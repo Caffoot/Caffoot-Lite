@@ -1455,6 +1455,29 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             }, 3000);
         }
 
+        // RC1 accessibility: browser-native required-field errors must also be
+        // visible in the form and announced, even when submit is prevented.
+        document.addEventListener('invalid', function(event) {
+            const field = event.target;
+            const form = field.closest && field.closest('#modal-container form');
+            if (!form) return;
+            field.setAttribute('aria-invalid', 'true');
+            const error = form.querySelector('[data-form-error]');
+            if (!error) return;
+            const label = field.id ? form.querySelector('label[for="' + field.id + '"]') : null;
+            const fieldName = label ? label.textContent.replace('*', '').trim() : (field.getAttribute('aria-label') || 'This field');
+            const message = fieldName + ': ' + (field.validationMessage || 'Please check this value.');
+            error.textContent = message;
+            error.classList.add('is-visible');
+        }, true);
+
+        document.addEventListener('input', function(event) {
+            const field = event.target;
+            const form = field.closest && field.closest('#modal-container form');
+            if (!form || !field.matches('input,select,textarea')) return;
+            if (field.validity && field.validity.valid) field.removeAttribute('aria-invalid');
+        });
+
         function switchTab(tabId) {
             currentTab = tabId;
             document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -3147,7 +3170,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             const description = document.getElementById('sub-desc').value.trim();
 
             if (!isValidCidr24(cidr)) {
-                showToast('Enter a valid network CIDR from /23 to /30 (e.g. 192.168.10.0/23).', 'error');
+                showToast('Enter a valid network CIDR from /23 to /30 (e.g. 192.168.10.0/24).', 'error');
                 return;
             }
             if (!name) {
@@ -4132,7 +4155,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                     field.classList.add('phase14b-invalid');
                     field.setAttribute('aria-invalid', 'true');
                     const error = deviceForm.querySelector('[data-form-error]');
-                    if (error) error.textContent = 'Please complete the highlighted required field before saving.';
+                    if (error) { error.textContent = 'Please complete the highlighted required field before saving.'; error.classList.add('is-visible'); }
                 }, true);
             }
         }
