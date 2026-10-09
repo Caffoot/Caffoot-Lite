@@ -402,3 +402,9 @@ assert(html.includes('#modal-content :is(input,select,textarea)[aria-invalid="tr
 assert(html.includes('outline: 3px solid #dc2626 !important'), 'invalid light-theme focus must be red');
 assert(html.includes('outline-color: #fb7185 !important'), 'invalid dark-theme focus must be distinguishable');
 console.log('RC1 invalid field focus contrast safeguards passed.');
+
+assert(html.includes("[/rack name/i, 'rack-name']"), 'rack validation must target rack name');
+assert(html.includes("[/device name|hostname|unique device name/i, 'dev-name']"), 'device validation must target device name');
+assert(html.includes("[/gateway/i, 'sub-gw']"), 'gateway validation must target gateway input');
+assert(html.includes("const field = document.getElementById(match[1]);"), 'application validation must resolve field');
+console.log('RC1 application validation field targeting safeguards passed.');
