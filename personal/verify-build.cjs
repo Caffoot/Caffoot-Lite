@@ -2,7 +2,7 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const htmlPath = path.join(__dirname, 'dist', 'caffoot-personal-offline.html');
+const htmlPath = path.join(__dirname, 'dist', 'Caffoot-Lite.html');
 const html = fs.readFileSync(htmlPath, 'utf8');
 const remote = [...html.matchAll(/<(?:script|link)\b[^>]*\b(?:src|href)\s*=\s*["']https?:\/\/[^"']+["']/gi)];
 assert.equal(remote.length, 0, 'Built file still has remote script/stylesheet references');
