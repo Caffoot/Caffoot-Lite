@@ -4302,20 +4302,20 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                     }
                 }
                 if (issues.length) {
-                    window.alert('INVENTORY SAFETY CHECK — ACTION REQUIRED\\n\\n' +
-                        issues.slice(0, 12).map((issue, i) => (i + 1) + '. ' + issue).join('\\n') +
-                        (issues.length > 12 ? '\\n...and ' + (issues.length - 12) + ' more issue(s).' : '') +
-                        '\\n\\nExport a JSON backup before making changes.');
+                    window.alert('INVENTORY SAFETY CHECK — ACTION REQUIRED\n\n' +
+                        issues.slice(0, 12).map((issue, i) => (i + 1) + '. ' + issue).join('\n') +
+                        (issues.length > 12 ? '\n...and ' + (issues.length - 12) + ' more issue(s).' : '') +
+                        '\n\nExport a JSON backup before making changes.');
                     return;
                 }
-                window.alert('INVENTORY SAFETY CHECK PASSED\\n\\n' +
+                window.alert('INVENTORY SAFETY CHECK PASSED\n\n' +
                     appState.devices.length + ' devices, ' + appState.racks.length + ' racks, ' +
                     appState.subnets.length + ' subnets and ' + Object.keys(appState.ipAllocations).length +
-                    ' IPAM records checked.\\n\\nBrowser storage matches the active inventory. ' +
+                    ' IPAM records checked.\n\nBrowser storage matches the active inventory. ' +
                     'Keep a downloaded JSON backup as well: browser storage is not a permanent backup.');
             } catch (error) {
-                window.alert('INVENTORY SAFETY CHECK FAILED\\n\\n' + error.message +
-                    '\\n\\nExport a JSON backup before making changes.');
+                window.alert('INVENTORY SAFETY CHECK FAILED\n\n' + error.message +
+                    '\n\nExport a JSON backup before making changes.');
             }
         }
 
