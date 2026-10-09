@@ -3251,6 +3251,15 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 return;
             }
 
+            if (appState.devices.some(d => d.primaryIp === gateway) || appState.ipAllocations[gateway]) {
+                showToast('Gateway IP is already assigned or reserved. Release that address before using it as a gateway.', 'error');
+                return;
+            }
+
+            const beforeSubnetSave = JSON.stringify(appState);
+            const previousSubnetSelection = selectedSubnetId;
+            const previousDeviceDraftSubnet = deviceFormDraft?.subnetId;
+
             if (subnetId) {
                 const sub = appState.subnets.find(s => s.id === subnetId);
                 if (!sub) {
@@ -3295,7 +3304,13 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 });
             }
 
-            if (!saveState()) return;
+            if (!saveState()) {
+                appState = JSON.parse(beforeSubnetSave);
+                selectedSubnetId = previousSubnetSelection;
+                if (deviceFormDraft) deviceFormDraft.subnetId = previousDeviceDraftSubnet;
+                showToast('Subnet changes were not saved. Previous inventory restored.', 'error');
+                return;
+            }
             const returnToDevice = !!deviceFormDraft;
             closeModal();
             if (returnToDevice) {
