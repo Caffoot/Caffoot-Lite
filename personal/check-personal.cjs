@@ -199,3 +199,10 @@ console.log('Backup JSON validation fixtures passed.');
 
 
 console.log('Personal source regression checks passed (' + scripts.length + ' inline scripts parsed).');
+
+
+const ipPickerSource = fs.readFileSync(path.join(__dirname, 'caffoot-personal.html'), 'utf8');
+assert(ipPickerSource.includes('id="dev-ip-available"'), 'Device form must expose a Safari-compatible IP dropdown');
+assert(ipPickerSource.includes("case 'device-ip-select':"), 'Device IP dropdown must be handled on change');
+assert(ipPickerSource.includes('if (available.length < 50) available.push(ip)'), 'IP dropdown must cap rendered choices');
+assert(ipPickerSource.includes('if (ip === subnet.gateway) continue;'), 'IP dropdown must exclude gateway');
