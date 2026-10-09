@@ -286,3 +286,52 @@ managedContext.appState.installedSoftware = [{ key: 'CustomApp', label: 'Custom 
 assert.equal(managedContext.phase19BServerFunctions()[0].key, 'Custom', 'custom server option preserved');
 assert.equal(managedContext.phase19BSoftware()[0].key, 'CustomApp', 'custom software option preserved');
 console.log('RC1 managed options reset fixtures passed.');
+
+/* RC1 transactional deletion: real subnet/rack handlers, dependencies and rollback. */
+const subnetDepsStart = html.indexOf('function phase11BSubnetDependencies(');
+const subnetDepsEnd = html.indexOf('function phase11BCommitDelete(', subnetDepsStart);
+const subnetDeleteStart = html.indexOf('function deleteSubnet(');
+const subnetDeleteEnd = html.indexOf('function deleteVlan(', subnetDeleteStart);
+const rackDeleteStart = html.indexOf('function deleteRack(');
+const rackDeleteEnd = html.indexOf('// Phase 18B:', rackDeleteStart);
+assert(subnetDepsStart >= 0 && subnetDepsEnd > subnetDepsStart && subnetDeleteStart >= 0 && subnetDeleteEnd > subnetDeleteStart && rackDeleteStart >= 0 && rackDeleteEnd > rackDeleteStart, 'subnet/rack deletion helpers must exist');
+const deletionFixture = {
+  appState: {
+    subnets: [{id:'s1',name:'Test subnet',cidr:'192.168.40.0/24'}],
+    racks: [{id:'r1',name:'Test rack'}],
+    devices: [{id:'d1',name:'Test device',primaryIp:'192.168.40.10',rackId:'r1'}],
+    rackAccessories: [],
+    ipAllocations: {'192.168.40.10':{deviceId:'d1',status:'Assigned'}}
+  },
+  selectedSubnetId: 's1',
+  selectedRackId: 'r1',
+  confirm: () => true,
+  showToast: msg => { deletionFixture.lastToast=msg; },
+  renderContent: () => { deletionFixture.renders++; },
+  saveState: () => deletionFixture.allowSave,
+  allowSave: true,
+  renders: 0,
+  lastToast: '',
+  ipBelongsToSubnet: (ip,cidr) => ip.startsWith(cidr.split('.').slice(0,3).join('.')+'.')
+};
+vm.createContext(deletionFixture);
+vm.runInContext(html.slice(subnetDepsStart,subnetDepsEnd) + '\n' + html.slice(commitStart,commitEnd).split('function deleteSubnet(')[0] + '\n' + html.slice(subnetDeleteStart,subnetDeleteEnd) + '\n' + html.slice(rackDeleteStart,rackDeleteEnd),deletionFixture);
+deletionFixture.deleteSubnet('s1');
+assert.equal(deletionFixture.appState.subnets.length,1,'subnet with device/IPAM dependency must not be deleted');
+deletionFixture.deleteRack('r1');
+assert.equal(deletionFixture.appState.racks.length,1,'rack with mounted device must not be deleted');
+deletionFixture.appState.devices=[];
+deletionFixture.appState.ipAllocations={};
+deletionFixture.allowSave=false;
+deletionFixture.deleteSubnet('s1');
+assert.equal(deletionFixture.appState.subnets.length,1,'failed subnet save must restore subnet');
+assert.equal(deletionFixture.selectedSubnetId,'s1','failed subnet save restores selection');
+deletionFixture.deleteRack('r1');
+assert.equal(deletionFixture.appState.racks.length,1,'failed rack save must restore rack');
+assert.equal(deletionFixture.selectedRackId,'r1','failed rack save restores selection');
+deletionFixture.allowSave=true;
+deletionFixture.deleteSubnet('s1');
+deletionFixture.deleteRack('r1');
+assert.equal(deletionFixture.appState.subnets.length,0,'empty subnet can be deleted');
+assert.equal(deletionFixture.appState.racks.length,0,'empty rack can be deleted');
+console.log('RC1 subnet/rack deletion and rollback fixtures passed.');
