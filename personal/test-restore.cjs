@@ -25,7 +25,8 @@ function scenario(mode) {
     getItem(k) {return store.has(k) ? store.get(k) : null;},
     setItem(k,v) {
       if(mode === 'snapshot-fails' && k === safety) throw Error('Snapshot blocked');
-      if(mode === 'save-fails' && k === key && JSON.parse(v).devices[0]?.id === 'replacement') throw Error('Write blocked');
+      if((mode === 'save-fails' || mode === 'rollback-fails') && k === key && JSON.parse(v).devices[0]?.id === 'replacement') throw Error('Write blocked');
+      if(mode === 'rollback-fails' && k === key && JSON.parse(v).devices[0]?.id === 'original') throw Error('Rollback blocked');
       store.set(k,String(v));
     },
     removeItem(k) {store.delete(k);}
@@ -33,6 +34,7 @@ function scenario(mode) {
   ctx = vm.createContext({
     appState:original, localStorage:storage, SAFETY_SNAPSHOT_KEY:safety,
     nextAuditReason:'',auditBaseline:JSON.stringify(original),
+    phase17AStorageRecovery:null,phase17ARecoveryBanner:()=>{ctx.bannerShown=true;},
     selectedSubnetId:'',selectedRackId:'',
     FileReader:FakeReader,
     phase16CReadJson:JSON.parse,
@@ -55,15 +57,20 @@ function scenario(mode) {
   ctx.importData({target:input});
   return {ctx,store,messages,input,original,replacement,key,safety};
 }
-for(const mode of ['snapshot-fails','save-fails']){
+for(const mode of ['snapshot-fails','save-fails','rollback-fails']){
   const v=scenario(mode);
   assert.equal(v.ctx.appState.devices[0].id,'original',mode+' must retain original in memory');
   assert.equal(JSON.parse(v.store.get(v.key)).devices[0].id,'original',mode+' must retain original in storage');
   assert(v.messages.some(m=>m.t==='error'),mode+' must report failure');
   assert.equal(v.input.value,'',mode+' must clear file input');
 }
+const blocked=scenario('rollback-fails');
+assert(blocked.ctx.phase17AStorageRecovery, 'Failed rollback must activate recovery mode');
+assert.equal(blocked.ctx.phase17AStorageRecovery.raw,JSON.stringify(blocked.original), 'Recovery mode must retain original snapshot');
+assert.equal(blocked.ctx.bannerShown,true, 'Recovery banner must be displayed');
+assert.equal(blocked.store.get(blocked.safety),JSON.stringify(blocked.original), 'Safety snapshot must survive failed rollback');
 const ok=scenario('success');
 assert.equal(ok.ctx.appState.devices[0].id,'replacement','Successful restore must activate backup');
 assert.equal(JSON.parse(ok.store.get(ok.key)).devices[0].id,'replacement','Successful restore must persist backup');
 assert.equal(JSON.parse(ok.store.get(ok.safety)).devices[0].id,'original','Successful restore must preserve original safety snapshot');
-console.log('PASS: executable restore success, failed safety snapshot and failed storage-write tests.');
+console.log('PASS: executable restore success, failed safety snapshot and failed storage-write and failed rollback tests.');
