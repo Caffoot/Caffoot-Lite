@@ -38,3 +38,11 @@ Inventory is stored in browser-local storage, not in a shared server database. P
 ## Caffoot Server
 
 The server edition is paused, not cancelled. The existing server branches and Docker preview should remain unchanged until that project resumes.
+
+## Accessibility testing
+
+Target WCAG 2.2 AA; automated tests do not establish compliance.
+
+Safari: Settings > Advanced > enable Tab highlighting of every webpage item. This is needed for full keyboard traversal of buttons and fields.
+
+Manual RC1 checklist: verify Tab and Shift+Tab on Dashboard and Rack/Device dialogs; Escape and focus return; readable light/dark contrast; visible focus; labelled controls and errors; VoiceOver announcements; 200% zoom; reduced motion.
