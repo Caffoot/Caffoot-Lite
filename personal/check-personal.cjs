@@ -373,3 +373,7 @@ assert(html.includes("event.shiftKey && (document.activeElement === first"), 'Sh
 assert(html.includes("document.activeElement === last"), 'Tab must remain in dialog');
 assert(html.includes('prefers-reduced-motion: reduce'), 'reduced-motion preference must be respected');
 console.log('RC1 accessibility structural safeguards passed.');
+
+assert(html.includes('const current = items.indexOf(document.activeElement);'), 'modal Tab navigation must use explicit control ordering for Safari');
+assert(html.includes('items[next].focus();'), 'modal Tab navigation must explicitly focus the next control');
+console.log('Safari modal keyboard navigation safeguards passed.');
