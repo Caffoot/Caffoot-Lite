@@ -1,0 +1,18 @@
+'use strict';
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const htmlPath = path.join(__dirname, 'dist', 'caffoot-personal-offline.html');
+const html = fs.readFileSync(htmlPath, 'utf8');
+const remote = [...html.matchAll(/<(?:script|link)\b[^>]*\b(?:src|href)\s*=\s*["']https?:\/\/[^"']+["']/gi)];
+assert.equal(remote.length, 0, 'Built file still has remote script/stylesheet references');
+assert.doesNotMatch(html, /tailwind\.config\s*=/, 'Tailwind CDN configuration remains');
+assert.match(html, /<style id="caffoot-tailwind">[\s\S]+?<\/style>/, 'Compiled Tailwind missing');
+assert.match(html, /<style id="caffoot-icons">[\s\S]+?<\/style>/, 'Embedded Font Awesome missing');
+assert.match(html, /data:font\/woff2;base64,/, 'Embedded icon fonts missing');
+assert.match(html, /netmini_state/, 'Original data key missing');
+assert.match(html, /<title>Caffoot Lite/, 'Lite branding missing');
+assert.match(html, /switchTab\('dashboard'\)/, 'Dashboard startup missing');
+assert.match(html, /exportData\(\)/, 'Export function reference missing');
+console.log('PASS: standalone HTML structure and local assets verified.');
+console.log('NOTE: This does not replace browser testing, especially offline file:// operation and import/export.');
