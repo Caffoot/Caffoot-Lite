@@ -397,3 +397,8 @@ assert(html.includes("error.classList.add('is-visible');"), 'form validation err
 assert(html.includes("field.setAttribute('aria-invalid', 'true');"), 'invalid fields must be marked');
 assert(html.includes("field.removeAttribute('aria-invalid');"), 'corrected fields must clear invalid state');
 console.log('RC1 form validation accessibility safeguards passed.');
+
+assert(html.includes('#modal-content :is(input,select,textarea)[aria-invalid="true"]:focus-visible'), 'invalid fields must retain red focus indication');
+assert(html.includes('outline: 3px solid #dc2626 !important'), 'invalid light-theme focus must be red');
+assert(html.includes('outline-color: #fb7185 !important'), 'invalid dark-theme focus must be distinguishable');
+console.log('RC1 invalid field focus contrast safeguards passed.');
