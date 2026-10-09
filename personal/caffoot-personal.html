@@ -857,7 +857,8 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             deviceLocations: ['Racked', 'Unknown'],
             ipAllocations: {},
             serverFunctions: [],
-            installedSoftware: []
+            installedSoftware: [],
+            managedOptionsCleared: false
         };
 
         const STATE_VERSION = 3;
@@ -3863,7 +3864,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
         // be edited without changing device types or deleting historical device values.
         const phase19BDefaultServerFunctions = ['SwanServer','SQLServer','TMSServer','printserver','keriserver','ActiveDirectory','AntivirusSoftware','DNS','DHCP','ExchangeServer','BackupSoftware','PlanetDB','SystemsDatabaseBackEndTables','PDASystem'];
         function phase19BServerFunctions() {
-            return Array.isArray(appState.serverFunctions) && appState.serverFunctions.length ? appState.serverFunctions : phase19BDefaultServerFunctions.map(key=>({key,label:phase19BLabels[key]||key}));
+            return Array.isArray(appState.serverFunctions) && (appState.serverFunctions.length || appState.managedOptionsCleared) ? appState.serverFunctions : phase19BDefaultServerFunctions.map(key=>({key,label:phase19BLabels[key]||key}));
         }
         function phase19BServerFunctionFields() { return phase19BServerFunctions().map(x=>x.key); }
         function phase19BManageFunctions() {
@@ -3898,7 +3899,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
         // Desktop, laptop and tablet software is managed independently of server functions.
         const phase19BDefaultSoftware = ['Swan','MicrosoftOffice','Planet','SpindleSoftware','Preactor','RedLionApp','SalesBase','HelpDesk','ProductionITHelpDeskDashboards','PDA','TMS','PhoneBook','EasyLabel'];
         function phase19BSoftware() {
-            return Array.isArray(appState.installedSoftware) && appState.installedSoftware.length ? appState.installedSoftware : phase19BDefaultSoftware.map(key=>({key,label:phase19BLabels[key]||key}));
+            return Array.isArray(appState.installedSoftware) && (appState.installedSoftware.length || appState.managedOptionsCleared) ? appState.installedSoftware : phase19BDefaultSoftware.map(key=>({key,label:phase19BLabels[key]||key}));
         }
         function phase19BSoftwareFields(){return phase19BSoftware().map(x=>x.key);}
         function phase19BManageSoftware(){
@@ -4347,7 +4348,9 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 previousSaved = localStorage.getItem(key);
                 previousSafety = localStorage.getItem(SAFETY_SNAPSHOT_KEY);
                 const snapshot = previousSaved || JSON.stringify(original);
-                const candidate = phase16CCheckBackup(cloneDefaultData());
+                const cleanStart = cloneDefaultData();
+                cleanStart.managedOptionsCleared = true;
+                const candidate = phase16CCheckBackup(cleanStart);
                 localStorage.setItem(SAFETY_SNAPSHOT_KEY, snapshot);
                 if (localStorage.getItem(SAFETY_SNAPSHOT_KEY) !== snapshot)
                     throw new Error('Could not verify the recovery snapshot.');
