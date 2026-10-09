@@ -23,6 +23,12 @@ assert(!html.includes('data-tab="diagnostics"'), 'diagnostics must not appear in
 assert(!html.includes('function diagnosticTests()'), 'obsolete diagnostic tests must be removed');
 assert(!html.includes('function renderDiagnosticsHTML()'), 'obsolete diagnostics view must be removed');
 assert(!html.includes("case 'run-diagnostics':"), 'obsolete diagnostics handler must be removed');
+assert(/personalSafeStorageGet\(SAFETY_SNAPSHOT_KEY\)\?'':'disabled'\)\)\s*\+\s*panel\('Danger zone/.test(html), 'Danger zone must be concatenated into Data Management HTML');
+assert(html.includes("case 'phase16a-clear-system': phase16AClearSystem();"), 'Clear system action must be wired');
+assert(html.includes('function phase16AClearSystem()'), 'Clear system handler must exist');
+assert(html.includes('localStorage.setItem(SAFETY_SNAPSHOT_KEY, snapshot)'), 'Clear system must create recovery snapshot');
+assert(html.includes('const candidate = phase16CCheckBackup(cloneDefaultData())'), 'Clear system must validate clean starter data');
+assert(html.includes('function suggestSubnetGateway()'), 'Automatic gateway suggestion must remain');
 assert(html.includes('function phase11CPlan('), 'IPAM repair planner must remain');
 assert(html.includes('...phase19BSoftwareFields()'), 'computer software options must be rendered');
 assert(html.includes('...phase19BServerFunctionFields()'), 'server feature options must be rendered');
