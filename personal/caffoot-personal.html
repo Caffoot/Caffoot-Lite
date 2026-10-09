@@ -4369,7 +4369,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
         }
 
         function phase16ARenderSettings() {
-            const section = ['backup','preferences','maintenance','about'].includes(phase16ASection) ? phase16ASection : 'backup';
+            const section = ['backup','preferences','about'].includes(phase16ASection) ? phase16ASection : 'backup';
             const button = (action,label,icon,extra='') => `<button type="button" data-action="${action}" ${extra} class="phase16a-action"><i class="fa-solid ${icon}" aria-hidden="true"></i>${label}</button>`;
             const panel = (title,desc,inner='') => `<section class="phase16a-panel"><h3>${title}</h3><p>${desc}</p>${inner ? `<div class="phase16a-buttons">${inner}</div>` : ''}</section>`;
             let body = '';
@@ -4381,12 +4381,10 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                     panel('Danger zone — clear system','Permanently reset all inventory, IPAM records and managed options in this browser. Export a JSON backup first.',button('phase16a-clear-system','Clear system / clean start','fa-triangle-exclamation'));
             } else if (section === 'preferences') {
                 body = panel('Appearance','Switch between the existing light and dark themes.',button('phase16a-theme','Switch light / dark','fa-circle-half-stroke'));
-            } else if (section === 'maintenance') {
-                body = panel('Data safety','Export a JSON backup before making major changes. Use Data Management to restore a backup or review the existing inventory.');
             } else {
                 body = panel('About Caffoot Lite','Standalone browser-based network inventory, IP address management and rack documentation. Data is saved locally in this browser.');
             }
-            const tabs = [['backup','Data Management','fa-database'],['preferences','Preferences','fa-palette'],['maintenance','Maintenance','fa-screwdriver-wrench'],['about','About Caffoot Lite','fa-circle-info']];
+            const tabs = [['backup','Data Management','fa-database'],['preferences','Preferences','fa-palette'],['about','About Caffoot Lite','fa-circle-info']];
             return `<div class="phase16a-workspace phase16b-workspace"><div class="phase16a-intro"><h2>Settings & Data</h2><p>Manage your data, appearance and application health — without duplicate tools.</p></div>
                 <div class="phase16a-tabs" role="group" aria-label="Settings sections">${tabs.map(([id,label,icon])=>`<button type="button" data-action="phase16a-section" data-section="${id}" aria-pressed="${section===id}" class="phase16a-tab ${section===id?'phase16a-active':''}"><i class="fa-solid ${icon}" aria-hidden="true"></i>${label}</button>`).join('')}</div>
                 <div class="phase16a-grid">${body}</div>${section==='backup'?'<p class="phase16a-warning"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Browser storage is not a reliable long-term backup. Keep exported JSON files somewhere safe, especially before restoring data or changing browsers.</p>':''}</div>`;
