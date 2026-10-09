@@ -14,7 +14,7 @@ npm install
 npm run release
 ```
 
-The offline HTML is generated at `personal/dist/caffoot-personal-offline.html`. End users do not need Node.js. On pushes to `main`, GitHub Actions builds and checks the application and uploads the `caffoot-lite-offline-preview` artifact.
+The offline HTML is generated at `personal/dist/Caffoot-Lite.html`. End users do not need Node.js. On pushes to `main`, GitHub Actions builds and checks the application and uploads the `caffoot-lite-offline-preview` artifact.
 
 ## Data safety
 
