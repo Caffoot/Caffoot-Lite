@@ -15,7 +15,7 @@ assert.match(html, /<title>Caffoot Lite/, 'Lite branding missing');
 assert.match(html, /<img[^>]+src="data:image\\/png;base64,[A-Za-z0-9+/=]+"[^>]+alt="Caffoot hedgehog mascot"/, 'Embedded sidebar mascot missing');
 assert.match(html, /<link rel="icon" href="data:image\\/x-icon;base64,[A-Za-z0-9+/=]+"/, 'Embedded favicon missing');
 assert.match(html, /<link rel="apple-touch-icon" href="data:image\\/png;base64,[A-Za-z0-9+/=]+"/, 'Embedded Apple touch icon missing');
-assert.doesNotMatch(html, /\\.\\.\\/assets\\//, 'Release still depends on external brand assets');
+assert.ok(!html.includes('../assets/'), 'Release still depends on external brand assets');
 
 assert.match(html, /switchTab\('dashboard'\)/, 'Dashboard startup missing');
 assert.match(html, /exportData\(\)/, 'Export function reference missing');
