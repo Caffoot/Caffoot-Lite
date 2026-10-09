@@ -3031,6 +3031,15 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             closeModal();renderContent();
         }
 
+        // Suggest the first usable address when creating a subnet. Manual edits are respected.
+        function suggestSubnetGateway() {
+            const cidrInput = document.getElementById('sub-cidr');
+            const gatewayInput = document.getElementById('sub-gw');
+            if (!cidrInput || !gatewayInput || gatewayInput.dataset.gatewayManual === 'true') return;
+            const range = phase12Cidr(cidrInput.value.trim());
+            gatewayInput.value = range ? phase12IpString(range.first) : '';
+        }
+
         function openSubnetModal(subnetId = null) {
             const subnet = subnetId ? appState.subnets.find(s => s.id === subnetId) : null;
             openModal(`
@@ -3073,6 +3082,18 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                     </form>
                 </div>
             `);
+            const cidrInput = document.getElementById('sub-cidr');
+            const gatewayInput = document.getElementById('sub-gw');
+            if (cidrInput && gatewayInput) {
+                // Editing keeps the saved gateway unless the user clears it.
+                gatewayInput.dataset.gatewayManual = subnet ? 'true' : 'false';
+                cidrInput.addEventListener('input', suggestSubnetGateway);
+                gatewayInput.addEventListener('input', () => {
+                    gatewayInput.dataset.gatewayManual = gatewayInput.value.trim() ? 'true' : 'false';
+                    if (!gatewayInput.value.trim()) suggestSubnetGateway();
+                });
+                if (!subnet) suggestSubnetGateway();
+            }
         }
 
         function openSubnetModalByName(vlanName) {
