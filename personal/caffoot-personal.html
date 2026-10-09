@@ -3032,6 +3032,24 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
         }
 
         // Suggest the first usable address when creating a subnet. Manual edits are respected.
+        function subnetCidrFeedback(value) {
+            const cidr = String(value || '').trim();
+            if (!cidr) return {message: 'Enter a network CIDR to suggest a gateway.', invalid: false};
+            const parts = cidr.match(/^([^/]+)\/(\d{1,2})$/);
+            if (!parts) return {message: 'Use an IPv4 network in CIDR format, for example 192.168.1.0/24.', invalid: true};
+            const ip = phase12IpNumber(parts[1]);
+            if (ip === null) return {message: 'Enter a valid IPv4 address (four numbers from 0 to 255).', invalid: true};
+            const prefix = Number(parts[2]);
+            if (prefix < 23 || prefix > 30) return {message: 'Caffoot Lite supports subnet sizes /23 through /30.', invalid: true};
+            const size = 2 ** (32 - prefix);
+            const network = Math.floor(ip / size) * size;
+            if (ip !== network) return {
+                message: 'Not a /' + prefix + ' network boundary. Did you mean ' + phase12IpString(network) + '/' + prefix + '?',
+                invalid: true
+            };
+            return {message: 'Suggested gateway: ' + phase12IpString(network + 1) + ' (first usable IP; you can change it)', invalid: false};
+        }
+
         function suggestSubnetGateway() {
             const cidrInput = document.getElementById('sub-cidr');
             const gatewayInput = document.getElementById('sub-gw');
@@ -3041,15 +3059,22 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             const range = phase12Cidr(cidrInput.value.trim());
             const suggestion = range ? phase12IpString(range.first) : '';
             const previous = gatewayInput.dataset.autoGateway || '';
-            // Respect any manually entered gateway, even when the CIDR changes.
             if (!gatewayInput.value.trim() || gatewayInput.value === previous) {
                 gatewayInput.value = suggestion;
                 gatewayInput.dataset.autoGateway = suggestion;
             }
             const hint = document.getElementById('sub-gw-hint');
-            if (hint) hint.textContent = suggestion
-                ? 'Suggested gateway: ' + suggestion + ' (first usable IP; you can change it)'
-                : 'Enter a valid network CIDR (/23 to /30) to suggest a gateway.';
+            const feedback = subnetCidrFeedback(cidrInput.value);
+            if (hint) {
+                hint.textContent = feedback.message;
+                hint.classList.toggle('text-red-700', feedback.invalid);
+                hint.classList.toggle('dark:text-red-300', feedback.invalid);
+                hint.classList.toggle('text-slate-600', !feedback.invalid);
+                hint.classList.toggle('dark:text-slate-300', !feedback.invalid);
+                hint.setAttribute('role', feedback.invalid ? 'alert' : 'status');
+            }
+            cidrInput.setAttribute('aria-invalid', feedback.invalid ? 'true' : 'false');
+            cidrInput.setAttribute('aria-describedby', 'sub-gw-hint');
         }
 
         function openSubnetModal(subnetId = null) {
