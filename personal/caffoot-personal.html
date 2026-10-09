@@ -4490,8 +4490,10 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                         else localStorage.setItem(SAFETY_SNAPSHOT_KEY, previousSafety);
                     }
                 } catch (rollbackError) {
+                    phase17AStorageRecovery = { reason: 'Clean reset rollback could not be verified. Further saves are blocked.', raw: previousSaved === undefined ? null : previousSaved };
+                    phase17ARecoveryBanner();
                     console.error('Reset rollback failed:', rollbackError);
-                    showToast('Reset failed; storage rollback failed. Export the recovery snapshot.', 'error');
+                    showToast('Reset failed; storage rollback failed. Further saves are blocked; export the original stored data from the recovery banner.', 'error');
                     renderContent();
                     return;
                 }
@@ -4620,7 +4622,9 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                             if (previousSafetySnapshot === null) localStorage.removeItem(SAFETY_SNAPSHOT_KEY);
                             else localStorage.setItem(SAFETY_SNAPSHOT_KEY, previousSafetySnapshot);
                         } catch (rollbackError) {
-                            throw new Error('Restore failed and automatic storage rollback could not be verified. Download the safety snapshot before making further changes. ' + rollbackError.message);
+                            phase17AStorageRecovery = { reason: 'Backup restore rollback could not be verified. Further saves are blocked.', raw: currentSnapshot };
+                            phase17ARecoveryBanner();
+                            throw new Error('Restore failed and automatic storage rollback could not be verified. Further saves are blocked. Download the original stored data from the recovery banner. ' + rollbackError.message);
                         }
                         auditBaseline = currentSnapshot;
                         throw new Error('Restore cancelled; original inventory retained. ' + error.message);
