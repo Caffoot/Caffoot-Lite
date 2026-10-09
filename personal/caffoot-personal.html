@@ -35,6 +35,23 @@
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.5); border-radius: 3px; }
     
+        /* RC1: validation takes precedence over the normal blue focus ring. */
+        #modal-content :is(input,select,textarea)[aria-invalid="true"] {
+            border-color: #b91c1c !important;
+            outline: 3px solid #dc2626 !important;
+            outline-offset: 2px !important;
+            box-shadow: 0 0 0 1px #b91c1c !important;
+        }
+        #modal-content :is(input,select,textarea)[aria-invalid="true"]:focus-visible {
+            outline: 3px solid #dc2626 !important;
+            outline-offset: 2px !important;
+        }
+        .dark #modal-content :is(input,select,textarea)[aria-invalid="true"],
+        .dark #modal-content :is(input,select,textarea)[aria-invalid="true"]:focus-visible {
+            border-color: #fda4af !important;
+            outline-color: #fb7185 !important;
+            box-shadow: 0 0 0 1px #fda4af !important;
+        }
         /* Phase 7A — individual form layout */
         .form-shell { max-width: 900px; margin: 0 auto; }
         .form-section-card { padding: 1rem; border: 1px solid rgb(226 232 240); border-radius: 0.9rem; background: rgb(248 250 252 / .55); }
