@@ -27,7 +27,7 @@ assert(/personalSafeStorageGet\(SAFETY_SNAPSHOT_KEY\)\?'':'disabled'\)\)\s*\+\s*
 assert(html.includes("case 'phase16a-clear-system': phase16AClearSystem();"), 'Clear system action must be wired');
 assert(html.includes('function phase16AClearSystem()'), 'Clear system handler must exist');
 assert(html.includes('localStorage.setItem(SAFETY_SNAPSHOT_KEY, snapshot)'), 'Clear system must create recovery snapshot');
-assert(html.includes('const candidate = phase16CCheckBackup(cloneDefaultData())'), 'Clear system must validate clean starter data');
+assert(html.includes('const candidate = phase16CCheckBackup(cleanStart);'), 'Clear system must validate the explicitly cleared starter data');
 assert(html.includes('function suggestSubnetGateway()'), 'Automatic gateway suggestion must remain');
 assert(html.includes("event.target.id === 'sub-cidr'"), 'CIDR input must trigger automatic gateway suggestion');
 assert(html.includes("event.target.id === 'sub-gw'"), 'Manual gateway edits must be preserved');
