@@ -4267,7 +4267,8 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             const panel = (title,desc,inner='') => `<section class="phase16a-panel"><h3>${title}</h3><p>${desc}</p>${inner ? `<div class="phase16a-buttons">${inner}</div>` : ''}</section>`;
             let body = '';
             if (section === 'backup') {
-                body = panel('Back up your data','Download a complete JSON copy of the current inventory, including devices, IPAM, subnets and racks.',button('phase11-export-backup','Download JSON backup','fa-download')) +
+                body = panel('Inventory safety check','Check data integrity and confirm that the current inventory is saved in this browser. This check makes no changes.',button('phase16a-check-safety','Check inventory safety','fa-shield-halved')) +
+                    panel('Back up your data','Download a complete JSON copy of the current inventory, including devices, IPAM, subnets and racks.',button('phase11-export-backup','Download JSON backup','fa-download')) +
                     panel('Restore your data','Choose a JSON backup. Caffoot Lite checks the file and displays a summary before asking you to replace your inventory. A safety copy is verified first.',button('phase16a-import','Choose backup file','fa-upload')) +
                     panel('Recovery snapshot','A safety snapshot is available only after a restore has created one.',button('phase11-download-snapshot','Download safety snapshot','fa-shield-halved',personalSafeStorageGet(SAFETY_SNAPSHOT_KEY)?'':'disabled')) +
                     panel('Danger zone — clear system','Permanently reset all inventory, IPAM records and managed options in this browser. Export a JSON backup first.',button('phase16a-clear-system','Clear system / clean start','fa-triangle-exclamation'));
@@ -4282,6 +4283,40 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             return `<div class="phase16a-workspace phase16b-workspace"><div class="phase16a-intro"><h2>Settings & Data</h2><p>Manage your data, appearance and application health — without duplicate tools.</p></div>
                 <div class="phase16a-tabs" role="group" aria-label="Settings sections">${tabs.map(([id,label,icon])=>`<button type="button" data-action="phase16a-section" data-section="${id}" aria-pressed="${section===id}" class="phase16a-tab ${section===id?'phase16a-active':''}"><i class="fa-solid ${icon}" aria-hidden="true"></i>${label}</button>`).join('')}</div>
                 <div class="phase16a-grid">${body}</div>${section==='backup'?'<p class="phase16a-warning"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Browser storage is not a reliable long-term backup. Keep exported JSON files somewhere safe, especially before restoring data or changing browsers.</p>':''}</div>`;
+        }
+
+        function phase16ACheckSafety() {
+            try {
+                const issues = validateApplicationState();
+                const key = typeof STORAGE_KEY !== 'undefined' ? STORAGE_KEY : 'netmini_state';
+                const stored = localStorage.getItem(key);
+                if (!stored) issues.push('No saved inventory was found in browser storage.');
+                else {
+                    try {
+                        const saved = normaliseState(JSON.parse(stored));
+                        const current = normaliseState(JSON.parse(JSON.stringify(appState)));
+                        if (JSON.stringify(saved) !== JSON.stringify(current))
+                            issues.push('The saved inventory differs from the currently displayed inventory.');
+                    } catch (error) {
+                        issues.push('Saved browser inventory cannot be read: ' + error.message);
+                    }
+                }
+                if (issues.length) {
+                    window.alert('INVENTORY SAFETY CHECK — ACTION REQUIRED\\n\\n' +
+                        issues.slice(0, 12).map((issue, i) => (i + 1) + '. ' + issue).join('\\n') +
+                        (issues.length > 12 ? '\\n...and ' + (issues.length - 12) + ' more issue(s).' : '') +
+                        '\\n\\nExport a JSON backup before making changes.');
+                    return;
+                }
+                window.alert('INVENTORY SAFETY CHECK PASSED\\n\\n' +
+                    appState.devices.length + ' devices, ' + appState.racks.length + ' racks, ' +
+                    appState.subnets.length + ' subnets and ' + Object.keys(appState.ipAllocations).length +
+                    ' IPAM records checked.\\n\\nBrowser storage matches the active inventory. ' +
+                    'Keep a downloaded JSON backup as well: browser storage is not a permanent backup.');
+            } catch (error) {
+                window.alert('INVENTORY SAFETY CHECK FAILED\\n\\n' + error.message +
+                    '\\n\\nExport a JSON backup before making changes.');
+            }
         }
 
         function phase16AClearSystem() {
@@ -4928,6 +4963,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 case 'tab-ipam': switchTab('ipam'); break;
                 case 'tab-audit': switchTab('audit'); break;
                 case 'export-audit': exportAuditHistory(); break;
+                case 'phase16a-check-safety': phase16ACheckSafety(); break;
                 case 'phase11-export-backup': exportData(); break;
                 case 'phase16a-clear-system': phase16AClearSystem(); break;
                 case 'phase11-download-snapshot': phase11DownloadSnapshot(); break;
