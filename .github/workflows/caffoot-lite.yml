@@ -32,7 +32,7 @@ jobs:
           node - <<'NODE'
           const fs = require('node:fs');
           const vm = require('node:vm');
-          const html = fs.readFileSync('dist/caffoot-personal-offline.html','utf8');
+          const html = fs.readFileSync('dist/Caffoot-Lite.html','utf8');
           const scripts = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)];
           if (!scripts.length) throw new Error('No inline application scripts found');
           for (const [index, script] of scripts.entries()) {
@@ -44,5 +44,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: caffoot-lite-offline-preview
-          path: personal/dist/caffoot-personal-offline.html
+          path: personal/dist/Caffoot-Lite.html
           if-no-files-found: error
