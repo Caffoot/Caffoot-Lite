@@ -1,0 +1,48 @@
+name: Build Caffoot Lite standalone HTML
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'personal/**'
+      - '.github/workflows/caffoot-lite.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-personal:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install build-only dependencies
+        working-directory: personal
+        run: npm install --no-audit --no-fund
+      - name: Build and verify standalone HTML
+        working-directory: personal
+        run: npm run release
+      - name: Validate HTML JavaScript syntax
+        working-directory: personal
+        run: |
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const vm = require('node:vm');
+          const html = fs.readFileSync('dist/caffoot-personal-offline.html','utf8');
+          const scripts = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)];
+          if (!scripts.length) throw new Error('No inline application scripts found');
+          for (const [index, script] of scripts.entries()) {
+            new vm.Script(script[1], {filename: 'inline-script-' + (index + 1) + '.js'});
+          }
+          console.log('Checked ' + scripts.length + ' inline scripts');
+          NODE
+      - name: Upload standalone HTML for testing
+        uses: actions/upload-artifact@v4
+        with:
+          name: caffoot-lite-offline-preview
+          path: personal/dist/caffoot-personal-offline.html
+          if-no-files-found: error
