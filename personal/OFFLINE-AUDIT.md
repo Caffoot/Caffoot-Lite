@@ -2,7 +2,7 @@
 
 Date: 2026-10-09
 
-## Status: in progress, **not yet fully offline**
+## Status: historical pre-build audit — superseded by verified offline RC1 testing
 
 The Personal HTML file is based on NetMini Phase 19D2. Its original JavaScript, UI structure and browser storage keys remain in place.
 
@@ -24,4 +24,4 @@ The Personal HTML file is based on NetMini Phase 19D2. Its original JavaScript, 
 
 The app uses browser-local storage keys including `netmini_state`, `netmini_dark` and `netmini_phase12b_prebulk_snapshot`. Do not rename them as part of visual branding. A local HTML file's storage may be scoped differently across browsers or file locations; users must use the built-in export/backup function before changing versions.
 
-Do not advertise the app as completely offline or release-ready until the blocking dependencies and browser tests are resolved.
+The generated standalone HTML now bundles these runtime assets, and offline Safari testing was completed during RC1 verification. The **developer source HTML** still references external assets; distribute the **generated offline HTML**, not the developer source.
