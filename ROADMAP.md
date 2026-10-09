@@ -43,4 +43,8 @@ These were **proposals**, not committed v1.0 requirements. Confirm scope before 
 
 ## Compatibility and project boundaries
 
-Keep the `netmini_state` storage key and compatible backup formats unless a tested migration is provided. Keep Caffoot Server and the original repository untouched. Maintain a known-good rollback until the new build is confirmed stable.
+**Data compatibility:** Preserve existing browser inventories and supported JSON backup formats. The current storage key is `netmini_state`; change it only alongside a tested migration so existing users do not lose access to saved data.
+
+**Independent projects:** Caffoot Lite is developed and released separately from Caffoot Server. Changes to Lite must not modify the Server repository.
+
+**Safe releases:** Keep a known-good standalone HTML build and recommend exporting a JSON backup before upgrading. Validate new builds before publishing them.
