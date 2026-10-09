@@ -222,3 +222,9 @@ assert(ipPickerSource.includes('id="dev-ip-available"'), 'Device form must expos
 assert(ipPickerSource.includes("case 'device-ip-select':"), 'Device IP dropdown must be handled on change');
 assert(ipPickerSource.includes('if (available.length < 50) available.push(ip)'), 'IP dropdown must cap rendered choices');
 assert(ipPickerSource.includes('if (ip === subnet.gateway) continue;'), 'IP dropdown must exclude gateway');
+
+assert(html.includes("case 'phase16a-check-safety': phase16ACheckSafety(); break;"), 'Inventory safety check must be wired');
+assert(html.includes('function phase16ACheckSafety()'), 'Inventory safety check must remain');
+assert(html.includes('const issues = validateApplicationState();'), 'Inventory safety check must validate integrity');
+assert(html.includes('The saved inventory differs from the currently displayed inventory.'), 'Safety check must compare saved inventory');
+assert(html.includes("panel('Inventory safety check'"), 'Safety check must appear in Data Management');
