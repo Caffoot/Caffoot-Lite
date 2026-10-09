@@ -228,3 +228,7 @@ assert(html.includes('function phase16ACheckSafety()'), 'Inventory safety check 
 assert(html.includes('const issues = validateApplicationState();'), 'Inventory safety check must validate integrity');
 assert(html.includes('The saved inventory differs from the currently displayed inventory.'), 'Safety check must compare saved inventory');
 assert(html.includes("panel('Inventory safety check'"), 'Safety check must appear in Data Management');
+
+assert(html.includes('cleanStart.managedOptionsCleared = true;'), 'Clean Start must explicitly clear managed options');
+assert(html.includes('appState.serverFunctions.length || appState.managedOptionsCleared'), 'Empty managed server options must stay empty after reset');
+assert(html.includes('appState.installedSoftware.length || appState.managedOptionsCleared'), 'Empty managed software options must stay empty after reset');
