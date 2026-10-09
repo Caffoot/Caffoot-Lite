@@ -3444,12 +3444,14 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             if (event.key !== 'Tab') return;
             const items = Array.from(container.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]):not([type="hidden"]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')).filter(el => el.getClientRects().length);
             if (!items.length) { event.preventDefault(); document.getElementById('modal-content').focus(); return; }
-            const first = items[0], last = items[items.length - 1];
-            if (event.shiftKey && (document.activeElement === first || !container.contains(document.activeElement))) {
-                event.preventDefault(); last.focus();
-            } else if (!event.shiftKey && (document.activeElement === last || !container.contains(document.activeElement))) {
-                event.preventDefault(); first.focus();
-            }
+            // Safari can omit buttons/selects from its native Tab order depending on
+            // keyboard settings. Advance explicitly through every dialog control.
+            const current = items.indexOf(document.activeElement);
+            const next = event.shiftKey
+                ? (current <= 0 ? items.length - 1 : current - 1)
+                : (current < 0 || current === items.length - 1 ? 0 : current + 1);
+            event.preventDefault();
+            items[next].focus();
         });
 
         function openRackModal(rackId = null) {
