@@ -4241,7 +4241,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             if (section === 'backup') {
                 body = panel('Back up your data','Download a complete JSON copy of the current inventory, including devices, IPAM, subnets and racks.',button('phase11-export-backup','Download JSON backup','fa-download')) +
                     panel('Restore your data','Choose a JSON backup. Caffoot Lite checks the file and displays a summary before asking you to replace your inventory. A safety copy is verified first.',button('phase16a-import','Choose backup file','fa-upload')) +
-                    panel('Recovery snapshot','A safety snapshot is available only after a restore has created one.',button('phase11-download-snapshot','Download safety snapshot','fa-shield-halved',personalSafeStorageGet(SAFETY_SNAPSHOT_KEY)?'':'disabled'));
+                    panel('Recovery snapshot','A safety snapshot is available only after a restore has created one.',button('phase11-download-snapshot','Download safety snapshot','fa-shield-halved',personalSafeStorageGet(SAFETY_SNAPSHOT_KEY)?'':'disabled')) +
                     panel('Danger zone — clear system','Permanently reset all inventory, IPAM records and managed options in this browser. Export a JSON backup first.',button('phase16a-clear-system','Clear system / clean start','fa-triangle-exclamation'));
             } else if (section === 'preferences') {
                 body = panel('Appearance','Switch between the existing light and dark themes.',button('phase16a-theme','Switch light / dark','fa-circle-half-stroke'));
@@ -4257,37 +4257,69 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
         }
 
         function phase16AClearSystem() {
-            if (phase17AStorageRecovery) return showToast('Clear system is unavailable in storage recovery mode.', 'error');
-            const devices = appState.devices.length;
-            const racks = appState.racks.length;
-            const subnets = appState.subnets.length;
-            const warning = [
+            if (phase17AStorageRecovery) {
+                showToast('Recovery mode: saved data is protected. Resolve storage issues before resetting.', 'error');
+                return;
+            }
+            const summary = [
+                appState.devices.length + ' devices',
+                appState.racks.length + ' racks',
+                appState.subnets.length + ' subnets'
+            ].join(', ');
+            if (!window.confirm([
                 'WARNING: RESET CAFFOOT LITE TO A CLEAN START',
                 '',
-                'Current inventory: ' + devices + ' devices, ' + racks + ' racks, ' + subnets + ' subnets',
+                'Current inventory: ' + summary,
                 '',
                 'ALL inventory, IPAM records, managed server options and software options will be replaced.',
                 '',
                 'Download a JSON backup first if you want to keep this data.',
                 '',
-                'Press OK to continue or Cancel to keep everything.'
-            ].join('\n');
-            if (!window.confirm(warning)) return;
-            const phrase = window.prompt('Final confirmation: type RESET to permanently clear this browser inventory.');
-            if (phrase !== 'RESET') return showToast('Reset cancelled.', 'info');
-            const previous = appState;
-            const previousAudit = auditBaseline;
-            appState = cloneDefaultData();
-            nextAuditReason = 'Clear system / clean start';
-            if (!saveState()) {
-                appState = previous;
-                auditBaseline = previousAudit;
+                'Press OK to reset or Cancel to keep everything.'
+            ].join('\n'))) return;
+            const original = appState;
+            const key = typeof STORAGE_KEY !== 'undefined' ? STORAGE_KEY : 'netmini_state';
+            let previousSaved, previousSafety;
+            try {
+                previousSaved = localStorage.getItem(key);
+                previousSafety = localStorage.getItem(SAFETY_SNAPSHOT_KEY);
+                const snapshot = previousSaved || JSON.stringify(original);
+                const candidate = phase16CCheckBackup(cloneDefaultData());
+                localStorage.setItem(SAFETY_SNAPSHOT_KEY, snapshot);
+                if (localStorage.getItem(SAFETY_SNAPSHOT_KEY) !== snapshot)
+                    throw new Error('Could not verify the recovery snapshot.');
+                appState = candidate;
+                nextAuditReason = 'Clean inventory reset';
+                if (!saveState()) throw new Error('Could not save the clean inventory.');
+                const stored = localStorage.getItem(key);
+                if (!stored || JSON.stringify(normaliseState(JSON.parse(stored))) !== JSON.stringify(candidate))
+                    throw new Error('Could not verify the clean inventory in browser storage.');
+                selectedSubnetId = '';
+                selectedRackId = '';
+                renderContent();
+                showToast('Caffoot Lite has been reset to a clean inventory.', 'success');
+            } catch (error) {
+                appState = original;
                 nextAuditReason = '';
-                return;
+                try {
+                    if (previousSaved !== undefined) {
+                        if (previousSaved === null) localStorage.removeItem(key);
+                        else localStorage.setItem(key, previousSaved);
+                    }
+                    if (previousSafety !== undefined) {
+                        if (previousSafety === null) localStorage.removeItem(SAFETY_SNAPSHOT_KEY);
+                        else localStorage.setItem(SAFETY_SNAPSHOT_KEY, previousSafety);
+                    }
+                } catch (rollbackError) {
+                    console.error('Reset rollback failed:', rollbackError);
+                    showToast('Reset failed; storage rollback failed. Export the recovery snapshot.', 'error');
+                    renderContent();
+                    return;
+                }
+                renderContent();
+                console.error('Clean inventory reset failed:', error);
+                showToast('Reset cancelled: ' + error.message, 'error');
             }
-            selectedSubnetId = null;
-            renderContent();
-            showToast('System reset to a clean start.');
         }
 
         function exportData() {
