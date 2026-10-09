@@ -432,6 +432,12 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .phase13k-elevation .phase13i-actions button:hover{background:#fff!important}
 .phase13k-elevation .phase13-empty{background:#1e293b!important;color:#cbd5e1!important;border-color:#475569!important}
 .phase13k-elevation .phase13-empty:hover{background:#334155!important}
+/* RC1 accessibility: rack elevation is navy in BOTH application themes.
+   Its child labels must contrast against navy, not against the page theme. */
+.phase13k-elevation .phase13-empty > span{color:#f1f5f9!important;opacity:1!important}
+.phase13k-elevation .phase13-empty:hover > span,
+.phase13k-elevation .phase13-empty:focus-visible > span{color:#a7f3d0!important}
+
 .phase13k-elevation .phase13-drop-preview{z-index:5}
 </style><style id="phase14-style">
 .phase14-tabs{display:flex;gap:8px;overflow-x:auto;padding:2px 0}
