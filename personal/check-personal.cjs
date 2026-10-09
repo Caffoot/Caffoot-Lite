@@ -363,3 +363,13 @@ assert.match(rackContext.validateRackPlacement('other','rack-a','front',12,13),/
 assert.match(rackContext.validateRackPlacement('other','rack-a','front',5,4),/below the start/,'inverted U range blocked');
 assert.match(rackContext.validateRackPlacement('other','missing','front',1,1),/no longer exists/,'missing rack blocked');
 console.log('RC1 IPAM reservation and rack bounds fixtures passed.');
+
+/* RC1 accessibility safeguards; browser/screen-reader testing still required. */
+assert.match(html, /id="modal-content"[^>]*role="dialog"[^>]*aria-modal="true"/, 'modal must expose dialog semantics');
+assert.match(html, /id="toast"[^>]*role="status"[^>]*aria-live="polite"/, 'toast announcements must reach assistive technology');
+assert(html.includes("modalReturnFocus.focus()"), 'closing dialog must return keyboard focus');
+assert(html.includes("event.key === 'Escape'"), 'Escape must close an open dialog');
+assert(html.includes("event.shiftKey && (document.activeElement === first"), 'Shift+Tab must remain in dialog');
+assert(html.includes("document.activeElement === last"), 'Tab must remain in dialog');
+assert(html.includes('prefers-reduced-motion: reduce'), 'reduced-motion preference must be respected');
+console.log('RC1 accessibility structural safeguards passed.');
