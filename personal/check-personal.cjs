@@ -369,8 +369,8 @@ assert.match(html, /id="modal-content"[^>]*role="dialog"[^>]*aria-modal="true"/,
 assert.match(html, /id="toast"[^>]*role="status"[^>]*aria-live="polite"/, 'toast announcements must reach assistive technology');
 assert(html.includes("modalReturnFocus.focus()"), 'closing dialog must return keyboard focus');
 assert(html.includes("event.key === 'Escape'"), 'Escape must close an open dialog');
-assert(html.includes("event.shiftKey && (document.activeElement === first"), 'Shift+Tab must remain in dialog');
-assert(html.includes("document.activeElement === last"), 'Tab must remain in dialog');
+assert(html.includes('event.shiftKey') && html.includes('current <= 0 ? items.length - 1 : current - 1'), 'Shift+Tab must wrap through modal controls');
+assert(html.includes('current === items.length - 1 ? 0 : current + 1'), 'Tab must wrap through modal controls');
 assert(html.includes('prefers-reduced-motion: reduce'), 'reduced-motion preference must be respected');
 console.log('RC1 accessibility structural safeguards passed.');
 
