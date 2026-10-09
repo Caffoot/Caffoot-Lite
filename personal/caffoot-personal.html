@@ -834,13 +834,13 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 
     <!-- Universal Modal Container -->
     <div id="modal-container" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
-        <div id="modal-content" class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-5xl border border-slate-200 dark:border-slate-700 overflow-hidden transform transition-all">
+        <div id="modal-content" role="dialog" aria-modal="true" tabindex="-1" class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-5xl border border-slate-200 dark:border-slate-700 overflow-hidden transform transition-all">
             <!-- Modal content rendered here -->
         </div>
     </div>
 
     <!-- Toast Notification Banner -->
-    <div id="toast" class="fixed bottom-6 right-6 transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center space-x-3 px-4 py-3 rounded-xl shadow-xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 text-sm font-medium border border-slate-700">
+    <div id="toast" role="status" aria-live="polite" aria-atomic="true" class="fixed bottom-6 right-6 transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center space-x-3 px-4 py-3 rounded-xl shadow-xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 text-sm font-medium border border-slate-700">
         <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400"></i>
         <span id="toast-message">Action completed successfully.</span>
     </div>
@@ -3403,19 +3403,54 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             `;
         }
 
+        // RC1 accessibility: modal focus is contained and returned to its trigger.
+        let modalReturnFocus = null;
         function closeModal() {
-            document.getElementById('modal-container').classList.add('hidden');
-            document.getElementById('modal-container').classList.remove('flex');
+            const container = document.getElementById('modal-container');
+            container.classList.add('hidden');
+            container.classList.remove('flex');
+            if (modalReturnFocus && modalReturnFocus.isConnected) modalReturnFocus.focus();
+            modalReturnFocus = null;
         }
 
         function openModal(htmlContent) {
             const container = document.getElementById('modal-container');
             const content = document.getElementById('modal-content');
+            if (container.classList.contains('hidden')) modalReturnFocus = document.activeElement;
             content.classList.remove('phase18b-balanced-modal');
             content.innerHTML = htmlContent;
             container.classList.remove('hidden');
             container.classList.add('flex');
+            const heading = content.querySelector('h1,h2,h3,h4');
+            if (heading) {
+                heading.id = 'caffoot-modal-heading';
+                content.setAttribute('aria-labelledby', heading.id);
+            } else {
+                content.removeAttribute('aria-labelledby');
+                content.setAttribute('aria-label', 'Caffoot dialog');
+            }
+            const first = content.querySelector('input:not([type="hidden"]):not([disabled]),select:not([disabled]),textarea:not([disabled]),button:not([disabled])');
+            (first || content).focus();
         }
+
+        document.addEventListener('keydown', function(event) {
+            const container = document.getElementById('modal-container');
+            if (!container || container.classList.contains('hidden')) return;
+            if (event.key === 'Escape') {
+                event.preventDefault();
+                closeModal();
+                return;
+            }
+            if (event.key !== 'Tab') return;
+            const items = Array.from(container.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]):not([type="hidden"]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')).filter(el => el.getClientRects().length);
+            if (!items.length) { event.preventDefault(); document.getElementById('modal-content').focus(); return; }
+            const first = items[0], last = items[items.length - 1];
+            if (event.shiftKey && (document.activeElement === first || !container.contains(document.activeElement))) {
+                event.preventDefault(); last.focus();
+            } else if (!event.shiftKey && (document.activeElement === last || !container.contains(document.activeElement))) {
+                event.preventDefault(); first.focus();
+            }
+        });
 
         function openRackModal(rackId = null) {
             const rack = rackId ? appState.racks.find(r => r.id === rackId) : null;
