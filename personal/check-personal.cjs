@@ -460,3 +460,14 @@ for (const field of ['deviceId: device.id', "hostname: device.name || ''", "note
   assert(ipSyncCode.includes(field), 'IPAM sync missing ' + field);
 }
 console.log('Device/IPAM add, edit and rollback wiring safeguards passed.');
+
+// Audit regression: rack downsizing must reject both device and accessory overflow.
+const rackSubmitStart = html.indexOf('function handleRackSubmit(e, rackId)');
+const rackSubmitEnd = html.indexOf('function deleteRack(rackId)', rackSubmitStart);
+assert(rackSubmitStart >= 0 && rackSubmitEnd > rackSubmitStart, 'Rack submit handler must exist');
+const rackSubmitCode = html.slice(rackSubmitStart, rackSubmitEnd);
+assert(rackSubmitCode.includes('const outOfBoundsDevice ='), 'Rack resizing must protect mounted devices');
+assert(rackSubmitCode.includes('const outOfBoundsAccessory ='), 'Rack resizing must protect mounted accessories');
+assert(rackSubmitCode.includes('Number(a.startU) + Number(a.heightU) - 1 > heightU'), 'Rack resizing must check full accessory U span');
+assert(rackSubmitCode.includes('if (!saveState())') && rackSubmitCode.includes('appState = JSON.parse(before);'), 'Rack edit must restore failed saves');
+console.log('Rack downsizing and rollback wiring safeguards passed.');
