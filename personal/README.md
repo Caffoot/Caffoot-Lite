@@ -45,4 +45,11 @@ Target WCAG 2.2 AA; automated tests do not establish compliance.
 
 Safari: Settings > Advanced > enable Tab highlighting of every webpage item. This is needed for full keyboard traversal of buttons and fields.
 
-Manual RC1 checklist: verify Tab and Shift+Tab on Dashboard and Rack/Device dialogs; Escape and focus return; readable light/dark contrast; visible focus; labelled controls and errors; VoiceOver announcements; 200% zoom; reduced motion.
+RC1 testing order:
+
+1. Light/dark theme review: readable text, labels, placeholders, errors, focus outlines and rack elevation.
+2. Functional regression: Dashboard, Devices, IPAM/Subnets, Racks, Assignments and Data Management; backup before destructive tests.
+3. Offline Safari: generated HTML opened from disk with network disconnected; verify icons, styles, save/reopen and JSON backup/restore using test data.
+4. Final accessibility check: Tab/Shift+Tab, Escape/focus return, 200% zoom, reduced motion and **VoiceOver last**.
+
+Main theme text contrast is checked in `check-personal.cjs` against the WCAG AA 4.5:1 normal-text threshold. This is a palette check, not a complete rendered-page audit or WCAG conformance claim.
