@@ -3090,7 +3090,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 <div class="p-6 sm:p-7 space-y-5">
                     <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-3">
                         <h3 class="font-bold text-base text-slate-900 dark:text-white">${subnet ? 'Edit Subnet & VLAN' : 'Add Subnet & VLAN Range'}</h3>
-                        <button data-action="cancel-subnet-modal" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+                        <button type="button" data-action="cancel-subnet-modal" aria-label="Close dialog" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
                     </div>
                     <form data-form-action="subnet" data-subnet-id="${escapeHtml(subnet ? subnet.id : '')}" class="form-shell space-y-5">
                         <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-network-wired"></i>Network identity</div>
