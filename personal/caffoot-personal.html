@@ -3592,6 +3592,14 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                         return;
                     }
 
+                    const outOfBoundsAccessory = (appState.rackAccessories || []).find(a =>
+                        a.rackId === rackId && Number(a.startU) + Number(a.heightU) - 1 > heightU
+                    );
+                    if (outOfBoundsAccessory) {
+                        showToast(`${outOfBoundsAccessory.name || 'A rack accessory'} occupies U${Number(outOfBoundsAccessory.startU) + Number(outOfBoundsAccessory.heightU) - 1}, so the rack cannot be reduced to ${heightU}U.`, 'error');
+                        return;
+                    }
+
                     r.name = name;
                     r.heightU = heightU;
                     r.depth = depth;
