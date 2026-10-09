@@ -4242,6 +4242,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 body = panel('Back up your data','Download a complete JSON copy of the current inventory, including devices, IPAM, subnets and racks.',button('phase11-export-backup','Download JSON backup','fa-download')) +
                     panel('Restore your data','Choose a JSON backup. Caffoot Lite checks the file and displays a summary before asking you to replace your inventory. A safety copy is verified first.',button('phase16a-import','Choose backup file','fa-upload')) +
                     panel('Recovery snapshot','A safety snapshot is available only after a restore has created one.',button('phase11-download-snapshot','Download safety snapshot','fa-shield-halved',personalSafeStorageGet(SAFETY_SNAPSHOT_KEY)?'':'disabled'));
+                    panel('Danger zone — clear system','Permanently reset all inventory, IPAM records and managed options in this browser. Export a JSON backup first.',button('phase16a-clear-system','Clear system / clean start','fa-triangle-exclamation'));
             } else if (section === 'preferences') {
                 body = panel('Appearance','Switch between the existing light and dark themes.',button('phase16a-theme','Switch light / dark','fa-circle-half-stroke'));
             } else if (section === 'maintenance') {
@@ -4253,6 +4254,40 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             return `<div class="phase16a-workspace phase16b-workspace"><div class="phase16a-intro"><h2>Settings & Data</h2><p>Manage your data, appearance and application health — without duplicate tools.</p></div>
                 <div class="phase16a-tabs" role="group" aria-label="Settings sections">${tabs.map(([id,label,icon])=>`<button type="button" data-action="phase16a-section" data-section="${id}" aria-pressed="${section===id}" class="phase16a-tab ${section===id?'phase16a-active':''}"><i class="fa-solid ${icon}" aria-hidden="true"></i>${label}</button>`).join('')}</div>
                 <div class="phase16a-grid">${body}</div>${section==='backup'?'<p class="phase16a-warning"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Browser storage is not a reliable long-term backup. Keep exported JSON files somewhere safe, especially before restoring data or changing browsers.</p>':''}</div>`;
+        }
+
+        function phase16AClearSystem() {
+            if (phase17AStorageRecovery) return showToast('Clear system is unavailable in storage recovery mode.', 'error');
+            const devices = appState.devices.length;
+            const racks = appState.racks.length;
+            const subnets = appState.subnets.length;
+            const warning = [
+                'WARNING: RESET CAFFOOT LITE TO A CLEAN START',
+                '',
+                'Current inventory: ' + devices + ' devices, ' + racks + ' racks, ' + subnets + ' subnets',
+                '',
+                'ALL inventory, IPAM records, managed server options and software options will be replaced.',
+                '',
+                'Download a JSON backup first if you want to keep this data.',
+                '',
+                'Press OK to continue or Cancel to keep everything.'
+            ].join('\n');
+            if (!window.confirm(warning)) return;
+            const phrase = window.prompt('Final confirmation: type RESET to permanently clear this browser inventory.');
+            if (phrase !== 'RESET') return showToast('Reset cancelled.', 'info');
+            const previous = appState;
+            const previousAudit = auditBaseline;
+            appState = cloneDefaultData();
+            nextAuditReason = 'Clear system / clean start';
+            if (!saveState()) {
+                appState = previous;
+                auditBaseline = previousAudit;
+                nextAuditReason = '';
+                return;
+            }
+            selectedSubnetId = null;
+            renderContent();
+            showToast('System reset to a clean start.');
         }
 
         function exportData() {
@@ -4826,6 +4861,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 case 'tab-audit': switchTab('audit'); break;
                 case 'export-audit': exportAuditHistory(); break;
                 case 'phase11-export-backup': exportData(); break;
+                case 'phase16a-clear-system': phase16AClearSystem(); break;
                 case 'phase11-download-snapshot': phase11DownloadSnapshot(); break;
                 case 'phase10d-export': phase10DDownloadCsv(target.dataset.report); break;
                 
