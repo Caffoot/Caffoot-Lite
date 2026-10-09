@@ -8,7 +8,8 @@
     "check:source": "node check-offline.cjs",
     "check:build": "node verify-build.cjs",
     "check:personal": "node check-personal.cjs",
-    "release": "npm run check:personal && npm run build && npm run check:build"
+    "release": "npm run check:personal && npm run check:rack && npm run build && npm run check:build",
+    "check:rack": "node test-rack-placement.cjs"
   },
   "devDependencies": {
     "tailwindcss": "3.4.17",
