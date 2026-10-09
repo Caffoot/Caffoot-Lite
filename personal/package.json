@@ -1,0 +1,17 @@
+{
+  "private": true,
+  "name": "caffoot-lite-build",
+  "version": "0.1.0",
+  "description": "Build standalone offline Caffoot Lite HTML",
+  "scripts": {
+    "build": "node build-offline.cjs",
+    "check:source": "node check-offline.cjs",
+    "check:build": "node verify-build.cjs",
+    "check:personal": "node check-personal.cjs",
+    "release": "npm run check:personal && npm run build && npm run check:build"
+  },
+  "devDependencies": {
+    "tailwindcss": "3.4.17",
+    "@fortawesome/fontawesome-free": "6.4.0"
+  }
+}
