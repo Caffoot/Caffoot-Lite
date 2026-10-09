@@ -32,6 +32,11 @@ assert(html.includes('function suggestSubnetGateway()'), 'Automatic gateway sugg
 assert(html.includes("event.target.id === 'sub-cidr'"), 'CIDR input must trigger automatic gateway suggestion');
 assert(html.includes("event.target.id === 'sub-gw'"), 'Manual gateway edits must be preserved');
 assert(html.includes('id="sub-gw-hint"'), 'Gateway suggestion must be visible in Add Subnet');
+assert(html.includes('function subnetCidrFeedback(value)'), 'CIDR validation feedback helper must remain');
+assert(html.includes('Not a /'), 'Misaligned network boundary must be explained');
+assert(html.includes('Did you mean '), 'Network boundary error must suggest correct CIDR');
+assert(html.includes('aria-invalid'), 'Invalid CIDR must be announced accessibly');
+assert(html.includes('Caffoot Lite supports subnet sizes /23 through /30.'), 'Unsupported prefix must be explained');
 assert(html.includes("if (!subnet) suggestSubnetGateway();"), 'New subnet modal must initialize gateway suggestion');
 assert(html.includes("form.dataset.subnetId"), 'Existing subnet gateways must not be automatically replaced');
 assert(html.includes('function phase11CPlan('), 'IPAM repair planner must remain');
