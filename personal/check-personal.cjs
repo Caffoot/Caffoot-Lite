@@ -443,3 +443,20 @@ assert(vlanDeleteCode.includes('const before = JSON.stringify(appState);'), 'VLA
 assert(vlanDeleteCode.includes("phase11BCommitDelete(before, 'VLAN');"), 'VLAN deletion must use verified-save rollback helper');
 assert(!vlanDeleteCode.includes('saveState();'), 'VLAN deletion must not bypass rollback helper');
 console.log('VLAN deletion rollback safeguards passed.');
+
+// Audit regression: device create/edit must synchronise IPAM and roll back failed saves.
+const deviceSubmitStart = html.indexOf('function handleDeviceSubmit(e, deviceId)');
+const deviceSubmitEnd = html.indexOf('\n        function ', deviceSubmitStart + 1);
+assert(deviceSubmitStart >= 0 && deviceSubmitEnd > deviceSubmitStart, 'Device submit handler must exist');
+const deviceSubmitCode = html.slice(deviceSubmitStart, deviceSubmitEnd);
+assert(deviceSubmitCode.includes('const beforeDeviceSave = JSON.stringify(appState);'), 'Device changes must capture rollback state');
+assert.equal((deviceSubmitCode.match(/setDevicePrimaryIp\(/g) || []).length, 2, 'Device add/edit must both allocate primary IP');
+assert.equal((deviceSubmitCode.match(/syncDeviceIpamRecord\(/g) || []).length, 2, 'Device add/edit must both refresh IPAM details');
+assert(deviceSubmitCode.includes('if (!saveState()) {') && deviceSubmitCode.includes('appState = JSON.parse(beforeDeviceSave);'), 'Failed device save must restore inventory');
+const ipSyncStart = html.indexOf('function syncDeviceIpamRecord(device)');
+const ipSyncEnd = html.indexOf('\n        function ', ipSyncStart + 1);
+const ipSyncCode = html.slice(ipSyncStart, ipSyncEnd);
+for (const field of ['deviceId: device.id', "hostname: device.name || ''", "notes: device.notes || ''"]) {
+  assert(ipSyncCode.includes(field), 'IPAM sync missing ' + field);
+}
+console.log('Device/IPAM add, edit and rollback wiring safeguards passed.');
