@@ -34,6 +34,18 @@ try {
   const fontLink = /<link rel="stylesheet" href="https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/font-awesome\/6\.4\.0\/css\/all\.min\.css">/;
   if (!fontLink.test(html)) throw Error('Unexpected source layout: Font Awesome CDN link not found');
   html = html.replace(fontLink, '<style id="caffoot-icons">\n' + fontCss + '\n</style>');
+  // Embed official branding assets so file:// releases remain truly standalone.
+  const brandAssets = [
+    ['../assets/caffoot-icon-1024.png', 'image/png'],
+    ['../assets/apple-touch-icon.png', 'image/png'],
+    ['../assets/favicon.ico', 'image/x-icon'],
+  ];
+  for (const [relativeUrl, mime] of brandAssets) {
+    if (!html.includes(relativeUrl)) throw Error('Expected brand asset reference missing: ' + relativeUrl);
+    const bytes = fs.readFileSync(path.resolve(root, relativeUrl));
+    html = html.replaceAll(relativeUrl, 'data:' + mime + ';base64,' + bytes.toString('base64'));
+  }
+  if (/\\.\\.\\/assets\\//.test(html)) throw Error('External brand asset reference remains');
   if (/<(?:script|link)\b[^>]*\b(?:src|href)=["']https?:\/\//i.test(html)) throw Error('Remote runtime resource remains');
   fs.mkdirSync(path.dirname(destination), { recursive: true });
   fs.writeFileSync(destination, html);
