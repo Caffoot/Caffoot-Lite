@@ -391,3 +391,9 @@ for (const id of ['sub-cidr','sub-name','sub-vlan','sub-gw','sub-desc','dev-name
   assert(html.includes('for="' + id + '"'), 'Missing accessible label for ' + id);
 }
 console.log('RC1 essential form label safeguards passed.');
+
+assert(html.includes("document.addEventListener('invalid', function(event)"), 'native invalid fields must be handled accessibly');
+assert(html.includes("error.classList.add('is-visible');"), 'form validation errors must be visible');
+assert(html.includes("field.setAttribute('aria-invalid', 'true');"), 'invalid fields must be marked');
+assert(html.includes("field.removeAttribute('aria-invalid');"), 'corrected fields must clear invalid state');
+console.log('RC1 form validation accessibility safeguards passed.');
