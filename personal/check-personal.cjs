@@ -385,3 +385,9 @@ console.log('RC1 rack empty-slot contrast safeguards passed.');
 assert(html.includes('.phase13k-elevation .phase13-empty > span{color:#f1f5f9!important;opacity:1!important}'), 'navy rack elevation must use visible light text in either theme');
 assert(html.includes('.phase13k-elevation .phase13-empty:focus-visible > span{color:#a7f3d0!important}'), 'keyboard-focused rack slots must keep readable text');
 console.log('RC1 rack elevation contrast regression checks passed.');
+
+// RC1: labels must remain associated with essential Device and Subnet controls.
+for (const id of ['sub-cidr','sub-name','sub-vlan','sub-gw','sub-desc','dev-name','dev-type','dev-custom-type']) {
+  assert(html.includes('for="' + id + '"'), 'Missing accessible label for ' + id);
+}
+console.log('RC1 essential form label safeguards passed.');
