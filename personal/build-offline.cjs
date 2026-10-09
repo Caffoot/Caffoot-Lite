@@ -45,7 +45,7 @@ try {
     const bytes = fs.readFileSync(path.resolve(root, relativeUrl));
     html = html.replaceAll(relativeUrl, 'data:' + mime + ';base64,' + bytes.toString('base64'));
   }
-  if (/\\.\\.\\/assets\\//.test(html)) throw Error('External brand asset reference remains');
+  if (html.includes('../assets/')) throw Error('External brand asset reference remains');
   if (/<(?:script|link)\b[^>]*\b(?:src|href)=["']https?:\/\//i.test(html)) throw Error('Remote runtime resource remains');
   fs.mkdirSync(path.dirname(destination), { recursive: true });
   fs.writeFileSync(destination, html);
