@@ -3460,17 +3460,17 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 <div class="p-6 sm:p-7 space-y-5">
                     <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-4 mb-1">
                         <h3 class="font-bold text-base">${rack ? 'Edit Network Rack' : 'Add Network Rack Enclosure'}</h3>
-                        <button data-action="close-modal"><i class="fa-solid fa-xmark"></i></button>
+                        <button type="button" data-action="close-modal" aria-label="Close dialog"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
                     </div>
                     <form data-form-action="rack" data-rack-id="${escapeHtml(rack ? rack.id : '')}" class="form-shell space-y-5">
                         <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-server"></i>Rack identity</div>
                         <div>
-                            <label class="block text-xs font-semibold mb-1">Rack Name <span class="required-mark">*</span></label>
+                            <label for="rack-name" class="block text-xs font-semibold mb-1">Rack Name <span class="required-mark">*</span></label>
                             <input type="text" id="rack-name" required value="${rack ? escapeHtml(rack.name) : ''}" placeholder="e.g. Rack C - Garage" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                             <div>
-                                <label class="block text-xs font-semibold mb-1">Height in U</label>
+                                <label for="rack-height" class="block text-xs font-semibold mb-1">Height in U</label>
                                 <select id="rack-height" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
                                     <option value="12" ${rack && rack.heightU == 12 ? 'selected' : ''}>12U</option>
                                     <option value="24" ${rack && rack.heightU == 24 ? 'selected' : ''}>24U</option>
@@ -3479,13 +3479,13 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold mb-1">Depth</label>
+                                <label for="rack-depth" class="block text-xs font-semibold mb-1">Depth</label>
                                 <input type="text" id="rack-depth" value="${rack ? escapeHtml(rack.depth) : '600mm'}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
                             </div>
                         </div>
                         </div>
                         <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-location-dot"></i>Placement</div><div>
-                            <label class="form-label">Location Room <span class="font-normal text-slate-400">(optional)</span></label>
+                            <label for="rack-location" class="form-label">Location Room <span class="font-normal text-slate-400">(optional)</span></label>
                             <input type="text" id="rack-location" value="${rack ? escapeHtml(rack.location || '') : ''}" placeholder="e.g. Garage Server Room" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
                         </div>
                         </div>
@@ -3596,7 +3596,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 <div class="p-6 sm:p-7 space-y-5">
                     <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-4 mb-1">
                         <div><h3 class="font-bold text-xl">Rack placement</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">${escapeHtml(rack.name)} · U${slotU}</p></div>
-                        <button data-action="close-modal"><i class="fa-solid fa-xmark"></i></button>
+                        <button type="button" data-action="close-modal" aria-label="Close dialog"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
                     </div>
                     <form data-form-action="assign" data-rack-id="${escapeHtml(rackId)}" data-default-slot="${Number(slotU) || 1}" class="form-shell space-y-5">
                         <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-link"></i>Device</div>
@@ -4049,7 +4049,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 <div class="phase14b-device-modal">
                     <div class="phase14b-heading">
                         <h3 class="font-bold text-base">${device ? 'Edit Device' : isDuplicate ? 'Duplicate Device' : 'Add New Device'}</h3>
-                        <button data-action="close-modal"><i class="fa-solid fa-xmark"></i></button>
+                        <button type="button" data-action="close-modal" aria-label="Close dialog"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
                     </div>
                     ${isDuplicate ? '<p class="rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-300 dark:border-blue-700 p-3 text-sm text-blue-900 dark:text-sky-100" role="status"><strong>Creating a new device from a copy.</strong> Enter a unique hostname and IP address. Serial number and IP are cleared; check the mounting position before saving. The original device is unchanged.</p>' : ''}
                     <form data-device-form="true" data-device-id="${escapeHtml(device?.id || draft?.deviceId || '')}" class="form-shell">
