@@ -3369,9 +3369,9 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 return;
             }
             if (confirm('Delete this VLAN?')) {
+                const before = JSON.stringify(appState);
                 appState.vlans = appState.vlans.filter(v => v.id !== vId);
-                saveState();
-                renderContent();
+                phase11BCommitDelete(before, 'VLAN');
             }
         }
 
