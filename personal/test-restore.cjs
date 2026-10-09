@@ -1,0 +1,69 @@
+'use strict';
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const vm = require('node:vm');
+const path = require('node:path');
+const html = fs.readFileSync(path.join(__dirname, 'caffoot-personal.html'), 'utf8');
+const start = html.indexOf('function importData(event)');
+const end = html.indexOf("document.addEventListener('submit'", start);
+assert(start >= 0 && end > start, 'Restore handler must be available');
+const code = html.slice(start, end);
+function scenario(mode) {
+  const original = {devices:[{id:'original'}],racks:[],subnets:[],ipAllocations:{}};
+  const replacement = {devices:[{id:'replacement'}],racks:[],subnets:[],ipAllocations:{}};
+  const key = 'netmini_state', safety = 'safety_test';
+  const store = new Map([[key,JSON.stringify(original)]]);
+  const messages = [];
+  let ctx;
+  class FakeReader {
+    readAsText(file) {
+      this.result = file.contents;
+      this.onload();
+    }
+  }
+  const storage = {
+    getItem(k) {return store.has(k) ? store.get(k) : null;},
+    setItem(k,v) {
+      if(mode === 'snapshot-fails' && k === safety) throw Error('Snapshot blocked');
+      if(mode === 'save-fails' && k === key && JSON.parse(v).devices[0]?.id === 'replacement') throw Error('Write blocked');
+      store.set(k,String(v));
+    },
+    removeItem(k) {store.delete(k);}
+  };
+  ctx = vm.createContext({
+    appState:original, localStorage:storage, SAFETY_SNAPSHOT_KEY:safety,
+    nextAuditReason:'',auditBaseline:JSON.stringify(original),
+    selectedSubnetId:'',selectedRackId:'',
+    FileReader:FakeReader,
+    phase16CReadJson:JSON.parse,
+    phase16CCheckBackup:v => {
+      if(!v || !Array.isArray(v.devices)) throw Error('Invalid inventory');
+      return v;
+    },
+    normaliseState:v=>v,
+    confirm:()=>true,
+    saveState:()=>{
+      try {storage.setItem(key,JSON.stringify(ctx.appState));return true;}
+      catch{return false;}
+    },
+    renderContent:()=>{},
+    showToast:(m,t)=>messages.push({m,t}),
+    console:{error:()=>{}}
+  });
+  vm.runInContext(code,ctx);
+  const input={files:[{name:'backup.json',size:100,contents:JSON.stringify(replacement)}],value:'selected'};
+  ctx.importData({target:input});
+  return {ctx,store,messages,input,original,replacement,key,safety};
+}
+for(const mode of ['snapshot-fails','save-fails']){
+  const v=scenario(mode);
+  assert.equal(v.ctx.appState.devices[0].id,'original',mode+' must retain original in memory');
+  assert.equal(JSON.parse(v.store.get(v.key)).devices[0].id,'original',mode+' must retain original in storage');
+  assert(v.messages.some(m=>m.t==='error'),mode+' must report failure');
+  assert.equal(v.input.value,'',mode+' must clear file input');
+}
+const ok=scenario('success');
+assert.equal(ok.ctx.appState.devices[0].id,'replacement','Successful restore must activate backup');
+assert.equal(JSON.parse(ok.store.get(ok.key)).devices[0].id,'replacement','Successful restore must persist backup');
+assert.equal(JSON.parse(ok.store.get(ok.safety)).devices[0].id,'original','Successful restore must preserve original safety snapshot');
+console.log('PASS: executable restore success, failed safety snapshot and failed storage-write tests.');
