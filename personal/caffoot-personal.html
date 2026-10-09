@@ -3599,32 +3599,51 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
         function refreshDeviceIpOptions() {
             const subnetSelect = document.getElementById('dev-subnet');
             const ipInput = document.getElementById('dev-ip');
-            const list = document.getElementById('dev-ip-options');
+            const select = document.getElementById('dev-ip-available');
             const hint = document.getElementById('dev-ip-hint');
-            if (!subnetSelect || !ipInput || !list) return;
+            if (!subnetSelect || !ipInput || !select) return;
             const subnet = appState.subnets.find(s => s.id === subnetSelect.value);
+            select.innerHTML = '<option value="">Select next available IP...</option>';
             if (!subnet) {
                 ipInput.disabled = true;
+                select.disabled = true;
                 ipInput.value = '';
-                list.innerHTML = '';
                 if (hint) hint.textContent = 'Select an existing subnet before entering an IP address.';
                 return;
             }
-            const range=phase12Cidr(subnet.cidr);
-            if(!range) return;
-            const currentIp=ipInput.value.trim();
-            const used=new Set(Object.keys(appState.ipAllocations||{}));
-            appState.devices.forEach(d=>{if(d.primaryIp) used.add(d.primaryIp);});
-            const ips=[];
-            for(let n=range.first;n<=range.lastHost;n++) {
-                const ip=phase12IpString(n);
-                if(ip===currentIp||(!used.has(ip)&&ip!==subnet.gateway)) ips.push(ip);
+            const range = phase12Cidr(subnet.cidr);
+            if (!range) {
+                ipInput.disabled = true;
+                select.disabled = true;
+                if (hint) hint.textContent = 'This subnet has an invalid address range.';
+                return;
             }
-            list.innerHTML=ips.map(ip=>`<option value="${escapeHtml(ip)}"></option>`).join('');
-            ipInput.disabled=false;
-            ipInput.placeholder=`e.g. ${phase12IpString(range.first)}`;
-            if(hint) hint.textContent=`${subnet.name||subnet.cidr} · Gateway ${subnet.gateway||'not set'} · ${ips.length} selectable addresses`;
+            const currentIp = ipInput.value.trim();
+            const editingId = document.querySelector('[data-device-form="true"]')?.dataset.deviceId || '';
+            const used = new Set(Object.keys(appState.ipAllocations || {}));
+            appState.devices.forEach(d => { if (d.primaryIp && d.id !== editingId) used.add(d.primaryIp); });
+            const available = [];
+            let count = 0;
+            for (let n = range.first; n <= range.lastHost; n++) {
+                const ip = phase12IpString(n);
+                if (ip === subnet.gateway) continue;
+                if (!used.has(ip) || (ip === currentIp && appState.devices.some(d => d.id === editingId && d.primaryIp === ip))) {
+                    count++;
+                    if (available.length < 50) available.push(ip);
+                }
+            }
+            select.innerHTML = '<option value="">Select next available IP...</option>' +
+                available.map(ip => `<option value="${escapeHtml(ip)}" ${ip === currentIp ? 'selected' : ''}>${escapeHtml(ip)}${ip === currentIp ? ' (current)' : ''}</option>`).join('');
+            select.disabled = available.length === 0;
+            ipInput.disabled = false;
+            ipInput.placeholder = 'Enter an IP or choose above';
+            if (hint) hint.textContent = `${subnet.name || subnet.cidr} · ${count} available · showing first ${available.length} · gateway excluded`;
+        }
 
+        function handleDeviceIpSelection() {
+            const select = document.getElementById('dev-ip-available');
+            const input = document.getElementById('dev-ip');
+            if (select && input && select.value) input.value = select.value;
         }
 
         function handleDeviceSubnetChange() {
@@ -3983,7 +4002,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                             </div><p class="phase14b-help">End U is calculated automatically from Start U + U Height - 1.</p>
                         </div>
                         </div>
-                        <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-network-wired"></i>Network identity</div><div><label class="form-label">Primary IP <span class="text-slate-400 font-normal">(must belong to an existing subnet)</span></label><div class="phase14b-network-grid"><div><label for="dev-subnet" class="phase14b-ip-label">Existing subnet <span class="required-mark">*</span></label><select id="dev-subnet" required data-action="device-subnet-change" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" disabled ${!currentSubnet ? 'selected' : ''}>Select an existing subnet...</option>${appState.subnets.map(s => `<option value="${escapeHtml(s.id)}" ${currentSubnet?.id === s.id ? 'selected' : ''}>${escapeHtml(s.name || s.cidr)} — ${escapeHtml(s.cidr)}</option>`).join('')}</select><button type="button" data-action="create-subnet-from-device" class="mt-2 w-full px-3 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold transition border border-slate-200 dark:border-slate-600"><i class="fa-solid fa-diagram-project mr-1.5"></i>Create subnet in IPAM</button></div><div><label for="dev-ip" class="phase14b-ip-label">Device IP address <span class="required-mark">*</span></label><input type="text" id="dev-ip" list="dev-ip-options" required value="${escapeHtml(draft?.primaryIp ?? device?.primaryIp ?? '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700 font-mono" placeholder="Select a subnet first"><datalist id="dev-ip-options"></datalist><p id="dev-ip-hint" class="phase14b-help"></p></div></div><label class="flex items-start gap-3 mt-4 p-3 rounded-xl border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/30 cursor-pointer">
+                        <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-network-wired"></i>Network identity</div><div><label class="form-label">Primary IP <span class="text-slate-400 font-normal">(must belong to an existing subnet)</span></label><div class="phase14b-network-grid"><div><label for="dev-subnet" class="phase14b-ip-label">Existing subnet <span class="required-mark">*</span></label><select id="dev-subnet" required data-action="device-subnet-change" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" disabled ${!currentSubnet ? 'selected' : ''}>Select an existing subnet...</option>${appState.subnets.map(s => `<option value="${escapeHtml(s.id)}" ${currentSubnet?.id === s.id ? 'selected' : ''}>${escapeHtml(s.name || s.cidr)} — ${escapeHtml(s.cidr)}</option>`).join('')}</select><button type="button" data-action="create-subnet-from-device" class="mt-2 w-full px-3 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold transition border border-slate-200 dark:border-slate-600"><i class="fa-solid fa-diagram-project mr-1.5"></i>Create subnet in IPAM</button></div><div><label for="dev-ip" class="phase14b-ip-label">Device IP address <span class="required-mark">*</span></label><select id="dev-ip-available" aria-label="Next available IP addresses" data-action="device-ip-select" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700 font-mono mb-2"><option value="">Select next available IP...</option></select><input type="text" id="dev-ip" required value="${escapeHtml(draft?.primaryIp ?? device?.primaryIp ?? '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700 font-mono" placeholder="Select a subnet first"><p id="dev-ip-hint" class="phase14b-help"></p></div></div><label class="flex items-start gap-3 mt-4 p-3 rounded-xl border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/30 cursor-pointer">
 <input id="dev-ip-reserved" type="checkbox" ${((draft?.ipReserved ?? device?.ipReserved ?? (device?.primaryIp && appState.ipAllocations[device.primaryIp]?.status === 'Reserved')) ? 'checked' : '')} class="mt-1 h-5 w-5 shrink-0">
 <span class="text-sm text-slate-800 dark:text-slate-100"><strong>Reserve this IP address for this device</strong><span class="block text-xs mt-1 text-slate-600 dark:text-slate-300">Keeps this same IP linked to the device, but displays it as Reserved in IPAM. No second address is needed.</span></span>
 </label><p class="phase14b-help">Don't see the required network? Create it in IPAM, then return here to select it.</p></div>
@@ -4432,6 +4451,9 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                     break;
                 case 'device-mount-type-change':
                     toggleDeviceMountType();
+                    break;
+                case 'device-ip-select':
+                    handleDeviceIpSelection();
                     break;
                 case 'device-subnet-change':
                     handleDeviceSubnetChange();
