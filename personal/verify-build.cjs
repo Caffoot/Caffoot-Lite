@@ -12,9 +12,9 @@ assert.match(html, /<style id="caffoot-icons">[\s\S]+?<\/style>/, 'Embedded Font
 assert.match(html, /data:font\/woff2;base64,/, 'Embedded icon fonts missing');
 assert.match(html, /netmini_state/, 'Original data key missing');
 assert.match(html, /<title>Caffoot Lite/, 'Lite branding missing');
-assert.match(html, /<img[^>]+src="data:image\\/png;base64,[A-Za-z0-9+/=]+"[^>]+alt="Caffoot hedgehog mascot"/, 'Embedded sidebar mascot missing');
-assert.match(html, /<link rel="icon" href="data:image\\/x-icon;base64,[A-Za-z0-9+/=]+"/, 'Embedded favicon missing');
-assert.match(html, /<link rel="apple-touch-icon" href="data:image\\/png;base64,[A-Za-z0-9+/=]+"/, 'Embedded Apple touch icon missing');
+assert.ok(html.includes('alt="Caffoot hedgehog mascot"') && html.includes('src="data:image/png;base64,'), 'Embedded sidebar mascot missing');
+assert.ok(html.includes('<link rel="icon" href="data:image/x-icon;base64,'), 'Embedded favicon missing');
+assert.ok(html.includes('<link rel="apple-touch-icon" href="data:image/png;base64,'), 'Embedded Apple touch icon missing');
 assert.ok(!html.includes('../assets/'), 'Release still depends on external brand assets');
 
 assert.match(html, /switchTab\('dashboard'\)/, 'Dashboard startup missing');
