@@ -29,6 +29,11 @@ assert(html.includes('function phase16AClearSystem()'), 'Clear system handler mu
 assert(html.includes('localStorage.setItem(SAFETY_SNAPSHOT_KEY, snapshot)'), 'Clear system must create recovery snapshot');
 assert(html.includes('const candidate = phase16CCheckBackup(cloneDefaultData())'), 'Clear system must validate clean starter data');
 assert(html.includes('function suggestSubnetGateway()'), 'Automatic gateway suggestion must remain');
+assert(html.includes("event.target.id === 'sub-cidr'"), 'CIDR input must trigger automatic gateway suggestion');
+assert(html.includes("event.target.id === 'sub-gw'"), 'Manual gateway edits must be preserved');
+assert(html.includes('id="sub-gw-hint"'), 'Gateway suggestion must be visible in Add Subnet');
+assert(html.includes("if (!subnet) suggestSubnetGateway();"), 'New subnet modal must initialize gateway suggestion');
+assert(html.includes("form.dataset.subnetId"), 'Existing subnet gateways must not be automatically replaced');
 assert(html.includes('function phase11CPlan('), 'IPAM repair planner must remain');
 assert(html.includes('...phase19BSoftwareFields()'), 'computer software options must be rendered');
 assert(html.includes('...phase19BServerFunctionFields()'), 'server feature options must be rendered');
