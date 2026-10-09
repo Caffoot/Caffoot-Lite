@@ -377,3 +377,7 @@ console.log('RC1 accessibility structural safeguards passed.');
 assert(html.includes('const current = items.indexOf(document.activeElement);'), 'modal Tab navigation must use explicit control ordering for Safari');
 assert(html.includes('items[next].focus();'), 'modal Tab navigation must explicitly focus the next control');
 console.log('Safari modal keyboard navigation safeguards passed.');
+
+assert(html.includes('font-semibold text-slate-700 dark:text-slate-200 opacity-100 transition group-hover:text-emerald-800'), 'empty rack placement text must remain readable without hover');
+assert(html.includes('font-mono font-bold text-slate-700 dark:text-slate-200 group-hover:text-emerald-800'), 'rack U numbers must have readable contrast');
+console.log('RC1 rack empty-slot contrast safeguards passed.');
