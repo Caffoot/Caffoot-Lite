@@ -4,7 +4,7 @@ Caffoot Lite is a standalone, browser-based network inventory application derive
 
 ## Current status
 
-**Development preview, not yet a verified offline release.** The source HTML at `caffoot-personal.html` still loads Tailwind and Font Awesome from the internet. Do not distribute it as offline-ready.
+**v1.0.0-rc.1 release preparation.** The generated standalone HTML has passed offline Safari testing. The developer source HTML at `caffoot-personal.html` still references Tailwind and Font Awesome on the internet; distribute only the generated offline build.
 
 ## Build a single offline HTML file (developer workflow)
 
@@ -16,7 +16,7 @@ npm install
 npm run release
 ```
 
-The intended output is `personal/dist/caffoot-personal-offline.html`. The build compiles Tailwind utilities and embeds Font Awesome webfonts directly into the file. `npm run release` checks the generated HTML for expected assets and for external script or stylesheet references. GitHub Actions runs automated build and syntax checks. Manual offline browser testing is still required before v1.0.
+The intended output is `personal/dist/caffoot-personal-offline.html`. The build compiles Tailwind utilities and embeds Font Awesome webfonts directly into the file. `npm run release` checks the generated HTML for expected assets and for external script or stylesheet references. GitHub Actions runs automated build and syntax checks. Manual offline Safari testing has been completed for RC1; repeat verification for release changes.
 
 ## Data and privacy
 
