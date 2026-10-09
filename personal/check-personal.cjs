@@ -381,3 +381,7 @@ console.log('Safari modal keyboard navigation safeguards passed.');
 assert(html.includes('font-semibold text-slate-700 dark:text-slate-200 opacity-100 transition group-hover:text-emerald-800'), 'empty rack placement text must remain readable without hover');
 assert(html.includes('font-mono font-bold text-slate-700 dark:text-slate-200 group-hover:text-emerald-800'), 'rack U numbers must have readable contrast');
 console.log('RC1 rack empty-slot contrast safeguards passed.');
+
+assert(html.includes('.phase13k-elevation .phase13-empty > span{color:#f1f5f9!important;opacity:1!important}'), 'navy rack elevation must use visible light text in either theme');
+assert(html.includes('.phase13k-elevation .phase13-empty:focus-visible > span{color:#a7f3d0!important}'), 'keyboard-focused rack slots must keep readable text');
+console.log('RC1 rack elevation contrast regression checks passed.');
