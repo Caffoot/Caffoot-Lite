@@ -408,3 +408,28 @@ assert(html.includes("[/device name|hostname|unique device name/i, 'dev-name']")
 assert(html.includes("[/gateway/i, 'sub-gw']"), 'gateway validation must target gateway input');
 assert(html.includes("const field = document.getElementById(match[1]);"), 'application validation must resolve field');
 console.log('RC1 application validation field targeting safeguards passed.');
+
+/* RC1: objectively check the main light/dark text palette against WCAG AA. */
+function rc1Luminance(hex) {
+  const channels = hex.match(/[0-9a-f]{2}/gi).map(v => {
+    const c = parseInt(v, 16) / 255;
+    return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  });
+  return channels[0] * 0.2126 + channels[1] * 0.7152 + channels[2] * 0.0722;
+}
+function rc1Contrast(a, b) {
+  const x = rc1Luminance(a), y = rc1Luminance(b);
+  return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
+}
+for (const [name, fg, bg] of [
+  ['light body text', '#172033', '#ffffff'],
+  ['light muted text', '#4b5563', '#ffffff'],
+  ['light subtle text', '#6b7280', '#ffffff'],
+  ['dark body text', '#f8fafc', '#111827'],
+  ['dark muted text', '#d1d5db', '#111827'],
+  ['dark subtle text', '#cbd5e1', '#111827'],
+  ['rack placement text', '#f1f5f9', '#1e293b']
+]) {
+  assert(rc1Contrast(fg, bg) >= 4.5, name + ' must meet 4.5:1 normal-text contrast');
+}
+console.log('RC1 main theme text contrast fixtures passed.');
