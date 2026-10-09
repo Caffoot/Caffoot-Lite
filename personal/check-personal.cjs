@@ -255,10 +255,10 @@ for (const [cidr, gateway] of [
   const range = cidrContext.phase12Cidr(cidr);
   assert(range, cidr + ' must be accepted');
   assert.equal(cidrContext.phase12IpString(range.first), gateway, cidr + ' gateway');
-  assert.match(cidrContext.subnetCidrFeedback(cidr).message, new RegExp(gateway.replaceAll('.', '\\.')), cidr + ' feedback');
+  assert(cidrContext.subnetCidrFeedback(cidr).message.includes(gateway), cidr + ' feedback');
 }
 assert.equal(cidrContext.phase12Cidr('192.168.1.0/23'), null, 'misaligned /23 rejected');
-assert.match(cidrContext.subnetCidrFeedback('192.168.1.0/23').message, /192\\.168\\.0\\.0\\/23/, 'misaligned /23 suggests valid network');
+assert(cidrContext.subnetCidrFeedback('192.168.1.0/23').message.includes('192.168.0.0/23'), 'misaligned /23 suggests valid network');
 assert.match(cidrContext.subnetCidrFeedback('10.0.0.0/22').message, /supports subnet sizes/, 'unsupported prefix explained');
 assert.equal(cidrContext.subnetCidrFeedback('192.168.1.0/23').invalid, true, 'misaligned subnet visibly invalid');
 console.log('RC1 subnet gateway and CIDR validation fixtures passed.');
