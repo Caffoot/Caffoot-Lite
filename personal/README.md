@@ -16,7 +16,7 @@ npm install
 npm run release
 ```
 
-The intended output is `personal/dist/caffoot-personal-offline.html`. The build compiles Tailwind utilities and embeds Font Awesome webfonts directly into the file. `npm run release` checks the generated HTML for expected assets and for external script or stylesheet references. GitHub Actions runs automated build and syntax checks. Manual offline Safari testing has been completed for RC1; repeat verification for release changes.
+The intended output is `personal/dist/Caffoot-Lite.html`. The build compiles Tailwind utilities and embeds Font Awesome webfonts directly into the file. `npm run release` checks the generated HTML for expected assets and for external script or stylesheet references. GitHub Actions runs automated build and syntax checks. Manual offline Safari testing has been completed for RC1; repeat verification for release changes.
 
 ## Data and privacy
 
