@@ -232,3 +232,57 @@ assert(html.includes("panel('Inventory safety check'"), 'Safety check must appea
 assert(html.includes('cleanStart.managedOptionsCleared = true;'), 'Clean Start must explicitly clear managed options');
 assert(html.includes('appState.serverFunctions.length || appState.managedOptionsCleared'), 'Empty managed server options must stay empty after reset');
 assert(html.includes('appState.installedSoftware.length || appState.managedOptionsCleared'), 'Empty managed software options must stay empty after reset');
+
+/*
+ * RC1: execute real CIDR/gateway feedback and managed-options fallback logic.
+ * These tests catch behaviour regressions that simple source-string checks miss.
+ */
+const cidrStart = html.indexOf('function isValidIpv4(');
+const cidrEnd = html.indexOf('function normaliseState(', cidrStart);
+const gatewayStart = html.indexOf('function subnetCidrFeedback(');
+const gatewayEnd = html.indexOf('function openSubnetModal(', gatewayStart);
+assert(cidrStart >= 0 && cidrEnd > cidrStart && gatewayStart >= 0 && gatewayEnd > gatewayStart, 'CIDR and gateway functions must exist');
+const cidrContext = {};
+vm.createContext(cidrContext);
+vm.runInContext(html.slice(cidrStart, cidrEnd) + '\n' + html.slice(gatewayStart, gatewayEnd), cidrContext);
+for (const [cidr, gateway] of [
+  ['192.168.1.0/24', '192.168.1.1'],
+  ['192.168.0.0/23', '192.168.0.1'],
+  ['192.168.1.128/25', '192.168.1.129'],
+  ['192.168.1.64/26', '192.168.1.65'],
+  ['10.1.2.0/30', '10.1.2.1']
+]) {
+  const range = cidrContext.phase12Cidr(cidr);
+  assert(range, cidr + ' must be accepted');
+  assert.equal(cidrContext.phase12IpString(range.first), gateway, cidr + ' gateway');
+  assert.match(cidrContext.subnetCidrFeedback(cidr).message, new RegExp(gateway.replaceAll('.', '\\.')), cidr + ' feedback');
+}
+assert.equal(cidrContext.phase12Cidr('192.168.1.0/23'), null, 'misaligned /23 rejected');
+assert.match(cidrContext.subnetCidrFeedback('192.168.1.0/23').message, /192\\.168\\.0\\.0\\/23/, 'misaligned /23 suggests valid network');
+assert.match(cidrContext.subnetCidrFeedback('10.0.0.0/22').message, /supports subnet sizes/, 'unsupported prefix explained');
+assert.equal(cidrContext.subnetCidrFeedback('192.168.1.0/23').invalid, true, 'misaligned subnet visibly invalid');
+console.log('RC1 subnet gateway and CIDR validation fixtures passed.');
+
+const managedStart = html.indexOf('function phase19BServerFunctions(');
+const managedEnd = html.indexOf('function phase19BServerFunctionFields(', managedStart);
+const softwareStart = html.indexOf('function phase19BSoftware()');
+const softwareEnd = html.indexOf('function phase19BSoftwareFields(', softwareStart);
+assert(managedStart >= 0 && managedEnd > managedStart && softwareStart >= 0 && softwareEnd > softwareStart, 'managed option readers must exist');
+const managedContext = {
+  appState: { serverFunctions: [], installedSoftware: [], managedOptionsCleared: false },
+  phase19BDefaultServerFunctions: ['DNS'],
+  phase19BDefaultSoftware: ['Office'],
+  phase19BLabels: { DNS: 'DNS', Office: 'Office' }
+};
+vm.createContext(managedContext);
+vm.runInContext(html.slice(managedStart, managedEnd) + '\n' + html.slice(softwareStart, softwareEnd), managedContext);
+assert.equal(managedContext.phase19BServerFunctions().length, 1, 'fresh installation shows starter server options');
+assert.equal(managedContext.phase19BSoftware().length, 1, 'fresh installation shows starter software options');
+managedContext.appState.managedOptionsCleared = true;
+assert.equal(managedContext.phase19BServerFunctions().length, 0, 'clean start must not resurrect server options');
+assert.equal(managedContext.phase19BSoftware().length, 0, 'clean start must not resurrect software options');
+managedContext.appState.serverFunctions = [{ key: 'Custom', label: 'Custom' }];
+managedContext.appState.installedSoftware = [{ key: 'CustomApp', label: 'Custom App' }];
+assert.equal(managedContext.phase19BServerFunctions()[0].key, 'Custom', 'custom server option preserved');
+assert.equal(managedContext.phase19BSoftware()[0].key, 'CustomApp', 'custom software option preserved');
+console.log('RC1 managed options reset fixtures passed.');
