@@ -17,10 +17,10 @@ assert.ok(html.includes('<link rel="icon" href="data:image/x-icon;base64,'), 'Em
 assert.ok(html.includes('<link rel="apple-touch-icon" href="data:image/png;base64,'), 'Embedded Apple touch icon missing');
 assert.ok(!html.includes('../assets/'), 'Release still depends on external brand assets');
 
-assert.doesNotMatch(html, new RegExp('<(?:img|audio|video|source|iframe)\\\\b[^>]*\\\\b(?:src|poster)\\\\s*=\\\\s*["\\\']https?:\\\\/\\\\/', 'i'), 'Built file has a remote media dependency');
-assert.doesNotMatch(html, new RegExp('@import\\\\s+(?:url\\\\()?\\\\s*["\\\']?https?:\\\\/\\\\/', 'i'), 'Built CSS imports a remote stylesheet');
-assert.doesNotMatch(html, new RegExp('url\\\\(\\\\s*["\\\']?https?:\\\\/\\\\/', 'i'), 'Built CSS contains remote URL resources');
-assert.doesNotMatch(html, new RegExp('<(?:script|link|img|source|iframe)\\\\b[^>]*\\\\b(?:src|href)\\\\s*=\\\\s*["\\\']\\\\.\\\\.\\\\/', 'i'), 'Built HTML refers to a parent-directory resource');
+assert.doesNotMatch(html, /<(?:img|audio|video|source|iframe)\b[^>]*\b(?:src|poster)\s*=\s*["']https?:\/\//i, 'Built file has a remote media dependency');
+assert.doesNotMatch(html, /@import\s+(?:url\()?\s*["']?https?:\/\//i, 'Built CSS imports a remote stylesheet');
+assert.doesNotMatch(html, /url\(\s*["']?https?:\/\//i, 'Built CSS contains remote URL resources');
+assert.doesNotMatch(html, /<(?:script|link|img|source|iframe)\b[^>]*\b(?:src|href)\s*=\s*["']\.\.\//i, 'Built HTML refers to a parent-directory resource');
 
 assert.match(html, /switchTab\('dashboard'\)/, 'Dashboard startup missing');
 assert.match(html, /exportData\(\)/, 'Export function reference missing');
