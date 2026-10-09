@@ -433,3 +433,13 @@ for (const [name, fg, bg] of [
   assert(rc1Contrast(fg, bg) >= 4.5, name + ' must meet 4.5:1 normal-text contrast');
 }
 console.log('RC1 main theme text contrast fixtures passed.');
+
+// Audit regression: deleting a VLAN must restore in-memory inventory on failed persistence.
+const vlanDeleteStart = html.indexOf('function deleteVlan(vId)');
+const vlanDeleteEnd = html.indexOf('function openIpModal(ip)', vlanDeleteStart);
+assert(vlanDeleteStart >= 0 && vlanDeleteEnd > vlanDeleteStart, 'VLAN deletion handler must exist');
+const vlanDeleteCode = html.slice(vlanDeleteStart, vlanDeleteEnd);
+assert(vlanDeleteCode.includes('const before = JSON.stringify(appState);'), 'VLAN deletion must capture a rollback snapshot');
+assert(vlanDeleteCode.includes("phase11BCommitDelete(before, 'VLAN');"), 'VLAN deletion must use verified-save rollback helper');
+assert(!vlanDeleteCode.includes('saveState();'), 'VLAN deletion must not bypass rollback helper');
+console.log('VLAN deletion rollback safeguards passed.');
