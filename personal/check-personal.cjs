@@ -335,3 +335,31 @@ deletionFixture.deleteRack('r1');
 assert.equal(deletionFixture.appState.subnets.length,0,'empty subnet can be deleted');
 assert.equal(deletionFixture.appState.racks.length,0,'empty rack can be deleted');
 console.log('RC1 subnet/rack deletion and rollback fixtures passed.');
+
+/* RC1: reservation ownership and rack face/bounds safety. */
+const ipamFixture = ipamContext;
+state.devices.length = 0;
+state.ipAllocations = {};
+const owner = {id:'owner',name:'owner',notes:'',primaryIp:'',ipReserved:false};
+const contender = {id:'contender',name:'contender',notes:'',primaryIp:'',ipReserved:false};
+state.devices.push(owner,contender);
+ipamFixture.setDevicePrimaryIp(owner,'192.168.40.30');
+state.ipAllocations['192.168.40.31'] = {status:'Reserved',reservedForDeviceId:'owner'};
+assert.throws(()=>ipamFixture.setDevicePrimaryIp(contender,'192.168.40.31'),/reserved for another device/,'reservation belongs to owner');
+assert.equal(contender.primaryIp,'','failed reservation claim leaves device unchanged');
+ipamFixture.setDevicePrimaryIp(owner,'192.168.40.31');
+assert.equal(state.ipAllocations['192.168.40.30'],undefined,'moving to owned reservation releases previous IP');
+assert.equal(state.ipAllocations['192.168.40.31'].deviceId,'owner','reservation owner can claim IP');
+assert.equal(state.ipAllocations['192.168.40.31'].reservedForDeviceId,'owner','reservation metadata survives assignment');
+owner.ipReserved=true;
+ipamFixture.syncDeviceIpamRecord(owner);
+assert.equal(state.ipAllocations['192.168.40.31'].status,'Reserved','reserved device status stays in sync');
+
+rackContext.appState.devices = [{id:'mounted',rackId:'rack-a',face:'front',rackUStart:6,rackUEnd:8}];
+assert.match(rackContext.validateRackPlacement('other','rack-a','front',7,7),/overlaps another device/,'same-face device collision blocked');
+assert.equal(rackContext.validateRackPlacement('other','rack-a','rear',7,7),null,'opposite face can use same U');
+assert.equal(rackContext.validateRackPlacement('mounted','rack-a','front',7,7),null,'device can validate its own occupied position');
+assert.match(rackContext.validateRackPlacement('other','rack-a','front',12,13),/between U1 and U12/,'rack overflow blocked');
+assert.match(rackContext.validateRackPlacement('other','rack-a','front',5,4),/below the start/,'inverted U range blocked');
+assert.match(rackContext.validateRackPlacement('other','missing','front',1,1),/no longer exists/,'missing rack blocked');
+console.log('RC1 IPAM reservation and rack bounds fixtures passed.');
