@@ -1464,6 +1464,29 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                     formError.textContent = message;
                     formError.classList.add('is-visible');
                 }
+                // Highlight the relevant control for common application-level
+                // validation failures (native required-field errors are handled
+                // separately by the 'invalid' listener).
+                const rules = [
+                    [/rack name/i, 'rack-name'],
+                    [/device name|hostname|unique device name/i, 'dev-name'],
+                    [/device type/i, 'dev-type'],
+                    [/mounting option/i, 'dev-mount-type'],
+                    [/select a location/i, 'dev-location'],
+                    [/existing subnet|selected subnet/i, 'dev-subnet'],
+                    [/primary ip|ip address/i, 'dev-ip'],
+                    [/network cidr|valid network cidr/i, 'sub-cidr'],
+                    [/subnet name/i, 'sub-name'],
+                    [/vlan id/i, 'sub-vlan'],
+                    [/gateway/i, 'sub-gw']
+                ];
+                const match = rules.find(([pattern, id]) => pattern.test(message) &&
+                    document.getElementById(id)?.closest('#modal-container form'));
+                if (match) {
+                    const field = document.getElementById(match[1]);
+                    field.setAttribute('aria-invalid', 'true');
+                    field.focus();
+                }
             }
 
             toast.classList.remove('translate-y-20', 'opacity-0');
