@@ -4,7 +4,7 @@ Caffoot Lite is a standalone, browser-based network inventory application. This 
 
 ## Current status
 
-**v1.0.0-rc.1 release preparation.** The generated standalone HTML has passed offline Safari testing. The developer source HTML at `caffoot-personal.html` still references Tailwind and Font Awesome on the internet; distribute only the generated offline build.
+**v1.0.0-rc.1 release preparation.** The generated standalone HTML has passed offline Safari testing. The developer source HTML at `caffoot-lite.html` still references Tailwind and Font Awesome on the internet; distribute only the generated offline build.
 
 ## Build a single offline HTML file (developer workflow)
 
@@ -48,4 +48,4 @@ RC1 testing order:
 3. Offline Safari: generated HTML opened from disk with network disconnected; verify icons, styles, save/reopen and JSON backup/restore using test data.
 4. Final accessibility check: Tab/Shift+Tab, Escape/focus return, 200% zoom, reduced motion and **VoiceOver last**.
 
-Main theme text contrast is checked in `check-personal.cjs` against the WCAG AA 4.5:1 normal-text threshold. This is a palette check, not a complete rendered-page audit or WCAG conformance claim.
+Main theme text contrast is checked in `check-app.cjs` against the WCAG AA 4.5:1 normal-text threshold. This is a palette check, not a complete rendered-page audit or WCAG conformance claim.
