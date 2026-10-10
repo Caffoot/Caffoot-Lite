@@ -23,6 +23,15 @@ jobs:
       - name: Install build-only dependencies
         working-directory: app
         run: npm install --no-audit --no-fund
+      - name: Generate reproducible dependency lockfile preview
+        working-directory: app
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+      - name: Upload dependency lockfile for review
+        uses: actions/upload-artifact@v4
+        with:
+          name: caffoot-lite-package-lock-preview
+          path: app/package-lock.json
+          if-no-files-found: error
       - name: Build and verify standalone HTML
         working-directory: app
         run: npm run release
