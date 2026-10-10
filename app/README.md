@@ -35,10 +35,6 @@ Inventory is stored in browser-local storage, not in a shared server database. I
 - [ ] Verify storage behaviour after closing/reopening and moving the HTML file.
 - [ ] Publish a versioned HTML download and release notes.
 
-## Caffoot Server
-
-Caffoot Server is a separate project. This repository and its release workflow do not build or deploy the server edition.
-
 ## Accessibility testing
 
 Target WCAG 2.2 AA; automated tests do not establish compliance.
