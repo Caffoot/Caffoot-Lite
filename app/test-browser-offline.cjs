@@ -377,6 +377,53 @@ const { chromium } = require('playwright');
     assert(failedDeviceSave.storedUnchanged, 'Failed Device save must not alter stored inventory');
     assert(failedDeviceSave.modalStayedOpen, 'Failed Device save must keep edit dialog open');
     console.log('PASS: failed Device save rolls back IPAM and inventory without closing form.');
+    // A failed first save must not leave a ghost device or orphaned IPAM allocation.
+    const failedDeviceCreate = await page.evaluate(() => {
+      const subnet = { id: 'browser-create-subnet', cidr: '10.240.79.0/24',
+        gateway: '10.240.79.1', name: 'Browser create test', vlan: 79 };
+      const ip = '10.240.79.15';
+      const originalSaveState = saveState;
+      const originalStorage = localStorage.getItem('caffoot_state');
+      appState.subnets.push(subnet);
+      const before = JSON.stringify(appState);
+      try {
+        openDeviceModal();
+        const type = document.getElementById('dev-type');
+        const location = document.getElementById('dev-location');
+        if (!Array.from(type.options).some(option => option.value === 'Switch')) {
+          type.add(new Option('Switch', 'Switch'));
+        }
+        if (!Array.from(location.options).some(option => option.value === 'Unknown')) {
+          location.add(new Option('Unknown', 'Unknown'));
+        }
+        type.value = 'Switch';
+        location.value = 'Unknown';
+        document.getElementById('dev-mount-type').value = 'Desktop';
+        document.getElementById('dev-subnet').value = subnet.id;
+        document.getElementById('dev-name').value = 'Browser ghost device';
+        document.getElementById('dev-ip').value = ip;
+        saveState = () => false;
+        handleDeviceSubmit({ preventDefault() {} }, null);
+        return {
+          unchanged: JSON.stringify(appState) === before,
+          storedUnchanged: localStorage.getItem('caffoot_state') === originalStorage,
+          noGhost: !appState.devices.some(d => d.name === 'Browser ghost device'),
+          noOrphan: !Object.prototype.hasOwnProperty.call(appState.ipAllocations, ip),
+          modalStayedOpen: !document.getElementById('modal-container').classList.contains('hidden')
+        };
+      } finally {
+        saveState = originalSaveState;
+        closeModal();
+        const idx = appState.subnets.findIndex(s => s.id === subnet.id);
+        if (idx >= 0) appState.subnets.splice(idx, 1);
+      }
+    });
+    assert(failedDeviceCreate.unchanged, 'Failed Device creation must restore inventory state');
+    assert(failedDeviceCreate.storedUnchanged, 'Failed Device creation must preserve stored inventory');
+    assert(failedDeviceCreate.noGhost, 'Failed Device creation must not leave a ghost device');
+    assert(failedDeviceCreate.noOrphan, 'Failed Device creation must not leave an orphan IPAM allocation');
+    assert(failedDeviceCreate.modalStayedOpen, 'Failed Device creation must keep form open');
+    console.log('PASS: failed Device creation leaves no ghost device or orphan IPAM record.');
     assert.deepEqual(outbound, [], 'Standalone file must not attempt network requests');
     assert.deepEqual(failures, [], 'Browser must not raise uncaught JavaScript errors');
     console.log('PASS: Chromium file:// startup, navigation, offline operation and localStorage reload.');
