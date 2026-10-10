@@ -3830,12 +3830,14 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             if (mount === 'Rack Mounted') {
                 location.value = 'Racked';
                 location.disabled = true;
+                rackOptions.hidden = false;
                 rackOptions.classList.remove('hidden');
                 if (height) height.required = true;
             } else {
                 location.disabled = false;
                 if (location.value === 'Racked') location.value = '';
                 rackOptions.classList.add('hidden');
+                rackOptions.hidden = true;
                 if (height) height.required = false;
             }
         }
@@ -4157,7 +4159,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                             <div><label for="dev-location" class="block text-xs font-semibold mb-1">Location Area <span class="required-mark">*</span></label><select id="dev-location" required data-action="device-location-change" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" disabled ${currentLoc === '' ? 'selected' : ''}>Select a location...</option>${locations.map(l => `<option value="${escapeHtml(l)}" ${currentLoc === l ? 'selected' : ''}>${escapeHtml(l)}</option>`).join('')}</select></div>
                             <div><label for="dev-custom-location" class="block text-xs font-semibold mb-1">Add Custom Location</label><div class="phase14b-add-inline"><input type="text" id="dev-custom-location" placeholder="New location..." class="w-full border rounded-xl px-2.5 py-2 text-xs dark:bg-slate-700"><button type="button" data-action="add-custom-location" class="px-2.5 py-2 bg-slate-200 dark:bg-slate-600 rounded-xl text-xs"><i class="fa-solid fa-plus"></i></button></div></div>
                         </div>
-                        <div id="racked-options" class="${mountType === 'Rack Mounted' ? '' : 'hidden'} phase14b-rack-config bg-slate-100 dark:bg-slate-900">
+                        <div id="racked-options" ${mountType === 'Rack Mounted' ? '' : 'hidden'} class="${mountType === 'Rack Mounted' ? '' : 'hidden'} phase14b-rack-config bg-slate-100 dark:bg-slate-900">
                             <div class="block text-xs font-bold text-indigo-600">Rack Mounting Configuration</div>
                             <div class="phase14b-rack-grid">
                                 <div><label for="dev-rack-id" class="block text-[10px] font-semibold text-slate-500 uppercase mb-1">Rack</label><select id="dev-rack-id" class="w-full border rounded-lg p-1.5 text-xs dark:bg-slate-700">${appState.racks.map(r => `<option value="${escapeHtml(r.id)}" ${(draft?.rackId ?? device?.rackId) === r.id ? 'selected' : ''}>${escapeHtml(r.name)}</option>`).join('')}</select></div>
