@@ -8,13 +8,14 @@
     "check:source": "node check-offline.cjs",
     "check:build": "node verify-build.cjs",
     "check:personal": "node check-app.cjs",
-    "release": "npm run check:personal && npm run check:rack && npm run check:restore && npm run check:security-reset && npm run check:security-backup && npm run check:security-xss && npm run check:subnet && npm run build && npm run check:build",
+    "release": "npm run check:personal && npm run check:rack && npm run check:restore && npm run check:security-reset && npm run check:security-backup && npm run check:security-xss && npm run check:security-list && npm run check:subnet && npm run build && npm run check:build",
     "check:rack": "node test-rack-placement.cjs",
     "check:restore": "node test-restore.cjs",
     "check:subnet": "node test-subnet.cjs",
     "check:security-reset": "node test-security-reset.cjs",
     "check:security-backup": "node test-security-backup.cjs",
-    "check:security-xss": "node test-security-xss.cjs"
+    "check:security-xss": "node test-security-xss.cjs",
+    "check:security-list": "node test-security-list.cjs"
   },
   "devDependencies": {
     "tailwindcss": "3.4.17",
