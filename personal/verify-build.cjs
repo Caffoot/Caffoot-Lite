@@ -10,7 +10,8 @@ assert.doesNotMatch(html, /tailwind\.config\s*=/, 'Tailwind CDN configuration re
 assert.match(html, /<style id="caffoot-tailwind">[\s\S]+?<\/style>/, 'Compiled Tailwind missing');
 assert.match(html, /<style id="caffoot-icons">[\s\S]+?<\/style>/, 'Embedded Font Awesome missing');
 assert.match(html, /data:font\/woff2;base64,/, 'Embedded icon fonts missing');
-assert.match(html, /netmini_state/, 'Original data key missing');
+assert.match(html, /caffoot_state/, 'New Caffoot storage key missing');
+assert.match(html, /netmini_state/, 'Legacy migration key missing');
 assert.match(html, /<title>Caffoot Lite/, 'Lite branding missing');
 assert.ok(html.includes('alt="Caffoot hedgehog mascot"') && html.includes('src="data:image/png;base64,'), 'Embedded sidebar mascot missing');
 assert.ok(html.includes('<link rel="icon" href="data:image/x-icon;base64,'), 'Embedded favicon missing');
