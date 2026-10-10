@@ -92,6 +92,43 @@ const { chromium } = require('playwright');
       }
     }
     console.log('PASS: light/dark shared text tokens meet WCAG AA contrast on both surfaces.');
+    // Exercise real keyboard focus containment and return in the universal dialog.
+    await page.evaluate(() => {
+      const trigger = document.createElement('button');
+      trigger.id = 'accessibility-test-trigger';
+      trigger.textContent = 'Open accessibility test dialog';
+      document.body.appendChild(trigger);
+      trigger.focus();
+      openModal('<h2>Keyboard test dialog</h2><label for="accessibility-test-field">Test field</label><input id="accessibility-test-field" required><button id="accessibility-test-close" type="button">Close</button>');
+    });
+    assert.equal(await page.locator('#modal-content').getAttribute('aria-modal'), 'true');
+    assert.equal(await page.locator('#modal-content').getAttribute('aria-labelledby'), 'caffoot-modal-heading');
+    assert.equal(await page.evaluate(() => document.activeElement.id), 'accessibility-test-field',
+      'Dialog must focus its first input');
+    const fieldAccessibility = await page.locator('#accessibility-test-field').evaluate(el => ({
+      label: el.labels && el.labels[0] && el.labels[0].textContent.trim(),
+      required: el.required
+    }));
+    assert.deepEqual(fieldAccessibility, { label: 'Test field', required: true });
+    await page.keyboard.press('Shift+Tab');
+    assert.equal(await page.evaluate(() => document.activeElement.id), 'accessibility-test-close',
+      'Reverse tab must wrap to final dialog control');
+    await page.keyboard.press('Tab');
+    assert.equal(await page.evaluate(() => document.activeElement.id), 'accessibility-test-field',
+      'Forward tab must wrap to first dialog control');
+    const focusStyle = await page.locator('#accessibility-test-field').evaluate(el => {
+      const css = getComputedStyle(el);
+      return { style: css.outlineStyle, width: parseFloat(css.outlineWidth) };
+    });
+    assert.notEqual(focusStyle.style, 'none', 'Keyboard focus must have a visible outline');
+    assert(focusStyle.width >= 2, 'Keyboard focus outline must be at least 2px');
+    await page.keyboard.press('Escape');
+    assert.equal(await page.locator('#modal-container').evaluate(el => el.classList.contains('hidden')), true,
+      'Escape must close dialog');
+    assert.equal(await page.evaluate(() => document.activeElement.id), 'accessibility-test-trigger',
+      'Closing dialog must return focus to trigger');
+    await page.evaluate(() => document.getElementById('accessibility-test-trigger').remove());
+    console.log('PASS: modal keyboard trap, labelled field, visible focus, Escape and focus return.');
     assert.deepEqual(outbound, [], 'Standalone file must not attempt network requests');
     assert.deepEqual(failures, [], 'Browser must not raise uncaught JavaScript errors');
     console.log('PASS: Chromium file:// startup, navigation, offline operation and localStorage reload.');
