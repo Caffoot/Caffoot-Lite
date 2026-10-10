@@ -516,6 +516,23 @@ const { chromium } = require('playwright');
     assert(deviceTypeMountRules.serverAllowsRack, 'Server must retain Rack Mounted option');
     assert(deviceTypeMountRules.caseInsensitive, 'Mounting restrictions must handle type case and whitespace');
     console.log('PASS: Desktop, Laptop and Tablet types are Desktop-only in Device forms.');
+    // The Device Details dialog must expose the existing guarded delete action.
+    const deviceDeleteAction = await page.evaluate(() => {
+      const fixture = { id: 'browser-delete-action-fixture', name: 'Delete action fixture',
+        type: 'Desktop', mountType: 'Desktop', location: 'Unknown', primaryIp: '' };
+      appState.devices.push(fixture);
+      try {
+        phase14CViewDevice(fixture.id);
+        const button = document.querySelector('[data-action="phase14c-delete"]');
+        return !!button && button.dataset.id === fixture.id &&
+          button.textContent.includes('Delete device');
+      } finally {
+        closeModal();
+        appState.devices = appState.devices.filter(d => d.id !== fixture.id);
+      }
+    });
+    assert(deviceDeleteAction, 'Device Details must expose a Delete device action');
+    console.log('PASS: Device Details exposes the guarded Delete device action.');
     assert.deepEqual(outbound, [], 'Standalone file must not attempt network requests');
     assert.deepEqual(failures, [], 'Browser must not raise uncaught JavaScript errors');
     console.log('PASS: Chromium file:// startup, navigation, offline operation and localStorage reload.');
