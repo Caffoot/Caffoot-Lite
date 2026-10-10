@@ -203,7 +203,7 @@ const { chromium } = require('playwright');
       try {
         const dialog = document.getElementById('modal-content');
         const ids = ['dev-name', 'dev-type', 'dev-mount-type', 'dev-location',
-          'dev-custom-location', 'dev-rack-face', 'dev-rack-u',
+          'dev-custom-location', 'dev-rack-id', 'dev-rack-face', 'dev-rack-u',
           'dev-rack-height', 'dev-notes'];
         return ids.map(id => {
           const control = dialog.querySelector('#' + id);
