@@ -41,6 +41,7 @@ These checks are valuable regression coverage, **not** a complete security audit
 - **Final Device workflows (6/6):** duplicate, independent IPAM allocation, delete and release IPAM allocation, rack position cleanup and persistence; owner confirmed red Delete button works.
 - **Stage 6A — IPAM (7/7):** reservation create/edit/remove, available-address filtering, bulk action and cancellation, integrity/repair, persistence.
 - **Stage 6B — Rack workspace (7/7):** accessory add/remove and collision rejection, drag/move and occupied-position rejection, Safari scrolling, persistence (owner reported 8/7, all seven listed checks passed).
+- **Stage 7A — Safari usability (7/7):** owner confirmed light/dark readability, keyboard navigation, modal focus/Escape, form validation presentation, narrow-window usability and destructive-action clarity. This is manual acceptance, not formal WCAG certification.
 
 ## Remaining release gates
 
@@ -53,7 +54,8 @@ These checks are valuable regression coverage, **not** a complete security audit
 - [x] Exercise **Duplicate/Delete Device** and confirm linked IPAM/rack records stay consistent.
 - [x] Exercise **IPAM reservations, bulk actions and integrity repair**, including cancellation and persistence.
 - [x] Exercise **rack accessories, drag-and-drop and scrolling** on Safari; confirm no collision or accidental moves.
-- [ ] Complete targeted **keyboard-only/VoiceOver**, mobile-width and light/dark visual checks beyond shared contrast tokens.
+- [x] Complete targeted **keyboard navigation**, narrow-window and light/dark visual checks (Stage 7A, 7/7).
+- [ ] Complete an explicit **VoiceOver screen-reader** walkthrough (not established by Stage 7A).
 - [ ] Test **HTML update/move/rename with exported JSON backup**; document browser `file://` storage differences.
 - [ ] Final source privacy review, dependency licence verification and **release ZIP contents** inspection.
 - [ ] Agree public distribution: preferably complete ZIP with notices; if standalone HTML is offered, make licence notices accessible beside it.
