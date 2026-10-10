@@ -43,7 +43,7 @@ These were **proposals**, not committed v1.0 requirements. Confirm scope before 
 
 ## Compatibility and project boundaries
 
-**Data compatibility:** Preserve existing browser inventories and supported JSON backup formats. The primary storage key is `caffoot_state`. On first use, a compatible legacy `netmini_state` inventory is copied into the new key, with the original retained. Verify migration in browser testing before release.
+**Data compatibility:** Preserve existing browser inventories and supported JSON backup formats. The primary storage key is `caffoot_state`; this pre-release build does not automatically migrate legacy test storage. Export and restore JSON backups to retain test data.
 
 **Independent projects:** Caffoot Lite is developed and released separately from Caffoot Server. Changes to Lite must not modify the Server repository.
 
