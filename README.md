@@ -49,7 +49,7 @@ The build produces `app/dist/Caffoot-Lite.html`. GitHub Actions also builds and 
 
 ## Project and release status
 
-This repository contains **Caffoot Lite** only. Caffoot Server lives separately in `sdelnevo/caffoot` and is not modified by Lite development.
+This repository is dedicated to **Caffoot Lite**: its standalone application, build tools, tests and release documentation.
 
 The [roadmap and release checklist](ROADMAP.md) record remaining tests, security/privacy review and owner approval. No public release or repository visibility change should occur before approval.
 
