@@ -3,9 +3,20 @@
 **Infrastructure, Simplified.**  
 *For HomeLabs and Small Teams*
 
-A lightweight, standalone network inventory and IP address management (IPAM) application for devices, subnets, racks and network assets.
+**Caffoot Lite is a free, open-source, offline network inventory and IP address management (IPAM) tool** for homelabs and small teams. Track network devices and IT assets, document IPv4 subnets, manage IP address allocations and reservations, and organise equipment in racks — all from a standalone HTML file.
 
-> **Status:** [Caffoot Lite v1.0.0 is published](https://github.com/sdelnevo/Caffoot-Lite/releases/tag/v1.0.0). The repository is public.
+No Docker, database, web server or account is required to run the published release. Download the HTML application and open it in a modern browser. Your inventory stays in that browser's local storage, so **regular JSON exports are essential**: browser data loss can mean inventory loss.
+
+## At a glance
+
+| Capability | Caffoot Lite |
+| --- | --- |
+| Network inventory and IT asset tracking | Devices, types, locations and details |
+| IP address management (IPAM) | Subnets, addresses, reservations and allocation workflows |
+| Rack management | Equipment placement and rack-unit tracking |
+| Installation | Open a standalone HTML file; no server required |
+| Data portability | JSON export and import for backups |
+| Cost | Free, open-source software (MIT source licence) |
 
 ## ⚠️ Important — your inventory lives in your browser
 
