@@ -4,7 +4,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const assert = require('node:assert/strict');
-const html = fs.readFileSync(path.join(__dirname, 'caffoot-personal.html'), 'utf8');
+const html = fs.readFileSync(path.join(__dirname, 'caffoot-lite.html'), 'utf8');
 const resources = [...html.matchAll(/<(?:script|link)\b[^>]*\b(?:src|href)=["'](https?:\/\/[^"']+)["'][^>]*>/gi)]
   .map(match => match[1]);
 const unique = [...new Set(resources)];
