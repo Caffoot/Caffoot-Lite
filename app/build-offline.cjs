@@ -1,5 +1,5 @@
 'use strict';
-// Developer-only build: npm install && npm run build (inside personal/).
+// Developer-only build: npm install && npm run build (inside app/).
 // Creates a single HTML file with compiled Tailwind and embedded Font Awesome webfonts.
 const fs = require('node:fs');
 const path = require('node:path');
