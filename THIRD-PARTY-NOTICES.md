@@ -10,19 +10,19 @@ Caffoot Lite uses third-party components in its standalone HTML build. These not
 - Fonts: SIL Open Font License 1.1
 - Code: MIT License
 
-The build embeds Font Awesome CSS and webfont data directly into `Caffoot-Lite.html`. The upstream licence files are available in the package `@fortawesome/fontawesome-free` and at https://github.com/FortAwesome/Font-Awesome/tree/6.4.0.
+The build embeds Font Awesome CSS and webfont data directly into `Caffoot-Lite.html`. The complete upstream licence text for the pinned version is included at [`licenses/FONT-AWESOME-6.4.0.txt`](licenses/FONT-AWESOME-6.4.0.txt). Source: https://github.com/FortAwesome/Font-Awesome/blob/6.4.0/LICENSE.txt.
 
 ## Tailwind CSS 3.4.17
 
 - Project: https://tailwindcss.com/
 - Copyright: Tailwind Labs, Inc.
 - Licence: MIT License
-- Source and licence: https://github.com/tailwindlabs/tailwindcss/tree/v3.4.17
+- Complete MIT licence: [`licenses/TAILWIND-CSS-3.4.17.txt`](licenses/TAILWIND-CSS-3.4.17.txt). Source: https://github.com/tailwindlabs/tailwindcss/blob/v3.4.17/LICENSE
 
 Tailwind CSS is used at build time to generate the CSS embedded in the standalone HTML.
 
 ## Distribution reminder
 
-Before publishing a release, include the applicable complete upstream licence texts and attribution notices alongside the downloadable HTML (or in a clearly accessible notice within it). This summary is not a substitute for those complete texts. Verify the exact packaged licence files from the installed dependency versions.
+The pinned dependencies' upstream licence texts are checked into `licenses/` for attribution and release preparation. **Before public distribution**, verify the exact packaged dependency licence files against these copies and ensure the complete notices accompany the downloadable HTML (or are clearly accessible within it). The standalone HTML currently does not embed these complete licence texts.
 
 Caffoot branding, name and mascot are not licensed as third-party components by this document.
