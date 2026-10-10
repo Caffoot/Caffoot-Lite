@@ -1,6 +1,6 @@
 # Caffoot Lite — Development Roadmap
 
-**Updated:** 9 October 2026  
+**Updated:** 10 October 2026  
 **Current milestone:** v1.0.0 release candidate  
 **Repository:** `sdelnevo/Caffoot-Lite` (private during development)  
 **Release policy:** Publish publicly only after manual verification, security/privacy review and owner approval.
@@ -14,7 +14,29 @@
 - Light/dark UI improvements, consistent forms and Safari rack scrolling refinements.
 - Offline single-HTML build pipeline and automated checks.
 
-The features above are recorded as delivered. **Latest Caffoot Lite browser regression and release approval remain outstanding.**
+The features above are recorded as delivered. Automated Chromium regression checks have been added for offline startup, local storage recovery, backup rejection and restore, Device/IPAM integrity, rack placement, form labels, modal keyboard behaviour and theme text contrast. **Manual cross-browser acceptance, final release review and owner approval remain outstanding.**
+
+## Verified automated coverage (private CI)
+
+- Offline HTML build verification, embedded assets and no outbound HTTP(S) requests in the Chromium smoke test.
+- Browser-local inventory persistence, unreadable-storage recovery and recovery-data download.
+- Malformed and malicious backup rejection, restore cancellation, rollback on failed restore and successful restore.
+- Device/IPAM allocation ownership, subnet membership, record synchronisation and reassignment.
+- Rack U-range validation, overlapping placement rejection and separate front/rear faces.
+- Failed Device edits and creations roll back without leaving ghost inventory or orphan IPAM records.
+- Modal keyboard focus and Escape behaviour, shared light/dark text contrast, and selected Device/Subnet/IPAM field labels and HTML escaping.
+
+These checks are valuable regression coverage, **not** a complete security audit, accessibility certification or replacement for manual browser testing.
+
+## Manual acceptance still needed
+
+- Safari on macOS: open the generated offline HTML with network disabled, exercise navigation, reload and JSON backup/restore.
+- Add/Edit/Duplicate/Delete Device, including type-specific options, subnet creation from the Device form, automatic next available IP and IPAM synchronisation.
+- Rack mounting and moving devices between front/rear faces, U heights, accessories and drag/scroll behaviour.
+- Subnet creation and gateway suggestion; IPAM reservations, bulk actions and integrity repair.
+- Keyboard-only and VoiceOver walkthrough of all forms, light/dark themes, mobile-width layout and contrast outside shared tokens.
+- Upgrade/move/rename of the HTML file with a JSON backup, explicitly checking browser-local storage caveats.
+- Final licence, privacy and packaged ZIP review; explicit owner approval before any public repository or release action.
 
 ## v1.0 completion checklist
 
