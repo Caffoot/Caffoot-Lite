@@ -33,7 +33,7 @@ See the [user guide](USER-GUIDE.md) for the first-run walkthrough and day-to-day
 
 Caffoot Lite stores inventory in your **browser's local storage**, not in the HTML file or on a server. Browser `file://` storage behaviour varies: changing browser, profile, path or filename may prevent the new file from seeing existing data. Clearing browser data can erase it.
 
-**Export a JSON backup before upgrading, moving/renaming the HTML file, resetting data or changing browsers.** Keep backups safe; they may contain sensitive infrastructure details. The historical `netmini_state` storage key is intentionally preserved for compatibility.
+**Export a JSON backup before upgrading, moving/renaming the HTML file, resetting data or changing browsers.** Keep backups safe; they may contain sensitive infrastructure details. New saves use `caffoot_state`. On first use, compatible older `netmini_state` inventories are migrated automatically, while the original is retained as a safety copy.
 
 ## For developers: build and test
 
