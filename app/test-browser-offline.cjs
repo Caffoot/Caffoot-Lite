@@ -228,6 +228,34 @@ const { chromium } = require('playwright');
         id + ' must retain required validation');
     }
     console.log('PASS: Device form mounting, location, rack and notes labels in Chromium.');
+    // Inventory integrity: reject rack collisions and out-of-range U allocations.
+    const rackValidation = await page.evaluate(() => {
+      const rack = { id: 'browser-rack-check', name: 'Browser rack', heightU: 12 };
+      const occupied = {
+        id: 'browser-occupied-device', rackId: rack.id,
+        face: 'front', rackUStart: 4, rackUEnd: 6
+      };
+      appState.racks.push(rack);
+      appState.devices.push(occupied);
+      try {
+        return {
+          overlap: validateRackPlacement('new-device', rack.id, 'front', 5, 7),
+          outside: validateRackPlacement('new-device', rack.id, 'front', 11, 13),
+          missing: validateRackPlacement('new-device', 'missing-browser-rack', 'front', 1, 1),
+          clear: validateRackPlacement('new-device', rack.id, 'front', 7, 9),
+          otherFace: validateRackPlacement('new-device', rack.id, 'rear', 5, 7)
+        };
+      } finally {
+        appState.devices.splice(appState.devices.indexOf(occupied), 1);
+        appState.racks.splice(appState.racks.indexOf(rack), 1);
+      }
+    });
+    assert.match(rackValidation.overlap, /overlap/i, 'Rack U overlap must be rejected');
+    assert.match(rackValidation.outside, /between U1 and U12/i, 'Rack U bounds must be enforced');
+    assert.match(rackValidation.missing, /no longer exists/i, 'Missing racks must be rejected');
+    assert.equal(rackValidation.clear, null, 'Non-overlapping rack positions should remain valid');
+    assert.equal(rackValidation.otherFace, null, 'Opposite rack faces may share U positions');
+    console.log('PASS: rack placement rejects collisions and out-of-range positions.');
     assert.deepEqual(outbound, [], 'Standalone file must not attempt network requests');
     assert.deepEqual(failures, [], 'Browser must not raise uncaught JavaScript errors');
     console.log('PASS: Chromium file:// startup, navigation, offline operation and localStorage reload.');
