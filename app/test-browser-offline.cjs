@@ -319,6 +319,64 @@ const { chromium } = require('playwright');
     assert.equal(ipamIntegrity.moved.newAllocation.hostname, 'Updated device');
     assert.equal(ipamIntegrity.moved.newAllocation.deviceId, 'browser-ipam-device');
     console.log('PASS: Device/IPAM rejection, detail synchronisation and IP reassignment.');
+    // A failed browser storage write must roll back Device edits and IPAM changes.
+    const failedDeviceSave = await page.evaluate(() => {
+      const subnet = { id: 'browser-save-subnet', cidr: '10.240.78.0/24',
+        gateway: '10.240.78.1', name: 'Browser save test', vlan: 78 };
+      const device = { id: 'browser-save-device', name: 'Before save failure',
+        type: 'Switch', mountType: 'Desktop', location: 'Unknown',
+        notes: 'Original note', status: 'Active', primaryIp: '10.240.78.10',
+        ipReserved: false, rackId: '', face: 'front' };
+      const originalSaveState = saveState;
+      const originalStorage = localStorage.getItem('caffoot_state');
+      appState.subnets.push(subnet);
+      appState.devices.push(device);
+      appState.ipAllocations[device.primaryIp] = {
+        deviceId: device.id, status: 'Assigned',
+        hostname: device.name, notes: device.notes
+      };
+      const before = JSON.stringify(appState);
+      let modalStayedOpen = false;
+      try {
+        openDeviceModal(device.id);
+        const type = document.getElementById('dev-type');
+        const location = document.getElementById('dev-location');
+        if (!Array.from(type.options).some(option => option.value === device.type)) {
+          type.add(new Option(device.type, device.type));
+        }
+        if (!Array.from(location.options).some(option => option.value === device.location)) {
+          location.add(new Option(device.location, device.location));
+        }
+        type.value = device.type;
+        location.value = device.location;
+        document.getElementById('dev-mount-type').value = 'Desktop';
+        document.getElementById('dev-subnet').value = subnet.id;
+        document.getElementById('dev-name').value = 'Changed but not saved';
+        document.getElementById('dev-notes').value = 'Changed note';
+        document.getElementById('dev-ip').value = '10.240.78.11';
+        saveState = () => false;
+        handleDeviceSubmit({ preventDefault() {} }, device.id);
+        modalStayedOpen = !document.getElementById('modal-container').classList.contains('hidden');
+        return {
+          unchanged: JSON.stringify(appState) === before,
+          storedUnchanged: localStorage.getItem('caffoot_state') === originalStorage,
+          modalStayedOpen
+        };
+      } finally {
+        saveState = originalSaveState;
+        closeModal();
+        const idx = appState.devices.findIndex(item => item.id === device.id);
+        if (idx >= 0) appState.devices.splice(idx, 1);
+        const subnetIdx = appState.subnets.findIndex(item => item.id === subnet.id);
+        if (subnetIdx >= 0) appState.subnets.splice(subnetIdx, 1);
+        delete appState.ipAllocations['10.240.78.10'];
+        delete appState.ipAllocations['10.240.78.11'];
+      }
+    });
+    assert(failedDeviceSave.unchanged, 'Failed Device save must restore Device and IPAM state');
+    assert(failedDeviceSave.storedUnchanged, 'Failed Device save must not alter stored inventory');
+    assert(failedDeviceSave.modalStayedOpen, 'Failed Device save must keep edit dialog open');
+    console.log('PASS: failed Device save rolls back IPAM and inventory without closing form.');
     assert.deepEqual(outbound, [], 'Standalone file must not attempt network requests');
     assert.deepEqual(failures, [], 'Browser must not raise uncaught JavaScript errors');
     console.log('PASS: Chromium file:// startup, navigation, offline operation and localStorage reload.');
