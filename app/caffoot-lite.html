@@ -4555,8 +4555,8 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 meta.format !== CAFFOOT_BACKUP_FORMAT ||
                 !Number.isSafeInteger(meta.schemaVersion) || meta.schemaVersion < 1 ||
                 typeof meta.app !== 'string' || !['Caffoot Lite','Caffoot Pro'].includes(meta.app) ||
-                typeof meta.appVersion !== 'string' || !/^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[a-zA-Z0-9.-]+)?$/.test(meta.appVersion) ||
-                typeof meta.exportedAt !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}T/.test(meta.exportedAt) || !Number.isFinite(Date.parse(meta.exportedAt)))
+                typeof meta.appVersion !== 'string' || !/^[0-9]+\.[0-9]+\.[0-9]+(?:-[a-zA-Z0-9.-]+)?$/.test(meta.appVersion) ||
+                typeof meta.exportedAt !== 'string' || !/^\d{4}-\d{2}-\d{2}T/.test(meta.exportedAt) || !Number.isFinite(Date.parse(meta.exportedAt)))
                 throw new Error('Backup version metadata is invalid or unsupported.');
             if (meta.schemaVersion > CAFFOOT_BACKUP_SCHEMA_VERSION)
                 throw new Error('This backup uses a newer inventory schema. Update Caffoot Lite before importing it.');
