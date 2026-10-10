@@ -4513,6 +4513,22 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 
         // Phase 11A: safety snapshots are kept separately from active inventory.
         const SAFETY_SNAPSHOT_KEY = 'caffoot_phase11_pre_restore';
+        // Reject dangerous object keys before migration, merging or rendering imported JSON.
+        function phase16CRejectUnsafeKeys(root) {
+            const blocked = new Set(['__proto__', 'prototype', 'constructor']);
+            const pending = [root];
+            const visited = new WeakSet();
+            while (pending.length) {
+                const value = pending.pop();
+                if (!value || typeof value !== 'object' || visited.has(value)) continue;
+                visited.add(value);
+                for (const key of Object.keys(value)) {
+                    if (blocked.has(key)) throw new Error('Backup contains a prohibited object property.');
+                    const child = value[key];
+                    if (child && typeof child === 'object') pending.push(child);
+                }
+            }
+        }
         function phase11ValidateBackupShape(raw) {
             if (!raw || typeof raw !== 'object' || Array.isArray(raw)) throw new Error('Backup must be a JSON object.');
             const required = ['devices', 'subnets', 'racks'];
@@ -4554,6 +4570,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 
         // Phase 16C: inspect an imported file without changing the saved inventory.
         function phase16CCheckBackup(raw) {
+            phase16CRejectUnsafeKeys(raw);
             phase11ValidateBackupShape(raw);
             const candidate = normaliseState(raw);
             const original = appState;
