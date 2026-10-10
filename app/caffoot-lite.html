@@ -39,7 +39,7 @@
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.5); border-radius: 3px; }
     
-        /* RC1: validation takes precedence over the normal blue focus ring. */
+        /* validation takes precedence over the normal blue focus ring. */
         #modal-content :is(input,select,textarea)[aria-invalid="true"] {
             border-color: #b91c1c !important;
             outline: 3px solid #dc2626 !important;
@@ -56,7 +56,7 @@
             outline-color: #fb7185 !important;
             box-shadow: 0 0 0 1px #fda4af !important;
         }
-        /* Phase 7A — individual form layout */
+        /* — individual form layout */
         .form-shell { max-width: 900px; margin: 0 auto; }
         .form-section-card { padding: 1rem; border: 1px solid rgb(226 232 240); border-radius: 0.9rem; background: rgb(248 250 252 / .55); }
         .dark .form-section-card { border-color: rgb(51 65 85); background: rgb(15 23 42 / .35); }
@@ -96,13 +96,13 @@
 .dark #modal-content :is(input,select,textarea,button):focus-visible { outline-color: #a5b4fc; }
 #modal-content .grid > * { min-width: 0; }
 @media (max-width: 640px) { #modal-content { max-width: calc(100vw - 1rem); } }
-/* Phase 19C: compact divider within the hardware details grid. */
+/* compact divider within the hardware details grid. */
 .phase19c-detail-subheading { grid-column: 1 / -1; padding-top: .85rem; margin-top: .25rem; border-top: 1px solid var(--border-color, #cbd5e1); font-size: .75rem; font-weight: 750; letter-spacing: .03em; color: #475569; }
 .dark .phase19c-detail-subheading { color: #cbd5e1; border-color: #475569; }
 </style>
 
 <style>
-/* Phase 7 - consistent modal/form layout */
+/* - consistent modal/form layout */
 #modal-container { align-items: center; }
 #modal-content { max-width: 64rem; max-height: 90vh; overflow-y: auto; }
 #modal-content form { width: 100%; }
@@ -234,7 +234,7 @@ button:disabled, input:disabled, select:disabled, textarea:disabled {
 </style>
 
 <style id="phase-7b-qa">
-/* Phase 7B: legibility and consistent controls in light/dark themes */
+/* legibility and consistent controls in light/dark themes */
 :root { --qa-muted: #475569; --qa-border: #94a3b8; --qa-focus: #1d4ed8; }
 .dark { --qa-muted: #cbd5e1; --qa-border: #64748b; --qa-focus: #a5b4fc; }
 #modal-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
@@ -386,7 +386,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .phase13e-patch-12 .phase13d-port,.phase13e-patch-24 .phase13d-port,.phase13e-patch-48 .phase13d-port{display:block!important;width:100%;min-width:0;max-width:none;height:9px}
 @media(max-width:640px){.phase13e-patch-48{gap:1px;padding:2px}.phase13e-patch-48 .phase13d-port{border-width:1px}}
 
-/* Phase 13E refinement: let patch-panel ports occupy all usable rack width. */
+/* let patch-panel ports occupy all usable rack width. */
 .phase13d-rack-item.phase13d-patch{gap:6px;padding-left:8px;padding-right:8px}
 .phase13d-rack-item.phase13d-patch > .flex.items-center{flex:1 1 auto;min-width:0;gap:6px}
 .phase13d-rack-item.phase13d-patch .phase13d-accessory-content{flex:1 1 auto;width:100%;min-width:0;gap:0}
@@ -398,7 +398,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .phase13d-rack-item.phase13d-patch .phase13d-port{min-width:0}
 @media(max-width:640px){.phase13d-rack-item.phase13d-patch{padding-left:4px;padding-right:4px;gap:3px}.phase13d-rack-item.phase13d-patch > .flex.items-center{gap:3px}.phase13d-rack-item.phase13d-patch .phase13e-patch-48{gap:1px;padding:2px}}
 
-/* Phase 13E refinement: use the full usable rack width for ALL accessory fascias.
+/* use the full usable rack width for ALL accessory fascias.
    Retain the left U marker and right edit/remove actions. */
 .phase13b-workspace .phase13d-rack-item:is(.phase13d-blank,.phase13d-brush,.phase13d-cable,.phase13d-shelf){gap:6px;padding-left:8px;padding-right:8px}
 .phase13b-workspace .phase13d-rack-item:is(.phase13d-blank,.phase13d-brush,.phase13d-cable,.phase13d-shelf) > .flex.items-center{flex:1 1 auto;min-width:0;gap:6px}
@@ -453,7 +453,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .phase13k-elevation .phase13i-actions button:hover{background:#fff!important}
 .phase13k-elevation .phase13-empty{background:#1e293b!important;color:#cbd5e1!important;border-color:#475569!important}
 .phase13k-elevation .phase13-empty:hover{background:#334155!important}
-/* RC1 accessibility: rack elevation is navy in BOTH application themes.
+/* rack elevation is navy in BOTH application themes.
    Its child labels must contrast against navy, not against the page theme. */
 .phase13k-elevation .phase13-empty > span{color:#f1f5f9!important;opacity:1!important}
 .phase13k-elevation .phase13-empty:hover > span,
@@ -472,7 +472,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .phase14-devices table tbody tr{border-color:#e2e8f0}
 .dark .phase14-devices table tbody tr{border-color:#475569}
 </style><style id="phase14b-device-form-style">
-/* Phase 14B: only the Add/Edit/Duplicate Device dialog */
+/* only the Add/Edit/Duplicate Device dialog */
 #modal-content:has(.phase14b-device-modal){width:min(94vw,850px)!important;max-width:850px!important;max-height:calc(100vh - 36px);overflow-y:auto;padding:0!important;}
 .phase14b-device-modal{padding:24px 28px 28px; color:inherit;}
 .phase14b-device-modal .phase14b-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-bottom:17px;border-bottom:1px solid #94a3b855;margin-bottom:20px;}
@@ -541,7 +541,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 @media (prefers-reduced-motion: reduce) { .phase14d-located { animation: none; outline: 3px solid #fbbf24; outline-offset: -3px; } }
 </style>
 <style id="phase14f-style">
-/* Phase 14F: simplify the inventory's row actions while preserving existing action handlers. */
+/* simplify the inventory's row actions while preserving existing action handlers. */
 .phase14f-table-wrap{overflow-x:auto;overflow-y:visible}
 .phase14f-actions{display:inline-flex;align-items:center;justify-content:flex-end;gap:7px;white-space:nowrap}
 .phase14f-details{background:#dcfce7;color:#14532d;border:1px solid #86efac;border-radius:9px;padding:8px 12px;min-height:38px;font-size:12px;font-weight:700}
@@ -574,7 +574,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 @media(max-width:640px){.phase14-devices .phase14f-table-wrap{max-width:100%;overflow-x:auto}.phase14-devices [data-device-panel="inventory"] label{max-width:100%}}
 </style>
 <style id="phase14h-style">
-/* Phase 14H: consistent alignment and control sizing, scoped to device inventory filters. */
+/* consistent alignment and control sizing, scoped to device inventory filters. */
 .phase14-devices .phase14h-filter-row{align-items:flex-end;gap:12px}
 .phase14-devices .phase14h-filter-row>label{display:flex;flex-direction:column;justify-content:flex-end;gap:6px;min-width:144px;margin:0;line-height:1.25}
 .phase14-devices .phase14h-filter-row>label>select{box-sizing:border-box;display:block;width:100%;height:44px;min-height:44px;max-height:44px;margin:0;padding:0 34px 0 12px;border-radius:12px;font-size:14px;line-height:normal;vertical-align:middle}
@@ -583,7 +583,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 @media(max-width:640px){.phase14-devices .phase14h-filter-row>label{flex:1 1 145px;min-width:0}}
 </style>
 <style id="phase15a-dashboard-style">
-/* Phase 15A: dashboard-only visual system, retains existing page behaviour */
+/* dashboard-only visual system, retains existing page behaviour */
 .phase15a-stats .phase15a-stat{min-width:0;box-shadow:0 2px 8px rgba(15,23,42,.035)}
 .phase15a-stats .phase15a-stat:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(15,23,42,.08)}
 .phase15a-stat-icon{width:38px;height:38px;display:inline-flex;align-items:center;justify-content:center;border-radius:12px;background:#dbeafe;color:#1d4ed8;font-size:16px;flex-shrink:0}
@@ -637,7 +637,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 </style>
 
 <style id="phase18a-ui-consistency">
-/* Phase 18A: accessible, consistent application controls without changing rack geometry. */
+/* accessible, consistent application controls without changing rack geometry. */
 :root { --phase18-focus:#2563eb; --phase18-control-border:#94a3b8; }
 .dark { --phase18-focus:#93c5fd; --phase18-control-border:#64748b; }
 /* Use a visible keyboard-only focus indicator, including dynamically rendered controls. */
@@ -685,7 +685,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 @media(max-width:420px){.phase18b-choice{font-size:12px;padding:8px 5px}}
 </style>
 <style id="phase18b-balanced-dialog-style">
-/* Phase 18B polish: one consistent, contained dialog for either equipment type. */
+/* one consistent, contained dialog for either equipment type. */
 #modal-content.phase18b-balanced-modal { width: min(620px, calc(100vw - 28px)); max-width: 620px; max-height: min(88dvh, 780px); overflow-y: auto; overscroll-behavior: contain; }
 #modal-content.phase18b-balanced-modal .phase18b-balanced-dialog { min-height: 490px; display: flex; flex-direction: column; gap: 0; }
 #modal-content.phase18b-balanced-modal .phase18b-placement-switch { flex-shrink: 0; margin: 0 0 20px; }
@@ -703,7 +703,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 }
 </style>
 <style id="phase18c-final-ui-polish">
-/* Phase 18C: presentation-only refinements; rack geometry and drag logic untouched. */
+/* presentation-only refinements; rack geometry and drag logic untouched. */
 #main-content :is(.phase14-tabs,.phase12c-tabs,.phase15c-tabs,.phase16a-tabs) { scrollbar-width: thin; }
 #main-content :is(.phase14-tab,.phase12c-tab,.phase15c-tab,.phase16a-tab) { line-height:1.35; }
 #main-content :is(.phase14-tab,.phase12c-tab,.phase15c-tab,.phase16a-tab):focus-visible { outline-offset: -2px; }
@@ -736,7 +736,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 </style>
 
 <style id="phase19d2-global-form-actions">
-/* Phase 19D.2: presentation-only; preserve existing event actions and validation. */
+/* presentation-only; preserve existing event actions and validation. */
 #modal-content .form-actions,
 #modal-content .rack-form-actions { justify-content:flex-end; align-items:center; gap:12px; }
 #modal-content .form-actions button,
@@ -823,7 +823,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 <button data-action="tab-audit" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700/50 hover:text-indigo-600 dark:hover:text-indigo-400" data-tab="audit"><i class="fa-solid fa-clock-rotate-left w-5 text-center"></i><span>Change History</span></button>
                 
             </nav>
-            <!-- Phase 16D: application-wide controls live in Settings & Data. -->
+            <!-- application-wide controls live in Settings & Data. -->
             <div class="px-4 pb-4 pt-3 border-t border-slate-200 dark:border-slate-700">
                 <button data-action="tab-settings" data-tab="settings" aria-label="Open Settings and Data" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700/50 hover:text-indigo-600 dark:hover:text-indigo-400"><i class="fa-solid fa-gear w-5 text-center"></i><span>Settings & Data</span></button>
             </div>
@@ -896,7 +896,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             });
         }
 
-        // Phase 12A: unsigned IPv4 math; supported host ranges /23 through /30.
+        // unsigned IPv4 math; supported host ranges /23 through /30.
         function phase12IpNumber(ip) {
             if (!isValidIpv4(ip)) return null;
             return ip.split('.').reduce((n,part)=>((n*256)+Number(part)),0);
@@ -957,7 +957,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             state.deviceTypes = [...new Set([...state.deviceTypes, ...discoveredTypes])];
             state.deviceLocations = [...new Set([...state.deviceLocations, ...discoveredLocations, 'Unknown'])].filter(location => location !== 'Blank');
 
-            // Phase 5 migration: Blank is no longer a valid managed location.
+            // Blank is no longer a valid managed location.
             state.devices.forEach(device => {
                 if (device.location === 'Blank' || !device.location) device.location = 'Unknown';
             });
@@ -1137,7 +1137,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
         // Caffoot Lite v1 uses its own browser storage namespace.
         const STORAGE_KEY = 'caffoot_state';
 
-        // Phase 17A: preserve unreadable stored data. Never overwrite it on startup.
+        // preserve unreadable stored data. Never overwrite it on startup.
         let phase17AStorageRecovery = null;
         function loadStoredState() {
             let stored;
@@ -1206,7 +1206,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
         let phase13CDraggedAccessoryId = null;
         let phase13BRackTab = 'view';
         let phase13CSelectedAccessory = 'blank';
-        // Phase 6: temporarily preserve the device form while creating a missing subnet.
+        // temporarily preserve the device form while creating a missing subnet.
         let deviceFormDraft = null;
         let ipViewRange = '1-32';
         let phase12Page = 0;
@@ -1222,7 +1222,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             document.getElementById('theme-icon')?.setAttribute('class', isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon');
         }
 
-        // Phase 10C: a compact, local, best-effort audit trail.
+        // a compact, local, best-effort audit trail.
         // Audit records are metadata only; backup JSON still contains the complete inventory.
         const AUDIT_KEY = 'caffoot_audit_v1';
         const AUDIT_LIMIT = 200;
@@ -1340,7 +1340,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             }
         }
 
-        // Phase 1 data-integrity helpers
+        // data-integrity helpers
         function getDeviceById(deviceId) {
             return appState.devices.find(d => d.id === deviceId);
         }
@@ -1357,7 +1357,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             if (trimmedIp && findDeviceUsingIp(trimmedIp, device.id)) {
                 throw new Error(`IP address ${trimmedIp} is already assigned to another device.`);
             }
-            // Phase 17C: refuse to take an IPAM address owned by a different device.
+            // refuse to take an IPAM address owned by a different device.
             // Validate before releasing the old address so a failed edit leaves it intact.
             if (trimmedIp) {
                 if (!appState.subnets.some(subnet => ipBelongsToSubnet(trimmedIp, subnet.cidr))) {
@@ -1453,7 +1453,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             msg.textContent = message;
             icon.className = type === 'success' ? 'fa-solid fa-circle-check text-emerald-400 text-lg' : 'fa-solid fa-circle-exclamation text-amber-400 text-lg';
 
-            // Phase 7A: mirror validation errors inside the currently open form.
+            // mirror validation errors inside the currently open form.
             if (type === 'error') {
                 const formError = document.querySelector('#modal-container form [data-form-error]');
                 if (formError) {
@@ -1491,7 +1491,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             }, 3000);
         }
 
-        // RC1 accessibility: browser-native required-field errors must also be
+        // browser-native required-field errors must also be
         // visible in the form and announced, even when submit is prevented.
         document.addEventListener('invalid', function(event) {
             const field = event.target;
@@ -1540,7 +1540,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             renderContent();
         }
 
-        // Phase 3: safely render user-controlled values into HTML and inline event attributes.
+        // safely render user-controlled values into HTML and inline event attributes.
         function escapeHtml(value) {
             return String(value ?? '')
                 .replace(/&/g, '&amp;')
@@ -1556,7 +1556,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 
         function renderContent() {
             const container = document.getElementById('main-content');
-            // Phase 17B: replace the view once, avoiding an extra DOM teardown.
+            // replace the view once, avoiding an extra DOM teardown.
             let html = '';
             if (currentTab === 'dashboard') html = renderDashboardHTML();
             else if (currentTab === 'ipam') html = renderIpamHTML();
@@ -1570,7 +1570,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
         }
 
 
-        // Phase 11C: conservative repair planner. Never changes source data during preview.
+        // conservative repair planner. Never changes source data during preview.
         let phase11CPreview = null;
         const PHASE11C_SNAPSHOT_KEY = 'caffoot_phase11c_pre_repair_v1';
         function phase11CPlan(state=appState) {
@@ -1676,7 +1676,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             </section>`;
         }
 
-        // Phase 10D reports: read-only, generated from the current inventory.
+        // read-only, generated from the current inventory.
         function phase10DReportData() {
             const devices=Array.isArray(appState.devices)?appState.devices:[];
             const racks=Array.isArray(appState.racks)?appState.racks:[];
@@ -1829,7 +1829,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             const topTypes = Object.entries(typeCounts).sort((a, b) => b[1] - a[1]).slice(0, 6);
             const maxTypeCount = Math.max(1, ...topTypes.map(([, count]) => count));
 
-            // Phase 15B: use each subnet's real usable host capacity (/23 through /30).
+            // use each subnet's real usable host capacity (/23 through /30).
             const subnetStats = subnets.map(subnet => {
                 const summary = phase10SubnetSummary(subnet);
                 return { ...subnet, used: summary.assigned + summary.reserved,
@@ -1979,7 +1979,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                     <div class="mt-2 h-1.5 rounded-full bg-slate-200 dark:bg-slate-600 overflow-hidden"><div class="h-full rounded-full ${subnet.percentage >= 85 ? 'bg-amber-500' : 'bg-emerald-500'}" style="width:${Math.max(subnet.percentage, subnet.used ? 1 : 0)}%"></div></div>
                 </div>`).join('') : `<p class="text-sm text-slate-500 dark:text-slate-400">No subnets configured.</p>`;
 
-            // Phase 15B visual insights are computed from current application state.
+            // insights are computed from current application state.
             const insightSegment = (label, value, total, colour) => `<div class="phase15b-legend-row"><span class="phase15b-dot ${colour}"></span><span>${escapeHtml(label)}</span><strong>${value}</strong><span class="phase15b-muted">${total ? Math.round(value / total * 100) : 0}%</span></div>`;
             const statusCounts = devices.reduce((map, d) => { const key = String(d.status || 'Active').trim() || 'Active'; map[key] = (map[key] || 0) + 1; return map; }, {});
             const statusEntries = Object.entries(statusCounts).sort((a,b) => b[1] - a[1]);
@@ -2158,7 +2158,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             }
         }
 
-        // Phase 13G: lightweight, offline rack fascias configured per managed device type.
+        // lightweight, offline rack fascias configured per managed device type.
         const phase13GPresets = {automatic:'Automatic',switch24:'24-port switch',switch48:'48-port switch',server:'Server',router:'Router / firewall',storage:'Storage / NAS',ups:'UPS / PDU',plain:'Plain front panel'};
         function phase13GDefault(type) {
             const t=String(type||'').toLowerCase();
@@ -2195,7 +2195,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             else appState.deviceTypeGraphics[type]=choice;
             saveState();openManageTypesModal();renderContent();
         }
-        // Phase 13L: calculate occupancy by unique U slots, not by summing item heights.
+        // calculate occupancy by unique U slots, not by summing item heights.
         let phase13LHeight = 1;
         function phase13LUsage(rack, face) {
             const used = new Set();
@@ -2652,7 +2652,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             `;
         }
 
-        // --- PHASE 18D: MANAGED TYPES & LOCATIONS ---
+        // --- MANAGED TYPES & LOCATIONS ---
         let phase18DSearch = {type:'',location:''};
         function phase18DList(kind) {
             const key = kind === 'type' ? 'deviceTypes' : 'deviceLocations';
@@ -2754,7 +2754,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
         let ipamStatusFilter = 'All';
         let ipamAddressSearch = '';
         let phase12CIpamTab = 'overview';
-        // Phase 10A: operate on the existing /24 IPAM address grid without
+        // operate on the existing /24 IPAM address grid without
         // assuming that every stored subnet is a /24.
         function phase10SubnetSummary(subnet) {
             const range=phase12Cidr(subnet?.cidr);
@@ -2999,7 +2999,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             renderContent();
         }
 
-        // Phase 12B: CIDR-aware, bounded bulk edits. Offset 1 is the first usable IP.
+        // CIDR-aware, bounded bulk edits. Offset 1 is the first usable IP.
         function phase12BBulkPlan(subnet, start, end, status, hostname, notes) {
             const range=phase12Cidr(subnet?.cidr);
             if (!range) return {error:'Unsupported or invalid subnet.'};
@@ -3320,7 +3320,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 
         function ipBelongsToSubnet(ip,cidr) { return phase12Usable(ip,cidr); }
 
-        // Phase 11B: refuse destructive operations with dependent records.
+        // refuse destructive operations with dependent records.
         // Users can deliberately detach/reassign dependencies first.
         function phase11BSubnetDependencies(subnet, state=appState) {
             const devices=state.devices.filter(d=>d.primaryIp && ipBelongsToSubnet(d.primaryIp,subnet.cidr));
@@ -3466,7 +3466,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             renderContent();
         }
 
-        // RC1 accessibility: modal focus is contained and returned to its trigger.
+        // modal focus is contained and returned to its trigger.
         let modalReturnFocus = null;
         function closeModal() {
             const container = document.getElementById('modal-container');
@@ -3628,7 +3628,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             if(!phase11BCommitDelete(before,'Rack')) { selectedRackId=previousSelection; renderContent(); }
         }
 
-        // Phase 18B: one placement workflow for a clicked empty rack U.
+        // one placement workflow for a clicked empty rack U.
         function phase18BOpenPlacement(rackId, slotU, mode = 'device') {
             const rack = appState.racks.find(r => r.id === rackId);
             if (!rack) return;
@@ -3836,7 +3836,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             }
         }
 
-        // Phase 19C: read-only details follow the same order as the Add/Edit form.
+        // read-only details follow the same order as the Add/Edit form.
         // Use the current managed labels, including renamed software and server functions.
         function phase19CDetailLabel(key, type) {
             if (phase19BTypeGroups[String(type || '').toLowerCase().trim()] === 'router' && key === 'networkConnection') return 'WAN connection method';
@@ -3963,7 +3963,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
         }
 
 
-        // Phase 19B: Access-inspired device type detail profiles. Optional fields are stored
+        // Access-inspired device type detail profiles. Optional fields are stored
         // on each device; switching types hides, but never erases, previously entered values.
         const phase19BProfiles = {"network":["networkCard","networkConnection"],"printer":["networkCard","networkConnection","printerColour","printerDesign"],"computer":["windowsLicence","os","networkCard","networkConnection","processor","graphics","memory","memoryUnit","storage","storageUnit","Swan","MicrosoftOffice","Planet","SpindleSoftware","Preactor","RedLionApp","SalesBase","HelpDesk","ProductionITHelpDeskDashboards","PDA","TMS","PhoneBook","EasyLabel"],"server":["windowsLicence","os","networkCard","networkConnection","processor","graphics","memory","memoryUnit","storage","storageUnit","SwanServer","SQLServer","TMSServer","printserver","keriserver","ActiveDirectory","AntivirusSoftware","DNS","DHCP","ExchangeServer","BackupSoftware","PlanetDB","SystemsDatabaseBackEndTables","PDASystem","raid","driveCount"],"nas":["networkCard","networkConnection","memory","memoryUnit","storage","storageUnit","raid","driveCount"],"phone":["handsetCount"],"ups":["powerOutlets","serialPort","usbPort"],"tape":["networkCard","networkConnection","driveCount"],"ap":[]};
         phase19BProfiles.switch=['portCount','networkCard','networkConnection'];
@@ -4361,7 +4361,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
         }
 
 
-        // Phase 16B: one purpose per settings section; existing handlers remain unchanged.
+        // one purpose per settings section; existing handlers remain unchanged.
         let phase16ASection = 'backup';
         // A browser may block localStorage (including for file:// pages).
         // Reading optional recovery indicators must not prevent Settings from rendering.
@@ -4506,7 +4506,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             dlAnchor.remove();
         }
 
-        // Phase 11A: safety snapshots are kept separately from active inventory.
+        // safety snapshots are kept separately from active inventory.
         const SAFETY_SNAPSHOT_KEY = 'caffoot_phase11_pre_restore';
         function phase11ValidateBackupShape(raw) {
             if (!raw || typeof raw !== 'object' || Array.isArray(raw)) throw new Error('Backup must be a JSON object.');
@@ -4547,7 +4547,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             </section>`;
         }
 
-        // Phase 16C: inspect an imported file without changing the saved inventory.
+        // inspect an imported file without changing the saved inventory.
         function phase16CCheckBackup(raw) {
             phase11ValidateBackupShape(raw);
             const candidate = normaliseState(raw);
@@ -4747,7 +4747,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             cable: {label:'Cable manager',icon:'fa-bars-staggered'},
             shelf: {label:'Rack shelf',icon:'fa-layer-group'}
         };
-        // Phase 13D: CSS-only rack fascia art; no external images or data changes.
+        // CSS-only rack fascia art; no external images or data changes.
         function phase13DFascia(type, portCount = 24) {
             if (type === 'patch') { const count=[12,24,48].includes(Number(portCount))?Number(portCount):24; return `<span class="phase13d-fascia phase13d-patch phase13e-patch-${count}" aria-hidden="true" title="${count} RJ45 ports">${Array.from({length:count},(_,i)=>`<span class="phase13d-port" title="Port ${i+1}"><i></i></span>`).join('')}</span>`; }
             if (type === 'brush') return `<span class="phase13d-fascia phase13d-brush" aria-hidden="true"><span class="phase13d-bristles"></span></span>`;
@@ -4830,7 +4830,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             if(!saveState()){appState=JSON.parse(before);return false;}phase17dRenderPreservingRackScroll();return true;
         }
 
-        // Phase 13A: single validated pathway for drag/drop and accessible click-to-move.
+        // single validated pathway for drag/drop and accessible click-to-move.
         function phase13MoveDevice(deviceId, rackId, targetU) {
             const device = appState.devices.find(d => d.id === deviceId);
             if (!device || !rackId) { showToast('Device or rack was not found.', 'error'); return false; }
@@ -4867,7 +4867,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             const next = document.querySelector('[data-rack-scroll="true"]');
             if (next) next.scrollTop = scrollTop;
         }
-        // Phase 17D: drag near the top/bottom of the rack viewport to scroll its
+        // drag near the top/bottom of the rack viewport to scroll its
         // contents, not the surrounding page. Never alter rack placement rules.
         let phase17dScrollFrame = null;
         let phase17dScrollPane = null;
@@ -4981,7 +4981,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             phase13ClearDropPreview();
         });
 
-        // Phase 4: centralised event delegation for dynamically-rendered controls.
+        // centralised event delegation for dynamically-rendered controls.
         // Buttons/links carry data-action rather than inline JavaScript. This keeps
         // user-entered values out of executable HTML attributes and means one handler
         // continues to work after renderContent() replaces #content.
