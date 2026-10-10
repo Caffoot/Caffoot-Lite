@@ -72,3 +72,7 @@ In Settings & Data → Data Management, use **Check for updates** to check the l
 5. Verify devices, IPAM, subnets and racks. Keep the old HTML and backup until satisfied.
 
 The safe update guide and backups work offline. Newer backup schemas require a compatible app; retain your original backup for recovery.
+
+## Complete release package
+
+Prefer the version-named release ZIP (for stable v1.0, `Caffoot-Lite-1.0.0.zip`). Extract it and open `Caffoot-Lite.html`; keep the guides and licences beside it. `SHA256SUMS` contains file hashes for checking integrity. The standalone HTML also includes full software notices in About Caffoot Lite, available offline. Example backups under `app/fixtures/` are fictional demonstrations; importing one replaces the current inventory after confirmation.

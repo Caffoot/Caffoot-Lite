@@ -52,22 +52,14 @@ jobs:
           node test-browser-offline.cjs
           node test-browser-import.cjs
           node test-browser-restore.cjs
-      - name: Assemble private offline preview bundle
-        run: |
-          mkdir -p app/dist/preview-package/licenses
-          cp app/dist/Caffoot-Lite.html app/dist/preview-package/
-          cp LICENSE THIRD-PARTY-NOTICES.md app/dist/preview-package/
-          cp licenses/FONT-AWESOME-6.4.0.txt licenses/TAILWIND-CSS-3.4.17.txt app/dist/preview-package/licenses/
-          cd app/dist/preview-package
-          zip -q -r ../Caffoot-Lite-preview.zip .
-          for file in Caffoot-Lite.html LICENSE THIRD-PARTY-NOTICES.md licenses/FONT-AWESOME-6.4.0.txt licenses/TAILWIND-CSS-3.4.17.txt; do
-            unzip -Z1 ../Caffoot-Lite-preview.zip | grep -Fxq "$file" || exit 1
-          done
+          node test-browser-upgrade.cjs
       - name: Upload standalone HTML and licensed preview bundle for testing
         uses: actions/upload-artifact@v4
         with:
           name: caffoot-lite-offline-preview
           path: |
             app/dist/Caffoot-Lite.html
-            app/dist/Caffoot-Lite-preview.zip
+            app/dist/Caffoot-Lite-*.zip
+            app/dist/SHA256SUMS
           if-no-files-found: error
+

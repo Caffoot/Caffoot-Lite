@@ -8,7 +8,7 @@
     "check:source": "node check-offline.cjs",
     "check:build": "node verify-build.cjs",
     "check:personal": "node check-app.cjs",
-    "release": "npm run check:personal && npm run check:rack && npm run check:restore && npm run check:security-reset && npm run check:security-backup && npm run check:security-xss && npm run check:security-list && npm run check:security-ipam && npm run check:security-racks && npm run check:security-dashboard && npm run check:subnet && npm run check:updates && npm run build && npm run check:build",
+    "release": "npm run check:personal && npm run check:rack && npm run check:restore && npm run check:security-reset && npm run check:security-backup && npm run check:security-xss && npm run check:security-list && npm run check:security-ipam && npm run check:security-racks && npm run check:security-dashboard && npm run check:subnet && npm run check:updates && npm run check:backup-contract && npm run build && npm run check:build && npm run package",
     "check:rack": "node test-rack-placement.cjs",
     "check:restore": "node test-restore.cjs",
     "check:subnet": "node test-subnet.cjs",
@@ -19,7 +19,9 @@
     "check:security-ipam": "node test-security-ipam.cjs",
     "check:security-racks": "node test-security-racks.cjs",
     "check:security-dashboard": "node test-security-dashboard.cjs",
-    "check:updates": "node test-updates.cjs"
+    "check:updates": "node test-updates.cjs",
+    "check:backup-contract": "node test-backup-contract.cjs",
+    "package": "node package-release.cjs"
   },
   "devDependencies": {
     "tailwindcss": "3.4.17",

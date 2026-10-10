@@ -45,7 +45,7 @@ These checks are valuable regression coverage, **not** a complete security audit
 
 ## Remaining release gates
 
-- [x] Latest private GitHub Actions build green (commit `392b351`, checked 10 October 2026).
+- [x] Latest prior private GitHub Actions build green (`12568fd`, checked 10 October 2026); this preparation pass requires its own green run.
 - [x] Generated HTML operates offline in Safari and retains inventory after reopening.
 - [x] Basic Add/Edit Device, next available IP and Device/IPAM synchronisation tested in Safari.
 - [x] Rack mounting restrictions and core U integrity tested in Safari.
@@ -57,8 +57,8 @@ These checks are valuable regression coverage, **not** a complete security audit
 - [x] Complete targeted **keyboard navigation**, narrow-window and light/dark visual checks (Stage 7A, 7/7).
 - [ ] Complete an explicit **VoiceOver screen-reader** walkthrough (not established by Stage 7A).
 - [ ] Test **HTML update/move/rename with exported JSON backup**; document browser `file://` storage differences.
-- [ ] Final source privacy review, dependency licence verification and **release ZIP contents** inspection.
-- [ ] Agree public distribution: preferably complete ZIP with notices; if standalone HTML is offered, make licence notices accessible beside it.
+- [x] Source/main-history privacy review, pinned runtime licence comparison and automated exact ZIP member/hash inspection implemented; see RELEASE-REVIEW.md.
+- [x] Prepare complete version-named ZIP and standalone HTML with complete offline licence notices; final distribution approval remains with owner.
 - [ ] Owner explicitly approves release version, public repository visibility and publication actions **separately**.
 
 Passing these checks supports release readiness; it is not a formal security or accessibility certification.
@@ -90,7 +90,14 @@ These were **proposals**, not committed v1.0 requirements. Confirm scope before 
 
 ### Before Lite v1.0 publication
 
-- [ ] Add version metadata to JSON exports and a documented versioned import/migration strategy while retaining compatibility with current valid backups.
-- [ ] Add automated tests for legacy backups, unsupported future schema versions, malformed metadata and unchanged inventory on rejection.
-- [ ] Produce an example Lite backup fixture for future Pro import contract tests, without real infrastructure or sensitive data.
+- [x] Add version metadata to JSON exports and a documented versioned import/migration strategy while retaining compatibility with current valid backups.
+- [x] Add automated tests for legacy backups, unsupported future schema versions, malformed metadata and unchanged inventory on rejection.
+- [x] Produce an example Lite backup fixture for future Pro import contract tests, without real infrastructure or sensitive data.
 - [ ] Complete release packaging, offline upgrade/restore acceptance and owner publication approval.
+
+
+## Final private preparation pass — 10 October 2026
+
+Implemented manual release checks and safe update guide, BACKUP-FORMAT.md, populated fictional schema-v1/legacy fixtures, detached non-mutating migration, generated-file upgrade regression test, embedded licence viewer, version-named ZIP with guides/examples and SHA-256 verification. See RELEASE-REVIEW.md for scope and evidence.
+
+Safari upgrade/move/rename and actual VoiceOver acceptance remain unconfirmed; follow RELEASE-ACCEPTANCE.md. No claim of completed Safari/VoiceOver acceptance is made for this new candidate. Prepare stable 1.0.0 only after acceptance, then rerun checks and obtain separate publication approval.

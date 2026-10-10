@@ -47,8 +47,16 @@ try {
   }
   if (html.includes('../assets/')) throw Error('External brand asset reference remains');
   if (/<(?:script|link)\b[^>]*\b(?:src|href)=["']https?:\/\//i.test(html)) throw Error('Remote runtime resource remains');
+  // Complete runtime notices travel with the standalone HTML as well as the ZIP.
+  const noticePaths = ['LICENSE', 'THIRD-PARTY-NOTICES.md', 'licenses/FONT-AWESOME-6.4.0.txt', 'licenses/TAILWIND-CSS-3.4.17.txt'];
+  const escape = text => text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const notices = noticePaths.map(name => name + '\n\n' + fs.readFileSync(path.resolve(root, '..', name), 'utf8')).join('\n\n--------------------\n\n');
+  const template = /<template id="caffoot-license-notices">[\s\S]*?<\/template>/;
+  if (!template.test(html)) throw Error('Licence notice template missing');
+  html = html.replace(template, () => '<template id="caffoot-license-notices">' + escape(notices) + '</template>');
   fs.mkdirSync(path.dirname(destination), { recursive: true });
   fs.writeFileSync(destination, html);
   console.log('Built ' + destination + ' (' + Buffer.byteLength(html) + ' bytes)');
   console.log('Review the generated HTML in a browser before releasing.');
 } finally { fs.rmSync(tmp, { recursive: true, force: true }); }
+

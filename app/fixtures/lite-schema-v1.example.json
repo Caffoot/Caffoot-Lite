@@ -1,0 +1,146 @@
+{
+  "stateVersion": 3,
+  "subnets": [
+    {
+      "id": "example-subnet",
+      "name": "Example lab",
+      "cidr": "192.168.40.0/24",
+      "vlan": 40,
+      "gateway": "192.168.40.1",
+      "description": "Fictional demonstration subnet"
+    }
+  ],
+  "vlans": [
+    {
+      "id": "example-vlan",
+      "name": "Example lab",
+      "vlanId": 40,
+      "description": "Fictional demonstration VLAN"
+    }
+  ],
+  "racks": [
+    {
+      "id": "example-rack",
+      "name": "Example rack",
+      "heightU": 12,
+      "depth": 800,
+      "type": "Free Standing",
+      "location": "Example room"
+    }
+  ],
+  "devices": [
+    {
+      "id": "example-server",
+      "name": "Example server",
+      "type": "Server - Physical",
+      "mountType": "Rack Mounted",
+      "location": "Racked",
+      "primaryIp": "192.168.40.10",
+      "ipReserved": false,
+      "status": "Active",
+      "manufacturer": "Example maker",
+      "model": "Example 2U",
+      "serialNumber": "FICTIONAL-001",
+      "notes": "Fictional contract fixture",
+      "rackId": "example-rack",
+      "face": "front",
+      "rackUStart": 2,
+      "rackUEnd": 3,
+      "rackUHeight": 2,
+      "typeDetails": {
+        "os": "Example OS",
+        "memory": "32",
+        "memoryUnit": "GB",
+        "legacyExampleFlag": true
+      }
+    },
+    {
+      "id": "example-desktop",
+      "name": "Example desktop",
+      "type": "Desktop",
+      "mountType": "Desktop",
+      "location": "Example room",
+      "primaryIp": "192.168.40.11",
+      "ipReserved": true,
+      "status": "Maintenance",
+      "manufacturer": "Example maker",
+      "model": "Example desktop",
+      "serialNumber": "FICTIONAL-002",
+      "notes": "Reserved primary address example",
+      "rackId": "",
+      "face": "front",
+      "rackUStart": null,
+      "rackUEnd": null,
+      "rackUHeight": null,
+      "typeDetails": {
+        "os": "Example OS",
+        "storage": "512",
+        "storageUnit": "GB"
+      }
+    }
+  ],
+  "rackAccessories": [
+    {
+      "id": "example-panel",
+      "rackId": "example-rack",
+      "type": "patch",
+      "name": "Example patch panel",
+      "face": "rear",
+      "startU": 7,
+      "heightU": 1,
+      "portCount": 24
+    }
+  ],
+  "deviceTypes": [
+    "Server - Physical",
+    "Desktop",
+    "Unknown"
+  ],
+  "deviceTypeGraphics": {},
+  "deviceLocations": [
+    "Racked",
+    "Unknown",
+    "Example room"
+  ],
+  "ipAllocations": {
+    "192.168.40.10": {
+      "status": "Assigned",
+      "deviceId": "example-server",
+      "hostname": "Example server",
+      "notes": "Fictional contract fixture"
+    },
+    "192.168.40.11": {
+      "status": "Reserved",
+      "deviceId": "example-desktop",
+      "hostname": "Example desktop",
+      "notes": "Reserved primary address example"
+    },
+    "192.168.40.20": {
+      "status": "Reserved",
+      "deviceId": "",
+      "reservedForDeviceId": "example-server",
+      "hostname": "Example spare",
+      "notes": "Fictional independent reservation"
+    }
+  },
+  "serverFunctions": [
+    {
+      "key": "legacyExampleFlag",
+      "label": "Example historical function"
+    }
+  ],
+  "installedSoftware": [
+    {
+      "key": "exampleSoftware",
+      "label": "Example software"
+    }
+  ],
+  "managedOptionsCleared": true,
+  "caffootBackup": {
+    "format": "caffoot-inventory",
+    "schemaVersion": 1,
+    "app": "Caffoot Lite",
+    "appVersion": "1.0.0-rc.1",
+    "exportedAt": "2026-10-10T15:00:00.000Z"
+  }
+}

@@ -24,5 +24,7 @@ assert.doesNotMatch(html, /<(?:script|link|img|source|iframe)\b[^>]*\b(?:src|hre
 
 assert.match(html, /switchTab\('dashboard'\)/, 'Dashboard startup missing');
 assert.match(html, /exportData\(\)/, 'Export function reference missing');
+assert.match(html, /<template id="caffoot-license-notices">[\s\S]*?SIL OPEN FONT LICENSE[\s\S]*?<\/template>/, 'Complete embedded licence notices missing');
 console.log('PASS: standalone HTML structure and local assets verified.');
 console.log('NOTE: This does not replace browser testing, especially offline file:// operation and import/export.');
+

@@ -23,6 +23,7 @@ Tailwind CSS is used at build time to generate the CSS embedded in the standalon
 
 ## Distribution reminder
 
-The pinned dependencies' upstream licence texts are checked into `licenses/` for attribution and release preparation. **Before public distribution**, verify the exact packaged dependency licence files against these copies and ensure the complete notices accompany the downloadable HTML (or are clearly accessible within it). The standalone HTML currently does not embed these complete licence texts.
+The pinned dependencies' upstream licence texts are checked into `licenses/` for attribution and release preparation. **Before public distribution**, verify the exact packaged dependency licence files against these copies and ensure the complete notices accompany the downloadable HTML (or are clearly accessible within it). The generated standalone HTML now embeds these complete texts, accessible through Settings & Data → About Caffoot Lite → Software licences; the version-named ZIP includes separate copies. The package script verifies pinned installed licence files and extracted ZIP bytes.
 
 Caffoot branding, name and mascot are not licensed as third-party components by this document.
+

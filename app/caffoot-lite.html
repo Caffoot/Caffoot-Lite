@@ -848,6 +848,8 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
         </main>
     </div>
 
+    <template id="caffoot-license-notices">Developer source: see LICENSE, THIRD-PARTY-NOTICES.md and licenses/. Complete notices are embedded in the generated standalone build.</template>
+
     <!-- Universal Modal Container -->
     <div id="modal-container" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
         <div id="modal-content" role="dialog" aria-modal="true" tabindex="-1" class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-5xl border border-slate-200 dark:border-slate-700 overflow-hidden transform transition-all">
@@ -4417,7 +4419,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             } else if (section === 'preferences') {
                 body = panel('Appearance','Switch between the existing light and dark themes.',button('phase16a-theme','Switch light / dark','fa-circle-half-stroke'));
             } else {
-                body = panel('About Caffoot Lite','Standalone browser-based network inventory, IP address management and rack documentation. Data is saved locally in this browser. Version ' + CAFFOOT_LITE_VERSION);
+                body = panel('About Caffoot Lite','Standalone browser-based network inventory, IP address management and rack documentation. Data is saved locally in this browser. Version ' + CAFFOOT_LITE_VERSION,button('caffoot-licences','Software licences','fa-file-lines'));
             }
             const tabs = [['backup','Data Management','fa-database'],['preferences','Preferences','fa-palette'],['about','About Caffoot Lite','fa-circle-info']];
             return `<div class="phase16a-workspace phase16b-workspace"><div class="phase16a-intro"><h2>Settings & Data</h2><p>Manage your data, appearance and application health — without duplicate tools.</p></div>
@@ -4447,6 +4449,11 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 return a.pre[i] > b.pre[i] ? 1 : -1;
             }
             return 0;
+        }
+
+        function caffootShowLicences() {
+            const template = document.getElementById('caffoot-license-notices');
+            openModal(`<div class="p-6 space-y-4"><h3 class="text-lg font-bold">Software licences</h3><div class="text-sm whitespace-pre-wrap break-words">${template ? template.innerHTML : 'See LICENSE and THIRD-PARTY-NOTICES.md beside the developer source.'}</div></div>`);
         }
 
         function caffootUpdateGuide() {
@@ -4632,6 +4639,11 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 throw new Error('This backup uses a newer inventory schema. Update Caffoot Lite before importing it.');
             return meta.schemaVersion;
         }
+        // Work on a detached copy: legacy normalisation must never mutate the input backup.
+        function phase20MigrateBackup(raw) {
+            phase20ValidateBackupVersion(raw);
+            return normaliseState(JSON.parse(JSON.stringify(raw)));
+        }
         function exportData() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(phase20CreateBackup(), null, 2));
             const dlAnchor = document.createElement('a');
@@ -4704,7 +4716,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             phase16CRejectUnsafeKeys(raw);
             phase11ValidateBackupShape(raw);
             phase20ValidateBackupVersion(raw);
-            const candidate = normaliseState(raw);
+            const candidate = phase20MigrateBackup(raw);
             const original = appState;
             let issues;
             try {
@@ -5232,6 +5244,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 case 'tab-audit': switchTab('audit'); break;
                 case 'export-audit': exportAuditHistory(); break;
                 case 'phase16a-check-safety': phase16ACheckSafety(); break;
+                case 'caffoot-licences': caffootShowLicences(); break;
                 case 'caffoot-check-updates': caffootCheckUpdates(); break;
                 case 'caffoot-update-guide': caffootUpdateGuide(); break;
                 case 'phase11-export-backup': exportData(); break;

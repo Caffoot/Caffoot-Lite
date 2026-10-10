@@ -21,7 +21,7 @@ When the first stable GitHub Release is published:
 
 1. Open this repository's **Releases** page.
 2. Under the latest stable release, expand **Assets**.
-3. Download **`Caffoot-Lite.html`** (not the source-code ZIP).
+3. Prefer the version-named **`Caffoot-Lite-1.0.0.zip`** release asset, which includes guides and licences. Extract it and open `Caffoot-Lite.html`. The standalone HTML is also self-contained with embedded notices. Do not download GitHub’s automatically generated source-code ZIP to run the app.
 4. Open it in a modern browser. No Docker, Node.js or web server is required to run the release file.
 
 **A public download is not available yet.** See the detailed [installation and upgrade guide](INSTALLATION.md) for the complete process and storage precautions.
@@ -66,3 +66,8 @@ The [roadmap and release checklist](ROADMAP.md) record remaining tests, security
 Source code: [MIT License](LICENSE), copyright (c) 2026 Steven Del-Nevo. Third-party components retain their own licence terms.
 
 The Caffoot name, hedgehog mascot and official project branding are **not** licensed as official branding by the MIT software licence. No registered-trademark claim is made. Do not present a modified build as an official Caffoot release without the owner's permission.
+
+
+## Backup compatibility and release preparation
+
+The [backup format contract](BACKUP-FORMAT.md) documents versioned exports and legacy imports for future Lite-to-Pro migration. Pro import has not been implemented yet. The [final acceptance walkthrough](RELEASE-ACCEPTANCE.md) and [release review](RELEASE-REVIEW.md) distinguish automated checks from remaining Safari/VoiceOver owner tests.
