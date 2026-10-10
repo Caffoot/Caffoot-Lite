@@ -51,6 +51,7 @@ jobs:
         run: |
           node test-browser-offline.cjs
           node test-browser-import.cjs
+          node test-browser-restore.cjs
       - name: Upload standalone HTML for testing
         uses: actions/upload-artifact@v4
         with:
