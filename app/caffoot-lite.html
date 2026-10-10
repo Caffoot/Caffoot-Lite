@@ -3660,7 +3660,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             if (!rack) { showToast('Select a rack before mounting a device.', 'error'); return; }
             const occupant = appState.devices.find(d => d.rackId === rackId && (d.face || 'front') === activeRackFace &&
                 Number(d.rackUStart) <= Number(slotU) && Number(d.rackUEnd || d.rackUStart) >= Number(slotU));
-            const unassignedDevices = appState.devices.filter(d => d.mountType === 'Rack Mounted' && (!d.rackId || d.rackId === rackId));
+            const unassignedDevices = appState.devices.filter(d => d.mountType === 'Rack Mounted' && phase19BAllowedMounts(d.type).includes('Rack Mounted') && (!d.rackId || d.rackId === rackId));
             if (occupant) unassignedDevices.sort((a, b) => (a.id === occupant.id ? -1 : b.id === occupant.id ? 1 : 0));
 
             openModal(`
@@ -3710,7 +3710,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             const uStart = parseInt(document.getElementById('assign-u-start').value);
 
             const device = appState.devices.find(d => d.id === deviceId);
-            if (!device || device.mountType !== 'Rack Mounted') {
+            if (!device || device.mountType !== 'Rack Mounted' || !phase19BAllowedMounts(device.type).includes('Rack Mounted')) {
                 showToast('Only devices configured as Rack Mounted can be placed in a rack.', 'error');
                 return;
             }
@@ -4094,8 +4094,12 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
         }
 
         function phase19BIsAccessPoint(type){return phase19BTypeGroups[String(type||'').toLowerCase().trim()]==='ap';}
+        function phase19BAllowedMounts(type){
+            if (['desktop','laptop','tablet'].includes(String(type || '').trim().toLowerCase())) return ['Desktop'];
+            return phase19BIsAccessPoint(type)?['Desktop','Ceiling Mounted','Wall Mounted']:['Desktop','Rack Mounted'];
+        }
         function phase19BMountOptions(type, selected){
-            const opts=phase19BIsAccessPoint(type)?['Desktop','Ceiling Mounted','Wall Mounted']:['Desktop','Rack Mounted'];
+            const opts=phase19BAllowedMounts(type);
             return opts.map(v=>`<option value="${v}" ${selected===v?'selected':''}>${v}</option>`).join('');
         }
         function phase19BUpdateMountChoices(){
@@ -4103,7 +4107,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             const mount=document.getElementById('dev-mount-type');
             if(!mount)return;
             const previous=mount.value;
-            const options=phase19BIsAccessPoint(type)?['Desktop','Ceiling Mounted','Wall Mounted']:['Desktop','Rack Mounted'];
+            const options=phase19BAllowedMounts(type);
             mount.innerHTML='<option value="" disabled>Select mounting type...</option>'+phase19BMountOptions(type,options.includes(previous)?previous:'Desktop');
             mount.value=options.includes(previous)?previous:'Desktop';
             toggleDeviceMountType();
@@ -4119,7 +4123,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             phase19BFormValues = {...(draft?.typeDetails ?? device?.typeDetails ?? {})};
             const currentLoc = draft?.location ?? device?.location ?? '';
             const requestedMountType = draft?.mountType ?? device?.mountType ?? (currentLoc === 'Racked' ? 'Rack Mounted' : 'Desktop');
-            const mountType = (phase19BIsAccessPoint(currentType) && requestedMountType === 'Rack Mounted') ? 'Desktop' : requestedMountType;
+            const mountType = phase19BAllowedMounts(currentType).includes(requestedMountType) ? requestedMountType : 'Desktop';
             const currentSubnet = draft?.subnetId ? appState.subnets.find(s => s.id === draft.subnetId) : (device?.primaryIp ? getSubnetForIp(device.primaryIp) : null);
             const currentHeight = draft?.rackUHeight || (device?.rackUStart && device?.rackUEnd ? Math.max(1, Number(device.rackUEnd) - Number(device.rackUStart) + 1) : 1);
             openModal(`
@@ -4313,7 +4317,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             if (!name) return showToast('Please enter a device name.', 'error');
             if (appState.devices.some(d => String(d.id) !== String(deviceId || '') && String(d.name || '').trim().toLowerCase() === name.toLowerCase())) return showToast('A device with this name already exists. Please enter a unique device name.', 'error');
             if (!type) return showToast('Please select a device type.', 'error');
-            if (!mountType || !(phase19BIsAccessPoint(type)?['Desktop','Ceiling Mounted','Wall Mounted']:['Desktop','Rack Mounted']).includes(mountType)) return showToast('Please select a valid mounting option for this device type.', 'error');
+            if (!mountType || !phase19BAllowedMounts(type).includes(mountType)) return showToast('Please select a valid mounting option for this device type.', 'error');
             if (!location) return showToast('Please select a location.', 'error');
             if (!subnetId) return showToast('Please select an existing subnet.', 'error');
             if (!primaryIp) return showToast('Please enter a primary IP address.', 'error');
