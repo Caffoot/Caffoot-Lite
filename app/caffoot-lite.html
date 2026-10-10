@@ -3897,6 +3897,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                     <button type="button" data-action="phase14c-duplicate" data-id="${safe(d.id)}" class="phase19d1-secondary"><i class="fa-solid fa-copy" aria-hidden="true"></i>Duplicate</button>
                     ${mounted ? `<button type="button" data-action="phase14c-rack" data-id="${safe(d.id)}" class="phase19d1-secondary"><i class="fa-solid fa-server" aria-hidden="true"></i>View in rack</button>` : ''}
                     <button type="button" data-action="phase14c-edit" data-id="${safe(d.id)}" class="phase19d1-edit"><i class="fa-solid fa-pen" aria-hidden="true"></i>Edit device</button>
+                    <button type="button" data-action="phase14c-delete" data-id="${safe(d.id)}" class="phase14f-danger"><i class="fa-solid fa-trash mr-1" aria-hidden="true"></i>Delete device</button>
                     <button type="button" data-action="close-modal" class="phase19d1-close"><i class="fa-solid fa-check" aria-hidden="true"></i>Close</button>
                 </footer>
             </div>`);
@@ -5035,6 +5036,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 case 'view-device': phase14CViewDevice(id); break;
                 case 'phase14c-edit': closeModal(); openDeviceModal(id); break;
                 case 'phase14c-duplicate': closeModal(); duplicateDevice(id); break;
+                case 'phase14c-delete': closeModal(); deleteDevice(id); break;
                 case 'phase14c-rack': phase14CGoToRack(id); break;
                 case 'duplicate-device': duplicateDevice(id); break;
                 case 'delete-device': deleteDevice(id); break;
