@@ -1,0 +1,128 @@
+name: Publish approved Caffoot Lite v1.0.0
+
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/publish-v1.0.0.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: caffoot-lite-publish-v1.0.0
+  cancel-in-progress: false
+
+jobs:
+  publish-approved-release:
+    if: github.repository == 'sdelnevo/Caffoot-Lite' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Retrieve the exact green owner-approved artifact
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('node:fs');
+            const crypto = require('node:crypto');
+            const {owner, repo} = context.repo;
+            const sourceSha = '6f5d38e6959016fb236763f8f7a241de14d23c83';
+            const runId = 38064002992;
+            const run = (await github.rest.actions.getWorkflowRun({owner, repo, run_id: runId})).data;
+            if (run.head_sha !== sourceSha || run.conclusion !== 'success' || run.status !== 'completed') throw Error('Approved source build is not green');
+            const repository = (await github.rest.repos.get({owner, repo})).data;
+            if (repository.private) throw Error('Owner-approved public visibility change has not occurred');
+            const artifacts = (await github.rest.actions.listWorkflowRunArtifacts({owner, repo, run_id: runId})).data.artifacts;
+            const matches = artifacts.filter(a => a.name === 'caffoot-lite-offline-preview' && !a.expired);
+            if (matches.length !== 1 || matches[0].id !== 11673649965) throw Error('Approved artifact not found');
+            const downloaded = await github.rest.actions.downloadArtifact({owner, repo, artifact_id: matches[0].id, archive_format: 'zip'});
+            const bytes = Buffer.from(downloaded.data);
+            const digest = crypto.createHash('sha256').update(bytes).digest('hex');
+            if (digest !== '26f8e8566a32bd2ab12dd2ad9c742dfc44ba0222f63841bd307fa1215bf90f9e') throw Error('Approved artifact digest mismatch');
+            fs.writeFileSync('approved-artifact.zip', bytes);
+            core.info('Verified exact green source commit and approved artifact archive digest.');
+      - name: Verify approved downloads and finalise release-note wording
+        run: |
+          python3 - <<'PY'
+          import hashlib, pathlib, zipfile, re
+          digest=lambda data: hashlib.sha256(data).hexdigest()
+          destination=pathlib.Path('approved-downloads'); destination.mkdir()
+          with zipfile.ZipFile('approved-artifact.zip') as outer:
+              expected={'Caffoot-Lite.html','Caffoot-Lite-1.0.0.zip','SHA256SUMS'}
+              members={pathlib.PurePosixPath(n).name:n for n in outer.namelist() if not n.endswith('/')}
+              if set(members)!=expected: raise RuntimeError('Unexpected artifact members')
+              for name, entry in members.items(): (destination/name).write_bytes(outer.read(entry))
+          for line in (destination/'SHA256SUMS').read_text().splitlines():
+              checksum,name=line.split('  ',1)
+              if name not in {'Caffoot-Lite.html','Caffoot-Lite-1.0.0.zip'}: raise RuntimeError('Unexpected checksum target')
+              if digest((destination/name).read_bytes())!=checksum: raise RuntimeError('Approved download hash mismatch')
+          html=(destination/'Caffoot-Lite.html').read_bytes()
+          if b"const CAFFOOT_LITE_VERSION = '1.0.0';" not in html: raise RuntimeError('Wrong application version')
+          archive=destination/'Caffoot-Lite-1.0.0.zip'
+          with zipfile.ZipFile(archive) as z:
+              infos=z.infolist(); data={i.filename:z.read(i.filename) for i in infos}
+          expected={'Caffoot-Lite.html','RELEASE-NOTES-1.0.0.md','LICENSE','THIRD-PARTY-NOTICES.md','INSTALLATION.md','USER-GUIDE.md','BACKUP-FORMAT.md','licenses/FONT-AWESOME-6.4.0.txt','licenses/TAILWIND-CSS-3.4.17.txt','app/fixtures/lite-schema-v1.example.json','app/fixtures/lite-legacy.example.json','SHA256SUMS'}
+          if set(data)!=expected or len(infos)!=len(expected): raise RuntimeError('Unexpected release ZIP members')
+          if data['Caffoot-Lite.html']!=html: raise RuntimeError('ZIP HTML does not match approved standalone HTML')
+          checked=set()
+          for line in data['SHA256SUMS'].decode().splitlines():
+              checksum,name=line.split('  ',1)
+              if name not in expected-{'SHA256SUMS'} or name in checked: raise RuntimeError('Invalid member checksum list')
+              if digest(data[name])!=checksum: raise RuntimeError('ZIP member checksum mismatch')
+              checked.add(name)
+          if checked!=expected-{'SHA256SUMS'}: raise RuntimeError('Incomplete ZIP member checksums')
+          notes=data['RELEASE-NOTES-1.0.0.md'].decode()
+          notes=notes.replace('**Status: prepared privately; not published. Owner publication approval is outstanding.**','**First stable release — 10 October 2026.**')
+          notes=notes.replace('## Download and run when published','## Download and run')
+          notes=notes.replace('Version 1.0.0 is rebuilt and runs the full automated suite before publication approval.','The final version 1.0.0 build passed the full automated suite before publication approval.')
+          data['RELEASE-NOTES-1.0.0.md']=notes.encode()
+          data['SHA256SUMS']=(''.join(digest(data[name])+'  '+name+'\n' for name in sorted(expected-{'SHA256SUMS'}))).encode()
+          with zipfile.ZipFile(archive,'w') as z:
+              for info in infos: z.writestr(info,data[info.filename])
+          with zipfile.ZipFile(archive) as z:
+              for name,bytes_ in data.items():
+                  if z.read(name)!=bytes_: raise RuntimeError('Final ZIP verification failed')
+          (destination/'SHA256SUMS').write_text(''.join(digest((destination/name).read_bytes())+'  '+name+'\n' for name in ['Caffoot-Lite.html','Caffoot-Lite-1.0.0.zip']))
+          (destination/'release-body.md').write_text(notes)
+          print('PASS: approved artifact, download/member hashes, version and exact ZIP contents. Runnable HTML bytes unchanged; only release-note wording and checksums finalised.')
+          PY
+      - name: Attach verified files to draft then publish stable release
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('node:fs');
+            const crypto = require('node:crypto');
+            const {owner, repo} = context.repo;
+            const tag = 'v1.0.0';
+            const sourceSha = '6f5d38e6959016fb236763f8f7a241de14d23c83';
+            let release;
+            try { release = (await github.rest.repos.getReleaseByTag({owner, repo, tag})).data; }
+            catch (error) { if (error.status !== 404) throw error; }
+            if (release && !release.draft) {
+              core.info('v1.0.0 is already published; refusing to modify existing public release.');
+              return;
+            }
+            if (release && release.target_commitish !== sourceSha) throw Error('Existing draft targets a different commit');
+            try {
+              const ref = (await github.rest.git.getRef({owner, repo, ref:'tags/'+tag})).data;
+              if (ref.object.sha !== sourceSha || ref.object.type !== 'commit') throw Error('Existing tag does not point at approved commit');
+            } catch(error) { if (error.status !== 404) throw error; }
+            const body = fs.readFileSync('approved-downloads/release-body.md','utf8');
+            if (!release) release = (await github.rest.repos.createRelease({owner, repo, tag_name:tag, target_commitish:sourceSha, name:'Caffoot Lite v1.0.0', body, draft:true, prerelease:false})).data;
+            else await github.rest.repos.updateRelease({owner, repo, release_id:release.id, name:'Caffoot Lite v1.0.0', body, draft:true, prerelease:false});
+            const files = [['Caffoot-Lite-1.0.0.zip','application/zip'],['Caffoot-Lite.html','text/html'],['SHA256SUMS','text/plain']];
+            const assets = (await github.rest.repos.listReleaseAssets({owner, repo, release_id:release.id})).data;
+            if (assets.some(a=>!files.some(([name])=>name===a.name))) throw Error('Draft has unexpected assets');
+            for (const [name, type] of files) {
+              const bytes = fs.readFileSync('approved-downloads/'+name);
+              const hash = 'sha256:'+crypto.createHash('sha256').update(bytes).digest('hex');
+              let asset = assets.find(a=>a.name===name);
+              if (!asset) asset = (await github.rest.repos.uploadReleaseAsset({owner, repo, release_id:release.id, name, data:bytes, headers:{'content-type':type,'content-length':bytes.length}})).data;
+              if (asset.state !== 'uploaded' || asset.size !== bytes.length || asset.digest !== hash) throw Error('Uploaded asset verification failed: '+name);
+            }
+            const all = (await github.rest.repos.listReleaseAssets({owner, repo, release_id:release.id})).data;
+            if (all.length !== files.length || all.some(a=>a.state!=='uploaded')) throw Error('Release assets incomplete');
+            const published = (await github.rest.repos.updateRelease({owner, repo, release_id:release.id, draft:false, prerelease:false, make_latest:'true'})).data;
+            if (published.draft || published.prerelease) throw Error('Stable publication not confirmed');
+            core.info('Published '+published.html_url);
