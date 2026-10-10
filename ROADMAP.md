@@ -45,7 +45,7 @@ These checks are valuable regression coverage, **not** a complete security audit
 
 ## Remaining release gates
 
-- [x] Latest prior private GitHub Actions build green (`12568fd`, checked 10 October 2026); this preparation pass requires its own green run.
+- [x] Final private preparation source build green (`be6eac2`, workflow `38063343516`, 10 October 2026), including moved/renamed-file browser restore and verified ZIP.
 - [x] Generated HTML operates offline in Safari and retains inventory after reopening.
 - [x] Basic Add/Edit Device, next available IP and Device/IPAM synchronisation tested in Safari.
 - [x] Rack mounting restrictions and core U integrity tested in Safari.

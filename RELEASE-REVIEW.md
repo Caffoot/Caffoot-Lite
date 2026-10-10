@@ -4,11 +4,11 @@ Candidate: `1.0.0-rc.1`. Planned stable version: `1.0.0`, subject to final manua
 
 ## Privacy and source/history scope
 
-Reviewed the main-branch history through `12568fd0c8dcf71218909a7abd127b233e954bb3`: 208 commits, 226 unique blobs, including 222 readable text blobs and four branding image blobs. Recursive trees were retrieved for every commit, including deleted historical development documents. Only `main` was returned by the branch inventory. Later changes in this preparation pass are also reviewed and tested before the new commit.
+Reviewed the main-branch history through `12568fd0c8dcf71218909a7abd127b233e954bb3`: 208 commits, 226 unique blobs, including 222 readable text blobs and four branding image blobs. Recursive trees were retrieved for every commit, including deleted historical development documents. Only `main` was returned by the branch inventory; the tag-ref inventory was empty. Later changes in this preparation pass are also reviewed and tested before the new commit.
 
 Common private-key markers, GitHub/AWS/OpenAI token patterns, email-address patterns, and quoted password/secret/API-key/access-token assignments produced no findings in the text blobs. Pattern scanning cannot prove that arbitrary credentials or sensitive prose are absent. IPv4 values reviewed are source examples, placeholders and automated-test fixtures; no saved inventory/credential export was found among repository paths. Current starter inventory arrays and IPAM are empty.
 
-Legacy source retains names of historical server/software options (for example Swan, Planet and TMS) and old NetMini/Personal development terminology in commit history. These are compatibility labels and development history, not actual customer inventory or credentials. This review does not rewrite history or remove historical detail keys needed to read older backups. The owner's software copyright attribution and repository identity are intentional public-facing information. Branding image bytes are packaged as the approved project assets; no separate metadata/ownership certification is claimed.
+Legacy source retains names of historical server/software options (for example Swan, Planet and TMS) and old NetMini/Personal development terminology in commit history. These are compatibility labels and development history, not actual customer inventory or credentials. This review does not rewrite history or remove historical detail keys needed to read older backups. The owner's software copyright attribution and repository identity are intentional public-facing information. The three PNG branding files had no metadata keys reported by Pillow. Branding image bytes are packaged as the approved project assets; no ownership certification is claimed.
 
 The generated HTML embeds styling, fonts and branding. Normal use does not need outbound requests. The only application `fetch` is the manually invoked public GitHub latest-release check: fixed URL, no inventory payload, credentials omitted, no referrer. Following Official releases is a user-initiated external navigation. Developer source still references Tailwind/Font Awesome CDNs and must not be distributed as the offline artifact.
 
@@ -35,3 +35,7 @@ See `RELEASE-ACCEPTANCE.md`: Safari upgrade/move/rename steps 1–7 and VoiceOve
 ### Local file storage scope
 
 The upgrade test observed shared browser storage across original and renamed HTML paths in the CI Chromium profile. Do not assume separate folders protect separate inventories: restoring in a new copy can change data visible in the old copy. Other browsers may isolate paths. Keep an exported JSON backup outside the browser; use a separate browser profile for isolated test inventories. The test asserts restoration and persistence according to the observed scope instead of assuming isolation.
+
+## Final automated result
+
+All checks passed for source commit `be6eac2304fd4dd60582d3c884b61fc85767dba0`, workflow `38063343516`. This includes all existing browser checks and the new populated upgrade test. The verified version-named ZIP and checksum list were uploaded as a private Actions artifact. No tag, public release or visibility change was made. The remaining Safari and VoiceOver evidence is explicitly pending.

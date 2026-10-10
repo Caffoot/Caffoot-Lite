@@ -4,7 +4,7 @@ Publication is blocked until the remaining manual checks below are confirmed and
 
 ## Safari upgrade, move and rename — owner check required
 
-Use a copy of your HTML and exported test inventory, keeping your real file and backup safe. Do not clear real browser data.
+Use a separate Safari test profile with a copy of your HTML and exported test inventory. Keep your real file and backup safe; some local files share storage in the same profile. Do not clear real browser data.
 
 1. In the existing version, export JSON; note device, subnet, rack and IPAM counts and one known device/rack placement.
 2. Extract the latest preview ZIP into a separate folder and open its `Caffoot-Lite.html` in Safari. Record whether existing inventory is visible: either outcome can occur because file storage scope varies.
@@ -36,3 +36,7 @@ Set the app/backup producer and package versions to `1.0.0` consistently, update
 ### Local file storage scope
 
 The upgrade test observed shared browser storage across original and renamed HTML paths in the CI Chromium profile. Do not assume separate folders protect separate inventories: restoring in a new copy can change data visible in the old copy. Other browsers may isolate paths. Keep an exported JSON backup outside the browser; use a separate browser profile for isolated test inventories. The test asserts restoration and persistence according to the observed scope instead of assuming isolation.
+
+## Verified private preview
+
+Source commit: `be6eac2304fd4dd60582d3c884b61fc85767dba0`. Full private workflow [38063343516](https://github.com/sdelnevo/Caffoot-Lite/actions/runs/38063343516) passed build, regression, offline browser, upgraded-file restore, package and artifact checks. Download `caffoot-lite-offline-preview` from that run; extract its inner `Caffoot-Lite-1.0.0-rc.1.zip` for testing. Safari/VoiceOver results are still pending.
