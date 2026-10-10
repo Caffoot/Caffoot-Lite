@@ -14,7 +14,7 @@
 - Light/dark UI improvements, consistent forms and Safari rack scrolling refinements.
 - Offline single-HTML build pipeline and automated checks.
 
-The features above are implemented or recorded as delivered in the original NetMini roadmap. **Latest Caffoot Lite browser regression and release approval remain outstanding.**
+The features above are recorded as delivered. **Latest Caffoot Lite browser regression and release approval remain outstanding.**
 
 ## v1.0 completion checklist
 
@@ -44,7 +44,5 @@ These were **proposals**, not committed v1.0 requirements. Confirm scope before 
 ## Compatibility and project boundaries
 
 **Data compatibility:** Preserve existing browser inventories and supported JSON backup formats. The primary storage key is `caffoot_state`; this pre-release build does not automatically migrate legacy test storage. Export and restore JSON backups to retain test data.
-
-**Independent projects:** Caffoot Lite is developed and released separately from Caffoot Server. Changes to Lite must not modify the Server repository.
 
 **Safe releases:** Keep a known-good standalone HTML build and recommend exporting a JSON backup before upgrading. Validate new builds before publishing them.
