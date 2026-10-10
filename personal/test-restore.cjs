@@ -32,7 +32,7 @@ function scenario(mode) {
     removeItem(k) {store.delete(k);}
   };
   ctx = vm.createContext({
-    appState:original, localStorage:storage, SAFETY_SNAPSHOT_KEY:safety,
+    appState:original, localStorage:storage, STORAGE_KEY:key, SAFETY_SNAPSHOT_KEY:safety,
     nextAuditReason:'',auditBaseline:JSON.stringify(original),
     phase17AStorageRecovery:null,phase17ARecoveryBanner:()=>{ctx.bannerShown=true;},
     selectedSubnetId:'',selectedRackId:'',
