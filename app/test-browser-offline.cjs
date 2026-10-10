@@ -168,6 +168,35 @@ const { chromium } = require('playwright');
     assert(subnetProbe.labels.every(field => field.labelled),
       'All five subnet fields must have associated labels');
     console.log('PASS: subnet edit fields safely preserve hostile text and accessible labels.');
+    // IPAM regression: visible labels must identify the actual controls, and
+    // an unexpected allocation key must never become markup in the heading.
+    const ipProbe = await page.evaluate(() => {
+      const ip = '192.168.77.42<img src=x onerror=alert(1)>';
+      openIpModal(ip);
+      try {
+        const dialog = document.getElementById('modal-content');
+        const fields = ['ip-status', 'ip-hostname', 'ip-notes'].map(id => {
+          const el = dialog.querySelector('#' + id);
+          return { id, label: el && el.labels && el.labels[0] && el.labels[0].textContent.trim() };
+        });
+        return {
+          fields,
+          heading: dialog.querySelector('h3')?.textContent,
+          images: dialog.querySelectorAll('img').length
+        };
+      } finally {
+        closeModal();
+      }
+    });
+    assert.deepEqual(ipProbe.fields, [
+      { id: 'ip-status', label: 'Status' },
+      { id: 'ip-hostname', label: 'Hostname' },
+      { id: 'ip-notes', label: 'Notes' }
+    ], 'Every IPAM allocation field must have its matching accessible label');
+    assert.equal(ipProbe.heading, 'Configure IP: 192.168.77.42<img src=x onerror=alert(1)>',
+      'IP dialog heading must preserve the literal text');
+    assert.equal(ipProbe.images, 0, 'IP dialog heading must not inject HTML elements');
+    console.log('PASS: IPAM allocation labels and heading escaping in Chromium.');
     assert.deepEqual(outbound, [], 'Standalone file must not attempt network requests');
     assert.deepEqual(failures, [], 'Browser must not raise uncaught JavaScript errors');
     console.log('PASS: Chromium file:// startup, navigation, offline operation and localStorage reload.');
