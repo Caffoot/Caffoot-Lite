@@ -38,6 +38,9 @@ These checks are valuable regression coverage, **not** a complete security audit
 - **Stage 4C (5/6):** malformed JSON rejected, inventory unchanged and persisted; pre-test inventory confirmation was not checked.
 - **Stage 4D:** owner confirmed a modified backup was rejected. This is evidence of rejection, but does not independently establish every invalid-structure case.
 - **Stage 5A:** owner confirmed rejection of invalid subnet boundary, overlapping subnet, duplicate device IP and out-of-subnet IP; no issue reported.
+- **Final Device workflows (6/6):** duplicate, independent IPAM allocation, delete and release IPAM allocation, rack position cleanup and persistence; owner confirmed red Delete button works.
+- **Stage 6A — IPAM (7/7):** reservation create/edit/remove, available-address filtering, bulk action and cancellation, integrity/repair, persistence.
+- **Stage 6B — Rack workspace (7/7):** accessory add/remove and collision rejection, drag/move and occupied-position rejection, Safari scrolling, persistence (owner reported 8/7, all seven listed checks passed).
 
 ## Remaining release gates
 
@@ -47,9 +50,9 @@ These checks are valuable regression coverage, **not** a complete security audit
 - [x] Rack mounting restrictions and core U integrity tested in Safari.
 - [x] JSON export, cancelled restore, successful restore and malformed JSON rejection tested in Safari.
 - [x] Core subnet/IPAM invalid-operation rejection tested in Safari.
-- [ ] Exercise **Duplicate/Delete Device** and confirm linked IPAM/rack records stay consistent.
-- [ ] Exercise **IPAM reservations, bulk actions and integrity repair**, including cancellation and persistence.
-- [ ] Exercise **rack accessories, drag-and-drop and scrolling** on Safari; confirm no collision or accidental moves.
+- [x] Exercise **Duplicate/Delete Device** and confirm linked IPAM/rack records stay consistent.
+- [x] Exercise **IPAM reservations, bulk actions and integrity repair**, including cancellation and persistence.
+- [x] Exercise **rack accessories, drag-and-drop and scrolling** on Safari; confirm no collision or accidental moves.
 - [ ] Complete targeted **keyboard-only/VoiceOver**, mobile-width and light/dark visual checks beyond shared contrast tokens.
 - [ ] Test **HTML update/move/rename with exported JSON backup**; document browser `file://` storage differences.
 - [ ] Final source privacy review, dependency licence verification and **release ZIP contents** inspection.
