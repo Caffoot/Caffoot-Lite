@@ -487,6 +487,35 @@ const { chromium } = require('playwright');
     assert(rackFormVisibility.visibleForRack, 'Rack Mounted Device form must show rack configuration');
     assert(rackFormVisibility.hiddenForDesktop, 'Switching to Desktop must hide all rack controls');
     console.log('PASS: Device form only shows rack configuration for Rack Mounted devices.');
+    // Desktop, Laptop and Tablet types must never offer Rack Mounted.
+    const deviceTypeMountRules = await page.evaluate(() => {
+      openDeviceModal();
+      try {
+        const type = document.getElementById('dev-type');
+        const mount = document.getElementById('dev-mount-type');
+        const rack = document.getElementById('racked-options');
+        const results = {};
+        for (const value of ['Desktop', 'Laptop', 'Tablet']) {
+          if (!Array.from(type.options).some(o => o.value === value)) type.add(new Option(value, value));
+          type.value = value;
+          phase19BUpdateMountChoices();
+          const options = Array.from(mount.options).filter(o => o.value).map(o => o.value);
+          results[value] = options.length === 1 && options[0] === 'Desktop' &&
+            mount.value === 'Desktop' && rack.hidden;
+        }
+        results.serverAllowsRack = phase19BAllowedMounts('Server').includes('Rack Mounted');
+        results.caseInsensitive = phase19BAllowedMounts(' laptop ').join(',') === 'Desktop';
+        return results;
+      } finally {
+        closeModal();
+      }
+    });
+    for (const type of ['Desktop', 'Laptop', 'Tablet']) {
+      assert(deviceTypeMountRules[type], type + ' must only allow Desktop mounting');
+    }
+    assert(deviceTypeMountRules.serverAllowsRack, 'Server must retain Rack Mounted option');
+    assert(deviceTypeMountRules.caseInsensitive, 'Mounting restrictions must handle type case and whitespace');
+    console.log('PASS: Desktop, Laptop and Tablet types are Desktop-only in Device forms.');
     assert.deepEqual(outbound, [], 'Standalone file must not attempt network requests');
     assert.deepEqual(failures, [], 'Browser must not raise uncaught JavaScript errors');
     console.log('PASS: Chromium file:// startup, navigation, offline operation and localStorage reload.');
