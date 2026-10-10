@@ -465,6 +465,28 @@ const { chromium } = require('playwright');
     assert(rackMountGuard.storedUnchanged, 'Rejected rack placement must not change browser storage');
     assert(rackMountGuard.stillDesktop, 'Rejected rack placement must not convert Desktop to Rack Mounted');
     console.log('PASS: rack placement rejects Desktop devices without silently converting them.');
+    // Rack configuration must only be visible for Rack Mounted device forms.
+    const rackFormVisibility = await page.evaluate(() => {
+      openDeviceModal();
+      try {
+        const mount = document.getElementById('dev-mount-type');
+        const rackSection = document.getElementById('racked-options');
+        const initialHidden = rackSection.hidden;
+        mount.value = 'Rack Mounted';
+        toggleDeviceMountType();
+        const visibleForRack = !rackSection.hidden && !rackSection.classList.contains('hidden');
+        mount.value = 'Desktop';
+        toggleDeviceMountType();
+        const hiddenForDesktop = rackSection.hidden && rackSection.classList.contains('hidden');
+        return { initialHidden, visibleForRack, hiddenForDesktop };
+      } finally {
+        closeModal();
+      }
+    });
+    assert(rackFormVisibility.initialHidden, 'New Desktop Device form must hide rack configuration');
+    assert(rackFormVisibility.visibleForRack, 'Rack Mounted Device form must show rack configuration');
+    assert(rackFormVisibility.hiddenForDesktop, 'Switching to Desktop must hide all rack controls');
+    console.log('PASS: Device form only shows rack configuration for Rack Mounted devices.');
     assert.deepEqual(outbound, [], 'Standalone file must not attempt network requests');
     assert.deepEqual(failures, [], 'Browser must not raise uncaught JavaScript errors');
     console.log('PASS: Chromium file:// startup, navigation, offline operation and localStorage reload.');
