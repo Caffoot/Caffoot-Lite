@@ -52,7 +52,8 @@ assert(html.includes('>Manage server options</button>'), 'server options manager
 assert(html.includes('>Manage software options</button>'), 'software options manager must be in Devices');
 assert(!html.includes("button('phase19b-manage-functions','Manage Server Options'"), 'server options manager must not appear in Settings maintenance');
 assert(html.includes('data-action="phase19b-manage-software"'), 'software options manager must be accessible');
-assert(html.includes("localStorage.getItem('netmini_state')"), 'saved-data compatibility key must remain');
+assert(html.includes("const STORAGE_KEY = 'caffoot_state'"), 'Caffoot inventory storage key must remain');
+assert(!/netmini_[a-z0-9_]+/.test(html), 'Legacy NetMini browser storage keys must be removed');
 assert(html.includes('function phase17ARecoveryBanner()'), 'recovery banner must remain');
 assert(html.includes('Caffoot Lite recovery mode'), 'recovery banner must use Lite branding');
 assert(html.includes("panel('About Caffoot Lite'"), 'About panel must remain');
