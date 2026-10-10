@@ -7,6 +7,14 @@ A lightweight, standalone network inventory and IP address management (IPAM) app
 
 > **Status:** v1.0.0 release candidate preparation. The repository is private and no stable public release has been approved yet.
 
+## ⚠️ Important — your inventory lives in your browser
+
+**Caffoot Lite does not save your devices, IP addresses, racks or settings inside `Caffoot-Lite.html`.** Your inventory is stored in the **local storage of the browser you use to open it**. There is no server, automatic cloud backup or automatic synchronisation.
+
+**If browser/site data is cleared, your inventory may be permanently lost.** Changing browser or profile, or moving/renaming the HTML file, can also make existing data inaccessible because `file://` storage varies between browsers.
+
+**Export a JSON backup regularly, and ALWAYS before upgrading, moving, renaming or resetting Caffoot Lite.** Store backups somewhere safe outside the browser and verify you can restore them. Backups may contain sensitive infrastructure details.
+
 ## Download and run
 
 When the first stable GitHub Release is published:
