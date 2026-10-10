@@ -1,6 +1,6 @@
 # Final private candidate acceptance
 
-Version `1.0.0` is prepared privately following owner acceptance of the preview. Publication is blocked until the owner explicitly approves publication and the repository visibility change. The detailed walkthrough below remains a reusable checklist; it is not a claim that each numbered step was individually reported.
+Version `1.0.0` is published following owner acceptance, explicit publication approval and a successful final automated rerun. The detailed walkthrough below remains a reusable checklist; it is not a claim that each numbered step was individually reported.
 
 ## Safari upgrade, move and rename — reusable checklist
 
@@ -45,4 +45,11 @@ Source commit: `be6eac2304fd4dd60582d3c884b61fc85767dba0`. Full private workflow
 
 The owner downloaded the latest preview, opened it in Safari, liked the appearance and new warning, and reported that VoiceOver appears to work well. In response to the explicit three-step export-backup, restore/check devices/IPAM/subnets/racks, close/reopen question, the owner confirmed: “yes tested that all works really well”.
 
-This establishes owner-reported Safari restore/reopen acceptance and positive VoiceOver feedback. It does not establish a formal accessibility certification or individually witnessed results for every numbered checklist step (including manual rename, offline update check and licence-reader checks). Those behaviours also have automated coverage where applicable. Only version identifiers and release documentation change for stable 1.0.0; full automated checks run again. Publication approval has not been given.
+This establishes owner-reported Safari restore/reopen acceptance and positive VoiceOver feedback. It does not establish a formal accessibility certification or individually witnessed results for every numbered checklist step (including manual rename, offline update check and licence-reader checks). Those behaviours also have automated coverage where applicable. Only version identifiers and release documentation change for stable 1.0.0; full automated checks run again. Explicit publication approval was subsequently given, and publication is complete.
+
+
+## Publication completed — 10 October 2026
+
+The owner explicitly approved making `sdelnevo/Caffoot-Lite` public and publishing Caffoot Lite v1.0.0 with the prepared downloads. The owner changed repository visibility to public. The final stable source commit `6f5d38e6959016fb236763f8f7a241de14d23c83` passed the complete automated suite in [workflow 38064002992](https://github.com/sdelnevo/Caffoot-Lite/actions/runs/38064002992). [Publication workflow 38065143351](https://github.com/sdelnevo/Caffoot-Lite/actions/runs/38065143351) verified that exact artifact, finalised release-note wording without changing runnable HTML, checked package member hashes and uploaded asset digests, then published the stable release.
+
+[Caffoot Lite v1.0.0](https://github.com/sdelnevo/Caffoot-Lite/releases/tag/v1.0.0) includes `Caffoot-Lite-1.0.0.zip`, `Caffoot-Lite.html` and `SHA256SUMS`. The tag points to the tested source commit. Earlier private-preparation results below are retained as historical evidence.

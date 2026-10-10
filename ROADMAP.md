@@ -1,8 +1,8 @@
 # Caffoot Lite — Development Roadmap
 
 **Updated:** 10 October 2026  
-**Current milestone:** v1.0.0 prepared privately; publication approval pending  
-**Repository:** `sdelnevo/Caffoot-Lite` (private during development)  
+**Current milestone:** v1.0.0 published  
+**Repository:** `sdelnevo/Caffoot-Lite` (public)  
 **Release policy:** Publish publicly only after manual verification, security/privacy review and owner approval.
 
 ## Delivered core scope
@@ -14,9 +14,9 @@
 - Light/dark UI improvements, consistent forms and Safari rack scrolling refinements.
 - Offline single-HTML build pipeline and automated checks.
 
-The features above are recorded as delivered. Automated Chromium regression checks have been added for offline startup, local storage recovery, backup rejection and restore, Device/IPAM integrity, rack placement, form labels, modal keyboard behaviour and theme text contrast. **Safari manual acceptance has progressed substantially; remaining workflow, accessibility, distribution and owner-approval checks are listed below.**
+The features above are recorded as delivered. Automated Chromium regression checks have been added for offline startup, local storage recovery, backup rejection and restore, Device/IPAM integrity, rack placement, form labels, modal keyboard behaviour and theme text contrast. **Safari manual acceptance has progressed substantially; owner-reported acceptance and completed publication checks are listed below.**
 
-## Verified automated coverage (private CI)
+## Verified automated coverage
 
 - Offline HTML build verification, embedded assets and no outbound HTTP(S) requests in the Chromium smoke test.
 - Browser-local inventory persistence, unreadable-storage recovery and recovery-data download.
@@ -43,7 +43,7 @@ These checks are valuable regression coverage, **not** a complete security audit
 - **Stage 6B — Rack workspace (7/7):** accessory add/remove and collision rejection, drag/move and occupied-position rejection, Safari scrolling, persistence (owner reported 8/7, all seven listed checks passed).
 - **Stage 7A — Safari usability (7/7):** owner confirmed light/dark readability, keyboard navigation, modal focus/Escape, form validation presentation, narrow-window usability and destructive-action clarity. This is manual acceptance, not formal WCAG certification.
 
-## Remaining release gates
+## Completed release gates
 
 - [x] Final private preparation source build green (`be6eac2`, workflow `38063343516`, 10 October 2026), including moved/renamed-file browser restore and verified ZIP.
 - [x] Generated HTML operates offline in Safari and retains inventory after reopening.
@@ -58,8 +58,8 @@ These checks are valuable regression coverage, **not** a complete security audit
 - [x] Owner reports VoiceOver works well on the latest Safari preview (10 October); informal acceptance, not a per-step audit or certification.
 - [x] Owner confirms backup export, restore into the new version and Safari close/reopen persistence. Moved/renamed-file and shared-storage behaviour are covered by automated Chromium tests and documented; manual Safari rename results were not separately reported.
 - [x] Source/main-history privacy review, pinned runtime licence comparison and automated exact ZIP member/hash inspection implemented; see RELEASE-REVIEW.md.
-- [x] Prepare complete version-named ZIP and standalone HTML with complete offline licence notices; final distribution approval remains with owner.
-- [ ] Owner explicitly approves release version, public repository visibility and publication actions **separately**.
+- [x] Prepare complete version-named ZIP and standalone HTML with complete offline licence notices; owner approved publication.
+- [x] Owner explicitly approved release version, public repository visibility and publication actions.
 
 Passing these checks supports release readiness; it is not a formal security or accessibility certification.
 
@@ -75,7 +75,7 @@ These were **proposals**, not committed v1.0 requirements. Confirm scope before 
 
 ## Compatibility and project boundaries
 
-**Data compatibility:** Preserve existing browser inventories and supported JSON backup formats. The primary storage key is `caffoot_state`; this pre-release build does not automatically migrate legacy test storage. Export and restore JSON backups to retain test data.
+**Data compatibility:** Preserve existing browser inventories and supported JSON backup formats. The primary storage key is `caffoot_state`; version 1.0.0 does not automatically migrate legacy test storage. Export and restore JSON backups to retain test data.
 
 **Safe releases:** Keep a known-good standalone HTML build and recommend exporting a JSON backup before upgrading. Validate new builds before publishing them.
 
@@ -93,11 +93,18 @@ These were **proposals**, not committed v1.0 requirements. Confirm scope before 
 - [x] Add version metadata to JSON exports and a documented versioned import/migration strategy while retaining compatibility with current valid backups.
 - [x] Add automated tests for legacy backups, unsupported future schema versions, malformed metadata and unchanged inventory on rejection.
 - [x] Produce an example Lite backup fixture for future Pro import contract tests, without real infrastructure or sensitive data.
-- [ ] Complete release packaging, offline upgrade/restore acceptance and owner publication approval.
+- [x] Complete release packaging, offline upgrade/restore acceptance and owner publication approval.
 
 
 ## Final private preparation pass — 10 October 2026
 
 Implemented manual release checks and safe update guide, BACKUP-FORMAT.md, populated fictional schema-v1/legacy fixtures, detached non-mutating migration, generated-file upgrade regression test, embedded licence viewer, version-named ZIP with guides/examples and SHA-256 verification. See RELEASE-REVIEW.md for scope and evidence.
 
-Owner opened the latest preview in Safari, reported that the new warning looks good and VoiceOver works well, and explicitly confirmed backup export/restore and reopen persistence. Stable 1.0.0 is being prepared with a fresh full automated rerun. Publication approval remains outstanding. See RELEASE-ACCEPTANCE.md for precise evidence scope.
+Owner opened the latest preview in Safari, reported that the new warning looks good and VoiceOver works well, and explicitly confirmed backup export/restore and reopen persistence. Stable 1.0.0 passed its full automated rerun; owner approval and public publication are complete. See RELEASE-ACCEPTANCE.md for precise evidence scope.
+
+
+## Publication completed — 10 October 2026
+
+The owner explicitly approved making `sdelnevo/Caffoot-Lite` public and publishing Caffoot Lite v1.0.0 with the prepared downloads. The owner changed repository visibility to public. The final stable source commit `6f5d38e6959016fb236763f8f7a241de14d23c83` passed the complete automated suite in [workflow 38064002992](https://github.com/sdelnevo/Caffoot-Lite/actions/runs/38064002992). [Publication workflow 38065143351](https://github.com/sdelnevo/Caffoot-Lite/actions/runs/38065143351) verified that exact artifact, finalised release-note wording without changing runnable HTML, checked package member hashes and uploaded asset digests, then published the stable release.
+
+[Caffoot Lite v1.0.0](https://github.com/sdelnevo/Caffoot-Lite/releases/tag/v1.0.0) includes `Caffoot-Lite-1.0.0.zip`, `Caffoot-Lite.html` and `SHA256SUMS`. The tag points to the tested source commit. Earlier private-preparation results below are retained as historical evidence.

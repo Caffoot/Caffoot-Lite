@@ -5,7 +5,7 @@
 
 A lightweight, standalone network inventory and IP address management (IPAM) application for devices, subnets, racks and network assets.
 
-> **Status:** v1.0.0 prepared for publication review. The repository is private and publication has not been approved yet.
+> **Status:** [Caffoot Lite v1.0.0 is published](https://github.com/sdelnevo/Caffoot-Lite/releases/tag/v1.0.0). The repository is public.
 
 ## ⚠️ Important — your inventory lives in your browser
 
@@ -17,14 +17,14 @@ A lightweight, standalone network inventory and IP address management (IPAM) app
 
 ## Download and run
 
-When the first stable GitHub Release is published:
+[Download Caffoot-Lite-1.0.0.zip](https://github.com/sdelnevo/Caffoot-Lite/releases/download/v1.0.0/Caffoot-Lite-1.0.0.zip), or use the [release page](https://github.com/sdelnevo/Caffoot-Lite/releases/tag/v1.0.0):
 
 1. Open this repository's **Releases** page.
 2. Under the latest stable release, expand **Assets**.
 3. Prefer the version-named **`Caffoot-Lite-1.0.0.zip`** release asset, which includes guides and licences. Extract it and open `Caffoot-Lite.html`. The standalone HTML is also self-contained with embedded notices. Do not download GitHub’s automatically generated source-code ZIP to run the app.
 4. Open it in a modern browser. No Docker, Node.js or web server is required to run the release file.
 
-**A public download is not available yet.** See the detailed [installation and upgrade guide](INSTALLATION.md) for the complete process and storage precautions.
+See the detailed [installation and upgrade guide](INSTALLATION.md) for the complete process and storage precautions.
 
 ## What you can manage
 
@@ -41,7 +41,7 @@ See the [user guide](USER-GUIDE.md) for the first-run walkthrough and day-to-day
 
 Caffoot Lite stores inventory in your **browser's local storage**, not in the HTML file or on a server. Browser `file://` storage behaviour varies: changing browser, profile, path or filename may prevent the new file from seeing existing data. Clearing browser data can erase it.
 
-**Export a JSON backup before upgrading, moving/renaming the HTML file, resetting data or changing browsers.** Keep backups safe; they may contain sensitive infrastructure details. Caffoot Lite saves inventory under `caffoot_state`. This pre-release version does not migrate older test-browser storage automatically; export and restore a JSON backup if you need to keep test data.
+**Export a JSON backup before upgrading, moving/renaming the HTML file, resetting data or changing browsers.** Keep backups safe; they may contain sensitive infrastructure details. Caffoot Lite saves inventory under `caffoot_state`. Version 1.0.0 does not migrate older test-browser storage automatically; export and restore a JSON backup if you need to keep test data.
 
 ## For developers: build and test
 
@@ -59,7 +59,7 @@ The build produces `app/dist/Caffoot-Lite.html`. GitHub Actions also builds and 
 
 This repository is dedicated to **Caffoot Lite**: its standalone application, build tools, tests and release documentation.
 
-The [roadmap and release checklist](ROADMAP.md) record remaining tests, security/privacy review and owner approval. No public release or repository visibility change should occur before approval.
+The [roadmap and release checklist](ROADMAP.md) record completed release checks and future proposals. The owner approved public visibility and publication; v1.0.0 was published on 10 October 2026.
 
 ## Licence and branding
 
@@ -70,4 +70,4 @@ The Caffoot name, hedgehog mascot and official project branding are **not** lice
 
 ## Backup compatibility and release preparation
 
-The [backup format contract](BACKUP-FORMAT.md) documents versioned exports and legacy imports for future Lite-to-Pro migration. Pro import has not been implemented yet. The [final acceptance walkthrough](RELEASE-ACCEPTANCE.md) and [release review](RELEASE-REVIEW.md) distinguish automated checks from remaining Safari/VoiceOver owner tests.
+The [backup format contract](BACKUP-FORMAT.md) documents versioned exports and legacy imports for future Lite-to-Pro migration. Pro import has not been implemented yet. The [final acceptance walkthrough](RELEASE-ACCEPTANCE.md) and [release review](RELEASE-REVIEW.md) record automated checks and owner-reported Safari/VoiceOver acceptance.
