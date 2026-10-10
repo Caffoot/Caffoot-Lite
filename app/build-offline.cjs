@@ -6,7 +6,7 @@ const path = require('node:path');
 const os = require('node:os');
 const { spawnSync } = require('node:child_process');
 const root = __dirname;
-const source = path.join(root, 'caffoot-personal.html');
+const source = path.join(root, 'caffoot-lite.html');
 const destination = path.join(root, 'dist', 'Caffoot-Lite.html');
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'caffoot-css-'));
 try {
