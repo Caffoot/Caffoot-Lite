@@ -1142,11 +1142,30 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             return errors;
         }
 
+        // Preserve legacy browser inventories while adopting Caffoot-branded storage.
+        const STORAGE_KEY = 'caffoot_state';
+        const LEGACY_STORAGE_KEY = 'netmini_state';
+        function readCaffootStoredInventory() {
+            const current = localStorage.getItem(STORAGE_KEY);
+            if (current !== null) return current; // Never overwrite an existing (even corrupt) new-format entry.
+            const legacy = localStorage.getItem(LEGACY_STORAGE_KEY);
+            if (legacy === null) return null;
+            // Validate before migration; retain the legacy value as a safety copy.
+            const parsed = JSON.parse(legacy);
+            if (!isPlainObject(parsed) || !Array.isArray(parsed.devices) || !Array.isArray(parsed.subnets) || !Array.isArray(parsed.racks) || !isPlainObject(parsed.ipAllocations)) {
+                throw new Error('Legacy inventory structure is missing required collections');
+            }
+            const migrated = JSON.stringify(normaliseState(parsed));
+            localStorage.setItem(STORAGE_KEY, migrated);
+            if (localStorage.getItem(STORAGE_KEY) !== migrated) throw new Error('Caffoot inventory migration verification failed');
+            return migrated;
+        }
+
         // Phase 17A: preserve unreadable stored data. Never overwrite it on startup.
         let phase17AStorageRecovery = null;
         function loadStoredState() {
             let stored;
-            try { stored = localStorage.getItem('netmini_state'); }
+            try { stored = readCaffootStoredInventory(); }
             catch (error) {
                 phase17AStorageRecovery = { reason: 'Browser storage cannot be read.', raw: null };
                 console.error('Storage unavailable:', error);
@@ -1197,7 +1216,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             reset.onclick = () => {
                 if (!confirm('This replaces the unreadable stored inventory with an empty Caffoot Lite inventory. Download the original data first. Continue?')) return;
                 if (!confirm('Final confirmation: overwrite the existing saved inventory?')) return;
-                try { localStorage.setItem('netmini_state',JSON.stringify(cloneDefaultData())); location.reload(); }
+                try { localStorage.setItem(STORAGE_KEY,JSON.stringify(cloneDefaultData())); location.reload(); }
                 catch (error) { alert('Reset failed: '+String(error.message||error)); }
             };
             banner.append(heading,message,download,reset);
@@ -1328,8 +1347,8 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 }
                 appState.stateVersion = STATE_VERSION;
                 const nextSnapshot = JSON.stringify(appState);
-                localStorage.setItem('netmini_state', nextSnapshot);
-                if (localStorage.getItem('netmini_state') !== nextSnapshot) {
+                localStorage.setItem(STORAGE_KEY, nextSnapshot);
+                if (localStorage.getItem(STORAGE_KEY) !== nextSnapshot) {
                     throw new Error('Saved data verification failed');
                 }
                 try { recordAudit(JSON.parse(auditBaseline), appState, nextAuditReason); }
@@ -4417,7 +4436,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
         function phase16ACheckSafety() {
             try {
                 const issues = validateApplicationState();
-                const key = typeof STORAGE_KEY !== 'undefined' ? STORAGE_KEY : 'netmini_state';
+                const key = typeof STORAGE_KEY !== 'undefined' ? STORAGE_KEY : 'caffoot_state';
                 const stored = localStorage.getItem(key);
                 if (!stored) issues.push('No saved inventory was found in browser storage.');
                 else {
@@ -4470,7 +4489,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 'Press OK to reset or Cancel to keep everything.'
             ].join('\n'))) return;
             const original = appState;
-            const key = typeof STORAGE_KEY !== 'undefined' ? STORAGE_KEY : 'netmini_state';
+            const key = typeof STORAGE_KEY !== 'undefined' ? STORAGE_KEY : 'caffoot_state';
             let previousSaved, previousSafety;
             try {
                 previousSaved = localStorage.getItem(key);
@@ -4608,7 +4627,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                     // Capture the current inventory before any restore or rollback operation.
                     const original = appState;
                     // A failed safety-snapshot write blocks replacement. Existing data stays untouched.
-                    const currentSnapshot = localStorage.getItem('netmini_state') || JSON.stringify(original);
+                    const currentSnapshot = localStorage.getItem(STORAGE_KEY) || JSON.stringify(original);
                     const previousSafetySnapshot = localStorage.getItem(SAFETY_SNAPSHOT_KEY);
                     try {
                         localStorage.setItem(SAFETY_SNAPSHOT_KEY, currentSnapshot);
@@ -4618,7 +4637,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                         throw new Error('Unable to create the pre-restore safety snapshot. Restore cancelled: ' + snapshotError.message);
                     }
                     // Persist before changing the active in-memory inventory.
-                    const key = typeof STORAGE_KEY !== 'undefined' ? STORAGE_KEY : 'netmini_state';
+                    const key = typeof STORAGE_KEY !== 'undefined' ? STORAGE_KEY : 'caffoot_state';
                     // saveState handles storage errors; do not replace active state on a failed save.
                     appState = candidate;
                     nextAuditReason = 'Backup restored';
