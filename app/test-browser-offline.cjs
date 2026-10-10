@@ -197,6 +197,37 @@ const { chromium } = require('playwright');
       'IP dialog heading must preserve the literal text');
     assert.equal(ipProbe.images, 0, 'IP dialog heading must not inject HTML elements');
     console.log('PASS: IPAM allocation labels and heading escaping in Chromium.');
+    // Device regression: rack and location controls must retain accessible labels.
+    const deviceLabels = await page.evaluate(() => {
+      openDeviceModal();
+      try {
+        const dialog = document.getElementById('modal-content');
+        const ids = ['dev-name', 'dev-type', 'dev-mount-type', 'dev-location',
+          'dev-custom-location', 'dev-rack-face', 'dev-rack-u',
+          'dev-rack-height', 'dev-notes'];
+        return ids.map(id => {
+          const control = dialog.querySelector('#' + id);
+          return {
+            id,
+            present: !!control,
+            label: control && control.labels && control.labels[0]
+              ? control.labels[0].textContent.trim() : null,
+            required: !!(control && control.required)
+          };
+        });
+      } finally {
+        closeModal();
+      }
+    });
+    for (const field of deviceLabels) {
+      assert(field.present, field.id + ' must be present in Add Device');
+      assert(field.label && field.label.length > 0, field.id + ' must have an associated label');
+    }
+    for (const id of ['dev-name', 'dev-type', 'dev-mount-type', 'dev-location']) {
+      assert(deviceLabels.find(field => field.id === id).required,
+        id + ' must retain required validation');
+    }
+    console.log('PASS: Device form mounting, location, rack and notes labels in Chromium.');
     assert.deepEqual(outbound, [], 'Standalone file must not attempt network requests');
     assert.deepEqual(failures, [], 'Browser must not raise uncaught JavaScript errors');
     console.log('PASS: Chromium file:// startup, navigation, offline operation and localStorage reload.');
