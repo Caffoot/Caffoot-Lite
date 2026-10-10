@@ -424,6 +424,47 @@ const { chromium } = require('playwright');
     assert(failedDeviceCreate.noOrphan, 'Failed Device creation must not leave an orphan IPAM allocation');
     assert(failedDeviceCreate.modalStayedOpen, 'Failed Device creation must keep form open');
     console.log('PASS: failed Device creation leaves no ghost device or orphan IPAM record.');
+    // Rack placement must not silently convert Desktop devices to Rack Mounted.
+    const rackMountGuard = await page.evaluate(() => {
+      const rack = { id: 'browser-mount-guard-rack', name: 'Mount guard rack', heightU: 12 };
+      const desktop = { id: 'browser-mount-guard-desktop', name: 'Desktop fixture',
+        type: 'Switch', mountType: 'Desktop', location: 'Unknown', rackId: '' };
+      const mounted = { id: 'browser-mount-guard-eligible', name: 'Rack fixture',
+        type: 'Switch', mountType: 'Rack Mounted', location: 'Racked', rackId: '' };
+      const originalSaveState = saveState;
+      const originalStorage = localStorage.getItem('caffoot_state');
+      appState.racks.push(rack);
+      appState.devices.push(desktop, mounted);
+      const before = JSON.stringify(appState);
+      try {
+        openAssignDeviceModal(rack.id, 4);
+        const choices = Array.from(document.getElementById('assign-device-id').options).map(o => o.value);
+        const excludedDesktop = !choices.includes(desktop.id);
+        const includesEligible = choices.includes(mounted.id);
+        document.getElementById('assign-device-id').add(new Option(desktop.name, desktop.id));
+        document.getElementById('assign-device-id').value = desktop.id;
+        document.getElementById('assign-face').value = 'front';
+        document.getElementById('assign-u-start').value = '4';
+        handleAssignSubmit({ preventDefault() {} }, rack.id, 4);
+        return {
+          excludedDesktop, includesEligible,
+          unchanged: JSON.stringify(appState) === before,
+          storedUnchanged: localStorage.getItem('caffoot_state') === originalStorage,
+          stillDesktop: desktop.mountType === 'Desktop' && !desktop.rackId
+        };
+      } finally {
+        saveState = originalSaveState;
+        closeModal();
+        appState.devices = appState.devices.filter(d => d.id !== desktop.id && d.id !== mounted.id);
+        appState.racks = appState.racks.filter(r => r.id !== rack.id);
+      }
+    });
+    assert(rackMountGuard.excludedDesktop, 'Rack picker must exclude Desktop devices');
+    assert(rackMountGuard.includesEligible, 'Rack picker must include eligible Rack Mounted devices');
+    assert(rackMountGuard.unchanged, 'Forced Desktop rack placement must not mutate inventory');
+    assert(rackMountGuard.storedUnchanged, 'Rejected rack placement must not change browser storage');
+    assert(rackMountGuard.stillDesktop, 'Rejected rack placement must not convert Desktop to Rack Mounted');
+    console.log('PASS: rack placement rejects Desktop devices without silently converting them.');
     assert.deepEqual(outbound, [], 'Standalone file must not attempt network requests');
     assert.deepEqual(failures, [], 'Browser must not raise uncaught JavaScript errors');
     console.log('PASS: Chromium file:// startup, navigation, offline operation and localStorage reload.');
