@@ -28,7 +28,7 @@ for (const payload of payloads) {
   const ctx=vm.createContext({
     appState:{devices:[device],racks:[]},
     phase14DeviceTab:'inventory',deviceSearchTerm:'',deviceTypeFilter:'',
-    deviceStatusFilter:'',deviceLocationFilter:'',deviceMountFilter:'',
+    deviceStatusFilter:'',deviceLocationFilter:'',deviceMountFilter:'',deviceSort:'name-asc',
     getVisibleDevices:()=>[device],
     getUniqueDeviceTypes:()=>[payload],
     getUniqueDeviceLocations:()=>[payload]
