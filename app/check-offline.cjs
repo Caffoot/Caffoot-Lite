@@ -1,5 +1,5 @@
 'use strict';
-// Run: node personal/check-offline.cjs
+// Run: node app/check-offline.cjs
 // Dependency audit only: it does not modify the application or user data.
 const fs = require('node:fs');
 const path = require('node:path');
