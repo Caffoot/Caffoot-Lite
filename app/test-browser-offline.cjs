@@ -533,6 +533,26 @@ const { chromium } = require('playwright');
     });
     assert(deviceDeleteAction, 'Device Details must expose a Delete device action');
     console.log('PASS: Device Details exposes the guarded Delete device action.');
+    // Storage warning must appear until acknowledged, and remain in Data Management.
+    const storageNotice = await page.evaluate(() => {
+      localStorage.removeItem('caffoot_browser_storage_notice_v1');
+      browserStorageNoticeAcknowledged = false;
+      currentTab = 'dashboard';
+      renderContent();
+      const initial = !!document.querySelector('[data-action="acknowledge-browser-storage"]') &&
+        !!document.querySelector('[data-action="phase11-export-backup"]');
+      acknowledgeBrowserStorageNotice();
+      const dismissed = !document.querySelector('[data-action="acknowledge-browser-storage"]');
+      currentTab = 'settings';
+      phase16ASection = 'backup';
+      renderContent();
+      const permanent = !!document.querySelector('[aria-label="Important browser storage warning"]') &&
+        !!document.querySelector('[data-action="phase11-export-backup"]');
+      return {initial, dismissed, permanent};
+    });
+    assert(storageNotice.initial && storageNotice.dismissed && storageNotice.permanent,
+      'Browser storage warning must appear on first run and in Data Management');
+    console.log('PASS: first-run browser storage warning and permanent backup reminder.');
     assert.deepEqual(outbound, [], 'Standalone file must not attempt network requests');
     assert.deepEqual(failures, [], 'Browser must not raise uncaught JavaScript errors');
     console.log('PASS: Chromium file:// startup, navigation, offline operation and localStorage reload.');
