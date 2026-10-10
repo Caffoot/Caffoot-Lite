@@ -11,7 +11,7 @@ const code = html.slice(start, end);
 function scenario(mode) {
   const original = {devices:[{id:'original'}],racks:[],subnets:[],ipAllocations:{}};
   const replacement = {devices:[{id:'replacement'}],racks:[],subnets:[],ipAllocations:{}};
-  const key = 'netmini_state', safety = 'safety_test';
+  const key = 'caffoot_state', safety = 'safety_test';
   const store = new Map([[key,JSON.stringify(original)]]);
   const messages = [];
   let ctx;
