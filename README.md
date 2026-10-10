@@ -5,7 +5,7 @@
 
 A lightweight, standalone network inventory and IP address management (IPAM) application for devices, subnets, racks and network assets.
 
-> **Status:** v1.0.0 release candidate preparation. The repository is private and no stable public release has been approved yet.
+> **Status:** v1.0.0 prepared for publication review. The repository is private and publication has not been approved yet.
 
 ## ⚠️ Important — your inventory lives in your browser
 

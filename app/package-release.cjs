@@ -10,7 +10,7 @@ for(const marker of ['MIT License','SIL OPEN FONT LICENSE','CC BY 4.0','Tailwind
 for(const [copy,installed] of [['licenses/FONT-AWESOME-6.4.0.txt','@fortawesome/fontawesome-free/LICENSE.txt'],['licenses/TAILWIND-CSS-3.4.17.txt','tailwindcss/LICENSE']]){
  assert.equal(fs.readFileSync(path.join(root,copy),'utf8').trim(),fs.readFileSync(path.join(__dirname,'node_modules',installed),'utf8').trim(),'Pinned dependency notice mismatch: '+copy);
 }
-const files=['LICENSE','THIRD-PARTY-NOTICES.md','INSTALLATION.md','USER-GUIDE.md','BACKUP-FORMAT.md','licenses/FONT-AWESOME-6.4.0.txt','licenses/TAILWIND-CSS-3.4.17.txt','app/fixtures/lite-schema-v1.example.json','app/fixtures/lite-legacy.example.json'];
+const files=['RELEASE-NOTES-'+version+'.md','LICENSE','THIRD-PARTY-NOTICES.md','INSTALLATION.md','USER-GUIDE.md','BACKUP-FORMAT.md','licenses/FONT-AWESOME-6.4.0.txt','licenses/TAILWIND-CSS-3.4.17.txt','app/fixtures/lite-schema-v1.example.json','app/fixtures/lite-legacy.example.json'];
 const temp=fs.mkdtempSync(path.join(os.tmpdir(),'caffoot-package-'));
 try{
  fs.copyFileSync(path.join(dist,'Caffoot-Lite.html'),path.join(temp,'Caffoot-Lite.html'));

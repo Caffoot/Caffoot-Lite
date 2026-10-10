@@ -1,6 +1,6 @@
 # Private pre-release review — 10 October 2026
 
-Candidate: `1.0.0-rc.1`. Planned stable version: `1.0.0`, subject to final manual acceptance and explicit owner publication approval. This review is a focused engineering review, not a formal security audit or accessibility certification.
+Version: `1.0.0`, prepared privately after owner-reported acceptance; publication approval is outstanding. This review is a focused engineering review, not a formal security audit or accessibility certification.
 
 ## Privacy and source/history scope
 
@@ -30,7 +30,7 @@ The new generated-file browser test covers export, import into a moved/renamed H
 
 ## Remaining manual evidence
 
-See `RELEASE-ACCEPTANCE.md`: Safari upgrade/move/rename steps 1–7 and VoiceOver steps 1–6 need explicit owner results on the latest candidate. A previous release-note claim of a completed VoiceOver walkthrough was unsupported by the detailed roadmap and has been corrected. Stable version bump and final rerun follow acceptance; publication remains a separate owner decision.
+See `RELEASE-ACCEPTANCE.md` for owner-reported Safari appearance, positive VoiceOver feedback and confirmed backup export/restore/reopen acceptance. Individual numbered checklist results were not separately reported; the record does not claim formal screen-reader or accessibility certification. Stable version preparation and automated rerun follow this acceptance; publication remains a separate owner decision.
 
 ### Local file storage scope
 
@@ -38,4 +38,4 @@ The upgrade test observed shared browser storage across original and renamed HTM
 
 ## Final automated result
 
-All checks passed for source commit `be6eac2304fd4dd60582d3c884b61fc85767dba0`, workflow `38063343516`. This includes all existing browser checks and the new populated upgrade test. The verified version-named ZIP and checksum list were uploaded as a private Actions artifact. No tag, public release or visibility change was made. The remaining Safari and VoiceOver evidence is explicitly pending.
+All checks passed for source commit `be6eac2304fd4dd60582d3c884b61fc85767dba0`, workflow `38063343516`. This includes all existing browser checks and the new populated upgrade test. The verified version-named ZIP and checksum list were uploaded as a private Actions artifact. No tag, public release or visibility change was made. Subsequent owner-reported Safari and VoiceOver feedback is recorded in RELEASE-ACCEPTANCE.md; stable 1.0.0 requires its own full automated rerun.

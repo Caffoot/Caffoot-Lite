@@ -1,8 +1,8 @@
 # Final private candidate acceptance
 
-Publication is blocked until the remaining manual checks below are confirmed and the owner explicitly approves the release and repository visibility change. Use the latest green **private preview ZIP**, not developer source. The candidate remains `1.0.0-rc.1`; the planned stable version is `1.0.0`.
+Version `1.0.0` is prepared privately following owner acceptance of the preview. Publication is blocked until the owner explicitly approves publication and the repository visibility change. The detailed walkthrough below remains a reusable checklist; it is not a claim that each numbered step was individually reported.
 
-## Safari upgrade, move and rename — owner check required
+## Safari upgrade, move and rename — reusable checklist
 
 Use a separate Safari test profile with a copy of your HTML and exported test inventory. Keep your real file and backup safe; some local files share storage in the same profile. Do not clear real browser data.
 
@@ -16,7 +16,7 @@ Use a separate Safari test profile with a copy of your HTML and exported test in
 
 Report `Safari upgrade 1–7 passed` or the numbered failure and what happened. Automated Chromium checks supplement this pass; they do not establish Safari storage behaviour.
 
-## VoiceOver — owner check required
+## VoiceOver — reusable checklist
 
 Turn on VoiceOver on your Mac (Command–F5, or accessibility settings). Use a test inventory.
 
@@ -39,4 +39,10 @@ The upgrade test observed shared browser storage across original and renamed HTM
 
 ## Verified private preview
 
-Source commit: `be6eac2304fd4dd60582d3c884b61fc85767dba0`. Full private workflow [38063343516](https://github.com/sdelnevo/Caffoot-Lite/actions/runs/38063343516) passed build, regression, offline browser, upgraded-file restore, package and artifact checks. Download `caffoot-lite-offline-preview` from that run; extract its inner `Caffoot-Lite-1.0.0-rc.1.zip` for testing. Safari/VoiceOver results are still pending.
+Source commit: `be6eac2304fd4dd60582d3c884b61fc85767dba0`. Full private workflow [38063343516](https://github.com/sdelnevo/Caffoot-Lite/actions/runs/38063343516) passed build, regression, offline browser, upgraded-file restore, package and artifact checks. Download `caffoot-lite-offline-preview` from that run; extract its inner `Caffoot-Lite-1.0.0-rc.1.zip` for testing. The owner subsequently reported positive Safari appearance and VoiceOver results and confirmed the export/restore/reopen sequence.
+
+## Owner acceptance recorded — 10 October 2026
+
+The owner downloaded the latest preview, opened it in Safari, liked the appearance and new warning, and reported that VoiceOver appears to work well. In response to the explicit three-step export-backup, restore/check devices/IPAM/subnets/racks, close/reopen question, the owner confirmed: “yes tested that all works really well”.
+
+This establishes owner-reported Safari restore/reopen acceptance and positive VoiceOver feedback. It does not establish a formal accessibility certification or individually witnessed results for every numbered checklist step (including manual rename, offline update check and licence-reader checks). Those behaviours also have automated coverage where applicable. Only version identifiers and release documentation change for stable 1.0.0; full automated checks run again. Publication approval has not been given.

@@ -1,7 +1,7 @@
 # Caffoot Lite — Development Roadmap
 
 **Updated:** 10 October 2026  
-**Current milestone:** v1.0.0 release candidate  
+**Current milestone:** v1.0.0 prepared privately; publication approval pending  
 **Repository:** `sdelnevo/Caffoot-Lite` (private during development)  
 **Release policy:** Publish publicly only after manual verification, security/privacy review and owner approval.
 
@@ -55,8 +55,8 @@ These checks are valuable regression coverage, **not** a complete security audit
 - [x] Exercise **IPAM reservations, bulk actions and integrity repair**, including cancellation and persistence.
 - [x] Exercise **rack accessories, drag-and-drop and scrolling** on Safari; confirm no collision or accidental moves.
 - [x] Complete targeted **keyboard navigation**, narrow-window and light/dark visual checks (Stage 7A, 7/7).
-- [ ] Complete an explicit **VoiceOver screen-reader** walkthrough (not established by Stage 7A).
-- [ ] Test **HTML update/move/rename with exported JSON backup**; document browser `file://` storage differences.
+- [x] Owner reports VoiceOver works well on the latest Safari preview (10 October); informal acceptance, not a per-step audit or certification.
+- [x] Owner confirms backup export, restore into the new version and Safari close/reopen persistence. Moved/renamed-file and shared-storage behaviour are covered by automated Chromium tests and documented; manual Safari rename results were not separately reported.
 - [x] Source/main-history privacy review, pinned runtime licence comparison and automated exact ZIP member/hash inspection implemented; see RELEASE-REVIEW.md.
 - [x] Prepare complete version-named ZIP and standalone HTML with complete offline licence notices; final distribution approval remains with owner.
 - [ ] Owner explicitly approves release version, public repository visibility and publication actions **separately**.
@@ -100,4 +100,4 @@ These were **proposals**, not committed v1.0 requirements. Confirm scope before 
 
 Implemented manual release checks and safe update guide, BACKUP-FORMAT.md, populated fictional schema-v1/legacy fixtures, detached non-mutating migration, generated-file upgrade regression test, embedded licence viewer, version-named ZIP with guides/examples and SHA-256 verification. See RELEASE-REVIEW.md for scope and evidence.
 
-Safari upgrade/move/rename and actual VoiceOver acceptance remain unconfirmed; follow RELEASE-ACCEPTANCE.md. No claim of completed Safari/VoiceOver acceptance is made for this new candidate. Prepare stable 1.0.0 only after acceptance, then rerun checks and obtain separate publication approval.
+Owner opened the latest preview in Safari, reported that the new warning looks good and VoiceOver works well, and explicitly confirmed backup export/restore and reopen persistence. Stable 1.0.0 is being prepared with a fresh full automated rerun. Publication approval remains outstanding. See RELEASE-ACCEPTANCE.md for precise evidence scope.
