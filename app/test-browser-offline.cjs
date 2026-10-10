@@ -33,6 +33,29 @@ const { chromium } = require('playwright');
     await page.reload({ waitUntil: 'load' });
     const restored = await page.evaluate(() => localStorage.getItem('caffoot_state'));
     assert.equal(restored, saved.stored, 'Reload must preserve saved inventory');
+
+    // Corrupt the isolated browser inventory and verify recovery without overwriting it.
+    const corrupt = '{broken inventory JSON';
+    await page.evaluate(value => localStorage.setItem('caffoot_state', value), corrupt);
+    await page.reload({ waitUntil: 'load' });
+    const recovery = page.locator('#phase17a-recovery');
+    await recovery.waitFor({ state: 'visible' });
+    assert.match(await recovery.innerText(), /recovery mode/i);
+    assert.equal(await page.evaluate(() => saveState()), false, 'Recovery must block saving');
+    assert.equal(await page.evaluate(() => localStorage.getItem('caffoot_state')), corrupt,
+      'Corrupt inventory must remain untouched');
+    const downloadPromise = page.waitForEvent('download');
+    await recovery.getByRole('button', { name: 'Download original stored data' }).click();
+    const download = await downloadPromise;
+    assert.equal(download.suggestedFilename(), 'caffoot_lite_unreadable_recovery.txt');
+    const fs = require('node:fs');
+    assert.equal(fs.readFileSync(await download.path(), 'utf8'), corrupt,
+      'Recovery download must preserve the original stored text');
+    await page.reload({ waitUntil: 'load' });
+    await page.locator('#phase17a-recovery').waitFor({ state: 'visible' });
+    assert.equal(await page.evaluate(() => localStorage.getItem('caffoot_state')), corrupt,
+      'Corrupt data must survive a second reload');
+    console.log('PASS: corrupted inventory recovery protects data and exports original text.');
     assert.deepEqual(outbound, [], 'Standalone file must not attempt network requests');
     assert.deepEqual(failures, [], 'Browser must not raise uncaught JavaScript errors');
     console.log('PASS: Chromium file:// startup, navigation, offline operation and localStorage reload.');
