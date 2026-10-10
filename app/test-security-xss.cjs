@@ -39,7 +39,8 @@ for (const payload of payloads) {
   context.phase14CViewDevice(payload);
   assert(rendered.includes(encoded),'Payload must be visible as escaped text');
   assert(!rendered.includes(payload),'Raw payload must never reach device details HTML');
-  assert(!/<script\b|<svg\b|<img\b|\sonerror\s*=|\sonload\s*=|\sonfocus\s*=/i.test(rendered),'No injected executable markup or event handlers');
+  assert(!/<(?:script|svg|img)\b/i.test(rendered),'No injected executable elements');
+  assert(!/<[^>]+\s(?:onerror|onload|onfocus)\s*=/i.test(rendered),'No injected event-handler attributes on real HTML tags');
   assert(rendered.includes('data-id="'+encoded+'"'),'Injected device ID must be attribute-escaped');
 }
 console.log('PASS: production device detail renderer escapes hostile HTML and attribute payloads.');
