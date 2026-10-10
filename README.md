@@ -40,12 +40,12 @@ Caffoot Lite stores inventory in your **browser's local storage**, not in the HT
 Node.js and npm are needed **only to build from source**, not to run the released HTML:
 
 ```sh
-cd personal
+cd app
 npm install
 npm run release
 ```
 
-The build produces `personal/dist/Caffoot-Lite.html`. GitHub Actions also builds and checks the application and uploads a preview artifact on pushes to `main`. Automated checks do not replace manual Safari and offline testing.
+The build produces `app/dist/Caffoot-Lite.html`. GitHub Actions also builds and checks the application and uploads a preview artifact on pushes to `main`. Automated checks do not replace manual Safari and offline testing.
 
 ## Project and release status
 
