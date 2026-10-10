@@ -843,12 +843,6 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 <div class="flex items-center space-x-4">
                     <h2 id="page-title" class="text-xl font-bold text-slate-900 dark:text-white">Dashboard</h2>
                 </div>
-                <div class="flex items-center space-x-3">
-                    <div id="status-badge" class="flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 text-xs font-semibold border border-emerald-200 dark:border-emerald-800">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        <span>System Online & Synced</span>
-                    </div>
-                </div>
             </header>
 
             <!-- Dynamic Tab Content Container -->
@@ -2083,14 +2077,14 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                                 </div>
                                 <div>
                                     <h4 class="font-bold text-slate-900 dark:text-white">Data health</h4>
-                                    <p class="text-xs text-slate-500 mt-1">Cross-check of devices, IPAM, subnets, VLANs and rack assignments.</p>
+                                    <p class="text-xs text-slate-500 mt-1">Checks for known inconsistencies in devices, IPAM, subnets, VLANs and rack assignments.</p>
                                 </div>
                             </div>
                             <div class="flex items-center gap-2">
                                 <span class="px-3 py-1.5 rounded-full text-xs font-bold ${integrityHealthy ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300' : 'bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300'}">${integrityHealthy ? 'Healthy' : `${integrityErrors.length} issue${integrityErrors.length === 1 ? '' : 's'}`}</span>
                             </div>
                         </div>
-                        ${integrityHealthy ? `<div class="mt-4 p-3 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/20 text-xs text-emerald-700 dark:text-emerald-300"><i class="fa-solid fa-circle-check mr-2"></i>No blocking data integrity issues detected.</div>` : `<div class="mt-4 space-y-2">${integrityPreview.map(error => `<div class="flex items-start gap-2 p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/20 text-xs text-rose-700 dark:text-rose-300"><i class="fa-solid fa-circle-exclamation mt-0.5"></i><span>${escapeHtml(error)}</span></div>`).join('')}${integrityErrors.length > integrityPreview.length ? `<p class="text-[11px] text-slate-500 pt-1">Showing the first ${integrityPreview.length} of ${integrityErrors.length} issues.</p>` : ''}</div>`}
+                        ${integrityHealthy ? `<div class="mt-4 p-3 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/20 text-xs text-emerald-700 dark:text-emerald-300"><i class="fa-solid fa-circle-check mr-2"></i>No issues detected by the current data integrity checks.</div>` : `<div class="mt-4 space-y-2">${integrityPreview.map(error => `<div class="flex items-start gap-2 p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/20 text-xs text-rose-700 dark:text-rose-300"><i class="fa-solid fa-circle-exclamation mt-0.5"></i><span>${escapeHtml(error)}</span></div>`).join('')}${integrityErrors.length > integrityPreview.length ? `<p class="text-[11px] text-slate-500 pt-1">Showing the first ${integrityPreview.length} of ${integrityErrors.length} issues.</p>` : ''}</div>`}
                     </section>
 
                     ${networkSnapshot}
