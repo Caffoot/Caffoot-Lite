@@ -1,6 +1,6 @@
 # Caffoot Lite
 
-Caffoot Lite is a standalone, browser-based network inventory application derived from NetMini Phase 19D2. This independent repository contains only Caffoot Lite; the original NetMini reference remains in the separate Caffoot repository.
+Caffoot Lite is a standalone, browser-based network inventory application. This repository contains the Lite application, its build tools, automated tests and supporting documentation.
 
 ## Current status
 
@@ -20,7 +20,7 @@ The intended output is `personal/dist/Caffoot-Lite.html`. The build compiles Tai
 
 ## Data and privacy
 
-Inventory is stored in browser-local storage, not in a shared server database. Preserve the existing `netmini_state` storage key for backward compatibility. Browser `file://` storage handling varies by browser and file location: moving or renaming the HTML file can affect access to previously saved data.
+Inventory is stored in browser-local storage, not in a shared server database. Inventory is stored under `caffoot_state`. Earlier development-only storage keys are not migrated automatically; export a JSON backup from an older test build before changing versions. Browser `file://` storage handling varies by browser and file location: moving or renaming the HTML file can affect access to previously saved data.
 
 **Before testing a new build or replacing an existing copy, export a JSON backup from the current application and save it outside the browser.** Test restore using a separate browser profile or test dataset; do not overwrite your only inventory copy.
 
@@ -37,7 +37,7 @@ Inventory is stored in browser-local storage, not in a shared server database. P
 
 ## Caffoot Server
 
-The server edition is paused, not cancelled. The existing server branches and Docker preview should remain unchanged until that project resumes.
+Caffoot Server is a separate project. This repository and its release workflow do not build or deploy the server edition.
 
 ## Accessibility testing
 
