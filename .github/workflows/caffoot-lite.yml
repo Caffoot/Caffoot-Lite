@@ -48,7 +48,9 @@ jobs:
         working-directory: app
         env:
           NODE_PATH: ${{ runner.temp }}/caffoot-browser-tools/node_modules
-        run: node test-browser-offline.cjs
+        run: |
+          node test-browser-offline.cjs
+          node test-browser-import.cjs
       - name: Upload standalone HTML for testing
         uses: actions/upload-artifact@v4
         with:
