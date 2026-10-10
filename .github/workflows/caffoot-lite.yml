@@ -40,6 +40,15 @@ jobs:
           }
           console.log('Checked ' + scripts.length + ' inline scripts');
           NODE
+      - name: Install isolated browser test tools
+        run: |
+          npm install --prefix "$RUNNER_TEMP/caffoot-browser-tools" --no-save --no-package-lock --no-audit --no-fund playwright@1.56.1
+          "$RUNNER_TEMP/caffoot-browser-tools/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Run standalone HTML in Chromium (offline)
+        working-directory: app
+        env:
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tools/node_modules
+        run: node test-browser-offline.cjs
       - name: Upload standalone HTML for testing
         uses: actions/upload-artifact@v4
         with:
