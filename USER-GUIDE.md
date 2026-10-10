@@ -79,3 +79,7 @@ In Settings & Data → Data Management, use **Check for updates** to check the l
 5. Verify devices, IPAM, subnets and racks. Keep the old HTML and backup until satisfied.
 
 The safe update guide and backups work offline. Newer backup schemas require a compatible app; retain your original backup for recovery.
+
+### Local file storage scope
+
+The upgrade test observed shared browser storage across original and renamed HTML paths in the CI Chromium profile. Do not assume separate folders protect separate inventories: restoring in a new copy can change data visible in the old copy. Other browsers may isolate paths. Keep an exported JSON backup outside the browser; use a separate browser profile for isolated test inventories. The test asserts restoration and persistence according to the observed scope instead of assuming isolation.

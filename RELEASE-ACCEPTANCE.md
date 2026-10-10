@@ -32,3 +32,7 @@ Report `VoiceOver 1–6 passed` or the numbered failure. This is a targeted acce
 ## Stable release preparation after acceptance
 
 Set the app/backup producer and package versions to `1.0.0` consistently, update release notes and evidence, and run all checks again. Review the generated ZIP and SHA256SUMS. Obtain explicit owner approval before changing repository visibility, creating a public tag/release, or publishing assets. No publication action is performed by the build workflow.
+
+### Local file storage scope
+
+The upgrade test observed shared browser storage across original and renamed HTML paths in the CI Chromium profile. Do not assume separate folders protect separate inventories: restoring in a new copy can change data visible in the old copy. Other browsers may isolate paths. Keep an exported JSON backup outside the browser; use a separate browser profile for isolated test inventories. The test asserts restoration and persistence according to the observed scope instead of assuming isolation.

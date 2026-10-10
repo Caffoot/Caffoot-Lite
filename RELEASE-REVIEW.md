@@ -31,3 +31,7 @@ The new generated-file browser test covers export, import into a moved/renamed H
 ## Remaining manual evidence
 
 See `RELEASE-ACCEPTANCE.md`: Safari upgrade/move/rename steps 1–7 and VoiceOver steps 1–6 need explicit owner results on the latest candidate. A previous release-note claim of a completed VoiceOver walkthrough was unsupported by the detailed roadmap and has been corrected. Stable version bump and final rerun follow acceptance; publication remains a separate owner decision.
+
+### Local file storage scope
+
+The upgrade test observed shared browser storage across original and renamed HTML paths in the CI Chromium profile. Do not assume separate folders protect separate inventories: restoring in a new copy can change data visible in the old copy. Other browsers may isolate paths. Keep an exported JSON backup outside the browser; use a separate browser profile for isolated test inventories. The test asserts restoration and persistence according to the observed scope instead of assuming isolation.

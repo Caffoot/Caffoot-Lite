@@ -20,6 +20,7 @@ const {pathToFileURL}=require('node:url'),{chromium}=require('playwright');
  const downloadEvent=page.waitForEvent('download');await page.evaluate(()=>exportData());const download=await downloadEvent;const exported=path.join(temp,'exported.json');await download.saveAs(exported);const bytes=fs.readFileSync(exported),backup=JSON.parse(bytes);
  assert.equal(backup.caffootBackup.schemaVersion,1);assert.equal(backup.devices.length,2);
  const old=await snapshot();await page.goto(pathToFileURL(moved).href);
+ const sharedStorage=(await snapshot()).stored===old.stored;
  // Do not assume browser-specific file storage scope: establish a separate destination inventory.
  await page.evaluate(()=>{appState=cloneDefaultData();if(!saveState())throw Error('Cannot save destination baseline');currentTab='settings';phase16ASection='backup';renderContent();});
  const baseline=await snapshot();approve=false;await upload(bytes);assert.deepEqual(await snapshot(),baseline,'Cancelled import into moved file must preserve destination');
@@ -35,7 +36,8 @@ const {pathToFileURL}=require('node:url'),{chromium}=require('playwright');
  await page.locator('[data-action="caffoot-update-guide"]').click();await page.getByRole('heading',{name:'Safely update Caffoot Lite'}).waitFor();await page.keyboard.press('Escape');
  await page.locator('[data-action="phase16a-section"][data-section="about"]').click();await page.locator('[data-action="caffoot-licences"]').click();assert.match(await page.locator('#modal-content').innerText(),/SIL OPEN FONT LICENSE/);await page.keyboard.press('Escape');
  assert.deepEqual(errors,[]);assert.deepEqual(requests,[]);assert.equal(fs.readFileSync(exported,'utf8'),bytes.toString(),'Original backup file unchanged');
- await page.goto(pathToFileURL(source).href);assert.deepEqual(await snapshot(),old,'Original file inventory must remain unchanged in Chromium');
+ await page.goto(pathToFileURL(source).href);assert.deepEqual(await snapshot(),sharedStorage?after:old,'Original path must reflect the observed shared or separate storage scope');
+ console.log('Observed file storage: '+(sharedStorage?'shared across original and renamed paths':'separate per path')+'.');
  console.log('PASS: populated export, moved/renamed HTML restore, cancellation, future-schema rejection, persistence, offline update guide and embedded licences.');
  await context.close();
  }finally{await browser.close();fs.rmSync(temp,{recursive:true,force:true});}
