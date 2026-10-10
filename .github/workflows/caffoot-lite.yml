@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'personal/**'
+      - 'app/**'
       - '.github/workflows/caffoot-lite.yml'
   workflow_dispatch:
 
@@ -13,7 +13,7 @@ permissions:
   contents: read
 
 jobs:
-  build-personal:
+  build-app:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -21,13 +21,13 @@ jobs:
         with:
           node-version: '24'
       - name: Install build-only dependencies
-        working-directory: personal
+        working-directory: app
         run: npm install --no-audit --no-fund
       - name: Build and verify standalone HTML
-        working-directory: personal
+        working-directory: app
         run: npm run release
       - name: Validate HTML JavaScript syntax
-        working-directory: personal
+        working-directory: app
         run: |
           node - <<'NODE'
           const fs = require('node:fs');
@@ -44,5 +44,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: caffoot-lite-offline-preview
-          path: personal/dist/Caffoot-Lite.html
+          path: app/dist/Caffoot-Lite.html
           if-no-files-found: error
