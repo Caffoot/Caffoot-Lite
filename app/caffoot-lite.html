@@ -3660,7 +3660,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             if (!rack) { showToast('Select a rack before mounting a device.', 'error'); return; }
             const occupant = appState.devices.find(d => d.rackId === rackId && (d.face || 'front') === activeRackFace &&
                 Number(d.rackUStart) <= Number(slotU) && Number(d.rackUEnd || d.rackUStart) >= Number(slotU));
-            const unassignedDevices = appState.devices.filter(d => !d.rackId || d.rackId === rackId);
+            const unassignedDevices = appState.devices.filter(d => d.mountType === 'Rack Mounted' && (!d.rackId || d.rackId === rackId));
             if (occupant) unassignedDevices.sort((a, b) => (a.id === occupant.id ? -1 : b.id === occupant.id ? 1 : 0));
 
             openModal(`
@@ -3674,7 +3674,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                         <div>
                             <label class="block text-xs font-semibold mb-1">Select Device from Inventory <span class="required-mark">*</span></label>
                             <select id="assign-device-id" required class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
-                                ${unassignedDevices.length ? '<option value="" selected disabled>Select a device...</option>' : '<option value="" selected disabled>No unmounted devices available</option>'}
+                                ${unassignedDevices.length ? '<option value="" selected disabled>Select a device...</option>' : '<option value="" selected disabled>No eligible Rack Mounted devices available</option>'}
                                 ${unassignedDevices.map(d => `<option value="${escapeHtml(d.id)}">${escapeHtml(d.name)} (${escapeHtml(d.type)})</option>`).join('')}
                             </select>
                         </div>
@@ -3710,6 +3710,10 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             const uStart = parseInt(document.getElementById('assign-u-start').value);
 
             const device = appState.devices.find(d => d.id === deviceId);
+            if (!device || device.mountType !== 'Rack Mounted') {
+                showToast('Only devices configured as Rack Mounted can be placed in a rack.', 'error');
+                return;
+            }
             if (device) {
                 const height = Math.max(1, Number(device.rackUHeight) || (Number(device.rackUEnd) - Number(device.rackUStart) + 1) || 1);
                 const endU = uStart + height - 1;
