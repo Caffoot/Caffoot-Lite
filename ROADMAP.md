@@ -78,3 +78,19 @@ These were **proposals**, not committed v1.0 requirements. Confirm scope before 
 **Data compatibility:** Preserve existing browser inventories and supported JSON backup formats. The primary storage key is `caffoot_state`; this pre-release build does not automatically migrate legacy test storage. Export and restore JSON backups to retain test data.
 
 **Safe releases:** Keep a known-good standalone HTML build and recommend exporting a JSON backup before upgrading. Validate new builds before publishing them.
+
+## Lite → Pro compatibility principles (planned)
+
+- **Lite is the design reference:** Caffoot Pro should retain the same visual language, navigation, shared forms, field labels, validation presentation, light/dark themes and core workflows. Pro may add clearly distinguished capabilities without breaking familiar Lite experiences.
+- **One-way migration must be straightforward:** A user should be able to export a supported versioned JSON inventory from Lite and import it into Pro, with a validation preview, clear conflict handling and a transactional database import. No manual re-entry of devices, subnets, racks or IPAM allocations should be required for supported data.
+- **Versioned interchange format:** Introduce an explicit schema version and originating app version, documented semantics and migration functions; preserve backwards-compatible imports as the schema evolves. Never assume an HTML filename or browser localStorage is portable.
+- **Keep the original safe:** Import must not mutate the exported JSON file. Invalid or unsupported formats must fail clearly and leave existing data unchanged. Test reference fixtures across both editions.
+- **Separate storage and deployment:** Lite remains offline-first and browser-local. Pro is planned for Docker and server-side persistence, with authentication, roles and expanded capabilities designed separately.
+- **Pro repository:** Owner intends to create a separate `Caffoot-Pro` repository. Do not create or publish it without explicit instruction. A Caffoot website is a future project, not a v1.0 blocker.
+
+### Before Lite v1.0 publication
+
+- [ ] Add version metadata to JSON exports and a documented versioned import/migration strategy while retaining compatibility with current valid backups.
+- [ ] Add automated tests for legacy backups, unsupported future schema versions, malformed metadata and unchanged inventory on rejection.
+- [ ] Produce an example Lite backup fixture for future Pro import contract tests, without real infrastructure or sensitive data.
+- [ ] Complete release packaging, offline upgrade/restore acceptance and owner publication approval.
