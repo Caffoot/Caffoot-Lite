@@ -4411,17 +4411,87 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 body = browserStorageWarning() + panel('Inventory safety check','Check data integrity and confirm that the current inventory is saved in this browser. This check makes no changes.',button('phase16a-check-safety','Check inventory safety','fa-shield-halved')) +
                     panel('Back up your data','Download a complete JSON copy of the current inventory, including devices, IPAM, subnets and racks.',button('phase11-export-backup','Download JSON backup','fa-download')) +
                     panel('Restore your data','Choose a JSON backup. Caffoot Lite checks the file and displays a summary before asking you to replace your inventory. A safety copy is verified first.',button('phase16a-import','Choose backup file','fa-upload')) +
+                    panel('Update Caffoot Lite','Check for a published release when online. Download a JSON backup before opening a newer HTML file.',button('caffoot-check-updates','Check for updates','fa-arrow-rotate-right') + button('caffoot-update-guide','Safe update guide','fa-circle-info') + '<p id="caffoot-update-status" role="status" aria-live="polite"></p>') +
                     panel('Recovery snapshot','A safety snapshot is available only after a restore has created one.',button('phase11-download-snapshot','Download safety snapshot','fa-shield-halved',personalSafeStorageGet(SAFETY_SNAPSHOT_KEY)?'':'disabled')) +
                     panel('Danger zone — clear system','Permanently reset all inventory, IPAM records and managed options in this browser. Export a JSON backup first.',button('phase16a-clear-system','Clear system / clean start','fa-triangle-exclamation'));
             } else if (section === 'preferences') {
                 body = panel('Appearance','Switch between the existing light and dark themes.',button('phase16a-theme','Switch light / dark','fa-circle-half-stroke'));
             } else {
-                body = panel('About Caffoot Lite','Standalone browser-based network inventory, IP address management and rack documentation. Data is saved locally in this browser.');
+                body = panel('About Caffoot Lite','Standalone browser-based network inventory, IP address management and rack documentation. Data is saved locally in this browser. Version ' + CAFFOOT_LITE_VERSION);
             }
             const tabs = [['backup','Data Management','fa-database'],['preferences','Preferences','fa-palette'],['about','About Caffoot Lite','fa-circle-info']];
             return `<div class="phase16a-workspace phase16b-workspace"><div class="phase16a-intro"><h2>Settings & Data</h2><p>Manage your data, appearance and application health — without duplicate tools.</p></div>
                 <div class="phase16a-tabs" role="group" aria-label="Settings sections">${tabs.map(([id,label,icon])=>`<button type="button" data-action="phase16a-section" data-section="${id}" aria-pressed="${section===id}" class="phase16a-tab ${section===id?'phase16a-active':''}"><i class="fa-solid ${icon}" aria-hidden="true"></i>${label}</button>`).join('')}</div>
                 ${section==='backup'?browserStorageWarning():''}<div class="phase16a-grid">${section==='backup'?body.replace(browserStorageWarning(),''):body}</div>${section==='backup'?'<p class="phase16a-warning"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Browser storage is not a reliable long-term backup. Keep exported JSON files somewhere safe, especially before restoring data or changing browsers.</p>':''}</div>`;
+        }
+
+        // Manual release checks never read or send inventory, or change browser storage.
+        function caffootCompareVersions(left, right) {
+            const parse = value => {
+                const match = /^(?:v)?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-([0-9A-Za-z.-]+))?(?:\+[0-9A-Za-z.-]+)?$/.exec(value);
+                if (!match) throw new Error('Release version is not recognised.');
+                const pre = match[4] ? match[4].split('.') : [];
+                if (pre.some(part => !part || (/^\d+$/.test(part) && part.length > 1 && part[0] === '0'))) throw new Error('Release version is not recognised.');
+                return {numbers:match.slice(1,4).map(BigInt), pre};
+            };
+            const a = parse(left), b = parse(right);
+            for (let i=0;i<3;i++) if (a.numbers[i] !== b.numbers[i]) return a.numbers[i] > b.numbers[i] ? 1 : -1;
+            if (!a.pre.length || !b.pre.length) return a.pre.length === b.pre.length ? 0 : a.pre.length ? -1 : 1;
+            for (let i=0;i<Math.max(a.pre.length,b.pre.length);i++) {
+                if (a.pre[i] === undefined) return -1;
+                if (b.pre[i] === undefined) return 1;
+                if (a.pre[i] === b.pre[i]) continue;
+                const an = /^\d+$/.test(a.pre[i]), bn = /^\d+$/.test(b.pre[i]);
+                if (an && bn) return BigInt(a.pre[i]) > BigInt(b.pre[i]) ? 1 : -1;
+                if (an !== bn) return an ? -1 : 1;
+                return a.pre[i] > b.pre[i] ? 1 : -1;
+            }
+            return 0;
+        }
+
+        function caffootUpdateGuide() {
+            openModal(`<div class="p-6 space-y-4"><h3 class="text-lg font-bold text-slate-900 dark:text-white">Safely update Caffoot Lite</h3>
+                <ol class="list-decimal pl-6 space-y-3 text-slate-700 dark:text-slate-200">
+                    <li>Download a JSON backup from the current version and keep it outside your browser.</li>
+                    <li>Keep your current HTML file. Download the new <strong>Caffoot-Lite.html</strong> from the official release page into a separate folder.</li>
+                    <li>Open the new file in your usual browser. Moving a file can change which saved inventory the browser can access.</li>
+                    <li>Use Settings &amp; Data → Choose backup file if your inventory is missing or out of date. Review the import summary carefully: restoring replaces the inventory visible in that file.</li>
+                    <li>Check your devices, IPAM, subnets and racks before continuing. Keep the old HTML and backup until you are satisfied.</li>
+                </ol><p class="text-sm text-slate-700 dark:text-slate-200">Updates are manual. The application works offline; only checking for releases and downloading a newer file need internet access. A backup from a newer schema may require a newer application.</p>
+                <div class="flex flex-wrap gap-3"><button type="button" data-action="phase11-export-backup" class="phase16a-action">Download JSON backup</button>
+                <a href="https://github.com/sdelnevo/Caffoot-Lite/releases" target="_blank" rel="noopener noreferrer" class="phase16a-action">Official releases</a></div></div>`);
+        }
+
+        let caffootUpdateChecking = false;
+        async function caffootCheckUpdates() {
+            if (caffootUpdateChecking) return;
+            const status = document.getElementById('caffoot-update-status');
+            if (!status) return;
+            if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+                status.textContent = 'You are offline. You can keep using Caffoot Lite and follow the safe update guide later.';
+                return;
+            }
+            caffootUpdateChecking = true;
+            status.textContent = 'Checking official published releases…';
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 10000);
+            try {
+                const response = await fetch('https://api.github.com/repos/sdelnevo/Caffoot-Lite/releases/latest', {signal:controller.signal, credentials:'omit', referrerPolicy:'no-referrer', headers:{Accept:'application/vnd.github+json'}});
+                if (response.status === 404) {
+                    status.textContent = 'No public release is available yet, or the repository is private. Your current version is ' + CAFFOOT_LITE_VERSION + '.';
+                    return;
+                }
+                if (!response.ok) throw new Error('Release check unavailable');
+                const release = await response.json();
+                if (!release || release.draft !== false || release.prerelease !== false || typeof release.tag_name !== 'string') throw new Error('Invalid release');
+                const newer = caffootCompareVersions(release.tag_name, CAFFOOT_LITE_VERSION) > 0;
+                status.textContent = newer ? 'A newer release (' + release.tag_name + ') is available. Download a JSON backup, then follow the safe update guide.' : 'No newer stable release is available. Current version: ' + CAFFOOT_LITE_VERSION + '.';
+            } catch (error) {
+                status.textContent = 'Could not check releases. Check your connection or visit Official releases in the safe update guide. Your inventory has not changed.';
+            } finally {
+                clearTimeout(timeout);
+                caffootUpdateChecking = false;
+            }
         }
 
         function phase16ACheckSafety() {
@@ -5162,6 +5232,8 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 case 'tab-audit': switchTab('audit'); break;
                 case 'export-audit': exportAuditHistory(); break;
                 case 'phase16a-check-safety': phase16ACheckSafety(); break;
+                case 'caffoot-check-updates': caffootCheckUpdates(); break;
+                case 'caffoot-update-guide': caffootUpdateGuide(); break;
                 case 'phase11-export-backup': exportData(); break;
                 case 'acknowledge-browser-storage': acknowledgeBrowserStorageNotice(); break;
                 case 'phase16a-clear-system': phase16AClearSystem(); break;

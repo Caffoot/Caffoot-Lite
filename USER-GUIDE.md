@@ -66,3 +66,16 @@ The **reset/clean start** operation is destructive: it replaces local inventory 
 5. Export a backup and verify it can be restored to a test inventory.
 
 For download instructions and troubleshooting, see [INSTALLATION.md](INSTALLATION.md).
+
+
+## Updating safely
+
+In Settings & Data → Data Management, use **Check for updates** to check the latest published stable release. This is a manual online check; it does not send inventory or install anything. While the repository is private or no release has been published, no public release is available.
+
+1. Download a JSON backup from your current version.
+2. Keep the old HTML and download the new `Caffoot-Lite.html` into a separate folder from the [official releases](https://github.com/sdelnevo/Caffoot-Lite/releases).
+3. Open the new file in your usual browser. Saved data may be unavailable after moving or renaming a file.
+4. If needed, choose your backup in Settings & Data and review the replacement summary before restoring.
+5. Verify devices, IPAM, subnets and racks. Keep the old HTML and backup until satisfied.
+
+The safe update guide and backups work offline. Newer backup schemas require a compatible app; retain your original backup for recovery.
