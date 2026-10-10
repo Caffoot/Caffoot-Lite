@@ -1554,11 +1554,30 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             return escapeHtml(JSON.stringify(String(value ?? '')));
         }
 
+        const BROWSER_STORAGE_NOTICE_KEY = 'caffoot_browser_storage_notice_v1';
+        let browserStorageNoticeAcknowledged = personalSafeStorageGet(BROWSER_STORAGE_NOTICE_KEY) === 'acknowledged';
+        function browserStorageWarning(firstRun = false) {
+            return `<section role="region" aria-label="Important browser storage warning" class="rounded-2xl border-2 border-amber-500 bg-amber-50 p-4 sm:p-5 text-amber-950 dark:border-amber-400 dark:bg-amber-950 dark:text-amber-50 space-y-3">
+                <h3 class="text-lg font-extrabold"><i class="fa-solid fa-triangle-exclamation mr-2" aria-hidden="true"></i>Important: your inventory is stored in this browser</h3>
+                <p class="text-sm leading-relaxed"><strong>Your devices, IP addresses, subnets, racks and settings are NOT saved inside Caffoot-Lite.html.</strong> They are held in this browser's local storage, with no automatic cloud backup or synchronisation. Clearing browser data can permanently erase them. Changing browser or profile, or moving or renaming the HTML file, may make them inaccessible.</p>
+                <p class="text-sm font-bold">Download a JSON backup regularly, and ALWAYS before upgrading, moving, renaming or resetting Caffoot Lite. Keep backups somewhere safe outside the browser.</p>
+                <div class="flex flex-wrap gap-3">
+                    <button type="button" data-action="phase11-export-backup" class="rounded-lg bg-amber-900 px-4 py-2.5 text-sm font-bold text-white hover:bg-amber-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-800 dark:bg-amber-200 dark:text-amber-950 dark:hover:bg-amber-100"><i class="fa-solid fa-download mr-2" aria-hidden="true"></i>Download JSON backup</button>
+                    ${firstRun ? '<button type="button" data-action="acknowledge-browser-storage" class="rounded-lg border-2 border-amber-800 px-4 py-2.5 text-sm font-bold hover:bg-amber-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-800 dark:border-amber-200 dark:hover:bg-amber-900">I understand — continue</button>' : ''}
+                </div>
+            </section>`;
+        }
+        function acknowledgeBrowserStorageNotice() {
+            browserStorageNoticeAcknowledged = true;
+            try { localStorage.setItem(BROWSER_STORAGE_NOTICE_KEY, 'acknowledged'); }
+            catch (error) { console.warn('Could not remember browser storage notice:', error); }
+            renderContent();
+        }
         function renderContent() {
             const container = document.getElementById('main-content');
             // Phase 17B: replace the view once, avoiding an extra DOM teardown.
             let html = '';
-            if (currentTab === 'dashboard') html = renderDashboardHTML();
+            if (currentTab === 'dashboard') html = (!browserStorageNoticeAcknowledged ? browserStorageWarning(true) : '') + renderDashboardHTML();
             else if (currentTab === 'ipam') html = renderIpamHTML();
             else if (currentTab === 'devices') html = renderDevicesHTML();
             else if (currentTab === 'racks') html = renderRacksHTML();
@@ -4387,7 +4406,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             const panel = (title,desc,inner='') => `<section class="phase16a-panel"><h3>${title}</h3><p>${desc}</p>${inner ? `<div class="phase16a-buttons">${inner}</div>` : ''}</section>`;
             let body = '';
             if (section === 'backup') {
-                body = panel('Inventory safety check','Check data integrity and confirm that the current inventory is saved in this browser. This check makes no changes.',button('phase16a-check-safety','Check inventory safety','fa-shield-halved')) +
+                body = browserStorageWarning() + panel('Inventory safety check','Check data integrity and confirm that the current inventory is saved in this browser. This check makes no changes.',button('phase16a-check-safety','Check inventory safety','fa-shield-halved')) +
                     panel('Back up your data','Download a complete JSON copy of the current inventory, including devices, IPAM, subnets and racks.',button('phase11-export-backup','Download JSON backup','fa-download')) +
                     panel('Restore your data','Choose a JSON backup. Caffoot Lite checks the file and displays a summary before asking you to replace your inventory. A safety copy is verified first.',button('phase16a-import','Choose backup file','fa-upload')) +
                     panel('Recovery snapshot','A safety snapshot is available only after a restore has created one.',button('phase11-download-snapshot','Download safety snapshot','fa-shield-halved',personalSafeStorageGet(SAFETY_SNAPSHOT_KEY)?'':'disabled')) +
@@ -4400,7 +4419,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             const tabs = [['backup','Data Management','fa-database'],['preferences','Preferences','fa-palette'],['about','About Caffoot Lite','fa-circle-info']];
             return `<div class="phase16a-workspace phase16b-workspace"><div class="phase16a-intro"><h2>Settings & Data</h2><p>Manage your data, appearance and application health — without duplicate tools.</p></div>
                 <div class="phase16a-tabs" role="group" aria-label="Settings sections">${tabs.map(([id,label,icon])=>`<button type="button" data-action="phase16a-section" data-section="${id}" aria-pressed="${section===id}" class="phase16a-tab ${section===id?'phase16a-active':''}"><i class="fa-solid ${icon}" aria-hidden="true"></i>${label}</button>`).join('')}</div>
-                <div class="phase16a-grid">${body}</div>${section==='backup'?'<p class="phase16a-warning"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Browser storage is not a reliable long-term backup. Keep exported JSON files somewhere safe, especially before restoring data or changing browsers.</p>':''}</div>`;
+                ${section==='backup'?browserStorageWarning():''}<div class="phase16a-grid">${section==='backup'?body.replace(browserStorageWarning(),''):body}</div>${section==='backup'?'<p class="phase16a-warning"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Browser storage is not a reliable long-term backup. Keep exported JSON files somewhere safe, especially before restoring data or changing browsers.</p>':''}</div>`;
         }
 
         function phase16ACheckSafety() {
@@ -5112,6 +5131,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 case 'export-audit': exportAuditHistory(); break;
                 case 'phase16a-check-safety': phase16ACheckSafety(); break;
                 case 'phase11-export-backup': exportData(); break;
+                case 'acknowledge-browser-storage': acknowledgeBrowserStorageNotice(); break;
                 case 'phase16a-clear-system': phase16AClearSystem(); break;
                 case 'phase11-download-snapshot': phase11DownloadSnapshot(); break;
                 case 'phase10d-export': phase10DDownloadCsv(target.dataset.report); break;
