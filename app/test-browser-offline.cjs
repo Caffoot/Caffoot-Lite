@@ -129,6 +129,45 @@ const { chromium } = require('playwright');
       'Closing dialog must return focus to trigger');
     await page.evaluate(() => document.getElementById('accessibility-test-trigger').remove());
     console.log('PASS: modal keyboard trap, labelled field, visible focus, Escape and focus return.');
+    // Regression: imported subnet strings must remain values, never executable markup.
+    const subnetProbe = await page.evaluate(() => {
+      const marker = 'subnet-attribute-escape-test';
+      const payload = '\"><img src=x onerror=alert(1)>';
+      const subnet = {
+        id: marker, cidr: '192.168.77.0/24', name: payload,
+        vlan: 77, gateway: '192.168.77.1', description: payload
+      };
+      appState.subnets.push(subnet);
+      try {
+        openSubnetModal(marker);
+        const content = document.getElementById('modal-content');
+        const name = content.querySelector('#sub-name');
+        const description = content.querySelector('#sub-desc');
+        const labels = ['sub-cidr', 'sub-name', 'sub-vlan', 'sub-gw', 'sub-desc']
+          .map(id => {
+            const input = content.querySelector('#' + id);
+            return { id, labelled: !!(input && input.labels && input.labels.length) };
+          });
+        return {
+          name: name && name.value,
+          description: description && description.value,
+          injectedImages: content.querySelectorAll('img').length,
+          fieldCount: content.querySelectorAll('input').length,
+          labels
+        };
+      } finally {
+        closeModal();
+        appState.subnets.splice(appState.subnets.indexOf(subnet), 1);
+      }
+    });
+    const payload = '"><img src=x onerror=alert(1)>';
+    assert.equal(subnetProbe.name, payload, 'Subnet name must preserve exact text');
+    assert.equal(subnetProbe.description, payload, 'Subnet description must preserve exact text');
+    assert.equal(subnetProbe.injectedImages, 0, 'Subnet values must not create injected elements');
+    assert.equal(subnetProbe.fieldCount, 5, 'Subnet values must not alter the form structure');
+    assert(subnetProbe.labels.every(field => field.labelled),
+      'All five subnet fields must have associated labels');
+    console.log('PASS: subnet edit fields safely preserve hostile text and accessible labels.');
     assert.deepEqual(outbound, [], 'Standalone file must not attempt network requests');
     assert.deepEqual(failures, [], 'Browser must not raise uncaught JavaScript errors');
     console.log('PASS: Chromium file:// startup, navigation, offline operation and localStorage reload.');
