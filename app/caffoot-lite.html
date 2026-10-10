@@ -4533,8 +4533,37 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             }
         }
 
+        const CAFFOOT_BACKUP_FORMAT = 'caffoot-inventory';
+        const CAFFOOT_BACKUP_SCHEMA_VERSION = 1;
+        const CAFFOOT_LITE_VERSION = '1.0.0-rc.1';
+        function phase20CreateBackup(state = appState) {
+            return {
+                ...JSON.parse(JSON.stringify(state)),
+                caffootBackup: {
+                    format: CAFFOOT_BACKUP_FORMAT,
+                    schemaVersion: CAFFOOT_BACKUP_SCHEMA_VERSION,
+                    app: 'Caffoot Lite',
+                    appVersion: CAFFOOT_LITE_VERSION,
+                    exportedAt: new Date().toISOString()
+                }
+            };
+        }
+        function phase20ValidateBackupVersion(raw) {
+            if (!Object.prototype.hasOwnProperty.call(raw, 'caffootBackup')) return 0; // legacy inventory export
+            const meta = raw.caffootBackup;
+            if (!meta || typeof meta !== 'object' || Array.isArray(meta) ||
+                meta.format !== CAFFOOT_BACKUP_FORMAT ||
+                !Number.isSafeInteger(meta.schemaVersion) || meta.schemaVersion < 1 ||
+                typeof meta.app !== 'string' || !['Caffoot Lite','Caffoot Pro'].includes(meta.app) ||
+                typeof meta.appVersion !== 'string' || !/^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[a-zA-Z0-9.-]+)?$/.test(meta.appVersion) ||
+                typeof meta.exportedAt !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}T/.test(meta.exportedAt) || !Number.isFinite(Date.parse(meta.exportedAt)))
+                throw new Error('Backup version metadata is invalid or unsupported.');
+            if (meta.schemaVersion > CAFFOOT_BACKUP_SCHEMA_VERSION)
+                throw new Error('This backup uses a newer inventory schema. Update Caffoot Lite before importing it.');
+            return meta.schemaVersion;
+        }
         function exportData() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(phase20CreateBackup(), null, 2));
             const dlAnchor = document.createElement('a');
             dlAnchor.setAttribute("href", dataStr);
             dlAnchor.setAttribute("download", `caffoot_lite_backup_${new Date().toISOString().slice(0,10)}.json`);
@@ -4604,6 +4633,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
         function phase16CCheckBackup(raw) {
             phase16CRejectUnsafeKeys(raw);
             phase11ValidateBackupShape(raw);
+            phase20ValidateBackupVersion(raw);
             const candidate = normaliseState(raw);
             const original = appState;
             let issues;
