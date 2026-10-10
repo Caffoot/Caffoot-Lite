@@ -833,7 +833,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             </div>
         </aside>
         <!-- Hidden backup input retained for Settings restore and existing import workflow. -->
-        <input type="file" id="import-file" class="hidden" accept=".json,application/json" data-action="import-file" aria-label="Choose Caffoot Lite or legacy NetMini backup JSON file">
+        <input type="file" id="import-file" class="hidden" accept=".json,application/json" data-action="import-file" aria-label="Choose Caffoot Lite or older compatible backup JSON file">
 
 
         <!-- MAIN CONTENT AREA -->
@@ -3995,7 +3995,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
         const phase19BProfiles = {"network":["networkCard","networkConnection"],"printer":["networkCard","networkConnection","printerColour","printerDesign"],"computer":["windowsLicence","os","networkCard","networkConnection","processor","graphics","memory","memoryUnit","storage","storageUnit","Swan","MicrosoftOffice","Planet","SpindleSoftware","Preactor","RedLionApp","SalesBase","HelpDesk","ProductionITHelpDeskDashboards","PDA","TMS","PhoneBook","EasyLabel"],"server":["windowsLicence","os","networkCard","networkConnection","processor","graphics","memory","memoryUnit","storage","storageUnit","SwanServer","SQLServer","TMSServer","printserver","keriserver","ActiveDirectory","AntivirusSoftware","DNS","DHCP","ExchangeServer","BackupSoftware","PlanetDB","SystemsDatabaseBackEndTables","PDASystem","raid","driveCount"],"nas":["networkCard","networkConnection","memory","memoryUnit","storage","storageUnit","raid","driveCount"],"phone":["handsetCount"],"ups":["powerOutlets","serialPort","usbPort"],"tape":["networkCard","networkConnection","driveCount"],"ap":[]};
         phase19BProfiles.switch=['portCount','networkCard','networkConnection'];
         phase19BProfiles.router=['portCount','networkConnection'];
-        // User-managed server roles: the list is persisted in NetMini backups and can
+        // User-managed server roles: the list is preserved in older compatible backups and can
         // be edited without changing device types or deleting historical device values.
         const phase19BDefaultServerFunctions = ['SwanServer','SQLServer','TMSServer','printserver','keriserver','ActiveDirectory','AntivirusSoftware','DNS','DHCP','ExchangeServer','BackupSoftware','PlanetDB','SystemsDatabaseBackEndTables','PDASystem'];
         function phase19BServerFunctions() {
@@ -4591,7 +4591,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
         }
         function phase16CReadJson(contents) {
             try { return JSON.parse(contents); }
-            catch (error) { throw new Error('This file is not valid JSON. Select a Caffoot Lite or legacy NetMini JSON backup (not a CSV export). ' + error.message); }
+            catch (error) { throw new Error('This file is not valid JSON. Select a Caffoot Lite or older compatible JSON backup (not a CSV export). ' + error.message); }
         }
         function importData(event) {
             const input = event.target;
