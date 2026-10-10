@@ -1555,7 +1555,9 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
         }
 
         const BROWSER_STORAGE_NOTICE_KEY = 'caffoot_browser_storage_notice_v1';
-        let browserStorageNoticeAcknowledged = personalSafeStorageGet(BROWSER_STORAGE_NOTICE_KEY) === 'acknowledged';
+        let browserStorageNoticeAcknowledged = false;
+        try { browserStorageNoticeAcknowledged = typeof localStorage !== 'undefined' && localStorage.getItem(BROWSER_STORAGE_NOTICE_KEY) === 'acknowledged'; }
+        catch (error) { console.warn('Browser storage notice preference unavailable:', error); }
         function browserStorageWarning(firstRun = false) {
             return `<section role="region" aria-label="Important browser storage warning" class="rounded-2xl border-2 border-amber-500 bg-amber-50 p-4 sm:p-5 text-amber-950 dark:border-amber-400 dark:bg-amber-950 dark:text-amber-50 space-y-3">
                 <h3 class="text-lg font-extrabold"><i class="fa-solid fa-triangle-exclamation mr-2" aria-hidden="true"></i>Important: your inventory is stored in this browser</h3>
