@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
 const path = require('node:path');
-const html = fs.readFileSync(path.join(__dirname, 'caffoot-personal.html'), 'utf8');
+const html = fs.readFileSync(path.join(__dirname, 'caffoot-lite.html'), 'utf8');
 const start = html.indexOf('const defaultData = {');
 const end = html.indexOf('const STATE_VERSION', start);
 assert(start >= 0 && end > start, 'starter inventory block must exist');
@@ -215,10 +215,10 @@ console.log('Backup JSON validation fixtures passed.');
 
 
 
-console.log('Personal source regression checks passed (' + scripts.length + ' inline scripts parsed).');
+console.log('Caffoot Lite source regression checks passed (' + scripts.length + ' inline scripts parsed).');
 
 
-const ipPickerSource = fs.readFileSync(path.join(__dirname, 'caffoot-personal.html'), 'utf8');
+const ipPickerSource = fs.readFileSync(path.join(__dirname, 'caffoot-lite.html'), 'utf8');
 assert(ipPickerSource.includes('id="dev-ip-available"'), 'Device form must expose a Safari-compatible IP dropdown');
 assert(ipPickerSource.includes("case 'device-ip-select':"), 'Device IP dropdown must be handled on change');
 assert(ipPickerSource.includes('if (available.length < 50) available.push(ip)'), 'IP dropdown must cap rendered choices');
