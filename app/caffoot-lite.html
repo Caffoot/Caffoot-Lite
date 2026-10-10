@@ -820,10 +820,6 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                     <i class="fa-solid fa-hard-drive w-5 text-center"></i>
                     <span>Network Racks</span>
                 </button>
-                <button data-action="tab-docker" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700/50 hover:text-indigo-600 dark:hover:text-indigo-400" data-tab="docker">
-                    <i class="fa-brands fa-docker w-5 text-center"></i>
-                    <span>Docker & Deploy</span>
-                </button>
                 <button data-action="tab-audit" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700/50 hover:text-indigo-600 dark:hover:text-indigo-400" data-tab="audit"><i class="fa-solid fa-clock-rotate-left w-5 text-center"></i><span>Change History</span></button>
                 
             </nav>
@@ -1535,7 +1531,8 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 ipam: 'IP Address Management, Subnets & VLANs',
                 devices: 'Device Inventory & Hardware',
                 racks: 'Network Racks & Elevations',
-                docker: 'Docker & Self-Hosting Deployment',
+
+
                 audit: 'Change History & Data Safety',
                 settings: 'Settings & Data Management'
             };
@@ -1566,8 +1563,8 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             else if (currentTab === 'devices') html = renderDevicesHTML();
             else if (currentTab === 'racks') html = renderRacksHTML();
             else if (currentTab === 'audit') html = renderAuditHTML();
-            
-            else if (currentTab === 'docker') html = renderDockerHTML();
+
+
             else if (currentTab === 'settings') html = phase16ARenderSettings();
             container.innerHTML = html;
         }
@@ -3469,24 +3466,6 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             renderContent();
         }
 
-        function renderDockerHTML() {
-            return `
-                <div class="space-y-6">
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-lg font-bold text-slate-900 dark:text-white">Docker & Self-Hosting Templates</h3>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-                        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col justify-between space-y-4">
-                            <div>
-                                <h4 class="font-bold text-base text-slate-900 dark:text-white">Nginx Proxy Manager</h4>
-                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Easy reverse proxy management with SSL automation.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
         // RC1 accessibility: modal focus is contained and returned to its trigger.
         let modalReturnFocus = null;
         function closeModal() {
@@ -5139,7 +5118,8 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 }
                 case 'tab-dashboard': switchTab('dashboard'); break;
                 case 'tab-devices': switchTab('devices'); break;
-                case 'tab-docker': switchTab('docker'); break;
+
+
                 case 'tab-ipam': switchTab('ipam'); break;
                 case 'tab-racks': switchTab('racks'); break;
                 case 'toggle-dark-mode': toggleDarkMode(); break;
