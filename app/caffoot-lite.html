@@ -4482,6 +4482,11 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                         if (previousSafety === null) localStorage.removeItem(SAFETY_SNAPSHOT_KEY);
                         else localStorage.setItem(SAFETY_SNAPSHOT_KEY, previousSafety);
                     }
+                    // Storage writes can silently fail. Verify both restored values before allowing edits.
+                    if (previousSaved !== undefined && localStorage.getItem(key) !== previousSaved)
+                        throw new Error('Inventory rollback verification failed.');
+                    if (previousSafety !== undefined && localStorage.getItem(SAFETY_SNAPSHOT_KEY) !== previousSafety)
+                        throw new Error('Safety snapshot rollback verification failed.');
                 } catch (rollbackError) {
                     phase17AStorageRecovery = { reason: 'Clean reset rollback could not be verified. Further saves are blocked.', raw: previousSaved === undefined ? null : previousSaved };
                     phase17ARecoveryBanner();
