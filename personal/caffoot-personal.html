@@ -1142,30 +1142,14 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             return errors;
         }
 
-        // Preserve legacy browser inventories while adopting Caffoot-branded storage.
+        // Caffoot Lite v1 uses its own browser storage namespace.
         const STORAGE_KEY = 'caffoot_state';
-        const LEGACY_STORAGE_KEY = 'netmini_state';
-        function readCaffootStoredInventory() {
-            const current = localStorage.getItem(STORAGE_KEY);
-            if (current !== null) return current; // Never overwrite an existing (even corrupt) new-format entry.
-            const legacy = localStorage.getItem(LEGACY_STORAGE_KEY);
-            if (legacy === null) return null;
-            // Validate before migration; retain the legacy value as a safety copy.
-            const parsed = JSON.parse(legacy);
-            if (!isPlainObject(parsed) || !Array.isArray(parsed.devices) || !Array.isArray(parsed.subnets) || !Array.isArray(parsed.racks) || !isPlainObject(parsed.ipAllocations)) {
-                throw new Error('Legacy inventory structure is missing required collections');
-            }
-            const migrated = JSON.stringify(normaliseState(parsed));
-            localStorage.setItem(STORAGE_KEY, migrated);
-            if (localStorage.getItem(STORAGE_KEY) !== migrated) throw new Error('Caffoot inventory migration verification failed');
-            return migrated;
-        }
 
         // Phase 17A: preserve unreadable stored data. Never overwrite it on startup.
         let phase17AStorageRecovery = null;
         function loadStoredState() {
             let stored;
-            try { stored = readCaffootStoredInventory(); }
+            try { stored = localStorage.getItem(STORAGE_KEY); }
             catch (error) {
                 phase17AStorageRecovery = { reason: 'Browser storage cannot be read.', raw: null };
                 console.error('Storage unavailable:', error);
@@ -1235,20 +1219,20 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
         let ipViewRange = '1-32';
         let phase12Page = 0;
 
-        if (localStorage.getItem('netmini_dark') === 'true') {
+        if (localStorage.getItem('caffoot_dark') === 'true') {
             document.documentElement.classList.add('dark');
             document.getElementById('theme-icon')?.setAttribute('class', 'fa-solid fa-sun');
         }
 
         function toggleDarkMode() {
             const isDark = document.documentElement.classList.toggle('dark');
-            localStorage.setItem('netmini_dark', isDark);
+            localStorage.setItem('caffoot_dark', isDark);
             document.getElementById('theme-icon')?.setAttribute('class', isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon');
         }
 
         // Phase 10C: a compact, local, best-effort audit trail.
         // Audit records are metadata only; backup JSON still contains the complete inventory.
-        const AUDIT_KEY = 'netmini_audit_v1';
+        const AUDIT_KEY = 'caffoot_audit_v1';
         const AUDIT_LIMIT = 200;
         function readAuditHistory() {
             try {
@@ -1595,7 +1579,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 
         // Phase 11C: conservative repair planner. Never changes source data during preview.
         let phase11CPreview = null;
-        const PHASE11C_SNAPSHOT_KEY = 'netmini_phase11c_pre_repair_v1';
+        const PHASE11C_SNAPSHOT_KEY = 'caffoot_phase11c_pre_repair_v1';
         function phase11CPlan(state=appState) {
             const fixes=[], blocked=[];
             const owners=new Map();
@@ -3106,7 +3090,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             if(plan.error||!plan.changes?.length) return showToast(plan.error||'No eligible addresses remain.','error');
             const before=JSON.stringify(appState);
             try {
-                localStorage.setItem('netmini_phase12b_prebulk_snapshot',before);
+                localStorage.setItem('caffoot_phase12b_prebulk_snapshot',before);
             } catch(error) {return showToast('Safety snapshot could not be saved. Bulk operation cancelled.','error');}
             for(const change of plan.changes) {
                 if(change.updated===null) delete appState.ipAllocations[change.ip];
@@ -4548,7 +4532,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
         }
 
         // Phase 11A: safety snapshots are kept separately from active inventory.
-        const SAFETY_SNAPSHOT_KEY = 'netmini_phase11_pre_restore';
+        const SAFETY_SNAPSHOT_KEY = 'caffoot_phase11_pre_restore';
         function phase11ValidateBackupShape(raw) {
             if (!raw || typeof raw !== 'object' || Array.isArray(raw)) throw new Error('Backup must be a JSON object.');
             const required = ['devices', 'subnets', 'racks'];
