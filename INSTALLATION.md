@@ -4,6 +4,14 @@
 
 Caffoot Lite is a standalone HTML application. You do **not** need Docker, Node.js, a database, an account, or a web server to use the released file.
 
+## ⚠️ Read this before you start — browser storage
+
+**Your inventory is saved in the browser's local storage, NOT inside the HTML file.** Caffoot Lite does not provide automatic backups, cloud synchronisation or a server-side database.
+
+**Clearing browser/site data may permanently erase your inventory.** A different browser or profile, or moving/renaming the HTML file, may show an empty inventory due to differing `file://` storage behaviour.
+
+**Export JSON backups regularly and ALWAYS before upgrades, moves, renames or resets.** Save them outside the browser and test restoration. The backup may include sensitive network information.
+
 ## Download the released HTML
 
 > **Release status:** Caffoot Lite is still being prepared. Until the owner publishes a GitHub Release, the download instructions below describe the planned public distribution.
