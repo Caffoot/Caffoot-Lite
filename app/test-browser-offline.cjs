@@ -256,6 +256,69 @@ const { chromium } = require('playwright');
     assert.equal(rackValidation.clear, null, 'Non-overlapping rack positions should remain valid');
     assert.equal(rackValidation.otherFace, null, 'Opposite rack faces may share U positions');
     console.log('PASS: rack placement rejects collisions and out-of-range positions.');
+    // Device/IPAM integrity: rejected changes must not release the existing IP.
+    const ipamIntegrity = await page.evaluate(() => {
+      const subnet = { id: 'browser-ipam-subnet', cidr: '10.240.77.0/24',
+        gateway: '10.240.77.1', name: 'Browser IPAM test', vlan: 77 };
+      const device = { id: 'browser-ipam-device', name: 'Original device',
+        notes: 'Original notes', primaryIp: '10.240.77.10', ipReserved: false };
+      const rival = { id: 'browser-ipam-rival', name: 'Other device',
+        primaryIp: '10.240.77.20' };
+      const keys = ['10.240.77.10', '10.240.77.20', '10.240.77.30'];
+      const originals = keys.map(ip => [ip, appState.ipAllocations[ip]]);
+      appState.subnets.push(subnet);
+      appState.devices.push(device, rival);
+      appState.ipAllocations[keys[0]] = {
+        status: 'Assigned', deviceId: device.id, hostname: device.name, notes: device.notes
+      };
+      appState.ipAllocations[keys[1]] = {
+        status: 'Assigned', deviceId: rival.id, hostname: rival.name
+      };
+      appState.ipAllocations[keys[2]] = { status: 'Reserved', hostname: 'Reserved host' };
+      try {
+        const before = JSON.stringify({
+          device: device.primaryIp, old: appState.ipAllocations[keys[0]]
+        });
+        const rejected = [];
+        for (const ip of [keys[1], keys[2], '10.241.77.44']) {
+          try { setDevicePrimaryIp(device, ip); rejected.push(null); }
+          catch (error) { rejected.push(error.message); }
+        }
+        const after = JSON.stringify({
+          device: device.primaryIp, old: appState.ipAllocations[keys[0]]
+        });
+        device.name = 'Updated device';
+        device.notes = 'Updated notes';
+        syncDeviceIpamRecord(device);
+        const synced = { ...appState.ipAllocations[keys[0]] };
+        setDevicePrimaryIp(device, '10.240.77.11');
+        const moved = {
+          ip: device.primaryIp,
+          oldExists: Object.prototype.hasOwnProperty.call(appState.ipAllocations, keys[0]),
+          newAllocation: { ...appState.ipAllocations['10.240.77.11'] }
+        };
+        return { rejected, unchanged: before === after, synced, moved };
+      } finally {
+        appState.devices.splice(appState.devices.indexOf(rival), 1);
+        appState.devices.splice(appState.devices.indexOf(device), 1);
+        appState.subnets.splice(appState.subnets.indexOf(subnet), 1);
+        delete appState.ipAllocations['10.240.77.11'];
+        for (const [ip, original] of originals) {
+          if (original === undefined) delete appState.ipAllocations[ip];
+          else appState.ipAllocations[ip] = original;
+        }
+      }
+    });
+    assert(ipamIntegrity.rejected.every(message => typeof message === 'string'),
+      'Duplicate, reserved and out-of-subnet IP addresses must be rejected');
+    assert(ipamIntegrity.unchanged, 'Rejected IP changes must retain original allocation');
+    assert.equal(ipamIntegrity.synced.hostname, 'Updated device');
+    assert.equal(ipamIntegrity.synced.notes, 'Updated notes');
+    assert.equal(ipamIntegrity.moved.ip, '10.240.77.11');
+    assert.equal(ipamIntegrity.moved.oldExists, false, 'Old owned allocation must be released');
+    assert.equal(ipamIntegrity.moved.newAllocation.hostname, 'Updated device');
+    assert.equal(ipamIntegrity.moved.newAllocation.deviceId, 'browser-ipam-device');
+    console.log('PASS: Device/IPAM rejection, detail synchronisation and IP reassignment.');
     assert.deepEqual(outbound, [], 'Standalone file must not attempt network requests');
     assert.deepEqual(failures, [], 'Browser must not raise uncaught JavaScript errors');
     console.log('PASS: Chromium file:// startup, navigation, offline operation and localStorage reload.');
