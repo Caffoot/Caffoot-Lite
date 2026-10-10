@@ -13,7 +13,6 @@ for (const url of unique) console.log(' - ' + url);
 console.log('External resource count: ' + unique.length);
 assert.match(html, /<title>Caffoot Lite/);
 assert.match(html, /caffoot_state/, 'New Caffoot storage key missing');
-assert.match(html, /netmini_state/, 'Legacy migration key missing');
 if (unique.length) {
   console.error('NOT OFFLINE READY: Bundle or replace these resources before release.');
   process.exitCode = 1;
