@@ -2,6 +2,12 @@
 
 **Status:** In preparation; not yet published. This is a release candidate, not the final stable v1.0 release.
 
+## ⚠️ Essential data storage warning
+
+**Caffoot Lite stores inventory in your browser's local storage — NOT in `Caffoot-Lite.html`.** There is no automatic cloud backup, server-side storage or synchronisation. Clearing browser data can permanently erase inventory. Moving or renaming the file, or changing browser/profile, may make existing inventory inaccessible.
+
+**Export a JSON backup regularly and before EVERY upgrade, move, rename or reset.** Keep backups outside the browser, protect sensitive infrastructure information and verify restoration.
+
 ## Included
 - Standalone offline HTML for local use without a server or account.
 - Device inventory, subnets and IP address management, rack layouts and assignments.
