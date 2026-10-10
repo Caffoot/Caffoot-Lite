@@ -30,9 +30,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Consistent native UI typography; no unavailable Inter font dependency. -->
     <style>
+        /* Use one offline-safe UI font stack for every page, including Dashboard. */
         html { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; }
-        body { font-family: inherit; }
-        button, input, select, textarea { font-family: inherit; }
+        body, button, input, select, textarea { font-family: inherit; }
+        /* Tailwind's font-sans utility otherwise selects a different system stack. */
+        .font-sans { font-family: inherit; }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.5); border-radius: 3px; }
