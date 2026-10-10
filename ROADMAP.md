@@ -14,7 +14,7 @@
 - Light/dark UI improvements, consistent forms and Safari rack scrolling refinements.
 - Offline single-HTML build pipeline and automated checks.
 
-The features above are recorded as delivered. Automated Chromium regression checks have been added for offline startup, local storage recovery, backup rejection and restore, Device/IPAM integrity, rack placement, form labels, modal keyboard behaviour and theme text contrast. **Manual cross-browser acceptance, final release review and owner approval remain outstanding.**
+The features above are recorded as delivered. Automated Chromium regression checks have been added for offline startup, local storage recovery, backup rejection and restore, Device/IPAM integrity, rack placement, form labels, modal keyboard behaviour and theme text contrast. **Safari manual acceptance has progressed substantially; remaining workflow, accessibility, distribution and owner-approval checks are listed below.**
 
 ## Verified automated coverage (private CI)
 
@@ -28,30 +28,35 @@ The features above are recorded as delivered. Automated Chromium regression chec
 
 These checks are valuable regression coverage, **not** a complete security audit, accessibility certification or replacement for manual browser testing.
 
-## Manual acceptance still needed
+## Manual Safari acceptance — owner confirmed, 10 October 2026
 
-- Safari on macOS: open the generated offline HTML with network disabled, exercise navigation, reload and JSON backup/restore.
-- Add/Edit/Duplicate/Delete Device, including type-specific options, subnet creation from the Device form, automatic next available IP and IPAM synchronisation.
-- Rack mounting and moving devices between front/rear faces, U heights, accessories and drag/scroll behaviour.
-- Subnet creation and gateway suggestion; IPAM reservations, bulk actions and integrity repair.
-- Keyboard-only and VoiceOver walkthrough of all forms, light/dark themes, mobile-width layout and contrast outside shared tokens.
-- Upgrade/move/rename of the HTML file with a JSON backup, explicitly checking browser-local storage caveats.
-- Final licence, privacy and packaged ZIP review; explicit owner approval before any public repository or release action.
+- **Stage 1 (5/5):** offline startup, branding, navigation, themes and reopening.
+- **Stage 2 (6/6):** subnet creation and suggested gateway, Desktop device creation and next available IP, Device/IPAM name synchronisation.
+- **Rack workflows:** mounting-type restrictions confirmed in Safari; Stage 5B rack integrity **5/5** (overlap, capacity, opposite faces, unchanged state after rejection, persistence).
+- **Stage 4A (6/6):** JSON export, backup contents, cancelled import and persistence.
+- **Stage 4B (7/7):** successful restore, temporary data removed, original inventory/IPAM restored and persisted.
+- **Stage 4C (5/6):** malformed JSON rejected, inventory unchanged and persisted; pre-test inventory confirmation was not checked.
+- **Stage 4D:** owner confirmed a modified backup was rejected. This is evidence of rejection, but does not independently establish every invalid-structure case.
+- **Stage 5A:** owner confirmed rejection of invalid subnet boundary, overlapping subnet, duplicate device IP and out-of-subnet IP; no issue reported.
 
-## v1.0 completion checklist
+## Remaining release gates
 
-- [ ] Confirm clean GitHub Actions build in this standalone repository.
-- [ ] Verify generated HTML works without an internet connection.
-- [ ] Exercise Add/Edit/Duplicate/Delete Device, including type-specific options and save failures.
-- [ ] Verify Device ↔ IPAM and Device ↔ Rack integrity on moves, edits and deletions.
-- [ ] Test rack front/rear placement, accessory collision, U height and Safari drag scrolling.
-- [ ] Check subnet/IPAM reservations, bulk operations and repair workflows.
-- [ ] Check empty inventory, forms, keyboard focus, light/dark contrast and responsive layout.
-- [ ] Export/restore test data and verify corrupt backup rejection and recovery.
-- [ ] Confirm browser-local storage persistence and document file:// caveats.
-- [ ] Review repository for private information, licences and release documentation.
-- [ ] Owner approves stable v1.0.0; tag release and attach offline HTML.
-- [ ] Consider making repository public **only after** final review and approval.
+- [x] Latest private GitHub Actions build green (commit `392b351`, checked 10 October 2026).
+- [x] Generated HTML operates offline in Safari and retains inventory after reopening.
+- [x] Basic Add/Edit Device, next available IP and Device/IPAM synchronisation tested in Safari.
+- [x] Rack mounting restrictions and core U integrity tested in Safari.
+- [x] JSON export, cancelled restore, successful restore and malformed JSON rejection tested in Safari.
+- [x] Core subnet/IPAM invalid-operation rejection tested in Safari.
+- [ ] Exercise **Duplicate/Delete Device** and confirm linked IPAM/rack records stay consistent.
+- [ ] Exercise **IPAM reservations, bulk actions and integrity repair**, including cancellation and persistence.
+- [ ] Exercise **rack accessories, drag-and-drop and scrolling** on Safari; confirm no collision or accidental moves.
+- [ ] Complete targeted **keyboard-only/VoiceOver**, mobile-width and light/dark visual checks beyond shared contrast tokens.
+- [ ] Test **HTML update/move/rename with exported JSON backup**; document browser `file://` storage differences.
+- [ ] Final source privacy review, dependency licence verification and **release ZIP contents** inspection.
+- [ ] Agree public distribution: preferably complete ZIP with notices; if standalone HTML is offered, make licence notices accessible beside it.
+- [ ] Owner explicitly approves release version, public repository visibility and publication actions **separately**.
+
+Passing these checks supports release readiness; it is not a formal security or accessibility certification.
 
 ## Future enhancements — after v1.0
 
