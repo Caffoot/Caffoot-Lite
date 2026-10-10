@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
-const html = fs.readFileSync(path.join(__dirname, 'caffoot-personal.html'), 'utf8');
+const html = fs.readFileSync(path.join(__dirname, 'caffoot-lite.html'), 'utf8');
 function extract(name, next) {
   const start = html.indexOf('function ' + name + '(');
   const end = html.indexOf('function ' + next + '(', start + 1);
