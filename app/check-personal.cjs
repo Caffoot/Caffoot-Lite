@@ -210,7 +210,7 @@ assert.throws(() => backupContext.phase11ValidateBackupShape({ ...validBackup, r
 assert.throws(() => backupContext.phase11ValidateBackupShape({ ...validBackup, devices: Array(50001).fill({}) }), /too many devices/, 'oversized device list rejected');
 assert(html.includes('caffoot_lite_backup_'), 'backup filename uses Caffoot branding');
 assert(html.includes('caffoot_lite_pre_restore_safety_snapshot.json'), 'recovery filename uses Caffoot branding');
-assert(html.includes('legacy NetMini JSON backup'), 'legacy backup compatibility is described');
+assert(html.includes('older compatible JSON backup'), 'older backup compatibility is described');
 console.log('Backup JSON validation fixtures passed.');
 
 
