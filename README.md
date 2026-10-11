@@ -1,9 +1,9 @@
-# Caffoot Lite
+# Caffoot Lite — Free Offline IPAM & Network Inventory Software
 
 **Infrastructure, Simplified.**  
 *For HomeLabs and Small Teams*
 
-**Caffoot Lite is a free, open-source, offline network inventory and IP address management (IPAM) tool** for homelabs and small teams. Track network devices and IT assets, document IPv4 subnets, manage IP address allocations and reservations, and organise equipment in racks — all from a standalone HTML file.
+**Caffoot Lite is free, open-source IP address management (IPAM), network device inventory, IT asset tracking and rack management software** for homelabs and small teams. Track network devices and IT assets, document IPv4 subnets, manage IP address allocations and reservations, and organise equipment in racks — all from a standalone HTML file.
 
 No Docker, database, web server or account is required to run the published release. Download the HTML application and open it in a modern browser. Your inventory stays in that browser's local storage, so **regular JSON exports are essential**: browser data loss can mean inventory loss.
 
@@ -28,7 +28,7 @@ No Docker, database, web server or account is required to run the published rele
 
 ## Download and run
 
-[Download Caffoot-Lite-1.0.0.zip](https://github.com/sdelnevo/Caffoot-Lite/releases/download/v1.0.0/Caffoot-Lite-1.0.0.zip), or use the [release page](https://github.com/sdelnevo/Caffoot-Lite/releases/tag/v1.0.0):
+**[Get the latest stable Caffoot Lite release](https://github.com/sdelnevo/Caffoot-Lite/releases/latest)** — no installation, Docker or server required. For version 1.0.0, [download Caffoot-Lite-1.0.0.zip](https://github.com/sdelnevo/Caffoot-Lite/releases/download/v1.0.0/Caffoot-Lite-1.0.0.zip), or use the [release page](https://github.com/sdelnevo/Caffoot-Lite/releases/tag/v1.0.0):
 
 1. Open this repository's **Releases** page.
 2. Under the latest stable release, expand **Assets**.
@@ -36,6 +36,10 @@ No Docker, database, web server or account is required to run the published rele
 4. Open it in a modern browser. No Docker, Node.js or web server is required to run the release file.
 
 See the detailed [installation and upgrade guide](INSTALLATION.md) for the complete process and storage precautions.
+
+## Who is Caffoot Lite for?
+
+If you're looking for **free IPAM software**, an **offline network inventory tool**, a **homelab asset manager**, or a simple way to document **subnets, device IP addresses and server racks**, Caffoot Lite is designed for that workflow. It runs locally in your browser without an account or hosted service. It is not a network discovery scanner or a multi-user server.
 
 ## What you can manage
 
