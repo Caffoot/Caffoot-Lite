@@ -7,6 +7,21 @@
 
 No Docker, database, web server or account is required to run the published release. Download the HTML application and open it in a modern browser. Your inventory stays in that browser's local storage, so **regular JSON exports are essential**: browser data loss can mean inventory loss.
 
+## Screenshots
+
+### Dashboard
+
+![Caffoot Lite dashboard showing network inventory totals, IPAM allocation statistics and data health](docs/screenshots/dashboard.png)
+
+A clear overview of devices, IPv4 subnets, IP address allocations and rack space.
+
+| Device inventory | Rack management |
+| --- | --- |
+| [![Caffoot Lite device inventory with search, filters, device details and primary IP addresses](docs/screenshots/device-inventory.png)](docs/screenshots/device-inventory.png) | [![Caffoot Lite rack management showing a rack elevation, mounted equipment and available rack units](docs/screenshots/rack-management.png)](docs/screenshots/rack-management.png) |
+| Search and organise network devices, hardware details and IP addresses. | Visualise equipment placement, rack utilisation and available U-space. |
+
+Select either thumbnail to view the full-size screenshot.
+
 ## At a glance
 
 | Capability | Caffoot Lite |
