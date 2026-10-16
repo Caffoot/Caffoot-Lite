@@ -21,7 +21,8 @@
     "check:security-dashboard": "node test-security-dashboard.cjs",
     "check:updates": "node test-updates.cjs",
     "check:backup-contract": "node test-backup-contract.cjs",
-    "package": "node package-release.cjs"
+    "package": "node package-release.cjs",
+    "check:subnet-hierarchy": "node test-subnet-hierarchy.cjs"
   },
   "devDependencies": {
     "tailwindcss": "3.4.17",
