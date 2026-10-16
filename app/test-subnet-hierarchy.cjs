@@ -60,5 +60,25 @@ for(const badType of [
   {...typeCases[0],vlan:0},
   {...typeCases[0],cidr:'192.168.40.0/32'}
 ]) assert(validateSubnetTypes([badType]).length>0);
+
+// Ensure the offline browser copy and the Node test module stay in sync.
+// The HTML is intentionally self-contained and cannot require .cjs at runtime.
+const fs=require('node:fs');
+const vm=require('node:vm');
+const html=fs.readFileSync(require('node:path').join(__dirname,'caffoot-lite.html'),'utf8');
+const start=html.indexOf('function hierarchyIpNumber(');
+const stop=html.indexOf('function normaliseState(raw)',start);
+assert(start>=0&&stop>start,'Browser hierarchy functions must be embedded');
+const context=vm.createContext({});
+vm.runInContext(html.slice(start,stop),context,{timeout:2000});
+for(const records of [good,template,...bad,[network('legacy','192.168.1.0/24')]]) {
+  assert.deepEqual(Array.from(context.hierarchyValidate(records)),validateHierarchy(records),
+    'Browser hierarchy rules must match Node rules');
+}
+for(const records of [typeCases,...typeCases.map(item=>[item])]) {
+  assert.deepEqual(Array.from(context.hierarchyValidateTypes(records)),validateSubnetTypes(records),
+    'Browser subnet type rules must match Node rules');
+}
+console.log('PASS: embedded offline browser validators match Node module.');
 console.log('PASS: subnet type-specific VLAN, gateway and loopback rules.');
 console.log('PASS: hierarchy CIDR, nesting, boundaries, cycles, overlap, and legacy defaults.');
