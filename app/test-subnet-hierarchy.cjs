@@ -9,6 +9,24 @@ assert.deepEqual(validateHierarchy([network('legacy','192.168.1.0/24')]),[]);
 assert.equal(parseCidr('10.10.10.75/26').canonical,'10.10.10.64/26');
 assert.equal(parseCidr('10.0.0.0/8').aligned,true);
 assert.equal(parseCidr('10.0.0.0/8',{minPrefix:23,maxPrefix:30}),null);
+const template=[
+ container('site','10.128.96.0/20'),
+ container('block','10.128.96.0/21','site'),
+ {id:'future',cidr:'10.128.104.0/21',kind:'reserved',parentId:'site'},
+ {id:'loop',cidr:'10.128.96.0/32',kind:'loopback',parentId:'block'},
+ network('mgmt','10.128.96.128/26','block'),
+ network('fortilink','10.128.96.192/26','block'),
+ network('wlan','10.128.97.0/26','block'),
+ network('servers','10.128.98.0/24','block'),
+ network('voice','10.128.99.0/25','block'),
+ network('office','10.128.100.0/23','block'),
+ network('guest','10.128.102.0/24','block'),
+ network('things','10.128.103.0/24','block')
+];
+assert.deepEqual(validateHierarchy(template),[]);
+assert.deepEqual(validateHierarchy([network('twenty','172.16.16.0/20')]),[]);
+assert.deepEqual(validateHierarchy([{id:'host',cidr:'10.0.0.1/32',kind:'loopback'}]),[]);
+assert(validateHierarchy([...template,network('collision','10.128.98.128/25','block')]).length>0);
 const bad=[
  [container('a','10.0.0.0/8'),network('b','10.10.0.0/16','a')],
  [container('a','10.0.0.0/8'),network('b','10.10.0.0/24','missing')],
