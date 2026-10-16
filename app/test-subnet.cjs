@@ -11,7 +11,7 @@ const source = html.slice(start,end);
 function run({edit=false, cidr='192.168.10.0/24', gateway='192.168.10.1', vlan='10', save=true, dependent=false, allocated=false, overlap=false}={}) {
   const initial = {subnets:[{id:'s1',name:'Existing',cidr:'192.168.10.0/24',gateway:'192.168.10.1',vlan:10,description:''}],vlans:[{id:'v1',vlanId:10,name:'Existing',description:''}],devices:dependent?[{id:'d1',primaryIp:'192.168.10.20'}]:[],ipAllocations:allocated?{'192.168.10.1':{status:'Reserved'}}:{}};
   if(overlap)initial.subnets.push({id:'s2',name:'Other',cidr:'192.168.11.0/24',gateway:'192.168.11.1',vlan:11});
-  const fields={'sub-cidr':cidr,'sub-name':edit?'Existing':'New','sub-vlan':vlan,'sub-gw':gateway,'sub-desc':'Description'};
+  const fields={'sub-kind':'network','sub-parent':'','sub-cidr':cidr,'sub-name':edit?'Existing':'New','sub-vlan':vlan,'sub-gw':gateway,'sub-desc':'Description'};
   const messages=[];
   const ctx=vm.createContext({
     appState:JSON.parse(JSON.stringify(initial)),selectedSubnetId:'s1',deviceFormDraft:null,
