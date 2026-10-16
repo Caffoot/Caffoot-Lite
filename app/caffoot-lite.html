@@ -876,7 +876,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             racks: [],
             devices: [],
             rackAccessories: [],
-            deviceTypes: ['Server - Physical', 'Server - Virtual', 'Desktop', 'Laptop', 'Tablet', 'Switch', 'Router', 'Firewall', 'NAS', 'Access Point', 'PDU', 'UPS', 'Unknown'],
+            deviceTypes: ['Server - Physical', 'Server - Virtual', 'Desktop', 'Laptop', 'Tablet', 'Switch', 'Layer 3 Switch', 'Router', 'Firewall', 'NAS', 'Access Point', 'PDU', 'UPS', 'Unknown'],
             deviceTypeGraphics: {},
             deviceLocations: ['Racked', 'Unknown'],
             ipAllocations: {},
@@ -1067,7 +1067,7 @@ function hierarchyValidateTypes(subnets) {
             // Migrate older saves which did not have managed type/location lists.
             const discoveredTypes = state.devices.map(d => String(d.type || '').trim()).filter(Boolean);
             const discoveredLocations = state.devices.map(d => String(d.location || '').trim()).filter(Boolean);
-            state.deviceTypes = [...new Set([...state.deviceTypes, ...discoveredTypes])];
+            state.deviceTypes = [...new Set([...state.deviceTypes, ...discoveredTypes, 'Layer 3 Switch'])];
             state.deviceLocations = [...new Set([...state.deviceLocations, ...discoveredLocations, 'Unknown'])].filter(location => location !== 'Blank');
 
             // Phase 5 migration: Blank is no longer a valid managed location.
