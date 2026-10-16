@@ -21,8 +21,8 @@ function run({edit=false, cidr='192.168.10.0/24', gateway='192.168.10.1', vlan='
   const ctx=vm.createContext({
     appState:JSON.parse(JSON.stringify(initial)),selectedSubnetId:'s1',deviceFormDraft:null,
     document:{getElementById:id=>({value:fields[id]})},
-    isValidCidr24:x=>/^192\.168\.(10|11)\.0\/24$/.test(x),
-    isValidIpv4:x=>/^192\.168\.(10|11)\.\d{1,3}$/.test(x),
+    isValidCidr24:x=>/^(192\.168\.(10|11)|172\.(16|17)\.1)\.0\/24$/.test(x),
+    isValidIpv4:x=>/^(192\.168\.(10|11)|172\.(16|17)\.1)\.\d{1,3}$/.test(x),
     phase12Usable:(ip,range)=>ip.startsWith(range.split('.')[0]+'.'+range.split('.')[1]+'.'+range.split('.')[2]+'.') && Number(ip.split('.')[3])>0 && Number(ip.split('.')[3])<255,
     phase12Overlap:(a,b)=>a===b,
     hierarchyValidate:validateHierarchy,hierarchyValidateTypes:validateSubnetTypes,
