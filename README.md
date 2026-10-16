@@ -90,7 +90,7 @@ The build produces `app/dist/Caffoot-Lite.html`. Automated checks and manual bro
 
 This repository is dedicated to **Caffoot Lite**: its standalone application, build tools, tests and release documentation.
 
-The latest published release is **v1.0.1** (16 October 2026). For development plans and historical release checks, see the [project roadmap](ROADMAP.md).
+The latest published release is **v1.0.3** (16 October 2026). For development plans and historical release checks, see the [project roadmap](ROADMAP.md).
 
 ## Licence and branding
 
