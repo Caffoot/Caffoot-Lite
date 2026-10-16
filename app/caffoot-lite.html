@@ -1159,6 +1159,8 @@ function hierarchyValidate(subnets) {
 
         function validateApplicationState() {
             const errors = [];
+            // Apply the same hierarchy rules during live integrity checks as on import.
+            errors.push(...hierarchyValidate(appState.subnets));
             const subnetIds = new Set();
             const vlanNumbers = new Set();
             const deviceIds = new Set();
