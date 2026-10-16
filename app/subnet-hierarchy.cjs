@@ -20,11 +20,12 @@ function validateHierarchy(subnets) {
   if(!Array.isArray(subnets)) return ['Subnets must be an array.'];
   const ids=new Map(),cidrs=new Set(),ranges=new Map();
   for(const s of subnets) {
-    if(!s||typeof s!=='object'||typeof s.id!=='string'||!s.id.trim()) {errors.push('Subnet ID is missing.');continue;}
-    if(ids.has(s.id)) errors.push('Duplicate subnet ID: '+s.id);
+    if(!s||typeof s!=='object'||Array.isArray(s)||typeof s.id!=='string'||!s.id.trim()) {errors.push('Subnet ID is missing.');continue;}
+    if(ids.has(s.id)) { errors.push('Duplicate subnet ID: '+s.id); continue; }
     ids.set(s.id,s);
     const kind=s.kind===undefined?'network':s.kind;
-    if(kind!=='network'&&kind!=='container'&&kind!=='reserved'&&kind!=='loopback') errors.push('Invalid subnet kind: '+s.id);
+    if(kind!=='network'&&kind!=='container'&&kind!=='reserved'&&kind!=='loopback') { errors.push('Invalid subnet kind: '+s.id); continue; }
+    if(s.parentId!==undefined&&s.parentId!==null&&s.parentId!==''&&typeof s.parentId!=='string') errors.push('Invalid parent ID for '+s.id);
     const range=parseCidr(s.cidr,{minPrefix:kind==='container'||kind==='reserved'?0:kind==='loopback'?32:1,maxPrefix:kind==='loopback'?32:32});
     if(!range) errors.push('Invalid CIDR for '+s.id+': '+s.cidr);
     else if(!range.aligned) errors.push('Misaligned CIDR '+s.cidr+'; use '+range.canonical);
@@ -36,7 +37,7 @@ function validateHierarchy(subnets) {
   }
   for(const s of subnets) {
     if(!s||!s.id||!ranges.has(s.id)) continue;
-    const parentId=s.parentId||null;
+    const parentId=typeof s.parentId==='string'?s.parentId:null;
     if(!parentId) continue;
     if(parentId===s.id) {errors.push('Subnet cannot parent itself: '+s.id);continue;}
     const p=ids.get(parentId);
@@ -66,7 +67,7 @@ function validateHierarchy(subnets) {
   }
   for(let i=0;i<subnets.length;i++) for(let j=i+1;j<subnets.length;j++) {
     const a=subnets[i],b=subnets[j];
-    if(!a||!b||a.id===b.id) continue;
+    if(!a||!b||typeof a!=='object'||typeof b!=='object'||a.id===b.id) continue;
     const x=ranges.get(a.id),y=ranges.get(b.id);
     if(x&&y&&x.start<=y.end&&y.start<=x.end&&!ancestor(a.id,b.id)&&!ancestor(b.id,a.id))
       errors.push('Overlapping unrelated subnets: '+a.cidr+' and '+b.cidr);
