@@ -3287,13 +3287,13 @@ function hierarchyValidateTypes(subnets) {
                             <label for="sub-kind" class="form-label">Subnet Type</label>
                             <select id="sub-kind" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white">
                                 <option value="network" selected>Network / VLAN</option>
-                                <option value="container" disabled>Parent container (coming next)</option>
+                                <option value="container" ${subnet?.kind === "container" ? "selected" : ""}>Parent Container</option>
                                 <option value="reserved" disabled>Reserved range (coming next)</option>
                                 <option value="loopback" disabled>Loopback /32 (coming next)</option>
                             </select>
-                            <p class="text-xs text-slate-500 dark:text-slate-400">Other subnet types will become available when their save and IPAM handling is complete.</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Parent Container fields can be previewed. Saving will be enabled after IPAM ownership and persistence checks are complete.</p>
                         </div>
-                        <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-network-wired"></i>Network identity</div>
+                        <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-network-wired"></i>Network Identity</div>
                         <div>
                             <label for="sub-cidr" class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Subnet CIDR <span class="required-mark">*</span></label>
                             <input type="text" id="sub-cidr" required value="${escapeHtml(subnet ? subnet.cidr : '')}" placeholder="e.g. 192.168.10.0/24" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white font-mono">
@@ -3303,13 +3303,13 @@ function hierarchyValidateTypes(subnets) {
                                 <label for="sub-name" class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Network / VLAN Name <span class="required-mark">*</span></label>
                                 <input type="text" id="sub-name" required value="${escapeHtml(subnet ? subnet.name : '')}" placeholder="Guest Network" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white">
                             </div>
-                            <div>
+                            <div data-network-only>
                                 <label for="sub-vlan" class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">VLAN ID <span class="required-mark">*</span></label>
                                 <input type="number" id="sub-vlan" required value="${escapeHtml(subnet ? subnet.vlan : 30)}" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white font-mono">
                             </div>
                         </div>
                         </div>
-                        <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-route"></i>Gateway & description</div><div>
+                        <div data-network-only class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-route"></i>Gateway & Description</div><div>
                             <label for="sub-gw" class="form-label">Gateway IP <span class="required-mark">*</span></label>
                             <input type="text" id="sub-gw" required value="${escapeHtml(subnet ? subnet.gateway : '')}" placeholder="192.168.10.1" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white font-mono">
                             <p id="sub-gw-hint" class="mt-1 text-xs text-slate-600 dark:text-slate-300" aria-live="polite">Enter a network CIDR to suggest a gateway.</p>
@@ -3328,7 +3328,27 @@ function hierarchyValidateTypes(subnets) {
                 </div>
             `);
             // The delegated input handler works for every new subnet modal instance.
-            if (!subnet) suggestSubnetGateway();
+            const subnetTypeSelect = document.getElementById('sub-kind');
+            const updateSubnetTypePreview = () => {
+                const isContainer = subnetTypeSelect.value === 'container';
+                document.querySelectorAll('#modal-content [data-network-only]').forEach(element => {
+                    element.hidden = isContainer;
+                    element.style.display = isContainer ? 'none' : '';
+                });
+                for (const id of ['sub-vlan', 'sub-gw']) {
+                    const input = document.getElementById(id);
+                    if (input) { input.required = !isContainer; input.disabled = isContainer; }
+                }
+                const submit = document.querySelector('#modal-content form[data-form-action="subnet"] button[type="submit"]');
+                if (submit) {
+                    submit.disabled = isContainer;
+                    submit.title = isContainer ? 'Parent Container saving is not enabled yet.' : '';
+                    submit.textContent = isContainer ? 'Parent Container Save Coming Soon' : 'Save Subnet & VLAN';
+                }
+            };
+            subnetTypeSelect.addEventListener('change', updateSubnetTypePreview);
+            updateSubnetTypePreview();
+            if (!subnet && subnetTypeSelect.value === 'network') suggestSubnetGateway();
         }
 
         function openSubnetModalByName(vlanName) {
@@ -3340,6 +3360,10 @@ function hierarchyValidateTypes(subnets) {
 
         function handleSubnetSubmit(e, subnetId) {
             e.preventDefault();
+            if (document.getElementById('sub-kind')?.value !== 'network') {
+                showToast('Parent Container saving is not enabled yet.', 'error');
+                return;
+            }
             const cidr = document.getElementById('sub-cidr').value.trim();
             const name = document.getElementById('sub-name').value.trim();
             const vlanIdVal = parseInt(document.getElementById('sub-vlan').value, 10);
