@@ -28,7 +28,7 @@ assert.deepEqual(validateHierarchy([network('twenty','172.16.16.0/20')]),[]);
 assert.deepEqual(validateHierarchy([{id:'host',cidr:'10.0.0.1/32',kind:'loopback'}]),[]);
 assert(validateHierarchy([...template,network('collision','10.128.98.128/25','block')]).length>0);
 const bad=[
- [container('a','10.0.0.0/8'),network('b','10.10.0.0/16','a')],
+ [container('a','10.0.0.0/8'),network('b','10.10.0.0/16','a'),network('c','10.10.0.0/20','a')],
  [container('a','10.0.0.0/8'),network('b','10.10.0.0/24','missing')],
  [container('a','10.0.0.0/8'),network('b','11.0.0.0/24','a')],
  [container('a','10.0.0.0/8'),container('b','10.0.0.0/8','a')],
