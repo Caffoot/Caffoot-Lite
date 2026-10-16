@@ -3476,6 +3476,7 @@ function hierarchyValidateTypes(subnets) {
             const vlanIdVal = parseInt(document.getElementById('sub-vlan').value, 10);
             const gateway = document.getElementById('sub-gw').value.trim();
             const description = document.getElementById('sub-desc').value.trim();
+            const parentId = document.getElementById('sub-parent')?.value || null;
 
             if (!isValidCidr24(cidr)) {
                 showToast('Enter a valid network CIDR from /23 to /30 (e.g. 192.168.10.0/24).', 'error');
@@ -3504,8 +3505,22 @@ function hierarchyValidateTypes(subnets) {
                 return;
             }
 
-            const overlappingSubnet=appState.subnets.find(s=>s.id!==subnetId && phase12Overlap(s.cidr,cidr));
-            if(overlappingSubnet) return showToast(`Overlapping subnet: ${overlappingSubnet.cidr}.`, 'error');
+            // Validate the proposed parent-child relationship before mutating live state.
+            // Preserve legacy flat-network records without introducing default fields.
+            const existingSubnet = subnetId ? appState.subnets.find(s => s.id === subnetId) : null;
+            const proposedSubnet = {
+                ...(existingSubnet || {}),
+                id: existingSubnet?.id || 'sub_' + Date.now(),
+                cidr, name, vlan: vlanIdVal, gateway, description
+            };
+            if (parentId) proposedSubnet.parentId = parentId;
+            else delete proposedSubnet.parentId;
+            const proposedSubnets = appState.subnets.filter(s => s.id !== proposedSubnet.id).concat(proposedSubnet);
+            const hierarchyIssues = [...hierarchyValidate(proposedSubnets), ...hierarchyValidateTypes(proposedSubnets)];
+            if (hierarchyIssues.length) {
+                showToast(hierarchyIssues[0], 'error');
+                return;
+            }
             const otherSubnetWithVlan = appState.subnets.find(s => Number(s.vlan) === vlanIdVal && s.id !== subnetId);
             if (otherSubnetWithVlan) {
                 showToast(`VLAN ${vlanIdVal} is already used by ${otherSubnetWithVlan.name}.`, 'error');
@@ -3547,11 +3562,13 @@ function hierarchyValidateTypes(subnets) {
                 sub.vlan = vlanIdVal;
                 sub.gateway = gateway;
                 sub.description = description;
+                if (parentId) sub.parentId = parentId;
+                else delete sub.parentId;
                 if (previousVlanId !== vlanIdVal && !appState.subnets.some(item => item.id !== sub.id && Number(item.vlan) === previousVlanId)) {
                     appState.vlans = appState.vlans.filter(v => Number(v.vlanId) !== previousVlanId);
                 }
             } else {
-                const newSub = { id: 'sub_' + Date.now(), cidr, name, vlan: vlanIdVal, gateway, description };
+                const newSub = proposedSubnet;
                 appState.subnets.push(newSub);
                 selectedSubnetId = newSub.id;
                 if (deviceFormDraft) deviceFormDraft.subnetId = newSub.id;
