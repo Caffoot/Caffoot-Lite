@@ -27,6 +27,11 @@ assert.deepEqual(validateHierarchy(template),[]);
 assert.deepEqual(validateHierarchy([network('twenty','172.16.16.0/20')]),[]);
 assert.deepEqual(validateHierarchy([{id:'host',cidr:'10.0.0.1/32',kind:'loopback'}]),[]);
 assert(validateHierarchy([...template,network('collision','10.128.98.128/25','block')]).length>0);
+assert(validateHierarchy([null]).length>0);
+assert(validateHierarchy([42]).length>0);
+assert(validateHierarchy([{id:'bad-kind',cidr:'10.0.0.0/24',kind:'nonsense'}]).length>0);
+assert(validateHierarchy([network('a','10.0.0.0/24',123)]).length>0);
+assert(validateHierarchy([network('same','10.0.0.0/24'),network('same','10.1.0.0/24')]).length>0);
 const bad=[
  [container('a','10.0.0.0/8'),network('b','10.10.0.0/16','a'),network('c','10.10.0.0/20','a')],
  [container('a','10.0.0.0/8'),network('b','10.10.0.0/24','missing')],
