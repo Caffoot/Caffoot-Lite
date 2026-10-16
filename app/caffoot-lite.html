@@ -1076,6 +1076,9 @@ function hierarchyValidateTypes(subnets) {
             });
 
             for (const subnet of state.subnets) {
+                // Hierarchical address blocks are validated by the shared hierarchy validators below.
+                // Do not apply legacy /23–/30, VLAN and gateway requirements to them.
+                if (isPlainObject(subnet) && subnet.kind && subnet.kind !== 'network') continue;
                 if (!isPlainObject(subnet) || !subnet.id || !subnet.name || !isValidCidr24(subnet.cidr)) {
                     throw new Error('Every subnet must have an id, name and valid /23–/30 CIDR.');
                 }
