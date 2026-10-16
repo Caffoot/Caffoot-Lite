@@ -231,8 +231,8 @@ assert(html.includes('The saved inventory differs from the currently displayed i
 assert(html.includes("panel('Inventory safety check'"), 'Safety check must appear in Data Management');
 
 assert(html.includes('cleanStart.managedOptionsCleared = true;'), 'Clean Start must explicitly clear managed options');
-assert(html.includes('appState.serverFunctions.length || appState.managedOptionsCleared'), 'Empty managed server options must stay empty after reset');
-assert(html.includes('appState.installedSoftware.length || appState.managedOptionsCleared'), 'Empty managed software options must stay empty after reset');
+assert(html.includes('return Array.isArray(appState.serverFunctions) ? appState.serverFunctions : [];'), 'Server options must return only saved entries or an empty list');
+assert(html.includes('return Array.isArray(appState.installedSoftware) ? appState.installedSoftware : [];'), 'Software options must return only saved entries or an empty list');
 
 /*
  * RC1: execute real CIDR/gateway feedback and managed-options fallback logic.
@@ -277,8 +277,8 @@ const managedContext = {
 };
 vm.createContext(managedContext);
 vm.runInContext(html.slice(managedStart, managedEnd) + '\n' + html.slice(softwareStart, softwareEnd), managedContext);
-assert.equal(managedContext.phase19BServerFunctions().length, 1, 'fresh installation shows starter server options');
-assert.equal(managedContext.phase19BSoftware().length, 1, 'fresh installation shows starter software options');
+assert.equal(managedContext.phase19BServerFunctions().length, 0, 'fresh installation starts with empty server options');
+assert.equal(managedContext.phase19BSoftware().length, 0, 'fresh installation starts with empty software options');
 managedContext.appState.managedOptionsCleared = true;
 assert.equal(managedContext.phase19BServerFunctions().length, 0, 'clean start must not resurrect server options');
 assert.equal(managedContext.phase19BSoftware().length, 0, 'clean start must not resurrect software options');
