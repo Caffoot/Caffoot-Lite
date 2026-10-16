@@ -2926,6 +2926,42 @@ function hierarchyValidateTypes(subnets) {
                 available:range.capacity-assigned-reserved,next,
                 utilisation:Math.round((assigned+reserved)/range.capacity*100),duplicates};
         }
+
+        // v1.1: read-only subnet hierarchy, with native keyboard-accessible disclosure.
+        function renderSubnetHierarchyPreview() {
+            const subnets = appState.subnets || [];
+            const ids = new Set(subnets.map(s => String(s.id)));
+            const byParent = new Map();
+            for (const subnet of subnets) {
+                const parent = subnet.parentId && ids.has(String(subnet.parentId)) ? String(subnet.parentId) : '';
+                if (!byParent.has(parent)) byParent.set(parent, []);
+                byParent.get(parent).push(subnet);
+            }
+            const visited = new Set();
+            function nodes(parent, ancestry = new Set()) {
+                return (byParent.get(parent) || []).map(subnet => {
+                    const id = String(subnet.id);
+                    if (ancestry.has(id) || visited.has(id)) return '';
+                    visited.add(id);
+                    const next = new Set(ancestry);
+                    next.add(id);
+                    const children = nodes(id, next);
+                    const isContainer = subnet.kind === 'container';
+                    const name = escapeHtml(String(subnet.name || 'Unnamed Subnet'));
+                    const cidr = escapeHtml(String(subnet.cidr || ''));
+                    const type = isContainer ? 'Parent Container' : subnet.kind === 'reserved' ? 'Reserved Range' : subnet.kind === 'loopback' ? 'Loopback /32' : 'Network / VLAN';
+                    const details = '<span class="ml-2 text-xs font-normal text-slate-500 dark:text-slate-400">' + type + (isContainer ? '' : ' · VLAN ' + escapeHtml(String(subnet.vlan ?? '—'))) + '</span>';
+                    if (children || isContainer) {
+                        return '<details open class="ml-3 my-2 pl-3 border-l-2 border-indigo-200 dark:border-indigo-800"><summary class="cursor-pointer py-2 text-sm font-semibold text-slate-900 dark:text-white"><i class="fa-solid fa-folder text-indigo-500 mr-2"></i>' + cidr + ' — ' + name + details + '</summary>' + (children || '<p class="text-xs text-slate-500 dark:text-slate-400 ml-5 py-2">No Child Subnets</p>') + '</details>';
+                    }
+                    return '<div class="ml-3 my-1 pl-3 py-2 border-l-2 border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white"><i class="fa-solid fa-network-wired text-indigo-500 mr-2"></i>' + cidr + ' — ' + name + details + '</div>';
+                }).join('');
+            }
+            const roots = nodes('');
+            const orphaned = subnets.filter(subnet => !visited.has(String(subnet.id)));
+            return '<section class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-3" aria-label="Subnet Hierarchy"><h3 class="font-bold text-base text-slate-900 dark:text-white">Subnet Hierarchy</h3><p class="text-xs text-slate-500 dark:text-slate-400">Expand Parent Containers to view child networks. Read-only preview.</p>' + (roots || '<p class="text-sm text-slate-500">No Subnets Yet</p>') + (orphaned.length ? '<p class="text-xs text-rose-600">Some subnet relationships could not be displayed.</p>' : '') + '</section>';
+        }
+
         function renderIpamHTML() {
             const subnet = appState.subnets.find(s => s.id === selectedSubnetId) || appState.subnets[0];
             
@@ -3000,6 +3036,7 @@ function hierarchyValidateTypes(subnets) {
             return `
                 <div class="space-y-5 phase12c-ipam">
                     <div class="${phase12CIpamTab==='manage'?'':'hidden'} space-y-4" data-ipam-panel="manage">
+                    ${renderSubnetHierarchyPreview()}
                     <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
                         <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700/60 pb-3">
                             <div class="flex items-center space-x-2">
