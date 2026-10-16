@@ -2134,7 +2134,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                     </section>
                     <section class="phase15d-columns">
                         <div class="phase15d-card"><div class="phase15d-heading"><div><h3>Recent Activity</h3><p>Saved changes on this browser</p></div><button type="button" data-action="tab-audit" class="phase15d-link">Full history <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div>${phase15eActivityControls}<div class="phase15d-timeline">${phase15dTimeline}</div></div>
-                        <div class="phase15d-card"><div class="phase15d-heading"><div><h3>Warnings & attention</h3><p>Network consistency and capacity</p></div><span class="phase15d-count">${alerts.length} total</span></div>${phase15eAlertControls}<ul class="phase15d-warnings">${phase15dWarningRows}</ul>${alerts.filter(a => phase15eAlertFilter === 'all' || (phase15eAlertFilter === 'critical' ? a.level === 'danger' : a.level !== 'danger')).length>phase15dAlerts.length?`<p class="phase15d-more">Showing ${phase15dAlerts.length} of ${alerts.length} warnings</p>`:''}<div class="phase15d-links"><button type="button" data-action="tab-ipam">Open IPAM</button><button type="button" data-action="tab-racks">Open racks</button></div></div>
+                        <div class="phase15d-card"><div class="phase15d-heading"><div><h3>Warnings & attention</h3><p>Network consistency and capacity</p></div><span class="phase15d-count">${alerts.length} total</span></div>${phase15eAlertControls}<ul class="phase15d-warnings">${phase15dWarningRows}</ul>${alerts.filter(a => phase15eAlertFilter === 'all' || (phase15eAlertFilter === 'critical' ? a.level === 'danger' : a.level !== 'danger')).length>phase15dAlerts.length?`<p class="phase15d-more">Showing ${phase15dAlerts.length} of ${alerts.length} warnings</p>`:''}<div class="phase15d-links"><button type="button" data-action="tab-ipam">Open IPAM</button><button type="button" data-action="tab-racks">Open Racks</button></div></div>
                     </section>
                     <section class="phase15c-report-panel bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5"><h3 class="font-bold text-slate-900 dark:text-white mb-3">Reports & exports</h3>${phase10DReportsHTML()}</section>
                     <section class="grid grid-cols-1 lg:grid-cols-2 gap-5">
@@ -2975,7 +2975,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                         </section>
                         <div class="flex flex-wrap gap-2">
                             <button type="button" data-action="phase12c-tab" data-tab="addresses" class="px-4 py-2.5 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold text-sm"><i class="fa-solid fa-arrow-right mr-1"></i> Browse IP addresses</button>
-                            <button type="button" data-action="phase12c-tab" data-tab="manage" class="px-4 py-2.5 rounded-xl border border-slate-400 dark:border-slate-500 text-slate-800 dark:text-slate-100 font-semibold text-sm">Subnet tools</button>
+                            <button type="button" data-action="phase12c-tab" data-tab="manage" class="px-4 py-2.5 rounded-xl border border-slate-400 dark:border-slate-500 text-slate-800 dark:text-slate-100 font-semibold text-sm">Subnet Tools</button>
                         </div>
                         </div>
                         <div class="${phase12CIpamTab==='addresses'?'':'hidden'} space-y-4" data-ipam-panel="addresses">
@@ -3062,13 +3062,13 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                     <form data-form-action="bulk-ip" data-subnet-id="${escapeHtml(subnet.id)}" class="form-shell space-y-5">
                         <div class="form-section-card space-y-4"><div class="form-section-heading">Range &amp; action</div>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div><label for="bulk-start" class="form-label">First host offset</label><input type="number" id="bulk-start" min="1" max="${range.capacity}" value="1" required class="w-full border rounded-xl px-3 py-2 dark:bg-slate-700"></div>
-                                <div><label for="bulk-end" class="form-label">Last host offset</label><input type="number" id="bulk-end" min="1" max="${range.capacity}" value="${Math.min(32,range.capacity)}" required class="w-full border rounded-xl px-3 py-2 dark:bg-slate-700"></div>
+                                <div><label for="bulk-start" class="form-label">First Host Offset</label><input type="number" id="bulk-start" min="1" max="${range.capacity}" value="1" required class="w-full border rounded-xl px-3 py-2 dark:bg-slate-700"></div>
+                                <div><label for="bulk-end" class="form-label">Last Host Offset</label><input type="number" id="bulk-end" min="1" max="${range.capacity}" value="${Math.min(32,range.capacity)}" required class="w-full border rounded-xl px-3 py-2 dark:bg-slate-700"></div>
                             </div>
                             <div><label for="bulk-status" class="form-label">Action</label><select id="bulk-status" class="w-full border rounded-xl px-3 py-2 dark:bg-slate-700"><option value="Reserved">Reserve unassigned addresses</option><option value="Available">Release unowned allocations</option></select></div>
                         </div>
                         <div class="form-section-card space-y-4"><div class="form-section-heading">Optional reservation labels</div>
-                            <div><label for="bulk-hostname" class="form-label">Label prefix</label><input id="bulk-hostname" maxlength="80" class="w-full border rounded-xl px-3 py-2 dark:bg-slate-700" placeholder="dhcp-pool"></div>
+                            <div><label for="bulk-hostname" class="form-label">Label Prefix</label><input id="bulk-hostname" maxlength="80" class="w-full border rounded-xl px-3 py-2 dark:bg-slate-700" placeholder="dhcp-pool"></div>
                             <div><label for="bulk-notes" class="form-label">Notes</label><input id="bulk-notes" maxlength="240" class="w-full border rounded-xl px-3 py-2 dark:bg-slate-700"></div>
                         </div>
                         <p class="text-xs text-slate-600 dark:text-slate-300">Preview before applying. Existing device assignments and conflicting assigned records are protected.</p>
@@ -4207,7 +4207,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                         <div class="form-section-card space-y-4">
                             <div class="form-section-heading"><i class="fa-solid fa-server"></i>Hardware &amp; lifecycle</div>
                             ${device ? `
-                            <div><label for="dev-status" class="form-label">Device status</label>
+                            <div><label for="dev-status" class="form-label">Device Status</label>
                                 <select id="dev-status" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
                                     ${['Active','Maintenance','Retired'].map(v=>`<option value="${v}" ${(draft?.status ?? device?.status ?? 'Active')===v?'selected':''}>${v}</option>`).join('')}
                                 </select>
