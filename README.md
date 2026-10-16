@@ -101,4 +101,4 @@ The Caffoot name, hedgehog mascot and official project branding are **not** lice
 
 ## Backup compatibility and release preparation
 
-The [backup format contract](BACKUP-FORMAT.md) documents versioned exports and legacy imports for future Lite-to-Pro migration. Pro import has not been implemented yet. Historical testing and release-review records remain available in [RELEASE-ACCEPTANCE.md](RELEASE-ACCEPTANCE.md) and [RELEASE-REVIEW.md](RELEASE-REVIEW.md).
+The [backup format contract](BACKUP-FORMAT.md) documents versioned JSON exports, legacy imports and compatibility safeguards. Historical testing and release-review records remain available in [RELEASE-ACCEPTANCE.md](RELEASE-ACCEPTANCE.md) and [RELEASE-REVIEW.md](RELEASE-REVIEW.md).
