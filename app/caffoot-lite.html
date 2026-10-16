@@ -1297,7 +1297,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             return `<div class="max-w-5xl mx-auto space-y-5">
                 <section class="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-2xl p-6 space-y-3">
                     <div class="flex items-center justify-between flex-wrap gap-3">
-                        <div><h3 class="font-bold text-lg text-slate-900 dark:text-white">Change history</h3>
+                        <div><h3 class="font-bold text-lg text-slate-900 dark:text-white">Change History</h3>
                         <p class="text-sm text-slate-700 dark:text-slate-200 mt-1">Local history of successful saves on this browser, from Phase 10C onwards. Up to ${AUDIT_LIMIT} events are retained.</p></div>
                         <button type="button" data-action="export-audit" class="px-4 py-2.5 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold"><i class="fa-solid fa-download mr-2"></i>Export history</button>
                     </div>
@@ -1687,13 +1687,13 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 <h3 class="text-base font-bold text-slate-900 dark:text-white">Phase 11C · Integrity repair preview</h3>
                 <p class="text-sm text-slate-700 dark:text-slate-200">Preview safe IPAM synchronisation changes before applying them. Conflicting owners, duplicate IPs, orphaned records and rack problems require manual review. No devices or racks are deleted.</p>
                 <div class="flex flex-wrap gap-2">
-                    <button type="button" data-action="phase11c-preview" class="px-4 py-2.5 rounded-xl bg-blue-800 text-white font-semibold">Preview repairs</button>
+                    <button type="button" data-action="phase11c-preview" class="px-4 py-2.5 rounded-xl bg-blue-800 text-white font-semibold">Preview Repairs</button>
                     <button type="button" data-action="phase11c-snapshot" ${snapshotExists?'':'disabled'} class="px-4 py-2.5 rounded-xl bg-slate-700 text-white font-semibold disabled:opacity-40">Download pre-repair snapshot</button>
                 </div>
                 ${preview?`<div class="space-y-3"><p class="font-semibold text-slate-900 dark:text-white">${preview.plan.fixes.length} proposed safe repair(s) · ${preview.plan.blocked.length} item(s) requiring review</p>
                     ${preview.plan.fixes.length?`<ul class="space-y-2">${preview.plan.fixes.map(f=>`<li class="text-sm text-slate-800 dark:text-slate-200 border-l-4 border-blue-600 pl-3">${escapeHtml(f.ip)} · ${escapeHtml(f.name)} — ${escapeHtml(f.reason)}</li>`).join('')}</ul>`:'<p class="text-sm text-slate-700 dark:text-slate-200">No safe automatic repairs are needed.</p>'}
                     ${preview.plan.blocked.length?`<div class="rounded-xl border border-amber-400 p-3 space-y-2"><strong class="text-amber-900 dark:text-amber-200">Manual review required</strong><ul class="space-y-1">${preview.plan.blocked.map(x=>`<li class="text-sm text-slate-800 dark:text-slate-200">${escapeHtml(x)}</li>`).join('')}</ul></div>`:''}
-                    ${preview.plan.fixes.length?'<button type="button" data-action="phase11c-apply" class="px-4 py-2.5 rounded-xl bg-emerald-800 text-white font-semibold">Confirm and apply safe repairs</button>':''}
+                    ${preview.plan.fixes.length?'<button type="button" data-action="phase11c-apply" class="px-4 py-2.5 rounded-xl bg-emerald-800 text-white font-semibold">Confirm And Apply Safe Repairs</button>':''}
                 </div>`:''}
                 <p class="text-xs text-slate-600 dark:text-slate-300">A browser-local snapshot is written before applying repairs. Download it for independent protection. Repair previews do not change saved data.</p>
             </section>`;
@@ -1771,7 +1771,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             const warnRacks=data.racks.filter(x=>x.height&&x.percent>=85);
             return `<section class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 space-y-5" aria-label="Network reports">
                 <div class="flex flex-wrap gap-3 justify-between items-start">
-                    <div><h3 class="text-base font-bold text-slate-900 dark:text-white">Network reports</h3>
+                    <div><h3 class="text-base font-bold text-slate-900 dark:text-white">Network Reports</h3>
                     <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Live summaries and CSV exports from the current inventory.</p></div>
                     <div class="flex flex-wrap gap-2">
                         ${[['devices','Devices CSV'],['subnets','Subnets CSV'],['racks','Racks CSV']].map(([id,label])=>`<button type="button" data-action="phase10d-export" data-report="${id}" class="px-3 py-2.5 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold text-xs"><i class="fa-solid fa-download mr-1"></i>${label}</button>`).join('')}
@@ -1779,14 +1779,14 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 </div>
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
                     <div class="rounded-xl border border-slate-200 dark:border-slate-600 p-4 space-y-3">
-                        <h4 class="font-semibold text-slate-900 dark:text-white">Devices by location</h4>
+                        <h4 class="font-semibold text-slate-900 dark:text-white">Devices By Location</h4>
                         ${data.locations.length?data.locations.map(([name,n])=>`<div class="space-y-1">
                             <div class="flex justify-between gap-2 text-sm"><span class="text-slate-700 dark:text-slate-200 truncate">${escapeHtml(name)}</span><strong class="text-slate-900 dark:text-white">${n}</strong></div>
                             <div class="h-2.5 bg-slate-200 dark:bg-slate-600 rounded-full overflow-hidden"><div class="h-full bg-blue-700 dark:bg-sky-400 rounded-full" style="width:${Math.round(n/maxLocation*100)}%"></div></div>
                         </div>`).join(''):'<p class="text-sm text-slate-600 dark:text-slate-300">No devices recorded yet.</p>'}
                     </div>
                     <div class="rounded-xl border border-slate-200 dark:border-slate-600 p-4 space-y-3">
-                        <h4 class="font-semibold text-slate-900 dark:text-white">Subnet utilisation</h4>
+                        <h4 class="font-semibold text-slate-900 dark:text-white">Subnet Utilisation</h4>
                         ${data.subnets.length?data.subnets.map(n=>`<div class="space-y-1">
                             <div class="flex justify-between gap-2 text-sm"><span class="text-slate-700 dark:text-slate-200 truncate">${escapeHtml(n.name)} <span class="text-xs">(${escapeHtml(n.cidr)})</span></span>
                             <strong class="${n.supported&&n.utilisation>=85?'text-amber-800 dark:text-amber-200':'text-slate-900 dark:text-white'}">${n.supported?n.utilisation+'%':'N/A'}</strong></div>
@@ -1795,7 +1795,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                     </div>
                 </div>
                 <div class="rounded-xl border border-slate-200 dark:border-slate-600 p-4 space-y-3">
-                    <h4 class="font-semibold text-slate-900 dark:text-white">Rack occupancy by face</h4>
+                    <h4 class="font-semibold text-slate-900 dark:text-white">Rack Occupancy By Face</h4>
                     ${data.racks.length?data.racks.map(r=>`<div class="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_auto] gap-2 border-b border-slate-200 dark:border-slate-700 pb-2">
                         <span class="text-sm text-slate-800 dark:text-slate-200 font-medium">${escapeHtml(r.name)}</span>
                         <span class="text-sm ${r.percent>=85?'text-amber-800 dark:text-amber-200':'text-slate-700 dark:text-slate-200'}">${r.front}U front · ${r.rear}U rear / ${r.height}U · ${r.percent}% max</span>
@@ -1926,7 +1926,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             const integrityPreview = integrityErrors.slice(0, 5);
 
             const networkSnapshot = `<section class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 space-y-4">
-                <div class="flex items-center justify-between gap-3 flex-wrap"><h3 class="text-base font-bold text-slate-900 dark:text-white">Network allocation overview</h3><span class="text-sm text-slate-600 dark:text-slate-300">${subnets.length} subnets · ${reservedDeviceCount} device IP reservations</span></div>
+                <div class="flex items-center justify-between gap-3 flex-wrap"><h3 class="text-base font-bold text-slate-900 dark:text-white">Network Allocation Overview</h3><span class="text-sm text-slate-600 dark:text-slate-300">${subnets.length} subnets · ${reservedDeviceCount} device IP reservations</span></div>
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     ${[['Assigned',subnetAssigned,'text-blue-800 dark:text-sky-200'],['Reserved',subnetReserved,'text-amber-800 dark:text-amber-300'],['Available',Math.max(0,totalSubnetCapacity-subnetAssigned-subnetReserved),'text-emerald-700 dark:text-emerald-300'],['Utilisation',ipUtilisation+'%','text-slate-900 dark:text-white']].map(([label,value,cls])=>`<div class="rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700/40 p-4"><p class="text-xs font-semibold text-slate-600 dark:text-slate-300">${label}</p><p class="mt-1 text-2xl font-bold ${cls}">${value}</p></div>`).join('')}
                 </div>
@@ -2030,7 +2030,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 return {rack, faces};
             });
             const networkInsights = `<section class="phase15b-insights" aria-label="Network insights">
-                <div class="phase15b-heading"><div><h3>Network insights</h3><p>Live utilisation and inventory distribution</p></div><span>Phase 15B</span></div>
+                <div class="phase15b-heading"><div><h3>Network Insights</h3><p>Live utilisation and inventory distribution</p></div><span>Phase 15B</span></div>
                 <div class="phase15b-grid">
                     <article class="phase15b-panel"><h4>IP address utilisation</h4><p class="phase15b-muted">${totalSubnetCapacity.toLocaleString()} usable addresses across ${subnets.length} subnets</p>
                         <div class="phase15b-bar" role="progressbar" aria-label="IP utilisation" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${ipUtilisation}"><span style="width:${ipUtilisation}%;background:#2563eb"></span></div>
@@ -2039,14 +2039,14 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                         ${insightSegment('Reserved',subnetReserved,totalSubnetCapacity,'phase15b-amber')}
                         ${insightSegment('Available',Math.max(0,totalSubnetCapacity-subnetAssigned-subnetReserved),totalSubnetCapacity,'phase15b-green')}
                     </article>
-                    <article class="phase15b-panel"><h4>Device status</h4><p class="phase15b-muted">${devices.length} devices in your inventory</p>
+                    <article class="phase15b-panel"><h4>Device Status</h4><p class="phase15b-muted">${devices.length} devices in your inventory</p>
                         <div class="phase15b-status"><div class="phase15b-donut" style="background:${statusGradient}" role="img" aria-label="Device status distribution"><span>${devices.length}</span></div>
                         <div class="phase15b-status-legend">${statusEntries.length ? statusEntries.map(([name,count],i)=>`<div class="phase15b-legend-row"><span class="phase15b-dot" style="background:${statusColours[i%statusColours.length]}"></span><span>${escapeHtml(name)}</span><strong>${count}</strong></div>`).join('') : '<p class="phase15b-muted">No devices configured</p>'}</div></div>
                     </article>
-                    <article class="phase15b-panel"><h4>Hardware distribution</h4><p class="phase15b-muted">Device types by inventory count</p>
+                    <article class="phase15b-panel"><h4>Hardware Distribution</h4><p class="phase15b-muted">Device types by inventory count</p>
                         <div class="phase15b-types">${topTypes.length ? topTypes.map(([name,count])=>`<div><div class="phase15b-type-label"><span>${escapeHtml(name)}</span><strong>${count}</strong></div><div class="phase15b-bar"><span style="width:${Math.round(count/maxTypeCount*100)}%;background:#0d9488"></span></div></div>`).join('') : '<p class="phase15b-muted">No devices configured</p>'}</div>
                     </article>
-                    <article class="phase15b-panel"><h4>Rack capacity by face</h4><p class="phase15b-muted">Front and rear occupancy, including accessories</p>
+                    <article class="phase15b-panel"><h4>Rack Capacity By Face</h4><p class="phase15b-muted">Front and rear occupancy, including accessories</p>
                         <div class="phase15b-racks">${rackInsights.length ? rackInsights.map(({rack,faces})=>`<div class="phase15b-rack"><strong>${escapeHtml(rack.name)}</strong>${faces.map(f=>`<div class="phase15b-face"><span>${f.face === 'front' ? 'Front' : 'Rear'}</span><div class="phase15b-bar"><span style="width:${f.percent}%;background:${f.percent>=85?'#d97706':'#15803d'}"></span></div><span>${f.used}/${f.capacity}U</span></div>`).join('')}</div>`).join('') : '<p class="phase15b-muted">No racks configured</p>'}</div>
                     </article>
                 </div>
@@ -2065,7 +2065,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
                             <div>
                                 <p class="text-xs font-semibold uppercase tracking-wider text-white">Network overview</p>
-                                <h3 class="text-2xl font-bold mt-1">Network overview</h3>
+                                <h3 class="text-2xl font-bold mt-1">Network Overview</h3>
                                 <p class="text-sm text-white mt-1">A live summary of devices, addressing and rack space. Select a summary card to open its workspace.</p>
                             </div>
                             ${quickActions}
@@ -2096,7 +2096,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                                     <i class="fa-solid ${integrityHealthy ? 'fa-shield-check' : 'fa-shield-exclamation'}"></i>
                                 </div>
                                 <div>
-                                    <h4 class="font-bold text-slate-900 dark:text-white">Data health</h4>
+                                    <h4 class="font-bold text-slate-900 dark:text-white">Data Health</h4>
                                     <p class="text-xs text-slate-500 mt-1">Checks for known inconsistencies in devices, IPAM, subnets, VLANs and rack assignments.</p>
                                 </div>
                             </div>
@@ -2114,7 +2114,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 
                     <section class="grid grid-cols-1 xl:grid-cols-3 gap-5">
                         <div class="xl:col-span-2 bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700">
-                            <div class="flex items-center justify-between mb-4"><div><h4 class="font-bold text-slate-900 dark:text-white">Rack capacity</h4><p class="text-xs text-slate-500 mt-1">Used U-space across your cabinets</p></div><span class="text-sm font-bold text-slate-700 dark:text-slate-200">${occupiedUs}/${rackCapacity}U</span></div>
+                            <div class="flex items-center justify-between mb-4"><div><h4 class="font-bold text-slate-900 dark:text-white">Rack Capacity</h4><p class="text-xs text-slate-500 mt-1">Used U-space across your cabinets</p></div><span class="text-sm font-bold text-slate-700 dark:text-slate-200">${occupiedUs}/${rackCapacity}U</span></div>
                             <div class="h-3 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden"><div class="h-full rounded-full ${occupancyPct >= 85 ? 'bg-amber-500' : 'bg-sky-600 dark:bg-sky-400'}" style="width:${occupancyPct}%"></div></div>
                             <div class="flex justify-between mt-2 text-[11px] text-slate-500"><span>0U</span><span>${occupancyPct}% occupied</span><span>${rackCapacity}U</span></div>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-5">${rackCards}</div>
@@ -2133,28 +2133,28 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                         <div class="phase15d-summary-item"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i><div><strong>${integrityErrors.length}</strong><span>Integrity issues</span></div></div>
                     </section>
                     <section class="phase15d-columns">
-                        <div class="phase15d-card"><div class="phase15d-heading"><div><h3>Recent activity</h3><p>Saved changes on this browser</p></div><button type="button" data-action="tab-audit" class="phase15d-link">Full history <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div>${phase15eActivityControls}<div class="phase15d-timeline">${phase15dTimeline}</div></div>
+                        <div class="phase15d-card"><div class="phase15d-heading"><div><h3>Recent Activity</h3><p>Saved changes on this browser</p></div><button type="button" data-action="tab-audit" class="phase15d-link">Full history <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div>${phase15eActivityControls}<div class="phase15d-timeline">${phase15dTimeline}</div></div>
                         <div class="phase15d-card"><div class="phase15d-heading"><div><h3>Warnings & attention</h3><p>Network consistency and capacity</p></div><span class="phase15d-count">${alerts.length} total</span></div>${phase15eAlertControls}<ul class="phase15d-warnings">${phase15dWarningRows}</ul>${alerts.filter(a => phase15eAlertFilter === 'all' || (phase15eAlertFilter === 'critical' ? a.level === 'danger' : a.level !== 'danger')).length>phase15dAlerts.length?`<p class="phase15d-more">Showing ${phase15dAlerts.length} of ${alerts.length} warnings</p>`:''}<div class="phase15d-links"><button type="button" data-action="tab-ipam">Open IPAM</button><button type="button" data-action="tab-racks">Open racks</button></div></div>
                     </section>
                     <section class="phase15c-report-panel bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5"><h3 class="font-bold text-slate-900 dark:text-white mb-3">Reports & exports</h3>${phase10DReportsHTML()}</section>
                     <section class="grid grid-cols-1 lg:grid-cols-2 gap-5">
                         <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700">
-                            <div class="flex items-center justify-between mb-4"><div><h4 class="font-bold text-slate-900 dark:text-white">Devices by type</h4><p class="text-xs text-slate-500 mt-1">Most common hardware categories</p></div><span class="text-xs text-slate-500">${Object.keys(typeCounts).length} types</span></div>
+                            <div class="flex items-center justify-between mb-4"><div><h4 class="font-bold text-slate-900 dark:text-white">Devices By Type</h4><p class="text-xs text-slate-500 mt-1">Most common hardware categories</p></div><span class="text-xs text-slate-500">${Object.keys(typeCounts).length} types</span></div>
                             <div class="space-y-3">${typeRows}</div>
                         </div>
                         <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700">
-                            <div class="flex items-center justify-between mb-4"><div><h4 class="font-bold text-slate-900 dark:text-white">Recent devices</h4><p class="text-xs text-slate-500 mt-1">Latest records in your inventory</p></div><button data-action="tab-devices" class="text-xs font-semibold text-blue-800 dark:text-sky-300">View all</button></div>
+                            <div class="flex items-center justify-between mb-4"><div><h4 class="font-bold text-slate-900 dark:text-white">Recent Devices</h4><p class="text-xs text-slate-500 mt-1">Latest records in your inventory</p></div><button data-action="tab-devices" class="text-xs font-semibold text-blue-800 dark:text-sky-300">View All</button></div>
                             <div>${deviceRows}</div>
                         </div>
                     </section>
 
                     <section class="grid grid-cols-1 lg:grid-cols-2 gap-5">
                         <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700">
-                            <div class="flex items-center justify-between mb-4"><div><h4 class="font-bold text-slate-900 dark:text-white">Subnet utilisation</h4><p class="text-xs text-slate-500 mt-1">Usable addresses across your configured CIDR networks</p></div><button data-action="tab-ipam" class="text-xs font-semibold text-blue-800 dark:text-sky-300">Open IPAM</button></div>
+                            <div class="flex items-center justify-between mb-4"><div><h4 class="font-bold text-slate-900 dark:text-white">Subnet Utilisation</h4><p class="text-xs text-slate-500 mt-1">Usable addresses across your configured CIDR networks</p></div><button data-action="tab-ipam" class="text-xs font-semibold text-blue-800 dark:text-sky-300">Open IPAM</button></div>
                             <div class="space-y-2">${subnetRows}</div>
                         </div>
                         <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700">
-                            <div class="flex items-center justify-between mb-4"><div><h4 class="font-bold text-slate-900 dark:text-white">Inventory status</h4><p class="text-xs text-slate-500 mt-1">Quick operational snapshot</p></div></div>
+                            <div class="flex items-center justify-between mb-4"><div><h4 class="font-bold text-slate-900 dark:text-white">Inventory Status</h4><p class="text-xs text-slate-500 mt-1">Quick operational snapshot</p></div></div>
                             <div class="space-y-2">
                                 ${statusPill('Active devices', activeDevices, 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-300')}
                                 ${statusPill('Other device states', inactiveDevices, 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-200')}
@@ -2208,7 +2208,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
         function phase13GOpenGraphics(type) {
             if(!getUniqueDeviceTypes().includes(type))return;
             const current=appState.deviceTypeGraphics?.[type]||'automatic';
-            openModal(`<div class="p-6 space-y-4"><div class="flex items-center justify-between"><h3 class="font-bold text-lg text-slate-900 dark:text-white">Rack graphic: ${escapeHtml(type)}</h3><button data-action="close-modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button></div><p class="text-sm text-slate-600 dark:text-slate-300">Choose a front-panel design for every rack-mounted device of this type. This does not affect inventory or rack placement.</p><label class="block text-sm font-semibold text-slate-900 dark:text-white">Graphic style<select id="phase13g-style" class="phase13c-field">${Object.entries(phase13GPresets).map(([key,label])=>`<option value="${key}" ${current===key?'selected':''}>${label}</option>`).join('')}</select></label><div class="flex justify-end gap-2"><button type="button" data-action="open-manage-types" class="phase13b-secondary">Cancel</button><button type="button" data-action="phase13g-save" data-name="${escapeHtml(type)}" class="phase13b-primary">Save graphic</button></div></div>`);
+            openModal(`<div class="p-6 space-y-4"><div class="flex items-center justify-between"><h3 class="font-bold text-lg text-slate-900 dark:text-white">Rack graphic: ${escapeHtml(type)}</h3><button data-action="close-modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button></div><p class="text-sm text-slate-600 dark:text-slate-300">Choose a front-panel design for every rack-mounted device of this type. This does not affect inventory or rack placement.</p><label class="block text-sm font-semibold text-slate-900 dark:text-white">Graphic style<select id="phase13g-style" class="phase13c-field">${Object.entries(phase13GPresets).map(([key,label])=>`<option value="${key}" ${current===key?'selected':''}>${label}</option>`).join('')}</select></label><div class="flex justify-end gap-2"><button type="button" data-action="open-manage-types" class="phase13b-secondary">Cancel</button><button type="button" data-action="phase13g-save" data-name="${escapeHtml(type)}" class="phase13b-primary">Save Graphic</button></div></div>`);
         }
         function phase13GSaveGraphics(type) {
             const choice=document.getElementById('phase13g-style')?.value;
@@ -2361,7 +2361,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             return `
                 <div class="space-y-5 phase13b-workspace">
                     <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 sm:p-5 space-y-3">
-                        <div><h2 class="text-lg font-bold text-slate-900 dark:text-white">Rack workspace</h2><p class="text-sm text-slate-600 dark:text-slate-300">Visualise equipment, review placements, or manage rack properties in separate sections.</p></div>
+                        <div><h2 class="text-lg font-bold text-slate-900 dark:text-white">Rack Workspace</h2><p class="text-sm text-slate-600 dark:text-slate-300">Visualise equipment, review placements, or manage rack properties in separate sections.</p></div>
                         <nav class="phase13b-tabs" aria-label="Rack workspace sections">
                             ${[['view','Rack view','fa-server'],['equipment','Equipment','fa-list'],['settings','Rack settings','fa-gear']].map(([tab,label,icon])=>`<button type="button" data-action="phase13b-tab" data-tab="${tab}" aria-current="${phase13BRackTab===tab?'page':'false'}" class="phase13b-tab ${phase13BRackTab===tab?'phase13b-selected':''}"><i class="fa-solid ${icon} mr-2"></i>${label}</button>`).join('')}
                         </nav>
@@ -2483,17 +2483,17 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                     </section>
                     <section class="${phase13BRackTab==='equipment'?'':'hidden'} space-y-4" aria-label="Mounted equipment">
                         <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5">
-                            <div class="flex flex-wrap justify-between items-center gap-3 mb-4"><div><h3 class="font-bold text-slate-900 dark:text-white">Mounted equipment</h3><p class="text-sm text-slate-600 dark:text-slate-300">${rackDevices.length} device(s) across front and rear. To reposition equipment, use Rack view.</p></div><button type="button" data-action="phase13b-tab" data-tab="view" class="phase13b-primary">Open rack view</button></div>
+                            <div class="flex flex-wrap justify-between items-center gap-3 mb-4"><div><h3 class="font-bold text-slate-900 dark:text-white">Mounted Equipment</h3><p class="text-sm text-slate-600 dark:text-slate-300">${rackDevices.length} device(s) across front and rear. To reposition equipment, use Rack view.</p></div><button type="button" data-action="phase13b-tab" data-tab="view" class="phase13b-primary">Open Rack View</button></div>
                             <div class="mt-4 mb-3 flex items-center justify-between"><h4 class="font-bold">Rack accessories (${rackAccessories.length})</h4></div>
                             ${rackAccessories.length?`<div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-5">${rackAccessories.map(a=>`<div class="flex items-center justify-between gap-2 rounded-xl border border-slate-200 dark:border-slate-600 p-3"><div class="text-sm"><strong>${escapeHtml(a.name||phase13CAccessoryTypes[a.type]?.label||'Accessory')}</strong><div class="text-xs text-slate-600 dark:text-slate-300">${escapeHtml(a.face)} · U${a.startU}${a.heightU>1?'-U'+(a.startU+a.heightU-1):''} · ${a.heightU}U</div></div><button type="button" data-action="phase13c-edit" data-id="${escapeHtml(a.id)}" class="phase13b-secondary">Edit</button></div>`).join('')}</div>`:'<p class="text-sm text-slate-600 dark:text-slate-300 mb-4">No rack accessories added yet.</p>'}
-                            ${rackDevices.length ? `<div class="overflow-x-auto"><table class="w-full text-sm text-left"><thead><tr class="text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700"><th class="p-3">Device</th><th class="p-3">Side</th><th class="p-3">Position</th><th class="p-3">IP address</th><th class="p-3">Actions</th></tr></thead><tbody>${[...rackDevices].sort((a,b)=>Number(b.rackUStart)-Number(a.rackUStart)).map(d=>`<tr class="border-b border-slate-100 dark:border-slate-700"><td class="p-3 font-semibold text-slate-900 dark:text-white">${escapeHtml(d.name)}</td><td class="p-3 capitalize">${escapeHtml(d.face||'front')}</td><td class="p-3 font-mono">U${escapeHtml(String(d.rackUStart||'?'))}${Number(d.rackUEnd)>Number(d.rackUStart)?'-U'+escapeHtml(String(d.rackUEnd)):''}</td><td class="p-3 font-mono">${escapeHtml(d.primaryIp||'—')}</td><td class="p-3"><button type="button" data-action="rack-face-device" data-face="${escapeHtml(d.face||'front')}" class="phase13b-secondary">Show in rack</button></td></tr>`).join('')}</tbody></table></div>` : `<p class="text-sm text-slate-600 dark:text-slate-300">No equipment is mounted in this rack yet. Open Rack view and select an empty U to mount a device.</p>`}
+                            ${rackDevices.length ? `<div class="overflow-x-auto"><table class="w-full text-sm text-left"><thead><tr class="text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700"><th class="p-3">Device</th><th class="p-3">Side</th><th class="p-3">Position</th><th class="p-3">IP address</th><th class="p-3">Actions</th></tr></thead><tbody>${[...rackDevices].sort((a,b)=>Number(b.rackUStart)-Number(a.rackUStart)).map(d=>`<tr class="border-b border-slate-100 dark:border-slate-700"><td class="p-3 font-semibold text-slate-900 dark:text-white">${escapeHtml(d.name)}</td><td class="p-3 capitalize">${escapeHtml(d.face||'front')}</td><td class="p-3 font-mono">U${escapeHtml(String(d.rackUStart||'?'))}${Number(d.rackUEnd)>Number(d.rackUStart)?'-U'+escapeHtml(String(d.rackUEnd)):''}</td><td class="p-3 font-mono">${escapeHtml(d.primaryIp||'—')}</td><td class="p-3"><button type="button" data-action="rack-face-device" data-face="${escapeHtml(d.face||'front')}" class="phase13b-secondary">Show In Rack</button></td></tr>`).join('')}</tbody></table></div>` : `<p class="text-sm text-slate-600 dark:text-slate-300">No equipment is mounted in this rack yet. Open Rack view and select an empty U to mount a device.</p>`}
                         </div>
                     </section>
                     <section class="${phase13BRackTab==='settings'?'':'hidden'} space-y-4" aria-label="Rack settings">
                         <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 space-y-4">
-                            <div><h3 class="font-bold text-slate-900 dark:text-white">Rack configuration</h3><p class="text-sm text-slate-600 dark:text-slate-300">Edit rack details, add enclosures, or remove an unused rack.</p></div>
+                            <div><h3 class="font-bold text-slate-900 dark:text-white">Rack Configuration</h3><p class="text-sm text-slate-600 dark:text-slate-300">Edit rack details, add enclosures, or remove an unused rack.</p></div>
                             <dl class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm"><div><dt class="text-slate-500 dark:text-slate-400">Rack name</dt><dd class="font-semibold">${escapeHtml(currentRack.name)}</dd></div><div><dt class="text-slate-500 dark:text-slate-400">Location</dt><dd class="font-semibold">${escapeHtml(currentRack.location||'Not set')}</dd></div><div><dt class="text-slate-500 dark:text-slate-400">Height</dt><dd class="font-semibold">${Number(currentRack.heightU)||42}U</dd></div><div><dt class="text-slate-500 dark:text-slate-400">Mounted devices</dt><dd class="font-semibold">${rackDevices.length}</dd></div></dl>
-                            <div class="flex flex-wrap gap-2"><button data-action="edit-rack" data-id="${escapeHtml(currentRack.id)}" class="phase13b-primary">Edit rack</button><button data-action="open-rack-modal" class="phase13b-secondary">Add rack</button><button data-action="delete-rack" data-id="${escapeHtml(currentRack.id)}" class="phase13b-danger">Delete rack</button></div>
+                            <div class="flex flex-wrap gap-2"><button data-action="edit-rack" data-id="${escapeHtml(currentRack.id)}" class="phase13b-primary">Edit Rack</button><button data-action="open-rack-modal" class="phase13b-secondary">Add Rack</button><button data-action="delete-rack" data-id="${escapeHtml(currentRack.id)}" class="phase13b-danger">Delete Rack</button></div>
                         </div>
                     </section>
                 </div>
@@ -2648,24 +2648,24 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                     <section class="${phase14DeviceTab==='manage'?'':'hidden'} space-y-4" data-device-panel="manage">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 space-y-3">
-                                <div class="flex items-center gap-2"><i class="fa-solid fa-tags text-blue-600"></i><h3 class="font-bold text-slate-900 dark:text-white">Device types</h3></div>
+                                <div class="flex items-center gap-2"><i class="fa-solid fa-tags text-blue-600"></i><h3 class="font-bold text-slate-900 dark:text-white">Device Types</h3></div>
                                 <p class="text-sm text-slate-600 dark:text-slate-300">Manage the categories available when adding or editing devices.</p>
                                 <p class="text-xs text-slate-600 dark:text-slate-300">${getUniqueDeviceTypes().length} types configured</p>
-                                <button type="button" data-action="open-manage-types" class="h-11 px-4 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold text-sm">Manage types</button>
+                                <button type="button" data-action="open-manage-types" class="h-11 px-4 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold text-sm">Manage Types</button>
                             </div>
                             <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 space-y-3">
-                                <div class="flex items-center gap-2"><i class="fa-solid fa-map-location-dot text-blue-600"></i><h3 class="font-bold text-slate-900 dark:text-white">Device locations</h3></div>
+                                <div class="flex items-center gap-2"><i class="fa-solid fa-map-location-dot text-blue-600"></i><h3 class="font-bold text-slate-900 dark:text-white">Device Locations</h3></div>
                                 <p class="text-sm text-slate-600 dark:text-slate-300">Maintain location choices while preserving special rack handling.</p>
                                 <p class="text-xs text-slate-600 dark:text-slate-300">${getUniqueDeviceLocations().length} locations configured</p>
-                                <button type="button" data-action="open-manage-locations" class="h-11 px-4 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold text-sm">Manage locations</button>
+                                <button type="button" data-action="open-manage-locations" class="h-11 px-4 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold text-sm">Manage Locations</button>
                             </div>
                             <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 space-y-3">
-                                <div class="flex items-center gap-2"><i class="fa-solid fa-server text-blue-600"></i><h3 class="font-bold text-slate-900 dark:text-white">Server options</h3></div>
+                                <div class="flex items-center gap-2"><i class="fa-solid fa-server text-blue-600"></i><h3 class="font-bold text-slate-900 dark:text-white">Server Options</h3></div>
                                 <p class="text-sm text-slate-600 dark:text-slate-300">Manage optional server functions shown when adding or editing physical and virtual servers.</p>
                                 <button type="button" data-action="phase19b-manage-functions" class="h-11 px-4 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold text-sm">Manage Server Options</button>
                             </div>
                             <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 space-y-3">
-                                <div class="flex items-center gap-2"><i class="fa-solid fa-laptop-code text-blue-600"></i><h3 class="font-bold text-slate-900 dark:text-white">Software options</h3></div>
+                                <div class="flex items-center gap-2"><i class="fa-solid fa-laptop-code text-blue-600"></i><h3 class="font-bold text-slate-900 dark:text-white">Software Options</h3></div>
                                 <p class="text-sm text-slate-600 dark:text-slate-300">Manage optional software checkboxes shown for desktops, laptops and tablets.</p>
                                 <button type="button" data-action="phase19b-manage-software" class="h-11 px-4 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold text-sm">Manage Software Options</button>
                             </div>
@@ -3073,7 +3073,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                         </div>
                         <p class="text-xs text-slate-600 dark:text-slate-300">Preview before applying. Existing device assignments and conflicting assigned records are protected.</p>
                         <div class="form-error" data-form-error role="alert"></div>
-                        <div class="form-actions"><button type="button" data-action="close-modal" class="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-700">Cancel</button><button type="submit" class="px-4 py-2 rounded-xl bg-blue-800 text-white font-semibold">Preview changes</button></div>
+                        <div class="form-actions"><button type="button" data-action="close-modal" class="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-700">Cancel</button><button type="submit" class="px-4 py-2 rounded-xl bg-blue-800 text-white font-semibold">Preview Changes</button></div>
                     </form>
                 </div>`);
         }
@@ -3709,7 +3709,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             openModal(`
                 <div class="p-6 sm:p-7 space-y-5">
                     <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-4 mb-1">
-                        <div><h3 class="font-bold text-xl">Rack placement</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">${escapeHtml(rack.name)} · U${slotU}</p></div>
+                        <div><h3 class="font-bold text-xl">Rack Placement</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">${escapeHtml(rack.name)} · U${slotU}</p></div>
                         <button type="button" data-action="close-modal" aria-label="Close dialog"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
                     </div>
                     <form data-form-action="assign" data-rack-id="${escapeHtml(rackId)}" data-default-slot="${Number(slotU) || 1}" class="form-shell space-y-5">
@@ -4032,7 +4032,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 <div class="flex items-start justify-between gap-3"><div><h3 class="text-lg font-bold">Manage Server Functionality</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Add, rename or remove server feature checkboxes. Existing device values are preserved.</p></div><button type="button" data-action="close-modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button></div>
                 <div class="flex gap-2"><input id="phase19b-function-name" type="text" maxlength="80" placeholder="New server function" class="flex-1 min-w-0 h-11 px-3 rounded-xl border border-slate-400 dark:bg-slate-800"><button type="button" data-action="phase19b-add-function" class="h-11 px-4 rounded-xl bg-blue-800 text-white">Add</button></div>
                 <div class="space-y-2 max-h-[48vh] overflow-y-auto">${items.map(x=>`<div class="flex items-center gap-3 p-3 border border-slate-300 dark:border-slate-600 rounded-xl"><span class="flex-1 break-words">${deviceOptionsReturnContent ? `<label class="flex items-center gap-2"><input type="checkbox" data-phase19b-function-select="${escapeHtml(x.key)}" ${phase19BFormValues[x.key]===true?'checked':''}><span>${escapeHtml(x.label)}</span></label>` : escapeHtml(x.label)}</span><button type="button" data-action="phase19b-rename-function" data-name="${escapeHtml(x.key)}" class="h-10 px-3 border rounded-lg" aria-label="Rename ${escapeHtml(x.label)}"><i class="fa-solid fa-pen"></i></button><button type="button" data-action="phase19b-delete-function" data-name="${escapeHtml(x.key)}" class="h-10 px-3 border border-rose-400 rounded-lg text-rose-700 dark:text-rose-300" aria-label="Remove ${escapeHtml(x.label)}"><i class="fa-solid fa-trash"></i></button></div>`).join('')}</div>
-                <div class="flex justify-between gap-2">${deviceOptionsReturnContent ? '' : '<button type="button" data-action="open-manage-types" class="h-11 px-4 rounded-xl border border-slate-400">Back to types</button>'}<button type="button" data-action="close-modal" class="h-11 px-5 rounded-xl bg-blue-800 text-white">Done</button></div>
+                <div class="flex justify-between gap-2">${deviceOptionsReturnContent ? '' : '<button type="button" data-action="open-manage-types" class="h-11 px-4 rounded-xl border border-slate-400">Back To Types</button>'}<button type="button" data-action="close-modal" class="h-11 px-5 rounded-xl bg-blue-800 text-white">Done</button></div>
             </div>`);
         }
         function phase19BReadFunctionSelections() {
@@ -4075,7 +4075,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 <div class="flex items-start justify-between gap-3"><div><h3 class="text-lg font-bold">Manage Installed Software</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Manage the software checkboxes shown for servers, desktops, laptops and tablets. Removing an option preserves existing device records.</p></div><button type="button" data-action="close-modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button></div>
                 <div class="flex gap-2"><input id="phase19b-software-name" type="text" maxlength="80" placeholder="New software" class="flex-1 min-w-0 h-11 px-3 rounded-xl border border-slate-400 dark:bg-slate-800"><button type="button" data-action="phase19b-add-software" class="h-11 px-4 rounded-xl bg-blue-800 text-white">Add</button></div>
                 <div class="space-y-2 max-h-[48vh] overflow-y-auto">${items.map(x=>`<div class="flex items-center gap-3 p-3 border border-slate-300 dark:border-slate-600 rounded-xl"><span class="flex-1 break-words">${deviceOptionsReturnContent ? `<label class="flex items-center gap-2"><input type="checkbox" data-phase19b-software-select="${escapeHtml(x.key)}" ${phase19BFormValues[x.key]===true?'checked':''}><span>${escapeHtml(x.label)}</span></label>` : escapeHtml(x.label)}</span><button type="button" data-action="phase19b-rename-software" data-name="${escapeHtml(x.key)}" class="h-10 px-3 border rounded-lg" aria-label="Rename ${escapeHtml(x.label)}"><i class="fa-solid fa-pen"></i></button><button type="button" data-action="phase19b-delete-software" data-name="${escapeHtml(x.key)}" class="h-10 px-3 border border-rose-400 rounded-lg text-rose-700 dark:text-rose-300" aria-label="Remove ${escapeHtml(x.label)}"><i class="fa-solid fa-trash"></i></button></div>`).join('')}</div>
-                <div class="flex justify-between gap-2">${deviceOptionsReturnContent ? '' : '<button type="button" data-action="open-manage-types" class="h-11 px-4 rounded-xl border border-slate-400">Back to types</button>'}<button type="button" data-action="close-modal" class="h-11 px-5 rounded-xl bg-blue-800 text-white">Done</button></div>
+                <div class="flex justify-between gap-2">${deviceOptionsReturnContent ? '' : '<button type="button" data-action="open-manage-types" class="h-11 px-4 rounded-xl border border-slate-400">Back To Types</button>'}<button type="button" data-action="close-modal" class="h-11 px-5 rounded-xl bg-blue-800 text-white">Done</button></div>
             </div>`);
         }
         function phase19BReadSoftwareSelections(){
@@ -4492,7 +4492,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 
         function caffootShowLicences() {
             const template = document.getElementById('caffoot-license-notices');
-            openModal(`<div class="p-6 space-y-4"><h3 class="text-lg font-bold">Software licences</h3><div class="text-sm whitespace-pre-wrap break-words">${template ? template.innerHTML : 'See LICENSE and THIRD-PARTY-NOTICES.md beside the developer source.'}</div></div>`);
+            openModal(`<div class="p-6 space-y-4"><h3 class="text-lg font-bold">Software Licences</h3><div class="text-sm whitespace-pre-wrap break-words">${template ? template.innerHTML : 'See LICENSE and THIRD-PARTY-NOTICES.md beside the developer source.'}</div></div>`);
         }
 
         function caffootUpdateGuide() {
@@ -4743,7 +4743,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 <h3 class="text-base font-bold text-slate-900 dark:text-white">Backup &amp; restore safety</h3>
                 <p class="text-sm text-slate-700 dark:text-slate-200">Before replacing your inventory with an imported backup, Caffoot Lite validates the backup structure and saves a separate copy of the existing inventory. This copy is retained until the next successful restore.</p>
                 <div class="flex flex-wrap gap-2">
-                    <button type="button" data-action="phase11-export-backup" class="px-4 py-2.5 rounded-xl bg-blue-800 text-white font-semibold">Export current inventory</button>
+                    <button type="button" data-action="phase11-export-backup" class="px-4 py-2.5 rounded-xl bg-blue-800 text-white font-semibold">Export Current Inventory</button>
                     <button type="button" data-action="phase11-download-snapshot" ${exists?'':'disabled'} class="px-4 py-2.5 rounded-xl bg-slate-700 text-white font-semibold disabled:opacity-40">Download pre-restore snapshot</button>
                 </div>
                 <p class="text-xs text-slate-600 dark:text-slate-300">${exists?'A pre-restore snapshot is stored in this browser. Download it to keep a separate copy.':'No pre-restore snapshot yet.'} Browser storage is not a substitute for exported backups.</p>
