@@ -2460,7 +2460,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                                 <h3 class="font-bold text-base text-slate-900 dark:text-white">Available U positions</h3>
                                 <p class="text-xs text-slate-600 dark:text-slate-300">Suggested starting slots on the ${activeRackFace} face. Select a height to find contiguous free space.</p>
                                 <div class="flex flex-wrap gap-2">${[1,2,3,4].map(h=>`<button type="button" data-action="phase13l-height" data-height="${h}" class="phase13b-secondary ${phase13LHeight===h?'ring-2 ring-indigo-500':''}">${h}U</button>`).join('')}</div>
-                                ${(()=>{const runs=phase13LFreeRuns(currentRack,activeRackFace,phase13LHeight);return runs.length?`<p class="text-sm text-slate-800 dark:text-slate-100">${runs.length} possible position(s). Suggested: <strong>U${runs[0]}${phase13LHeight>1?'–U'+(runs[0]+phase13LHeight-1):''}</strong></p><button type="button" data-action="phase13l-mount" data-u="${runs[0]}" class="phase13b-primary">Mount at suggested U</button>`:'<p class="text-sm text-amber-700 dark:text-amber-300">No contiguous space for this height on this face.</p>';})()}
+                                ${(()=>{const runs=phase13LFreeRuns(currentRack,activeRackFace,phase13LHeight);return runs.length?`<p class="text-sm text-slate-800 dark:text-slate-100">${runs.length} possible position(s). Suggested: <strong>U${runs[0]}${phase13LHeight>1?'–U'+(runs[0]+phase13LHeight-1):''}</strong></p><button type="button" data-action="phase13l-mount" data-u="${runs[0]}" class="phase13b-primary">Mount At Suggested U</button>`:'<p class="text-sm text-amber-700 dark:text-amber-300">No contiguous space for this height on this face.</p>';})()}
                             </div>
                             <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-6">
                                 <h3 class="font-bold text-base text-slate-900 dark:text-white mb-1">Other Side (${activeRackFace === 'front' ? 'Rear' : 'Front'}) Equipment</h3>
@@ -2539,7 +2539,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                     <section class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 sm:p-5 space-y-3">
                         <div class="flex flex-wrap items-center justify-between gap-3">
                             <div><h2 class="text-lg font-bold text-slate-900 dark:text-white">Device Management</h2><p class="text-sm text-slate-600 dark:text-slate-300">Find, update and organise your network equipment.</p></div>
-                            <button type="button" data-action="open-device-modal" class="h-11 px-4 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold text-sm"><i class="fa-solid fa-plus mr-2"></i>Add device</button>
+                            <button type="button" data-action="open-device-modal" class="h-11 px-4 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold text-sm"><i class="fa-solid fa-plus mr-2"></i>Add Device</button>
                         </div>
                         <nav class="phase14-tabs" aria-label="Device workspace">
                             ${[['inventory','Inventory','fa-server'],['manage','Types & Locations','fa-sliders']].map(([key,label,icon])=>`<button type="button" data-action="phase14-tab" data-tab="${key}" aria-current="${phase14DeviceTab===key?'page':'false'}" class="phase14-tab ${phase14DeviceTab===key?'phase14-active':''}"><i class="fa-solid ${icon} mr-2"></i>${label}</button>`).join('')}
@@ -2640,7 +2640,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                                         </tr>
                                     `;
                                 }).join('')}
-                                ${getVisibleDevices().length === 0 ? `<tr><td colspan="7" class="px-4 py-12 text-center"><div class="phase14g-empty"><i class="fa-solid ${appState.devices.length?'fa-magnifying-glass':'fa-server'}" aria-hidden="true"></i><strong>${appState.devices.length?'No matching devices':'Your inventory is empty'}</strong><p>${appState.devices.length?'Try another search or remove your filters.':'Add your first device to get started.'}</p><button type="button" data-action="${appState.devices.length?'phase14g-clear-filters':'open-device-modal'}">${appState.devices.length?'Clear search and filters':'Add device'}</button></div></td></tr>` : ''}
+                                ${getVisibleDevices().length === 0 ? `<tr><td colspan="7" class="px-4 py-12 text-center"><div class="phase14g-empty"><i class="fa-solid ${appState.devices.length?'fa-magnifying-glass':'fa-server'}" aria-hidden="true"></i><strong>${appState.devices.length?'No matching devices':'Your inventory is empty'}</strong><p>${appState.devices.length?'Try another search or remove your filters.':'Add your first device to get started.'}</p><button type="button" data-action="${appState.devices.length?'phase14g-clear-filters':'open-device-modal'}">${appState.devices.length?'Clear search and filters':'Add Device'}</button></div></td></tr>` : ''}
                             </tbody>
                         </table>
                     </div>
@@ -4449,12 +4449,12 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             const panel = (title,desc,inner='') => `<section class="phase16a-panel"><h3>${title}</h3><p>${desc}</p>${inner ? `<div class="phase16a-buttons">${inner}</div>` : ''}</section>`;
             let body = '';
             if (section === 'backup') {
-                body = browserStorageWarning() + panel('Inventory safety check','Check data integrity and confirm that the current inventory is saved in this browser. This check makes no changes.',button('phase16a-check-safety','Check inventory safety','fa-shield-halved')) +
+                body = browserStorageWarning() + panel('Inventory Safety Check','Check data integrity and confirm that the current inventory is saved in this browser. This check makes no changes.',button('phase16a-check-safety','Check inventory safety','fa-shield-halved')) +
                     panel('Back up your data','Download a complete JSON copy of the current inventory, including devices, IPAM, subnets and racks.',button('phase11-export-backup','Download JSON backup','fa-download')) +
-                    panel('Restore your data','Choose a JSON backup. Caffoot Lite checks the file and displays a summary before asking you to replace your inventory. A safety copy is verified first.',button('phase16a-import','Choose backup file','fa-upload')) +
+                    panel('Restore Your Data','Choose a JSON backup. Caffoot Lite checks the file and displays a summary before asking you to replace your inventory. A safety copy is verified first.',button('phase16a-import','Choose backup file','fa-upload')) +
                     panel('Update Caffoot Lite','Check for a published release when online. Download a JSON backup before opening a newer HTML file.',button('caffoot-check-updates','Check for updates','fa-arrow-rotate-right') + button('caffoot-update-guide','Safe update guide','fa-circle-info') + '<p id="caffoot-update-status" role="status" aria-live="polite"></p>') +
-                    panel('Recovery snapshot','A safety snapshot is available only after a restore has created one.',button('phase11-download-snapshot','Download safety snapshot','fa-shield-halved',personalSafeStorageGet(SAFETY_SNAPSHOT_KEY)?'':'disabled')) +
-                    panel('Danger zone — clear system','Permanently reset all inventory, IPAM records and managed options in this browser. Export a JSON backup first.',button('phase16a-clear-system','Clear system / clean start','fa-triangle-exclamation'));
+                    panel('Recovery Snapshot','A safety snapshot is available only after a restore has created one.',button('phase11-download-snapshot','Download safety snapshot','fa-shield-halved',personalSafeStorageGet(SAFETY_SNAPSHOT_KEY)?'':'disabled')) +
+                    panel('Danger Zone — Clear System','Permanently reset all inventory, IPAM records and managed options in this browser. Export a JSON backup first.',button('phase16a-clear-system','Clear system / clean start','fa-triangle-exclamation'));
             } else if (section === 'preferences') {
                 body = panel('Appearance','Switch between the existing light and dark themes.',button('phase16a-theme','Switch light / dark','fa-circle-half-stroke'));
             } else {
