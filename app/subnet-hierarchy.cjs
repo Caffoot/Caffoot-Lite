@@ -74,4 +74,36 @@ function validateHierarchy(subnets) {
   }
   return errors;
 }
-module.exports={ipNumber,ipString,parseCidr,validateHierarchy};
+
+// Type-specific rules are kept separate from hierarchy placement rules.
+// Missing kind remains a legacy ordinary network without changing saved data.
+function validateSubnetTypes(subnets) {
+  if(!Array.isArray(subnets)) return ['Subnets must be an array.'];
+  const errors=[];
+  for(const s of subnets) {
+    if(!s||typeof s!=='object'||Array.isArray(s)) {errors.push('Invalid subnet record.');continue;}
+    const kind=s.kind===undefined?'network':s.kind;
+    if(!['network','container','reserved','loopback'].includes(kind)) {
+      errors.push('Invalid subnet kind: '+String(s.id));continue;
+    }
+    const range=parseCidr(s.cidr);
+    if(!range||!range.aligned) {errors.push('Invalid subnet CIDR: '+String(s.cidr));continue;}
+    if(kind==='network') {
+      if(range.prefix>30||range.prefix<1) errors.push('Network requires a /1–/30 CIDR: '+s.cidr);
+      const vlan=Number(s.vlan);
+      if(s.vlan===null||s.vlan===undefined||s.vlan===''||!Number.isInteger(vlan)||vlan<1||vlan>4094)
+        errors.push('Network requires VLAN 1–4094: '+String(s.id));
+      const gateway=ipNumber(s.gateway);
+      if(gateway===null||gateway<=range.start||gateway>=range.end)
+        errors.push('Network requires a usable gateway: '+String(s.id));
+    } else {
+      if(kind==='loopback'&&range.prefix!==32) errors.push('Loopback requires /32: '+String(s.id));
+      if(s.gateway!==undefined&&s.gateway!==null&&s.gateway!=='')
+        errors.push(kind+' must not have a gateway: '+String(s.id));
+      if(s.vlan!==undefined&&s.vlan!==null&&s.vlan!=='')
+        errors.push(kind+' must not have a VLAN: '+String(s.id));
+    }
+  }
+  return errors;
+}
+module.exports={ipNumber,ipString,parseCidr,validateHierarchy,validateSubnetTypes};
