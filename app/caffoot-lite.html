@@ -4002,7 +4002,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
         // be edited without changing device types or deleting historical device values.
         const phase19BDefaultServerFunctions = ['SwanServer','SQLServer','TMSServer','printserver','keriserver','ActiveDirectory','AntivirusSoftware','DNS','DHCP','ExchangeServer','BackupSoftware','PlanetDB','SystemsDatabaseBackEndTables','PDASystem'];
         function phase19BServerFunctions() {
-            return Array.isArray(appState.serverFunctions) && (appState.serverFunctions.length || appState.managedOptionsCleared) ? appState.serverFunctions : phase19BDefaultServerFunctions.map(key=>({key,label:phase19BLabels[key]||key}));
+            return Array.isArray(appState.serverFunctions) ? appState.serverFunctions : [];
         }
         function phase19BServerFunctionFields() { return phase19BServerFunctions().map(x=>x.key); }
         function phase19BManageFunctions() {
@@ -4037,7 +4037,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
         // Desktop, laptop and tablet software is managed independently of server functions.
         const phase19BDefaultSoftware = ['Swan','MicrosoftOffice','Planet','SpindleSoftware','Preactor','RedLionApp','SalesBase','HelpDesk','ProductionITHelpDeskDashboards','PDA','TMS','PhoneBook','EasyLabel'];
         function phase19BSoftware() {
-            return Array.isArray(appState.installedSoftware) && (appState.installedSoftware.length || appState.managedOptionsCleared) ? appState.installedSoftware : phase19BDefaultSoftware.map(key=>({key,label:phase19BLabels[key]||key}));
+            return Array.isArray(appState.installedSoftware) ? appState.installedSoftware : [];
         }
         function phase19BSoftwareFields(){return phase19BSoftware().map(x=>x.key);}
         function phase19BManageSoftware(){
