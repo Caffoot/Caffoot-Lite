@@ -1040,6 +1040,14 @@ function hierarchyValidate(subnets) {
                 if (device.location === 'Blank' || !device.location) device.location = 'Unknown';
             });
 
+            // Existing v1.0.3 subnet records have no kind/parentId.
+            // Give them an explicit, backward-compatible network identity.
+            // New kinds remain gated until their UI and IPAM rules are ready.
+            for (const subnet of state.subnets) {
+                if (isPlainObject(subnet) && subnet.kind === undefined) subnet.kind = 'network';
+                if (isPlainObject(subnet) && subnet.parentId === undefined) subnet.parentId = null;
+            }
+
             for (const subnet of state.subnets) {
                 if (!isPlainObject(subnet) || !subnet.id || !subnet.name || !isValidCidr24(subnet.cidr)) {
                     throw new Error('Every subnet must have an id, name and valid /23–/30 CIDR.');
