@@ -2963,7 +2963,7 @@ function hierarchyValidateTypes(subnets) {
         }
 
         function renderIpamHTML() {
-            const subnet = appState.subnets.find(s => s.id === selectedSubnetId) || appState.subnets[0];
+            const subnet = appState.subnets.find(s => s.id === selectedSubnetId && s.kind !== 'container') || appState.subnets.find(s => s.kind !== 'container') || appState.subnets[0];
             
             if (!subnet && appState.subnets.length === 0) {
                 return `
@@ -2978,7 +2978,9 @@ function hierarchyValidateTypes(subnets) {
                 `;
             }
 
-            const phase10Summary = phase10SubnetSummary(subnet);
+            const activeNetwork = subnet?.kind === 'container' ? appState.subnets.find(s => s.kind !== 'container' && phase12Cidr(s.cidr)) : subnet;
+            if (subnet?.kind === 'container' && !activeNetwork) return renderSubnetHierarchyPreview();
+            const phase10Summary = phase10SubnetSummary(activeNetwork);
             const baseIpParts = subnet ? subnet.cidr.split('/')[0].split('.') : ['192', '168', '1'];
             const basePrefix = `${baseIpParts[0]}.${baseIpParts[1]}.${baseIpParts[2]}`;
             
@@ -3297,6 +3299,7 @@ function hierarchyValidateTypes(subnets) {
             if (!cidrInput || !gatewayInput) return;
             const form = cidrInput.closest('form[data-form-action="subnet"]');
             if (!form || form.dataset.subnetId) return; // Never overwrite an existing subnet gateway.
+            if (document.getElementById('sub-kind')?.value === 'container') { cidrInput.removeAttribute('aria-invalid'); cidrInput.removeAttribute('aria-describedby'); return; }
             const range = phase12Cidr(cidrInput.value.trim());
             const suggestion = range ? phase12IpString(range.first) : '';
             const previous = gatewayInput.dataset.autoGateway || '';
