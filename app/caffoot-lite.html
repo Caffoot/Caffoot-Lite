@@ -3504,6 +3504,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
         function closeModal() {
             if (deviceOptionsReturnContent) {
                 phase19BReadSoftwareSelections();
+                phase19BReadFunctionSelections();
                 const content = document.getElementById('modal-content');
                 content.replaceChildren(deviceOptionsReturnContent);
                 deviceOptionsReturnContent = null;
@@ -4028,13 +4029,20 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             phase19BKeepDeviceForm();
             const items=phase19BServerFunctions();
             openModal(`<div class="p-5 sm:p-7 space-y-4 phase18d-manager">
-                <div class="flex items-start justify-between gap-3"><div><h3 class="text-lg font-bold">Manage server functionality</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Add, rename or remove server feature checkboxes. Existing device values are preserved.</p></div><button type="button" data-action="close-modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button></div>
+                <div class="flex items-start justify-between gap-3"><div><h3 class="text-lg font-bold">Manage Server Functionality</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Add, rename or remove server feature checkboxes. Existing device values are preserved.</p></div><button type="button" data-action="close-modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button></div>
                 <div class="flex gap-2"><input id="phase19b-function-name" type="text" maxlength="80" placeholder="New server function" class="flex-1 min-w-0 h-11 px-3 rounded-xl border border-slate-400 dark:bg-slate-800"><button type="button" data-action="phase19b-add-function" class="h-11 px-4 rounded-xl bg-blue-800 text-white">Add</button></div>
-                <div class="space-y-2 max-h-[48vh] overflow-y-auto">${items.map(x=>`<div class="flex items-center gap-3 p-3 border border-slate-300 dark:border-slate-600 rounded-xl"><span class="flex-1 break-words">${escapeHtml(x.label)}</span><button type="button" data-action="phase19b-rename-function" data-name="${escapeHtml(x.key)}" class="h-10 px-3 border rounded-lg" aria-label="Rename ${escapeHtml(x.label)}"><i class="fa-solid fa-pen"></i></button><button type="button" data-action="phase19b-delete-function" data-name="${escapeHtml(x.key)}" class="h-10 px-3 border border-rose-400 rounded-lg text-rose-700 dark:text-rose-300" aria-label="Remove ${escapeHtml(x.label)}"><i class="fa-solid fa-trash"></i></button></div>`).join('')}</div>
-                <div class="flex justify-between gap-2"><button type="button" data-action="${deviceOptionsReturnContent ? 'close-modal' : 'open-manage-types'}" class="h-11 px-4 rounded-xl border border-slate-400">${deviceOptionsReturnContent ? 'Back to device' : 'Back to types'}</button><button type="button" data-action="close-modal" class="h-11 px-5 rounded-xl bg-blue-800 text-white">Done</button></div>
+                <div class="space-y-2 max-h-[48vh] overflow-y-auto">${items.map(x=>`<div class="flex items-center gap-3 p-3 border border-slate-300 dark:border-slate-600 rounded-xl"><span class="flex-1 break-words">${deviceOptionsReturnContent ? `<label class="flex items-center gap-2"><input type="checkbox" data-phase19b-function-select="${escapeHtml(x.key)}" ${phase19BFormValues[x.key]===true?'checked':''}><span>${escapeHtml(x.label)}</span></label>` : escapeHtml(x.label)}</span><button type="button" data-action="phase19b-rename-function" data-name="${escapeHtml(x.key)}" class="h-10 px-3 border rounded-lg" aria-label="Rename ${escapeHtml(x.label)}"><i class="fa-solid fa-pen"></i></button><button type="button" data-action="phase19b-delete-function" data-name="${escapeHtml(x.key)}" class="h-10 px-3 border border-rose-400 rounded-lg text-rose-700 dark:text-rose-300" aria-label="Remove ${escapeHtml(x.label)}"><i class="fa-solid fa-trash"></i></button></div>`).join('')}</div>
+                <div class="flex justify-between gap-2">${deviceOptionsReturnContent ? '' : '<button type="button" data-action="open-manage-types" class="h-11 px-4 rounded-xl border border-slate-400">Back to types</button>'}<button type="button" data-action="close-modal" class="h-11 px-5 rounded-xl bg-blue-800 text-white">Done</button></div>
             </div>`);
         }
+        function phase19BReadFunctionSelections() {
+            if(!deviceOptionsReturnContent)return;
+            document.querySelectorAll('[data-phase19b-function-select]').forEach(el=>{
+                phase19BFormValues[el.dataset.phase19bFunctionSelect]=el.checked;
+            });
+        }
         function phase19BUpdateFunction(action,key='') {
+            phase19BReadFunctionSelections();
             const items=phase19BServerFunctions().map(x=>({...x}));
             const old=items.find(x=>x.key===key);
             if(action!=='add'&&!old)return;
@@ -4064,10 +4072,10 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             phase19BKeepDeviceForm();
             const items=phase19BSoftware();
             openModal(`<div class="p-5 sm:p-7 space-y-4 phase18d-manager">
-                <div class="flex items-start justify-between gap-3"><div><h3 class="text-lg font-bold">Manage installed software</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Manage the software checkboxes shown for Desktop, Laptop and Tablet. Removing an option preserves existing device records.</p></div><button type="button" data-action="close-modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button></div>
+                <div class="flex items-start justify-between gap-3"><div><h3 class="text-lg font-bold">Manage Installed Software</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Manage the software checkboxes shown for servers, desktops, laptops and tablets. Removing an option preserves existing device records.</p></div><button type="button" data-action="close-modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button></div>
                 <div class="flex gap-2"><input id="phase19b-software-name" type="text" maxlength="80" placeholder="New software" class="flex-1 min-w-0 h-11 px-3 rounded-xl border border-slate-400 dark:bg-slate-800"><button type="button" data-action="phase19b-add-software" class="h-11 px-4 rounded-xl bg-blue-800 text-white">Add</button></div>
                 <div class="space-y-2 max-h-[48vh] overflow-y-auto">${items.map(x=>`<div class="flex items-center gap-3 p-3 border border-slate-300 dark:border-slate-600 rounded-xl"><span class="flex-1 break-words">${deviceOptionsReturnContent ? `<label class="flex items-center gap-2"><input type="checkbox" data-phase19b-software-select="${escapeHtml(x.key)}" ${phase19BFormValues[x.key]===true?'checked':''}><span>${escapeHtml(x.label)}</span></label>` : escapeHtml(x.label)}</span><button type="button" data-action="phase19b-rename-software" data-name="${escapeHtml(x.key)}" class="h-10 px-3 border rounded-lg" aria-label="Rename ${escapeHtml(x.label)}"><i class="fa-solid fa-pen"></i></button><button type="button" data-action="phase19b-delete-software" data-name="${escapeHtml(x.key)}" class="h-10 px-3 border border-rose-400 rounded-lg text-rose-700 dark:text-rose-300" aria-label="Remove ${escapeHtml(x.label)}"><i class="fa-solid fa-trash"></i></button></div>`).join('')}</div>
-                <div class="flex justify-between gap-2"><button type="button" data-action="${deviceOptionsReturnContent ? 'close-modal' : 'open-manage-types'}" class="h-11 px-4 rounded-xl border border-slate-400">${deviceOptionsReturnContent ? 'Back to device' : 'Back to types'}</button><button type="button" data-action="close-modal" class="h-11 px-5 rounded-xl bg-blue-800 text-white">Done</button></div>
+                <div class="flex justify-between gap-2">${deviceOptionsReturnContent ? '' : '<button type="button" data-action="open-manage-types" class="h-11 px-4 rounded-xl border border-slate-400">Back to types</button>'}<button type="button" data-action="close-modal" class="h-11 px-5 rounded-xl bg-blue-800 text-white">Done</button></div>
             </div>`);
         }
         function phase19BReadSoftwareSelections(){
