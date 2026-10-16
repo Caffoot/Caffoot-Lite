@@ -72,7 +72,7 @@ See the [user guide](USER-GUIDE.md) for the first-run walkthrough and day-to-day
 
 Caffoot Lite stores inventory in your **browser's local storage**, not in the HTML file or on a server. Browser `file://` storage behaviour varies: changing browser, profile, path or filename may prevent the new file from seeing existing data. Clearing browser data can erase it.
 
-**Export a JSON backup before upgrading, moving/renaming the HTML file, resetting data or changing browsers.** Keep backups safe; they may contain sensitive infrastructure details. Caffoot Lite saves inventory under `caffoot_state`. Version 1.0.0 does not migrate older test-browser storage automatically; export and restore a JSON backup if you need to keep test data.
+**Export a JSON backup before upgrading, moving/renaming the HTML file, resetting data or changing browsers.** Keep backups safe; they may contain sensitive infrastructure details. Caffoot Lite saves inventory under `caffoot_state`. For upgrades from older versions, export and restore a JSON backup if existing browser data is not visible.
 
 ## For developers: build and test
 
@@ -84,13 +84,13 @@ npm install
 npm run release
 ```
 
-The build produces `app/dist/Caffoot-Lite.html`. GitHub Actions also builds and checks the application and uploads a preview artifact on pushes to `main`. Automated checks do not replace manual Safari and offline testing.
+The build produces `app/dist/Caffoot-Lite.html`. Automated checks and manual browser testing are recommended before distributing a build. The GitHub Actions build workflow is currently disabled.
 
 ## Project and release status
 
 This repository is dedicated to **Caffoot Lite**: its standalone application, build tools, tests and release documentation.
 
-The [roadmap and release checklist](ROADMAP.md) record completed release checks and future proposals. The owner approved public visibility and publication; v1.0.0 was published on 10 October 2026.
+The latest published release is **v1.0.1** (16 October 2026). For development plans and historical release checks, see the [project roadmap](ROADMAP.md).
 
 ## Licence and branding
 
@@ -101,4 +101,4 @@ The Caffoot name, hedgehog mascot and official project branding are **not** lice
 
 ## Backup compatibility and release preparation
 
-The [backup format contract](BACKUP-FORMAT.md) documents versioned exports and legacy imports for future Lite-to-Pro migration. Pro import has not been implemented yet. The [final acceptance walkthrough](RELEASE-ACCEPTANCE.md) and [release review](RELEASE-REVIEW.md) record automated checks and owner-reported Safari/VoiceOver acceptance.
+The [backup format contract](BACKUP-FORMAT.md) documents versioned exports and legacy imports for future Lite-to-Pro migration. Pro import has not been implemented yet. Historical testing and release-review records remain available in [RELEASE-ACCEPTANCE.md](RELEASE-ACCEPTANCE.md) and [RELEASE-REVIEW.md](RELEASE-REVIEW.md).
