@@ -24,8 +24,8 @@ function validateHierarchy(subnets) {
     if(ids.has(s.id)) errors.push('Duplicate subnet ID: '+s.id);
     ids.set(s.id,s);
     const kind=s.kind===undefined?'network':s.kind;
-    if(kind!=='network'&&kind!=='container') errors.push('Invalid subnet kind: '+s.id);
-    const range=parseCidr(s.cidr,{minPrefix:kind==='container'?0:23,maxPrefix:kind==='container'?32:30});
+    if(kind!=='network'&&kind!=='container'&&kind!=='reserved'&&kind!=='loopback') errors.push('Invalid subnet kind: '+s.id);
+    const range=parseCidr(s.cidr,{minPrefix:kind==='container'||kind==='reserved'?0:kind==='loopback'?32:1,maxPrefix:kind==='loopback'?32:32});
     if(!range) errors.push('Invalid CIDR for '+s.id+': '+s.cidr);
     else if(!range.aligned) errors.push('Misaligned CIDR '+s.cidr+'; use '+range.canonical);
     else {
