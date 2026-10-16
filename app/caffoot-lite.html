@@ -1201,6 +1201,9 @@ function hierarchyValidateTypes(subnets) {
             appState.subnets.forEach(subnet => {
                 if (!subnet.id || subnetIds.has(subnet.id)) errors.push(`Duplicate or missing subnet ID: ${subnet.id || '(missing)'}`);
                 subnetIds.add(subnet.id);
+                // Containers, reservations and loopbacks have no VLAN/gateway.
+                // Their CIDR and type rules are checked by hierarchyValidateTypes above.
+                if (subnet.kind && subnet.kind !== 'network') return;
                 if (!isValidCidr24(subnet.cidr)) errors.push(`Invalid subnet CIDR: ${subnet.cidr}`);
                 if (!isValidIpv4(subnet.gateway) || !ipBelongsToSubnet(subnet.gateway, subnet.cidr)) errors.push(`Invalid gateway for subnet ${subnet.name || subnet.cidr}.`);
                 const vlan = Number(subnet.vlan);
