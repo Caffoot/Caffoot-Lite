@@ -14,7 +14,7 @@ Caffoot Lite is a standalone HTML application. You do **not** need Docker, Node.
 
 ## Download the released HTML
 
-**Caffoot Lite v1.0.1 is published.** Always use the [latest stable release](https://github.com/sdelnevo/Caffoot-Lite/releases/latest) for the current download.
+**Caffoot Lite v1.0.3 is published.** Always use the [latest stable release](https://github.com/sdelnevo/Caffoot-Lite/releases/latest) for the current download.
 
 1. Visit the [Caffoot Lite GitHub repository](https://github.com/sdelnevo/Caffoot-Lite).
 2. Open **Releases** and select the latest stable release.
