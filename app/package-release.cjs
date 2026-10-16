@@ -20,9 +20,27 @@ try{
  fs.writeFileSync(path.join(temp,'SHA256SUMS'),members.map(name=>sum(fs.readFileSync(path.join(temp,name)))+'  '+name).join('\n')+'\n');
  members.push('SHA256SUMS');
  const archive=path.join(dist,'Caffoot-Lite-'+version+'.zip');fs.rmSync(archive,{force:true});
- const zip=spawnSync('zip',['-q',archive,...members],{cwd:temp,encoding:'utf8'});if(zip.status!==0)throw Error(zip.stderr||'ZIP creation failed');
- const listing=spawnSync('unzip',['-Z1',archive],{encoding:'utf8'});assert.equal(listing.status,0);assert.deepEqual(listing.stdout.trim().split('\n').sort(),members.slice().sort(),'ZIP must contain exactly reviewed files');
- for(const name of members){const read=spawnSync('unzip',['-p',archive,name],{maxBuffer:20*1024*1024});assert.equal(read.status,0);assert.equal(sum(read.stdout),sum(fs.readFileSync(path.join(temp,name))),'ZIP bytes mismatch: '+name);}
+ if(process.platform==='win32'){
+  // Windows has PowerShell's built-in ZIP support; no Unix zip/unzip required.
+  const runPS=script=>{
+   const encoded=Buffer.from(script,'utf16le').toString('base64');
+   const result=spawnSync('powershell.exe',['-NoProfile','-NonInteractive','-EncodedCommand',encoded],{encoding:'utf8'});
+   if(result.error||result.status!==0)throw Error(result.error?.message||result.stderr||result.stdout||'PowerShell ZIP command failed');
+  };
+  const quote=value=>"'"+value.replace(/'/g,"''")+"'";
+  runPS('Compress-Archive -LiteralPath '+members.map(name=>quote(path.join(temp,name))).join(',')+' -DestinationPath '+quote(archive)+' -Force');
+  const extracted=fs.mkdtempSync(path.join(os.tmpdir(),'caffoot-verify-'));
+  try{
+   runPS('Expand-Archive -LiteralPath '+quote(archive)+' -DestinationPath '+quote(extracted)+' -Force');
+   const list=(dir,prefix='')=>fs.readdirSync(dir,{withFileTypes:true}).flatMap(entry=>entry.isDirectory()?list(path.join(dir,entry.name),prefix+entry.name+'/'):[prefix+entry.name]);
+   assert.deepEqual(list(extracted).sort(),members.slice().sort(),'ZIP must contain exactly reviewed files');
+   for(const name of members)assert.equal(sum(fs.readFileSync(path.join(extracted,name))),sum(fs.readFileSync(path.join(temp,name))),'ZIP bytes mismatch: '+name);
+  }finally{fs.rmSync(extracted,{recursive:true,force:true});}
+ }else{
+  const zip=spawnSync('zip',['-q',archive,...members],{cwd:temp,encoding:'utf8'});if(zip.status!==0)throw Error(zip.stderr||'ZIP creation failed');
+  const listing=spawnSync('unzip',['-Z1',archive],{encoding:'utf8'});assert.equal(listing.status,0);assert.deepEqual(listing.stdout.trim().split('\\n').sort(),members.slice().sort(),'ZIP must contain exactly reviewed files');
+  for(const name of members){const read=spawnSync('unzip',['-p',archive,name],{maxBuffer:20*1024*1024});assert.equal(read.status,0);assert.equal(sum(read.stdout),sum(fs.readFileSync(path.join(temp,name))),'ZIP bytes mismatch: '+name);}
+ }
  fs.writeFileSync(path.join(dist,'SHA256SUMS'),['Caffoot-Lite.html',path.basename(archive)].map(name=>sum(fs.readFileSync(path.join(dist,name)))+'  '+name).join('\n')+'\n');
  console.log('PASS: pinned runtime licence copies, app/package version, complete embedded notices, exact ZIP members and extracted byte hashes.');
  console.log('Prepared '+archive+'; no publication performed.');
