@@ -1,6 +1,6 @@
 # Caffoot inventory interchange — schema 1
 
-This document describes the implemented Lite export/import contract. It is the reference for the future Pro importer; **Pro import is not implemented or verified yet**. The examples contain fictional inventory only.
+This document describes the implemented Caffoot Lite JSON export/import contract. The examples contain fictional inventory only.
 
 ## Envelope and versions
 
@@ -16,7 +16,7 @@ A backup is a UTF-8 JSON object. Inventory remains at the top level; there is no
 }
 ```
 
-`schemaVersion` is the interchange version. `appVersion` identifies the producer and does not determine compatibility. `stateVersion` is Lite's internal normalisation version (currently 3), separate from the interchange version. Metadata permits producer `Caffoot Lite` or `Caffoot Pro`; this is an identifier, not proof that Pro exists or every Pro feature can be represented in Lite.
+`schemaVersion` is the interchange version. `appVersion` identifies the producer and does not determine compatibility. `stateVersion` is Lite's internal normalisation version (currently 3), separate from the interchange version. The current validator accepts producer identifiers `Caffoot Lite` and `Caffoot Pro`. These are existing format identifiers; acceptance of an identifier does not establish compatibility with other applications or formats.
 
 Missing `caffootBackup` identifies a legacy unversioned inventory (logical schema 0). A present malformed metadata object is rejected. Schema versions above 1 are rejected with an update message. Never remove metadata from a future backup to bypass this guard.
 
@@ -34,7 +34,7 @@ Missing `caffootBackup` identifies a legacy unversioned inventory (logical schem
 | `deviceTypeGraphics` | Mapping of managed type to graphic selection; defaults to an empty object. |
 | `serverFunctions`, `installedSoftware` | Managed option arrays, normally `{key,label}` objects. Preserve historical option definitions and device `typeDetails` values. |
 | `managedOptionsCleared` | Boolean preserving intentional empty option lists. |
-| Additional fields | Lite's normalisation preserves unknown properties through its object spread. A future Pro importer must preserve supported extras or clearly report unsupported fields; do not silently discard them. |
+| Additional fields | Lite's normalisation preserves unknown properties through its object spread. Future import and migration changes must preserve supported extras or clearly report unsupported fields; do not silently discard them. |
 
 IDs are references, not display names. A device's `rackId` references a rack; an allocation's `deviceId` references a device. A mounted device uses `mountType: "Rack Mounted"`, `location: "Racked"`, `face: "front"` or `"rear"`, and inclusive U positions where `rackUEnd = rackUStart + rackUHeight - 1`. A Desktop device has no rack assignment. A device primary IP belongs to an existing subnet and is unique.
 
@@ -51,11 +51,11 @@ IDs are references, not display names. A device's `rackId` references a rack; an
 
 Preview/migration does not modify the input JSON object or the original file, active inventory or saved inventory. Restore replaces inventory; it is not a merge. Backups exclude separately stored audit history, theme preference, acknowledgement state and recovery snapshots. Export audit history separately if needed. Do not treat a JSON backup as encrypted.
 
-## Evolution policy and Pro requirements
+## Evolution policy and compatibility requirements
 
 For a future schema, introduce an explicit supported-version dispatcher and ordered, tested migrations on detached data. Keep immutable fixtures for every supported schema, reject unsupported future versions before changes, and review any migration that changes meaning or drops fields. App version updates alone do not require a schema bump; incompatible data semantics do.
 
-Pro should validate first, present a preview and conflict policy, map stable IDs and references, then import in a single database transaction. A failed import must leave the database unchanged. This is a future requirement, not tested Pro behaviour. Pro-only data may require a new schema; same appearance does not imply bidirectional backup compatibility.
+Future import enhancements must validate input before modifying inventory, clearly present replacement or conflict behaviour, preserve supported references, and leave existing data unchanged on failure. New or incompatible data semantics may require a new schema version; matching file structure alone does not guarantee compatibility.
 
 ## Reference fixtures and tests
 

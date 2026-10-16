@@ -90,7 +90,7 @@ The build produces `app/dist/Caffoot-Lite.html`. Automated checks and manual bro
 
 This repository is dedicated to **Caffoot Lite**: its standalone application, build tools, tests and release documentation.
 
-The latest published release is **v1.0.1** (16 October 2026). For development plans and historical release checks, see the [project roadmap](ROADMAP.md).
+The latest published release is **v1.0.3** (16 October 2026). For development plans and historical release checks, see the [project roadmap](ROADMAP.md).
 
 ## Licence and branding
 
@@ -101,4 +101,4 @@ The Caffoot name, hedgehog mascot and official project branding are **not** lice
 
 ## Backup compatibility and release preparation
 
-The [backup format contract](BACKUP-FORMAT.md) documents versioned exports and legacy imports for future Lite-to-Pro migration. Pro import has not been implemented yet. Historical testing and release-review records remain available in [RELEASE-ACCEPTANCE.md](RELEASE-ACCEPTANCE.md) and [RELEASE-REVIEW.md](RELEASE-REVIEW.md).
+The [backup format contract](BACKUP-FORMAT.md) documents versioned JSON exports, legacy imports and compatibility safeguards. Historical testing and release-review records remain available in [RELEASE-ACCEPTANCE.md](RELEASE-ACCEPTANCE.md) and [RELEASE-REVIEW.md](RELEASE-REVIEW.md).

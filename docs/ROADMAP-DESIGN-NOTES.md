@@ -1,0 +1,151 @@
+# Caffoot Lite — Roadmap Design Notes
+
+**Created:** 16 October 2026  
+**Status:** Planning only  
+**Purpose:** Preserve proposed features, agreed design directions, dependencies and compatibility requirements.
+
+These notes are not implementation approval or release commitments. Finish v1.1 first. Published v1.0.3 remains untouched until a separately reviewed release is authorised.
+
+## 1. Device form redesign — v1.2 candidate
+
+**Agreed design direction:** Wider, responsive Add Device and Edit Device forms with tabbed sections and consistent shared behaviour.
+
+Proposed tabs:
+- **General:** Device name, type, location and general information.
+- **IP Addresses:** Assigned IPs, address purposes and optional interface associations.
+- **Hardware:** Manufacturer, model, serial number and device-type-specific attributes.
+- **Connections:** Future device relationships and physical/logical connectivity.
+
+Requirements:
+- Preserve existing dynamic fields based on device type.
+- Share form structure and validation between Add and Edit.
+- Retain unsaved values when switching tabs.
+- Direct validation errors to the relevant tab.
+- Support smaller screens and keyboard navigation.
+- Preserve compatibility with existing device records.
+- Introduce the Connections tab when relationship functionality is ready, if appropriate.
+
+## 2. Multiple IP addresses per device — v1.2 candidate
+
+**Agreed design direction:** Support multiple IP addresses without requiring detailed interface configuration.
+
+- Add and remove IP assignments in the device form.
+- Designate a primary management IP.
+- Optionally associate an IP with an interface.
+- Permit multiple IPs on an interface where appropriate.
+- Record address purposes such as management, storage, WAN or LAN.
+- Preserve Device/IPAM consistency and existing allocation safeguards.
+- Support existing single-IP device records without manual re-entry.
+
+### Public IP address management
+
+Investigate public IPv4 allocations and blocks, ISP/circuit metadata, public-facing device assignments, and NAT/virtual IP documentation. Address validation must not be weakened to accommodate public addresses.
+
+## 3. Rack configuration enhancements — v1.2 candidate
+
+### Existing functionality to preserve
+
+- Front and rear rack elevation views.
+- Independent front/rear placements.
+- Overlap prevention on the same face.
+- Existing utilisation statistics and Print/PDF support.
+- Separate devices may occupy the same U position on opposite faces where otherwise valid.
+
+### Proposed configuration
+
+Preset heights: **6U, 9U, 12U, 14U, 18U, 22U, 24U, 27U, 32U, 42U, 45U and 48U**, plus **Custom Height** with sensible validation.
+
+Mounting types: **Wall Mounted**, **Free Standing**, **Open Frame**.
+
+Optional rack depth is under consideration.
+
+### Editing and data safety
+
+- Allow rack height and mounting type to be edited.
+- Validate existing equipment before allowing a rack to shrink, checking both faces.
+- Never silently remove or reposition equipment.
+- Preserve existing rack records and placement rules.
+
+## 4. Advanced search and reporting — v1.2 or later
+
+Investigate cross-module search across Devices, IP addresses and allocations, Subnets, and Racks/equipment.
+
+Initial reporting candidates:
+- Device inventory.
+- IP address and subnet utilisation.
+- Rack capacity and utilisation.
+- Unassigned or reserved addresses.
+
+Later reporting may include ports, connectivity and cabling.
+
+## 5. Device relationships and interfaces — v1.3 candidate
+
+A device should show its connections to other devices, including local and remote interfaces.
+
+Example: `CORE-SW01 Gi1/0/24 → FW01 LAN1`.
+
+- One shared connection record visible from both endpoints.
+- Avoid independent, conflicting connection entries.
+- Interfaces can exist independently of IP assignments.
+- IPs can optionally reference interfaces.
+- Support appropriate physical and logical relationship types.
+- Reuse these records in later cabling and topology features.
+
+## 6. Cabling and rack connectivity — v1.4 candidate
+
+- Patch panel inventory and physical ports.
+- Cable endpoints and connection tracing.
+- Duplicate endpoint assignment prevention.
+- Rack-aware cabling documentation.
+- Exportable rack diagrams.
+
+Investigate SVG, Excalidraw and Visio compatibility without promising formats before feasibility testing.
+
+## 7. Network topology — v1.5 candidate
+
+Generate topology from the same relationship and connectivity records used elsewhere in Caffoot Lite; do not maintain a conflicting independent topology model.
+
+Investigate physical/logical views, interactive device selection, connection tracing, layout/filtering and exports.
+
+## 8. Future investigations
+
+- Offline CSV/JSON imports and possible NetBox import compatibility.
+- IPv6 blocks, allocations, validation and interface requirements.
+- Additional reports and export formats.
+
+No release commitment has been made for these ideas.
+
+## 9. Cross-cutting design requirements
+
+### Data integrity
+
+- Preserve supported existing inventories and backup formats.
+- Validate migrations and imports.
+- Prevent orphaned records and conflicting assignments.
+- Avoid partial changes after failed operations.
+- Confirm destructive actions.
+
+### Usability
+
+- **Simple when you need it, detailed when you want it.**
+- Consistent forms, labels and navigation, including Title Case for button text and headings.
+- Clear validation messages, keyboard workflows, responsive layouts and light/dark themes.
+
+### Offline operation
+
+Caffoot Lite remains a standalone, offline HTML application without a required server or external service.
+
+### Testing
+
+Include relevant automated regression coverage and manual browser acceptance testing for future changes.
+
+## 10. Implementation sequence
+
+1. Complete and validate v1.1.
+2. Review existing Device and IPAM data models.
+3. Finalise the device form redesign.
+4. Design multiple-IP assignment, validation and migration behaviour.
+5. Confirm scope and sequencing for rack, search and reporting improvements.
+6. Progress to relationships, cabling and topology through separately reviewed milestones.
+
+**A feature appearing here does not authorise implementation.**
