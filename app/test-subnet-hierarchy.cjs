@@ -1,6 +1,6 @@
 'use strict';
 const assert=require('node:assert/strict');
-const {parseCidr,validateHierarchy}=require('./subnet-hierarchy.cjs');
+const {parseCidr,validateHierarchy,validateSubnetTypes}=require('./subnet-hierarchy.cjs');
 const container=(id,cidr,parentId)=>({id,cidr,kind:'container',parentId});
 const network=(id,cidr,parentId)=>({id,cidr,kind:'network',parentId});
 const good=[container('company','10.0.0.0/8'),container('london','10.10.0.0/16','company'),network('servers','10.10.10.0/24','london'),network('desktops','10.10.20.0/24','london')];
@@ -44,4 +44,21 @@ const bad=[
  [network('a','10.1.0.0/24'),network('b','10.1.0.0/24','a')]
 ];
 for(const [i,items] of bad.entries()) assert(validateHierarchy(items).length>0,'invalid case '+i+' should fail');
+const typeCases=[
+  {id:'legacy',cidr:'192.168.40.0/24',vlan:40,gateway:'192.168.40.1'},
+  {id:'parent',kind:'container',cidr:'10.0.0.0/8'},
+  {id:'future',kind:'reserved',cidr:'10.1.0.0/16'},
+  {id:'host',kind:'loopback',cidr:'10.1.1.1/32'},
+  {id:'large',kind:'network',cidr:'10.128.96.0/20',vlan:200,gateway:'10.128.96.1'}
+];
+assert.deepEqual(validateSubnetTypes(typeCases),[]);
+for(const badType of [
+  {...typeCases[1],gateway:'10.0.0.1'},
+  {...typeCases[2],vlan:5},
+  {...typeCases[3],cidr:'10.1.1.0/24'},
+  {...typeCases[0],gateway:'192.168.40.255'},
+  {...typeCases[0],vlan:0},
+  {...typeCases[0],cidr:'192.168.40.0/32'}
+]) assert(validateSubnetTypes([badType]).length>0);
+console.log('PASS: subnet type-specific VLAN, gateway and loopback rules.');
 console.log('PASS: hierarchy CIDR, nesting, boundaries, cycles, overlap, and legacy defaults.');
