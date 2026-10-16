@@ -2949,7 +2949,7 @@ function hierarchyValidateTypes(subnets) {
                     const isContainer = subnet.kind === 'container';
                     const name = escapeHtml(String(subnet.name || 'Unnamed Subnet'));
                     const cidr = escapeHtml(String(subnet.cidr || ''));
-                    const type = isContainer ? 'Parent Container' : subnet.kind === 'reserved' ? 'Reserved Range' : subnet.kind === 'loopback' ? 'Loopback /32' : 'Network / VLAN';
+                    const type = isContainer ? 'IP Address Block' : subnet.kind === 'reserved' ? 'Reserved Range' : subnet.kind === 'loopback' ? 'Loopback /32' : 'Network / VLAN';
                     const details = '<span class="ml-2 text-xs font-normal text-slate-500 dark:text-slate-400">' + type + (isContainer ? '' : ' · VLAN ' + escapeHtml(String(subnet.vlan ?? '—'))) + '</span>';
                     if (children || isContainer) {
                         return '<details open class="ml-3 my-2 pl-3 border-l-2 border-indigo-200 dark:border-indigo-800"><summary class="cursor-pointer py-2 text-sm font-semibold text-slate-900 dark:text-white"><i class="fa-solid fa-folder text-indigo-500 mr-2"></i>' + cidr + ' — ' + name + details + '</summary>' + (children || '<p class="text-xs text-slate-500 dark:text-slate-400 ml-5 py-2">No Child Subnets</p>') + '</details>';
@@ -2959,7 +2959,7 @@ function hierarchyValidateTypes(subnets) {
             }
             const roots = nodes('');
             const orphaned = subnets.filter(subnet => !visited.has(String(subnet.id)));
-            return '<section class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-3" aria-label="Subnet Hierarchy"><h3 class="font-bold text-base text-slate-900 dark:text-white">Subnet Hierarchy</h3><p class="text-xs text-slate-500 dark:text-slate-400">Expand Parent Containers to view child networks. Read-only preview.</p>' + (roots || '<p class="text-sm text-slate-500">No Subnets Yet</p>') + (orphaned.length ? '<p class="text-xs text-rose-600">Some subnet relationships could not be displayed.</p>' : '') + '</section>';
+            return '<section class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-3" aria-label="Subnet Hierarchy"><h3 class="font-bold text-base text-slate-900 dark:text-white">Subnet Hierarchy</h3><p class="text-xs text-slate-500 dark:text-slate-400">Expand IP Address Blocks to view child networks. Read-only preview.</p>' + (roots || '<p class="text-sm text-slate-500">No Subnets Yet</p>') + (orphaned.length ? '<p class="text-xs text-rose-600">Some subnet relationships could not be displayed.</p>' : '') + '</section>';
         }
 
         function renderIpamHTML() {
@@ -3222,7 +3222,7 @@ function hierarchyValidateTypes(subnets) {
                             <div><label for="bulk-notes" class="form-label">Notes</label><input id="bulk-notes" maxlength="240" class="w-full border rounded-xl px-3 py-2 dark:bg-slate-700"></div>
                         </div>
                         <p class="text-xs text-slate-600 dark:text-slate-300">Preview before applying. Existing device assignments and conflicting assigned records are protected.</p>
-                        <div class="form-section-card space-y-3"><label for="sub-parent" class="form-label">Parent Container</label><select id="sub-parent" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white"><option value="">None (Top Level)</option>${appState.subnets.filter(s => s.kind === 'container' && s.id !== subnetId).map(s => `<option value="${escapeHtml(s.id)}" ${subnet?.parentId === s.id ? 'selected' : ''}>${escapeHtml(s.cidr)} — ${escapeHtml(s.name)}</option>`).join('')}</select><label for="sub-desc" class="form-label">Description</label><input type="text" id="sub-desc" value="${escapeHtml(subnet ? (subnet.description || '') : '')}" placeholder="Purpose or department" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white"></div>
+                        <div class="form-section-card space-y-3"><label for="sub-parent" class="form-label">IP Address Block</label><select id="sub-parent" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white"><option value="">None (Top Level)</option>${appState.subnets.filter(s => s.kind === 'container' && s.id !== subnetId).map(s => `<option value="${escapeHtml(s.id)}" ${subnet?.parentId === s.id ? 'selected' : ''}>${escapeHtml(s.cidr)} — ${escapeHtml(s.name)}</option>`).join('')}</select><label for="sub-desc" class="form-label">Description</label><input type="text" id="sub-desc" value="${escapeHtml(subnet ? (subnet.description || '') : '')}" placeholder="Purpose or department" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white"></div>
                         <div class="form-error" data-form-error role="alert"></div>
                         <div class="form-actions"><button type="button" data-action="close-modal" class="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-700">Cancel</button><button type="submit" class="px-4 py-2 rounded-xl bg-blue-800 text-white font-semibold">Preview Changes</button></div>
                     </form>
@@ -3331,11 +3331,11 @@ function hierarchyValidateTypes(subnets) {
                             <label for="sub-kind" class="form-label">Subnet Type</label>
                             <select id="sub-kind" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white">
                                 <option value="network" selected>Network / VLAN</option>
-                                <option value="container" ${subnet?.kind === "container" ? "selected" : ""}>Parent Container</option>
+                                <option value="container" ${subnet?.kind === "container" ? "selected" : ""}>IP Address Block</option>
                                 <option value="reserved" disabled>Reserved range (coming next)</option>
                                 <option value="loopback" disabled>Loopback /32 (coming next)</option>
                             </select>
-                            <p class="text-xs text-slate-500 dark:text-slate-400">Parent Containers organise address space without a VLAN or gateway. Existing overlapping networks must be explicitly assigned as children.</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">IP Address Blocks organise address space without a VLAN or gateway. Existing overlapping networks must be explicitly assigned as children.</p>
                         </div>
                         <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-network-wired"></i>Network Identity</div>
                         <div>
@@ -3361,7 +3361,7 @@ function hierarchyValidateTypes(subnets) {
 
                         </div>
                         <div class="form-section-card space-y-3">
-                            <label for="sub-parent" class="form-label">Parent Container</label>
+                            <label for="sub-parent" class="form-label">IP Address Block</label>
                             <select id="sub-parent" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white">
                                 <option value="">None (Top Level)</option>
                                 ${appState.subnets.filter(s => s.kind === 'container' && s.id !== subnetId).map(s => `<option value="${escapeHtml(s.id)}" ${subnet?.parentId === s.id ? 'selected' : ''}>${escapeHtml(s.cidr)} — ${escapeHtml(s.name)}</option>`).join('')}
@@ -3381,7 +3381,7 @@ function hierarchyValidateTypes(subnets) {
             const subnetTypeSelect = document.getElementById('sub-kind');
             const updateSubnetTypePreview = () => {
                 const isContainer = subnetTypeSelect.value === 'container';
-                document.getElementById('sub-name-label').textContent = isContainer ? 'Container Name' : 'Network / VLAN Name';
+                document.getElementById('sub-name-label').textContent = isContainer ? 'IP Address Block Name' : 'Network / VLAN Name';
                 document.querySelectorAll('#modal-content [data-network-only]').forEach(element => {
                     element.hidden = isContainer;
                     element.style.display = isContainer ? 'none' : '';
@@ -3394,7 +3394,7 @@ function hierarchyValidateTypes(subnets) {
                 if (submit) {
                     submit.disabled = false;
                     submit.title = '';
-                    submit.textContent = isContainer ? 'Save Parent Container' : 'Save Subnet & VLAN';
+                    submit.textContent = isContainer ? 'Save IP Address Block' : 'Save Subnet & VLAN';
                 }
             };
             subnetTypeSelect.addEventListener('change', updateSubnetTypePreview);
@@ -3419,7 +3419,7 @@ function hierarchyValidateTypes(subnets) {
                 const parentId = document.getElementById('sub-parent').value || null;
                 const range = hierarchyParseCidr(cidr);
                 if (!range || !range.aligned || !name) {
-                    showToast('Enter a valid aligned CIDR and a container name.', 'error');
+                    showToast('Enter a valid aligned CIDR and a IP Address Block name.', 'error');
                     return;
                 }
                 const previous = JSON.stringify(appState);
