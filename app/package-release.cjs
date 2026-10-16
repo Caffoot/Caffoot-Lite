@@ -28,7 +28,7 @@ try{
    if(result.error||result.status!==0)throw Error(result.error?.message||result.stderr||result.stdout||'PowerShell ZIP command failed');
   };
   const quote=value=>"'"+value.replace(/'/g,"''")+"'";
-  runPS('Compress-Archive -LiteralPath '+members.map(name=>quote(path.join(temp,name))).join(',')+' -DestinationPath '+quote(archive)+' -Force');
+  runPS('Compress-Archive -Path '+quote(path.join(temp,'*'))+' -DestinationPath '+quote(archive)+' -Force');
   const extracted=fs.mkdtempSync(path.join(os.tmpdir(),'caffoot-verify-'));
   try{
    runPS('Expand-Archive -LiteralPath '+quote(archive)+' -DestinationPath '+quote(extracted)+' -Force');
