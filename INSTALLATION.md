@@ -14,10 +14,10 @@ Caffoot Lite is a standalone HTML application. You do **not** need Docker, Node.
 
 ## Download the released HTML
 
-> **Release status:** Caffoot Lite is still being prepared. Until the owner publishes a GitHub Release, the download instructions below describe the planned public distribution.
+**Caffoot Lite v1.0.1 is published.** Always use the [latest stable release](https://github.com/sdelnevo/Caffoot-Lite/releases/latest) for the current download.
 
 1. Visit the [Caffoot Lite GitHub repository](https://github.com/sdelnevo/Caffoot-Lite).
-2. Open **Releases** and select the latest stable release (when available).
+2. Open **Releases** and select the latest stable release.
 3. Expand **Assets** and select **`Caffoot-Lite.html`**. **Do not** choose “Source code (zip)” if you only want to run the application.
 4. Save the HTML file in a folder you can find again, such as Documents/Caffoot-Lite.
 5. Double-click the HTML file, or use **Open With** to choose Safari, Chrome, Edge or Firefox.
@@ -55,7 +55,7 @@ Never assume that replacing an HTML file transfers its browser-local data.
 - **I see no devices:** Check that you opened the expected file in the same browser/profile. Restore a JSON backup if needed.
 - **The file opens as text:** Confirm the filename ends in `.html`, not `.html.txt`, and choose a browser with **Open With**.
 - **Changes do not persist:** Avoid private/incognito browsing; check browser storage restrictions, then export your data before trying a different browser or location.
-- **The download is missing:** A stable GitHub Release may not have been published yet. Do not download an arbitrary build from an unverified third party.
+- **The download is missing:** Check the [official latest release](https://github.com/sdelnevo/Caffoot-Lite/releases/latest) and expand **Assets**. Do not download arbitrary builds from unverified third parties.
 - **An import fails:** Do not overwrite your only backup. Confirm you selected a Caffoot Lite JSON export and retain the original file for diagnosis.
 
 For features and day-to-day workflows, see [USER-GUIDE.md](USER-GUIDE.md).
@@ -63,7 +63,7 @@ For features and day-to-day workflows, see [USER-GUIDE.md](USER-GUIDE.md).
 
 ## Updating safely
 
-In Settings & Data → Data Management, use **Check for updates** to check the latest published stable release. This is a manual online check; it does not send inventory or install anything. While the repository is private or no release has been published, no public release is available.
+In Settings & Data → Data Management, use **Check for updates** to check the latest published stable release. This is a manual online check; it does not send inventory or install anything. The check requires an internet connection and reports the latest public release.
 
 1. Download a JSON backup from your current version.
 2. Keep the old HTML and download the new `Caffoot-Lite.html` into a separate folder from the [official releases](https://github.com/sdelnevo/Caffoot-Lite/releases).
@@ -75,7 +75,7 @@ The safe update guide and backups work offline. Newer backup schemas require a c
 
 ## Complete release package
 
-Prefer the version-named release ZIP (for stable v1.0, `Caffoot-Lite-1.0.0.zip`). Extract it and open `Caffoot-Lite.html`; keep the guides and licences beside it. `SHA256SUMS` contains file hashes for checking integrity. The standalone HTML also includes full software notices in About Caffoot Lite, available offline. Example backups under `app/fixtures/` are fictional demonstrations; importing one replaces the current inventory after confirmation.
+Prefer the version-named release ZIP (currently `Caffoot-Lite-1.0.1.zip`). Extract it and open `Caffoot-Lite.html`; keep the guides and licences beside it. `SHA256SUMS` contains file hashes for checking integrity. The standalone HTML also includes full software notices in About Caffoot Lite, available offline. Example backups under `app/fixtures/` are fictional demonstrations; importing one replaces the current inventory after confirmation.
 
 ### Local file storage scope
 
