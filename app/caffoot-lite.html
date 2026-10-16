@@ -3222,6 +3222,7 @@ function hierarchyValidateTypes(subnets) {
                             <div><label for="bulk-notes" class="form-label">Notes</label><input id="bulk-notes" maxlength="240" class="w-full border rounded-xl px-3 py-2 dark:bg-slate-700"></div>
                         </div>
                         <p class="text-xs text-slate-600 dark:text-slate-300">Preview before applying. Existing device assignments and conflicting assigned records are protected.</p>
+                        <div class="form-section-card space-y-3"><label for="sub-parent" class="form-label">Parent Container</label><select id="sub-parent" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white"><option value="">None (Top Level)</option>${appState.subnets.filter(s => s.kind === 'container' && s.id !== subnetId).map(s => `<option value="${escapeHtml(s.id)}" ${subnet?.parentId === s.id ? 'selected' : ''}>${escapeHtml(s.cidr)} — ${escapeHtml(s.name)}</option>`).join('')}</select><label for="sub-desc" class="form-label">Description</label><input type="text" id="sub-desc" value="${escapeHtml(subnet ? (subnet.description || '') : '')}" placeholder="Purpose or department" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white"></div>
                         <div class="form-error" data-form-error role="alert"></div>
                         <div class="form-actions"><button type="button" data-action="close-modal" class="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-700">Cancel</button><button type="submit" class="px-4 py-2 rounded-xl bg-blue-800 text-white font-semibold">Preview Changes</button></div>
                     </form>
@@ -3334,7 +3335,7 @@ function hierarchyValidateTypes(subnets) {
                                 <option value="reserved" disabled>Reserved range (coming next)</option>
                                 <option value="loopback" disabled>Loopback /32 (coming next)</option>
                             </select>
-                            <p class="text-xs text-slate-500 dark:text-slate-400">Parent Container fields can be previewed. Saving will be enabled after IPAM ownership and persistence checks are complete.</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Parent Containers organise address space without a VLAN or gateway. Existing overlapping networks must be explicitly assigned as children.</p>
                         </div>
                         <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-network-wired"></i>Network Identity</div>
                         <div>
@@ -3352,15 +3353,12 @@ function hierarchyValidateTypes(subnets) {
                             </div>
                         </div>
                         </div>
-                        <div data-network-only class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-route"></i>Gateway & Description</div><div>
+                        <div data-network-only class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-route"></i>Gateway</div><div>
                             <label for="sub-gw" class="form-label">Gateway IP <span class="required-mark">*</span></label>
                             <input type="text" id="sub-gw" required value="${escapeHtml(subnet ? subnet.gateway : '')}" placeholder="192.168.10.1" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white font-mono">
                             <p id="sub-gw-hint" class="mt-1 text-xs text-slate-600 dark:text-slate-300" aria-live="polite">Enter a network CIDR to suggest a gateway.</p>
                         </div>
-                        <div>
-                            <label for="sub-desc" class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Description</label>
-                            <input type="text" id="sub-desc" value="${escapeHtml(subnet ? (subnet.description || '') : '')}" placeholder="Purpose or department" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white">
-                        </div>
+
                         </div>
                         <div class="form-error" data-form-error role="alert"></div>
                         <div class="form-actions">
@@ -3384,9 +3382,9 @@ function hierarchyValidateTypes(subnets) {
                 }
                 const submit = document.querySelector('#modal-content form[data-form-action="subnet"] button[type="submit"]');
                 if (submit) {
-                    submit.disabled = isContainer;
-                    submit.title = isContainer ? 'Parent Container saving is not enabled yet.' : '';
-                    submit.textContent = isContainer ? 'Parent Container Save Coming Soon' : 'Save Subnet & VLAN';
+                    submit.disabled = false;
+                    submit.title = '';
+                    submit.textContent = isContainer ? 'Save Parent Container' : 'Save Subnet & VLAN';
                 }
             };
             subnetTypeSelect.addEventListener('change', updateSubnetTypePreview);
@@ -3403,8 +3401,45 @@ function hierarchyValidateTypes(subnets) {
 
         function handleSubnetSubmit(e, subnetId) {
             e.preventDefault();
-            if (document.getElementById('sub-kind')?.value !== 'network') {
-                showToast('Parent Container saving is not enabled yet.', 'error');
+            const requestedKind = document.getElementById('sub-kind')?.value;
+            if (requestedKind === 'container') {
+                const cidr = document.getElementById('sub-cidr').value.trim();
+                const name = document.getElementById('sub-name').value.trim();
+                const description = document.getElementById('sub-desc').value.trim();
+                const parentId = document.getElementById('sub-parent').value || null;
+                const range = hierarchyParseCidr(cidr);
+                if (!range || !range.aligned || !name) {
+                    showToast('Enter a valid aligned CIDR and a container name.', 'error');
+                    return;
+                }
+                const previous = JSON.stringify(appState);
+                const previousSelection = selectedSubnetId;
+                const existing = subnetId ? appState.subnets.find(s => s.id === subnetId) : null;
+                if (subnetId && (!existing || existing.kind !== 'container')) {
+                    showToast('Changing an existing network into a container is not supported.', 'error');
+                    return;
+                }
+                const record = { id: existing ? existing.id : 'sub_' + Date.now(), kind: 'container', cidr, name, description, parentId };
+                const candidate = appState.subnets.map(s => s.id === record.id ? record : s);
+                if (!existing) candidate.push(record);
+                const issues = [...hierarchyValidate(candidate), ...hierarchyValidateTypes(candidate)];
+                if (issues.length) {
+                    showToast(issues[0], 'error');
+                    return;
+                }
+                appState.subnets = candidate;
+                if (!saveState()) {
+                    appState = JSON.parse(previous);
+                    selectedSubnetId = previousSelection;
+                    showToast('Container was not saved. Previous inventory restored.', 'error');
+                    return;
+                }
+                closeModal();
+                renderContent();
+                return;
+            }
+            if (requestedKind !== 'network') {
+                showToast('This subnet type is not available yet.', 'error');
                 return;
             }
             const cidr = document.getElementById('sub-cidr').value.trim();
