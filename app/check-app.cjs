@@ -23,7 +23,7 @@ assert(!html.includes('data-tab="diagnostics"'), 'diagnostics must not appear in
 assert(!html.includes('function diagnosticTests()'), 'obsolete diagnostic tests must be removed');
 assert(!html.includes('function renderDiagnosticsHTML()'), 'obsolete diagnostics view must be removed');
 assert(!html.includes("case 'run-diagnostics':"), 'obsolete diagnostics handler must be removed');
-assert(/personalSafeStorageGet\(SAFETY_SNAPSHOT_KEY\)\?'':'disabled'\)\)\s*\+\s*panel\('Danger zone/.test(html), 'Danger zone must be concatenated into Data Management HTML');
+assert(/personalSafeStorageGet\(SAFETY_SNAPSHOT_KEY\)\?'':'disabled'\)\)\s*\+\s*panel\('Danger Zone/.test(html), 'Danger zone must be concatenated into Data Management HTML');
 assert(html.includes("case 'phase16a-clear-system': phase16AClearSystem();"), 'Clear system action must be wired');
 assert(html.includes('function phase16AClearSystem()'), 'Clear system handler must exist');
 assert(html.includes('localStorage.setItem(SAFETY_SNAPSHOT_KEY, snapshot)'), 'Clear system must create recovery snapshot');
@@ -48,8 +48,8 @@ assert(html.includes('function phase11CApplyRepair('), 'IPAM repair commit must 
 assert(!html.includes("case 'tab-diagnostics':"), 'diagnostics action must be removed');
 assert(html.includes('data-action="phase19b-manage-functions"'), 'server options manager must be accessible');
 assert(html.includes('data-device-panel="manage"'), 'Devices management workspace must remain');
-assert(html.includes('>Manage server options</button>'), 'server options manager must be in Devices');
-assert(html.includes('>Manage software options</button>'), 'software options manager must be in Devices');
+assert(html.includes('>Manage Server Options</button>'), 'server options manager must be in Devices');
+assert(html.includes('>Manage Software Options</button>'), 'software options manager must be in Devices');
 assert(!html.includes("button('phase19b-manage-functions','Manage Server Options'"), 'server options manager must not appear in Settings maintenance');
 assert(html.includes('data-action="phase19b-manage-software"'), 'software options manager must be accessible');
 assert(html.includes("const STORAGE_KEY = 'caffoot_state'"), 'Caffoot inventory storage key must remain');
