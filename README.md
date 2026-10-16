@@ -43,12 +43,13 @@ Select either thumbnail to view the full-size screenshot.
 
 ## Download and run
 
-**[Get the latest stable Caffoot Lite release](https://github.com/sdelnevo/Caffoot-Lite/releases/latest)** — no installation, Docker or server required. For version 1.0.0, [download Caffoot-Lite-1.0.0.zip](https://github.com/sdelnevo/Caffoot-Lite/releases/download/v1.0.0/Caffoot-Lite-1.0.0.zip), or use the [release page](https://github.com/sdelnevo/Caffoot-Lite/releases/tag/v1.0.0):
+**[Get the latest stable Caffoot Lite release](https://github.com/sdelnevo/Caffoot-Lite/releases/latest)** — no installation, Docker or server required.
 
-1. Open this repository's **Releases** page.
-2. Under the latest stable release, expand **Assets**.
-3. Prefer the version-named **`Caffoot-Lite-1.0.0.zip`** release asset, which includes guides and licences. Extract it and open `Caffoot-Lite.html`. The standalone HTML is also self-contained with embedded notices. Do not download GitHub’s automatically generated source-code ZIP to run the app.
-4. Open it in a modern browser. No Docker, Node.js or web server is required to run the release file.
+1. Open the **[latest release page](https://github.com/sdelnevo/Caffoot-Lite/releases/latest)**.
+2. Under **Assets**, download the version-named `Caffoot-Lite-<version>.zip` release package, which includes the standalone app, guides and licences. Alternatively, download `Caffoot-Lite.html` directly from the release assets.
+3. If you downloaded the release ZIP, extract it and open `Caffoot-Lite.html` in a modern browser. No Docker, Node.js or web server is needed to run it.
+
+**Want the source code instead?** Click the green **Code** button on the repository page and choose **Download ZIP**. This is the source repository, **not** the ready-to-run release package; building from source requires Node.js and npm.
 
 See the detailed [installation and upgrade guide](INSTALLATION.md) for the complete process and storage precautions.
 
