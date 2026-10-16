@@ -1,9 +1,70 @@
 # Caffoot Lite — Development Roadmap
 
-**Updated:** 10 October 2026  
-**Current milestone:** v1.0.0 published  
+**Updated:** 16 October 2026  
+**Latest published release:** v1.0.3  
+**Current development milestone:** v1.1 (in development)  
 **Repository:** `sdelnevo/Caffoot-Lite` (public)  
 **Release policy:** Publish publicly only after manual verification, security/privacy review and owner approval.
+
+Caffoot Lite is an offline, standalone single-HTML network inventory and IP address management application. The published v1.0.3 release remains unchanged while future development is tested separately.
+
+## Current and proposed milestones
+
+Release assignments beyond v1.1 are provisional. A feature listed here is not a release promise or approval to implement it.
+
+### v1.1 — Subnet hierarchy and validation
+
+**Status: In development**
+
+- Subnet hierarchy, parent/child relationships and CIDR validation.
+- Nesting, boundaries, overlap and cycle protection.
+- Intelligent subnet creation and editing with type-specific rules.
+- Gateway protection and relevant network device-type support.
+- Regression testing and compatibility with existing inventory and backups.
+
+Development takes place separately from the published release. Do not merge unfinished work without owner approval.
+
+### v1.2 — Device, IPAM and rack enhancements
+
+**Status: Planning; scope may be split into smaller milestones**
+
+- Wider, responsive, tabbed Add Device and Edit Device forms with shared behaviour.
+- Preserve dynamic fields for different device types.
+- Multiple IP addresses per device, optional interface associations and primary management IP.
+- Public IP address documentation, including relevant ISP, circuit and NAT metadata.
+- Flexible rack heights and presets, Wall Mounted / Free Standing / Open Frame types, optional depth and safe resizing.
+- Cross-module advanced search and initial inventory, subnet/IPAM and rack reporting.
+
+### v1.3 — Device relationships and interfaces
+
+**Status: Proposed**
+
+- Device relationships and upstream/downstream links.
+- Interface and port records, with optional IP associations.
+- Shared connection records visible from both connected devices.
+
+### v1.4 — Cabling and rack connectivity
+
+**Status: Proposed**
+
+- Patch panels, cabling, ports and physical endpoints.
+- Duplicate endpoint protection and connection tracing.
+- Rack diagram exports; investigate SVG, Excalidraw and Visio compatibility.
+
+### v1.5 — Network topology
+
+**Status: Proposed**
+
+- Physical and logical topology generated from existing relationship and cabling records.
+- Device navigation, connection tracing and usable diagram layouts.
+
+### Future investigations
+
+- Offline import options, including potential NetBox compatibility.
+- IPv6 capabilities.
+- Additional reporting and export formats.
+
+See [Roadmap Design Notes](docs/ROADMAP-DESIGN-NOTES.md) for detailed concepts and compatibility requirements.
 
 ## Delivered core scope
 
@@ -63,36 +124,17 @@ These checks are valuable regression coverage, **not** a complete security audit
 
 Passing these checks supports release readiness; it is not a formal security or accessibility certification.
 
-## Future enhancements — after v1.0
-
-1. Cross-module advanced search (Devices, IPAM, Subnets, Racks).
-2. Device relationships and upstream/downstream links.
-3. Port, patch-panel and rack cabling management.
-4. Network topology visualisation based on shared relationship data.
-5. Expanded inventory, rack, IPAM and connection reporting.
-
-These were **proposals**, not committed v1.0 requirements. Confirm scope before development.
-
 ## Compatibility and project boundaries
 
 **Data compatibility:** Preserve existing browser inventories and supported JSON backup formats. The primary storage key is `caffoot_state`; version 1.0.0 does not automatically migrate legacy test storage. Export and restore JSON backups to retain test data.
 
 **Safe releases:** Keep a known-good standalone HTML build and recommend exporting a JSON backup before upgrading. Validate new builds before publishing them.
 
-## Lite → Pro compatibility principles (planned)
-
-- **Lite is the design reference:** Caffoot Pro should retain the same visual language, navigation, shared forms, field labels, validation presentation, light/dark themes and core workflows. Pro may add clearly distinguished capabilities without breaking familiar Lite experiences.
-- **One-way migration must be straightforward:** A user should be able to export a supported versioned JSON inventory from Lite and import it into Pro, with a validation preview, clear conflict handling and a transactional database import. No manual re-entry of devices, subnets, racks or IPAM allocations should be required for supported data.
-- **Versioned interchange format:** Introduce an explicit schema version and originating app version, documented semantics and migration functions; preserve backwards-compatible imports as the schema evolves. Never assume an HTML filename or browser localStorage is portable.
-- **Keep the original safe:** Import must not mutate the exported JSON file. Invalid or unsupported formats must fail clearly and leave existing data unchanged. Test reference fixtures across both editions.
-- **Separate storage and deployment:** Lite remains offline-first and browser-local. Pro is planned for Docker and server-side persistence, with authentication, roles and expanded capabilities designed separately.
-- **Pro repository:** Owner intends to create a separate `Caffoot-Pro` repository. Do not create or publish it without explicit instruction. A Caffoot website is a future project, not a v1.0 blocker.
-
 ### Before Lite v1.0 publication
 
 - [x] Add version metadata to JSON exports and a documented versioned import/migration strategy while retaining compatibility with current valid backups.
 - [x] Add automated tests for legacy backups, unsupported future schema versions, malformed metadata and unchanged inventory on rejection.
-- [x] Produce an example Lite backup fixture for future Pro import contract tests, without real infrastructure or sensitive data.
+- [x] Produce an example Lite backup fixture for future import compatibility tests, without real infrastructure or sensitive data.
 - [x] Complete release packaging, offline upgrade/restore acceptance and owner publication approval.
 
 
