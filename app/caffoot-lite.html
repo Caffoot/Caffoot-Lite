@@ -3006,10 +3006,7 @@ function hierarchyValidateTypes(subnets) {
                                 <i class="fa-solid fa-tags text-indigo-600 dark:text-indigo-400"></i>
                                 <h3 class="font-bold text-base text-slate-900 dark:text-white">Active VLAN Tags & Subnets</h3>
                             </div>
-                            <button data-action="open-subnet-modal" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold transition shadow-sm">
-                                <i class="fa-solid fa-plus mr-1"></i> Add Subnet & VLAN Range
-                            </button>
-                        </div>
+</div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                             ${appState.vlans.map(v => `
                                 <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/30 border border-slate-200 dark:border-slate-700 flex flex-col justify-between space-y-3">
@@ -3051,10 +3048,7 @@ function hierarchyValidateTypes(subnets) {
                                     <i class="fa-solid fa-trash mr-1.5"></i> Delete Range
                                 </button>
                             ` : ''}
-                            <button data-action="open-subnet-modal" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold transition shadow-sm">
-                                <i class="fa-solid fa-plus mr-1.5"></i> Add Subnet Range
-                            </button>
-                        </div>
+</div>
                     </div>
 
                     ${subnet ? `
