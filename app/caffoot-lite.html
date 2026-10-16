@@ -2877,7 +2877,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                         <div><h2 class="text-lg font-bold text-slate-900 dark:text-white">IP address management</h2>
                         <p class="text-sm text-slate-600 dark:text-slate-300">Choose a subnet, then switch between its overview, addresses and management tools.</p></div>
                         <nav class="phase12c-tabs" aria-label="IPAM sections">
-                            ${[['overview','Overview','fa-chart-pie'],['addresses','IP addresses','fa-list'],['manage','Manage subnets','fa-sliders']].map(([tab,label,icon])=>`<button type="button" data-action="phase12c-tab" data-tab="${tab}" aria-current="${phase12CIpamTab===tab?'page':'false'}" class="phase12c-tab ${phase12CIpamTab===tab?'phase12c-active':''}"><i class="fa-solid ${icon} mr-2"></i>${label}</button>`).join('')}
+                            ${[['overview','Overview','fa-chart-pie'],['addresses','IP addresses','fa-list'],['manage','Manage Subnets','fa-sliders']].map(([tab,label,icon])=>`<button type="button" data-action="phase12c-tab" data-tab="${tab}" aria-current="${phase12CIpamTab===tab?'page':'false'}" class="phase12c-tab ${phase12CIpamTab===tab?'phase12c-active':''}"><i class="fa-solid ${icon} mr-2"></i>${label}</button>`).join('')}
                         </nav>
                     </div>
                     <div class="${phase12CIpamTab==='manage'?'':'hidden'} space-y-4" data-ipam-panel="manage">
@@ -2962,7 +2962,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                         <section class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-4" aria-label="Subnet utilisation">
                             <div class="flex items-center justify-between gap-3 flex-wrap">
                                 <h4 class="font-bold text-slate-900 dark:text-white">Subnet capacity &amp; availability</h4>
-                                ${phase10Summary.supported && phase10Summary.next ? `<button type="button" data-action="phase10-next-ip" data-ip="${escapeHtml(phase10Summary.next)}" class="px-4 py-2.5 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold text-sm"><i class="fa-solid fa-arrow-right mr-1"></i> Next available: ${escapeHtml(phase10Summary.next)}</button>` : ''}
+                                ${phase10Summary.supported && phase10Summary.next ? `<button type="button" data-action="phase10-next-ip" data-ip="${escapeHtml(phase10Summary.next)}" class="px-4 py-2.5 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold text-sm"><i class="fa-solid fa-arrow-right mr-1"></i> Next Available: ${escapeHtml(phase10Summary.next)}</button>` : ''}
                             </div>
                             ${phase10Summary.supported ? `
                                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
@@ -2974,7 +2974,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                             ` : `<p class="text-sm text-amber-900 dark:text-amber-200 bg-amber-50 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-700 rounded-xl p-3">This CIDR is outside the supported /23–/30 range.</p>`}
                         </section>
                         <div class="flex flex-wrap gap-2">
-                            <button type="button" data-action="phase12c-tab" data-tab="addresses" class="px-4 py-2.5 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold text-sm"><i class="fa-solid fa-arrow-right mr-1"></i> Browse IP addresses</button>
+                            <button type="button" data-action="phase12c-tab" data-tab="addresses" class="px-4 py-2.5 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold text-sm"><i class="fa-solid fa-arrow-right mr-1"></i> Browse IP Addresses</button>
                             <button type="button" data-action="phase12c-tab" data-tab="manage" class="px-4 py-2.5 rounded-xl border border-slate-400 dark:border-slate-500 text-slate-800 dark:text-slate-100 font-semibold text-sm">Subnet Tools</button>
                         </div>
                         </div>
@@ -4450,7 +4450,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             let body = '';
             if (section === 'backup') {
                 body = browserStorageWarning() + panel('Inventory Safety Check','Check data integrity and confirm that the current inventory is saved in this browser. This check makes no changes.',button('phase16a-check-safety','Check inventory safety','fa-shield-halved')) +
-                    panel('Back up your data','Download a complete JSON copy of the current inventory, including devices, IPAM, subnets and racks.',button('phase11-export-backup','Download JSON backup','fa-download')) +
+                    panel('Back Up Your Data','Download a complete JSON copy of the current inventory, including devices, IPAM, subnets and racks.',button('phase11-export-backup','Download JSON backup','fa-download')) +
                     panel('Restore Your Data','Choose a JSON backup. Caffoot Lite checks the file and displays a summary before asking you to replace your inventory. A safety copy is verified first.',button('phase16a-import','Choose backup file','fa-upload')) +
                     panel('Update Caffoot Lite','Check for a published release when online. Download a JSON backup before opening a newer HTML file.',button('caffoot-check-updates','Check for updates','fa-arrow-rotate-right') + button('caffoot-update-guide','Safe update guide','fa-circle-info') + '<p id="caffoot-update-status" role="status" aria-live="polite"></p>') +
                     panel('Recovery Snapshot','A safety snapshot is available only after a restore has created one.',button('phase11-download-snapshot','Download safety snapshot','fa-shield-halved',personalSafeStorageGet(SAFETY_SNAPSHOT_KEY)?'':'disabled')) +
