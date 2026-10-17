@@ -24,6 +24,8 @@ Release assignments beyond v1.1 are provisional. A feature listed here is not a 
 - Fix informational modal dismissal consistently, including Safe Update Guide and Software Licences (visible Close control, Escape and appropriate focus behaviour).
 - Add read-only network information (network/broadcast addresses, mask, gateway, usable range and capacity) while keeping network and broadcast addresses out of host allocation.
 - Present top-level IP Address Blocks in a responsive two-column card grid (one column on narrow screens), with nested collapsible blocks, compact Network / VLAN rows and Expand All / Collapse All. Preserve editing and avoid excessive page length.
+- Data-safety release gates: verify backup/export guidance and browser-storage warnings; test edits/deletions and cross-module Device/IPAM/Rack references, including JSON restore; preview the impact of destructive actions on linked records.
+- Accessibility acceptance for new and existing affected dialogs, including visible modal Close controls, Escape/focus behaviour, keyboard operation and responsive IPAM layouts.
 - Regression testing and compatibility with existing inventory and backups.
 
 Development takes place separately from the published release. Do not merge unfinished work without owner approval.

@@ -16,6 +16,8 @@ These notes are not implementation approval or release commitments. Finish v1.1 
 - **Network information:** read-only CIDR-derived network address, mask, gateway, first/last usable address, broadcast address, usable host count and available-for-allocation count. Continue excluding network/broadcast from the allocation grid.
 - **Hierarchy presentation:** top-level IP Address Blocks as separate cards in a responsive two-column desktop grid, one column on narrow screens. Nested blocks stay collapsible; individual Network / VLAN entries remain compact rows. Add Expand All / Collapse All. Preserve edit controls and existing hierarchy validation, storage and backup formats. Avoid fixed-height scroll traps and unnecessary visual clutter.
 - **Release gates:** automated regression testing and user-confirmed Firefox/Safari checks before release. No changes to published v1.0.3 without approval.
+- **v1.1 data safety:** keep prominent browser-storage and manual JSON backup guidance; test safe export/restore and cross-module references after device, IPAM and rack edits/deletions; show affected-record impact before destructive operations that would affect linked data.
+- **v1.1 accessibility:** visible Close/× buttons for informational modals (including Safe Update Guide and Software Licences), Escape, sensible focus handling, keyboard navigation and responsive behaviour. Audit related modal buttons for consistent dismissal.
 
 ### v1.1.1 — Settings, usability and documentation (proposed)
 
@@ -44,6 +46,18 @@ Review areas:
 **Deployment guidance:** Do not expose Lite unauthenticated to the internet. If served over HTTPS, restrict access through properly integrated identity/authentication and network controls. Authentik may provide identity services alongside Nginx or another reverse proxy, but a proxy alone is not a login and authentication alone is not a complete security assessment. Hosting does not provide shared server-side inventory storage or multi-user isolation.
 
 **Reporting:** consider `SECURITY.md` with supported versions, private reporting mechanism and disclosure expectations; do not publish exploit details prematurely. Distinguish intended future Pro architecture from an actually released and validated product.
+
+## Additional usability and data-safety ideas — future review
+
+The following are **proposals**, not confirmed defects or approved implementation work. Prioritise completing v1.1 before expanding scope.
+
+- **Backup awareness:** v1.1 must keep clear browser-storage risks and manual export guidance, with basic failure warnings where feasible. v1.1.1 may explore a reliable Last Backup indicator, non-intrusive reminders after meaningful changes, date/version in export filenames and detection of ephemeral storage. Do not claim an export is safely retained merely because it was initiated; never download backups silently.
+- **First-run and empty states (v1.1.1 candidate):** useful explanations and direct actions for empty Devices, Subnets/IPAM and Racks, without unnecessary onboarding screens.
+- **Inventory Health (v1.1.1 candidate):** extend understandable diagnostics for orphaned references, duplicate assignments and consistency problems. Distinguish actual errors from optional missing information (such as devices without IPs); avoid suggesting live monitoring.
+- **Cross-module integrity (v1.1 release gate, then ongoing):** test device renames/deletes, subnet changes, rack moves/removals, IP allocations and JSON restore across modules. Preserve referential integrity and protect existing data; extend security-specific abuse cases in v1.1.2.
+- **Destructive-action previews (v1.1 for affected linked records; later polish as needed):** show affected records and consequences before removing populated subnets, racks or linked devices. Preserve cancellation and recovery safeguards.
+- **Accessibility (v1.1 modal/IPAM acceptance, then ongoing):** keyboard and focus behaviour, semantic controls, screen reader labels, contrast, zoom, responsive layouts and consistent modal dismissal. Explicitly include Safe Update Guide and Software Licences modal buttons.
+- **Inventory-wide change history (future investigation):** consider a lightweight local history building on existing IPAM history, covering device edits, subnet creation and rack moves. Set reasonable storage limits and explain that browser-local history is **not** a tamper-proof multi-user audit log.
 
 ## 1. Device form redesign — v1.2 candidate
 

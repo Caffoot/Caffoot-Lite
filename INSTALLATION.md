@@ -40,16 +40,6 @@ Caffoot Lite stores its inventory in **this browser's local storage**. The HTML 
 
 **Always export a JSON backup before** upgrading, moving/renaming the HTML file, resetting the app, clearing browser data, or changing browsers. Keep the backup somewhere safe and test that you can restore it.
 
-## Updating to a new version
-
-1. Open your current Caffoot Lite and **export a JSON backup**.
-2. Download the new release's `Caffoot-Lite.html`.
-3. Keep your old HTML and backup until you have checked the new version.
-4. Open the new file. If your inventory is not visible, use **Data Management → Restore/Import** to load the JSON backup.
-5. Check your devices, subnets, racks and IPAM records before discarding the old copy.
-
-Never assume that replacing an HTML file transfers its browser-local data.
-
 ## Troubleshooting
 
 - **I see no devices:** Check that you opened the expected file in the same browser/profile. Restore a JSON backup if needed.
@@ -61,7 +51,7 @@ Never assume that replacing an HTML file transfers its browser-local data.
 For features and day-to-day workflows, see [USER-GUIDE.md](USER-GUIDE.md).
 
 
-## Updating safely
+## Updating to a new version safely
 
 In Settings & Data → Data Management, use **Check for updates** to check the latest published stable release. This is a manual online check; it does not send inventory or install anything. The check requires an internet connection and reports the latest public release.
 
@@ -75,7 +65,7 @@ The safe update guide and backups work offline. Newer backup schemas require a c
 
 ## Complete release package
 
-Prefer the version-named release ZIP (currently `Caffoot-Lite-1.0.1.zip`). Extract it and open `Caffoot-Lite.html`; keep the guides and licences beside it. `SHA256SUMS` contains file hashes for checking integrity. The standalone HTML also includes full software notices in About Caffoot Lite, available offline. Example backups under `app/fixtures/` are fictional demonstrations; importing one replaces the current inventory after confirmation.
+Prefer the version-named release ZIP (for example `Caffoot-Lite-1.0.3.zip` for v1.0.3; always check the current release assets). Extract it and open `Caffoot-Lite.html`; keep the guides and licences beside it. `SHA256SUMS` contains file hashes for checking integrity. The standalone HTML also includes full software notices in About Caffoot Lite, available offline. Example backups under `app/fixtures/` are fictional demonstrations; importing one replaces the current inventory after confirmation.
 
 ### Local file storage scope
 
