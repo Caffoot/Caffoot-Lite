@@ -3039,7 +3039,7 @@ function hierarchyValidateTypes(subnets) {
                     const ip = phase12Paged ? phase12IpString(i) : `${basePrefix}.${i}`;
                     const alloc = appState.ipAllocations[ip];
                     const gatewayProtected = ip === subnet.gateway;
-                    const status = alloc?.status || (appState.devices.some(d => d.primaryIp === ip) ? 'Assigned' : gatewayProtected ? 'Reserved' : 'Available');
+                    const status = gatewayProtected && (!alloc || alloc.status === 'Available') ? (appState.devices.some(d => d.primaryIp === ip) ? 'Assigned' : 'Reserved') : (alloc?.status || (appState.devices.some(d => d.primaryIp === ip) ? 'Assigned' : 'Available'));
                     const displayStatus = gatewayProtected ? `Gateway · ${status}` : status;
                     const reservedDevice = alloc?.reservedForDeviceId ? getDeviceById(alloc.reservedForDeviceId) : null;
                     
@@ -3056,7 +3056,7 @@ function hierarchyValidateTypes(subnets) {
                                 <span class="text-[10px] px-1.5 py-0.5 rounded bg-white/80 dark:bg-slate-800/80 shadow-xs">${escapeHtml(displayStatus)}</span>
                             </div>
                             <div class="text-xs truncate">
-                                <span class="font-medium text-slate-700 dark:text-slate-200">${reservedDevice && status === 'Reserved' ? 'For: ' + escapeHtml(reservedDevice.name) : (alloc ? escapeHtml(alloc.hostname || 'Assigned IP') : 'Available')}</span>
+                                <span class="font-medium text-slate-700 dark:text-slate-200">${reservedDevice && status === 'Reserved' ? 'For: ' + escapeHtml(reservedDevice.name) : (gatewayProtected ? (status === 'Assigned' ? 'Assigned to Network Device' : 'Reserved') : (alloc ? escapeHtml(alloc.hostname || 'Assigned IP') : 'Available'))}</span>
                             </div>
                         </button>
                     `;
