@@ -106,4 +106,23 @@ function validateSubnetTypes(subnets) {
   }
   return errors;
 }
-module.exports={ipNumber,ipString,parseCidr,validateHierarchy,validateSubnetTypes};
+// A parent IP Address Block is the VLAN domain. Legacy flat networks share one domain.
+// This helper does not mutate records and can be reused by form and import validators.
+function vlanDomainKey(subnet) {
+  return subnet && typeof subnet.parentId==='string' && subnet.parentId.trim()
+    ? subnet.parentId : '__unassigned__';
+}
+function validateVlanDomains(subnets) {
+  if(!Array.isArray(subnets)) return ['Subnets must be an array.'];
+  const seen=new Map(), errors=[];
+  for(const subnet of subnets) {
+    if(!subnet || typeof subnet!=='object' || (subnet.kind && subnet.kind!=='network')) continue;
+    const vlan=Number(subnet.vlan);
+    if(!Number.isInteger(vlan)||vlan<1||vlan>4094) continue; // Type validator owns range errors.
+    const key=JSON.stringify([vlanDomainKey(subnet),vlan]);
+    if(seen.has(key)) errors.push('VLAN '+vlan+' is already used in this IP Address Block by '+(seen.get(key).name||seen.get(key).id)+'.');
+    else seen.set(key,subnet);
+  }
+  return errors;
+}
+module.exports={ipNumber,ipString,parseCidr,validateHierarchy,validateSubnetTypes,vlanDomainKey,validateVlanDomains};
