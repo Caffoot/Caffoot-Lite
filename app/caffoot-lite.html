@@ -1629,6 +1629,35 @@ function hierarchyValidateTypes(subnets) {
             error.classList.add('is-visible');
         }, true);
 
+        // Overview search filters existing DOM nodes; it does not modify inventory data.
+        document.addEventListener('input', function(event) {
+            if (event.target?.id !== 'ipam-overview-search') return;
+            const query = event.target.value.trim().toLowerCase();
+            const groups = document.querySelectorAll('[data-ipam-network-group]');
+            let matches = 0, visibleGroups = 0;
+            groups.forEach(group => {
+                const groupMatch = !!query && (group.dataset.search || '').includes(query);
+                let count = 0;
+                group.querySelectorAll('[data-ipam-network-row]').forEach(row => {
+                    const visible = !query || groupMatch || (row.dataset.search || '').includes(query);
+                    row.hidden = !visible;
+                    row.classList.toggle('hidden', !visible);
+                    if (visible) count++;
+                });
+                const showGroup = count > 0;
+                group.hidden = !showGroup;
+                group.classList.toggle('hidden', !showGroup);
+                if (query && showGroup) group.open = true;
+                if (!query) group.open = false;
+                const counter = group.querySelector('[data-ipam-group-count]');
+                if (counter) counter.textContent = count;
+                if (showGroup) {matches += count;visibleGroups++;}
+            });
+            const status = document.getElementById('ipam-overview-search-status');
+            if (status) status.textContent = matches
+                ? 'Showing ' + matches + ' matching networks in ' + visibleGroups + ' groups.'
+                : 'No matching networks found.';
+        });
         document.addEventListener('input', function(event) {
             const field = event.target;
             const form = field.closest && field.closest('#modal-container form');
@@ -2994,6 +3023,34 @@ function hierarchyValidateTypes(subnets) {
                     ['Usable Addresses', capacity],
                     ['Available Addresses', available]
                 ];
+                // Native disclosure elements keep large inventories compact and keyboard-accessible.
+                const groups = blocks.map(block => ({block, networks: networks.filter(n => String(n.parentId || '') === String(block.id))}));
+                const ungrouped = networks.filter(n => !blocks.some(b => String(b.id) === String(n.parentId || '')));
+                if (ungrouped.length) groups.push({block:null, networks:ungrouped});
+                const networkRows = list => list.map(network => {
+                    const summary = phase10SubnetSummary(network);
+                    const usage = summary.supported ? summary.utilisation + '%' : '—';
+                    const search = [network.name,network.cidr,network.vlan,network.description].join(' ').toLowerCase();
+                    return `<div data-ipam-network-row data-search="${escapeHtml(search)}" class="grid grid-cols-1 sm:grid-cols-12 gap-2 sm:gap-3 items-center px-4 py-3 border-t border-slate-100 dark:border-slate-700">
+                        <div class="sm:col-span-6 min-w-0"><div class="font-semibold text-sm text-slate-900 dark:text-white break-words">${escapeHtml(network.name || network.cidr)}</div><div class="text-xs text-slate-600 dark:text-slate-300">${escapeHtml(network.cidr)}</div></div>
+                        <div class="sm:col-span-2 text-sm text-slate-700 dark:text-slate-200">VLAN ${escapeHtml(String(network.vlan ?? '—'))}</div>
+                        <div class="sm:col-span-4 text-sm text-slate-700 dark:text-slate-200"><span class="font-semibold">${usage}</span> used <span class="text-xs text-slate-500 dark:text-slate-300">· ${summary.available.toLocaleString('en-GB')} available</span>
+                            <div class="h-2 bg-slate-200 dark:bg-slate-600 rounded-full overflow-hidden mt-1" role="progressbar" aria-label="Network utilisation" aria-valuenow="${summary.utilisation}" aria-valuemin="0" aria-valuemax="100"><div class="h-full bg-indigo-600 dark:bg-indigo-400 rounded-full" style="width:${summary.utilisation}%"></div></div>
+                        </div>
+                    </div>`;
+                }).join('');
+                const networkGroups = groups.map(({block,networks:list}) => {
+                    const title = block ? block.name || block.cidr : 'Unassigned Networks';
+                    const cidr = block ? block.cidr : 'No parent IP Address Block';
+                    const groupSearch = [title,cidr].join(' ').toLowerCase();
+                    return `<details data-ipam-network-group data-search="${escapeHtml(groupSearch)}" class="border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden bg-white dark:bg-slate-800">
+                        <summary class="cursor-pointer px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-700/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500">
+                            <span class="font-semibold text-slate-900 dark:text-white">${escapeHtml(title)}</span>
+                            <span class="text-xs text-slate-600 dark:text-slate-300 ml-2">${escapeHtml(cidr)} · <span data-ipam-group-count>${list.length}</span> networks</span>
+                        </summary>
+                        <div data-ipam-group-rows>${networkRows(list)}</div>
+                    </details>`;
+                }).join('');
                 return `<div class="space-y-5" data-ipam-panel="overview">
                     <section class="space-y-3" aria-labelledby="ipam-inventory-overview-heading">
                         <div>
@@ -3009,7 +3066,10 @@ function hierarchyValidateTypes(subnets) {
                     </section>
                     <section class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 space-y-2" aria-labelledby="ipam-network-summary-heading">
                         <h4 id="ipam-network-summary-heading" class="font-bold text-slate-900 dark:text-white">Network Summary</h4>
-                        <p class="text-sm text-slate-600 dark:text-slate-300">The searchable, expandable network list will be added in the next stage. For now, use Manage Subnets to explore the hierarchy and IP Addresses to manage individual addresses.</p>
+                        <label for="ipam-overview-search" class="sr-only">Search networks by name, CIDR or VLAN</label>
+                        <input id="ipam-overview-search" type="search" autocomplete="off" placeholder="Search networks by name, CIDR or VLAN…" class="w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                        <p id="ipam-overview-search-status" class="text-xs text-slate-600 dark:text-slate-300" role="status">Showing ${networks.length} networks in ${groups.length} groups. Expand a block to view its networks.</p>
+                        <div id="ipam-overview-network-groups" class="space-y-2">${networkGroups || '<p class="text-sm text-slate-600 dark:text-slate-300">No networks yet. Add a Network / VLAN subnet to begin.</p>'}</div>
                     </section>
                 </div>`;
             }
