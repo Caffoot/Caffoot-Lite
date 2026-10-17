@@ -95,3 +95,14 @@ assert.equal(validateVlanDomains([{id:'flat-a',vlan:30},{id:'flat-b',vlan:30}]).
 assert.equal(vlanDomainKey({parentId:'block-london'}),'block-london','block ID rather than name defines VLAN scope');
 assert.deepEqual(validateVlanDomains([{id:'block',kind:'container',vlan:20},...scopedNetworks]),[],'containers are excluded from VLAN uniqueness');
 console.log('PASS: scoped VLAN domains allow reuse across blocks and reject duplicates within a block or unassigned domain.');
+
+const {validateVlanInventory}=require('./subnet-hierarchy.cjs');
+const vlanRecords=[
+  {id:'vlan-london-20',name:'London 20',parentId:'block-london',vlanId:20},
+  {id:'vlan-manchester-20',name:'Manchester 20',parentId:'block-manchester',vlanId:20}
+];
+assert.deepEqual(validateVlanInventory(vlanRecords),[],'same number in different VLAN inventory domains is valid');
+assert.equal(validateVlanInventory([...vlanRecords,{id:'vlan-london-20b',name:'Duplicate',parentId:'block-london',vlanId:20}]).length,1,'duplicate number within domain rejected');
+assert.equal(validateVlanInventory([{id:'legacy-1',name:'Legacy',vlanId:20},{id:'legacy-2',name:'Legacy duplicate',vlanId:20}]).length,1,'legacy VLAN records share unassigned domain');
+assert.equal(validateVlanInventory([...vlanRecords,{id:'vlan-london-20',name:'Duplicate ID',parentId:'block-other',vlanId:21}]).length,1,'record IDs remain globally unique');
+console.log('PASS: VLAN inventory IDs remain unique while VLAN numbers are scoped by IP Address Block.');
