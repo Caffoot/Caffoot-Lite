@@ -3789,6 +3789,17 @@ function hierarchyValidateTypes(subnets) {
             deviceOptionsReturnContent = document.createDocumentFragment();
             while (content.firstChild) deviceOptionsReturnContent.appendChild(content.firstChild);
         }
+        // Compare current field values with the initial form, not merely whether a field was touched.
+        const modalFormSnapshots = new WeakMap();
+        function modalFormSnapshot(form) {
+            return JSON.stringify(Array.from(form.querySelectorAll('input,select,textarea'))
+                .filter(field => !['button','submit','reset','hidden'].includes(field.type))
+                .map(field => [field.id || field.name || '', field.type, field.type === 'checkbox' || field.type === 'radio' ? field.checked : field.value]));
+        }
+        function rememberModalForm() {
+            const form = document.querySelector('#modal-content form[data-device-form="true"], #modal-content form[data-form-action="subnet"]');
+            if (form) modalFormSnapshots.set(form, modalFormSnapshot(form));
+        }
         function closeModal(force = false) {
             if (deviceOptionsReturnContent) {
                 phase19BReadSoftwareSelections();
@@ -3800,8 +3811,10 @@ function hierarchyValidateTypes(subnets) {
                 content.querySelector('form[data-device-form="true"]')?.querySelector('input,select,textarea')?.focus();
                 return;
             }
-            const deviceForm = document.querySelector('#modal-content form[data-device-form="true"]');
-            if (!force && deviceForm?.dataset.unsavedChanges === 'true' && !window.confirm('Discard unsaved device changes?')) return;
+            const editableForm = document.querySelector('#modal-content form[data-device-form="true"], #modal-content form[data-form-action="subnet"]');
+            if (!force && editableForm && modalFormSnapshots.has(editableForm) &&
+                modalFormSnapshot(editableForm) !== modalFormSnapshots.get(editableForm) &&
+                !window.confirm('Discard unsaved changes?')) return;
             const container = document.getElementById('modal-container');
             container.classList.add('hidden');
             container.classList.remove('flex');
@@ -3827,16 +3840,8 @@ function hierarchyValidateTypes(subnets) {
             }
             const first = content.querySelector('input:not([type="hidden"]):not([disabled]),select:not([disabled]),textarea:not([disabled]),button:not([disabled])');
             (first || content).focus();
+            rememberModalForm();
         }
-
-        document.addEventListener('input', function(event) {
-            const form = event.target.closest?.('#modal-content form[data-device-form="true"]');
-            if (form) form.dataset.unsavedChanges = 'true';
-        });
-        document.addEventListener('change', function(event) {
-            const form = event.target.closest?.('#modal-content form[data-device-form="true"]');
-            if (form) form.dataset.unsavedChanges = 'true';
-        });
 
         document.addEventListener('keydown', function(event) {
             const container = document.getElementById('modal-container');
@@ -4553,6 +4558,7 @@ function hierarchyValidateTypes(subnets) {
             }
             refreshDeviceIpOptions();
             phase19BUpdateMountChoices();
+            rememberModalForm();
             const deviceForm = document.querySelector('[data-device-form="true"]');
             if (deviceForm) {
                 const clearFieldError = event => {
