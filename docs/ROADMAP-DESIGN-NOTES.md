@@ -37,6 +37,7 @@ Proposed tabs:
 - **General:** Device name, type, location and general information.
 - **IP Addresses:** Assigned IPs, address purposes and optional interface associations.
 - **Hardware:** Manufacturer, model, serial number and device-type-specific attributes.
+- **Software / OS:** Contextual operating system family, version, optional edition and existing software-related fields for applicable devices.
 - **Connections:** Future device relationships and physical/logical connectivity.
 
 Requirements:
@@ -47,6 +48,16 @@ Requirements:
 - Support smaller screens and keyboard navigation.
 - Preserve compatibility with existing device records.
 - Introduce the Connections tab when relationship functionality is ready, if appropriate.
+- Keep the form wider but responsive, and avoid unnecessary fields for devices to which they do not apply.
+
+### Contextual operating system fields
+
+For Desktop, Laptop, Tablet and Server (and other applicable device types), offer a simple Operating System family selector followed by a dependent version selector. Examples include Windows, Windows Server (2016/2019/2022/2025), Linux distributions, macOS, ChromeOS, Android and iPadOS. Treat these as illustrative rather than a fixed exhaustive list; allow **Unknown**, **None**, **Other / Custom** and future versions. For Windows Server, an optional edition field can capture Standard/Datacenter without confusing edition with version. Preserve existing OS/software values and backup compatibility; do not force invalid guesses.
+
+### Device Inventory presentation
+
+Align Device Inventory with the v1.1 IPAM design language: clear overview summaries, consistent actions and Title Case, responsive layout, filtering/search and readable details. Prefer compact searchable tables or rows for large device inventories over a large card for every device. Preserve existing operations and accessibility.
+
 
 ## 2. Multiple IP addresses per device — v1.2 candidate
 
@@ -80,7 +91,7 @@ Preset heights: **6U, 9U, 12U, 14U, 18U, 22U, 24U, 27U, 32U, 42U, 45U and 48U**,
 
 Mounting types: **Wall Mounted**, **Free Standing**, **Open Frame**.
 
-Optional rack depth is under consideration.
+Optional rack depth is under consideration. Additional optional descriptive fields: **manufacturer, model, serial number, asset tag, width, depth and location**. For Free Standing racks, record base/installation configuration such as **casters**, **levelling feet** and **fixed/anchored**, allowing combinations where appropriate (casters and feet can coexist). Keep simple rack creation quick, with advanced fields optional.
 
 ### Rack accessories — additional v1.2 scope
 
@@ -115,6 +126,10 @@ Initial reporting candidates:
 - Unassigned or reserved addresses.
 
 Later reporting may include ports, connectivity and cabling.
+
+## 4A. Shared Suppliers directory — future milestone candidate
+
+Consider a reusable Suppliers directory rather than repeating supplier contact information on each device or rack. Potential supplier data: company name, website, contact information, account reference and notes. Devices/racks could reference a supplier and optional purchase date, purchase order, cost and warranty expiry. **Manufacturer and supplier are distinct concepts.** Plan future record linkage and safe migration without implementing full supplier management in v1.2. Do not displace the existing v1.3 relationships/interfaces scope.
 
 ## 5. Device relationships and interfaces — v1.3 candidate
 
