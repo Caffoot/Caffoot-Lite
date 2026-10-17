@@ -101,6 +101,12 @@ const ipamContext = {
 };
 vm.createContext(ipamContext);
 vm.runInContext(html.slice(helperStart, helperEnd), ipamContext);
+// Load the production gateway lookup into this isolated device/IPAM test context.
+const gatewayStart = html.indexOf('function phase10GatewaySubnet(');
+const gatewayEnd = html.indexOf('function phase10SubnetSummary(', gatewayStart);
+assert(gatewayStart >= 0 && gatewayEnd > gatewayStart, 'gateway protection helper must exist');
+ipamContext.phase12Usable = ipamContext.ipBelongsToSubnet;
+vm.runInContext(html.slice(gatewayStart, gatewayEnd), ipamContext);
 const { appState: state } = ipamContext;
 const a = { id: 'test-a', name: 'server-a', notes: 'Original notes', primaryIp: '', ipReserved: false };
 const b = { id: 'test-b', name: 'server-b', notes: '', primaryIp: '', ipReserved: false };
@@ -127,6 +133,16 @@ ipamContext.syncDeviceIpamRecord(a);
 assert.equal(state.ipAllocations['192.168.40.11'].status, 'Reserved', 'reservation flag sync');
 ipamContext.setDevicePrimaryIp(a, '');
 assert.equal(state.ipAllocations['192.168.40.11'], undefined, 'clearing primary IP releases allocation');
+state.subnets[0].gateway = '192.168.40.1';
+const server = {id:'gateway-server',name:'server',type:'Server - Physical',primaryIp:'',ipReserved:false};
+const firewall = {id:'gateway-firewall',name:'firewall',type:'Firewall',primaryIp:'',ipReserved:false};
+state.devices.push(server,firewall);
+assert.throws(() => ipamContext.setDevicePrimaryIp(server,'192.168.40.1'), /may only be assigned/, 'server must not newly claim gateway');
+assert.equal(server.primaryIp,'', 'blocked gateway assignment must not mutate device');
+ipamContext.setDevicePrimaryIp(firewall,'192.168.40.1');
+assert.equal(firewall.primaryIp,'192.168.40.1','firewall may own gateway');
+assert.throws(() => ipamContext.setDevicePrimaryIp(server,'192.168.40.1'), /already assigned/, 'gateway cannot be assigned twice');
+console.log('Gateway device assignment fixtures passed.');
 console.log('Device/IPAM runtime fixtures passed.');
 
 const rackValidatorStart = html.indexOf('function validateRackPlacement(');
