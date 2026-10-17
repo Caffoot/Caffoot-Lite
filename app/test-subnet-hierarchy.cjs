@@ -82,3 +82,16 @@ for(const records of [typeCases,...typeCases.map(item=>[item])]) {
 console.log('PASS: embedded offline browser validators match Node module.');
 console.log('PASS: subnet type-specific VLAN, gateway and loopback rules.');
 console.log('PASS: hierarchy CIDR, nesting, boundaries, cycles, overlap, and legacy defaults.');
+
+
+const {validateVlanDomains,vlanDomainKey}=require('./subnet-hierarchy.cjs');
+const scopedNetworks=[
+  {id:'london',name:'London 20',kind:'network',parentId:'block-london',vlan:20},
+  {id:'manchester',name:'Manchester 20',kind:'network',parentId:'block-manchester',vlan:20}
+];
+assert.deepEqual(validateVlanDomains(scopedNetworks),[],'same VLAN in separate blocks is valid');
+assert.equal(validateVlanDomains([...scopedNetworks,{id:'duplicate',kind:'network',parentId:'block-london',vlan:20}]).length,1,'same VLAN in same block is rejected');
+assert.equal(validateVlanDomains([{id:'flat-a',vlan:30},{id:'flat-b',vlan:30}]).length,1,'legacy unassigned networks share a VLAN domain');
+assert.equal(vlanDomainKey({parentId:'block-london'}),'block-london','block ID rather than name defines VLAN scope');
+assert.deepEqual(validateVlanDomains([{id:'block',kind:'container',vlan:20},...scopedNetworks]),[],'containers are excluded from VLAN uniqueness');
+console.log('PASS: scoped VLAN domains allow reuse across blocks and reject duplicates within a block or unassigned domain.');
