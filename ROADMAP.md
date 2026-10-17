@@ -48,9 +48,12 @@ Scope and sequencing require review before implementation. No v1.2 commitments a
 
 - Wider, responsive, tabbed Add Device and Edit Device forms with shared behaviour.
 - Preserve dynamic fields for different device types.
+- Add contextual Operating System family, version and optional edition selection for applicable device types, with Unknown/None/Custom choices and safe legacy compatibility.
+- Refresh Device Inventory screens using the same responsive visual language as v1.1 IPAM, with clear summaries, useful filtering and compact, scalable device lists.
 - Multiple IP addresses per device, optional interface associations and primary management IP.
 - Public IP address documentation, including relevant ISP, circuit and NAT metadata.
 - Flexible rack heights and presets, Wall Mounted / Free Standing / Open Frame types, optional depth and safe resizing.
+- Expand optional rack details: manufacturer, model, serial number, asset tag, width/depth, location and free-standing base configuration (casters, levelling feet and/or anchored).
 - Extend existing rack accessories with PDUs (horizontal rack-mounted and vertical 0U), fan/ventilation panels, vertical cable managers and environmental sensors; preserve existing accessories and collision safeguards.
 - Cross-module advanced search and initial inventory, subnet/IPAM and rack reporting.
 
@@ -78,6 +81,8 @@ Scope and sequencing require review before implementation. No v1.2 commitments a
 - Device navigation, connection tracing and usable diagram layouts.
 
 ### Future investigations
+
+- Shared Suppliers directory for devices, racks and other assets, with optional procurement, warranty and contact information; schedule in a separate future milestone rather than expanding v1.3.
 
 - Offline import options, including potential NetBox compatibility.
 - IPv6 capabilities.
