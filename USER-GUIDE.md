@@ -2,7 +2,7 @@
 
 **Infrastructure, Simplified. — For HomeLabs and Small Teams**
 
-This guide covers the main workflows. Button names and layouts may change slightly before v1.0 is finalised.
+This guide covers the main workflows of the published Caffoot Lite release. Screens and controls may evolve in later versions; consult the [roadmap](ROADMAP.md) for planned changes.
 
 ## Getting started
 
