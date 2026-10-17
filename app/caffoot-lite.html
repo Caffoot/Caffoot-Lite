@@ -5717,7 +5717,7 @@ function hierarchyValidateTypes(subnets) {
                 case 'sidebar-ipam-overview': phase12CIpamTab = 'overview'; switchTab('ipam'); break;
                 case 'sidebar-ipam-addresses': phase12CIpamTab = 'addresses'; switchTab('ipam'); break;
                 case 'ipam-open-block': {
-                    const blockId = String(actionEl.dataset.id || '');
+                    const blockId = String(target.dataset.id || '');
                     if (blockId && !appState.subnets.some(s => s.id === blockId && s.kind === 'container')) break;
                     phase12CIpamTab = 'manage';
                     switchTab('ipam');
