@@ -1478,6 +1478,10 @@ function hierarchyValidateTypes(subnets) {
             // Phase 17C: refuse to take an IPAM address owned by a different device.
             // Validate before releasing the old address so a failed edit leaves it intact.
             if (trimmedIp) {
+                const gatewaySubnet = phase10GatewaySubnet(trimmedIp);
+                if (gatewaySubnet && trimmedIp !== oldIp && !['Firewall', 'Router', 'Layer 3 Switch'].includes(device.type)) {
+                    throw new Error(`Gateway ${trimmedIp} may only be assigned to a Firewall, Router or Layer 3 Switch.`);
+                }
                 if (!appState.subnets.some(subnet => ipBelongsToSubnet(trimmedIp, subnet.cidr))) {
                     throw new Error(`IP address ${trimmedIp} is not in a configured subnet.`);
                 }
@@ -2908,6 +2912,10 @@ function hierarchyValidateTypes(subnets) {
         let phase12CIpamTab = 'overview';
         // Phase 10A: operate on the existing /24 IPAM address grid without
         // assuming that every stored subnet is a /24.
+        function phase10GatewaySubnet(ip) {
+            return appState.subnets.find(s => s.kind !== 'container' && s.gateway === ip && phase12Usable(ip, s.cidr)) || null;
+        }
+
         function phase10SubnetSummary(subnet) {
             const range=phase12Cidr(subnet?.cidr);
             if(!range) return {supported:false,cidr:subnet?.cidr||'',capacity:0,assigned:0,reserved:0,available:0,next:null,utilisation:0,duplicates:[]};
@@ -2923,7 +2931,8 @@ function hierarchyValidateTypes(subnets) {
                 const status=alloc?.status||(owners.has(ip)?'Assigned':'Available');
                 if(status==='Reserved') reserved++;
                 else if(status==='Assigned') assigned++;
-                else if(next===null && status==='Available' && !owners.has(ip) && ip!==subnet.gateway) next=ip;
+                else if(ip===subnet.gateway) reserved++; // Protected without writing an allocation record.
+                else if(next===null && status==='Available' && !owners.has(ip)) next=ip;
             }
             return {supported:true,cidr:subnet.cidr,capacity:range.capacity,assigned,reserved,
                 available:range.capacity-assigned-reserved,next,
@@ -3029,7 +3038,9 @@ function hierarchyValidateTypes(subnets) {
                 for (let i = (phase12Paged?phase12Start:startHost); i <= (phase12Paged?phase12End:endHost); i++) {
                     const ip = phase12Paged ? phase12IpString(i) : `${basePrefix}.${i}`;
                     const alloc = appState.ipAllocations[ip];
-                    const status = alloc ? alloc.status : 'Available';
+                    const gatewayProtected = ip === subnet.gateway;
+                    const status = alloc?.status || (appState.devices.some(d => d.primaryIp === ip) ? 'Assigned' : gatewayProtected ? 'Reserved' : 'Available');
+                    const displayStatus = gatewayProtected ? `Gateway · ${status}` : status;
                     const reservedDevice = alloc?.reservedForDeviceId ? getDeviceById(alloc.reservedForDeviceId) : null;
                     
                     let badgeColor = 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600';
@@ -3039,10 +3050,10 @@ function hierarchyValidateTypes(subnets) {
                     if (ipamStatusFilter !== 'All' && status !== ipamStatusFilter) continue;
                     if (ipamAddressSearch.trim() && ![ip, alloc?.hostname, reservedDevice?.name].some(v => String(v || '').toLowerCase().includes(ipamAddressSearch.trim().toLowerCase()))) continue;
                     ipListHtml += `
-                        <button type="button" data-action="open-ip" data-ip="${escapeHtml(ip)}" aria-label="View ${escapeHtml(ip)}, ${escapeHtml(status)}" class="ipam-address-card p-3 rounded-xl border ${badgeColor} cursor-pointer hover:shadow-md transition flex flex-col justify-between space-y-2 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500">
+                        <button type="button" data-action="open-ip" data-ip="${escapeHtml(ip)}" aria-label="View ${escapeHtml(ip)}, ${escapeHtml(displayStatus)}" class="ipam-address-card p-3 rounded-xl border ${badgeColor} cursor-pointer hover:shadow-md transition flex flex-col justify-between space-y-2 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500">
                             <div class="flex items-center justify-between">
                                 <span class="font-mono text-xs font-bold">${ip}</span>
-                                <span class="text-[10px] px-1.5 py-0.5 rounded bg-white/80 dark:bg-slate-800/80 shadow-xs">${status}</span>
+                                <span class="text-[10px] px-1.5 py-0.5 rounded bg-white/80 dark:bg-slate-800/80 shadow-xs">${escapeHtml(displayStatus)}</span>
                             </div>
                             <div class="text-xs truncate">
                                 <span class="font-medium text-slate-700 dark:text-slate-200">${reservedDevice && status === 'Reserved' ? 'For: ' + escapeHtml(reservedDevice.name) : (alloc ? escapeHtml(alloc.hostname || 'Assigned IP') : 'Available')}</span>
@@ -3202,6 +3213,7 @@ function hierarchyValidateTypes(subnets) {
             const changes=[],blocked=[];
             for(let offset=start;offset<=end;offset++) {
                 const ip=phase12IpString(range.network+offset);
+                if (ip === subnet.gateway) { blocked.push(ip); continue; }
                 const owners=appState.devices.filter(d=>d.primaryIp===ip);
                 const old=appState.ipAllocations[ip];
                 if (owners.length || (old?.deviceId && getDeviceById(old.deviceId))) {
@@ -3676,6 +3688,12 @@ function hierarchyValidateTypes(subnets) {
         }
 
         function openIpModal(ip) {
+            const gatewaySubnet = phase10GatewaySubnet(ip);
+            if (gatewaySubnet) {
+                const owner = findDeviceUsingIp(ip);
+                showToast(`Gateway ${ip} is protected${owner ? ` and assigned to ${owner.name}` : ''}. Edit the network device instead.`, 'error');
+                return;
+            }
             const alloc = appState.ipAllocations[ip] || { status: 'Available', hostname: '', notes: '' };
             openModal(`
                 <div class="p-6 sm:p-7 space-y-5">
@@ -3718,6 +3736,10 @@ function hierarchyValidateTypes(subnets) {
             const notes = document.getElementById('ip-notes').value;
             const previousAllocation = appState.ipAllocations[ip] ? {...appState.ipAllocations[ip]} : null;
             const primaryDevice = findDeviceUsingIp(ip);
+            if (phase10GatewaySubnet(ip)) {
+                showToast(`Gateway ${ip} is protected. Edit the network device instead.`, 'error');
+                return;
+            }
 
             if (primaryDevice) {
                 showToast(`IP address ${ip} is the primary IP of ${primaryDevice.name}. Edit the device instead.`, 'error');
@@ -4097,7 +4119,7 @@ function hierarchyValidateTypes(subnets) {
             let count = 0;
             for (let n = range.first; n <= range.lastHost; n++) {
                 const ip = phase12IpString(n);
-                if (ip === subnet.gateway) continue;
+                if (ip === subnet.gateway && ip !== currentIp) continue;
                 if (!used.has(ip) || (ip === currentIp && appState.devices.some(d => d.id === editingId && d.primaryIp === ip))) {
                     count++;
                     if (available.length < 50) available.push(ip);
