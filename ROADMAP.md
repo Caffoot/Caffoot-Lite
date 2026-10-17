@@ -1,6 +1,6 @@
 # Caffoot Lite — Development Roadmap
 
-**Updated:** 16 October 2026  
+**Updated:** 17 October 2026  
 **Latest published release:** v1.0.3  
 **Current development milestone:** v1.1 (in development)  
 **Repository:** `sdelnevo/Caffoot-Lite` (public)  
@@ -20,9 +20,27 @@ Release assignments beyond v1.1 are provisional. A feature listed here is not a 
 - Nesting, boundaries, overlap and cycle protection.
 - Intelligent subnet creation and editing with type-specific rules.
 - Gateway protection and relevant network device-type support.
+- Show gateway addresses as protected/reserved in IPAM; prevent accidental allocation and update availability statistics.
+- Fix informational modal dismissal consistently, including Safe Update Guide and Software Licences (visible Close control, Escape and appropriate focus behaviour).
+- Add read-only network information (network/broadcast addresses, mask, gateway, usable range and capacity) while keeping network and broadcast addresses out of host allocation.
+- Present top-level IP Address Blocks in a responsive two-column card grid (one column on narrow screens), with nested collapsible blocks, compact Network / VLAN rows and Expand All / Collapse All. Preserve editing and avoid excessive page length.
 - Regression testing and compatibility with existing inventory and backups.
 
 Development takes place separately from the published release. Do not merge unfinished work without owner approval.
+
+### v1.1.1 — Settings, usability and documentation
+
+**Status: Proposed; planning only, after v1.1**
+
+- Consolidate duplicate backup controls while preserving prominent local-storage warnings, JSON export/restore, recovery snapshots and destructive-action safeguards.
+- Reorganise Settings & Data into clear everyday tasks and advanced diagnostics/recovery.
+- Expand About Caffoot Lite with meaningful project information, version, repository links and licence access.
+- Explore additional application preferences and central management of device/server/software option lists without breaking existing device workflows or backups.
+- Rename dashboard Data Health to Inventory Health, explain what is checked, and distinguish inventory consistency from browser-storage safety and live network monitoring (which is not provided).
+- Add concise, offline Help & Documentation accessible from the interface, designed to complement—not replace—an intuitive user experience.
+- Improve update status presentation and investigate opt-in automatic release checks; do not silently replace the local HTML file or restore inventory.
+
+Scope and sequencing require review before implementation. No v1.2 commitments are moved into this milestone.
 
 ### v1.2 — Device, IPAM and rack enhancements
 

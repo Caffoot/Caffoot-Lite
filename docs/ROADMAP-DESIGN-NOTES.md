@@ -1,10 +1,33 @@
 # Caffoot Lite — Roadmap Design Notes
 
 **Created:** 16 October 2026  
+**Updated:** 17 October 2026  
 **Status:** Planning only  
 **Purpose:** Preserve proposed features, agreed design directions, dependencies and compatibility requirements.
 
 These notes are not implementation approval or release commitments. Finish v1.1 first. Published v1.0.3 remains untouched until a separately reviewed release is authorised.
+
+## 0. Agreed v1.1 completion and proposed v1.1.1 polish
+
+### v1.1 — completion work
+
+- **Gateway safety:** a configured gateway must not appear freely allocatable; protect editing/bulk actions and reconcile Reserved/Available counts while preserving existing device assignments.
+- **Informational modals:** Safe Update Guide and Software Licences need visible close controls and consistent Escape/focus behaviour. Audit other informational modals for the same issue.
+- **Network information:** read-only CIDR-derived network address, mask, gateway, first/last usable address, broadcast address, usable host count and available-for-allocation count. Continue excluding network/broadcast from the allocation grid.
+- **Hierarchy presentation:** top-level IP Address Blocks as separate cards in a responsive two-column desktop grid, one column on narrow screens. Nested blocks stay collapsible; individual Network / VLAN entries remain compact rows. Add Expand All / Collapse All. Preserve edit controls and existing hierarchy validation, storage and backup formats. Avoid fixed-height scroll traps and unnecessary visual clutter.
+- **Release gates:** automated regression testing and user-confirmed Firefox/Safari checks before release. No changes to published v1.0.3 without approval.
+
+### v1.1.1 — Settings, usability and documentation (proposed)
+
+- **Settings & Data:** keep one obvious Download JSON Backup control in Back Up Your Data; retain a concise, prominent local-storage warning. Preserve restore, snapshot, diagnostics and clear-system safeguards. Put advanced/recovery actions in a less prominent but accessible section.
+- **About:** more substantial, polished explanation of Caffoot Lite and its offline-first purpose, version, repository and licence information. Summarise rather than paste the entire README.
+- **Preferences:** consider theme, startup/default views and opt-in update checks. Explore central management of device types, server functions and software option lists while keeping contextual controls in device forms.
+- **Inventory Health:** distinguish dashboard data-integrity checks from the Inventory Safety Check that also verifies browser-storage persistence; do not imply live network or device monitoring. Explain what each check does.
+- **Help & Documentation:** concise, discoverable offline help for getting started, IPAM/subnets, devices/racks, backups/recovery and troubleshooting. Prefer an intuitive UI; help is optional support.
+- **Updates:** improve status and release guidance; investigate optional online version checks. Local single-file applications must not silently overwrite themselves or change inventories.
+- **Safety:** preserve legacy inventory, JSON backups, offline operation and accessible keyboard interactions.
+
+These are planning decisions, not permission to implement. Existing v1.2–v1.5 scope remains unchanged.
 
 ## 1. Device form redesign — v1.2 candidate
 
