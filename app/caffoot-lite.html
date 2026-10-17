@@ -2976,6 +2976,43 @@ function hierarchyValidateTypes(subnets) {
         }
 
         function renderIpamHTML() {
+            // v1.1 IPAM Overview stage 1: inventory-wide, read-only totals.
+            // Return before selected-network rendering so Overview never depends on its dropdown.
+            if (phase12CIpamTab === 'overview') {
+                const blocks = appState.subnets.filter(s => s.kind === 'container');
+                const networks = appState.subnets.filter(s => (s.kind || 'network') === 'network');
+                let capacity = 0, available = 0;
+                for (const network of networks) {
+                    const summary = phase10SubnetSummary(network);
+                    if (!summary.supported) continue;
+                    capacity += summary.capacity;
+                    available += summary.available;
+                }
+                const overviewStats = [
+                    ['IP Address Blocks', blocks.length],
+                    ['Networks', networks.length],
+                    ['Usable Addresses', capacity],
+                    ['Available Addresses', available]
+                ];
+                return `<div class="space-y-5" data-ipam-panel="overview">
+                    <section class="space-y-3" aria-labelledby="ipam-inventory-overview-heading">
+                        <div>
+                            <h3 id="ipam-inventory-overview-heading" class="text-lg font-bold text-slate-900 dark:text-white">IPAM Overview</h3>
+                            <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Inventory-wide totals across all Network / VLAN subnets. Parent IP Address Blocks are counted separately and do not add host capacity.</p>
+                        </div>
+                        <dl class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                            ${overviewStats.map(([label,value]) => `<div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5">
+                                <dt class="text-sm font-semibold text-slate-600 dark:text-slate-300">${escapeHtml(label)}</dt>
+                                <dd class="text-3xl font-bold text-slate-900 dark:text-white mt-2">${Number(value).toLocaleString('en-GB')}</dd>
+                            </div>`).join('')}
+                        </dl>
+                    </section>
+                    <section class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 space-y-2" aria-labelledby="ipam-network-summary-heading">
+                        <h4 id="ipam-network-summary-heading" class="font-bold text-slate-900 dark:text-white">Network Summary</h4>
+                        <p class="text-sm text-slate-600 dark:text-slate-300">The searchable, expandable network list will be added in the next stage. For now, use Manage Subnets to explore the hierarchy and IP Addresses to manage individual addresses.</p>
+                    </section>
+                </div>`;
+            }
             const subnet = appState.subnets.find(s => s.id === selectedSubnetId && s.kind !== 'container') || appState.subnets.find(s => s.kind !== 'container') || appState.subnets[0];
             
             if (!subnet && appState.subnets.length === 0) {
