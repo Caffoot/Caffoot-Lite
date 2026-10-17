@@ -102,11 +102,11 @@ const ipamContext = {
 vm.createContext(ipamContext);
 vm.runInContext(html.slice(helperStart, helperEnd), ipamContext);
 // Load the production gateway lookup into this isolated device/IPAM test context.
-const gatewayStart = html.indexOf('function phase10GatewaySubnet(');
-const gatewayEnd = html.indexOf('function phase10SubnetSummary(', gatewayStart);
-assert(gatewayStart >= 0 && gatewayEnd > gatewayStart, 'gateway protection helper must exist');
+const ipamGatewayHelperStart = html.indexOf('function phase10GatewaySubnet(');
+const ipamGatewayHelperEnd = html.indexOf('function phase10SubnetSummary(', ipamGatewayHelperStart);
+assert(ipamGatewayHelperStart >= 0 && ipamGatewayHelperEnd > ipamGatewayHelperStart, 'gateway protection helper must exist');
 ipamContext.phase12Usable = ipamContext.ipBelongsToSubnet;
-vm.runInContext(html.slice(gatewayStart, gatewayEnd), ipamContext);
+vm.runInContext(html.slice(ipamGatewayHelperStart, ipamGatewayHelperEnd), ipamContext);
 const { appState: state } = ipamContext;
 const a = { id: 'test-a', name: 'server-a', notes: 'Original notes', primaryIp: '', ipReserved: false };
 const b = { id: 'test-b', name: 'server-b', notes: '', primaryIp: '', ipReserved: false };
