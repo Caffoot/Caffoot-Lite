@@ -3805,7 +3805,14 @@ function hierarchyValidateTypes(subnets) {
         function deleteVlan(vId) {
             const vlan = appState.vlans.find(v => v.id === vId);
             if (!vlan) return;
-            const linkedSubnets = appState.subnets.filter(s => Number(s.vlan) === Number(vlan.vlanId));
+            // Match VLAN number AND parent block. Legacy records without parentId share the unassigned domain.
+            // This prevents a VLAN deletion in one block from depending on unrelated blocks.
+            const vlanDomain = vlan.parentId || '__unassigned__';
+            const linkedSubnets = appState.subnets.filter(s =>
+                (!s.kind || s.kind === 'network') &&
+                Number(s.vlan) === Number(vlan.vlanId) &&
+                (s.parentId || '__unassigned__') === vlanDomain
+            );
             if (linkedSubnets.length) {
                 showToast('Delete or reassign the linked subnet before deleting this VLAN.', 'error');
                 return;
