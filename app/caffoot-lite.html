@@ -3789,7 +3789,7 @@ function hierarchyValidateTypes(subnets) {
             deviceOptionsReturnContent = document.createDocumentFragment();
             while (content.firstChild) deviceOptionsReturnContent.appendChild(content.firstChild);
         }
-        function closeModal() {
+        function closeModal(force = false) {
             if (deviceOptionsReturnContent) {
                 phase19BReadSoftwareSelections();
                 phase19BReadFunctionSelections();
@@ -3800,6 +3800,8 @@ function hierarchyValidateTypes(subnets) {
                 content.querySelector('form[data-device-form="true"]')?.querySelector('input,select,textarea')?.focus();
                 return;
             }
+            const deviceForm = document.querySelector('#modal-content form[data-device-form="true"]');
+            if (!force && deviceForm?.dataset.unsavedChanges === 'true' && !window.confirm('Discard unsaved device changes?')) return;
             const container = document.getElementById('modal-container');
             container.classList.add('hidden');
             container.classList.remove('flex');
@@ -3826,6 +3828,15 @@ function hierarchyValidateTypes(subnets) {
             const first = content.querySelector('input:not([type="hidden"]):not([disabled]),select:not([disabled]),textarea:not([disabled]),button:not([disabled])');
             (first || content).focus();
         }
+
+        document.addEventListener('input', function(event) {
+            const form = event.target.closest?.('#modal-content form[data-device-form="true"]');
+            if (form) form.dataset.unsavedChanges = 'true';
+        });
+        document.addEventListener('change', function(event) {
+            const form = event.target.closest?.('#modal-content form[data-device-form="true"]');
+            if (form) form.dataset.unsavedChanges = 'true';
+        });
 
         document.addEventListener('keydown', function(event) {
             const container = document.getElementById('modal-container');
@@ -4704,7 +4715,7 @@ function hierarchyValidateTypes(subnets) {
                 showToast('Device changes were not saved. Previous data restored.', 'error');
                 return;
             }
-            closeModal(); renderContent();
+            closeModal(true); renderContent();
         }
 
         function deleteDevice(deviceId) {
