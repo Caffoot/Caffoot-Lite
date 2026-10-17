@@ -42,6 +42,21 @@ Development takes place separately from the published release. Do not merge unfi
 
 Scope and sequencing require review before implementation. No v1.2 commitments are moved into this milestone.
 
+### v1.1.2 — Security hardening and deployment guidance
+
+**Status: Proposed; planning only, after v1.1.1 and before v1.2**
+
+- Perform a code-focused security review of the standalone HTML app, including DOM XSS, HTML rendering, imported JSON, data validation and unsafe file/input handling.
+- Review browser local-storage exposure, shared-device risks, backup sensitivity, privacy and origin-specific storage behaviour.
+- Audit bundled dependencies and unexpected external requests; preserve the offline-first design.
+- Evaluate practical Content Security Policy and other browser mitigations compatible with the single-file offline distribution.
+- Add repeatable security regression tests and document limitations; do not claim the application is vulnerability-free.
+- Publish clear README/deployment warnings against unauthenticated public exposure, explaining HTTPS, reverse-proxy authentication, network restrictions and residual risks.
+- Consider a SECURITY.md with a private vulnerability-reporting route, supported versions and responsible disclosure guidance.
+- Preserve existing data, JSON backup compatibility and user-approved release gates.
+
+Security controls for a future managed Caffoot Pro deployment require separate design and validation; Pro is not currently a released or security-certified alternative.
+
 ### v1.2 — Device, IPAM and rack enhancements
 
 **Status: Planning; scope may be split into smaller milestones**

@@ -29,6 +29,22 @@ These notes are not implementation approval or release commitments. Finish v1.1 
 
 These are planning decisions, not permission to implement. Existing v1.2–v1.5 scope remains unchanged.
 
+### v1.1.2 — Security hardening and deployment guidance (proposed)
+
+**Purpose:** Review the actual v1.1.x standalone HTML build and its source before expanding the feature surface in v1.2. The immediate README warning is guidance, not evidence of a completed audit.
+
+Review areas:
+- **DOM injection/XSS:** audit all user-controlled text, HTML insertion and imported backup data; use safe rendering and output encoding.
+- **Import/validation:** malformed and hostile JSON, unexpected keys/types, oversized input, prototype-pollution-style keys, recovery and backup integrity.
+- **Storage/privacy:** browser local storage, site origin and `file://` differences, shared machines, export confidentiality and reset/recovery paths.
+- **Dependencies/network:** inventory bundled libraries and vulnerabilities; verify no unintended external requests; protect offline functionality.
+- **Browser controls:** assess CSP and other mitigations without breaking standalone file execution; document trade-offs.
+- **Testing:** targeted security regression cases, repeatable checks, documented findings, remediation and Firefox/Safari acceptance.
+
+**Deployment guidance:** Do not expose Lite unauthenticated to the internet. If served over HTTPS, restrict access through properly integrated identity/authentication and network controls. Authentik may provide identity services alongside Nginx or another reverse proxy, but a proxy alone is not a login and authentication alone is not a complete security assessment. Hosting does not provide shared server-side inventory storage or multi-user isolation.
+
+**Reporting:** consider `SECURITY.md` with supported versions, private reporting mechanism and disclosure expectations; do not publish exploit details prematurely. Distinguish intended future Pro architecture from an actually released and validated product.
+
 ## 1. Device form redesign — v1.2 candidate
 
 **Agreed design direction:** Wider, responsive Add Device and Edit Device forms with tabbed sections and consistent shared behaviour.
