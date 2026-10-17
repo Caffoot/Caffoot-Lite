@@ -143,4 +143,13 @@ function validateVlanInventory(vlans) {
   }
   return errors;
 }
-module.exports={ipNumber,ipString,parseCidr,validateHierarchy,validateSubnetTypes,vlanDomainKey,validateVlanDomains,validateVlanInventory};
+// A VLAN record belongs only to networks in its own domain.
+// Compare the scope as well as the number before editing or deleting VLAN records.
+function subnetUsesVlanRecord(subnet, vlanRecord) {
+  if(!subnet || !vlanRecord || (subnet.kind && subnet.kind!=='network')) return false;
+  const subnetNumber=Number(subnet.vlan), recordNumber=Number(vlanRecord.vlanId);
+  return Number.isInteger(subnetNumber) && subnetNumber>=1 && subnetNumber<=4094 &&
+    Number.isInteger(recordNumber) && recordNumber>=1 && recordNumber<=4094 &&
+    subnetNumber===recordNumber && vlanDomainKey(subnet)===vlanDomainKey(vlanRecord);
+}
+module.exports={ipNumber,ipString,parseCidr,validateHierarchy,validateSubnetTypes,vlanDomainKey,validateVlanDomains,validateVlanInventory,subnetUsesVlanRecord};
