@@ -106,3 +106,12 @@ assert.equal(validateVlanInventory([...vlanRecords,{id:'vlan-london-20b',name:'D
 assert.equal(validateVlanInventory([{id:'legacy-1',name:'Legacy',vlanId:20},{id:'legacy-2',name:'Legacy duplicate',vlanId:20}]).length,1,'legacy VLAN records share unassigned domain');
 assert.equal(validateVlanInventory([...vlanRecords,{id:'vlan-london-20',name:'Duplicate ID',parentId:'block-other',vlanId:21}]).length,1,'record IDs remain globally unique');
 console.log('PASS: VLAN inventory IDs remain unique while VLAN numbers are scoped by IP Address Block.');
+
+const {subnetUsesVlanRecord}=require('./subnet-hierarchy.cjs');
+assert.equal(subnetUsesVlanRecord(scopedNetworks[0],vlanRecords[0]),true,'London VLAN record belongs to London network');
+assert.equal(subnetUsesVlanRecord(scopedNetworks[1],vlanRecords[0]),false,'London VLAN record does not belong to Manchester network');
+assert.equal(subnetUsesVlanRecord(scopedNetworks[1],vlanRecords[1]),true,'Manchester VLAN record belongs to Manchester network');
+assert.equal(subnetUsesVlanRecord({id:'flat',vlan:20},{id:'legacy',vlanId:20}),true,'legacy unassigned records remain linked');
+assert.equal(subnetUsesVlanRecord({id:'flat',vlan:20},vlanRecords[0]),false,'unassigned network cannot link to London VLAN');
+assert.equal(subnetUsesVlanRecord({kind:'container',vlan:20,parentId:'block-london'},vlanRecords[0]),false,'containers never link to VLANs');
+console.log('PASS: VLAN record ownership is scoped for safe editing and deletion.');
