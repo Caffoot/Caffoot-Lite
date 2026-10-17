@@ -3739,7 +3739,7 @@ function hierarchyValidateTypes(subnets) {
                 return;
             }
             const returnToDevice = !!deviceFormDraft;
-            closeModal();
+            closeModal(true);
             if (returnToDevice) {
                 const draftDeviceId = deviceFormDraft.deviceId || null;
                 switchTab('devices');
