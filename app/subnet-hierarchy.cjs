@@ -125,4 +125,22 @@ function validateVlanDomains(subnets) {
   }
   return errors;
 }
-module.exports={ipNumber,ipString,parseCidr,validateHierarchy,validateSubnetTypes,vlanDomainKey,validateVlanDomains};
+// VLAN inventory records may carry parentId; missing parentId is the legacy unassigned scope.
+// Keep record IDs distinct even when VLAN numbers repeat in different domains.
+function validateVlanInventory(vlans) {
+  if(!Array.isArray(vlans)) return ['VLAN inventory must be an array.'];
+  const ids=new Set(), keys=new Set(), errors=[];
+  for(const vlan of vlans) {
+    if(!vlan || typeof vlan!=='object' || Array.isArray(vlan)) {errors.push('Invalid VLAN record.');continue;}
+    if(typeof vlan.id!=='string'||!vlan.id||typeof vlan.name!=='string'||!vlan.name) errors.push('VLAN requires an id and name.');
+    if(ids.has(vlan.id)) errors.push('Duplicate VLAN record ID: '+vlan.id);
+    ids.add(vlan.id);
+    const number=Number(vlan.vlanId);
+    if(!Number.isInteger(number)||number<1||number>4094) {errors.push('Invalid VLAN number: '+vlan.vlanId);continue;}
+    const key=JSON.stringify([vlanDomainKey(vlan),number]);
+    if(keys.has(key)) errors.push('Duplicate VLAN number '+number+' in the same IP Address Block.');
+    keys.add(key);
+  }
+  return errors;
+}
+module.exports={ipNumber,ipString,parseCidr,validateHierarchy,validateSubnetTypes,vlanDomainKey,validateVlanDomains,validateVlanInventory};
