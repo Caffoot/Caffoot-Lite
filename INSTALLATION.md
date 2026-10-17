@@ -12,14 +12,14 @@ Caffoot Lite is a standalone HTML application. You do **not** need Docker, Node.
 
 **Export JSON backups regularly and ALWAYS before upgrades, moves, renames or resets.** Save them outside the browser and test restoration. The backup may include sensitive network information.
 
-## Download the released HTML
+## Download the released application
 
 **Caffoot Lite v1.0.3 is published.** Always use the [latest stable release](https://github.com/sdelnevo/Caffoot-Lite/releases/latest) for the current download.
 
 1. Visit the [Caffoot Lite GitHub repository](https://github.com/sdelnevo/Caffoot-Lite).
 2. Open **Releases** and select the latest stable release.
-3. Expand **Assets** and select **`Caffoot-Lite.html`**. **Do not** choose “Source code (zip)” if you only want to run the application.
-4. Save the HTML file in a folder you can find again, such as Documents/Caffoot-Lite.
+3. Expand **Assets** and download the version-named Caffoot Lite release ZIP (recommended, includes guides and licences), or download **`Caffoot-Lite.html`** directly. **Do not** choose GitHub's automatically generated “Source code (zip)” if you only want to run the application.
+4. If using the release ZIP, extract it first. Save the HTML file in a folder you can find again, such as Documents/Caffoot-Lite.
 5. Double-click the HTML file, or use **Open With** to choose Safari, Chrome, Edge or Firefox.
 6. The app should open in a browser tab without an internet connection.
 
