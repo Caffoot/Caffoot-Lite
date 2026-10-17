@@ -82,6 +82,21 @@ Mounting types: **Wall Mounted**, **Free Standing**, **Open Frame**.
 
 Optional rack depth is under consideration.
 
+### Rack accessories — additional v1.2 scope
+
+Current rack accessory types observed in the application: **Blanking Plate, Patch Panel, Brush Panel, Cable Manager and Rack Shelf**. Preserve and reuse these rather than adding duplicates.
+
+Proposed additions:
+- **PDU (Power Distribution Unit):** horizontal rack-mounted units (commonly 1U/2U, with configurable height) or vertical **0U** units that do not consume numbered rack units.
+- **Fan / Ventilation Panel:** rack-mounted, height based on actual accessory.
+- **Vertical Cable Manager:** 0U, with a suitable mounting position.
+- **Environmental Sensor:** typically 0U, with a suitable mounting position.
+- **Rack-mounted UPS:** normally model as an inventory device where appropriate, avoiding duplicate accessory and device representations.
+
+For 0U accessories, investigate mounting positions such as Front Left, Front Right, Rear Left and Rear Right, plus appropriate conflict handling. Do not assume that 0U means unlimited physical mounting space. Existing Face / Start U / Height (U) placement fields and overlap rules remain valid for conventional U-consuming accessories.
+
+Optional PDU details may include socket counts/types (for example IEC C13/C19), power rating and descriptive notes. **Per-outlet connectivity, power consumption tracking and full power topology are outside the initial scope.** Keep the first implementation focused on safe physical rack placement and useful documentation.
+
 ### Editing and data safety
 
 - Allow rack height and mounting type to be edited.
