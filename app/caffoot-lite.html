@@ -3773,7 +3773,7 @@ function hierarchyValidateTypes(subnets) {
                 showToast('IP changes could not be saved. Previous allocation restored.', 'error');
                 return;
             }
-            closeModal();
+            closeModal(true);
             renderContent();
         }
 
@@ -3797,7 +3797,7 @@ function hierarchyValidateTypes(subnets) {
                 .map(field => [field.id || field.name || '', field.type, field.type === 'checkbox' || field.type === 'radio' ? field.checked : field.value]));
         }
         function rememberModalForm() {
-            const form = document.querySelector('#modal-content form[data-device-form="true"], #modal-content form[data-form-action="subnet"]');
+            const form = document.querySelector('#modal-content form[data-device-form="true"], #modal-content form[data-form-action="subnet"], #modal-content form[data-form-action="rack"], #modal-content form[data-form-action="ip"]');
             if (form) modalFormSnapshots.set(form, modalFormSnapshot(form));
         }
         function closeModal(force = false) {
@@ -3811,7 +3811,7 @@ function hierarchyValidateTypes(subnets) {
                 content.querySelector('form[data-device-form="true"]')?.querySelector('input,select,textarea')?.focus();
                 return;
             }
-            const editableForm = document.querySelector('#modal-content form[data-device-form="true"], #modal-content form[data-form-action="subnet"]');
+            const editableForm = document.querySelector('#modal-content form[data-device-form="true"], #modal-content form[data-form-action="subnet"], #modal-content form[data-form-action="rack"], #modal-content form[data-form-action="ip"]');
             if (!force && editableForm && modalFormSnapshots.has(editableForm) &&
                 modalFormSnapshot(editableForm) !== modalFormSnapshots.get(editableForm) &&
                 !window.confirm('Discard unsaved changes?')) return;
@@ -3955,7 +3955,7 @@ function hierarchyValidateTypes(subnets) {
                 showToast('Rack changes were not saved. Please check the validation message.', 'error');
                 return;
             }
-            closeModal();
+            closeModal(true);
             renderContent();
         }
 
