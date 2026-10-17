@@ -238,7 +238,8 @@ const ipPickerSource = fs.readFileSync(path.join(__dirname, 'caffoot-lite.html')
 assert(ipPickerSource.includes('id="dev-ip-available"'), 'Device form must expose a Safari-compatible IP dropdown');
 assert(ipPickerSource.includes("case 'device-ip-select':"), 'Device IP dropdown must be handled on change');
 assert(ipPickerSource.includes('if (available.length < 50) available.push(ip)'), 'IP dropdown must cap rendered choices');
-assert(ipPickerSource.includes('if (ip === subnet.gateway) continue;'), 'IP dropdown must exclude gateway');
+assert(ipPickerSource.includes('if (ip === subnet.gateway && ip !== currentIp) continue;'), 'IP dropdown must exclude gateway except when showing the current address');
+assert(ipPickerSource.includes("appState.devices.some(d => d.id === editingId && d.primaryIp === ip)"), 'Existing gateway address must only be retained for its owning device');
 
 assert(html.includes("case 'phase16a-check-safety': phase16ACheckSafety(); break;"), 'Inventory safety check must be wired');
 assert(html.includes('function phase16ACheckSafety()'), 'Inventory safety check must remain');
