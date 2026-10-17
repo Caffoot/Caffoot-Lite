@@ -51,6 +51,7 @@ Scope and sequencing require review before implementation. No v1.2 commitments a
 - Multiple IP addresses per device, optional interface associations and primary management IP.
 - Public IP address documentation, including relevant ISP, circuit and NAT metadata.
 - Flexible rack heights and presets, Wall Mounted / Free Standing / Open Frame types, optional depth and safe resizing.
+- Extend existing rack accessories with PDUs (horizontal rack-mounted and vertical 0U), fan/ventilation panels, vertical cable managers and environmental sensors; preserve existing accessories and collision safeguards.
 - Cross-module advanced search and initial inventory, subnet/IPAM and rack reporting.
 
 ### v1.3 — Device relationships and interfaces
