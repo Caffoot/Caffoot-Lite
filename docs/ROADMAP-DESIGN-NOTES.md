@@ -45,6 +45,18 @@ Review areas:
 
 **Reporting:** consider `SECURITY.md` with supported versions, private reporting mechanism and disclosure expectations; do not publish exploit details prematurely. Distinguish intended future Pro architecture from an actually released and validated product.
 
+## Additional usability and data-safety ideas — future review
+
+The following are **proposals**, not confirmed defects or approved implementation work. Prioritise completing v1.1 before expanding scope.
+
+- **Backup awareness (v1.1.1 candidate):** explore a reliable Last Backup indicator, a non-intrusive reminder after meaningful changes, date/version in export filenames and detection/warnings for unavailable or ephemeral browser storage. Do not claim an export is safely retained merely because it was initiated; never download backups silently.
+- **First-run and empty states (v1.1.1 candidate):** useful explanations and direct actions for empty Devices, Subnets/IPAM and Racks, without unnecessary onboarding screens.
+- **Inventory Health (v1.1.1 candidate):** extend understandable diagnostics for orphaned references, duplicate assignments and consistency problems. Distinguish actual errors from optional missing information (such as devices without IPs); avoid suggesting live monitoring.
+- **Cross-module integrity (v1.1.2 and ongoing):** test device renames/deletes, subnet changes, rack moves/removals, IP allocations and JSON restore across modules. Preserve referential integrity and protect existing data.
+- **Destructive-action previews (future usability work):** show affected records and consequences before removing populated subnets, racks or linked devices. Preserve cancellation and recovery safeguards.
+- **Accessibility (ongoing):** keyboard and focus behaviour, semantic controls, screen reader labels, contrast, zoom, responsive layouts and consistent modal dismissal.
+- **Inventory-wide change history (future investigation):** consider a lightweight local history building on existing IPAM history, covering device edits, subnet creation and rack moves. Set reasonable storage limits and explain that browser-local history is **not** a tamper-proof multi-user audit log.
+
 ## 1. Device form redesign — v1.2 candidate
 
 **Agreed design direction:** Wider, responsive Add Device and Edit Device forms with tabbed sections and consistent shared behaviour.
