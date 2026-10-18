@@ -4642,6 +4642,34 @@ function hierarchyValidateTypes(subnets) {
             refreshDeviceIpOptions();
         }
 
+        function updateDeviceRackLimits() {
+            const rackSelect = document.getElementById('dev-rack-id');
+            const start = document.getElementById('dev-rack-u');
+            const height = document.getElementById('dev-rack-height');
+            const hint = document.getElementById('dev-rack-range-hint');
+            if (!rackSelect || !start || !height || !hint) return;
+            const rack = appState.racks.find(r => r.id === rackSelect.value);
+            if (!rack) {
+                start.disabled = true;
+                height.disabled = true;
+                hint.textContent = 'Select or create a network rack before choosing a mounting position.';
+                return;
+            }
+            start.disabled = false;
+            height.disabled = false;
+            const capacity = Number(rack.heightU);
+            height.max = String(capacity);
+            const units = Number(height.value);
+            const maxStart = Number.isInteger(units) && units > 0 ? capacity - units + 1 : capacity;
+            start.max = String(Math.max(0, maxStart));
+            hint.textContent = maxStart < 1
+                ? `This device is too tall for ${rack.name} (${capacity}U). Reduce U Height or select another rack.`
+                : `Rack: ${rack.name} (${capacity}U). For a ${units}U device, Start U must be between 1 and ${maxStart}. Occupied positions are checked when saving.`;
+            start.setCustomValidity(Number(start.value) < 1 || Number(start.value) > maxStart || !Number.isInteger(Number(start.value))
+                ? `Choose a Start U between 1 and ${Math.max(1, maxStart)}.` : '');
+            height.setCustomValidity(!Number.isInteger(units) || units < 1 || units > capacity
+                ? `U Height must be between 1 and ${capacity}.` : '');
+        }
         function toggleDeviceMountType() {
             const mount = document.getElementById('dev-mount-type')?.value;
             const location = document.getElementById('dev-location');
@@ -5011,7 +5039,7 @@ function hierarchyValidateTypes(subnets) {
                                 <div><label for="dev-rack-face" class="block text-[10px] font-semibold text-slate-500 uppercase mb-1">Face</label><select id="dev-rack-face" class="w-full border rounded-lg p-1.5 text-xs dark:bg-slate-700"><option value="front" ${(draft?.face ?? device?.face) !== 'rear' ? 'selected' : ''}>Front</option><option value="rear" ${(draft?.face ?? device?.face) === 'rear' ? 'selected' : ''}>Rear</option></select></div>
                                 <div><label for="dev-rack-u" class="block text-[10px] font-semibold text-slate-500 uppercase mb-1">Start U</label><input type="number" id="dev-rack-u" min="1" max="48" value="${draft?.rackUStart ?? device?.rackUStart ?? 1}" class="w-full border rounded-lg p-1.5 text-xs dark:bg-slate-700 text-center font-mono"></div>
                                 <div><label for="dev-rack-height" class="block text-[10px] font-semibold text-slate-500 uppercase mb-1">U Height</label><input type="number" id="dev-rack-height" min="1" max="48" value="${currentHeight}" required class="w-full border rounded-lg p-1.5 text-xs dark:bg-slate-700 text-center font-mono"></div>
-                            </div><p class="phase14b-help">End U is calculated automatically from Start U + U Height - 1.</p>
+                            </div><p id="dev-rack-range-hint" class="phase14b-help" role="status">End U is calculated automatically from Start U + U Height - 1.</p>
                         </div>
                         </div>
                         <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-network-wired"></i>Network identity</div><div><div class="form-label">Primary IP <span class="text-slate-400 font-normal">(must belong to an existing subnet)</span></div><div class="phase14b-network-grid"><div><label for="dev-block" class="phase14b-ip-label">IP Address Block</label><select id="dev-block" data-action="device-block-change" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="">Select an IP Address Block...</option>${appState.subnets.filter(s => s.kind === 'container' && !s.parentId).map(b => `<option value="${escapeHtml(b.id)}" ${currentSubnet && phase11DeviceTopBlock(currentSubnet)?.id === b.id ? 'selected' : ''}>${escapeHtml(b.name || b.cidr)}</option>`).join('')}<option value="__unassigned__" ${currentSubnet && !phase11DeviceTopBlock(currentSubnet) ? 'selected' : ''}>Networks Without an IP Address Block</option></select><label for="dev-vlan" class="phase14b-ip-label block mt-3">VLAN</label><select id="dev-vlan" data-action="device-vlan-change" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="">Select a VLAN...</option></select><label for="dev-subnet" class="phase14b-ip-label block mt-3">Subnet <span class="required-mark">*</span></label><select id="dev-subnet" required data-action="device-subnet-change" data-initial-subnet="${escapeHtml(currentSubnet?.id || '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="">Select a subnet...</option></select><button type="button" data-action="create-subnet-from-device" class="mt-2 w-full px-3 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold transition border border-slate-200 dark:border-slate-600"><i class="fa-solid fa-diagram-project mr-1.5"></i>Create subnet in IPAM</button></div><div><label for="dev-ip" class="phase14b-ip-label">Device IP address <span class="required-mark">*</span></label><input type="text" id="dev-ip" required inputmode="decimal" autocomplete="off" value="${escapeHtml(draft?.primaryIp ?? device?.primaryIp ?? '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700 font-mono" placeholder="Select a subnet first"><label for="dev-ip-available" class="phase14b-ip-label block mt-3">Or choose an available IP</label><select id="dev-ip-available" data-action="device-ip-select" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700 font-mono"><option value="">Select next available IP...</option></select><p id="dev-ip-hint" class="phase14b-help"></p></div></div><label class="flex items-start gap-3 mt-4 p-3 rounded-xl border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/30 cursor-pointer">
@@ -5032,6 +5060,12 @@ function hierarchyValidateTypes(subnets) {
             }
             phase11DeviceCascade('initial');
             refreshDeviceIpOptions();
+            ['dev-rack-id', 'dev-rack-height', 'dev-rack-u'].forEach(id => {
+                const field = document.getElementById(id);
+                field?.addEventListener('change', updateDeviceRackLimits);
+                field?.addEventListener('input', updateDeviceRackLimits);
+            });
+            updateDeviceRackLimits();
             phase19BUpdateMountChoices();
             rememberModalForm();
             const deviceForm = document.querySelector('[data-device-form="true"]');
