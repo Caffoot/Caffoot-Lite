@@ -1,6 +1,6 @@
-# Caffoot Lite v1.1.0 — Release Candidate Notes
+# Caffoot Lite v1.1.0 — Release Notes
 
-**Status:** Pre-release candidate. Not published; requires final automated checks, manual backup/restore acceptance and owner approval.
+**Status:** Published 18 October 2026. Automated release checks and manual browser, offline and backup/restore acceptance completed. [Download v1.1.0](https://github.com/sdelnevo/Caffoot-Lite/releases/tag/v1.1.0).
 
 ## Highlights
 
@@ -27,9 +27,9 @@ Caffoot Lite remains a standalone, offline HTML application. The source tree use
 ## Final release gates
 
 - [ ] Run the complete local `npm.cmd run release` suite and inspect the generated package.
-- [ ] Confirm the v1.1.0 version appears consistently in About, package metadata and release assets.
+- [x] Confirm the v1.1.0 version appears consistently in About, package metadata and release assets.
 - [ ] Test JSON export, cancelled import, successful restore and browser persistence using disposable test inventory.
 - [ ] Verify the standalone HTML offline in Edge and review representative modal and IPAM workflows.
 - [ ] Review documentation and owner approval before merging or publishing.
 
-**Do not publish or merge solely on the basis of this draft.**
+**Release closeout:** v1.1.0 published; downloaded ZIP and extracted HTML hashes matched the original local release build.
