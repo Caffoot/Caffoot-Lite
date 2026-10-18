@@ -663,7 +663,8 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .dark .phase16c-theme-check{color:#93c5fd}
 </style>
 <style id="phase16c-about-style">
-.phase16c-about{max-width:none;width:100%}
+.phase16a-grid:has(> .phase16c-about){grid-template-columns:minmax(0,1fr)}
+.phase16c-about{max-width:none;width:100%;grid-column:1 / -1}
 .phase16c-about>p{min-height:0;margin:18px 0}
 .phase16c-about-brand{display:flex;align-items:center;gap:18px}
 .phase16c-about-brand img{width:76px;height:76px;border-radius:16px;object-fit:cover;flex-shrink:0}
