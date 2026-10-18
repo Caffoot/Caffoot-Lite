@@ -1,13 +1,13 @@
 # Caffoot Lite — Development Roadmap
 
 **Updated:** 18 October 2026  
-**Current milestone:** v1.1.1 (Settings, usability and documentation) has passed automated validation and owner browser acceptance; version 1.1.1 is prepared on the development branch, pending final versioned-build verification, review, merge and publication. Next: v1.1.2 (security hardening and deployment guidance), then v1.2.0.  
+**Current milestone:** v1.1.1 (Settings, usability and documentation) published on 18 October 2026 after automated validation, owner browser acceptance, PR #39 review and merge. Next planned milestone: v1.1.2 (security hardening and deployment guidance), then v1.2.0.  
 **Repository:** `caffoot/Caffoot-Lite` (public)  
 **Release policy:** Publish publicly only after manual verification, security/privacy review and owner approval.
 
-**Latest stable hotfix:** v1.1.0.1. The v1.1.0 release references below describe the preceding milestone; use the latest stable release link for current downloads.
+**Current stable release:** [v1.1.1](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.1.1). v1.1.0.1 is a historical hotfix.
 
-Caffoot Lite is an offline, standalone single-HTML network inventory and IP address management application. v1.1.0 is the published release as of 18 October 2026; v1.0.3 remains available as a historical release.
+Caffoot Lite is an offline, standalone single-HTML network inventory and IP address management application. v1.1.1 is the published stable release as of 18 October 2026; older versions remain available as historical releases.
 
 ## Documentation checks for every release
 
@@ -43,7 +43,7 @@ The v1.1.0 scope above is historical release planning, now delivered. Further ch
 
 ### v1.1.1 — Settings, usability and documentation
 
-**Status: In development on `feature/v1.1.1-settings-data-usability`; not yet merged or released**
+**Status: Released on 18 October 2026** — PR #39 merged; local browser acceptance, GitHub Actions and verified release packaging passed.
 
 - **Implemented on development branch, pending release validation:** consolidate duplicate backup controls while preserving prominent local-storage warnings, JSON export/restore, recovery snapshots and destructive-action safeguards.
 - **Implemented on development branch, pending release validation:** reorganise Settings & Data into Back Up & Restore, Maintenance & Safety and Advanced Recovery.
@@ -53,7 +53,7 @@ The v1.1.0 scope above is historical release planning, now delivered. Further ch
 - **Implemented on development branch, pending release validation:** add a dedicated offline Help & Guides tab with expandable reference topics, separate from About Caffoot Lite and complementary to the full online guides. Maintain these topics whenever related workflows change.
 - **Partially implemented on development branch:** improve manual update status presentation. Opt-in automatic release checks remain under consideration; do not silently replace the local HTML file or restore inventory.
 
-Scope remains subject to review before implementation. v1.1.1 comes before v1.1.2 and v1.2; no v1.2 commitments are moved into this milestone.
+The delivered v1.1.1 scope is complete. Remaining ideas stay subject to review and do not automatically move into v1.1.2 or v1.2.
 
 ### v1.1.2 — Security hardening and deployment guidance
 
