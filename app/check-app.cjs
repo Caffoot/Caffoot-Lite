@@ -42,7 +42,7 @@ assert(html.includes("form.dataset.subnetId"), 'Existing subnet gateways must no
 assert(html.includes('function phase11CPlan('), 'IPAM repair planner must remain');
 assert(html.includes('...phase19BSoftwareFields()'), 'computer software options must be rendered');
 assert(html.includes('...phase19BServerFunctionFields()'), 'server feature options must be rendered');
-assert(html.includes("if(!phase11BCommitDelete(before,'Subnet')) { selectedSubnetId=previousSelection; renderContent(); }"), 'failed subnet deletion must restore selected subnet');
+assert(/if\s*\(phase11BCommitDelete\(before,\s*isNetwork\s*\?\s*'Subnet & VLAN'\s*:\s*'IP Address Block'\)\)\s*closeModal\(\);\s*else\s*selectedSubnetId\s*=\s*previousSelection\s*;/.test(html), 'failed subnet deletion must restore selected subnet');
 assert(html.includes("if(!phase11BCommitDelete(before,'Rack')) { selectedRackId=previousSelection; renderContent(); }"), 'failed rack deletion must restore selected rack');
 assert(html.includes('function phase11CApplyRepair('), 'IPAM repair commit must remain');
 assert(!html.includes("case 'tab-diagnostics':"), 'diagnostics action must be removed');
