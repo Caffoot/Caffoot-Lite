@@ -38,3 +38,17 @@ The owner confirmed successful automated release, manual browser/offline and bac
 - HTML: `0D5901373F50A9081AF6211B1D9BA0ED9832374857191983DBE3ACB52C62111C`
 
 Documentation closeout and branch deletion remain subject to review and completion.
+
+## v1.1.1 closeout record — 18 October 2026
+
+Published release: https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.1.1
+
+- [x] Owner completed nine browser acceptance checks, including offline operation and disposable backup/restore.
+- [x] Automated regression suite, standalone build and versioned ZIP packaging passed.
+- [x] GitHub Actions validation passed after updating the version check to follow package metadata.
+- [x] PR #39 reviewed and merged into `main` with owner approval.
+- [x] Public stable v1.1.1 release verified with ZIP, standalone HTML and SHA256SUMS assets.
+- [ ] Compare public asset SHA256 hashes with the original locally generated artifacts; record results when checked.
+- [ ] Merge the separate v1.1.1 documentation closeout PR after review.
+
+This record is historical; the reusable checklist above remains unchecked for the next release.
