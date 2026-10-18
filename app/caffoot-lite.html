@@ -3923,8 +3923,16 @@ function hierarchyValidateTypes(subnets) {
                 return;
             }
             const deps = phase11BSubnetDependencies(subnet);
-            if (deps.devices.length || deps.allocations.length) {
-                showToast(`Cannot delete ${subnet.name}: ${deps.devices.length} device(s) and ${deps.allocations.length} IPAM allocation(s) depend on it. Reassign or clear them first. No records were deleted.`, 'error');
+            // Only device-owned primary allocations can be detached automatically.
+            // Independent reservations and ambiguous IPAM links must be resolved manually.
+            const ownedIps = new Set(deps.devices.map(d => d.primaryIp));
+            const unsafeIps = deps.allocations.filter(ip => {
+                const a = appState.ipAllocations[ip];
+                const owner = deps.devices.find(d => d.primaryIp === ip);
+                return !owner || a?.deviceId !== owner.id || Boolean(a?.reservedForDeviceId);
+            });
+            if (unsafeIps.length || deps.devices.some(d => !appState.ipAllocations[d.primaryIp] || !ownedIps.has(d.primaryIp))) {
+                showToast(`Cannot delete ${subnet.name}: ${unsafeIps.length} independent or ambiguous IPAM allocation(s) require manual reassignment. No records were deleted.`, 'error');
                 return;
             }
             const isNetwork = !subnet.kind || subnet.kind === 'network';
@@ -3954,8 +3962,16 @@ function hierarchyValidateTypes(subnets) {
             }
             const block = appState.subnets.find(x => x.id === subnet.parentId);
             const message = `Are you sure you want to permanently delete ${isNetwork ? 'this subnet and its associated VLAN' : 'this IP Address Block'}?\n\nName: ${subnet.name}\nCIDR: ${subnet.cidr}\n${isNetwork ? `VLAN: ${subnet.vlan}\n` : ''}IP Address Block: ${block?.name || 'Unassigned'}\n\nThis cannot be undone.`;
-            if (!confirm(message)) return;
+            const deviceNotice = deps.devices.length
+                ? `\n\n${deps.devices.length} device(s) will be moved to Unassigned Devices. Their primary IP allocations will be released; all other device details remain.\n\nAffected devices:\n${deps.devices.map(d => `- ${d.name} (${d.primaryIp})`).join('\\n')}`
+                : '';
+            if (!confirm(message + deviceNotice)) return;
             const before = JSON.stringify(appState);
+            for (const device of deps.devices) {
+                // Keep the last address as informational metadata, not an active allocation.
+                device.previousPrimaryIp = device.primaryIp;
+                setDevicePrimaryIp(device, '');
+            }
             const previousSelection = selectedSubnetId;
             appState.subnets = appState.subnets.filter(x => x.id !== subId);
             if (linked.length) appState.vlans = appState.vlans.filter(v => v.id !== linked[0].id);
