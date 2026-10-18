@@ -72,6 +72,8 @@
         .form-error.is-visible { display:block; }
         .form-actions { display:flex; justify-content:flex-end; align-items:center; gap:.65rem; padding-top:1rem; margin-top:.25rem; border-top:1px solid rgb(226 232 240); }
         .dark .form-actions { border-color:rgb(51 65 85); }
+        .form-actions > [data-action="delete-subnet"] { margin-right:auto; }
+        @media (max-width:640px) { .form-actions > [data-action="delete-subnet"] { margin-right:0; } }
         .form-actions button { min-height:2.35rem; }
         @media (max-width:640px) { .form-actions { flex-direction:column-reverse; align-items:stretch; } .form-actions button { width:100%; } }
 
@@ -812,6 +814,12 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                     <i class="fa-solid fa-diagram-project w-5 text-center"></i>
                     <span>IPAM</span>
                 </button>
+                <div id="ipam-sidebar-actions" class="hidden ml-6 pl-3 border-l border-slate-200 dark:border-slate-700 space-y-1" aria-label="IPAM Actions">
+                    <button type="button" data-action="sidebar-ipam-overview" class="w-full text-left px-3 py-2 rounded-lg text-xs text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700">Overview</button>
+                    <button type="button" data-action="sidebar-ipam-addresses" class="w-full text-left px-3 py-2 rounded-lg text-xs text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700">IP Addresses</button>
+                    <button type="button" data-action="sidebar-ipam-manage" class="w-full text-left px-3 py-2 rounded-lg text-xs text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700">Manage Subnets</button>
+                    <button type="button" data-action="open-subnet-modal" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-slate-700"><i class="fa-solid fa-plus mr-2"></i>Add Subnet</button>
+                </div>
                 <button data-action="tab-devices" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700/50 hover:text-indigo-600 dark:hover:text-indigo-400" data-tab="devices">
                     <i class="fa-solid fa-server w-5 text-center"></i>
                     <span>Device Inventory</span>
@@ -870,7 +878,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             racks: [],
             devices: [],
             rackAccessories: [],
-            deviceTypes: ['Server - Physical', 'Server - Virtual', 'Desktop', 'Laptop', 'Tablet', 'Switch', 'Router', 'Firewall', 'NAS', 'Access Point', 'PDU', 'UPS', 'Unknown'],
+            deviceTypes: ['Server - Physical', 'Server - Virtual', 'Desktop', 'Laptop', 'Tablet', 'Switch', 'Layer 3 Switch', 'Router', 'Firewall', 'NAS', 'Access Point', 'PDU', 'UPS', 'Unknown'],
             deviceTypeGraphics: {},
             deviceLocations: ['Racked', 'Unknown'],
             ipAllocations: {},
@@ -925,6 +933,162 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
         }
         function isValidCidr24(cidr) { return !!phase12Cidr(cidr); }
 
+// Pure IPv4 hierarchy validation. No DOM, storage, or network dependencies.
+// This file is the testable foundation for the upcoming app integration.
+function hierarchyIpNumber(ip) {
+  const parts=String(ip).split('.');
+  if(parts.length!==4 || !parts.every(p=>/^\d{1,3}$/.test(p)&&Number(p)<=255)) return null;
+  return parts.reduce((n,p)=>n*256+Number(p),0);
+}
+function hierarchyIpString(n) { return [24,16,8,0].map(k=>Math.floor(n/2**k)%256).join('.'); }
+function hierarchyParseCidr(value,{minPrefix=0,maxPrefix=32}={}) {
+  const m=/^([^/]+)\/(\d{1,2})$/.exec(String(value));
+  if(!m) return null;
+  const raw=hierarchyIpNumber(m[1]),prefix=Number(m[2]);
+  if(raw===null||prefix<minPrefix||prefix>maxPrefix) return null;
+  const size=2**(32-prefix),start=Math.floor(raw/size)*size;
+  return {prefix,start,end:start+size-1,size,aligned:raw===start,canonical:hierarchyIpString(start)+'/'+prefix};
+}
+function hierarchyValidate(subnets) {
+  const errors=[];
+  if(!Array.isArray(subnets)) return ['Subnets must be an array.'];
+  const ids=new Map(),cidrs=new Set(),ranges=new Map();
+  for(const s of subnets) {
+    if(!s||typeof s!=='object'||Array.isArray(s)||typeof s.id!=='string'||!s.id.trim()) {errors.push('Subnet ID is missing.');continue;}
+    if(ids.has(s.id)) { errors.push('Duplicate subnet ID: '+s.id); continue; }
+    ids.set(s.id,s);
+    const kind=s.kind===undefined?'network':s.kind;
+    if(kind!=='network'&&kind!=='container'&&kind!=='reserved'&&kind!=='loopback') { errors.push('Invalid subnet kind: '+s.id); continue; }
+    if(s.parentId!==undefined&&s.parentId!==null&&s.parentId!==''&&typeof s.parentId!=='string') errors.push('Invalid parent ID for '+s.id);
+    const range=hierarchyParseCidr(s.cidr,{minPrefix:kind==='container'||kind==='reserved'?0:kind==='loopback'?32:1,maxPrefix:kind==='loopback'?32:32});
+    if(!range) errors.push('Invalid CIDR for '+s.id+': '+s.cidr);
+    else if(!range.aligned) errors.push('Misaligned CIDR '+s.cidr+'; use '+range.canonical);
+    else {
+      ranges.set(s.id,range);
+      if(cidrs.has(range.canonical)) errors.push('Duplicate CIDR: '+range.canonical);
+      cidrs.add(range.canonical);
+    }
+  }
+  for(const s of subnets) {
+    if(!s||!s.id||!ranges.has(s.id)) continue;
+    const parentId=typeof s.parentId==='string'?s.parentId:null;
+    if(!parentId) continue;
+    if(parentId===s.id) {errors.push('Subnet cannot parent itself: '+s.id);continue;}
+    const p=ids.get(parentId);
+    if(!p) {errors.push('Missing parent '+parentId+' for '+s.id);continue;}
+    if(p.kind!=='container') errors.push('Parent must be a container: '+parentId);
+    const child=ranges.get(s.id),parent=ranges.get(parentId);
+    if(parent&&!(parent.start<=child.start&&child.end<=parent.end&&child.size<parent.size))
+      errors.push('Child '+s.id+' is not strictly inside parent '+parentId);
+    const seen=new Set([s.id]);
+    let cursor=p;
+    while(cursor) {
+      if(seen.has(cursor.id)) {errors.push('Parent cycle involving '+s.id);break;}
+      seen.add(cursor.id);
+      cursor=cursor.parentId?ids.get(cursor.parentId):null;
+    }
+  }
+  // Every intersecting pair must have an explicit ancestor relationship.
+  function ancestor(ancestorId,childId) {
+    const seen=new Set();
+    let s=ids.get(childId);
+    while(s&&s.parentId&&!seen.has(s.id)) {
+      seen.add(s.id);
+      if(s.parentId===ancestorId) return true;
+      s=ids.get(s.parentId);
+    }
+    return false;
+  }
+  for(let i=0;i<subnets.length;i++) for(let j=i+1;j<subnets.length;j++) {
+    const a=subnets[i],b=subnets[j];
+    if(!a||!b||typeof a!=='object'||typeof b!=='object'||a.id===b.id) continue;
+    const x=ranges.get(a.id),y=ranges.get(b.id);
+    if(x&&y&&x.start<=y.end&&y.start<=x.end&&!ancestor(a.id,b.id)&&!ancestor(b.id,a.id))
+      errors.push('Overlapping unrelated subnets: '+a.cidr+' and '+b.cidr);
+  }
+  return errors;
+}
+
+function hierarchyValidateTypes(subnets) {
+  if(!Array.isArray(subnets)) return ['Subnets must be an array.'];
+  const errors=[];
+  for(const s of subnets) {
+    if(!s||typeof s!=='object'||Array.isArray(s)) {errors.push('Invalid subnet record.');continue;}
+    const kind=s.kind===undefined?'network':s.kind;
+    if(!['network','container','reserved','loopback'].includes(kind)) {
+      errors.push('Invalid subnet kind: '+String(s.id));continue;
+    }
+    const range=hierarchyParseCidr(s.cidr);
+    if(!range||!range.aligned) {errors.push('Invalid subnet CIDR: '+String(s.cidr));continue;}
+    if(kind==='network') {
+      if(range.prefix>30||range.prefix<1) errors.push('Network requires a /1–/30 CIDR: '+s.cidr);
+      const vlan=Number(s.vlan);
+      if(s.vlan===null||s.vlan===undefined||s.vlan===''||!Number.isInteger(vlan)||vlan<1||vlan>4094)
+        errors.push('Network requires VLAN 1–4094: '+String(s.id));
+      const gateway=hierarchyIpNumber(s.gateway);
+      if(gateway===null||gateway<=range.start||gateway>=range.end)
+        errors.push('Network requires a usable gateway: '+String(s.id));
+    } else {
+      if(kind==='loopback'&&range.prefix!==32) errors.push('Loopback requires /32: '+String(s.id));
+      if(s.gateway!==undefined&&s.gateway!==null&&s.gateway!=='')
+        errors.push(kind+' must not have a gateway: '+String(s.id));
+      if(s.vlan!==undefined&&s.vlan!==null&&s.vlan!=='')
+        errors.push(kind+' must not have a VLAN: '+String(s.id));
+    }
+  }
+  return errors;
+}
+        // Read-only ownership assessment: never migrate records during rendering.
+        function previewLegacyVlanOwnershipInApp(state = appState) {
+            return state.vlans.filter(v => v && !v.parentId).map(v => {
+                const matches = state.subnets.filter(sub =>
+                    sub && (!sub.kind || sub.kind === 'network') &&
+                    Number(sub.vlan) === Number(v.vlanId));
+                return {
+                    id: v.id,
+                    vlanId: v.vlanId,
+                    status: matches.length === 1 ? 'unique' : matches.length ? 'ambiguous' : 'orphaned',
+                    parentId: matches.length === 1 ? (matches[0].parentId || null) : null
+                };
+            });
+        }
+
+        function reconcileLegacyVlanOwnership() {
+            const preview = previewLegacyVlanOwnershipInApp();
+            const candidates = preview.filter(item => item.status === 'unique' && item.parentId);
+            if (!candidates.length) {
+                showToast('No uniquely matched legacy VLAN records need reconciliation.');
+                return;
+            }
+            if (preview.some(item => item.status !== 'unique')) {
+                showToast('Reconciliation blocked: ambiguous or orphaned VLAN records require review.', 'error');
+                return;
+            }
+            const candidateIds = new Set(candidates.map(item => item.id));
+            const proposed = appState.vlans.map(v => candidateIds.has(v.id)
+                ? { ...v, parentId: candidates.find(item => item.id === v.id).parentId }
+                : { ...v });
+            const seen = new Set();
+            for (const v of proposed) {
+                const key = (v.parentId || '__unassigned__') + ':' + String(v.vlanId);
+                if (seen.has(key)) {
+                    showToast('Reconciliation blocked: duplicate VLAN numbers within a domain.', 'error');
+                    return;
+                }
+                seen.add(key);
+            }
+            if (!window.confirm('Assign IP Address Block ownership to ' + candidates.length +
+                ' uniquely matched legacy VLAN records? Unassigned records will stay unchanged. Export a backup first.')) return;
+            const before = JSON.stringify(appState);
+            appState.vlans = proposed;
+            if (!saveState()) {
+                appState = JSON.parse(before);
+                showToast('Reconciliation was not saved; inventory restored.', 'error');
+                return;
+            }
+            renderContent();
+        }
+
         function normaliseState(raw) {
             if (!isPlainObject(raw)) throw new Error('Imported data must be a JSON object.');
 
@@ -956,7 +1120,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             // Migrate older saves which did not have managed type/location lists.
             const discoveredTypes = state.devices.map(d => String(d.type || '').trim()).filter(Boolean);
             const discoveredLocations = state.devices.map(d => String(d.location || '').trim()).filter(Boolean);
-            state.deviceTypes = [...new Set([...state.deviceTypes, ...discoveredTypes])];
+            state.deviceTypes = [...new Set([...state.deviceTypes, ...discoveredTypes, 'Layer 3 Switch'])];
             state.deviceLocations = [...new Set([...state.deviceLocations, ...discoveredLocations, 'Unknown'])].filter(location => location !== 'Blank');
 
             // Phase 5 migration: Blank is no longer a valid managed location.
@@ -965,6 +1129,9 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             });
 
             for (const subnet of state.subnets) {
+                // Hierarchical address blocks are validated by the shared hierarchy validators below.
+                // Do not apply legacy /23–/30, VLAN and gateway requirements to them.
+                if (isPlainObject(subnet) && subnet.kind && subnet.kind !== 'network') continue;
                 if (!isPlainObject(subnet) || !subnet.id || !subnet.name || !isValidCidr24(subnet.cidr)) {
                     throw new Error('Every subnet must have an id, name and valid /23–/30 CIDR.');
                 }
@@ -979,15 +1146,11 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 }
             }
 
-            for(let i=0;i<state.subnets.length;i++) for(let j=i+1;j<state.subnets.length;j++) {
-                if(phase12Overlap(state.subnets[i].cidr,state.subnets[j].cidr))
-                    throw new Error(`Overlapping subnets: ${state.subnets[i].cidr} and ${state.subnets[j].cidr}.`);
-            }
-            const subnetIds = new Set();
-            for (const subnet of state.subnets) {
-                if (subnetIds.has(subnet.id)) throw new Error(`Duplicate subnet ID: ${subnet.id}.`);
-                subnetIds.add(subnet.id);
-            }
+            // Shared hierarchy rules also preserve the old flat-subnet overlap checks.
+            const hierarchyErrors = hierarchyValidate(state.subnets);
+            if (hierarchyErrors.length) throw new Error(hierarchyErrors[0]);
+            const typeErrors = hierarchyValidateTypes(state.subnets);
+            if (typeErrors.length) throw new Error(typeErrors[0]);
 
             const vlanIds = new Set();
             const vlanNumbers = new Set();
@@ -996,9 +1159,11 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 const vlanNumber = Number(vlan.vlanId);
                 if (!Number.isInteger(vlanNumber) || vlanNumber < 1 || vlanNumber > 4094) throw new Error(`Invalid VLAN ID: ${vlan.vlanId}.`);
                 if (vlanIds.has(vlan.id)) throw new Error(`Duplicate VLAN ID: ${vlan.id}.`);
-                if (vlanNumbers.has(vlanNumber)) throw new Error(`Duplicate VLAN number: ${vlanNumber}.`);
+                const vlanDomain = vlan.parentId || '__unassigned__';
+                const vlanKey = JSON.stringify([vlanDomain, vlanNumber]);
+                if (vlanNumbers.has(vlanKey)) throw new Error(`Duplicate VLAN number ${vlanNumber} within the same IP Address Block.`);
                 vlanIds.add(vlan.id);
-                vlanNumbers.add(vlanNumber);
+                vlanNumbers.add(vlanKey);
             }
 
             const deviceIds = new Set();
@@ -1089,6 +1254,9 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 
         function validateApplicationState() {
             const errors = [];
+            // Apply the same hierarchy rules during live integrity checks as on import.
+            errors.push(...hierarchyValidate(appState.subnets));
+            errors.push(...hierarchyValidateTypes(appState.subnets));
             const subnetIds = new Set();
             const vlanNumbers = new Set();
             const deviceIds = new Set();
@@ -1097,11 +1265,16 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             appState.subnets.forEach(subnet => {
                 if (!subnet.id || subnetIds.has(subnet.id)) errors.push(`Duplicate or missing subnet ID: ${subnet.id || '(missing)'}`);
                 subnetIds.add(subnet.id);
+                // Containers, reservations and loopbacks have no VLAN/gateway.
+                // Their CIDR and type rules are checked by hierarchyValidateTypes above.
+                if (subnet.kind && subnet.kind !== 'network') return;
                 if (!isValidCidr24(subnet.cidr)) errors.push(`Invalid subnet CIDR: ${subnet.cidr}`);
                 if (!isValidIpv4(subnet.gateway) || !ipBelongsToSubnet(subnet.gateway, subnet.cidr)) errors.push(`Invalid gateway for subnet ${subnet.name || subnet.cidr}.`);
                 const vlan = Number(subnet.vlan);
-                if (!Number.isInteger(vlan) || vlan < 1 || vlan > 4094 || vlanNumbers.has(vlan)) errors.push(`Invalid or duplicate VLAN ${subnet.vlan}.`);
-                vlanNumbers.add(vlan);
+                const domain = subnet.parentId || '__unassigned__';
+                const vlanKey = JSON.stringify([domain, vlan]);
+                if (!Number.isInteger(vlan) || vlan < 1 || vlan > 4094 || vlanNumbers.has(vlanKey)) errors.push(`Invalid or duplicate VLAN ${subnet.vlan} in this IP Address Block.`);
+                vlanNumbers.add(vlanKey);
             });
 
             appState.devices.forEach(device => {
@@ -1362,6 +1535,10 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             // Phase 17C: refuse to take an IPAM address owned by a different device.
             // Validate before releasing the old address so a failed edit leaves it intact.
             if (trimmedIp) {
+                const gatewaySubnet = phase10GatewaySubnet(trimmedIp);
+                if (gatewaySubnet && trimmedIp !== oldIp && !['Firewall', 'Router', 'Layer 3 Switch'].includes(device.type)) {
+                    throw new Error(`Gateway ${trimmedIp} may only be assigned to a Firewall, Router or Layer 3 Switch.`);
+                }
                 if (!appState.subnets.some(subnet => ipBelongsToSubnet(trimmedIp, subnet.cidr))) {
                     throw new Error(`IP address ${trimmedIp} is not in a configured subnet.`);
                 }
@@ -1509,6 +1686,50 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             error.classList.add('is-visible');
         }, true);
 
+        // Read-only Overview search filters cards, including their child network identifiers.
+        document.addEventListener('input', function(event) {
+            if (event.target?.id !== 'ipam-overview-search') return;
+            const query = event.target.value.trim().toLowerCase();
+            let count = 0;
+            document.querySelectorAll('[data-ipam-network-group]').forEach(card => {
+                const visible = !query || (card.dataset.search || '').includes(query);
+                card.hidden = !visible;
+                card.classList.toggle('hidden', !visible);
+                if (visible) count++;
+            });
+            const status = document.getElementById('ipam-overview-search-status');
+            if (status) status.textContent = count
+                ? 'Showing ' + count + ' matching ' + (count === 1 ? 'card.' : 'cards.')
+                : 'No matching IP Address Blocks or networks found.';
+        });
+        document.addEventListener('input', function(event) {
+            if (event.target?.id !== 'ipam-overview-search') return;
+            const query = event.target.value.trim().toLowerCase();
+            const groups = document.querySelectorAll('[data-ipam-network-group]');
+            let matches = 0, visibleGroups = 0;
+            groups.forEach(group => {
+                const groupMatch = !!query && (group.dataset.search || '').includes(query);
+                let count = 0;
+                group.querySelectorAll('[data-ipam-network-row]').forEach(row => {
+                    const visible = !query || groupMatch || (row.dataset.search || '').includes(query);
+                    row.hidden = !visible;
+                    row.classList.toggle('hidden', !visible);
+                    if (visible) count++;
+                });
+                const showGroup = count > 0;
+                group.hidden = !showGroup;
+                group.classList.toggle('hidden', !showGroup);
+                if (query && showGroup) group.open = true;
+                if (!query) group.open = false;
+                const counter = group.querySelector('[data-ipam-group-count]');
+                if (counter) counter.textContent = count;
+                if (showGroup) {matches += count;visibleGroups++;}
+            });
+            const status = document.getElementById('ipam-overview-search-status');
+            if (status) status.textContent = matches
+                ? 'Showing ' + matches + ' matching networks in ' + visibleGroups + ' groups.'
+                : 'No matching networks found.';
+        });
         document.addEventListener('input', function(event) {
             const field = event.target;
             const form = field.closest && field.closest('#modal-container form');
@@ -1518,6 +1739,19 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 
         function switchTab(tabId) {
             currentTab = tabId;
+            const ipamSidebarActions = document.getElementById('ipam-sidebar-actions');
+            if (ipamSidebarActions) ipamSidebarActions.classList.toggle('hidden', tabId !== 'ipam');
+            document.querySelectorAll('#ipam-sidebar-actions [data-action^="sidebar-ipam-"]').forEach(btn => {
+                const activeAction = 'sidebar-ipam-' + (phase12CIpamTab === 'addresses' ? 'addresses' : phase12CIpamTab === 'manage' ? 'manage' : 'overview');
+                const selected = tabId === 'ipam' && btn.dataset.action === activeAction;
+                btn.classList.toggle('bg-indigo-50', selected);
+                btn.classList.toggle('dark:bg-slate-700', selected);
+                btn.classList.toggle('text-indigo-700', selected);
+                btn.classList.toggle('dark:text-indigo-300', selected);
+                btn.classList.toggle('font-semibold', selected);
+                if (selected) btn.setAttribute('aria-current', 'page');
+                else btn.removeAttribute('aria-current');
+            });
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 if(btn.dataset.tab === tabId) {
                     btn.classList.add('bg-indigo-50', 'dark:bg-slate-700/60', 'text-indigo-600', 'dark:text-indigo-400');
@@ -2510,6 +2744,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
         let deviceSearchTerm = '';
         let deviceTypeFilter = '';
         let deviceStatusFilter = '';
+        let deviceAssignmentFilter = '';
         let deviceLocationFilter = '';
         let deviceMountFilter = '';
         let deviceSort = 'name-asc';
@@ -2520,6 +2755,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             const filtered = appState.devices.filter(d =>
                 (!deviceTypeFilter || d.type === deviceTypeFilter) &&
                 (!deviceStatusFilter || (d.status || 'Active') === deviceStatusFilter) &&
+                (!deviceAssignmentFilter || (deviceAssignmentFilter === 'assigned' ? Boolean(d.primaryIp && appState.subnets.some(n => (!n.kind || n.kind === 'network') && ipBelongsToSubnet(d.primaryIp,n.cidr))) : !d.primaryIp || !appState.subnets.some(n => (!n.kind || n.kind === 'network') && ipBelongsToSubnet(d.primaryIp,n.cidr)))) &&
                 (!deviceLocationFilter || (d.location || 'Unknown') === deviceLocationFilter) &&
                 (!deviceMountFilter || (deviceMountFilter === 'racked' ? validRackIds.has(String(d.rackId)) : !validRackIds.has(String(d.rackId)))) &&
                 (!term || [d.name, d.primaryIp, d.type, d.location, d.manufacturer, d.model, d.serialNumber].some(v => String(v || '').toLowerCase().includes(term)))
@@ -2552,6 +2788,13 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                             <input id="device-search" type="search" placeholder="Name, IP, model, serial or location" value="${escapeHtml(deviceSearchTerm)}" class="mt-1 w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500" />
                         </label>
                         <div class="phase14h-filter-row flex flex-wrap gap-3 items-end">
+                            <label class="text-xs font-semibold text-slate-700 dark:text-slate-200">Network assignment
+                                <select id="device-assignment-filter" class="mt-1 block min-w-36 rounded-xl bg-white dark:bg-slate-800 border border-slate-400 dark:border-slate-500 text-slate-900 dark:text-white">
+                                    <option value="" ${deviceAssignmentFilter===''?'selected':''}>All Devices</option>
+                                    <option value="assigned" ${deviceAssignmentFilter==='assigned'?'selected':''}>Assigned</option>
+                                    <option value="unassigned" ${deviceAssignmentFilter==='unassigned'?'selected':''}>Unassigned</option>
+                                </select>
+                            </label>
                             <label class="text-xs font-semibold text-slate-700 dark:text-slate-200">Device type
                                 <select id="device-type-filter" class="mt-1 block min-w-36 rounded-xl bg-white dark:bg-slate-800 border border-slate-400 dark:border-slate-500 text-slate-900 dark:text-white">
                                     <option value="">All types</option>
@@ -2594,7 +2837,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                         </div>
                     </div>
                     <div class="phase14g-results" aria-live="polite"><span>Showing <strong>${getVisibleDevices().length}</strong> of ${appState.devices.length} devices</span>
-                        ${(deviceSearchTerm || deviceTypeFilter || deviceStatusFilter || deviceLocationFilter || deviceMountFilter) ? `<button type="button" data-action="phase14g-clear-filters" class="phase14g-reset"><i class="fa-solid fa-xmark" aria-hidden="true"></i> Clear filters</button>` : ''}
+                        ${(deviceSearchTerm || deviceTypeFilter || deviceStatusFilter || deviceLocationFilter || deviceMountFilter || deviceAssignmentFilter) ? `<button type="button" data-action="phase14g-clear-filters" class="phase14g-reset"><i class="fa-solid fa-xmark" aria-hidden="true"></i> Clear filters</button>` : ''}
                     </div>
                     <div class="bg-white dark:bg-slate-800 rounded-2xl border shadow-sm phase14f-table-wrap">
                         <table class="w-full min-w-[850px] text-left border-collapse">
@@ -2779,6 +3022,10 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
         let phase12CIpamTab = 'overview';
         // Phase 10A: operate on the existing /24 IPAM address grid without
         // assuming that every stored subnet is a /24.
+        function phase10GatewaySubnet(ip) {
+            return appState.subnets.find(s => s.kind !== 'container' && s.gateway === ip && phase12Usable(ip, s.cidr)) || null;
+        }
+
         function phase10SubnetSummary(subnet) {
             const range=phase12Cidr(subnet?.cidr);
             if(!range) return {supported:false,cidr:subnet?.cidr||'',capacity:0,assigned:0,reserved:0,available:0,next:null,utilisation:0,duplicates:[]};
@@ -2794,14 +3041,119 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 const status=alloc?.status||(owners.has(ip)?'Assigned':'Available');
                 if(status==='Reserved') reserved++;
                 else if(status==='Assigned') assigned++;
-                else if(next===null && status==='Available' && !owners.has(ip) && ip!==subnet.gateway) next=ip;
+                else if(ip===subnet.gateway) reserved++; // Protected without writing an allocation record.
+                else if(next===null && status==='Available' && !owners.has(ip)) next=ip;
             }
             return {supported:true,cidr:subnet.cidr,capacity:range.capacity,assigned,reserved,
                 available:range.capacity-assigned-reserved,next,
                 utilisation:Math.round((assigned+reserved)/range.capacity*100),duplicates};
         }
+
+        let ipamManageBlockFilter = null; // null = all, empty string = unassigned
+
+        // v1.1: read-only subnet hierarchy, with native keyboard-accessible disclosure.
+        function renderSubnetHierarchyPreview() {
+            const subnets = appState.subnets || [];
+            const ids = new Set(subnets.map(s => String(s.id)));
+            const byParent = new Map();
+            for (const subnet of subnets) {
+                const parent = subnet.parentId && ids.has(String(subnet.parentId)) ? String(subnet.parentId) : '';
+                if (!byParent.has(parent)) byParent.set(parent, []);
+                byParent.get(parent).push(subnet);
+            }
+            const visited = new Set();
+            function nodes(parent, ancestry = new Set()) {
+                return (byParent.get(parent) || []).map(subnet => {
+                    const id = String(subnet.id);
+                    if (ancestry.has(id) || visited.has(id)) return '';
+                    visited.add(id);
+                    const next = new Set(ancestry);
+                    next.add(id);
+                    const children = nodes(id, next);
+                    const isContainer = subnet.kind === 'container';
+                    const name = escapeHtml(String(subnet.name || 'Unnamed Subnet'));
+                    const cidr = escapeHtml(String(subnet.cidr || ''));
+                    const type = isContainer ? 'IP Address Block' : subnet.kind === 'reserved' ? 'Reserved Range' : subnet.kind === 'loopback' ? 'Loopback /32' : 'Network / VLAN';
+                    const details = '<span class="ml-2 text-xs font-normal text-slate-500 dark:text-slate-400">' + type + (isContainer ? '' : ' · VLAN ' + escapeHtml(String(subnet.vlan ?? '—'))) + '</span>';
+                    const editAction = '<button type="button" data-action="edit-subnet" data-id="' + escapeHtml(id) + '" class="inline-flex align-middle items-center ml-3 px-2 py-1 text-xs font-semibold text-indigo-700 dark:text-indigo-300 hover:underline" aria-label="Edit ' + name + '"><i class="fa-solid fa-pen mr-1"></i>Edit</button>';
+                    if (children || isContainer) {
+                        return '<details ' + (isContainer ? 'data-ipam-hierarchy-block="' + escapeHtml(id) + '" ' : '') + 'open class="ml-3 my-2 pl-3 border-l-2 border-indigo-200 dark:border-indigo-800"><summary class="cursor-pointer py-2 text-sm font-semibold text-slate-900 dark:text-white"><span class="inline"><i class="fa-solid fa-folder text-indigo-500 mr-2"></i>' + cidr + ' — ' + name + details + '</span>' + editAction + '</summary>' + (children || '<p class="text-xs text-slate-500 dark:text-slate-400 ml-5 py-2">No Child Subnets</p>') + '</details>';
+                    }
+                    return '<div class="ml-3 my-1 pl-3 py-2 border-l-2 border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white"><i class="fa-solid fa-network-wired text-indigo-500 mr-2"></i>' + cidr + ' — ' + name + details + editAction + '</div>';
+                }).join('');
+            }
+            const roots = nodes('');
+            const orphaned = subnets.filter(subnet => !visited.has(String(subnet.id)));
+            return '<section class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-3" aria-label="Subnet Hierarchy"><h3 class="font-bold text-base text-slate-900 dark:text-white">Subnet Hierarchy</h3><p class="text-xs text-slate-500 dark:text-slate-400">Expand IP Address Blocks to view child networks. Use Edit to rename or update a subnet.</p>' + (roots || '<p class="text-sm text-slate-500">No Subnets Yet</p>') + (orphaned.length ? '<p class="text-xs text-rose-600">Some subnet relationships could not be displayed.</p>' : '') + '</section>';
+        }
+
         function renderIpamHTML() {
-            const subnet = appState.subnets.find(s => s.id === selectedSubnetId) || appState.subnets[0];
+            // v1.1 IPAM Overview stage 1: inventory-wide, read-only totals.
+            // Return before selected-network rendering so Overview never depends on its dropdown.
+            if (phase12CIpamTab === 'overview') {
+                const blocks = appState.subnets.filter(s => s.kind === 'container');
+                const networks = appState.subnets.filter(s => (s.kind || 'network') === 'network');
+                let capacity = 0, available = 0;
+                for (const network of networks) {
+                    const summary = phase10SubnetSummary(network);
+                    if (!summary.supported) continue;
+                    capacity += summary.capacity;
+                    available += summary.available;
+                }
+                const overviewStats = [
+                    ['IP Address Blocks', blocks.length],
+                    ['Networks', networks.length],
+                    ['Usable Addresses', capacity],
+                    ['Available Addresses', available]
+                ];
+                // Native disclosure elements keep large inventories compact and keyboard-accessible.
+                const groups = blocks.map(block => ({block, networks: networks.filter(n => String(n.parentId || '') === String(block.id))}));
+                const ungrouped = networks.filter(n => !blocks.some(b => String(b.id) === String(n.parentId || '')));
+                if (ungrouped.length) groups.push({block:null, networks:ungrouped});
+                const networkGroups = groups.map(({block,networks:list}) => {
+                    const title = block ? block.name || block.cidr : 'Unassigned Networks';
+                    const cidr = block ? block.cidr : 'No parent IP Address Block';
+                    const search = [title,cidr,...list.flatMap(n => [n.name,n.cidr,n.vlan,n.description])].join(' ').toLowerCase();
+                    return `<button type="button" data-action="ipam-open-block" data-id="${escapeHtml(block?.id || '')}" data-ipam-network-group data-search="${escapeHtml(search)}" class="text-left w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700/30 p-4 min-w-0 space-y-2 hover:border-indigo-400 hover:bg-indigo-50 dark:hover:bg-slate-700/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500 transition-colors">
+                        <div class="flex items-start gap-3">
+                            <i class="fa-solid fa-layer-group text-indigo-600 dark:text-indigo-400 mt-1" aria-hidden="true"></i>
+                            <div class="min-w-0 flex-1">
+                                <h5 class="font-semibold text-slate-900 dark:text-white break-words">${escapeHtml(title)}</h5>
+                                <p class="text-sm text-slate-600 dark:text-slate-300 break-words mt-1">${escapeHtml(cidr)}</p>
+                            </div>
+                        </div>
+                        <p class="text-xs font-semibold text-slate-600 dark:text-slate-300">${list.length} ${list.length === 1 ? 'network' : 'networks'}</p>
+                        <span class="inline-flex items-center gap-2 text-xs font-semibold text-indigo-700 dark:text-indigo-300">View in Manage Subnets <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+                    </button>`;
+                }).join('');
+                return `<div class="space-y-5" data-ipam-panel="overview">
+                    <section class="space-y-3" aria-labelledby="ipam-inventory-overview-heading">
+                        <div>
+                            <h3 id="ipam-inventory-overview-heading" class="text-lg font-bold text-slate-900 dark:text-white">IPAM Overview</h3>
+                            <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Inventory-wide totals across all Network / VLAN subnets. Parent IP Address Blocks are counted separately and do not add host capacity.</p>
+                        </div>
+                        <dl class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                            ${overviewStats.map(([label,value]) => `<div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5">
+                                <dt class="text-sm font-semibold text-slate-600 dark:text-slate-300">${escapeHtml(label)}</dt>
+                                <dd class="text-3xl font-bold text-slate-900 dark:text-white mt-2">${Number(value).toLocaleString('en-GB')}</dd>
+                            </div>`).join('')}
+                        </dl>
+                    </section>
+                    <section class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 space-y-2" aria-labelledby="ipam-network-summary-heading">
+                        <h4 id="ipam-network-summary-heading" class="font-bold text-slate-900 dark:text-white">Network Summary</h4>
+                        <label for="ipam-overview-search" class="sr-only">Search blocks or networks by name, CIDR or VLAN</label>
+                        <input id="ipam-overview-search" type="search" autocomplete="off" placeholder="Search blocks or networks by name, CIDR or VLAN…" class="w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                        <p id="ipam-overview-search-status" class="text-xs text-slate-600 dark:text-slate-300" role="status">Showing ${groups.length} IP Address Block cards. Select a card to view its networks in Manage Subnets.</p>
+                        <div id="ipam-overview-network-groups" class="grid grid-cols-1 lg:grid-cols-2 gap-3">${networkGroups || '<p class="text-sm text-slate-600 dark:text-slate-300">No networks yet. Add a Network / VLAN subnet to begin.</p>'}</div>
+                    </section>
+                </div>`;
+            }
+            const availableNetworks = appState.subnets.filter(s => (s.kind || 'network') === 'network' &&
+                (phase12CIpamTab !== 'manage' || ipamManageBlockFilter === null ||
+                 (s.parentId || '') === ipamManageBlockFilter));
+            const subnet = availableNetworks.find(s => s.id === selectedSubnetId) || availableNetworks[0] || null;
+            if (phase12CIpamTab === 'manage' && selectedSubnetId !== (subnet?.id || '')) selectedSubnetId = subnet?.id || '';
+            if (phase12CIpamTab === 'manage' && !subnet) return renderSubnetHierarchyPreview();
             
             if (!subnet && appState.subnets.length === 0) {
                 return `
@@ -2816,7 +3168,22 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 `;
             }
 
-            const phase10Summary = phase10SubnetSummary(subnet);
+            const activeNetwork = subnet;
+            if (subnet?.kind === 'container' && !activeNetwork) {
+                if (phase12CIpamTab === 'manage') return renderSubnetHierarchyPreview();
+                const blocks = appState.subnets.filter(s => s.kind === 'container');
+                const heading = phase12CIpamTab === 'addresses' ? 'IP Addresses' : 'IPAM Overview';
+                const blockSummary = phase12CIpamTab === 'overview' ? `<div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    ${[['IP Address Blocks', blocks.length], ['Network / VLAN Subnets', 0], ['Host Allocations', 0]].map(([label, value]) => `<div class="rounded-xl border border-slate-200 dark:border-slate-600 p-4"><p class="text-sm text-slate-500 dark:text-slate-300">${label}</p><p class="text-2xl font-bold text-slate-900 dark:text-white">${value}</p></div>`).join('')}
+                </div>` : '';
+                return `<section class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3">
+                    <h3 class="font-bold text-slate-900 dark:text-white">${heading}</h3>
+                    ${blockSummary}
+                    <p class="text-sm text-slate-600 dark:text-slate-300">No assignable Network / VLAN subnets are available yet. IP Address Blocks organise address space but do not contain individual host allocations.</p>
+                    <p class="text-sm text-slate-600 dark:text-slate-300">Use Add Subnet in the sidebar to create a Network / VLAN. The existing subnet summary and IP address grid will appear once a network is available.</p>
+                </section>`;
+            }
+            const phase10Summary = phase10SubnetSummary(activeNetwork);
             const baseIpParts = subnet ? subnet.cidr.split('/')[0].split('.') : ['192', '168', '1'];
             const basePrefix = `${baseIpParts[0]}.${baseIpParts[1]}.${baseIpParts[2]}`;
             
@@ -2835,6 +3202,31 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             phase12Page=Math.max(0,Math.min(phase12Page,phase12Pages-1));
             const phase12Start=phase12Range.first+phase12Page*32;
             const phase12End=Math.min(phase12Range.lastHost,phase12Start+31);
+            const networkParent = appState.subnets.find(item => String(item.id) === String(subnet.parentId || ''));
+            const networkMask = phase12Range ? phase12IpString((0xFFFFFFFF << (32 - phase12Range.prefix)) >>> 0) : '—';
+            const networkInfoItems = [
+                ['Network Name', subnet.name || '—'],
+                ['Network CIDR', subnet.cidr || '—'],
+                ['Subnet Mask', networkMask],
+                ['Usable Address Range', phase12Range ? phase12IpString(phase12Range.first) + ' – ' + phase12IpString(phase12Range.lastHost) : '—'],
+                ['Gateway', subnet.gateway || 'Not configured'],
+                ['VLAN ID', subnet.vlan ?? 'Not configured'],
+                ['Parent IP Address Block', networkParent ? networkParent.name + ' (' + networkParent.cidr + ')' : 'None'],
+                ['Usable Addresses', phase10Summary.capacity],
+                ['Assigned', phase10Summary.assigned],
+                ['Reserved', phase10Summary.reserved],
+                ['Available', phase10Summary.available]
+            ];
+            const networkInformationPanel = `<section class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-4" aria-labelledby="network-information-heading">
+                <div><h4 id="network-information-heading" class="font-bold text-slate-900 dark:text-white">Network Information</h4>
+                <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Read-only details calculated from the selected network and current inventory.</p></div>
+                <dl class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    ${networkInfoItems.map(([label,value]) => `<div class="rounded-xl bg-slate-50 dark:bg-slate-700/40 border border-slate-200 dark:border-slate-600 p-3 min-w-0">
+                        <dt class="text-xs font-semibold text-slate-600 dark:text-slate-300">${escapeHtml(String(label))}</dt>
+                        <dd class="mt-1 text-sm font-semibold text-slate-900 dark:text-white break-words">${escapeHtml(String(value))}</dd>
+                    </div>`).join('')}
+                </dl>
+            </section>`;
             const assignedCount = phase10Summary.assigned;
             const reservedCount = phase10Summary.reserved;
 
@@ -2848,7 +3240,9 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 for (let i = (phase12Paged?phase12Start:startHost); i <= (phase12Paged?phase12End:endHost); i++) {
                     const ip = phase12Paged ? phase12IpString(i) : `${basePrefix}.${i}`;
                     const alloc = appState.ipAllocations[ip];
-                    const status = alloc ? alloc.status : 'Available';
+                    const gatewayProtected = ip === subnet.gateway;
+                    const status = gatewayProtected && (!alloc || alloc.status === 'Available') ? (appState.devices.some(d => d.primaryIp === ip) ? 'Assigned' : 'Reserved') : (alloc?.status || (appState.devices.some(d => d.primaryIp === ip) ? 'Assigned' : 'Available'));
+                    const displayStatus = gatewayProtected ? `Gateway · ${status}` : status;
                     const reservedDevice = alloc?.reservedForDeviceId ? getDeviceById(alloc.reservedForDeviceId) : null;
                     
                     let badgeColor = 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600';
@@ -2858,13 +3252,13 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                     if (ipamStatusFilter !== 'All' && status !== ipamStatusFilter) continue;
                     if (ipamAddressSearch.trim() && ![ip, alloc?.hostname, reservedDevice?.name].some(v => String(v || '').toLowerCase().includes(ipamAddressSearch.trim().toLowerCase()))) continue;
                     ipListHtml += `
-                        <button type="button" data-action="open-ip" data-ip="${escapeHtml(ip)}" aria-label="View ${escapeHtml(ip)}, ${escapeHtml(status)}" class="ipam-address-card p-3 rounded-xl border ${badgeColor} cursor-pointer hover:shadow-md transition flex flex-col justify-between space-y-2 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500">
+                        <button type="button" data-action="open-ip" data-ip="${escapeHtml(ip)}" aria-label="View ${escapeHtml(ip)}, ${escapeHtml(displayStatus)}" class="ipam-address-card p-3 rounded-xl border ${badgeColor} cursor-pointer hover:shadow-md transition flex flex-col justify-between space-y-2 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500">
                             <div class="flex items-center justify-between">
                                 <span class="font-mono text-xs font-bold">${ip}</span>
-                                <span class="text-[10px] px-1.5 py-0.5 rounded bg-white/80 dark:bg-slate-800/80 shadow-xs">${status}</span>
+                                <span class="text-[10px] px-1.5 py-0.5 rounded bg-white/80 dark:bg-slate-800/80 shadow-xs">${escapeHtml(displayStatus)}</span>
                             </div>
                             <div class="text-xs truncate">
-                                <span class="font-medium text-slate-700 dark:text-slate-200">${reservedDevice && status === 'Reserved' ? 'For: ' + escapeHtml(reservedDevice.name) : (alloc ? escapeHtml(alloc.hostname || 'Assigned IP') : 'Available')}</span>
+                                <span class="font-medium text-slate-700 dark:text-slate-200">${reservedDevice && status === 'Reserved' ? 'For: ' + escapeHtml(reservedDevice.name) : (gatewayProtected ? (status === 'Assigned' ? 'Assigned to Network Device' : 'Reserved') : (alloc ? escapeHtml(alloc.hostname || 'Assigned IP') : 'Available'))}</span>
                             </div>
                         </button>
                     `;
@@ -2873,41 +3267,75 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 
             return `
                 <div class="space-y-5 phase12c-ipam">
-                    <div class="rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 sm:p-5 space-y-3">
-                        <div><h2 class="text-lg font-bold text-slate-900 dark:text-white">IP address management</h2>
-                        <p class="text-sm text-slate-600 dark:text-slate-300">Choose a subnet, then switch between its overview, addresses and management tools.</p></div>
-                        <nav class="phase12c-tabs" aria-label="IPAM sections">
-                            ${[['overview','Overview','fa-chart-pie'],['addresses','IP addresses','fa-list'],['manage','Manage Subnets','fa-sliders']].map(([tab,label,icon])=>`<button type="button" data-action="phase12c-tab" data-tab="${tab}" aria-current="${phase12CIpamTab===tab?'page':'false'}" class="phase12c-tab ${phase12CIpamTab===tab?'phase12c-active':''}"><i class="fa-solid ${icon} mr-2"></i>${label}</button>`).join('')}
-                        </nav>
-                    </div>
                     <div class="${phase12CIpamTab==='manage'?'':'hidden'} space-y-4" data-ipam-panel="manage">
+                    ${ipamManageBlockFilter !== null ? `<div class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-950/30 px-4 py-3"><div><strong class="text-sm text-slate-900 dark:text-white">Filtered Manage Subnets</strong><p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Showing ${escapeHtml(ipamManageBlockFilter === '' ? 'Unassigned Networks' : (appState.subnets.find(s => String(s.id) === String(ipamManageBlockFilter))?.name || 'Selected IP Address Block'))} only.</p></div><button type="button" data-action="ipam-show-all-blocks" class="rounded-lg border border-indigo-300 dark:border-indigo-700 px-3 py-2 text-xs font-semibold text-indigo-700 dark:text-indigo-200">Show All IP Address Blocks</button></div>` : ''}
+                    <!-- Block editing and VLAN navigation are available in the grouped cards below. -->
+                    ${(() => {
+                        const legacy = previewLegacyVlanOwnershipInApp();
+                        const scoped = legacy.filter(v => v.status === 'unique' && v.parentId).length;
+                        const ambiguous = legacy.filter(v => v.status === 'ambiguous').length;
+                        const orphaned = legacy.filter(v => v.status === 'orphaned').length;
+                        const unassigned = legacy.filter(v => v.status === 'unique' && !v.parentId).length;
+                        const needsUpdate = scoped > 0;
+                        const hasIssues = ambiguous > 0 || orphaned > 0;
+                        return `<div class="rounded-xl border ${needsUpdate || hasIssues ? 'border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40'} p-4 text-sm text-slate-800 dark:text-slate-200">
+                            <strong>VLAN Ownership Check</strong>
+                            <p class="mt-1">VLANs can belong to an IP Address Block or remain unassigned. Older inventory records may need updating to identify their block.</p>
+                            <p class="mt-2">${needsUpdate ? `${scoped} VLAN record(s) can be linked to their identified IP Address Block.` : 'VLAN ownership is up to date. No action required.'} ${unassigned} VLAN(s) are in the Unassigned VLAN Domain; this is allowed and needs no action.</p>
+                            ${hasIssues ? `<p class="mt-2 text-amber-800 dark:text-amber-200">${ambiguous} VLAN(s) match multiple subnets; ${orphaned} have no matching subnet. Review these before updating ownership.</p>` : ''}
+                            ${needsUpdate && !hasIssues ? `<button type="button" data-action="reconcile-legacy-vlans" class="mt-3 px-3 py-2 rounded-lg bg-indigo-600 text-white font-semibold">Update VLAN Ownership (${scoped})</button>` : ''}
+                        </div>`;
+                    })()}
                     <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
                         <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700/60 pb-3">
                             <div class="flex items-center space-x-2">
                                 <i class="fa-solid fa-tags text-indigo-600 dark:text-indigo-400"></i>
                                 <h3 class="font-bold text-base text-slate-900 dark:text-white">Active VLAN Tags & Subnets</h3>
                             </div>
-                            <button data-action="open-subnet-modal" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold transition shadow-sm">
-                                <i class="fa-solid fa-plus mr-1"></i> Add Subnet & VLAN Range
-                            </button>
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                            ${appState.vlans.map(v => `
-                                <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/30 border border-slate-200 dark:border-slate-700 flex flex-col justify-between space-y-3">
-                                    <div>
-                                        <div class="flex items-center justify-between">
-                                            <span class="px-2.5 py-0.5 rounded-lg text-xs font-bold bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800">VLAN ${v.vlanId}</span>
-                                            <div class="space-x-1">
-                                                <button data-action="open-subnet-by-vlan" data-name="${escapeHtml(v.name)}" class="p-1.5 text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 rounded-lg transition" title="Edit VLAN & Subnet"><i class="fa-solid fa-pen text-xs"></i></button>
-                                                <button data-action="delete-vlan" data-id="${escapeHtml(v.id)}" class="p-1.5 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition" title="Delete VLAN"><i class="fa-solid fa-trash text-xs"></i></button>
-                                            </div>
-                                        </div>
-                                        <h4 class="font-bold text-sm text-slate-900 dark:text-white mt-2">${escapeHtml(v.name)}</h4>
-                                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 truncate">${escapeHtml(v.description || 'No description')}</p>
+</div>
+                        ${(() => {
+                            const blocks = appState.subnets.filter(sub => sub.kind === 'container');
+                            const groups = blocks.map(block => ({
+                                id: block.id, name: block.name, cidr: block.cidr,
+                                vlans: appState.vlans.filter(v => v.parentId === block.id)
+                            }));
+                            groups.push({
+                                id: '__unassigned__', name: 'Unassigned VLANs', cidr: 'No IP Address Block',
+                                vlans: appState.vlans.filter(v => !v.parentId || !blocks.some(b => b.id === v.parentId))
+                            });
+                            return groups.filter(group => (ipamManageBlockFilter === null || (ipamManageBlockFilter === '' ? group.id === '__unassigned__' : String(group.id) === String(ipamManageBlockFilter))) && (group.vlans.length || group.id !== '__unassigned__' || ipamManageBlockFilter === '')).map(group => `
+                                <details open data-ipam-hierarchy-block="${escapeHtml(group.id)}" class="rounded-2xl border border-orange-200 dark:border-amber-900 bg-orange-50/70 dark:bg-amber-950/20 p-4 space-y-3">
+                                    <div class="flex flex-wrap items-center justify-between gap-2">
+                                        <summary class="cursor-pointer flex-1 min-w-0">
+                                            <span class="font-bold text-slate-900 dark:text-white"><i class="fa-solid fa-network-wired text-orange-600 dark:text-amber-400 mr-2"></i>${escapeHtml(group.name)}</span>
+                                            <span class="block text-xs text-slate-600 dark:text-slate-300 mt-1">${escapeHtml(group.cidr || '')} · ${group.vlans.length} VLAN(s)</span>
+                                        </summary>
+                                        ${group.id !== '__unassigned__' ? `<button type="button" data-action="edit-ipam-block" data-id="${escapeHtml(group.id)}" class="px-3 py-1.5 rounded-lg border border-orange-300 dark:border-amber-800 text-sm font-semibold">Edit Block</button>` : ''}
                                     </div>
-                                </div>
-                            `).join('')}
-                        </div>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                                        ${group.vlans.slice().sort((a,b) => Number(a.vlanId)-Number(b.vlanId)).map(v => {
+                                            const matches = appState.subnets.filter(sub => (!sub.kind || sub.kind === 'network') &&
+                                                Number(sub.vlan) === Number(v.vlanId) &&
+                                                (sub.parentId || '__unassigned__') === (v.parentId || '__unassigned__'));
+                                            const cidr = matches.length === 1 ? matches[0].cidr : '';
+                                            return `<div class="p-3 rounded-xl bg-white dark:bg-slate-800 border border-orange-100 dark:border-slate-700 flex flex-col justify-between space-y-2">
+                                                <div>
+                                                    <div class="flex items-center justify-between">
+                                                        <span class="px-2 py-0.5 rounded-lg text-xs font-bold bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800">VLAN ${escapeHtml(v.vlanId)}</span>
+                                                        <div class="space-x-1">
+                                                            <button data-action="open-subnet-by-vlan" data-id="${escapeHtml(v.id)}" class="p-1.5 text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 rounded-lg" title="Edit VLAN & Subnet"><i class="fa-solid fa-pen text-xs"></i></button>
+
+                                                        </div>
+                                                    </div>
+                                                    <h5 class="font-bold text-sm text-slate-900 dark:text-white mt-2">${escapeHtml(v.name)}</h5>
+                                                    ${cidr ? `<p class="text-xs text-slate-600 dark:text-slate-300 mt-1">${escapeHtml(cidr)}</p>` : ''}
+                                                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">${escapeHtml(v.description || 'No description')}</p>
+                                                </div>
+                                            </div>`;
+                                        }).join('')}
+                                    </div>
+                                </details>`).join('');
+                        })()}
                     </div>
 
                     </div>
@@ -2915,8 +3343,8 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                         <div class="flex items-center space-x-3 w-full sm:w-auto">
                             <label class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Active Subnet:</label>
                             <select id="subnet-selector" onchange="changeSubnet(this.value)" class="bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm font-semibold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                ${appState.subnets.map(s => `
-                                    <option value="${escapeHtml(s.id)}" ${s.id === selectedSubnetId ? 'selected' : ''}>${escapeHtml(s.cidr)} (${escapeHtml(s.name)} - VLAN${s.vlan})</option>
+                                ${availableNetworks.map(s => `
+                                    <option value="${escapeHtml(s.id)}" ${s.id === activeNetwork.id ? 'selected' : ''}>${escapeHtml(s.cidr)} (${escapeHtml(s.name)} - VLAN ${escapeHtml(s.vlan)})</option>
                                 `).join('')}
                             </select>
                         </div>
@@ -2928,18 +3356,14 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                                 <button data-action="edit-subnet" data-id="${escapeHtml(subnet.id)}" class="px-3.5 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold transition">
                                     <i class="fa-solid fa-pen mr-1.5"></i> Edit Subnet & VLAN
                                 </button>
-                                <button data-action="delete-subnet" data-id="${escapeHtml(subnet.id)}" class="px-3.5 py-2 bg-rose-50 dark:bg-rose-950/50 hover:bg-rose-100 text-rose-600 dark:text-rose-400 rounded-xl text-xs font-semibold transition border border-rose-200 dark:border-rose-800">
-                                    <i class="fa-solid fa-trash mr-1.5"></i> Delete Range
-                                </button>
+
                             ` : ''}
-                            <button data-action="open-subnet-modal" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold transition shadow-sm">
-                                <i class="fa-solid fa-plus mr-1.5"></i> Add Subnet Range
-                            </button>
-                        </div>
+</div>
                     </div>
 
                     ${subnet ? `
                         <div class="${phase12CIpamTab==='overview'?'':'hidden'} space-y-4" data-ipam-panel="overview">
+                        ${networkInformationPanel}
                         <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                             <div>
                                 <div class="flex items-center space-x-3">
@@ -3017,6 +3441,12 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
         }
 
         function changeSubnet(id) {
+            if (phase12CIpamTab === 'manage' && ipamManageBlockFilter !== null &&
+                !appState.subnets.some(s => s.id === id && (s.kind || 'network') === 'network' &&
+                    (s.parentId || '') === ipamManageBlockFilter)) {
+                showToast('Choose a subnet from the selected IP Address Block.', 'error');
+                return;
+            }
             selectedSubnetId = id;
             phase12Page = 0;
             renderContent();
@@ -3033,6 +3463,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             const changes=[],blocked=[];
             for(let offset=start;offset<=end;offset++) {
                 const ip=phase12IpString(range.network+offset);
+                if (ip === subnet.gateway) { blocked.push(ip); continue; }
                 const owners=appState.devices.filter(d=>d.primaryIp===ip);
                 const old=appState.ipAllocations[ip];
                 if (owners.length || (old?.deviceId && getDeviceById(old.deviceId))) {
@@ -3072,6 +3503,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                             <div><label for="bulk-notes" class="form-label">Notes</label><input id="bulk-notes" maxlength="240" class="w-full border rounded-xl px-3 py-2 dark:bg-slate-700"></div>
                         </div>
                         <p class="text-xs text-slate-600 dark:text-slate-300">Preview before applying. Existing device assignments and conflicting assigned records are protected.</p>
+                        <p class="text-sm text-slate-700 dark:text-slate-200"><strong>IP Address Block:</strong> ${escapeHtml(appState.subnets.find(b => b.id === subnet.parentId)?.name || 'Unassigned')} — ${escapeHtml(subnet.name)} (VLAN ${escapeHtml(String(subnet.vlan))})</p>
                         <div class="form-error" data-form-error role="alert"></div>
                         <div class="form-actions"><button type="button" data-action="close-modal" class="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-700">Cancel</button><button type="submit" class="px-4 py-2 rounded-xl bg-blue-800 text-white font-semibold">Preview Changes</button></div>
                     </form>
@@ -3146,6 +3578,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             if (!cidrInput || !gatewayInput) return;
             const form = cidrInput.closest('form[data-form-action="subnet"]');
             if (!form || form.dataset.subnetId) return; // Never overwrite an existing subnet gateway.
+            if (document.getElementById('sub-kind')?.value === 'container') { cidrInput.removeAttribute('aria-invalid'); cidrInput.removeAttribute('aria-describedby'); return; }
             const range = phase12Cidr(cidrInput.value.trim());
             const suggestion = range ? phase12IpString(range.first) : '';
             const previous = gatewayInput.dataset.autoGateway || '';
@@ -3172,38 +3605,55 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             openModal(`
                 <div class="p-6 sm:p-7 space-y-5">
                     <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-3">
-                        <h3 class="font-bold text-base text-slate-900 dark:text-white">${subnet ? 'Edit Subnet & VLAN' : 'Add Subnet & VLAN Range'}</h3>
+                        <h3 class="font-bold text-base text-slate-900 dark:text-white">${subnet ? 'Edit Subnet' : 'Add Subnet'}</h3>
                         <button type="button" data-action="cancel-subnet-modal" aria-label="Close dialog" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
                     </div>
                     <form data-form-action="subnet" data-subnet-id="${escapeHtml(subnet ? subnet.id : '')}" class="form-shell space-y-5">
-                        <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-network-wired"></i>Network identity</div>
+                        <div class="form-section-card space-y-2">
+                            <label for="sub-kind" class="form-label">Subnet Type</label>
+                            <select id="sub-kind" ${subnet ? 'disabled' : ''} class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white">
+                                <option value="network" ${subnet?.kind !== "container" ? "selected" : ""}>Network / VLAN</option>
+                                <option value="container" ${subnet?.kind === "container" ? "selected" : ""}>IP Address Block</option>
+                                <option value="reserved" disabled>Reserved range (coming next)</option>
+                                <option value="loopback" disabled>Loopback /32 (coming next)</option>
+                            </select>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">IP Address Blocks organise address space without a VLAN or gateway. Existing overlapping networks must be explicitly assigned as children.</p>
+                        </div>
+                        <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-network-wired"></i>Network Identity</div>
                         <div>
                             <label for="sub-cidr" class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Subnet CIDR <span class="required-mark">*</span></label>
                             <input type="text" id="sub-cidr" required value="${escapeHtml(subnet ? subnet.cidr : '')}" placeholder="e.g. 192.168.10.0/24" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white font-mono">
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                             <div>
-                                <label for="sub-name" class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Network / VLAN Name <span class="required-mark">*</span></label>
+                                <label for="sub-name" class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1"><span id="sub-name-label">Network / VLAN Name</span> <span class="required-mark">*</span></label>
                                 <input type="text" id="sub-name" required value="${escapeHtml(subnet ? subnet.name : '')}" placeholder="Guest Network" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white">
                             </div>
-                            <div>
+                            <div data-network-only>
                                 <label for="sub-vlan" class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">VLAN ID <span class="required-mark">*</span></label>
-                                <input type="number" id="sub-vlan" required value="${escapeHtml(subnet ? subnet.vlan : 30)}" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white font-mono">
+                                <input type="number" id="sub-vlan" required value="${escapeHtml(subnet ? subnet.vlan : '')}" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white font-mono">
                             </div>
                         </div>
                         </div>
-                        <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-route"></i>Gateway & description</div><div>
+                        <div data-network-only class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-route"></i>Gateway</div><div>
                             <label for="sub-gw" class="form-label">Gateway IP <span class="required-mark">*</span></label>
                             <input type="text" id="sub-gw" required value="${escapeHtml(subnet ? subnet.gateway : '')}" placeholder="192.168.10.1" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white font-mono">
                             <p id="sub-gw-hint" class="mt-1 text-xs text-slate-600 dark:text-slate-300" aria-live="polite">Enter a network CIDR to suggest a gateway.</p>
                         </div>
-                        <div>
-                            <label for="sub-desc" class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Description</label>
-                            <input type="text" id="sub-desc" value="${escapeHtml(subnet ? (subnet.description || '') : '')}" placeholder="Purpose or department" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white">
+
                         </div>
+                        <div class="form-section-card space-y-3">
+                            <label for="sub-parent" class="form-label">IP Address Block</label>
+                            <select id="sub-parent" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white">
+                                <option value="">None (Top Level)</option>
+                                ${appState.subnets.filter(s => s.kind === 'container' && s.id !== subnetId).map(s => `<option value="${escapeHtml(s.id)}" ${subnet?.parentId === s.id ? 'selected' : ''}>${escapeHtml(s.cidr)} — ${escapeHtml(s.name)}</option>`).join('')}
+                            </select>
+                            <label for="sub-desc" class="form-label">Description</label>
+                            <input type="text" id="sub-desc" value="${escapeHtml(subnet ? (subnet.description || '') : '')}" placeholder="Purpose or department" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white">
                         </div>
                         <div class="form-error" data-form-error role="alert"></div>
                         <div class="form-actions">
+                            ${subnet ? `<button type="button" data-action="delete-subnet" data-id="${escapeHtml(subnet.id)}" class="mr-auto px-4 py-2 bg-rose-800 hover:bg-rose-900 dark:bg-rose-700 dark:hover:bg-rose-800 text-white rounded-xl text-xs font-semibold transition"><i class="fa-solid fa-trash mr-1"></i>Delete ${subnet.kind === 'container' ? 'IP Address Block' : 'Subnet & VLAN'}</button>` : ''}
                             <button type="button" data-action="cancel-subnet-modal" class="px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold transition">Cancel</button>
                             <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold transition shadow-md">Save Subnet & VLAN</button>
                         </div>
@@ -3211,23 +3661,100 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 </div>
             `);
             // The delegated input handler works for every new subnet modal instance.
-            if (!subnet) suggestSubnetGateway();
+            const subnetTypeSelect = document.getElementById('sub-kind');
+            const updateSubnetTypePreview = () => {
+                const isContainer = subnetTypeSelect.value === 'container';
+                document.getElementById('sub-name-label').textContent = isContainer ? 'IP Address Block Name' : 'Network / VLAN Name';
+                document.querySelectorAll('#modal-content [data-network-only]').forEach(element => {
+                    element.hidden = isContainer;
+                    element.style.display = isContainer ? 'none' : '';
+                });
+                for (const id of ['sub-vlan', 'sub-gw']) {
+                    const input = document.getElementById(id);
+                    if (input) { input.required = !isContainer; input.disabled = isContainer; }
+                }
+                const submit = document.querySelector('#modal-content form[data-form-action="subnet"] button[type="submit"]');
+                if (submit) {
+                    submit.disabled = false;
+                    submit.title = '';
+                    submit.textContent = isContainer ? 'Save IP Address Block' : 'Save Subnet & VLAN';
+                }
+            };
+            subnetTypeSelect.addEventListener('change', updateSubnetTypePreview);
+            updateSubnetTypePreview();
+            if (!subnet && subnetTypeSelect.value === 'network') suggestSubnetGateway();
         }
 
-        function openSubnetModalByName(vlanName) {
-            const subnet = appState.subnets.find(s => s.name === vlanName);
-            if (subnet) {
-                openSubnetModal(subnet.id);
-            }
+        // Resolve VLAN card editing by stable record ID and scoped VLAN identity.
+        function openSubnetModalByVlanId(vlanRecordId) {
+            const vlan = appState.vlans.find(v => v.id === vlanRecordId);
+            if (!vlan) return;
+            const domain = vlan.parentId || '__unassigned__';
+            const matches = appState.subnets.filter(s =>
+                (!s.kind || s.kind === 'network') &&
+                Number(s.vlan) === Number(vlan.vlanId)
+            );
+            // Legacy VLAN records lack parentId even when their subnet is in a block.
+            // Resolve them only when there is exactly one matching subnet; never guess
+            // between multiple blocks that reuse the same VLAN number.
+            const scoped = matches.filter(s => (s.parentId || '__unassigned__') === domain);
+            const subnet = scoped.length === 1 ? scoped[0] :
+                (!vlan.parentId && matches.length === 1 ? matches[0] : null);
+            if (subnet) openSubnetModal(subnet.id);
+            else showToast(matches.length > 1
+                ? 'Multiple subnets use this VLAN number; the legacy VLAN record has no unique block association.'
+                : 'No linked subnet was found for this VLAN.', 'error');
         }
 
         function handleSubnetSubmit(e, subnetId) {
             e.preventDefault();
+            const requestedKind = document.getElementById('sub-kind')?.value;
+            if (requestedKind === 'container') {
+                const cidr = document.getElementById('sub-cidr').value.trim();
+                const name = document.getElementById('sub-name').value.trim();
+                const description = document.getElementById('sub-desc').value.trim();
+                const parentId = document.getElementById('sub-parent').value || null;
+                const range = hierarchyParseCidr(cidr);
+                if (!range || !range.aligned || !name) {
+                    showToast('Enter a valid aligned CIDR and a IP Address Block name.', 'error');
+                    return;
+                }
+                const previous = JSON.stringify(appState);
+                const previousSelection = selectedSubnetId;
+                const existing = subnetId ? appState.subnets.find(s => s.id === subnetId) : null;
+                if (subnetId && (!existing || existing.kind !== 'container')) {
+                    showToast('Changing an existing network into a container is not supported.', 'error');
+                    return;
+                }
+                const record = { id: existing ? existing.id : 'sub_' + Date.now(), kind: 'container', cidr, name, description, parentId };
+                const candidate = appState.subnets.map(s => s.id === record.id ? record : s);
+                if (!existing) candidate.push(record);
+                const issues = [...hierarchyValidate(candidate), ...hierarchyValidateTypes(candidate)];
+                if (issues.length) {
+                    showToast(issues[0], 'error');
+                    return;
+                }
+                appState.subnets = candidate;
+                if (!saveState()) {
+                    appState = JSON.parse(previous);
+                    selectedSubnetId = previousSelection;
+                    showToast('Container was not saved. Previous inventory restored.', 'error');
+                    return;
+                }
+                closeModal(true);
+                renderContent();
+                return;
+            }
+            if (requestedKind !== 'network') {
+                showToast('This subnet type is not available yet.', 'error');
+                return;
+            }
             const cidr = document.getElementById('sub-cidr').value.trim();
             const name = document.getElementById('sub-name').value.trim();
             const vlanIdVal = parseInt(document.getElementById('sub-vlan').value, 10);
             const gateway = document.getElementById('sub-gw').value.trim();
             const description = document.getElementById('sub-desc').value.trim();
+            const parentId = document.getElementById('sub-parent')?.value || null;
 
             if (!isValidCidr24(cidr)) {
                 showToast('Enter a valid network CIDR from /23 to /30 (e.g. 192.168.10.0/24).', 'error');
@@ -3256,16 +3783,30 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 return;
             }
 
-            const overlappingSubnet=appState.subnets.find(s=>s.id!==subnetId && phase12Overlap(s.cidr,cidr));
-            if(overlappingSubnet) return showToast(`Overlapping subnet: ${overlappingSubnet.cidr}.`, 'error');
-            const otherSubnetWithVlan = appState.subnets.find(s => Number(s.vlan) === vlanIdVal && s.id !== subnetId);
+            // Validate the proposed parent-child relationship before mutating live state.
+            // Preserve legacy flat-network records without introducing default fields.
+            const existingSubnet = subnetId ? appState.subnets.find(s => s.id === subnetId) : null;
+            const proposedSubnet = {
+                ...(existingSubnet || {}),
+                id: existingSubnet?.id || 'sub_' + Date.now(),
+                cidr, name, vlan: vlanIdVal, gateway, description
+            };
+            if (parentId) proposedSubnet.parentId = parentId;
+            else delete proposedSubnet.parentId;
+            const proposedSubnets = appState.subnets.filter(s => s.id !== proposedSubnet.id).concat(proposedSubnet);
+            const hierarchyIssues = [...hierarchyValidate(proposedSubnets), ...hierarchyValidateTypes(proposedSubnets)];
+            if (hierarchyIssues.length) {
+                showToast(hierarchyIssues[0], 'error');
+                return;
+            }
+            const otherSubnetWithVlan = appState.subnets.find(s => (!s.kind || s.kind === 'network') && Number(s.vlan) === vlanIdVal && (s.parentId || '__unassigned__') === (parentId || '__unassigned__') && s.id !== subnetId);
             if (otherSubnetWithVlan) {
                 showToast(`VLAN ${vlanIdVal} is already used by ${otherSubnetWithVlan.name}.`, 'error');
                 return;
             }
 
-            const otherVlan = appState.vlans.find(v => Number(v.vlanId) === vlanIdVal);
-            if (otherVlan && otherVlan.name !== name && !appState.subnets.some(s => Number(s.vlan) === vlanIdVal && s.id === subnetId)) {
+            const otherVlan = appState.vlans.find(v => Number(v.vlanId) === vlanIdVal && (v.parentId || '__unassigned__') === (parentId || '__unassigned__'));
+            if (otherVlan && otherVlan.name !== name && !appState.subnets.some(s => Number(s.vlan) === vlanIdVal && (s.parentId || '__unassigned__') === (parentId || '__unassigned__') && s.id === subnetId)) {
                 showToast(`VLAN ${vlanIdVal} already exists with the name ${otherVlan.name}.`, 'error');
                 return;
             }
@@ -3286,6 +3827,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                     return;
                 }
                 const previousVlanId = Number(sub.vlan);
+                const previousParentId = sub.parentId || '__unassigned__';
                 if (sub.cidr !== cidr) {
                     const dependentDevices = appState.devices.filter(d => d.primaryIp && ipBelongsToSubnet(d.primaryIp, sub.cidr));
                     const dependentIps = Object.keys(appState.ipAllocations).filter(ip => ipBelongsToSubnet(ip, sub.cidr));
@@ -3299,27 +3841,33 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 sub.vlan = vlanIdVal;
                 sub.gateway = gateway;
                 sub.description = description;
-                if (previousVlanId !== vlanIdVal && !appState.subnets.some(item => item.id !== sub.id && Number(item.vlan) === previousVlanId)) {
-                    appState.vlans = appState.vlans.filter(v => Number(v.vlanId) !== previousVlanId);
+                if (parentId) sub.parentId = parentId;
+                else delete sub.parentId;
+                if ((previousVlanId !== vlanIdVal || previousParentId !== (parentId || '__unassigned__')) &&
+                    !appState.subnets.some(item => item.id !== sub.id && Number(item.vlan) === previousVlanId && (item.parentId || '__unassigned__') === previousParentId)) {
+                    appState.vlans = appState.vlans.filter(v => !(Number(v.vlanId) === previousVlanId && (v.parentId || '__unassigned__') === previousParentId));
                 }
             } else {
-                const newSub = { id: 'sub_' + Date.now(), cidr, name, vlan: vlanIdVal, gateway, description };
+                const newSub = proposedSubnet;
                 appState.subnets.push(newSub);
                 selectedSubnetId = newSub.id;
                 if (deviceFormDraft) deviceFormDraft.subnetId = newSub.id;
             }
 
-            let existingVlan = appState.vlans.find(v => Number(v.vlanId) === vlanIdVal);
+            let existingVlan = appState.vlans.find(v => Number(v.vlanId) === vlanIdVal && (v.parentId || '__unassigned__') === (parentId || '__unassigned__'));
             if (existingVlan) {
                 existingVlan.name = name;
                 existingVlan.description = description;
             } else {
                 appState.vlans.push({
-                    id: 'vlan_' + Date.now(),
+                    id: 'vlan_' + Date.now() + '_' + Math.random().toString(36).slice(2, 9),
                     vlanId: vlanIdVal,
                     name,
                     description,
-                    color: 'indigo'
+                    color: 'indigo',
+                    // New VLAN records retain their stable IP Address Block ownership.
+                    // Legacy records are left untouched until explicit reconciliation.
+                    ...(parentId ? { parentId } : {})
                 });
             }
 
@@ -3331,7 +3879,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 return;
             }
             const returnToDevice = !!deviceFormDraft;
-            closeModal();
+            closeModal(true);
             if (returnToDevice) {
                 const draftDeviceId = deviceFormDraft.deviceId || null;
                 switchTab('devices');
@@ -3378,26 +3926,199 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             showToast(`${label} was not deleted because the changes could not be saved.`, 'error');
             return false;
         }
+        function showSubnetDeletionBlocked(subnet, blockedIps) {
+            const block = appState.subnets.find(s => s.id === subnet.parentId);
+            const rows = blockedIps.map(ip => {
+                const record = appState.ipAllocations[ip] || {};
+                const reason = record.reservedForDeviceId ? 'Device Reservation' :
+                    record.deviceId ? 'Device Allocation' : (record.status || 'IPAM Record');
+                return `<li class="flex flex-wrap justify-between gap-2 py-2 border-b border-slate-200 dark:border-slate-700">
+                    <span class="font-mono font-semibold">${escapeHtml(ip)}</span>
+                    <span class="text-sm text-slate-600 dark:text-slate-300">${escapeHtml(String(reason))}</span>
+                </li>`;
+            }).join('');
+            openModal(`
+                <div class="p-6 sm:p-7 space-y-5 text-slate-900 dark:text-white">
+                    <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-3">
+                        <h3 class="font-bold text-lg">Subnet Deletion Blocked</h3>
+                        <button type="button" data-action="close-modal" aria-label="Close dialog" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <p class="text-sm">This subnet cannot be deleted while protected IPAM records remain. No records have been changed.</p>
+                    <dl class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                        <div><dt class="font-semibold">Subnet</dt><dd>${escapeHtml(subnet.name)}</dd></div>
+                        <div><dt class="font-semibold">CIDR</dt><dd class="font-mono">${escapeHtml(subnet.cidr)}</dd></div>
+                        <div><dt class="font-semibold">VLAN ID</dt><dd>${escapeHtml(String(subnet.vlan ?? 'None'))}</dd></div>
+                        <div><dt class="font-semibold">IP Address Block</dt><dd>${escapeHtml(block?.name || 'Unassigned')}</dd></div>
+                    </dl>
+                    <section class="rounded-xl border border-amber-300 dark:border-amber-700 p-4 space-y-2">
+                        <h4 class="font-bold">Protected Addresses (${blockedIps.length})</h4>
+                        <p class="text-sm">Review and resolve these IPAM records before attempting deletion again.</p>
+                        <ul class="max-h-56 overflow-y-auto" aria-label="Protected IP addresses">${rows}</ul>
+                    </section>
+                    <div class="flex justify-end">
+                        <button type="button" data-action="close-modal" class="px-5 py-2 rounded-xl bg-slate-700 hover:bg-slate-800 text-white font-semibold">Close</button>
+                    </div>
+                </div>
+            `);
+        }
+
         function deleteSubnet(subId) {
-            const subnet=appState.subnets.find(x=>x.id===subId);
-            if(!subnet) return;
-            const deps=phase11BSubnetDependencies(subnet);
-            if(deps.devices.length || deps.allocations.length) {
-                showToast(`Cannot delete ${subnet.name}: ${deps.devices.length} device(s) and ${deps.allocations.length} IPAM allocation(s) depend on it. Reassign or clear them first.`, 'error');
+            const subnet = appState.subnets.find(x => x.id === subId);
+            if (!subnet) return;
+            const children = appState.subnets.filter(x => String(x.parentId || '') === String(subId));
+            if (children.length) {
+                showToast(`Cannot delete ${subnet.name}: ${children.length} child subnet(s) or block(s) must be moved or deleted first.`, 'error');
                 return;
             }
-            if(!confirm(`Delete subnet ${subnet.name} (${subnet.cidr})? This cannot be undone.`)) return;
-            const before=JSON.stringify(appState);
-            const previousSelection=selectedSubnetId;
-            appState.subnets=appState.subnets.filter(x=>x.id!==subId);
-            selectedSubnetId=appState.subnets[0]?.id||'';
-            if(!phase11BCommitDelete(before,'Subnet')) { selectedSubnetId=previousSelection; renderContent(); }
+            const deps = phase11BSubnetDependencies(subnet);
+            // Only device-owned primary allocations can be detached automatically.
+            // Independent reservations and ambiguous IPAM links must be resolved manually.
+            const ownedIps = new Set(deps.devices.map(d => d.primaryIp));
+            const unsafeIps = deps.allocations.filter(ip => {
+                const a = appState.ipAllocations[ip];
+                const owner = deps.devices.find(d => d.primaryIp === ip);
+                return !owner || a?.deviceId !== owner.id || Boolean(a?.reservedForDeviceId);
+            });
+            if (unsafeIps.length || deps.devices.some(d => !appState.ipAllocations[d.primaryIp] || !ownedIps.has(d.primaryIp))) {
+                const missing = deps.devices.filter(d => !appState.ipAllocations[d.primaryIp]).map(d => d.primaryIp);
+                showSubnetDeletionBlocked(subnet, [...new Set([...unsafeIps, ...missing])]);
+                return;
+            }
+            const isNetwork = !subnet.kind || subnet.kind === 'network';
+            const domain = subnet.parentId || '__unassigned__';
+            const linked = isNetwork ? appState.vlans.filter(v =>
+                Number(v.vlanId) === Number(subnet.vlan) &&
+                (v.parentId || '__unassigned__') === domain
+            ) : [];
+            if (isNetwork && linked.length > 1) {
+                showToast('Multiple VLAN records match this subnet. Resolve VLAN ownership before deleting.', 'error');
+                return;
+            }
+            if (isNetwork && linked.length === 0 && appState.vlans.some(v =>
+                Number(v.vlanId) === Number(subnet.vlan) && !v.parentId
+            )) {
+                showToast('Legacy VLAN ownership is unresolved. Reconcile VLAN ownership before deleting.', 'error');
+                return;
+            }
+            const otherUsers = linked.length ? appState.subnets.filter(x =>
+                x.id !== subId && (!x.kind || x.kind === 'network') &&
+                Number(x.vlan) === Number(subnet.vlan) &&
+                (x.parentId || '__unassigned__') === domain
+            ) : [];
+            if (otherUsers.length) {
+                showToast('This VLAN is shared by another subnet in the same block. Reassign it before deleting.', 'error');
+                return;
+            }
+            const block = appState.subnets.find(x => x.id === subnet.parentId);
+            const deviceRows = deps.devices.map(d => `<li class="py-2 border-b border-slate-200 dark:border-slate-700"><strong>${escapeHtml(d.name)}</strong><span class="block text-sm font-mono text-slate-600 dark:text-slate-300">${escapeHtml(d.primaryIp)}</span></li>`).join('');
+            const previewSignature = JSON.stringify({
+                subnet: [subnet.id, subnet.name, subnet.cidr, subnet.kind, subnet.vlan, subnet.parentId],
+                devices: deps.devices.map(d => [d.id, d.primaryIp]).sort((a,b) => String(a[0]).localeCompare(String(b[0]))),
+                allocations: deps.allocations.map(ip => [ip, appState.ipAllocations[ip]]).sort((a,b) => a[0].localeCompare(b[0])),
+                linked: linked.map(v => [v.id, v.vlanId, v.parentId])
+            });
+            pendingSubnetDeletion = { subId, previewSignature };
+            openModal(`
+                <div class="p-6 sm:p-7 space-y-5 text-slate-900 dark:text-white">
+                    <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-3">
+                        <h3 class="font-bold text-lg">Confirm ${isNetwork ? 'Subnet & VLAN' : 'IP Address Block'} Deletion</h3>
+                        <button type="button" data-action="close-modal" aria-label="Close dialog" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <p class="text-sm text-rose-700 dark:text-rose-300 font-semibold">This action cannot be undone. Review the affected records before confirming.</p>
+                    <dl class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                        <div><dt class="font-semibold">Name</dt><dd>${escapeHtml(subnet.name)}</dd></div>
+                        <div><dt class="font-semibold">CIDR</dt><dd class="font-mono">${escapeHtml(subnet.cidr)}</dd></div>
+                        ${isNetwork ? `<div><dt class="font-semibold">VLAN ID</dt><dd>${escapeHtml(String(subnet.vlan))}</dd></div>` : ''}
+                        <div><dt class="font-semibold">IP Address Block</dt><dd>${escapeHtml(block?.name || 'Unassigned')}</dd></div>
+                    </dl>
+                    ${deps.devices.length ? `<section class="rounded-xl border border-amber-300 dark:border-amber-700 p-4 space-y-2">
+                        <h4 class="font-bold">Move ${deps.devices.length} Device(s) to Unassigned</h4>
+                        <p class="text-sm">Device inventory, rack and hardware details will remain. The primary IP allocations below will be released.</p>
+                        <ul class="max-h-44 overflow-y-auto">${deviceRows}</ul>
+                    </section>` : '<p class="text-sm">No device assignments will be changed.</p>'}
+                    <div class="form-actions">
+                        <button type="button" data-action="close-modal" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-white font-semibold">Cancel</button>
+                        <button type="button" data-action="confirm-delete-subnet" data-id="${escapeHtml(subId)}" class="px-4 py-2 rounded-xl bg-rose-800 hover:bg-rose-900 text-white font-semibold">${deps.devices.length ? 'Move Devices & Delete Subnet' : isNetwork ? 'Delete Subnet & VLAN' : 'Delete IP Address Block'}</button>
+                    </div>
+                </div>
+            `);
+        }
+
+        let pendingSubnetDeletion = null;
+        function confirmDeleteSubnet(subId) {
+            // Revalidate on confirmation: no stale or changed dependency preview may be applied.
+            const subnet = appState.subnets.find(s => s.id === subId);
+            if (!subnet) { closeModal(true); return; }
+            const confirmation = document.querySelector('[data-action="confirm-delete-subnet"]');
+            if (!confirmation || confirmation.dataset.id !== subId) return;
+            const deps = phase11BSubnetDependencies(subnet);
+            const domain = subnet.parentId || '__unassigned__';
+            const linked = (!subnet.kind || subnet.kind === 'network') ? appState.vlans.filter(v =>
+                Number(v.vlanId) === Number(subnet.vlan) && (v.parentId || '__unassigned__') === domain
+            ) : [];
+            const currentSignature = JSON.stringify({
+                subnet: [subnet.id, subnet.name, subnet.cidr, subnet.kind, subnet.vlan, subnet.parentId],
+                devices: deps.devices.map(d => [d.id, d.primaryIp]).sort((a,b) => String(a[0]).localeCompare(String(b[0]))),
+                allocations: deps.allocations.map(ip => [ip, appState.ipAllocations[ip]]).sort((a,b) => a[0].localeCompare(b[0])),
+                linked: linked.map(v => [v.id, v.vlanId, v.parentId])
+            });
+            if (!pendingSubnetDeletion || pendingSubnetDeletion.subId !== subId || pendingSubnetDeletion.previewSignature !== currentSignature) {
+                pendingSubnetDeletion = null;
+                closeModal(true);
+                showToast('Subnet or dependent records changed after preview. Deletion cancelled; please review again.', 'error');
+                return;
+            }
+            pendingSubnetDeletion = null;
+            closeModal(true);
+            deleteSubnetCommit(subId);
+        }
+
+        function deleteSubnetCommit(subId) {
+            const subnet = appState.subnets.find(s => s.id === subId);
+            if (!subnet) return;
+            const deps = phase11BSubnetDependencies(subnet);
+            const independent = deps.allocations.filter(ip => {
+                const owner = deps.devices.find(d => d.primaryIp === ip);
+                const a = appState.ipAllocations[ip];
+                return !owner || a?.deviceId !== owner.id || Boolean(a?.reservedForDeviceId);
+            });
+            if (independent.length || appState.subnets.some(s => s.parentId === subId)) {
+                showToast('Dependencies changed; deletion cancelled. Review the subnet again.', 'error');
+                return;
+            }
+            const isNetwork = !subnet.kind || subnet.kind === 'network';
+            const domain = subnet.parentId || '__unassigned__';
+            const linked = isNetwork ? appState.vlans.filter(v => Number(v.vlanId) === Number(subnet.vlan) && (v.parentId || '__unassigned__') === domain) : [];
+            if (linked.length > 1 || (isNetwork && linked.length === 0 && appState.vlans.some(v => Number(v.vlanId) === Number(subnet.vlan) && !v.parentId)) ||
+                appState.subnets.some(s => s.id !== subId && (!s.kind || s.kind === 'network') && Number(s.vlan) === Number(subnet.vlan) && (s.parentId || '__unassigned__') === domain)) {
+                showToast('VLAN ownership changed; deletion cancelled.', 'error');
+                return;
+            }
+            const before = JSON.stringify(appState);
+            for (const device of deps.devices) {
+                // Keep the last address as informational metadata, not an active allocation.
+                device.previousPrimaryIp = device.primaryIp;
+                setDevicePrimaryIp(device, '');
+            }
+            const previousSelection = selectedSubnetId;
+            appState.subnets = appState.subnets.filter(x => x.id !== subId);
+            if (linked.length) appState.vlans = appState.vlans.filter(v => v.id !== linked[0].id);
+            selectedSubnetId = appState.subnets[0]?.id || '';
+            if (phase11BCommitDelete(before, isNetwork ? 'Subnet & VLAN' : 'IP Address Block')) closeModal();
+            else selectedSubnetId = previousSelection;
         }
 
         function deleteVlan(vId) {
             const vlan = appState.vlans.find(v => v.id === vId);
             if (!vlan) return;
-            const linkedSubnets = appState.subnets.filter(s => Number(s.vlan) === Number(vlan.vlanId));
+            // Match VLAN number AND parent block. Legacy records without parentId share the unassigned domain.
+            // This prevents a VLAN deletion in one block from depending on unrelated blocks.
+            const vlanDomain = vlan.parentId || '__unassigned__';
+            const linkedSubnets = appState.subnets.filter(s =>
+                (!s.kind || s.kind === 'network') &&
+                Number(s.vlan) === Number(vlan.vlanId) &&
+                (s.parentId || '__unassigned__') === vlanDomain
+            );
             if (linkedSubnets.length) {
                 showToast('Delete or reassign the linked subnet before deleting this VLAN.', 'error');
                 return;
@@ -3410,6 +4131,12 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
         }
 
         function openIpModal(ip) {
+            const gatewaySubnet = phase10GatewaySubnet(ip);
+            if (gatewaySubnet) {
+                const owner = findDeviceUsingIp(ip);
+                showToast(`Gateway ${ip} is protected${owner ? ` and assigned to ${owner.name}` : ''}. Edit the network device instead.`, 'error');
+                return;
+            }
             const alloc = appState.ipAllocations[ip] || { status: 'Available', hostname: '', notes: '' };
             openModal(`
                 <div class="p-6 sm:p-7 space-y-5">
@@ -3452,6 +4179,10 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             const notes = document.getElementById('ip-notes').value;
             const previousAllocation = appState.ipAllocations[ip] ? {...appState.ipAllocations[ip]} : null;
             const primaryDevice = findDeviceUsingIp(ip);
+            if (phase10GatewaySubnet(ip)) {
+                showToast(`Gateway ${ip} is protected. Edit the network device instead.`, 'error');
+                return;
+            }
 
             if (primaryDevice) {
                 showToast(`IP address ${ip} is the primary IP of ${primaryDevice.name}. Edit the device instead.`, 'error');
@@ -3485,7 +4216,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 showToast('IP changes could not be saved. Previous allocation restored.', 'error');
                 return;
             }
-            closeModal();
+            closeModal(true);
             renderContent();
         }
 
@@ -3501,7 +4232,18 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             deviceOptionsReturnContent = document.createDocumentFragment();
             while (content.firstChild) deviceOptionsReturnContent.appendChild(content.firstChild);
         }
-        function closeModal() {
+        // Compare current field values with the initial form, not merely whether a field was touched.
+        const modalFormSnapshots = new WeakMap();
+        function modalFormSnapshot(form) {
+            return JSON.stringify(Array.from(form.querySelectorAll('input,select,textarea'))
+                .filter(field => !['button','submit','reset','hidden'].includes(field.type))
+                .map(field => [field.id || field.name || '', field.type, field.type === 'checkbox' || field.type === 'radio' ? field.checked : field.value]));
+        }
+        function rememberModalForm() {
+            const form = document.querySelector('#modal-content form[data-device-form="true"], #modal-content form[data-form-action="subnet"], #modal-content form[data-form-action="rack"], #modal-content form[data-form-action="ip"], #modal-content form[data-form-action="assign"], #modal-content form[data-form-action="bulk-ip"]');
+            if (form) modalFormSnapshots.set(form, modalFormSnapshot(form));
+        }
+        function closeModal(force = false) {
             if (deviceOptionsReturnContent) {
                 phase19BReadSoftwareSelections();
                 phase19BReadFunctionSelections();
@@ -3512,6 +4254,10 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 content.querySelector('form[data-device-form="true"]')?.querySelector('input,select,textarea')?.focus();
                 return;
             }
+            const editableForm = document.querySelector('#modal-content form[data-device-form="true"], #modal-content form[data-form-action="subnet"], #modal-content form[data-form-action="rack"], #modal-content form[data-form-action="ip"], #modal-content form[data-form-action="assign"], #modal-content form[data-form-action="bulk-ip"]');
+            if (!force && editableForm && modalFormSnapshots.has(editableForm) &&
+                modalFormSnapshot(editableForm) !== modalFormSnapshots.get(editableForm) &&
+                !window.confirm('Discard unsaved changes?')) return;
             const container = document.getElementById('modal-container');
             container.classList.add('hidden');
             container.classList.remove('flex');
@@ -3537,6 +4283,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             }
             const first = content.querySelector('input:not([type="hidden"]):not([disabled]),select:not([disabled]),textarea:not([disabled]),button:not([disabled])');
             (first || content).focus();
+            rememberModalForm();
         }
 
         document.addEventListener('keydown', function(event) {
@@ -3544,7 +4291,12 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             if (!container || container.classList.contains('hidden')) return;
             if (event.key === 'Escape') {
                 event.preventDefault();
-                closeModal();
+                if (deviceFormDraft && container.querySelector('form[data-form-action="subnet"]')) {
+                    const draft = deviceFormDraft;
+                    closeModal(true);
+                    switchTab('devices');
+                    setTimeout(() => openDeviceModal(draft.deviceId || null), 0);
+                } else closeModal();
                 return;
             }
             if (event.key !== 'Tab') return;
@@ -3597,7 +4349,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                         </div>
                         <div class="form-error" data-form-error role="alert"></div>
                         <div class="form-actions rack-form-actions">
-                            <button type="button" data-action="close-modal" class="rack-form-button bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white rounded-xl font-semibold">Cancel</button>
+                            <button type="button" data-action="cancel-rack-from-device" class="rack-form-button bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white rounded-xl font-semibold">Cancel</button>
                             <button type="submit" class="rack-form-button bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold">Save Rack</button>
                         </div>
                     </form>
@@ -3651,8 +4403,17 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 showToast('Rack changes were not saved. Please check the validation message.', 'error');
                 return;
             }
-            closeModal();
-            renderContent();
+            if (deviceRackReturnPending) {
+                if (deviceFormDraft) deviceFormDraft.rackId = selectedRackId;
+                const draftId = deviceFormDraft?.deviceId || null;
+                deviceRackReturnPending = false;
+                closeModal(true);
+                switchTab('devices');
+                setTimeout(() => openDeviceModal(draftId), 0);
+            } else {
+                closeModal(true);
+                renderContent();
+            }
         }
 
         function deleteRack(rackId) {
@@ -3780,7 +4541,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 showToast('Rack move was not saved; your previous placement was restored.', 'error');
                 return;
             }
-            closeModal();
+            closeModal(true);
             renderContent();
         }
 
@@ -3831,7 +4592,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             let count = 0;
             for (let n = range.first; n <= range.lastHost; n++) {
                 const ip = phase12IpString(n);
-                if (ip === subnet.gateway) continue;
+                if (ip === subnet.gateway && ip !== currentIp) continue;
                 if (!used.has(ip) || (ip === currentIp && appState.devices.some(d => d.id === editingId && d.primaryIp === ip))) {
                     count++;
                     if (available.length < 50) available.push(ip);
@@ -3854,6 +4615,37 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             }
         }
 
+        function phase11DeviceTopBlock(subnet) {
+            let current = subnet;
+            const visited = new Set();
+            while (current?.parentId && !visited.has(current.id)) {
+                visited.add(current.id);
+                current = appState.subnets.find(s => s.id === current.parentId);
+            }
+            return current?.kind === 'container' && !current.parentId ? current : null;
+        }
+        function phase11DeviceCascade(level = 'initial') {
+            const block = document.getElementById('dev-block');
+            const vlan = document.getElementById('dev-vlan');
+            const subnet = document.getElementById('dev-subnet');
+            if (!block || !vlan || !subnet) return;
+            const initial = level === 'initial' ? subnet.dataset.initialSubnet : '';
+            const selected = appState.subnets.find(s => s.id === initial);
+            if (level === 'initial' && selected && !block.value) block.value = phase11DeviceTopBlock(selected)?.id || '__unassigned__';
+            const networks = appState.subnets.filter(s => (!s.kind || s.kind === 'network') &&
+                (phase11DeviceTopBlock(s)?.id || '__unassigned__') === block.value);
+            const vlanIds = [...new Set(networks.map(s => String(s.vlan)))].sort((a,b) => Number(a)-Number(b));
+            const previousVlan = level === 'subnet' ? vlan.value : level === 'initial' ? String(selected?.vlan ?? '') : '';
+            vlan.innerHTML = '<option value="">Select a VLAN...</option>' + vlanIds.map(id =>
+                `<option value="${escapeHtml(id)}">${escapeHtml('VLAN ' + id)}</option>`).join('');
+            if (vlanIds.includes(previousVlan)) vlan.value = previousVlan;
+            const matches = networks.filter(s => String(s.vlan) === vlan.value);
+            subnet.innerHTML = '<option value="">Select a subnet...</option>' + matches.map(s =>
+                `<option value="${escapeHtml(s.id)}">${escapeHtml(s.name || s.cidr)} — ${escapeHtml(s.cidr)}</option>`).join('');
+            if (level === 'initial' && matches.some(s => s.id === initial)) subnet.value = initial;
+            else if (matches.length === 1 && vlan.value) subnet.value = matches[0].id;
+            if (level !== 'initial') handleDeviceSubnetChange();
+        }
         function handleDeviceSubnetChange() {
             const select = document.getElementById('dev-subnet');
             const ip = document.getElementById('dev-ip');
@@ -3864,6 +4656,50 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             refreshDeviceIpOptions();
         }
 
+        function updateDeviceRackLimits() {
+            const rackSelect = document.getElementById('dev-rack-id');
+            const start = document.getElementById('dev-rack-u');
+            const height = document.getElementById('dev-rack-height');
+            const face = document.getElementById('dev-rack-face');
+            const hint = document.getElementById('dev-rack-range-hint');
+            const form = document.querySelector('[data-device-form="true"]');
+            if (!rackSelect || !start || !height || !hint) return;
+            const rack = appState.racks.find(r => r.id === rackSelect.value);
+            const previous = start.value || start.dataset.initialU || '';
+            delete start.dataset.initialU;
+            if (!rack) {
+                start.innerHTML = '<option value="">Select a rack first...</option>';
+                start.disabled = true;
+                height.disabled = true;
+                hint.textContent = 'Select or create a network rack before choosing a mounting position.';
+                return;
+            }
+            start.disabled = false;
+            height.disabled = false;
+            const capacity = Number(rack.heightU);
+            height.max = String(capacity);
+            const units = Number(height.value);
+            const validHeight = Number.isInteger(units) && units > 0 && units <= capacity;
+            const maxStart = validHeight ? capacity - units + 1 : 0;
+            const deviceId = form?.dataset.deviceId || null;
+            const currentFace = face?.value || 'front';
+            const available = [];
+            for (let u = 1; u <= maxStart; u++) {
+                const end = u + units - 1;
+                if (!validateRackPlacement(deviceId, rack.id, currentFace, u, end)) available.push(u);
+            }
+            start.innerHTML = '<option value="">Select Start U...</option>' + available.map(u =>
+                `<option value="${u}">U${u}–U${u + units - 1}</option>`).join('');
+            if (available.includes(Number(previous))) start.value = String(previous);
+            else if (available.length === 1) start.value = String(available[0]);
+            hint.textContent = !validHeight
+                ? `U Height must be between 1 and ${capacity} for ${rack.name}.`
+                : available.length
+                    ? `${rack.name} (${capacity}U): ${available.length} available starting position(s) for a ${units}U device. Occupied positions are excluded.`
+                    : `No available ${units}U positions on the ${currentFace} face of ${rack.name}.`;
+            height.setCustomValidity(validHeight ? '' : `U Height must be between 1 and ${capacity}.`);
+            start.required = true;
+        }
         function toggleDeviceMountType() {
             const mount = document.getElementById('dev-mount-type')?.value;
             const location = document.getElementById('dev-location');
@@ -4229,14 +5065,14 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                         <div id="racked-options" ${mountType === 'Rack Mounted' ? '' : 'hidden'} class="${mountType === 'Rack Mounted' ? '' : 'hidden'} phase14b-rack-config bg-slate-100 dark:bg-slate-900">
                             <div class="block text-xs font-bold text-indigo-600">Rack Mounting Configuration</div>
                             <div class="phase14b-rack-grid">
-                                <div><label for="dev-rack-id" class="block text-[10px] font-semibold text-slate-500 uppercase mb-1">Rack</label><select id="dev-rack-id" class="w-full border rounded-lg p-1.5 text-xs dark:bg-slate-700">${appState.racks.map(r => `<option value="${escapeHtml(r.id)}" ${(draft?.rackId ?? device?.rackId) === r.id ? 'selected' : ''}>${escapeHtml(r.name)}</option>`).join('')}</select></div>
+                                <div><label for="dev-rack-id" class="block text-[10px] font-semibold text-slate-500 uppercase mb-1">Rack</label><select id="dev-rack-id" class="w-full border rounded-lg p-1.5 text-xs dark:bg-slate-700"><option value="" ${!appState.racks.length ? 'selected' : ''}>${appState.racks.length ? 'Select a network rack...' : 'No network racks created yet'}</option>${appState.racks.map(r => `<option value="${escapeHtml(r.id)}" ${(draft?.rackId ?? device?.rackId) === r.id ? 'selected' : ''}>${escapeHtml(r.name)}</option>`).join('')}</select><p class="phase14b-help">A network rack is a physical enclosure, separate from the device location.</p><button type="button" data-action="create-rack-from-device" class="mt-2 w-full px-3 py-2 bg-slate-200 dark:bg-slate-700 rounded-lg text-xs font-semibold"><i class="fa-solid fa-plus mr-1"></i>Create Network Rack</button></div>
                                 <div><label for="dev-rack-face" class="block text-[10px] font-semibold text-slate-500 uppercase mb-1">Face</label><select id="dev-rack-face" class="w-full border rounded-lg p-1.5 text-xs dark:bg-slate-700"><option value="front" ${(draft?.face ?? device?.face) !== 'rear' ? 'selected' : ''}>Front</option><option value="rear" ${(draft?.face ?? device?.face) === 'rear' ? 'selected' : ''}>Rear</option></select></div>
-                                <div><label for="dev-rack-u" class="block text-[10px] font-semibold text-slate-500 uppercase mb-1">Start U</label><input type="number" id="dev-rack-u" min="1" max="48" value="${draft?.rackUStart ?? device?.rackUStart ?? 1}" class="w-full border rounded-lg p-1.5 text-xs dark:bg-slate-700 text-center font-mono"></div>
+                                <div><label for="dev-rack-u" class="block text-[10px] font-semibold text-slate-500 uppercase mb-1">Start U</label><select id="dev-rack-u" data-initial-u="${escapeHtml(String(draft?.rackUStart ?? device?.rackUStart ?? 1))}" class="w-full border rounded-lg p-1.5 text-xs dark:bg-slate-700 text-center font-mono"><option value="">Select Start U...</option></select></div>
                                 <div><label for="dev-rack-height" class="block text-[10px] font-semibold text-slate-500 uppercase mb-1">U Height</label><input type="number" id="dev-rack-height" min="1" max="48" value="${currentHeight}" required class="w-full border rounded-lg p-1.5 text-xs dark:bg-slate-700 text-center font-mono"></div>
-                            </div><p class="phase14b-help">End U is calculated automatically from Start U + U Height - 1.</p>
+                            </div><p id="dev-rack-range-hint" class="phase14b-help" role="status">End U is calculated automatically from Start U + U Height - 1.</p>
                         </div>
                         </div>
-                        <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-network-wired"></i>Network identity</div><div><div class="form-label">Primary IP <span class="text-slate-400 font-normal">(must belong to an existing subnet)</span></div><div class="phase14b-network-grid"><div><label for="dev-subnet" class="phase14b-ip-label">Existing subnet <span class="required-mark">*</span></label><select id="dev-subnet" required data-action="device-subnet-change" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" disabled ${!currentSubnet ? 'selected' : ''}>Select an existing subnet...</option>${appState.subnets.map(s => `<option value="${escapeHtml(s.id)}" ${currentSubnet?.id === s.id ? 'selected' : ''}>${escapeHtml(s.name || s.cidr)} — ${escapeHtml(s.cidr)}</option>`).join('')}</select><button type="button" data-action="create-subnet-from-device" class="mt-2 w-full px-3 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold transition border border-slate-200 dark:border-slate-600"><i class="fa-solid fa-diagram-project mr-1.5"></i>Create subnet in IPAM</button></div><div><label for="dev-ip" class="phase14b-ip-label">Device IP address <span class="required-mark">*</span></label><input type="text" id="dev-ip" required inputmode="decimal" autocomplete="off" value="${escapeHtml(draft?.primaryIp ?? device?.primaryIp ?? '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700 font-mono" placeholder="Select a subnet first"><label for="dev-ip-available" class="phase14b-ip-label block mt-3">Or choose an available IP</label><select id="dev-ip-available" data-action="device-ip-select" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700 font-mono"><option value="">Select next available IP...</option></select><p id="dev-ip-hint" class="phase14b-help"></p></div></div><label class="flex items-start gap-3 mt-4 p-3 rounded-xl border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/30 cursor-pointer">
+                        <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-network-wired"></i>Network identity</div><div><div class="form-label">Primary IP <span class="text-slate-400 font-normal">(must belong to an existing subnet)</span></div><div class="phase14b-network-grid"><div><label for="dev-block" class="phase14b-ip-label">IP Address Block</label><select id="dev-block" data-action="device-block-change" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="">Select an IP Address Block...</option>${appState.subnets.filter(s => s.kind === 'container' && !s.parentId).map(b => `<option value="${escapeHtml(b.id)}" ${currentSubnet && phase11DeviceTopBlock(currentSubnet)?.id === b.id ? 'selected' : ''}>${escapeHtml(b.name || b.cidr)}</option>`).join('')}<option value="__unassigned__" ${currentSubnet && !phase11DeviceTopBlock(currentSubnet) ? 'selected' : ''}>Networks Without an IP Address Block</option></select><label for="dev-vlan" class="phase14b-ip-label block mt-3">VLAN</label><select id="dev-vlan" data-action="device-vlan-change" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="">Select a VLAN...</option></select><label for="dev-subnet" class="phase14b-ip-label block mt-3">Subnet <span class="required-mark">*</span></label><select id="dev-subnet" required data-action="device-subnet-change" data-initial-subnet="${escapeHtml(currentSubnet?.id || '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="">Select a subnet...</option></select><button type="button" data-action="create-subnet-from-device" class="mt-2 w-full px-3 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold transition border border-slate-200 dark:border-slate-600"><i class="fa-solid fa-diagram-project mr-1.5"></i>Create subnet in IPAM</button></div><div><label for="dev-ip" class="phase14b-ip-label">Device IP address <span class="required-mark">*</span></label><input type="text" id="dev-ip" required inputmode="decimal" autocomplete="off" value="${escapeHtml(draft?.primaryIp ?? device?.primaryIp ?? '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700 font-mono" placeholder="Select a subnet first"><label for="dev-ip-available" class="phase14b-ip-label block mt-3">Or choose an available IP</label><select id="dev-ip-available" data-action="device-ip-select" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700 font-mono"><option value="">Select next available IP...</option></select><p id="dev-ip-hint" class="phase14b-help"></p></div></div><label class="flex items-start gap-3 mt-4 p-3 rounded-xl border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/30 cursor-pointer">
 <input id="dev-ip-reserved" type="checkbox" ${((draft?.ipReserved ?? device?.ipReserved ?? (device?.primaryIp && appState.ipAllocations[device.primaryIp]?.status === 'Reserved')) ? 'checked' : '')} class="mt-1 h-5 w-5 shrink-0">
 <span class="text-sm text-slate-800 dark:text-slate-100"><strong>Reserve this IP address for this device</strong><span class="block text-xs mt-1 text-slate-600 dark:text-slate-300">Keeps this same IP linked to the device, but displays it as Reserved in IPAM. No second address is needed.</span></span>
 </label><p class="phase14b-help">Don't see the required network? Create it in IPAM, then return here to select it.</p></div>
@@ -4252,8 +5088,16 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 phase19BTypeSelect.addEventListener('change',phase19BRefreshFields);
                 phase19BTypeSelect.addEventListener('input',phase19BRefreshFields);
             }
+            phase11DeviceCascade('initial');
             refreshDeviceIpOptions();
+            ['dev-rack-id', 'dev-rack-height', 'dev-rack-face'].forEach(id => {
+                const field = document.getElementById(id);
+                field?.addEventListener('change', updateDeviceRackLimits);
+                field?.addEventListener('input', updateDeviceRackLimits);
+            });
+            updateDeviceRackLimits();
             phase19BUpdateMountChoices();
+            rememberModalForm();
             const deviceForm = document.querySelector('[data-device-form="true"]');
             if (deviceForm) {
                 const clearFieldError = event => {
@@ -4300,13 +5144,32 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             };
         }
 
+        let deviceRackReturnPending = false;
+        function createRackFromDevice() {
+            const draft = captureDeviceFormDraft();
+            if (!draft) return showToast('Unable to preserve device details.', 'error');
+            deviceFormDraft = draft;
+            deviceRackReturnPending = true;
+            closeModal(true);
+            openRackModal();
+        }
+        function cancelRackFromDevice() {
+            if (!deviceRackReturnPending) { closeModal(); return; }
+            const draft = deviceFormDraft;
+            deviceRackReturnPending = false;
+            closeModal(true);
+            switchTab('devices');
+            setTimeout(() => openDeviceModal(draft?.deviceId || null), 0);
+        }
+
         function createSubnetFromDevice() {
             deviceFormDraft = captureDeviceFormDraft();
             if (!deviceFormDraft) {
                 showToast('Unable to preserve the device form. Please reopen the form.', 'error');
                 return;
             }
-            closeModal();
+            // Draft has already been captured; do not prompt to discard it.
+            closeModal(true);
             switchTab('ipam');
             setTimeout(() => openSubnetModal(), 0);
         }
@@ -4416,7 +5279,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 showToast('Device changes were not saved. Previous data restored.', 'error');
                 return;
             }
-            closeModal(); renderContent();
+            closeModal(true); renderContent();
         }
 
         function deleteDevice(deviceId) {
@@ -4492,11 +5355,11 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 
         function caffootShowLicences() {
             const template = document.getElementById('caffoot-license-notices');
-            openModal(`<div class="p-6 space-y-4"><h3 class="text-lg font-bold">Software Licences</h3><div class="text-sm whitespace-pre-wrap break-words">${template ? template.innerHTML : 'See LICENSE and THIRD-PARTY-NOTICES.md beside the developer source.'}</div></div>`);
+            openModal(`<div class="p-6 space-y-4"><div class="flex items-start justify-between gap-4"><h3 class="text-lg font-bold">Software Licences</h3><button type="button" data-action="close-modal" aria-label="Close software licences" class="phase16a-action">✕</button></div><div class="text-sm whitespace-pre-wrap break-words">${template ? template.innerHTML : 'See LICENSE and THIRD-PARTY-NOTICES.md beside the developer source.'}</div><div class="flex justify-end"><button type="button" data-action="close-modal" class="phase16a-action">Close</button></div></div>`);
         }
 
         function caffootUpdateGuide() {
-            openModal(`<div class="p-6 space-y-4"><h3 class="text-lg font-bold text-slate-900 dark:text-white">Safely update Caffoot Lite</h3>
+            openModal(`<div class="p-6 space-y-4"><div class="flex items-start justify-between gap-4"><h3 class="text-lg font-bold text-slate-900 dark:text-white">Safely Update Caffoot Lite</h3><button type="button" data-action="close-modal" aria-label="Close safe update guide" class="phase16a-action">✕</button></div>
                 <ol class="list-decimal pl-6 space-y-3 text-slate-700 dark:text-slate-200">
                     <li>Download a JSON backup from the current version and keep it outside your browser.</li>
                     <li>Keep your current HTML file. Download the new <strong>Caffoot-Lite.html</strong> from the official release page into a separate folder.</li>
@@ -4504,7 +5367,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                     <li>Use Settings &amp; Data → Choose backup file if your inventory is missing or out of date. Review the import summary carefully: restoring replaces the inventory visible in that file.</li>
                     <li>Check your devices, IPAM, subnets and racks before continuing. Keep the old HTML and backup until you are satisfied.</li>
                 </ol><p class="text-sm text-slate-700 dark:text-slate-200">Updates are manual. The application works offline; only checking for releases and downloading a newer file need internet access. A backup from a newer schema may require a newer application.</p>
-                <div class="flex flex-wrap gap-3"><button type="button" data-action="phase11-export-backup" class="phase16a-action">Download JSON backup</button>
+                <div class="flex flex-wrap gap-3"><button type="button" data-action="close-modal" class="phase16a-action" aria-label="Close safe update guide">Close</button><button type="button" data-action="phase11-export-backup" class="phase16a-action">Download JSON backup</button>
                 <a href="https://github.com/sdelnevo/Caffoot-Lite/releases" target="_blank" rel="noopener noreferrer" class="phase16a-action">Official releases</a></div></div>`);
         }
 
@@ -4651,7 +5514,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 
         const CAFFOOT_BACKUP_FORMAT = 'caffoot-inventory';
         const CAFFOOT_BACKUP_SCHEMA_VERSION = 1;
-        const CAFFOOT_LITE_VERSION = '1.0.3';
+        const CAFFOOT_LITE_VERSION = '1.1.0';
         function phase20CreateBackup(state = appState) {
             return {
                 ...JSON.parse(JSON.stringify(state)),
@@ -4902,6 +5765,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 renderContent();
                 return;
             }
+            if (event.target.id === 'device-assignment-filter') { deviceAssignmentFilter = event.target.value; renderContent(); return; }
             if (event.target.id === 'device-status-filter') {
                 deviceStatusFilter = event.target.value;
                 renderContent();
@@ -4935,6 +5799,8 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 case 'device-ip-select':
                     handleDeviceIpSelection();
                     break;
+                case 'device-block-change': phase11DeviceCascade('block'); break;
+                case 'device-vlan-change': phase11DeviceCascade('subnet'); break;
                 case 'device-subnet-change':
                     handleDeviceSubnetChange();
                     break;
@@ -5201,7 +6067,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             event.preventDefault();
 
             switch (action) {
-                case 'phase14g-clear-filters': deviceSearchTerm = ''; deviceTypeFilter = ''; deviceStatusFilter = ''; deviceLocationFilter = ''; deviceMountFilter = ''; renderContent(); break;
+                case 'phase14g-clear-filters': deviceSearchTerm = ''; deviceTypeFilter = ''; deviceStatusFilter = ''; deviceLocationFilter = ''; deviceMountFilter = ''; deviceAssignmentFilter = ''; renderContent(); break;
                 case 'phase14-tab': if (['inventory','manage'].includes(target.dataset.tab)) { phase14DeviceTab=target.dataset.tab; renderContent(); } break;
                 case 'open-device-modal': openDeviceModal(); break;
                 case 'edit-device': openDeviceModal(id); break;
@@ -5229,6 +6095,8 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 case 'add-custom-type': addCustomTypeOption(); break;
                 case 'add-custom-location': addCustomLocationOption(); break;
                 case 'create-subnet-from-device': createSubnetFromDevice(); break;
+                case 'create-rack-from-device': createRackFromDevice(); break;
+                case 'cancel-rack-from-device': cancelRackFromDevice(); break;
                 case 'delete-device-type': deleteDeviceType(name); break;
                 case 'edit-device-type': editDeviceTypePrompt(name); break;
                 case 'phase13g-graphic': phase13GOpenGraphics(name); break;
@@ -5264,10 +6132,13 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 case 'open-subnet-modal': openSubnetModal(); break;
                 case 'edit-subnet': openSubnetModal(id); break;
                 case 'delete-subnet': deleteSubnet(id); break;
+                case 'confirm-delete-subnet': confirmDeleteSubnet(id); break;
                 case 'bulk-ip': openBulkIpModal(id); break;
                 case 'phase12c-tab': if (['overview','addresses','manage'].includes(target.dataset.tab)) { phase12CIpamTab=target.dataset.tab; renderContent(); } break;
                 case 'phase12b-apply': phase12BApply(); break;
-                case 'open-subnet-by-vlan': openSubnetModalByName(name); break;
+                case 'open-subnet-by-vlan': openSubnetModalByVlanId(id); break;
+                case 'reconcile-legacy-vlans': reconcileLegacyVlanOwnership(); break;
+                case 'edit-ipam-block': openSubnetModal(id); break;
                 case 'delete-vlan': deleteVlan(id); break;
                 case 'open-ip': openIpModal(target.dataset.ip); break;
                 case 'phase10-next-ip': openIpModal(target.dataset.ip); break;
@@ -5279,6 +6150,24 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 case 'ip-range-65-128': ipViewRange = '65-128'; renderContent(); break;
                 case 'ip-range-129-192': ipViewRange = '129-192'; renderContent(); break;
                 case 'ip-range-193-254': ipViewRange = '193-254'; renderContent(); break;
+                case 'sidebar-ipam-overview': phase12CIpamTab = 'overview'; switchTab('ipam'); break;
+                case 'sidebar-ipam-addresses': phase12CIpamTab = 'addresses'; switchTab('ipam'); break;
+                case 'ipam-open-block': {
+                    const blockId = String(target.dataset.id || '');
+                    if (blockId && !appState.subnets.some(s => s.id === blockId && s.kind === 'container')) break;
+                    ipamManageBlockFilter = blockId;
+                    phase12CIpamTab = 'manage';
+                    switchTab('ipam');
+                    const tree = document.querySelectorAll('[data-ipam-hierarchy-block]');
+                    tree.forEach(item => {
+                        if (blockId) item.open = item.getAttribute('data-ipam-hierarchy-block') === blockId;
+                    });
+                    const selectedBlock = blockId ? [...tree].find(item => item.getAttribute('data-ipam-hierarchy-block') === blockId) : null;
+                    if (selectedBlock) selectedBlock.scrollIntoView({block:'center',behavior:'instant'});
+                    break;
+                }
+                case 'ipam-show-all-blocks': ipamManageBlockFilter = null; phase12CIpamTab = 'manage'; switchTab('ipam'); break;
+                case 'sidebar-ipam-manage': ipamManageBlockFilter = null; phase12CIpamTab = 'manage'; switchTab('ipam'); break;
                 case 'tab-ipam': switchTab('ipam'); break;
                 case 'tab-audit': switchTab('audit'); break;
                 case 'export-audit': exportAuditHistory(); break;
@@ -5334,7 +6223,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 case 'tab-racks': switchTab('racks'); break;
                 case 'toggle-dark-mode': toggleDarkMode(); break;
                 case 'export-data': exportData(); break;
-                case 'cancel-subnet-modal': deviceFormDraft = null; closeModal(); break;
+                case 'cancel-subnet-modal': { const draft = deviceFormDraft; closeModal(true); if (draft) { switchTab('devices'); setTimeout(() => openDeviceModal(draft.deviceId || null), 0); } break; }
                 case 'close-modal': closeModal(); break;
                 default:
                     console.warn('Unhandled data-action:', action);

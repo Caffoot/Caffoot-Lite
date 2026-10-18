@@ -14,7 +14,7 @@ Caffoot Lite is a standalone HTML application. You do **not** need Docker, Node.
 
 ## Download the released application
 
-**Caffoot Lite v1.0.3 is published.** Always use the [latest stable release](https://github.com/sdelnevo/Caffoot-Lite/releases/latest) for the current download.
+**v1.1.0 is currently a release candidate, not yet published.** Always use the [latest stable release](https://github.com/sdelnevo/Caffoot-Lite/releases/latest) for production downloads.
 
 1. Visit the [Caffoot Lite GitHub repository](https://github.com/sdelnevo/Caffoot-Lite).
 2. Open **Releases** and select the latest stable release.
@@ -27,7 +27,7 @@ If your browser downloads the file instead of opening it, use the browser's **Fi
 
 ## First steps
 
-1. Open **Subnets** and add the network(s) you manage.
+1. Open **IPAM → Manage Subnets** and create an IP Address Block, then add Network / VLAN subnets within it.
 2. Open **Devices** and add a device using an address from an existing subnet.
 3. Explore **IPAM**, **Racks** and the **Dashboard** as needed.
 4. Find **Data Management** and export a **JSON backup** once you have added useful data.
@@ -65,7 +65,7 @@ The safe update guide and backups work offline. Newer backup schemas require a c
 
 ## Complete release package
 
-Prefer the version-named release ZIP (for example `Caffoot-Lite-1.0.3.zip` for v1.0.3; always check the current release assets). Extract it and open `Caffoot-Lite.html`; keep the guides and licences beside it. `SHA256SUMS` contains file hashes for checking integrity. The standalone HTML also includes full software notices in About Caffoot Lite, available offline. Example backups under `app/fixtures/` are fictional demonstrations; importing one replaces the current inventory after confirmation.
+Prefer the version-named ZIP from the latest stable release (the v1.1.0 candidate is `Caffoot-Lite-1.1.0.zip`, not yet published). Extract it and open `Caffoot-Lite.html`; keep the guides and licences beside it. `SHA256SUMS` contains file hashes for checking integrity. The standalone HTML also includes full software notices in About Caffoot Lite, available offline. Example backups under `app/fixtures/` are fictional demonstrations; importing one replaces the current inventory after confirmation.
 
 ### Local file storage scope
 

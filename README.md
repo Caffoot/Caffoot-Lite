@@ -70,7 +70,7 @@ If you're looking for **free IPAM software**, an **offline network inventory too
 ## What you can manage
 
 - **Devices:** inventory, types, locations and device details.
-- **Subnets and IPAM:** CIDR networks, addresses, reservations and allocation workflows.
+- **Subnets and IPAM:** IP Address Block hierarchy, CIDR networks, scoped VLANs, addresses, reservations and allocation workflows.
 - **Racks:** rack layouts, equipment placement and U-space management.
 - **Dashboard:** inventory overview.
 - **Data Management:** validated JSON backup/restore and reset/recovery tools.
@@ -100,7 +100,7 @@ The build produces `app/dist/Caffoot-Lite.html`. Automated checks and manual bro
 
 This repository is dedicated to **Caffoot Lite**: its standalone application, build tools, tests and release documentation.
 
-The latest published release is **v1.0.3** (16 October 2026). For development plans and historical release checks, see the [project roadmap](ROADMAP.md).
+**v1.1.0 is a tested release candidate, not yet published.** Use the [latest stable release](https://github.com/sdelnevo/Caffoot-Lite/releases/latest) for downloads until publication. See the [v1.1.0 release notes](RELEASE-NOTES-1.1.0.md) and [roadmap](ROADMAP.md) for changes and acceptance status.
 
 ## Licence and branding
 

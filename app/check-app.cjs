@@ -37,14 +37,26 @@ assert(html.includes('Not a /'), 'Misaligned network boundary must be explained'
 assert(html.includes('Did you mean '), 'Network boundary error must suggest correct CIDR');
 assert(html.includes('aria-invalid'), 'Invalid CIDR must be announced accessibly');
 assert(html.includes('Caffoot Lite supports subnet sizes /23 through /30.'), 'Unsupported prefix must be explained');
-assert(html.includes("if (!subnet) suggestSubnetGateway();"), 'New subnet modal must initialize gateway suggestion');
+assert(html.includes("if (!subnet && subnetTypeSelect.value === 'network') suggestSubnetGateway();"), 'New network subnet modal must initialize gateway suggestion without treating IP Address Blocks as networks');
 assert(html.includes("form.dataset.subnetId"), 'Existing subnet gateways must not be automatically replaced');
 assert(html.includes('function phase11CPlan('), 'IPAM repair planner must remain');
 assert(html.includes('...phase19BSoftwareFields()'), 'computer software options must be rendered');
 assert(html.includes('...phase19BServerFunctionFields()'), 'server feature options must be rendered');
-assert(html.includes("if(!phase11BCommitDelete(before,'Subnet')) { selectedSubnetId=previousSelection; renderContent(); }"), 'failed subnet deletion must restore selected subnet');
+assert(/if\s*\(phase11BCommitDelete\(before,\s*isNetwork\s*\?\s*'Subnet & VLAN'\s*:\s*'IP Address Block'\)\)\s*closeModal\(\);\s*else\s*selectedSubnetId\s*=\s*previousSelection\s*;/.test(html), 'failed subnet deletion must restore selected subnet');
 assert(html.includes("if(!phase11BCommitDelete(before,'Rack')) { selectedRackId=previousSelection; renderContent(); }"), 'failed rack deletion must restore selected rack');
 assert(html.includes('function phase11CApplyRepair('), 'IPAM repair commit must remain');
+
+/* v1.1: Manage Subnets must not expose edit actions for a different address block. */
+assert(html.includes("const availableNetworks = appState.subnets.filter("), 'IPAM must derive a filtered list of active networks');
+assert(html.includes("(s.parentId || '') === ipamManageBlockFilter"), 'active subnet list must respect the selected address block');
+assert(html.includes("const subnet = availableNetworks.find(s => s.id === selectedSubnetId) || availableNetworks[0] || null;"), 'stale subnet selection must fall back within the filtered block');
+assert(html.includes("if (phase12CIpamTab === 'manage' && !subnet) return renderSubnetHierarchyPreview();"), 'empty filtered blocks must not expose unrelated subnet actions');
+assert(html.includes("availableNetworks.map(s =>"), 'active subnet dropdown must use filtered networks');
+assert(html.includes('data-action="bulk-ip" data-id="${escapeHtml(subnet.id)}"'), 'bulk edit must target filtered active subnet');
+assert(html.includes('data-action="edit-subnet" data-id="${escapeHtml(subnet.id)}"'), 'subnet edit must target filtered active subnet');
+assert(html.includes("showToast('Choose a subnet from the selected IP Address Block.'"), 'manual subnet selection must reject out-of-block IDs');
+console.log('v1.1 filtered active subnet and edit action safeguards passed.');
+
 assert(!html.includes("case 'tab-diagnostics':"), 'diagnostics action must be removed');
 assert(html.includes('data-action="phase19b-manage-functions"'), 'server options manager must be accessible');
 assert(html.includes('data-device-panel="manage"'), 'Devices management workspace must remain');
@@ -101,6 +113,12 @@ const ipamContext = {
 };
 vm.createContext(ipamContext);
 vm.runInContext(html.slice(helperStart, helperEnd), ipamContext);
+// Load the production gateway lookup into this isolated device/IPAM test context.
+const ipamGatewayHelperStart = html.indexOf('function phase10GatewaySubnet(');
+const ipamGatewayHelperEnd = html.indexOf('function phase10SubnetSummary(', ipamGatewayHelperStart);
+assert(ipamGatewayHelperStart >= 0 && ipamGatewayHelperEnd > ipamGatewayHelperStart, 'gateway protection helper must exist');
+ipamContext.phase12Usable = ipamContext.ipBelongsToSubnet;
+vm.runInContext(html.slice(ipamGatewayHelperStart, ipamGatewayHelperEnd), ipamContext);
 const { appState: state } = ipamContext;
 const a = { id: 'test-a', name: 'server-a', notes: 'Original notes', primaryIp: '', ipReserved: false };
 const b = { id: 'test-b', name: 'server-b', notes: '', primaryIp: '', ipReserved: false };
@@ -127,6 +145,16 @@ ipamContext.syncDeviceIpamRecord(a);
 assert.equal(state.ipAllocations['192.168.40.11'].status, 'Reserved', 'reservation flag sync');
 ipamContext.setDevicePrimaryIp(a, '');
 assert.equal(state.ipAllocations['192.168.40.11'], undefined, 'clearing primary IP releases allocation');
+state.subnets[0].gateway = '192.168.40.1';
+const server = {id:'gateway-server',name:'server',type:'Server - Physical',primaryIp:'',ipReserved:false};
+const firewall = {id:'gateway-firewall',name:'firewall',type:'Firewall',primaryIp:'',ipReserved:false};
+state.devices.push(server,firewall);
+assert.throws(() => ipamContext.setDevicePrimaryIp(server,'192.168.40.1'), /may only be assigned/, 'server must not newly claim gateway');
+assert.equal(server.primaryIp,'', 'blocked gateway assignment must not mutate device');
+ipamContext.setDevicePrimaryIp(firewall,'192.168.40.1');
+assert.equal(firewall.primaryIp,'192.168.40.1','firewall may own gateway');
+assert.throws(() => ipamContext.setDevicePrimaryIp(server,'192.168.40.1'), /already assigned/, 'gateway cannot be assigned twice');
+console.log('Gateway device assignment fixtures passed.');
 console.log('Device/IPAM runtime fixtures passed.');
 
 const rackValidatorStart = html.indexOf('function validateRackPlacement(');
@@ -222,7 +250,8 @@ const ipPickerSource = fs.readFileSync(path.join(__dirname, 'caffoot-lite.html')
 assert(ipPickerSource.includes('id="dev-ip-available"'), 'Device form must expose a Safari-compatible IP dropdown');
 assert(ipPickerSource.includes("case 'device-ip-select':"), 'Device IP dropdown must be handled on change');
 assert(ipPickerSource.includes('if (available.length < 50) available.push(ip)'), 'IP dropdown must cap rendered choices');
-assert(ipPickerSource.includes('if (ip === subnet.gateway) continue;'), 'IP dropdown must exclude gateway');
+assert(ipPickerSource.includes('if (ip === subnet.gateway && ip !== currentIp) continue;'), 'IP dropdown must exclude gateway except when showing the current address');
+assert(ipPickerSource.includes("appState.devices.some(d => d.id === editingId && d.primaryIp === ip)"), 'Existing gateway address must only be retained for its owning device');
 
 assert(html.includes("case 'phase16a-check-safety': phase16ACheckSafety(); break;"), 'Inventory safety check must be wired');
 assert(html.includes('function phase16ACheckSafety()'), 'Inventory safety check must remain');
@@ -300,11 +329,16 @@ const deletionFixture = {
   appState: {
     subnets: [{id:'s1',name:'Test subnet',cidr:'192.168.40.0/24'}],
     racks: [{id:'r1',name:'Test rack'}],
+    vlans: [],
     devices: [{id:'d1',name:'Test device',primaryIp:'192.168.40.10',rackId:'r1'}],
     rackAccessories: [],
     ipAllocations: {'192.168.40.10':{deviceId:'d1',status:'Assigned'}}
   },
   selectedSubnetId: 's1',
+  pendingSubnetDeletion: null,
+  openModal: html => { deletionFixture.lastModal = html; },
+  lastModal: '',
+  escapeHtml: value => String(value),
   selectedRackId: 'r1',
   confirm: () => true,
   showToast: msg => { deletionFixture.lastToast=msg; },
@@ -318,23 +352,23 @@ const deletionFixture = {
 vm.createContext(deletionFixture);
 vm.runInContext(html.slice(subnetDepsStart,subnetDepsEnd) + '\n' + html.slice(commitStart,commitEnd).split('function deleteSubnet(')[0] + '\n' + html.slice(subnetDeleteStart,subnetDeleteEnd) + '\n' + html.slice(rackDeleteStart,rackDeleteEnd),deletionFixture);
 deletionFixture.deleteSubnet('s1');
-assert.equal(deletionFixture.appState.subnets.length,1,'subnet with device/IPAM dependency must not be deleted');
+assert.equal(deletionFixture.appState.subnets.length,1,'subnet deletion must wait for explicit confirmation');
+assert(deletionFixture.lastModal.includes('Confirm Subnet & VLAN Deletion'),'subnet deletion preview must be shown');
 deletionFixture.deleteRack('r1');
 assert.equal(deletionFixture.appState.racks.length,1,'rack with mounted device must not be deleted');
 deletionFixture.appState.devices=[];
 deletionFixture.appState.ipAllocations={};
 deletionFixture.allowSave=false;
 deletionFixture.deleteSubnet('s1');
-assert.equal(deletionFixture.appState.subnets.length,1,'failed subnet save must restore subnet');
-assert.equal(deletionFixture.selectedSubnetId,'s1','failed subnet save restores selection');
+assert.equal(deletionFixture.appState.subnets.length,1,'subnet preview must not mutate inventory');
+assert.equal(deletionFixture.selectedSubnetId,'s1','subnet preview preserves selection');
 deletionFixture.deleteRack('r1');
 assert.equal(deletionFixture.appState.racks.length,1,'failed rack save must restore rack');
 assert.equal(deletionFixture.selectedRackId,'r1','failed rack save restores selection');
 deletionFixture.allowSave=true;
-deletionFixture.deleteSubnet('s1');
 deletionFixture.deleteRack('r1');
-assert.equal(deletionFixture.appState.subnets.length,0,'empty subnet can be deleted');
 assert.equal(deletionFixture.appState.racks.length,0,'empty rack can be deleted');
+// Executable subnet confirmation/rollback and final deletion are covered by check:subnet-deletion.
 console.log('RC1 subnet/rack deletion and rollback fixtures passed.');
 
 /* RC1: reservation ownership and rack face/bounds safety. */
