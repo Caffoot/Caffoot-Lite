@@ -2417,15 +2417,15 @@ function hierarchyValidateTypes(subnets) {
                                     <i class="fa-solid ${integrityHealthy ? 'fa-shield-check' : 'fa-shield-exclamation'}"></i>
                                 </div>
                                 <div>
-                                    <h4 class="font-bold text-slate-900 dark:text-white">Data Health</h4>
-                                    <p class="text-xs text-slate-500 mt-1">Checks for known inconsistencies in devices, IPAM, subnets, VLANs and rack assignments.</p>
+                                    <h4 class="font-bold text-slate-900 dark:text-white">Inventory Health</h4>
+                                    <p class="text-xs text-slate-500 mt-1">Checks saved inventory records for known inconsistencies in devices, IPAM, subnets, VLANs and rack assignments. This does not test browser storage safety, backups or live network availability.</p>
                                 </div>
                             </div>
                             <div class="flex items-center gap-2">
                                 <span class="px-3 py-1.5 rounded-full text-xs font-bold ${integrityHealthy ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300' : 'bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300'}">${integrityHealthy ? 'Healthy' : `${integrityErrors.length} issue${integrityErrors.length === 1 ? '' : 's'}`}</span>
                             </div>
                         </div>
-                        ${integrityHealthy ? `<div class="mt-4 p-3 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/20 text-xs text-emerald-700 dark:text-emerald-300"><i class="fa-solid fa-circle-check mr-2"></i>No issues detected by the current data integrity checks.</div>` : `<div class="mt-4 space-y-2">${integrityPreview.map(error => `<div class="flex items-start gap-2 p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/20 text-xs text-rose-700 dark:text-rose-300"><i class="fa-solid fa-circle-exclamation mt-0.5"></i><span>${escapeHtml(error)}</span></div>`).join('')}${integrityErrors.length > integrityPreview.length ? `<p class="text-[11px] text-slate-500 pt-1">Showing the first ${integrityPreview.length} of ${integrityErrors.length} issues.</p>` : ''}</div>`}
+                        ${integrityHealthy ? `<div class="mt-4 p-3 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/20 text-xs text-emerald-700 dark:text-emerald-300"><i class="fa-solid fa-circle-check mr-2"></i>No issues detected by the current inventory consistency checks. Keep a separate JSON backup; this result does not verify browser storage or network devices.</div>` : `<div class="mt-4 space-y-2">${integrityPreview.map(error => `<div class="flex items-start gap-2 p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/20 text-xs text-rose-700 dark:text-rose-300"><i class="fa-solid fa-circle-exclamation mt-0.5"></i><span>${escapeHtml(error)}</span></div>`).join('')}${integrityErrors.length > integrityPreview.length ? `<p class="text-[11px] text-slate-500 pt-1">Showing the first ${integrityPreview.length} of ${integrityErrors.length} issues.</p>` : ''}</div>`}
                     </section>
 
                     ${networkSnapshot}
