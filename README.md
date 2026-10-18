@@ -78,8 +78,8 @@ If you're looking for **free IPAM software**, an **offline network inventory too
 - **Devices:** inventory, types, locations and device details.
 - **Subnets and IPAM:** IP Address Block hierarchy, CIDR networks, scoped VLANs, addresses, reservations and allocation workflows.
 - **Racks:** rack layouts, equipment placement and U-space management.
-- **Dashboard:** inventory overview; v1.1.1 development adds clearer **Inventory Health** wording for saved-record consistency, not storage, backup or live-network monitoring.
-- **Data Management:** validated JSON backup/restore and reset/recovery tools. A clearer Back Up & Restore, Maintenance & Safety and Advanced Recovery layout is in development for v1.1.1; it is not yet part of the published stable release.
+- **Dashboard:** inventory overview; v1.1.1 includes clearer **Inventory Health** wording for saved-record consistency, not storage, backup or live-network monitoring.
+- **Data Management:** validated JSON backup/restore and reset/recovery tools. The v1.1.1 Settings & Data interface organises backup/restore, maintenance and advanced recovery controls under Data Management.
 - **Offline use:** a single HTML file with bundled styling, fonts and branding assets.
 
 See the [user guide](USER-GUIDE.md) for the first-run walkthrough and day-to-day tasks.
@@ -102,13 +102,13 @@ npm run release
 
 The build produces `app/dist/Caffoot-Lite.html`. Automated checks and manual browser testing are recommended before distributing a build. The GitHub Actions build workflow is currently disabled.
 
-**Latest stable hotfix:** v1.1.0.1. The v1.1.0 release references below describe the preceding milestone; use the latest stable release link for current downloads.
+**Current stable release:** [v1.1.1](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.1.1), published 18 October 2026. v1.1.0.1 remains a historical hotfix.
 
 ## Project and release status
 
 This repository is dedicated to **Caffoot Lite**: its standalone application, build tools, tests and release documentation.
 
-**v1.1.0 was published on 18 October 2026.** The v1.1.1 Settings and documentation improvements are under development, not yet released. Download it from the [v1.1.0 release](https://github.com/caffoot/Caffoot-Lite/releases/tag/v1.1.0) or visit the [latest stable release](https://github.com/caffoot/Caffoot-Lite/releases/latest). See the [v1.1.0 release notes](RELEASE-NOTES-1.1.0.md) and [roadmap](ROADMAP.md) for changes and acceptance status.
+**v1.1.1 was published on 18 October 2026.** Download it from the [v1.1.1 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.1.1) or visit the [latest stable release](https://github.com/Caffoot/Caffoot-Lite/releases/latest). See the [v1.1.1 release notes](RELEASE-NOTES-1.1.1.md), [historical v1.1.0 release notes](RELEASE-NOTES-1.1.0.md) and [roadmap](ROADMAP.md).
 
 ## Licence and branding
 
