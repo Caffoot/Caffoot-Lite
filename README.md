@@ -53,9 +53,9 @@ A dedicated security review and deployment-hardening milestone is planned for v1
 
 ## Download and run
 
-**[Get the latest stable Caffoot Lite release](https://github.com/sdelnevo/Caffoot-Lite/releases/latest)** — no installation, Docker or server required.
+**[Get the latest stable Caffoot Lite release](https://github.com/caffoot/Caffoot-Lite/releases/latest)** — no installation, Docker or server required.
 
-1. Open the **[latest release page](https://github.com/sdelnevo/Caffoot-Lite/releases/latest)**.
+1. Open the **[latest release page](https://github.com/caffoot/Caffoot-Lite/releases/latest)**.
 2. Under **Assets**, download the version-named `Caffoot-Lite-<version>.zip` release package, which includes the standalone app, guides and licences. Alternatively, download `Caffoot-Lite.html` directly from the release assets.
 3. If you downloaded the release ZIP, extract it and open `Caffoot-Lite.html` in a modern browser. No Docker, Node.js or web server is needed to run it.
 
@@ -100,7 +100,7 @@ The build produces `app/dist/Caffoot-Lite.html`. Automated checks and manual bro
 
 This repository is dedicated to **Caffoot Lite**: its standalone application, build tools, tests and release documentation.
 
-**v1.1.0 was published on 18 October 2026.** Download it from the [v1.1.0 release](https://github.com/sdelnevo/Caffoot-Lite/releases/tag/v1.1.0) or visit the [latest stable release](https://github.com/sdelnevo/Caffoot-Lite/releases/latest). See the [v1.1.0 release notes](RELEASE-NOTES-1.1.0.md) and [roadmap](ROADMAP.md) for changes and acceptance status.
+**v1.1.0 was published on 18 October 2026.** Download it from the [v1.1.0 release](https://github.com/caffoot/Caffoot-Lite/releases/tag/v1.1.0) or visit the [latest stable release](https://github.com/caffoot/Caffoot-Lite/releases/latest). See the [v1.1.0 release notes](RELEASE-NOTES-1.1.0.md) and [roadmap](ROADMAP.md) for changes and acceptance status.
 
 ## Licence and branding
 

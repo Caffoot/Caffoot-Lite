@@ -29,7 +29,7 @@ Use this checklist for every Caffoot Lite release, including patch releases. Kee
 
 ## v1.1.0 closeout record — 18 October 2026
 
-Published release: https://github.com/sdelnevo/Caffoot-Lite/releases/tag/v1.1.0
+Published release: https://github.com/caffoot/Caffoot-Lite/releases/tag/v1.1.0
 
 The owner confirmed successful automated release, manual browser/offline and backup/restore tests. The downloaded ZIP and extracted release HTML matched the original local build hashes:
 

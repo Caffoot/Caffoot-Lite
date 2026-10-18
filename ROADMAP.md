@@ -2,7 +2,7 @@
 
 **Updated:** 18 October 2026  
 **Current milestone:** v1.1.0 published on 18 October 2026; release verification completed. Next planned milestone: v1.1.1 (Settings, usability and documentation), followed by v1.1.2 (security hardening and deployment guidance), then v1.2.0.  
-**Repository:** `sdelnevo/Caffoot-Lite` (public)  
+**Repository:** `caffoot/Caffoot-Lite` (public)  
 **Release policy:** Publish publicly only after manual verification, security/privacy review and owner approval.
 
 Caffoot Lite is an offline, standalone single-HTML network inventory and IP address management application. v1.1.0 is the published release as of 18 October 2026; v1.0.3 remains available as a historical release.
@@ -211,9 +211,9 @@ Owner opened the latest preview in Safari, reported that the new warning looks g
 
 ## Publication completed — 10 October 2026
 
-The owner explicitly approved making `sdelnevo/Caffoot-Lite` public and publishing Caffoot Lite v1.0.0 with the prepared downloads. The owner changed repository visibility to public. The final stable source commit `6f5d38e6959016fb236763f8f7a241de14d23c83` passed the complete automated suite in [workflow 38064002992](https://github.com/sdelnevo/Caffoot-Lite/actions/runs/38064002992). [Publication workflow 38065143351](https://github.com/sdelnevo/Caffoot-Lite/actions/runs/38065143351) verified that exact artifact, finalised release-note wording without changing runnable HTML, checked package member hashes and uploaded asset digests, then published the stable release.
+The owner explicitly approved making `caffoot/Caffoot-Lite` public and publishing Caffoot Lite v1.0.0 with the prepared downloads. The owner changed repository visibility to public. The final stable source commit `6f5d38e6959016fb236763f8f7a241de14d23c83` passed the complete automated suite in [workflow 38064002992](https://github.com/caffoot/Caffoot-Lite/actions/runs/38064002992). [Publication workflow 38065143351](https://github.com/caffoot/Caffoot-Lite/actions/runs/38065143351) verified that exact artifact, finalised release-note wording without changing runnable HTML, checked package member hashes and uploaded asset digests, then published the stable release.
 
-[Caffoot Lite v1.0.0](https://github.com/sdelnevo/Caffoot-Lite/releases/tag/v1.0.0) includes `Caffoot-Lite-1.0.0.zip`, `Caffoot-Lite.html` and `SHA256SUMS`. The tag points to the tested source commit. Earlier private-preparation results below are retained as historical evidence.
+[Caffoot Lite v1.0.0](https://github.com/caffoot/Caffoot-Lite/releases/tag/v1.0.0) includes `Caffoot-Lite-1.0.0.zip`, `Caffoot-Lite.html` and `SHA256SUMS`. The tag points to the tested source commit. Earlier private-preparation results below are retained as historical evidence.
 
 
 ## v1.1 VLAN scope and hierarchy — released
