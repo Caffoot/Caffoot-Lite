@@ -3932,7 +3932,7 @@ function hierarchyValidateTypes(subnets) {
                 return !owner || a?.deviceId !== owner.id || Boolean(a?.reservedForDeviceId);
             });
             if (unsafeIps.length || deps.devices.some(d => !appState.ipAllocations[d.primaryIp] || !ownedIps.has(d.primaryIp))) {
-                showToast(`Cannot delete ${subnet.name}: ${unsafeIps.length} independent or ambiguous IPAM allocation(s) require manual reassignment. No records were deleted.`, 'error');
+                showToast(`Cannot delete ${subnet.name}: protected or ambiguous IPAM record(s) at ${unsafeIps.slice(0, 3).join(', ') || deps.devices.filter(d => !appState.ipAllocations[d.primaryIp]).map(d => d.primaryIp).slice(0, 3).join(', ')}${unsafeIps.length > 3 ? ' (and more)' : ''}. Resolve these before deleting. No records were deleted.`, 'error');
                 return;
             }
             const isNetwork = !subnet.kind || subnet.kind === 'network';
@@ -3962,6 +3962,13 @@ function hierarchyValidateTypes(subnets) {
             }
             const block = appState.subnets.find(x => x.id === subnet.parentId);
             const deviceRows = deps.devices.map(d => `<li class="py-2 border-b border-slate-200 dark:border-slate-700"><strong>${escapeHtml(d.name)}</strong><span class="block text-sm font-mono text-slate-600 dark:text-slate-300">${escapeHtml(d.primaryIp)}</span></li>`).join('');
+            const previewSignature = JSON.stringify({
+                subnet: [subnet.id, subnet.name, subnet.cidr, subnet.kind, subnet.vlan, subnet.parentId],
+                devices: deps.devices.map(d => [d.id, d.primaryIp]).sort((a,b) => String(a[0]).localeCompare(String(b[0]))),
+                allocations: deps.allocations.map(ip => [ip, appState.ipAllocations[ip]]).sort((a,b) => a[0].localeCompare(b[0])),
+                linked: linked.map(v => [v.id, v.vlanId, v.parentId])
+            });
+            pendingSubnetDeletion = { subId, previewSignature };
             openModal(`
                 <div class="p-6 sm:p-7 space-y-5 text-slate-900 dark:text-white">
                     <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-3">
@@ -3988,12 +3995,31 @@ function hierarchyValidateTypes(subnets) {
             `);
         }
 
+        let pendingSubnetDeletion = null;
         function confirmDeleteSubnet(subId) {
             // Revalidate on confirmation: no stale or changed dependency preview may be applied.
             const subnet = appState.subnets.find(s => s.id === subId);
             if (!subnet) { closeModal(true); return; }
             const confirmation = document.querySelector('[data-action="confirm-delete-subnet"]');
             if (!confirmation || confirmation.dataset.id !== subId) return;
+            const deps = phase11BSubnetDependencies(subnet);
+            const domain = subnet.parentId || '__unassigned__';
+            const linked = (!subnet.kind || subnet.kind === 'network') ? appState.vlans.filter(v =>
+                Number(v.vlanId) === Number(subnet.vlan) && (v.parentId || '__unassigned__') === domain
+            ) : [];
+            const currentSignature = JSON.stringify({
+                subnet: [subnet.id, subnet.name, subnet.cidr, subnet.kind, subnet.vlan, subnet.parentId],
+                devices: deps.devices.map(d => [d.id, d.primaryIp]).sort((a,b) => String(a[0]).localeCompare(String(b[0]))),
+                allocations: deps.allocations.map(ip => [ip, appState.ipAllocations[ip]]).sort((a,b) => a[0].localeCompare(b[0])),
+                linked: linked.map(v => [v.id, v.vlanId, v.parentId])
+            });
+            if (!pendingSubnetDeletion || pendingSubnetDeletion.subId !== subId || pendingSubnetDeletion.previewSignature !== currentSignature) {
+                pendingSubnetDeletion = null;
+                closeModal(true);
+                showToast('Subnet or dependent records changed after preview. Deletion cancelled; please review again.', 'error');
+                return;
+            }
+            pendingSubnetDeletion = null;
             closeModal(true);
             deleteSubnetCommit(subId);
         }
