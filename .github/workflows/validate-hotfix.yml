@@ -1,0 +1,42 @@
+name: Validate Caffoot Lite hotfix
+
+on:
+  pull_request:
+    paths:
+      - 'app/**'
+      - 'RELEASE-NOTES-1.1.0.1.md'
+      - '.github/workflows/validate-hotfix.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-and-package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - name: Install pinned dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Run release checks and create verified package
+        run: npm run release
+      - name: Confirm public hotfix version and package
+        run: |
+          node -e "const fs=require('fs'); const html=fs.readFileSync('dist/Caffoot-Lite.html','utf8'); if (!html.includes(\"const CAFFOOT_LITE_VERSION = '1.1.0.1';\")) process.exit(1); if (!fs.existsSync('dist/Caffoot-Lite-1.1.0.1.zip')) process.exit(1);"
+      - name: Upload test build (not a published release)
+        uses: actions/upload-artifact@v4
+        with:
+          name: caffoot-lite-v1.1.0.1-hotfix-validation
+          path: |
+            app/dist/Caffoot-Lite.html
+            app/dist/Caffoot-Lite-1.1.0.1.zip
+          retention-days: 7

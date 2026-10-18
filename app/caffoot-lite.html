@@ -5332,14 +5332,14 @@ function hierarchyValidateTypes(subnets) {
         // Manual release checks never read or send inventory, or change browser storage.
         function caffootCompareVersions(left, right) {
             const parse = value => {
-                const match = /^(?:v)?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-([0-9A-Za-z.-]+))?(?:\+[0-9A-Za-z.-]+)?$/.exec(value);
+                const match = /^(?:[vV])?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:\.(0|[1-9]\d*))?(?:-([0-9A-Za-z.-]+))?(?:\+[0-9A-Za-z.-]+)?$/.exec(value);
                 if (!match) throw new Error('Release version is not recognised.');
-                const pre = match[4] ? match[4].split('.') : [];
+                const pre = match[5] ? match[5].split('.') : [];
                 if (pre.some(part => !part || (/^\d+$/.test(part) && part.length > 1 && part[0] === '0'))) throw new Error('Release version is not recognised.');
-                return {numbers:match.slice(1,4).map(BigInt), pre};
+                return {numbers:[...match.slice(1,4),match[4] || '0'].map(BigInt), pre};
             };
             const a = parse(left), b = parse(right);
-            for (let i=0;i<3;i++) if (a.numbers[i] !== b.numbers[i]) return a.numbers[i] > b.numbers[i] ? 1 : -1;
+            for (let i=0;i<4;i++) if (a.numbers[i] !== b.numbers[i]) return a.numbers[i] > b.numbers[i] ? 1 : -1;
             if (!a.pre.length || !b.pre.length) return a.pre.length === b.pre.length ? 0 : a.pre.length ? -1 : 1;
             for (let i=0;i<Math.max(a.pre.length,b.pre.length);i++) {
                 if (a.pre[i] === undefined) return -1;
@@ -5514,7 +5514,7 @@ function hierarchyValidateTypes(subnets) {
 
         const CAFFOOT_BACKUP_FORMAT = 'caffoot-inventory';
         const CAFFOOT_BACKUP_SCHEMA_VERSION = 1;
-        const CAFFOOT_LITE_VERSION = '1.1.0';
+        const CAFFOOT_LITE_VERSION = '1.1.0.1';
         function phase20CreateBackup(state = appState) {
             return {
                 ...JSON.parse(JSON.stringify(state)),
@@ -5534,7 +5534,7 @@ function hierarchyValidateTypes(subnets) {
                 meta.format !== CAFFOOT_BACKUP_FORMAT ||
                 !Number.isSafeInteger(meta.schemaVersion) || meta.schemaVersion < 1 ||
                 typeof meta.app !== 'string' || !['Caffoot Lite','Caffoot Pro'].includes(meta.app) ||
-                typeof meta.appVersion !== 'string' || !/^[0-9]+\.[0-9]+\.[0-9]+(?:-[a-zA-Z0-9.-]+)?$/.test(meta.appVersion) ||
+                typeof meta.appVersion !== 'string' || !/^[0-9]+\.[0-9]+\.[0-9]+(?:\.[0-9]+)?(?:-[a-zA-Z0-9.-]+)?$/.test(meta.appVersion) ||
                 typeof meta.exportedAt !== 'string' || !/^\d{4}-\d{2}-\d{2}T/.test(meta.exportedAt) || !Number.isFinite(Date.parse(meta.exportedAt)))
                 throw new Error('Backup version metadata is invalid or unsupported.');
             if (meta.schemaVersion > CAFFOOT_BACKUP_SCHEMA_VERSION)

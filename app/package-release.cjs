@@ -2,8 +2,11 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),os=require('node:os');
 const {spawnSync}=require('node:child_process');
 const root=path.resolve(__dirname,'..'),dist=path.join(__dirname,'dist');
-const version=JSON.parse(fs.readFileSync(path.join(__dirname,'package.json'),'utf8')).version;
-assert(/^[0-9]+\.[0-9]+\.[0-9]+(?:-[A-Za-z0-9.-]+)?$/.test(version));
+const sourceHtml=fs.readFileSync(path.join(__dirname,'caffoot-lite.html'),'utf8');
+const versionMatch=sourceHtml.match(/const CAFFOOT_LITE_VERSION = '([^']+)';/);
+assert(versionMatch,'App release version missing');
+const version=versionMatch[1]; // Public release version; npm metadata may use a SemVer-compatible variant.
+assert(/^[0-9]+\.[0-9]+\.[0-9]+(?:\.[0-9]+)?(?:-[A-Za-z0-9.-]+)?$/.test(version));
 const html=fs.readFileSync(path.join(dist,'Caffoot-Lite.html'),'utf8');
 assert(html.includes("const CAFFOOT_LITE_VERSION = '"+version+"'"),'App and package versions differ');
 for(const marker of ['MIT License','SIL OPEN FONT LICENSE','CC BY 4.0','Tailwind Labs'])assert(html.includes(marker),'Embedded notice missing: '+marker);
@@ -38,7 +41,7 @@ try{
   }finally{fs.rmSync(extracted,{recursive:true,force:true});}
  }else{
   const zip=spawnSync('zip',['-q',archive,...members],{cwd:temp,encoding:'utf8'});if(zip.status!==0)throw Error(zip.stderr||'ZIP creation failed');
-  const listing=spawnSync('unzip',['-Z1',archive],{encoding:'utf8'});assert.equal(listing.status,0);assert.deepEqual(listing.stdout.trim().split('\\n').sort(),members.slice().sort(),'ZIP must contain exactly reviewed files');
+  const listing=spawnSync('unzip',['-Z1',archive],{encoding:'utf8'});assert.equal(listing.status,0);assert.deepEqual(listing.stdout.trim().split(/\r?\n/).sort(),members.slice().sort(),'ZIP must contain exactly reviewed files');
   for(const name of members){const read=spawnSync('unzip',['-p',archive,name],{maxBuffer:20*1024*1024});assert.equal(read.status,0);assert.equal(sum(read.stdout),sum(fs.readFileSync(path.join(temp,name))),'ZIP bytes mismatch: '+name);}
  }
  fs.writeFileSync(path.join(dist,'SHA256SUMS'),['Caffoot-Lite.html',path.basename(archive)].map(name=>sum(fs.readFileSync(path.join(dist,name)))+'  '+name).join('\n')+'\n');
