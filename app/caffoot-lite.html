@@ -3216,9 +3216,10 @@ function hierarchyValidateTypes(subnets) {
                         const scoped = legacy.filter(v => v.status === 'unique' && v.parentId).length;
                         const ambiguous = legacy.filter(v => v.status === 'ambiguous').length;
                         const orphaned = legacy.filter(v => v.status === 'orphaned').length;
+                        const unassigned = legacy.filter(v => v.status === 'unique' && !v.parentId).length;
                         return legacy.length ? `<div class="rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 p-4 text-sm text-slate-800 dark:text-slate-200">
                             <strong>Legacy VLAN Ownership Preview</strong>
-                            <p class="mt-1">${legacy.length} legacy record(s): ${scoped} uniquely matched to an IP Address Block, ${ambiguous} ambiguous, ${orphaned} without a matching subnet. No records have been changed.</p>
+                            <p class="mt-1">${legacy.length} legacy record(s): ${scoped} uniquely matched to an IP Address Block, ${unassigned} uniquely matched in the Unassigned VLAN Domain, ${ambiguous} ambiguous, ${orphaned} without a matching subnet. No records have been changed.</p>
                         </div>` : '';
                     })()}
                     <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
