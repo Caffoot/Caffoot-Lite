@@ -4646,10 +4646,15 @@ function hierarchyValidateTypes(subnets) {
             const rackSelect = document.getElementById('dev-rack-id');
             const start = document.getElementById('dev-rack-u');
             const height = document.getElementById('dev-rack-height');
+            const face = document.getElementById('dev-rack-face');
             const hint = document.getElementById('dev-rack-range-hint');
+            const form = document.querySelector('[data-device-form="true"]');
             if (!rackSelect || !start || !height || !hint) return;
             const rack = appState.racks.find(r => r.id === rackSelect.value);
+            const previous = start.value || start.dataset.initialU || '';
+            delete start.dataset.initialU;
             if (!rack) {
+                start.innerHTML = '<option value="">Select a rack first...</option>';
                 start.disabled = true;
                 height.disabled = true;
                 hint.textContent = 'Select or create a network rack before choosing a mounting position.';
@@ -4660,15 +4665,26 @@ function hierarchyValidateTypes(subnets) {
             const capacity = Number(rack.heightU);
             height.max = String(capacity);
             const units = Number(height.value);
-            const maxStart = Number.isInteger(units) && units > 0 ? capacity - units + 1 : capacity;
-            start.max = String(Math.max(0, maxStart));
-            hint.textContent = maxStart < 1
-                ? `This device is too tall for ${rack.name} (${capacity}U). Reduce U Height or select another rack.`
-                : `Rack: ${rack.name} (${capacity}U). For a ${units}U device, Start U must be between 1 and ${maxStart}. Occupied positions are checked when saving.`;
-            start.setCustomValidity(Number(start.value) < 1 || Number(start.value) > maxStart || !Number.isInteger(Number(start.value))
-                ? `Choose a Start U between 1 and ${Math.max(1, maxStart)}.` : '');
-            height.setCustomValidity(!Number.isInteger(units) || units < 1 || units > capacity
-                ? `U Height must be between 1 and ${capacity}.` : '');
+            const validHeight = Number.isInteger(units) && units > 0 && units <= capacity;
+            const maxStart = validHeight ? capacity - units + 1 : 0;
+            const deviceId = form?.dataset.deviceId || null;
+            const currentFace = face?.value || 'front';
+            const available = [];
+            for (let u = 1; u <= maxStart; u++) {
+                const end = u + units - 1;
+                if (!validateRackPlacement(deviceId, rack.id, currentFace, u, end)) available.push(u);
+            }
+            start.innerHTML = '<option value="">Select Start U...</option>' + available.map(u =>
+                `<option value="${u}">U${u}–U${u + units - 1}</option>`).join('');
+            if (available.includes(Number(previous))) start.value = String(previous);
+            else if (available.length === 1) start.value = String(available[0]);
+            hint.textContent = !validHeight
+                ? `U Height must be between 1 and ${capacity} for ${rack.name}.`
+                : available.length
+                    ? `${rack.name} (${capacity}U): ${available.length} available starting position(s) for a ${units}U device. Occupied positions are excluded.`
+                    : `No available ${units}U positions on the ${currentFace} face of ${rack.name}.`;
+            height.setCustomValidity(validHeight ? '' : `U Height must be between 1 and ${capacity}.`);
+            start.required = true;
         }
         function toggleDeviceMountType() {
             const mount = document.getElementById('dev-mount-type')?.value;
@@ -5037,7 +5053,7 @@ function hierarchyValidateTypes(subnets) {
                             <div class="phase14b-rack-grid">
                                 <div><label for="dev-rack-id" class="block text-[10px] font-semibold text-slate-500 uppercase mb-1">Rack</label><select id="dev-rack-id" class="w-full border rounded-lg p-1.5 text-xs dark:bg-slate-700"><option value="" ${!appState.racks.length ? 'selected' : ''}>${appState.racks.length ? 'Select a network rack...' : 'No network racks created yet'}</option>${appState.racks.map(r => `<option value="${escapeHtml(r.id)}" ${(draft?.rackId ?? device?.rackId) === r.id ? 'selected' : ''}>${escapeHtml(r.name)}</option>`).join('')}</select><p class="phase14b-help">A network rack is a physical enclosure, separate from the device location.</p><button type="button" data-action="create-rack-from-device" class="mt-2 w-full px-3 py-2 bg-slate-200 dark:bg-slate-700 rounded-lg text-xs font-semibold"><i class="fa-solid fa-plus mr-1"></i>Create Network Rack</button></div>
                                 <div><label for="dev-rack-face" class="block text-[10px] font-semibold text-slate-500 uppercase mb-1">Face</label><select id="dev-rack-face" class="w-full border rounded-lg p-1.5 text-xs dark:bg-slate-700"><option value="front" ${(draft?.face ?? device?.face) !== 'rear' ? 'selected' : ''}>Front</option><option value="rear" ${(draft?.face ?? device?.face) === 'rear' ? 'selected' : ''}>Rear</option></select></div>
-                                <div><label for="dev-rack-u" class="block text-[10px] font-semibold text-slate-500 uppercase mb-1">Start U</label><input type="number" id="dev-rack-u" min="1" max="48" value="${draft?.rackUStart ?? device?.rackUStart ?? 1}" class="w-full border rounded-lg p-1.5 text-xs dark:bg-slate-700 text-center font-mono"></div>
+                                <div><label for="dev-rack-u" class="block text-[10px] font-semibold text-slate-500 uppercase mb-1">Start U</label><select id="dev-rack-u" data-initial-u="${escapeHtml(String(draft?.rackUStart ?? device?.rackUStart ?? 1))}" class="w-full border rounded-lg p-1.5 text-xs dark:bg-slate-700 text-center font-mono"><option value="">Select Start U...</option></select></div>
                                 <div><label for="dev-rack-height" class="block text-[10px] font-semibold text-slate-500 uppercase mb-1">U Height</label><input type="number" id="dev-rack-height" min="1" max="48" value="${currentHeight}" required class="w-full border rounded-lg p-1.5 text-xs dark:bg-slate-700 text-center font-mono"></div>
                             </div><p id="dev-rack-range-hint" class="phase14b-help" role="status">End U is calculated automatically from Start U + U Height - 1.</p>
                         </div>
@@ -5060,7 +5076,7 @@ function hierarchyValidateTypes(subnets) {
             }
             phase11DeviceCascade('initial');
             refreshDeviceIpOptions();
-            ['dev-rack-id', 'dev-rack-height', 'dev-rack-u'].forEach(id => {
+            ['dev-rack-id', 'dev-rack-height', 'dev-rack-face'].forEach(id => {
                 const field = document.getElementById(id);
                 field?.addEventListener('change', updateDeviceRackLimits);
                 field?.addEventListener('input', updateDeviceRackLimits);
