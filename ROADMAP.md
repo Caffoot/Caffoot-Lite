@@ -41,12 +41,12 @@ The v1.1.0 scope above is historical release planning, now delivered. Further ch
 
 ### v1.1.1 — Settings, usability and documentation
 
-**Status: Next planned milestone, after published v1.1.0**
+**Status: In development on `feature/v1.1.1-settings-data-usability`; not yet merged or released**
 
-- Consolidate duplicate backup controls while preserving prominent local-storage warnings, JSON export/restore, recovery snapshots and destructive-action safeguards.
-- Reorganise Settings & Data into clear everyday tasks and advanced diagnostics/recovery.
-- Expand About Caffoot Lite with meaningful project information, version, repository links and licence access.
-- Explore additional application preferences and central management of device/server/software option lists without breaking existing device workflows or backups.
+- **Implemented on development branch, pending release validation:** consolidate duplicate backup controls while preserving prominent local-storage warnings, JSON export/restore, recovery snapshots and destructive-action safeguards.
+- **Implemented on development branch, pending release validation:** reorganise Settings & Data into Back Up & Restore, Maintenance & Safety and Advanced Recovery.
+- **Implemented on development branch, pending release validation:** expand About Caffoot Lite with official branding, installed version, repository and documentation links, release notes and licence access.
+- **Partially implemented on development branch:** Light Mode, Dark Mode and Use System Setting preferences. Central management of device/server/software option lists remains to be assessed; preserve existing workflows and backups.
 - Rename dashboard Data Health to Inventory Health, explain what is checked, and distinguish inventory consistency from browser-storage safety and live network monitoring (which is not provided).
 - Add concise, offline Help & Documentation accessible from the interface, designed to complement—not replace—an intuitive user experience.
 - Improve update status presentation and investigate opt-in automatic release checks; do not silently replace the local HTML file or restore inventory.
