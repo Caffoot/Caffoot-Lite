@@ -4592,6 +4592,37 @@ function hierarchyValidateTypes(subnets) {
             }
         }
 
+        function phase11DeviceTopBlock(subnet) {
+            let current = subnet;
+            const visited = new Set();
+            while (current?.parentId && !visited.has(current.id)) {
+                visited.add(current.id);
+                current = appState.subnets.find(s => s.id === current.parentId);
+            }
+            return current?.kind === 'container' && !current.parentId ? current : null;
+        }
+        function phase11DeviceCascade(level = 'initial') {
+            const block = document.getElementById('dev-block');
+            const vlan = document.getElementById('dev-vlan');
+            const subnet = document.getElementById('dev-subnet');
+            if (!block || !vlan || !subnet) return;
+            const initial = level === 'initial' ? subnet.dataset.initialSubnet : '';
+            const selected = appState.subnets.find(s => s.id === initial);
+            if (level === 'initial' && selected && !block.value) block.value = phase11DeviceTopBlock(selected)?.id || '__unassigned__';
+            const networks = appState.subnets.filter(s => (!s.kind || s.kind === 'network') &&
+                (phase11DeviceTopBlock(s)?.id || '__unassigned__') === block.value);
+            const vlanIds = [...new Set(networks.map(s => String(s.vlan)))].sort((a,b) => Number(a)-Number(b));
+            const previousVlan = level === 'subnet' ? vlan.value : level === 'initial' ? String(selected?.vlan ?? '') : '';
+            vlan.innerHTML = '<option value="">Select a VLAN...</option>' + vlanIds.map(id =>
+                `<option value="${escapeHtml(id)}">${escapeHtml('VLAN ' + id)}</option>`).join('');
+            if (vlanIds.includes(previousVlan)) vlan.value = previousVlan;
+            const matches = networks.filter(s => String(s.vlan) === vlan.value);
+            subnet.innerHTML = '<option value="">Select a subnet...</option>' + matches.map(s =>
+                `<option value="${escapeHtml(s.id)}">${escapeHtml(s.name || s.cidr)} — ${escapeHtml(s.cidr)}</option>`).join('');
+            if (level === 'initial' && matches.some(s => s.id === initial)) subnet.value = initial;
+            else if (matches.length === 1 && vlan.value) subnet.value = matches[0].id;
+            if (level !== 'initial') handleDeviceSubnetChange();
+        }
         function handleDeviceSubnetChange() {
             const select = document.getElementById('dev-subnet');
             const ip = document.getElementById('dev-ip');
@@ -4974,7 +5005,7 @@ function hierarchyValidateTypes(subnets) {
                             </div><p class="phase14b-help">End U is calculated automatically from Start U + U Height - 1.</p>
                         </div>
                         </div>
-                        <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-network-wired"></i>Network identity</div><div><div class="form-label">Primary IP <span class="text-slate-400 font-normal">(must belong to an existing subnet)</span></div><div class="phase14b-network-grid"><div><label for="dev-subnet" class="phase14b-ip-label">Existing subnet <span class="required-mark">*</span></label><select id="dev-subnet" required data-action="device-subnet-change" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" disabled ${!currentSubnet ? 'selected' : ''}>Select an existing subnet...</option>${appState.subnets.map(s => `<option value="${escapeHtml(s.id)}" ${currentSubnet?.id === s.id ? 'selected' : ''}>${escapeHtml(s.name || s.cidr)} — ${escapeHtml(s.cidr)}</option>`).join('')}</select><button type="button" data-action="create-subnet-from-device" class="mt-2 w-full px-3 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold transition border border-slate-200 dark:border-slate-600"><i class="fa-solid fa-diagram-project mr-1.5"></i>Create subnet in IPAM</button></div><div><label for="dev-ip" class="phase14b-ip-label">Device IP address <span class="required-mark">*</span></label><input type="text" id="dev-ip" required inputmode="decimal" autocomplete="off" value="${escapeHtml(draft?.primaryIp ?? device?.primaryIp ?? '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700 font-mono" placeholder="Select a subnet first"><label for="dev-ip-available" class="phase14b-ip-label block mt-3">Or choose an available IP</label><select id="dev-ip-available" data-action="device-ip-select" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700 font-mono"><option value="">Select next available IP...</option></select><p id="dev-ip-hint" class="phase14b-help"></p></div></div><label class="flex items-start gap-3 mt-4 p-3 rounded-xl border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/30 cursor-pointer">
+                        <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-network-wired"></i>Network identity</div><div><div class="form-label">Primary IP <span class="text-slate-400 font-normal">(must belong to an existing subnet)</span></div><div class="phase14b-network-grid"><div><label for="dev-block" class="phase14b-ip-label">IP Address Block</label><select id="dev-block" data-action="device-block-change" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="">Select an IP Address Block...</option>${appState.subnets.filter(s => s.kind === 'container' && !s.parentId).map(b => `<option value="${escapeHtml(b.id)}" ${currentSubnet && phase11DeviceTopBlock(currentSubnet)?.id === b.id ? 'selected' : ''}>${escapeHtml(b.name || b.cidr)}</option>`).join('')}<option value="__unassigned__" ${currentSubnet && !phase11DeviceTopBlock(currentSubnet) ? 'selected' : ''}>Networks Without an IP Address Block</option></select><label for="dev-vlan" class="phase14b-ip-label block mt-3">VLAN</label><select id="dev-vlan" data-action="device-vlan-change" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="">Select a VLAN...</option></select><label for="dev-subnet" class="phase14b-ip-label block mt-3">Subnet <span class="required-mark">*</span></label><select id="dev-subnet" required data-action="device-subnet-change" data-initial-subnet="${escapeHtml(currentSubnet?.id || '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="">Select a subnet...</option></select><button type="button" data-action="create-subnet-from-device" class="mt-2 w-full px-3 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold transition border border-slate-200 dark:border-slate-600"><i class="fa-solid fa-diagram-project mr-1.5"></i>Create subnet in IPAM</button></div><div><label for="dev-ip" class="phase14b-ip-label">Device IP address <span class="required-mark">*</span></label><input type="text" id="dev-ip" required inputmode="decimal" autocomplete="off" value="${escapeHtml(draft?.primaryIp ?? device?.primaryIp ?? '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700 font-mono" placeholder="Select a subnet first"><label for="dev-ip-available" class="phase14b-ip-label block mt-3">Or choose an available IP</label><select id="dev-ip-available" data-action="device-ip-select" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700 font-mono"><option value="">Select next available IP...</option></select><p id="dev-ip-hint" class="phase14b-help"></p></div></div><label class="flex items-start gap-3 mt-4 p-3 rounded-xl border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/30 cursor-pointer">
 <input id="dev-ip-reserved" type="checkbox" ${((draft?.ipReserved ?? device?.ipReserved ?? (device?.primaryIp && appState.ipAllocations[device.primaryIp]?.status === 'Reserved')) ? 'checked' : '')} class="mt-1 h-5 w-5 shrink-0">
 <span class="text-sm text-slate-800 dark:text-slate-100"><strong>Reserve this IP address for this device</strong><span class="block text-xs mt-1 text-slate-600 dark:text-slate-300">Keeps this same IP linked to the device, but displays it as Reserved in IPAM. No second address is needed.</span></span>
 </label><p class="phase14b-help">Don't see the required network? Create it in IPAM, then return here to select it.</p></div>
@@ -4990,6 +5021,7 @@ function hierarchyValidateTypes(subnets) {
                 phase19BTypeSelect.addEventListener('change',phase19BRefreshFields);
                 phase19BTypeSelect.addEventListener('input',phase19BRefreshFields);
             }
+            phase11DeviceCascade('initial');
             refreshDeviceIpOptions();
             phase19BUpdateMountChoices();
             rememberModalForm();
@@ -5676,6 +5708,8 @@ function hierarchyValidateTypes(subnets) {
                 case 'device-ip-select':
                     handleDeviceIpSelection();
                     break;
+                case 'device-block-change': phase11DeviceCascade('block'); break;
+                case 'device-vlan-change': phase11DeviceCascade('subnet'); break;
                 case 'device-subnet-change':
                     handleDeviceSubnetChange();
                     break;
