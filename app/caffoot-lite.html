@@ -5045,7 +5045,8 @@ function hierarchyValidateTypes(subnets) {
                 showToast('Unable to preserve the device form. Please reopen the form.', 'error');
                 return;
             }
-            closeModal();
+            // Draft has already been captured; do not prompt to discard it.
+            closeModal(true);
             switchTab('ipam');
             setTimeout(() => openSubnetModal(), 0);
         }
