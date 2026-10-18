@@ -644,6 +644,24 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .phase16c-group-grid .phase16a-buttons{margin-top:18px}
 @media(max-width:720px){.phase16c-group-grid{grid-template-columns:1fr}.phase16c-group-grid .phase16a-panel{min-height:0}}
 </style>
+<style id="phase16c-appearance-style">
+.phase16c-appearance{max-width:850px}
+.phase16c-appearance>p{min-height:0}
+.phase16c-theme-options{display:grid;gap:12px;margin-top:18px}
+.phase16c-theme-choice{display:flex;align-items:center;text-align:left;gap:16px;width:100%;min-height:76px;padding:16px;border:2px solid #cbd5e1;border-radius:13px;background:#fff;color:#0f172a}
+.phase16c-theme-choice>i:first-child{font-size:20px;width:25px;color:#334155}
+.phase16c-theme-choice span{display:flex;flex-direction:column;gap:4px;flex:1}
+.phase16c-theme-choice strong{font-size:14px}
+.phase16c-theme-choice small{font-size:12px;color:#475569}
+.phase16c-theme-check{visibility:hidden;color:#1d4ed8}
+.phase16c-theme-selected{border-color:#2563eb;background:#eff6ff}
+.phase16c-theme-selected .phase16c-theme-check{visibility:visible}
+.phase16c-theme-choice:focus-visible{outline:3px solid #60a5fa;outline-offset:2px}
+.dark .phase16c-theme-choice{background:#1e293b;border-color:#64748b;color:#f8fafc}
+.dark .phase16c-theme-choice small,.dark .phase16c-theme-choice>i:first-child{color:#cbd5e1}
+.dark .phase16c-theme-selected{background:#172554;border-color:#60a5fa}
+.dark .phase16c-theme-check{color:#93c5fd}
+</style>
 <style id="phase17d-scroll-style">
 /* Keep tall rack elevations inside the viewport and contain wheel/trackpad scroll. */
 .phase17d-rack-scroll { max-height: min(700px, calc(100dvh - 220px)); min-height: 230px; overscroll-behavior-y: contain; overflow-y: auto; -webkit-overflow-scrolling: touch; scroll-behavior: auto; }
@@ -1399,15 +1417,44 @@ function hierarchyValidateTypes(subnets) {
         let ipViewRange = '1-32';
         let phase12Page = 0;
 
-        if (localStorage.getItem('caffoot_dark') === 'true') {
-            document.documentElement.classList.add('dark');
-            document.getElementById('theme-icon')?.setAttribute('class', 'fa-solid fa-sun');
+        // Keep the existing caffoot_dark preference compatible with previous releases.
+        // Only the explicit 'system' setting follows OS changes automatically.
+        const caffootThemeMedia = typeof window.matchMedia === 'function' ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+        function caffootThemePreference() {
+            let value = null;
+            try { value = localStorage.getItem('caffoot_theme_preference'); } catch (_) {}
+            if (value === 'light' || value === 'dark' || value === 'system') return value;
+            try { return localStorage.getItem('caffoot_dark') === 'true' ? 'dark' : 'light'; }
+            catch (_) { return 'light'; }
         }
-
-        function toggleDarkMode() {
-            const isDark = document.documentElement.classList.toggle('dark');
-            localStorage.setItem('caffoot_dark', isDark);
+        function caffootApplyTheme() {
+            const preference = caffootThemePreference();
+            const isDark = preference === 'dark' || (preference === 'system' && !!caffootThemeMedia?.matches);
+            document.documentElement.classList.toggle('dark', isDark);
             document.getElementById('theme-icon')?.setAttribute('class', isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon');
+        }
+        function caffootSetTheme(preference) {
+            if (!['light','dark','system'].includes(preference)) return;
+            try {
+                localStorage.setItem('caffoot_theme_preference', preference);
+                localStorage.setItem('caffoot_dark', String(preference === 'dark' || (preference === 'system' && !!caffootThemeMedia?.matches)));
+            } catch (error) { console.warn('Theme preference could not be saved:', error); }
+            caffootApplyTheme();
+            renderContent();
+        }
+        caffootApplyTheme();
+        if (caffootThemeMedia) {
+            const onSystemThemeChange = () => {
+                if (caffootThemePreference() === 'system') {
+                    caffootApplyTheme();
+                    try { localStorage.setItem('caffoot_dark', String(!!caffootThemeMedia.matches)); } catch (_) {}
+                }
+            };
+            if (typeof caffootThemeMedia.addEventListener === 'function') caffootThemeMedia.addEventListener('change', onSystemThemeChange);
+            else if (typeof caffootThemeMedia.addListener === 'function') caffootThemeMedia.addListener(onSystemThemeChange);
+        }
+        function toggleDarkMode() {
+            caffootSetTheme(document.documentElement.classList.contains('dark') ? 'light' : 'dark');
         }
 
         // Phase 10C: a compact, local, best-effort audit trail.
@@ -5341,7 +5388,13 @@ function hierarchyValidateTypes(subnets) {
                     panel('Danger Zone — Clear System','Permanently reset all inventory, IPAM records and managed options in this browser. Download a backup first.',button('phase16a-clear-system','Clear System / Clean Start','fa-triangle-exclamation')) +
                     '</div>';
             } else if (section === 'preferences') {
-                body = panel('Appearance','Switch between the existing light and dark themes.',button('phase16a-theme','Switch light / dark','fa-circle-half-stroke'));
+                const preference = caffootThemePreference();
+                const themeChoice = (mode,label,icon,description) => '<button type="button" data-action="phase16c-set-theme" data-theme="' + mode + '" aria-pressed="' + (preference === mode) + '" class="phase16c-theme-choice' + (preference === mode ? ' phase16c-theme-selected' : '') + '"><i class="fa-solid ' + icon + '" aria-hidden="true"></i><span><strong>' + label + '</strong><small>' + description + '</small></span><i class="fa-solid fa-check phase16c-theme-check" aria-hidden="true"></i></button>';
+                body = '<section class="phase16a-panel phase16c-appearance"><h3>Appearance</h3><p>Choose how Caffoot Lite looks on this device. Your selection is remembered in this browser.</p><div class="phase16c-theme-options">' +
+                    themeChoice('light','Light Mode','fa-sun','Always use the light theme') +
+                    themeChoice('dark','Dark Mode','fa-moon','Always use the dark theme') +
+                    themeChoice('system','Use System Setting','fa-desktop','Follow your device appearance') +
+                    '</div></section>';
             } else {
                 body = panel('About Caffoot Lite','Standalone browser-based network inventory, IP address management and rack documentation. Data is saved locally in this browser. Version ' + CAFFOOT_LITE_VERSION,button('caffoot-licences','Software licences','fa-file-lines'));
             }
@@ -6207,6 +6260,7 @@ function hierarchyValidateTypes(subnets) {
                 case 'phase16a-section': if (['backup','preferences','maintenance','about'].includes(target.dataset.section)) { phase16ASection=target.dataset.section; renderContent(); } break;
                 case 'phase16a-import': document.getElementById('import-file')?.click(); break;
                 case 'phase16a-theme': toggleDarkMode(); renderContent(); break;
+                case 'phase16c-set-theme': caffootSetTheme(target.dataset.theme); break;
                 case 'phase11c-preview': phase11CPreviewRepair(); break;
                 case 'phase11c-apply': phase11CApplyRepair(); break;
                 case 'phase11c-snapshot': phase11CDownloadSnapshot(); break;
