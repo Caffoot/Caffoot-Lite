@@ -664,6 +664,10 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .dark .phase16c-theme-check{color:#93c5fd}
 @media(max-width:900px){.phase16c-theme-options{grid-template-columns:1fr}}
 </style>
+<style id="phase16c-update-status-style">
+.phase16c-update-status{width:100%;margin:8px 0 0;padding:10px 12px;border-radius:10px;background:#eff6ff;color:#1e40af;font-size:12px;line-height:1.5}
+.dark .phase16c-update-status{background:#172554;color:#bfdbfe}
+</style>
 <style id="phase16c-help-style">
 .phase16a-grid:has(> .phase16c-help){grid-template-columns:minmax(0,1fr)}
 .phase16c-help{max-width:none;width:100%;grid-column:1/-1}
@@ -2018,7 +2022,7 @@ function hierarchyValidateTypes(subnets) {
             const preview=phase11CPreview;
             const snapshotExists=!!personalSafeStorageGet(PHASE11C_SNAPSHOT_KEY);
             return `<section class="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-2xl p-5 space-y-4">
-                <h3 class="text-base font-bold text-slate-900 dark:text-white">Phase 11C · Integrity repair preview</h3>
+                <h3 class="text-base font-bold text-slate-900 dark:text-white">Integrity Repair Preview</h3>
                 <p class="text-sm text-slate-700 dark:text-slate-200">Preview safe IPAM synchronisation changes before applying them. Conflicting owners, duplicate IPs, orphaned records and rack problems require manual review. No devices or racks are deleted.</p>
                 <div class="flex flex-wrap gap-2">
                     <button type="button" data-action="phase11c-preview" class="px-4 py-2.5 rounded-xl bg-blue-800 text-white font-semibold">Preview Repairs</button>
@@ -5420,7 +5424,7 @@ function hierarchyValidateTypes(subnets) {
                     '</div><h3 class="phase16c-group-title">Maintenance & Safety</h3>' +
                     '<div class="phase16c-group-grid">' +
                     panel('Inventory Safety Check','Check your inventory integrity without changing any data.',button('phase16a-check-safety','Check Inventory Safety','fa-shield-halved')) +
-                    panel('Update Caffoot Lite','Check for published releases when online. Back up your data before switching HTML files.',button('caffoot-check-updates','Check for Updates','fa-arrow-rotate-right') + button('caffoot-update-guide','Safe Update Guide','fa-circle-info') + '<p id="caffoot-update-status" role="status" aria-live="polite"></p>') +
+                    panel('Update Caffoot Lite','Check for published releases when online. Back up your data before switching HTML files.',button('caffoot-check-updates','Check for Updates','fa-arrow-rotate-right') + button('caffoot-update-guide','Safe Update Guide','fa-circle-info') + '<p id="caffoot-update-status" class="phase16c-update-status" role="status" aria-live="polite">Update checks are manual and require internet access. No inventory is sent or changed.</p>') +
                     '</div><h3 class="phase16c-group-title">Advanced Recovery</h3>' +
                     '<p class="phase16c-group-note">Use these tools only when recovering or resetting inventory.</p>' +
                     '<div class="phase16c-group-grid">' +
@@ -5517,11 +5521,11 @@ function hierarchyValidateTypes(subnets) {
             const status = document.getElementById('caffoot-update-status');
             if (!status) return;
             if (typeof navigator !== 'undefined' && navigator.onLine === false) {
-                status.textContent = 'You are offline. You can keep using Caffoot Lite and follow the safe update guide later.';
+                status.textContent = 'Offline — update check unavailable. You can continue using Caffoot Lite and open the Safe Update Guide.';
                 return;
             }
             caffootUpdateChecking = true;
-            status.textContent = 'Checking official published releases…';
+            status.textContent = 'Checking official stable releases…';
             const controller = new AbortController();
             const timeout = setTimeout(() => controller.abort(), 10000);
             try {
@@ -5534,7 +5538,7 @@ function hierarchyValidateTypes(subnets) {
                 const release = await response.json();
                 if (!release || release.draft !== false || release.prerelease !== false || typeof release.tag_name !== 'string') throw new Error('Invalid release');
                 const newer = caffootCompareVersions(release.tag_name, CAFFOOT_LITE_VERSION) > 0;
-                status.textContent = newer ? 'A newer release (' + release.tag_name + ') is available. Download a JSON backup, then follow the safe update guide.' : 'No newer stable release is available. Current version: ' + CAFFOOT_LITE_VERSION + '.';
+                status.textContent = newer ? 'A newer release (' + release.tag_name + ') is available. Download a JSON backup, then follow the safe update guide.' : 'Up to date — no newer stable release found. Installed version: ' + CAFFOOT_LITE_VERSION + '.';
             } catch (error) {
                 status.textContent = 'Could not check releases. Check your connection or visit Official releases in the safe update guide. Your inventory has not changed.';
             } finally {
