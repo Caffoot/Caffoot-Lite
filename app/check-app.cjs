@@ -317,11 +317,16 @@ const deletionFixture = {
   appState: {
     subnets: [{id:'s1',name:'Test subnet',cidr:'192.168.40.0/24'}],
     racks: [{id:'r1',name:'Test rack'}],
+    vlans: [],
     devices: [{id:'d1',name:'Test device',primaryIp:'192.168.40.10',rackId:'r1'}],
     rackAccessories: [],
     ipAllocations: {'192.168.40.10':{deviceId:'d1',status:'Assigned'}}
   },
   selectedSubnetId: 's1',
+  pendingSubnetDeletion: null,
+  openModal: html => { deletionFixture.lastModal = html; },
+  lastModal: '',
+  escapeHtml: value => String(value),
   selectedRackId: 'r1',
   confirm: () => true,
   showToast: msg => { deletionFixture.lastToast=msg; },
@@ -335,23 +340,23 @@ const deletionFixture = {
 vm.createContext(deletionFixture);
 vm.runInContext(html.slice(subnetDepsStart,subnetDepsEnd) + '\n' + html.slice(commitStart,commitEnd).split('function deleteSubnet(')[0] + '\n' + html.slice(subnetDeleteStart,subnetDeleteEnd) + '\n' + html.slice(rackDeleteStart,rackDeleteEnd),deletionFixture);
 deletionFixture.deleteSubnet('s1');
-assert.equal(deletionFixture.appState.subnets.length,1,'subnet with device/IPAM dependency must not be deleted');
+assert.equal(deletionFixture.appState.subnets.length,1,'subnet deletion must wait for explicit confirmation');
+assert(deletionFixture.lastModal.includes('Confirm Subnet & VLAN Deletion'),'subnet deletion preview must be shown');
 deletionFixture.deleteRack('r1');
 assert.equal(deletionFixture.appState.racks.length,1,'rack with mounted device must not be deleted');
 deletionFixture.appState.devices=[];
 deletionFixture.appState.ipAllocations={};
 deletionFixture.allowSave=false;
 deletionFixture.deleteSubnet('s1');
-assert.equal(deletionFixture.appState.subnets.length,1,'failed subnet save must restore subnet');
-assert.equal(deletionFixture.selectedSubnetId,'s1','failed subnet save restores selection');
+assert.equal(deletionFixture.appState.subnets.length,1,'subnet preview must not mutate inventory');
+assert.equal(deletionFixture.selectedSubnetId,'s1','subnet preview preserves selection');
 deletionFixture.deleteRack('r1');
 assert.equal(deletionFixture.appState.racks.length,1,'failed rack save must restore rack');
 assert.equal(deletionFixture.selectedRackId,'r1','failed rack save restores selection');
 deletionFixture.allowSave=true;
-deletionFixture.deleteSubnet('s1');
 deletionFixture.deleteRack('r1');
-assert.equal(deletionFixture.appState.subnets.length,0,'empty subnet can be deleted');
 assert.equal(deletionFixture.appState.racks.length,0,'empty rack can be deleted');
+// Executable subnet confirmation/rollback and final deletion are covered by check:subnet-deletion.
 console.log('RC1 subnet/rack deletion and rollback fixtures passed.');
 
 /* RC1: reservation ownership and rack face/bounds safety. */
