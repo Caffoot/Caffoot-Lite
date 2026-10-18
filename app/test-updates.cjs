@@ -12,7 +12,7 @@ async function run(response, offline=false) {
 }
 (async()=>{
  const {context}=await run({status:404});
- for(const [a,b,n] of [['1.0.0','1.0.0-rc.1',1],['v1.0.0','1.0.0',0],['1.0.0-rc.10','1.0.0-rc.2',1],['1.0.0-beta','1.0.0-rc.1',-1],['1.0.0-1','1.0.0-a',-1],['1.0.0-a','1.0.0-a.1',-1],['1.0.0+build','1.0.0',0],['2.0.0','1.99.0',1]])assert.equal(context.caffootCompareVersions(a,b),n);
+ for(const [a,b,n] of [['1.0.0','1.0.0-rc.1',1],['v1.0.0','1.0.0',0],['V1.1.0','v1.1.0',0],['V1.1.0','v1.0.0',1],['1.0.0-rc.10','1.0.0-rc.2',1],['1.0.0-beta','1.0.0-rc.1',-1],['1.0.0-1','1.0.0-a',-1],['1.0.0-a','1.0.0-a.1',-1],['1.0.0+build','1.0.0',0],['2.0.0','1.99.0',1]])assert.equal(context.caffootCompareVersions(a,b),n);
  assert.throws(()=>context.caffootCompareVersions('bad','1.0.0'));
  assert.throws(()=>context.caffootCompareVersions('1.0.0-01','1.0.0'));
  assert.equal((await run(null,true)).calls,0);
