@@ -60,7 +60,7 @@ Choose **Light Mode**, **Dark Mode** or **Use System Setting**. The system optio
 
 ### About Caffoot Lite
 
-Displays the official Caffoot branding, installed application version and links to the official repository, User Guide, Installation Guide and GitHub release notes. **Software Licences** opens bundled third-party notices, including when offline. External GitHub links require an internet connection.
+Displays the official Caffoot branding, installed application version, **Quick Help — Available Offline** (getting started, backups, updates and troubleshooting), and links to the official repository, User Guide, Installation Guide and GitHub release notes. **Software Licences** opens bundled third-party notices, including when offline. External GitHub links require an internet connection.
 
 ## Data safety and privacy
 
