@@ -2742,6 +2742,7 @@ function hierarchyValidateTypes(subnets) {
         let deviceSearchTerm = '';
         let deviceTypeFilter = '';
         let deviceStatusFilter = '';
+        let deviceAssignmentFilter = '';
         let deviceLocationFilter = '';
         let deviceMountFilter = '';
         let deviceSort = 'name-asc';
@@ -2752,6 +2753,7 @@ function hierarchyValidateTypes(subnets) {
             const filtered = appState.devices.filter(d =>
                 (!deviceTypeFilter || d.type === deviceTypeFilter) &&
                 (!deviceStatusFilter || (d.status || 'Active') === deviceStatusFilter) &&
+                (!deviceAssignmentFilter || (deviceAssignmentFilter === 'assigned' ? Boolean(d.primaryIp && appState.subnets.some(n => (!n.kind || n.kind === 'network') && ipBelongsToSubnet(d.primaryIp,n.cidr))) : !d.primaryIp || !appState.subnets.some(n => (!n.kind || n.kind === 'network') && ipBelongsToSubnet(d.primaryIp,n.cidr)))) &&
                 (!deviceLocationFilter || (d.location || 'Unknown') === deviceLocationFilter) &&
                 (!deviceMountFilter || (deviceMountFilter === 'racked' ? validRackIds.has(String(d.rackId)) : !validRackIds.has(String(d.rackId)))) &&
                 (!term || [d.name, d.primaryIp, d.type, d.location, d.manufacturer, d.model, d.serialNumber].some(v => String(v || '').toLowerCase().includes(term)))
@@ -2784,6 +2786,13 @@ function hierarchyValidateTypes(subnets) {
                             <input id="device-search" type="search" placeholder="Name, IP, model, serial or location" value="${escapeHtml(deviceSearchTerm)}" class="mt-1 w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500" />
                         </label>
                         <div class="phase14h-filter-row flex flex-wrap gap-3 items-end">
+                            <label class="text-xs font-semibold text-slate-700 dark:text-slate-200">Network assignment
+                                <select id="device-assignment-filter" class="mt-1 block min-w-36 rounded-xl bg-white dark:bg-slate-800 border border-slate-400 dark:border-slate-500 text-slate-900 dark:text-white">
+                                    <option value="" ${deviceAssignmentFilter===''?'selected':''}>All Devices</option>
+                                    <option value="assigned" ${deviceAssignmentFilter==='assigned'?'selected':''}>Assigned</option>
+                                    <option value="unassigned" ${deviceAssignmentFilter==='unassigned'?'selected':''}>Unassigned</option>
+                                </select>
+                            </label>
                             <label class="text-xs font-semibold text-slate-700 dark:text-slate-200">Device type
                                 <select id="device-type-filter" class="mt-1 block min-w-36 rounded-xl bg-white dark:bg-slate-800 border border-slate-400 dark:border-slate-500 text-slate-900 dark:text-white">
                                     <option value="">All types</option>
@@ -2826,7 +2835,7 @@ function hierarchyValidateTypes(subnets) {
                         </div>
                     </div>
                     <div class="phase14g-results" aria-live="polite"><span>Showing <strong>${getVisibleDevices().length}</strong> of ${appState.devices.length} devices</span>
-                        ${(deviceSearchTerm || deviceTypeFilter || deviceStatusFilter || deviceLocationFilter || deviceMountFilter) ? `<button type="button" data-action="phase14g-clear-filters" class="phase14g-reset"><i class="fa-solid fa-xmark" aria-hidden="true"></i> Clear filters</button>` : ''}
+                        ${(deviceSearchTerm || deviceTypeFilter || deviceStatusFilter || deviceLocationFilter || deviceMountFilter || deviceAssignmentFilter) ? `<button type="button" data-action="phase14g-clear-filters" class="phase14g-reset"><i class="fa-solid fa-xmark" aria-hidden="true"></i> Clear filters</button>` : ''}
                     </div>
                     <div class="bg-white dark:bg-slate-800 rounded-2xl border shadow-sm phase14f-table-wrap">
                         <table class="w-full min-w-[850px] text-left border-collapse">
@@ -5460,6 +5469,7 @@ function hierarchyValidateTypes(subnets) {
                 renderContent();
                 return;
             }
+            if (event.target.id === 'device-assignment-filter') { deviceAssignmentFilter = event.target.value; renderContent(); return; }
             if (event.target.id === 'device-status-filter') {
                 deviceStatusFilter = event.target.value;
                 renderContent();
@@ -5759,7 +5769,7 @@ function hierarchyValidateTypes(subnets) {
             event.preventDefault();
 
             switch (action) {
-                case 'phase14g-clear-filters': deviceSearchTerm = ''; deviceTypeFilter = ''; deviceStatusFilter = ''; deviceLocationFilter = ''; deviceMountFilter = ''; renderContent(); break;
+                case 'phase14g-clear-filters': deviceSearchTerm = ''; deviceTypeFilter = ''; deviceStatusFilter = ''; deviceLocationFilter = ''; deviceMountFilter = ''; deviceAssignmentFilter = ''; renderContent(); break;
                 case 'phase14-tab': if (['inventory','manage'].includes(target.dataset.tab)) { phase14DeviceTab=target.dataset.tab; renderContent(); } break;
                 case 'open-device-modal': openDeviceModal(); break;
                 case 'edit-device': openDeviceModal(id); break;
