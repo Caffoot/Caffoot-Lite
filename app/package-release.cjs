@@ -2,7 +2,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),os=require('node:os');
 const {spawnSync}=require('node:child_process');
 const root=path.resolve(__dirname,'..'),dist=path.join(__dirname,'dist');
-const version=JSON.parse(fs.readFileSync(path.join(__dirname,'package.json'),'utf8')).version;
+const version='1.1.0.1'; // Public release version; npm metadata uses SemVer 1.1.0-hotfix.1.
 assert(/^[0-9]+\.[0-9]+\.[0-9]+(?:\.[0-9]+)?(?:-[A-Za-z0-9.-]+)?$/.test(version));
 const html=fs.readFileSync(path.join(dist,'Caffoot-Lite.html'),'utf8');
 assert(html.includes("const CAFFOOT_LITE_VERSION = '"+version+"'"),'App and package versions differ');
