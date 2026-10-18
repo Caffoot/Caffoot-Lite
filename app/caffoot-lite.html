@@ -645,9 +645,10 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 @media(max-width:720px){.phase16c-group-grid{grid-template-columns:1fr}.phase16c-group-grid .phase16a-panel{min-height:0}}
 </style>
 <style id="phase16c-appearance-style">
-.phase16c-appearance{max-width:850px}
+.phase16a-grid:has(> .phase16c-appearance){grid-template-columns:minmax(0,1fr)}
+.phase16c-appearance{max-width:none;width:100%;grid-column:1 / -1}
 .phase16c-appearance>p{min-height:0}
-.phase16c-theme-options{display:grid;gap:12px;margin-top:18px}
+.phase16c-theme-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:18px}
 .phase16c-theme-choice{display:flex;align-items:center;text-align:left;gap:16px;width:100%;min-height:76px;padding:16px;border:2px solid #cbd5e1;border-radius:13px;background:#fff;color:#0f172a}
 .phase16c-theme-choice>i:first-child{font-size:20px;width:25px;color:#334155}
 .phase16c-theme-choice span{display:flex;flex-direction:column;gap:4px;flex:1}
@@ -661,6 +662,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .dark .phase16c-theme-choice small,.dark .phase16c-theme-choice>i:first-child{color:#cbd5e1}
 .dark .phase16c-theme-selected{background:#172554;border-color:#60a5fa}
 .dark .phase16c-theme-check{color:#93c5fd}
+@media(max-width:900px){.phase16c-theme-options{grid-template-columns:1fr}}
 </style>
 <style id="phase16c-about-style">
 .phase16a-grid:has(> .phase16c-about){grid-template-columns:minmax(0,1fr)}
