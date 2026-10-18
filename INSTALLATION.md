@@ -12,6 +12,8 @@ Caffoot Lite is a standalone HTML application. You do **not** need Docker, Node.
 
 **Export JSON backups regularly and ALWAYS before upgrades, moves, renames or resets.** Save them outside the browser and test restoration. The backup may include sensitive network information.
 
+**Latest stable hotfix:** v1.1.0.1. The v1.1.0 release references below describe the preceding milestone; use the latest stable release link for current downloads.
+
 ## Download the released application
 
 **v1.1.0 was published on 18 October 2026.** Download it from the [v1.1.0 release](https://github.com/caffoot/Caffoot-Lite/releases/tag/v1.1.0), or use the [latest stable release](https://github.com/caffoot/Caffoot-Lite/releases/latest).
@@ -30,7 +32,7 @@ If your browser downloads the file instead of opening it, use the browser's **Fi
 1. Open **IPAM → Manage Subnets** and create an IP Address Block, then add Network / VLAN subnets within it.
 2. Open **Devices** and add a device using an address from an existing subnet.
 3. Explore **IPAM**, **Racks** and the **Dashboard** as needed.
-4. Find **Data Management** and export a **JSON backup** once you have added useful data.
+4. Open **Settings & Data → Data Management → Back Up & Restore** and export a **JSON backup** (in the upcoming v1.1.1 interface) once you have added useful data.
 
 ## Where is my data?
 
@@ -53,12 +55,14 @@ For features and day-to-day workflows, see [USER-GUIDE.md](USER-GUIDE.md).
 
 ## Updating to a new version safely
 
-In Settings & Data → Data Management, use **Check for updates** to check the latest published stable release. This is a manual online check; it does not send inventory or install anything. The check requires an internet connection and reports the latest public release.
+**Navigation note:** The redesigned Back Up & Restore, Maintenance & Safety and Advanced Recovery panels are under development for v1.1.1. The published v1.1.0 release may show the same actions in different places.
+
+In Settings & Data → Data Management, use **Check for Updates** to check the latest published stable release. This is a manual online check; it does not send inventory or install anything. The check requires an internet connection and reports the latest public release.
 
 1. Download a JSON backup from your current version.
 2. Keep the old HTML and download the new `Caffoot-Lite.html` into a separate folder from the [official releases](https://github.com/caffoot/Caffoot-Lite/releases).
 3. Open the new file in your usual browser. Saved data may be unavailable after moving or renaming a file.
-4. If needed, choose your backup in Settings & Data and review the replacement summary before restoring.
+4. If needed, use **Choose Backup File** in **Settings & Data → Data Management → Back Up & Restore** (v1.1.1 interface) and review the replacement summary before restoring.
 5. Verify devices, IPAM, subnets and racks. Keep the old HTML and backup until satisfied.
 
 The safe update guide and backups work offline. Newer backup schemas require a compatible app; retain your original backup for recovery.

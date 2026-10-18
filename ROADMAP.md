@@ -1,9 +1,11 @@
 # Caffoot Lite — Development Roadmap
 
 **Updated:** 18 October 2026  
-**Current milestone:** v1.1.0 published on 18 October 2026; release verification completed. Next planned milestone: v1.1.1 (Settings, usability and documentation), followed by v1.1.2 (security hardening and deployment guidance), then v1.2.0.  
+**Current milestone:** v1.1.1 (Settings, usability and documentation) has passed automated validation and owner browser acceptance; version 1.1.1 is prepared on the development branch, pending final versioned-build verification, review, merge and publication. Next: v1.1.2 (security hardening and deployment guidance), then v1.2.0.  
 **Repository:** `caffoot/Caffoot-Lite` (public)  
 **Release policy:** Publish publicly only after manual verification, security/privacy review and owner approval.
+
+**Latest stable hotfix:** v1.1.0.1. The v1.1.0 release references below describe the preceding milestone; use the latest stable release link for current downloads.
 
 Caffoot Lite is an offline, standalone single-HTML network inventory and IP address management application. v1.1.0 is the published release as of 18 October 2026; v1.0.3 remains available as a historical release.
 
@@ -41,15 +43,15 @@ The v1.1.0 scope above is historical release planning, now delivered. Further ch
 
 ### v1.1.1 — Settings, usability and documentation
 
-**Status: Next planned milestone, after published v1.1.0**
+**Status: In development on `feature/v1.1.1-settings-data-usability`; not yet merged or released**
 
-- Consolidate duplicate backup controls while preserving prominent local-storage warnings, JSON export/restore, recovery snapshots and destructive-action safeguards.
-- Reorganise Settings & Data into clear everyday tasks and advanced diagnostics/recovery.
-- Expand About Caffoot Lite with meaningful project information, version, repository links and licence access.
-- Explore additional application preferences and central management of device/server/software option lists without breaking existing device workflows or backups.
-- Rename dashboard Data Health to Inventory Health, explain what is checked, and distinguish inventory consistency from browser-storage safety and live network monitoring (which is not provided).
-- Add concise, offline Help & Documentation accessible from the interface, designed to complement—not replace—an intuitive user experience.
-- Improve update status presentation and investigate opt-in automatic release checks; do not silently replace the local HTML file or restore inventory.
+- **Implemented on development branch, pending release validation:** consolidate duplicate backup controls while preserving prominent local-storage warnings, JSON export/restore, recovery snapshots and destructive-action safeguards.
+- **Implemented on development branch, pending release validation:** reorganise Settings & Data into Back Up & Restore, Maintenance & Safety and Advanced Recovery.
+- **Implemented on development branch, pending release validation:** expand About Caffoot Lite with official branding, installed version, repository and documentation links, release notes and licence access.
+- **Partially implemented on development branch:** Light Mode, Dark Mode and Use System Setting preferences. Central management of device/server/software option lists remains to be assessed; preserve existing workflows and backups.
+- **Implemented on development branch, pending release validation:** rename dashboard Data Health to Inventory Health, explain what is checked, and distinguish inventory consistency from browser-storage safety and live network monitoring (which is not provided).
+- **Implemented on development branch, pending release validation:** add a dedicated offline Help & Guides tab with expandable reference topics, separate from About Caffoot Lite and complementary to the full online guides. Maintain these topics whenever related workflows change.
+- **Partially implemented on development branch:** improve manual update status presentation. Opt-in automatic release checks remain under consideration; do not silently replace the local HTML file or restore inventory.
 
 Scope remains subject to review before implementation. v1.1.1 comes before v1.1.2 and v1.2; no v1.2 commitments are moved into this milestone.
 

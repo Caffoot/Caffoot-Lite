@@ -23,6 +23,6 @@ async function run(response, offline=false) {
  const r=await run({ok:true,json:async()=>({draft:false,prerelease:false,tag_name:tag})});
  assert.match(r.status.textContent,tag==='1.0.0'?/newer release/:/Could not check/);
  }
- assert.match((await run({ok:true,json:async()=>({draft:false,prerelease:false,tag_name:'0.9.0'})})).status.textContent,/No newer/);
+ assert.match((await run({ok:true,json:async()=>({draft:false,prerelease:false,tag_name:'0.9.0'})})).status.textContent,/Up to date/);
  console.log('PASS: release versions, offline, private repository, network errors and hostile metadata.');
 })().catch(e=>{console.error(e);process.exitCode=1;});

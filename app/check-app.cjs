@@ -68,7 +68,10 @@ assert(html.includes("const STORAGE_KEY = 'caffoot_state'"), 'Caffoot inventory 
 assert(!/netmini_[a-z0-9_]+/.test(html), 'Legacy NetMini browser storage keys must be removed');
 assert(html.includes('function phase17ARecoveryBanner()'), 'recovery banner must remain');
 assert(html.includes('Caffoot Lite recovery mode'), 'recovery banner must use Lite branding');
-assert(html.includes("panel('About Caffoot Lite'"), 'About panel must remain');
+assert(html.includes('phase16c-about-brand'), 'About branding panel must remain');
+assert(html.includes("['help','Help & Guides','fa-book-open']"), 'offline Help & Guides tab must remain');
+assert(html.includes('phase16c-help-topics'), 'expandable offline help topics must remain');
+assert(html.includes('phase16c-about-version'), 'About version display must remain');
 assert(!html.includes("panel('Application version'"), 'redundant application version panel must stay removed');
 assert(html.includes('Reset to empty inventory'), 'recovery reset must describe empty inventory');
 assert(!html.includes('Reset to sample inventory'), 'obsolete sample inventory label must be removed');

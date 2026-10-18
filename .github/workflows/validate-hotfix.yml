@@ -1,10 +1,10 @@
-name: Validate Caffoot Lite hotfix
+name: Validate Caffoot Lite release candidate
 
 on:
   pull_request:
     paths:
       - 'app/**'
-      - 'RELEASE-NOTES-1.1.0.1.md'
+      - 'RELEASE-NOTES-*.md'
       - '.github/workflows/validate-hotfix.yml'
   workflow_dispatch:
 
@@ -29,14 +29,14 @@ jobs:
         run: npm ci --no-audit --no-fund
       - name: Run release checks and create verified package
         run: npm run release
-      - name: Confirm public hotfix version and package
+      - name: Confirm application version and package
         run: |
-          node -e "const fs=require('fs'); const html=fs.readFileSync('dist/Caffoot-Lite.html','utf8'); if (!html.includes(\"const CAFFOOT_LITE_VERSION = '1.1.0.1';\")) process.exit(1); if (!fs.existsSync('dist/Caffoot-Lite-1.1.0.1.zip')) process.exit(1);"
+          node -e "const fs=require('fs'); const src=fs.readFileSync('caffoot-lite.html','utf8'); const pkg=require('./package.json'); const v=pkg.version; const marker='const CAFFOOT_LITE_VERSION = '+String.fromCharCode(39)+v+String.fromCharCode(39)+';'; if (!src.includes(marker)) process.exit(1); if (!fs.readFileSync('dist/Caffoot-Lite.html','utf8').includes(marker)) process.exit(1); if (!fs.existsSync('dist/Caffoot-Lite-'+v+'.zip')) process.exit(1);"
       - name: Upload test build (not a published release)
         uses: actions/upload-artifact@v4
         with:
-          name: caffoot-lite-v1.1.0.1-hotfix-validation
+          name: caffoot-lite-release-candidate
           path: |
             app/dist/Caffoot-Lite.html
-            app/dist/Caffoot-Lite-1.1.0.1.zip
+            app/dist/Caffoot-Lite-*.zip
           retention-days: 7

@@ -2,7 +2,7 @@
 
 **Infrastructure, Simplified. — For HomeLabs and Small Teams**
 
-This guide covers the main workflows in Caffoot Lite v1.1.0 (published 18 October 2026).
+This guide covers the published v1.1.0 workflows and documents the Settings interface prepared on the v1.1.1 development branch. The v1.1.1 changes have passed browser acceptance but are not yet published.
 
 ## Getting started
 
@@ -32,21 +32,41 @@ Use the managed options/settings areas to maintain device types and locations. S
 
 ### 6. Dashboard
 
-The **Dashboard** summarises inventory and network information based on your locally saved data. If it appears empty, add a subnet and some devices, then return to the dashboard.
+The **Dashboard** summarises inventory and network information based on your locally saved data. If it appears empty, add a subnet and some devices, then return to the dashboard. In the upcoming v1.1.1 interface, **Inventory Health** checks known inconsistencies across saved devices, IPAM, subnets, VLANs and rack assignments. A healthy result does not verify backup availability, browser storage safety or live network reachability.
 
-## Back up, restore and reset
+## Settings & Data (v1.1.1 development interface)
 
-### Export a backup
+The Settings tabs are **Data Management**, **Preferences**, **Help & Guides**, and **About Caffoot Lite**.
 
-In **Data Management**, choose the JSON export/backup action and save the resulting `.json` file in a safe location. Make backups regularly and especially before any upgrade or reset.
+Open **Settings & Data** for **Data Management**, **Preferences** and **About Caffoot Lite**. The layout below describes the upcoming v1.1.1 interface; the published v1.1.0 release may have different labels and placement.
 
-### Restore a backup
+### Data Management — Back Up & Restore
 
-In **Data Management**, choose the restore/import action and select a JSON backup previously exported by the application. Read any validation or replacement warning carefully. Restoring may replace the current inventory, so **export the current data first**. After restoration, verify device counts, subnets, racks and IPAM.
+- **Download Backup** exports your inventory as a JSON file. Save it somewhere secure outside the browser; this is a manual backup, not automatic synchronisation.
+- **Choose Backup File** selects a previously exported JSON file. Review the validation and replacement confirmation carefully. A restore **replaces** the active inventory; it does not merge records. Download a fresh backup before restoring and verify devices, IPAM, subnets and racks afterwards.
 
-### Reset to a clean start
+### Data Management — Maintenance & Safety
 
-The **reset/clean start** operation is destructive: it replaces local inventory and related settings. Export a backup first, read the warning and proceed only if you intend to discard the current local state. If the reset loads starter data, review it before adding your own assets.
+- **Inventory Safety Check** checks inventory consistency; it is not a network scan or a guarantee that browser storage is backed up.
+- **Check for Updates** performs a manual online check for the latest published stable release. The status area explains when the check is idle, running, offline, successful or unavailable. It does not upload inventory or install an update.
+- **Safe Update Guide** explains how to back up data, keep the previous HTML file and verify the replacement. The guide and backup features work offline; checking releases requires internet access.
+
+### Data Management — Advanced Recovery
+
+- **Download Safety Snapshot** is available only when a recovery snapshot has been created by a restore or clean start. The button is disabled when no snapshot exists. A snapshot is a temporary local safeguard, **not** a substitute for an exported backup.
+- **Clear System** is destructive and replaces local inventory and related managed options with a clean start. Export a backup, read the confirmation and proceed only if you intend to discard the current inventory. Test destructive workflows with disposable data in a separate browser profile.
+
+### Preferences
+
+Choose **Light Mode**, **Dark Mode** or **Use System Setting**. The system option follows the browser/operating-system colour preference as it changes. Appearance preferences are local to the browser and are not included in inventory JSON backups.
+
+### Help & Guides
+
+The built-in offline reference has expandable topics for getting started, IPAM, devices, racks, backups, updates, appearance, inventory health and troubleshooting. It is updated as application workflows change. The complete online User Guide remains available for further detail.
+
+### About Caffoot Lite
+
+Displays the official Caffoot branding, installed application version, a pointer to offline Help & Guides, and links to the official repository, User Guide, Installation Guide and GitHub release notes. **Software Licences** opens bundled third-party notices, including when offline. External GitHub links require an internet connection.
 
 ## Data safety and privacy
 
@@ -70,7 +90,7 @@ For download instructions and troubleshooting, see [INSTALLATION.md](INSTALLATIO
 
 ## Updating safely
 
-In Settings & Data → Data Management, use **Check for updates** to check the latest published stable release. This is a manual online check; it does not send inventory or install anything. Use the [latest stable release](https://github.com/caffoot/Caffoot-Lite/releases/latest) to see the current published version.
+In Settings & Data → Data Management, use **Check for Updates** to check the latest published stable release. This is a manual online check; it does not send inventory or install anything. Use the [latest stable release](https://github.com/caffoot/Caffoot-Lite/releases/latest) to see the current published version.
 
 1. Download a JSON backup from your current version.
 2. Keep the old HTML and download the new `Caffoot-Lite.html` into a separate folder from the [official releases](https://github.com/caffoot/Caffoot-Lite/releases).
