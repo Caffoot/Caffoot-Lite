@@ -5,6 +5,8 @@
 **Repository:** `caffoot/Caffoot-Lite` (public)  
 **Release policy:** Publish publicly only after manual verification, security/privacy review and owner approval.
 
+**Latest stable hotfix:** v1.1.0.1. The v1.1.0 release references below describe the preceding milestone; use the latest stable release link for current downloads.
+
 Caffoot Lite is an offline, standalone single-HTML network inventory and IP address management application. v1.1.0 is the published release as of 18 October 2026; v1.0.3 remains available as a historical release.
 
 ## Documentation checks for every release
