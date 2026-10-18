@@ -6147,8 +6147,8 @@ function hierarchyValidateTypes(subnets) {
                     tree.forEach(item => {
                         if (blockId) item.open = item.getAttribute('data-ipam-hierarchy-block') === blockId;
                     });
-                    const target = blockId ? [...tree].find(item => item.getAttribute('data-ipam-hierarchy-block') === blockId) : null;
-                    if (target) target.scrollIntoView({block:'center',behavior:'instant'});
+                    const selectedBlock = blockId ? [...tree].find(item => item.getAttribute('data-ipam-hierarchy-block') === blockId) : null;
+                    if (selectedBlock) selectedBlock.scrollIntoView({block:'center',behavior:'instant'});
                     break;
                 }
                 case 'sidebar-ipam-manage': phase12CIpamTab = 'manage'; switchTab('ipam'); break;
