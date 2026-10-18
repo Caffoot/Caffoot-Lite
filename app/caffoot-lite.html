@@ -662,6 +662,29 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .dark .phase16c-theme-selected{background:#172554;border-color:#60a5fa}
 .dark .phase16c-theme-check{color:#93c5fd}
 </style>
+<style id="phase16c-about-style">
+.phase16c-about{max-width:850px}
+.phase16c-about>p{min-height:0;margin:18px 0}
+.phase16c-about-brand{display:flex;align-items:center;gap:18px}
+.phase16c-about-brand img{width:76px;height:76px;border-radius:16px;object-fit:cover;flex-shrink:0}
+.phase16c-about-brand h3{font-size:23px;margin:0 0 4px}
+.phase16c-about-brand strong{font-size:14px;color:#334155}
+.phase16c-about-brand p{min-height:0;margin:4px 0 0}
+.phase16c-about-version{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:22px;padding:14px 16px;background:#f1f5f9;border-radius:10px;font-size:13px}
+.phase16c-about-version strong{font-size:16px}
+.phase16c-about h4{font-size:15px;font-weight:800;margin:20px 0 10px}
+.phase16c-about-links{display:grid;gap:8px}
+.phase16c-about-links a{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid #cbd5e1;border-radius:10px;color:#1d4ed8;font-size:13px;font-weight:700;text-decoration:none}
+.phase16c-about-links a i:last-child{margin-left:auto}
+.phase16c-about-links a:hover{text-decoration:underline}
+.phase16c-about-links a:focus-visible{outline:3px solid #60a5fa;outline-offset:2px}
+.phase16c-about .phase16c-about-offline{font-size:12px;color:#64748b;margin:12px 0}
+.dark .phase16c-about-brand strong{color:#cbd5e1}
+.dark .phase16c-about-version{background:#0f172a}
+.dark .phase16c-about-links a{border-color:#64748b;color:#93c5fd}
+.dark .phase16c-about .phase16c-about-offline{color:#cbd5e1}
+@media(max-width:520px){.phase16c-about-brand{align-items:flex-start}.phase16c-about-brand img{width:58px;height:58px}.phase16c-about-version{align-items:flex-start;flex-direction:column}}
+</style>
 <style id="phase17d-scroll-style">
 /* Keep tall rack elevations inside the viewport and contain wheel/trackpad scroll. */
 .phase17d-rack-scroll { max-height: min(700px, calc(100dvh - 220px)); min-height: 230px; overscroll-behavior-y: contain; overflow-y: auto; -webkit-overflow-scrolling: touch; scroll-behavior: auto; }
@@ -5396,7 +5419,17 @@ function hierarchyValidateTypes(subnets) {
                     themeChoice('system','Use System Setting','fa-desktop','Follow your device appearance') +
                     '</div></section>';
             } else {
-                body = panel('About Caffoot Lite','Standalone browser-based network inventory, IP address management and rack documentation. Data is saved locally in this browser. Version ' + CAFFOOT_LITE_VERSION,button('caffoot-licences','Software licences','fa-file-lines'));
+                body = '<section class="phase16a-panel phase16c-about"><div class="phase16c-about-brand">' +
+                    '<img src="../assets/caffoot-icon-1024.png" alt="Caffoot hedgehog logo" width="76" height="76">' +
+                    '<div><h3>Caffoot Lite</h3><strong>Infrastructure, Simplified.</strong><p>Network documentation for home labs and small teams.</p></div></div>' +
+                    '<div class="phase16c-about-version"><span>Installed Version</span><strong>' + escapeHtml(CAFFOOT_LITE_VERSION) + '</strong></div>' +
+                    '<p>Manage devices, IP addresses, subnets and network racks in one standalone, offline-capable HTML application. Your inventory stays in this browser unless you export a JSON backup.</p>' +
+                    '<h4>Project & Documentation</h4><div class="phase16c-about-links">' +
+                    '<a href="https://github.com/Caffoot/Caffoot-Lite" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-github" aria-hidden="true"></i> Official GitHub Repository <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>' +
+                    '<a href="https://github.com/Caffoot/Caffoot-Lite/blob/main/USER-GUIDE.md" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-book-open" aria-hidden="true"></i> User Guide <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>' +
+                    '<a href="https://github.com/Caffoot/Caffoot-Lite/blob/main/INSTALLATION.md" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Installation Guide <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>' +
+                    '</div><p class="phase16c-about-offline">External links require an internet connection; Caffoot Lite itself remains usable offline.</p>' +
+                    '<div class="phase16a-buttons">' + button('caffoot-licences','Software Licences','fa-file-lines') + '</div></section>';
             }
             const tabs = [['backup','Data Management','fa-database'],['preferences','Preferences','fa-palette'],['about','About Caffoot Lite','fa-circle-info']];
             return `<div class="phase16a-workspace phase16b-workspace"><div class="phase16a-intro"><h2>Settings & Data</h2><p>Manage your data, appearance and application health — without duplicate tools.</p></div>
