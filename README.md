@@ -100,7 +100,7 @@ The build produces `app/dist/Caffoot-Lite.html`. Automated checks and manual bro
 
 This repository is dedicated to **Caffoot Lite**: its standalone application, build tools, tests and release documentation.
 
-**v1.1.0 is a tested release candidate, not yet published.** Use the [latest stable release](https://github.com/sdelnevo/Caffoot-Lite/releases/latest) for downloads until publication. See the [v1.1.0 release notes](RELEASE-NOTES-1.1.0.md) and [roadmap](ROADMAP.md) for changes and acceptance status.
+**v1.1.0 was published on 18 October 2026.** Download it from the [v1.1.0 release](https://github.com/sdelnevo/Caffoot-Lite/releases/tag/v1.1.0) or visit the [latest stable release](https://github.com/sdelnevo/Caffoot-Lite/releases/latest). See the [v1.1.0 release notes](RELEASE-NOTES-1.1.0.md) and [roadmap](ROADMAP.md) for changes and acceptance status.
 
 ## Licence and branding
 
