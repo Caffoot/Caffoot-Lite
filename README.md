@@ -51,6 +51,12 @@ Browser storage is local to the browser/profile and origin; hosting the HTML fil
 
 A dedicated security review and deployment-hardening milestone is planned for v1.1.2; that review has **not yet been completed**. Future Caffoot Pro is intended to address managed multi-user deployment, but it should not be treated as an available or security-validated alternative until released and reviewed.
 
+## Update checker notice for older versions
+
+**Using Caffoot Lite v1.0.3 or v1.1.0 and seeing “Could not check releases”?** These versions can fail to recognise the uppercase `V` in a GitHub release tag. Your inventory is not changed by this error, and the application can still run offline. **The update checker cannot repair an older HTML file automatically.**
+
+To update manually, first **download and safely store a JSON backup** from **Settings & Data Management** in your current installation. Then visit the [official Caffoot Lite releases](https://github.com/Caffoot/Caffoot-Lite/releases) and download the latest published release's `Caffoot-Lite.html` or versioned ZIP. Keep the old HTML and backup until you have checked the new file in your browser. **Do not clear browser storage**; moving or renaming local HTML files can affect access to stored inventory. See [INSTALLATION.md](INSTALLATION.md) for the full upgrade precautions.
+
 ## Download and run
 
 **[Get the latest stable Caffoot Lite release](https://github.com/caffoot/Caffoot-Lite/releases/latest)** — no installation, Docker or server required.

@@ -12,3 +12,7 @@ Maintenance release fixing the manual GitHub release check when a published rele
 Export a JSON backup before opening a new application file. Keep the previous HTML file and backup until you have checked your inventory in the new version. Do not clear browser storage. Updates remain manual; the application runs offline.
 
 Official releases: https://github.com/Caffoot/Caffoot-Lite/releases
+
+## Notice for users of older versions
+
+The update checker in v1.0.3 and v1.1.0 may show “Could not check releases” because it does not recognise uppercase `V` release tags. Affected older HTML files will not fix themselves when this release is published. If you see that message, download the newest published version manually from https://github.com/Caffoot/Caffoot-Lite/releases. Export a JSON backup before upgrading, keep your previous HTML file and backup, and do not clear browser storage. The error does not itself modify inventory data.
