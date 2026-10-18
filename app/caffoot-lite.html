@@ -3049,6 +3049,8 @@ function hierarchyValidateTypes(subnets) {
                 utilisation:Math.round((assigned+reserved)/range.capacity*100),duplicates};
         }
 
+        let ipamManageBlockFilter = null; // null = all, empty string = unassigned
+
         // v1.1: read-only subnet hierarchy, with native keyboard-accessible disclosure.
         function renderSubnetHierarchyPreview() {
             const subnets = appState.subnets || [];
@@ -3261,6 +3263,7 @@ function hierarchyValidateTypes(subnets) {
             return `
                 <div class="space-y-5 phase12c-ipam">
                     <div class="${phase12CIpamTab==='manage'?'':'hidden'} space-y-4" data-ipam-panel="manage">
+                    ${ipamManageBlockFilter !== null ? `<div class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-950/30 px-4 py-3"><div><strong class="text-sm text-slate-900 dark:text-white">Filtered Manage Subnets</strong><p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Showing ${escapeHtml(ipamManageBlockFilter === '' ? 'Unassigned Networks' : (appState.subnets.find(s => String(s.id) === String(ipamManageBlockFilter))?.name || 'Selected IP Address Block'))} only.</p></div><button type="button" data-action="ipam-show-all-blocks" class="rounded-lg border border-indigo-300 dark:border-indigo-700 px-3 py-2 text-xs font-semibold text-indigo-700 dark:text-indigo-200">Show All IP Address Blocks</button></div>` : ''}
                     <!-- Block editing and VLAN navigation are available in the grouped cards below. -->
                     ${(() => {
                         const legacy = previewLegacyVlanOwnershipInApp();
@@ -3295,7 +3298,7 @@ function hierarchyValidateTypes(subnets) {
                                 id: '__unassigned__', name: 'Unassigned VLANs', cidr: 'No IP Address Block',
                                 vlans: appState.vlans.filter(v => !v.parentId || !blocks.some(b => b.id === v.parentId))
                             });
-                            return groups.filter(group => group.vlans.length || group.id !== '__unassigned__').map(group => `
+                            return groups.filter(group => (ipamManageBlockFilter === null || (ipamManageBlockFilter === '' ? group.id === '__unassigned__' : String(group.id) === String(ipamManageBlockFilter))) && (group.vlans.length || group.id !== '__unassigned__' || ipamManageBlockFilter === '')).map(group => `
                                 <details open data-ipam-hierarchy-block="${escapeHtml(group.id)}" class="rounded-2xl border border-orange-200 dark:border-amber-900 bg-orange-50/70 dark:bg-amber-950/20 p-4 space-y-3">
                                     <div class="flex flex-wrap items-center justify-between gap-2">
                                         <summary class="cursor-pointer flex-1 min-w-0">
@@ -6141,6 +6144,7 @@ function hierarchyValidateTypes(subnets) {
                 case 'ipam-open-block': {
                     const blockId = String(target.dataset.id || '');
                     if (blockId && !appState.subnets.some(s => s.id === blockId && s.kind === 'container')) break;
+                    ipamManageBlockFilter = blockId;
                     phase12CIpamTab = 'manage';
                     switchTab('ipam');
                     const tree = document.querySelectorAll('[data-ipam-hierarchy-block]');
@@ -6151,7 +6155,8 @@ function hierarchyValidateTypes(subnets) {
                     if (selectedBlock) selectedBlock.scrollIntoView({block:'center',behavior:'instant'});
                     break;
                 }
-                case 'sidebar-ipam-manage': phase12CIpamTab = 'manage'; switchTab('ipam'); break;
+                case 'ipam-show-all-blocks': ipamManageBlockFilter = null; phase12CIpamTab = 'manage'; switchTab('ipam'); break;
+                case 'sidebar-ipam-manage': ipamManageBlockFilter = null; phase12CIpamTab = 'manage'; switchTab('ipam'); break;
                 case 'tab-ipam': switchTab('ipam'); break;
                 case 'tab-audit': switchTab('audit'); break;
                 case 'export-audit': exportAuditHistory(); break;
