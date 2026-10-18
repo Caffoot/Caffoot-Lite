@@ -102,6 +102,8 @@ npm run release
 
 The build produces `app/dist/Caffoot-Lite.html`. Automated checks and manual browser testing are recommended before distributing a build. The GitHub Actions build workflow is currently disabled.
 
+**Latest stable hotfix:** v1.1.0.1. The v1.1.0 release references below describe the preceding milestone; use the latest stable release link for current downloads.
+
 ## Project and release status
 
 This repository is dedicated to **Caffoot Lite**: its standalone application, build tools, tests and release documentation.
