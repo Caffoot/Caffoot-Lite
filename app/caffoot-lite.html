@@ -5449,7 +5449,7 @@ function hierarchyValidateTypes(subnets) {
                 body = '<section class="phase16a-panel phase16c-help"><h3>Help & Guides</h3><p>Built into Caffoot Lite and available without an internet connection. Choose a topic to read the guidance. For more detailed instructions, see the online User Guide linked in About Caffoot Lite.</p>' +
                     '<div class="phase16c-help-topics">' + helpTopics.map(([title,content]) => '<details class="phase16c-help-topic"><summary>' + title + '</summary><p>' + content + '</p></details>').join('') + '</div></section>';
             } else {
-                body = '<section class="phase16a-panel phase16c-about'><div class="phase16c-about-brand">' +
+                body = '<section class="phase16a-panel phase16c-about"><div class="phase16c-about-brand">' +
                     '<img src="../assets/caffoot-icon-1024.png" alt="Caffoot hedgehog logo" width="76" height="76">' +
                     '<div><h3>Caffoot Lite</h3><strong>Infrastructure, Simplified.</strong><p>Network documentation for home labs and small teams.</p></div></div>' +
                     '<div class="phase16c-about-version"><span>Installed Version</span><strong>' + escapeHtml(CAFFOOT_LITE_VERSION) + '</strong></div>' +
