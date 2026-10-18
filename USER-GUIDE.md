@@ -2,7 +2,7 @@
 
 **Infrastructure, Simplified. — For HomeLabs and Small Teams**
 
-This guide covers the published v1.1.0 workflows and documents the Settings interface prepared on the v1.1.1 development branch. The v1.1.1 changes have passed browser acceptance but are not yet published.
+This guide covers the published v1.1.1 application, including the redesigned Settings & Data interface. v1.1.1 was published on 18 October 2026.
 
 ## Getting started
 
@@ -32,13 +32,13 @@ Use the managed options/settings areas to maintain device types and locations. S
 
 ### 6. Dashboard
 
-The **Dashboard** summarises inventory and network information based on your locally saved data. If it appears empty, add a subnet and some devices, then return to the dashboard. In the upcoming v1.1.1 interface, **Inventory Health** checks known inconsistencies across saved devices, IPAM, subnets, VLANs and rack assignments. A healthy result does not verify backup availability, browser storage safety or live network reachability.
+The **Dashboard** summarises inventory and network information based on your locally saved data. If it appears empty, add a subnet and some devices, then return to the dashboard. In v1.1.1, **Inventory Health** checks known inconsistencies across saved devices, IPAM, subnets, VLANs and rack assignments. A healthy result does not verify backup availability, browser storage safety or live network reachability.
 
-## Settings & Data (v1.1.1 development interface)
+## Settings & Data (v1.1.1)
 
 The Settings tabs are **Data Management**, **Preferences**, **Help & Guides**, and **About Caffoot Lite**.
 
-Open **Settings & Data** for **Data Management**, **Preferences** and **About Caffoot Lite**. The layout below describes the upcoming v1.1.1 interface; the published v1.1.0 release may have different labels and placement.
+Open **Settings & Data** for **Data Management**, **Preferences** and **About Caffoot Lite**. The layout below describes v1.1.1; older releases may have different labels and placement.
 
 ### Data Management — Back Up & Restore
 
