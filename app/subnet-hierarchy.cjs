@@ -152,4 +152,17 @@ function subnetUsesVlanRecord(subnet, vlanRecord) {
     Number.isInteger(recordNumber) && recordNumber>=1 && recordNumber<=4094 &&
     subnetNumber===recordNumber && vlanDomainKey(subnet)===vlanDomainKey(vlanRecord);
 }
-module.exports={ipNumber,ipString,parseCidr,validateHierarchy,validateSubnetTypes,vlanDomainKey,validateVlanDomains,validateVlanInventory,subnetUsesVlanRecord};
+// Preview legacy VLAN ownership without modifying imported or saved records.
+// Only a unique matching network can establish ownership; ambiguous records stay untouched.
+function previewLegacyVlanOwnership(subnets, vlans) {
+  if(!Array.isArray(subnets)||!Array.isArray(vlans)) return [];
+  return vlans.filter(v=>v && !v.parentId).map(v=>{
+    const matches=subnets.filter(s=>s && (!s.kind||s.kind==='network') &&
+      Number(s.vlan)===Number(v.vlanId));
+    const domain=matches.length===1?vlanDomainKey(matches[0]):null;
+    return {vlanRecordId:v.id, vlanId:v.vlanId,
+      status:matches.length===1?'unique':matches.length===0?'orphaned':'ambiguous',
+      proposedParentId:domain && domain!=='__unassigned__'?domain:null};
+  });
+}
+module.exports={ipNumber,ipString,parseCidr,validateHierarchy,validateSubnetTypes,vlanDomainKey,validateVlanDomains,validateVlanInventory,subnetUsesVlanRecord,previewLegacyVlanOwnership};
