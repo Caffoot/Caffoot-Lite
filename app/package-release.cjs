@@ -41,7 +41,7 @@ try{
   }finally{fs.rmSync(extracted,{recursive:true,force:true});}
  }else{
   const zip=spawnSync('zip',['-q',archive,...members],{cwd:temp,encoding:'utf8'});if(zip.status!==0)throw Error(zip.stderr||'ZIP creation failed');
-  const listing=spawnSync('unzip',['-Z1',archive],{encoding:'utf8'});assert.equal(listing.status,0);assert.deepEqual(listing.stdout.trim().split('\\n').sort(),members.slice().sort(),'ZIP must contain exactly reviewed files');
+  const listing=spawnSync('unzip',['-Z1',archive],{encoding:'utf8'});assert.equal(listing.status,0);assert.deepEqual(listing.stdout.trim().split(/\r?\n/).sort(),members.slice().sort(),'ZIP must contain exactly reviewed files');
   for(const name of members){const read=spawnSync('unzip',['-p',archive,name],{maxBuffer:20*1024*1024});assert.equal(read.status,0);assert.equal(sum(read.stdout),sum(fs.readFileSync(path.join(temp,name))),'ZIP bytes mismatch: '+name);}
  }
  fs.writeFileSync(path.join(dist,'SHA256SUMS'),['Caffoot-Lite.html',path.basename(archive)].map(name=>sum(fs.readFileSync(path.join(dist,name)))+'  '+name).join('\n')+'\n');
