@@ -3914,6 +3914,42 @@ function hierarchyValidateTypes(subnets) {
             showToast(`${label} was not deleted because the changes could not be saved.`, 'error');
             return false;
         }
+        function showSubnetDeletionBlocked(subnet, blockedIps) {
+            const block = appState.subnets.find(s => s.id === subnet.parentId);
+            const rows = blockedIps.map(ip => {
+                const record = appState.ipAllocations[ip] || {};
+                const reason = record.reservedForDeviceId ? 'Device Reservation' :
+                    record.deviceId ? 'Device Allocation' : (record.status || 'IPAM Record');
+                return `<li class="flex flex-wrap justify-between gap-2 py-2 border-b border-slate-200 dark:border-slate-700">
+                    <span class="font-mono font-semibold">${escapeHtml(ip)}</span>
+                    <span class="text-sm text-slate-600 dark:text-slate-300">${escapeHtml(String(reason))}</span>
+                </li>`;
+            }).join('');
+            openModal(`
+                <div class="p-6 sm:p-7 space-y-5 text-slate-900 dark:text-white">
+                    <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-3">
+                        <h3 class="font-bold text-lg">Subnet Deletion Blocked</h3>
+                        <button type="button" data-action="close-modal" aria-label="Close dialog" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <p class="text-sm">This subnet cannot be deleted while protected IPAM records remain. No records have been changed.</p>
+                    <dl class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                        <div><dt class="font-semibold">Subnet</dt><dd>${escapeHtml(subnet.name)}</dd></div>
+                        <div><dt class="font-semibold">CIDR</dt><dd class="font-mono">${escapeHtml(subnet.cidr)}</dd></div>
+                        <div><dt class="font-semibold">VLAN ID</dt><dd>${escapeHtml(String(subnet.vlan ?? 'None'))}</dd></div>
+                        <div><dt class="font-semibold">IP Address Block</dt><dd>${escapeHtml(block?.name || 'Unassigned')}</dd></div>
+                    </dl>
+                    <section class="rounded-xl border border-amber-300 dark:border-amber-700 p-4 space-y-2">
+                        <h4 class="font-bold">Protected Addresses (${blockedIps.length})</h4>
+                        <p class="text-sm">Review and resolve these IPAM records before attempting deletion again.</p>
+                        <ul class="max-h-56 overflow-y-auto" aria-label="Protected IP addresses">${rows}</ul>
+                    </section>
+                    <div class="flex justify-end">
+                        <button type="button" data-action="close-modal" class="px-5 py-2 rounded-xl bg-slate-700 hover:bg-slate-800 text-white font-semibold">Close</button>
+                    </div>
+                </div>
+            `);
+        }
+
         function deleteSubnet(subId) {
             const subnet = appState.subnets.find(x => x.id === subId);
             if (!subnet) return;
@@ -3932,7 +3968,8 @@ function hierarchyValidateTypes(subnets) {
                 return !owner || a?.deviceId !== owner.id || Boolean(a?.reservedForDeviceId);
             });
             if (unsafeIps.length || deps.devices.some(d => !appState.ipAllocations[d.primaryIp] || !ownedIps.has(d.primaryIp))) {
-                showToast(`Cannot delete ${subnet.name}: protected or ambiguous IPAM record(s) at ${unsafeIps.slice(0, 3).join(', ') || deps.devices.filter(d => !appState.ipAllocations[d.primaryIp]).map(d => d.primaryIp).slice(0, 3).join(', ')}${unsafeIps.length > 3 ? ' (and more)' : ''}. Resolve these before deleting. No records were deleted.`, 'error');
+                const missing = deps.devices.filter(d => !appState.ipAllocations[d.primaryIp]).map(d => d.primaryIp);
+                showSubnetDeletionBlocked(subnet, [...new Set([...unsafeIps, ...missing])]);
                 return;
             }
             const isNetwork = !subnet.kind || subnet.kind === 'network';
