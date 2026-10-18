@@ -664,6 +664,19 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .dark .phase16c-theme-check{color:#93c5fd}
 @media(max-width:900px){.phase16c-theme-options{grid-template-columns:1fr}}
 </style>
+<style id="phase16c-help-style">
+.phase16a-grid:has(> .phase16c-help){grid-template-columns:minmax(0,1fr)}
+.phase16c-help{max-width:none;width:100%;grid-column:1/-1}
+.phase16c-help>p{min-height:0;margin:12px 0 18px}
+.phase16c-help-topics{display:grid;gap:10px}
+.phase16c-help-topic{border:1px solid #cbd5e1;border-radius:12px;overflow:hidden}
+.phase16c-help-topic summary{cursor:pointer;padding:15px 17px;font-weight:700;list-style-position:inside}
+.phase16c-help-topic summary:focus-visible{outline:3px solid #818cf8;outline-offset:-3px}
+.phase16c-help-topic[open] summary{border-bottom:1px solid #cbd5e1}
+.phase16c-help-topic p{margin:0;padding:16px 19px;line-height:1.65;min-height:0}
+.dark .phase16c-help-topic{border-color:#475569}
+.dark .phase16c-help-topic[open] summary{border-color:#475569}
+</style>
 <style id="phase16c-about-style">
 .phase16a-grid:has(> .phase16c-about){grid-template-columns:minmax(0,1fr)}
 .phase16c-about{max-width:none;width:100%;grid-column:1 / -1}
@@ -5394,7 +5407,7 @@ function hierarchyValidateTypes(subnets) {
         }
 
         function phase16ARenderSettings() {
-            const section = ['backup','preferences','about'].includes(phase16ASection) ? phase16ASection : 'backup';
+            const section = ['backup','preferences','help','about'].includes(phase16ASection) ? phase16ASection : 'backup';
             const button = (action,label,icon,extra='') => `<button type="button" data-action="${action}" ${extra} class="phase16a-action"><i class="fa-solid ${icon}" aria-hidden="true"></i>${label}</button>`;
             const panel = (title,desc,inner='') => `<section class="phase16a-panel"><h3>${title}</h3><p>${desc}</p>${inner ? `<div class="phase16a-buttons">${inner}</div>` : ''}</section>`;
             let body = '';
@@ -5422,8 +5435,21 @@ function hierarchyValidateTypes(subnets) {
                     themeChoice('dark','Dark Mode','fa-moon','Always use the dark theme') +
                     themeChoice('system','Use System Setting','fa-desktop','Follow your device appearance') +
                     '</div></section>';
+            } else if (section === 'help') {
+                const helpTopics = [
+                    ['Getting Started', 'Create an IP Address Block under IPAM → Manage Subnets, then add a Network / VLAN subnet within it. Add devices in Device Inventory and use Network Racks to document rack-mounted equipment. The Dashboard summarises the inventory saved in this browser.'],
+                    ['IPAM & Subnets', 'Use IPAM to create and inspect subnets, allocations and reservations. Check CIDR boundaries, VLAN scope and gateway suggestions against your actual network before saving. Review the active subnet and parent block before bulk edits.'],
+                    ['Devices & Locations', 'Add devices from Device Inventory. Choose the appropriate type, location and an address from an existing subnet. Confirm IP assignments after edits or deletions. Rack Mounted devices need a valid rack and available U positions.'],
+                    ['Network Racks', 'Use Network Racks to create cabinets and place equipment. Verify the rack face, U position and device height before saving. Occupied positions and overlapping equipment must be resolved before placement.'],
+                    ['Backups & Restore', 'Open Data Management → Back Up & Restore and select Download Backup. Save the JSON outside the browser. Choose Backup File only when ready to replace the current inventory; review the validation summary and confirmation. Restore does not merge inventories.'],
+                    ['Updates & Recovery', 'In Data Management, select Safe Update Guide for offline update steps. Check for Updates requires an internet connection and never installs the HTML automatically. Recovery snapshots are temporary safeguards; Clear System / Clean Start is destructive. Always export a backup first.'],
+                    ['Appearance & Inventory Health', 'Preferences offers Light Mode, Dark Mode and Use System Setting. Dashboard Inventory Health checks saved-record consistency, not network reachability, browser storage reliability or backup availability.'],
+                    ['Troubleshooting & Storage', 'Your inventory is stored in this browser, not in the HTML file. If it looks empty, check the browser/profile and file location. Browser file storage rules vary; do not clear browser data. Restore a saved JSON backup if needed.']
+                ];
+                body = '<section class="phase16a-panel phase16c-help"><h3>Help & Guides</h3><p>Built into Caffoot Lite and available without an internet connection. Choose a topic to read the guidance. For more detailed instructions, see the online User Guide linked in About Caffoot Lite.</p>' +
+                    '<div class="phase16c-help-topics">' + helpTopics.map(([title,content]) => '<details class="phase16c-help-topic"><summary>' + title + '</summary><p>' + content + '</p></details>').join('') + '</div></section>';
             } else {
-                body = '<section class="phase16a-panel phase16c-about"><div class="phase16c-about-brand">' +
+                body = '<section class="phase16a-panel phase16c-about'><div class="phase16c-about-brand">' +
                     '<img src="../assets/caffoot-icon-1024.png" alt="Caffoot hedgehog logo" width="76" height="76">' +
                     '<div><h3>Caffoot Lite</h3><strong>Infrastructure, Simplified.</strong><p>Network documentation for home labs and small teams.</p></div></div>' +
                     '<div class="phase16c-about-version"><span>Installed Version</span><strong>' + escapeHtml(CAFFOOT_LITE_VERSION) + '</strong></div>' +
@@ -5434,14 +5460,10 @@ function hierarchyValidateTypes(subnets) {
                     '<a href="https://github.com/Caffoot/Caffoot-Lite/blob/main/INSTALLATION.md" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Installation Guide <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>' +
                     '<a href="https://github.com/Caffoot/Caffoot-Lite/releases" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-tag" aria-hidden="true"></i> Release Notes <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>' +
                     '</div><p class="phase16c-about-offline">External links require an internet connection; Caffoot Lite itself remains usable offline.</p>' +
-                    '<h4>Quick Start Tips</h4><p>These short tips are built into Caffoot Lite and work offline. For the complete User Guide and Installation Guide, use the documentation links above when online.</p>' +
-                    '<p><strong>Getting started:</strong> Open IPAM to create an IP Address Block and a Network / VLAN subnet, then add devices in Device Inventory. Use Network Racks to document equipment placement.</p>' +
-                    '<p><strong>Protect your work:</strong> Open Data Management and select Download Backup. Save the JSON file outside the browser before updating, restoring or clearing data. Choose Backup File only when you intend to replace the current inventory.</p>' +
-                    '<p><strong>Updating:</strong> In Data Management, select Safe Update Guide for offline instructions. Check for Updates and the external documentation links require an internet connection.</p>' +
-                    '<p><strong>Troubleshooting:</strong> If your inventory looks empty, confirm you opened the expected file in the same browser and profile. Different file locations or browser storage rules can change which inventory is visible. Do not clear browser data; use a saved JSON backup to recover if necessary.</p>' +
+                    '<p>For offline instructions, open the Help & Guides tab in Settings & Data.</p>' +
                     '<div class="phase16a-buttons">' + button('caffoot-licences','Software Licences','fa-file-lines') + '</div></section>';
             }
-            const tabs = [['backup','Data Management','fa-database'],['preferences','Preferences','fa-palette'],['about','About Caffoot Lite','fa-circle-info']];
+            const tabs = [['backup','Data Management','fa-database'],['preferences','Preferences','fa-palette'],['help','Help & Guides','fa-book-open'],['about','About Caffoot Lite','fa-circle-info']];
             return `<div class="phase16a-workspace phase16b-workspace"><div class="phase16a-intro"><h2>Settings & Data</h2><p>Manage your data, appearance and application health — without duplicate tools.</p></div>
                 <div class="phase16a-tabs" role="group" aria-label="Settings sections">${tabs.map(([id,label,icon])=>`<button type="button" data-action="phase16a-section" data-section="${id}" aria-pressed="${section===id}" class="phase16a-tab ${section===id?'phase16a-active':''}"><i class="fa-solid ${icon}" aria-hidden="true"></i>${label}</button>`).join('')}</div>
                 ${section==='backup'?browserStorageWarning(false, false):''}<div class="${section==='backup'?'phase16c-groups':'phase16a-grid'}">${body}</div>${section==='backup'?'<p class="phase16a-warning"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Browser storage is not a reliable long-term backup. Keep exported JSON files somewhere safe, especially before restoring data or changing browsers.</p>':''}</div>`;
@@ -6300,7 +6322,7 @@ function hierarchyValidateTypes(subnets) {
                 case 'phase10d-export': phase10DDownloadCsv(target.dataset.report); break;
                 
                 case 'tab-settings': switchTab('settings'); break;
-                case 'phase16a-section': if (['backup','preferences','maintenance','about'].includes(target.dataset.section)) { phase16ASection=target.dataset.section; renderContent(); } break;
+                case 'phase16a-section': if (['backup','preferences','help','about'].includes(target.dataset.section)) { phase16ASection=target.dataset.section; renderContent(); } break;
                 case 'phase16a-import': document.getElementById('import-file')?.click(); break;
                 case 'phase16a-theme': toggleDarkMode(); renderContent(); break;
                 case 'phase16c-set-theme': caffootSetTheme(target.dataset.theme); break;
