@@ -36,6 +36,8 @@ The **Dashboard** summarises inventory and network information based on your loc
 
 ## Settings & Data (v1.1.1 development interface)
 
+The Settings tabs are **Data Management**, **Preferences**, **Help & Guides**, and **About Caffoot Lite**.
+
 Open **Settings & Data** for **Data Management**, **Preferences** and **About Caffoot Lite**. The layout below describes the upcoming v1.1.1 interface; the published v1.1.0 release may have different labels and placement.
 
 ### Data Management — Back Up & Restore
@@ -58,9 +60,13 @@ Open **Settings & Data** for **Data Management**, **Preferences** and **About Ca
 
 Choose **Light Mode**, **Dark Mode** or **Use System Setting**. The system option follows the browser/operating-system colour preference as it changes. Appearance preferences are local to the browser and are not included in inventory JSON backups.
 
+### Help & Guides
+
+The built-in offline reference has expandable topics for getting started, IPAM, devices, racks, backups, updates, appearance, inventory health and troubleshooting. It is updated as application workflows change. The complete online User Guide remains available for further detail.
+
 ### About Caffoot Lite
 
-Displays the official Caffoot branding, installed application version, **Quick Start Tips** (short offline guidance for getting started, backups, updates and troubleshooting; not a complete offline manual), and links to the official repository, User Guide, Installation Guide and GitHub release notes. **Software Licences** opens bundled third-party notices, including when offline. External GitHub links require an internet connection.
+Displays the official Caffoot branding, installed application version, a pointer to offline Help & Guides, and links to the official repository, User Guide, Installation Guide and GitHub release notes. **Software Licences** opens bundled third-party notices, including when offline. External GitHub links require an internet connection.
 
 ## Data safety and privacy
 
