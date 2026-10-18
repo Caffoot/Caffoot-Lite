@@ -5,7 +5,7 @@
 **Status:** Planning only  
 **Purpose:** Preserve proposed features, agreed design directions, dependencies and compatibility requirements.
 
-These notes are not implementation approval or release commitments. Historical planning note (written before v1.1): finish v1.1 first; do not alter the published v1.0.3 release without approval. v1.1.0 was subsequently published on 18 October 2026.
+These notes are not implementation approval or release commitments. Historical planning note (written before v1.1): finish v1.1 first; do not alter the published v1.0.3 release without approval. v1.1.0 was subsequently published on 18 October 2026, followed by v1.1.1 on the same date. The proposals below remain historical planning notes, not a statement that every candidate feature shipped.
 
 ## 0. Agreed v1.1 completion and proposed v1.1.1 polish
 
