@@ -1036,6 +1036,21 @@ function hierarchyValidateTypes(subnets) {
   }
   return errors;
 }
+        // Read-only ownership assessment: never migrate records during rendering.
+        function previewLegacyVlanOwnershipInApp(state = appState) {
+            return state.vlans.filter(v => v && !v.parentId).map(v => {
+                const matches = state.subnets.filter(sub =>
+                    sub && (!sub.kind || sub.kind === 'network') &&
+                    Number(sub.vlan) === Number(v.vlanId));
+                return {
+                    id: v.id,
+                    vlanId: v.vlanId,
+                    status: matches.length === 1 ? 'unique' : matches.length ? 'ambiguous' : 'orphaned',
+                    parentId: matches.length === 1 ? (matches[0].parentId || null) : null
+                };
+            });
+        }
+
         function normaliseState(raw) {
             if (!isPlainObject(raw)) throw new Error('Imported data must be a JSON object.');
 
@@ -3196,6 +3211,16 @@ function hierarchyValidateTypes(subnets) {
                 <div class="space-y-5 phase12c-ipam">
                     <div class="${phase12CIpamTab==='manage'?'':'hidden'} space-y-4" data-ipam-panel="manage">
                     ${renderSubnetHierarchyPreview()}
+                    ${(() => {
+                        const legacy = previewLegacyVlanOwnershipInApp();
+                        const scoped = legacy.filter(v => v.status === 'unique' && v.parentId).length;
+                        const ambiguous = legacy.filter(v => v.status === 'ambiguous').length;
+                        const orphaned = legacy.filter(v => v.status === 'orphaned').length;
+                        return legacy.length ? `<div class="rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 p-4 text-sm text-slate-800 dark:text-slate-200">
+                            <strong>Legacy VLAN Ownership Preview</strong>
+                            <p class="mt-1">${legacy.length} legacy record(s): ${scoped} uniquely matched to an IP Address Block, ${ambiguous} ambiguous, ${orphaned} without a matching subnet. No records have been changed.</p>
+                        </div>` : '';
+                    })()}
                     <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
                         <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700/60 pb-3">
                             <div class="flex items-center space-x-2">
