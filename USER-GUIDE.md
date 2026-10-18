@@ -70,7 +70,7 @@ For download instructions and troubleshooting, see [INSTALLATION.md](INSTALLATIO
 
 ## Updating safely
 
-In Settings & Data → Data Management, use **Check for updates** to check the latest published stable release. This is a manual online check; it does not send inventory or install anything. While the repository is private or no release has been published, no public release is available.
+In Settings & Data → Data Management, use **Check for updates** to check the latest published stable release. This is a manual online check; it does not send inventory or install anything. Use the [latest stable release](https://github.com/sdelnevo/Caffoot-Lite/releases/latest) to see the current published version.
 
 1. Download a JSON backup from your current version.
 2. Keep the old HTML and download the new `Caffoot-Lite.html` into a separate folder from the [official releases](https://github.com/sdelnevo/Caffoot-Lite/releases).

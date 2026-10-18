@@ -5,6 +5,131 @@
 **Repository:** `sdelnevo/Caffoot-Lite` (public)  
 **Release policy:** Publish publicly only after manual verification, security/privacy review and owner approval.
 
+Caffoot Lite is an offline, standalone single-HTML network inventory and IP address management application. The published v1.0.3 release remains unchanged while future development is tested separately.
+
+## Documentation checks for every release
+
+Before publishing **every** new version (including patch releases), complete a documentation consistency review as a release gate:
+
+- Verify the application, package, release tag, release assets and current-version statements agree.
+- Review `README.md`, `INSTALLATION.md`, `USER-GUIDE.md`, `ROADMAP.md`, `docs/ROADMAP-DESIGN-NOTES.md`, `BACKUP-FORMAT.md`, release notes and any other affected guides for accurate feature descriptions, navigation labels, download links, update instructions and backup warnings.
+- Preserve historical release evidence, older compatible backup examples and legitimate references to previous versions; do not blindly replace every version number.
+- Run automated checks for known version inconsistencies where practical, in addition to a human documentation review. An automated pass alone does not establish that instructions or screenshots are accurate.
+- Record completion of the documentation review in release acceptance before publication. Treat unresolved user-facing inaccuracies as release blockers.
+
+## Current and proposed milestones
+
+Release assignments beyond v1.1 are provisional. A feature listed here is not a release promise or approval to implement it.
+
+### v1.1 — Subnet hierarchy and validation
+
+**Status: In development**
+
+- Subnet hierarchy, parent/child relationships and CIDR validation.
+- Nesting, boundaries, overlap and cycle protection.
+- Intelligent subnet creation and editing with type-specific rules.
+- Gateway protection and relevant network device-type support.
+- Show gateway addresses as protected/reserved in IPAM; prevent accidental allocation and update availability statistics.
+- Fix informational modal dismissal consistently, including Safe Update Guide and Software Licences (visible Close control, Escape and appropriate focus behaviour).
+- Add read-only network information (network/broadcast addresses, mask, gateway, usable range and capacity) while keeping network and broadcast addresses out of host allocation.
+- Present top-level IP Address Blocks in a responsive two-column card grid (one column on narrow screens), with nested collapsible blocks, compact Network / VLAN rows and Expand All / Collapse All. Preserve editing and avoid excessive page length.
+- Data-safety release gates: verify backup/export guidance and browser-storage warnings; test edits/deletions and cross-module Device/IPAM/Rack references, including JSON restore; preview the impact of destructive actions on linked records.
+- Accessibility acceptance for new and existing affected dialogs, including visible modal Close controls, Escape/focus behaviour, keyboard operation and responsive IPAM layouts.
+- Regression testing and compatibility with existing inventory and backups.
+
+Development takes place separately from the published release. Do not merge unfinished work without owner approval.
+
+### v1.1.1 — Settings, usability and documentation
+
+**Status: Proposed; planning only, after v1.1**
+
+- Consolidate duplicate backup controls while preserving prominent local-storage warnings, JSON export/restore, recovery snapshots and destructive-action safeguards.
+- Reorganise Settings & Data into clear everyday tasks and advanced diagnostics/recovery.
+- Expand About Caffoot Lite with meaningful project information, version, repository links and licence access.
+- Explore additional application preferences and central management of device/server/software option lists without breaking existing device workflows or backups.
+- Rename dashboard Data Health to Inventory Health, explain what is checked, and distinguish inventory consistency from browser-storage safety and live network monitoring (which is not provided).
+- Add concise, offline Help & Documentation accessible from the interface, designed to complement—not replace—an intuitive user experience.
+- Improve update status presentation and investigate opt-in automatic release checks; do not silently replace the local HTML file or restore inventory.
+
+Scope and sequencing require review before implementation. No v1.2 commitments are moved into this milestone.
+
+### v1.1.2 — Security hardening and deployment guidance
+
+**Status: Proposed; planning only, after v1.1.1 and before v1.2**
+
+- Perform a code-focused security review of the standalone HTML app, including DOM XSS, HTML rendering, imported JSON, data validation and unsafe file/input handling.
+- Review browser local-storage exposure, shared-device risks, backup sensitivity, privacy and origin-specific storage behaviour.
+- Audit bundled dependencies and unexpected external requests; preserve the offline-first design.
+- Evaluate practical Content Security Policy and other browser mitigations compatible with the single-file offline distribution.
+- Add repeatable security regression tests and document limitations; do not claim the application is vulnerability-free.
+- Publish clear README/deployment warnings against unauthenticated public exposure, explaining HTTPS, reverse-proxy authentication, network restrictions and residual risks.
+- Consider a SECURITY.md with a private vulnerability-reporting route, supported versions and responsible disclosure guidance.
+- Preserve existing data, JSON backup compatibility and user-approved release gates.
+
+Security controls for a future managed Caffoot Pro deployment require separate design and validation; Pro is not currently a released or security-certified alternative.
+
+### v1.2 — Device, IPAM and rack enhancements
+
+**Status: Planning; scope may be split into smaller milestones**
+
+- Wider, responsive, tabbed Add Device and Edit Device forms with shared behaviour.
+- Preserve dynamic fields for different device types.
+- Add contextual Operating System family, version and optional edition selection for applicable device types, with Unknown/None/Custom choices and safe legacy compatibility.
+- Refresh Device Inventory screens using the same responsive visual language as v1.1 IPAM, with clear summaries, useful filtering and compact, scalable device lists.
+- **Network Environments / customer isolation (MSP use case):** support independent customer or site addressing scopes above IP Address Blocks, allowing identical IPv4 CIDRs, VLAN IDs and gateway addresses in separate environments while retaining overlap protection within each environment. Scope device IPs, reservations, VLAN ownership, lookups, exports and validation by environment; migrate existing single-environment inventory and JSON backups safely. Do not enable duplicate ranges until allocation identity and all dependent workflows are environment-aware.
+- Multiple IP addresses per device, optional interface associations and primary management IP.
+- Public IP address documentation, including relevant ISP, circuit and NAT metadata.
+- Flexible rack heights and presets, Wall Mounted / Free Standing / Open Frame types, optional depth and safe resizing.
+- Expand optional rack details: manufacturer, model, serial number, asset tag, width/depth, location and free-standing base configuration (casters, levelling feet and/or anchored).
+- Extend existing rack accessories with PDUs (horizontal rack-mounted and vertical 0U), fan/ventilation panels, vertical cable managers and environmental sensors; preserve existing accessories and collision safeguards.
+- Cross-module advanced search and initial inventory, subnet/IPAM and rack reporting.
+
+### v1.3 — Device relationships and interfaces
+
+**Status: Proposed**
+
+- Device relationships and upstream/downstream links.
+- Interface and port records, with optional IP associations.
+- Shared connection records visible from both connected devices.
+
+### v1.4 — Cabling and rack connectivity
+
+**Status: Proposed**
+
+- Patch panels, cabling, ports and physical endpoints.
+- Duplicate endpoint protection and connection tracing.
+- Rack diagram exports; investigate SVG, Excalidraw and Visio compatibility.
+
+### v1.5 — Network topology
+
+**Status: Proposed**
+
+- Physical and logical topology generated from existing relationship and cabling records.
+- Device navigation, connection tracing and usable diagram layouts.
+
+### v1.6 — Advanced network migration and lifecycle management
+
+**Status: Proposed; planning only**
+
+- Bulk subnet, VLAN and device network migrations with scoped VLAN ownership safeguards.
+- Assisted IP reassignment with collision checks, address validation and explicit user approval.
+- Guided migration workflows with previews and dry-run validation before changes are applied.
+- Historical subnet, VLAN and device IP assignment reporting, subject to a safe and compatible data-history design.
+- Network retirement workflows that preserve device inventory and support unassigned-device reassignment.
+- Backup/restore compatibility, rollback protections and cross-module regression tests for migration operations.
+
+This milestone is provisional and must not expand the v1.1 delivery scope. Basic manual device reassignment and safe subnet/VLAN deletion remain part of the current v1.1 safety work.
+
+### Future investigations
+
+- Shared Suppliers directory for devices, racks and other assets, with optional procurement, warranty and contact information; schedule in a separate future milestone rather than expanding v1.3.
+
+- Offline import options, including potential NetBox compatibility.
+- IPv6 capabilities.
+- Additional reporting and export formats.
+
+See [Roadmap Design Notes](docs/ROADMAP-DESIGN-NOTES.md) for detailed concepts and compatibility requirements.
+
 ## Delivered core scope
 
 - Subnets/CIDR, IPAM, reservations, bulk operations, history, CSV and integrity safeguards.
@@ -63,36 +188,17 @@ These checks are valuable regression coverage, **not** a complete security audit
 
 Passing these checks supports release readiness; it is not a formal security or accessibility certification.
 
-## Future enhancements — after v1.0
-
-1. Cross-module advanced search (Devices, IPAM, Subnets, Racks).
-2. Device relationships and upstream/downstream links.
-3. Port, patch-panel and rack cabling management.
-4. Network topology visualisation based on shared relationship data.
-5. Expanded inventory, rack, IPAM and connection reporting.
-
-These were **proposals**, not committed v1.0 requirements. Confirm scope before development.
-
 ## Compatibility and project boundaries
 
 **Data compatibility:** Preserve existing browser inventories and supported JSON backup formats. The primary storage key is `caffoot_state`; version 1.0.0 does not automatically migrate legacy test storage. Export and restore JSON backups to retain test data.
 
 **Safe releases:** Keep a known-good standalone HTML build and recommend exporting a JSON backup before upgrading. Validate new builds before publishing them.
 
-## Lite → Pro compatibility principles (planned)
-
-- **Lite is the design reference:** Caffoot Pro should retain the same visual language, navigation, shared forms, field labels, validation presentation, light/dark themes and core workflows. Pro may add clearly distinguished capabilities without breaking familiar Lite experiences.
-- **One-way migration must be straightforward:** A user should be able to export a supported versioned JSON inventory from Lite and import it into Pro, with a validation preview, clear conflict handling and a transactional database import. No manual re-entry of devices, subnets, racks or IPAM allocations should be required for supported data.
-- **Versioned interchange format:** Introduce an explicit schema version and originating app version, documented semantics and migration functions; preserve backwards-compatible imports as the schema evolves. Never assume an HTML filename or browser localStorage is portable.
-- **Keep the original safe:** Import must not mutate the exported JSON file. Invalid or unsupported formats must fail clearly and leave existing data unchanged. Test reference fixtures across both editions.
-- **Separate storage and deployment:** Lite remains offline-first and browser-local. Pro is planned for Docker and server-side persistence, with authentication, roles and expanded capabilities designed separately.
-- **Pro repository:** Owner intends to create a separate `Caffoot-Pro` repository. Do not create or publish it without explicit instruction. A Caffoot website is a future project, not a v1.0 blocker.
-
 ### Before Lite v1.0 publication
 
 - [x] Add version metadata to JSON exports and a documented versioned import/migration strategy while retaining compatibility with current valid backups.
 - [x] Add automated tests for legacy backups, unsupported future schema versions, malformed metadata and unchanged inventory on rejection.
-- [x] Produce an example Lite backup fixture for future Pro import contract tests, without real infrastructure or sensitive data.
+- [x] Produce an example Lite backup fixture for future import compatibility tests, without real infrastructure or sensitive data.
 - [x] Complete release packaging, offline upgrade/restore acceptance and owner publication approval.
 
 

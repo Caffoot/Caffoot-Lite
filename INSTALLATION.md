@@ -12,14 +12,14 @@ Caffoot Lite is a standalone HTML application. You do **not** need Docker, Node.
 
 **Export JSON backups regularly and ALWAYS before upgrades, moves, renames or resets.** Save them outside the browser and test restoration. The backup may include sensitive network information.
 
-## Download the released HTML
+## Download the released application
 
 **v1.1.0 is currently a release candidate, not yet published.** Always use the [latest stable release](https://github.com/sdelnevo/Caffoot-Lite/releases/latest) for production downloads.
 
 1. Visit the [Caffoot Lite GitHub repository](https://github.com/sdelnevo/Caffoot-Lite).
 2. Open **Releases** and select the latest stable release.
-3. Expand **Assets** and select **`Caffoot-Lite.html`**. **Do not** choose “Source code (zip)” if you only want to run the application.
-4. Save the HTML file in a folder you can find again, such as Documents/Caffoot-Lite.
+3. Expand **Assets** and download the version-named Caffoot Lite release ZIP (recommended, includes guides and licences), or download **`Caffoot-Lite.html`** directly. **Do not** choose GitHub's automatically generated “Source code (zip)” if you only want to run the application.
+4. If using the release ZIP, extract it first. Save the HTML file in a folder you can find again, such as Documents/Caffoot-Lite.
 5. Double-click the HTML file, or use **Open With** to choose Safari, Chrome, Edge or Firefox.
 6. The app should open in a browser tab without an internet connection.
 
@@ -40,16 +40,6 @@ Caffoot Lite stores its inventory in **this browser's local storage**. The HTML 
 
 **Always export a JSON backup before** upgrading, moving/renaming the HTML file, resetting the app, clearing browser data, or changing browsers. Keep the backup somewhere safe and test that you can restore it.
 
-## Updating to a new version
-
-1. Open your current Caffoot Lite and **export a JSON backup**.
-2. Download the new release's `Caffoot-Lite.html`.
-3. Keep your old HTML and backup until you have checked the new version.
-4. Open the new file. If your inventory is not visible, use **Data Management → Restore/Import** to load the JSON backup.
-5. Check your devices, subnets, racks and IPAM records before discarding the old copy.
-
-Never assume that replacing an HTML file transfers its browser-local data.
-
 ## Troubleshooting
 
 - **I see no devices:** Check that you opened the expected file in the same browser/profile. Restore a JSON backup if needed.
@@ -61,7 +51,7 @@ Never assume that replacing an HTML file transfers its browser-local data.
 For features and day-to-day workflows, see [USER-GUIDE.md](USER-GUIDE.md).
 
 
-## Updating safely
+## Updating to a new version safely
 
 In Settings & Data → Data Management, use **Check for updates** to check the latest published stable release. This is a manual online check; it does not send inventory or install anything. The check requires an internet connection and reports the latest public release.
 

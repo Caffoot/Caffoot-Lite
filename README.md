@@ -41,6 +41,16 @@ Select either thumbnail to view the full-size screenshot.
 
 **Export a JSON backup regularly, and ALWAYS before upgrading, moving, renaming or resetting Caffoot Lite.** Store backups somewhere safe outside the browser and verify you can restore them. Backups may contain sensitive infrastructure details.
 
+## 🔐 Security and deployment guidance
+
+**Caffoot Lite is intended primarily for local, offline use. Do not expose the standalone HTML application directly to the public internet.** It has no built-in authentication, role-based access control or secure multi-user backend. Network inventory and exported JSON backups can contain sensitive infrastructure details.
+
+If you choose to serve Caffoot Lite from a web server, restrict access with appropriately configured authentication and authorisation (for example, Authentik integrated with Nginx or another compatible reverse proxy), HTTPS and network access controls. **A reverse proxy alone is not an authentication system**, and adding a login does not eliminate application or browser-storage risks. Test your deployment configuration carefully.
+
+Browser storage is local to the browser/profile and origin; hosting the HTML file does **not** turn Caffoot Lite into a shared, server-backed inventory system. Avoid using it on untrusted or shared computers, protect exported backups, and never assume that an externally hosted copy provides multi-user isolation.
+
+A dedicated security review and deployment-hardening milestone is planned for v1.1.2; that review has **not yet been completed**. Future Caffoot Pro is intended to address managed multi-user deployment, but it should not be treated as an available or security-validated alternative until released and reviewed.
+
 ## Download and run
 
 **[Get the latest stable Caffoot Lite release](https://github.com/sdelnevo/Caffoot-Lite/releases/latest)** — no installation, Docker or server required.
@@ -101,4 +111,4 @@ The Caffoot name, hedgehog mascot and official project branding are **not** lice
 
 ## Backup compatibility and release preparation
 
-The [backup format contract](BACKUP-FORMAT.md) documents versioned exports and legacy imports for future Lite-to-Pro migration. Pro import has not been implemented yet. Historical testing and release-review records remain available in [RELEASE-ACCEPTANCE.md](RELEASE-ACCEPTANCE.md) and [RELEASE-REVIEW.md](RELEASE-REVIEW.md).
+The [backup format contract](BACKUP-FORMAT.md) documents versioned JSON exports, legacy imports and compatibility safeguards. Historical testing and release-review records remain available in [RELEASE-ACCEPTANCE.md](RELEASE-ACCEPTANCE.md) and [RELEASE-REVIEW.md](RELEASE-REVIEW.md).
