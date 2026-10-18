@@ -45,6 +45,18 @@ assert(html.includes('...phase19BServerFunctionFields()'), 'server feature optio
 assert(/if\s*\(phase11BCommitDelete\(before,\s*isNetwork\s*\?\s*'Subnet & VLAN'\s*:\s*'IP Address Block'\)\)\s*closeModal\(\);\s*else\s*selectedSubnetId\s*=\s*previousSelection\s*;/.test(html), 'failed subnet deletion must restore selected subnet');
 assert(html.includes("if(!phase11BCommitDelete(before,'Rack')) { selectedRackId=previousSelection; renderContent(); }"), 'failed rack deletion must restore selected rack');
 assert(html.includes('function phase11CApplyRepair('), 'IPAM repair commit must remain');
+
+/* v1.1: Manage Subnets must not expose edit actions for a different address block. */
+assert(html.includes("const availableNetworks = appState.subnets.filter("), 'IPAM must derive a filtered list of active networks');
+assert(html.includes("(s.parentId || '') === ipamManageBlockFilter"), 'active subnet list must respect the selected address block');
+assert(html.includes("const subnet = availableNetworks.find(s => s.id === selectedSubnetId) || availableNetworks[0] || null;"), 'stale subnet selection must fall back within the filtered block');
+assert(html.includes("if (phase12CIpamTab === 'manage' && !subnet) return renderSubnetHierarchyPreview();"), 'empty filtered blocks must not expose unrelated subnet actions');
+assert(html.includes("availableNetworks.map(s =>"), 'active subnet dropdown must use filtered networks');
+assert(html.includes('data-action="bulk-ip" data-id="${escapeHtml(subnet.id)}"'), 'bulk edit must target filtered active subnet');
+assert(html.includes('data-action="edit-subnet" data-id="${escapeHtml(subnet.id)}"'), 'subnet edit must target filtered active subnet');
+assert(html.includes("showToast('Choose a subnet from the selected IP Address Block.'"), 'manual subnet selection must reject out-of-block IDs');
+console.log('v1.1 filtered active subnet and edit action safeguards passed.');
+
 assert(!html.includes("case 'tab-diagnostics':"), 'diagnostics action must be removed');
 assert(html.includes('data-action="phase19b-manage-functions"'), 'server options manager must be accessible');
 assert(html.includes('data-device-panel="manage"'), 'Devices management workspace must remain');
