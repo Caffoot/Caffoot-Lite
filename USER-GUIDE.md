@@ -2,7 +2,7 @@
 
 **Infrastructure, Simplified. — For HomeLabs and Small Teams**
 
-This guide covers the published v1.1.0 workflows and documents the Settings interface being prepared for v1.1.1. The v1.1.1 changes are not yet published.
+This guide covers the published v1.1.0 workflows and documents the Settings interface prepared on the v1.1.1 development branch. The v1.1.1 changes have passed browser acceptance but are not yet published.
 
 ## Getting started
 
