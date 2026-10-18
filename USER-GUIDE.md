@@ -32,7 +32,7 @@ Use the managed options/settings areas to maintain device types and locations. S
 
 ### 6. Dashboard
 
-The **Dashboard** summarises inventory and network information based on your locally saved data. If it appears empty, add a subnet and some devices, then return to the dashboard.
+The **Dashboard** summarises inventory and network information based on your locally saved data. If it appears empty, add a subnet and some devices, then return to the dashboard. In the upcoming v1.1.1 interface, **Inventory Health** checks known inconsistencies across saved devices, IPAM, subnets, VLANs and rack assignments. A healthy result does not verify backup availability, browser storage safety or live network reachability.
 
 ## Settings & Data (v1.1.1 development interface)
 
