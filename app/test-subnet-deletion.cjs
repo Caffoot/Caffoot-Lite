@@ -26,6 +26,7 @@ function scenario({reserved=false,device=false,save=true}={}) {
         appState:state, selectedSubnetId:'net', 
         document:{querySelector:()=>({dataset:{id:'net'}})},
         phase12Usable:(ip,cidr)=>ip.startsWith(cidr.split('/')[0].replace(/\.0$/,'' )+'.'),
+        ipBelongsToSubnet:(ip,cidr)=>ip.startsWith(cidr.split('/')[0].replace(/\.0$/,'' )+'.'),
         escapeHtml:String,openModal:html=>{modal=html;},closeModal:()=>{},
         showToast:(message)=>notices.push(message),
         saveState:()=>save,renderContent:()=>{},
