@@ -3569,13 +3569,20 @@ function hierarchyValidateTypes(subnets) {
             const vlan = appState.vlans.find(v => v.id === vlanRecordId);
             if (!vlan) return;
             const domain = vlan.parentId || '__unassigned__';
-            const subnet = appState.subnets.find(s =>
+            const matches = appState.subnets.filter(s =>
                 (!s.kind || s.kind === 'network') &&
-                Number(s.vlan) === Number(vlan.vlanId) &&
-                (s.parentId || '__unassigned__') === domain
+                Number(s.vlan) === Number(vlan.vlanId)
             );
+            // Legacy VLAN records lack parentId even when their subnet is in a block.
+            // Resolve them only when there is exactly one matching subnet; never guess
+            // between multiple blocks that reuse the same VLAN number.
+            const scoped = matches.filter(s => (s.parentId || '__unassigned__') === domain);
+            const subnet = scoped.length === 1 ? scoped[0] :
+                (!vlan.parentId && matches.length === 1 ? matches[0] : null);
             if (subnet) openSubnetModal(subnet.id);
-            else showToast('No linked subnet was found for this VLAN.', 'error');
+            else showToast(matches.length > 1
+                ? 'Multiple subnets use this VLAN number; the legacy VLAN record has no unique block association.'
+                : 'No linked subnet was found for this VLAN.', 'error');
         }
 
         function handleSubnetSubmit(e, subnetId) {
