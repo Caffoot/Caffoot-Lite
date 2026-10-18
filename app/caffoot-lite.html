@@ -1157,9 +1157,11 @@ function hierarchyValidateTypes(subnets) {
                 const vlanNumber = Number(vlan.vlanId);
                 if (!Number.isInteger(vlanNumber) || vlanNumber < 1 || vlanNumber > 4094) throw new Error(`Invalid VLAN ID: ${vlan.vlanId}.`);
                 if (vlanIds.has(vlan.id)) throw new Error(`Duplicate VLAN ID: ${vlan.id}.`);
-                if (vlanNumbers.has(vlanNumber)) throw new Error(`Duplicate VLAN number: ${vlanNumber}.`);
+                const vlanDomain = vlan.parentId || '__unassigned__';
+                const vlanKey = JSON.stringify([vlanDomain, vlanNumber]);
+                if (vlanNumbers.has(vlanKey)) throw new Error(`Duplicate VLAN number ${vlanNumber} within the same IP Address Block.`);
                 vlanIds.add(vlan.id);
-                vlanNumbers.add(vlanNumber);
+                vlanNumbers.add(vlanKey);
             }
 
             const deviceIds = new Set();
