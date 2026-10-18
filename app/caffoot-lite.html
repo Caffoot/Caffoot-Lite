@@ -1051,6 +1051,42 @@ function hierarchyValidateTypes(subnets) {
             });
         }
 
+        function reconcileLegacyVlanOwnership() {
+            const preview = previewLegacyVlanOwnershipInApp();
+            const candidates = preview.filter(item => item.status === 'unique' && item.parentId);
+            if (!candidates.length) {
+                showToast('No uniquely matched legacy VLAN records need reconciliation.');
+                return;
+            }
+            if (preview.some(item => item.status !== 'unique')) {
+                showToast('Reconciliation blocked: ambiguous or orphaned VLAN records require review.', 'error');
+                return;
+            }
+            const candidateIds = new Set(candidates.map(item => item.id));
+            const proposed = appState.vlans.map(v => candidateIds.has(v.id)
+                ? { ...v, parentId: candidates.find(item => item.id === v.id).parentId }
+                : { ...v });
+            const seen = new Set();
+            for (const v of proposed) {
+                const key = (v.parentId || '__unassigned__') + ':' + String(v.vlanId);
+                if (seen.has(key)) {
+                    showToast('Reconciliation blocked: duplicate VLAN numbers within a domain.', 'error');
+                    return;
+                }
+                seen.add(key);
+            }
+            if (!window.confirm('Assign IP Address Block ownership to ' + candidates.length +
+                ' uniquely matched legacy VLAN records? Unassigned records will stay unchanged. Export a backup first.')) return;
+            const before = JSON.stringify(appState);
+            appState.vlans = proposed;
+            if (!saveState()) {
+                appState = JSON.parse(before);
+                showToast('Reconciliation was not saved; inventory restored.', 'error');
+                return;
+            }
+            renderContent();
+        }
+
         function normaliseState(raw) {
             if (!isPlainObject(raw)) throw new Error('Imported data must be a JSON object.');
 
@@ -3220,6 +3256,7 @@ function hierarchyValidateTypes(subnets) {
                         return legacy.length ? `<div class="rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 p-4 text-sm text-slate-800 dark:text-slate-200">
                             <strong>Legacy VLAN Ownership Preview</strong>
                             <p class="mt-1">${legacy.length} legacy record(s): ${scoped} uniquely matched to an IP Address Block, ${unassigned} uniquely matched in the Unassigned VLAN Domain, ${ambiguous} ambiguous, ${orphaned} without a matching subnet. No records have been changed.</p>
+                            ${scoped && !ambiguous && !orphaned ? `<button type="button" data-action="reconcile-legacy-vlans" class="mt-3 px-3 py-2 rounded-lg bg-indigo-600 text-white font-semibold">Reconcile ${scoped} VLAN Records</button>` : ''}
                         </div>` : '';
                     })()}
                     <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
@@ -5753,6 +5790,7 @@ function hierarchyValidateTypes(subnets) {
                 case 'phase12c-tab': if (['overview','addresses','manage'].includes(target.dataset.tab)) { phase12CIpamTab=target.dataset.tab; renderContent(); } break;
                 case 'phase12b-apply': phase12BApply(); break;
                 case 'open-subnet-by-vlan': openSubnetModalByVlanId(id); break;
+                case 'reconcile-legacy-vlans': reconcileLegacyVlanOwnership(); break;
                 case 'delete-vlan': deleteVlan(id); break;
                 case 'open-ip': openIpModal(target.dataset.ip); break;
                 case 'phase10-next-ip': openIpModal(target.dataset.ip); break;
