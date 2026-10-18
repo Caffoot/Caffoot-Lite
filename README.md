@@ -78,7 +78,7 @@ If you're looking for **free IPAM software**, an **offline network inventory too
 - **Devices:** inventory, types, locations and device details.
 - **Subnets and IPAM:** IP Address Block hierarchy, CIDR networks, scoped VLANs, addresses, reservations and allocation workflows.
 - **Racks:** rack layouts, equipment placement and U-space management.
-- **Dashboard:** inventory overview.
+- **Dashboard:** inventory overview; v1.1.1 development adds clearer **Inventory Health** wording for saved-record consistency, not storage, backup or live-network monitoring.
 - **Data Management:** validated JSON backup/restore and reset/recovery tools. A clearer Back Up & Restore, Maintenance & Safety and Advanced Recovery layout is in development for v1.1.1; it is not yet part of the published stable release.
 - **Offline use:** a single HTML file with bundled styling, fonts and branding assets.
 
