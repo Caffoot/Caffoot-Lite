@@ -107,6 +107,19 @@ Security controls for a future managed Caffoot Pro deployment require separate d
 - Physical and logical topology generated from existing relationship and cabling records.
 - Device navigation, connection tracing and usable diagram layouts.
 
+### v1.6 — Advanced network migration and lifecycle management
+
+**Status: Proposed; planning only**
+
+- Bulk subnet, VLAN and device network migrations with scoped VLAN ownership safeguards.
+- Assisted IP reassignment with collision checks, address validation and explicit user approval.
+- Guided migration workflows with previews and dry-run validation before changes are applied.
+- Historical subnet, VLAN and device IP assignment reporting, subject to a safe and compatible data-history design.
+- Network retirement workflows that preserve device inventory and support unassigned-device reassignment.
+- Backup/restore compatibility, rollback protections and cross-module regression tests for migration operations.
+
+This milestone is provisional and must not expand the v1.1 delivery scope. Basic manual device reassignment and safe subnet/VLAN deletion remain part of the current v1.1 safety work.
+
 ### Future investigations
 
 - Shared Suppliers directory for devices, racks and other assets, with optional procurement, warranty and contact information; schedule in a separate future milestone rather than expanding v1.3.
