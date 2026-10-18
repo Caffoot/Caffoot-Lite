@@ -49,7 +49,7 @@ The v1.1.0 scope above is historical release planning, now delivered. Further ch
 - **Implemented on development branch, pending release validation:** reorganise Settings & Data into Back Up & Restore, Maintenance & Safety and Advanced Recovery.
 - **Implemented on development branch, pending release validation:** expand About Caffoot Lite with official branding, installed version, repository and documentation links, release notes and licence access.
 - **Partially implemented on development branch:** Light Mode, Dark Mode and Use System Setting preferences. Central management of device/server/software option lists remains to be assessed; preserve existing workflows and backups.
-- Rename dashboard Data Health to Inventory Health, explain what is checked, and distinguish inventory consistency from browser-storage safety and live network monitoring (which is not provided).
+- **Implemented on development branch, pending release validation:** rename dashboard Data Health to Inventory Health, explain what is checked, and distinguish inventory consistency from browser-storage safety and live network monitoring (which is not provided).
 - Add concise, offline Help & Documentation accessible from the interface, designed to complement—not replace—an intuitive user experience.
 - Improve update status presentation and investigate opt-in automatic release checks; do not silently replace the local HTML file or restore inventory.
 
