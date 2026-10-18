@@ -1,11 +1,11 @@
 # Caffoot Lite — Development Roadmap
 
 **Updated:** 18 October 2026  
-**Current milestone:** v1.1.0 release candidate — automated suite and packaging passed; manual final acceptance and owner approval pending  
+**Current milestone:** v1.1.0 published on 18 October 2026; release verification completed. Next planned milestone: v1.2.0.  
 **Repository:** `sdelnevo/Caffoot-Lite` (public)  
 **Release policy:** Publish publicly only after manual verification, security/privacy review and owner approval.
 
-Caffoot Lite is an offline, standalone single-HTML network inventory and IP address management application. The published v1.0.3 release remains unchanged while future development is tested separately.
+Caffoot Lite is an offline, standalone single-HTML network inventory and IP address management application. v1.1.0 is the published release as of 18 October 2026; v1.0.3 remains available as a historical release.
 
 ## Documentation checks for every release
 
@@ -216,9 +216,9 @@ The owner explicitly approved making `sdelnevo/Caffoot-Lite` public and publishi
 [Caffoot Lite v1.0.0](https://github.com/sdelnevo/Caffoot-Lite/releases/tag/v1.0.0) includes `Caffoot-Lite-1.0.0.zip`, `Caffoot-Lite.html` and `SHA256SUMS`. The tag points to the tested source commit. Earlier private-preparation results below are retained as historical evidence.
 
 
-## v1.1 VLAN scope and hierarchy — release candidate
+## v1.1 VLAN scope and hierarchy — released
 
-**Status:** Integrated in v1.1.0 candidate. Automated subnet hierarchy, deletion, backup and core UI safeguards passed on 18 October 2026; final manual acceptance and publication approval are pending.
+**Status:** Released in v1.1.0 on 18 October 2026. Automated subnet hierarchy, deletion, backup and core UI safeguards passed; manual browser, offline and backup/restore acceptance completed.
 
 - Each parent **IP Address Block** is an independent VLAN domain. A VLAN number may be reused in different blocks.
 - Within a single block, a VLAN number must be unique among Network / VLAN subnets.
