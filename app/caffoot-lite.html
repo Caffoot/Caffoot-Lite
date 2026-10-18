@@ -5368,7 +5368,7 @@ function hierarchyValidateTypes(subnets) {
                     <li>Check your devices, IPAM, subnets and racks before continuing. Keep the old HTML and backup until you are satisfied.</li>
                 </ol><p class="text-sm text-slate-700 dark:text-slate-200">Updates are manual. The application works offline; only checking for releases and downloading a newer file need internet access. A backup from a newer schema may require a newer application.</p>
                 <div class="flex flex-wrap gap-3"><button type="button" data-action="close-modal" class="phase16a-action" aria-label="Close safe update guide">Close</button><button type="button" data-action="phase11-export-backup" class="phase16a-action">Download JSON backup</button>
-                <a href="https://github.com/sdelnevo/Caffoot-Lite/releases" target="_blank" rel="noopener noreferrer" class="phase16a-action">Official releases</a></div></div>`);
+                <a href="https://github.com/caffoot/Caffoot-Lite/releases" target="_blank" rel="noopener noreferrer" class="phase16a-action">Official releases</a></div></div>`);
         }
 
         let caffootUpdateChecking = false;
@@ -5385,7 +5385,7 @@ function hierarchyValidateTypes(subnets) {
             const controller = new AbortController();
             const timeout = setTimeout(() => controller.abort(), 10000);
             try {
-                const response = await fetch('https://api.github.com/repos/sdelnevo/Caffoot-Lite/releases/latest', {signal:controller.signal, credentials:'omit', referrerPolicy:'no-referrer', headers:{Accept:'application/vnd.github+json'}});
+                const response = await fetch('https://api.github.com/repos/caffoot/Caffoot-Lite/releases/latest', {signal:controller.signal, credentials:'omit', referrerPolicy:'no-referrer', headers:{Accept:'application/vnd.github+json'}});
                 if (response.status === 404) {
                     status.textContent = 'No public release is available yet, or the repository is private. Your current version is ' + CAFFOOT_LITE_VERSION + '.';
                     return;
