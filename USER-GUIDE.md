@@ -2,7 +2,7 @@
 
 **Infrastructure, Simplified. — For HomeLabs and Small Teams**
 
-This guide covers the main workflows. Button names and layouts may change slightly before v1.0 is finalised.
+This guide covers the main workflows in Caffoot Lite v1.1.0 (release candidate).
 
 ## Getting started
 
@@ -10,7 +10,7 @@ Download and open the standalone HTML file following [INSTALLATION.md](INSTALLAT
 
 ### 1. Add a subnet
 
-Open **Subnets**, create a subnet using a valid network/CIDR (for example, `192.168.10.0/24`), review the proposed gateway address, and save. Confirm the network and gateway are correct for **your** environment; an automatically suggested gateway is not a substitute for checking your router configuration.
+Open **IPAM → Manage Subnets**, create an **IP Address Block** (for example, `192.168.0.0/16`), then add a **Network / VLAN** subnet within it (for example, `192.168.10.0/24`). Review the proposed gateway address and save. Each block is a separate VLAN-number scope, but overlapping customer networks are not yet supported in one inventory. Use **IPAM Overview** to open a block in a filtered Manage Subnets view; the Active Subnet dropdown and edit actions stay within that block. Confirm the network and gateway are correct for **your** environment; an automatically suggested gateway is not a substitute for checking your router configuration.
 
 ### 2. Add a device
 
@@ -20,7 +20,7 @@ If the device is **Rack Mounted**, enter its rack/U requirements and review plac
 
 ### 3. Manage IP addresses
 
-Use **IPAM** to inspect allocations and reservations, identify available addresses, and manage entries. Check the subnet and any existing reservation before assigning an address. After editing or deleting a device, verify that its IPAM record has been updated accordingly.
+Use **IPAM** to inspect allocations and reservations, identify available addresses, and manage entries. **Bulk Edit Range** identifies the active subnet and its parent block; verify that context before applying changes. Check the subnet and any existing reservation before assigning an address. After editing or deleting a device, verify that its IPAM record has been updated accordingly.
 
 ### 4. Work with racks
 
