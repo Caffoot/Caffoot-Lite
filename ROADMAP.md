@@ -1,7 +1,7 @@
 # Caffoot Lite — Development Roadmap
 
-**Updated:** 10 October 2026  
-**Current milestone:** v1.0.0 published  
+**Updated:** 18 October 2026  
+**Current milestone:** v1.1.0 release candidate — automated suite and packaging passed; manual final acceptance and owner approval pending  
 **Repository:** `sdelnevo/Caffoot-Lite` (public)  
 **Release policy:** Publish publicly only after manual verification, security/privacy review and owner approval.
 
@@ -110,15 +110,19 @@ The owner explicitly approved making `sdelnevo/Caffoot-Lite` public and publishi
 [Caffoot Lite v1.0.0](https://github.com/sdelnevo/Caffoot-Lite/releases/tag/v1.0.0) includes `Caffoot-Lite-1.0.0.zip`, `Caffoot-Lite.html` and `SHA256SUMS`. The tag points to the tested source commit. Earlier private-preparation results below are retained as historical evidence.
 
 
-## v1.1 design decision — VLAN scope (implementation in progress)
+## v1.1 VLAN scope and hierarchy — release candidate
 
-**Status:** Scoped VLAN validation helper and regression tests pass locally; application integration is **not yet complete**.
+**Status:** Integrated in v1.1.0 candidate. Automated subnet hierarchy, deletion, backup and core UI safeguards passed on 18 October 2026; final manual acceptance and publication approval are pending.
 
 - Each parent **IP Address Block** is an independent VLAN domain. A VLAN number may be reused in different blocks.
 - Within a single block, a VLAN number must be unique among Network / VLAN subnets.
 - Legacy networks without a parent share one **Unassigned VLAN Domain** and must not duplicate VLAN numbers there.
 - VLAN scope is based on stable parent block IDs, not editable block names.
 - CIDR overlap, hierarchy, gateway and data-integrity protections remain independent of VLAN scope.
-- The current separate `vlans` inventory and backup/import validators assume globally unique VLAN numbers. Before enabling reuse in the UI, update these together so same-number VLAN records in different domains remain distinct, without silently rewriting existing inventories.
-- Regression coverage must include create/edit, cross-block reuse, within-block duplicates, unassigned networks, VLAN deletion, backup/import and legacy data.
+- The separate VLAN inventory, backup/import validators and legacy ownership migration were updated to support stable VLAN identities scoped to IP Address Blocks.
+- Regression coverage includes cross-block reuse, within-block duplicates, unassigned networks, VLAN ownership, backup/import and legacy data.
+
+## v1.2 planned — Network environments
+
+Support separate customer/network environments with independent overlapping CIDRs, VLAN numbers, gateways and environment-aware IP allocations, backups and migration. **Not included in v1.1.0.**
 
