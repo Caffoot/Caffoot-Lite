@@ -1267,8 +1267,10 @@ function hierarchyValidateTypes(subnets) {
                 if (!isValidCidr24(subnet.cidr)) errors.push(`Invalid subnet CIDR: ${subnet.cidr}`);
                 if (!isValidIpv4(subnet.gateway) || !ipBelongsToSubnet(subnet.gateway, subnet.cidr)) errors.push(`Invalid gateway for subnet ${subnet.name || subnet.cidr}.`);
                 const vlan = Number(subnet.vlan);
-                if (!Number.isInteger(vlan) || vlan < 1 || vlan > 4094 || vlanNumbers.has(vlan)) errors.push(`Invalid or duplicate VLAN ${subnet.vlan}.`);
-                vlanNumbers.add(vlan);
+                const domain = subnet.parentId || '__unassigned__';
+                const vlanKey = JSON.stringify([domain, vlan]);
+                if (!Number.isInteger(vlan) || vlan < 1 || vlan > 4094 || vlanNumbers.has(vlanKey)) errors.push(`Invalid or duplicate VLAN ${subnet.vlan} in this IP Address Block.`);
+                vlanNumbers.add(vlanKey);
             });
 
             appState.devices.forEach(device => {
