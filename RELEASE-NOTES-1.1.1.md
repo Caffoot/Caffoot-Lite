@@ -1,6 +1,6 @@
 # Caffoot Lite v1.1.1 — Release Notes
 
-**Status:** Release candidate on `feature/v1.1.1-settings-data-usability`. Not yet merged, tagged or published.
+**Status:** Published stable release on 18 October 2026. [Download v1.1.1](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.1.1).
 
 ## Highlights
 
@@ -28,6 +28,6 @@ The distributed application remains a standalone HTML file with embedded styling
 
 - [x] Automated release tests and offline HTML build passed before version bump.
 - [x] Owner confirmed nine browser acceptance checks, including offline operation and backup/restore with disposable data.
-- [ ] Re-run full release suite and verify `Caffoot-Lite-1.1.1.zip` after version bump and release notes creation.
-- [ ] Review release package and documentation; obtain owner approval for pull request merge.
-- [ ] Merge, tag and publish v1.1.1 release assets after explicit approval.
+- [x] Full regression suite and standalone build passed; v1.1.1 ZIP packaged and integrity-checked locally and in GitHub Actions.
+- [x] PR #39 reviewed and merged with owner approval.
+- [x] Published v1.1.1 tag and three release assets after owner approval.
