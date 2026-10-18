@@ -5332,7 +5332,7 @@ function hierarchyValidateTypes(subnets) {
         // Manual release checks never read or send inventory, or change browser storage.
         function caffootCompareVersions(left, right) {
             const parse = value => {
-                const match = /^(?:v)?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-([0-9A-Za-z.-]+))?(?:\+[0-9A-Za-z.-]+)?$/.exec(value);
+                const match = /^(?:[vV])?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-([0-9A-Za-z.-]+))?(?:\+[0-9A-Za-z.-]+)?$/.exec(value);
                 if (!match) throw new Error('Release version is not recognised.');
                 const pre = match[4] ? match[4].split('.') : [];
                 if (pre.some(part => !part || (/^\d+$/.test(part) && part.length > 1 && part[0] === '0'))) throw new Error('Release version is not recognised.');
