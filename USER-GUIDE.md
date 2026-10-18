@@ -48,7 +48,7 @@ Open **Settings & Data** for **Data Management**, **Preferences** and **About Ca
 ### Data Management — Maintenance & Safety
 
 - **Inventory Safety Check** checks inventory consistency; it is not a network scan or a guarantee that browser storage is backed up.
-- **Check for Updates** performs a manual online check for the latest published stable release. It does not upload inventory or install an update.
+- **Check for Updates** performs a manual online check for the latest published stable release. The status area explains when the check is idle, running, offline, successful or unavailable. It does not upload inventory or install an update.
 - **Safe Update Guide** explains how to back up data, keep the previous HTML file and verify the replacement. The guide and backup features work offline; checking releases requires internet access.
 
 ### Data Management — Advanced Recovery
