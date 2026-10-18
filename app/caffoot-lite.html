@@ -72,6 +72,8 @@
         .form-error.is-visible { display:block; }
         .form-actions { display:flex; justify-content:flex-end; align-items:center; gap:.65rem; padding-top:1rem; margin-top:.25rem; border-top:1px solid rgb(226 232 240); }
         .dark .form-actions { border-color:rgb(51 65 85); }
+        .form-actions > [data-action="delete-subnet"] { margin-right:auto; }
+        @media (max-width:640px) { .form-actions > [data-action="delete-subnet"] { margin-right:0; } }
         .form-actions button { min-height:2.35rem; }
         @media (max-width:640px) { .form-actions { flex-direction:column-reverse; align-items:stretch; } .form-actions button { width:100%; } }
 
@@ -3639,7 +3641,7 @@ function hierarchyValidateTypes(subnets) {
                         </div>
                         <div class="form-error" data-form-error role="alert"></div>
                         <div class="form-actions">
-                            ${subnet ? `<button type="button" data-action="delete-subnet" data-id="${escapeHtml(subnet.id)}" class="px-4 py-2 bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 border border-rose-300 dark:border-rose-800 rounded-xl text-xs font-semibold"><i class="fa-solid fa-trash mr-1"></i>Delete ${subnet.kind === 'container' ? 'IP Address Block' : 'Subnet & VLAN'}</button>` : ''}
+                            ${subnet ? `<button type="button" data-action="delete-subnet" data-id="${escapeHtml(subnet.id)}" class="mr-auto px-4 py-2 bg-rose-800 hover:bg-rose-900 dark:bg-rose-700 dark:hover:bg-rose-800 text-white rounded-xl text-xs font-semibold transition"><i class="fa-solid fa-trash mr-1"></i>Delete ${subnet.kind === 'container' ? 'IP Address Block' : 'Subnet & VLAN'}</button>` : ''}
                             <button type="button" data-action="cancel-subnet-modal" class="px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold transition">Cancel</button>
                             <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold transition shadow-md">Save Subnet & VLAN</button>
                         </div>
