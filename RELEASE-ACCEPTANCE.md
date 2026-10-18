@@ -39,7 +39,7 @@ The upgrade test observed shared browser storage across original and renamed HTM
 
 ## Verified private preview
 
-Source commit: `be6eac2304fd4dd60582d3c884b61fc85767dba0`. Full private workflow [38063343516](https://github.com/sdelnevo/Caffoot-Lite/actions/runs/38063343516) passed build, regression, offline browser, upgraded-file restore, package and artifact checks. Download `caffoot-lite-offline-preview` from that run; extract its inner `Caffoot-Lite-1.0.0-rc.1.zip` for testing. The owner subsequently reported positive Safari appearance and VoiceOver results and confirmed the export/restore/reopen sequence.
+Source commit: `be6eac2304fd4dd60582d3c884b61fc85767dba0`. Full private workflow [38063343516](https://github.com/caffoot/Caffoot-Lite/actions/runs/38063343516) passed build, regression, offline browser, upgraded-file restore, package and artifact checks. Download `caffoot-lite-offline-preview` from that run; extract its inner `Caffoot-Lite-1.0.0-rc.1.zip` for testing. The owner subsequently reported positive Safari appearance and VoiceOver results and confirmed the export/restore/reopen sequence.
 
 ## Owner acceptance recorded — 10 October 2026
 
@@ -50,6 +50,6 @@ This establishes owner-reported Safari restore/reopen acceptance and positive Vo
 
 ## Publication completed — 10 October 2026
 
-The owner explicitly approved making `sdelnevo/Caffoot-Lite` public and publishing Caffoot Lite v1.0.0 with the prepared downloads. The owner changed repository visibility to public. The final stable source commit `6f5d38e6959016fb236763f8f7a241de14d23c83` passed the complete automated suite in [workflow 38064002992](https://github.com/sdelnevo/Caffoot-Lite/actions/runs/38064002992). [Publication workflow 38065143351](https://github.com/sdelnevo/Caffoot-Lite/actions/runs/38065143351) verified that exact artifact, finalised release-note wording without changing runnable HTML, checked package member hashes and uploaded asset digests, then published the stable release.
+The owner explicitly approved making `sdelnevo/Caffoot-Lite` public and publishing Caffoot Lite v1.0.0 with the prepared downloads. The owner changed repository visibility to public. The final stable source commit `6f5d38e6959016fb236763f8f7a241de14d23c83` passed the complete automated suite in [workflow 38064002992](https://github.com/caffoot/Caffoot-Lite/actions/runs/38064002992). [Publication workflow 38065143351](https://github.com/caffoot/Caffoot-Lite/actions/runs/38065143351) verified that exact artifact, finalised release-note wording without changing runnable HTML, checked package member hashes and uploaded asset digests, then published the stable release.
 
-[Caffoot Lite v1.0.0](https://github.com/sdelnevo/Caffoot-Lite/releases/tag/v1.0.0) includes `Caffoot-Lite-1.0.0.zip`, `Caffoot-Lite.html` and `SHA256SUMS`. The tag points to the tested source commit. Earlier private-preparation results below are retained as historical evidence.
+[Caffoot Lite v1.0.0](https://github.com/caffoot/Caffoot-Lite/releases/tag/v1.0.0) includes `Caffoot-Lite-1.0.0.zip`, `Caffoot-Lite.html` and `SHA256SUMS`. The tag points to the tested source commit. Earlier private-preparation results below are retained as historical evidence.
