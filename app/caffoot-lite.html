@@ -3741,7 +3741,10 @@ function hierarchyValidateTypes(subnets) {
                     vlanId: vlanIdVal,
                     name,
                     description,
-                    color: 'indigo'
+                    color: 'indigo',
+                    // New VLAN records retain their stable IP Address Block ownership.
+                    // Legacy records are left untouched until explicit reconciliation.
+                    ...(parentId ? { parentId } : {})
                 });
             }
 
