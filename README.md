@@ -79,7 +79,7 @@ If you're looking for **free IPAM software**, an **offline network inventory too
 - **Subnets and IPAM:** IP Address Block hierarchy, CIDR networks, scoped VLANs, addresses, reservations and allocation workflows.
 - **Racks:** rack layouts, equipment placement and U-space management.
 - **Dashboard:** inventory overview.
-- **Data Management:** validated JSON backup/restore and reset/recovery tools.
+- **Data Management:** validated JSON backup/restore and reset/recovery tools. A clearer Back Up & Restore, Maintenance & Safety and Advanced Recovery layout is in development for v1.1.1; it is not yet part of the published stable release.
 - **Offline use:** a single HTML file with bundled styling, fonts and branding assets.
 
 See the [user guide](USER-GUIDE.md) for the first-run walkthrough and day-to-day tasks.
@@ -106,7 +106,7 @@ The build produces `app/dist/Caffoot-Lite.html`. Automated checks and manual bro
 
 This repository is dedicated to **Caffoot Lite**: its standalone application, build tools, tests and release documentation.
 
-**v1.1.0 was published on 18 October 2026.** Download it from the [v1.1.0 release](https://github.com/caffoot/Caffoot-Lite/releases/tag/v1.1.0) or visit the [latest stable release](https://github.com/caffoot/Caffoot-Lite/releases/latest). See the [v1.1.0 release notes](RELEASE-NOTES-1.1.0.md) and [roadmap](ROADMAP.md) for changes and acceptance status.
+**v1.1.0 was published on 18 October 2026.** The v1.1.1 Settings and documentation improvements are under development, not yet released. Download it from the [v1.1.0 release](https://github.com/caffoot/Caffoot-Lite/releases/tag/v1.1.0) or visit the [latest stable release](https://github.com/caffoot/Caffoot-Lite/releases/latest). See the [v1.1.0 release notes](RELEASE-NOTES-1.1.0.md) and [roadmap](ROADMAP.md) for changes and acceptance status.
 
 ## Licence and branding
 
