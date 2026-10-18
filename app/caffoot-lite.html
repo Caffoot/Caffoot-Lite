@@ -632,6 +632,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 @media(max-width:720px){.phase16b-workspace .phase16a-grid{grid-template-columns:1fr}.phase16b-workspace .phase16a-panel{min-height:0}}
 </style>
 <style id="phase16c-settings-layout">
+.phase16a-workspace.phase16b-workspace{max-width:1240px;width:100%}
 .phase16c-groups{display:block}
 .phase16c-group-title{font-size:17px;font-weight:800;margin:22px 0 10px}
 .phase16c-group-title:first-child{margin-top:4px}
@@ -1809,8 +1810,8 @@ function hierarchyValidateTypes(subnets) {
         function browserStorageWarning(firstRun = false, showBackupAction = true) {
             return `<section role="region" aria-label="Important browser storage warning" class="rounded-2xl border-2 border-amber-500 bg-amber-50 p-4 sm:p-5 text-amber-950 dark:border-amber-400 dark:bg-amber-950 dark:text-amber-50 space-y-3">
                 <h3 class="text-lg font-extrabold"><i class="fa-solid fa-triangle-exclamation mr-2" aria-hidden="true"></i>Important: your inventory is stored in this browser</h3>
-                <p class="text-sm leading-relaxed"><strong>Your devices, IP addresses, subnets, racks and settings are NOT saved inside Caffoot-Lite.html.</strong> They are held in this browser's local storage, with no automatic cloud backup or synchronisation. Clearing browser data can permanently erase them. Changing browser or profile, or moving or renaming the HTML file, may make them inaccessible.</p>
-                <p class="text-sm font-bold">Download a JSON backup regularly, and ALWAYS before upgrading, moving, renaming or resetting Caffoot Lite. Keep backups somewhere safe outside the browser.</p>
+                <p class="text-sm leading-relaxed"><strong>Your inventory is NOT saved inside Caffoot-Lite.html.</strong> It is stored only in this browser, without automatic cloud backup. Clearing browser data can erase it; changing browser, profile or HTML file location may make it inaccessible.</p>
+                <p class="text-sm font-bold">Keep regular JSON backups outside the browser. Always back up before upgrading, moving, renaming, restoring or resetting Caffoot Lite.</p>
                 <div class="flex flex-wrap gap-3">
                     ${showBackupAction ? `<button type="button" data-action="phase11-export-backup" class="rounded-lg bg-amber-900 px-4 py-2.5 text-sm font-bold text-white hover:bg-amber-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-800 dark:bg-amber-200 dark:text-amber-950 dark:hover:bg-amber-100"><i class="fa-solid fa-download mr-2" aria-hidden="true"></i>Download JSON backup</button>` : ''}
                     ${firstRun ? '<button type="button" data-action="acknowledge-browser-storage" class="rounded-lg border-2 border-amber-800 px-4 py-2.5 text-sm font-bold hover:bg-amber-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-800 dark:border-amber-200 dark:hover:bg-amber-900">I understand — continue</button>' : ''}
