@@ -631,6 +631,18 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .phase16b-workspace .phase16a-tab{justify-content:center;flex:1 1 170px}
 @media(max-width:720px){.phase16b-workspace .phase16a-grid{grid-template-columns:1fr}.phase16b-workspace .phase16a-panel{min-height:0}}
 </style>
+<style id="phase16c-settings-layout">
+.phase16c-groups{display:block}
+.phase16c-group-title{font-size:17px;font-weight:800;margin:22px 0 10px}
+.phase16c-group-title:first-child{margin-top:4px}
+.phase16c-group-note{font-size:13px;line-height:1.5;color:#475569;margin:-3px 0 12px}
+.dark .phase16c-group-note{color:#cbd5e1}
+.phase16c-group-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:stretch}
+.phase16c-group-grid .phase16a-panel{display:flex;flex-direction:column;min-height:155px}
+.phase16c-group-grid .phase16a-panel p{min-height:0;flex:1}
+.phase16c-group-grid .phase16a-buttons{margin-top:18px}
+@media(max-width:720px){.phase16c-group-grid{grid-template-columns:1fr}.phase16c-group-grid .phase16a-panel{min-height:0}}
+</style>
 <style id="phase17d-scroll-style">
 /* Keep tall rack elevations inside the viewport and contain wheel/trackpad scroll. */
 .phase17d-rack-scroll { max-height: min(700px, calc(100dvh - 220px)); min-height: 230px; overscroll-behavior-y: contain; overflow-y: auto; -webkit-overflow-scrolling: touch; scroll-behavior: auto; }
@@ -1794,13 +1806,13 @@ function hierarchyValidateTypes(subnets) {
         let browserStorageNoticeAcknowledged = false;
         try { browserStorageNoticeAcknowledged = typeof localStorage !== 'undefined' && localStorage.getItem(BROWSER_STORAGE_NOTICE_KEY) === 'acknowledged'; }
         catch (error) { console.warn('Browser storage notice preference unavailable:', error); }
-        function browserStorageWarning(firstRun = false) {
+        function browserStorageWarning(firstRun = false, showBackupAction = true) {
             return `<section role="region" aria-label="Important browser storage warning" class="rounded-2xl border-2 border-amber-500 bg-amber-50 p-4 sm:p-5 text-amber-950 dark:border-amber-400 dark:bg-amber-950 dark:text-amber-50 space-y-3">
                 <h3 class="text-lg font-extrabold"><i class="fa-solid fa-triangle-exclamation mr-2" aria-hidden="true"></i>Important: your inventory is stored in this browser</h3>
                 <p class="text-sm leading-relaxed"><strong>Your devices, IP addresses, subnets, racks and settings are NOT saved inside Caffoot-Lite.html.</strong> They are held in this browser's local storage, with no automatic cloud backup or synchronisation. Clearing browser data can permanently erase them. Changing browser or profile, or moving or renaming the HTML file, may make them inaccessible.</p>
                 <p class="text-sm font-bold">Download a JSON backup regularly, and ALWAYS before upgrading, moving, renaming or resetting Caffoot Lite. Keep backups somewhere safe outside the browser.</p>
                 <div class="flex flex-wrap gap-3">
-                    <button type="button" data-action="phase11-export-backup" class="rounded-lg bg-amber-900 px-4 py-2.5 text-sm font-bold text-white hover:bg-amber-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-800 dark:bg-amber-200 dark:text-amber-950 dark:hover:bg-amber-100"><i class="fa-solid fa-download mr-2" aria-hidden="true"></i>Download JSON backup</button>
+                    ${showBackupAction ? `<button type="button" data-action="phase11-export-backup" class="rounded-lg bg-amber-900 px-4 py-2.5 text-sm font-bold text-white hover:bg-amber-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-800 dark:bg-amber-200 dark:text-amber-950 dark:hover:bg-amber-100"><i class="fa-solid fa-download mr-2" aria-hidden="true"></i>Download JSON backup</button>` : ''}
                     ${firstRun ? '<button type="button" data-action="acknowledge-browser-storage" class="rounded-lg border-2 border-amber-800 px-4 py-2.5 text-sm font-bold hover:bg-amber-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-800 dark:border-amber-200 dark:hover:bg-amber-900">I understand — continue</button>' : ''}
                 </div>
             </section>`;
@@ -5312,12 +5324,21 @@ function hierarchyValidateTypes(subnets) {
             const panel = (title,desc,inner='') => `<section class="phase16a-panel"><h3>${title}</h3><p>${desc}</p>${inner ? `<div class="phase16a-buttons">${inner}</div>` : ''}</section>`;
             let body = '';
             if (section === 'backup') {
-                body = browserStorageWarning() + panel('Inventory Safety Check','Check data integrity and confirm that the current inventory is saved in this browser. This check makes no changes.',button('phase16a-check-safety','Check inventory safety','fa-shield-halved')) +
-                    panel('Back Up Your Data','Download a complete JSON copy of the current inventory, including devices, IPAM, subnets and racks.',button('phase11-export-backup','Download JSON backup','fa-download')) +
-                    panel('Restore Your Data','Choose a JSON backup. Caffoot Lite checks the file and displays a summary before asking you to replace your inventory. A safety copy is verified first.',button('phase16a-import','Choose backup file','fa-upload')) +
-                    panel('Update Caffoot Lite','Check for a published release when online. Download a JSON backup before opening a newer HTML file.',button('caffoot-check-updates','Check for updates','fa-arrow-rotate-right') + button('caffoot-update-guide','Safe update guide','fa-circle-info') + '<p id="caffoot-update-status" role="status" aria-live="polite"></p>') +
-                    panel('Recovery Snapshot','A safety snapshot is available only after a restore has created one.',button('phase11-download-snapshot','Download safety snapshot','fa-shield-halved',personalSafeStorageGet(SAFETY_SNAPSHOT_KEY)?'':'disabled')) +
-                    panel('Danger Zone — Clear System','Permanently reset all inventory, IPAM records and managed options in this browser. Export a JSON backup first.',button('phase16a-clear-system','Clear system / clean start','fa-triangle-exclamation'));
+                // One prominent backup action; keep restore, safety and recovery handlers unchanged.
+                body = '<h3 class="phase16c-group-title">Back Up & Restore</h3>' +
+                    '<div class="phase16c-group-grid">' +
+                    panel('Back Up Your Data','Download a complete JSON copy of your devices, IPAM, subnets and racks. Store it somewhere safe outside this browser.',button('phase11-export-backup','Download Backup','fa-download')) +
+                    panel('Restore Your Data','Choose a saved JSON backup. Review its contents before confirming; Caffoot verifies a safety copy first.',button('phase16a-import','Choose Backup File','fa-upload')) +
+                    '</div><h3 class="phase16c-group-title">Maintenance & Safety</h3>' +
+                    '<div class="phase16c-group-grid">' +
+                    panel('Inventory Safety Check','Check your inventory integrity without changing any data.',button('phase16a-check-safety','Check Inventory Safety','fa-shield-halved')) +
+                    panel('Update Caffoot Lite','Check for published releases when online. Back up your data before switching HTML files.',button('caffoot-check-updates','Check for Updates','fa-arrow-rotate-right') + button('caffoot-update-guide','Safe Update Guide','fa-circle-info') + '<p id="caffoot-update-status" role="status" aria-live="polite"></p>') +
+                    '</div><h3 class="phase16c-group-title">Advanced Recovery</h3>' +
+                    '<p class="phase16c-group-note">Use these tools only when recovering or resetting inventory.</p>' +
+                    '<div class="phase16c-group-grid">' +
+                    panel('Recovery Snapshot','A safety snapshot can be downloaded after a restore has created one.',button('phase11-download-snapshot','Download Safety Snapshot','fa-shield-halved',personalSafeStorageGet(SAFETY_SNAPSHOT_KEY)?'':'disabled')) +
+                    panel('Danger Zone — Clear System','Permanently reset all inventory, IPAM records and managed options in this browser. Download a backup first.',button('phase16a-clear-system','Clear System / Clean Start','fa-triangle-exclamation')) +
+                    '</div>';
             } else if (section === 'preferences') {
                 body = panel('Appearance','Switch between the existing light and dark themes.',button('phase16a-theme','Switch light / dark','fa-circle-half-stroke'));
             } else {
@@ -5326,7 +5347,7 @@ function hierarchyValidateTypes(subnets) {
             const tabs = [['backup','Data Management','fa-database'],['preferences','Preferences','fa-palette'],['about','About Caffoot Lite','fa-circle-info']];
             return `<div class="phase16a-workspace phase16b-workspace"><div class="phase16a-intro"><h2>Settings & Data</h2><p>Manage your data, appearance and application health — without duplicate tools.</p></div>
                 <div class="phase16a-tabs" role="group" aria-label="Settings sections">${tabs.map(([id,label,icon])=>`<button type="button" data-action="phase16a-section" data-section="${id}" aria-pressed="${section===id}" class="phase16a-tab ${section===id?'phase16a-active':''}"><i class="fa-solid ${icon}" aria-hidden="true"></i>${label}</button>`).join('')}</div>
-                ${section==='backup'?browserStorageWarning():''}<div class="phase16a-grid">${section==='backup'?body.replace(browserStorageWarning(),''):body}</div>${section==='backup'?'<p class="phase16a-warning"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Browser storage is not a reliable long-term backup. Keep exported JSON files somewhere safe, especially before restoring data or changing browsers.</p>':''}</div>`;
+                ${section==='backup'?browserStorageWarning(false, false):''}<div class="${section==='backup'?'phase16c-groups':'phase16a-grid'}">${body}</div>${section==='backup'?'<p class="phase16a-warning"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Browser storage is not a reliable long-term backup. Keep exported JSON files somewhere safe, especially before restoring data or changing browsers.</p>':''}</div>`;
         }
 
         // Manual release checks never read or send inventory, or change browser storage.
