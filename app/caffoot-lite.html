@@ -4335,7 +4335,7 @@ function hierarchyValidateTypes(subnets) {
                         </div>
                         <div class="form-error" data-form-error role="alert"></div>
                         <div class="form-actions rack-form-actions">
-                            <button type="button" data-action="close-modal" class="rack-form-button bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white rounded-xl font-semibold">Cancel</button>
+                            <button type="button" data-action="cancel-rack-from-device" class="rack-form-button bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white rounded-xl font-semibold">Cancel</button>
                             <button type="submit" class="rack-form-button bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold">Save Rack</button>
                         </div>
                     </form>
@@ -4389,8 +4389,17 @@ function hierarchyValidateTypes(subnets) {
                 showToast('Rack changes were not saved. Please check the validation message.', 'error');
                 return;
             }
-            closeModal(true);
-            renderContent();
+            if (deviceRackReturnPending) {
+                if (deviceFormDraft) deviceFormDraft.rackId = selectedRackId;
+                const draftId = deviceFormDraft?.deviceId || null;
+                deviceRackReturnPending = false;
+                closeModal(true);
+                switchTab('devices');
+                setTimeout(() => openDeviceModal(draftId), 0);
+            } else {
+                closeModal(true);
+                renderContent();
+            }
         }
 
         function deleteRack(rackId) {
@@ -4998,7 +5007,7 @@ function hierarchyValidateTypes(subnets) {
                         <div id="racked-options" ${mountType === 'Rack Mounted' ? '' : 'hidden'} class="${mountType === 'Rack Mounted' ? '' : 'hidden'} phase14b-rack-config bg-slate-100 dark:bg-slate-900">
                             <div class="block text-xs font-bold text-indigo-600">Rack Mounting Configuration</div>
                             <div class="phase14b-rack-grid">
-                                <div><label for="dev-rack-id" class="block text-[10px] font-semibold text-slate-500 uppercase mb-1">Rack</label><select id="dev-rack-id" class="w-full border rounded-lg p-1.5 text-xs dark:bg-slate-700">${appState.racks.map(r => `<option value="${escapeHtml(r.id)}" ${(draft?.rackId ?? device?.rackId) === r.id ? 'selected' : ''}>${escapeHtml(r.name)}</option>`).join('')}</select></div>
+                                <div><label for="dev-rack-id" class="block text-[10px] font-semibold text-slate-500 uppercase mb-1">Rack</label><select id="dev-rack-id" class="w-full border rounded-lg p-1.5 text-xs dark:bg-slate-700"><option value="" ${!appState.racks.length ? 'selected' : ''}>${appState.racks.length ? 'Select a network rack...' : 'No network racks created yet'}</option>${appState.racks.map(r => `<option value="${escapeHtml(r.id)}" ${(draft?.rackId ?? device?.rackId) === r.id ? 'selected' : ''}>${escapeHtml(r.name)}</option>`).join('')}</select><p class="phase14b-help">A network rack is a physical enclosure, separate from the device location.</p><button type="button" data-action="create-rack-from-device" class="mt-2 w-full px-3 py-2 bg-slate-200 dark:bg-slate-700 rounded-lg text-xs font-semibold"><i class="fa-solid fa-plus mr-1"></i>Create Network Rack</button></div>
                                 <div><label for="dev-rack-face" class="block text-[10px] font-semibold text-slate-500 uppercase mb-1">Face</label><select id="dev-rack-face" class="w-full border rounded-lg p-1.5 text-xs dark:bg-slate-700"><option value="front" ${(draft?.face ?? device?.face) !== 'rear' ? 'selected' : ''}>Front</option><option value="rear" ${(draft?.face ?? device?.face) === 'rear' ? 'selected' : ''}>Rear</option></select></div>
                                 <div><label for="dev-rack-u" class="block text-[10px] font-semibold text-slate-500 uppercase mb-1">Start U</label><input type="number" id="dev-rack-u" min="1" max="48" value="${draft?.rackUStart ?? device?.rackUStart ?? 1}" class="w-full border rounded-lg p-1.5 text-xs dark:bg-slate-700 text-center font-mono"></div>
                                 <div><label for="dev-rack-height" class="block text-[10px] font-semibold text-slate-500 uppercase mb-1">U Height</label><input type="number" id="dev-rack-height" min="1" max="48" value="${currentHeight}" required class="w-full border rounded-lg p-1.5 text-xs dark:bg-slate-700 text-center font-mono"></div>
@@ -5069,6 +5078,24 @@ function hierarchyValidateTypes(subnets) {
                 typeDetails: phase19BReadFields(),
                 notes: document.getElementById('dev-notes')?.value || ''
             };
+        }
+
+        let deviceRackReturnPending = false;
+        function createRackFromDevice() {
+            const draft = captureDeviceFormDraft();
+            if (!draft) return showToast('Unable to preserve device details.', 'error');
+            deviceFormDraft = draft;
+            deviceRackReturnPending = true;
+            closeModal(true);
+            openRackModal();
+        }
+        function cancelRackFromDevice() {
+            if (!deviceRackReturnPending) { closeModal(); return; }
+            const draft = deviceFormDraft;
+            deviceRackReturnPending = false;
+            closeModal(true);
+            switchTab('devices');
+            setTimeout(() => openDeviceModal(draft?.deviceId || null), 0);
         }
 
         function createSubnetFromDevice() {
@@ -6004,6 +6031,8 @@ function hierarchyValidateTypes(subnets) {
                 case 'add-custom-type': addCustomTypeOption(); break;
                 case 'add-custom-location': addCustomLocationOption(); break;
                 case 'create-subnet-from-device': createSubnetFromDevice(); break;
+                case 'create-rack-from-device': createRackFromDevice(); break;
+                case 'cancel-rack-from-device': cancelRackFromDevice(); break;
                 case 'delete-device-type': deleteDeviceType(name); break;
                 case 'edit-device-type': editDeviceTypePrompt(name); break;
                 case 'phase13g-graphic': phase13GOpenGraphics(name); break;
