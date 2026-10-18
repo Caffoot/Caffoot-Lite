@@ -1,7 +1,7 @@
 # Caffoot Lite — Development Roadmap
 
 **Updated:** 18 October 2026  
-**Current milestone:** v1.1.0 published on 18 October 2026; release verification completed. Next planned milestone: v1.1.1 (Settings, usability and documentation), followed by v1.1.2 (security hardening and deployment guidance), then v1.2.0.  
+**Current milestone:** v1.1.1 (Settings, usability and documentation) has passed automated validation and owner browser acceptance; version 1.1.1 is prepared on the development branch, pending final versioned-build verification, review, merge and publication. Next: v1.1.2 (security hardening and deployment guidance), then v1.2.0.  
 **Repository:** `caffoot/Caffoot-Lite` (public)  
 **Release policy:** Publish publicly only after manual verification, security/privacy review and owner approval.
 
