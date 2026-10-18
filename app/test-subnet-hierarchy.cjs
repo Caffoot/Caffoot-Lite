@@ -115,3 +115,24 @@ assert.equal(subnetUsesVlanRecord({id:'flat',vlan:20},{id:'legacy',vlanId:20}),t
 assert.equal(subnetUsesVlanRecord({id:'flat',vlan:20},vlanRecords[0]),false,'unassigned network cannot link to London VLAN');
 assert.equal(subnetUsesVlanRecord({kind:'container',vlan:20,parentId:'block-london'},vlanRecords[0]),false,'containers never link to VLANs');
 console.log('PASS: VLAN record ownership is scoped for safe editing and deletion.');
+
+const {previewLegacyVlanOwnership}=require('./subnet-hierarchy.cjs');
+const preview=previewLegacyVlanOwnership([
+  {id:'a',kind:'network',parentId:'block-london',vlan:20},
+  {id:'b',kind:'network',parentId:'block-manchester',vlan:20},
+  {id:'c',kind:'network',parentId:'block-london',vlan:30},
+  {id:'d',kind:'network',vlan:40}
+],[
+  {id:'ambiguous',vlanId:20},
+  {id:'unique',vlanId:30},
+  {id:'flat',vlanId:40},
+  {id:'orphan',vlanId:50},
+  {id:'already-scoped',parentId:'block-london',vlanId:30}
+]);
+assert.deepEqual(preview,[
+  {vlanRecordId:'ambiguous',vlanId:20,status:'ambiguous',proposedParentId:null},
+  {vlanRecordId:'unique',vlanId:30,status:'unique',proposedParentId:'block-london'},
+  {vlanRecordId:'flat',vlanId:40,status:'unique',proposedParentId:null},
+  {vlanRecordId:'orphan',vlanId:50,status:'orphaned',proposedParentId:null}
+],'legacy preview must never guess ambiguous ownership or modify scoped records');
+console.log('PASS: legacy VLAN ownership preview identifies unique, ambiguous and orphaned records.');
