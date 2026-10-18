@@ -3253,11 +3253,15 @@ function hierarchyValidateTypes(subnets) {
                         const ambiguous = legacy.filter(v => v.status === 'ambiguous').length;
                         const orphaned = legacy.filter(v => v.status === 'orphaned').length;
                         const unassigned = legacy.filter(v => v.status === 'unique' && !v.parentId).length;
-                        return legacy.length ? `<div class="rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30 p-4 text-sm text-slate-800 dark:text-slate-200">
-                            <strong>Legacy VLAN Ownership Preview</strong>
-                            <p class="mt-1">${legacy.length} legacy record(s): ${scoped} uniquely matched to an IP Address Block, ${unassigned} uniquely matched in the Unassigned VLAN Domain, ${ambiguous} ambiguous, ${orphaned} without a matching subnet. No records have been changed.</p>
-                            ${scoped && !ambiguous && !orphaned ? `<button type="button" data-action="reconcile-legacy-vlans" class="mt-3 px-3 py-2 rounded-lg bg-indigo-600 text-white font-semibold">Reconcile ${scoped} VLAN Records</button>` : ''}
-                        </div>` : '';
+                        const needsUpdate = scoped > 0;
+                        const hasIssues = ambiguous > 0 || orphaned > 0;
+                        return `<div class="rounded-xl border ${needsUpdate || hasIssues ? 'border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/40'} p-4 text-sm text-slate-800 dark:text-slate-200">
+                            <strong>VLAN Ownership Check</strong>
+                            <p class="mt-1">VLANs can belong to an IP Address Block or remain unassigned. Older inventory records may need updating to identify their block.</p>
+                            <p class="mt-2">${needsUpdate ? `${scoped} VLAN record(s) can be linked to their identified IP Address Block.` : 'VLAN ownership is up to date. No action required.'} ${unassigned} VLAN(s) are in the Unassigned VLAN Domain; this is allowed and needs no action.</p>
+                            ${hasIssues ? `<p class="mt-2 text-amber-800 dark:text-amber-200">${ambiguous} VLAN(s) match multiple subnets; ${orphaned} have no matching subnet. Review these before updating ownership.</p>` : ''}
+                            ${needsUpdate && !hasIssues ? `<button type="button" data-action="reconcile-legacy-vlans" class="mt-3 px-3 py-2 rounded-lg bg-indigo-600 text-white font-semibold">Update VLAN Ownership (${scoped})</button>` : ''}
+                        </div>`;
                     })()}
                     <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
                         <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700/60 pb-3">
