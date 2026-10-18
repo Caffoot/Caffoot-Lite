@@ -3747,14 +3747,14 @@ function hierarchyValidateTypes(subnets) {
                 showToast(hierarchyIssues[0], 'error');
                 return;
             }
-            const otherSubnetWithVlan = appState.subnets.find(s => Number(s.vlan) === vlanIdVal && s.id !== subnetId);
+            const otherSubnetWithVlan = appState.subnets.find(s => (!s.kind || s.kind === 'network') && Number(s.vlan) === vlanIdVal && (s.parentId || '__unassigned__') === (parentId || '__unassigned__') && s.id !== subnetId);
             if (otherSubnetWithVlan) {
                 showToast(`VLAN ${vlanIdVal} is already used by ${otherSubnetWithVlan.name}.`, 'error');
                 return;
             }
 
-            const otherVlan = appState.vlans.find(v => Number(v.vlanId) === vlanIdVal);
-            if (otherVlan && otherVlan.name !== name && !appState.subnets.some(s => Number(s.vlan) === vlanIdVal && s.id === subnetId)) {
+            const otherVlan = appState.vlans.find(v => Number(v.vlanId) === vlanIdVal && (v.parentId || '__unassigned__') === (parentId || '__unassigned__'));
+            if (otherVlan && otherVlan.name !== name && !appState.subnets.some(s => Number(s.vlan) === vlanIdVal && (s.parentId || '__unassigned__') === (parentId || '__unassigned__') && s.id === subnetId)) {
                 showToast(`VLAN ${vlanIdVal} already exists with the name ${otherVlan.name}.`, 'error');
                 return;
             }
@@ -3775,6 +3775,7 @@ function hierarchyValidateTypes(subnets) {
                     return;
                 }
                 const previousVlanId = Number(sub.vlan);
+                const previousParentId = sub.parentId || '__unassigned__';
                 if (sub.cidr !== cidr) {
                     const dependentDevices = appState.devices.filter(d => d.primaryIp && ipBelongsToSubnet(d.primaryIp, sub.cidr));
                     const dependentIps = Object.keys(appState.ipAllocations).filter(ip => ipBelongsToSubnet(ip, sub.cidr));
@@ -3790,8 +3791,9 @@ function hierarchyValidateTypes(subnets) {
                 sub.description = description;
                 if (parentId) sub.parentId = parentId;
                 else delete sub.parentId;
-                if (previousVlanId !== vlanIdVal && !appState.subnets.some(item => item.id !== sub.id && Number(item.vlan) === previousVlanId)) {
-                    appState.vlans = appState.vlans.filter(v => Number(v.vlanId) !== previousVlanId);
+                if ((previousVlanId !== vlanIdVal || previousParentId !== (parentId || '__unassigned__')) &&
+                    !appState.subnets.some(item => item.id !== sub.id && Number(item.vlan) === previousVlanId && (item.parentId || '__unassigned__') === previousParentId)) {
+                    appState.vlans = appState.vlans.filter(v => !(Number(v.vlanId) === previousVlanId && (v.parentId || '__unassigned__') === previousParentId));
                 }
             } else {
                 const newSub = proposedSubnet;
@@ -3800,13 +3802,13 @@ function hierarchyValidateTypes(subnets) {
                 if (deviceFormDraft) deviceFormDraft.subnetId = newSub.id;
             }
 
-            let existingVlan = appState.vlans.find(v => Number(v.vlanId) === vlanIdVal);
+            let existingVlan = appState.vlans.find(v => Number(v.vlanId) === vlanIdVal && (v.parentId || '__unassigned__') === (parentId || '__unassigned__'));
             if (existingVlan) {
                 existingVlan.name = name;
                 existingVlan.description = description;
             } else {
                 appState.vlans.push({
-                    id: 'vlan_' + Date.now(),
+                    id: 'vlan_' + Date.now() + '_' + Math.random().toString(36).slice(2, 9),
                     vlanId: vlanIdVal,
                     name,
                     description,
