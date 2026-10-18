@@ -70,10 +70,10 @@ For download instructions and troubleshooting, see [INSTALLATION.md](INSTALLATIO
 
 ## Updating safely
 
-In Settings & Data → Data Management, use **Check for updates** to check the latest published stable release. This is a manual online check; it does not send inventory or install anything. Use the [latest stable release](https://github.com/sdelnevo/Caffoot-Lite/releases/latest) to see the current published version.
+In Settings & Data → Data Management, use **Check for updates** to check the latest published stable release. This is a manual online check; it does not send inventory or install anything. Use the [latest stable release](https://github.com/caffoot/Caffoot-Lite/releases/latest) to see the current published version.
 
 1. Download a JSON backup from your current version.
-2. Keep the old HTML and download the new `Caffoot-Lite.html` into a separate folder from the [official releases](https://github.com/sdelnevo/Caffoot-Lite/releases).
+2. Keep the old HTML and download the new `Caffoot-Lite.html` into a separate folder from the [official releases](https://github.com/caffoot/Caffoot-Lite/releases).
 3. Open the new file in your usual browser. Saved data may be unavailable after moving or renaming a file.
 4. If needed, choose your backup in Settings & Data and review the replacement summary before restoring.
 5. Verify devices, IPAM, subnets and racks. Keep the old HTML and backup until satisfied.
