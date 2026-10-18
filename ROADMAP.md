@@ -77,6 +77,7 @@ Security controls for a future managed Caffoot Pro deployment require separate d
 - Preserve dynamic fields for different device types.
 - Add contextual Operating System family, version and optional edition selection for applicable device types, with Unknown/None/Custom choices and safe legacy compatibility.
 - Refresh Device Inventory screens using the same responsive visual language as v1.1 IPAM, with clear summaries, useful filtering and compact, scalable device lists.
+- **Network Environments / customer isolation (MSP use case):** support independent customer or site addressing scopes above IP Address Blocks, allowing identical IPv4 CIDRs, VLAN IDs and gateway addresses in separate environments while retaining overlap protection within each environment. Scope device IPs, reservations, VLAN ownership, lookups, exports and validation by environment; migrate existing single-environment inventory and JSON backups safely. Do not enable duplicate ranges until allocation identity and all dependent workflows are environment-aware.
 - Multiple IP addresses per device, optional interface associations and primary management IP.
 - Public IP address documentation, including relevant ISP, circuit and NAT metadata.
 - Flexible rack heights and presets, Wall Mounted / Free Standing / Open Frame types, optional depth and safe resizing.
