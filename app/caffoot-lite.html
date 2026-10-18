@@ -2351,7 +2351,7 @@ function hierarchyValidateTypes(subnets) {
                 return {rack, faces};
             });
             const networkInsights = `<section class="phase15b-insights" aria-label="Network insights">
-                <div class="phase15b-heading"><div><h3>Network Insights</h3><p>Live utilisation and inventory distribution</p></div><span>Phase 15B</span></div>
+                <div class="phase15b-heading"><div><h3>Network Insights</h3><p>Live utilisation and inventory distribution</p></div></div>
                 <div class="phase15b-grid">
                     <article class="phase15b-panel"><h4>IP address utilisation</h4><p class="phase15b-muted">${totalSubnetCapacity.toLocaleString()} usable addresses across ${subnets.length} subnets</p>
                         <div class="phase15b-bar" role="progressbar" aria-label="IP utilisation" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${ipUtilisation}"><span style="width:${ipUtilisation}%;background:#2563eb"></span></div>
