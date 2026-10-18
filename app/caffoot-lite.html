@@ -3961,11 +3961,64 @@ function hierarchyValidateTypes(subnets) {
                 return;
             }
             const block = appState.subnets.find(x => x.id === subnet.parentId);
-            const message = `Are you sure you want to permanently delete ${isNetwork ? 'this subnet and its associated VLAN' : 'this IP Address Block'}?\n\nName: ${subnet.name}\nCIDR: ${subnet.cidr}\n${isNetwork ? `VLAN: ${subnet.vlan}\n` : ''}IP Address Block: ${block?.name || 'Unassigned'}\n\nThis cannot be undone.`;
-            const deviceNotice = deps.devices.length
-                ? `\n\n${deps.devices.length} device(s) will be moved to Unassigned Devices. Their primary IP allocations will be released; all other device details remain.\n\nAffected devices:\n${deps.devices.map(d => `- ${d.name} (${d.primaryIp})`).join('\\n')}`
-                : '';
-            if (!confirm(message + deviceNotice)) return;
+            const deviceRows = deps.devices.map(d => `<li class="py-2 border-b border-slate-200 dark:border-slate-700"><strong>${escapeHtml(d.name)}</strong><span class="block text-sm font-mono text-slate-600 dark:text-slate-300">${escapeHtml(d.primaryIp)}</span></li>`).join('');
+            openModal(`
+                <div class="p-6 sm:p-7 space-y-5 text-slate-900 dark:text-white">
+                    <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-3">
+                        <h3 class="font-bold text-lg">Confirm ${isNetwork ? 'Subnet & VLAN' : 'IP Address Block'} Deletion</h3>
+                        <button type="button" data-action="close-modal" aria-label="Close dialog" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <p class="text-sm text-rose-700 dark:text-rose-300 font-semibold">This action cannot be undone. Review the affected records before confirming.</p>
+                    <dl class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                        <div><dt class="font-semibold">Name</dt><dd>${escapeHtml(subnet.name)}</dd></div>
+                        <div><dt class="font-semibold">CIDR</dt><dd class="font-mono">${escapeHtml(subnet.cidr)}</dd></div>
+                        ${isNetwork ? `<div><dt class="font-semibold">VLAN ID</dt><dd>${escapeHtml(String(subnet.vlan))}</dd></div>` : ''}
+                        <div><dt class="font-semibold">IP Address Block</dt><dd>${escapeHtml(block?.name || 'Unassigned')}</dd></div>
+                    </dl>
+                    ${deps.devices.length ? `<section class="rounded-xl border border-amber-300 dark:border-amber-700 p-4 space-y-2">
+                        <h4 class="font-bold">Move ${deps.devices.length} Device(s) to Unassigned</h4>
+                        <p class="text-sm">Device inventory, rack and hardware details will remain. The primary IP allocations below will be released.</p>
+                        <ul class="max-h-44 overflow-y-auto">${deviceRows}</ul>
+                    </section>` : '<p class="text-sm">No device assignments will be changed.</p>'}
+                    <div class="form-actions">
+                        <button type="button" data-action="close-modal" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-white font-semibold">Cancel</button>
+                        <button type="button" data-action="confirm-delete-subnet" data-id="${escapeHtml(subId)}" class="px-4 py-2 rounded-xl bg-rose-800 hover:bg-rose-900 text-white font-semibold">${deps.devices.length ? 'Move Devices & Delete Subnet' : isNetwork ? 'Delete Subnet & VLAN' : 'Delete IP Address Block'}</button>
+                    </div>
+                </div>
+            `);
+        }
+
+        function confirmDeleteSubnet(subId) {
+            // Revalidate on confirmation: no stale or changed dependency preview may be applied.
+            const subnet = appState.subnets.find(s => s.id === subId);
+            if (!subnet) { closeModal(true); return; }
+            const confirmation = document.querySelector('[data-action="confirm-delete-subnet"]');
+            if (!confirmation || confirmation.dataset.id !== subId) return;
+            closeModal(true);
+            deleteSubnetCommit(subId);
+        }
+
+        function deleteSubnetCommit(subId) {
+            const subnet = appState.subnets.find(s => s.id === subId);
+            if (!subnet) return;
+            const deps = phase11BSubnetDependencies(subnet);
+            const independent = deps.allocations.filter(ip => {
+                const owner = deps.devices.find(d => d.primaryIp === ip);
+                const a = appState.ipAllocations[ip];
+                return !owner || a?.deviceId !== owner.id || Boolean(a?.reservedForDeviceId);
+            });
+            if (independent.length || appState.subnets.some(s => s.parentId === subId)) {
+                showToast('Dependencies changed; deletion cancelled. Review the subnet again.', 'error');
+                return;
+            }
+            const isNetwork = !subnet.kind || subnet.kind === 'network';
+            const domain = subnet.parentId || '__unassigned__';
+            const linked = isNetwork ? appState.vlans.filter(v => Number(v.vlanId) === Number(subnet.vlan) && (v.parentId || '__unassigned__') === domain) : [];
+            if (linked.length > 1 || (isNetwork && linked.length === 0 && appState.vlans.some(v => Number(v.vlanId) === Number(subnet.vlan) && !v.parentId)) ||
+                appState.subnets.some(s => s.id !== subId && (!s.kind || s.kind === 'network') && Number(s.vlan) === Number(subnet.vlan) && (s.parentId || '__unassigned__') === domain)) {
+                showToast('VLAN ownership changed; deletion cancelled.', 'error');
+                return;
+            }
             const before = JSON.stringify(appState);
             for (const device of deps.devices) {
                 // Keep the last address as informational metadata, not an active allocation.
@@ -5885,6 +5938,7 @@ function hierarchyValidateTypes(subnets) {
                 case 'open-subnet-modal': openSubnetModal(); break;
                 case 'edit-subnet': openSubnetModal(id); break;
                 case 'delete-subnet': deleteSubnet(id); break;
+                case 'confirm-delete-subnet': confirmDeleteSubnet(id); break;
                 case 'bulk-ip': openBulkIpModal(id); break;
                 case 'phase12c-tab': if (['overview','addresses','manage'].includes(target.dataset.tab)) { phase12CIpamTab=target.dataset.tab; renderContent(); } break;
                 case 'phase12b-apply': phase12BApply(); break;
