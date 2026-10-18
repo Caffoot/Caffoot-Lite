@@ -9,6 +9,7 @@ Use this checklist for every Caffoot Lite release, including patch releases. Kee
 - [ ] Test JSON backup export, import/restore, and persistence with disposable data.
 - [ ] Review security, rollback and compatibility changes as appropriate.
 - [ ] Review README, INSTALLATION, USER-GUIDE, ROADMAP, BACKUP-FORMAT, release notes and relevant design documents for version accuracy, links and unfinished draft wording.
+- [ ] Update and manually review the built-in offline Help & Guides topics for any new or changed features, controls, labels, safety guidance and navigation.
 - [ ] Confirm source on the review branch matches the tested build; inspect merge changes.
 - [ ] Merge only after review and owner approval.
 
