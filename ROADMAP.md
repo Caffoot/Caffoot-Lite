@@ -1,7 +1,7 @@
 # Caffoot Lite — Development Roadmap
 
 **Updated:** 18 October 2026  
-**Current milestone:** v1.1.0 published on 18 October 2026; release verification completed. Next planned milestone: v1.2.0.  
+**Current milestone:** v1.1.0 published on 18 October 2026; release verification completed. Next planned milestone: v1.1.1 (Settings, usability and documentation), followed by v1.1.2 (security hardening and deployment guidance), then v1.2.0.  
 **Repository:** `sdelnevo/Caffoot-Lite` (public)  
 **Release policy:** Publish publicly only after manual verification, security/privacy review and owner approval.
 
@@ -23,7 +23,7 @@ Release assignments beyond v1.1 are provisional. A feature listed here is not a 
 
 ### v1.1 — Subnet hierarchy and validation
 
-**Status: In development**
+**Status: Released in v1.1.0 on 18 October 2026**
 
 - Subnet hierarchy, parent/child relationships and CIDR validation.
 - Nesting, boundaries, overlap and cycle protection.
@@ -37,11 +37,11 @@ Release assignments beyond v1.1 are provisional. A feature listed here is not a 
 - Accessibility acceptance for new and existing affected dialogs, including visible modal Close controls, Escape/focus behaviour, keyboard operation and responsive IPAM layouts.
 - Regression testing and compatibility with existing inventory and backups.
 
-Development takes place separately from the published release. Do not merge unfinished work without owner approval.
+The v1.1.0 scope above is historical release planning, now delivered. Further changes must be developed separately and merged only after review and owner approval.
 
 ### v1.1.1 — Settings, usability and documentation
 
-**Status: Proposed; planning only, after v1.1**
+**Status: Next planned milestone, after published v1.1.0**
 
 - Consolidate duplicate backup controls while preserving prominent local-storage warnings, JSON export/restore, recovery snapshots and destructive-action safeguards.
 - Reorganise Settings & Data into clear everyday tasks and advanced diagnostics/recovery.
@@ -51,11 +51,11 @@ Development takes place separately from the published release. Do not merge unfi
 - Add concise, offline Help & Documentation accessible from the interface, designed to complement—not replace—an intuitive user experience.
 - Improve update status presentation and investigate opt-in automatic release checks; do not silently replace the local HTML file or restore inventory.
 
-Scope and sequencing require review before implementation. No v1.2 commitments are moved into this milestone.
+Scope remains subject to review before implementation. v1.1.1 comes before v1.1.2 and v1.2; no v1.2 commitments are moved into this milestone.
 
 ### v1.1.2 — Security hardening and deployment guidance
 
-**Status: Proposed; planning only, after v1.1.1 and before v1.2**
+**Status: Planned after v1.1.1 and before v1.2**
 
 - Perform a code-focused security review of the standalone HTML app, including DOM XSS, HTML rendering, imported JSON, data validation and unsafe file/input handling.
 - Review browser local-storage exposure, shared-device risks, backup sensitivity, privacy and origin-specific storage behaviour.
@@ -118,7 +118,7 @@ Security controls for a future managed Caffoot Pro deployment require separate d
 - Network retirement workflows that preserve device inventory and support unassigned-device reassignment.
 - Backup/restore compatibility, rollback protections and cross-module regression tests for migration operations.
 
-This milestone is provisional and must not expand the v1.1 delivery scope. Basic manual device reassignment and safe subnet/VLAN deletion remain part of the current v1.1 safety work.
+This milestone is provisional and must not retroactively expand the completed v1.1.0 scope. Basic manual device reassignment and safe subnet/VLAN deletion were part of v1.1 safety work.
 
 ### Future investigations
 
