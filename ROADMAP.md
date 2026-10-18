@@ -50,7 +50,7 @@ The v1.1.0 scope above is historical release planning, now delivered. Further ch
 - **Implemented on development branch, pending release validation:** expand About Caffoot Lite with official branding, installed version, repository and documentation links, release notes and licence access.
 - **Partially implemented on development branch:** Light Mode, Dark Mode and Use System Setting preferences. Central management of device/server/software option lists remains to be assessed; preserve existing workflows and backups.
 - **Implemented on development branch, pending release validation:** rename dashboard Data Health to Inventory Health, explain what is checked, and distinguish inventory consistency from browser-storage safety and live network monitoring (which is not provided).
-- **Implemented on development branch, pending release validation:** add concise Quick Help — Available Offline within About Caffoot Lite, complementing the full online guides.
+- **Implemented on development branch, pending release validation:** add concise offline Quick Start Tips within About Caffoot Lite, explicitly distinguishing them from the full online guides.
 - Improve update status presentation and investigate opt-in automatic release checks; do not silently replace the local HTML file or restore inventory.
 
 Scope remains subject to review before implementation. v1.1.1 comes before v1.1.2 and v1.2; no v1.2 commitments are moved into this milestone.
