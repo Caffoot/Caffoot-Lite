@@ -1,6 +1,6 @@
 # Caffoot Lite v1.1.0 — Release Notes
 
-**Status:** Published 18 October 2026. Automated release checks and manual browser, offline and backup/restore acceptance completed. [Download v1.1.0](https://github.com/sdelnevo/Caffoot-Lite/releases/tag/v1.1.0).
+**Status:** Published 18 October 2026. Automated release checks and manual browser, offline and backup/restore acceptance completed. [Download v1.1.0](https://github.com/caffoot/Caffoot-Lite/releases/tag/v1.1.0).
 
 ## Highlights
 
