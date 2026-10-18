@@ -4277,7 +4277,12 @@ function hierarchyValidateTypes(subnets) {
             if (!container || container.classList.contains('hidden')) return;
             if (event.key === 'Escape') {
                 event.preventDefault();
-                closeModal();
+                if (deviceFormDraft && container.querySelector('form[data-form-action="subnet"]')) {
+                    const draft = deviceFormDraft;
+                    closeModal(true);
+                    switchTab('devices');
+                    setTimeout(() => openDeviceModal(draft.deviceId || null), 0);
+                } else closeModal();
                 return;
             }
             if (event.key !== 'Tab') return;
@@ -6088,7 +6093,7 @@ function hierarchyValidateTypes(subnets) {
                 case 'tab-racks': switchTab('racks'); break;
                 case 'toggle-dark-mode': toggleDarkMode(); break;
                 case 'export-data': exportData(); break;
-                case 'cancel-subnet-modal': deviceFormDraft = null; closeModal(); break;
+                case 'cancel-subnet-modal': { const draft = deviceFormDraft; closeModal(true); if (draft) { switchTab('devices'); setTimeout(() => openDeviceModal(draft.deviceId || null), 0); } break; }
                 case 'close-modal': closeModal(); break;
                 default:
                     console.warn('Unhandled data-action:', action);
