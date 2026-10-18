@@ -5,7 +5,7 @@
 **Status:** Planning only  
 **Purpose:** Preserve proposed features, agreed design directions, dependencies and compatibility requirements.
 
-These notes are not implementation approval or release commitments. Finish v1.1 first. Published v1.0.3 remains untouched until a separately reviewed release is authorised.
+These notes are not implementation approval or release commitments. Historical planning note (written before v1.1): finish v1.1 first; do not alter the published v1.0.3 release without approval. v1.1.0 was subsequently published on 18 October 2026.
 
 ## 0. Agreed v1.1 completion and proposed v1.1.1 polish
 
@@ -15,7 +15,7 @@ These notes are not implementation approval or release commitments. Finish v1.1 
 - **Informational modals:** Safe Update Guide and Software Licences need visible close controls and consistent Escape/focus behaviour. Audit other informational modals for the same issue.
 - **Network information:** read-only CIDR-derived network address, mask, gateway, first/last usable address, broadcast address, usable host count and available-for-allocation count. Continue excluding network/broadcast from the allocation grid.
 - **Hierarchy presentation:** top-level IP Address Blocks as separate cards in a responsive two-column desktop grid, one column on narrow screens. Nested blocks stay collapsible; individual Network / VLAN entries remain compact rows. Add Expand All / Collapse All. Preserve edit controls and existing hierarchy validation, storage and backup formats. Avoid fixed-height scroll traps and unnecessary visual clutter.
-- **Release gates:** automated regression testing and user-confirmed Firefox/Safari checks before release. No changes to published v1.0.3 without approval.
+- **Release gates:** automated regression testing and user-confirmed Firefox/Safari checks before release. Historical release gate: no changes to the then-published v1.0.3 without approval.
 - **v1.1 data safety:** keep prominent browser-storage and manual JSON backup guidance; test safe export/restore and cross-module references after device, IPAM and rack edits/deletions; show affected-record impact before destructive operations that would affect linked data.
 - **v1.1 accessibility:** visible Close/× buttons for informational modals (including Safe Update Guide and Software Licences), Escape, sensible focus handling, keyboard navigation and responsive behaviour. Audit related modal buttons for consistent dismissal.
 

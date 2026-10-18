@@ -1,6 +1,6 @@
-# Caffoot Lite v1.1.0 — Release Candidate Notes
+# Caffoot Lite v1.1.0 — Release Notes
 
-**Status:** Pre-release candidate. Not published; requires final automated checks, manual backup/restore acceptance and owner approval.
+**Status:** Published 18 October 2026. Automated release checks and manual browser, offline and backup/restore acceptance completed. [Download v1.1.0](https://github.com/sdelnevo/Caffoot-Lite/releases/tag/v1.1.0).
 
 ## Highlights
 
@@ -20,16 +20,18 @@ Caffoot Lite remains a standalone, offline HTML application. The source tree use
 
 ## Compatibility and limitations
 
-- Existing supported inventory and backup formats remain in scope for regression testing; successful restoration must be confirmed in the final release acceptance pass.
+- Existing supported inventory and backup formats remain in scope for regression testing; backup and restore behaviour was tested during release acceptance.
 - **Network environment/customer isolation is not included in v1.1.** Reusing the same IP address across independent customer environments requires a future environment-aware allocation model, planned for v1.2. Do not use overlapping customer networks in one v1.1 inventory.
 - This release does not claim a formal security audit or accessibility certification.
 
-## Final release gates
+## Release verification (completed 18 October 2026)
 
-- [ ] Run the complete local `npm.cmd run release` suite and inspect the generated package.
-- [ ] Confirm the v1.1.0 version appears consistently in About, package metadata and release assets.
-- [ ] Test JSON export, cancelled import, successful restore and browser persistence using disposable test inventory.
-- [ ] Verify the standalone HTML offline in Edge and review representative modal and IPAM workflows.
-- [ ] Review documentation and owner approval before merging or publishing.
+- [x] Complete local `npm.cmd run release` suite, build verification and package checks.
+- [x] Confirm the v1.1.0 version in package metadata and release assets.
+- [x] Complete manual browser, offline, backup and restore acceptance checks.
+- [x] Review documentation and approve publication.
+- [x] Publish GitHub release with ZIP, standalone HTML and `SHA256SUMS`.
+- [x] Compare downloaded ZIP with original build: `3FBD5A5050C998D5A49FC834F0E0E13C0C88CFCD9433334777CFEFCA65468239`.
+- [x] Compare extracted release HTML with original built HTML: `0D5901373F50A9081AF6211B1D9BA0ED9832374857191983DBE3ACB52C62111C`.
 
-**Do not publish or merge solely on the basis of this draft.**
+The release was published on 18 October 2026. These verification results do not constitute an independent security certification.

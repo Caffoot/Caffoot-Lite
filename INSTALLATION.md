@@ -14,7 +14,7 @@ Caffoot Lite is a standalone HTML application. You do **not** need Docker, Node.
 
 ## Download the released application
 
-**v1.1.0 is currently a release candidate, not yet published.** Always use the [latest stable release](https://github.com/sdelnevo/Caffoot-Lite/releases/latest) for production downloads.
+**v1.1.0 was published on 18 October 2026.** Download it from the [v1.1.0 release](https://github.com/sdelnevo/Caffoot-Lite/releases/tag/v1.1.0), or use the [latest stable release](https://github.com/sdelnevo/Caffoot-Lite/releases/latest).
 
 1. Visit the [Caffoot Lite GitHub repository](https://github.com/sdelnevo/Caffoot-Lite).
 2. Open **Releases** and select the latest stable release.
@@ -65,7 +65,7 @@ The safe update guide and backups work offline. Newer backup schemas require a c
 
 ## Complete release package
 
-Prefer the version-named ZIP from the latest stable release (the v1.1.0 candidate is `Caffoot-Lite-1.1.0.zip`, not yet published). Extract it and open `Caffoot-Lite.html`; keep the guides and licences beside it. `SHA256SUMS` contains file hashes for checking integrity. The standalone HTML also includes full software notices in About Caffoot Lite, available offline. Example backups under `app/fixtures/` are fictional demonstrations; importing one replaces the current inventory after confirmation.
+For v1.1.0, download `Caffoot-Lite-1.1.0.zip` from the [published release](https://github.com/sdelnevo/Caffoot-Lite/releases/tag/v1.1.0). Extract it and open `Caffoot-Lite.html`; keep the guides and licences beside it. `SHA256SUMS` contains file hashes for checking integrity. The standalone HTML also includes full software notices in About Caffoot Lite, available offline. Example backups under `app/fixtures/` are fictional demonstrations; importing one replaces the current inventory after confirmation.
 
 ### Local file storage scope
 

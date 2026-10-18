@@ -2,7 +2,7 @@
 
 **Infrastructure, Simplified. — For HomeLabs and Small Teams**
 
-This guide covers the main workflows in Caffoot Lite v1.1.0 (release candidate).
+This guide covers the main workflows in Caffoot Lite v1.1.0 (published 18 October 2026).
 
 ## Getting started
 
