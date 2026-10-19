@@ -43,7 +43,8 @@ async function scenario(mode) {
     phase16CRejectUnsafeKeys:()=>{},
     phase11ValidateBackupShape:()=>{},
     phase20ValidateBackupVersion:()=>{},
-    phase16CAPMountConflicts:()=>[],
+    phase20MigrateBackup:v=>v,
+    phase19BIsAccessPoint:()=>false,
     phase16CCheckBackup:v => {
       if(!v || !Array.isArray(v.devices)) throw Error('Invalid inventory');
       return v;
