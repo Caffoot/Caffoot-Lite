@@ -1,22 +1,32 @@
-# Tailwind CSS v4 evaluation (isolated experiment)
+# Tailwind CSS v4 evaluation — v1.1.2 draft integration
 
-This branch is an investigation only. It must not be merged into the v1.1.2 security-hardening branch until the owner explicitly approves a tested migration.
+**Status:** Migration implemented and owner-tested on the isolated experimental branch. Draft PR #41 targets `feature/v1.1.2-security-hardening`. Not merged, tagged, or published. Owner approval is required before merging.
 
-## Baseline
+## Baseline and migration
 
-- Production application: standalone offline HTML, with CSS and Font Awesome fonts embedded at build time.
-- Current build: Tailwind CSS 3.4.17, direct invocation of `tailwindcss/lib/cli.js`.
-- User's `npm audit --audit-level=moderate` baseline: **7 vulnerabilities (5 high, 2 moderate)** in the build dependency tree.
-- Existing configuration: `darkMode: 'class'`, custom `brand` colour palette, regular class scanning of `app/caffoot-lite.html`, regex-based safelist with colour, dark, hover and responsive variants.
+- Original build: Tailwind CSS 3.4.17 with the bundled v3 CLI and a JavaScript configuration/safelist.
+- Original owner-reported audit: **7 vulnerabilities (5 high, 2 moderate)** in the build dependency tree.
+- Experimental build: **Tailwind CSS 4.3.3**, **@tailwindcss/cli 4.3.0**, and transitive **@parcel/watcher 2.6.0**.
+- `app/build-offline.cjs` uses the locally installed v4 CSS entry point, explicit HTML source scanning, `@source inline` for dynamic classes, a class-based dark variant, and the existing brand palette.
+- `app/tailwind.config.cjs` is a legacy v3 reference; the v4 build does not load it.
+- The standalone HTML continues to embed compiled CSS, Font Awesome fonts, branding assets, and the complete licence notices. The ZIP includes the v4.3.3 licence copy.
 
-## Migration issues to validate
+## Owner verification
 
-1. Tailwind v4 uses a separate CLI package (`@tailwindcss/cli`) and CSS-first `@import "tailwindcss"` input. Adapt `app/build-offline.cjs` without changing the released HTML's offline model.
-2. Preserve `.dark`-controlled dark mode, the custom brand colours and all dynamically constructed classes. Tailwind v4 does not support the existing JavaScript `safelist` configuration; enumerate needed classes using explicit `@source inline(...)` rules or another validated strategy.
-3. Verify Tailwind v4 browser compatibility and generated CSS against supported browsers, including dark mode, responsive layouts, modal dialogs, racks, devices and IPAM.
-4. Retain the existing font and branding embedding, third-party notices, ZIP allowlist, hashes, and backup import/export compatibility.
-5. Run `npm audit --audit-level=moderate`, `npm run release`, visual comparison, offline browser tests and security regression tests. Capture results; do not claim vulnerabilities are resolved before audit confirms it.
+- Windows clean install: `npm.cmd ci --no-audit --no-fund` passed.
+- `npm.cmd audit --audit-level=moderate`: **0 reported vulnerabilities** at test time.
+- `npm.cmd run release`: all 21 checks, HTML build and ZIP verification passed after clean installation.
+- After updating the v4 licence filename and notices, the owner reran `npm.cmd run release` and all checks and packaging passed again.
+- Manual browser checks: test inventory import, screens, light/dark themes, modals, Escape key, wireless access point and desktop configuration. No regressions reported.
+
+## Remaining review before merge or publication
+
+- Inspect browser network traffic (including offline `file://` operation) and remaining dynamic HTML sinks separately; static regression checks do not replace runtime inspection.
+- Review repository history and source/artifact contents for sensitive information; the release privacy gate only checks certain paths and fictional fixtures.
+- Review generated CSS and supported-browser compatibility for dynamic classes and responsive layouts.
+- Recheck release notes, guides, embedded help, and final ZIP/HTML after integration.
+- Obtain explicit owner approval before merging PR #41 or publishing v1.1.2.
 
 ## Guardrails
 
-Do not run `npm audit fix --force` on the release candidate. Do not change the release branch, create a release tag, merge, or publish without owner approval. This document records the plan; no v4 dependency migration has yet been made.
+Do not run `npm audit fix --force` on the release candidate. Do not merge, tag, or publish without owner approval. The dependency audit reports known advisory findings in the tested dependency tree; it is not a comprehensive security audit.
