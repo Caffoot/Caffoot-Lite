@@ -993,7 +993,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             rackAccessories: [],
             deviceTypes: ['Server - Physical', 'Server - Virtual', 'Desktop', 'Laptop', 'Tablet', 'Switch', 'Layer 3 Switch', 'Router', 'Firewall', 'NAS', 'Access Point', 'Wireless LAN Controller', 'PDU', 'UPS', 'Unknown'],
             deviceTypeGraphics: {},
-            deviceLocations: ['Racked', 'Unknown'],
+            deviceLocations: ['Unknown'],
             ipAllocations: {},
             serverFunctions: [],
             installedSoftware: [],
@@ -1237,7 +1237,7 @@ function hierarchyValidateTypes(subnets) {
                 subnets: raw.subnets,
                 vlans: raw.vlans,
                 racks: raw.racks,
-                devices: raw.devices,
+                devices: phase120SeparateLegacyRackLocation(raw.devices),
                 rackAccessories: Array.isArray(raw.rackAccessories) ? raw.rackAccessories : [],
                 deviceTypes: Array.isArray(raw.deviceTypes) ? raw.deviceTypes : cloneDefaultData().deviceTypes,
                 deviceTypeGraphics: isPlainObject(raw.deviceTypeGraphics) ? raw.deviceTypeGraphics : {},
@@ -1249,7 +1249,7 @@ function hierarchyValidateTypes(subnets) {
             const discoveredTypes = state.devices.map(d => String(d.type || '').trim()).filter(Boolean);
             const discoveredLocations = state.devices.map(d => String(d.location || '').trim()).filter(Boolean);
             state.deviceTypes = [...new Set([...state.deviceTypes, ...discoveredTypes, 'Layer 3 Switch', 'Wireless LAN Controller'])];
-            state.deviceLocations = [...new Set([...state.deviceLocations, ...discoveredLocations, 'Unknown'])].filter(location => location !== 'Blank');
+            state.deviceLocations = [...new Set([...state.deviceLocations, ...discoveredLocations, 'Unknown'])].filter(location => location !== 'Blank' && location !== 'Racked');
 
             // Phase 5 migration: Blank is no longer a valid managed location.
             state.devices.forEach(device => {
@@ -1303,7 +1303,7 @@ function hierarchyValidateTypes(subnets) {
                 if (device.primaryIp && !isValidIpv4(device.primaryIp)) throw new Error(`Invalid primary IP on device ${device.name}.`);
                 if (device.mountType === 'Rack Mounted' || device.rackId) {
                     if (device.mountType !== 'Rack Mounted') throw new Error(`Device ${device.name} has a rack assignment but is not Rack Mounted.`);
-                    if (device.location !== 'Racked') throw new Error(`Rack Mounted device ${device.name} must use the Racked location.`);
+                    if (!device.location || device.location === 'Racked') throw new Error(`Rack Mounted device ${device.name} needs a physical location or Unknown.`);
                     if (!device.rackId || !state.racks.some(r => r.id === device.rackId)) throw new Error(`Device ${device.name} references a missing rack.`);
                     if (!['front','rear'].includes(device.face || 'front')) throw new Error(`Invalid rack face on device ${device.name}.`);
                     if (!Number.isInteger(Number(device.rackUStart)) || !Number.isInteger(Number(device.rackUHeight)) || Number(device.rackUStart) < 1 || Number(device.rackUHeight) < 1) throw new Error(`Invalid rack position on device ${device.name}.`);
@@ -1422,7 +1422,7 @@ function hierarchyValidateTypes(subnets) {
                 if (device.rackId) {
                     const rack = appState.racks.find(r => r.id === device.rackId);
                     if (!rack) errors.push(`Device ${device.name} references a missing rack.`);
-                    if (device.mountType !== 'Rack Mounted' || device.location !== 'Racked') errors.push(`Rack assignment is inconsistent for ${device.name}.`);
+                    if (device.mountType !== 'Rack Mounted') errors.push(`Rack assignment is inconsistent for ${device.name}.`);
                     if (Number(device.rackUEnd) !== Number(device.rackUStart) + Number(device.rackUHeight) - 1) errors.push(`Rack U range is inconsistent for ${device.name}.`);
                 }
             });
@@ -3092,7 +3092,7 @@ function hierarchyValidateTypes(subnets) {
         function getUniqueDeviceTypes() { return [...new Set([...phase18DList('type'), 'Desktop', 'Laptop', 'Tablet', 'Server - Physical', 'Server - Virtual'])]; }
         function getUniqueDeviceLocations() { return phase18DList('location'); }
         function phase18DProtected(kind,name) {
-            return name.toLowerCase()==='unknown' || (kind==='location' && name.toLowerCase()==='racked');
+            return name.toLowerCase()==='unknown';
         }
         function phase18DOpen(kind) {
             const isType=kind==='type', label=isType?'Device types':'Device locations';
@@ -4695,7 +4695,7 @@ function hierarchyValidateTypes(subnets) {
                 device.rackUEnd = endU;
                 device.rackUHeight = height;
                 device.mountType = 'Rack Mounted';
-                device.location = 'Racked';
+                // Preserve the physical location when moving between racks.
             }
 
             if (!saveState()) {
@@ -4713,7 +4713,7 @@ function hierarchyValidateTypes(subnets) {
                 device.rackId = '';
                 device.rackUStart = null;
                 device.rackUEnd = null;
-                device.location = 'Unknown';
+                // Preserve the physical location when unassigning a rack.
                 device.mountType = 'Desktop';
                 saveState();
                 renderContent();
