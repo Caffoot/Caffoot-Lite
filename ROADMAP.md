@@ -83,6 +83,15 @@ Managed multi-user hosting, authentication and centrally administered deployment
 - Keep all analytics **offline and local**: no external telemetry, live status, reachability or health claims. Do not label a device online/offline or show activity timelines unless reliable stored evidence supports them.
 - Validate the new navigation, visualisations, Add/Edit workflows, import/export compatibility, rack/IPAM relationships, dark/light themes, narrow screens and offline standalone HTML in automated and owner browser acceptance before merging.
 
+**v1.2.0 Device Catalogues — owner-approved scope (19 October 2026):**
+- Introduce a dedicated **Device Catalogues** section in the expandable Devices sidebar, with four separate, consistently designed destinations: **Manufacturers**, **Models**, **Software**, and **Server Services**. Keep Device Intelligence and Device Inventory prominent; avoid duplicating catalogue management controls in Add/Edit Device.
+- Each catalogue should provide an accessible, searchable list with clear **Add, Edit/Rename, and Remove** actions, helpful empty states, responsive layouts and dark/light-theme parity. Models must support filtering by **device type and manufacturer**; manufacturer suggestions should remain consistent across device types where applicable.
+- Distinguish **built-in defaults**, **user-managed catalogue entries**, and **values already used by saved devices**. Permit safe hiding/replacement of built-in suggestions rather than destructive removal of defaults; make it clear which entries are editable.
+- Retain **Other / Custom** manufacturer and model inputs in the device form for one-off values. A one-off entry must not silently become a managed catalogue item; reusable options are maintained explicitly through Device Catalogues.
+- Bring existing **Manage Software Options** and **Manage Server Services** functionality into the same navigational and visual pattern without dropping existing user-defined options, device-specific selections or stored records.
+- **Data safety:** Renaming, hiding or removing a catalogue suggestion must not silently rewrite or erase historical device manufacturer/model values, software flags or server-service values. Clearly communicate impact and confirm destructive changes. Preserve local/offline storage and compatible JSON export/restore, including migration of existing custom hardware catalogue data.
+- Deliver incrementally: **(1) Manufacturers and Models**, then **(2) Software and Server Services**, followed by regression tests for custom entry, edit/delete, reopening forms, filtering, backups, offline build and owner browser acceptance. This is planned work, not yet implemented or approved for release.
+
 **Additional v1.2 roadmap candidates (not automatically approved for v1.2.0):**
 - Preserve dynamic fields for different device types.
 - Add contextual Operating System family, version and optional edition selection for applicable device types, with Unknown/None/Custom choices and safe legacy compatibility.
