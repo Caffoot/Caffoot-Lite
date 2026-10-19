@@ -28,5 +28,7 @@ These improvements are defensive safeguards and automated regression tests, **no
 - [ ] Complete historical repository and sensitive-content review.
 - [ ] Review dependencies, browser network activity and remaining dynamic HTML surfaces.
 - [ ] Review documentation and built-in Help & Guides for v1.1.2 consistency.
-- [ ] Run full release pipeline against the final v1.1.2 files and inspect generated HTML/ZIP.
+- [x] Owner ran the full v1.1.2 release pipeline successfully; the uploaded candidate ZIP passed initial integrity, manifest and sensitive-pattern checks.
+- [x] Owner confirmed the v1.1.2 About screen and offline browser navigation.
+- [ ] Re-run packaging after any final documentation changes and verify the resulting release artifacts.
 - [ ] Obtain explicit owner approval before merging, tagging or publishing.
