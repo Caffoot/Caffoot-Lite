@@ -6,6 +6,7 @@
 
 - **Security hardening:** Additional regression checks for backup JSON validation, hostile object properties, browser-storage recovery, output escaping and malformed rack accessory placement.
 - **Release privacy checks:** A release gate checks repository or extracted development-folder paths for likely private/generated data and validates the two approved fictional backup fixtures. It does not establish that Git history or file contents are free of secrets.
+- **Permanent Git-history secret scanning:** PR #45 added a Gitleaks GitHub Actions workflow for pull requests, pushes to main and manual runs. The initial PR #45 scan and the subsequent PR #44 scan passed. Scanning covers reachable Git history and does not guarantee that all sensitive data has been identified.
 - **Network surface guard:** A static regression test monitors known browser network APIs and the explicit GitHub latest-release check. This is not a substitute for runtime network inspection.
 - **Safer release packaging:** The packager requires the source application version to match npm package metadata and verifies the ZIP member allowlist, embedded notices, dependency licence copies and extracted file hashes.
 - **Documentation:** Security reporting and browser-local inventory storage limitations are documented. Access point mounting terminology uses Tabletop / Shelf Mounted, Ceiling Mounted, Wall Mounted and Pole Mounted; older backup mounting values remain subject to compatibility checks.
@@ -33,7 +34,8 @@ These improvements are defensive safeguards and automated regression tests, **no
 - [x] Development-stage automated release pipeline passed before the v1.1.2 version bump.
 - [x] Owner verified fresh-browser startup, disposable device backup export/import and offline operation.
 - [x] Package-version consistency safeguard passed before the version bump.
-- [ ] Complete historical repository and sensitive-content review.
+- [x] Run automated Git-history secret scanning with Gitleaks; PR #45 and updated PR #44 checks passed.
+- [ ] Complete remaining manual historical repository and sensitive-content review.
 - [x] Update and audit the experimental Tailwind v4 build dependencies; clean npm audit reported zero vulnerabilities. 
 - [x] Owner inspected browser network activity during normal use; no unexpected outbound HTTP(S) requests observed. Remaining dynamic HTML surfaces require review.
 - [ ] Review documentation and built-in Help & Guides for v1.1.2 consistency.
