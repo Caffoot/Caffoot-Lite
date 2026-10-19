@@ -49,7 +49,7 @@ If you choose to serve Caffoot Lite from a web server, restrict access with appr
 
 Browser storage is local to the browser/profile and origin; hosting the HTML file does **not** turn Caffoot Lite into a shared, server-backed inventory system. Avoid using it on untrusted or shared computers, protect exported backups, and never assume that an externally hosted copy provides multi-user isolation.
 
-A dedicated security review and deployment-hardening milestone is planned for v1.1.2; that review has **not yet been completed**. Future Caffoot Pro is intended to address managed multi-user deployment, but it should not be treated as an available or security-validated alternative until released and reviewed.
+A dedicated security review and deployment-hardening milestone is in progress for v1.1.2. The review is not complete, and Caffoot Lite must not be treated as an authenticated multi-user service or a security-certified public deployment.
 
 ## Update checker notice for older versions
 
