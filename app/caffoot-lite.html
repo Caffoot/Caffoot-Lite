@@ -5357,7 +5357,7 @@ function hierarchyValidateTypes(subnets) {
         // Keep legacy mounting values available to avoid changing existing device records.
         // Broad compatibility whitelist: historical selections remain valid in saved inventories.
         function phase19BAllowedMounts(type){
-            return ['Desktop','Tabletop / Shelf Mounted','Shelf Mounted','Rack Mounted','Wall Mounted','Ceiling Mounted','Pole Mounted','DIN Rail Mounted','Under-Desk Mounted','Floor Standing','Handheld','Mobile','Vehicle Mounted','Not Applicable','Unknown'];
+            return ['Desktop','Tabletop / Shelf Mounted','Shelf Mounted','Rack Mounted','Wall Mounted','Ceiling Mounted','Pole Mounted','DIN Rail Mounted','Under-Desk Mounted','Floor Standing','Tower / Floor Standing','Handheld','Mobile','Vehicle Mounted','Not Applicable','Unknown'];
         }
         // Narrower, device-appropriate suggestions shown when adding or changing a device.
         function phase120SuggestedMounts(type){
@@ -5366,7 +5366,7 @@ function hierarchyValidateTypes(subnets) {
             if(normalized==='desktop') return ['Tabletop / Shelf Mounted','Under-Desk Mounted','Wall Mounted','Floor Standing','Not Applicable','Unknown'];
             if(phase19BIsAccessPoint(type)) return ['Tabletop / Shelf Mounted','Ceiling Mounted','Wall Mounted','Pole Mounted','Unknown'];
             if(normalized==='firewall'||normalized==='router'||normalized==='switch'||normalized==='wireless lan controller') return ['Rack Mounted','Tabletop / Shelf Mounted','Shelf Mounted','Wall Mounted','DIN Rail Mounted','Unknown'];
-            if(normalized==='server'||normalized==='server - physical'||normalized==='physical server') return ['Rack Mounted','Floor Standing','Tabletop / Shelf Mounted','Shelf Mounted','Unknown'];
+            if(normalized==='server'||normalized==='server - physical'||normalized==='physical server') return ['Rack Mounted','Tower / Floor Standing','Tabletop / Shelf Mounted','Shelf Mounted','Unknown'];
             if(normalized==='server - virtual'||normalized==='virtual server') return ['Not Applicable','Unknown'];
             if(normalized==='printer'||normalized==='scanner'||normalized==='print server'||normalized==='print servers') return ['Tabletop / Shelf Mounted','Shelf Mounted','Floor Standing','Rack Mounted','Unknown'];
             if(normalized==='nas') return ['Tabletop / Shelf Mounted','Shelf Mounted','Rack Mounted','Floor Standing','Unknown'];
