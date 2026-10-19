@@ -499,13 +499,15 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 
 
 /* v1.2.0 Notes: spacious editor and offline-safe Markdown preview. */
-.phase14b-device-modal .phase120-device-panel[data-notes-panel="true"]{height:100%;}
-.phase14b-device-modal .phase120-device-panel[data-notes-panel="true"]>.form-section-card{flex:1;min-height:0;display:flex;flex-direction:column;}
+.phase14b-device-modal .phase120-device-panel[data-notes-panel="true"]{height:100%;box-sizing:border-box;overflow:hidden;}
+.phase14b-device-modal .phase120-device-panel[data-notes-panel="true"]>.form-section-card{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;}
+.phase14b-device-modal .phase120-device-panel[data-notes-panel="true"]>.form-section-card>div:last-child{display:flex;flex:1;flex-direction:column;min-height:0;}
 .phase14b-device-modal .phase120-notes-workspace{display:flex;flex:1;flex-direction:column;min-height:0;gap:10px;}
 .phase14b-device-modal .phase120-notes-toolbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
 .phase14b-device-modal .phase120-notes-toolbar button{border:1px solid #94a3b8;border-radius:7px;padding:6px 10px;font-size:12px;font-weight:600;}
 .phase14b-device-modal .phase120-notes-toolbar button[aria-pressed="true"]{background:#e0e7ff;color:#312e81;}
-.phase14b-device-modal #dev-notes,.phase14b-device-modal #phase120-notes-preview{flex:1;min-height:240px;width:100%;resize:vertical;overflow:auto;line-height:1.6;}
+.phase14b-device-modal #dev-notes,.phase14b-device-modal #phase120-notes-preview{flex:1 1 0;min-height:0!important;height:auto!important;max-height:100%;width:100%;resize:none;overflow:auto;line-height:1.6;box-sizing:border-box;}
+@media(max-height:560px){.phase14b-device-modal .phase120-device-panel[data-notes-panel="true"]{overflow-y:auto;}.phase14b-device-modal #dev-notes,.phase14b-device-modal #phase120-notes-preview{min-height:120px!important;}}
 .phase14b-device-modal #phase120-notes-preview{border:1px solid #94a3b8;border-radius:12px;padding:12px;white-space:pre-wrap;overflow-wrap:anywhere;}
 .phase14b-device-modal #phase120-notes-preview h2{font-size:1.25rem;font-weight:700;}
 .phase14b-device-modal #phase120-notes-preview h3{font-size:1.05rem;font-weight:700;}
