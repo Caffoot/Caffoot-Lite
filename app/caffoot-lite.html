@@ -995,6 +995,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                     <button type="button" data-action="sidebar-devices-inventory" class="w-full text-left px-3 py-2 rounded-lg text-xs text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700">Device Inventory</button>
                     <button type="button" data-action="sidebar-devices-types" class="w-full text-left px-3 py-2 rounded-lg text-xs text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700">Device Types</button>
                     <button type="button" data-action="sidebar-devices-locations" class="w-full text-left px-3 py-2 rounded-lg text-xs text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700">Locations</button>
+                    <button type="button" data-action="open-device-modal" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-slate-700"><i class="fa-solid fa-plus mr-2"></i>Add Device</button>
                 </div>
                 <button data-action="tab-racks" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700/50 hover:text-indigo-600 dark:hover:text-indigo-400" data-tab="racks">
                     <i class="fa-solid fa-hard-drive w-5 text-center"></i>
@@ -3003,13 +3004,6 @@ function hierarchyValidateTypes(subnets) {
         function renderDevicesHTML() {
             return `
                 <div class="space-y-5 phase14-devices">
-                    <section class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 sm:p-5 space-y-3">
-                        <div class="flex flex-wrap items-center justify-between gap-3">
-                            <div><h2 class="text-lg font-bold text-slate-900 dark:text-white">Device Management</h2><p class="text-sm text-slate-600 dark:text-slate-300">Find, update and organise your network equipment.</p></div>
-                            <button type="button" data-action="open-device-modal" class="h-11 px-4 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold text-sm"><i class="fa-solid fa-plus mr-2"></i>Add Device</button>
-                        </div>
-
-                    </section>
                     <section class="${phase14DeviceTab==='overview'?'':'hidden'} space-y-4" data-device-panel="overview">
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">${[['Total Devices',appState.devices.length],['With Primary IP',appState.devices.filter(d=>d.primaryIp).length],['Locations Recorded',appState.devices.filter(d=>d.location && d.location!=='Unknown').length]].map(([label,value])=>`<div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5"><p class="text-sm text-slate-600 dark:text-slate-300">${label}</p><p class="text-3xl font-bold text-slate-900 dark:text-white">${value}</p></div>`).join('')}</div>
                         <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5"><h3 class="text-lg font-bold">Device Overview</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-2">A local inventory summary. More detailed intelligence and charts are planned for this milestone.</p><button type="button" data-action="sidebar-devices-inventory" class="mt-4 h-11 px-4 rounded-xl bg-blue-800 text-white font-semibold">View Device Inventory</button></div>
