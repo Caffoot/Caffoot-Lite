@@ -3202,31 +3202,36 @@ function hierarchyValidateTypes(subnets) {
                         </table>
                     </div>
                     </section>
-                    <section class="${['types','locations'].includes(phase14DeviceTab)?'':'hidden'} space-y-4" data-device-panel="manage">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div class="${phase14DeviceTab==='types'?'':'hidden'} bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 space-y-3">
-                                <div class="flex items-center gap-2"><i class="fa-solid fa-tags text-blue-600"></i><h3 class="font-bold text-slate-900 dark:text-white">Device Types</h3></div>
-                                <p class="text-sm text-slate-600 dark:text-slate-300">Manage the categories available when adding or editing devices.</p>
-                                <p class="text-xs text-slate-600 dark:text-slate-300">${getUniqueDeviceTypes().length} types configured</p>
-                                <button type="button" data-action="open-manage-types" class="h-11 px-4 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold text-sm">Manage Types</button>
+                    <section class="${['types','locations'].includes(phase14DeviceTab)?'':'hidden'} space-y-5" data-device-panel="manage">
+                        ${(()=>{
+                            const isType=phase14DeviceTab==='types';
+                            const field=isType?'type':'location';
+                            const values=isType?getUniqueDeviceTypes():getUniqueDeviceLocations();
+                            const counts=new Map();
+                            appState.devices.forEach(d=>{
+                                const value=String(d[field]||'').trim();
+                                const key=(!value||value==='Unknown')?'Not Recorded':value;
+                                counts.set(key,(counts.get(key)||0)+1);
+                            });
+                            const missing=counts.get('Not Recorded')||0;
+                            const rows=[...new Set([...values.filter(v=>v&&v!=='Unknown'),'Not Recorded'])].map(name=>({name,count:counts.get(name)||0})).filter(x=>x.count||x.name!=='Not Recorded').sort((a,b)=>b.count-a.count||a.name.localeCompare(b.name));
+                            const max=Math.max(1,...rows.map(x=>x.count));
+                            return `<div class="flex flex-wrap items-start justify-between gap-4">
+                                <div><h2 class="text-xl font-extrabold text-slate-900 dark:text-white">${isType?'Device Types':'Device Locations'}</h2>
+                                <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">${isType?'Explore your inventory by equipment classification.':'Explore where equipment is recorded across your sites and rooms.'}</p></div>
+                                <button type="button" data-action="${isType?'open-manage-types':'open-manage-locations'}" class="h-11 px-5 rounded-xl bg-blue-800 hover:bg-blue-900 text-white text-sm font-bold"><i class="fa-solid fa-pen-to-square mr-2" aria-hidden="true"></i>Manage ${isType?'Types':'Locations'}</button>
                             </div>
-                            <div class="${phase14DeviceTab==='locations'?'':'hidden'} bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 space-y-3">
-                                <div class="flex items-center gap-2"><i class="fa-solid fa-map-location-dot text-blue-600"></i><h3 class="font-bold text-slate-900 dark:text-white">Device Locations</h3></div>
-                                <p class="text-sm text-slate-600 dark:text-slate-300">Maintain location choices while preserving special rack handling.</p>
-                                <p class="text-xs text-slate-600 dark:text-slate-300">${getUniqueDeviceLocations().length} locations configured</p>
-                                <button type="button" data-action="open-manage-locations" class="h-11 px-4 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold text-sm">Manage Locations</button>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                ${[[isType?'Configured Types':'Configured Locations',values.length,'fa-list'],['Devices',appState.devices.length,'fa-server'],[isType?'Unclassified Devices':'Location Not Recorded',missing,'fa-circle-exclamation']].map(([label,value,icon])=>`<div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5"><div class="text-sm text-slate-600 dark:text-slate-300"><i class="fa-solid ${icon} mr-2 text-blue-600" aria-hidden="true"></i>${label}</div><strong class="block text-3xl font-extrabold mt-2 text-slate-900 dark:text-white">${value}</strong></div>`).join('')}
                             </div>
-                            <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 space-y-3">
-                                <div class="flex items-center gap-2"><i class="fa-solid fa-server text-blue-600"></i><h3 class="font-bold text-slate-900 dark:text-white">Server Options</h3></div>
-                                <p class="text-sm text-slate-600 dark:text-slate-300">Manage optional server functions shown when adding or editing physical and virtual servers.</p>
-                                <button type="button" data-action="phase19b-manage-functions" class="h-11 px-4 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold text-sm">Manage Server Services</button>
-                            </div>
-                            <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 space-y-3">
-                                <div class="flex items-center gap-2"><i class="fa-solid fa-laptop-code text-blue-600"></i><h3 class="font-bold text-slate-900 dark:text-white">Software Options</h3></div>
-                                <p class="text-sm text-slate-600 dark:text-slate-300">Manage optional software checkboxes shown for desktops, laptops and tablets.</p>
-                                <button type="button" data-action="phase19b-manage-software" class="h-11 px-4 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold text-sm">Manage Software Options</button>
-                            </div>
-                        </div>
+                            <div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4">
+                                <div><h3 class="font-bold text-slate-900 dark:text-white">${isType?'Devices by Type':'Devices by Location'}</h3><p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Select a row to view matching devices in Device Inventory.</p></div>
+                                ${rows.length?rows.map(({name,count})=>`<button type="button" data-action="phase120-manage-drilldown" data-kind="${field}" data-name="${escapeHtml(name)}" class="w-full text-left rounded-xl border border-slate-200 dark:border-slate-600 p-3 hover:bg-blue-50 dark:hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500">
+                                    <div class="flex justify-between gap-3 text-sm"><span class="font-semibold text-slate-900 dark:text-white break-words">${escapeHtml(name)}</span><span class="shrink-0 font-bold text-blue-700 dark:text-blue-300">${count} device${count===1?'':'s'} <i class="fa-solid fa-arrow-right ml-1" aria-hidden="true"></i></span></div>
+                                    <div class="mt-2 h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden"><div class="h-full rounded-full bg-blue-600" style="width:${Math.max(0,Math.min(100,100*count/max))}%"></div></div>
+                                </button>`).join(''):'<p class="text-sm text-slate-600 dark:text-slate-300">No devices recorded yet. Add a device to populate this overview.</p>'}
+                            </div>`;
+                        })()}
                     </section>
                 </div>
             `;
@@ -7109,6 +7114,13 @@ function hierarchyValidateTypes(subnets) {
                 case 'device-hardware-drilldown': { const field=String(target.dataset.field||''); const value=String(target.dataset.value||''); if (!['manufacturer','model','mountType'].includes(field) || !value) break; deviceOsFilter=''; deviceServiceFilter=''; deviceMissingFilter=''; deviceSearchTerm=''; deviceTypeFilter=''; deviceStatusFilter=''; deviceLocationFilter=''; deviceMountFilter=''; deviceAssignmentFilter=''; deviceHardwareFilter={field,value}; phase14DeviceTab='inventory'; switchTab('devices'); break; }
                 case 'device-os-drilldown': { const os=String(target.dataset.os||''); if (!os) break; deviceServiceFilter=''; deviceMissingFilter=''; deviceOsFilter=os; deviceHardwareFilter=null; deviceSearchTerm=''; deviceTypeFilter=''; deviceStatusFilter=''; deviceLocationFilter=''; deviceMountFilter=''; deviceAssignmentFilter=''; phase14DeviceTab='inventory'; switchTab('devices'); break; }
                 case 'device-intelligence-drilldown': { const kind=String(target.dataset.kind||''); const value=String(target.dataset.value||''); if (!['type','location','service','missing'].includes(kind) || !value) break; deviceOsFilter=''; deviceServiceFilter=''; deviceMissingFilter=''; deviceSearchTerm=''; deviceTypeFilter=''; deviceStatusFilter=''; deviceLocationFilter=''; deviceMountFilter=''; deviceAssignmentFilter=''; deviceHardwareFilter=null; if (kind==='type' && value!=='Not Recorded') deviceTypeFilter=value; else if(kind==='location' && value!=='Not Recorded') deviceLocationFilter=value; else if(kind==='service') deviceServiceFilter=value; else if(kind==='missing' && ['ip','type','location'].includes(value)) deviceMissingFilter=value; else if(kind==='type' && value==='Not Recorded') deviceMissingFilter='type'; else if(kind==='location' && value==='Not Recorded') deviceMissingFilter='location'; phase14DeviceTab='inventory'; switchTab('devices'); break; }
+                case 'phase120-manage-drilldown': {
+                    deviceSearchTerm=''; deviceTypeFilter=''; deviceLocationFilter=''; deviceOsFilter=''; deviceServiceFilter=''; deviceMissingFilter=''; deviceHardwareFilter=null; deviceStatusFilter=''; deviceMountFilter=''; deviceAssignmentFilter='';
+                    if(target.dataset.name==='Not Recorded')deviceMissingFilter=target.dataset.kind==='type'?'type':'location';
+                    else if(target.dataset.kind==='type')deviceTypeFilter=target.dataset.name;
+                    else deviceLocationFilter=target.dataset.name;
+                    phase14DeviceTab='inventory';switchTab('devices');break;
+                }
                 case 'sidebar-devices-inventory': phase14DeviceTab='inventory'; switchTab('devices'); break;
                 case 'sidebar-devices-types': phase14DeviceTab='types'; switchTab('devices'); break;
                 case 'sidebar-devices-locations': phase14DeviceTab='locations'; switchTab('devices'); break;
