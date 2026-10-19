@@ -1,6 +1,6 @@
 # Tailwind CSS v4 evaluation — v1.1.2 draft integration
 
-**Status:** Migration implemented and owner-tested on the isolated experimental branch. Draft PR #41 targets `feature/v1.1.2-security-hardening`. Not merged, tagged, or published. Owner approval is required before merging.
+**Status:** Migration integrated into `feature/v1.1.2-security-hardening` via squash-merged PR #43, replacing closed, unmerged PR #41. Not merged into `main`, tagged, or published. Owner approval remains required for release.
 
 ## Baseline and migration
 
@@ -15,18 +15,18 @@
 
 - Windows clean install: `npm.cmd ci --no-audit --no-fund` passed.
 - `npm.cmd audit --audit-level=moderate`: **0 reported vulnerabilities** at test time.
-- `npm.cmd run release`: all 21 checks, HTML build and ZIP verification passed after clean installation.
+- `npm.cmd run release`: the experimental build passed its earlier 21-step pipeline. The owner subsequently downloaded the full combined integration branch, ran a clean `npm.cmd ci --no-audit --no-fund`, and passed all 27 release pipeline steps, including both new XSS regressions, HTML build and ZIP verification.
 - After updating the v4 licence filename and notices, the owner reran `npm.cmd run release` and all checks and packaging passed again.
 - Manual browser checks: test inventory import, screens, light/dark themes, modals, Escape key, wireless access point and desktop configuration. No regressions reported.
 
-## Remaining review before merge or publication
+## Remaining review before release publication
 
-- Inspect browser network traffic (including offline `file://` operation) and remaining dynamic HTML sinks separately; static regression checks do not replace runtime inspection.
+- The owner previously confirmed offline operation and clean browser Network activity during normal use. Remaining dynamic HTML sinks and broader runtime behaviour have not undergone a comprehensive security audit.
 - Review repository history and source/artifact contents for sensitive information; the release privacy gate only checks certain paths and fictional fixtures.
-- Review generated CSS and supported-browser compatibility for dynamic classes and responsive layouts.
+- Owner-reported browser smoke tests passed for the combined build; broader supported-browser compatibility and exhaustive dynamic CSS review remain outstanding.
 - Recheck release notes, guides, embedded help, and final ZIP/HTML after integration.
-- Obtain explicit owner approval before merging PR #41 or publishing v1.1.2.
+- Obtain explicit owner approval before merging the final release PR into `main`, tagging or publishing v1.1.2.
 
 ## Guardrails
 
-Do not run `npm audit fix --force` on the release candidate. Do not merge, tag, or publish without owner approval. The dependency audit reports known advisory findings in the tested dependency tree; it is not a comprehensive security audit.
+Do not run `npm audit fix --force` on the release candidate. Do not merge into `main`, tag, or publish without owner approval. The dependency audit reports known advisory findings in the tested dependency tree; it is not a comprehensive security audit.
