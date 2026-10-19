@@ -15,12 +15,20 @@ const guardCode = html.slice(guardStart,guardEnd);
 const checkStart = html.indexOf('function phase16CCheckBackup(');
 const checkEnd = html.indexOf('function importData(',checkStart);
 assert(checkStart >= 0 && checkEnd > checkStart, 'Backup validation pipeline must exist');
+const mountsStart = html.indexOf('const phase19BTypeGroups =');
+const mountsEnd = html.indexOf('function phase19BMountOptions(', mountsStart);
+const repairStart = html.indexOf('function phase16CLegacyMountRepairs(');
+const repairEnd = html.indexOf('function phase16CCheckBackup(', repairStart);
+assert(mountsStart >= 0 && mountsEnd > mountsStart && repairStart >= 0 && repairEnd > repairStart,
+  'Mount compatibility rules and legacy repair helpers must exist');
+const mountCode = html.slice(mountsStart, mountsEnd);
+const repairCode = html.slice(repairStart, repairEnd);
 const context = vm.createContext({
   appState:{devices:[],subnets:[],racks:[],vlans:[],ipAllocations:{}},
   normaliseState:raw=>raw,
   validateApplicationState:()=>[]
 });
-vm.runInContext(versionCode+'\n'+guardCode+'\n'+html.slice(checkStart,checkEnd),context);
+vm.runInContext(mountCode+'\n'+repairCode+'\n'+versionCode+'\n'+guardCode+'\n'+html.slice(checkStart,checkEnd),context);
 const valid = '{"devices":[],"subnets":[],"racks":[],"vlans":[],"ipAllocations":{}}';
 assert.equal(context.phase16CCheckBackup(JSON.parse(valid)).devices.length,0,'ordinary backup must pass');
 const versioned = JSON.parse(JSON.stringify(context.phase20CreateBackup({devices:[],subnets:[],racks:[],vlans:[],ipAllocations:{}})));
