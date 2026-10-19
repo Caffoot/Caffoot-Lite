@@ -3183,18 +3183,37 @@ function hierarchyValidateTypes(subnets) {
         }
 
 
+        function phase120ModelAllowedTypes(manufacturer){
+            const key=String(manufacturer||'').trim().toLowerCase();
+            if(!key)return [];
+            const builtin=Object.entries(phase120HardwareSeed).filter(([type,makers])=>type!=='Server - Virtual'&&Object.keys(makers).some(m=>m.toLowerCase()===key)).map(([type])=>type);
+            const custom=phase120HardwareCatalogue().filter(x=>!x.model&&x.manufacturer.toLowerCase()===key&&x.type!=='Server - Virtual').map(x=>x.type);
+            return [...new Set([...builtin,...custom])].sort((a,b)=>a.localeCompare(b));
+        }
+        function phase120ModelUpdateTypes(){
+            const maker=document.getElementById('phase120-model-manufacturer'),field=document.getElementById('phase120-model-device-type');
+            if(!maker||!field)return;
+            const previous=field.value,allowed=phase120ModelAllowedTypes(maker.value);
+            const legacy=field.dataset.originalType||'',same=maker.value===field.dataset.originalMaker;
+            field.innerHTML='<option value="">'+(maker.value?'Select Device Type':'Select Manufacturer First')+'</option>'+allowed.map(t=>'<option value="'+escapeHtml(t)+'">'+escapeHtml(t)+'</option>').join('')+(same&&legacy&&!allowed.includes(legacy)?'<option value="'+escapeHtml(legacy)+'">'+escapeHtml(legacy)+' (Existing Association)</option>':'');
+            field.disabled=!maker.value;
+            field.value=[...field.options].some(o=>o.value===previous)?previous:(same&&legacy?legacy:'');
+            const note=document.getElementById('phase120-model-type-note');
+            if(note)note.textContent=!maker.value?'Select a manufacturer first.':allowed.length?'Only device types associated with '+maker.value+' are offered.':'No associations yet. Add one in Manufacturers first.';
+        }
+        document.addEventListener('change',e=>{if(e.target?.id==='phase120-model-manufacturer')phase120ModelUpdateTypes();});
         function phase120ModelManager(id='',remove=false){
             const item=phase120HardwareCatalogue().find(x=>x.id===id&&x.model);
             if(id&&!item)return;
             const makers=new Set([...Object.values(phase120HardwareSeed).flatMap(x=>Object.keys(x)),...phase120HardwareCatalogue().map(x=>x.manufacturer),...appState.devices.map(x=>x.manufacturer)].filter(Boolean));
-            const types=[...new Set([...(appState.deviceTypes||[]),...Object.keys(phase120HardwareSeed),...(item?[item.type]:[])])].filter(x=>x&&x!=='Server - Virtual').sort();
+            const types=item?phase120ModelAllowedTypes(item.manufacturer):[];
             const opts=(values,current)=>[...values].sort((a,b)=>a.localeCompare(b)).map(v=>'<option value="'+escapeHtml(v)+'"'+(v===current?' selected':'')+'>'+escapeHtml(v)+'</option>').join('');
             const used=item?appState.devices.filter(d=>d.model?.toLowerCase()===item.model.toLowerCase()&&d.manufacturer?.toLowerCase()===item.manufacturer.toLowerCase()&&d.type===item.type).length:0;
             openModal('<div class="p-5 sm:p-7 space-y-5"><div><h3 class="text-lg font-bold">'+(remove?'Remove Model Suggestion':item?'Edit Model Suggestion':'Add Model Suggestion')+'</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Custom suggestions only. Built-in models and saved devices are never changed.</p></div>'+
                 (remove?'<p class="text-sm">Remove <strong>'+escapeHtml(item.model)+'</strong> ('+escapeHtml(item.manufacturer)+' · '+escapeHtml(item.type)+')? '+used+' existing device(s) use this model and will remain unchanged.</p>':
-                '<form id="phase120-model-form" data-form-action="model" onsubmit="return false" class="space-y-3"><div><label class="block text-sm font-semibold mb-1" for="phase120-model-name">Model Name</label><input id="phase120-model-name" maxlength="120" value="'+escapeHtml(item?.model||'')+'" class="w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-800"></div><div><label class="block text-sm font-semibold mb-1" for="phase120-model-manufacturer">Manufacturer</label><select id="phase120-model-manufacturer" class="w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-800"><option value="">Select Manufacturer</option>'+opts(makers,item?.manufacturer||'')+'</select></div><div><label class="block text-sm font-semibold mb-1" for="phase120-model-device-type">Device Type</label><select id="phase120-model-device-type" class="w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-800"><option value="">Select Device Type</option>'+opts(types,item?.type||'')+'</select></div><p id="phase120-model-error" role="alert" class="hidden text-sm text-rose-700 dark:text-rose-300"></p></form>')+
+                '<form id="phase120-model-form" data-form-action="model" onsubmit="return false" class="space-y-3"><div><label class="block text-sm font-semibold mb-1" for="phase120-model-name">Model Name</label><input id="phase120-model-name" maxlength="120" value="'+escapeHtml(item?.model||'')+'" class="w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-800"></div><div><label class="block text-sm font-semibold mb-1" for="phase120-model-manufacturer">Manufacturer</label><select id="phase120-model-manufacturer" class="w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-800"><option value="">Select Manufacturer</option>'+opts(makers,item?.manufacturer||'')+'</select></div><div><label class="block text-sm font-semibold mb-1" for="phase120-model-device-type">Device Type</label><select id="phase120-model-device-type" class="w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-800"><option value="">Select Device Type</option>'+opts(types,item?.type||'')+'</select><p id="phase120-model-type-note" class="text-xs text-slate-600 dark:text-slate-300 mt-1"></p></div><p id="phase120-model-error" role="alert" class="hidden text-sm text-rose-700 dark:text-rose-300"></p></form>')+
                 '<div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-4 rounded-xl border border-slate-300 dark:border-slate-600 caffoot-modal-cancel">Cancel</button><button type="button" data-action="'+(remove?'phase120-model-confirm-remove':'phase120-model-save')+'" data-name="'+escapeHtml(id)+'" class="h-11 px-4 rounded-xl text-white '+(remove?'bg-rose-700':'bg-blue-800')+'">'+(remove?'Remove Model':'Save Model')+'</button></div></div>');
-            if(!remove)rememberModalForm();
+            if(!remove){const field=document.getElementById('phase120-model-device-type');field.dataset.originalType=item?.type||'';field.dataset.originalMaker=item?.manufacturer||'';phase120ModelUpdateTypes();rememberModalForm();}
         }
         function phase120ModelSave(id='',remove=false){
             const items=phase120HardwareCatalogue().map(x=>({...x}));
@@ -3208,7 +3227,9 @@ function hierarchyValidateTypes(subnets) {
                 const seeded=(phase120HardwareSeed[type]||{});
                 const builtin=Object.entries(seeded).some(([m,models])=>m.toLowerCase()===manufacturer.toLowerCase()&&models.some(v=>v.toLowerCase()===model.toLowerCase()));
                 const duplicate=items.some(x=>x.id!==id&&x.type===type&&x.manufacturer.toLowerCase()===manufacturer.toLowerCase()&&String(x.model||'').toLowerCase()===model.toLowerCase());
-                const error=!model?'Enter a model name.':!manufacturer?'Select a manufacturer.':!type?'Select a device type.':builtin?'This is already a built-in model suggestion.':duplicate?'This model suggestion already exists.':'';
+                const allowed=phase120ModelAllowedTypes(manufacturer);
+                const legacy=!!item&&item.manufacturer===manufacturer&&item.type===type;
+                const error=!model?'Enter a model name.':!manufacturer?'Select a manufacturer.':!type?'Select a device type.':!allowed.includes(type)&&!legacy?'This device type is not associated with this manufacturer. Update Manufacturers first.':builtin?'This is already a built-in model suggestion.':duplicate?'This model suggestion already exists.':'';
                 if(error){const el=document.getElementById('phase120-model-error');if(el){el.textContent=error;el.classList.remove('hidden');}return;}
             }
             if(remove)items.splice(items.findIndex(x=>x.id===id),1);
