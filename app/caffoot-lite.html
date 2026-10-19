@@ -5149,15 +5149,70 @@ function hierarchyValidateTypes(subnets) {
                 return `<div><label class="form-label" for="phase19b-${escapeHtml(key)}">${escapeHtml(label)}</label><input id="phase19b-${escapeHtml(key)}" data-phase19b-field="${escapeHtml(key)}" type="${phase19BNumeric.has(key)?'number':'text'}" ${phase19BNumeric.has(key)?'min="0" step="any"':''} maxlength="160" value="${escapeHtml(String(value))}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></div>`;
             }).join('')+'</div>';
         }
+        // Offline, device-type-aware platform suggestions. Names are not version claims.
+        const phase120PlatformCatalog = Object.freeze({
+            network: ['FortiOS','PAN-OS','pfSense','OPNsense','Sophos Firewall OS','Cisco ASA Software','Cisco Secure Firewall Threat Defense'],
+            router: ['Cisco IOS','Cisco IOS XE','MikroTik RouterOS','Junos OS','OpenWrt','UniFi OS','VyOS'],
+            switch: ['Cisco IOS','Cisco IOS XE','Cisco NX-OS','ArubaOS-Switch','Aruba AOS-CX','Junos OS','UniFi Switch Firmware','MikroTik RouterOS'],
+            nas: ['Synology DSM','QNAP QTS','QNAP QuTS hero','TrueNAS SCALE','TrueNAS CORE','Unraid'],
+            ap: ['UniFi AP Firmware','Aruba Instant','Cisco IOS','TP-Link Omada Firmware','OpenWrt'],
+            controller: ['UniFi Network','ArubaOS','Cisco Catalyst 9800 IOS XE','TP-Link Omada Controller'],
+            server: ['Windows Server','Ubuntu Server','Debian','Red Hat Enterprise Linux','Rocky Linux','Proxmox VE','VMware ESXi'],
+            computer: ['Windows','macOS','Ubuntu','Debian','Fedora','Linux Mint'],
+            ups: ['UPS Firmware','PDU Firmware'],
+            generic: ['Firmware','Embedded Software']
+        });
+        function phase120PlatformGroup(type) {
+            const normalized = String(type || '').toLowerCase().trim();
+            if (normalized === 'wireless lan controller') return 'controller';
+            if (normalized === 'layer 3 switch') return 'switch';
+            return phase19BTypeGroups[normalized] || 'generic';
+        }
+        function phase120PlatformOptions(type) {
+            return phase120PlatformCatalog[phase120PlatformGroup(type)] || phase120PlatformCatalog.generic;
+        }
+        function phase120RenderSoftwarePlatform(type, values = {}) {
+            const group = phase120PlatformGroup(type);
+            const isComputer = group === 'server' || group === 'computer';
+            const name = values.softwarePlatform ?? '';
+            const version = values.softwareVersion ?? '';
+            const choices = phase120PlatformOptions(type);
+            const options = [...new Set([...choices, ...(name && !choices.includes(name) ? [name] : [])])];
+            return `<div class="form-section-card space-y-4" id="phase120-software-platform">
+                <div class="form-section-heading"><i class="fa-solid fa-microchip" aria-hidden="true"></i>${isComputer ? 'Operating System' : 'Software & Firmware'}</div>
+                <div><label for="phase120-platform-name" class="form-label">${isComputer ? 'Operating System / Platform' : 'Software / Firmware Platform'} (optional)</label>
+                <input id="phase120-platform-name" type="text" list="phase120-platform-suggestions" maxlength="160" autocomplete="off" value="${escapeHtml(String(name))}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Choose a suggestion or enter your own">
+                <datalist id="phase120-platform-suggestions">${options.map(x => `<option value="${escapeHtml(x)}"></option>`).join('')}</datalist></div>
+                <div><label for="phase120-platform-version" class="form-label">${isComputer ? 'OS / Platform Version' : 'Software / Firmware Version'} (optional)</label>
+                <input id="phase120-platform-version" type="text" maxlength="160" value="${escapeHtml(String(version))}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Version shown in the device management interface"></div>
+                <p class="text-xs text-slate-600 dark:text-slate-300">Suggestions are available offline. Versions are entered manually; custom platform names are supported.</p>
+            </div>`;
+        }
+        function phase120CaptureSoftwarePlatform() {
+            const name = document.getElementById('phase120-platform-name');
+            const version = document.getElementById('phase120-platform-version');
+            if (name) phase19BFormValues.softwarePlatform = name.value;
+            if (version) phase19BFormValues.softwareVersion = version.value;
+        }
+        function phase120RefreshSoftwarePlatform() {
+            phase120CaptureSoftwarePlatform();
+            const panel = document.getElementById('phase120-software-platform');
+            if (!panel) return;
+            const type = document.getElementById('dev-type')?.value || '';
+            panel.outerHTML = phase120RenderSoftwarePlatform(type, phase19BFormValues);
+        }
         let phase19BFormValues = {};
         function phase19BReadFields() {
+            phase120CaptureSoftwarePlatform();
             document.querySelectorAll('[data-phase19b-field]').forEach(el=>{
                 phase19BFormValues[el.dataset.phase19bField]=el.type==='checkbox'?el.checked:el.value;
             });
             return {...phase19BFormValues};
         }
         function phase19BRefreshFields() {
+            phase120CaptureSoftwarePlatform();
             phase19BReadFields();
+            phase120RefreshSoftwarePlatform();
             const panel=document.getElementById('phase19b-fields');
             const type=document.getElementById('dev-type')?.value;
             if(panel) panel.innerHTML=phase19BRenderFields(type,phase19BFormValues);
@@ -5305,10 +5360,9 @@ function hierarchyValidateTypes(subnets) {
             if (mountHeading) mountHeading.textContent = 'Mounting & Rack Configuration';
             panels.get('notes').dataset.notesPanel = 'true';
             phase120InitializeNotesEditor(form);
-            const note = document.createElement('p');
-            note.className = 'phase120-device-empty';
-            note.textContent = 'Software and firmware options will be organised here in the next development step. Existing device-specific fields remain available under Hardware for now.';
-            panels.get('software').appendChild(note);
+            const platformContainer = document.createElement('div');
+            platformContainer.innerHTML = phase120RenderSoftwarePlatform(form.querySelector('#dev-type')?.value || '', phase19BFormValues);
+            panels.get('software').appendChild(platformContainer.firstElementChild);
             let active = form.dataset.initialDeviceTab || 'general';
             function activate(id, focusButton = false) {
                 if (!panels.has(id)) return;
