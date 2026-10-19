@@ -5695,7 +5695,7 @@ function hierarchyValidateTypes(subnets) {
         function phase120AvailableServerServices() {
             const saved = phase19BServerFunctions();
             const keys = new Set(saved.map(item => item.key));
-            return [...saved, ...phase120StarterServerServices.filter(item => !keys.has(item.key))];
+            return [...saved, ...phase120StarterServerServices.filter(item => !keys.has(item.key))].sort((a,b)=>String(a.label||'').localeCompare(String(b.label||''),undefined,{sensitivity:'base'}));
         }
         function phase19BServerFunctionFields() { return phase120AvailableServerServices().map(x=>x.key); }
         function phase19BManageFunctions() {
