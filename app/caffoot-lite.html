@@ -5829,6 +5829,48 @@ function hierarchyValidateTypes(subnets) {
                 <button type="button" onclick="closeModal()" class="rounded-xl bg-blue-800 px-5 py-2.5 font-semibold text-white">Close</button>
             </div>`);
         }
+        // Review detached legacy corrections before restore. Closing the dialog always cancels.
+        function phase16CReviewLegacyMountRepairs(repairs) {
+            return new Promise(resolve => {
+                const container = document.getElementById('modal-container');
+                const rows = repairs.map(change => `
+                    <li class="rounded-lg border border-slate-200 dark:border-slate-700 p-3 break-words">
+                        <strong class="text-slate-900 dark:text-white">${escapeHtml(String(change.name || '(unnamed device)'))}</strong>
+                        <span class="text-sm text-slate-600 dark:text-slate-300"> (${escapeHtml(String(change.type || 'Unknown'))})</span>
+                        <p class="text-sm text-slate-700 dark:text-slate-200 mt-1">Current: ${escapeHtml(String(change.mountType))} — ${escapeHtml(String(change.rack))}${change.startU != null ? ', U' + escapeHtml(String(change.startU)) : ''}</p>
+                        <p class="text-sm font-semibold text-blue-800 dark:text-blue-300 mt-1">Proposed: Desktop / Unknown location / No rack assignment</p>
+                    </li>`).join('');
+                openModal(`<section class="space-y-4" role="group" aria-label="Legacy Mounting Compatibility Review">
+                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">Legacy Mounting Compatibility Review</h2>
+                    <p class="text-sm text-slate-700 dark:text-slate-200">${repairs.length} device(s) have legacy rack assignments incompatible with their device types. Review each proposed correction below.</p>
+                    <ul class="space-y-2 max-h-[45vh] overflow-y-auto overscroll-contain" tabindex="0" aria-label="Proposed mounting corrections">${rows}</ul>
+                    <p class="text-sm text-slate-700 dark:text-slate-200">Only mounting and location fields will change. Device names, IP addresses and other inventory data are preserved. Your backup file will not be modified. Approval here does not restore the backup; a separate final confirmation follows.</p>
+                    <div class="flex flex-wrap gap-3 justify-end">
+                        <button type="button" data-legacy-review="cancel" class="rounded-xl border border-slate-400 px-4 py-2.5 font-semibold dark:text-white">Cancel Restore</button>
+                        <button type="button" data-legacy-review="approve" class="rounded-xl bg-blue-800 px-4 py-2.5 font-semibold text-white">Approve Corrections</button>
+                    </div>
+                </section>`);
+                let finished = false;
+                const observer = new MutationObserver(() => {
+                    if (container.classList.contains('hidden')) finish(false);
+                });
+                const finish = approved => {
+                    if (finished) return;
+                    finished = true;
+                    observer.disconnect();
+                    container.removeEventListener('click', onClick);
+                    if (!container.classList.contains('hidden')) closeModal(true);
+                    resolve(approved);
+                };
+                const onClick = event => {
+                    const button = event.target.closest('[data-legacy-review]');
+                    if (!button) return;
+                    finish(button.dataset.legacyReview === 'approve');
+                };
+                container.addEventListener('click', onClick);
+                observer.observe(container, {attributes:true,attributeFilter:['class']});
+            });
+        }
         function importData(event) {
             const input = event.target;
             const file = input.files?.[0];
@@ -5839,18 +5881,12 @@ function hierarchyValidateTypes(subnets) {
                 return;
             }
             const reader = new FileReader();
-            reader.onload = () => {
+            reader.onload = async () => {
                 try {
                     const raw = phase16CReadJson(reader.result);
                     const candidate = phase16CCheckBackup(raw);
                     const repairs = candidate._legacyMountRepairs || [];
-                    if (repairs.length) {
-                        const preview = repairs.slice(0, 20).map(change =>
-                            `• ${change.name} (${change.type}): ${change.mountType} in ${change.rack}${change.startU ? ', U' + change.startU : ''} → Desktop / Unknown location / no rack assignment`
-                        ).join('\n');
-                        const extra = repairs.length > 20 ? `\n...and ${repairs.length - 20} more devices.` : '';
-                        if (!confirm(`Legacy mounting compatibility review\n\n${repairs.length} device(s) have rack assignments incompatible with their device type.\n\n${preview}${extra}\n\nOnly mounting and location details will be corrected. Device names, IPs and other inventory information will be preserved. The original backup file will not be modified.\n\nApply these corrections and proceed to the normal restore confirmation?`)) return;
-                    }
+                    if (repairs.length && !(await phase16CReviewLegacyMountRepairs(repairs))) return;
                     const summary = `${candidate.devices.length} devices, ${candidate.racks.length} racks, ${candidate.subnets.length} subnets, ${Object.keys(candidate.ipAllocations).length} IPAM records`;
                     const currentSummary = `${appState.devices.length} devices, ${appState.racks.length} racks, ${appState.subnets.length} subnets`;
                     if (!confirm(`Backup validation passed.\n\nFile: ${file.name}\nBackup: ${summary}\nCurrent inventory: ${currentSummary}\n\nRestore will REPLACE your current inventory. A verified safety snapshot will be created first.\n\nContinue?`)) return;
