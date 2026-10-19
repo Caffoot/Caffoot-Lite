@@ -72,9 +72,18 @@ Managed multi-user hosting, authentication and centrally administered deployment
 
 ### v1.2 — Device, IPAM and rack enhancements
 
-**Status: Planning; scope may be split into smaller milestones**
+**Status: Active development on `feature/v1.2.0-device-form-tabs`; expanded device experience approved for v1.2.0 on 19 October 2026.** Remaining IPAM/rack/network-environment features are still proposed and may be split into later milestones. No merge or publication without owner acceptance.
 
-- Wider, responsive, tabbed Add Device and Edit Device forms with shared behaviour.
+**v1.2.0 device experience — agreed scope:**
+- Redesign Add Device and Edit Device as **wider, responsive, consistent five-tab modals** (General, Hardware, Software & Firmware, Networking, Notes). Use readable field widths, compact two-column layouts where appropriate, and single-column layouts on small screens; preserve keyboard access, validation, unsaved drafts, device-type-specific fields and existing records.
+- Refine mounting options by device type, including **Tower / Floor Standing** for physical servers, while accepting historical **Floor Standing** values in existing data and backups; only Rack Mounted devices require rack configuration.
+- Move the current Devices workspace controls out of the page header into an **IPAM-style expandable left-hand Devices submenu**, with Overview as the default, Device Inventory, Device Types, Locations and appropriate management destinations. Avoid duplicated controls, empty pages and confusing navigation.
+- Create a detailed **Devices Overview / Device Intelligence Dashboard** using the user's local inventory: total devices, relevant physical/virtual counts, device-type distribution, operating-system family/version distribution, location and mounting distribution, common software and server services, and inventory completeness (including missing IP/OS/location data). Only display metrics supported by stored data; show Unknown/Not Recorded and useful empty states instead of inventing information.
+- Use responsive summary cards and accessible, readable charts consistent with IPAM's design language. Where practical, clicking a chart category opens Device Inventory with the corresponding filter; retain searchable, sortable, compact device lists and clear filtering.
+- Keep all analytics **offline and local**: no external telemetry, live status, reachability or health claims. Do not label a device online/offline or show activity timelines unless reliable stored evidence supports them.
+- Validate the new navigation, visualisations, Add/Edit workflows, import/export compatibility, rack/IPAM relationships, dark/light themes, narrow screens and offline standalone HTML in automated and owner browser acceptance before merging.
+
+**Additional v1.2 roadmap candidates (not automatically approved for v1.2.0):**
 - Preserve dynamic fields for different device types.
 - Add contextual Operating System family, version and optional edition selection for applicable device types, with Unknown/None/Custom choices and safe legacy compatibility.
 - Refresh Device Inventory screens using the same responsive visual language as v1.1 IPAM, with clear summaries, useful filtering and compact, scalable device lists.
