@@ -3362,7 +3362,7 @@ function hierarchyValidateTypes(subnets) {
         function phase120ServerServiceEditor(key=''){
             const item=phase19BServerFunctions().find(x=>x.key===key&&!x.archived);
             if(key&&!item)return;
-            openModal('<div class="p-5 sm:p-7 space-y-5"><h3 class="text-lg font-bold text-slate-900 dark:text-white">'+(item?'Edit Server Service':'Add Custom Server Service')+'</h3><label for="phase120-service-name" class="block text-sm font-semibold">Service Name</label><input id="phase120-service-name" maxlength="80" class="w-full h-11 px-3 rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-800" value="'+escapeHtml(item?.label||'')+'"><div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-4 rounded-xl border border-slate-300 dark:border-slate-600 caffoot-modal-cancel">Cancel</button><button type="button" data-action="server-catalog-save" data-name="'+escapeHtml(key)+'" class="h-11 px-4 rounded-xl bg-blue-800 hover:bg-blue-700 text-white font-semibold">Save Service</button></div></div>');
+            openModal('<form data-form-action="server-service" onsubmit="return false" class="p-5 sm:p-7 space-y-5"><h3 class="text-lg font-bold text-slate-900 dark:text-white">'+(item?'Edit Server Service':'Add Custom Server Service')+'</h3><label for="phase120-service-name" class="block text-sm font-semibold">Service Name</label><input id="phase120-service-name" maxlength="80" class="w-full h-11 px-3 rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-800" value="'+escapeHtml(item?.label||'')+'"><div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-4 rounded-xl border border-slate-300 dark:border-slate-600 caffoot-modal-cancel">Cancel</button><button type="button" data-action="server-catalog-save" data-name="'+escapeHtml(key)+'" class="h-11 px-4 rounded-xl bg-blue-800 hover:bg-blue-700 text-white font-semibold">Save Service</button></div></form>');
         }
         function phase120SaveServerService(key){
             const label=String(document.getElementById('phase120-service-name')?.value||'').trim();
@@ -5020,7 +5020,7 @@ function hierarchyValidateTypes(subnets) {
                 .map(field => [field.id || field.name || '', field.type, field.type === 'checkbox' || field.type === 'radio' ? field.checked : field.value]));
         }
         function rememberModalForm() {
-            const form = document.querySelector('#modal-content form[data-device-form="true"], #modal-content form[data-form-action="subnet"], #modal-content form[data-form-action="rack"], #modal-content form[data-form-action="ip"], #modal-content form[data-form-action="assign"], #modal-content form[data-form-action="bulk-ip"], #modal-content form[data-form-action="manufacturer"], #modal-content form[data-form-action="model"], #modal-content form[data-form-action="software"]');
+            const form = document.querySelector('#modal-content form[data-device-form="true"], #modal-content form[data-form-action="subnet"], #modal-content form[data-form-action="rack"], #modal-content form[data-form-action="ip"], #modal-content form[data-form-action="assign"], #modal-content form[data-form-action="bulk-ip"], #modal-content form[data-form-action="manufacturer"], #modal-content form[data-form-action="model"], #modal-content form[data-form-action="software"], #modal-content form[data-form-action="server-service"]');
             if (form) modalFormSnapshots.set(form, modalFormSnapshot(form));
         }
         let phase120DiscardCallback=null;
@@ -5072,7 +5072,7 @@ function hierarchyValidateTypes(subnets) {
                 content.querySelector('form[data-device-form="true"]')?.querySelector('input,select,textarea')?.focus();
                 return;
             }
-            const editableForm = document.querySelector('#modal-content form[data-device-form="true"], #modal-content form[data-form-action="subnet"], #modal-content form[data-form-action="rack"], #modal-content form[data-form-action="ip"], #modal-content form[data-form-action="assign"], #modal-content form[data-form-action="bulk-ip"], #modal-content form[data-form-action="manufacturer"], #modal-content form[data-form-action="model"], #modal-content form[data-form-action="software"]');
+            const editableForm = document.querySelector('#modal-content form[data-device-form="true"], #modal-content form[data-form-action="subnet"], #modal-content form[data-form-action="rack"], #modal-content form[data-form-action="ip"], #modal-content form[data-form-action="assign"], #modal-content form[data-form-action="bulk-ip"], #modal-content form[data-form-action="manufacturer"], #modal-content form[data-form-action="model"], #modal-content form[data-form-action="software"], #modal-content form[data-form-action="server-service"]');
             if (!force && editableForm && modalFormSnapshots.has(editableForm) &&
                 modalFormSnapshot(editableForm) !== modalFormSnapshots.get(editableForm) &&
                 !phase120ConfirmDiscard(() => closeModal(true))) return;
