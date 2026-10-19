@@ -68,7 +68,7 @@ The delivered v1.1.1 scope is complete. Remaining ideas stay subject to review a
 - Consider a SECURITY.md with a private vulnerability-reporting route, supported versions and responsible disclosure guidance.
 - Preserve existing data, JSON backup compatibility and user-approved release gates.
 
-Security controls for a future managed Caffoot Pro deployment require separate design and validation; Pro is not currently a released or security-certified alternative.
+Managed multi-user hosting, authentication and centrally administered deployments are outside the scope of this standalone offline-first application. Any such architecture would require separate design, implementation and security validation.
 
 ### v1.2 — Device, IPAM and rack enhancements
 
