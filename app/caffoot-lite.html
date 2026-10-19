@@ -5519,7 +5519,7 @@ function hierarchyValidateTypes(subnets) {
             const historical = Object.keys(details).filter(key => !keys.includes(key) && details[key] !== '' && details[key] !== null && details[key] !== undefined);
             const allKeys = [...keys, ...historical];
             const flags = new Set([...phase19BFlags, ...phase19BServerFunctionFields(), ...phase120SoftwareOptions().map(x=>x.key)]);
-            const rows = allKeys.filter(key => !phase120SoftwareOptions().some(x=>x.key===key) && details[key] !== '' && details[key] !== null && details[key] !== undefined)
+            const rows = allKeys.filter(key => ![...phase120SoftwareOptions(),...phase19BSoftware()].some(x=>x.key===key) && details[key] !== '' && details[key] !== null && details[key] !== undefined)
                 .map(key => {
                     const value = details[key];
                     const display = typeof value === 'boolean' ? (value ? 'Yes' : 'No') : value;
