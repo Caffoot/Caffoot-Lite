@@ -20,7 +20,7 @@ try {
     '@source inline("{hover:,dark:,dark:hover:}{bg,text,border}-{red,green,yellow,blue,gray,slate,indigo,amber,emerald}-{50,100,200,300,400,500,600,700,800,900}");',
     '@source inline("{sm:,md:,lg:}{hidden,block,flex,grid,inline-flex}");',
   ].join('\n') + '\n');
-  const cli = require.resolve('@tailwindcss/cli/package.json').replace(/package\.json$/, 'dist/index.mjs');
+  const cli = path.join(root, 'node_modules', '@tailwindcss', 'cli', 'dist', 'index.mjs');
   const run = spawnSync(process.execPath, [cli, '-i', cssInput, '-o', cssOutput, '--minify'], { cwd: root, encoding: 'utf8' });
   if (run.status !== 0) throw Error('Tailwind compilation failed: ' + (run.stderr || run.stdout));
   let html = fs.readFileSync(source, 'utf8');
