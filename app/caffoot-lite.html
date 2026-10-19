@@ -5543,7 +5543,7 @@ function hierarchyValidateTypes(subnets) {
             const status = d.status || 'Active';
             const detailRows = phase19CDetailRows(d, field);
             const softwareEntries=[...phase120SoftwareOptions(),...phase19BSoftware().filter(x=>x.archived)].filter((x,i,all)=>all.findIndex(y=>y.key===x.key)===i).filter(x=>d.typeDetails?.[x.key]===true||d[x.key]===true);
-            const installedSoftware=softwareEntries.sort((a,b)=>String(a.label||'').localeCompare(String(b.label||''),undefined,{sensitivity:'base'})).map(x=>field(x.label,x.archived?'Installed · Archived':'Installed')).join('');
+            const installedSoftware=softwareEntries.sort((a,b)=>String(a.label||'').localeCompare(String(b.label||''),undefined,{sensitivity:'base'})).map(x=>x.archived?`<div class="phase14c-field"><dt>${safe(x.label)}</dt><dd><span>Installed</span> <span class="inline-flex items-center gap-1 rounded-full border border-red-300 bg-red-50 px-2 py-0.5 text-xs font-bold text-red-700 dark:border-red-700 dark:bg-red-950/50 dark:text-red-300" title="Installed on this device; no longer available in the software catalogue"><i class="fa-solid fa-box-archive" aria-hidden="true"></i>Archived</span></dd></div>`:field(x.label,'Installed')).join('');
             const hardware = field('Manufacturer', d.manufacturer) + field('Model', d.model) + field('Serial number', d.serialNumber);
             const rackRows = mounted ? field('Rack', rack.name) + field('Face', d.face || 'front') + field('U position', uText) + field('Height', (Number(d.rackUHeight) || (uEnd-uStart+1) || 1) + 'U') : '';
             openModal(`<div class="phase14c-detail space-y-5 p-5 sm:p-7">
