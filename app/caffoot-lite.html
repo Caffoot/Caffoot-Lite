@@ -348,7 +348,11 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .phase13b-tab.phase13b-selected{background:#1e40af;color:#fff;border-color:#1e40af}
 .dark .phase13b-tab{background:#334155;color:#f1f5f9;border-color:#64748b}
 .dark .phase13b-tab.phase13b-selected{background:#1d4ed8;border-color:#60a5fa;color:#fff}
-#modal-content.phase16c-ap-review{max-width:44rem}
+#modal-content.phase16c-ap-review,#modal-content.phase16c-legacy-review{max-width:44rem}
+#modal-content.phase16c-legacy-review button[data-legacy-review="cancel"]{background:#fff1f2;color:#9f1239;border:1px solid #fda4af}
+#modal-content.phase16c-legacy-review button[data-legacy-review="cancel"]:hover{background:#ffe4e6}
+.dark #modal-content.phase16c-legacy-review button[data-legacy-review="cancel"]{background:#4c1d2a;color:#ffe4e6;border-color:#be123c}
+.dark #modal-content.phase16c-legacy-review button[data-legacy-review="cancel"]:hover{background:#641d32}
 #modal-content.phase16c-ap-review button[data-ap-action="cancel"]{background:#fff1f2;color:#9f1239;border:1px solid #fda4af}
 #modal-content.phase16c-ap-review button[data-ap-action="cancel"]:hover{background:#ffe4e6}
 .dark #modal-content.phase16c-ap-review button[data-ap-action="cancel"]{background:#4c1d2a;color:#ffe4e6;border-color:#be123c}
@@ -4383,7 +4387,7 @@ function hierarchyValidateTypes(subnets) {
             const container = document.getElementById('modal-container');
             const content = document.getElementById('modal-content');
             if (container.classList.contains('hidden')) modalReturnFocus = document.activeElement;
-            content.classList.remove('phase18b-balanced-modal', 'phase16c-ap-review');
+            content.classList.remove('phase18b-balanced-modal', 'phase16c-ap-review', 'phase16c-legacy-review');
             content.innerHTML = htmlContent;
             container.classList.remove('hidden');
             container.classList.add('flex');
@@ -5839,22 +5843,34 @@ function hierarchyValidateTypes(subnets) {
             return new Promise(resolve => {
                 const container = document.getElementById('modal-container');
                 const rows = repairs.map(change => `
-                    <li class="rounded-lg border border-slate-200 dark:border-slate-700 p-3 break-words">
-                        <strong class="text-slate-900 dark:text-white">${escapeHtml(String(change.name || '(unnamed device)'))}</strong>
-                        <span class="text-sm text-slate-600 dark:text-slate-300"> (${escapeHtml(String(change.type || 'Unknown'))})</span>
-                        <p class="text-sm text-slate-700 dark:text-slate-200 mt-1">Current: ${escapeHtml(String(change.mountType))} — ${escapeHtml(String(change.rack))}${change.startU != null ? ', U' + escapeHtml(String(change.startU)) : ''}</p>
-                        <p class="text-sm font-semibold text-blue-800 dark:text-blue-300 mt-1">Proposed: Desktop / Unknown location / No rack assignment</p>
+                    <li class="rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/40 p-4 space-y-3 break-words">
+                        <div>
+                            <p class="font-semibold text-slate-900 dark:text-white">${escapeHtml(String(change.name || '(unnamed device)'))}</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-300">${escapeHtml(String(change.type || 'Unknown'))}</p>
+                        </div>
+                        <div class="text-sm text-slate-600 dark:text-slate-300">
+                            <span class="font-semibold">Current:</span> ${escapeHtml(String(change.mountType))} — ${escapeHtml(String(change.rack))}${change.startU != null ? ', U' + escapeHtml(String(change.startU)) : ''}
+                        </div>
+                        <div class="rounded-lg border border-blue-200 bg-blue-50 dark:border-blue-700 dark:bg-blue-950/40 p-3">
+                            <p class="text-xs font-bold uppercase tracking-wide text-blue-900 dark:text-blue-200">Proposed Correction</p>
+                            <p class="mt-1 text-sm font-semibold text-blue-900 dark:text-blue-100">Desktop · Unknown Location · No Rack Assignment</p>
+                        </div>
                     </li>`).join('');
-                openModal(`<section class="space-y-4" role="group" aria-label="Legacy Mounting Compatibility Review">
-                    <h2 class="text-xl font-bold text-slate-900 dark:text-white">Legacy Mounting Compatibility Review</h2>
-                    <p class="text-sm text-slate-700 dark:text-slate-200">${repairs.length} device(s) have legacy rack assignments incompatible with their device types. Review each proposed correction below.</p>
-                    <ul class="space-y-2 max-h-[45vh] overflow-y-auto overscroll-contain" tabindex="0" aria-label="Proposed mounting corrections">${rows}</ul>
-                    <p class="text-sm text-slate-700 dark:text-slate-200">Only mounting and location fields will change. Device names, IP addresses and other inventory data are preserved. Your backup file will not be modified. Approval here does not restore the backup; a separate final confirmation follows.</p>
-                    <div class="flex flex-wrap gap-3 justify-end">
-                        <button type="button" data-legacy-review="cancel" class="rounded-xl border border-slate-400 px-4 py-2.5 font-semibold dark:text-white">Cancel Restore</button>
-                        <button type="button" data-legacy-review="approve" class="rounded-xl bg-blue-800 px-4 py-2.5 font-semibold text-white">Approve Corrections</button>
-                    </div>
+                openModal(`<section class="p-5 sm:p-6 flex flex-col gap-4 max-h-[85vh]" role="group" aria-label="Legacy Mounting Compatibility Review">
+                    <header class="flex-shrink-0 border-b border-slate-200 dark:border-slate-600 pb-4">
+                        <h2 class="text-lg font-bold text-slate-900 dark:text-white">Legacy Mounting Compatibility Review</h2>
+                        <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">${repairs.length} device${repairs.length === 1 ? '' : 's'} require mounting corrections</p>
+                    </header>
+                    <p class="flex-shrink-0 text-sm text-slate-700 dark:text-slate-200">These devices have legacy rack assignments incompatible with their device types. Review the proposed corrections before proceeding.</p>
+                    <p class="flex-shrink-0 text-xs font-semibold text-slate-600 dark:text-slate-300">Affected Devices (${repairs.length}) — scroll to review all</p>
+                    <ul class="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain pr-2 border-y border-slate-200 dark:border-slate-600 py-2" tabindex="0" aria-label="Proposed mounting corrections">${rows}</ul>
+                    <p class="flex-shrink-0 text-xs text-slate-600 dark:text-slate-300">Only mounting and location fields will change. Names, IP addresses and other inventory data are preserved. Your backup file stays unchanged. A final restore confirmation follows.</p>
+                    <footer class="flex-shrink-0 flex flex-wrap items-center justify-end gap-3 border-t border-slate-200 dark:border-slate-600 pt-4">
+                        <button type="button" data-legacy-review="cancel" class="phase13b-secondary">Cancel Restore</button>
+                        <button type="button" data-legacy-review="approve" class="phase13b-primary">Approve Corrections</button>
+                    </footer>
                 </section>`);
+                document.getElementById('modal-content').classList.add('phase16c-legacy-review');
                 let finished = false;
                 const observer = new MutationObserver(() => {
                     if (container.classList.contains('hidden')) finish(false);
@@ -5863,6 +5879,7 @@ function hierarchyValidateTypes(subnets) {
                     if (finished) return;
                     finished = true;
                     observer.disconnect();
+                    document.getElementById('modal-content').classList.remove('phase16c-legacy-review');
                     container.removeEventListener('click', onClick);
                     if (!container.classList.contains('hidden')) closeModal(true);
                     resolve(approved);
