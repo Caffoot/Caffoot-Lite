@@ -10,13 +10,13 @@
 - **Safer release packaging:** The packager requires the source application version to match npm package metadata and verifies the ZIP member allowlist, embedded notices, dependency licence copies and extracted file hashes.
 - **Documentation:** Security reporting and browser-local inventory storage limitations are documented. Access point mounting terminology uses Tabletop / Shelf Mounted, Ceiling Mounted, Wall Mounted and Pole Mounted; older backup mounting values remain subject to compatibility checks.
 
-## Tailwind CSS v4 dependency upgrade (experimental validation)
+## Tailwind CSS v4 dependency upgrade (integrated and tested)
 
-- Upgraded the experimental offline build from Tailwind CSS v3.4.17 to **Tailwind CSS v4.3.3** with **@tailwindcss/cli v4.3.0** and **@parcel/watcher v2.6.0**.
+- Upgraded the offline build from Tailwind CSS v3.4.17 to **Tailwind CSS v4.3.3** with **@tailwindcss/cli v4.3.0** and **@parcel/watcher v2.6.0**.
 - The owner ran a clean `npm ci` installation and `npm audit --audit-level=moderate`, reporting **zero vulnerabilities** in the installed dependency tree at test time (down from seven reported on the v3 baseline).
-- The owner ran the complete **21-check** release pipeline successfully after the clean installation, including standalone HTML and ZIP packaging checks.
+- The owner ran the earlier **21-step** experimental pipeline successfully, then tested a clean checkout of the combined integration branch with **all 27 release pipeline steps passing**, including both new XSS regression checks and standalone HTML/ZIP packaging.
 - The owner manually verified test-data import, screens, light/dark themes, wireless access point and desktop configuration, modals, and Escape-key behaviour without observing regressions.
-- The build-time dependency audit does not establish that the application is free of all vulnerabilities. Final integration and security review remain outstanding.
+- Tailwind v4 and the new XSS regression tests were integrated into the v1.1.2 security-hardening branch through PR #43. The build-time dependency audit does not establish that the application is free of all vulnerabilities; broader security review remains outstanding.
 
 ## Upgrade and data safety
 
@@ -39,6 +39,7 @@ These improvements are defensive safeguards and automated regression tests, **no
 - [ ] Review documentation and built-in Help & Guides for v1.1.2 consistency.
 - [x] Owner ran the full v1.1.2 release pipeline successfully; the uploaded candidate ZIP passed initial integrity, manifest and sensitive-pattern checks.
 - [x] Owner confirmed the v1.1.2 About screen and offline browser navigation.
-- [x] Experimental Tailwind v4 build passed clean-install release packaging and integrity checks. 
-- [ ] Re-run packaging after integration or final documentation changes and verify the resulting release artifacts.
+- [x] Integrated Tailwind v4 build passed clean-install release packaging and integrity checks; all 27 release steps and owner browser smoke tests passed.
+- [x] Clean checkout of the combined integration branch passed the complete release pipeline and ZIP integrity checks before documentation-only updates.
+- [ ] Re-run final release packaging and inspect artifacts after the documentation updates.
 - [ ] Obtain explicit owner approval before merging, tagging or publishing.
