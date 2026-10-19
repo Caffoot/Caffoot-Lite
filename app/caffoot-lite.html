@@ -5553,7 +5553,7 @@ function hierarchyValidateTypes(subnets) {
             const status = d.status || 'Active';
             const detailRows = phase19CDetailRows(d, field);
             const softwareEntries=[...phase120SoftwareOptions(),...phase19BSoftware().filter(x=>x.archived)].filter((x,i,all)=>all.findIndex(y=>y.key===x.key)===i).filter(x=>d.typeDetails?.[x.key]===true||d[x.key]===true);
-            const installedSoftware=softwareEntries.sort((a,b)=>String(a.label||'').localeCompare(String(b.label||''),undefined,{sensitivity:'base'})).map(x=>x.archived?`<div class="phase14c-field"><dt>${safe(x.label)}</dt><dd><span>Installed</span> <span class="inline-flex items-center gap-1 rounded-full border border-red-300 bg-red-50 px-2 py-0.5 text-xs font-bold text-red-700 dark:border-red-700 dark:bg-red-950/50 dark:text-red-300" title="Installed on this device; no longer available in the software catalogue"><i class="fa-solid fa-box-archive" aria-hidden="true"></i>Archived</span></dd></div>`:field(x.label,'Installed')).join('');
+            const installedSoftware=softwareEntries.sort((a,b)=>String(a.label||'').localeCompare(String(b.label||''),undefined,{sensitivity:'base'})).map(x=>x.archived?`<div class="phase14c-field"><dt>${safe(x.label)}</dt><dd><span>Installed</span> <span class="inline-flex items-center gap-1 rounded-full border border-red-300 bg-red-50 px-2 py-0.5 text-xs font-bold text-red-700 dark:border-red-700 dark:bg-red-950/50 dark:text-red-300" title="Installed on this device; no longer available in the software catalogue"><i class="fa-solid fa-box-archive" aria-hidden="true"></i>Archived</span><button type="button" data-action="archived-software-remove" data-id="${safe(d.id)}" data-name="${safe(x.key)}" class="mt-2 block rounded-lg border border-red-300 px-2 py-1 text-xs font-semibold text-red-700 hover:bg-red-50 dark:border-red-700 dark:text-red-300 dark:hover:bg-red-950/40">Mark as Uninstalled</button></dd></div>`:field(x.label,'Installed')).join('');
             const hardware = field('Manufacturer', d.manufacturer) + field('Model', d.model) + field('Serial number', d.serialNumber);
             const rackRows = mounted ? field('Rack', rack.name) + field('Face', d.face || 'front') + field('U position', uText) + field('Height', (Number(d.rackUHeight) || (uEnd-uStart+1) || 1) + 'U') : '';
             openModal(`<div class="phase14c-detail space-y-5 p-5 sm:p-7">
@@ -5592,6 +5592,31 @@ function hierarchyValidateTypes(subnets) {
                     <button type="button" data-action="close-modal" class="phase19d1-close"><i class="fa-solid fa-check" aria-hidden="true"></i>Close</button>
                 </footer>
             </div>`);
+        }
+        function phase120ConfirmArchivedUninstall(deviceId,key){
+            const device=appState.devices.find(d=>String(d.id)===String(deviceId));
+            const software=phase19BSoftware().find(x=>x.key===key&&x.archived);
+            if(!device||!software||(device.typeDetails?.[key]!==true&&device[key]!==true))return showToast('Archived installation not found.','error');
+            openModal('<div class="p-5 sm:p-7 space-y-5"><h3 class="text-lg font-bold text-slate-900 dark:text-white">Mark Software as Uninstalled?</h3><p class="text-sm text-slate-700 dark:text-slate-200">Mark <strong>'+escapeHtml(software.label)+'</strong> as uninstalled on <strong>'+escapeHtml(device.name)+'</strong>? This only changes the Caffoot Lite inventory record. It does not uninstall software from the physical device.</p><div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-4 rounded-xl border border-slate-300 dark:border-slate-600 caffoot-modal-cancel">Cancel</button><button type="button" data-action="archived-software-confirm-uninstall" data-id="'+escapeHtml(String(device.id))+'" data-name="'+escapeHtml(key)+'" class="h-11 px-4 rounded-xl bg-rose-700 hover:bg-rose-800 text-white font-semibold">Mark as Uninstalled</button></div></div>');
+        }
+        function phase120RecordArchivedUninstall(deviceId,key){
+            const device=appState.devices.find(d=>String(d.id)===String(deviceId));
+            const software=phase19BSoftware().find(x=>x.key===key&&x.archived);
+            if(!device||!software||(device.typeDetails?.[key]!==true&&device[key]!==true))return showToast('Archived installation not found.','error');
+            const previousDetails=device.typeDetails;
+            const previousLegacy=device[key];
+            device.typeDetails={...(device.typeDetails||{}),[key]:false};
+            if(Object.prototype.hasOwnProperty.call(device,key))device[key]=false;
+            if(!saveState()){
+                device.typeDetails=previousDetails;
+                if(Object.prototype.hasOwnProperty.call(device,key))device[key]=previousLegacy;
+                return showToast('Could not update the installation record.','error');
+            }
+            closeModal(true);
+            renderContent();
+            phase14CViewDevice(deviceId);
+            phase14CSelectTab('software');
+            showToast('Software marked as uninstalled in inventory.');
         }
         function phase14CSelectTab(key){
             const root=document.querySelector('.phase14c-detail');
@@ -7711,6 +7736,8 @@ function hierarchyValidateTypes(subnets) {
                 case 'edit-device': openDeviceModal(id); break;
                 case 'view-device': phase14CViewDevice(id); break;
                 case 'phase14c-tab': phase14CSelectTab(name); break;
+                case 'archived-software-remove': phase120ConfirmArchivedUninstall(id,name); break;
+                case 'archived-software-confirm-uninstall': phase120RecordArchivedUninstall(id,name); break;
                 case 'phase14c-edit': closeModal(); openDeviceModal(id); break;
                 case 'phase14c-duplicate': closeModal(); duplicateDevice(id); break;
                 case 'phase14c-delete': closeModal(); deleteDevice(id); break;
