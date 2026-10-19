@@ -10,7 +10,7 @@ assert(start >= 0 && end > start, 'Restore handler must be available');
 const helperStart = html.indexOf('function phase16CShowImportError(');
 assert(helperStart >= 0 && helperStart < start, 'Persistent import error helper must exist');
 const code = html.slice(helperStart, end);
-function scenario(mode) {
+async function scenario(mode) {
   const original = {devices:[{id:'original'}],racks:[],subnets:[],ipAllocations:{}};
   const replacement = {devices:[{id:'replacement'}],racks:[],subnets:[],ipAllocations:{}};
   const key = 'caffoot_state', safety = 'safety_test';
@@ -40,6 +40,10 @@ function scenario(mode) {
     selectedSubnetId:'',selectedRackId:'',
     FileReader:FakeReader,
     phase16CReadJson:JSON.parse,
+    phase16CRejectUnsafeKeys:()=>{},
+    phase11ValidateBackupShape:()=>{},
+    phase20ValidateBackupVersion:()=>{},
+    phase16CAPMountConflicts:()=>[],
     phase16CCheckBackup:v => {
       if(!v || !Array.isArray(v.devices)) throw Error('Invalid inventory');
       return v;
@@ -59,22 +63,27 @@ function scenario(mode) {
   vm.runInContext(code,ctx);
   const input={files:[{name:'backup.json',size:100,contents:JSON.stringify(replacement)}],value:'selected'};
   ctx.importData({target:input});
+  await new Promise(resolve => setImmediate(resolve));
   return {ctx,store,messages,input,original,replacement,key,safety};
 }
+async function main() {
 for(const mode of ['snapshot-fails','save-fails','rollback-fails']){
-  const v=scenario(mode);
+  const v=await scenario(mode);
   assert.equal(v.ctx.appState.devices[0].id,'original',mode+' must retain original in memory');
   assert.equal(JSON.parse(v.store.get(v.key)).devices[0].id,'original',mode+' must retain original in storage');
   assert(v.messages.some(m=>m.t==='persistent-error'),mode+' must report failure in a persistent dialog');
   assert.equal(v.input.value,'',mode+' must clear file input');
 }
-const blocked=scenario('rollback-fails');
+const blocked=await scenario('rollback-fails');
 assert(blocked.ctx.phase17AStorageRecovery, 'Failed rollback must activate recovery mode');
 assert.equal(blocked.ctx.phase17AStorageRecovery.raw,JSON.stringify(blocked.original), 'Recovery mode must retain original snapshot');
 assert.equal(blocked.ctx.bannerShown,true, 'Recovery banner must be displayed');
 assert.equal(blocked.store.get(blocked.safety),JSON.stringify(blocked.original), 'Safety snapshot must survive failed rollback');
-const ok=scenario('success');
+const ok=await scenario('success');
 assert.equal(ok.ctx.appState.devices[0].id,'replacement','Successful restore must activate backup');
 assert.equal(JSON.parse(ok.store.get(ok.key)).devices[0].id,'replacement','Successful restore must persist backup');
 assert.equal(JSON.parse(ok.store.get(ok.safety)).devices[0].id,'original','Successful restore must preserve original safety snapshot');
 console.log('PASS: executable restore success, failed safety snapshot and failed storage-write and failed rollback tests.');
+
+}
+main().catch(error => { console.error(error); process.exitCode = 1; });
