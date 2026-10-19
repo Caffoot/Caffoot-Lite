@@ -5104,7 +5104,7 @@ function hierarchyValidateTypes(subnets) {
         function phase19BIsAccessPoint(type){return phase19BTypeGroups[String(type||'').toLowerCase().trim()]==='ap';}
         function phase19BAllowedMounts(type){
             if (['desktop','laptop','tablet'].includes(String(type || '').trim().toLowerCase())) return ['Desktop'];
-            return phase19BIsAccessPoint(type)?['Desktop','Ceiling Mounted','Wall Mounted','Pole Mounted']:['Desktop','Rack Mounted'];
+            return phase19BIsAccessPoint(type)?['Tabletop / Shelf Mounted','Ceiling Mounted','Wall Mounted','Pole Mounted','Desktop']:['Desktop','Rack Mounted'];
         }
         function phase19BMountOptions(type, selected){
             const opts=phase19BAllowedMounts(type);
@@ -5116,8 +5116,8 @@ function hierarchyValidateTypes(subnets) {
             if(!mount)return;
             const previous=mount.value;
             const options=phase19BAllowedMounts(type);
-            mount.innerHTML='<option value="" disabled>Select mounting type...</option>'+phase19BMountOptions(type,options.includes(previous)?previous:'Desktop');
-            mount.value=options.includes(previous)?previous:'Desktop';
+            mount.innerHTML='<option value="" disabled>Select mounting type...</option>'+phase19BMountOptions(type,options.includes(previous)?previous:(phase19BIsAccessPoint(type)?'Tabletop / Shelf Mounted':'Desktop'));
+            mount.value=options.includes(previous)?previous:(phase19BIsAccessPoint(type)?'Tabletop / Shelf Mounted':'Desktop');
             toggleDeviceMountType();
         }
         function openDeviceModal(deviceId = null) {
@@ -5131,7 +5131,7 @@ function hierarchyValidateTypes(subnets) {
             phase19BFormValues = {...(draft?.typeDetails ?? device?.typeDetails ?? {})};
             const currentLoc = draft?.location ?? device?.location ?? '';
             const requestedMountType = draft?.mountType ?? device?.mountType ?? (currentLoc === 'Racked' ? 'Rack Mounted' : 'Desktop');
-            const mountType = phase19BAllowedMounts(currentType).includes(requestedMountType) ? requestedMountType : 'Desktop';
+            const mountType = phase19BAllowedMounts(currentType).includes(requestedMountType) ? requestedMountType : (phase19BIsAccessPoint(currentType) ? 'Tabletop / Shelf Mounted' : 'Desktop');
             const currentSubnet = draft?.subnetId ? appState.subnets.find(s => s.id === draft.subnetId) : (device?.primaryIp ? getSubnetForIp(device.primaryIp) : null);
             const currentHeight = draft?.rackUHeight || (device?.rackUStart && device?.rackUEnd ? Math.max(1, Number(device.rackUEnd) - Number(device.rackUStart) + 1) : 1);
             openModal(`
