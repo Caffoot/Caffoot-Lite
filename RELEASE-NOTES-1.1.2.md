@@ -34,9 +34,11 @@ These improvements are defensive safeguards and automated regression tests, **no
 - [x] Owner verified fresh-browser startup, disposable device backup export/import and offline operation.
 - [x] Package-version consistency safeguard passed before the version bump.
 - [ ] Complete historical repository and sensitive-content review.
-- [x] Update and audit the experimental Tailwind v4 build dependencies; clean npm audit reported zero vulnerabilities.\n- [ ] Review browser network activity and remaining dynamic HTML surfaces.
+- [x] Update and audit the experimental Tailwind v4 build dependencies; clean npm audit reported zero vulnerabilities. 
+- [x] Owner inspected browser network activity during normal use; no unexpected outbound HTTP(S) requests observed. Remaining dynamic HTML surfaces require review.
 - [ ] Review documentation and built-in Help & Guides for v1.1.2 consistency.
 - [x] Owner ran the full v1.1.2 release pipeline successfully; the uploaded candidate ZIP passed initial integrity, manifest and sensitive-pattern checks.
 - [x] Owner confirmed the v1.1.2 About screen and offline browser navigation.
-- [x] Experimental Tailwind v4 build passed clean-install release packaging and integrity checks.\n- [ ] Re-run packaging after integration or final documentation changes and verify the resulting release artifacts.
+- [x] Experimental Tailwind v4 build passed clean-install release packaging and integrity checks. 
+- [ ] Re-run packaging after integration or final documentation changes and verify the resulting release artifacts.
 - [ ] Obtain explicit owner approval before merging, tagging or publishing.
