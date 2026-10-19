@@ -5730,7 +5730,7 @@ function hierarchyValidateTypes(subnets) {
         function phase120AvailableServerServices() {
             const saved = phase19BServerFunctions();
             const keys = new Set(saved.map(item => item.key));
-            return [...saved, ...phase120StarterServerServices.filter(item => !keys.has(item.key))].sort((a,b)=>String(a.label||'').localeCompare(String(b.label||''),undefined,{sensitivity:'base'}));
+            return [...saved.filter(item=>!item.archived), ...phase120StarterServerServices.filter(item => !keys.has(item.key))].sort((a,b)=>String(a.label||'').localeCompare(String(b.label||''),undefined,{sensitivity:'base'}));
         }
         function phase19BServerFunctionFields() { return phase120AvailableServerServices().map(x=>x.key); }
         function phase19BManageFunctions() {
@@ -5759,16 +5759,30 @@ function hierarchyValidateTypes(subnets) {
             const label=String(entered||'').trim();
             if(action!=='delete' && (!label||label.length>80)){showToast('Enter a server function name (up to 80 characters).','error');return;}
             if(action!=='delete' && items.some(x=>x.label.toLowerCase()===label.toLowerCase() && x.key!==key)){showToast('That server function already exists.','error');return;}
-            if(action==='delete'&&!confirm(`Remove "${old.label}" from server forms? Existing saved device details will be retained.`))return;
+            if(action==='delete'){phase120ConfirmServerServiceArchive(key);return;}
             const snapshot=JSON.stringify(appState);
             if(action==='add'){
                 const id='customServerFunction_'+Date.now().toString(36);
                 items.push({key:id,label});
             }else if(action==='rename')old.label=label;
-            else items.splice(items.findIndex(x=>x.key===key),1);
+            else return;
             appState.serverFunctions=items;
             if(!saveState()){const prior=JSON.parse(snapshot);Object.keys(appState).forEach(k=>delete appState[k]);Object.assign(appState,prior);showToast('Could not save the change.','error');return;}
             phase19BManageFunctions();
+        }
+        function phase120ConfirmServerServiceArchive(key){
+            const entry=phase19BServerFunctions().find(x=>x.key===key&&!x.archived);
+            if(!entry)return;
+            const count=appState.devices.filter(d=>d.typeDetails?.[key]===true||d[key]===true).length;
+            openModal('<div class="p-5 sm:p-7 space-y-5"><h3 class="text-lg font-bold text-slate-900 dark:text-white">Archive Server Service?</h3><p class="text-sm text-slate-700 dark:text-slate-200">Archive <strong>'+escapeHtml(entry.label)+'</strong>? It will no longer be available for new assignments. '+count+' device(s) currently have this service recorded, and their historical records will be preserved.</p><div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-4 rounded-xl border border-slate-300 dark:border-slate-600 caffoot-modal-cancel">Cancel</button><button type="button" data-action="server-service-confirm-archive" data-name="'+escapeHtml(key)+'" class="h-11 px-4 rounded-xl bg-rose-700 hover:bg-rose-800 text-white font-semibold">Archive Service</button></div></div>');
+        }
+        function phase120ArchiveServerService(key){
+            const entry=phase19BServerFunctions().find(x=>x.key===key&&!x.archived);
+            if(!entry)return;
+            const previous=appState.serverFunctions;
+            appState.serverFunctions=phase19BServerFunctions().map(x=>x.key===key?{...x,archived:true}:x);
+            if(!saveState()){appState.serverFunctions=previous;return showToast('Could not archive server service.','error');}
+            closeModal(true);renderContent();showToast('Server service archived. Existing records preserved.');
         }
         // Hardware suggestions are advisory: typed values remain authoritative.
         const phase120HardwareSeed = {
@@ -7756,6 +7770,7 @@ function hierarchyValidateTypes(subnets) {
                 case 'phase19b-add-function': phase19BUpdateFunction('add'); break;
                 case 'phase19b-rename-function': phase19BUpdateFunction('rename',name); break;
                 case 'phase19b-delete-function': phase19BUpdateFunction('delete',name); break;
+                case 'server-service-confirm-archive': phase120ArchiveServerService(name); break;
                 case 'phase18d-add': phase18DCommit(target.dataset.kind,'add','',document.getElementById('phase18d-new')?.value||''); break;
                 case 'phase18d-search': phase18DSearch[target.dataset.kind]=document.getElementById('phase18d-search')?.value||'';phase18DOpen(target.dataset.kind); break;
                 case 'phase120-keep-editing': phase120KeepEditing(); break;
