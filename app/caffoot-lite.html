@@ -5910,7 +5910,7 @@ function hierarchyValidateTypes(subnets) {
             const configured=phase19BSoftware();
             const active=configured.filter(x=>!x.archived);
             const known=new Set(configured.map(x=>String(x.label||'').trim().toLowerCase()));
-            return [...active,...phase120SoftwareSuggestions.filter(x=>!known.has(x.name.toLowerCase())).map(x=>({key:phase120BuiltinSoftwareKey(x.name),label:x.name,deviceTypes:x.types,builtin:true}))];
+            return [...active,...phase120SoftwareSuggestions.filter(x=>!known.has(x.name.toLowerCase())).map(x=>({key:phase120BuiltinSoftwareKey(x.name),label:x.name,deviceTypes:x.types,builtin:true}))].sort((a,b)=>String(a.label||'').localeCompare(String(b.label||''),undefined,{sensitivity:'base'}));
         }
         function phase120SoftwareHidden(name,type){return (appState.softwareTypeExclusions||{})[name]?.includes(type)===true;}
         function phase120SoftwareToggle(name,type){
