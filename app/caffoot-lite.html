@@ -988,8 +988,14 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 </div>
                 <button data-action="tab-devices" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700/50 hover:text-indigo-600 dark:hover:text-indigo-400" data-tab="devices">
                     <i class="fa-solid fa-server w-5 text-center"></i>
-                    <span>Device Inventory</span>
+                    <span>Devices</span>
                 </button>
+                <div id="devices-sidebar-actions" class="hidden ml-6 pl-3 border-l border-slate-200 dark:border-slate-700 space-y-1" aria-label="Devices Actions">
+                    <button type="button" data-action="sidebar-devices-overview" class="w-full text-left px-3 py-2 rounded-lg text-xs text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700">Overview</button>
+                    <button type="button" data-action="sidebar-devices-inventory" class="w-full text-left px-3 py-2 rounded-lg text-xs text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700">Device Inventory</button>
+                    <button type="button" data-action="sidebar-devices-types" class="w-full text-left px-3 py-2 rounded-lg text-xs text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700">Device Types</button>
+                    <button type="button" data-action="sidebar-devices-locations" class="w-full text-left px-3 py-2 rounded-lg text-xs text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700">Locations</button>
+                </div>
                 <button data-action="tab-racks" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700/50 hover:text-indigo-600 dark:hover:text-indigo-400" data-tab="racks">
                     <i class="fa-solid fa-hard-drive w-5 text-center"></i>
                     <span>Network Racks</span>
@@ -1955,6 +1961,17 @@ function hierarchyValidateTypes(subnets) {
             currentTab = tabId;
             const ipamSidebarActions = document.getElementById('ipam-sidebar-actions');
             if (ipamSidebarActions) ipamSidebarActions.classList.toggle('hidden', tabId !== 'ipam');
+            const deviceSidebarActions = document.getElementById('devices-sidebar-actions');
+            if (deviceSidebarActions) deviceSidebarActions.classList.toggle('hidden', tabId !== 'devices');
+            document.querySelectorAll('#devices-sidebar-actions button').forEach(btn => {
+                const selected = tabId === 'devices' && btn.dataset.action === 'sidebar-devices-' + phase14DeviceTab;
+                btn.classList.toggle('bg-indigo-50', selected);
+                btn.classList.toggle('dark:bg-slate-700', selected);
+                btn.classList.toggle('text-indigo-700', selected);
+                btn.classList.toggle('dark:text-indigo-300', selected);
+                btn.classList.toggle('font-semibold', selected);
+                if (selected) btn.setAttribute('aria-current', 'page'); else btn.removeAttribute('aria-current');
+            });
             document.querySelectorAll('#ipam-sidebar-actions [data-action^="sidebar-ipam-"]').forEach(btn => {
                 const activeAction = 'sidebar-ipam-' + (phase12CIpamTab === 'addresses' ? 'addresses' : phase12CIpamTab === 'manage' ? 'manage' : 'overview');
                 const selected = tabId === 'ipam' && btn.dataset.action === activeAction;
@@ -1979,7 +1996,7 @@ function hierarchyValidateTypes(subnets) {
             const titles = {
                 dashboard: 'Dashboard Overview',
                 ipam: 'IP Address Management, Subnets & VLANs',
-                devices: 'Device Inventory & Hardware',
+                devices: 'Devices',
                 racks: 'Network Racks & Elevations',
 
 
@@ -2954,7 +2971,7 @@ function hierarchyValidateTypes(subnets) {
         }
 
         // --- DEVICES VIEW (With Manage Type & Location Buttons) ---
-        let phase14DeviceTab = 'inventory';
+        let phase14DeviceTab = 'overview';
         let deviceSearchTerm = '';
         let deviceTypeFilter = '';
         let deviceStatusFilter = '';
@@ -2991,9 +3008,11 @@ function hierarchyValidateTypes(subnets) {
                             <div><h2 class="text-lg font-bold text-slate-900 dark:text-white">Device Management</h2><p class="text-sm text-slate-600 dark:text-slate-300">Find, update and organise your network equipment.</p></div>
                             <button type="button" data-action="open-device-modal" class="h-11 px-4 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold text-sm"><i class="fa-solid fa-plus mr-2"></i>Add Device</button>
                         </div>
-                        <nav class="phase14-tabs" aria-label="Device workspace">
-                            ${[['inventory','Inventory','fa-server'],['manage','Types & Locations','fa-sliders']].map(([key,label,icon])=>`<button type="button" data-action="phase14-tab" data-tab="${key}" aria-current="${phase14DeviceTab===key?'page':'false'}" class="phase14-tab ${phase14DeviceTab===key?'phase14-active':''}"><i class="fa-solid ${icon} mr-2"></i>${label}</button>`).join('')}
-                        </nav>
+
+                    </section>
+                    <section class="${phase14DeviceTab==='overview'?'':'hidden'} space-y-4" data-device-panel="overview">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">${[['Total Devices',appState.devices.length],['With Primary IP',appState.devices.filter(d=>d.primaryIp).length],['Locations Recorded',appState.devices.filter(d=>d.location && d.location!=='Unknown').length]].map(([label,value])=>`<div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5"><p class="text-sm text-slate-600 dark:text-slate-300">${label}</p><p class="text-3xl font-bold text-slate-900 dark:text-white">${value}</p></div>`).join('')}</div>
+                        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5"><h3 class="text-lg font-bold">Device Overview</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-2">A local inventory summary. More detailed intelligence and charts are planned for this milestone.</p><button type="button" data-action="sidebar-devices-inventory" class="mt-4 h-11 px-4 rounded-xl bg-blue-800 text-white font-semibold">View Device Inventory</button></div>
                     </section>
                     <section class="${phase14DeviceTab==='inventory'?'':'hidden'} space-y-4" data-device-panel="inventory">
                     <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 sm:p-5 flex flex-col gap-4">
@@ -3102,15 +3121,15 @@ function hierarchyValidateTypes(subnets) {
                         </table>
                     </div>
                     </section>
-                    <section class="${phase14DeviceTab==='manage'?'':'hidden'} space-y-4" data-device-panel="manage">
+                    <section class="${['types','locations'].includes(phase14DeviceTab)?'':'hidden'} space-y-4" data-device-panel="manage">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 space-y-3">
+                            <div class="${phase14DeviceTab==='types'?'':'hidden'} bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 space-y-3">
                                 <div class="flex items-center gap-2"><i class="fa-solid fa-tags text-blue-600"></i><h3 class="font-bold text-slate-900 dark:text-white">Device Types</h3></div>
                                 <p class="text-sm text-slate-600 dark:text-slate-300">Manage the categories available when adding or editing devices.</p>
                                 <p class="text-xs text-slate-600 dark:text-slate-300">${getUniqueDeviceTypes().length} types configured</p>
                                 <button type="button" data-action="open-manage-types" class="h-11 px-4 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold text-sm">Manage Types</button>
                             </div>
-                            <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 space-y-3">
+                            <div class="${phase14DeviceTab==='locations'?'':'hidden'} bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 space-y-3">
                                 <div class="flex items-center gap-2"><i class="fa-solid fa-map-location-dot text-blue-600"></i><h3 class="font-bold text-slate-900 dark:text-white">Device Locations</h3></div>
                                 <p class="text-sm text-slate-600 dark:text-slate-300">Maintain location choices while preserving special rack handling.</p>
                                 <p class="text-xs text-slate-600 dark:text-slate-300">${getUniqueDeviceLocations().length} locations configured</p>
@@ -6887,7 +6906,11 @@ function hierarchyValidateTypes(subnets) {
 
             switch (action) {
                 case 'phase14g-clear-filters': deviceSearchTerm = ''; deviceTypeFilter = ''; deviceStatusFilter = ''; deviceLocationFilter = ''; deviceMountFilter = ''; deviceAssignmentFilter = ''; renderContent(); break;
-                case 'phase14-tab': if (['inventory','manage'].includes(target.dataset.tab)) { phase14DeviceTab=target.dataset.tab; renderContent(); } break;
+                case 'phase14-tab': if (['inventory','manage'].includes(target.dataset.tab)) { phase14DeviceTab=target.dataset.tab==='manage'?'types':target.dataset.tab; switchTab('devices'); } break;
+                case 'sidebar-devices-overview': phase14DeviceTab='overview'; switchTab('devices'); break;
+                case 'sidebar-devices-inventory': phase14DeviceTab='inventory'; switchTab('devices'); break;
+                case 'sidebar-devices-types': phase14DeviceTab='types'; switchTab('devices'); break;
+                case 'sidebar-devices-locations': phase14DeviceTab='locations'; switchTab('devices'); break;
                 case 'open-device-modal': openDeviceModal(); break;
                 case 'edit-device': openDeviceModal(id); break;
                 case 'view-device': phase14CViewDevice(id); break;
