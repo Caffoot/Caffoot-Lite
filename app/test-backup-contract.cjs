@@ -13,7 +13,17 @@ assert.equal(JSON.stringify(context.appState),before,'Preview must not replace a
 assert.equal(candidate.devices.length,2);assert.equal(candidate.rackAccessories.length,1);assert.equal(candidate.ipAllocations['192.168.40.20'].reservedForDeviceId,'example-server');
 assert.equal(candidate.devices[0].typeDetails.legacyExampleFlag,true);
 const roundtrip=context.phase16CCheckBackup(JSON.parse(JSON.stringify(context.phase20CreateBackup(candidate))));
-for(const key of Object.keys(raw).filter(k=>!['caffootBackup','deviceTypes'].includes(k)))assert.equal(JSON.stringify(roundtrip[key]),JSON.stringify(raw[key]),key+' must survive export/import');
+// Location Area is now independent of rack assignment: legacy 'Racked' is a
+// sentinel, not a real room. Compare migrated devices, not the old sentinel.
+assert.equal(candidate.devices[0].location,'Unknown','legacy rack location must migrate');
+assert.equal(candidate.devices[0].rackId,raw.devices[0].rackId,'rack assignment must survive migration');
+assert.equal(candidate.devices[0].rackUStart,raw.devices[0].rackUStart,'rack U position must survive migration');
+assert.equal(candidate.devices[1].location,raw.devices[1].location,'real room must survive migration');
+for(const key of Object.keys(raw).filter(k=>!['caffootBackup','deviceTypes','devices','deviceLocations'].includes(k)))
+  assert.equal(JSON.stringify(roundtrip[key]),JSON.stringify(raw[key]),key+' must survive export/import');
+assert.equal(JSON.stringify(roundtrip.devices),JSON.stringify(candidate.devices),'migrated devices must survive export/import');
+assert.equal(JSON.stringify(roundtrip.deviceLocations),JSON.stringify(candidate.deviceLocations),'migrated location options must survive export/import');
+assert(!roundtrip.deviceLocations.includes('Racked'),'legacy sentinel must not remain a managed location');
 // Migration may append newly supported built-in device types, but must preserve every original type and its order.
 assert.deepEqual(Array.from(roundtrip.deviceTypes.slice(0,raw.deviceTypes.length)),raw.deviceTypes,'original device types must survive export/import in order');
 assert(roundtrip.deviceTypes.includes('Layer 3 Switch'),'migration must retain the new Layer 3 Switch type');
