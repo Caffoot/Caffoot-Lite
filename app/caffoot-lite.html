@@ -953,7 +953,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             racks: [],
             devices: [],
             rackAccessories: [],
-            deviceTypes: ['Server - Physical', 'Server - Virtual', 'Desktop', 'Laptop', 'Tablet', 'Switch', 'Layer 3 Switch', 'Router', 'Firewall', 'NAS', 'Access Point', 'PDU', 'UPS', 'Unknown'],
+            deviceTypes: ['Server - Physical', 'Server - Virtual', 'Desktop', 'Laptop', 'Tablet', 'Switch', 'Layer 3 Switch', 'Router', 'Firewall', 'NAS', 'Access Point', 'Wireless LAN Controller', 'PDU', 'UPS', 'Unknown'],
             deviceTypeGraphics: {},
             deviceLocations: ['Racked', 'Unknown'],
             ipAllocations: {},
@@ -5054,7 +5054,7 @@ function hierarchyValidateTypes(subnets) {
             'printer':'printer','scanner':'printer',
             'desktop':'computer','laptop':'computer','tablet':'computer',
             'server':'server','server - virtual':'server','server - physical':'server','physical server':'server','virtual server':'server',
-            'nas':'nas','phone system':'phone','ups':'ups','tape drive':'tape','access point':'ap','ap':'ap','print server':'network','wireless access point':'ap'
+            'nas':'nas','phone system':'phone','ups':'ups','tape drive':'tape','access point':'ap','ap':'ap','print server':'network','wireless access point':'ap','wireless lan controller':'network'
         };
         const phase19BChoices = {
             portCount:['4','8','12','16','24','48'],networkConnection:['Ethernet','Wi-Fi','Fibre','Other'],printerColour:['Colour','Monochrome'],
