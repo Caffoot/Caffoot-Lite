@@ -621,6 +621,18 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 </style>
 <style id="phase14c-styles">
 #modal-content:has(.phase14c-detail){width:min(1040px,calc(100vw - 24px));max-width:1040px;max-height:calc(100vh - 32px);overflow-y:auto}
+.phase14c-detail{display:flex;flex-direction:column;max-height:calc(100vh - 32px);min-height:0}
+.phase14c-detail>header{flex-shrink:0}
+.phase14c-tabs{display:flex;flex-wrap:wrap;gap:7px;flex-shrink:0;border-bottom:1px solid #cbd5e1;padding-bottom:9px}
+.phase14c-tab{border:1px solid #cbd5e1;border-radius:10px;padding:9px 13px;font-size:13px;font-weight:700;color:#334155;background:#f8fafc}
+.phase14c-tab-active{background:#1d4ed8;color:#fff;border-color:#1d4ed8}
+.phase14c-panels{flex:1 1 auto;min-height:0;overflow-y:auto}
+.phase14c-panel{display:grid;gap:14px}
+.phase14c-panel[hidden]{display:none}
+.phase14c-detail>.phase19d1-actions{flex-shrink:0;border-top:1px solid #cbd5e1;padding-top:12px}
+.dark .phase14c-tabs,.dark .phase14c-detail>.phase19d1-actions{border-color:#475569}
+.dark .phase14c-tab{background:#334155;border-color:#64748b;color:#f8fafc}
+.dark .phase14c-tab-active{background:#1d4ed8;border-color:#60a5fa;color:#fff}
 .phase14c-section{border:1px solid #cbd5e1;border-radius:14px;padding:15px;background:#f8fafc}
 .phase14c-section h4{font-size:13px;font-weight:800;color:#1e293b;margin-bottom:12px}
 .phase14c-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 20px}
@@ -5500,12 +5512,27 @@ function hierarchyValidateTypes(subnets) {
                     <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">${safe(d.type)} · ${safe(d.location)} · <span class="font-semibold">${safe(status)}</span></p></div>
                     <button type="button" data-action="close-modal" aria-label="Close device details" class="phase14c-close"><i class="fa-solid fa-xmark"></i></button>
                 </header>
-                ${section('Device details', 'fa-circle-info', field('Device name', d.name) + field('Type', d.type) + field('Status', status))}
-                ${section('Hardware & lifecycle', 'fa-microchip', hardware + (detailRows ? `<div class="phase19c-detail-subheading">Additional ${safe(d.type)} details</div>${detailRows}` : ''))}
-                ${section('Installed software', 'fa-laptop-code', installedSoftware || '<p class="text-sm text-slate-600 dark:text-slate-300">No installed software recorded.</p>')}
-                ${section('Mounting & location', 'fa-location-dot', field('Mounting', d.mountType || (mounted ? 'Rack Mounted' : 'Desktop')) + field('Location', d.location) + rackRows)}
-                ${section('Network identity', 'fa-network-wired', field('Primary IP', d.primaryIp) + field('Subnet', subnet ? (subnet.cidr || subnet.name || subnet.network || subnet.id) : 'Not linked') + field('IP reserved', d.ipReserved ? 'Yes' : 'No'))}
-                ${d.notes ? `<section class="phase14c-section"><h4><i class="fa-solid fa-note-sticky mr-2" aria-hidden="true"></i>Notes</h4><p class="phase14c-notes">${safe(d.notes)}</p></section>` : ''}
+                <nav class="phase14c-tabs" role="tablist" aria-label="Device detail sections">
+                    ${[['overview','Overview'],['hardware','Hardware'],['network','Network'],['software','Software'],['location','Location']].map(([key,label],i)=>`<button type="button" role="tab" id="phase14c-tab-${key}" aria-controls="phase14c-panel-${key}" aria-selected="${i===0?'true':'false'}" tabindex="${i===0?'0':'-1'}" data-action="phase14c-tab" data-name="${key}" class="phase14c-tab ${i===0?'phase14c-tab-active':''}">${label}</button>`).join('')}
+                </nav>
+                <div class="phase14c-panels">
+                    <div id="phase14c-panel-overview" role="tabpanel" aria-labelledby="phase14c-tab-overview" class="phase14c-panel">
+                        ${section('Device overview', 'fa-circle-info', field('Device name', d.name) + field('Type', d.type) + field('Status', status) + field('Manufacturer', d.manufacturer) + field('Model', d.model) + field('Primary IP', d.primaryIp) + field('Location', d.location))}
+                        ${d.notes ? `<section class="phase14c-section"><h4><i class="fa-solid fa-note-sticky mr-2" aria-hidden="true"></i>Notes</h4><p class="phase14c-notes">${safe(d.notes)}</p></section>` : ''}
+                    </div>
+                    <div id="phase14c-panel-hardware" role="tabpanel" aria-labelledby="phase14c-tab-hardware" class="phase14c-panel" hidden>
+                        ${section('Hardware & lifecycle', 'fa-microchip', hardware + (detailRows ? `<div class="phase19c-detail-subheading">Additional ${safe(d.type)} details</div>${detailRows}` : ''))}
+                    </div>
+                    <div id="phase14c-panel-network" role="tabpanel" aria-labelledby="phase14c-tab-network" class="phase14c-panel" hidden>
+                        ${section('Network identity', 'fa-network-wired', field('Primary IP', d.primaryIp) + field('Subnet', subnet ? (subnet.cidr || subnet.name || subnet.network || subnet.id) : 'Not linked') + field('IP reserved', d.ipReserved ? 'Yes' : 'No'))}
+                    </div>
+                    <div id="phase14c-panel-software" role="tabpanel" aria-labelledby="phase14c-tab-software" class="phase14c-panel" hidden>
+                        ${section('Installed software', 'fa-laptop-code', installedSoftware || '<p class="text-sm text-slate-600 dark:text-slate-300">No installed software recorded.</p>')}
+                    </div>
+                    <div id="phase14c-panel-location" role="tabpanel" aria-labelledby="phase14c-tab-location" class="phase14c-panel" hidden>
+                        ${section('Mounting & location', 'fa-location-dot', field('Mounting', d.mountType || (mounted ? 'Rack Mounted' : 'Desktop')) + field('Location', d.location) + rackRows)}
+                    </div>
+                </div>
                 <footer class="phase19d1-actions">
                     <button type="button" data-action="phase14c-duplicate" data-id="${safe(d.id)}" class="phase19d1-secondary"><i class="fa-solid fa-copy" aria-hidden="true"></i>Duplicate</button>
                     ${mounted ? `<button type="button" data-action="phase14c-rack" data-id="${safe(d.id)}" class="phase19d1-secondary"><i class="fa-solid fa-server" aria-hidden="true"></i>View in rack</button>` : ''}
@@ -5514,6 +5541,19 @@ function hierarchyValidateTypes(subnets) {
                     <button type="button" data-action="close-modal" class="phase19d1-close"><i class="fa-solid fa-check" aria-hidden="true"></i>Close</button>
                 </footer>
             </div>`);
+        }
+        function phase14CSelectTab(key){
+            const root=document.querySelector('.phase14c-detail');
+            if(!root)return;
+            const target=root.querySelector('#phase14c-panel-'+key);
+            if(!target)return;
+            root.querySelectorAll('.phase14c-panel').forEach(panel=>{panel.hidden=panel!==target;});
+            root.querySelectorAll('.phase14c-tab').forEach(tab=>{
+                const active=tab.dataset.name===key;
+                tab.setAttribute('aria-selected',String(active));
+                tab.tabIndex=active?0:-1;
+                tab.classList.toggle('phase14c-tab-active',active);
+            });
         }
         function phase14CGoToRack(deviceId) {
             const d = appState.devices.find(device => String(device.id) === String(deviceId));
@@ -7611,6 +7651,7 @@ function hierarchyValidateTypes(subnets) {
                 case 'open-device-modal': openDeviceModal(); break;
                 case 'edit-device': openDeviceModal(id); break;
                 case 'view-device': phase14CViewDevice(id); break;
+                case 'phase14c-tab': phase14CSelectTab(name); break;
                 case 'phase14c-edit': closeModal(); openDeviceModal(id); break;
                 case 'phase14c-duplicate': closeModal(); duplicateDevice(id); break;
                 case 'phase14c-delete': closeModal(); deleteDevice(id); break;
