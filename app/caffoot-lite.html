@@ -494,6 +494,40 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .phase14-devices table tbody tr{border-color:#e2e8f0}
 .dark .phase14-devices table tbody tr{border-color:#475569}
 </style><style id="phase14b-device-form-style">
+/* v1.2.0: colourful, subnet-inspired software and server selection grids. */
+.phase14b-device-modal #phase120-server-services-fields .grid,
+.phase14b-device-modal #phase120-installed-software-fields .grid { gap: 10px; }
+.phase14b-device-modal .phase120-option-tile {
+  --tile-bg:#eff6ff; --tile-border:#93c5fd; --tile-active:#dbeafe; --tile-ink:#1d4ed8;
+  display:flex; align-items:center; gap:.65rem; min-height:3.4rem; padding:.75rem .85rem;
+  border:1px solid var(--tile-border); border-radius:12px; background:var(--tile-bg);
+  color:#1e293b; cursor:pointer; transition:background-color .15s,border-color .15s,box-shadow .15s;
+}
+.phase14b-device-modal .phase120-option-tile:nth-child(4n+2) { --tile-bg:#f0fdf4;--tile-border:#86efac;--tile-active:#dcfce7;--tile-ink:#15803d; }
+.phase14b-device-modal .phase120-option-tile:nth-child(4n+3) { --tile-bg:#fff7ed;--tile-border:#fdba74;--tile-active:#ffedd5;--tile-ink:#c2410c; }
+.phase14b-device-modal .phase120-option-tile:nth-child(4n+4) { --tile-bg:#faf5ff;--tile-border:#d8b4fe;--tile-active:#f3e8ff;--tile-ink:#7e22ce; }
+.phase14b-device-modal .phase120-option-tile:hover { border-color:var(--tile-ink); }
+.phase14b-device-modal .phase120-option-tile:has(input:checked) {
+  background:var(--tile-active); border-color:var(--tile-ink);
+  box-shadow:inset 0 0 0 1px var(--tile-ink);
+}
+.phase14b-device-modal .phase120-option-tile input { accent-color:var(--tile-ink); }
+.phase14b-device-modal .phase120-option-tile .phase120-option-status {
+  display:none; color:var(--tile-ink); background:rgba(255,255,255,.75);
+}
+.phase14b-device-modal .phase120-option-tile:has(input:checked) .phase120-option-status { display:inline-block; }
+.phase14b-device-modal .phase120-option-tile:focus-within { outline:2px solid var(--tile-ink);outline-offset:2px; }
+.dark .phase14b-device-modal .phase120-option-tile {
+  --tile-bg:#172c49;--tile-border:#3b82f6;--tile-active:#1e3a5f;--tile-ink:#93c5fd;
+  color:#f1f5f9; background:var(--tile-bg);border-color:var(--tile-border);
+}
+.dark .phase14b-device-modal .phase120-option-tile:nth-child(4n+2) {--tile-bg:#12372b;--tile-border:#15803d;--tile-active:#14532d;--tile-ink:#86efac;}
+.dark .phase14b-device-modal .phase120-option-tile:nth-child(4n+3) {--tile-bg:#422b17;--tile-border:#c2410c;--tile-active:#7c2d12;--tile-ink:#fdba74;}
+.dark .phase14b-device-modal .phase120-option-tile:nth-child(4n+4) {--tile-bg:#322045;--tile-border:#7e22ce;--tile-active:#581c87;--tile-ink:#d8b4fe;}
+.dark .phase14b-device-modal .phase120-option-tile:has(input:checked) {background:var(--tile-active);border-color:var(--tile-ink);}
+.dark .phase14b-device-modal .phase120-option-tile .phase120-option-status {background:rgba(15,23,42,.7);color:var(--tile-ink);}
+@media(prefers-reduced-motion:reduce){.phase14b-device-modal .phase120-option-tile{transition:none;}}
+
 /* v1.2.0 Device form tabs: original controls are moved, not rebuilt. */
 .phase14b-device-modal .phase120-device-tabs{display:flex;gap:6px;overflow-x:auto;border-bottom:1px solid #94a3b855;padding-bottom:8px;scrollbar-width:thin;}
 .phase14b-device-modal .phase120-device-tab{flex:0 0 auto;padding:10px 13px;border-radius:9px;font-size:.85rem;font-weight:650;border:1px solid transparent;color:inherit;cursor:pointer;transition:background-color .16s ease,color .16s ease,border-color .16s ease;}
