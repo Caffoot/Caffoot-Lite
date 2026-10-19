@@ -12,12 +12,12 @@ Caffoot Lite uses third-party components in its standalone HTML build. These not
 
 The build embeds Font Awesome CSS and webfont data directly into `Caffoot-Lite.html`. The complete upstream licence text for the pinned version is included at [`licenses/FONT-AWESOME-6.4.0.txt`](licenses/FONT-AWESOME-6.4.0.txt). Source: https://github.com/FortAwesome/Font-Awesome/blob/6.4.0/LICENSE.txt.
 
-## Tailwind CSS 3.4.17
+## Tailwind CSS 4.3.3
 
 - Project: https://tailwindcss.com/
 - Copyright: Tailwind Labs, Inc.
 - Licence: MIT License
-- Complete MIT licence: [`licenses/TAILWIND-CSS-3.4.17.txt`](licenses/TAILWIND-CSS-3.4.17.txt). Source: https://github.com/tailwindlabs/tailwindcss/blob/v3.4.17/LICENSE
+- Complete MIT licence: [`licenses/TAILWIND-CSS-4.3.3.txt`](licenses/TAILWIND-CSS-4.3.3.txt). Source: https://github.com/tailwindlabs/tailwindcss/blob/v4.3.3/LICENSE
 
 Tailwind CSS is used at build time to generate the CSS embedded in the standalone HTML.
 
