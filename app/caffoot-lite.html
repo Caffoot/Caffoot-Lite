@@ -1403,6 +1403,9 @@ function hierarchyValidateTypes(subnets) {
                 if (!isPlainObject(parsed) || !Array.isArray(parsed.devices) || !Array.isArray(parsed.subnets) || !Array.isArray(parsed.racks) || !isPlainObject(parsed.ipAllocations)) {
                     throw new Error('Inventory structure is missing required collections');
                 }
+                // Apply the same unsafe-key guard used by JSON restore before normalisation.
+                // Function declarations are hoisted, so this guard is available during startup.
+                phase16CRejectUnsafeKeys(parsed);
                 return normaliseState(parsed);
             } catch (error) {
                 phase17AStorageRecovery = { reason: String(error.message || error), raw: stored };
