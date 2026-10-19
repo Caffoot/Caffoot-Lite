@@ -2,7 +2,7 @@
 
 **Infrastructure, Simplified. — For HomeLabs and Small Teams**
 
-This guide covers the published v1.1.1 application, including the redesigned Settings & Data interface. v1.1.1 was published on 18 October 2026.
+This guide covers the published v1.1.2 application, including the redesigned Settings & Data interface introduced in v1.1.1 and security-hardening improvements in v1.1.2. v1.1.2 was published on 19 October 2026.
 
 ## Getting started
 
@@ -38,7 +38,7 @@ The **Dashboard** summarises inventory and network information based on your loc
 
 The Settings tabs are **Data Management**, **Preferences**, **Help & Guides**, and **About Caffoot Lite**.
 
-Open **Settings & Data** for **Data Management**, **Preferences**, **Help & Guides**, and **About Caffoot Lite**. These tabs are available in v1.1.1 and the v1.1.2 release candidate; older releases may have different labels and placement.
+Open **Settings & Data** for **Data Management**, **Preferences**, **Help & Guides**, and **About Caffoot Lite**. These tabs are available in v1.1.1 and v1.1.2; older releases may have different labels and placement.
 
 ### Data Management — Back Up & Restore
 
