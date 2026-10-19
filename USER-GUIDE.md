@@ -38,7 +38,7 @@ The **Dashboard** summarises inventory and network information based on your loc
 
 The Settings tabs are **Data Management**, **Preferences**, **Help & Guides**, and **About Caffoot Lite**.
 
-Open **Settings & Data** for **Data Management**, **Preferences** and **About Caffoot Lite**. The layout below describes v1.1.1; older releases may have different labels and placement.
+Open **Settings & Data** for **Data Management**, **Preferences**, **Help & Guides**, and **About Caffoot Lite**. These tabs are available in v1.1.1 and the v1.1.2 release candidate; older releases may have different labels and placement.
 
 ### Data Management — Back Up & Restore
 
