@@ -485,7 +485,10 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 </style><style id="phase14b-device-form-style">
 /* v1.2.0 Device form tabs: original controls are moved, not rebuilt. */
 .phase14b-device-modal .phase120-device-tabs{display:flex;gap:6px;overflow-x:auto;border-bottom:1px solid #94a3b855;padding-bottom:8px;scrollbar-width:thin;}
-.phase14b-device-modal .phase120-device-tab{flex:0 0 auto;padding:10px 13px;border-radius:9px;font-size:.85rem;font-weight:650;border:1px solid transparent;color:inherit;}
+.phase14b-device-modal .phase120-device-tab{flex:0 0 auto;padding:10px 13px;border-radius:9px;font-size:.85rem;font-weight:650;border:1px solid transparent;color:inherit;cursor:pointer;transition:background-color .16s ease,color .16s ease,border-color .16s ease;}
+.phase14b-device-modal .phase120-device-tab:hover:not([aria-selected="true"]){background:#e0e7ff;color:#3730a3;border-color:#c7d2fe;}
+.dark .phase14b-device-modal .phase120-device-tab:hover:not([aria-selected="true"]){background:#3730a3;color:#e0e7ff;border-color:#6366f1;}
+@media(prefers-reduced-motion:reduce){.phase14b-device-modal .phase120-device-tab{transition:none;}}
 .phase14b-device-modal .phase120-device-tab[aria-selected="true"]{background:#e0e7ff;color:#312e81;border-color:#a5b4fc;}
 .dark .phase14b-device-modal .phase120-device-tab[aria-selected="true"]{background:#312e81;color:#e0e7ff;border-color:#6366f1;}
 .phase14b-device-modal .phase120-device-tab:focus-visible{outline:2px solid #818cf8;outline-offset:2px;}
