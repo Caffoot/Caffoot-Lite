@@ -5820,12 +5820,21 @@ function hierarchyValidateTypes(subnets) {
             try { return JSON.parse(contents); }
             catch (error) { throw new Error('This file is not valid JSON. Select a Caffoot Lite or older compatible JSON backup (not a CSV export). ' + error.message); }
         }
+        // Import failures must remain visible until explicitly dismissed.
+        function phase16CShowImportError(message) {
+            openModal(`<div class="space-y-4" role="alert">
+                <h2 class="text-xl font-bold text-slate-900 dark:text-white">Backup Import Could Not Continue</h2>
+                <p class="text-sm text-slate-700 dark:text-slate-200">Your existing inventory has not been replaced.</p>
+                <div class="max-h-64 overflow-y-auto whitespace-pre-wrap break-words rounded-xl border border-amber-400 bg-amber-50 p-4 text-sm text-amber-950 dark:bg-slate-900 dark:text-amber-200">${escapeHtml(String(message))}</div>
+                <button type="button" onclick="closeModal()" class="rounded-xl bg-blue-800 px-5 py-2.5 font-semibold text-white">Close</button>
+            </div>`);
+        }
         function importData(event) {
             const input = event.target;
             const file = input.files?.[0];
             if (!file) return;
             if (file.size > 10 * 1024 * 1024) {
-                showToast('Backup exceeds the 10 MB safety limit.', 'error');
+                phase16CShowImportError('Backup exceeds the 10 MB safety limit.');
                 input.value = '';
                 return;
             }
@@ -5890,12 +5899,12 @@ function hierarchyValidateTypes(subnets) {
                     showToast('Validated backup restored successfully.');
                 } catch (error) {
                     console.error('Backup restore failed', error);
-                    showToast(`Restore failed: ${error.message}`, 'error');
+                    phase16CShowImportError(`Restore failed: ${error.message}`);
                 } finally {
                     input.value = '';
                 }
             };
-            reader.onerror = () => { showToast('Unable to read backup file.', 'error'); input.value = ''; };
+            reader.onerror = () => { phase16CShowImportError('Unable to read backup file.'); input.value = ''; };
             reader.readAsText(file, 'UTF-8');
         }
 
