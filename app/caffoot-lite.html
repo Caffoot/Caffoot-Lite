@@ -3417,6 +3417,16 @@ function hierarchyValidateTypes(subnets) {
                             </div>
                             <button type="button" data-action="sidebar-devices-inventory" class="h-11 px-4 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold text-sm">View Device Inventory</button>
                         </section>
+                        ${deviceIntelligenceTab==='software'?(()=>{
+                            const archived=phase19BSoftware().filter(x=>x.archived);
+                            const affected=appState.devices.map(d=>({device:d,software:archived.filter(x=>d.typeDetails?.[x.key]===true||d[x.key]===true)})).filter(x=>x.software.length);
+                            const titles=new Set(affected.flatMap(x=>x.software.map(y=>y.key)));
+                            return `<section class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 space-y-4">
+                                <div><h3 class="font-bold text-slate-900 dark:text-white"><i class="fa-solid fa-box-archive text-red-600 dark:text-red-400 mr-2" aria-hidden="true"></i>Devices with Archived Software</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Software removed from the catalogue but still recorded as installed. Select a device to review its inventory record.</p></div>
+                                <div class="grid grid-cols-2 gap-3"><div class="rounded-xl bg-slate-50 dark:bg-slate-900 p-4"><p class="text-xs text-slate-600 dark:text-slate-300">Affected Devices</p><p class="text-2xl font-bold text-slate-900 dark:text-white">${affected.length}</p></div><div class="rounded-xl bg-slate-50 dark:bg-slate-900 p-4"><p class="text-xs text-slate-600 dark:text-slate-300">Archived Software Titles</p><p class="text-2xl font-bold text-slate-900 dark:text-white">${titles.size}</p></div></div>
+                                ${affected.length?`<div class="space-y-2">${affected.sort((a,b)=>String(a.device.name||'').localeCompare(String(b.device.name||''))).map(x=>`<button type="button" data-action="view-device" data-id="${escapeHtml(String(x.device.id))}" class="w-full flex flex-wrap items-center justify-between gap-2 text-left rounded-xl border border-slate-200 dark:border-slate-600 p-3 hover:bg-red-50 dark:hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-500"><span class="min-w-0"><span class="block font-semibold text-blue-800 dark:text-blue-300">${escapeHtml(String(x.device.name||'Unnamed Device'))}</span><span class="block text-sm text-slate-600 dark:text-slate-300">${x.software.map(y=>escapeHtml(String(y.label||y.key))).join(', ')}</span></span><span class="inline-flex rounded-full border border-red-300 bg-red-50 px-2 py-1 text-xs font-bold text-red-700 dark:border-red-700 dark:bg-red-950/50 dark:text-red-300">Archived</span></button>`).join('')}</div>`:'<p class="text-sm text-slate-600 dark:text-slate-300">No devices have archived software recorded.</p>'}
+                            </section>`;
+                        })():''}
                         ${[['os','Operating Systems','os'],['software','Software & Services','services']].map(([tab,heading,kind])=>{
                             const counts=new Map();
                             appState.devices.forEach(d=>{
