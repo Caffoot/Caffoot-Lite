@@ -5543,7 +5543,7 @@ function hierarchyValidateTypes(subnets) {
             const status = d.status || 'Active';
             const detailRows = phase19CDetailRows(d, field);
             const softwareEntries=phase120SoftwareOptions().filter(x=>d.typeDetails?.[x.key]===true||d[x.key]===true);
-            const installedSoftware=softwareEntries.map(x=>field(x.label,'Installed')).join('');
+            const installedSoftware=softwareEntries.sort((a,b)=>String(a.label||'').localeCompare(String(b.label||''),undefined,{sensitivity:'base'})).map(x=>field(x.label,'Installed')).join('');
             const hardware = field('Manufacturer', d.manufacturer) + field('Model', d.model) + field('Serial number', d.serialNumber);
             const rackRows = mounted ? field('Rack', rack.name) + field('Face', d.face || 'front') + field('U position', uText) + field('Height', (Number(d.rackUHeight) || (uEnd-uStart+1) || 1) + 'U') : '';
             openModal(`<div class="phase14c-detail space-y-5 p-5 sm:p-7">
@@ -5948,6 +5948,7 @@ function hierarchyValidateTypes(subnets) {
         function phase19BRenderFields(type, values={}, section='all') {
             const keys=phase19BFieldsFor(type).filter(key =>
                 key !== 'os' && key !== 'windowsLicence' && (section === 'all' || (section === 'hardware' && !phase120IsSoftwareField(key)) || (section === 'services' && phase19BServerFunctionFields().includes(key)) || (section === 'installed' && phase120SoftwareOptions().some(x=>x.key===key)) || (section === 'software' && phase120IsSoftwareField(key))));
+            if(section==='installed'||section==='services'||section==='software')keys.sort((a,b)=>String(phase120AvailableServerServices().find(x=>x.key===a)?.label||phase120SoftwareOptions().find(x=>x.key===a)?.label||phase19BLabels[a]||a).localeCompare(String(phase120AvailableServerServices().find(x=>x.key===b)?.label||phase120SoftwareOptions().find(x=>x.key===b)?.label||phase19BLabels[b]||b),undefined,{sensitivity:'base'}));
             if (!keys.length) return '<p class="text-sm text-slate-600 dark:text-slate-300">'+(type ? 'No additional fields are configured for this type yet.' : 'Select a device type above to display its additional fields.')+'</p>';
             return '<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">'+keys.map(key=>{
                 const label=(phase19BTypeGroups[String(type||'').toLowerCase().trim()]==='router'&&key==='networkConnection')?'WAN connection method':(phase120AvailableServerServices().find(x=>x.key===key)?.label||phase120SoftwareOptions().find(x=>x.key===key)?.label||phase19BLabels[key]||key);
