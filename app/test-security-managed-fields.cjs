@@ -14,6 +14,7 @@ const ctx=vm.createContext({
  phase19BFieldsFor:()=>[hostile],
  phase19BTypeGroups:{server:'server'},
  phase19BServerFunctions:()=>[{key:hostile,label:'Example label'}],
+ phase120AvailableServerServices:()=>[{key:hostile,label:'Example label'}],
  phase19BSoftware:()=>[],
  phase19BServerFunctionFields:()=>[hostile],
  phase19BSoftwareFields:()=>[],
