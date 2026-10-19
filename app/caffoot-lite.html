@@ -620,7 +620,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 @media(max-width:540px){.phase19d1-actions button{flex:1 1 auto}}
 </style>
 <style id="phase14c-styles">
-#modal-content:has(.phase14c-detail){width:min(780px,calc(100vw - 24px));max-width:780px;max-height:calc(100vh - 32px);overflow-y:auto}
+#modal-content:has(.phase14c-detail){width:min(1040px,calc(100vw - 24px));max-width:1040px;max-height:calc(100vh - 32px);overflow-y:auto}
 .phase14c-section{border:1px solid #cbd5e1;border-radius:14px;padding:15px;background:#f8fafc}
 .phase14c-section h4{font-size:13px;font-weight:800;color:#1e293b;margin-bottom:12px}
 .phase14c-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 20px}
@@ -5456,7 +5456,7 @@ function hierarchyValidateTypes(subnets) {
         // Use the current managed labels, including renamed software and server functions.
         function phase19CDetailLabel(key, type) {
             if (phase19BTypeGroups[String(type || '').toLowerCase().trim()] === 'router' && key === 'networkConnection') return 'WAN connection method';
-            const managed = [...phase19BServerFunctions(), ...phase19BSoftware()].find(item => item.key === key);
+            const managed = [...phase19BServerFunctions(), ...phase120SoftwareOptions()].find(item => item.key === key);
             return managed?.label || phase19BLabels[key] || key;
         }
         function phase19CDetailRows(device, field) {
@@ -5465,8 +5465,8 @@ function hierarchyValidateTypes(subnets) {
             // Retain access to historical values even when a managed option was removed.
             const historical = Object.keys(details).filter(key => !keys.includes(key) && details[key] !== '' && details[key] !== null && details[key] !== undefined);
             const allKeys = [...keys, ...historical];
-            const flags = new Set([...phase19BFlags, ...phase19BServerFunctionFields(), ...phase19BSoftwareFields()]);
-            const rows = allKeys.filter(key => details[key] !== '' && details[key] !== null && details[key] !== undefined)
+            const flags = new Set([...phase19BFlags, ...phase19BServerFunctionFields(), ...phase120SoftwareOptions().map(x=>x.key)]);
+            const rows = allKeys.filter(key => !phase120SoftwareOptions().some(x=>x.key===key) && details[key] !== '' && details[key] !== null && details[key] !== undefined)
                 .map(key => {
                     const value = details[key];
                     const display = typeof value === 'boolean' ? (value ? 'Yes' : 'No') : value;
@@ -5489,6 +5489,8 @@ function hierarchyValidateTypes(subnets) {
             const section = (title, icon, body) => `<section class="phase14c-section"><h4><i class="fa-solid ${icon} mr-2" aria-hidden="true"></i>${escapeHtml(title)}</h4><dl class="phase14c-grid">${body}</dl></section>`;
             const status = d.status || 'Active';
             const detailRows = phase19CDetailRows(d, field);
+            const softwareEntries=phase120SoftwareOptions().filter(x=>d.typeDetails?.[x.key]===true||d[x.key]===true);
+            const installedSoftware=softwareEntries.map(x=>field(x.label,'Installed')).join('');
             const hardware = field('Manufacturer', d.manufacturer) + field('Model', d.model) + field('Serial number', d.serialNumber);
             const rackRows = mounted ? field('Rack', rack.name) + field('Face', d.face || 'front') + field('U position', uText) + field('Height', (Number(d.rackUHeight) || (uEnd-uStart+1) || 1) + 'U') : '';
             openModal(`<div class="phase14c-detail space-y-5 p-5 sm:p-7">
@@ -5500,6 +5502,7 @@ function hierarchyValidateTypes(subnets) {
                 </header>
                 ${section('Device details', 'fa-circle-info', field('Device name', d.name) + field('Type', d.type) + field('Status', status))}
                 ${section('Hardware & lifecycle', 'fa-microchip', hardware + (detailRows ? `<div class="phase19c-detail-subheading">Additional ${safe(d.type)} details</div>${detailRows}` : ''))}
+                ${section('Installed software', 'fa-laptop-code', installedSoftware || '<p class="text-sm text-slate-600 dark:text-slate-300">No installed software recorded.</p>')}
                 ${section('Mounting & location', 'fa-location-dot', field('Mounting', d.mountType || (mounted ? 'Rack Mounted' : 'Desktop')) + field('Location', d.location) + rackRows)}
                 ${section('Network identity', 'fa-network-wired', field('Primary IP', d.primaryIp) + field('Subnet', subnet ? (subnet.cidr || subnet.name || subnet.network || subnet.id) : 'Not linked') + field('IP reserved', d.ipReserved ? 'Yes' : 'No'))}
                 ${d.notes ? `<section class="phase14c-section"><h4><i class="fa-solid fa-note-sticky mr-2" aria-hidden="true"></i>Notes</h4><p class="phase14c-notes">${safe(d.notes)}</p></section>` : ''}
