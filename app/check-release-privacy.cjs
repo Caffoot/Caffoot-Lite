@@ -7,10 +7,16 @@ const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 const root = path.resolve(__dirname, '..');
 const tracked = spawnSync('git', ['ls-files', '-z'], { cwd: root, encoding: 'utf8' });
-if (tracked.error || tracked.status !== 0) {
-  throw new Error('Git tracked-file inventory unavailable; run from a Git checkout (not a release ZIP).');
-}
-const names = tracked.stdout.split('\0').filter(Boolean).map(x => x.replace(/\\/g, '/'));
+const gitAvailable = !tracked.error && tracked.status === 0;
+const enumerate = (dir, prefix = '') => fs.readdirSync(dir, { withFileTypes: true }).flatMap(entry => {
+  if (entry.isDirectory() && ['.git', 'node_modules', 'dist'].includes(entry.name)) return [];
+  const name = prefix + entry.name;
+  return entry.isDirectory() ? enumerate(path.join(dir, entry.name), name + '/') : [name];
+});
+const names = gitAvailable
+  ? tracked.stdout.split('\0').filter(Boolean).map(x => x.replace(/\\/g, '/'))
+  : enumerate(root);
+console.log(gitAvailable ? 'Checking Git-tracked paths.' : 'Git metadata absent: checking extracted development folder paths (not repository history).');
 const prohibited = [
   /(^|\/)\.env(?:\.|$)/i, /(^|\/)id_(?:rsa|ed25519)(?:\.|$)/i,
   /\.(?:pem|p12|pfx|key)$/i, /(^|\/)(?:private|secrets?)(?:\/|\.)/i,
