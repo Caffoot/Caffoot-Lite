@@ -5232,10 +5232,12 @@ function hierarchyValidateTypes(subnets) {
         function phase120HardwareCatalogue(){
             return Array.isArray(appState.hardwareCatalogue)?appState.hardwareCatalogue:[];
         }
+        let phase120HardwareCatalogActiveType='';
         function phase120HardwareCatalogType(){
-            return document.getElementById('dev-type')?.value||'';
+            return document.getElementById('dev-type')?.value||phase120HardwareCatalogActiveType;
         }
         function phase120ManageHardwareCatalogue(){
+            phase120HardwareCatalogActiveType=phase120HardwareCatalogType();
             phase19BKeepDeviceForm();
             const type=phase120HardwareCatalogType()||'Device';
             const items=phase120HardwareCatalogue().filter(x=>x.type===type);
