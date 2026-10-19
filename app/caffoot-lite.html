@@ -3018,7 +3018,7 @@ function hierarchyValidateTypes(subnets) {
                                 ${getVisibleDevices().map(d => {
                                     const rack = appState.racks.find(r => String(r.id) === String(d.rackId));
                                     const isUnknownLocation = !d.location || d.location === 'Unknown' || !getUniqueDeviceLocations().includes(d.location);
-                                    const locText = d.location === 'Racked' && rack ? `Racked (${rack.name} - ${d.face || 'front'} U${d.rackUStart}${Number(d.rackUEnd || d.rackUStart) > Number(d.rackUStart) ? '-U' + d.rackUEnd : ''})` : (isUnknownLocation ? 'Unknown' : d.location);
+                                    const locText = isUnknownLocation ? 'Unknown' : d.location;
                                     return `
                                         <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/20">
                                             <td class="py-3 px-4 font-semibold text-slate-900 dark:text-white"><button type="button" data-action="view-device" data-id="${escapeHtml(d.id)}" class="phase14c-name text-left hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-600" title="View device details">${escapeHtml(d.name)}</button>${d.serialNumber ? `<span class="block text-xs font-normal text-slate-500 dark:text-slate-400 sm:hidden">${escapeHtml(d.serialNumber)}</span>` : ''}</td>
@@ -4869,14 +4869,12 @@ function hierarchyValidateTypes(subnets) {
             const height = document.getElementById('dev-rack-height');
             if (!location || !rackOptions) return;
             if (mount === 'Rack Mounted') {
-                location.value = 'Racked';
-                location.disabled = true;
+                // Location Area stays editable independently of mounting.
                 rackOptions.hidden = false;
                 rackOptions.classList.remove('hidden');
                 if (height) height.required = true;
             } else {
-                location.disabled = false;
-                if (location.value === 'Racked') location.value = '';
+                // Switching mounting must not erase a building or room.
                 rackOptions.classList.add('hidden');
                 rackOptions.hidden = true;
                 if (height) height.required = false;
@@ -5286,7 +5284,7 @@ function hierarchyValidateTypes(subnets) {
             const currentType = draft?.type ?? device?.type ?? '';
             phase19BFormValues = {...(draft?.typeDetails ?? device?.typeDetails ?? {})};
             const currentLoc = draft?.location ?? device?.location ?? '';
-            const requestedMountType = draft?.mountType ?? device?.mountType ?? (currentLoc === 'Racked' ? 'Rack Mounted' : 'Desktop');
+            const requestedMountType = draft?.mountType ?? device?.mountType ?? (device?.rackId ? 'Rack Mounted' : 'Desktop');
             const mountType = phase19BAllowedMounts(currentType).includes(requestedMountType) ? requestedMountType : (phase19BIsAccessPoint(currentType) ? 'Tabletop / Shelf Mounted' : 'Desktop');
             const currentSubnet = draft?.subnetId ? appState.subnets.find(s => s.id === draft.subnetId) : (device?.primaryIp ? getSubnetForIp(device.primaryIp) : null);
             const currentHeight = draft?.rackUHeight || (device?.rackUStart && device?.rackUEnd ? Math.max(1, Number(device.rackUEnd) - Number(device.rackUStart) + 1) : 1);
@@ -5519,7 +5517,7 @@ function hierarchyValidateTypes(subnets) {
             if (findDeviceUsingIp(primaryIp, deviceId)) return showToast(`IP address ${primaryIp} is already assigned to another device.`, 'error');
             let rackId = '', face = 'front', rackUStart = null, rackUEnd = null, rackUHeight = null;
             if (mountType === 'Rack Mounted') {
-                if (location !== 'Racked') return showToast('Rack Mounted devices must use the Racked location.', 'error');
+                if (!location || location === 'Racked') return showToast('Select a physical Location Area or Unknown.', 'error');
                 rackId = document.getElementById('dev-rack-id').value; face = document.getElementById('dev-rack-face').value;
                 rackUStart = parseInt(document.getElementById('dev-rack-u').value, 10); rackUHeight = parseInt(document.getElementById('dev-rack-height').value, 10);
                 if (!Number.isInteger(rackUStart) || !Number.isInteger(rackUHeight) || rackUStart < 1 || rackUHeight < 1) return showToast('Please enter a valid rack start U and U height.', 'error');
