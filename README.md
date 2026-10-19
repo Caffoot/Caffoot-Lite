@@ -57,7 +57,7 @@ If you choose to serve Caffoot Lite from a web server, restrict access with appr
 
 Browser storage is local to the browser/profile and origin; hosting the HTML file does **not** turn Caffoot Lite into a shared, server-backed inventory system. Avoid using it on untrusted or shared computers, protect exported backups, and never assume that an externally hosted copy provides multi-user isolation.
 
-A dedicated security review and deployment-hardening milestone is in progress for v1.1.2. The review is not complete, and Caffoot Lite must not be treated as an authenticated multi-user service or a security-certified public deployment.
+v1.1.2 delivered security hardening and automated regression checks. A comprehensive manual security audit has not been completed, and Caffoot Lite must not be treated as an authenticated multi-user service or a security-certified public deployment.
 
 ## Update checker notice for older versions
 
@@ -110,13 +110,13 @@ npm run release
 
 The build produces `app/dist/Caffoot-Lite.html`. Automated checks and manual browser testing are recommended before distributing a build. The GitHub Actions build workflow is currently disabled.
 
-**Current stable release:** [v1.1.1](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.1.1), published 18 October 2026. v1.1.0.1 remains a historical hotfix.
+**Current stable release:** [v1.1.2](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.1.2), published 19 October 2026. v1.1.0.1 remains a historical hotfix.
 
 ## Project and release status
 
 This repository is dedicated to **Caffoot Lite**: its standalone application, build tools, tests and release documentation.
 
-**v1.1.1 was published on 18 October 2026.** Download it from the [v1.1.1 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.1.1) or visit the [latest stable release](https://github.com/Caffoot/Caffoot-Lite/releases/latest). See the [v1.1.1 release notes](RELEASE-NOTES-1.1.1.md), [historical v1.1.0 release notes](RELEASE-NOTES-1.1.0.md) and [roadmap](ROADMAP.md).
+**v1.1.2 was published on 19 October 2026.** Download it from the [v1.1.2 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.1.2) or visit the [latest stable release](https://github.com/Caffoot/Caffoot-Lite/releases/latest). See the [v1.1.2 release notes](RELEASE-NOTES-1.1.2.md), [historical v1.1.1 release notes](RELEASE-NOTES-1.1.1.md), [historical v1.1.0 release notes](RELEASE-NOTES-1.1.0.md) and [roadmap](ROADMAP.md).
 
 ## Licence and branding
 
