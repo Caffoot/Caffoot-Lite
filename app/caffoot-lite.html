@@ -5137,8 +5137,17 @@ function hierarchyValidateTypes(subnets) {
             if(group==='server')return [...phase19BProfiles.server.filter(k=>!phase19BDefaultServerFunctions.includes(k)),...phase19BServerFunctionFields(),...phase19BSoftwareFields()];
             return phase19BProfiles[group] || [];
         }
-        function phase19BRenderFields(type, values={}) {
-            const keys=phase19BFieldsFor(type);
+        // Keep persisted typeDetails keys unchanged while separating physical and software controls.
+        function phase120IsSoftwareField(key) {
+            return key === 'os' || key === 'windowsLicence' ||
+                phase19BSoftwareFields().includes(key) ||
+                phase19BServerFunctionFields().includes(key) ||
+                phase19BDefaultSoftware.includes(key) ||
+                phase19BDefaultServerFunctions.includes(key);
+        }
+        function phase19BRenderFields(type, values={}, section='all') {
+            const keys=phase19BFieldsFor(type).filter(key =>
+                section === 'all' || (section === 'software') === phase120IsSoftwareField(key));
             if (!keys.length) return '<p class="text-sm text-slate-600 dark:text-slate-300">'+(type ? 'No additional fields are configured for this type yet.' : 'Select a device type above to display its additional fields.')+'</p>';
             return '<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">'+keys.map(key=>{
                 const label=(phase19BTypeGroups[String(type||'').toLowerCase().trim()]==='router'&&key==='networkConnection')?'WAN connection method':(phase19BServerFunctions().find(x=>x.key===key)?.label||phase19BSoftware().find(x=>x.key===key)?.label||phase19BLabels[key]||key);
@@ -5232,8 +5241,11 @@ function hierarchyValidateTypes(subnets) {
             phase120RefreshSoftwarePlatform();
             const panel=document.getElementById('phase19b-fields');
             const type=document.getElementById('dev-type')?.value;
-            if(panel) panel.innerHTML=phase19BRenderFields(type,phase19BFormValues);
-            document.getElementById('phase19b-details-section')?.classList.toggle('hidden',phase19BFieldsFor(type).length === 0);
+            if(panel) panel.innerHTML=phase19BRenderFields(type,phase19BFormValues,'hardware');
+            const softwareFields = document.getElementById('phase120-software-fields');
+            if(softwareFields) softwareFields.innerHTML=phase19BRenderFields(type,phase19BFormValues,'software');
+            document.getElementById('phase19b-details-section')?.classList.toggle('hidden',!phase19BFieldsFor(type).some(key=>!phase120IsSoftwareField(key)));
+            document.getElementById('phase120-software-details')?.classList.toggle('hidden',!phase19BFieldsFor(type).some(phase120IsSoftwareField));
             const group=phase19BTypeGroups[String(type||'').toLowerCase().trim()];
             document.getElementById('phase19b-manage-functions-button')?.classList.toggle('hidden',group!=='server');
             document.getElementById('phase19b-manage-software-button')?.classList.toggle('hidden',group!=='server'&&group!=='computer');
@@ -5381,6 +5393,21 @@ function hierarchyValidateTypes(subnets) {
             platformContainer.innerHTML = phase120RenderSoftwarePlatform(form.querySelector('#dev-type')?.value || '', phase19BFormValues);
             panels.get('software').appendChild(platformContainer.firstElementChild);
             phase120WireSoftwarePlatform();
+            // Existing manager buttons and checkbox data stay on their original DOM nodes.
+            const hardwareDetails = form.querySelector('#phase19b-details-section');
+            if (hardwareDetails) {
+                const managers = hardwareDetails.querySelector('.flex.flex-wrap.gap-2');
+                const softwareSection = document.createElement('div');
+                softwareSection.id = 'phase120-software-details';
+                softwareSection.className = 'form-section-card space-y-4';
+                softwareSection.innerHTML = '<div class="form-section-heading"><i class="fa-solid fa-list-check" aria-hidden="true"></i>Installed Software & Server Functionality</div><div id="phase120-software-fields"></div>';
+                if (managers) softwareSection.insertBefore(managers, softwareSection.querySelector('#phase120-software-fields'));
+                panels.get('software').appendChild(softwareSection);
+                const type = form.querySelector('#dev-type')?.value || '';
+                softwareSection.querySelector('#phase120-software-fields').innerHTML = phase19BRenderFields(type, phase19BFormValues, 'software');
+                softwareSection.classList.toggle('hidden', !phase19BFieldsFor(type).some(phase120IsSoftwareField));
+                hardwareDetails.classList.toggle('hidden', !phase19BFieldsFor(type).some(key => !phase120IsSoftwareField(key)));
+            }
             let active = form.dataset.initialDeviceTab || 'general';
             function activate(id, focusButton = false) {
                 if (!panels.has(id)) return;
@@ -5464,7 +5491,7 @@ function hierarchyValidateTypes(subnets) {
                                 <div><label for="dev-model" class="form-label">Model (optional)</label><input id="dev-model" type="text" maxlength="120" value="${escapeHtml(draft?.model ?? device?.model ?? '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="e.g. C9200"></div>
                             </div>
                             <div><label for="dev-serial" class="form-label">Serial number (optional)</label><input id="dev-serial" type="text" maxlength="120" value="${escapeHtml(draft?.serialNumber ?? device?.serialNumber ?? '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Manufacturer serial number"></div>
-                        <div class="form-section-card space-y-4 ${phase19BFieldsFor(currentType).length===0?'hidden':''}" id="phase19b-details-section" aria-live="polite"><div class="form-section-heading"><i class="fa-solid fa-list-check"></i>Additional details for this device type</div><div class="flex flex-wrap gap-2"><button type="button" id="phase19b-manage-functions-button" data-action="phase19b-manage-functions" class="h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-500 text-sm font-semibold ${phase19BTypeGroups[String(currentType||'').toLowerCase().trim()]==='server'?'':'hidden'}">Manage Server Options</button><button type="button" id="phase19b-manage-software-button" data-action="phase19b-manage-software" class="h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-500 text-sm font-semibold ${['server','computer'].includes(phase19BTypeGroups[String(currentType||'').toLowerCase().trim()])?'':'hidden'}">Manage Software Options</button></div><div id="phase19b-fields">${phase19BRenderFields(currentType,phase19BFormValues)}</div></div>
+                        <div class="form-section-card space-y-4 ${phase19BFieldsFor(currentType).length===0?'hidden':''}" id="phase19b-details-section" aria-live="polite"><div class="form-section-heading"><i class="fa-solid fa-list-check"></i>Additional details for this device type</div><div class="flex flex-wrap gap-2"><button type="button" id="phase19b-manage-functions-button" data-action="phase19b-manage-functions" class="h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-500 text-sm font-semibold ${phase19BTypeGroups[String(currentType||'').toLowerCase().trim()]==='server'?'':'hidden'}">Manage Server Options</button><button type="button" id="phase19b-manage-software-button" data-action="phase19b-manage-software" class="h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-500 text-sm font-semibold ${['server','computer'].includes(phase19BTypeGroups[String(currentType||'').toLowerCase().trim()])?'':'hidden'}">Manage Software Options</button></div><div id="phase19b-fields">${phase19BRenderFields(currentType,phase19BFormValues,'hardware')}</div></div>
                         </div>
                         <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-rack"></i>Mounting & location</div><div><label for="dev-mount-type" class="form-label">Device Mounting <span class="required-mark">*</span></label><select id="dev-mount-type" required data-action="device-mount-type-change" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" disabled>Select mounting type...</option>${phase19BMountOptions(currentType,mountType)}</select></div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
