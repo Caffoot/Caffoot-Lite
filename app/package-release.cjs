@@ -5,7 +5,9 @@ const root=path.resolve(__dirname,'..'),dist=path.join(__dirname,'dist');
 const sourceHtml=fs.readFileSync(path.join(__dirname,'caffoot-lite.html'),'utf8');
 const versionMatch=sourceHtml.match(/const CAFFOOT_LITE_VERSION = '([^']+)';/);
 assert(versionMatch,'App release version missing');
-const version=versionMatch[1]; // Public release version; npm metadata may use a SemVer-compatible variant.
+const version=versionMatch[1]; // Public release version.
+const packageVersion=JSON.parse(fs.readFileSync(path.join(__dirname,'package.json'),'utf8')).version;
+assert.equal(packageVersion,version,'App source version and npm package version differ');
 assert(/^[0-9]+\.[0-9]+\.[0-9]+(?:\.[0-9]+)?(?:-[A-Za-z0-9.-]+)?$/.test(version));
 const html=fs.readFileSync(path.join(dist,'Caffoot-Lite.html'),'utf8');
 assert(html.includes("const CAFFOOT_LITE_VERSION = '"+version+"'"),'App and package versions differ');
