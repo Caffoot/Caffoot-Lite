@@ -56,6 +56,20 @@ Published release: https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.1.1
 - [x] PR #39 reviewed and merged into `main` with owner approval.
 - [x] Public stable v1.1.1 release verified with ZIP, standalone HTML and SHA256SUMS assets.
 - [ ] Compare public asset SHA256 hashes with the original locally generated artifacts; record results when checked.
-- [ ] Merge the separate v1.1.1 documentation closeout PR after review.
+- [ ] Confirm the historical v1.1.1 documentation closeout PR status if needed; this historical record is retained.
 
 This record is historical; the reusable checklist above remains unchecked for the next release.
+
+## v1.1.2 closeout record — 19 October 2026
+
+Published release: https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.1.2
+
+- [x] Owner completed final clean dependency installation and release pipeline.
+- [x] Final standalone HTML SHA256 matched the previously tested build; release ZIP and SHA256SUMS were generated and matched.
+- [x] GitHub release validation and Gitleaks Git-history checks passed on PR #44.
+- [x] Owner approved PR #44; it was squash-merged into `main`.
+- [x] Owner confirmed publication of v1.1.2 with standalone HTML, ZIP and checksum manifest.
+- [ ] Independently verify public asset downloads and their checksums.
+- [ ] Merge the v1.1.2 post-release documentation closeout PR after review.
+
+The reusable checklist above remains unchecked for the next release.

@@ -1,6 +1,6 @@
-# Caffoot Lite v1.1.2 — Release Candidate Notes
+# Caffoot Lite v1.1.2 — Release Notes
 
-**Status:** Draft release candidate — not merged, tagged or published. The stable public release remains v1.1.1.
+**Status:** Published stable release on 19 October 2026. PR #44 was squash-merged into `main`; release tag: [v1.1.2](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.1.2).
 
 ## Highlights
 
@@ -29,7 +29,7 @@ Caffoot Lite remains a standalone offline-capable HTML application. The optional
 
 These improvements are defensive safeguards and automated regression tests, **not** a formal security audit or a guarantee against all malicious inputs. Browser local storage and exported backups are not encrypted by Caffoot Lite. Protect exported inventories accordingly.
 
-## Release verification — outstanding
+## Release verification and remaining review
 
 - [x] Development-stage automated release pipeline passed before the v1.1.2 version bump.
 - [x] Owner verified fresh-browser startup, disposable device backup export/import and offline operation.
@@ -38,10 +38,10 @@ These improvements are defensive safeguards and automated regression tests, **no
 - [ ] Complete remaining manual historical repository and sensitive-content review.
 - [x] Update and audit the experimental Tailwind v4 build dependencies; clean npm audit reported zero vulnerabilities. 
 - [x] Owner inspected browser network activity during normal use; no unexpected outbound HTTP(S) requests observed. Remaining dynamic HTML surfaces require review.
-- [ ] Review documentation and built-in Help & Guides for v1.1.2 consistency.
+- [x] Review documentation and built-in Help & Guides for v1.1.2 consistency; post-release main-branch status corrections tracked separately.
 - [x] Owner ran the full v1.1.2 release pipeline successfully; the uploaded candidate ZIP passed initial integrity, manifest and sensitive-pattern checks.
 - [x] Owner confirmed the v1.1.2 About screen and offline browser navigation.
 - [x] Integrated Tailwind v4 build passed clean-install release packaging and integrity checks; all 27 release steps and owner browser smoke tests passed.
 - [x] Clean checkout of the combined integration branch passed the complete release pipeline and ZIP integrity checks before documentation-only updates.
-- [ ] Re-run final release packaging and inspect artifacts after the documentation updates.
-- [ ] Obtain explicit owner approval before merging, tagging or publishing.
+- [x] Owner reran final release packaging after documentation updates; all release checks passed, HTML checksum matched the prior tested build, and the ZIP and SHA256SUMS matched.
+- [x] Owner explicitly approved merging and publishing; PR #44 merged and v1.1.2 was published.
