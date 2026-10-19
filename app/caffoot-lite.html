@@ -5048,11 +5048,16 @@ function hierarchyValidateTypes(subnets) {
             {key:'serverService_VPN',label:'VPN Server'}
         ];
         function phase19BServerFunctions() {
-            const saved = Array.isArray(appState.serverFunctions) ? appState.serverFunctions : [];
+            return Array.isArray(appState.serverFunctions) ? appState.serverFunctions : [];
+        }
+        // Suggested services are a view-layer catalogue, not implicit saved options.
+        // Clean Start and legacy backups therefore retain their existing semantics.
+        function phase120AvailableServerServices() {
+            const saved = phase19BServerFunctions();
             const keys = new Set(saved.map(item => item.key));
             return [...saved, ...phase120StarterServerServices.filter(item => !keys.has(item.key))];
         }
-        function phase19BServerFunctionFields() { return phase19BServerFunctions().map(x=>x.key); }
+        function phase19BServerFunctionFields() { return phase120AvailableServerServices().map(x=>x.key); }
         function phase19BManageFunctions() {
             phase19BKeepDeviceForm();
             const items=phase19BServerFunctions();
@@ -5167,7 +5172,7 @@ function hierarchyValidateTypes(subnets) {
                 key !== 'os' && (section === 'all' || (section === 'software') === phase120IsSoftwareField(key)));
             if (!keys.length) return '<p class="text-sm text-slate-600 dark:text-slate-300">'+(type ? 'No additional fields are configured for this type yet.' : 'Select a device type above to display its additional fields.')+'</p>';
             return '<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">'+keys.map(key=>{
-                const label=(phase19BTypeGroups[String(type||'').toLowerCase().trim()]==='router'&&key==='networkConnection')?'WAN connection method':(phase19BServerFunctions().find(x=>x.key===key)?.label||phase19BSoftware().find(x=>x.key===key)?.label||phase19BLabels[key]||key);
+                const label=(phase19BTypeGroups[String(type||'').toLowerCase().trim()]==='router'&&key==='networkConnection')?'WAN connection method':(phase120AvailableServerServices().find(x=>x.key===key)?.label||phase19BSoftware().find(x=>x.key===key)?.label||phase19BLabels[key]||key);
                 const value=values[key]??'';
                 if(phase19BFlags.has(key)||phase19BServerFunctionFields().includes(key)||phase19BSoftwareFields().includes(key)) return `<label class="flex items-center gap-3 rounded-xl border border-slate-300 dark:border-slate-600 p-3 text-sm"><input type="checkbox" data-phase19b-field="${escapeHtml(key)}" ${value===true?'checked':''}>${escapeHtml(label)}</label>`;
                 const choices=phase19BChoices[key];
