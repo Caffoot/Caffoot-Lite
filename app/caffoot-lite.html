@@ -1468,6 +1468,16 @@ function hierarchyValidateTypes(subnets) {
             }
         }
 
+        // Device mount validation runs during stored-inventory normalisation at startup.
+        // Keep this lookup initialized before loadStoredState() invokes it.
+        const phase19BTypeGroups = {
+            'switch':'switch','router':'router','firewall':'network','print servers':'network',
+            'printer':'printer','scanner':'printer',
+            'desktop':'computer','laptop':'computer','tablet':'computer',
+            'server':'server','server - virtual':'server','server - physical':'server','physical server':'server','virtual server':'server',
+            'nas':'nas','phone system':'phone','ups':'ups','tape drive':'tape','access point':'ap','ap':'ap','print server':'network','wireless access point':'ap','wireless lan controller':'network'
+        };
+
         let appState = loadStoredState();
         const startupIntegrityErrors = validateApplicationState();
         if (startupIntegrityErrors.length) console.error('Startup integrity issues:', startupIntegrityErrors);
@@ -5099,13 +5109,6 @@ function hierarchyValidateTypes(subnets) {
             phase19BManageSoftware();
         }
         const phase19BLabels = {"portCount":"Number of ports","networkCard":"Network card","networkConnection":"Network connection method","printerColour":"Printer colour type","printerDesign":"Printer design type","windowsLicence":"Windows licence","os":"Operating system","processor":"Processor","graphics":"Graphics card","memory":"Memory size","memoryUnit":"Memory unit","storage":"Storage size","storageUnit":"Storage unit","raid":"RAID type","driveCount":"Number of hard drives","handsetCount":"Number of handsets","powerOutlets":"UPS power outlets","serialPort":"UPS serial port","usbPort":"UPS USB port","Swan":"Swan","MicrosoftOffice":"Microsoft Office","Planet":"Planet","SpindleSoftware":"Spindle Software","Preactor":"Preactor","RedLionApp":"Red Lion App","SalesBase":"Sales Base","HelpDesk":"Help Desk","ProductionITHelpDeskDashboards":"Production I T Help Desk Dashboards","PDA":"P D A","TMS":"T M S","PhoneBook":"Phone Book","EasyLabel":"Easy Label","SwanServer":"Swan Server","SQLServer":"S Q L Server","TMSServer":"T M S Server","printserver":"printserver","keriserver":"keriserver","ActiveDirectory":"Active Directory","AntivirusSoftware":"Antivirus Software","DNS":"D N S","DHCP":"D H C P","ExchangeServer":"Exchange Server","BackupSoftware":"Backup Software","PlanetDB":"Planet D B","SystemsDatabaseBackEndTables":"Systems Database Back End Tables","PDASystem":"P D A System"};
-        const phase19BTypeGroups = {
-            'switch':'switch','router':'router','firewall':'network','print servers':'network',
-            'printer':'printer','scanner':'printer',
-            'desktop':'computer','laptop':'computer','tablet':'computer',
-            'server':'server','server - virtual':'server','server - physical':'server','physical server':'server','virtual server':'server',
-            'nas':'nas','phone system':'phone','ups':'ups','tape drive':'tape','access point':'ap','ap':'ap','print server':'network','wireless access point':'ap','wireless lan controller':'network'
-        };
         const phase19BChoices = {
             portCount:['4','8','12','16','24','48'],networkConnection:['Ethernet','Wi-Fi','Fibre','Other'],printerColour:['Colour','Monochrome'],
             printerDesign:['Laser','Inkjet','Thermal','Dot matrix','Other'],
