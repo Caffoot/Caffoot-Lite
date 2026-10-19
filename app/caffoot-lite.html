@@ -5199,6 +5199,26 @@ function hierarchyValidateTypes(subnets) {
             panels.get('general').append(sections[0], sections[4]);
             panels.get('hardware').append(sections[1], sections[2]);
             panels.get('networking').append(sections[3]);
+            // Move existing field nodes rather than cloning controls, preserving IDs and handlers.
+            const status = form.querySelector('#dev-status');
+            const statusRow = status?.closest('div');
+            if (statusRow && status?.type !== 'hidden') {
+                sections[0].appendChild(statusRow);
+            } else if (status?.type === 'hidden') {
+                // New devices still need the hidden Active status value submitted.
+                sections[0].appendChild(status);
+            }
+            const location = form.querySelector('#dev-location');
+            const locationRow = location?.closest('.grid');
+            if (locationRow && locationRow.contains(form.querySelector('#dev-custom-location'))) {
+                const locationSection = document.createElement('div');
+                locationSection.className = 'form-section-card space-y-4';
+                locationSection.innerHTML = '<div class="form-section-heading"><i class="fa-solid fa-location-dot" aria-hidden="true"></i>Location Area</div>';
+                locationSection.appendChild(locationRow);
+                panels.get('general').insertBefore(locationSection, sections[4]);
+            }
+            const mountHeading = sections[2].querySelector('.form-section-heading');
+            if (mountHeading) mountHeading.textContent = 'Mounting & Rack Configuration';
             const note = document.createElement('p');
             note.className = 'phase120-device-empty';
             note.textContent = 'Software and firmware options will be organised here in the next development step. Existing device-specific fields remain available under Hardware for now.';
