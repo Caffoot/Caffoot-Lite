@@ -5873,13 +5873,14 @@ function hierarchyValidateTypes(subnets) {
         }
         // AP conflicts require an explicit choice, never an inferred mounting position.
         function phase16CAPMountConflicts(raw) {
-            const candidate = phase20MigrateBackup(raw);
-            return candidate.devices.filter(device => phase19BIsAccessPoint(device.type) &&
+            // Inspect the validated raw backup before migration: normaliseState
+            // rejects incompatible AP mounts, so migration cannot run first.
+            return raw.devices.filter(device => phase19BIsAccessPoint(device.type) &&
                 (!phase19BAllowedMounts(device.type).includes(device.mountType || (device.rackId ? 'Rack Mounted' : 'Desktop')) ||
                 Boolean(device.rackId))).map(device => ({
                     id: device.id, name: device.name, type: device.type,
                     mountType: device.mountType || (device.rackId ? 'Rack Mounted' : 'Desktop'),
-                    rack: candidate.racks.find(r => r.id === device.rackId)?.name || device.rackId || '(none)'
+                    rack: raw.racks.find(r => r.id === device.rackId)?.name || device.rackId || '(none)'
                 }));
         }
         function phase16CChooseAPMounts(conflicts) {
