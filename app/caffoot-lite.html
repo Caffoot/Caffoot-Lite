@@ -5693,7 +5693,11 @@ function hierarchyValidateTypes(subnets) {
         // Work on a detached copy: legacy normalisation must never mutate the input backup.
         function phase20MigrateBackup(raw) {
             phase20ValidateBackupVersion(raw);
-            return normaliseState(JSON.parse(JSON.stringify(raw)));
+            const detached = JSON.parse(JSON.stringify(raw));
+            const repairs = phase16CLegacyMountRepairs(detached);
+            const candidate = normaliseState(detached);
+            if (repairs.length) Object.defineProperty(candidate, '_legacyMountRepairs', { value: repairs, enumerable: false });
+            return candidate;
         }
         function exportData() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(phase20CreateBackup(), null, 2));
@@ -5799,7 +5803,6 @@ function hierarchyValidateTypes(subnets) {
             phase11ValidateBackupShape(raw);
             phase20ValidateBackupVersion(raw);
             const candidate = phase20MigrateBackup(raw);
-            const mountRepairs = phase16CLegacyMountRepairs(candidate);
             const invalidMounts = phase16CInvalidMounts(candidate);
             if (invalidMounts.length) throw new Error('Backup contains unsupported device mounting types: ' + invalidMounts.slice(0, 4).map(d => String(d.name)).join(', '));
             const original = appState;
@@ -5811,7 +5814,6 @@ function hierarchyValidateTypes(subnets) {
                 appState = original;
             }
             if (issues.length) throw new Error(`Inventory integrity check found ${issues.length} issue(s): ${issues.slice(0, 4).join('; ')}${issues.length > 4 ? '; and more' : ''}`);
-            if (mountRepairs.length) Object.defineProperty(candidate, '_legacyMountRepairs', { value: mountRepairs, enumerable: false });
             return candidate;
         }
         function phase16CReadJson(contents) {
