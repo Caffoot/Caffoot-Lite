@@ -5295,7 +5295,7 @@ function hierarchyValidateTypes(subnets) {
             const makerValues=[...makers].sort((a,b)=>a.localeCompare(b));
             makerSelect.replaceChildren(new Option('Select Manufacturer...',''),...makerValues.map(v=>new Option(v,v)),new Option('Other / Custom Manufacturer','__custom__'));
             const matchingMaker=makerValues.find(v=>v.toLowerCase()===currentMaker.toLowerCase());
-            makerSelect.value=currentMaker?(matchingMaker||'__custom__'):'';
+            makerSelect.value=currentMaker?(matchingMaker||'__custom__'):(makerSelect.value==='__custom__'?'__custom__':'');
             makerCustom.classList.toggle('hidden',makerSelect.value!=='__custom__');
             makerCustom.value=makerSelect.value==='__custom__'?currentMaker:'';
             const models=new Set(catalog.filter(x=>x.manufacturer.toLowerCase()===currentMaker.toLowerCase()).map(x=>x.model).filter(Boolean));
@@ -5305,7 +5305,7 @@ function hierarchyValidateTypes(subnets) {
             const modelValues=[...models].sort((a,b)=>a.localeCompare(b));
             modelSelect.replaceChildren(new Option('Select Model...',''),...modelValues.map(v=>new Option(v,v)),new Option('Other / Custom Model','__custom__'));
             const matchingModel=modelValues.find(v=>v.toLowerCase()===currentModel.toLowerCase());
-            modelSelect.value=currentModel?(matchingModel||'__custom__'):'';
+            modelSelect.value=currentModel?(matchingModel||'__custom__'):(modelSelect.value==='__custom__'?'__custom__':'');
             modelCustom.classList.toggle('hidden',modelSelect.value!=='__custom__');
             modelCustom.value=modelSelect.value==='__custom__'?currentModel:'';
         }
@@ -5321,6 +5321,7 @@ function hierarchyValidateTypes(subnets) {
             if(kind==='manufacturer'){
                 document.getElementById('dev-model').value='';
                 phase120RefreshHardwareSuggestions();
+                if(isCustom){custom.classList.remove('hidden');custom.focus();}
             }
         }
         // Desktop, laptop and tablet software is managed independently of server functions.
