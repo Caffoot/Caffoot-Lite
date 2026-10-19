@@ -1246,6 +1246,7 @@ function hierarchyValidateTypes(subnets) {
                 if (!isPlainObject(device) || !device.id || !device.name) throw new Error('Every device must have an id and name.');
                 if (deviceIds.has(device.id)) throw new Error(`Duplicate device ID: ${device.id}.`);
                 deviceIds.add(device.id);
+                if (!phase19BAllowedMounts(device.type).includes(device.mountType || (device.rackId ? 'Rack Mounted' : 'Desktop'))) throw new Error(`Device ${device.name} has an incompatible mounting type for ${device.type}.`);
                 if (device.primaryIp && !isValidIpv4(device.primaryIp)) throw new Error(`Invalid primary IP on device ${device.name}.`);
                 if (device.mountType === 'Rack Mounted' || device.rackId) {
                     if (device.mountType !== 'Rack Mounted') throw new Error(`Device ${device.name} has a rack assignment but is not Rack Mounted.`);
@@ -1355,6 +1356,7 @@ function hierarchyValidateTypes(subnets) {
             appState.devices.forEach(device => {
                 if (!device.id || deviceIds.has(device.id)) errors.push(`Duplicate or missing device ID: ${device.id || '(missing)'}`);
                 deviceIds.add(device.id);
+                if (!phase19BAllowedMounts(device.type).includes(device.mountType || (device.rackId ? 'Rack Mounted' : 'Desktop'))) errors.push(`Device ${device.name} has an incompatible mounting type for ${device.type}.`);
                 if (device.location === 'Blank') errors.push(`Device ${device.name} still uses the retired Blank location.`);
                 if (device.primaryIp) {
                     if (primaryIps.has(device.primaryIp)) errors.push(`Duplicate primary IP: ${device.primaryIp}.`);
