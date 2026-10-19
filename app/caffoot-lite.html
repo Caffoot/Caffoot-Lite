@@ -5871,6 +5871,84 @@ function hierarchyValidateTypes(subnets) {
                 observer.observe(container, {attributes:true,attributeFilter:['class']});
             });
         }
+        // AP conflicts require an explicit choice, never an inferred mounting position.
+        function phase16CAPMountConflicts(raw) {
+            const candidate = phase20MigrateBackup(raw);
+            return candidate.devices.filter(device => phase19BIsAccessPoint(device.type) &&
+                (!phase19BAllowedMounts(device.type).includes(device.mountType || (device.rackId ? 'Rack Mounted' : 'Desktop')) ||
+                Boolean(device.rackId))).map(device => ({
+                    id: device.id, name: device.name, type: device.type,
+                    mountType: device.mountType || (device.rackId ? 'Rack Mounted' : 'Desktop'),
+                    rack: candidate.racks.find(r => r.id === device.rackId)?.name || device.rackId || '(none)'
+                }));
+        }
+        function phase16CChooseAPMounts(conflicts) {
+            return new Promise(resolve => {
+                const container = document.getElementById('modal-container');
+                const options = ['Tabletop / Shelf Mounted','Ceiling Mounted','Wall Mounted','Pole Mounted','Desktop'];
+                const rows = conflicts.map((device, index) => `
+                    <li class="rounded-lg border border-slate-200 dark:border-slate-700 p-3 space-y-2">
+                        <p class="font-semibold text-slate-900 dark:text-white">${escapeHtml(String(device.name || '(unnamed device)'))} (${escapeHtml(String(device.type))})</p>
+                        <p class="text-sm dark:text-slate-200">Existing: ${escapeHtml(String(device.mountType))} / ${escapeHtml(String(device.rack))}</p>
+                        <label class="block text-sm font-semibold dark:text-white" for="legacy-ap-${index}">Choose Mounting Type</label>
+                        <select id="legacy-ap-${index}" data-ap-choice="${index}" class="w-full rounded-lg border p-2 text-slate-900">
+                            <option value="">Select a mounting type…</option>
+                            ${options.map(option => `<option value="${escapeHtml(option)}">${escapeHtml(option)}</option>`).join('')}
+                        </select>
+                    </li>`).join('');
+                openModal(`<section class="space-y-4">
+                    <h2 class="text-xl font-bold dark:text-white">Access Point Mounting Review</h2>
+                    <p class="text-sm dark:text-slate-200">Choose a valid mounting type for each Access Point. Rack assignments and rack-unit positions will be cleared. The original backup and current inventory will not be changed unless you approve the final restore.</p>
+                    <ul class="space-y-2 max-h-[45vh] overflow-y-auto" tabindex="0">${rows}</ul>
+                    <p data-ap-error role="alert" class="text-sm text-red-700 dark:text-red-300"></p>
+                    <div class="flex flex-wrap justify-end gap-3">
+                        <button type="button" data-ap-action="cancel" class="rounded-xl border px-4 py-2 dark:text-white">Cancel Restore</button>
+                        <button type="button" data-ap-action="approve" class="rounded-xl bg-blue-800 px-4 py-2 font-semibold text-white">Apply Mounting Choices</button>
+                    </div>
+                </section>`);
+                let finished = false;
+                const observer = new MutationObserver(() => {
+                    if (container.classList.contains('hidden')) finish(null);
+                });
+                const finish = choices => {
+                    if (finished) return;
+                    finished = true;
+                    observer.disconnect();
+                    container.removeEventListener('click', onClick);
+                    if (!container.classList.contains('hidden')) closeModal(true);
+                    resolve(choices);
+                };
+                const onClick = event => {
+                    const button = event.target.closest('[data-ap-action]');
+                    if (!button) return;
+                    if (button.dataset.apAction === 'cancel') return finish(null);
+                    const selections = [...container.querySelectorAll('[data-ap-choice]')].map(select => select.value);
+                    if (selections.length !== conflicts.length || selections.some(choice => !options.includes(choice))) {
+                        container.querySelector('[data-ap-error]').textContent = 'Select a valid mounting type for every Access Point.';
+                        return;
+                    }
+                    finish(selections);
+                };
+                container.addEventListener('click', onClick);
+                observer.observe(container, {attributes:true,attributeFilter:['class']});
+            });
+        }
+        function phase16CApplyAPChoices(raw, conflicts, choices) {
+            const copy = JSON.parse(JSON.stringify(raw));
+            for (let index = 0; index < conflicts.length; index++) {
+                const device = copy.devices.find(item => item.id === conflicts[index].id);
+                if (!device || !phase19BIsAccessPoint(device.type) || !phase19BAllowedMounts(device.type).includes(choices[index]))
+                    throw new Error('Invalid Access Point mounting selection.');
+                device.mountType = choices[index];
+                device.rackId = '';
+                device.face = 'front';
+                device.rackUStart = null;
+                device.rackUEnd = null;
+                device.rackUHeight = null;
+                if (String(device.location || '').toLowerCase() === 'racked') device.location = 'Unknown';
+            }
+            return copy;
+        }
         function importData(event) {
             const input = event.target;
             const file = input.files?.[0];
@@ -5884,7 +5962,17 @@ function hierarchyValidateTypes(subnets) {
             reader.onload = async () => {
                 try {
                     const raw = phase16CReadJson(reader.result);
-                    const candidate = phase16CCheckBackup(raw);
+                    phase16CRejectUnsafeKeys(raw);
+                    phase11ValidateBackupShape(raw);
+                    phase20ValidateBackupVersion(raw);
+                    const apConflicts = phase16CAPMountConflicts(raw);
+                    let reviewedRaw = raw;
+                    if (apConflicts.length) {
+                        const choices = await phase16CChooseAPMounts(apConflicts);
+                        if (!choices) return;
+                        reviewedRaw = phase16CApplyAPChoices(raw, apConflicts, choices);
+                    }
+                    const candidate = phase16CCheckBackup(reviewedRaw);
                     const repairs = candidate._legacyMountRepairs || [];
                     if (repairs.length && !(await phase16CReviewLegacyMountRepairs(repairs))) return;
                     const summary = `${candidate.devices.length} devices, ${candidate.racks.length} racks, ${candidate.subnets.length} subnets, ${Object.keys(candidate.ipAllocations).length} IPAM records`;
