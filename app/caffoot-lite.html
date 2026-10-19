@@ -5169,7 +5169,7 @@ function hierarchyValidateTypes(subnets) {
         }
         function phase19BRenderFields(type, values={}, section='all') {
             const keys=phase19BFieldsFor(type).filter(key =>
-                key !== 'os' && key !== 'windowsLicence' && (section === 'all' || (section === 'software') === phase120IsSoftwareField(key)));
+                key !== 'os' && key !== 'windowsLicence' && (section === 'all' || (section === 'hardware' && !phase120IsSoftwareField(key)) || (section === 'services' && phase19BServerFunctionFields().includes(key)) || (section === 'installed' && phase19BSoftwareFields().includes(key)) || (section === 'software' && phase120IsSoftwareField(key))));
             if (!keys.length) return '<p class="text-sm text-slate-600 dark:text-slate-300">'+(type ? 'No additional fields are configured for this type yet.' : 'Select a device type above to display its additional fields.')+'</p>';
             return '<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">'+keys.map(key=>{
                 const label=(phase19BTypeGroups[String(type||'').toLowerCase().trim()]==='router'&&key==='networkConnection')?'WAN connection method':(phase120AvailableServerServices().find(x=>x.key===key)?.label||phase19BSoftware().find(x=>x.key===key)?.label||phase19BLabels[key]||key);
@@ -5299,10 +5299,13 @@ function hierarchyValidateTypes(subnets) {
             const panel=document.getElementById('phase19b-fields');
             const type=document.getElementById('dev-type')?.value;
             if(panel) panel.innerHTML=phase19BRenderFields(type,phase19BFormValues,'hardware');
-            const softwareFields = document.getElementById('phase120-software-fields');
-            if(softwareFields) softwareFields.innerHTML=phase19BRenderFields(type,phase19BFormValues,'software');
+            const serviceFields = document.getElementById('phase120-server-services-fields');
+            if(serviceFields) serviceFields.innerHTML=phase19BRenderFields(type,phase19BFormValues,'services');
+            const installedFields = document.getElementById('phase120-installed-software-fields');
+            if(installedFields) installedFields.innerHTML=phase19BRenderFields(type,phase19BFormValues,'installed');
             document.getElementById('phase19b-details-section')?.classList.toggle('hidden',!phase19BFieldsFor(type).some(key=>!phase120IsSoftwareField(key)));
-            document.getElementById('phase120-software-details')?.classList.toggle('hidden',!phase19BFieldsFor(type).some(phase120IsSoftwareField));
+            document.getElementById('phase120-server-services-section')?.classList.toggle('hidden',phase19BTypeGroups[String(type||'').toLowerCase().trim()]!=='server');
+            document.getElementById('phase120-installed-software-section')?.classList.toggle('hidden',!['server','computer'].includes(phase19BTypeGroups[String(type||'').toLowerCase().trim()]));
             const group=phase19BTypeGroups[String(type||'').toLowerCase().trim()];
             document.getElementById('phase19b-manage-functions-button')?.classList.toggle('hidden',group!=='server');
             document.getElementById('phase19b-manage-software-button')?.classList.toggle('hidden',group!=='server'&&group!=='computer');
@@ -5454,15 +5457,34 @@ function hierarchyValidateTypes(subnets) {
             const hardwareDetails = form.querySelector('#phase19b-details-section');
             if (hardwareDetails) {
                 const managers = hardwareDetails.querySelector('.flex.flex-wrap.gap-2');
-                const softwareSection = document.createElement('div');
-                softwareSection.id = 'phase120-software-details';
-                softwareSection.className = 'form-section-card space-y-4';
-                softwareSection.innerHTML = '<div class="form-section-heading"><i class="fa-solid fa-list-check" aria-hidden="true"></i>Installed Software & Server Functionality</div><div id="phase120-software-fields"></div>';
-                if (managers) softwareSection.insertBefore(managers, softwareSection.querySelector('#phase120-software-fields'));
-                panels.get('software').appendChild(softwareSection);
                 const type = form.querySelector('#dev-type')?.value || '';
-                softwareSection.querySelector('#phase120-software-fields').innerHTML = phase19BRenderFields(type, phase19BFormValues, 'software');
-                softwareSection.classList.toggle('hidden', !phase19BFieldsFor(type).some(phase120IsSoftwareField));
+                const group = phase19BTypeGroups[String(type||'').toLowerCase().trim()];
+                const servicesSection = document.createElement('div');
+                servicesSection.id = 'phase120-server-services-section';
+                servicesSection.className = 'form-section-card space-y-4';
+                servicesSection.innerHTML = '<div class="form-section-heading"><i class="fa-solid fa-server" aria-hidden="true"></i>Server Services</div><div id="phase120-server-services-fields"></div>';
+                const installedSection = document.createElement('div');
+                installedSection.id = 'phase120-installed-software-section';
+                installedSection.className = 'form-section-card space-y-4';
+                installedSection.innerHTML = '<div class="form-section-heading"><i class="fa-solid fa-box-open" aria-hidden="true"></i>Installed Software</div><div id="phase120-installed-software-fields"></div>';
+                if (managers) {
+                    const servicesManager = managers.querySelector('#phase19b-manage-functions-button');
+                    const softwareManager = managers.querySelector('#phase19b-manage-software-button');
+                    if (servicesManager) {
+                        servicesManager.textContent = 'Manage Server Services';
+                        servicesSection.insertBefore(servicesManager, servicesSection.querySelector('#phase120-server-services-fields'));
+                    }
+                    if (softwareManager) {
+                        softwareManager.textContent = 'Manage Installed Software';
+                        installedSection.insertBefore(softwareManager, installedSection.querySelector('#phase120-installed-software-fields'));
+                    }
+                }
+                panels.get('software').appendChild(servicesSection);
+                panels.get('software').appendChild(installedSection);
+                servicesSection.querySelector('#phase120-server-services-fields').innerHTML = phase19BRenderFields(type, phase19BFormValues, 'services');
+                installedSection.querySelector('#phase120-installed-software-fields').innerHTML = phase19BRenderFields(type, phase19BFormValues, 'installed');
+                servicesSection.classList.toggle('hidden', group !== 'server');
+                installedSection.classList.toggle('hidden', group !== 'server' && group !== 'computer');
                 hardwareDetails.classList.toggle('hidden', !phase19BFieldsFor(type).some(key => !phase120IsSoftwareField(key)));
             }
             let active = form.dataset.initialDeviceTab || 'general';
