@@ -3345,6 +3345,9 @@ function hierarchyValidateTypes(subnets) {
         document.addEventListener('input',event=>{if(['phase120-software-search','phase120-software-source','phase120-software-type','phase120-software-used'].includes(event.target?.id))phase120FilterSoftware();});
         document.addEventListener('change',event=>{if(['phase120-software-source','phase120-software-type','phase120-software-used'].includes(event.target?.id))phase120FilterSoftware();});
         function renderDevicesHTML() {
+            if(phase14DeviceTab==='manufacturers')return '<div class="space-y-5 phase14-devices">'+phase120ManufacturersHTML()+'</div>';
+            if(phase14DeviceTab==='models')return '<div class="space-y-5 phase14-devices">'+phase120ModelsHTML()+'</div>';
+            if(phase14DeviceTab==='software')return '<div class="space-y-5 phase14-devices">'+phase120SoftwareHTML()+'</div>';
             return `
                 <div class="space-y-5 phase14-devices">
                     ${phase14DeviceTab==='manufacturers'?phase120ManufacturersHTML():''}
