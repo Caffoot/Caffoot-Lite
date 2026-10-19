@@ -1,0 +1,16 @@
+'use strict';
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const source = fs.readFileSync(__dirname + '/caffoot-lite.html', 'utf8');
+const tabs = source.slice(source.indexOf('function phase120InitializeDeviceTabs('), source.indexOf('function openDeviceModal('));
+assert.match(tabs, /\['notes', 'Notes'\]/, 'Notes is a fifth tab');
+assert.match(tabs, /panels\.get\('general'\)\.append\(sections\[0\], sections\[2\]\)/, 'Mounting is on General');
+assert.match(tabs, /panels\.get\('hardware'\)\.append\(sections\[1\]\)/, 'Hardware excludes mounting');
+assert.match(tabs, /panels\.get\('notes'\)\.append\(sections\[4\]\)/, 'Notes section belongs to Notes tab');
+assert.match(tabs, /form\.dataset\.activeDeviceTab = id/, 'Active tab recorded');
+assert.match(tabs, /form\.dataset\.initialDeviceTab \|\| 'general'/, 'Active tab restored');
+assert.match(source, /activeDeviceTab: form\.dataset\.activeDeviceTab/, 'Draft remembers tab');
+assert.match(source, /draft\?\.activeDeviceTab\) deviceForm\.dataset\.initialDeviceTab/, 'Reopened device restores tab');
+assert.match(source, /<textarea id="dev-notes" rows="7"/, 'Notes supports multiline content');
+assert.doesNotMatch(source, /<input type="text" id="dev-notes"/, 'Old single-line notes field removed');
+console.log('PASS: five-tab layout, mounting placement, multiline notes and tab draft contract.');
