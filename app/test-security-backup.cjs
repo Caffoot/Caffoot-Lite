@@ -15,12 +15,20 @@ const guardCode = html.slice(guardStart,guardEnd);
 const checkStart = html.indexOf('function phase16CCheckBackup(');
 const checkEnd = html.indexOf('function importData(',checkStart);
 assert(checkStart >= 0 && checkEnd > checkStart, 'Backup validation pipeline must exist');
+const mountsStart = html.indexOf('const phase19BTypeGroups =');
+const mountsEnd = html.indexOf('function phase19BMountOptions(', mountsStart);
+const repairStart = html.indexOf('function phase16CLegacyMountRepairs(');
+const repairEnd = html.indexOf('function phase16CCheckBackup(', repairStart);
+assert(mountsStart >= 0 && mountsEnd > mountsStart && repairStart >= 0 && repairEnd > repairStart,
+  'Mount compatibility rules and legacy repair helpers must exist');
+const mountCode = html.slice(mountsStart, mountsEnd);
+const repairCode = html.slice(repairStart, repairEnd);
 const context = vm.createContext({
   appState:{devices:[],subnets:[],racks:[],vlans:[],ipAllocations:{}},
   normaliseState:raw=>raw,
   validateApplicationState:()=>[]
 });
-vm.runInContext(versionCode+'\n'+guardCode+'\n'+html.slice(checkStart,checkEnd),context);
+vm.runInContext(mountCode+'\n'+repairCode+'\n'+versionCode+'\n'+guardCode+'\n'+html.slice(checkStart,checkEnd),context);
 const valid = '{"devices":[],"subnets":[],"racks":[],"vlans":[],"ipAllocations":{}}';
 assert.equal(context.phase16CCheckBackup(JSON.parse(valid)).devices.length,0,'ordinary backup must pass');
 const versioned = JSON.parse(JSON.stringify(context.phase20CreateBackup({devices:[],subnets:[],racks:[],vlans:[],ipAllocations:{}})));
@@ -46,6 +54,19 @@ assert.throws(()=>context.phase16CCheckBackup(JSON.parse('{"devices":{},"subnets
 const tooMany = JSON.parse(valid);
 tooMany.devices = Array.from({length:50001},()=>({}));
 assert.throws(()=>context.phase16CCheckBackup(tooMany),/too many devices/,'excessive collection must be rejected');
+const malformedEntries = JSON.parse(valid);
+malformedEntries.devices = [null];
+assert.throws(()=>context.phase16CCheckBackup(malformedEntries),/invalid entries in devices/,'null device entries must be rejected');
+const arrayAllocations = JSON.parse(valid);
+arrayAllocations.ipAllocations = [];
+assert.throws(()=>context.phase16CCheckBackup(arrayAllocations),/valid IP allocation table/,'array-shaped IP allocation tables must be rejected');
+const tooManyAllocations = JSON.parse(valid);
+tooManyAllocations.ipAllocations = Object.fromEntries(Array.from({length:100001},(_,i)=>['ip-'+i,{}]));
+assert.throws(()=>context.phase16CCheckBackup(tooManyAllocations),/too many IP allocations/,'excessive IP allocations must be rejected');
+const nestedArrayPayload = JSON.parse(valid);
+nestedArrayPayload.devices = [{id:'safe',metadata:[{nested:[JSON.parse('{"__proto__":{"polluted":true}}')]}]}];
+assert.throws(()=>context.phase16CCheckBackup(nestedArrayPayload),/prohibited object property/,'dangerous keys inside nested arrays must be rejected');
+assert.equal(context.appState.devices.length,0,'failed checks must not replace active inventory');
 assert.throws(()=>context.phase16CReadJson('{invalid'),/not valid JSON/,'malformed JSON must be rejected');
 assert.equal(context.phase16CCheckBackup(JSON.parse(valid)).devices.length,0,'valid backups must still work after rejected payloads');
 console.log('PASS: hostile JSON property names, malformed data and oversized collections rejected.');

@@ -45,19 +45,19 @@ The v1.1.0 scope above is historical release planning, now delivered. Further ch
 
 **Status: Released on 18 October 2026** — PR #39 merged; local browser acceptance, GitHub Actions and verified release packaging passed.
 
-- **Implemented on development branch, pending release validation:** consolidate duplicate backup controls while preserving prominent local-storage warnings, JSON export/restore, recovery snapshots and destructive-action safeguards.
-- **Implemented on development branch, pending release validation:** reorganise Settings & Data into Back Up & Restore, Maintenance & Safety and Advanced Recovery.
-- **Implemented on development branch, pending release validation:** expand About Caffoot Lite with official branding, installed version, repository and documentation links, release notes and licence access.
+- **Delivered in published v1.1.1:** consolidate duplicate backup controls while preserving prominent local-storage warnings, JSON export/restore, recovery snapshots and destructive-action safeguards.
+- **Delivered in published v1.1.1:** reorganise Settings & Data into Back Up & Restore, Maintenance & Safety and Advanced Recovery.
+- **Delivered in published v1.1.1:** expand About Caffoot Lite with official branding, installed version, repository and documentation links, release notes and licence access.
 - **Partially implemented on development branch:** Light Mode, Dark Mode and Use System Setting preferences. Central management of device/server/software option lists remains to be assessed; preserve existing workflows and backups.
-- **Implemented on development branch, pending release validation:** rename dashboard Data Health to Inventory Health, explain what is checked, and distinguish inventory consistency from browser-storage safety and live network monitoring (which is not provided).
-- **Implemented on development branch, pending release validation:** add a dedicated offline Help & Guides tab with expandable reference topics, separate from About Caffoot Lite and complementary to the full online guides. Maintain these topics whenever related workflows change.
+- **Delivered in published v1.1.1:** rename dashboard Data Health to Inventory Health, explain what is checked, and distinguish inventory consistency from browser-storage safety and live network monitoring (which is not provided).
+- **Delivered in published v1.1.1:** add a dedicated offline Help & Guides tab with expandable reference topics, separate from About Caffoot Lite and complementary to the full online guides. Maintain these topics whenever related workflows change.
 - **Partially implemented on development branch:** improve manual update status presentation. Opt-in automatic release checks remain under consideration; do not silently replace the local HTML file or restore inventory.
 
 The delivered v1.1.1 scope is complete. Remaining ideas stay subject to review and do not automatically move into v1.1.2 or v1.2.
 
 ### v1.1.2 — Security hardening and deployment guidance
 
-**Status: Planned after v1.1.1 and before v1.2**
+**Status: In progress on `feature/v1.1.2-security-hardening`; not merged or published.**
 
 - Perform a code-focused security review of the standalone HTML app, including DOM XSS, HTML rendering, imported JSON, data validation and unsafe file/input handling.
 - Review browser local-storage exposure, shared-device risks, backup sensitivity, privacy and origin-specific storage behaviour.
@@ -68,7 +68,7 @@ The delivered v1.1.1 scope is complete. Remaining ideas stay subject to review a
 - Consider a SECURITY.md with a private vulnerability-reporting route, supported versions and responsible disclosure guidance.
 - Preserve existing data, JSON backup compatibility and user-approved release gates.
 
-Security controls for a future managed Caffoot Pro deployment require separate design and validation; Pro is not currently a released or security-certified alternative.
+Managed multi-user hosting, authentication and centrally administered deployments are outside the scope of this standalone offline-first application. Any such architecture would require separate design, implementation and security validation.
 
 ### v1.2 — Device, IPAM and rack enhancements
 

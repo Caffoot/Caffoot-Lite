@@ -2,8 +2,9 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const html=fs.readFileSync(__dirname+'/caffoot-lite.html','utf8');
 const slice=(start,end)=>{const a=html.indexOf(start),b=html.indexOf(end,a);assert(a>=0&&b>a);return html.slice(a,b);};
+const mountCode=slice('const phase19BTypeGroups =','function phase19BMountOptions('); const repairCode=slice('function phase16CLegacyMountRepairs(','function phase16CCheckBackup(');
 const context=vm.createContext({appState:{devices:[],subnets:[],vlans:[],racks:[],ipAllocations:{}},getDeviceById:id=>context.appState.devices.find(d=>d.id===id)});
-vm.runInContext(slice('const defaultData =','// Caffoot Lite v1 uses its own browser storage namespace.')+'\nfunction ipBelongsToSubnet(ip,cidr){return phase12Usable(ip,cidr);}\n'+slice('const CAFFOOT_BACKUP_FORMAT =','function exportData()')+'\n'+slice('function phase16CRejectUnsafeKeys(','function phase11DownloadSnapshot(')+'\n'+slice('function phase16CCheckBackup(','function importData('),context);
+vm.runInContext(mountCode+'\n'+repairCode+'\n'+slice('const defaultData =','// Caffoot Lite v1 uses its own browser storage namespace.')+'\nfunction ipBelongsToSubnet(ip,cidr){return phase12Usable(ip,cidr);}\n'+slice('const CAFFOOT_BACKUP_FORMAT =','function exportData()')+'\n'+slice('function phase16CRejectUnsafeKeys(','function phase11DownloadSnapshot(')+'\n'+slice('function phase16CCheckBackup(','function importData('),context);
 const read=name=>JSON.parse(fs.readFileSync(__dirname+'/fixtures/'+name,'utf8'));
 const raw=read('lite-schema-v1.example.json'),original=JSON.stringify(raw),before=JSON.stringify(context.appState);
 const candidate=context.phase16CCheckBackup(raw);

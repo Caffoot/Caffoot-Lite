@@ -7,6 +7,14 @@
 
 No Docker, database, web server or account is required to run the published release. Download the HTML application and open it in a modern browser. Your inventory stays in that browser's local storage, so **regular JSON exports are essential**: browser data loss can mean inventory loss.
 
+## ⚠️ SECURITY WARNING — DO NOT EXPOSE CAFFOOT LITE TO THE PUBLIC INTERNET
+
+> **Caffoot Lite is a local, offline-first application — NOT a secure public web service.** It has **no built-in login, access control, user isolation or server-side security boundary**. Do **not** publish it openly on the internet or assume a web server makes it safe for multi-user access.
+>
+> If you deliberately host the HTML file, restrict access using **properly configured authentication and authorisation, HTTPS, and network controls** (preferably private-network/VPN access). **A reverse proxy by itself is not authentication.** These measures reduce exposure but do not turn Lite into a secure multi-user application.
+>
+> **Inventory is stored in each browser's local storage**, and exported JSON backups may reveal IP addresses, device details and other sensitive infrastructure information. Avoid shared/untrusted computers, protect backups and read the [full security and deployment guidance](#-security-and-deployment-guidance) and [SECURITY.md](SECURITY.md) before deploying.
+
 ## Screenshots
 
 ### Dashboard
@@ -49,7 +57,7 @@ If you choose to serve Caffoot Lite from a web server, restrict access with appr
 
 Browser storage is local to the browser/profile and origin; hosting the HTML file does **not** turn Caffoot Lite into a shared, server-backed inventory system. Avoid using it on untrusted or shared computers, protect exported backups, and never assume that an externally hosted copy provides multi-user isolation.
 
-A dedicated security review and deployment-hardening milestone is planned for v1.1.2; that review has **not yet been completed**. Future Caffoot Pro is intended to address managed multi-user deployment, but it should not be treated as an available or security-validated alternative until released and reviewed.
+A dedicated security review and deployment-hardening milestone is in progress for v1.1.2. The review is not complete, and Caffoot Lite must not be treated as an authenticated multi-user service or a security-certified public deployment.
 
 ## Update checker notice for older versions
 
