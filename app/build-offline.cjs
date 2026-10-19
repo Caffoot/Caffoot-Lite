@@ -13,7 +13,7 @@ try {
   const cssInput = path.join(tmp, 'input.css');
   const cssOutput = path.join(tmp, 'output.css');
   fs.writeFileSync(cssInput, [
-    '@import "tailwindcss" source(none);',
+    '@import "' + path.join(root, 'node_modules', 'tailwindcss', 'index.css').replace(/\\/g, '/') + '" source(none);',
     '@source "' + source.replace(/\\/g, '/') + '";',
     '@custom-variant dark (&:where(.dark, .dark *));',
     '@theme { --color-brand-50: #eef2ff; --color-brand-100: #e0e7ff; --color-brand-500: #6366f1; --color-brand-600: #4f46e5; --color-brand-700: #4338ca; }',
