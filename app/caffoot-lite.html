@@ -5228,6 +5228,53 @@ function hierarchyValidateTypes(subnets) {
             'Firewall': {'Fortinet':['FortiGate'],'Cisco':['Firepower'],'Sophos':['XGS'],'Palo Alto Networks':['PA Series']},
             'NAS': {'Synology':['DiskStation','RackStation'],'QNAP':['TS Series']}
         };
+        // User-managed hardware suggestions are stored with the offline inventory.
+        function phase120HardwareCatalogue(){
+            return Array.isArray(appState.hardwareCatalogue)?appState.hardwareCatalogue:[];
+        }
+        function phase120HardwareCatalogType(){
+            return document.getElementById('dev-type')?.value||'';
+        }
+        function phase120ManageHardwareCatalogue(){
+            phase19BKeepDeviceForm();
+            const type=phase120HardwareCatalogType()||'Device';
+            const items=phase120HardwareCatalogue().filter(x=>x.type===type);
+            openModal(`<div class="p-5 sm:p-7 space-y-4 phase18d-manager">
+                <div class="flex items-start justify-between gap-3"><div><h3 class="text-lg font-bold">Manage Hardware Catalogue</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Custom manufacturer and model suggestions for ${escapeHtml(type)}. Built-in suggestions and existing device records are retained.</p></div><button type="button" data-action="close-modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button></div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2"><input id="hardware-catalog-maker" maxlength="120" placeholder="Manufacturer (e.g. Dell)" aria-label="Manufacturer" class="h-11 px-3 rounded-xl border border-slate-400 dark:bg-slate-800"><input id="hardware-catalog-model" maxlength="120" placeholder="Model (optional)" aria-label="Model" class="h-11 px-3 rounded-xl border border-slate-400 dark:bg-slate-800"></div>
+                <button type="button" data-action="hardware-catalog-add" class="h-11 px-4 rounded-xl bg-blue-800 text-white">Add Catalogue Entry</button>
+                <div class="space-y-2 max-h-[48vh] overflow-y-auto">${items.length?items.map(x=>`<div class="flex items-center gap-2 p-3 border border-slate-300 dark:border-slate-600 rounded-xl"><span class="flex-1 break-words"><strong>${escapeHtml(x.manufacturer)}</strong>${x.model?' — '+escapeHtml(x.model):''}</span><button type="button" data-action="hardware-catalog-edit" data-name="${escapeHtml(x.id)}" class="h-10 px-3 border rounded-lg" aria-label="Edit catalogue entry"><i class="fa-solid fa-pen"></i></button><button type="button" data-action="hardware-catalog-remove" data-name="${escapeHtml(x.id)}" class="h-10 px-3 border border-rose-400 rounded-lg text-rose-700 dark:text-rose-300" aria-label="Remove catalogue entry"><i class="fa-solid fa-trash"></i></button></div>`).join(''):'<p class="text-sm text-slate-600 dark:text-slate-300">No custom entries yet. Built-in suggestions are available automatically.</p>'}</div>
+                <div class="flex justify-end"><button type="button" data-action="close-modal" class="h-11 px-5 rounded-xl bg-blue-800 text-white">Done</button></div>
+            </div>`);
+        }
+        function phase120UpdateHardwareCatalogue(action,id=''){
+            const type=phase120HardwareCatalogType()||'Device';
+            const items=phase120HardwareCatalogue().map(x=>({...x}));
+            const entry=items.find(x=>x.id===id);
+            if(action!=='add'&&!entry)return;
+            let maker='',model='';
+            if(action==='add'){
+                maker=String(document.getElementById('hardware-catalog-maker')?.value||'').trim();
+                model=String(document.getElementById('hardware-catalog-model')?.value||'').trim();
+            }else if(action==='edit'){
+                const enteredMaker=prompt('Manufacturer:',entry.manufacturer);
+                if(enteredMaker===null)return;
+                const enteredModel=prompt('Model (leave blank for manufacturer only):',entry.model||'');
+                if(enteredModel===null)return;
+                maker=enteredMaker.trim();model=enteredModel.trim();
+            }else if(!confirm('Remove this catalogue suggestion? Existing device records will not change.'))return;
+            if(action!=='remove'){
+                if(!maker||maker.length>120||model.length>120){showToast('Enter a manufacturer (up to 120 characters) and an optional model (up to 120 characters).','error');return;}
+                if(items.some(x=>x.id!==id&&x.type===type&&x.manufacturer.toLowerCase()===maker.toLowerCase()&&String(x.model||'').toLowerCase()===model.toLowerCase())){showToast('That catalogue entry already exists.','error');return;}
+            }
+            if(action==='add')items.push({id:'hardware_'+Date.now().toString(36),type,manufacturer:maker,model});
+            else if(action==='edit'){entry.manufacturer=maker;entry.model=model;}
+            else items.splice(items.findIndex(x=>x.id===id),1);
+            const previous=appState.hardwareCatalogue;
+            appState.hardwareCatalogue=items;
+            if(!saveState()){if(previous===undefined)delete appState.hardwareCatalogue;else appState.hardwareCatalogue=previous;showToast('Could not save the catalogue.','error');return;}
+            phase120ManageHardwareCatalogue();
+        }
         function phase120RefreshHardwareSuggestions(preserve=true) {
             const type=document.getElementById('dev-type')?.value||'';
             const maker=document.getElementById('dev-manufacturer');
@@ -5239,7 +5286,8 @@ function hierarchyValidateTypes(subnets) {
             if(!maker||!model||!makerSelect||!modelSelect)return;
             const seeds=phase120HardwareSeed[type]||{};
             const related=appState.devices.filter(d=>d.type===type);
-            const makers=new Set([...Object.keys(seeds),...related.map(d=>String(d.manufacturer||'').trim()).filter(Boolean)]);
+            const catalog=phase120HardwareCatalogue().filter(x=>x.type===type);
+            const makers=new Set([...Object.keys(seeds),...related.map(d=>String(d.manufacturer||'').trim()).filter(Boolean),...catalog.map(x=>x.manufacturer)]);
             ['Dell','HP','HPE','Lenovo','ASUS','Apple','Cisco','Samsung','Microsoft','Toshiba'].forEach(m=>makers.add(m));
             const currentMaker=maker.value.trim();
             const makerValues=[...makers].sort((a,b)=>a.localeCompare(b));
@@ -5248,7 +5296,7 @@ function hierarchyValidateTypes(subnets) {
             makerSelect.value=currentMaker?(matchingMaker||'__custom__'):'';
             makerCustom.classList.toggle('hidden',makerSelect.value!=='__custom__');
             makerCustom.value=makerSelect.value==='__custom__'?currentMaker:'';
-            const models=new Set();
+            const models=new Set(catalog.filter(x=>x.manufacturer.toLowerCase()===currentMaker.toLowerCase()).map(x=>x.model).filter(Boolean));
             Object.entries(seeds).forEach(([name,values])=>{if(name.toLowerCase()===currentMaker.toLowerCase())values.forEach(v=>models.add(v));});
             related.forEach(d=>{if(String(d.manufacturer||'').trim().toLowerCase()===currentMaker.toLowerCase() && String(d.model||'').trim())models.add(String(d.model).trim());});
             const currentModel=model.value.trim();
@@ -5771,6 +5819,7 @@ function hierarchyValidateTypes(subnets) {
                                 <div><label for="dev-manufacturer-select" class="form-label">Manufacturer (optional)</label><input id="dev-manufacturer" type="hidden" value="${escapeHtml(draft?.manufacturer ?? device?.manufacturer ?? '')}"><select id="dev-manufacturer-select" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></select><input id="dev-manufacturer-custom" type="text" maxlength="120" class="hidden mt-2 w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Enter Custom Manufacturer" aria-label="Custom Manufacturer"></div>
                                 <div><label for="dev-model-select" class="form-label">Model (optional)</label><input id="dev-model" type="hidden" value="${escapeHtml(draft?.model ?? device?.model ?? '')}"><select id="dev-model-select" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></select><input id="dev-model-custom" type="text" maxlength="120" class="hidden mt-2 w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Enter Custom Model" aria-label="Custom Model"></div>
                             </div>
+                            <div><button type="button" data-action="hardware-catalog-manage" class="h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-500 text-sm font-semibold"><i class="fa-solid fa-list mr-1"></i>Manage Hardware Catalogue</button><p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Add reusable manufacturer and model suggestions for this device type.</p></div>
                             <div><label for="dev-serial" class="form-label">Serial number (optional)</label><input id="dev-serial" type="text" maxlength="120" value="${escapeHtml(draft?.serialNumber ?? device?.serialNumber ?? '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Manufacturer serial number"></div>
                         <div class="form-section-card space-y-4 ${phase19BFieldsFor(currentType).length===0?'hidden':''}" id="phase19b-details-section" aria-live="polite"><div class="form-section-heading"><i class="fa-solid fa-list-check"></i>Additional details for this device type</div><div class="flex flex-wrap gap-2"><button type="button" id="phase19b-manage-functions-button" data-action="phase19b-manage-functions" class="h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-500 text-sm font-semibold ${phase19BTypeGroups[String(currentType||'').toLowerCase().trim()]==='server'?'':'hidden'}">Manage Server Options</button><button type="button" id="phase19b-manage-software-button" data-action="phase19b-manage-software" class="h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-500 text-sm font-semibold ${['server','computer'].includes(phase19BTypeGroups[String(currentType||'').toLowerCase().trim()])?'':'hidden'}">Manage Software Options</button></div><div id="phase19b-fields">${phase19BRenderFields(currentType,phase19BFormValues,'hardware')}</div></div>
                         </div>
@@ -7055,6 +7104,10 @@ function hierarchyValidateTypes(subnets) {
                 case 'phase14c-rack': phase14CGoToRack(id); break;
                 case 'duplicate-device': duplicateDevice(id); break;
                 case 'delete-device': deleteDevice(id); break;
+                case 'hardware-catalog-manage': phase120ManageHardwareCatalogue(); break;
+                case 'hardware-catalog-add': phase120UpdateHardwareCatalogue('add'); break;
+                case 'hardware-catalog-edit': phase120UpdateHardwareCatalogue('edit',name); break;
+                case 'hardware-catalog-remove': phase120UpdateHardwareCatalogue('remove',name); break;
                 case 'phase19b-manage-software': phase19BManageSoftware(); break;
                 case 'phase19b-add-software': phase19BUpdateSoftware('add'); break;
                 case 'phase19b-rename-software': phase19BUpdateSoftware('rename',name); break;
