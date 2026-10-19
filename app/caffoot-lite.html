@@ -3273,12 +3273,23 @@ function hierarchyValidateTypes(subnets) {
             const custom=configured.filter(x=>!names.has(String(x.label||'').toLowerCase())).map(x=>({name:x.label,types:[],source:'configured',count:appState.devices.filter(d=>d[x.key]===true).length}));
             const items=[...builtins,...custom].map(x=>{
                 const option=configured.find(o=>String(o.label||'').toLowerCase()===x.name.toLowerCase());
-                return {...x,count:option?appState.devices.filter(d=>d[option.key]===true).length:0};
+                return {...x,configured:!!option,count:option?appState.devices.filter(d=>d[option.key]===true).length:0};
             }).sort((a,b)=>a.name.localeCompare(b.name));
             const types=[...new Set(items.flatMap(x=>x.types))].sort((a,b)=>a.localeCompare(b));
             const card=(label,value)=>'<div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5"><p class="text-sm text-slate-600 dark:text-slate-300">'+label+'</p><p class="text-3xl font-bold mt-2">'+value+'</p></div>';
-            const rows=items.map(x=>'<div data-software-row="'+escapeHtml(x.name.toLowerCase())+'" data-software-types="'+escapeHtml('|'+x.types.join('|')+'|')+'" data-software-used="'+x.count+'" data-software-source="'+x.source+'" class="rounded-xl border border-slate-200 dark:border-slate-700 p-4 flex flex-wrap items-center justify-between gap-3"><div><h3 class="font-semibold">'+escapeHtml(x.name)+'</h3><p class="text-xs text-slate-600 dark:text-slate-300 mt-1">'+(x.source==='built-in'?'Built-in suggestion':'Configured software')+(x.types.length?' · '+escapeHtml(x.types.join(', ')):' · No device-type association')+'</p></div><span class="text-sm font-semibold text-blue-700 dark:text-blue-300">'+x.count+' device'+(x.count===1?'':'s')+'</span></div>').join('');
+            const rows=items.map(x=>'<div data-software-row="'+escapeHtml(x.name.toLowerCase())+'" data-software-types="'+escapeHtml('|'+x.types.join('|')+'|')+'" data-software-used="'+x.count+'" data-software-source="'+x.source+'" class="rounded-xl border border-slate-200 dark:border-slate-700 p-4 flex flex-wrap items-center justify-between gap-3"><div><h3 class="font-semibold">'+escapeHtml(x.name)+'</h3><p class="text-xs text-slate-600 dark:text-slate-300 mt-1">'+(x.source==='built-in'?'Built-in suggestion':'Configured software')+(x.types.length?' · '+escapeHtml(x.types.join(', ')):' · No device-type association')+'</p></div><span class="text-sm font-semibold text-blue-700 dark:text-blue-300">'+x.count+' device'+(x.count===1?'':'s')+'</span>'+(x.source==='built-in'&&!x.configured?'<button type="button" data-action="phase120-software-enable" data-name="'+escapeHtml(x.name)+'" class="h-10 px-3 rounded-xl border border-blue-400 text-blue-700 dark:text-blue-300 font-semibold">Add To Device Forms</button>':'')+'</div>').join('');
             return '<section class="space-y-5"><div><h2 class="text-xl font-bold">Software</h2><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Browse built-in software suggestions by device type. Suggestions do not mean software is installed. Existing configured software and device records are preserved.</p></div><div class="grid grid-cols-1 sm:grid-cols-3 gap-4">'+card('Software Suggestions',items.length)+card('Used in Inventory',items.filter(x=>x.count>0).length)+card('Configured Software',configured.length)+'</div><div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-3"><label for="phase120-software-search" class="block text-sm font-semibold">Search Software</label><input id="phase120-software-search" type="search" placeholder="Filter software by name" class="w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-900"><div class="flex flex-wrap gap-3 items-end"><label class="text-sm">Device Type <select id="phase120-software-type" class="block mt-1 h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-900"><option value="">All Device Types</option>'+types.map(t=>'<option value="'+escapeHtml(t)+'">'+escapeHtml(t)+'</option>').join('')+'</select></label><label class="text-sm">Source <select id="phase120-software-source" class="block mt-1 h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-900"><option value="">All Sources</option><option value="built-in">Built-in Suggestions</option><option value="configured">Configured Software</option></select></label><label class="flex items-center gap-2 text-sm pb-2"><input id="phase120-software-used" type="checkbox">In Use Only</label><button type="button" data-action="phase120-software-reset" class="ml-auto pb-2 text-sm font-semibold text-blue-700 dark:text-blue-300">Reset Filters</button></div><p id="phase120-software-count" class="text-xs text-slate-600 dark:text-slate-300" aria-live="polite">'+items.length+' software options shown</p><div class="space-y-2 max-h-[65vh] overflow-y-auto">'+rows+'</div><p id="phase120-software-empty" class="hidden text-sm text-slate-600 dark:text-slate-300">No software matches these filters.</p></div></section>';
+        }
+        function phase120EnableSoftware(name){
+            const suggestion=phase120SoftwareSuggestions.find(x=>x.name===name);
+            if(!suggestion)return;
+            if(phase19BSoftware().some(x=>x.label.toLowerCase()===name.toLowerCase())){showToast('This software is already configured.');return;}
+            const snapshot=JSON.stringify(appState);
+            const key='customSoftware_'+Date.now().toString(36);
+            appState.installedSoftware=[...phase19BSoftware(),{key,label:suggestion.name,deviceTypes:suggestion.types}];
+            if(!saveState()){const previous=JSON.parse(snapshot);Object.keys(appState).forEach(k=>delete appState[k]);Object.assign(appState,previous);showToast('Could not save software option.','error');return;}
+            switchTab('devices');
+            showToast(suggestion.name+' is now available on compatible device forms.');
         }
         function phase120FilterSoftware(){
             const query=(document.getElementById('phase120-software-search')?.value||'').trim().toLowerCase();
@@ -5810,11 +5821,14 @@ function hierarchyValidateTypes(subnets) {
         };
         const phase19BFlags = new Set(['Swan','MicrosoftOffice','Planet','SpindleSoftware','Preactor','RedLionApp','SalesBase','HelpDesk','ProductionITHelpDeskDashboards','PDA','TMS','PhoneBook','EasyLabel','SwanServer','SQLServer','TMSServer','printserver','keriserver','ActiveDirectory','AntivirusSoftware','DNS','DHCP','ExchangeServer','BackupSoftware','PlanetDB','SystemsDatabaseBackEndTables','PDASystem','serialPort','usbPort']);
         const phase19BNumeric = new Set(['memory','storage','driveCount','handsetCount','powerOutlets']);
+        function phase120SoftwareFieldsFor(type){
+            return phase19BSoftware().filter(x=>!Array.isArray(x.deviceTypes)||x.deviceTypes.length===0||x.deviceTypes.some(t=>t.toLowerCase()===String(type||'').toLowerCase())).map(x=>x.key);
+        }
         function phase19BFieldsFor(type) {
             const group=phase19BTypeGroups[String(type||'').toLowerCase().trim()];
-            if(group==='computer')return [...phase19BProfiles.computer.filter(k=>!phase19BDefaultSoftware.includes(k)),...phase19BSoftwareFields()];
+            if(group==='computer')return [...phase19BProfiles.computer.filter(k=>!phase19BDefaultSoftware.includes(k)),...phase120SoftwareFieldsFor(type)];
             if(group==='server')return [...phase19BProfiles.server.filter(k=>!phase19BDefaultServerFunctions.includes(k)),...phase19BServerFunctionFields(),...phase19BSoftwareFields()];
-            return phase19BProfiles[group] || [];
+            return [...(phase19BProfiles[group] || []),...phase120SoftwareFieldsFor(type)];
         }
         // Keep persisted typeDetails keys unchanged while separating physical and software controls.
         function phase120IsSoftwareField(key) {
@@ -7553,6 +7567,7 @@ function hierarchyValidateTypes(subnets) {
                 case 'sidebar-devices-manufacturers': phase14DeviceTab='manufacturers'; switchTab('devices'); break;
                 case 'sidebar-devices-models': phase14DeviceTab='models'; switchTab('devices'); break;
                 case 'sidebar-devices-software': phase14DeviceTab='software'; switchTab('devices'); break;
+                case 'phase120-software-enable': phase120EnableSoftware(name); break;
                 case 'phase120-software-reset': ['phase120-software-search','phase120-software-source','phase120-software-type'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';}); if(document.getElementById('phase120-software-used'))document.getElementById('phase120-software-used').checked=false; phase120FilterSoftware(); break;
                 case 'phase120-model-add': phase120ModelManager(); break;
                 case 'phase120-model-edit': phase120ModelManager(name); break;
