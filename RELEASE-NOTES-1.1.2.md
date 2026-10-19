@@ -10,6 +10,14 @@
 - **Safer release packaging:** The packager requires the source application version to match npm package metadata and verifies the ZIP member allowlist, embedded notices, dependency licence copies and extracted file hashes.
 - **Documentation:** Security reporting and browser-local inventory storage limitations are documented. Access point mounting terminology uses Tabletop / Shelf Mounted, Ceiling Mounted, Wall Mounted and Pole Mounted; older backup mounting values remain subject to compatibility checks.
 
+## Tailwind CSS v4 dependency upgrade (experimental validation)
+
+- Upgraded the experimental offline build from Tailwind CSS v3.4.17 to **Tailwind CSS v4.3.3** with **@tailwindcss/cli v4.3.0** and **@parcel/watcher v2.6.0**.
+- The owner ran a clean `npm ci` installation and `npm audit --audit-level=moderate`, reporting **zero vulnerabilities** in the installed dependency tree at test time (down from seven reported on the v3 baseline).
+- The owner ran the complete **21-check** release pipeline successfully after the clean installation, including standalone HTML and ZIP packaging checks.
+- The owner manually verified test-data import, screens, light/dark themes, wireless access point and desktop configuration, modals, and Escape-key behaviour without observing regressions.
+- The build-time dependency audit does not establish that the application is free of all vulnerabilities. Final integration and security review remain outstanding.
+
 ## Upgrade and data safety
 
 **Export and safely retain a JSON backup before switching versions.** Inventory resides in browser local storage rather than inside the HTML. Moving or renaming a local `file://` application can change browser storage scope and make an existing inventory appear absent. Verify the restored data before deleting any backup.
@@ -26,9 +34,9 @@ These improvements are defensive safeguards and automated regression tests, **no
 - [x] Owner verified fresh-browser startup, disposable device backup export/import and offline operation.
 - [x] Package-version consistency safeguard passed before the version bump.
 - [ ] Complete historical repository and sensitive-content review.
-- [ ] Review dependencies, browser network activity and remaining dynamic HTML surfaces.
+- [x] Update and audit the experimental Tailwind v4 build dependencies; clean npm audit reported zero vulnerabilities.\n- [ ] Review browser network activity and remaining dynamic HTML surfaces.
 - [ ] Review documentation and built-in Help & Guides for v1.1.2 consistency.
 - [x] Owner ran the full v1.1.2 release pipeline successfully; the uploaded candidate ZIP passed initial integrity, manifest and sensitive-pattern checks.
 - [x] Owner confirmed the v1.1.2 About screen and offline browser navigation.
-- [ ] Re-run packaging after any final documentation changes and verify the resulting release artifacts.
+- [x] Experimental Tailwind v4 build passed clean-install release packaging and integrity checks.\n- [ ] Re-run packaging after integration or final documentation changes and verify the resulting release artifacts.
 - [ ] Obtain explicit owner approval before merging, tagging or publishing.
