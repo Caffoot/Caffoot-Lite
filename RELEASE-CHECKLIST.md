@@ -3,6 +3,12 @@
 Use this checklist for every Caffoot Lite release, including patch releases. Keep changes on a reviewable branch and do not publish until the release owner approves.
 
 ## Before merging
+- [ ] Inventory the complete feature-branch and main-branch file trees; confirm no local dummy-data generator, large generated inventory, private backup, credential, token, private key or customer data is tracked.
+- [ ] Review repository history for accidentally committed sensitive material; a clean current tree does not prove history is clean. Escalate suspected secrets privately and rotate exposed credentials as appropriate.
+- [ ] Run the repository privacy/security checks and inspect findings; do not rely on `.gitignore` to protect files already tracked or committed.
+- [ ] Inspect generated standalone HTML and the exact release ZIP member list, including both reviewed fictional fixtures. Reject any unexpected test files, development utilities, private data or external dependencies.
+- [ ] Review dependency versions, outbound network behaviour, CSP/browser mitigation decisions, and documented security limitations.
+- [ ] Review all user-facing documentation and embedded Help & Guides against the current application, while preserving accurate historical release records.
 - [ ] Confirm version in application, package metadata, release notes and filenames.
 - [ ] Run the full local release command and confirm every automated check passes.
 - [ ] Test the built standalone HTML in a browser and offline.
@@ -14,6 +20,7 @@ Use this checklist for every Caffoot Lite release, including patch releases. Kee
 - [ ] Merge only after review and owner approval.
 
 ## Publishing
+- [ ] Recheck all intended public release assets for sensitive information and unexpected files immediately before upload.
 - [ ] Create the version tag from the intended main commit.
 - [ ] Publish the release with approved release notes, versioned ZIP, standalone HTML and SHA256SUMS.
 - [ ] Check that Latest/pre-release settings are correct.
