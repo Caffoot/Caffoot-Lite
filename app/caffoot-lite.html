@@ -5348,9 +5348,9 @@ function hierarchyValidateTypes(subnets) {
                         <div class="form-actions"><button type="button" data-action="close-modal" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 rounded-xl text-xs">Cancel</button><button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-semibold">Save Device</button></div>
                     </form>
                 </div>`);
-            const deviceForm = document.querySelector('[data-device-form="true"]');
-            if (deviceForm && draft?.activeDeviceTab) deviceForm.dataset.initialDeviceTab = draft.activeDeviceTab;
-            phase120InitializeDeviceTabs(deviceForm);
+            const tabbedDeviceForm = document.querySelector('[data-device-form="true"]');
+            if (tabbedDeviceForm && draft?.activeDeviceTab) tabbedDeviceForm.dataset.initialDeviceTab = draft.activeDeviceTab;
+            phase120InitializeDeviceTabs(tabbedDeviceForm);
             const phase19BTypeSelect=document.getElementById('dev-type');
             if(phase19BTypeSelect) {
                 phase19BTypeSelect.addEventListener('change',phase19BRefreshFields);
