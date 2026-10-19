@@ -16,7 +16,7 @@ Open **IPAM → Manage Subnets**, create an **IP Address Block** (for example, `
 
 Open **Devices** and choose the add-device action. Enter the device details, choose a **Type** and **Location**, and select an IP address belonging to an existing subnet. Where offered, use **Next Available IP** to suggest a free address, then verify it before saving. If the subnet does not exist, create it first using the available subnet-creation flow.
 
-If the device is **Rack Mounted**, enter its rack/U requirements and review placement; otherwise choose **Desktop** where appropriate. Save and confirm that the device appears in inventory and that IPAM reflects its address.
+If the device is **Rack Mounted**, enter its rack/U requirements and review placement; otherwise choose the appropriate non-rack mounting option. For access points, the available choices include **Tabletop / Shelf Mounted**, **Ceiling Mounted**, **Wall Mounted**, and **Pole Mounted**. Save and confirm that the device appears in inventory and that IPAM reflects its address.
 
 ### 3. Manage IP addresses
 
@@ -43,7 +43,7 @@ Open **Settings & Data** for **Data Management**, **Preferences** and **About Ca
 ### Data Management — Back Up & Restore
 
 - **Download Backup** exports your inventory as a JSON file. Save it somewhere secure outside the browser; this is a manual backup, not automatic synchronisation.
-- **Choose Backup File** selects a previously exported JSON file. Review the validation and replacement confirmation carefully. A restore **replaces** the active inventory; it does not merge records. Download a fresh backup before restoring and verify devices, IPAM, subnets and racks afterwards.
+- **Choose Backup File** selects a previously exported JSON file. Review the validation and replacement confirmation carefully. When restoring an older backup, review any access-point mounting conflicts and confirm any legacy desktop/laptop rack-mount corrections before the final replacement confirmation. Cancelling a review leaves the active inventory unchanged. A restore **replaces** the active inventory; it does not merge records. Download a fresh backup before restoring and verify devices, IPAM, subnets and racks afterwards.
 
 ### Data Management — Maintenance & Safety
 
