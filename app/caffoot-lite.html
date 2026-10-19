@@ -983,6 +983,30 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
         .dark .phase120-maker-choice:hover { background: #312e81; border-color: #818cf8; }
         .dark .phase120-maker-choice:has(input:checked) { background: #1e3a8a; border-color: #60a5fa; color: #eff6ff; box-shadow: inset 0 0 0 1px #3b82f6; }
     </style>
+
+<style id="caffoot-modal-cancel-style">
+/* Shared modal Cancel appearance: consistent with the subnet form in both themes. */
+#modal-content button.caffoot-modal-cancel {
+  background:#fff1f2 !important;
+  color:#9f1239 !important;
+  border:1px solid #fda4af !important;
+  border-radius:11px;
+  min-height:44px;
+  font-weight:700;
+  transition:background-color .15s,border-color .15s;
+}
+#modal-content button.caffoot-modal-cancel:hover { background:#ffe4e6 !important; }
+#modal-content button.caffoot-modal-cancel:focus-visible {
+  outline:3px solid #2563eb;
+  outline-offset:2px;
+}
+.dark #modal-content button.caffoot-modal-cancel {
+  background:#4c1d2a !important;
+  color:#ffe4e6 !important;
+  border-color:#be6478 !important;
+}
+.dark #modal-content button.caffoot-modal-cancel:hover { background:#6b2438 !important; }
+</style>
 </head>
 <body class="h-full bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-200">
 
@@ -2707,7 +2731,7 @@ function hierarchyValidateTypes(subnets) {
         function phase13GOpenGraphics(type) {
             if(!getUniqueDeviceTypes().includes(type))return;
             const current=appState.deviceTypeGraphics?.[type]||'automatic';
-            openModal(`<div class="p-6 space-y-4"><div class="flex items-center justify-between"><h3 class="font-bold text-lg text-slate-900 dark:text-white">Rack graphic: ${escapeHtml(type)}</h3><button data-action="close-modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button></div><p class="text-sm text-slate-600 dark:text-slate-300">Choose a front-panel design for every rack-mounted device of this type. This does not affect inventory or rack placement.</p><label class="block text-sm font-semibold text-slate-900 dark:text-white">Graphic style<select id="phase13g-style" class="phase13c-field">${Object.entries(phase13GPresets).map(([key,label])=>`<option value="${key}" ${current===key?'selected':''}>${label}</option>`).join('')}</select></label><div class="flex justify-end gap-2"><button type="button" data-action="open-manage-types" class="phase13b-secondary">Cancel</button><button type="button" data-action="phase13g-save" data-name="${escapeHtml(type)}" class="phase13b-primary">Save Graphic</button></div></div>`);
+            openModal(`<div class="p-6 space-y-4"><div class="flex items-center justify-between"><h3 class="font-bold text-lg text-slate-900 dark:text-white">Rack graphic: ${escapeHtml(type)}</h3><button data-action="close-modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button></div><p class="text-sm text-slate-600 dark:text-slate-300">Choose a front-panel design for every rack-mounted device of this type. This does not affect inventory or rack placement.</p><label class="block text-sm font-semibold text-slate-900 dark:text-white">Graphic style<select id="phase13g-style" class="phase13c-field">${Object.entries(phase13GPresets).map(([key,label])=>`<option value="${key}" ${current===key?'selected':''}>${label}</option>`).join('')}</select></label><div class="flex justify-end gap-2"><button type="button" data-action="open-manage-types" class="phase13b-secondary caffoot-modal-cancel">Cancel</button><button type="button" data-action="phase13g-save" data-name="${escapeHtml(type)}" class="phase13b-primary">Save Graphic</button></div></div>`);
         }
         function phase13GSaveGraphics(type) {
             const choice=document.getElementById('phase13g-style')?.value;
@@ -3091,7 +3115,7 @@ function hierarchyValidateTypes(subnets) {
             openModal('<div class="p-5 sm:p-7 space-y-5"><div><h3 class="text-lg font-bold text-slate-900 dark:text-white">'+(deleting?'Remove Manufacturer Suggestions':makerName?'Manage Manufacturer':'Add Manufacturer')+'</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Associate a manufacturer with multiple device types. Built-in suggestions, model entries and existing device records are retained.</p></div>'+
                 (deleting?'<p class="text-sm text-slate-800 dark:text-slate-200">Remove custom manufacturer-only suggestions for <strong>'+escapeHtml(entry.manufacturer)+'</strong> across '+matches.length+' device type(s)? '+affected+' existing device(s) use this manufacturer; their records will remain unchanged.</p>':
                 '<form data-form-action="manufacturer" id="phase120-maker-form" class="space-y-4" onsubmit="return false"><div><label class="block text-sm font-semibold mb-2" for="phase120-maker-name">Manufacturer Name</label><input id="phase120-maker-name" required maxlength="120" value="'+escapeHtml(makerName||'')+'" '+(isBuiltIn?'readonly':'')+' class="w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-800"><p id="phase120-maker-error" role="alert" class="hidden text-sm text-rose-700 dark:text-rose-300 mt-2"></p></div>'+(isBuiltIn?'<p class="text-xs text-blue-700 dark:text-blue-300">Built-in manufacturer names and their default associations are protected. You can add custom device-type associations.</p>':'')+'<fieldset><legend class="font-semibold text-sm mb-2">Associated Device Types</legend><div class="flex gap-2 mb-3"><button type="button" data-action="phase120-maker-all" class="h-9 px-3 rounded-lg border border-slate-300 dark:border-slate-600 text-sm">Select All</button><button type="button" data-action="phase120-maker-none" class="h-9 px-3 rounded-lg border border-slate-300 dark:border-slate-600 text-sm">Clear All</button></div><div class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[38vh] overflow-y-auto">'+checks+'</div></fieldset></form>')+
-                '<div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-5 rounded-xl border border-slate-300 dark:border-slate-600">Cancel</button><button type="button" data-action="'+(deleting?'phase120-maker-confirm-remove':'phase120-maker-save')+'" data-name="'+escapeHtml(id)+'" class="h-11 px-5 rounded-xl text-white '+(deleting?'bg-rose-700':'bg-blue-800')+'">'+(deleting?'Remove Suggestions':'Save Manufacturer')+'</button></div></div>');
+                '<div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-5 rounded-xl border border-slate-300 dark:border-slate-600 caffoot-modal-cancel">Cancel</button><button type="button" data-action="'+(deleting?'phase120-maker-confirm-remove':'phase120-maker-save')+'" data-name="'+escapeHtml(id)+'" class="h-11 px-5 rounded-xl text-white '+(deleting?'bg-rose-700':'bg-blue-800')+'">'+(deleting?'Remove Suggestions':'Save Manufacturer')+'</button></div></div>');
             if(!deleting)rememberModalForm();
         }
         function phase120ManufacturerSave(id='',remove=false){
@@ -3169,7 +3193,7 @@ function hierarchyValidateTypes(subnets) {
             openModal('<div class="p-5 sm:p-7 space-y-5"><div><h3 class="text-lg font-bold">'+(remove?'Remove Model Suggestion':item?'Edit Model Suggestion':'Add Model Suggestion')+'</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Custom suggestions only. Built-in models and saved devices are never changed.</p></div>'+
                 (remove?'<p class="text-sm">Remove <strong>'+escapeHtml(item.model)+'</strong> ('+escapeHtml(item.manufacturer)+' · '+escapeHtml(item.type)+')? '+used+' existing device(s) use this model and will remain unchanged.</p>':
                 '<form id="phase120-model-form" data-form-action="model" onsubmit="return false" class="space-y-3"><div><label class="block text-sm font-semibold mb-1" for="phase120-model-name">Model Name</label><input id="phase120-model-name" maxlength="120" value="'+escapeHtml(item?.model||'')+'" class="w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-800"></div><div><label class="block text-sm font-semibold mb-1" for="phase120-model-manufacturer">Manufacturer</label><select id="phase120-model-manufacturer" class="w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-800"><option value="">Select Manufacturer</option>'+opts(makers,item?.manufacturer||'')+'</select></div><div><label class="block text-sm font-semibold mb-1" for="phase120-model-device-type">Device Type</label><select id="phase120-model-device-type" class="w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-800"><option value="">Select Device Type</option>'+opts(types,item?.type||'')+'</select></div><p id="phase120-model-error" role="alert" class="hidden text-sm text-rose-700 dark:text-rose-300"></p></form>')+
-                '<div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-4 rounded-xl border border-slate-300 dark:border-slate-600">Cancel</button><button type="button" data-action="'+(remove?'phase120-model-confirm-remove':'phase120-model-save')+'" data-name="'+escapeHtml(id)+'" class="h-11 px-4 rounded-xl text-white '+(remove?'bg-rose-700':'bg-blue-800')+'">'+(remove?'Remove Model':'Save Model')+'</button></div></div>');
+                '<div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-4 rounded-xl border border-slate-300 dark:border-slate-600 caffoot-modal-cancel">Cancel</button><button type="button" data-action="'+(remove?'phase120-model-confirm-remove':'phase120-model-save')+'" data-name="'+escapeHtml(id)+'" class="h-11 px-4 rounded-xl text-white '+(remove?'bg-rose-700':'bg-blue-800')+'">'+(remove?'Remove Model':'Save Model')+'</button></div></div>');
             if(!remove)rememberModalForm();
         }
         function phase120ModelSave(id='',remove=false){
@@ -3480,7 +3504,7 @@ function hierarchyValidateTypes(subnets) {
                         }).join('') : `<p class="text-sm text-center py-8 text-slate-600 dark:text-slate-300">No matching ${label.toLowerCase()}.</p>`}
                     </div>
                     <p class="text-xs text-slate-600 dark:text-slate-300">${isType?'Deleting an in-use device type sets affected devices to Unknown. Unknown is a protected system type.':'Deleting an in-use location sets affected devices to Unknown. Unknown is a protected system location.'}</p>
-                    <div class="flex justify-end gap-2 border-t border-slate-200 dark:border-slate-700 pt-4"><button type="button" data-action="close-modal" class="h-11 px-5 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-slate-100 font-semibold">Cancel</button><button type="button" data-action="close-modal" class="h-11 px-5 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold">Done</button></div>
+                    <div class="flex justify-end gap-2 border-t border-slate-200 dark:border-slate-700 pt-4"><button type="button" data-action="close-modal" class="h-11 px-5 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-slate-100 font-semibold caffoot-modal-cancel">Cancel</button><button type="button" data-action="close-modal" class="h-11 px-5 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold">Done</button></div>
                 </div>`);
         }
         function openManageTypesModal(){phase18DOpen('type');}
@@ -3506,7 +3530,7 @@ function hierarchyValidateTypes(subnets) {
                 <p class="font-semibold break-words text-slate-900 dark:text-white">${escapeHtml(name)}</p>
                 <p id="phase18d-delete-description" class="text-sm text-slate-700 dark:text-slate-200">This ${kind==='type'?'device type':'location'} is assigned to <strong>${affected} device${affected===1?'':'s'}</strong>. ${affected?'Affected devices will be changed to Unknown.':'No existing devices will be changed.'} Deletion cannot be undone except by restoring a backup.</p>
                 <div class="flex flex-wrap justify-end gap-3">
-                    <button type="button" data-action="phase18d-cancel-delete" class="h-11 px-4 rounded-xl border border-slate-400 dark:border-slate-500 text-slate-900 dark:text-white">Cancel</button>
+                    <button type="button" data-action="phase18d-cancel-delete" class="h-11 px-4 rounded-xl border border-slate-400 dark:border-slate-500 text-slate-900 dark:text-white caffoot-modal-cancel">Cancel</button>
                     <button type="button" data-action="phase18d-confirm-delete" class="h-11 px-4 rounded-xl bg-rose-700 hover:bg-rose-800 text-white font-bold">Delete</button>
                 </div>
             </div>`;
@@ -3585,7 +3609,7 @@ function hierarchyValidateTypes(subnets) {
                     <p class="text-xs text-slate-600 dark:text-slate-300">Renaming updates devices currently using this ${kind}. Existing inventory is retained.</p>
                 </div>
                 <div class="flex flex-wrap justify-end gap-2 border-t border-slate-200 dark:border-slate-700 pt-4">
-                    <button type="button" data-action="phase18d-cancel-rename" class="h-11 px-4 rounded-xl border border-slate-400 dark:border-slate-500 text-slate-800 dark:text-slate-100">Cancel</button>
+                    <button type="button" data-action="phase18d-cancel-rename" class="h-11 px-4 rounded-xl border border-slate-400 dark:border-slate-500 text-slate-800 dark:text-slate-100 caffoot-modal-cancel">Cancel</button>
                     <button type="button" data-action="phase18d-save-rename" data-kind="${kind}" data-name="${escapeHtml(n)}" class="h-11 px-5 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-bold">Save Changes</button>
                 </div>
             </div>`;
@@ -4103,7 +4127,7 @@ function hierarchyValidateTypes(subnets) {
                         <p class="text-xs text-slate-600 dark:text-slate-300">Preview before applying. Existing device assignments and conflicting assigned records are protected.</p>
                         <p class="text-sm text-slate-700 dark:text-slate-200"><strong>IP Address Block:</strong> ${escapeHtml(appState.subnets.find(b => b.id === subnet.parentId)?.name || 'Unassigned')} — ${escapeHtml(subnet.name)} (VLAN ${escapeHtml(String(subnet.vlan))})</p>
                         <div class="form-error" data-form-error role="alert"></div>
-                        <div class="form-actions"><button type="button" data-action="close-modal" class="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-700">Cancel</button><button type="submit" class="px-4 py-2 rounded-xl bg-blue-800 text-white font-semibold">Preview Changes</button></div>
+                        <div class="form-actions"><button type="button" data-action="close-modal" class="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-700 caffoot-modal-cancel">Cancel</button><button type="submit" class="px-4 py-2 rounded-xl bg-blue-800 text-white font-semibold">Preview Changes</button></div>
                     </form>
                 </div>`);
         }
@@ -4122,7 +4146,7 @@ function hierarchyValidateTypes(subnets) {
                 ${plan.blocked.length?`<p class="text-sm text-amber-900 dark:text-amber-200">Protected examples: ${escapeHtml(plan.blocked.slice(0,6).join(', '))}</p>`:''}
                 <p class="text-sm text-slate-700 dark:text-slate-200">Changes include: ${escapeHtml(sample||'none')}</p>
                 <p class="text-xs text-slate-600 dark:text-slate-300">A safety snapshot is stored before changes are applied. Confirm only after reviewing the range.</p>
-                <div class="flex justify-end gap-3"><button type="button" data-action="close-modal" class="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-700">Cancel</button>
+                <div class="flex justify-end gap-3"><button type="button" data-action="close-modal" class="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-700 caffoot-modal-cancel">Cancel</button>
                 <button type="button" data-action="phase12b-apply" class="px-4 py-2 rounded-xl bg-blue-800 text-white font-semibold" ${!plan.changes.length?'disabled':''}>Apply ${plan.changes.length} changes</button></div></div>`);
             phase12BPending={subnetId,start,end,status,hostname,notes};
         }
@@ -4252,7 +4276,7 @@ function hierarchyValidateTypes(subnets) {
                         <div class="form-error" data-form-error role="alert"></div>
                         <div class="form-actions">
                             ${subnet ? `<button type="button" data-action="delete-subnet" data-id="${escapeHtml(subnet.id)}" class="mr-auto px-4 py-2 bg-rose-800 hover:bg-rose-900 dark:bg-rose-700 dark:hover:bg-rose-800 text-white rounded-xl text-xs font-semibold transition"><i class="fa-solid fa-trash mr-1"></i>Delete ${subnet.kind === 'container' ? 'IP Address Block' : 'Subnet & VLAN'}</button>` : ''}
-                            <button type="button" data-action="cancel-subnet-modal" class="px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold transition">Cancel</button>
+                            <button type="button" data-action="cancel-subnet-modal" class="px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold transition caffoot-modal-cancel">Cancel</button>
                             <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold transition shadow-md">Save Subnet & VLAN</button>
                         </div>
                     </form>
@@ -4635,7 +4659,7 @@ function hierarchyValidateTypes(subnets) {
                         <ul class="max-h-44 overflow-y-auto">${deviceRows}</ul>
                     </section>` : '<p class="text-sm">No device assignments will be changed.</p>'}
                     <div class="form-actions">
-                        <button type="button" data-action="close-modal" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-white font-semibold">Cancel</button>
+                        <button type="button" data-action="close-modal" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-white font-semibold caffoot-modal-cancel">Cancel</button>
                         <button type="button" data-action="confirm-delete-subnet" data-id="${escapeHtml(subId)}" class="px-4 py-2 rounded-xl bg-rose-800 hover:bg-rose-900 text-white font-semibold">${deps.devices.length ? 'Move Devices & Delete Subnet' : isNetwork ? 'Delete Subnet & VLAN' : 'Delete IP Address Block'}</button>
                     </div>
                 </div>
@@ -4762,7 +4786,7 @@ function hierarchyValidateTypes(subnets) {
                         </div>
                         <div class="form-error" data-form-error role="alert"></div>
                         <div class="form-actions">
-                            <button type="button" data-action="close-modal" class="px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold transition">Cancel</button>
+                            <button type="button" data-action="close-modal" class="px-4 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold transition caffoot-modal-cancel">Cancel</button>
                             <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold transition shadow-md">Save IP</button>
                         </div>
                     </form>
@@ -4992,7 +5016,7 @@ function hierarchyValidateTypes(subnets) {
                         </div>
                         <div class="form-error" data-form-error role="alert"></div>
                         <div class="form-actions rack-form-actions">
-                            <button type="button" data-action="cancel-rack-from-device" class="rack-form-button bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white rounded-xl font-semibold">Cancel</button>
+                            <button type="button" data-action="cancel-rack-from-device" class="rack-form-button bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white rounded-xl font-semibold caffoot-modal-cancel">Cancel</button>
                             <button type="submit" class="rack-form-button bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold">Save Rack</button>
                         </div>
                     </form>
@@ -5140,7 +5164,7 @@ function hierarchyValidateTypes(subnets) {
                         </div>
                         <div class="form-error" data-form-error role="alert"></div>
                         <div class="form-actions">
-                            <button type="button" data-action="close-modal" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 rounded-xl text-xs">Cancel</button>
+                            <button type="button" data-action="close-modal" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 rounded-xl text-xs caffoot-modal-cancel">Cancel</button>
                             <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-semibold">Mount Device</button>
                         </div>
                     </form>
@@ -6210,7 +6234,7 @@ function hierarchyValidateTypes(subnets) {
                         <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-note-sticky"></i>Notes</div><div><label for="dev-notes" class="form-label">Notes / Details <span class="font-normal text-slate-400">(optional)</span></label><div class="phase120-notes-workspace"><div class="phase120-notes-toolbar" role="toolbar" aria-label="Notes formatting"><button type="button" data-notes-format="bold" title="Bold">Bold</button><button type="button" data-notes-format="italic" title="Italic">Italic</button><button type="button" data-notes-format="heading" title="Heading">Heading</button><button type="button" data-notes-format="bullet" title="Bullet list">Bullets</button><button type="button" data-notes-format="number" title="Numbered list">Numbers</button><button type="button" data-notes-format="code" title="Code">Code</button><button type="button" data-notes-format="link" title="Link">Link</button><button type="button" id="phase120-notes-toggle" aria-pressed="false">Preview</button></div><textarea id="dev-notes" rows="18" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Purpose, role, or assignment details">${escapeHtml(draft?.notes ?? device?.notes ?? '')}</textarea><div id="phase120-notes-preview" role="region" aria-label="Notes Markdown preview" hidden></div></div></div>
                         </div>
                         <div class="form-error" data-form-error role="alert"></div>
-                        <div class="form-actions"><button type="button" data-action="close-modal" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 rounded-xl text-xs">Cancel</button><button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-semibold">Save Device</button></div>
+                        <div class="form-actions"><button type="button" data-action="close-modal" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 rounded-xl text-xs caffoot-modal-cancel">Cancel</button><button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-semibold">Save Device</button></div>
                     </form>
                 </div>`);
             const tabbedDeviceForm = document.querySelector('[data-device-form="true"]');
@@ -7250,7 +7274,7 @@ function hierarchyValidateTypes(subnets) {
                     </div>
                   </fieldset>
                   <p id="phase13c-error" role="alert" aria-live="polite" class="text-sm text-rose-600 dark:text-rose-400 min-h-5"></p>
-                  <div class="flex flex-wrap justify-end gap-3 pt-2 border-t border-slate-200 dark:border-slate-600"><button type="button" data-action="close-modal" class="phase13b-secondary">Cancel</button><button type="submit" class="phase13b-primary">${existing?'Save changes':'Place accessory'}</button></div>
+                  <div class="flex flex-wrap justify-end gap-3 pt-2 border-t border-slate-200 dark:border-slate-600"><button type="button" data-action="close-modal" class="phase13b-secondary caffoot-modal-cancel">Cancel</button><button type="submit" class="phase13b-primary">${existing?'Save changes':'Place accessory'}</button></div>
                 </form>
             </div>`;
             modal.classList.remove('hidden');
