@@ -3356,7 +3356,12 @@ function hierarchyValidateTypes(subnets) {
             const input=manager.querySelector('#phase18d-rename-value');
             input?.focus();input?.select();
         }
-        function phase18DCancelRename(){
+        function phase18DCancelRename(force=false){
+            const editor=document.querySelector('.phase18d-manager[data-phase18d-editing="true"]');
+            const input=editor?.querySelector('#phase18d-rename-value');
+            if(!force && input && input.value!==editor._phase18dReturnFocusName){
+                phase120ConfirmDiscard(()=>phase18DCancelRename(true));return;
+            }
             const manager=document.querySelector('.phase18d-manager');
             if(!manager)return;
             if(manager._phase18dSavedContent){
@@ -4598,6 +4603,44 @@ function hierarchyValidateTypes(subnets) {
             const form = document.querySelector('#modal-content form[data-device-form="true"], #modal-content form[data-form-action="subnet"], #modal-content form[data-form-action="rack"], #modal-content form[data-form-action="ip"], #modal-content form[data-form-action="assign"], #modal-content form[data-form-action="bulk-ip"]');
             if (form) modalFormSnapshots.set(form, modalFormSnapshot(form));
         }
+        let phase120DiscardCallback=null;
+        function phase120ConfirmDiscard(onDiscard){
+            if(document.getElementById('phase120-discard-dialog'))return false;
+            phase120DiscardCallback=onDiscard;
+            const overlay=document.createElement('div');
+            overlay.id='phase120-discard-dialog';
+            overlay.setAttribute('role','alertdialog');
+            overlay.setAttribute('aria-modal','true');
+            overlay.setAttribute('aria-labelledby','phase120-discard-title');
+            overlay.setAttribute('aria-describedby','phase120-discard-description');
+            overlay.className='absolute inset-0 z-50 flex items-center justify-center bg-slate-950/65 p-4 rounded-2xl';
+            overlay.innerHTML=`<div class="w-full max-w-md rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 p-6 shadow-2xl space-y-4">
+                <h3 id="phase120-discard-title" class="text-lg font-bold text-slate-900 dark:text-white">Discard Unsaved Changes?</h3>
+                <p id="phase120-discard-description" class="text-sm text-slate-700 dark:text-slate-200">Your changes have not been saved. Would you like to keep editing or discard them?</p>
+                <div class="flex flex-wrap justify-end gap-3">
+                    <button type="button" data-action="phase120-keep-editing" class="h-11 px-4 rounded-xl border border-slate-400 dark:border-slate-500 text-slate-900 dark:text-white">Keep Editing</button>
+                    <button type="button" data-action="phase120-discard-changes" class="h-11 px-4 rounded-xl bg-rose-700 hover:bg-rose-800 text-white font-bold">Discard Changes</button>
+                </div>
+            </div>`;
+            const content=document.getElementById('modal-content');
+            if(getComputedStyle(content).position==='static')content.style.position='relative';
+            overlay._returnFocus=document.activeElement;
+            content.appendChild(overlay);
+            overlay.querySelector('[data-action="phase120-keep-editing"]').focus();
+            return false;
+        }
+        function phase120KeepEditing(){
+            const overlay=document.getElementById('phase120-discard-dialog');
+            const focus=overlay?._returnFocus;
+            overlay?.remove();phase120DiscardCallback=null;
+            if(focus?.isConnected)focus.focus();
+        }
+        function phase120DiscardChanges(){
+            const callback=phase120DiscardCallback;
+            document.getElementById('phase120-discard-dialog')?.remove();
+            phase120DiscardCallback=null;
+            if(callback)callback();
+        }
         function closeModal(force = false) {
             if (deviceOptionsReturnContent) {
                 phase19BReadSoftwareSelections();
@@ -4612,7 +4655,7 @@ function hierarchyValidateTypes(subnets) {
             const editableForm = document.querySelector('#modal-content form[data-device-form="true"], #modal-content form[data-form-action="subnet"], #modal-content form[data-form-action="rack"], #modal-content form[data-form-action="ip"], #modal-content form[data-form-action="assign"], #modal-content form[data-form-action="bulk-ip"]');
             if (!force && editableForm && modalFormSnapshots.has(editableForm) &&
                 modalFormSnapshot(editableForm) !== modalFormSnapshots.get(editableForm) &&
-                !window.confirm('Discard unsaved changes?')) return;
+                !phase120ConfirmDiscard(() => closeModal(true))) return;
             const container = document.getElementById('modal-container');
             container.classList.add('hidden');
             container.classList.remove('flex');
@@ -4646,6 +4689,7 @@ function hierarchyValidateTypes(subnets) {
             if (!container || container.classList.contains('hidden')) return;
             if (event.key === 'Escape') {
                 event.preventDefault();
+                if(document.getElementById('phase120-discard-dialog')){phase120KeepEditing();return;}
                 if (container.querySelector('.phase18d-manager[data-phase18d-editing="true"]')) {
                     phase18DCancelRename();
                     return;
@@ -7187,6 +7231,8 @@ function hierarchyValidateTypes(subnets) {
                 case 'phase19b-delete-function': phase19BUpdateFunction('delete',name); break;
                 case 'phase18d-add': phase18DCommit(target.dataset.kind,'add','',document.getElementById('phase18d-new')?.value||''); break;
                 case 'phase18d-search': phase18DSearch[target.dataset.kind]=document.getElementById('phase18d-search')?.value||'';phase18DOpen(target.dataset.kind); break;
+                case 'phase120-keep-editing': phase120KeepEditing(); break;
+                case 'phase120-discard-changes': phase120DiscardChanges(); break;
                 case 'phase18d-save-rename': phase18DCommit(target.dataset.kind,'rename',name,document.getElementById('phase18d-rename-value')?.value||''); break;
                 case 'phase18d-cancel-rename': phase18DCancelRename(); break;
                 case 'phase18d-rename': phase18DRename(target.dataset.kind,name); break;
