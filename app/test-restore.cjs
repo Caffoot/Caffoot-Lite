@@ -49,6 +49,8 @@ function scenario(mode) {
       catch{return false;}
     },
     renderContent:()=>{},
+    openModal:html=>messages.push({m:html,t:'persistent-error'}),
+    escapeHtml:value=>String(value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'),
     showToast:(m,t)=>messages.push({m,t}),
     console:{error:()=>{}}
   });
@@ -61,7 +63,7 @@ for(const mode of ['snapshot-fails','save-fails','rollback-fails']){
   const v=scenario(mode);
   assert.equal(v.ctx.appState.devices[0].id,'original',mode+' must retain original in memory');
   assert.equal(JSON.parse(v.store.get(v.key)).devices[0].id,'original',mode+' must retain original in storage');
-  assert(v.messages.some(m=>m.t==='error'),mode+' must report failure');
+  assert(v.messages.some(m=>m.t==='persistent-error'),mode+' must report failure in a persistent dialog');
   assert.equal(v.input.value,'',mode+' must clear file input');
 }
 const blocked=scenario('rollback-fails');
