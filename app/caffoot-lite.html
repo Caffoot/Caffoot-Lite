@@ -497,6 +497,20 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .phase14b-device-modal .phase120-device-empty{padding:20px;border:1px dashed #94a3b8;border-radius:12px;font-size:.875rem;line-height:1.6;}
 @media(max-width:600px){.phase14b-device-modal{padding:16px 14px 20px;}.phase14b-device-modal .phase120-device-tab{padding:10px 9px;}.phase14b-device-modal .phase120-device-panel .form-section-card{padding:14px;}}
 
+
+/* v1.2.0 Notes: spacious editor and offline-safe Markdown preview. */
+.phase14b-device-modal .phase120-device-panel[data-notes-panel="true"]{height:100%;}
+.phase14b-device-modal .phase120-device-panel[data-notes-panel="true"]>.form-section-card{flex:1;min-height:0;display:flex;flex-direction:column;}
+.phase14b-device-modal .phase120-notes-workspace{display:flex;flex:1;flex-direction:column;min-height:0;gap:10px;}
+.phase14b-device-modal .phase120-notes-toolbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+.phase14b-device-modal .phase120-notes-toolbar button{border:1px solid #94a3b8;border-radius:7px;padding:6px 10px;font-size:12px;font-weight:600;}
+.phase14b-device-modal .phase120-notes-toolbar button[aria-pressed="true"]{background:#e0e7ff;color:#312e81;}
+.phase14b-device-modal #dev-notes,.phase14b-device-modal #phase120-notes-preview{flex:1;min-height:240px;width:100%;resize:vertical;overflow:auto;line-height:1.6;}
+.phase14b-device-modal #phase120-notes-preview{border:1px solid #94a3b8;border-radius:12px;padding:12px;white-space:pre-wrap;overflow-wrap:anywhere;}
+.phase14b-device-modal #phase120-notes-preview h2{font-size:1.25rem;font-weight:700;}
+.phase14b-device-modal #phase120-notes-preview h3{font-size:1.05rem;font-weight:700;}
+.phase14b-device-modal #phase120-notes-preview p{margin:0 0 8px;}
+.phase14b-device-modal #phase120-notes-preview a{text-decoration:underline;}
 /* v1.2.0: dark-only contrast refinement for the Device dialog. */
 .dark #modal-content:has(.phase14b-device-modal){border-color:#64748b!important;}
 .dark .phase14b-device-modal .form-section-card{border-color:#64748b;background:rgba(148,163,184,.055);}
@@ -5172,6 +5186,59 @@ function hierarchyValidateTypes(subnets) {
             toggleDeviceMountType();
         }
         // v1.2.0: rearrange existing form nodes, without recreating inputs or changing saved data.
+        // Markdown is stored as plain text. Preview creates DOM nodes, never evaluates note HTML.
+        function phase120InitializeNotesEditor(form) {
+            const editor = form.querySelector('#dev-notes');
+            const preview = form.querySelector('#phase120-notes-preview');
+            const toggle = form.querySelector('#phase120-notes-toggle');
+            if (!editor || !preview || !toggle) return;
+            function inlineMarkdown(target, text) {
+                const pattern = /(\\[([^\\]]+)\\]\\((https?:\\/\\/[^\\s)]+)\\)|\\*\\*([^*\\n]+)\\*\\*|\\*([^*\\n]+)\\*|`([^`\\n]+)`)/g;
+                let last = 0, match;
+                while ((match = pattern.exec(text)) !== null) {
+                    target.appendChild(document.createTextNode(text.slice(last, match.index)));
+                    const node = document.createElement(match[2] ? 'a' : match[4] ? 'strong' : match[5] ? 'em' : 'code');
+                    if (match[2]) { node.href = match[3]; node.target = '_blank'; node.rel = 'noopener noreferrer'; }
+                    node.textContent = match[2] || match[4] || match[5] || match[6];
+                    target.appendChild(node);
+                    last = pattern.lastIndex;
+                }
+                target.appendChild(document.createTextNode(text.slice(last)));
+            }
+            function render() {
+                preview.replaceChildren();
+                for (const line of editor.value.split(/\\r?\\n/)) {
+                    const heading = /^(#{1,3})\\s+(.*)$/.exec(line);
+                    const bullet = /^\\s*[-*]\\s+(.*)$/.exec(line);
+                    const number = /^\\s*\\d+\\.\\s+(.*)$/.exec(line);
+                    const node = document.createElement(heading ? (heading[1].length === 1 ? 'h2' : 'h3') : bullet || number ? 'p' : 'p');
+                    inlineMarkdown(node, heading ? heading[2] : bullet ? '• ' + bullet[1] : number ? '1. ' + number[1] : line);
+                    preview.appendChild(node);
+                }
+            }
+            form.querySelectorAll('[data-notes-format]').forEach(button => button.addEventListener('click', () => {
+                const kind = button.dataset.notesFormat;
+                const start = editor.selectionStart, end = editor.selectionEnd;
+                const selected = editor.value.slice(start, end);
+                const wrap = {bold:['**','**'], italic:['*','*'], code:['`','`'], link:['[','](https://example.com)'], heading:['## ',''], bullet:['- ',''], number:['1. ','']}[kind];
+                if (!wrap) return;
+                const insertion = wrap[0] + (selected || (kind === 'link' ? 'link text' : 'text')) + wrap[1];
+                editor.setRangeText(insertion, start, end, 'select');
+                editor.dispatchEvent(new Event('input', {bubbles:true}));
+                editor.focus();
+            }));
+            toggle.addEventListener('click', () => {
+                const show = preview.hidden;
+                if (show) render();
+                preview.hidden = !show;
+                editor.hidden = show;
+                toggle.textContent = show ? 'Edit Notes' : 'Preview';
+                toggle.setAttribute('aria-pressed', String(show));
+                if (!show) editor.focus();
+            });
+            editor.addEventListener('input', () => { if (!preview.hidden) render(); });
+        }
+
         function phase120InitializeDeviceTabs(form) {
             if (!form || form.querySelector('[data-device-tabs]')) return;
             const sections = Array.from(form.children).filter(el => el.classList.contains('form-section-card'));
@@ -5234,6 +5301,8 @@ function hierarchyValidateTypes(subnets) {
             }
             const mountHeading = sections[2].querySelector('.form-section-heading');
             if (mountHeading) mountHeading.textContent = 'Mounting & Rack Configuration';
+            panels.get('notes').dataset.notesPanel = 'true';
+            phase120InitializeNotesEditor(form);
             const note = document.createElement('p');
             note.className = 'phase120-device-empty';
             note.textContent = 'Software and firmware options will be organised here in the next development step. Existing device-specific fields remain available under Hardware for now.';
@@ -5343,7 +5412,7 @@ function hierarchyValidateTypes(subnets) {
 <span class="text-sm text-slate-800 dark:text-slate-100"><strong>Reserve this IP address for this device</strong><span class="block text-xs mt-1 text-slate-600 dark:text-slate-300">Keeps this same IP linked to the device, but displays it as Reserved in IPAM. No second address is needed.</span></span>
 </label><p class="phase14b-help">Don't see the required network? Create it in IPAM, then return here to select it.</p></div>
                         </div>
-                        <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-note-sticky"></i>Notes</div><div><label for="dev-notes" class="form-label">Notes / Details <span class="font-normal text-slate-400">(optional)</span></label><textarea id="dev-notes" rows="7" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Purpose, role, or assignment details">${escapeHtml(draft?.notes ?? device?.notes ?? '')}</textarea></div>
+                        <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-note-sticky"></i>Notes</div><div><label for="dev-notes" class="form-label">Notes / Details <span class="font-normal text-slate-400">(optional)</span></label><div class="phase120-notes-workspace"><div class="phase120-notes-toolbar" role="toolbar" aria-label="Notes formatting"><button type="button" data-notes-format="bold" title="Bold">Bold</button><button type="button" data-notes-format="italic" title="Italic">Italic</button><button type="button" data-notes-format="heading" title="Heading">Heading</button><button type="button" data-notes-format="bullet" title="Bullet list">Bullets</button><button type="button" data-notes-format="number" title="Numbered list">Numbers</button><button type="button" data-notes-format="code" title="Code">Code</button><button type="button" data-notes-format="link" title="Link">Link</button><button type="button" id="phase120-notes-toggle" aria-pressed="false">Preview</button></div><textarea id="dev-notes" rows="18" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Purpose, role, or assignment details">${escapeHtml(draft?.notes ?? device?.notes ?? '')}</textarea><div id="phase120-notes-preview" role="region" aria-label="Notes Markdown preview" hidden></div></div></div>
                         </div>
                         <div class="form-error" data-form-error role="alert"></div>
                         <div class="form-actions"><button type="button" data-action="close-modal" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 rounded-xl text-xs">Cancel</button><button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-semibold">Save Device</button></div>
