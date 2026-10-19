@@ -680,6 +680,20 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .phase14-devices .phase14h-search-label>input{box-sizing:border-box;height:44px;min-height:44px;margin:0}
 @media(max-width:640px){.phase14-devices .phase14h-filter-row>label{flex:1 1 145px;min-width:0}}
 </style>
+<style id="phase120-inventory-layout">
+/* Device Inventory: use the available workspace width at 100% browser zoom. */
+#main-content:has(.phase14-devices [data-device-panel="inventory"]:not(.hidden)){min-width:0;padding-left:clamp(12px,2vw,24px);padding-right:clamp(12px,2vw,24px)}
+.phase14-devices,.phase14-devices [data-device-panel="inventory"]{width:100%;max-width:none;min-width:0}
+.phase14-devices [data-device-panel="inventory"]>.rounded-2xl{min-width:0}
+.phase14-devices [data-device-panel="inventory"] .phase14h-filter-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:12px;width:100%}
+.phase14-devices [data-device-panel="inventory"] .phase14h-filter-row>label{min-width:0;width:100%}
+.phase14-devices [data-device-panel="inventory"] .phase14h-filter-row select{width:100%;min-width:0;max-width:100%}
+.phase14-devices [data-device-panel="inventory"] .phase14h-search-label{width:100%;max-width:none}
+.phase14-devices [data-device-panel="inventory"] .phase14f-table-wrap{width:100%;max-width:100%;overflow-x:auto}
+.phase14-devices [data-device-panel="inventory"] table{min-width:1050px;width:100%}
+@media(min-width:1400px){.phase14-devices [data-device-panel="inventory"] table{min-width:1100px}}
+@media(max-width:640px){.phase14-devices [data-device-panel="inventory"] .phase14h-filter-row{grid-template-columns:repeat(auto-fit,minmax(145px,1fr))}}
+</style>
 <style id="phase15a-dashboard-style">
 /* Phase 15A: dashboard-only visual system, retains existing page behaviour */
 .phase15a-stats .phase15a-stat{min-width:0;box-shadow:0 2px 8px rgba(15,23,42,.035)}
@@ -3084,7 +3098,7 @@ function hierarchyValidateTypes(subnets) {
                     <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 sm:p-5 flex flex-col gap-4">
                         <h3 class="text-base font-bold text-slate-900 dark:text-white">Search & filter devices</h3>
                         ${(deviceOsFilter || deviceServiceFilter || deviceMissingFilter || deviceTypeFilter || deviceLocationFilter || deviceHardwareFilter) ? `<div class="flex flex-wrap items-center gap-3 rounded-xl border border-indigo-300 dark:border-indigo-700 bg-indigo-50 dark:bg-indigo-950/40 p-3 text-sm"><span class="font-semibold text-indigo-900 dark:text-indigo-200">${escapeHtml(deviceOsFilter ? "Operating System: "+deviceOsFilter : deviceServiceFilter ? "Software / Service: "+deviceServiceFilter : deviceMissingFilter ? ({ip:"Primary IP: Not Recorded",type:"Device Type: Not Recorded",location:"Location: Not Recorded"}[deviceMissingFilter]||"Data: Not Recorded") : deviceTypeFilter ? "Device Type: "+deviceTypeFilter : deviceHardwareFilter ? ({manufacturer:"Manufacturer",model:"Model",mountType:"Mounting Method"}[deviceHardwareFilter.field]+": "+deviceHardwareFilter.value) : "Location: "+deviceLocationFilter)}</span><span class="text-slate-700 dark:text-slate-200">${getVisibleDevices().length} matching devices</span><button type="button" data-action="phase14g-clear-filters" class="font-semibold text-indigo-700 dark:text-indigo-300 underline">Clear Filter</button></div>` : ''}
-                        <label class="phase14h-search-label block w-full sm:w-64 text-xs font-semibold text-slate-700 dark:text-slate-200">Search devices
+                        <label class="phase14h-search-label block w-full text-xs font-semibold text-slate-700 dark:text-slate-200">Search devices
                             <input id="device-search" type="search" placeholder="Name, IP, model, serial or location" value="${escapeHtml(deviceSearchTerm)}" class="mt-1 w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500" />
                         </label>
                         <div class="phase14h-filter-row flex flex-wrap gap-3 items-end">
