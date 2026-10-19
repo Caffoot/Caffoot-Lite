@@ -3359,6 +3359,23 @@ function hierarchyValidateTypes(subnets) {
         }
         document.addEventListener('input',event=>{if(['phase120-software-search','phase120-software-source','phase120-software-type','phase120-software-used'].includes(event.target?.id))phase120FilterSoftware();});
         document.addEventListener('change',event=>{if(['phase120-software-source','phase120-software-type','phase120-software-used'].includes(event.target?.id))phase120FilterSoftware();});
+        function phase120ServerServiceEditor(key=''){
+            const item=phase19BServerFunctions().find(x=>x.key===key&&!x.archived);
+            if(key&&!item)return;
+            openModal('<div class="p-5 sm:p-7 space-y-5"><h3 class="text-lg font-bold text-slate-900 dark:text-white">'+(item?'Edit Server Service':'Add Custom Server Service')+'</h3><label for="phase120-service-name" class="block text-sm font-semibold">Service Name</label><input id="phase120-service-name" maxlength="80" class="w-full h-11 px-3 rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-800" value="'+escapeHtml(item?.label||'')+'"><div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-4 rounded-xl border border-slate-300 dark:border-slate-600 caffoot-modal-cancel">Cancel</button><button type="button" data-action="server-catalog-save" data-name="'+escapeHtml(key)+'" class="h-11 px-4 rounded-xl bg-blue-800 hover:bg-blue-700 text-white font-semibold">Save Service</button></div></div>');
+        }
+        function phase120SaveServerService(key){
+            const label=String(document.getElementById('phase120-service-name')?.value||'').trim();
+            if(!label||label.length>80)return showToast('Enter a service name (up to 80 characters).','error');
+            if([...phase19BServerFunctions(),...phase120StarterServerServices].some(x=>x.label.toLowerCase()===label.toLowerCase()&&x.key!==key))return showToast('That service name already exists.','error');
+            const old=appState.serverFunctions;
+            const items=phase19BServerFunctions().map(x=>({...x}));
+            if(key){const entry=items.find(x=>x.key===key&&!x.archived);if(!entry)return;entry.label=label;}
+            else items.push({key:'customServerFunction_'+Date.now().toString(36),label});
+            appState.serverFunctions=items;
+            if(!saveState()){appState.serverFunctions=old;return showToast('Could not save server service.','error');}
+            closeModal(true);renderContent();showToast('Server service saved.');
+        }
         function phase120ServerServicesHTML(){
             const saved=phase19BServerFunctions();
             const active=phase120AvailableServerServices();
@@ -7737,6 +7754,10 @@ function hierarchyValidateTypes(subnets) {
                 case 'sidebar-devices-models': phase14DeviceTab='models'; switchTab('devices'); break;
                 case 'sidebar-devices-software': phase14DeviceTab='software'; switchTab('devices'); break;
                 case 'sidebar-devices-services': phase14DeviceTab='services'; switchTab('devices'); break;
+                case 'server-catalog-add': phase120ServerServiceEditor(); break;
+                case 'server-catalog-edit': phase120ServerServiceEditor(name); break;
+                case 'server-catalog-save': phase120SaveServerService(name); break;
+                case 'server-catalog-remove': phase120ConfirmServerServiceArchive(name); break;
                 case 'phase120-software-enable': phase120EnableSoftware(name); break;
                 case 'phase120-software-toggle': phase120SoftwareToggle(name,target.dataset.type); break;
                 case 'software-custom-add': phase120SoftwareEdit(); break;
