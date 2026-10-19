@@ -5218,6 +5218,33 @@ function hierarchyValidateTypes(subnets) {
             if(!saveState()){const prior=JSON.parse(snapshot);Object.keys(appState).forEach(k=>delete appState[k]);Object.assign(appState,prior);showToast('Could not save the change.','error');return;}
             phase19BManageFunctions();
         }
+        // Hardware suggestions are advisory: typed values remain authoritative.
+        const phase120HardwareSeed = {
+            'Laptop': {'Dell':['Latitude 5450','Latitude 7450','Precision 3591'],'HP':['EliteBook 840','ProBook 450'],'Lenovo':['ThinkPad T14','ThinkPad X1 Carbon'],'ASUS':['ExpertBook B5'],'Apple':['MacBook Air','MacBook Pro'],'Toshiba':[]},
+            'Desktop': {'Dell':['OptiPlex','Precision'],'HP':['EliteDesk','ProDesk'],'Lenovo':['ThinkCentre','ThinkStation'],'ASUS':['ExpertCenter'],'Apple':['Mac mini','iMac']},
+            'Tablet': {'Apple':['iPad','iPad Air','iPad Pro'],'Samsung':['Galaxy Tab'],'Microsoft':['Surface Pro'],'Lenovo':['Tab']},
+            'Server - Physical': {'Dell':['PowerEdge'],'HPE':['ProLiant DL','ProLiant ML'],'Lenovo':['ThinkSystem'],'Supermicro':['SuperServer']},
+            'Switch': {'Cisco':['Catalyst','Nexus'],'Aruba':['CX'],'HPE':['FlexNetwork'],'Ubiquiti':['UniFi Switch']},
+            'Firewall': {'Fortinet':['FortiGate'],'Cisco':['Firepower'],'Sophos':['XGS'],'Palo Alto Networks':['PA Series']},
+            'NAS': {'Synology':['DiskStation','RackStation'],'QNAP':['TS Series']}
+        };
+        function phase120RefreshHardwareSuggestions() {
+            const type=document.getElementById('dev-type')?.value||'';
+            const manufacturer=document.getElementById('dev-manufacturer');
+            const manufacturerList=document.getElementById('dev-manufacturer-suggestions');
+            const modelList=document.getElementById('dev-model-suggestions');
+            if(!manufacturer||!manufacturerList||!modelList)return;
+            const seeds=phase120HardwareSeed[type]||{};
+            const related=appState.devices.filter(d=>d.type===type);
+            const makers=new Set([...Object.keys(seeds),...related.map(d=>String(d.manufacturer||'').trim()).filter(Boolean)]);
+            ['Dell','HP','HPE','Lenovo','ASUS','Apple','Cisco','Samsung','Microsoft','Toshiba'].forEach(m=>makers.add(m));
+            manufacturerList.replaceChildren(...[...makers].sort((a,b)=>a.localeCompare(b)).map(value=>new Option(value,value)));
+            const selected=manufacturer.value.trim().toLowerCase();
+            const models=new Set();
+            Object.entries(seeds).forEach(([maker,values])=>{if(maker.toLowerCase()===selected)values.forEach(v=>models.add(v));});
+            related.forEach(d=>{if(String(d.manufacturer||'').trim().toLowerCase()===selected && String(d.model||'').trim())models.add(String(d.model).trim());});
+            modelList.replaceChildren(...[...models].sort((a,b)=>a.localeCompare(b)).map(value=>new Option(value,value)));
+        }
         // Desktop, laptop and tablet software is managed independently of server functions.
         const phase19BDefaultSoftware = ['Swan','MicrosoftOffice','Planet','SpindleSoftware','Preactor','RedLionApp','SalesBase','HelpDesk','ProductionITHelpDeskDashboards','PDA','TMS','PhoneBook','EasyLabel'];
         function phase19BSoftware() {
@@ -5713,8 +5740,8 @@ function hierarchyValidateTypes(subnets) {
                             </div>
                             ` : '<input type="hidden" id="dev-status" value="Active">'}
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div><label for="dev-manufacturer" class="form-label">Manufacturer (optional)</label><input id="dev-manufacturer" type="text" maxlength="120" value="${escapeHtml(draft?.manufacturer ?? device?.manufacturer ?? '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="e.g. Cisco"></div>
-                                <div><label for="dev-model" class="form-label">Model (optional)</label><input id="dev-model" type="text" maxlength="120" value="${escapeHtml(draft?.model ?? device?.model ?? '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="e.g. C9200"></div>
+                                <div><label for="dev-manufacturer" class="form-label">Manufacturer (optional)</label><input id="dev-manufacturer" type="text" list="dev-manufacturer-suggestions" autocomplete="off" maxlength="120" value="${escapeHtml(draft?.manufacturer ?? device?.manufacturer ?? '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="e.g. Cisco"><datalist id="dev-manufacturer-suggestions"></datalist></div>
+                                <div><label for="dev-model" class="form-label">Model (optional)</label><input id="dev-model" type="text" list="dev-model-suggestions" autocomplete="off" maxlength="120" value="${escapeHtml(draft?.model ?? device?.model ?? '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="e.g. C9200"><datalist id="dev-model-suggestions"></datalist></div>
                             </div>
                             <div><label for="dev-serial" class="form-label">Serial number (optional)</label><input id="dev-serial" type="text" maxlength="120" value="${escapeHtml(draft?.serialNumber ?? device?.serialNumber ?? '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Manufacturer serial number"></div>
                         <div class="form-section-card space-y-4 ${phase19BFieldsFor(currentType).length===0?'hidden':''}" id="phase19b-details-section" aria-live="polite"><div class="form-section-heading"><i class="fa-solid fa-list-check"></i>Additional details for this device type</div><div class="flex flex-wrap gap-2"><button type="button" id="phase19b-manage-functions-button" data-action="phase19b-manage-functions" class="h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-500 text-sm font-semibold ${phase19BTypeGroups[String(currentType||'').toLowerCase().trim()]==='server'?'':'hidden'}">Manage Server Options</button><button type="button" id="phase19b-manage-software-button" data-action="phase19b-manage-software" class="h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-500 text-sm font-semibold ${['server','computer'].includes(phase19BTypeGroups[String(currentType||'').toLowerCase().trim()])?'':'hidden'}">Manage Software Options</button></div><div id="phase19b-fields">${phase19BRenderFields(currentType,phase19BFormValues,'hardware')}</div></div>
@@ -5751,8 +5778,11 @@ function hierarchyValidateTypes(subnets) {
             const phase19BTypeSelect=document.getElementById('dev-type');
             if(phase19BTypeSelect) {
                 phase19BTypeSelect.addEventListener('change',phase19BRefreshFields);
+                phase19BTypeSelect.addEventListener('change',phase120RefreshHardwareSuggestions);
                 phase19BTypeSelect.addEventListener('input',phase19BRefreshFields);
             }
+            document.getElementById('dev-manufacturer')?.addEventListener('input',phase120RefreshHardwareSuggestions);
+            phase120RefreshHardwareSuggestions();
             phase11DeviceCascade('initial');
             refreshDeviceIpOptions();
             ['dev-rack-id', 'dev-rack-height', 'dev-rack-face'].forEach(id => {
