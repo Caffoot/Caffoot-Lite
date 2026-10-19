@@ -3062,7 +3062,7 @@ function hierarchyValidateTypes(subnets) {
             // Build the rack index once per filter operation, not once per device.
             const validRackIds = deviceMountFilter ? new Set(appState.racks.map(r => String(r.id))) : null;
             const filtered = appState.devices.filter(d =>
-                (!deviceOsFilter || (String(d.typeDetails?.os || '').trim() || 'Not Recorded') === deviceOsFilter) &&
+                (!deviceOsFilter || (String(d.typeDetails?.softwarePlatform || d.typeDetails?.os || '').trim() || 'Not Recorded') === deviceOsFilter) &&
                 (!deviceServiceFilter || d.typeDetails?.[deviceServiceFilter] === true) &&
                 (!deviceMissingFilter || (deviceMissingFilter==='ip' ? !String(d.primaryIp||'').trim() : deviceMissingFilter==='type' ? (!String(d.type||'').trim() || d.type==='Unknown') : deviceMissingFilter==='location' ? (!String(d.location||'').trim() || d.location==='Unknown') : false)) &&
                 (!deviceTypeFilter || d.type === deviceTypeFilter) &&
@@ -3431,7 +3431,7 @@ function hierarchyValidateTypes(subnets) {
                             const counts=new Map();
                             appState.devices.forEach(d=>{
                                 const details=d.typeDetails && typeof d.typeDetails==='object'?d.typeDetails:{};
-                                const entries=kind==='os'?[String(details.os||'').trim()||'Not Recorded']:Object.entries(details).filter(([key,value])=>value===true && !['serialPort','usbPort'].includes(key)).map(([key])=>key);
+                                const entries=kind==='os'?[String(details.softwarePlatform||details.os||'').trim()||'Not Recorded']:Object.entries(details).filter(([key,value])=>value===true && !['serialPort','usbPort'].includes(key)).map(([key])=>key);
                                 if(kind==='services' && !entries.length)return;
                                 entries.forEach(name=>counts.set(name,(counts.get(name)||0)+1));
                             });
