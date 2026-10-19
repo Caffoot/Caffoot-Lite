@@ -3009,9 +3009,35 @@ function hierarchyValidateTypes(subnets) {
         function renderDevicesHTML() {
             return `
                 <div class="space-y-5 phase14-devices">
-                    <section class="${phase14DeviceTab==='overview'?'':'hidden'} space-y-4" data-device-panel="overview">
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">${[['Total Devices',appState.devices.length],['With Primary IP',appState.devices.filter(d=>d.primaryIp).length],['Locations Recorded',appState.devices.filter(d=>d.location && d.location!=='Unknown').length]].map(([label,value])=>`<div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5"><p class="text-sm text-slate-600 dark:text-slate-300">${label}</p><p class="text-3xl font-bold text-slate-900 dark:text-white">${value}</p></div>`).join('')}</div>
-                        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5"><h3 class="text-lg font-bold">Device Overview</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-2">A local inventory summary. More detailed intelligence and charts are planned for this milestone.</p><button type="button" data-action="sidebar-devices-inventory" class="mt-4 h-11 px-4 rounded-xl bg-blue-800 text-white font-semibold">View Device Inventory</button></div>
+                    <section class="${phase14DeviceTab==='overview'?'':'hidden'} space-y-5" data-device-panel="overview">
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-900 dark:text-white">Device Intelligence Overview</h2>
+                            <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Inventory insights calculated locally from your saved devices.</p>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                            ${[['Total Devices',appState.devices.length],['With Primary IP',appState.devices.filter(d=>String(d.primaryIp||'').trim()).length],['Locations Recorded',appState.devices.filter(d=>String(d.location||'').trim() && d.location!=='Unknown').length],['Device Types',new Set(appState.devices.map(d=>String(d.type||'').trim()).filter(Boolean)).size]].map(([label,value])=>`<div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5"><p class="text-sm text-slate-600 dark:text-slate-300">${label}</p><p class="text-3xl font-bold text-slate-900 dark:text-white mt-2">${value}</p></div>`).join('')}
+                        </div>
+                        <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                            ${[['Devices by Type','type'],['Devices by Location','location']].map(([heading,field])=>{
+                                const counts=new Map();
+                                appState.devices.forEach(d=>{
+                                    const raw=String(d[field]||'').trim();
+                                    const name=raw && raw!=='Unknown' ? raw : 'Not Recorded';
+                                    counts.set(name,(counts.get(name)||0)+1);
+                                });
+                                const groups=[...counts.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));
+                                const max=Math.max(1,...groups.map(g=>g[1]));
+                                return `<section class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 space-y-4"><h3 class="font-bold text-slate-900 dark:text-white">${heading}</h3>${groups.length?groups.map(([name,count])=>`<div><div class="flex justify-between gap-3 text-sm mb-1"><span class="text-slate-700 dark:text-slate-200 break-words">${escapeHtml(name)}</span><strong class="text-slate-900 dark:text-white">${count}</strong></div><div class="h-3 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden" role="img" aria-label="${escapeHtml(name)}: ${count} devices"><div class="h-full rounded-full bg-indigo-600 dark:bg-indigo-400" style="width:${(count/max)*100}%"></div></div></div>`).join(''):'<p class="text-sm text-slate-600 dark:text-slate-300">No devices recorded yet.</p>'}</section>`;
+                            }).join('')}
+                        </div>
+                        <section class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 space-y-3">
+                            <h3 class="font-bold text-slate-900 dark:text-white">Inventory Completeness</h3>
+                            <p class="text-sm text-slate-600 dark:text-slate-300">Missing fields across the device inventory (a device can appear in multiple categories).</p>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                ${[['Missing Primary IP',d=>!String(d.primaryIp||'').trim()],['Missing Device Type',d=>!String(d.type||'').trim()||d.type==='Unknown'],['Missing Location',d=>!String(d.location||'').trim()||d.location==='Unknown']].map(([label,test])=>`<div class="rounded-xl border border-slate-200 dark:border-slate-600 p-4"><p class="text-xs text-slate-600 dark:text-slate-300">${label}</p><p class="text-2xl font-bold text-slate-900 dark:text-white">${appState.devices.filter(test).length}</p></div>`).join('')}
+                            </div>
+                            <button type="button" data-action="sidebar-devices-inventory" class="h-11 px-4 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold text-sm">View Device Inventory</button>
+                        </section>
                     </section>
                     <section class="${phase14DeviceTab==='inventory'?'':'hidden'} space-y-4" data-device-panel="inventory">
                     <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 sm:p-5 flex flex-col gap-4">
