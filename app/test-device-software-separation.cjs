@@ -20,10 +20,15 @@ for (const token of [
   "phase19BSoftwareFields().includes(key)",
   "phase19BServerFunctionFields().includes(key)",
   "phase19BRenderFields(currentType,phase19BFormValues,'hardware')",
-  "phase19BRenderFields(type, phase19BFormValues, 'software')",
-  "id = 'phase120-software-details'",
-  "softwareSection.insertBefore(managers",
-  "softwareFields.innerHTML=phase19BRenderFields(type,phase19BFormValues,'software')",
+  "phase19BRenderFields(type, phase19BFormValues, 'services')",
+  "phase19BRenderFields(type, phase19BFormValues, 'installed')",
+  "id = 'phase120-server-services-section'",
+  "id = 'phase120-installed-software-section'",
+  "servicesSection.insertBefore(servicesManager",
+  "installedSection.insertBefore(softwareManager",
+  "Manage Installed Software",
+  "serviceFields.innerHTML=phase19BRenderFields(type,phase19BFormValues,'services')",
+  "installedFields.innerHTML=phase19BRenderFields(type,phase19BFormValues,'installed')",
   "phase19BReadFields();"
 ]) assert.ok(source.includes(token), 'Missing software separation contract: ' + token);
 console.log('PASS: software and server-role fields separated; existing keys and managers retained.');
