@@ -3034,7 +3034,7 @@ function hierarchyValidateTypes(subnets) {
         document.addEventListener('input',function(event){
             if(event.target?.id!=='phase120-maker-search')return;
             const query=event.target.value.trim().toLocaleLowerCase();
-            document.querySelectorAll('[data-manufacturer-row]').forEach(row=>{row.hidden=!row.dataset.manufacturerRow.includes(query);});
+            document.querySelectorAll('[data-manufacturer-row]').forEach(row=>{row.classList.toggle('hidden',!row.dataset.manufacturerRow.includes(query));});
         });
         // Read-only catalogue overview. Suggestions and device records remain untouched.
         function phase120ManufacturersHTML() {
