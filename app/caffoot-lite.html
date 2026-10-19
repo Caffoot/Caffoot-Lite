@@ -348,6 +348,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .phase13b-tab.phase13b-selected{background:#1e40af;color:#fff;border-color:#1e40af}
 .dark .phase13b-tab{background:#334155;color:#f1f5f9;border-color:#64748b}
 .dark .phase13b-tab.phase13b-selected{background:#1d4ed8;border-color:#60a5fa;color:#fff}
+#modal-content.phase16c-ap-review{max-width:44rem}
 .phase13b-primary,.phase13b-secondary,.phase13b-danger{min-height:40px;padding:9px 14px;border-radius:10px;font-weight:650;font-size:13px}
 .phase13b-primary{background:#1e40af;color:white}.phase13b-primary:hover{background:#1e3a8a}
 .phase13b-secondary{border:1px solid #94a3b8;color:#334155}.dark .phase13b-secondary{color:#f1f5f9;border-color:#64748b}
@@ -4378,7 +4379,7 @@ function hierarchyValidateTypes(subnets) {
             const container = document.getElementById('modal-container');
             const content = document.getElementById('modal-content');
             if (container.classList.contains('hidden')) modalReturnFocus = document.activeElement;
-            content.classList.remove('phase18b-balanced-modal');
+            content.classList.remove('phase18b-balanced-modal', 'phase16c-ap-review');
             content.innerHTML = htmlContent;
             container.classList.remove('hidden');
             container.classList.add('flex');
@@ -5888,25 +5889,27 @@ function hierarchyValidateTypes(subnets) {
                 const container = document.getElementById('modal-container');
                 const options = ['Tabletop / Shelf Mounted','Ceiling Mounted','Wall Mounted','Pole Mounted','Desktop'];
                 const rows = conflicts.map((device, index) => `
-                    <li class="rounded-lg border border-slate-200 dark:border-slate-700 p-3 space-y-2">
-                        <p class="font-semibold text-slate-900 dark:text-white">${escapeHtml(String(device.name || '(unnamed device)'))} (${escapeHtml(String(device.type))})</p>
-                        <p class="text-sm dark:text-slate-200">Existing: ${escapeHtml(String(device.mountType))} / ${escapeHtml(String(device.rack))}</p>
+                    <li class="rounded-xl border border-slate-200 bg-slate-50 dark:bg-slate-900/40 dark:border-slate-600 p-4 space-y-3">
+                        <p class="font-semibold text-slate-900 dark:text-white break-words">${escapeHtml(String(device.name || '(unnamed device)'))}</p>
+                        <p class="text-sm text-slate-600 dark:text-slate-300">Current Mounting: <strong>${escapeHtml(String(device.mountType))}</strong></p>
+                        <p class="text-sm text-slate-600 dark:text-slate-300">Current Rack: <strong>${escapeHtml(String(device.rack))}</strong></p>
                         <label class="block text-sm font-semibold dark:text-white" for="legacy-ap-${index}">Choose Mounting Type</label>
-                        <select id="legacy-ap-${index}" data-ap-choice="${index}" class="w-full rounded-lg border p-2 text-slate-900">
+                        <select id="legacy-ap-${index}" data-ap-choice="${index}" class="w-full rounded-xl border border-slate-300 bg-white dark:bg-slate-700 dark:border-slate-500 px-3 py-2.5 text-slate-900 dark:text-white">
                             <option value="">Select a mounting type…</option>
                             ${options.map(option => `<option value="${escapeHtml(option)}">${escapeHtml(option)}</option>`).join('')}
                         </select>
                     </li>`).join('');
-                openModal(`<section class="space-y-4">
-                    <h2 class="text-xl font-bold dark:text-white">Access Point Mounting Review</h2>
-                    <p class="text-sm dark:text-slate-200">Choose a valid mounting type for each Access Point. Rack assignments and rack-unit positions will be cleared. The original backup and current inventory will not be changed unless you approve the final restore.</p>
-                    <ul class="space-y-2 max-h-[45vh] overflow-y-auto" tabindex="0">${rows}</ul>
+                openModal(`<section class="p-5 sm:p-6 space-y-5">
+                    <div class="border-b border-slate-200 dark:border-slate-600 pb-4"><h2 class="text-lg font-bold text-slate-900 dark:text-white">Access Point Mounting Review</h2><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">${conflicts.length} Access Point${conflicts.length === 1 ? '' : 's'} require mounting confirmation</p></div>
+                    <p class="text-sm dark:text-slate-200">Select the correct mounting type for each Access Point. Previous rack assignments will be cleared. Nothing is imported until you confirm the restore.</p>
+                    <ul class="space-y-3 max-h-[42vh] overflow-y-auto pr-1" tabindex="0">${rows}</ul>
                     <p data-ap-error role="alert" class="text-sm text-red-700 dark:text-red-300"></p>
-                    <div class="flex flex-wrap justify-end gap-3">
-                        <button type="button" data-ap-action="cancel" class="rounded-xl border px-4 py-2 dark:text-white">Cancel Restore</button>
-                        <button type="button" data-ap-action="approve" class="rounded-xl bg-blue-800 px-4 py-2 font-semibold text-white">Apply Mounting Choices</button>
+                    <div class="flex flex-wrap justify-end items-center gap-3 border-t border-slate-200 dark:border-slate-600 pt-4">
+                        <button type="button" data-ap-action="cancel" class="phase13b-secondary">Cancel Restore</button>
+                        <button type="button" data-ap-action="approve" class="phase13b-primary">Apply Mounting Choices</button>
                     </div>
                 </section>`);
+                document.getElementById('modal-content').classList.add('phase16c-ap-review');
                 let finished = false;
                 const observer = new MutationObserver(() => {
                     if (container.classList.contains('hidden')) finish(null);
@@ -5915,6 +5918,7 @@ function hierarchyValidateTypes(subnets) {
                     if (finished) return;
                     finished = true;
                     observer.disconnect();
+                    document.getElementById('modal-content').classList.remove('phase16c-ap-review');
                     container.removeEventListener('click', onClick);
                     if (!container.classList.contains('hidden')) closeModal(true);
                     resolve(choices);
