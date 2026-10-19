@@ -3293,6 +3293,52 @@ function hierarchyValidateTypes(subnets) {
         }
         function openManageTypesModal(){phase18DOpen('type');}
         function openManageLocationsModal(){phase18DOpen('location');}
+        let phase18DDeleteApproved=false;
+        let phase18DDeletePending=null;
+        function phase18DConfirmDelete(kind,name){
+            if(document.getElementById('phase18d-delete-dialog') || document.getElementById('phase120-discard-dialog'))return;
+            const prop=kind==='type'?'type':'location';
+            if(phase18DProtected(kind,name)||!phase18DList(kind).includes(name))return;
+            const affected=appState.devices.filter(d=>d[prop]===name).length;
+            const content=document.getElementById('modal-content');
+            if(!content)return;
+            const overlay=document.createElement('div');
+            overlay.id='phase18d-delete-dialog';
+            overlay.setAttribute('role','alertdialog');
+            overlay.setAttribute('aria-modal','true');
+            overlay.setAttribute('aria-labelledby','phase18d-delete-title');
+            overlay.setAttribute('aria-describedby','phase18d-delete-description');
+            overlay.className='absolute inset-0 z-50 flex items-center justify-center bg-slate-950/65 p-4 rounded-2xl';
+            overlay.innerHTML=`<div class="w-full max-w-md rounded-2xl border border-rose-300 dark:border-rose-700 bg-white dark:bg-slate-800 p-6 shadow-2xl space-y-4">
+                <h3 id="phase18d-delete-title" class="text-lg font-bold text-slate-900 dark:text-white">Delete ${kind==='type'?'Device Type':'Location'}?</h3>
+                <p class="font-semibold break-words text-slate-900 dark:text-white">${escapeHtml(name)}</p>
+                <p id="phase18d-delete-description" class="text-sm text-slate-700 dark:text-slate-200">This ${kind==='type'?'device type':'location'} is assigned to <strong>${affected} device${affected===1?'':'s'}</strong>. ${affected?'Affected devices will be changed to Unknown.':'No existing devices will be changed.'} Deletion cannot be undone except by restoring a backup.</p>
+                <div class="flex flex-wrap justify-end gap-3">
+                    <button type="button" data-action="phase18d-cancel-delete" class="h-11 px-4 rounded-xl border border-slate-400 dark:border-slate-500 text-slate-900 dark:text-white">Cancel</button>
+                    <button type="button" data-action="phase18d-confirm-delete" class="h-11 px-4 rounded-xl bg-rose-700 hover:bg-rose-800 text-white font-bold">Delete</button>
+                </div>
+            </div>`;
+            if(getComputedStyle(content).position==='static')content.style.position='relative';
+            overlay._returnFocus=document.activeElement;
+            phase18DDeletePending={kind,name};
+            content.appendChild(overlay);
+            overlay.querySelector('[data-action="phase18d-cancel-delete"]').focus();
+        }
+        function phase18DCancelDelete(){
+            const overlay=document.getElementById('phase18d-delete-dialog');
+            const focus=overlay?._returnFocus;
+            overlay?.remove();
+            phase18DDeletePending=null;
+            if(focus?.isConnected)focus.focus();
+        }
+        function phase18DConfirmDeleteAction(){
+            const pending=phase18DDeletePending;
+            if(!pending)return;
+            phase18DCancelDelete();
+            phase18DDeleteApproved=true;
+            try{phase18DCommit(pending.kind,'delete',pending.name);}
+            finally{phase18DDeleteApproved=false;}
+        }
         function phase18DCommit(kind,operation,oldName,newName='') {
             const key=kind==='type'?'deviceTypes':'deviceLocations',prop=kind==='type'?'type':'location';
             const list=phase18DList(kind);
@@ -3308,7 +3354,7 @@ function hierarchyValidateTypes(subnets) {
             if(operation!=='add' && (phase18DProtected(kind,oldName)||!list.includes(oldName))){showToast('This entry cannot be changed.','error');return;}
             if(operation==='rename' && oldName===name)return;
             const affected=appState.devices.filter(d=>d[prop]===oldName).length;
-            if(operation==='delete' && !confirm(`Delete ${kind} "${oldName}"?\n\n${affected} device(s) will be set to Unknown. This cannot be undone except by restoring a backup.`))return;
+            if(operation==='delete' && !phase18DDeleteApproved){phase18DConfirmDelete(kind,oldName);return;}
             const snapshot=JSON.stringify(appState);
             if(operation==='add')appState[key]=[...new Set([...(appState[key]||[]),name])];
             else if(operation==='rename'){
@@ -4689,6 +4735,7 @@ function hierarchyValidateTypes(subnets) {
             if (!container || container.classList.contains('hidden')) return;
             if (event.key === 'Escape') {
                 event.preventDefault();
+                if(document.getElementById('phase18d-delete-dialog')){phase18DCancelDelete();return;}
                 if(document.getElementById('phase120-discard-dialog')){phase120KeepEditing();return;}
                 if (container.querySelector('.phase18d-manager[data-phase18d-editing="true"]')) {
                     phase18DCancelRename();
@@ -4703,7 +4750,8 @@ function hierarchyValidateTypes(subnets) {
                 return;
             }
             if (event.key !== 'Tab') return;
-            const items = Array.from(container.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]):not([type="hidden"]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')).filter(el => el.getClientRects().length);
+            const activeDialog=document.getElementById('phase18d-delete-dialog')||document.getElementById('phase120-discard-dialog');
+            const items = Array.from((activeDialog||container).querySelectorAll('a[href],button:not([disabled]),input:not([disabled]):not([type="hidden"]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')).filter(el => el.getClientRects().length);
             if (!items.length) { event.preventDefault(); document.getElementById('modal-content').focus(); return; }
             // Safari can omit buttons/selects from its native Tab order depending on
             // keyboard settings. Advance explicitly through every dialog control.
@@ -7236,7 +7284,9 @@ function hierarchyValidateTypes(subnets) {
                 case 'phase18d-save-rename': phase18DCommit(target.dataset.kind,'rename',name,document.getElementById('phase18d-rename-value')?.value||''); break;
                 case 'phase18d-cancel-rename': phase18DCancelRename(); break;
                 case 'phase18d-rename': phase18DRename(target.dataset.kind,name); break;
-                case 'phase18d-delete': phase18DCommit(target.dataset.kind,'delete',name); break;
+                case 'phase18d-delete': phase18DConfirmDelete(target.dataset.kind,name); break;
+                case 'phase18d-cancel-delete': phase18DCancelDelete(); break;
+                case 'phase18d-confirm-delete': phase18DConfirmDeleteAction(); break;
                 case 'open-manage-types': openManageTypesModal(); break;
                 case 'open-manage-locations': openManageLocationsModal(); break;
                 case 'add-custom-type': addCustomTypeOption(); break;
