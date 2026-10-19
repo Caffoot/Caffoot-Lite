@@ -1202,6 +1202,21 @@ function hierarchyValidateTypes(subnets) {
             renderContent();
         }
 
+        // v1.2.0 migration primitive: operate on a copy, never mutate a supplied backup.
+        // Wiring this into normalisation must accompany updated rack validators; until
+        // then the legacy 'Racked' invariant is still enforced by the application.
+        function phase120SeparateLegacyRackLocation(devices) {
+            if (!Array.isArray(devices)) throw new Error('Devices must be an array.');
+            return devices.map(device => {
+                if (!isPlainObject(device)) throw new Error('Invalid device in migration.');
+                const copy = {...device};
+                if (copy.location === 'Racked' && (copy.mountType === 'Rack Mounted' || copy.rackId)) {
+                    copy.location = 'Unknown';
+                }
+                return copy;
+            });
+        }
+
         function normaliseState(raw) {
             if (!isPlainObject(raw)) throw new Error('Imported data must be a JSON object.');
 
