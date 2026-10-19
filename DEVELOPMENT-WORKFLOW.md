@@ -48,3 +48,19 @@ If any download fails, **stop** and investigate rather than testing a partially 
 Use a fresh checkout/ZIP when files have been moved or removed, a large set of files changed, the local checkout is uncertain, or incremental updates would be unreliable. Never copy arbitrary downloaded files into a customer's live installation.
 
 **Do not merge, tag, publish, or change the stable release without explicit project-owner approval.** Update release notes and versioned repository documentation as part of every version change. Development builds and packages are not published releases.
+
+## Mandatory chat-session handover continuity
+
+At the end of **every development chat-session handover**, append a section titled **Continuity and Development Workflow — Mandatory**. This requirement applies to all future Caffoot Lite development sessions, not only v1.1.2.
+
+The handover must:
+1. Link to this `DEVELOPMENT-WORKFLOW.md` and explicitly instruct the next session to read and follow it **before suggesting local downloads, commands, tests or repository changes**.
+2. Record the official repository, active feature branch, **last verified commit SHA**, stable published version, changed files, and any uncommitted or untested work. Never assume the branch or SHA remains current: verify against GitHub at the start of the new session.
+3. Record decisions already agreed with the project owner, including naming, compatibility, safety, UX, testing and release constraints. Do not silently overturn those decisions.
+4. **Default to the existing Windows PowerShell `app` development folder.** Give copy-and-paste `Invoke-WebRequest` commands that fetch **only changed files** from the exact verified commit, then the specific `npm.cmd` tests. Do **not** ask for another repository ZIP or fresh extraction unless an exception in this document applies.
+5. Warn that downloaded files overwrite matching local files. Confirm that the user is in the development checkout, not a published installation, and has no local edits to the target files. For multiple files, prefer a staged download before replacement.
+6. List tests already passed, tests still pending, and the **single next recommended step**. Never describe unrun tests as passing.
+7. Preserve the rule that **nothing is merged, tagged, released or published without explicit project-owner approval**.
+8. Distinguish repository documentation from ChatGPT Project Library files: **never claim a handover was saved to the Project Library unless that save was actually verified**.
+
+The last section of the handover must reproduce this continuity requirement or provide an explicit checklist with all eight items, so that the next chat session can follow it without relying on conversational memory.
