@@ -3331,7 +3331,25 @@ function hierarchyValidateTypes(subnets) {
         }
         function editDeviceTypePrompt(n){phase18DRename('type',n);}
         function editDeviceLocationPrompt(n){phase18DRename('location',n);}
-        function phase18DRename(kind,n){const next=prompt(`Rename ${kind} "${n}" to:`,n);if(next!==null)phase18DCommit(kind,'rename',n,next);}
+        function phase18DRename(kind,n){
+            const manager=document.querySelector('.phase18d-manager');
+            if(!manager)return;
+            manager.querySelector('[data-phase18d-rename-editor]')?.remove();
+            const row=[...manager.querySelectorAll('[data-action="phase18d-rename"]')].find(b=>b.dataset.kind===kind&&b.dataset.name===n)?.closest('.rounded-xl');
+            if(!row)return;
+            const editor=document.createElement('div');
+            editor.dataset.phase18dRenameEditor='true';
+            editor.className='w-full basis-full mt-2 p-4 rounded-xl border border-blue-300 dark:border-blue-700 bg-blue-50 dark:bg-slate-800 space-y-3';
+            editor.innerHTML=`<label for="phase18d-rename-value" class="block text-sm font-bold text-slate-900 dark:text-white">Rename ${kind==='type'?'Device Type':'Device Location'}</label>
+                <input id="phase18d-rename-value" type="text" maxlength="100" class="w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-white" value="${escapeHtml(n)}">
+                <div class="flex flex-wrap justify-end gap-2">
+                    <button type="button" data-action="phase18d-cancel-rename" class="h-11 px-4 rounded-xl border border-slate-400 dark:border-slate-500 text-slate-800 dark:text-slate-100">Cancel</button>
+                    <button type="button" data-action="phase18d-save-rename" data-kind="${kind}" data-name="${escapeHtml(n)}" class="h-11 px-5 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-bold">Save Changes</button>
+                </div>`;
+            row.appendChild(editor);
+            const input=editor.querySelector('input');
+            input?.focus();input?.select();
+        }
         function deleteDeviceType(n){phase18DCommit('type','delete',n);}
         function deleteDeviceLocation(n){phase18DCommit('location','delete',n);}
 
@@ -7147,6 +7165,8 @@ function hierarchyValidateTypes(subnets) {
                 case 'phase19b-delete-function': phase19BUpdateFunction('delete',name); break;
                 case 'phase18d-add': phase18DCommit(target.dataset.kind,'add','',document.getElementById('phase18d-new')?.value||''); break;
                 case 'phase18d-search': phase18DSearch[target.dataset.kind]=document.getElementById('phase18d-search')?.value||'';phase18DOpen(target.dataset.kind); break;
+                case 'phase18d-save-rename': phase18DCommit(target.dataset.kind,'rename',name,document.getElementById('phase18d-rename-value')?.value||''); break;
+                case 'phase18d-cancel-rename': target.closest('[data-phase18d-rename-editor]')?.remove(); break;
                 case 'phase18d-rename': phase18DRename(target.dataset.kind,name); break;
                 case 'phase18d-delete': phase18DCommit(target.dataset.kind,'delete',name); break;
                 case 'open-manage-types': openManageTypesModal(); break;
