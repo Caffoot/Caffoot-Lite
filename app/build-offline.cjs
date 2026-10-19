@@ -12,9 +12,16 @@ const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'caffoot-css-'));
 try {
   const cssInput = path.join(tmp, 'input.css');
   const cssOutput = path.join(tmp, 'output.css');
-  fs.writeFileSync(cssInput, '@tailwind base;\n@tailwind components;\n@tailwind utilities;\n');
-  const cli = require.resolve('tailwindcss/lib/cli.js');
-  const run = spawnSync(process.execPath, [cli, '-i', cssInput, '-o', cssOutput, '--minify', '-c', path.join(root, 'tailwind.config.cjs')], { cwd: root, encoding: 'utf8' });
+  fs.writeFileSync(cssInput, [
+    '@import "tailwindcss" source(none);',
+    '@source "' + source.replace(/\\/g, '/') + '";',
+    '@custom-variant dark (&:where(.dark, .dark *));',
+    '@theme { --color-brand-50: #eef2ff; --color-brand-100: #e0e7ff; --color-brand-500: #6366f1; --color-brand-600: #4f46e5; --color-brand-700: #4338ca; }',
+    '@source inline("{hover:,dark:,dark:hover:}{bg,text,border}-{red,green,yellow,blue,gray,slate,indigo,amber,emerald}-{50,100,200,300,400,500,600,700,800,900}");',
+    '@source inline("{sm:,md:,lg:}{hidden,block,flex,grid,inline-flex}");',
+  ].join('\n') + '\n');
+  const cli = require.resolve('@tailwindcss/cli/package.json').replace(/package\.json$/, 'dist/index.mjs');
+  const run = spawnSync(process.execPath, [cli, '-i', cssInput, '-o', cssOutput, '--minify'], { cwd: root, encoding: 'utf8' });
   if (run.status !== 0) throw Error('Tailwind compilation failed: ' + (run.stderr || run.stdout));
   let html = fs.readFileSync(source, 'utf8');
   const cdn = '<script src="https://cdn.tailwindcss.com"></script>';
