@@ -28,5 +28,5 @@ vlan.value = hostile;
 ctx.phase11DeviceCascade('subnet');
 assert(subnet.innerHTML.includes('&lt;img'), 'Hostile subnet name and ID must be escaped');
 assert(!subnet.innerHTML.includes('<img'), 'Hostile subnet must not create markup');
-assert(!/<[^>]+\sonerror\s*=/.test(vlan.innerHTML + subnet.innerHTML), 'Executable event handler leaked into markup');
+assert(!/<(?:img|svg|script)\b/i.test(vlan.innerHTML + subnet.innerHTML), 'Injected executable element leaked into markup');
 console.log('PASS: device VLAN/subnet cascade escapes hostile imported identifiers and names.');
