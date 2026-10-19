@@ -3272,12 +3272,12 @@ function hierarchyValidateTypes(subnets) {
             const names=new Set(builtins.map(x=>x.name.toLowerCase()));
             const custom=configured.filter(x=>!names.has(String(x.label||'').toLowerCase())).map(x=>({name:x.label,types:[],source:'configured',count:appState.devices.filter(d=>d[x.key]===true).length}));
             const items=[...builtins,...custom].map(x=>{
-                const option=configured.find(o=>String(o.label||'').toLowerCase()===x.name.toLowerCase());
-                return {...x,configured:!!option,count:option?appState.devices.filter(d=>d[option.key]===true).length:0};
+                const option=phase120SoftwareOptions().find(o=>String(o.label||'').toLowerCase()===x.name.toLowerCase());
+                return {...x,configured:!!option,count:option?appState.devices.filter(d=>d.typeDetails?.[option.key]===true||d[option.key]===true).length:0};
             }).sort((a,b)=>a.name.localeCompare(b.name));
             const types=[...new Set(items.flatMap(x=>x.types))].sort((a,b)=>a.localeCompare(b));
             const card=(label,value)=>'<div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5"><p class="text-sm text-slate-600 dark:text-slate-300">'+label+'</p><p class="text-3xl font-bold mt-2">'+value+'</p></div>';
-            const rows=items.map(x=>'<div data-software-row="'+escapeHtml(x.name.toLowerCase())+'" data-software-types="'+escapeHtml('|'+x.types.join('|')+'|')+'" data-software-used="'+x.count+'" data-software-source="'+x.source+'" class="rounded-xl border border-slate-200 dark:border-slate-700 p-4 flex flex-wrap items-center justify-between gap-3"><div><h3 class="font-semibold">'+escapeHtml(x.name)+'</h3><p class="text-xs text-slate-600 dark:text-slate-300 mt-1">'+(x.source==='built-in'?'Built-in suggestion':'Configured software')+(x.types.length?' · '+escapeHtml(x.types.join(', ')):' · No device-type association')+'</p></div><span class="text-sm font-semibold text-blue-700 dark:text-blue-300">'+x.count+' device'+(x.count===1?'':'s')+'</span>'+(x.source==='built-in'&&!x.configured?'<button type="button" data-action="phase120-software-enable" data-name="'+escapeHtml(x.name)+'" class="h-10 px-3 rounded-xl border border-blue-400 text-blue-700 dark:text-blue-300 font-semibold">Add To Device Forms</button>':'')+'</div>').join('');
+            const rows=items.map(x=>'<div data-software-row="'+escapeHtml(x.name.toLowerCase())+'" data-software-types="'+escapeHtml('|'+x.types.join('|')+'|')+'" data-software-used="'+x.count+'" data-software-source="'+x.source+'" class="rounded-xl border border-slate-200 dark:border-slate-700 p-4 flex flex-wrap items-center justify-between gap-3"><div><h3 class="font-semibold">'+escapeHtml(x.name)+'</h3><p class="text-xs text-slate-600 dark:text-slate-300 mt-1">'+(x.source==='built-in'?'Built-in suggestion':'Configured software')+(x.types.length?' · '+escapeHtml(x.types.join(', ')):' · No device-type association')+'</p>'+(x.source==='built-in'?'<div class="flex flex-wrap gap-1 mt-2">'+phase120SoftwareTypeControls(x.name)+'</div>':'')+'</div><span class="text-sm font-semibold text-blue-700 dark:text-blue-300">'+x.count+' device'+(x.count===1?'':'s')+'</span>'+''+'</div>').join('');
             return '<section class="space-y-5"><div><h2 class="text-xl font-bold">Software</h2><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Browse built-in software suggestions by device type. Suggestions do not mean software is installed. Existing configured software and device records are preserved.</p></div><div class="grid grid-cols-1 sm:grid-cols-3 gap-4">'+card('Software Suggestions',items.length)+card('Used in Inventory',items.filter(x=>x.count>0).length)+card('Configured Software',configured.length)+'</div><div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-3"><label for="phase120-software-search" class="block text-sm font-semibold">Search Software</label><input id="phase120-software-search" type="search" placeholder="Filter software by name" class="w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-900"><div class="flex flex-wrap gap-3 items-end"><label class="text-sm">Device Type <select id="phase120-software-type" class="block mt-1 h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-900"><option value="">All Device Types</option>'+types.map(t=>'<option value="'+escapeHtml(t)+'">'+escapeHtml(t)+'</option>').join('')+'</select></label><label class="text-sm">Source <select id="phase120-software-source" class="block mt-1 h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-900"><option value="">All Sources</option><option value="built-in">Built-in Suggestions</option><option value="configured">Configured Software</option></select></label><label class="flex items-center gap-2 text-sm pb-2"><input id="phase120-software-used" type="checkbox">In Use Only</label><button type="button" data-action="phase120-software-reset" class="ml-auto pb-2 text-sm font-semibold text-blue-700 dark:text-blue-300">Reset Filters</button></div><p id="phase120-software-count" class="text-xs text-slate-600 dark:text-slate-300" aria-live="polite">'+items.length+' software options shown</p><div class="space-y-2 max-h-[65vh] overflow-y-auto">'+rows+'</div><p id="phase120-software-empty" class="hidden text-sm text-slate-600 dark:text-slate-300">No software matches these filters.</p></div></section>';
         }
         function phase120EnableSoftware(name){
@@ -5821,31 +5821,53 @@ function hierarchyValidateTypes(subnets) {
         };
         const phase19BFlags = new Set(['Swan','MicrosoftOffice','Planet','SpindleSoftware','Preactor','RedLionApp','SalesBase','HelpDesk','ProductionITHelpDeskDashboards','PDA','TMS','PhoneBook','EasyLabel','SwanServer','SQLServer','TMSServer','printserver','keriserver','ActiveDirectory','AntivirusSoftware','DNS','DHCP','ExchangeServer','BackupSoftware','PlanetDB','SystemsDatabaseBackEndTables','PDASystem','serialPort','usbPort']);
         const phase19BNumeric = new Set(['memory','storage','driveCount','handsetCount','powerOutlets']);
+        function phase120BuiltinSoftwareKey(name){return 'catalogSoftware_'+String(name).toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'');}
+        function phase120SoftwareOptions(){
+            const configured=phase19BSoftware();
+            const known=new Set(configured.map(x=>x.label.toLowerCase()));
+            return [...configured,...phase120SoftwareSuggestions.filter(x=>!known.has(x.name.toLowerCase())).map(x=>({key:phase120BuiltinSoftwareKey(x.name),label:x.name,deviceTypes:x.types,builtin:true}))];
+        }
+        function phase120SoftwareHidden(name,type){return (appState.softwareTypeExclusions||{})[name]?.includes(type)===true;}
+        function phase120SoftwareToggle(name,type){
+            const entry=phase120SoftwareSuggestions.find(x=>x.name===name);
+            if(!entry||!entry.types.includes(type))return;
+            const previous=appState.softwareTypeExclusions;
+            const next={...(previous||{})},set=new Set(next[name]||[]);
+            if(set.has(type))set.delete(type);else set.add(type);
+            if(set.size)next[name]=[...set];else delete next[name];
+            appState.softwareTypeExclusions=next;
+            if(!saveState()){appState.softwareTypeExclusions=previous;showToast('Unable to save software preference.','error');return;}
+            renderContent();
+        }
+        function phase120SoftwareTypeControls(name){
+            const entry=phase120SoftwareSuggestions.find(x=>x.name===name);
+            return entry?entry.types.map(t=>'<button type="button" data-action="phase120-software-toggle" data-name="'+escapeHtml(name)+'" data-type="'+escapeHtml(t)+'" class="rounded-lg px-2 py-1 border text-xs '+(phase120SoftwareHidden(name,t)?'border-rose-400 text-rose-700 dark:text-rose-300':'border-blue-400 text-blue-700 dark:text-blue-300')+'">'+escapeHtml(t)+(phase120SoftwareHidden(name,t)?' · Hidden':' · Available')+'</button>').join(' '):'';
+        }
         function phase120SoftwareFieldsFor(type){
-            return phase19BSoftware().filter(x=>!Array.isArray(x.deviceTypes)||x.deviceTypes.length===0||x.deviceTypes.some(t=>t.toLowerCase()===String(type||'').toLowerCase())).map(x=>x.key);
+            return phase120SoftwareOptions().filter(x=>(!Array.isArray(x.deviceTypes)||!x.deviceTypes.length||x.deviceTypes.some(t=>t.toLowerCase()===String(type||'').toLowerCase()))&&(!x.builtin||!phase120SoftwareHidden(x.label,type))).map(x=>x.key);
         }
         function phase19BFieldsFor(type) {
             const group=phase19BTypeGroups[String(type||'').toLowerCase().trim()];
             if(group==='computer')return [...phase19BProfiles.computer.filter(k=>!phase19BDefaultSoftware.includes(k)),...phase120SoftwareFieldsFor(type)];
-            if(group==='server')return [...phase19BProfiles.server.filter(k=>!phase19BDefaultServerFunctions.includes(k)),...phase19BServerFunctionFields(),...phase19BSoftwareFields()];
+            if(group==='server')return [...phase19BProfiles.server.filter(k=>!phase19BDefaultServerFunctions.includes(k)),...phase19BServerFunctionFields(),...phase120SoftwareFieldsFor(type)];
             return [...(phase19BProfiles[group] || []),...phase120SoftwareFieldsFor(type)];
         }
         // Keep persisted typeDetails keys unchanged while separating physical and software controls.
         function phase120IsSoftwareField(key) {
             return key === 'windowsLicence' ||
-                phase19BSoftwareFields().includes(key) ||
+                phase120SoftwareOptions().some(x=>x.key===key) ||
                 phase19BServerFunctionFields().includes(key) ||
                 phase19BDefaultSoftware.includes(key) ||
                 phase19BDefaultServerFunctions.includes(key);
         }
         function phase19BRenderFields(type, values={}, section='all') {
             const keys=phase19BFieldsFor(type).filter(key =>
-                key !== 'os' && key !== 'windowsLicence' && (section === 'all' || (section === 'hardware' && !phase120IsSoftwareField(key)) || (section === 'services' && phase19BServerFunctionFields().includes(key)) || (section === 'installed' && phase19BSoftwareFields().includes(key)) || (section === 'software' && phase120IsSoftwareField(key))));
+                key !== 'os' && key !== 'windowsLicence' && (section === 'all' || (section === 'hardware' && !phase120IsSoftwareField(key)) || (section === 'services' && phase19BServerFunctionFields().includes(key)) || (section === 'installed' && phase120SoftwareOptions().some(x=>x.key===key)) || (section === 'software' && phase120IsSoftwareField(key))));
             if (!keys.length) return '<p class="text-sm text-slate-600 dark:text-slate-300">'+(type ? 'No additional fields are configured for this type yet.' : 'Select a device type above to display its additional fields.')+'</p>';
             return '<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">'+keys.map(key=>{
-                const label=(phase19BTypeGroups[String(type||'').toLowerCase().trim()]==='router'&&key==='networkConnection')?'WAN connection method':(phase120AvailableServerServices().find(x=>x.key===key)?.label||phase19BSoftware().find(x=>x.key===key)?.label||phase19BLabels[key]||key);
+                const label=(phase19BTypeGroups[String(type||'').toLowerCase().trim()]==='router'&&key==='networkConnection')?'WAN connection method':(phase120AvailableServerServices().find(x=>x.key===key)?.label||phase120SoftwareOptions().find(x=>x.key===key)?.label||phase19BLabels[key]||key);
                 const value=values[key]??'';
-                if(phase19BFlags.has(key)||phase19BServerFunctionFields().includes(key)||phase19BSoftwareFields().includes(key)) {
+                if(phase19BFlags.has(key)||phase19BServerFunctionFields().includes(key)||phase120SoftwareOptions().some(x=>x.key===key)) {
                     const tile = section === 'services' || section === 'installed';
                     return tile ? `<label class="phase120-option-tile text-sm"><input type="checkbox" data-phase19b-field="${escapeHtml(key)}" ${value===true?'checked':''}><span>${escapeHtml(label)}</span><span class="phase120-option-status" aria-hidden="true">Enabled</span></label>` : `<label class="flex items-center gap-3 rounded-xl border border-slate-300 dark:border-slate-600 p-3 text-sm"><input type="checkbox" data-phase19b-field="${escapeHtml(key)}" ${value===true?'checked':''}>${escapeHtml(label)}</label>`;
                 }
@@ -7568,6 +7590,7 @@ function hierarchyValidateTypes(subnets) {
                 case 'sidebar-devices-models': phase14DeviceTab='models'; switchTab('devices'); break;
                 case 'sidebar-devices-software': phase14DeviceTab='software'; switchTab('devices'); break;
                 case 'phase120-software-enable': phase120EnableSoftware(name); break;
+                case 'phase120-software-toggle': phase120SoftwareToggle(name,button.dataset.type); break;
                 case 'phase120-software-reset': ['phase120-software-search','phase120-software-source','phase120-software-type'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';}); if(document.getElementById('phase120-software-used'))document.getElementById('phase120-software-used').checked=false; phase120FilterSoftware(); break;
                 case 'phase120-model-add': phase120ModelManager(); break;
                 case 'phase120-model-edit': phase120ModelManager(name); break;
