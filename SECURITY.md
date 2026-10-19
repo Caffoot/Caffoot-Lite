@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-Security fixes are developed against the current supported stable Caffoot Lite release and reviewed for the next release. As of 19 October 2026, the published stable release is **v1.1.1**. The **v1.1.2** security-hardening work is in development and is not a published release. Older releases may not receive security fixes. Check the [latest releases](https://github.com/Caffoot/Caffoot-Lite/releases) for the current status.
+Security fixes are developed against the current supported stable Caffoot Lite release and reviewed for the next release. As of 19 October 2026, the published stable release is **v1.1.2**. This release includes security hardening and automated regression checks but is not a comprehensive security audit. Older releases may not receive security fixes. Check the [latest releases](https://github.com/Caffoot/Caffoot-Lite/releases) for the current status.
 
 ## Report a vulnerability privately
 
