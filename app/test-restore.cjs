@@ -7,7 +7,9 @@ const html = fs.readFileSync(path.join(__dirname, 'caffoot-lite.html'), 'utf8');
 const start = html.indexOf('function importData(event)');
 const end = html.indexOf("document.addEventListener('submit'", start);
 assert(start >= 0 && end > start, 'Restore handler must be available');
-const code = html.slice(start, end);
+const helperStart = html.indexOf('function phase16CShowImportError(');
+assert(helperStart >= 0 && helperStart < start, 'Persistent import error helper must exist');
+const code = html.slice(helperStart, end);
 function scenario(mode) {
   const original = {devices:[{id:'original'}],racks:[],subnets:[],ipAllocations:{}};
   const replacement = {devices:[{id:'replacement'}],racks:[],subnets:[],ipAllocations:{}};
