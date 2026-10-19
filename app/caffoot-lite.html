@@ -3336,6 +3336,7 @@ function hierarchyValidateTypes(subnets) {
             if(!manager)return;
             const label=kind==='type'?'Device Type':'Device Location';
             const savedContent=manager.innerHTML;
+            manager._phase18dReturnFocusName=n;
             manager.innerHTML=`<div class="space-y-5">
                 <div class="flex items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-700 pb-4">
                     <div><h3 class="text-lg font-bold text-slate-900 dark:text-white">Edit ${label}</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Update the name and return to the management list.</p></div>
@@ -3362,6 +3363,9 @@ function hierarchyValidateTypes(subnets) {
                 manager.innerHTML=manager._phase18dSavedContent;
                 delete manager._phase18dSavedContent;
                 delete manager.dataset.phase18dEditing;
+                const button=[...manager.querySelectorAll('[data-action="phase18d-rename"]')].find(b=>b.dataset.name===manager._phase18dReturnFocusName);
+                (button||manager.querySelector('button'))?.focus();
+                delete manager._phase18dReturnFocusName;
             }
         }
         function deleteDeviceType(n){phase18DCommit('type','delete',n);}
@@ -4642,6 +4646,10 @@ function hierarchyValidateTypes(subnets) {
             if (!container || container.classList.contains('hidden')) return;
             if (event.key === 'Escape') {
                 event.preventDefault();
+                if (container.querySelector('.phase18d-manager[data-phase18d-editing="true"]')) {
+                    phase18DCancelRename();
+                    return;
+                }
                 if (deviceFormDraft && container.querySelector('form[data-form-action="subnet"]')) {
                     const draft = deviceFormDraft;
                     closeModal(true);
