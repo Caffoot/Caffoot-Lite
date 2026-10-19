@@ -5169,7 +5169,7 @@ function hierarchyValidateTypes(subnets) {
         }
         function phase19BRenderFields(type, values={}, section='all') {
             const keys=phase19BFieldsFor(type).filter(key =>
-                key !== 'os' && (section === 'all' || (section === 'software') === phase120IsSoftwareField(key)));
+                key !== 'os' && key !== 'windowsLicence' && (section === 'all' || (section === 'software') === phase120IsSoftwareField(key)));
             if (!keys.length) return '<p class="text-sm text-slate-600 dark:text-slate-300">'+(type ? 'No additional fields are configured for this type yet.' : 'Select a device type above to display its additional fields.')+'</p>';
             return '<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">'+keys.map(key=>{
                 const label=(phase19BTypeGroups[String(type||'').toLowerCase().trim()]==='router'&&key==='networkConnection')?'WAN connection method':(phase120AvailableServerServices().find(x=>x.key===key)?.label||phase19BSoftware().find(x=>x.key===key)?.label||phase19BLabels[key]||key);
@@ -5202,6 +5202,23 @@ function hierarchyValidateTypes(subnets) {
         function phase120PlatformOptions(type) {
             return phase120PlatformCatalog[phase120PlatformGroup(type)] || phase120PlatformCatalog.generic;
         }
+        // Historical major releases are offline suggestions, not support-status claims.
+        const phase120PlatformVersions = Object.freeze({
+            'Windows Server':['2025','2022','2019','2016','2012 R2','2012','2008 R2','2008','2003','2000'],
+            'Windows':['11','10','8.1','8','7','Vista','XP','2000','ME','98'],
+            'Ubuntu Server':['26.04 LTS','24.04 LTS','22.04 LTS','20.04 LTS','18.04 LTS','16.04 LTS','14.04 LTS','12.04 LTS','10.04 LTS','8.04 LTS'],
+            'Debian':['13','12','11','10','9','8','7','6','5','4'],
+            'Proxmox VE':['9','8','7','6','5','4','3','2','1'],
+            'VMware ESXi':['8','7','6.7','6.5','6.0','5.5','5.1','5.0','4.1','4.0'],
+            'Synology DSM':['7.3','7.2','7.1','7.0','6.2','6.1','6.0','5.2','5.1','5.0'],
+            'FortiOS':['7.6','7.4','7.2','7.0','6.4','6.2','6.0','5.6','5.4','5.2']
+        });
+        function phase120VersionOptions(platform) {
+            return phase120PlatformVersions[platform] || [];
+        }
+        function phase120IsWindowsPlatform(platform) {
+            return /^Windows(?: Server)?$/i.test(String(platform || '').trim());
+        }
         function phase120RenderSoftwarePlatform(type, values = {}) {
             const group = phase120PlatformGroup(type);
             const isComputer = group === 'server' || group === 'computer';
@@ -5214,9 +5231,11 @@ function hierarchyValidateTypes(subnets) {
                 <div><label for="phase120-platform-name" class="form-label">${isComputer ? 'Operating System / Platform' : 'Software / Firmware Platform'} (optional)</label>
                 <select id="phase120-platform-select" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" ${!name?'selected':''}>Select a platform...</option>${options.map(x => `<option value="${escapeHtml(x)}" ${name===x?'selected':''}>${escapeHtml(x)}</option>`).join('')}<option value="__custom__">Custom / Other...</option></select>
                 <input id="phase120-platform-name" type="text" maxlength="160" autocomplete="off" value="${escapeHtml(String(name))}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700 mt-2" placeholder="Enter custom platform" ${name && !choices.includes(name) ? '' : 'hidden'}></div>
-                <div><label for="phase120-platform-version" class="form-label">${isComputer ? 'OS / Platform Version' : 'Software / Firmware Version'} (optional)</label>
-                <input id="phase120-platform-version" type="text" maxlength="160" value="${escapeHtml(String(version))}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Version shown in the device management interface"></div>
-                <p class="text-xs text-slate-600 dark:text-slate-300">Suggestions are available offline. Versions are entered manually; custom platform names are supported.</p>
+                <div><label for="phase120-version-select" class="form-label">${isComputer ? 'OS / Platform Version' : 'Software / Firmware Version'} (optional)</label>
+                <select id="phase120-version-select" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="">Select a version...</option>${phase120VersionOptions(name).map(v=>`<option value="${escapeHtml(v)}" ${version===v?'selected':''}>${escapeHtml(v)}</option>`).join('')}<option value="__custom__" ${version && !phase120VersionOptions(name).includes(version)?'selected':''}>Custom / Other...</option></select>
+                <input id="phase120-platform-version" type="text" maxlength="160" value="${escapeHtml(String(version))}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700 mt-2" placeholder="Enter custom or detailed version" ${version && !phase120VersionOptions(name).includes(version)?'':'hidden'}></div>
+                <div id="phase120-windows-licence-row" ${phase120IsWindowsPlatform(name)?'':'hidden'}><label for="phase120-windows-licence" class="form-label">Windows Licence Information (optional)</label><input id="phase120-windows-licence" type="text" maxlength="160" value="${escapeHtml(String(values.windowsLicence ?? ''))}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Edition, licence type or reference (avoid activation keys)"></div>
+                <p class="text-xs text-slate-600 dark:text-slate-300">Historical version suggestions are available offline. Custom versions are always supported; no support status is implied.</p>
             </div>`;
         }
         function phase120WireSoftwarePlatform() {
@@ -5233,6 +5252,20 @@ function hierarchyValidateTypes(subnets) {
                     custom.value = select.value;
                 }
                 phase120CaptureSoftwarePlatform();
+                phase120RefreshSoftwarePlatform();
+            });
+            const versionSelect = document.getElementById('phase120-version-select');
+            const versionInput = document.getElementById('phase120-platform-version');
+            versionSelect?.addEventListener('change', () => {
+                if (versionSelect.value === '__custom__') {
+                    versionInput.hidden = false;
+                    versionInput.value = '';
+                    versionInput.focus();
+                } else {
+                    versionInput.hidden = true;
+                    versionInput.value = versionSelect.value;
+                }
+                phase120CaptureSoftwarePlatform();
             });
         }
         function phase120CaptureSoftwarePlatform() {
@@ -5240,6 +5273,8 @@ function hierarchyValidateTypes(subnets) {
             const version = document.getElementById('phase120-platform-version');
             if (name) phase19BFormValues.softwarePlatform = name.value;
             if (version) phase19BFormValues.softwareVersion = version.value;
+            const licence = document.getElementById('phase120-windows-licence');
+            if (licence) phase19BFormValues.windowsLicence = licence.value;
         }
         function phase120RefreshSoftwarePlatform() {
             phase120CaptureSoftwarePlatform();
