@@ -16,7 +16,7 @@ A backup is a UTF-8 JSON object. Inventory remains at the top level; there is no
 }
 ```
 
-The version above is an illustrative current-release producer value, not a required fixed value; older backups may correctly contain older app versions. `schemaVersion` is the interchange version. `appVersion` identifies the producer and does not determine compatibility. `stateVersion` is Lite's internal normalisation version (currently 3), separate from the interchange version. The current validator accepts producer identifiers `Caffoot Lite` and `Caffoot Pro`. These are existing format identifiers; acceptance of an identifier does not establish compatibility with other applications or formats.
+The version above is an illustrative current-release producer value, not a required fixed value; older backups may correctly contain older app versions. `schemaVersion` is the interchange version. `appVersion` identifies the producer and does not determine compatibility. `stateVersion` is Lite's internal normalisation version (currently 3), separate from the interchange version. The validator recognises a limited set of historical producer identifiers for compatibility. An accepted identifier does not establish compatibility with other applications or backup formats.
 
 Missing `caffootBackup` identifies a legacy unversioned inventory (logical schema 0). A present malformed metadata object is rejected. Schema versions above 1 are rejected with an update message. Never remove metadata from a future backup to bypass this guard.
 
