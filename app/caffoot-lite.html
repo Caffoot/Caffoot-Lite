@@ -1195,7 +1195,7 @@ function hierarchyValidateTypes(subnets) {
             // Migrate older saves which did not have managed type/location lists.
             const discoveredTypes = state.devices.map(d => String(d.type || '').trim()).filter(Boolean);
             const discoveredLocations = state.devices.map(d => String(d.location || '').trim()).filter(Boolean);
-            state.deviceTypes = [...new Set([...state.deviceTypes, ...discoveredTypes, 'Layer 3 Switch'])];
+            state.deviceTypes = [...new Set([...state.deviceTypes, ...discoveredTypes, 'Layer 3 Switch', 'Wireless LAN Controller'])];
             state.deviceLocations = [...new Set([...state.deviceLocations, ...discoveredLocations, 'Unknown'])].filter(location => location !== 'Blank');
 
             // Phase 5 migration: Blank is no longer a valid managed location.
