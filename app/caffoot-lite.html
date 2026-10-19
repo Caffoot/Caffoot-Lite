@@ -5104,7 +5104,7 @@ function hierarchyValidateTypes(subnets) {
         function phase19BIsAccessPoint(type){return phase19BTypeGroups[String(type||'').toLowerCase().trim()]==='ap';}
         function phase19BAllowedMounts(type){
             if (['desktop','laptop','tablet'].includes(String(type || '').trim().toLowerCase())) return ['Desktop'];
-            return phase19BIsAccessPoint(type)?['Desktop','Ceiling Mounted','Wall Mounted']:['Desktop','Rack Mounted'];
+            return phase19BIsAccessPoint(type)?['Desktop','Ceiling Mounted','Wall Mounted','Pole Mounted']:['Desktop','Rack Mounted'];
         }
         function phase19BMountOptions(type, selected){
             const opts=phase19BAllowedMounts(type);
