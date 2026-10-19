@@ -5179,7 +5179,8 @@ function hierarchyValidateTypes(subnets) {
                 ['general', 'General'],
                 ['hardware', 'Hardware'],
                 ['software', 'Software & Firmware'],
-                ['networking', 'Networking']
+                ['networking', 'Networking'],
+                ['notes', 'Notes']
             ];
             const nav = document.createElement('div');
             nav.className = 'phase120-device-tabs';
@@ -5208,9 +5209,10 @@ function hierarchyValidateTypes(subnets) {
             });
             form.insertBefore(nav, sections[0]);
             labels.forEach(([id]) => form.insertBefore(panels.get(id), sections[0]));
-            panels.get('general').append(sections[0], sections[4]);
-            panels.get('hardware').append(sections[1], sections[2]);
+            panels.get('general').append(sections[0], sections[2]);
+            panels.get('hardware').append(sections[1]);
             panels.get('networking').append(sections[3]);
+            panels.get('notes').append(sections[4]);
             // Move existing field nodes rather than cloning controls, preserving IDs and handlers.
             const status = form.querySelector('#dev-status');
             const statusRow = status?.closest('div');
@@ -5227,7 +5229,7 @@ function hierarchyValidateTypes(subnets) {
                 locationSection.className = 'form-section-card space-y-4';
                 locationSection.innerHTML = '<div class="form-section-heading"><i class="fa-solid fa-location-dot" aria-hidden="true"></i>Location Area</div>';
                 locationSection.appendChild(locationRow);
-                panels.get('general').insertBefore(locationSection, sections[4]);
+                panels.get('general').insertBefore(locationSection, sections[2]);
             }
             const mountHeading = sections[2].querySelector('.form-section-heading');
             if (mountHeading) mountHeading.textContent = 'Mounting & Rack Configuration';
@@ -5235,10 +5237,11 @@ function hierarchyValidateTypes(subnets) {
             note.className = 'phase120-device-empty';
             note.textContent = 'Software and firmware options will be organised here in the next development step. Existing device-specific fields remain available under Hardware for now.';
             panels.get('software').appendChild(note);
-            let active = 'general';
+            let active = form.dataset.initialDeviceTab || 'general';
             function activate(id, focusButton = false) {
                 if (!panels.has(id)) return;
                 active = id;
+                form.dataset.activeDeviceTab = id;
                 labels.forEach(([key]) => {
                     const selected = key === id;
                     buttons.get(key).setAttribute('aria-selected', String(selected));
@@ -5339,13 +5342,15 @@ function hierarchyValidateTypes(subnets) {
 <span class="text-sm text-slate-800 dark:text-slate-100"><strong>Reserve this IP address for this device</strong><span class="block text-xs mt-1 text-slate-600 dark:text-slate-300">Keeps this same IP linked to the device, but displays it as Reserved in IPAM. No second address is needed.</span></span>
 </label><p class="phase14b-help">Don't see the required network? Create it in IPAM, then return here to select it.</p></div>
                         </div>
-                        <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-note-sticky"></i>Notes</div><div><label for="dev-notes" class="form-label">Notes / Details <span class="font-normal text-slate-400">(optional)</span></label><input type="text" id="dev-notes" value="${escapeHtml(draft?.notes ?? device?.notes ?? '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Purpose, role, or assignment details"></div>
+                        <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-note-sticky"></i>Notes</div><div><label for="dev-notes" class="form-label">Notes / Details <span class="font-normal text-slate-400">(optional)</span></label><textarea id="dev-notes" rows="7" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Purpose, role, or assignment details">${escapeHtml(draft?.notes ?? device?.notes ?? '')}</textarea></div>
                         </div>
                         <div class="form-error" data-form-error role="alert"></div>
                         <div class="form-actions"><button type="button" data-action="close-modal" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 rounded-xl text-xs">Cancel</button><button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-semibold">Save Device</button></div>
                     </form>
                 </div>`);
-            phase120InitializeDeviceTabs(document.querySelector('[data-device-form="true"]'));
+            const deviceForm = document.querySelector('[data-device-form="true"]');
+            if (deviceForm && draft?.activeDeviceTab) deviceForm.dataset.initialDeviceTab = draft.activeDeviceTab;
+            phase120InitializeDeviceTabs(deviceForm);
             const phase19BTypeSelect=document.getElementById('dev-type');
             if(phase19BTypeSelect) {
                 phase19BTypeSelect.addEventListener('change',phase19BRefreshFields);
@@ -5387,6 +5392,7 @@ function hierarchyValidateTypes(subnets) {
             if (!form) return null;
             return {
                 deviceId: form.dataset.deviceId || null,
+                activeDeviceTab: form.dataset.activeDeviceTab || 'general',
                 name: document.getElementById('dev-name')?.value || '',
                 type: document.getElementById('dev-type')?.value || '',
                 mountType: document.getElementById('dev-mount-type')?.value || '',
