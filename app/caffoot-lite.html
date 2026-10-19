@@ -6195,8 +6195,12 @@ function hierarchyValidateTypes(subnets) {
             const existing=(appState.rackAccessories||[]).find(a=>a.id===editId);
             const type=existing?.type||phase13CSelectedAccessory;
             const face=existing?.face||activeRackFace;
-            const start=existing?.startU||startU;
-            const height=existing?.heightU||1;
+            const safeRackHeight = Number(rack.heightU);
+            const rackLimit = Number.isInteger(safeRackHeight) && safeRackHeight >= 1 && safeRackHeight <= 100 ? safeRackHeight : 42;
+            const safeStart = Number(existing?.startU ?? startU);
+            const safeHeight = Number(existing?.heightU ?? 1);
+            const start = Number.isInteger(safeStart) && safeStart >= 1 && safeStart <= rackLimit ? safeStart : 1;
+            const height = Number.isInteger(safeHeight) && safeHeight >= 1 && safeHeight <= 12 ? safeHeight : 1;
             const modal=document.getElementById('modal-container');
             const modalContent = document.getElementById('modal-content');
             modalContent.classList.remove('phase18b-balanced-modal');
@@ -6211,7 +6215,7 @@ function hierarchyValidateTypes(subnets) {
                   <fieldset class="border border-slate-200 dark:border-slate-600 rounded-xl p-4"><legend class="px-2 font-semibold text-sm">Rack placement</legend>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <label class="phase13h-label">Face<select name="face" class="phase13c-field"><option value="front" ${face==='front'?'selected':''}>Front</option><option value="rear" ${face==='rear'?'selected':''}>Rear</option></select></label>
-                      <label class="phase13h-label">Start U<input name="startU" type="number" min="1" max="${Number(rack.heightU)}" required class="phase13c-field" value="${start}"></label>
+                      <label class="phase13h-label">Start U<input name="startU" type="number" min="1" max="${rackLimit}" required class="phase13c-field" value="${start}"></label>
                       <label class="phase13h-label">Height (U)<input name="heightU" type="number" min="1" max="12" required class="phase13c-field" value="${height}"></label>
                     </div>
                   </fieldset>
