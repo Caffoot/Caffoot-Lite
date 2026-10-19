@@ -5542,7 +5542,7 @@ function hierarchyValidateTypes(subnets) {
             const section = (title, icon, body) => `<section class="phase14c-section"><h4><i class="fa-solid ${icon} mr-2" aria-hidden="true"></i>${escapeHtml(title)}</h4><dl class="phase14c-grid">${body}</dl></section>`;
             const status = d.status || 'Active';
             const detailRows = phase19CDetailRows(d, field);
-            const softwareEntries=phase120SoftwareOptions().filter(x=>d.typeDetails?.[x.key]===true||d[x.key]===true);
+            const softwareEntries=[...phase120SoftwareOptions(),...phase19BSoftware().filter(x=>x.archived)].filter((x,i,all)=>all.findIndex(y=>y.key===x.key)===i).filter(x=>d.typeDetails?.[x.key]===true||d[x.key]===true);
             const installedSoftware=softwareEntries.sort((a,b)=>String(a.label||'').localeCompare(String(b.label||''),undefined,{sensitivity:'base'})).map(x=>field(x.label,'Installed')).join('');
             const hardware = field('Manufacturer', d.manufacturer) + field('Model', d.model) + field('Serial number', d.serialNumber);
             const rackRows = mounted ? field('Rack', rack.name) + field('Face', d.face || 'front') + field('U position', uText) + field('Height', (Number(d.rackUHeight) || (uEnd-uStart+1) || 1) + 'U') : '';
