@@ -1203,8 +1203,7 @@ function hierarchyValidateTypes(subnets) {
         }
 
         // v1.2.0 migration primitive: operate on a copy, never mutate a supplied backup.
-        // Wiring this into normalisation must accompany updated rack validators; until
-        // then the legacy 'Racked' invariant is still enforced by the application.
+        // Called by state normalisation before rack-placement validation.
         function phase120SeparateLegacyRackLocation(devices) {
             if (!Array.isArray(devices)) throw new Error('Devices must be an array.');
             return devices.map(device => {
@@ -6420,7 +6419,7 @@ function hierarchyValidateTypes(subnets) {
             device.rackUEnd = end;
             device.rackUHeight = height;
             device.mountType = 'Rack Mounted';
-            device.location = 'Racked';
+            // Drag-and-drop rack placement must preserve the physical location.
             if (!saveState()) {
                 appState = JSON.parse(before);
                 showToast('Move could not be saved; original placement restored.', 'error');
