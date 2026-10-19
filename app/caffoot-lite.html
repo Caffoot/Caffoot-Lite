@@ -972,6 +972,17 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 }
 @media(prefers-reduced-motion:reduce){#modal-content .form-actions button,#modal-content .rack-form-actions button{transition:none}}
 </style>
+
+    <style>
+        /* Manufacturer associations use the same selected-card language as other catalogue grids. */
+        .phase120-maker-choice { background: #fff; color: #334155; }
+        .phase120-maker-choice:hover { border-color: #818cf8; background: #eef2ff; }
+        .phase120-maker-choice:has(input:checked) { background: #dbeafe; border-color: #60a5fa; color: #1e3a8a; box-shadow: inset 0 0 0 1px #93c5fd; }
+        .phase120-maker-choice:has(input:focus-visible) { outline: 3px solid #818cf8; outline-offset: 2px; }
+        .dark .phase120-maker-choice { background: #1e293b; color: #e2e8f0; }
+        .dark .phase120-maker-choice:hover { background: #312e81; border-color: #818cf8; }
+        .dark .phase120-maker-choice:has(input:checked) { background: #1e3a8a; border-color: #60a5fa; color: #eff6ff; box-shadow: inset 0 0 0 1px #3b82f6; }
+    </style>
 </head>
 <body class="h-full bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-200">
 
@@ -3048,7 +3059,7 @@ function hierarchyValidateTypes(subnets) {
             const selected=new Set(matches.map(x=>x.type));
             const types=[...new Set([...(appState.deviceTypes||[]),...Object.keys(phase120HardwareSeed),...selected])].filter(Boolean).sort();
             const affected=entry?appState.devices.filter(d=>String(d.manufacturer||'').toLowerCase()===entry.manufacturer.toLowerCase()).length:0;
-            const checks=types.map(t=>'<label class="flex items-center gap-3 rounded-xl border border-slate-200 dark:border-slate-600 p-3 text-sm"><input type="checkbox" name="phase120-maker-type" value="'+escapeHtml(t)+'" '+(selected.has(t)?'checked':'')+' class="h-5 w-5 accent-blue-700"><span>'+escapeHtml(t)+'</span></label>').join('');
+            const checks=types.map(t=>'<label class="phase120-maker-choice flex items-center gap-3 rounded-xl border border-slate-200 dark:border-slate-600 p-3 text-sm cursor-pointer transition-colors"><input type="checkbox" name="phase120-maker-type" value="'+escapeHtml(t)+'" '+(selected.has(t)?'checked':'')+' class="h-5 w-5 accent-blue-700"><span>'+escapeHtml(t)+'</span></label>').join('');
             openModal('<div class="p-5 sm:p-7 space-y-5"><div><h3 class="text-lg font-bold text-slate-900 dark:text-white">'+(deleting?'Remove Manufacturer Suggestions':entry?'Edit Manufacturer':'Add Manufacturer')+'</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Associate a manufacturer with multiple device types. Built-in suggestions, model entries and existing device records are retained.</p></div>'+
                 (deleting?'<p class="text-sm text-slate-800 dark:text-slate-200">Remove custom manufacturer-only suggestions for <strong>'+escapeHtml(entry.manufacturer)+'</strong> across '+matches.length+' device type(s)? '+affected+' existing device(s) use this manufacturer; their records will remain unchanged.</p>':
                 '<form data-form-action="manufacturer" id="phase120-maker-form" class="space-y-4" onsubmit="return false"><div><label class="block text-sm font-semibold mb-2" for="phase120-maker-name">Manufacturer Name</label><input id="phase120-maker-name" required maxlength="120" value="'+escapeHtml(entry?.manufacturer||'')+'" class="w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-800"><p id="phase120-maker-error" role="alert" class="hidden text-sm text-rose-700 dark:text-rose-300 mt-2"></p></div><fieldset><legend class="font-semibold text-sm mb-2">Associated Device Types</legend><div class="flex gap-2 mb-3"><button type="button" data-action="phase120-maker-all" class="h-9 px-3 rounded-lg border border-slate-300 dark:border-slate-600 text-sm">Select All</button><button type="button" data-action="phase120-maker-none" class="h-9 px-3 rounded-lg border border-slate-300 dark:border-slate-600 text-sm">Clear All</button></div><div class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[38vh] overflow-y-auto">'+checks+'</div></fieldset></form>')+
