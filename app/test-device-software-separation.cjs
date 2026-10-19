@@ -4,7 +4,12 @@ const path = require('node:path');
 const source = fs.readFileSync(path.join(__dirname, 'caffoot-lite.html'), 'utf8');
 for (const token of [
   "function phase120IsSoftwareField(key)",
-  "key === 'os' || key === 'windowsLicence'",
+  "key === 'windowsLicence'",
+  "key !== 'os'",
+  "phase120StarterServerServices",
+  "serverService_File",
+  "serverService_Hypervisor",
+  "Manage Server Services",
   "phase19BSoftwareFields().includes(key)",
   "phase19BServerFunctionFields().includes(key)",
   "phase19BRenderFields(currentType,phase19BFormValues,'hardware')",
