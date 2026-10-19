@@ -1,13 +1,13 @@
 # Caffoot Lite — Development Roadmap
 
-**Updated:** 18 October 2026  
-**Current milestone:** v1.1.1 (Settings, usability and documentation) published on 18 October 2026 after automated validation, owner browser acceptance, PR #39 review and merge. Next planned milestone: v1.1.2 (security hardening and deployment guidance), then v1.2.0.  
+**Updated:** 19 October 2026  
+**Current milestone:** v1.1.2 (security hardening and deployment guidance) published on 19 October 2026 following automated validation, owner browser acceptance, PR #44 merge and verified release packaging. Next proposed milestone: v1.2.0.  
 **Repository:** `caffoot/Caffoot-Lite` (public)  
 **Release policy:** Publish publicly only after manual verification, security/privacy review and owner approval.
 
-**Current stable release:** [v1.1.1](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.1.1). v1.1.0.1 is a historical hotfix.
+**Current stable release:** [v1.1.2](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.1.2). v1.1.0.1 is a historical hotfix.
 
-Caffoot Lite is an offline, standalone single-HTML network inventory and IP address management application. v1.1.1 is the published stable release as of 18 October 2026; older versions remain available as historical releases.
+Caffoot Lite is an offline, standalone single-HTML network inventory and IP address management application. v1.1.2 is the published stable release as of 19 October 2026; older versions remain available as historical releases.
 
 ## Documentation checks for every release
 
@@ -57,7 +57,7 @@ The delivered v1.1.1 scope is complete. Remaining ideas stay subject to review a
 
 ### v1.1.2 — Security hardening and deployment guidance
 
-**Status: In progress on `feature/v1.1.2-security-hardening`; not merged or published.**
+**Status: Released on 19 October 2026** — PR #44 squash-merged to `main`; automated release validation, Gitleaks Git-history scanning and owner local release packaging passed. The security work is defensive hardening, not a comprehensive security audit.
 
 - Perform a code-focused security review of the standalone HTML app, including DOM XSS, HTML rendering, imported JSON, data validation and unsafe file/input handling.
 - Review browser local-storage exposure, shared-device risks, backup sensitivity, privacy and origin-specific storage behaviour.
