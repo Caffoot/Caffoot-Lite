@@ -5761,11 +5761,45 @@ function hierarchyValidateTypes(subnets) {
         }
 
         // Phase 16C: inspect an imported file without changing the saved inventory.
+        // Compatibility repair is intentionally limited to device-type/mounting mismatches.
+        // Never mutate the original backup; all other integrity failures still block restore.
+        function phase16CLegacyMountRepairs(candidate) {
+            const changes = [];
+            for (const device of candidate.devices) {
+                const allowed = phase19BAllowedMounts(device.type);
+                const mount = device.mountType || (device.rackId ? 'Rack Mounted' : 'Desktop');
+                if (allowed.includes(mount) && !(device.rackId && mount !== 'Rack Mounted')) continue;
+                // Only repair known legacy mismatches. Unknown types or malformed mounting
+                // values remain subject to normal integrity validation.
+                if (!['desktop', 'laptop', 'tablet'].includes(String(device.type || '').trim().toLowerCase()) ||
+                    (mount !== 'Rack Mounted' && !device.rackId)) continue;
+                changes.push({
+                    id: device.id, name: device.name, type: device.type,
+                    mountType: mount, location: device.location,
+                    rack: candidate.racks.find(r => r.id === device.rackId)?.name || device.rackId || '(none)',
+                    startU: device.rackUStart, endU: device.rackUEnd
+                });
+                device.mountType = 'Desktop';
+                device.location = 'Unknown';
+                device.rackId = '';
+                device.face = 'front';
+                device.rackUStart = null;
+                device.rackUEnd = null;
+                device.rackUHeight = null;
+            }
+            return changes;
+        }
+        function phase16CInvalidMounts(state) {
+            return state.devices.filter(d => !phase19BAllowedMounts(d.type).includes(d.mountType || (d.rackId ? 'Rack Mounted' : 'Desktop')));
+        }
         function phase16CCheckBackup(raw) {
             phase16CRejectUnsafeKeys(raw);
             phase11ValidateBackupShape(raw);
             phase20ValidateBackupVersion(raw);
             const candidate = phase20MigrateBackup(raw);
+            const mountRepairs = phase16CLegacyMountRepairs(candidate);
+            const invalidMounts = phase16CInvalidMounts(candidate);
+            if (invalidMounts.length) throw new Error('Backup contains unsupported device mounting types: ' + invalidMounts.slice(0, 4).map(d => String(d.name)).join(', '));
             const original = appState;
             let issues;
             try {
@@ -5775,6 +5809,7 @@ function hierarchyValidateTypes(subnets) {
                 appState = original;
             }
             if (issues.length) throw new Error(`Inventory integrity check found ${issues.length} issue(s): ${issues.slice(0, 4).join('; ')}${issues.length > 4 ? '; and more' : ''}`);
+            if (mountRepairs.length) Object.defineProperty(candidate, '_legacyMountRepairs', { value: mountRepairs, enumerable: false });
             return candidate;
         }
         function phase16CReadJson(contents) {
@@ -5795,6 +5830,14 @@ function hierarchyValidateTypes(subnets) {
                 try {
                     const raw = phase16CReadJson(reader.result);
                     const candidate = phase16CCheckBackup(raw);
+                    const repairs = candidate._legacyMountRepairs || [];
+                    if (repairs.length) {
+                        const preview = repairs.slice(0, 20).map(change =>
+                            `• ${change.name} (${change.type}): ${change.mountType} in ${change.rack}${change.startU ? ', U' + change.startU : ''} → Desktop / Unknown location / no rack assignment`
+                        ).join('\n');
+                        const extra = repairs.length > 20 ? `\n...and ${repairs.length - 20} more devices.` : '';
+                        if (!confirm(`Legacy mounting compatibility review\n\n${repairs.length} device(s) have rack assignments incompatible with their device type.\n\n${preview}${extra}\n\nOnly mounting and location details will be corrected. Device names, IPs and other inventory information will be preserved. The original backup file will not be modified.\n\nApply these corrections and proceed to the normal restore confirmation?`)) return;
+                    }
                     const summary = `${candidate.devices.length} devices, ${candidate.racks.length} racks, ${candidate.subnets.length} subnets, ${Object.keys(candidate.ipAllocations).length} IPAM records`;
                     const currentSummary = `${appState.devices.length} devices, ${appState.racks.length} racks, ${appState.subnets.length} subnets`;
                     if (!confirm(`Backup validation passed.\n\nFile: ${file.name}\nBackup: ${summary}\nCurrent inventory: ${currentSummary}\n\nRestore will REPLACE your current inventory. A verified safety snapshot will be created first.\n\nContinue?`)) return;
