@@ -483,6 +483,17 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .phase14-devices table tbody tr{border-color:#e2e8f0}
 .dark .phase14-devices table tbody tr{border-color:#475569}
 </style><style id="phase14b-device-form-style">
+/* v1.2.0 Device form tabs: original controls are moved, not rebuilt. */
+.phase14b-device-modal .phase120-device-tabs{display:flex;gap:6px;overflow-x:auto;border-bottom:1px solid #94a3b855;padding-bottom:8px;scrollbar-width:thin;}
+.phase14b-device-modal .phase120-device-tab{flex:0 0 auto;padding:10px 13px;border-radius:9px;font-size:.85rem;font-weight:650;border:1px solid transparent;color:inherit;}
+.phase14b-device-modal .phase120-device-tab[aria-selected="true"]{background:#e0e7ff;color:#312e81;border-color:#a5b4fc;}
+.dark .phase14b-device-modal .phase120-device-tab[aria-selected="true"]{background:#312e81;color:#e0e7ff;border-color:#6366f1;}
+.phase14b-device-modal .phase120-device-tab:focus-visible{outline:2px solid #818cf8;outline-offset:2px;}
+.phase14b-device-modal .phase120-device-panel{display:flex;flex-direction:column;gap:18px;min-width:0;}
+.phase14b-device-modal .phase120-device-panel[hidden]{display:none!important;}
+.phase14b-device-modal .phase120-device-empty{padding:20px;border:1px dashed #94a3b8;border-radius:12px;font-size:.875rem;line-height:1.6;}
+@media(max-width:600px){.phase14b-device-modal{padding:16px 14px 20px;}.phase14b-device-modal .phase120-device-tab{padding:10px 9px;}.phase14b-device-modal .phase120-device-panel .form-section-card{padding:14px;}}
+
 /* Phase 14B: only the Add/Edit/Duplicate Device dialog */
 #modal-content:has(.phase14b-device-modal){width:min(94vw,850px)!important;max-width:850px!important;max-height:calc(100vh - 36px);overflow-y:auto;padding:0!important;}
 .phase14b-device-modal{padding:24px 28px 28px; color:inherit;}
@@ -5129,6 +5140,89 @@ function hierarchyValidateTypes(subnets) {
             mount.value=options.includes(previous)?previous:(phase19BIsAccessPoint(type)?'Tabletop / Shelf Mounted':'Desktop');
             toggleDeviceMountType();
         }
+        // v1.2.0: rearrange existing form nodes, without recreating inputs or changing saved data.
+        function phase120InitializeDeviceTabs(form) {
+            if (!form || form.querySelector('[data-device-tabs]')) return;
+            const sections = Array.from(form.children).filter(el => el.classList.contains('form-section-card'));
+            if (sections.length !== 5) return;
+            const labels = [
+                ['general', 'General'],
+                ['hardware', 'Hardware'],
+                ['software', 'Software & Firmware'],
+                ['networking', 'Networking']
+            ];
+            const nav = document.createElement('div');
+            nav.className = 'phase120-device-tabs';
+            nav.setAttribute('role', 'tablist');
+            nav.setAttribute('aria-label', 'Device form sections');
+            nav.dataset.deviceTabs = 'true';
+            const panels = new Map();
+            const buttons = new Map();
+            labels.forEach(([id, label], index) => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'phase120-device-tab';
+                button.id = 'phase120-tab-' + id;
+                button.setAttribute('role', 'tab');
+                button.setAttribute('aria-controls', 'phase120-panel-' + id);
+                button.textContent = label;
+                nav.appendChild(button);
+                buttons.set(id, button);
+                const panel = document.createElement('div');
+                panel.id = 'phase120-panel-' + id;
+                panel.className = 'phase120-device-panel';
+                panel.setAttribute('role', 'tabpanel');
+                panel.setAttribute('aria-labelledby', button.id);
+                panel.setAttribute('tabindex', '0');
+                panels.set(id, panel);
+            });
+            form.insertBefore(nav, sections[0]);
+            labels.forEach(([id]) => form.insertBefore(panels.get(id), sections[0]));
+            panels.get('general').append(sections[0], sections[4]);
+            panels.get('hardware').append(sections[1], sections[2]);
+            panels.get('networking').append(sections[3]);
+            const note = document.createElement('p');
+            note.className = 'phase120-device-empty';
+            note.textContent = 'Software and firmware options will be organised here in the next development step. Existing device-specific fields remain available under Hardware for now.';
+            panels.get('software').appendChild(note);
+            let active = 'general';
+            function activate(id, focusButton = false) {
+                if (!panels.has(id)) return;
+                active = id;
+                labels.forEach(([key]) => {
+                    const selected = key === id;
+                    buttons.get(key).setAttribute('aria-selected', String(selected));
+                    buttons.get(key).tabIndex = selected ? 0 : -1;
+                    panels.get(key).hidden = !selected;
+                });
+                if (focusButton) buttons.get(id).focus();
+            }
+            labels.forEach(([id], index) => {
+                const button = buttons.get(id);
+                button.addEventListener('click', () => activate(id));
+                button.addEventListener('keydown', event => {
+                    const keys = ['ArrowLeft', 'ArrowRight', 'Home', 'End'];
+                    if (!keys.includes(event.key)) return;
+                    event.preventDefault();
+                    let next = index;
+                    if (event.key === 'ArrowRight') next = (index + 1) % labels.length;
+                    if (event.key === 'ArrowLeft') next = (index + labels.length - 1) % labels.length;
+                    if (event.key === 'Home') next = 0;
+                    if (event.key === 'End') next = labels.length - 1;
+                    activate(labels[next][0], true);
+                });
+            });
+            // Native constraint validation needs the invalid control's panel visible.
+            form.addEventListener('invalid', event => {
+                const panel = event.target.closest('.phase120-device-panel');
+                if (panel && panel.hidden) {
+                    const id = labels.find(([key]) => panels.get(key) === panel)?.[0];
+                    if (id) activate(id);
+                }
+            }, true);
+            activate(active);
+        }
+
         function openDeviceModal(deviceId = null) {
             const device = deviceId ? appState.devices.find(d => d.id === deviceId) : null;
             const draft = deviceFormDraft && (!deviceId || deviceFormDraft.deviceId === deviceId) ? deviceFormDraft : null;
@@ -5201,6 +5295,7 @@ function hierarchyValidateTypes(subnets) {
                         <div class="form-actions"><button type="button" data-action="close-modal" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 rounded-xl text-xs">Cancel</button><button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-semibold">Save Device</button></div>
                     </form>
                 </div>`);
+            phase120InitializeDeviceTabs(document.querySelector('[data-device-form="true"]'));
             const phase19BTypeSelect=document.getElementById('dev-type');
             if(phase19BTypeSelect) {
                 phase19BTypeSelect.addEventListener('change',phase19BRefreshFields);
