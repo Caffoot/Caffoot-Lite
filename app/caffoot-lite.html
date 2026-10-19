@@ -5315,17 +5315,30 @@ function hierarchyValidateTypes(subnets) {
         function phase19BIsAccessPoint(type){return ['access point','ap','wireless access point'].includes(String(type||'').toLowerCase().trim());}
         // Device mounting describes physical installation, independently of Location Area.
         // Keep legacy mounting values available to avoid changing existing device records.
+        // Broad compatibility whitelist: historical selections remain valid in saved inventories.
         function phase19BAllowedMounts(type){
-            const normalized = String(type || '').trim().toLowerCase();
-            const common = ['Desktop','Tabletop / Shelf Mounted','Shelf Mounted','Rack Mounted','Wall Mounted','Ceiling Mounted','Pole Mounted','DIN Rail Mounted','Under-Desk Mounted','Floor Standing','Handheld','Mobile','Vehicle Mounted','Not Applicable','Unknown'];
-            if (['laptop','tablet'].includes(normalized)) return ['Desktop','Tabletop / Shelf Mounted','Handheld','Mobile','Vehicle Mounted','Not Applicable','Unknown'];
-            if (normalized === 'desktop') return ['Desktop','Tabletop / Shelf Mounted','Under-Desk Mounted','Wall Mounted','Floor Standing','Not Applicable','Unknown'];
-            if (phase19BIsAccessPoint(type)) return ['Tabletop / Shelf Mounted','Ceiling Mounted','Wall Mounted','Pole Mounted','Desktop','Shelf Mounted','Rack Mounted','Unknown'];
-            return common;
+            return ['Desktop','Tabletop / Shelf Mounted','Shelf Mounted','Rack Mounted','Wall Mounted','Ceiling Mounted','Pole Mounted','DIN Rail Mounted','Under-Desk Mounted','Floor Standing','Handheld','Mobile','Vehicle Mounted','Not Applicable','Unknown'];
+        }
+        // Narrower, device-appropriate suggestions shown when adding or changing a device.
+        function phase120SuggestedMounts(type){
+            const normalized=String(type||'').trim().toLowerCase();
+            if(normalized==='laptop'||normalized==='tablet') return ['Tabletop / Shelf Mounted','Handheld','Mobile','Vehicle Mounted','Not Applicable','Unknown'];
+            if(normalized==='desktop') return ['Tabletop / Shelf Mounted','Under-Desk Mounted','Wall Mounted','Floor Standing','Not Applicable','Unknown'];
+            if(phase19BIsAccessPoint(type)) return ['Tabletop / Shelf Mounted','Ceiling Mounted','Wall Mounted','Pole Mounted','Unknown'];
+            if(normalized==='firewall'||normalized==='router'||normalized==='switch'||normalized==='wireless lan controller') return ['Rack Mounted','Tabletop / Shelf Mounted','Shelf Mounted','Wall Mounted','DIN Rail Mounted','Unknown'];
+            if(normalized==='server'||normalized==='server - physical'||normalized==='physical server') return ['Rack Mounted','Floor Standing','Tabletop / Shelf Mounted','Shelf Mounted','Unknown'];
+            if(normalized==='server - virtual'||normalized==='virtual server') return ['Not Applicable','Unknown'];
+            if(normalized==='printer'||normalized==='scanner'||normalized==='print server'||normalized==='print servers') return ['Tabletop / Shelf Mounted','Shelf Mounted','Floor Standing','Rack Mounted','Unknown'];
+            if(normalized==='nas') return ['Tabletop / Shelf Mounted','Shelf Mounted','Rack Mounted','Floor Standing','Unknown'];
+            if(normalized==='ups') return ['Rack Mounted','Floor Standing','Tabletop / Shelf Mounted','Unknown'];
+            return ['Rack Mounted','Tabletop / Shelf Mounted','Shelf Mounted','Wall Mounted','Floor Standing','Unknown'];
+        }
+        function phase120DefaultMount(type){
+            return phase120SuggestedMounts(type)[0];
         }
         function phase19BMountOptions(type, selected){
-            const opts=phase19BAllowedMounts(type);
-            if (selected && !opts.includes(selected)) opts.push(selected);
+            const opts=phase120SuggestedMounts(type);
+            if (selected && phase19BAllowedMounts(type).includes(selected) && !opts.includes(selected)) opts.push(selected);
             return opts.map(v=>`<option value="${escapeHtml(v)}" ${selected===v?'selected':''}>${escapeHtml(v)}</option>`).join('');
         }
         function phase19BUpdateMountChoices(){
@@ -5333,8 +5346,8 @@ function hierarchyValidateTypes(subnets) {
             const mount=document.getElementById('dev-mount-type');
             if(!mount)return;
             const previous=mount.value;
-            const options=phase19BAllowedMounts(type);
-            const chosen=previous || (phase19BIsAccessPoint(type)?'Tabletop / Shelf Mounted':'Desktop');
+            const options=phase120SuggestedMounts(type);
+            const chosen=options.includes(previous) ? previous : phase120DefaultMount(type);
             mount.innerHTML='<option value="" disabled>Select mounting type...</option>'+phase19BMountOptions(type,chosen);
             mount.value=chosen;
             toggleDeviceMountType();
@@ -5544,8 +5557,8 @@ function hierarchyValidateTypes(subnets) {
             const currentType = draft?.type ?? device?.type ?? '';
             phase19BFormValues = {...(draft?.typeDetails ?? device?.typeDetails ?? {})};
             const currentLoc = draft?.location ?? device?.location ?? '';
-            const requestedMountType = draft?.mountType ?? device?.mountType ?? (device?.rackId ? 'Rack Mounted' : 'Desktop');
-            const mountType = phase19BAllowedMounts(currentType).includes(requestedMountType) ? requestedMountType : (phase19BIsAccessPoint(currentType) ? 'Tabletop / Shelf Mounted' : 'Desktop');
+            const requestedMountType = draft?.mountType ?? device?.mountType ?? (device?.rackId ? 'Rack Mounted' : phase120DefaultMount(currentType));
+            const mountType = phase19BAllowedMounts(currentType).includes(requestedMountType) ? requestedMountType : phase120DefaultMount(currentType);
             const currentSubnet = draft?.subnetId ? appState.subnets.find(s => s.id === draft.subnetId) : (device?.primaryIp ? getSubnetForIp(device.primaryIp) : null);
             const currentHeight = draft?.rackUHeight || (device?.rackUStart && device?.rackUEnd ? Math.max(1, Number(device.rackUEnd) - Number(device.rackUStart) + 1) : 1);
             openModal(`
