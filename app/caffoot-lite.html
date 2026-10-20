@@ -5309,10 +5309,7 @@ function hierarchyValidateTypes(subnets) {
                             <div>
                                 <label for="rack-height" class="block text-xs font-semibold mb-1">Height in U</label>
                                 <select id="rack-height" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
-                                    <option value="12" ${rack && rack.heightU == 12 ? 'selected' : ''}>12U</option>
-                                    <option value="24" ${rack && rack.heightU == 24 ? 'selected' : ''}>24U</option>
-                                    <option value="42" ${rack && (!rack.heightU || rack.heightU == 42) ? 'selected' : ''}>42U (Standard)</option>
-                                    <option value="48" ${rack && rack.heightU == 48 ? 'selected' : ''}>48U</option>
+                                    ${Array.from(new Set([12, 24, 42, 48, ...(rack && Number.isInteger(Number(rack.heightU)) && Number(rack.heightU) > 0 ? [Number(rack.heightU)] : [])])).sort((a,b)=>a-b).map(height => `<option value="${height}" ${height === (rack ? Number(rack.heightU) || 42 : 42) ? 'selected' : ''}>${height}U${height === 42 ? ' (Standard)' : ''}</option>`).join('')}
                                 </select>
                             </div>
                             <div>
@@ -5342,6 +5339,10 @@ function hierarchyValidateTypes(subnets) {
             if (!name) { showToast('Rack name is required.', 'error'); return; }
             const before = JSON.stringify(appState);
             const heightU = parseInt(document.getElementById('rack-height').value);
+            if (!Number.isInteger(heightU) || heightU < 1 || heightU > 100) {
+                showToast('Choose a valid rack height.', 'error');
+                return;
+            }
             const depth = document.getElementById('rack-depth').value;
             const location = document.getElementById('rack-location').value;
 
