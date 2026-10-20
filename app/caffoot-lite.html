@@ -5203,6 +5203,42 @@ function hierarchyValidateTypes(subnets) {
             overlay.querySelector('[data-action="phase120-keep-editing"]').focus();
             return false;
         }
+        let phase120RackCorrectionResolve = null;
+        function phase120ConfirmRackCorrection() {
+            if (document.getElementById('phase120-rack-correction-dialog')) return Promise.resolve(false);
+            return new Promise(resolve => {
+                phase120RackCorrectionResolve = resolve;
+                const overlay = document.createElement('div');
+                overlay.id = 'phase120-rack-correction-dialog';
+                overlay.setAttribute('role', 'alertdialog');
+                overlay.setAttribute('aria-modal', 'true');
+                overlay.setAttribute('aria-labelledby', 'phase120-rack-correction-title');
+                overlay.setAttribute('aria-describedby', 'phase120-rack-correction-description');
+                overlay.className = 'absolute inset-0 z-50 flex items-center justify-center bg-slate-950/65 p-4 rounded-2xl';
+                overlay.innerHTML = `<div class="w-full max-w-md rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 p-6 shadow-2xl space-y-4">
+                    <h3 id="phase120-rack-correction-title" class="text-lg font-bold text-slate-900 dark:text-white">Confirm Rack Specification Correction</h3>
+                    <p id="phase120-rack-correction-description" class="text-sm text-slate-700 dark:text-slate-200">Correct the recorded physical specifications for this rack? Mounted equipment will not be moved.</p>
+                    <div class="flex flex-wrap justify-end gap-3">
+                        <button type="button" data-action="phase120-rack-correction-cancel" class="h-11 px-4 rounded-xl border border-slate-400 dark:border-slate-500 text-slate-900 dark:text-white caffoot-modal-cancel">Cancel</button>
+                        <button type="button" data-action="phase120-rack-correction-accept" class="h-11 px-4 rounded-xl bg-blue-800 hover:bg-blue-700 text-white font-bold">Confirm Correction</button>
+                    </div>
+                </div>`;
+                const content = document.getElementById('modal-content');
+                if (getComputedStyle(content).position === 'static') content.style.position = 'relative';
+                overlay._returnFocus = document.activeElement;
+                content.appendChild(overlay);
+                overlay.querySelector('[data-action="phase120-rack-correction-cancel"]').focus();
+            });
+        }
+        function phase120ResolveRackCorrection(accepted) {
+            const overlay = document.getElementById('phase120-rack-correction-dialog');
+            const focus = overlay?._returnFocus;
+            overlay?.remove();
+            const resolve = phase120RackCorrectionResolve;
+            phase120RackCorrectionResolve = null;
+            if (focus?.isConnected) focus.focus();
+            if (resolve) resolve(accepted);
+        }
         function phase120KeepEditing(){
             const overlay=document.getElementById('phase120-discard-dialog');
             const focus=overlay?._returnFocus;
@@ -5264,6 +5300,7 @@ function hierarchyValidateTypes(subnets) {
             if (event.key === 'Escape') {
                 event.preventDefault();
                 if(document.getElementById('phase18d-delete-dialog')){phase18DCancelDelete();return;}
+                if(document.getElementById('phase120-rack-correction-dialog')){phase120ResolveRackCorrection(false);return;}
                 if(document.getElementById('phase120-discard-dialog')){phase120KeepEditing();return;}
                 if (container.querySelector('.phase18d-manager[data-phase18d-editing="true"]')) {
                     phase18DCancelRename();
@@ -5278,7 +5315,7 @@ function hierarchyValidateTypes(subnets) {
                 return;
             }
             if (event.key !== 'Tab') return;
-            const activeDialog=document.getElementById('phase18d-delete-dialog')||document.getElementById('phase120-discard-dialog');
+            const activeDialog=document.getElementById('phase120-rack-correction-dialog')||document.getElementById('phase18d-delete-dialog')||document.getElementById('phase120-discard-dialog');
             const items = Array.from((activeDialog||container).querySelectorAll('a[href],button:not([disabled]),input:not([disabled]):not([type="hidden"]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')).filter(el => el.getClientRects().length);
             if (!items.length) { event.preventDefault(); document.getElementById('modal-content').focus(); return; }
             // Safari can omit buttons/selects from its native Tab order depending on
@@ -5354,7 +5391,7 @@ function hierarchyValidateTypes(subnets) {
             });
         }
 
-        function handleRackSubmit(e, rackId) {
+        async function handleRackSubmit(e, rackId) {
             e.preventDefault();
             const correction = e.target.closest('form').dataset.correction === 'true';
             const rack = rackId ? appState.racks.find(r => r.id === rackId) : null;
@@ -5381,7 +5418,7 @@ function hierarchyValidateTypes(subnets) {
                     const device = appState.devices.find(d => d.rackId === rackId && Number(d.rackUEnd || d.rackUStart) > heightU);
                     const accessory = (appState.rackAccessories || []).find(a => a.rackId === rackId && Number(a.startU) + Number(a.heightU) - 1 > heightU);
                     if (device || accessory) { showToast('Rack height cannot be reduced below mounted devices or accessories.', 'error'); return; }
-                    if (!confirm('Correct the recorded physical specifications for this rack? Mounted equipment will not be moved.')) return;
+                    if (!(await phase120ConfirmRackCorrection())) return;
                 }
             }
             if (rack) {
@@ -8040,6 +8077,8 @@ function hierarchyValidateTypes(subnets) {
                 case 'server-service-confirm-archive': phase120ArchiveServerService(name); break;
                 case 'phase18d-add': phase18DCommit(target.dataset.kind,'add','',document.getElementById('phase18d-new')?.value||''); break;
                 case 'phase18d-search': phase18DSearch[target.dataset.kind]=document.getElementById('phase18d-search')?.value||'';phase18DOpen(target.dataset.kind); break;
+                case 'phase120-rack-correction-cancel': phase120ResolveRackCorrection(false); break;
+                case 'phase120-rack-correction-accept': phase120ResolveRackCorrection(true); break;
                 case 'phase120-keep-editing': phase120KeepEditing(); break;
                 case 'phase120-discard-changes': phase120DiscardChanges(); break;
                 case 'phase18d-save-rename': phase18DCommit(target.dataset.kind,'rename',name,document.getElementById('phase18d-rename-value')?.value||''); break;
