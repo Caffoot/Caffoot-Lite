@@ -1,6 +1,6 @@
 # Caffoot Lite — Development Roadmap
 
-**Updated:** 19 October 2026  
+**Updated:** 20 October 2026  
 **Current milestone:** v1.1.2 (security hardening and deployment guidance) published on 19 October 2026 following automated validation, owner browser acceptance, PR #44 merge and verified release packaging. Next proposed milestone: v1.2.0.  
 **Repository:** `caffoot/Caffoot-Lite` (public)  
 **Release policy:** Publish publicly only after manual verification, security/privacy review and owner approval.
@@ -99,11 +99,20 @@ Managed multi-user hosting, authentication and centrally administered deployment
 - **Data safety:** Renaming, hiding or removing a catalogue suggestion must not silently rewrite or erase historical device manufacturer/model values, software flags or server-service values. Clearly communicate impact and confirm destructive changes. Preserve local/offline storage and compatible JSON export/restore, including migration of existing custom hardware catalogue data.
 - Deliver incrementally: **(1) Manufacturers and Models**, then **(2) Software and Server Services**, followed by regression tests for custom entry, edit/delete, reopening forms, filtering, backups, offline build and owner browser acceptance. This is planned work, not yet implemented or approved for release.
 
-**Additional v1.2 roadmap candidates (not automatically approved for v1.2.0):**
+**Additional device improvements (future candidates, not automatically included in v1.2.0):**
 - Preserve dynamic fields for different device types.
 - Add contextual Operating System family, version and optional edition selection for applicable device types, with Unknown/None/Custom choices and safe legacy compatibility.
-- Refresh Device Inventory screens using the same responsive visual language as v1.1 IPAM, with clear summaries, useful filtering and compact, scalable device lists.
-- **Network Environments / customer isolation (MSP use case):** support independent customer or site addressing scopes above IP Address Blocks, allowing identical IPv4 CIDRs, VLAN IDs and gateway addresses in separate environments while retaining overlap protection within each environment. Scope device IPs, reservations, VLAN ownership, lookups, exports and validation by environment; migrate existing single-environment inventory and JSON backups safely. Do not enable duplicate ranges until allocation identity and all dependent workflows are environment-aware.
+- Continue refining Device Inventory responsiveness, filtering and compact lists as needed.
+
+### v1.2.1+ — v1.2 maintenance releases
+
+**Status: Reserved if needed.** Patch releases address bugs, regressions, compatibility and small maintenance improvements after v1.2.0. Major new functionality belongs in a minor release.
+
+### v1.3.0 — Rack management, advanced IP addressing and reporting
+
+**Status: Proposed scope agreed 20 October 2026; implementation and release require separate review and owner acceptance.**
+
+- Modernise the Racks workspace with an expandable sidebar, rack overview and useful utilisation/capacity visualisations, responsive rack inventory and clearer management workflows, consistent with Devices and IPAM.
 - Multiple IP addresses per device, optional interface associations and primary management IP.
 - Public IP address documentation, including relevant ISP, circuit and NAT metadata.
 - Flexible rack heights and presets, Wall Mounted / Free Standing / Open Frame types, optional depth and safe resizing.
@@ -111,15 +120,17 @@ Managed multi-user hosting, authentication and centrally administered deployment
 - Extend existing rack accessories with PDUs (horizontal rack-mounted and vertical 0U), fan/ventilation panels, vertical cable managers and environmental sensors; preserve existing accessories and collision safeguards.
 - Cross-module advanced search and initial inventory, subnet/IPAM and rack reporting.
 
-### v1.3 — Device relationships and interfaces
+Deliver incrementally, with explicit migration, offline-build, browser-acceptance and JSON backup/restore checks. Protect existing IPAM ownership, rack placements, historical data and collision rules.
+
+### v1.4.0 — Device relationships and interfaces
 
 **Status: Proposed**
 
 - Device relationships and upstream/downstream links.
-- Interface and port records, with optional IP associations.
+- Interface and port records, with optional IP associations, building on v1.3.0 addressing work.
 - Shared connection records visible from both connected devices.
 
-### v1.4 — Cabling and rack connectivity
+### v1.5.0 — Cabling and rack connectivity
 
 **Status: Proposed**
 
@@ -127,14 +138,23 @@ Managed multi-user hosting, authentication and centrally administered deployment
 - Duplicate endpoint protection and connection tracing.
 - Rack diagram exports; investigate SVG, Excalidraw and Visio compatibility.
 
-### v1.5 — Network topology
+### v1.6.0 — Network topology
 
 **Status: Proposed**
 
 - Physical and logical topology generated from existing relationship and cabling records.
 - Device navigation, connection tracing and usable diagram layouts.
 
-### v1.6 — Advanced network migration and lifecycle management
+### v1.7.0 — Network Environments and customer/site addressing scopes
+
+**Status: Provisional research and design milestone; feasibility and Lite product boundaries must be assessed before implementation.**
+
+- **Network Environments / customer isolation (MSP use case):** support independent customer or site addressing scopes above IP Address Blocks, allowing identical IPv4 CIDRs, VLAN IDs and gateway addresses in separate environments while retaining overlap protection within each environment.
+- Scope device IPs, reservations, VLAN ownership, lookups, exports and validation by environment; migrate existing single-environment inventory and JSON backups safely.
+- Do not enable duplicate ranges until allocation identity and all dependent workflows are environment-aware.
+- Distinguish logical separation of records within one local browser inventory from authenticated multi-user/customer security isolation. Lite must not claim secure tenant isolation or hosted MSP access without a separately designed and validated architecture.
+
+### v1.8.0 — Advanced network migration and lifecycle management
 
 **Status: Proposed; planning only**
 
