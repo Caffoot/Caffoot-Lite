@@ -7747,13 +7747,21 @@ function hierarchyValidateTypes(subnets) {
             patch: {label:'Patch panel',icon:'fa-network-wired'},
             brush: {label:'Brush panel',icon:'fa-grip'},
             cable: {label:'Cable manager',icon:'fa-bars-staggered'},
-            shelf: {label:'Rack shelf',icon:'fa-layer-group'}
+            shelf: {label:'Rack shelf',icon:'fa-layer-group'},
+            pdu_horizontal: {label:'Horizontal rack PDU',icon:'fa-plug'},
+            ventilation: {label:'Ventilation panel',icon:'fa-wind'},
+            fan_tray: {label:'Fan tray',icon:'fa-fan'},
+            environmental_sensor: {label:'Environmental sensor (rack-mounted)',icon:'fa-temperature-half'}
         };
         // Phase 13D: CSS-only rack fascia art; no external images or data changes.
         function phase13DFascia(type, portCount = 24) {
             if (type === 'patch') { const count=[12,24,48].includes(Number(portCount))?Number(portCount):24; return `<span class="phase13d-fascia phase13d-patch phase13e-patch-${count}" aria-hidden="true" title="${count} RJ45 ports">${Array.from({length:count},(_,i)=>`<span class="phase13d-port" title="Port ${i+1}"><i></i></span>`).join('')}</span>`; }
             if (type === 'brush') return `<span class="phase13d-fascia phase13d-brush" aria-hidden="true"><span class="phase13d-bristles"></span></span>`;
             if (type === 'cable') return `<span class="phase13d-fascia phase13d-cable" aria-hidden="true">${Array.from({length:8},()=>'<i></i>').join('')}</span>`;
+            if (type === 'pdu_horizontal') return `<span class="phase13d-fascia phase13d-blank" aria-hidden="true">⚡ PDU · AC outlets</span>`;
+            if (type === 'ventilation') return `<span class="phase13d-fascia phase13d-brush" aria-hidden="true">Ventilation panel</span>`;
+            if (type === 'fan_tray') return `<span class="phase13d-fascia phase13d-blank" aria-hidden="true">Fan tray · airflow</span>`;
+            if (type === 'environmental_sensor') return `<span class="phase13d-fascia phase13d-blank" aria-hidden="true">Temperature / humidity sensor</span>`;
             if (type === 'shelf') return `<span class="phase13d-fascia phase13d-shelf" aria-hidden="true"><i></i><i></i><i></i><i></i></span>`;
             return `<span class="phase13d-fascia phase13d-blank" aria-hidden="true"><i></i><i></i></span>`;
         }
