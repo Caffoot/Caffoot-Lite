@@ -1652,6 +1652,7 @@ function hierarchyValidateTypes(subnets) {
         let phase13BRackTab = 'view';
         let v13RackSection = 'overview';
         let v13RackDetailOpen = false;
+        let v13RackOverviewTab = 'capacity';
         let phase13CSelectedAccessory = 'blank';
         // Phase 6: temporarily preserve the device form while creating a missing subnet.
         let deviceFormDraft = null;
@@ -2838,8 +2839,39 @@ function hierarchyValidateTypes(subnets) {
             const card=(label,value,icon)=>`<div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5"><div class="text-sm font-semibold text-slate-600 dark:text-slate-300"><i class="fa-solid ${icon} mr-2" aria-hidden="true"></i>${label}</div><div class="text-3xl font-extrabold mt-2 text-slate-900 dark:text-white">${value}</div></div>`;
             let body='';
             if(v13RackSection==='overview') {
-                const locations=new Set(racks.map(r=>r.location).filter(Boolean)).size;
-                body=`<section class="space-y-5" aria-label="Estate-wide rack overview"><div><h2 class="text-xl font-bold text-slate-900 dark:text-white">Rack Overview</h2><p class="text-sm text-slate-600 dark:text-slate-300">Estate-wide rack capacity and equipment summary. Use Rack Inventory to manage individual racks.</p></div><div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">${card('Total racks',racks.length,'fa-server')}${card('Total rack capacity',totalU+'U','fa-ruler-vertical')}${card('Mounted devices',mounted.length,'fa-hard-drive')}${card('Rack accessories',linkedAccessories.length,'fa-layer-group')}</div><div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-2"><h3 class="font-bold text-slate-900 dark:text-white">Estate summary</h3><p class="text-sm text-slate-600 dark:text-slate-300">Racks are recorded across ${locations} named ${locations===1?'location':'locations'}. Detailed capacity and equipment charts are planned for the next overview increment.</p></div><p class="text-xs text-slate-500 dark:text-slate-400">Capacity utilisation and contiguous free-space calculations will follow after placement semantics are verified. No live monitoring is performed.</p></section>`;
+                const insights=racks.map(r=>{
+                    const height=Math.max(0,Number(r.heightU)||0);
+                    const rackDevices=mounted.filter(d=>d.rackId===r.id);
+                    const rackAccessories=linkedAccessories.filter(a=>a.rackId===r.id);
+                    const faces=['front','rear'].map(face=>{
+                        const occupied=new Set();
+                        const mark=(start,end)=>{if(!Number.isInteger(start)||!Number.isInteger(end)||end<start)return;for(let u=Math.max(1,start);u<=Math.min(height,end);u++)occupied.add(u);};
+                        rackDevices.filter(d=>String(d.rackFace||'front').toLowerCase()===face).forEach(d=>mark(Number(d.rackUStart),Number(d.rackUEnd??d.rackUStart)));
+                        rackAccessories.filter(a=>String(a.face||'front').toLowerCase()===face && Number(a.heightU)>0).forEach(a=>mark(Number(a.startU),Number(a.startU)+Number(a.heightU)-1));
+                        let run=0,largest=0;
+                        for(let u=1;u<=height;u++){run=occupied.has(u)?0:run+1;largest=Math.max(largest,run);}
+                        return {face,used:occupied.size,free:height-occupied.size,largest};
+                    });
+                    return {rack:r,height,devices:rackDevices.length,accessories:rackAccessories.length,faces};
+                });
+                const totalFaceCapacity=insights.reduce((n,r)=>n+r.height*2,0);
+                const usedFaceU=insights.reduce((n,r)=>n+r.faces[0].used+r.faces[1].used,0);
+                const percent=totalFaceCapacity?Math.round(usedFaceU/totalFaceCapacity*100):0;
+                const locations=new Map();
+                insights.forEach(r=>{const name=r.rack.location||'Not recorded';const prev=locations.get(name)||{racks:0,devices:0};prev.racks++;prev.devices+=r.devices;locations.set(name,prev);});
+                const tabs=[['capacity','Capacity'],['equipment','Equipment'],['locations','Locations & Types']];
+                const tabNav=tabs.map(([id,label])=>`<button type="button" data-action="v13-overview-tab" data-tab="${id}" aria-pressed="${v13RackOverviewTab===id}" class="rounded-xl px-4 py-2.5 text-sm font-semibold ${v13RackOverviewTab===id?'bg-indigo-700 text-white':'border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700'}">${label}</button>`).join('');
+                const bar=(used,height)=>`<div class="h-3 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden" role="img" aria-label="${used} of ${height} rack units occupied"><div class="h-full bg-indigo-600 dark:bg-indigo-400" style="width:${height?Math.min(100,Math.round(used/height*100)):0}%"></div></div>`;
+                let panel='';
+                if(v13RackOverviewTab==='capacity'){
+                    panel=`<div class="space-y-4"><div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-3"><h3 class="font-bold text-slate-900 dark:text-white">Rack face utilisation</h3><p class="text-sm text-slate-600 dark:text-slate-300">Front and rear are measured separately. 0U accessories do not consume rack-unit space.</p>${bar(usedFaceU,totalFaceCapacity)}<p class="text-sm font-semibold text-slate-700 dark:text-slate-200">${usedFaceU}U occupied · ${totalFaceCapacity-usedFaceU}U free · ${percent}% used (combined front/rear face capacity)</p></div><div class="grid grid-cols-1 xl:grid-cols-2 gap-4">${insights.map(r=>`<div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-3"><h4 class="font-bold text-slate-900 dark:text-white">${escapeHtml(r.rack.name)}</h4>${r.faces.map(f=>`<div class="space-y-1"><div class="flex justify-between gap-2 text-xs text-slate-600 dark:text-slate-300"><span>${f.face==='front'?'Front':'Rear'}</span><span>${f.used}U used · ${f.free}U free · largest contiguous ${f.largest}U</span></div>${bar(f.used,r.height)}</div>`).join('')}</div>`).join('')||'<p class="text-slate-600 dark:text-slate-300">No racks recorded. Add racks through Rack Inventory.</p>'}</div></div>`;
+                } else if(v13RackOverviewTab==='equipment'){
+                    const counts=new Map();mounted.forEach(d=>{const name=d.type||'Unspecified';counts.set(name,(counts.get(name)||0)+1);});
+                    panel=`<div class="grid grid-cols-1 lg:grid-cols-2 gap-4"><div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-3"><h3 class="font-bold text-slate-900 dark:text-white">Mounted equipment by type</h3>${[...counts.entries()].sort((a,b)=>b[1]-a[1]).map(([name,count])=>`<div class="flex justify-between border-b border-slate-100 dark:border-slate-700 py-2 text-sm"><span>${escapeHtml(name)}</span><strong>${count}</strong></div>`).join('')||'<p class="text-sm text-slate-500">No mounted devices recorded.</p>'}</div><div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-3"><h3 class="font-bold text-slate-900 dark:text-white">Devices and accessories by rack</h3>${insights.map(r=>`<div class="flex justify-between gap-3 border-b border-slate-100 dark:border-slate-700 py-2 text-sm"><span>${escapeHtml(r.rack.name)}</span><span class="whitespace-nowrap">${r.devices} devices · ${r.accessories} accessories</span></div>`).join('')||'<p class="text-sm text-slate-500">No racks recorded.</p>'}</div></div>`;
+                } else {
+                    panel=`<div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-3"><h3 class="font-bold text-slate-900 dark:text-white">Rack distribution by location</h3>${[...locations.entries()].sort((a,b)=>b[1].racks-a[1].racks).map(([name,value])=>`<div class="flex justify-between gap-3 border-b border-slate-100 dark:border-slate-700 py-3 text-sm"><span>${escapeHtml(name)}</span><span>${value.racks} racks · ${value.devices} devices</span></div>`).join('')||'<p class="text-sm text-slate-500">No racks recorded.</p>'}<p class="text-xs text-slate-500 dark:text-slate-400">Rack-type distribution will be added with the v1.3.0 rack-type schema update.</p></div>`;
+                }
+                body=`<section class="space-y-5" aria-label="Estate-wide rack overview"><div><h2 class="text-xl font-bold text-slate-900 dark:text-white">Rack Overview</h2><p class="text-sm text-slate-600 dark:text-slate-300">Estate-wide rack capacity and equipment insights. Manage individual racks in Rack Inventory.</p></div><div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">${card('Total racks',racks.length,'fa-server')}${card('Physical rack capacity',totalU+'U','fa-ruler-vertical')}${card('Mounted devices',mounted.length,'fa-hard-drive')}${card('Rack accessories',linkedAccessories.length,'fa-layer-group')}</div><div class="flex flex-wrap gap-2" role="group" aria-label="Rack overview charts">${tabNav}</div>${panel}<p class="text-xs text-slate-500 dark:text-slate-400">Inventory-based estimates, not live monitoring. Front and rear capacity is counted separately; physical rack height is not doubled.</p></section>`;
             } else if(v13RackSection==='inventory') {
                 if(v13RackDetailOpen && racks.some(r=>r.id===selectedRackId)) {
                     const selected=racks.find(r=>r.id===selectedRackId);
@@ -8012,6 +8044,7 @@ function hierarchyValidateTypes(subnets) {
 
 
                 case 'tab-ipam': switchTab('ipam'); break;
+                case 'v13-overview-tab': { const next=target.dataset.tab; if(['capacity','equipment','locations'].includes(next)){v13RackOverviewTab=next;renderContent();} break; }
                 case 'sidebar-racks-overview': v13RackSection='overview'; switchTab('racks'); break;
                 case 'sidebar-racks-inventory': v13RackSection='inventory'; v13RackDetailOpen=false; switchTab('racks'); break;
                 case 'sidebar-racks-accessories': v13RackSection='accessories'; switchTab('racks'); break;
