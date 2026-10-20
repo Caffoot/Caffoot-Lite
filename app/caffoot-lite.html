@@ -3070,15 +3070,15 @@ function hierarchyValidateTypes(subnets) {
                                     <span class="w-3 h-3 rounded-full ${activeRackFace === 'front' ? 'bg-emerald-500' : 'bg-purple-500'}"></span>
                                     <h3 class="font-bold text-base text-slate-900 dark:text-white">${escapeHtml(currentRack.name)} — <span class="uppercase text-sm ${activeRackFace === 'front' ? 'text-emerald-600 dark:text-emerald-400' : 'text-purple-600 dark:text-purple-400'}">${activeRackFace} View</span></h3>
                                 </div>
-                                <span class="text-xs text-slate-500 font-medium">${faceDevices.length+faceAccessories.length} mounted items • ${totalCapacityPercent}% U utilized</span>
+                                <span class="text-xs text-slate-600 dark:text-slate-300 font-semibold">${faceDevices.length} devices · ${faceAccessories.length} accessories · ${totalCapacityPercent}% ${activeRackFace} face occupied</span>
                             </div>
 
                             <div class="phase17d-rack-scroll p-6 overflow-y-auto custom-scrollbar bg-slate-100 dark:bg-slate-900/80" data-rack-scroll="true" tabindex="0" aria-label="Scrollable rack elevation">
                                 <div class="phase13k-elevation max-w-5xl mx-auto bg-white dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-700 rounded-xl shadow-inner overflow-hidden">
                                     <div class="bg-slate-800 text-slate-200 px-4 py-2 text-xs font-bold flex justify-between uppercase tracking-wider">
-                                        <span>Rack Unit (U)</span>
-                                        <span>Mounted Equipment (${activeRackFace.toUpperCase()} Panel)</span>
-                                        <span>Status / IP</span>
+                                        <span>Rack Units (U)</span>
+                                        <span>Equipment — ${activeRackFace.toUpperCase()} face</span>
+                                        <span>Placement</span>
                                     </div>
                                     <div class="flex flex-col">
                                         ${rackSlotsHtml}
@@ -3092,7 +3092,8 @@ function hierarchyValidateTypes(subnets) {
 
                         <div class="space-y-6">
                             <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-6">
-                                <div class="flex items-center justify-between gap-2 mb-3"><h3 class="font-bold text-base text-slate-900 dark:text-white">Rack Statistics</h3><button type="button" data-action="phase13l-print" data-id="${escapeHtml(currentRack.id)}" class="phase13b-secondary"><i class="fa-solid fa-print mr-1"></i> Print / PDF</button></div>
+                                <div class="flex items-center justify-between gap-2 mb-3"><h3 class="font-bold text-base text-slate-900 dark:text-white">Rack Capacity &amp; Details</h3><button type="button" data-action="phase13l-print" data-id="${escapeHtml(currentRack.id)}" class="phase13b-secondary"><i class="fa-solid fa-print mr-1"></i> Print / PDF</button></div>
+                                <p class="text-xs text-slate-600 dark:text-slate-300 mb-3">Each face has ${currentRack.heightU}U of potential mounting positions. Front and rear figures are separate; they do not double the physical rack height.</p>
                                 <div class="space-y-3 text-sm">
                                     ${['front','rear'].map(face=>{const v=phase13LUsage(currentRack,face);return `<div class="space-y-1"><div class="flex justify-between gap-2"><span class="font-semibold capitalize">${face}</span><span class="font-mono">${v.occupied}U used · ${v.available}U free</span></div><div class="h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden" role="progressbar" aria-label="${face} utilisation" aria-valuenow="${v.percent}" aria-valuemin="0" aria-valuemax="100"><div class="h-full ${face==='front'?'bg-emerald-700':'bg-indigo-600'}" style="width:${v.percent}%"></div></div></div>`;}).join('')}
                                     <div class="flex justify-between py-2 border-b border-slate-100 dark:border-slate-700">
@@ -3100,7 +3101,7 @@ function hierarchyValidateTypes(subnets) {
                                         <span class="font-medium text-slate-900 dark:text-white">${escapeHtml(currentRack.location || 'N/A')}</span>
                                     </div>
                                     <div class="flex justify-between py-2 border-b border-slate-100 dark:border-slate-700">
-                                        <span class="text-slate-500">Total Rack Capacity</span>
+                                        <span class="text-slate-500 dark:text-slate-400">Physical rack height</span>
                                         <span class="font-medium text-slate-900 dark:text-white">${currentRack.heightU} U</span>
                                     </div>
                                     <div class="flex justify-between py-2 border-b border-slate-100 dark:border-slate-700">
@@ -3112,7 +3113,7 @@ function hierarchyValidateTypes(subnets) {
                                         <span class="font-medium text-purple-600">${rackDevices.filter(d => d.face === 'rear').length}</span>
                                     </div>
                                     <div class="flex justify-between py-2">
-                                        <span class="text-slate-500">Current View Utilization</span>
+                                        <span class="text-slate-500 dark:text-slate-400">Selected face occupancy</span>
                                         <span class="font-medium text-slate-900 dark:text-white">${faceUUsed+accessoryUUsed} U / ${currentRack.heightU} U</span>
                                     </div>
                                 </div>
@@ -3120,13 +3121,13 @@ function hierarchyValidateTypes(subnets) {
 
                             <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-5 space-y-3">
                                 <h3 class="font-bold text-base text-slate-900 dark:text-white">Available U positions</h3>
-                                <p class="text-xs text-slate-600 dark:text-slate-300">Suggested starting slots on the ${activeRackFace} face. Select a height to find contiguous free space.</p>
+                                <p class="text-xs text-slate-600 dark:text-slate-300">Choose the equipment height to find uninterrupted empty rack units on the ${activeRackFace} face. Placement still checks collisions.</p>
                                 <div class="flex flex-wrap gap-2">${[1,2,3,4].map(h=>`<button type="button" data-action="phase13l-height" data-height="${h}" class="phase13b-secondary ${phase13LHeight===h?'ring-2 ring-indigo-500':''}">${h}U</button>`).join('')}</div>
                                 ${(()=>{const runs=phase13LFreeRuns(currentRack,activeRackFace,phase13LHeight);return runs.length?`<p class="text-sm text-slate-800 dark:text-slate-100">${runs.length} possible position(s). Suggested: <strong>U${runs[0]}${phase13LHeight>1?'–U'+(runs[0]+phase13LHeight-1):''}</strong></p><button type="button" data-action="phase13l-mount" data-u="${runs[0]}" class="phase13b-primary">Mount At Suggested U</button>`:'<p class="text-sm text-amber-700 dark:text-amber-300">No contiguous space for this height on this face.</p>';})()}
                             </div>
                             <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-6">
                                 <h3 class="font-bold text-base text-slate-900 dark:text-white mb-1">Other Side (${activeRackFace === 'front' ? 'Rear' : 'Front'}) Equipment</h3>
-                                <p class="text-xs text-slate-500 mb-4">Toggle side view to inspect mounted hardware on the opposite face.</p>
+                                <p class="text-xs text-slate-600 dark:text-slate-300 mb-4">These devices are mounted on the opposite face. Choose View to switch faces.</p>
                                 <div class="space-y-2 max-h-[250px] overflow-y-auto custom-scrollbar">
                                     ${rackDevices.filter(d => (d.face || 'front') !== activeRackFace).length === 0 ? `<p class="text-xs text-slate-400 italic">No devices mounted on this face.</p>` : ''}
                                     ${rackDevices.filter(d => (d.face || 'front') !== activeRackFace).map(d => `
