@@ -1645,6 +1645,7 @@ function hierarchyValidateTypes(subnets) {
         let phase13DraggedDeviceId = null;
         let phase13CDraggedAccessoryId = null;
         let phase13BRackTab = 'view';
+        let v13RackSection = 'overview';
         let phase13CSelectedAccessory = 'blank';
         // Phase 6: temporarily preserve the device form while creating a missing subnet.
         let deviceFormDraft = null;
@@ -2123,7 +2124,7 @@ function hierarchyValidateTypes(subnets) {
             if (currentTab === 'dashboard') html = (!browserStorageNoticeAcknowledged ? browserStorageWarning(true) : '') + renderDashboardHTML();
             else if (currentTab === 'ipam') html = renderIpamHTML();
             else if (currentTab === 'devices') html = renderDevicesHTML();
-            else if (currentTab === 'racks') html = renderRacksHTML();
+            else if (currentTab === 'racks') html = renderRackHubV13();
             else if (currentTab === 'audit') html = renderAuditHTML();
 
 
@@ -2809,6 +2810,27 @@ function hierarchyValidateTypes(subnets) {
             w.focus();
             // User initiates the browser print/PDF flow explicitly via the toolbar.
             w.print();
+        }
+
+        // v1.3.0 Phase 1A: estate-wide, read-only rack overview. Existing rack editor/elevations are unchanged.
+        function renderRackHubV13() {
+            const sections=[['overview','Rack Overview','fa-chart-pie'],['inventory','Rack Inventory','fa-list'],['accessories','Rack Accessories','fa-layer-group']];
+            const nav=sections.map(([id,label,icon])=>`<button type="button" data-action="v13-rack-section" data-section="${id}" aria-current="${v13RackSection===id?'page':'false'}" class="w-full text-left rounded-xl px-4 py-3 text-sm font-semibold transition ${v13RackSection===id?'bg-indigo-700 text-white':'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700'}"><i class="fa-solid ${icon} mr-2" aria-hidden="true"></i>${label}</button>`).join('');
+            const racks=appState.racks||[], devices=appState.devices||[], accessories=appState.rackAccessories||[];
+            const totalU=racks.reduce((sum,r)=>sum+(Number(r.heightU)||0),0);
+            const mounted=devices.filter(d=>racks.some(r=>r.id===d.rackId));
+            const linkedAccessories=accessories.filter(a=>racks.some(r=>r.id===a.rackId));
+            const card=(label,value,icon)=>`<div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5"><div class="text-sm font-semibold text-slate-600 dark:text-slate-300"><i class="fa-solid ${icon} mr-2" aria-hidden="true"></i>${label}</div><div class="text-3xl font-extrabold mt-2 text-slate-900 dark:text-white">${value}</div></div>`;
+            let body='';
+            if(v13RackSection==='overview') {
+                const rows=racks.map(r=>`<button type="button" data-action="v13-open-rack" data-id="${escapeHtml(r.id)}" class="w-full text-left flex flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3 hover:bg-indigo-50 dark:hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500"><span class="font-semibold text-slate-900 dark:text-white">${escapeHtml(r.name)}</span><span class="text-sm text-slate-600 dark:text-slate-300">${escapeHtml(r.location||'Location not recorded')} · ${Number(r.heightU)||0}U · ${mounted.filter(d=>d.rackId===r.id).length} devices</span></button>`).join('');
+                body=`<section class="space-y-5" aria-label="Estate-wide rack overview"><div><h2 class="text-xl font-bold text-slate-900 dark:text-white">Rack Overview</h2><p class="text-sm text-slate-600 dark:text-slate-300">All recorded racks across your inventory. Select a rack to open its existing elevation and management tools.</p></div><div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">${card('Total racks',racks.length,'fa-server')}${card('Total rack capacity',totalU+'U','fa-ruler-vertical')}${card('Mounted devices',mounted.length,'fa-hard-drive')}${card('Rack accessories',linkedAccessories.length,'fa-layer-group')}</div><div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-3"><h3 class="font-bold text-slate-900 dark:text-white">Racks across your estate</h3>${rows||'<p class="text-sm text-slate-600 dark:text-slate-300">No racks recorded yet. Open Rack Inventory to create your first rack.</p>'}</div><p class="text-xs text-slate-500 dark:text-slate-400">Capacity utilisation and contiguous free-space calculations will follow after placement semantics are verified. No live monitoring is performed.</p></section>`;
+            } else if(v13RackSection==='inventory') {
+                body=renderRacksHTML();
+            } else {
+                body=`<section class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4"><h2 class="text-xl font-bold text-slate-900 dark:text-white">Rack Accessories</h2><p class="text-sm text-slate-600 dark:text-slate-300">Existing accessories remain editable from each rack's elevation. Choose a rack below to manage its accessories.</p>${racks.map(r=>`<button type="button" data-action="v13-open-rack" data-id="${escapeHtml(r.id)}" class="block w-full text-left rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3 hover:bg-indigo-50 dark:hover:bg-slate-700 font-semibold text-slate-900 dark:text-white">${escapeHtml(r.name)} — ${linkedAccessories.filter(a=>a.rackId===r.id).length} accessories</button>`).join('')||'<p class="text-sm text-slate-600 dark:text-slate-300">No racks recorded yet.</p>'}</section>`;
+            }
+            return `<div class="grid grid-cols-1 lg:grid-cols-[220px_minmax(0,1fr)] gap-5"><nav aria-label="Racks sections" class="self-start rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-3 space-y-1"><h2 class="px-4 py-2 text-xs uppercase tracking-wider font-bold text-slate-500 dark:text-slate-400">Racks</h2>${nav}</nav><div class="min-w-0">${body}</div></div>`;
         }
 
         function renderRacksHTML() {
@@ -7964,6 +7986,8 @@ function hierarchyValidateTypes(subnets) {
 
 
                 case 'tab-ipam': switchTab('ipam'); break;
+                case 'v13-rack-section': { const next=target.dataset.section; if(['overview','inventory','accessories'].includes(next)){v13RackSection=next;renderContent();} break; }
+                case 'v13-open-rack': { const rack=appState.racks.find(r=>r.id===target.dataset.id); if(rack){selectedRackId=rack.id;v13RackSection='inventory';phase13BRackTab='view';renderContent();} break; }
                 case 'tab-racks': switchTab('racks'); break;
                 case 'toggle-dark-mode': toggleDarkMode(); break;
                 case 'export-data': exportData(); break;
