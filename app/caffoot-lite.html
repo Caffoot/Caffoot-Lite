@@ -7795,27 +7795,67 @@ function hierarchyValidateTypes(subnets) {
                 <form id="phase13c-form" class="space-y-5">
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <label class="phase13h-label">Accessory type<select name="type" required class="phase13c-field">${Object.entries(phase13CAccessoryTypes).map(([key,item])=>`<option value="${key}" ${type===key?'selected':''}>${item.label}</option>`).join('')}</select></label>
-                    <label id="phase13e-port-field" class="phase13h-label ${type==='patch'?'':'hidden'}">Patch panel ports<select name="portCount" class="phase13c-field"><option value="12" ${Number(existing?.portCount)===12?'selected':''}>12 ports</option><option value="24" ${![12,48].includes(Number(existing?.portCount))?'selected':''}>24 ports</option><option value="48" ${Number(existing?.portCount)===48?'selected':''}>48 ports</option></select></label>
+                    <label id="phase13e-port-field" class="phase13h-label ${type==='patch'?'':'hidden'}">Patch panel ports<select name="portCount" class="phase13c-field" ${type==='patch'?'required':'disabled'}><option value="12" ${Number(existing?.portCount)===12?'selected':''}>12 ports</option><option value="24" ${![12,48].includes(Number(existing?.portCount))?'selected':''}>24 ports</option><option value="48" ${Number(existing?.portCount)===48?'selected':''}>48 ports</option></select></label>
                   </div>
-                  <label class="phase13h-label">Description (optional)<input name="name" maxlength="80" class="phase13c-field" value="${escapeHtml(existing?.name||'')}" placeholder="e.g. Fibre patch panel"></label>
+                  <label class="phase13h-label">Description (optional)<input name="name" maxlength="80" class="phase13c-field" value="${escapeHtml(existing?.name||'')}" placeholder="e.g. Rack PDU or fibre patch panel"></label>
                   <fieldset class="border border-slate-200 dark:border-slate-600 rounded-xl p-4"><legend class="px-2 font-semibold text-sm">Rack placement</legend>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <label class="phase13h-label">Face<select name="face" class="phase13c-field"><option value="front" ${face==='front'?'selected':''}>Front</option><option value="rear" ${face==='rear'?'selected':''}>Rear</option></select></label>
-                      <label class="phase13h-label">Start U<input name="startU" type="number" min="1" max="${rackLimit}" required class="phase13c-field" value="${start}"></label>
+                      <label class="phase13h-label">Start U<select name="startU" required class="phase13c-field" aria-describedby="phase13c-position-hint"></select></label>
                       <label class="phase13h-label">Height (U)<input name="heightU" type="number" min="1" max="12" required class="phase13c-field" value="${height}"></label>
                     </div>
                   </fieldset>
+                  <p id="phase13c-position-hint" class="text-xs text-slate-500 dark:text-slate-300" aria-live="polite"></p>
                   <p id="phase13c-error" role="alert" aria-live="polite" class="text-sm text-rose-600 dark:text-rose-400 min-h-5"></p>
                   <div class="flex flex-wrap justify-end gap-3 pt-2 border-t border-slate-200 dark:border-slate-600"><button type="button" data-action="close-modal" class="phase13b-secondary caffoot-modal-cancel">Cancel</button><button type="submit" class="phase13b-primary">${existing?'Save changes':'Place accessory'}</button></div>
                 </form>
             </div>`;
             modal.classList.remove('hidden');
             modal.classList.add('flex');
-            modal.querySelector('#phase13c-form [name="type"]').addEventListener('change',event=>{
-                modal.querySelector('#phase13e-port-field').classList.toggle('hidden',event.target.value!=='patch');
-            });
+            const form=modal.querySelector('#phase13c-form');
+            const typeSelect=form.elements.namedItem('type');
+            const portField=modal.querySelector('#phase13e-port-field');
+            const portSelect=form.elements.namedItem('portCount');
+            const faceSelect=form.elements.namedItem('face');
+            const startSelect=form.elements.namedItem('startU');
+            const heightInput=form.elements.namedItem('heightU');
+            const positionHint=modal.querySelector('#phase13c-position-hint');
+            function refreshAccessoryOptions() {
+                const isPatch=typeSelect.value==='patch';
+                portField.classList.toggle('hidden',!isPatch);
+                portSelect.disabled=!isPatch;
+                portSelect.required=isPatch;
+                const previous=startSelect.value||String(start);
+                const h=Number(heightInput.value);
+                const options=[];
+                if(Number.isInteger(h)&&h>=1&&h<=12) {
+                    for(let u=1;u+h-1<=rackLimit;u++) {
+                        const candidate={rackId,face:faceSelect.value,startU:u,heightU:h};
+                        if(!phase13CAccessoryError(candidate,existing?.id)) options.push(u);
+                    }
+                }
+                startSelect.replaceChildren();
+                for(const u of options) {
+                    const option=document.createElement('option');
+                    option.value=String(u);
+                    option.textContent='U'+u;
+                    startSelect.appendChild(option);
+                }
+                if(options.includes(Number(previous))) startSelect.value=previous;
+                else if(options.includes(start)) startSelect.value=String(start);
+                else if(options.length) startSelect.value=String(options[0]);
+                startSelect.disabled=options.length===0;
+                positionHint.textContent=options.length
+                    ? options.length+' available starting position'+(options.length===1?'':'s')+' on the '+faceSelect.value+' face.'
+                    : 'No available positions for this height and face. Change the height or face.';
+            }
+            typeSelect.addEventListener('change',refreshAccessoryOptions);
+            faceSelect.addEventListener('change',refreshAccessoryOptions);
+            heightInput.addEventListener('input',refreshAccessoryOptions);
+            refreshAccessoryOptions();
             modal.querySelector('#phase13c-form').addEventListener('submit',event=>{
                 event.preventDefault();
+                if(startSelect.disabled){modal.querySelector('#phase13c-error').textContent='No available rack position for this accessory.';return;}
                 const data=new FormData(event.currentTarget);
                 const candidate={id:existing?.id||('acc-'+Date.now()+'-'+Math.random().toString(36).slice(2,8)),rackId,type:String(data.get('type')),name:String(data.get('name')).trim(),face:String(data.get('face')),startU:Number(data.get('startU')),heightU:Number(data.get('heightU')),portCount:String(data.get('type'))==='patch'?Number(data.get('portCount')):null};
                 const error=(candidate.type==='patch' && ![12,24,48].includes(candidate.portCount))?'Choose a valid patch panel port count.':phase13CAccessoryError(candidate,existing?.id);
