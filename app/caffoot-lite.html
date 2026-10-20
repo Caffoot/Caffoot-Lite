@@ -3078,7 +3078,7 @@ function hierarchyValidateTypes(subnets) {
                                 <span class="text-xs text-slate-600 dark:text-slate-300 font-semibold">${faceDevices.length} devices · ${faceAccessories.length} accessories · ${totalCapacityPercent}% ${activeRackFace} face occupied</span>
                             </div>
 
-                            <div class="phase17d-rack-scroll p-6 overflow-y-auto custom-scrollbar bg-slate-100 dark:bg-slate-900/80" data-rack-scroll="true" tabindex="0" aria-label="Scrollable rack elevation">
+                            <div class="phase17d-rack-scroll p-6 overflow-y-auto custom-scrollbar bg-slate-100 dark:bg-slate-900/80" data-rack-scroll="true" data-rack-scrollable="${Number(currentRack.heightU) > 12 ? 'true' : 'false'}" tabindex="0" aria-label="Scrollable rack elevation">
                                 <div class="phase13k-elevation max-w-5xl mx-auto bg-white dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-700 rounded-xl shadow-inner overflow-hidden">
                                     <div class="bg-slate-800 text-slate-200 px-4 py-2 text-xs font-bold flex justify-between uppercase tracking-wider">
                                         <span>Rack Units (U)</span>
