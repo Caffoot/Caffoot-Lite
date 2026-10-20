@@ -81,6 +81,10 @@ See the detailed [installation and upgrade guide](INSTALLATION.md) for the compl
 
 If you're looking for **free IPAM software**, an **offline network inventory tool**, a **homelab asset manager**, or a simple way to document **subnets, device IP addresses and server racks**, Caffoot Lite is designed for that workflow. It runs locally in your browser without an account or hosted service. It is not a network discovery scanner or a multi-user server.
 
+## v1.2.0 Devices & Intelligence (release candidate)
+
+The v1.2.0 candidate adds a wider five-tab Add/Edit Device experience; Devices Overview and inventory drill-downs; separate Device Types and Locations workspaces; and Manufacturers, Models, Software and Server Services catalogues. These features are undergoing final release review and are **not yet the published stable release**. See [v1.2.0 candidate release notes](RELEASE-NOTES-1.2.0.md).
+
 ## What you can manage
 
 - **Devices:** inventory, types, locations and device details.
