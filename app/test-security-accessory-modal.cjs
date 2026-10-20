@@ -22,7 +22,7 @@ const context = vm.createContext({
 vm.runInContext(code, context);
 context.phase13COpenAccessory('rack1',1,'acc1');
 assert(!modalContent.innerHTML.includes('<img'), 'Hostile imported numeric data reached executable markup');
-assert.match(modalContent.innerHTML, /name="startU"[^>]*<\/select>/);
+assert.match(modalContent.innerHTML, /<select\b[^>]*name="startU"[^>]*><\/select>/);
 assert.match(modalContent.innerHTML, /name="heightU"[^>]*value="1"/);
 assert.match(modalContent.innerHTML, /name="startU"[^>]*required/);
 assert(modalContent.innerHTML.includes('&lt;img'), 'Description should remain visible as escaped text');
