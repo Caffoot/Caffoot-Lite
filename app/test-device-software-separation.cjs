@@ -17,7 +17,7 @@ for (const token of [
   "id=\"phase120-windows-licence\"",
   "id=\"phase120-version-select\"",
   "phase19BFormValues.windowsLicence = licence.value",
-  "phase19BSoftwareFields().includes(key)",
+  "phase120SoftwareOptions().some(x=>x.key===key)",
   "phase19BServerFunctionFields().includes(key)",
   "phase19BRenderFields(currentType,phase19BFormValues,'hardware')",
   "phase19BRenderFields(type, phase19BFormValues, 'services')",
