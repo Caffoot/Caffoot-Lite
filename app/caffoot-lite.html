@@ -5455,7 +5455,7 @@ function hierarchyValidateTypes(subnets) {
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold mb-1">Start U Position <span class="required-mark">*</span></label>
-                                <input type="number" id="assign-u-start" min="1" max="${rack.heightU}" value="${slotU}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700 font-mono">
+                                <select id="assign-u-start" required class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700 font-mono" aria-label="Available start U position"></select>
                             </div>
                         </div>
                         <div class="form-error" data-form-error role="alert"></div>
@@ -5466,6 +5466,48 @@ function hierarchyValidateTypes(subnets) {
                     </form>
                 </div>
             `);
+            const deviceSelect = document.getElementById('assign-device-id');
+            const faceSelect = document.getElementById('assign-face');
+            const startSelect = document.getElementById('assign-u-start');
+            const refresh = () => refreshAssignStartPositions(rackId, Number(startSelect?.value) || Number(slotU));
+            deviceSelect?.addEventListener('change', refresh);
+            faceSelect?.addEventListener('change', refresh);
+            refreshAssignStartPositions(rackId, Number(slotU));
+        }
+
+        // Only offer positions that fit the inventory device on the selected face.
+        function refreshAssignStartPositions(rackId, preferredU) {
+            const select = document.getElementById('assign-u-start');
+            const deviceId = document.getElementById('assign-device-id')?.value;
+            const face = document.getElementById('assign-face')?.value || 'front';
+            const device = appState.devices.find(d => d.id === deviceId);
+            const rack = appState.racks.find(r => r.id === rackId);
+            if (!select) return;
+            select.replaceChildren();
+            if (!device || !rack) {
+                select.add(new Option('Select a device first', ''));
+                select.disabled = true;
+                return;
+            }
+            const height = Math.max(1, Number(device.rackUHeight) || (Number(device.rackUEnd) - Number(device.rackUStart) + 1) || 1);
+            const available = [];
+            for (let u = 1; u + height - 1 <= Number(rack.heightU); u++) {
+                if (!validateRackPlacement(device.id, rackId, face, u, u + height - 1)) available.push(u);
+            }
+            if (!available.length) {
+                select.add(new Option('No available positions', ''));
+                select.disabled = true;
+                return;
+            }
+            select.disabled = false;
+            for (const u of available) {
+                const label = height === 1 ? `U${u}` : `U${u}–U${u + height - 1}`;
+                select.add(new Option(label, String(u)));
+            }
+            const preferred = Number(preferredU);
+            const chosen = available.includes(preferred) ? preferred :
+                available.reduce((best, u) => Math.abs(u - preferred) < Math.abs(best - preferred) ? u : best, available[0]);
+            select.value = String(chosen);
         }
 
         function handleAssignSubmit(e, rackId, defaultSlot) {
@@ -5475,6 +5517,10 @@ function hierarchyValidateTypes(subnets) {
             if (!deviceId) { showToast('Select a device from inventory before mounting.', 'error'); return; }
             const face = document.getElementById('assign-face').value;
             const uStart = parseInt(document.getElementById('assign-u-start').value);
+            if (!Number.isInteger(uStart)) {
+                showToast('No valid rack position is available for this device on the selected face.', 'error');
+                return;
+            }
 
             const device = appState.devices.find(d => d.id === deviceId);
             if (!device || device.mountType !== 'Rack Mounted' || !phase19BAllowedMounts(device.type).includes('Rack Mounted')) {
