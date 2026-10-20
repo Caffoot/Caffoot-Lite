@@ -845,7 +845,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 /* Keep tall rack elevations inside the viewport and contain wheel/trackpad scroll. */
 .phase17d-rack-scroll { max-height: clamp(320px, calc(100dvh - 260px), 720px); min-height: 0; overscroll-behavior-y: contain; overflow-y: auto; -webkit-overflow-scrolling: touch; scroll-behavior: auto; scrollbar-gutter: stable; }
 .phase17d-rack-scroll[data-rack-scrollable="true"] { border-bottom: 2px solid #94a3b8; }
-.phase17d-rack-scroll[data-rack-scrollable="true"]::after { content: "Scroll inside this rack to see more U positions"; display:block; position:sticky; bottom:0; margin:12px auto -24px; padding:5px 12px; width:max-content; max-width:100%; border-radius:8px 8px 0 0; background:#334155; color:#fff; font-size:11px; font-weight:600; pointer-events:none; }
+.phase17d-rack-scroll[data-rack-scrollable="true"][data-more-below="true"]::after { content: "Scroll inside this rack to see more U positions"; display:block; position:sticky; bottom:0; margin:12px auto -24px; padding:5px 12px; width:max-content; max-width:100%; border-radius:8px 8px 0 0; background:#334155; color:#fff; font-size:11px; font-weight:600; pointer-events:none; }
 @media(max-width:640px){.phase17d-rack-scroll{max-height:clamp(280px,calc(100dvh - 230px),620px);padding:12px!important}}
 @media(prefers-reduced-motion:reduce){.phase17d-rack-scroll{scroll-behavior:auto}}
 .phase17d-rack-scroll:focus-visible { outline: 2px solid #10b981; outline-offset: -2px; }
@@ -2164,6 +2164,14 @@ function hierarchyValidateTypes(subnets) {
 
             else if (currentTab === 'settings') html = phase16ARenderSettings();
             container.innerHTML = html;
+            const rackScroll = container.querySelector('[data-rack-scroll="true"]');
+            if (rackScroll) {
+                const updateScrollHint = () => {
+                    rackScroll.dataset.moreBelow = String(rackScroll.scrollHeight - rackScroll.scrollTop - rackScroll.clientHeight > 3);
+                };
+                rackScroll.addEventListener('scroll', updateScrollHint, {passive:true});
+                updateScrollHint();
+            }
         }
 
 
