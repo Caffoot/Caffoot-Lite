@@ -12,11 +12,11 @@ Caffoot Lite is a standalone HTML application. You do **not** need Docker, Node.
 
 **Export JSON backups regularly and ALWAYS before upgrades, moves, renames or resets.** Save them outside the browser and test restoration. The backup may include sensitive network information.
 
-**Current stable release:** [v1.1.2](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.1.2), published 19 October 2026. v1.1.0.1 remains a historical hotfix.
+**Current release:** [v1.2.0](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.2.0). Earlier releases, including v1.1.2, remain available on GitHub.
 
 ## Download the released application
 
-**v1.1.2 was published on 19 October 2026.** Download it from the [v1.1.2 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.1.2), or use the [latest stable release](https://github.com/Caffoot/Caffoot-Lite/releases/latest).
+Use the [latest stable release](https://github.com/Caffoot/Caffoot-Lite/releases/latest) to download the current published application. v1.2.0 introduces Devices & Intelligence.
 
 1. Visit the [Caffoot Lite GitHub repository](https://github.com/caffoot/Caffoot-Lite).
 2. Open **Releases** and select the latest stable release.
@@ -27,9 +27,9 @@ Caffoot Lite is a standalone HTML application. You do **not** need Docker, Node.
 
 If your browser downloads the file instead of opening it, use the browser's **File → Open File** option to open the saved `.html` file.
 
-## v1.2.0 release candidate
+## What's new in v1.2.0
 
-The v1.2.0 release candidate introduces the expanded Devices navigation, five-tab Add/Edit Device forms, Device Intelligence and Device Catalogues. Until publication is complete, v1.1.2 remains the latest stable release. For candidate details, see [RELEASE-NOTES-1.2.0.md](RELEASE-NOTES-1.2.0.md). Always back up existing inventory before trying a candidate.
+v1.2.0 introduces expanded Devices navigation, five-tab Add/Edit Device forms, Device Intelligence and Device Catalogues. See [RELEASE-NOTES-1.2.0.md](RELEASE-NOTES-1.2.0.md). Always back up existing inventory before upgrading.
 
 ## First steps
 
@@ -73,7 +73,7 @@ The safe update guide and backups work offline. Newer backup schemas require a c
 
 ## Complete release package
 
-For the current published stable v1.1.2, download `Caffoot-Lite-1.1.2.zip` from the [published release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.1.2). The v1.2.0 candidate uses `Caffoot-Lite-1.2.0.zip` and is not published yet. Extract it and open `Caffoot-Lite.html`; keep the guides and licences beside it. `SHA256SUMS` contains file hashes for checking integrity. The standalone HTML also includes full software notices in About Caffoot Lite, available offline. Example backups under `app/fixtures/` are fictional demonstrations; importing one replaces the current inventory after confirmation.
+For v1.2.0, download `Caffoot-Lite-1.2.0.zip` from the [v1.2.0 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.2.0) after publication. Extract it and open `Caffoot-Lite.html`; keep the guides and licences beside it. `SHA256SUMS` contains file hashes for checking integrity. The standalone HTML also includes full software notices in About Caffoot Lite, available offline. Example backups under `app/fixtures/` are fictional demonstrations; importing one replaces the current inventory after confirmation.
 
 ### Local file storage scope
 

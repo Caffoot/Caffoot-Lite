@@ -81,9 +81,9 @@ See the detailed [installation and upgrade guide](INSTALLATION.md) for the compl
 
 If you're looking for **free IPAM software**, an **offline network inventory tool**, a **homelab asset manager**, or a simple way to document **subnets, device IP addresses and server racks**, Caffoot Lite is designed for that workflow. It runs locally in your browser without an account or hosted service. It is not a network discovery scanner or a multi-user server.
 
-## v1.2.0 Devices & Intelligence (release candidate)
+## v1.2.0 Devices & Intelligence
 
-The v1.2.0 candidate adds a wider five-tab Add/Edit Device experience; Devices Overview and inventory drill-downs; separate Device Types and Locations workspaces; and Manufacturers, Models, Software and Server Services catalogues. These features are undergoing final release review and are **not yet the published stable release**. See [v1.2.0 candidate release notes](RELEASE-NOTES-1.2.0.md).
+v1.2.0 adds a wider five-tab Add/Edit Device experience; Devices Overview and inventory drill-downs; separate Device Types and Locations workspaces; and Manufacturers, Models, Software and Server Services catalogues. See the [v1.2.0 release notes](RELEASE-NOTES-1.2.0.md).
 
 ## What you can manage
 
@@ -114,13 +114,13 @@ npm run release
 
 The build produces `app/dist/Caffoot-Lite.html`. Automated checks and manual browser testing are recommended before distributing a build. The GitHub Actions build workflow is currently disabled.
 
-**Current stable release:** [v1.1.2](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.1.2), published 19 October 2026. v1.1.0.1 remains a historical hotfix.
+**Current release:** [v1.2.0](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.2.0), published 20 October 2026. v1.1.2 remains available as an earlier stable release; v1.1.0.1 is a historical hotfix.
 
 ## Project and release status
 
 This repository is dedicated to **Caffoot Lite**: its standalone application, build tools, tests and release documentation.
 
-**v1.1.2 was published on 19 October 2026.** Download it from the [v1.1.2 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.1.2) or visit the [latest stable release](https://github.com/Caffoot/Caffoot-Lite/releases/latest). See the [v1.1.2 release notes](RELEASE-NOTES-1.1.2.md), [historical v1.1.1 release notes](RELEASE-NOTES-1.1.1.md), [historical v1.1.0 release notes](RELEASE-NOTES-1.1.0.md) and [roadmap](ROADMAP.md).
+**v1.2.0 was prepared for publication on 20 October 2026.** Download the currently published version from the [latest stable release](https://github.com/Caffoot/Caffoot-Lite/releases/latest). See the [v1.2.0 release notes](RELEASE-NOTES-1.2.0.md), [v1.1.2 release notes](RELEASE-NOTES-1.1.2.md), [historical v1.1.1 release notes](RELEASE-NOTES-1.1.1.md), [historical v1.1.0 release notes](RELEASE-NOTES-1.1.0.md) and [roadmap](ROADMAP.md).
 
 ## Licence and branding
 

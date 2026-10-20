@@ -1,13 +1,13 @@
 # Caffoot Lite — Development Roadmap
 
 **Updated:** 20 October 2026  
-**Current milestone:** v1.1.2 (security hardening and deployment guidance) published on 19 October 2026 following automated validation, owner browser acceptance, PR #44 merge and verified release packaging. v1.2.0 release candidate passed owner browser acceptance and automated release packaging; merge and publication pending.  
+**Current milestone:** v1.2.0 Devices & Intelligence. v1.1.2 security hardening was released on 19 October 2026. v1.2.0 passed owner browser acceptance, GitHub Actions checks and automated release packaging; final publication requires approval.  
 **Repository:** `caffoot/Caffoot-Lite` (public)  
 **Release policy:** Publish publicly only after manual verification, security/privacy review and owner approval.
 
-**Current stable release:** [v1.1.2](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.1.2). v1.1.0.1 is a historical hotfix.
+**Current release:** [v1.2.0](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.2.0). v1.1.2 is an earlier stable release; v1.1.0.1 is a historical hotfix.
 
-Caffoot Lite is an offline, standalone single-HTML network inventory and IP address management application. v1.1.2 is the published stable release as of 19 October 2026; older versions remain available as historical releases.
+Caffoot Lite is an offline, standalone single-HTML network inventory and IP address management application. v1.2.0 is the October 2026 Devices & Intelligence release; earlier versions remain available as historical releases.
 
 ## Documentation checks for every release
 
@@ -72,7 +72,7 @@ Managed multi-user hosting, authentication and centrally administered deployment
 
 ### v1.2 — Device, IPAM and rack enhancements
 
-**Status: v1.2.0 release candidate tested on `feature/v1.2.0-device-form-tabs`; final review, merge and publication pending.** Remaining IPAM/rack/network-environment features are still proposed and may be split into later milestones. No merge or publication without owner acceptance.
+**Status: v1.2.0 functionality and owner acceptance completed; publication prepared.** Remaining IPAM/rack/network-environment features are proposed for later milestones. Final release publication requires explicit owner approval.
 
 **v1.2.0 device experience — agreed scope:**
 - Redesign Add Device and Edit Device as **wider, responsive, consistent five-tab modals** (General, Hardware, Software & Firmware, Networking, Notes). Use readable field widths, compact two-column layouts where appropriate, and single-column layouts on small screens; preserve keyboard access, validation, unsaved drafts, device-type-specific fields and existing records.
@@ -97,7 +97,7 @@ Managed multi-user hosting, authentication and centrally administered deployment
 - Retain **Other / Custom** manufacturer and model inputs in the device form for one-off values. A one-off entry must not silently become a managed catalogue item; reusable options are maintained explicitly through Device Catalogues.
 - Bring existing **Manage Software Options** and **Manage Server Services** functionality into the same navigational and visual pattern without dropping existing user-defined options, device-specific selections or stored records.
 - **Data safety:** Renaming, hiding or removing a catalogue suggestion must not silently rewrite or erase historical device manufacturer/model values, software flags or server-service values. Clearly communicate impact and confirm destructive changes. Preserve local/offline storage and compatible JSON export/restore, including migration of existing custom hardware catalogue data.
-- Deliver incrementally: **(1) Manufacturers and Models**, then **(2) Software and Server Services**, followed by regression tests for custom entry, edit/delete, reopening forms, filtering, backups, offline build and owner browser acceptance. This is planned work, not yet implemented or approved for release.
+- Deliver incrementally: **(1) Manufacturers and Models**, then **(2) Software and Server Services**, followed by regression tests for custom entry, edit/delete, reopening forms, filtering, backups, offline build and owner browser acceptance. This work was implemented and accepted in the v1.2.0 device catalogue scope.
 
 **Additional device improvements (future candidates, not automatically included in v1.2.0):**
 - Preserve dynamic fields for different device types.

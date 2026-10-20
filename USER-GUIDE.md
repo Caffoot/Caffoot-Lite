@@ -2,11 +2,11 @@
 
 **Infrastructure, Simplified. — For HomeLabs and Small Teams**
 
-This guide covers the published v1.1.2 application and the v1.2.0 Devices & Intelligence release candidate. v1.1.2 was published on 19 October 2026; v1.2.0 is undergoing final release review. The redesigned Settings & Data interface was introduced in v1.1.1, with security hardening in v1.1.2.
+This guide covers v1.2.0 Devices & Intelligence, with relevant information for users upgrading from previous releases, including v1.1.2. The redesigned Settings & Data interface was introduced in v1.1.1, with security hardening in v1.1.2.
 
 ## v1.2.0 Devices & Intelligence
 
-The candidate adds **Devices → Overview** for local inventory charts and drill-downs; **Device Inventory**, **Device Types** and **Locations** for distinct management views; and **Device Catalogues** for **Manufacturers**, **Models**, **Software** and **Server Services**. The wider Add/Edit Device form has five tabs: **General**, **Hardware**, **Software & Firmware**, **Networking** and **Notes**. Server Services are managed separately from software assignments. Archived catalogue entries are retained for historical device records, with restoration where offered. Always verify saved assignments after changing a catalogue entry.
+v1.2.0 adds **Devices → Overview** for local inventory charts and drill-downs; **Device Inventory**, **Device Types** and **Locations** for distinct management views; and **Device Catalogues** for **Manufacturers**, **Models**, **Software** and **Server Services**. The wider Add/Edit Device form has five tabs: **General**, **Hardware**, **Software & Firmware**, **Networking** and **Notes**. Server Services are managed separately from software assignments. Archived catalogue entries are retained for historical device records, with restoration where offered. Always verify saved assignments after changing a catalogue entry.
 
 ## Getting started
 
@@ -42,7 +42,7 @@ The **Dashboard** summarises inventory and network information based on your loc
 
 The Settings tabs are **Data Management**, **Preferences**, **Help & Guides**, and **About Caffoot Lite**.
 
-Open **Settings & Data** for **Data Management**, **Preferences**, **Help & Guides**, and **About Caffoot Lite**. These tabs are available in v1.1.1, v1.1.2 and the v1.2.0 candidate; older releases may have different labels and placement.
+Open **Settings & Data** for **Data Management**, **Preferences**, **Help & Guides**, and **About Caffoot Lite**. These tabs are available in v1.1.1, v1.1.2 and v1.2.0; older releases may have different labels and placement.
 
 ### Data Management — Back Up & Restore
 

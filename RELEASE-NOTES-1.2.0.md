@@ -1,6 +1,6 @@
 # Caffoot Lite v1.2.0 — Release Notes
 
-**Status:** Release candidate under verification; not yet published.
+**Status:** v1.2.0 release package prepared for publication (20 October 2026).
 **Release focus:** Devices & Intelligence.
 
 ## Highlights
@@ -25,7 +25,8 @@ Existing supported JSON backup formats and historical inventory records are inte
 - Final v1.2.0 `npm.cmd run release` pipeline passed on 20 October 2026: all 27 applicable regression commands, offline build, build verification, packaging and ZIP member/hash checks. `npm.cmd ci` reported zero dependency vulnerabilities; two package install scripts were flagged for review, not approved automatically.
 - Owner confirmed offline browser navigation and themes, redesigned Device forms, unsaved-change protection, Software Catalogue and Server Services workflows, archive/restore behaviour, and disposable-data JSON export, cancelled restore, completed restore and reopen persistence.
 - Owner confirmed the versioned v1.2.0 build displays the correct About version and opens Dashboard, Devices, IPAM and Racks; a disposable device's IPAM and rack relationships persisted after editing and reopening.
-- **Still required before publication:** final documentation/privacy review (including repository history and distributable contents), final downloadable asset SHA-256 recording, and explicit owner approval of the release/merge. The extracted-folder privacy gate cannot inspect Git history.
+- GitHub Actions completed the full-history Gitleaks scan and release-candidate validation successfully at commit `a526533de7a1790343a143bef9456e0363ad595d` on 20 October 2026. The history scan complements, rather than replaces, distributable privacy checks.
+- Final published asset SHA-256 values and publication confirmation are recorded with the GitHub release assets; successful tests do not constitute a formal security certification.
 
 This is owner-reported acceptance and automated regression evidence, not a formal security or accessibility certification.
 
