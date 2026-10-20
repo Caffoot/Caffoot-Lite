@@ -2846,7 +2846,7 @@ function hierarchyValidateTypes(subnets) {
                     const faces=['front','rear'].map(face=>{
                         const occupied=new Set();
                         const mark=(start,end)=>{if(!Number.isInteger(start)||!Number.isInteger(end)||end<start)return;for(let u=Math.max(1,start);u<=Math.min(height,end);u++)occupied.add(u);};
-                        rackDevices.filter(d=>String(d.rackFace||'front').toLowerCase()===face).forEach(d=>mark(Number(d.rackUStart),Number(d.rackUEnd??d.rackUStart)));
+                        rackDevices.filter(d=>String(d.face||d.rackFace||'front').toLowerCase()===face).forEach(d=>mark(Number(d.rackUStart),Number(d.rackUEnd??d.rackUStart)));
                         rackAccessories.filter(a=>String(a.face||'front').toLowerCase()===face && Number(a.heightU)>0).forEach(a=>mark(Number(a.startU),Number(a.startU)+Number(a.heightU)-1));
                         let run=0,largest=0;
                         for(let u=1;u<=height;u++){run=occupied.has(u)?0:run+1;largest=Math.max(largest,run);}
