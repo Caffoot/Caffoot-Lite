@@ -2891,6 +2891,15 @@ function hierarchyValidateTypes(subnets) {
             return `<div class="min-w-0">${body}</div>`;
         }
 
+        document.addEventListener('change', event => {
+            if (event.target?.id !== 'v13-rack-detail-select') return;
+            const rack = appState.racks.find(r => r.id === event.target.value);
+            if (!rack) return;
+            selectedRackId = rack.id;
+            phase13BRackTab = 'view';
+            renderContent();
+        });
+
         function renderRacksHTML() {
             const currentRack = appState.racks.find(r => r.id === selectedRackId) || appState.racks[0];
 
