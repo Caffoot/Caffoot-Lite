@@ -11,7 +11,7 @@ const checks = [
   ['rack name heading', '${escapeHtml(currentRack.name)}'],
   ['rack location', "escapeHtml(currentRack.location||'Not set')"],
   ['rack selector label', '${escapeHtml(r.name)}'],
-  ['rack selector ID', 'data-id="${escapeHtml(r.id)}"'],
+  ['rack selector ID', 'value="${escapeHtml(r.id)}"'],
   ['rack edit ID', 'data-id="${escapeHtml(currentRack.id)}"'],
   ['rack drop ID', 'data-rack-drop-id="${escapeHtml(currentRack.id)}"'],
   ['device label', '${escapeHtml(dev.name)}'],
