@@ -10,7 +10,7 @@ function section(start,end) {
   return html.slice(a,b);
 }
 const escapeSource=section('function escapeHtml(value)','function inlineJsArg(value)');
-const modalSource=section('function phase13COpenAccessory(','function phase13CDeleteAccessory(');
+const modalSource=section('function phase13COpenAccessory(',"modal.classList.remove('hidden');") + '\n}';
 const payloads=['"><img src=x onerror=alert(1)>','</option><svg onload=alert(1)>',"' autofocus onfocus='alert(1)"];
 for(const hostile of payloads) {
   const content={innerHTML:'',classList:{remove(){}}};
