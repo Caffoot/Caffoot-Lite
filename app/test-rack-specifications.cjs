@@ -14,7 +14,7 @@ const toast=[];let confirms=0, saves=0;
 const context=vm.createContext({appState:state,document:{getElementById(id){return {value:inputs[id]};}},showToast:(...args)=>toast.push(args),confirm:()=>{confirms++;return true;},confirms:0,saveState:()=>{saves++;return true;},closeModal:()=>{},renderContent:()=>{},deviceRackReturnPending:false,selectedRackId:'r1'});
 vm.runInContext(code,context);
 // The styled correction dialog is asynchronous; simulate user approval without browser DOM.
-vm.runInContext('phase120ConfirmRackCorrection = async () => { confirms++; return true; }', context);
+vm.runInContext('phase120ConfirmRackCorrection = async () => { globalThis.confirms++; return true; }', context);
 // The production submit listener is delegated on document: currentTarget is NOT the form.
 (async () => {
 const submit=async (correction)=>context.handleRackSubmit({preventDefault(){},target:{closest(){return {dataset:{correction:String(correction)}}}},currentTarget:{dataset:{}}},'r1');
