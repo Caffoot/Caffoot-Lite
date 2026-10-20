@@ -3176,7 +3176,7 @@ function hierarchyValidateTypes(subnets) {
                         <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 space-y-4">
                             <div><h3 class="font-bold text-slate-900 dark:text-white">Rack Configuration</h3><p class="text-sm text-slate-600 dark:text-slate-300">Edit rack details, add enclosures, or remove an unused rack.</p></div>
                             <dl class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm"><div><dt class="text-slate-500 dark:text-slate-400">Rack name</dt><dd class="font-semibold">${escapeHtml(currentRack.name)}</dd></div><div><dt class="text-slate-500 dark:text-slate-400">Location</dt><dd class="font-semibold">${escapeHtml(currentRack.location||'Not set')}</dd></div><div><dt class="text-slate-500 dark:text-slate-400">Height</dt><dd class="font-semibold">${Number(currentRack.heightU)||42}U</dd></div><div><dt class="text-slate-500 dark:text-slate-400">Mounted devices</dt><dd class="font-semibold">${rackDevices.length}</dd></div></dl>
-                            <div class="flex flex-wrap gap-2"><button data-action="edit-rack" data-id="${escapeHtml(currentRack.id)}" class="phase13b-primary">Edit Rack</button><button data-action="delete-rack" data-id="${escapeHtml(currentRack.id)}" class="phase13b-danger">Delete Rack</button></div>
+                            <div class="flex flex-wrap gap-2"><button data-action="edit-rack" data-id="${escapeHtml(currentRack.id)}" class="phase13b-primary">Edit Rack</button><button data-action="correct-rack-specifications" data-id="${escapeHtml(currentRack.id)}" class="phase13b-primary">Correct Rack Specifications</button><button data-action="delete-rack" data-id="${escapeHtml(currentRack.id)}" class="phase13b-danger">Delete Rack</button></div>
                         </div>
                     </section>
                 </div>
@@ -5291,90 +5291,111 @@ function hierarchyValidateTypes(subnets) {
             items[next].focus();
         });
 
-        function openRackModal(rackId = null) {
+        const rackTypes = ['Floor-standing cabinet', 'Wall-mounted cabinet', 'Open-frame 2-post', 'Open-frame 4-post', 'Wall-mounted network enclosure'];
+        const rackHeightPresets = [6, 9, 12, 18, 24, 42, 48];
+        function rackPhysicalDetails(rack) {
+            const dimension = (value, fallback) => {
+                if (value == null || value === '') return fallback;
+                const match = String(value).trim().match(/^(\d+)\s*(?:mm)?$/i);
+                return match ? Number(match[1]) : NaN;
+            };
+            return {
+                type: rack ? (rack.type || 'Free Standing') : rackTypes[0],
+                height: rack ? Number(rack.heightU) : 42,
+                width: dimension(rack && (rack.widthMm ?? rack.width), 600),
+                depth: dimension(rack && (rack.depthMm ?? rack.depth), 600)
+            };
+        }
+
+        function openRackModal(rackId = null, correction = false) {
             const rack = rackId ? appState.racks.find(r => r.id === rackId) : null;
+            if (rackId && !rack) return;
+            const details = rackPhysicalDetails(rack);
+            const physicalEditable = !rack || correction;
+            const types = Array.from(new Set([...rackTypes, details.type]));
+            const heights = Array.from(new Set([...rackHeightPresets, details.height])).filter(h => Number.isInteger(h) && h > 0).sort((a,b) => a-b);
             openModal(`
                 <div class="p-6 sm:p-7 space-y-5">
                     <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-4 mb-1">
-                        <h3 class="font-bold text-base">${rack ? 'Edit Network Rack' : 'Add Network Rack Enclosure'}</h3>
+                        <h3 class="font-bold text-base">${rack ? (correction ? 'Correct Rack Specifications' : 'Edit Network Rack') : 'Add Network Rack Enclosure'}</h3>
                         <button type="button" data-action="close-modal" aria-label="Close dialog"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
                     </div>
-                    <form data-form-action="rack" data-rack-id="${escapeHtml(rack ? rack.id : '')}" class="form-shell space-y-5">
+                    <form data-form-action="rack" data-rack-id="${escapeHtml(rack ? rack.id : '')}" data-correction="${correction}" class="form-shell space-y-5">
                         <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-server"></i>Rack identity</div>
-                        <div>
-                            <label for="rack-name" class="block text-xs font-semibold mb-1">Rack Name <span class="required-mark">*</span></label>
-                            <input type="text" id="rack-name" required value="${rack ? escapeHtml(rack.name) : ''}" placeholder="e.g. Rack C - Garage" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
-                            <div>
-                                <label for="rack-height" class="block text-xs font-semibold mb-1">Height in U</label>
-                                <select id="rack-height" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
-                                    ${Array.from(new Set([12, 24, 42, 48, ...(rack && Number.isInteger(Number(rack.heightU)) && Number(rack.heightU) > 0 ? [Number(rack.heightU)] : [])])).sort((a,b)=>a-b).map(height => `<option value="${height}" ${height === (rack ? Number(rack.heightU) || 42 : 42) ? 'selected' : ''}>${height}U${height === 42 ? ' (Standard)' : ''}</option>`).join('')}
-                                </select>
+                            <div><label for="rack-name" class="block text-xs font-semibold mb-1">Rack Name <span class="required-mark">*</span></label>
+                            <input type="text" id="rack-name" required value="${rack ? escapeHtml(rack.name) : ''}" placeholder="e.g. Rack C - Garage" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></div>
+                            <div><label for="rack-type" class="block text-xs font-semibold mb-1">Rack Type</label>
+                            <select id="rack-type" ${physicalEditable ? '' : 'disabled'} class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">${types.map(t => `<option value="${escapeHtml(t)}" ${t === details.type ? 'selected' : ''}>${escapeHtml(t)}</option>`).join('')}</select></div>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <div><label for="rack-height" class="block text-xs font-semibold mb-1">Height (U)</label>
+                                <select id="rack-height" ${physicalEditable ? '' : 'disabled'} class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">${heights.map(h => `<option value="${h}" ${h === details.height ? 'selected' : ''}>${h}U</option>`).join('')}<option value="custom">Custom…</option></select>
+                                <input type="number" id="rack-height-custom" min="1" max="100" step="1" placeholder="Custom U" hidden ${physicalEditable ? '' : 'disabled'} class="w-full mt-2 border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></div>
+                                <div><label for="rack-width" class="block text-xs font-semibold mb-1">Width (mm)</label><input type="number" id="rack-width" min="1" max="10000" step="1" value="${Number.isFinite(details.width) ? details.width : ''}" ${physicalEditable ? '' : 'disabled'} class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></div>
+                                <div><label for="rack-depth" class="block text-xs font-semibold mb-1">Depth (mm)</label><input type="number" id="rack-depth" min="1" max="10000" step="1" value="${Number.isFinite(details.depth) ? details.depth : ''}" ${physicalEditable ? '' : 'disabled'} class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></div>
                             </div>
-                            <div>
-                                <label for="rack-depth" class="block text-xs font-semibold mb-1">Depth</label>
-                                <input type="text" id="rack-depth" value="${rack ? escapeHtml(rack.depth) : '600mm'}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
-                            </div>
+                            ${rack && !correction ? '<p class="text-xs text-slate-500 dark:text-slate-400">Physical specifications are locked. Use Correct Rack Specifications in Rack Settings to correct a recording mistake.</p>' : ''}
                         </div>
-                        </div>
-                        <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-location-dot"></i>Placement</div><div>
-                            <label for="rack-location" class="form-label">Location Room <span class="font-normal text-slate-400">(optional)</span></label>
-                            <input type="text" id="rack-location" value="${rack ? escapeHtml(rack.location || '') : ''}" placeholder="e.g. Garage Server Room" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
-                        </div>
+                        <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-location-dot"></i>Placement</div>
+                            <div><label for="rack-location" class="form-label">Location Room (optional)</label><input type="text" id="rack-location" value="${rack ? escapeHtml(rack.location || '') : ''}" placeholder="e.g. Garage Server Room" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></div>
                         </div>
                         <div class="form-error" data-form-error role="alert"></div>
                         <div class="form-actions rack-form-actions">
                             <button type="button" data-action="cancel-rack-from-device" class="rack-form-button bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white rounded-xl font-semibold caffoot-modal-cancel">Cancel</button>
-                            <button type="submit" class="rack-form-button bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold">Save Rack</button>
+                            <button type="submit" class="rack-form-button bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold">${correction ? 'Review Correction' : 'Save Rack'}</button>
                         </div>
                     </form>
                 </div>
             `);
+            const heightSelect = document.getElementById('rack-height');
+            if (physicalEditable && heightSelect) heightSelect.addEventListener('change', () => {
+                const custom = document.getElementById('rack-height-custom');
+                custom.hidden = heightSelect.value !== 'custom';
+                custom.required = heightSelect.value === 'custom';
+            });
         }
 
         function handleRackSubmit(e, rackId) {
             e.preventDefault();
+            const correction = e.target.closest('form').dataset.correction === 'true';
+            const rack = rackId ? appState.racks.find(r => r.id === rackId) : null;
+            if (rackId && !rack) return;
             const name = document.getElementById('rack-name').value.trim();
             if (!name) { showToast('Rack name is required.', 'error'); return; }
-            const before = JSON.stringify(appState);
-            const heightU = parseInt(document.getElementById('rack-height').value);
-            if (!Number.isInteger(heightU) || heightU < 1 || heightU > 100) {
-                showToast('Choose a valid rack height.', 'error');
-                return;
-            }
-            const depth = document.getElementById('rack-depth').value;
             const location = document.getElementById('rack-location').value;
-
-            if (rackId) {
-                const r = appState.racks.find(item => item.id === rackId);
-                if (r) {
-                    const outOfBoundsDevice = appState.devices.find(d => {
-                        if (d.rackId !== rackId) return false;
-                        const endU = Number(d.rackUEnd || d.rackUStart);
-                        return Number.isInteger(endU) && endU > heightU;
-                    });
-
-                    if (outOfBoundsDevice) {
-                        showToast(`${outOfBoundsDevice.name} occupies U${outOfBoundsDevice.rackUEnd || outOfBoundsDevice.rackUStart}, so the rack cannot be reduced to ${heightU}U.`, 'error');
-                        return;
-                    }
-
-                    const outOfBoundsAccessory = (appState.rackAccessories || []).find(a =>
-                        a.rackId === rackId && Number(a.startU) + Number(a.heightU) - 1 > heightU
-                    );
-                    if (outOfBoundsAccessory) {
-                        showToast(`${outOfBoundsAccessory.name || 'A rack accessory'} occupies U${Number(outOfBoundsAccessory.startU) + Number(outOfBoundsAccessory.heightU) - 1}, so the rack cannot be reduced to ${heightU}U.`, 'error');
-                        return;
-                    }
-
-                    r.name = name;
-                    r.heightU = heightU;
-                    r.depth = depth;
-                    r.location = location;
+            const before = JSON.stringify(appState);
+            let physical = null;
+            if (!rack || correction) {
+                const selectedHeight = document.getElementById('rack-height').value;
+                const rawHeight = selectedHeight === 'custom' ? document.getElementById('rack-height-custom').value : selectedHeight;
+                const heightU = rawHeight === '' ? NaN : Number(rawHeight);
+                const rawWidth = document.getElementById('rack-width').value;
+                const rawDepth = document.getElementById('rack-depth').value;
+                const widthMm = rawWidth === '' ? NaN : Number(rawWidth);
+                const depthMm = rawDepth === '' ? NaN : Number(rawDepth);
+                const type = document.getElementById('rack-type').value;
+                if (!Number.isInteger(heightU) || heightU < 1 || heightU > 100 || !Number.isInteger(widthMm) || widthMm < 1 || widthMm > 10000 || !Number.isInteger(depthMm) || depthMm < 1 || depthMm > 10000 || !rackTypes.includes(type) && !(rack && type === rack.type)) {
+                    showToast('Enter a valid rack type, height (1–100U), width and depth in mm.', 'error'); return;
+                }
+                physical = {heightU, widthMm, depthMm, type};
+                if (rack) {
+                    const device = appState.devices.find(d => d.rackId === rackId && Number(d.rackUEnd || d.rackUStart) > heightU);
+                    const accessory = (appState.rackAccessories || []).find(a => a.rackId === rackId && Number(a.startU) + Number(a.heightU) - 1 > heightU);
+                    if (device || accessory) { showToast('Rack height cannot be reduced below mounted devices or accessories.', 'error'); return; }
+                    if (!confirm('Correct the recorded physical specifications for this rack? Mounted equipment will not be moved.')) return;
+                }
+            }
+            if (rack) {
+                rack.name = name;
+                rack.location = location;
+                if (correction) {
+                    rack.heightU = physical.heightU;
+                    rack.widthMm = physical.widthMm;
+                    rack.depthMm = physical.depthMm;
+                    rack.depth = physical.depthMm + 'mm';
+                    rack.type = physical.type;
                 }
             } else {
-                const newRack = { id: 'rack_' + Date.now(), name, heightU, depth, type: 'Free Standing', location };
+                const newRack = {id: 'rack_' + Date.now(), name, heightU: physical.heightU, widthMm: physical.widthMm, depthMm: physical.depthMm, depth: physical.depthMm + 'mm', type: physical.type, location};
                 appState.racks.push(newRack);
                 selectedRackId = newRack.id;
             }
@@ -8042,6 +8063,7 @@ function hierarchyValidateTypes(subnets) {
                 case 'edit-location': editDeviceLocationPrompt(name); break;
                 case 'open-rack-modal': openRackModal(); break;
                 case 'edit-rack': openRackModal(id); break;
+                case 'correct-rack-specifications': openRackModal(id, true); break;
                 case 'delete-rack': deleteRack(id); break;
                 case 'phase13c-add': phase13COpenAccessory(selectedRackId,1); break;
                 case 'phase13c-edit': {const a=(appState.rackAccessories||[]).find(a=>a.id===id);if(a)phase13COpenAccessory(a.rackId,a.startU,id);break;}

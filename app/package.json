@@ -14,7 +14,7 @@
     "check:release-privacy": "node check-release-privacy.cjs",
     "check:network-surface": "node check-network-surface.cjs",
     "check:security-accessory-modal": "node test-security-accessory-modal.cjs",
-    "check:rack": "node test-rack-placement.cjs",
+    "check:rack": "node test-rack-placement.cjs && node test-rack-specifications.cjs",
     "check:restore": "node test-restore.cjs",
     "check:subnet": "node test-subnet.cjs",
     "check:subnet-deletion": "node test-subnet-deletion.cjs",
