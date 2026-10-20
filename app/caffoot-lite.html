@@ -7813,12 +7813,12 @@ function hierarchyValidateTypes(subnets) {
             modal.classList.remove('hidden');
             modal.classList.add('flex');
             const form=modal.querySelector('#phase13c-form');
-            const typeSelect=form.elements.namedItem('type');
+            const typeSelect=modal.querySelector('#phase13c-form [name="type"]');
             const portField=modal.querySelector('#phase13e-port-field');
-            const portSelect=form.elements.namedItem('portCount');
-            const faceSelect=form.elements.namedItem('face');
-            const startSelect=form.elements.namedItem('startU');
-            const heightInput=form.elements.namedItem('heightU');
+            const portSelect=modal.querySelector('#phase13c-form [name="portCount"]');
+            const faceSelect=modal.querySelector('#phase13c-form [name="face"]');
+            const startSelect=modal.querySelector('#phase13c-form [name="startU"]');
+            const heightInput=modal.querySelector('#phase13c-form [name="heightU"]');
             const positionHint=modal.querySelector('#phase13c-position-hint');
             function refreshAccessoryOptions() {
                 const isPatch=typeSelect.value==='patch';
