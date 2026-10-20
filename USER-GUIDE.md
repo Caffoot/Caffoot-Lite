@@ -2,7 +2,11 @@
 
 **Infrastructure, Simplified. — For HomeLabs and Small Teams**
 
-This guide covers the published v1.1.2 application, including the redesigned Settings & Data interface introduced in v1.1.1 and security-hardening improvements in v1.1.2. v1.1.2 was published on 19 October 2026.
+This guide covers v1.2.0 Devices & Intelligence, with relevant information for users upgrading from previous releases, including v1.1.2. The redesigned Settings & Data interface was introduced in v1.1.1, with security hardening in v1.1.2.
+
+## v1.2.0 Devices & Intelligence
+
+v1.2.0 adds **Devices → Overview** for local inventory charts and drill-downs; **Device Inventory**, **Device Types** and **Locations** for distinct management views; and **Device Catalogues** for **Manufacturers**, **Models**, **Software** and **Server Services**. The wider Add/Edit Device form has five tabs: **General**, **Hardware**, **Software & Firmware**, **Networking** and **Notes**. Server Services are managed separately from software assignments. Archived catalogue entries are retained for historical device records, with restoration where offered. Always verify saved assignments after changing a catalogue entry.
 
 ## Getting started
 
@@ -14,7 +18,7 @@ Open **IPAM → Manage Subnets**, create an **IP Address Block** (for example, `
 
 ### 2. Add a device
 
-Open **Devices** and choose the add-device action. Enter the device details, choose a **Type** and **Location**, and select an IP address belonging to an existing subnet. Where offered, use **Next Available IP** to suggest a free address, then verify it before saving. If the subnet does not exist, create it first using the available subnet-creation flow.
+Open **Devices → Device Inventory** and choose the add-device action. Enter the device details, choose a **Type** and **Location**, and select an IP address belonging to an existing subnet. Where offered, use **Next Available IP** to suggest a free address, then verify it before saving. If the subnet does not exist, create it first using the available subnet-creation flow.
 
 If the device is **Rack Mounted**, enter its rack/U requirements and review placement; otherwise choose the appropriate non-rack mounting option. For access points, the available choices include **Tabletop / Shelf Mounted**, **Ceiling Mounted**, **Wall Mounted**, and **Pole Mounted**. Save and confirm that the device appears in inventory and that IPAM reflects its address.
 
@@ -28,7 +32,7 @@ Open **Racks** to add or manage a rack. Check available U positions before placi
 
 ### 5. Types, locations and device details
 
-Use the managed options/settings areas to maintain device types and locations. Select meaningful values when adding devices. Certain built-in options, such as **Racked**, have special behaviour and should not be treated as ordinary disposable labels.
+Use **Devices → Device Types** and **Devices → Locations** to review and manage classifications and locations. Select meaningful values when adding devices. Certain built-in options, such as **Racked**, have special behaviour and should not be treated as ordinary disposable labels.
 
 ### 6. Dashboard
 
@@ -38,7 +42,7 @@ The **Dashboard** summarises inventory and network information based on your loc
 
 The Settings tabs are **Data Management**, **Preferences**, **Help & Guides**, and **About Caffoot Lite**.
 
-Open **Settings & Data** for **Data Management**, **Preferences**, **Help & Guides**, and **About Caffoot Lite**. These tabs are available in v1.1.1 and v1.1.2; older releases may have different labels and placement.
+Open **Settings & Data** for **Data Management**, **Preferences**, **Help & Guides**, and **About Caffoot Lite**. These tabs are available in v1.1.1, v1.1.2 and v1.2.0; older releases may have different labels and placement.
 
 ### Data Management — Back Up & Restore
 

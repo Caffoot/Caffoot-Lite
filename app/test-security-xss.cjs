@@ -29,6 +29,10 @@ for (const payload of payloads) {
   const context=vm.createContext({
     appState:{devices:[device],racks:[]},
     getSubnetForIp:()=>null,
+    phase120SoftwareOptions:()=>[],
+    phase19BSoftware:()=>[],
+    phase120AvailableServerServices:()=>[],
+    phase19BServerFunctions:()=>[],
     phase19CDetailRows:()=>'', openModal:value=>{rendered=value;},
     showToast:()=>{throw Error('Device unexpectedly not found');}
   });

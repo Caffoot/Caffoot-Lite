@@ -1,13 +1,13 @@
 # Caffoot Lite — Development Roadmap
 
-**Updated:** 19 October 2026  
-**Current milestone:** v1.1.2 (security hardening and deployment guidance) published on 19 October 2026 following automated validation, owner browser acceptance, PR #44 merge and verified release packaging. Next proposed milestone: v1.2.0.  
+**Updated:** 20 October 2026  
+**Current milestone:** v1.2.0 Devices & Intelligence. v1.1.2 security hardening was released on 19 October 2026. v1.2.0 passed owner browser acceptance, GitHub Actions checks and automated release packaging; final publication requires approval.  
 **Repository:** `caffoot/Caffoot-Lite` (public)  
 **Release policy:** Publish publicly only after manual verification, security/privacy review and owner approval.
 
-**Current stable release:** [v1.1.2](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.1.2). v1.1.0.1 is a historical hotfix.
+**Current release:** [v1.2.0](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.2.0). v1.1.2 is an earlier stable release; v1.1.0.1 is a historical hotfix.
 
-Caffoot Lite is an offline, standalone single-HTML network inventory and IP address management application. v1.1.2 is the published stable release as of 19 October 2026; older versions remain available as historical releases.
+Caffoot Lite is an offline, standalone single-HTML network inventory and IP address management application. v1.2.0 is the October 2026 Devices & Intelligence release; earlier versions remain available as historical releases.
 
 ## Documentation checks for every release
 
@@ -72,13 +72,47 @@ Managed multi-user hosting, authentication and centrally administered deployment
 
 ### v1.2 — Device, IPAM and rack enhancements
 
-**Status: Planning; scope may be split into smaller milestones**
+**Status: v1.2.0 functionality and owner acceptance completed; publication prepared.** Remaining IPAM/rack/network-environment features are proposed for later milestones. Final release publication requires explicit owner approval.
 
-- Wider, responsive, tabbed Add Device and Edit Device forms with shared behaviour.
+**v1.2.0 device experience — agreed scope:**
+- Redesign Add Device and Edit Device as **wider, responsive, consistent five-tab modals** (General, Hardware, Software & Firmware, Networking, Notes). Use readable field widths, compact two-column layouts where appropriate, and single-column layouts on small screens; preserve keyboard access, validation, unsaved drafts, device-type-specific fields and existing records.
+- Refine mounting options by device type, including **Tower / Floor Standing** for physical servers, while accepting historical **Floor Standing** values in existing data and backups; only Rack Mounted devices require rack configuration.
+- Move the current Devices workspace controls out of the page header into an **IPAM-style expandable left-hand Devices submenu**, with Overview as the default, Device Inventory, Device Types, Locations and appropriate management destinations. Avoid duplicated controls, empty pages and confusing navigation.
+- Create a detailed **Devices Overview / Device Intelligence Dashboard** using the user's local inventory: total devices, relevant physical/virtual counts, device-type distribution, operating-system family/version distribution, location and mounting distribution, common software and server services, and inventory completeness (including missing IP/OS/location data). Only display metrics supported by stored data; show Unknown/Not Recorded and useful empty states instead of inventing information.
+- Use responsive summary cards and accessible, readable charts consistent with IPAM's design language. Where practical, clicking a chart category opens Device Inventory with the corresponding filter; retain searchable, sortable, compact device lists and clear filtering.
+- Keep all analytics **offline and local**: no external telemetry, live status, reachability or health claims. Do not label a device online/offline or show activity timelines unless reliable stored evidence supports them.
+- Validate the new navigation, visualisations, Add/Edit workflows, import/export compatibility, rack/IPAM relationships, dark/light themes, narrow screens and offline standalone HTML in automated and owner browser acceptance before merging.
+
+**v1.2.0 Devices workspace refinement — owner-requested scope (19 October 2026):**
+- **Device Inventory layout:** investigate the current narrow content area and improve usable width at normal (100%) browser zoom. Reduce unnecessary nested containers and wasted horizontal space; use a responsive, readable inventory table, appropriately sized search/filter controls and consistent spacing without causing horizontal overflow on smaller screens.
+- **Device Types:** give this destination a distinct purpose as a device classification overview and management workspace. Show counts by type and useful navigation into filtered Device Inventory; provide clear, safe management of custom types and distinguish predefined from custom entries.
+- **Locations:** give this destination a distinct purpose as a location-based inventory overview, with device counts and drill-downs by location, useful missing-location indicators, and location management where supported. Avoid simply duplicating the Device Types page with a different label.
+- **Consistent navigation:** ensure Device Intelligence, Device Inventory, Device Types, Locations and upcoming Device Catalogues have clear, non-overlapping purposes and coherent sidebar labels, responsive styling and light/dark appearance.
+- **Safety and acceptance:** do not silently rename/delete types or locations used by devices; preserve existing device data, IPAM/rack relationships, backups and offline operation. Test at 100% zoom, with large datasets and on narrow screens, and obtain owner browser acceptance before merge.
+
+**v1.2.0 Device Catalogues — owner-approved scope (19 October 2026):**
+- Introduce a dedicated **Device Catalogues** section in the expandable Devices sidebar, with four separate, consistently designed destinations: **Manufacturers**, **Models**, **Software**, and **Server Services**. Keep Device Intelligence and Device Inventory prominent; avoid duplicating catalogue management controls in Add/Edit Device.
+- Each catalogue should provide an accessible, searchable list with clear **Add, Edit/Rename, and Remove** actions, helpful empty states, responsive layouts and dark/light-theme parity. Models must support filtering by **device type and manufacturer**; manufacturer suggestions should remain consistent across device types where applicable.
+- Distinguish **built-in defaults**, **user-managed catalogue entries**, and **values already used by saved devices**. Permit safe hiding/replacement of built-in suggestions rather than destructive removal of defaults; make it clear which entries are editable.
+- Retain **Other / Custom** manufacturer and model inputs in the device form for one-off values. A one-off entry must not silently become a managed catalogue item; reusable options are maintained explicitly through Device Catalogues.
+- Bring existing **Manage Software Options** and **Manage Server Services** functionality into the same navigational and visual pattern without dropping existing user-defined options, device-specific selections or stored records.
+- **Data safety:** Renaming, hiding or removing a catalogue suggestion must not silently rewrite or erase historical device manufacturer/model values, software flags or server-service values. Clearly communicate impact and confirm destructive changes. Preserve local/offline storage and compatible JSON export/restore, including migration of existing custom hardware catalogue data.
+- Deliver incrementally: **(1) Manufacturers and Models**, then **(2) Software and Server Services**, followed by regression tests for custom entry, edit/delete, reopening forms, filtering, backups, offline build and owner browser acceptance. This work was implemented and accepted in the v1.2.0 device catalogue scope.
+
+**Additional device improvements (future candidates, not automatically included in v1.2.0):**
 - Preserve dynamic fields for different device types.
 - Add contextual Operating System family, version and optional edition selection for applicable device types, with Unknown/None/Custom choices and safe legacy compatibility.
-- Refresh Device Inventory screens using the same responsive visual language as v1.1 IPAM, with clear summaries, useful filtering and compact, scalable device lists.
-- **Network Environments / customer isolation (MSP use case):** support independent customer or site addressing scopes above IP Address Blocks, allowing identical IPv4 CIDRs, VLAN IDs and gateway addresses in separate environments while retaining overlap protection within each environment. Scope device IPs, reservations, VLAN ownership, lookups, exports and validation by environment; migrate existing single-environment inventory and JSON backups safely. Do not enable duplicate ranges until allocation identity and all dependent workflows are environment-aware.
+- Continue refining Device Inventory responsiveness, filtering and compact lists as needed.
+
+### v1.2.1+ — v1.2 maintenance releases
+
+**Status: Reserved if needed.** Patch releases address bugs, regressions, compatibility and small maintenance improvements after v1.2.0. Major new functionality belongs in a minor release.
+
+### v1.3.0 — Rack management, advanced IP addressing and reporting
+
+**Status: Proposed scope agreed 20 October 2026; implementation and release require separate review and owner acceptance.**
+
+- Modernise the Racks workspace with an expandable sidebar, rack overview and useful utilisation/capacity visualisations, responsive rack inventory and clearer management workflows, consistent with Devices and IPAM.
 - Multiple IP addresses per device, optional interface associations and primary management IP.
 - Public IP address documentation, including relevant ISP, circuit and NAT metadata.
 - Flexible rack heights and presets, Wall Mounted / Free Standing / Open Frame types, optional depth and safe resizing.
@@ -86,15 +120,17 @@ Managed multi-user hosting, authentication and centrally administered deployment
 - Extend existing rack accessories with PDUs (horizontal rack-mounted and vertical 0U), fan/ventilation panels, vertical cable managers and environmental sensors; preserve existing accessories and collision safeguards.
 - Cross-module advanced search and initial inventory, subnet/IPAM and rack reporting.
 
-### v1.3 — Device relationships and interfaces
+Deliver incrementally, with explicit migration, offline-build, browser-acceptance and JSON backup/restore checks. Protect existing IPAM ownership, rack placements, historical data and collision rules.
+
+### v1.4.0 — Device relationships and interfaces
 
 **Status: Proposed**
 
 - Device relationships and upstream/downstream links.
-- Interface and port records, with optional IP associations.
+- Interface and port records, with optional IP associations, building on v1.3.0 addressing work.
 - Shared connection records visible from both connected devices.
 
-### v1.4 — Cabling and rack connectivity
+### v1.5.0 — Cabling and rack connectivity
 
 **Status: Proposed**
 
@@ -102,14 +138,23 @@ Managed multi-user hosting, authentication and centrally administered deployment
 - Duplicate endpoint protection and connection tracing.
 - Rack diagram exports; investigate SVG, Excalidraw and Visio compatibility.
 
-### v1.5 — Network topology
+### v1.6.0 — Network topology
 
 **Status: Proposed**
 
 - Physical and logical topology generated from existing relationship and cabling records.
 - Device navigation, connection tracing and usable diagram layouts.
 
-### v1.6 — Advanced network migration and lifecycle management
+### v1.7.0 — Network Environments and customer/site addressing scopes
+
+**Status: Provisional research and design milestone; feasibility and Lite product boundaries must be assessed before implementation.**
+
+- **Network Environments / customer isolation (MSP use case):** support independent customer or site addressing scopes above IP Address Blocks, allowing identical IPv4 CIDRs, VLAN IDs and gateway addresses in separate environments while retaining overlap protection within each environment.
+- Scope device IPs, reservations, VLAN ownership, lookups, exports and validation by environment; migrate existing single-environment inventory and JSON backups safely.
+- Do not enable duplicate ranges until allocation identity and all dependent workflows are environment-aware.
+- Distinguish logical separation of records within one local browser inventory from authenticated multi-user/customer security isolation. Lite must not claim secure tenant isolation or hosted MSP access without a separately designed and validated architecture.
+
+### v1.8.0 — Advanced network migration and lifecycle management
 
 **Status: Proposed; planning only**
 
