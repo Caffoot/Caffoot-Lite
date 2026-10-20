@@ -40,7 +40,7 @@ assert(html.includes('Caffoot Lite supports subnet sizes /23 through /30.'), 'Un
 assert(html.includes("if (!subnet && subnetTypeSelect.value === 'network') suggestSubnetGateway();"), 'New network subnet modal must initialize gateway suggestion without treating IP Address Blocks as networks');
 assert(html.includes("form.dataset.subnetId"), 'Existing subnet gateways must not be automatically replaced');
 assert(html.includes('function phase11CPlan('), 'IPAM repair planner must remain');
-assert(html.includes('...phase19BSoftwareFields()'), 'computer software options must be rendered');
+assert(html.includes('...phase120SoftwareFieldsFor(type)'), 'computer software options must be rendered');
 assert(html.includes('...phase19BServerFunctionFields()'), 'server feature options must be rendered');
 assert(/if\s*\(phase11BCommitDelete\(before,\s*isNetwork\s*\?\s*'Subnet & VLAN'\s*:\s*'IP Address Block'\)\)\s*closeModal\(\);\s*else\s*selectedSubnetId\s*=\s*previousSelection\s*;/.test(html), 'failed subnet deletion must restore selected subnet');
 assert(html.includes("if(!phase11BCommitDelete(before,'Rack')) { selectedRackId=previousSelection; renderContent(); }"), 'failed rack deletion must restore selected rack');
