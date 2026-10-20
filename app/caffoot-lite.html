@@ -7795,7 +7795,7 @@ function hierarchyValidateTypes(subnets) {
                 <form id="phase13c-form" class="space-y-5">
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <label class="phase13h-label">Accessory type<select name="type" required class="phase13c-field">${Object.entries(phase13CAccessoryTypes).map(([key,item])=>`<option value="${key}" ${type===key?'selected':''}>${item.label}</option>`).join('')}</select></label>
-                    <label id="phase13e-port-field" class="phase13h-label ${type==='patch'?'':'hidden'}">Patch panel ports<select name="portCount" class="phase13c-field" ${type==='patch'?'required':'disabled'}><option value="12" ${Number(existing?.portCount)===12?'selected':''}>12 ports</option><option value="24" ${![12,48].includes(Number(existing?.portCount))?'selected':''}>24 ports</option><option value="48" ${Number(existing?.portCount)===48?'selected':''}>48 ports</option></select></label>
+                    <label id="phase13e-port-field" class="phase13h-label" style="${type==='patch'?'':'display:none;'}">Patch panel ports<select name="portCount" class="phase13c-field" ${type==='patch'?'required':'disabled'}><option value="12" ${Number(existing?.portCount)===12?'selected':''}>12 ports</option><option value="24" ${![12,48].includes(Number(existing?.portCount))?'selected':''}>24 ports</option><option value="48" ${Number(existing?.portCount)===48?'selected':''}>48 ports</option></select></label>
                   </div>
                   <label class="phase13h-label">Description (optional)<input name="name" maxlength="80" class="phase13c-field" value="${escapeHtml(existing?.name||'')}" placeholder="e.g. Rack PDU or fibre patch panel"></label>
                   <fieldset class="border border-slate-200 dark:border-slate-600 rounded-xl p-4"><legend class="px-2 font-semibold text-sm">Rack placement</legend>
@@ -7822,7 +7822,7 @@ function hierarchyValidateTypes(subnets) {
             const positionHint=modal.querySelector('#phase13c-position-hint');
             function refreshAccessoryOptions() {
                 const isPatch=typeSelect.value==='patch';
-                portField.classList.toggle('hidden',!isPatch);
+                portField.style.display=isPatch?'':'none';
                 portSelect.disabled=!isPatch;
                 portSelect.required=isPatch;
                 const previous=startSelect.value||String(start);
