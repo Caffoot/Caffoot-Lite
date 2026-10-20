@@ -1,7 +1,7 @@
 # Caffoot Lite — Development Roadmap
 
 **Updated:** 20 October 2026  
-**Current milestone:** v1.2.0 Devices & Intelligence. v1.1.2 security hardening was released on 19 October 2026. v1.2.0 passed owner browser acceptance, GitHub Actions checks and automated release packaging; final publication requires approval.  
+**Current milestone:** v1.3.0 planning and staged development. v1.2.0 Devices & Intelligence was published on 20 October 2026 following owner acceptance and release verification.  
 **Repository:** `caffoot/Caffoot-Lite` (public)  
 **Release policy:** Publish publicly only after manual verification, security/privacy review and owner approval.
 
@@ -72,7 +72,7 @@ Managed multi-user hosting, authentication and centrally administered deployment
 
 ### v1.2 — Device, IPAM and rack enhancements
 
-**Status: v1.2.0 functionality and owner acceptance completed; publication prepared.** Remaining IPAM/rack/network-environment features are proposed for later milestones. Final release publication requires explicit owner approval.
+**Status: v1.2.0 published on 20 October 2026.** Remaining IPAM/rack/network-environment features are proposed for later milestones.
 
 **v1.2.0 device experience — agreed scope:**
 - Redesign Add Device and Edit Device as **wider, responsive, consistent five-tab modals** (General, Hardware, Software & Firmware, Networking, Notes). Use readable field widths, compact two-column layouts where appropriate, and single-column layouts on small screens; preserve keyboard access, validation, unsaved drafts, device-type-specific fields and existing records.
@@ -110,7 +110,7 @@ Managed multi-user hosting, authentication and centrally administered deployment
 
 ### v1.3.0 — Rack management, advanced IP addressing and reporting
 
-**Status: Proposed scope agreed 20 October 2026; implementation and release require separate review and owner acceptance.**
+**Status: Rack Management selected as the first v1.3.0 development stage on 20 October 2026; implementation and release require separate review and owner acceptance.**
 
 - Modernise the Racks workspace with an expandable sidebar, rack overview and useful utilisation/capacity visualisations, responsive rack inventory and clearer management workflows, consistent with Devices and IPAM.
 - Multiple IP addresses per device, optional interface associations and primary management IP.
@@ -121,6 +121,16 @@ Managed multi-user hosting, authentication and centrally administered deployment
 - Cross-module advanced search and initial inventory, subnet/IPAM and rack reporting.
 
 Deliver incrementally, with explicit migration, offline-build, browser-acceptance and JSON backup/restore checks. Protect existing IPAM ownership, rack placements, historical data and collision rules.
+
+**v1.3.0 Stage 1 — Rack Management Modernisation (owner-approved design direction):**
+- **1A Navigation, Overview and Inventory:** default to an estate-wide Rack Overview consistent with Devices and IPAM; expandable Racks sidebar with Rack Overview, Rack Inventory and Rack Accessories; searchable/sortable responsive inventory with per-rack drill-downs. Rack creation/editing belongs in Rack Inventory rather than duplicative sidebar destinations.
+- **Overview tabs:** Overview, Capacity, Equipment, Locations & Types. Show total racks, capacity, occupied/available U, utilisation by rack, equipment/accessory counts and useful data-completeness indicators. All charts use stored local inventory only, with empty states and actionable drill-downs; no live monitoring claims.
+- **Capacity semantics:** distinguish total free U from contiguous usable U; do not count 0U accessories as rack-unit occupancy; preserve existing front/rear placement and collision rules.
+- **1B Rack Detail & Elevation:** improve front/rear visualisation and controls while retaining existing drag-and-drop and placement behaviour.
+- **1C Rack Configuration:** rack type, flexible U height/presets, optional dimensions and safe resizing with impact validation; preserve legacy rack records.
+- **1D Accessories:** support horizontal/vertical 0U PDUs, ventilation, cable management and environmental sensors without breaking current accessories.
+- **1E Acceptance:** automated and owner browser regression, light/dark and responsive layouts, JSON export/restore, offline HTML and linked Device/IPAM/Rack integrity before merge. Keep `main` and the published v1.2.0 release unchanged until separately approved.
+
 
 ### v1.4.0 — Device relationships and interfaces
 
