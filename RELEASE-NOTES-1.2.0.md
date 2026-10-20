@@ -22,9 +22,10 @@ Existing supported JSON backup formats and historical inventory records are inte
 ## Verification status
 
 - 27 applicable automated regression checks passed during development and pre-release testing.
-- Standalone HTML build and embedded-asset verification passed before the version bump.
+- Final v1.2.0 `npm.cmd run release` pipeline passed on 20 October 2026: all 27 applicable regression commands, offline build, build verification, packaging and ZIP member/hash checks. `npm.cmd ci` reported zero dependency vulnerabilities; two package install scripts were flagged for review, not approved automatically.
 - Owner confirmed offline browser navigation and themes, redesigned Device forms, unsaved-change protection, Software Catalogue and Server Services workflows, archive/restore behaviour, and disposable-data JSON export, cancelled restore, completed restore and reopen persistence.
-- **Still required before publication:** final v1.2.0 versioned build, complete automated release pipeline, targeted Device/IPAM/Rack integrity review, documentation consistency/security/privacy checks, ZIP and SHA-256 verification, and explicit owner approval of the final candidate.
+- Owner confirmed the versioned v1.2.0 build displays the correct About version and opens Dashboard, Devices, IPAM and Racks; a disposable device's IPAM and rack relationships persisted after editing and reopening.
+- **Still required before publication:** final documentation/privacy review (including repository history and distributable contents), final downloadable asset SHA-256 recording, and explicit owner approval of the release/merge. The extracted-folder privacy gate cannot inspect Git history.
 
 This is owner-reported acceptance and automated regression evidence, not a formal security or accessibility certification.
 
