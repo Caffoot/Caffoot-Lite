@@ -7838,7 +7838,7 @@ function hierarchyValidateTypes(subnets) {
                 for(const u of options) {
                     const option=document.createElement('option');
                     option.value=String(u);
-                    option.textContent='U'+u;
+                    option.textContent=h===1?'U'+u:'U'+u+'–U'+(u+h-1);
                     startSelect.appendChild(option);
                 }
                 if(options.includes(Number(previous))) startSelect.value=previous;
