@@ -458,6 +458,11 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 </style><style id="phase13i-style">
 .phase13i-rack-item{position:relative;display:flex;align-items:center;justify-content:center;width:100%;min-width:0;padding:0 82px;overflow:hidden;box-sizing:border-box}
 .phase13i-name{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;line-height:1.2;font-weight:700;text-align:center;color:inherit}
+.phase13i-device-details{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-width:0;overflow:hidden;white-space:nowrap}
+.phase13i-device-details .phase13i-name{flex:0 1 auto;min-width:0}
+.phase13i-device-meta{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;opacity:.9}
+@media(max-width:760px){.phase13i-device-details{gap:5px}.phase13i-device-meta{font-size:10px}}
+@media(max-width:540px){.phase13i-device-meta{display:none}}
 .phase13i-actions{position:absolute;right:9px;top:50%;transform:translateY(-50%);display:flex;gap:4px;align-items:center;z-index:2}
 .phase13i-action,.phase13i-actions .phase13c-icon{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;min-width:28px;padding:0;border-radius:7px;background:rgba(255,255,255,.86);color:#334155;cursor:pointer}
 .dark .phase13i-action,.dark .phase13i-actions .phase13c-icon{background:#1e293b;color:#e2e8f0}
@@ -3005,7 +3010,7 @@ function hierarchyValidateTypes(subnets) {
                         rackSlotsHtml += `
                             <div draggable="true" data-rack-device="${escapeHtml(dev.id)}" data-rack-drop-u="${u}" data-rack-drop-id="${escapeHtml(currentRack.id)}" style="height: ${span * 40}px;" title="${escapeHtml(dev.name)} · ${escapeHtml(dev.type)} · ${escapeHtml(dev.primaryIp||'No IP')} · ${span}U · ${dev.face||'front'}" class="phase13-device phase13i-rack-item border-b border-slate-200 dark:border-slate-800 ${borderCol} transition hover:brightness-105 shadow-sm relative group">
                                 <span class="phase13j-u" aria-label="Rack position">${span===1?`U${start}`:`U${start}–${end}`}</span>
-                                <span class="phase13i-name" title="${escapeHtml(dev.name)}">${escapeHtml(dev.name)}</span>
+                                <span class="phase13i-device-details"><span class="phase13i-name" title="${escapeHtml(dev.name)}">${escapeHtml(dev.name)}</span><span class="phase13i-device-meta" title="${escapeHtml(dev.type||'Device')} · ${escapeHtml(dev.primaryIp||'No IP recorded')}">${escapeHtml(dev.type||'Device')} · ${escapeHtml(dev.primaryIp||'No IP recorded')}</span></span>
                                 <div class="phase13i-actions">
                                     <button data-action="assign-device" data-device-id="${escapeHtml(dev.id)}" data-rack-id="${escapeHtml(currentRack.id)}" data-u="${start}" class="phase13i-action" title="Edit placement" aria-label="Edit rack placement for ${escapeHtml(dev.name)}"><i class="fa-solid fa-pen"></i></button>
                                     <button data-action="unassign-device" data-id="${escapeHtml(dev.id)}" class="phase13i-action text-rose-600" title="Remove from rack" aria-label="Remove ${escapeHtml(dev.name)} from rack"><i class="fa-solid fa-trash"></i></button>
