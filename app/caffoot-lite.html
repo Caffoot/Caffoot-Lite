@@ -2960,7 +2960,7 @@ function hierarchyValidateTypes(subnets) {
                                 <span class="phase13j-u" aria-label="Rack position">${span===1?`U${start}`:`U${start}–${end}`}</span>
                                 <span class="phase13i-name" title="${escapeHtml(dev.name)}">${escapeHtml(dev.name)}</span>
                                 <div class="phase13i-actions">
-                                    <button data-action="assign-device" data-rack-id="${escapeHtml(currentRack.id)}" data-u="${start}" class="phase13i-action" title="Edit placement" aria-label="Edit rack placement for ${escapeHtml(dev.name)}"><i class="fa-solid fa-pen"></i></button>
+                                    <button data-action="assign-device" data-device-id="${escapeHtml(dev.id)}" data-rack-id="${escapeHtml(currentRack.id)}" data-u="${start}" class="phase13i-action" title="Edit placement" aria-label="Edit rack placement for ${escapeHtml(dev.name)}"><i class="fa-solid fa-pen"></i></button>
                                     <button data-action="unassign-device" data-id="${escapeHtml(dev.id)}" class="phase13i-action text-rose-600" title="Remove from rack" aria-label="Remove ${escapeHtml(dev.name)} from rack"><i class="fa-solid fa-trash"></i></button>
                                 </div>
                             </div>
@@ -5374,11 +5374,13 @@ function hierarchyValidateTypes(subnets) {
             else dialog.prepend(switcher);
         }
 
-        function openAssignDeviceModal(rackId, slotU) {
+        function openAssignDeviceModal(rackId, slotU, editDeviceId = null) {
             const rack = appState.racks.find(r => r.id === rackId);
             if (!rack) { showToast('Select a rack before mounting a device.', 'error'); return; }
             const occupant = appState.devices.find(d => d.rackId === rackId && (d.face || 'front') === activeRackFace &&
                 Number(d.rackUStart) <= Number(slotU) && Number(d.rackUEnd || d.rackUStart) >= Number(slotU));
+            const editingDevice = editDeviceId ? appState.devices.find(d => d.id === editDeviceId && d.rackId === rackId) : null;
+            if (editDeviceId && !editingDevice) { showToast('The mounted device could not be found.', 'error'); return; }
             const unassignedDevices = appState.devices.filter(d => d.mountType === 'Rack Mounted' && phase19BAllowedMounts(d.type).includes('Rack Mounted') && (!d.rackId || d.rackId === rackId));
             if (occupant) unassignedDevices.sort((a, b) => (a.id === occupant.id ? -1 : b.id === occupant.id ? 1 : 0));
 
@@ -5392,9 +5394,9 @@ function hierarchyValidateTypes(subnets) {
                         <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-link"></i>Device</div>
                         <div>
                             <label class="block text-xs font-semibold mb-1">Select Device from Inventory <span class="required-mark">*</span></label>
-                            <select id="assign-device-id" required class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
-                                ${unassignedDevices.length ? '<option value="" selected disabled>Select a device...</option>' : '<option value="" selected disabled>No eligible Rack Mounted devices available</option>'}
-                                ${unassignedDevices.map(d => `<option value="${escapeHtml(d.id)}">${escapeHtml(d.name)} (${escapeHtml(d.type)})</option>`).join('')}
+                            <select id="assign-device-id" required ${editingDevice ? 'aria-label="Mounted device being edited"' : ''} class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
+                                ${editingDevice ? '' : (unassignedDevices.length ? '<option value="" selected disabled>Select a device...</option>' : '<option value="" selected disabled>No eligible Rack Mounted devices available</option>')}
+                                ${unassignedDevices.map(d => `<option value="${escapeHtml(d.id)}" ${editingDevice && d.id === editingDevice.id ? 'selected' : ''}>${escapeHtml(d.name)} (${escapeHtml(d.type)})</option>`).join('')}
                             </select>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
@@ -7950,7 +7952,7 @@ function hierarchyValidateTypes(subnets) {
                 case 'phase18b-place': phase18BOpenPlacement(target.dataset.rackId, Number(target.dataset.u)); break;
                 case 'phase18b-placement-device': phase18BOpenPlacement(target.dataset.rackId, Number(target.dataset.u), 'device'); break;
                 case 'phase18b-placement-accessory': phase18BOpenPlacement(target.dataset.rackId, Number(target.dataset.u), 'accessory'); break;
-                case 'assign-device': openAssignDeviceModal(target.dataset.rackId, Number(target.dataset.u)); break;
+                case 'assign-device': openAssignDeviceModal(target.dataset.rackId, Number(target.dataset.u), target.dataset.deviceId || null); break;
                 case 'unassign-device': unassignDevice(id); break;
                 case 'open-subnet-modal': openSubnetModal(); break;
                 case 'edit-subnet': openSubnetModal(id); break;
