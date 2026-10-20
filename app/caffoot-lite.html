@@ -846,6 +846,12 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .phase17d-rack-scroll { max-height: clamp(320px, calc(100dvh - 260px), 720px); min-height: 0; overscroll-behavior-y: contain; overflow-y: auto; -webkit-overflow-scrolling: touch; scroll-behavior: auto; scrollbar-gutter: stable; }
 .phase17d-rack-scroll[data-rack-scrollable="true"] { border-bottom: 2px solid #94a3b8; }
 .phase17d-rack-scroll[data-rack-scrollable="true"][data-more-below="true"]::after { content: "Scroll inside this rack to see more U positions"; display:block; position:sticky; bottom:0; margin:12px auto -24px; padding:5px 12px; width:max-content; max-width:100%; border-radius:8px 8px 0 0; background:#334155; color:#fff; font-size:11px; font-weight:600; pointer-events:none; }
+/* Match tall rack viewport to the adjacent details column, keeping internal scroll. */
+@media(min-width:1024px){
+.phase17d-tall-layout{align-items:stretch}
+.phase17d-tall-panel{height:100%;min-height:0}
+.phase17d-tall-panel .phase17d-rack-scroll{flex:1 1 0;height:0;min-height:320px;max-height:none}
+}
 @media(max-width:640px){.phase17d-rack-scroll{max-height:clamp(280px,calc(100dvh - 230px),620px);padding:12px!important}}
 @media(prefers-reduced-motion:reduce){.phase17d-rack-scroll{scroll-behavior:auto}}
 .phase17d-rack-scroll:focus-visible { outline: 2px solid #10b981; outline-offset: -2px; }
@@ -3076,8 +3082,8 @@ function hierarchyValidateTypes(subnets) {
                     </div>
 
                     <section class="${phase13BRackTab==='view'?'':'hidden'} space-y-4" aria-label="Visual rack view">
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-                        <div class="lg:col-span-2 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden flex flex-col">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start ${Number(currentRack.heightU)>12?'phase17d-tall-layout':''}">
+                        <div class="lg:col-span-2 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden flex flex-col ${Number(currentRack.heightU)>12?'phase17d-tall-panel':''}">
                             <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 flex items-center justify-between">
                                 <div class="flex items-center space-x-3">
                                     <span class="w-3 h-3 rounded-full ${activeRackFace === 'front' ? 'bg-emerald-500' : 'bg-orange-500'}"></span>
