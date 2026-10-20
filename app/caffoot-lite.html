@@ -1651,6 +1651,7 @@ function hierarchyValidateTypes(subnets) {
         let phase13CDraggedAccessoryId = null;
         let phase13BRackTab = 'view';
         let v13RackSection = 'overview';
+        let v13RackDetailOpen = false;
         let phase13CSelectedAccessory = 'blank';
         // Phase 6: temporarily preserve the device form while creating a missing subnet.
         let deviceFormDraft = null;
@@ -2840,7 +2841,18 @@ function hierarchyValidateTypes(subnets) {
                 const rows=racks.map(r=>`<button type="button" data-action="v13-open-rack" data-id="${escapeHtml(r.id)}" class="w-full text-left flex flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3 hover:bg-indigo-50 dark:hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500"><span class="font-semibold text-slate-900 dark:text-white">${escapeHtml(r.name)}</span><span class="text-sm text-slate-600 dark:text-slate-300">${escapeHtml(r.location||'Location not recorded')} · ${Number(r.heightU)||0}U · ${mounted.filter(d=>d.rackId===r.id).length} devices</span></button>`).join('');
                 body=`<section class="space-y-5" aria-label="Estate-wide rack overview"><div><h2 class="text-xl font-bold text-slate-900 dark:text-white">Rack Overview</h2><p class="text-sm text-slate-600 dark:text-slate-300">All recorded racks across your inventory. Select a rack to open its existing elevation and management tools.</p></div><div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">${card('Total racks',racks.length,'fa-server')}${card('Total rack capacity',totalU+'U','fa-ruler-vertical')}${card('Mounted devices',mounted.length,'fa-hard-drive')}${card('Rack accessories',linkedAccessories.length,'fa-layer-group')}</div><div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-3"><h3 class="font-bold text-slate-900 dark:text-white">Racks across your estate</h3>${rows||'<p class="text-sm text-slate-600 dark:text-slate-300">No racks recorded yet. Open Rack Inventory to create your first rack.</p>'}</div><p class="text-xs text-slate-500 dark:text-slate-400">Capacity utilisation and contiguous free-space calculations will follow after placement semantics are verified. No live monitoring is performed.</p></section>`;
             } else if(v13RackSection==='inventory') {
-                body=renderRacksHTML();
+                if(v13RackDetailOpen && racks.some(r=>r.id===selectedRackId)) {
+                    const selected=racks.find(r=>r.id===selectedRackId);
+                    body=`<div class="space-y-4"><button type="button" data-action="v13-rack-back" class="rounded-xl border border-slate-300 dark:border-slate-600 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700"><i class="fa-solid fa-arrow-left mr-2" aria-hidden="true"></i>Back to Rack Inventory</button><h2 class="text-xl font-bold text-slate-900 dark:text-white">${escapeHtml(selected.name)}</h2>${renderRacksHTML()}</div>`;
+                } else {
+                    const tableRows=racks.map(r=>{
+                        const count=mounted.filter(d=>d.rackId===r.id).length;
+                        const acc=linkedAccessories.filter(a=>a.rackId===r.id).length;
+                        const name=escapeHtml(r.name||'Unnamed rack'),location=escapeHtml(r.location||'Not recorded');
+                        return `<tr data-v13-rack-row data-search="${escapeHtml((r.name||'')+' '+(r.location||''))}" class="border-b border-slate-200 dark:border-slate-700 last:border-0"><td class="px-4 py-3 font-semibold text-slate-900 dark:text-white">${name}</td><td class="px-4 py-3">${location}</td><td class="px-4 py-3 whitespace-nowrap">${Number(r.heightU)||0}U</td><td class="px-4 py-3">${count}</td><td class="px-4 py-3">${acc}</td><td class="px-4 py-3"><button type="button" data-action="v13-open-rack" data-id="${escapeHtml(r.id)}" class="rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 text-xs font-bold">View rack</button></td></tr>`;
+                    }).join('');
+                    body=`<section class="space-y-4" aria-label="Rack inventory"><div class="flex flex-wrap gap-3 justify-between items-center"><div><h2 class="text-xl font-bold text-slate-900 dark:text-white">Rack Inventory</h2><p class="text-sm text-slate-600 dark:text-slate-300">Search your racks, or open one to view its equipment and settings.</p></div><button type="button" data-action="open-rack-modal" class="rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 text-sm font-bold"><i class="fa-solid fa-plus mr-2" aria-hidden="true"></i>Add Rack</button></div><div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 overflow-hidden"><div class="p-4 border-b border-slate-200 dark:border-slate-700"><label for="v13-rack-search" class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Search racks</label><input id="v13-rack-search" type="search" placeholder="Search by rack name or location" class="w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white px-3 py-2.5" /></div><div class="overflow-x-auto"><table class="w-full text-left text-sm text-slate-700 dark:text-slate-200"><thead class="bg-slate-100 dark:bg-slate-900/60"><tr><th class="px-4 py-3">Rack</th><th class="px-4 py-3">Location</th><th class="px-4 py-3">Height</th><th class="px-4 py-3">Devices</th><th class="px-4 py-3">Accessories</th><th class="px-4 py-3">Actions</th></tr></thead><tbody>${tableRows||'<tr><td colspan="6" class="px-4 py-6 text-center">No racks recorded yet. Add a rack to get started.</td></tr>'}</tbody></table></div><p id="v13-rack-no-results" class="hidden px-4 py-4 text-sm text-slate-600 dark:text-slate-300">No racks match your search.</p></div></section>`;
+                }
             } else {
                 body=`<section class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4"><h2 class="text-xl font-bold text-slate-900 dark:text-white">Rack Accessories</h2><p class="text-sm text-slate-600 dark:text-slate-300">Existing accessories remain editable from each rack's elevation. Choose a rack below to manage its accessories.</p>${racks.map(r=>`<button type="button" data-action="v13-open-rack" data-id="${escapeHtml(r.id)}" class="block w-full text-left rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3 hover:bg-indigo-50 dark:hover:bg-slate-700 font-semibold text-slate-900 dark:text-white">${escapeHtml(r.name)} — ${linkedAccessories.filter(a=>a.rackId===r.id).length} accessories</button>`).join('')||'<p class="text-sm text-slate-600 dark:text-slate-300">No racks recorded yet.</p>'}</section>`;
             }
@@ -8000,10 +8012,11 @@ function hierarchyValidateTypes(subnets) {
 
 
                 case 'tab-ipam': switchTab('ipam'); break;
+                case 'v13-rack-back': v13RackDetailOpen=false; switchTab('racks'); break;
                 case 'sidebar-racks-overview': v13RackSection='overview'; switchTab('racks'); break;
-                case 'sidebar-racks-inventory': v13RackSection='inventory'; switchTab('racks'); break;
+                case 'sidebar-racks-inventory': v13RackSection='inventory'; v13RackDetailOpen=false; switchTab('racks'); break;
                 case 'sidebar-racks-accessories': v13RackSection='accessories'; switchTab('racks'); break;
-                case 'v13-open-rack': { const rack=appState.racks.find(r=>r.id===target.dataset.id); if(rack){selectedRackId=rack.id;v13RackSection='inventory';phase13BRackTab='view';switchTab('racks');} break; }
+                case 'v13-open-rack': { const rack=appState.racks.find(r=>r.id===target.dataset.id); if(rack){selectedRackId=rack.id;v13RackSection='inventory';v13RackDetailOpen=true;phase13BRackTab='view';switchTab('racks');} break; }
                 case 'tab-racks': switchTab('racks'); break;
                 case 'toggle-dark-mode': toggleDarkMode(); break;
                 case 'export-data': exportData(); break;
@@ -8012,6 +8025,19 @@ function hierarchyValidateTypes(subnets) {
                 default:
                     console.warn('Unhandled data-action:', action);
             }
+        });
+
+        document.addEventListener('input', function(event) {
+            if(event.target?.id !== 'v13-rack-search') return;
+            const query=event.target.value.trim().toLocaleLowerCase();
+            let shown=0;
+            document.querySelectorAll('[data-v13-rack-row]').forEach(row=>{
+                const match=(row.dataset.search||'').toLocaleLowerCase().includes(query);
+                row.classList.toggle('hidden',!match);
+                if(match) shown++;
+            });
+            const empty=document.getElementById('v13-rack-no-results');
+            if(empty) empty.classList.toggle('hidden',shown!==0 || !(appState.racks||[]).length);
         });
 
         window.onload = function() {
