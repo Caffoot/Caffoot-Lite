@@ -1,7 +1,7 @@
 # Caffoot Lite — Development Roadmap
 
 **Updated:** 20 October 2026  
-**Current milestone:** v1.1.2 (security hardening and deployment guidance) published on 19 October 2026 following automated validation, owner browser acceptance, PR #44 merge and verified release packaging. Next proposed milestone: v1.2.0.  
+**Current milestone:** v1.1.2 (security hardening and deployment guidance) published on 19 October 2026 following automated validation, owner browser acceptance, PR #44 merge and verified release packaging. v1.2.0 release candidate passed owner browser acceptance and automated release packaging; merge and publication pending.  
 **Repository:** `caffoot/Caffoot-Lite` (public)  
 **Release policy:** Publish publicly only after manual verification, security/privacy review and owner approval.
 
@@ -72,7 +72,7 @@ Managed multi-user hosting, authentication and centrally administered deployment
 
 ### v1.2 — Device, IPAM and rack enhancements
 
-**Status: Active development on `feature/v1.2.0-device-form-tabs`; expanded device experience approved for v1.2.0 on 19 October 2026.** Remaining IPAM/rack/network-environment features are still proposed and may be split into later milestones. No merge or publication without owner acceptance.
+**Status: v1.2.0 release candidate tested on `feature/v1.2.0-device-form-tabs`; final review, merge and publication pending.** Remaining IPAM/rack/network-environment features are still proposed and may be split into later milestones. No merge or publication without owner acceptance.
 
 **v1.2.0 device experience — agreed scope:**
 - Redesign Add Device and Edit Device as **wider, responsive, consistent five-tab modals** (General, Hardware, Software & Firmware, Networking, Notes). Use readable field widths, compact two-column layouts where appropriate, and single-column layouts on small screens; preserve keyboard access, validation, unsaved drafts, device-type-specific fields and existing records.
