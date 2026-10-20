@@ -27,7 +27,7 @@ for (const payload of payloads) {
   };
   const ctx=vm.createContext({
     appState:{devices:[device],racks:[]},
-    phase14DeviceTab:'inventory',deviceSearchTerm:'',deviceAssignmentFilter:'',deviceTypeFilter:'',
+    phase14DeviceTab:'inventory',deviceIntelligenceTab:'overview',deviceOsFilter:'',deviceServiceFilter:'',deviceMissingFilter:'',deviceHardwareFilter:null,deviceSearchTerm:'',deviceAssignmentFilter:'',deviceTypeFilter:'',
     deviceStatusFilter:'',deviceLocationFilter:'',deviceMountFilter:'',deviceSort:'name-asc',
     getVisibleDevices:()=>[device],
     getUniqueDeviceTypes:()=>[payload],
