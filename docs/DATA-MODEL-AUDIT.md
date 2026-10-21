@@ -44,3 +44,29 @@
 - Map every stored key and decide which belongs in a future database, local preferences, audit archive or recovery store.
 - Define migration test fixtures for overlapping VLAN/IP domains, rack collision rules, failed writes and legacy backups.
 - Cross-check this audit against final v1.3.0 release artefacts and automated tests.
+
+## Lifecycle review — source-confirmed examples
+
+| Operation | Current behaviour | Future persistence requirement |
+| --- | --- | --- |
+| Device create/edit | `handleDeviceSubmit` validates device form values, including selected virtual host and primary IP; `setDevicePrimaryIp` checks conflicting device, reservation and gateway ownership before changing the address | Commit device and associated IPAM changes atomically; retain meaningful conflict messages |
+| Device delete | `deleteDevice` counts linked allocations and reservations for confirmation, deletes device-owned IPAM records, and clears `reservedForDeviceId` on other records | Explicit transaction with defined deletion policy for linked records |
+| Subnet delete | `deleteSubnet` refuses deletion with children; `deleteSubnetCommit` rechecks independent reservations and VLAN ownership, detaches device primary IPs while recording `previousPrimaryIp`, and may remove the corresponding VLAN | Revalidate dependencies at commit time, prevent concurrent changes and preserve previous-IP history |
+| VLAN delete | `deleteVlan` checks linked networks using both VLAN number and parent address-block domain | Scoped foreign-key/business-rule checks; never rely on VLAN number alone |
+| Rack delete | `deleteRack` refuses deletion while devices or accessories remain mounted | Enforce no-orphan policy for rack placements |
+| Rack edit | `handleRackSubmit` rejects shrinking below mounted device or accessory positions | Validate against all placements within one transaction |
+| Rack device placement | `validateRackPlacement` checks rack bounds and front/rear overlaps, including applicable accessories | Preserve face-aware and 0U accessory semantics in future constraints |
+
+**Important:** The current `validateApplicationState` check does not visibly validate every cross-reference (for example `virtualHostId` or `reservedForDeviceId`), although individual workflows may perform their own checks. This is a **test-coverage and invariant-review item**, not proof of a user-facing defect. Review all relevant handlers and fixtures before changing code.
+
+### Initial migration test matrix
+
+- Create/edit/delete a device with a primary IP, independent reservation, and reserved-for-device link.
+- Delete a network with linked device IPs and its scoped VLAN; confirm blocked deletion when independent reservations or children remain.
+- Use the same VLAN number in distinct address blocks without cross-deletion.
+- Edit/delete a rack with front/rear mounted devices, overlapping accessories and 0U placements.
+- Preserve virtual-host relationships and old IDs across export/import.
+- Inject failed persistence between linked changes and verify full rollback.
+- Repeat migrations and restores without duplicating UUIDs, records or links.
+
+These findings are based on static source inspection, **not** execution of the regression suite.
