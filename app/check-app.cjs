@@ -425,9 +425,10 @@ assert(html.includes('.phase13k-elevation .phase13-empty:focus-visible > span{co
 console.log('RC1 rack elevation contrast regression checks passed.');
 
 // RC1: labels must remain associated with essential Device and Subnet controls.
-for (const id of ['sub-cidr','sub-name','sub-vlan','sub-gw','sub-desc','dev-name','dev-type','dev-custom-type']) {
+for (const id of ['sub-cidr','sub-name','sub-vlan','sub-gw','sub-desc','dev-name','dev-type','dev-location']) {
   assert(html.includes('for="' + id + '"'), 'Missing accessible label for ' + id);
 }
+assert(!html.includes('id="dev-custom-type"'), 'Removed inline custom type input must not return');
 console.log('RC1 essential form label safeguards passed.');
 
 assert(html.includes("document.addEventListener('invalid', function(event)"), 'native invalid fields must be handled accessibly');
