@@ -5320,6 +5320,7 @@ function hierarchyValidateTypes(subnets) {
                 event.preventDefault();
                 if(document.getElementById('phase18d-delete-dialog')){phase18DCancelDelete();return;}
                 if(document.getElementById('phase130-conversion-dialog')){phase130ResolveDeviceConversion(false);return;}
+                if(document.getElementById('phase130-restore-dialog')){phase130ResolveRestore(false);return;}
                 if(document.getElementById('phase120-rack-correction-dialog')){phase120ResolveRackCorrection(false);return;}
                 if(document.getElementById('phase120-discard-dialog')){phase120KeepEditing();return;}
                 if (container.querySelector('.phase18d-manager[data-phase18d-editing="true"]')) {
@@ -5993,6 +5994,7 @@ function hierarchyValidateTypes(subnets) {
             const device = getDeviceById(deviceId);
             const entries = Array.isArray(device?.previousTypeDetails) ? device.previousTypeDetails : [];
             const snapshot = entries[index];
+            if (!Number.isInteger(index) || index < 0 || index >= entries.length) { showToast('Previous configuration not found.', 'error'); return; }
             if (!device || !snapshot || !snapshot.type || !snapshot.details || typeof snapshot.details !== 'object' || Array.isArray(snapshot.details)) {
                 showToast('Previous configuration not found.', 'error'); return;
             }
