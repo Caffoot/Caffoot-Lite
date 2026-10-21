@@ -20,4 +20,10 @@ assert.match(suggestedMounts, /\['Rack Mounted','Tower \/ Floor Standing','Table
 assert.match(allowedMounts, /'Shelf Mounted'/, 'Legacy Shelf Mounted selections remain valid');
 assert.doesNotMatch(suggestedMounts, /,'Shelf Mounted'/, 'Duplicate Shelf Mounted suggestion is removed');
 assert.match(source, /if \(mountType === 'Rack Mounted'\)\s*\{/, 'Rack-specific save requirements remain conditional');
+
+// v1.3.0: opening a legacy device editor must preserve a valid historical mount.
+const mountRefresh = source.match(/function phase120RefreshMountOptions\(type\)\s*\{([\s\S]*?)\n\s*\}/)?.[1] || '';
+assert.match(mountRefresh, /phase19BAllowedMounts\(type\)\.includes\(previous\)/, 'Valid legacy mounting is preserved when opening the editor');
+assert.match(mountRefresh, /options\.includes\(previous\)/, 'Suggested mounting remains preserved');
+assert.match(mountRefresh, /phase120DefaultMount\(type\)/, 'Invalid mounting still falls back to the type default');
 console.log('PASS: location/rack separation and tower-server mounting source contracts.');
