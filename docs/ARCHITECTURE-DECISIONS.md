@@ -57,3 +57,13 @@ Continue supporting validated, versioned JSON import/export as a portable interc
 Read-only source review of `app/caffoot-lite.html` found `caffoot_state` in browser `localStorage`, `STATE_VERSION = 3`, `normaliseState`, `validateApplicationState`, `phase20CreateBackup`, `phase20MigrateBackup`, `phase16CCheckBackup` and a pre-restore safety snapshot. New device IDs currently use a `dev_` plus timestamp pattern, not UUIDs. Existing record IDs are references and must remain stable during any migration. This audit is not a test run and does not prove all data paths or security properties.
 
 **Migration design requirement:** Retain legacy IDs and their links while adding new immutable UUIDs in a staged migration. Validate collisions, import idempotency, linked records and rollback before adopting UUID-based internal references. Never silently rewrite a live inventory or its only backup.
+
+## ADR-009 — Asset ID numbering policy
+
+**Status:** Accepted product direction — 21 October 2026; implementation deferred.
+
+Support optional human-readable Asset IDs with configurable prefix, starting number and zero-padding (for example `CAF-000001`). Asset IDs are distinct from immutable internal UUIDs, preserved legacy IDs, hostnames and IP addresses.
+
+**Rules agreed:** Asset IDs must be unique within an inventory scope; never automatically recycle a retired/issued number; retain existing asset tags without automatic renumbering. Changes to Asset IDs must not affect internal identity or relationships. Define safe handling for manual edits, collisions, imports, gaps and concurrent allocation before coding. Future multi-tenant scopes require separate authorization and uniqueness review.
+
+**Consequences:** This decision establishes design direction, not a new v1.4.0 end-user feature. See [Identity & Migration Contract](IDENTITY-MIGRATION-CONTRACT.md).
