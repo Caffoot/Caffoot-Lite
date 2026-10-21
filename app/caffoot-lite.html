@@ -360,6 +360,13 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .phase13-empty{position:relative}
 .phase13-empty:focus-visible{outline:3px solid #38bdf8;outline-offset:2px}
 @media(prefers-reduced-motion:reduce){.phase13-device{transition:none!important}}
+</style><style id="phase13-vertical-rail-preview">
+/* Stage 1D: non-interactive 0U side-rail preview; no rack capacity or placement changes. */
+.phase13-vertical-layout{display:grid;grid-template-columns:32px minmax(0,1fr) 32px;gap:5px;align-items:stretch;padding:5px}
+.phase13-vertical-rail{background:repeating-linear-gradient(to bottom,#334155 0px,#334155 38px,#475569 38px,#475569 40px);border:1px solid #64748b;border-radius:4px;min-width:0}
+.phase13-vertical-rail-labels{display:grid;grid-template-columns:32px minmax(0,1fr) 32px;gap:5px;padding:4px 5px 7px;background:#1e293b;color:#e2e8f0;font-size:11px;font-weight:700;text-align:center}
+.phase13-vertical-rail-labels span:nth-child(2){font-weight:500;font-size:10px}
+@media(max-width:480px){.phase13-vertical-layout,.phase13-vertical-rail-labels{grid-template-columns:22px minmax(0,1fr) 22px;gap:3px}}
 </style><style id="phase13b-style">
 .phase13b-tabs{display:flex;gap:8px;overflow-x:auto;padding:4px 0 2px}
 .phase13b-tab{flex:1 0 auto;min-height:44px;padding:10px 14px;border-radius:12px;font-size:14px;font-weight:650;border:1px solid #94a3b8;color:#334155;background:#f8fafc}
@@ -3101,8 +3108,15 @@ function hierarchyValidateTypes(subnets) {
                                         <span>Equipment — ${activeRackFace.toUpperCase()} face</span>
                                         <span>Placement</span>
                                     </div>
-                                    <div class="flex flex-col">
-                                        ${rackSlotsHtml}
+                                    <div class="phase13-vertical-layout" aria-label="0U vertical accessory rail preview">
+                                        <div class="phase13-vertical-rail" aria-label="Left 0U rail, as viewed from this face"></div>
+                                        <div class="flex flex-col min-w-0">
+                                            ${rackSlotsHtml}
+                                        </div>
+                                        <div class="phase13-vertical-rail" aria-label="Right 0U rail, as viewed from this face"></div>
+                                    </div>
+                                    <div class="phase13-vertical-rail-labels" aria-label="Side orientation as viewed from ${activeRackFace} face">
+                                        <span>L</span><span>As viewed from ${activeRackFace} face</span><span>R</span>
                                     </div>
                                     <div class="bg-slate-800 text-slate-400 px-4 py-2 text-xs text-center font-mono">
                                         ${escapeHtml(currentRack.location || 'Server Room')} • Total Height: ${currentRack.heightU}U
