@@ -605,6 +605,9 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .phase14b-device-modal input:focus-visible,.phase14b-device-modal select:focus-visible{outline:2px solid #818cf8;outline-offset:1px;}
 .phase14b-device-modal .phase14b-add-inline{display:grid;grid-template-columns:minmax(0,1fr) 43px;gap:8px;}
 .phase14b-device-modal .phase14b-add-inline button{height:43px;width:43px;border-radius:10px;display:grid;place-items:center;}
+.phase14b-device-modal .phase14b-location-create-row{grid-template-columns:minmax(0,1fr) 58px 78px;align-items:center;gap:8px;}
+.phase14b-device-modal .phase14b-location-create-row button{width:100%;height:43px;white-space:nowrap;}
+@media(max-width:520px){.phase14b-device-modal .phase14b-location-create-row{grid-template-columns:minmax(0,1fr) 58px 78px;gap:5px;}}
 .phase14b-device-modal .phase14b-rack-config{padding:18px;border:1px solid #94a3b855;border-radius:12px;}
 .phase14b-device-modal .phase14b-rack-config .phase14b-rack-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;align-items:start;}
 .phase14b-device-modal .phase14b-rack-config label{font-size:.78rem!important;text-transform:none!important;color:inherit!important;}
@@ -5320,6 +5323,11 @@ function hierarchyValidateTypes(subnets) {
         }
 
         document.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' && event.target?.id === 'dev-custom-location') {
+                event.preventDefault();
+                addCustomLocationOption();
+                return;
+            }
             const container = document.getElementById('modal-container');
             if (!container || container.classList.contains('hidden')) return;
             if (event.key === 'Escape') {
