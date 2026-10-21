@@ -5831,7 +5831,7 @@ function hierarchyValidateTypes(subnets) {
         function phase19CDetailLabel(key, type) {
             if (phase19BTypeGroups[String(type || '').toLowerCase().trim()] === 'router' && key === 'networkConnection') return 'WAN connection method';
             const managed = [...phase19BServerFunctions(), ...phase120SoftwareOptions()].find(item => item.key === key);
-            return managed?.label || phase19BLabels[key] || key;
+            return ({softwarePlatform:'Operating System',softwareVersion:'OS Version',windowsLicence:'Windows Licence'})[key] || managed?.label || phase19BLabels[key] || key;
         }
         function phase19CDetailRows(device, field) {
             const details = device.typeDetails && typeof device.typeDetails === 'object' ? device.typeDetails : {};
@@ -5883,7 +5883,7 @@ function hierarchyValidateTypes(subnets) {
                     <button type="button" data-action="close-modal" aria-label="Close device details" class="phase14c-close"><i class="fa-solid fa-xmark"></i></button>
                 </header>
                 <nav class="phase14c-tabs" role="tablist" aria-label="Device detail sections">
-                    ${[['overview','Overview'],['hardware','Hardware'],['network','Network'],['software','Software'],['location','Location']].map(([key,label],i)=>`<button type="button" role="tab" id="phase14c-tab-${key}" aria-controls="phase14c-panel-${key}" aria-selected="${i===0?'true':'false'}" tabindex="${i===0?'0':'-1'}" data-action="phase14c-tab" data-name="${key}" class="phase14c-tab ${i===0?'phase14c-tab-active':''}">${label}</button>`).join('')}
+                    ${[['overview','Overview'],['hardware','Hardware'],['network','Network'],['software','Software'],['location','Location'],...(historyRows?[['history','History']]:[])].map(([key,label],i)=>`<button type="button" role="tab" id="phase14c-tab-${key}" aria-controls="phase14c-panel-${key}" aria-selected="${i===0?'true':'false'}" tabindex="${i===0?'0':'-1'}" data-action="phase14c-tab" data-name="${key}" class="phase14c-tab ${i===0?'phase14c-tab-active':''}">${label}</button>`).join('')}
                 </nav>
                 <div class="phase14c-panels">
                     <div id="phase14c-panel-overview" role="tabpanel" aria-labelledby="phase14c-tab-overview" class="phase14c-panel">
@@ -5903,8 +5903,8 @@ function hierarchyValidateTypes(subnets) {
                     </div>
                     <div id="phase14c-panel-location" role="tabpanel" aria-labelledby="phase14c-tab-location" class="phase14c-panel" hidden>
                         ${section('Mounting & location', 'fa-location-dot', field('Mounting', d.mountType || (mounted ? 'Rack Mounted' : 'Desktop')) + field('Location', d.location) + rackRows)}
-                        ${historyRows?`<section class="phase14c-section"><h4>Previous Device Type Details</h4><p class="text-sm mb-3">Preserved for reference only; not part of the active configuration.</p>${historyRows}</section>`:''}
                     </div>
+                    ${historyRows?`<div id="phase14c-panel-history" role="tabpanel" aria-labelledby="phase14c-tab-history" class="phase14c-panel" hidden><section class="phase14c-section"><h4>Previous Device Type Details</h4><p class="text-sm mb-3">Preserved for reference only; not part of the active configuration.</p>${historyRows}</section></div>`:''}
                 </div>
                 <footer class="phase19d1-actions">
                     <button type="button" data-action="phase14c-duplicate" data-id="${safe(d.id)}" class="phase19d1-secondary"><i class="fa-solid fa-copy" aria-hidden="true"></i>Duplicate</button>
@@ -5959,6 +5959,8 @@ function hierarchyValidateTypes(subnets) {
             selectedRackId = appState.racks.find(r => String(r.id) === String(d.rackId)).id;
             activeRackFace = d.face === 'rear' ? 'rear' : 'front';
             phase13BRackTab = 'view';
+            v13RackSection = 'inventory';
+            v13RackDetailOpen = true;
             closeModal();
             // Switch through the normal navigation path so the selected rack and face render.
             switchTab('racks');
