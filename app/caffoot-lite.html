@@ -6855,7 +6855,7 @@ function hierarchyValidateTypes(subnets) {
                         <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-rack"></i>Mounting & location</div><div><label for="dev-mount-type" class="form-label">Device Mounting <span class="required-mark">*</span></label><select id="dev-mount-type" required data-action="device-mount-type-change" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" disabled>Select mounting type...</option>${phase19BMountOptions(currentType,mountType)}</select></div>
                         <div>
                             <label for="dev-location" class="block text-xs font-semibold mb-1">Location Area <span class="required-mark">*</span></label>
-                            <select id="dev-location" required data-action="device-location-change" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" disabled ${currentLoc === '' ? 'selected' : ''}>Select a location...</option>${locations.map(l => `<option value="${escapeHtml(l)}" ${currentLoc === l ? 'selected' : ''}>${escapeHtml(l)}</option>`).join('')}<option value="__caffoot_create_location__">+ Create new location…</option></select>
+                            <select id="dev-location" required data-previous-location="${escapeHtml(currentLoc)}" data-action="device-location-change" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" disabled ${currentLoc === '' ? 'selected' : ''}>Select a location...</option>${locations.map(l => `<option value="${escapeHtml(l)}" ${currentLoc === l ? 'selected' : ''}>${escapeHtml(l)}</option>`).join('')}<option value="__caffoot_create_location__">+ Create new location…</option></select>
                             <div id="dev-create-location-panel" hidden class="mt-2"><label for="dev-custom-location" class="block text-xs font-semibold mb-1">New location name</label><div class="phase14b-add-inline phase14b-location-create-row"><input type="text" id="dev-custom-location" placeholder="Enter a new location" class="flex-1 min-w-48 border rounded-xl px-2.5 py-2 text-sm dark:bg-slate-700"><button type="button" data-action="add-custom-location" class="px-3 py-2 bg-indigo-600 text-white rounded-xl text-xs font-semibold">Add</button><button type="button" data-action="cancel-custom-location" class="px-3 py-2 bg-slate-200 dark:bg-slate-600 rounded-xl text-xs font-semibold">Cancel</button></div></div>
                         </div>
                         <div id="racked-options" ${mountType === 'Rack Mounted' ? '' : 'hidden'} class="${mountType === 'Rack Mounted' ? '' : 'hidden'} phase14b-rack-config bg-slate-100 dark:bg-slate-900">
@@ -7015,11 +7015,13 @@ function hierarchyValidateTypes(subnets) {
             const panel = document.getElementById('dev-create-location-panel');
             if (!panel) return;
             if (select.value === '__caffoot_create_location__') {
+                phase130PreviousLocation = select.dataset.previousLocation || '';
                 panel.hidden = false;
                 document.getElementById('dev-custom-location')?.focus();
                 return;
             }
             phase130PreviousLocation = select.value;
+            select.dataset.previousLocation = select.value;
             panel.hidden = true;
             toggleRackLocationFields(select.value);
         }
@@ -7028,6 +7030,7 @@ function hierarchyValidateTypes(subnets) {
             const panel = document.getElementById('dev-create-location-panel');
             if (!select || !panel) return;
             select.value = phase130PreviousLocation && Array.from(select.options).some(o => o.value === phase130PreviousLocation) ? phase130PreviousLocation : '';
+            select.dataset.previousLocation = select.value;
             panel.hidden = true;
             const input = document.getElementById('dev-custom-location');
             if (input) input.value = '';
@@ -7053,6 +7056,7 @@ function hierarchyValidateTypes(subnets) {
                 showToast(`Added location: ${newVal}`);
             }
             phase130PreviousLocation = select.value;
+            select.dataset.previousLocation = select.value;
             document.getElementById('dev-create-location-panel').hidden = true;
             input.value = '';
             toggleRackLocationFields(select.value);
@@ -7124,6 +7128,10 @@ function hierarchyValidateTypes(subnets) {
             const type = document.getElementById('dev-type').value;
             const mountType = document.getElementById('dev-mount-type').value;
             const location = document.getElementById('dev-location').value;
+            if (location === '__caffoot_create_location__') {
+                showToast('Add or cancel the new location before saving this device.', 'error');
+                return;
+            }
             const subnetId = document.getElementById('dev-subnet').value;
             const primaryIp = document.getElementById('dev-ip').value.trim();
             const ipReserved = document.getElementById('dev-ip-reserved').checked;
