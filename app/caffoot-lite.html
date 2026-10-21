@@ -3717,12 +3717,18 @@ function hierarchyValidateTypes(subnets) {
                                 ${getVisibleDevices().map(d => {
                                     const rack = appState.racks.find(r => String(r.id) === String(d.rackId));
                                     const isUnknownLocation = !d.location || d.location === 'Unknown' || !getUniqueDeviceLocations().includes(d.location);
+                                    // A valid rack placement does not imply a known physical room/site.
+                                    const hasValidRackPlacement = d.mountType === 'Rack Mounted' && !!rack &&
+                                        ['front', 'rear'].includes(d.face) && Number.isInteger(Number(d.rackUStart)) &&
+                                        Number(d.rackUStart) >= 1 && Number(d.rackUEnd) >= Number(d.rackUStart) &&
+                                        Number(d.rackUEnd) <= Number(rack.heightU);
+                                    const locationNeedsAttention = isUnknownLocation && !hasValidRackPlacement;
                                     const locText = isUnknownLocation ? 'Unknown' : d.location;
                                     return `
                                         <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/20">
                                             <td class="py-3 px-4 min-w-[220px] font-semibold text-slate-900 dark:text-white"><button type="button" data-action="view-device" data-id="${escapeHtml(d.id)}" class="phase14c-name text-left whitespace-normal break-words hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-600" title="View device details">${escapeHtml(d.name)}</button>${d.serialNumber ? `<span class="block text-xs font-normal text-slate-500 dark:text-slate-400 sm:hidden">${escapeHtml(d.serialNumber)}</span>` : ''}</td>
                                             <td class="py-3 px-4"><span class="px-2 py-0.5 rounded text-xs bg-slate-100 dark:bg-slate-700">${escapeHtml(d.type)}</span></td>
-                                            <td class="py-3 px-4 text-xs font-medium ${isUnknownLocation ? 'text-rose-600 font-bold' : ''}">${escapeHtml(locText)}${isUnknownLocation ? ' <span class="text-[10px] font-semibold uppercase">(needs attention)</span>' : ''}</td>
+                                            <td class="py-3 px-4 text-xs font-medium ${locationNeedsAttention ? 'text-rose-600 font-bold' : ''}">${escapeHtml(locText)}${locationNeedsAttention ? ' <span class="text-[10px] font-semibold uppercase">(needs attention)</span>' : ''}</td>
                                             <td class="py-3 px-4 font-mono text-xs text-indigo-600">${escapeHtml(d.primaryIp || 'None')}</td>
                                             <td class="py-3 px-4"><span class="inline-flex px-2.5 py-1 rounded-lg text-xs font-semibold ${d.status === 'Retired' ? 'bg-slate-200 text-slate-800 dark:bg-slate-600 dark:text-white' : d.status === 'Maintenance' ? 'bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-200' : 'bg-emerald-100 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-200'}">${escapeHtml(d.status || 'Active')}</span></td>
                                             <td class="py-3 px-4 text-xs text-slate-700 dark:text-slate-200"><span class="font-semibold">${escapeHtml([d.manufacturer,d.model].filter(Boolean).join(' ') || '—')}</span>${d.serialNumber ? `<span class="block text-slate-600 dark:text-slate-300">S/N ${escapeHtml(d.serialNumber)}</span>` : ''}</td>
