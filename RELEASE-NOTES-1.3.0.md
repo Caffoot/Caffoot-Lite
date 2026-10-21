@@ -1,7 +1,7 @@
 # Caffoot Lite v1.3.0 — Rack Management Modernisation
 
-**Status:** Draft release notes — release candidate preparation, not yet published.  
-**Release date:** To be confirmed after owner approval.  
+**Status:** Published stable release.  
+**Release date:** 21 October 2026.  
 **Previous stable release:** v1.2.1.
 
 ## Overview
@@ -23,18 +23,15 @@ v1.3.0 focuses on making rack inventory and equipment placement easier to unders
 - Browser inventory remains in local storage. **Export and safely retain a JSON backup before upgrading**, changing file paths or browser profiles, or restoring data. A restore replaces the active inventory rather than merging it.
 - The standalone HTML application is **not** an authenticated multi-user web service and must not be exposed directly to the public internet.
 
-## Validation so far
+## Development validation record
 
 - Owner ran the full automated regression, offline HTML build, build verification and packaging checks successfully on 21 October 2026 using the development branch. The package still carried development version 1.2.0 at that point; this was **not** the final v1.3.0 release build.
 - Owner verified the generated HTML opens and the Dashboard and Racks navigation work.
 - Owner imported a historical backup and verified the Admin-Client legacy `Desktop` mounting value and corrected `Unknown` location in the device details and editor.
 
-## Outstanding release gates
+## Publication
 
-- Confirm each claimed feature against the final implementation and browser acceptance, including responsive/light/dark behaviour and rack accessory workflows.
-- Align application, package, documentation, release artefact names and version to 1.3.0.
-- Complete security/privacy, licence, backup compatibility, documentation and final packaging review.
-- Obtain explicit owner approval before merging or publishing.
+v1.3.0 was published following owner approval on 21 October 2026. The development checks above are retained as historical preparation evidence, not a statement of the final release's outstanding gates.
 
 ## What's next
 
