@@ -364,7 +364,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 /* Stage 1D: non-interactive 0U side-rail preview; no rack capacity or placement changes. */
 .phase13-vertical-layout{display:grid;grid-template-columns:32px minmax(0,1fr) 32px;gap:5px;align-items:stretch;padding:5px}
 .phase13-vertical-rail{background:repeating-linear-gradient(to bottom,#334155 0px,#334155 38px,#475569 38px,#475569 40px);border:1px solid #64748b;border-radius:4px;min-width:0}
-.phase13v-rail{position:relative;overflow:hidden}.phase13v-add{position:absolute;inset:0;width:100%;cursor:pointer;background:transparent}.phase13v-add:hover{background:#38bdf833}.phase13v-placed{position:absolute;left:1px;right:1px;width:calc(100% - 2px);z-index:2;border:1px solid #f8fafc;border-radius:3px;overflow:hidden;display:flex;align-items:center;justify-content:center;color:white;font-size:9px;cursor:pointer}.phase13v-placed span{writing-mode:vertical-rl;max-height:95%;overflow:hidden;text-overflow:ellipsis}.phase13v-pdu{background:#92400e}.phase13v-cable{background:#0369a1}.phase13v-placed:hover{filter:brightness(1.2)}
+.phase13v-rail{position:relative;overflow:hidden}.phase13v-add{position:absolute;inset:0;width:100%;cursor:pointer;background:transparent}.phase13v-add:hover{background:#38bdf833}.phase13v-placed{position:absolute;left:1px;right:1px;width:calc(100% - 2px);z-index:2;border:1px solid #f8fafc;border-radius:3px;overflow:hidden;display:flex;align-items:center;justify-content:center;color:white;font-size:9px;cursor:pointer}.phase13v-placed span{writing-mode:vertical-rl;max-height:95%;overflow:hidden;text-overflow:ellipsis}.phase13v-pdu{background:#92400e}.phase13v-cable{background:#0369a1}.phase13v-placed:hover{filter:brightness(1.2)}.phase13v-placed{cursor:grab}.phase13v-placed:active{cursor:grabbing}.phase13v-rail.phase13v-valid{outline:3px solid #22c55e;outline-offset:2px}.phase13v-rail.phase13v-invalid{outline:3px solid #f43f5e;outline-offset:2px}.phase13v-drop-preview{position:absolute;left:1px;right:1px;z-index:4;pointer-events:none;border:2px dashed #86efac;background:#22c55e55;border-radius:3px}.phase13v-drop-preview.phase13v-invalid{border-color:#fda4af;background:#ef444455}
 .phase13-vertical-rail-labels{display:grid;grid-template-columns:32px minmax(0,1fr) 32px;gap:5px;padding:4px 5px 7px;background:#1e293b;color:#e2e8f0;font-size:11px;font-weight:700;text-align:center}
 .phase13-vertical-rail-labels span:nth-child(2){font-weight:500;font-size:10px}
 @media(max-width:480px){.phase13-vertical-layout,.phase13-vertical-rail-labels{grid-template-columns:22px minmax(0,1fr) 22px;gap:3px}}
@@ -1681,6 +1681,7 @@ function hierarchyValidateTypes(subnets) {
         let activeRackFace = 'front';
         let phase13DraggedDeviceId = null;
         let phase13CDraggedAccessoryId = null;
+        let phase13VDraggedId = null;
         let phase13BRackTab = 'view';
         let v13RackSection = 'overview';
         let v13RackDetailOpen = false;
@@ -7808,9 +7809,9 @@ function hierarchyValidateTypes(subnets) {
                 const bottom=(Number(a.startU)-1)/height*100, span=Number(a.heightU)/height*100;
                 const label=a.name||phase13CAccessoryTypes[a.type]?.label||'0U accessory';
                 const title=escapeHtml(label+' · U'+a.startU+'–U'+(Number(a.startU)+Number(a.heightU)-1)+' · '+side);
-                return `<button type="button" data-action="phase13c-edit" data-id="${escapeHtml(a.id)}" title="${title}" aria-label="Edit ${title}" class="phase13v-placed ${a.type==='pdu_vertical'?'phase13v-pdu':'phase13v-cable'}" style="bottom:${bottom}%;height:${span}%"><span>${escapeHtml(label)}</span></button>`;
+                return `<button type="button" data-action="phase13c-edit" data-id="${escapeHtml(a.id)}" title="${title}" aria-label="Edit ${title}" draggable="true" data-vertical-accessory="${escapeHtml(a.id)}" class="phase13v-placed ${a.type==='pdu_vertical'?'phase13v-pdu':'phase13v-cable'}" style="bottom:${bottom}%;height:${span}%"><span>${escapeHtml(label)}</span></button>`;
             }).join('');
-            return `<div class="phase13-vertical-rail phase13v-rail" aria-label="${side} 0U rail as viewed from ${activeRackFace} face"><button type="button" data-action="phase13v-add" data-side="${side}" data-rack-id="${escapeHtml(rack.id)}" class="phase13v-add" title="Add vertical 0U accessory on ${side}" aria-label="Add vertical 0U accessory on ${side}"></button>${blocks}</div>`;
+            return `<div class="phase13-vertical-rail phase13v-rail" data-rack-id="${escapeHtml(rack.id)}" data-side="${side}" aria-label="${side} 0U rail as viewed from ${activeRackFace} face"><button type="button" data-action="phase13v-add" data-side="${side}" data-rack-id="${escapeHtml(rack.id)}" class="phase13v-add" title="Add vertical 0U accessory on ${side}" aria-label="Add vertical 0U accessory on ${side}"></button>${blocks}</div>`;
         }
         function phase13COpenAccessory(rackId, startU = 1, editId = null) {
             const rack=appState.racks.find(r=>r.id===rackId);
@@ -8019,6 +8020,64 @@ function hierarchyValidateTypes(subnets) {
             if (phase17dScrollFrame === null) phase17dScrollFrame = requestAnimationFrame(phase17dScrollTick);
         }
         document.addEventListener('dragover', phase17dTrackDrag);
+        function phase13VTarget(event,rail,accessory){
+            const rack=appState.racks.find(r=>r.id===rail.dataset.rackId);
+            if(!rack)return null;
+            const bounds=rail.getBoundingClientRect(), total=Number(rack.heightU),height=Number(accessory.heightU);
+            if(!total||bounds.height<=0||height>total)return null;
+            const pointerU=Math.floor((bounds.bottom-event.clientY)/bounds.height*total)+1;
+            const startU=Math.max(1,Math.min(total-height+1,pointerU-Math.floor(height/2)));
+            const candidate={...accessory,rackId:rack.id,face:activeRackFace,side:rail.dataset.side,startU};
+            return {candidate,error:phase13CAccessoryError(candidate,accessory.id),total};
+        }
+        function phase13VClearPreview(){
+            document.querySelectorAll('.phase13v-drop-preview').forEach(el=>el.remove());
+            document.querySelectorAll('.phase13v-rail').forEach(el=>el.classList.remove('phase13v-valid','phase13v-invalid'));
+        }
+        document.addEventListener('dragstart',event=>{
+            const source=event.target.closest('[data-vertical-accessory]');
+            if(!source)return;
+            phase13VDraggedId=source.dataset.verticalAccessory;
+            event.dataTransfer.effectAllowed='move';
+            event.dataTransfer.setData('text/plain',phase13VDraggedId);
+            event.stopImmediatePropagation();
+        });
+        document.addEventListener('dragover',event=>{
+            if(!phase13VDraggedId)return;
+            const rail=event.target.closest('.phase13v-rail');
+            if(!rail)return;
+            event.preventDefault();event.stopImmediatePropagation();
+            const a=(appState.rackAccessories||[]).find(a=>a.id===phase13VDraggedId);
+            if(!a)return;
+            const placement=phase13VTarget(event,rail,a);
+            phase13VClearPreview();
+            if(!placement)return;
+            const invalid=!!placement.error;
+            rail.classList.add(invalid?'phase13v-invalid':'phase13v-valid');
+            const preview=document.createElement('div');
+            preview.className='phase13v-drop-preview'+(invalid?' phase13v-invalid':'');
+            preview.style.bottom=((placement.candidate.startU-1)/placement.total*100)+'%';
+            preview.style.height=(Number(a.heightU)/placement.total*100)+'%';
+            rail.appendChild(preview);
+            event.dataTransfer.dropEffect=invalid?'none':'move';
+        });
+        document.addEventListener('drop',event=>{
+            if(!phase13VDraggedId)return;
+            event.preventDefault();event.stopImmediatePropagation();
+            const rail=event.target.closest('.phase13v-rail');
+            const a=(appState.rackAccessories||[]).find(a=>a.id===phase13VDraggedId);
+            const placement=rail&&a?phase13VTarget(event,rail,a):null;
+            phase13VDraggedId=null;
+            phase13VClearPreview();
+            if(!placement||placement.error){if(placement?.error)showToast(placement.error,'error');return;}
+            const before=JSON.stringify(appState);
+            Object.assign(a,placement.candidate);
+            if(!saveState()){appState=JSON.parse(before);return;}
+            renderContent();
+        });
+        document.addEventListener('dragend',()=>{
+            phase13VDraggedId=null;phase13VClearPreview();
+        });
         document.addEventListener('dragstart', event => {
             const source = event.target.closest('[data-rack-device]');
             const accessory=event.target.closest('[data-rack-accessory]');
