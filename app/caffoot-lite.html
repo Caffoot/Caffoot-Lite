@@ -1952,7 +1952,7 @@ function hierarchyValidateTypes(subnets) {
             if (overlaps) {
                 return `The selected U position overlaps another device on the ${face || 'front'} face.`;
             }
-            if ((appState.rackAccessories || []).some(a => a.rackId === rackId && a.face === (face || 'front') && start <= Number(a.startU) + Number(a.heightU) - 1 && end >= Number(a.startU))) {
+            if ((appState.rackAccessories || []).some(a => a.rackId === rackId && !['pdu_vertical','cable_vertical'].includes(a.type) && a.face === (face || 'front') && start <= Number(a.startU) + Number(a.heightU) - 1 && end >= Number(a.startU))) {
                 return 'The selected U position overlaps a rack accessory.';
             }
             return null;
@@ -2619,7 +2619,7 @@ function hierarchyValidateTypes(subnets) {
                         const start = Number(d.rackUStart), end = Number(d.rackUEnd ?? d.rackUStart);
                         if(Number.isInteger(start) && Number.isInteger(end)) for(let u=Math.max(1,start);u<=Math.min(height,end);u++) occupied.add(u);
                     });
-                    accessories.filter(a => String(a.face || 'front').toLowerCase() === face).forEach(a => {
+                    accessories.filter(a => !['pdu_vertical','cable_vertical'].includes(a.type) && String(a.face || 'front').toLowerCase() === face).forEach(a => {
                         const start = Number(a.startU), size = Number(a.heightU) || 1;
                         if(Number.isInteger(start)) for(let u=Math.max(1,start);u<=Math.min(height,start+size-1);u++) occupied.add(u);
                     });
@@ -2853,7 +2853,7 @@ function hierarchyValidateTypes(subnets) {
                 const usage=phase13LUsage(rack,face);
                 const slots=Array.from({length:Number(rack.heightU)},(_,i)=>Number(rack.heightU)-i).map(u=>{
                     const d=appState.devices.find(d=>d.rackId===rack.id&&(d.face||'front')===face&&Number(d.rackUStart)<=u&&Number(d.rackUEnd||d.rackUStart)>=u);
-                    const a=(appState.rackAccessories||[]).find(a=>a.rackId===rack.id&&a.face===face&&Number(a.startU)<=u&&Number(a.startU)+Number(a.heightU)-1>=u);
+                    const a=(appState.rackAccessories||[]).find(a=>a.rackId===rack.id&&a.face===face&&!['pdu_vertical','cable_vertical'].includes(a.type)&&Number(a.startU)<=u&&Number(a.startU)+Number(a.heightU)-1>=u);
                     const item=d||a;
                     const name=d?.name||a?.name||'';
                     const cls=d?'device':a?'accessory':'empty';
@@ -2887,7 +2887,7 @@ function hierarchyValidateTypes(subnets) {
                         const occupied=new Set();
                         const mark=(start,end)=>{if(!Number.isInteger(start)||!Number.isInteger(end)||end<start)return;for(let u=Math.max(1,start);u<=Math.min(height,end);u++)occupied.add(u);};
                         rackDevices.filter(d=>String(d.face||d.rackFace||'front').toLowerCase()===face).forEach(d=>mark(Number(d.rackUStart),Number(d.rackUEnd??d.rackUStart)));
-                        rackAccessories.filter(a=>String(a.face||'front').toLowerCase()===face && Number(a.heightU)>0).forEach(a=>mark(Number(a.startU),Number(a.startU)+Number(a.heightU)-1));
+                        rackAccessories.filter(a=>!['pdu_vertical','cable_vertical'].includes(a.type) && String(a.face||'front').toLowerCase()===face && Number(a.heightU)>0).forEach(a=>mark(Number(a.startU),Number(a.startU)+Number(a.heightU)-1));
                         let run=0,largest=0;
                         for(let u=1;u<=height;u++){run=occupied.has(u)?0:run+1;largest=Math.max(largest,run);}
                         return {face,used:occupied.size,free:height-occupied.size,largest};
@@ -7921,6 +7921,7 @@ function hierarchyValidateTypes(subnets) {
         function phase13CMoveAccessory(id,rackId,startU){
             const a=(appState.rackAccessories||[]).find(x=>x.id===id);
             if(!a)return false;
+            if(phase13CAccessoryTypes[a.type]?.vertical)return false;
             const candidate={...a,rackId,face:activeRackFace,startU:Number(startU)};
             const error=phase13CAccessoryError(candidate,id);
             if(error){showToast(error,'error');return false;}
@@ -8197,7 +8198,7 @@ function hierarchyValidateTypes(subnets) {
                 case 'correct-rack-specifications': openRackModal(id, true); break;
                 case 'delete-rack': deleteRack(id); break;
                 case 'phase13c-add': phase13COpenAccessory(selectedRackId,1); break;
-                case 'phase13v-add': phase13CSelectedAccessory='pdu_vertical';phase13COpenAccessory(target.dataset.rackId,1); {const f=document.querySelector('#phase13c-form [name="side"]');if(f){f.value=target.dataset.side;f.dispatchEvent(new Event('change'));}} break;
+                case 'phase13v-add': phase13CSelectedAccessory='pdu_vertical';phase13COpenAccessory(target.dataset.rackId,1);phase13CSelectedAccessory='blank'; {const f=document.querySelector('#phase13c-form [name="side"]');if(f){f.value=target.dataset.side;f.dispatchEvent(new Event('change'));}} break;
                 case 'phase13c-edit': {const a=(appState.rackAccessories||[]).find(a=>a.id===id);if(a)phase13COpenAccessory(a.rackId,a.startU,id);break;}
                 case 'phase13c-delete': phase13CDeleteAccessory(id); break;
                 case 'phase13b-tab': if (['view','equipment','settings'].includes(target.dataset.tab)) { phase13BRackTab=target.dataset.tab; renderContent(); } break;
