@@ -7559,18 +7559,30 @@ function hierarchyValidateTypes(subnets) {
             for (const device of candidate.devices) {
                 const allowed = phase19BAllowedMounts(device.type);
                 const mount = device.mountType || (device.rackId ? 'Rack Mounted' : 'Desktop');
-                if (allowed.includes(mount) && !(device.rackId && mount !== 'Rack Mounted')) continue;
-                // Only repair known legacy mismatches. Unknown types or malformed mounting
-                // values remain subject to normal integrity validation.
-                if (!['desktop', 'laptop', 'tablet'].includes(String(device.type || '').trim().toLowerCase()) ||
-                    (mount !== 'Rack Mounted' && !device.rackId)) continue;
+                const legacyComputer = ['desktop', 'laptop', 'tablet'].includes(String(device.type || '').trim().toLowerCase());
+                const noRackPosition = !device.rackId && device.rackUStart == null &&
+                    device.rackUEnd == null && device.rackUHeight == null;
+                // Old backups sometimes mark a desktop as "Racked" even though
+                // its mounting type is Desktop and it has no rack assignment.
+                const legacyLocation = legacyComputer && noRackPosition &&
+                    device.location === 'Racked' && mount !== 'Rack Mounted' && allowed.includes(mount);
+                const orphanedMount = legacyComputer && noRackPosition && mount === 'Rack Mounted';
+                const incompatibleRackMount = legacyComputer && (mount === 'Rack Mounted' || Boolean(device.rackId));
+                if (!legacyLocation && !orphanedMount && !incompatibleRackMount) continue;
+                // Only offer safe, unambiguous corrections. Unknown mount values
+                // and dangling rack references remain validation failures.
+                if (!legacyLocation && !orphanedMount && !(
+                    incompatibleRackMount && (mount === 'Rack Mounted' || device.rackId)
+                )) continue;
+                const proposedMount = legacyLocation ? mount : 'Desktop';
                 changes.push({
                     id: device.id, name: device.name, type: device.type,
                     mountType: mount, location: device.location,
+                    proposedMountType: proposedMount,
                     rack: candidate.racks.find(r => r.id === device.rackId)?.name || device.rackId || '(none)',
                     startU: device.rackUStart, endU: device.rackUEnd
                 });
-                device.mountType = 'Desktop';
+                device.mountType = proposedMount;
                 device.location = 'Unknown';
                 device.rackId = '';
                 device.face = 'front';
@@ -7580,7 +7592,7 @@ function hierarchyValidateTypes(subnets) {
             }
             return changes;
         }
-        function phase16CInvalidMounts(state) {
+                function phase16CInvalidMounts(state) {
             return state.devices.filter(d => !phase19BAllowedMounts(d.type).includes(d.mountType || (d.rackId ? 'Rack Mounted' : 'Desktop')));
         }
         function phase16CCheckBackup(raw) {
