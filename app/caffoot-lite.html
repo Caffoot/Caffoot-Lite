@@ -7817,6 +7817,7 @@ function hierarchyValidateTypes(subnets) {
             if(!rack) return;
             const existing=(appState.rackAccessories||[]).find(a=>a.id===editId);
             const type=existing?.type||phase13CSelectedAccessory;
+            const verticalWorkflow=!!phase13CAccessoryTypes[type]?.vertical;
             const face=existing?.face||activeRackFace;
             const safeRackHeight = Number(rack.heightU);
             const rackLimit = Number.isInteger(safeRackHeight) && safeRackHeight >= 1 && safeRackHeight <= 100 ? safeRackHeight : 42;
@@ -7831,7 +7832,7 @@ function hierarchyValidateTypes(subnets) {
                 <div class="mb-5"><h2 class="font-bold text-xl">${existing?'Edit accessory':'Rack placement'}</h2><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">${escapeHtml(rack.name)} · U${start}</p></div>
                 <form id="phase13c-form" class="space-y-5">
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <label class="phase13h-label">Accessory type<select name="type" required class="phase13c-field">${Object.entries(phase13CAccessoryTypes).map(([key,item])=>`<option value="${key}" ${type===key?'selected':''}>${item.label}</option>`).join('')}</select></label>
+                    <label class="phase13h-label">Accessory type<select name="type" required class="phase13c-field">${Object.entries(phase13CAccessoryTypes).filter(([key,item])=>!!item.vertical===verticalWorkflow).map(([key,item])=>`<option value="${key}" ${type===key?'selected':''}>${item.label}</option>`).join('')}</select></label>
                     <label id="phase13e-port-field" class="phase13h-label" style="${type==='patch'?'':'display:none;'}">Patch panel ports<select name="portCount" class="phase13c-field" ${type==='patch'?'required':'disabled'}><option value="12" ${Number(existing?.portCount)===12?'selected':''}>12 ports</option><option value="24" ${![12,48].includes(Number(existing?.portCount))?'selected':''}>24 ports</option><option value="48" ${Number(existing?.portCount)===48?'selected':''}>48 ports</option></select></label>
                   </div>
                   <label class="phase13h-label">Description (optional)<input name="name" maxlength="80" class="phase13c-field" value="${escapeHtml(existing?.name||'')}" placeholder="e.g. Rack PDU or fibre patch panel"></label>
@@ -7839,8 +7840,8 @@ function hierarchyValidateTypes(subnets) {
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <label class="phase13h-label">Face<select name="face" class="phase13c-field"><option value="front" ${face==='front'?'selected':''}>Front</option><option value="rear" ${face==='rear'?'selected':''}>Rear</option></select></label>
                       <label id="phase13v-side-field" class="phase13h-label" style="${phase13CAccessoryTypes[type]?.vertical?'':'display:none;'}">Side (as viewed from selected face)<select name="side" class="phase13c-field"><option value="left" ${existing?.side==='left'?'selected':''}>Left (L)</option><option value="right" ${existing?.side==='right'?'selected':''}>Right (R)</option></select></label>
-                      <label class="phase13h-label">Start U<select name="startU" required class="phase13c-field" aria-describedby="phase13c-position-hint"></select></label>
                       <label class="phase13h-label">Height (U)<input name="heightU" type="number" min="1" max="${phase13CAccessoryTypes[type]?.vertical?rackLimit:12}" required class="phase13c-field" value="${height}"></label>
+                      <label class="phase13h-label">Start U<select name="startU" required class="phase13c-field" aria-describedby="phase13c-position-hint"></select></label>
                     </div>
                   </fieldset>
                   <p id="phase13c-position-hint" class="text-xs text-slate-500 dark:text-slate-300" aria-live="polite"></p>
@@ -7903,7 +7904,7 @@ function hierarchyValidateTypes(subnets) {
                 if(startSelect.disabled){modal.querySelector('#phase13c-error').textContent='No available rack position for this accessory.';return;}
                 const data=new FormData(event.currentTarget);
                 const candidate={id:existing?.id||('acc-'+Date.now()+'-'+Math.random().toString(36).slice(2,8)),rackId,type:String(data.get('type')),name:String(data.get('name')).trim(),face:String(data.get('face')),startU:Number(data.get('startU')),heightU:Number(data.get('heightU')),side:phase13CAccessoryTypes[String(data.get('type'))]?.vertical?String(data.get('side')):null,portCount:String(data.get('type'))==='patch'?Number(data.get('portCount')):null};
-                const error=(candidate.type==='patch' && ![12,24,48].includes(candidate.portCount))?'Choose a valid patch panel port count.':phase13CAccessoryError(candidate,existing?.id);
+                const error=(!!phase13CAccessoryTypes[candidate.type]?.vertical!==verticalWorkflow)?'Choose an accessory type for this placement.':(candidate.type==='patch' && ![12,24,48].includes(candidate.portCount))?'Choose a valid patch panel port count.':phase13CAccessoryError(candidate,existing?.id);
                 if(error){modal.querySelector('#phase13c-error').textContent=error;return;}
                 const before=JSON.stringify(appState);
                 if(!Array.isArray(appState.rackAccessories))appState.rackAccessories=[];
