@@ -5872,7 +5872,7 @@ function hierarchyValidateTypes(subnets) {
             const serverServices=serverServiceEntries.map(x=>`<div class="phase14c-field"><dt>${safe(x.label)}</dt><dd>Enabled${x.archived?' <span class="inline-flex items-center gap-1 rounded-full border border-red-300 bg-red-50 px-2 py-0.5 text-xs font-bold text-red-700 dark:border-red-700 dark:bg-red-950/50 dark:text-red-300"><i class="fa-solid fa-box-archive" aria-hidden="true"></i>Archived</span>':''}</dd></div>`).join('');
             const platformDetails=[['Operating system',deviceDetails.softwarePlatform||deviceDetails.os],['OS version',deviceDetails.softwareVersion],['Windows licence',deviceDetails.windowsLicence]].filter(([label])=>['server','computer'].includes(phase19BTypeGroups[String(d.type||'').toLowerCase().trim()]) || label==='Operating system' && activeFields.has('os')).filter(([,value])=>value!==undefined&&value!==null&&value!=='').map(([label,value])=>field(label,value)).join('');
             const historicalSnapshots = Array.isArray(d.previousTypeDetails) ? [...d.previousTypeDetails].reverse() : [];
-            const historyRows = historicalSnapshots.map((snapshot,index)=>`<details class="rounded-xl border border-slate-300 dark:border-slate-600 p-3"><summary class="cursor-pointer font-semibold">${safe(snapshot.type||'Previous type')} — saved configuration ${index+1}</summary><dl class="phase14c-grid mt-3">${Object.entries(snapshot.details||{}).map(([key,value])=>field(phase19CDetailLabel(key,snapshot.type),typeof value==='boolean'?(value?'Yes':'No'):value)).join('')}</dl></details>`).join('');
+            const historyRows = historicalSnapshots.map((snapshot,index)=>`<details class="rounded-xl border border-slate-300 dark:border-slate-600 p-3"><summary class="cursor-pointer font-semibold">${safe(snapshot.type||'Previous type')} — saved configuration ${index+1}</summary><dl class="phase14c-grid mt-3">${Object.entries(snapshot.details||{}).map(([key,value])=>field(phase19CDetailLabel(key,snapshot.type),typeof value==='boolean'?(value?'Yes':'No'):value)).join('')}</dl><button type="button" data-action="phase130-restore" data-id="${safe(d.id)}" data-index="${historicalSnapshots.length-1-index}" class="phase14c-primary mt-3">Restore Configuration</button></details>`).join('');
             const hardware = field('Manufacturer', d.manufacturer) + field('Model', d.model) + field('Serial number', d.serialNumber);
             const rackRows = mounted ? field('Rack', rack.name) + field('Face', d.face || 'front') + field('U position', uText) + field('Height', (Number(d.rackUHeight) || (uEnd-uStart+1) || 1) + 'U') : '';
             openModal(`<div class="phase14c-detail space-y-5 p-5 sm:p-7">
@@ -5953,6 +5953,46 @@ function hierarchyValidateTypes(subnets) {
                 tab.classList.toggle('phase14c-tab-active',active);
             });
         }
+        function phase130RestoreHistory(deviceId, index) {
+            const device = getDeviceById(deviceId);
+            const entries = Array.isArray(device?.previousTypeDetails) ? device.previousTypeDetails : [];
+            const snapshot = entries[index];
+            if (!device || !snapshot || !snapshot.type || !snapshot.details || typeof snapshot.details !== 'object' || Array.isArray(snapshot.details)) {
+                showToast('Previous configuration not found.', 'error'); return;
+            }
+            const current = device.typeDetails && typeof device.typeDetails === 'object' ? device.typeDetails : {};
+            const destination = new Set(phase19BFieldsFor(snapshot.type));
+            if (['computer','server'].includes(phase19BTypeGroups[String(snapshot.type).toLowerCase().trim()])) {
+                destination.add('softwarePlatform'); destination.add('softwareVersion'); destination.add('windowsLicence');
+            }
+            const restore = Object.entries(snapshot.details).filter(([key,value]) => destination.has(key) && value !== null && value !== undefined);
+            const obsolete = phase130ObsoleteDeviceFields(device.type, snapshot.type, current);
+            const changes = restore.map(([key,value]) => phase19CDetailLabel(key,snapshot.type)+': '+String(value===true?'Yes':value));
+            const description = 'Restore '+snapshot.type+' configuration? Device type will change from '+device.type+'. '+(changes.length?'Restored fields: '+changes.join('; ')+'. ':'')+
+                (obsolete.length?'Current incompatible fields will be preserved as history: '+obsolete.map(key=>phase19CDetailLabel(key,device.type)).join(', ')+'. ':'')+
+                'Device name, IP address, location and rack assignment will not change. Existing matching fields will be replaced.';
+            if (!window.confirm(description)) return;
+            if (getDeviceById(deviceId) !== device || device.previousTypeDetails?.[index] !== snapshot) return;
+            const before = JSON.stringify(appState);
+            const nextDetails = {...current};
+            const archived = Object.fromEntries(obsolete.map(key=>[key,current[key]]));
+            for (const key of obsolete) delete nextDetails[key];
+            for (const [key,value] of restore) nextDetails[key] = value;
+            device.type = snapshot.type;
+            device.typeDetails = nextDetails;
+            const nextHistory = entries.filter((_,i)=>i!==index);
+            if (Object.keys(archived).length) nextHistory.push({type:JSON.parse(before).devices.find(d=>String(d.id)===String(deviceId)).type,details:archived});
+            device.previousTypeDetails = nextHistory;
+            if (!saveState()) {
+                appState = JSON.parse(before);
+                return;
+            }
+            closeModal();
+            renderContent();
+            phase14CViewDevice(deviceId);
+            phase14CSelectTab('history');
+        }
+
         function phase14CGoToRack(deviceId) {
             const d = appState.devices.find(device => String(device.id) === String(deviceId));
             if (!d?.rackId || !appState.racks.some(r => String(r.id) === String(d.rackId))) return showToast('Rack not found.', 'error');
@@ -8315,6 +8355,7 @@ function hierarchyValidateTypes(subnets) {
                 case 'phase14c-duplicate': closeModal(); duplicateDevice(id); break;
                 case 'phase14c-delete': closeModal(); deleteDevice(id); break;
                 case 'phase14c-rack': phase14CGoToRack(id); break;
+                case 'phase130-restore': phase130RestoreHistory(id, Number(actionEl.dataset.index)); break;
                 case 'duplicate-device': duplicateDevice(id); break;
                 case 'delete-device': deleteDevice(id); break;
                 case 'hardware-catalog-manage': phase120ManageHardwareCatalogue(); break;
