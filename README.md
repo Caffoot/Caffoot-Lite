@@ -7,6 +7,10 @@
 
 No Docker, database, web server or account is required to run the published release. Download the HTML application and open it in a modern browser. Your inventory stays in that browser's local storage, so **regular JSON exports are essential**: browser data loss can mean inventory loss.
 
+## v1.3.0 Rack Management — release candidate
+
+The next release focuses on Rack Overview, Rack Inventory and Rack Accessories, improved rack elevations, configuration and legacy mounting compatibility. **v1.3.0 is not yet published**; use the latest stable release for production. See [draft v1.3.0 release notes](RELEASE-NOTES-1.3.0.md) and the [roadmap](ROADMAP.md). Advanced addressing and reporting are deferred to later milestones.
+
 ## ⚠️ SECURITY WARNING — DO NOT EXPOSE CAFFOOT LITE TO THE PUBLIC INTERNET
 
 > **Caffoot Lite is a local, offline-first application — NOT a secure public web service.** It has **no built-in login, access control, user isolation or server-side security boundary**. Do **not** publish it openly on the internet or assume a web server makes it safe for multi-user access.
