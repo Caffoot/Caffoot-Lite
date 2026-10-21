@@ -1161,7 +1161,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             racks: [],
             devices: [],
             rackAccessories: [],
-            deviceTypes: ['Server - Physical', 'Server - Virtual', 'Desktop', 'Laptop', 'Tablet', 'Switch', 'Layer 3 Switch', 'Router', 'Firewall', 'NAS', 'Access Point', 'Wireless LAN Controller', 'PDU', 'UPS', 'Unknown'],
+            deviceTypes: ['Server - Physical', 'Server - Virtual', 'Desktop', 'Laptop', 'Tablet', 'Switch', 'Layer 3 Switch', 'Router', 'Firewall', 'NAS', 'Printer', 'Scanner', 'Access Point', 'Wireless LAN Controller', 'PDU', 'UPS', 'Unknown'],
             deviceTypeGraphics: {},
             deviceLocations: ['Unknown'],
             ipAllocations: {},
@@ -3793,7 +3793,7 @@ function hierarchyValidateTypes(subnets) {
             return [...new Set([...list,...appState.devices.map(d=>d[prop])].filter(Boolean))]
                 .sort((a,b)=>a.localeCompare(b,undefined,{sensitivity:'base'}));
         }
-        function getUniqueDeviceTypes() { return [...new Set([...phase18DList('type'), 'Desktop', 'Laptop', 'Tablet', 'Server - Physical', 'Server - Virtual'])].sort((a,b)=>a.localeCompare(b,undefined,{sensitivity:'base'})); }
+        function getUniqueDeviceTypes() { return [...new Set([...phase18DList('type'), ...defaultData.deviceTypes])].sort((a,b)=>a.localeCompare(b,undefined,{sensitivity:'base'})); }
         function getUniqueDeviceLocations() { return phase18DList('location'); }
         function phase18DProtected(kind,name) {
             return name.toLowerCase()==='unknown';
