@@ -6853,9 +6853,10 @@ function hierarchyValidateTypes(subnets) {
                         <div class="form-section-card space-y-4 ${phase19BFieldsFor(currentType).length===0?'hidden':''}" id="phase19b-details-section" aria-live="polite"><div class="form-section-heading"><i class="fa-solid fa-list-check"></i>Additional details for this device type</div><div class="flex flex-wrap gap-2"><button type="button" id="phase19b-manage-functions-button" data-action="phase19b-manage-functions" class="h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-500 text-sm font-semibold ${phase19BTypeGroups[String(currentType||'').toLowerCase().trim()]==='server'?'':'hidden'}">Manage Server Options</button><button type="button" id="phase19b-manage-software-button" data-action="phase19b-manage-software" class="h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-500 text-sm font-semibold ${['server','computer'].includes(phase19BTypeGroups[String(currentType||'').toLowerCase().trim()])?'':'hidden'}">Manage Software Options</button></div><div id="phase19b-fields">${phase19BRenderFields(currentType,phase19BFormValues,'hardware')}</div></div>
                         </div>
                         <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-rack"></i>Mounting & location</div><div><label for="dev-mount-type" class="form-label">Device Mounting <span class="required-mark">*</span></label><select id="dev-mount-type" required data-action="device-mount-type-change" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" disabled>Select mounting type...</option>${phase19BMountOptions(currentType,mountType)}</select></div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
-                            <div><label for="dev-location" class="block text-xs font-semibold mb-1">Location Area <span class="required-mark">*</span></label><select id="dev-location" required data-action="device-location-change" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" disabled ${currentLoc === '' ? 'selected' : ''}>Select a location...</option>${locations.map(l => `<option value="${escapeHtml(l)}" ${currentLoc === l ? 'selected' : ''}>${escapeHtml(l)}</option>`).join('')}</select></div>
-                            <div><label for="dev-custom-location" class="block text-xs font-semibold mb-1">Add Custom Location</label><div class="phase14b-add-inline"><input type="text" id="dev-custom-location" placeholder="New location..." class="w-full border rounded-xl px-2.5 py-2 text-xs dark:bg-slate-700"><button type="button" data-action="add-custom-location" class="px-2.5 py-2 bg-slate-200 dark:bg-slate-600 rounded-xl text-xs"><i class="fa-solid fa-plus"></i></button></div></div>
+                        <div>
+                            <label for="dev-location" class="block text-xs font-semibold mb-1">Location Area <span class="required-mark">*</span></label>
+                            <select id="dev-location" required data-action="device-location-change" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" disabled ${currentLoc === '' ? 'selected' : ''}>Select a location...</option>${locations.map(l => `<option value="${escapeHtml(l)}" ${currentLoc === l ? 'selected' : ''}>${escapeHtml(l)}</option>`).join('')}<option value="__caffoot_create_location__">+ Create new location…</option></select>
+                            <div id="dev-create-location-panel" hidden class="mt-2"><label for="dev-custom-location" class="block text-xs font-semibold mb-1">New location name</label><div class="phase14b-add-inline phase14b-location-create-row"><input type="text" id="dev-custom-location" placeholder="Enter a new location" class="flex-1 min-w-48 border rounded-xl px-2.5 py-2 text-sm dark:bg-slate-700"><button type="button" data-action="add-custom-location" class="px-3 py-2 bg-indigo-600 text-white rounded-xl text-xs font-semibold">Add</button><button type="button" data-action="cancel-custom-location" class="px-3 py-2 bg-slate-200 dark:bg-slate-600 rounded-xl text-xs font-semibold">Cancel</button></div></div>
                         </div>
                         <div id="racked-options" ${mountType === 'Rack Mounted' ? '' : 'hidden'} class="${mountType === 'Rack Mounted' ? '' : 'hidden'} phase14b-rack-config bg-slate-100 dark:bg-slate-900">
                             <div class="block text-xs font-bold text-indigo-600">Rack Mounting Configuration</div>
@@ -7009,29 +7010,52 @@ function hierarchyValidateTypes(subnets) {
             }
         }
 
+        let phase130PreviousLocation = '';
+        function phase130HandleLocationChange(select) {
+            const panel = document.getElementById('dev-create-location-panel');
+            if (!panel) return;
+            if (select.value === '__caffoot_create_location__') {
+                panel.hidden = false;
+                document.getElementById('dev-custom-location')?.focus();
+                return;
+            }
+            phase130PreviousLocation = select.value;
+            panel.hidden = true;
+            toggleRackLocationFields(select.value);
+        }
+        function phase130CancelCustomLocation() {
+            const select = document.getElementById('dev-location');
+            const panel = document.getElementById('dev-create-location-panel');
+            if (!select || !panel) return;
+            select.value = phase130PreviousLocation && Array.from(select.options).some(o => o.value === phase130PreviousLocation) ? phase130PreviousLocation : '';
+            panel.hidden = true;
+            const input = document.getElementById('dev-custom-location');
+            if (input) input.value = '';
+            toggleRackLocationFields(select.value);
+        }
         function addCustomLocationOption() {
             const input = document.getElementById('dev-custom-location');
             const select = document.getElementById('dev-location');
+            if (!input || !select) return;
             const newVal = input.value.trim();
-            if (newVal) {
-                let exists = false;
-                for (let opt of select.options) {
-                    if (opt.value.toLowerCase() === newVal.toLowerCase()) { exists = true; break; }
-                }
-                if (!exists) {
-                    const opt = document.createElement('option');
-                    opt.value = newVal;
-                    opt.textContent = newVal;
-                    select.appendChild(opt);
-                    select.value = newVal;
-                    if (!Array.isArray(appState.deviceLocations)) appState.deviceLocations = [];
-                    appState.deviceLocations.push(newVal);
-                    saveState();
-                    toggleRackLocationFields(newVal);
-                    showToast(`Added location: ${newVal}`);
-                }
-                input.value = '';
+            if (!newVal) { showToast('Enter a location name first.', 'error'); input.focus(); return; }
+            const existing = Array.from(select.options).find(o => o.value.toLowerCase() === newVal.toLowerCase());
+            if (existing && existing.value !== '__caffoot_create_location__') {
+                select.value = existing.value;
+            } else {
+                const opt = document.createElement('option');
+                opt.value = newVal; opt.textContent = newVal;
+                select.insertBefore(opt, select.querySelector('option[value="__caffoot_create_location__"]'));
+                select.value = newVal;
+                if (!Array.isArray(appState.deviceLocations)) appState.deviceLocations = [];
+                if (!appState.deviceLocations.some(l => l.toLowerCase() === newVal.toLowerCase())) appState.deviceLocations.push(newVal);
+                saveState();
+                showToast(`Added location: ${newVal}`);
             }
+            phase130PreviousLocation = select.value;
+            document.getElementById('dev-create-location-panel').hidden = true;
+            input.value = '';
+            toggleRackLocationFields(select.value);
         }
 
         // Only catalogue-recognised keys can be removed automatically; unknown legacy
@@ -7916,7 +7940,7 @@ function hierarchyValidateTypes(subnets) {
                     importData({ target });
                     break;
                 case 'device-location-change':
-                    toggleRackLocationFields(target.value);
+                    phase130HandleLocationChange(target);
                     break;
                 case 'device-mount-type-change':
                     toggleDeviceMountType();
@@ -8442,6 +8466,7 @@ function hierarchyValidateTypes(subnets) {
                 case 'open-manage-locations': openManageLocationsModal(); break;
                 case 'add-custom-type': addCustomTypeOption(); break;
                 case 'add-custom-location': addCustomLocationOption(); break;
+                case 'cancel-custom-location': phase130CancelCustomLocation(); break;
                 case 'create-subnet-from-device': createSubnetFromDevice(); break;
                 case 'create-rack-from-device': createRackFromDevice(); break;
                 case 'cancel-rack-from-device': cancelRackFromDevice(); break;
