@@ -1,13 +1,13 @@
 # Caffoot Lite — Development Roadmap
 
-**Updated:** 20 October 2026  
-**Current milestone:** v1.3.0 planning and staged development. v1.2.0 Devices & Intelligence was published on 20 October 2026 following owner acceptance and release verification.  
+**Updated:** 21 October 2026  
+**Current milestone:** v1.3.0 Rack Management feature freeze and release preparation; v1.4.0 Data & Architecture Foundations follows after publication.  
 **Repository:** `caffoot/Caffoot-Lite` (public)  
 **Release policy:** Publish publicly only after manual verification, security/privacy review and owner approval.
 
-**Current release:** [v1.2.0](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.2.0). v1.1.2 is an earlier stable release; v1.1.0.1 is a historical hotfix.
+**Current published stable release:** [v1.2.1](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.2.1). v1.3.0 remains unpublished pending release gates.
 
-Caffoot Lite is an offline, standalone single-HTML network inventory and IP address management application. v1.2.0 is the October 2026 Devices & Intelligence release; earlier versions remain available as historical releases.
+Caffoot Lite is an offline, standalone single-HTML network inventory and IP address management application. v1.2.1 is the published stable patch release following October 2026 Devices & Intelligence; earlier versions remain available as historical releases.
 
 ## Documentation checks for every release
 
