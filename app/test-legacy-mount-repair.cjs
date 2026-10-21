@@ -28,6 +28,26 @@ assert.deepEqual(original.devices[0].rackId,'r1');
 assert.equal(ctx.phase16CLegacyMountRepairs(copy).length,0);
 console.log('PASS: legacy rack mounting corrections preserve inventory and leave valid devices unchanged.');
 
+const legacyLocation={devices:[
+{id:'loc1',name:'Legacy desktop location',type:'Desktop',mountType:'Desktop',location:'Racked',rackId:'',rackUStart:null,rackUEnd:null,rackUHeight:null,notes:'keep location note'},
+{id:'loc2',name:'Legacy laptop location',type:'Laptop',mountType:'Desktop',location:'Racked',rackId:'',rackUStart:null,rackUEnd:null,rackUHeight:null},
+{id:'loc3',name:'Orphaned tablet rack mount',type:'Tablet',mountType:'Rack Mounted',location:'Racked',rackId:'',rackUStart:null,rackUEnd:null,rackUHeight:null},
+{id:'loc4',name:'Normal desktop',type:'Desktop',mountType:'Desktop',location:'Office',rackId:''}
+],racks:[]};
+const locationCopy=JSON.parse(JSON.stringify(legacyLocation));
+const locationRepairs=ctx.phase16CLegacyMountRepairs(locationCopy);
+assert.equal(locationRepairs.length,3,'Legacy Racked location and orphaned mounts must be reviewed');
+assert.equal(locationRepairs[0].proposedMountType,'Desktop');
+assert.equal(locationCopy.devices[0].location,'Unknown');
+assert.equal(locationCopy.devices[0].notes,'keep location note');
+assert.equal(locationCopy.devices[1].location,'Unknown');
+assert.equal(locationCopy.devices[2].mountType,'Desktop');
+assert.equal(locationCopy.devices[2].rackId,'');
+assert.deepEqual(locationCopy.devices[3],legacyLocation.devices[3]);
+assert.equal(ctx.phase16CLegacyMountRepairs(locationCopy).length,0,'Corrections must be idempotent');
+console.log('PASS: legacy Racked locations and orphaned computer mounts receive explicit corrections.');
+
+
 const apOriginal={devices:[
 {id:'ap1',name:'Legacy AP on shelf',type:'Wireless Access Point',mountType:'Desktop',location:'Office',rackId:'',notes:'keep AP'},
 {id:'ap2',name:'Ceiling AP',type:'Wireless Access Point',mountType:'Ceiling Mounted',location:'Office',rackId:''},
