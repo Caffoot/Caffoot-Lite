@@ -5836,8 +5836,8 @@ function hierarchyValidateTypes(subnets) {
         function phase19CDetailRows(device, field) {
             const details = device.typeDetails && typeof device.typeDetails === 'object' ? device.typeDetails : {};
             const keys = phase19BFieldsFor(device.type);
-            // Retain access to historical values even when a managed option was removed.
-            const historical = []; // Incompatible values belong in historical type snapshots, not active hardware.
+            // Incompatible fields are displayed in the separate History tab, never as active hardware.
+            const historical = [];
             const allKeys = [...keys, ...historical];
             const flags = new Set([...phase19BFlags, ...phase19BServerFunctionFields(), ...phase120SoftwareOptions().map(x=>x.key)]);
             const serviceKeys=new Set([...phase120StarterServerServices,...phase19BServerFunctions()].map(x=>x.key));
@@ -5871,7 +5871,7 @@ function hierarchyValidateTypes(subnets) {
             const serverServiceEntries=[...phase120AvailableServerServices(),...phase19BServerFunctions().filter(x=>x.archived)].filter((x,i,all)=>all.findIndex(y=>y.key===x.key)===i).filter(x=>activeFields.has(x.key) && (deviceDetails[x.key]===true||d[x.key]===true)).sort((a,b)=>String(a.label||'').localeCompare(String(b.label||''),undefined,{sensitivity:'base'}));
             const serverServices=serverServiceEntries.map(x=>`<div class="phase14c-field"><dt>${safe(x.label)}</dt><dd>Enabled${x.archived?' <span class="inline-flex items-center gap-1 rounded-full border border-red-300 bg-red-50 px-2 py-0.5 text-xs font-bold text-red-700 dark:border-red-700 dark:bg-red-950/50 dark:text-red-300"><i class="fa-solid fa-box-archive" aria-hidden="true"></i>Archived</span>':''}</dd></div>`).join('');
             const platformDetails=[['Operating system',deviceDetails.softwarePlatform||deviceDetails.os],['OS version',deviceDetails.softwareVersion],['Windows licence',deviceDetails.windowsLicence]].filter(([label])=>['server','computer'].includes(phase19BTypeGroups[String(d.type||'').toLowerCase().trim()]) || label==='Operating system' && activeFields.has('os')).filter(([,value])=>value!==undefined&&value!==null&&value!=='').map(([label,value])=>field(label,value)).join('');
-            const historicalSnapshots = Array.isArray(d.previousTypeDetails) ? d.previousTypeDetails : [];
+            const historicalSnapshots = Array.isArray(d.previousTypeDetails) ? [...d.previousTypeDetails].reverse() : [];
             const historyRows = historicalSnapshots.map((snapshot,index)=>`<details class="rounded-xl border border-slate-300 dark:border-slate-600 p-3"><summary class="cursor-pointer font-semibold">${safe(snapshot.type||'Previous type')} — saved configuration ${index+1}</summary><dl class="phase14c-grid mt-3">${Object.entries(snapshot.details||{}).map(([key,value])=>field(phase19CDetailLabel(key,snapshot.type),typeof value==='boolean'?(value?'Yes':'No'):value)).join('')}</dl></details>`).join('');
             const hardware = field('Manufacturer', d.manufacturer) + field('Model', d.model) + field('Serial number', d.serialNumber);
             const rackRows = mounted ? field('Rack', rack.name) + field('Face', d.face || 'front') + field('U position', uText) + field('Height', (Number(d.rackUHeight) || (uEnd-uStart+1) || 1) + 'U') : '';
