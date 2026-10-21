@@ -1,6 +1,6 @@
 # Caffoot Lite v1.2.1 — Release Notes
 
-**Status:** Maintenance release candidate — not yet published.
+**Status:** Published maintenance release.
 **Focus:** Legacy backup import compatibility and rack-location display.
 
 ## Fixes
