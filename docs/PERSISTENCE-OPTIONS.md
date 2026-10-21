@@ -44,4 +44,4 @@ A container image can package an application independently of which database it 
 - Will offline-first operation remain fully standalone, or become an optional disconnected mode?
 - What is the expected backup frequency, recovery point and recovery time for supported deployments?
 
-**Next step:** produce a concrete entity/relationship and migration contract proposal; do not choose or implement a database until these questions have reviewed answers.
+**Next step:** review the proposed entity/relationship and migration contract in [ENTITY-RELATIONSHIP-PROPOSAL.md](ENTITY-RELATIONSHIP-PROPOSAL.md), resolve its open scoping questions, and only then decide whether to implement a database.
