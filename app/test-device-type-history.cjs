@@ -14,6 +14,9 @@ for (const token of [
   'phase130ConfirmRestore(description)',
   "case 'phase130-restore-cancel': phase130ResolveRestore(false)",
   "case 'phase130-restore-accept': phase130ResolveRestore(true)",
-  'Number.isInteger(index)'
+  'Number.isInteger(index)',
+  'const nextHistory = entries.slice();',
+  'if (!saveState()) {',
+  'appState = JSON.parse(before);'
 ]) assert.ok(source.includes(token), 'Missing device type history contract: ' + token);
-console.log('PASS: device type conversion archives incompatible fields and separates active details.');
+console.log('PASS: device type history and restore source contracts, including retained snapshots and save rollback.');
