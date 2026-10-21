@@ -7847,12 +7847,13 @@ function hierarchyValidateTypes(subnets) {
                   </fieldset>
                   <p id="phase13c-position-hint" class="text-xs text-slate-500 dark:text-slate-300" aria-live="polite"></p>
                   <p id="phase13c-error" role="alert" aria-live="polite" class="text-sm text-rose-600 dark:text-rose-400 min-h-5"></p>
-                  <div class="flex flex-wrap justify-end gap-3 pt-2 border-t border-slate-200 dark:border-slate-600"><button type="button" data-action="close-modal" class="phase13b-secondary caffoot-modal-cancel">Cancel</button><button type="submit" class="phase13b-primary">${existing?'Save changes':'Place accessory'}</button></div>
+                  <div class="flex flex-wrap justify-end gap-3 pt-2 border-t border-slate-200 dark:border-slate-600">${existing?`<button type="button" id="phase13c-remove" class="phase13b-danger mr-auto">Remove accessory</button>`:''}<button type="button" data-action="close-modal" class="phase13b-secondary caffoot-modal-cancel">Cancel</button><button type="submit" class="phase13b-primary">${existing?'Save changes':'Place accessory'}</button></div>
                 </form>
             </div>`;
             modal.classList.remove('hidden');
             modal.classList.add('flex');
             const form=modal.querySelector('#phase13c-form');
+            modal.querySelector('#phase13c-remove')?.addEventListener('click',()=>phase13CDeleteAccessory(existing.id));
             const typeSelect=modal.querySelector('#phase13c-form [name="type"]');
             const portField=modal.querySelector('#phase13e-port-field');
             const portSelect=modal.querySelector('#phase13c-form [name="portCount"]');
@@ -7916,10 +7917,26 @@ function hierarchyValidateTypes(subnets) {
         }
         function phase13CDeleteAccessory(id){
             const accessory=(appState.rackAccessories||[]).find(a=>a.id===id);
-            if(!accessory||!confirm(`Remove ${accessory.name||phase13CAccessoryTypes[accessory.type]?.label||'accessory'} from this rack?`))return;
+            if(!accessory||document.getElementById('phase13c-remove-confirm'))return;
+            const overlay=document.createElement('div');
+            overlay.id='phase13c-remove-confirm';
+            overlay.className='fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/70 p-4';
+            overlay.setAttribute('role','alertdialog');
+            overlay.setAttribute('aria-modal','true');
+            overlay.setAttribute('aria-labelledby','phase13c-remove-title');
+            overlay.innerHTML=`<div class="w-full max-w-md rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 p-6 shadow-2xl space-y-4 text-slate-900 dark:text-white"><h3 id="phase13c-remove-title" class="text-lg font-bold">Remove rack accessory?</h3><p class="text-sm text-slate-700 dark:text-slate-200">Remove <strong>${escapeHtml(accessory.name||phase13CAccessoryTypes[accessory.type]?.label||'accessory')}</strong> from this rack? Other equipment will not be changed.</p><div class="flex justify-end gap-3"><button type="button" id="phase13c-remove-cancel" class="phase13b-secondary">Keep accessory</button><button type="button" id="phase13c-remove-accept" class="phase13b-danger">Remove accessory</button></div></div>`;
+            const previousFocus=document.activeElement;
+            document.body.appendChild(overlay);
+            const cancel=()=>{overlay.remove();if(previousFocus?.isConnected)previousFocus.focus();};
+            overlay.querySelector('#phase13c-remove-cancel').addEventListener('click',cancel);
+            overlay.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();event.stopPropagation();cancel();}});
+            overlay.querySelector('#phase13c-remove-cancel').focus();
+            overlay.querySelector('#phase13c-remove-accept').addEventListener('click',()=>{
+            overlay.remove();
             const before=JSON.stringify(appState);
             appState.rackAccessories=appState.rackAccessories.filter(a=>a.id!==id);
-            if(!saveState()){appState=JSON.parse(before);return;}renderContent();
+            if(!saveState()){appState=JSON.parse(before);return;}closeModal();renderContent();
+            });
         }
         function phase13CMoveAccessory(id,rackId,startU){
             const a=(appState.rackAccessories||[]).find(x=>x.id===id);
