@@ -6601,7 +6601,7 @@ function hierarchyValidateTypes(subnets) {
             if(!mount)return;
             const previous=mount.value;
             const options=phase120SuggestedMounts(type);
-            const chosen=options.includes(previous) ? previous : phase120DefaultMount(type);
+            const chosen=(options.includes(previous) || (previous && phase19BAllowedMounts(type).includes(previous))) ? previous : phase120DefaultMount(type);
             mount.innerHTML='<option value="" disabled>Select mounting type...</option>'+phase19BMountOptions(type,chosen);
             mount.value=chosen;
             toggleDeviceMountType();
