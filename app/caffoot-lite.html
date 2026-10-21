@@ -6019,7 +6019,8 @@ function hierarchyValidateTypes(subnets) {
             for (const [key,value] of restore) nextDetails[key] = value;
             device.type = snapshot.type;
             device.typeDetails = nextDetails;
-            const nextHistory = entries.filter((_,i)=>i!==index);
+            // Restoring a snapshot must never consume it: earlier configurations remain available.
+            const nextHistory = entries.slice();
             if (Object.keys(archived).length) nextHistory.push({type:JSON.parse(before).devices.find(d=>String(d.id)===String(deviceId)).type,details:archived});
             device.previousTypeDetails = nextHistory;
             if (!saveState()) {
