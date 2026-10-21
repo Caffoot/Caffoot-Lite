@@ -7625,11 +7625,11 @@ function hierarchyValidateTypes(subnets) {
                             <p class="text-xs text-slate-500 dark:text-slate-300">${escapeHtml(String(change.type || 'Unknown'))}</p>
                         </div>
                         <div class="text-sm text-slate-600 dark:text-slate-300">
-                            <span class="font-semibold">Current:</span> ${escapeHtml(String(change.mountType))} — ${escapeHtml(String(change.rack))}${change.startU != null ? ', U' + escapeHtml(String(change.startU)) : ''}
+                            <span class="font-semibold">Current mounting:</span> ${escapeHtml(String(change.mountType))} · <span class="font-semibold">Location:</span> ${escapeHtml(String(change.location || "Unknown"))} · <span class="font-semibold">Rack:</span> ${escapeHtml(String(change.rack))}${change.startU != null ? ', U' + escapeHtml(String(change.startU)) : ''}
                         </div>
                         <div class="rounded-lg border border-blue-200 bg-blue-50 dark:border-blue-700 dark:bg-blue-950/40 p-3">
                             <p class="text-xs font-bold uppercase tracking-wide text-blue-900 dark:text-blue-200">Proposed Correction</p>
-                            <p class="mt-1 text-sm font-semibold text-blue-900 dark:text-blue-100">Desktop · Unknown Location · No Rack Assignment</p>
+                            <p class="mt-1 text-sm font-semibold text-blue-900 dark:text-blue-100">${escapeHtml(String(change.proposedMountType || "Desktop"))} · Unknown Location · No Rack Assignment</p>
                         </div>
                     </li>`).join('');
                 openModal(`<section class="p-5 sm:p-6 flex flex-col gap-4 max-h-[85vh]" role="group" aria-label="Legacy Mounting Compatibility Review">
