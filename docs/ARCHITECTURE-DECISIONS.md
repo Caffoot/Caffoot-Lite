@@ -67,3 +67,21 @@ Support optional human-readable Asset IDs with configurable prefix, starting num
 **Rules agreed:** Asset IDs must be unique within an inventory scope; never automatically recycle a retired/issued number; retain existing asset tags without automatic renumbering. Changes to Asset IDs must not affect internal identity or relationships. Define safe handling for manual edits, collisions, imports, gaps and concurrent allocation before coding. Future multi-tenant scopes require separate authorization and uniqueness review.
 
 **Consequences:** This decision establishes design direction, not a new v1.4.0 end-user feature. See [Identity & Migration Contract](IDENTITY-MIGRATION-CONTRACT.md).
+
+
+## ADR-010 — One interface, optional self-hosted deployment
+
+**Status:** Accepted product direction — 21 October 2026; implementation and delivery milestone pending.
+
+Caffoot Lite remains **one product with one consistent user experience** across two supported deployment choices:
+
+1. **Standalone HTML:** the existing offline, browser-local application remains a first-class supported option. Users may continue using it indefinitely without being forced into Docker, accounts or a database.
+2. **Self-hosted:** an optional Docker/Portainer-friendly deployment may provide server-side persistence, user management, authentication, permissions and administration. It should retain the same dashboard, navigation, design language and core device/IPAM/rack workflows. Only deployment-specific administration controls should appear when relevant.
+
+A future **Settings → Self-Hosting** guide may present a Portainer/Compose stack and Docker run instructions, then assist users with a secure, explicit inventory transfer. The implementation must accommodate browser `file://` and cross-origin restrictions; provide a reliable validated JSON export/import fallback instead of promising direct browser-storage transfer in all environments.
+
+**Migration guarantees:** never delete or silently mutate the source browser inventory; stage and validate destination data and linked records; require explicit user confirmation; preserve legacy backup compatibility, rollback and recovery. Migration is **copy**, not move. Do not silently enable two-way synchronization between independent standalone and hosted inventories.
+
+**Security boundary:** accounts, sessions, authorization and MFA belong to a properly secured hosted backend, not the standalone HTML file. A reverse proxy or Docker container alone is not authentication or tenant isolation.
+
+**Consequences:** No separate product edition is required, and this decision does not determine future pricing, licensing, the database choice, Docker packaging or release timing. Do not interpret this ADR as approval to change published v1.3.0. See [Data Storage Boundaries](DATA-STORAGE-BOUNDARIES.md) and [Persistence Options](PERSISTENCE-OPTIONS.md).
