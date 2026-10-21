@@ -7836,7 +7836,7 @@ function hierarchyValidateTypes(subnets) {
                   </div>
                   <label class="phase13h-label">Description (optional)<input name="name" maxlength="80" class="phase13c-field" value="${escapeHtml(existing?.name||'')}" placeholder="e.g. Rack PDU or fibre patch panel"></label>
                   <fieldset class="border border-slate-200 dark:border-slate-600 rounded-xl p-4"><legend class="px-2 font-semibold text-sm">Rack placement</legend>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <label class="phase13h-label">Face<select name="face" class="phase13c-field"><option value="front" ${face==='front'?'selected':''}>Front</option><option value="rear" ${face==='rear'?'selected':''}>Rear</option></select></label>
                       <label id="phase13v-side-field" class="phase13h-label" style="${phase13CAccessoryTypes[type]?.vertical?'':'display:none;'}">Side (as viewed from selected face)<select name="side" class="phase13c-field"><option value="left" ${existing?.side==='left'?'selected':''}>Left (L)</option><option value="right" ${existing?.side==='right'?'selected':''}>Right (R)</option></select></label>
                       <label class="phase13h-label">Start U<select name="startU" required class="phase13c-field" aria-describedby="phase13c-position-hint"></select></label>
@@ -7895,7 +7895,8 @@ function hierarchyValidateTypes(subnets) {
             typeSelect.addEventListener('change',refreshAccessoryOptions);
             sideSelect.addEventListener('change',refreshAccessoryOptions);
             faceSelect.addEventListener('change',refreshAccessoryOptions);
-            heightInput.addEventListener('input',refreshAccessoryOptions);
+            heightInput.addEventListener('change',refreshAccessoryOptions);
+            heightInput.addEventListener('blur',refreshAccessoryOptions);
             refreshAccessoryOptions();
             modal.querySelector('#phase13c-form').addEventListener('submit',event=>{
                 event.preventDefault();
