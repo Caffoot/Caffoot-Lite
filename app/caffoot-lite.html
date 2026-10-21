@@ -7789,16 +7789,16 @@ function hierarchyValidateTypes(subnets) {
             const rack = appState.racks.find(r=>r.id===candidate.rackId);
             if (!rack || !['front','rear'].includes(candidate.face)) return 'Choose a valid rack and face.';
             const start = Number(candidate.startU), height = Number(candidate.heightU);
-            const vertical=!!phase13CAccessoryTypes[candidate.type]?.vertical;
+            const vertical=(candidate.type==='pdu_vertical'||candidate.type==='cable_vertical');
             if (!Number.isInteger(start) || !Number.isInteger(height) || height<1 || height>(vertical?Number(rack.heightU):12) || start<1 || start+height-1>Number(rack.heightU)) return `Accessory must fit within U1–U${rack.heightU}.`;
             if(vertical && !['left','right'].includes(candidate.side)) return 'Choose left or right as viewed from this face.';
             const end = start+height-1;
             if(vertical){
-                if((appState.rackAccessories||[]).some(a=>a.id!==excludeId && a.rackId===candidate.rackId && phase13CAccessoryTypes[a.type]?.vertical && a.face===candidate.face && a.side===candidate.side && start<=Number(a.startU)+Number(a.heightU)-1 && end>=Number(a.startU)))return 'This side rail is occupied at the selected height.';
+                if((appState.rackAccessories||[]).some(a=>a.id!==excludeId && a.rackId===candidate.rackId && (a.type==='pdu_vertical'||a.type==='cable_vertical') && a.face===candidate.face && a.side===candidate.side && start<=Number(a.startU)+Number(a.heightU)-1 && end>=Number(a.startU)))return 'This side rail is occupied at the selected height.';
                 return null;
             }
             if (appState.devices.some(d=>d.rackId===candidate.rackId && (d.face||'front')===candidate.face && start<=Number(d.rackUEnd||d.rackUStart) && end>=Number(d.rackUStart))) return 'This position overlaps a mounted device.';
-            if ((appState.rackAccessories||[]).some(a=>a.id!==excludeId && a.rackId===candidate.rackId && !phase13CAccessoryTypes[a.type]?.vertical && a.face===candidate.face && start<=a.startU+a.heightU-1 && end>=a.startU)) return 'This position overlaps another accessory.';
+            if ((appState.rackAccessories||[]).some(a=>a.id!==excludeId && a.rackId===candidate.rackId && a.type!=='pdu_vertical' && a.type!=='cable_vertical' && a.face===candidate.face && start<=a.startU+a.heightU-1 && end>=a.startU)) return 'This position overlaps another accessory.';
             return null;
         }
         function phase13VRenderRail(rack, accessories, side){
