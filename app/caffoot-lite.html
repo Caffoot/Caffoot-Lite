@@ -5830,7 +5830,7 @@ function hierarchyValidateTypes(subnets) {
         // Use the current managed labels, including renamed software and server functions.
         function phase19CDetailLabel(key, type) {
             if (phase19BTypeGroups[String(type || '').toLowerCase().trim()] === 'router' && key === 'networkConnection') return 'WAN connection method';
-            const managed = [...phase19BServerFunctions(), ...phase120SoftwareOptions()].find(item => item.key === key);
+            const managed = [...phase19BServerFunctions(), ...phase120StarterServerServices, ...phase120SoftwareOptions()].find(item => item.key === key);
             return ({softwarePlatform:'Operating System',softwareVersion:'OS Version',windowsLicence:'Windows Licence'})[key] || managed?.label || phase19BLabels[key] || key;
         }
         function phase19CDetailRows(device, field) {
