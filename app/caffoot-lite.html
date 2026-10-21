@@ -7187,7 +7187,7 @@ function hierarchyValidateTypes(subnets) {
                             <p class="text-xs text-slate-500 dark:text-slate-300">${escapeHtml(String(change.type || 'Unknown'))}</p>
                         </div>
                         <div class="text-sm text-slate-600 dark:text-slate-300">
-                            <span class="font-semibold">Current:</span> ${escapeHtml(String(change.mountType))} — ${escapeHtml(String(change.rack))}${change.startU != null ? ', U' + escapeHtml(String(change.startU)) : ''}
+                            <span class="font-semibold">Current mounting:</span> ${escapeHtml(String(change.mountType))} · <span class="font-semibold">Location:</span> ${escapeHtml(String(change.location || "Unknown"))} · <span class="font-semibold">Rack:</span> ${escapeHtml(String(change.rack))}${change.startU != null ? ', U' + escapeHtml(String(change.startU)) : ''}
                         </div>
                         <div class="rounded-lg border border-blue-200 bg-blue-50 dark:border-blue-700 dark:bg-blue-950/40 p-3">
                             <p class="text-xs font-bold uppercase tracking-wide text-blue-900 dark:text-blue-200">Proposed Correction</p>
@@ -7197,9 +7197,9 @@ function hierarchyValidateTypes(subnets) {
                 openModal(`<section class="p-5 sm:p-6 flex flex-col gap-4 max-h-[85vh]" role="group" aria-label="Legacy Mounting Compatibility Review">
                     <header class="flex-shrink-0 border-b border-slate-200 dark:border-slate-600 pb-4">
                         <h2 class="text-lg font-bold text-slate-900 dark:text-white">Legacy Mounting Compatibility Review</h2>
-                        <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">${repairs.length} device${repairs.length === 1 ? '' : 's'} require mounting corrections</p>
+                        <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">${repairs.length} device${repairs.length === 1 ? '' : 's'} require compatibility corrections</p>
                     </header>
-                    <p class="flex-shrink-0 text-sm text-slate-700 dark:text-slate-200">These devices have legacy rack assignments incompatible with their device types. Review the proposed corrections before proceeding.</p>
+                    <p class="flex-shrink-0 text-sm text-slate-700 dark:text-slate-200">These devices contain legacy mounting or location information that conflicts with current inventory rules. Review each proposed correction before proceeding.</p>
                     <p class="flex-shrink-0 text-xs font-semibold text-slate-600 dark:text-slate-300">Affected Devices (${repairs.length}) — scroll to review all</p>
                     <ul class="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain pr-2 border-y border-slate-200 dark:border-slate-600 py-2" tabindex="0" aria-label="Proposed mounting corrections">${rows}</ul>
                     <p class="flex-shrink-0 text-xs text-slate-600 dark:text-slate-300">Only mounting and location fields will change. Names, IP addresses and other inventory data are preserved. Your backup file stays unchanged. A final restore confirmation follows.</p>
