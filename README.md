@@ -1,5 +1,13 @@
 # Caffoot Lite — Free Offline IPAM & Network Inventory Software
 
+# Your infrastructure. Without the infrastructure.
+
+## Lite in effort. Not in features.
+
+*It needs recording? Just Caffoot it.*
+
+Caffoot Lite is our one actively developed product. See the [product vision](docs/PRODUCT-VISION.md) and [architecture decision log](docs/ARCHITECTURE-DECISIONS.md). The current published standalone application remains offline-first; future deployment and storage options are under evaluation.
+
 **Infrastructure, Simplified.**  
 *For HomeLabs and Small Teams*
 
