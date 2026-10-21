@@ -15,9 +15,9 @@ Caffoot Lite is our one actively developed product. See the [product vision](doc
 
 No Docker, database, web server or account is required to run the published release. Download the HTML application and open it in a modern browser. Your inventory stays in that browser's local storage, so **regular JSON exports are essential**: browser data loss can mean inventory loss.
 
-## v1.3.0 Rack Management — release candidate
+## v1.3.0 Rack Management — released
 
-The next release focuses on Rack Overview, Rack Inventory and Rack Accessories, improved rack elevations, configuration and legacy mounting compatibility. **v1.3.0 is not yet published**; use the latest stable release for production. See [draft v1.3.0 release notes](RELEASE-NOTES-1.3.0.md) and the [roadmap](ROADMAP.md). Advanced addressing and reporting are deferred to later milestones.
+The v1.3.0 release includes Rack Overview, Rack Inventory and Rack Accessories, improved rack elevations, configuration and legacy mounting compatibility. See the [v1.3.0 release notes](RELEASE-NOTES-1.3.0.md) and the [roadmap](ROADMAP.md). Advanced addressing and reporting are deferred to later milestones.
 
 ## ⚠️ SECURITY WARNING — DO NOT EXPOSE CAFFOOT LITE TO THE PUBLIC INTERNET
 
@@ -126,13 +126,13 @@ npm run release
 
 The build produces `app/dist/Caffoot-Lite.html`. Automated checks and manual browser testing are recommended before distributing a build. The GitHub Actions build workflow is currently disabled.
 
-**Current release:** [v1.2.0](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.2.0), published 20 October 2026. v1.1.2 remains available as an earlier stable release; v1.1.0.1 is a historical hotfix.
+**Current release:** [v1.3.0](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.0), published 21 October 2026. Earlier releases remain available as historical versions.
 
 ## Project and release status
 
 This repository is dedicated to **Caffoot Lite**: its standalone application, build tools, tests and release documentation.
 
-**v1.2.0 was prepared for publication on 20 October 2026.** Download the currently published version from the [latest stable release](https://github.com/Caffoot/Caffoot-Lite/releases/latest). See the [v1.2.0 release notes](RELEASE-NOTES-1.2.0.md), [v1.1.2 release notes](RELEASE-NOTES-1.1.2.md), [historical v1.1.1 release notes](RELEASE-NOTES-1.1.1.md), [historical v1.1.0 release notes](RELEASE-NOTES-1.1.0.md) and [roadmap](ROADMAP.md).
+Download the published version from the [latest stable release](https://github.com/Caffoot/Caffoot-Lite/releases/latest). See the [v1.3.0 release notes](RELEASE-NOTES-1.3.0.md), [v1.2.0 release notes](RELEASE-NOTES-1.2.0.md) and [roadmap](ROADMAP.md).
 
 ## Licence and branding
 
