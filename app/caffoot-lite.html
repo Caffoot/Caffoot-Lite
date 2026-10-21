@@ -364,6 +364,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 /* Stage 1D: non-interactive 0U side-rail preview; no rack capacity or placement changes. */
 .phase13-vertical-layout{display:grid;grid-template-columns:32px minmax(0,1fr) 32px;gap:5px;align-items:stretch;padding:5px}
 .phase13-vertical-rail{background:repeating-linear-gradient(to bottom,#334155 0px,#334155 38px,#475569 38px,#475569 40px);border:1px solid #64748b;border-radius:4px;min-width:0}
+.phase13v-rail{position:relative;overflow:hidden}.phase13v-add{position:absolute;inset:0;width:100%;cursor:pointer;background:transparent}.phase13v-add:hover{background:#38bdf833}.phase13v-placed{position:absolute;left:1px;right:1px;width:calc(100% - 2px);z-index:2;border:1px solid #f8fafc;border-radius:3px;overflow:hidden;display:flex;align-items:center;justify-content:center;color:white;font-size:9px;cursor:pointer}.phase13v-placed span{writing-mode:vertical-rl;max-height:95%;overflow:hidden;text-overflow:ellipsis}.phase13v-pdu{background:#92400e}.phase13v-cable{background:#0369a1}.phase13v-placed:hover{filter:brightness(1.2)}
 .phase13-vertical-rail-labels{display:grid;grid-template-columns:32px minmax(0,1fr) 32px;gap:5px;padding:4px 5px 7px;background:#1e293b;color:#e2e8f0;font-size:11px;font-weight:700;text-align:center}
 .phase13-vertical-rail-labels span:nth-child(2){font-weight:500;font-size:10px}
 @media(max-width:480px){.phase13-vertical-layout,.phase13-vertical-rail-labels{grid-template-columns:22px minmax(0,1fr) 22px;gap:3px}}
@@ -2992,7 +2993,8 @@ function hierarchyValidateTypes(subnets) {
             const rackDevices = appState.devices.filter(d => d.rackId === currentRack.id);
             const faceDevices = rackDevices.filter(d => (d.face || 'front') === activeRackFace);
             const rackAccessories=(appState.rackAccessories||[]).filter(a=>a.rackId===currentRack.id);
-            const faceAccessories=rackAccessories.filter(a=>a.face===activeRackFace);
+            const faceAccessories=rackAccessories.filter(a=>a.face===activeRackFace && !phase13CAccessoryTypes[a.type]?.vertical);
+            const verticalAccessories=rackAccessories.filter(a=>a.face===activeRackFace && phase13CAccessoryTypes[a.type]?.vertical);
 
             const faceUUsed = faceDevices.reduce((acc, d) => {
                 const height = (parseInt(d.rackUEnd || d.rackUStart) - parseInt(d.rackUStart) + 1) || 1;
@@ -3109,11 +3111,11 @@ function hierarchyValidateTypes(subnets) {
                                         <span>Placement</span>
                                     </div>
                                     <div class="phase13-vertical-layout" aria-label="0U vertical accessory rail preview">
-                                        <div class="phase13-vertical-rail" aria-label="Left 0U rail, as viewed from this face"></div>
+                                        ${phase13VRenderRail(currentRack,verticalAccessories,"left")}
                                         <div class="flex flex-col min-w-0">
                                             ${rackSlotsHtml}
                                         </div>
-                                        <div class="phase13-vertical-rail" aria-label="Right 0U rail, as viewed from this face"></div>
+                                        ${phase13VRenderRail(currentRack,verticalAccessories,"right")}
                                     </div>
                                     <div class="phase13-vertical-rail-labels" aria-label="Side orientation as viewed from ${activeRackFace} face">
                                         <span>L</span><span>As viewed from ${activeRackFace} face</span><span>R</span>
@@ -7767,7 +7769,9 @@ function hierarchyValidateTypes(subnets) {
             pdu_horizontal: {label:'Horizontal rack PDU',icon:'fa-plug'},
             ventilation: {label:'Ventilation panel',icon:'fa-wind'},
             fan_tray: {label:'Fan tray',icon:'fa-fan'},
-            environmental_sensor: {label:'Environmental sensor (rack-mounted)',icon:'fa-temperature-half'}
+            environmental_sensor: {label:'Environmental sensor (rack-mounted)',icon:'fa-temperature-half'},
+            pdu_vertical: {label:'Vertical 0U PDU',icon:'fa-plug',vertical:true},
+            cable_vertical: {label:'Vertical 0U cable manager',icon:'fa-bars-staggered',vertical:true}
         };
         // Phase 13D: CSS-only rack fascia art; no external images or data changes.
         function phase13DFascia(type, portCount = 24) {
@@ -7785,11 +7789,28 @@ function hierarchyValidateTypes(subnets) {
             const rack = appState.racks.find(r=>r.id===candidate.rackId);
             if (!rack || !['front','rear'].includes(candidate.face)) return 'Choose a valid rack and face.';
             const start = Number(candidate.startU), height = Number(candidate.heightU);
-            if (!Number.isInteger(start) || !Number.isInteger(height) || height<1 || height>12 || start<1 || start+height-1>Number(rack.heightU)) return `Accessory must fit within U1–U${rack.heightU}.`;
+            const vertical=!!phase13CAccessoryTypes[candidate.type]?.vertical;
+            if (!Number.isInteger(start) || !Number.isInteger(height) || height<1 || height>(vertical?Number(rack.heightU):12) || start<1 || start+height-1>Number(rack.heightU)) return `Accessory must fit within U1–U${rack.heightU}.`;
+            if(vertical && !['left','right'].includes(candidate.side)) return 'Choose left or right as viewed from this face.';
             const end = start+height-1;
+            if(vertical){
+                if((appState.rackAccessories||[]).some(a=>a.id!==excludeId && a.rackId===candidate.rackId && phase13CAccessoryTypes[a.type]?.vertical && a.face===candidate.face && a.side===candidate.side && start<=Number(a.startU)+Number(a.heightU)-1 && end>=Number(a.startU)))return 'This side rail is occupied at the selected height.';
+                return null;
+            }
             if (appState.devices.some(d=>d.rackId===candidate.rackId && (d.face||'front')===candidate.face && start<=Number(d.rackUEnd||d.rackUStart) && end>=Number(d.rackUStart))) return 'This position overlaps a mounted device.';
-            if ((appState.rackAccessories||[]).some(a=>a.id!==excludeId && a.rackId===candidate.rackId && a.face===candidate.face && start<=a.startU+a.heightU-1 && end>=a.startU)) return 'This position overlaps another accessory.';
+            if ((appState.rackAccessories||[]).some(a=>a.id!==excludeId && a.rackId===candidate.rackId && !phase13CAccessoryTypes[a.type]?.vertical && a.face===candidate.face && start<=a.startU+a.heightU-1 && end>=a.startU)) return 'This position overlaps another accessory.';
             return null;
+        }
+        function phase13VRenderRail(rack, accessories, side){
+            const height=Number(rack.heightU)||42;
+            const items=accessories.filter(a=>a.side===side);
+            const blocks=items.map(a=>{
+                const bottom=(Number(a.startU)-1)/height*100, span=Number(a.heightU)/height*100;
+                const label=a.name||phase13CAccessoryTypes[a.type]?.label||'0U accessory';
+                const title=escapeHtml(label+' · U'+a.startU+'–U'+(Number(a.startU)+Number(a.heightU)-1)+' · '+side);
+                return `<button type="button" data-action="phase13c-edit" data-id="${escapeHtml(a.id)}" title="${title}" aria-label="Edit ${title}" class="phase13v-placed ${a.type==='pdu_vertical'?'phase13v-pdu':'phase13v-cable'}" style="bottom:${bottom}%;height:${span}%"><span>${escapeHtml(label)}</span></button>`;
+            }).join('');
+            return `<div class="phase13-vertical-rail phase13v-rail" aria-label="${side} 0U rail as viewed from ${activeRackFace} face"><button type="button" data-action="phase13v-add" data-side="${side}" data-rack-id="${escapeHtml(rack.id)}" class="phase13v-add" title="Add vertical 0U accessory on ${side}" aria-label="Add vertical 0U accessory on ${side}"></button>${blocks}</div>`;
         }
         function phase13COpenAccessory(rackId, startU = 1, editId = null) {
             const rack=appState.racks.find(r=>r.id===rackId);
@@ -7802,7 +7823,7 @@ function hierarchyValidateTypes(subnets) {
             const safeStart = Number(existing?.startU ?? startU);
             const safeHeight = Number(existing?.heightU ?? 1);
             const start = Number.isInteger(safeStart) && safeStart >= 1 && safeStart <= rackLimit ? safeStart : 1;
-            const height = Number.isInteger(safeHeight) && safeHeight >= 1 && safeHeight <= 12 ? safeHeight : 1;
+            const height = Number.isInteger(safeHeight) && safeHeight >= 1 && safeHeight <= (phase13CAccessoryTypes[type]?.vertical?rackLimit:12) ? safeHeight : 1;
             const modal=document.getElementById('modal-container');
             const modalContent = document.getElementById('modal-content');
             modalContent.classList.remove('phase18b-balanced-modal');
@@ -7817,8 +7838,9 @@ function hierarchyValidateTypes(subnets) {
                   <fieldset class="border border-slate-200 dark:border-slate-600 rounded-xl p-4"><legend class="px-2 font-semibold text-sm">Rack placement</legend>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <label class="phase13h-label">Face<select name="face" class="phase13c-field"><option value="front" ${face==='front'?'selected':''}>Front</option><option value="rear" ${face==='rear'?'selected':''}>Rear</option></select></label>
+                      <label id="phase13v-side-field" class="phase13h-label" style="${phase13CAccessoryTypes[type]?.vertical?'':'display:none;'}">Side (as viewed from selected face)<select name="side" class="phase13c-field"><option value="left" ${existing?.side==='left'?'selected':''}>Left (L)</option><option value="right" ${existing?.side==='right'?'selected':''}>Right (R)</option></select></label>
                       <label class="phase13h-label">Start U<select name="startU" required class="phase13c-field" aria-describedby="phase13c-position-hint"></select></label>
-                      <label class="phase13h-label">Height (U)<input name="heightU" type="number" min="1" max="12" required class="phase13c-field" value="${height}"></label>
+                      <label class="phase13h-label">Height (U)<input name="heightU" type="number" min="1" max="${phase13CAccessoryTypes[type]?.vertical?rackLimit:12}" required class="phase13c-field" value="${height}"></label>
                     </div>
                   </fieldset>
                   <p id="phase13c-position-hint" class="text-xs text-slate-500 dark:text-slate-300" aria-live="polite"></p>
@@ -7836,17 +7858,22 @@ function hierarchyValidateTypes(subnets) {
             const startSelect=modal.querySelector('#phase13c-form [name="startU"]');
             const heightInput=modal.querySelector('#phase13c-form [name="heightU"]');
             const positionHint=modal.querySelector('#phase13c-position-hint');
+            const sideField=modal.querySelector('#phase13v-side-field');
+            const sideSelect=modal.querySelector('#phase13c-form [name="side"]');
             function refreshAccessoryOptions() {
                 const isPatch=typeSelect.value==='patch';
+                const isVertical=!!phase13CAccessoryTypes[typeSelect.value]?.vertical;
+                sideField.style.display=isVertical?'':'none';
+                heightInput.max=String(isVertical?rackLimit:12);
                 portField.style.display=isPatch?'':'none';
                 portSelect.disabled=!isPatch;
                 portSelect.required=isPatch;
                 const previous=startSelect.value||String(start);
                 const h=Number(heightInput.value);
                 const options=[];
-                if(Number.isInteger(h)&&h>=1&&h<=12) {
+                if(Number.isInteger(h)&&h>=1&&h<=(isVertical?rackLimit:12)) {
                     for(let u=1;u+h-1<=rackLimit;u++) {
-                        const candidate={rackId,face:faceSelect.value,startU:u,heightU:h};
+                        const candidate={rackId,type:typeSelect.value,side:sideSelect.value,face:faceSelect.value,startU:u,heightU:h};
                         if(!phase13CAccessoryError(candidate,existing?.id)) options.push(u);
                     }
                 }
@@ -7862,10 +7889,11 @@ function hierarchyValidateTypes(subnets) {
                 else if(options.length) startSelect.value=String(options[0]);
                 startSelect.disabled=options.length===0;
                 positionHint.textContent=options.length
-                    ? options.length+' available starting position'+(options.length===1?'':'s')+' on the '+faceSelect.value+' face.'
+                    ? options.length+' available starting position'+(options.length===1?'':'s')+' on the '+faceSelect.value+(isVertical?' '+sideSelect.value+' 0U rail.':' face.')
                     : 'No available positions for this height and face. Change the height or face.';
             }
             typeSelect.addEventListener('change',refreshAccessoryOptions);
+            sideSelect.addEventListener('change',refreshAccessoryOptions);
             faceSelect.addEventListener('change',refreshAccessoryOptions);
             heightInput.addEventListener('input',refreshAccessoryOptions);
             refreshAccessoryOptions();
@@ -7873,7 +7901,7 @@ function hierarchyValidateTypes(subnets) {
                 event.preventDefault();
                 if(startSelect.disabled){modal.querySelector('#phase13c-error').textContent='No available rack position for this accessory.';return;}
                 const data=new FormData(event.currentTarget);
-                const candidate={id:existing?.id||('acc-'+Date.now()+'-'+Math.random().toString(36).slice(2,8)),rackId,type:String(data.get('type')),name:String(data.get('name')).trim(),face:String(data.get('face')),startU:Number(data.get('startU')),heightU:Number(data.get('heightU')),portCount:String(data.get('type'))==='patch'?Number(data.get('portCount')):null};
+                const candidate={id:existing?.id||('acc-'+Date.now()+'-'+Math.random().toString(36).slice(2,8)),rackId,type:String(data.get('type')),name:String(data.get('name')).trim(),face:String(data.get('face')),startU:Number(data.get('startU')),heightU:Number(data.get('heightU')),side:phase13CAccessoryTypes[String(data.get('type'))]?.vertical?String(data.get('side')):null,portCount:String(data.get('type'))==='patch'?Number(data.get('portCount')):null};
                 const error=(candidate.type==='patch' && ![12,24,48].includes(candidate.portCount))?'Choose a valid patch panel port count.':phase13CAccessoryError(candidate,existing?.id);
                 if(error){modal.querySelector('#phase13c-error').textContent=error;return;}
                 const before=JSON.stringify(appState);
@@ -8169,6 +8197,7 @@ function hierarchyValidateTypes(subnets) {
                 case 'correct-rack-specifications': openRackModal(id, true); break;
                 case 'delete-rack': deleteRack(id); break;
                 case 'phase13c-add': phase13COpenAccessory(selectedRackId,1); break;
+                case 'phase13v-add': phase13CSelectedAccessory='pdu_vertical';phase13COpenAccessory(target.dataset.rackId,1); {const f=document.querySelector('#phase13c-form [name="side"]');if(f){f.value=target.dataset.side;f.dispatchEvent(new Event('change'));}} break;
                 case 'phase13c-edit': {const a=(appState.rackAccessories||[]).find(a=>a.id===id);if(a)phase13COpenAccessory(a.rackId,a.startU,id);break;}
                 case 'phase13c-delete': phase13CDeleteAccessory(id); break;
                 case 'phase13b-tab': if (['view','equipment','settings'].includes(target.dataset.tab)) { phase13BRackTab=target.dataset.tab; renderContent(); } break;
