@@ -5953,7 +5953,43 @@ function hierarchyValidateTypes(subnets) {
                 tab.classList.toggle('phase14c-tab-active',active);
             });
         }
-        function phase130RestoreHistory(deviceId, index) {
+        let phase130RestoreResolve = null;
+        function phase130ConfirmRestore(description) {
+            if (document.getElementById('phase130-restore-dialog')) return Promise.resolve(false);
+            return new Promise(resolve => {
+                phase130RestoreResolve = resolve;
+                const overlay = document.createElement('div');
+                overlay.id = 'phase130-restore-dialog';
+                overlay.setAttribute('role','alertdialog');
+                overlay.setAttribute('aria-modal','true');
+                overlay.setAttribute('aria-labelledby','phase130-restore-title');
+                overlay.setAttribute('aria-describedby','phase130-restore-description');
+                overlay.className = 'absolute inset-0 z-50 flex items-center justify-center bg-slate-950/65 p-4 rounded-2xl';
+                overlay.innerHTML = `<div class="w-full max-w-lg rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 p-6 shadow-2xl space-y-4">
+                    <h3 id="phase130-restore-title" class="text-lg font-bold text-slate-900 dark:text-white">Restore Previous Configuration</h3>
+                    <p id="phase130-restore-description" class="text-sm text-slate-700 dark:text-slate-200 whitespace-pre-wrap break-words max-h-64 overflow-y-auto">${escapeHtml(description)}</p>
+                    <div class="flex flex-wrap justify-end gap-3">
+                        <button type="button" data-action="phase130-restore-cancel" class="h-11 px-4 rounded-xl border border-slate-400 dark:border-slate-500 text-slate-900 dark:text-white caffoot-modal-cancel">Keep Current Configuration</button>
+                        <button type="button" data-action="phase130-restore-accept" class="h-11 px-4 rounded-xl bg-indigo-700 hover:bg-indigo-800 text-white font-bold">Restore Configuration</button>
+                    </div></div>`;
+                const content = document.getElementById('modal-content');
+                if (!content) { phase130RestoreResolve = null; resolve(false); return; }
+                if (getComputedStyle(content).position === 'static') content.style.position = 'relative';
+                overlay._returnFocus = document.activeElement;
+                content.appendChild(overlay);
+                overlay.querySelector('[data-action="phase130-restore-cancel"]').focus();
+            });
+        }
+        function phase130ResolveRestore(accepted) {
+            const overlay = document.getElementById('phase130-restore-dialog');
+            const focus = overlay?._returnFocus;
+            overlay?.remove();
+            const resolve = phase130RestoreResolve;
+            phase130RestoreResolve = null;
+            if (focus?.isConnected) focus.focus();
+            if (resolve) resolve(accepted);
+        }
+        async function phase130RestoreHistory(deviceId, index) {
             const device = getDeviceById(deviceId);
             const entries = Array.isArray(device?.previousTypeDetails) ? device.previousTypeDetails : [];
             const snapshot = entries[index];
@@ -5971,7 +6007,8 @@ function hierarchyValidateTypes(subnets) {
             const description = 'Restore '+snapshot.type+' configuration? Device type will change from '+device.type+'. '+(changes.length?'Restored fields: '+changes.join('; ')+'. ':'')+
                 (obsolete.length?'Current incompatible fields will be preserved as history: '+obsolete.map(key=>phase19CDetailLabel(key,device.type)).join(', ')+'. ':'')+
                 'Device name, IP address, location and rack assignment will not change. Existing matching fields will be replaced.';
-            if (!window.confirm(description)) return;
+            const accepted = await phase130ConfirmRestore(description);
+            if (!accepted) return;
             if (getDeviceById(deviceId) !== device || device.previousTypeDetails?.[index] !== snapshot) return;
             const before = JSON.stringify(appState);
             const nextDetails = {...current};
@@ -8356,6 +8393,8 @@ function hierarchyValidateTypes(subnets) {
                 case 'phase14c-delete': closeModal(); deleteDevice(id); break;
                 case 'phase14c-rack': phase14CGoToRack(id); break;
                 case 'phase130-restore': phase130RestoreHistory(id, Number(actionEl.dataset.index)); break;
+                case 'phase130-restore-cancel': phase130ResolveRestore(false); break;
+                case 'phase130-restore-accept': phase130ResolveRestore(true); break;
                 case 'duplicate-device': duplicateDevice(id); break;
                 case 'delete-device': deleteDevice(id); break;
                 case 'hardware-catalog-manage': phase120ManageHardwareCatalogue(); break;
