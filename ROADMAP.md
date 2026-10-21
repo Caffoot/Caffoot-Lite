@@ -108,54 +108,56 @@ Managed multi-user hosting, authentication and centrally administered deployment
 
 **Status: Reserved if needed.** Patch releases address bugs, regressions, compatibility and small maintenance improvements after v1.2.0. Major new functionality belongs in a minor release.
 
-### v1.3.0 — Rack management, advanced IP addressing and reporting
+### v1.3.0 — Rack Management Modernisation
 
-**Status: Rack Management selected as the first v1.3.0 development stage on 20 October 2026; implementation and release require separate review and owner acceptance.**
+**Status: Feature scope frozen for release preparation (21 October 2026); not yet published.** The v1.3.0 branch has passed its automated release suite and owner browser checks for rack workflows and historical backup/mounting compatibility. Publication still requires release-version alignment, documentation review, final acceptance, merge and explicit owner approval. Published v1.2.1 remains unchanged.
 
-- Modernise the Racks workspace with an expandable sidebar, rack overview and useful utilisation/capacity visualisations, responsive rack inventory and clearer management workflows, consistent with Devices and IPAM.
+**Release scope — Rack Management:**
+- Racks navigation, estate-wide overview, inventory and accessories workflows; overview tabs for capacity, equipment, locations and types.
+- Rack elevations and front/rear equipment placement, with collision/boundary protection and contiguous-space awareness.
+- Flexible rack heights and presets, rack types, optional physical specifications and safe editing/resizing.
+- Rack accessories including horizontal/vertical 0U PDUs, ventilation, cable-management and environmental equipment, with existing placement protections.
+- Compatibility with historical devices, rack mounting values and JSON backup/restore.
+
+**Release gate:** Confirm actual implemented scope against source and owner acceptance; do not describe proposed functionality as shipped. Run the full release build, offline/browser checks, security/privacy and licence review, and the documentation consistency gate before publication. Do not merge or publish without owner approval.
+
+### v1.4.0 — Data & Architecture Foundations
+
+**Status: Architecture-first design milestone; no storage architecture or implementation selected.**
+
+- Define the product principle: **“Your infrastructure. Without the infrastructure.”** Lite means low installation and operational effort, not artificially limited functionality.
+- Evaluate retaining the one-file offline browser experience alongside potential self-hosted and managed deployment models, while avoiding multiple independently maintained applications.
+- Audit the existing localStorage schema, storage limits, failure modes, data durability, origin behaviour, and migration/rollback requirements.
+- Compare IndexedDB, SQLite-backed local services and PostgreSQL-backed deployments using explicit criteria: operational complexity, data integrity, portability, security, concurrent use and maintenance burden.
+- Design a shared domain/data model and storage boundary, versioned migrations, backup/restore and recovery contracts, and a safe proof of concept on a separate development branch.
+- Define future multi-user security boundaries (server-side authentication, authorization, audit, tenancy and safe WAN access). The current standalone HTML must **not** be exposed publicly as a secure multi-user service.
+- Produce an architecture decision record and owner-approved, realistically sized delivery scope before implementing a migration. Do not assume multi-user hosting or a managed service ships in v1.4.
+
+### v1.5.0 — Advanced IP Addressing, Interfaces & Relationships
+
+**Status: Proposed; dependencies on v1.4 architecture review.**
+
 - Multiple IP addresses per device, optional interface associations and primary management IP.
-- Public IP address documentation, including relevant ISP, circuit and NAT metadata.
-- Flexible rack heights and presets, Wall Mounted / Free Standing / Open Frame types, optional depth and safe resizing.
-- Expand optional rack details: manufacturer, model, serial number, asset tag, width/depth, location and free-standing base configuration (casters, levelling feet and/or anchored).
-- Extend existing rack accessories with PDUs (horizontal rack-mounted and vertical 0U), fan/ventilation panels, vertical cable managers and environmental sensors; preserve existing accessories and collision safeguards.
-- Cross-module advanced search and initial inventory, subnet/IPAM and rack reporting.
+- Public IP documentation including ISP, circuit and NAT metadata.
+- Device upstream/downstream relationships, interface and port records, and shared connection records visible from both devices.
 
-Deliver incrementally, with explicit migration, offline-build, browser-acceptance and JSON backup/restore checks. Protect existing IPAM ownership, rack placements, historical data and collision rules.
+### v1.6.0 — Cabling & Rack Connectivity
 
-**v1.3.0 Stage 1 — Rack Management Modernisation (owner-approved design direction):**
-- **1A Navigation, Overview and Inventory:** default to an estate-wide Rack Overview consistent with Devices and IPAM; expandable Racks sidebar with Rack Overview, Rack Inventory and Rack Accessories; searchable/sortable responsive inventory with per-rack drill-downs. Rack creation/editing belongs in Rack Inventory rather than duplicative sidebar destinations.
-- **Overview tabs:** Overview, Capacity, Equipment, Locations & Types. Show total racks, capacity, occupied/available U, utilisation by rack, equipment/accessory counts and useful data-completeness indicators. All charts use stored local inventory only, with empty states and actionable drill-downs; no live monitoring claims.
-- **Capacity semantics:** distinguish total free U from contiguous usable U; do not count 0U accessories as rack-unit occupancy; preserve existing front/rear placement and collision rules.
-- **1B Rack Detail & Elevation:** improve front/rear visualisation and controls while retaining existing drag-and-drop and placement behaviour.
-- **1C Rack Configuration:** rack type, flexible U height/presets, optional dimensions and safe resizing with impact validation; preserve legacy rack records.
-- **1D Accessories:** support horizontal/vertical 0U PDUs, ventilation, cable management and environmental sensors without breaking current accessories.
-- **1E Acceptance:** automated and owner browser regression, light/dark and responsive layouts, JSON export/restore, offline HTML and linked Device/IPAM/Rack integrity before merge. Keep `main` and the published v1.2.0 release unchanged until separately approved.
-
-
-### v1.4.0 — Device relationships and interfaces
-
-**Status: Proposed**
-
-- Device relationships and upstream/downstream links.
-- Interface and port records, with optional IP associations, building on v1.3.0 addressing work.
-- Shared connection records visible from both connected devices.
-
-### v1.5.0 — Cabling and rack connectivity
-
-**Status: Proposed**
+**Status: Proposed.**
 
 - Patch panels, cabling, ports and physical endpoints.
 - Duplicate endpoint protection and connection tracing.
 - Rack diagram exports; investigate SVG, Excalidraw and Visio compatibility.
 
-### v1.6.0 — Network topology
+### v1.7.0 — Advanced Reporting, Search & Topology
 
-**Status: Proposed**
+**Status: Proposed.**
 
-- Physical and logical topology generated from existing relationship and cabling records.
+- Cross-module advanced search and inventory, subnet/IPAM and rack reporting.
+- Physical and logical topology based on validated device relationships and cabling records.
 - Device navigation, connection tracing and usable diagram layouts.
 
-### v1.7.0 — Network Environments and customer/site addressing scopes
+### v1.8.0 — Network Environments and customer/site addressing scopes
 
 **Status: Provisional research and design milestone; feasibility and Lite product boundaries must be assessed before implementation.**
 
@@ -164,7 +166,7 @@ Deliver incrementally, with explicit migration, offline-build, browser-acceptanc
 - Do not enable duplicate ranges until allocation identity and all dependent workflows are environment-aware.
 - Distinguish logical separation of records within one local browser inventory from authenticated multi-user/customer security isolation. Lite must not claim secure tenant isolation or hosted MSP access without a separately designed and validated architecture.
 
-### v1.8.0 — Advanced network migration and lifecycle management
+### v1.9.0 — Advanced network migration and lifecycle management
 
 **Status: Proposed; planning only**
 
