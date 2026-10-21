@@ -45,3 +45,15 @@ Future tickets should be linked primarily to a device record, while retaining th
 **Status:** Future design candidate
 
 Explore an optional rule selecting an IPv4 octet to suggest a VLAN number (e.g., third octet of 192.168.10.0/24 suggests VLAN 10). Require validation, manual override and network/customer scoping; never assume this is a universal one-to-one mapping.
+
+## ADR-008 — Preserve JSON backup interchange across storage changes
+
+**Status:** Proposed for acceptance — 21 October 2026
+
+Continue supporting validated, versioned JSON import/export as a portable interchange and recovery format if internal persistence moves to a database. Keep historical unversioned and schema-v1 imports compatible unless a separately reviewed migration explicitly documents an exception. Database snapshots are not a substitute for tested user-restorable exports. Verify export/import round trips, rejected-input non-mutation and rollback.
+
+## Audit note — current v1.3.0 implementation
+
+Read-only source review of `app/caffoot-lite.html` found `caffoot_state` in browser `localStorage`, `STATE_VERSION = 3`, `normaliseState`, `validateApplicationState`, `phase20CreateBackup`, `phase20MigrateBackup`, `phase16CCheckBackup` and a pre-restore safety snapshot. New device IDs currently use a `dev_` plus timestamp pattern, not UUIDs. Existing record IDs are references and must remain stable during any migration. This audit is not a test run and does not prove all data paths or security properties.
+
+**Migration design requirement:** Retain legacy IDs and their links while adding new immutable UUIDs in a staged migration. Validate collisions, import idempotency, linked records and rollback before adopting UUID-based internal references. Never silently rewrite a live inventory or its only backup.
