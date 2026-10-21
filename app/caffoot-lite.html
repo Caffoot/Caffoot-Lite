@@ -5319,6 +5319,7 @@ function hierarchyValidateTypes(subnets) {
             if (event.key === 'Escape') {
                 event.preventDefault();
                 if(document.getElementById('phase18d-delete-dialog')){phase18DCancelDelete();return;}
+                if(document.getElementById('phase130-conversion-dialog')){phase130ResolveDeviceConversion(false);return;}
                 if(document.getElementById('phase120-rack-correction-dialog')){phase120ResolveRackCorrection(false);return;}
                 if(document.getElementById('phase120-discard-dialog')){phase120KeepEditing();return;}
                 if (container.querySelector('.phase18d-manager[data-phase18d-editing="true"]')) {
@@ -5334,7 +5335,7 @@ function hierarchyValidateTypes(subnets) {
                 return;
             }
             if (event.key !== 'Tab') return;
-            const activeDialog=document.getElementById('phase120-rack-correction-dialog')||document.getElementById('phase18d-delete-dialog')||document.getElementById('phase120-discard-dialog');
+            const activeDialog=document.getElementById('phase130-conversion-dialog')||document.getElementById('phase120-rack-correction-dialog')||document.getElementById('phase18d-delete-dialog')||document.getElementById('phase120-discard-dialog');
             const items = Array.from((activeDialog||container).querySelectorAll('a[href],button:not([disabled]),input:not([disabled]):not([type="hidden"]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')).filter(el => el.getClientRects().length);
             if (!items.length) { event.preventDefault(); document.getElementById('modal-content').focus(); return; }
             // Safari can omit buttons/selects from its native Tab order depending on
@@ -6936,7 +6937,73 @@ function hierarchyValidateTypes(subnets) {
             }
         }
 
-        function handleDeviceSubmit(e, deviceId) {
+        // Only catalogue-recognised keys can be removed automatically; unknown legacy
+        // and custom keys are retained so historical backups remain recoverable.
+        function phase130ObsoleteDeviceFields(oldType, newType, details) {
+            const known = new Set([
+                ...Object.values(phase19BProfiles).flat(),
+                ...phase19BDefaultSoftware, ...phase19BDefaultServerFunctions,
+                ...phase19BServerFunctionFields(), ...phase19BSoftwareFields(),
+                ...phase120SoftwareOptions().map(item => item.key),
+                'softwarePlatform', 'softwareVersion'
+            ]);
+            const allowed = new Set([...phase19BFieldsFor(newType), 'os']);
+            const oldAllowed = new Set([...phase19BFieldsFor(oldType), 'os', 'softwarePlatform', 'softwareVersion']);
+            // Platform/version apply to computers and servers only.
+            if (['computer','server'].includes(phase19BTypeGroups[String(newType || '').toLowerCase().trim()])) {
+                allowed.add('softwarePlatform');
+                allowed.add('softwareVersion');
+            }
+            return Object.keys(details || {}).filter(key =>
+                known.has(key) && oldAllowed.has(key) && !allowed.has(key) &&
+                details[key] !== '' && details[key] !== null &&
+                details[key] !== undefined && details[key] !== false);
+        }
+        let phase130ConversionResolve = null;
+        function phase130ConfirmDeviceConversion(oldType, newType, keys, details) {
+            if (document.getElementById('phase130-conversion-dialog')) return Promise.resolve(false);
+            return new Promise(resolve => {
+                phase130ConversionResolve = resolve;
+                const overlay = document.createElement('div');
+                overlay.id = 'phase130-conversion-dialog';
+                overlay.setAttribute('role', 'alertdialog');
+                overlay.setAttribute('aria-modal', 'true');
+                overlay.setAttribute('aria-labelledby', 'phase130-conversion-title');
+                overlay.setAttribute('aria-describedby', 'phase130-conversion-description');
+                overlay.className = 'absolute inset-0 z-50 flex items-center justify-center bg-slate-950/65 p-4 rounded-2xl';
+                const labels = keys.map(key => {
+                    const label = phase19CDetailLabel(key, oldType);
+                    const value = details[key] === true ? 'Selected' : String(details[key]);
+                    return '<li class="break-words">' + escapeHtml(label) + ': ' + escapeHtml(value) + '</li>';
+                }).join('');
+                overlay.innerHTML = `<div class="w-full max-w-lg rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 p-6 shadow-2xl space-y-4">
+                    <h3 id="phase130-conversion-title" class="text-lg font-bold text-slate-900 dark:text-white">Confirm Device Type Change</h3>
+                    <p id="phase130-conversion-description" class="text-sm text-slate-700 dark:text-slate-200">Changing from ${escapeHtml(oldType)} to ${escapeHtml(newType)} will remove these incompatible details from this device when saved:</p>
+                    <ul class="list-disc pl-5 max-h-48 overflow-y-auto text-sm text-slate-800 dark:text-slate-100 space-y-1">${labels}</ul>
+                    <p class="text-sm text-slate-700 dark:text-slate-200">Shared details and unrecognised historical fields will be preserved.</p>
+                    <div class="flex flex-wrap justify-end gap-3">
+                        <button type="button" data-action="phase130-conversion-cancel" class="h-11 px-4 rounded-xl border border-slate-400 dark:border-slate-500 text-slate-900 dark:text-white caffoot-modal-cancel">Keep Editing</button>
+                        <button type="button" data-action="phase130-conversion-accept" class="h-11 px-4 rounded-xl bg-rose-700 hover:bg-rose-800 text-white font-bold">Remove Details &amp; Save</button>
+                    </div>
+                </div>`;
+                const content = document.getElementById('modal-content');
+                if (getComputedStyle(content).position === 'static') content.style.position = 'relative';
+                overlay._returnFocus = document.activeElement;
+                content.appendChild(overlay);
+                overlay.querySelector('[data-action="phase130-conversion-cancel"]').focus();
+            });
+        }
+        function phase130ResolveDeviceConversion(accepted) {
+            const overlay = document.getElementById('phase130-conversion-dialog');
+            const focus = overlay?._returnFocus;
+            overlay?.remove();
+            const resolve = phase130ConversionResolve;
+            phase130ConversionResolve = null;
+            if (focus?.isConnected) focus.focus();
+            if (resolve) resolve(accepted);
+        }
+
+        async function handleDeviceSubmit(e, deviceId) {
             e.preventDefault();
             const name = document.getElementById('dev-name').value.trim();
             const type = document.getElementById('dev-type').value;
@@ -6954,7 +7021,7 @@ function hierarchyValidateTypes(subnets) {
             if(virtualHostId&&!appState.devices.some(d=>d.id===virtualHostId&&d.type==='Server - Physical'&&d.id!==deviceId))return showToast('Select a valid physical host device.','error');
             if (!['Active','Maintenance','Retired'].includes(status)) return showToast('Invalid device status.', 'error');
             const notes = document.getElementById('dev-notes').value.trim();
-            const typeDetails = phase19BReadFields();
+            let typeDetails = phase19BReadFields();
             if (!name) return showToast('Please enter a device name.', 'error');
             if (appState.devices.some(d => String(d.id) !== String(deviceId || '') && String(d.name || '').trim().toLowerCase() === name.toLowerCase())) return showToast('A device with this name already exists. Please enter a unique device name.', 'error');
             if (!type) return showToast('Please select a device type.', 'error');
@@ -6977,6 +7044,20 @@ function hierarchyValidateTypes(subnets) {
                 if (validationError) return showToast(validationError, 'error');
             }
             const existingDevice = deviceId ? getDeviceById(deviceId) : null;
+            // Type-specific values remain in the unsaved draft when switching types.
+            // Only known, incompatible populated fields are eligible for confirmed removal.
+            if (existingDevice && String(existingDevice.type || '').toLowerCase().trim() !== String(type || '').toLowerCase().trim()) {
+                const obsolete = phase130ObsoleteDeviceFields(existingDevice.type, type, typeDetails);
+                if (obsolete.length) {
+                    const accepted = await phase130ConfirmDeviceConversion(existingDevice.type, type, obsolete, typeDetails);
+                    if (!accepted) return;
+                    // Never apply a stale confirmation if the form or underlying record changed.
+                    if (!document.getElementById('dev-type') || document.getElementById('dev-type').value !== type ||
+                        getDeviceById(deviceId) !== existingDevice) return;
+                    typeDetails = {...typeDetails};
+                    for (const key of obsolete) delete typeDetails[key];
+                }
+            }
             const beforeDeviceSave = JSON.stringify(appState);
             if (existingDevice) {
                 Object.assign(existingDevice, {status, manufacturer, model, serialNumber, typeDetails, virtualPlatform, virtualHostId});
@@ -8248,6 +8329,8 @@ function hierarchyValidateTypes(subnets) {
                 case 'server-service-confirm-archive': phase120ArchiveServerService(name); break;
                 case 'phase18d-add': phase18DCommit(target.dataset.kind,'add','',document.getElementById('phase18d-new')?.value||''); break;
                 case 'phase18d-search': phase18DSearch[target.dataset.kind]=document.getElementById('phase18d-search')?.value||'';phase18DOpen(target.dataset.kind); break;
+                case 'phase130-conversion-cancel': phase130ResolveDeviceConversion(false); break;
+                case 'phase130-conversion-accept': phase130ResolveDeviceConversion(true); break;
                 case 'phase120-rack-correction-cancel': phase120ResolveRackCorrection(false); break;
                 case 'phase120-rack-correction-accept': phase120ResolveRackCorrection(true); break;
                 case 'phase120-keep-editing': phase120KeepEditing(); break;
