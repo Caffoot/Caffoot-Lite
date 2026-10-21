@@ -16,6 +16,8 @@ const suggestedMounts = source.match(/function phase120SuggestedMounts\(type\)\s
 assert.match(allowedMounts, /'Floor Standing'/, 'Historical Floor Standing mounting remains supported');
 assert.match(allowedMounts, /'Tower \/ Floor Standing'/, 'Tower mounting passes validation');
 assert.match(suggestedMounts, /normalized==='server'\|\|normalized==='server - physical'\|\|normalized==='physical server'/, 'Physical server types use dedicated mounting suggestions');
-assert.match(suggestedMounts, /\['Rack Mounted','Tower \/ Floor Standing','Tabletop \/ Shelf Mounted','Shelf Mounted','Unknown'\]/, 'Physical servers offer tower mounting');
+assert.match(suggestedMounts, /\['Rack Mounted','Tower \/ Floor Standing','Tabletop \/ Shelf Mounted','Unknown'\]/, 'Physical servers offer tower mounting');
+assert.match(allowedMounts, /'Shelf Mounted'/, 'Legacy Shelf Mounted selections remain valid');
+assert.doesNotMatch(suggestedMounts, /,'Shelf Mounted'/, 'Duplicate Shelf Mounted suggestion is removed');
 assert.match(source, /if \(mountType === 'Rack Mounted'\)\s*\{/, 'Rack-specific save requirements remain conditional');
 console.log('PASS: location/rack separation and tower-server mounting source contracts.');
