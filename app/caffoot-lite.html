@@ -7109,7 +7109,14 @@ function hierarchyValidateTypes(subnets) {
             for (const device of candidate.devices) {
                 const allowed = phase19BAllowedMounts(device.type);
                 const mount = device.mountType || (device.rackId ? 'Rack Mounted' : 'Desktop');
-                if (allowed.includes(mount) && !(device.rackId && mount !== 'Rack Mounted')) continue;
+                // A legacy desktop/laptop/tablet may claim to be rack mounted even
+                // though no rack was ever assigned. Offer an explicit review for this
+                // unambiguous case, but do not repair dangling rack IDs or U positions.
+                const legacyComputer = ['desktop', 'laptop', 'tablet'].includes(String(device.type || '').trim().toLowerCase());
+                const orphanedMount = legacyComputer && mount === 'Rack Mounted' &&
+                    !device.rackId && device.rackUStart == null && device.rackUEnd == null &&
+                    device.rackUHeight == null;
+                if (allowed.includes(mount) && !(device.rackId && mount !== 'Rack Mounted') && !orphanedMount) continue;
                 // Only repair known legacy mismatches. Unknown types or malformed mounting
                 // values remain subject to normal integrity validation.
                 if (!['desktop', 'laptop', 'tablet'].includes(String(device.type || '').trim().toLowerCase()) ||
