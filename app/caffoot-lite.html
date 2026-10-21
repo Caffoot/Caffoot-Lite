@@ -5837,7 +5837,7 @@ function hierarchyValidateTypes(subnets) {
             const details = device.typeDetails && typeof device.typeDetails === 'object' ? device.typeDetails : {};
             const keys = phase19BFieldsFor(device.type);
             // Retain access to historical values even when a managed option was removed.
-            const historical = Object.keys(details).filter(key => !keys.includes(key) && details[key] !== '' && details[key] !== null && details[key] !== undefined);
+            const historical = []; // Incompatible values belong in historical type snapshots, not active hardware.
             const allKeys = [...keys, ...historical];
             const flags = new Set([...phase19BFlags, ...phase19BServerFunctionFields(), ...phase120SoftwareOptions().map(x=>x.key)]);
             const serviceKeys=new Set([...phase120StarterServerServices,...phase19BServerFunctions()].map(x=>x.key));
@@ -5864,12 +5864,15 @@ function hierarchyValidateTypes(subnets) {
             const section = (title, icon, body) => `<section class="phase14c-section"><h4><i class="fa-solid ${icon} mr-2" aria-hidden="true"></i>${escapeHtml(title)}</h4><dl class="phase14c-grid">${body}</dl></section>`;
             const status = d.status || 'Active';
             const detailRows = phase19CDetailRows(d, field);
-            const softwareEntries=[...phase120SoftwareOptions(),...phase19BSoftware().filter(x=>x.archived)].filter((x,i,all)=>all.findIndex(y=>y.key===x.key)===i).filter(x=>d.typeDetails?.[x.key]===true||d[x.key]===true);
+            const activeFields = new Set(phase19BFieldsFor(d.type));
+            const softwareEntries=[...phase120SoftwareOptions(),...phase19BSoftware().filter(x=>x.archived)].filter((x,i,all)=>all.findIndex(y=>y.key===x.key)===i).filter(x=>activeFields.has(x.key) && (d.typeDetails?.[x.key]===true||d[x.key]===true));
             const installedSoftware=softwareEntries.sort((a,b)=>String(a.label||'').localeCompare(String(b.label||''),undefined,{sensitivity:'base'})).map(x=>x.archived?`<div class="phase14c-field"><dt>${safe(x.label)}</dt><dd><span>Installed</span> <span class="inline-flex items-center gap-1 rounded-full border border-red-300 bg-red-50 px-2 py-0.5 text-xs font-bold text-red-700 dark:border-red-700 dark:bg-red-950/50 dark:text-red-300" title="Installed on this device; no longer available in the software catalogue"><i class="fa-solid fa-box-archive" aria-hidden="true"></i>Archived</span><button type="button" data-action="archived-software-remove" data-id="${safe(d.id)}" data-name="${safe(x.key)}" class="mt-2 block rounded-lg border border-red-300 px-2 py-1 text-xs font-semibold text-red-700 hover:bg-red-50 dark:border-red-700 dark:text-red-300 dark:hover:bg-red-950/40">Mark as Uninstalled</button></dd></div>`:field(x.label,'Installed')).join('');
             const deviceDetails=d.typeDetails||{};
-            const serverServiceEntries=[...phase120AvailableServerServices(),...phase19BServerFunctions().filter(x=>x.archived)].filter((x,i,all)=>all.findIndex(y=>y.key===x.key)===i).filter(x=>deviceDetails[x.key]===true||d[x.key]===true).sort((a,b)=>String(a.label||'').localeCompare(String(b.label||''),undefined,{sensitivity:'base'}));
+            const serverServiceEntries=[...phase120AvailableServerServices(),...phase19BServerFunctions().filter(x=>x.archived)].filter((x,i,all)=>all.findIndex(y=>y.key===x.key)===i).filter(x=>activeFields.has(x.key) && (deviceDetails[x.key]===true||d[x.key]===true)).sort((a,b)=>String(a.label||'').localeCompare(String(b.label||''),undefined,{sensitivity:'base'}));
             const serverServices=serverServiceEntries.map(x=>`<div class="phase14c-field"><dt>${safe(x.label)}</dt><dd>Enabled${x.archived?' <span class="inline-flex items-center gap-1 rounded-full border border-red-300 bg-red-50 px-2 py-0.5 text-xs font-bold text-red-700 dark:border-red-700 dark:bg-red-950/50 dark:text-red-300"><i class="fa-solid fa-box-archive" aria-hidden="true"></i>Archived</span>':''}</dd></div>`).join('');
-            const platformDetails=[['Operating system',deviceDetails.softwarePlatform||deviceDetails.os],['OS version',deviceDetails.softwareVersion],['Windows licence',deviceDetails.windowsLicence]].filter(([,value])=>value!==undefined&&value!==null&&value!=='').map(([label,value])=>field(label,value)).join('');
+            const platformDetails=[['Operating system',deviceDetails.softwarePlatform||deviceDetails.os],['OS version',deviceDetails.softwareVersion],['Windows licence',deviceDetails.windowsLicence]].filter(([label])=>['server','computer'].includes(phase19BTypeGroups[String(d.type||'').toLowerCase().trim()]) || label==='Operating system' && activeFields.has('os')).filter(([,value])=>value!==undefined&&value!==null&&value!=='').map(([label,value])=>field(label,value)).join('');
+            const historicalSnapshots = Array.isArray(d.previousTypeDetails) ? d.previousTypeDetails : [];
+            const historyRows = historicalSnapshots.map((snapshot,index)=>`<details class="rounded-xl border border-slate-300 dark:border-slate-600 p-3"><summary class="cursor-pointer font-semibold">${safe(snapshot.type||'Previous type')} — saved configuration ${index+1}</summary><dl class="phase14c-grid mt-3">${Object.entries(snapshot.details||{}).map(([key,value])=>field(phase19CDetailLabel(key,snapshot.type),typeof value==='boolean'?(value?'Yes':'No'):value)).join('')}</dl></details>`).join('');
             const hardware = field('Manufacturer', d.manufacturer) + field('Model', d.model) + field('Serial number', d.serialNumber);
             const rackRows = mounted ? field('Rack', rack.name) + field('Face', d.face || 'front') + field('U position', uText) + field('Height', (Number(d.rackUHeight) || (uEnd-uStart+1) || 1) + 'U') : '';
             openModal(`<div class="phase14c-detail space-y-5 p-5 sm:p-7">
@@ -5900,6 +5903,7 @@ function hierarchyValidateTypes(subnets) {
                     </div>
                     <div id="phase14c-panel-location" role="tabpanel" aria-labelledby="phase14c-tab-location" class="phase14c-panel" hidden>
                         ${section('Mounting & location', 'fa-location-dot', field('Mounting', d.mountType || (mounted ? 'Rack Mounted' : 'Desktop')) + field('Location', d.location) + rackRows)}
+                        ${historyRows?`<section class="phase14c-section"><h4>Previous Device Type Details</h4><p class="text-sm mb-3">Preserved for reference only; not part of the active configuration.</p>${historyRows}</section>`:''}
                     </div>
                 </div>
                 <footer class="phase19d1-actions">
@@ -6939,25 +6943,19 @@ function hierarchyValidateTypes(subnets) {
 
         // Only catalogue-recognised keys can be removed automatically; unknown legacy
         // and custom keys are retained so historical backups remain recoverable.
+        // Only populated, recognised fields that are not valid for the destination
+        // are archived. Unknown legacy fields remain untouched for backup compatibility.
         function phase130ObsoleteDeviceFields(oldType, newType, details) {
-            const known = new Set([
-                ...Object.values(phase19BProfiles).flat(),
-                ...phase19BDefaultSoftware, ...phase19BDefaultServerFunctions,
-                ...phase19BServerFunctionFields(), ...phase19BSoftwareFields(),
-                ...phase120SoftwareOptions().map(item => item.key),
-                'softwarePlatform', 'softwareVersion'
-            ]);
-            const allowed = new Set([...phase19BFieldsFor(newType), 'os']);
-            const oldAllowed = new Set([...phase19BFieldsFor(oldType), 'os', 'softwarePlatform', 'softwareVersion']);
-            // Platform/version apply to computers and servers only.
-            if (['computer','server'].includes(phase19BTypeGroups[String(newType || '').toLowerCase().trim()])) {
-                allowed.add('softwarePlatform');
-                allowed.add('softwareVersion');
+            const known = new Set([...Object.values(phase19BProfiles).flat(), ...phase19BDefaultSoftware,
+                ...phase19BDefaultServerFunctions, ...phase19BServerFunctionFields(),
+                ...phase19BSoftwareFields(), ...phase120SoftwareOptions().map(item=>item.key),
+                'softwarePlatform','softwareVersion','windowsLicence']);
+            const allowed = new Set([...phase19BFieldsFor(newType),'os']);
+            if (['computer','server'].includes(phase19BTypeGroups[String(newType||'').toLowerCase().trim()])) {
+                allowed.add('softwarePlatform'); allowed.add('softwareVersion'); allowed.add('windowsLicence');
             }
-            return Object.keys(details || {}).filter(key =>
-                known.has(key) && oldAllowed.has(key) && !allowed.has(key) &&
-                details[key] !== '' && details[key] !== null &&
-                details[key] !== undefined && details[key] !== false);
+            return Object.keys(details||{}).filter(key=>known.has(key)&&!allowed.has(key)&&
+                details[key]!==''&&details[key]!==null&&details[key]!==undefined&&details[key]!==false);
         }
         let phase130ConversionResolve = null;
         function phase130ConfirmDeviceConversion(oldType, newType, keys, details) {
@@ -6978,12 +6976,12 @@ function hierarchyValidateTypes(subnets) {
                 }).join('');
                 overlay.innerHTML = `<div class="w-full max-w-lg rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 p-6 shadow-2xl space-y-4">
                     <h3 id="phase130-conversion-title" class="text-lg font-bold text-slate-900 dark:text-white">Confirm Device Type Change</h3>
-                    <p id="phase130-conversion-description" class="text-sm text-slate-700 dark:text-slate-200">Changing from ${escapeHtml(oldType)} to ${escapeHtml(newType)} will remove these incompatible details from this device when saved:</p>
+                    <p id="phase130-conversion-description" class="text-sm text-slate-700 dark:text-slate-200">Changing from ${escapeHtml(oldType)} to ${escapeHtml(newType)} will preserve these incompatible details as read-only history rather than keeping them active:</p>
                     <ul class="list-disc pl-5 max-h-48 overflow-y-auto text-sm text-slate-800 dark:text-slate-100 space-y-1">${labels}</ul>
-                    <p class="text-sm text-slate-700 dark:text-slate-200">Shared details and unrecognised historical fields will be preserved.</p>
+                    <p class="text-sm text-slate-700 dark:text-slate-200">Shared details and unrecognised historical fields will be preserved. You can review previous configurations in device details.</p>
                     <div class="flex flex-wrap justify-end gap-3">
                         <button type="button" data-action="phase130-conversion-cancel" class="h-11 px-4 rounded-xl border border-slate-400 dark:border-slate-500 text-slate-900 dark:text-white caffoot-modal-cancel">Keep Editing</button>
-                        <button type="button" data-action="phase130-conversion-accept" class="h-11 px-4 rounded-xl bg-rose-700 hover:bg-rose-800 text-white font-bold">Remove Details &amp; Save</button>
+                        <button type="button" data-action="phase130-conversion-accept" class="h-11 px-4 rounded-xl bg-rose-700 hover:bg-rose-800 text-white font-bold">Preserve History &amp; Save</button>
                     </div>
                 </div>`;
                 const content = document.getElementById('modal-content');
@@ -7044,6 +7042,7 @@ function hierarchyValidateTypes(subnets) {
                 if (validationError) return showToast(validationError, 'error');
             }
             const existingDevice = deviceId ? getDeviceById(deviceId) : null;
+            let conversionSnapshot = null;
             // Type-specific values remain in the unsaved draft when switching types.
             // Only known, incompatible populated fields are eligible for confirmed removal.
             if (existingDevice && String(existingDevice.type || '').toLowerCase().trim() !== String(type || '').toLowerCase().trim()) {
@@ -7055,11 +7054,13 @@ function hierarchyValidateTypes(subnets) {
                     if (!document.getElementById('dev-type') || document.getElementById('dev-type').value !== type ||
                         getDeviceById(deviceId) !== existingDevice) return;
                     typeDetails = {...typeDetails};
+                    conversionSnapshot = {type:existingDevice.type, details:Object.fromEntries(obsolete.map(key=>[key,typeDetails[key]]))};
                     for (const key of obsolete) delete typeDetails[key];
                 }
             }
             const beforeDeviceSave = JSON.stringify(appState);
             if (existingDevice) {
+                if (conversionSnapshot) existingDevice.previousTypeDetails = [...(Array.isArray(existingDevice.previousTypeDetails)?existingDevice.previousTypeDetails:[]),conversionSnapshot];
                 Object.assign(existingDevice, {status, manufacturer, model, serialNumber, typeDetails, virtualPlatform, virtualHostId});
                 existingDevice.ipReserved = ipReserved;
                 existingDevice.name = name; existingDevice.type = type; existingDevice.mountType = mountType; existingDevice.location = location; existingDevice.notes = notes;
