@@ -425,9 +425,10 @@ assert(html.includes('.phase13k-elevation .phase13-empty:focus-visible > span{co
 console.log('RC1 rack elevation contrast regression checks passed.');
 
 // RC1: labels must remain associated with essential Device and Subnet controls.
-for (const id of ['sub-cidr','sub-name','sub-vlan','sub-gw','sub-desc','dev-name','dev-type','dev-custom-type']) {
+for (const id of ['sub-cidr','sub-name','sub-vlan','sub-gw','sub-desc','dev-name','dev-type','dev-location']) {
   assert(html.includes('for="' + id + '"'), 'Missing accessible label for ' + id);
 }
+assert(!html.includes('id="dev-custom-type"'), 'Removed inline custom type input must not return');
 console.log('RC1 essential form label safeguards passed.');
 
 assert(html.includes("document.addEventListener('invalid', function(event)"), 'native invalid fields must be handled accessibly');
@@ -504,11 +505,13 @@ const rackSubmitStart = html.indexOf('function handleRackSubmit(e, rackId)');
 const rackSubmitEnd = html.indexOf('function deleteRack(rackId)', rackSubmitStart);
 assert(rackSubmitStart >= 0 && rackSubmitEnd > rackSubmitStart, 'Rack submit handler must exist');
 const rackSubmitCode = html.slice(rackSubmitStart, rackSubmitEnd);
-assert(rackSubmitCode.includes('const outOfBoundsDevice ='), 'Rack resizing must protect mounted devices');
-assert(rackSubmitCode.includes('const outOfBoundsAccessory ='), 'Rack resizing must protect mounted accessories');
+assert(rackSubmitCode.includes('const device = appState.devices.find(') && rackSubmitCode.includes('Number(d.rackUEnd || d.rackUStart) > heightU'), 'Rack specification corrections must protect mounted devices');
+assert(rackSubmitCode.includes('const accessory = (appState.rackAccessories || []).find('), 'Rack specification corrections must protect mounted accessories');
 assert(rackSubmitCode.includes('Number(a.startU) + Number(a.heightU) - 1 > heightU'), 'Rack resizing must check full accessory U span');
 assert(rackSubmitCode.includes('if (!saveState())') && rackSubmitCode.includes('appState = JSON.parse(before);'), 'Rack edit must restore failed saves');
-console.log('Rack downsizing and rollback wiring safeguards passed.');
+assert(rackSubmitCode.includes("if (!rack || correction) {"), 'Normal rack edits must not mutate physical specifications');
+assert(rackSubmitCode.includes("if (correction) {"), 'Physical specification mutations require correction mode');
+console.log('Rack correction boundaries, locked editing and rollback wiring safeguards passed.');
 
 // Audit regression: subnet mutations must roll back and gateways cannot reuse allocations.
 const subnetSubmitStart = html.indexOf('function handleSubnetSubmit(e, subnetId)');

@@ -33,7 +33,9 @@ for (const payload of payloads) {
     phase19BSoftware:()=>[],
     phase120AvailableServerServices:()=>[],
     phase19BServerFunctions:()=>[],
-    phase19CDetailRows:()=>'', openModal:value=>{rendered=value;},
+    phase19CDetailRows:()=>'', phase19BFieldsFor:()=>[],
+    phase19BTypeGroups:{}, phase19CDetailLabel:key=>key,
+    openModal:value=>{rendered=value;},
     showToast:()=>{throw Error('Device unexpectedly not found');}
   });
   vm.runInContext(escapeSource+'\n'+viewSource,context);

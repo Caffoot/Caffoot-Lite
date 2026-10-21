@@ -114,9 +114,12 @@
 .dark .phase19c-detail-subheading { color: #cbd5e1; border-color: #475569; }
 
 /* Keep the Devices quick action visually consistent with the IPAM Add Subnet action. */
-#devices-sidebar-actions .sidebar-add-device { color: #4338ca; }
-#devices-sidebar-actions .sidebar-add-device i { color: inherit; }
-.dark #devices-sidebar-actions .sidebar-add-device { color: #a5b4fc; }
+#devices-sidebar-actions .sidebar-add-device,
+#racks-sidebar-actions .sidebar-add-device { color: #4338ca; }
+#devices-sidebar-actions .sidebar-add-device i,
+#racks-sidebar-actions .sidebar-add-device i { color: inherit; }
+.dark #devices-sidebar-actions .sidebar-add-device,
+.dark #racks-sidebar-actions .sidebar-add-device { color: #a5b4fc; }
 </style>
 
 <style>
@@ -357,6 +360,14 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .phase13-empty{position:relative}
 .phase13-empty:focus-visible{outline:3px solid #38bdf8;outline-offset:2px}
 @media(prefers-reduced-motion:reduce){.phase13-device{transition:none!important}}
+</style><style id="phase13-vertical-rail-preview">
+/* Stage 1D: non-interactive 0U side-rail preview; no rack capacity or placement changes. */
+.phase13-vertical-layout{display:grid;grid-template-columns:32px minmax(0,1fr) 32px;gap:5px;align-items:stretch;padding:5px}
+.phase13-vertical-rail{background:repeating-linear-gradient(to bottom,#334155 0px,#334155 38px,#475569 38px,#475569 40px);border:1px solid #64748b;border-radius:4px;min-width:0}
+.phase13v-rail{position:relative;overflow:hidden}.phase13v-add{position:absolute;inset:0;width:100%;cursor:pointer;background:transparent}.phase13v-add:hover{background:#38bdf833}.phase13v-placed{position:absolute;left:1px;right:1px;width:calc(100% - 2px);z-index:2;border:1px solid #f8fafc;border-radius:3px;overflow:hidden;display:flex;align-items:center;justify-content:center;color:white;font-size:9px;cursor:pointer}.phase13v-placed span{writing-mode:vertical-rl;max-height:95%;overflow:hidden;text-overflow:ellipsis}.phase13v-pdu{background:#92400e}.phase13v-cable{background:#0369a1}.phase13v-placed:hover{filter:brightness(1.2)}.phase13v-placed{cursor:grab}.phase13v-placed:active{cursor:grabbing}.phase13v-rail.phase13v-valid{outline:3px solid #22c55e;outline-offset:2px}.phase13v-rail.phase13v-invalid{outline:3px solid #f43f5e;outline-offset:2px}.phase13v-drop-preview{position:absolute;left:1px;right:1px;z-index:4;pointer-events:none;border:2px dashed #86efac;background:#22c55e55;border-radius:3px}.phase13v-drop-preview.phase13v-invalid{border-color:#fda4af;background:#ef444455}
+.phase13-vertical-rail-labels{display:grid;grid-template-columns:32px minmax(0,1fr) 32px;gap:5px;padding:4px 5px 7px;background:#1e293b;color:#e2e8f0;font-size:11px;font-weight:700;text-align:center}
+.phase13-vertical-rail-labels span:nth-child(2){font-weight:500;font-size:10px}
+@media(max-width:480px){.phase13-vertical-layout,.phase13-vertical-rail-labels{grid-template-columns:22px minmax(0,1fr) 22px;gap:3px}}
 </style><style id="phase13b-style">
 .phase13b-tabs{display:flex;gap:8px;overflow-x:auto;padding:4px 0 2px}
 .phase13b-tab{flex:1 0 auto;min-height:44px;padding:10px 14px;border-radius:12px;font-size:14px;font-weight:650;border:1px solid #94a3b8;color:#334155;background:#f8fafc}
@@ -455,6 +466,11 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 </style><style id="phase13i-style">
 .phase13i-rack-item{position:relative;display:flex;align-items:center;justify-content:center;width:100%;min-width:0;padding:0 82px;overflow:hidden;box-sizing:border-box}
 .phase13i-name{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;line-height:1.2;font-weight:700;text-align:center;color:inherit}
+.phase13i-device-details{display:flex;align-items:center;justify-content:center;gap:16px;width:100%;min-width:0;overflow:hidden;white-space:nowrap}
+.phase13i-device-details .phase13i-name{flex:0 1 auto;min-width:0}
+.phase13i-device-meta{display:flex;align-items:center;flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;line-height:1.2;opacity:.9}
+@media(max-width:760px){.phase13i-device-details{gap:5px}.phase13i-device-meta{font-size:10px}}
+@media(max-width:540px){.phase13i-device-meta{display:none}}
 .phase13i-actions{position:absolute;right:9px;top:50%;transform:translateY(-50%);display:flex;gap:4px;align-items:center;z-index:2}
 .phase13i-action,.phase13i-actions .phase13c-icon{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;min-width:28px;padding:0;border-radius:7px;background:rgba(255,255,255,.86);color:#334155;cursor:pointer}
 .dark .phase13i-action,.dark .phase13i-actions .phase13c-icon{background:#1e293b;color:#e2e8f0}
@@ -473,8 +489,13 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 /* Match the preview: deep slate rack, forest green devices, slate accessories. */
 .phase13k-elevation{background:#1e293b!important;border-color:#334155!important}
 .phase13k-elevation .phase13-device[data-rack-device]{background:#14532d!important;color:#fff!important;border-color:#4ade80!important;box-shadow:inset 0 0 0 1px rgba(134,239,172,.15)}
-.phase13k-elevation .phase13-device[data-rack-accessory]{background:#334155!important;color:#fff!important;border-color:#64748b!important}
+.phase13k-elevation .phase13-device[data-rack-device][data-rack-face="rear"]{background:#fdba74!important;color:#431407!important;border-color:#ea580c!important;box-shadow:inset 0 0 0 1px rgba(154,52,18,.2)}
+.phase13k-elevation .phase13-device[data-rack-accessory]{background:#14532d!important;color:#fff!important;border-color:#4ade80!important;box-shadow:inset 0 0 0 1px rgba(134,239,172,.15)}
+.phase13k-elevation .phase13-device[data-rack-accessory][data-rack-face="rear"]{background:#fdba74!important;color:#431407!important;border-color:#ea580c!important;box-shadow:inset 0 0 0 1px rgba(154,52,18,.2)}
+.phase13k-elevation [data-rack-accessory][data-rack-face="rear"] .phase13i-name{color:#000!important}
 .phase13k-elevation .phase13i-name{color:#fff!important}
+.phase13k-elevation [data-rack-device][data-rack-face="rear"] .phase13i-name{color:#000!important}
+.phase13k-elevation [data-rack-device][data-rack-face="rear"] .phase13i-device-meta{color:#000!important;opacity:1}
 .phase13k-elevation .phase13j-u{background:rgba(15,23,42,.82)!important;color:#e2e8f0!important}
 .phase13k-elevation .phase13i-actions button{background:#e2e8f0!important;color:#1e293b!important}
 .phase13k-elevation .phase13i-actions button:hover{background:#fff!important}
@@ -584,6 +605,9 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .phase14b-device-modal input:focus-visible,.phase14b-device-modal select:focus-visible{outline:2px solid #818cf8;outline-offset:1px;}
 .phase14b-device-modal .phase14b-add-inline{display:grid;grid-template-columns:minmax(0,1fr) 43px;gap:8px;}
 .phase14b-device-modal .phase14b-add-inline button{height:43px;width:43px;border-radius:10px;display:grid;place-items:center;}
+.phase14b-device-modal .phase14b-location-create-row{grid-template-columns:minmax(0,1fr) 58px 78px;align-items:center;gap:8px;}
+.phase14b-device-modal .phase14b-location-create-row button{width:100%;height:43px;white-space:nowrap;}
+@media(max-width:520px){.phase14b-device-modal .phase14b-location-create-row{grid-template-columns:minmax(0,1fr) 58px 78px;gap:5px;}}
 .phase14b-device-modal .phase14b-rack-config{padding:18px;border:1px solid #94a3b855;border-radius:12px;}
 .phase14b-device-modal .phase14b-rack-config .phase14b-rack-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;align-items:start;}
 .phase14b-device-modal .phase14b-rack-config label{font-size:.78rem!important;text-transform:none!important;color:inherit!important;}
@@ -832,9 +856,19 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 </style>
 <style id="phase17d-scroll-style">
 /* Keep tall rack elevations inside the viewport and contain wheel/trackpad scroll. */
-.phase17d-rack-scroll { max-height: min(700px, calc(100dvh - 220px)); min-height: 230px; overscroll-behavior-y: contain; overflow-y: auto; -webkit-overflow-scrolling: touch; scroll-behavior: auto; }
+.phase17d-rack-scroll { max-height: clamp(320px, calc(100dvh - 260px), 720px); min-height: 0; overscroll-behavior-y: contain; overflow-y: auto; -webkit-overflow-scrolling: touch; scroll-behavior: auto; scrollbar-gutter: stable; }
+.phase17d-rack-scroll[data-rack-scrollable="true"] { border-bottom: 2px solid #94a3b8; }
+.phase17d-rack-scroll[data-rack-scrollable="true"][data-more-below="true"]::after { content: "Scroll inside this rack to see more U positions"; display:block; position:sticky; bottom:0; margin:12px auto -24px; padding:5px 12px; width:max-content; max-width:100%; border-radius:8px 8px 0 0; background:#334155; color:#fff; font-size:11px; font-weight:600; pointer-events:none; }
+/* Match tall rack viewport to the adjacent details column, keeping internal scroll. */
+@media(min-width:1024px){
+.phase17d-tall-layout{align-items:stretch}
+.phase17d-tall-panel{height:100%;min-height:0}
+.phase17d-tall-panel .phase17d-rack-scroll{flex:1 1 0;height:0;min-height:320px;max-height:none}
+}
+@media(max-width:640px){.phase17d-rack-scroll{max-height:clamp(280px,calc(100dvh - 230px),620px);padding:12px!important}}
+@media(prefers-reduced-motion:reduce){.phase17d-rack-scroll{scroll-behavior:auto}}
 .phase17d-rack-scroll:focus-visible { outline: 2px solid #10b981; outline-offset: -2px; }
-@supports not (height: 100dvh) { .phase17d-rack-scroll { max-height: min(700px, calc(100vh - 220px)); } }
+@supports not (height: 100dvh) { .phase17d-rack-scroll { max-height: clamp(320px, calc(100vh - 260px), 720px); } }
 </style>
 
 <style id="phase18a-ui-consistency">
@@ -1074,6 +1108,12 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                     <i class="fa-solid fa-hard-drive w-5 text-center"></i>
                     <span>Network Racks</span>
                 </button>
+                <div id="racks-sidebar-actions" class="hidden ml-6 pl-3 border-l border-slate-200 dark:border-slate-700 space-y-1" aria-label="Racks Actions">
+                    <button type="button" data-action="sidebar-racks-overview" class="w-full text-left px-3 py-2 rounded-lg text-xs text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700">Rack Overview</button>
+                    <button type="button" data-action="sidebar-racks-inventory" class="w-full text-left px-3 py-2 rounded-lg text-xs text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700">Rack Inventory</button>
+                    <button type="button" data-action="sidebar-racks-accessories" class="w-full text-left px-3 py-2 rounded-lg text-xs text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700">Rack Accessories</button>
+                    <button type="button" data-action="open-rack-modal" class="w-full text-left px-3 py-2 mt-3 rounded-lg text-xs font-semibold text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-slate-700 sidebar-add-device"><i class="fa-solid fa-plus mr-2"></i>Add Rack</button>
+                </div>
                 <button data-action="tab-audit" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700/50 hover:text-indigo-600 dark:hover:text-indigo-400" data-tab="audit"><i class="fa-solid fa-clock-rotate-left w-5 text-center"></i><span>Change History</span></button>
                 
             </nav>
@@ -1124,7 +1164,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             racks: [],
             devices: [],
             rackAccessories: [],
-            deviceTypes: ['Server - Physical', 'Server - Virtual', 'Desktop', 'Laptop', 'Tablet', 'Switch', 'Layer 3 Switch', 'Router', 'Firewall', 'NAS', 'Access Point', 'Wireless LAN Controller', 'PDU', 'UPS', 'Unknown'],
+            deviceTypes: ['Server - Physical', 'Server - Virtual', 'Desktop', 'Laptop', 'Tablet', 'Switch', 'Layer 3 Switch', 'Router', 'Firewall', 'NAS', 'Printer', 'Scanner', 'Access Point', 'Wireless LAN Controller', 'PDU', 'UPS', 'Unknown'],
             deviceTypeGraphics: {},
             deviceLocations: ['Unknown'],
             ipAllocations: {},
@@ -1644,7 +1684,11 @@ function hierarchyValidateTypes(subnets) {
         let activeRackFace = 'front';
         let phase13DraggedDeviceId = null;
         let phase13CDraggedAccessoryId = null;
+        let phase13VDraggedId = null;
         let phase13BRackTab = 'view';
+        let v13RackSection = 'overview';
+        let v13RackDetailOpen = false;
+        let v13RackOverviewTab = 'capacity';
         let phase13CSelectedAccessory = 'blank';
         // Phase 6: temporarily preserve the device form while creating a missing subnet.
         let deviceFormDraft = null;
@@ -1912,7 +1956,7 @@ function hierarchyValidateTypes(subnets) {
             if (overlaps) {
                 return `The selected U position overlaps another device on the ${face || 'front'} face.`;
             }
-            if ((appState.rackAccessories || []).some(a => a.rackId === rackId && a.face === (face || 'front') && start <= Number(a.startU) + Number(a.heightU) - 1 && end >= Number(a.startU))) {
+            if ((appState.rackAccessories || []).some(a => a.rackId === rackId && !['pdu_vertical','cable_vertical'].includes(a.type) && a.face === (face || 'front') && start <= Number(a.startU) + Number(a.heightU) - 1 && end >= Number(a.startU))) {
                 return 'The selected U position overlaps a rack accessory.';
             }
             return null;
@@ -2035,6 +2079,17 @@ function hierarchyValidateTypes(subnets) {
             currentTab = tabId;
             const ipamSidebarActions = document.getElementById('ipam-sidebar-actions');
             if (ipamSidebarActions) ipamSidebarActions.classList.toggle('hidden', tabId !== 'ipam');
+            const rackSidebarActions = document.getElementById('racks-sidebar-actions');
+            if (rackSidebarActions) rackSidebarActions.classList.toggle('hidden', tabId !== 'racks');
+            document.querySelectorAll('#racks-sidebar-actions button').forEach(btn => {
+                const selected = tabId === 'racks' && btn.dataset.action === 'sidebar-racks-' + v13RackSection;
+                btn.classList.toggle('bg-indigo-50', selected);
+                btn.classList.toggle('dark:bg-slate-700', selected);
+                btn.classList.toggle('text-indigo-700', selected);
+                btn.classList.toggle('dark:text-indigo-300', selected);
+                btn.classList.toggle('font-semibold', selected);
+                if (selected) btn.setAttribute('aria-current', 'page'); else btn.removeAttribute('aria-current');
+            });
             const deviceSidebarActions = document.getElementById('devices-sidebar-actions');
             if (deviceSidebarActions) deviceSidebarActions.classList.toggle('hidden', tabId !== 'devices');
             document.querySelectorAll('#devices-sidebar-actions button').forEach(btn => {
@@ -2123,12 +2178,20 @@ function hierarchyValidateTypes(subnets) {
             if (currentTab === 'dashboard') html = (!browserStorageNoticeAcknowledged ? browserStorageWarning(true) : '') + renderDashboardHTML();
             else if (currentTab === 'ipam') html = renderIpamHTML();
             else if (currentTab === 'devices') html = renderDevicesHTML();
-            else if (currentTab === 'racks') html = renderRacksHTML();
+            else if (currentTab === 'racks') html = renderRackHubV13();
             else if (currentTab === 'audit') html = renderAuditHTML();
 
 
             else if (currentTab === 'settings') html = phase16ARenderSettings();
             container.innerHTML = html;
+            const rackScroll = container.querySelector('[data-rack-scroll="true"]');
+            if (rackScroll) {
+                const updateScrollHint = () => {
+                    rackScroll.dataset.moreBelow = String(rackScroll.scrollHeight - rackScroll.scrollTop - rackScroll.clientHeight > 3);
+                };
+                rackScroll.addEventListener('scroll', updateScrollHint, {passive:true});
+                updateScrollHint();
+            }
         }
 
 
@@ -2560,7 +2623,7 @@ function hierarchyValidateTypes(subnets) {
                         const start = Number(d.rackUStart), end = Number(d.rackUEnd ?? d.rackUStart);
                         if(Number.isInteger(start) && Number.isInteger(end)) for(let u=Math.max(1,start);u<=Math.min(height,end);u++) occupied.add(u);
                     });
-                    accessories.filter(a => String(a.face || 'front').toLowerCase() === face).forEach(a => {
+                    accessories.filter(a => !['pdu_vertical','cable_vertical'].includes(a.type) && String(a.face || 'front').toLowerCase() === face).forEach(a => {
                         const start = Number(a.startU), size = Number(a.heightU) || 1;
                         if(Number.isInteger(start)) for(let u=Math.max(1,start);u<=Math.min(height,start+size-1);u++) occupied.add(u);
                     });
@@ -2620,7 +2683,7 @@ function hierarchyValidateTypes(subnets) {
                             ['Devices', devices.length, `${activeDevices} active · ${inactiveDevices} other`, 'fa-server', 'blue', 'tab-devices'],
                             ['IP addresses', totalTrackedIps, `${assignedIps} assigned · ${reservedIps} reserved`, 'fa-network-wired', 'emerald', 'tab-ipam'],
                             ['Subnets', subnets.length, 'Managed networks', 'fa-diagram-project', 'indigo', 'tab-ipam'],
-                            ['Racks', racks.length, `${rackedDevices} mounted devices`, 'fa-hard-drive', 'slate', 'tab-racks']
+                            ['Racks', racks.length, `${rackedDevices} mounted devices`, 'fa-hard-drive', 'slate', 'dashboard-racks-overview']
                         ].map(([label,value,detail,icon,tone,action]) => `<button type="button" data-action="${action}" class="phase15a-stat phase15a-${tone} text-left bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 sm:p-5 transition-colors hover:border-blue-400 dark:hover:border-sky-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500" aria-label="${label}: ${value}. Open section">
                             <div class="flex items-center justify-between gap-2"><span class="text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">${label}</span><span class="phase15a-stat-icon"><i class="fa-solid ${icon}" aria-hidden="true"></i></span></div>
                             <p class="text-3xl font-extrabold text-slate-900 dark:text-white mt-3">${value}</p>
@@ -2794,7 +2857,7 @@ function hierarchyValidateTypes(subnets) {
                 const usage=phase13LUsage(rack,face);
                 const slots=Array.from({length:Number(rack.heightU)},(_,i)=>Number(rack.heightU)-i).map(u=>{
                     const d=appState.devices.find(d=>d.rackId===rack.id&&(d.face||'front')===face&&Number(d.rackUStart)<=u&&Number(d.rackUEnd||d.rackUStart)>=u);
-                    const a=(appState.rackAccessories||[]).find(a=>a.rackId===rack.id&&a.face===face&&Number(a.startU)<=u&&Number(a.startU)+Number(a.heightU)-1>=u);
+                    const a=(appState.rackAccessories||[]).find(a=>a.rackId===rack.id&&a.face===face&&!['pdu_vertical','cable_vertical'].includes(a.type)&&Number(a.startU)<=u&&Number(a.startU)+Number(a.heightU)-1>=u);
                     const item=d||a;
                     const name=d?.name||a?.name||'';
                     const cls=d?'device':a?'accessory':'empty';
@@ -2810,6 +2873,110 @@ function hierarchyValidateTypes(subnets) {
             // User initiates the browser print/PDF flow explicitly via the toolbar.
             w.print();
         }
+
+        // v1.3.0 Phase 1A: estate-wide, read-only rack overview. Existing rack editor/elevations are unchanged.
+        function renderRackHubV13() {
+            const racks=appState.racks||[], devices=appState.devices||[], accessories=appState.rackAccessories||[];
+            const totalU=racks.reduce((sum,r)=>sum+(Number(r.heightU)||0),0);
+            const mounted=devices.filter(d=>racks.some(r=>r.id===d.rackId));
+            const linkedAccessories=accessories.filter(a=>racks.some(r=>r.id===a.rackId));
+            const card=(label,value,icon)=>`<div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5"><div class="text-sm font-semibold text-slate-600 dark:text-slate-300"><i class="fa-solid ${icon} mr-2" aria-hidden="true"></i>${label}</div><div class="text-3xl font-extrabold mt-2 text-slate-900 dark:text-white">${value}</div></div>`;
+            let body='';
+            if(v13RackSection==='overview') {
+                const insights=racks.map(r=>{
+                    const height=Math.max(0,Number(r.heightU)||0);
+                    const rackDevices=mounted.filter(d=>d.rackId===r.id);
+                    const rackAccessories=linkedAccessories.filter(a=>a.rackId===r.id);
+                    const faces=['front','rear'].map(face=>{
+                        const occupied=new Set();
+                        const mark=(start,end)=>{if(!Number.isInteger(start)||!Number.isInteger(end)||end<start)return;for(let u=Math.max(1,start);u<=Math.min(height,end);u++)occupied.add(u);};
+                        rackDevices.filter(d=>String(d.face||d.rackFace||'front').toLowerCase()===face).forEach(d=>mark(Number(d.rackUStart),Number(d.rackUEnd??d.rackUStart)));
+                        rackAccessories.filter(a=>!['pdu_vertical','cable_vertical'].includes(a.type) && String(a.face||'front').toLowerCase()===face && Number(a.heightU)>0).forEach(a=>mark(Number(a.startU),Number(a.startU)+Number(a.heightU)-1));
+                        let run=0,largest=0;
+                        for(let u=1;u<=height;u++){run=occupied.has(u)?0:run+1;largest=Math.max(largest,run);}
+                        return {face,used:occupied.size,free:height-occupied.size,largest};
+                    });
+                    return {rack:r,height,devices:rackDevices.length,accessories:rackAccessories.length,faces};
+                });
+                const totalFaceCapacity=insights.reduce((n,r)=>n+r.height*2,0);
+                const usedFaceU=insights.reduce((n,r)=>n+r.faces[0].used+r.faces[1].used,0);
+                const percent=totalFaceCapacity?Math.round(usedFaceU/totalFaceCapacity*100):0;
+                const locations=new Map();
+                insights.forEach(r=>{const name=r.rack.location||'Not recorded';const prev=locations.get(name)||{racks:0,devices:0};prev.racks++;prev.devices+=r.devices;locations.set(name,prev);});
+                const tabs=[['capacity','Capacity'],['equipment','Equipment'],['locations','Locations & Types']];
+                const tabNav=tabs.map(([id,label])=>`<button type="button" data-action="v13-overview-tab" data-tab="${id}" aria-pressed="${v13RackOverviewTab===id}" class="rounded-xl px-4 py-2.5 text-sm font-semibold ${v13RackOverviewTab===id?'bg-indigo-700 text-white':'border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700'}">${label}</button>`).join('');
+                const bar=(used,height)=>`<div class="h-3 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden" role="img" aria-label="${used} of ${height} rack units occupied"><div class="h-full bg-indigo-600 dark:bg-indigo-400" style="width:${height?Math.min(100,Math.round(used/height*100)):0}%"></div></div>`;
+                const chartBox=(title,description,content)=>`<div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4"><div><h3 class="font-bold text-slate-900 dark:text-white">${title}</h3><p class="text-xs text-slate-500 dark:text-slate-400 mt-1">${description}</p></div>${content}</div>`;
+                const chartRows=(entries,max,unit='')=>entries.map(([label,value])=>`<div class="space-y-1.5"><div class="flex justify-between gap-3 text-sm"><span class="text-slate-700 dark:text-slate-200 break-words">${escapeHtml(String(label))}</span><strong class="text-slate-900 dark:text-white whitespace-nowrap">${value}${unit}</strong></div><div class="h-3 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden"><div class="h-full bg-indigo-500 dark:bg-indigo-400 rounded-full" style="width:${max?Math.min(100,value/max*100):0}%"></div></div></div>`).join('')||'<p class="text-sm text-slate-500 dark:text-slate-400">No data recorded yet.</p>';
+                // An illustrative rack diagram makes the distinction between total free U and contiguous free U explicit.
+                const rackSpaceGuide=()=>{
+                    const cells=Array.from({length:12},(_,i)=>{
+                        const u=12-i,free=u>=7||u<=3;
+                        return `<div class="flex items-center gap-2"><span class="w-5 text-right text-xs text-slate-500 dark:text-slate-400">${u}</span><div class="h-4 flex-1 rounded-sm border ${free?'border-emerald-300 dark:border-emerald-700 bg-emerald-100 dark:bg-emerald-900/40':'border-slate-400 dark:border-slate-500 bg-slate-300 dark:bg-slate-600'}"></div></div>`;
+                    }).join('');
+                    return chartBox('Understanding available rack space','Illustrative 12U rack — not a live reading or an actual inventory rack.',`<div class="grid grid-cols-1 sm:grid-cols-2 gap-5 items-center"><div class="space-y-1" role="img" aria-label="12U example rack: units 12 through 7 free, units 6 through 4 occupied, units 3 through 1 free">${cells}</div><div class="space-y-4"><div><p class="text-sm text-slate-600 dark:text-slate-300">Total free space</p><strong class="text-2xl text-slate-900 dark:text-white">9U</strong><p class="text-xs text-slate-500 dark:text-slate-400">All empty units added together.</p></div><div class="border-t border-slate-200 dark:border-slate-700 pt-3"><p class="text-sm text-slate-600 dark:text-slate-300">Largest contiguous free block</p><strong class="text-2xl text-emerald-700 dark:text-emerald-400">6U</strong><p class="text-xs text-slate-500 dark:text-slate-400">Six uninterrupted empty units at the top. Actual device fit also depends on depth and mounting constraints.</p></div></div></div><div class="flex flex-wrap gap-4 text-xs text-slate-600 dark:text-slate-300"><span><i class="fa-solid fa-square text-emerald-500 mr-1" aria-hidden="true"></i>Free</span><span><i class="fa-solid fa-square text-slate-400 mr-1" aria-hidden="true"></i>Occupied</span></div>`);
+                };
+                let panel='';
+                if(v13RackOverviewTab==='capacity'){
+                    const front=insights.reduce((n,r)=>n+r.faces[0].used,0),rear=insights.reduce((n,r)=>n+r.faces[1].used,0);
+                    const faceChart=chartRows([['Front occupied',front],['Rear occupied',rear]],totalU,'U');
+                    const freeChart=chartRows(insights.map(r=>[r.rack.name,Math.max(r.faces[0].largest,r.faces[1].largest)]).sort((a,b)=>b[1]-a[1]),Math.max(1,...insights.map(r=>r.height)),'U');
+                    panel=`<div class="space-y-4">${chartBox('Combined face utilisation','Front and rear rack-unit capacity are counted separately.',`${bar(usedFaceU,totalFaceCapacity)}<div class="flex flex-wrap justify-between gap-2 text-sm font-semibold text-slate-700 dark:text-slate-200"><span>${usedFaceU}U occupied</span><span>${totalFaceCapacity-usedFaceU}U free</span><span>${percent}% used</span></div>`)}<div class="grid grid-cols-1 xl:grid-cols-2 gap-4">${chartBox('Front vs rear occupancy','Occupied units on each face, compared with physical estate height.',`<div class="space-y-4">${faceChart}</div>`)}${chartBox('Largest contiguous free space','Longest uninterrupted empty U block on either the front or rear face of each rack. A rack can have more free U in total than this value.',`<div class="space-y-4">${freeChart}</div>`)}</div>${rackSpaceGuide()}</div>`;
+                } else if(v13RackOverviewTab==='equipment'){
+                    const counts=new Map();mounted.forEach(d=>{const name=d.type||'Unspecified';counts.set(name,(counts.get(name)||0)+1);});
+                    const types=[...counts.entries()].sort((a,b)=>b[1]-a[1]);
+                    panel=`<div class="grid grid-cols-1 xl:grid-cols-2 gap-4">${chartBox('Mounted equipment by type','Each bar counts devices assigned to a rack, grouped by their recorded device type. A device is counted once.',`<div class="space-y-4">${chartRows(types,Math.max(1,...types.map(x=>x[1])))}</div>`)}${chartBox('Devices and accessories by rack','Compare how many devices and rack accessories are recorded in each rack. These are item counts, not rack-unit usage.',`<div class="space-y-5">${insights.map(r=>`<div><p class="text-sm font-semibold text-slate-800 dark:text-slate-100 mb-2">${escapeHtml(r.rack.name)}</p><div class="space-y-2">${chartRows([['Devices',r.devices],['Accessories',r.accessories]],Math.max(1,...insights.map(x=>Math.max(x.devices,x.accessories))))}</div></div>`).join('')||'<p class="text-sm text-slate-500">No racks recorded.</p>'}</div>`)}</div>`;
+                    panel+=chartBox('How to read these charts','Equipment figures describe saved inventory records, not live device status.',`<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm"><div class="rounded-xl bg-indigo-50 dark:bg-indigo-900/20 p-4"><i class="fa-solid fa-server text-indigo-600 dark:text-indigo-300 mr-2" aria-hidden="true"></i><strong class="text-slate-900 dark:text-white">Devices</strong><p class="mt-2 text-slate-600 dark:text-slate-300">A mounted server, switch or other device contributes one to its type and rack totals, regardless of its height in U.</p></div><div class="rounded-xl bg-slate-100 dark:bg-slate-700/60 p-4"><i class="fa-solid fa-layer-group text-slate-600 dark:text-slate-300 mr-2" aria-hidden="true"></i><strong class="text-slate-900 dark:text-white">Accessories</strong><p class="mt-2 text-slate-600 dark:text-slate-300">PDUs, cable managers and other recorded accessories are counted separately. A 0U accessory still counts as an item.</p></div></div>`);
+                } else {
+                    const ranked=[...locations.entries()].sort((a,b)=>b[1].racks-a[1].racks);
+                    panel=`<div class="grid grid-cols-1 xl:grid-cols-2 gap-4">${chartBox('Racks by location','Each bar counts racks assigned to that location, regardless of rack height.',`<div class="space-y-4">${chartRows(ranked.map(([name,value])=>[name,value.racks]),Math.max(1,...ranked.map(x=>x[1].racks)))}</div>`)}${chartBox('Mounted devices by location','Each bar counts devices mounted in racks at that location; unmounted devices are excluded.',`<div class="space-y-4">${chartRows(ranked.map(([name,value])=>[name,value.devices]),Math.max(1,...ranked.map(x=>x[1].devices)))}</div><p class="text-xs text-slate-500 dark:text-slate-400">Rack-type charts will follow the Phase 1C rack-type schema update.</p>`)}</div>`;
+                    panel+=chartBox('How to read location charts','Locations come from the rack records in your inventory.',`<div class="text-sm text-slate-700 dark:text-slate-200 space-y-2"><p><strong>Racks by location:</strong> a 12U cabinet and a 42U rack each count as one rack.</p><p><strong>Mounted devices by location:</strong> devices inherit their location from the rack they are mounted in. This is not a count of all devices at that site.</p><p class="text-xs text-slate-500 dark:text-slate-400">Locations not recorded are grouped under “Not recorded”.</p></div>`);
+                }
+                body=`<section class="space-y-5" aria-label="Estate-wide rack overview"><div><h2 class="text-xl font-bold text-slate-900 dark:text-white">Rack Overview</h2><p class="text-sm text-slate-600 dark:text-slate-300">Estate-wide rack capacity and equipment insights. Manage individual racks in Rack Inventory.</p></div><div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">${card('Total racks',racks.length,'fa-server')}${card('Physical rack capacity',totalU+'U','fa-ruler-vertical')}${card('Mounted devices',mounted.length,'fa-hard-drive')}${card('Rack accessories',linkedAccessories.length,'fa-layer-group')}</div><div class="flex flex-wrap gap-2" role="group" aria-label="Rack overview charts">${tabNav}</div>${panel}<p class="text-xs text-slate-500 dark:text-slate-400">Inventory-based estimates, not live monitoring. Front and rear capacity is counted separately; physical rack height is not doubled.</p></section>`;
+            } else if(v13RackSection==='inventory') {
+                if(v13RackDetailOpen && racks.some(r=>r.id===selectedRackId)) {
+                    const selected=racks.find(r=>r.id===selectedRackId);
+                    body=`<div class="space-y-4"><h2 class="text-xl font-bold text-slate-900 dark:text-white">${escapeHtml(selected.name)}</h2>${renderRacksHTML()}</div>`;
+                } else {
+                    const rackCards=racks.map(r=>{
+                        const rackDevices=mounted.filter(d=>d.rackId===r.id);
+                        const acc=linkedAccessories.filter(a=>a.rackId===r.id).length;
+                        const height=Math.max(0,Number(r.heightU)||0);
+                        const occupied=new Set();
+                        rackDevices.forEach(d=>{
+                            const start=Number(d.rackUStart),end=Number(d.rackUEnd??d.rackUStart);
+                            if(Number.isInteger(start)&&Number.isInteger(end)&&end>=start)
+                                for(let u=Math.max(1,start);u<=Math.min(height,end);u++) occupied.add(u);
+                        });
+                        const percent=height?Math.round(occupied.size/height*100):0;
+                        const name=escapeHtml(r.name||'Unnamed rack'),location=escapeHtml(r.location||'Not recorded');
+                        const search=escapeHtml((r.name||'')+' '+(r.location||''));
+                        return `<button type="button" data-v13-rack-row data-search="${search}" data-action="v13-open-rack" data-id="${escapeHtml(r.id)}" class="group w-full text-left rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 shadow-sm hover:border-indigo-400 dark:hover:border-indigo-500 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 transition-all">
+                            <div class="flex justify-between items-start gap-3"><div class="rounded-xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300 p-3"><i class="fa-solid fa-server" aria-hidden="true"></i></div><span class="text-xs font-bold rounded-full bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1">${percent}%</span></div>
+                            <h3 class="mt-4 font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-300 break-words">${name}</h3>
+                            <p class="mt-1 text-sm text-slate-600 dark:text-slate-300"><i class="fa-solid fa-location-dot mr-1" aria-hidden="true"></i>${location}</p>
+                            <div class="mt-4 flex justify-between gap-2 text-xs text-slate-600 dark:text-slate-300"><span>${height}U height</span><span>${occupied.size}U occupied</span></div>
+                            <div class="mt-2 h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden"><div class="h-full ${percent>=80?'bg-amber-500':'bg-indigo-500'}" style="width:${percent}%"></div></div>
+                            <div class="mt-4 flex justify-between gap-2 text-sm text-slate-700 dark:text-slate-200"><span>${rackDevices.length} devices</span><span>${acc} accessories</span></div>
+                            <div class="mt-4 pt-3 border-t border-slate-200 dark:border-slate-700 flex justify-between items-center text-sm font-semibold text-indigo-600 dark:text-indigo-300"><span>View elevation</span><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></div>
+                        </button>`;
+                    }).join('');
+                    body=`<section class="space-y-4" aria-label="Rack inventory"><div class="flex flex-wrap gap-3 justify-between items-center"><div><h2 class="text-xl font-bold text-slate-900 dark:text-white">Rack Inventory</h2><p class="text-sm text-slate-600 dark:text-slate-300">Select a rack card to view its equipment and settings.</p></div><button type="button" data-action="open-rack-modal" class="rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 text-sm font-bold"><i class="fa-solid fa-plus mr-2" aria-hidden="true"></i>Add Rack</button></div><div><label for="v13-rack-search" class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Search racks</label><input id="v13-rack-search" type="search" placeholder="Search by rack name or location" class="w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white px-3 py-2.5" /></div><div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">${rackCards||'<p class="text-sm text-slate-600 dark:text-slate-300">No racks recorded yet. Add a rack to get started.</p>'}</div><p class="text-xs text-slate-500 dark:text-slate-400">Utilisation shows unique occupied rack units across both faces, not combined face capacity. Inventory-based estimates, not live monitoring.</p><p id="v13-rack-no-results" class="hidden text-sm text-slate-600 dark:text-slate-300">No racks match your search.</p></section>`;
+                }
+            } else {
+                body=`<section class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4"><h2 class="text-xl font-bold text-slate-900 dark:text-white">Rack Accessories</h2><p class="text-sm text-slate-600 dark:text-slate-300">Existing accessories remain editable from each rack's elevation. Choose a rack below to manage its accessories.</p>${racks.map(r=>`<button type="button" data-action="v13-open-rack" data-id="${escapeHtml(r.id)}" class="block w-full text-left rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3 hover:bg-indigo-50 dark:hover:bg-slate-700 font-semibold text-slate-900 dark:text-white">${escapeHtml(r.name)} — ${linkedAccessories.filter(a=>a.rackId===r.id).length} accessories</button>`).join('')||'<p class="text-sm text-slate-600 dark:text-slate-300">No racks recorded yet.</p>'}</section>`;
+            }
+            return `<div class="min-w-0">${body}</div>`;
+        }
+
+        document.addEventListener('change', event => {
+            if (event.target?.id !== 'v13-rack-detail-select') return;
+            const rack = appState.racks.find(r => r.id === event.target.value);
+            if (!rack) return;
+            selectedRackId = rack.id;
+            phase13BRackTab = 'view';
+            renderContent();
+        });
 
         function renderRacksHTML() {
             const currentRack = appState.racks.find(r => r.id === selectedRackId) || appState.racks[0];
@@ -2830,7 +2997,8 @@ function hierarchyValidateTypes(subnets) {
             const rackDevices = appState.devices.filter(d => d.rackId === currentRack.id);
             const faceDevices = rackDevices.filter(d => (d.face || 'front') === activeRackFace);
             const rackAccessories=(appState.rackAccessories||[]).filter(a=>a.rackId===currentRack.id);
-            const faceAccessories=rackAccessories.filter(a=>a.face===activeRackFace);
+            const faceAccessories=rackAccessories.filter(a=>a.face===activeRackFace && !phase13CAccessoryTypes[a.type]?.vertical);
+            const verticalAccessories=rackAccessories.filter(a=>a.face===activeRackFace && phase13CAccessoryTypes[a.type]?.vertical);
 
             const faceUUsed = faceDevices.reduce((acc, d) => {
                 const height = (parseInt(d.rackUEnd || d.rackUStart) - parseInt(d.rackUStart) + 1) || 1;
@@ -2860,7 +3028,7 @@ function hierarchyValidateTypes(subnets) {
                     if (occupancy.accessory) {
                         if(occupancy.isTopSlot){
                             const a=occupancy.accessory, kind=phase13CAccessoryTypes[a.type]||phase13CAccessoryTypes.blank;
-                            rackSlotsHtml+=`<div draggable="true" data-rack-accessory="${escapeHtml(a.id)}" data-rack-drop-u="${u}" data-rack-drop-id="${escapeHtml(currentRack.id)}" style="height:${a.heightU*40}px" title="${escapeHtml(a.name||kind.label)} · ${kind.label} · ${a.heightU}U · ${a.face}" class="phase13-device phase13c-accessory phase13i-rack-item phase13h-rack-item border-b border-slate-400 dark:border-slate-600"><span class="phase13j-u" aria-label="Rack position">${a.heightU===1?`U${a.startU}`:`U${a.startU}–${a.startU+a.heightU-1}`}</span><span class="phase13i-name" title="${escapeHtml(a.name||kind.label)}">${escapeHtml(a.name||kind.label)}</span><div class="phase13i-actions"><button type="button" data-action="phase13c-edit" data-id="${escapeHtml(a.id)}" class="phase13c-icon" aria-label="Edit ${escapeHtml(a.name||kind.label)}"><i class="fa-solid fa-pen"></i></button><button type="button" data-action="phase13c-delete" data-id="${escapeHtml(a.id)}" class="phase13c-icon" aria-label="Remove ${escapeHtml(a.name||kind.label)}"><i class="fa-solid fa-trash"></i></button></div></div>`;
+                            rackSlotsHtml+=`<div draggable="true" data-rack-accessory="${escapeHtml(a.id)}" data-rack-face="${a.face==='rear'?'rear':'front'}" data-rack-drop-u="${u}" data-rack-drop-id="${escapeHtml(currentRack.id)}" style="height:${a.heightU*40}px" title="${escapeHtml(a.name||kind.label)} · ${kind.label} · ${a.heightU}U · ${a.face}" class="phase13-device phase13c-accessory phase13i-rack-item phase13h-rack-item border-b border-slate-400 dark:border-slate-600"><span class="phase13j-u" aria-label="Rack position">${a.heightU===1?`U${a.startU}`:`U${a.startU}–${a.startU+a.heightU-1}`}</span><span class="phase13i-name" title="${escapeHtml(a.name||kind.label)}">${escapeHtml(a.name||kind.label)}</span><div class="phase13i-actions"><button type="button" data-action="phase13c-edit" data-id="${escapeHtml(a.id)}" class="phase13c-icon" aria-label="Edit ${escapeHtml(a.name||kind.label)}"><i class="fa-solid fa-pen"></i></button><button type="button" data-action="phase13c-delete" data-id="${escapeHtml(a.id)}" class="phase13c-icon" aria-label="Remove ${escapeHtml(a.name||kind.label)}"><i class="fa-solid fa-trash"></i></button></div></div>`;
                         }
                         continue;
                     }
@@ -2876,11 +3044,11 @@ function hierarchyValidateTypes(subnets) {
                             : 'border-emerald-300 dark:border-emerald-800 bg-emerald-50/90 dark:bg-emerald-950/40';
 
                         rackSlotsHtml += `
-                            <div draggable="true" data-rack-device="${escapeHtml(dev.id)}" data-rack-drop-u="${u}" data-rack-drop-id="${escapeHtml(currentRack.id)}" style="height: ${span * 40}px;" title="${escapeHtml(dev.name)} · ${escapeHtml(dev.type)} · ${escapeHtml(dev.primaryIp||'No IP')} · ${span}U · ${dev.face||'front'}" class="phase13-device phase13i-rack-item border-b border-slate-200 dark:border-slate-800 ${borderCol} transition hover:brightness-105 shadow-sm relative group">
+                            <div draggable="true" data-rack-device="${escapeHtml(dev.id)}" data-rack-face="${isRear?'rear':'front'}" data-rack-drop-u="${u}" data-rack-drop-id="${escapeHtml(currentRack.id)}" style="height: ${span * 40}px;" title="${escapeHtml(dev.name)} · ${escapeHtml(dev.type)} · ${escapeHtml(dev.primaryIp||'No IP')} · ${span}U · ${dev.face||'front'}" class="phase13-device phase13i-rack-item border-b border-slate-200 dark:border-slate-800 ${borderCol} transition hover:brightness-105 shadow-sm relative group">
                                 <span class="phase13j-u" aria-label="Rack position">${span===1?`U${start}`:`U${start}–${end}`}</span>
-                                <span class="phase13i-name" title="${escapeHtml(dev.name)}">${escapeHtml(dev.name)}</span>
+                                <span class="phase13i-device-details"><span class="phase13i-name" title="${escapeHtml(dev.name)}">${escapeHtml(dev.name)}</span><span class="phase13i-device-meta" title="${escapeHtml(dev.type||'Device')} · ${escapeHtml(dev.primaryIp||'No IP recorded')}">${escapeHtml(dev.type||'Device')} · ${escapeHtml(dev.primaryIp||'No IP recorded')}</span></span>
                                 <div class="phase13i-actions">
-                                    <button data-action="assign-device" data-rack-id="${escapeHtml(currentRack.id)}" data-u="${start}" class="phase13i-action" title="Edit placement" aria-label="Edit rack placement for ${escapeHtml(dev.name)}"><i class="fa-solid fa-pen"></i></button>
+                                    <button data-action="assign-device" data-device-id="${escapeHtml(dev.id)}" data-rack-id="${escapeHtml(currentRack.id)}" data-u="${start}" class="phase13i-action" title="Edit placement" aria-label="Edit rack placement for ${escapeHtml(dev.name)}"><i class="fa-solid fa-pen"></i></button>
                                     <button data-action="unassign-device" data-id="${escapeHtml(dev.id)}" class="phase13i-action text-rose-600" title="Remove from rack" aria-label="Remove ${escapeHtml(dev.name)} from rack"><i class="fa-solid fa-trash"></i></button>
                                 </div>
                             </div>
@@ -2906,59 +3074,55 @@ function hierarchyValidateTypes(subnets) {
                         </nav>
                     </div>
                     <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
-                        <div class="flex items-center space-x-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0">
-                            ${appState.racks.map(r => `
-                                <button data-action="select-rack" data-id="${escapeHtml(r.id)}" class="px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition ${r.id === currentRack.id ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'}">
-                                    <i class="fa-solid fa-server mr-2"></i>${escapeHtml(r.name)}
-                                </button>
-                            `).join('')}
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-2 min-w-0 w-full md:w-auto">
+                            <label for="v13-rack-detail-select" class="text-xs font-semibold text-slate-600 dark:text-slate-300 whitespace-nowrap">Viewing rack</label>
+                            <select id="v13-rack-detail-select" aria-label="Choose rack to view" class="w-full sm:w-72 max-w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white px-3 py-2 text-sm font-semibold">
+                                ${appState.racks.map(r=>`<option value="${escapeHtml(r.id)}" ${r.id===currentRack.id?'selected':''}>${escapeHtml(r.name)}</option>`).join('')}
+                            </select>
                         </div>
 
                         <div class="flex items-center space-x-2 w-full md:w-auto justify-end">
-                            <div class="flex items-center bg-slate-100 dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-700">
+                            <div class="${phase13BRackTab==='settings'?'hidden':'flex'} items-center bg-slate-100 dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-700">
                                 <button data-action="rack-face-front" aria-pressed="${activeRackFace === 'front'}" class="px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition flex items-center space-x-1.5 ${activeRackFace === 'front' ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}">
                                     <i class="fa-solid fa-desktop"></i>
                                     <span>Front</span>
                                 </button>
-                                <button data-action="rack-face-rear" aria-pressed="${activeRackFace === 'rear'}" class="px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition flex items-center space-x-1.5 ${activeRackFace === 'rear' ? 'bg-white dark:bg-slate-800 text-purple-600 dark:text-purple-400 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}">
+                                <button data-action="rack-face-rear" aria-pressed="${activeRackFace === 'rear'}" class="px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition flex items-center space-x-1.5 ${activeRackFace === 'rear' ? 'bg-white dark:bg-slate-800 text-orange-700 dark:text-orange-400 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}">
                                     <i class="fa-solid fa-server"></i>
                                     <span>Rear</span>
                                 </button>
                             </div>
-                            <div class="${phase13BRackTab==='settings'?'flex':'hidden'} items-center gap-2 flex-wrap">
-                            <button data-action="edit-rack" data-id="${escapeHtml(currentRack.id)}" class="px-3 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold transition" title="Edit Rack Properties">
-                                <i class="fa-solid fa-pen"></i>
-                            </button>
-                            <button data-action="delete-rack" data-id="${escapeHtml(currentRack.id)}" class="px-3 py-2 bg-rose-50 dark:bg-rose-950/50 hover:bg-rose-100 text-rose-600 dark:text-rose-400 rounded-xl text-xs font-semibold transition border border-rose-200 dark:border-rose-800" title="Delete Rack">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                            <button data-action="open-rack-modal" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold transition shadow-sm">
-                                <i class="fa-solid fa-plus mr-1"></i> New Rack
-                            </button>
-                            </div>
+
                         </div>
                     </div>
 
                     <section class="${phase13BRackTab==='view'?'':'hidden'} space-y-4" aria-label="Visual rack view">
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <div class="lg:col-span-2 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden flex flex-col">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start ${Number(currentRack.heightU)>12?'phase17d-tall-layout':''}">
+                        <div class="lg:col-span-2 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden flex flex-col ${Number(currentRack.heightU)>12?'phase17d-tall-panel':''}">
                             <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 flex items-center justify-between">
                                 <div class="flex items-center space-x-3">
-                                    <span class="w-3 h-3 rounded-full ${activeRackFace === 'front' ? 'bg-emerald-500' : 'bg-purple-500'}"></span>
-                                    <h3 class="font-bold text-base text-slate-900 dark:text-white">${escapeHtml(currentRack.name)} — <span class="uppercase text-sm ${activeRackFace === 'front' ? 'text-emerald-600 dark:text-emerald-400' : 'text-purple-600 dark:text-purple-400'}">${activeRackFace} View</span></h3>
+                                    <span class="w-3 h-3 rounded-full ${activeRackFace === 'front' ? 'bg-emerald-500' : 'bg-orange-500'}"></span>
+                                    <h3 class="font-bold text-base text-slate-900 dark:text-white">${escapeHtml(currentRack.name)} — <span class="uppercase text-sm ${activeRackFace === 'front' ? 'text-emerald-600 dark:text-emerald-400' : 'text-orange-700 dark:text-orange-400'}">${activeRackFace} View</span></h3>
                                 </div>
-                                <span class="text-xs text-slate-500 font-medium">${faceDevices.length+faceAccessories.length} mounted items • ${totalCapacityPercent}% U utilized</span>
+                                <span class="text-xs text-slate-600 dark:text-slate-300 font-semibold">${faceDevices.length} devices · ${faceAccessories.length} accessories · ${totalCapacityPercent}% ${activeRackFace} face occupied</span>
                             </div>
 
-                            <div class="phase17d-rack-scroll p-6 overflow-y-auto custom-scrollbar bg-slate-100 dark:bg-slate-900/80" data-rack-scroll="true" tabindex="0" aria-label="Scrollable rack elevation">
+                            <div class="phase17d-rack-scroll p-6 overflow-y-auto custom-scrollbar bg-slate-100 dark:bg-slate-900/80" data-rack-scroll="true" data-rack-scrollable="${Number(currentRack.heightU) > 12 ? 'true' : 'false'}" tabindex="0" aria-label="Scrollable rack elevation">
                                 <div class="phase13k-elevation max-w-5xl mx-auto bg-white dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-700 rounded-xl shadow-inner overflow-hidden">
                                     <div class="bg-slate-800 text-slate-200 px-4 py-2 text-xs font-bold flex justify-between uppercase tracking-wider">
-                                        <span>Rack Unit (U)</span>
-                                        <span>Mounted Equipment (${activeRackFace.toUpperCase()} Panel)</span>
-                                        <span>Status / IP</span>
+                                        <span>Rack Units (U)</span>
+                                        <span>Equipment — ${activeRackFace.toUpperCase()} face</span>
+                                        <span>Placement</span>
                                     </div>
-                                    <div class="flex flex-col">
-                                        ${rackSlotsHtml}
+                                    <div class="phase13-vertical-layout" aria-label="0U vertical accessory rail preview">
+                                        ${phase13VRenderRail(currentRack,verticalAccessories,"left")}
+                                        <div class="flex flex-col min-w-0">
+                                            ${rackSlotsHtml}
+                                        </div>
+                                        ${phase13VRenderRail(currentRack,verticalAccessories,"right")}
+                                    </div>
+                                    <div class="phase13-vertical-rail-labels" aria-label="Side orientation as viewed from ${activeRackFace} face">
+                                        <span>L</span><span>As viewed from ${activeRackFace} face</span><span>R</span>
                                     </div>
                                     <div class="bg-slate-800 text-slate-400 px-4 py-2 text-xs text-center font-mono">
                                         ${escapeHtml(currentRack.location || 'Server Room')} • Total Height: ${currentRack.heightU}U
@@ -2969,15 +3133,16 @@ function hierarchyValidateTypes(subnets) {
 
                         <div class="space-y-6">
                             <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-6">
-                                <div class="flex items-center justify-between gap-2 mb-3"><h3 class="font-bold text-base text-slate-900 dark:text-white">Rack Statistics</h3><button type="button" data-action="phase13l-print" data-id="${escapeHtml(currentRack.id)}" class="phase13b-secondary"><i class="fa-solid fa-print mr-1"></i> Print / PDF</button></div>
+                                <div class="flex items-center justify-between gap-2 mb-3"><h3 class="font-bold text-base text-slate-900 dark:text-white">Rack Capacity &amp; Details</h3><button type="button" data-action="phase13l-print" data-id="${escapeHtml(currentRack.id)}" class="phase13b-secondary"><i class="fa-solid fa-print mr-1"></i> Print / PDF</button></div>
+                                <p class="text-xs text-slate-600 dark:text-slate-300 mb-3">Each face has ${currentRack.heightU}U of potential mounting positions. Front and rear figures are separate; they do not double the physical rack height.</p>
                                 <div class="space-y-3 text-sm">
-                                    ${['front','rear'].map(face=>{const v=phase13LUsage(currentRack,face);return `<div class="space-y-1"><div class="flex justify-between gap-2"><span class="font-semibold capitalize">${face}</span><span class="font-mono">${v.occupied}U used · ${v.available}U free</span></div><div class="h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden" role="progressbar" aria-label="${face} utilisation" aria-valuenow="${v.percent}" aria-valuemin="0" aria-valuemax="100"><div class="h-full ${face==='front'?'bg-emerald-700':'bg-indigo-600'}" style="width:${v.percent}%"></div></div></div>`;}).join('')}
+                                    ${['front','rear'].map(face=>{const v=phase13LUsage(currentRack,face);return `<div class="space-y-1"><div class="flex justify-between gap-2"><span class="font-semibold capitalize">${face}</span><span class="font-mono">${v.occupied}U used · ${v.available}U free</span></div><div class="h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden" role="progressbar" aria-label="${face} utilisation" aria-valuenow="${v.percent}" aria-valuemin="0" aria-valuemax="100"><div class="h-full ${face==='front'?'bg-emerald-700':'bg-orange-500'}" style="width:${v.percent}%"></div></div></div>`;}).join('')}
                                     <div class="flex justify-between py-2 border-b border-slate-100 dark:border-slate-700">
                                         <span class="text-slate-500">Location</span>
                                         <span class="font-medium text-slate-900 dark:text-white">${escapeHtml(currentRack.location || 'N/A')}</span>
                                     </div>
                                     <div class="flex justify-between py-2 border-b border-slate-100 dark:border-slate-700">
-                                        <span class="text-slate-500">Total Rack Capacity</span>
+                                        <span class="text-slate-500 dark:text-slate-400">Physical rack height</span>
                                         <span class="font-medium text-slate-900 dark:text-white">${currentRack.heightU} U</span>
                                     </div>
                                     <div class="flex justify-between py-2 border-b border-slate-100 dark:border-slate-700">
@@ -2986,10 +3151,10 @@ function hierarchyValidateTypes(subnets) {
                                     </div>
                                     <div class="flex justify-between py-2 border-b border-slate-100 dark:border-slate-700">
                                         <span class="text-slate-500">Rear Mounted Devices</span>
-                                        <span class="font-medium text-purple-600">${rackDevices.filter(d => d.face === 'rear').length}</span>
+                                        <span class="font-medium text-orange-700 dark:text-orange-400">${rackDevices.filter(d => d.face === 'rear').length}</span>
                                     </div>
                                     <div class="flex justify-between py-2">
-                                        <span class="text-slate-500">Current View Utilization</span>
+                                        <span class="text-slate-500 dark:text-slate-400">Selected face occupancy</span>
                                         <span class="font-medium text-slate-900 dark:text-white">${faceUUsed+accessoryUUsed} U / ${currentRack.heightU} U</span>
                                     </div>
                                 </div>
@@ -2997,13 +3162,13 @@ function hierarchyValidateTypes(subnets) {
 
                             <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-5 space-y-3">
                                 <h3 class="font-bold text-base text-slate-900 dark:text-white">Available U positions</h3>
-                                <p class="text-xs text-slate-600 dark:text-slate-300">Suggested starting slots on the ${activeRackFace} face. Select a height to find contiguous free space.</p>
+                                <p class="text-xs text-slate-600 dark:text-slate-300">Choose the equipment height to find uninterrupted empty rack units on the ${activeRackFace} face. Placement still checks collisions.</p>
                                 <div class="flex flex-wrap gap-2">${[1,2,3,4].map(h=>`<button type="button" data-action="phase13l-height" data-height="${h}" class="phase13b-secondary ${phase13LHeight===h?'ring-2 ring-indigo-500':''}">${h}U</button>`).join('')}</div>
                                 ${(()=>{const runs=phase13LFreeRuns(currentRack,activeRackFace,phase13LHeight);return runs.length?`<p class="text-sm text-slate-800 dark:text-slate-100">${runs.length} possible position(s). Suggested: <strong>U${runs[0]}${phase13LHeight>1?'–U'+(runs[0]+phase13LHeight-1):''}</strong></p><button type="button" data-action="phase13l-mount" data-u="${runs[0]}" class="phase13b-primary">Mount At Suggested U</button>`:'<p class="text-sm text-amber-700 dark:text-amber-300">No contiguous space for this height on this face.</p>';})()}
                             </div>
                             <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-6">
                                 <h3 class="font-bold text-base text-slate-900 dark:text-white mb-1">Other Side (${activeRackFace === 'front' ? 'Rear' : 'Front'}) Equipment</h3>
-                                <p class="text-xs text-slate-500 mb-4">Toggle side view to inspect mounted hardware on the opposite face.</p>
+                                <p class="text-xs text-slate-600 dark:text-slate-300 mb-4">These devices are mounted on the opposite face. Choose View to switch faces.</p>
                                 <div class="space-y-2 max-h-[250px] overflow-y-auto custom-scrollbar">
                                     ${rackDevices.filter(d => (d.face || 'front') !== activeRackFace).length === 0 ? `<p class="text-xs text-slate-400 italic">No devices mounted on this face.</p>` : ''}
                                     ${rackDevices.filter(d => (d.face || 'front') !== activeRackFace).map(d => `
@@ -3021,18 +3186,19 @@ function hierarchyValidateTypes(subnets) {
                     </div>
                     </section>
                     <section class="${phase13BRackTab==='equipment'?'':'hidden'} space-y-4" aria-label="Mounted equipment">
+                        ${(()=>{const visibleDevices=rackDevices.filter(d=>(d.face||'front')===activeRackFace);const visibleAccessories=rackAccessories.filter(a=>(a.face||'front')===activeRackFace);return `
                         <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5">
-                            <div class="flex flex-wrap justify-between items-center gap-3 mb-4"><div><h3 class="font-bold text-slate-900 dark:text-white">Mounted Equipment</h3><p class="text-sm text-slate-600 dark:text-slate-300">${rackDevices.length} device(s) across front and rear. To reposition equipment, use Rack view.</p></div><button type="button" data-action="phase13b-tab" data-tab="view" class="phase13b-primary">Open Rack View</button></div>
-                            <div class="mt-4 mb-3 flex items-center justify-between"><h4 class="font-bold">Rack accessories (${rackAccessories.length})</h4></div>
-                            ${rackAccessories.length?`<div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-5">${rackAccessories.map(a=>`<div class="flex items-center justify-between gap-2 rounded-xl border border-slate-200 dark:border-slate-600 p-3"><div class="text-sm"><strong>${escapeHtml(a.name||phase13CAccessoryTypes[a.type]?.label||'Accessory')}</strong><div class="text-xs text-slate-600 dark:text-slate-300">${escapeHtml(a.face)} · U${a.startU}${a.heightU>1?'-U'+(a.startU+a.heightU-1):''} · ${a.heightU}U</div></div><button type="button" data-action="phase13c-edit" data-id="${escapeHtml(a.id)}" class="phase13b-secondary">Edit</button></div>`).join('')}</div>`:'<p class="text-sm text-slate-600 dark:text-slate-300 mb-4">No rack accessories added yet.</p>'}
-                            ${rackDevices.length ? `<div class="overflow-x-auto"><table class="w-full text-sm text-left"><thead><tr class="text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700"><th class="p-3">Device</th><th class="p-3">Side</th><th class="p-3">Position</th><th class="p-3">IP address</th><th class="p-3">Actions</th></tr></thead><tbody>${[...rackDevices].sort((a,b)=>Number(b.rackUStart)-Number(a.rackUStart)).map(d=>`<tr class="border-b border-slate-100 dark:border-slate-700"><td class="p-3 font-semibold text-slate-900 dark:text-white">${escapeHtml(d.name)}</td><td class="p-3 capitalize">${escapeHtml(d.face||'front')}</td><td class="p-3 font-mono">U${escapeHtml(String(d.rackUStart||'?'))}${Number(d.rackUEnd)>Number(d.rackUStart)?'-U'+escapeHtml(String(d.rackUEnd)):''}</td><td class="p-3 font-mono">${escapeHtml(d.primaryIp||'—')}</td><td class="p-3"><button type="button" data-action="rack-face-device" data-face="${escapeHtml(d.face||'front')}" class="phase13b-secondary">Show In Rack</button></td></tr>`).join('')}</tbody></table></div>` : `<p class="text-sm text-slate-600 dark:text-slate-300">No equipment is mounted in this rack yet. Open Rack view and select an empty U to mount a device.</p>`}
+                            <div class="flex flex-wrap justify-between items-center gap-3 mb-4"><div><h3 class="font-bold text-slate-900 dark:text-white">Mounted Equipment</h3><p class="text-sm text-slate-600 dark:text-slate-300">${visibleDevices.length} device(s) on the ${activeRackFace} face (${rackDevices.length} across both faces). To reposition equipment, use Rack view.</p></div><button type="button" data-action="phase13b-tab" data-tab="view" class="phase13b-primary">Open Rack View</button></div>
+                            <div class="mt-4 mb-3 flex items-center justify-between"><h4 class="font-bold">Rack accessories — ${activeRackFace} (${visibleAccessories.length})</h4></div>
+                            ${visibleAccessories.length?`<div class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-5">${visibleAccessories.map(a=>`<div class="flex items-center justify-between gap-2 rounded-xl border border-slate-200 dark:border-slate-600 p-3"><div class="text-sm"><strong>${escapeHtml(a.name||phase13CAccessoryTypes[a.type]?.label||'Accessory')}</strong><div class="text-xs text-slate-600 dark:text-slate-300">${escapeHtml(a.face)}${phase13CAccessoryTypes[a.type]?.vertical?' · '+escapeHtml(a.side||'left')+' 0U rail':''} · U${a.startU}${a.heightU>1?'-U'+(a.startU+a.heightU-1):''} · ${a.heightU}U${phase13CAccessoryTypes[a.type]?.vertical?' span · 0U occupied':''}</div></div><div class="flex flex-wrap gap-2"><button type="button" data-action="phase13c-edit" data-id="${escapeHtml(a.id)}" class="phase13b-secondary">Edit</button><button type="button" data-action="phase13c-delete" data-id="${escapeHtml(a.id)}" class="phase13b-danger">Remove</button></div></div>`).join('')}</div>`:'<p class="text-sm text-slate-600 dark:text-slate-300 mb-4">No rack accessories on this face.</p>'}
+                            ${visibleDevices.length ? `<div class="overflow-x-auto"><table class="w-full text-sm text-left"><thead><tr class="text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700"><th class="p-3">Device</th><th class="p-3">Side</th><th class="p-3">Position</th><th class="p-3">IP address</th><th class="p-3">Actions</th></tr></thead><tbody>${[...visibleDevices].sort((a,b)=>Number(b.rackUStart)-Number(a.rackUStart)).map(d=>`<tr class="border-b border-slate-100 dark:border-slate-700"><td class="p-3 font-semibold text-slate-900 dark:text-white">${escapeHtml(d.name)}</td><td class="p-3 capitalize">${escapeHtml(d.face||'front')}</td><td class="p-3 font-mono">U${escapeHtml(String(d.rackUStart||'?'))}${Number(d.rackUEnd)>Number(d.rackUStart)?'-U'+escapeHtml(String(d.rackUEnd)):''}</td><td class="p-3 font-mono">${escapeHtml(d.primaryIp||'—')}</td><td class="p-3"><button type="button" data-action="rack-face-device" data-face="${escapeHtml(d.face||'front')}" class="phase13b-secondary">Show In Rack</button></td></tr>`).join('')}</tbody></table></div>` : `<p class="text-sm text-slate-600 dark:text-slate-300">No devices mounted on the ${activeRackFace} face. Open Rack view and select an empty U to mount a device.</p>`}
                         </div>
-                    </section>
+                    </section>`;})()}
                     <section class="${phase13BRackTab==='settings'?'':'hidden'} space-y-4" aria-label="Rack settings">
                         <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 space-y-4">
                             <div><h3 class="font-bold text-slate-900 dark:text-white">Rack Configuration</h3><p class="text-sm text-slate-600 dark:text-slate-300">Edit rack details, add enclosures, or remove an unused rack.</p></div>
                             <dl class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm"><div><dt class="text-slate-500 dark:text-slate-400">Rack name</dt><dd class="font-semibold">${escapeHtml(currentRack.name)}</dd></div><div><dt class="text-slate-500 dark:text-slate-400">Location</dt><dd class="font-semibold">${escapeHtml(currentRack.location||'Not set')}</dd></div><div><dt class="text-slate-500 dark:text-slate-400">Height</dt><dd class="font-semibold">${Number(currentRack.heightU)||42}U</dd></div><div><dt class="text-slate-500 dark:text-slate-400">Mounted devices</dt><dd class="font-semibold">${rackDevices.length}</dd></div></dl>
-                            <div class="flex flex-wrap gap-2"><button data-action="edit-rack" data-id="${escapeHtml(currentRack.id)}" class="phase13b-primary">Edit Rack</button><button data-action="open-rack-modal" class="phase13b-secondary">Add Rack</button><button data-action="delete-rack" data-id="${escapeHtml(currentRack.id)}" class="phase13b-danger">Delete Rack</button></div>
+                            <div class="flex flex-wrap gap-2"><button data-action="edit-rack" data-id="${escapeHtml(currentRack.id)}" class="phase13b-primary">Edit Rack</button><button data-action="correct-rack-specifications" data-id="${escapeHtml(currentRack.id)}" class="phase13b-primary">Correct Rack Specifications</button><button data-action="delete-rack" data-id="${escapeHtml(currentRack.id)}" class="phase13b-danger">Delete Rack</button></div>
                         </div>
                     </section>
                 </div>
@@ -3636,7 +3802,7 @@ function hierarchyValidateTypes(subnets) {
             return [...new Set([...list,...appState.devices.map(d=>d[prop])].filter(Boolean))]
                 .sort((a,b)=>a.localeCompare(b,undefined,{sensitivity:'base'}));
         }
-        function getUniqueDeviceTypes() { return [...new Set([...phase18DList('type'), 'Desktop', 'Laptop', 'Tablet', 'Server - Physical', 'Server - Virtual'])]; }
+        function getUniqueDeviceTypes() { return [...new Set([...phase18DList('type'), ...defaultData.deviceTypes])].sort((a,b)=>a.localeCompare(b,undefined,{sensitivity:'base'})); }
         function getUniqueDeviceLocations() { return phase18DList('location'); }
         function phase18DProtected(kind,name) {
             return name.toLowerCase()==='unknown';
@@ -5065,6 +5231,42 @@ function hierarchyValidateTypes(subnets) {
             overlay.querySelector('[data-action="phase120-keep-editing"]').focus();
             return false;
         }
+        let phase120RackCorrectionResolve = null;
+        function phase120ConfirmRackCorrection() {
+            if (document.getElementById('phase120-rack-correction-dialog')) return Promise.resolve(false);
+            return new Promise(resolve => {
+                phase120RackCorrectionResolve = resolve;
+                const overlay = document.createElement('div');
+                overlay.id = 'phase120-rack-correction-dialog';
+                overlay.setAttribute('role', 'alertdialog');
+                overlay.setAttribute('aria-modal', 'true');
+                overlay.setAttribute('aria-labelledby', 'phase120-rack-correction-title');
+                overlay.setAttribute('aria-describedby', 'phase120-rack-correction-description');
+                overlay.className = 'absolute inset-0 z-50 flex items-center justify-center bg-slate-950/65 p-4 rounded-2xl';
+                overlay.innerHTML = `<div class="w-full max-w-md rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 p-6 shadow-2xl space-y-4">
+                    <h3 id="phase120-rack-correction-title" class="text-lg font-bold text-slate-900 dark:text-white">Confirm Rack Specification Correction</h3>
+                    <p id="phase120-rack-correction-description" class="text-sm text-slate-700 dark:text-slate-200">Correct the recorded physical specifications for this rack? Mounted equipment will not be moved.</p>
+                    <div class="flex flex-wrap justify-end gap-3">
+                        <button type="button" data-action="phase120-rack-correction-cancel" class="h-11 px-4 rounded-xl border border-slate-400 dark:border-slate-500 text-slate-900 dark:text-white caffoot-modal-cancel">Cancel</button>
+                        <button type="button" data-action="phase120-rack-correction-accept" class="h-11 px-4 rounded-xl bg-blue-800 hover:bg-blue-700 text-white font-bold">Confirm Correction</button>
+                    </div>
+                </div>`;
+                const content = document.getElementById('modal-content');
+                if (getComputedStyle(content).position === 'static') content.style.position = 'relative';
+                overlay._returnFocus = document.activeElement;
+                content.appendChild(overlay);
+                overlay.querySelector('[data-action="phase120-rack-correction-cancel"]').focus();
+            });
+        }
+        function phase120ResolveRackCorrection(accepted) {
+            const overlay = document.getElementById('phase120-rack-correction-dialog');
+            const focus = overlay?._returnFocus;
+            overlay?.remove();
+            const resolve = phase120RackCorrectionResolve;
+            phase120RackCorrectionResolve = null;
+            if (focus?.isConnected) focus.focus();
+            if (resolve) resolve(accepted);
+        }
         function phase120KeepEditing(){
             const overlay=document.getElementById('phase120-discard-dialog');
             const focus=overlay?._returnFocus;
@@ -5121,11 +5323,19 @@ function hierarchyValidateTypes(subnets) {
         }
 
         document.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' && event.target?.id === 'dev-custom-location') {
+                event.preventDefault();
+                addCustomLocationOption();
+                return;
+            }
             const container = document.getElementById('modal-container');
             if (!container || container.classList.contains('hidden')) return;
             if (event.key === 'Escape') {
                 event.preventDefault();
                 if(document.getElementById('phase18d-delete-dialog')){phase18DCancelDelete();return;}
+                if(document.getElementById('phase130-conversion-dialog')){phase130ResolveDeviceConversion(false);return;}
+                if(document.getElementById('phase130-restore-dialog')){phase130ResolveRestore(false);return;}
+                if(document.getElementById('phase120-rack-correction-dialog')){phase120ResolveRackCorrection(false);return;}
                 if(document.getElementById('phase120-discard-dialog')){phase120KeepEditing();return;}
                 if (container.querySelector('.phase18d-manager[data-phase18d-editing="true"]')) {
                     phase18DCancelRename();
@@ -5140,7 +5350,7 @@ function hierarchyValidateTypes(subnets) {
                 return;
             }
             if (event.key !== 'Tab') return;
-            const activeDialog=document.getElementById('phase18d-delete-dialog')||document.getElementById('phase120-discard-dialog');
+            const activeDialog=document.getElementById('phase130-conversion-dialog')||document.getElementById('phase120-rack-correction-dialog')||document.getElementById('phase18d-delete-dialog')||document.getElementById('phase120-discard-dialog');
             const items = Array.from((activeDialog||container).querySelectorAll('a[href],button:not([disabled]),input:not([disabled]):not([type="hidden"]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')).filter(el => el.getClientRects().length);
             if (!items.length) { event.preventDefault(); document.getElementById('modal-content').focus(); return; }
             // Safari can omit buttons/selects from its native Tab order depending on
@@ -5153,89 +5363,111 @@ function hierarchyValidateTypes(subnets) {
             items[next].focus();
         });
 
-        function openRackModal(rackId = null) {
+        const rackTypes = ['Floor-standing cabinet', 'Wall-mounted cabinet', 'Open-frame 2-post', 'Open-frame 4-post', 'Wall-mounted network enclosure'];
+        const rackHeightPresets = [6, 9, 12, 18, 24, 42, 48];
+        function rackPhysicalDetails(rack) {
+            const dimension = (value, fallback) => {
+                if (value == null || value === '') return fallback;
+                const match = String(value).trim().match(/^(\d+)\s*(?:mm)?$/i);
+                return match ? Number(match[1]) : NaN;
+            };
+            return {
+                type: rack ? (rack.type || 'Free Standing') : rackTypes[0],
+                height: rack ? Number(rack.heightU) : 42,
+                width: dimension(rack && (rack.widthMm ?? rack.width), 600),
+                depth: dimension(rack && (rack.depthMm ?? rack.depth), 600)
+            };
+        }
+
+        function openRackModal(rackId = null, correction = false) {
             const rack = rackId ? appState.racks.find(r => r.id === rackId) : null;
+            if (rackId && !rack) return;
+            const details = rackPhysicalDetails(rack);
+            const physicalEditable = !rack || correction;
+            const types = Array.from(new Set([...rackTypes, details.type]));
+            const heights = Array.from(new Set([...rackHeightPresets, details.height])).filter(h => Number.isInteger(h) && h > 0).sort((a,b) => a-b);
             openModal(`
                 <div class="p-6 sm:p-7 space-y-5">
                     <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-4 mb-1">
-                        <h3 class="font-bold text-base">${rack ? 'Edit Network Rack' : 'Add Network Rack Enclosure'}</h3>
+                        <h3 class="font-bold text-base">${rack ? (correction ? 'Correct Rack Specifications' : 'Edit Network Rack') : 'Add Network Rack Enclosure'}</h3>
                         <button type="button" data-action="close-modal" aria-label="Close dialog"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
                     </div>
-                    <form data-form-action="rack" data-rack-id="${escapeHtml(rack ? rack.id : '')}" class="form-shell space-y-5">
+                    <form data-form-action="rack" data-rack-id="${escapeHtml(rack ? rack.id : '')}" data-correction="${correction}" class="form-shell space-y-5">
                         <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-server"></i>Rack identity</div>
-                        <div>
-                            <label for="rack-name" class="block text-xs font-semibold mb-1">Rack Name <span class="required-mark">*</span></label>
-                            <input type="text" id="rack-name" required value="${rack ? escapeHtml(rack.name) : ''}" placeholder="e.g. Rack C - Garage" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
-                            <div>
-                                <label for="rack-height" class="block text-xs font-semibold mb-1">Height in U</label>
-                                <select id="rack-height" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
-                                    <option value="12" ${rack && rack.heightU == 12 ? 'selected' : ''}>12U</option>
-                                    <option value="24" ${rack && rack.heightU == 24 ? 'selected' : ''}>24U</option>
-                                    <option value="42" ${rack && (!rack.heightU || rack.heightU == 42) ? 'selected' : ''}>42U (Standard)</option>
-                                    <option value="48" ${rack && rack.heightU == 48 ? 'selected' : ''}>48U</option>
-                                </select>
+                            <div><label for="rack-name" class="block text-xs font-semibold mb-1">Rack Name <span class="required-mark">*</span></label>
+                            <input type="text" id="rack-name" required value="${rack ? escapeHtml(rack.name) : ''}" placeholder="e.g. Rack C - Garage" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></div>
+                            <div><label for="rack-type" class="block text-xs font-semibold mb-1">Rack Type</label>
+                            <select id="rack-type" ${physicalEditable ? '' : 'disabled'} class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">${types.map(t => `<option value="${escapeHtml(t)}" ${t === details.type ? 'selected' : ''}>${escapeHtml(t)}</option>`).join('')}</select></div>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <div><label for="rack-height" class="block text-xs font-semibold mb-1">Height (U)</label>
+                                <select id="rack-height" ${physicalEditable ? '' : 'disabled'} class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">${heights.map(h => `<option value="${h}" ${h === details.height ? 'selected' : ''}>${h}U</option>`).join('')}<option value="custom">Custom…</option></select>
+                                <input type="number" id="rack-height-custom" min="1" max="100" step="1" placeholder="Custom U" hidden ${physicalEditable ? '' : 'disabled'} class="w-full mt-2 border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></div>
+                                <div><label for="rack-width" class="block text-xs font-semibold mb-1">Width (mm)</label><input type="number" id="rack-width" min="1" max="10000" step="1" value="${Number.isFinite(details.width) ? details.width : ''}" ${physicalEditable ? '' : 'disabled'} class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></div>
+                                <div><label for="rack-depth" class="block text-xs font-semibold mb-1">Depth (mm)</label><input type="number" id="rack-depth" min="1" max="10000" step="1" value="${Number.isFinite(details.depth) ? details.depth : ''}" ${physicalEditable ? '' : 'disabled'} class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></div>
                             </div>
-                            <div>
-                                <label for="rack-depth" class="block text-xs font-semibold mb-1">Depth</label>
-                                <input type="text" id="rack-depth" value="${rack ? escapeHtml(rack.depth) : '600mm'}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
-                            </div>
+                            ${rack && !correction ? '<p class="text-xs text-slate-500 dark:text-slate-400">Physical specifications are locked. Use Correct Rack Specifications in Rack Settings to correct a recording mistake.</p>' : ''}
                         </div>
-                        </div>
-                        <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-location-dot"></i>Placement</div><div>
-                            <label for="rack-location" class="form-label">Location Room <span class="font-normal text-slate-400">(optional)</span></label>
-                            <input type="text" id="rack-location" value="${rack ? escapeHtml(rack.location || '') : ''}" placeholder="e.g. Garage Server Room" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
-                        </div>
+                        <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-location-dot"></i>Placement</div>
+                            <div><label for="rack-location" class="form-label">Location Room (optional)</label><input type="text" id="rack-location" value="${rack ? escapeHtml(rack.location || '') : ''}" placeholder="e.g. Garage Server Room" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></div>
                         </div>
                         <div class="form-error" data-form-error role="alert"></div>
                         <div class="form-actions rack-form-actions">
                             <button type="button" data-action="cancel-rack-from-device" class="rack-form-button bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white rounded-xl font-semibold caffoot-modal-cancel">Cancel</button>
-                            <button type="submit" class="rack-form-button bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold">Save Rack</button>
+                            <button type="submit" class="rack-form-button bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold">${correction ? 'Review Correction' : 'Save Rack'}</button>
                         </div>
                     </form>
                 </div>
             `);
+            const heightSelect = document.getElementById('rack-height');
+            if (physicalEditable && heightSelect) heightSelect.addEventListener('change', () => {
+                const custom = document.getElementById('rack-height-custom');
+                custom.hidden = heightSelect.value !== 'custom';
+                custom.required = heightSelect.value === 'custom';
+            });
         }
 
-        function handleRackSubmit(e, rackId) {
+        async function handleRackSubmit(e, rackId) {
             e.preventDefault();
+            const correction = e.target.closest('form').dataset.correction === 'true';
+            const rack = rackId ? appState.racks.find(r => r.id === rackId) : null;
+            if (rackId && !rack) return;
             const name = document.getElementById('rack-name').value.trim();
             if (!name) { showToast('Rack name is required.', 'error'); return; }
-            const before = JSON.stringify(appState);
-            const heightU = parseInt(document.getElementById('rack-height').value);
-            const depth = document.getElementById('rack-depth').value;
             const location = document.getElementById('rack-location').value;
-
-            if (rackId) {
-                const r = appState.racks.find(item => item.id === rackId);
-                if (r) {
-                    const outOfBoundsDevice = appState.devices.find(d => {
-                        if (d.rackId !== rackId) return false;
-                        const endU = Number(d.rackUEnd || d.rackUStart);
-                        return Number.isInteger(endU) && endU > heightU;
-                    });
-
-                    if (outOfBoundsDevice) {
-                        showToast(`${outOfBoundsDevice.name} occupies U${outOfBoundsDevice.rackUEnd || outOfBoundsDevice.rackUStart}, so the rack cannot be reduced to ${heightU}U.`, 'error');
-                        return;
-                    }
-
-                    const outOfBoundsAccessory = (appState.rackAccessories || []).find(a =>
-                        a.rackId === rackId && Number(a.startU) + Number(a.heightU) - 1 > heightU
-                    );
-                    if (outOfBoundsAccessory) {
-                        showToast(`${outOfBoundsAccessory.name || 'A rack accessory'} occupies U${Number(outOfBoundsAccessory.startU) + Number(outOfBoundsAccessory.heightU) - 1}, so the rack cannot be reduced to ${heightU}U.`, 'error');
-                        return;
-                    }
-
-                    r.name = name;
-                    r.heightU = heightU;
-                    r.depth = depth;
-                    r.location = location;
+            const before = JSON.stringify(appState);
+            let physical = null;
+            if (!rack || correction) {
+                const selectedHeight = document.getElementById('rack-height').value;
+                const rawHeight = selectedHeight === 'custom' ? document.getElementById('rack-height-custom').value : selectedHeight;
+                const heightU = rawHeight === '' ? NaN : Number(rawHeight);
+                const rawWidth = document.getElementById('rack-width').value;
+                const rawDepth = document.getElementById('rack-depth').value;
+                const widthMm = rawWidth === '' ? NaN : Number(rawWidth);
+                const depthMm = rawDepth === '' ? NaN : Number(rawDepth);
+                const type = document.getElementById('rack-type').value;
+                if (!Number.isInteger(heightU) || heightU < 1 || heightU > 100 || !Number.isInteger(widthMm) || widthMm < 1 || widthMm > 10000 || !Number.isInteger(depthMm) || depthMm < 1 || depthMm > 10000 || !rackTypes.includes(type) && !(rack && type === rack.type)) {
+                    showToast('Enter a valid rack type, height (1–100U), width and depth in mm.', 'error'); return;
+                }
+                physical = {heightU, widthMm, depthMm, type};
+                if (rack) {
+                    const device = appState.devices.find(d => d.rackId === rackId && Number(d.rackUEnd || d.rackUStart) > heightU);
+                    const accessory = (appState.rackAccessories || []).find(a => a.rackId === rackId && Number(a.startU) + Number(a.heightU) - 1 > heightU);
+                    if (device || accessory) { showToast('Rack height cannot be reduced below mounted devices or accessories.', 'error'); return; }
+                    if (!(await phase120ConfirmRackCorrection())) return;
+                }
+            }
+            if (rack) {
+                rack.name = name;
+                rack.location = location;
+                if (correction) {
+                    rack.heightU = physical.heightU;
+                    rack.widthMm = physical.widthMm;
+                    rack.depthMm = physical.depthMm;
+                    rack.depth = physical.depthMm + 'mm';
+                    rack.type = physical.type;
                 }
             } else {
-                const newRack = { id: 'rack_' + Date.now(), name, heightU, depth, type: 'Free Standing', location };
+                const newRack = {id: 'rack_' + Date.now(), name, heightU: physical.heightU, widthMm: physical.widthMm, depthMm: physical.depthMm, depth: physical.depthMm + 'mm', type: physical.type, location};
                 appState.racks.push(newRack);
                 selectedRackId = newRack.id;
             }
@@ -5300,11 +5532,13 @@ function hierarchyValidateTypes(subnets) {
             else dialog.prepend(switcher);
         }
 
-        function openAssignDeviceModal(rackId, slotU) {
+        function openAssignDeviceModal(rackId, slotU, editDeviceId = null) {
             const rack = appState.racks.find(r => r.id === rackId);
             if (!rack) { showToast('Select a rack before mounting a device.', 'error'); return; }
             const occupant = appState.devices.find(d => d.rackId === rackId && (d.face || 'front') === activeRackFace &&
                 Number(d.rackUStart) <= Number(slotU) && Number(d.rackUEnd || d.rackUStart) >= Number(slotU));
+            const editingDevice = editDeviceId ? appState.devices.find(d => d.id === editDeviceId && d.rackId === rackId) : null;
+            if (editDeviceId && !editingDevice) { showToast('The mounted device could not be found.', 'error'); return; }
             const unassignedDevices = appState.devices.filter(d => d.mountType === 'Rack Mounted' && phase19BAllowedMounts(d.type).includes('Rack Mounted') && (!d.rackId || d.rackId === rackId));
             if (occupant) unassignedDevices.sort((a, b) => (a.id === occupant.id ? -1 : b.id === occupant.id ? 1 : 0));
 
@@ -5318,9 +5552,9 @@ function hierarchyValidateTypes(subnets) {
                         <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-link"></i>Device</div>
                         <div>
                             <label class="block text-xs font-semibold mb-1">Select Device from Inventory <span class="required-mark">*</span></label>
-                            <select id="assign-device-id" required class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
-                                ${unassignedDevices.length ? '<option value="" selected disabled>Select a device...</option>' : '<option value="" selected disabled>No eligible Rack Mounted devices available</option>'}
-                                ${unassignedDevices.map(d => `<option value="${escapeHtml(d.id)}">${escapeHtml(d.name)} (${escapeHtml(d.type)})</option>`).join('')}
+                            <select id="assign-device-id" required ${editingDevice ? 'aria-label="Mounted device being edited"' : ''} class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
+                                ${editingDevice ? '' : (unassignedDevices.length ? '<option value="" selected disabled>Select a device...</option>' : '<option value="" selected disabled>No eligible Rack Mounted devices available</option>')}
+                                ${unassignedDevices.map(d => `<option value="${escapeHtml(d.id)}" ${editingDevice && d.id === editingDevice.id ? 'selected' : ''}>${escapeHtml(d.name)} (${escapeHtml(d.type)})</option>`).join('')}
                             </select>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
@@ -5333,7 +5567,7 @@ function hierarchyValidateTypes(subnets) {
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold mb-1">Start U Position <span class="required-mark">*</span></label>
-                                <input type="number" id="assign-u-start" min="1" max="${rack.heightU}" value="${slotU}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700 font-mono">
+                                <select id="assign-u-start" required class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700 font-mono" aria-label="Available start U position"></select>
                             </div>
                         </div>
                         <div class="form-error" data-form-error role="alert"></div>
@@ -5344,6 +5578,48 @@ function hierarchyValidateTypes(subnets) {
                     </form>
                 </div>
             `);
+            const deviceSelect = document.getElementById('assign-device-id');
+            const faceSelect = document.getElementById('assign-face');
+            const startSelect = document.getElementById('assign-u-start');
+            const refresh = () => refreshAssignStartPositions(rackId, Number(startSelect?.value) || Number(slotU));
+            deviceSelect?.addEventListener('change', refresh);
+            faceSelect?.addEventListener('change', refresh);
+            refreshAssignStartPositions(rackId, Number(slotU));
+        }
+
+        // Only offer positions that fit the inventory device on the selected face.
+        function refreshAssignStartPositions(rackId, preferredU) {
+            const select = document.getElementById('assign-u-start');
+            const deviceId = document.getElementById('assign-device-id')?.value;
+            const face = document.getElementById('assign-face')?.value || 'front';
+            const device = appState.devices.find(d => d.id === deviceId);
+            const rack = appState.racks.find(r => r.id === rackId);
+            if (!select) return;
+            select.replaceChildren();
+            if (!device || !rack) {
+                select.add(new Option('Select a device first', ''));
+                select.disabled = true;
+                return;
+            }
+            const height = Math.max(1, Number(device.rackUHeight) || (Number(device.rackUEnd) - Number(device.rackUStart) + 1) || 1);
+            const available = [];
+            for (let u = 1; u + height - 1 <= Number(rack.heightU); u++) {
+                if (!validateRackPlacement(device.id, rackId, face, u, u + height - 1)) available.push(u);
+            }
+            if (!available.length) {
+                select.add(new Option('No available positions', ''));
+                select.disabled = true;
+                return;
+            }
+            select.disabled = false;
+            for (const u of available) {
+                const label = height === 1 ? `U${u}` : `U${u}–U${u + height - 1}`;
+                select.add(new Option(label, String(u)));
+            }
+            const preferred = Number(preferredU);
+            const chosen = available.includes(preferred) ? preferred :
+                available.reduce((best, u) => Math.abs(u - preferred) < Math.abs(best - preferred) ? u : best, available[0]);
+            select.value = String(chosen);
         }
 
         function handleAssignSubmit(e, rackId, defaultSlot) {
@@ -5353,6 +5629,10 @@ function hierarchyValidateTypes(subnets) {
             if (!deviceId) { showToast('Select a device from inventory before mounting.', 'error'); return; }
             const face = document.getElementById('assign-face').value;
             const uStart = parseInt(document.getElementById('assign-u-start').value);
+            if (!Number.isInteger(uStart)) {
+                showToast('No valid rack position is available for this device on the selected face.', 'error');
+                return;
+            }
 
             const device = appState.devices.find(d => d.id === deviceId);
             if (!device || device.mountType !== 'Rack Mounted' || !phase19BAllowedMounts(device.type).includes('Rack Mounted')) {
@@ -5383,6 +5663,7 @@ function hierarchyValidateTypes(subnets) {
                 return;
             }
             closeModal(true);
+            activeRackFace = face;
             renderContent();
         }
 
@@ -5564,14 +5845,14 @@ function hierarchyValidateTypes(subnets) {
         // Use the current managed labels, including renamed software and server functions.
         function phase19CDetailLabel(key, type) {
             if (phase19BTypeGroups[String(type || '').toLowerCase().trim()] === 'router' && key === 'networkConnection') return 'WAN connection method';
-            const managed = [...phase19BServerFunctions(), ...phase120SoftwareOptions()].find(item => item.key === key);
-            return managed?.label || phase19BLabels[key] || key;
+            const managed = [...phase19BServerFunctions(), ...phase120StarterServerServices, ...phase120SoftwareOptions()].find(item => item.key === key);
+            return ({softwarePlatform:'Operating System',softwareVersion:'OS Version',windowsLicence:'Windows Licence'})[key] || managed?.label || phase19BLabels[key] || key;
         }
         function phase19CDetailRows(device, field) {
             const details = device.typeDetails && typeof device.typeDetails === 'object' ? device.typeDetails : {};
             const keys = phase19BFieldsFor(device.type);
-            // Retain access to historical values even when a managed option was removed.
-            const historical = Object.keys(details).filter(key => !keys.includes(key) && details[key] !== '' && details[key] !== null && details[key] !== undefined);
+            // Incompatible fields are displayed in the separate History tab, never as active hardware.
+            const historical = [];
             const allKeys = [...keys, ...historical];
             const flags = new Set([...phase19BFlags, ...phase19BServerFunctionFields(), ...phase120SoftwareOptions().map(x=>x.key)]);
             const serviceKeys=new Set([...phase120StarterServerServices,...phase19BServerFunctions()].map(x=>x.key));
@@ -5598,12 +5879,15 @@ function hierarchyValidateTypes(subnets) {
             const section = (title, icon, body) => `<section class="phase14c-section"><h4><i class="fa-solid ${icon} mr-2" aria-hidden="true"></i>${escapeHtml(title)}</h4><dl class="phase14c-grid">${body}</dl></section>`;
             const status = d.status || 'Active';
             const detailRows = phase19CDetailRows(d, field);
-            const softwareEntries=[...phase120SoftwareOptions(),...phase19BSoftware().filter(x=>x.archived)].filter((x,i,all)=>all.findIndex(y=>y.key===x.key)===i).filter(x=>d.typeDetails?.[x.key]===true||d[x.key]===true);
+            const activeFields = new Set(phase19BFieldsFor(d.type));
+            const softwareEntries=[...phase120SoftwareOptions(),...phase19BSoftware().filter(x=>x.archived)].filter((x,i,all)=>all.findIndex(y=>y.key===x.key)===i).filter(x=>activeFields.has(x.key) && (d.typeDetails?.[x.key]===true||d[x.key]===true));
             const installedSoftware=softwareEntries.sort((a,b)=>String(a.label||'').localeCompare(String(b.label||''),undefined,{sensitivity:'base'})).map(x=>x.archived?`<div class="phase14c-field"><dt>${safe(x.label)}</dt><dd><span>Installed</span> <span class="inline-flex items-center gap-1 rounded-full border border-red-300 bg-red-50 px-2 py-0.5 text-xs font-bold text-red-700 dark:border-red-700 dark:bg-red-950/50 dark:text-red-300" title="Installed on this device; no longer available in the software catalogue"><i class="fa-solid fa-box-archive" aria-hidden="true"></i>Archived</span><button type="button" data-action="archived-software-remove" data-id="${safe(d.id)}" data-name="${safe(x.key)}" class="mt-2 block rounded-lg border border-red-300 px-2 py-1 text-xs font-semibold text-red-700 hover:bg-red-50 dark:border-red-700 dark:text-red-300 dark:hover:bg-red-950/40">Mark as Uninstalled</button></dd></div>`:field(x.label,'Installed')).join('');
             const deviceDetails=d.typeDetails||{};
-            const serverServiceEntries=[...phase120AvailableServerServices(),...phase19BServerFunctions().filter(x=>x.archived)].filter((x,i,all)=>all.findIndex(y=>y.key===x.key)===i).filter(x=>deviceDetails[x.key]===true||d[x.key]===true).sort((a,b)=>String(a.label||'').localeCompare(String(b.label||''),undefined,{sensitivity:'base'}));
+            const serverServiceEntries=[...phase120AvailableServerServices(),...phase19BServerFunctions().filter(x=>x.archived)].filter((x,i,all)=>all.findIndex(y=>y.key===x.key)===i).filter(x=>activeFields.has(x.key) && (deviceDetails[x.key]===true||d[x.key]===true)).sort((a,b)=>String(a.label||'').localeCompare(String(b.label||''),undefined,{sensitivity:'base'}));
             const serverServices=serverServiceEntries.map(x=>`<div class="phase14c-field"><dt>${safe(x.label)}</dt><dd>Enabled${x.archived?' <span class="inline-flex items-center gap-1 rounded-full border border-red-300 bg-red-50 px-2 py-0.5 text-xs font-bold text-red-700 dark:border-red-700 dark:bg-red-950/50 dark:text-red-300"><i class="fa-solid fa-box-archive" aria-hidden="true"></i>Archived</span>':''}</dd></div>`).join('');
-            const platformDetails=[['Operating system',deviceDetails.softwarePlatform||deviceDetails.os],['OS version',deviceDetails.softwareVersion],['Windows licence',deviceDetails.windowsLicence]].filter(([,value])=>value!==undefined&&value!==null&&value!=='').map(([label,value])=>field(label,value)).join('');
+            const platformDetails=[['Operating system',deviceDetails.softwarePlatform||deviceDetails.os],['OS version',deviceDetails.softwareVersion],['Windows licence',deviceDetails.windowsLicence]].filter(([label])=>['server','computer'].includes(phase19BTypeGroups[String(d.type||'').toLowerCase().trim()]) || label==='Operating system' && activeFields.has('os')).filter(([,value])=>value!==undefined&&value!==null&&value!=='').map(([label,value])=>field(label,value)).join('');
+            const historicalSnapshots = Array.isArray(d.previousTypeDetails) ? [...d.previousTypeDetails].reverse() : [];
+            const historyRows = historicalSnapshots.map((snapshot,index)=>`<details class="rounded-xl border border-slate-300 dark:border-slate-600 p-3"><summary class="cursor-pointer font-semibold">${safe(snapshot.type||'Previous type')} — saved configuration ${index+1}</summary><dl class="phase14c-grid mt-3">${Object.entries(snapshot.details||{}).map(([key,value])=>field(phase19CDetailLabel(key,snapshot.type),typeof value==='boolean'?(value?'Yes':'No'):value)).join('')}</dl><button type="button" data-action="phase130-restore" data-id="${safe(d.id)}" data-index="${historicalSnapshots.length-1-index}" class="phase14c-primary mt-3">Restore Configuration</button></details>`).join('');
             const hardware = field('Manufacturer', d.manufacturer) + field('Model', d.model) + field('Serial number', d.serialNumber);
             const rackRows = mounted ? field('Rack', rack.name) + field('Face', d.face || 'front') + field('U position', uText) + field('Height', (Number(d.rackUHeight) || (uEnd-uStart+1) || 1) + 'U') : '';
             openModal(`<div class="phase14c-detail space-y-5 p-5 sm:p-7">
@@ -5614,7 +5898,7 @@ function hierarchyValidateTypes(subnets) {
                     <button type="button" data-action="close-modal" aria-label="Close device details" class="phase14c-close"><i class="fa-solid fa-xmark"></i></button>
                 </header>
                 <nav class="phase14c-tabs" role="tablist" aria-label="Device detail sections">
-                    ${[['overview','Overview'],['hardware','Hardware'],['network','Network'],['software','Software'],['location','Location']].map(([key,label],i)=>`<button type="button" role="tab" id="phase14c-tab-${key}" aria-controls="phase14c-panel-${key}" aria-selected="${i===0?'true':'false'}" tabindex="${i===0?'0':'-1'}" data-action="phase14c-tab" data-name="${key}" class="phase14c-tab ${i===0?'phase14c-tab-active':''}">${label}</button>`).join('')}
+                    ${[['overview','Overview'],['hardware','Hardware'],['network','Network'],['software','Software'],['location','Location'],...(historyRows?[['history','History']]:[])].map(([key,label],i)=>`<button type="button" role="tab" id="phase14c-tab-${key}" aria-controls="phase14c-panel-${key}" aria-selected="${i===0?'true':'false'}" tabindex="${i===0?'0':'-1'}" data-action="phase14c-tab" data-name="${key}" class="phase14c-tab ${i===0?'phase14c-tab-active':''}">${label}</button>`).join('')}
                 </nav>
                 <div class="phase14c-panels">
                     <div id="phase14c-panel-overview" role="tabpanel" aria-labelledby="phase14c-tab-overview" class="phase14c-panel">
@@ -5635,6 +5919,7 @@ function hierarchyValidateTypes(subnets) {
                     <div id="phase14c-panel-location" role="tabpanel" aria-labelledby="phase14c-tab-location" class="phase14c-panel" hidden>
                         ${section('Mounting & location', 'fa-location-dot', field('Mounting', d.mountType || (mounted ? 'Rack Mounted' : 'Desktop')) + field('Location', d.location) + rackRows)}
                     </div>
+                    ${historyRows?`<div id="phase14c-panel-history" role="tabpanel" aria-labelledby="phase14c-tab-history" class="phase14c-panel" hidden><section class="phase14c-section"><h4>Previous Device Type Details</h4><p class="text-sm mb-3">Preserved for reference only; not part of the active configuration.</p>${historyRows}</section></div>`:''}
                 </div>
                 <footer class="phase19d1-actions">
                     <button type="button" data-action="phase14c-duplicate" data-id="${safe(d.id)}" class="phase19d1-secondary"><i class="fa-solid fa-copy" aria-hidden="true"></i>Duplicate</button>
@@ -5683,12 +5968,98 @@ function hierarchyValidateTypes(subnets) {
                 tab.classList.toggle('phase14c-tab-active',active);
             });
         }
+        let phase130RestoreResolve = null;
+        function phase130ConfirmRestore(description) {
+            if (document.getElementById('phase130-restore-dialog')) return Promise.resolve(false);
+            return new Promise(resolve => {
+                phase130RestoreResolve = resolve;
+                const overlay = document.createElement('div');
+                overlay.id = 'phase130-restore-dialog';
+                overlay.setAttribute('role','alertdialog');
+                overlay.setAttribute('aria-modal','true');
+                overlay.setAttribute('aria-labelledby','phase130-restore-title');
+                overlay.setAttribute('aria-describedby','phase130-restore-description');
+                overlay.className = 'absolute inset-0 z-50 flex items-center justify-center bg-slate-950/65 p-4 rounded-2xl';
+                overlay.innerHTML = `<div class="w-full max-w-lg rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 p-6 shadow-2xl space-y-4">
+                    <h3 id="phase130-restore-title" class="text-lg font-bold text-slate-900 dark:text-white">Restore Previous Configuration</h3>
+                    <p id="phase130-restore-description" class="text-sm text-slate-700 dark:text-slate-200 whitespace-pre-wrap break-words max-h-64 overflow-y-auto">${escapeHtml(description)}</p>
+                    <div class="flex flex-wrap justify-end gap-3">
+                        <button type="button" data-action="phase130-restore-cancel" class="h-11 px-4 rounded-xl border border-slate-400 dark:border-slate-500 text-slate-900 dark:text-white caffoot-modal-cancel">Keep Current Configuration</button>
+                        <button type="button" data-action="phase130-restore-accept" class="h-11 px-4 rounded-xl bg-indigo-700 hover:bg-indigo-800 text-white font-bold">Restore Configuration</button>
+                    </div></div>`;
+                const content = document.getElementById('modal-content');
+                if (!content) { phase130RestoreResolve = null; resolve(false); return; }
+                if (getComputedStyle(content).position === 'static') content.style.position = 'relative';
+                overlay._returnFocus = document.activeElement;
+                content.appendChild(overlay);
+                overlay.querySelector('[data-action="phase130-restore-cancel"]').focus();
+            });
+        }
+        function phase130ResolveRestore(accepted) {
+            const overlay = document.getElementById('phase130-restore-dialog');
+            const focus = overlay?._returnFocus;
+            overlay?.remove();
+            const resolve = phase130RestoreResolve;
+            phase130RestoreResolve = null;
+            if (focus?.isConnected) focus.focus();
+            if (resolve) resolve(accepted);
+        }
+        async function phase130RestoreHistory(deviceId, index) {
+            const device = getDeviceById(deviceId);
+            const entries = Array.isArray(device?.previousTypeDetails) ? device.previousTypeDetails : [];
+            const snapshot = entries[index];
+            if (!Number.isInteger(index) || index < 0 || index >= entries.length) { showToast('Previous configuration not found.', 'error'); return; }
+            if (!device || !snapshot || !snapshot.type || !snapshot.details || typeof snapshot.details !== 'object' || Array.isArray(snapshot.details)) {
+                showToast('Previous configuration not found.', 'error'); return;
+            }
+            const current = device.typeDetails && typeof device.typeDetails === 'object' ? device.typeDetails : {};
+            const destination = new Set(phase19BFieldsFor(snapshot.type));
+            if (['computer','server'].includes(phase19BTypeGroups[String(snapshot.type).toLowerCase().trim()])) {
+                destination.add('softwarePlatform'); destination.add('softwareVersion'); destination.add('windowsLicence');
+            }
+            const restore = Object.entries(snapshot.details).filter(([key,value]) => destination.has(key) && value !== null && value !== undefined);
+            const obsolete = phase130ObsoleteDeviceFields(device.type, snapshot.type, current);
+            const changes = restore.map(([key,value]) => phase19CDetailLabel(key,snapshot.type)+': '+String(value===true?'Yes':value));
+            const description = 'Restore '+snapshot.type+' configuration? Device type will change from '+device.type+'. '+(changes.length?'Restored fields: '+changes.join('; ')+'. ':'')+
+                (obsolete.length?'Current incompatible fields will be preserved as history: '+obsolete.map(key=>phase19CDetailLabel(key,device.type)).join(', ')+'. ':'')+
+                'Device name, IP address, location and rack assignment will not change. Existing matching fields will be replaced.';
+            const accepted = await phase130ConfirmRestore(description);
+            if (!accepted) return;
+            if (getDeviceById(deviceId) !== device || device.previousTypeDetails?.[index] !== snapshot) return;
+            const before = JSON.stringify(appState);
+            const nextDetails = {...current};
+            // Preserve both incompatible fields and values that restoration will overwrite.
+            const archived = Object.fromEntries(obsolete.map(key=>[key,current[key]]));
+            for (const [key,value] of restore) {
+                if (Object.prototype.hasOwnProperty.call(current,key) &&
+                    JSON.stringify(current[key]) !== JSON.stringify(value)) archived[key] = current[key];
+            }
+            for (const key of obsolete) delete nextDetails[key];
+            for (const [key,value] of restore) nextDetails[key] = value;
+            device.type = snapshot.type;
+            device.typeDetails = nextDetails;
+            // Restoring a snapshot must never consume it: earlier configurations remain available.
+            const nextHistory = entries.slice();
+            if (Object.keys(archived).length) nextHistory.push({type:JSON.parse(before).devices.find(d=>String(d.id)===String(deviceId)).type,details:archived});
+            device.previousTypeDetails = nextHistory;
+            if (!saveState()) {
+                appState = JSON.parse(before);
+                return;
+            }
+            closeModal();
+            renderContent();
+            phase14CViewDevice(deviceId);
+            phase14CSelectTab('history');
+        }
+
         function phase14CGoToRack(deviceId) {
             const d = appState.devices.find(device => String(device.id) === String(deviceId));
             if (!d?.rackId || !appState.racks.some(r => String(r.id) === String(d.rackId))) return showToast('Rack not found.', 'error');
             selectedRackId = appState.racks.find(r => String(r.id) === String(d.rackId)).id;
             activeRackFace = d.face === 'rear' ? 'rear' : 'front';
             phase13BRackTab = 'view';
+            v13RackSection = 'inventory';
+            v13RackDetailOpen = true;
             closeModal();
             // Switch through the normal navigation path so the selected rack and face render.
             switchTab('racks');
@@ -6208,13 +6579,13 @@ function hierarchyValidateTypes(subnets) {
             if(normalized==='laptop'||normalized==='tablet') return ['Tabletop / Shelf Mounted','Handheld','Mobile','Vehicle Mounted','Not Applicable','Unknown'];
             if(normalized==='desktop') return ['Tabletop / Shelf Mounted','Under-Desk Mounted','Wall Mounted','Floor Standing','Not Applicable','Unknown'];
             if(phase19BIsAccessPoint(type)) return ['Tabletop / Shelf Mounted','Ceiling Mounted','Wall Mounted','Pole Mounted','Unknown'];
-            if(normalized==='firewall'||normalized==='router'||normalized==='switch'||normalized==='wireless lan controller') return ['Rack Mounted','Tabletop / Shelf Mounted','Shelf Mounted','Wall Mounted','DIN Rail Mounted','Unknown'];
-            if(normalized==='server'||normalized==='server - physical'||normalized==='physical server') return ['Rack Mounted','Tower / Floor Standing','Tabletop / Shelf Mounted','Shelf Mounted','Unknown'];
+            if(normalized==='firewall'||normalized==='router'||normalized==='switch'||normalized==='wireless lan controller') return ['Rack Mounted','Tabletop / Shelf Mounted','Wall Mounted','DIN Rail Mounted','Unknown'];
+            if(normalized==='server'||normalized==='server - physical'||normalized==='physical server') return ['Rack Mounted','Tower / Floor Standing','Tabletop / Shelf Mounted','Unknown'];
             if(normalized==='server - virtual'||normalized==='virtual server') return ['Not Applicable','Unknown'];
-            if(normalized==='printer'||normalized==='scanner'||normalized==='print server'||normalized==='print servers') return ['Tabletop / Shelf Mounted','Shelf Mounted','Floor Standing','Rack Mounted','Unknown'];
-            if(normalized==='nas') return ['Tabletop / Shelf Mounted','Shelf Mounted','Rack Mounted','Floor Standing','Unknown'];
+            if(normalized==='printer'||normalized==='scanner'||normalized==='print server'||normalized==='print servers') return ['Tabletop / Shelf Mounted','Floor Standing','Rack Mounted','Unknown'];
+            if(normalized==='nas') return ['Tabletop / Shelf Mounted','Rack Mounted','Floor Standing','Unknown'];
             if(normalized==='ups') return ['Rack Mounted','Floor Standing','Tabletop / Shelf Mounted','Unknown'];
-            return ['Rack Mounted','Tabletop / Shelf Mounted','Shelf Mounted','Wall Mounted','Floor Standing','Unknown'];
+            return ['Rack Mounted','Tabletop / Shelf Mounted','Wall Mounted','Floor Standing','Unknown'];
         }
         function phase120DefaultMount(type){
             return phase120SuggestedMounts(type)[0];
@@ -6230,7 +6601,7 @@ function hierarchyValidateTypes(subnets) {
             if(!mount)return;
             const previous=mount.value;
             const options=phase120SuggestedMounts(type);
-            const chosen=options.includes(previous) ? previous : phase120DefaultMount(type);
+            const chosen=(options.includes(previous) || (previous && phase19BAllowedMounts(type).includes(previous))) ? previous : phase120DefaultMount(type);
             mount.innerHTML='<option value="" disabled>Select mounting type...</option>'+phase19BMountOptions(type,chosen);
             mount.value=chosen;
             toggleDeviceMountType();
@@ -6454,10 +6825,7 @@ function hierarchyValidateTypes(subnets) {
                     <form data-device-form="true" data-device-id="${escapeHtml(device?.id || draft?.deviceId || '')}" class="form-shell">
                         <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-circle-info"></i>Device details</div>
                         <div><label for="dev-name" class="block text-xs font-semibold mb-1">Device Name <span class="required-mark">*</span></label><input type="text" id="dev-name" required value="${escapeHtml(draft?.name ?? device?.name ?? '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="e.g. core-switch"></div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                             <div><label for="dev-type" class="block text-xs font-semibold mb-1">Device Type</label><select id="dev-type" required class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" disabled ${currentType === '' ? 'selected' : ''}>Select a device type...</option>${types.map(t => `<option value="${escapeHtml(t)}" ${currentType === t ? 'selected' : ''}>${escapeHtml(t)}</option>`).join('')}</select></div>
-                            <div><label for="dev-custom-type" class="block text-xs font-semibold mb-1">Add Custom Type</label><div class="phase14b-add-inline"><input type="text" id="dev-custom-type" placeholder="New type..." class="w-full border rounded-xl px-2.5 py-2 text-xs dark:bg-slate-700"><button type="button" data-action="add-custom-type" class="px-2.5 py-2 bg-slate-200 dark:bg-slate-600 rounded-xl text-xs"><i class="fa-solid fa-plus"></i></button></div></div>
-                        </div>
                         </div>
                         <div class="form-section-card space-y-4">
                             <div class="form-section-heading"><i class="fa-solid fa-server"></i>Hardware &amp; lifecycle</div>
@@ -6490,9 +6858,10 @@ function hierarchyValidateTypes(subnets) {
                         <div class="form-section-card space-y-4 ${phase19BFieldsFor(currentType).length===0?'hidden':''}" id="phase19b-details-section" aria-live="polite"><div class="form-section-heading"><i class="fa-solid fa-list-check"></i>Additional details for this device type</div><div class="flex flex-wrap gap-2"><button type="button" id="phase19b-manage-functions-button" data-action="phase19b-manage-functions" class="h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-500 text-sm font-semibold ${phase19BTypeGroups[String(currentType||'').toLowerCase().trim()]==='server'?'':'hidden'}">Manage Server Options</button><button type="button" id="phase19b-manage-software-button" data-action="phase19b-manage-software" class="h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-500 text-sm font-semibold ${['server','computer'].includes(phase19BTypeGroups[String(currentType||'').toLowerCase().trim()])?'':'hidden'}">Manage Software Options</button></div><div id="phase19b-fields">${phase19BRenderFields(currentType,phase19BFormValues,'hardware')}</div></div>
                         </div>
                         <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-rack"></i>Mounting & location</div><div><label for="dev-mount-type" class="form-label">Device Mounting <span class="required-mark">*</span></label><select id="dev-mount-type" required data-action="device-mount-type-change" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" disabled>Select mounting type...</option>${phase19BMountOptions(currentType,mountType)}</select></div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
-                            <div><label for="dev-location" class="block text-xs font-semibold mb-1">Location Area <span class="required-mark">*</span></label><select id="dev-location" required data-action="device-location-change" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" disabled ${currentLoc === '' ? 'selected' : ''}>Select a location...</option>${locations.map(l => `<option value="${escapeHtml(l)}" ${currentLoc === l ? 'selected' : ''}>${escapeHtml(l)}</option>`).join('')}</select></div>
-                            <div><label for="dev-custom-location" class="block text-xs font-semibold mb-1">Add Custom Location</label><div class="phase14b-add-inline"><input type="text" id="dev-custom-location" placeholder="New location..." class="w-full border rounded-xl px-2.5 py-2 text-xs dark:bg-slate-700"><button type="button" data-action="add-custom-location" class="px-2.5 py-2 bg-slate-200 dark:bg-slate-600 rounded-xl text-xs"><i class="fa-solid fa-plus"></i></button></div></div>
+                        <div>
+                            <label for="dev-location" class="block text-xs font-semibold mb-1">Location Area <span class="required-mark">*</span></label>
+                            <select id="dev-location" required data-previous-location="${escapeHtml(currentLoc)}" data-action="device-location-change" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" disabled ${currentLoc === '' ? 'selected' : ''}>Select a location...</option>${locations.map(l => `<option value="${escapeHtml(l)}" ${currentLoc === l ? 'selected' : ''}>${escapeHtml(l)}</option>`).join('')}<option value="__caffoot_create_location__">+ Create new location…</option></select>
+                            <div id="dev-create-location-panel" hidden class="mt-2"><label for="dev-custom-location" class="block text-xs font-semibold mb-1">New location name</label><div class="phase14b-add-inline phase14b-location-create-row"><input type="text" id="dev-custom-location" placeholder="Enter a new location" class="flex-1 min-w-48 border rounded-xl px-2.5 py-2 text-sm dark:bg-slate-700"><button type="button" data-action="add-custom-location" class="px-3 py-2 bg-indigo-600 text-white rounded-xl text-xs font-semibold">Add</button><button type="button" data-action="cancel-custom-location" class="px-3 py-2 bg-slate-200 dark:bg-slate-600 rounded-xl text-xs font-semibold">Cancel</button></div></div>
                         </div>
                         <div id="racked-options" ${mountType === 'Rack Mounted' ? '' : 'hidden'} class="${mountType === 'Rack Mounted' ? '' : 'hidden'} phase14b-rack-config bg-slate-100 dark:bg-slate-900">
                             <div class="block text-xs font-bold text-indigo-600">Rack Mounting Configuration</div>
@@ -6621,62 +6990,128 @@ function hierarchyValidateTypes(subnets) {
             setTimeout(() => openSubnetModal(), 0);
         }
 
-        function addCustomTypeOption() {
-            const input = document.getElementById('dev-custom-type');
-            const select = document.getElementById('dev-type');
-            const newVal = input.value.trim();
-            if (newVal) {
-                let exists = false;
-                for (let opt of select.options) {
-                    if (opt.value.toLowerCase() === newVal.toLowerCase()) { exists = true; break; }
-                }
-                if (!exists) {
-                    const opt = document.createElement('option');
-                    opt.value = newVal;
-                    opt.textContent = newVal;
-                    select.appendChild(opt);
-                    select.value = newVal;
-                    phase19BRefreshFields();
-                    if (!Array.isArray(appState.deviceTypes)) appState.deviceTypes = [];
-                    appState.deviceTypes.push(newVal);
-                    saveState();
-                    showToast(`Added type: ${newVal}`);
-                }
-                input.value = '';
+        let phase130PreviousLocation = '';
+        function phase130HandleLocationChange(select) {
+            const panel = document.getElementById('dev-create-location-panel');
+            if (!panel) return;
+            if (select.value === '__caffoot_create_location__') {
+                phase130PreviousLocation = select.dataset.previousLocation || '';
+                panel.hidden = false;
+                document.getElementById('dev-custom-location')?.focus();
+                return;
             }
+            phase130PreviousLocation = select.value;
+            select.dataset.previousLocation = select.value;
+            panel.hidden = true;
+            toggleRackLocationFields(select.value);
         }
-
+        function phase130CancelCustomLocation() {
+            const select = document.getElementById('dev-location');
+            const panel = document.getElementById('dev-create-location-panel');
+            if (!select || !panel) return;
+            select.value = phase130PreviousLocation && Array.from(select.options).some(o => o.value === phase130PreviousLocation) ? phase130PreviousLocation : '';
+            select.dataset.previousLocation = select.value;
+            panel.hidden = true;
+            const input = document.getElementById('dev-custom-location');
+            if (input) input.value = '';
+            toggleRackLocationFields(select.value);
+        }
         function addCustomLocationOption() {
             const input = document.getElementById('dev-custom-location');
             const select = document.getElementById('dev-location');
+            if (!input || !select) return;
             const newVal = input.value.trim();
-            if (newVal) {
-                let exists = false;
-                for (let opt of select.options) {
-                    if (opt.value.toLowerCase() === newVal.toLowerCase()) { exists = true; break; }
-                }
-                if (!exists) {
-                    const opt = document.createElement('option');
-                    opt.value = newVal;
-                    opt.textContent = newVal;
-                    select.appendChild(opt);
-                    select.value = newVal;
-                    if (!Array.isArray(appState.deviceLocations)) appState.deviceLocations = [];
-                    appState.deviceLocations.push(newVal);
-                    saveState();
-                    toggleRackLocationFields(newVal);
-                    showToast(`Added location: ${newVal}`);
-                }
-                input.value = '';
+            if (!newVal) { showToast('Enter a location name first.', 'error'); input.focus(); return; }
+            const existing = Array.from(select.options).find(o => o.value.toLowerCase() === newVal.toLowerCase());
+            if (existing && existing.value !== '__caffoot_create_location__') {
+                select.value = existing.value;
+            } else {
+                const opt = document.createElement('option');
+                opt.value = newVal; opt.textContent = newVal;
+                select.insertBefore(opt, select.querySelector('option[value="__caffoot_create_location__"]'));
+                select.value = newVal;
+                if (!Array.isArray(appState.deviceLocations)) appState.deviceLocations = [];
+                if (!appState.deviceLocations.some(l => l.toLowerCase() === newVal.toLowerCase())) appState.deviceLocations.push(newVal);
+                saveState();
+                showToast(`Added location: ${newVal}`);
             }
+            phase130PreviousLocation = select.value;
+            select.dataset.previousLocation = select.value;
+            document.getElementById('dev-create-location-panel').hidden = true;
+            input.value = '';
+            toggleRackLocationFields(select.value);
         }
 
-        function handleDeviceSubmit(e, deviceId) {
+        // Only catalogue-recognised keys can be removed automatically; unknown legacy
+        // and custom keys are retained so historical backups remain recoverable.
+        // Only populated, recognised fields that are not valid for the destination
+        // are archived. Unknown legacy fields remain untouched for backup compatibility.
+        function phase130ObsoleteDeviceFields(oldType, newType, details) {
+            const known = new Set([...Object.values(phase19BProfiles).flat(), ...phase19BDefaultSoftware,
+                ...phase19BDefaultServerFunctions, ...phase19BServerFunctionFields(),
+                ...phase19BSoftwareFields(), ...phase120SoftwareOptions().map(item=>item.key),
+                'softwarePlatform','softwareVersion','windowsLicence']);
+            const allowed = new Set([...phase19BFieldsFor(newType),'os']);
+            if (['computer','server'].includes(phase19BTypeGroups[String(newType||'').toLowerCase().trim()])) {
+                allowed.add('softwarePlatform'); allowed.add('softwareVersion'); allowed.add('windowsLicence');
+            }
+            return Object.keys(details||{}).filter(key=>known.has(key)&&!allowed.has(key)&&
+                details[key]!==''&&details[key]!==null&&details[key]!==undefined&&details[key]!==false);
+        }
+        let phase130ConversionResolve = null;
+        function phase130ConfirmDeviceConversion(oldType, newType, keys, details) {
+            if (document.getElementById('phase130-conversion-dialog')) return Promise.resolve(false);
+            return new Promise(resolve => {
+                phase130ConversionResolve = resolve;
+                const overlay = document.createElement('div');
+                overlay.id = 'phase130-conversion-dialog';
+                overlay.setAttribute('role', 'alertdialog');
+                overlay.setAttribute('aria-modal', 'true');
+                overlay.setAttribute('aria-labelledby', 'phase130-conversion-title');
+                overlay.setAttribute('aria-describedby', 'phase130-conversion-description');
+                overlay.className = 'absolute inset-0 z-50 flex items-center justify-center bg-slate-950/65 p-4 rounded-2xl';
+                const labels = keys.map(key => {
+                    const label = phase19CDetailLabel(key, oldType);
+                    const value = details[key] === true ? 'Selected' : String(details[key]);
+                    return '<li class="break-words">' + escapeHtml(label) + ': ' + escapeHtml(value) + '</li>';
+                }).join('');
+                overlay.innerHTML = `<div class="w-full max-w-lg rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 p-6 shadow-2xl space-y-4">
+                    <h3 id="phase130-conversion-title" class="text-lg font-bold text-slate-900 dark:text-white">Confirm Device Type Change</h3>
+                    <p id="phase130-conversion-description" class="text-sm text-slate-700 dark:text-slate-200">Changing from ${escapeHtml(oldType)} to ${escapeHtml(newType)} will preserve these incompatible details as read-only history rather than keeping them active:</p>
+                    <ul class="list-disc pl-5 max-h-48 overflow-y-auto text-sm text-slate-800 dark:text-slate-100 space-y-1">${labels}</ul>
+                    <p class="text-sm text-slate-700 dark:text-slate-200">Shared details and unrecognised historical fields will be preserved. You can review previous configurations in device details.</p>
+                    <div class="flex flex-wrap justify-end gap-3">
+                        <button type="button" data-action="phase130-conversion-cancel" class="h-11 px-4 rounded-xl border border-slate-400 dark:border-slate-500 text-slate-900 dark:text-white caffoot-modal-cancel">Keep Editing</button>
+                        <button type="button" data-action="phase130-conversion-accept" class="h-11 px-4 rounded-xl bg-rose-700 hover:bg-rose-800 text-white font-bold">Preserve History &amp; Save</button>
+                    </div>
+                </div>`;
+                const content = document.getElementById('modal-content');
+                if (getComputedStyle(content).position === 'static') content.style.position = 'relative';
+                overlay._returnFocus = document.activeElement;
+                content.appendChild(overlay);
+                overlay.querySelector('[data-action="phase130-conversion-cancel"]').focus();
+            });
+        }
+        function phase130ResolveDeviceConversion(accepted) {
+            const overlay = document.getElementById('phase130-conversion-dialog');
+            const focus = overlay?._returnFocus;
+            overlay?.remove();
+            const resolve = phase130ConversionResolve;
+            phase130ConversionResolve = null;
+            if (focus?.isConnected) focus.focus();
+            if (resolve) resolve(accepted);
+        }
+
+        async function handleDeviceSubmit(e, deviceId) {
             e.preventDefault();
             const name = document.getElementById('dev-name').value.trim();
             const type = document.getElementById('dev-type').value;
             const mountType = document.getElementById('dev-mount-type').value;
             const location = document.getElementById('dev-location').value;
+            if (location === '__caffoot_create_location__') {
+                showToast('Add or cancel the new location before saving this device.', 'error');
+                return;
+            }
             const subnetId = document.getElementById('dev-subnet').value;
             const primaryIp = document.getElementById('dev-ip').value.trim();
             const ipReserved = document.getElementById('dev-ip-reserved').checked;
@@ -6689,7 +7124,7 @@ function hierarchyValidateTypes(subnets) {
             if(virtualHostId&&!appState.devices.some(d=>d.id===virtualHostId&&d.type==='Server - Physical'&&d.id!==deviceId))return showToast('Select a valid physical host device.','error');
             if (!['Active','Maintenance','Retired'].includes(status)) return showToast('Invalid device status.', 'error');
             const notes = document.getElementById('dev-notes').value.trim();
-            const typeDetails = phase19BReadFields();
+            let typeDetails = phase19BReadFields();
             if (!name) return showToast('Please enter a device name.', 'error');
             if (appState.devices.some(d => String(d.id) !== String(deviceId || '') && String(d.name || '').trim().toLowerCase() === name.toLowerCase())) return showToast('A device with this name already exists. Please enter a unique device name.', 'error');
             if (!type) return showToast('Please select a device type.', 'error');
@@ -6712,8 +7147,25 @@ function hierarchyValidateTypes(subnets) {
                 if (validationError) return showToast(validationError, 'error');
             }
             const existingDevice = deviceId ? getDeviceById(deviceId) : null;
+            let conversionSnapshot = null;
+            // Type-specific values remain in the unsaved draft when switching types.
+            // Only known, incompatible populated fields are eligible for confirmed removal.
+            if (existingDevice && String(existingDevice.type || '').toLowerCase().trim() !== String(type || '').toLowerCase().trim()) {
+                const obsolete = phase130ObsoleteDeviceFields(existingDevice.type, type, typeDetails);
+                if (obsolete.length) {
+                    const accepted = await phase130ConfirmDeviceConversion(existingDevice.type, type, obsolete, typeDetails);
+                    if (!accepted) return;
+                    // Never apply a stale confirmation if the form or underlying record changed.
+                    if (!document.getElementById('dev-type') || document.getElementById('dev-type').value !== type ||
+                        getDeviceById(deviceId) !== existingDevice) return;
+                    typeDetails = {...typeDetails};
+                    conversionSnapshot = {type:existingDevice.type, details:Object.fromEntries(obsolete.map(key=>[key,typeDetails[key]]))};
+                    for (const key of obsolete) delete typeDetails[key];
+                }
+            }
             const beforeDeviceSave = JSON.stringify(appState);
             if (existingDevice) {
+                if (conversionSnapshot) existingDevice.previousTypeDetails = [...(Array.isArray(existingDevice.previousTypeDetails)?existingDevice.previousTypeDetails:[]),conversionSnapshot];
                 Object.assign(existingDevice, {status, manufacturer, model, serialNumber, typeDetails, virtualPlatform, virtualHostId});
                 existingDevice.ipReserved = ipReserved;
                 existingDevice.name = name; existingDevice.type = type; existingDevice.mountType = mountType; existingDevice.location = location; existingDevice.notes = notes;
@@ -7004,7 +7456,7 @@ function hierarchyValidateTypes(subnets) {
 
         const CAFFOOT_BACKUP_FORMAT = 'caffoot-inventory';
         const CAFFOOT_BACKUP_SCHEMA_VERSION = 1;
-        const CAFFOOT_LITE_VERSION = '1.2.1';
+        const CAFFOOT_LITE_VERSION = '1.3.0';
         function phase20CreateBackup(state = appState) {
             return {
                 ...JSON.parse(JSON.stringify(state)),
@@ -7488,7 +7940,7 @@ function hierarchyValidateTypes(subnets) {
                     importData({ target });
                     break;
                 case 'device-location-change':
-                    toggleRackLocationFields(target.value);
+                    phase130HandleLocationChange(target);
                     break;
                 case 'device-mount-type-change':
                     toggleDeviceMountType();
@@ -7513,13 +7965,23 @@ function hierarchyValidateTypes(subnets) {
             patch: {label:'Patch panel',icon:'fa-network-wired'},
             brush: {label:'Brush panel',icon:'fa-grip'},
             cable: {label:'Cable manager',icon:'fa-bars-staggered'},
-            shelf: {label:'Rack shelf',icon:'fa-layer-group'}
+            shelf: {label:'Rack shelf',icon:'fa-layer-group'},
+            pdu_horizontal: {label:'Horizontal rack PDU',icon:'fa-plug'},
+            ventilation: {label:'Ventilation panel',icon:'fa-wind'},
+            fan_tray: {label:'Fan tray',icon:'fa-fan'},
+            environmental_sensor: {label:'Environmental sensor (rack-mounted)',icon:'fa-temperature-half'},
+            pdu_vertical: {label:'Vertical 0U PDU',icon:'fa-plug',vertical:true},
+            cable_vertical: {label:'Vertical 0U cable manager',icon:'fa-bars-staggered',vertical:true}
         };
         // Phase 13D: CSS-only rack fascia art; no external images or data changes.
         function phase13DFascia(type, portCount = 24) {
             if (type === 'patch') { const count=[12,24,48].includes(Number(portCount))?Number(portCount):24; return `<span class="phase13d-fascia phase13d-patch phase13e-patch-${count}" aria-hidden="true" title="${count} RJ45 ports">${Array.from({length:count},(_,i)=>`<span class="phase13d-port" title="Port ${i+1}"><i></i></span>`).join('')}</span>`; }
             if (type === 'brush') return `<span class="phase13d-fascia phase13d-brush" aria-hidden="true"><span class="phase13d-bristles"></span></span>`;
             if (type === 'cable') return `<span class="phase13d-fascia phase13d-cable" aria-hidden="true">${Array.from({length:8},()=>'<i></i>').join('')}</span>`;
+            if (type === 'pdu_horizontal') return `<span class="phase13d-fascia phase13d-blank" aria-hidden="true">⚡ PDU · AC outlets</span>`;
+            if (type === 'ventilation') return `<span class="phase13d-fascia phase13d-brush" aria-hidden="true">Ventilation panel</span>`;
+            if (type === 'fan_tray') return `<span class="phase13d-fascia phase13d-blank" aria-hidden="true">Fan tray · airflow</span>`;
+            if (type === 'environmental_sensor') return `<span class="phase13d-fascia phase13d-blank" aria-hidden="true">Temperature / humidity sensor</span>`;
             if (type === 'shelf') return `<span class="phase13d-fascia phase13d-shelf" aria-hidden="true"><i></i><i></i><i></i><i></i></span>`;
             return `<span class="phase13d-fascia phase13d-blank" aria-hidden="true"><i></i><i></i></span>`;
         }
@@ -7527,24 +7989,42 @@ function hierarchyValidateTypes(subnets) {
             const rack = appState.racks.find(r=>r.id===candidate.rackId);
             if (!rack || !['front','rear'].includes(candidate.face)) return 'Choose a valid rack and face.';
             const start = Number(candidate.startU), height = Number(candidate.heightU);
-            if (!Number.isInteger(start) || !Number.isInteger(height) || height<1 || height>12 || start<1 || start+height-1>Number(rack.heightU)) return `Accessory must fit within U1–U${rack.heightU}.`;
+            const vertical=(candidate.type==='pdu_vertical'||candidate.type==='cable_vertical');
+            if (!Number.isInteger(start) || !Number.isInteger(height) || height<1 || height>(vertical?Number(rack.heightU):12) || start<1 || start+height-1>Number(rack.heightU)) return `Accessory must fit within U1–U${rack.heightU}.`;
+            if(vertical && !['left','right'].includes(candidate.side)) return 'Choose left or right as viewed from this face.';
             const end = start+height-1;
+            if(vertical){
+                if((appState.rackAccessories||[]).some(a=>a.id!==excludeId && a.rackId===candidate.rackId && (a.type==='pdu_vertical'||a.type==='cable_vertical') && a.face===candidate.face && a.side===candidate.side && start<=Number(a.startU)+Number(a.heightU)-1 && end>=Number(a.startU)))return 'This side rail is occupied at the selected height.';
+                return null;
+            }
             if (appState.devices.some(d=>d.rackId===candidate.rackId && (d.face||'front')===candidate.face && start<=Number(d.rackUEnd||d.rackUStart) && end>=Number(d.rackUStart))) return 'This position overlaps a mounted device.';
-            if ((appState.rackAccessories||[]).some(a=>a.id!==excludeId && a.rackId===candidate.rackId && a.face===candidate.face && start<=a.startU+a.heightU-1 && end>=a.startU)) return 'This position overlaps another accessory.';
+            if ((appState.rackAccessories||[]).some(a=>a.id!==excludeId && a.rackId===candidate.rackId && a.type!=='pdu_vertical' && a.type!=='cable_vertical' && a.face===candidate.face && start<=a.startU+a.heightU-1 && end>=a.startU)) return 'This position overlaps another accessory.';
             return null;
+        }
+        function phase13VRenderRail(rack, accessories, side){
+            const height=Number(rack.heightU)||42;
+            const items=accessories.filter(a=>a.side===side);
+            const blocks=items.map(a=>{
+                const bottom=(Number(a.startU)-1)/height*100, span=Number(a.heightU)/height*100;
+                const label=a.name||phase13CAccessoryTypes[a.type]?.label||'0U accessory';
+                const title=escapeHtml(label+' · U'+a.startU+'–U'+(Number(a.startU)+Number(a.heightU)-1)+' · '+side);
+                return `<button type="button" data-action="phase13c-edit" data-id="${escapeHtml(a.id)}" title="${title}" aria-label="Edit ${title}" draggable="true" data-vertical-accessory="${escapeHtml(a.id)}" class="phase13v-placed ${a.type==='pdu_vertical'?'phase13v-pdu':'phase13v-cable'}" style="bottom:${bottom}%;height:${span}%"><span>${escapeHtml(label)}</span></button>`;
+            }).join('');
+            return `<div class="phase13-vertical-rail phase13v-rail" data-rack-id="${escapeHtml(rack.id)}" data-side="${side}" aria-label="${side} 0U rail as viewed from ${activeRackFace} face"><button type="button" data-action="phase13v-add" data-side="${side}" data-rack-id="${escapeHtml(rack.id)}" class="phase13v-add" title="Add vertical 0U accessory on ${side}" aria-label="Add vertical 0U accessory on ${side}"></button>${blocks}</div>`;
         }
         function phase13COpenAccessory(rackId, startU = 1, editId = null) {
             const rack=appState.racks.find(r=>r.id===rackId);
             if(!rack) return;
             const existing=(appState.rackAccessories||[]).find(a=>a.id===editId);
             const type=existing?.type||phase13CSelectedAccessory;
+            const verticalWorkflow=!!phase13CAccessoryTypes[type]?.vertical;
             const face=existing?.face||activeRackFace;
             const safeRackHeight = Number(rack.heightU);
             const rackLimit = Number.isInteger(safeRackHeight) && safeRackHeight >= 1 && safeRackHeight <= 100 ? safeRackHeight : 42;
             const safeStart = Number(existing?.startU ?? startU);
             const safeHeight = Number(existing?.heightU ?? 1);
             const start = Number.isInteger(safeStart) && safeStart >= 1 && safeStart <= rackLimit ? safeStart : 1;
-            const height = Number.isInteger(safeHeight) && safeHeight >= 1 && safeHeight <= 12 ? safeHeight : 1;
+            const height = Number.isInteger(safeHeight) && safeHeight >= 1 && safeHeight <= (phase13CAccessoryTypes[type]?.vertical?rackLimit:12) ? safeHeight : 1;
             const modal=document.getElementById('modal-container');
             const modalContent = document.getElementById('modal-content');
             modalContent.classList.remove('phase18b-balanced-modal');
@@ -7552,31 +8032,80 @@ function hierarchyValidateTypes(subnets) {
                 <div class="mb-5"><h2 class="font-bold text-xl">${existing?'Edit accessory':'Rack placement'}</h2><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">${escapeHtml(rack.name)} · U${start}</p></div>
                 <form id="phase13c-form" class="space-y-5">
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <label class="phase13h-label">Accessory type<select name="type" required class="phase13c-field">${Object.entries(phase13CAccessoryTypes).map(([key,item])=>`<option value="${key}" ${type===key?'selected':''}>${item.label}</option>`).join('')}</select></label>
-                    <label id="phase13e-port-field" class="phase13h-label ${type==='patch'?'':'hidden'}">Patch panel ports<select name="portCount" class="phase13c-field"><option value="12" ${Number(existing?.portCount)===12?'selected':''}>12 ports</option><option value="24" ${![12,48].includes(Number(existing?.portCount))?'selected':''}>24 ports</option><option value="48" ${Number(existing?.portCount)===48?'selected':''}>48 ports</option></select></label>
+                    <label class="phase13h-label">Accessory type<select name="type" required class="phase13c-field">${Object.entries(phase13CAccessoryTypes).filter(([key,item])=>!!item.vertical===verticalWorkflow).map(([key,item])=>`<option value="${key}" ${type===key?'selected':''}>${item.label}</option>`).join('')}</select></label>
+                    <label id="phase13e-port-field" class="phase13h-label" style="${type==='patch'?'':'display:none;'}">Patch panel ports<select name="portCount" class="phase13c-field" ${type==='patch'?'required':'disabled'}><option value="12" ${Number(existing?.portCount)===12?'selected':''}>12 ports</option><option value="24" ${![12,48].includes(Number(existing?.portCount))?'selected':''}>24 ports</option><option value="48" ${Number(existing?.portCount)===48?'selected':''}>48 ports</option></select></label>
                   </div>
-                  <label class="phase13h-label">Description (optional)<input name="name" maxlength="80" class="phase13c-field" value="${escapeHtml(existing?.name||'')}" placeholder="e.g. Fibre patch panel"></label>
+                  <label class="phase13h-label">Description (optional)<input name="name" maxlength="80" class="phase13c-field" value="${escapeHtml(existing?.name||'')}" placeholder="e.g. Rack PDU or fibre patch panel"></label>
                   <fieldset class="border border-slate-200 dark:border-slate-600 rounded-xl p-4"><legend class="px-2 font-semibold text-sm">Rack placement</legend>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <label class="phase13h-label">Face<select name="face" class="phase13c-field"><option value="front" ${face==='front'?'selected':''}>Front</option><option value="rear" ${face==='rear'?'selected':''}>Rear</option></select></label>
-                      <label class="phase13h-label">Start U<input name="startU" type="number" min="1" max="${rackLimit}" required class="phase13c-field" value="${start}"></label>
-                      <label class="phase13h-label">Height (U)<input name="heightU" type="number" min="1" max="12" required class="phase13c-field" value="${height}"></label>
+                      <label id="phase13v-side-field" class="phase13h-label" style="${phase13CAccessoryTypes[type]?.vertical?'':'display:none;'}">Side (as viewed from selected face)<select name="side" class="phase13c-field"><option value="left" ${existing?.side==='left'?'selected':''}>Left (L)</option><option value="right" ${existing?.side==='right'?'selected':''}>Right (R)</option></select></label>
+                      <label class="phase13h-label">Height (U)<input name="heightU" type="number" min="1" max="${phase13CAccessoryTypes[type]?.vertical?rackLimit:12}" required class="phase13c-field" value="${height}"></label>
+                      <label class="phase13h-label">Start U<select name="startU" required class="phase13c-field" aria-describedby="phase13c-position-hint"></select></label>
                     </div>
                   </fieldset>
+                  <p id="phase13c-position-hint" class="text-xs text-slate-500 dark:text-slate-300" aria-live="polite"></p>
                   <p id="phase13c-error" role="alert" aria-live="polite" class="text-sm text-rose-600 dark:text-rose-400 min-h-5"></p>
-                  <div class="flex flex-wrap justify-end gap-3 pt-2 border-t border-slate-200 dark:border-slate-600"><button type="button" data-action="close-modal" class="phase13b-secondary caffoot-modal-cancel">Cancel</button><button type="submit" class="phase13b-primary">${existing?'Save changes':'Place accessory'}</button></div>
+                  <div class="flex flex-wrap justify-end gap-3 pt-2 border-t border-slate-200 dark:border-slate-600">${existing?`<button type="button" id="phase13c-remove" class="phase13b-danger mr-auto">Remove accessory</button>`:''}<button type="button" data-action="close-modal" class="phase13b-secondary caffoot-modal-cancel">Cancel</button><button type="submit" class="phase13b-primary">${existing?'Save changes':'Place accessory'}</button></div>
                 </form>
             </div>`;
             modal.classList.remove('hidden');
             modal.classList.add('flex');
-            modal.querySelector('#phase13c-form [name="type"]').addEventListener('change',event=>{
-                modal.querySelector('#phase13e-port-field').classList.toggle('hidden',event.target.value!=='patch');
-            });
+            const form=modal.querySelector('#phase13c-form');
+            modal.querySelector('#phase13c-remove')?.addEventListener('click',()=>phase13CDeleteAccessory(existing.id));
+            const typeSelect=modal.querySelector('#phase13c-form [name="type"]');
+            const portField=modal.querySelector('#phase13e-port-field');
+            const portSelect=modal.querySelector('#phase13c-form [name="portCount"]');
+            const faceSelect=modal.querySelector('#phase13c-form [name="face"]');
+            const startSelect=modal.querySelector('#phase13c-form [name="startU"]');
+            const heightInput=modal.querySelector('#phase13c-form [name="heightU"]');
+            const positionHint=modal.querySelector('#phase13c-position-hint');
+            const sideField=modal.querySelector('#phase13v-side-field');
+            const sideSelect=modal.querySelector('#phase13c-form [name="side"]');
+            function refreshAccessoryOptions() {
+                const isPatch=typeSelect.value==='patch';
+                const isVertical=!!phase13CAccessoryTypes[typeSelect.value]?.vertical;
+                sideField.style.display=isVertical?'':'none';
+                heightInput.max=String(isVertical?rackLimit:12);
+                portField.style.display=isPatch?'':'none';
+                portSelect.disabled=!isPatch;
+                portSelect.required=isPatch;
+                const previous=startSelect.value||String(start);
+                const h=Number(heightInput.value);
+                const options=[];
+                if(Number.isInteger(h)&&h>=1&&h<=(isVertical?rackLimit:12)) {
+                    for(let u=1;u+h-1<=rackLimit;u++) {
+                        const candidate={rackId,type:typeSelect.value,side:sideSelect.value,face:faceSelect.value,startU:u,heightU:h};
+                        if(!phase13CAccessoryError(candidate,existing?.id)) options.push(u);
+                    }
+                }
+                startSelect.replaceChildren();
+                for(const u of options) {
+                    const option=document.createElement('option');
+                    option.value=String(u);
+                    option.textContent=h===1?'U'+u:'U'+u+'–U'+(u+h-1);
+                    startSelect.appendChild(option);
+                }
+                if(options.includes(Number(previous))) startSelect.value=previous;
+                else if(options.includes(start)) startSelect.value=String(start);
+                else if(options.length) startSelect.value=String(options[0]);
+                startSelect.disabled=options.length===0;
+                positionHint.textContent=options.length
+                    ? options.length+' available starting position'+(options.length===1?'':'s')+' on the '+faceSelect.value+(isVertical?' '+sideSelect.value+' 0U rail.':' face.')
+                    : 'No available positions for this height and face. Change the height or face.';
+            }
+            typeSelect.addEventListener('change',refreshAccessoryOptions);
+            sideSelect.addEventListener('change',refreshAccessoryOptions);
+            faceSelect.addEventListener('change',refreshAccessoryOptions);
+            heightInput.addEventListener('change',refreshAccessoryOptions);
+            heightInput.addEventListener('blur',refreshAccessoryOptions);
+            refreshAccessoryOptions();
             modal.querySelector('#phase13c-form').addEventListener('submit',event=>{
                 event.preventDefault();
+                if(startSelect.disabled){modal.querySelector('#phase13c-error').textContent='No available rack position for this accessory.';return;}
                 const data=new FormData(event.currentTarget);
-                const candidate={id:existing?.id||('acc-'+Date.now()+'-'+Math.random().toString(36).slice(2,8)),rackId,type:String(data.get('type')),name:String(data.get('name')).trim(),face:String(data.get('face')),startU:Number(data.get('startU')),heightU:Number(data.get('heightU')),portCount:String(data.get('type'))==='patch'?Number(data.get('portCount')):null};
-                const error=(candidate.type==='patch' && ![12,24,48].includes(candidate.portCount))?'Choose a valid patch panel port count.':phase13CAccessoryError(candidate,existing?.id);
+                const candidate={id:existing?.id||('acc-'+Date.now()+'-'+Math.random().toString(36).slice(2,8)),rackId,type:String(data.get('type')),name:String(data.get('name')).trim(),face:String(data.get('face')),startU:Number(data.get('startU')),heightU:Number(data.get('heightU')),side:phase13CAccessoryTypes[String(data.get('type'))]?.vertical?String(data.get('side')):null,portCount:String(data.get('type'))==='patch'?Number(data.get('portCount')):null};
+                const error=(!!phase13CAccessoryTypes[candidate.type]?.vertical!==verticalWorkflow)?'Choose an accessory type for this placement.':(candidate.type==='patch' && ![12,24,48].includes(candidate.portCount))?'Choose a valid patch panel port count.':phase13CAccessoryError(candidate,existing?.id);
                 if(error){modal.querySelector('#phase13c-error').textContent=error;return;}
                 const before=JSON.stringify(appState);
                 if(!Array.isArray(appState.rackAccessories))appState.rackAccessories=[];
@@ -7587,14 +8116,31 @@ function hierarchyValidateTypes(subnets) {
         }
         function phase13CDeleteAccessory(id){
             const accessory=(appState.rackAccessories||[]).find(a=>a.id===id);
-            if(!accessory||!confirm(`Remove ${accessory.name||phase13CAccessoryTypes[accessory.type]?.label||'accessory'} from this rack?`))return;
+            if(!accessory||document.getElementById('phase13c-remove-confirm'))return;
+            const overlay=document.createElement('div');
+            overlay.id='phase13c-remove-confirm';
+            overlay.className='fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/70 p-4';
+            overlay.setAttribute('role','alertdialog');
+            overlay.setAttribute('aria-modal','true');
+            overlay.setAttribute('aria-labelledby','phase13c-remove-title');
+            overlay.innerHTML=`<div class="w-full max-w-md rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 p-6 shadow-2xl space-y-4 text-slate-900 dark:text-white"><h3 id="phase13c-remove-title" class="text-lg font-bold">Remove rack accessory?</h3><p class="text-sm text-slate-700 dark:text-slate-200">Remove <strong>${escapeHtml(accessory.name||phase13CAccessoryTypes[accessory.type]?.label||'accessory')}</strong> from this rack? Other equipment will not be changed.</p><div class="flex justify-end gap-3"><button type="button" id="phase13c-remove-cancel" class="phase13b-secondary">Keep accessory</button><button type="button" id="phase13c-remove-accept" class="phase13b-danger">Remove accessory</button></div></div>`;
+            const previousFocus=document.activeElement;
+            document.body.appendChild(overlay);
+            const cancel=()=>{overlay.remove();if(previousFocus?.isConnected)previousFocus.focus();};
+            overlay.querySelector('#phase13c-remove-cancel').addEventListener('click',cancel);
+            overlay.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();event.stopPropagation();cancel();}});
+            overlay.querySelector('#phase13c-remove-cancel').focus();
+            overlay.querySelector('#phase13c-remove-accept').addEventListener('click',()=>{
+            overlay.remove();
             const before=JSON.stringify(appState);
             appState.rackAccessories=appState.rackAccessories.filter(a=>a.id!==id);
-            if(!saveState()){appState=JSON.parse(before);return;}renderContent();
+            if(!saveState()){appState=JSON.parse(before);return;}closeModal();renderContent();
+            });
         }
         function phase13CMoveAccessory(id,rackId,startU){
             const a=(appState.rackAccessories||[]).find(x=>x.id===id);
             if(!a)return false;
+            if(phase13CAccessoryTypes[a.type]?.vertical)return false;
             const candidate={...a,rackId,face:activeRackFace,startU:Number(startU)};
             const error=phase13CAccessoryError(candidate,id);
             if(error){showToast(error,'error');return false;}
@@ -7690,6 +8236,64 @@ function hierarchyValidateTypes(subnets) {
             if (phase17dScrollFrame === null) phase17dScrollFrame = requestAnimationFrame(phase17dScrollTick);
         }
         document.addEventListener('dragover', phase17dTrackDrag);
+        function phase13VTarget(event,rail,accessory){
+            const rack=appState.racks.find(r=>r.id===rail.dataset.rackId);
+            if(!rack)return null;
+            const bounds=rail.getBoundingClientRect(), total=Number(rack.heightU),height=Number(accessory.heightU);
+            if(!total||bounds.height<=0||height>total)return null;
+            const pointerU=Math.floor((bounds.bottom-event.clientY)/bounds.height*total)+1;
+            const startU=Math.max(1,Math.min(total-height+1,pointerU-Math.floor(height/2)));
+            const candidate={...accessory,rackId:rack.id,face:activeRackFace,side:rail.dataset.side,startU};
+            return {candidate,error:phase13CAccessoryError(candidate,accessory.id),total};
+        }
+        function phase13VClearPreview(){
+            document.querySelectorAll('.phase13v-drop-preview').forEach(el=>el.remove());
+            document.querySelectorAll('.phase13v-rail').forEach(el=>el.classList.remove('phase13v-valid','phase13v-invalid'));
+        }
+        document.addEventListener('dragstart',event=>{
+            const source=event.target.closest('[data-vertical-accessory]');
+            if(!source)return;
+            phase13VDraggedId=source.dataset.verticalAccessory;
+            event.dataTransfer.effectAllowed='move';
+            event.dataTransfer.setData('text/plain',phase13VDraggedId);
+            event.stopImmediatePropagation();
+        });
+        document.addEventListener('dragover',event=>{
+            if(!phase13VDraggedId)return;
+            const rail=event.target.closest('.phase13v-rail');
+            if(!rail)return;
+            event.preventDefault();event.stopImmediatePropagation();
+            const a=(appState.rackAccessories||[]).find(a=>a.id===phase13VDraggedId);
+            if(!a)return;
+            const placement=phase13VTarget(event,rail,a);
+            phase13VClearPreview();
+            if(!placement)return;
+            const invalid=!!placement.error;
+            rail.classList.add(invalid?'phase13v-invalid':'phase13v-valid');
+            const preview=document.createElement('div');
+            preview.className='phase13v-drop-preview'+(invalid?' phase13v-invalid':'');
+            preview.style.bottom=((placement.candidate.startU-1)/placement.total*100)+'%';
+            preview.style.height=(Number(a.heightU)/placement.total*100)+'%';
+            rail.appendChild(preview);
+            event.dataTransfer.dropEffect=invalid?'none':'move';
+        });
+        document.addEventListener('drop',event=>{
+            if(!phase13VDraggedId)return;
+            event.preventDefault();event.stopImmediatePropagation();
+            const rail=event.target.closest('.phase13v-rail');
+            const a=(appState.rackAccessories||[]).find(a=>a.id===phase13VDraggedId);
+            const placement=rail&&a?phase13VTarget(event,rail,a):null;
+            phase13VDraggedId=null;
+            phase13VClearPreview();
+            if(!placement||placement.error){if(placement?.error)showToast(placement.error,'error');return;}
+            const before=JSON.stringify(appState);
+            Object.assign(a,placement.candidate);
+            if(!saveState()){appState=JSON.parse(before);return;}
+            renderContent();
+        });
+        document.addEventListener('dragend',()=>{
+            phase13VDraggedId=null;phase13VClearPreview();
+        });
         document.addEventListener('dragstart', event => {
             const source = event.target.closest('[data-rack-device]');
             const accessory=event.target.closest('[data-rack-accessory]');
@@ -7826,6 +8430,9 @@ function hierarchyValidateTypes(subnets) {
                 case 'phase14c-duplicate': closeModal(); duplicateDevice(id); break;
                 case 'phase14c-delete': closeModal(); deleteDevice(id); break;
                 case 'phase14c-rack': phase14CGoToRack(id); break;
+                case 'phase130-restore': phase130RestoreHistory(id, Number(actionEl.dataset.index)); break;
+                case 'phase130-restore-cancel': phase130ResolveRestore(false); break;
+                case 'phase130-restore-accept': phase130ResolveRestore(true); break;
                 case 'duplicate-device': duplicateDevice(id); break;
                 case 'delete-device': deleteDevice(id); break;
                 case 'hardware-catalog-manage': phase120ManageHardwareCatalogue(); break;
@@ -7843,6 +8450,10 @@ function hierarchyValidateTypes(subnets) {
                 case 'server-service-confirm-archive': phase120ArchiveServerService(name); break;
                 case 'phase18d-add': phase18DCommit(target.dataset.kind,'add','',document.getElementById('phase18d-new')?.value||''); break;
                 case 'phase18d-search': phase18DSearch[target.dataset.kind]=document.getElementById('phase18d-search')?.value||'';phase18DOpen(target.dataset.kind); break;
+                case 'phase130-conversion-cancel': phase130ResolveDeviceConversion(false); break;
+                case 'phase130-conversion-accept': phase130ResolveDeviceConversion(true); break;
+                case 'phase120-rack-correction-cancel': phase120ResolveRackCorrection(false); break;
+                case 'phase120-rack-correction-accept': phase120ResolveRackCorrection(true); break;
                 case 'phase120-keep-editing': phase120KeepEditing(); break;
                 case 'phase120-discard-changes': phase120DiscardChanges(); break;
                 case 'phase18d-save-rename': phase18DCommit(target.dataset.kind,'rename',name,document.getElementById('phase18d-rename-value')?.value||''); break;
@@ -7853,8 +8464,8 @@ function hierarchyValidateTypes(subnets) {
                 case 'phase18d-confirm-delete': phase18DConfirmDeleteAction(); break;
                 case 'open-manage-types': openManageTypesModal(); break;
                 case 'open-manage-locations': openManageLocationsModal(); break;
-                case 'add-custom-type': addCustomTypeOption(); break;
                 case 'add-custom-location': addCustomLocationOption(); break;
+                case 'cancel-custom-location': phase130CancelCustomLocation(); break;
                 case 'create-subnet-from-device': createSubnetFromDevice(); break;
                 case 'create-rack-from-device': createRackFromDevice(); break;
                 case 'cancel-rack-from-device': cancelRackFromDevice(); break;
@@ -7866,8 +8477,10 @@ function hierarchyValidateTypes(subnets) {
                 case 'edit-location': editDeviceLocationPrompt(name); break;
                 case 'open-rack-modal': openRackModal(); break;
                 case 'edit-rack': openRackModal(id); break;
+                case 'correct-rack-specifications': openRackModal(id, true); break;
                 case 'delete-rack': deleteRack(id); break;
                 case 'phase13c-add': phase13COpenAccessory(selectedRackId,1); break;
+                case 'phase13v-add': phase13CSelectedAccessory='pdu_vertical';phase13COpenAccessory(target.dataset.rackId,1);phase13CSelectedAccessory='blank'; {const f=document.querySelector('#phase13c-form [name="side"]');if(f){f.value=target.dataset.side;f.dispatchEvent(new Event('change'));}} break;
                 case 'phase13c-edit': {const a=(appState.rackAccessories||[]).find(a=>a.id===id);if(a)phase13COpenAccessory(a.rackId,a.startU,id);break;}
                 case 'phase13c-delete': phase13CDeleteAccessory(id); break;
                 case 'phase13b-tab': if (['view','equipment','settings'].includes(target.dataset.tab)) { phase13BRackTab=target.dataset.tab; renderContent(); } break;
@@ -7888,7 +8501,7 @@ function hierarchyValidateTypes(subnets) {
                 case 'phase18b-place': phase18BOpenPlacement(target.dataset.rackId, Number(target.dataset.u)); break;
                 case 'phase18b-placement-device': phase18BOpenPlacement(target.dataset.rackId, Number(target.dataset.u), 'device'); break;
                 case 'phase18b-placement-accessory': phase18BOpenPlacement(target.dataset.rackId, Number(target.dataset.u), 'accessory'); break;
-                case 'assign-device': openAssignDeviceModal(target.dataset.rackId, Number(target.dataset.u)); break;
+                case 'assign-device': openAssignDeviceModal(target.dataset.rackId, Number(target.dataset.u), target.dataset.deviceId || null); break;
                 case 'unassign-device': unassignDevice(id); break;
                 case 'open-subnet-modal': openSubnetModal(); break;
                 case 'edit-subnet': openSubnetModal(id); break;
@@ -7982,6 +8595,12 @@ function hierarchyValidateTypes(subnets) {
 
 
                 case 'tab-ipam': switchTab('ipam'); break;
+                case 'v13-overview-tab': { const next=target.dataset.tab; if(['capacity','equipment','locations'].includes(next)){v13RackOverviewTab=next;renderContent();} break; }
+                case 'sidebar-racks-overview': v13RackSection='overview'; switchTab('racks'); break;
+                case 'sidebar-racks-inventory': v13RackSection='inventory'; v13RackDetailOpen=false; switchTab('racks'); break;
+                case 'sidebar-racks-accessories': v13RackSection='accessories'; switchTab('racks'); break;
+                case 'v13-open-rack': { const rack=appState.racks.find(r=>r.id===target.dataset.id); if(rack){selectedRackId=rack.id;v13RackSection='inventory';v13RackDetailOpen=true;phase13BRackTab='view';switchTab('racks');} break; }
+                case 'dashboard-racks-overview': v13RackSection='overview'; v13RackDetailOpen=false; switchTab('racks'); break;
                 case 'tab-racks': switchTab('racks'); break;
                 case 'toggle-dark-mode': toggleDarkMode(); break;
                 case 'export-data': exportData(); break;
@@ -7990,6 +8609,19 @@ function hierarchyValidateTypes(subnets) {
                 default:
                     console.warn('Unhandled data-action:', action);
             }
+        });
+
+        document.addEventListener('input', function(event) {
+            if(event.target?.id !== 'v13-rack-search') return;
+            const query=event.target.value.trim().toLocaleLowerCase();
+            let shown=0;
+            document.querySelectorAll('[data-v13-rack-row]').forEach(row=>{
+                const match=(row.dataset.search||'').toLocaleLowerCase().includes(query);
+                row.classList.toggle('hidden',!match);
+                if(match) shown++;
+            });
+            const empty=document.getElementById('v13-rack-no-results');
+            if(empty) empty.classList.toggle('hidden',shown!==0 || !(appState.racks||[]).length);
         });
 
         window.onload = function() {
