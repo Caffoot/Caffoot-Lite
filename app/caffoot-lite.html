@@ -6014,7 +6014,12 @@ function hierarchyValidateTypes(subnets) {
             if (getDeviceById(deviceId) !== device || device.previousTypeDetails?.[index] !== snapshot) return;
             const before = JSON.stringify(appState);
             const nextDetails = {...current};
+            // Preserve both incompatible fields and values that restoration will overwrite.
             const archived = Object.fromEntries(obsolete.map(key=>[key,current[key]]));
+            for (const [key,value] of restore) {
+                if (Object.prototype.hasOwnProperty.call(current,key) &&
+                    JSON.stringify(current[key]) !== JSON.stringify(value)) archived[key] = current[key];
+            }
             for (const key of obsolete) delete nextDetails[key];
             for (const [key,value] of restore) nextDetails[key] = value;
             device.type = snapshot.type;
