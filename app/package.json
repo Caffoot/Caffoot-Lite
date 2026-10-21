@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "caffoot-lite-build",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Build standalone offline Caffoot Lite HTML",
   "scripts": {
     "build": "node build-offline.cjs",
