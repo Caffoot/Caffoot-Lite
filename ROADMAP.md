@@ -1,5 +1,21 @@
 # Caffoot Lite — Development Roadmap
 
+> **Your infrastructure. Without the infrastructure.**  
+> **Lite in effort. Not in features.**
+>
+> Caffoot Lite is the sole actively developed product. See the [product vision](docs/PRODUCT-VISION.md) and [architecture decisions](docs/ARCHITECTURE-DECISIONS.md). This does not commit the project to any particular future commercial model.
+
+## v1.4.0 — Data & Architecture Foundations (planning)
+
+- Audit the v1.3.0 code, browser storage, data relationships and backup format before changing application code.
+- Evaluate Docker and persistent database options, including SQLite and PostgreSQL, without preselecting a solution.
+- Design permanent device identity, user-facing asset numbering and future data relationships.
+- Specify secure future internet-facing architecture, including login, administrator MFA, permissions and identity integration; **these capabilities are not delivered by this planning milestone**.
+- Specify backward-compatible backup migration, persistence, rollback, security and regression acceptance gates.
+- Preserve the current interface and workflows; **no new user-facing features are planned for v1.4.0**.
+
+**Historical roadmap notes below are retained for traceability and may contain superseded planning or release-status statements; a separate documentation consistency pass will reconcile them against published releases.**
+
 **Updated:** 21 October 2026  
 **Current milestone:** v1.3.0 Rack Management feature freeze and release preparation; v1.4.0 Data & Architecture Foundations follows after publication.  
 **Repository:** `caffoot/Caffoot-Lite` (public)  
