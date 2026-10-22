@@ -49,3 +49,7 @@ Add proposed renames to the maintenance roadmap for investigation. Do not bundle
 | `phase11BCommitDelete(before, label)` | Persist a deletion already applied in memory; restore the snapshot and display an error if the save fails | WF-03, WF-04 | `commitDeletionWithRollback()` remains a proposal |
 
 The initial reference table and this addition are incremental, not a complete function inventory.
+
+## Relationship note: virtual hosts
+
+`handleDeviceSubmit()` validates a selected virtual server host against an existing physical server. `deleteDevice()` does not explicitly inspect other devices' `virtualHostId` references before removing a physical server. The complete relationship validation path and runtime behaviour remain under investigation. See WF-03 and maintenance candidate M-005.
