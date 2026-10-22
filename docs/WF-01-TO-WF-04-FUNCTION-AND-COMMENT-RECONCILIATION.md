@@ -119,3 +119,21 @@ Published HTML, source-only inspection:
 | Rack accessory move | 8140–8148 | Validates placement, snapshots and restores inventory on failed save, returns false. Inspect invoking UI for failure feedback. |
 
 These are static source observations only. In particular, distinguish correct inventory rollback from missing confirmation or stale interface presentation. Use existing WF-02 and WF-05 failure scenarios rather than duplicating large test suites.
+
+## P11 explanatory comment review, 22 October 2026
+
+This review judges whether source comments explain **why** a safeguard or exception exists, not simply whether comments are present. Published v1.3.0 HTML is the reference.
+
+| Area | Source location | Comment finding | P11 action |
+| --- | --- | --- | --- |
+| Save and verification | `saveState()`, 1825–1853 | Validation, storage write, byte-for-byte readback, and non-fatal audit logging are implemented. No adjacent explanation distinguishes why audit logging may fail without invalidating the already verified inventory save. | Propose explanatory comment at inventory versus audit boundary and why readback matters; documentation proposal only |
+| Import protection | 7803–7834 | Comments explain why original inventory and safety snapshot are captured, why a failed snapshot blocks replacement, and why rollback is verified. | Retain; sufficiently explanatory in inspected region |
+| Bulk IPAM | `phase12BApply()`, 4494–4515 | UI text mentions safety snapshot, but code has no adjacent comment explaining why plan is recalculated at confirmation or why snapshot must precede mutation. | Propose two concise comments; do not duplicate implementation in prose |
+| Rack move and unassignment | 5651–5679 | Both paths explain why physical location is preserved. Unassignment comment does not explain ignored save result, which is a candidate defect rather than intended policy. | Retain location comment; investigate M-001, do not document unchecked save as deliberate |
+| Subnet save | 4819–4842 | Comments explain stable VLAN ownership and deliberate legacy reconciliation; rollback also restores selected subnet and draft subnet but that reason is not locally explained. | Propose comment about preserving user's form context on failed save |
+| IPAM repair | 2257–2282 | Explicit comment says snapshot must persist before mutation. It does not explain the unverified snapshot readback and catch restoration handling. | Investigate M-012 before proposing rationale |
+| Accessory create and delete | 8103–8138 | No adjacent explanation for restore-on-save-failure or why confirmation overlay is removed before persistence. | Consider a brief comment after UX behaviour is agreed; investigate M-023 |
+
+**P11 assessment:** Several significant decisions already have useful explanatory comments. The gaps above are proposals for later **code comments**, not authorisation to change published v1.3.0 or a claim that every comment must narrate each line. Avoid comment churn on straightforward code. All browser tests remain unexecuted.
+
+**M-023 feedback precision:** `saveState()` itself calls `showToast()` on validation failure (1834), storage failure (1851), and recovery mode (1827). Therefore the accessory handlers' lack of an *additional* message is not evidence of no error notification. The remaining question is modal/confirmation clarity and retry after failure.
