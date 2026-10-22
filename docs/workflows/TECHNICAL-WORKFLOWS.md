@@ -218,6 +218,19 @@ Together with the explicit absence of dependent host checks in `deleteDevice()`,
 - **Remaining WF-04 work:** Inspect backup import validation and reconciliation paths, then verify gateway ownership and subnet edits in a browser before treating M-009 as a reproduced defect.
 
 
+### WF-07 follow-up: catalogue form routing and save boundaries (22 October 2026)
+
+**Evidence:** Published `v1.3.0` `app/caffoot-lite.html`: `phase120ManufacturerSave()`, `phase120ModelSave()`, `phase120SoftwareSaveCustom()`, `phase120SaveServerService()` and their modal form markup. Source inspection only; detailed catalogue lifecycle and device compatibility belong to WF-08.
+
+- Manufacturer, model, custom software and server service editor forms carry `data-form-action` values `manufacturer`, `model`, `software` and `server-service`. These are included in `closeModal()`'s dirty-form snapshot selectors. Their form markup uses `onsubmit="return false"`; saving is performed by explicit catalogue action buttons and their specialised functions, **not** by the document-level submit dispatcher (which has no catalogue cases). This distinction matters when reviewing Enter-key behaviour and accessibility.
+- `phase120ManufacturerSave()` validates the name and device-type associations, preserves built-in manufacturer restrictions, and changes only manufacturer-only catalogue entries rather than model entries. It remembers the previous `appState.hardwareCatalogue` value and restores it if `saveState()` fails.
+- `phase120ModelSave()` validates the model/manufacturer/type relationship, including duplicate and built-in suggestions. It restores the prior hardware catalogue on failed `saveState()` and closes the modal only after success.
+- `phase120SoftwareSaveCustom()` validates name, uniqueness and at least one device type; it restores `appState.installedSoftware` after failed save. `phase120SaveServerService()` validates name and uniqueness, and similarly restores `appState.serverFunctions` on failure. Their success paths force-close the modal and rerender.
+- These forms generally separate catalogue availability from already recorded device assignments. The software removal confirmation explicitly says existing device records remain and the entry is retained for historical reference; WF-08 must verify the full archive, restore and device-reference paths before claiming complete preservation guarantees.
+- **UI boundary:** Clicking a catalogue Save button invokes specialised logic and should not trigger the ordinary unsaved-changes prompt when the save succeeds. Closing an edited form through the normal modal action does invoke the snapshot comparison. Browser checks should verify whether pressing Enter does nothing, triggers a button, or submits unexpectedly; do not infer keyboard behaviour solely from the form markup.
+
+**WF-07 browser checks:** Edit and cancel each catalogue form; attempt invalid and duplicate entries; inject a failed save and verify modal remains open and original catalogue remains intact; check keyboard Enter and Escape, focus restoration and user feedback. Pass catalogue semantics, archive/restore, built-in suggestions and legacy device references to WF-08 for comprehensive treatment. No runtime test or code change in this audit.
+
 ### WF-07 follow-up: IP address, bulk IP and rack assignment forms (22 October 2026)
 
 **Evidence:** Published `v1.3.0` `app/caffoot-lite.html`, `openIpModal()`, `handleIpSubmit()`, `openBulkIpModal()`, `handleBulkIpSubmit()`, `phase12BApply()`, `openAssignDeviceModal()`, `handleAssignSubmit()`, and delegated `cancel-subnet-modal` action. Source inspection only; no fault injection or browser confirmation.
