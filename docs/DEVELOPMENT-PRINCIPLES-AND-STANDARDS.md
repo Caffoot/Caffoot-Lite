@@ -122,3 +122,17 @@ A workflow audit is not ready to hand over until its technical description, func
 Documenting a test is not the same as executing it. A workflow may be documentation complete with clearly recorded tests still pending, but must never be labelled browser verified without evidence. Existing data safety concerns must be raised and tracked. Any code changes, merges or releases remain subject to separate explicit approval.
 
 **Review question:** Can another contributor find the current behaviour, functions, tests, unresolved risks and agreed next steps without searching old conversations?
+
+## P13. Keep testing proportionate to Lite
+
+Tests must protect the simplicity, reliability and maintainability of Caffoot Lite rather than introduce unnecessary complexity.
+
+- **Reuse before duplication:** Prefer shared test helpers, common fixtures and parameterised cases where the same rule applies to multiple forms or workflows. Keep distinct scenarios only where they protect different behaviour or failure paths.
+- **Risk-based coverage:** Prioritise saving, restoring, imports, integrity, data relationships and recovery. Match the depth of regression testing to the potential impact of a change.
+- **Automate repetition:** Automate stable, repeatable checks when this reduces ongoing effort. Reserve manual checks for interactions, usability and recovery behaviour that genuinely need human observation.
+- **Keep tests readable:** Name tests by user-visible behaviour and explain what they protect in plain British English. Avoid unnecessary frameworks, elaborate fixtures and brittle implementation-specific assertions.
+- **Keep execution practical:** A documented scenario is not necessarily a separate automated test. Group related scenarios into efficient test runs and distinguish quick checks from full release regression.
+- **Maintain evidence honestly:** Record what was actually run, on which revision, and with what result. Never equate a planned scenario or source inspection with a passing test.
+- **Review test maintenance cost:** When functionality changes, update or retire obsolete tests and remove duplicated coverage without weakening critical safeguards.
+
+**Review question:** Does this test provide meaningful protection at a reasonable maintenance cost, and could a future contributor understand and run it easily?
