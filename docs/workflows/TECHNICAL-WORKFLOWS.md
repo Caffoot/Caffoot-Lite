@@ -303,6 +303,20 @@ The rack editor rejects device and accessory collisions through dedicated placem
 
 **Targeted future verification:** Using disposable browser storage and fictional inventories, exercise safety-snapshot write failure, candidate save failure, candidate post-save mismatch, successful rollback, secondary snapshot restoration failure, and primary rollback failure. Assert preservation of the original active inventory and the intended pre-existing safety snapshot separately. Confirm recovery mode blocks further saves when primary rollback cannot be verified. Do not use an owner's live browser profile or real inventory for fault injection.
 
+
+### WF-06 follow-up: startup recovery banner and user recovery choices (22 October 2026)
+
+**Evidence:** Published `v1.3.0` `app/caffoot-lite.html` startup `loadStoredState()`, `phase17ARecoveryBanner()`, `saveState()`, and `window.onload`. Source review only; browser scenarios not executed for this follow-up.
+
+- `loadStoredState()` reads `STORAGE_KEY`. On a storage-read exception it sets `phase17AStorageRecovery = {reason, raw:null}` and loads default state in memory. When stored text exists but fails JSON parsing, required collection checks, unsafe-key checks or `normaliseState()`, it sets recovery state with the exact original stored text as `raw` and loads default state in memory. It does **not** overwrite the stored key on startup.
+- `saveState()` refuses to save while `phase17AStorageRecovery` is set. `window.onload` calls `phase17ARecoveryBanner()`, which explains that the saved inventory was not loaded and changes are disabled.
+- The recovery banner offers `Download original stored data`, disabled if `raw === null`. It exports `raw` as a plain-text `.txt` file. This preserves available bytes/text for inspection, but does not guarantee valid JSON or successful reimport. Where storage itself could not be read, no original text is available to export through this control.
+- The banner also offers `Reset to empty inventory`, guarded by two native confirmation dialogs. On approval it calls `localStorage.setItem(STORAGE_KEY, JSON.stringify(cloneDefaultData()))` and reloads. Unlike `saveState()`, this reset path does **not** check exact storage readback before reload; thrown storage errors are alerted. This is a source-supported verification gap and should be cross-referenced to M-014, without asserting an observed reset failure.
+- The banner reset does not itself create a fresh pre-reset safety snapshot or require a successful download. The text advises downloading first; both confirmations are user decisions. Treat this as an intentional destructive recovery escape hatch requiring clear documentation and focused design review, not an invitation to remove the ability to recover.
+- Separate from recovery mode, a structurally readable state can yield `startupIntegrityErrors` from `validateApplicationState()`. Those errors are logged to the console, but do not by themselves set `phase17AStorageRecovery`; `saveState()` performs its own integrity check and can block persistence. Do not conflate these two startup states.
+
+**Focused future tests/design questions:** In a disposable browser profile, test unreadable JSON, storage-read exception, download availability, cancel at either reset confirmation, reset write exception, and a simulated silent reset write mismatch. Verify that original storage is not overwritten by initial load and that saving is blocked in recovery mode. Consider verifying the reset write before reload and clearer wording about preservation-copy limitations; do not require users to lose access to the reset escape hatch. No changes to production behaviour authorised by this documentation entry.
+
 ### WF-01 and WF-02 startup recovery and verified persistence
 
 **Source:** `app/caffoot-lite.html` on `main`, approximately lines 1618–1693 and 1818–1855. Source inspection, browser tests pending.
