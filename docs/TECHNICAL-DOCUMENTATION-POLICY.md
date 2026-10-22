@@ -23,3 +23,10 @@
 - Fourth, resume the v1.4.0 feasibility investigation using the verified baseline.
 
 This policy does not itself authorise modifications to application code, a database, Docker deployment or a release.
+
+
+## Discovery and roadmap discussion during audits
+
+During every technical workflow investigation, identify potential defects, missing safeguards, inconsistencies, usability improvements and new capabilities. Explain meaningful findings to the product owner in plain British English, including the existing behaviour, potential impact, evidence and recommended next step. Discuss the roadmap disposition as the audit proceeds, rather than waiting until the end.
+
+Record source-supported candidates in the maintenance or future roadmap with an explicit status such as proposed, investigation required, deferred, rejected or approved. Recording a candidate does not approve implementation. Distinguish confirmed defects from hypotheses and product suggestions. Prioritise data protection concerns for prompt discussion. Do not interrupt the read-only v1.3.0 baseline audit with application changes without explicit approval. Keep existing behaviour in baseline documentation and prospective behaviour in roadmap documents. Review roadmap entries and their disposition with the product owner before declaring the audit complete.
