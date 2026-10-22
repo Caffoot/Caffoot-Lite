@@ -111,3 +111,7 @@ Inspected `README.md`, `CONTRIBUTING.md`, `ROADMAP.md`, `SECURITY.md`, and six m
 Inspected twelve additional canonical documents across Testing, Audits, Architecture and Releases for selected old-path, duplicated-prefix and ambiguous cross-directory references. Clarified six references: one workflow source path in `docs/testing/WF-04-IPAM-NETWORK-TEST-MATRIX.md`, four cross references in `docs/audits/P11-EXPLANATORY-COMMENT-IMPROVEMENT-REGISTER.md`, and one function-reference path in `docs/audits/WF-01-TO-WF-04-FUNCTION-AND-COMMENT-RECONCILIATION.md`. The companion test matrix reference in `docs/testing/WF-02-SAVING-AND-INTEGRITY-TEST-MATRIX.md` points to a file in the same directory and was retained.
 
 These checks were targeted textual inspections, not comprehensive path extraction, link validation or executed tests. All 27 compatibility stubs remain until the remaining repository references have been reconciled.
+
+## Roadmap readability correction, 22 October 2026
+
+Found one literal escaped newline (`\\n`) joining M-007 and M-006 in the candidate table of `docs/roadmaps/V1.3.1-MAINTENANCE-ROADMAP.md`. Replaced it with an actual line break, restoring the two distinct Markdown table rows. The candidate register changed from seven physical `| M-` rows to eight; candidate wording and status were not altered. No maintenance item was implemented, and no application code or tests changed. This correction does not establish that every table row is valid or that the roadmap priorities are approved.
