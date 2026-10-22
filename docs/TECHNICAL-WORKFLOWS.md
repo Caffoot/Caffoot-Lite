@@ -232,3 +232,14 @@ Together with the explicit absence of dependent host checks in `deleteDevice()`,
 - Neither `normaliseState()` nor `validateApplicationState()` explicitly validates `virtualHostId` against an existing physical server. Consequently, import relies on a validation path that does not reject this particular broken relationship (existing M-005). Confirm behaviour in browser tests before describing it as reproduced.
 - The integrity checks verify gateway usability within a subnet, but do not explicitly require a gateway IP owner to be a permitted network device type. This is a policy and testing question under M-009, not an independently confirmed import defect.
 - **Important distinction:** Repair of recoverable IPAM drift is part of normalisation; no equivalent automatic repair should be assumed for virtual host links. Do not introduce inferred host assignments during import.
+
+### WF-05 rack creation, placement, deletion and unassignment
+
+**Source:** `validateRackPlacement()` approximately lines 1930–1967, `handleRackSubmit()` 5429–5490, `deleteRack()` 5492–5506, `handleAssignSubmit()` 5625–5668 and `unassignDevice()` 5670–5682 in `app/caffoot-lite.html` on `main`. Source inspection only; runtime tests pending.
+
+- Placement checks whole-number U positions, rack bounds, end not below start, overlapping devices on the same face, and overlapping non-vertical rack accessories. Front and rear device placements are checked independently.
+- Rack creation validates name, type, height (1–100U), width and depth. Existing rack physical corrections require confirmation and cannot shrink below mounted equipment or accessories. Failed saves restore the previous in-memory inventory.
+- Rack deletion refuses any rack with mounted devices or accessories, asks for confirmation, and uses the shared deletion commit/rollback helper.
+- Rack assignment requires an existing device configured with an allowed Rack Mounted type, validates the full height of its intended placement, preserves physical location, and rolls back on failed save.
+- **Existing M-001/M-002 concerns:** `unassignDevice()` clears rack ID and U start/end and switches mount type to Desktop, but does not clear `rackUHeight` or `face`. It calls `saveState()` without checking the return value or restoring the previous state if saving fails. This differs from the guarded assignment path. Confirm in browser tests before declaring a reproduced defect.
+- **Follow-up:** Trace rack accessories, dragging, occupancy display and rack export/print; compare all paths with the same collision and persistence safeguards.
