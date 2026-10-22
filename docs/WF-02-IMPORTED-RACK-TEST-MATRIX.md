@@ -38,7 +38,7 @@ Use a disposable browser profile, a separate copy of the **published v1.3.0 stan
 | WF02-T11 | `rackAccessories` present as an object or string instead of an array | Whether import silently substitutes an empty collection; decide future rejection policy | Exact input and resulting records |
 | WF02-T12 | `rackAccessories` array contains a malformed entry, duplicate ID or unknown type | Whether records are rejected, preserved or rendered unsafely | Import outcome, console, stored bytes |
 | WF02-T13 | Two mounted devices overlap on the same rack face | Whether general import integrity detects device collisions | Import outcome, rack view |
-| WF02-T14 | A mounted device has a missing rack, inconsistent end U or out of bounds height | Confirm existing device checks and distinguish them from accessory checks | Error message, unchanged current inventory |
+| WF02-T14 | Separately test a mounted device with a missing rack, inconsistent end U, or out of bounds height | Distinguish central checks for missing rack and U range arithmetic from any bounds enforcement; record acceptance or rejection of each independently | Error message, unchanged current inventory where rejected, exact stored bytes |
 | WF02-T15 | Valid legacy mounting mismatch eligible for reviewed correction | Review screen explains changes; cancellation preserves current inventory | Review screenshots, unchanged storage |
 | WF02-T16 | Valid candidate, but pre-restore safety snapshot write fails | Replacement blocked and current inventory preserved | Storage fault trace, error |
 | WF02-T17 | Candidate save or readback fails after safety snapshot succeeds | Verified rollback attempted; current inventory retained | Snapshot, stored bytes, message |
@@ -59,3 +59,9 @@ A future improvement should validate every accessory's rack reference, type, fac
 ## Exit conditions
 
 Agree acceptance criteria with the owner before implementing changes. Run source-level tests and browser tests against a disposable build and then the published standalone HTML. Record any differences between source and distributed application. No code changes, release or merge are authorised by this plan.
+
+## Validation boundary reconciliation, 22 October 2026
+
+The central `validateApplicationState()` in published HTML lines 1581–1599 checks a device's rack reference, mounting consistency and the arithmetic relationship between start U, height and end U. It does **not** itself explicitly check that the placement lies within rack height or that mounted devices and accessories do not overlap. Interactive rack placement functions perform additional checks, but imported data does not necessarily follow those same form pathways. Therefore WF02-T13 and WF02-T14 must separately establish what the import path accepts or rejects. Do not treat a matching end U calculation as proof that a position is within the rack.
+
+This is source-derived test scope, not a browser execution result. No scenario status has changed.
