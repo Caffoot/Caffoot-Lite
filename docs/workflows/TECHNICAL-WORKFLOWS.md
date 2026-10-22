@@ -217,6 +217,20 @@ Together with the explicit absence of dependent host checks in `deleteDevice()`,
 - Browser startup parses and normalises stored inventory, checks integrity and deliberately avoids automatically writing over stored data. Unreadable data enters recovery mode. The normal integrity validator does not explicitly verify gateway ownership policy beyond subnet gateway validity and primary IP/IPAM consistency.
 - **Remaining WF-04 work:** Inspect backup import validation and reconciliation paths, then verify gateway ownership and subnet edits in a browser before treating M-009 as a reproduced defect.
 
+
+### WF-07 initial source trace: main navigation, screen rendering and modal lifecycle (22 October 2026)
+
+**Evidence:** Published `v1.3.0` `app/caffoot-lite.html`: `switchTab(tabId)`, `renderContent()`, `openModal()`, `closeModal(force = false)`, modal keyboard handler, and `phase16ARenderSettings()`. This is a source inspection, not a completed browser interaction audit.
+
+- `switchTab(tabId)` updates `currentTab`, toggles IPAM/rack/device sidebar actions, updates selected navigation button classes and relevant `aria-current` attributes, changes the page heading, then calls `renderContent()`. The known main tabs are Dashboard, IPAM, Devices, Racks, Change History and Settings. It does not itself persist inventory.
+- `renderContent()` selects one main HTML renderer based on `currentTab`: `renderDashboardHTML()`, `renderIpamHTML()`, `renderDevicesHTML()`, `renderRackHubV13()`, `renderAuditHTML()` or `phase16ARenderSettings()`. It replaces the `#main-content` HTML once, then sets up a scroll hint for a rack scroll container if present. State for inner sections is tracked separately (for example `v13RackSection`, `phase14DeviceTab`, `phase12CIpamTab`, and `phase16ASection`).
+- `openModal(htmlContent)` remembers the previously focused element on first opening, inserts modal content, shows the container, assigns an accessible heading or fallback label, focuses the first enabled field/control (or the content container), and records an initial form snapshot for discard detection.
+- `closeModal(force = false)` first handles return from the device-options subview. For recognised editable forms it compares the current form snapshot with the initial snapshot and may ask for confirmation before discarding edits; when closure proceeds it hides the modal and returns focus to the previous connected element. This is not evidence that *all* modal types receive the same unsaved-changes prompt.
+- The modal keyboard handler has dedicated Escape paths for delete, conversion, restore, rack-correction and discard dialogs, as well as catalogue editing and temporary device/subnet creation. It also implements explicit Tab handling for active dialogs. Review the full handler and test keyboard focus in a browser before claiming comprehensive accessibility compliance.
+- `phase16ARenderSettings()` uses four inner sections: backup, preferences, help and about. The backup section already separates primary backup/restore controls, maintenance/safety and advanced recovery. Current public wording still includes `Recovery Snapshot` and `Download Safety Snapshot`; the approved plain-English redesign is separately tracked under M-025 and is **not** implemented in v1.3.0.
+
+**Next WF-07 checks:** Trace the delegated click/change/submit event routing; verify that dashboard shortcuts land on the intended screen and inner section; map form opening, save, cancel and discard paths; check modal focus/keyboard handling with disposable browser scenarios. Do not assume a render-only navigation change writes inventory. Distinguish confirmed UI issues from code-review questions.
+
 ### WF-06 backup import, legacy compatibility and verified restore
 
 **Source:** `app/caffoot-lite.html` on `main`, approximately lines 7460–7848. Code inspection only; browser regression tests pending.
