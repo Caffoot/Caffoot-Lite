@@ -364,3 +364,8 @@ During `normaliseState()`, each device's primary IP is treated as authoritative 
 5. **There is no readback verification** between the write and reload. A storage implementation that silently fails to retain the write would still trigger reload. This is a source-established safeguard gap, not a demonstrated user-visible defect.
 
 **Testing still needed:** Simulate cancellation at each confirmation, successful reset, throwing storage writes, silent non-persistence, download availability, and page reload into continued recovery. Verify behaviour in a browser using disposable inventory. Do not change production code without owner approval.
+
+
+### WF-01 second-pass: readable inventory with integrity errors
+
+At startup, `loadStoredState()` creates `appState`, then `validateApplicationState()` runs and writes any findings to `console.error('Startup integrity issues:', ...)`. This is distinct from the recovery banner, which is shown only when `phase17AStorageRecovery` is set. A readable inventory with integrity errors can therefore render its dashboard without a corresponding startup warning for ordinary users. On a later `saveState()` call, the application revalidates the working inventory and blocks persistence, displaying the first integrity error in a toast. The initial startup check does not itself write the stored inventory. Source evidence: `app/caffoot-lite.html` approximately lines 1643 to 1651 and 1830 to 1867. Browser confirmation remains outstanding.
