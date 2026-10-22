@@ -89,3 +89,9 @@ Updated `docs/releases/RELEASE-CHECKLIST.md` to require version-specific archive
 Read all **27** temporary Markdown compatibility stubs (five at repository root and 22 at the former `docs/` root). Each is a short `# Document moved` notice linking to the corresponding subject-directory path. The target paths were compared with the repository tree listing, which includes the intended destination documents.
 
 **Scope and limits:** This confirms the 27 stub destinations and target file presence. It does not prove that all inbound references have been updated, that external bookmarks can be discarded, or that every relative link inside relocated documents works. Keep all stubs pending that further review. No stub deletion or application code change was made.
+
+## Release tooling reference inspection, 22 October 2026
+
+Read `app/package-release.cjs`, `app/build-offline.cjs`, `app/check-app.cjs`, `app/check-release-privacy.cjs`, `app/verify-build.cjs`, `app/package.json` and the four tracked GitHub Actions workflow files. The inspected files do not contain direct references to the five relocated root documentation stubs or the 22 relocated `docs/` stubs. The release packaging script explicitly includes root release notes, installation guide, user guide, backup format and third-party notices; the offline build also includes third-party notices. `.github/workflows/validate-hotfix.yml` watches `RELEASE-NOTES-*.md`. The historical `publish-v1.0.0.yml` workflow explicitly lists root package members for v1.0.0.
+
+This is a **targeted inspection of listed tooling**, not a claim that all code, documentation, external links or automation consumers have been checked. No temporary stub was removed. No build or browser test was executed.
