@@ -137,3 +137,16 @@ This review judges whether source comments explain **why** a safeguard or except
 **P11 assessment:** Several significant decisions already have useful explanatory comments. The gaps above are proposals for later **code comments**, not authorisation to change published v1.3.0 or a claim that every comment must narrate each line. Avoid comment churn on straightforward code. All browser tests remain unexecuted.
 
 **M-023 feedback precision:** `saveState()` itself calls `showToast()` on validation failure (1834), storage failure (1851), and recovery mode (1827). Therefore the accessory handlers' lack of an *additional* message is not evidence of no error notification. The remaining question is modal/confirmation clarity and retry after failure.
+
+## P11 review of startup integrity and destructive network actions, 22 October 2026
+
+| Decision | Published HTML lines | Source evidence and explanatory-comment assessment |
+| --- | --- | --- |
+| Normalise legacy location | 1380–1389 | Converts the old `Racked` location to `Unknown` when rack mounting is separately recorded. No adjacent comment explains the distinction between physical location and mounting; a concise rationale would help. |
+| Normalise imported collections | 1392–1420 | Rejects missing required collections, but defaults missing/malformed optional `rackAccessories` to an empty array. The policy distinction is not explained nearby; document the risk without presuming a fix (M-019). |
+| Shared integrity validator | 1556–1612 | Existing comments explain subnet hierarchy and non-network kinds. No adjacent explanation of the intentional limits of validation; accessory and virtual-host relationship coverage are currently missing. Do not write a comment suggesting omissions are intended. |
+| Startup load | 1617–1647 | Clear comments explain preserving unreadable raw inventory, rejecting unsafe keys and avoiding startup overwrite. Retain as strong P11 examples. Readable but inconsistent inventory is logged rather than automatically entering recovery (M-017). |
+| Network dependency deletion | 4856–4862, 5020–5070 | Comments explain why dependent records block deletion and why prior IP is retained as informational metadata. Source rechecks a preview signature and dependencies before commit. Add concise explanation of stale-preview recheck if editing comments later. |
+| VLAN deletion | 5073–5086 | Existing comments clearly explain why matching VLAN number and parent block prevents unrelated dependencies. Retain. |
+
+**Assessment:** Startup recovery, VLAN ownership and destructive network protections already have useful 'why' comments. Missing rationale around legacy location separation and optional collection defaulting should be documented as P11 candidates. Any comment about a suspected gap must wait for a policy decision; do not disguise a possible omission as deliberate design. No runtime tests performed.
