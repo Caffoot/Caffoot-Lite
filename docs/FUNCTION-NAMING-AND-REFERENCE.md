@@ -125,3 +125,16 @@ Names are suggestions only; no code changes authorised.
 | `unassignDevice()` | Remove a device's rack assignment | `removeDeviceFromRack()` | Review required |
 
 Naming suggestions only; no application code changes authorised.
+
+## WF-05 rack accessory and movement naming candidates
+
+| Current function | Responsibility | Proposed name | Status |
+| --- | --- | --- | --- |
+| `phase13CAccessoryError()` | Validate accessory placement and collisions | `validateRackAccessoryPlacement()` | Review required |
+| `phase13COpenAccessory()` | Open and handle rack accessory editing | `openRackAccessoryEditor()` | Review required |
+| `phase13CMoveAccessory()` | Validate and save horizontal accessory moves | `moveRackAccessory()` | Review required |
+| `phase13MoveDevice()` | Validate and save rack device moves | `moveRackMountedDevice()` | Review required |
+| `phase13VTarget()` | Calculate a proposed vertical rail drop position | `calculateVerticalRailDropTarget()` | Review required |
+| `phase17dTrackDrag()` | Auto-scroll the rack viewport during dragging | `trackRackDragAutoScroll()` | Review required |
+
+Names are proposals only; code unchanged.
