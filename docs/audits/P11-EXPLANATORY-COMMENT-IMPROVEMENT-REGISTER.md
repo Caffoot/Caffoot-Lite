@@ -38,4 +38,4 @@
 4. Never claim that P11 or P12 has passed merely because a proposed comment exists. Browser failure tests remain pending.
 5. Use the existing WF-01 to WF-04 test matrices; avoid creating a separate comment-only test suite.
 
-**Cross references:** `WF-01-TO-WF-04-FUNCTION-AND-COMMENT-RECONCILIATION.md`, `V1.3.0-DOCUMENTATION-COVERAGE-AUDIT.md`, `V1.3.1-MAINTENANCE-ROADMAP.md`, `DEVELOPMENT-PRINCIPLES-AND-STANDARDS.md`.
+**Cross references:** `docs/audits/WF-01-TO-WF-04-FUNCTION-AND-COMMENT-RECONCILIATION.md`, `docs/audits/V1.3.0-DOCUMENTATION-COVERAGE-AUDIT.md`, `docs/roadmaps/V1.3.1-MAINTENANCE-ROADMAP.md`, `docs/standards/DEVELOPMENT-PRINCIPLES-AND-STANDARDS.md`.
