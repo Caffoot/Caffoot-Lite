@@ -634,3 +634,15 @@ At startup, `loadStoredState()` creates `appState`, then `validateApplicationSta
 - Rack accessory save restores the inventory snapshot on failed `saveState()` and leaves its editor open, but its independent overlay and focus handling require separate browser tests. The central recognised-form snapshot selector does not itself list the rack accessory form; do not infer its Cancel semantics from the central selector.
 
 **WF-07 source checkpoint:** Main modal opening/closing, dirty-form comparison, selected nested editing transitions, catalogue Save/Cancel patterns, bulk IP preview and shared save feedback have been traced. **Not browser verified and not a completed accessibility or responsive design audit.** Outstanding: targeted keyboard and screen-reader checks, narrow viewport layouts, empty/error/loading states by workflow, rack accessory modal cancellation and remaining special overlays. Carry catalogue mutation and legacy preservation detail into WF-08. Keep the technical workflow source description distinct from maintenance proposals M-026 and M-027.
+
+
+### WF-08 opening checkpoint: catalogue storage and independent saves (source audit, 22 October 2026)
+
+**Evidence:** Published v1.3.0 `app/caffoot-lite.html` blob `e8a24f6370a1bb572287aad91a314a3e4a189d94`, lines 3297–3338, 3387–3423, 3455–3470, 3528–3543, 6220–6268. Source inspection only.
+
+- Hardware suggestions use `appState.hardwareCatalogue` with manufacturer-only and model entries. `phase120ManufacturerSave()`, `phase120ModelSave()` and the older device-form hardware catalogue manager update candidate arrays and check `saveState()`; on failure they restore the prior catalogue reference. Built-in manufacturer/model suggestions are distinguished from user-managed entries. Do not confuse removing a suggestion with deleting or rewriting an existing device.
+- Custom software uses `appState.installedSoftware`; `phase120SoftwareSaveCustom()` copies catalogue entries, checks name uniqueness and at least one device type, then checks `saveState()` and restores the prior array on failure.
+- Custom server services use `appState.serverFunctions`; `phase120SaveServerService()` checks name and duplicate rules, copies entries, saves and restores the previous array on failure. Service removal/archiving and legacy device selections require separate tracing.
+- The older in-device hardware catalogue manager edits entries using browser `prompt()` and confirms removal using `confirm()`, whereas dedicated manufacturer/model pages use styled editors. This is a source-confirmed user-interface inconsistency, not proof of a data defect. Evaluate consistent Edit/Cancel controls under M-026 without changing existing catalogue identity or stored values.
+
+**Next WF-08 checks:** Trace built-in, inventory-derived and user-created suggestion precedence; archive/restore versus deletion; how existing device selections survive catalogue changes; type-specific software availability; migration and backup compatibility; failed-save rollback and independent child saves. Browser testing is outstanding. No production changes authorised.
