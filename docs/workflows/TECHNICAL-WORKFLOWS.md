@@ -218,6 +218,18 @@ Together with the explicit absence of dependent host checks in `deleteDevice()`,
 - **Remaining WF-04 work:** Inspect backup import validation and reconciliation paths, then verify gateway ownership and subnet edits in a browser before treating M-009 as a reproduced defect.
 
 
+### WF-07 follow-up: submit failure boundaries and UI selection state (22 October 2026)
+
+**Evidence:** Published `v1.3.0` `app/caffoot-lite.html`, `handleDeviceSubmit()`, `handleSubnetSubmit()` and `handleRackSubmit()`. Source inspection only; no injected browser storage failure.
+
+- **Device:** After validating entered fields and any required conversion confirmation, `handleDeviceSubmit()` captures `beforeDeviceSave`, mutates the device and associated IPAM records, then checks `saveState()`. An IPAM exception or failed save restores `appState` from the pre-save copy and reports an error. The modal closes only after a successful save. This does not reverse separately committed custom location creation (M-018).
+- **Network/VLAN subnet:** `handleSubnetSubmit()` validates CIDR, VLAN, gateway, uniqueness and hierarchy before changing live records. It captures `beforeSubnetSave`, `selectedSubnetId` and `deviceFormDraft?.subnetId`. On failed `saveState()` it restores all three. On success it closes and, if opened from a device draft, returns to that device editor.
+- **IP Address Block:** The container branch builds a proposed subnet array, checks hierarchy, then replaces `appState.subnets` and saves. On failure it restores the inventory and previous `selectedSubnetId`. Unlike the network branch, the container success path closes and renders content without explicitly returning to a pending device draft. Test this workflow only where the UI actually permits it; do not assume a defect.
+- **Rack:** `handleRackSubmit()` validates identity and, when appropriate, physical dimensions and mounted-equipment limits. It captures `before`, changes the rack or appends a new one, then checks `saveState()`. On failure it restores `appState` and shows an error, leaving the modal open. For a new rack it sets `selectedRackId` before saving, but does **not** restore that selection on failed save. This is the already recorded M-022 source concern, not a new finding or proven browser failure.
+- **Independent save boundary:** When a rack is created from a pending device form, a successful rack save can return to the device editor with its new rack selected. Cancelling the subsequent device form does not undo the independently saved rack. This is consistent with the separately saved subnet and custom location patterns, but should be made clear in user-facing flows.
+
+**Browser verification plan:** Use fictional disposable inventories and storage fault injection. Check failure at each save boundary; ensure existing inventory survives, the modal remains usable, selection state does not point at a nonexistent record, and the user sees accurate success/failure feedback. Check device-to-subnet and device-to-rack return paths, including cancelling the parent device form after independently saving the child record. Keep M-018 and M-022 as the existing roadmap references. No code change or release approval implied.
+
 ### WF-07 follow-up: when device, subnet and rack forms change inventory (22 October 2026)
 
 **Evidence:** Published `v1.3.0` `app/caffoot-lite.html`, `openDeviceModal()`, `openSubnetModal()`, `openRackModal()`, `handleDeviceSubmit()`, `handleSubnetSubmit()`, `handleRackSubmit()`, and `addCustomLocationOption()`. Source inspection only; no browser cancellation/failure reproduction.
