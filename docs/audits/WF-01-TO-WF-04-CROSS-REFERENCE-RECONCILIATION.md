@@ -41,7 +41,7 @@ The WF-02 matrix explicitly records all as planned and unexecuted. M-022 is alre
 2. Resolve the S06 validation-scope wording and assess its effect on imported rack tests.
 3. Complete source caller/comment checks and roadmap links, including cross-workflow dependencies.
 4. Execute and record appropriate browser and automated regression evidence separately. Do not infer execution from this document.
-5. Update `TECHNICAL-WORKFLOWS.md` workflow register only when its status materially changes.
+5. Update `docs/workflows/TECHNICAL-WORKFLOWS.md` workflow register only when its status materially changes.
 
 **No application code, merge or release authorised by this reconciliation.**
 
