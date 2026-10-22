@@ -90,3 +90,18 @@ The published v1.3.0 HTML has **35 textual `saveState()` call sites** outside th
 ## Correction to hardware model rollback observation, 22 October 2026
 
 The earlier note suggesting that the hardware model editor might mutate an original catalogue item before taking its prior reference was **incorrect**. At line 3401, `phase120ModelSave()` first makes a new array of shallow-copied model entries. Its edits at lines 3417–3419 affect those copies, not the original entries. On save failure, the old catalogue reference is restored at line 3422. This resolves the particular aliasing concern recorded earlier. M-021 is closed without change on source evidence; routine failure regression testing is still worthwhile. The earlier observation is retained above solely as an audit trail, not a current finding.
+
+## Focused IPAM, device and rack rollback review, 22 October 2026
+
+Published HTML, source-only inspection:
+
+| Handler | Lines | Source-observed protection | Remaining limitation or test |
+| --- | --- | --- | --- |
+| `handleIpSubmit()` | 5140–5182 | Copies the prior allocation before mutation; refuses gateway and device-primary-IP conflicts; restores prior allocation if `saveState()` fails | Check form remains usable and that no unrelated state changes occur; failed-save browser test pending |
+| `handleAssignSubmit()` | 5642–5667 | Checks rack placement before assignment; restores serialised inventory snapshot on failed save | Check selected face, modal and rack view after failure |
+| `unassignDevice()` | 5670–5680 | Preserves device physical location in its comment | Save return ignored and rack fields are mutated without rollback, as M-001 and M-002 |
+| Rack creation/edit handler | 5459–5477 | Serialised state snapshot restored if saving fails | For **new rack**, `selectedRackId` is set before save and not restored in the failure branch; assess whether selection can point to a rack no longer in inventory. Source-supported investigation, not a confirmed browser defect |
+| `handleDeviceSubmit()` | 7166–7184 | Snapshots inventory before changes; restores snapshot if IPAM update throws or save fails | Verify draft/modal behaviour and relationships after conversion; virtual host integrity remains M-005 |
+| `phase11CApplyRepair()` | 2250–2283 | Checks preview freshness, writes safety snapshot before mutation, restores in-memory state and attempts previous snapshot restoration on failure | Snapshot write has no readback verification and catch ignores snapshot restoration errors; already tracked as M-012 |
+
+**Important scope correction:** A check for `saveState()` success does not prove that auxiliary UI state, selection, recovery snapshots or other side effects have been restored. Conversely, no failure should be asserted from code structure alone without reproducing its user-visible effect. Prioritise targeted failure-injection tests within existing WF-02 scenarios and record actual results separately.
