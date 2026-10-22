@@ -14,7 +14,7 @@ For each workflow record: entry point and trigger; source path and function name
 | --- | --- | --- |
 | WF-01 | Startup, load and recovery | Source inspected, runtime verification pending |
 | WF-02 | Save and integrity validation | Source inspected, runtime verification pending |
-| WF-03 | Device create, edit, convert and delete | Pending |
+| WF-03 | Device create, edit, convert and delete | Source inspection in progress; runtime verification pending |
 | WF-04 | Subnets, VLANs and IPAM | Pending |
 | WF-05 | Rack placement and accessories | Pending |
 | WF-06 | Backup, import and restore | Pending |
@@ -64,3 +64,44 @@ For each workflow record: entry point and trigger; source path and function name
 ## Completion criteria
 
 This document is not complete until each workflow has source evidence, failure behaviour, cross-record effects, relevant tests and an explicit review outcome. Confirm release provenance and ensure no unresolved material ambiguities remain. Where a defect requires code changes, use an approved maintenance branch and record both baseline behaviour and the corrected release version. Do not rewrite history to suggest the original v1.3.0 behaved differently.
+
+## WF-03 Device lifecycle (incremental source findings)
+
+**Evidence:** Read-only inspection of `app/caffoot-lite.html` on `main`, blob SHA `e8a24f6370a1bb572287aad91a314a3e4a189d94`, approximately lines 5626–5684 and 7049–7205. This is not yet confirmation of the published release tag or runtime behaviour.
+
+### Create and edit
+
+- `handleDeviceSubmit(e, deviceId)` reads form values and rejects missing names, duplicate case-insensitive device names, invalid status, incompatible mounting choices, missing locations, missing subnet or primary IP, IP outside the selected subnet and an IP assigned to another device.
+- Virtual host selection requires an existing physical server other than the device being edited.
+- Rack-mounted devices require a valid physical location, integer start U and height, and a successful `validateRackPlacement()` check.
+- Before changing `appState`, the handler serialises a snapshot. Existing devices are updated in place; new devices receive an ID based on `Date.now()` and are appended to `appState.devices`.
+- `setDevicePrimaryIp()` and `syncDeviceIpamRecord()` maintain linked IPAM information. If either throws, the handler restores the prior in-memory snapshot and shows an error. If `saveState()` returns false, it likewise restores the snapshot and reports that changes were not saved.
+- On success, the handler closes the modal and rerenders content.
+
+### Device type conversion
+
+- `phase130ObsoleteDeviceFields()` identifies populated, catalogue-recognised fields incompatible with the destination type. Unrecognised legacy fields are retained.
+- If incompatible fields exist, `phase130ConfirmDeviceConversion()` asks for explicit confirmation. The handler checks that the form's selected type and underlying device are unchanged before applying confirmation.
+- Confirmed incompatible details are appended to `previousTypeDetails` and removed from active `typeDetails`. Shared details remain active.
+
+### Rack assignment and removal
+
+- `handleAssignSubmit()` verifies an inventory device configured for rack mounting, validates placement, updates rack position and mounting details, and restores the prior in-memory snapshot if `saveState()` returns false. Physical location is retained.
+- `unassignDevice()` clears rack ID and U bounds, preserves physical location, changes mount type to `Desktop`, calls `saveState()` and rerenders. It does **not** check the save result or restore the prior in-memory state. It also does not explicitly clear `rackUHeight` or `face` here. Determine whether those retained fields are benign and whether failed saves create visible inconsistencies.
+
+### Delete
+
+- `deleteDevice()` obtains the device, counts linked IPAM allocations and other reservations, and uses a browser `confirm()` with an irreversible deletion warning and backup advice.
+- On confirmation, it snapshots the state, removes allocations owned by the device, clears reservation references pointing to the device, removes the device, then delegates to `phase11BCommitDelete(before, 'Device')`.
+- **Not yet traced:** `phase11BCommitDelete()` implementation and failure rollback; dependent virtual-host relationships and other references after deletion.
+
+### Outstanding investigation and test requirements
+
+1. Trace `phase11BCommitDelete()`, `setDevicePrimaryIp()`, `syncDeviceIpamRecord()`, `validateRackPlacement()` and all other device mutation entry points.
+2. Investigate `unassignDevice()` save-failure handling and retained rack fields; do not classify as a runtime defect without reproduction.
+3. Check cross-record effects of deleting a physical host referenced by virtual devices.
+4. Verify how changing the primary IP releases or retains previous allocations and reservations.
+5. Review form cancellation, duplicate/invalid identifiers, and failed browser storage behaviour in runtime tests.
+6. Match source to exact published v1.3.0 release before final approval.
+
+**Status:** Partial source-verified documentation only. No runtime tests executed and no application code changed.
