@@ -61,3 +61,11 @@ Published-source review confirms the following distinctions:
 - `phase19BManageSoftware` mutation path (6345–6361) clones software entries, captures the full inventory and restores it on failed save. `phase120SoftwareToggle()` (6388–6397) copies the exclusions map and changed type set before saving, then restores the previous map on failure. These are source-level rollback observations only.
 
 **Risk boundary:** Deleting a physical host can leave dependent virtual server links unless another path intervenes. Before a fix is proposed, agree whether deletion should be blocked, reassignment required, or links intentionally detached, and how existing backups are treated. Reuse WF-03 scenarios and WF-02 failure injection; do not approve a policy change by documentation alone.
+
+## Physical-host type conversion and virtual-server dependency, 22 October 2026
+
+The published `handleDeviceSubmit()` (7122–7124) reads `virtualHostId` only for a device whose new type is `Server - Virtual` and checks that the chosen host exists, has type `Server - Physical` and is not the same device. This protects the **virtual-server form submission**.
+
+The same handler (7149–7179) permits an existing device's type to be changed after the applicable type-field conversion review. That review addresses obsolete type-specific fields, but the examined path does not explicitly search for other virtual devices referencing the edited device as `virtualHostId`. Thus a physical server may be converted to another type while its dependants retain their old host link. `deleteDevice()` (7187–7199) likewise does not check those incoming links. `validateApplicationState()` (1556–1612) does not verify `virtualHostId` relationships. These are **source-confirmed gaps in cross-record checking**, not browser-tested outcomes.
+
+**Policy decision required under M-005 and M-008:** Should conversion or deletion be blocked until hosted virtual servers are reassigned, or should there be an explicit reviewed detachment workflow? Do not choose a policy implicitly. Preserve historical records and backups, and test both successful and failed saves before implementing any change.
