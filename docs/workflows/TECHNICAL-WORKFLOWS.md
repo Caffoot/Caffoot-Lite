@@ -228,8 +228,23 @@ Together with the explicit absence of dependent host checks in `deleteDevice()`,
 - Before replacement, the user sees counts for imported and current inventory and an explicit confirmation that restore replaces existing data.
 - The pre-restore snapshot is stored under `caffoot_phase11_pre_restore` and read back for verification before inventory replacement. Failure to store or verify it prevents the restore.
 - After saving the candidate, the code reads saved inventory and verifies it matches the normalised candidate. On save or verification failure, it restores the original in-memory inventory, attempts to restore original browser storage and prior safety snapshot, and verifies rollback. If rollback verification fails, recovery mode blocks further saves and offers the original data for download.
-- The snapshot panel explains that the snapshot is retained until the next successful restore and that exported backups remain essential.
+- The v1.3.0 snapshot panel uses technical wording and explains that the pre-restore copy is retained until the next successful restore. **Future UI direction (M-025):** replace user-facing “snapshot” language with plain English, retain the underlying safety copy, and make recovery secondary to the main Back up and Restore actions. This is a proposal for v1.3.1, not current v1.3.0 behaviour.
 - **Follow-up:** Investigate gateway ownership and virtual host relationships in imported inventories, since the restore checks use the existing application integrity validator; check whether these relationships are covered before asserting they are fully validated.
+
+
+### WF-06 source audit completion checkpoint and remaining verification (22 October 2026)
+
+**Covered by source review:** Current inventory export and backup metadata; 10 MB limit and JSON parsing; unsafe-key, required-collection and backup-version checks; Access Point mounting review; detached migration and legacy mount review; confirmation before replacement; pre-restore safety-copy creation and exact readback; candidate save and verification; original inventory rollback and recovery-mode entry; startup recovery banner and destructive reset; separate downloads of normal backup, pre-restore safety copy and original unreadable text. These steps are documented above and in the dated WF-06 follow-ups. **This is not a claim that WF-06 browser regression testing is complete.**
+
+**Remaining questions and targeted checks:**
+
+1. **Import compatibility:** Test an older backup without `rackAccessories` and a malformed explicitly present `rackAccessories` collection separately; confirm expected preservation and error wording before any stricter validation is considered (M-019). Check rack occupancy conflicts separately (M-010).
+2. **Restore rollback:** In disposable browser storage, simulate candidate save/readback failure, successful main inventory rollback, failure to restore the previous safety copy, and unverified main rollback. Confirm recovery mode protects the original data (M-011).
+3. **Recovery and exports:** Confirm all three download paths produce the intended files; simulate unavailable storage and silent reset write mismatch. Check whether the recovery copy is clearly identified as potentially unreadable data, not a guaranteed importable backup (M-014).
+4. **User experience:** Agree final wording and placement for the plain-English **Back up your inventory**, **Restore an inventory**, and secondary **Recover previous inventory** options before any application change. Preserve automatic safety-copy creation and existing recovery access (M-025).
+5. **Related relationships:** Verify virtual host and gateway ownership questions already recorded as M-005 and M-009; avoid claiming the import integrity validator covers them until verified.
+
+**WF-06 status:** Substantial source documentation complete; browser fault-injection and compatibility checks outstanding. Keep v1.3.0 facts distinct from v1.3.1 proposed changes. No production change, merge or release authorised by this checkpoint.
 
 ### WF-06 imported inventory relationship validation and normalisation
 
