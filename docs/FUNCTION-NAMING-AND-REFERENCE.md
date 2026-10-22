@@ -113,3 +113,15 @@ Proposals do not imply code changes or approved refactoring.
 | `importData()` | Orchestrate file reading, validation, reviews, snapshot and verified restore | `restoreInventoryFromBackupFile()` | Review required |
 
 Names are suggestions only; no code changes authorised.
+
+## WF-05 rack management naming candidates
+
+| Current function | Responsibility | Proposed name | Status |
+| --- | --- | --- | --- |
+| `validateRackPlacement()` | Check rack bounds and equipment overlap | `validateDeviceRackPlacement()` | Review required |
+| `handleRackSubmit()` | Validate and save rack creation or edits | `saveRackFromForm()` | Review required |
+| `deleteRack()` | Block deletion of occupied racks and confirm deletion | `deleteEmptyRack()` | Review required |
+| `handleAssignSubmit()` | Validate and save device rack placement | `saveDeviceRackAssignment()` | Review required |
+| `unassignDevice()` | Remove a device's rack assignment | `removeDeviceFromRack()` | Review required |
+
+Naming suggestions only; no application code changes authorised.
