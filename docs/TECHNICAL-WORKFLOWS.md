@@ -208,3 +208,17 @@ Together with the explicit absence of dependent host checks in `deleteDevice()`,
 - A permitted network device can own a gateway as its primary IP, with a device-linked IPAM record. The subnet form's unconditional gateway collision check is therefore a potential conflict with a legitimate existing owner (M-009).
 - Browser startup parses and normalises stored inventory, checks integrity and deliberately avoids automatically writing over stored data. Unreadable data enters recovery mode. The normal integrity validator does not explicitly verify gateway ownership policy beyond subnet gateway validity and primary IP/IPAM consistency.
 - **Remaining WF-04 work:** Inspect backup import validation and reconciliation paths, then verify gateway ownership and subnet edits in a browser before treating M-009 as a reproduced defect.
+
+### WF-06 backup import, legacy compatibility and verified restore
+
+**Source:** `app/caffoot-lite.html` on `main`, approximately lines 7460–7848. Code inspection only; browser regression tests pending.
+
+- Export writes a JSON inventory with `caffootBackup` metadata, format `caffoot-inventory`, schema version 1 and application version 1.3.0. Older exports without metadata are recognised as legacy; newer schema versions are rejected.
+- Import rejects files over 10 MB, invalid JSON, dangerous nested property keys, missing required arrays/tables, excessive collection sizes, invalid backup metadata, unsupported mounting types and application integrity failures.
+- Validation and legacy normalisation run on a detached copy. Limited desktop mounting/location compatibility repairs are proposed for explicit review, not silently applied to the active inventory.
+- Access Point mounting conflicts require a user-selected supported mounting type for each affected device. Rack assignment and rack positions are cleared in the detached candidate. Cancel leaves the current inventory unchanged.
+- Before replacement, the user sees counts for imported and current inventory and an explicit confirmation that restore replaces existing data.
+- The pre-restore snapshot is stored under `caffoot_phase11_pre_restore` and read back for verification before inventory replacement. Failure to store or verify it prevents the restore.
+- After saving the candidate, the code reads saved inventory and verifies it matches the normalised candidate. On save or verification failure, it restores the original in-memory inventory, attempts to restore original browser storage and prior safety snapshot, and verifies rollback. If rollback verification fails, recovery mode blocks further saves and offers the original data for download.
+- The snapshot panel explains that the snapshot is retained until the next successful restore and that exported backups remain essential.
+- **Follow-up:** Investigate gateway ownership and virtual host relationships in imported inventories, since the restore checks use the existing application integrity validator; check whether these relationships are covered before asserting they are fully validated.
