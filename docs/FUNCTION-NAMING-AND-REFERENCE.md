@@ -94,3 +94,7 @@ No function renames have been made.
 | `handleSubnetSubmit()` | Validate and save a subnet or IP Address Block, maintaining scoped VLAN records and rollback | `saveSubnetFromForm()` | Review required; function has several responsibilities |
 
 Proposals do not imply code changes or approved refactoring.
+
+## WF-04 gateway relationship reference
+
+`setDevicePrimaryIp()` owns device primary IP allocation changes and permits eligible network devices to use gateway addresses. `handleSubnetSubmit()` also checks gateway collisions but does not explicitly exempt unchanged gateway ownership. This cross-function interaction is recorded as maintenance candidate M-009; no renaming or behaviour changes are approved.
