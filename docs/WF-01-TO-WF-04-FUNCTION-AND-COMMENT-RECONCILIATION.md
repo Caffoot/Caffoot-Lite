@@ -50,3 +50,39 @@ A targeted list of 23 important functions was searched in the published HTML for
 4. Record dated workflow-by-workflow completion decisions only when the documentation package is complete. Browser execution remains a separate verification gate.
 
 **No application source changed.** Proposed comments and renames are documentation candidates, not approved patches.
+
+## Save caller trace, 22 October 2026
+
+The published v1.3.0 HTML has **35 textual `saveState()` call sites** outside the function definition. This is a whole-file textual inventory, not a runtime branch coverage claim. Calls fall into these groups:
+
+| Source line(s) | Area | Source-observed save result handling |
+| --- | --- | --- |
+| 1370 | Legacy VLAN reconciliation | Checks result; restores snapshot on failure |
+| 2270 | Confirmed IPAM repair | Throws on failure within enclosing recovery flow; inspect snapshot and error path |
+| 2821 | Device type graphic choice | **Return value ignored**, then interface refreshed; investigate separately |
+| 3335, 3422 | Hardware catalogue | Checks result; restores previous catalogue reference |
+| 3469, 3483, 3507 | Software catalogue | Checks result; restores previous collection or full snapshot |
+| 3542, 3550 | Server services | Checks result; restores previous collection |
+| 3927 | Device type/name catalogue changes | Checks result; restores full snapshot |
+| 4510 | Bulk IPAM | Checks result; restores in-memory snapshot; durable safety snapshot saved before mutation |
+| 4700, 4836 | Subnet editing | Checks result; restores prior state and selection |
+| 4885 | Shared deletion commit | Checks result; restores prior snapshot |
+| 5175 | IP allocation editing | Checks result; restores previous allocation |
+| 5474 | Rack editing | Checks result; restores state; verify UI selection after failed new rack save |
+| 5660 | Rack assignment | Checks result; restores prior state |
+| 5678 | Rack unassignment | **Return value ignored**; no snapshot restoration (M-001) |
+| 5947, 6045 | Device details | Checks result; restores prior values or snapshot |
+| 6193, 6207 | Server services | Checks result; restores prior state |
+| 6266 | Hardware catalogue | Checks result; restores previous collection reference |
+| 6360, 6396 | Software and preferences | Checks result; restores prior values or snapshot |
+| 7035 | Custom device location | **Return value ignored**; follows with success toast (M-018) |
+| 7179 | Device create/edit | Checks result; restores prior snapshot |
+| 7418 | Clean inventory reset | Throws on failure; further verifies stored candidate in surrounding flow |
+| 7821 | Backup restore | Throws on failure; surrounding flow verifies and handles rollback |
+| 8113, 8137, 8148 | Rack accessory changes | Checks result; restores prior snapshot |
+| 8168 | Drag-and-drop device placement | Checks result; restores prior snapshot |
+| 8291 | Accessory drag-and-drop | Checks result; restores prior snapshot |
+
+**Interpretation:** Exactly three call sites in this source scan visibly ignore the Boolean result: lines 2821, 5678 and 7035. This is a static source finding, **not proof of data loss**. In the device type graphic and custom location paths, inspect whether a failed write leaves the changed in-memory object and a misleading success message. In rack unassignment, inspect the discrepancy between in-memory and persisted placement. These should receive failure-injection regression cases.
+
+**Further scrutiny needed:** Some catalogue handlers store a `previous` reference to an array, then mutate an entry before calling `saveState()`. A reference restoration may not reverse mutations made to an object inside that same array. Check the exact edit paths and consider a controlled failed-save test; do not declare a defect until confirmed. Check the caller's UI refresh and audit reason reset separately from the save return check. The 35-call inventory does not establish that every rollback is complete.
