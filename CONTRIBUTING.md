@@ -4,7 +4,7 @@ Thank you for helping improve Caffoot Lite. Contributions, bug reports, document
 
 ## Getting started
 
-Read the [project README](README.md), [documentation homepage](docs/README.md) and [development workflow](DEVELOPMENT-WORKFLOW.md). You do not need to understand the entire codebase before reporting a problem or proposing an improvement.
+Read the [project README](README.md), [documentation homepage](docs/README.md) and [development workflow](docs/standards/DEVELOPMENT-WORKFLOW.md). You do not need to understand the entire codebase before reporting a problem or proposing an improvement.
 
 ## Reporting a problem
 
@@ -24,7 +24,7 @@ Preserve the standalone single HTML experience. Any future self-hosted functiona
 
 ## Documentation
 
-Follow the [documentation policy](docs/TECHNICAL-DOCUMENTATION-POLICY.md). Document current behaviour separately from proposed changes, use British English in public-facing text and update the relevant technical workflows after significant changes.
+Follow the [documentation policy](docs/standards/TECHNICAL-DOCUMENTATION-POLICY.md). Document current behaviour separately from proposed changes, use British English in public-facing text and update the relevant technical workflows after significant changes.
 
 ## Review and release
 
