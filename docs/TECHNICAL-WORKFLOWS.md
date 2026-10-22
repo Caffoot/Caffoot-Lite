@@ -167,3 +167,14 @@ Together with the explicit absence of dependent host checks in `deleteDevice()`,
 - Marking an independently managed IP Available deletes its IPAM record. Assigned or Reserved selections update the record, retaining valid device ownership only where appropriate. If `saveState()` returns false, the previous IPAM allocation is restored in memory.
 
 **Still to verify:** Runtime deletion and rollback, behaviour with mixed IPAM reservations, editing subnets and VLANs, bulk allocation workflows, and whether former primary IP metadata is displayed or exported as intended.
+
+### WF-04 bulk IPAM reservation and release
+
+**Source:** `app/caffoot-lite.html` on `main`, approximately lines 4418–4523. Source inspected; runtime testing pending.
+
+- `phase12BBulkPlan()` validates a CIDR-aware range of host offsets and permits at most 512 addresses per batch. Only Reserved and Available actions are supported.
+- Gateway addresses and addresses used as a device primary IP or by an existing valid IPAM device owner are excluded. Existing Assigned records are blocked from bulk reservation.
+- `handleBulkIpSubmit()` creates a preview showing counts of changes and blocked addresses and up to six example addresses.
+- `phase12BApply()` recalculates the plan at confirmation time, writes a full pre-change snapshot to `localStorage` under `caffoot_phase12b_prebulk_snapshot`, applies eligible changes, and calls `saveState()`. A failed snapshot write cancels the operation. A reported failed inventory save restores the previous in-memory inventory.
+- **Review question:** Unlike subnet deletion's exact preview signature comparison, bulk IPAM recomputes the plan without requiring it to match the previewed changes. If eligible addresses change between preview and confirmation, the applied set may differ from the preview. Verify in runtime tests and consider whether exact preview consistency is required.
+- **Review question:** Determine the intended retention and recovery behaviour of the separate bulk safety snapshot, especially after successful operations and across repeated bulk changes.
