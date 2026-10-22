@@ -85,3 +85,12 @@ Suggested names are not approved code changes.
 | `phase12BApply()` | Recalculate the bulk plan, store a safety snapshot, apply changes and save | `applyBulkIpChanges()` | Review required |
 
 No function renames have been made.
+
+## WF-04 subnet editing functions
+
+| Current function | Source-verified responsibility | Proposed name | Status |
+| --- | --- | --- | --- |
+| `openSubnetModalByVlanId()` | Resolve the linked subnet for a VLAN card, refusing ambiguous legacy ownership | `openSubnetEditorForVlan()` | Review required |
+| `handleSubnetSubmit()` | Validate and save a subnet or IP Address Block, maintaining scoped VLAN records and rollback | `saveSubnetFromForm()` | Review required; function has several responsibilities |
+
+Proposals do not imply code changes or approved refactoring.
