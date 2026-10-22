@@ -317,6 +317,18 @@ The rack editor rejects device and accessory collisions through dedicated placem
 
 **Focused future tests/design questions:** In a disposable browser profile, test unreadable JSON, storage-read exception, download availability, cancel at either reset confirmation, reset write exception, and a simulated silent reset write mismatch. Verify that original storage is not overwritten by initial load and that saving is blocked in recovery mode. Consider verifying the reset write before reload and clearer wording about preservation-copy limitations; do not require users to lose access to the reset escape hatch. No changes to production behaviour authorised by this documentation entry.
 
+
+### WF-06 follow-up: normal backup export and pre-restore snapshot download (22 October 2026)
+
+**Evidence:** Published `v1.3.0` `app/caffoot-lite.html`, `phase20CreateBackup()`, `exportData()`, `phase11DownloadSnapshot()`, `phase11SafetyPanelHTML()`, Settings event dispatch. Source review only; no browser download executed in this audit step.
+
+- The Settings and browser-storage notice `phase11-export-backup` actions call `exportData()`. It serialises `phase20CreateBackup(appState)` to pretty-printed JSON, URI-encodes it and triggers a browser download named `caffoot_lite_backup_YYYY-MM-DD.json`. `phase20CreateBackup()` makes a JSON-detached copy of current in-memory inventory and adds `caffootBackup` metadata: `format: 'caffoot-inventory'`, `schemaVersion: 1`, `app: 'Caffoot Lite'`, `appVersion: '1.3.0'`, and an ISO timestamp. This export is not itself a separate save or readback of the persisted storage key; if the active state differs from the last saved state, the export reflects active in-memory state.
+- The Settings `phase11-download-snapshot` action calls `phase11DownloadSnapshot()`. It reads `SAFETY_SNAPSHOT_KEY` directly, shows a toast when no snapshot exists, otherwise creates a JSON-typed Blob and downloads the exact stored text as `caffoot_lite_pre_restore_safety_snapshot.json`. It does not call `phase20CreateBackup()`, attach current metadata, or normalise the snapshot. The source does not guarantee the stored snapshot text is valid JSON; the `.json` filename alone is not validation.
+- The Settings safety panel enables the snapshot download button based on `personalSafeStorageGet(SAFETY_SNAPSHOT_KEY)`, a guarded optional storage read. The download function itself reads `localStorage.getItem` directly without its own try/catch; a storage-read exception is not handled locally by that function. This is a narrow robustness observation, not evidence of data loss.
+- Standard inventory export, pre-restore safety snapshot, and the startup recovery banner's `.txt` preservation download serve distinct purposes. None is a substitute for retaining independent backup copies outside browser storage.
+
+**Documentation/test follow-up:** Keep these three downloads distinct in user guidance. If browser checks are later run, verify JSON metadata and record preservation using disposable data; check that the safety snapshot download is byte-for-byte equivalent to the stored text; test unavailable browser storage and confirm the user receives a useful error rather than a silent failure. Do not claim that an exported in-memory state was independently saved or validated on disk.
+
 ### WF-01 and WF-02 startup recovery and verified persistence
 
 **Source:** `app/caffoot-lite.html` on `main`, approximately lines 1618–1693 and 1818–1855. Source inspection, browser tests pending.
