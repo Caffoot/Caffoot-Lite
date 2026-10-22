@@ -21,7 +21,7 @@ The v1.3.0 technical audit is ongoing. Source inspection does not establish that
 
 ## Reorganisation status
 
-The [documentation relocation register](audits/DOCUMENTATION-RELOCATION-REGISTER.md) tracks temporary links, outstanding checks and release packaging dependencies. The move is not yet signed off.
+The [documentation relocation register](audits/DOCUMENTATION-RELOCATION-REGISTER.md) tracks temporary links, outstanding checks and release packaging dependencies. The relocation and removal of forwarding documents have been reviewed and approved by the project owner. The documentation branch is awaiting merge into `main`; historical inbound links and fragment anchors have not been exhaustively verified.
 
 ## Navigation policy
 
