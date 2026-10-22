@@ -579,3 +579,20 @@ During `normaliseState()`, each device's primary IP is treated as authoritative 
 ### WF-01 second-pass: readable inventory with integrity errors
 
 At startup, `loadStoredState()` creates `appState`, then `validateApplicationState()` runs and writes any findings to `console.error('Startup integrity issues:', ...)`. This is distinct from the recovery banner, which is shown only when `phase17AStorageRecovery` is set. A readable inventory with integrity errors can therefore render its dashboard without a corresponding startup warning for ordinary users. On a later `saveState()` call, the application revalidates the working inventory and blocks persistence, displaying the first integrity error in a toast. The initial startup check does not itself write the stored inventory. Source evidence: `app/caffoot-lite.html` approximately lines 1643 to 1651 and 1830 to 1867. Browser confirmation remains outstanding.
+
+
+### WF-07 follow-up: forced modal closes and nested editing routes (source audit, 22 October 2026)
+
+**Evidence:** Published v1.3.0 `app/caffoot-lite.html` on `main`, blob `e8a24f6370a1bb572287aad91a314a3e4a189d94`, lines 5282 to 5323, 5333 to 5350, 5479 to 5489, 6963 to 6991 and 8607 to 8608. Source inspection only; browser outcomes have not been verified.
+
+- `closeModal(force = false)` checks a snapshot of recognised editable forms before ordinary closure. `closeModal(true)` skips that comparison. The close function also has a higher-priority `deviceOptionsReturnContent` branch which restores device options instead of closing, even if `force` is true.
+- Successful catalogue, subnet, rack, IP and device commits intentionally force-close after `saveState()` succeeds. These are not by themselves evidence of discarded work.
+- `createRackFromDevice()` and `createSubnetFromDevice()` capture the parent device draft before force-closing it. That bypass is intentional, but browser tests must verify complete draft restoration.
+- When a subnet editor is opened from a device draft, the Escape handler (lines 5344 to 5349) and delegated `cancel-subnet-modal` action (line 8607) force-close it and reopen the parent device without the ordinary subnet dirty-form prompt. This is a source-confirmed inconsistency, not a demonstrated loss of persisted data. Test whether unsaved subnet fields are discarded and whether the parent device draft survives intact.
+- `cancelRackFromDevice()` force-closes and returns to the parent draft (lines 6972 to 6979), also without checking the rack form snapshot. Test dirty rack fields and draft restoration. A successful rack save remains an independent saved child record.
+- `openModal(htmlContent)` replaces modal content via `innerHTML` and remembers the new form snapshot (lines 5304 to 5323); it does not itself ask for permission to discard edits in the previous modal. Audit its callers and replacement paths before concluding any particular user route is unsafe.
+- Dedicated restore-review dialogs force-close on completion (around lines 7680 and 7740); assess these as review decisions rather than ordinary editable-form cancellations.
+
+**Targeted browser regression matrix:** (1) edit dirty subnet from a device draft, press Escape; (2) repeat using Cancel; (3) edit dirty rack from a device draft, press Cancel; (4) complete and save a child subnet/rack, then cancel the parent device and confirm independent child persistence; (5) verify parent draft fields and focus on return; (6) test modal replacement with dirty form content; (7) test catalogue Save, Cancel, Enter and Escape. Use disposable inventories and distinguish observed results from source expectations.
+
+**Decision:** No production code change authorised. Evaluate consistent dirty-form cancellation alongside M-026 and existing maintenance candidates, without weakening specialised save validation or compatibility with older inventories. WF-07 remains in progress pending remaining route inspection and browser verification.
