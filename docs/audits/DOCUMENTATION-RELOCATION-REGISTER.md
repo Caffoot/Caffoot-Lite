@@ -127,3 +127,7 @@ Inspected twelve further canonical documents: `docs/architecture/TAILWIND-V4-EVA
 ## Repository entry-point Markdown links, 22 October 2026
 
 Read and extracted Markdown link destinations from `README.md`, `CONTRIBUTING.md`, `ROADMAP.md`, `docs/README.md`, `docs/getting-started/README.md` and `docs/archive/README.md`. Compared representative local targets including root release guides and notes, contributor standards, relocated release and roadmap documents, the relocation register and three README screenshots against the current branch tree; all checked targets exist. External URLs and in-page anchors were not verified. This is an entry-point review and selected tree cross-check, **not** a comprehensive repository-wide Markdown link checker. All 27 compatibility stubs remain in place; no application code, package contents or published release was changed.
+
+## Final verification procedure documented, 22 October 2026
+
+Added `docs/audits/DOCUMENTATION-LINK-VERIFICATION-PLAN.md` and linked it from the Audits index. It defines branch-wide link and anchor checks, textual references, automated consumers, compatibility stub review, evidence requirements and sign-off conditions. **The plan has been documented, not executed.** The relocation remains in progress and all 27 compatibility stubs are retained. No application code, release package or published release was modified.
