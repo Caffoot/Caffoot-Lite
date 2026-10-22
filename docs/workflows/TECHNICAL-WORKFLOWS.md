@@ -218,6 +218,21 @@ Together with the explicit absence of dependent host checks in `deleteDevice()`,
 - **Remaining WF-04 work:** Inspect backup import validation and reconciliation paths, then verify gateway ownership and subnet edits in a browser before treating M-009 as a reproduced defect.
 
 
+### WF-07 follow-up: delegated navigation and dashboard shortcuts (22 October 2026)
+
+**Evidence:** Published `v1.3.0` `app/caffoot-lite.html`, delegated `document.addEventListener('click', ...)` action switch, `document.addEventListener('submit', ...)`, `switchTab()` and `renderContent()`. Source review only, no browser click-through yet.
+
+- One document-level click listener resolves the closest `[data-action]` element and dispatches by its `data-action` value. This survives `renderContent()` replacing the main view and keeps most controls from requiring inline JavaScript. Unrecognised actions log a console warning; they are not silently mapped to another page.
+- Main tab actions `tab-dashboard`, `tab-devices`, `tab-ipam` and `tab-racks` call `switchTab()`. The dashboard rack overview shortcut `dashboard-racks-overview` explicitly sets `v13RackSection='overview'` and `v13RackDetailOpen=false` before switching to Racks. This preserves the intended overview destination rather than opening the previously selected rack. The `tab-racks` action alone does not reset the inner rack section; check intended behaviour for that different control.
+- Rack sidebar actions choose overview, inventory or accessories. `sidebar-racks-inventory` closes rack detail; `v13-open-rack` checks the rack exists, selects it, opens its inventory detail and sets the rack view tab. The ordinary `sidebar-racks-overview` changes the section but does not explicitly reset `v13RackDetailOpen`; inspect renderer handling before treating that as a navigation defect.
+- IPAM sidebar actions set `phase12CIpamTab` to overview or addresses. The `ipam-open-block` action checks the requested container exists, selects Manage, expands matching hierarchy entries and scrolls the selected entry into view.
+- Device sidebar overview resets `phase14DeviceTab`; device intelligence drilldowns clear other device filters before setting their intended filter and switching to inventory. These are UI-state changes, not inventory writes.
+- Dashboard alert action `phase15e-open-alert` selects Devices, Racks, IPAM or Settings according to the supplied destination. For a valid device it can open details, and for an IP it can open the IP modal. Rack alerts only switch to the Racks main tab in the inspected branch; they do not use the available `rackId` to select/open the specific rack. **Potential usability improvement, not a reproduced defect:** determine whether a rack alert should navigate directly to the affected rack.
+- Dashboard inner tab action `phase15c-dashboard-tab` accepts only overview, insights or activity, rerenders and restores focus to the selected tab control when present.
+- A document-level submit listener dispatches device, bulk IP, subnet, IP, rack and rack assignment forms to their respective handlers. Save/validation/rollback guarantees belong to those handlers, not to the routing listener; verify each relevant form path separately.
+
+**Targeted browser matrix:** (1) dashboard rack overview from an open rack detail; (2) Racks sidebar overview after opening detail; (3) rack alert destination with a specific rack; (4) IPAM block drilldown; (5) device intelligence drilldown with pre-existing filters; (6) keyboard focus after dashboard inner-tab switching; (7) modal cancel and unsaved-edit confirmation for each supported form family. Record expected and observed destinations and whether any inventory changes occur. Do not change code to satisfy an assumed navigation expectation without owner agreement.
+
 ### WF-07 initial source trace: main navigation, screen rendering and modal lifecycle (22 October 2026)
 
 **Evidence:** Published `v1.3.0` `app/caffoot-lite.html`: `switchTab(tabId)`, `renderContent()`, `openModal()`, `closeModal(force = false)`, modal keyboard handler, and `phase16ARenderSettings()`. This is a source inspection, not a completed browser interaction audit.
