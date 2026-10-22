@@ -67,3 +67,11 @@ Reconciled 30 additional code-formatted references across `docs/standards/DEVELO
 Compared the relative Markdown links in nine main navigation indexes (`docs/README.md` and the eight section README files) against the repository tree. Their destinations exist at the expected paths. This check establishes file existence for those navigation links only, not complete anchor correctness or a repository-wide link audit.
 
 Clarified `docs/getting-started/README.md`: `INSTALLATION.md`, `USER-GUIDE.md` and `BACKUP-FORMAT.md` are release package inputs, while the root README and contributor guide are retained for discoverability. Release packaging and browser tests have not been run in this documentation pass.
+
+## Root and compatibility-link inspection, 22 October 2026
+
+Inspected `README.md`, `CONTRIBUTING.md`, `ROADMAP.md`, `docs/standards/DEVELOPMENT-WORKFLOW.md`, `docs/releases/RELEASE-CHECKLIST.md` and `docs/roadmaps/V1.3.1-MAINTENANCE-ROADMAP.md` for a focused set of former documentation names. The contributor guide already points to `docs/standards/DEVELOPMENT-WORKFLOW.md`; the maintenance roadmap points to the canonical technical workflows and function reference. The development workflow still uses the short filename `DEVELOPMENT-WORKFLOW.md` in a handover instruction to refer to itself. This is understandable in context but should be reviewed if links are made clickable.
+
+Also read representative temporary compatibility stubs at `docs/TECHNICAL-WORKFLOWS.md`, `docs/V1.3.1-MAINTENANCE-ROADMAP.md`, `docs/WF-03-DEVICE-LIFECYCLE-TEST-MATRIX.md`, `DEVELOPMENT-WORKFLOW.md` and `RELEASE-CHECKLIST.md`. Each points to its expected canonical location. This sample is **not** proof that every compatibility stub or every link is valid.
+
+**Outstanding:** Inspect all 27 stubs, review non-Markdown consumers of their paths, check fragment links, and assess external bookmarks before deleting anything. No stub was deleted in this checkpoint.
