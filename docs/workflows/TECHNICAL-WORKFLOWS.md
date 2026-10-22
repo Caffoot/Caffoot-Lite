@@ -289,6 +289,20 @@ The rack editor rejects device and accessory collisions through dedicated placem
 
 **Follow-up scope:** Link the collection-shape and accessory-entry question to M-019 and overlapping rack occupancy to M-010; keep display-only occupancy calculations under M-013. Any future tests should be focused on the affected import scenarios and evidence of preservation, not a blanket rerun of unrelated suites. WF-06 should reuse this import trace and concentrate next on restore snapshot and rollback behaviour.
 
+
+### WF-06 follow-up: restore write failure, rollback and recovery (22 October 2026)
+
+**Evidence:** Published `v1.3.0` `app/caffoot-lite.html`, `importData()` approximately lines 7774–7859, `saveState()` approximately lines 1822–1855. Source review only; no browser fault injection performed.
+
+- Import validates the candidate before final confirmation, captures `original = appState`, and reads the current persisted inventory as `currentSnapshot` (falling back to serialising `original` when storage is absent). It remembers the previous value of `SAFETY_SNAPSHOT_KEY`.
+- Before replacing active state, it writes `currentSnapshot` to `SAFETY_SNAPSHOT_KEY` and verifies an exact readback. Failure here cancels restore before `appState = candidate`.
+- It sets `appState = candidate`, invokes `saveState()`, then checks the stored data by parsing and normalising the persisted JSON and comparing its serialisation to the candidate. `saveState()` itself checks application integrity, writes the active storage key and verifies exact readback; audit-history recording is best effort.
+- If candidate save or subsequent verification fails, the catch block restores the original in-memory object, writes `currentSnapshot` to the active storage key, and verifies exact readback. It then attempts to reinstate the previous safety snapshot (or remove the newly created snapshot if none previously existed).
+- **Verification asymmetry:** The active inventory rollback is verified by readback, but the reinstatement/removal of the *previous safety snapshot* is not independently verified after its write/removal. A storage implementation that silently fails this secondary operation without throwing could leave the wrong safety snapshot while the code reports that the original inventory was retained. This is a source-supported risk, not a reproduced browser defect. Track under M-011; do not describe the primary inventory rollback as unverified.
+- If any rollback operation throws or active-inventory rollback verification fails, `phase17AStorageRecovery` is populated with the original snapshot, the recovery banner is displayed, and subsequent `saveState()` calls are blocked. The error directs the user to download the original stored data from the recovery banner.
+
+**Targeted future verification:** Using disposable browser storage and fictional inventories, exercise safety-snapshot write failure, candidate save failure, candidate post-save mismatch, successful rollback, secondary snapshot restoration failure, and primary rollback failure. Assert preservation of the original active inventory and the intended pre-existing safety snapshot separately. Confirm recovery mode blocks further saves when primary rollback cannot be verified. Do not use an owner's live browser profile or real inventory for fault injection.
+
 ### WF-01 and WF-02 startup recovery and verified persistence
 
 **Source:** `app/caffoot-lite.html` on `main`, approximately lines 1618–1693 and 1818–1855. Source inspection, browser tests pending.
