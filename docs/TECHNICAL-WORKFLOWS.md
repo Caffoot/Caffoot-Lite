@@ -256,3 +256,11 @@ Together with the explicit absence of dependent host checks in `deleteDevice()`,
 - Vertical accessory drag/drop uses `phase13VTarget()` to calculate and validate a proposed side rail position, provides valid/invalid previews, then revalidates at drop and rolls back on save failure.
 - `phase17dTrackDrag()` scrolls the rack viewport when dragging near its visible top or bottom, with special handling for partially visible Safari viewports; it does not change placement rules.
 - **Follow-up:** Compare stored accessory validity with `validateApplicationState()`, since user interaction validation does not by itself guarantee imported accessory data is checked equivalently.
+
+### WF-05 and WF-06 cross-workflow finding: imported rack occupancy
+
+**Source:** `app/caffoot-lite.html` on `main`: `normaliseState()` approximately 1392–1554; `validateApplicationState()` 1556–1610; `validateRackPlacement()` 1930–1967; `phase11BIntegrityIssues()` 4863–4882; `phase16CCheckBackup()` 7606–7623; `phase13CAccessoryError()` 7988–8003. Source inspection only, not browser reproduced.
+
+The rack editor rejects device and accessory collisions through dedicated placement validators. In contrast, imported backups are checked through `normaliseState()` and `validateApplicationState()`, neither of which invokes those placement validators or independently checks pairwise rack occupancy. The latter validates a mounted device's rack reference and U range consistency but not whether two devices occupy the same U range on the same face. Neither routine comprehensively validates `rackAccessories` entries for existence of their rack, legal face/rail, bounds or collisions. `phase11BIntegrityIssues()` likewise checks only missing rack references among its rack-related checks.
+
+**Risk requiring confirmation:** a structurally acceptable imported backup could contain overlapping devices or accessories, or invalid accessory placement, without this being rejected by import integrity checks. Do not claim an observed restore failure or data loss; reproduce safely with a disposable test inventory and backups before agreeing any correction. Preserve compatibility with legitimate front/rear placements and vertical 0U rails when defining expected behaviour.
