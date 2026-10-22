@@ -138,3 +138,13 @@ Naming suggestions only; no application code changes authorised.
 | `phase17dTrackDrag()` | Auto-scroll the rack viewport during dragging | `trackRackDragAutoScroll()` | Review required |
 
 Names are proposals only; code unchanged.
+
+## WF-01 and WF-02 startup recovery naming candidates
+
+| Current function | Responsibility | Proposed name | Status |
+| --- | --- | --- | --- |
+| `loadStoredState()` | Read and normalise saved inventory or preserve unreadable data | `loadAndValidateStoredInventory()` | Review required |
+| `phase17ARecoveryBanner()` | Show protected recovery options | `showStoredInventoryRecoveryBanner()` | Review required |
+| `saveState()` | Validate, persist and read back inventory | `saveAndVerifyInventory()` | Review required |
+
+These are descriptive naming proposals, not approved code changes.
