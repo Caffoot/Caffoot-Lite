@@ -4,6 +4,10 @@
 **Source:** Published v1.3.0 baseline, examined from `main`. Before final approval, verify the precise release tag and source commit.
 **Purpose:** Describe actual implemented behaviour, data relationships, safeguards, error paths and tests for contributors. Future proposals belong in separate architecture documentation.
 
+## Published HTML provenance reconciliation, 22 October 2026
+
+Read-only GitHub comparison confirms `app/caffoot-lite.html` on `main` and at tag `v1.3.0` share the exact blob SHA `e8a24f6370a1bb572287aad91a314a3e4a189d94` and contain 8,634 lines. Earlier WF-01 through WF-04 source observations citing `main` therefore refer to identical HTML content **at the time of this comparison**. Historical notes retain their original inspection wording for traceability. This check does not establish the contents of other release assets, prove any runtime behaviour or close outstanding workflow questions.
+
 ## Documentation standard
 
 For each workflow record: entry point and trigger; source path and function names; inputs and state read; ordered operations; validation and authorisation checks; changes to related records; persistence; error and rollback behaviour; interface response; tests; verified source revision; open questions. Never infer a successful runtime test from source inspection. Mark unknowns explicitly. Update documentation with each significant code change.
