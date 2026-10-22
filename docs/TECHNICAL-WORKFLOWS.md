@@ -198,3 +198,13 @@ Together with the explicit absence of dependent host checks in `deleteDevice()`,
 - `handleSubnetSubmit()` rejects saving a network subnet whenever its proposed gateway matches **any** device primary IP or existing IPAM allocation. This check does not distinguish a changed gateway from the subnet's unchanged current gateway.
 - **Potential user-facing issue to reproduce:** If a router legitimately owns an existing subnet gateway, editing only that subnet's name or description may be blocked by the gateway collision check.
 - **Design question:** Define whether a gateway can legitimately be device-owned, and distinguish valid existing ownership from attempts to reassign a gateway to a conflicting address. Preserve existing inventory during any future correction.
+
+### WF-04 gateway display, ownership and startup context
+
+**Source:** `phase10GatewaySubnet()` and `phase10SubnetSummary()`, approximately lines 3987–4010; `setDevicePrimaryIp()`, approximately lines 1866–1917; and startup loading, approximately lines 1620–1652 of `app/caffoot-lite.html` on `main`.
+
+- Gateway recognition derives from a configured network subnet's `gateway` field and a usable address check; no separate IPAM record is required merely to identify the gateway.
+- IPAM summary counts an unallocated gateway as protected/reserved for display, without writing a new allocation record. A gateway with an explicit Assigned or Reserved IPAM record is counted according to that record's status.
+- A permitted network device can own a gateway as its primary IP, with a device-linked IPAM record. The subnet form's unconditional gateway collision check is therefore a potential conflict with a legitimate existing owner (M-009).
+- Browser startup parses and normalises stored inventory, checks integrity and deliberately avoids automatically writing over stored data. Unreadable data enters recovery mode. The normal integrity validator does not explicitly verify gateway ownership policy beyond subnet gateway validity and primary IP/IPAM consistency.
+- **Remaining WF-04 work:** Inspect backup import validation and reconciliation paths, then verify gateway ownership and subnet edits in a browser before treating M-009 as a reproduced defect.
