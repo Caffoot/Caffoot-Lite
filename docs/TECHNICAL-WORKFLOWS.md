@@ -303,3 +303,17 @@ The rack editor rejects device and accessory collisions through dedicated placem
 - `phase11CDownloadSnapshot()` exports the browser-local pre-repair JSON snapshot. `phase11CPanelHTML()` displays proposed repairs and manual review items. The snapshot download is available only when the storage key is readable through the safe storage helper.
 
 **Follow-up:** Browser-test successful repairs, blocked conflicts, changed inventory after preview, storage write and readback failures, snapshot persistence, snapshot download and failure recovery. Assess whether snapshot readback verification or a stronger rollback guarantee is needed. Do not classify data loss without reproduction. No application changes authorised.
+
+
+## WF-09 network reports and CSV exports (source inspection)
+
+**Evidence:** `app/caffoot-lite.html` on `main`, blob `e8a24f6370a1bb572287aad91a314a3e4a189d94`, approximately lines 2304 to 2425. Runtime tests pending.
+
+- `phase10DReportData()` reads current in-memory devices, racks and subnets. Device location totals use the location string or `Unknown` and are sorted by count. Rack summaries separately sum front and rear mounted device U ranges; the reported occupancy percentage is the larger face total divided by rack height, rounded to an integer. It counts devices, not accessory occupancy, and sums lengths rather than unique occupied U slots.
+- Subnet rows delegate to `phase10SubnetSummary()` for assigned, reserved, available, capacity, utilisation and supported-range calculations. That helper requires a separate detailed trace.
+- `phase10DCsvCell()` quotes fields, doubles embedded quotation marks and prefixes a single quote when a value begins with optional whitespace followed by `=`, `+`, `-` or `@`, reducing spreadsheet formula injection risk.
+- `phase10DDownloadCsv(kind)` supports devices, subnets and racks, ignores unknown kinds, emits UTF-8 CSV with BOM and CRLF row separators, and creates a date-stamped download. Unsupported subnet statistics are blanked and the supported flag is included.
+- `phase10DReportsHTML()` renders device counts by location, subnet utilisation, front/rear rack occupancy and capacity warnings at 85 percent or higher. Subnet utilisation outside the supported /23 to /30 range is displayed as unavailable.
+- Reports are generated from the current in-memory inventory without saving it. Confirm export/download behaviour, output escaping, spreadsheet compatibility, occupancy interpretation and source helper consistency in browser tests.
+
+**Interpretation caution:** Rack occupancy is a sum of device lengths on each face, not a collision-aware measurement of uniquely occupied positions or installed accessories. Do not describe this report as comprehensive physical rack capacity without verifying its intended meaning.
