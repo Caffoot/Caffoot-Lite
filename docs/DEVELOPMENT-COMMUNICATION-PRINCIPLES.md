@@ -30,11 +30,21 @@ Prefer short, accessible explanations and relatable analogies (for example, a fi
 - Preserve the standalone, fully offline, single-HTML experience unless a separately approved decision changes that commitment.
 - Use friendly, collaborative language; avoid condescension and unnecessary jargon.
 
+## Public facing writing and punctuation
+
+All public facing Caffoot text must use **British English** spelling, grammar and terminology. This includes the website, product interface, help text, user documentation, release notes, announcements and other published materials.
+
+**Do not use hyphens or dashes as punctuation** in public facing prose. Hyphens are permitted only when they form part of a correctly written British English word or compound expression, or an acronym or established technical identifier where the character is necessary. Use full stops, commas, colons, semicolons or separate sentences instead of punctuation dashes.
+
+Preserve exact commands, code, file paths, URLs, version identifiers and technical names where changing punctuation would make them incorrect. Do not silently change quoted source material.
+
+Review public facing text for both British English and this punctuation rule before publishing.
+
 ## Mandatory handover section
 
 Every future Caffoot Lite chat handover must include a section equivalent to:
 
-> **Communication preference — agreed project principle:** Explain all development work in plain English first, as to a non-programmer. For each topic, cover what it is, why it matters, what was found or changed, and the recommended next step. Use everyday examples, define unavoidable technical terms, avoid code-heavy explanations unless requested, and keep product decisions accessible. Reference `docs/DEVELOPMENT-COMMUNICATION-PRINCIPLES.md`.
+> **Communication preference — agreed project principle:** Explain all development work in plain English first, as to a non-programmer. For each topic, cover what it is, why it matters, what was found or changed, and the recommended next step. Use everyday examples, define unavoidable technical terms, avoid code-heavy explanations unless requested, and keep product decisions accessible. Use British English in all public facing material and do not use dashes as punctuation; permit hyphens only in valid words, acronyms and necessary technical identifiers. Reference `docs/DEVELOPMENT-COMMUNICATION-PRINCIPLES.md`.
 
 ## Scope
 
