@@ -154,3 +154,16 @@ Together with the explicit absence of dependent host checks in `deleteDevice()`,
 - **Not yet verified:** Full `deleteSubnetCommit()` mutation sequence, rollback, VLAN deletion paths, subnet editing, bulk IPAM operations and browser test outcomes.
 
 **Design observation:** Dependency previews followed by confirmation-time revalidation are useful safeguards to consider for other destructive workflows, subject to approved design and testing.
+
+### WF-04 confirmed subnet deletion and individual IP editing
+
+**Source:** `app/caffoot-lite.html`, approximately lines 5038–5180 on `main`. Source inspected only; runtime verification pending.
+
+- `deleteSubnetCommit(subId)` rechecks independent IPAM records, child subnets and VLAN ownership. It snapshots `appState` before changing records.
+- For affected devices, it sets `previousPrimaryIp` to the former primary address, then calls `setDevicePrimaryIp(device, '')` to release their active device-owned allocation. Device inventory remains.
+- It removes the subnet, removes one matching linked VLAN where applicable and changes the selected subnet. `phase11BCommitDelete()` saves the change and restores the prior in-memory snapshot on reported failure. The caller restores the prior selected subnet on failure.
+- `deleteVlan(vId)` refuses deletion while network subnets in the same parent domain use that VLAN; otherwise it asks for confirmation and delegates persistence and rollback to `phase11BCommitDelete()`.
+- `openIpModal(ip)` blocks gateway editing. `handleIpSubmit(e, ip)` refuses gateway changes and changes to a device's primary IP through the standalone IP editor.
+- Marking an independently managed IP Available deletes its IPAM record. Assigned or Reserved selections update the record, retaining valid device ownership only where appropriate. If `saveState()` returns false, the previous IPAM allocation is restored in memory.
+
+**Still to verify:** Runtime deletion and rollback, behaviour with mixed IPAM reservations, editing subnets and VLANs, bulk allocation workflows, and whether former primary IP metadata is displayed or exported as intended.
