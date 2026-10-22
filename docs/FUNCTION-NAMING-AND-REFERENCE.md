@@ -98,3 +98,18 @@ Proposals do not imply code changes or approved refactoring.
 ## WF-04 gateway relationship reference
 
 `setDevicePrimaryIp()` owns device primary IP allocation changes and permits eligible network devices to use gateway addresses. `handleSubnetSubmit()` also checks gateway collisions but does not explicitly exempt unchanged gateway ownership. This cross-function interaction is recorded as maintenance candidate M-009; no renaming or behaviour changes are approved.
+
+## WF-06 backup and restore naming candidates
+
+| Current function | Responsibility | Proposed name | Status |
+| --- | --- | --- | --- |
+| `phase20CreateBackup()` | Build a versioned JSON backup payload | `createVersionedInventoryBackup()` | Review required |
+| `phase20ValidateBackupVersion()` | Validate backup metadata and supported schema version | `validateBackupMetadata()` | Review required |
+| `phase20MigrateBackup()` | Clone and normalise legacy backup data, recording supported repairs | `normaliseImportedBackup()` | Review required |
+| `phase16CCheckBackup()` | Validate and normalise an imported backup without retaining candidate as active inventory | `validateImportedInventory()` | Review required |
+| `phase16CAPMountConflicts()` | Find imported Access Points with incompatible mounting | `findImportedAccessPointMountConflicts()` | Review required |
+| `phase16CChooseAPMounts()` | Ask user to select supported mounting types for conflicting Access Points | `reviewAccessPointMountChoices()` | Review required |
+| `phase16CReviewLegacyMountRepairs()` | Show proposed legacy mounting corrections and request approval | `reviewLegacyMountingCorrections()` | Review required |
+| `importData()` | Orchestrate file reading, validation, reviews, snapshot and verified restore | `restoreInventoryFromBackupFile()` | Review required |
+
+Names are suggestions only; no code changes authorised.
