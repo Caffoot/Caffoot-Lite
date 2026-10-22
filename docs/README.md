@@ -1,42 +1,21 @@
 # Caffoot Lite documentation
 
-Welcome. Caffoot Lite aims to be easy to use and straightforward to contribute to.
+Welcome to the Caffoot Lite contributor documentation. Start with the [contributor guide](../CONTRIBUTING.md) and [development workflow](../DEVELOPMENT-WORKFLOW.md).
 
-## Start here
+## Find what you need
 
-- [Contributor guidance](../CONTRIBUTING.md)
-- [Development workflow](../DEVELOPMENT-WORKFLOW.md)
-- [User guide](../USER-GUIDE.md)
-- [Installation](../INSTALLATION.md)
-- [Published roadmap](../ROADMAP.md)
+- [Standards](standards/README.md): development rules, naming and documentation policy
+- [Workflows](workflows/README.md): current application behaviour and safeguards
+- [Testing](testing/README.md): planned scenarios and regression checks
+- [Audits](audits/README.md): investigations, evidence and outstanding findings
+- [Roadmaps](roadmaps/README.md): future work and maintenance priorities
+- [Architecture](architecture/README.md): design decisions and evaluations
+- [Releases](releases/README.md): release process documentation
 
-## Documentation organisation
+The published roadmap and release notes remain at the repository root. Automated test scripts remain in their existing application directories.
 
-We are organising technical documentation into the following sections. Existing documents remain at their current paths until their references have been checked and their moves can be made safely.
+The v1.3.0 technical audit is ongoing. Source inspection does not establish that browser tests have passed. Keep current behaviour separate from proposed changes.
 
-- **getting-started**: orientation for contributors
-- **standards**: development and documentation conventions
-- **workflows**: how the current application operates
-- **testing**: manual test plans and regression matrices
-- **audits**: evidence, investigations and reconciliation
-- **roadmaps**: planned maintenance and future work
-- **architecture**: design and data relationships
-- **releases**: release preparation and historical documentation
+## Navigation policy
 
-The application's executable tests stay in their existing source locations. Documentation about tests belongs under docs/testing.
-
-## Current technical baseline
-
-The v1.3.0 technical audit is in progress on the documentation branch. These documents currently live directly under docs:
-
-- [Technical workflows](TECHNICAL-WORKFLOWS.md)
-- [Documentation policy](TECHNICAL-DOCUMENTATION-POLICY.md)
-- [Development principles](DEVELOPMENT-PRINCIPLES-AND-STANDARDS.md)
-- [Documentation coverage audit](V1.3.0-DOCUMENTATION-COVERAGE-AUDIT.md)
-- [v1.3.1 maintenance roadmap](V1.3.1-MAINTENANCE-ROADMAP.md)
-
-Source inspection is not the same as browser verification. Do not describe planned tests as passed tests.
-
-## Documentation rules
-
-Place new documents in a suitable section, link them from an index and update references when moving files. Keep current published behaviour separate from proposed changes. Write public-facing documentation in British English.
+Add new technical documents to the appropriate section and its index. Check and update links when documents move. Write public-facing documentation in British English.
