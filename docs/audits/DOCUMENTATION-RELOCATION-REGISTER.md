@@ -115,3 +115,7 @@ These checks were targeted textual inspections, not comprehensive path extractio
 ## Roadmap readability correction, 22 October 2026
 
 Found one literal escaped newline (`\\n`) joining M-007 and M-006 in the candidate table of `docs/roadmaps/V1.3.1-MAINTENANCE-ROADMAP.md`. Replaced it with an actual line break, restoring the two distinct Markdown table rows. The candidate register changed from seven physical `| M-` rows to eight; candidate wording and status were not altered. No maintenance item was implemented, and no application code or tests changed. This correction does not establish that every table row is valid or that the roadmap priorities are approved.
+
+## Release-facing guide link spot check, 22 October 2026
+
+Read the release-packaged root `INSTALLATION.md`, `USER-GUIDE.md`, and `BACKUP-FORMAT.md`, plus canonical `docs/releases/RELEASE-CHECKLIST.md`, `docs/releases/RELEASE-ACCEPTANCE.md` and `docs/standards/DEVELOPMENT-WORKFLOW.md`. In this targeted inspection, installation and user guide links point to retained root-level release files; the release checklist links to the existing archive policy via `../archive/README.md`. No stale relocated `docs/FILE.md` reference or doubled `docs/docs/` prefix was found in these six files. This is not a full automated link checker or runtime test. Release-packaged root guides remain in place and the 27 compatibility stubs are still retained.
