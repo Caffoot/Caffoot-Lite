@@ -273,6 +273,22 @@ The rack editor rejects device and accessory collisions through dedicated placem
 
 **Risk requiring confirmation:** a structurally acceptable imported backup could contain overlapping devices or accessories, or invalid accessory placement, without this being rejected by import integrity checks. Do not claim an observed restore failure or data loss; reproduce safely with a disposable test inventory and backups before agreeing any correction. Preserve compatibility with legitimate front/rear placements and vertical 0U rails when defining expected behaviour.
 
+
+### WF-05/WF-06 follow-up: accessory collection compatibility and migration trace (22 October 2026)
+
+**Evidence and status:** Source inspection of published `v1.3.0` `app/caffoot-lite.html`; no new browser test or application change. This clarifies the previously recorded M-010/M-019 import integrity concern, rather than claiming observed inventory loss.
+
+1. `importData()` parses the selected backup, rejects unsafe keys, checks required backup shape and version, offers explicit Access Point mounting choices where applicable, then calls `phase16CCheckBackup()` before asking for final restore confirmation.
+2. `phase16CCheckBackup()` calls `phase20MigrateBackup()`, which checks backup version, makes a detached JSON copy, assesses legacy mounting repairs, and calls `normaliseState()`. Migration does not add rack accessory validation. The supplied backup object is not mutated by this step.
+3. `phase11ValidateBackupShape()` requires valid `devices`, `subnets`, `racks` arrays and an `ipAllocations` object, but does not validate `rackAccessories` as a required or optional array.
+4. `normaliseState()` sets `rackAccessories: Array.isArray(raw.rackAccessories) ? raw.rackAccessories : []`. A missing collection (legitimate for historical backups) and an explicitly present malformed collection therefore both become an empty accessory array in the candidate. Existing valid arrays are retained; their individual entries do not receive the interactive accessory editor's complete collision, rack-reference, face, rail and bounds checks.
+5. `validateApplicationState()` does not run `validateRackPlacement()` or `phase13CAccessoryError()` over the candidate. As a result, pairwise device occupancy conflicts and accessory placement conflicts are not comprehensively rejected by this import path. This is a source-supported validation gap, not a browser-reproduced outcome.
+6. After validation, restore still requires user confirmation, a verified pre-restore safety snapshot, and a verified inventory write. Those safeguards protect the previous inventory against many failures but do not identify accessory records already omitted during candidate normalisation.
+
+**Compatibility decision proposed for v1.3.1, not approved:** Continue accepting absent `rackAccessories` in historical backups. Consider rejecting a *present but non-array* `rackAccessories` value with a clear message before restore, rather than silently substituting `[]`. Separately assess invalid individual accessory entries and overlapping rack positions using fictional backups and a disposable browser profile. Do not automatically move/delete equipment or introduce strict validation that prevents users with legitimate legacy inventories from saving their work. Agree whether review, warnings, or safe repair are needed before implementation.
+
+**Follow-up scope:** Link the collection-shape and accessory-entry question to M-019 and overlapping rack occupancy to M-010; keep display-only occupancy calculations under M-013. Any future tests should be focused on the affected import scenarios and evidence of preservation, not a blanket rerun of unrelated suites. WF-06 should reuse this import trace and concentrate next on restore snapshot and rollback behaviour.
+
 ### WF-01 and WF-02 startup recovery and verified persistence
 
 **Source:** `app/caffoot-lite.html` on `main`, approximately lines 1618–1693 and 1818–1855. Source inspection, browser tests pending.
