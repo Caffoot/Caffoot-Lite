@@ -40,3 +40,7 @@ Use a disposable browser profile and fictional inventory. Export a backup before
 ## Exit criteria
 
 Review every function and caller encountered against `FUNCTION-NAMING-AND-REFERENCE.md` and P11 comments. Record defects and improvement candidates in the coverage audit and maintenance roadmap, distinguishing source-confirmed gaps from browser-reproduced issues. Mark each scenario **planned**, **passed**, **failed**, **blocked** or **not applicable**, with evidence. Documentation completeness does not mean test verification.
+
+## Host dependency test precision, 22 October 2026
+
+D10 and D11 exercise the explicit `handleDeviceSubmit()` check that a chosen virtual host is an existing, different `Server - Physical` device. D12 and D13 deliberately exercise **incoming** host dependencies when that physical device is deleted or converted; the published handler does not explicitly inspect those incoming references. D26 covers malformed imported relationships, where the central validator also lacks a `virtualHostId` check. Keep these distinct: a valid virtual-host selector on one form does not guarantee referential integrity when the host changes later. Existing D10–D13 and D26 already cover the issue, so no new scenario IDs are required. All remain planned and unexecuted.
