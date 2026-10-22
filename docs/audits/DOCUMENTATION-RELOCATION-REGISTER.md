@@ -105,3 +105,9 @@ Repository code search returned no results for three targeted terms, but it sear
 ## Additional reference corrections, 22 October 2026
 
 Inspected `README.md`, `CONTRIBUTING.md`, `ROADMAP.md`, `SECURITY.md`, and six more canonical documentation files for selected old-path and ambiguous cross-directory references. Corrected two references in root `ROADMAP.md` from `docs/ROADMAP-DESIGN-NOTES.md` to `docs/roadmaps/ROADMAP-DESIGN-NOTES.md`. Made cross-directory document references explicit in `docs/standards/FUNCTION-NAMING-AND-REFERENCE.md` and `docs/audits/WF-01-TO-WF-04-CROSS-REFERENCE-RECONCILIATION.md`. This is a targeted text inspection, not a full Markdown or repository-wide link validation. The temporary stubs remain in place. No application code or release assets changed.
+
+## Further technical and testing reference reconciliation, 22 October 2026
+
+Inspected twelve additional canonical documents across Testing, Audits, Architecture and Releases for selected old-path, duplicated-prefix and ambiguous cross-directory references. Clarified six references: one workflow source path in `docs/testing/WF-04-IPAM-NETWORK-TEST-MATRIX.md`, four cross references in `docs/audits/P11-EXPLANATORY-COMMENT-IMPROVEMENT-REGISTER.md`, and one function-reference path in `docs/audits/WF-01-TO-WF-04-FUNCTION-AND-COMMENT-RECONCILIATION.md`. The companion test matrix reference in `docs/testing/WF-02-SAVING-AND-INTEGRITY-TEST-MATRIX.md` points to a file in the same directory and was retained.
+
+These checks were targeted textual inspections, not comprehensive path extraction, link validation or executed tests. All 27 compatibility stubs remain until the remaining repository references have been reconciled.
