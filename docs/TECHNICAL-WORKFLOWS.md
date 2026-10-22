@@ -178,3 +178,14 @@ Together with the explicit absence of dependent host checks in `deleteDevice()`,
 - `phase12BApply()` recalculates the plan at confirmation time, writes a full pre-change snapshot to `localStorage` under `caffoot_phase12b_prebulk_snapshot`, applies eligible changes, and calls `saveState()`. A failed snapshot write cancels the operation. A reported failed inventory save restores the previous in-memory inventory.
 - **Review question:** Unlike subnet deletion's exact preview signature comparison, bulk IPAM recomputes the plan without requiring it to match the previewed changes. If eligible addresses change between preview and confirmation, the applied set may differ from the preview. Verify in runtime tests and consider whether exact preview consistency is required.
 - **Review question:** Determine the intended retention and recovery behaviour of the separate bulk safety snapshot, especially after successful operations and across repeated bulk changes.
+
+### WF-04 subnet creation and editing
+
+**Source:** `app/caffoot-lite.html`, approximately lines 4651–4854 on `main`. Source inspected; runtime tests pending.
+
+- `openSubnetModalByVlanId()` resolves a VLAN card by stable record ID and parent-block domain. For legacy VLANs without ownership metadata, it only infers a subnet when there is exactly one match; ambiguous matches are rejected.
+- `handleSubnetSubmit()` treats IP Address Block containers separately from network subnets. It rejects conversion of an existing network into a container and validates proposed parent-child hierarchy before changing live state.
+- For network subnets, it checks CIDR size and alignment, name, VLAN range, usable gateway, duplicate CIDR, hierarchy constraints and duplicate VLAN use in the same parent domain.
+- Existing network CIDR changes are blocked while any device primary IP or IPAM allocation depends on the old subnet range.
+- The handler updates the associated VLAN, removing the old scoped VLAN record when appropriate, or creates a new scoped VLAN record. A failed `saveState()` restores the previous inventory and relevant UI selection or draft state in memory.
+- **Investigation candidate:** The gateway collision check rejects a proposed gateway when any device primary IP or IPAM allocation already uses it. Verify whether saving an otherwise unchanged subnet with an already device-owned gateway is intentionally supported or unexpectedly blocked, and assess gateway changes separately from CIDR changes. Do not classify as a reproduced defect without testing.
