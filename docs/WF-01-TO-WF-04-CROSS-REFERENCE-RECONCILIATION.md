@@ -80,3 +80,11 @@ Published source shows additional cross-record safeguards that must not be overl
 - `deleteDevice()` (7187–7199) explicitly clears `reservedForDeviceId` references pointing to the deleted device, which helps preserve reservation integrity during that workflow. This does not address incoming virtual-host links.
 
 **Follow-up:** Trace all callers of `phase11BIntegrityIssues()` and whether import, ordinary saving and safety checks use it. Reuse WF-02/03 existing scenarios for dangling reservation references and rack deletion/resize. These are source observations only, not browser test outcomes.
+
+## Integrity helper caller search, 22 October 2026
+
+A full literal source occurrence search of the 8,634-line published HTML found `phase11BIntegrityIssues(` **once**, at its declaration (4863). No textual call site was found. Therefore its extra dangling `reservedForDeviceId` check is **not evidence of an active runtime safeguard** in this published source. This is a static call-site finding, not proof that a dynamic invocation is impossible.
+
+In contrast, `validateApplicationState()` appears at its declaration and in startup (1645), save (1831), the dashboard/safety display (2526, 7350, 7617), and other inspection paths. `phase16CCheckBackup()` (7606–7623) explicitly swaps in the migrated candidate, runs `validateApplicationState()`, and restores the original state in `finally`. Its validator does not explicitly check dangling `reservedForDeviceId`, incoming `virtualHostId`, or accessory placement. This strengthens the need for M-019 and the virtual-host dependency review and identifies a **new reservation-integrity coverage question** for the post-audit maintenance review.
+
+Do not label the unused helper itself a bug or assume deleting it is safe. First determine its historical purpose and whether tests rely on it. Reuse existing WF-02 S04/S23–S25 and WF-03 D22/D26 fixtures to check dangling reservation references, with no new mandatory scenario identifiers.
