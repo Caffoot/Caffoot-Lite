@@ -44,3 +44,9 @@ The WF-02 matrix explicitly records all as planned and unexecuted. M-022 is alre
 5. Update `TECHNICAL-WORKFLOWS.md` workflow register only when its status materially changes.
 
 **No application code, merge or release authorised by this reconciliation.**
+
+## Imported rack validation reconciliation, 22 October 2026
+
+Compared WF-02 S06 with imported rack scenarios WF02-T13 and WF02-T14 against published `validateApplicationState()` lines 1581–1599. The central validator checks mounted device rack existence, mounting consistency and U-range arithmetic, but does not explicitly enforce rack-height bounds or physical collision rules. Interactive placement checks exist separately. The imported rack test matrix now separates missing rack, inconsistent end U and out-of-bounds height observations, and distinguishes rejected saves from accepted but potentially invalid imports. Existing WF02-T13 tests device overlap. No new scenarios added and none executed.
+
+**Implication for v1.4:** Document the boundary between form validation and shared persistence/import validation before introducing a second storage implementation. This is an architectural caution, not approval to change application code.
