@@ -45,7 +45,7 @@ A targeted list of 23 important functions was searched in the published HTML for
 ## Remaining work under P12
 
 1. Enumerate **all** function declarations relevant to WF-01 through WF-04, including anonymous callbacks and shared helpers where significant, and trace callers and mutation effects.
-2. Compare each important function's existing name, proposed name or retention decision, dependencies and P11 comments with `FUNCTION-NAMING-AND-REFERENCE.md`.
+2. Compare each important function's existing name, proposed name or retention decision, dependencies and P11 comments with `docs/standards/FUNCTION-NAMING-AND-REFERENCE.md`.
 3. Reconcile M-001, M-002, M-009, M-014, M-017, M-018, M-019 and any other confirmed findings with the maintenance roadmap and test matrices.
 4. Record dated workflow-by-workflow completion decisions only when the documentation package is complete. Browser execution remains a separate verification gate.
 
