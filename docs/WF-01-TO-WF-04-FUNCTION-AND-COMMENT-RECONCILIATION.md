@@ -105,3 +105,17 @@ Published HTML, source-only inspection:
 | `phase11CApplyRepair()` | 2250–2283 | Checks preview freshness, writes safety snapshot before mutation, restores in-memory state and attempts previous snapshot restoration on failure | Snapshot write has no readback verification and catch ignores snapshot restoration errors; already tracked as M-012 |
 
 **Important scope correction:** A check for `saveState()` success does not prove that auxiliary UI state, selection, recovery snapshots or other side effects have been restored. Conversely, no failure should be asserted from code structure alone without reproducing its user-visible effect. Prioritise targeted failure-injection tests within existing WF-02 scenarios and record actual results separately.
+
+## Additional mutation and interface side-effect review, 22 October 2026
+
+| Handler | Published HTML lines | Observed safeguards and limitations |
+| --- | --- | --- |
+| Managed device type/location add, rename, delete | 3912–3932 | Takes full JSON snapshot before editing managed lists, device fields and type graphics; on failed save restores prior object contents. This is distinct from the unchecked **custom device location quick-add** at line 7035 (M-018). |
+| Bulk IPAM apply | 4494–4515 | Recalculates eligible changes at confirmation, stores a safety snapshot before mutation, restores in-memory inventory on save failure. **Snapshot write is not read back**; assess alongside existing snapshot-verification candidates, not as proved loss. |
+| Container subnet save | 4684–4707 | Builds candidate separately, validates hierarchy, restores inventory and `selectedSubnetId` on failure. |
+| Network subnet/VLAN save | 4815–4842 | On failed save restores inventory, `selectedSubnetId` and the device-form draft subnet selection. |
+| Rack accessory form | 8103–8115 | Validates candidate and restores inventory on failed save, but **does not show an explicit handler-level error message** before returning. Determine whether `saveState()` itself provides sufficient visible feedback. |
+| Rack accessory deletion | 8133–8138 | Removes confirmation overlay **before** attempting save, restores inventory on failure, but does not reopen confirmation or render in this branch. Check whether user can recognise the failure and retry. |
+| Rack accessory move | 8140–8148 | Validates placement, snapshots and restores inventory on failed save, returns false. Inspect invoking UI for failure feedback. |
+
+These are static source observations only. In particular, distinguish correct inventory rollback from missing confirmation or stale interface presentation. Use existing WF-02 and WF-05 failure scenarios rather than duplicating large test suites.
