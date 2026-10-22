@@ -1,6 +1,6 @@
 # WF-04 Subnets, VLANs and IPAM: Controlled Test Matrix
 
-**Baseline:** Published Caffoot Lite v1.3.0. **Status:** Planned browser tests, not executed. Grounded in WF-04 source findings in `TECHNICAL-WORKFLOWS.md`. No application changes authorised.
+**Baseline:** Published Caffoot Lite v1.3.0. **Status:** Planned browser tests, not executed. Grounded in WF-04 source findings in `docs/workflows/TECHNICAL-WORKFLOWS.md`. No application changes authorised.
 
 ## Safety and evidence
 
