@@ -53,3 +53,14 @@ The initial reference table and this addition are incremental, not a complete fu
 ## Relationship note: virtual hosts
 
 `handleDeviceSubmit()` validates a selected virtual server host against an existing physical server. `deleteDevice()` does not explicitly inspect other devices' `virtualHostId` references before removing a physical server. The complete relationship validation path and runtime behaviour remain under investigation. See WF-03 and maintenance candidate M-005.
+
+## Initial WF-04 function references
+
+| Current function | Source-verified purpose | Workflow | Naming observation |
+| --- | --- | --- | --- |
+| `phase11BSubnetDependencies(subnet, state)` | Find devices and IPAM records associated with a subnet range | WF-04 | Candidate `getSubnetDependencies()` |
+| `deleteSubnet(subId)` | Check child and related records, then present a deletion preview | WF-04 | Name does not convey that this function starts a guarded workflow rather than immediately deleting |
+| `confirmDeleteSubnet(subId)` | Recheck the previewed dependencies before committing deletion | WF-04 | Existing name is reasonably descriptive |
+| `deleteSubnetCommit(subId)` | Entry point for committing a confirmed subnet deletion; implementation not yet fully traced | WF-04 | Review after complete source inspection |
+
+Names are descriptive suggestions only. No code has been renamed.
