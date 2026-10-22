@@ -9,6 +9,8 @@ Use this checklist for every Caffoot Lite release, including patch releases. Kee
 - [ ] Inspect generated standalone HTML and the exact release ZIP member list, including both reviewed fictional fixtures. Reject any unexpected test files, development utilities, private data or external dependencies.
 - [ ] Review dependency versions, outbound network behaviour, CSP/browser mitigation decisions, and documented security limitations.
 - [ ] Review all user-facing documentation and embedded Help & Guides against the current application, while preserving accurate historical release records.
+- [ ] Review technical documentation against the release and identify genuinely superseded version-specific documents; prepare replacements and archive candidates under `docs/archive/vX.Y.Z/` using the [archive policy](../archive/README.md).
+- [ ] For each archive move, check relative links, historical references, source/build consumers and release-critical root files; preserve necessary compatibility links and record the verification evidence.
 - [ ] Confirm version in application, package metadata, release notes and filenames.
 - [ ] Run the full local release command and confirm every automated check passes.
 - [ ] Test the built standalone HTML in a browser and offline.
@@ -31,7 +33,8 @@ Use this checklist for every Caffoot Lite release, including patch releases. Kee
 - [ ] Update main-branch documentation from release-candidate to published status in a separate reviewable documentation change.
 - [ ] Verify latest-release links and release asset names.
 - [ ] Confirm the release tag remains unchanged after documentation-only housekeeping.
-- [ ] Merge the documentation closeout change after review.
+- [ ] Merge the documentation closeout change after review, including approved version archive moves and their version index.
+- [ ] Confirm current documentation and archived version files are visible on `main` before relying on automatic source-branch deletion.
 - [ ] Delete completed development/housekeeping branches only after all changes are safely merged.
 - [ ] Record any remaining follow-ups for the next milestone.
 

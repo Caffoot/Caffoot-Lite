@@ -14,7 +14,7 @@ Caffoot Lite is an offline, standalone single-HTML network inventory and IP addr
 Before publishing **every** new version (including patch releases), complete a documentation consistency review as a release gate:
 
 - Verify the application, package, release tag, release assets and current-version statements agree.
-- Review `README.md`, `INSTALLATION.md`, `USER-GUIDE.md`, `ROADMAP.md`, `docs/ROADMAP-DESIGN-NOTES.md`, `BACKUP-FORMAT.md`, release notes and any other affected guides for accurate feature descriptions, navigation labels, download links, update instructions and backup warnings.
+- Review `README.md`, `INSTALLATION.md`, `USER-GUIDE.md`, `ROADMAP.md`, `docs/roadmaps/ROADMAP-DESIGN-NOTES.md`, `BACKUP-FORMAT.md`, release notes and any other affected guides for accurate feature descriptions, navigation labels, download links, update instructions and backup warnings.
 - Preserve historical release evidence, older compatible backup examples and legitimate references to previous versions; do not blindly replace every version number.
 - Run automated checks for known version inconsistencies where practical, in addition to a human documentation review. An automated pass alone does not establish that instructions or screenshots are accurate.
 - Record completion of the documentation review in release acceptance before publication. Treat unresolved user-facing inaccuracies as release blockers.
@@ -187,7 +187,7 @@ This milestone is provisional and must not retroactively expand the completed v1
 - IPv6 capabilities.
 - Additional reporting and export formats.
 
-See [Roadmap Design Notes](docs/ROADMAP-DESIGN-NOTES.md) for detailed concepts and compatibility requirements.
+See [Roadmap Design Notes](docs/roadmaps/ROADMAP-DESIGN-NOTES.md) for detailed concepts and compatibility requirements.
 
 ## Delivered core scope
 

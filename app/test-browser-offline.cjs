@@ -469,13 +469,27 @@ const { chromium } = require('playwright');
     const rackFormVisibility = await page.evaluate(() => {
       openDeviceModal();
       try {
+        const type = document.getElementById('dev-type');
         const mount = document.getElementById('dev-mount-type');
         const rackSection = document.getElementById('racked-options');
-        const initialHidden = rackSection.hidden;
+        // A blank new-device form may suggest Rack Mounted. Select Desktop
+        // explicitly before checking Desktop-specific rack visibility.
+        if (!Array.from(type.options).some(o => o.value === 'Desktop')) type.add(new Option('Desktop', 'Desktop'));
+        type.value = 'Desktop';
+        phase19BUpdateMountChoices();
+        mount.value = 'Tabletop / Shelf Mounted';
+        toggleDeviceMountType();
+        const initialHidden = mount.value !== 'Rack Mounted' && rackSection.hidden && rackSection.classList.contains('hidden');
+        // Select a rack-eligible type before testing rack controls.
+        if (!Array.from(type.options).some(o => o.value === 'Server')) type.add(new Option('Server', 'Server'));
+        type.value = 'Server';
+        phase19BUpdateMountChoices();
         mount.value = 'Rack Mounted';
         toggleDeviceMountType();
-        const visibleForRack = !rackSection.hidden && !rackSection.classList.contains('hidden');
-        mount.value = 'Desktop';
+        const visibleForRack = mount.value === 'Rack Mounted' && !rackSection.hidden && !rackSection.classList.contains('hidden');
+        type.value = 'Desktop';
+        phase19BUpdateMountChoices();
+        mount.value = 'Tabletop / Shelf Mounted';
         toggleDeviceMountType();
         const hiddenForDesktop = rackSection.hidden && rackSection.classList.contains('hidden');
         return { initialHidden, visibleForRack, hiddenForDesktop };
@@ -487,7 +501,8 @@ const { chromium } = require('playwright');
     assert(rackFormVisibility.visibleForRack, 'Rack Mounted Device form must show rack configuration');
     assert(rackFormVisibility.hiddenForDesktop, 'Switching to Desktop must hide all rack controls');
     console.log('PASS: Device form only shows rack configuration for Rack Mounted devices.');
-    // Desktop, Laptop and Tablet types must never offer Rack Mounted.
+    // Current type-specific suggestions must remain useful, while legacy mount
+    // values stay allowed so existing inventories are not silently rewritten.
     const deviceTypeMountRules = await page.evaluate(() => {
       openDeviceModal();
       try {
@@ -498,24 +513,31 @@ const { chromium } = require('playwright');
         for (const value of ['Desktop', 'Laptop', 'Tablet']) {
           if (!Array.from(type.options).some(o => o.value === value)) type.add(new Option(value, value));
           type.value = value;
+          mount.value = 'Rack Mounted'; // Existing legacy value may be retained.
           phase19BUpdateMountChoices();
           const options = Array.from(mount.options).filter(o => o.value).map(o => o.value);
-          results[value] = options.length === 1 && options[0] === 'Desktop' &&
-            mount.value === 'Desktop' && rack.hidden;
+          const suggested = phase120SuggestedMounts(value);
+          const defaultMount = phase120DefaultMount(value);
+          // A new form with no legacy selection should offer a sensible default.
+          mount.value = defaultMount;
+          toggleDeviceMountType();
+          results[value] = suggested.length > 0 && suggested[0] === defaultMount &&
+            !suggested.includes('Rack Mounted') && options.includes(defaultMount) &&
+            phase19BAllowedMounts(value).includes('Rack Mounted') && rack.hidden;
         }
-        results.serverAllowsRack = phase19BAllowedMounts('Server').includes('Rack Mounted');
-        results.caseInsensitive = phase19BAllowedMounts(' laptop ').join(',') === 'Desktop';
+        results.serverAllowsRack = phase120SuggestedMounts('Server').includes('Rack Mounted');
+        results.legacyCaseInsensitive = phase19BAllowedMounts(' laptop ').includes('Rack Mounted');
         return results;
       } finally {
         closeModal();
       }
     });
     for (const type of ['Desktop', 'Laptop', 'Tablet']) {
-      assert(deviceTypeMountRules[type], type + ' must only allow Desktop mounting');
+      assert(deviceTypeMountRules[type], type + ' must suggest non-rack mounting and preserve legacy mount compatibility');
     }
-    assert(deviceTypeMountRules.serverAllowsRack, 'Server must retain Rack Mounted option');
-    assert(deviceTypeMountRules.caseInsensitive, 'Mounting restrictions must handle type case and whitespace');
-    console.log('PASS: Desktop, Laptop and Tablet types are Desktop-only in Device forms.');
+    assert(deviceTypeMountRules.serverAllowsRack, 'Server must suggest Rack Mounted');
+    assert(deviceTypeMountRules.legacyCaseInsensitive, 'Legacy mounting compatibility must not depend on type casing');
+    console.log('PASS: Desktop, Laptop and Tablet suggest non-rack mounting while legacy values remain compatible.');
     // The Device Details dialog must expose the existing guarded delete action.
     const deviceDeleteAction = await page.evaluate(() => {
       const fixture = { id: 'browser-delete-action-fixture', name: 'Delete action fixture',

@@ -31,8 +31,14 @@ const {pathToFileURL}=require('node:url'),{chromium}=require('playwright');
  assert.equal(after.safety,baseline.stored);
  await page.reload();assert.deepEqual(await snapshot(),after,'Restored inventory must persist in renamed file');
  const bad=JSON.parse(bytes);bad.caffootBackup.schemaVersion=2;const count=confirmations;await upload(Buffer.from(JSON.stringify(bad)));assert.deepEqual(await snapshot(),after);assert.equal(confirmations,count,'Unsupported schema must reject before confirmation');
+ // The expected rejection is displayed in a modal; dismiss it before testing
+ // controls behind the modal, and verify that dismissal leaves data untouched.
+ await page.locator('#modal-container').waitFor({state:'visible'});
+ await page.keyboard.press('Escape');
+ await page.locator('#modal-container').waitFor({state:'hidden'});
+ assert.deepEqual(await snapshot(),after,'Dismissing rejected backup error must preserve inventory');
  await page.evaluate(()=>{currentTab='settings';phase16ASection='backup';renderContent();});
- await page.locator('[data-action="caffoot-check-updates"]').click();assert.match(await page.locator('#caffoot-update-status').textContent(),/offline/);
+ await page.locator('[data-action="caffoot-check-updates"]').click();assert.match(await page.locator('#caffoot-update-status').textContent(),/offline/i);
  await page.locator('[data-action="caffoot-update-guide"]').click();await page.getByRole('heading',{name:'Safely update Caffoot Lite'}).waitFor();await page.keyboard.press('Escape');
  await page.locator('[data-action="phase16a-section"][data-section="about"]').click();await page.locator('[data-action="caffoot-licences"]').click();assert.match(await page.locator('#modal-content').innerText(),/SIL OPEN FONT LICENSE/);await page.keyboard.press('Escape');
  assert.deepEqual(errors,[]);assert.deepEqual(requests,[]);assert.equal(fs.readFileSync(exported,'utf8'),bytes.toString(),'Original backup file unchanged');

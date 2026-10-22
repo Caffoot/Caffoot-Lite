@@ -7,9 +7,9 @@
 
 No Docker, database, web server or account is required to run the published release. Download the HTML application and open it in a modern browser. Your inventory stays in that browser's local storage, so **regular JSON exports are essential**: browser data loss can mean inventory loss.
 
-## v1.3.0 Rack Management — release candidate
+## v1.3.0 Rack Management
 
-The next release focuses on Rack Overview, Rack Inventory and Rack Accessories, improved rack elevations, configuration and legacy mounting compatibility. **v1.3.0 is not yet published**; use the latest stable release for production. See [draft v1.3.0 release notes](RELEASE-NOTES-1.3.0.md) and the [roadmap](ROADMAP.md). Advanced addressing and reporting are deferred to later milestones.
+The published v1.3.0 release focuses on Rack Overview, Rack Inventory and Rack Accessories, improved rack elevations, configuration and legacy mounting compatibility. See the [v1.3.0 release notes](RELEASE-NOTES-1.3.0.md) and the [roadmap](ROADMAP.md). Advanced addressing and reporting are deferred to later milestones.
 
 ## ⚠️ SECURITY WARNING — DO NOT EXPOSE CAFFOOT LITE TO THE PUBLIC INTERNET
 
@@ -17,7 +17,7 @@ The next release focuses on Rack Overview, Rack Inventory and Rack Accessories, 
 >
 > If you deliberately host the HTML file, restrict access using **properly configured authentication and authorisation, HTTPS, and network controls** (preferably private-network/VPN access). **A reverse proxy by itself is not authentication.** These measures reduce exposure but do not turn Lite into a secure multi-user application.
 >
-> **Inventory is stored in each browser's local storage**, and exported JSON backups may reveal IP addresses, device details and other sensitive infrastructure information. Avoid shared/untrusted computers, protect backups and read the [full security and deployment guidance](#-security-and-deployment-guidance) and [SECURITY.md](SECURITY.md) before deploying.
+> **Inventory is stored in each browser's local storage**, and exported JSON backups may reveal IP addresses, device details and other sensitive infrastructure information. Avoid shared/untrusted computers, protect backups and read the [full security and deployment guidance](#security-and-deployment-guidance) and [SECURITY.md](SECURITY.md) before deploying.
 
 ## Screenshots
 
@@ -53,7 +53,7 @@ Select either thumbnail to view the full-size screenshot.
 
 **Export a JSON backup regularly, and ALWAYS before upgrading, moving, renaming or resetting Caffoot Lite.** Store backups somewhere safe outside the browser and verify you can restore them. Backups may contain sensitive infrastructure details.
 
-## 🔐 Security and deployment guidance
+## Security and deployment guidance
 
 **Caffoot Lite is intended primarily for local, offline use. Do not expose the standalone HTML application directly to the public internet.** It has no built-in authentication, role-based access control or secure multi-user backend. Network inventory and exported JSON backups can contain sensitive infrastructure details.
 
@@ -118,13 +118,13 @@ npm run release
 
 The build produces `app/dist/Caffoot-Lite.html`. Automated checks and manual browser testing are recommended before distributing a build. The GitHub Actions build workflow is currently disabled.
 
-**Current release:** [v1.2.0](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.2.0), published 20 October 2026. v1.1.2 remains available as an earlier stable release; v1.1.0.1 is a historical hotfix.
+**Current release:** [v1.3.0](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.0), published 21 October 2026. Earlier releases remain available in the release history.
 
 ## Project and release status
 
 This repository is dedicated to **Caffoot Lite**: its standalone application, build tools, tests and release documentation.
 
-**v1.2.0 was prepared for publication on 20 October 2026.** Download the currently published version from the [latest stable release](https://github.com/Caffoot/Caffoot-Lite/releases/latest). See the [v1.2.0 release notes](RELEASE-NOTES-1.2.0.md), [v1.1.2 release notes](RELEASE-NOTES-1.1.2.md), [historical v1.1.1 release notes](RELEASE-NOTES-1.1.1.md), [historical v1.1.0 release notes](RELEASE-NOTES-1.1.0.md) and [roadmap](ROADMAP.md).
+**v1.3.0 was published on 21 October 2026.** Download the currently published version from the [latest stable release](https://github.com/Caffoot/Caffoot-Lite/releases/latest). See the [v1.3.0 release notes](RELEASE-NOTES-1.3.0.md), [v1.2.0 release notes](RELEASE-NOTES-1.2.0.md), [v1.1.2 release notes](RELEASE-NOTES-1.1.2.md), [historical v1.1.1 release notes](RELEASE-NOTES-1.1.1.md), [historical v1.1.0 release notes](RELEASE-NOTES-1.1.0.md) and [roadmap](ROADMAP.md).
 
 ## Licence and branding
 
@@ -135,4 +135,4 @@ The Caffoot name, hedgehog mascot and official project branding are **not** lice
 
 ## Backup compatibility and release preparation
 
-The [backup format contract](BACKUP-FORMAT.md) documents versioned JSON exports, legacy imports and compatibility safeguards. Historical testing and release-review records remain available in [RELEASE-ACCEPTANCE.md](RELEASE-ACCEPTANCE.md) and [RELEASE-REVIEW.md](RELEASE-REVIEW.md).
+The [backup format contract](BACKUP-FORMAT.md) documents versioned JSON exports, legacy imports and compatibility safeguards. Historical testing and release-review records remain available in [RELEASE-ACCEPTANCE.md](docs/releases/RELEASE-ACCEPTANCE.md) and [RELEASE-REVIEW.md](docs/releases/RELEASE-REVIEW.md).
