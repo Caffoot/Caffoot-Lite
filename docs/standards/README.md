@@ -1,7 +1,8 @@
 # Standards
 
 - [DEVELOPMENT PRINCIPLES AND STANDARDS](DEVELOPMENT-PRINCIPLES-AND-STANDARDS.md)
+- [DEVELOPMENT WORKFLOW](DEVELOPMENT-WORKFLOW.md)
 - [FUNCTION NAMING AND REFERENCE](FUNCTION-NAMING-AND-REFERENCE.md)
 - [TECHNICAL DOCUMENTATION POLICY](TECHNICAL-DOCUMENTATION-POLICY.md)
 
-These documents describe the published baseline or recorded proposals as indicated within each file. Audit tests are not considered passed without execution evidence.
+Documentation and historical records are distinct from evidence of executed tests.

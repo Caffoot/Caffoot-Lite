@@ -1,5 +1,7 @@
 # Releases
 
+- [RELEASE ACCEPTANCE](RELEASE-ACCEPTANCE.md)
+- [RELEASE CHECKLIST](RELEASE-CHECKLIST.md)
+- [RELEASE REVIEW](RELEASE-REVIEW.md)
 
-
-These documents describe the published baseline or recorded proposals as indicated within each file. Audit tests are not considered passed without execution evidence.
+Documentation and historical records are distinct from evidence of executed tests.
