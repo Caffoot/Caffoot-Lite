@@ -317,3 +317,16 @@ The rack editor rejects device and accessory collisions through dedicated placem
 - Reports are generated from the current in-memory inventory without saving it. Confirm export/download behaviour, output escaping, spreadsheet compatibility, occupancy interpretation and source helper consistency in browser tests.
 
 **Interpretation caution:** Rack occupancy is a sum of device lengths on each face, not a collision-aware measurement of uniquely occupied positions or installed accessories. Do not describe this report as comprehensive physical rack capacity without verifying its intended meaning.
+
+
+### WF-01 second-pass findings: normalisation and startup controls
+
+**Source:** `app/caffoot-lite.html` on `main`, blob `e8a24f6370a1bb572287aad91a314a3e4a189d94`, approximately lines 1380 to 1535, 1615 to 1700 and 8590 to 8634. Browser verification outstanding.
+
+- On load, `normaliseState()` works on a constructed state object, merges default fields and performs legacy migration, including retired location replacement, discovered type/location list entries and repair of device-owned IPAM links. Startup does not call `saveState()` automatically. The resulting in-memory inventory can therefore differ from the unchanged stored JSON until a subsequent save.
+- `normaliseState()` requires `vlans` as well as devices, subnets, racks and IPAM. The preliminary structural check in `loadStoredState()` does not list `vlans`, but normalisation rejects it if missing. Document the combined requirement, not just the preliminary check.
+- `window.onload` calls `switchTab('dashboard')` followed by `phase17ARecoveryBanner()`. Recovery mode blocks `saveState()`; the recovery banner offers the raw stored text when readable and a two-confirmation reset.
+- Reset writes a fresh default inventory directly to `caffoot_state` and reloads. Unlike normal `saveState()`, this handler does not compare a readback before reloading. A thrown write error produces an alert. This is a source observation requiring disposable-browser failure tests.
+- Theme preference uses separate browser keys `caffoot_theme_preference` and legacy `caffoot_dark`; audit history uses `caffoot_audit_v1` with a 200-entry limit. These keys must be covered in the full storage-key inventory under WF-11.
+
+**Open questions:** Whether migrated fields should be disclosed to users before a later save, whether reset verification should match normal persistence safeguards, and how the interface behaves for readable inventory with integrity errors. No application change approved.
