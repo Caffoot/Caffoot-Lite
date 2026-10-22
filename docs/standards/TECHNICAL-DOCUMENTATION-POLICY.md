@@ -45,3 +45,7 @@ Before beginning the next workflow, complete and review the current workflow's d
 **Progression rule:** Do not begin the next workflow until all required documents exist, the reference reconciliation is complete, and any exceptions or outstanding evidence are explicitly recorded and discussed. If urgent data protection concerns require a change of sequence, record the reason and obtain approval. Continue to protect user inventory and maintain application change control.
 
 **Retrospective application:** Recheck WF-01 through WF-04 against this gate before treating their documentation packages as complete. WF-03 and WF-04 require dedicated test matrices. WF-05 has a matrix but still requires completion review. Keep the distinction between documentation completion and unexecuted browser tests visible.
+
+## Release documentation archiving
+
+As part of every release tidy-up, review documentation for material that has been superseded. Follow the [historical documentation archive policy](../archive/README.md). Keep current descriptions accurate, preserve historical evidence, retain shared standards where still valid and check all links and release packaging dependencies before moving files. Archive changes must be reviewed and merged before the source branch is deleted.
