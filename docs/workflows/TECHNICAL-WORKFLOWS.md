@@ -218,6 +218,17 @@ Together with the explicit absence of dependent host checks in `deleteDevice()`,
 - **Remaining WF-04 work:** Inspect backup import validation and reconciliation paths, then verify gateway ownership and subnet edits in a browser before treating M-009 as a reproduced defect.
 
 
+### WF-07 follow-up: search and filter event routing (22 October 2026)
+
+**Evidence:** Published `v1.3.0` `app/caffoot-lite.html`, document-level `input` and `change` listeners, IPAM Overview search handlers, `renderDevicesHTML()`, `renderIpamHTML()`, and rack search handling. Source inspection only; browser outcomes unverified.
+
+- Device inventory search (`#device-search`) and IPAM address search (`#ipam-address-search`) update local query variables and call `renderContent()`. Their handlers then seek the replacement input, restore focus and attempt to restore the caret. Device inventory filters for assignment, status, type, location, mount and sorting, plus the IPAM status filter, update UI selection variables and rerender. These paths do not directly call `saveState()`.
+- Rack list search (`#v13-rack-search`) filters existing DOM rows using `data-search` and updates the empty-results indicator, without a full rerender or inventory mutation.
+- **Source-confirmed duplication:** Two independent document-level `input` listeners respond to `#ipam-overview-search`. The first hides/shows matching `[data-ipam-network-group]` elements and reports matching cards. The second also filters nested `[data-ipam-network-row]` elements, controls group visibility and disclosure, updates group counters, and replaces the same `#ipam-overview-search-status` text with a network/group count. Because listeners run in registration order, the second listener's status normally replaces the first's; these handlers implement different matching/counting rules. This is maintainability and potential user-feedback inconsistency, **not** a reproduced search defect. Before any consolidation, check the actual rendered DOM: IPAM Overview groups may be buttons rather than nested disclosure elements, so do not assume the second handler's selectors match the current view.
+- A further modal `input` listener clears `aria-invalid` from a form control when its native validity becomes valid. This is presentation feedback only; it does not establish that all application-specific validation errors have been resolved.
+
+**Browser verification:** Search IPAM Overview for block name, network name, CIDR and no-match text, checking which groups and rows appear and what status is announced. Verify device/IPAM search focus and caret after rerender; combine filters and clear them; search racks with and without matches; inspect keyboard and screen-reader announcements where practical. Compare observed behaviour with the current rendered structure before suggesting a change. Any cleanup must preserve existing search semantics and historical inventory compatibility.
+
 ### WF-07 follow-up: modal keyboard handling and nested editing (22 October 2026)
 
 **Evidence:** Published `v1.3.0` `app/caffoot-lite.html`, modal `keydown` listener, `closeModal()`, `phase120ConfirmDiscard()`, `phase120KeepEditing()`, `phase120DiscardChanges()`, `addCustomLocationOption()`, and document-level input/change listeners. Source inspection, not browser accessibility certification.
