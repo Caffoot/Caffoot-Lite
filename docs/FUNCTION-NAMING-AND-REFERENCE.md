@@ -148,3 +148,15 @@ Names are proposals only; code unchanged.
 | `saveState()` | Validate, persist and read back inventory | `saveAndVerifyInventory()` | Review required |
 
 These are descriptive naming proposals, not approved code changes.
+
+## WF-02 integrity repair functions
+
+| Current function | Source-verified responsibility | Proposed name | Verification |
+| --- | --- | --- | --- |
+| `phase11CPlan(state=appState)` | Read devices, subnets, IPAM and racks to propose unambiguous IPAM synchronisation and list conflicts for manual review without mutating inventory | `planSafeIpamRepairs()` | Source inspected; browser pending |
+| `phase11CPreviewRepair()` | Save current inventory JSON and proposed repairs in a temporary in-memory preview, then rerender | `previewInventoryIntegrityRepairs()` | Source inspected; browser pending |
+| `phase11CDownloadSnapshot()` | Download the browser-local pre-repair JSON snapshot if present | `downloadPreRepairSnapshot()` | Source inspected; browser pending |
+| `phase11CApplyRepair()` | Check preview freshness, request confirmation, save pre-repair snapshot, apply planned IPAM changes and invoke validated persistence; restore memory on failure | `applyConfirmedIpamRepairs()` | Source inspected; browser pending |
+| `phase11CPanelHTML()` | Render preview, blocked items, confirmation control and snapshot download | `renderIntegrityRepairPanel()` | Source inspected; browser pending |
+
+Source: `app/caffoot-lite.html` on `main`, blob `e8a24f6370a1bb572287aad91a314a3e4a189d94`, approximately lines 2201 to 2305. These are suggestions only; no renames authorised.
