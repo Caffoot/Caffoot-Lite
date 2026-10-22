@@ -1,7 +1,7 @@
 # Caffoot Lite v1.3.0 Technical Workflows
 
 **Status:** Baseline audit in progress. Not yet a complete or verified specification.
-**Source:** Published v1.3.0 baseline, examined from `main`. Before final approval, verify the precise release tag and source commit.
+**Source:** Published v1.3.0 HTML at tag `v1.3.0`, blob `e8a24f6370a1bb572287aad91a314a3e4a189d94`; this matches the inspected `main` HTML. Other release assets and runtime behaviour are not yet fully verified.
 **Purpose:** Describe actual implemented behaviour, data relationships, safeguards, error paths and tests for contributors. Future proposals belong in separate architecture documentation.
 
 ## Published HTML provenance reconciliation, 22 October 2026
@@ -14,18 +14,22 @@ For each workflow record: entry point and trigger; source path and function name
 
 ## Workflow register
 
-| ID | Area | Status |
-| --- | --- | --- |
-| WF-01 | Startup, load and recovery | Source inspected, runtime verification pending |
-| WF-02 | Save and integrity validation | Source inspected, runtime verification pending |
-| WF-03 | Device create, edit, convert and delete | Source inspection in progress; runtime verification pending |
-| WF-04 | Subnets, VLANs and IPAM | Pending |
-| WF-05 | Rack placement and accessories | Pending |
-| WF-06 | Backup, import and restore | Pending |
-| WF-07 | UI navigation and forms | Pending |
-| WF-08 | Catalogues, software and services | Pending |
-| WF-09 | Audit history and preferences | Pending |
-| WF-10 | Security, build, tests and release | Pending |
+**Current position: 22 October 2026.** This is the authoritative at-a-glance status of the documentation audit. Detailed dated notes below provide the evidence and history. A planned test is not a passed test.
+
+| ID | Area | Documentation and source position | P12 completion gate | Browser tests |
+| --- | --- | --- | --- | --- |
+| WF-01 | Startup, load and recovery | Technical workflow recorded; 16-scenario recovery plan; published HTML matched; targeted function and comment review started | Open: complete callers, comments, roadmap and cross-checks | Not executed in this audit |
+| WF-02 | Save and integrity validation | Technical workflow recorded; 30 saving scenarios plus 18 imported rack scenarios; published HTML matched; targeted function review started | Open: complete save caller and rollback coverage, comments, roadmap and cross-checks | Not executed in this audit |
+| WF-03 | Device create, edit, convert and delete | Technical workflow and 26-scenario device matrix recorded; targeted source and naming review started | Open: complete caller/comment review and reconcile findings | Not executed in this audit |
+| WF-04 | Subnets, VLANs and IPAM | Technical workflow and 33-scenario network matrix recorded; targeted source and naming review started | Open: complete caller/comment review and reconcile findings | Not executed in this audit |
+| WF-05 | Rack placement and accessories | Source findings and 20-scenario regression matrix recorded | In progress, paused while WF-01 to WF-04 P12 retrospective checks finish | Not executed in this audit |
+| WF-06 | Backup, import and restore | Preliminary technical workflow notes recorded; overlaps with WF-02 import scenarios | Not assessed under P12 | Not executed in this audit |
+| WF-07 | UI navigation and forms | Not yet comprehensively audited | Not assessed under P12 | Not executed in this audit |
+| WF-08 | Catalogues, software and services | Not yet comprehensively audited | Not assessed under P12 | Not executed in this audit |
+| WF-09 | Audit history and preferences | Preliminary technical workflow notes recorded | Not assessed under P12 | Not executed in this audit |
+| WF-10 | Security, build, tests and release | Not yet comprehensively audited | Not assessed under P12 | Not executed in this audit |
+
+**Maintenance rule:** Update this register whenever the documentation or audit status changes, in the same documentation commit wherever practical. Keep detailed dated findings below, but do not rely on append-only notes to communicate current status. Only mark a P12 gate closed after its documented requirements are met; record browser execution independently.
 
 ## WF-01 Startup, load and recovery
 
