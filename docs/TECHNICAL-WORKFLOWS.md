@@ -330,3 +330,15 @@ The rack editor rejects device and accessory collisions through dedicated placem
 - Theme preference uses separate browser keys `caffoot_theme_preference` and legacy `caffoot_dark`; audit history uses `caffoot_audit_v1` with a 200-entry limit. These keys must be covered in the full storage-key inventory under WF-11.
 
 **Open questions:** Whether migrated fields should be disclosed to users before a later save, whether reset verification should match normal persistence safeguards, and how the interface behaves for readable inventory with integrity errors. No application change approved.
+
+
+### WF-01 second-pass follow-up: startup wiring and audit storage
+
+**Source:** `app/caffoot-lite.html` on `main`, blob `e8a24f6370a1bb572287aad91a314a3e4a189d94`, approximately lines 1160 to 1195, 1720 to 1805, 1820 to 1855 and 8600 to 8634.
+
+- The `window.onload` handler first opens the dashboard through `switchTab('dashboard')`, then mounts the recovery banner using `phase17ARecoveryBanner()`. The banner has alert semantics and offers download when raw saved text is available. The dashboard still initially renders from the in-memory state, which may be defaults in recovery mode. Runtime checks must confirm this is sufficiently clear to users.
+- `cloneDefaultData()` provides empty collections, including devices, racks, subnets, VLANs, rack accessories and IP allocations. The default state version is assigned during normalisation or saving, not as a startup write.
+- Audit history is a separate browser key `caffoot_audit_v1`, limited to the most recent 200 events. `readAuditHistory()` returns an empty list if the stored audit JSON cannot be parsed. `recordAudit()` catches audit write failures, so inventory persistence may succeed while audit history persistence fails. The UI explicitly states that history is local, not tamper-proof, and excluded from standard inventory backups.
+- `auditChanges()` compares devices, subnets, racks, VLANs, IP allocations and managed device type/location lists, but not every field or collection in the state. The change history is a compact summary, not a complete mutation ledger.
+
+**Remaining evidence:** Browser verification of recovery banner ordering, reset failures, unreadable audit data and malformed but parseable inventory; review available automated tests. No source-only finding should be labelled a runtime defect.
