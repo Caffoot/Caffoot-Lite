@@ -1,6 +1,6 @@
 # WF-03 Device Lifecycle: Controlled Test Matrix
 
-**Baseline:** Published Caffoot Lite v1.3.0. **Status:** Test design only. No browser tests executed. Source findings are recorded in `TECHNICAL-WORKFLOWS.md`. This matrix does not authorise application changes.
+**Baseline:** Published Caffoot Lite v1.3.0. **Status:** Test design only. No browser tests executed. Source findings are recorded in `docs/workflows/TECHNICAL-WORKFLOWS.md`. This matrix does not authorise application changes.
 
 ## Safety and evidence
 
@@ -39,7 +39,7 @@ Use a disposable browser profile and fictional inventory. Export a backup before
 
 ## Exit criteria
 
-Review every function and caller encountered against `FUNCTION-NAMING-AND-REFERENCE.md` and P11 comments. Record defects and improvement candidates in the coverage audit and maintenance roadmap, distinguishing source-confirmed gaps from browser-reproduced issues. Mark each scenario **planned**, **passed**, **failed**, **blocked** or **not applicable**, with evidence. Documentation completeness does not mean test verification.
+Review every function and caller encountered against `docs/standards/FUNCTION-NAMING-AND-REFERENCE.md` and P11 comments. Record defects and improvement candidates in the coverage audit and maintenance roadmap, distinguishing source-confirmed gaps from browser-reproduced issues. Mark each scenario **planned**, **passed**, **failed**, **blocked** or **not applicable**, with evidence. Documentation completeness does not mean test verification.
 
 ## Host dependency test precision, 22 October 2026
 
