@@ -127,3 +127,9 @@ This document is not complete until each workflow has source evidence, failure b
 - `handleDeviceSubmit()` validates a nonempty `virtualHostId` against an existing `Server - Physical` device other than the edited device.
 - `deleteDevice()` removes the selected device and its associated IPAM records but contains no explicit check for other devices whose `virtualHostId` refers to the deleted device, and no explicit cleanup of those references.
 - **Investigation required:** Trace all other relationship validation and deletion entry points, then reproduce deleting a physical server hosting virtual servers. Determine whether orphaned host references persist and how they are displayed or exported. Do not treat source inspection alone as runtime verification.
+
+### Main integrity validation and virtual host links
+
+**Source verified:** `validateApplicationState()`, `app/caffoot-lite.html` approximately lines 1556–1610 on `main`, checks device IDs, mounting compatibility, location, primary IP and IPAM consistency, rack references and U ranges, plus subnet and VLAN rules. It does not inspect `virtualHostId` or verify that a virtual server's host still exists and remains a physical server.
+
+Together with the explicit absence of dependent host checks in `deleteDevice()`, this is a source-supported safeguard gap. Confirm complete runtime behaviour and any other validation paths before classifying the end-to-end issue as reproduced. Investigate whether physical server type conversion can also leave virtual host references behind.
