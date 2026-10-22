@@ -351,3 +351,16 @@ The rack editor rejects device and accessory collisions through dedicated placem
 During `normaliseState()`, each device's primary IP is treated as authoritative for device ownership, hostname and notes in the corresponding IPAM allocation. Missing allocation entries are created, mismatched `deviceId` or `status` fields are corrected, and hostname/notes are refreshed. For existing allocations, allocation-specific fields outside those refreshed properties are preserved. In a subsequent pass, allocation links to absent devices or devices whose primary IP no longer matches are cleared; `Assigned` becomes `Available` for such links. The input saved JSON is not immediately rewritten at startup. The distinction between routine normalisation and material correction is relevant to proposed M-015.
 
 **Verification required:** Exercise older valid inventories, stale IPAM ownership, reserved device IPs, missing allocations and mismatched status using disposable test data. Check whether any data is unexpectedly changed on first subsequent save, and whether recovery messaging remains clear. Confirm exact released v1.3.0 artefact and automated test coverage. Do not mark WF-01 complete.
+
+
+### WF-01 second-pass: emergency recovery reset exact sequence
+
+**Source evidence:** `app/caffoot-lite.html` on `main`, approximately lines 1646 to 1687. The `phase17ARecoveryBanner()` handler is distinct from the Settings clean-start handler.
+
+1. A recovery banner is shown only when `phase17AStorageRecovery` exists. The heading explains that the saved inventory was not loaded, and the message says the existing browser data was not overwritten and changes are disabled.
+2. The original stored text may be downloaded as `caffoot_lite_unreadable_recovery.txt`. Download is disabled when browser storage could not be read and the original text is unavailable.
+3. Reset requires two successive native confirmation dialogs. Cancellation at either confirmation stops the reset.
+4. After confirmation, the handler directly calls `localStorage.setItem(STORAGE_KEY, JSON.stringify(cloneDefaultData()))` and then `location.reload()`. It catches thrown exceptions and displays an alert.
+5. **There is no readback verification** between the write and reload. A storage implementation that silently fails to retain the write would still trigger reload. This is a source-established safeguard gap, not a demonstrated user-visible defect.
+
+**Testing still needed:** Simulate cancellation at each confirmation, successful reset, throwing storage writes, silent non-persistence, download availability, and page reload into continued recovery. Verify behaviour in a browser using disposable inventory. Do not change production code without owner approval.
