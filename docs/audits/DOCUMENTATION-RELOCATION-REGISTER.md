@@ -281,3 +281,9 @@ Rechecked the documentation branch root through the GitHub contents API: 32 imme
 The user's fresh Mac run passed npm run release, node test-browser-offline.cjs and node test-browser-upgrade.cjs. Browser PASS results include mounting compatibility, storage recovery, populated export, renamed-file restore, future-schema rejection, offline update guide and embedded licences. This supersedes earlier pending browser results but does not prove all repository Markdown links or heading fragments. Testing used an extracted ZIP without Git metadata. No merge or publication performed.
 
 Proposed root closeout: retain five compatibility stubs pending complete reference review and owner approval. Retain release-packaged root inputs and historical release notes pending a separately approved and tested path migration. Canonical documents under docs/ remain authoritative. Root cleanup is not yet signed off.
+
+## Complete compatibility-stub destination review, 22 October 2026
+
+Individually read all 27 temporary forwarding documents, comprising five at repository root and 22 immediately within docs/. Each contains a relative Markdown link to the intended canonical document. Independently listed the canonical standards, architecture, audits, roadmaps, testing, releases and workflows directories and confirmed that every one of the 27 linked target filenames exists in the expected directory. **Result: 27/27 forwarding links have existing target files; zero missing targets in this scope.**
+
+This verifies destination existence and relative directory placement, not every link inside the target documents, heading fragments, external links, or historical inbound links. Keep the forwarding files until the wider reference audit and owner decision. No application or release files changed and no merge or publication performed.
