@@ -342,3 +342,12 @@ The rack editor rejects device and accessory collisions through dedicated placem
 - `auditChanges()` compares devices, subnets, racks, VLANs, IP allocations and managed device type/location lists, but not every field or collection in the state. The change history is a compact summary, not a complete mutation ledger.
 
 **Remaining evidence:** Browser verification of recovery banner ordering, reset failures, unreadable audit data and malformed but parseable inventory; review available automated tests. No source-only finding should be labelled a runtime defect.
+
+
+### WF-01 second-pass: IPAM migration precedence and unresolved verification
+
+**Source inspected:** `app/caffoot-lite.html` on `main`, blob `e8a24f6370a1bb572287aad91a314a3e4a189d94`, approximately lines 1490 to 1550. Source inspection only.
+
+During `normaliseState()`, each device's primary IP is treated as authoritative for device ownership, hostname and notes in the corresponding IPAM allocation. Missing allocation entries are created, mismatched `deviceId` or `status` fields are corrected, and hostname/notes are refreshed. For existing allocations, allocation-specific fields outside those refreshed properties are preserved. In a subsequent pass, allocation links to absent devices or devices whose primary IP no longer matches are cleared; `Assigned` becomes `Available` for such links. The input saved JSON is not immediately rewritten at startup. The distinction between routine normalisation and material correction is relevant to proposed M-015.
+
+**Verification required:** Exercise older valid inventories, stale IPAM ownership, reserved device IPs, missing allocations and mismatched status using disposable test data. Check whether any data is unexpectedly changed on first subsequent save, and whether recovery messaging remains clear. Confirm exact released v1.3.0 artefact and automated test coverage. Do not mark WF-01 complete.
