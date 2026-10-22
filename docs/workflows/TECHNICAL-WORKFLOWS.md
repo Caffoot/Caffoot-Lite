@@ -23,8 +23,8 @@ For each workflow record: entry point and trigger; source path and function name
 | WF-03 | Device create, edit, convert and delete | Technical workflow and 26-scenario device matrix recorded; targeted source and naming review started | Open: complete caller/comment review and reconcile findings | Not executed in this audit |
 | WF-04 | Subnets, VLANs and IPAM | Technical workflow and 33-scenario network matrix recorded; targeted source and naming review started | Open: complete caller/comment review and reconcile findings | Not executed in this audit |
 | WF-05 | Rack placement and accessories | Source findings and 20-scenario regression matrix recorded | In progress, paused while WF-01 to WF-04 P12 retrospective checks finish | Not executed in this audit |
-| WF-06 | Backup, import and restore | Preliminary technical workflow notes recorded; overlaps with WF-02 import scenarios | Not assessed under P12 | Not executed in this audit |
-| WF-07 | UI navigation and forms | Not yet comprehensively audited | Not assessed under P12 | Not executed in this audit |
+| WF-06 | Backup, import and restore | Substantial published-source audit recorded, including rollback and compatibility checkpoints | Not assessed under P12; targeted browser fault injection outstanding | Not executed in this audit |
+| WF-07 | UI navigation and forms | Main navigation, modal lifecycle, save/cancel boundaries, keyboard handling, searches and filters source traced; coverage reconciliation in progress | Not assessed under P12; remaining paths and browser matrix outstanding | Not executed in this audit |
 | WF-08 | Catalogues, software and services | Not yet comprehensively audited | Not assessed under P12 | Not executed in this audit |
 | WF-09 | Audit history and preferences | Preliminary technical workflow notes recorded | Not assessed under P12 | Not executed in this audit |
 | WF-10 | Security, build, tests and release | Not yet comprehensively audited | Not assessed under P12 | Not executed in this audit |
@@ -217,6 +217,23 @@ Together with the explicit absence of dependent host checks in `deleteDevice()`,
 - Browser startup parses and normalises stored inventory, checks integrity and deliberately avoids automatically writing over stored data. Unreadable data enters recovery mode. The normal integrity validator does not explicitly verify gateway ownership policy beyond subnet gateway validity and primary IP/IPAM consistency.
 - **Remaining WF-04 work:** Inspect backup import validation and reconciliation paths, then verify gateway ownership and subnet edits in a browser before treating M-009 as a reproduced defect.
 
+
+### WF-07 coverage reconciliation and remaining gates (22 October 2026)
+
+**Review basis:** Reconciled the existing dated WF-07 source notes with the workflow register. This is a documentation coverage check, not a browser test or accessibility certification.
+
+| WF-07 area | Recorded source coverage | Remaining work before source sign-off |
+| --- | --- | --- |
+| Main and inner navigation | `switchTab()`, `renderContent()`, delegated actions, dashboard/rack/IPAM/device drilldowns | Trace all remaining inner navigation actions and verify return/back behaviour |
+| Modal opening and closing | `openModal()`, `closeModal()`, focus restoration, form snapshots and discard alert | Check all direct `closeModal(true)` and modal replacement callers for intentional bypasses |
+| Device, subnet and rack editing | Opening functions, submission boundaries, failure rollback, independently saved child records | Reconcile specialised device draft and correction paths with WF-03 to WF-05 |
+| Other editable forms | Known snapshot selectors for IP, bulk IP, rack assignment, manufacturer, model, software and service | Trace each handler's cancel, validation, save and rollback paths; coordinate with WF-04, WF-05 and WF-08 |
+| Keyboard and accessibility | Escape precedence, Tab cycling, modal labels and focus, Enter for custom locations | Browser keyboard and assistive technology checks, including nested dialogs |
+| Search and filters | Device/IPAM filter rerenders, rack DOM search, duplicated IPAM Overview listeners | Verify actual DOM structure, matching semantics, counts, focus and no-match feedback |
+| Settings, backup and recovery controls | Settings sections and existing WF-06 recovery paths | Cross-check settings actions and user-facing copy against WF-06 and M-025 |
+| Responsive and error feedback | Selected error and toast paths recorded | Review loading/disabled states, mobile layout, empty states and feedback consistency |
+
+**Status:** WF-07 is substantially progressed but **not complete**. Source coverage remains uneven for catalogue forms, other IPAM/rack editors, forced modal closure and responsive feedback. All proposed browser scenarios are **not executed in this audit**. Do not declare the workflow verified or close the audit solely because the major paths are documented. Reuse existing roadmap references M-018 and M-022 and assess the duplicate IPAM Overview handlers separately before proposing a new maintenance item.
 
 ### WF-07 follow-up: search and filter event routing (22 October 2026)
 
