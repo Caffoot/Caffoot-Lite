@@ -17,7 +17,7 @@ The published v1.3.0 release focuses on Rack Overview, Rack Inventory and Rack A
 >
 > If you deliberately host the HTML file, restrict access using **properly configured authentication and authorisation, HTTPS, and network controls** (preferably private-network/VPN access). **A reverse proxy by itself is not authentication.** These measures reduce exposure but do not turn Lite into a secure multi-user application.
 >
-> **Inventory is stored in each browser's local storage**, and exported JSON backups may reveal IP addresses, device details and other sensitive infrastructure information. Avoid shared/untrusted computers, protect backups and read the [full security and deployment guidance](#-security-and-deployment-guidance) and [SECURITY.md](SECURITY.md) before deploying.
+> **Inventory is stored in each browser's local storage**, and exported JSON backups may reveal IP addresses, device details and other sensitive infrastructure information. Avoid shared/untrusted computers, protect backups and read the [full security and deployment guidance](#security-and-deployment-guidance) and [SECURITY.md](SECURITY.md) before deploying.
 
 ## Screenshots
 
@@ -53,7 +53,7 @@ Select either thumbnail to view the full-size screenshot.
 
 **Export a JSON backup regularly, and ALWAYS before upgrading, moving, renaming or resetting Caffoot Lite.** Store backups somewhere safe outside the browser and verify you can restore them. Backups may contain sensitive infrastructure details.
 
-## 🔐 Security and deployment guidance
+## Security and deployment guidance
 
 **Caffoot Lite is intended primarily for local, offline use. Do not expose the standalone HTML application directly to the public internet.** It has no built-in authentication, role-based access control or secure multi-user backend. Network inventory and exported JSON backups can contain sensitive infrastructure details.
 
