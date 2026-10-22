@@ -50,3 +50,14 @@ The WF-02 matrix explicitly records all as planned and unexecuted. M-022 is alre
 Compared WF-02 S06 with imported rack scenarios WF02-T13 and WF02-T14 against published `validateApplicationState()` lines 1581–1599. The central validator checks mounted device rack existence, mounting consistency and U-range arithmetic, but does not explicitly enforce rack-height bounds or physical collision rules. Interactive placement checks exist separately. The imported rack test matrix now separates missing rack, inconsistent end U and out-of-bounds height observations, and distinguishes rejected saves from accepted but potentially invalid imports. Existing WF02-T13 tests device overlap. No new scenarios added and none executed.
 
 **Implication for v1.4:** Document the boundary between form validation and shared persistence/import validation before introducing a second storage implementation. This is an architectural caution, not approval to change application code.
+
+## Device relationships and catalogue rollback, 22 October 2026
+
+Published-source review confirms the following distinctions:
+
+- `deleteDevice()` (7187–7199) identifies direct IPAM ownership and reservations, removes those links and delegates persistence to `phase11BCommitDelete()`. It does **not** explicitly check other devices' `virtualHostId` references before deleting a physical host. The shared `validateApplicationState()` (1556–1612) likewise does not validate `virtualHostId` references. This is source evidence supporting the existing M-005 investigation, **not** proof of a browser reproduction.
+- The shared validator checks IPAM ownership, device ID uniqueness and basic rack references, but not rack accessory records or physical collisions. Those remain M-019 and imported-rack scenario questions, rather than newly discovered separate defects.
+- `phase120UpdateHardwareCatalogue()` (6241–6267) clones each catalogue entry before edits and restores the prior catalogue reference on failed save. This agrees with the M-021 source correction for the other hardware model editor; do not reopen M-021 on the same aliasing assumption.
+- `phase19BManageSoftware` mutation path (6345–6361) clones software entries, captures the full inventory and restores it on failed save. `phase120SoftwareToggle()` (6388–6397) copies the exclusions map and changed type set before saving, then restores the previous map on failure. These are source-level rollback observations only.
+
+**Risk boundary:** Deleting a physical host can leave dependent virtual server links unless another path intervenes. Before a fix is proposed, agree whether deletion should be blocked, reassignment required, or links intentionally detached, and how existing backups are treated. Reuse WF-03 scenarios and WF-02 failure injection; do not approve a policy change by documentation alone.
