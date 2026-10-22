@@ -596,3 +596,15 @@ At startup, `loadStoredState()` creates `appState`, then `validateApplicationSta
 **Targeted browser regression matrix:** (1) edit dirty subnet from a device draft, press Escape; (2) repeat using Cancel; (3) edit dirty rack from a device draft, press Cancel; (4) complete and save a child subnet/rack, then cancel the parent device and confirm independent child persistence; (5) verify parent draft fields and focus on return; (6) test modal replacement with dirty form content; (7) test catalogue Save, Cancel, Enter and Escape. Use disposable inventories and distinguish observed results from source expectations.
 
 **Decision:** No production code change authorised. Evaluate consistent dirty-form cancellation alongside M-026 and existing maintenance candidates, without weakening specialised save validation or compatibility with older inventories. WF-07 remains in progress pending remaining route inspection and browser verification.
+
+
+### WF-07 follow-up: catalogue keyboard and device-options modal replacement (source audit, 22 October 2026)
+
+**Evidence:** Published v1.3.0 source blob `e8a24f6370a1bb572287aad91a314a3e4a189d94`, approximately lines 3297 to 3303, 3394 to 3400, 3455 to 3458, 3531 to 3535, 5187 to 5206, 5282 to 5323, 6159 to 6173, 6328 to 6342 and 8396 to 8422. Source inspection, not browser verification.
+
+- Manufacturer, model, custom software and server service editors use forms with `onsubmit="return false"` and dedicated `type="button"` Save actions routed through the delegated click dispatcher. There is no basis to claim Enter performs the same save action; check each editor in a browser with focus on text fields and selections.
+- Their ordinary Cancel buttons use `closeModal()`, which compares recognised form snapshots and can display the unsaved changes confirmation. Server service forms rely on the snapshot created by `openModal()`; manufacturer, model and software forms also explicitly remember their initial form state.
+- `phase19BKeepDeviceForm()` moves the live device form into a document fragment before opening the software or server service manager. `closeModal()` first restores that fragment and reads option selections when `deviceOptionsReturnContent` is set. This is a deliberate modal replacement safeguard, not an ordinary discard. Check preservation of every edited device field, option selection and focus in browser testing.
+- `openModal()` itself replaces content without dirty-form confirmation. Its remaining callers should be assessed in context rather than labelled unsafe wholesale.
+
+**Browser regression additions:** Enter in manufacturer/model/software/service text fields; Escape and Cancel after edits; Tab and Shift+Tab focus movement; opening and closing device software/service managers with a dirty parent device form; keyboard navigation at narrow viewport widths. Record actual results before treating a source concern as a defect. Keep WF-07 open until remaining modal callers and visual states are reviewed.
