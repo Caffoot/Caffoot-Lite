@@ -227,3 +227,27 @@ Compared function mentions in `TECHNICAL-WORKFLOWS.md` and `V1.3.0-DOCUMENTATION
 | `phase120UpdateHardwareCatalogue()` | Function referenced by workflow or coverage audit; verify full responsibility and callers before proposing a rename | Audit coverage | `Review descriptive name()` | 6241 | Reference only; full source review pending |
 
 **Ongoing control:** On completing each workflow, compare all significant functions encountered with this reference, record retained names as well as proposed changes, check their source declarations and callers, and review comments against P11. A separate exhaustive inventory of all declared functions and callback forms is still required before claiming whole-source coverage. Do not treat this list as completed browser testing.
+
+## WF-01 to WF-04 supporting function inventory expansion, 22 October 2026
+
+A declaration scan of the published HTML found 274 named function declarations overall. A **targeted selection of 50 declarations** from relevant source regions was compared with this register by exact function-name occurrence. Eighteen were absent; five are primarily settings/preferences functions to review under WF-09 rather than count as WF-01 to WF-04 omissions. The other thirteen are listed below as **source-located, purpose to verify in caller review**. Their location and names are confirmed, but their complete behaviour and failure contracts are not yet signed off.
+
+| Current function | Published HTML line | Preliminary role suggested by source context | Workflow to review |
+| --- | ---: | --- | --- |
+| `phase120SeparateLegacyRackLocation()` | 1380 | Legacy rack/location normalisation helper | WF-01, WF-06 |
+| `getDeviceById()` | 1857 | Find device by identifier | WF-03 |
+| `changeSubnet()` | 4405 | Switch selected subnet | WF-04 |
+| `openBulkIpModal()` | 4444 | Open bulk IPAM editor | WF-04 |
+| `subnetCidrFeedback()` | 4519 | Explain CIDR and gateway suggestion status | WF-04 |
+| `suggestSubnetGateway()` | 4537 | Suggest a subnet gateway | WF-04 |
+| `openSubnetModal()` | 4565 | Open subnet form | WF-04 |
+| `ipBelongsToSubnet()` | 4854 | Test IP membership in subnet | WF-04 |
+| `showSubnetDeletionBlocked()` | 4891 | Explain blocked subnet deletion | WF-04 |
+| `getSubnetForIp()` | 5683 | Find subnet for an IP address | WF-03, WF-04 |
+| `refreshDeviceIpOptions()` | 5687 | Refresh available device IP choices | WF-03, WF-04 |
+| `phase130ResolveDeviceConversion()` | 7095 | Resolve pending device conversion decision | WF-03 |
+| `personalSafeStorageGet()` | 7206 | Read preferences from browser storage safely | WF-09, not current completion gate |
+
+**Deferred to WF-09:** `caffootThemePreference()`, `caffootApplyTheme()`, `caffootSetTheme()`, `toggleDarkMode()` and `phase16ARenderSettings()`. `personalSafeStorageGet()` is likewise primarily WF-09 and is included above only to preserve the scan trail.
+
+**Evidence boundary:** The source-region scan is not a whole-file workflow mapping, and textual presence does not demonstrate complete function documentation. Before P12 sign-off, trace the important callers, side effects, persistence and error handling, and decide whether each historical name should remain or be proposed for future improvement. No code has been renamed.
