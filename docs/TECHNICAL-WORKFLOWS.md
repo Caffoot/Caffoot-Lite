@@ -222,3 +222,13 @@ Together with the explicit absence of dependent host checks in `deleteDevice()`,
 - After saving the candidate, the code reads saved inventory and verifies it matches the normalised candidate. On save or verification failure, it restores the original in-memory inventory, attempts to restore original browser storage and prior safety snapshot, and verifies rollback. If rollback verification fails, recovery mode blocks further saves and offers the original data for download.
 - The snapshot panel explains that the snapshot is retained until the next successful restore and that exported backups remain essential.
 - **Follow-up:** Investigate gateway ownership and virtual host relationships in imported inventories, since the restore checks use the existing application integrity validator; check whether these relationships are covered before asserting they are fully validated.
+
+### WF-06 imported inventory relationship validation and normalisation
+
+**Source:** `normaliseState()` approximately lines 1392–1554, `validateApplicationState()` approximately lines 1556–1610, and `phase16CCheckBackup()` approximately lines 7606–7627 of `app/caffoot-lite.html` on `main`. Source review, not a browser reproduction.
+
+- Imported data is normalised and validated before replacing active inventory. Normalisation retains older managed type and location values, converts retired Blank locations to Unknown and applies limited legacy rack-location compatibility handling.
+- Network and VLAN identifiers, subnet hierarchy, primary IP uniqueness, rack references and placement, IP allocation structure and ownership are checked. Normalisation also repairs certain device/IPAM discrepancies, treating device primary IP as authoritative.
+- Neither `normaliseState()` nor `validateApplicationState()` explicitly validates `virtualHostId` against an existing physical server. Consequently, import relies on a validation path that does not reject this particular broken relationship (existing M-005). Confirm behaviour in browser tests before describing it as reproduced.
+- The integrity checks verify gateway usability within a subnet, but do not explicitly require a gateway IP owner to be a permitted network device type. This is a policy and testing question under M-009, not an independently confirmed import defect.
+- **Important distinction:** Repair of recoverable IPAM drift is part of normalisation; no equivalent automatic repair should be assumed for virtual host links. Do not introduce inferred host assignments during import.
