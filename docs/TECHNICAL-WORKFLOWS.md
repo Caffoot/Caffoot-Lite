@@ -189,3 +189,12 @@ Together with the explicit absence of dependent host checks in `deleteDevice()`,
 - Existing network CIDR changes are blocked while any device primary IP or IPAM allocation depends on the old subnet range.
 - The handler updates the associated VLAN, removing the old scoped VLAN record when appropriate, or creates a new scoped VLAN record. A failed `saveState()` restores the previous inventory and relevant UI selection or draft state in memory.
 - **Investigation candidate:** The gateway collision check rejects a proposed gateway when any device primary IP or IPAM allocation already uses it. Verify whether saving an otherwise unchanged subnet with an already device-owned gateway is intentionally supported or unexpectedly blocked, and assess gateway changes separately from CIDR changes. Do not classify as a reproduced defect without testing.
+
+### WF-04 gateway ownership and editing interaction
+
+**Source:** `handleSubnetSubmit()`, approximately lines 4755–4830, and `setDevicePrimaryIp()`, approximately lines 1866–1920 in `app/caffoot-lite.html` on `main`. Source inspected; browser verification pending.
+
+- `setDevicePrimaryIp()` permits a gateway IP as a primary address for Firewall, Router or Layer 3 Switch devices when the address is newly assigned, subject to IPAM ownership checks.
+- `handleSubnetSubmit()` rejects saving a network subnet whenever its proposed gateway matches **any** device primary IP or existing IPAM allocation. This check does not distinguish a changed gateway from the subnet's unchanged current gateway.
+- **Potential user-facing issue to reproduce:** If a router legitimately owns an existing subnet gateway, editing only that subnet's name or description may be blocked by the gateway collision check.
+- **Design question:** Define whether a gateway can legitimately be device-owned, and distinguish valid existing ownership from attempts to reassign a gateway to a conflicting address. Preserve existing inventory during any future correction.
