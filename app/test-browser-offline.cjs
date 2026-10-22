@@ -478,11 +478,15 @@ const { chromium } = require('playwright');
         type.value = 'Desktop';
         phase19BUpdateMountChoices();
         const initialHidden = mount.value !== 'Rack Mounted' && rackSection.hidden && rackSection.classList.contains('hidden');
+        // Select a rack-eligible type before testing rack controls.
+        if (!Array.from(type.options).some(o => o.value === 'Server')) type.add(new Option('Server', 'Server'));
+        type.value = 'Server';
+        phase19BUpdateMountChoices();
         mount.value = 'Rack Mounted';
         toggleDeviceMountType();
-        const visibleForRack = !rackSection.hidden && !rackSection.classList.contains('hidden');
-        mount.value = 'Desktop';
-        toggleDeviceMountType();
+        const visibleForRack = mount.value === 'Rack Mounted' && !rackSection.hidden && !rackSection.classList.contains('hidden');
+        type.value = 'Desktop';
+        phase19BUpdateMountChoices();
         const hiddenForDesktop = rackSection.hidden && rackSection.classList.contains('hidden');
         return { initialHidden, visibleForRack, hiddenForDesktop };
       } finally {
