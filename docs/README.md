@@ -18,6 +18,10 @@ The published roadmap and release notes remain at the repository root. Automated
 
 The v1.3.0 technical audit is ongoing. Source inspection does not establish that browser tests have passed. Keep current behaviour separate from proposed changes.
 
+## Reorganisation status
+
+The [documentation relocation register](audits/DOCUMENTATION-RELOCATION-REGISTER.md) tracks temporary links, outstanding checks and release packaging dependencies. The move is not yet signed off.
+
 ## Navigation policy
 
 Add new technical documents to the appropriate section and its index. Check and update links when documents move. Write public-facing documentation in British English.
