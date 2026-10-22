@@ -61,3 +61,5 @@ These are **subcases of existing scenarios**, not extra mandatory test runs. The
 | S10 | Add custom device location with failed save | Inspect any success message and in-memory versus stored location | M-018 |
 
 **Execution status:** All remain planned and unexecuted. A shared storage-failure fixture can cover these branches efficiently without treating each row as a separate testing framework.
+
+**M-021 source correction, 22 October 2026:** The model editor copies catalogue entries before editing and restores the previous reference on failed save. The specific suspected aliasing defect has been closed without change on source evidence. Keep the existing failed-save subcase as ordinary regression coverage, not a defect reproduction requirement.
