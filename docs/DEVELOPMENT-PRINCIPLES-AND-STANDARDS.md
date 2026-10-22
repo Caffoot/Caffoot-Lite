@@ -81,6 +81,22 @@ Each principle has a plain English meaning and an implementation expectation. Wh
 
 **Review question:** What evidence supports the claim that this is fixed and safe?
 
+## P11. Clear, human readable code comments
+**Plain English:** Someone new to Caffoot Lite should be able to read the comments and understand what each meaningful section is trying to achieve, even without understanding every line of code.
+
+**Technical expectation:** Write explanatory comments in clear, grammatically correct British English. Introduce meaningful sections with their purpose and expected behaviour. Explain non-obvious decisions, assumptions, dependencies, compatibility handling, data protection and failure safeguards. Prefer explaining *why* the code works this way rather than merely restating what the next line says. Use simple wording, and explain necessary technical terms in context. Avoid unexplained abbreviations, misleading claims and unnecessary comments on obvious lines.
+
+**Example:**
+```javascript
+// Check that the inventory is valid before saving it.
+// If a problem is found, preserve the previously saved inventory
+// and explain to the user why their changes could not be saved.
+```
+
+**Maintenance expectation:** Whenever behaviour changes, check and update nearby comments. Treat inaccurate comments as documentation defects. Comments must accurately describe implemented behaviour and must not claim safeguards that the code does not actually provide.
+
+**Review question:** Could a new contributor understand the purpose and safeguards of this section from its comments without first decoding the implementation?
+
 ## Review checklist
 For each significant change, reviewers should record:
 1. The existing behaviour and supporting source references.
@@ -91,6 +107,7 @@ For each significant change, reviewers should record:
 6. Technical documentation and function-reference changes.
 7. Automated and manual regression evidence.
 8. Whether the change belongs in maintenance or a future feature release.
+9. Whether comments clearly explain meaningful sections, important decisions and safeguards in British English, and remain accurate.
 
 ## Audit status and maintenance relationship
 This document records agreed engineering direction. The v1.3.0 audit remains ongoing. The rack occupancy findings and vertically mounted accessory terminology proposal require assessment against the existing maintenance roadmap to avoid duplicate entries. The suggested shared occupancy implementation has not been approved, coded or browser-tested.
