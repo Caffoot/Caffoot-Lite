@@ -117,7 +117,7 @@ Review this file when architectural decisions introduce a new principle, refine 
 
 ## P12. Close each workflow audit before opening the next
 
-A workflow audit is not ready to hand over until its technical description, function naming and comment review, dedicated test matrix, findings, roadmap disposition, cross-references and evidence status have been reconciled. Use the **Mandatory workflow audit completion gate** in `TECHNICAL-DOCUMENTATION-POLICY.md` and record a dated checkpoint in `V1.3.0-DOCUMENTATION-COVERAGE-AUDIT.md`.
+A workflow audit is not ready to hand over until its technical description, function naming and comment review, dedicated test matrix, findings, roadmap disposition, cross-references and evidence status have been reconciled. Use the **Mandatory workflow audit completion gate** in `docs/standards/TECHNICAL-DOCUMENTATION-POLICY.md` and record a dated checkpoint in `docs/audits/V1.3.0-DOCUMENTATION-COVERAGE-AUDIT.md`.
 
 Documenting a test is not the same as executing it. A workflow may be documentation complete with clearly recorded tests still pending, but must never be labelled browser verified without evidence. Existing data safety concerns must be raised and tracked. Any code changes, merges or releases remain subject to separate explicit approval.
 
