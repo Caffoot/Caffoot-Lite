@@ -83,3 +83,9 @@ Created `docs/archive/README.md` with release tidy-up and archive rules, linked 
 ## Release checklist integration, 22 October 2026
 
 Updated `docs/releases/RELEASE-CHECKLIST.md` to require version-specific archive review during release preparation, including current replacements, path and release-dependency checks, and confirmation that the archive is present on `main` after the documentation closeout merge. This is a prospective checklist change, not evidence that a release tidy-up or build has already occurred. No v1.3.0 baseline documents have been moved into the archive.
+
+## All compatibility stubs inspected, 22 October 2026
+
+Read all **27** temporary Markdown compatibility stubs (five at repository root and 22 at the former `docs/` root). Each is a short `# Document moved` notice linking to the corresponding subject-directory path. The target paths were compared with the repository tree listing, which includes the intended destination documents.
+
+**Scope and limits:** This confirms the 27 stub destinations and target file presence. It does not prove that all inbound references have been updated, that external bookmarks can be discarded, or that every relative link inside relocated documents works. Keep all stubs pending that further review. No stub deletion or application code change was made.
