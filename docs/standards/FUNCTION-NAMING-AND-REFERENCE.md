@@ -183,7 +183,7 @@ Source: `app/caffoot-lite.html` on `main`, blob `e8a24f6370a1bb572287aad91a314a3
 
 ## Reconciliation of WF-01 to WF-05 function references (22 October 2026)
 
-Compared function mentions in `TECHNICAL-WORKFLOWS.md` and `V1.3.0-DOCUMENTATION-COVERAGE-AUDIT.md` against this reference, then searched the published v1.3.0 HTML for the corresponding declarations. This is a **reference coverage reconciliation**, not proof that every function in the application has been audited. Generic browser `confirm()` is excluded as a built-in, not a Caffoot function. All names are proposals only; no application changes are authorised. Where a responsibility is not yet verified, it is explicitly marked for review. Published HTML line numbers are approximate.
+Compared function mentions in `docs/workflows/TECHNICAL-WORKFLOWS.md` and `docs/audits/V1.3.0-DOCUMENTATION-COVERAGE-AUDIT.md` against this reference, then searched the published v1.3.0 HTML for the corresponding declarations. This is a **reference coverage reconciliation**, not proof that every function in the application has been audited. Generic browser `confirm()` is excluded as a built-in, not a Caffoot function. All names are proposals only; no application changes are authorised. Where a responsibility is not yet verified, it is explicitly marked for review. Published HTML line numbers are approximate.
 
 | Current function | Plain English responsibility or investigation note | Workflow | Suggested name | Source line | Evidence status |
 | --- | --- | --- | --- | --- | --- |
