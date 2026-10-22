@@ -85,3 +85,15 @@ A future **Settings → Self-Hosting** guide may present a Portainer/Compose sta
 **Security boundary:** accounts, sessions, authorization and MFA belong to a properly secured hosted backend, not the standalone HTML file. A reverse proxy or Docker container alone is not authentication or tenant isolation.
 
 **Consequences:** No separate product edition is required, and this decision does not determine future pricing, licensing, the database choice, Docker packaging or release timing. Do not interpret this ADR as approval to change published v1.3.0. See [Data Storage Boundaries](DATA-STORAGE-BOUNDARIES.md) and [Persistence Options](PERSISTENCE-OPTIONS.md).
+
+## ADR-011 — One-way standalone-to-hosted migration
+
+**Status:** Accepted product direction — 22 October 2026; implementation deferred.
+
+The supported deployment migration path is **standalone HTML → self-hosted Caffoot Lite only**. Migration from self-hosted Docker/database deployments back to the standalone HTML application is **not supported**. This restriction must be disclosed before migration confirmation, in help documentation and in hosted export guidance.
+
+The migration copies inventory into a validated hosted destination and never deletes or modifies the source browser inventory. After migration, the two copies are independent; hosted edits are not synchronized back to standalone. The original standalone copy may continue to be used, but it is not an up-to-date hosted backup.
+
+Hosted installations must retain tested backup/export and disaster-recovery mechanisms suitable for hosted restoration. Do not imply that a hosted export is restorable by standalone HTML. Historical standalone JSON backups remain eligible for validated import into hosted deployments under the migration contract.
+
+**Consequences:** The migration wizard must display an explicit one-way warning and require informed confirmation. No reverse-conversion feature or cross-deployment synchronization is implied or approved.
