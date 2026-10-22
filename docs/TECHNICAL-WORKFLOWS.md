@@ -139,3 +139,18 @@ Together with the explicit absence of dependent host checks in `deleteDevice()`,
 **Source verified:** `handleDeviceSubmit()`, `app/caffoot-lite.html`, approximately lines 7123–7185 on `main`. The selected virtual host is validated when saving a virtual server, but changing an existing physical server to another type does not explicitly check whether other devices reference its ID in `virtualHostId`. The conversion confirmation focuses on the converted device's own incompatible `typeDetails`, not relationships held by other devices. `validateApplicationState()` does not inspect `virtualHostId`.
 
 **Implication to test:** A physical host type conversion may preserve virtual server references to a device that is no longer a physical server. Reproduce in a controlled browser test after documentation, assess whether backup imports already contain such links, and design a non-destructive handling strategy before an approved maintenance change.
+
+## WF-04 Subnets, VLANs and IPAM (initial source findings)
+
+**Status:** Source inspection in progress. Runtime verification pending.
+**Source:** `app/caffoot-lite.html` on `main`, approximately lines 4858–4889 and 4927–5040; exact published release provenance pending.
+
+- `phase11BSubnetDependencies(subnet, state)` identifies devices whose primary IP lies in the subnet and IPAM allocation keys in that range.
+- `deleteSubnet(subId)` blocks deletion when child subnets or blocks exist.
+- It distinguishes device-owned primary allocations, which may be detached through the deletion workflow, from independent reservations, ambiguous ownership and unresolved IPAM links, which block deletion.
+- For network subnets it checks linked VLAN records, ambiguous legacy VLAN ownership and other subnet users of the VLAN.
+- The confirmation screen previews affected devices and addresses, with a warning that their primary IP allocations will be released while device inventory and rack/hardware information remain.
+- A preview signature includes subnet identity, dependent devices, allocations and linked VLANs. `confirmDeleteSubnet(subId)` recalculates this signature and cancels deletion if dependencies changed after the preview.
+- **Not yet verified:** Full `deleteSubnetCommit()` mutation sequence, rollback, VLAN deletion paths, subnet editing, bulk IPAM operations and browser test outcomes.
+
+**Design observation:** Dependency previews followed by confirmation-time revalidation are useful safeguards to consider for other destructive workflows, subject to approved design and testing.
