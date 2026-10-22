@@ -243,3 +243,16 @@ Together with the explicit absence of dependent host checks in `deleteDevice()`,
 - Rack assignment requires an existing device configured with an allowed Rack Mounted type, validates the full height of its intended placement, preserves physical location, and rolls back on failed save.
 - **Existing M-001/M-002 concerns:** `unassignDevice()` clears rack ID and U start/end and switches mount type to Desktop, but does not clear `rackUHeight` or `face`. It calls `saveState()` without checking the return value or restoring the previous state if saving fails. This differs from the guarded assignment path. Confirm in browser tests before declaring a reproduced defect.
 - **Follow-up:** Trace rack accessories, dragging, occupancy display and rack export/print; compare all paths with the same collision and persistence safeguards.
+
+### WF-05 rack accessories, availability and movement
+
+**Source:** `app/caffoot-lite.html` on `main`, approximately lines 7988–8175 and 8177–8296. Source inspection; browser verification pending.
+
+- `phase13CAccessoryError()` validates rack, face, height, start U and collisions. Normal accessories cannot overlap mounted devices or other normal accessories on the same face. Vertical 0U PDUs and cable managers occupy independent left/right side rails, checked for overlap against other vertical accessories on the same rail and face.
+- `refreshAccessoryOptions()` rebuilds available starting U choices from the full height and collision rules, showing a multi-U range such as U3–U4 for equipment taller than 1U. It recalculates on type, face, side and height changes.
+- The accessory editor validates again at submission, supports patch panels with 12, 24 or 48 ports, and snapshots inventory before add/edit. A failed `saveState()` restores the in-memory snapshot.
+- Accessory deletion requires explicit confirmation and restores the prior inventory on save failure. Horizontal accessory movement also revalidates and rolls back on failure.
+- `phase13MoveDevice()` is the shared validated device movement path for rack interactions, checking full height, selected face, bounds and collisions, and restoring the previous placement on save failure.
+- Vertical accessory drag/drop uses `phase13VTarget()` to calculate and validate a proposed side rail position, provides valid/invalid previews, then revalidates at drop and rolls back on save failure.
+- `phase17dTrackDrag()` scrolls the rack viewport when dragging near its visible top or bottom, with special handling for partially visible Safari viewports; it does not change placement rules.
+- **Follow-up:** Compare stored accessory validity with `validateApplicationState()`, since user interaction validation does not by itself guarantee imported accessory data is checked equivalently.
