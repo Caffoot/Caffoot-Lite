@@ -469,9 +469,15 @@ const { chromium } = require('playwright');
     const rackFormVisibility = await page.evaluate(() => {
       openDeviceModal();
       try {
+        const type = document.getElementById('dev-type');
         const mount = document.getElementById('dev-mount-type');
         const rackSection = document.getElementById('racked-options');
-        const initialHidden = rackSection.hidden;
+        // A blank new-device form may suggest Rack Mounted. Select Desktop
+        // explicitly before checking Desktop-specific rack visibility.
+        if (!Array.from(type.options).some(o => o.value === 'Desktop')) type.add(new Option('Desktop', 'Desktop'));
+        type.value = 'Desktop';
+        phase19BUpdateMountChoices();
+        const initialHidden = mount.value !== 'Rack Mounted' && rackSection.hidden && rackSection.classList.contains('hidden');
         mount.value = 'Rack Mounted';
         toggleDeviceMountType();
         const visibleForRack = !rackSection.hidden && !rackSection.classList.contains('hidden');
