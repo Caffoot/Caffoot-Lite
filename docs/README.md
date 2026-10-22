@@ -1,6 +1,6 @@
 # Caffoot Lite documentation
 
-Welcome to the Caffoot Lite contributor documentation. Start with the [contributor guide](../CONTRIBUTING.md) and [development workflow](../DEVELOPMENT-WORKFLOW.md).
+Welcome to the Caffoot Lite contributor documentation. Start with the [contributor guide](../CONTRIBUTING.md) and [development workflow](standards/DEVELOPMENT-WORKFLOW.md).
 
 ## Find what you need
 
