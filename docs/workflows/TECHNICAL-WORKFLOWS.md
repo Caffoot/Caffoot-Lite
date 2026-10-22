@@ -218,6 +218,17 @@ Together with the explicit absence of dependent host checks in `deleteDevice()`,
 - **Remaining WF-04 work:** Inspect backup import validation and reconciliation paths, then verify gateway ownership and subnet edits in a browser before treating M-009 as a reproduced defect.
 
 
+### WF-07 follow-up: when device, subnet and rack forms change inventory (22 October 2026)
+
+**Evidence:** Published `v1.3.0` `app/caffoot-lite.html`, `openDeviceModal()`, `openSubnetModal()`, `openRackModal()`, `handleDeviceSubmit()`, `handleSubnetSubmit()`, `handleRackSubmit()`, and `addCustomLocationOption()`. Source inspection only; no browser cancellation/failure reproduction.
+
+- The three main open functions populate form fields from existing inventory (or a device draft) and open a modal. The inspected opening paths do not themselves commit a new device, subnet or rack. Their respective submit handlers collect and validate form values before making the corresponding inventory changes. Device submission takes a JSON copy before mutation, updates related IPAM state, and restores that copy if the IPAM operation or `saveState()` fails. Subnet and rack submission also take pre-save copies and contain their own validation and rollback paths; their complete edge cases remain governed by WF-04 and WF-05 respectively.
+- **Important exception to a blanket “Cancel changes nothing” claim:** `addCustomLocationOption()`, invoked while editing a device, immediately adds a new value to `appState.deviceLocations` and calls `saveState()` before the user submits the device form. Closing or discarding the device form does not, by itself, undo this separately saved location. This may be intentional because location creation is a distinct action, but it must be explained and tested as such. It is not evidence that the device itself was saved.
+- **Existing safeguard concern, M-018:** `addCustomLocationOption()` does not inspect the return value of `saveState()`; it displays an “Added location” success toast even if persistence failed. In-memory `deviceLocations` is already modified at that point. This is a source-confirmed feedback/rollback concern, not a browser-reproduced storage failure. Avoid adding a duplicate roadmap item.
+- A device can temporarily leave its form to create a subnet using `deviceFormDraft`; cancellation and return to the device editor follow a specialised path. The general modal discard mechanism must not be assumed to undo a subnet that was independently saved. Confirm draft restoration and explicit save boundaries in browser tests.
+
+**Focused checks:** (1) open and cancel unchanged and edited device, subnet and rack forms; (2) add a custom device location then discard the device and check whether the location persists; (3) simulate failed storage during custom location creation and verify actual toast/in-memory behaviour; (4) open subnet creation from a device draft, cancel and return; (5) successfully create a subnet from that path, then discard the device and check the independently saved subnet; (6) test failed device/subnet/rack saves with disposable inventory. Document the intended behaviour before proposing UI or code changes.
+
 ### WF-07 follow-up: unsaved form detection and discard confirmation (22 October 2026)
 
 **Evidence:** Published `v1.3.0` `app/caffoot-lite.html`, `modalFormSnapshot()`, `rememberModalForm()`, `phase120ConfirmDiscard()`, `phase120KeepEditing()`, `phase120DiscardChanges()`, `closeModal()`, `openModal()`. Source inspection only; no browser interaction performed.
