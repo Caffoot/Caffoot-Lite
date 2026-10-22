@@ -218,6 +218,19 @@ Together with the explicit absence of dependent host checks in `deleteDevice()`,
 - **Remaining WF-04 work:** Inspect backup import validation and reconciliation paths, then verify gateway ownership and subnet edits in a browser before treating M-009 as a reproduced defect.
 
 
+### WF-07 follow-up: unsaved form detection and discard confirmation (22 October 2026)
+
+**Evidence:** Published `v1.3.0` `app/caffoot-lite.html`, `modalFormSnapshot()`, `rememberModalForm()`, `phase120ConfirmDiscard()`, `phase120KeepEditing()`, `phase120DiscardChanges()`, `closeModal()`, `openModal()`. Source inspection only; no browser interaction performed.
+
+- `modalFormSnapshot(form)` records an ordered JSON array of each input/select/textarea's identifier, type and current value or checked state. Button, submit, reset and hidden input types are excluded. This is a comparison of visible/editable form fields, **not** an inventory snapshot or persistence transaction.
+- `rememberModalForm()` registers a baseline for the first matching form inside `#modal-content` when `openModal()` runs. Explicitly covered selectors are device forms and `data-form-action` values `subnet`, `rack`, `ip`, `assign`, `bulk-ip`, `manufacturer`, `model`, `software`, and `server-service`.
+- `closeModal(force=false)` checks whether a covered form has changed from its baseline. If so, `phase120ConfirmDiscard()` overlays a two-choice alert dialog and defers closing. **Keep Editing** removes the overlay and returns focus to the previously focused element when still connected. **Discard Changes** invokes the saved callback to `closeModal(true)`, bypassing a repeat prompt, then returns focus to the element that opened the modal when available.
+- `phase120ConfirmDiscard()` refuses to create a second discard overlay while one already exists. The modal Escape handler recognises the discard overlay and routes Escape to Keep Editing rather than silently discarding changes.
+- `closeModal()` has a separate first branch for the device-options subview: it reads software/function selections and restores the parent device form rather than immediately closing. This path must be evaluated independently of ordinary form closure.
+- **Coverage limitation:** Forms not matching the explicit selector list, controls whose state is not represented by input/select/textarea values, and edits to excluded hidden fields are not guaranteed to trigger this discard prompt. Also, this comparison does not prove that an individual form handler has never changed `appState` before submission. Review mutation and rollback behaviour separately before claiming cancellation is always non-destructive.
+
+**Targeted browser checks:** For each covered form family, open, change a field, attempt close using the close button and Escape, choose Keep Editing, then Discard Changes; confirm focus, no unexpected persistence and unchanged inventory. Include unchanged forms, nested device options, and at least one form outside the selector list. For custom widgets or dynamically added controls, confirm that edits are represented in the form snapshot. Do not infer a defect without reproducing it.
+
 ### WF-07 follow-up: delegated navigation and dashboard shortcuts (22 October 2026)
 
 **Evidence:** Published `v1.3.0` `app/caffoot-lite.html`, delegated `document.addEventListener('click', ...)` action switch, `document.addEventListener('submit', ...)`, `switchTab()` and `renderContent()`. Source review only, no browser click-through yet.
