@@ -608,3 +608,16 @@ At startup, `loadStoredState()` creates `appState`, then `validateApplicationSta
 - `openModal()` itself replaces content without dirty-form confirmation. Its remaining callers should be assessed in context rather than labelled unsafe wholesale.
 
 **Browser regression additions:** Enter in manufacturer/model/software/service text fields; Escape and Cancel after edits; Tab and Shift+Tab focus movement; opening and closing device software/service managers with a dirty parent device form; keyboard navigation at narrow viewport widths. Record actual results before treating a source concern as a defect. Keep WF-07 open until remaining modal callers and visual states are reviewed.
+
+
+### WF-07 follow-up: modal caller inventory and bulk IP preview transition (source audit, 22 October 2026)
+
+**Evidence:** Published v1.3.0 `app/caffoot-lite.html`, blob `e8a24f6370a1bb572287aad91a314a3e4a189d94`, approximately lines 2813, 3815, 4444 to 4515, 4567, 4902, 4983, 5103, 5389, 5545, 5893, 6233, 6818, 7300 to 7304 and 7628 to 7740. Source inspection only.
+
+- Modal callers include device and rack editors, IPAM individual and bulk editors, subnet deletion and other confirmations, device detail views, catalogue managers, help/licence dialogs and import recovery/review dialogs. Their existence is not evidence of unsafe replacement; caller context matters.
+- `handleBulkIpSubmit()` captures the user's range, status, hostname and notes, then calls `openModal()` to replace the bulk editor with a confirmation preview. `phase12BPending` retains the request values for Apply, and `phase12BApply()` recalculates the plan before writing. The confirmation has Cancel and Apply but no explicit Back/Edit action to reconstruct the previous editor. This is a source-confirmed usability limitation: cancelling the preview closes it rather than returning to the filled form. Browser verification remains outstanding.
+- `phase12BPending` is not cleared by the generic Cancel handler. An old request remains in memory until another preview replaces it or Apply consumes it. No reachable unintended Apply path has been established; check whether this stale state has any observable impact before proposing a defect.
+- Import error messaging explicitly states the existing inventory was not replaced. Import legacy mounting and access point review dialogs are separate decisions and should be tested for cancellation and focus, not treated as ordinary editable forms.
+- Management dialogs for device types/locations and hardware/software/services contain controls that act on individual records. Their unsaved input and independent commit semantics require separate consideration under WF-08.
+
+**Recommended targeted checks:** Enter bulk IP values, preview, cancel and check whether the entries are recoverable; repeat with changed preview and protected addresses; verify a new preview supersedes the previous pending request; check modal focus and keyboard cancellation; review narrow-screen confirmation layout. No production changes authorised. Keep WF-07 browser verification open and carry catalogue mutation semantics into WF-08.
