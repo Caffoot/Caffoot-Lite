@@ -3,6 +3,10 @@
 **Status:** Draft documentation standard and initial source-verified examples. No application functions renamed.
 **Baseline:** v1.3.0 source inspection on `main`; exact published release provenance remains to be confirmed.
 
+## Published HTML provenance reconciliation, 22 October 2026
+
+The published `v1.3.0` tag and current `main` have the same `app/caffoot-lite.html` blob SHA `e8a24f6370a1bb572287aad91a314a3e4a189d94` (8,634 lines). This confirms the HTML source used for the earlier `main` inspections matches the published HTML. The function reference remains a **partial, evolving inventory**, not an exhaustive declaration-by-declaration audit. Significant function callers, responsibilities and P11 source comments still require completion review. No functions have been renamed.
+
 ## Purpose
 
 Future contributors should understand what each important function does without needing to know the development phase in which it was introduced. Existing historical names must remain documented until an approved and tested change replaces them.
