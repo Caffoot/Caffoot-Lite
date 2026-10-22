@@ -93,7 +93,7 @@ This document is not complete until each workflow has source evidence, failure b
 
 - `deleteDevice()` obtains the device, counts linked IPAM allocations and other reservations, and uses a browser `confirm()` with an irreversible deletion warning and backup advice.
 - On confirmation, it snapshots the state, removes allocations owned by the device, clears reservation references pointing to the device, removes the device, then delegates to `phase11BCommitDelete(before, 'Device')`.
-- **Not yet traced:** `phase11BCommitDelete()` implementation and failure rollback; dependent virtual-host relationships and other references after deletion.
+- **Verified additional source finding:** `phase11BCommitDelete(before, label)` calls `saveState()` and, when it returns false, restores `appState` from the provided snapshot, rerenders and shows an error. Dependent virtual-host relationships and other references remain unverified.
 
 ### Outstanding investigation and test requirements
 
