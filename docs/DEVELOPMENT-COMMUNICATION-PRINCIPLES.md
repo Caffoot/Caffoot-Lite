@@ -46,6 +46,10 @@ Every future Caffoot Lite chat handover must include a section equivalent to:
 
 > **Communication preference — agreed project principle:** Explain all development work in plain English first, as to a non-programmer. For each topic, cover what it is, why it matters, what was found or changed, and the recommended next step. Use everyday examples, define unavoidable technical terms, avoid code-heavy explanations unless requested, and keep product decisions accessible. Use British English in all public facing material and do not use dashes as punctuation; permit hyphens only in valid words, acronyms and necessary technical identifiers. Reference `docs/DEVELOPMENT-COMMUNICATION-PRINCIPLES.md`.
 
+## Handover chat title
+
+Every future handover must start with a **Suggested new chat title** that describes the specific work to be done in the next session, using plain English. The title should be short, specific and action oriented, for example **Caffoot Lite: Investigate Saving and Loading Data**. Include the same title prominently in the handover text so it can be used when creating or renaming the next chat. Chat titles may need to be set manually in the ChatGPT interface.
+
 ## Scope
 
 This document establishes a communication and collaboration practice only. It does not approve any programming language, database, deployment architecture, application code change, merge or release.
