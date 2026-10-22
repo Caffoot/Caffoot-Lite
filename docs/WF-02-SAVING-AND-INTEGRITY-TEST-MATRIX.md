@@ -48,3 +48,16 @@ Use a separate disposable browser profile and fictional inventory with the exact
 ## Completion criteria
 
 For each test, record **planned**, **passed**, **failed**, **blocked** or **not applicable**, with actual evidence and source revision. Cross-check `saveState()`, `validateApplicationState()`, `normaliseState()`, `phase11BCommitDelete()`, all mutation callers and their P11 comments against the Function Naming and Reference document. Reconcile issues with the maintenance roadmap, especially M-001, M-002, M-014, M-017, M-018 and M-019. The matrix closes a documentation gap only; it does not prove these safeguards work in a browser.
+
+## Focused regression additions, 22 October 2026
+
+These are **subcases of existing scenarios**, not extra mandatory test runs. They preserve P13's proportional testing rule.
+
+| Parent scenario | Subcase | Evidence to collect | Roadmap link |
+| --- | --- | --- | --- |
+| S20 | Change a device type graphic with a simulated failed save | Compare selected graphic in memory, error notification, stored bytes and reloaded selection | M-020 |
+| S20 | Edit an existing hardware model with a simulated failed save | Compare the edited model before/after failure and after reload; distinguish edit from add/remove | M-021 |
+| S09 | Unassign a rack device with failed save | Compare rack fields, screen, stored bytes and reload | M-001, M-002 |
+| S10 | Add custom device location with failed save | Inspect any success message and in-memory versus stored location | M-018 |
+
+**Execution status:** All remain planned and unexecuted. A shared storage-failure fixture can cover these branches efficiently without treating each row as a separate testing framework.
