@@ -13,6 +13,7 @@ Welcome to the Caffoot Lite contributor documentation. Start with the [contribut
 - [Roadmaps](roadmaps/README.md): future work and maintenance priorities
 - [Architecture](architecture/README.md): design decisions and evaluations
 - [Releases](releases/README.md): release process documentation
+- [Archive](archive/README.md): superseded documentation organised by release
 
 The published roadmap and release notes remain at the repository root. Automated test scripts remain in their existing application directories.
 
