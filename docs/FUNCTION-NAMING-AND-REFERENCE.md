@@ -75,3 +75,13 @@ Names are descriptive suggestions only. No code has been renamed.
 | `handleIpSubmit(e, ip)` | Protect device primary IPs and gateways, change independent IPAM allocation, restore prior allocation on reported save failure | WF-04 | `saveIpAllocationFromForm()` is a possible clearer name |
 
 Suggested names are not approved code changes.
+
+## WF-04 bulk IPAM naming candidates
+
+| Current function | Current responsibility | Proposed name | Status |
+| --- | --- | --- | --- |
+| `phase12BBulkPlan()` | Validate a requested range and calculate eligible, blocked and changed IPAM records | `planBulkIpChanges()` | Review required |
+| `handleBulkIpSubmit()` | Read the bulk form and present the confirmation preview | `previewBulkIpChanges()` | Review required |
+| `phase12BApply()` | Recalculate the bulk plan, store a safety snapshot, apply changes and save | `applyBulkIpChanges()` | Review required |
+
+No function renames have been made.
