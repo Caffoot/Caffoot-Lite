@@ -4,6 +4,8 @@ Welcome to the Caffoot Lite contributor documentation. Start with the [contribut
 
 ## Find what you need
 
+- [Getting started](getting-started/README.md): installation, user and backup guidance
+
 - [Standards](standards/README.md): development rules, naming and documentation policy
 - [Workflows](workflows/README.md): current application behaviour and safeguards
 - [Testing](testing/README.md): planned scenarios and regression checks
