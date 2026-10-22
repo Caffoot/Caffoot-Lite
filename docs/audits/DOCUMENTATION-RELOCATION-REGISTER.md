@@ -61,3 +61,9 @@ This was a **targeted reference pass**, not an exhaustive repository-wide link o
 Reconciled 30 additional code-formatted references across `docs/standards/DEVELOPMENT-PRINCIPLES-AND-STANDARDS.md` and `docs/audits/V1.3.0-DOCUMENTATION-COVERAGE-AUDIT.md`, including test matrices, workflow documentation and the maintenance roadmap. The original audit findings and application behaviour were not intentionally altered.
 
 **Limit:** This is not a complete automated link checker, and text references outside the specifically replaced code-formatted filenames may remain. Historical references and external links still require review before temporary stubs can be removed.
+
+## Documentation index verification checkpoint, 22 October 2026
+
+Compared the relative Markdown links in nine main navigation indexes (`docs/README.md` and the eight section README files) against the repository tree. Their destinations exist at the expected paths. This check establishes file existence for those navigation links only, not complete anchor correctness or a repository-wide link audit.
+
+Clarified `docs/getting-started/README.md`: `INSTALLATION.md`, `USER-GUIDE.md` and `BACKUP-FORMAT.md` are release package inputs, while the root README and contributor guide are retained for discoverability. Release packaging and browser tests have not been run in this documentation pass.
