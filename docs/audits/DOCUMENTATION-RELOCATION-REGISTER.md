@@ -79,3 +79,7 @@ Also read representative temporary compatibility stubs at `docs/TECHNICAL-WORKFL
 ## Release archive policy, 22 October 2026
 
 Created `docs/archive/README.md` with release tidy-up and archive rules, linked it from `docs/README.md`, and added a reference to `docs/standards/TECHNICAL-DOCUMENTATION-POLICY.md`. No version-specific technical documents were moved. Superseded documents should be archived only when their current replacements are ready and release-critical dependencies have been checked. A merged archive survives automatic source-branch deletion; unmerged changes do not become part of `main`.
+
+## Release checklist integration, 22 October 2026
+
+Updated `docs/releases/RELEASE-CHECKLIST.md` to require version-specific archive review during release preparation, including current replacements, path and release-dependency checks, and confirmation that the archive is present on `main` after the documentation closeout merge. This is a prospective checklist change, not evidence that a release tidy-up or build has already occurred. No v1.3.0 baseline documents have been moved into the archive.
