@@ -218,6 +218,19 @@ Together with the explicit absence of dependent host checks in `deleteDevice()`,
 - **Remaining WF-04 work:** Inspect backup import validation and reconciliation paths, then verify gateway ownership and subnet edits in a browser before treating M-009 as a reproduced defect.
 
 
+### WF-07 follow-up: modal keyboard handling and nested editing (22 October 2026)
+
+**Evidence:** Published `v1.3.0` `app/caffoot-lite.html`, modal `keydown` listener, `closeModal()`, `phase120ConfirmDiscard()`, `phase120KeepEditing()`, `phase120DiscardChanges()`, `addCustomLocationOption()`, and document-level input/change listeners. Source inspection, not browser accessibility certification.
+
+- **Escape precedence:** When a modal is open, Escape first handles specialised delete, device conversion, restore, rack correction, and discard-confirmation dialogs, then catalogue rename editing. In a subnet editor opened from a device draft it instead closes the subnet modal and schedules reopening the device editor. Otherwise it calls `closeModal()`, which can prompt before discarding changed form fields.
+- **Discard confirmation:** Escape while the discard alert is visible chooses Keep Editing; it does not silently discard. The alert has explicit Keep Editing and Discard Changes actions, and its initial focus is moved to Keep Editing.
+- **Tab and Shift+Tab:** The modal keydown listener builds a list of visible, enabled links/buttons/fields and moves focus forward or backward, wrapping at the ends. When a recognised confirmation overlay is active, it uses that overlay's controls. This is an intentional keyboard safeguard, including a Safari-specific comment, but actual focus order and screen-reader behaviour still require browser checks.
+- **Nested device options:** `closeModal()` returns from the device-options subview to the device form, collecting software/function selections. It is not equivalent to abandoning the parent device edit. Test whether the parent form's unsaved-change comparison captures nested selections; `modalFormSnapshot()` only serialises input/select/textarea values present in the form when sampled.
+- **Enter on custom location:** The modal keyboard handler intercepts Enter when focus is on `#dev-custom-location` and calls `addCustomLocationOption()` rather than submitting the device. Because that function separately mutates and saves the location list, pressing Enter can commit a location while the device form remains unsaved. This is the previously recorded M-018 save-feedback boundary, not a new issue.
+- **Input and change routing:** The document-level input handler rerenders device and IPAM searches, then restores input focus and caret where possible. The change handler rerenders several inventory filters and dispatches other `data-action` changes. Rerendering replaces view elements; check keyboard focus and form state for dynamically replaced controls rather than assuming they survive unchanged.
+
+**Browser scenarios:** Escape from a modified form and both discard choices; Escape from each nested confirmation; forward and reverse Tab wrapping with disabled/hidden controls; returning from device options with unsaved software changes; Enter to add a custom location then cancelling the device; changing a search/filter while navigating by keyboard. Capture actual focus destinations and inventory changes. No code change authorised.
+
 ### WF-07 follow-up: submit failure boundaries and UI selection state (22 October 2026)
 
 **Evidence:** Published `v1.3.0` `app/caffoot-lite.html`, `handleDeviceSubmit()`, `handleSubnetSubmit()` and `handleRackSubmit()`. Source inspection only; no injected browser storage failure.
