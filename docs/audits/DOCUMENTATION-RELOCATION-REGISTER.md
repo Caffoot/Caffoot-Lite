@@ -75,3 +75,7 @@ Inspected `README.md`, `CONTRIBUTING.md`, `ROADMAP.md`, `docs/standards/DEVELOPM
 Also read representative temporary compatibility stubs at `docs/TECHNICAL-WORKFLOWS.md`, `docs/V1.3.1-MAINTENANCE-ROADMAP.md`, `docs/WF-03-DEVICE-LIFECYCLE-TEST-MATRIX.md`, `DEVELOPMENT-WORKFLOW.md` and `RELEASE-CHECKLIST.md`. Each points to its expected canonical location. This sample is **not** proof that every compatibility stub or every link is valid.
 
 **Outstanding:** Inspect all 27 stubs, review non-Markdown consumers of their paths, check fragment links, and assess external bookmarks before deleting anything. No stub was deleted in this checkpoint.
+
+## Release archive policy, 22 October 2026
+
+Created `docs/archive/README.md` with release tidy-up and archive rules, linked it from `docs/README.md`, and added a reference to `docs/standards/TECHNICAL-DOCUMENTATION-POLICY.md`. No version-specific technical documents were moved. Superseded documents should be archived only when their current replacements are ready and release-critical dependencies have been checked. A merged archive survives automatic source-branch deletion; unmerged changes do not become part of `main`.
