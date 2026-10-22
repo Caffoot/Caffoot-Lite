@@ -659,3 +659,15 @@ At startup, `loadStoredState()` creates `appState`, then `validateApplicationSta
 - All inspected catalogue mutations check `saveState()` and restore prior state or a captured state snapshot on failure. Distinguish persisted inventory integrity from usability of orphaned or archived option labels after reload.
 
 **Targeted WF-08 regression plan:** Create disposable devices using custom manufacturer/model/software/service values; edit, remove or archive each catalogue entry from both the dedicated screen and in-device manager; inspect device detail, Edit, filters, export, reload and import; restore archived services; force a failed save; verify old backups and legacy keys retain their meaning. Consider a maintenance candidate for consistent software archive behaviour only after observing the effect and checking compatibility. No code changes authorised.
+
+
+### WF-08 follow-up: archived software and services may be hidden in device details (source audit, 22 October 2026)
+
+**Evidence:** Published v1.3.0 `app/caffoot-lite.html`, blob `e8a24f6370a1bb572287aad91a314a3e4a189d94`, lines 5868–5888, 6148–6157, 6324–6361, 6381–6410. Source inspection only.
+
+- Device detail rendering deliberately combines available software with archived software, and available server services with archived services, and has explicit **Archived** labels (lines 5883–5887).
+- Both combined lists are then filtered by `activeFields = new Set(phase19BFieldsFor(d.type))`. That helper uses `phase120SoftwareFieldsFor(type)`, which takes only `phase120SoftwareOptions()` (active configured software and built-in suggestions), and `phase19BServerFunctionFields()`, which takes only `phase120AvailableServerServices()` (non-archived services). **Consequently an archived custom entry is normally excluded from the active field set before its Archived badge can render.** This is a source-supported display filtering defect candidate, not proof of lost stored device data. Other type-specific field rules may affect particular legacy keys.
+- The older in-device software manager deletes a custom catalogue row outright rather than archiving it (lines 6354–6359). A device's existing Boolean value may remain stored under that removed key, but without a catalogue row its label cannot be resolved by the device detail software list. This is a separate orphaned-label visibility concern; do not claim all views lose the data without checking them.
+- Existing records and backup compatibility must remain intact. Do not automatically delete archived/orphaned keys or tighten validation in a way that blocks existing inventory saves.
+
+**Browser regression:** Create a disposable device with custom software and server service selected. Archive each via dedicated pages, reload, open device details and edit form, check archived labels and historical assignment, export/import, restore service, and test the older manager's outright software removal separately. Check whether an archived service/software can be marked uninstalled without silently altering other selections. Verify data in exported JSON without using real inventory. No production code change authorised.
