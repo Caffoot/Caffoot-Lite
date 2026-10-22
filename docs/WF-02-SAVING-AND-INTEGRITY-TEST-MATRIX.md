@@ -19,7 +19,7 @@ Use a separate disposable browser profile and fictional inventory with the exact
 | S03 | Simulate a successful write followed by mismatching readback | Save reports failure; caller handles uncertainty; preserve recoverable state |
 | S04 | Save inventory with duplicate device ID or invalid reference | Validator rejects; stored bytes unchanged |
 | S05 | Save device with duplicate primary IP or IPAM ownership mismatch | Reject inconsistent state |
-| S06 | Save rack-mounted device with invalid rack, face or U range | Reject invalid state without destroying existing data |
+| S06 | Test invalid rack reference, mounting relationship, face, U range, rack bounds and placement overlap separately | Record which rules are rejected by the central save validator versus form-level placement checks; preserve stored data on rejected saves and flag any central validation gaps |
 | S07 | Edit device then force save failure | `handleDeviceSubmit()` restores prior in-memory snapshot and displays failure |
 | S08 | Assign device to rack then force save failure | `handleAssignSubmit()` restores prior state |
 | S09 | Unassign device then force save failure | Investigate source-observed unchecked `saveState()` result, visible outcome and reload discrepancy (M-001/M-002) |
@@ -63,3 +63,5 @@ These are **subcases of existing scenarios**, not extra mandatory test runs. The
 **Execution status:** All remain planned and unexecuted. A shared storage-failure fixture can cover these branches efficiently without treating each row as a separate testing framework.
 
 **M-021 source correction, 22 October 2026:** The model editor copies catalogue entries before editing and restores the previous reference on failed save. The specific suspected aliasing defect has been closed without change on source evidence. Keep the existing failed-save subcase as ordinary regression coverage, not a defect reproduction requirement.
+
+**S06 source-scope clarification, 22 October 2026:** The published `validateApplicationState()` explicitly checks rack existence, compatible mounting and U range consistency (HTML lines 1583–1599), but does not itself comprehensively check rack face, rack bounds or overlapping placements. Test these separately and distinguish form-level protection from save-level protection. Do not claim a test has passed or a browser defect has been reproduced.
