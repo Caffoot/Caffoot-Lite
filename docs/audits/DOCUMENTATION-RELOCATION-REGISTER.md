@@ -49,3 +49,9 @@ Source inspection of `app/build-offline.cjs` also found `THIRD-PARTY-NOTICES.md`
 ## Safety
 
 Documentation moves and index updates are not evidence that application behaviour has changed or browser tests have passed. No production release, merge or application code change is authorised by this register.
+
+## Reference reconciliation checkpoint, 22 October 2026
+
+Updated the root README, contributor guide and docs homepage to link to selected canonical document paths. Subsequently updated `docs/standards/TECHNICAL-DOCUMENTATION-POLICY.md`, `docs/testing/WF-03-DEVICE-LIFECYCLE-TEST-MATRIX.md` and `docs/roadmaps/V1.3.1-MAINTENANCE-ROADMAP.md` to replace specific old code-formatted document references with their repository-relative canonical paths.
+
+This was a **targeted reference pass**, not an exhaustive repository-wide link or fragment validation. The remaining temporary stubs must not be removed on the strength of this checkpoint alone. No browser, release build or archive verification has been performed in this housekeeping pass.
