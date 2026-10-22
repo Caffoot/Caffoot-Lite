@@ -64,3 +64,14 @@ The initial reference table and this addition are incremental, not a complete fu
 | `deleteSubnetCommit(subId)` | Entry point for committing a confirmed subnet deletion; implementation not yet fully traced | WF-04 | Review after complete source inspection |
 
 Names are descriptive suggestions only. No code has been renamed.
+
+## Additional WF-04 functions
+
+| Current function | Source-verified purpose | Workflow | Naming observation |
+| --- | --- | --- | --- |
+| `deleteSubnetCommit(subId)` | Recheck dependencies, retain devices and former primary IP metadata, release active allocations, remove subnet and linked VLAN, then save with rollback | WF-04 | `commitSubnetDeletion()` is a possible clearer name |
+| `deleteVlan(vId)` | Block deletion when a network subnet still uses the VLAN; otherwise confirm and save deletion with rollback | WF-04 | Existing name is descriptive |
+| `openIpModal(ip)` | Display IPAM editing form except for protected gateway addresses | WF-04 | Existing name is descriptive |
+| `handleIpSubmit(e, ip)` | Protect device primary IPs and gateways, change independent IPAM allocation, restore prior allocation on reported save failure | WF-04 | `saveIpAllocationFromForm()` is a possible clearer name |
+
+Suggested names are not approved code changes.
