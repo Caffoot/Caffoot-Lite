@@ -288,3 +288,18 @@ The rack editor rejects device and accessory collisions through dedicated placem
 7. The backup and restore safety panel can export current inventory and download the latest retained pre-restore snapshot. It explicitly warns that browser storage is not a substitute for an exported backup.
 
 **Nuance to test:** The rollback path verifies the main inventory's readback, but restoring the *previous safety snapshot* is not followed by a separate readback comparison. A failure to write that snapshot should enter recovery mode through the enclosing catch; a storage implementation that silently fails a snapshot write would not be detected by an explicit snapshot readback here. Also assess audit history if candidate persistence succeeds but the restore's additional verification fails. Do not claim observed corruption or data loss without a controlled browser reproduction.
+
+
+## WF-02 integrity repair, Phase 11C (additional source inspection)
+
+**Evidence:** `app/caffoot-lite.html` on `main`, blob `e8a24f6370a1bb572287aad91a314a3e4a189d94`, around lines 2201 to 2305. Runtime verification and exact release provenance remain pending.
+
+- `phase11CPlan()` prepares IPAM synchronisation proposals without changing inventory. It creates missing allocations and corrects status, device ID, hostname and notes for uniquely owned device primary IPs within a known subnet.
+- Duplicate primary IPs, absent matching subnets, conflicting IPAM ownership, independently allocated addresses, orphaned allocation or reservation references and missing racks are reported for manual review, not automatically changed.
+- `phase11CPreviewRepair()` retains a JSON snapshot and proposed plan in memory and rerenders the interface. `phase11CApplyRepair()` refuses to proceed without a preview or if the inventory JSON differs from the preview snapshot.
+- A nonempty repair plan requires browser `confirm()`. Before editing the in-memory allocations, the handler reads the previous value of `caffoot_phase11c_pre_repair_v1` and writes the current inventory JSON to that browser storage key. This snapshot write has no explicit readback comparison in this function.
+- The handler applies only the previewed IPAM changes, sets an audit reason and calls `saveState()`. On success it clears the preview and rerenders. `saveState()` performs inventory validation and exact readback verification of the main inventory key as documented above.
+- On a thrown error or a reported unsuccessful save, it restores the pre-repair inventory in memory, clears the audit reason, attempts to reinstate the previous repair snapshot (or remove the newly created one), clears the preview and shows an error. Failure to reinstate the previous snapshot is silently ignored. This catch path does not itself verify the main stored inventory or the restored snapshot.
+- `phase11CDownloadSnapshot()` exports the browser-local pre-repair JSON snapshot. `phase11CPanelHTML()` displays proposed repairs and manual review items. The snapshot download is available only when the storage key is readable through the safe storage helper.
+
+**Follow-up:** Browser-test successful repairs, blocked conflicts, changed inventory after preview, storage write and readback failures, snapshot persistence, snapshot download and failure recovery. Assess whether snapshot readback verification or a stronger rollback guarantee is needed. Do not classify data loss without reproduction. No application changes authorised.
