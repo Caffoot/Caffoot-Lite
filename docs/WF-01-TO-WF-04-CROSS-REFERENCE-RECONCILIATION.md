@@ -69,3 +69,14 @@ The published `handleDeviceSubmit()` (7122–7124) reads `virtualHostId` only fo
 The same handler (7149–7179) permits an existing device's type to be changed after the applicable type-field conversion review. That review addresses obsolete type-specific fields, but the examined path does not explicitly search for other virtual devices referencing the edited device as `virtualHostId`. Thus a physical server may be converted to another type while its dependants retain their old host link. `deleteDevice()` (7187–7199) likewise does not check those incoming links. `validateApplicationState()` (1556–1612) does not verify `virtualHostId` relationships. These are **source-confirmed gaps in cross-record checking**, not browser-tested outcomes.
 
 **Policy decision required under M-005 and M-008:** Should conversion or deletion be blocked until hosted virtual servers are reassigned, or should there be an explicit reviewed detachment workflow? Do not choose a policy implicitly. Preserve historical records and backups, and test both successful and failed saves before implementing any change.
+
+## Rack deletion, rack resize and IPAM reservation integrity, 22 October 2026
+
+Published source shows additional cross-record safeguards that must not be overlooked:
+
+- `deleteRack()` (5492–5505) refuses to remove a rack containing either mounted devices **or rack accessories**. On a failed deletion save, it restores the previous selected rack ID; `phase11BCommitDelete()` restores the inventory. This contrasts with M-022, which concerns **new rack creation** selection on failed save.
+- Rack physical correction (5452–5456) checks that the new height does not cut off a mounted device or accessory before saving. It checks the upper extent of recorded placements; this does not replace complete central validation of malformed imported placement records.
+- `phase11BIntegrityIssues()` (4863–4883) checks missing rack references, duplicate primary IPs, device/IPAM ownership mismatches and dangling `reservedForDeviceId` references. By contrast, `validateApplicationState()` (1556–1612) checks IPAM `deviceId` ownership but does not explicitly check dangling `reservedForDeviceId`. **Different validators cover different rules**; document the actual call path before claiming a safeguard applies to all saves or imports.
+- `deleteDevice()` (7187–7199) explicitly clears `reservedForDeviceId` references pointing to the deleted device, which helps preserve reservation integrity during that workflow. This does not address incoming virtual-host links.
+
+**Follow-up:** Trace all callers of `phase11BIntegrityIssues()` and whether import, ordinary saving and safety checks use it. Reuse WF-02/03 existing scenarios for dangling reservation references and rack deletion/resize. These are source observations only, not browser test outcomes.
