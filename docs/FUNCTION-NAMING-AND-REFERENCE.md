@@ -29,6 +29,8 @@ Future contributors should understand what each important function does without 
 | `unassignDevice(deviceId)` | Clear a device's rack assignment and set its mount type to Desktop; save result currently unchecked | WF-03, WF-05 | `unassignDeviceFromRack()` |
 | `deleteDevice(deviceId)` | Confirm deletion, remove device-linked allocations, clear reservations and delegate persistence and rollback | WF-03 | Existing name is already descriptive |
 
+| `phase10DReportData()` | Prepare live device, location, rack and subnet report summaries; rack occupancy currently sums device U ranges by face and omits rack accessories (M-013) | WF-05, reporting | `buildInventoryReportData()` |
+
 **Caution:** Proposed names are suggestions, not a refactoring plan. Review complete behaviour, call sites and naming collisions before selecting replacements.
 
 ## Reference entry requirements
@@ -160,3 +162,17 @@ These are descriptive naming proposals, not approved code changes.
 | `phase11CPanelHTML()` | Render preview, blocked items, confirmation control and snapshot download | `renderIntegrityRepairPanel()` | Source inspected; browser pending |
 
 Source: `app/caffoot-lite.html` on `main`, blob `e8a24f6370a1bb572287aad91a314a3e4a189d94`, approximately lines 2201 to 2305. These are suggestions only; no renames authorised.
+
+## WF-05 reporting function detail
+
+**Current:** `phase10DReportData()`, published v1.3.0 `app/caffoot-lite.html`, approximately lines 2305–2336.
+
+**Proposed:** `buildInventoryReportData()`, pending naming review and approval.
+
+**Inputs and state:** No arguments. Reads `appState.devices`, `appState.racks` and `appState.subnets`; calls `phase10SubnetSummary()`. Returns device rows, location counts, rack occupancy summaries and subnet summaries without intentionally modifying inventory state.
+
+**Callers:** `phase10DDownloadCsv(kind)` for CSV exports and `phase10DReportsHTML()` for the Reports screen.
+
+**Existing behaviour and risk:** Rack face occupancy sums device U spans; accessories are omitted and overlapping device records may be counted more than once. The report percentage uses the higher of front or rear occupancy. This is a source-confirmed calculation inconsistency, not a browser-verified defect. Track functional review under M-013 and do not change the calculation as part of a cosmetic rename.
+
+**Testing and change control:** No browser regression completed for this finding. If a rename is approved, update both callers and associated tests and documentation. Review the shared occupancy design separately before changing reported values.
