@@ -132,3 +132,8 @@ The product owner confirmed that fictional device `TEST-SW01` appears correctly 
 ## Owner first backup export checkpoint, 23 October 2026
 
 The product owner reported that the JSON backup downloaded correctly from the published v1.3.0 application after creating a fictional subnet, location, rack and device and confirming its IPAM allocation. This is owner-reported manual browser evidence of the download action, not an independently inspected backup file. File size, JSON contents, continued visibility of the active inventory and successful restoration have not yet been verified. The owner has been asked to confirm a nonempty download and unchanged inventory before any restore exercise. The location/rack prerequisite guidance gap remains open. WF-14 and M-030 remain open; no automated application tests were executed.
+
+
+## Owner first backup file size confirmation, 23 October 2026
+
+The product owner confirmed that the downloaded JSON backup is approximately 3 KB, establishing that the downloaded file is nonempty. The file's contents, schema and ability to restore remain uninspected. Continued visibility of `TEST-SW01` and its IPAM allocation after export has been requested but is not yet confirmed. This is owner-reported manual evidence, not an automated test. WF-14 and M-030 remain open.
