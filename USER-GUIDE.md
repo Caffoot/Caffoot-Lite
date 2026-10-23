@@ -46,6 +46,10 @@ Open **Settings & Data** for **Data Management**, **Preferences**, **Help & Guid
 
 ### Data Management — Back Up & Restore
 
+**First backup:** After adding useful inventory, open **Settings & Data → Data Management → Back Up & Restore** and select **Download Backup**. Keep the resulting JSON file somewhere safe outside the browser. Repeat this before upgrading, moving the HTML file or importing another inventory.
+
+**Before restoring:** Download a backup of the inventory currently open. **Choose Backup File** replaces rather than combines inventories, so review the confirmation before proceeding. After import, check your devices, IPAM and racks. Use a separate browser profile with disposable data for practice restores.
+
 - **Download Backup** exports your inventory as a JSON file. Save it somewhere secure outside the browser; this is a manual backup, not automatic synchronisation.
 - **Choose Backup File** selects a previously exported JSON file. Review the validation and replacement confirmation carefully. When restoring an older backup, review any access-point mounting conflicts and confirm any legacy desktop/laptop rack-mount corrections before the final replacement confirmation. Cancelling a review leaves the active inventory unchanged. A restore **replaces** the active inventory; it does not merge records. Download a fresh backup before restoring and verify devices, IPAM, subnets and racks afterwards.
 
