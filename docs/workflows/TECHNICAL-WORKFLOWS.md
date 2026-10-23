@@ -833,3 +833,28 @@ Names below are existing published v1.3.0 identifiers. Proposed alternatives are
 **Maintenance reconciliation:** M-025 already covers plain-language backup/recovery terminology; M-026 already covers shared form conventions. Avoid duplicating these. The two additional WF-09 investigation candidates are (1) malformed array-shaped local audit events affecting the history view and (2) possible stale success events or baseline after a later restore/reset verification failure. Record together as a scoped history reliability candidate, with browser fault injection required before implementation. Also test whether appearance selection silently fails to persist under blocked browser storage. No application changes or browser tests performed.
 
 **WF-09 source checkpoint:** Local change-history lifecycle, reload, export boundaries, inventory save ordering, restore/reset interaction, recovery mode, settings/appearance preferences, and targeted naming review have been inspected. This is a **source checkpoint only**, not a browser or accessibility sign-off. Preserve compatibility with existing browser storage and older inventory backups, and keep history failures non-blocking for inventory use.
+
+
+## WF-10: security, build and release process (source audit opened, 23 October 2026)
+
+**Scope:** Published `main` repository scripts, package manifest and GitHub workflows. Source/configuration inspection only; no build, browser execution or workflow run was performed in this checkpoint.
+
+### Build and packaging path
+
+- `app/package.json` identifies v1.3.0 and defines `npm run release` as a chain of source, security, inventory, rack, restore, catalogue, subnet, update and backup checks followed by `npm run build`, `npm run check:build` and `npm run package`. The chain stops on a failed command. A script being defined does not prove that it has passed on the current commit.
+- `app/build-offline.cjs` builds `app/dist/Caffoot-Lite.html` from `app/caffoot-lite.html`, compiling Tailwind locally, embedding Font Awesome CSS/webfonts and branding images, replacing external runtime CSS dependencies and embedding licence notices. It rejects unexpected source layout and remaining remote runtime resources. The developer source and distributed standalone HTML are distinct artifacts.
+- `app/verify-build.cjs` checks for embedded styles, fonts and branding, absence of selected remote or parent-directory resource references, expected app markers and licence notices. Its own final output says it does not replace browser testing.
+- `app/package-release.cjs` checks source/package/build version alignment, installed dependency licence copies, expected notice text, exact release ZIP membership, extracted file hashes and SHA256SUMS. Packaging creates a release candidate locally; it does **not** itself publish a GitHub release.
+
+### GitHub automation boundaries
+
+- `.github/workflows/caffoot-lite.yml` runs on pushes to `main` affecting `app/**` or that workflow, plus manual dispatch. It installs dependencies, runs the release chain, parses inline JavaScript syntax, installs Playwright Chromium, executes four browser scripts (offline, import, restore, upgrade), and uploads preview HTML/ZIP/checksums as a testing artifact. This workflow is not configured to run automatically for documentation-only branch pushes.
+- `.github/workflows/validate-hotfix.yml` runs on pull requests affecting `app/**`, release notes or its workflow, plus manual dispatch. It runs `npm run release` and uploads a candidate package. **It does not invoke the four Playwright browser scripts in `caffoot-lite.yml`.** A green hotfix workflow therefore is not, by itself, proof of a full browser regression run.
+- `.github/workflows/git-history-secrets.yml` scans reachable Git history using Gitleaks on pull requests, pushes to `main` and manual dispatch. This is a repository history secret check, not a guarantee that the application has no security flaws.
+- `.github/workflows/publish-v1.0.0.yml` is a historical, version-specific publishing workflow, restricted by repository/ref and pinned approved v1.0.0 source/artifact. Do **not** treat it as a generic current-release publishing mechanism. Verify actual current publication procedure separately.
+
+### First review findings and next checks
+
+- **Release assurance boundary:** Pull-request validation and main-branch build automation exercise different test sets. Establish which checks must pass before approving each future maintenance release and whether a documented browser-test gate is needed. No workflow change is authorised by this audit.
+- **Naming/responsibility review:** `build-offline.cjs` creates the distributed standalone HTML; `verify-build.cjs` verifies its structure; `package-release.cjs` creates and verifies the release ZIP; `npm run release` is a *local build and verification pipeline*, not a publication command. Documentation and future function/script names should make that distinction clear.
+- **Next:** Inspect security/privacy/network checks and their limitations, current release instructions and GitHub publication path, dependency pinning, workflow permissions, offline test scope and any test gaps. Record source evidence and remaining manual release checks before the WF-10 checkpoint. Never claim CI success without inspecting the relevant run.
