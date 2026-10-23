@@ -25,7 +25,7 @@ const { chromium } = require('playwright');
     for (const mode of ['throw-snapshot', 'ignore-snapshot', 'throw-main', 'success', 'old-snapshot']) {
       await scenario('M-031 ' + mode, async page => {
         const result = await page.evaluate(({ mode, key, inventoryKey }) => {
-          const subnet = { id:'fictional-subnet', name:'Audit test', cidr:'10.88.77.0/29', gateway:'10.88.77.1' };
+          const subnet = { id:'fictional-subnet', name:'Audit test', kind:'network', cidr:'10.88.77.0/29', gateway:'10.88.77.1', vlan:3877 };
           appState.subnets.push(subnet);
           const before = JSON.stringify(appState);
           localStorage.setItem(inventoryKey, before);
@@ -148,7 +148,7 @@ const { chromium } = require('playwright');
       await scenario('M-012 repair ' + mode, async page => {
         page.on('dialog', dialog => dialog.accept());
         const result=await page.evaluate(mode => {
-          appState.subnets.push({id:'fictional-repair-subnet',name:'Fictional repair',cidr:'10.87.76.0/29',gateway:'10.87.76.1'});
+          appState.subnets.push({id:'fictional-repair-subnet',name:'Fictional repair',kind:'network',cidr:'10.87.76.0/29',gateway:'10.87.76.1',vlan:3876});
           appState.devices.push({id:'fictional-repair-device',name:'Fictional repair device',type:'Server',primaryIp:'10.87.76.2'});
           const before=JSON.stringify(appState);
           localStorage.setItem('caffoot_state',before);
