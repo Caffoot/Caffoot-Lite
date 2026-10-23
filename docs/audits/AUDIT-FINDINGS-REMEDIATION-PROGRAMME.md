@@ -107,6 +107,23 @@ This programme is the central planning register. Detailed evidence remains in th
 
 **Before each release:** Review the entire findings register for open risks, assign every incomplete item to an approved later release or explicit deferral, reconcile all affected documents and obtain explicit product owner approval before merging or publication.
 
+## M-005 current source investigation checkpoint, 23 October 2026
+
+**Source inspected:** Current `main` `app/caffoot-lite.html`, fetched during this checkpoint (8,656 lines; file blob `8e97cd82863d9a7b84d640c89962619065db0c3b`). This is inspection of current repository source, not a newly executed browser test or proof of published package behaviour.
+
+- The virtual host selector at approximately line 6864 lists other devices of type `Server - Physical`. `handleDeviceSubmit()` at approximately lines 7125–7145 rejects a nonempty `virtualHostId` unless it points to an existing physical server other than the edited device.
+- The physical device conversion update at approximately lines 7189–7195 assigns the new `type` without an explicit incoming dependency check for virtual devices that still reference its ID.
+- `deleteDevice()` starts at approximately line 7209 and constructs a deletion summary from IPAM ownership, reservations and rack placement. The previously recorded source review found no explicit incoming `virtualHostId` dependency check.
+- `validateApplicationState()` starts at approximately line 1556; the earlier workflow and audit source traces record that it does not validate `virtualHostId` referential integrity.
+
+**Assessment:** The absence of incoming host relationship safeguards remains a source-supported risk under M-005. Do not claim a reproduced orphan link or a passed browser test. The existing WF-03 test matrix scenarios D10, D11, D12, D13 and D26 cover creation, invalid selection, host deletion, host conversion and malformed imports. All M-005 scenarios remain unexecuted at this checkpoint.
+
+**Recommended product decision, not yet approved:** Prevent deletion or conversion of a physical host while dependent virtual servers remain assigned, show their names and offer a clear path to reassign them first. Preserve historical imported relationships and avoid silently removing links or blocking unrelated saves of older inventories. Agree how existing orphaned references should be displayed and repaired before implementation.
+
+**Next verification:** Inspect the full deletion, import and validation caller paths against the exact intended maintenance revision, then execute the existing scenarios with disposable fictional inventories, including save failure, reload and backup compatibility. Update WF-03, WF-06, function references, test evidence, the master audit and roadmap when evidence or decisions change.
+
+**Documentation checkpoint:** Central remediation programme updated. Existing technical workflows, master audit and WF-03 matrix were inspected and already record this gap, so their historical findings have not been rewritten. No application code changed, no tests executed, and no merge or release authorised. The master audit remains administratively closed with individual P12 gaps open.
+
 ## Permanent change and closure rules
 
 For each change, review the current workflow, function references and explanatory comments, test matrices, data and backup compatibility, audit and development findings, user guidance, roadmap and release notes. Update affected living documents in the same pull request. Record a short reason where an area is not applicable.
