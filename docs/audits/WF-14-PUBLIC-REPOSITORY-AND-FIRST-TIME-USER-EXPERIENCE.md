@@ -117,3 +117,8 @@ The product owner reported that the published Caffoot Lite v1.3.0 HTML opened su
 ## Owner first subnet creation checkpoint, 23 October 2026
 
 The product owner reported that the fictional IP Address Block and Network / VLAN subnet creation step in the fresh-profile published v1.3.0 application saved as expected. This is owner-executed manual browser evidence; no screenshot, storage readback or automated test result was independently inspected. The next manual check is adding fictional device `TEST-SW01` with address `192.168.50.10`, then confirming its Device Inventory and IPAM entries. Backup export and restore remain outstanding. WF-14 and M-030 remain open.
+
+
+## Owner first device and prerequisite discovery, 23 October 2026
+
+The product owner reported that the fictional test device saved correctly after first creating a rack and adding a location in the published v1.3.0 fresh-profile walkthrough. This is owner-reported manual browser evidence, not an independently observed or automated test. The additional location/rack steps reveal a first-time guidance gap: instructions should explain when these prerequisites are needed for the chosen mounting configuration. Do not assume every device requires a rack. IPAM allocation for the test device has not yet been separately confirmed; ask the owner before marking it passed. Backup export and restore remain outstanding. WF-14 and M-030 remain open.
