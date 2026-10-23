@@ -691,3 +691,15 @@ At startup, `loadStoredState()` creates `appState`, then `validateApplicationSta
 - The archived server service detail display has an Archived badge but no equivalent direct disable control in that detail row (lines 5886–5887). Confirm intended service removal through edit forms or catalogue restoration; avoid assuming a missing function is a defect without user-flow testing.
 
 **Regression:** Archive custom software/service on a disposable device; make unrelated device edits, save and reload; inspect exported JSON for preserved true values; test the archived uninstall action once made reachable; check failed saves, legacy top-level values and previous type configurations. Keep historical inventory readable and avoid unexpected mutation of hidden keys.
+
+
+### WF-08 follow-up: final device save and type conversion (source audit, 23 October 2026)
+
+**Evidence:** Published v1.3.0 `app/caffoot-lite.html` lines 6541–6547, 6804–6813, 7045–7060 and 7105–7184. Source inspection, not browser testing.
+
+- On opening an existing device, `phase19BFormValues` is seeded with a copy of its full `typeDetails`. `phase19BReadFields()` overwrites only currently rendered fields and returns the whole working object. `handleDeviceSubmit()` uses this returned object when saving. For an ordinary same-type edit, this source path preserves hidden archived and unrecognised keys, subject to any intervening form interactions or other validation not covered by this source trace.
+- Before mutating a device, `handleDeviceSubmit()` captures `JSON.stringify(appState)`. Both device/IPAM exceptions and a failed `saveState()` restore the captured state; the latter displays an explicit failure toast (lines 7166–7182). Successful saves force-close the modal only after persistence succeeds.
+- On type change, `phase130ObsoleteDeviceFields()` identifies **populated** keys that are in its recognised-key set but invalid for the destination type. Its recognised set includes configured software keys, including archived custom software via `phase19BSoftwareFields()`, and available service keys via `phase19BServerFunctionFields()`. Unknown legacy keys remain untouched by design (lines 7045–7060).
+- The conversion path requires user confirmation, stores removed recognised values in `previousTypeDetails`, and aborts if the form or underlying device has changed while awaiting confirmation (lines 7150–7164). Therefore **do not claim all archived assignments are always retained in current `typeDetails` after a device-type change**: some recognised archived software keys may be moved to history; archived service keys absent from the available-service recognised set may instead remain. The exact outcome depends on destination type and keys. Check in browser and backup exports.
+
+**Verification:** Test ordinary same-type edit with archived software and service keys, then type changes in both directions, cancellation, confirmation, history display, restoring previous configuration, failed save and export/import. Verify archived software and services are understandable and manageable, while preserving legacy unknown keys. No production code change authorised.
