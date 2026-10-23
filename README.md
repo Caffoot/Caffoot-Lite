@@ -7,6 +7,26 @@
 
 No Docker, database, web server or account is required to run the published release. Download the HTML application and open it in a modern browser. Your inventory stays in that browser's local storage, so **regular JSON exports are essential**: browser data loss can mean inventory loss.
 
+## Try Caffoot Lite
+
+**No installation or account needed.** Download the published HTML file, open it in your browser and start documenting your network. You can try it with fictional data before entering real infrastructure details.
+
+**Your inventory stays in that browser, not in the HTML file.** Export JSON backups regularly, especially before changing browsers or updating Caffoot Lite. It does not provide automatic backups or a shared server database.
+
+## Download and run
+
+**[Get the latest stable Caffoot Lite release](https://github.com/caffoot/Caffoot-Lite/releases/latest)** — no installation, Docker or server required.
+
+1. Open the **[latest release page](https://github.com/caffoot/Caffoot-Lite/releases/latest)**.
+2. Under **Assets**, download the version-named `Caffoot-Lite-<version>.zip` release package, which includes the standalone app, guides and licences. Alternatively, download `Caffoot-Lite.html` directly from the release assets.
+3. If you downloaded the release ZIP, extract it and open `Caffoot-Lite.html` in a modern browser. No Docker, Node.js or web server is needed to run it.
+
+**Want the source code instead?** Click the green **Code** button on the repository page and choose **Download ZIP**. This is the source repository, **not** the ready-to-run release package; building from source requires Node.js and npm.
+
+**Your first five minutes:** Open the released HTML file, add an IP Address Block and a subnet in **IPAM → Manage Subnets**, then add a device in **Devices → Device Inventory**. If you want the device mounted in a rack, create its location in **Devices → Locations** and its rack in **Network Racks → Rack Inventory** before assigning the device. Devices that are not rack mounted do not need a rack. Once you have entered useful information, open **Settings & Data → Data Management → Back Up & Restore** and select **Download Backup**. Save the JSON file outside your browser. This is a manual backup, not automatic synchronisation. Restoring a backup later replaces the active inventory rather than combining records.
+
+See the detailed [installation and upgrade guide](INSTALLATION.md) and [user guide](USER-GUIDE.md) for the complete process and storage precautions.
+
 ## v1.3.0 Rack Management
 
 The published v1.3.0 release focuses on Rack Overview, Rack Inventory and Rack Accessories, improved rack elevations, configuration and legacy mounting compatibility. See the [v1.3.0 release notes](RELEASE-NOTES-1.3.0.md) and the [roadmap](ROADMAP.md). Advanced addressing and reporting are deferred to later milestones.
@@ -75,20 +95,6 @@ v1.1.2 delivered security hardening and automated regression checks. A comprehen
 **Using Caffoot Lite v1.0.3 or v1.1.0 and seeing “Could not check releases”?** These versions can fail to recognise the uppercase `V` in a GitHub release tag. Your inventory is not changed by this error, and the application can still run offline. **The update checker cannot repair an older HTML file automatically.**
 
 To update manually, first **download and safely store a JSON backup** from **Settings & Data Management** in your current installation. Then visit the [official Caffoot Lite releases](https://github.com/Caffoot/Caffoot-Lite/releases) and download the latest published release's `Caffoot-Lite.html` or versioned ZIP. Keep the old HTML and backup until you have checked the new file in your browser. **Do not clear browser storage**; moving or renaming local HTML files can affect access to stored inventory. See [INSTALLATION.md](INSTALLATION.md) for the full upgrade precautions.
-
-## Download and run
-
-**[Get the latest stable Caffoot Lite release](https://github.com/caffoot/Caffoot-Lite/releases/latest)** — no installation, Docker or server required.
-
-1. Open the **[latest release page](https://github.com/caffoot/Caffoot-Lite/releases/latest)**.
-2. Under **Assets**, download the version-named `Caffoot-Lite-<version>.zip` release package, which includes the standalone app, guides and licences. Alternatively, download `Caffoot-Lite.html` directly from the release assets.
-3. If you downloaded the release ZIP, extract it and open `Caffoot-Lite.html` in a modern browser. No Docker, Node.js or web server is needed to run it.
-
-**Want the source code instead?** Click the green **Code** button on the repository page and choose **Download ZIP**. This is the source repository, **not** the ready-to-run release package; building from source requires Node.js and npm.
-
-**Your first five minutes:** Open the released HTML file, add an IP Address Block and a subnet in **IPAM → Manage Subnets**, then add a device in **Devices → Device Inventory**. If you want the device mounted in a rack, create its location in **Devices → Locations** and its rack in **Network Racks → Rack Inventory** before assigning the device. Devices that are not rack mounted do not need a rack. Once you have entered useful information, open **Settings & Data → Data Management → Back Up & Restore** and select **Download Backup**. Save the JSON file outside your browser. This is a manual backup, not automatic synchronisation. Restoring a backup later replaces the active inventory rather than combining records.
-
-See the detailed [installation and upgrade guide](INSTALLATION.md) and [user guide](USER-GUIDE.md) for the complete process and storage precautions.
 
 ## Who is Caffoot Lite for?
 
