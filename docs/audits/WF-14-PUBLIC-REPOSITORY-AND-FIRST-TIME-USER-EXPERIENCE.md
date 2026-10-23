@@ -137,3 +137,8 @@ The product owner reported that the JSON backup downloaded correctly from the pu
 ## Owner first backup file size confirmation, 23 October 2026
 
 The product owner confirmed that the downloaded JSON backup is approximately 3 KB, establishing that the downloaded file is nonempty. The file's contents, schema and ability to restore remain uninspected. Continued visibility of `TEST-SW01` and its IPAM allocation after export has been requested but is not yet confirmed. This is owner-reported manual evidence, not an automated test. WF-14 and M-030 remain open.
+
+
+## Owner post-export inventory persistence confirmation, 23 October 2026
+
+The product owner confirmed that following Download Backup, `TEST-SW01` remains visible and its address `192.168.50.10` remains correctly allocated in IPAM. The downloaded JSON file was previously reported to be approximately 3 KB. These are owner-executed manual checks in a separate browser profile using fictional data, not automated tests or independent inspection of the JSON contents. First-time launch, subnet, location, rack, device save, IPAM allocation, nonempty backup download and post-export inventory persistence have now been reported successful. Restore behaviour and backup contents remain unverified; do not mark the full first-time journey complete. The first-time location/rack guidance gap remains open. WF-14 and M-030 remain open.
