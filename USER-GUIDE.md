@@ -4,9 +4,9 @@
 
 This guide covers the published v1.3.0 release, including Devices & Intelligence and rack-management workflows, with relevant information for users upgrading from earlier releases. The redesigned Settings & Data interface was introduced in v1.1.1, with security hardening in v1.1.2.
 
-## v1.2.0 Devices & Intelligence
+## Devices & Intelligence in v1.3.0
 
-v1.2.0 adds **Devices → Overview** for local inventory charts and drill-downs; **Device Inventory**, **Device Types** and **Locations** for distinct management views; and **Device Catalogues** for **Manufacturers**, **Models**, **Software** and **Server Services**. The wider Add/Edit Device form has five tabs: **General**, **Hardware**, **Software & Firmware**, **Networking** and **Notes**. Server Services are managed separately from software assignments. Archived catalogue entries are retained for historical device records, with restoration where offered. Always verify saved assignments after changing a catalogue entry.
+The published v1.3.0 release includes the Devices & Intelligence features introduced in v1.2.0. These include **Devices → Overview** for local inventory charts and drill-downs; **Device Inventory**, **Device Types** and **Locations** for distinct management views; and **Device Catalogues** for **Manufacturers**, **Models**, **Software** and **Server Services**. The wider Add/Edit Device form has five tabs: **General**, **Hardware**, **Software & Firmware**, **Networking** and **Notes**. Server Services are managed separately from software assignments. Archived catalogue entries are retained for historical device records, with restoration where offered. Always verify saved assignments after changing a catalogue entry.
 
 ## Getting started
 
@@ -28,7 +28,7 @@ Use **IPAM** to inspect allocations and reservations, identify available address
 
 ### 4. Work with racks
 
-In the **published v1.3.0 release**, expand **Network Racks** in the sidebar. **Rack Overview** shows inventory-based capacity, equipment, location and type summaries; **Rack Inventory** lets you search, add and open individual racks; **Rack Accessories** manages rack accessories. These summaries are not live monitoring. In a rack detail view, inspect front/rear elevations and available U positions before placing equipment. For rack-mounted devices, review U height and placement; avoid overlaps with devices and accessories. A 0U accessory does not occupy numbered rack units. Verify placement visually after dragging or editing an item, and review any rack-resize warnings before saving. Earlier releases, including v1.2.1, may use different navigation labels.
+In v1.3.0, expand **Network Racks** in the sidebar. **Rack Overview** shows inventory-based capacity, equipment, location and type summaries; **Rack Inventory** lets you search, add and open individual racks; **Rack Accessories** manages rack accessories. These summaries are not live monitoring. In a rack detail view, inspect front/rear elevations and available U positions before placing equipment. For rack-mounted devices, review U height and placement; avoid overlaps with devices and accessories. A 0U accessory does not occupy numbered rack units. Verify placement visually after dragging or editing an item, and review any rack-resize warnings before saving. Earlier releases, including v1.2.1, may use different navigation labels.
 
 ### 5. Types, locations and device details
 
@@ -38,11 +38,9 @@ Use **Devices → Device Types** and **Devices → Locations** to review and man
 
 The **Dashboard** summarises inventory and network information based on your locally saved data. If it appears empty, add a subnet and some devices, then return to the dashboard. In v1.1.1, **Inventory Health** checks known inconsistencies across saved devices, IPAM, subnets, VLANs and rack assignments. A healthy result does not verify backup availability, browser storage safety or live network reachability.
 
-## Settings & Data (v1.1.1)
+## Settings & Data
 
-The Settings tabs are **Data Management**, **Preferences**, **Help & Guides**, and **About Caffoot Lite**.
-
-Open **Settings & Data** for **Data Management**, **Preferences**, **Help & Guides**, and **About Caffoot Lite**. These tabs are available in v1.1.1, v1.1.2 and v1.2.0; older releases may have different labels and placement.
+Open **Settings & Data** for **Data Management**, **Preferences**, **Help & Guides** and **About Caffoot Lite**. These tabs are present in the published v1.3.0 release. The redesigned Settings interface was introduced in v1.1.1; older releases may have different labels and placement.
 
 ### Data Management — Back Up & Restore
 
