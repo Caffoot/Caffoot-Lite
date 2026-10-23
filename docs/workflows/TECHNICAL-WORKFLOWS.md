@@ -990,3 +990,10 @@ PR [#81](https://github.com/Caffoot/Caffoot-Lite/pull/81) merged to `main` as `4
 **Source and evidence distinction:** The named functions above were inspected in the current repository HTML. M-011's broader restoration behaviour is supported by the recorded merged PR and executed Chromium assertions; the full helper-level call chain has not been newly inspected in this documentation checkpoint. Historical tests are not new executions. The individual P12 gates remain partial as stated in the workflow register above.
 
 **Maintenance release distinction:** Published v1.3.0 remains unchanged. These merged corrections require explicit inclusion, package verification, relevant regression evidence and product owner approval before any v1.3.1 release.
+
+
+### WF-06 and WF-12 M-011 current source trace, 23 October 2026
+
+The top-level `importData(event)` implementation on current `main` was inspected, including its backup parsing and validation calls, mounting conflict review, candidate confirmation, exact safety copy readback, candidate save and normalised readback, and both original inventory and previous safety copy rollback checks. On an unverified rollback, it sets `phase17AStorageRecovery`, shows `phase17ARecoveryBanner()` and relies on the existing recovery guard to block subsequent saves. See the [M-011 function call chain](../standards/FUNCTION-NAMING-AND-REFERENCE.md#m-011-import-rollback-call-chain-source-inspection-23-october-2026) for ordered steps and dependencies.
+
+**Verified previously by execution:** PR #81, Chromium run 39959581469, including ignored restoration, recovery banner and save blocking. **Checked in this checkpoint:** source inspection of `importData()` and identification of its called helpers. **Not checked:** all helper internals, historical backup variations and exhaustive rollback fault combinations. These remain part of the partial WF-06 and WF-12 gates.
