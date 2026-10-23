@@ -47,3 +47,40 @@ Reuse historical CI, owner acceptance and inspected test assertions. Do not reru
 **Executed evidence recovered, not newly run by this audit:** GitHub Actions [Build Caffoot Lite standalone HTML run 39940647187](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39940647187) completed successfully on 23 October 2026, push commit `d0a817f95711cf668d0c6ae26b0b66ef8725bef9`. Job `120370950406` was successful. Its retrieved log explicitly invokes `node test-browser-offline.cjs`, `node test-browser-import.cjs`, `node test-browser-restore.cjs` and `node test-browser-upgrade.cjs`; all four completed with passing assertions. Logs include corrupt-inventory recovery and raw-text export, rejected import persistence, failed device/IPAM save rollback, cancelled/failed/successful restore, reload and renamed HTML upgrade. The job uploaded preview artifact `12496072816`. This **satisfies the consolidated plan's alternative of a recorded successful run on an identified revision**, so do not repeat the four scripts solely for provenance. It does **not** establish a Chromium run on the exact 21 October release revision or cover M-014 emergency reset or M-031 bulk IPAM snapshot fault injection.
 
 **Published asset metadata recovered:** GitHub release API for tag `v1.3.0`, published 21 October 2026, reports SHA256 digests: `Caffoot-Lite-1.3.0.zip` = `2b02d12f163c27a5a0b63ffdd11facde0dc713266ecb1f567bb689ed7ecbcfdb`; `Caffoot-Lite.html` = `585360a2e219bc2998b413daae51d4ce0c17928dcbb73669ab1dc86e3cfbf713`; `SHA256SUMS` = `12e023a30675fdfc80dfe689206eeb4a55ef3cb8448876daa0742d5f5ebc444e`. These are **GitHub-reported release asset digests**, not locally downloaded and independently calculated hashes. Comparing published bytes to the candidate artifact remains outstanding. No new test execution or release.
+
+## M-014 and M-031 targeted verification design, 23 October 2026
+
+**Checkpoint type:** source inspection and test design only. No fault injection or browser test was executed. This is not a defect confirmation or an implementation approval.
+
+### M-014 recovery banner reset
+
+Source: `app/caffoot-lite.html`, recovery banner reset handler. The reset requires two confirmations and writes default inventory to the primary storage key before reload. A thrown write is handled, but there is no immediate readback comparison. This is distinct from the Settings Clean Start path and its existing tests.
+
+In a disposable Chromium profile only, prepare a fictional malformed primary inventory with a distinctive raw-text marker and confirm the recovery banner appears. Capture exact original storage bytes before each isolated scenario.
+
+| Scenario | Test action | Required evidence |
+| --- | --- | --- |
+| R1 | Decline the first confirmation | No reset, no reload, original raw bytes preserved |
+| R2 | Accept first and decline second confirmation | No reset, no reload, original raw bytes preserved |
+| R3 | Inject a throwing `setItem` only for the primary inventory key | Error shown, no reload, original raw bytes preserved |
+| R4 | Inject a silently ignored `setItem` only for the primary inventory key | Record banner, reload and bytes; check whether a false success or recovery loop occurs |
+| R5 | Permit a successful write | Stored defaults survive reload and the banner clears |
+| R6 | Export original raw text before reset | Download contains the exact pre-reset bytes and a clearly identified recovery copy |
+
+Record the source SHA, Chromium version, script or manual steps, storage bytes before/after, UI message, reload result and pass/fail for each. Do not test against a real inventory.
+
+### M-031 bulk IPAM safety snapshot
+
+Source: `phase12BApply()` in `app/caffoot-lite.html`. The function writes `caffoot_phase12b_prebulk_snapshot` within a try/catch, mutates allocations, then calls `saveState()`; on save failure it restores the previous `appState` in memory. No snapshot readback occurs before mutation.
+
+Prepare a disposable valid fictional subnet and eligible addresses. Capture primary inventory and prebulk snapshot bytes before each independent scenario.
+
+| Scenario | Test action | Required evidence |
+| --- | --- | --- |
+| B1 | Inject a throwing write for the prebulk snapshot key | Bulk action cancelled, allocations and primary bytes unchanged, error shown |
+| B2 | Silently ignore the prebulk snapshot write | Determine whether operation proceeds without a verified safety copy; record snapshot, primary bytes and reload |
+| B3 | Permit snapshot but force primary inventory save failure | Verify previous in-memory allocations, saved primary bytes and recovery message after reload |
+| B4 | Permit both writes | Snapshot equals the original inventory bytes; updated allocations persist after reload |
+| B5 | Repeat with a pre-existing older prebulk snapshot | Confirm whether failure overwrites, retains or exposes that older snapshot |
+
+**Decision rule:** Existing browser CI already passed four scripts on run 39940647187; do not repeat them. Execute only these missing failure conditions, once, and do not call any suspected issue a reproduced defect before evidence exists. Any behavioural fix requires separate product owner approval. Keep M-014 and M-031 open and WF-13 in progress.
