@@ -26,4 +26,4 @@ Changing device type can make some old details inapplicable. Caffoot Lite has co
 
 Use a fictional device list, a device detail view and a type-specific edit form. Do not show real customer addresses or passwords.
 
-**Technical reference:** Device and catalogue workflows in `docs/workflows/TECHNICAL-WORKFLOWS.md`.
+**Technical reference:** Device and catalogue workflows in [technical workflow reference](../workflows/TECHNICAL-WORKFLOWS.md).
