@@ -1,0 +1,39 @@
+name: Audit consolidated Chromium regression
+
+on:
+  pull_request:
+    paths:
+      - 'app/caffoot-lite.html'
+      - 'app/test-browser-consolidated-audit.cjs'
+      - '.github/workflows/audit-consolidated-chromium.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  consolidated-chromium:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - name: Install pinned build dependencies
+        working-directory: app
+        run: npm ci
+      - name: Build and verify standalone HTML
+        working-directory: app
+        run: npm run build && npm run check:build
+      - name: Install isolated browser test tools
+        run: |
+          npm install --prefix "$RUNNER_TEMP/caffoot-browser-tools" --no-save --no-package-lock --no-audit --no-fund playwright@1.56.1
+          "$RUNNER_TEMP/caffoot-browser-tools/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Run consolidated audit scenarios in Chromium
+        working-directory: app
+        env:
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tools/node_modules
+        run: node test-browser-consolidated-audit.cjs
