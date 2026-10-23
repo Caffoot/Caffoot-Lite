@@ -29,7 +29,7 @@ If your browser downloads the file instead of opening it, use the browser's **Fi
 
 ## What's new in v1.2.0
 
-v1.2.0 introduces expanded Devices navigation, five-tab Add/Edit Device forms, Device Intelligence and Device Catalogues. See [RELEASE-NOTES-1.2.0.md](RELEASE-NOTES-1.2.0.md). Always back up existing inventory before upgrading.
+v1.2.0 introduces expanded Devices navigation, five-tab Add/Edit Device forms, Device Intelligence and Device Catalogues. See [v1.2.0 release notes](docs/archive/release-notes/RELEASE-NOTES-1.2.0.md). Always back up existing inventory before upgrading.
 
 ## First steps
 
