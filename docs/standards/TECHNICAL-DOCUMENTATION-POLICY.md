@@ -97,3 +97,14 @@ Every pull request must identify which technical workflows, test matrices, findi
 A lightweight automated documentation job should check that mandatory documents exist, relative Markdown links resolve, and current release references are internally consistent. It must not rewrite historical release evidence or treat historic version strings as errors. Automation cannot establish whether a workflow description accurately matches application behaviour; reviewers remain responsible for that judgement and for reconciling master audit status. Keep M-030 open until the check has been implemented and executed successfully.
 
 Do not change repository branch protections or required status checks without separate explicit product owner approval. Existing approval rules for application behaviour, merging and publication remain in force.
+
+
+## Non-negotiable documentation accuracy and change gate
+
+Documentation accuracy is a **mandatory acceptance criterion**, not optional maintenance. Before designing a new safeguard, feature, test or CI job, inventory existing implementations and checks; record their location, purpose, observed coverage and remaining gap. Do not introduce duplicates based on an incomplete search.
+
+Every proposed change must identify the exact published baseline and current development revision. Record the affected workflow IDs, functions, data contracts, test scenarios, findings and public descriptions. For each affected document, either update it in the same pull request or explain explicitly why it remains correct. Never silently change historical evidence. If the evidence is incomplete, mark the relevant claim or gate pending rather than claiming verification.
+
+Before approval, reconcile the master audit, current findings, workflow register, test matrices, roadmap, release checklist and pull request evidence. Confirm that status summaries, links, source revisions and test claims agree. Automated checks must cover objectively testable requirements; technical accuracy still requires a reviewer to inspect source and actual test evidence. If any mandatory reconciliation is outstanding, **do not call the change documentation complete or ready to merge**.
+
+This policy is proposed on the current review branch. Existing GitHub documentation CI already checks links and version statements; additional automated checks must extend it rather than duplicate it. Making a check compulsory through branch protection requires separate owner approval.
