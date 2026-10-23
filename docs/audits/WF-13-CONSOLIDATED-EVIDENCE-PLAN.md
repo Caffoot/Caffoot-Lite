@@ -145,3 +145,18 @@ The five M-031 scenarios (`throw-snapshot`, `ignore-snapshot`, `throw-main`, `su
 ## Verified main Chromium checkpoint, 23 October 2026
 
 Main Chromium run 39953195636 completed successfully. M-031 five scenarios passed; M-018 creation failure, selection and cancellation scenarios passed after correction. M-001 and M-020 scenarios passed their assertions but recorded in-memory divergence following failed saves. M-012 five repair scenarios executed; `ignore-snapshot` demonstrated repair persistence despite a silently ignored safety snapshot. This is an OPEN safeguard finding, not a safe outcome. M-011 three import rollback scenarios executed; original inventory persisted, including after ignored secondary snapshot rollback, but the secondary snapshot outcome needs further inspection. Workflow green means the observations matched current assertions, not that all findings are resolved. WF-13 and master audit IN PROGRESS.
+
+
+## M-012 repair snapshot safeguard, 23 October 2026
+
+Source change proposed on branch `fix/m012-ipam-repair-snapshot-readback-20261023`: `phase11CApplyRepair()` now compares the stored pre-repair safety snapshot with the exact original inventory before changing IPAM allocations. A silently ignored snapshot write cancels repair and preserves the original inventory. The consolidated Chromium test now requires unchanged stored and in-memory inventory for this failure case. This is a source change and revised test assertion, **not yet executed browser evidence**. Existing throw-snapshot, throw-main, success, old-snapshot and reload scenarios remain in the suite. M-012 stays open until the revised suite passes and the results are reconciled. Other findings and the overall audit remain open. No release authorised.
+
+
+## M-011 secondary restore snapshot readback, source checkpoint 23 October 2026
+
+Inspected `app/caffoot-lite.html` backup import rollback path at the `SAFETY_SNAPSHOT_KEY` restoration after a failed primary inventory save. The initial pre-restore snapshot is verified by immediate readback before replacement, and the primary inventory rollback is verified. However, the subsequent `removeItem` or `setItem` restoration of the *previous* safety snapshot has no immediate readback verification. A silently ignored secondary snapshot restoration could therefore leave the wrong recovery copy while the primary inventory remains intact. This is a source-supported candidate only, not a newly executed test or confirmed data-loss event. Target a fictional-data Chromium test that injects a silently ignored secondary restoration, checks original main inventory and previous snapshot bytes, and inspects recovery mode and messaging. Keep M-011 open. No behaviour change or release authorised.
+
+
+### M-012 Chromium execution evidence, 23 October 2026
+
+GitHub Actions `Audit consolidated Chromium regression` run [39955252665](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39955252665), job `120419381282`, executed `node test-browser-consolidated-audit.cjs` successfully at commit `810ca43721fa09bb82c33369780e428f82056f69`. The job log explicitly records PASS for all five M-012 cases: throwing snapshot write, silently ignored snapshot write, throwing main save, successful repair and pre-existing snapshot. It also records passing scenario execution for M-031, M-001, M-018, M-020 and M-011; the latter four findings remain open because a passing observation scenario is not proof of corrected behaviour. M-012 targeted regression evidence is now satisfied; final finding disposition and cross-reference reconciliation remain required before audit closure. This evidence does not claim a published release or independent execution on v1.3.0.

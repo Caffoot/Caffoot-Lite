@@ -83,3 +83,13 @@ M-031 proposed fix branch, 23 October 2026:** `phase12BApply()` now reads back i
 ## Verified main Chromium checkpoint, 23 October 2026
 
 Executed main Chromium run 39953195636: overall PASS. M-031 five scenarios PASS; M-018 failed custom location save and selection/cancellation PASS, with in-memory divergence observed on failed save. M-001 and M-020 assertions PASS with in-memory divergence observations. M-012 five repair scenarios PASS against current expectations, but `ignore-snapshot` proves repair persists without confirmed safety snapshot and is an OPEN defect. M-011 three import rollback scenarios PASS with original inventory retained; secondary snapshot outcome pending review. A passing assertion does not establish safety where an unsafe outcome is explicitly expected.
+
+
+## M-012 repair snapshot safeguard, 23 October 2026
+
+Source change proposed on branch `fix/m012-ipam-repair-snapshot-readback-20261023`: `phase11CApplyRepair()` now compares the stored pre-repair safety snapshot with the exact original inventory before changing IPAM allocations. A silently ignored snapshot write cancels repair and preserves the original inventory. The consolidated Chromium test now requires unchanged stored and in-memory inventory for this failure case. This is a source change and revised test assertion, **not yet executed browser evidence**. Existing throw-snapshot, throw-main, success, old-snapshot and reload scenarios remain in the suite. M-012 stays open until the revised suite passes and the results are reconciled. Other findings and the overall audit remain open. No release authorised.
+
+
+### M-012 Chromium execution evidence, 23 October 2026
+
+GitHub Actions `Audit consolidated Chromium regression` run [39955252665](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39955252665), job `120419381282`, executed `node test-browser-consolidated-audit.cjs` successfully at commit `810ca43721fa09bb82c33369780e428f82056f69`. The job log explicitly records PASS for all five M-012 cases: throwing snapshot write, silently ignored snapshot write, throwing main save, successful repair and pre-existing snapshot. It also records passing scenario execution for M-031, M-001, M-018, M-020 and M-011; the latter four findings remain open because a passing observation scenario is not proof of corrected behaviour. M-012 targeted regression evidence is now satisfied; final finding disposition and cross-reference reconciliation remain required before audit closure. This evidence does not claim a published release or independent execution on v1.3.0.

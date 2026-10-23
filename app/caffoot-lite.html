@@ -2259,6 +2259,7 @@ function hierarchyValidateTypes(subnets) {
             try {
                 // Snapshot must persist before any in-memory changes are made.
                 localStorage.setItem(PHASE11C_SNAPSHOT_KEY,before);
+                if(localStorage.getItem(PHASE11C_SNAPSHOT_KEY)!==before) throw new Error('Pre-repair safety snapshot could not be verified.');
                 for(const f of fixes) {
                     const d=appState.devices.find(d=>d.id===f.deviceId && d.primaryIp===f.ip);
                     if(!d) throw new Error('A device changed during repair.');

@@ -202,9 +202,10 @@ const { chromium } = require('playwright');
           assert.equal(result.stored,result.before);
           assert.equal(result.snapshot,result.old);
         }else if(mode==='ignore-snapshot'){
-          assert.equal(result.snapshot,result.old);
-          assert.equal(result.allocated,true);
-          console.log('OBSERVED M-012: repair persisted despite silently ignored safety snapshot');
+          assert.equal(result.snapshot,result.old,'Existing safety snapshot must remain unchanged');
+          assert.equal(result.allocated,false,'Repair must not proceed without a verified snapshot');
+          assert.equal(result.after,result.before,'Failed snapshot must preserve in-memory inventory');
+          assert.equal(result.stored,result.before,'Failed snapshot must preserve stored inventory');
         }else{
           assert.equal(result.snapshot,result.before);
           assert.equal(result.allocated,true);
