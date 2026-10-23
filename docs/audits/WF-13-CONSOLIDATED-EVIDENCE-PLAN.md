@@ -127,3 +127,7 @@ Main run [39947457073](https://github.com/Caffoot/Caffoot-Lite/actions/runs/3994
 ## Second consolidated Chromium run, 23 October 2026
 
 The main browser run following PR #70 passed the existing five browser scripts and M-031 throw-snapshot, ignore-snapshot and throw-main scenarios, then **failed** at the M-031 successful-save assertion (`test-browser-consolidated-audit.cjs` line 65). Source inspection identified a test fixture error: fictional network subnets omitted the VLAN field required by `validateApplicationState()`. Consequently `saveState()` rejected the fixture, and the successful-save expectation was invalid. The audit-only correction adds valid fictional VLANs to both M-031 and M-012 subnet fixtures. The corrected test has not yet run. Remaining combined scenarios were not executed in the failed run. No application behaviour changes, no findings closed, and master audit remains in progress.
+
+## M-031 proposed application correction, 23 October 2026
+
+Following product owner approval to implement, a separate fix branch adds exact readback verification to the bulk IPAM prebulk snapshot write. The existing M-031 silent-write regression case will assert that the inventory remains unchanged. **The corrected application has not yet been tested or merged.** PR #72 separately records the executed failure evidence. Remaining combined scenarios, independent release asset hashing and final audit reconciliation are still outstanding.
