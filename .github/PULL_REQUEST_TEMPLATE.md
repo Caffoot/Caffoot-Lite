@@ -19,7 +19,13 @@ Tick the relevant items. Write `N/A` with a short reason where a check does not 
 
 ### Documentation review
 
+<!-- Explicitly cover affected technical workflows, test matrices, findings register, master audit, function references, roadmap, release checklist and version statements. State N/A with a reason for unaffected areas. A passing link check does not prove technical accuracy. -->
+
 <!-- List updated documents or briefly explain why no documentation updates are needed. Include technical workflows when behaviour changes. -->
+
+### Evidence and documentation reconciliation
+
+<!-- Confirm that current statuses, test execution claims, links and published versus merged version descriptions agree. State any checks not executed. -->
 
 ### Outstanding issues or deferred work
 
