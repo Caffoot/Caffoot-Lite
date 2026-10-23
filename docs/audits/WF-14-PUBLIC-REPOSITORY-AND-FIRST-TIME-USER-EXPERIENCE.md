@@ -1,6 +1,6 @@
 # WF-14: Public Repository and First-Time User Experience Review
 
-**Status:** Planned, not started. Agreed 23 October 2026.
+**Status:** In progress as at 23 October 2026. First-time owner manual walkthrough completed; public repository review and final sign-off remain outstanding.
 **Baseline:** Published Caffoot Lite v1.3.0.
 **Scope boundary:** New workstream following the original v1.3.0 documentation audit WF-01 to WF-13. This is not a renaming of WF-11, WF-12 or WF-13.
 
