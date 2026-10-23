@@ -119,5 +119,29 @@ const { chromium } = require('playwright');
       await page.reload({waitUntil:'load'});
       assert.equal(await page.evaluate(() => localStorage.getItem('caffoot_state')),result.before);
     });
+    await scenario('M-018 failed custom location save', async page => {
+      const result=await page.evaluate(() => {
+        const input=document.createElement('input');input.id='dev-custom-location';input.value='Fictional audit room';
+        const select=document.createElement('select');select.id='dev-location';
+        select.innerHTML='<option value="__caffoot_create_location__">Create location</option>';
+        const panel=document.createElement('div');panel.id='dev-create-location-panel';
+        document.body.append(input,select,panel);
+        const before=JSON.stringify(appState);
+        localStorage.setItem('caffoot_state',before);
+        const original=Storage.prototype.setItem;
+        Storage.prototype.setItem=function(k,v){if(k==='caffoot_state')throw Error('fictional save failure');return original.call(this,k,v)};
+        let thrown=null;
+        try {addCustomLocationOption()}catch(e){thrown=String(e)}
+        Storage.prototype.setItem=original;
+        return {before,stored:localStorage.getItem('caffoot_state'),after:JSON.stringify(appState),
+          hasLocation:appState.deviceLocations?.includes('Fictional audit room'),thrown};
+      });
+      assert.equal(result.thrown,null);
+      assert.equal(result.stored,result.before);
+      assert.equal(result.hasLocation,true);
+      console.log('OBSERVED M-018: failed save retains new location in memory but not storage');
+      await page.reload({waitUntil:'load'});
+      assert.equal(await page.evaluate(() => appState.deviceLocations?.includes('Fictional audit room')),false);
+    });
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode=1; });
