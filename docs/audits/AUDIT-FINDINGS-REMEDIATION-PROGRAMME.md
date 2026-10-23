@@ -78,3 +78,8 @@ Reviewed the master audit, original roadmap, technical workflow register, develo
 ### M-011 tracing progress, 23 October 2026
 
 The top-level `importData(event)` caller sequence, candidate validation, verified pre-restore safety copy, saved candidate readback, original inventory rollback, previous safety copy restoration and recovery mode activation have now been inspected in current `main` source and documented in the [function reference](../standards/FUNCTION-NAMING-AND-REFERENCE.md#m-011-import-rollback-call-chain-source-inspection-23-october-2026) and [WF-06 and WF-12](../workflows/TECHNICAL-WORKFLOWS.md#wf-06-and-wf-12-m-011-current-source-trace-23-october-2026). This is source inspection, not a newly executed test. Complete helper internals and untested backup variants remain outstanding. Historical passing run 39959581469 remains the executed evidence.
+
+
+## Test matrix reconciliation, 23 October 2026
+
+The [workflow verification coverage register](../testing/WORKFLOW-VERIFICATION-COVERAGE-REGISTER.md) summarises WF-01 through WF-13. Dated evidence notes were added to the existing WF-01, WF-02 saving, WF-03, WF-04 and WF-05 test matrices, preserving their historical plans while identifying previously executed targeted Chromium assertions. Individual matrix completion remains unverified, and the imported rack matrix and other workflow test cases still require detailed review. No new application tests were executed during this documentation update.
