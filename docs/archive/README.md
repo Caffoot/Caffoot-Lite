@@ -17,7 +17,7 @@ During preparation of every new release:
 
 ## Release-critical files
 
-Some repository-root files are explicitly used by the release packaging scripts, including release notes, installation guidance, the user guide, the backup format and third-party notices. Do not move or remove those files merely to tidy the archive. Any relocation needs approved packaging changes and successful release checks.
+Some repository-root files are explicitly used by the release packaging scripts, including the **current version's** release notes, installation guidance, the user guide, the backup format and third-party notices. Do not move or remove those required files merely to tidy the archive. Earlier versions' release notes are historical records and may be archived after checking references and release consumers. Any relocation of required packaging inputs needs approved packaging changes and successful release checks.
 
 ## GitHub branch deletion
 
@@ -25,7 +25,7 @@ If GitHub is configured to delete a pull request's source branch automatically a
 
 ## Current status
 
-This is the archive policy and navigation entry only. No v1.3.0 baseline technical document has been archived. WF-01 to WF-10 source-inspection checkpoints for v1.3.0 are complete. Documentation closeout, full link and compatibility checks, and any separately required browser testing remain outstanding. No v1.3.0 baseline document has been archived.
+This is the archive policy and navigation entry only. WF-01 to WF-10 source-inspection checkpoints for v1.3.0 are complete. Documentation closeout, full link and compatibility checks, and any separately required browser testing remain outstanding. No v1.3.0 baseline technical document has been archived.
 
 ## Historical release notes decision, 23 October 2026
 
