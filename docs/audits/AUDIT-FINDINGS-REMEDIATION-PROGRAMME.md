@@ -73,3 +73,8 @@ No application behaviour, branch protection, merge into main or published releas
 ## Draft checkpoint, 23 October 2026
 
 Reviewed the master audit, original roadmap, technical workflow register, development and documentation policies, function reference and WF-13 evidence plan. This document is a **documentation proposal**, not a full reconciliation or completion certificate. No application tests were executed for its creation. Remaining tasks include verifying individual dispositions against all detailed audit notes, reconciling documentation indexes and status summaries, reviewing automated documentation checks and reconciling the release-specific roadmap with each individual finding. No merge or release is authorised by this draft.
+
+
+### M-011 tracing progress, 23 October 2026
+
+The top-level `importData(event)` caller sequence, candidate validation, verified pre-restore safety copy, saved candidate readback, original inventory rollback, previous safety copy restoration and recovery mode activation have now been inspected in current `main` source and documented in the [function reference](../standards/FUNCTION-NAMING-AND-REFERENCE.md#m-011-import-rollback-call-chain-source-inspection-23-october-2026) and [WF-06 and WF-12](../workflows/TECHNICAL-WORKFLOWS.md#wf-06-and-wf-12-m-011-current-source-trace-23-october-2026). This is source inspection, not a newly executed test. Complete helper internals and untested backup variants remain outstanding. Historical passing run 39959581469 remains the executed evidence.
