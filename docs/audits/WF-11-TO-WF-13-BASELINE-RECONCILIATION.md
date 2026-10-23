@@ -1,6 +1,6 @@
 # Caffoot Lite v1.3.0 WF-11 to WF-13 Baseline Reconciliation
 
-**Status:** Initial source-informed reconciliation, 23 October 2026. Not verified by execution and not signed off.
+**Status:** In progress, 23 October 2026. Source inspection remains partial; historical automated release execution evidence has been recovered for WF-13, but browser execution and full traceability are not signed off.
 **Baseline:** Published v1.3.0 `app/caffoot-lite.html`, blob `e8a24f6370a1bb572287aad91a314a3e4a189d94`.
 **Scope:** Preserve the original audit definitions: WF-11 data schema and migrations; WF-12 failure and recovery matrix; WF-13 test traceability. The proposed public repository experience review must use a different identifier.
 
@@ -38,11 +38,11 @@
 | --- | --- | --- |
 | Source baseline | Published HTML blob above is identified in earlier audit work | Reconcile other packaged source, dependencies and assets to the actual published release |
 | Automated test definitions | `app/package.json` defines `npm run release`, which chains security, restore, rack, subnet, backup, build and packaging checks | Map each test script to requirements and exact fixtures; capture execution results for the target revision |
-| GitHub validation | `.github/workflows/validate-hotfix.yml` runs `npm ci` and `npm run release` for relevant application/release-note pull requests | Link a real workflow run and its outcome; confirm package artifact provenance |
+| GitHub validation | `.github/workflows/validate-hotfix.yml` runs `npm ci` and `npm run release` for relevant application/release-note pull requests; historical successful run `39605067641` and exact release-source comparison are recorded below | Confirm published package artefact provenance and remaining test-to-requirement mapping |
 | Browser checks | Dedicated workflow matrices and planned scenarios are referenced throughout the coverage audit | Record browser, platform, fixture, steps, observed results and pass/fail evidence |
 | Release artifact verification | Published release record and package contents have been inspected in earlier WF-10 notes | Verify actual released ZIP/HTML/checksums and licences, not just expected names |
 
-**WF-13 decision:** Traceability structure started, but no tests were executed as part of this reconciliation. Do not claim automated or browser verification has passed.
+**WF-13 decision:** Traceability remains partial. No new tests were executed in this audit checkpoint, but historical successful automated release execution was recovered and verified later on 23 October 2026, as recorded below. Do not claim the separate browser workflow has passed without its run evidence.
 
 ## Mandatory completion gate for all three areas
 
