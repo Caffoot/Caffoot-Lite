@@ -804,3 +804,32 @@ At startup, `loadStoredState()` creates `appState`, then `validateApplicationSta
 - `readAuditHistory()` accepts any parsed JSON array, truncating it to the newest 200 entries, without schema validation of each event. `renderAuditHTML()` expects event fields including `changes` and `at`. A malformed but array-shaped local history payload could therefore affect the history screen. This is a **source-supported resilience candidate**, not a confirmed browser crash. Test deliberately malformed local history separately from the protected inventory data; do not allow history problems to block access to inventory.
 
 **Next:** Review settings/history function naming and any duplicated concepts; reconcile actionable candidates with existing maintenance roadmap before declaring the WF-09 source checkpoint. Browser testing remains outstanding.
+
+
+### WF-09 function naming and responsibility review (source audit, 23 October 2026)
+
+Names below are existing published v1.3.0 identifiers. Proposed alternatives are documentation suggestions only, not authorised renames.
+
+| Existing function | Actual responsibility | Proposed descriptive name |
+| --- | --- | --- |
+| `caffootThemePreference()` (1701) | Read current appearance preference with legacy fallback | `getAppearancePreference()` |
+| `caffootApplyTheme()` (1708) | Apply current preference to document and icon | `applyAppearancePreference()` |
+| `caffootSetTheme()` (1714) | Persist chosen appearance and refresh display | `setAppearancePreference()` |
+| `toggleDarkMode()` (1734) | Toggle explicit light/dark choice | `toggleLightDarkAppearance()` |
+| `readAuditHistory()` (1742) | Read local best-effort change events | `loadLocalChangeHistory()` |
+| `auditChanges()` (1751) | Calculate a summary of inventory changes | `summariseInventoryChanges()` |
+| `recordAudit()` (1788) | Append bounded local change event | `recordLocalInventoryChange()` |
+| `exportAuditHistory()` (1798) | Download separate change-history JSON | `downloadLocalChangeHistory()` |
+| `renderAuditHTML()` (1806) | Build change-history screen markup | `renderChangeHistoryView()` |
+| `personalSafeStorageGet()` (7206) | Guard optional localStorage read for settings | `readOptionalBrowserStorage()` |
+| `phase16ARenderSettings()` (7211) | Build all settings sections and navigation | `renderSettingsWorkspace()` |
+| `phase16AClearSystem()` (7382) | Confirm and execute normal Clean Start with recovery copy | `resetInventoryWithSafetyCopy()` |
+| `phase20CreateBackup()` (7460) | Create inventory export payload with version metadata | `createVersionedInventoryBackup()` |
+| `phase11DownloadSnapshot()` (7540) | Download previously saved safety-copy text | `downloadRecoverySafetyCopy()` |
+| `phase130RestoreHistory()` (6007) | Restore previous **device configuration**, not change log | `restorePreviousDeviceConfiguration()` |
+
+**Responsibility boundaries:** `readAuditHistory()` / `exportAuditHistory()` concern a separate local change log; `phase130RestoreHistory()` concerns a device's prior type configuration; `phase11DownloadSnapshot()` concerns a safety copy of an inventory. None is a substitute for `exportData()`, the standard complete inventory backup. The current phase-numbered names obscure these differences. Appearance preference writes and legacy fallback should remain distinct from inventory `saveState()`, which validates and verifies saved inventory.
+
+**Maintenance reconciliation:** M-025 already covers plain-language backup/recovery terminology; M-026 already covers shared form conventions. Avoid duplicating these. The two additional WF-09 investigation candidates are (1) malformed array-shaped local audit events affecting the history view and (2) possible stale success events or baseline after a later restore/reset verification failure. Record together as a scoped history reliability candidate, with browser fault injection required before implementation. Also test whether appearance selection silently fails to persist under blocked browser storage. No application changes or browser tests performed.
+
+**WF-09 source checkpoint:** Local change-history lifecycle, reload, export boundaries, inventory save ordering, restore/reset interaction, recovery mode, settings/appearance preferences, and targeted naming review have been inspected. This is a **source checkpoint only**, not a browser or accessibility sign-off. Preserve compatibility with existing browser storage and older inventory backups, and keep history failures non-blocking for inventory use.
