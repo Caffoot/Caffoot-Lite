@@ -122,3 +122,8 @@ The product owner reported that the fictional IP Address Block and Network / VLA
 ## Owner first device and prerequisite discovery, 23 October 2026
 
 The product owner reported that the fictional test device saved correctly after first creating a rack and adding a location in the published v1.3.0 fresh-profile walkthrough. This is owner-reported manual browser evidence, not an independently observed or automated test. The additional location/rack steps reveal a first-time guidance gap: instructions should explain when these prerequisites are needed for the chosen mounting configuration. Do not assume every device requires a rack. IPAM allocation for the test device has not yet been separately confirmed; ask the owner before marking it passed. Backup export and restore remain outstanding. WF-14 and M-030 remain open.
+
+
+## Owner first device IPAM allocation confirmation, 23 October 2026
+
+The product owner confirmed that fictional device `TEST-SW01` appears correctly in IPAM with address `192.168.50.10` following successful device save. This is owner-reported manual browser evidence, not automated verification. The next first-time test is Download Backup and checking that a nonempty JSON file is saved while the active inventory remains visible. Backup restore is not yet attempted. The location/rack setup guidance gap remains to be addressed. WF-14 and M-030 remain open.
