@@ -172,6 +172,14 @@ Read-only inspection of current `main` source `app/caffoot-lite.html` (blob `8e9
 
 **Evidence limit:** Source inspection only, not an executed browser test. No application code changed. M-005 remains open and WF-03 test matrix scenarios still require execution.
 
+### M-005 hypervisor change propagation decision, 23 October 2026
+
+**Product owner agreed:** When a physical server's selected hypervisor changes, for example from VMware ESXi to Proxmox VE, Caffoot Lite must first show a confirmation identifying the physical host, old and new hypervisors, and all assigned virtual servers. On confirmation, the physical host's selected hypervisor and the recorded virtualisation platform of **every virtual server assigned to that host** must be updated together. Cancellation leaves all records unchanged. A failed save must roll back the host and all dependent virtual servers together, with no partial changes. This is an inventory metadata update; it does not migrate or reconfigure real virtual machines.
+
+Removing hypervisor eligibility entirely remains different: it is blocked until all dependent virtual servers have been reassigned to eligible physical hosts or deliberately deleted individually. Existing legacy records must not be silently rewritten during unrelated edits, imports or reads.
+
+**Verification to add:** Confirmed and cancelled VMware ESXi to Proxmox VE changes with multiple dependants; no dependants; save failure rollback; reload persistence; custom hypervisor choice; legacy platform mismatches and backups. This decision is documented only; implementation, tests and release remain outstanding.
+
 ## Permanent change and closure rules
 
 For each change, review the current workflow, function references and explanatory comments, test matrices, data and backup compatibility, audit and development findings, user guidance, roadmap and release notes. Update affected living documents in the same pull request. Record a short reason where an area is not applicable.
