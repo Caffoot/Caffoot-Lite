@@ -27,4 +27,4 @@ The published v1.3.0 interface may use the technical term **snapshot** for a rec
 
 Show the actual published Data Management screen and a fictional backup review. Do not show future wording as if it were already released.
 
-**Technical reference:** Save, import, recovery and settings workflows in `docs/workflows/TECHNICAL-WORKFLOWS.md`.
+**Technical reference:** Save, import, recovery and settings workflows in [technical workflow reference](../workflows/TECHNICAL-WORKFLOWS.md).
