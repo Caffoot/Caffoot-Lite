@@ -49,3 +49,26 @@
 Each area requires (1) technical workflow and source coverage, (2) significant function and P11 review, (3) test matrix and executed evidence, (4) findings and roadmap disposition, (5) documentation and link consistency, and (6) a dated owner-reviewed completion record. No item has been marked complete solely because this document exists.
 
 **Next action:** Finish WF-11's field and relationship inventory; extend WF-12 to every significant save and recovery path; link WF-13 to actual test scripts, fixtures and results; then update the master coverage register. No application source changes are authorised by this document.
+
+## WF-11 default-state field inventory, 23 October 2026
+
+**Direct source evidence:** `app/caffoot-lite.html` lines 1161–1179, published v1.3.0 blob noted above. This is an exact inventory of the keys declared in `defaultData`, **not** a complete schema of imported or persisted states. `normaliseState()` spreads the original raw object, so additional fields may be retained; a complete schema requires separate source tracing.
+
+| Default state field | Default | Source-supported interpretation |
+| --- | --- | --- |
+| `subnets` | `[]` | Subnet and address-block records; required array in normalisation |
+| `vlans` | `[]` | VLAN records; required array |
+| `racks` | `[]` | Rack records; required array |
+| `devices` | `[]` | Device records; required array |
+| `rackAccessories` | `[]` | Rack accessory records; currently defaults to empty for non-array legacy input, subject to M-019 |
+| `deviceTypes` | Built-in device type names | Managed device type choices; normalisation merges discovered device types |
+| `deviceTypeGraphics` | `{}` | Per-type graphics configuration; non-object input becomes empty |
+| `deviceLocations` | `['Unknown']` | Managed locations; normalisation merges discovered device locations |
+| `ipAllocations` | `{}` | IP allocation lookup; required object |
+| `serverFunctions` | `[]` | Default collection; exact relationship to managed server services still needs tracing |
+| `installedSoftware` | `[]` | Default collection; exact relationship to software catalogue still needs tracing |
+| `managedOptionsCleared` | `false` | Default preference flag; usage and migration semantics still need tracing |
+
+`STATE_VERSION` is **3** at line 1176 and is assigned to normalised state by `normaliseState()`. This internal state version is **not the same** as the backup schema version, which is **1** in `phase20CreateBackup()` near lines 7453–7465. Keep these version identifiers separate in documentation and future migration work.
+
+**Required next checks:** Identify all other top-level fields introduced or preserved by normalisation, catalogue editors and save paths; map nested device, rack, accessory, subnet, VLAN and IP allocation fields and references; confirm `serverFunctions`, `installedSoftware`, managed catalogues and optional preferences; trace browser storage keys excluded from inventory export; check legacy fixtures. No browser or automated tests were executed for this field inventory.
