@@ -32,3 +32,8 @@
 ## Current checkpoint
 
 This table is a **planning and cross-reference summary** of recorded evidence, not newly executed test results. Individual matrices still need to be reconciled with these rows and each outstanding scenario. Existing matrices: [WF-01 recovery](WF-01-RECOVERY-TEST-PLAN.md), [WF-02 saving](WF-02-SAVING-AND-INTEGRITY-TEST-MATRIX.md), [WF-02 imported racks](WF-02-IMPORTED-RACK-TEST-MATRIX.md), [WF-03 devices](WF-03-DEVICE-LIFECYCLE-TEST-MATRIX.md), [WF-04 networks](WF-04-IPAM-NETWORK-TEST-MATRIX.md), [WF-05 racks](WF-05-RACK-OCCUPANCY-REGRESSION-MATRIX.md). No application tests executed for this document.
+
+
+## Imported rack matrix note
+
+The 18 specific WF02-T01 to WF02-T18 scenarios remain pending. Earlier backup compatibility and rollback tests do not cover the exact imported rack accessory fixtures. See [imported rack test matrix](WF-02-IMPORTED-RACK-TEST-MATRIX.md). M-010 and M-019 remain open. No new browser tests were executed.
