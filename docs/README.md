@@ -16,7 +16,7 @@ Welcome to the Caffoot Lite contributor documentation. Start with the [contribut
 - [Releases](releases/README.md): release process documentation
 - [Archive](archive/README.md): superseded documentation organised by release
 
-The published roadmap and release notes remain at the repository root. Automated test scripts remain in their existing application directories.
+The published roadmap and **current release notes** remain at the repository root. [Earlier release notes](archive/release-notes/README.md) are preserved in the archive. Automated test scripts remain in their existing application directories.
 
 The WF-01 to WF-10 source-inspection checkpoints for v1.3.0 are complete. This does not mean every suspected issue has been reproduced or browser regression tests have been run. Documentation closeout and the first-time user experience review remain outstanding. Keep current behaviour separate from proposed changes.
 
