@@ -145,6 +145,18 @@ A follow-up read of current `main` confirms the specific paths and sharpens the 
 
 **Implementation gate:** This records an approved *product rule*, not approval to change application code, merge or release. Complete import validator inspection and agree implementation scope, then execute existing WF-03 D10 to D13 and D26 plus relevant save failure, reload and backup tests before closure. M-005 remains open.
 
+### M-005 hypervisor eligibility and platform design agreement, 23 October 2026
+
+**Product owner agreed design, not implemented:** Physical server eligibility for new virtual server hosting is controlled by one selected hypervisor product. The physical server form should offer a hypervisor selection with recognised choices such as Proxmox VE, VMware ESXi, Microsoft Hyper-V, XCP-ng and KVM, plus a custom option. Selecting a product automatically enables the existing Hypervisor server service; clearing the product disables that service only where it is safe to do so. The service and selected product must not become contradictory independent controls.
+
+A virtual server's host selector should normally offer only physical servers with a saved eligible hypervisor selection. On choosing a host, the virtual server's virtualisation platform should derive from that host's selected hypervisor, rather than allow a conflicting value. The existing optional unassigned host state remains possible for virtual servers unless a separate policy changes it.
+
+**Relationship safeguard:** A physical host with dependent virtual servers cannot be deleted, converted to another device type or have its hypervisor eligibility removed until the dependants have been deliberately reassigned to an eligible physical server or individually deleted. Never automatically delete virtual servers or silently clear existing relationships. Cancelled or failed saves must preserve previous data.
+
+**Compatibility and design questions still open:** Existing physical hosts marked with the Hypervisor service but no named product, imported custom or archived software, historical virtual platform values and malformed host references must remain readable and repairable without blocking unrelated inventory saves. Agree how the software catalogue and custom product choices map to stable identifiers, how platform changes propagate to dependants, and what warnings or migration prompts are appropriate. Inspect the full form render and persistence path before implementation.
+
+**Verification required:** Existing WF-03 D10 to D13 and D26, plus scenarios for eligible/ineligible hosts, automatic service and platform synchronisation, hypervisor removal, custom and archived products, failed saves, reload and legacy backup restore. This is an approved design direction only. No application code change, browser execution, merge or release is authorised by this record.
+
 ## Permanent change and closure rules
 
 For each change, review the current workflow, function references and explanatory comments, test matrices, data and backup compatibility, audit and development findings, user guidance, roadmap and release notes. Update affected living documents in the same pull request. Record a short reason where an area is not applicable.
