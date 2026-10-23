@@ -57,6 +57,7 @@ jobs:
           node test-browser-import.cjs
           node test-browser-restore.cjs
           node test-browser-upgrade.cjs
+          node test-browser-recovery-reset.cjs
       - name: Upload standalone HTML and licensed preview bundle for testing
         uses: actions/upload-artifact@v4
         with:
