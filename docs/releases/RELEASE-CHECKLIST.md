@@ -25,6 +25,8 @@ Use this checklist for every Caffoot Lite release, including patch releases. Kee
 - [ ] Confirm source on the review branch matches the tested build; inspect merge changes.
 - [ ] Merge only after review and owner approval.
 
+**Optional targeted checker:** From `app/`, run `npm run check:release-docs` and record the result. Run `node ../scripts/check-release-documentation.cjs --self-test` to check its positive, stale-version and missing-file fixtures. This checker deliberately covers a small set of explicit **published stable** version statements. It is not yet part of the release pipeline, does not inspect every document, cannot validate prose or links, and must not be used to reject a legitimate release candidate while `main` still describes the previous published version. Human sign-off remains mandatory.
+
 ## Mandatory documentation consistency sign-off
 
 Complete this review for every release candidate, including maintenance releases. Record the results in the existing release handover or review record rather than opening a separate process document.
