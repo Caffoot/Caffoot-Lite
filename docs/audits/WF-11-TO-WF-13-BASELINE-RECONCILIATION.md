@@ -282,3 +282,17 @@ The central `saveState()` validates the **current in-memory** `appState`, writes
 **Coverage conclusions:** The existing tests contain substantive targeted assertions, especially for Clean Start rollback and hostile backup input. However, a passing result from these isolated VM tests would not prove the emergency recovery reset (M-014), bulk IPAM snapshot readback (M-031), unchecked save callers (M-001, M-018, M-020), integrity repair (M-012), or complete imported relationship validation (M-005, M-019). Preserve the distinction between **script inspected**, **test run** and **browser verified**.
 
 **Follow-up:** Record actual run results and exact commit; inspect further scripts before making any broad automated coverage claim; define isolated fault-injection scenarios for the untested handlers; reconcile dedicated test matrices. No new defect is asserted solely because a test does not cover a particular path.
+
+
+## WF-13 additional test definition inspection, 23 October 2026
+
+Inspected four further scripts from the v1.3.0 source. **Inspection only: none was executed in this checkpoint.**
+
+| Script | Source-supported coverage | What this does not establish |
+| --- | --- | --- |
+| `app/test-backup-contract.cjs` | Uses populated schema-v1 and legacy fixtures; checks migration without mutating source data, rack position retention, accessory and IP allocation retention, export/import round trips, primary IP record repair, rejected invalid examples and optional field preservation | Full browser import, persistence failure injection and every possible legacy inventory |
+| `app/test-legacy-mount-repair.cjs` | Checks legacy mounting correction, preservation of notes and primary IP, unchanged valid devices, idempotence, retired `Racked` locations, orphaned mounts and ambiguous wireless access point handling | All imported rack collision cases or end-to-end browser repair confirmation |
+| `app/test-security-ipam.cjs` | Inspects IPAM renderer output escaping and hostile text handling | IPAM bulk persistence, snapshot verification or subnet integrity under storage failure |
+| `app/test-security-device-cascade.cjs` | Inspects device subnet/VLAN cascade escaping of hostile imported names and identifiers | Device relationship integrity, unchecked save results or full UI interactions |
+
+**Traceability decision:** Existing fixture-backed backup tests offer stronger compatibility evidence than test names alone suggested. They are still not equivalent to executed tests on this branch or browser verification. M-031, M-014 and existing import/rack findings remain investigations, not newly confirmed defects. Next reconcile actual fixture paths and execute the defined commands on an identified source revision.
