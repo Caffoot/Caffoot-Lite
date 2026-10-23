@@ -84,3 +84,9 @@ Prepare a disposable valid fictional subnet and eligible addresses. Capture prim
 | B5 | Repeat with a pre-existing older prebulk snapshot | Confirm whether failure overwrites, retains or exposes that older snapshot |
 
 **Decision rule:** Existing browser CI already passed four scripts on run 39940647187; do not repeat them. Execute only these missing failure conditions, once, and do not call any suspected issue a reproduced defect before evidence exists. Any behavioural fix requires separate product owner approval. Keep M-014 and M-031 open and WF-13 in progress.
+
+## M-014 executable browser regression added, 23 October 2026
+
+A new isolated Chromium test, `app/test-browser-recovery-reset.cjs`, exercises the recovery-banner reset using fictional malformed inventory bytes. It covers cancelling each confirmation (R1 and R2), throwing primary storage writes (R3), silently ignored writes and recovery after reload (R4), successful reset persistence (R5), and byte-exact recovery download (R6). The existing `.github/workflows/caffoot-lite.yml` browser step now invokes the dedicated test after the four historical scripts.
+
+**Evidence status:** Script and CI invocation committed on the working branch only. No Chromium run or passing assertion is claimed for this new test until the GitHub Actions job actually completes and its logs are inspected. The prior four-script successful run remains valid historical evidence and need not be repeated for provenance, although the normal CI workflow invokes them on any app change. M-014 remains open pending execution evidence and interpretation of any observed silent-write behaviour. M-031 remains open and has no new executable scenario in this checkpoint. No application behaviour was changed.
