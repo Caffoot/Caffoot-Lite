@@ -225,3 +225,26 @@ The central `saveState()` validates the **current in-memory** `appState`, writes
 **Test fixture specification for WF-13:** Use a fictional rack, device, location and graphics preset. For each path inject (a) `localStorage.setItem` throwing, (b) a write that silently fails, (c) readback throwing or mismatching, and (d) validation rejecting the proposed state. Record previous and subsequent `caffoot_state` bytes, visible UI, any success/error notification and reload result. Avoid real inventories. The central helper's success toast can be followed by later operation-level verification failures in restore/reset paths, so notification timing must be assessed separately.
 
 **Status:** The direct unchecked-save paths and M-022 selection issue are traced to the existing roadmap. The table is a test plan, not observed browser outcomes. Do not mark WF-12 or WF-13 verified.
+
+
+## WF-12 direct browser-storage write inventory, 23 October 2026
+
+**Inspection method:** Searched published v1.3.0 `app/caffoot-lite.html` for direct `localStorage.setItem()` and `localStorage.removeItem()` expressions, then read the surrounding handlers. This is a textual source census, not execution, proof of every indirect storage access or complete browser testing.
+
+| Storage operation | Source handler and approximate line | Verification or failure behaviour seen in source | Roadmap or follow-up |
+| --- | --- | --- | --- |
+| Main inventory | `saveState()`, 1839 | Reads back exact serialized bytes; returns false on validation, access or mismatch errors | Central reference for WF-12 |
+| Emergency recovery reset | Recovery banner reset click, 1672–1676 | Two confirmations; direct write then reload, without explicit readback | Existing M-014 |
+| Theme preference and dark flag | `caffootSetTheme()`, 1714–1721; system listener, 1724–1729 | Catches thrown storage errors; does not verify readback; non-inventory preference | WF-09 usability test, no new finding yet |
+| Audit history | `recordAudit()`, around 1795 | Separate best-effort write after main inventory verification | Existing M-029 |
+| Browser storage notice | Notice acknowledgement, around 2170 | Best-effort preference marker; separate from inventory | WF-01 browser notice tests |
+| IPAM integrity repair safety copy | `phase11CApplyRepair()`, 2261 and 2277–2278 | Snapshot write without immediate readback; rollback snapshot reinstatement may fail silently | Existing M-012 |
+| Bulk IPAM safety copy | `phase12BApply()`, 4503 | Snapshot write guarded against throws but not verified by readback; main save failure restores memory | New M-031 |
+| Clean Start safety copy and rollback | Clean Start handler, 7413 and 7431–7436 | Dedicated safety and inventory verification in operation; rollback includes secondary storage keys | WF-12 operation-level tests |
+| Backup import safety copy and rollback | `importData()`, 7809 and 7830–7833 | Dedicated safety and inventory verification in operation; rollback handles secondary snapshot | Existing M-011 and WF-06 |
+
+**Scope clarification:** Direct `removeItem()` calls seen in this search occur during safety snapshot restoration, not an independent inventory deletion flow. Direct calls can coexist with helper-mediated storage reads and writes, so this is not a claim of exhaustive storage interaction coverage.
+
+**WF-13 test additions:** For emergency reset, preserve original unreadable bytes first; simulate a thrown write, silently unsuccessful write and successful verified write. Check whether the page reloads, whether the recovery banner remains, and what data is present after restart. For bulk IPAM, separately fail the safety snapshot write, its readback and the main inventory write. Compare persisted bytes and user feedback; do not infer persistence from the live screen.
+
+**Reconciliation:** M-014 and M-031 are existing roadmap references; no duplicate issues created. No application code changed, no browser tests executed and WF-12/WF-13 remain open.
