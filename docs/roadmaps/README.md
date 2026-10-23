@@ -1,6 +1,8 @@
 # Roadmaps
 
 - [ROADMAP DESIGN NOTES](ROADMAP-DESIGN-NOTES.md)
-- [V1.3.1 MAINTENANCE ROADMAP](V1.3.1-MAINTENANCE-ROADMAP.md)
+- [V1.3.1 maintenance roadmap](V1.3.1-MAINTENANCE-ROADMAP.md): concise proposed release scope
+- [Historical v1.3.1 maintenance investigation register](V1.3.1-MAINTENANCE-INVESTIGATION-HISTORY.md): complete original findings narrative, retained for traceability
+- [Audit findings remediation programme](../audits/AUDIT-FINDINGS-REMEDIATION-PROGRAMME.md): all 31 findings and workflow gates
 
 These documents describe the published baseline or recorded proposals as indicated within each file. Audit tests are not considered passed without execution evidence.
