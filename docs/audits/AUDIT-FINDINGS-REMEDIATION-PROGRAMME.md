@@ -108,3 +108,8 @@ The [technical documentation policy](../standards/TECHNICAL-DOCUMENTATION-POLICY
 ## PR #89 checker verification and remaining limits
 
 GitHub Actions run [39983484456](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39983484456) completed successfully for PR #89 head `e395dbd5fbe4169ca1b06beca131f325c00d3c1a`, verifying the existing release documentation consistency workflow on that revision. History secret scan [39983484358](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39983484358) also succeeded. This does not prove semantic accuracy of technical workflows, completeness of finding statuses, or coverage of all mandatory document changes. M-030 remains partially implemented pending an agreed objective coverage check and review gate. No application tests were executed for this checkpoint.
+
+
+## M-030 objective documentation gate extension, 23 October 2026
+
+PR #89 now includes a proposed extension to the existing release documentation consistency workflow. The checker requires six living audit and policy documents, exactly one current table entry for each finding M-001 through M-031 and each workflow WF-01 through WF-13, and table entries for imported rack scenarios WF02-T01 through WF02-T18. Separate positive and deliberately broken self-test fixtures exercise these checks. This is **structural coverage**, not automatic proof of technical accuracy, test execution, or consistency of every status claim. Existing link and release version checks remain in place. The new GitHub Actions result and final document reconciliation are pending at this checkpoint. M-030 remains **partially implemented** until verification and review are complete. No application behaviour was changed.
