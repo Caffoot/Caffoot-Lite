@@ -96,6 +96,10 @@ v1.1.2 delivered security hardening and automated regression checks. A comprehen
 
 To update manually, first **download and safely store a JSON backup** from **Settings & Data Management** in your current installation. Then visit the [official Caffoot Lite releases](https://github.com/Caffoot/Caffoot-Lite/releases) and download the latest published release's `Caffoot-Lite.html` or versioned ZIP. Keep the old HTML and backup until you have checked the new file in your browser. **Do not clear browser storage**; moving or renaming local HTML files can affect access to stored inventory. See [INSTALLATION.md](INSTALLATION.md) for the full upgrade precautions.
 
+## Need help or found a problem?
+
+Start with the [user guide](USER-GUIDE.md) for everyday tasks and the [installation guide](INSTALLATION.md) for opening, updating and protecting your inventory. To report a problem or suggest an improvement, use [GitHub Issues](https://github.com/Caffoot/Caffoot-Lite/issues). Include the Caffoot Lite version, the steps you took, what you expected and what happened. Please do not upload real inventory backups, passwords or private network information. See [CONTRIBUTING.md](CONTRIBUTING.md) if you would like to help improve the project. For security concerns, follow [SECURITY.md](SECURITY.md) rather than publishing sensitive details in a public issue.
+
 ## Who is Caffoot Lite for?
 
 If you're looking for **free IPAM software**, an **offline network inventory tool**, a **homelab asset manager**, or a simple way to document **subnets, device IP addresses and server racks**, Caffoot Lite is designed for that workflow. It runs locally in your browser without an account or hosted service. It is not a network discovery scanner or a multi-user server.
