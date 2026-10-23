@@ -71,7 +71,7 @@ function auditCoverage(read) {
     const rows = docs[file].split(/\r?\n/).filter(line => /^\s*\|/.test(line));
     for (let n = 1; n <= count; n++) {
       const id = prefix + '-' + String(n).padStart(digits, '0');
-      const matching = rows.filter(line => line.split('|')[1]?.trim() === id);
+      const matching = rows.filter(line => new RegExp('^' + id + '(?:\\b|$)').test(line.split('|')[1]?.trim() || ''));
       if (matching.length !== 1)
         errors.push(file + ': expected one current table row for ' + id + ', found ' + matching.length);
     }
@@ -103,6 +103,8 @@ if (process.argv.includes('--audit-self-test')) {
   const fixtures = auditFixtures();
   const read = file => fixtures[file];
   assert.deepEqual(auditCoverage(read), []);
+  const labelled = {...fixtures, 'docs/testing/WORKFLOW-VERIFICATION-COVERAGE-REGISTER.md': fixtures['docs/testing/WORKFLOW-VERIFICATION-COVERAGE-REGISTER.md'].replace('| WF-01 |', '| WF-01 Startup and recovery |')};
+  assert.deepEqual(auditCoverage(file => labelled[file]), []);
   assert(auditCoverage(file => file.endsWith('TECHNICAL-DOCUMENTATION-POLICY.md') ? undefined : read(file)).some(x => x.includes('required document')));
   assert(auditCoverage(file => file.includes('REMEDIATION-PROGRAMME.md') ? read(file).replace('| M-031 |', '| M-030 |') : read(file)).some(x => x.includes('M-031')));
   assert(auditCoverage(file => file.includes('WORKFLOW-VERIFICATION-COVERAGE-REGISTER.md') ? read(file).replace('| WF-13 |', '| WF-12 |') : read(file)).some(x => x.includes('WF-13')));
