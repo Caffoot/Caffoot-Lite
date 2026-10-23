@@ -1,5 +1,7 @@
 # Audits
 
+- [Audit findings remediation programme (draft)](AUDIT-FINDINGS-REMEDIATION-PROGRAMME.md): current v1.3.x planning and evidence links. Historical audit records remain authoritative for original observations.
+
 - [Documentation relocation and compatibility register](DOCUMENTATION-RELOCATION-REGISTER.md)
 - [Documentation link verification plan](DOCUMENTATION-LINK-VERIFICATION-PLAN.md)
 
