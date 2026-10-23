@@ -25,4 +25,4 @@ Rack diagrams describe the saved inventory; they do not automatically detect phy
 
 Use a fictional populated rack with a clear view of U positions, plus an equipment placement form.
 
-**Technical reference:** Rack and accessory workflows in `docs/workflows/TECHNICAL-WORKFLOWS.md`.
+**Technical reference:** Rack and accessory workflows in [technical workflow reference](../workflows/TECHNICAL-WORKFLOWS.md).
