@@ -83,3 +83,8 @@ Before **any** pull request is merged into `main`, its change record and pull re
 ## Release documentation archiving
 
 As part of every release tidy-up, review documentation for material that has been superseded. Follow the [historical documentation archive policy](../archive/README.md). Keep current descriptions accurate, preserve historical evidence, retain shared standards where still valid and check all links and release packaging dependencies before moving files. Archive changes must be reviewed and merged before the source branch is deleted.
+
+
+## Workstream identifier clarification, 23 October 2026
+
+The original v1.3.0 documentation audit retains WF-01 through WF-13. The separately agreed public repository and first-time user experience review is **WF-14**, tracked in [the WF-14 scope document](../audits/WF-14-PUBLIC-REPOSITORY-AND-FIRST-TIME-USER-EXPERIENCE.md). It is planned work, not a replacement for WF-11 or evidence that the original audit is complete. This clarification supersedes earlier provisional references to an unnamed public repository review.
