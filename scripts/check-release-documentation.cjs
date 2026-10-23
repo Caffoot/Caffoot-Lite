@@ -44,6 +44,7 @@ function parse(args) {
   if (mode === 'candidate' && version !== packageVersion) throw Error('Candidate version must match app/package.json');
   if (mode === 'published' && version !== packageVersion) throw Error('Published version must match app/package.json');
   if (mode === 'candidate' && !published) throw Error('Candidate mode requires --published-version X.Y.Z');
+  if (mode === 'candidate' && published === version) throw Error('Candidate and published versions must differ');
   return {mode, version, published};
 }
 if (process.argv.includes('--self-test')) {
@@ -62,6 +63,7 @@ if (process.argv.includes('--self-test')) {
   assert(inspect(file => file === 'SECURITY.md' ? undefined : read(file), '1.3.0', 'published').some(x => x.includes('missing')));
   assert(inspect(read, '1.3.1', 'published').length > 0);
   assert.throws(() => parse(['--candidate']), /requires --published-version/);
+  assert.throws(() => parse(['--candidate', '--published-version', packageVersion]), /must differ/);
   console.log('PASS: published, candidate, stale, missing, historical and argument fixtures.');
 } else {
   try {
