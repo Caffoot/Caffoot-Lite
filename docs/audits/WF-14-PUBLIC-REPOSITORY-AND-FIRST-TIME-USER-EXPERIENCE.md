@@ -97,3 +97,8 @@ Expanded `USER-GUIDE.md` first-use guidance for adding devices, selecting subnet
 ## First backup and restore guidance checkpoint, 23 October 2026
 
 Added a short first-backup and safe-restore walkthrough to `USER-GUIDE.md`. It explains where to find Download Backup, retaining exported JSON outside the browser, saving a backup before replacement imports, the replace-not-merge behaviour, and checking devices, IPAM and racks afterwards. The existing local browser storage and advanced recovery warnings remain. Compared with documented v1.3.0 backup workflow; this was document inspection only, not an executed import, restore, browser test or automated test. M-030 and WF-14 remain open.
+
+
+## First-time journey cross-document checkpoint, 23 October 2026
+
+Compared the published-release first-use instructions in `README.md`, `INSTALLATION.md` and `USER-GUIDE.md`. The download instructions were present, but the first meaningful action and first manual backup were separated across documents. Added a concise `Your first five minutes` paragraph immediately after the README download instructions, linking opening the HTML file, creating an IP Address Block and subnet, adding a device and exporting a JSON backup from Settings & Data. It also states that backup export is manual and importing a backup replaces, rather than merges, inventory. This is a documentation navigation improvement, not a completed end-to-end new-user browser test. Release asset download, opening the HTML and completing a real backup remain unexecuted in this checkpoint. M-030 and WF-14 remain open.
