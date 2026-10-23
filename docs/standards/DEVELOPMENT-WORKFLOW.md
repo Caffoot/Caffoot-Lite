@@ -64,3 +64,8 @@ The handover must:
 8. Distinguish repository documentation from ChatGPT Project Library files: **never claim a handover was saved to the Project Library unless that save was actually verified**.
 
 The last section of the handover must reproduce this continuity requirement or provide an explicit checklist with all eight items, so that the next chat session can follow it without relying on conversational memory.
+
+
+## Actions minute conservation and required checks, 23 October 2026
+
+To conserve the monthly GitHub Actions allowance, preserve required pull request checks and existing browser workflow path filters. The proposed workflow concurrency groups cancel older runs only when superseded on the same pull request or branch. Cancelled runs are not passing test evidence; the latest relevant run must finish successfully. A skipped required job can block merging, so do not use pull request path filters to suppress the required `release-documentation` job without separately verifying branch protection behaviour. Keep manual browser dispatch available for deliberate verification and record actual execution separately from source inspection. See `docs/audits/V1.3.0-DOCUMENTATION-COVERAGE-AUDIT.md` for the dated proposal and open verification gate.
