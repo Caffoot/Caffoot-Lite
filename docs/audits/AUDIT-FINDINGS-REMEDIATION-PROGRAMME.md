@@ -8,7 +8,7 @@
 
 Finish the outstanding work discovered during the v1.3.0 audit through controlled v1.3.x maintenance releases, before beginning substantial v1.4 development. Preserve the original audit evidence and chronology. A finding may be corrected in repository source without appearing in the published v1.3.0 download. Do not describe such work as released.
 
-The [original maintenance register](../roadmaps/V1.3.1-MAINTENANCE-ROADMAP.md), [master audit](../audits/V1.3.0-DOCUMENTATION-COVERAGE-AUDIT.md), [technical workflows](../workflows/TECHNICAL-WORKFLOWS.md) and [WF-13 evidence plan](../audits/WF-13-CONSOLIDATED-EVIDENCE-PLAN.md) retain the detailed source observations and test history. Earlier investigation wording in those records is historical, not necessarily the latest disposition.
+The [preserved original maintenance register](../roadmaps/V1.3.1-MAINTENANCE-INVESTIGATION-HISTORY.md), [master audit](../audits/V1.3.0-DOCUMENTATION-COVERAGE-AUDIT.md), [technical workflows](../workflows/TECHNICAL-WORKFLOWS.md) and [WF-13 evidence plan](../audits/WF-13-CONSOLIDATED-EVIDENCE-PLAN.md) retain the detailed source observations and test history. Earlier investigation wording in those records is historical, not necessarily the latest disposition.
 
 ## Findings register
 
@@ -60,7 +60,7 @@ The [current workflow register](../workflows/TECHNICAL-WORKFLOWS.md) records sou
 2. **Later v1.3.x releases:** Resolve remaining confirmed defects, design and verify the agreed usability improvements, and perform separately controlled function naming or form consistency work. Assign specific versions only after evidence and impact review.
 3. **Before v1.4:** Record an evidenced disposition for every M finding, reconcile all individual workflow gates and public documentation, and obtain product owner approval for the next development phase.
 
-The earlier [v1.3.1 roadmap](../roadmaps/V1.3.1-MAINTENANCE-ROADMAP.md) contains a 23 October planning split that proposed deferring some findings to v1.4. The product owner's subsequent direction is to complete original audit remediation in v1.3.x. This document records that updated direction **as a proposal for reconciliation**, without silently rewriting the historical decision or assigning unapproved fixes.
+The [historical v1.3.1 investigation register](../roadmaps/V1.3.1-MAINTENANCE-INVESTIGATION-HISTORY.md) contains a 23 October planning split that proposed deferring some findings to v1.4. The product owner's subsequent direction is to complete original audit remediation in v1.3.x. This document records that updated direction **as a proposal for reconciliation**, without silently rewriting the historical decision or assigning unapproved fixes.
 
 ## Permanent change and closure rules
 
@@ -72,4 +72,4 @@ No application behaviour, branch protection, merge into main or published releas
 
 ## Draft checkpoint, 23 October 2026
 
-Reviewed the master audit, original roadmap, technical workflow register, development and documentation policies, function reference and WF-13 evidence plan. This document is a **documentation proposal**, not a full reconciliation or completion certificate. No application tests were executed for its creation. Remaining tasks include verifying individual dispositions against all detailed audit notes, reconciling documentation indexes and status summaries, simplifying the release-specific roadmap and reviewing automated documentation checks. No merge or release is authorised by this draft.
+Reviewed the master audit, original roadmap, technical workflow register, development and documentation policies, function reference and WF-13 evidence plan. This document is a **documentation proposal**, not a full reconciliation or completion certificate. No application tests were executed for its creation. Remaining tasks include verifying individual dispositions against all detailed audit notes, reconciling documentation indexes and status summaries, reviewing automated documentation checks and reconciling the release-specific roadmap with each individual finding. No merge or release is authorised by this draft.
