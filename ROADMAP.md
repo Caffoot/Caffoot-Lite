@@ -19,7 +19,7 @@ Before publishing **every** new version (including patch releases), complete a d
 - Run automated checks for known version inconsistencies where practical, in addition to a human documentation review. An automated pass alone does not establish that instructions or screenshots are accurate.
 - Record completion of the documentation review in release acceptance before publication. Treat unresolved user-facing inaccuracies as release blockers.
 
-## Current and proposed milestones
+## Proposed v1.3.x audit remediation sequence, 23 October 2026\n\nThe proposed maintenance sequence is **v1.3.1 inventory safety and integrity**, **v1.3.2 usability and editing consistency**, then **v1.3.3 code clarity and outstanding audit reconciliation**. The [central audit remediation programme](docs/audits/AUDIT-FINDINGS-REMEDIATION-PROGRAMME.md#proposed-v13x-release-allocation-23-october-2026) assigns all 31 findings and tracks function naming, P11 explanatory comments, P12 workflow gates and imported rack fixtures. M-030 documentation accuracy controls apply to every release. Allocations remain provisional and do not authorise application changes, merges or publication. Published v1.3.0 is unchanged.\n\n## Current and proposed milestones
 
 Release assignments beyond v1.1 are provisional. A feature listed here is not a release promise or approval to implement it.
 
