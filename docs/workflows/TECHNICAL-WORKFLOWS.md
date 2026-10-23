@@ -727,3 +727,34 @@ At startup, `loadStoredState()` creates `appState`, then `validateApplicationSta
 - Existing safeguards include built-in manufacturer protection, duplicate-name checks, type association validation for model suggestions, preservation of legacy model association during an unchanged edit, and retained device detail keys during ordinary saves. The audit has not established that all legacy backup permutations are correctly displayed or restored; these require actual test fixtures and browser verification.
 
 **WF-08 source checkpoint:** Catalogue CRUD, independent saves, device reference identity, archive/delete paths, ordinary device edit preservation, device-type conversion and previous-configuration restore have been traced. Main unresolved source-supported candidate: M-028, covering archived assignment visibility, editability, historical labels, restoration eligibility and legacy manager deletion. Do not reopen previously closed M-021 without new contrary evidence. No browser, accessibility or import/export regression suite has been executed in this checkpoint. WF-08 may move to a source-audit checkpoint while these tests remain explicitly outstanding; do not describe it as fully verified.
+
+
+### WF-08 naming and responsibility review (source audit, 23 October 2026)
+
+**Scope:** Targeted inventory of WF-08 catalogue, software and service functions in published v1.3.0 `app/caffoot-lite.html`. Existing names below are actual identifiers. Proposed names are **documentation suggestions only**, not renames or migration commitments. Names containing `phase120`, `phase19B` and `phase130` reflect historical development phases rather than current user-facing concepts.
+
+| Existing function | Responsibility observed | Possible descriptive name |
+| --- | --- | --- |
+| `phase120HardwareCatalogue()` (6221) | Read saved custom manufacturer/model suggestion rows | `getCustomHardwareSuggestions()` |
+| `phase120ManufacturerSave()` (3303) | Create, update or remove manufacturer-only catalogue associations | `saveManufacturerSuggestionChanges()` |
+| `phase120ModelSave()` (3400) | Create, update or remove model suggestions | `saveModelSuggestionChanges()` |
+| `phase120UpdateHardwareCatalogue()` (6241) | Legacy in-device hardware catalogue add/edit/remove via prompts | `updateHardwareSuggestionsFromDeviceEditor()` |
+| `phase19BSoftware()` (6324) | Read all saved custom software entries, including archived | `getSavedSoftwareCatalogue()` |
+| `phase120SoftwareOptions()` (6381) | Combine active custom software and built-in suggestions | `getAvailableSoftwareOptions()` |
+| `phase19BSoftwareFields()` (6327) | Return keys for **all** custom software, including archived | `getSavedSoftwareKeys()` |
+| `phase120SoftwareFieldsFor()` (6403) | Return available software keys applicable to a device type | `getAssignableSoftwareKeysForType()` |
+| `phase120SoftwareSaveCustom()` (3458) | Create/update custom software and check persistence | `saveCustomSoftwareEntry()` |
+| `phase120SoftwareRemove()` (3472) | Open removal confirmation; does **not** itself remove | `confirmSoftwareArchive()` |
+| `phase120SoftwareArchive()` (3478) | Archive custom software while retaining catalogue entry | `archiveCustomSoftware()` |
+| `phase19BUpdateSoftware()` (6344) | Legacy manager add/rename/**permanent catalogue row removal** | `updateSoftwareFromDeviceManager()` |
+| `phase19BServerFunctions()` (6148) | Read all saved custom server services | `getSavedServerServices()` |
+| `phase120AvailableServerServices()` (6153) | Combine active saved and starter services | `getAvailableServerServices()` |
+| `phase19BServerFunctionFields()` (6158) | Return available service keys, **not** archived keys | `getAssignableServerServiceKeys()` |
+| `phase120SaveServerService()` (3533) | Create/rename custom server service | `saveCustomServerService()` |
+| `phase120ArchiveServerService()` (6202) | Archive service with saved device records preserved | `archiveCustomServerService()` |
+| `phase130ObsoleteDeviceFields()` (7049) | Identify populated recognised keys incompatible with destination type | `getIncompatibleDeviceDetailsForTypeChange()` |
+| `phase130RestoreHistory()` (6007) | Restore selected previous device type configuration | `restorePreviousDeviceConfiguration()` |
+
+**Responsibility overlaps:** The dedicated catalogue screens and older in-device managers both mutate hardware and software suggestions, but the software removal semantics differ (archive versus catalogue row deletion). `phase19BSoftwareFields()` and `phase19BServerFunctionFields()` look symmetrical but one returns all saved custom keys while the other returns only currently available keys; this matters in conversion and restore. `phase120SoftwareRemove()` names a confirmation dialog as if it performs removal. Some managers use `prompt()` and `confirm()` while newer editors use structured modals. These are concrete maintainability and consistency candidates, not evidence that a mass rename is safe.
+
+**Future change rule:** Preserve saved catalogue keys, legacy import/export compatibility, event-handler wiring, function references, active versus archived selection semantics, and all save/rollback protections. Consider naming changes incrementally alongside approved workflow fixes and regression tests, not as a broad cosmetic refactor. No application source changed during this audit.
