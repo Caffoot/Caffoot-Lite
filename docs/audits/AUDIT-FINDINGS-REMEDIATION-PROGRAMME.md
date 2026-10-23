@@ -137,6 +137,14 @@ A follow-up read of current `main` confirms the specific paths and sharpens the 
 
 **Verification boundary:** This checkpoint is source inspection only. No browser scenarios D10, D11, D12, D13 or D26 were executed. M-005 remains open; M-008 conversion policy and WF-06 import compatibility must be considered together.
 
+### M-005 product owner decision, 23 October 2026
+
+**Agreed behaviour for new deletion and conversion safeguards, not yet implemented:** A physical server with virtual servers currently assigned to it must not be deleted or converted to another device type. The user must first deliberately reassign each dependent virtual server to a different valid physical server. If no alternative physical server exists, the user may create one and reassign the virtual servers, or deliberately delete the virtual servers individually before proceeding. Caffoot Lite must never automatically delete dependent virtual servers or silently remove their host assignments. Cancellation and failed saves must preserve existing devices and relationships. Show the names of affected virtual servers and explain the necessary action. Apply the same rule to both physical server deletion and conversion.
+
+**Compatibility boundary:** The existing optional host selection for a virtual server is not itself being removed by this decision. Existing malformed or orphaned imported references need a separately agreed, non-destructive review and repair policy. Do not impose stricter global validation that prevents unrelated saves of older inventories.
+
+**Implementation gate:** This records an approved *product rule*, not approval to change application code, merge or release. Complete import validator inspection and agree implementation scope, then execute existing WF-03 D10 to D13 and D26 plus relevant save failure, reload and backup tests before closure. M-005 remains open.
+
 ## Permanent change and closure rules
 
 For each change, review the current workflow, function references and explanatory comments, test matrices, data and backup compatibility, audit and development findings, user guidance, roadmap and release notes. Update affected living documents in the same pull request. Record a short reason where an area is not applicable.
