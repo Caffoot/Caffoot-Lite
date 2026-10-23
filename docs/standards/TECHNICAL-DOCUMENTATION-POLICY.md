@@ -88,3 +88,12 @@ As part of every release tidy-up, review documentation for material that has bee
 ## Workstream identifier clarification, 23 October 2026
 
 The original v1.3.0 documentation audit retains WF-01 through WF-13. The separately agreed public repository and first-time user experience review is **WF-14**, tracked in [the WF-14 scope document](../audits/WF-14-PUBLIC-REPOSITORY-AND-FIRST-TIME-USER-EXPERIENCE.md). It is planned work, not a replacement for WF-11 or evidence that the original audit is complete. This clarification supersedes earlier provisional references to an unnamed public repository review.
+
+
+## Documentation consistency gate, proposed 23 October 2026
+
+Every pull request must identify which technical workflows, test matrices, findings, function references, roadmap entries and release documents were checked. For any unchanged document, explain why it is unaffected. A documentation-only change requires link and consistency checks, not an invented application test pass.
+
+A lightweight automated documentation job should check that mandatory documents exist, relative Markdown links resolve, and current release references are internally consistent. It must not rewrite historical release evidence or treat historic version strings as errors. Automation cannot establish whether a workflow description accurately matches application behaviour; reviewers remain responsible for that judgement and for reconciling master audit status. Keep M-030 open until the check has been implemented and executed successfully.
+
+Do not change repository branch protections or required status checks without separate explicit product owner approval. Existing approval rules for application behaviour, merging and publication remain in force.
