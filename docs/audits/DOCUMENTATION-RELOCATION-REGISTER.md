@@ -1,6 +1,8 @@
 # Documentation relocation and compatibility register
 
-**Scope:** Documentation branch only. The published v1.3.0 application is unchanged.
+**Scope:** Historical documentation relocation and compatibility checks, now merged into `main` through PR #89. The published v1.3.0 application is unchanged.
+
+**Current status, 23 October 2026:** PR #89 was merged as `8708d3f173e7fdbb7114f17a1af82845afdcf72a`. Earlier references to a documentation branch or pending merge describe historical checkpoints. Compatibility stubs remain in place, and exhaustive inbound link and fragment verification is not yet established. Post-merge CI confirmation remains outstanding.
 
 ## Completed
 
