@@ -47,7 +47,74 @@ function parse(args) {
   if (mode === 'candidate' && published === version) throw Error('Candidate and published versions must differ');
   return {mode, version, published};
 }
-if (process.argv.includes('--self-test')) {
+
+const auditFiles = [
+  'docs/standards/TECHNICAL-DOCUMENTATION-POLICY.md',
+  'docs/audits/V1.3.0-DOCUMENTATION-COVERAGE-AUDIT.md',
+  'docs/audits/AUDIT-FINDINGS-REMEDIATION-PROGRAMME.md',
+  'docs/workflows/TECHNICAL-WORKFLOWS.md',
+  'docs/testing/WORKFLOW-VERIFICATION-COVERAGE-REGISTER.md',
+  'docs/testing/WF-02-IMPORTED-RACK-TEST-MATRIX.md'
+];
+function auditCoverage(read) {
+  const errors = [];
+  const docs = {};
+  for (const file of auditFiles) {
+    try {
+      const content = read(file);
+      if (typeof content !== 'string' || !content.trim()) throw Error('empty document');
+      docs[file] = content;
+    } catch (_) { errors.push(file + ': required document missing or empty'); }
+  }
+  function checkRows(file, prefix, count, digits) {
+    if (!docs[file]) return;
+    const rows = docs[file].split(/\r?\n/).filter(line => /^\s*\|/.test(line));
+    for (let n = 1; n <= count; n++) {
+      const id = prefix + '-' + String(n).padStart(digits, '0');
+      const matching = rows.filter(line => new RegExp('^' + id + '(?:\\b|$)').test(line.split('|')[1]?.trim() || ''));
+      if (matching.length !== 1)
+        errors.push(file + ': expected one current table row for ' + id + ', found ' + matching.length);
+    }
+  }
+  checkRows('docs/audits/AUDIT-FINDINGS-REMEDIATION-PROGRAMME.md', 'M', 31, 3);
+  checkRows('docs/testing/WORKFLOW-VERIFICATION-COVERAGE-REGISTER.md', 'WF', 13, 2);
+  const rack = docs['docs/testing/WF-02-IMPORTED-RACK-TEST-MATRIX.md'];
+  if (rack) {
+    for (let n = 1; n <= 18; n++) {
+      const id = 'WF02-T' + String(n).padStart(2, '0');
+      if (!rack.split(/\r?\n/).some(line => /^\s*\|/.test(line) && line.split('|')[1]?.trim() === id))
+        errors.push('docs/testing/WF-02-IMPORTED-RACK-TEST-MATRIX.md: missing scenario ' + id);
+    }
+  }
+  return errors;
+}
+function auditFixtures() {
+  const docs = Object.fromEntries(auditFiles.map(file => [file, '# Test fixture\n']));
+  docs['docs/audits/AUDIT-FINDINGS-REMEDIATION-PROGRAMME.md'] =
+    Array.from({length: 31}, (_, i) => '| M-' + String(i + 1).padStart(3, '0') + ' | Open |').join('\n');
+  docs['docs/testing/WORKFLOW-VERIFICATION-COVERAGE-REGISTER.md'] =
+    Array.from({length: 13}, (_, i) => '| WF-' + String(i + 1).padStart(2, '0') + ' | Pending |').join('\n');
+  docs['docs/testing/WF-02-IMPORTED-RACK-TEST-MATRIX.md'] =
+    Array.from({length: 18}, (_, i) => '| WF02-T' + String(i + 1).padStart(2, '0') + ' | Pending |').join('\n');
+  return docs;
+}
+
+if (process.argv.includes('--audit-self-test')) {
+  const fixtures = auditFixtures();
+  const read = file => fixtures[file];
+  assert.deepEqual(auditCoverage(read), []);
+  const labelled = {...fixtures, 'docs/testing/WORKFLOW-VERIFICATION-COVERAGE-REGISTER.md': fixtures['docs/testing/WORKFLOW-VERIFICATION-COVERAGE-REGISTER.md'].replace('| WF-01 |', '| WF-01 Startup and recovery |')};
+  assert.deepEqual(auditCoverage(file => labelled[file]), []);
+  assert(auditCoverage(file => file.endsWith('TECHNICAL-DOCUMENTATION-POLICY.md') ? undefined : read(file)).some(x => x.includes('required document')));
+  assert(auditCoverage(file => file.includes('REMEDIATION-PROGRAMME.md') ? read(file).replace('| M-031 |', '| M-030 |') : read(file)).some(x => x.includes('M-031')));
+  assert(auditCoverage(file => file.includes('WORKFLOW-VERIFICATION-COVERAGE-REGISTER.md') ? read(file).replace('| WF-13 |', '| WF-12 |') : read(file)).some(x => x.includes('WF-13')));
+  assert(auditCoverage(file => file.includes('IMPORTED-RACK-TEST-MATRIX.md') ? read(file).replace('| WF02-T18 |', '| WF02-T17 |') : read(file)).some(x => x.includes('WF02-T18')));
+  console.log('PASS: audit coverage positive, missing document, finding, workflow and scenario fixtures');
+} else if (process.argv.includes('--audit-coverage')) {
+  const errors = auditCoverage(file => fs.readFileSync(path.join(root, file), 'utf8'));
+  if (errors.length) { errors.forEach(x => console.error('FAIL: ' + x)); process.exitCode = 1; }
+  else console.log('PASS: required audit documents, findings, workflows and imported rack scenarios');
+} else if (process.argv.includes('--self-test')) {
   const fixtures = {
     'README.md': '**Current release:** [v1.3.0](url)\nHistorical v1.2.1',
     'INSTALLATION.md': '**Current published stable release:** [v1.3.0](url)',

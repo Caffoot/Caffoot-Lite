@@ -251,3 +251,43 @@ A declaration scan of the published HTML found 274 named function declarations o
 **Deferred to WF-09:** `caffootThemePreference()`, `caffootApplyTheme()`, `caffootSetTheme()`, `toggleDarkMode()` and `phase16ARenderSettings()`. `personalSafeStorageGet()` is likewise primarily WF-09 and is included above only to preserve the scan trail.
 
 **Evidence boundary:** The source-region scan is not a whole-file workflow mapping, and textual presence does not demonstrate complete function documentation. Before P12 sign-off, trace the important callers, side effects, persistence and error handling, and decide whether each historical name should remain or be proposed for future improvement. No code has been renamed.
+
+
+## Post-release merged correction function reference, 23 October 2026
+
+**Scope:** Source inspected on `main` after the v1.3.0 publication. These functions describe merged repository code, **not** the immutable published v1.3.0 HTML. The original baseline notes above remain historical. No functions were renamed for this documentation update.
+
+| Finding | Actual function and current responsibility | Failure protection and state affected | Workflow and evidence |
+| --- | --- | --- | --- |
+| M-001 | `unassignDevice(deviceId)` clears rack placement and changes mounting to Desktop | Saves an exact pre-change `appState` JSON copy; if `saveState()` fails, restores that state, displays an error and redraws | WF-02, WF-05; PR #79, Chromium run 39957395113 |
+| M-018 | Existing device form custom location creation path | Captures `appState` before adding a location; failed save restores state, removes the newly inserted select option, restores the create option, displays an error and refocuses the input | WF-03, WF-07; PR #79, run 39957395113 |
+| M-020 | `phase13GSaveGraphics(type)` saves a selected rack graphic for a device type | Captures `appState` before changing `deviceTypeGraphics`; failed save restores the original selection, displays an error and redraws | WF-03, WF-07; PR #79, run 39957395113 |
+| M-012 | `phase11CApplyRepair()` applies a confirmed integrity repair preview | Checks the current inventory matches the preview, writes and immediately reads back the pre-repair safety copy before mutation; on failure restores in-memory inventory and attempts to restore the prior safety copy | WF-02, WF-04, WF-12; PR #77, run 39955498407 |
+| M-031 | `phase12BApply()` applies a reviewed bulk IPAM request | Rebuilds the plan, saves and reads back the pre-bulk safety copy before changing allocations; cancels on snapshot failure; restores in-memory inventory if the main save fails | WF-02, WF-04, WF-12; runs 39957395113 and 39959581469 |
+| M-011 | Import and restore failure handling (multiple helpers and storage operations) | Merged restoration logic checks whether the earlier safety copy was restored, including the absence case; if an ignored restoration is detected, recovery mode protects original stored bytes and blocks further saves | WF-01, WF-06, WF-12; PR #81, run 39959581469 |
+
+**M-011 source tracing limitation:** The precise full caller chain and function-by-function responsibilities are not certified by this summary. See the WF-06 and WF-12 source notes and the M-011 test assertions before modifying restore logic. Do not treat this table as a complete source-level call graph.
+
+**Test scope:** These are previously executed, targeted Chromium regressions at the recorded commits. They do not certify complete workflow coverage or all historical backups. No tests were executed while adding this reference. Refer to the [technical workflow register](../workflows/TECHNICAL-WORKFLOWS.md) and [master audit](../audits/V1.3.0-DOCUMENTATION-COVERAGE-AUDIT.md) for evidence and open P12 gates.
+
+**Documentation debt:** Complete the function declaration and caller inventory for M-011 and the wider WF-01 to WF-13 pathways. Future fixes must update this living reference, the applicable workflow, test matrix and findings register in the same change.
+
+
+## M-011 import rollback call chain, source inspection 23 October 2026
+
+**Source inspected:** Current `main` `app/caffoot-lite.html`, `importData(event)` at approximately lines 7794 to 7878, with related function declarations identified in the same source. This is a current merged-source inspection, not an execution of an import.
+
+| Function or state | Current responsibility and dependency |
+| --- | --- |
+| `importData(event)` | Handles the chosen backup file, 10 MB limit, reading, review, replacement, verification, rollback, interface feedback and clearing the file input |
+| `phase16CReadJson()`, `phase16CRejectUnsafeKeys()` | Parse backup JSON and reject unsafe object keys before candidate processing |
+| `phase11ValidateBackupShape()`, `phase20ValidateBackupVersion()` | Check supported backup structure and version |
+| `phase16CAPMountConflicts()`, `phase16CChooseAPMounts()`, `phase16CApplyAPChoices()` | Identify and review access point mounting conflicts before import |
+| `phase16CCheckBackup()`, `phase16CReviewLegacyMountRepairs()` | Build a validated candidate and review legacy mounting repairs |
+| `saveState()` | Persist the candidate inventory after the pre-restore safety copy has been written and read back |
+| `phase17AStorageRecovery`, `phase17ARecoveryBanner()` | If rollback verification fails, retain original stored bytes, activate recovery protection and show the recovery banner |
+| `phase16CShowImportError()` | Present restore errors without claiming success |
+
+**Ordered storage safeguards:** After user confirmation, `importData()` captures the original in-memory state, the existing stored inventory bytes (`currentSnapshot`) and the previous safety copy (`previousSafetySnapshot`). It writes the pre-restore safety copy and checks the exact bytes by immediate readback. Only then does it set `appState` to the validated candidate and call `saveState()`. It reads the newly stored inventory back and compares its normalised form with the candidate. On failure, it restores the original in-memory state, writes back the original stored bytes and verifies them, then restores the previous safety copy (including the absent case) and verifies that too. If either rollback check fails, it enters protected recovery mode, displays a banner and blocks further saves through the existing recovery guard. Otherwise it reports the cancelled restore and retains the earlier inventory.
+
+**Evidence boundary:** PR #81 and Chromium run 39959581469 previously exercised the main save failure, ignored previous safety copy restoration, recovery banner, retained original bytes and subsequent save blocking. The source inspection above was not a new browser test. The complete implementations of every called helper, all backup variants and all failure combinations have **not** been individually reverified at this checkpoint. The old statement above that this call chain was untraced is superseded for the top-level import path, but wider helper internals remain open.

@@ -13,13 +13,25 @@ Tick the relevant items. Write `N/A` with a short reason where a check does not 
 - [ ] **Reconcile:** The result meets the agreed acceptance criteria; remaining risks and deferred items are linked and explained.
 - [ ] **Approve:** Product owner approval is obtained before merging. Release publication requires separate explicit approval.
 
+### Existing implementation and checks reviewed
+
+<!-- Identify relevant existing functionality, tests and GitHub Actions before proposing additions. State the actual gap and why this does not duplicate an existing safeguard. -->
+
 ### Verification evidence
 
 <!-- Commands and results, browser checks, screenshots or existing valid evidence. For documentation-only changes, note focused link/format checks and why application tests are N/A. -->
 
 ### Documentation review
 
+<!-- Explicitly cover affected technical workflows, test matrices, findings register, master audit, function references, roadmap, release checklist and version statements. State N/A with a reason for unaffected areas. A passing link check does not prove technical accuracy. -->
+
 <!-- List updated documents or briefly explain why no documentation updates are needed. Include technical workflows when behaviour changes. -->
+
+### Evidence and documentation reconciliation
+
+<!-- Mandatory acceptance gate: confirm that source revision, published version, workflows, findings, test matrices, roadmap, release documentation and master audit agree. If any check is pending, do not mark documentation complete or ready to merge. -->
+
+<!-- Confirm that current statuses, test execution claims, links and published versus merged version descriptions agree. State any checks not executed. -->
 
 ### Outstanding issues or deferred work
 

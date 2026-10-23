@@ -88,3 +88,33 @@ As part of every release tidy-up, review documentation for material that has bee
 ## Workstream identifier clarification, 23 October 2026
 
 The original v1.3.0 documentation audit retains WF-01 through WF-13. The separately agreed public repository and first-time user experience review is **WF-14**, tracked in [the WF-14 scope document](../audits/WF-14-PUBLIC-REPOSITORY-AND-FIRST-TIME-USER-EXPERIENCE.md). It is planned work, not a replacement for WF-11 or evidence that the original audit is complete. This clarification supersedes earlier provisional references to an unnamed public repository review.
+
+
+## Documentation consistency gate, proposed 23 October 2026
+
+Every pull request must identify which technical workflows, test matrices, findings, function references, roadmap entries and release documents were checked. For any unchanged document, explain why it is unaffected. A documentation-only change requires link and consistency checks, not an invented application test pass.
+
+A lightweight automated documentation job should check that mandatory documents exist, relative Markdown links resolve, and current release references are internally consistent. It must not rewrite historical release evidence or treat historic version strings as errors. Automation cannot establish whether a workflow description accurately matches application behaviour; reviewers remain responsible for that judgement and for reconciling master audit status. Keep M-030 open until the check has been implemented and executed successfully.
+
+Do not change repository branch protections or required status checks without separate explicit product owner approval. Existing approval rules for application behaviour, merging and publication remain in force.
+
+
+## Non-negotiable documentation accuracy and change gate
+
+Documentation accuracy is a **mandatory acceptance criterion**, not optional maintenance. Before designing a new safeguard, feature, test or CI job, inventory existing implementations and checks; record their location, purpose, observed coverage and remaining gap. Do not introduce duplicates based on an incomplete search.
+
+Every proposed change must identify the exact published baseline and current development revision. Record the affected workflow IDs, functions, data contracts, test scenarios, findings and public descriptions. For each affected document, either update it in the same pull request or explain explicitly why it remains correct. Never silently change historical evidence. If the evidence is incomplete, mark the relevant claim or gate pending rather than claiming verification.
+
+Before approval, reconcile the master audit, current findings, workflow register, test matrices, roadmap, release checklist and pull request evidence. Confirm that status summaries, links, source revisions and test claims agree. Automated checks must cover objectively testable requirements; technical accuracy still requires a reviewer to inspect source and actual test evidence. If any mandatory reconciliation is outstanding, **do not call the change documentation complete or ready to merge**.
+
+This policy is proposed on the current review branch. Existing GitHub documentation CI already checks links and version statements; additional automated checks must extend it rather than duplicate it. Making a check compulsory through branch protection requires separate owner approval.
+
+
+## Automated audit register coverage, 23 October 2026
+
+The existing release documentation consistency workflow has been extended on the PR #89 review branch to check the presence of six mandatory audit and policy files and the current table identifiers for M-001 through M-031, WF-01 through WF-13 and WF02-T01 through WF02-T18. The checker has isolated self-test fixtures for missing files and entries. This gate checks objective structural completeness only. It does **not** certify that statuses agree, that cited tests ran, or that technical explanations match application source. Reviewers must still reconcile the master audit, workflow documentation, evidence registers, roadmap and release records before approval. The new checks have been committed but their GitHub Actions outcome is pending. No branch protection change is authorised.
+
+
+## Automated coverage execution evidence, 23 October 2026
+
+The PR #89 structural coverage gate and existing documentation checks passed in [GitHub Actions run 39984994151](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39984994151) at commit `1c42846fad63cc1acc189c9ab2a4c0284cc279d9`. The history secret scan also passed in run 39984994558. This is evidence of objective automated checks only. The mandatory reviewer reconciliation of current statuses, technical behaviour, test provenance and release descriptions remains a separate approval gate. The audit programme records the corrected labelled workflow parser regression. No branch protection, application behaviour, merge or release was changed.

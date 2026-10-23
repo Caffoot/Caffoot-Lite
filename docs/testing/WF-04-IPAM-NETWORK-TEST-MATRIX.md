@@ -47,3 +47,8 @@ Use fictional data in an isolated browser profile. Keep a verified export before
 ## Exit criteria
 
 Cross-check WF-03 primary IP tests, WF-01 storage and WF-02 rollback checks without duplicating their evidence. Reconcile significant functions and P11 comments with the naming reference. Record M-009 and any new source-supported findings in the roadmap with explicit status. Every scenario starts **planned**, not passed; browser sign-off requires actual evidence.
+
+
+## Evidence update, 23 October 2026
+
+The initial planned-only status predates subsequent targeted Chromium evidence. M-031 bulk IPAM safety snapshot scenarios passed in [run 39957395113](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39957395113) and [run 39959581469](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39959581469). M-012 integrity repair safeguard scenarios passed in [run 39955498407](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39955498407). These are **specific executed cases**, not a complete subnet, VLAN, gateway, ownership or reservation matrix. M-006, M-009 and M-024 still need assessment. See [coverage register](WORKFLOW-VERIFICATION-COVERAGE-REGISTER.md). No new browser tests were executed for this documentation change.

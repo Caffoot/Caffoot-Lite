@@ -64,3 +64,8 @@ Caffoot stores its inventory in browser storage. We need to check that it does n
 ## Exit conditions
 
 WF-01 may only be marked browser verified when the agreed scenarios have been executed, failures investigated and evidence recorded. Do not close M-014 or M-017 merely because a plan exists. Published asset byte verification, ZIP member checks and release-note reconciliation are separate outstanding release provenance tasks.
+
+
+## Evidence update, 23 October 2026
+
+The original status above describes this document when it was a test plan. Subsequent **targeted recovery reset browser scenarios were executed and passed** in [Chromium run 39944710633](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39944710633). This does not establish execution of every planned scenario or complete the WF-01 P12 gate. M-014 remains a deferred recovery feedback improvement. See the [current coverage register](WORKFLOW-VERIFICATION-COVERAGE-REGISTER.md) and [technical workflows](../workflows/TECHNICAL-WORKFLOWS.md). This documentation update did not execute any tests.

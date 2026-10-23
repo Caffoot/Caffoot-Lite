@@ -14,6 +14,9 @@ For each workflow record: entry point and trigger; source path and function name
 
 ## Workflow register
 
+The [workflow verification coverage register](../testing/WORKFLOW-VERIFICATION-COVERAGE-REGISTER.md) links earlier executed Chromium evidence to outstanding P12 gaps. Historical planned-only statements in individual test matrices are supplemented by dated evidence updates; none establishes completion of an entire matrix.
+
+
 **Current position: 23 October 2026.** This register supersedes the outdated 22 October table. Administrative audit closure is distinct from the completion of individual P12 gates. Evidence in the dated sections below remains historical and must be read against the newer findings and CI runs.
 
 | ID | Area | Source and documentation assessment | P12 completion gate | Executed browser evidence |
@@ -974,3 +977,31 @@ PR [#81](https://github.com/Caffoot/Caffoot-Lite/pull/81) merged to `main` as `4
 | WF-13 Traceability | Source to test mapping and CI run references recorded | Carry unverified coverage mapping and outstanding workflow completion gates into maintenance |
 
 **Risk and stop rule:** No further browser tests are claimed for this document only checkpoint. Previously corrected high risk integrity findings have targeted executed evidence, but this is not a guarantee that no undiscovered defects exist. Any newly demonstrated risk to existing inventory data must be triaged separately before a future release. Do not reopen the v1.3.0 audit merely to rerun successful checks. Before any v1.3.1 release, the product owner must agree priorities and explicit acceptance criteria for remaining P12 coverage, with completed tests recorded against their exact revision. The authoritative at a glance source and browser status is the register in `docs/workflows/TECHNICAL-WORKFLOWS.md`. No application change or release is authorised by this disposition.
+
+
+## Current merged-source integrity safeguards, 23 October 2026
+
+**Reading rule:** The earlier workflow narrative documents the published v1.3.0 baseline and the dated audit history. This section summarises safeguards now present on `main` after the publication. Do not attribute these corrections to the published v1.3.0 download. The [function reference](../standards/FUNCTION-NAMING-AND-REFERENCE.md) records the concrete functions and state changes. The [remediation programme](../audits/AUDIT-FINDINGS-REMEDIATION-PROGRAMME.md) tracks follow-up and release decisions.
+
+| Workflow | Current merged-source behaviour and relevant finding | Evidence already executed | Outstanding |
+| --- | --- | --- | --- |
+| WF-02 and WF-05 | `unassignDevice()` now restores the earlier in-memory rack placement if persistence fails (M-001) | PR #79; Chromium 39957395113 | Full save-caller and rack matrix |
+| WF-03 and WF-07 | Custom location creation restores inventory and form selection on failed save (M-018); `phase13GSaveGraphics()` restores device type graphic choice on failed save (M-020) | PR #79; Chromium 39957395113 | Complete device and form lifecycle coverage |
+| WF-02, WF-04 and WF-12 | `phase11CApplyRepair()` checks the pre-repair safety copy by readback before changing allocations (M-012); `phase12BApply()` checks the pre-bulk safety copy before applying bulk changes (M-031) | PR #77, Chromium 39955498407; Chromium 39957395113 and 39959581469 | Other integrity and IPAM scenarios |
+| WF-01, WF-06 and WF-12 | Import rollback verifies previous safety copy restoration and activates recovery protection on ignored restoration, retaining original bytes and blocking subsequent saves (M-011) | PR #81; Chromium 39959581469 | Full import helper caller tracing and broader backup matrix |
+
+**Source and evidence distinction:** The named functions above were inspected in the current repository HTML. M-011's broader restoration behaviour is supported by the recorded merged PR and executed Chromium assertions; the full helper-level call chain has not been newly inspected in this documentation checkpoint. Historical tests are not new executions. The individual P12 gates remain partial as stated in the workflow register above.
+
+**Maintenance release distinction:** Published v1.3.0 remains unchanged. These merged corrections require explicit inclusion, package verification, relevant regression evidence and product owner approval before any v1.3.1 release.
+
+
+### WF-06 and WF-12 M-011 current source trace, 23 October 2026
+
+The top-level `importData(event)` implementation on current `main` was inspected, including its backup parsing and validation calls, mounting conflict review, candidate confirmation, exact safety copy readback, candidate save and normalised readback, and both original inventory and previous safety copy rollback checks. On an unverified rollback, it sets `phase17AStorageRecovery`, shows `phase17ARecoveryBanner()` and relies on the existing recovery guard to block subsequent saves. See the [M-011 function call chain](../standards/FUNCTION-NAMING-AND-REFERENCE.md#m-011-import-rollback-call-chain-source-inspection-23-october-2026) for ordered steps and dependencies.
+
+**Verified previously by execution:** PR #81, Chromium run 39959581469, including ignored restoration, recovery banner and save blocking. **Checked in this checkpoint:** source inspection of `importData()` and identification of its called helpers. **Not checked:** all helper internals, historical backup variations and exhaustive rollback fault combinations. These remain part of the partial WF-06 and WF-12 gates.
+
+
+## Documentation CI structural coverage checkpoint, 23 October 2026
+
+The existing documentation workflow passed at PR #89 commit `1c42846fad63cc1acc189c9ab2a4c0284cc279d9`, [run 39984994151](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39984994151). It checks required audit documents, M-001 through M-031 register entries, WF-01 through WF-13 coverage entries, imported rack scenario identifiers, Markdown links and release version statements. This is not a new browser verification of the technical workflows, nor a complete P12 sign-off. The current workflow status table remains partial, and manual semantic reconciliation is required before approval.

@@ -62,3 +62,8 @@ For each test record: test ID, fixture and backup filename, browser/version, pub
 ## Change control and follow-up
 
 Link reporting fixes to **M-013**, import integrity checks to **M-010/M-019**, and naming/comment improvements to the Function Naming and Reference document and P11. The shared occupancy calculation is a proposal, not approved implementation. WF-01 to WF-04 source reviews and planned tests are not all browser signed off. No application code, merge, release or PR changes are authorised by this matrix.
+
+
+## Evidence update, 23 October 2026
+
+The original source-based matrix status is historical. A **targeted M-001 failed rack unassignment rollback browser scenario passed** in [Chromium run 39957395113](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39957395113), following [PR #79](https://github.com/Caffoot/Caffoot-Lite/pull/79). That test does not establish that the imported rack collision, accessory placement or occupancy scenarios in this matrix were executed. M-010, M-013 and M-019 remain open for investigation or policy decisions. See [coverage register](WORKFLOW-VERIFICATION-COVERAGE-REGISTER.md). No browser tests were executed for this documentation update.
