@@ -32,3 +32,8 @@ Make the public Caffoot Lite repository accurate, understandable and welcoming f
 Complete and reconcile the original WF-01 to WF-13 audit first, while correcting any confirmed serious public misinformation or user-data safety issue as a priority. Keep the existing roadmap maintenance candidates, including the public-documentation version drift finding M-030, visible until resolved. Confirm release packaging dependencies before relocating or editing release documentation.
 
 **Authorisation:** Creating and maintaining this planning document is documentation work on the existing branch. No application source changes, merge to `main`, release, website publication or GitHub ruleset changes are authorised by this record.
+
+
+## Preliminary public documentation link checkpoint, 23 October 2026
+
+This is a focused prerequisite check during WF-13, not the start or completion of the full WF-14 first-time user review. Inspected relative Markdown links in `README.md`, `INSTALLATION.md`, `USER-GUIDE.md`, `SECURITY.md` and `ROADMAP.md` on the documentation branch. Fourteen distinct linked text or licence targets were successfully fetched from the repository, including current release notes, archived historical notes and release guidance. Three linked PNG screenshots (`docs/screenshots/dashboard.png`, `docs/screenshots/device-inventory.png`, `docs/screenshots/rack-management.png`) could not be validated using the UTF-8 text file reader, which returned a binary decoding error. Their existence and rendering are **unverified, not failed**. External URLs, anchors, image appearance and the published main branch were not checked. No application tests were run. WF-14 remains planned and not signed off.
