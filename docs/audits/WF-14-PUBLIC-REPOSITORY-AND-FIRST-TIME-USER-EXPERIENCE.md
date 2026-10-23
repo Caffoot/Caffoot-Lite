@@ -87,3 +87,8 @@ Reviewed `INSTALLATION.md` against published v1.3.0 release metadata and the v1.
 ## User guide release framing correction, 23 October 2026
 
 Reviewed `USER-GUIDE.md` against the published v1.3.0 scope and current source labels. Its introductory Devices section was still headed `v1.2.0 Devices & Intelligence` despite describing the v1.3.0 guide, and its Settings section was headed `(v1.1.1)` and repeated the same tab list. Revised the headings to describe the current v1.3.0 experience, retained historical origin in prose and removed the repeated Settings explanation. Preserved backup, restore, recovery and browser storage cautions. The current source includes the `Software & Firmware` form label and `Software & Services` overview label, which refer to different interfaces and must not be conflated. **Executed:** textual source and revised-document checks. **Not executed:** browser or automated application tests. M-030 and the wider WF-14 review remain open.
+
+
+## Everyday workflow guidance improvement, 23 October 2026
+
+Expanded `USER-GUIDE.md` first-use guidance for adding devices, selecting subnets/IP addresses and opening Network Racks. Checked current v1.3.0 source for the `Add Device`, `Add Rack`, `Rack Inventory`, `Manage Subnets` and `Bulk Edit Range` labels, and the distinct `Software & Firmware` editing tab and `Software & Services` reporting tab. The revised guide asks users to confirm their network address choices and rack capacity before saving; it does not claim automatic validation beyond what was inspected. Verification consisted of source text inspection and guide edits, **not** browser walkthrough or automated tests. Full first-time task validation remains outstanding under WF-14, with M-030 open.
