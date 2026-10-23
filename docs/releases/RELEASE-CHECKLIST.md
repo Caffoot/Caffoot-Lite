@@ -27,6 +27,9 @@ Use this checklist for every Caffoot Lite release, including patch releases. Kee
 
 **Optional targeted checker:** Run `npm run check:release-docs` from `app/` to check the current published release when package metadata still identifies that release. For a future candidate, run `npm run check:release-docs -- --candidate --published-version 1.3.0` with the **actual** published version in place of the example. Candidate mode requires candidate release notes named for the package version, but deliberately checks public stable version claims against the separately supplied published version. Run `node ../scripts/check-release-documentation.cjs --self-test` for positive and negative fixtures. These checks do not verify prose, links, packaging or publication status, are not part of CI or `npm run release`, and require a complete local checkout. Do not use the published mode after package metadata has advanced to a candidate version. Human review remains mandatory.
 
+
+**GitHub pull request observation:** The `Release documentation consistency` workflow now runs on every pull request, with published or candidate mode selected from package and README version statements. Draft PR #52 produced a successful live GitHub Actions result before removal of the path filter. Recheck the revised workflow run before proposing mandatory status check enforcement. This automated check remains advisory until the product owner separately approves GitHub ruleset or branch protection changes. Human documentation sign-off is mandatory regardless.
+
 ## Mandatory documentation consistency sign-off
 
 Complete this review for every release candidate, including maintenance releases. Record the results in the existing release handover or review record rather than opening a separate process document.
