@@ -30,6 +30,26 @@
 | Hold | WF-02/WF-05 | `validateApplicationState()`, 1556–1612 | Accessories and virtual-host references are not comprehensively checked. | Do not add a comment suggesting these omissions are intentional; investigate M-019 and M-005 |
 | Hold | WF-03 | `unassignDevice()`, 5670–5680 | The save result is ignored. | Do not explain an unchecked save as policy; investigate M-001 |
 
+## WF-07 to WF-10 source-informed comment reconciliation, 23 October 2026
+
+This pass reconciles significant documented functions and behaviour against the published v1.3.0 source traces in `docs/workflows/TECHNICAL-WORKFLOWS.md`. It is **not** an exhaustive function-by-function comment audit, a browser test, or authorisation to change application code. Source locations and rationale must be rechecked when implementing comments.
+
+| Priority | Workflow | Source location | Why a comment would help | Proposed intent, not final code wording |
+| --- | --- | --- | --- | --- |
+| Useful | WF-07 | `closeModal()`, `phase120ConfirmDiscard()` and nested modal paths | Closing, dirty-form confirmation and nested return routes do not all follow the same path; future refactoring could inadvertently discard a parent form. | Explain the distinction between ordinary close, discard confirmation and preserved parent editing context |
+| Useful | WF-07 | Global Escape and Tab handling | Keyboard priority handles confirmation overlays and nested editing before ordinary modal close; focus containment is important but not proof of accessibility. | Explain priority order and focus restoration assumptions, subject to browser and assistive technology checks |
+| Hold | WF-07/WF-05 | Rack accessory overlay save/delete and modal close | Independent overlay and focus behaviour remain unverified. | Do not assert uniform Cancel, Escape or focus behaviour until M-023 and browser scenarios are resolved |
+| Essential | WF-08 | Custom software and server service edit paths | Edits preserve catalogue keys while changing display labels, protecting device associations. | Explain stable key identity and why a label edit must not regenerate the key |
+| Useful | WF-08 | Archive filtering and device assignment rendering | Archived custom entries are hidden from new choices but their keys can remain in saved device records. | Explain new-selection visibility versus historical reference preservation; avoid asserting correct display of every legacy case |
+| Hold | WF-08 | Older in-device software manager removal versus dedicated archive | Older manager deletes a catalogue row whereas dedicated screen archives it; M-028 remains unresolved. | Do not describe the two routes as equivalent or intentionally interchangeable |
+| Useful | WF-09 | `auditChanges()`, `recordAudit()`, `readAuditHistory()` | Change history is separate, local, bounded and best effort; a durable inventory save must not be presented as dependent on history logging. | Explain the distinction between inventory persistence and local change-history convenience |
+| Useful | WF-09 | `phase130RestoreHistory()` versus `exportAuditHistory()` | The similarly named operations act on previous device configuration and the separate change log respectively. | Explain the two distinct meanings of history and discourage accidental conflation |
+| Useful | WF-09 | `caffootThemePreference()` and `caffootSetTheme()` | Appearance preference includes legacy fallback and is stored independently of the main inventory. | Explain compatibility fallback and the preference boundary if source reinspection confirms it remains necessary |
+| Useful | WF-10 | `app/package-release.cjs` release input handling | Packaging depends on current root documentation and release notes, so moving them is not a documentation-only operation. | Explain why required root inputs must be retained until packaging is changed and verified |
+| Hold | WF-10 | Release workflow and public version statements | Public root guides contain version drift recorded as M-030; static build review alone is not full release verification. | Do not add comments suggesting public version claims or release verification are already consistent |
+
+**Coverage status:** WF-07, WF-08, WF-09 and WF-10 now have explicit **source-informed P11 proposals**. This closes the earlier *missing-register-entries* gap only. It does not complete P11 sign-off: significant function coverage, existing comment adequacy, source-to-comment line accuracy and any applicable tests still need a final reconciliation. WF-01 through WF-06 likewise remain proposals or partial reviews rather than approved source changes.
+
 ## Review and implementation rules
 
 1. Keep this as a **documentation proposal**. No comments have been inserted into published application code.
