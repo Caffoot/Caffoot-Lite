@@ -2,7 +2,7 @@
 
 **Updated:** 21 October 2026  
 **Current milestone:** v1.3.0 Rack Management published; v1.3.x maintenance and documentation alignment are being reviewed before substantial v1.4.0 development.  
-**Repository:** `caffoot/Caffoot-Lite` (public)  
+**Repository:** `Caffoot/Caffoot-Lite` (public)  
 **Release policy:** Publish publicly only after manual verification, security/privacy review and owner approval.
 
 **Current published stable release:** [v1.3.0](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.0), published 21 October 2026.
