@@ -305,3 +305,12 @@ Read the two fixtures referenced by `app/test-backup-contract.cjs` from this doc
 Checked GitHub Actions runs associated with published v1.3.0 commit `92d6a60b0e4bc9f73589b27820cb283def377dbd`. The available connector lookup, which only returns pull-request-triggered runs, returned no matching runs. This **does not establish that no CI or release testing occurred**; it provides no execution evidence for this checkpoint.
 
 **Execution blocker:** Node.js is available in the inspection environment, but the repository is not checked out locally and direct GitHub network access failed. The connector allowed source and fixture inspection, not an executable local checkout. Accordingly **no npm, Node test, build or browser test was run**. The next valid execution step requires an accessible exact-revision checkout or an approved CI run, followed by capture of command, commit, environment, exit status and logs. Do not mark WF-13 verified based on this source inspection.
+
+
+## WF-13 CI execution route review, 23 October 2026
+
+Read `.github/workflows/validate-hotfix.yml`, `app/check-offline.cjs` and `app/verify-build.cjs` on the documentation branch. The workflow supports manual `workflow_dispatch` and pull request triggers limited to `app/**`, `RELEASE-NOTES-*.md` and its own workflow file. Therefore a documentation-only pull request is not expected to trigger the automatic validation job. The job uses Node.js 22, runs `npm ci --no-audit --no-fund`, `npm run release`, confirms the version and package exist, and uploads a temporary candidate artefact. This is a **workflow definition review, not an executed CI run**.
+
+The separately declared `check:source` invokes `check-offline.cjs`, which inspects source HTML for remote script or stylesheet links and expected markers. The release sequence instead runs `check:build` via `verify-build.cjs`, which checks the generated standalone HTML and embedded resources. Their targets differ; omission of `check:source` from the release chain is not, without further assessment, a proven release defect. The workflow's own build verification states that browser testing is still required.
+
+**Execution route:** Use the existing manual workflow on an explicitly selected revision if permitted by the repository and product owner, or obtain a local checkout of the exact published source and run the named commands. Capture run ID, source SHA, job steps, logs and artefact identity. No workflow was dispatched, test executed, application behaviour changed or release published in this checkpoint.
