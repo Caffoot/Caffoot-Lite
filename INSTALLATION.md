@@ -27,15 +27,15 @@ Use the [latest stable release](https://github.com/Caffoot/Caffoot-Lite/releases
 
 If your browser downloads the file instead of opening it, use the browser's **File → Open File** option to open the saved `.html` file.
 
-## What's new in v1.2.0
+## What's included in v1.3.0
 
-v1.2.0 introduces expanded Devices navigation, five-tab Add/Edit Device forms, Device Intelligence and Device Catalogues. See [v1.2.0 release notes](docs/archive/release-notes/RELEASE-NOTES-1.2.0.md). Always back up existing inventory before upgrading.
+v1.3.0 adds the **Network Racks** workspace with Rack Overview, Rack Inventory and Rack Accessories, including rack placement and capacity information. It also includes the earlier v1.2.0 Devices navigation, five-tab Add/Edit Device forms, Device Intelligence and Device Catalogues. See the [v1.3.0 release notes](RELEASE-NOTES-1.3.0.md) and the [historical v1.2.0 release notes](docs/archive/release-notes/RELEASE-NOTES-1.2.0.md). Always back up existing inventory before upgrading.
 
 ## First steps
 
 1. Open **IPAM → Manage Subnets** and create an IP Address Block, then add Network / VLAN subnets within it.
 2. Open **Devices** and add a device using an address from an existing subnet.
-3. Explore **IPAM**, **Racks** and the **Dashboard** as needed.
+3. Explore **IPAM**, **Network Racks** and the **Dashboard** as needed.
 4. Open **Settings & Data → Data Management → Back Up & Restore** and export a **JSON backup** once you have added useful data.
 
 ## Where is my data?
