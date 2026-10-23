@@ -9,6 +9,9 @@ Use this checklist for every Caffoot Lite release, including patch releases. Kee
 - [ ] Inspect generated standalone HTML and the exact release ZIP member list, including both reviewed fictional fixtures. Reject any unexpected test files, development utilities, private data or external dependencies.
 - [ ] Review dependency versions, outbound network behaviour, CSP/browser mitigation decisions, and documented security limitations.
 - [ ] Review all user-facing documentation and embedded Help & Guides against the current application, while preserving accurate historical release records.
+- [ ] Inventory mandatory root documents, current documentation and archive candidates; preserve historical records and build inputs.
+- [ ] Check public stable-release version statements and review affected website feature reference documents.
+- [ ] Record reviewed, updated, archived and deliberately unchanged documents with release approval evidence.
 - [ ] Review technical documentation against the release and identify genuinely superseded version-specific documents; prepare replacements and archive candidates under `docs/archive/vX.Y.Z/` using the [archive policy](../archive/README.md).
 - [ ] For each archive move, check relative links, historical references, source/build consumers and release-critical root files; preserve necessary compatibility links and record the verification evidence.
 - [ ] Confirm version in application, package metadata, release notes and filenames.
