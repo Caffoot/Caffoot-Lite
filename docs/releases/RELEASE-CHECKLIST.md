@@ -100,3 +100,18 @@ Published release: https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.1.2
 - [ ] Merge the v1.1.2 post-release documentation closeout PR after review.
 
 The reusable checklist above remains unchecked for the next release.
+
+
+## v1.3.0 documentation baseline closeout, 23 October 2026
+
+This is a **documentation publication review**, not a new application release or a declaration that the original technical audit is complete. The decision record is [v1.3.0 documentation baseline closeout](../audits/V1.3.0-DOCUMENTATION-BASELINE-CLOSEOUT.md). Draft PR #52 remains open and requires explicit product owner merge approval.
+
+- [x] Compare the PR's changed-file paths against application source boundaries: 44 changed paths, comprising documentation, screenshot images, repository contribution template, validation workflow, npm check command and documentation check scripts. No application HTML source path is changed. This is path review, not a full byte-level or sensitive-data review.
+- [x] Record the three passing GitHub Actions results on commit `4a44b057903982a81110d8535d268221dbdd5041`: documentation consistency 39933151092, release candidate validation 39933151070 and Git history secret scan 39933151056.
+- [x] Record product owner positive feedback on the revised README wording. This is not approval to merge.
+- [ ] Confirm all three checks again on the final reconciliation commit and complete the full diff and sensitive-data review.
+- [ ] Confirm agreement between master audit, WF-11 to WF-13, WF-14, documentation relocation register, maintenance roadmap and this checklist.
+- [ ] Obtain explicit product owner approval to merge PR #52. No merge or release has been performed.
+- [ ] After an approved merge, verify public `main` links, version claims and screenshot paths, then configure and verify the required documentation check under repository rules without weakening other protections.
+
+**Still open:** WF-11 to WF-13 technical verification, WF-14 final public review and M-030 publication and required-check enforcement. No new application or browser tests were executed at this checkpoint.
