@@ -72,3 +72,25 @@ Each area requires (1) technical workflow and source coverage, (2) significant f
 `STATE_VERSION` is **3** at line 1176 and is assigned to normalised state by `normaliseState()`. This internal state version is **not the same** as the backup schema version, which is **1** in `phase20CreateBackup()` near lines 7453–7465. Keep these version identifiers separate in documentation and future migration work.
 
 **Required next checks:** Identify all other top-level fields introduced or preserved by normalisation, catalogue editors and save paths; map nested device, rack, accessory, subnet, VLAN and IP allocation fields and references; confirm `serverFunctions`, `installedSoftware`, managed catalogues and optional preferences; trace browser storage keys excluded from inventory export; check legacy fixtures. No browser or automated tests were executed for this field inventory.
+
+## WF-11 nested records and cross-record relationships, 23 October 2026
+
+**Evidence:** Direct inspection of published `app/caffoot-lite.html` at the baseline blob, especially lines 6140–6210, 6324–6360, 6940–6963, 7122–7124, 7165–7179 and 8103–8115. The following is a **source-supported partial field map**, not a full schema contract.
+
+| Record or collection | Observed fields and relationships | Behaviour and limits |
+| --- | --- | --- |
+| `devices[]` | Creation includes `id`, `name`, `type`, `mountType`, `location`, `notes`, `status`, `manufacturer`, `model`, `serialNumber`, `typeDetails`, `virtualPlatform`, `virtualHostId`, `ipReserved`, `primaryIp`, `rackId`, `face`, `rackUStart`, `rackUEnd`, `rackUHeight` | Existing device edits can also preserve additional fields, including `previousTypeDetails`; not all legacy and optional fields are listed here |
+| `devices[].typeDetails` | Type-specific values; selected software and server services may be represented as Boolean values indexed by catalogue `key` | Catalogue labels can change while keys remain stable; archive visibility and historical rendering still require tests |
+| `devices[].virtualHostId` | References another `devices[].id` for a physical server | The device form checks selected host when saving a virtual server; central validation and incoming dependencies on host deletion/conversion remain open under M-005/M-008 |
+| `devices[].rackId` | References `racks[].id`; rack position also uses `face`, `rackUStart`, `rackUEnd`, `rackUHeight` | Central validation checks some rack consistency but is not a complete occupancy proof |
+| `rackAccessories[]` | Accessory editor constructs `id`, `rackId`, `type`, `name`, `face`, `startU`, `heightU`, `side`, `portCount` | `side` applies to vertical accessories and `portCount` to patch panels; import validation of accessory relationships remains a separate open concern |
+| `installedSoftware[]` | Entries read through `phase19BSoftware()`, typically using `key`, `label`, optional `deviceTypes` and `archived` | This collection is the managed software catalogue, **not** a per-device list despite its name; legacy manager removal and dedicated archive are not equivalent (M-028) |
+| `serverFunctions[]` | Entries read through `phase19BServerFunctions()`, using `key`, `label` and optional `archived` | This is the managed server services catalogue; built-in suggestions are offered by the view layer rather than automatically stored |
+| `hardwareCatalogue` | Optional top-level collection read as an array and modified by manufacturer/model editors | It is not declared in `defaultData`; edits may introduce it, and normalisation can preserve raw top-level fields. It supplies suggestions rather than replacing saved device manufacturer/model text |
+| `managedOptionsCleared` | Set to `true` by Settings Clean Start | Exact consequences across every catalogue and legacy import combination remain to be reconciled |
+
+**Relationship diagram in words:** Device primary IP relates to `ipAllocations` and subnet membership. Device rack mounting relates to `racks`; accessories also relate to racks but occupy separate records. Virtual servers relate to physical devices by ID. Software and server service catalogue entries relate to type-specific device fields by stable keys. Hardware catalogue manufacturer/model suggestions do not directly rewrite device text.
+
+**Compatibility warning:** The normaliser merges defaults and raw top-level fields. It is therefore incorrect to claim that `defaultData` lists every possible stored field, or that the source enforces every relationship in this table. Before introducing stricter validation, investigate older inventories and preserve the ability to recover or repair imperfect saved data.
+
+**Remaining WF-11 work:** Enumerate subnet, VLAN, rack and allocation record fields; inspect additional optional device fields and historical configuration records; trace storage keys and export exclusions; reconcile migration and backup fixtures; review all relationships against actual validation call paths. No tests were run for this checkpoint.
