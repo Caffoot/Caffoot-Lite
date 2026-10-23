@@ -92,3 +92,8 @@ Reviewed `USER-GUIDE.md` against the published v1.3.0 scope and current source l
 ## Everyday workflow guidance improvement, 23 October 2026
 
 Expanded `USER-GUIDE.md` first-use guidance for adding devices, selecting subnets/IP addresses and opening Network Racks. Checked current v1.3.0 source for the `Add Device`, `Add Rack`, `Rack Inventory`, `Manage Subnets` and `Bulk Edit Range` labels, and the distinct `Software & Firmware` editing tab and `Software & Services` reporting tab. The revised guide asks users to confirm their network address choices and rack capacity before saving; it does not claim automatic validation beyond what was inspected. Verification consisted of source text inspection and guide edits, **not** browser walkthrough or automated tests. Full first-time task validation remains outstanding under WF-14, with M-030 open.
+
+
+## First backup and restore guidance checkpoint, 23 October 2026
+
+Added a short first-backup and safe-restore walkthrough to `USER-GUIDE.md`. It explains where to find Download Backup, retaining exported JSON outside the browser, saving a backup before replacement imports, the replace-not-merge behaviour, and checking devices, IPAM and racks afterwards. The existing local browser storage and advanced recovery warnings remain. Compared with documented v1.3.0 backup workflow; this was document inspection only, not an executed import, restore, browser test or automated test. M-030 and WF-14 remain open.
