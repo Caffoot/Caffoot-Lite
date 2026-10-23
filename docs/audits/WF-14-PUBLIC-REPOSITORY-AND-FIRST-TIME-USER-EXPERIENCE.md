@@ -147,3 +147,8 @@ The product owner confirmed that following Download Backup, `TEST-SW01` remains 
 ## Restore preview checkpoint preparation, 23 October 2026
 
 Following owner confirmation that the fictional inventory remains intact after backup export, the published v1.3.0 application source and tagged user guide were inspected for the restore entry point. The source labels the action `Choose Backup File` under `Settings & Data` and `Back Up & Restore`; its explanatory text says the backup is reviewed before confirmation and a safety copy is verified. The tagged user guide states that restoration replaces the active inventory rather than merging records. These are source and documentation inspection findings, not an executed restore test. The owner has been asked to select the downloaded fictional JSON in the separate test profile and stop at the review or confirmation stage, reporting what appears without confirming replacement. The restore preview and completion remain outstanding. The first-time location/rack guidance gap remains open; WF-14 and M-030 remain open.
+
+
+## Restore action label usability finding, 23 October 2026
+
+During the owner's first-time manual walkthrough, the product owner proposed renaming the `Choose Backup File` button to `Restore Data`, since the existing label describes file selection rather than the intended task. The suggested supporting text should explain that a saved JSON backup is selected and reviewed before confirmation, and that restoration replaces rather than merges the current inventory. Record as an open WF-14 first-time usability improvement and v1.3.1 roadmap proposal. This is a proposal, not an implemented change or completed restore test. Published v1.3.0 continues to use `Choose Backup File`.
