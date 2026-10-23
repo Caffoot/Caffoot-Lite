@@ -144,6 +144,33 @@ const { chromium } = require('playwright');
       await page.reload({waitUntil:'load'});
       assert.equal(await page.evaluate(() => appState.deviceLocations?.includes('Fictional audit room')),false);
     });
+    await scenario('M-018 location selection and cancellation', async page => {
+      const result=await page.evaluate(() => {
+        const select=document.createElement('select');
+        select.id='dev-location';
+        select.innerHTML='<option value="Room A">Room A</option><option value="Room B">Room B</option><option value="__caffoot_create_location__">Create location</option>';
+        select.value='Room A';
+        select.dataset.previousLocation='Room A';
+        const panel=document.createElement('div');
+        panel.id='dev-create-location-panel';
+        panel.hidden=true;
+        const input=document.createElement('input');
+        input.id='dev-custom-location';
+        document.body.append(select,panel,input);
+        let error=null;
+        try {
+          select.value='Room B';
+          phase130HandleLocationChange(select);
+          select.value='__caffoot_create_location__';
+          phase130HandleLocationChange(select);
+          phase130CancelCustomLocation();
+        } catch(e) {error=String(e)}
+        return {error,selected:select.value,panelHidden:panel.hidden};
+      });
+      assert.equal(result.error,null);
+      assert.equal(result.selected,'Room B');
+      assert.equal(result.panelHidden,true);
+    });
     for (const mode of ['throw-snapshot','ignore-snapshot','throw-main','success','old-snapshot']) {
       await scenario('M-012 repair ' + mode, async page => {
         page.on('dialog', dialog => dialog.accept());
