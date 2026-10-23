@@ -1005,3 +1005,10 @@ The top-level `importData(event)` implementation on current `main` was inspected
 ## Documentation CI structural coverage checkpoint, 23 October 2026
 
 The existing documentation workflow passed at PR #89 commit `1c42846fad63cc1acc189c9ab2a4c0284cc279d9`, [run 39984994151](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39984994151). It checks required audit documents, M-001 through M-031 register entries, WF-01 through WF-13 coverage entries, imported rack scenario identifiers, Markdown links and release version statements. This is not a new browser verification of the technical workflows, nor a complete P12 sign-off. The current workflow status table remains partial, and manual semantic reconciliation is required before approval.
+
+### WF-03 and WF-06 virtual host import validation, source checkpoint 23 October 2026
+
+**Current `main` source only, not the published v1.3.0 binary:** `phase16CCheckBackup()` (approximately lines 7626 to 7643) validates unsafe keys, backup shape, schema version and mounting, then runs `validateApplicationState()` against a detached migrated candidate before restoring the original application state. The current validator does not check `virtualHostId`. Consequently this path does not establish that imported virtual server host links refer to an existing physical server or that its hypervisor service and selected product are eligible. `phase120SoftwareSuggestions` already includes VMware ESXi, Proxmox VE and Microsoft Hyper-V for physical servers, while the device form currently lists all physical servers as possible hosts.
+
+This is a **source inspection finding**, not an executed import test. The proposed future safeguard is recorded in the central M-005 remediation programme, not part of the published behaviour specification. Preserve older inventories and distinguish warning and repair from unsafe automatic mutation. WF-03 D26 and WF-06 backup compatibility and failure tests remain outstanding.
+
