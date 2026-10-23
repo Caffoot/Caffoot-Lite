@@ -384,3 +384,8 @@ Inspected `app/caffoot-lite.html` at `main` commit `a8d397f455da931a93bfd000124c
 ## WF-13 minimal verification handover, 23 October 2026
 
 The [consolidated WF-13 evidence plan](WF-13-CONSOLIDATED-EVIDENCE-PLAN.md) is the single working checklist for outstanding verification. It retains historical CI and owner acceptance without representing inspected browser scripts as executed tests, groups M-014 and M-031 disposable-data scenarios, and records published asset and Chromium run provenance gaps. This is a documentation checkpoint, not new test execution. Existing roadmap findings and master audit remain open.
+
+
+## WF-13 recovered executed Chromium evidence and published asset digests, 23 October 2026
+
+GitHub Actions [run 39940647187](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39940647187), job `120370950406`, **actually passed** on commit `d0a817f95711cf668d0c6ae26b0b66ef8725bef9` on 23 October 2026. Retrieved job logs show all four Chromium scripts invoked and passing, including offline recovery, import rejection, restore rollback and renamed HTML upgrade. This resolves the need to execute those four scripts again merely to obtain a known-revision pass, **but does not prove execution at the original v1.3.0 release SHA** or cover M-014/M-031 targeted fault injection. GitHub release API also provides three SHA256 digests for published v1.3.0 ZIP, HTML and SHA256SUMS, recorded in [consolidated plan](WF-13-CONSOLIDATED-EVIDENCE-PLAN.md). They have not been independently calculated from downloaded bytes. Prior dated claims that no successful browser execution was recovered are superseded for the 23 October run only. WF-13 remains in progress; no tests newly executed in this audit checkpoint.
