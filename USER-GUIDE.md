@@ -18,7 +18,7 @@ Open **IPAM → Manage Subnets**, create an **IP Address Block** (for example, `
 
 ### 2. Add a device
 
-**Before you start:** create the appropriate subnet and check the address you intend to assign. If you plan to place the device in a rack, first create a location in **Devices → Locations** and a rack in **Network Racks → Rack Inventory → Add Rack**, selecting the appropriate location. This is the order successfully used in the published v1.3.0 first-time walkthrough. A rack is not required for devices using a suitable non-rack mounting option. In **Devices → Device Inventory**, use **Add Device** to open the five-tab form. Work through **General**, **Hardware**, **Software & Firmware**, **Networking** and **Notes**, entering only details that apply to your device. The Software & Firmware form tab is different from the Software & Services reporting tab on Devices Overview.
+**Before you start:** create the appropriate subnet and check the address you intend to assign. If you plan to place the device in a rack, first create a location in **Devices → Locations** and a rack in **Network Racks → Rack Inventory → Add Rack**, selecting the appropriate location. A rack is not required for devices using a suitable non-rack mounting option. In **Devices → Device Inventory**, use **Add Device** to open the five-tab form. Work through **General**, **Hardware**, **Software & Firmware**, **Networking** and **Notes**, entering only details that apply to your device. The Software & Firmware form tab is different from the Software & Services reporting tab on Devices Overview.
 
 Open **Devices → Device Inventory** and choose the add-device action. Enter the device details, choose a **Type** and **Location**, and select an IP address belonging to an existing subnet. Where offered, use **Next Available IP** to suggest a free address, then verify it before saving. If the subnet does not exist, create it first using the available subnet-creation flow.
 
@@ -98,10 +98,10 @@ For download instructions and troubleshooting, see [INSTALLATION.md](INSTALLATIO
 
 ## Updating safely
 
-In Settings & Data → Data Management, use **Check for Updates** to check the latest published stable release. This is a manual online check; it does not send inventory or install anything. Use the [latest stable release](https://github.com/caffoot/Caffoot-Lite/releases/latest) to see the current published version.
+In Settings & Data → Data Management, use **Check for Updates** to check the latest published stable release. This is a manual online check; it does not send inventory or install anything. Use the [latest stable release](https://github.com/Caffoot/Caffoot-Lite/releases/latest) to see the current published version.
 
 1. Download a JSON backup from your current version.
-2. Keep the old HTML and download the new `Caffoot-Lite.html` into a separate folder from the [official releases](https://github.com/caffoot/Caffoot-Lite/releases).
+2. Keep the old HTML and download the new `Caffoot-Lite.html` into a separate folder from the [official releases](https://github.com/Caffoot/Caffoot-Lite/releases).
 3. Open the new file in your usual browser. Saved data may be unavailable after moving or renaming a file.
 4. If needed, choose your backup in Settings & Data and review the replacement summary before restoring.
 5. Verify devices, IPAM, subnets and racks. Keep the old HTML and backup until satisfied.
