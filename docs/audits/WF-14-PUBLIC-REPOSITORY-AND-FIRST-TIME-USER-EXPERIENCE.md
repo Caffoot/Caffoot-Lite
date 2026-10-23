@@ -152,3 +152,8 @@ Following owner confirmation that the fictional inventory remains intact after b
 ## Restore action label usability finding, 23 October 2026
 
 During the owner's first-time manual walkthrough, the product owner proposed renaming the `Choose Backup File` button to `Restore Data`, since the existing label describes file selection rather than the intended task. The suggested supporting text should explain that a saved JSON backup is selected and reviewed before confirmation, and that restoration replaces rather than merges the current inventory. Record as an open WF-14 first-time usability improvement and v1.3.1 roadmap proposal. This is a proposal, not an implemented change or completed restore test. Published v1.3.0 continues to use `Choose Backup File`.
+
+
+## Owner successful backup validation and restore checkpoint, 23 October 2026
+
+The product owner reported that after selecting the exported fictional JSON backup and pressing OK, Caffoot Lite validated the file and the restore process worked. This confirms owner-executed manual validation and restore of the approximately 3 KB backup in the isolated testing browser profile. It is not an automated test or independent inspection of backup contents. The owner has not yet explicitly confirmed the complete post-restore set of device, subnet, rack, location and IPAM records, so detailed record parity remains outstanding. The first-time journey has now exercised the restore operation; do not describe full end-to-end data parity as verified until the final inventory check is reported. The `Choose Backup File` to `Restore Data` usability proposal and first-time location/rack guidance gap remain open. WF-14 and M-030 remain open.
