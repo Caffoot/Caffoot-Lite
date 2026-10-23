@@ -27,12 +27,19 @@ The published v1.3.0 release focuses on Rack Overview, Rack Inventory and Rack A
 
 A clear overview of devices, IPv4 subnets, IP address allocations and rack space.
 
-| Device inventory | Rack management |
+### Devices and network racks
+
+| Device Intelligence Overview | Rack Overview |
+| --- | --- |
+| [![Caffoot Lite v1.3.0 Device Intelligence Overview showing device totals, primary IP addresses and devices by type and location](docs/screenshots/devices-overview-v1.3.0.png)](docs/screenshots/devices-overview-v1.3.0.png) | [![Caffoot Lite v1.3.0 Rack Overview showing capacity, mounted devices, accessories and rack space utilisation](docs/screenshots/rack-overview-v1.3.0.png)](docs/screenshots/rack-overview-v1.3.0.png) |
+| Explore device intelligence, hardware, operating systems, software and data quality. | Review rack capacity, equipment, locations and available space. |
+
+| Device Inventory | Rack Elevation |
 | --- | --- |
 | [![Caffoot Lite device inventory with search, filters, device details and primary IP addresses](docs/screenshots/device-inventory.png)](docs/screenshots/device-inventory.png) | [![Caffoot Lite rack management showing a rack elevation, mounted equipment and available rack units](docs/screenshots/rack-management.png)](docs/screenshots/rack-management.png) |
 | Search and organise network devices, hardware details and IP addresses. | Visualise equipment placement, rack utilisation and available U-space. |
 
-Select either thumbnail to view the full-size screenshot.
+Select a thumbnail to view its full-size screenshot.
 
 ## At a glance
 
