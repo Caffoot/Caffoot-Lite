@@ -671,3 +671,12 @@ At startup, `loadStoredState()` creates `appState`, then `validateApplicationSta
 - Existing records and backup compatibility must remain intact. Do not automatically delete archived/orphaned keys or tighten validation in a way that blocks existing inventory saves.
 
 **Browser regression:** Create a disposable device with custom software and server service selected. Archive each via dedicated pages, reload, open device details and edit form, check archived labels and historical assignment, export/import, restore service, and test the older manager's outright software removal separately. Check whether an archived service/software can be marked uninstalled without silently altering other selections. Verify data in exported JSON without using real inventory. No production code change authorised.
+
+
+### WF-08 follow-up: archived assignments in the device edit form (source audit, 23 October 2026)
+
+**Evidence:** Published v1.3.0 `app/caffoot-lite.html` lines 6403–6425 and 5882–5887. Source inspection only, not browser testing.
+
+- `phase19BRenderFields()` constructs editable controls from `phase19BFieldsFor(type)` (lines 6420–6425). The latter includes software keys from `phase120SoftwareFieldsFor(type)` and service keys from `phase19BServerFunctionFields()`, both based on active catalogue entries (lines 6403–6410). An archived custom software or server service entry is therefore generally absent from ordinary device edit controls as well as from device details.
+- `phase120IsSoftwareField()` and the edit section filters also consult active software/service catalogues (lines 6413–6423). This reinforces the need to check that historical Boolean keys remain untouched by saving unrelated device changes; the source excerpt alone does not prove a destructive save.
+- Verify archived assignment visibility, explicit uninstall options, edit-and-save preservation, reload, export/import and older backups with disposable data. Preserve unknown historical keys. Do not conflate absence from UI with loss of stored values.
