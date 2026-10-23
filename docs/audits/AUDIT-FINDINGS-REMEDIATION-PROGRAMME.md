@@ -83,3 +83,8 @@ The top-level `importData(event)` caller sequence, candidate validation, verifie
 ## Test matrix reconciliation, 23 October 2026
 
 The [workflow verification coverage register](../testing/WORKFLOW-VERIFICATION-COVERAGE-REGISTER.md) summarises WF-01 through WF-13. Dated evidence notes were added to the existing WF-01, WF-02 saving, WF-03, WF-04 and WF-05 test matrices, preserving their historical plans while identifying previously executed targeted Chromium assertions. Individual matrix completion remains unverified, and the imported rack matrix and other workflow test cases still require detailed review. No new application tests were executed during this documentation update.
+
+
+## Imported rack verification boundary
+
+The [imported rack test matrix](../testing/WF-02-IMPORTED-RACK-TEST-MATRIX.md) retains 18 pending fixture-specific scenarios. Previous release compatibility and M-011 rollback runs are related evidence, not proof that the imported accessory collision and malformed placement cases were executed. M-010 and M-019 remain open. The [coverage register](../testing/WORKFLOW-VERIFICATION-COVERAGE-REGISTER.md) records this distinction.
