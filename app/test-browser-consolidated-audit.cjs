@@ -53,8 +53,9 @@ const { chromium } = require('playwright');
           assert.equal(result.snapshot,result.priorSnapshot);
         } else if (mode === 'ignore-snapshot') {
           assert.equal(result.snapshot,result.priorSnapshot,'Silent write did not create a safety copy');
-          assert.equal(result.allocated,true,'Record actual bulk mutation despite missing copy');
-          console.log('OBSERVED M-031 B2: bulk mutation persisted without verified safety snapshot');
+          console.log('OBSERVED M-031 B2: snapshot ignored; allocated=' + result.allocated + ', savedChanged=' + (result.primary!==result.before));
+          assert.equal(result.primary,result.before,'Failed save must preserve original inventory bytes');
+          assert.equal(result.after,result.before,'Failed save must restore original in-memory inventory');
         } else if (mode === 'throw-main') {
           assert.equal(result.after,result.before);
           assert.equal(result.primary,result.before);
