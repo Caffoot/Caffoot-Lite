@@ -58,6 +58,20 @@ This is the single permanent process for Caffoot Lite audits, documentation chan
 6. **Reconcile:** Compare the work record against the original agreed scope and acceptance criteria. Account for every requirement as completed with evidence, partially completed, not completed or explicitly deferred with reason and approval. Preserve original identifiers, record any conflicts and never silently shorten a checklist.
 7. **Approve and release:** Record the completion decision and remaining risks. Obtain the product owner's explicit approval before merging, tagging or publishing. Confirm that required documentation is present on `main` after an approved merge.
 
+### Mandatory pull request and merge gate
+
+Before **any** pull request is merged into `main`, its change record and pull request must demonstrate that the seven stages above were followed at a level appropriate to the change. The reviewer must check:
+
+1. The agreed scope and acceptance criteria are recorded, and any scope changes are explained and approved.
+2. Affected technical workflows, function references, explanatory comment assessments, user-facing documentation, tests, roadmap and release guidance have been reviewed and updated where relevant. Record **not applicable** with a brief reason where a category genuinely does not apply.
+3. Relevant automated and manual checks have passed, with evidence linked; unexecuted or blocked checks are disclosed, not treated as passed.
+4. Open risks, deferred work and known limitations are recorded and have an explicit disposition.
+5. The pull request is reviewed, the change record is reconciled against its original scope, and the product owner has explicitly authorised the merge.
+
+**No merge before this gate is satisfied.** Keep documentation changes in the same pull request as the change they describe wherever practical, so `main` remains consistent. A release also requires its separate packaging, version, licence and publication checks. For documentation-only work, application-specific tests may be not applicable when justified.
+
+**Enforcement:** Repository guidance alone cannot block a GitHub merge. Maintain a pull request template reflecting this gate, add suitable automated checks and configure branch protection or repository rules to require checks and reviews where supported. Verify these controls are active before describing the gate as technically enforced. Any exception requires an explicit, recorded product-owner decision; do not silently bypass the gate.
+
 **Always-required safeguards:** No claims of passed tests without execution evidence; no source inspection presented as browser verification; no undocumented scope changes; no misleading comments explaining unresolved defects as intended design; no unapproved application changes or release actions. Every significant code change must review its technical workflow documentation. Explain findings to the product owner in plain British English, with precise technical evidence retained for contributors.
 
 **Proportionate application:** A small text correction needs a short record and focused checks. A change affecting inventory saving, migration, recovery or user data requires deeper source review, failure testing and explicit safeguards. The seven stages remain the same; the evidence needed within each stage varies.
