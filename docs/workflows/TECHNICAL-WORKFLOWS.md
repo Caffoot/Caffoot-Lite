@@ -758,3 +758,24 @@ At startup, `loadStoredState()` creates `appState`, then `validateApplicationSta
 **Responsibility overlaps:** The dedicated catalogue screens and older in-device managers both mutate hardware and software suggestions, but the software removal semantics differ (archive versus catalogue row deletion). `phase19BSoftwareFields()` and `phase19BServerFunctionFields()` look symmetrical but one returns all saved custom keys while the other returns only currently available keys; this matters in conversion and restore. `phase120SoftwareRemove()` names a confirmation dialog as if it performs removal. Some managers use `prompt()` and `confirm()` while newer editors use structured modals. These are concrete maintainability and consistency candidates, not evidence that a mass rename is safe.
 
 **Future change rule:** Preserve saved catalogue keys, legacy import/export compatibility, event-handler wiring, function references, active versus archived selection semantics, and all save/rollback protections. Consider naming changes incrementally alongside approved workflow fixes and regression tests, not as a broad cosmetic refactor. No application source changed during this audit.
+
+
+## WF-09: change history, preferences and settings (source audit opened, 23 October 2026)
+
+**Basis:** Published v1.3.0 `app/caffoot-lite.html`, source inspection only. Browser, storage-denial and accessibility testing outstanding.
+
+### Change history and its boundaries
+
+- `AUDIT_KEY='caffoot_audit_v1'` and `AUDIT_LIMIT=200` (lines 1738–1749) keep a separate, browser-local best-effort log. `readAuditHistory()` returns at most the latest 200 entries and falls back to an empty array on unavailable, malformed or unexpected storage.
+- `auditChanges()` (1751–1787) summarises created, updated and deleted devices, subnets, racks and VLANs, IP allocation changes and managed device type/location list changes. It records labels and changed field names, not previous/current field values; it does not provide exhaustive per-field tracking for all settings and catalogues.
+- `recordAudit()` (1788–1797) keeps at most 200 events and at most 60 change entries per event, with an omitted count. If history persistence fails, the code warns and shows a toast saying the inventory saved but history could not be stored. Verify interaction with `saveState()` before concluding that a history entry always corresponds to a confirmed inventory save.
+- `exportAuditHistory()` (1798–1805) downloads the local log separately. `renderAuditHTML()` (1806–1822) explicitly states that this is not a tamper-proof or multi-user audit system and is not included in standard inventory JSON backups. History therefore cannot be treated as an authoritative, portable inventory version record.
+
+### Appearance and settings boundaries
+
+- `caffootThemePreference()` (1701–1707) reads `caffoot_theme_preference` when valid, otherwise falls back to legacy `caffoot_dark`, defaulting to Light when storage is unavailable. `caffootApplyTheme()` uses the system colour scheme only for the explicit System choice (1708–1713).
+- `caffootSetTheme()` (1714–1722) writes the modern preference and compatibility key, catches storage errors with a console warning, then applies and rerenders the interface. Potential usability question: if browser storage rejects the write, the user is not given a visible persistence warning and the selected mode may not persist across reload. Verify in a storage-denied browser scenario before assigning a maintenance item.
+- The system appearance change listener updates the display only when System is selected and writes the legacy compatibility key best-effort (1723–1735). The old quick toggle explicitly chooses Light or Dark rather than System.
+- `phase16ARenderSettings()` (7203–7272) organises Data Management, Preferences, Help & Guides and About; Data Management links to established backup, restore, safety, update and destructive reset flows rather than introducing separate save implementations. Optional storage indicator reads are guarded. User guidance states that inventory remains browser-local and exports are necessary for long-term backups.
+
+**Next WF-09 source checks:** Trace `saveState()` to audit logging and its failure semantics, inventory replacement/reset and audit baseline handling, audit export versus inventory export, preference persistence after reload, and the names/responsibilities of settings and history functions. Check for user-visible confusion between change history, previous device configurations and safety snapshots. Record genuine candidates only after establishing their actual behaviour.
