@@ -296,3 +296,12 @@ Inspected four further scripts from the v1.3.0 source. **Inspection only: none w
 | `app/test-security-device-cascade.cjs` | Inspects device subnet/VLAN cascade escaping of hostile imported names and identifiers | Device relationship integrity, unchecked save results or full UI interactions |
 
 **Traceability decision:** Existing fixture-backed backup tests offer stronger compatibility evidence than test names alone suggested. They are still not equivalent to executed tests on this branch or browser verification. M-031, M-014 and existing import/rack findings remain investigations, not newly confirmed defects. Next reconcile actual fixture paths and execute the defined commands on an identified source revision.
+
+
+## WF-13 fixture provenance and execution availability, 23 October 2026
+
+Read the two fixtures referenced by `app/test-backup-contract.cjs` from this documentation branch: `app/fixtures/lite-schema-v1.example.json` and `app/fixtures/lite-legacy.example.json`. Both are JSON objects with two devices, one rack and one rack accessory. The schema-v1 fixture also declares `caffootBackup` metadata; the legacy example does not. These are repository test fixtures, not evidence of real user inventories or comprehensive compatibility.
+
+Checked GitHub Actions runs associated with published v1.3.0 commit `92d6a60b0e4bc9f73589b27820cb283def377dbd`. The available connector lookup, which only returns pull-request-triggered runs, returned no matching runs. This **does not establish that no CI or release testing occurred**; it provides no execution evidence for this checkpoint.
+
+**Execution blocker:** Node.js is available in the inspection environment, but the repository is not checked out locally and direct GitHub network access failed. The connector allowed source and fixture inspection, not an executable local checkout. Accordingly **no npm, Node test, build or browser test was run**. The next valid execution step requires an accessible exact-revision checkout or an approved CI run, followed by capture of command, commit, environment, exit status and logs. Do not mark WF-13 verified based on this source inspection.
