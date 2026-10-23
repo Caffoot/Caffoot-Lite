@@ -73,7 +73,7 @@ The safe update guide and backups work offline. Newer backup schemas require a c
 
 ## Complete release package
 
-For v1.2.0, download `Caffoot-Lite-1.2.0.zip` from the [v1.2.0 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.2.0) after publication. Extract it and open `Caffoot-Lite.html`; keep the guides and licences beside it. `SHA256SUMS` contains file hashes for checking integrity. The standalone HTML also includes full software notices in About Caffoot Lite, available offline. Example backups under `app/fixtures/` are fictional demonstrations; importing one replaces the current inventory after confirmation.
+For the current published **v1.3.0** release, open the [v1.3.0 release page](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.0) and download the versioned `Caffoot-Lite-1.3.0.zip` asset, or use the standalone `Caffoot-Lite.html` asset. Extract the ZIP before opening the HTML file in your browser. Keep the included guides and licence information with the package. Where provided, use `SHA256SUMS` to check downloaded file integrity. The standalone HTML includes software notices in About Caffoot Lite, available offline. Example backups under `app/fixtures/` are fictional demonstrations; importing one replaces the current inventory after confirmation. For the earlier package, see the [historical v1.2.0 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.2.0).
 
 ### Local file storage scope
 
