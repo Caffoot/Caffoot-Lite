@@ -82,3 +82,8 @@ The product owner uploaded `docs/screenshots/devices-overview-v1.3.0.png` (74,27
 ## Installation feature and navigation correction, 23 October 2026
 
 Reviewed `INSTALLATION.md` against published v1.3.0 release metadata and the v1.3.0 source navigation. The guide identified v1.3.0 as current but prominently titled its feature introduction `What's new in v1.2.0` and used `Racks` rather than the current `Network Racks` sidebar label in first steps. Updated the heading and text to describe the v1.3.0 Network Racks workspace while preserving v1.2.0 as historical background. Corrected the first steps navigation label. Verification: read back the revised guide text and compared the labels with inspected source. No browser or application tests were run. Wider M-030 and WF-14 checks remain open; no application change, merge or release.
+
+
+## User guide release framing correction, 23 October 2026
+
+Reviewed `USER-GUIDE.md` against the published v1.3.0 scope and current source labels. Its introductory Devices section was still headed `v1.2.0 Devices & Intelligence` despite describing the v1.3.0 guide, and its Settings section was headed `(v1.1.1)` and repeated the same tab list. Revised the headings to describe the current v1.3.0 experience, retained historical origin in prose and removed the repeated Settings explanation. Preserved backup, restore, recovery and browser storage cautions. The current source includes the `Software & Firmware` form label and `Software & Services` overview label, which refer to different interfaces and must not be conflated. **Executed:** textual source and revised-document checks. **Not executed:** browser or automated application tests. M-030 and the wider WF-14 review remain open.
