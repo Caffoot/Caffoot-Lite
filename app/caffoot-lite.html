@@ -4501,7 +4501,9 @@ function hierarchyValidateTypes(subnets) {
             const before=JSON.stringify(appState);
             try {
                 localStorage.setItem('caffoot_phase12b_prebulk_snapshot',before);
-            } catch(error) {return showToast('Safety snapshot could not be saved. Bulk operation cancelled.','error');}
+                if(localStorage.getItem('caffoot_phase12b_prebulk_snapshot')!==before)
+                    throw new Error('Safety snapshot verification failed.');
+            } catch(error) {return showToast('Safety snapshot could not be saved or verified. Bulk operation cancelled.','error');}
             for(const change of plan.changes) {
                 if(change.updated===null) delete appState.ipAllocations[change.ip];
                 else appState.ipAllocations[change.ip]=change.updated;

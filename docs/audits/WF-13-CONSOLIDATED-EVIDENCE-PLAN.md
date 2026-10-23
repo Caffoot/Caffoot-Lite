@@ -131,3 +131,7 @@ The main browser run following PR #70 passed the existing five browser scripts a
 ## Third consolidated Chromium run, 23 October 2026
 
 Main run [39948681541](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39948681541) **FAILED** at M-031 B2 after M-031 throw-snapshot passed. With the now-valid fictional subnet, Chromium observed `snapshot ignored; allocated=true, savedChanged=true`: the bulk IPAM operation saved the reservation even though the safety snapshot write was silently discarded. This is an observed safety safeguard gap, not an observed loss of inventory data. `phase12BApply()` writes the snapshot but does not read it back for verification. The subsequent M-031 scenarios and all other new combined scenarios did not execute in this run. M-031 requires product owner decision before any application behaviour change. The current assertion deliberately fails on this condition; do not relabel it as a passing safeguard. Master audit remains in progress.
+
+M-031 proposed application correction, 23 October 2026
+
+Following product owner approval to implement, a separate fix branch adds exact readback verification to the bulk IPAM prebulk snapshot write. The existing M-031 silent-write regression case will assert that the inventory remains unchanged. **The corrected application has not yet been tested or merged.** PR #72 separately records the executed failure evidence. Remaining combined scenarios, independent release asset hashing and final audit reconciliation are still outstanding.
