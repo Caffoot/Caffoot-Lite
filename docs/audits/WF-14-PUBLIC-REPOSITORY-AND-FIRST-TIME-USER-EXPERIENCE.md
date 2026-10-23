@@ -57,3 +57,8 @@ Queried the GitHub repository directory metadata for `docs/screenshots/` on the 
 ## Screenshot identity comparison with main, 23 October 2026
 
 Retrieved GitHub directory metadata for `docs/screenshots/` on both `main` and the documentation branch. `dashboard.png`, `device-inventory.png` and `rack-management.png` each have the same Git blob SHA and byte size on both branches. Therefore the three image files are byte-identical across these branches. This does not verify their visual content or whether the screenshots represent the published v1.3.0 interface. Image inspection and release comparison remain open. No browser or application tests were executed.
+
+
+## Screenshot provenance and source terminology review, 23 October 2026
+
+Queried the latest GitHub commit affecting each README screenshot on `main`. All three were last changed by commit `cc4cfce5f9cfe6974dc2cad9ca72ab065a58b98f`, dated 11 October 2026, before publication of v1.3.0 on 21 October. This timing creates a need for visual comparison but does **not** establish that any image is outdated. Inspected the current v1.3.0 source HTML on the documentation branch and found the Rack Overview, Rack Inventory and Rack Accessories navigation labels. These textual checks do not establish that the screenshots depict those screens or their current layouts. The image binaries could not be visually inspected through the available text-only GitHub retrieval route. Retain screenshot currency as **unverified** until images can be viewed alongside the released application. No screenshot or application file was changed and no browser test was run.
