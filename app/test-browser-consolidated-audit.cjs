@@ -143,5 +143,91 @@ const { chromium } = require('playwright');
       await page.reload({waitUntil:'load'});
       assert.equal(await page.evaluate(() => appState.deviceLocations?.includes('Fictional audit room')),false);
     });
+    for (const mode of ['throw-snapshot','ignore-snapshot','throw-main','success','old-snapshot']) {
+      await scenario('M-012 repair ' + mode, async page => {
+        page.on('dialog', dialog => dialog.accept());
+        const result=await page.evaluate(mode => {
+          appState.subnets.push({id:'fictional-repair-subnet',name:'Fictional repair',cidr:'10.87.76.0/29',gateway:'10.87.76.1'});
+          appState.devices.push({id:'fictional-repair-device',name:'Fictional repair device',type:'Server',primaryIp:'10.87.76.2'});
+          const before=JSON.stringify(appState);
+          localStorage.setItem('caffoot_state',before);
+          const key='caffoot_phase11c_pre_repair_v1';
+          if(mode==='old-snapshot')localStorage.setItem(key,'previous fictional repair snapshot');
+          const old=localStorage.getItem(key);
+          const original=Storage.prototype.setItem;
+          Storage.prototype.setItem=function(k,v){
+            if(k===key&&mode==='throw-snapshot')throw Error('fictional repair snapshot failure');
+            if(k===key&&mode==='ignore-snapshot')return;
+            if(k==='caffoot_state'&&mode==='throw-main')throw Error('fictional repair main failure');
+            return original.call(this,k,v);
+          };
+          phase11CPreview={snapshot:before,plan:phase11CPlan()};
+          let thrown=null;
+          try {phase11CApplyRepair()}catch(e){thrown=String(e)}
+          Storage.prototype.setItem=original;
+          return {before,old,stored:localStorage.getItem('caffoot_state'),snapshot:localStorage.getItem(key),
+            after:JSON.stringify(appState),allocated:!!appState.ipAllocations['10.87.76.2'],thrown};
+        },mode);
+        assert.equal(result.thrown,null);
+        if(mode==='throw-snapshot'||mode==='throw-main'){
+          assert.equal(result.after,result.before);
+          assert.equal(result.stored,result.before);
+          assert.equal(result.snapshot,result.old);
+        }else if(mode==='ignore-snapshot'){
+          assert.equal(result.snapshot,result.old);
+          assert.equal(result.allocated,true);
+          console.log('OBSERVED M-012: repair persisted despite silently ignored safety snapshot');
+        }else{
+          assert.equal(result.snapshot,result.before);
+          assert.equal(result.allocated,true);
+          assert.notEqual(result.stored,result.before);
+        }
+        await page.reload({waitUntil:'load'});
+        const persisted=await page.evaluate(()=>({stored:localStorage.getItem('caffoot_state'),snapshot:localStorage.getItem('caffoot_phase11c_pre_repair_v1')}));
+        assert.equal(persisted.stored,result.stored);
+        assert.equal(persisted.snapshot,result.snapshot);
+      });
+    }
+    for (const mode of ['throw-main','ignore-restore-snapshot','old-snapshot']) {
+      await scenario('M-011 import rollback ' + mode, async page => {
+        const initial=await page.evaluate(mode => {
+          if(!saveState())throw Error('Could not establish fictional baseline');
+          const original=localStorage.getItem('caffoot_state');
+          const safety='caffoot_phase11_pre_restore';
+          if(mode==='old-snapshot')localStorage.setItem(safety,'fictional earlier safety copy');
+          return {original,safety:localStorage.getItem(safety)};
+        },mode);
+        const candidate=JSON.parse(initial.original);
+        candidate.browserConsolidatedImportMarker='fictional import';
+        let accepted=0;
+        page.on('dialog',dialog=>{accepted++;return dialog.accept()});
+        await page.evaluate(mode=>{
+          const original=Storage.prototype.setItem;
+          window.__auditOriginalSetItem=original;
+          const safety='caffoot_phase11_pre_restore';
+          let mainWrites=0;
+          Storage.prototype.setItem=function(k,v){
+            if(k==='caffoot_state'&&++mainWrites===1)throw Error('fictional import primary save failure');
+            if(k===safety&&mode==='ignore-restore-snapshot'&&mainWrites>0)return;
+            return original.call(this,k,v);
+          };
+        },mode);
+        await page.locator('#import-file').setInputFiles({
+          name:'fictional-import.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(candidate))
+        });
+        await page.waitForFunction(()=>document.getElementById('import-file').value==='');
+        const outcome=await page.evaluate(()=>{
+          Storage.prototype.setItem=window.__auditOriginalSetItem||Storage.prototype.setItem;
+          delete window.__auditOriginalSetItem;
+          return {stored:localStorage.getItem('caffoot_state'),safety:localStorage.getItem('caffoot_phase11_pre_restore')};
+        });
+        assert(accepted>=1,'Import confirmation was not shown');
+        assert.equal(outcome.stored,initial.original);
+        if(mode==='old-snapshot')assert.equal(outcome.safety,initial.safety);
+        if(mode==='ignore-restore-snapshot')console.log('OBSERVED M-011: inspect secondary snapshot rollback after ignored write');
+        await page.reload({waitUntil:'load'});
+        assert.equal(await page.evaluate(()=>localStorage.getItem('caffoot_state')),initial.original);
+      });
+    }
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode=1; });
