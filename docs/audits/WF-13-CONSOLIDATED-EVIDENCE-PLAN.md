@@ -145,3 +145,8 @@ The five M-031 scenarios (`throw-snapshot`, `ignore-snapshot`, `throw-main`, `su
 ## Verified main Chromium checkpoint, 23 October 2026
 
 Main Chromium run 39953195636 completed successfully. M-031 five scenarios passed; M-018 creation failure, selection and cancellation scenarios passed after correction. M-001 and M-020 scenarios passed their assertions but recorded in-memory divergence following failed saves. M-012 five repair scenarios executed; `ignore-snapshot` demonstrated repair persistence despite a silently ignored safety snapshot. This is an OPEN safeguard finding, not a safe outcome. M-011 three import rollback scenarios executed; original inventory persisted, including after ignored secondary snapshot rollback, but the secondary snapshot outcome needs further inspection. Workflow green means the observations matched current assertions, not that all findings are resolved. WF-13 and master audit IN PROGRESS.
+
+
+## M-012 repair snapshot safeguard, 23 October 2026
+
+Source change proposed on branch `fix/m012-ipam-repair-snapshot-readback-20261023`: `phase11CApplyRepair()` now compares the stored pre-repair safety snapshot with the exact original inventory before changing IPAM allocations. A silently ignored snapshot write cancels repair and preserves the original inventory. The consolidated Chromium test now requires unchanged stored and in-memory inventory for this failure case. This is a source change and revised test assertion, **not yet executed browser evidence**. Existing throw-snapshot, throw-main, success, old-snapshot and reload scenarios remain in the suite. M-012 stays open until the revised suite passes and the results are reconciled. Other findings and the overall audit remain open. No release authorised.
