@@ -247,7 +247,12 @@ const { chromium } = require('playwright');
         const outcome=await page.evaluate(()=>{
           Storage.prototype.setItem=window.__auditOriginalSetItem||Storage.prototype.setItem;
           delete window.__auditOriginalSetItem;
-          return {stored:localStorage.getItem('caffoot_state'),safety:localStorage.getItem('caffoot_phase11_pre_restore')};
+          return {stored:localStorage.getItem('caffoot_state'),safety:localStorage.getItem('caffoot_phase11_pre_restore'),
+            recoveryActive:!!phase17AStorageRecovery,
+            recoveryReason:phase17AStorageRecovery?.reason||'',
+            recoveryRaw:phase17AStorageRecovery?.raw||null,
+            bannerPresent:!!document.getElementById('phase17a-recovery'),
+            blockedSave:phase17AStorageRecovery ? saveState() : null};
         });
         assert(accepted>=1,'Import confirmation was not shown');
         assert.equal(outcome.stored,initial.original);
@@ -255,6 +260,11 @@ const { chromium } = require('playwright');
         if(mode==='ignore-restore-snapshot'){
           assert.notEqual(outcome.safety,initial.safety,'Injected failure must leave secondary safety copy unrestored');
           assert.equal(outcome.stored,initial.original,'Failed secondary rollback must preserve original main inventory');
+          assert.equal(outcome.recoveryActive,true,'Secondary rollback failure must activate recovery protection');
+          assert.equal(outcome.blockedSave,false,'Recovery protection must block subsequent saves');
+          assert.equal(outcome.bannerPresent,true,'Secondary rollback failure must display recovery banner');
+          assert.equal(outcome.recoveryRaw,initial.original,'Recovery export must retain exact original stored bytes');
+          assert.match(outcome.recoveryReason,/rollback could not be verified/i);
         }
         await page.reload({waitUntil:'load'});
         assert.equal(await page.evaluate(()=>localStorage.getItem('caffoot_state')),initial.original);
