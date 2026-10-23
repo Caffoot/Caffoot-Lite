@@ -20,4 +20,4 @@ Caffoot Lite v1.3.0 does **not** provide a central shared database, built-in use
 
 ## Source and maintenance
 
-Source of truth: published v1.3.0 application and `docs/workflows/TECHNICAL-WORKFLOWS.md`. Check the relevant feature page and website content whenever a release changes behaviour. Public-facing copy uses British English.
+Source of truth: published v1.3.0 application and [technical workflow reference](../workflows/TECHNICAL-WORKFLOWS.md). Check the relevant feature page and website content whenever a release changes behaviour. Public-facing copy uses British English.
