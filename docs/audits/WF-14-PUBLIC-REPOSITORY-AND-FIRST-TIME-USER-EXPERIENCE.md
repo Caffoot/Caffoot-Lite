@@ -112,3 +112,8 @@ Fetched `app/caffoot-lite.html` directly from Git tag `v1.3.0` and from the docu
 ## Owner manual first-time opening checkpoint, 23 October 2026
 
 The product owner reported that the published Caffoot Lite v1.3.0 HTML opened successfully in a newly created browser profile and displayed an empty inventory. This is **owner-executed manual browser evidence**, not an automated test or independent browser observation. The subsequent fictional subnet, device and backup export walkthrough remains outstanding. No application changes, merge or release were authorised.
+
+
+## Owner first subnet creation checkpoint, 23 October 2026
+
+The product owner reported that the fictional IP Address Block and Network / VLAN subnet creation step in the fresh-profile published v1.3.0 application saved as expected. This is owner-executed manual browser evidence; no screenshot, storage readback or automated test result was independently inspected. The next manual check is adding fictional device `TEST-SW01` with address `192.168.50.10`, then confirming its Device Inventory and IPAM entries. Backup export and restore remain outstanding. WF-14 and M-030 remain open.
