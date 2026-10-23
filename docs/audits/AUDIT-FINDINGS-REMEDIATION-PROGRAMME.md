@@ -88,3 +88,8 @@ The [workflow verification coverage register](../testing/WORKFLOW-VERIFICATION-C
 ## Imported rack verification boundary
 
 The [imported rack test matrix](../testing/WF-02-IMPORTED-RACK-TEST-MATRIX.md) retains 18 pending fixture-specific scenarios. Previous release compatibility and M-011 rollback runs are related evidence, not proof that the imported accessory collision and malformed placement cases were executed. M-010 and M-019 remain open. The [coverage register](../testing/WORKFLOW-VERIFICATION-COVERAGE-REGISTER.md) records this distinction.
+
+
+## M-030 automation assessment, 23 October 2026
+
+Source inspection of `.github/workflows/caffoot-lite.yml` shows the existing build and Chromium workflow runs on pushes to `main` that change `app/**` or that workflow itself, plus manual dispatch. Its steps build the standalone HTML, validate inline JavaScript and run six browser scripts. **The inspected workflow does not automatically run on documentation-only pull requests and contains no explicit documentation cross-reference or version consistency check.** This is a workflow configuration inspection, not an executed CI test. The [release checklist](../releases/RELEASE-CHECKLIST.md) now records a manual documentation and version gate, but M-030 remains open until automated coverage is agreed, implemented and tested. No CI workflow was changed in this checkpoint.
