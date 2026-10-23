@@ -7,6 +7,11 @@ These are preserved release records for previous versions of Caffoot Lite. The l
 - [v1.1.2](RELEASE-NOTES-1.1.2.md)
 - [v1.1.1](RELEASE-NOTES-1.1.1.md)
 - [v1.1.0](RELEASE-NOTES-1.1.0.md)
+- [v1.1.0.1](RELEASE-NOTES-1.1.0.1.md)
+- [v1.0.3](RELEASE-NOTES-1.0.3.md)
+- [v1.0.2](RELEASE-NOTES-1.0.2.md)
+- [v1.0.1](RELEASE-NOTES-1.0.1.md)
+- [v1.0.0 release candidate 1](RELEASE-NOTES-1.0.0-rc.1.md)
 - [v1.0.0](RELEASE-NOTES-1.0.0.md)
 
 When publishing a new version, archive the previous version's release notes after reviewing existing links, release tooling and the package requirements. Never overwrite a historical release record with a newer version's claims.
