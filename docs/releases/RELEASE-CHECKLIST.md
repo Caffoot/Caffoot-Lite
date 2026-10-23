@@ -10,6 +10,7 @@ Use this checklist for every Caffoot Lite release, including patch releases. Kee
 - [ ] Review dependency versions, outbound network behaviour, CSP/browser mitigation decisions, and documented security limitations.
 - [ ] Review all user-facing documentation and embedded Help & Guides against the current application, while preserving accurate historical release records.
 - [ ] Inventory mandatory root documents, current documentation and archive candidates; preserve historical records and build inputs.
+- [ ] Prepare to move the previous release's notes into [`docs/archive/release-notes/`](../archive/release-notes/README.md) once the new release is published, checking repository links and release tooling first. Keep the new current version's release notes at the repository root.
 - [ ] Check public stable-release version statements and review affected website feature reference documents.
 - [ ] Record reviewed, updated, archived and deliberately unchanged documents with release approval evidence.
 - [ ] Review technical documentation against the release and identify genuinely superseded version-specific documents; prepare replacements and archive candidates under `docs/archive/vX.Y.Z/` using the [archive policy](../archive/README.md).
@@ -34,6 +35,7 @@ Use this checklist for every Caffoot Lite release, including patch releases. Kee
 
 ## After publishing
 - [ ] Update main-branch documentation from release-candidate to published status in a separate reviewable documentation change.
+- [ ] Archive the previous release's notes without changing their historical content; update internal links and verify that the new current release notes remain at the root.
 - [ ] Verify latest-release links and release asset names.
 - [ ] Confirm the release tag remains unchanged after documentation-only housekeeping.
 - [ ] Merge the documentation closeout change after review, including approved version archive moves and their version index.
