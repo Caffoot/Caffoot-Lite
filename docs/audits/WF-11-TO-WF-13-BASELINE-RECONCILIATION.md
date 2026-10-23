@@ -403,3 +403,7 @@ M-031 proposed correction:** The separately proposed application branch adds bul
 **23 October 2026 reconciliation, run 39952033135:** M-031 five browser scenarios passed on main after merged safety snapshot verification. M-001 and M-020 current assertions passed with in-memory divergence observations. M-018 stopped the suite on undefined `toggleRackLocationFields`; source confirms three call sites and no definition. M-012 and M-011 were not executed. Overall workflow failed, master audit and WF-13 remain in progress, and M-018 requires product owner decision before behaviour changes. See WF-13 evidence plan, WF-02 test matrix and v1.3.1 roadmap.
 
 **23 October 2026:** M-018 proposed branch removes three calls to undefined rack location handler and adds selection and cancellation browser regression coverage. Corrected tests not executed; master audit remains in progress.
+
+## Verified main Chromium checkpoint, 23 October 2026
+
+Final evidence update for main run 39953195636: build and Chromium PASS; separate secret scan 39953195663 PASS. M-031 and corrected M-018 browser scenarios PASS. M-012 repair snapshot ignored write persists repair, open finding. M-001, M-020, M-018 failed-save divergence observed; M-011 secondary snapshot requires review despite original inventory persistence. Cross-referenced WF-13 evidence plan, WF-02 matrix, technical workflows and v1.3.1 roadmap. Master audit remains IN PROGRESS, release v1.3.0 unchanged; independent release asset SHA256 still outstanding.
