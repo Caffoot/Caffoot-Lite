@@ -2817,9 +2817,14 @@ function hierarchyValidateTypes(subnets) {
             const choice=document.getElementById('phase13g-style')?.value;
             if(!getUniqueDeviceTypes().includes(type)||!Object.hasOwn(phase13GPresets,choice))return;
             if(!isPlainObject(appState.deviceTypeGraphics))appState.deviceTypeGraphics={};
+            const before = JSON.stringify(appState);
             if(choice==='automatic')delete appState.deviceTypeGraphics[type];
             else appState.deviceTypeGraphics[type]=choice;
-            saveState();openManageTypesModal();renderContent();
+            if (!saveState()) {
+                appState = JSON.parse(before);
+                showToast('Device graphic was not saved; previous selection restored.', 'error');
+            }
+            openManageTypesModal();renderContent();
         }
         // Phase 13L: calculate occupancy by unique U slots, not by summing item heights.
         let phase13LHeight = 1;
@@ -5673,12 +5678,16 @@ function hierarchyValidateTypes(subnets) {
         function unassignDevice(deviceId) {
             const device = appState.devices.find(d => d.id === deviceId);
             if (device) {
+                const before = JSON.stringify(appState);
                 device.rackId = '';
                 device.rackUStart = null;
                 device.rackUEnd = null;
                 // Preserve the physical location when unassigning a rack.
                 device.mountType = 'Desktop';
-                saveState();
+                if (!saveState()) {
+                    appState = JSON.parse(before);
+                    showToast('Rack unassignment was not saved; original placement restored.', 'error');
+                }
                 renderContent();
             }
         }
@@ -7033,9 +7042,17 @@ function hierarchyValidateTypes(subnets) {
                 opt.value = newVal; opt.textContent = newVal;
                 select.insertBefore(opt, select.querySelector('option[value="__caffoot_create_location__"]'));
                 select.value = newVal;
+                const before = JSON.stringify(appState);
                 if (!Array.isArray(appState.deviceLocations)) appState.deviceLocations = [];
                 if (!appState.deviceLocations.some(l => l.toLowerCase() === newVal.toLowerCase())) appState.deviceLocations.push(newVal);
-                saveState();
+                if (!saveState()) {
+                    appState = JSON.parse(before);
+                    opt.remove();
+                    select.value = '__caffoot_create_location__';
+                    showToast('Location was not saved. Please try again.', 'error');
+                    input.focus();
+                    return;
+                }
                 showToast(`Added location: ${newVal}`);
             }
             phase130PreviousLocation = select.value;
@@ -7834,6 +7851,8 @@ function hierarchyValidateTypes(subnets) {
                             if (localStorage.getItem(key) !== currentSnapshot) throw new Error('Rollback verification failed');
                             if (previousSafetySnapshot === null) localStorage.removeItem(SAFETY_SNAPSHOT_KEY);
                             else localStorage.setItem(SAFETY_SNAPSHOT_KEY, previousSafetySnapshot);
+                            if (localStorage.getItem(SAFETY_SNAPSHOT_KEY) !== previousSafetySnapshot)
+                                throw new Error('Previous safety snapshot restoration could not be verified.');
                         } catch (rollbackError) {
                             phase17AStorageRecovery = { reason: 'Backup restore rollback could not be verified. Further saves are blocked.', raw: currentSnapshot };
                             phase17ARecoveryBanner();
