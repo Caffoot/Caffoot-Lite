@@ -87,7 +87,7 @@ If you're looking for **free IPAM software**, an **offline network inventory too
 
 ## v1.2.0 Devices & Intelligence
 
-v1.2.0 adds a wider five-tab Add/Edit Device experience; Devices Overview and inventory drill-downs; separate Device Types and Locations workspaces; and Manufacturers, Models, Software and Server Services catalogues. See the [v1.2.0 release notes](RELEASE-NOTES-1.2.0.md).
+v1.2.0 adds a wider five-tab Add/Edit Device experience; Devices Overview and inventory drill-downs; separate Device Types and Locations workspaces; and Manufacturers, Models, Software and Server Services catalogues. See the [v1.2.0 release notes](docs/archive/release-notes/RELEASE-NOTES-1.2.0.md).
 
 ## What you can manage
 
@@ -124,7 +124,7 @@ The build produces `app/dist/Caffoot-Lite.html`. Automated checks and manual bro
 
 This repository is dedicated to **Caffoot Lite**: its standalone application, build tools, tests and release documentation.
 
-**v1.3.0 was published on 21 October 2026.** Download the currently published version from the [latest stable release](https://github.com/Caffoot/Caffoot-Lite/releases/latest). See the [v1.3.0 release notes](RELEASE-NOTES-1.3.0.md), [v1.2.0 release notes](RELEASE-NOTES-1.2.0.md), [v1.1.2 release notes](RELEASE-NOTES-1.1.2.md), [historical v1.1.1 release notes](RELEASE-NOTES-1.1.1.md), [historical v1.1.0 release notes](RELEASE-NOTES-1.1.0.md) and [roadmap](ROADMAP.md).
+**v1.3.0 was published on 21 October 2026.** Download the currently published version from the [latest stable release](https://github.com/Caffoot/Caffoot-Lite/releases/latest). See the [v1.3.0 release notes](RELEASE-NOTES-1.3.0.md), [v1.2.0 release notes](docs/archive/release-notes/RELEASE-NOTES-1.2.0.md), [v1.1.2 release notes](docs/archive/release-notes/RELEASE-NOTES-1.1.2.md), [historical v1.1.1 release notes](docs/archive/release-notes/RELEASE-NOTES-1.1.1.md), [historical v1.1.0 release notes](docs/archive/release-notes/RELEASE-NOTES-1.1.0.md) and [roadmap](ROADMAP.md).
 
 ## Licence and branding
 
