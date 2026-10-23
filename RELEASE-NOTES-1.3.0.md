@@ -1,8 +1,9 @@
 # Caffoot Lite v1.3.0 — Rack Management Modernisation
 
-**Status:** Draft release notes — release candidate preparation, not yet published.  
-**Release date:** To be confirmed after owner approval.  
-**Previous stable release:** v1.2.1.
+**Status:** Published stable release.  
+**Release date:** 21 October 2026.  
+**Previous stable release:** v1.2.1.  
+**Published release:** [v1.3.0 on GitHub](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.0).
 
 ## Overview
 
@@ -23,13 +24,16 @@ v1.3.0 focuses on making rack inventory and equipment placement easier to unders
 - Browser inventory remains in local storage. **Export and safely retain a JSON backup before upgrading**, changing file paths or browser profiles, or restoring data. A restore replaces the active inventory rather than merging it.
 - The standalone HTML application is **not** an authenticated multi-user web service and must not be exposed directly to the public internet.
 
-## Validation so far
+## Pre-publication validation recorded on 21 October 2026
 
 - Owner ran the full automated regression, offline HTML build, build verification and packaging checks successfully on 21 October 2026 using the development branch. The package still carried development version 1.2.0 at that point; this was **not** the final v1.3.0 release build.
 - Owner verified the generated HTML opens and the Dashboard and Racks navigation work.
 - Owner imported a historical backup and verified the Admin-Client legacy `Desktop` mounting value and corrected `Unknown` location in the device details and editor.
 
-## Outstanding release gates
+## Release preparation checklist (historical)
+
+The following items were recorded before publication and are preserved as a historical checklist. They are not claims that any unrecorded tests have since been executed.
+
 
 - Confirm each claimed feature against the final implementation and browser acceptance, including responsive/light/dark behaviour and rack accessory workflows.
 - Align application, package, documentation, release artefact names and version to 1.3.0.
