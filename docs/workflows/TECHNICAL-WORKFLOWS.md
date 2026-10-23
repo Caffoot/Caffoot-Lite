@@ -1,7 +1,7 @@
 # Caffoot Lite v1.3.0 Technical Workflows
 
-**Status:** Baseline audit in progress. Not yet a complete or verified specification.
-**Source:** Published v1.3.0 HTML at tag `v1.3.0`, blob `e8a24f6370a1bb572287aad91a314a3e4a189d94`; this matches the inspected `main` HTML. Other release assets and runtime behaviour are not yet fully verified.
+**Status:** Extended v1.3.0 audit administratively closed with product owner approval on 23 October 2026, with incomplete individual workflow coverage explicitly retained. This is not a fully verified specification.
+**Source:** Published v1.3.0 HTML and published ZIP/HTML assets. The earlier matching source blob comparison below was historical; subsequent audit corrections on `main` must not be confused with the immutable published v1.3.0 release. Published ZIP integrity and representative v1.2.1 backup compatibility were verified in GitHub Actions run [39961182872](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39961182872).
 **Purpose:** Describe actual implemented behaviour, data relationships, safeguards, error paths and tests for contributors. Future proposals belong in separate architecture documentation.
 
 ## Published HTML provenance reconciliation, 22 October 2026
@@ -14,22 +14,26 @@ For each workflow record: entry point and trigger; source path and function name
 
 ## Workflow register
 
-**Current position: 22 October 2026.** This is the authoritative at-a-glance status of the documentation audit. Detailed dated notes below provide the evidence and history. A planned test is not a passed test.
+**Current position: 23 October 2026.** This register supersedes the outdated 22 October table. Administrative audit closure is distinct from the completion of individual P12 gates. Evidence in the dated sections below remains historical and must be read against the newer findings and CI runs.
 
-| ID | Area | Documentation and source position | P12 completion gate | Browser tests |
+| ID | Area | Source and documentation assessment | P12 completion gate | Executed browser evidence |
 | --- | --- | --- | --- | --- |
-| WF-01 | Startup, load and recovery | Technical workflow recorded; 16-scenario recovery plan; published HTML matched; targeted function and comment review started | Open: complete callers, comments, roadmap and cross-checks | Not executed in this audit |
-| WF-02 | Save and integrity validation | Technical workflow recorded; 30 saving scenarios plus 18 imported rack scenarios; published HTML matched; targeted function review started | Open: complete save caller and rollback coverage, comments, roadmap and cross-checks | Not executed in this audit |
-| WF-03 | Device create, edit, convert and delete | Technical workflow and 26-scenario device matrix recorded; targeted source and naming review started | Open: complete caller/comment review and reconcile findings | Not executed in this audit |
-| WF-04 | Subnets, VLANs and IPAM | Technical workflow and 33-scenario network matrix recorded; targeted source and naming review started | Open: complete caller/comment review and reconcile findings | Not executed in this audit |
-| WF-05 | Rack placement and accessories | Source findings and 20-scenario regression matrix recorded | In progress, paused while WF-01 to WF-04 P12 retrospective checks finish | Not executed in this audit |
-| WF-06 | Backup, import and restore | Substantial published-source audit recorded, including rollback and compatibility checkpoints | Not assessed under P12; targeted browser fault injection outstanding | Not executed in this audit |
-| WF-07 | UI navigation and forms | Main navigation, modal lifecycle, save/cancel boundaries, keyboard handling, searches and filters source traced; coverage reconciliation in progress | Not assessed under P12; remaining paths and browser matrix outstanding | Not executed in this audit |
-| WF-08 | Catalogues, software and services | Not yet comprehensively audited | Not assessed under P12 | Not executed in this audit |
-| WF-09 | Audit history and preferences | Preliminary technical workflow notes recorded | Not assessed under P12 | Not executed in this audit |
-| WF-10 | Security, build, tests and release | Not yet comprehensively audited | Not assessed under P12 | Not executed in this audit |
+| WF-01 | Startup, load and recovery | Assessed with recorded recovery source tracing and fault findings | Partially assessed; full caller and documentation gate not evidenced as closed | Targeted recovery reset scenarios passed, run [39944710633](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39944710633); M-014 usability improvement deferred |
+| WF-02 | Saving and integrity | Assessed with save caller and rollback findings | Partially assessed; exhaustive caller review not certified | Targeted failed save and recovery assertions passed in runs [39957395113](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39957395113) and [39959581469](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39959581469) |
+| WF-03 | Device lifecycle | Source and workflow paths assessed with recorded findings | Partially assessed; full P12 sign-off not evidenced | Targeted device graphic failure scenario passed in run 39957395113; not exhaustive device lifecycle coverage |
+| WF-04 | Subnets, VLANs and IPAM | Source and workflow paths assessed with recorded findings | Partially assessed; full P12 sign-off not evidenced | Targeted bulk IPAM M-031 scenarios passed in runs 39957395113 and 39959581469; not full network matrix |
+| WF-05 | Rack placement and accessories | Source and workflow paths assessed with recorded findings | Partially assessed; complete P12 gate not evidenced | Targeted rack unassignment failure scenario passed in run 39957395113; not full rack matrix |
+| WF-06 | Backup, import and restore | Substantial source inspection and published compatibility verification | Partially assessed; full failure matrix not certified | Published v1.2.1 export into published v1.3.0 passed in run [39961182872](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39961182872); targeted M-011 rollback evidence passed in run 39959581469 |
+| WF-07 | Navigation and forms | Source traced; outstanding accessibility and interface paths | Partially assessed; accessibility gate not certified | Targeted custom location failed save passed in run 39957395113; not complete UI coverage |
+| WF-08 | Catalogues and services | Source review progressed; coverage remains incomplete | Not demonstrated as a complete P12 assessment | No comprehensive browser matrix evidenced by this register |
+| WF-09 | Audit history and preferences | Source review progressed; coverage remains incomplete | Not demonstrated as a complete P12 assessment | No comprehensive browser matrix evidenced by this register |
+| WF-10 | Security, build and release | Source review and release provenance assessed | Partially assessed; full P12 gate not certified | Published release asset checks passed in run 39961182872; release checks are not comprehensive browser security tests |
+| WF-11 | Data schema and migrations | Source and fixture migration reconciliation recorded | Partially assessed; full P12 gate not certified | Representative published version backup migration passed in run 39961182872 |
+| WF-12 | Failure and recovery | Failure matrix and targeted correction evidence recorded | Partially assessed; full P12 gate not certified | Targeted M-011 and M-031 fault scenarios passed in run 39959581469 |
+| WF-13 | Test traceability | Existing CI evidence and release provenance linked | Partially assessed; full cross-workflow coverage not certified | Recorded targeted Chromium and published asset runs above; no claim of exhaustive coverage |
 
-**Maintenance rule:** Update this register whenever the documentation or audit status changes, in the same documentation commit wherever practical. Keep detailed dated findings below, but do not rely on append-only notes to communicate current status. Only mark a P12 gate closed after its documented requirements are met; record browser execution independently.
+**Status rule:** A targeted PASS is not a pass for an entire workflow or its P12 gate. Historical phrases such as “not executed” in dated sections refer to the evidence available at the time, not to this updated register. M-014 remains deferred to v1.3.1. M-031 is technically corrected with targeted passing evidence. Outstanding coverage is retained for maintenance prioritisation.
+
 
 ## WF-01 Startup, load and recovery
 
