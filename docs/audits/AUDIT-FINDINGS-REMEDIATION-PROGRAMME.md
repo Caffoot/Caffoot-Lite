@@ -62,6 +62,34 @@ The [current workflow register](../workflows/TECHNICAL-WORKFLOWS.md) records sou
 
 The [historical v1.3.1 investigation register](../roadmaps/V1.3.1-MAINTENANCE-INVESTIGATION-HISTORY.md) contains a 23 October planning split that proposed deferring some findings to v1.4. The product owner's subsequent direction is to complete original audit remediation in v1.3.x. This document records that updated direction **as a proposal for reconciliation**, without silently rewriting the historical decision or assigning unapproved fixes.
 
+## Single work plan and completeness controls, 23 October 2026
+
+This programme is the central planning register. Detailed evidence remains in the linked specialist records. The 31 M entries above are the complete numbered maintenance finding inventory, but **not** the entire audit work inventory. The following cross-cutting workstreams must also be accounted for. A proposed release allocation is not approval to implement.
+
+| Workstream | Authoritative detailed record | Current status | Required next decision and completion evidence | Proposed sequence |
+| --- | --- | --- | --- | --- |
+| M-001 to M-031 | Findings table above and historical maintenance register | All numbered findings recorded; individual dispositions vary | Verify each finding against original evidence, assign an approved release or explicit deferral, preserve closures and record verification | Review throughout; prioritise data safety first |
+| WF-01 to WF-13 and P12 | [Workflow verification coverage register](../testing/WORKFLOW-VERIFICATION-COVERAGE-REGISTER.md) and [master audit](V1.3.0-DOCUMENTATION-COVERAGE-AUDIT.md) | Individual completion gates incomplete despite administrative audit closure | For each workflow record source coverage, previously executed evidence, untested scenarios, owner disposition and release gate | Alongside relevant M findings, then final P12 reconciliation |
+| Imported rack fixtures WF02-T01 to WF02-T18 | [Imported rack test matrix](../testing/WF-02-IMPORTED-RACK-TEST-MATRIX.md) | Fixture-specific execution outstanding | Confirm expected compatibility policy and execute or explicitly defer each scenario with evidence | With M-010 and M-019 |
+| Function naming and caller reference, M-007 | [Function naming and reference](../standards/FUNCTION-NAMING-AND-REFERENCE.md) | Partial inventory and proposed names; no renames implemented | Complete significant declaration and caller coverage, decide retain versus rename, assess dependencies and tests; schedule approved renames separately | After urgent integrity work; before substantial v1.4 development |
+| P11 explanatory comments | [P11 comment improvement register](P11-EXPLANATORY-COMMENT-IMPROVEMENT-REGISTER.md) | Proposals recorded; final completeness and source accuracy outstanding | Review essential, useful, retain and hold entries per workflow; only implement comments when accurate and approved | With affected workflow changes, then final review |
+| Documentation accuracy, links, release provenance and M-030 | [Master audit](V1.3.0-DOCUMENTATION-COVERAGE-AUDIT.md), [relocation register](DOCUMENTATION-RELOCATION-REGISTER.md) and [release checklist](../releases/RELEASE-CHECKLIST.md) | Automated PR checks previously passed; manual semantic reconciliation and some compatibility checks outstanding | Align operative status summaries, preserve historical evidence, check references and verify release readiness | First, after each change, and before release |
+| v1.3.1 versus later maintenance versus v1.4 | [v1.3.1 roadmap](../roadmaps/V1.3.1-MAINTENANCE-ROADMAP.md) and [root roadmap](../../ROADMAP.md) | Prioritisation proposed, individual allocations not fully approved | Record explicit owner disposition for every finding and cross-cutting workstream; do not silently transfer incomplete work | After evidence-based investigations and before implementation batches |
+
+### Ordered checkpoints
+
+1. Reconcile PR #89 merge status, documentation summaries, the master audit and CI evidence without rewriting historical checkpoints.
+2. Investigate M-005 physical host relationships using existing WF-03 scenarios D10 to D13 and D26. Agree a non-destructive compatibility policy before any code change.
+3. Investigate and prioritise remaining data protection findings, including M-004, M-006, M-009, M-010, M-017, M-019, M-022 and M-024. Reuse prior evidence where applicable.
+4. Complete or explicitly disposition the imported rack fixtures and relevant targeted regression coverage. Do not claim unexecuted tests passed.
+5. Review the remaining M findings, usability proposals, M-007 function names and P11 comments. Give each an explicit retain, fix, defer or close decision and approved release destination.
+6. Reconcile all thirteen individual P12 workflow gates, function references, master audit, roadmap, documentation and release checklist. Preserve legitimate partial statuses.
+7. Agree the exact v1.3.1 release scope and acceptance criteria. Implement only separately approved changes, verify the built release, seek explicit owner approval before merging or publishing, and carry approved deferrals into a named later plan.
+
+**No omission rule:** An item is not complete merely because it appears in a register. Its evidence, current disposition, next action, planned release or approved deferral, tests actually executed and affected documentation must agree. An unresolved entry remains visible and cannot be silently dropped from a shortened roadmap.
+
+**Current limitation:** This table reconciles the existence and planning destination of the known registers. It does not yet prove exhaustive function declaration coverage, all P11 comment assessments, every P12 test or full agreement of every historical and operative status statement. Those checks remain open.
+
 ## Permanent change and closure rules
 
 For each change, review the current workflow, function references and explanatory comments, test matrices, data and backup compatibility, audit and development findings, user guidance, roadmap and release notes. Update affected living documents in the same pull request. Record a short reason where an area is not applicable.
