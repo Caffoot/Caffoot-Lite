@@ -2,7 +2,7 @@
 
 **Date:** 23 October 2026  
 **Baseline:** Published v1.3.0; audit branch based on `d78f0f99b7c203d7bbc35de37d97bc906b670e06`  
-**Status:** In progress. This plan is not a claim of test completion.
+**Status:** Extended audit administratively closed with documented limitations on 23 October 2026. This historical plan is not a claim that all tests or P12 gates completed.
 
 ## Purpose and evidence rules
 
@@ -197,3 +197,8 @@ PR [#81](https://github.com/Caffoot/Caffoot-Lite/pull/81) merged to `main` as `4
 
 **Remaining master audit scope:** The historical WF-01 to WF-13 coverage rows contain partial or pending areas. Prior successful targeted tests remain valid, but those rows must not silently become complete. Treat unverified paths and broader accessibility, catalogue, recovery and failure coverage as explicitly outstanding or as scoped v1.3.1 follow-up, subject to product owner acceptance. This reconciliation does not itself prove full WF-01 to WF-13 coverage or constitute final audit sign-off. No new tests were executed for this documentation change. The v1.3.0 extended audit is **closed with documented limitations by explicit product owner approval on 23 October 2026**. This is an administrative audit closure, not a claim that every WF-01 to WF-13 path was exhaustively tested. The historical partial coverage rows remain accurate as evidence coverage records. Unverified paths, broader accessibility and catalogue checks, and recovery and failure scenarios not covered by the cited targeted evidence are carried forward for prioritisation in v1.3.1 maintenance planning. M-014 is an approved deferred usability improvement; M-031 is technically corrected and verified by targeted Chromium evidence. The release compatibility gate passed for the representative populated inventory in run 39961182872. No additional tests were executed for this closure decision. No application behaviour, published asset or release was changed. No release was created.
 
+
+
+### P12 and browser evidence register correction, 23 October 2026
+
+The authoritative current workflow register in [TECHNICAL-WORKFLOWS.md](../workflows/TECHNICAL-WORKFLOWS.md) has been corrected to cover WF-01 through WF-13 and to separate source assessment, P12 completion and actually executed browser evidence. This resolves the misleading 22 October at-a-glance statements that all browser tests were not executed and several P12 areas had not been assessed, while **not** claiming every P12 gate passed. Published v1.2.1 to v1.3.0 compatibility and asset verification passed in run [39961182872](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39961182872); targeted recovery and integrity evidence is recorded in runs [39944710633](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39944710633), [39957395113](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39957395113) and [39959581469](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39959581469). Earlier planned or not executed statements remain dated historical evidence only. The extended audit is owner approved as administratively closed **with incomplete individual P12 and workflow coverage carried forward**, not as a certification of full P12 completion. No new browser tests were run for this documentation correction. M-014 remains deferred; M-031 is corrected with targeted evidence. The remaining P12 gaps must be prioritised in v1.3.1 planning before they can be individually closed.
