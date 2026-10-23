@@ -900,3 +900,8 @@ Proposed M-031 bulk IPAM safeguard, 23 October 2026:** Before changing any alloc
 ## Verified main Chromium checkpoint, 23 October 2026
 
 Verified in main Chromium run 39953195636: M-031 bulk snapshot readback blocks ignored writes; M-018 location actions no longer call the undefined rack handler, and selection/cancellation tests pass. Repair workflow M-012 still permits mutation after a silently ignored safety snapshot, requiring a safeguard decision. Failed saves in M-001, M-020 and M-018 leave in-memory changes even though stored bytes remain unchanged. Import rollback M-011 preserved original inventory in three tested cases; secondary snapshot handling needs inspection.
+
+
+## M-012 repair snapshot safeguard, 23 October 2026
+
+Source change proposed on branch `fix/m012-ipam-repair-snapshot-readback-20261023`: `phase11CApplyRepair()` now compares the stored pre-repair safety snapshot with the exact original inventory before changing IPAM allocations. A silently ignored snapshot write cancels repair and preserves the original inventory. The consolidated Chromium test now requires unchanged stored and in-memory inventory for this failure case. This is a source change and revised test assertion, **not yet executed browser evidence**. Existing throw-snapshot, throw-main, success, old-snapshot and reload scenarios remain in the suite. M-012 stays open until the revised suite passes and the results are reconciled. Other findings and the overall audit remain open. No release authorised.
