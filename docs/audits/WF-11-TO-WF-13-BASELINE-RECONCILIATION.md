@@ -248,3 +248,21 @@ The central `saveState()` validates the **current in-memory** `appState`, writes
 **WF-13 test additions:** For emergency reset, preserve original unreadable bytes first; simulate a thrown write, silently unsuccessful write and successful verified write. Check whether the page reloads, whether the recovery banner remains, and what data is present after restart. For bulk IPAM, separately fail the safety snapshot write, its readback and the main inventory write. Compare persisted bytes and user feedback; do not infer persistence from the live screen.
 
 **Reconciliation:** M-014 and M-031 are existing roadmap references; no duplicate issues created. No application code changed, no browser tests executed and WF-12/WF-13 remain open.
+
+
+## WF-13 executable test command inventory, 23 October 2026
+
+**Evidence inspected:** Published v1.3.0 `app/package.json` on the documentation branch, compared with the published HTML baseline. The package manifest defines a chained `npm run release` script. **No command listed below was executed in this checkpoint.** The command names and script targets establish the intended scope only; test assertions, fixtures and results require separate inspection.
+
+| Area | Defined npm commands | Declared script targets | Execution evidence for this checkpoint |
+| --- | --- | --- | --- |
+| Device form, lifecycle and managed data | `check:device-form-tabs`, `check:device-type-history`, `check:location-mounting-contract`, `check:software-platform-catalog`, `check:device-software-separation`, `check:security-device-cascade` | `test-device-form-tabs.cjs`, `test-device-type-history.cjs`, `test-location-mounting-contract.cjs`, `test-software-platform-catalog.cjs`, `test-device-software-separation.cjs`, `test-security-device-cascade.cjs` | Not executed |
+| Rack placement and accessories | `check:rack`, `check:security-accessory-modal`, `check:security-accessory-text`, `check:security-racks` | `test-rack-placement.cjs`, `test-rack-specifications.cjs`, `test-security-accessory-modal.cjs`, `test-security-accessory-text.cjs`, `test-security-racks.cjs` | Not executed |
+| IPAM and network structure | `check:security-ipam`, `check:subnet`, `check:subnet-deletion`, `check:subnet-hierarchy` | `test-security-ipam.cjs`, `test-subnet.cjs`, `test-subnet-deletion.cjs`, `test-subnet-hierarchy.cjs` | Not executed |
+| Backup, storage, migration and recovery | `check:restore`, `check:security-reset`, `check:security-backup`, `check:security-storage`, `check:legacy-mount-repair`, `check:backup-contract` | `test-restore.cjs`, `test-security-reset.cjs`, `test-security-backup.cjs`, `test-security-storage.cjs`, `test-legacy-mount-repair.cjs`, `test-backup-contract.cjs` | Not executed |
+| Privacy, security and dashboard | `check:release-privacy`, `check:network-surface`, `check:security-xss`, `check:security-list`, `check:security-dashboard`, `check:security-managed-fields`, `check:personal` | Corresponding `check-*.cjs` or `test-*.cjs` scripts as declared in the package manifest | Not executed |
+| Release, source and package | `check:updates`, `build`, `check:build`, `package`; `check:source` is defined separately | `test-updates.cjs`, `build-offline.cjs`, `verify-build.cjs`, `package-release.cjs`; separate `check-offline.cjs` | Not executed |
+
+**Coverage caveats:** `check:source` and `check:build` are distinct. The release chain includes `check:build` after `build` but does **not** invoke the separately defined `check:source` command. The release chain also does not establish browser behaviour under injected storage faults merely by naming security/storage tests. No automated command should be marked as covering M-001, M-012, M-014, M-018, M-020 or M-031 until its assertions and fixtures are inspected and relevant tests are run.
+
+**WF-13 next evidence steps:** (1) Inspect each relevant test file and map actual assertions to the WF requirements; (2) record fixture provenance and expected behaviour; (3) execute tests on a recorded commit in a suitable environment; (4) record pass, fail, skipped and blocked separately; (5) run the browser-only recovery scenarios using disposable data; (6) reconcile published artefact provenance and complete the six-part approval gate. The source manifest alone proves none of these execution outcomes.
