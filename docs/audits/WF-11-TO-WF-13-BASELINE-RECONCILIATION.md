@@ -94,3 +94,33 @@ Each area requires (1) technical workflow and source coverage, (2) significant f
 **Compatibility warning:** The normaliser merges defaults and raw top-level fields. It is therefore incorrect to claim that `defaultData` lists every possible stored field, or that the source enforces every relationship in this table. Before introducing stricter validation, investigate older inventories and preserve the ability to recover or repair imperfect saved data.
 
 **Remaining WF-11 work:** Enumerate subnet, VLAN, rack and allocation record fields; inspect additional optional device fields and historical configuration records; trace storage keys and export exclusions; reconcile migration and backup fixtures; review all relationships against actual validation call paths. No tests were run for this checkpoint.
+
+## WF-11 network, rack and IP allocation field map, 23 October 2026
+
+**Evidence:** Direct inspection of published `app/caffoot-lite.html`, principally lines 4672–4840, 5095–5180, 5440–5477 and 1515–1535. These are fields written by the inspected creation/editing paths, not a claim that all legacy records contain precisely these fields.
+
+| Collection | Confirmed record fields | Relationships and compatibility |
+| --- | --- | --- |
+| `subnets[]`, address block | `id`, `kind: 'container'`, `cidr`, `name`, `description`, `parentId` | `parentId` may link to another subnet container; hierarchy validation checks ancestry, containment and overlap |
+| `subnets[]`, network | `id`, `cidr`, `name`, `vlan`, `gateway`, `description`, optional `parentId`; `kind` may be absent on legacy network records | Network edits spread the existing record before updating fields, preserving other existing properties; a missing kind is treated as network in relevant code |
+| `vlans[]` | `id`, `vlanId`, `name`, `description`, `color`, optional `parentId` | VLAN number is scoped to an IP Address Block domain, not globally unique; legacy unscoped VLANs require explicit reconciliation rather than guessed ownership |
+| `racks[]` | `id`, `name`, `heightU`, `widthMm`, `depthMm`, `depth`, `type`, `location` | `depth` is also written as a formatted millimetre string; devices and accessories reference `racks[].id`; resize checks mounted extents |
+| `ipAllocations` | Object indexed by IP address string; inspected entries use `status`, `deviceId`, `hostname`, `notes`, and sometimes `reservedForDeviceId` | Device primary IP synchronisation can create or update entries; manual allocation editing preserves existing extra properties before changing selected fields |
+
+**Important boundary:** The current central validator checks primary-IP ownership and some rack links, but does not establish every possible relationship, including all reserved-for references and imported accessory occupancy. Do not tighten the shared validator without a migration and recovery policy for existing imperfect inventories.
+
+## WF-11 browser storage and export boundaries, 23 October 2026
+
+| Storage key or family | Purpose from source | Inventory backup treatment |
+| --- | --- | --- |
+| `caffoot_state` | Active saved inventory | Export uses the in-memory inventory object and adds backup metadata; it is not a byte-for-byte export of this storage entry |
+| `caffoot_audit_v1` | Separate bounded local change history | Not included by `phase20CreateBackup(state)` |
+| `caffoot_theme_preference`, `caffoot_dark` | Appearance preference and legacy/dark-mode support | Separate browser preferences, not included in inventory export |
+| `caffoot_browser_storage_notice_v1` | Remembered browser storage warning acknowledgement | Not included in inventory export |
+| `caffoot_phase11_pre_restore` | Separate pre-restore safety copy | Not included in inventory export |
+| `caffoot_phase11c_pre_repair_v1` | Pre-repair safety copy | Not included in inventory export |
+| `caffoot_phase12b_prebulk_snapshot` | Pre-bulk-change safety copy | Not included in inventory export |
+
+**Export evidence:** `phase20CreateBackup(state = appState)` clones the supplied state and adds `caffootBackup` metadata. The separate browser keys above are not members of `defaultData` and are not explicitly appended to that export. A separate source-wide storage-key audit is still required before claiming this table exhausts every stored preference or safety record.
+
+**WF-11 status:** Top-level defaults, significant nested records, core relationships and key storage/export distinctions now have a documented source-based map. Remaining: complete legacy field inventory, all secondary storage keys and migration branches, fixture-backed compatibility tests and P11/P12 reconciliation. No automated or browser tests executed for this update.
