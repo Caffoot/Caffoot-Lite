@@ -17,7 +17,7 @@ During preparation of every new release:
 
 ## Release-critical files
 
-Some repository-root files are explicitly used by the release packaging scripts, including release notes, installation guidance, the user guide, the backup format and third-party notices. Do not move or remove those files merely to tidy the archive. Any relocation needs approved packaging changes and successful release checks.
+Some repository-root files are explicitly used by the release packaging scripts, including the **current version's** release notes, installation guidance, the user guide, the backup format and third-party notices. Do not move or remove those required files merely to tidy the archive. Earlier versions' release notes are historical records and may be archived after checking references and release consumers. Any relocation of required packaging inputs needs approved packaging changes and successful release checks.
 
 ## GitHub branch deletion
 
@@ -25,4 +25,10 @@ If GitHub is configured to delete a pull request's source branch automatically a
 
 ## Current status
 
-This is the archive policy and navigation entry only. No v1.3.0 baseline document has been archived yet. The v1.3.0 technical audit and documentation relocation checks are still in progress.
+This is the archive policy and navigation entry only. WF-01 to WF-10 source-inspection checkpoints for v1.3.0 are complete. Documentation closeout, full link and compatibility checks, and any separately required browser testing remain outstanding. No v1.3.0 baseline technical document has been archived.
+
+## Historical release notes decision, 23 October 2026
+
+Historical release notes are permanent release records, not automatically superseded technical guidance. Archive historical notes under [release-notes/](release-notes/README.md) while retaining the current version's notes at the root. The current release's `RELEASE-NOTES-<version>.md` is a required input to `app/package-release.cjs`; `.github/workflows/validate-hotfix.yml` also watches root `RELEASE-NOTES-*.md` files. Historical release-note files for v1.0.0, v1.1.0, v1.1.1, v1.1.2, v1.2.0 and v1.2.1 were copied unchanged to the archive and indexed. The six former root copies were then removed on the documentation branch after checking their archived contents and updating identified README and installation-guide links. External bookmarks to old root paths may stop working; repository-wide link and build verification are still outstanding. The published release assets remain unchanged. Do not treat a historical version reference as stale merely because it names an earlier release.
+
+The 27 temporary forwarding documents likewise remain in place pending inbound-link and fragment review. No archive move is authorised by this decision.

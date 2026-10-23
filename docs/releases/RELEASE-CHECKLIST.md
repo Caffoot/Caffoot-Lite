@@ -9,6 +9,10 @@ Use this checklist for every Caffoot Lite release, including patch releases. Kee
 - [ ] Inspect generated standalone HTML and the exact release ZIP member list, including both reviewed fictional fixtures. Reject any unexpected test files, development utilities, private data or external dependencies.
 - [ ] Review dependency versions, outbound network behaviour, CSP/browser mitigation decisions, and documented security limitations.
 - [ ] Review all user-facing documentation and embedded Help & Guides against the current application, while preserving accurate historical release records.
+- [ ] Inventory mandatory root documents, current documentation and archive candidates; preserve historical records and build inputs.
+- [ ] Prepare to move the previous release's notes into [`docs/archive/release-notes/`](../archive/release-notes/README.md) once the new release is published, checking repository links and release tooling first. Keep the new current version's release notes at the repository root.
+- [ ] Check public stable-release version statements and review affected website feature reference documents.
+- [ ] Record reviewed, updated, archived and deliberately unchanged documents with release approval evidence.
 - [ ] Review technical documentation against the release and identify genuinely superseded version-specific documents; prepare replacements and archive candidates under `docs/archive/vX.Y.Z/` using the [archive policy](../archive/README.md).
 - [ ] For each archive move, check relative links, historical references, source/build consumers and release-critical root files; preserve necessary compatibility links and record the verification evidence.
 - [ ] Confirm version in application, package metadata, release notes and filenames.
@@ -21,6 +25,25 @@ Use this checklist for every Caffoot Lite release, including patch releases. Kee
 - [ ] Confirm source on the review branch matches the tested build; inspect merge changes.
 - [ ] Merge only after review and owner approval.
 
+**Optional targeted checker:** Run `npm run check:release-docs` from `app/` to check the current published release when package metadata still identifies that release. For a future candidate, run `npm run check:release-docs -- --candidate --published-version 1.3.0` with the **actual** published version in place of the example. Candidate mode requires candidate release notes named for the package version, but deliberately checks public stable version claims against the separately supplied published version. Run `node ../scripts/check-release-documentation.cjs --self-test` for positive and negative fixtures. These checks do not verify prose, links, packaging or publication status, are not part of CI or `npm run release`, and require a complete local checkout. Do not use the published mode after package metadata has advanced to a candidate version. Human review remains mandatory.
+
+
+**GitHub pull request observation:** The `Release documentation consistency` workflow now runs on every pull request, with published or candidate mode selected from package and README version statements. Draft PR #52 produced a successful live GitHub Actions result before removal of the path filter. Recheck the revised workflow run before proposing mandatory status check enforcement. This automated check remains advisory until the product owner separately approves GitHub ruleset or branch protection changes. Human documentation sign-off is mandatory regardless.
+
+## Mandatory documentation consistency sign-off
+
+Complete this review for every release candidate, including maintenance releases. Record the results in the existing release handover or review record rather than opening a separate process document.
+
+- [ ] Identify the exact **currently published** version and the **proposed** release version separately. Before publication, do not describe the candidate as already published.
+- [ ] Check current-version claims in `README.md`, `INSTALLATION.md`, `USER-GUIDE.md`, `SECURITY.md`, `ROADMAP.md`, `BACKUP-FORMAT.md`, current release notes, `docs/README.md`, relevant feature and website reference pages, and embedded Help & Guides. Mark each reviewed, updated or not applicable with a reason.
+- [ ] Confirm the proposed version, ZIP name, standalone HTML name, licence notices and expected asset list agree with the approved release build. Preserve correct historical version references and release notes.
+- [ ] Check all changed relative documentation links and screenshot paths on the release candidate. Check the rendered public entry points and current download guidance; record any blocked external checks as outstanding.
+- [ ] Confirm the release notes and documentation needed by the release package are present before moving or archiving files. Review archive redirects and references after moves.
+- [ ] Reconcile technical workflows, applicable test matrices, open findings, maintenance roadmap and master audit statuses with the actual checks executed. Distinguish source inspection, automated results and owner-reported browser tests.
+- [ ] Record who reviewed the documentation, evidence links, unresolved risks and the product owner's explicit merge or release approval. A green build alone does not authorise publication.
+
+**After publication:** Recheck the actual latest release and its downloadable assets, then update the documentation to describe the newly published version. Complete the existing post-release archive and link checks before declaring documentation closeout finished.
+
 ## Publishing
 - [ ] Recheck all intended public release assets for sensitive information and unexpected files immediately before upload.
 - [ ] Create the version tag from the intended main commit.
@@ -31,6 +54,7 @@ Use this checklist for every Caffoot Lite release, including patch releases. Kee
 
 ## After publishing
 - [ ] Update main-branch documentation from release-candidate to published status in a separate reviewable documentation change.
+- [ ] Archive the previous release's notes without changing their historical content; update internal links and verify that the new current release notes remain at the root.
 - [ ] Verify latest-release links and release asset names.
 - [ ] Confirm the release tag remains unchanged after documentation-only housekeeping.
 - [ ] Merge the documentation closeout change after review, including approved version archive moves and their version index.
@@ -76,3 +100,23 @@ Published release: https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.1.2
 - [ ] Merge the v1.1.2 post-release documentation closeout PR after review.
 
 The reusable checklist above remains unchecked for the next release.
+
+
+## v1.3.0 documentation baseline closeout, 23 October 2026
+
+This is a **documentation publication review**, not a new application release or a declaration that the original technical audit is complete. The decision record is [v1.3.0 documentation baseline closeout](../audits/V1.3.0-DOCUMENTATION-BASELINE-CLOSEOUT.md). Draft PR #52 remains open and requires explicit product owner merge approval.
+
+- [x] Compare the PR's changed-file paths against application source boundaries: 44 changed paths, comprising documentation, screenshot images, repository contribution template, validation workflow, npm check command and documentation check scripts. No application HTML source path is changed. This is path review, not a full byte-level or sensitive-data review.
+- [x] Record the three passing GitHub Actions results on commit `4a44b057903982a81110d8535d268221dbdd5041`: documentation consistency 39933151092, release candidate validation 39933151070 and Git history secret scan 39933151056.
+- [x] Record product owner positive feedback on the revised README wording. This is not approval to merge.
+- [x] Confirm all three checks on documentation checkpoint `2fe5cb36264b821e925873b3676f17526d751eca`: documentation consistency 39935123617, release candidate validation 39935123615 and Git history secret scan 39935123699. Owner visually confirmed the two new overview screenshots show correct screens and fictional data. These results do not cover later commits.\n- [ ] Complete independent full diff and sensitive-data review, including the remaining screenshots and external destinations; record any blocked checks rather than claiming success.
+- [x] Recheck master audit, WF-11 to WF-13, WF-14, documentation relocation register, maintenance roadmap and this checklist for shared status: technical verification remains incomplete; WF-14 and M-030 remain open; documentation baseline publication is not technical audit completion. Historical checkpoint statements remain dated evidence.\n- [ ] Final publication sign-off still requires the independent review limits to be resolved or explicitly accepted by the owner.
+- [ ] Obtain explicit product owner approval to merge PR #52. No merge or release has been performed.
+- [ ] After an approved merge, verify public `main` links, version claims and screenshot paths, then configure and verify the required documentation check under repository rules without weakening other protections.
+
+**Still open:** WF-11 to WF-13 technical verification, WF-14 final public review and M-030 publication and required-check enforcement. No new application or browser tests were executed at this checkpoint.
+
+
+## Final status alignment review, 23 October 2026
+
+Re-read the master coverage audit, WF-11 to WF-13 reconciliation, WF-14, documentation relocation register, maintenance roadmap and baseline closeout record. Their operative status is consistent: v1.3.0 remains published, PR #52 is draft and unmerged, the technical audit remains in progress, and WF-13, WF-14 and M-030 are not closed. Older checkpoint notes mentioning pending CI remain historical and are superseded by exact commit-specific results above. No application or browser tests were executed during this source-document reconciliation. No merge, release or protection change. This checklist update requires fresh CI verification.

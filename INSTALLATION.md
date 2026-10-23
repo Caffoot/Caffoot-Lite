@@ -12,13 +12,13 @@ Caffoot Lite is a standalone HTML application. You do **not** need Docker, Node.
 
 **Export JSON backups regularly and ALWAYS before upgrades, moves, renames or resets.** Save them outside the browser and test restoration. The backup may include sensitive network information.
 
-**Current published stable release:** [v1.2.1](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.2.1). v1.3.0 is in release preparation and is not yet published. Earlier releases remain available on GitHub.
+**Current published stable release:** [v1.3.0](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.0), published 21 October 2026. Earlier releases remain available on GitHub.
 
 ## Download the released application
 
-Use the [latest stable release](https://github.com/Caffoot/Caffoot-Lite/releases/latest) to download the current published application. v1.2.1 includes the Devices & Intelligence improvements and subsequent compatibility fixes.
+Use the [latest stable release](https://github.com/Caffoot/Caffoot-Lite/releases/latest) to download the current published application. v1.3.0 includes the earlier Devices & Intelligence improvements and updated Network Rack management.
 
-1. Visit the [Caffoot Lite GitHub repository](https://github.com/caffoot/Caffoot-Lite).
+1. Visit the [Caffoot Lite GitHub repository](https://github.com/Caffoot/Caffoot-Lite).
 2. Open **Releases** and select the latest stable release.
 3. Expand **Assets** and download the version-named Caffoot Lite release ZIP (recommended, includes guides and licences), or download **`Caffoot-Lite.html`** directly. **Do not** choose GitHub's automatically generated “Source code (zip)” if you only want to run the application.
 4. If using the release ZIP, extract it first. Save the HTML file in a folder you can find again, such as Documents/Caffoot-Lite.
@@ -27,15 +27,15 @@ Use the [latest stable release](https://github.com/Caffoot/Caffoot-Lite/releases
 
 If your browser downloads the file instead of opening it, use the browser's **File → Open File** option to open the saved `.html` file.
 
-## What's new in v1.2.0
+## What's included in v1.3.0
 
-v1.2.0 introduces expanded Devices navigation, five-tab Add/Edit Device forms, Device Intelligence and Device Catalogues. See [RELEASE-NOTES-1.2.0.md](RELEASE-NOTES-1.2.0.md). Always back up existing inventory before upgrading.
+v1.3.0 adds the **Network Racks** workspace with Rack Overview, Rack Inventory and Rack Accessories, including rack placement and capacity information. It also includes the earlier v1.2.0 Devices navigation, five-tab Add/Edit Device forms, Device Intelligence and Device Catalogues. See the [v1.3.0 release notes](RELEASE-NOTES-1.3.0.md) and the [historical v1.2.0 release notes](docs/archive/release-notes/RELEASE-NOTES-1.2.0.md). Always back up existing inventory before upgrading.
 
 ## First steps
 
 1. Open **IPAM → Manage Subnets** and create an IP Address Block, then add Network / VLAN subnets within it.
 2. Open **Devices** and add a device using an address from an existing subnet.
-3. Explore **IPAM**, **Racks** and the **Dashboard** as needed.
+3. Explore **IPAM**, **Network Racks** and the **Dashboard** as needed.
 4. Open **Settings & Data → Data Management → Back Up & Restore** and export a **JSON backup** once you have added useful data.
 
 ## Where is my data?
@@ -51,7 +51,7 @@ Caffoot Lite stores its inventory in **this browser's local storage**. The HTML 
 - **I see no devices:** Check that you opened the expected file in the same browser/profile. Restore a JSON backup if needed.
 - **The file opens as text:** Confirm the filename ends in `.html`, not `.html.txt`, and choose a browser with **Open With**.
 - **Changes do not persist:** Avoid private/incognito browsing; check browser storage restrictions, then export your data before trying a different browser or location.
-- **The download is missing:** Check the [official latest release](https://github.com/caffoot/Caffoot-Lite/releases/latest) and expand **Assets**. Do not download arbitrary builds from unverified third parties.
+- **The download is missing:** Check the [official latest release](https://github.com/Caffoot/Caffoot-Lite/releases/latest) and expand **Assets**. Do not download arbitrary builds from unverified third parties.
 - **An import fails:** Do not overwrite your only backup. Confirm you selected a Caffoot Lite JSON export and retain the original file for diagnosis.
 
 For features and day-to-day workflows, see [USER-GUIDE.md](USER-GUIDE.md).
@@ -64,7 +64,7 @@ For features and day-to-day workflows, see [USER-GUIDE.md](USER-GUIDE.md).
 In Settings & Data → Data Management, use **Check for Updates** to check the latest published stable release. This is a manual online check; it does not send inventory or install anything. The check requires an internet connection and reports the latest public release.
 
 1. Download a JSON backup from your current version.
-2. Keep the old HTML and download the new `Caffoot-Lite.html` into a separate folder from the [official releases](https://github.com/caffoot/Caffoot-Lite/releases).
+2. Keep the old HTML and download the new `Caffoot-Lite.html` into a separate folder from the [official releases](https://github.com/Caffoot/Caffoot-Lite/releases).
 3. Open the new file in your usual browser. Saved data may be unavailable after moving or renaming a file.
 4. If needed, use **Choose Backup File** in **Settings & Data → Data Management → Back Up & Restore** and review the replacement summary before restoring.
 5. Verify devices, IPAM, subnets and racks. Keep the old HTML and backup until satisfied.
@@ -73,7 +73,7 @@ The safe update guide and backups work offline. Newer backup schemas require a c
 
 ## Complete release package
 
-For v1.2.0, download `Caffoot-Lite-1.2.0.zip` from the [v1.2.0 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.2.0) after publication. Extract it and open `Caffoot-Lite.html`; keep the guides and licences beside it. `SHA256SUMS` contains file hashes for checking integrity. The standalone HTML also includes full software notices in About Caffoot Lite, available offline. Example backups under `app/fixtures/` are fictional demonstrations; importing one replaces the current inventory after confirmation.
+For the current published **v1.3.0** release, open the [v1.3.0 release page](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.0) and download the versioned `Caffoot-Lite-1.3.0.zip` asset, or use the standalone `Caffoot-Lite.html` asset. Extract the ZIP before opening the HTML file in your browser. Keep the included guides and licence information with the package. Where provided, use `SHA256SUMS` to check downloaded file integrity. The standalone HTML includes software notices in About Caffoot Lite, available offline. Example backups under `app/fixtures/` are fictional demonstrations; importing one replaces the current inventory after confirmation. For the earlier package, see the [historical v1.2.0 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.2.0).
 
 ### Local file storage scope
 

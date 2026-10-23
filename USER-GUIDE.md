@@ -2,11 +2,11 @@
 
 **Infrastructure, Simplified. — For HomeLabs and Small Teams**
 
-This guide covers the published v1.2.x Devices & Intelligence functionality and the upcoming v1.3.0 rack-management workflows (not yet published), with relevant information for users upgrading from earlier releases. The redesigned Settings & Data interface was introduced in v1.1.1, with security hardening in v1.1.2.
+This guide covers the published v1.3.0 release, including Devices & Intelligence and rack-management workflows, with relevant information for users upgrading from earlier releases. The redesigned Settings & Data interface was introduced in v1.1.1, with security hardening in v1.1.2.
 
-## v1.2.0 Devices & Intelligence
+## Devices & Intelligence in v1.3.0
 
-v1.2.0 adds **Devices → Overview** for local inventory charts and drill-downs; **Device Inventory**, **Device Types** and **Locations** for distinct management views; and **Device Catalogues** for **Manufacturers**, **Models**, **Software** and **Server Services**. The wider Add/Edit Device form has five tabs: **General**, **Hardware**, **Software & Firmware**, **Networking** and **Notes**. Server Services are managed separately from software assignments. Archived catalogue entries are retained for historical device records, with restoration where offered. Always verify saved assignments after changing a catalogue entry.
+The published v1.3.0 release includes the Devices & Intelligence features introduced in v1.2.0. These include **Devices → Overview** for local inventory charts and drill-downs; **Device Inventory**, **Device Types** and **Locations** for distinct management views; and **Device Catalogues** for **Manufacturers**, **Models**, **Software** and **Server Services**. The wider Add/Edit Device form has five tabs: **General**, **Hardware**, **Software & Firmware**, **Networking** and **Notes**. Server Services are managed separately from software assignments. Archived catalogue entries are retained for historical device records, with restoration where offered. Always verify saved assignments after changing a catalogue entry.
 
 ## Getting started
 
@@ -18,17 +18,19 @@ Open **IPAM → Manage Subnets**, create an **IP Address Block** (for example, `
 
 ### 2. Add a device
 
+**Before you start:** create the appropriate subnet and check the address you intend to assign. If you plan to place the device in a rack, first create a location in **Devices → Locations** and a rack in **Network Racks → Rack Inventory → Add Rack**, selecting the appropriate location. A rack is not required for devices using a suitable non-rack mounting option. In **Devices → Device Inventory**, use **Add Device** to open the five-tab form. Work through **General**, **Hardware**, **Software & Firmware**, **Networking** and **Notes**, entering only details that apply to your device. The Software & Firmware form tab is different from the Software & Services reporting tab on Devices Overview.
+
 Open **Devices → Device Inventory** and choose the add-device action. Enter the device details, choose a **Type** and **Location**, and select an IP address belonging to an existing subnet. Where offered, use **Next Available IP** to suggest a free address, then verify it before saving. If the subnet does not exist, create it first using the available subnet-creation flow.
 
-If the device is **Rack Mounted**, enter its rack/U requirements and review placement; otherwise choose the appropriate non-rack mounting option. For access points, the available choices include **Tabletop / Shelf Mounted**, **Ceiling Mounted**, **Wall Mounted**, and **Pole Mounted**. Save and confirm that the device appears in inventory and that IPAM reflects its address.
+If the device is **Rack Mounted**, select the rack you created, enter its rack/U requirements and review placement; otherwise choose the appropriate non-rack mounting option. For access points, the available choices include **Tabletop / Shelf Mounted**, **Ceiling Mounted**, **Wall Mounted**, and **Pole Mounted**. Save and confirm that the device appears in inventory and that IPAM reflects its address.
 
 ### 3. Manage IP addresses
 
-Use **IPAM** to inspect allocations and reservations, identify available addresses, and manage entries. **Bulk Edit Range** identifies the active subnet and its parent block; verify that context before applying changes. Check the subnet and any existing reservation before assigning an address. After editing or deleting a device, verify that its IPAM record has been updated accordingly.
+Start in **IPAM → Manage Subnets** to confirm you are working in the intended address block and subnet. Review any suggested available address against the actual network before assigning it. Use **IPAM** to inspect allocations and reservations, identify available addresses, and manage entries. **Bulk Edit Range** identifies the active subnet and its parent block; verify that context before applying changes. Check the subnet and any existing reservation before assigning an address. After editing or deleting a device, verify that its IPAM record has been updated accordingly.
 
 ### 4. Work with racks
 
-In the **v1.3.0 development build**, expand **Network Racks** in the sidebar. **Rack Overview** shows inventory-based capacity, equipment, location and type summaries; **Rack Inventory** lets you search, add and open individual racks; **Rack Accessories** manages rack accessories. These summaries are not live monitoring. In a rack detail view, inspect front/rear elevations and available U positions before placing equipment. For rack-mounted devices, review U height and placement; avoid overlaps with devices and accessories. A 0U accessory does not occupy numbered rack units. Verify placement visually after dragging or editing an item, and review any rack-resize warnings before saving. The published v1.2.1 interface may use older navigation labels.
+Begin with **Network Racks → Rack Overview** for a summary of capacity and equipment. Open **Rack Inventory** to find a rack or use **Add Rack** to create one. Check rack height and location before assigning devices or accessories. In v1.3.0, expand **Network Racks** in the sidebar. **Rack Overview** shows inventory-based capacity, equipment, location and type summaries; **Rack Inventory** lets you search, add and open individual racks; **Rack Accessories** manages rack accessories. These summaries are not live monitoring. In a rack detail view, inspect front/rear elevations and available U positions before placing equipment. For rack-mounted devices, review U height and placement; avoid overlaps with devices and accessories. A 0U accessory does not occupy numbered rack units. Verify placement visually after dragging or editing an item, and review any rack-resize warnings before saving. Earlier releases, including v1.2.1, may use different navigation labels.
 
 ### 5. Types, locations and device details
 
@@ -38,13 +40,15 @@ Use **Devices → Device Types** and **Devices → Locations** to review and man
 
 The **Dashboard** summarises inventory and network information based on your locally saved data. If it appears empty, add a subnet and some devices, then return to the dashboard. In v1.1.1, **Inventory Health** checks known inconsistencies across saved devices, IPAM, subnets, VLANs and rack assignments. A healthy result does not verify backup availability, browser storage safety or live network reachability.
 
-## Settings & Data (v1.1.1)
+## Settings & Data
 
-The Settings tabs are **Data Management**, **Preferences**, **Help & Guides**, and **About Caffoot Lite**.
-
-Open **Settings & Data** for **Data Management**, **Preferences**, **Help & Guides**, and **About Caffoot Lite**. These tabs are available in v1.1.1, v1.1.2 and v1.2.0; older releases may have different labels and placement.
+Open **Settings & Data** for **Data Management**, **Preferences**, **Help & Guides** and **About Caffoot Lite**. These tabs are present in the published v1.3.0 release. The redesigned Settings interface was introduced in v1.1.1; older releases may have different labels and placement.
 
 ### Data Management — Back Up & Restore
+
+**First backup:** After adding useful inventory, open **Settings & Data → Data Management → Back Up & Restore** and select **Download Backup**. Keep the resulting JSON file somewhere safe outside the browser. Repeat this before upgrading, moving the HTML file or importing another inventory.
+
+**Before restoring:** Download a backup of the inventory currently open. **Choose Backup File** replaces rather than combines inventories, so review the confirmation before proceeding. After import, check your devices, IPAM and racks. Use a separate browser profile with disposable data for practice restores.
 
 - **Download Backup** exports your inventory as a JSON file. Save it somewhere secure outside the browser; this is a manual backup, not automatic synchronisation.
 - **Choose Backup File** selects a previously exported JSON file. Review the validation and replacement confirmation carefully. When restoring an older backup, review any access-point mounting conflicts and confirm any legacy desktop/laptop rack-mount corrections before the final replacement confirmation. Cancelling a review leaves the active inventory unchanged. A restore **replaces** the active inventory; it does not merge records. Download a fresh backup before restoring and verify devices, IPAM, subnets and racks afterwards.
@@ -94,10 +98,10 @@ For download instructions and troubleshooting, see [INSTALLATION.md](INSTALLATIO
 
 ## Updating safely
 
-In Settings & Data → Data Management, use **Check for Updates** to check the latest published stable release. This is a manual online check; it does not send inventory or install anything. Use the [latest stable release](https://github.com/caffoot/Caffoot-Lite/releases/latest) to see the current published version.
+In Settings & Data → Data Management, use **Check for Updates** to check the latest published stable release. This is a manual online check; it does not send inventory or install anything. Use the [latest stable release](https://github.com/Caffoot/Caffoot-Lite/releases/latest) to see the current published version.
 
 1. Download a JSON backup from your current version.
-2. Keep the old HTML and download the new `Caffoot-Lite.html` into a separate folder from the [official releases](https://github.com/caffoot/Caffoot-Lite/releases).
+2. Keep the old HTML and download the new `Caffoot-Lite.html` into a separate folder from the [official releases](https://github.com/Caffoot/Caffoot-Lite/releases).
 3. Open the new file in your usual browser. Saved data may be unavailable after moving or renaming a file.
 4. If needed, choose your backup in Settings & Data and review the replacement summary before restoring.
 5. Verify devices, IPAM, subnets and racks. Keep the old HTML and backup until satisfied.

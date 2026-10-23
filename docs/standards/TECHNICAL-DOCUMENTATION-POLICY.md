@@ -46,6 +46,45 @@ Before beginning the next workflow, complete and review the current workflow's d
 
 **Retrospective application:** Recheck WF-01 through WF-04 against this gate before treating their documentation packages as complete. WF-03 and WF-04 require dedicated test matrices. WF-05 has a matrix but still requires completion review. Keep the distinction between documentation completion and unexecuted browser tests visible.
 
+## One mandatory development and audit process
+
+This is the single permanent process for Caffoot Lite audits, documentation changes, bug fixes, improvements, new features and releases. Contributors and AI-assisted development must follow it. Individual tasks do **not** require a separate formal process or plan document. Use the existing issue, roadmap entry, audit register or change record to capture the specific scope and evidence, in proportion to risk.
+
+1. **Understand:** Read the relevant current code, published behaviour, technical workflows, safeguards and dependencies. Identify the source revision and any uncertainty.
+2. **Agree:** Record the intended outcome, scope, acceptance criteria, risks and required approval in the existing work record. Do not begin unauthorised application changes.
+3. **Implement:** Make only approved changes. Record unexpected findings, explain their impact and obtain approval before materially changing scope.
+4. **Verify:** Perform checks appropriate to the change's risk, including negative cases, persistence, rollback and browser or release testing where relevant. Distinguish planned tests from executed results. Reuse valid evidence for unchanged code rather than repeating checks for appearances.
+5. **Document:** Update affected technical workflows, function naming references, P11 explanatory comment assessments, user guidance, test matrices, roadmap and release records as applicable. Document existing behaviour separately from proposed behaviour.
+6. **Reconcile:** Compare the work record against the original agreed scope and acceptance criteria. Account for every requirement as completed with evidence, partially completed, not completed or explicitly deferred with reason and approval. Preserve original identifiers, record any conflicts and never silently shorten a checklist.
+7. **Approve and release:** Record the completion decision and remaining risks. Obtain the product owner's explicit approval before merging, tagging or publishing. Confirm that required documentation is present on `main` after an approved merge.
+
+### Mandatory pull request and merge gate
+
+Before **any** pull request is merged into `main`, its change record and pull request must demonstrate that the seven stages above were followed at a level appropriate to the change. The reviewer must check:
+
+1. The agreed scope and acceptance criteria are recorded, and any scope changes are explained and approved.
+2. Affected technical workflows, function references, explanatory comment assessments, user-facing documentation, tests, roadmap and release guidance have been reviewed and updated where relevant. Record **not applicable** with a brief reason where a category genuinely does not apply.
+3. Relevant automated and manual checks have passed, with evidence linked; unexecuted or blocked checks are disclosed, not treated as passed.
+4. Open risks, deferred work and known limitations are recorded and have an explicit disposition.
+5. The pull request is reviewed, the change record is reconciled against its original scope, and the product owner has explicitly authorised the merge.
+
+**No merge before this gate is satisfied.** Keep documentation changes in the same pull request as the change they describe wherever practical, so `main` remains consistent. A release also requires its separate packaging, version, licence and publication checks. For documentation-only work, application-specific tests may be not applicable when justified.
+
+**Enforcement:** Repository guidance alone cannot block a GitHub merge. Maintain a pull request template reflecting this gate, add suitable automated checks and configure branch protection or repository rules to require checks and reviews where supported. Verify these controls are active before describing the gate as technically enforced. Any exception requires an explicit, recorded product-owner decision; do not silently bypass the gate.
+
+**Always-required safeguards:** No claims of passed tests without execution evidence; no source inspection presented as browser verification; no undocumented scope changes; no misleading comments explaining unresolved defects as intended design; no unapproved application changes or release actions. Every significant code change must review its technical workflow documentation. Explain findings to the product owner in plain British English, with precise technical evidence retained for contributors.
+
+**Proportionate application:** A small text correction needs a short record and focused checks. A change affecting inventory saving, migration, recovery or user data requires deeper source review, failure testing and explicit safeguards. The seven stages remain the same; the evidence needed within each stage varies.
+
+**Audit-specific completion:** The original v1.3.0 coverage audit includes WF-01 through WF-13 and must be reconciled against its own original requirements, including P11 comments, P12 completion checks, function references and outstanding test evidence. The proposed public repository experience review must not reuse the original WF-11 identifier until the conflict is resolved. This audit register is the task's evidence record, not a competing process.
+
+**Main branch requirement:** This policy becomes binding repository guidance once reviewed and merged into `main`. Until then, it remains on the documentation branch for review.
+
 ## Release documentation archiving
 
 As part of every release tidy-up, review documentation for material that has been superseded. Follow the [historical documentation archive policy](../archive/README.md). Keep current descriptions accurate, preserve historical evidence, retain shared standards where still valid and check all links and release packaging dependencies before moving files. Archive changes must be reviewed and merged before the source branch is deleted.
+
+
+## Workstream identifier clarification, 23 October 2026
+
+The original v1.3.0 documentation audit retains WF-01 through WF-13. The separately agreed public repository and first-time user experience review is **WF-14**, tracked in [the WF-14 scope document](../audits/WF-14-PUBLIC-REPOSITORY-AND-FIRST-TIME-USER-EXPERIENCE.md). It is planned work, not a replacement for WF-11 or evidence that the original audit is complete. This clarification supersedes earlier provisional references to an unnamed public repository review.

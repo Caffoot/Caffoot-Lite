@@ -1,0 +1,45 @@
+name: Release documentation consistency
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  release-documentation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check release documentation checker self-tests
+        run: node scripts/check-release-documentation.cjs --self-test
+      - name: Check Markdown link checker self-tests
+        run: node scripts/check-documentation-links.cjs --self-test
+      - name: Check local Markdown and image paths
+        run: node scripts/check-documentation-links.cjs
+      - name: Identify published version from README
+        id: versions
+        shell: bash
+        run: |
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const text = fs.readFileSync('README.md', 'utf8');
+          const match = text.match(/\*\*Current release:\*\*\s*\[v(\d+\.\d+\.\d+)\]/i);
+          if (!match) throw Error('README current published version not found');
+          const pkg = require('./app/package.json').version;
+          const mode = pkg === match[1] ? 'published' : 'candidate';
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, 'mode=' + mode + '\npublished=' + match[1] + '\n');
+          console.log('Checking ' + mode + ' documentation statements');
+          NODE
+      - name: Check published or candidate release documentation
+        shell: bash
+        run: |
+          if [ "${{ steps.versions.outputs.mode }}" = "published" ]; then
+            node scripts/check-release-documentation.cjs --published
+          else
+            node scripts/check-release-documentation.cjs --candidate --published-version "${{ steps.versions.outputs.published }}"
+          fi
