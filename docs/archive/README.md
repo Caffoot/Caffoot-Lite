@@ -25,10 +25,10 @@ If GitHub is configured to delete a pull request's source branch automatically a
 
 ## Current status
 
-This is the archive policy and navigation entry only. No v1.3.0 baseline document has been archived yet. WF-01 to WF-10 source-inspection checkpoints for v1.3.0 are complete. Documentation closeout, full link and compatibility checks, and any separately required browser testing remain outstanding. No v1.3.0 baseline document has been archived.
+This is the archive policy and navigation entry only. No v1.3.0 baseline technical document has been archived. WF-01 to WF-10 source-inspection checkpoints for v1.3.0 are complete. Documentation closeout, full link and compatibility checks, and any separately required browser testing remain outstanding. No v1.3.0 baseline document has been archived.
 
 ## Historical release notes decision, 23 October 2026
 
-Historical release notes are permanent release records, not automatically superseded technical guidance. Retain them at their current repository-root paths for now to preserve links and avoid unnecessary packaging or workflow changes. The current release's `RELEASE-NOTES-<version>.md` is a required input to `app/package-release.cjs`; `.github/workflows/validate-hotfix.yml` also watches root `RELEASE-NOTES-*.md` files. Historical notes may be reconsidered for relocation only after inbound links, release automation and published documentation are checked, with owner approval and relevant verification. Do not treat a historical version reference as stale merely because it names an earlier release.
+Historical release notes are permanent release records, not automatically superseded technical guidance. Archive historical notes under [release-notes/](release-notes/README.md) while retaining the current version's notes at the root. The current release's `RELEASE-NOTES-<version>.md` is a required input to `app/package-release.cjs`; `.github/workflows/validate-hotfix.yml` also watches root `RELEASE-NOTES-*.md` files. Historical release-note files have been copied byte-for-byte to the archive and indexed. Repository links must be updated before root copies are removed; external bookmarks to old root paths may stop working. The published release assets remain unchanged. Do not treat a historical version reference as stale merely because it names an earlier release.
 
 The 27 temporary forwarding documents likewise remain in place pending inbound-link and fragment review. No archive move is authorised by this decision.
