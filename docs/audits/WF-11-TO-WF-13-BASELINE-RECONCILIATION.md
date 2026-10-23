@@ -1,6 +1,6 @@
 # Caffoot Lite v1.3.0 WF-11 to WF-13 Baseline Reconciliation
 
-**Status:** Initial source-informed reconciliation, 23 October 2026. Not verified by execution and not signed off.
+**Status:** In progress, 23 October 2026. Source inspection remains partial; historical automated release execution evidence has been recovered for WF-13, but browser execution and full traceability are not signed off.
 **Baseline:** Published v1.3.0 `app/caffoot-lite.html`, blob `e8a24f6370a1bb572287aad91a314a3e4a189d94`.
 **Scope:** Preserve the original audit definitions: WF-11 data schema and migrations; WF-12 failure and recovery matrix; WF-13 test traceability. The proposed public repository experience review must use a different identifier.
 
@@ -38,11 +38,11 @@
 | --- | --- | --- |
 | Source baseline | Published HTML blob above is identified in earlier audit work | Reconcile other packaged source, dependencies and assets to the actual published release |
 | Automated test definitions | `app/package.json` defines `npm run release`, which chains security, restore, rack, subnet, backup, build and packaging checks | Map each test script to requirements and exact fixtures; capture execution results for the target revision |
-| GitHub validation | `.github/workflows/validate-hotfix.yml` runs `npm ci` and `npm run release` for relevant application/release-note pull requests | Link a real workflow run and its outcome; confirm package artifact provenance |
+| GitHub validation | `.github/workflows/validate-hotfix.yml` runs `npm ci` and `npm run release` for relevant application/release-note pull requests; historical successful run `39605067641` and exact release-source comparison are recorded below | Confirm published package artefact provenance and remaining test-to-requirement mapping |
 | Browser checks | Dedicated workflow matrices and planned scenarios are referenced throughout the coverage audit | Record browser, platform, fixture, steps, observed results and pass/fail evidence |
 | Release artifact verification | Published release record and package contents have been inspected in earlier WF-10 notes | Verify actual released ZIP/HTML/checksums and licences, not just expected names |
 
-**WF-13 decision:** Traceability structure started, but no tests were executed as part of this reconciliation. Do not claim automated or browser verification has passed.
+**WF-13 decision:** Traceability remains partial. No new tests were executed in this audit checkpoint, but historical successful automated release execution was recovered and verified later on 23 October 2026, as recorded below. Do not claim the separate browser workflow has passed without its run evidence.
 
 ## Mandatory completion gate for all three areas
 
@@ -324,3 +324,14 @@ The validation workflow checks application and package output but does not test 
 ## Documentation baseline closeout decision prepared, 23 October 2026
 
 Created `docs/audits/V1.3.0-DOCUMENTATION-BASELINE-CLOSEOUT.md` to distinguish readiness to publish corrected v1.3.0 documentation from completion of the original technical audit. The product owner agreed to this evidence-based approach, but has **not** approved merging PR #52. WF-11 to WF-13 retain their incomplete source and test coverage, WF-14 retains final public review, and M-030 remains open until public `main` reconciliation and actual required-check enforcement. GitHub Actions previously passed on commit `00761e84928832ef20a3a2e6155b4bbe5d746f1b`; the new closeout commits require fresh CI verification. No application tests executed in this checkpoint, no merge, release or branch protection change. The master audit stays in progress.
+
+
+## WF-13 recovered historical release CI evidence, 23 October 2026
+
+**Evidence recovered, not a fresh test execution.** GitHub Actions [release candidate validation run 39605067641](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39605067641), job `119239027726`, completed successfully on 21 October 2026 for commit `be778285e6d1180052802255d1c283abfbd5238e`. Its downloaded job log records `npm run release`, 29 named `check:*` commands, `build`, `check:build` and `package`; the job's install, release, version/package confirmation and artefact upload steps concluded successfully. The associated [history secret scan run 39605067721](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39605067721) also succeeded.
+
+GitHub's comparison of tested commit `be778285e6d1180052802255d1c283abfbd5238e` with published v1.3.0 merge commit `92d6a60b0e4bc9f73589b27820cb283def377dbd` reports one intervening commit and **no changed files**. The `app/package.json` blob SHA is identical at both revisions. This supports release-source equivalence for the recovered automated release suite. It does not establish that the published downloadable artefacts have been independently hashed or opened.
+
+The separate [main-branch build workflow](https://github.com/Caffoot/Caffoot-Lite/blob/main/.github/workflows/caffoot-lite.yml) defines four Playwright Chromium scripts: `test-browser-offline.cjs`, `test-browser-import.cjs`, `test-browser-restore.cjs` and `test-browser-upgrade.cjs`. Its configuration was inspected, but **no historical successful execution of that workflow at the release revision has yet been recovered**. The connector's commit workflow lookup is limited to pull-request-triggered runs and cannot disprove push-triggered execution. Existing owner-reported manual browser acceptance remains separately attributed to the owner. Browser execution history, exact published artefact provenance and the broader source-to-assertion mapping remain open.
+
+**Checkpoint controls:** This is documentary recovery of historical evidence only. No tests, browser sessions or builds were executed in this checkpoint. No application behaviour, workflows, protections or published release were changed. WF-13 and the master technical audit remain **in progress**, not signed off. Earlier dated statements that evidence was unavailable describe the earlier inspection checkpoint and are superseded for the specific release candidate run above.
