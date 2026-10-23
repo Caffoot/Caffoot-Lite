@@ -18,7 +18,7 @@ function inspect(read, expected) {
   const errors = [];
   for (const [file, patterns] of Object.entries(files)) {
     let source;
-    try { source = read(file); } catch (_) { errors.push(file + ': missing or unreadable'); continue; }
+    try { source = read(file); if (typeof source !== 'string') throw new Error('missing content'); } catch (_) { errors.push(file + ': missing or unreadable'); continue; }
     for (const pattern of patterns) {
       const match = source.match(pattern);
       if (!match) { errors.push(file + ': required current-release statement not found'); continue; }
