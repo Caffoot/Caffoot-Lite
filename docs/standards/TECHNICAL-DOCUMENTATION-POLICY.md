@@ -113,3 +113,8 @@ This policy is proposed on the current review branch. Existing GitHub documentat
 ## Automated audit register coverage, 23 October 2026
 
 The existing release documentation consistency workflow has been extended on the PR #89 review branch to check the presence of six mandatory audit and policy files and the current table identifiers for M-001 through M-031, WF-01 through WF-13 and WF02-T01 through WF02-T18. The checker has isolated self-test fixtures for missing files and entries. This gate checks objective structural completeness only. It does **not** certify that statuses agree, that cited tests ran, or that technical explanations match application source. Reviewers must still reconcile the master audit, workflow documentation, evidence registers, roadmap and release records before approval. The new checks have been committed but their GitHub Actions outcome is pending. No branch protection change is authorised.
+
+
+## Automated coverage execution evidence, 23 October 2026
+
+The PR #89 structural coverage gate and existing documentation checks passed in [GitHub Actions run 39984994151](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39984994151) at commit `1c42846fad63cc1acc189c9ab2a4c0284cc279d9`. The history secret scan also passed in run 39984994558. This is evidence of objective automated checks only. The mandatory reviewer reconciliation of current statuses, technical behaviour, test provenance and release descriptions remains a separate approval gate. The audit programme records the corrected labelled workflow parser regression. No branch protection, application behaviour, merge or release was changed.
