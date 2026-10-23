@@ -250,3 +250,12 @@ PR #89 commit `1c42846fad63cc1acc189c9ab2a4c0284cc279d9` passed [release documen
 
 **Recommended compatibility design for agreement:** On import, preserve legacy host references and platform values and present a non-destructive review of missing hosts, ineligible hosts and platform mismatches. Do not silently rewrite them or globally prevent unrelated saves. Confirm precise handling, error versus warning criteria and repair actions with the product owner before implementing. Cross-reference WF-03 D26 and WF-06 import verification. Source inspection only; no runtime test executed.
 
+
+### M-005 hypervisor product and version catalogue proposal, 23 October 2026
+
+**Product owner suggestion, proposed for design review:** Follow the existing server operating system pattern by offering a hypervisor product selector and a separate version selector, including historical versions. Extend the suggested products beyond the existing VMware ESXi, Proxmox VE and Microsoft Hyper-V to consider XCP-ng, XenServer/Citrix Hypervisor, KVM, VMware vSphere Hypervisor historical naming, Nutanix AHV, Oracle VM Server, oVirt and other relevant products. Validate exact product names, support histories and version values before adding any starter catalogue entries. Include a custom product and custom version for uncommon or older installations.
+
+**Recommended data model for agreement:** Store a stable hypervisor product identifier and a separately recorded version string on the physical server. The selected product determines eligibility and the dependent virtual servers' platform identity. A version-only update should not reassign virtual servers or change their platform identity. A change of product triggers the already agreed confirmation and atomic update of all dependent virtual server platform metadata. Avoid inferring installed versions from arbitrary software checkbox labels. Reuse or reconcile existing software catalogue choices and preserve legacy software and Hypervisor service selections.
+
+**Status:** Proposed enhancement, not yet approved as an exact catalogue or schema, implemented or tested. Review server OS selector source and version catalogue before finalising design. Existing M-005 safeguards and WF-03 planned tests remain open.
+
