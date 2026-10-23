@@ -155,3 +155,32 @@ The inventory export clones the in-memory inventory and adds `caffootBackup` met
 - Backup compatibility across supported historical releases and recovery after simulated storage write/readback failures
 
 **Decision:** The source-level WF-11 migration and key inventory has advanced, but WF-11 remains **partial** until fixture-based tests, complete legacy record mapping, function/P11 review and the six-part completion gate are satisfied. Existing M-005, M-019, M-024 and M-028 investigations must not be silently closed.
+
+## WF-12 source-traced failure and recovery matrix, 23 October 2026
+
+**Evidence baseline:** Direct inspection of published `app/caffoot-lite.html` at lines 1617–1651, 1822–1856, 2250–2286, 4493–4518, 7385–7450 and 7785–7855. This matrix describes observed code paths and verification still required, not completed runtime tests.
+
+| Path and source | Failure point | Source-supported response | Recovery evidence still needed |
+| --- | --- | --- | --- |
+| Startup, `loadStoredState()` | Browser storage read denied; malformed or structurally invalid JSON; unsafe keys; failed normalisation | Retains unreadable raw text where available, activates recovery mode, does not automatically write inventory | Simulate each failure; confirm recovery banner, blocked saves, raw download and reset behaviour |
+| Shared `saveState()` | Recovery mode; integrity errors; storage write exception; readback mismatch | Returns `false`, reports error; successful write precedes best-effort audit logging | Check each caller rolls back in-memory changes; verify failure messages and persistent bytes |
+| Change history, `recordAudit()` | Audit diff error or separate history write failure | Save remains successful; audit failures are caught and history write can display a warning | Confirm failed history storage cannot turn a successful inventory write into a failed transaction |
+| Subnet form, `handleSubnetSubmit()` | Hierarchy/VLAN/gateway/dependency validation or failed save | Rejects invalid proposal; on save failure restores JSON snapshot and prior selection/draft subnet | Test existing and new subnet, retained legacy fields and nested return-to-device flow |
+| Rack form, rack submit path | Invalid dimensions, occupied positions on resize, declined correction or failed save | Rejects invalid changes; on failed save restores prior in-memory state | Test rack resize with devices and accessories, including legacy rack dimensions |
+| IP allocation, `handleIpSubmit()` | Protected gateway or device primary IP; failed save | Rejects protected edits; on failed save restores the previous allocation or removes newly created entry | Test status changes, reserved references and storage write failures |
+| Bulk IPAM, `phase12BApply()` | Expired/recalculated plan; snapshot write exception; failed save | Cancels on snapshot write exception; failed save restores in-memory inventory and clears audit reason | **Open risk:** source writes snapshot but does not read it back before mutation. Test silent storage failures and confirm expected policy before calling this verified protection |
+| IPAM repair, `phase11CApply()` | Stale preview; conflicting owner; snapshot write or save failure | Rejects stale preview; attempts in-memory rollback and previous snapshot restoration | **Open risk:** snapshot is written without immediate readback; snapshot rollback errors are swallowed. Test quota, silent write and rollback failure cases |
+| Clean Start, `phase16AClearSystem()` | Safety snapshot or clean inventory write/readback failure | Attempts to restore original inventory and safety snapshot, verifies rollback and blocks further saves if rollback cannot be verified | Test all write/readback stages, separate browser keys and emergency recovery behaviour |
+| Backup import, `importData()` | Parse, unsafe keys, version, shape, compatibility, user cancellation | Validates and requests confirmation before replacing active inventory | Test real historical backups and each pre-replacement rejection |
+| Backup import, `importData()` | Safety snapshot write/readback failure | Cancels replacement before changing active inventory | Inject exceptions and silent failed writes |
+| Backup import, `importData()` | Candidate save/readback failure | Restores original in-memory state and attempts saved inventory and safety snapshot rollback | Test all failure stages and compare original bytes |
+| Backup import, `importData()` | Failed rollback verification | Activates recovery protection, blocks further saves and provides raw original-data recovery path | Verify banner, blocked actions and recoverable original bytes |
+
+### WF-12 findings and proposed verification priorities
+
+1. **Priority review:** Bulk IPAM and confirmed IPAM repair both write a safety snapshot, but the inspected paths do not immediately verify its persisted value before mutating state. This differs from import and Clean Start. Record as a **source-observed safeguard inconsistency**, not as a demonstrated user-facing defect. Determine whether a readback and rollback escalation are needed in a separately approved code change.
+2. **Priority review:** `phase11CApply()` swallows errors while attempting to restore a previous safety snapshot after failure. Investigate whether recovery protection should activate when rollback cannot be verified. Do not change behaviour during a documentation-only audit.
+3. **Completion gap:** P12 must trace **every** `saveState()` caller, including device, catalogue, rack accessory, network and preferences operations, and distinguish durable storage rollback from in-memory rollback.
+4. **Test standard:** For each row, record the baseline commit, input fixture, fault injected, expected stored bytes, expected active state, message, recovery availability and actual observed result. Until run, status is **Not executed**.
+
+**WF-12 status:** The principal recovery boundaries now have a source-traced matrix and two explicit consistency review items. WF-12 remains **partial** pending exhaustive caller coverage, runtime failure injection, P11 review and owner-approved completion record.
