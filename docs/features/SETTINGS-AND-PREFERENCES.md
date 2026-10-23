@@ -25,4 +25,4 @@ Appearance preferences are saved in the current browser when browser storage per
 
 Show the actual Preferences choices and Settings & Data navigation from the published release. If showing Change History, use fictional events.
 
-**Technical reference:** WF-09 in `docs/workflows/TECHNICAL-WORKFLOWS.md`.
+**Technical reference:** WF-09 in [technical workflow reference](../workflows/TECHNICAL-WORKFLOWS.md).
