@@ -184,3 +184,23 @@ The inventory export clones the in-memory inventory and adds `caffootBackup` met
 4. **Test standard:** For each row, record the baseline commit, input fixture, fault injected, expected stored bytes, expected active state, message, recovery availability and actual observed result. Until run, status is **Not executed**.
 
 **WF-12 status:** The principal recovery boundaries now have a source-traced matrix and two explicit consistency review items. WF-12 remains **partial** pending exhaustive caller coverage, runtime failure injection, P11 review and owner-approved completion record.
+
+## WF-12 direct save caller reconciliation, 23 October 2026
+
+**Method:** Search of the published `app/caffoot-lite.html` for direct `saveState()` invocations and inspection of surrounding error paths. There are **36 textual occurrences**, including the function declaration, hence **35 direct call sites**. This is a source-level census of the literal call form, not a call-graph proof of every indirect persistence route.
+
+**Established rollback groups:** Subnet and VLAN editing/reconciliation; IP allocation; rack creation, correction and moves; device edits and placement; rack accessory create, delete and move; hardware, software and service catalogues; managed type/location changes; software preference changes; IPAM bulk operations and repair; Clean Start; backup restore. Most inspected handlers check the boolean return and restore a prior in-memory value or snapshot. Clean Start and backup restore additionally attempt to verify and roll back persisted browser storage.
+
+**Three direct call sites need targeted review:**
+
+| Source line | Operation | Observed code | Risk and test required |
+| --- | --- | --- | --- |
+| 2821 | Device type graphic preset change | Mutates `appState.deviceTypeGraphics`, then invokes `saveState();openManageTypesModal();renderContent();` without checking the result | A rejected save may leave the changed preset visible in memory. Inject a failed save and confirm whether UI and stored data diverge |
+| 5678 | Rack device unassignment | Clears rack fields, changes mount type, then invokes `saveState();renderContent();` without checking the result | A rejected save may leave the unassigned device in memory although storage retains its earlier rack placement. Test storage failure and reload |
+| 7035 | Add physical location from device form | Adds to `appState.deviceLocations`, invokes `saveState();`, then displays an unconditional added-location toast | Save failure may still be followed by a success message and an unsaved option in memory. Test invalid storage and recovery mode |
+
+These are **source-observed unchecked save results**, not yet reproduced defects. They warrant explicit maintenance findings and approval before any application change. Do not assume the shared `saveState()` protects callers from in-memory changes already made.
+
+**Additional nuance:** Some successful inventory writes are followed by best-effort change-history recording; failure of the separate audit history does not invalidate the inventory save. Conversely, rollback that restores only `appState` does not prove browser storage rollback when a write or readback fails partway through. Both cases require distinct failure-injection assertions.
+
+**Next checks:** Inspect dynamic or indirect save dispatch, assess whether any other handlers mutate shared nested objects before copying, record these three cases in the maintenance findings register, and execute browser tests with controlled write failures. WF-12 remains open.
