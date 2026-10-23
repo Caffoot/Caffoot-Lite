@@ -7005,7 +7005,7 @@ function hierarchyValidateTypes(subnets) {
             phase130PreviousLocation = select.value;
             select.dataset.previousLocation = select.value;
             panel.hidden = true;
-            toggleRackLocationFields(select.value);
+            // Rack mounting is controlled independently by the device mounting type.
         }
         function phase130CancelCustomLocation() {
             const select = document.getElementById('dev-location');
@@ -7016,7 +7016,7 @@ function hierarchyValidateTypes(subnets) {
             panel.hidden = true;
             const input = document.getElementById('dev-custom-location');
             if (input) input.value = '';
-            toggleRackLocationFields(select.value);
+            // Rack mounting is controlled independently by the device mounting type.
         }
         function addCustomLocationOption() {
             const input = document.getElementById('dev-custom-location');
@@ -7041,7 +7041,7 @@ function hierarchyValidateTypes(subnets) {
             select.dataset.previousLocation = select.value;
             document.getElementById('dev-create-location-panel').hidden = true;
             input.value = '';
-            toggleRackLocationFields(select.value);
+            // Rack mounting is controlled independently by the device mounting type.
         }
 
         // Only catalogue-recognised keys can be removed automatically; unknown legacy
