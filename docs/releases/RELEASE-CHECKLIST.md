@@ -25,6 +25,20 @@ Use this checklist for every Caffoot Lite release, including patch releases. Kee
 - [ ] Confirm source on the review branch matches the tested build; inspect merge changes.
 - [ ] Merge only after review and owner approval.
 
+## Mandatory documentation consistency sign-off
+
+Complete this review for every release candidate, including maintenance releases. Record the results in the existing release handover or review record rather than opening a separate process document.
+
+- [ ] Identify the exact **currently published** version and the **proposed** release version separately. Before publication, do not describe the candidate as already published.
+- [ ] Check current-version claims in `README.md`, `INSTALLATION.md`, `USER-GUIDE.md`, `SECURITY.md`, `ROADMAP.md`, `BACKUP-FORMAT.md`, current release notes, `docs/README.md`, relevant feature and website reference pages, and embedded Help & Guides. Mark each reviewed, updated or not applicable with a reason.
+- [ ] Confirm the proposed version, ZIP name, standalone HTML name, licence notices and expected asset list agree with the approved release build. Preserve correct historical version references and release notes.
+- [ ] Check all changed relative documentation links and screenshot paths on the release candidate. Check the rendered public entry points and current download guidance; record any blocked external checks as outstanding.
+- [ ] Confirm the release notes and documentation needed by the release package are present before moving or archiving files. Review archive redirects and references after moves.
+- [ ] Reconcile technical workflows, applicable test matrices, open findings, maintenance roadmap and master audit statuses with the actual checks executed. Distinguish source inspection, automated results and owner-reported browser tests.
+- [ ] Record who reviewed the documentation, evidence links, unresolved risks and the product owner's explicit merge or release approval. A green build alone does not authorise publication.
+
+**After publication:** Recheck the actual latest release and its downloadable assets, then update the documentation to describe the newly published version. Complete the existing post-release archive and link checks before declaring documentation closeout finished.
+
 ## Publishing
 - [ ] Recheck all intended public release assets for sensitive information and unexpected files immediately before upload.
 - [ ] Create the version tag from the intended main commit.
