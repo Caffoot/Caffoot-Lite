@@ -157,6 +157,21 @@ A virtual server's host selector should normally offer only physical servers wit
 
 **Verification required:** Existing WF-03 D10 to D13 and D26, plus scenarios for eligible/ineligible hosts, automatic service and platform synchronisation, hypervisor removal, custom and archived products, failed saves, reload and legacy backup restore. This is an approved design direction only. No application code change, browser execution, merge or release is authorised by this record.
 
+### M-005 device form and software catalogue source checkpoint, 23 October 2026
+
+Read-only inspection of current `main` source `app/caffoot-lite.html` (blob `8e97cd82863d9a7b84d640c89962619065db0c3b`) confirms:
+
+- The shared Hypervisor server service is `serverService_Hypervisor` (line 6155). `phase120AvailableServerServices()` exposes active services, while `phase19BServerFunctionFields()` and `phase19BFieldsFor(type)` include them in server device details (lines 6165 to 6170, 6418 to 6422).
+- `phase19BSoftware()`, `phase120SoftwareOptions()` and `phase120SoftwareFieldsFor(type)` provide saved and suggested installed software choices, including custom options (lines 6335 to 6339, 6392 to 6397, 6415 to 6416). `phase19BRenderFields()` currently renders software and service choices as independent checkboxes (lines 6432 to 6442). There is no single active hypervisor selection in this inspected form path.
+- The virtual server form separately offers a manually selected virtualisation platform and all physical servers as host candidates, without checking hypervisor service or software (lines 6856 to 6865). `handleDeviceSubmit()` checks that a selected host exists and is a physical server, but not whether it is hypervisor eligible (lines 7142 to 7144).
+- `captureDeviceFormDraft()` retains `virtualPlatform`, `virtualHostId` and `typeDetails` (lines 6947 to 6972). Device save retains these values with rollback on persistence failure (lines 7186 to 7205).
+
+**Design implications:** Use a single active hypervisor product choice with a stable saved identifier, mapped to the existing software catalogue where feasible; derive the existing Hypervisor service state from that choice. Keep other installed software selections independent. Host eligibility and derived virtualisation platform must be enforced at save time, not just by hiding ineligible dropdown entries. A host's hypervisor change must also consider dependent virtual servers and existing custom or archived software.
+
+**Not yet settled:** Whether a host's hypervisor product may be changed in place when dependants exist, and how to handle existing host records with only the legacy Hypervisor service checked. These require explicit compatibility decisions before implementation.
+
+**Evidence limit:** Source inspection only, not an executed browser test. No application code changed. M-005 remains open and WF-03 test matrix scenarios still require execution.
+
 ## Permanent change and closure rules
 
 For each change, review the current workflow, function references and explanatory comments, test matrices, data and backup compatibility, audit and development findings, user guidance, roadmap and release notes. Update affected living documents in the same pull request. Record a short reason where an area is not applicable.
