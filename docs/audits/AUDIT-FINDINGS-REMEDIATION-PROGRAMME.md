@@ -259,3 +259,12 @@ PR #89 commit `1c42846fad63cc1acc189c9ab2a4c0284cc279d9` passed [release documen
 
 **Status:** Proposed enhancement, not yet approved as an exact catalogue or schema, implemented or tested. Review server OS selector source and version catalogue before finalising design. Existing M-005 safeguards and WF-03 planned tests remain open.
 
+
+### M-005 guest operating system independence decision, 23 October 2026
+
+**Product owner agreed design:** Each virtual machine retains its own independently selected guest operating system and version, regardless of the physical host's hypervisor product and version. Guest choices must accommodate server operating systems and virtual network appliances such as OPNsense and pfSense, as well as custom or historical operating systems. Changing the physical host's hypervisor product updates the assigned virtual machines' recorded hypervisor platform only, following the agreed confirmation and atomic save rule; it must **never** overwrite their guest operating systems, versions or other unrelated device details. Changing only the physical host's hypervisor version does not alter dependent virtual machines.
+
+**Design detail requiring further inspection:** The existing device type and OS catalogue may classify firewalls and routers separately from virtual servers. Inspect and reconcile the current OS selector and device type rules before implementing cross-category guest OS selection. Preserve legacy values and avoid blocking unrelated inventory saves.
+
+**Status:** Product design approved, application implementation not approved or started. No tests executed. Add guest OS independence and appliance OS scenarios to WF-03 verification before implementation.
+
