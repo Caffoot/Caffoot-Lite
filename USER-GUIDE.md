@@ -18,11 +18,11 @@ Open **IPAM → Manage Subnets**, create an **IP Address Block** (for example, `
 
 ### 2. Add a device
 
-**Before you start:** create the appropriate subnet and check the address you intend to assign. In **Devices → Device Inventory**, use **Add Device** to open the five-tab form. Work through **General**, **Hardware**, **Software & Firmware**, **Networking** and **Notes**, entering only details that apply to your device. The Software & Firmware form tab is different from the Software & Services reporting tab on Devices Overview.
+**Before you start:** create the appropriate subnet and check the address you intend to assign. If you plan to place the device in a rack, first create a location in **Devices → Locations** and a rack in **Network Racks → Rack Inventory → Add Rack**, selecting the appropriate location. This is the order successfully used in the published v1.3.0 first-time walkthrough. A rack is not required for devices using a suitable non-rack mounting option. In **Devices → Device Inventory**, use **Add Device** to open the five-tab form. Work through **General**, **Hardware**, **Software & Firmware**, **Networking** and **Notes**, entering only details that apply to your device. The Software & Firmware form tab is different from the Software & Services reporting tab on Devices Overview.
 
 Open **Devices → Device Inventory** and choose the add-device action. Enter the device details, choose a **Type** and **Location**, and select an IP address belonging to an existing subnet. Where offered, use **Next Available IP** to suggest a free address, then verify it before saving. If the subnet does not exist, create it first using the available subnet-creation flow.
 
-If the device is **Rack Mounted**, enter its rack/U requirements and review placement; otherwise choose the appropriate non-rack mounting option. For access points, the available choices include **Tabletop / Shelf Mounted**, **Ceiling Mounted**, **Wall Mounted**, and **Pole Mounted**. Save and confirm that the device appears in inventory and that IPAM reflects its address.
+If the device is **Rack Mounted**, select the rack you created, enter its rack/U requirements and review placement; otherwise choose the appropriate non-rack mounting option. For access points, the available choices include **Tabletop / Shelf Mounted**, **Ceiling Mounted**, **Wall Mounted**, and **Pole Mounted**. Save and confirm that the device appears in inventory and that IPAM reflects its address.
 
 ### 3. Manage IP addresses
 
