@@ -204,3 +204,24 @@ These are **source-observed unchecked save results**, not yet reproduced defects
 **Additional nuance:** Some successful inventory writes are followed by best-effort change-history recording; failure of the separate audit history does not invalidate the inventory save. Conversely, rollback that restores only `appState` does not prove browser storage rollback when a write or readback fails partway through. Both cases require distinct failure-injection assertions.
 
 **Next checks:** Inspect dynamic or indirect save dispatch, assess whether any other handlers mutate shared nested objects before copying, record these three cases in the maintenance findings register, and execute browser tests with controlled write failures. WF-12 remains open.
+
+
+## WF-12 in-memory state versus saved browser data, 23 October 2026
+
+**Source baseline:** Published v1.3.0 `app/caffoot-lite.html`, especially `saveState()` lines 1825–1855, `phase13GSaveGraphics()` 2815–2822, rack save 5430–5480, `unassignDevice()` 5669–5682 and `addCustomLocationOption()` 7018–7044. No runtime failure injection performed.
+
+The central `saveState()` validates the **current in-memory** `appState`, writes it to `caffoot_state`, reads the stored string back, and returns a Boolean. It **does not itself undo mutations** already made by the caller when validation or storage fails. Callers therefore need to handle both the Boolean result and their own temporary UI and state changes.
+
+| Case | Before attempting save | After a failed save in inspected code | Distinct test expectation |
+| --- | --- | --- | --- |
+| M-001, rack unassignment | Device rack fields are cleared and mount type set to Desktop | Save result is ignored; page is rerendered with modified in-memory device | On injected failure, compare rack placement immediately, persisted inventory, and placement after reload |
+| M-018, new physical location | New option is inserted into the device form and `deviceLocations` | Save result is ignored; success toast and form changes continue | Compare toast, option list, in-memory managed locations and stored locations after reload |
+| M-020, device graphic preset | `deviceTypeGraphics` is changed | Save result is ignored; management modal opens and page rerenders | Compare selected graphic before and after reload with storage failure |
+| M-022, new rack selection | New rack is pushed and `selectedRackId` points to it | Inventory JSON snapshot is restored, but prior `selectedRackId` is not explicitly restored | Check selection, navigation and any subsequent rack actions after failed save |
+| Ordinary rack move | Rack placement fields change | Prior inventory JSON is restored and handler returns | Confirm both visible placement and persisted placement remain consistent |
+
+**Important qualification:** A failed save may follow a successful write but failed readback, or may occur before any write. Therefore, observing an in-memory rollback alone cannot prove stored bytes are unchanged. Tests must separately inspect the saved value, the live view and the state after reopening the application.
+
+**Test fixture specification for WF-13:** Use a fictional rack, device, location and graphics preset. For each path inject (a) `localStorage.setItem` throwing, (b) a write that silently fails, (c) readback throwing or mismatching, and (d) validation rejecting the proposed state. Record previous and subsequent `caffoot_state` bytes, visible UI, any success/error notification and reload result. Avoid real inventories. The central helper's success toast can be followed by later operation-level verification failures in restore/reset paths, so notification timing must be assessed separately.
+
+**Status:** The direct unchecked-save paths and M-022 selection issue are traced to the existing roadmap. The table is a test plan, not observed browser outcomes. Do not mark WF-12 or WF-13 verified.
