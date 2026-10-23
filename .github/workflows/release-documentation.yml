@@ -2,15 +2,6 @@ name: Release documentation consistency
 
 on:
   pull_request:
-    paths:
-      - 'README.md'
-      - 'INSTALLATION.md'
-      - 'SECURITY.md'
-      - 'ROADMAP.md'
-      - 'RELEASE-NOTES-*.md'
-      - 'app/package.json'
-      - 'scripts/check-release-documentation.cjs'
-      - '.github/workflows/release-documentation.yml'
   workflow_dispatch:
 
 permissions:
