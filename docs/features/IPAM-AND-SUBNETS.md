@@ -25,4 +25,4 @@ Caffoot Lite is an inventory tool, not an authoritative DHCP server, live networ
 
 Show a fictional subnet, address list and bulk change preview. Avoid presenting a planned confirmation control as an existing feature.
 
-**Technical reference:** IPAM and subnet workflows in `docs/workflows/TECHNICAL-WORKFLOWS.md`.
+**Technical reference:** IPAM and subnet workflows in [technical workflow reference](../workflows/TECHNICAL-WORKFLOWS.md).
