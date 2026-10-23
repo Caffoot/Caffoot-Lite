@@ -47,3 +47,8 @@ Read the published-release instructions in `README.md` and `INSTALLATION.md` on 
 ## Published v1.3.0 asset listing verification, 23 October 2026
 
 Queried the official GitHub release metadata for tag `v1.3.0` (release ID `419573857`). The public, non-prerelease release was published on 21 October 2026. GitHub lists three uploaded assets: `Caffoot-Lite-1.3.0.zip` (4,501,694 bytes), `Caffoot-Lite.html` (7,700,748 bytes) and `SHA256SUMS` (173 bytes). Their published names match the revised installation instructions. The release metadata also publishes SHA-256 digest fields for the ZIP and HTML assets. This confirms asset listing and naming only; file downloads, checksum recalculation, ZIP contents, browser opening and screenshot image validation remain outstanding. The release description records historical test claims from 21 October; these were not independently rerun during this audit. No application tests were executed or release changes made. WF-14 remains planned, with this preliminary evidence retained.
+
+
+## README screenshot target verification, 23 October 2026
+
+Queried the GitHub repository directory metadata for `docs/screenshots/` on the documentation branch. All three README targets exist as files: `dashboard.png` (343,858 bytes), `device-inventory.png` (303,519 bytes), and `rack-management.png` (358,454 bytes). The earlier UTF-8 decoding errors came from attempting to read binary PNG files with a text reader and are not missing-file evidence. This verifies repository path existence, **not** image appearance, currency against published v1.3.0, rendering in GitHub or presence on `main`. Visual review and release comparison remain open. No application tests were run.
