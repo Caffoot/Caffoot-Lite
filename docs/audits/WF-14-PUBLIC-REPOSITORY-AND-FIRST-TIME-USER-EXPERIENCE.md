@@ -52,3 +52,8 @@ Queried the official GitHub release metadata for tag `v1.3.0` (release ID `41957
 ## README screenshot target verification, 23 October 2026
 
 Queried the GitHub repository directory metadata for `docs/screenshots/` on the documentation branch. All three README targets exist as files: `dashboard.png` (343,858 bytes), `device-inventory.png` (303,519 bytes), and `rack-management.png` (358,454 bytes). The earlier UTF-8 decoding errors came from attempting to read binary PNG files with a text reader and are not missing-file evidence. This verifies repository path existence, **not** image appearance, currency against published v1.3.0, rendering in GitHub or presence on `main`. Visual review and release comparison remain open. No application tests were run.
+
+
+## Screenshot identity comparison with main, 23 October 2026
+
+Retrieved GitHub directory metadata for `docs/screenshots/` on both `main` and the documentation branch. `dashboard.png`, `device-inventory.png` and `rack-management.png` each have the same Git blob SHA and byte size on both branches. Therefore the three image files are byte-identical across these branches. This does not verify their visual content or whether the screenshots represent the published v1.3.0 interface. Image inspection and release comparison remain open. No browser or application tests were executed.
