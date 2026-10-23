@@ -49,3 +49,21 @@ D10 and D11 exercise the explicit `handleDeviceSubmit()` check that a chosen vir
 ## Evidence update, 23 October 2026
 
 The opening statement that no browser tests were executed is historical wording from the original matrix design. **A targeted M-020 failed device graphic save scenario was subsequently executed and passed** in [Chromium run 39957395113](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39957395113), after the correction merged through [PR #79](https://github.com/Caffoot/Caffoot-Lite/pull/79). This does **not** certify the wider device lifecycle, host relationships, device conversion or the whole matrix. M-005 and M-008 remain subject to investigation and product decisions. See [coverage register](WORKFLOW-VERIFICATION-COVERAGE-REGISTER.md). No tests were run for this documentation update.
+
+### Proposed M-005 hypervisor design test additions, 23 October 2026
+
+These scenarios are **planned, not executed**, and concern future approved application behaviour, not the published v1.3.0 baseline:
+
+| ID | Proposed scenario | Expected result |
+| --- | --- | --- |
+| H01 | Select recognised or custom hypervisor on physical server | Exactly one active hypervisor, existing Hypervisor service synchronised |
+| H02 | Create virtual server and choose eligible host | Only eligible new hosts offered; platform matches selected host |
+| H03 | Attempt to select physical server without hypervisor | New invalid assignment blocked at save, not only in selector |
+| H04 | Confirm host VMware ESXi to Proxmox VE change with several VMs | All dependent platform metadata changes in one verified save |
+| H05 | Cancel hypervisor change or force save failure | Host and every dependent VM remain unchanged |
+| H06 | Remove hypervisor or delete or convert host with dependants | Block until VMs are reassigned or deliberately deleted |
+| H07 | Import legacy host links, missing hosts and platform mismatches | Non-destructive review and repair policy, no silent loss or unrelated save lockout |
+| H08 | Reload, export and reimport custom or archived hypervisor choices | Stable selection and relationships survive round trip |
+
+Retain D10 to D13 and D26 as the original baseline scenarios; do not treat H01 to H08 as passed or as implementation approval.
+
