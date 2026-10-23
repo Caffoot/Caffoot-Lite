@@ -86,7 +86,9 @@ To update manually, first **download and safely store a JSON backup** from **Set
 
 **Want the source code instead?** Click the green **Code** button on the repository page and choose **Download ZIP**. This is the source repository, **not** the ready-to-run release package; building from source requires Node.js and npm.
 
-See the detailed [installation and upgrade guide](INSTALLATION.md) for the complete process and storage precautions.
+**Your first five minutes:** Open the released HTML file, add an IP Address Block and a subnet in **IPAM → Manage Subnets**, then add a device in **Devices → Device Inventory**. Once you have entered useful information, open **Settings & Data → Data Management → Back Up & Restore** and select **Download Backup**. Save the JSON file outside your browser. This is a manual backup, not automatic synchronisation. Restoring a backup later replaces the active inventory rather than combining records.
+
+See the detailed [installation and upgrade guide](INSTALLATION.md) and [user guide](USER-GUIDE.md) for the complete process and storage precautions.
 
 ## Who is Caffoot Lite for?
 
