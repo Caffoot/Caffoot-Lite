@@ -319,3 +319,8 @@ The separately declared `check:source` invokes `check-offline.cjs`, which inspec
 ## WF-13 documentation consistency observation, 23 October 2026
 
 The validation workflow checks application and package output but does not test agreement between public documentation and the release. Documentation-only changes do not trigger its pull request job. The pull request template and technical documentation policy already require human documentation review and reconciliation. This separation could contribute to stale guidance, but historical causation is unproven. Existing M-030 and WF-14 cover the public documentation concern. No duplicate finding or workflow change is proposed here. A future release review should record published version, documentation links, status agreement, executed checks and product owner approval. No tests were run.
+
+
+## Documentation baseline closeout decision prepared, 23 October 2026
+
+Created `docs/audits/V1.3.0-DOCUMENTATION-BASELINE-CLOSEOUT.md` to distinguish readiness to publish corrected v1.3.0 documentation from completion of the original technical audit. The product owner agreed to this evidence-based approach, but has **not** approved merging PR #52. WF-11 to WF-13 retain their incomplete source and test coverage, WF-14 retains final public review, and M-030 remains open until public `main` reconciliation and actual required-check enforcement. GitHub Actions previously passed on commit `00761e84928832ef20a3a2e6155b4bbe5d746f1b`; the new closeout commits require fresh CI verification. No application tests executed in this checkpoint, no merge, release or branch protection change. The master audit stays in progress.
