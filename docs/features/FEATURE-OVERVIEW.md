@@ -21,3 +21,7 @@ Caffoot Lite v1.3.0 does **not** provide a central shared database, built-in use
 ## Source and maintenance
 
 Source of truth: published v1.3.0 application and [technical workflow reference](../workflows/TECHNICAL-WORKFLOWS.md). Check the relevant feature page and website content whenever a release changes behaviour. Public-facing copy uses British English.
+
+## Website project handover
+
+For website maintenance, use [the website project handover](../website/WEBSITE-PROJECT-HANDOVER.md) to locate approved v1.3.0 feature copy, screenshots, current release guidance and safety boundaries. The public website is `https://caffoot.co.uk`, but website content and publication are managed separately. This documentation branch is not yet merged into `main`; do not assume branch-only images and text are present in the public repository.
