@@ -2,7 +2,7 @@
 
 **Infrastructure, Simplified. — For HomeLabs and Small Teams**
 
-This guide covers the published v1.2.x Devices & Intelligence functionality and the upcoming v1.3.0 rack-management workflows (not yet published), with relevant information for users upgrading from earlier releases. The redesigned Settings & Data interface was introduced in v1.1.1, with security hardening in v1.1.2.
+This guide covers the published v1.3.0 release, including Devices & Intelligence and rack-management workflows, with relevant information for users upgrading from earlier releases. The redesigned Settings & Data interface was introduced in v1.1.1, with security hardening in v1.1.2.
 
 ## v1.2.0 Devices & Intelligence
 
@@ -28,7 +28,7 @@ Use **IPAM** to inspect allocations and reservations, identify available address
 
 ### 4. Work with racks
 
-In the **v1.3.0 development build**, expand **Network Racks** in the sidebar. **Rack Overview** shows inventory-based capacity, equipment, location and type summaries; **Rack Inventory** lets you search, add and open individual racks; **Rack Accessories** manages rack accessories. These summaries are not live monitoring. In a rack detail view, inspect front/rear elevations and available U positions before placing equipment. For rack-mounted devices, review U height and placement; avoid overlaps with devices and accessories. A 0U accessory does not occupy numbered rack units. Verify placement visually after dragging or editing an item, and review any rack-resize warnings before saving. The published v1.2.1 interface may use older navigation labels.
+In the **published v1.3.0 release**, expand **Network Racks** in the sidebar. **Rack Overview** shows inventory-based capacity, equipment, location and type summaries; **Rack Inventory** lets you search, add and open individual racks; **Rack Accessories** manages rack accessories. These summaries are not live monitoring. In a rack detail view, inspect front/rear elevations and available U positions before placing equipment. For rack-mounted devices, review U height and placement; avoid overlaps with devices and accessories. A 0U accessory does not occupy numbered rack units. Verify placement visually after dragging or editing an item, and review any rack-resize warnings before saving. Earlier releases, including v1.2.1, may use different navigation labels.
 
 ### 5. Types, locations and device details
 
