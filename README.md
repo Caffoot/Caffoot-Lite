@@ -1,133 +1,99 @@
-# Caffoot Lite — Free Offline IPAM & Network Inventory Software
+# Caffoot Lite
 
-**Infrastructure, Simplified.**  
-*For HomeLabs and Small Teams*
+**Infrastructure, Simplified.**
 
-**Caffoot Lite is free, open-source IP address management (IPAM), network device inventory, IT asset tracking and rack management software** for homelabs and small teams. Track network devices and IT assets, document IPv4 subnets, manage IP address allocations and reservations, and organise equipment in racks — all from a standalone HTML file.
+Free, open-source, offline IP address management (IPAM), network inventory and rack management for homelabs and small teams.
 
-No Docker, database, web server or account is required to run the published release. Download the HTML application and open it in a modern browser. Your inventory stays in that browser's local storage, so **regular JSON exports are essential**: browser data loss can mean inventory loss.
+Keep track of devices, IP addresses, subnets, VLANs, locations and network racks in one place. Caffoot Lite runs as a **single HTML file** in a modern browser. No account, Docker, database or web server is needed for the published standalone release.
 
-## Try Caffoot Lite
+## Get started in minutes
 
-**No installation or account needed.** Download the published HTML file, open it in your browser and start documenting your network. You can try it with fictional data before entering real infrastructure details.
+**[Download the latest stable Caffoot Lite release](https://github.com/Caffoot/Caffoot-Lite/releases/latest)**
 
-**Your inventory stays in that browser, not in the HTML file.** Export JSON backups regularly, especially before changing browsers or updating Caffoot Lite. It does not provide automatic backups or a shared server database.
+1. Open the release page and expand **Assets**.
+2. Download `Caffoot-Lite.html` or the versioned `Caffoot-Lite-<version>.zip` package. If you choose the ZIP, extract it first.
+3. Open `Caffoot-Lite.html` in a modern browser.
+4. Create an IP Address Block and subnet in **IPAM → Manage Subnets**, then add your first device in **Devices → Device Inventory**.
+5. Open **Settings & Data → Data Management → Back Up & Restore** and select **Download Backup** to save a JSON copy of your inventory.
 
-## Download and run
+You can explore with fictional information before adding details of your real network.
 
-**[Get the latest stable Caffoot Lite release](https://github.com/Caffoot/Caffoot-Lite/releases/latest)** — no installation, Docker or server required.
+**Please note:** The repository's green **Code → Download ZIP** option downloads the *source code*, not the ready-to-run release. Building from source requires Node.js and npm.
 
-1. Open the **[latest release page](https://github.com/Caffoot/Caffoot-Lite/releases/latest)**.
-2. Under **Assets**, download the version-named `Caffoot-Lite-<version>.zip` release package, which includes the standalone app, guides and licences. Alternatively, download `Caffoot-Lite.html` directly from the release assets.
-3. If you downloaded the release ZIP, extract it and open `Caffoot-Lite.html` in a modern browser. No Docker, Node.js or web server is needed to run it.
+For step-by-step help, see the [installation and upgrade guide](INSTALLATION.md) or [user guide](USER-GUIDE.md).
 
-**Want the source code instead?** Click the green **Code** button on the repository page and choose **Download ZIP**. This is the source repository, **not** the ready-to-run release package; building from source requires Node.js and npm.
+## What can Caffoot Lite do?
 
-**Your first five minutes:** Open the released HTML file, add an IP Address Block and a subnet in **IPAM → Manage Subnets**, then add a device in **Devices → Device Inventory**. If you want the device mounted in a rack, create its location in **Devices → Locations** and its rack in **Network Racks → Rack Inventory** before assigning the device. Devices that are not rack mounted do not need a rack. Once you have entered useful information, open **Settings & Data → Data Management → Back Up & Restore** and select **Download Backup**. Save the JSON file outside your browser. This is a manual backup, not automatic synchronisation. Restoring a backup later replaces the active inventory rather than combining records.
+| Area | What you can manage |
+| --- | --- |
+| **Devices** | Inventory, types, locations, hardware, software and network details |
+| **IPAM** | IPv4 address blocks, subnets, VLANs, addresses, allocations and reservations |
+| **Network racks** | Racks, mounted equipment, accessories, rack elevations and available space |
+| **Overview and data quality** | Inventory summaries and saved-record consistency information |
+| **Data management** | JSON backup and restore, maintenance and recovery tools |
 
-See the detailed [installation and upgrade guide](INSTALLATION.md) and [user guide](USER-GUIDE.md) for the complete process and storage precautions.
+Caffoot Lite is a documentation tool, **not** a live network discovery or monitoring service. Read the [feature overview](docs/features/FEATURE-OVERVIEW.md) for more detail.
 
-## v1.3.0 Rack Management
-
-The published v1.3.0 release focuses on Rack Overview, Rack Inventory and Rack Accessories, improved rack elevations, configuration and legacy mounting compatibility. See the [v1.3.0 release notes](RELEASE-NOTES-1.3.0.md) and the [roadmap](ROADMAP.md). Advanced addressing and reporting are deferred to later milestones.
-
-## ⚠️ SECURITY WARNING — DO NOT EXPOSE CAFFOOT LITE TO THE PUBLIC INTERNET
-
-> **Caffoot Lite is a local, offline-first application — NOT a secure public web service.** It has **no built-in login, access control, user isolation or server-side security boundary**. Do **not** publish it openly on the internet or assume a web server makes it safe for multi-user access.
->
-> If you deliberately host the HTML file, restrict access using **properly configured authentication and authorisation, HTTPS, and network controls** (preferably private-network/VPN access). **A reverse proxy by itself is not authentication.** These measures reduce exposure but do not turn Lite into a secure multi-user application.
->
-> **Inventory is stored in each browser's local storage**, and exported JSON backups may reveal IP addresses, device details and other sensitive infrastructure information. Avoid shared/untrusted computers, protect backups and read the [full security and deployment guidance](#security-and-deployment-guidance) and [SECURITY.md](SECURITY.md) before deploying.
-
-## Screenshots
+## See it in action
 
 ### Dashboard
 
 ![Caffoot Lite dashboard showing network inventory totals, IPAM allocation statistics and data health](docs/screenshots/dashboard.png)
 
-A clear overview of devices, IPv4 subnets, IP address allocations and rack space.
+### Device and rack overviews
 
-### Devices and network racks
-
-| Device Intelligence Overview | Rack Overview |
+| Devices Overview | Rack Overview |
 | --- | --- |
-| [![Caffoot Lite v1.3.0 Device Intelligence Overview showing device totals, primary IP addresses and devices by type and location](docs/screenshots/devices-overview-v1.3.0.png)](docs/screenshots/devices-overview-v1.3.0.png) | [![Caffoot Lite v1.3.0 Rack Overview showing capacity, mounted devices, accessories and rack space utilisation](docs/screenshots/rack-overview-v1.3.0.png)](docs/screenshots/rack-overview-v1.3.0.png) |
-| Explore device intelligence, hardware, operating systems, software and data quality. | Review rack capacity, equipment, locations and available space. |
+| [![Device overview showing device totals, addresses and device types](docs/screenshots/devices-overview-v1.3.0.png)](docs/screenshots/devices-overview-v1.3.0.png) | [![Rack overview showing capacity, mounted devices and accessories](docs/screenshots/rack-overview-v1.3.0.png)](docs/screenshots/rack-overview-v1.3.0.png) |
+
+### Inventory and rack elevation
 
 | Device Inventory | Rack Elevation |
 | --- | --- |
-| [![Caffoot Lite device inventory with search, filters, device details and primary IP addresses](docs/screenshots/device-inventory.png)](docs/screenshots/device-inventory.png) | [![Caffoot Lite rack management showing a rack elevation, mounted equipment and available rack units](docs/screenshots/rack-management.png)](docs/screenshots/rack-management.png) |
-| Search and organise network devices, hardware details and IP addresses. | Visualise equipment placement, rack utilisation and available U-space. |
+| [![Device inventory with search, filters and device details](docs/screenshots/device-inventory.png)](docs/screenshots/device-inventory.png) | [![Rack elevation showing equipment placement and available rack units](docs/screenshots/rack-management.png)](docs/screenshots/rack-management.png) |
 
-Select a thumbnail to view its full-size screenshot.
+Select an image to view it at full size.
 
-## At a glance
+## Important: keep your inventory safe
 
-| Capability | Caffoot Lite |
-| --- | --- |
-| Network inventory and IT asset tracking | Devices, types, locations and details |
-| IP address management (IPAM) | Subnets, addresses, reservations and allocation workflows |
-| Rack management | Equipment placement and rack-unit tracking |
-| Installation | Open a standalone HTML file; no server required |
-| Data portability | JSON export and import for backups |
-| Cost | Free, open-source software (MIT source licence) |
+**Your inventory is saved in your browser's local storage, not inside the HTML file.** Caffoot Lite does not automatically back up or synchronise data, and it does not use a shared server database.
 
-## ⚠️ Important — your inventory lives in your browser
+Clearing browser data can permanently erase your inventory. Changing browser, browser profile, or the location or name of the HTML file can also make existing data unavailable because local file storage varies between browsers.
 
-**Caffoot Lite does not save your devices, IP addresses, racks or settings inside `Caffoot-Lite.html`.** Your inventory is stored in the **local storage of the browser you use to open it**. There is no server, automatic cloud backup or automatic synchronisation.
+**Export a JSON backup regularly and always before upgrading, moving or renaming the HTML file, resetting data or changing browsers.** Keep backups somewhere safe outside the browser and check that they can be restored. Restoring a backup replaces the active inventory rather than combining it with existing records. Backups may contain sensitive network information.
 
-**If browser/site data is cleared, your inventory may be permanently lost.** Changing browser or profile, or moving/renaming the HTML file, can also make existing data inaccessible because `file://` storage varies between browsers.
+Read the [installation and upgrade guide](INSTALLATION.md) for precautions and recovery guidance.
 
-**Export a JSON backup regularly, and ALWAYS before upgrading, moving, renaming or resetting Caffoot Lite.** Store backups somewhere safe outside the browser and verify you can restore them. Backups may contain sensitive infrastructure details.
+## Security and intended use
 
-## Security and deployment guidance
+**Do not expose Caffoot Lite directly to the public internet.** The standalone application has no built-in login, user isolation or secure multi-user backend. Serving the HTML file from a web server does not turn browser-local storage into a shared inventory.
 
-**Caffoot Lite is intended primarily for local, offline use. Do not expose the standalone HTML application directly to the public internet.** It has no built-in authentication, role-based access control or secure multi-user backend. Network inventory and exported JSON backups can contain sensitive infrastructure details.
+If you choose to host it, use properly configured authentication and authorisation, HTTPS and network access controls, preferably private network or VPN access. **A reverse proxy alone does not provide authentication.** These controls do not make the application a security-certified multi-user service. Avoid shared or untrusted computers and protect exported backups.
 
-If you choose to serve Caffoot Lite from a web server, restrict access with appropriately configured authentication and authorisation (for example, Authentik integrated with Nginx or another compatible reverse proxy), HTTPS and network access controls. **A reverse proxy alone is not an authentication system**, and adding a login does not eliminate application or browser-storage risks. Test your deployment configuration carefully.
+Please read [SECURITY.md](SECURITY.md) before considering a hosted deployment. A comprehensive manual security audit has not been completed.
 
-Browser storage is local to the browser/profile and origin; hosting the HTML file does **not** turn Caffoot Lite into a shared, server-backed inventory system. Avoid using it on untrusted or shared computers, protect exported backups, and never assume that an externally hosted copy provides multi-user isolation.
+## Guides and project information
 
-v1.1.2 delivered security hardening and automated regression checks. A comprehensive manual security audit has not been completed, and Caffoot Lite must not be treated as an authenticated multi-user service or a security-certified public deployment.
+- [Installation, upgrades and troubleshooting](INSTALLATION.md)
+- [User guide](USER-GUIDE.md)
+- [Feature overview](docs/features/FEATURE-OVERVIEW.md)
+- [Roadmap](ROADMAP.md)
+- [Current v1.3.0 release notes](RELEASE-NOTES-1.3.0.md)
+- [Historical release notes](docs/archive/release-notes/README.md)
+- [Documentation index](docs/README.md)
+- [Contributing](CONTRIBUTING.md) and [backup format contract](BACKUP-FORMAT.md)
 
-## Update checker notice for older versions
+**Current release:** [v1.3.0](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.0), published 21 October 2026.
 
-**Using Caffoot Lite v1.0.3 or v1.1.0 and seeing “Could not check releases”?** These versions can fail to recognise the uppercase `V` in a GitHub release tag. Your inventory is not changed by this error, and the application can still run offline. **The update checker cannot repair an older HTML file automatically.**
+Older versions such as v1.0.3 and v1.1.0 may report “Could not check releases” because of an update checker compatibility issue. This does not change inventory. Back up your data and use the [official releases](https://github.com/Caffoot/Caffoot-Lite/releases) and [upgrade instructions](INSTALLATION.md) to update manually.
 
-To update manually, first **download and safely store a JSON backup** from **Settings & Data Management** in your current installation. Then visit the [official Caffoot Lite releases](https://github.com/Caffoot/Caffoot-Lite/releases) and download the latest published release's `Caffoot-Lite.html` or versioned ZIP. Keep the old HTML and backup until you have checked the new file in your browser. **Do not clear browser storage**; moving or renaming local HTML files can affect access to stored inventory. See [INSTALLATION.md](INSTALLATION.md) for the full upgrade precautions.
+## Help and feedback
 
-## Need help or found a problem?
+Found a problem or have an idea? Open a [GitHub Issue](https://github.com/Caffoot/Caffoot-Lite/issues) with the version, steps to reproduce and expected behaviour. **Never attach real inventory backups, credentials or private network details to a public issue.** For sensitive security concerns, follow [SECURITY.md](SECURITY.md).
 
-Start with the [user guide](USER-GUIDE.md) for everyday tasks and the [installation guide](INSTALLATION.md) for opening, updating and protecting your inventory. To report a problem or suggest an improvement, use [GitHub Issues](https://github.com/Caffoot/Caffoot-Lite/issues). Include the Caffoot Lite version, the steps you took, what you expected and what happened. Please do not upload real inventory backups, passwords or private network information. See [CONTRIBUTING.md](CONTRIBUTING.md) if you would like to help improve the project. For security concerns, follow [SECURITY.md](SECURITY.md) rather than publishing sensitive details in a public issue.
+## For developers
 
-## Who is Caffoot Lite for?
-
-If you're looking for **free IPAM software**, an **offline network inventory tool**, a **homelab asset manager**, or a simple way to document **subnets, device IP addresses and server racks**, Caffoot Lite is designed for that workflow. It runs locally in your browser without an account or hosted service. It is not a network discovery scanner or a multi-user server.
-
-## Device inventory and intelligence
-
-v1.2.0 adds a wider five-tab Add/Edit Device experience; Devices Overview and inventory drill-downs; separate Device Types and Locations workspaces; and Manufacturers, Models, Software and Server Services catalogues. See the [v1.2.0 release notes](docs/archive/release-notes/RELEASE-NOTES-1.2.0.md).
-
-## What you can manage
-
-- **Devices:** inventory, types, locations and device details.
-- **Subnets and IPAM:** IP Address Block hierarchy, CIDR networks, scoped VLANs, addresses, reservations and allocation workflows.
-- **Racks:** rack layouts, equipment placement and U-space management.
-- **Dashboard:** inventory overview; v1.1.1 includes clearer **Inventory Health** wording for saved-record consistency, not storage, backup or live-network monitoring.
-- **Data Management:** validated JSON backup/restore and reset/recovery tools. The v1.1.1 Settings & Data interface organises backup/restore, maintenance and advanced recovery controls under Data Management.
-- **Offline use:** a single HTML file with bundled styling, fonts and branding assets.
-
-See the [user guide](USER-GUIDE.md) for the first-run walkthrough and day-to-day tasks.
-
-## Important: protect your data
-
-Caffoot Lite stores inventory in your **browser's local storage**, not in the HTML file or on a server. Browser `file://` storage behaviour varies: changing browser, profile, path or filename may prevent the new file from seeing existing data. Clearing browser data can erase it.
-
-**Export a JSON backup before upgrading, moving/renaming the HTML file, resetting data or changing browsers.** Keep backups safe; they may contain sensitive infrastructure details. Caffoot Lite saves inventory under `caffoot_state`. For upgrades from older versions, export and restore a JSON backup if existing browser data is not visible.
-
-## For developers: build and test
-
-Node.js and npm are needed **only to build from source**, not to run the released HTML:
+The released HTML file needs no build tools. To build from source, install Node.js and npm, then run:
 
 ```sh
 cd app
@@ -135,23 +101,10 @@ npm install
 npm run release
 ```
 
-The build produces `app/dist/Caffoot-Lite.html`. Automated checks and manual browser testing are recommended before distributing a build. The GitHub Actions build workflow is currently disabled.
-
-**Current release:** [v1.3.0](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.0), published 21 October 2026. Earlier releases remain available in the release history.
-
-## Project and release status
-
-This repository is dedicated to **Caffoot Lite**: its standalone application, build tools, tests and release documentation.
-
-**v1.3.0 was published on 21 October 2026.** Download the currently published version from the [latest stable release](https://github.com/Caffoot/Caffoot-Lite/releases/latest). See the [v1.3.0 release notes](RELEASE-NOTES-1.3.0.md), [v1.2.0 release notes](docs/archive/release-notes/RELEASE-NOTES-1.2.0.md), [v1.1.2 release notes](docs/archive/release-notes/RELEASE-NOTES-1.1.2.md), [historical v1.1.1 release notes](docs/archive/release-notes/RELEASE-NOTES-1.1.1.md), [historical v1.1.0 release notes](docs/archive/release-notes/RELEASE-NOTES-1.1.0.md) and [roadmap](ROADMAP.md).
+The build produces `app/dist/Caffoot-Lite.html`. Automated checks and manual browser verification are recommended before distributing a build. The GitHub Actions build workflow is currently disabled. See [contributing guidance](CONTRIBUTING.md) and the [technical documentation](docs/README.md).
 
 ## Licence and branding
 
-Source code: [MIT License](LICENSE), copyright (c) 2026 Steven Del-Nevo. Third-party components retain their own licence terms.
+Caffoot Lite source code is available under the [MIT Licence](LICENSE), copyright © 2026 Steven Del-Nevo. Third-party components retain their own licence terms.
 
-The Caffoot name, hedgehog mascot and official project branding are **not** licensed as official branding by the MIT software licence. No registered-trademark claim is made. Do not present a modified build as an official Caffoot release without the owner's permission.
-
-
-## Backup compatibility and release preparation
-
-The [backup format contract](BACKUP-FORMAT.md) documents versioned JSON exports, legacy imports and compatibility safeguards. Historical testing and release-review records remain available in [RELEASE-ACCEPTANCE.md](docs/releases/RELEASE-ACCEPTANCE.md) and [RELEASE-REVIEW.md](docs/releases/RELEASE-REVIEW.md).
+The Caffoot name, hedgehog mascot and official project branding are not licensed as official branding under the MIT software licence. No registered trademark claim is made. Do not present modified builds as official Caffoot releases without the owner's permission.
