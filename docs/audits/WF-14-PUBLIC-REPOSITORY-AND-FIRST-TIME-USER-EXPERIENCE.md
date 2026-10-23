@@ -42,3 +42,8 @@ This is a focused prerequisite check during WF-13, not the start or completion o
 ## First-time installation guide correction, 23 October 2026
 
 Read the published-release instructions in `README.md` and `INSTALLATION.md` on the documentation branch. `INSTALLATION.md` identified v1.3.0 as current near the top but its later `Complete release package` section still directed new readers to the v1.2.0 ZIP. Updated that section to name the v1.3.0 release and ZIP, retaining a clearly historical link to v1.2.0. This is a confirmed **documentation inconsistency**, not an application defect. The release asset's live availability, archive contents and actual browser opening remain to be checked independently. M-030 remains open for wider public document reconciliation; WF-14 is not signed off. No application tests were executed.
+
+
+## Published v1.3.0 asset listing verification, 23 October 2026
+
+Queried the official GitHub release metadata for tag `v1.3.0` (release ID `419573857`). The public, non-prerelease release was published on 21 October 2026. GitHub lists three uploaded assets: `Caffoot-Lite-1.3.0.zip` (4,501,694 bytes), `Caffoot-Lite.html` (7,700,748 bytes) and `SHA256SUMS` (173 bytes). Their published names match the revised installation instructions. The release metadata also publishes SHA-256 digest fields for the ZIP and HTML assets. This confirms asset listing and naming only; file downloads, checksum recalculation, ZIP contents, browser opening and screenshot image validation remain outstanding. The release description records historical test claims from 21 October; these were not independently rerun during this audit. No application tests were executed or release changes made. WF-14 remains planned, with this preliminary evidence retained.
