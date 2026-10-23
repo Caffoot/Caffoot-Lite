@@ -242,3 +242,8 @@ Executed Node.js v22.16.0 tests using a locally reconstructed copy of the two-mo
 ## Release checker mode verification, 23 October 2026
 
 Executed Node.js v22.16.0 in a disposable local fixture directory. Candidate v1.3.1 with published v1.3.0 passed after correcting the fixture installation statement; deliberate v1.2.1 installation wording failed with exit code 1; using published mode against candidate metadata failed with exit code 1; omitting `--published-version` failed with exit code 1; built-in self-tests passed. This is execution of a local reconstructed checker, **not** a byte-for-byte verification of the committed GitHub file or a full repository checkout. Current branch remains `docs/wf05-wf06-import-integrity-20261022`; public stable release remains v1.3.0. M-030, WF-13 and WF-14 remain open. The master audit still requires reconciliation. No app behaviour changes, merge or release.
+
+
+### 23 October 2026: repeatable candidate fixture check
+
+Executed Node.js v22.16.0 in the disposable local fixture checkout. Candidate v1.3.1 with published v1.3.0 and matching installation wording passed (exit 0). Deliberately stale installation wording v1.2.1 failed (exit 1). Published mode on candidate metadata, missing published version, and equal candidate/published versions each failed (exit 1). Built-in self-test passed (exit 0). Restored the deliberately stale fixture afterwards. These results are for a reconstructed local script, not the exact committed file or full repository checkout. Master audit reconciliation, exact checkout verification and CI integration remain outstanding. No application behaviour changes, merge or release.
