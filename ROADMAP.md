@@ -1,13 +1,13 @@
 # Caffoot Lite — Development Roadmap
 
 **Updated:** 21 October 2026  
-**Current milestone:** v1.3.0 Rack Management feature freeze and release preparation; v1.4.0 Data & Architecture Foundations follows after publication.  
+**Current milestone:** v1.3.0 Rack Management published; v1.3.x maintenance and documentation alignment are being reviewed before substantial v1.4.0 development.  
 **Repository:** `caffoot/Caffoot-Lite` (public)  
 **Release policy:** Publish publicly only after manual verification, security/privacy review and owner approval.
 
-**Current published stable release:** [v1.2.1](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.2.1). v1.3.0 remains unpublished pending release gates.
+**Current published stable release:** [v1.3.0](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.0), published 21 October 2026.
 
-Caffoot Lite is an offline, standalone single-HTML network inventory and IP address management application. v1.2.1 is the published stable patch release following October 2026 Devices & Intelligence; earlier versions remain available as historical releases.
+Caffoot Lite is an offline, standalone single-HTML network inventory and IP address management application. v1.3.0 is the published Rack Management release following the v1.2.x Devices & Intelligence releases; earlier versions remain available as historical releases.
 
 ## Documentation checks for every release
 
@@ -110,7 +110,7 @@ Managed multi-user hosting, authentication and centrally administered deployment
 
 ### v1.3.0 — Rack Management Modernisation
 
-**Status: Feature scope frozen for release preparation (21 October 2026); not yet published.** The v1.3.0 branch has passed its automated release suite and owner browser checks for rack workflows and historical backup/mounting compatibility. Publication still requires release-version alignment, documentation review, final acceptance, merge and explicit owner approval. Published v1.2.1 remains unchanged.
+**Status: Published on 21 October 2026.** The v1.3.0 release delivered the Rack Management scope following automated release validation and owner acceptance. The documentation consistency audit subsequently identified outdated release-status statements, now being corrected on a separate documentation branch.
 
 **Release scope — Rack Management:**
 - Racks navigation, estate-wide overview, inventory and accessories workflows; overview tabs for capacity, equipment, locations and types.
