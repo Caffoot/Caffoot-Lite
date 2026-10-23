@@ -18,17 +18,19 @@ Open **IPAM → Manage Subnets**, create an **IP Address Block** (for example, `
 
 ### 2. Add a device
 
+**Before you start:** create the appropriate subnet and check the address you intend to assign. In **Devices → Device Inventory**, use **Add Device** to open the five-tab form. Work through **General**, **Hardware**, **Software & Firmware**, **Networking** and **Notes**, entering only details that apply to your device. The Software & Firmware form tab is different from the Software & Services reporting tab on Devices Overview.
+
 Open **Devices → Device Inventory** and choose the add-device action. Enter the device details, choose a **Type** and **Location**, and select an IP address belonging to an existing subnet. Where offered, use **Next Available IP** to suggest a free address, then verify it before saving. If the subnet does not exist, create it first using the available subnet-creation flow.
 
 If the device is **Rack Mounted**, enter its rack/U requirements and review placement; otherwise choose the appropriate non-rack mounting option. For access points, the available choices include **Tabletop / Shelf Mounted**, **Ceiling Mounted**, **Wall Mounted**, and **Pole Mounted**. Save and confirm that the device appears in inventory and that IPAM reflects its address.
 
 ### 3. Manage IP addresses
 
-Use **IPAM** to inspect allocations and reservations, identify available addresses, and manage entries. **Bulk Edit Range** identifies the active subnet and its parent block; verify that context before applying changes. Check the subnet and any existing reservation before assigning an address. After editing or deleting a device, verify that its IPAM record has been updated accordingly.
+Start in **IPAM → Manage Subnets** to confirm you are working in the intended address block and subnet. Review any suggested available address against the actual network before assigning it. Use **IPAM** to inspect allocations and reservations, identify available addresses, and manage entries. **Bulk Edit Range** identifies the active subnet and its parent block; verify that context before applying changes. Check the subnet and any existing reservation before assigning an address. After editing or deleting a device, verify that its IPAM record has been updated accordingly.
 
 ### 4. Work with racks
 
-In v1.3.0, expand **Network Racks** in the sidebar. **Rack Overview** shows inventory-based capacity, equipment, location and type summaries; **Rack Inventory** lets you search, add and open individual racks; **Rack Accessories** manages rack accessories. These summaries are not live monitoring. In a rack detail view, inspect front/rear elevations and available U positions before placing equipment. For rack-mounted devices, review U height and placement; avoid overlaps with devices and accessories. A 0U accessory does not occupy numbered rack units. Verify placement visually after dragging or editing an item, and review any rack-resize warnings before saving. Earlier releases, including v1.2.1, may use different navigation labels.
+Begin with **Network Racks → Rack Overview** for a summary of capacity and equipment. Open **Rack Inventory** to find a rack or use **Add Rack** to create one. Check rack height and location before assigning devices or accessories. In v1.3.0, expand **Network Racks** in the sidebar. **Rack Overview** shows inventory-based capacity, equipment, location and type summaries; **Rack Inventory** lets you search, add and open individual racks; **Rack Accessories** manages rack accessories. These summaries are not live monitoring. In a rack detail view, inspect front/rear elevations and available U positions before placing equipment. For rack-mounted devices, review U height and placement; avoid overlaps with devices and accessories. A 0U accessory does not occupy numbered rack units. Verify placement visually after dragging or editing an item, and review any rack-resize warnings before saving. Earlier releases, including v1.2.1, may use different navigation labels.
 
 ### 5. Types, locations and device details
 
