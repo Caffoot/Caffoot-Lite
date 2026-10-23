@@ -251,3 +251,23 @@ A declaration scan of the published HTML found 274 named function declarations o
 **Deferred to WF-09:** `caffootThemePreference()`, `caffootApplyTheme()`, `caffootSetTheme()`, `toggleDarkMode()` and `phase16ARenderSettings()`. `personalSafeStorageGet()` is likewise primarily WF-09 and is included above only to preserve the scan trail.
 
 **Evidence boundary:** The source-region scan is not a whole-file workflow mapping, and textual presence does not demonstrate complete function documentation. Before P12 sign-off, trace the important callers, side effects, persistence and error handling, and decide whether each historical name should remain or be proposed for future improvement. No code has been renamed.
+
+
+## Post-release merged correction function reference, 23 October 2026
+
+**Scope:** Source inspected on `main` after the v1.3.0 publication. These functions describe merged repository code, **not** the immutable published v1.3.0 HTML. The original baseline notes above remain historical. No functions were renamed for this documentation update.
+
+| Finding | Actual function and current responsibility | Failure protection and state affected | Workflow and evidence |
+| --- | --- | --- | --- |
+| M-001 | `unassignDevice(deviceId)` clears rack placement and changes mounting to Desktop | Saves an exact pre-change `appState` JSON copy; if `saveState()` fails, restores that state, displays an error and redraws | WF-02, WF-05; PR #79, Chromium run 39957395113 |
+| M-018 | Existing device form custom location creation path | Captures `appState` before adding a location; failed save restores state, removes the newly inserted select option, restores the create option, displays an error and refocuses the input | WF-03, WF-07; PR #79, run 39957395113 |
+| M-020 | `phase13GSaveGraphics(type)` saves a selected rack graphic for a device type | Captures `appState` before changing `deviceTypeGraphics`; failed save restores the original selection, displays an error and redraws | WF-03, WF-07; PR #79, run 39957395113 |
+| M-012 | `phase11CApplyRepair()` applies a confirmed integrity repair preview | Checks the current inventory matches the preview, writes and immediately reads back the pre-repair safety copy before mutation; on failure restores in-memory inventory and attempts to restore the prior safety copy | WF-02, WF-04, WF-12; PR #77, run 39955498407 |
+| M-031 | `phase12BApply()` applies a reviewed bulk IPAM request | Rebuilds the plan, saves and reads back the pre-bulk safety copy before changing allocations; cancels on snapshot failure; restores in-memory inventory if the main save fails | WF-02, WF-04, WF-12; runs 39957395113 and 39959581469 |
+| M-011 | Import and restore failure handling (multiple helpers and storage operations) | Merged restoration logic checks whether the earlier safety copy was restored, including the absence case; if an ignored restoration is detected, recovery mode protects original stored bytes and blocks further saves | WF-01, WF-06, WF-12; PR #81, run 39959581469 |
+
+**M-011 source tracing limitation:** The precise full caller chain and function-by-function responsibilities are not certified by this summary. See the WF-06 and WF-12 source notes and the M-011 test assertions before modifying restore logic. Do not treat this table as a complete source-level call graph.
+
+**Test scope:** These are previously executed, targeted Chromium regressions at the recorded commits. They do not certify complete workflow coverage or all historical backups. No tests were executed while adding this reference. Refer to the [technical workflow register](../workflows/TECHNICAL-WORKFLOWS.md) and [master audit](../audits/V1.3.0-DOCUMENTATION-COVERAGE-AUDIT.md) for evidence and open P12 gates.
+
+**Documentation debt:** Complete the function declaration and caller inventory for M-011 and the wider WF-01 to WF-13 pathways. Future fixes must update this living reference, the applicable workflow, test matrix and findings register in the same change.
