@@ -124,6 +124,19 @@ This programme is the central planning register. Detailed evidence remains in th
 
 **Documentation checkpoint:** Central remediation programme updated. Existing technical workflows, master audit and WF-03 matrix were inspected and already record this gap, so their historical findings have not been rewritten. No application code changed, no tests executed, and no merge or release authorised. The master audit remains administratively closed with individual P12 gaps open.
 
+### M-005 full deletion and import caller trace, 23 October 2026
+
+A follow-up read of current `main` confirms the specific paths and sharpens the decision:
+
+- `deleteDevice(deviceId)` at lines 7207 to 7219 calculates linked IPAM allocations and reservations, asks for confirmation, removes those records, removes the device and calls `phase11BCommitDelete(before, 'Device')`. It contains **no scan of dependent devices' `virtualHostId` values** and does not mention those dependencies in the confirmation.
+- `handleDeviceSubmit()` at lines 7170 to 7205 performs obsolete field confirmation for some type conversions, then writes the new device type and saves. It does **not** check whether other virtual servers use the existing physical server as their host. Its save failure branch restores the prior inventory snapshot.
+- `normaliseState(raw)` at lines 1392 to 1429 preserves imported device records and performs legacy field normalisation; no virtual host repair or rejection is visible in this inspected portion. `validateApplicationState()` at lines 1581 to 1600 checks device identity, mount, location, IPAM and rack links, not `virtualHostId`.
+- `importData(event)` at lines 7794 to 7877 calls `phase11ValidateBackupShape`, `phase20ValidateBackupVersion`, `phase16CCheckBackup`, confirms replacement, verifies a safety snapshot, saves the candidate and checks persisted readback. The full internals of `phase16CCheckBackup` and its helper validators still need review before concluding precisely which imported orphan references can pass.
+
+**Design recommendation pending owner decision:** Block deletion or conversion of a physical host with dependent virtual servers and show a helpful list of affected names. Require reassignment first; do not silently clear references. Treat imported legacy orphan references as a separate compatibility and repair decision so an existing inventory is not locked out of unrelated saves. Preserve current rollback and safety snapshot protections.
+
+**Verification boundary:** This checkpoint is source inspection only. No browser scenarios D10, D11, D12, D13 or D26 were executed. M-005 remains open; M-008 conversion policy and WF-06 import compatibility must be considered together.
+
 ## Permanent change and closure rules
 
 For each change, review the current workflow, function references and explanatory comments, test matrices, data and backup compatibility, audit and development findings, user guidance, roadmap and release notes. Update affected living documents in the same pull request. Record a short reason where an area is not applicable.
