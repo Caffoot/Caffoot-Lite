@@ -90,6 +90,23 @@ This programme is the central planning register. Detailed evidence remains in th
 
 **Current limitation:** This table reconciles the existence and planning destination of the known registers. It does not yet prove exhaustive function declaration coverage, all P11 comment assessments, every P12 test or full agreement of every historical and operative status statement. Those checks remain open.
 
+## Proposed v1.3.x release allocation, 23 October 2026
+
+**Planning agreement:** The product owner agreed to document a three release planning structure. These allocations are **provisional**, not permission to modify application behaviour, merge or publish. Investigations may change scope. Published v1.3.0 remains unchanged.
+
+| Proposed release | Primary outcome | Findings allocated for investigation or delivery | Cross-cutting requirements |
+| --- | --- | --- | --- |
+| v1.3.1 | Data safety and inventory integrity | Already merged, not yet published: M-001, M-011, M-012, M-018, M-020, M-031. Investigate M-004, M-005, M-006, M-009, M-010, M-017, M-019, M-022, M-024 | WF-02, WF-03, WF-04, WF-05, WF-06, WF-11 and WF-12 relevant evidence; WF02-T01 to WF02-T18 imported rack fixtures; historical backup compatibility and release package checks |
+| v1.3.2 | Usability, relationships and consistent editing | M-002, M-008, M-013, M-014, M-015, M-023, M-025, M-026, M-027, M-028 | Review UI consistency, historical data preservation, device conversion and relevant workflow/browser tests |
+| v1.3.3 | Code clarity, history and outstanding audit reconciliation | M-003, M-007, M-016, M-029. M-021 remains closed without change and is carried for evidence reconciliation only, not implementation | Complete significant function and caller review, P11 explanatory comments, remaining P12 decisions across WF-01 to WF-13 and final documentation consistency |
+| Every release | Documentation and safety gate | M-030 spans all releases; it is **not deferred** to v1.3.3 | Update technical workflows, function references, test matrices, master audit, findings, roadmap and release documents with each change; retain evidence of executed tests |
+
+**Completeness check:** Every original finding M-001 through M-031 appears in the allocation above exactly once as a primary allocation, except M-030 which is explicitly cross-cutting. M-021 is a closure record, not a planned fix. All thirteen workflow gates, P11, P12 and the eighteen imported rack scenarios remain tracked separately; no scenario is deemed passed by allocation alone.
+
+**Priority override:** If an investigation identifies a confirmed threat to inventory data, reconsider its release placement immediately. Do not defer required safety work to preserve this schedule. Conversely, do not make older inventories impossible to save through stricter validation. Scope, acceptance criteria, tests and individual fixes require separate agreement.
+
+**Before each release:** Review the entire findings register for open risks, assign every incomplete item to an approved later release or explicit deferral, reconcile all affected documents and obtain explicit product owner approval before merging or publication.
+
 ## Permanent change and closure rules
 
 For each change, review the current workflow, function references and explanatory comments, test matrices, data and backup compatibility, audit and development findings, user guidance, roadmap and release notes. Update affected living documents in the same pull request. Record a short reason where an area is not applicable.
