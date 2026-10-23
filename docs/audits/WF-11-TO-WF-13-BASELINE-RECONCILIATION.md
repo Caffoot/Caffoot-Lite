@@ -314,3 +314,8 @@ Read `.github/workflows/validate-hotfix.yml`, `app/check-offline.cjs` and `app/v
 The separately declared `check:source` invokes `check-offline.cjs`, which inspects source HTML for remote script or stylesheet links and expected markers. The release sequence instead runs `check:build` via `verify-build.cjs`, which checks the generated standalone HTML and embedded resources. Their targets differ; omission of `check:source` from the release chain is not, without further assessment, a proven release defect. The workflow's own build verification states that browser testing is still required.
 
 **Execution route:** Use the existing manual workflow on an explicitly selected revision if permitted by the repository and product owner, or obtain a local checkout of the exact published source and run the named commands. Capture run ID, source SHA, job steps, logs and artefact identity. No workflow was dispatched, test executed, application behaviour changed or release published in this checkpoint.
+
+
+## WF-13 documentation consistency observation, 23 October 2026
+
+The validation workflow checks application and package output but does not test agreement between public documentation and the release. Documentation-only changes do not trigger its pull request job. The pull request template and technical documentation policy already require human documentation review and reconciliation. This separation could contribute to stale guidance, but historical causation is unproven. Existing M-030 and WF-14 cover the public documentation concern. No duplicate finding or workflow change is proposed here. A future release review should record published version, documentation links, status agreement, executed checks and product owner approval. No tests were run.
