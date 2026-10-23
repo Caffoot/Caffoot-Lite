@@ -896,3 +896,7 @@ Proposed M-031 bulk IPAM safeguard, 23 October 2026:** Before changing any alloc
 **M-018 confirmed source reference issue, 23 October 2026:** `phase130HandleLocationChange()`, `phase130CancelCustomLocation()` and `addCustomLocationOption()` call `toggleRackLocationFields(select.value)`, but there is no corresponding function definition in `app/caffoot-lite.html`. Main Chromium run 39952033135 reproduced the reference error while testing custom location creation. User-path impact and correct replacement behaviour require further investigation. M-031 bulk safety snapshot regression scenarios passed in that same run. No M-018 application change made.
 
 **23 October 2026:** M-018 proposed device location behaviour: location selection, cancellation and creation update the location selection without invoking a rack location filter. Rack mounting remains independently controlled by device mounting type and rack selector. Verification pending.
+
+## Verified main Chromium checkpoint, 23 October 2026
+
+Verified in main Chromium run 39953195636: M-031 bulk snapshot readback blocks ignored writes; M-018 location actions no longer call the undefined rack handler, and selection/cancellation tests pass. Repair workflow M-012 still permits mutation after a silently ignored safety snapshot, requiring a safeguard decision. Failed saves in M-001, M-020 and M-018 leave in-memory changes even though stored bytes remain unchanged. Import rollback M-011 preserved original inventory in three tested cases; secondary snapshot handling needs inspection.
