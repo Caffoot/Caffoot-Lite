@@ -65,3 +65,12 @@ Agree acceptance criteria with the owner before implementing changes. Run source
 The central `validateApplicationState()` in published HTML lines 1581–1599 checks a device's rack reference, mounting consistency and the arithmetic relationship between start U, height and end U. It does **not** itself explicitly check that the placement lies within rack height or that mounted devices and accessories do not overlap. Interactive rack placement functions perform additional checks, but imported data does not necessarily follow those same form pathways. Therefore WF02-T13 and WF02-T14 must separately establish what the import path accepts or rejects. Do not treat a matching end U calculation as proof that a position is within the rack.
 
 This is source-derived test scope, not a browser execution result. No scenario status has changed.
+
+
+## Evidence reconciliation, 23 October 2026
+
+**The 18 specific imported rack scenarios above remain recorded as not executed.** The [published backup compatibility run 39961182872](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39961182872) exercised a representative populated v1.2.1 export imported into published v1.3.0, preserving core device, rack, subnet and location collections. It did **not** establish accessory collision rejection, malformed accessory handling, imported device overlap detection or the precise WF02-T01 accessory configuration. Do not mark WF02-T01 or WF02-T02 through WF02-T15 passed from that run.
+
+The [targeted M-011 rollback run 39959581469](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39959581469) demonstrated import rollback and protected recovery for its own injected conditions. It provides related WF02-T16 to WF02-T18 safeguard evidence but is **not** a recorded execution of these exact imported rack fixtures. Those test IDs remain pending until independently matched or executed.
+
+M-010 and M-019 remain open import integrity investigations. The current [workflow verification coverage register](WORKFLOW-VERIFICATION-COVERAGE-REGISTER.md), [WF-05 rack matrix](WF-05-RACK-OCCUPANCY-REGRESSION-MATRIX.md), [remediation programme](../audits/AUDIT-FINDINGS-REMEDIATION-PROGRAMME.md) and [technical workflows](../workflows/TECHNICAL-WORKFLOWS.md) must retain this distinction. No browser tests were executed in this documentation reconciliation.
