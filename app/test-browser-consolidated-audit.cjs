@@ -93,10 +93,11 @@ const { chromium } = require('playwright');
     });
     await scenario('M-020 failed device graphic save', async page => {
       const result=await page.evaluate(() => {
-        const type=getUniqueDeviceTypes()[0];
-        if(!type) return {blocked:'No device types'};
+        appState.devices.push({id:'fictional-graphic-device',name:'Fictional graphic device',type:'Server'});
+        const type='Server';
         const presets=Object.keys(phase13GPresets).filter(x=>x!=='automatic');
         if(!presets.length) return {blocked:'No graphic presets'};
+        document.getElementById('phase13g-style')?.remove();
         const select=document.createElement('select');
         select.id='phase13g-style';
         select.innerHTML='<option value="'+presets[0]+'">'+presets[0]+'</option>';
@@ -116,7 +117,7 @@ const { chromium } = require('playwright');
       assert.notEqual(result.after,result.before);
       console.log('OBSERVED M-020: failed graphic save changes in-memory preference without persistence');
       await page.reload({waitUntil:'load'});
-      assert.equal(await page.evaluate(() => JSON.stringify(appState)),result.before);
+      assert.equal(await page.evaluate(() => localStorage.getItem('caffoot_state')),result.before);
     });
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode=1; });
