@@ -37,3 +37,8 @@ This table is a **planning and cross-reference summary** of recorded evidence, n
 ## Imported rack matrix note
 
 The 18 specific WF02-T01 to WF02-T18 scenarios remain pending. Earlier backup compatibility and rollback tests do not cover the exact imported rack accessory fixtures. See [imported rack test matrix](WF-02-IMPORTED-RACK-TEST-MATRIX.md). M-010 and M-019 remain open. No new browser tests were executed.
+
+
+## Documentation checker evidence, 23 October 2026
+
+PR #89 [release documentation consistency run 39984994151](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39984994151) passed structural checks that each WF-01 through WF-13 table entry exists and that WF02-T01 through WF02-T18 are present in the imported rack test matrix. This verifies **document structure only**, not individual workflow execution or completion. The earlier failed run 39984762571 exposed a checker parsing defect for labelled workflow rows, subsequently corrected. Existing targeted browser run evidence in this register is unchanged. Individual P12 completion gates and all 18 imported rack fixtures remain outstanding.
