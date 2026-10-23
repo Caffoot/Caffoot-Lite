@@ -14,6 +14,9 @@ For each workflow record: entry point and trigger; source path and function name
 
 ## Workflow register
 
+The [workflow verification coverage register](../testing/WORKFLOW-VERIFICATION-COVERAGE-REGISTER.md) links earlier executed Chromium evidence to outstanding P12 gaps. Historical planned-only statements in individual test matrices are supplemented by dated evidence updates; none establishes completion of an entire matrix.
+
+
 **Current position: 23 October 2026.** This register supersedes the outdated 22 October table. Administrative audit closure is distinct from the completion of individual P12 gates. Evidence in the dated sections below remains historical and must be read against the newer findings and CI runs.
 
 | ID | Area | Source and documentation assessment | P12 completion gate | Executed browser evidence |
