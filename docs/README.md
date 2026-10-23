@@ -22,7 +22,7 @@ The WF-01 to WF-10 source-inspection checkpoints for v1.3.0 are complete. This d
 
 ## Reorganisation status
 
-The [documentation relocation register](audits/DOCUMENTATION-RELOCATION-REGISTER.md) tracks temporary links, outstanding checks and release packaging dependencies. Relocated documents retain temporary forwarding pages while remaining inbound links and compatibility are checked. Do not remove these pages without further review. The documentation branch is awaiting merge into `main`; historical inbound links and fragment anchors have not been exhaustively verified.
+The [documentation relocation register](audits/DOCUMENTATION-RELOCATION-REGISTER.md) tracks temporary links, outstanding checks and release packaging dependencies. Relocated documents retain temporary forwarding pages while remaining inbound links and compatibility are checked. Do not remove these pages without further review. The documentation remediation work in PR #89 was merged into `main` on 23 October 2026 (squash commit `8708d3f173e7fdbb7114f17a1af82845afdcf72a`). Historical inbound links and fragment anchors have not been exhaustively verified. Post-merge CI confirmation and manual semantic reconciliation remain outstanding.
 
 ## Navigation policy
 
