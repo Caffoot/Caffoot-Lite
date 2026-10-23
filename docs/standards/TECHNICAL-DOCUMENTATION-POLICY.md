@@ -108,3 +108,8 @@ Every proposed change must identify the exact published baseline and current dev
 Before approval, reconcile the master audit, current findings, workflow register, test matrices, roadmap, release checklist and pull request evidence. Confirm that status summaries, links, source revisions and test claims agree. Automated checks must cover objectively testable requirements; technical accuracy still requires a reviewer to inspect source and actual test evidence. If any mandatory reconciliation is outstanding, **do not call the change documentation complete or ready to merge**.
 
 This policy is proposed on the current review branch. Existing GitHub documentation CI already checks links and version statements; additional automated checks must extend it rather than duplicate it. Making a check compulsory through branch protection requires separate owner approval.
+
+
+## Automated audit register coverage, 23 October 2026
+
+The existing release documentation consistency workflow has been extended on the PR #89 review branch to check the presence of six mandatory audit and policy files and the current table identifiers for M-001 through M-031, WF-01 through WF-13 and WF02-T01 through WF02-T18. The checker has isolated self-test fixtures for missing files and entries. This gate checks objective structural completeness only. It does **not** certify that statuses agree, that cited tests ran, or that technical explanations match application source. Reviewers must still reconcile the master audit, workflow documentation, evidence registers, roadmap and release records before approval. The new checks have been committed but their GitHub Actions outcome is pending. No branch protection change is authorised.
