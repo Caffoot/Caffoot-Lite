@@ -124,3 +124,34 @@ Each area requires (1) technical workflow and source coverage, (2) significant f
 **Export evidence:** `phase20CreateBackup(state = appState)` clones the supplied state and adds `caffootBackup` metadata. The separate browser keys above are not members of `defaultData` and are not explicitly appended to that export. A separate source-wide storage-key audit is still required before claiming this table exhausts every stored preference or safety record.
 
 **WF-11 status:** Top-level defaults, significant nested records, core relationships and key storage/export distinctions now have a documented source-based map. Remaining: complete legacy field inventory, all secondary storage keys and migration branches, fixture-backed compatibility tests and P11/P12 reconciliation. No automated or browser tests executed for this update.
+
+## WF-11 migration, repair and storage boundary reconciliation, 23 October 2026
+
+**Evidence:** Direct source review of published v1.3.0 `app/caffoot-lite.html` lines 1392–1553, 1617–1651, 1738–1749, 2153–2171, 2199–2205, 4503 and 7506–7525. Source inspection only.
+
+### Normalisation sequence and its limits
+
+1. `normaliseState(raw)` requires a plain object, `subnets`, `vlans`, `racks` and `devices` arrays, and an `ipAllocations` object. It combines defaults with raw fields and assigns internal `stateVersion: 3`.
+2. Legacy mounted devices with the retired `Racked` physical location are copied with `location: 'Unknown'`. Missing or retired `Blank` locations are also replaced. Managed type/location choices incorporate values discovered in saved devices.
+3. Subnets, hierarchy and VLANs are checked, including address-block scoped VLAN numbers. The code distinguishes non-network address blocks from ordinary networks and permits legacy network records without an explicit `kind`.
+4. Devices are checked for identity, supported mounting, primary IP, rack references and rack position bounds. IP allocation entries are checked for valid addresses, subnet membership and existing device links.
+5. For devices with a primary IP, the normaliser can create or reconcile an allocation record, making the device authoritative for its primary IP, allocation owner, hostname and notes. It can clear stale allocation ownership in subsequent reconciliation. These are **specific** compatibility repairs, not a general guarantee that all invalid relationships are fixed.
+6. `loadStoredState()` parses and screens stored JSON, rejects unsafe keys and invokes normalisation. On a loading failure it retains the original raw stored text for recovery rather than overwriting it. Startup then performs an integrity check but intentionally does not write a normalised state automatically.
+
+**Compatibility implications:** An older inventory may be accepted after a narrowly defined repair, rejected for an invalid mandatory field, or left with a relationship that the current validators do not check. Future validation changes must consider each case and provide a recoverable migration path. Source inspection does not establish which real historical backups pass; fixture and browser tests remain mandatory.
+
+### Browser storage source trace
+
+The following keys are directly observed in the published source: active inventory `caffoot_state`; change history `caffoot_audit_v1` (bounded to 200 events); appearance `caffoot_theme_preference` and `caffoot_dark`; browser storage notice `caffoot_browser_storage_notice_v1`; pre-restore safety copy `caffoot_phase11_pre_restore`; pre-repair copy `caffoot_phase11c_pre_repair_v1`; and pre-bulk-operation copy `caffoot_phase12b_prebulk_snapshot`. The code also contains `personalSafeStorageGet(key)`, a generic guarded reader; the listed literal keys are not a proof that every dynamic or historical key has been inventoried.
+
+The inventory export clones the in-memory inventory and adds `caffootBackup` metadata. It does not append the separate audit, appearance, warning or recovery storage entries. This distinction should be made clear in future user-facing backup guidance.
+
+### Follow-up test evidence needed
+
+- Legacy records with missing managed options, legacy `Blank` and `Racked` locations, missing and inconsistent device IP allocations, and mixed hierarchy/VLAN ownership
+- Malformed mandatory collections, optional accessory collection with an invalid type, dangling virtual host, rack accessory and reservation references
+- Startup with malformed or inaccessible browser storage, confirming recovery mode, original-byte preservation and no automatic overwrite
+- Import and export round trips showing which browser keys are included, excluded or separately retained
+- Backup compatibility across supported historical releases and recovery after simulated storage write/readback failures
+
+**Decision:** The source-level WF-11 migration and key inventory has advanced, but WF-11 remains **partial** until fixture-based tests, complete legacy record mapping, function/P11 review and the six-part completion gate are satisfied. Existing M-005, M-019, M-024 and M-028 investigations must not be silently closed.
