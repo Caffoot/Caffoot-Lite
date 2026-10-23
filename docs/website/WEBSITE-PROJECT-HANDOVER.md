@@ -92,3 +92,7 @@ The product owner manually completed the published v1.3.0 journey in a separate 
 WF-14's first-time manual walkthrough is complete, but the broader public repository and website consistency review remains open. WF-13 and M-030 also remain open. The README and user guide have been improved on the documentation branch; they have not been merged to `main` or published as a new release. This handover does not constitute a live audit of https://caffoot.co.uk.
 
 **Handover instruction to the website project:** Read this file and the linked feature overview before editing site copy. Compare the current live website with the published v1.3.0 release and the five screenshot sources. Prepare proposed changes for owner review. Do not publish or describe planned functionality as available without approval.
+
+## Current source location after documentation merge, 23 October 2026
+
+The corrected v1.3.0 documentation baseline was approved and merged to public `main` in PR #52, merge commit `f03159349f722499b41c92b90f9637b3a9cecadf`. The documentation branch URLs elsewhere in this handover identify the review snapshot, but **website work should now use the corresponding files on `main`** as the current source. Published application release remains v1.3.0. The owner completed the recorded first-time inventory and backup/restore walkthrough and confirmed both new overview screenshots. WF-14's live website and external link review remains open; this update is not a live website audit. No website publication, application release or repository protection change occurred.
