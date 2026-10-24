@@ -108,3 +108,8 @@ GitHub Actions on branch head `6895d986143de9d2d6c1babfb19bfcc08bb4c2d0` reports
 ### M-005 unreferenced host regression, 24 October 2026
 
 A new consolidated Chromium scenario on draft PR #121 checks that deleting a physical host with no incoming virtual host references remains possible after the new protective guard. This test was committed after the earlier four successful GitHub checks; **its result is pending** and must not be counted as passed until CI completes on the new head. The full device conversion submission D13, legacy FileReader import, failure rollback and per dependant relationship decisions remain outstanding. M-005 and the master audit status remain open; no merge or release.
+
+
+### M-005 conversion guard ordering, 24 October 2026
+
+Draft PR #121 now checks incoming hosted relationships **before** the existing obsolete field confirmation in `handleDeviceSubmit()`. This avoids asking the user to confirm a conversion that cannot proceed because dependant virtual servers still reference the host. The source change is committed on the issue branch, not merged into the release branch or `main`. Full browser form submission and confirmation ordering tests remain outstanding; do not report them as passed. M-005 and the master audit remain open. No release.
