@@ -273,6 +273,41 @@ const { chromium } = require('playwright');
 
     // M-005: deletion protection acceptance, with legacy validator and import
     // characterisation retained separately until compatibility handling is designed.
+    await scenario('M-005 physical host details list hosted guests', async page => {
+      const result = await page.evaluate(() => {
+        appState.devices.push(
+          {id:'fictional-display-host',name:'Fictional display host',type:'Server - Physical',location:'Unknown'},
+          {id:'fictional-display-vm-a',name:'Fictional web VM',type:'Server - Virtual',status:'Active',virtualHostId:'fictional-display-host'},
+          {id:'fictional-display-vm-b',name:'Fictional database VM',type:'Server - Virtual',status:'Maintenance',virtualHostId:'fictional-display-host'}
+        );
+        phase14CViewDevice('fictional-display-host');
+        const panel=document.getElementById('phase14c-panel-overview');
+        return {text:panel?.textContent||'',links:appState.devices.filter(d=>d.virtualHostId==='fictional-display-host').length};
+      });
+      assert.match(result.text,/Hosted virtual machines/);
+      assert.match(result.text,/Fictional web VM/);
+      assert.match(result.text,/Fictional database VM/);
+      assert.match(result.text,/Maintenance/);
+      assert.equal(result.links,2,'Viewing host details must preserve guest links');
+    });
+    await scenario('M-005 physical host details show empty guest state', async page => {
+      const text = await page.evaluate(() => {
+        appState.devices.push({id:'fictional-display-empty',name:'Fictional empty host',type:'Server - Physical',location:'Unknown'});
+        phase14CViewDevice('fictional-display-empty');
+        return document.getElementById('phase14c-panel-overview')?.textContent||'';
+      });
+      assert.match(text,/No hosted virtual machines recorded/);
+    });
+    await scenario('M-005 legacy missing physical host remains visible', async page => {
+      const result = await page.evaluate(() => {
+        appState.devices.push({id:'fictional-display-orphan',name:'Fictional orphan guest',type:'Server - Virtual',location:'Unknown',virtualHostId:'fictional-absent-host'});
+        phase14CViewDevice('fictional-display-orphan');
+        return {text:document.getElementById('phase14c-panel-overview')?.textContent||'',
+          original:appState.devices.find(d=>d.id==='fictional-display-orphan')?.virtualHostId};
+      });
+      assert.match(result.text,/Missing or unavailable host/);
+      assert.equal(result.original,'fictional-absent-host','Viewing legacy guest must not modify host reference');
+    });
     await scenario('M-005 prevent deletion of host with dependants', async page => {
       const result = await page.evaluate(() => {
         appState.devices.push(
