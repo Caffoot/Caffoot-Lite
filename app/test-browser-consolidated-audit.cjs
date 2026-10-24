@@ -396,6 +396,53 @@ const { chromium } = require('playwright');
       assert.equal(result.acceptFocus,true);
       assert.equal(result.removed,true);
     });
+    for (const decision of ['escape','confirm']) {
+      await scenario('M-005 full hypervisor form save ' + decision, async page => {
+        const result=await page.evaluate(async decision => {
+          const hostId='fictional-hypervisor-form-host';
+          appState.subnets.push({id:'fictional-hypervisor-form-subnet',name:'Hypervisor form subnet',kind:'network',cidr:'10.88.74.0/29',gateway:'10.88.74.1',vlan:3874});
+          appState.devices.push(
+            {id:hostId,name:'Fictional hypervisor form host',type:'Server - Physical',mountType:'Desktop',location:'Unknown',status:'Active',primaryIp:'10.88.74.2',typeDetails:{serverService_Hypervisor:true}},
+            {id:'fictional-hypervisor-form-vm',name:'Fictional hypervisor form VM',type:'Server - Virtual',mountType:'Desktop',location:'Unknown',virtualHostId:hostId}
+          );
+          localStorage.setItem('caffoot_state',JSON.stringify(appState));
+          const before=localStorage.getItem('caffoot_state');
+          openDeviceModal(hostId);
+          const set=(id,value)=>{const el=document.getElementById(id);if(!el)throw Error('Missing form control '+id);el.value=value;el.dispatchEvent(new Event('change',{bubbles:true}));};
+          set('dev-location','Unknown');
+          set('dev-mount-type','Desktop');
+          set('dev-subnet','fictional-hypervisor-form-subnet');
+          set('dev-ip','10.88.74.2');
+          const hypervisor=document.querySelector('[data-phase19b-field="serverService_Hypervisor"]');
+          if(!hypervisor)throw Error('Hypervisor checkbox missing');
+          hypervisor.checked=false;
+          const pending=handleDeviceSubmit({preventDefault(){}},hostId);
+          await Promise.resolve();
+          const dialog=document.getElementById('phase-m005-hypervisor-dialog');
+          if(!dialog)throw Error('Expected hypervisor confirmation missing');
+          if(decision==='escape')document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));
+          else phaseM005ResolveHypervisorRemoval(true);
+          await pending;
+          const host=appState.devices.find(d=>d.id===hostId);
+          const guest=appState.devices.find(d=>d.id==='fictional-hypervisor-form-vm');
+          return {before,after:localStorage.getItem('caffoot_state'),hypervisor:host.typeDetails?.serverService_Hypervisor,
+            guestHost:guest.virtualHostId,dialogClosed:!document.getElementById('phase-m005-hypervisor-dialog'),
+            formStillOpen:!!document.getElementById('dev-name')};
+        },decision);
+        assert.equal(result.dialogClosed,true);
+        assert.equal(result.guestHost,'fictional-hypervisor-form-host');
+        if(decision==='escape') {
+          assert.equal(result.hypervisor,true,'Escape must preserve recorded hypervisor');
+          assert.equal(result.after,result.before,'Escape must not persist changes');
+          assert.equal(result.formStillOpen,true,'Escape must return to edit form');
+        } else {
+          assert.equal(result.hypervisor,false,'Confirmed removal must update service');
+          assert.notEqual(result.after,result.before,'Confirmed removal must persist');
+          const persisted=JSON.parse(result.after);
+          assert.equal(persisted.devices.find(d=>d.id==='fictional-hypervisor-form-vm').virtualHostId,'fictional-hypervisor-form-host');
+        }
+      });
+    }
     await scenario('M-005 legacy missing physical host remains visible', async page => {
       const result = await page.evaluate(() => {
         appState.devices.push({id:'fictional-display-orphan',name:'Fictional orphan guest',type:'Server - Virtual',location:'Unknown',virtualHostId:'fictional-absent-host'});
