@@ -268,3 +268,12 @@ PR #89 commit `1c42846fad63cc1acc189c9ab2a4c0284cc279d9` passed [release documen
 
 **Status:** Product design approved, application implementation not approved or started. No tests executed. Add guest OS independence and appliance OS scenarios to WF-03 verification before implementation.
 
+
+### WF-03 and WF-08 targeted device type consistency review, 24 October 2026
+
+**Product owner requested a further check before assuming other device types are sound.** Extend the existing WF-03 device lifecycle and WF-08 catalogue coverage, without reopening or duplicating the entire historical audit. Review physical and virtual servers, desktop, laptop, tablet, firewall, router, switch, wireless equipment, NAS, printer and any additional configured device types. For each, trace current form fields, operating system and firmware choices, software and service applicability, edit and conversion behaviour, save failure recovery, import compatibility, archived or custom catalogue values and preservation of existing records.
+
+**Reason:** Earlier source assessment and the absence of recorded defects are not proof that every device type is correct. Give each reviewed type an evidence status: source inspected, test executed, issue found, or further verification required. Cross-reference WF-03, WF-08, M-005, M-008 and the relevant test matrices. Do not claim passing tests without execution.
+
+**Scope and approval:** Investigation and documentation only. No application behaviour changes, merge or release authorised. Reconcile findings into the master audit register and roadmap before closing this review.
+
