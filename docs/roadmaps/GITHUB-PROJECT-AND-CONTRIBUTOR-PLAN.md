@@ -89,3 +89,8 @@ The original proposed scopes in the root roadmap are preserved without reallocat
 | v1.9.0 | [#114](https://github.com/Caffoot/Caffoot-Lite/issues/114) | [#119](https://github.com/Caffoot/Caffoot-Lite/issues/119) |
 
 These ten issues were created without milestones because the available GitHub connection cannot create milestones. Create and assign proposed v1.5.0 through v1.9.0 milestones through authorised GitHub access, then verify all ten associations. The existing Project auto add workflow is configured but membership of these ten new issues has not been independently verified. Check the Project board before manually adding any issue to avoid duplicates. The roadmap remains the authoritative scope; v1.8.0 is research and design only, and v1.9.0 is provisional planning. Dependencies, data preservation, standalone HTML compatibility, testing and release approvals remain open. This was GitHub issue and documentation planning only; no application tests, code changes, merge or release.
+
+
+### Milestone assignment verification, 24 October 2026
+
+The product owner confirmed the creation of GitHub milestones #5 to #9 for proposed releases v1.5.0 to v1.9.0. GitHub then accepted the milestone assignments for all ten new issues: v1.5.0 milestone #5 issues #110 and #115; v1.6.0 milestone #6 issues #111 and #116; v1.7.0 milestone #7 issues #112 and #117; v1.8.0 milestone #8 issues #113 and #118; v1.9.0 milestone #9 issues #114 and #119. Each update response returned the intended numeric milestone. This supersedes the earlier statement that milestone creation and assignment remained outstanding. A separate read back and Project membership check remain to be completed. No application tests were executed; no application code was changed, merged or released.
