@@ -11,7 +11,8 @@ The current `phase19BTypeGroups` mapping and `phase19BProfiles` in `app/caffoot-
 | Device types | Form group | Existing additional fields and behaviour |
 | --- | --- | --- |
 | Desktop, Laptop, Tablet | computer | OS, hardware and network details, software selection, Windows licence |
-| Server, Server - Physical, Server - Virtual | server | OS, hardware and network details, storage and RAID, installed software and shared server services |
+| Server - Physical, Server - Virtual | server | Default server types; OS, hardware and network details, storage and RAID, installed software and shared server services |
+| Server (legacy or user managed only) | server | Recognised by the internal mapping but not in the default fresh inventory device type list |
 | Firewall, Print Server, Print Servers, Wireless LAN Controller | network | Network card and network connection details, plus software available for exact type |
 | Router | router | Port count and network connection, plus type eligible software |
 | Switch | switch | Port count, network card and network connection, plus type eligible software |
@@ -22,6 +23,8 @@ The current `phase19BTypeGroups` mapping and `phase19BProfiles` in `app/caffoot-
 | UPS | ups | Power outlets, serial and USB flags, plus type eligible software |
 | Tape Drive | tape | Network and drive count, plus type eligible software |
 | Custom or unmatched type | no fixed group | Only type eligible software and common device fields; inspect case by case |
+
+**Default versus legacy distinction:** `cloneDefaultData()` lists `Server - Physical` and `Server - Virtual`, not generic `Server` (approximately line 1167). `openDeviceModal()` populates its type selector from `getUniqueDeviceTypes()` (approximately lines 6816 to 6823), while `normaliseState()` retains device types discovered in older saved devices (approximately lines 1420 to 1424). Therefore a generic `Server` may appear in imported or user managed inventories, but is not a default fresh inventory choice. This is a source finding, not an executed UI test.
 
 ## Starter software examples verified in source
 
