@@ -1,8 +1,16 @@
-# Standards
+# Caffoot Lite standards
 
-- [DEVELOPMENT PRINCIPLES AND STANDARDS](DEVELOPMENT-PRINCIPLES-AND-STANDARDS.md)
-- [DEVELOPMENT WORKFLOW](DEVELOPMENT-WORKFLOW.md)
-- [FUNCTION NAMING AND REFERENCE](FUNCTION-NAMING-AND-REFERENCE.md)
-- [TECHNICAL DOCUMENTATION POLICY](TECHNICAL-DOCUMENTATION-POLICY.md)
+These are the authoritative technical and design standards. The previous root file paths contain temporary compatibility pointers while existing references are updated and checked.
 
-Documentation and historical records are distinct from evidence of executed tests.
+## Technical standards
+
+- [Development principles and standards](technical/DEVELOPMENT-PRINCIPLES-AND-STANDARDS.md)
+- [Development workflow](technical/DEVELOPMENT-WORKFLOW.md)
+- [Function naming and reference](technical/FUNCTION-NAMING-AND-REFERENCE.md)
+- [Technical documentation policy](technical/TECHNICAL-DOCUMENTATION-POLICY.md)
+
+## Design standards
+
+- [Design and interaction standards](design/DESIGN-AND-INTERACTION-STANDARDS.md)
+
+Source inspection, documentation review and tests actually executed must be recorded separately. Follow the technical documentation policy and reconcile all affected workflow, findings, roadmap and test references before approving a release.

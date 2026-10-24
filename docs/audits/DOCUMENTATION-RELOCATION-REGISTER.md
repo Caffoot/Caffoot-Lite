@@ -1,6 +1,8 @@
 # Documentation relocation and compatibility register
 
-**Scope:** Documentation branch only. The published v1.3.0 application is unchanged.
+**Scope:** Historical documentation relocation and compatibility checks, now merged into `main` through PR #89. The published v1.3.0 application is unchanged.
+
+**Current status, 23 October 2026:** PR #89 was merged as `8708d3f173e7fdbb7114f17a1af82845afdcf72a`. Earlier references to a documentation branch or pending merge describe historical checkpoints. Compatibility stubs remain in place, and exhaustive inbound link and fragment verification is not yet established. Post-merge CI confirmation remains outstanding.
 
 ## Completed
 
@@ -326,3 +328,21 @@ Commit `16ae95ddd8a68bcfa48521f2d9fae5d89f1b0799` extended `scripts/check-docume
 ## Documentation baseline closeout reconciliation, 23 October 2026
 
 The branch comparison against `main` lists 44 changed paths, including historical release notes relocated under `docs/archive/release-notes/`, the two new v1.3.0 overview screenshots and the dedicated closeout record. Current `RELEASE-NOTES-1.3.0.md` remains at root because release packaging depends on it. The automated documentation consistency workflow previously passed on commit `4a44b057903982a81110d8535d268221dbdd5041` (run 39933151092), including local Markdown link and heading checks; this does not validate external websites or visual image fidelity. The final reconciliation commit still requires its own check. WF-11 to WF-13 remain technically incomplete, WF-14 remains open for public review, and M-030 remains open pending publication to `main` and required-check enforcement. Master audit remains in progress. No application or browser test executed here; no merge or release.
+
+## Standards directory organisation checkpoint, 24 October 2026
+
+The product owner approved organising standards under `docs/standards/technical/` and `docs/standards/design/`. Commit `6b2cdb5651e407ad6b441d93d0ac4cc2eac6d8e6` created the five authoritative documents in those directories and updated the standards index. Temporary compatibility pointers remain at the five previous paths. Commit `ef1e58d6e1a2541730c1b6fcc3035d0224fb0c8c` updated direct references in `docs/README.md`, `CONTRIBUTING.md`, the master audit, findings programme, maintenance roadmap, technical workflows and verification register. The technical documentation policy and design standard use relative links adjusted for their new locations.
+
+**Verification:** The new documents and index were read back from GitHub. No local Markdown link checker, documentation consistency checker, application tests or browser tests were executed at this checkpoint. Repository wide reference inventory and automated link and anchor verification are still outstanding. Compatibility pointers must not be removed until all references are reconciled and tests pass. The existing v1.3.0 audit administrative closure and its incomplete P12 and workflow verification remain unchanged. No application behaviour, merge to main, publication or release was authorised or performed.
+
+### Standards reference review, 24 October 2026
+
+A targeted review of current non archived Markdown documents found direct references in the contributor guide, documentation index, findings programme, maintenance roadmap, technical workflows, verification register, master audit and pull request template. These were updated to the authoritative `technical/` and `design/` paths in commits `ef1e58d6e1a2541730c1b6fcc3035d0224fb0c8c` and `3ebfd3303d7771608c3064d562e126a255745dff`. Other non archived Markdown files checked in this pass had no direct Markdown links to the five previous standard paths. This is a targeted source inspection, not the result of the repository's automated link checker. Historical references in archived material and unlinked prose are not declared fully reconciled.
+
+**Open verification gate:** Run the repository's Markdown link self tests, local link and anchor checker, release documentation checks and audit coverage checks on the final commit. Review results and cross references before removing compatibility pointers. The draft review branch remains separate from `main`; no release or application behaviour change.
+
+### PR #90 documentation gate evidence, 24 October 2026
+
+[Draft PR #90](https://github.com/Caffoot/Caffoot-Lite/pull/90) triggered the mandatory release documentation workflow. The first run [40076882069](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40076882069) failed its audit coverage check because the cross-cutting table row `M-001 to M-031` was interpreted as a duplicate current finding row for M-001. The finding itself was not duplicated. The label was corrected to `All numbered maintenance findings` in commit `603f701be816a846bee7a6030a96e7e32f8130c5`. The subsequent [run 40076919499](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40076919499) passed the release documentation workflow, including the audit coverage, Markdown link and heading, and release documentation checks. This is executed CI evidence, not application or browser testing.
+
+The five old standard paths are retained intentionally as small compatibility pointers for historic inbound links and archives. They are not competing authoritative copies. Current non archived Markdown references inspected in this relocation checkpoint use the new technical and design paths. Archived or external inbound links are not asserted to be exhaustively inventoried. This compatibility retention is deliberate and does not block returning to v1.3.1 investigations. No merge or release was performed.

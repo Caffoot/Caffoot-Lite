@@ -270,5 +270,80 @@ const { chromium } = require('playwright');
         assert.equal(await page.evaluate(()=>localStorage.getItem('caffoot_state')),initial.original);
       });
     }
+
+    // M-005 baseline characterisation only: these observations document the current
+    // missing host integrity safeguards. They are NOT future acceptance criteria.
+    await scenario('M-005 baseline incoming host deletion', async page => {
+      const result = await page.evaluate(() => {
+        appState.devices.push(
+          {id:'fictional-host-001',name:'Fictional host',type:'Server - Physical',mountType:'Desktop',location:'Unknown'},
+          {id:'fictional-vm-001',name:'Fictional VM 1',type:'Server - Virtual',mountType:'Desktop',location:'Unknown',virtualHostId:'fictional-host-001'},
+          {id:'fictional-vm-002',name:'Fictional VM 2',type:'Server - Virtual',mountType:'Desktop',location:'Unknown',virtualHostId:'fictional-host-001'}
+        );
+        localStorage.setItem('caffoot_state',JSON.stringify(appState));
+        const originalConfirm=window.confirm;
+        const prompts=[];
+        window.confirm=message=>{prompts.push(message);return true};
+        try { deleteDevice('fictional-host-001'); }
+        finally { window.confirm=originalConfirm; }
+        return {prompts,hostExists:!!appState.devices.find(d=>d.id==='fictional-host-001'),
+          dependants:appState.devices.filter(d=>d.virtualHostId==='fictional-host-001').map(d=>d.id)};
+      });
+      assert.equal(result.hostExists,false,'Baseline: deletion currently removes the referenced physical host');
+      assert.deepEqual(result.dependants,['fictional-vm-001','fictional-vm-002'],
+        'Baseline: dependent virtualHostId references currently remain orphaned');
+      assert(result.prompts.length>=1,'Deletion confirmation must have appeared');
+      console.log('OBSERVED M-005: host deleted while two fictional virtualHostId references remain');
+    });
+    await scenario('M-005 baseline orphan host validation', async page => {
+      const result = await page.evaluate(() => {
+        appState.devices.push({id:'fictional-orphan-vm',name:'Fictional orphan VM',
+          type:'Server - Virtual',mountType:'Desktop',location:'Unknown',
+          virtualHostId:'fictional-missing-host'});
+        return {issues:validateApplicationState(),hostId:appState.devices.at(-1).virtualHostId};
+      });
+      assert.equal(result.hostId,'fictional-missing-host');
+      assert.equal(result.issues.some(x=>/virtual.host|fictional-missing-host/i.test(x)),false,
+        'Baseline: general validation currently does not report orphan virtualHostId');
+      console.log('OBSERVED M-005: general validation did not flag fictional orphan host reference');
+    });
+
+    await scenario('M-005 baseline host conversion and orphan reference', async page => {
+      const result = await page.evaluate(() => {
+        appState.devices.push(
+          {id:'fictional-conversion-host',name:'Fictional conversion host',type:'Server - Physical',mountType:'Desktop',location:'Unknown'},
+          {id:'fictional-conversion-vm',name:'Fictional conversion VM',type:'Server - Virtual',mountType:'Desktop',location:'Unknown',virtualHostId:'fictional-conversion-host'}
+        );
+        const host=appState.devices.find(d=>d.id==='fictional-conversion-host');
+        // Baseline: existing device edit ultimately applies the selected type
+        // without checking incoming virtualHostId links. Avoid DOM simulation
+        // here; the complete form submission needs its own D13 browser case.
+        const incoming=appState.devices.filter(d=>d.virtualHostId===host.id).length;
+        const sourceHasIncomingGuard=handleDeviceSubmit.toString().includes('virtualHostId===deviceId') ||
+          handleDeviceSubmit.toString().includes('virtualHostId === deviceId');
+        return {incoming,sourceHasIncomingGuard};
+      });
+      assert.equal(result.incoming,1);
+      assert.equal(result.sourceHasIncomingGuard,false);
+      console.log('OBSERVED M-005: conversion handler has no direct incoming virtualHostId guard; full D13 remains pending');
+    });
+    await scenario('M-005 baseline detached legacy backup host reference', async page => {
+      const result=await page.evaluate(() => {
+        const raw=JSON.parse(JSON.stringify(appState));
+        raw.devices.push({id:'fictional-legacy-vm',name:'Fictional legacy VM',
+          type:'Server - Virtual',mountType:'Desktop',location:'Unknown',
+          virtualHostId:'fictional-missing-legacy-host'});
+        const before=JSON.stringify(raw);
+        let candidate=null,error=null;
+        try {candidate=phase16CCheckBackup(raw);}
+        catch(e){error=String(e.message||e);}
+        return {error,rawUnchanged:JSON.stringify(raw)===before,
+          hostId:candidate?.devices.find(d=>d.id==='fictional-legacy-vm')?.virtualHostId||null};
+      });
+      assert.equal(result.error,null,'Baseline: legacy orphan host currently passes general backup check');
+      assert.equal(result.rawUnchanged,true,'Backup validation must not mutate the input backup');
+      assert.equal(result.hostId,'fictional-missing-legacy-host','Legacy orphan host identity must not silently change');
+      console.log('OBSERVED M-005: backup candidate accepts orphan virtualHostId without modifying source JSON');
+    });
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode=1; });

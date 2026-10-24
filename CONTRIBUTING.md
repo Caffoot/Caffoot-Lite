@@ -4,7 +4,7 @@ Thank you for helping improve Caffoot Lite. Contributions, bug reports, document
 
 ## Getting started
 
-Read the [project README](README.md), [documentation homepage](docs/README.md) and [development workflow](docs/standards/DEVELOPMENT-WORKFLOW.md). You do not need to understand the entire codebase before reporting a problem or proposing an improvement.
+Read the [project README](README.md), [documentation homepage](docs/README.md) and [development workflow](docs/standards/technical/DEVELOPMENT-WORKFLOW.md). You do not need to understand the entire codebase before reporting a problem or proposing an improvement.
 
 ## Reporting a problem
 
@@ -24,8 +24,12 @@ Preserve the standalone single HTML experience. Any future self-hosted functiona
 
 ## Documentation
 
-Follow the [documentation policy](docs/standards/TECHNICAL-DOCUMENTATION-POLICY.md). Document current behaviour separately from proposed changes, use British English in public-facing text and update the relevant technical workflows after significant changes.
+Follow the [documentation policy](docs/standards/technical/TECHNICAL-DOCUMENTATION-POLICY.md). Document current behaviour separately from proposed changes, use British English in public-facing text and update the relevant technical workflows after significant changes.
 
 ## Review and release
 
 A pull request is a proposal, not an automatic release. Maintainers review changes, compatibility, evidence and release readiness before merging or publishing.
+
+## Finding work and release plans
+
+Before starting a change, check the [GitHub planning and contributor handover](docs/roadmaps/GITHUB-PROJECT-AND-CONTRIBUTOR-PLAN.md) and the linked audit or roadmap issue. A milestone identifies intended release scope; it does not create a branch or authorise a change. Retain historical decisions, test evidence and compatibility requirements when contributing.

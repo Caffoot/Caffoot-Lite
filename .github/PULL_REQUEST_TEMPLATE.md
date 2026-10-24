@@ -37,4 +37,4 @@ Tick the relevant items. Write `N/A` with a short reason where a check does not 
 
 <!-- State 'None' if applicable. Do not silently omit failed or unexecuted checks. -->
 
-> Follow [the permanent development and audit process](../docs/standards/TECHNICAL-DOCUMENTATION-POLICY.md). This checklist is a review aid, not permission to bypass approval or release controls.
+> Follow [the permanent development and audit process](../docs/standards/technical/TECHNICAL-DOCUMENTATION-POLICY.md). This checklist is a review aid, not permission to bypass approval or release controls.

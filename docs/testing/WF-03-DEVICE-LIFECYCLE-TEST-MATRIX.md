@@ -39,7 +39,7 @@ Use a disposable browser profile and fictional inventory. Export a backup before
 
 ## Exit criteria
 
-Review every function and caller encountered against `docs/standards/FUNCTION-NAMING-AND-REFERENCE.md` and P11 comments. Record defects and improvement candidates in the coverage audit and maintenance roadmap, distinguishing source-confirmed gaps from browser-reproduced issues. Mark each scenario **planned**, **passed**, **failed**, **blocked** or **not applicable**, with evidence. Documentation completeness does not mean test verification.
+Review every function and caller encountered against `docs/standards/technical/FUNCTION-NAMING-AND-REFERENCE.md` and P11 comments. Record defects and improvement candidates in the coverage audit and maintenance roadmap, distinguishing source-confirmed gaps from browser-reproduced issues. Mark each scenario **planned**, **passed**, **failed**, **blocked** or **not applicable**, with evidence. Documentation completeness does not mean test verification.
 
 ## Host dependency test precision, 22 October 2026
 
@@ -49,3 +49,42 @@ D10 and D11 exercise the explicit `handleDeviceSubmit()` check that a chosen vir
 ## Evidence update, 23 October 2026
 
 The opening statement that no browser tests were executed is historical wording from the original matrix design. **A targeted M-020 failed device graphic save scenario was subsequently executed and passed** in [Chromium run 39957395113](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39957395113), after the correction merged through [PR #79](https://github.com/Caffoot/Caffoot-Lite/pull/79). This does **not** certify the wider device lifecycle, host relationships, device conversion or the whole matrix. M-005 and M-008 remain subject to investigation and product decisions. See [coverage register](WORKFLOW-VERIFICATION-COVERAGE-REGISTER.md). No tests were run for this documentation update.
+
+### Proposed M-005 hypervisor design test additions, 23 October 2026
+
+These scenarios are **planned, not executed**, and concern future approved application behaviour, not the published v1.3.0 baseline:
+
+| ID | Proposed scenario | Expected result |
+| --- | --- | --- |
+| H01 | Select recognised or custom hypervisor on physical server | Exactly one active hypervisor, existing Hypervisor service synchronised |
+| H02 | Create virtual server and choose eligible host | Only eligible new hosts offered; platform matches selected host |
+| H03 | Attempt to select physical server without hypervisor | New invalid assignment blocked at save, not only in selector |
+| H04 | Confirm host VMware ESXi to Proxmox VE change with several VMs | All dependent platform metadata changes in one verified save |
+| H05 | Cancel hypervisor change or force save failure | Host and every dependent VM remain unchanged |
+| H06 | Remove hypervisor or delete or convert host with dependants | Require an explicit reviewed outcome for every dependant: eligible reassignment, unassignment with former host provenance, or retirement retaining history. Block unsafe changes and preserve state on cancellation or failed save |
+| H07 | Import legacy host links, missing hosts and platform mismatches | Non-destructive review and repair policy, no silent loss or unrelated save lockout |
+| H08 | Reload, export and reimport custom or archived hypervisor choices | Stable selection and relationships survive round trip |
+
+Retain D10 to D13 and D26 as the original baseline scenarios; do not treat H01 to H08 as passed or as implementation approval.
+
+
+## Proposed conversion and server software regression cases, 24 October 2026
+
+**Pending, not executed:** Edit a historical/custom type without changing type and preserve all `typeDetails`; change device type and cancel conversion without mutation; confirm conversion and verify active values and `previousTypeDetails`; preserve archived custom software and server services; distinguish OS/firmware, host hypervisor, installed applications and service roles; confirm physical and virtual servers share ordinary service eligibility; ensure host hypervisor setting and legacy `serverService_Hypervisor` remain compatible; verify guest OS independence and dependent VM host protection; test save failure rollback, backup/export/import and duplicate round trips; check keyboard and confirmation behaviour with WF-07. These are proposed regression scenarios for approved future implementation, not successful test results. See [design review](../roadmaps/V1.3X-MAINTENANCE-DESIGN-REVIEW.md) and [compatibility matrix](../workflows/DEVICE-SOFTWARE-COMPATIBILITY-MATRIX.md).
+
+**Additional unexecuted M-005 scenarios, 24 October 2026:** For host deletion and incompatible conversion, verify each dependent virtual server can be explicitly reassigned, left unassigned with former host provenance, or retired without losing history; mixed outcomes, cancellation and failed persistence must not alter records. Check orphaned and historical imported host IDs without preventing unrelated saves. Future virtual device categories require separate fixture coverage when their host model exists. These are planned scenarios, not test results.
+
+**M-005 source trace and pending runtime evidence, 24 October 2026:** Source inspected: virtual host form save `handleDeviceSubmit` lines 7142 to 7144, conversion lines 7173 to 7192, deletion `deleteDevice` lines 7207 to 7218. The latter two paths have no incoming virtual host dependency scan. Execute dependent host deletion and conversion scenarios, mixed reassignment/unassignment/retirement, cancellation, failed persistence, reload, and historical host IDs before any implementation claim. No browser test executed in this checkpoint.
+
+**Execution route reviewed, 24 October 2026:** The existing `.github/workflows/audit-consolidated-chromium.yml` runs on `workflow_dispatch` or a pull request changing the HTML, consolidated test script or workflow itself. The existing `app/test-browser-consolidated-audit.cjs` has no `virtualHostId` coverage. A documentation-only PR does not automatically run these host scenarios. Add isolated fictional M-005 cases to the browser suite on a separately reviewed test change, or explicitly dispatch a suitable workflow after coverage is present. Do not mark D10 to D13, D26 or H01 to H08 as executed on the strength of documentation CI.
+
+**M-005 browser baseline test preparation, 24 October 2026:** Commit `90364f6` adds two disposable fictional Chromium scenarios to `app/test-browser-consolidated-audit.cjs`: deleting a physical host referenced by two virtual servers (D12 baseline), and validating a virtual server referencing a missing host (D26 related integrity baseline). Assertions deliberately characterise the current source observed gaps, not the agreed future behaviour; they must be replaced or extended with protection acceptance assertions after implementation. No test execution or pass is claimed until the GitHub Chromium workflow reports a result. Physical host conversion D13, full backup import D26, save failure, rehost, explicit unassignment and retirement remain untested. No application code changed; M-005 remains open.
+
+**M-005 executed Chromium baseline, 24 October 2026:** [Consolidated Chromium run 40077572183](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40077572183) completed successfully against test commit `90364f680b9d94282948d2f3eb655f22d5b0be27`. Two new fictional inventory characterisation cases executed: deleting physical host `fictional-host-001` leaves both dependent virtual servers with orphaned `virtualHostId` references (D12 baseline); `validateApplicationState()` does not report the deliberately missing `virtualHostId` on a virtual server (D26 related validator baseline). These passing baseline assertions **confirm the unsafe existing behaviour**, not the proposed safeguard. Other pre-existing consolidated suite scenarios also ran within the successful workflow, but this evidence does not certify D10, D11, D13, full D26 backup import, or H01 to H08. M-005 stays open, with future acceptance tests required. No application code change, merge or release.
+
+**M-005 next baseline test change, 24 October 2026:** Test commit `919bf866543d82d7860703100fc8e57403b930c3` adds a detached legacy backup candidate test with a fictional orphan `virtualHostId`, checking import validation and source JSON preservation, plus a Chromium executed *source function inspection* of the conversion handler for a direct incoming host guard. The latter is not a full form submission or conversion reproduction; WF-03 D13 remains unexecuted. The backup candidate check does not exercise full FileReader restore or safety snapshot; full WF-06 import remains outstanding. Both new checks await Chromium results. M-005 stays open; no application behaviour changes, merge or release.
+
+
+## PR #90 latest Chromium evidence, 24 October 2026
+
+[GitHub Actions consolidated Chromium run 40083327937](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40083327937) completed successfully against documentation commit `12cfa287ab36458b2b73b5632ab501068f609228`. This supersedes the historical statement above that the checks added at `919bf866` were awaiting results. The detached legacy backup candidate check and conversion handler source inspection are limited baseline evidence, not full FileReader import, device conversion form submission, safety snapshot, rehost, explicit unassignment, retirement or failed save acceptance tests. The earlier executed baseline confirms unsafe existing behaviour; it does not fix M-005. M-005 and the relevant WF-03/WF-06 acceptance gates remain open. These are GitHub Actions results, not locally executed tests. No application behaviour change, merge or release.
