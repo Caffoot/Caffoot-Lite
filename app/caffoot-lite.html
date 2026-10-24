@@ -5921,14 +5921,17 @@ function hierarchyValidateTypes(subnets) {
                     <button type="button" data-action="close-modal" aria-label="Close device details" class="phase14c-close"><i class="fa-solid fa-xmark"></i></button>
                 </header>
                 <nav class="phase14c-tabs" role="tablist" aria-label="Device detail sections">
-                    ${[['overview','Overview'],['hardware','Hardware'],['network','Network'],['software','Software'],['location','Location'],...(historyRows?[['history','History']]:[])].map(([key,label],i)=>`<button type="button" role="tab" id="phase14c-tab-${key}" aria-controls="phase14c-panel-${key}" aria-selected="${i===0?'true':'false'}" tabindex="${i===0?'0':'-1'}" data-action="phase14c-tab" data-name="${key}" class="phase14c-tab ${i===0?'phase14c-tab-active':''}">${label}</button>`).join('')}
+                    ${[['overview','Overview'],...(d.type === 'Server - Physical' ? [['virtual-machines','Virtual Machines']] : []),['hardware','Hardware'],['network','Network'],['software','Software'],['location','Location'],...(historyRows?[['history','History']]:[])].map(([key,label],i)=>`<button type="button" role="tab" id="phase14c-tab-${key}" aria-controls="phase14c-panel-${key}" aria-selected="${i===0?'true':'false'}" tabindex="${i===0?'0':'-1'}" data-action="phase14c-tab" data-name="${key}" class="phase14c-tab ${i===0?'phase14c-tab-active':''}">${label}</button>`).join('')}
                 </nav>
                 <div class="phase14c-panels">
                     <div id="phase14c-panel-overview" role="tabpanel" aria-labelledby="phase14c-tab-overview" class="phase14c-panel">
                         ${section('Device overview', 'fa-circle-info', field('Device name', d.name) + field('Type', d.type) + field('Status', status) + field('Manufacturer', d.manufacturer) + field('Model', d.model) + field('Primary IP', d.primaryIp) + field('Location', d.location))}
-                        ${hostingSection}
+                        ${d.type === 'Server - Physical' ? '' : hostingSection}
                         ${d.notes ? `<section class="phase14c-section"><h4><i class="fa-solid fa-note-sticky mr-2" aria-hidden="true"></i>Notes</h4><p class="phase14c-notes">${safe(d.notes)}</p></section>` : ''}
                     </div>
+                    ${d.type === 'Server - Physical' ? `<div id="phase14c-panel-virtual-machines" role="tabpanel" aria-labelledby="phase14c-tab-virtual-machines" class="phase14c-panel" hidden>
+                        ${hostingSection}
+                    </div>` : ''}
                     <div id="phase14c-panel-hardware" role="tabpanel" aria-labelledby="phase14c-tab-hardware" class="phase14c-panel" hidden>
                         ${section('Hardware & lifecycle', 'fa-microchip', hardware + (detailRows ? `<div class="phase19c-detail-subheading">Additional ${safe(d.type)} details</div>${detailRows}` : ''))}
                     </div>
