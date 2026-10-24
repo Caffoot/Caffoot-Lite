@@ -1,6 +1,6 @@
 # GitHub issue migration register
 
-**Status:** Mapping in progress. v1.3.1 tracking issues #91 to #95 created; later candidate issues and milestones pending. **Date:** 24 October 2026. **Published baseline:** v1.3.0.
+**Status:** Mapping in progress. v1.3.1 issues #91 to #95 and v1.3.2 issues #96 to #99 created; v1.3.3 issues and milestones pending. **Date:** 24 October 2026. **Published baseline:** v1.3.0.
 
 ## Rules
 
@@ -22,10 +22,10 @@ Before creating a GitHub issue, check whether an existing issue or PR already re
 
 | Candidate issue group | Findings | Scope |
 | --- | --- | --- |
-| Device type conversions and preservation | M-008 | Historical and custom values, software and server service compatibility, cancelled conversion |
-| Rack, accessories and device details | M-002, M-013, M-028 | Retained mounting fields, occupancy reporting and archived selections |
-| Recovery and startup explanations | M-014, M-015 | Explain existing protections and automatic normalisation |
-| Editing and backup interface consistency | M-023, M-025, M-026, M-027 | Consistent controls, safe return to editing, user facing clarity |
+| [Device type conversions and preservation, issue #96](https://github.com/Caffoot/Caffoot-Lite/issues/96) | M-008 | Historical and custom values, software and server service compatibility, cancelled conversion |
+| [Rack, accessories and device details, issue #97](https://github.com/Caffoot/Caffoot-Lite/issues/97) | M-002, M-013, M-028 | Retained mounting fields, occupancy reporting and archived selections |
+| [Recovery and startup explanations, issue #98](https://github.com/Caffoot/Caffoot-Lite/issues/98) | M-014, M-015 | Explain existing protections and automatic normalisation |
+| [Editing and backup interface consistency, issue #99](https://github.com/Caffoot/Caffoot-Lite/issues/99) | M-023, M-025, M-026, M-027 | Consistent controls, safe return to editing, user facing clarity |
 
 ## Proposed v1.3.3 clarity and closeout issues
 
@@ -48,4 +48,4 @@ Before creating a GitHub issue, check whether an existing issue or PR already re
 
 All original M-001 through M-031 identifiers are represented in the candidate groups: M-001 to M-029 and M-031 have one primary allocation, M-030 is cross release. M-021 is retained as a closed evidence item. Existing issue #50 is linked rather than duplicated. Draft PR #90 remains the existing documentation change surface and must not be mistaken for a release.
 
-GitHub issues [#91](https://github.com/Caffoot/Caffoot-Lite/issues/91) through [#95](https://github.com/Caffoot/Caffoot-Lite/issues/95) were created as open v1.3.1 tracking and release verification issues. No GitHub Project, milestone or new branch is claimed. This mapping does not authorise application changes. Before implementation or publication, verify current GitHub Project and milestone configuration, review proposed issue grouping with the product owner, and reconcile any created items back to this register and the central audit. No browser tests executed for this planning change.
+GitHub issues [#91](https://github.com/Caffoot/Caffoot-Lite/issues/91) through [#95](https://github.com/Caffoot/Caffoot-Lite/issues/95) track v1.3.1; [#96](https://github.com/Caffoot/Caffoot-Lite/issues/96) through [#99](https://github.com/Caffoot/Caffoot-Lite/issues/99) track proposed v1.3.2 work. No GitHub Project, milestone or new branch is claimed. This mapping does not authorise application changes. Before implementation or publication, verify current GitHub Project and milestone configuration, review proposed issue grouping with the product owner, and reconcile any created items back to this register and the central audit. No browser tests executed for this planning change.
