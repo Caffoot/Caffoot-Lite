@@ -12,7 +12,7 @@ assert(helperStart >= 0 && helperStart < start, 'Persistent import error helper 
 const code = html.slice(helperStart, end);
 async function scenario(mode) {
   const original = {devices:[{id:'original'}],racks:[],subnets:[],ipAllocations:{}};
-  const replacement = {devices:[{id:'replacement'}],racks:[],subnets:[],ipAllocations:{}};
+  const replacement = {devices:[{id:'replacement'}],racks:[],subnets:[],ipAllocations:{'192.168.40.10':{status:'Available',deviceId:'',notes:'Historical address notes'},'192.168.40.11':{status:'Reserved',deviceId:'',reservedForDeviceId:'retired-device',notes:'Historical reservation notes'}}};
   const key = 'caffoot_state', safety = 'safety_test';
   const store = new Map([[key,JSON.stringify(original)]]);
   const messages = [];
@@ -84,6 +84,10 @@ const ok=await scenario('success');
 assert.equal(ok.ctx.appState.devices[0].id,'replacement','Successful restore must activate backup');
 assert.equal(JSON.parse(ok.store.get(ok.key)).devices[0].id,'replacement','Successful restore must persist backup');
 assert.equal(JSON.parse(ok.store.get(ok.safety)).devices[0].id,'original','Successful restore must preserve original safety snapshot');
+assert.equal(JSON.parse(ok.store.get(ok.key)).ipAllocations['192.168.40.10'].notes,'Historical address notes','restore must persist address notes');
+assert.equal(JSON.parse(ok.store.get(ok.key)).ipAllocations['192.168.40.11'].reservedForDeviceId,'retired-device','restore must persist historical reservation');
+assert.equal(JSON.parse(ok.store.get(ok.key)).ipAllocations['192.168.40.11'].notes,'Historical reservation notes','restore must persist reservation notes');
+assert.equal(JSON.parse(JSON.stringify(ok.ctx.appState)).ipAllocations['192.168.40.10'].notes,'Historical address notes','restored notes must survive JSON reload');
 console.log('PASS: executable restore success, failed safety snapshot and failed storage-write and failed rollback tests.');
 
 }
