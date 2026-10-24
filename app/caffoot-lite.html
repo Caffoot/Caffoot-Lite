@@ -5904,6 +5904,13 @@ function hierarchyValidateTypes(subnets) {
             const hostedGuests = d.type === 'Server - Physical'
                 ? appState.devices.filter(guest => guest.id !== d.id && guest.virtualHostId === d.id)
                 : [];
+            const hasRecordedHypervisor = d.type === 'Server - Physical' &&
+                (d.typeDetails?.serverService_Hypervisor === true || d.serverService_Hypervisor === true);
+            // Keep legacy hosted guests visible even when the hypervisor service was not recorded.
+            const showVirtualMachinesTab = d.type === 'Server - Physical' && (hasRecordedHypervisor || hostedGuests.length > 0);
+            const hypervisorNotice = showVirtualMachinesTab && !hasRecordedHypervisor
+                ? '<p role="status" class="text-sm text-amber-800 dark:text-amber-200 mb-3">Hosted virtual machines are recorded, but this server has no Hypervisor service selected. Existing relationships are preserved.</p>'
+                : '';
             const hostingSection = d.type === 'Server - Physical'
                 ? section('Hosted virtual machines', 'fa-server', hostedGuests.length
                     ? hostedGuests.map(guest => `<div class="phase14c-field"><dt>${safe(guest.name || guest.id)}</dt><dd><div class="flex flex-wrap items-center justify-between gap-2"><span>${safe(guest.type || 'Unknown type')} · ${safe(guest.status || 'Active')}</span><button type="button" data-action="phase14c-view-hosted-guest" data-id="${safe(guest.id)}" class="phase14c-primary shrink-0" aria-label="View details for ${safe(guest.name || guest.id)}">View details</button></div></dd></div>`).join('')
@@ -5921,7 +5928,7 @@ function hierarchyValidateTypes(subnets) {
                     <button type="button" data-action="close-modal" aria-label="Close device details" class="phase14c-close"><i class="fa-solid fa-xmark"></i></button>
                 </header>
                 <nav class="phase14c-tabs" role="tablist" aria-label="Device detail sections">
-                    ${[['overview','Overview'],...(d.type === 'Server - Physical' ? [['virtual-machines','Virtual Machines']] : []),['hardware','Hardware'],['network','Network'],['software','Software'],['location','Location'],...(historyRows?[['history','History']]:[])].map(([key,label],i)=>`<button type="button" role="tab" id="phase14c-tab-${key}" aria-controls="phase14c-panel-${key}" aria-selected="${i===0?'true':'false'}" tabindex="${i===0?'0':'-1'}" data-action="phase14c-tab" data-name="${key}" class="phase14c-tab ${i===0?'phase14c-tab-active':''}">${label}</button>`).join('')}
+                    ${[['overview','Overview'],...(showVirtualMachinesTab ? [['virtual-machines','Virtual Machines']] : []),['hardware','Hardware'],['network','Network'],['software','Software'],['location','Location'],...(historyRows?[['history','History']]:[])].map(([key,label],i)=>`<button type="button" role="tab" id="phase14c-tab-${key}" aria-controls="phase14c-panel-${key}" aria-selected="${i===0?'true':'false'}" tabindex="${i===0?'0':'-1'}" data-action="phase14c-tab" data-name="${key}" class="phase14c-tab ${i===0?'phase14c-tab-active':''}">${label}</button>`).join('')}
                 </nav>
                 <div class="phase14c-panels">
                     <div id="phase14c-panel-overview" role="tabpanel" aria-labelledby="phase14c-tab-overview" class="phase14c-panel">
@@ -5929,7 +5936,8 @@ function hierarchyValidateTypes(subnets) {
                         ${d.type === 'Server - Physical' ? '' : hostingSection}
                         ${d.notes ? `<section class="phase14c-section"><h4><i class="fa-solid fa-note-sticky mr-2" aria-hidden="true"></i>Notes</h4><p class="phase14c-notes">${safe(d.notes)}</p></section>` : ''}
                     </div>
-                    ${d.type === 'Server - Physical' ? `<div id="phase14c-panel-virtual-machines" role="tabpanel" aria-labelledby="phase14c-tab-virtual-machines" class="phase14c-panel" hidden>
+                    ${showVirtualMachinesTab ? `<div id="phase14c-panel-virtual-machines" role="tabpanel" aria-labelledby="phase14c-tab-virtual-machines" class="phase14c-panel" hidden>
+                        ${hypervisorNotice}
                         ${hostingSection}
                     </div>` : ''}
                     <div id="phase14c-panel-hardware" role="tabpanel" aria-labelledby="phase14c-tab-hardware" class="phase14c-panel" hidden>
