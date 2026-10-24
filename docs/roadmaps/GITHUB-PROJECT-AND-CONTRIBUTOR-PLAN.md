@@ -46,3 +46,7 @@ Pull requests must link their issue and follow the existing [pull request checkl
 5. Review the board against the central audit register and roadmaps. Do not mark anything done without implementation, verification, documentation reconciliation and required approval.
 
 **Current checkpoint:** This document establishes the planning rules only. No GitHub Project, milestone, issue, release branch or application change has been created by this checkpoint. Project and milestone inventory could not be verified using the currently available repository connector endpoint. The active documentation branch and draft PR #90 remain the existing work surface.
+
+## Proposed issue inventory
+
+The [GitHub issue migration register](GITHUB-ISSUE-MIGRATION-REGISTER.md) maps all 31 original audit findings into proposed issue groups and release milestones without changing finding status. Review existing issues and Project configuration before creating duplicates.

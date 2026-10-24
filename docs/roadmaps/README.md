@@ -8,3 +8,4 @@
 These documents describe the published baseline or recorded proposals as indicated within each file. Audit tests are not considered passed without execution evidence.
 
 - [GitHub planning and contributor handover](GITHUB-PROJECT-AND-CONTRIBUTOR-PLAN.md): agreed Project, milestone, issue and branch model; preservation of audit decisions and evidence; setup still pending
+- [GitHub issue migration register](GITHUB-ISSUE-MIGRATION-REGISTER.md): proposed issue groups covering all 31 original audit findings and v1.4 continuity
