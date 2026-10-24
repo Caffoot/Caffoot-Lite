@@ -5906,7 +5906,7 @@ function hierarchyValidateTypes(subnets) {
                 : [];
             const hostingSection = d.type === 'Server - Physical'
                 ? section('Hosted virtual machines', 'fa-server', hostedGuests.length
-                    ? hostedGuests.map(guest => `<div class="phase14c-field"><dt>${safe(guest.name || guest.id)}</dt><dd>${safe(guest.type || 'Unknown type')} · ${safe(guest.status || 'Active')} <button type="button" data-action="phase14c-view-hosted-guest" data-id="${safe(guest.id)}" class="phase14c-primary mt-2" aria-label="View details for ${safe(guest.name || guest.id)}">View details</button></dd></div>`).join('')
+                    ? hostedGuests.map(guest => `<div class="phase14c-field"><dt>${safe(guest.name || guest.id)}</dt><dd><div class="flex flex-wrap items-center justify-between gap-2"><span>${safe(guest.type || 'Unknown type')} · ${safe(guest.status || 'Active')}</span><button type="button" data-action="phase14c-view-hosted-guest" data-id="${safe(guest.id)}" class="phase14c-primary shrink-0" aria-label="View details for ${safe(guest.name || guest.id)}">View details</button></div></dd></div>`).join('')
                     : '<p class="text-sm text-slate-600 dark:text-slate-300">No hosted virtual machines recorded.</p>')
                 : d.virtualHostId
                     ? section('Physical host', 'fa-server', field('Host', appState.devices.find(host => host.id === d.virtualHostId)?.name || 'Missing or unavailable host (legacy reference preserved)'))
