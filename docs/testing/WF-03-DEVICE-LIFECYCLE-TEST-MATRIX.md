@@ -113,3 +113,8 @@ A new consolidated Chromium scenario on draft PR #121 checks that deleting a phy
 ### M-005 conversion guard ordering, 24 October 2026
 
 Draft PR #121 now checks incoming hosted relationships **before** the existing obsolete field confirmation in `handleDeviceSubmit()`. This avoids asking the user to confirm a conversion that cannot proceed because dependant virtual servers still reference the host. The source change is committed on the issue branch, not merged into the release branch or `main`. Full browser form submission and confirmation ordering tests remain outstanding; do not report them as passed. M-005 and the master audit remain open. No release.
+
+
+### M-005 D13 device form regression submitted, 24 October 2026
+
+Draft PR #121 now includes a disposable Chromium D13 scenario which opens the actual physical host edit modal, changes its device type, fills the required fields, invokes `handleDeviceSubmit`, and asserts that the physical host type and dependant virtual host reference remain unchanged, a named error is shown, and the obsolete field confirmation does not appear. This goes beyond the earlier function source inspection, but is **not yet a verified passing test**; await GitHub Actions on the new branch head and investigate any fixture or UI failures. The complete interactive user click path, successful rehosting, explicit unassignment, retirement, failed persistence and full legacy FileReader import still require further coverage. M-005 and master audit remain open; no merge or release.
