@@ -4440,7 +4440,7 @@ function hierarchyValidateTypes(subnets) {
                     blocked.push(ip); continue;
                 }
                 if(status==='Available') {
-                    if(old && old.status!=='Available') changes.push({ip,offset,old,updated:{...old,status:'Available',deviceId:''}});
+                    if(old && old.status!=='Available') changes.push({ip,offset,old,updated:{...old,status:'Available',deviceId:'',reservedForDeviceId:''}});
                 } else {
                     if(old?.status==='Assigned') {blocked.push(ip);continue;}
                     const updated={...old,status:'Reserved',deviceId:'',hostname:hostname?`${hostname}-${offset}`:(old?.hostname||''),notes:notes||old?.notes||''};
@@ -5170,7 +5170,7 @@ function hierarchyValidateTypes(subnets) {
                         return;
                     }
                 }
-                if (existing) appState.ipAllocations[ip] = { ...existing, status: 'Available', deviceId: '', hostname, notes };
+                if (existing) appState.ipAllocations[ip] = { ...existing, status: 'Available', deviceId: '', reservedForDeviceId: '', hostname, notes };
             } else {
                 const existing = appState.ipAllocations[ip] || {};
                 let deviceId = existing.deviceId || '';
