@@ -1,6 +1,6 @@
 # GitHub issue migration register
 
-**Status:** Mapping in progress. v1.3.1 issues #91 to #95 and v1.3.2 issues #96 to #99 created; v1.3.3 issues and milestones pending. **Date:** 24 October 2026. **Published baseline:** v1.3.0.
+**Status:** Mapping in progress. v1.3.1 issues #91 to #95, v1.3.2 issues #96 to #99 and v1.3.3 issues #100 to #103 created; milestones and Project setup pending. **Date:** 24 October 2026. **Published baseline:** v1.3.0.
 
 ## Rules
 
@@ -31,10 +31,10 @@ Before creating a GitHub issue, check whether an existing issue or PR already re
 
 | Candidate issue group | Findings | Scope |
 | --- | --- | --- |
-| Save and local history guarantees | M-003, M-029 | Define and verify history semantics and resilience |
-| Function and caller clarity | M-007 | Naming, P11 explanatory comments and compatibility of callers |
-| Historical documentation closure | M-016, M-021 | Reconcile already closed or historical evidence without inventing implementation work |
-| Final WF and audit evidence reconciliation | WF-01 to WF-13, P11, P12 | Confirm remaining verification gates and cross references before closeout |
+| [Save and local history guarantees, issue #100](https://github.com/Caffoot/Caffoot-Lite/issues/100) | M-003, M-029 | Define and verify history semantics and resilience |
+| [Function and caller clarity, issue #101](https://github.com/Caffoot/Caffoot-Lite/issues/101) | M-007 | Naming, P11 explanatory comments and compatibility of callers |
+| [Historical documentation closure, issue #102](https://github.com/Caffoot/Caffoot-Lite/issues/102) | M-016, M-021 | Reconcile already closed or historical evidence without inventing implementation work |
+| [Final WF and audit evidence reconciliation, issue #103](https://github.com/Caffoot/Caffoot-Lite/issues/103) | WF-01 to WF-13, P11, P12 | Confirm remaining verification gates and cross references before closeout |
 
 ## Cross release and v1.4
 
@@ -48,4 +48,4 @@ Before creating a GitHub issue, check whether an existing issue or PR already re
 
 All original M-001 through M-031 identifiers are represented in the candidate groups: M-001 to M-029 and M-031 have one primary allocation, M-030 is cross release. M-021 is retained as a closed evidence item. Existing issue #50 is linked rather than duplicated. Draft PR #90 remains the existing documentation change surface and must not be mistaken for a release.
 
-GitHub issues [#91](https://github.com/Caffoot/Caffoot-Lite/issues/91) through [#95](https://github.com/Caffoot/Caffoot-Lite/issues/95) track v1.3.1; [#96](https://github.com/Caffoot/Caffoot-Lite/issues/96) through [#99](https://github.com/Caffoot/Caffoot-Lite/issues/99) track proposed v1.3.2 work. No GitHub Project, milestone or new branch is claimed. This mapping does not authorise application changes. Before implementation or publication, verify current GitHub Project and milestone configuration, review proposed issue grouping with the product owner, and reconcile any created items back to this register and the central audit. No browser tests executed for this planning change.
+GitHub issues [#91](https://github.com/Caffoot/Caffoot-Lite/issues/91) through [#95](https://github.com/Caffoot/Caffoot-Lite/issues/95) track v1.3.1; [#96](https://github.com/Caffoot/Caffoot-Lite/issues/96) through [#99](https://github.com/Caffoot/Caffoot-Lite/issues/99) track proposed v1.3.2 work; [#100](https://github.com/Caffoot/Caffoot-Lite/issues/100) through [#103](https://github.com/Caffoot/Caffoot-Lite/issues/103) track proposed v1.3.3 work. No GitHub Project, milestone or new branch is claimed. This mapping does not authorise application changes. Before implementation or publication, verify current GitHub Project and milestone configuration, review proposed issue grouping with the product owner, and reconcile any created items back to this register and the central audit. No browser tests executed for this planning change.
