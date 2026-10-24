@@ -443,6 +443,54 @@ const { chromium } = require('playwright');
         }
       });
     }
+    await scenario('M-005 confirmed hypervisor removal rolls back failed storage save', async page => {
+      const result=await page.evaluate(async () => {
+        const hostId='fictional-hypervisor-failed-save-host';
+        appState.subnets.push({id:'fictional-hypervisor-failed-subnet',name:'Failed save subnet',kind:'network',cidr:'10.88.73.0/29',gateway:'10.88.73.1',vlan:3873});
+        appState.devices.push(
+          {id:hostId,name:'Fictional failed save host',type:'Server - Physical',mountType:'Desktop',location:'Unknown',status:'Active',primaryIp:'10.88.73.2',typeDetails:{serverService_Hypervisor:true}},
+          {id:'fictional-hypervisor-failed-vm',name:'Fictional failed save VM',type:'Server - Virtual',mountType:'Desktop',location:'Unknown',virtualHostId:hostId}
+        );
+        const before=JSON.stringify(appState);
+        localStorage.setItem('caffoot_state',before);
+        openDeviceModal(hostId);
+        const set=(id,value)=>{const el=document.getElementById(id);if(!el)throw Error('Missing form control '+id);el.value=value;el.dispatchEvent(new Event('change',{bubbles:true}));};
+        set('dev-location','Unknown');
+        set('dev-mount-type','Desktop');
+        set('dev-subnet','fictional-hypervisor-failed-subnet');
+        set('dev-ip','10.88.73.2');
+        const checkbox=document.querySelector('[data-phase19b-field="serverService_Hypervisor"]');
+        if(!checkbox)throw Error('Hypervisor checkbox missing');
+        checkbox.checked=false;
+        const original=Storage.prototype.setItem;
+        const notices=[];
+        const originalToast=showToast;
+        Storage.prototype.setItem=function(key,value){if(key==='caffoot_state')throw Error('fictional storage failure');return original.call(this,key,value)};
+        showToast=(message,level)=>notices.push({message,level});
+        let thrown=null;
+        try {
+          const pending=handleDeviceSubmit({preventDefault(){}},hostId);
+          await Promise.resolve();
+          const confirm=document.querySelector('[data-action="phase-m005-hypervisor-accept"]');
+          if(!confirm)throw Error('Expected hypervisor confirmation missing');
+          confirm.click();
+          await pending;
+        } catch(error) {thrown=String(error); }
+        finally {Storage.prototype.setItem=original;showToast=originalToast;}
+        return {before,after:JSON.stringify(appState),stored:localStorage.getItem('caffoot_state'),
+          hostHypervisor:appState.devices.find(d=>d.id===hostId)?.typeDetails?.serverService_Hypervisor,
+          guestHost:appState.devices.find(d=>d.id==='fictional-hypervisor-failed-vm')?.virtualHostId,
+          formStillOpen:!!document.getElementById('dev-name'),notices,thrown};
+      });
+      assert.equal(result.thrown,null,'Failed storage write must be handled without throwing');
+      assert.equal(result.after,result.before,'Failed save must restore entire in-memory inventory');
+      assert.equal(result.stored,result.before,'Failed save must preserve stored inventory');
+      assert.equal(result.hostHypervisor,true,'Failed save must retain original Hypervisor service');
+      assert.equal(result.guestHost,'fictional-hypervisor-failed-save-host','Guest relationship must remain intact');
+      assert.equal(result.formStillOpen,true,'Failed save must keep the edit form open');
+      assert(result.notices.some(n=>n.level==='error'&&/not saved/i.test(n.message)),
+        'Failed save must report the error to the user');
+    });
     await scenario('M-005 legacy missing physical host remains visible', async page => {
       const result = await page.evaluate(() => {
         appState.devices.push({id:'fictional-display-orphan',name:'Fictional orphan guest',type:'Server - Virtual',location:'Unknown',virtualHostId:'fictional-absent-host'});
