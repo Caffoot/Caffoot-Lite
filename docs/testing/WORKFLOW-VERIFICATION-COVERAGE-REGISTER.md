@@ -54,3 +54,7 @@ WF-03 device conversions and historical/custom type preservation, WF-08 software
 ## WF-06 compatibility matrix cross-reference, 24 October 2026
 
 The [legacy import compatibility matrix](LEGACY-BACKUP-IMPORT-COMPATIBILITY-MATRIX.md) identifies proposed mappings and pending fixture, idempotence, backup round trip, rejection and rollback tests. Source inspection is not a passed test. WF-06 and dependent WF-03/WF-08 gates remain pending.
+
+## Hosted virtual device dependency verification, 24 October 2026
+
+**Pending, not executed:** Physical host deletion with zero, one and multiple dependent devices; mixed virtual categories; sole hypervisor host; reassignment; explicit unassignment with retained previous host; retirement; cancellation; wrong type and missing host references; pre-v1.2.0 virtual server without a host; physical host type conversion; import and startup recovery; save failure rollback; accessible diagram and review. Current application only models explicit host assignment for virtual servers. This pending coverage is cross referenced in the [compatibility matrix](LEGACY-BACKUP-IMPORT-COMPATIBILITY-MATRIX.md) and [findings programme](../audits/AUDIT-FINDINGS-REMEDIATION-PROGRAMME.md). No passed test evidence.
