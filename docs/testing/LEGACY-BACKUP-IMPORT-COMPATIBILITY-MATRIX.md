@@ -47,3 +47,13 @@
 The historical specialised service keys `SwanServer`, `SQLServer`, `TMSServer`, `printserver`, `keriserver`, `ActiveDirectory`, `AntivirusSoftware`, `DNS`, `DHCP`, `ExchangeServer`, `BackupSoftware`, `PlanetDB`, `SystemsDatabaseBackEndTables` and `PDASystem` appear in all four inspected tags. Preserve their persisted meaning and selections; do not assume a new display label is a safe rename. Starter service suggestions appear in the inspected v1.2.0 and v1.3.0 source.
 
 **Open evidence:** `v1.1.0` was not available at the requested Git tag; no inference is made about that release. No real user backup JSON files were inspected and no runtime import/export tests were executed. Next compare exact device field schemas and use representative, sanitised old backups for deterministic mapping evidence.
+
+## Device and service field comparison, 24 October 2026
+
+Inspected historical application source at `v1.0.0`, `v1.2.0` and `v1.3.0`. The `phase19BTypeGroups` mapping in v1.0.0 already recognises alternative labels such as `physical server`, `virtual server`, `print server`, `print servers`, `wireless access point`, `ap`, `phone system` and `tape drive`, beyond its default type list. These are **display/form grouping aliases**, not proven persisted backup aliases. Do not automatically rewrite these type strings until real backup examples establish equivalent semantics. v1.2.0 adds `wireless lan controller` to that grouping.
+
+v1.0.0 has the older `phase19BDefaultServerFunctions` catalogue, including specialised historical keys. By v1.2.0 the code also provides `phase120StarterServerServices` with human-readable labels for several established keys and newer `serverService_*` entries. This supports preserving stable keys while improving labels, rather than wholesale renaming. It does not prove that all specialised services have a modern equivalent.
+
+The v1.0.0 `phase20MigrateBackup` delegates directly to `normaliseState` on a detached copy. By v1.2.0, the import migration also detects and records legacy mounting repairs for user review. v1.3.0 retains this approach and adds device type conversion safeguards through `phase130ObsoleteDeviceFields`. Therefore migration and editing are separate safety boundaries; tests must cover both.
+
+**Next evidence required:** Compare persisted `device.typeDetails`, installed software keys, `serverFunctions` entries and host relationship fields against sanitised old backup fixtures. No automatic aliases approved yet. No browser tests executed.
