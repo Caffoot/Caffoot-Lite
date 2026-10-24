@@ -1511,7 +1511,7 @@ function hierarchyValidateTypes(subnets) {
             }
 
             // Repair recoverable device/IPAM drift instead of rejecting an otherwise usable state.
-            // The device record is the source of truth for its primary IP, hostname and notes.
+            // The device record is the source of truth for its primary IP and hostname. IPAM notes belong to the address.
             for (const device of state.devices) {
                 if (!device.primaryIp) continue;
 
@@ -1521,7 +1521,7 @@ function hierarchyValidateTypes(subnets) {
                         status: 'Assigned',
                         deviceId: device.id,
                         hostname: device.name || '',
-                        notes: device.notes || ''
+                        notes: ''
                     };
                     continue;
                 }
@@ -1532,7 +1532,7 @@ function hierarchyValidateTypes(subnets) {
                     existing.status = device.ipReserved ? 'Reserved' : 'Assigned';
                 }
                 existing.hostname = device.name || '';
-                existing.notes = device.notes || '';
+                // Preserve existing address-specific IPAM notes during normalisation.
             }
 
             // A device primary IP cannot be simultaneously assigned to another device.
