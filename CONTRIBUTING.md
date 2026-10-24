@@ -33,3 +33,8 @@ A pull request is a proposal, not an automatic release. Maintainers review chang
 ## Finding work and release plans
 
 Before starting a change, check the [GitHub planning and contributor handover](docs/roadmaps/GITHUB-PROJECT-AND-CONTRIBUTOR-PLAN.md) and the linked audit or roadmap issue. A milestone identifies intended release scope; it does not create a branch or authorise a change. Retain historical decisions, test evidence and compatibility requirements when contributing.
+
+
+## Continuing work in a new session
+
+Follow the [new session recovery procedure](docs/standards/technical/SESSION-RECOVERY.md) before resuming development or audit work. The current repository, not a previous conversation, establishes the starting state.
