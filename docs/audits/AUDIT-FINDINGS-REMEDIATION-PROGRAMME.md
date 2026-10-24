@@ -355,3 +355,7 @@ GitHub Actions on draft PR #121 head `33c455d7d691272e2e1dd53004a9d49bbbb27f93` 
 ### M-005 hosted guest visibility checkpoint, 24 October 2026
 
 Draft PR #121 now includes a read-only Hosted virtual machines section in the physical server details overview, listing devices whose `virtualHostId` points to the physical server. A device with a recorded `virtualHostId` also displays its physical host name or a missing host warning without altering its legacy reference. Commit `75932102d09aa95ca0ffe9c796d8c0b8fd5b7d0c`. This is an application source change, not an executed test result. Browser rendering and interaction tests remain outstanding. Reassignment, explicit unassignment and provenance, hypervisor eligibility and propagation, retirement and full legacy import remain open. Master audit status unchanged. No merge or release.
+
+### M-005 hosted guest browser regression submitted, 24 October 2026
+
+Draft PR #121 commit `6fc07398ba8924e4886199e7931eace01361687e` adds three Chromium scenarios using the actual device details renderer: populated physical host guest list, empty host message and a virtual guest with a missing legacy host reference. The tests assert that viewing the legacy guest preserves its original `virtualHostId`. These scenarios are committed but **not yet verified as passing**; await the new commit's GitHub Actions results. Visual screenshot review and accessible guest navigation are separate unfinished design work. M-005 remains open, master audit unchanged, no merge or release.
