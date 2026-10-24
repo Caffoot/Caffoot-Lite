@@ -1064,3 +1064,8 @@ Draft PR #121 on `fix/v131-m005-host-relationship-guards` now changes the consol
 ### M-005 PR #121 first verified Chromium checkpoint, 24 October 2026
 
 GitHub Actions on branch head `6895d986143de9d2d6c1babfb19bfcc08bb4c2d0` reports completed success for **Audit consolidated Chromium regression**, **Validate Caffoot Lite release candidate**, **Release documentation consistency**, and **Git history secret scan**. These are executed CI workflows, not local manual tests. The consolidated suite now asserts protective blocking of host deletion with two dependants, preserved references and named feedback. The conversion check is **source inspection only**, not full D13 form submission. Legacy detached backup validation is a baseline characterisation, not full FileReader import. No evidence yet for mixed relationship decisions, unassignment provenance, retirement, hypervisor propagation, failed persistence or complete legacy restore. **M-005 remains open, master audit status unchanged, PR #121 draft and unmerged; no release.**
+
+
+### M-005 unreferenced host regression, 24 October 2026
+
+A new consolidated Chromium scenario on draft PR #121 checks that deleting a physical host with no incoming virtual host references remains possible after the new protective guard. This test was committed after the earlier four successful GitHub checks; **its result is pending** and must not be counted as passed until CI completes on the new head. The full device conversion submission D13, legacy FileReader import, failure rollback and per dependant relationship decisions remain outstanding. M-005 and the master audit status remain open; no merge or release.
