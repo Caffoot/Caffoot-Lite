@@ -58,3 +58,7 @@ The [legacy import compatibility matrix](LEGACY-BACKUP-IMPORT-COMPATIBILITY-MATR
 ## Hosted virtual device dependency verification, 24 October 2026
 
 **Pending, not executed:** Physical host deletion with zero, one and multiple dependent devices; mixed virtual categories; sole hypervisor host; reassignment; explicit unassignment with retained previous host; retirement; cancellation; wrong type and missing host references; pre-v1.2.0 virtual server without a host; physical host type conversion; import and startup recovery; save failure rollback; accessible diagram and review. Current application only models explicit host assignment for virtual servers. This pending coverage is cross referenced in the [compatibility matrix](LEGACY-BACKUP-IMPORT-COMPATIBILITY-MATRIX.md) and [findings programme](../audits/AUDIT-FINDINGS-REMEDIATION-PROGRAMME.md). No passed test evidence.
+
+## Proposed shared interface pattern coverage, 24 October 2026
+
+Pending tests include shared Save and Cancel behaviour, confirmation cancellation, warning clarity, diagram and text equivalence, keyboard focus and navigation, mobile layouts, offline standalone operation and consumer regression tests when a shared component changes. See [Design and Interaction Standards](../standards/DESIGN-AND-INTERACTION-STANDARDS.md). No tests executed for this proposed design.
