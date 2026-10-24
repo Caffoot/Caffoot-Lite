@@ -4440,7 +4440,7 @@ function hierarchyValidateTypes(subnets) {
                     blocked.push(ip); continue;
                 }
                 if(status==='Available') {
-                    if(old && old.status!=='Available') changes.push({ip,offset,old,updated:{...old,status:'Available',deviceId:'',reservedForDeviceId:''}});
+                    if(old && (old.status!=='Available' || old.deviceId || old.reservedForDeviceId)) changes.push({ip,offset,old,updated:{...old,status:'Available',deviceId:'',reservedForDeviceId:''}});
                 } else {
                     if(old?.status==='Assigned') {blocked.push(ip);continue;}
                     const updated={...old,status:'Reserved',deviceId:'',hostname:hostname?`${hostname}-${offset}`:(old?.hostname||''),notes:notes||old?.notes||''};
