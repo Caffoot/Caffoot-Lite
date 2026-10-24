@@ -29,3 +29,7 @@ Follow the [documentation policy](docs/standards/technical/TECHNICAL-DOCUMENTATI
 ## Review and release
 
 A pull request is a proposal, not an automatic release. Maintainers review changes, compatibility, evidence and release readiness before merging or publishing.
+
+## Finding work and release plans
+
+Before starting a change, check the [GitHub planning and contributor handover](docs/roadmaps/GITHUB-PROJECT-AND-CONTRIBUTOR-PLAN.md) and the linked audit or roadmap issue. A milestone identifies intended release scope; it does not create a branch or authorise a change. Retain historical decisions, test evidence and compatibility requirements when contributing.

@@ -6,3 +6,5 @@
 - [Audit findings remediation programme](../audits/AUDIT-FINDINGS-REMEDIATION-PROGRAMME.md): all 31 findings and workflow gates
 
 These documents describe the published baseline or recorded proposals as indicated within each file. Audit tests are not considered passed without execution evidence.
+
+- [GitHub planning and contributor handover](GITHUB-PROJECT-AND-CONTRIBUTOR-PLAN.md): agreed Project, milestone, issue and branch model; preservation of audit decisions and evidence; setup still pending
