@@ -285,3 +285,7 @@ The [maintenance design review](../roadmaps/V1.3X-MAINTENANCE-DESIGN-REVIEW.md) 
 ## WF-06 backwards compatible import decision, 24 October 2026
 
 **Owner agreed design:** Apply lossless, unambiguous older-format mappings silently on JSON import, preserve custom/unknown data, and ask for approval for ambiguous or potentially destructive changes. Retain source backup unchanged and safeguard existing inventory. Cross-reference [design review](../roadmaps/V1.3X-MAINTENANCE-DESIGN-REVIEW.md) and [verification register](../testing/WORKFLOW-VERIFICATION-COVERAGE-REGISTER.md). Pending WF-06 implementation and tests; no finding closed.
+
+## Legacy import mapping plan cross-reference, 24 October 2026
+
+The [legacy import compatibility matrix](../testing/LEGACY-BACKUP-IMPORT-COMPATIBILITY-MATRIX.md) records source-inspected backup export/import entry points, mapping categories and missing fixture evidence. WF-06 migration verification remains open; no finding closed.
