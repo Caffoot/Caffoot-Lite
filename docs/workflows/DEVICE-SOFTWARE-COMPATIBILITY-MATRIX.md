@@ -91,3 +91,9 @@ The product owner approved the **code once, use many** principle for Save, Cance
 - **Shared implementation:** reuse common dialog lifecycle, dirty state detection, action handling, keyboard behaviour and save feedback where practical. Keep form specific validation, dependencies and data preservation rules configurable. Do not assume every form already has identical behaviour.
 
 **Verification boundary:** Inventory current forms and nested dialogs, source trace existing shared functions, then add targeted WF-07 and WF-03 browser scenarios for normal save, invalid save, failed persistence, cancel, close, Escape and nested controls. Update technical workflows, findings, roadmap and master audit status through reconciliation. No tests executed or application changes authorised by this design agreement.
+
+## Agreed virtual desktop design, 24 October 2026
+
+**Decision:** Desktop devices will support Physical (default) or Virtual deployment. A virtual desktop may reference an eligible physical hypervisor host and has an independent guest OS and version. Laptop and Tablet remain physical only initially. This is a future design requirement, not a description of current implemented behaviour. Preserve existing type values, desktop details, imports and historical OS choices. No VDI management capability is proposed. Cross reference the [maintenance design review](../roadmaps/V1.3X-MAINTENANCE-DESIGN-REVIEW.md).
+
+**Outstanding verification:** Inspect current desktop form, save, load and import logic; plan tests for default physical mode, virtual host eligibility, independent guest OS, conversion, failed save and legacy records. No tests executed.
