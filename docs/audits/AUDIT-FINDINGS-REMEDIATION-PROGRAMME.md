@@ -277,3 +277,7 @@ PR #89 commit `1c42846fad63cc1acc189c9ab2a4c0284cc279d9` passed [release documen
 
 **Scope and approval:** Investigation and documentation only. No application behaviour changes, merge or release authorised. Reconcile findings into the master audit register and roadmap before closing this review.
 
+
+## 24 October 2026 design decisions and open verification
+
+The [maintenance design review](../roadmaps/V1.3X-MAINTENANCE-DESIGN-REVIEW.md) and [device/software compatibility matrix](../workflows/DEVICE-SOFTWARE-COMPATIBILITY-MATRIX.md) record owner-agreed proposals for physical and virtual device types, historical/custom compatibility, hypervisor host relationships, software and server services. These are **not implemented or tested**. M-005 and WF-03/WF-08 must verify host/guest separation, conversion preservation, historical values, catalogue eligibility, service archive and backup round trips. WF-07 covers form clarity and confirmation interaction. Do not close any finding based solely on design agreement. Refer to [workflow verification coverage](../testing/WORKFLOW-VERIFICATION-COVERAGE-REGISTER.md) and [WF-03 matrix](../testing/WF-03-DEVICE-LIFECYCLE-TEST-MATRIX.md). Master audit remains administratively closed with incomplete P12 coverage.
