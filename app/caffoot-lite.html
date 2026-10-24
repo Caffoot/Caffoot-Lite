@@ -5341,6 +5341,7 @@ function hierarchyValidateTypes(subnets) {
             if (event.key === 'Escape') {
                 event.preventDefault();
                 if(document.getElementById('phase18d-delete-dialog')){phase18DCancelDelete();return;}
+                if(document.getElementById('phase-m005-hypervisor-dialog')){phaseM005ResolveHypervisorRemoval(false);return;}
                 if(document.getElementById('phase130-conversion-dialog')){phase130ResolveDeviceConversion(false);return;}
                 if(document.getElementById('phase130-restore-dialog')){phase130ResolveRestore(false);return;}
                 if(document.getElementById('phase120-rack-correction-dialog')){phase120ResolveRackCorrection(false);return;}
@@ -5358,7 +5359,7 @@ function hierarchyValidateTypes(subnets) {
                 return;
             }
             if (event.key !== 'Tab') return;
-            const activeDialog=document.getElementById('phase130-conversion-dialog')||document.getElementById('phase120-rack-correction-dialog')||document.getElementById('phase18d-delete-dialog')||document.getElementById('phase120-discard-dialog');
+            const activeDialog=document.getElementById('phase-m005-hypervisor-dialog')||document.getElementById('phase130-conversion-dialog')||document.getElementById('phase120-rack-correction-dialog')||document.getElementById('phase18d-delete-dialog')||document.getElementById('phase120-discard-dialog');
             const items = Array.from((activeDialog||container).querySelectorAll('a[href],button:not([disabled]),input:not([disabled]):not([type="hidden"]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')).filter(el => el.getClientRects().length);
             if (!items.length) { event.preventDefault(); document.getElementById('modal-content').focus(); return; }
             // Safari can omit buttons/selects from its native Tab order depending on
@@ -7145,6 +7146,45 @@ function hierarchyValidateTypes(subnets) {
             if (resolve) resolve(accepted);
         }
 
+        let phaseM005HypervisorResolve = null;
+        function phaseM005ConfirmHypervisorRemoval(hostName, guests) {
+            if (document.getElementById('phase-m005-hypervisor-dialog')) return Promise.resolve(false);
+            return new Promise(resolve => {
+                phaseM005HypervisorResolve = resolve;
+                const overlay = document.createElement('div');
+                overlay.id = 'phase-m005-hypervisor-dialog';
+                overlay.setAttribute('role', 'alertdialog');
+                overlay.setAttribute('aria-modal', 'true');
+                overlay.setAttribute('aria-labelledby', 'phase-m005-hypervisor-title');
+                overlay.setAttribute('aria-describedby', 'phase-m005-hypervisor-description');
+                overlay.className = 'absolute inset-0 z-50 flex items-center justify-center bg-slate-950/65 p-4 rounded-2xl';
+                overlay.innerHTML = `<div class="w-full max-w-lg rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 p-6 shadow-2xl space-y-4">
+                    <h3 id="phase-m005-hypervisor-title" class="text-lg font-bold">Remove Hypervisor service?</h3>
+                    <p id="phase-m005-hypervisor-description" class="text-sm">Removing the Hypervisor service from ${escapeHtml(hostName)} will leave these virtual machines assigned to this host:</p>
+                    <ul class="list-disc pl-5 max-h-48 overflow-y-auto text-sm">${guests.map(guest=>'<li>'+escapeHtml(guest.name||guest.id)+'</li>').join('')}</ul>
+                    <p class="text-sm">The Virtual Machines tab will remain visible with a configuration warning. No guest data or host relationships will be changed.</p>
+                    <div class="flex flex-wrap justify-end gap-3">
+                        <button type="button" data-action="phase-m005-hypervisor-cancel" class="h-11 px-4 rounded-xl border border-slate-400 dark:border-slate-500 caffoot-modal-cancel">Keep Editing</button>
+                        <button type="button" data-action="phase-m005-hypervisor-accept" class="h-11 px-4 rounded-xl bg-rose-700 text-white font-bold">Remove Hypervisor service</button>
+                    </div>
+                </div>`;
+                const content = document.getElementById('modal-content');
+                if (getComputedStyle(content).position === 'static') content.style.position = 'relative';
+                overlay._returnFocus = document.activeElement;
+                content.appendChild(overlay);
+                overlay.querySelector('[data-action="phase-m005-hypervisor-cancel"]').focus();
+            });
+        }
+        function phaseM005ResolveHypervisorRemoval(accepted) {
+            const overlay = document.getElementById('phase-m005-hypervisor-dialog');
+            const focus = overlay?._returnFocus;
+            overlay?.remove();
+            const resolve = phaseM005HypervisorResolve;
+            phaseM005HypervisorResolve = null;
+            if (focus?.isConnected) focus.focus();
+            if (resolve) resolve(accepted);
+        }
+
         async function handleDeviceSubmit(e, deviceId) {
             e.preventDefault();
             const name = document.getElementById('dev-name').value.trim();
@@ -7203,8 +7243,7 @@ function hierarchyValidateTypes(subnets) {
                 if (wasHypervisor && !remainsHypervisor) {
                     const hostedGuests = appState.devices.filter(guest => guest.id !== deviceId && guest.virtualHostId === deviceId);
                     if (hostedGuests.length) {
-                        const names = hostedGuests.map(guest => guest.name || guest.id).join(', ');
-                        if (!window.confirm('Remove the Hypervisor service from ' + existingDevice.name + '?\\n\\nThe following hosted virtual machines will remain assigned to this server: ' + names + '\\n\\nThe Virtual Machines tab will remain visible with a configuration warning. No guest data or relationships will be changed.\\n\\nContinue?')) return;
+                        if (!await phaseM005ConfirmHypervisorRemoval(existingDevice.name, hostedGuests)) return;
                         if (getDeviceById(deviceId) !== existingDevice || !document.getElementById('dev-type') || document.getElementById('dev-type').value !== type) return;
                     }
                 }
@@ -8518,6 +8557,8 @@ function hierarchyValidateTypes(subnets) {
                 case 'server-service-confirm-archive': phase120ArchiveServerService(name); break;
                 case 'phase18d-add': phase18DCommit(target.dataset.kind,'add','',document.getElementById('phase18d-new')?.value||''); break;
                 case 'phase18d-search': phase18DSearch[target.dataset.kind]=document.getElementById('phase18d-search')?.value||'';phase18DOpen(target.dataset.kind); break;
+                case 'phase-m005-hypervisor-cancel': phaseM005ResolveHypervisorRemoval(false); break;
+                case 'phase-m005-hypervisor-accept': phaseM005ResolveHypervisorRemoval(true); break;
                 case 'phase130-conversion-cancel': phase130ResolveDeviceConversion(false); break;
                 case 'phase130-conversion-accept': phase130ResolveDeviceConversion(true); break;
                 case 'phase120-rack-correction-cancel': phase120ResolveRackCorrection(false); break;
