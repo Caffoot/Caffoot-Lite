@@ -383,3 +383,7 @@ Commit `2b2a4c85f754bc751406c0a279e6f714f032f839` adds a confirmation before an 
 ### M-005 consistent keyboard confirmation, 24 October 2026
 
 Commit `36967d4dba7bfcd6ca605d17e023d67f627afb3a` replaces the native browser confirmation for disabling a Hypervisor service with Caffoot Lite's accessible in-form confirmation. The dialogue supports Escape and Keep Editing cancellation, confirmation, keyboard focus return and the existing modal Tab focus handling. Assigned guests are listed and remain linked. Source inspection confirms wiring, but no new browser test execution is claimed for this commit. Explicit Chromium scenarios for Escape, Keep Editing, confirmation, guest preservation and focus remain required. Technical workflow, test matrix and master audit reconciliation remain outstanding. M-005 remains open; no merge or release.
+
+### M-005 hypervisor dialogue regression coverage, 24 October 2026
+
+Commit `2921e512dc68189e32428371ec03a55ab8979ee6` adds Chromium dialogue-level scenarios for Escape cancellation, Keep Editing cancellation, explicit confirmation, guest disclosure, dialogue removal and focus restoration. These scenarios verify dialogue outcomes but do not yet exercise a complete device form save, persisted guest relationship or rollback path. Their execution status must be checked against the latest commit CI. The technical workflow, test matrix and master audit still require reconciliation. M-005 remains open and PR #121 remains Draft. No merge or release.
