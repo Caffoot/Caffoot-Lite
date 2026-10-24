@@ -63,3 +63,11 @@ This initial matrix is a **source inventory**, not a complete device by software
 The product owner approved plural, user facing **category headings** such as **Servers**, **Computers**, **Printers**, **Firewalls**, **Routers**, **Switches** and **Storage** where suitable. Under **Servers**, retain the distinct device types `Server - Physical` and `Server - Virtual`; under **Computers**, retain `Desktop`, `Laptop` and `Tablet`. Category headings are labels, not replacement device type values. Do not use apostrophes to form plurals.
 
 **Implementation boundary:** Preserve `phase19BTypeGroups`, existing saved type strings, compatibility filtering, legacy or custom types and imports. Confirm appropriate headings against the full managed device type list and navigation before any implementation. This is an approved design principle only, not implemented or browser tested.
+
+## RAID and storage array configuration review, 24 October 2026
+
+**Current source finding:** `phase19BChoices.raid` is hard coded to `None`, `RAID 0`, `RAID 1`, `RAID 5`, `RAID 6`, `RAID 10` and `Other`. Both `server` and `nas` profiles expose `raid` and `driveCount`. This was source inspected only; no browser test executed.
+
+**Product owner suggestion, pending final design agreement:** Broaden common options to include appropriate nested RAID configurations such as RAID 50 and RAID 60, and permit user managed custom array types in the same selector, using the existing software catalogue pattern where suitable. Consider ZFS RAIDZ1, RAIDZ2, RAIDZ3 and mirror configurations without presenting ZFS vdev layouts as identical to conventional hardware RAID. Consider a clearer label such as **Storage array configuration**. Preserve the existing `raid` data field and all existing, custom and imported values; do not silently normalise or discard them. Confirm catalogue management, duplicate handling, archived entries, edit and failed save recovery before implementation.
+
+**Scope:** Proposed UI and catalogue improvement for NAS and server device types, not an authorised application change. Add source and browser checks to WF-03 and relevant catalogue tests under WF-08; reconcile the findings and roadmap before implementation.
