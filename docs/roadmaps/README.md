@@ -10,3 +10,12 @@ These documents describe the published baseline or recorded proposals as indicat
 
 - [GitHub planning and contributor handover](GITHUB-PROJECT-AND-CONTRIBUTOR-PLAN.md): agreed Project, milestone, issue and branch model; preservation of audit decisions and evidence; Project configured, individual issue membership verification outstanding
 - [GitHub issue migration register](GITHUB-ISSUE-MIGRATION-REGISTER.md): proposed issue groups covering all 31 original audit findings and v1.4 continuity
+
+- [Proposed v1.5.0 to v1.9.0 planning issues](GITHUB-ISSUE-MIGRATION-REGISTER.md#proposed-v150-to-v190-github-planning-checkpoint-24-october-2026): future release scopes and independent evidence gates; milestone and Project membership checks outstanding
+
+- Proposed v1.5.0 to v1.9.0 milestones #5 to #9 have their ten planning and release gate issues assigned; see [GitHub issue migration register](GITHUB-ISSUE-MIGRATION-REGISTER.md). Project membership verification remains outstanding.
+
+
+### GitHub Project board verification, 24 October 2026
+
+The product owner supplied two screenshots of the public Caffoot Lite Development Project board. The first visibly showed release evidence gate issues #115 to #119, each in Backlog with the corresponding v1.5.0 to v1.9.0 milestone. The second visibly showed planning issues #110 to #114 in Backlog with their matching milestone labels. The board displayed 29 Backlog items, consistent with the previously recorded 19 existing items plus these ten new issues. This confirms Project membership and Backlog status for all ten new issues at the screenshot checkpoint. The earlier separate #91 Project association discrepancy has not been individually rechecked and remains open. No application tests were executed and no application behaviour was changed.
