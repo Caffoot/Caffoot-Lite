@@ -57,3 +57,9 @@ The current `phase19BTypeGroups` mapping and `phase19BProfiles` in `app/caffoot-
 This initial matrix is a **source inventory**, not a complete device by software exhaustive listing and not a completed audit. Expand it from the full software suggestions and user managed catalogue rules before sign off. Record findings in `docs/audits/AUDIT-FINDINGS-REMEDIATION-PROGRAMME.md`, update WF-03 and WF-08 technical workflows, and add executable scenarios to their test matrices. Master audit P12 verification remains incomplete.
 
 **Source:** `app/caffoot-lite.html` on `main`, `phase120SoftwareSuggestions` (line 3455), `phase19BProfiles` (line 6139), `phase120StarterServerServices` (lines 6146 to 6162), `phase19BTypeGroups` (lines 6376 to 6387), `phase120SoftwareOptions` and `phase120SoftwareFieldsFor` (lines 6393 to 6416).
+
+## Agreed presentation naming, 24 October 2026
+
+The product owner approved plural, user facing **category headings** such as **Servers**, **Computers**, **Printers**, **Firewalls**, **Routers**, **Switches** and **Storage** where suitable. Under **Servers**, retain the distinct device types `Server - Physical` and `Server - Virtual`; under **Computers**, retain `Desktop`, `Laptop` and `Tablet`. Category headings are labels, not replacement device type values. Do not use apostrophes to form plurals.
+
+**Implementation boundary:** Preserve `phase19BTypeGroups`, existing saved type strings, compatibility filtering, legacy or custom types and imports. Confirm appropriate headings against the full managed device type list and navigation before any implementation. This is an approved design principle only, not implemented or browser tested.
