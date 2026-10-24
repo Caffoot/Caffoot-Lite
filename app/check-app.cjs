@@ -211,7 +211,8 @@ deletionContext.getDeviceById = id => deletionContext.appState.devices.find(d =>
 const initialDeletionState = JSON.stringify(deletionContext.appState);
 deletionContext.deleteDevice('dev-1');
 assert.equal(deletionContext.appState.devices.length, 1, 'deleted device removed');
-assert.equal(deletionContext.appState.ipAllocations['192.168.40.20'], undefined, 'owned allocation removed');
+assert.equal(deletionContext.appState.ipAllocations['192.168.40.20'].status, 'Available', 'deleted device IP released');
+assert.equal(deletionContext.appState.ipAllocations['192.168.40.20'].deviceId, '', 'deleted device IP ownership cleared');
 assert.equal(deletionContext.appState.ipAllocations['192.168.40.21'].deviceId, 'dev-2', 'other device allocation preserved');
 assert.equal(deletionContext.appState.ipAllocations['192.168.40.21'].reservedForDeviceId, '', 'reservation reference cleared');
 assert.equal(deletionContext.appState.ipAllocations['192.168.40.22'].reservedForDeviceId, '', 'unowned reservation reference cleared');
