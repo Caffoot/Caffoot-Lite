@@ -7167,6 +7167,11 @@ function hierarchyValidateTypes(subnets) {
                 if (validationError) return showToast(validationError, 'error');
             }
             const existingDevice = deviceId ? getDeviceById(deviceId) : null;
+            // M-005: never convert a host while its dependants still reference it.
+            if (existingDevice && existingDevice.type === 'Server - Physical' && type !== 'Server - Physical') {
+                const dependants = appState.devices.filter(d => d.id !== deviceId && d.virtualHostId === deviceId);
+                if (dependants.length) return showToast('Resolve hosted device relationships before changing this physical server type: ' + dependants.map(d => d.name || d.id).join(', '), 'error');
+            }
             let conversionSnapshot = null;
             // Type-specific values remain in the unsaved draft when switching types.
             // Only known, incompatible populated fields are eligible for confirmed removal.
@@ -7182,11 +7187,6 @@ function hierarchyValidateTypes(subnets) {
                     conversionSnapshot = {type:existingDevice.type, details:Object.fromEntries(obsolete.map(key=>[key,typeDetails[key]]))};
                     for (const key of obsolete) delete typeDetails[key];
                 }
-            }
-            // M-005: never convert a host while its dependants still reference it.
-            if (existingDevice && existingDevice.type === 'Server - Physical' && type !== 'Server - Physical') {
-                const dependants = appState.devices.filter(d => d.id !== deviceId && d.virtualHostId === deviceId);
-                if (dependants.length) return showToast('Resolve hosted device relationships before changing this physical server type: ' + dependants.map(d => d.name || d.id).join(', '), 'error');
             }
             const beforeDeviceSave = JSON.stringify(appState);
             if (existingDevice) {
