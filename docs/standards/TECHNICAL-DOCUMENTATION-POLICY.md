@@ -118,3 +118,7 @@ The existing release documentation consistency workflow has been extended on the
 ## Automated coverage execution evidence, 23 October 2026
 
 The PR #89 structural coverage gate and existing documentation checks passed in [GitHub Actions run 39984994151](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39984994151) at commit `1c42846fad63cc1acc189c9ab2a4c0284cc279d9`. The history secret scan also passed in run 39984994558. This is evidence of objective automated checks only. The mandatory reviewer reconciliation of current statuses, technical behaviour, test provenance and release descriptions remains a separate approval gate. The audit programme records the corrected labelled workflow parser regression. No branch protection, application behaviour, merge or release was changed.
+
+## Proposed interface design standard cross-reference, 24 October 2026
+
+The product owner agreed a consistent, reusable interface design direction. The proposed [Design and Interaction Standards](DESIGN-AND-INTERACTION-STANDARDS.md) define shared visual patterns, accessible relationship diagrams, common form and review behaviours, and documentation and verification expectations. This is a proposed standard, not evidence of implemented shared components or executed tests.
