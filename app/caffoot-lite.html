@@ -2219,7 +2219,7 @@ function hierarchyValidateTypes(subnets) {
                 if(existing && !existing.deviceId && existing.status && existing.status!=='Available') {
                     blocked.push(`${ip} is ${existing.status} without a matching owner. Review manually.`); continue;
                 }
-                const expected={status:d.ipReserved?'Reserved':'Assigned',deviceId:d.id,hostname:d.name||'',notes:d.notes||''};
+                const expected={status:d.ipReserved?'Reserved':'Assigned',deviceId:d.id,hostname:d.name||''};
                 if(!existing || Object.entries(expected).some(([k,v])=>existing[k]!==v)) {
                     fixes.push({ip,deviceId:d.id,name:d.name,expected,
                         reason:existing?'Synchronise device-owned IPAM fields':'Create missing device IPAM allocation'});
