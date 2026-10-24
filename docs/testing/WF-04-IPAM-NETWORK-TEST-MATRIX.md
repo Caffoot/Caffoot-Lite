@@ -1,6 +1,6 @@
 # WF-04 Subnets, VLANs and IPAM: Controlled Test Matrix
 
-**Baseline:** Published Caffoot Lite v1.3.0. **Status:** Planned browser tests, not executed. Grounded in WF-04 source findings in `docs/workflows/TECHNICAL-WORKFLOWS.md`. No application changes authorised.
+**Baseline:** Published Caffoot Lite v1.3.0. **Status:** Mixed evidence. Some targeted Chromium regressions have passed, while the complete WF-04 browser matrix remains unexecuted. Grounded in WF-04 source findings in `docs/workflows/TECHNICAL-WORKFLOWS.md`. PR #123 contains approved-scope IPAM corrections and tests, not a published release.
 
 ## Safety and evidence
 
@@ -31,7 +31,7 @@ Use fictional data in an isolated browser profile. Keep a verified export before
 | N19 | Delete VLAN used by a network subnet | Reject deletion |
 | N20 | Delete unused VLAN and force save failure | Confirmation; rollback on failure |
 | N21 | Open standalone IP editor for gateway or device primary IP | Editing protected |
-| N22 | Reserve, assign or release independent IPAM address | Valid record update; Available removes standalone allocation |
+| N22 | Reserve, assign or release independent IPAM address | Valid record update; explicit release clears active ownership and reservation while preserving address notes and other historical metadata. A previously unrecorded Available address with blank hostname and notes need not create a record |
 | N23 | Force save failure during standalone IP edit | Restore previous allocation |
 | N24 | Bulk reserve or release a valid small range | Preview matches applied eligible addresses |
 | N25 | Bulk range exceeding 512 addresses or invalid host offsets | Reject safely |
@@ -46,7 +46,7 @@ Use fictional data in an isolated browser profile. Keep a verified export before
 
 ## Exit criteria
 
-Cross-check WF-03 primary IP tests, WF-01 storage and WF-02 rollback checks without duplicating their evidence. Reconcile significant functions and P11 comments with the naming reference. Record M-009 and any new source-supported findings in the roadmap with explicit status. Every scenario starts **planned**, not passed; browser sign-off requires actual evidence.
+Cross-check WF-03 primary IP tests, WF-01 storage and WF-02 rollback checks without duplicating their evidence. Reconcile significant functions and P11 comments with the naming reference. Record M-009 and any new source-supported findings in the roadmap with explicit status. Scenarios without linked executed evidence remain **planned**, not passed. Targeted CI success does not imply full matrix completion; browser sign-off requires actual scenario evidence.
 
 
 ## Evidence update, 23 October 2026
@@ -82,3 +82,7 @@ M-006 historical backup fixture, 24 October 2026: commit `78a8291` adds an isola
 M-006 legacy migration checkpoint, 24 October 2026: commit `ca22a6f` adds an executable Node VM fixture calling production `phase20MigrateBackup()` with a synthetic unversioned historical inventory. It checks that the input JSON is not mutated and that both address notes and historical reservation reference/notes survive migration. Backup version validation and mount repairs are stubbed in this isolated fixture, so this does NOT establish a full browser restore, saved storage or reload. CI execution pending. M-006, M-009 and M-024 remain open; master audit reconciliation outstanding; no merge or release.
 
 M-006 restore persistence checkpoint, 24 October 2026: commit `b8d3653` extends existing `app/test-restore.cjs` executable restore success fixture to assert IPAM notes, historical `reservedForDeviceId` and notes persist in simulated browser storage, including a JSON reload round trip. The restore harness stubs migration and validation and uses fake FileReader and storage, so it does NOT constitute a real Chromium file import. Fresh CI pending. All four CI workflows passed for preceding commit `d69baa9`. M-006, M-009 and M-024 remain open; master audit final reconciliation outstanding; no merge or release.
+
+### Evidence reconciliation, 24 October 2026
+
+The document's former planned-only heading and N22 allocation removal expectation were outdated. N22 now reflects the agreed address history retention rule. The executed automated release candidate validation and Chromium regression for commit `65cd711` are recorded at [release validation run 40128949449](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40128949449) and [Chromium regression run 40128949458](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40128949458). These workflows do not establish a completed N22 or N31 browser scenario. N22 and N31 remain pending dedicated browser evidence. M-006, M-009 and M-024 remain open. No merge or release.
