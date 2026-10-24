@@ -4,7 +4,7 @@
 
 ## Rules
 
-This register is a proposed GitHub planning index derived from the [central findings programme](../audits/AUDIT-FINDINGS-REMEDIATION-PROGRAMME.md), not a replacement for it. The release allocations are provisional. Keep original M identifiers, finding dispositions, browser evidence, historical decisions and test IDs. A merged correction is not a published release. M-030 is a mandatory gate for every release. Do not convert closed M-021 into new implementation work.
+This register is a proposed GitHub planning index derived from the [central findings programme](../audits/AUDIT-FINDINGS-REMEDIATION-PROGRAMME.md), not a replacement for it. The release allocations are provisional. Keep original M identifiers, finding dispositions, browser evidence, historical decisions and test IDs. A merged correction is not a published release. M-030 is a mandatory gate for every release. Issue #104 tracks establishing and verifying the permanent gate and can close after approved evidence of that setup; each release must still independently complete its own documentation checks. Do not convert closed M-021 into new implementation work.
 
 Before creating a GitHub issue, check whether an existing issue or PR already represents it. Earlier inventory described #50 as an issue; live verification confirmed #50 is a draft pull request. PR #90 is also a draft pull request. Project and milestone existence have not yet been verified through the available connector.
 
@@ -40,7 +40,7 @@ Before creating a GitHub issue, check whether an existing issue or PR already re
 
 | Group | Findings or source | Scope |
 | --- | --- | --- |
-| [Mandatory documentation gate, issue #104](https://github.com/Caffoot/Caffoot-Lite/issues/104) | M-030 | Technical workflows, test matrices, master audit, findings, roadmap, version statements and release evidence must agree |
+| [Permanent documentation gate setup, issue #104](https://github.com/Caffoot/Caffoot-Lite/issues/104) | M-030 | Verify and establish the ongoing rule, then close #104 only with approval; separate documentation reconciliation is mandatory for each release |
 | [Optional Docker and database architecture, issue #105](https://github.com/Caffoot/Caffoot-Lite/issues/105) | Existing draft [PR #50](https://github.com/Caffoot/Caffoot-Lite/pull/50), [root roadmap](../../ROADMAP.md) | Preserve standalone HTML indefinitely; optional user management and migration; no implementation implied |
 | Future optional inventory component links | [v1.3.x design review](V1.3X-MAINTENANCE-DESIGN-REVIEW.md) | One level optional components and connected device links, no mandatory recursive hierarchy |
 
