@@ -1895,7 +1895,9 @@ function hierarchyValidateTypes(subnets) {
             }
 
             if (oldIp && appState.ipAllocations[oldIp]?.deviceId === device.id) {
-                delete appState.ipAllocations[oldIp];
+                const oldAllocation = appState.ipAllocations[oldIp];
+                // Release ownership without discarding address-specific IPAM information.
+                appState.ipAllocations[oldIp] = { ...oldAllocation, status: 'Available', deviceId: '' };
             }
 
             device.primaryIp = trimmedIp;
@@ -1907,7 +1909,7 @@ function hierarchyValidateTypes(subnets) {
                     status: device.ipReserved ? 'Reserved' : 'Assigned',
                     deviceId: device.id,
                     hostname: device.name || existing.hostname || '',
-                    notes: device.notes || existing.notes || ''
+                    notes: existing.notes || ''
                 };
             }
         }
@@ -1923,7 +1925,7 @@ function hierarchyValidateTypes(subnets) {
                 status: device.ipReserved ? 'Reserved' : 'Assigned',
                 deviceId: device.id,
                 hostname: device.name || '',
-                notes: device.notes || ''
+                notes: existing.notes || ''
             };
         }
 
@@ -4438,7 +4440,7 @@ function hierarchyValidateTypes(subnets) {
                     blocked.push(ip); continue;
                 }
                 if(status==='Available') {
-                    if(old && old.status!=='Available') changes.push({ip,offset,old,updated:null});
+                    if(old && old.status!=='Available') changes.push({ip,offset,old,updated:{...old,status:'Available',deviceId:''}});
                 } else {
                     if(old?.status==='Assigned') {blocked.push(ip);continue;}
                     const updated={...old,status:'Reserved',deviceId:'',hostname:hostname?`${hostname}-${offset}`:(old?.hostname||''),notes:notes||old?.notes||''};
@@ -4468,7 +4470,7 @@ function hierarchyValidateTypes(subnets) {
                         </div>
                         <div class="form-section-card space-y-4"><div class="form-section-heading">Optional reservation labels</div>
                             <div><label for="bulk-hostname" class="form-label">Label Prefix</label><input id="bulk-hostname" maxlength="80" class="w-full border rounded-xl px-3 py-2 dark:bg-slate-700" placeholder="dhcp-pool"></div>
-                            <div><label for="bulk-notes" class="form-label">Notes</label><input id="bulk-notes" maxlength="240" class="w-full border rounded-xl px-3 py-2 dark:bg-slate-700"></div>
+                            <div><label for="bulk-notes" class="form-label">IPAM Notes</label><p class="text-xs text-slate-600 dark:text-slate-300">Notes belong to each selected IP address, not to devices. Entering notes replaces existing address notes on eligible reservations.</p><input id="bulk-notes" maxlength="240" class="w-full border rounded-xl px-3 py-2 dark:bg-slate-700"></div>
                         </div>
                         <p class="text-xs text-slate-600 dark:text-slate-300">Preview before applying. Existing device assignments and conflicting assigned records are protected.</p>
                         <p class="text-sm text-slate-700 dark:text-slate-200"><strong>IP Address Block:</strong> ${escapeHtml(appState.subnets.find(b => b.id === subnet.parentId)?.name || 'Unassigned')} — ${escapeHtml(subnet.name)} (VLAN ${escapeHtml(String(subnet.vlan))})</p>
@@ -4490,7 +4492,7 @@ function hierarchyValidateTypes(subnets) {
             openModal(`<div class="p-6 space-y-4"><h3 class="font-bold text-lg text-slate-900 dark:text-white">Confirm bulk ${status==='Reserved'?'reservation':'release'}</h3>
                 <p class="text-sm text-slate-700 dark:text-slate-200">${plan.changes.length} address(es) will change. ${plan.blocked.length} protected address(es) will be skipped.</p>
                 ${plan.blocked.length?`<p class="text-sm text-amber-900 dark:text-amber-200">Protected examples: ${escapeHtml(plan.blocked.slice(0,6).join(', '))}</p>`:''}
-                <p class="text-sm text-slate-700 dark:text-slate-200">Changes include: ${escapeHtml(sample||'none')}</p>
+                <p class="text-sm text-slate-700 dark:text-slate-200">Changes include: ${escapeHtml(sample||'none')}${status==='Reserved'&&notes?'<br>Entered IPAM notes will replace existing notes on eligible addresses.':''}</p>
                 <p class="text-xs text-slate-600 dark:text-slate-300">A safety snapshot is stored before changes are applied. Confirm only after reviewing the range.</p>
                 <div class="flex justify-end gap-3"><button type="button" data-action="close-modal" class="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-700 caffoot-modal-cancel">Cancel</button>
                 <button type="button" data-action="phase12b-apply" class="px-4 py-2 rounded-xl bg-blue-800 text-white font-semibold" ${!plan.changes.length?'disabled':''}>Apply ${plan.changes.length} changes</button></div></div>`);
@@ -4618,7 +4620,7 @@ function hierarchyValidateTypes(subnets) {
                                 <option value="">None (Top Level)</option>
                                 ${appState.subnets.filter(s => s.kind === 'container' && s.id !== subnetId).map(s => `<option value="${escapeHtml(s.id)}" ${subnet?.parentId === s.id ? 'selected' : ''}>${escapeHtml(s.cidr)} — ${escapeHtml(s.name)}</option>`).join('')}
                             </select>
-                            <label for="sub-desc" class="form-label">Description</label>
+                            <label for="sub-desc" class="form-label">Description</label><p class="text-xs text-slate-600 dark:text-slate-300">Describe this subnet or IP Address Block, not individual devices.</p>
                             <input type="text" id="sub-desc" value="${escapeHtml(subnet ? (subnet.description || '') : '')}" placeholder="Purpose or department" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white">
                         </div>
                         <div class="form-error" data-form-error role="alert"></div>
@@ -5129,7 +5131,7 @@ function hierarchyValidateTypes(subnets) {
                             <input type="text" id="ip-hostname" value="${escapeHtml(alloc.hostname || '')}" placeholder="server-node-01" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white font-mono">
                         </div>
                         <div>
-                            <label for="ip-notes" class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Notes</label>
+                            <label for="ip-notes" class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">IPAM Notes</label><p class="text-xs text-slate-600 dark:text-slate-300">Notes about this IP address, not an individual device.</p>
                             <input type="text" id="ip-notes" value="${escapeHtml(alloc.notes || '')}" placeholder="Purpose or assignment" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white">
                         </div>
                         <div class="form-error" data-form-error role="alert"></div>
@@ -5168,7 +5170,7 @@ function hierarchyValidateTypes(subnets) {
                         return;
                     }
                 }
-                delete appState.ipAllocations[ip];
+                if (existing) appState.ipAllocations[ip] = { ...existing, status: 'Available', deviceId: '' };
             } else {
                 const existing = appState.ipAllocations[ip] || {};
                 let deviceId = existing.deviceId || '';
