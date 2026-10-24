@@ -61,4 +61,4 @@ The [legacy import compatibility matrix](LEGACY-BACKUP-IMPORT-COMPATIBILITY-MATR
 
 ## Proposed shared interface pattern coverage, 24 October 2026
 
-Pending tests include shared Save and Cancel behaviour, confirmation cancellation, warning clarity, diagram and text equivalence, keyboard focus and navigation, mobile layouts, offline standalone operation and consumer regression tests when a shared component changes. See [Design and Interaction Standards](../standards/DESIGN-AND-INTERACTION-STANDARDS.md). No tests executed for this proposed design.
+Pending tests include shared Save and Cancel behaviour, confirmation cancellation, warning clarity, diagram and text equivalence, keyboard focus and navigation, mobile layouts, offline standalone operation and consumer regression tests when a shared component changes. See [Design and Interaction Standards](../standards/design/DESIGN-AND-INTERACTION-STANDARDS.md). No tests executed for this proposed design.
