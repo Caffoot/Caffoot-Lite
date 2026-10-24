@@ -7214,7 +7214,10 @@ function hierarchyValidateTypes(subnets) {
             const message=`Delete device ${device.name}?\n\nPrimary IP: ${device.primaryIp||'none'}\nLinked IPAM records: ${related.length}\nOther reservations: ${reserved.length}\nRack: ${device.rackId?'mounted':'not mounted'}\n\nThis cannot be undone. Export a backup first.`;
             if(!confirm(message)) return;
             const before=JSON.stringify(appState);
-            for(const ip of related) delete appState.ipAllocations[ip];
+            for(const ip of related) {
+                const allocation = appState.ipAllocations[ip];
+                if (allocation) appState.ipAllocations[ip] = { ...allocation, status: 'Available', deviceId: '' };
+            }
             for(const ip of reserved) if(appState.ipAllocations[ip]) appState.ipAllocations[ip].reservedForDeviceId='';
             appState.devices=appState.devices.filter(d=>d.id!==deviceId);
             phase11BCommitDelete(before,'Device');
