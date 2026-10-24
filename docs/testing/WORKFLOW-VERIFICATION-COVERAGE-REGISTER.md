@@ -42,3 +42,7 @@ The 18 specific WF02-T01 to WF02-T18 scenarios remain pending. Earlier backup co
 ## Documentation checker evidence, 23 October 2026
 
 PR #89 [release documentation consistency run 39984994151](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39984994151) passed structural checks that each WF-01 through WF-13 table entry exists and that WF02-T01 through WF02-T18 are present in the imported rack test matrix. This verifies **document structure only**, not individual workflow execution or completion. The earlier failed run 39984762571 exposed a checker parsing defect for labelled workflow rows, subsequently corrected. Existing targeted browser run evidence in this register is unchanged. Individual P12 completion gates and all 18 imported rack fixtures remain outstanding.
+
+## Maintenance design verification carry-forward, 24 October 2026
+
+WF-03 device conversions and historical/custom type preservation, WF-08 software and server service catalogue behaviour, WF-07 form/confirmation usability and WF-06 backup/import compatibility remain **pending execution** against the proposed v1.3.x changes. The [WF-03 matrix](WF-03-DEVICE-LIFECYCLE-TEST-MATRIX.md) now records targeted scenarios. Design agreement and source inspection are not evidence of test passes. Refer to the [design review](../roadmaps/V1.3X-MAINTENANCE-DESIGN-REVIEW.md), [technical workflows](../workflows/TECHNICAL-WORKFLOWS.md) and [master audit](../audits/V1.3.0-DOCUMENTATION-COVERAGE-AUDIT.md). Original P12 limitations remain open.
