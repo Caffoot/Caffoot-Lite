@@ -20,7 +20,7 @@ Statuses here are intentionally conservative. **Corrected in main** means merged
 | M-002 | Leftover rack mounting fields after unassignment | Review | Determine effect on existing data and later mounting |
 | M-003 | Inventory save and audit history consistency | Review | Agree intended audit guarantees |
 | M-004 | Failed save rollback across editing paths | Review | Reconcile individual callers and previous tests |
-| M-005 | Physical host deletion or conversion breaking virtual server links | Open investigation | Prioritise non-destructive relationship safeguards |
+| M-005 | Physical host deletion or conversion breaking virtual server links | Protective changes in draft PR #121, Chromium verified; unreleased | Reconcile release candidate evidence for v1.3.1; retain advanced hosting design in v1.3.2 |
 | M-006 | Primary IP ownership and allocation consistency | Open investigation | Verify changes, metadata and failed saves |
 | M-007 | Historical function names obscure responsibilities | Proposed improvement | Complete function reference before controlled renames |
 | M-008 | Device type changes and preservation of related records | Proposed policy decision | Agree safe correction and conversion rules |
@@ -97,7 +97,7 @@ This programme is the central planning register. Detailed evidence remains in th
 | Proposed release | Primary outcome | Findings allocated for investigation or delivery | Cross-cutting requirements |
 | --- | --- | --- | --- |
 | v1.3.1 | Data safety and inventory integrity | Already merged, not yet published: M-001, M-011, M-012, M-018, M-020, M-031. Investigate M-004, M-005, M-006, M-009, M-010, M-017, M-019, M-022, M-024 | WF-02, WF-03, WF-04, WF-05, WF-06, WF-11 and WF-12 relevant evidence; WF02-T01 to WF02-T18 imported rack fixtures; historical backup compatibility and release package checks |
-| v1.3.2 | Usability, relationships and consistent editing | M-002, M-008, M-013, M-014, M-015, M-023, M-025, M-026, M-027, M-028 | Review UI consistency, historical data preservation, device conversion and relevant workflow/browser tests |
+| v1.3.2 | Usability, relationships and consistent editing | M-002, M-008, M-013, M-014, M-015, M-023, M-025, M-026, M-027, M-028; advanced M-005 hosting design | Review UI consistency, historical data preservation, device conversion and relevant workflow/browser tests |
 | v1.3.3 | Code clarity, history and outstanding audit reconciliation | M-003, M-007, M-016, M-029. M-021 remains closed without change and is carried for evidence reconciliation only, not implementation | Complete significant function and caller review, P11 explanatory comments, remaining P12 decisions across WF-01 to WF-13 and final documentation consistency |
 | Every release | Documentation and safety gate | M-030 spans all releases; it is **not deferred** to v1.3.3 | Update technical workflows, function references, test matrices, master audit, findings, roadmap and release documents with each change; retain evidence of executed tests |
 
