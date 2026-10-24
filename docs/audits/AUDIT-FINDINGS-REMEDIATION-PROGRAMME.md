@@ -387,3 +387,7 @@ Commit `36967d4dba7bfcd6ca605d17e023d67f627afb3a` replaces the native browser co
 ### M-005 hypervisor dialogue regression coverage, 24 October 2026
 
 Commit `2921e512dc68189e32428371ec03a55ab8979ee6` adds Chromium dialogue-level scenarios for Escape cancellation, Keep Editing cancellation, explicit confirmation, guest disclosure, dialogue removal and focus restoration. These scenarios verify dialogue outcomes but do not yet exercise a complete device form save, persisted guest relationship or rollback path. Their execution status must be checked against the latest commit CI. The technical workflow, test matrix and master audit still require reconciliation. M-005 remains open and PR #121 remains Draft. No merge or release.
+
+### M-005 complete form handler regression preparation, 24 October 2026
+
+Commit `0e8ea33c702e2e276cbaac55672ea006150e5306` adds two isolated Chromium scenarios invoking the actual physical server device form save handler with a recorded Hypervisor service and assigned guest. Escape must cancel without changing the saved inventory or guest relationship and leave the form open. Confirmation must save the removed service while preserving the guest reference in persisted storage. These newly added scenarios are not yet reported as executed or passed at this checkpoint. Failed persistence rollback and final documentation test matrix reconciliation remain outstanding. M-005 stays open; PR #121 is draft, unmerged and unreleased.
