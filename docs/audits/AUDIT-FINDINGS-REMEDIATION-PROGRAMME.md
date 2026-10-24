@@ -359,3 +359,7 @@ Draft PR #121 now includes a read-only Hosted virtual machines section in the ph
 ### M-005 hosted guest browser regression submitted, 24 October 2026
 
 Draft PR #121 commit `6fc07398ba8924e4886199e7931eace01361687e` adds three Chromium scenarios using the actual device details renderer: populated physical host guest list, empty host message and a virtual guest with a missing legacy host reference. The tests assert that viewing the legacy guest preserves its original `virtualHostId`. These scenarios are committed but **not yet verified as passing**; await the new commit's GitHub Actions results. Visual screenshot review and accessible guest navigation are separate unfinished design work. M-005 remains open, master audit unchanged, no merge or release.
+
+### M-005 dedicated Virtual Machines tab checkpoint, 24 October 2026
+
+Physical server device details now offer a dedicated Virtual Machines tab showing the existing read-only hosted guest section. The previous Overview placement was removed for physical servers; virtual servers continue to display their recorded physical host in Overview. Browser regression assertions were updated to select the tab and inspect the visible panel. Application commit `1c89cf3baa67d2dc889602fb31fa9294cb082b88`, test commit `516bb4d520f2695b697cfb63fce56db3f88f61a5`. These changes are not yet verified by a completed CI run or screenshot review. Direct guest navigation, relationship edits and legacy import safeguards remain outstanding. Master audit M-005 open. No merge or release.
