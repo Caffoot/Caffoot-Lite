@@ -33,3 +33,17 @@
 6. Keep source inspection separate from executed automated and browser tests, and reconcile WF-03, WF-06, WF-08, findings, roadmap and master audit before sign-off.
 
 **Implementation approval:** Not granted. This matrix is a planning artefact, not evidence of released behaviour.
+
+## Published source comparison, 24 October 2026
+
+**Read-only source inspection:** Inspected `app/caffoot-lite.html` at Git tags `v1.0.0` (5,312 lines), `v1.2.0` (7,984), `v1.2.1` (8,002) and `v1.3.0` (8,634). All four declare `STATE_VERSION = 3`, `CAFFOOT_BACKUP_FORMAT = 'caffoot-inventory'`, and `CAFFOOT_BACKUP_SCHEMA_VERSION = 1`. Therefore **app release number alone does not identify a different backup schema**. Actual backup fixtures and field-level differences are needed before assigning migration rules.
+
+| Published tag | Default device types observed | Compatibility implication |
+| --- | --- | --- |
+| v1.0.0 | Server - Physical, Server - Virtual, Desktop, Laptop, Tablet, Switch, Router, NAS, Access Point, PDU, UPS, Unknown | Existing exact type values need no renaming merely because the export is older |
+| v1.2.0 and v1.2.1 | Above plus Layer 3 Switch, Firewall, Wireless LAN Controller | Newly offered defaults must not cause older/custom records to be rewritten |
+| v1.3.0 | Above plus Printer, Scanner | These are later default catalogue additions, not proof of incompatible historic values |
+
+The historical specialised service keys `SwanServer`, `SQLServer`, `TMSServer`, `printserver`, `keriserver`, `ActiveDirectory`, `AntivirusSoftware`, `DNS`, `DHCP`, `ExchangeServer`, `BackupSoftware`, `PlanetDB`, `SystemsDatabaseBackEndTables` and `PDASystem` appear in all four inspected tags. Preserve their persisted meaning and selections; do not assume a new display label is a safe rename. Starter service suggestions appear in the inspected v1.2.0 and v1.3.0 source.
+
+**Open evidence:** `v1.1.0` was not available at the requested Git tag; no inference is made about that release. No real user backup JSON files were inspected and no runtime import/export tests were executed. Next compare exact device field schemas and use representative, sanitised old backups for deterministic mapping evidence.
