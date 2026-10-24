@@ -7195,6 +7195,20 @@ function hierarchyValidateTypes(subnets) {
                 const dependants = appState.devices.filter(d => d.id !== deviceId && d.virtualHostId === deviceId);
                 if (dependants.length) return showToast('Resolve hosted device relationships before changing this physical server type: ' + dependants.map(d => d.name || d.id).join(', '), 'error');
             }
+            // M-005: explicit acknowledgement before disabling the hypervisor on a host
+            // with existing guests. Guest links are never silently changed or removed.
+            if (existingDevice && existingDevice.type === 'Server - Physical' && type === 'Server - Physical') {
+                const wasHypervisor = existingDevice.typeDetails?.serverService_Hypervisor === true || existingDevice.serverService_Hypervisor === true;
+                const remainsHypervisor = typeDetails.serverService_Hypervisor === true;
+                if (wasHypervisor && !remainsHypervisor) {
+                    const hostedGuests = appState.devices.filter(guest => guest.id !== deviceId && guest.virtualHostId === deviceId);
+                    if (hostedGuests.length) {
+                        const names = hostedGuests.map(guest => guest.name || guest.id).join(', ');
+                        if (!window.confirm('Remove the Hypervisor service from ' + existingDevice.name + '?\\n\\nThe following hosted virtual machines will remain assigned to this server: ' + names + '\\n\\nThe Virtual Machines tab will remain visible with a configuration warning. No guest data or relationships will be changed.\\n\\nContinue?')) return;
+                        if (getDeviceById(deviceId) !== existingDevice || !document.getElementById('dev-type') || document.getElementById('dev-type').value !== type) return;
+                    }
+                }
+            }
             let conversionSnapshot = null;
             // Type-specific values remain in the unsaved draft when switching types.
             // Only known, incompatible populated fields are eligible for confirmed removal.
