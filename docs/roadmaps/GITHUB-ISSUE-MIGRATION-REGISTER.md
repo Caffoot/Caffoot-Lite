@@ -1,6 +1,6 @@
 # GitHub issue migration register
 
-**Status:** Mapping in progress. M-005 issue #91 created; other candidate issues and milestones pending. **Date:** 24 October 2026. **Published baseline:** v1.3.0.
+**Status:** Mapping in progress. v1.3.1 tracking issues #91 to #95 created; later candidate issues and milestones pending. **Date:** 24 October 2026. **Published baseline:** v1.3.0.
 
 ## Rules
 
@@ -13,10 +13,10 @@ Before creating a GitHub issue, check whether an existing issue or PR already re
 | Candidate issue group | Findings | Scope and preservation requirement |
 | --- | --- | --- |
 | [Host relationships and hypervisor eligibility, issue #91](https://github.com/Caffoot/Caffoot-Lite/issues/91) | M-005 | Explicit host dependant review, safe reassignment or unassignment with provenance or retirement, backup compatibility, save rollback, Chromium evidence; no silent deletion |
-| IP ownership and gateways | M-006, M-009, M-024 | Correct ownership, reservations and gateway behaviour, including imported inventories |
-| Rack and accessory import integrity | M-010, M-019 | Shared rack occupancy policy and imported fixture compatibility |
-| Save and startup recovery | M-004, M-017, M-022 | Preserve prior inventory and recovery options on failed saves or invalid startup state |
-| Carry already merged fixes into release acceptance | M-001, M-011, M-012, M-018, M-020, M-031 | Verify exact release package and existing targeted evidence; do not reopen corrected source findings automatically |
+| [IP ownership and gateways, issue #92](https://github.com/Caffoot/Caffoot-Lite/issues/92) | M-006, M-009, M-024 | Correct ownership, reservations and gateway behaviour, including imported inventories |
+| [Rack and accessory import integrity, issue #93](https://github.com/Caffoot/Caffoot-Lite/issues/93) | M-010, M-019 | Shared rack occupancy policy and imported fixture compatibility |
+| [Save and startup recovery, issue #94](https://github.com/Caffoot/Caffoot-Lite/issues/94) | M-004, M-017, M-022 | Preserve prior inventory and recovery options on failed saves or invalid startup state |
+| [Carry merged fixes into release acceptance, issue #95](https://github.com/Caffoot/Caffoot-Lite/issues/95) | M-001, M-011, M-012, M-018, M-020, M-031 | Verify exact release package and existing targeted evidence; do not reopen corrected source findings automatically |
 
 ## Proposed v1.3.2 usability and editing issues
 
@@ -48,4 +48,4 @@ Before creating a GitHub issue, check whether an existing issue or PR already re
 
 All original M-001 through M-031 identifiers are represented in the candidate groups: M-001 to M-029 and M-031 have one primary allocation, M-030 is cross release. M-021 is retained as a closed evidence item. Existing issue #50 is linked rather than duplicated. Draft PR #90 remains the existing documentation change surface and must not be mistaken for a release.
 
-GitHub issue [#91](https://github.com/Caffoot/Caffoot-Lite/issues/91) was created as an open M-005 tracking issue. No GitHub Project, milestone or new branch is claimed. This mapping does not authorise application changes. Before implementation or publication, verify current GitHub Project and milestone configuration, review proposed issue grouping with the product owner, and reconcile any created items back to this register and the central audit. No browser tests executed for this planning change.
+GitHub issues [#91](https://github.com/Caffoot/Caffoot-Lite/issues/91) through [#95](https://github.com/Caffoot/Caffoot-Lite/issues/95) were created as open v1.3.1 tracking and release verification issues. No GitHub Project, milestone or new branch is claimed. This mapping does not authorise application changes. Before implementation or publication, verify current GitHub Project and milestone configuration, review proposed issue grouping with the product owner, and reconcile any created items back to this register and the central audit. No browser tests executed for this planning change.
