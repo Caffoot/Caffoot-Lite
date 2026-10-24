@@ -315,12 +315,39 @@ const { chromium } = require('playwright');
     });
     await scenario('M-005 physical host details show empty guest state', async page => {
       const text = await page.evaluate(() => {
-        appState.devices.push({id:'fictional-display-empty',name:'Fictional empty host',type:'Server - Physical',location:'Unknown'});
+        appState.devices.push({id:'fictional-display-empty',name:'Fictional empty host',type:'Server - Physical',location:'Unknown',typeDetails:{serverService_Hypervisor:true}});
         phase14CViewDevice('fictional-display-empty');
         phase14CSelectTab('virtual-machines');
         return document.getElementById('phase14c-panel-virtual-machines')?.textContent||'';
       });
       assert.match(text,/No hosted virtual machines recorded/);
+    });
+    await scenario('M-005 no VM tab without hypervisor or hosted guests', async page => {
+      const result = await page.evaluate(() => {
+        appState.devices.push({id:'fictional-no-hypervisor',name:'Fictional ordinary physical server',type:'Server - Physical',location:'Unknown'});
+        phase14CViewDevice('fictional-no-hypervisor');
+        return {tab:!!document.getElementById('phase14c-tab-virtual-machines'),
+          panel:!!document.getElementById('phase14c-panel-virtual-machines')};
+      });
+      assert.equal(result.tab,false);
+      assert.equal(result.panel,false);
+    });
+    await scenario('M-005 existing guests remain visible without hypervisor service', async page => {
+      const result = await page.evaluate(() => {
+        appState.devices.push(
+          {id:'fictional-legacy-host',name:'Fictional legacy host',type:'Server - Physical',location:'Unknown'},
+          {id:'fictional-legacy-guest',name:'Fictional legacy guest',type:'Server - Virtual',location:'Unknown',virtualHostId:'fictional-legacy-host'}
+        );
+        phase14CViewDevice('fictional-legacy-host');
+        phase14CSelectTab('virtual-machines');
+        return {tab:!!document.getElementById('phase14c-tab-virtual-machines'),
+          text:document.getElementById('phase14c-panel-virtual-machines')?.textContent||'',
+          hostId:appState.devices.find(d=>d.id==='fictional-legacy-guest')?.virtualHostId};
+      });
+      assert.equal(result.tab,true);
+      assert.match(result.text,/Fictional legacy guest/);
+      assert.match(result.text,/no Hypervisor service selected/);
+      assert.equal(result.hostId,'fictional-legacy-host');
     });
     await scenario('M-005 legacy missing physical host remains visible', async page => {
       const result = await page.evaluate(() => {
