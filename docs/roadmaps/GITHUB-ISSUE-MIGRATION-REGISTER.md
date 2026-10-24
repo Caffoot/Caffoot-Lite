@@ -71,3 +71,18 @@ The product owner supplied a screenshot of the public **Caffoot Lite Development
 ## GitHub issue and workflow verification, 24 October 2026
 
 A fresh read of the GitHub REST issue resources confirmed **all 19 issues #91 to #109 remain open**. The **18 release specific issues** have the intended milestones: v1.3.1 (#91 to #95 and #106), v1.3.2 (#96 to #99 and #107), v1.3.3 (#100 to #103 and #108), and v1.4.0 (#105 and #109). Cross release issue **#104 has no milestone by design**. The Project board screenshot displays a Backlog count of 19 and visibly identifies #91 to #95, but individual Project membership for all 19 items has not been independently retrieved. GitHub Actions for documentation branch commit `7273a9306a0d66500dc13798790b4cff025daf4b` reported success for release candidate validation, release documentation consistency, consolidated Chromium regression, and Git history secret scan. These are CI runs, not locally executed tests. The issue sidebar and Project board discrepancy remains an open verification item. No application behaviour was changed, and no merge or release was performed.
+
+
+## Proposed v1.5.0 to v1.9.0 GitHub planning checkpoint, 24 October 2026
+
+The original proposed scopes in the root roadmap are preserved without reallocation or implementation approval. Planning issues and independent release evidence gates were created as follows:
+
+| Proposed release | Planning issue | Release documentation and evidence gate |
+| --- | --- | --- |
+| v1.5.0 | [#110](https://github.com/Caffoot/Caffoot-Lite/issues/110) | [#115](https://github.com/Caffoot/Caffoot-Lite/issues/115) |
+| v1.6.0 | [#111](https://github.com/Caffoot/Caffoot-Lite/issues/111) | [#116](https://github.com/Caffoot/Caffoot-Lite/issues/116) |
+| v1.7.0 | [#112](https://github.com/Caffoot/Caffoot-Lite/issues/112) | [#117](https://github.com/Caffoot/Caffoot-Lite/issues/117) |
+| v1.8.0 | [#113](https://github.com/Caffoot/Caffoot-Lite/issues/113) | [#118](https://github.com/Caffoot/Caffoot-Lite/issues/118) |
+| v1.9.0 | [#114](https://github.com/Caffoot/Caffoot-Lite/issues/114) | [#119](https://github.com/Caffoot/Caffoot-Lite/issues/119) |
+
+These ten issues were created without milestones because the available GitHub connection cannot create milestones. Create and assign proposed v1.5.0 through v1.9.0 milestones through authorised GitHub access, then verify all ten associations. The existing Project auto add workflow is configured but membership of these ten new issues has not been independently verified. Check the Project board before manually adding any issue to avoid duplicates. The roadmap remains the authoritative scope; v1.8.0 is research and design only, and v1.9.0 is provisional planning. Dependencies, data preservation, standalone HTML compatibility, testing and release approvals remain open. This was GitHub issue and documentation planning only; no application tests, code changes, merge or release.
