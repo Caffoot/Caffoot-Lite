@@ -295,3 +295,18 @@ The owner explicitly approved making `caffoot/Caffoot-Lite` public and publishin
 
 Support separate customer/network environments with independent overlapping CIDRs, VLAN numbers, gateways and environment-aware IP allocations, backups and migration. **Not included in v1.1.0.**
 
+
+
+## Proposed v1.5.0 to v1.9.0 GitHub planning checkpoint, 24 October 2026
+
+The original proposed scopes in the root roadmap are preserved without reallocation or implementation approval. Planning issues and independent release evidence gates were created as follows:
+
+| Proposed release | Planning issue | Release documentation and evidence gate |
+| --- | --- | --- |
+| v1.5.0 | [#110](https://github.com/Caffoot/Caffoot-Lite/issues/110) | [#115](https://github.com/Caffoot/Caffoot-Lite/issues/115) |
+| v1.6.0 | [#111](https://github.com/Caffoot/Caffoot-Lite/issues/111) | [#116](https://github.com/Caffoot/Caffoot-Lite/issues/116) |
+| v1.7.0 | [#112](https://github.com/Caffoot/Caffoot-Lite/issues/112) | [#117](https://github.com/Caffoot/Caffoot-Lite/issues/117) |
+| v1.8.0 | [#113](https://github.com/Caffoot/Caffoot-Lite/issues/113) | [#118](https://github.com/Caffoot/Caffoot-Lite/issues/118) |
+| v1.9.0 | [#114](https://github.com/Caffoot/Caffoot-Lite/issues/114) | [#119](https://github.com/Caffoot/Caffoot-Lite/issues/119) |
+
+These ten issues were created without milestones because the available GitHub connection cannot create milestones. Create and assign proposed v1.5.0 through v1.9.0 milestones through authorised GitHub access, then verify all ten associations. The existing Project auto add workflow is configured but membership of these ten new issues has not been independently verified. Check the Project board before manually adding any issue to avoid duplicates. The roadmap remains the authoritative scope; v1.8.0 is research and design only, and v1.9.0 is provisional planning. Dependencies, data preservation, standalone HTML compatibility, testing and release approvals remain open. This was GitHub issue and documentation planning only; no application tests, code changes, merge or release.
