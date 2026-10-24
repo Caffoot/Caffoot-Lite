@@ -557,3 +557,42 @@ assert(bulkPlanCode.includes("old.status!=='Available' || old.deviceId || old.re
 assert(bulkPlanCode.includes("updated:{...old,status:'Available',deviceId:'',reservedForDeviceId:''}"),
   'bulk release must retain address notes while clearing active ownership and reservation');
 console.log('M-006 bulk release stale reservation source contracts passed.');
+
+
+// Historical backup compatibility: exercise the production normalisation function
+// with isolated legacy allocation records. No real inventory is touched.
+const normaliseStart = html.indexOf('function normaliseState(raw)');
+const normaliseEnd = html.indexOf('function validateApplicationState()', normaliseStart);
+assert(normaliseStart >= 0 && normaliseEnd > normaliseStart, 'normaliseState production helper must exist');
+const normaliseSource = html.slice(normaliseStart, normaliseEnd);
+const legacyContext = {
+  isPlainObject: x => x !== null && typeof x === 'object' && !Array.isArray(x),
+  cloneDefaultData: () => ({deviceTypes:[],deviceLocations:[],rackAccessories:[],subnets:[],vlans:[],racks:[],devices:[],ipAllocations:{}}),
+  STATE_VERSION: 1,
+  phase120SeparateLegacyRackLocation: devices => devices,
+  isValidCidr24: () => true,
+  isValidIpv4: () => true,
+  phase12Usable: () => true,
+  hierarchyValidate: () => [],
+  hierarchyValidateTypes: () => [],
+  phase19BAllowedMounts: () => ['Desktop'],
+  ipBelongsToSubnet: () => true
+};
+vm.createContext(legacyContext);
+vm.runInContext(normaliseSource, legacyContext);
+const legacyBackup = {
+  subnets:[{id:'s1',name:'Historical subnet',cidr:'192.168.40.0/24',vlan:10,gateway:'192.168.40.1'}],
+  vlans:[{id:'v1',name:'Historical VLAN',vlanId:10}],
+  racks:[],
+  devices:[{id:'legacy-device',name:'renamed-device',type:'Server - Physical',location:'Unknown',primaryIp:'192.168.40.10',ipReserved:false}],
+  ipAllocations:{
+    '192.168.40.10':{status:'Available',deviceId:'',hostname:'old-name',notes:'Historical address notes'},
+    '192.168.40.11':{status:'Reserved',deviceId:'',reservedForDeviceId:'retired-device',notes:'Historical reservation'}
+  }
+};
+const normalisedLegacy = legacyContext.normaliseState(JSON.parse(JSON.stringify(legacyBackup)));
+assert.equal(normalisedLegacy.ipAllocations['192.168.40.10'].notes, 'Historical address notes', 'import repair must preserve address notes');
+assert.equal(normalisedLegacy.ipAllocations['192.168.40.10'].deviceId, 'legacy-device', 'import repair must link actual device');
+assert.equal(normalisedLegacy.ipAllocations['192.168.40.11'].reservedForDeviceId, 'retired-device', 'import must not silently rewrite historical reservation reference');
+assert.equal(normalisedLegacy.ipAllocations['192.168.40.11'].notes, 'Historical reservation', 'import must preserve historical reservation notes');
+console.log('M-006 historical JSON normalisation runtime fixture passed.');
