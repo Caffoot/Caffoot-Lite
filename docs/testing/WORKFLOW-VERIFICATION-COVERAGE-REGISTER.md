@@ -50,3 +50,7 @@ WF-03 device conversions and historical/custom type preservation, WF-08 software
 ## WF-06 import migration verification pending, 24 October 2026
 
 **Not executed:** Test older JSON device type aliases, hypervisor/service mapping, software versus OS classification, unknown/custom preservation, ambiguous correction approval/cancellation, legacy mount and AP reviews, repeated import idempotence, backup round trips, malformed files, integrity failures and failed save rollback. This is agreed design only, not passed verification. See [design review](../roadmaps/V1.3X-MAINTENANCE-DESIGN-REVIEW.md).
+
+## WF-06 compatibility matrix cross-reference, 24 October 2026
+
+The [legacy import compatibility matrix](LEGACY-BACKUP-IMPORT-COMPATIBILITY-MATRIX.md) identifies proposed mappings and pending fixture, idempotence, backup round trip, rejection and rollback tests. Source inspection is not a passed test. WF-06 and dependent WF-03/WF-08 gates remain pending.
