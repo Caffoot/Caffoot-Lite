@@ -45,7 +45,7 @@ Pull requests must link their issue and follow the existing [pull request checkl
 4. Create or configure the Project and milestones only through authorised GitHub access, then link existing issues first and create missing focused issues as needed.
 5. Review the board against the central audit register and roadmaps. Do not mark anything done without implementation, verification, documentation reconciliation and required approval.
 
-**Current checkpoint:** Planning issues #91 to #105 have been created, including the cross release documentation gate #104 and v1.4 planning issue #105. Existing draft PR #50 is architecture documentation, not a tracking issue; draft PR #90 remains the documentation change surface. No GitHub Project, milestone, release branch or application behaviour change has been created. Project and milestone inventory could not be verified using the currently available repository connector endpoint.
+**Current checkpoint:** Planning issues #91 to #105 have been created, including the finite permanent documentation gate setup #104 and v1.4 planning issue #105. Release specific documentation and evidence approval issues #106 to #109 are also open for v1.3.1, v1.3.2, v1.3.3 and v1.4.0 respectively. M-030 remains a permanent policy after #104 eventually closes; each release must complete its own gate. Existing draft PR #50 is architecture documentation, not a tracking issue; draft PR #90 remains the documentation change surface. No GitHub Project, milestone, release branch or application behaviour change has been created. Project and milestone inventory could not be verified using the currently available repository connector endpoint.
 
 ## Proposed issue inventory
 
