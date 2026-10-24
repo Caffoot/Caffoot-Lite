@@ -547,3 +547,13 @@ assert(ipSubmitCode.includes("if (existing || hostname || notes) appState.ipAllo
 assert(ipSubmitCode.includes('else delete appState.ipAllocations[ip];'),
   'failed new Available allocation save must restore the absent record');
 console.log('M-006 Available address notes and failed-save source contracts passed.');
+
+const bulkPlanStart = html.indexOf('function phase12BBulkPlan(');
+const bulkPlanEnd = html.indexOf('function openBulkIpModal(', bulkPlanStart);
+assert(bulkPlanStart >= 0 && bulkPlanEnd > bulkPlanStart, 'bulk IPAM planner must exist');
+const bulkPlanCode = html.slice(bulkPlanStart, bulkPlanEnd);
+assert(bulkPlanCode.includes("old.status!=='Available' || old.deviceId || old.reservedForDeviceId"),
+  'explicit bulk release must clear stale reservation even on an Available address');
+assert(bulkPlanCode.includes("updated:{...old,status:'Available',deviceId:'',reservedForDeviceId:''}"),
+  'bulk release must retain address notes while clearing active ownership and reservation');
+console.log('M-006 bulk release stale reservation source contracts passed.');
