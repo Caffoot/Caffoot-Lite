@@ -499,7 +499,7 @@ assert(deviceSubmitCode.includes('if (!saveState()) {') && deviceSubmitCode.incl
 const ipSyncStart = html.indexOf('function syncDeviceIpamRecord(device)');
 const ipSyncEnd = html.indexOf('\n        function ', ipSyncStart + 1);
 const ipSyncCode = html.slice(ipSyncStart, ipSyncEnd);
-for (const field of ['deviceId: device.id', "hostname: device.name || ''", "notes: device.notes || ''"]) {
+for (const field of ['deviceId: device.id', "hostname: device.name || ''", "notes: existing.notes || ''"]) {
   assert(ipSyncCode.includes(field), 'IPAM sync missing ' + field);
 }
 console.log('Device/IPAM add, edit and rollback wiring safeguards passed.');
