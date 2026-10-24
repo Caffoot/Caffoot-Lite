@@ -1034,3 +1034,5 @@ Source inspection confirms `STATE_VERSION = 3`, `phase20CreateBackup` includes `
 ## Proposed reusable interface patterns, 24 October 2026
 
 The [Design and Interaction Standards](../standards/design/DESIGN-AND-INTERACTION-STANDARDS.md) define a future shared component contract for consistent forms, confirmations, status messages and relationship diagrams. This is an owner agreed design direction, not a description of currently centralised application code. Inventory current components and verify each consumer before implementation. See [verification coverage](../testing/WORKFLOW-VERIFICATION-COVERAGE-REGISTER.md).
+
+**Design precedence clarification, 24 October 2026:** Earlier proposed M-005 language that requires reassigning or deleting every dependant has been superseded. The agreed future review also permits explicit unassignment with former host provenance and retirement with retained history. This paragraph documents intended behaviour only; the existing source behaviour above remains unchanged and the relevant browser scenarios have not been executed.
