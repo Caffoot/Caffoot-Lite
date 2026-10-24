@@ -39,7 +39,7 @@ Use a disposable browser profile and fictional inventory. Export a backup before
 
 ## Exit criteria
 
-Review every function and caller encountered against `docs/standards/FUNCTION-NAMING-AND-REFERENCE.md` and P11 comments. Record defects and improvement candidates in the coverage audit and maintenance roadmap, distinguishing source-confirmed gaps from browser-reproduced issues. Mark each scenario **planned**, **passed**, **failed**, **blocked** or **not applicable**, with evidence. Documentation completeness does not mean test verification.
+Review every function and caller encountered against `docs/standards/technical/FUNCTION-NAMING-AND-REFERENCE.md` and P11 comments. Record defects and improvement candidates in the coverage audit and maintenance roadmap, distinguishing source-confirmed gaps from browser-reproduced issues. Mark each scenario **planned**, **passed**, **failed**, **blocked** or **not applicable**, with evidence. Documentation completeness does not mean test verification.
 
 ## Host dependency test precision, 22 October 2026
 
@@ -61,7 +61,7 @@ These scenarios are **planned, not executed**, and concern future approved appli
 | H03 | Attempt to select physical server without hypervisor | New invalid assignment blocked at save, not only in selector |
 | H04 | Confirm host VMware ESXi to Proxmox VE change with several VMs | All dependent platform metadata changes in one verified save |
 | H05 | Cancel hypervisor change or force save failure | Host and every dependent VM remain unchanged |
-| H06 | Remove hypervisor or delete or convert host with dependants | Block until VMs are reassigned or deliberately deleted |
+| H06 | Remove hypervisor or delete or convert host with dependants | Require an explicit reviewed outcome for every dependant: eligible reassignment, unassignment with former host provenance, or retirement retaining history. Block unsafe changes and preserve state on cancellation or failed save |
 | H07 | Import legacy host links, missing hosts and platform mismatches | Non-destructive review and repair policy, no silent loss or unrelated save lockout |
 | H08 | Reload, export and reimport custom or archived hypervisor choices | Stable selection and relationships survive round trip |
 
@@ -75,3 +75,5 @@ Retain D10 to D13 and D26 as the original baseline scenarios; do not treat H01 t
 **Additional unexecuted M-005 scenarios, 24 October 2026:** For host deletion and incompatible conversion, verify each dependent virtual server can be explicitly reassigned, left unassigned with former host provenance, or retired without losing history; mixed outcomes, cancellation and failed persistence must not alter records. Check orphaned and historical imported host IDs without preventing unrelated saves. Future virtual device categories require separate fixture coverage when their host model exists. These are planned scenarios, not test results.
 
 **M-005 source trace and pending runtime evidence, 24 October 2026:** Source inspected: virtual host form save `handleDeviceSubmit` lines 7142 to 7144, conversion lines 7173 to 7192, deletion `deleteDevice` lines 7207 to 7218. The latter two paths have no incoming virtual host dependency scan. Execute dependent host deletion and conversion scenarios, mixed reassignment/unassignment/retirement, cancellation, failed persistence, reload, and historical host IDs before any implementation claim. No browser test executed in this checkpoint.
+
+**Execution route reviewed, 24 October 2026:** The existing `.github/workflows/audit-consolidated-chromium.yml` runs on `workflow_dispatch` or a pull request changing the HTML, consolidated test script or workflow itself. The existing `app/test-browser-consolidated-audit.cjs` has no `virtualHostId` coverage. A documentation-only PR does not automatically run these host scenarios. Add isolated fictional M-005 cases to the browser suite on a separately reviewed test change, or explicitly dispatch a suitable workflow after coverage is present. Do not mark D10 to D13, D26 or H01 to H08 as executed on the strength of documentation CI.
