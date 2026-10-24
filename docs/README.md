@@ -27,3 +27,6 @@ The [documentation relocation register](audits/DOCUMENTATION-RELOCATION-REGISTER
 ## Navigation policy
 
 Add new technical documents to the appropriate section and its index. Check and update links when documents move. Write public-facing documentation in British English.
+
+
+For new conversations or contributor handovers, begin with the [new session recovery procedure](standards/technical/SESSION-RECOVERY.md) before changing code or reporting audit status.

@@ -69,3 +69,8 @@ The last section of the handover must reproduce this continuity requirement or p
 ## Actions minute conservation and required checks, 23 October 2026
 
 To conserve the monthly GitHub Actions allowance, preserve required pull request checks and existing browser workflow path filters. The proposed workflow concurrency groups cancel older runs only when superseded on the same pull request or branch. Cancelled runs are not passing test evidence; the latest relevant run must finish successfully. A skipped required job can block merging, so do not use pull request path filters to suppress the required `release-documentation` job without separately verifying branch protection behaviour. Keep manual browser dispatch available for deliberate verification and record actual execution separately from source inspection. See `docs/audits/V1.3.0-DOCUMENTATION-COVERAGE-AUDIT.md` for the dated proposal and open verification gate.
+
+
+## Recovering work in a new session
+
+Before resuming development after a conversation or contributor handover, follow the [new session recovery procedure](SESSION-RECOVERY.md). Verify live repository status rather than relying on a previous chat or handover document.
