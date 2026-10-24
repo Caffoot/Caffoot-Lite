@@ -1020,3 +1020,7 @@ This is a **source inspection finding**, not an executed import test. The propos
 ## WF-06 future import migration boundary, 24 October 2026
 
 **Proposed, not current released behaviour:** Owner agreed lossless automatic migration of recognised historical backup fields, with explicit user review for ambiguous or destructive changes. Existing `phase11ValidateBackupShape`, `phase16CReadJson`, `phase16CReviewLegacyMountRepairs` and `phase16CAPMountConflicts` are source-inspected foundations, not evidence that the new mappings exist. See [design review](../roadmaps/V1.3X-MAINTENANCE-DESIGN-REVIEW.md) and [verification register](../testing/WORKFLOW-VERIFICATION-COVERAGE-REGISTER.md).
+
+## WF-06 legacy compatibility mapping evidence, 24 October 2026
+
+Source inspection confirms `STATE_VERSION = 3`, `phase20CreateBackup` includes `caffootBackup` metadata, `phase20ValidateBackupVersion` accepts metadata-free legacy backups and rejects newer schema versions, and `phase20MigrateBackup` creates a detached copy before `normaliseState`. `importData` validates, requests mounting review where required, obtains final restore confirmation, saves a verified safety snapshot and rolls back failed persistence. Proposed mappings and pending tests are in the [legacy import compatibility matrix](../testing/LEGACY-BACKUP-IMPORT-COMPATIBILITY-MATRIX.md). No new mappings have been implemented or tested.
