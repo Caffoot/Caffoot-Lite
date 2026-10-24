@@ -299,6 +299,17 @@ const { chromium } = require('playwright');
       assert(result.notices.some(n=>n.level==='error'&&n.message.includes('Fictional VM 1')&&n.message.includes('Fictional VM 2')),'Guard must identify both dependants');
       console.log('PASS M-005: deletion blocked and both dependent links preserved');
     });
+    await scenario('M-005 allow deletion of unreferenced host', async page => {
+      const result = await page.evaluate(() => {
+        appState.devices.push({id:'fictional-unused-host',name:'Fictional unused host',type:'Server - Physical',mountType:'Desktop',location:'Unknown'});
+        const originalConfirm=window.confirm;
+        window.confirm=()=>true;
+        try { deleteDevice('fictional-unused-host'); }
+        finally { window.confirm=originalConfirm; }
+        return {hostExists:!!appState.devices.find(d=>d.id==='fictional-unused-host')};
+      });
+      assert.equal(result.hostExists,false,'Unreferenced host deletion must remain available');
+    });
     await scenario('M-005 baseline orphan host validation', async page => {
       const result = await page.evaluate(() => {
         appState.devices.push({id:'fictional-orphan-vm',name:'Fictional orphan VM',
