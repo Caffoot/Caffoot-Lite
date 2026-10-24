@@ -12,3 +12,5 @@ These documents describe the published baseline or recorded proposals as indicat
 - [GitHub issue migration register](GITHUB-ISSUE-MIGRATION-REGISTER.md): proposed issue groups covering all 31 original audit findings and v1.4 continuity
 
 - [Proposed v1.5.0 to v1.9.0 planning issues](GITHUB-ISSUE-MIGRATION-REGISTER.md#proposed-v150-to-v190-github-planning-checkpoint-24-october-2026): future release scopes and independent evidence gates; milestone and Project membership checks outstanding
+
+- Proposed v1.5.0 to v1.9.0 milestones #5 to #9 have their ten planning and release gate issues assigned; see [GitHub issue migration register](GITHUB-ISSUE-MIGRATION-REGISTER.md). Project membership verification remains outstanding.
