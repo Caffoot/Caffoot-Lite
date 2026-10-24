@@ -270,5 +270,42 @@ const { chromium } = require('playwright');
         assert.equal(await page.evaluate(()=>localStorage.getItem('caffoot_state')),initial.original);
       });
     }
+
+    // M-005 baseline characterisation only: these observations document the current
+    // missing host integrity safeguards. They are NOT future acceptance criteria.
+    await scenario('M-005 baseline incoming host deletion', async page => {
+      const result = await page.evaluate(() => {
+        appState.devices.push(
+          {id:'fictional-host-001',name:'Fictional host',type:'Server - Physical',mountType:'Desktop',location:'Unknown'},
+          {id:'fictional-vm-001',name:'Fictional VM 1',type:'Server - Virtual',mountType:'Desktop',location:'Unknown',virtualHostId:'fictional-host-001'},
+          {id:'fictional-vm-002',name:'Fictional VM 2',type:'Server - Virtual',mountType:'Desktop',location:'Unknown',virtualHostId:'fictional-host-001'}
+        );
+        localStorage.setItem('caffoot_state',JSON.stringify(appState));
+        const originalConfirm=window.confirm;
+        const prompts=[];
+        window.confirm=message=>{prompts.push(message);return true};
+        try { deleteDevice('fictional-host-001'); }
+        finally { window.confirm=originalConfirm; }
+        return {prompts,hostExists:!!appState.devices.find(d=>d.id==='fictional-host-001'),
+          dependants:appState.devices.filter(d=>d.virtualHostId==='fictional-host-001').map(d=>d.id)};
+      });
+      assert.equal(result.hostExists,false,'Baseline: deletion currently removes the referenced physical host');
+      assert.deepEqual(result.dependants,['fictional-vm-001','fictional-vm-002'],
+        'Baseline: dependent virtualHostId references currently remain orphaned');
+      assert(result.prompts.length>=1,'Deletion confirmation must have appeared');
+      console.log('OBSERVED M-005: host deleted while two fictional virtualHostId references remain');
+    });
+    await scenario('M-005 baseline orphan host validation', async page => {
+      const result = await page.evaluate(() => {
+        appState.devices.push({id:'fictional-orphan-vm',name:'Fictional orphan VM',
+          type:'Server - Virtual',mountType:'Desktop',location:'Unknown',
+          virtualHostId:'fictional-missing-host'});
+        return {issues:validateApplicationState(),hostId:appState.devices.at(-1).virtualHostId};
+      });
+      assert.equal(result.hostId,'fictional-missing-host');
+      assert.equal(result.issues.some(x=>/virtual.host|fictional-missing-host/i.test(x)),false,
+        'Baseline: general validation currently does not report orphan virtualHostId');
+      console.log('OBSERVED M-005: general validation did not flag fictional orphan host reference');
+    });
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode=1; });
