@@ -389,7 +389,8 @@ state.ipAllocations['192.168.40.31'] = {status:'Reserved',reservedForDeviceId:'o
 assert.throws(()=>ipamFixture.setDevicePrimaryIp(contender,'192.168.40.31'),/reserved for another device/,'reservation belongs to owner');
 assert.equal(contender.primaryIp,'','failed reservation claim leaves device unchanged');
 ipamFixture.setDevicePrimaryIp(owner,'192.168.40.31');
-assert.equal(state.ipAllocations['192.168.40.30'],undefined,'moving to owned reservation releases previous IP');
+assert.equal(state.ipAllocations['192.168.40.30'].status,'Available','moving to owned reservation releases previous IP');
+assert.equal(state.ipAllocations['192.168.40.30'].deviceId,'','moving to owned reservation clears previous IP owner');
 assert.equal(state.ipAllocations['192.168.40.31'].deviceId,'owner','reservation owner can claim IP');
 assert.equal(state.ipAllocations['192.168.40.31'].reservedForDeviceId,'owner','reservation metadata survives assignment');
 owner.ipReserved=true;
