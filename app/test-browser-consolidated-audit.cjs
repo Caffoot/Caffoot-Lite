@@ -342,6 +342,36 @@ const { chromium } = require('playwright');
       assert.equal(result.sourceHasIncomingGuard,true,'Conversion handler must check incoming host links');
       console.log('PASS M-005: conversion source guard present; full D13 form submission remains pending');
     });
+    await scenario('M-005 D13 actual conversion form handler protects hosted VMs', async page => {
+      const result = await page.evaluate(async () => {
+        const hostId='fictional-d13-host';
+        appState.subnets.push({id:'fictional-d13-subnet',name:'D13 subnet',kind:'network',cidr:'10.88.76.0/29',gateway:'10.88.76.1',vlan:3876});
+        appState.devices.push(
+          {id:hostId,name:'Fictional D13 host',type:'Server - Physical',mountType:'Desktop',location:'Unknown',status:'Active',primaryIp:'10.88.76.2'},
+          {id:'fictional-d13-vm',name:'Fictional D13 VM',type:'Server - Virtual',mountType:'Desktop',location:'Unknown',virtualHostId:hostId}
+        );
+        openDeviceModal(hostId);
+        const set=(id,value)=>{const el=document.getElementById(id);if(!el)throw Error('Missing form control '+id);el.value=value;el.dispatchEvent(new Event('change',{bubbles:true}));};
+        set('dev-type','Server - Virtual');
+        set('dev-name','Fictional D13 host');
+        set('dev-location','Unknown');
+        set('dev-mount-type','Desktop');
+        set('dev-subnet','fictional-d13-subnet');
+        set('dev-ip','10.88.76.2');
+        const notices=[];
+        const originalToast=showToast;
+        showToast=(message,level)=>notices.push({message,level});
+        try {await handleDeviceSubmit({preventDefault(){}},hostId)}
+        finally {showToast=originalToast}
+        return {hostType:appState.devices.find(d=>d.id===hostId)?.type,
+          vmHost:appState.devices.find(d=>d.id==='fictional-d13-vm')?.virtualHostId,
+          notices,conversionDialog:!!document.getElementById('phase130-conversion-dialog')};
+      });
+      assert.equal(result.hostType,'Server - Physical','Blocked conversion must preserve physical host type');
+      assert.equal(result.vmHost,'fictional-d13-host','Blocked conversion must preserve dependant link');
+      assert(result.notices.some(n=>n.level==='error'&&n.message.includes('Fictional D13 VM')),'Conversion must identify dependant');
+      assert.equal(result.conversionDialog,false,'Dependency guard must run before obsolete field confirmation');
+    });
     await scenario('M-005 baseline detached legacy backup host reference', async page => {
       const result=await page.evaluate(() => {
         const raw=JSON.parse(JSON.stringify(appState));
