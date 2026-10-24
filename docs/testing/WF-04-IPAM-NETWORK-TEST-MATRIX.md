@@ -52,3 +52,7 @@ Cross-check WF-03 primary IP tests, WF-01 storage and WF-02 rollback checks with
 ## Evidence update, 23 October 2026
 
 The initial planned-only status predates subsequent targeted Chromium evidence. M-031 bulk IPAM safety snapshot scenarios passed in [run 39957395113](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39957395113) and [run 39959581469](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39959581469). M-012 integrity repair safeguard scenarios passed in [run 39955498407](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39955498407). These are **specific executed cases**, not a complete subnet, VLAN, gateway, ownership or reservation matrix. M-006, M-009 and M-024 still need assessment. See [coverage register](WORKFLOW-VERIFICATION-COVERAGE-REGISTER.md). No new browser tests were executed for this documentation change.
+
+### M-006 proposed regression cases, 24 October 2026
+
+Status: NOT EXECUTED. Verify device IP reassignment retains old address notes and new address notes; device note edits do not overwrite IPAM notes; duplicate ownership, reservation and gateway restrictions; single and bulk release preserve metadata; bulk reservation replacement warning and protected addresses; cancelled operations and failed persistence rollback; historical JSON backup imports and reload; normalisation and integrity checks on Available records with retained metadata. Record individual browser evidence and actual outcomes before marking any case passed.
