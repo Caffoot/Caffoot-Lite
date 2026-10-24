@@ -271,9 +271,9 @@ const { chromium } = require('playwright');
       });
     }
 
-    // M-005 baseline characterisation only: these observations document the current
-    // missing host integrity safeguards. They are NOT future acceptance criteria.
-    await scenario('M-005 baseline incoming host deletion', async page => {
+    // M-005: deletion protection acceptance, with legacy validator and import
+    // characterisation retained separately until compatibility handling is designed.
+    await scenario('M-005 prevent deletion of host with dependants', async page => {
       const result = await page.evaluate(() => {
         appState.devices.push(
           {id:'fictional-host-001',name:'Fictional host',type:'Server - Physical',mountType:'Desktop',location:'Unknown'},
@@ -282,18 +282,22 @@ const { chromium } = require('playwright');
         );
         localStorage.setItem('caffoot_state',JSON.stringify(appState));
         const originalConfirm=window.confirm;
+        const originalToast=showToast;
         const prompts=[];
+        const notices=[];
         window.confirm=message=>{prompts.push(message);return true};
+        showToast=(message,level)=>{notices.push({message,level})};
         try { deleteDevice('fictional-host-001'); }
-        finally { window.confirm=originalConfirm; }
-        return {prompts,hostExists:!!appState.devices.find(d=>d.id==='fictional-host-001'),
+        finally { window.confirm=originalConfirm; showToast=originalToast; }
+        return {prompts,notices,hostExists:!!appState.devices.find(d=>d.id==='fictional-host-001'),
           dependants:appState.devices.filter(d=>d.virtualHostId==='fictional-host-001').map(d=>d.id)};
       });
-      assert.equal(result.hostExists,false,'Baseline: deletion currently removes the referenced physical host');
+      assert.equal(result.hostExists,true,'Host with dependent virtual devices must not be deleted');
       assert.deepEqual(result.dependants,['fictional-vm-001','fictional-vm-002'],
-        'Baseline: dependent virtualHostId references currently remain orphaned');
-      assert(result.prompts.length>=1,'Deletion confirmation must have appeared');
-      console.log('OBSERVED M-005: host deleted while two fictional virtualHostId references remain');
+        'All dependent references must remain unchanged');
+      assert.equal(result.prompts.length,0,'Unsafe deletion must stop before confirmation');
+      assert(result.notices.some(n=>n.level==='error'&&n.message.includes('Fictional VM 1')&&n.message.includes('Fictional VM 2')),'Guard must identify both dependants');
+      console.log('PASS M-005: deletion blocked and both dependent links preserved');
     });
     await scenario('M-005 baseline orphan host validation', async page => {
       const result = await page.evaluate(() => {
@@ -308,7 +312,7 @@ const { chromium } = require('playwright');
       console.log('OBSERVED M-005: general validation did not flag fictional orphan host reference');
     });
 
-    await scenario('M-005 baseline host conversion and orphan reference', async page => {
+    await scenario('M-005 conversion incoming dependency guard source check', async page => {
       const result = await page.evaluate(() => {
         appState.devices.push(
           {id:'fictional-conversion-host',name:'Fictional conversion host',type:'Server - Physical',mountType:'Desktop',location:'Unknown'},
@@ -324,8 +328,8 @@ const { chromium } = require('playwright');
         return {incoming,sourceHasIncomingGuard};
       });
       assert.equal(result.incoming,1);
-      assert.equal(result.sourceHasIncomingGuard,false);
-      console.log('OBSERVED M-005: conversion handler has no direct incoming virtualHostId guard; full D13 remains pending');
+      assert.equal(result.sourceHasIncomingGuard,true,'Conversion handler must check incoming host links');
+      console.log('PASS M-005: conversion source guard present; full D13 form submission remains pending');
     });
     await scenario('M-005 baseline detached legacy backup host reference', async page => {
       const result=await page.evaluate(() => {
