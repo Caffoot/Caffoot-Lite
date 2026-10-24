@@ -88,3 +88,38 @@ Retain D10 to D13 and D26 as the original baseline scenarios; do not treat H01 t
 ## PR #90 latest Chromium evidence, 24 October 2026
 
 [GitHub Actions consolidated Chromium run 40083327937](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40083327937) completed successfully against documentation commit `12cfa287ab36458b2b73b5632ab501068f609228`. This supersedes the historical statement above that the checks added at `919bf866` were awaiting results. The detached legacy backup candidate check and conversion handler source inspection are limited baseline evidence, not full FileReader import, device conversion form submission, safety snapshot, rehost, explicit unassignment, retirement or failed save acceptance tests. The earlier executed baseline confirms unsafe existing behaviour; it does not fix M-005. M-005 and the relevant WF-03/WF-06 acceptance gates remain open. These are GitHub Actions results, not locally executed tests. No application behaviour change, merge or release.
+
+
+### M-005 v1.3.1 implementation checkpoint, 24 October 2026
+
+On development branch `fix/v131-m005-host-relationship-guards`, an initial source change adds incoming `virtualHostId` dependency guards to `deleteDevice()` and physical server type conversion in `handleDeviceSubmit()`. Deletion and incompatible conversion now stop before changing the inventory when any device still references the physical host, with a message naming affected devices. This is an interim safety barrier only, not the agreed complete per dependant relationship review workflow. Explicit rehosting, unassignment with former host provenance, retirement, relationship diagram, hypervisor product and version handling, guest OS preservation, and older JSON import compatibility remain open. In particular, existing baseline Chromium tests characterising unsafe deletion will require revision into protective acceptance tests. **No tests have been executed for this new code yet.** No application merge or release. The master audit status and M-005 finding remain open. Product owner approved starting implementation in conversation on 24 October 2026.
+
+
+### M-005 protective test update, 24 October 2026
+
+Draft PR #121 on `fix/v131-m005-host-relationship-guards` now changes the consolidated Chromium M-005 deletion scenario from characterising the known unsafe baseline to asserting that a referenced host remains present, both virtual host links remain unchanged, no destructive confirmation appears, and the user sees both dependent names in an error message. The conversion scenario now asserts presence of an incoming reference guard by source inspection only; **full D13 form submission remains unexecuted**. Detached orphan backup characterisation remains unchanged pending the agreed compatibility workflow. These are committed test changes, **not executed passing tests**. Await the exact branch GitHub Actions result, then separately cover successful unreferenced host deletion, full conversion, persistence failure and older import flows. The M-005 finding and master audit remain open. No merge or release.
+
+
+### M-005 PR #121 first verified Chromium checkpoint, 24 October 2026
+
+GitHub Actions on branch head `6895d986143de9d2d6c1babfb19bfcc08bb4c2d0` reports completed success for **Audit consolidated Chromium regression**, **Validate Caffoot Lite release candidate**, **Release documentation consistency**, and **Git history secret scan**. These are executed CI workflows, not local manual tests. The consolidated suite now asserts protective blocking of host deletion with two dependants, preserved references and named feedback. The conversion check is **source inspection only**, not full D13 form submission. Legacy detached backup validation is a baseline characterisation, not full FileReader import. No evidence yet for mixed relationship decisions, unassignment provenance, retirement, hypervisor propagation, failed persistence or complete legacy restore. **M-005 remains open, master audit status unchanged, PR #121 draft and unmerged; no release.**
+
+
+### M-005 unreferenced host regression, 24 October 2026
+
+A new consolidated Chromium scenario on draft PR #121 checks that deleting a physical host with no incoming virtual host references remains possible after the new protective guard. This test was committed after the earlier four successful GitHub checks; **its result is pending** and must not be counted as passed until CI completes on the new head. The full device conversion submission D13, legacy FileReader import, failure rollback and per dependant relationship decisions remain outstanding. M-005 and the master audit status remain open; no merge or release.
+
+
+### M-005 conversion guard ordering, 24 October 2026
+
+Draft PR #121 now checks incoming hosted relationships **before** the existing obsolete field confirmation in `handleDeviceSubmit()`. This avoids asking the user to confirm a conversion that cannot proceed because dependant virtual servers still reference the host. The source change is committed on the issue branch, not merged into the release branch or `main`. Full browser form submission and confirmation ordering tests remain outstanding; do not report them as passed. M-005 and the master audit remain open. No release.
+
+
+### M-005 D13 device form regression submitted, 24 October 2026
+
+Draft PR #121 now includes a disposable Chromium D13 scenario which opens the actual physical host edit modal, changes its device type, fills the required fields, invokes `handleDeviceSubmit`, and asserts that the physical host type and dependant virtual host reference remain unchanged, a named error is shown, and the obsolete field confirmation does not appear. This goes beyond the earlier function source inspection, but is **not yet a verified passing test**; await GitHub Actions on the new branch head and investigate any fixture or UI failures. The complete interactive user click path, successful rehosting, explicit unassignment, retirement, failed persistence and full legacy FileReader import still require further coverage. M-005 and master audit remain open; no merge or release.
+
+
+### M-005 D13 CI verification, 24 October 2026
+
+GitHub Actions on draft PR #121 head `33c455d7d691272e2e1dd53004a9d49bbbb27f93` reports completed success for Audit consolidated Chromium regression, Validate Caffoot Lite release candidate, Release documentation consistency and Git history secret scan. The consolidated Chromium suite includes the D13 scenario opening the physical host edit modal and invoking the real device form handler, verifying blocked incompatible conversion, preserved dependent link, named feedback and no obsolete field confirmation. This is executed CI evidence, not merely source inspection, although the test invokes the handler directly rather than a full user click and submit path. Rehosting, unassignment with provenance, retirement, hypervisor eligibility and propagation, failed persistence and full FileReader legacy import remain unverified and unimplemented as appropriate. M-005 and master audit remain open. PR #121 stays draft, unmerged; no release.

@@ -5341,6 +5341,7 @@ function hierarchyValidateTypes(subnets) {
             if (event.key === 'Escape') {
                 event.preventDefault();
                 if(document.getElementById('phase18d-delete-dialog')){phase18DCancelDelete();return;}
+                if(document.getElementById('phase-m005-hypervisor-dialog')){phaseM005ResolveHypervisorRemoval(false);return;}
                 if(document.getElementById('phase130-conversion-dialog')){phase130ResolveDeviceConversion(false);return;}
                 if(document.getElementById('phase130-restore-dialog')){phase130ResolveRestore(false);return;}
                 if(document.getElementById('phase120-rack-correction-dialog')){phase120ResolveRackCorrection(false);return;}
@@ -5358,7 +5359,7 @@ function hierarchyValidateTypes(subnets) {
                 return;
             }
             if (event.key !== 'Tab') return;
-            const activeDialog=document.getElementById('phase130-conversion-dialog')||document.getElementById('phase120-rack-correction-dialog')||document.getElementById('phase18d-delete-dialog')||document.getElementById('phase120-discard-dialog');
+            const activeDialog=document.getElementById('phase-m005-hypervisor-dialog')||document.getElementById('phase130-conversion-dialog')||document.getElementById('phase120-rack-correction-dialog')||document.getElementById('phase18d-delete-dialog')||document.getElementById('phase120-discard-dialog');
             const items = Array.from((activeDialog||container).querySelectorAll('a[href],button:not([disabled]),input:not([disabled]):not([type="hidden"]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')).filter(el => el.getClientRects().length);
             if (!items.length) { event.preventDefault(); document.getElementById('modal-content').focus(); return; }
             // Safari can omit buttons/selects from its native Tab order depending on
@@ -5900,6 +5901,24 @@ function hierarchyValidateTypes(subnets) {
             const platformDetails=[['Operating system',deviceDetails.softwarePlatform||deviceDetails.os],['OS version',deviceDetails.softwareVersion],['Windows licence',deviceDetails.windowsLicence]].filter(([label])=>['server','computer'].includes(phase19BTypeGroups[String(d.type||'').toLowerCase().trim()]) || label==='Operating system' && activeFields.has('os')).filter(([,value])=>value!==undefined&&value!==null&&value!=='').map(([label,value])=>field(label,value)).join('');
             const historicalSnapshots = Array.isArray(d.previousTypeDetails) ? [...d.previousTypeDetails].reverse() : [];
             const historyRows = historicalSnapshots.map((snapshot,index)=>`<details class="rounded-xl border border-slate-300 dark:border-slate-600 p-3"><summary class="cursor-pointer font-semibold">${safe(snapshot.type||'Previous type')} — saved configuration ${index+1}</summary><dl class="phase14c-grid mt-3">${Object.entries(snapshot.details||{}).map(([key,value])=>field(phase19CDetailLabel(key,snapshot.type),typeof value==='boolean'?(value?'Yes':'No'):value)).join('')}</dl><button type="button" data-action="phase130-restore" data-id="${safe(d.id)}" data-index="${historicalSnapshots.length-1-index}" class="phase14c-primary mt-3">Restore Configuration</button></details>`).join('');
+            // M-005: read-only hosted guest visibility, including preserved legacy references.
+            const hostedGuests = d.type === 'Server - Physical'
+                ? appState.devices.filter(guest => guest.id !== d.id && guest.virtualHostId === d.id)
+                : [];
+            const hasRecordedHypervisor = d.type === 'Server - Physical' &&
+                (d.typeDetails?.serverService_Hypervisor === true || d.serverService_Hypervisor === true);
+            // Keep legacy hosted guests visible even when the hypervisor service was not recorded.
+            const showVirtualMachinesTab = d.type === 'Server - Physical' && (hasRecordedHypervisor || hostedGuests.length > 0);
+            const hypervisorNotice = showVirtualMachinesTab && !hasRecordedHypervisor
+                ? '<p role="status" class="text-sm text-amber-800 dark:text-amber-200 mb-3">Hosted virtual machines are recorded, but this server has no Hypervisor service selected. Existing relationships are preserved.</p>'
+                : '';
+            const hostingSection = d.type === 'Server - Physical'
+                ? section('Hosted virtual machines', 'fa-server', hostedGuests.length
+                    ? hostedGuests.map(guest => `<div class="phase14c-field"><dt>${safe(guest.name || guest.id)}</dt><dd><div class="flex flex-wrap items-center justify-between gap-2"><span>${safe(guest.type || 'Unknown type')} · ${safe(guest.status || 'Active')}</span><button type="button" data-action="phase14c-view-hosted-guest" data-id="${safe(guest.id)}" class="phase14c-primary shrink-0" aria-label="View details for ${safe(guest.name || guest.id)}">View details</button></div></dd></div>`).join('')
+                    : '<p class="text-sm text-slate-600 dark:text-slate-300">No hosted virtual machines recorded.</p>')
+                : d.virtualHostId
+                    ? section('Physical host', 'fa-server', field('Host', appState.devices.find(host => host.id === d.virtualHostId)?.name || 'Missing or unavailable host (legacy reference preserved)'))
+                    : '';
             const hardware = field('Manufacturer', d.manufacturer) + field('Model', d.model) + field('Serial number', d.serialNumber);
             const rackRows = mounted ? field('Rack', rack.name) + field('Face', d.face || 'front') + field('U position', uText) + field('Height', (Number(d.rackUHeight) || (uEnd-uStart+1) || 1) + 'U') : '';
             openModal(`<div class="phase14c-detail space-y-5 p-5 sm:p-7">
@@ -5910,13 +5929,18 @@ function hierarchyValidateTypes(subnets) {
                     <button type="button" data-action="close-modal" aria-label="Close device details" class="phase14c-close"><i class="fa-solid fa-xmark"></i></button>
                 </header>
                 <nav class="phase14c-tabs" role="tablist" aria-label="Device detail sections">
-                    ${[['overview','Overview'],['hardware','Hardware'],['network','Network'],['software','Software'],['location','Location'],...(historyRows?[['history','History']]:[])].map(([key,label],i)=>`<button type="button" role="tab" id="phase14c-tab-${key}" aria-controls="phase14c-panel-${key}" aria-selected="${i===0?'true':'false'}" tabindex="${i===0?'0':'-1'}" data-action="phase14c-tab" data-name="${key}" class="phase14c-tab ${i===0?'phase14c-tab-active':''}">${label}</button>`).join('')}
+                    ${[['overview','Overview'],...(showVirtualMachinesTab ? [['virtual-machines','Virtual Machines']] : []),['hardware','Hardware'],['network','Network'],['software','Software'],['location','Location'],...(historyRows?[['history','History']]:[])].map(([key,label],i)=>`<button type="button" role="tab" id="phase14c-tab-${key}" aria-controls="phase14c-panel-${key}" aria-selected="${i===0?'true':'false'}" tabindex="${i===0?'0':'-1'}" data-action="phase14c-tab" data-name="${key}" class="phase14c-tab ${i===0?'phase14c-tab-active':''}">${label}</button>`).join('')}
                 </nav>
                 <div class="phase14c-panels">
                     <div id="phase14c-panel-overview" role="tabpanel" aria-labelledby="phase14c-tab-overview" class="phase14c-panel">
                         ${section('Device overview', 'fa-circle-info', field('Device name', d.name) + field('Type', d.type) + field('Status', status) + field('Manufacturer', d.manufacturer) + field('Model', d.model) + field('Primary IP', d.primaryIp) + field('Location', d.location))}
+                        ${d.type === 'Server - Physical' ? '' : hostingSection}
                         ${d.notes ? `<section class="phase14c-section"><h4><i class="fa-solid fa-note-sticky mr-2" aria-hidden="true"></i>Notes</h4><p class="phase14c-notes">${safe(d.notes)}</p></section>` : ''}
                     </div>
+                    ${showVirtualMachinesTab ? `<div id="phase14c-panel-virtual-machines" role="tabpanel" aria-labelledby="phase14c-tab-virtual-machines" class="phase14c-panel" hidden>
+                        ${hypervisorNotice}
+                        ${hostingSection}
+                    </div>` : ''}
                     <div id="phase14c-panel-hardware" role="tabpanel" aria-labelledby="phase14c-tab-hardware" class="phase14c-panel" hidden>
                         ${section('Hardware & lifecycle', 'fa-microchip', hardware + (detailRows ? `<div class="phase19c-detail-subheading">Additional ${safe(d.type)} details</div>${detailRows}` : ''))}
                     </div>
@@ -7122,6 +7146,45 @@ function hierarchyValidateTypes(subnets) {
             if (resolve) resolve(accepted);
         }
 
+        let phaseM005HypervisorResolve = null;
+        function phaseM005ConfirmHypervisorRemoval(hostName, guests) {
+            if (document.getElementById('phase-m005-hypervisor-dialog')) return Promise.resolve(false);
+            return new Promise(resolve => {
+                phaseM005HypervisorResolve = resolve;
+                const overlay = document.createElement('div');
+                overlay.id = 'phase-m005-hypervisor-dialog';
+                overlay.setAttribute('role', 'alertdialog');
+                overlay.setAttribute('aria-modal', 'true');
+                overlay.setAttribute('aria-labelledby', 'phase-m005-hypervisor-title');
+                overlay.setAttribute('aria-describedby', 'phase-m005-hypervisor-description');
+                overlay.className = 'absolute inset-0 z-50 flex items-center justify-center bg-slate-950/65 p-4 rounded-2xl';
+                overlay.innerHTML = `<div class="w-full max-w-lg rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 p-6 shadow-2xl space-y-4">
+                    <h3 id="phase-m005-hypervisor-title" class="text-lg font-bold">Remove Hypervisor service?</h3>
+                    <p id="phase-m005-hypervisor-description" class="text-sm">Removing the Hypervisor service from ${escapeHtml(hostName)} will leave these virtual machines assigned to this host:</p>
+                    <ul class="list-disc pl-5 max-h-48 overflow-y-auto text-sm">${guests.map(guest=>'<li>'+escapeHtml(guest.name||guest.id)+'</li>').join('')}</ul>
+                    <p class="text-sm">The Virtual Machines tab will remain visible with a configuration warning. No guest data or host relationships will be changed.</p>
+                    <div class="flex flex-wrap justify-end gap-3">
+                        <button type="button" data-action="phase-m005-hypervisor-cancel" class="h-11 px-4 rounded-xl border border-slate-400 dark:border-slate-500 caffoot-modal-cancel">Keep Editing</button>
+                        <button type="button" data-action="phase-m005-hypervisor-accept" class="h-11 px-4 rounded-xl bg-rose-700 text-white font-bold">Remove Hypervisor service</button>
+                    </div>
+                </div>`;
+                const content = document.getElementById('modal-content');
+                if (getComputedStyle(content).position === 'static') content.style.position = 'relative';
+                overlay._returnFocus = document.activeElement;
+                content.appendChild(overlay);
+                overlay.querySelector('[data-action="phase-m005-hypervisor-cancel"]').focus();
+            });
+        }
+        function phaseM005ResolveHypervisorRemoval(accepted) {
+            const overlay = document.getElementById('phase-m005-hypervisor-dialog');
+            const focus = overlay?._returnFocus;
+            overlay?.remove();
+            const resolve = phaseM005HypervisorResolve;
+            phaseM005HypervisorResolve = null;
+            if (focus?.isConnected) focus.focus();
+            if (resolve) resolve(accepted);
+        }
+
         async function handleDeviceSubmit(e, deviceId) {
             e.preventDefault();
             const name = document.getElementById('dev-name').value.trim();
@@ -7167,6 +7230,24 @@ function hierarchyValidateTypes(subnets) {
                 if (validationError) return showToast(validationError, 'error');
             }
             const existingDevice = deviceId ? getDeviceById(deviceId) : null;
+            // M-005: never convert a host while its dependants still reference it.
+            if (existingDevice && existingDevice.type === 'Server - Physical' && type !== 'Server - Physical') {
+                const dependants = appState.devices.filter(d => d.id !== deviceId && d.virtualHostId === deviceId);
+                if (dependants.length) return showToast('Resolve hosted device relationships before changing this physical server type: ' + dependants.map(d => d.name || d.id).join(', '), 'error');
+            }
+            // M-005: explicit acknowledgement before disabling the hypervisor on a host
+            // with existing guests. Guest links are never silently changed or removed.
+            if (existingDevice && existingDevice.type === 'Server - Physical' && type === 'Server - Physical') {
+                const wasHypervisor = existingDevice.typeDetails?.serverService_Hypervisor === true || existingDevice.serverService_Hypervisor === true;
+                const remainsHypervisor = typeDetails.serverService_Hypervisor === true;
+                if (wasHypervisor && !remainsHypervisor) {
+                    const hostedGuests = appState.devices.filter(guest => guest.id !== deviceId && guest.virtualHostId === deviceId);
+                    if (hostedGuests.length) {
+                        if (!await phaseM005ConfirmHypervisorRemoval(existingDevice.name, hostedGuests)) return;
+                        if (getDeviceById(deviceId) !== existingDevice || !document.getElementById('dev-type') || document.getElementById('dev-type').value !== type) return;
+                    }
+                }
+            }
             let conversionSnapshot = null;
             // Type-specific values remain in the unsaved draft when switching types.
             // Only known, incompatible populated fields are eligible for confirmed removal.
@@ -7207,6 +7288,9 @@ function hierarchyValidateTypes(subnets) {
         function deleteDevice(deviceId) {
             const device=getDeviceById(deviceId);
             if(!device) return;
+            // M-005: preserve incoming host references until every dependant is reviewed.
+            const hostedDependants = appState.devices.filter(d => d.id !== deviceId && d.virtualHostId === deviceId);
+            if (hostedDependants.length) return showToast('Resolve hosted device relationships before deleting this host: ' + hostedDependants.map(d => d.name || d.id).join(', '), 'error');
             const related=Object.keys(appState.ipAllocations).filter(ip=>appState.ipAllocations[ip]?.deviceId===deviceId);
             const reserved=Object.keys(appState.ipAllocations).filter(ip=>appState.ipAllocations[ip]?.reservedForDeviceId===deviceId);
             const message=`Delete device ${device.name}?\n\nPrimary IP: ${device.primaryIp||'none'}\nLinked IPAM records: ${related.length}\nOther reservations: ${reserved.length}\nRack: ${device.rackId?'mounted':'not mounted'}\n\nThis cannot be undone. Export a backup first.`;
@@ -8448,6 +8532,7 @@ function hierarchyValidateTypes(subnets) {
                 case 'phase14c-tab': phase14CSelectTab(name); break;
                 case 'archived-software-remove': phase120ConfirmArchivedUninstall(id,name); break;
                 case 'archived-software-confirm-uninstall': phase120RecordArchivedUninstall(id,name); break;
+                case 'phase14c-view-hosted-guest': phase14CViewDevice(id); break;
                 case 'phase14c-edit': closeModal(); openDeviceModal(id); break;
                 case 'phase14c-duplicate': closeModal(); duplicateDevice(id); break;
                 case 'phase14c-delete': closeModal(); deleteDevice(id); break;
@@ -8472,6 +8557,8 @@ function hierarchyValidateTypes(subnets) {
                 case 'server-service-confirm-archive': phase120ArchiveServerService(name); break;
                 case 'phase18d-add': phase18DCommit(target.dataset.kind,'add','',document.getElementById('phase18d-new')?.value||''); break;
                 case 'phase18d-search': phase18DSearch[target.dataset.kind]=document.getElementById('phase18d-search')?.value||'';phase18DOpen(target.dataset.kind); break;
+                case 'phase-m005-hypervisor-cancel': phaseM005ResolveHypervisorRemoval(false); break;
+                case 'phase-m005-hypervisor-accept': phaseM005ResolveHypervisorRemoval(true); break;
                 case 'phase130-conversion-cancel': phase130ResolveDeviceConversion(false); break;
                 case 'phase130-conversion-accept': phase130ResolveDeviceConversion(true); break;
                 case 'phase120-rack-correction-cancel': phase120ResolveRackCorrection(false); break;
