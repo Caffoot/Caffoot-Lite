@@ -528,3 +528,15 @@ assert(subnetSubmitCode.includes('const beforeSubnetSave = JSON.stringify(appSta
 assert(subnetSubmitCode.includes('appState = JSON.parse(beforeSubnetSave);'), 'Failed subnet saves must restore inventory');
 assert(subnetSubmitCode.includes('selectedSubnetId = previousSubnetSelection;'), 'Failed subnet saves must restore selection');
 console.log('Subnet gateway and failed-save rollback safeguards passed.');
+
+
+// M-006: preserve notes for a previously unrecorded Available address.
+const ipSubmitStart = html.indexOf('function handleIpSubmit(e, ip)');
+const ipSubmitEnd = html.indexOf('\n        function ', ipSubmitStart + 1);
+assert(ipSubmitStart >= 0 && ipSubmitEnd > ipSubmitStart, 'IPAM edit handler must exist');
+const ipSubmitCode = html.slice(ipSubmitStart, ipSubmitEnd);
+assert(ipSubmitCode.includes("if (existing || hostname || notes) appState.ipAllocations[ip] = { ...existing, status: 'Available', deviceId: '', reservedForDeviceId: '', hostname, notes };"),
+  'Available address with new notes or hostname must create an allocation record');
+assert(ipSubmitCode.includes('else delete appState.ipAllocations[ip];'),
+  'failed new Available allocation save must restore the absent record');
+console.log('M-006 Available address notes and failed-save source contracts passed.');
