@@ -5900,6 +5900,17 @@ function hierarchyValidateTypes(subnets) {
             const platformDetails=[['Operating system',deviceDetails.softwarePlatform||deviceDetails.os],['OS version',deviceDetails.softwareVersion],['Windows licence',deviceDetails.windowsLicence]].filter(([label])=>['server','computer'].includes(phase19BTypeGroups[String(d.type||'').toLowerCase().trim()]) || label==='Operating system' && activeFields.has('os')).filter(([,value])=>value!==undefined&&value!==null&&value!=='').map(([label,value])=>field(label,value)).join('');
             const historicalSnapshots = Array.isArray(d.previousTypeDetails) ? [...d.previousTypeDetails].reverse() : [];
             const historyRows = historicalSnapshots.map((snapshot,index)=>`<details class="rounded-xl border border-slate-300 dark:border-slate-600 p-3"><summary class="cursor-pointer font-semibold">${safe(snapshot.type||'Previous type')} — saved configuration ${index+1}</summary><dl class="phase14c-grid mt-3">${Object.entries(snapshot.details||{}).map(([key,value])=>field(phase19CDetailLabel(key,snapshot.type),typeof value==='boolean'?(value?'Yes':'No'):value)).join('')}</dl><button type="button" data-action="phase130-restore" data-id="${safe(d.id)}" data-index="${historicalSnapshots.length-1-index}" class="phase14c-primary mt-3">Restore Configuration</button></details>`).join('');
+            // M-005: read-only hosted guest visibility, including preserved legacy references.
+            const hostedGuests = d.type === 'Server - Physical'
+                ? appState.devices.filter(guest => guest.id !== d.id && guest.virtualHostId === d.id)
+                : [];
+            const hostingSection = d.type === 'Server - Physical'
+                ? section('Hosted virtual machines', 'fa-server', hostedGuests.length
+                    ? hostedGuests.map(guest => field(guest.name || guest.id, (guest.type || 'Unknown type') + ' · ' + (guest.status || 'Active'))).join('')
+                    : '<p class="text-sm text-slate-600 dark:text-slate-300">No hosted virtual machines recorded.</p>')
+                : d.virtualHostId
+                    ? section('Physical host', 'fa-server', field('Host', appState.devices.find(host => host.id === d.virtualHostId)?.name || 'Missing or unavailable host (legacy reference preserved)'))
+                    : '';
             const hardware = field('Manufacturer', d.manufacturer) + field('Model', d.model) + field('Serial number', d.serialNumber);
             const rackRows = mounted ? field('Rack', rack.name) + field('Face', d.face || 'front') + field('U position', uText) + field('Height', (Number(d.rackUHeight) || (uEnd-uStart+1) || 1) + 'U') : '';
             openModal(`<div class="phase14c-detail space-y-5 p-5 sm:p-7">
@@ -5915,6 +5926,7 @@ function hierarchyValidateTypes(subnets) {
                 <div class="phase14c-panels">
                     <div id="phase14c-panel-overview" role="tabpanel" aria-labelledby="phase14c-tab-overview" class="phase14c-panel">
                         ${section('Device overview', 'fa-circle-info', field('Device name', d.name) + field('Type', d.type) + field('Status', status) + field('Manufacturer', d.manufacturer) + field('Model', d.model) + field('Primary IP', d.primaryIp) + field('Location', d.location))}
+                        ${hostingSection}
                         ${d.notes ? `<section class="phase14c-section"><h4><i class="fa-solid fa-note-sticky mr-2" aria-hidden="true"></i>Notes</h4><p class="phase14c-notes">${safe(d.notes)}</p></section>` : ''}
                     </div>
                     <div id="phase14c-panel-hardware" role="tabpanel" aria-labelledby="phase14c-tab-hardware" class="phase14c-panel" hidden>
