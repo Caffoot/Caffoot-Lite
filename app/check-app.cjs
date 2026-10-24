@@ -596,3 +596,23 @@ assert.equal(normalisedLegacy.ipAllocations['192.168.40.10'].deviceId, 'legacy-d
 assert.equal(normalisedLegacy.ipAllocations['192.168.40.11'].reservedForDeviceId, 'retired-device', 'import must not silently rewrite historical reservation reference');
 assert.equal(normalisedLegacy.ipAllocations['192.168.40.11'].notes, 'Historical reservation', 'import must preserve historical reservation notes');
 console.log('M-006 historical JSON normalisation runtime fixture passed.');
+
+
+// Exercise the actual legacy backup migration entry point, not only normaliseState.
+const migrationStart = html.indexOf('function phase20MigrateBackup(raw)');
+const migrationEnd = html.indexOf('function exportData()', migrationStart);
+assert(migrationStart >= 0 && migrationEnd > migrationStart, 'production migration helper must exist');
+legacyContext.phase20ValidateBackupVersion = raw => {
+  assert.equal(Object.prototype.hasOwnProperty.call(raw, 'caffootBackup'), false, 'fixture must be a legacy unversioned export');
+  return 0;
+};
+legacyContext.phase16CLegacyMountRepairs = () => [];
+vm.runInContext(html.slice(migrationStart, migrationEnd), legacyContext);
+const legacyInput = JSON.parse(JSON.stringify(legacyBackup));
+const beforeMigration = JSON.stringify(legacyInput);
+const migratedLegacy = legacyContext.phase20MigrateBackup(legacyInput);
+assert.equal(JSON.stringify(legacyInput), beforeMigration, 'migration must not mutate historical input backup');
+assert.equal(migratedLegacy.ipAllocations['192.168.40.10'].notes, 'Historical address notes', 'migration must retain address notes');
+assert.equal(migratedLegacy.ipAllocations['192.168.40.11'].reservedForDeviceId, 'retired-device', 'migration must retain historical reservation reference');
+assert.equal(migratedLegacy.ipAllocations['192.168.40.11'].notes, 'Historical reservation', 'migration must retain reservation notes');
+console.log('M-006 legacy backup migration runtime fixture passed.');
