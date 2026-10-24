@@ -1,12 +1,12 @@
 # GitHub issue migration register
 
-**Status:** Mapping in progress. v1.3.1 issues #91 to #95, v1.3.2 issues #96 to #99 and v1.3.3 issues #100 to #103 created; milestones and Project setup pending. **Date:** 24 October 2026. **Published baseline:** v1.3.0.
+**Status:** Mapping in progress. v1.3.1 issues #91 to #95, v1.3.2 issues #96 to #99 and v1.3.3 issues #100 to #103 created; cross release issues #104 and #105 created; milestones and Project setup pending. **Date:** 24 October 2026. **Published baseline:** v1.3.0.
 
 ## Rules
 
 This register is a proposed GitHub planning index derived from the [central findings programme](../audits/AUDIT-FINDINGS-REMEDIATION-PROGRAMME.md), not a replacement for it. The release allocations are provisional. Keep original M identifiers, finding dispositions, browser evidence, historical decisions and test IDs. A merged correction is not a published release. M-030 is a mandatory gate for every release. Do not convert closed M-021 into new implementation work.
 
-Before creating a GitHub issue, check whether an existing issue or PR already represents it. The only open repository entries seen in the current issue listing were PR #90 and issue #50. Project and milestone existence have not yet been verified through the available connector.
+Before creating a GitHub issue, check whether an existing issue or PR already represents it. Earlier inventory described #50 as an issue; live verification confirmed #50 is a draft pull request. PR #90 is also a draft pull request. Project and milestone existence have not yet been verified through the available connector.
 
 ## Proposed v1.3.1 inventory integrity issues
 
@@ -40,12 +40,12 @@ Before creating a GitHub issue, check whether an existing issue or PR already re
 
 | Group | Findings or source | Scope |
 | --- | --- | --- |
-| Mandatory documentation gate for every release | M-030 | Technical workflows, test matrices, master audit, findings, roadmap, version statements and release evidence must agree |
-| Optional Docker and database architecture | Existing issue [#50](https://github.com/Caffoot/Caffoot-Lite/issues/50), [root roadmap](../../ROADMAP.md) | Preserve standalone HTML indefinitely; optional user management and migration; no implementation implied |
+| [Mandatory documentation gate, issue #104](https://github.com/Caffoot/Caffoot-Lite/issues/104) | M-030 | Technical workflows, test matrices, master audit, findings, roadmap, version statements and release evidence must agree |
+| [Optional Docker and database architecture, issue #105](https://github.com/Caffoot/Caffoot-Lite/issues/105) | Existing draft [PR #50](https://github.com/Caffoot/Caffoot-Lite/pull/50), [root roadmap](../../ROADMAP.md) | Preserve standalone HTML indefinitely; optional user management and migration; no implementation implied |
 | Future optional inventory component links | [v1.3.x design review](V1.3X-MAINTENANCE-DESIGN-REVIEW.md) | One level optional components and connected device links, no mandatory recursive hierarchy |
 
 ## Reconciliation
 
-All original M-001 through M-031 identifiers are represented in the candidate groups: M-001 to M-029 and M-031 have one primary allocation, M-030 is cross release. M-021 is retained as a closed evidence item. Existing issue #50 is linked rather than duplicated. Draft PR #90 remains the existing documentation change surface and must not be mistaken for a release.
+All original M-001 through M-031 identifiers are represented in the candidate groups: M-001 to M-029 and M-031 have one primary allocation, M-030 is cross release. M-021 is retained as a closed evidence item. Existing draft PR #50 is retained as architecture documentation and linked from new development issue #105; it is not an issue. Draft PR #90 remains the existing documentation change surface and must not be mistaken for a release.
 
-GitHub issues [#91](https://github.com/Caffoot/Caffoot-Lite/issues/91) through [#95](https://github.com/Caffoot/Caffoot-Lite/issues/95) track v1.3.1; [#96](https://github.com/Caffoot/Caffoot-Lite/issues/96) through [#99](https://github.com/Caffoot/Caffoot-Lite/issues/99) track proposed v1.3.2 work; [#100](https://github.com/Caffoot/Caffoot-Lite/issues/100) through [#103](https://github.com/Caffoot/Caffoot-Lite/issues/103) track proposed v1.3.3 work. No GitHub Project, milestone or new branch is claimed. This mapping does not authorise application changes. Before implementation or publication, verify current GitHub Project and milestone configuration, review proposed issue grouping with the product owner, and reconcile any created items back to this register and the central audit. No browser tests executed for this planning change.
+GitHub issues [#91](https://github.com/Caffoot/Caffoot-Lite/issues/91) through [#95](https://github.com/Caffoot/Caffoot-Lite/issues/95) track v1.3.1; [#96](https://github.com/Caffoot/Caffoot-Lite/issues/96) through [#99](https://github.com/Caffoot/Caffoot-Lite/issues/99) track proposed v1.3.2 work; [#100](https://github.com/Caffoot/Caffoot-Lite/issues/100) through [#103](https://github.com/Caffoot/Caffoot-Lite/issues/103) track proposed v1.3.3 work. Cross release documentation gate [#104](https://github.com/Caffoot/Caffoot-Lite/issues/104) and v1.4 architecture issue [#105](https://github.com/Caffoot/Caffoot-Lite/issues/105) are open. No GitHub Project, milestone or new branch is claimed. This mapping does not authorise application changes. Before implementation or publication, verify current GitHub Project and milestone configuration, review proposed issue grouping with the product owner, and reconcile any created items back to this register and the central audit. No browser tests executed for this planning change.
