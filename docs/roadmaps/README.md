@@ -10,3 +10,5 @@ These documents describe the published baseline or recorded proposals as indicat
 
 - [GitHub planning and contributor handover](GITHUB-PROJECT-AND-CONTRIBUTOR-PLAN.md): agreed Project, milestone, issue and branch model; preservation of audit decisions and evidence; Project configured, individual issue membership verification outstanding
 - [GitHub issue migration register](GITHUB-ISSUE-MIGRATION-REGISTER.md): proposed issue groups covering all 31 original audit findings and v1.4 continuity
+
+- [Proposed v1.5.0 to v1.9.0 planning issues](GITHUB-ISSUE-MIGRATION-REGISTER.md#proposed-v150-to-v190-github-planning-checkpoint-24-october-2026): future release scopes and independent evidence gates; milestone and Project membership checks outstanding
