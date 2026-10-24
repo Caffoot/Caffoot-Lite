@@ -91,3 +91,8 @@ At initial issue creation the five proposed milestones were not yet available th
 ### Milestone assignment verification, 24 October 2026
 
 The product owner confirmed the creation of GitHub milestones #5 to #9 for proposed releases v1.5.0 to v1.9.0. GitHub then accepted the milestone assignments for all ten new issues: v1.5.0 milestone #5 issues #110 and #115; v1.6.0 milestone #6 issues #111 and #116; v1.7.0 milestone #7 issues #112 and #117; v1.8.0 milestone #8 issues #113 and #118; v1.9.0 milestone #9 issues #114 and #119. Each update response returned the intended numeric milestone. This supersedes the earlier statement that milestone creation and assignment remained outstanding. A subsequent independent fetch of all ten issue records confirmed their numeric milestone values #5 to #9. Project membership remains to be checked individually. No application tests were executed; no application code was changed, merged or released.
+
+
+### GitHub Project board verification, 24 October 2026
+
+The product owner supplied two screenshots of the public Caffoot Lite Development Project board. The first visibly showed release evidence gate issues #115 to #119, each in Backlog with the corresponding v1.5.0 to v1.9.0 milestone. The second visibly showed planning issues #110 to #114 in Backlog with their matching milestone labels. The board displayed 29 Backlog items, consistent with the previously recorded 19 existing items plus these ten new issues. This confirms Project membership and Backlog status for all ten new issues at the screenshot checkpoint. The earlier separate #91 Project association discrepancy has not been individually rechecked and remains open. No application tests were executed and no application behaviour was changed.
