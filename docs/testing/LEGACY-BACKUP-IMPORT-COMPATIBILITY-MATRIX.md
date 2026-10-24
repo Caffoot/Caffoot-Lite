@@ -57,3 +57,19 @@ v1.0.0 has the older `phase19BDefaultServerFunctions` catalogue, including speci
 The v1.0.0 `phase20MigrateBackup` delegates directly to `normaliseState` on a detached copy. By v1.2.0, the import migration also detects and records legacy mounting repairs for user review. v1.3.0 retains this approach and adds device type conversion safeguards through `phase130ObsoleteDeviceFields`. Therefore migration and editing are separate safety boundaries; tests must cover both.
 
 **Next evidence required:** Compare persisted `device.typeDetails`, installed software keys, `serverFunctions` entries and host relationship fields against sanitised old backup fixtures. No automatic aliases approved yet. No browser tests executed.
+
+## Persisted field comparison, 24 October 2026
+
+Read-only inspection of published source at `v1.0.0`, `v1.2.0` and `v1.3.0` confirms the following distinctions:
+
+| Field or structure | Observed history | Migration decision |
+| --- | --- | --- |
+| `device.typeDetails` | Used in all three releases | Preserve the complete object, including unknown and historical keys; do not assume obsolete UI fields are disposable |
+| `appState.serverFunctions` | Managed catalogue exists in all three | Preserve custom keys, labels and selections |
+| `appState.installedSoftware` | Managed catalogue exists in all three; later releases add richer archive and suggestion handling | Preserve records, labels, device type applicability and archive status |
+| `device.virtualPlatform` | Explicit virtual machine field in v1.2.0 and v1.3.0 | Preserve original platform; do not infer a physical host's platform without evidence |
+| `device.virtualHostId` | Explicit host reference in v1.2.0 and v1.3.0, validated against physical server IDs on edit | Preserve valid IDs; flag broken references, never silently reassign |
+| `device.previousTypeDetails` | Historical conversion snapshots in v1.3.0; not observed in v1.0.0 or v1.2.0 inspected source | Preserve all snapshots on import and subsequent export; absence in older backups is not an error |
+| `softwarePlatform` | Observed in v1.2.0 and v1.3.0, not in v1.0.0 search | Do not synthesise an OS or software classification from an absent field |
+
+**Safety implication:** Shared field names do not guarantee that every value has the same meaning. Compare representative JSON backup fixtures before asserting any automatic conversion. Existing `phase130ObsoleteDeviceFields` and `previousTypeDetails` in v1.3.0 protect type conversions; they must not be confused with automatic backup migration. This is source inspection only, not an executed restore or save test.
