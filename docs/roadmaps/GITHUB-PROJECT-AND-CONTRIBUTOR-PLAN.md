@@ -1,6 +1,6 @@
 # GitHub planning and contributor handover
 
-**Status:** Agreed approach; board and milestone setup pending. **Baseline:** Published v1.3.0. **Recorded:** 24 October 2026.
+**Status:** Four release milestones created and issues assigned; central Project board setup pending. **Baseline:** Published v1.3.0. **Recorded:** 24 October 2026.
 
 ## Purpose
 
@@ -45,7 +45,7 @@ Pull requests must link their issue and follow the existing [pull request checkl
 4. Create or configure the Project and milestones only through authorised GitHub access, then link existing issues first and create missing focused issues as needed.
 5. Review the board against the central audit register and roadmaps. Do not mark anything done without implementation, verification, documentation reconciliation and required approval.
 
-**Current checkpoint:** Planning issues #91 to #105 have been created, including the finite permanent documentation gate setup #104 and v1.4 planning issue #105. Release specific documentation and evidence approval issues #106 to #109 are also open for v1.3.1, v1.3.2, v1.3.3 and v1.4.0 respectively. M-030 remains a permanent policy after #104 eventually closes; each release must complete its own gate. Existing draft PR #50 is architecture documentation, not a tracking issue; draft PR #90 remains the documentation change surface. No GitHub Project, milestone, release branch or application behaviour change has been created. Project and milestone inventory could not be verified using the currently available repository connector endpoint.
+**Current checkpoint:** Planning issues #91 to #105 have been created, including the finite permanent documentation gate setup #104 and v1.4 planning issue #105. Release specific documentation and evidence approval issues #106 to #109 are also open for v1.3.1, v1.3.2, v1.3.3 and v1.4.0 respectively. M-030 remains a permanent policy after #104 eventually closes; each release must complete its own gate. Existing draft PR #50 is architecture documentation, not a tracking issue; draft PR #90 remains the documentation change surface. The product owner created milestones #1 to #4 and GitHub confirmed release-specific issue assignments: v1.3.1 (#91 to #95, #106), v1.3.2 (#96 to #99, #107), v1.3.3 (#100 to #103, #108), and v1.4.0 (#105, #109). Cross release issue #104 has no milestone. No GitHub Project, release branch or application behaviour change has been created. The available connector cannot list or create Projects or milestones, so the Project board setup still requires authorised GitHub interface access.
 
 ## Proposed issue inventory
 
