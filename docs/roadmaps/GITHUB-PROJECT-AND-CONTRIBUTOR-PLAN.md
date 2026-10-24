@@ -50,3 +50,9 @@ Pull requests must link their issue and follow the existing [pull request checkl
 ## Proposed issue inventory
 
 The [GitHub issue migration register](GITHUB-ISSUE-MIGRATION-REGISTER.md) maps all 31 original audit findings into proposed issue groups and release milestones without changing finding status. Review existing issues and Project configuration before creating duplicates.
+
+## GitHub Project automation verification, 24 October 2026
+
+The product owner supplied screenshots of the Project workflow settings. Three workflows were confirmed enabled: **Auto-add to project** (repository `Caffoot-Lite`, filter `is:issue is:open`), **Item added to project** (sets status to Backlog for issues and pull requests), and **Auto-add sub-issues to project** (adds child issues of existing Project items). The following were confirmed disabled: **Auto-close issue**, **Item closed**, **Pull request linked to issue**, and **Pull request merged**. The screenshots show three enabled workflows after the owner disabled automatic issue closure. These are configuration observations, not proof that each automation has been exercised end to end.
+
+Moving a card to Done does not itself establish completed verification, documentation reconciliation or product owner approval. GitHub Project status changes remain possible for users with editing permission; the workflow settings are not an access control mechanism. Closing issues and merging or publishing releases require the existing documented approval and evidence gates. The Project configuration was reviewed visually, without application tests. The Project URL and a live automated trigger test remain independently unverified.
