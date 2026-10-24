@@ -109,3 +109,9 @@ The product owner approved the **code once, use many** principle for Save, Cance
 **Approved design direction, not current application behaviour:** Keep a single Firewall, Router and NAS type respectively, each with a Physical or Virtual deployment choice. Physical displays appropriate hardware details; Virtual displays eligible physical hypervisor host selection, inherited hypervisor platform and independent guest OS/version. Preserve existing records, historic/custom values and import compatibility. Unlike Desktop and Virtual Desktop, the type alone does not determine deployment. See [maintenance design review](../roadmaps/V1.3X-MAINTENANCE-DESIGN-REVIEW.md).
 
 **Outstanding:** Trace save/load and type conversion, define legacy defaults, NAS storage/RAID rules, firewall interfaces, router ports, and WF-03/WF-07/WF-08 browser scenarios. No tests executed or code changes authorised.
+
+## Networking device deployment decisions, 24 October 2026
+
+**Agreed future behaviour:** Switch, Layer 3 Switch and Access Point are physical only. Wireless LAN Controller can be Physical or Virtual; virtual controllers may reference eligible physical hypervisor hosts and keep their own controller OS/version. Use shared core fields for Switch and Layer 3 Switch while allowing meaningful differences. A cloud managed access point is still physical. No redundant deployment selection for fixed types.
+
+**Current source mismatch:** `phase19BTypeGroups` does not map Layer 3 Switch to the switch detailed profile, though `phase120PlatformGroup` maps its software suggestions to switch. Wireless LAN Controller uses the generic network detail profile but controller software suggestions. These are source findings, not browser verified defects. Preserve legacy/custom records and confirm field applicability before implementation. No tests executed.
