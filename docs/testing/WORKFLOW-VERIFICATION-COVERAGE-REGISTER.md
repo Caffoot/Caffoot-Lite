@@ -46,3 +46,7 @@ PR #89 [release documentation consistency run 39984994151](https://github.com/Ca
 ## Maintenance design verification carry-forward, 24 October 2026
 
 WF-03 device conversions and historical/custom type preservation, WF-08 software and server service catalogue behaviour, WF-07 form/confirmation usability and WF-06 backup/import compatibility remain **pending execution** against the proposed v1.3.x changes. The [WF-03 matrix](WF-03-DEVICE-LIFECYCLE-TEST-MATRIX.md) now records targeted scenarios. Design agreement and source inspection are not evidence of test passes. Refer to the [design review](../roadmaps/V1.3X-MAINTENANCE-DESIGN-REVIEW.md), [technical workflows](../workflows/TECHNICAL-WORKFLOWS.md) and [master audit](../audits/V1.3.0-DOCUMENTATION-COVERAGE-AUDIT.md). Original P12 limitations remain open.
+
+## WF-06 import migration verification pending, 24 October 2026
+
+**Not executed:** Test older JSON device type aliases, hypervisor/service mapping, software versus OS classification, unknown/custom preservation, ambiguous correction approval/cancellation, legacy mount and AP reviews, repeated import idempotence, backup round trips, malformed files, integrity failures and failed save rollback. This is agreed design only, not passed verification. See [design review](../roadmaps/V1.3X-MAINTENANCE-DESIGN-REVIEW.md).
