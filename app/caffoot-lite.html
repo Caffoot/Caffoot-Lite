@@ -5170,7 +5170,7 @@ function hierarchyValidateTypes(subnets) {
                         return;
                     }
                 }
-                if (existing) appState.ipAllocations[ip] = { ...existing, status: 'Available', deviceId: '', reservedForDeviceId: '', hostname, notes };
+                if (existing || hostname || notes) appState.ipAllocations[ip] = { ...existing, status: 'Available', deviceId: '', reservedForDeviceId: '', hostname, notes };
             } else {
                 const existing = appState.ipAllocations[ip] || {};
                 let deviceId = existing.deviceId || '';
