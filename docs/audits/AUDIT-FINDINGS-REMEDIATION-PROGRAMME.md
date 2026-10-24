@@ -289,3 +289,9 @@ The [maintenance design review](../roadmaps/V1.3X-MAINTENANCE-DESIGN-REVIEW.md) 
 ## Legacy import mapping plan cross-reference, 24 October 2026
 
 The [legacy import compatibility matrix](../testing/LEGACY-BACKUP-IMPORT-COMPATIBILITY-MATRIX.md) records source-inspected backup export/import entry points, mapping categories and missing fixture evidence. WF-06 migration verification remains open; no finding closed.
+
+## Open investigation: hosted virtual device relationship integrity, 24 October 2026
+
+Source inspection identified a potential gap: `deleteDevice` does not inspect virtual dependants, and the general integrity validator does not appear to validate `virtualHostId`, although the virtual server edit form checks a selected physical host. Historical source inspection shows the field from v1.2.0, but not v1.0.0. This is an **open investigation**, not a reproduced defect, passed test, closed finding or change to the administratively closed v1.3.0 audit.
+
+Owner agreed design: prevent silent loss of hosted relationships for all virtual device categories, permit explicit unassignment where no replacement host exists, preserve former host identity and history, offer retirement, and use a clear relationship diagram during review. A broader virtual device hosting model requires separate implementation approval. See [legacy compatibility and host relationship test plan](../testing/LEGACY-BACKUP-IMPORT-COMPATIBILITY-MATRIX.md) and [maintenance roadmap](../roadmaps/V1.3.1-MAINTENANCE-ROADMAP.md). Runtime verification, implementation, priority and release placement remain open.
