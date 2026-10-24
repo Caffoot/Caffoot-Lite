@@ -281,9 +281,13 @@ const { chromium } = require('playwright');
           {id:'fictional-display-vm-b',name:'Fictional database VM',type:'Server - Virtual',status:'Maintenance',virtualHostId:'fictional-display-host'}
         );
         phase14CViewDevice('fictional-display-host');
-        const panel=document.getElementById('phase14c-panel-overview');
-        return {text:panel?.textContent||'',links:appState.devices.filter(d=>d.virtualHostId==='fictional-display-host').length};
+        const tab=document.getElementById('phase14c-tab-virtual-machines');
+        phase14CSelectTab('virtual-machines');
+        const panel=document.getElementById('phase14c-panel-virtual-machines');
+        return {text:panel?.textContent||'',tabSelected:tab?.getAttribute('aria-selected'),panelVisible:!panel?.hidden,links:appState.devices.filter(d=>d.virtualHostId==='fictional-display-host').length};
       });
+      assert.equal(result.tabSelected,'true','Virtual Machines tab must be selected');
+      assert.equal(result.panelVisible,true,'Virtual Machines panel must be visible');
       assert.match(result.text,/Hosted virtual machines/);
       assert.match(result.text,/Fictional web VM/);
       assert.match(result.text,/Fictional database VM/);
@@ -294,7 +298,8 @@ const { chromium } = require('playwright');
       const text = await page.evaluate(() => {
         appState.devices.push({id:'fictional-display-empty',name:'Fictional empty host',type:'Server - Physical',location:'Unknown'});
         phase14CViewDevice('fictional-display-empty');
-        return document.getElementById('phase14c-panel-overview')?.textContent||'';
+        phase14CSelectTab('virtual-machines');
+        return document.getElementById('phase14c-panel-virtual-machines')?.textContent||'';
       });
       assert.match(text,/No hosted virtual machines recorded/);
     });
