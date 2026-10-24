@@ -67,3 +67,7 @@ These scenarios are **planned, not executed**, and concern future approved appli
 
 Retain D10 to D13 and D26 as the original baseline scenarios; do not treat H01 to H08 as passed or as implementation approval.
 
+
+## Proposed conversion and server software regression cases, 24 October 2026
+
+**Pending, not executed:** Edit a historical/custom type without changing type and preserve all `typeDetails`; change device type and cancel conversion without mutation; confirm conversion and verify active values and `previousTypeDetails`; preserve archived custom software and server services; distinguish OS/firmware, host hypervisor, installed applications and service roles; confirm physical and virtual servers share ordinary service eligibility; ensure host hypervisor setting and legacy `serverService_Hypervisor` remain compatible; verify guest OS independence and dependent VM host protection; test save failure rollback, backup/export/import and duplicate round trips; check keyboard and confirmation behaviour with WF-07. These are proposed regression scenarios for approved future implementation, not successful test results. See [design review](../roadmaps/V1.3X-MAINTENANCE-DESIGN-REVIEW.md) and [compatibility matrix](../workflows/DEVICE-SOFTWARE-COMPATIBILITY-MATRIX.md).
