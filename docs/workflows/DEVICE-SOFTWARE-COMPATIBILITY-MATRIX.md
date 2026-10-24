@@ -79,3 +79,15 @@ The product owner agreed that reusable RAID configurations should be saved to a 
 **Safeguards:** Shared presentation and editing code must allow catalogue specific validation, eligibility, archival, historical values, import compatibility and dependencies. A single implementation must not silently replace saved values or remove legacy or custom selections. Inventory editing must remain possible if older values are no longer offered to new records. Existing behaviours should first be mapped and tested before any refactor. Distinguish a shared user interface component from a shared data model, which may not be appropriate for every catalogue.
 
 **Status:** Approved design principle, not an instruction to refactor all dropdowns immediately. No application code changes or browser tests have been executed for this decision. WF-03, WF-07 and WF-08, the findings register, roadmap and master audit require reconciliation as the detailed implementation scope is established.
+
+## Agreed shared form and dialog interaction standard, 24 October 2026
+
+The product owner approved the **code once, use many** principle for Save, Cancel, Close, Exit and Escape handling, alongside shared dropdown and catalogue behaviour. This is a design standard for future work, not authorisation to change application behaviour now.
+
+- **Save:** use consistent validation, clear failure feedback, preservation of draft values and safe rollback of persisted state if a save fails.
+- **Cancel:** discard only the intended unsaved edits, with confirmation where changes would otherwise be lost.
+- **Close and Exit:** apply the same unsaved changes safeguards as Cancel where appropriate, while preserving any explicitly different navigation semantics.
+- **Escape:** follow the relevant dialog's safe close policy, except when an active nested control must handle Escape first. Avoid accidental closing or loss of draft values.
+- **Shared implementation:** reuse common dialog lifecycle, dirty state detection, action handling, keyboard behaviour and save feedback where practical. Keep form specific validation, dependencies and data preservation rules configurable. Do not assume every form already has identical behaviour.
+
+**Verification boundary:** Inventory current forms and nested dialogs, source trace existing shared functions, then add targeted WF-07 and WF-03 browser scenarios for normal save, invalid save, failed persistence, cancel, close, Escape and nested controls. Update technical workflows, findings, roadmap and master audit status through reconciliation. No tests executed or application changes authorised by this design agreement.
