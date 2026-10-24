@@ -7183,6 +7183,11 @@ function hierarchyValidateTypes(subnets) {
                     for (const key of obsolete) delete typeDetails[key];
                 }
             }
+            // M-005: never convert a host while its dependants still reference it.
+            if (existingDevice && existingDevice.type === 'Server - Physical' && type !== 'Server - Physical') {
+                const dependants = appState.devices.filter(d => d.id !== deviceId && d.virtualHostId === deviceId);
+                if (dependants.length) return showToast('Resolve hosted device relationships before changing this physical server type: ' + dependants.map(d => d.name || d.id).join(', '), 'error');
+            }
             const beforeDeviceSave = JSON.stringify(appState);
             if (existingDevice) {
                 if (conversionSnapshot) existingDevice.previousTypeDetails = [...(Array.isArray(existingDevice.previousTypeDetails)?existingDevice.previousTypeDetails:[]),conversionSnapshot];
@@ -7207,6 +7212,9 @@ function hierarchyValidateTypes(subnets) {
         function deleteDevice(deviceId) {
             const device=getDeviceById(deviceId);
             if(!device) return;
+            // M-005: preserve incoming host references until every dependant is reviewed.
+            const hostedDependants = appState.devices.filter(d => d.id !== deviceId && d.virtualHostId === deviceId);
+            if (hostedDependants.length) return showToast('Resolve hosted device relationships before deleting this host: ' + hostedDependants.map(d => d.name || d.id).join(', '), 'error');
             const related=Object.keys(appState.ipAllocations).filter(ip=>appState.ipAllocations[ip]?.deviceId===deviceId);
             const reserved=Object.keys(appState.ipAllocations).filter(ip=>appState.ipAllocations[ip]?.reservedForDeviceId===deviceId);
             const message=`Delete device ${device.name}?\n\nPrimary IP: ${device.primaryIp||'none'}\nLinked IPAM records: ${related.length}\nOther reservations: ${reserved.length}\nRack: ${device.rackId?'mounted':'not mounted'}\n\nThis cannot be undone. Export a backup first.`;
