@@ -294,6 +294,25 @@ const { chromium } = require('playwright');
       assert.match(result.text,/Maintenance/);
       assert.equal(result.links,2,'Viewing host details must preserve guest links');
     });
+    await scenario('M-005 navigate from hosted guest list to guest details', async page => {
+      const result = await page.evaluate(() => {
+        appState.devices.push(
+          {id:'fictional-nav-host',name:'Fictional navigation host',type:'Server - Physical',location:'Unknown'},
+          {id:'fictional-nav-guest',name:'Fictional navigation guest',type:'Server - Virtual',location:'Unknown',virtualHostId:'fictional-nav-host'}
+        );
+        phase14CViewDevice('fictional-nav-host');
+        phase14CSelectTab('virtual-machines');
+        const button=document.querySelector('#phase14c-panel-virtual-machines [data-action="phase14c-view-hosted-guest"][data-id="fictional-nav-guest"]');
+        if(!button)return {buttonFound:false};
+        button.click();
+        return {buttonFound:true,detailText:document.querySelector('.phase14c-detail')?.textContent||'',
+          hostId:appState.devices.find(d=>d.id==='fictional-nav-guest')?.virtualHostId};
+      });
+      assert.equal(result.buttonFound,true,'Guest details button must be present');
+      assert.match(result.detailText,/Fictional navigation guest/);
+      assert.match(result.detailText,/Fictional navigation host/);
+      assert.equal(result.hostId,'fictional-nav-host','Navigation must not change the guest host reference');
+    });
     await scenario('M-005 physical host details show empty guest state', async page => {
       const text = await page.evaluate(() => {
         appState.devices.push({id:'fictional-display-empty',name:'Fictional empty host',type:'Server - Physical',location:'Unknown'});
