@@ -532,6 +532,61 @@ const { chromium } = require('playwright');
       assert.equal(result.dialogRemoved,true);
       assert.equal(result.after,result.before,'Cancelled deletion must not change any inventory records');
     });
+    await scenario('M-005 host deletion reassigns guest and preserves platform and host history', async page => {
+      const result=await page.evaluate(async () => {
+        const host={id:'fictional-source-hv',name:'Source HV',type:'Server - Physical',status:'Active',typeDetails:{serverService_Hypervisor:true,hypervisorProduct:'VMware'}};
+        const destination={id:'fictional-target-hv',name:'Target HV',type:'Server - Physical',status:'Active',typeDetails:{serverService_Hypervisor:true,hypervisorProduct:'Proxmox'}};
+        const guest={id:'fictional-moving-vm',name:'Moving VM',type:'Server - Virtual',status:'Active',virtualHostId:host.id,virtualPlatform:'VMware',operatingSystem:'Guest OS unchanged'};
+        appState.devices.push(host,destination,guest);
+        const originalConfirm=window.confirm;
+        window.confirm=()=>true;
+        try {
+          const pending=deleteDevice(host.id);
+          const selector=document.querySelector('#phase-m005-hypervisor-dialog [data-m005-guest="0"]');
+          if(!selector)throw Error('Guest decision selector missing');
+          selector.value='host:'+destination.id;
+          document.querySelector('#phase-m005-hypervisor-dialog [data-action="confirm"]').click();
+          await pending;
+        } finally {window.confirm=originalConfirm}
+        const updated=appState.devices.find(d=>d.id===guest.id);
+        return {sourceExists:!!appState.devices.find(d=>d.id===host.id),
+          host:updated?.virtualHostId,platform:updated?.virtualPlatform,os:updated?.operatingSystem,
+          previousHosts:updated?.previousVirtualHosts,previousPlatforms:updated?.previousVirtualPlatforms};
+      });
+      assert.equal(result.sourceExists,false);
+      assert.equal(result.host,'fictional-target-hv');
+      assert.equal(result.platform,'Proxmox');
+      assert.equal(result.os,'Guest OS unchanged');
+      assert.equal(result.previousHosts?.at(-1)?.hostId,'fictional-source-hv');
+      assert.equal(result.previousPlatforms?.at(-1)?.platform,'VMware');
+    });
+    await scenario('M-005 host deletion retires guest without deleting history', async page => {
+      const result=await page.evaluate(async () => {
+        const host={id:'fictional-retire-host',name:'Retiring HV',type:'Server - Physical',status:'Active'};
+        const guest={id:'fictional-retired-vm',name:'Retired VM',type:'Server - Virtual',status:'Active',virtualHostId:host.id};
+        appState.devices.push(host,guest);
+        const originalConfirm=window.confirm;
+        window.confirm=()=>true;
+        try {
+          const pending=deleteDevice(host.id);
+          const selector=document.querySelector('#phase-m005-hypervisor-dialog [data-m005-guest="0"]');
+          if(!selector)throw Error('Guest decision selector missing');
+          selector.value='retire';
+          document.querySelector('#phase-m005-hypervisor-dialog [data-action="confirm"]').click();
+          await pending;
+        } finally {window.confirm=originalConfirm}
+        const updated=appState.devices.find(d=>d.id===guest.id);
+        return {sourceExists:!!appState.devices.find(d=>d.id===host.id),
+          guestExists:!!updated,status:updated?.status,host:updated?.virtualHostId,
+          previousHosts:updated?.previousVirtualHosts};
+      });
+      assert.equal(result.sourceExists,false);
+      assert.equal(result.guestExists,true);
+      assert.equal(result.status,'Retired');
+      assert.equal(result.host,'');
+      assert.equal(result.previousHosts?.at(-1)?.hostId,'fictional-retire-host');
+      assert.equal(result.previousHosts?.at(-1)?.action,'retire');
+    });
     await scenario('M-005 unreferenced host can still be deleted', async page => {
       const result = await page.evaluate(async () => {
         appState.devices.push({id:'fictional-unused-host',name:'Fictional unused host',type:'Server - Physical',mountType:'Desktop',location:'Unknown'});
