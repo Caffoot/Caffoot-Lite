@@ -345,5 +345,36 @@ const { chromium } = require('playwright');
       assert.equal(result.hostId,'fictional-missing-legacy-host','Legacy orphan host identity must not silently change');
       console.log('OBSERVED M-005: backup candidate accepts orphan virtualHostId without modifying source JSON');
     });
+    await scenario('M-006 N31 historical IPAM file import and reload', async page => {
+      const raw = await page.evaluate(() => {
+        const backup = JSON.parse(JSON.stringify(appState));
+        backup.ipAllocations['10.88.77.2'] = {status:'Available',deviceId:'',hostname:'legacy-host',notes:'Historical address notes'};
+        backup.ipAllocations['10.88.77.3'] = {status:'Available',deviceId:'',hostname:'legacy-reservation',notes:'Different historical notes'};
+        return backup;
+      });
+      assert.equal(Object.prototype.hasOwnProperty.call(raw,'caffootBackup'),false,'Fixture must use legacy unversioned JSON');
+      page.on('dialog', dialog => dialog.accept());
+      await page.locator('#import-file').setInputFiles({
+        name:'fictional-legacy-ipam.json',
+        mimeType:'application/json',
+        buffer:Buffer.from(JSON.stringify(raw))
+      });
+      await page.waitForFunction(() => {
+        const saved=localStorage.getItem('caffoot_state');
+        if(!saved) return false;
+        const allocations=JSON.parse(saved).ipAllocations;
+        return allocations?.['10.88.77.2']?.notes==='Historical address notes' &&
+          allocations?.['10.88.77.3']?.notes==='Different historical notes';
+      },null,{timeout:10000});
+      await page.reload({waitUntil:'load'});
+      const persisted=await page.evaluate(() => ({
+        first:appState.ipAllocations['10.88.77.2']?.notes,
+        second:appState.ipAllocations['10.88.77.3']?.notes,
+        storedFirst:JSON.parse(localStorage.getItem('caffoot_state')).ipAllocations['10.88.77.2']?.notes
+      }));
+      assert.equal(persisted.first,'Historical address notes');
+      assert.equal(persisted.second,'Different historical notes');
+      assert.equal(persisted.storedFirst,'Historical address notes');
+    });
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode=1; });
