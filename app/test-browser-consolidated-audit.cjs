@@ -15,7 +15,11 @@ const { chromium } = require('playwright');
     await page.route(/^https?:/i, route => route.abort('blockedbyclient'));
     try {
       await page.goto(url, { waitUntil: 'load' });
-      await fn(page);
+      console.log('START ' + name);
+      await Promise.race([
+        fn(page),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Browser scenario timed out after 30 seconds: ' + name)), 30000))
+      ]);
       console.log('PASS ' + name);
     } finally { await context.close(); }
   }
