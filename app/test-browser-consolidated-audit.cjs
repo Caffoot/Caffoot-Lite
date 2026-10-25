@@ -686,6 +686,40 @@ const { chromium } = require('playwright');
       assert.equal(result.hostId,'fictional-missing-legacy-host','Legacy orphan host identity must not silently change');
       console.log('OBSERVED M-005: backup candidate accepts orphan virtualHostId without modifying source JSON');
     });
+    await scenario('M-005 historical orphan virtual machine full JSON import and reload', async page => {
+      const raw=await page.evaluate(() => {
+        const backup=JSON.parse(JSON.stringify(appState));
+        backup.devices.push({id:'fictional-import-orphan-vm',name:'Historical orphan VM',
+          type:'Server - Virtual',mountType:'Desktop',location:'Unknown',
+          virtualHostId:'fictional-previous-host',virtualPlatform:'Legacy Hypervisor',
+          operatingSystem:'Historical guest OS',customHistoricalNote:'Keep this original value'});
+        return backup;
+      });
+      assert.equal(Object.prototype.hasOwnProperty.call(raw,'caffootBackup'),false);
+      page.on('dialog',dialog=>dialog.accept());
+      await page.locator('#import-file').setInputFiles({
+        name:'fictional-historical-orphan.json',mimeType:'application/json',
+        buffer:Buffer.from(JSON.stringify(raw))
+      });
+      await page.waitForFunction(() => {
+        const stored=localStorage.getItem('caffoot_state');
+        return !!stored&&JSON.parse(stored).devices?.some(d=>d.id==='fictional-import-orphan-vm');
+      },null,{timeout:10000});
+      await page.reload({waitUntil:'load'});
+      const result=await page.evaluate(() => {
+        const vm=appState.devices.find(d=>d.id==='fictional-import-orphan-vm');
+        const stored=JSON.parse(localStorage.getItem('caffoot_state')).devices
+          .find(d=>d.id==='fictional-import-orphan-vm');
+        return {vm,stored};
+      });
+      assert(result.vm,'Historical virtual machine must remain after reload');
+      assert.equal(result.vm.virtualHostId,'fictional-previous-host');
+      assert.equal(result.vm.virtualPlatform,'Legacy Hypervisor');
+      assert.equal(result.vm.operatingSystem,'Historical guest OS');
+      assert.equal(result.vm.customHistoricalNote,'Keep this original value');
+      assert.equal(result.stored.virtualHostId,'fictional-previous-host');
+      assert.equal(result.stored.customHistoricalNote,'Keep this original value');
+    });
     await scenario('M-006 N31 historical IPAM file import and reload', async page => {
       const raw = await page.evaluate(() => {
         const backup = JSON.parse(JSON.stringify(appState));
