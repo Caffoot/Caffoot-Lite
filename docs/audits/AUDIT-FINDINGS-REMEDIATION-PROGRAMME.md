@@ -1,5 +1,8 @@
 # Caffoot Lite audit findings remediation programme
 
+> **Current evidence status, 25 October 2026 (PR #123).** N22 individual and bulk release production handlers passed Chromium [run 40167357274](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40167357274), with save and reload. N31 real browser historical JSON import and reload, including notes and missing device reservation references, passed [run 40167139071](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40167139071). The published v1.2.1 export into the current candidate passed [run 40167627669](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40167627669), preserving the checked core inventory fields after reload. Its initial [run 40167619087](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40167619087) failed because the test workflow had not built `app/dist/Caffoot-Lite.html`; commit `77c02ed` added that build and verification step. This was a test setup failure, not an observed application regression. The published compatibility test does not establish every possible historical backup or IPAM field. Full UI click-through, complete test matrix and final audit reconciliation remain outstanding. M-006, M-009 and M-024 remain open. No merge or release. Earlier dated notes below describe historical checkpoints, not the latest result.
+
+
 **Status:** Draft for product owner review. This programme does not authorise application changes, merging or publication.
 **Baseline:** Published v1.3.0. Planning source: `main` at `6c72c35a49ce7ff161877f14ac2fe18ed5f09f41`, 23 October 2026.
 **Scope:** All 31 original maintenance findings and the incomplete individual WF-01 to WF-13 verification gates.
