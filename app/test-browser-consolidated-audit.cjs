@@ -704,7 +704,9 @@ const { chromium } = require('playwright');
         openDeviceModal();
         document.getElementById('dev-type').value=type;
         phase19BRefreshFields();
-        const add={hosting:document.getElementById('phase-m005-hosting-enabled')?.checked,
+        const add={onGeneral:!!document.querySelector('[data-device-form] .form-section-card:first-child #phase-m005-host-platform-fields'),
+          selectOptions:!!document.querySelector('#phase-m005-host-platform-select option[value="__custom__"]'),
+          hosting:document.getElementById('phase-m005-hosting-enabled')?.checked,
           duplicate:!!document.querySelector('#phase120-server-services-fields [data-phase19b-field="serverService_Hypervisor"]')};
         document.getElementById('phase-m005-hosting-enabled').checked=true;
         document.getElementById('phase-m005-hosting-enabled').dispatchEvent(new Event('change',{bubbles:true}));
@@ -727,6 +729,8 @@ const { chromium } = require('playwright');
           hidden:document.getElementById('phase-m005-hosting-details').hidden};
         return {add,enabled,edit,disabled};
       });
+      assert.equal(result.add.onGeneral,true,'Hosting controls should appear in the General tab');
+      assert.equal(result.add.selectOptions,true,'Hypervisor software should offer Custom / Other');
       assert.equal(result.add.hosting,false);
       assert.equal(result.add.duplicate,false);
       assert.equal(result.enabled.serverService_Hypervisor,true);
