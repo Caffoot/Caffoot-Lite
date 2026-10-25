@@ -544,7 +544,7 @@ const ipSubmitStart = html.indexOf('function handleIpSubmit(e, ip)');
 const ipSubmitEnd = html.indexOf('\n        function ', ipSubmitStart + 1);
 assert(ipSubmitStart >= 0 && ipSubmitEnd > ipSubmitStart, 'IPAM edit handler must exist');
 const ipSubmitCode = html.slice(ipSubmitStart, ipSubmitEnd);
-assert(ipSubmitCode.includes("if (existing || hostname || notes) appState.ipAllocations[ip] = { ...existing, status: 'Available', deviceId: '', reservedForDeviceId: '', hostname, notes };"),
+assert(ipSubmitCode.includes("if (existing || hostname || notes) appState.ipAllocations[ip] = { ...existing, status: 'Available', deviceId: '', reservedForDeviceId: existing?.status === 'Available' && !releaseOrphan ? (existing.reservedForDeviceId || '') : '', hostname, notes };"),
   'Available address with new notes or hostname must create an allocation record');
 assert(ipSubmitCode.includes('else delete appState.ipAllocations[ip];'),
   'failed new Available allocation save must restore the absent record');
