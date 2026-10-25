@@ -793,6 +793,50 @@ const { chromium } = require('playwright');
       assert.equal(restored.selected,'Microsoft Hyper-V');
       assert.equal(restored.version,'2026');
     });
+    await scenario('#134 custom hypervisor JSON backup import and reload preserves host and guest', async page => {
+      const raw=await page.evaluate(() => {
+        const backup=JSON.parse(JSON.stringify(appState));
+        backup.devices.push(
+          {id:'fictional-134-import-host',name:'Fictional custom hypervisor host',
+            type:'Server - Physical',mountType:'Desktop',location:'Unknown',status:'Active',
+            typeDetails:{serverService_Hypervisor:true,hypervisorProduct:'Historical Custom Hypervisor',hypervisorVersion:'Legacy 4.2'}},
+          {id:'fictional-134-import-guest',name:'Fictional hosted VM',
+            type:'Server - Virtual',mountType:'Desktop',location:'Unknown',status:'Active',
+            virtualHostId:'fictional-134-import-host',virtualPlatform:'Historical Custom Hypervisor',
+            operatingSystem:'Historical Guest OS',operatingSystemVersion:'Legacy Guest 1'}
+        );
+        return backup;
+      });
+      page.on('dialog',dialog=>dialog.accept());
+      await page.locator('#import-file').setInputFiles({
+        name:'fictional-134-custom-hypervisor.json',mimeType:'application/json',
+        buffer:Buffer.from(JSON.stringify(raw))
+      });
+      await page.waitForFunction(() => {
+        const stored=localStorage.getItem('caffoot_state');
+        return !!stored && JSON.parse(stored).devices?.some(d=>d.id==='fictional-134-import-host');
+      },null,{timeout:10000});
+      await page.reload({waitUntil:'load'});
+      const result=await page.evaluate(() => {
+        const host=appState.devices.find(d=>d.id==='fictional-134-import-host');
+        const guest=appState.devices.find(d=>d.id==='fictional-134-import-guest');
+        openDeviceModal(host.id);
+        return {host,guest,checked:document.getElementById('phase-m005-hosting-enabled').checked,
+          choice:document.getElementById('phase-m005-host-platform-select').value,
+          product:document.getElementById('phase-m005-host-platform').value,
+          version:document.getElementById('phase-m005-host-version').value};
+      });
+      assert.equal(result.host.typeDetails.serverService_Hypervisor,true);
+      assert.equal(result.host.typeDetails.hypervisorProduct,'Historical Custom Hypervisor');
+      assert.equal(result.host.typeDetails.hypervisorVersion,'Legacy 4.2');
+      assert.equal(result.checked,true);
+      assert.equal(result.choice,'__custom__');
+      assert.equal(result.product,'Historical Custom Hypervisor');
+      assert.equal(result.version,'Legacy 4.2');
+      assert.equal(result.guest.virtualHostId,'fictional-134-import-host');
+      assert.equal(result.guest.virtualPlatform,'Historical Custom Hypervisor');
+      assert.equal(result.guest.operatingSystem,'Historical Guest OS');
+    });
     await scenario('M-005 baseline orphan host validation', async page => {
       const result = await page.evaluate(() => {
         appState.devices.push({id:'fictional-orphan-vm',name:'Fictional orphan VM',
