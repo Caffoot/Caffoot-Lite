@@ -755,6 +755,44 @@ const { chromium } = require('playwright');
       assert.equal(result.disabled.product,'Historical Platform');
       assert.equal(result.disabled.hidden,true);
     });
+    await scenario('#134 physical hypervisor save persists through reload', async page => {
+      const result=await page.evaluate(async () => {
+        const hostId='fictional-134-persist-host';
+        appState.subnets.push({id:'fictional-134-persist-subnet',name:'Fictional hosting subnet',kind:'network',cidr:'10.88.72.0/29',gateway:'10.88.72.1',vlan:3872});
+        appState.devices.push({id:hostId,name:'Fictional hosting host',type:'Server - Physical',
+          mountType:'Desktop',location:'Unknown',status:'Active',primaryIp:'10.88.72.2',
+          typeDetails:{serverService_Hypervisor:false}});
+        openDeviceModal(hostId);
+        const set=(id,value)=>{const el=document.getElementById(id);if(!el)throw Error('Missing form control '+id);el.value=value;el.dispatchEvent(new Event('change',{bubbles:true}));};
+        set('dev-location','Unknown');
+        set('dev-mount-type','Desktop');
+        set('dev-subnet','fictional-134-persist-subnet');
+        set('dev-ip','10.88.72.2');
+        const enabled=document.getElementById('phase-m005-hosting-enabled');
+        enabled.checked=true;
+        enabled.dispatchEvent(new Event('change',{bubbles:true}));
+        set('phase-m005-host-platform-select','Microsoft Hyper-V');
+        set('phase-m005-host-version','2026');
+        await handleDeviceSubmit({preventDefault(){}},hostId);
+        return {stored:JSON.parse(localStorage.getItem('caffoot_state')||'{}').devices?.find(d=>d.id===hostId),
+          inMemory:appState.devices.find(d=>d.id===hostId)};
+      });
+      assert.equal(result.stored?.typeDetails?.serverService_Hypervisor,true);
+      assert.equal(result.stored?.typeDetails?.hypervisorProduct,'Microsoft Hyper-V');
+      assert.equal(result.stored?.typeDetails?.hypervisorVersion,'2026');
+      assert.equal(result.inMemory?.typeDetails?.hypervisorProduct,'Microsoft Hyper-V');
+      await page.reload({waitUntil:'load'});
+      const restored=await page.evaluate(() => {
+        const host=appState.devices.find(d=>d.id==='fictional-134-persist-host');
+        openDeviceModal(host.id);
+        return {host,checked:document.getElementById('phase-m005-hosting-enabled').checked,
+          selected:document.getElementById('phase-m005-host-platform-select').value,
+          version:document.getElementById('phase-m005-host-version').value};
+      });
+      assert.equal(restored.checked,true);
+      assert.equal(restored.selected,'Microsoft Hyper-V');
+      assert.equal(restored.version,'2026');
+    });
     await scenario('M-005 baseline orphan host validation', async page => {
       const result = await page.evaluate(() => {
         appState.devices.push({id:'fictional-orphan-vm',name:'Fictional orphan VM',
