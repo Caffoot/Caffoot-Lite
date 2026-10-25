@@ -4783,7 +4783,17 @@ function hierarchyValidateTypes(subnets) {
                 return;
             }
 
-            if (appState.devices.some(d => d.primaryIp === gateway) || appState.ipAllocations[gateway]) {
+            // M-009: preserve an unchanged gateway owned by one eligible network device.
+            // Do not release or reassign an existing IPAM record during subnet edits.
+            const existingGatewaySubnet = subnetId ? appState.subnets.find(s => s.id === subnetId) : null;
+            const gatewayOwners = appState.devices.filter(d => d.primaryIp === gateway);
+            const gatewayAllocation = appState.ipAllocations[gateway];
+            const eligibleExistingGatewayOwner = existingGatewaySubnet?.gateway === gateway &&
+                gatewayOwners.length === 1 &&
+                ['Firewall', 'Router', 'Layer 3 Switch'].includes(gatewayOwners[0].type) &&
+                gatewayAllocation?.deviceId === gatewayOwners[0].id &&
+                (!gatewayAllocation.reservedForDeviceId || gatewayAllocation.reservedForDeviceId === gatewayOwners[0].id);
+            if ((gatewayOwners.length || gatewayAllocation) && !eligibleExistingGatewayOwner) {
                 showToast('Gateway IP is already assigned or reserved. Release that address before using it as a gateway.', 'error');
                 return;
             }

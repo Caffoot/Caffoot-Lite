@@ -14,6 +14,12 @@ PR #128 was merged into `release/v1.3.1` at commit `57e2b6cbcd9a83e3f0bda3d1807d
 
 **Status:** Issue #91 remains open for final acceptance and documentation status reconciliation. The v1.3.0 master audit remains administratively closed with carried forward gaps. No application change, new test execution, merge into `main` or publication is claimed by this documentation checkpoint. Issue #95 and release gate #106 retain the combined v1.3.1 release acceptance requirements.
 
+## Issue #92 M-009 targeted WF-04 evidence, 25 October 2026
+
+Draft PR #132 on `release/v1.3.1` contains the narrowly scoped unchanged-gateway correction and an executed consolidated Chromium scenario for Firewall, Router and Layer 3 Switch. On head `c1ffc9f`, [Chromium run 40182601831](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40182601831) passed alongside release validation 40182601840, documentation consistency 40182601907 and secret scan 40182601893. The scenario exercises the subnet save handler, checks persisted name edits and ensures existing device-linked IPAM ownership and address notes remain unchanged. This is targeted evidence for WF-04 N08/N09, not full WF-04 sign-off. Changed-gateway conflict cases, historical gateway import permutations and M-024 disposition remain open. The older issue #91 status statement below is a historical checkpoint: issue #91 has since been closed following its release branch evidence reconciliation. No merge of PR #132, `main` merge or release is claimed.
+
+**M-009 N10 verification update, 25 October 2026:** Changed-gateway collision rejection passed targeted Chromium [40183270138](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40183270138) on head `6cb353b`. The real subnet save handler rejected a gateway address assigned to another device without changing the subnet, either IPAM allocation, notes or persisted storage. Other invalid gateway permutations and complete WF-04 sign-off remain unverified. This supplements, not replaces, the unchanged-owner evidence above.
+
 ## Existing evidence and gaps
 
 | Workflow | Recorded executed evidence | What remains unverified or requires a disposition |
