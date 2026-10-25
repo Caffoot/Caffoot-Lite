@@ -34,7 +34,7 @@ Use fictional data in an isolated browser profile. Keep a verified export before
 | N19 | Delete VLAN used by a network subnet | Reject deletion |
 | N20 | Delete unused VLAN and force save failure | Confirmation; rollback on failure |
 | N21 | Open standalone IP editor for gateway or device primary IP | Editing protected |
-| N22 | Reserve, assign or release independent IPAM address | Valid record update; explicit release clears active ownership and reservation while preserving address notes and other historical metadata. A previously unrecorded Available address with blank hostname and notes need not create a record |
+| N22 | Reserve, assign or release independent IPAM address | **Partially browser verified:** individual and bulk release production handlers passed Chromium run 40167357274, including note retention, reservation clearing, persistence and reload. Full form click-through, reserve/assign permutations and save failure remain unverified. A previously unrecorded blank Available address need not create a record |
 | N23 | Force save failure during standalone IP edit | Restore previous allocation |
 | N24 | Bulk reserve or release a valid small range | Preview matches applied eligible addresses |
 | N25 | Bulk range exceeding 512 addresses or invalid host offsets | Reject safely |
@@ -43,7 +43,7 @@ Use fictional data in an isolated browser profile. Keep a verified export before
 | N28 | Block writing bulk safety snapshot | Cancel operation without changes |
 | N29 | Force inventory save failure after bulk snapshot | Restore inventory; inspect retained safety snapshot |
 | N30 | Repeat bulk operation and reload | Check safety snapshot retention and recovery semantics |
-| N31 | Import legacy IPAM/VLAN/gateway records | Validate ownership, scope and backward compatibility; cross-reference WF-01, WF-02 and WF-06 |
+| N31 | Import legacy IPAM/VLAN/gateway records | **Partially browser verified:** real file import of unversioned historical JSON passed Chromium run 40167139071, preserving two address notes and an orphaned reservation across reload. Published v1.2.1 export into candidate passed run 40167627669 for checked core inventory fields. Complete VLAN, gateway and historical schema permutations remain unverified; cross-reference WF-01, WF-02 and WF-06 |
 | N32 | Verify IPAM summary for gateway without explicit allocation | Protected display count without creating phantom record |
 | N33 | Delete or edit network data while device links exist | Validate all affected relationships and audit history |
 
