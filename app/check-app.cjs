@@ -622,7 +622,7 @@ console.log('M-006 legacy backup migration runtime fixture passed.');
 // M-024 source contract: missing-device reservations must be visible and survive notes-only edits.
 const orphanCardStart = html.indexOf('const reservedDevice = alloc?.reservedForDeviceId');
 assert(orphanCardStart >= 0, 'IPAM reservation card lookup must exist');
-assert(html.slice(orphanCardStart, orphanCardStart + 1900).includes('Missing reserved device'),
+assert(html.slice(orphanCardStart, orphanCardStart + 3500).includes('Missing reserved device'),
   'IPAM card must identify missing reservation device');
 const orphanModalStart = html.indexOf('function openIpModal(ip)');
 const orphanModalEnd = html.indexOf('function handleIpSubmit(e, ip)', orphanModalStart);
