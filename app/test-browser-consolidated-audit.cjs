@@ -594,15 +594,23 @@ const { chromium } = require('playwright');
         const notices=[];
         const originalToast=showToast;
         showToast=(message,level)=>notices.push({message,level});
-        try {await handleDeviceSubmit({preventDefault(){}},hostId)}
-        finally {showToast=originalToast}
+        let guestDialogShown=false,guestNamed=false;
+        try {
+          const pending=handleDeviceSubmit({preventDefault(){}},hostId);
+          const dialog=document.getElementById('phase-m005-hypervisor-dialog');
+          guestDialogShown=!!dialog;
+          guestNamed=!!dialog?.textContent.includes('Fictional D13 VM');
+          dialog?.querySelector('[data-action="cancel"]')?.click();
+          await pending;
+        } finally {showToast=originalToast}
         return {hostType:appState.devices.find(d=>d.id===hostId)?.type,
           vmHost:appState.devices.find(d=>d.id==='fictional-d13-vm')?.virtualHostId,
-          notices,conversionDialog:!!document.getElementById('phase130-conversion-dialog')};
+          notices,guestDialogShown,guestNamed,conversionDialog:!!document.getElementById('phase130-conversion-dialog')};
       });
       assert.equal(result.hostType,'Server - Physical','Blocked conversion must preserve physical host type');
       assert.equal(result.vmHost,'fictional-d13-host','Blocked conversion must preserve dependant link');
-      assert(result.notices.some(n=>n.level==='error'&&n.message.includes('Fictional D13 VM')),'Conversion must identify dependant');
+      assert.equal(result.guestDialogShown,true,'Conversion must show guest resolution');
+      assert.equal(result.guestNamed,true,'Conversion must identify dependent VM');
       assert.equal(result.conversionDialog,false,'Dependency guard must run before obsolete field confirmation');
     });
     await scenario('M-005 baseline detached legacy backup host reference', async page => {
