@@ -5172,7 +5172,20 @@ function hierarchyValidateTypes(subnets) {
             }
 
             if (primaryDevice) {
-                showToast(`IP address ${ip} is the primary IP of ${primaryDevice.name}. Edit the device instead.`, 'error');
+                const existing = appState.ipAllocations[ip];
+                // A device-owned address may update its own IPAM notes, never its device notes or ownership.
+                if (!existing || status !== existing.status || hostname !== (existing.hostname || '') || releaseOrphan) {
+                    showToast(`IP address ${ip} is the primary IP of ${primaryDevice.name}. Only IPAM notes can be edited here; edit the device to change its assignment.`, 'error');
+                    return;
+                }
+                appState.ipAllocations[ip] = { ...existing, notes };
+                if (!saveState()) {
+                    appState.ipAllocations[ip] = previousAllocation;
+                    showToast('IP notes could not be saved. Previous allocation restored.', 'error');
+                    return;
+                }
+                closeModal(true);
+                renderContent();
                 return;
             }
 
