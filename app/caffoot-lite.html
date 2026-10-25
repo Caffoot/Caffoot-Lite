@@ -7345,7 +7345,7 @@ function hierarchyValidateTypes(subnets) {
             let typeDetails = phase19BReadFields();
             if (type === 'Server - Physical' && typeDetails.serverService_Hypervisor === true &&
                 !String(typeDetails.hypervisorProduct || '').trim() &&
-                !String(existingDevice?.typeDetails?.hypervisorProduct || '').trim() &&
+                !String(getDeviceById(deviceId)?.typeDetails?.hypervisorProduct || '').trim() &&
                 !(deviceId && (getDeviceById(deviceId)?.typeDetails?.serverService_Hypervisor === true ||
                                 getDeviceById(deviceId)?.serverService_Hypervisor === true))) {
                 return showToast('Select or enter a Hypervisor product to enable hosting.', 'error');
