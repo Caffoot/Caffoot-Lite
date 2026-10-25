@@ -544,7 +544,7 @@ const ipSubmitStart = html.indexOf('function handleIpSubmit(e, ip)');
 const ipSubmitEnd = html.indexOf('\n        function ', ipSubmitStart + 1);
 assert(ipSubmitStart >= 0 && ipSubmitEnd > ipSubmitStart, 'IPAM edit handler must exist');
 const ipSubmitCode = html.slice(ipSubmitStart, ipSubmitEnd);
-assert(ipSubmitCode.includes("if (existing || hostname || notes) appState.ipAllocations[ip] = { ...existing, status: 'Available', deviceId: '', reservedForDeviceId: '', hostname, notes };"),
+assert(ipSubmitCode.includes("if (existing || hostname || notes) appState.ipAllocations[ip] = { ...existing, status: 'Available', deviceId: '', reservedForDeviceId: existing?.status === 'Available' && !releaseOrphan ? (existing.reservedForDeviceId || '') : '', hostname, notes };"),
   'Available address with new notes or hostname must create an allocation record');
 assert(ipSubmitCode.includes('else delete appState.ipAllocations[ip];'),
   'failed new Available allocation save must restore the absent record');
@@ -618,3 +618,34 @@ assert.equal(migratedLegacy.ipAllocations['192.168.40.10'].notes, 'Historical ad
 assert.equal(migratedLegacy.ipAllocations['192.168.40.11'].reservedForDeviceId, 'retired-device', 'migration must retain historical reservation reference');
 assert.equal(migratedLegacy.ipAllocations['192.168.40.11'].notes, 'Historical reservation', 'migration must retain reservation notes');
 console.log('M-006 legacy backup migration runtime fixture passed.');
+
+// M-024 source contract: missing-device reservations must be visible and survive notes-only edits.
+const orphanCardStart = html.indexOf('const reservedDevice = alloc?.reservedForDeviceId');
+assert(orphanCardStart >= 0, 'IPAM reservation card lookup must exist');
+assert(html.slice(orphanCardStart, orphanCardStart + 3500).includes('Missing reserved device'),
+  'IPAM card must identify missing reservation device');
+const orphanModalStart = html.indexOf('function openIpModal(ip)');
+const orphanModalEnd = html.indexOf('function handleIpSubmit(e, ip)', orphanModalStart);
+assert(orphanModalStart >= 0 && orphanModalEnd > orphanModalStart, 'IP editor must exist');
+assert(html.slice(orphanModalStart, orphanModalEnd).includes('historical reservation for a device that is no longer in the inventory'),
+  'IP editor must explain historical missing-device reservation');
+const orphanSubmit = html.slice(orphanModalEnd, html.indexOf('// RC1 accessibility:', orphanModalEnd));
+assert(orphanSubmit.includes("status === existing.status && !releaseOrphan ? (existing.reservedForDeviceId || '') : ''"),
+  'same-status notes edits must preserve historical reservation reference');
+assert(orphanSubmit.includes("existing?.status === 'Available' && !releaseOrphan ? (existing.reservedForDeviceId || '') : ''"),
+  'Available notes-only edits must preserve historical reservation');
+assert(orphanSubmit.includes("const releaseOrphan = Boolean(document.getElementById('ip-release-orphan')?.checked)"),
+  'historical reservation release must require explicit user control');
+assert(orphanModalStart >= 0 && html.slice(orphanModalStart, orphanModalEnd).includes('Release historical reservation when saving'),
+  'IP editor must show explicit historical release control');
+console.log('M-024 missing-device UI source contracts passed (not a browser interaction test).');
+
+// Issue #92: device-owned IPAM notes remain independently editable without altering device ownership.
+const deviceOwnedSubmit = html.slice(html.indexOf('function handleIpSubmit(e, ip)'), html.indexOf('// RC1 accessibility:', html.indexOf('function handleIpSubmit(e, ip)')));
+assert(deviceOwnedSubmit.includes('appState.ipAllocations[ip] = { ...existing, notes };'),
+  'device-owned IPAM notes-only save must retain allocation fields');
+assert(deviceOwnedSubmit.includes("status !== existing.status || hostname !== (existing.hostname || '') || releaseOrphan"),
+  'device-owned IPAM editor must reject assignment, hostname or reservation release changes');
+assert(deviceOwnedSubmit.includes('appState.ipAllocations[ip] = previousAllocation;'),
+  'failed device-owned IPAM notes save must restore allocation');
+console.log('Issue #92 device-owned IPAM notes source contracts passed (browser interaction still required).');

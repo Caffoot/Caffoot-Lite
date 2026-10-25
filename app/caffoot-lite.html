@@ -4214,6 +4214,7 @@ function hierarchyValidateTypes(subnets) {
                     const status = gatewayProtected && (!alloc || alloc.status === 'Available') ? (appState.devices.some(d => d.primaryIp === ip) ? 'Assigned' : 'Reserved') : (alloc?.status || (appState.devices.some(d => d.primaryIp === ip) ? 'Assigned' : 'Available'));
                     const displayStatus = gatewayProtected ? `Gateway · ${status}` : status;
                     const reservedDevice = alloc?.reservedForDeviceId ? getDeviceById(alloc.reservedForDeviceId) : null;
+                    const missingReservedDevice = Boolean(alloc?.reservedForDeviceId && !reservedDevice);
                     
                     let badgeColor = 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600';
                     if (status === 'Assigned') badgeColor = 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/50 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800 font-semibold';
@@ -4228,7 +4229,7 @@ function hierarchyValidateTypes(subnets) {
                                 <span class="text-[10px] px-1.5 py-0.5 rounded bg-white/80 dark:bg-slate-800/80 shadow-xs">${escapeHtml(displayStatus)}</span>
                             </div>
                             <div class="text-xs truncate">
-                                <span class="font-medium text-slate-700 dark:text-slate-200">${reservedDevice && status === 'Reserved' ? 'For: ' + escapeHtml(reservedDevice.name) : (gatewayProtected ? (status === 'Assigned' ? 'Assigned to Network Device' : 'Reserved') : (alloc ? escapeHtml(alloc.hostname || 'Assigned IP') : 'Available'))}</span>
+                                <span class="font-medium text-slate-700 dark:text-slate-200">${missingReservedDevice ? 'Missing reserved device' : reservedDevice && status === 'Reserved' ? 'For: ' + escapeHtml(reservedDevice.name) : (gatewayProtected ? (status === 'Assigned' ? 'Assigned to Network Device' : 'Reserved') : (alloc ? escapeHtml(alloc.hostname || 'Assigned IP') : 'Available'))}</span>
                             </div>
                         </button>
                     `;
@@ -5120,13 +5121,16 @@ function hierarchyValidateTypes(subnets) {
                 return;
             }
             const alloc = appState.ipAllocations[ip] || { status: 'Available', hostname: '', notes: '' };
+            const orphanedReservation = alloc.reservedForDeviceId && !getDeviceById(alloc.reservedForDeviceId);
             openModal(`
                 <div class="p-6 sm:p-7 space-y-5">
                     <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-3">
                         <h3 class="font-bold text-base text-slate-900 dark:text-white">Configure IP: <span class="font-mono text-indigo-500">${escapeHtml(ip)}</span></h3>
                         <button data-action="close-modal" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
                     </div>
+                    ${orphanedReservation ? `<p role="status" class="text-sm text-amber-700 dark:text-amber-300">This IP has a historical reservation for a device that is no longer in the inventory. Editing the hostname or notes preserves this historical reference. To remove it, tick Release historical reservation when saving, or change a Reserved address to Available.</p>` : ''}
                     <form data-form-action="ip" data-ip="${escapeHtml(ip)}" class="form-shell space-y-5">
+                        ${orphanedReservation ? `<label class="flex items-center gap-2 text-sm"><input id="ip-release-orphan" type="checkbox"> Release historical reservation when saving</label>` : ''}
                         <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-tag"></i>Allocation</div>
                         <div>
                             <label for="ip-status" class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Status</label>
@@ -5159,6 +5163,7 @@ function hierarchyValidateTypes(subnets) {
             const status = document.getElementById('ip-status').value;
             const hostname = document.getElementById('ip-hostname').value;
             const notes = document.getElementById('ip-notes').value;
+            const releaseOrphan = Boolean(document.getElementById('ip-release-orphan')?.checked);
             const previousAllocation = appState.ipAllocations[ip] ? {...appState.ipAllocations[ip]} : null;
             const primaryDevice = findDeviceUsingIp(ip);
             if (phase10GatewaySubnet(ip)) {
@@ -5167,7 +5172,20 @@ function hierarchyValidateTypes(subnets) {
             }
 
             if (primaryDevice) {
-                showToast(`IP address ${ip} is the primary IP of ${primaryDevice.name}. Edit the device instead.`, 'error');
+                const existing = appState.ipAllocations[ip];
+                // A device-owned address may update its own IPAM notes, never its device notes or ownership.
+                if (!existing || status !== existing.status || hostname !== (existing.hostname || '') || releaseOrphan) {
+                    showToast(`IP address ${ip} is the primary IP of ${primaryDevice.name}. Only IPAM notes can be edited here; edit the device to change its assignment.`, 'error');
+                    return;
+                }
+                appState.ipAllocations[ip] = { ...existing, notes };
+                if (!saveState()) {
+                    appState.ipAllocations[ip] = previousAllocation;
+                    showToast('IP notes could not be saved. Previous allocation restored.', 'error');
+                    return;
+                }
+                closeModal(true);
+                renderContent();
                 return;
             }
 
@@ -5180,7 +5198,7 @@ function hierarchyValidateTypes(subnets) {
                         return;
                     }
                 }
-                if (existing || hostname || notes) appState.ipAllocations[ip] = { ...existing, status: 'Available', deviceId: '', reservedForDeviceId: '', hostname, notes };
+                if (existing || hostname || notes) appState.ipAllocations[ip] = { ...existing, status: 'Available', deviceId: '', reservedForDeviceId: existing?.status === 'Available' && !releaseOrphan ? (existing.reservedForDeviceId || '') : '', hostname, notes };
             } else {
                 const existing = appState.ipAllocations[ip] || {};
                 let deviceId = existing.deviceId || '';
@@ -5190,7 +5208,7 @@ function hierarchyValidateTypes(subnets) {
                         deviceId = '';
                     }
                 }
-                appState.ipAllocations[ip] = { ...existing, status, deviceId, hostname, notes, reservedForDeviceId: '' };
+                appState.ipAllocations[ip] = { ...existing, status, deviceId, hostname, notes, reservedForDeviceId: status === existing.status && !releaseOrphan ? (existing.reservedForDeviceId || '') : '' };
             }
             if (!saveState()) {
                 if (previousAllocation) appState.ipAllocations[ip] = previousAllocation;
