@@ -696,6 +696,48 @@ const { chromium } = require('playwright');
       });
       assert.equal(result.hostExists,false,'Unreferenced host deletion must remain available');
     });
+    await scenario('#134 shared Add and Edit physical host controls preserve legacy values', async page => {
+      const result = await page.evaluate(() => {
+        const type='Server - Physical';
+        openDeviceModal();
+        document.getElementById('dev-type').value=type;
+        phase19BRefreshFields();
+        const add={hosting:document.getElementById('phase-m005-hosting-enabled')?.checked,
+          duplicate:!!document.querySelector('#phase120-server-services-fields [data-phase19b-field="serverService_Hypervisor"]')};
+        document.getElementById('phase-m005-hosting-enabled').checked=true;
+        document.getElementById('phase-m005-hosting-enabled').dispatchEvent(new Event('change',{bubbles:true}));
+        document.getElementById('phase-m005-host-platform').value='Custom Hypervisor';
+        document.getElementById('phase-m005-host-version').value='2026.1';
+        const enabled=phase19BReadFields();
+        const host={id:'fictional-134-host',name:'Historical host',type,status:'Active',
+          mountType:'Desktop',location:'Unknown',serverService_Hypervisor:true,
+          typeDetails:{hypervisorProduct:'Historical Platform',hypervisorVersion:'Legacy 1'}};
+        appState.devices.push(host);
+        openDeviceModal(host.id);
+        const edit={hosting:document.getElementById('phase-m005-hosting-enabled')?.checked,
+          product:document.getElementById('phase-m005-host-platform')?.value,
+          version:document.getElementById('phase-m005-host-version')?.value,
+          flag:phase19BReadFields().serverService_Hypervisor};
+        document.getElementById('phase-m005-hosting-enabled').checked=false;
+        document.getElementById('phase-m005-hosting-enabled').dispatchEvent(new Event('change',{bubbles:true}));
+        const disabled={flag:phase19BReadFields().serverService_Hypervisor,
+          product:document.getElementById('phase-m005-host-platform').value,
+          hidden:document.getElementById('phase-m005-hosting-details').hidden};
+        return {add,enabled,edit,disabled};
+      });
+      assert.equal(result.add.hosting,false);
+      assert.equal(result.add.duplicate,false);
+      assert.equal(result.enabled.serverService_Hypervisor,true);
+      assert.equal(result.enabled.hypervisorProduct,'Custom Hypervisor');
+      assert.equal(result.enabled.hypervisorVersion,'2026.1');
+      assert.equal(result.edit.hosting,true);
+      assert.equal(result.edit.flag,true);
+      assert.equal(result.edit.product,'Historical Platform');
+      assert.equal(result.edit.version,'Legacy 1');
+      assert.equal(result.disabled.flag,false);
+      assert.equal(result.disabled.product,'Historical Platform');
+      assert.equal(result.disabled.hidden,true);
+    });
     await scenario('M-005 baseline orphan host validation', async page => {
       const result = await page.evaluate(() => {
         appState.devices.push({id:'fictional-orphan-vm',name:'Fictional orphan VM',
