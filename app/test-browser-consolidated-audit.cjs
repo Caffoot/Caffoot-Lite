@@ -587,6 +587,52 @@ const { chromium } = require('playwright');
       assert.equal(result.previousHosts?.at(-1)?.hostId,'fictional-retire-host');
       assert.equal(result.previousHosts?.at(-1)?.action,'retire');
     });
+    await scenario('M-005 host deletion handles mixed guest decisions and preserves histories', async page => {
+      const result=await page.evaluate(async () => {
+        const source={id:'fictional-mixed-source',name:'Mixed Source',type:'Server - Physical',status:'Active',typeDetails:{serverService_Hypervisor:true,hypervisorProduct:'VMware'}};
+        const target={id:'fictional-mixed-target',name:'Mixed Target',type:'Server - Physical',status:'Active',typeDetails:{serverService_Hypervisor:true,hypervisorProduct:'Proxmox'}};
+        const guests=['unassign','retire','reassign'].map((kind,index)=>({
+          id:'fictional-mixed-'+kind,name:'Mixed '+kind,type:'Server - Virtual',
+          status:'Active',virtualHostId:source.id,virtualPlatform:'VMware',
+          operatingSystem:'Guest OS '+index,customHistoricalNote:'Retain '+kind
+        }));
+        appState.devices.push(source,target,...guests);
+        const originalConfirm=window.confirm;
+        window.confirm=()=>true;
+        try {
+          const pending=deleteDevice(source.id);
+          const selectors=[...document.querySelectorAll('#phase-m005-hypervisor-dialog [data-m005-guest]')];
+          if(selectors.length!==3)throw Error('Expected three guest decisions');
+          selectors[0].value='unassign';
+          selectors[1].value='retire';
+          selectors[2].value='host:'+target.id;
+          document.querySelector('#phase-m005-hypervisor-dialog [data-action="confirm"]').click();
+          await pending;
+        } finally {window.confirm=originalConfirm}
+        return {sourceExists:!!appState.devices.find(d=>d.id===source.id),
+          guests:guests.map(g=>appState.devices.find(d=>d.id===g.id))};
+      });
+      assert.equal(result.sourceExists,false);
+      assert.equal(result.guests.length,3);
+      const [unassigned,retired,reassigned]=result.guests;
+      for(const [index,guest] of result.guests.entries()){
+        assert(guest,'No dependent guest may be deleted');
+        assert.equal(guest.operatingSystem,'Guest OS '+index);
+        assert.equal(guest.customHistoricalNote,'Retain '+['unassign','retire','reassign'][index]);
+        assert.equal(guest.previousVirtualHosts?.at(-1)?.hostId,'fictional-mixed-source');
+      }
+      assert.equal(unassigned.virtualHostId,'');
+      assert.equal(unassigned.status,'Active');
+      assert.equal(unassigned.previousVirtualHosts.at(-1).action,'unassign');
+      assert.equal(unassigned.virtualPlatform,'VMware');
+      assert.equal(retired.virtualHostId,'');
+      assert.equal(retired.status,'Retired');
+      assert.equal(retired.previousVirtualHosts.at(-1).action,'retire');
+      assert.equal(reassigned.virtualHostId,'fictional-mixed-target');
+      assert.equal(reassigned.status,'Active');
+      assert.equal(reassigned.virtualPlatform,'Proxmox');
+      assert.equal(reassigned.previousVirtualPlatforms?.at(-1)?.platform,'VMware');
+    });
     await scenario('M-005 unreferenced host can still be deleted', async page => {
       const result = await page.evaluate(async () => {
         appState.devices.push({id:'fictional-unused-host',name:'Fictional unused host',type:'Server - Physical',mountType:'Desktop',location:'Unknown'});
