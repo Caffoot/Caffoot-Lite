@@ -5130,6 +5130,7 @@ function hierarchyValidateTypes(subnets) {
                     </div>
                     ${orphanedReservation ? `<p role="status" class="text-sm text-amber-700 dark:text-amber-300">This IP has a historical reservation for a device that is no longer in the inventory. Editing the hostname or notes will preserve that reference. Select Available to release the reservation.</p>` : ''}
                     <form data-form-action="ip" data-ip="${escapeHtml(ip)}" class="form-shell space-y-5">
+                        ${orphanedReservation ? `<label class="flex items-center gap-2 text-sm"><input id="ip-release-orphan" type="checkbox"> Release historical reservation when saving</label>` : ''}
                         <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-tag"></i>Allocation</div>
                         <div>
                             <label for="ip-status" class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Status</label>
@@ -5162,6 +5163,7 @@ function hierarchyValidateTypes(subnets) {
             const status = document.getElementById('ip-status').value;
             const hostname = document.getElementById('ip-hostname').value;
             const notes = document.getElementById('ip-notes').value;
+            const releaseOrphan = Boolean(document.getElementById('ip-release-orphan')?.checked);
             const previousAllocation = appState.ipAllocations[ip] ? {...appState.ipAllocations[ip]} : null;
             const primaryDevice = findDeviceUsingIp(ip);
             if (phase10GatewaySubnet(ip)) {
@@ -5183,7 +5185,7 @@ function hierarchyValidateTypes(subnets) {
                         return;
                     }
                 }
-                if (existing || hostname || notes) appState.ipAllocations[ip] = { ...existing, status: 'Available', deviceId: '', reservedForDeviceId: existing?.status === 'Available' ? (existing.reservedForDeviceId || '') : '', hostname, notes };
+                if (existing || hostname || notes) appState.ipAllocations[ip] = { ...existing, status: 'Available', deviceId: '', reservedForDeviceId: existing?.status === 'Available' && !releaseOrphan ? (existing.reservedForDeviceId || '') : '', hostname, notes };
             } else {
                 const existing = appState.ipAllocations[ip] || {};
                 let deviceId = existing.deviceId || '';
@@ -5193,7 +5195,7 @@ function hierarchyValidateTypes(subnets) {
                         deviceId = '';
                     }
                 }
-                appState.ipAllocations[ip] = { ...existing, status, deviceId, hostname, notes, reservedForDeviceId: status === existing.status ? (existing.reservedForDeviceId || '') : '' };
+                appState.ipAllocations[ip] = { ...existing, status, deviceId, hostname, notes, reservedForDeviceId: status === existing.status && !releaseOrphan ? (existing.reservedForDeviceId || '') : '' };
             }
             if (!saveState()) {
                 if (previousAllocation) appState.ipAllocations[ip] = previousAllocation;
