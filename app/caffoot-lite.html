@@ -7403,26 +7403,54 @@ function hierarchyValidateTypes(subnets) {
             closeModal(true); renderContent();
         }
 
-        function deleteDevice(deviceId) {
+        async function deleteDevice(deviceId) {
             const device=getDeviceById(deviceId);
             if(!device) return;
-            // M-005: preserve incoming host references until every dependant is reviewed.
-            const hostedDependants = appState.devices.filter(d => d.id !== deviceId && d.virtualHostId === deviceId);
-            if (hostedDependants.length) return showToast('Resolve hosted device relationships before deleting this host: ' + hostedDependants.map(d => d.name || d.id).join(', '), 'error');
+            const hostedDependants=appState.devices.filter(d=>d.id!==deviceId&&d.virtualHostId===deviceId);
+            let choices=[];
+            if(hostedDependants.length) {
+                // Use the same per guest review as retirement and Hypervisor removal.
+                // Deleting the host itself still requires the existing separate confirmation.
+                choices=await phaseM005ConfirmHypervisorRemoval(device.name,hostedDependants,deviceId);
+                if(!choices) return;
+                if(getDeviceById(deviceId)!==device ||
+                    hostedDependants.some(guest=>getDeviceById(guest.id)!==guest||guest.virtualHostId!==deviceId)) {
+                    return showToast('Inventory changed while reviewing guests. Please try again.','error');
+                }
+            }
             const related=Object.keys(appState.ipAllocations).filter(ip=>appState.ipAllocations[ip]?.deviceId===deviceId);
             const reserved=Object.keys(appState.ipAllocations).filter(ip=>appState.ipAllocations[ip]?.reservedForDeviceId===deviceId);
-            const message=`Delete device ${device.name}?\n\nPrimary IP: ${device.primaryIp||'none'}\nLinked IPAM records: ${related.length}\nOther reservations: ${reserved.length}\nRack: ${device.rackId?'mounted':'not mounted'}\n\nThis cannot be undone. Export a backup first.`;
+            const message=`Delete device ${device.name}?\n\nPrimary IP: ${device.primaryIp||'none'}\nLinked IPAM records: ${related.length}\nOther reservations: ${reserved.length}\nRack: ${device.rackId?'mounted':'not mounted'}\n\n${hostedDependants.length} hosted virtual machines will be resolved as selected.\n\nThis cannot be undone. Export a backup first.`;
             if(!confirm(message)) return;
             const before=JSON.stringify(appState);
-            for(const ip of related) {
-                const allocation = appState.ipAllocations[ip];
-                if (allocation) appState.ipAllocations[ip] = { ...allocation, status: 'Available', deviceId: '' };
+            for(let index=0;index<hostedDependants.length;index++){
+                const guest=hostedDependants[index],choice=choices[index];
+                guest.previousVirtualHosts=[...(Array.isArray(guest.previousVirtualHosts)?guest.previousVirtualHosts:[]),
+                    {hostId:deviceId,changedAt:new Date().toISOString(),action:choice}];
+                if(choice==='unassign')guest.virtualHostId='';
+                else if(choice==='retire'){guest.virtualHostId='';guest.status='Retired';}
+                else if(choice.startsWith('host:')){
+                    const destination=appState.devices.find(host=>host.id===choice.slice(5)&&host.id!==deviceId&&
+                        host.type==='Server - Physical'&&host.status!=='Retired'&&
+                        (host.typeDetails?.serverService_Hypervisor===true||host.serverService_Hypervisor===true));
+                    if(!destination){appState=JSON.parse(before);return showToast('Destination Hypervisor is no longer eligible.','error');}
+                    guest.virtualHostId=destination.id;
+                    const platform=String(destination.typeDetails?.hypervisorProduct||'').trim();
+                    if(platform&&guest.virtualPlatform!==platform){
+                        guest.previousVirtualPlatforms=[...(Array.isArray(guest.previousVirtualPlatforms)?guest.previousVirtualPlatforms:[]),
+                            {platform:guest.virtualPlatform||'',hostId:deviceId,changedAt:new Date().toISOString()}];
+                        guest.virtualPlatform=platform;
+                    }
+                }else{appState=JSON.parse(before);return showToast('Invalid guest decision.','error');}
             }
-            for(const ip of reserved) if(appState.ipAllocations[ip]) appState.ipAllocations[ip].reservedForDeviceId='';
+            for(const ip of related){
+                const allocation=appState.ipAllocations[ip];
+                if(allocation)appState.ipAllocations[ip]={...allocation,status:'Available',deviceId:''};
+            }
+            for(const ip of reserved)if(appState.ipAllocations[ip])appState.ipAllocations[ip].reservedForDeviceId='';
             appState.devices=appState.devices.filter(d=>d.id!==deviceId);
             phase11BCommitDelete(before,'Device');
         }
-
 
         // Phase 16B: one purpose per settings section; existing handlers remain unchanged.
         let phase16ASection = 'backup';
