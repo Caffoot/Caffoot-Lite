@@ -7940,6 +7940,7 @@ function hierarchyValidateTypes(subnets) {
             const issues = [];
             const occupied = new Map();
             const ids = new Set();
+            const validAccessoryTypes = new Set(['blank', 'patch', 'brush', 'cable', 'shelf', 'pdu_horizontal', 'ventilation', 'fan_tray', 'environmental_sensor', 'pdu_vertical', 'cable_vertical']);
             const racks = new Map(candidate.racks.map(r => [r.id, r]));
             const place = (record, label, rackId, face, start, height, rail) => {
                 const rack = racks.get(rackId);
@@ -7971,10 +7972,10 @@ function hierarchyValidateTypes(subnets) {
                 const label = 'Accessory ' + String(accessory.name || accessory.id || '(unnamed)');
                 if (!accessory.id || ids.has(accessory.id)) issues.push(label + ' has a missing or duplicate ID.');
                 ids.add(accessory.id);
-                if (!Object.prototype.hasOwnProperty.call(phase13CAccessoryTypes, accessory.type)) {
+                if (!validAccessoryTypes.has(accessory.type)) {
                     issues.push(label + ' has an unsupported accessory type.'); continue;
                 }
-                const vertical = Boolean(phase13CAccessoryTypes[accessory.type].vertical);
+                const vertical = accessory.type === 'pdu_vertical' || accessory.type === 'cable_vertical';
                 if (vertical && !['left', 'right'].includes(accessory.side)) {
                     issues.push(label + ' has an invalid side rail.'); continue;
                 }
