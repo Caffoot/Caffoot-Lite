@@ -531,8 +531,8 @@ const subnetSubmitStart = html.indexOf('function handleSubnetSubmit(e, subnetId)
 const subnetSubmitEnd = html.indexOf('function ipBelongsToSubnet(', subnetSubmitStart);
 assert(subnetSubmitStart >= 0 && subnetSubmitEnd > subnetSubmitStart, 'Subnet handler must exist');
 const subnetSubmitCode = html.slice(subnetSubmitStart, subnetSubmitEnd);
-assert(subnetSubmitCode.includes('appState.ipAllocations[gateway]'), 'Gateway must reject reserved or allocated IPAM addresses');
-assert(subnetSubmitCode.includes('appState.devices.some(d => d.primaryIp === gateway)'), 'Gateway must reject device primary addresses');
+assert(subnetSubmitCode.includes('const gatewayAllocation = appState.ipAllocations[gateway];') && subnetSubmitCode.includes('(!gatewayAllocation.reservedForDeviceId || gatewayAllocation.reservedForDeviceId === gatewayOwners[0].id)'), 'Gateway must reject conflicting IPAM ownership and reservations');
+assert(subnetSubmitCode.includes('const gatewayOwners = appState.devices.filter(d => d.primaryIp === gateway);') && subnetSubmitCode.includes('gatewayOwners.length === 1') && subnetSubmitCode.includes("['Firewall', 'Router', 'Layer 3 Switch'].includes(gatewayOwners[0].type)") && subnetSubmitCode.includes('if ((gatewayOwners.length || gatewayAllocation) && !eligibleExistingGatewayOwner)'), 'Gateway must reject conflicting device primary addresses while preserving eligible existing ownership');
 assert(subnetSubmitCode.includes('const beforeSubnetSave = JSON.stringify(appState);'), 'Subnet changes must snapshot state');
 assert(subnetSubmitCode.includes('appState = JSON.parse(beforeSubnetSave);'), 'Failed subnet saves must restore inventory');
 assert(subnetSubmitCode.includes('selectedSubnetId = previousSubnetSelection;'), 'Failed subnet saves must restore selection');
