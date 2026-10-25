@@ -618,3 +618,20 @@ assert.equal(migratedLegacy.ipAllocations['192.168.40.10'].notes, 'Historical ad
 assert.equal(migratedLegacy.ipAllocations['192.168.40.11'].reservedForDeviceId, 'retired-device', 'migration must retain historical reservation reference');
 assert.equal(migratedLegacy.ipAllocations['192.168.40.11'].notes, 'Historical reservation', 'migration must retain reservation notes');
 console.log('M-006 legacy backup migration runtime fixture passed.');
+
+// M-024 source contract: missing-device reservations must be visible and survive notes-only edits.
+const orphanCardStart = html.indexOf('const reservedDevice = alloc?.reservedForDeviceId');
+assert(orphanCardStart >= 0, 'IPAM reservation card lookup must exist');
+assert(html.slice(orphanCardStart, orphanCardStart + 1900).includes('Missing reserved device'),
+  'IPAM card must identify missing reservation device');
+const orphanModalStart = html.indexOf('function openIpModal(ip)');
+const orphanModalEnd = html.indexOf('function handleIpSubmit(e, ip)', orphanModalStart);
+assert(orphanModalStart >= 0 && orphanModalEnd > orphanModalStart, 'IP editor must exist');
+assert(html.slice(orphanModalStart, orphanModalEnd).includes('historical reservation for a device that is no longer in the inventory'),
+  'IP editor must explain historical missing-device reservation');
+const orphanSubmit = html.slice(orphanModalEnd, html.indexOf('// RC1 accessibility:', orphanModalEnd));
+assert(orphanSubmit.includes("status === existing.status ? (existing.reservedForDeviceId || '') : ''"),
+  'same-status notes edits must preserve historical reservation reference');
+assert(orphanSubmit.includes("status: 'Available', deviceId: '', reservedForDeviceId: ''"),
+  'explicit Available release must still clear reservation reference');
+console.log('M-024 missing-device UI source contracts passed (not a browser interaction test).');
