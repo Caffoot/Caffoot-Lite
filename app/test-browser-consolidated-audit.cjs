@@ -896,6 +896,38 @@ const { chromium } = require('playwright');
         assert.equal(allocation.customLegacyField,'keep-history');
       }
     });
+    await scenario('M-009 existing network gateway owner survives subnet edit', async page => {
+      for (const type of ['Router', 'Firewall', 'Layer 3 Switch']) {
+        const result = await page.evaluate(type => {
+          const suffix = type.toLowerCase().replace(/[^a-z0-9]/g, '');
+          const subnet = {id:'fictional-gateway-'+suffix,name:'Before edit',kind:'network',cidr:'10.88.72.0/29',gateway:'10.88.72.1',vlan:3872};
+          const owner = {id:'fictional-owner-'+suffix,name:'Fictional '+type,type,primaryIp:subnet.gateway};
+          appState.subnets.push(subnet);
+          appState.devices.push(owner);
+          appState.ipAllocations[subnet.gateway] = {status:'Assigned',deviceId:owner.id,reservedForDeviceId:'',notes:'Preserve gateway notes'};
+          const originalAllocation = JSON.stringify(appState.ipAllocations[subnet.gateway]);
+          const fields = {'sub-kind':'network','sub-cidr':subnet.cidr,'sub-name':'After edit','sub-vlan':String(subnet.vlan),'sub-gw':subnet.gateway,'sub-desc':'Edited safely','sub-parent':''};
+          for (const [id,value] of Object.entries(fields)) {
+            let el = document.getElementById(id);
+            if (!el) { el = document.createElement('input'); el.id=id; document.body.appendChild(el); }
+            el.value=value;
+          }
+          handleSubnetSubmit({preventDefault(){}},subnet.id);
+          const edited=appState.subnets.find(s=>s.id===subnet.id);
+          const persisted=JSON.parse(localStorage.getItem('caffoot_state'));
+          const result={name:edited.name,allocation:JSON.stringify(appState.ipAllocations[subnet.gateway]),originalAllocation,
+            savedName:persisted.subnets.find(s=>s.id===subnet.id)?.name,savedAllocation:JSON.stringify(persisted.ipAllocations[subnet.gateway])};
+          appState.subnets=appState.subnets.filter(s=>s.id!==subnet.id);
+          appState.devices=appState.devices.filter(d=>d.id!==owner.id);
+          delete appState.ipAllocations[subnet.gateway];
+          return result;
+        },type);
+        assert.equal(result.name,'After edit',type+' should allow unchanged legitimate gateway');
+        assert.equal(result.savedName,'After edit',type+' edit should persist');
+        assert.equal(result.allocation,result.originalAllocation,type+' must preserve IPAM ownership and notes');
+        assert.equal(result.savedAllocation,result.originalAllocation,type+' must persist IPAM without mutation');
+      }
+    });
     await scenario('M-006 N22 individual and bulk release retain notes', async page => {
       const result=await page.evaluate(() => {
         const subnet={id:'fictional-release-subnet',name:'Release checks',kind:'network',cidr:'10.88.78.0/29',gateway:'10.88.78.1',vlan:3878};
