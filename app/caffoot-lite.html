@@ -6896,7 +6896,7 @@ function hierarchyValidateTypes(subnets) {
                                         ${['','VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng','Other'].map(x=>'<option value="'+escapeHtml(x)+'" '+((draft?.virtualPlatform ?? device?.virtualPlatform ?? '')===x?'selected':'')+'>'+escapeHtml(x||'Select Platform...')+'</option>').join('')}
                                     </select></div>
                                     <div><label class="form-label" for="dev-virtual-host">Host Device (optional)</label><select id="dev-virtual-host" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="">Not Specified</option>
-                                        ${appState.devices.filter(x=>x.id!==(device?.id||'')&&x.type==='Server - Physical').map(x=>'<option value="'+escapeHtml(x.id)+'" '+((draft?.virtualHostId ?? device?.virtualHostId ?? '')===x.id?'selected':'')+'>'+escapeHtml(x.name)+'</option>').join('')}
+                                        ${appState.devices.filter(x=>x.id!==(device?.id||'')&&x.type==='Server - Physical'&&((x.status!=='Retired'&&(x.typeDetails?.serverService_Hypervisor===true||x.serverService_Hypervisor===true))||x.id===(draft?.virtualHostId??device?.virtualHostId??''))).map(x=>'<option value="'+escapeHtml(x.id)+'" '+((draft?.virtualHostId ?? device?.virtualHostId ?? '')===x.id?'selected':'')+'>'+escapeHtml(x.name)+(x.status==='Retired'||!(x.typeDetails?.serverService_Hypervisor===true||x.serverService_Hypervisor===true)?' (existing legacy assignment)':'')+'</option>').join('')}
                                     </select></div>
                                 </div>
                             </div>
@@ -7278,7 +7278,8 @@ function hierarchyValidateTypes(subnets) {
             const serialNumber = document.getElementById('dev-serial').value.trim();
             const virtualPlatform = type==='Server - Virtual'?(document.getElementById('dev-virtual-platform')?.value||''):'';
             const virtualHostId = type==='Server - Virtual'?(document.getElementById('dev-virtual-host')?.value||''):'';
-            if(virtualHostId&&!appState.devices.some(d=>d.id===virtualHostId&&d.type==='Server - Physical'&&d.id!==deviceId))return showToast('Select a valid physical host device.','error');
+                        const existingDeviceHostIsUnchanged = () => !!deviceId && getDeviceById(deviceId)?.virtualHostId === virtualHostId;
+            if(virtualHostId&&!appState.devices.some(d=>d.id===virtualHostId&&d.type==='Server - Physical'&&d.id!==deviceId&&((d.status!=='Retired'&&(d.typeDetails?.serverService_Hypervisor===true||d.serverService_Hypervisor===true))||(existingDeviceHostIsUnchanged()))))return showToast('Select an eligible Hypervisor host, or retain the existing legacy assignment.','error');
             if (!['Active','Maintenance','Retired'].includes(status)) return showToast('Invalid device status.', 'error');
             const notes = document.getElementById('dev-notes').value.trim();
             let typeDetails = phase19BReadFields();
