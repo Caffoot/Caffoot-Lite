@@ -349,7 +349,7 @@ const { chromium } = require('playwright');
       assert.match(result.text,/no Hypervisor service selected/);
       assert.equal(result.hostId,'fictional-legacy-host');
     });
-    await scenario('M-005 hypervisor confirmation Escape preserves editing and focus', async page => {
+    await scenario('M-005 guest resolution Escape preserves editing and focus', async page => {
       const result = await page.evaluate(async () => {
         const container=document.getElementById('modal-container');
         const content=document.getElementById('modal-content');
@@ -357,7 +357,7 @@ const { chromium } = require('playwright');
         content.innerHTML='<button id="fictional-hypervisor-origin" type="button">Original control</button>';
         const origin=document.getElementById('fictional-hypervisor-origin');
         origin.focus();
-        const pending=phaseM005ConfirmHypervisorRemoval('Fictional host', [{id:'guest-one',name:'Fictional guest'}]);
+        const pending=phaseM005ConfirmHypervisorRemoval('Fictional host', [{id:'guest-one',name:'Fictional guest'}], 'fictional-host');
         const dialog=document.getElementById('phase-m005-hypervisor-dialog');
         const text=dialog?.textContent||'';
         document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));
@@ -365,14 +365,14 @@ const { chromium } = require('playwright');
         return {accepted,removed:!document.getElementById('phase-m005-hypervisor-dialog'),
           focusRestored:document.activeElement===origin,originStillPresent:!!document.getElementById('fictional-hypervisor-origin'),text};
       });
-      assert.equal(result.accepted,false);
+      assert.equal(result.accepted,null);
       assert.equal(result.removed,true);
       assert.equal(result.focusRestored,true);
       assert.equal(result.originStillPresent,true);
       assert.match(result.text,/Fictional guest/);
-      assert.match(result.text,/No guest data or host relationships will be changed/);
+      assert.match(result.text,/Nothing changes until you confirm and save/);
     });
-    await scenario('M-005 hypervisor Keep Editing and confirmation return distinct outcomes', async page => {
+    await scenario('M-005 guest resolution requires explicit choice and supports cancellation', async page => {
       const result = await page.evaluate(async () => {
         const container=document.getElementById('modal-container');
         const content=document.getElementById('modal-content');
@@ -380,18 +380,22 @@ const { chromium } = require('playwright');
         content.innerHTML='<button id="fictional-hypervisor-origin-2" type="button">Original control</button>';
         const origin=document.getElementById('fictional-hypervisor-origin-2');
         origin.focus();
-        const cancelPending=phaseM005ConfirmHypervisorRemoval('Fictional host', [{id:'guest-two',name:'Guest two'}]);
-        document.querySelector('[data-action="phase-m005-hypervisor-cancel"]').click();
+        const cancelPending=phaseM005ConfirmHypervisorRemoval('Fictional host', [{id:'guest-two',name:'Guest two'}], 'fictional-host');
+        document.querySelector('#phase-m005-hypervisor-dialog [data-action="cancel"]').click();
         const cancelled=await cancelPending;
         const cancelFocus=document.activeElement===origin;
-        const acceptPending=phaseM005ConfirmHypervisorRemoval('Fictional host', [{id:'guest-two',name:'Guest two'}]);
-        document.querySelector('[data-action="phase-m005-hypervisor-accept"]').click();
+        const acceptPending=phaseM005ConfirmHypervisorRemoval('Fictional host', [{id:'guest-two',name:'Guest two'}], 'fictional-host');
+        document.querySelector('#phase-m005-hypervisor-dialog [data-action="confirm"]').click();
+        const stillOpen=!!document.getElementById('phase-m005-hypervisor-dialog');
+        document.querySelector('[data-m005-guest="0"]').value='unassign';
+        document.querySelector('#phase-m005-hypervisor-dialog [data-action="confirm"]').click();
         const accepted=await acceptPending;
         return {cancelled,accepted,cancelFocus,acceptFocus:document.activeElement===origin,
-          removed:!document.getElementById('phase-m005-hypervisor-dialog')};
+          stillOpen,removed:!document.getElementById('phase-m005-hypervisor-dialog')};
       });
-      assert.equal(result.cancelled,false);
-      assert.equal(result.accepted,true);
+      assert.equal(result.cancelled,null);
+      assert.deepEqual(result.accepted,['unassign']);
+      assert.equal(result.stillOpen,true,'Confirmation must require a guest decision');
       assert.equal(result.cancelFocus,true);
       assert.equal(result.acceptFocus,true);
       assert.equal(result.removed,true);
@@ -421,7 +425,7 @@ const { chromium } = require('playwright');
           const dialog=document.getElementById('phase-m005-hypervisor-dialog');
           if(!dialog)throw Error('Expected hypervisor confirmation missing');
           if(decision==='escape')document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));
-          else phaseM005ResolveHypervisorRemoval(true);
+          else { document.querySelector('[data-m005-guest="0"]').value='unassign'; document.querySelector('#phase-m005-hypervisor-dialog [data-action="confirm"]').click(); }
           await pending;
           const host=appState.devices.find(d=>d.id===hostId);
           const guest=appState.devices.find(d=>d.id==='fictional-hypervisor-form-vm');
@@ -430,7 +434,7 @@ const { chromium } = require('playwright');
             formStillOpen:!!document.getElementById('dev-name')};
         },decision);
         assert.equal(result.dialogClosed,true);
-        assert.equal(result.guestHost,'fictional-hypervisor-form-host');
+        assert.equal(result.guestHost,decision==='escape'?'fictional-hypervisor-form-host':'');
         if(decision==='escape') {
           assert.equal(result.hypervisor,true,'Escape must preserve recorded hypervisor');
           assert.equal(result.after,result.before,'Escape must not persist changes');
@@ -439,7 +443,7 @@ const { chromium } = require('playwright');
           assert.equal(result.hypervisor,false,'Confirmed removal must update service');
           assert.notEqual(result.after,result.before,'Confirmed removal must persist');
           const persisted=JSON.parse(result.after);
-          assert.equal(persisted.devices.find(d=>d.id==='fictional-hypervisor-form-vm').virtualHostId,'fictional-hypervisor-form-host');
+          assert.equal(persisted.devices.find(d=>d.id==='fictional-hypervisor-form-vm').virtualHostId,'');
         }
       });
     }
@@ -471,8 +475,9 @@ const { chromium } = require('playwright');
         try {
           const pending=handleDeviceSubmit({preventDefault(){}},hostId);
           await Promise.resolve();
-          const confirm=document.querySelector('[data-action="phase-m005-hypervisor-accept"]');
+          const confirm=document.querySelector('#phase-m005-hypervisor-dialog [data-action="confirm"]');
           if(!confirm)throw Error('Expected hypervisor confirmation missing');
+          document.querySelector('[data-m005-guest="0"]').value='unassign';
           confirm.click();
           await pending;
         } catch(error) {thrown=String(error); }
