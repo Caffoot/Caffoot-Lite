@@ -7964,7 +7964,7 @@ function hierarchyValidateTypes(subnets) {
                 place(device, 'Device ' + String(device.name || device.id || '(unnamed)'),
                     device.rackId, device.face || 'front', start, height, 'horizontal');
             }
-            for (const accessory of candidate.rackAccessories) {
+            for (const accessory of (Array.isArray(candidate.rackAccessories) ? candidate.rackAccessories : [])) {
                 if (!accessory || typeof accessory !== 'object' || Array.isArray(accessory)) {
                     issues.push('Backup contains an invalid rack accessory record.'); continue;
                 }
