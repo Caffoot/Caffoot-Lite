@@ -41,7 +41,7 @@ Statuses here are intentionally conservative. **Corrected in main** means merged
 | M-006 | Primary IP ownership and allocation consistency | Open, approved-scope correction in PR #123; targeted N22/N31 Chromium passes | Finish full UI and failure-path verification, then product owner review |
 | M-007 | Historical function names obscure responsibilities | Proposed improvement | Complete function reference before controlled renames |
 | M-008 | Device type changes and preservation of related records | Proposed policy decision | Agree safe correction and conversion rules |
-| M-009 | Legitimate gateway ownership preventing subnet edits | Open investigation | Reproduce with existing and imported inventories |
+| M-009 | Legitimate gateway ownership preventing subnet edits | Correction in draft PR #132; targeted Chromium pass on head `c1ffc9f` | Unchanged legitimate gateway owner verified for Firewall, Router and Layer 3 Switch in run 40182601831; review changed-gateway conflicts, import compatibility and merge approval before closing |
 | M-010 | Rack occupancy checks during import | Open investigation | Coordinate with M-019 and protect older backups |
 | M-011 | Import rollback and safety copy restoration | Corrected in main, targeted Chromium pass, PR #81 | Carry into maintenance release verification |
 | M-012 | Integrity repair safety and failed save handling | Corrected in main, targeted Chromium pass, PR #77 | Carry into maintenance release verification |
