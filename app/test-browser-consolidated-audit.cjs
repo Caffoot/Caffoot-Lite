@@ -50,9 +50,9 @@ const { chromium } = require('playwright');
     await scenario('M-017 dashboard service label preserves raw drilldown key', async page => {
       const result = await page.evaluate(() => {
         appState.devices.push({id:'hypervisor-label-fixture',name:'Hypervisor label fixture',type:'Server - Physical',typeDetails:{serverService_Hypervisor:true}});
-        phase14DeviceTab='intelligence';
+        phase14DeviceTab='overview';
         deviceIntelligenceTab='software';
-        const html=renderDevices();
+        const html=renderDevicesHTML();
         return {html,storedKey:appState.devices.at(-1).typeDetails.serverService_Hypervisor};
       });
       assert.match(result.html,/data-value="serverService_Hypervisor"/,'Dashboard must retain raw filter key');
