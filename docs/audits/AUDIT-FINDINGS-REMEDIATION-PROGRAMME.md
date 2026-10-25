@@ -24,7 +24,7 @@ Statuses here are intentionally conservative. **Corrected in main** means merged
 | M-003 | Inventory save and audit history consistency | Review | Agree intended audit guarantees |
 | M-004 | Failed save rollback across editing paths | Review | Reconcile individual callers and previous tests |
 | M-005 | Physical host deletion or conversion breaking virtual server links | Open investigation | Prioritise non-destructive relationship safeguards |
-| M-006 | Primary IP ownership and allocation consistency | Open investigation | Verify changes, metadata and failed saves |
+| M-006 | Primary IP ownership and allocation consistency | Open, approved-scope correction in PR #123; targeted N22/N31 Chromium passes | Finish full UI and failure-path verification, then product owner review |
 | M-007 | Historical function names obscure responsibilities | Proposed improvement | Complete function reference before controlled renames |
 | M-008 | Device type changes and preservation of related records | Proposed policy decision | Agree safe correction and conversion rules |
 | M-009 | Legitimate gateway ownership preventing subnet edits | Open investigation | Reproduce with existing and imported inventories |
@@ -42,7 +42,7 @@ Statuses here are intentionally conservative. **Corrected in main** means merged
 | M-021 | Suspected hardware model edit rollback defect | Closed without change after complete function inspection | Retain original finding and closure evidence |
 | M-022 | Rack selection after a failed new rack save | Review | Reconcile existing test and source evidence |
 | M-023 | Rack accessory failure feedback and retry | Review | Check impact and proposed user experience |
-| M-024 | IP reservations referring to missing devices | Open investigation | Verify imports and preserve existing records |
+| M-024 | IP reservations referring to missing devices | Open, historical orphaned reservation survived real Chromium import and reload in PR #123 | Reconcile remaining import and repair paths before disposition |
 | M-025 | Backup and restore language and controls | Agreed user experience direction, not implemented | Design clear controls and retain safety copies |
 | M-026 | Consistent save, cancel and edit behaviour | Proposed improvement | Review form families and exceptions |
 | M-027 | Return to editing from bulk IP confirmation | Agreed user experience direction, not implemented | Design and test return without applying changes |
