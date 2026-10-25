@@ -271,9 +271,237 @@ const { chromium } = require('playwright');
       });
     }
 
-    // M-005 baseline characterisation only: these observations document the current
-    // missing host integrity safeguards. They are NOT future acceptance criteria.
-    await scenario('M-005 baseline incoming host deletion', async page => {
+    // M-005: deletion protection acceptance, with legacy validator and import
+    // characterisation retained separately until compatibility handling is designed.
+    await scenario('M-005 physical host details list hosted guests', async page => {
+      const result = await page.evaluate(() => {
+        appState.devices.push(
+          {id:'fictional-display-host',name:'Fictional display host',type:'Server - Physical',location:'Unknown'},
+          {id:'fictional-display-vm-a',name:'Fictional web VM',type:'Server - Virtual',status:'Active',virtualHostId:'fictional-display-host'},
+          {id:'fictional-display-vm-b',name:'Fictional database VM',type:'Server - Virtual',status:'Maintenance',virtualHostId:'fictional-display-host'}
+        );
+        phase14CViewDevice('fictional-display-host');
+        const tab=document.getElementById('phase14c-tab-virtual-machines');
+        phase14CSelectTab('virtual-machines');
+        const panel=document.getElementById('phase14c-panel-virtual-machines');
+        return {text:panel?.textContent||'',tabSelected:tab?.getAttribute('aria-selected'),panelVisible:!panel?.hidden,links:appState.devices.filter(d=>d.virtualHostId==='fictional-display-host').length};
+      });
+      assert.equal(result.tabSelected,'true','Virtual Machines tab must be selected');
+      assert.equal(result.panelVisible,true,'Virtual Machines panel must be visible');
+      assert.match(result.text,/Hosted virtual machines/);
+      assert.match(result.text,/Fictional web VM/);
+      assert.match(result.text,/Fictional database VM/);
+      assert.match(result.text,/Maintenance/);
+      assert.equal(result.links,2,'Viewing host details must preserve guest links');
+    });
+    await scenario('M-005 navigate from hosted guest list to guest details', async page => {
+      const result = await page.evaluate(() => {
+        appState.devices.push(
+          {id:'fictional-nav-host',name:'Fictional navigation host',type:'Server - Physical',location:'Unknown'},
+          {id:'fictional-nav-guest',name:'Fictional navigation guest',type:'Server - Virtual',location:'Unknown',virtualHostId:'fictional-nav-host'}
+        );
+        phase14CViewDevice('fictional-nav-host');
+        phase14CSelectTab('virtual-machines');
+        const button=document.querySelector('#phase14c-panel-virtual-machines [data-action="phase14c-view-hosted-guest"][data-id="fictional-nav-guest"]');
+        if(!button)return {buttonFound:false};
+        button.click();
+        return {buttonFound:true,detailText:document.querySelector('.phase14c-detail')?.textContent||'',
+          hostId:appState.devices.find(d=>d.id==='fictional-nav-guest')?.virtualHostId};
+      });
+      assert.equal(result.buttonFound,true,'Guest details button must be present');
+      assert.match(result.detailText,/Fictional navigation guest/);
+      assert.match(result.detailText,/Fictional navigation host/);
+      assert.equal(result.hostId,'fictional-nav-host','Navigation must not change the guest host reference');
+    });
+    await scenario('M-005 physical host details show empty guest state', async page => {
+      const text = await page.evaluate(() => {
+        appState.devices.push({id:'fictional-display-empty',name:'Fictional empty host',type:'Server - Physical',location:'Unknown',typeDetails:{serverService_Hypervisor:true}});
+        phase14CViewDevice('fictional-display-empty');
+        phase14CSelectTab('virtual-machines');
+        return document.getElementById('phase14c-panel-virtual-machines')?.textContent||'';
+      });
+      assert.match(text,/No hosted virtual machines recorded/);
+    });
+    await scenario('M-005 no VM tab without hypervisor or hosted guests', async page => {
+      const result = await page.evaluate(() => {
+        appState.devices.push({id:'fictional-no-hypervisor',name:'Fictional ordinary physical server',type:'Server - Physical',location:'Unknown'});
+        phase14CViewDevice('fictional-no-hypervisor');
+        return {tab:!!document.getElementById('phase14c-tab-virtual-machines'),
+          panel:!!document.getElementById('phase14c-panel-virtual-machines')};
+      });
+      assert.equal(result.tab,false);
+      assert.equal(result.panel,false);
+    });
+    await scenario('M-005 existing guests remain visible without hypervisor service', async page => {
+      const result = await page.evaluate(() => {
+        appState.devices.push(
+          {id:'fictional-legacy-host',name:'Fictional legacy host',type:'Server - Physical',location:'Unknown'},
+          {id:'fictional-legacy-guest',name:'Fictional legacy guest',type:'Server - Virtual',location:'Unknown',virtualHostId:'fictional-legacy-host'}
+        );
+        phase14CViewDevice('fictional-legacy-host');
+        phase14CSelectTab('virtual-machines');
+        return {tab:!!document.getElementById('phase14c-tab-virtual-machines'),
+          text:document.getElementById('phase14c-panel-virtual-machines')?.textContent||'',
+          hostId:appState.devices.find(d=>d.id==='fictional-legacy-guest')?.virtualHostId};
+      });
+      assert.equal(result.tab,true);
+      assert.match(result.text,/Fictional legacy guest/);
+      assert.match(result.text,/no Hypervisor service selected/);
+      assert.equal(result.hostId,'fictional-legacy-host');
+    });
+    await scenario('M-005 hypervisor confirmation Escape preserves editing and focus', async page => {
+      const result = await page.evaluate(async () => {
+        const container=document.getElementById('modal-container');
+        const content=document.getElementById('modal-content');
+        container.classList.remove('hidden');
+        content.innerHTML='<button id="fictional-hypervisor-origin" type="button">Original control</button>';
+        const origin=document.getElementById('fictional-hypervisor-origin');
+        origin.focus();
+        const pending=phaseM005ConfirmHypervisorRemoval('Fictional host', [{id:'guest-one',name:'Fictional guest'}]);
+        const dialog=document.getElementById('phase-m005-hypervisor-dialog');
+        const text=dialog?.textContent||'';
+        document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));
+        const accepted=await pending;
+        return {accepted,removed:!document.getElementById('phase-m005-hypervisor-dialog'),
+          focusRestored:document.activeElement===origin,originStillPresent:!!document.getElementById('fictional-hypervisor-origin'),text};
+      });
+      assert.equal(result.accepted,false);
+      assert.equal(result.removed,true);
+      assert.equal(result.focusRestored,true);
+      assert.equal(result.originStillPresent,true);
+      assert.match(result.text,/Fictional guest/);
+      assert.match(result.text,/No guest data or host relationships will be changed/);
+    });
+    await scenario('M-005 hypervisor Keep Editing and confirmation return distinct outcomes', async page => {
+      const result = await page.evaluate(async () => {
+        const container=document.getElementById('modal-container');
+        const content=document.getElementById('modal-content');
+        container.classList.remove('hidden');
+        content.innerHTML='<button id="fictional-hypervisor-origin-2" type="button">Original control</button>';
+        const origin=document.getElementById('fictional-hypervisor-origin-2');
+        origin.focus();
+        const cancelPending=phaseM005ConfirmHypervisorRemoval('Fictional host', [{id:'guest-two',name:'Guest two'}]);
+        document.querySelector('[data-action="phase-m005-hypervisor-cancel"]').click();
+        const cancelled=await cancelPending;
+        const cancelFocus=document.activeElement===origin;
+        const acceptPending=phaseM005ConfirmHypervisorRemoval('Fictional host', [{id:'guest-two',name:'Guest two'}]);
+        document.querySelector('[data-action="phase-m005-hypervisor-accept"]').click();
+        const accepted=await acceptPending;
+        return {cancelled,accepted,cancelFocus,acceptFocus:document.activeElement===origin,
+          removed:!document.getElementById('phase-m005-hypervisor-dialog')};
+      });
+      assert.equal(result.cancelled,false);
+      assert.equal(result.accepted,true);
+      assert.equal(result.cancelFocus,true);
+      assert.equal(result.acceptFocus,true);
+      assert.equal(result.removed,true);
+    });
+    for (const decision of ['escape','confirm']) {
+      await scenario('M-005 full hypervisor form save ' + decision, async page => {
+        const result=await page.evaluate(async decision => {
+          const hostId='fictional-hypervisor-form-host';
+          appState.subnets.push({id:'fictional-hypervisor-form-subnet',name:'Hypervisor form subnet',kind:'network',cidr:'10.88.74.0/29',gateway:'10.88.74.1',vlan:3874});
+          appState.devices.push(
+            {id:hostId,name:'Fictional hypervisor form host',type:'Server - Physical',mountType:'Desktop',location:'Unknown',status:'Active',primaryIp:'10.88.74.2',typeDetails:{serverService_Hypervisor:true}},
+            {id:'fictional-hypervisor-form-vm',name:'Fictional hypervisor form VM',type:'Server - Virtual',mountType:'Desktop',location:'Unknown',virtualHostId:hostId}
+          );
+          localStorage.setItem('caffoot_state',JSON.stringify(appState));
+          const before=localStorage.getItem('caffoot_state');
+          openDeviceModal(hostId);
+          const set=(id,value)=>{const el=document.getElementById(id);if(!el)throw Error('Missing form control '+id);el.value=value;el.dispatchEvent(new Event('change',{bubbles:true}));};
+          set('dev-location','Unknown');
+          set('dev-mount-type','Desktop');
+          set('dev-subnet','fictional-hypervisor-form-subnet');
+          set('dev-ip','10.88.74.2');
+          const hypervisor=document.querySelector('[data-phase19b-field="serverService_Hypervisor"]');
+          if(!hypervisor)throw Error('Hypervisor checkbox missing');
+          hypervisor.checked=false;
+          const pending=handleDeviceSubmit({preventDefault(){}},hostId);
+          await Promise.resolve();
+          const dialog=document.getElementById('phase-m005-hypervisor-dialog');
+          if(!dialog)throw Error('Expected hypervisor confirmation missing');
+          if(decision==='escape')document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));
+          else phaseM005ResolveHypervisorRemoval(true);
+          await pending;
+          const host=appState.devices.find(d=>d.id===hostId);
+          const guest=appState.devices.find(d=>d.id==='fictional-hypervisor-form-vm');
+          return {before,after:localStorage.getItem('caffoot_state'),hypervisor:host.typeDetails?.serverService_Hypervisor,
+            guestHost:guest.virtualHostId,dialogClosed:!document.getElementById('phase-m005-hypervisor-dialog'),
+            formStillOpen:!!document.getElementById('dev-name')};
+        },decision);
+        assert.equal(result.dialogClosed,true);
+        assert.equal(result.guestHost,'fictional-hypervisor-form-host');
+        if(decision==='escape') {
+          assert.equal(result.hypervisor,true,'Escape must preserve recorded hypervisor');
+          assert.equal(result.after,result.before,'Escape must not persist changes');
+          assert.equal(result.formStillOpen,true,'Escape must return to edit form');
+        } else {
+          assert.equal(result.hypervisor,false,'Confirmed removal must update service');
+          assert.notEqual(result.after,result.before,'Confirmed removal must persist');
+          const persisted=JSON.parse(result.after);
+          assert.equal(persisted.devices.find(d=>d.id==='fictional-hypervisor-form-vm').virtualHostId,'fictional-hypervisor-form-host');
+        }
+      });
+    }
+    await scenario('M-005 confirmed hypervisor removal rolls back failed storage save', async page => {
+      const result=await page.evaluate(async () => {
+        const hostId='fictional-hypervisor-failed-save-host';
+        appState.subnets.push({id:'fictional-hypervisor-failed-subnet',name:'Failed save subnet',kind:'network',cidr:'10.88.73.0/29',gateway:'10.88.73.1',vlan:3873});
+        appState.devices.push(
+          {id:hostId,name:'Fictional failed save host',type:'Server - Physical',mountType:'Desktop',location:'Unknown',status:'Active',primaryIp:'10.88.73.2',typeDetails:{serverService_Hypervisor:true}},
+          {id:'fictional-hypervisor-failed-vm',name:'Fictional failed save VM',type:'Server - Virtual',mountType:'Desktop',location:'Unknown',virtualHostId:hostId}
+        );
+        const before=JSON.stringify(appState);
+        localStorage.setItem('caffoot_state',before);
+        openDeviceModal(hostId);
+        const set=(id,value)=>{const el=document.getElementById(id);if(!el)throw Error('Missing form control '+id);el.value=value;el.dispatchEvent(new Event('change',{bubbles:true}));};
+        set('dev-location','Unknown');
+        set('dev-mount-type','Desktop');
+        set('dev-subnet','fictional-hypervisor-failed-subnet');
+        set('dev-ip','10.88.73.2');
+        const checkbox=document.querySelector('[data-phase19b-field="serverService_Hypervisor"]');
+        if(!checkbox)throw Error('Hypervisor checkbox missing');
+        checkbox.checked=false;
+        const original=Storage.prototype.setItem;
+        const notices=[];
+        const originalToast=showToast;
+        Storage.prototype.setItem=function(key,value){if(key==='caffoot_state')throw Error('fictional storage failure');return original.call(this,key,value)};
+        showToast=(message,level)=>notices.push({message,level});
+        let thrown=null;
+        try {
+          const pending=handleDeviceSubmit({preventDefault(){}},hostId);
+          await Promise.resolve();
+          const confirm=document.querySelector('[data-action="phase-m005-hypervisor-accept"]');
+          if(!confirm)throw Error('Expected hypervisor confirmation missing');
+          confirm.click();
+          await pending;
+        } catch(error) {thrown=String(error); }
+        finally {Storage.prototype.setItem=original;showToast=originalToast;}
+        return {before,after:JSON.stringify(appState),stored:localStorage.getItem('caffoot_state'),
+          hostHypervisor:appState.devices.find(d=>d.id===hostId)?.typeDetails?.serverService_Hypervisor,
+          guestHost:appState.devices.find(d=>d.id==='fictional-hypervisor-failed-vm')?.virtualHostId,
+          formStillOpen:!!document.getElementById('dev-name'),notices,thrown};
+      });
+      assert.equal(result.thrown,null,'Failed storage write must be handled without throwing');
+      assert.equal(result.after,result.before,'Failed save must restore entire in-memory inventory');
+      assert.equal(result.stored,result.before,'Failed save must preserve stored inventory');
+      assert.equal(result.hostHypervisor,true,'Failed save must retain original Hypervisor service');
+      assert.equal(result.guestHost,'fictional-hypervisor-failed-save-host','Guest relationship must remain intact');
+      assert.equal(result.formStillOpen,true,'Failed save must keep the edit form open');
+      assert(result.notices.some(n=>n.level==='error'&&/not saved/i.test(n.message)),
+        'Failed save must report the error to the user');
+    });
+    await scenario('M-005 legacy missing physical host remains visible', async page => {
+      const result = await page.evaluate(() => {
+        appState.devices.push({id:'fictional-display-orphan',name:'Fictional orphan guest',type:'Server - Virtual',location:'Unknown',virtualHostId:'fictional-absent-host'});
+        phase14CViewDevice('fictional-display-orphan');
+        return {text:document.getElementById('phase14c-panel-overview')?.textContent||'',
+          original:appState.devices.find(d=>d.id==='fictional-display-orphan')?.virtualHostId};
+      });
+      assert.match(result.text,/Missing or unavailable host/);
+      assert.equal(result.original,'fictional-absent-host','Viewing legacy guest must not modify host reference');
+    });
+    await scenario('M-005 prevent deletion of host with dependants', async page => {
       const result = await page.evaluate(() => {
         appState.devices.push(
           {id:'fictional-host-001',name:'Fictional host',type:'Server - Physical',mountType:'Desktop',location:'Unknown'},
@@ -282,18 +510,33 @@ const { chromium } = require('playwright');
         );
         localStorage.setItem('caffoot_state',JSON.stringify(appState));
         const originalConfirm=window.confirm;
+        const originalToast=showToast;
         const prompts=[];
+        const notices=[];
         window.confirm=message=>{prompts.push(message);return true};
+        showToast=(message,level)=>{notices.push({message,level})};
         try { deleteDevice('fictional-host-001'); }
-        finally { window.confirm=originalConfirm; }
-        return {prompts,hostExists:!!appState.devices.find(d=>d.id==='fictional-host-001'),
+        finally { window.confirm=originalConfirm; showToast=originalToast; }
+        return {prompts,notices,hostExists:!!appState.devices.find(d=>d.id==='fictional-host-001'),
           dependants:appState.devices.filter(d=>d.virtualHostId==='fictional-host-001').map(d=>d.id)};
       });
-      assert.equal(result.hostExists,false,'Baseline: deletion currently removes the referenced physical host');
+      assert.equal(result.hostExists,true,'Host with dependent virtual devices must not be deleted');
       assert.deepEqual(result.dependants,['fictional-vm-001','fictional-vm-002'],
-        'Baseline: dependent virtualHostId references currently remain orphaned');
-      assert(result.prompts.length>=1,'Deletion confirmation must have appeared');
-      console.log('OBSERVED M-005: host deleted while two fictional virtualHostId references remain');
+        'All dependent references must remain unchanged');
+      assert.equal(result.prompts.length,0,'Unsafe deletion must stop before confirmation');
+      assert(result.notices.some(n=>n.level==='error'&&n.message.includes('Fictional VM 1')&&n.message.includes('Fictional VM 2')),'Guard must identify both dependants');
+      console.log('PASS M-005: deletion blocked and both dependent links preserved');
+    });
+    await scenario('M-005 allow deletion of unreferenced host', async page => {
+      const result = await page.evaluate(() => {
+        appState.devices.push({id:'fictional-unused-host',name:'Fictional unused host',type:'Server - Physical',mountType:'Desktop',location:'Unknown'});
+        const originalConfirm=window.confirm;
+        window.confirm=()=>true;
+        try { deleteDevice('fictional-unused-host'); }
+        finally { window.confirm=originalConfirm; }
+        return {hostExists:!!appState.devices.find(d=>d.id==='fictional-unused-host')};
+      });
+      assert.equal(result.hostExists,false,'Unreferenced host deletion must remain available');
     });
     await scenario('M-005 baseline orphan host validation', async page => {
       const result = await page.evaluate(() => {
@@ -308,7 +551,7 @@ const { chromium } = require('playwright');
       console.log('OBSERVED M-005: general validation did not flag fictional orphan host reference');
     });
 
-    await scenario('M-005 baseline host conversion and orphan reference', async page => {
+    await scenario('M-005 conversion incoming dependency guard source check', async page => {
       const result = await page.evaluate(() => {
         appState.devices.push(
           {id:'fictional-conversion-host',name:'Fictional conversion host',type:'Server - Physical',mountType:'Desktop',location:'Unknown'},
@@ -324,8 +567,38 @@ const { chromium } = require('playwright');
         return {incoming,sourceHasIncomingGuard};
       });
       assert.equal(result.incoming,1);
-      assert.equal(result.sourceHasIncomingGuard,false);
-      console.log('OBSERVED M-005: conversion handler has no direct incoming virtualHostId guard; full D13 remains pending');
+      assert.equal(result.sourceHasIncomingGuard,true,'Conversion handler must check incoming host links');
+      console.log('PASS M-005: conversion source guard present; full D13 form submission remains pending');
+    });
+    await scenario('M-005 D13 actual conversion form handler protects hosted VMs', async page => {
+      const result = await page.evaluate(async () => {
+        const hostId='fictional-d13-host';
+        appState.subnets.push({id:'fictional-d13-subnet',name:'D13 subnet',kind:'network',cidr:'10.88.76.0/29',gateway:'10.88.76.1',vlan:3876});
+        appState.devices.push(
+          {id:hostId,name:'Fictional D13 host',type:'Server - Physical',mountType:'Desktop',location:'Unknown',status:'Active',primaryIp:'10.88.76.2'},
+          {id:'fictional-d13-vm',name:'Fictional D13 VM',type:'Server - Virtual',mountType:'Desktop',location:'Unknown',virtualHostId:hostId}
+        );
+        openDeviceModal(hostId);
+        const set=(id,value)=>{const el=document.getElementById(id);if(!el)throw Error('Missing form control '+id);el.value=value;el.dispatchEvent(new Event('change',{bubbles:true}));};
+        set('dev-type','Server - Virtual');
+        set('dev-name','Fictional D13 host');
+        set('dev-location','Unknown');
+        set('dev-mount-type','Desktop');
+        set('dev-subnet','fictional-d13-subnet');
+        set('dev-ip','10.88.76.2');
+        const notices=[];
+        const originalToast=showToast;
+        showToast=(message,level)=>notices.push({message,level});
+        try {await handleDeviceSubmit({preventDefault(){}},hostId)}
+        finally {showToast=originalToast}
+        return {hostType:appState.devices.find(d=>d.id===hostId)?.type,
+          vmHost:appState.devices.find(d=>d.id==='fictional-d13-vm')?.virtualHostId,
+          notices,conversionDialog:!!document.getElementById('phase130-conversion-dialog')};
+      });
+      assert.equal(result.hostType,'Server - Physical','Blocked conversion must preserve physical host type');
+      assert.equal(result.vmHost,'fictional-d13-host','Blocked conversion must preserve dependant link');
+      assert(result.notices.some(n=>n.level==='error'&&n.message.includes('Fictional D13 VM')),'Conversion must identify dependant');
+      assert.equal(result.conversionDialog,false,'Dependency guard must run before obsolete field confirmation');
     });
     await scenario('M-005 baseline detached legacy backup host reference', async page => {
       const result=await page.evaluate(() => {
