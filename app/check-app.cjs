@@ -630,7 +630,7 @@ assert(orphanModalStart >= 0 && orphanModalEnd > orphanModalStart, 'IP editor mu
 assert(html.slice(orphanModalStart, orphanModalEnd).includes('historical reservation for a device that is no longer in the inventory'),
   'IP editor must explain historical missing-device reservation');
 const orphanSubmit = html.slice(orphanModalEnd, html.indexOf('// RC1 accessibility:', orphanModalEnd));
-assert(orphanSubmit.includes("status === existing.status ? (existing.reservedForDeviceId || '') : ''"),
+assert(orphanSubmit.includes("status === existing.status && !releaseOrphan ? (existing.reservedForDeviceId || '') : ''"),
   'same-status notes edits must preserve historical reservation reference');
 assert(orphanSubmit.includes("existing?.status === 'Available' && !releaseOrphan ? (existing.reservedForDeviceId || '') : ''"),
   'Available notes-only edits must preserve historical reservation');
