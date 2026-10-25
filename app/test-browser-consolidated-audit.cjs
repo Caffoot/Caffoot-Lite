@@ -391,5 +391,46 @@ const { chromium } = require('playwright');
       assert.equal(persisted.storedReservation,'fictional-missing-historical-device','Stored legacy reservation reference must survive import');
       assert.equal(persisted.storedFirst,'Historical address notes');
     });
+    await scenario('M-006 N22 individual and bulk release retain notes', async page => {
+      const result=await page.evaluate(() => {
+        const subnet={id:'fictional-release-subnet',name:'Release checks',kind:'network',cidr:'10.88.78.0/29',gateway:'10.88.78.1',vlan:3878};
+        appState.subnets.push(subnet);
+        const first='10.88.78.2',second='10.88.78.3';
+        appState.ipAllocations[first]={status:'Reserved',deviceId:'',reservedForDeviceId:'fictional-missing-device',hostname:'original-host',notes:'Keep first address note',customLegacyField:'historical'};
+        appState.ipAllocations[second]={status:'Available',deviceId:'',reservedForDeviceId:'fictional-missing-device',hostname:'second-host',notes:'Keep second address note',customLegacyField:'historical'};
+        for(const [id,value] of [['ip-status','Available'],['ip-hostname','original-host'],['ip-notes','Keep first address note']]) {
+          let el=document.getElementById(id);
+          if(!el){el=document.createElement('input');el.id=id;document.body.appendChild(el);}
+          el.value=value;
+        }
+        handleIpSubmit({preventDefault(){}},first);
+        const individual=JSON.parse(JSON.stringify(appState.ipAllocations[first]));
+        const plan=phase12BBulkPlan(subnet,3,3,'Available','','');
+        phase12BPending={subnetId:subnet.id,start:3,end:3,status:'Available',hostname:'',notes:''};
+        phase12BApply();
+        return {individual,planChanges:plan.changes.length,bulk:appState.ipAllocations[second],saved:JSON.parse(localStorage.getItem('caffoot_state')).ipAllocations};
+      });
+      assert.equal(result.individual.status,'Available');
+      assert.equal(result.individual.deviceId,'');
+      assert.equal(result.individual.reservedForDeviceId,'');
+      assert.equal(result.individual.notes,'Keep first address note');
+      assert.equal(result.individual.customLegacyField,'historical');
+      assert.equal(result.planChanges,1,'Bulk release must clear a stale reservation even if already Available');
+      assert.equal(result.bulk.status,'Available');
+      assert.equal(result.bulk.reservedForDeviceId,'');
+      assert.equal(result.bulk.notes,'Keep second address note');
+      assert.equal(result.bulk.customLegacyField,'historical');
+      assert.equal(result.saved['10.88.78.2'].notes,'Keep first address note');
+      assert.equal(result.saved['10.88.78.3'].reservedForDeviceId,'');
+      await page.reload({waitUntil:'load'});
+      const after=await page.evaluate(() => ({
+        first:appState.ipAllocations['10.88.78.2'],
+        second:appState.ipAllocations['10.88.78.3']
+      }));
+      assert.equal(after.first.notes,'Keep first address note');
+      assert.equal(after.first.reservedForDeviceId,'');
+      assert.equal(after.second.notes,'Keep second address note');
+      assert.equal(after.second.reservedForDeviceId,'');
+    });
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode=1; });
