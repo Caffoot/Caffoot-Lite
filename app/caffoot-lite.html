@@ -7935,9 +7935,60 @@ function hierarchyValidateTypes(subnets) {
                 function phase16CInvalidMounts(state) {
             return state.devices.filter(d => !phase19BAllowedMounts(d.type).includes(d.mountType || (d.rackId ? 'Rack Mounted' : 'Desktop')));
         }
+        // Validate rack occupancy only on the detached import candidate. Never alter positions.
+        function phase16CRackImportIssues(candidate) {
+            const issues = [];
+            const occupied = new Map();
+            const ids = new Set();
+            const racks = new Map(candidate.racks.map(r => [r.id, r]));
+            const place = (record, label, rackId, face, start, height, rail) => {
+                const rack = racks.get(rackId);
+                if (!rack) { issues.push(label + ' references a missing rack.'); return; }
+                const limit = Number(rack.heightU);
+                if (!Number.isInteger(limit) || limit < 1 || !Number.isInteger(start) ||
+                    !Number.isInteger(height) || height < 1 || start < 1 || start + height - 1 > limit) {
+                    issues.push(label + ' has an invalid rack U position.'); return;
+                }
+                if (!['front', 'rear'].includes(face)) { issues.push(label + ' has an invalid rack face.'); return; }
+                const key = JSON.stringify([rackId, face, rail]);
+                const positions = occupied.get(key) || [];
+                const end = start + height - 1;
+                const collision = positions.find(p => start <= p.end && end >= p.start);
+                if (collision) issues.push(label + ' overlaps ' + collision.label + '.');
+                positions.push({start, end, label});
+                occupied.set(key, positions);
+            };
+            for (const device of candidate.devices) {
+                if (!device.rackId) continue;
+                const start = Number(device.rackUStart), height = Number(device.rackUHeight);
+                place(device, 'Device ' + String(device.name || device.id || '(unnamed)'),
+                    device.rackId, device.face || 'front', start, height, 'horizontal');
+            }
+            for (const accessory of candidate.rackAccessories) {
+                if (!accessory || typeof accessory !== 'object' || Array.isArray(accessory)) {
+                    issues.push('Backup contains an invalid rack accessory record.'); continue;
+                }
+                const label = 'Accessory ' + String(accessory.name || accessory.id || '(unnamed)');
+                if (!accessory.id || ids.has(accessory.id)) issues.push(label + ' has a missing or duplicate ID.');
+                ids.add(accessory.id);
+                if (!Object.prototype.hasOwnProperty.call(phase13CAccessoryTypes, accessory.type)) {
+                    issues.push(label + ' has an unsupported accessory type.'); continue;
+                }
+                const vertical = Boolean(phase13CAccessoryTypes[accessory.type].vertical);
+                if (vertical && !['left', 'right'].includes(accessory.side)) {
+                    issues.push(label + ' has an invalid side rail.'); continue;
+                }
+                place(accessory, label, accessory.rackId, accessory.face,
+                    Number(accessory.startU), Number(accessory.heightU),
+                    vertical ? 'rail-' + accessory.side : 'horizontal');
+            }
+            return issues;
+        }
         function phase16CCheckBackup(raw) {
             phase16CRejectUnsafeKeys(raw);
             phase11ValidateBackupShape(raw);
+            if (Object.prototype.hasOwnProperty.call(raw, 'rackAccessories') && !Array.isArray(raw.rackAccessories))
+                throw new Error('Backup has an invalid rackAccessories collection.');
             phase20ValidateBackupVersion(raw);
             const candidate = phase20MigrateBackup(raw);
             const invalidMounts = phase16CInvalidMounts(candidate);
@@ -7950,6 +8001,7 @@ function hierarchyValidateTypes(subnets) {
             } finally {
                 appState = original;
             }
+            issues.push(...phase16CRackImportIssues(candidate));
             if (issues.length) throw new Error(`Inventory integrity check found ${issues.length} issue(s): ${issues.slice(0, 4).join('; ')}${issues.length > 4 ? '; and more' : ''}`);
             return candidate;
         }
