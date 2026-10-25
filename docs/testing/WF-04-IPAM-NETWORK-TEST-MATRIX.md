@@ -8,6 +8,8 @@
 
 **Baseline:** Published Caffoot Lite v1.3.0. **Status:** Mixed evidence. Some targeted Chromium regressions have passed, while the complete WF-04 browser matrix remains unexecuted. Grounded in WF-04 source findings in `docs/workflows/TECHNICAL-WORKFLOWS.md`. PR #123 contains approved-scope IPAM corrections and tests, not a published release.
 
+> **PR #132 M-009 targeted gateway verification, 25 October 2026.** The existing consolidated Chromium suite executed a real `handleSubnetSubmit()` save for unchanged, device-owned gateways of Router, Firewall and Layer 3 Switch types, checking persisted subnet edits and unchanged IPAM owner and notes. Passed on head `c1ffc9f` in [run 40182601831](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40182601831), alongside release validation 40182601840, documentation consistency 40182601907 and secret scan 40182601893. This covers the permitted-owner branch of N08 and N09; it does **not** establish N10 changed-gateway conflict cases, all UI modal paths, or historical gateway import permutations. PR #132 remains draft and unmerged; the historical notes below are retained as dated evidence. The Layer 3 Switch hardware field mapping discrepancy is separately recorded in issue #92, not changed in PR #132.
+
 ## Safety and evidence
 
 Use fictional data in an isolated browser profile. Keep a verified export before deletion, bulk actions and failed-save tests. Record fixture, browser, published release, expected and actual outcome, saved state after reload, error messages, snapshot handling and links to source findings. Protect the user's actual inventory.
