@@ -5193,7 +5193,7 @@ function hierarchyValidateTypes(subnets) {
                         deviceId = '';
                     }
                 }
-                appState.ipAllocations[ip] = { ...existing, status, deviceId, hostname, notes, reservedForDeviceId: existing.reservedForDeviceId || '' };
+                appState.ipAllocations[ip] = { ...existing, status, deviceId, hostname, notes, reservedForDeviceId: status === existing.status ? (existing.reservedForDeviceId || '') : '' };
             }
             if (!saveState()) {
                 if (previousAllocation) appState.ipAllocations[ip] = previousAllocation;
