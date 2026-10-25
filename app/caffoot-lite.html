@@ -6916,6 +6916,22 @@ function hierarchyValidateTypes(subnets) {
                         <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-circle-info"></i>Device details</div>
                         <div><label for="dev-name" class="block text-xs font-semibold mb-1">Device Name <span class="required-mark">*</span></label><input type="text" id="dev-name" required value="${escapeHtml(draft?.name ?? device?.name ?? '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="e.g. core-switch"></div>
                             <div><label for="dev-type" class="block text-xs font-semibold mb-1">Device Type</label><select id="dev-type" required class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" disabled ${currentType === '' ? 'selected' : ''}>Select a device type...</option>${types.map(t => `<option value="${escapeHtml(t)}" ${currentType === t ? 'selected' : ''}>${escapeHtml(t)}</option>`).join('')}</select></div>
+                            <div id="phase-m005-host-platform-fields" class="hidden rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-slate-800 p-4 space-y-3">
+                                <p class="text-sm font-semibold text-blue-900 dark:text-blue-200">Virtualisation / Hypervisor</p>
+                                <label class="flex items-start gap-3 text-sm"><input id="phase-m005-hosting-enabled" type="checkbox" ${phase19BFormValues.serverService_Hypervisor === true ? 'checked' : ''} class="mt-1"><span><strong>This physical server hosts virtual machines</strong><span class="block text-xs text-slate-600 dark:text-slate-300">Enable this option if the physical server will host virtual machines.</span></span></label>
+                                <div id="phase-m005-hosting-details" ${phase19BFormValues.serverService_Hypervisor === true ? '' : 'hidden'} class="space-y-3">
+                                    <p class="text-xs text-slate-600 dark:text-slate-300">Select a hypervisor or choose Custom / Other. Existing values are retained. Changes affecting hosted virtual machines require confirmation.</p>
+                                    <label for="phase-m005-host-platform" class="form-label">Hypervisor software</label>
+                                    <select id="phase-m005-host-platform-select" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" aria-label="Hypervisor software">
+                                        <option value="">Select hypervisor software...</option>
+                                        ${['VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng'].map(p=>`<option value="${escapeHtml(p)}" ${phase19BFormValues.hypervisorProduct===p?'selected':''}>${escapeHtml(p)}</option>`).join('')}
+                                        <option value="__custom__" ${phase19BFormValues.hypervisorProduct && !['VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng'].includes(phase19BFormValues.hypervisorProduct)?'selected':''}>Custom / Other...</option>
+                                    </select>
+                                    <input id="phase-m005-host-platform" data-phase19b-field="hypervisorProduct" type="text" maxlength="120" value="${escapeHtml(phase19BFormValues.hypervisorProduct || '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700 ${phase19BFormValues.hypervisorProduct && !['VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng'].includes(phase19BFormValues.hypervisorProduct)?'':'hidden'}" placeholder="Enter custom hypervisor software">
+                                    <label for="phase-m005-host-version" class="form-label">Hypervisor version (optional)</label>
+                                    <input id="phase-m005-host-version" data-phase19b-field="hypervisorVersion" type="text" maxlength="120" value="${escapeHtml(phase19BFormValues.hypervisorVersion || '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="e.g. 8.0">
+                                </div>
+                            </div>
                         </div>
                         <div class="form-section-card space-y-4">
                             <div class="form-section-heading"><i class="fa-solid fa-server"></i>Hardware &amp; lifecycle</div>
@@ -6930,18 +6946,6 @@ function hierarchyValidateTypes(subnets) {
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div id="phase120-physical-manufacturer"><label for="dev-manufacturer-select" class="form-label">Manufacturer (optional)</label><input id="dev-manufacturer" type="hidden" value="${escapeHtml(draft?.manufacturer ?? device?.manufacturer ?? '')}"><select id="dev-manufacturer-select" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></select><input id="dev-manufacturer-custom" type="text" maxlength="120" class="hidden mt-2 w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Enter Custom Manufacturer" aria-label="Custom Manufacturer"></div>
                                 <div id="phase120-physical-model"><label for="dev-model-select" class="form-label">Model (optional)</label><input id="dev-model" type="hidden" value="${escapeHtml(draft?.model ?? device?.model ?? '')}"><select id="dev-model-select" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></select><input id="dev-model-custom" type="text" maxlength="120" class="hidden mt-2 w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Enter Custom Model" aria-label="Custom Model"></div>
-                            </div>
-                            <div id="phase-m005-host-platform-fields" class="hidden rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-slate-800 p-4 space-y-3">
-                                <p class="text-sm font-semibold text-blue-900 dark:text-blue-200">Virtualisation / Hypervisor</p>
-                                <label class="flex items-start gap-3 text-sm"><input id="phase-m005-hosting-enabled" type="checkbox" ${phase19BFormValues.serverService_Hypervisor === true ? 'checked' : ''} class="mt-1"><span><strong>This physical server hosts virtual machines</strong><span class="block text-xs text-slate-600 dark:text-slate-300">Enable hosting to make this server available as a virtual machine host. The existing Hypervisor service is kept in sync automatically.</span></span></label>
-                                <div id="phase-m005-hosting-details" ${phase19BFormValues.serverService_Hypervisor === true ? '' : 'hidden'} class="space-y-3">
-                                    <p class="text-xs text-slate-600 dark:text-slate-300">Choose the platform or enter a custom product. Existing and legacy values are retained. Changing a host with virtual machines requires confirmation.</p>
-                                    <label for="phase-m005-host-platform" class="form-label">Hypervisor product (optional for existing legacy hosts)</label>
-                                    <input id="phase-m005-host-platform" data-phase19b-field="hypervisorProduct" type="text" maxlength="120" list="phase-m005-hypervisor-products" value="${escapeHtml(phase19BFormValues.hypervisorProduct || '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Select or enter Hypervisor software">
-                                    <datalist id="phase-m005-hypervisor-products"><option value="VMware ESXi"></option><option value="Proxmox VE"></option><option value="Microsoft Hyper-V"></option><option value="KVM"></option><option value="XCP-ng"></option></datalist>
-                                    <label for="phase-m005-host-version" class="form-label">Hypervisor version (optional)</label>
-                                    <input id="phase-m005-host-version" data-phase19b-field="hypervisorVersion" type="text" maxlength="120" value="${escapeHtml(phase19BFormValues.hypervisorVersion || '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="e.g. 8.0">
-                                </div>
                             </div>
                             <div id="phase120-virtual-fields" class="hidden rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-slate-800 p-4 space-y-3">
                                 <p class="text-sm font-semibold text-blue-900 dark:text-blue-200">Virtual Machine Configuration</p>
@@ -7004,6 +7008,14 @@ function hierarchyValidateTypes(subnets) {
             });
             phase120RefreshHardwareSuggestions();
             document.getElementById('phase-m005-hosting-enabled')?.addEventListener('change', phaseM134SyncHostingVisibility);
+            document.getElementById('phase-m005-host-platform-select')?.addEventListener('change', event => {
+                const input = document.getElementById('phase-m005-host-platform');
+                if (!input) return;
+                const custom = event.target.value === '__custom__';
+                input.classList.toggle('hidden', !custom);
+                input.value = custom ? (['VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng'].includes(input.value) ? '' : input.value) : event.target.value;
+                if (custom) input.focus();
+            });
             phaseM134SyncHostingVisibility();
             phase11DeviceCascade('initial');
             refreshDeviceIpOptions();
