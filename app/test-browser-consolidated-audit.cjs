@@ -24,6 +24,41 @@ const { chromium } = require('playwright');
     } finally { await context.close(); }
   }
   try {
+    await scenario('M-017 readable invalid startup inventory enters protected recovery', async page => {
+      const original = await page.evaluate(() => {
+        const invalid = JSON.parse(JSON.stringify(appState));
+        invalid.devices.push({id:'duplicate-fixture',name:'Fixture one',type:'Server - Physical'});
+        invalid.devices.push({id:'duplicate-fixture',name:'Fixture two',type:'Server - Physical'});
+        const raw = JSON.stringify(invalid);
+        localStorage.setItem('caffoot_state', raw);
+        return raw;
+      });
+      await page.reload({waitUntil:'load'});
+      const result = await page.evaluate(() => ({
+        protected:!!phase17AStorageRecovery,
+        raw:phase17AStorageRecovery?.raw,
+        stored:localStorage.getItem('caffoot_state'),
+        banner:!!document.getElementById('phase17a-recovery'),
+        saved:saveState()
+      }));
+      assert.equal(result.protected,true,'Invalid readable inventory must enter recovery');
+      assert.equal(result.raw,original,'Original inventory must remain downloadable');
+      assert.equal(result.stored,original,'Startup and rejected save must not overwrite stored inventory');
+      assert.equal(result.banner,true,'Recovery must be visible');
+      assert.equal(result.saved,false,'Ordinary saves must be blocked in recovery');
+    });
+    await scenario('M-017 dashboard service label preserves raw drilldown key', async page => {
+      const result = await page.evaluate(() => {
+        appState.devices.push({id:'hypervisor-label-fixture',name:'Hypervisor label fixture',type:'Server - Physical',typeDetails:{serverService_Hypervisor:true}});
+        phase14DeviceTab='intelligence';
+        deviceIntelligenceTab='software';
+        const html=renderDevices();
+        return {html,storedKey:appState.devices.at(-1).typeDetails.serverService_Hypervisor};
+      });
+      assert.match(result.html,/data-value="serverService_Hypervisor"/,'Dashboard must retain raw filter key');
+      assert.match(result.html,/>Hypervisor<\/span>/,'Dashboard must display friendly label');
+      assert.equal(result.storedKey,true,'Service value must remain unchanged');
+    });
     await scenario('M-010/M-019 browser import validation preserves inventory', async page => {
       const before = await page.evaluate(() => {
         if (!saveState()) throw Error('Cannot establish fictional baseline');
