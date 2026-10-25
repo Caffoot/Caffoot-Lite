@@ -188,7 +188,7 @@ console.log('Rack accessory placement fixtures passed.');
 
 
 
-const deleteStart = html.indexOf('function deleteDevice(');
+const deleteStart = html.indexOf('async function deleteDevice(');
 const deleteEnd = html.indexOf('// Phase 16B:', deleteStart);
 const commitStart = html.indexOf('function phase11BCommitDelete(');
 const commitEnd = html.indexOf('function deleteSubnet(', commitStart);
