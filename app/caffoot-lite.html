@@ -5343,7 +5343,7 @@ function hierarchyValidateTypes(subnets) {
             if (event.key === 'Escape') {
                 event.preventDefault();
                 if(document.getElementById('phase18d-delete-dialog')){phase18DCancelDelete();return;}
-                if(document.getElementById('phase-m005-hypervisor-dialog')){phaseM005ResolveHypervisorRemoval(false);return;}
+                if(document.getElementById('phase-m005-hypervisor-dialog')){document.querySelector('#phase-m005-hypervisor-dialog [data-action="cancel"]')?.click();return;}
                 if(document.getElementById('phase130-conversion-dialog')){phase130ResolveDeviceConversion(false);return;}
                 if(document.getElementById('phase130-restore-dialog')){phase130ResolveRestore(false);return;}
                 if(document.getElementById('phase120-rack-correction-dialog')){phase120ResolveRackCorrection(false);return;}
@@ -8678,8 +8678,6 @@ function hierarchyValidateTypes(subnets) {
                 case 'server-service-confirm-archive': phase120ArchiveServerService(name); break;
                 case 'phase18d-add': phase18DCommit(target.dataset.kind,'add','',document.getElementById('phase18d-new')?.value||''); break;
                 case 'phase18d-search': phase18DSearch[target.dataset.kind]=document.getElementById('phase18d-search')?.value||'';phase18DOpen(target.dataset.kind); break;
-                case 'phase-m005-hypervisor-cancel': phaseM005ResolveHypervisorRemoval(false); break;
-                case 'phase-m005-hypervisor-accept': phaseM005ResolveHypervisorRemoval(true); break;
                 case 'phase130-conversion-cancel': phase130ResolveDeviceConversion(false); break;
                 case 'phase130-conversion-accept': phase130ResolveDeviceConversion(true); break;
                 case 'phase120-rack-correction-cancel': phase120ResolveRackCorrection(false); break;
