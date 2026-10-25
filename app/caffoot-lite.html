@@ -1646,7 +1646,9 @@ function hierarchyValidateTypes(subnets) {
         if (startupIntegrityErrors.length) {
             console.error('Startup integrity issues:', startupIntegrityErrors);
             if (!phase17AStorageRecovery) {
-                phase17AStorageRecovery = { reason: 'Stored inventory failed integrity checks: ' + startupIntegrityErrors[0], raw: localStorage.getItem(STORAGE_KEY) };
+                let originalStoredInventory = null;
+                try { originalStoredInventory = localStorage.getItem(STORAGE_KEY); } catch (error) { console.error('Unable to read invalid inventory for recovery:', error); }
+                phase17AStorageRecovery = { reason: 'Stored inventory failed integrity checks: ' + startupIntegrityErrors[0], raw: originalStoredInventory };
             }
         }
         // Do not write on startup: it could overwrite unreadable data or mask an integrity problem.
