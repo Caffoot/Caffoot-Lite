@@ -639,3 +639,13 @@ assert(orphanSubmit.includes("const releaseOrphan = Boolean(document.getElementB
 assert(orphanModalStart >= 0 && html.slice(orphanModalStart, orphanModalEnd).includes('Release historical reservation when saving'),
   'IP editor must show explicit historical release control');
 console.log('M-024 missing-device UI source contracts passed (not a browser interaction test).');
+
+// Issue #92: device-owned IPAM notes remain independently editable without altering device ownership.
+const deviceOwnedSubmit = html.slice(html.indexOf('function handleIpSubmit(e, ip)'), html.indexOf('// RC1 accessibility:', html.indexOf('function handleIpSubmit(e, ip)')));
+assert(deviceOwnedSubmit.includes('appState.ipAllocations[ip] = { ...existing, notes };'),
+  'device-owned IPAM notes-only save must retain allocation fields');
+assert(deviceOwnedSubmit.includes("status !== existing.status || hostname !== (existing.hostname || '') || releaseOrphan"),
+  'device-owned IPAM editor must reject assignment, hostname or reservation release changes');
+assert(deviceOwnedSubmit.includes('appState.ipAllocations[ip] = previousAllocation;'),
+  'failed device-owned IPAM notes save must restore allocation');
+console.log('Issue #92 device-owned IPAM notes source contracts passed (browser interaction still required).');
