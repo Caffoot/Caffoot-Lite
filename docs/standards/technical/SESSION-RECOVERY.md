@@ -1,5 +1,8 @@
 # New session recovery procedure
 
+> **PR #123 merge checkpoint, 25 October 2026.** Issue #92 M-006 IPAM address notes fix was merged into `release/v1.3.1` as commit [`ccb5a2c`](https://github.com/Caffoot/Caffoot-Lite/commit/ccb5a2c070afd8642ef2d2c76ed604c5d0d28121). GitHub confirmed PR #123 merged at 07:00:23 UTC. All five workflows on the final PR head `de7cb9e` passed: consolidated Chromium regression, release candidate validation, release documentation consistency, secret scan and published v1.2.1 backup compatibility (runs 40168871029, 40168871062, 40168871030, 40168871022 and 40168871053). These are pre-merge checks, not a post-merge combined branch test. The earlier PR #123 evidence reconciliation below is retained as historical evidence and its draft and no-merge wording describes the earlier checkpoint, not the current status. Full WF-03 and WF-04 coverage was not claimed; bulk UI, gateway M-009 and missing reservation M-024 findings remain outstanding under issue #92. The v1.3.0 master audit remains administratively closed with carried forward gaps. No merge into `main`, publication or replacement of existing release ZIP files has occurred. This documentation-only checkpoint does not declare v1.3.1 release readiness.
+
+
 **Status:** Development procedure, proposed for review on the v1.3.1 development branch, 24 October 2026. This procedure does not replace existing approval and release controls.
 
 ## Purpose
