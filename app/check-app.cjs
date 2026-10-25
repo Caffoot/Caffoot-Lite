@@ -215,8 +215,9 @@ const deletionContext = {
 vm.createContext(deletionContext);
 vm.runInContext(html.slice(commitStart, commitEnd) + '\n' + html.slice(deleteStart, deleteEnd), deletionContext);
 deletionContext.getDeviceById = id => deletionContext.appState.devices.find(d => d.id === id);
+(async () => {
 const initialDeletionState = JSON.stringify(deletionContext.appState);
-deletionContext.deleteDevice('dev-1');
+await deletionContext.deleteDevice('dev-1');
 assert.equal(deletionContext.appState.devices.length, 1, 'deleted device removed');
 assert.equal(deletionContext.appState.ipAllocations['192.168.40.20'].status, 'Available', 'deleted device IP released');
 assert.equal(deletionContext.appState.ipAllocations['192.168.40.20'].deviceId, '', 'deleted device IP ownership cleared');
@@ -226,11 +227,12 @@ assert.equal(deletionContext.appState.ipAllocations['192.168.40.22'].reservedFor
 assert(renderCount > 0, 'successful deletion re-renders');
 deletionContext.appState = JSON.parse(initialDeletionState);
 allowSave = false;
-deletionContext.deleteDevice('dev-1');
+await deletionContext.deleteDevice('dev-1');
 assert.equal(JSON.stringify(deletionContext.appState), initialDeletionState, 'failed deletion restores complete original state');
 assert.match(lastToast, /not deleted/, 'failed deletion reports error');
 console.log('Device deletion and rollback fixtures passed.');
 
+})().catch(error => { console.error(error); process.exitCode = 1; });
 const shapeStart = html.indexOf('function phase11ValidateBackupShape(');
 const shapeEnd = html.indexOf('function phase11DownloadSnapshot(', shapeStart);
 const jsonStart = html.indexOf('function phase16CReadJson(');
