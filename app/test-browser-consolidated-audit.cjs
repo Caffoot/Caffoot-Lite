@@ -47,6 +47,36 @@ const { chromium } = require('playwright');
       assert.equal(result.banner,true,'Recovery must be visible');
       assert.equal(result.saved,false,'Ordinary saves must be blocked in recovery');
     });
+    await scenario('M-022 failed new rack save restores selection and stored inventory', async page => {
+      const result = await page.evaluate(async () => {
+        const beforeSelection = selectedRackId;
+        const beforeRacks = JSON.stringify(appState.racks);
+        const beforeStored = localStorage.getItem('caffoot_state');
+        openRackModal();
+        document.getElementById('rack-name').value = 'Fictional failed rack';
+        document.getElementById('rack-height').value = '42';
+        document.getElementById('rack-width').value = '600';
+        document.getElementById('rack-depth').value = '1000';
+        const original = Storage.prototype.setItem;
+        Storage.prototype.setItem = function(key,value) {
+          if (key === 'caffoot_state') return;
+          return original.call(this,key,value);
+        };
+        try {
+          await handleRackSubmit({preventDefault(){},target:document.querySelector('#rack-name').closest('form')},null);
+        } finally {
+          Storage.prototype.setItem = original;
+        }
+        return {
+          beforeSelection,afterSelection:selectedRackId,
+          beforeRacks,afterRacks:JSON.stringify(appState.racks),
+          beforeStored,afterStored:localStorage.getItem('caffoot_state')
+        };
+      });
+      assert.equal(result.afterSelection,result.beforeSelection,'Failed new rack must restore previous selection');
+      assert.equal(result.afterRacks,result.beforeRacks,'Failed new rack must restore inventory');
+      assert.equal(result.afterStored,result.beforeStored,'Ignored storage write must not alter saved inventory');
+    });
     await scenario('M-017 dashboard service label preserves raw drilldown key', async page => {
       const result = await page.evaluate(() => {
         appState.devices.push({id:'hypervisor-label-fixture',name:'Hypervisor label fixture',type:'Server - Physical',typeDetails:{serverService_Hypervisor:true}});
