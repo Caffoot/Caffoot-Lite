@@ -6308,6 +6308,7 @@ function hierarchyValidateTypes(subnets) {
             const virtual=document.getElementById('dev-type')?.value==='Server - Virtual';
             ['phase120-physical-manufacturer','phase120-physical-model'].forEach(id=>document.getElementById(id)?.classList.toggle('hidden',virtual));
             document.getElementById('phase120-virtual-fields')?.classList.toggle('hidden',!virtual);
+            document.getElementById('phase-m005-host-platform-fields')?.classList.toggle('hidden',type!=='Server - Physical');
         }
         function phase120RefreshHardwareSuggestions(preserve=true) {
             const type=document.getElementById('dev-type')?.value||'';
@@ -6878,6 +6879,13 @@ function hierarchyValidateTypes(subnets) {
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div id="phase120-physical-manufacturer"><label for="dev-manufacturer-select" class="form-label">Manufacturer (optional)</label><input id="dev-manufacturer" type="hidden" value="${escapeHtml(draft?.manufacturer ?? device?.manufacturer ?? '')}"><select id="dev-manufacturer-select" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></select><input id="dev-manufacturer-custom" type="text" maxlength="120" class="hidden mt-2 w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Enter Custom Manufacturer" aria-label="Custom Manufacturer"></div>
                                 <div id="phase120-physical-model"><label for="dev-model-select" class="form-label">Model (optional)</label><input id="dev-model" type="hidden" value="${escapeHtml(draft?.model ?? device?.model ?? '')}"><select id="dev-model-select" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></select><input id="dev-model-custom" type="text" maxlength="120" class="hidden mt-2 w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Enter Custom Model" aria-label="Custom Model"></div>
+                            </div>
+                            <div id="phase-m005-host-platform-fields" class="hidden rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-slate-800 p-4 space-y-3">
+                                <p class="text-sm font-semibold text-blue-900 dark:text-blue-200">Physical Server Hypervisor</p>
+                                <p class="text-xs text-slate-600 dark:text-slate-300">Record the installed Hypervisor separately from the server operating system. Existing values are preserved. Changes to hosted virtual machines will require a separate confirmed relationship review.</p>
+                                <label for="phase-m005-host-platform" class="form-label">Hypervisor product (optional)</label>
+                                <input id="phase-m005-host-platform" data-phase19b-field="hypervisorProduct" type="text" maxlength="120" list="phase-m005-hypervisor-products" value="${escapeHtml(phase19BFormValues.hypervisorProduct || '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Select or enter Hypervisor software">
+                                <datalist id="phase-m005-hypervisor-products"><option value="VMware ESXi"></option><option value="Proxmox VE"></option><option value="Microsoft Hyper-V"></option><option value="KVM"></option><option value="XCP-ng"></option></datalist>
                             </div>
                             <div id="phase120-virtual-fields" class="hidden rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-slate-800 p-4 space-y-3">
                                 <p class="text-sm font-semibold text-blue-900 dark:text-blue-200">Virtual Machine Configuration</p>
