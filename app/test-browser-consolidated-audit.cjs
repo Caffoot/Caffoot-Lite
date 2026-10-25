@@ -710,6 +710,14 @@ const { chromium } = require('playwright');
           duplicate:!!document.querySelector('#phase120-server-services-fields [data-phase19b-field="serverService_Hypervisor"]')};
         document.getElementById('phase-m005-hosting-enabled').checked=true;
         document.getElementById('phase-m005-hosting-enabled').dispatchEvent(new Event('change',{bubbles:true}));
+        const productSelect=document.getElementById('phase-m005-host-platform-select');
+        productSelect.value='Proxmox VE';
+        productSelect.dispatchEvent(new Event('change',{bubbles:true}));
+        const selected={product:document.getElementById('phase-m005-host-platform').value,
+          customHidden:document.getElementById('phase-m005-host-platform').classList.contains('hidden')};
+        productSelect.value='__custom__';
+        productSelect.dispatchEvent(new Event('change',{bubbles:true}));
+        const customVisible=!document.getElementById('phase-m005-host-platform').classList.contains('hidden');
         document.getElementById('phase-m005-host-platform').value='Custom Hypervisor';
         document.getElementById('phase-m005-host-version').value='2026.1';
         const enabled=phase19BReadFields();
@@ -727,10 +735,13 @@ const { chromium } = require('playwright');
         const disabled={flag:phase19BReadFields().serverService_Hypervisor,
           product:document.getElementById('phase-m005-host-platform').value,
           hidden:document.getElementById('phase-m005-hosting-details').hidden};
-        return {add,enabled,edit,disabled};
+        return {add,selected,customVisible,enabled,edit,disabled};
       });
       assert.equal(result.add.onGeneral,true,'Hosting controls should appear in the General tab');
       assert.equal(result.add.selectOptions,true,'Hypervisor software should offer Custom / Other');
+      assert.equal(result.selected.product,'Proxmox VE','Recognised dropdown choice must update saved product field');
+      assert.equal(result.selected.customHidden,true,'Recognised choice must hide custom input');
+      assert.equal(result.customVisible,true,'Custom / Other must reveal custom input');
       assert.equal(result.add.hosting,false);
       assert.equal(result.add.duplicate,false);
       assert.equal(result.enabled.serverService_Hypervisor,true);
