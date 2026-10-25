@@ -7305,30 +7305,23 @@ function hierarchyValidateTypes(subnets) {
                 if (validationError) return showToast(validationError, 'error');
             }
             const existingDevice = deviceId ? getDeviceById(deviceId) : null;
-            // M-005: never convert a host while its dependants still reference it.
-            if (existingDevice && existingDevice.type === 'Server - Physical' && type !== 'Server - Physical') {
-                const dependants = appState.devices.filter(d => d.id !== deviceId && d.virtualHostId === deviceId);
-                if (dependants.length) return showToast('Resolve hosted device relationships before changing this physical server type: ' + dependants.map(d => d.name || d.id).join(', '), 'error');
-            }
-            // Do not silently retire a host that still has assigned guests.
-            if (existingDevice && existingDevice.type === 'Server - Physical' && type === 'Server - Physical' &&
-                status === 'Retired' && existingDevice.status !== 'Retired' &&
-                appState.devices.some(guest => guest.id !== deviceId && guest.virtualHostId === deviceId)) {
-                return showToast('Resolve hosted virtual machines before retiring this physical server.', 'error');
-            }
-            // M-005: every dependent guest must receive an explicit disposition.
+            // M-005: host conversion, retirement and loss of Hypervisor eligibility
+            // all require an explicit decision for every assigned guest.
             let removalGuests = [];
             let removalChoices = [];
-            if (existingDevice && existingDevice.type === 'Server - Physical' && type === 'Server - Physical') {
+            if (existingDevice && existingDevice.type === 'Server - Physical') {
                 const wasHypervisor = existingDevice.typeDetails?.serverService_Hypervisor === true || existingDevice.serverService_Hypervisor === true;
-                const remainsHypervisor = typeDetails.serverService_Hypervisor === true;
-                if (wasHypervisor && !remainsHypervisor) {
+                const remainsHypervisor = type === 'Server - Physical' && typeDetails.serverService_Hypervisor === true;
+                const converting = type !== 'Server - Physical';
+                const retiring = status === 'Retired' && existingDevice.status !== 'Retired';
+                if (converting || retiring || (wasHypervisor && !remainsHypervisor)) {
                     const hostedGuests = appState.devices.filter(guest => guest.id !== deviceId && guest.virtualHostId === deviceId);
                     if (hostedGuests.length) {
                         const choices = await phaseM005ConfirmHypervisorRemoval(existingDevice.name, hostedGuests, deviceId);
                         if (!choices) return;
                         if (getDeviceById(deviceId) !== existingDevice || document.getElementById('dev-type')?.value !== type ||
-                            phase19BReadFields().serverService_Hypervisor === true) return;
+                            document.getElementById('dev-status')?.value !== status ||
+                            (type === 'Server - Physical' && phase19BReadFields().serverService_Hypervisor !== typeDetails.serverService_Hypervisor)) return;
                         removalGuests = hostedGuests;
                         removalChoices = choices;
                     }
@@ -7339,7 +7332,7 @@ function hierarchyValidateTypes(subnets) {
             const previousHypervisor = String(existingDevice?.typeDetails?.hypervisorProduct || '').trim();
             const nextHypervisor = String(typeDetails.hypervisorProduct || '').trim();
             if (existingDevice && existingDevice.type === 'Server - Physical' && type === 'Server - Physical' &&
-                previousHypervisor && nextHypervisor && previousHypervisor !== nextHypervisor) {
+                previousHypervisor && nextHypervisor && previousHypervisor !== nextHypervisor && removalGuests.length === 0) {
                 platformGuests = appState.devices.filter(guest => guest.id !== deviceId && guest.virtualHostId === deviceId);
                 if (platformGuests.length) {
                     if (!await phaseM005ConfirmPlatformChange(existingDevice.name, platformGuests, previousHypervisor, nextHypervisor)) return;
