@@ -391,6 +391,38 @@ const { chromium } = require('playwright');
       assert.equal(persisted.storedReservation,'fictional-missing-historical-device','Stored legacy reservation reference must survive import');
       assert.equal(persisted.storedFirst,'Historical address notes');
     });
+    await scenario('M-006 N22 actual individual IP form save and release', async page => {
+      await page.evaluate(() => {
+        appState.subnets.push({id:'fictional-ui-subnet',name:'UI IPAM check',kind:'network',
+          cidr:'10.88.79.0/29',gateway:'10.88.79.1',vlan:3879});
+        appState.ipAllocations['10.88.79.2']={status:'Reserved',deviceId:'',
+          reservedForDeviceId:'fictional-historical-owner',hostname:'old-label',
+          notes:'Original address note',customLegacyField:'keep-history'};
+        saveState();
+        openIpModal('10.88.79.2');
+      });
+      const form=page.locator('form[data-form-action="ip"][data-ip="10.88.79.2"]');
+      await form.locator('#ip-notes').fill('Edited through real IPAM form');
+      await form.locator('button[type="submit"]').click();
+      const saved=await page.evaluate(() => appState.ipAllocations['10.88.79.2']);
+      assert.equal(saved.notes,'Edited through real IPAM form');
+      await page.evaluate(() => openIpModal('10.88.79.2'));
+      const releaseForm=page.locator('form[data-form-action="ip"][data-ip="10.88.79.2"]');
+      await releaseForm.locator('#ip-status').selectOption('Available');
+      await releaseForm.locator('button[type="submit"]').click();
+      await page.reload({waitUntil:'load'});
+      const released=await page.evaluate(() => ({
+        memory:appState.ipAllocations['10.88.79.2'],
+        stored:JSON.parse(localStorage.getItem('caffoot_state')).ipAllocations['10.88.79.2']
+      }));
+      for(const allocation of [released.memory,released.stored]){
+        assert.equal(allocation.status,'Available');
+        assert.equal(allocation.deviceId,'');
+        assert.equal(allocation.reservedForDeviceId,'');
+        assert.equal(allocation.notes,'Edited through real IPAM form');
+        assert.equal(allocation.customLegacyField,'keep-history');
+      }
+    });
     await scenario('M-006 N22 individual and bulk release retain notes', async page => {
       const result=await page.evaluate(() => {
         const subnet={id:'fictional-release-subnet',name:'Release checks',kind:'network',cidr:'10.88.78.0/29',gateway:'10.88.78.1',vlan:3878};
