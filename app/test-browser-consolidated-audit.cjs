@@ -506,38 +506,34 @@ const { chromium } = require('playwright');
       assert.match(result.text,/Missing or unavailable host/);
       assert.equal(result.original,'fictional-absent-host','Viewing legacy guest must not modify host reference');
     });
-    await scenario('M-005 prevent deletion of host with dependants', async page => {
-      const result = await page.evaluate(() => {
+    await scenario('M-005 host deletion requires guest resolution and preserves data on cancellation', async page => {
+      const result = await page.evaluate(async () => {
         appState.devices.push(
           {id:'fictional-host-001',name:'Fictional host',type:'Server - Physical',mountType:'Desktop',location:'Unknown'},
           {id:'fictional-vm-001',name:'Fictional VM 1',type:'Server - Virtual',mountType:'Desktop',location:'Unknown',virtualHostId:'fictional-host-001'},
           {id:'fictional-vm-002',name:'Fictional VM 2',type:'Server - Virtual',mountType:'Desktop',location:'Unknown',virtualHostId:'fictional-host-001'}
         );
-        localStorage.setItem('caffoot_state',JSON.stringify(appState));
-        const originalConfirm=window.confirm;
-        const originalToast=showToast;
-        const prompts=[];
-        const notices=[];
-        window.confirm=message=>{prompts.push(message);return true};
-        showToast=(message,level)=>{notices.push({message,level})};
-        try { deleteDevice('fictional-host-001'); }
-        finally { window.confirm=originalConfirm; showToast=originalToast; }
-        return {prompts,notices,hostExists:!!appState.devices.find(d=>d.id==='fictional-host-001'),
-          dependants:appState.devices.filter(d=>d.virtualHostId==='fictional-host-001').map(d=>d.id)};
+        const before=JSON.stringify(appState);
+        const pending=deleteDevice('fictional-host-001');
+        const dialog=document.getElementById('phase-m005-hypervisor-dialog');
+        const guestLabels=dialog?.textContent||'';
+        dialog?.querySelector('[data-action="cancel"]')?.click();
+        await pending;
+        return {before,after:JSON.stringify(appState),dialogShown:!!dialog,
+          guestLabels,dialogRemoved:!document.getElementById('phase-m005-hypervisor-dialog')};
       });
-      assert.equal(result.hostExists,true,'Host with dependent virtual devices must not be deleted');
-      assert.deepEqual(result.dependants,['fictional-vm-001','fictional-vm-002'],
-        'All dependent references must remain unchanged');
-      assert.equal(result.prompts.length,0,'Unsafe deletion must stop before confirmation');
-      assert(result.notices.some(n=>n.level==='error'&&n.message.includes('Fictional VM 1')&&n.message.includes('Fictional VM 2')),'Guard must identify both dependants');
-      console.log('PASS M-005: deletion blocked and both dependent links preserved');
+      assert.equal(result.dialogShown,true,'Host deletion must show guest decisions');
+      assert.match(result.guestLabels,/Fictional VM 1/);
+      assert.match(result.guestLabels,/Fictional VM 2/);
+      assert.equal(result.dialogRemoved,true);
+      assert.equal(result.after,result.before,'Cancelled deletion must not change any inventory records');
     });
-    await scenario('M-005 allow deletion of unreferenced host', async page => {
-      const result = await page.evaluate(() => {
+    await scenario('M-005 unreferenced host can still be deleted', async page => {
+      const result = await page.evaluate(async () => {
         appState.devices.push({id:'fictional-unused-host',name:'Fictional unused host',type:'Server - Physical',mountType:'Desktop',location:'Unknown'});
         const originalConfirm=window.confirm;
         window.confirm=()=>true;
-        try { deleteDevice('fictional-unused-host'); }
+        try { await deleteDevice('fictional-unused-host'); }
         finally { window.confirm=originalConfirm; }
         return {hostExists:!!appState.devices.find(d=>d.id==='fictional-unused-host')};
       });
