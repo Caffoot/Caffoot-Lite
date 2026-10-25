@@ -6305,7 +6305,8 @@ function hierarchyValidateTypes(subnets) {
             phase120ManageHardwareCatalogue();
         }
         function phase120VirtualHardwareVisibility(){
-            const virtual=document.getElementById('dev-type')?.value==='Server - Virtual';
+            const type=document.getElementById('dev-type')?.value || '';
+            const virtual=type==='Server - Virtual';
             ['phase120-physical-manufacturer','phase120-physical-model'].forEach(id=>document.getElementById(id)?.classList.toggle('hidden',virtual));
             document.getElementById('phase120-virtual-fields')?.classList.toggle('hidden',!virtual);
             document.getElementById('phase-m005-host-platform-fields')?.classList.toggle('hidden',type!=='Server - Physical');
