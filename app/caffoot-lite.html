@@ -6338,6 +6338,7 @@ function hierarchyValidateTypes(subnets) {
             ['phase120-physical-manufacturer','phase120-physical-model'].forEach(id=>document.getElementById(id)?.classList.toggle('hidden',virtual));
             document.getElementById('phase120-virtual-fields')?.classList.toggle('hidden',!virtual);
             document.getElementById('phase-m005-host-platform-fields')?.classList.toggle('hidden',type!=='Server - Physical');
+            phaseM134SyncHostingVisibility();
         }
         function phase120RefreshHardwareSuggestions(preserve=true) {
             const type=document.getElementById('dev-type')?.value||'';
@@ -6487,7 +6488,7 @@ function hierarchyValidateTypes(subnets) {
         }
         function phase19BRenderFields(type, values={}, section='all') {
             const keys=phase19BFieldsFor(type).filter(key =>
-                key !== 'os' && key !== 'windowsLicence' && (section === 'all' || (section === 'hardware' && !phase120IsSoftwareField(key)) || (section === 'services' && phase19BServerFunctionFields().includes(key)) || (section === 'installed' && phase120SoftwareOptions().some(x=>x.key===key)) || (section === 'software' && phase120IsSoftwareField(key))));
+                key !== 'os' && key !== 'windowsLicence' && !(type === 'Server - Physical' && key === 'serverService_Hypervisor' && section === 'services') && (section === 'all' || (section === 'hardware' && !phase120IsSoftwareField(key)) || (section === 'services' && phase19BServerFunctionFields().includes(key)) || (section === 'installed' && phase120SoftwareOptions().some(x=>x.key===key)) || (section === 'software' && phase120IsSoftwareField(key))));
             if(section==='installed'||section==='services'||section==='software')keys.sort((a,b)=>String(phase120AvailableServerServices().find(x=>x.key===a)?.label||phase120SoftwareOptions().find(x=>x.key===a)?.label||phase19BLabels[a]||a).localeCompare(String(phase120AvailableServerServices().find(x=>x.key===b)?.label||phase120SoftwareOptions().find(x=>x.key===b)?.label||phase19BLabels[b]||b),undefined,{sensitivity:'base'}));
             if (!keys.length) return '<p class="text-sm text-slate-600 dark:text-slate-300">'+(type ? 'No additional fields are configured for this type yet.' : 'Select a device type above to display its additional fields.')+'</p>';
             return '<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">'+keys.map(key=>{
@@ -6607,11 +6608,24 @@ function hierarchyValidateTypes(subnets) {
             phase120WireSoftwarePlatform();
         }
         let phase19BFormValues = {};
+        function phaseM134HostingEnabled() {
+            const control = document.getElementById('phase-m005-hosting-enabled');
+            return control ? control.checked : phase19BFormValues.serverService_Hypervisor === true;
+        }
+        function phaseM134SyncHostingVisibility() {
+            const enabled = phaseM134HostingEnabled();
+            const fields = document.getElementById('phase-m005-hosting-details');
+            if (fields) fields.hidden = !enabled;
+        }
         function phase19BReadFields() {
             phase120CaptureSoftwarePlatform();
             document.querySelectorAll('[data-phase19b-field]').forEach(el=>{
                 phase19BFormValues[el.dataset.phase19bField]=el.type==='checkbox'?el.checked:el.value;
             });
+            if (document.getElementById('dev-type')?.value === 'Server - Physical' &&
+                document.getElementById('phase-m005-hosting-enabled')) {
+                phase19BFormValues.serverService_Hypervisor = phaseM134HostingEnabled();
+            }
             return {...phase19BFormValues};
         }
         function phase19BRefreshFields() {
@@ -6623,6 +6637,9 @@ function hierarchyValidateTypes(subnets) {
             if(panel) panel.innerHTML=phase19BRenderFields(type,phase19BFormValues,'hardware');
             const serviceFields = document.getElementById('phase120-server-services-fields');
             if(serviceFields) serviceFields.innerHTML=phase19BRenderFields(type,phase19BFormValues,'services');
+            const hosting = document.getElementById('phase-m005-hosting-enabled');
+            if (hosting && type === 'Server - Physical') hosting.checked = phase19BFormValues.serverService_Hypervisor === true;
+            phaseM134SyncHostingVisibility();
             const installedFields = document.getElementById('phase120-installed-software-fields');
             if(installedFields) installedFields.innerHTML=phase19BRenderFields(type,phase19BFormValues,'installed');
             document.getElementById('phase19b-details-section')?.classList.toggle('hidden',!phase19BFieldsFor(type).some(key=>!phase120IsSoftwareField(key)));
@@ -6878,6 +6895,11 @@ function hierarchyValidateTypes(subnets) {
             const locations = getUniqueDeviceLocations();
             const currentType = draft?.type ?? device?.type ?? '';
             phase19BFormValues = {...(draft?.typeDetails ?? device?.typeDetails ?? {})};
+            if (currentType === 'Server - Physical' &&
+                phase19BFormValues.serverService_Hypervisor !== true &&
+                (draft ? draft.typeDetails?.serverService_Hypervisor === undefined : device?.serverService_Hypervisor === true)) {
+                phase19BFormValues.serverService_Hypervisor = true;
+            }
             const currentLoc = draft?.location ?? device?.location ?? '';
             const requestedMountType = draft?.mountType ?? device?.mountType ?? (device?.rackId ? 'Rack Mounted' : phase120DefaultMount(currentType));
             const mountType = phase19BAllowedMounts(currentType).includes(requestedMountType) ? requestedMountType : phase120DefaultMount(currentType);
@@ -6910,11 +6932,16 @@ function hierarchyValidateTypes(subnets) {
                                 <div id="phase120-physical-model"><label for="dev-model-select" class="form-label">Model (optional)</label><input id="dev-model" type="hidden" value="${escapeHtml(draft?.model ?? device?.model ?? '')}"><select id="dev-model-select" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></select><input id="dev-model-custom" type="text" maxlength="120" class="hidden mt-2 w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Enter Custom Model" aria-label="Custom Model"></div>
                             </div>
                             <div id="phase-m005-host-platform-fields" class="hidden rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-slate-800 p-4 space-y-3">
-                                <p class="text-sm font-semibold text-blue-900 dark:text-blue-200">Physical Server Hypervisor</p>
-                                <p class="text-xs text-slate-600 dark:text-slate-300">Record the installed Hypervisor separately from the server operating system. Existing values are preserved. Changes to hosted virtual machines will require a separate confirmed relationship review.</p>
-                                <label for="phase-m005-host-platform" class="form-label">Hypervisor product (optional)</label>
-                                <input id="phase-m005-host-platform" data-phase19b-field="hypervisorProduct" type="text" maxlength="120" list="phase-m005-hypervisor-products" value="${escapeHtml(phase19BFormValues.hypervisorProduct || '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Select or enter Hypervisor software">
-                                <datalist id="phase-m005-hypervisor-products"><option value="VMware ESXi"></option><option value="Proxmox VE"></option><option value="Microsoft Hyper-V"></option><option value="KVM"></option><option value="XCP-ng"></option></datalist>
+                                <p class="text-sm font-semibold text-blue-900 dark:text-blue-200">Virtualisation / Hypervisor</p>
+                                <label class="flex items-start gap-3 text-sm"><input id="phase-m005-hosting-enabled" type="checkbox" ${phase19BFormValues.serverService_Hypervisor === true ? 'checked' : ''} class="mt-1"><span><strong>This physical server hosts virtual machines</strong><span class="block text-xs text-slate-600 dark:text-slate-300">Enable hosting to make this server available as a virtual machine host. The existing Hypervisor service is kept in sync automatically.</span></span></label>
+                                <div id="phase-m005-hosting-details" ${phase19BFormValues.serverService_Hypervisor === true ? '' : 'hidden'} class="space-y-3">
+                                    <p class="text-xs text-slate-600 dark:text-slate-300">Choose the platform or enter a custom product. Existing and legacy values are retained. Changing a host with virtual machines requires confirmation.</p>
+                                    <label for="phase-m005-host-platform" class="form-label">Hypervisor product (optional for existing legacy hosts)</label>
+                                    <input id="phase-m005-host-platform" data-phase19b-field="hypervisorProduct" type="text" maxlength="120" list="phase-m005-hypervisor-products" value="${escapeHtml(phase19BFormValues.hypervisorProduct || '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Select or enter Hypervisor software">
+                                    <datalist id="phase-m005-hypervisor-products"><option value="VMware ESXi"></option><option value="Proxmox VE"></option><option value="Microsoft Hyper-V"></option><option value="KVM"></option><option value="XCP-ng"></option></datalist>
+                                    <label for="phase-m005-host-version" class="form-label">Hypervisor version (optional)</label>
+                                    <input id="phase-m005-host-version" data-phase19b-field="hypervisorVersion" type="text" maxlength="120" value="${escapeHtml(phase19BFormValues.hypervisorVersion || '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="e.g. 8.0">
+                                </div>
                             </div>
                             <div id="phase120-virtual-fields" class="hidden rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-slate-800 p-4 space-y-3">
                                 <p class="text-sm font-semibold text-blue-900 dark:text-blue-200">Virtual Machine Configuration</p>
@@ -6976,6 +7003,8 @@ function hierarchyValidateTypes(subnets) {
                 });
             });
             phase120RefreshHardwareSuggestions();
+            document.getElementById('phase-m005-hosting-enabled')?.addEventListener('change', phaseM134SyncHostingVisibility);
+            phaseM134SyncHostingVisibility();
             phase11DeviceCascade('initial');
             refreshDeviceIpOptions();
             ['dev-rack-id', 'dev-rack-height', 'dev-rack-face'].forEach(id => {
@@ -7314,6 +7343,13 @@ function hierarchyValidateTypes(subnets) {
             if (!['Active','Maintenance','Retired'].includes(status)) return showToast('Invalid device status.', 'error');
             const notes = document.getElementById('dev-notes').value.trim();
             let typeDetails = phase19BReadFields();
+            if (type === 'Server - Physical' && typeDetails.serverService_Hypervisor === true &&
+                !String(typeDetails.hypervisorProduct || '').trim() &&
+                !String(existingDevice?.typeDetails?.hypervisorProduct || '').trim() &&
+                !(deviceId && (getDeviceById(deviceId)?.typeDetails?.serverService_Hypervisor === true ||
+                                getDeviceById(deviceId)?.serverService_Hypervisor === true))) {
+                return showToast('Select or enter a Hypervisor product to enable hosting.', 'error');
+            }
             if (!name) return showToast('Please enter a device name.', 'error');
             if (appState.devices.some(d => String(d.id) !== String(deviceId || '') && String(d.name || '').trim().toLowerCase() === name.toLowerCase())) return showToast('A device with this name already exists. Please enter a unique device name.', 'error');
             if (!type) return showToast('Please select a device type.', 'error');
