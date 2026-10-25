@@ -633,6 +633,58 @@ const { chromium } = require('playwright');
       assert.equal(reassigned.virtualPlatform,'Proxmox');
       assert.equal(reassigned.previousVirtualPlatforms?.at(-1)?.platform,'VMware');
     });
+    await scenario('M-005 actual guest decision controls require explicit choice and preserve cancelled inventory', async page => {
+      await page.evaluate(() => {
+        appState.devices.push(
+          {id:'fictional-ui-host',name:'Fictional UI Host',type:'Server - Physical',status:'Active'},
+          {id:'fictional-ui-guest',name:'Fictional UI Guest',type:'Server - Virtual',status:'Active',virtualHostId:'fictional-ui-host',operatingSystem:'Preserved Guest OS'}
+        );
+        window.__m005UiBefore=JSON.stringify(appState);
+        window.__m005UiPending=deleteDevice('fictional-ui-host');
+      });
+      const dialog=page.locator('#phase-m005-hypervisor-dialog');
+      await dialog.waitFor();
+      await dialog.locator('[data-action="confirm"]').click();
+      assert.equal(await dialog.count(),1,'Missing guest choice must keep dialog open');
+      await dialog.locator('[data-m005-guest="0"]').selectOption('retire');
+      await dialog.locator('[data-action="cancel"]').click();
+      await page.evaluate(() => window.__m005UiPending);
+      const result=await page.evaluate(() => ({
+        before:window.__m005UiBefore,after:JSON.stringify(appState),
+        host:appState.devices.find(d=>d.id==='fictional-ui-host'),
+        guest:appState.devices.find(d=>d.id==='fictional-ui-guest')
+      }));
+      assert.equal(result.after,result.before,'Cancel through actual dialog controls must not mutate inventory');
+      assert(result.host,'Cancelled host deletion must preserve host');
+      assert.equal(result.guest.virtualHostId,'fictional-ui-host');
+      assert.equal(result.guest.operatingSystem,'Preserved Guest OS');
+    });
+    await scenario('M-005 actual guest decision controls confirm retirement and persist after reload', async page => {
+      await page.evaluate(() => {
+        appState.devices.push(
+          {id:'fictional-ui-confirm-host',name:'Fictional UI Confirm Host',type:'Server - Physical',status:'Active'},
+          {id:'fictional-ui-confirm-guest',name:'Fictional UI Confirm Guest',type:'Server - Virtual',status:'Active',virtualHostId:'fictional-ui-confirm-host',operatingSystem:'Preserved Guest OS'}
+        );
+        localStorage.setItem('caffoot_state',JSON.stringify(appState));
+        window.__m005UiConfirmPending=deleteDevice('fictional-ui-confirm-host');
+      });
+      const dialog=page.locator('#phase-m005-hypervisor-dialog');
+      await dialog.waitFor();
+      await dialog.locator('[data-m005-guest="0"]').selectOption('retire');
+      page.once('dialog',d=>d.accept());
+      await dialog.locator('[data-action="confirm"]').click();
+      await page.evaluate(() => window.__m005UiConfirmPending);
+      await page.reload({waitUntil:'load'});
+      const result=await page.evaluate(() => ({
+        host:appState.devices.find(d=>d.id==='fictional-ui-confirm-host'),
+        guest:appState.devices.find(d=>d.id==='fictional-ui-confirm-guest')
+      }));
+      assert.equal(result.host,undefined);
+      assert.equal(result.guest.status,'Retired');
+      assert.equal(result.guest.virtualHostId,'');
+      assert.equal(result.guest.operatingSystem,'Preserved Guest OS');
+      assert.equal(result.guest.previousVirtualHosts?.at(-1)?.hostId,'fictional-ui-confirm-host');
+    });
     await scenario('M-005 unreferenced host can still be deleted', async page => {
       const result = await page.evaluate(async () => {
         appState.devices.push({id:'fictional-unused-host',name:'Fictional unused host',type:'Server - Physical',mountType:'Desktop',location:'Unknown'});
