@@ -632,6 +632,10 @@ assert(html.slice(orphanModalStart, orphanModalEnd).includes('historical reserva
 const orphanSubmit = html.slice(orphanModalEnd, html.indexOf('// RC1 accessibility:', orphanModalEnd));
 assert(orphanSubmit.includes("status === existing.status ? (existing.reservedForDeviceId || '') : ''"),
   'same-status notes edits must preserve historical reservation reference');
-assert(orphanSubmit.includes("status: 'Available', deviceId: '', reservedForDeviceId: ''"),
-  'explicit Available release must still clear reservation reference');
+assert(orphanSubmit.includes("existing?.status === 'Available' && !releaseOrphan ? (existing.reservedForDeviceId || '') : ''"),
+  'Available notes-only edits must preserve historical reservation');
+assert(orphanSubmit.includes("const releaseOrphan = Boolean(document.getElementById('ip-release-orphan')?.checked)"),
+  'historical reservation release must require explicit user control');
+assert(orphanModalStart >= 0 && html.slice(orphanModalStart, orphanModalEnd).includes('Release historical reservation when saving'),
+  'IP editor must show explicit historical release control');
 console.log('M-024 missing-device UI source contracts passed (not a browser interaction test).');
