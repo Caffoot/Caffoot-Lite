@@ -345,5 +345,124 @@ const { chromium } = require('playwright');
       assert.equal(result.hostId,'fictional-missing-legacy-host','Legacy orphan host identity must not silently change');
       console.log('OBSERVED M-005: backup candidate accepts orphan virtualHostId without modifying source JSON');
     });
+    await scenario('M-006 N31 historical IPAM file import and reload', async page => {
+      const raw = await page.evaluate(() => {
+        const backup = JSON.parse(JSON.stringify(appState));
+        backup.subnets.push({id:'fictional-legacy-subnet',name:'Historical IPAM subnet',kind:'network',cidr:'10.88.77.0/29',gateway:'10.88.77.1',vlan:3877});
+        backup.ipAllocations['10.88.77.2'] = {status:'Available',deviceId:'',hostname:'legacy-host',notes:'Historical address notes'};
+        backup.ipAllocations['10.88.77.3'] = {status:'Available',deviceId:'',reservedForDeviceId:'fictional-missing-historical-device',hostname:'legacy-reservation',notes:'Different historical notes'};
+        return backup;
+      });
+      assert.equal(Object.prototype.hasOwnProperty.call(raw,'caffootBackup'),false,'Fixture must use legacy unversioned JSON');
+      page.on('dialog', dialog => dialog.accept());
+      await page.locator('#import-file').setInputFiles({
+        name:'fictional-legacy-ipam.json',
+        mimeType:'application/json',
+        buffer:Buffer.from(JSON.stringify(raw))
+      });
+      try {
+        await page.waitForFunction(() => {
+          const saved=localStorage.getItem('caffoot_state');
+          if(!saved) return false;
+          const allocations=JSON.parse(saved).ipAllocations;
+          return allocations?.['10.88.77.2']?.notes==='Historical address notes' &&
+            allocations?.['10.88.77.3']?.notes==='Different historical notes';
+        },null,{timeout:10000});
+      } catch (error) {
+        const diagnostic=await page.evaluate(() => ({
+          modalText:document.getElementById('modal-container')?.innerText?.slice(0,1200)||'',
+          storedAllocations:Object.keys(JSON.parse(localStorage.getItem('caffoot_state')||'{}').ipAllocations||{}).slice(0,12),
+          inMemoryNotes:[appState.ipAllocations['10.88.77.2']?.notes,appState.ipAllocations['10.88.77.3']?.notes],
+          selectedFile:document.getElementById('import-file')?.files?.[0]?.name||null
+        }));
+        throw new Error('N31 import persistence not observed: '+JSON.stringify(diagnostic)+'; '+error.message);
+      }
+      await page.reload({waitUntil:'load'});
+      const persisted=await page.evaluate(() => ({
+        first:appState.ipAllocations['10.88.77.2']?.notes,
+        second:appState.ipAllocations['10.88.77.3']?.notes,
+        historicalReservation:appState.ipAllocations['10.88.77.3']?.reservedForDeviceId,
+        storedReservation:JSON.parse(localStorage.getItem('caffoot_state')).ipAllocations['10.88.77.3']?.reservedForDeviceId,
+        storedFirst:JSON.parse(localStorage.getItem('caffoot_state')).ipAllocations['10.88.77.2']?.notes
+      }));
+      assert.equal(persisted.first,'Historical address notes');
+      assert.equal(persisted.second,'Different historical notes');
+      assert.equal(persisted.historicalReservation,'fictional-missing-historical-device','Legacy reservation reference must not be silently rewritten');
+      assert.equal(persisted.storedReservation,'fictional-missing-historical-device','Stored legacy reservation reference must survive import');
+      assert.equal(persisted.storedFirst,'Historical address notes');
+    });
+    await scenario('M-006 N22 actual individual IP form save and release', async page => {
+      await page.evaluate(() => {
+        appState.subnets.push({id:'fictional-ui-subnet',name:'UI IPAM check',kind:'network',
+          cidr:'10.88.79.0/29',gateway:'10.88.79.1',vlan:3879});
+        appState.ipAllocations['10.88.79.2']={status:'Reserved',deviceId:'',
+          reservedForDeviceId:'fictional-historical-owner',hostname:'old-label',
+          notes:'Original address note',customLegacyField:'keep-history'};
+        saveState();
+        openIpModal('10.88.79.2');
+      });
+      const form=page.locator('form[data-form-action="ip"][data-ip="10.88.79.2"]');
+      await form.locator('#ip-notes').fill('Edited through real IPAM form');
+      await form.locator('button[type="submit"]').click();
+      const saved=await page.evaluate(() => appState.ipAllocations['10.88.79.2']);
+      assert.equal(saved.notes,'Edited through real IPAM form');
+      await page.evaluate(() => openIpModal('10.88.79.2'));
+      const releaseForm=page.locator('form[data-form-action="ip"][data-ip="10.88.79.2"]');
+      await releaseForm.locator('#ip-status').selectOption('Available');
+      await releaseForm.locator('button[type="submit"]').click();
+      await page.reload({waitUntil:'load'});
+      const released=await page.evaluate(() => ({
+        memory:appState.ipAllocations['10.88.79.2'],
+        stored:JSON.parse(localStorage.getItem('caffoot_state')).ipAllocations['10.88.79.2']
+      }));
+      for(const allocation of [released.memory,released.stored]){
+        assert.equal(allocation.status,'Available');
+        assert.equal(allocation.deviceId,'');
+        assert.equal(allocation.reservedForDeviceId,'');
+        assert.equal(allocation.notes,'Edited through real IPAM form');
+        assert.equal(allocation.customLegacyField,'keep-history');
+      }
+    });
+    await scenario('M-006 N22 individual and bulk release retain notes', async page => {
+      const result=await page.evaluate(() => {
+        const subnet={id:'fictional-release-subnet',name:'Release checks',kind:'network',cidr:'10.88.78.0/29',gateway:'10.88.78.1',vlan:3878};
+        appState.subnets.push(subnet);
+        const first='10.88.78.2',second='10.88.78.3';
+        appState.ipAllocations[first]={status:'Reserved',deviceId:'',reservedForDeviceId:'fictional-missing-device',hostname:'original-host',notes:'Keep first address note',customLegacyField:'historical'};
+        appState.ipAllocations[second]={status:'Available',deviceId:'',reservedForDeviceId:'fictional-missing-device',hostname:'second-host',notes:'Keep second address note',customLegacyField:'historical'};
+        for(const [id,value] of [['ip-status','Available'],['ip-hostname','original-host'],['ip-notes','Keep first address note']]) {
+          let el=document.getElementById(id);
+          if(!el){el=document.createElement('input');el.id=id;document.body.appendChild(el);}
+          el.value=value;
+        }
+        handleIpSubmit({preventDefault(){}},first);
+        const individual=JSON.parse(JSON.stringify(appState.ipAllocations[first]));
+        const plan=phase12BBulkPlan(subnet,3,3,'Available','','');
+        phase12BPending={subnetId:subnet.id,start:3,end:3,status:'Available',hostname:'',notes:''};
+        phase12BApply();
+        return {individual,planChanges:plan.changes.length,bulk:appState.ipAllocations[second],saved:JSON.parse(localStorage.getItem('caffoot_state')).ipAllocations};
+      });
+      assert.equal(result.individual.status,'Available');
+      assert.equal(result.individual.deviceId,'');
+      assert.equal(result.individual.reservedForDeviceId,'');
+      assert.equal(result.individual.notes,'Keep first address note');
+      assert.equal(result.individual.customLegacyField,'historical');
+      assert.equal(result.planChanges,1,'Bulk release must clear a stale reservation even if already Available');
+      assert.equal(result.bulk.status,'Available');
+      assert.equal(result.bulk.reservedForDeviceId,'');
+      assert.equal(result.bulk.notes,'Keep second address note');
+      assert.equal(result.bulk.customLegacyField,'historical');
+      assert.equal(result.saved['10.88.78.2'].notes,'Keep first address note');
+      assert.equal(result.saved['10.88.78.3'].reservedForDeviceId,'');
+      await page.reload({waitUntil:'load'});
+      const after=await page.evaluate(() => ({
+        first:appState.ipAllocations['10.88.78.2'],
+        second:appState.ipAllocations['10.88.78.3']
+      }));
+      assert.equal(after.first.notes,'Keep first address note');
+      assert.equal(after.first.reservedForDeviceId,'');
+      assert.equal(after.second.notes,'Keep second address note');
+      assert.equal(after.second.reservedForDeviceId,'');
+    });
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode=1; });

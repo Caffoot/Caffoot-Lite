@@ -126,15 +126,23 @@ const { appState: state } = ipamContext;
 const a = { id: 'test-a', name: 'server-a', notes: 'Original notes', primaryIp: '', ipReserved: false };
 const b = { id: 'test-b', name: 'server-b', notes: '', primaryIp: '', ipReserved: false };
 state.devices.push(a, b);
+state.ipAllocations['192.168.40.10'] = {status:'Available',deviceId:'',hostname:'previous-host',notes:'Address ten history'};
+state.ipAllocations['192.168.40.11'] = {status:'Available',deviceId:'',notes:'Address eleven history'};
 ipamContext.setDevicePrimaryIp(a, '192.168.40.10');
 assert.equal(state.ipAllocations['192.168.40.10'].deviceId, a.id, 'new device must own allocation');
 a.name = 'renamed-server';
 a.notes = 'Updated notes';
 ipamContext.syncDeviceIpamRecord(a);
 assert.equal(state.ipAllocations['192.168.40.10'].hostname, 'renamed-server', 'rename sync');
-assert.equal(state.ipAllocations['192.168.40.10'].notes, 'Updated notes', 'notes sync');
+assert.equal(state.ipAllocations['192.168.40.10'].notes, 'Address ten history', 'device notes must not overwrite IPAM notes');
 ipamContext.setDevicePrimaryIp(a, '192.168.40.11');
-assert.equal(state.ipAllocations['192.168.40.10'], undefined, 'old IP must be released');
+assert.equal(state.ipAllocations['192.168.40.10'].status, 'Available', 'old IP must be released');
+assert.equal(state.ipAllocations['192.168.40.10'].deviceId, '', 'old IP ownership cleared');
+assert.equal(state.ipAllocations['192.168.40.10'].notes, 'Address ten history', 'released address retains history');
+assert.equal(state.ipAllocations['192.168.40.11'].notes, 'Address eleven history', 'new address retains its own notes');
+const reloadedAllocations = JSON.parse(JSON.stringify(state.ipAllocations));
+assert.equal(reloadedAllocations['192.168.40.10'].notes, 'Address ten history', 'released address notes survive JSON reload');
+assert.equal(reloadedAllocations['192.168.40.11'].notes, 'Address eleven history', 'assigned address notes survive JSON reload');
 assert.equal(state.ipAllocations['192.168.40.11'].deviceId, a.id, 'new IP must be owned');
 assert.throws(() => ipamContext.setDevicePrimaryIp(b, '192.168.40.11'), /already assigned/, 'duplicate IP blocked');
 assert.throws(() => ipamContext.setDevicePrimaryIp(b, '10.10.10.5'), /not in a configured subnet/, 'outside subnet blocked');
@@ -147,7 +155,8 @@ a.ipReserved = true;
 ipamContext.syncDeviceIpamRecord(a);
 assert.equal(state.ipAllocations['192.168.40.11'].status, 'Reserved', 'reservation flag sync');
 ipamContext.setDevicePrimaryIp(a, '');
-assert.equal(state.ipAllocations['192.168.40.11'], undefined, 'clearing primary IP releases allocation');
+assert.equal(state.ipAllocations['192.168.40.11'].status, 'Available', 'clearing primary IP releases allocation');
+assert.equal(state.ipAllocations['192.168.40.11'].deviceId, '', 'clearing primary IP removes ownership');
 state.subnets[0].gateway = '192.168.40.1';
 const server = {id:'gateway-server',name:'server',type:'Server - Physical',primaryIp:'',ipReserved:false};
 const firewall = {id:'gateway-firewall',name:'firewall',type:'Firewall',primaryIp:'',ipReserved:false};
@@ -209,7 +218,8 @@ deletionContext.getDeviceById = id => deletionContext.appState.devices.find(d =>
 const initialDeletionState = JSON.stringify(deletionContext.appState);
 deletionContext.deleteDevice('dev-1');
 assert.equal(deletionContext.appState.devices.length, 1, 'deleted device removed');
-assert.equal(deletionContext.appState.ipAllocations['192.168.40.20'], undefined, 'owned allocation removed');
+assert.equal(deletionContext.appState.ipAllocations['192.168.40.20'].status, 'Available', 'deleted device IP released');
+assert.equal(deletionContext.appState.ipAllocations['192.168.40.20'].deviceId, '', 'deleted device IP ownership cleared');
 assert.equal(deletionContext.appState.ipAllocations['192.168.40.21'].deviceId, 'dev-2', 'other device allocation preserved');
 assert.equal(deletionContext.appState.ipAllocations['192.168.40.21'].reservedForDeviceId, '', 'reservation reference cleared');
 assert.equal(deletionContext.appState.ipAllocations['192.168.40.22'].reservedForDeviceId, '', 'unowned reservation reference cleared');
@@ -386,7 +396,8 @@ state.ipAllocations['192.168.40.31'] = {status:'Reserved',reservedForDeviceId:'o
 assert.throws(()=>ipamFixture.setDevicePrimaryIp(contender,'192.168.40.31'),/reserved for another device/,'reservation belongs to owner');
 assert.equal(contender.primaryIp,'','failed reservation claim leaves device unchanged');
 ipamFixture.setDevicePrimaryIp(owner,'192.168.40.31');
-assert.equal(state.ipAllocations['192.168.40.30'],undefined,'moving to owned reservation releases previous IP');
+assert.equal(state.ipAllocations['192.168.40.30'].status,'Available','moving to owned reservation releases previous IP');
+assert.equal(state.ipAllocations['192.168.40.30'].deviceId,'','moving to owned reservation clears previous IP owner');
 assert.equal(state.ipAllocations['192.168.40.31'].deviceId,'owner','reservation owner can claim IP');
 assert.equal(state.ipAllocations['192.168.40.31'].reservedForDeviceId,'owner','reservation metadata survives assignment');
 owner.ipReserved=true;
@@ -495,7 +506,7 @@ assert(deviceSubmitCode.includes('if (!saveState()) {') && deviceSubmitCode.incl
 const ipSyncStart = html.indexOf('function syncDeviceIpamRecord(device)');
 const ipSyncEnd = html.indexOf('\n        function ', ipSyncStart + 1);
 const ipSyncCode = html.slice(ipSyncStart, ipSyncEnd);
-for (const field of ['deviceId: device.id', "hostname: device.name || ''", "notes: device.notes || ''"]) {
+for (const field of ['deviceId: device.id', "hostname: device.name || ''", "notes: existing.notes || ''"]) {
   assert(ipSyncCode.includes(field), 'IPAM sync missing ' + field);
 }
 console.log('Device/IPAM add, edit and rollback wiring safeguards passed.');
@@ -524,3 +535,84 @@ assert(subnetSubmitCode.includes('const beforeSubnetSave = JSON.stringify(appSta
 assert(subnetSubmitCode.includes('appState = JSON.parse(beforeSubnetSave);'), 'Failed subnet saves must restore inventory');
 assert(subnetSubmitCode.includes('selectedSubnetId = previousSubnetSelection;'), 'Failed subnet saves must restore selection');
 console.log('Subnet gateway and failed-save rollback safeguards passed.');
+
+
+// M-006: preserve notes for a previously unrecorded Available address.
+const ipSubmitStart = html.indexOf('function handleIpSubmit(e, ip)');
+const ipSubmitEnd = html.indexOf('\n        function ', ipSubmitStart + 1);
+assert(ipSubmitStart >= 0 && ipSubmitEnd > ipSubmitStart, 'IPAM edit handler must exist');
+const ipSubmitCode = html.slice(ipSubmitStart, ipSubmitEnd);
+assert(ipSubmitCode.includes("if (existing || hostname || notes) appState.ipAllocations[ip] = { ...existing, status: 'Available', deviceId: '', reservedForDeviceId: '', hostname, notes };"),
+  'Available address with new notes or hostname must create an allocation record');
+assert(ipSubmitCode.includes('else delete appState.ipAllocations[ip];'),
+  'failed new Available allocation save must restore the absent record');
+console.log('M-006 Available address notes and failed-save source contracts passed.');
+
+const bulkPlanStart = html.indexOf('function phase12BBulkPlan(');
+const bulkPlanEnd = html.indexOf('function openBulkIpModal(', bulkPlanStart);
+assert(bulkPlanStart >= 0 && bulkPlanEnd > bulkPlanStart, 'bulk IPAM planner must exist');
+const bulkPlanCode = html.slice(bulkPlanStart, bulkPlanEnd);
+assert(bulkPlanCode.includes("old.status!=='Available' || old.deviceId || old.reservedForDeviceId"),
+  'explicit bulk release must clear stale reservation even on an Available address');
+assert(bulkPlanCode.includes("updated:{...old,status:'Available',deviceId:'',reservedForDeviceId:''}"),
+  'bulk release must retain address notes while clearing active ownership and reservation');
+console.log('M-006 bulk release stale reservation source contracts passed.');
+
+
+// Historical backup compatibility: exercise the production normalisation function
+// with isolated legacy allocation records. No real inventory is touched.
+const normaliseStart = html.indexOf('function normaliseState(raw)');
+const normaliseEnd = html.indexOf('function validateApplicationState()', normaliseStart);
+assert(normaliseStart >= 0 && normaliseEnd > normaliseStart, 'normaliseState production helper must exist');
+const normaliseSource = html.slice(normaliseStart, normaliseEnd);
+const legacyContext = {
+  isPlainObject: x => x !== null && typeof x === 'object' && !Array.isArray(x),
+  cloneDefaultData: () => ({deviceTypes:[],deviceLocations:[],rackAccessories:[],subnets:[],vlans:[],racks:[],devices:[],ipAllocations:{}}),
+  STATE_VERSION: 1,
+  phase120SeparateLegacyRackLocation: devices => devices,
+  isValidCidr24: () => true,
+  isValidIpv4: () => true,
+  phase12Usable: () => true,
+  hierarchyValidate: () => [],
+  hierarchyValidateTypes: () => [],
+  phase19BAllowedMounts: () => ['Desktop'],
+  ipBelongsToSubnet: () => true
+};
+vm.createContext(legacyContext);
+vm.runInContext(normaliseSource, legacyContext);
+const legacyBackup = {
+  subnets:[{id:'s1',name:'Historical subnet',cidr:'192.168.40.0/24',vlan:10,gateway:'192.168.40.1'}],
+  vlans:[{id:'v1',name:'Historical VLAN',vlanId:10}],
+  racks:[],
+  devices:[{id:'legacy-device',name:'renamed-device',type:'Server - Physical',location:'Unknown',primaryIp:'192.168.40.10',ipReserved:false}],
+  ipAllocations:{
+    '192.168.40.10':{status:'Available',deviceId:'',hostname:'old-name',notes:'Historical address notes'},
+    '192.168.40.11':{status:'Reserved',deviceId:'',reservedForDeviceId:'retired-device',notes:'Historical reservation'}
+  }
+};
+const normalisedLegacy = legacyContext.normaliseState(JSON.parse(JSON.stringify(legacyBackup)));
+assert.equal(normalisedLegacy.ipAllocations['192.168.40.10'].notes, 'Historical address notes', 'import repair must preserve address notes');
+assert.equal(normalisedLegacy.ipAllocations['192.168.40.10'].deviceId, 'legacy-device', 'import repair must link actual device');
+assert.equal(normalisedLegacy.ipAllocations['192.168.40.11'].reservedForDeviceId, 'retired-device', 'import must not silently rewrite historical reservation reference');
+assert.equal(normalisedLegacy.ipAllocations['192.168.40.11'].notes, 'Historical reservation', 'import must preserve historical reservation notes');
+console.log('M-006 historical JSON normalisation runtime fixture passed.');
+
+
+// Exercise the actual legacy backup migration entry point, not only normaliseState.
+const migrationStart = html.indexOf('function phase20MigrateBackup(raw)');
+const migrationEnd = html.indexOf('function exportData()', migrationStart);
+assert(migrationStart >= 0 && migrationEnd > migrationStart, 'production migration helper must exist');
+legacyContext.phase20ValidateBackupVersion = raw => {
+  assert.equal(Object.prototype.hasOwnProperty.call(raw, 'caffootBackup'), false, 'fixture must be a legacy unversioned export');
+  return 0;
+};
+legacyContext.phase16CLegacyMountRepairs = () => [];
+vm.runInContext(html.slice(migrationStart, migrationEnd), legacyContext);
+const legacyInput = JSON.parse(JSON.stringify(legacyBackup));
+const beforeMigration = JSON.stringify(legacyInput);
+const migratedLegacy = legacyContext.phase20MigrateBackup(legacyInput);
+assert.equal(JSON.stringify(legacyInput), beforeMigration, 'migration must not mutate historical input backup');
+assert.equal(migratedLegacy.ipAllocations['192.168.40.10'].notes, 'Historical address notes', 'migration must retain address notes');
+assert.equal(migratedLegacy.ipAllocations['192.168.40.11'].reservedForDeviceId, 'retired-device', 'migration must retain historical reservation reference');
+assert.equal(migratedLegacy.ipAllocations['192.168.40.11'].notes, 'Historical reservation', 'migration must retain reservation notes');
+console.log('M-006 legacy backup migration runtime fixture passed.');

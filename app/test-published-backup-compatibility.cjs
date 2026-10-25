@@ -10,7 +10,8 @@ const {chromium}=require('playwright');
  assert(root,'CAFFOOT_RELEASE_DIR must point to downloaded official release assets');
  const oldHtml=path.join(root,'1.2.1','Caffoot-Lite.html');
  const newHtml=path.join(root,'1.3.0','Caffoot-Lite.html');
- for(const file of [oldHtml,newHtml])assert(fs.statSync(file).size>100000,'Missing published HTML: '+file);
+ const candidateHtml=path.join(__dirname,'dist','Caffoot-Lite.html');
+ for(const file of [oldHtml,newHtml,candidateHtml])assert(fs.statSync(file).size>100000,'Missing published HTML: '+file);
  const browser=await chromium.launch({headless:true});
  try{
   const context=await browser.newContext({acceptDownloads:true});
@@ -58,6 +59,26 @@ const {chromium}=require('playwright');
   await page.reload({waitUntil:'load'});
   const after=await page.evaluate(()=>localStorage.getItem('caffoot_state'));
   assert.equal(after,result.stored,'Imported inventory did not persist across reload');
+  // Exercise the current PR candidate with a genuine published v1.2.1 export.
+  // Navigate in the same browser context, matching a user's upgrade path.
+  await page.goto(pathToFileURL(candidateHtml).href,{waitUntil:'load'});
+  await upload(exported);
+  const candidate=await page.evaluate(()=>({
+    stored:localStorage.getItem('caffoot_state'),
+    devices:appState.devices,
+    racks:appState.racks,
+    subnets:appState.subnets,
+    locations:appState.deviceLocations
+  }));
+  assert(candidate.stored,'Current candidate did not persist published v1.2.1 export');
+  for(const key of ['devices','racks','subnets','deviceLocations']){
+    const actual=key==='deviceLocations'?candidate.locations:candidate[key];
+    assert.deepEqual(actual,backup[key],'Current candidate changed published v1.2.1 '+key);
+  }
+  await page.reload({waitUntil:'load'});
+  const candidateReload=await page.evaluate(()=>localStorage.getItem('caffoot_state'));
+  assert.equal(candidateReload,candidate.stored,'Current candidate lost published v1.2.1 inventory on reload');
+  console.log('PASS: genuine published v1.2.1 export imported into current candidate, preserved core inventory and survived reload');
   assert.deepEqual(requests,[],'Published applications attempted network requests while offline');
   assert.deepEqual(errors,[],'Published applications caused uncaught browser errors');
   console.log('PASS: genuine v1.2.1 export imported into published v1.3.0, preserved core inventory and survived reload');
