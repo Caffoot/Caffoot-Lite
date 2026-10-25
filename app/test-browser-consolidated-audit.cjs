@@ -421,9 +421,10 @@ const { chromium } = require('playwright');
           set('dev-mount-type','Desktop');
           set('dev-subnet','fictional-hypervisor-form-subnet');
           set('dev-ip','10.88.74.2');
-          const hypervisor=document.querySelector('[data-phase19b-field="serverService_Hypervisor"]');
-          if(!hypervisor)throw Error('Hypervisor checkbox missing');
-          hypervisor.checked=false;
+          const hypervisor=document.getElementById('phase-m005-hosting-enabled');
+           if(!hypervisor)throw Error('Shared hosting checkbox missing');
+           hypervisor.checked=false;
+           hypervisor.dispatchEvent(new Event('change',{bubbles:true}));
           const pending=handleDeviceSubmit({preventDefault(){}},hostId);
           await Promise.resolve();
           const dialog=document.getElementById('phase-m005-hypervisor-dialog');
@@ -467,9 +468,10 @@ const { chromium } = require('playwright');
         set('dev-mount-type','Desktop');
         set('dev-subnet','fictional-hypervisor-failed-subnet');
         set('dev-ip','10.88.73.2');
-        const checkbox=document.querySelector('[data-phase19b-field="serverService_Hypervisor"]');
-        if(!checkbox)throw Error('Hypervisor checkbox missing');
+        const checkbox=document.getElementById('phase-m005-hosting-enabled');
+        if(!checkbox)throw Error('Shared hosting checkbox missing');
         checkbox.checked=false;
+        checkbox.dispatchEvent(new Event('change',{bubbles:true}));
         const original=Storage.prototype.setItem;
         const notices=[];
         const originalToast=showToast;
@@ -695,6 +697,145 @@ const { chromium } = require('playwright');
         return {hostExists:!!appState.devices.find(d=>d.id==='fictional-unused-host')};
       });
       assert.equal(result.hostExists,false,'Unreferenced host deletion must remain available');
+    });
+    await scenario('#134 shared Add and Edit physical host controls preserve legacy values', async page => {
+      const result = await page.evaluate(() => {
+        const type='Server - Physical';
+        openDeviceModal();
+        document.getElementById('dev-type').value=type;
+        phase19BRefreshFields();
+        const add={onGeneral:!!document.querySelector('[data-device-form] .form-section-card:first-child #phase-m005-host-platform-fields'),
+          selectOptions:!!document.querySelector('#phase-m005-host-platform-select option[value="__custom__"]'),
+          hosting:document.getElementById('phase-m005-hosting-enabled')?.checked,
+          duplicate:!!document.querySelector('#phase120-server-services-fields [data-phase19b-field="serverService_Hypervisor"]')};
+        document.getElementById('phase-m005-hosting-enabled').checked=true;
+        document.getElementById('phase-m005-hosting-enabled').dispatchEvent(new Event('change',{bubbles:true}));
+        const productSelect=document.getElementById('phase-m005-host-platform-select');
+        productSelect.value='Proxmox VE';
+        productSelect.dispatchEvent(new Event('change',{bubbles:true}));
+        const selected={product:document.getElementById('phase-m005-host-platform').value,
+          customHidden:document.getElementById('phase-m005-host-platform').classList.contains('hidden')};
+        productSelect.value='__custom__';
+        productSelect.dispatchEvent(new Event('change',{bubbles:true}));
+        const customVisible=!document.getElementById('phase-m005-host-platform').classList.contains('hidden');
+        document.getElementById('phase-m005-host-platform').value='Custom Hypervisor';
+        document.getElementById('phase-m005-host-version').value='2026.1';
+        const enabled=phase19BReadFields();
+        const host={id:'fictional-134-host',name:'Historical host',type,status:'Active',
+          mountType:'Desktop',location:'Unknown',serverService_Hypervisor:true,
+          typeDetails:{hypervisorProduct:'Historical Platform',hypervisorVersion:'Legacy 1'}};
+        appState.devices.push(host);
+        openDeviceModal(host.id);
+        const edit={hosting:document.getElementById('phase-m005-hosting-enabled')?.checked,
+          product:document.getElementById('phase-m005-host-platform')?.value,
+          version:document.getElementById('phase-m005-host-version')?.value,
+          flag:phase19BReadFields().serverService_Hypervisor};
+        document.getElementById('phase-m005-hosting-enabled').checked=false;
+        document.getElementById('phase-m005-hosting-enabled').dispatchEvent(new Event('change',{bubbles:true}));
+        const disabled={flag:phase19BReadFields().serverService_Hypervisor,
+          product:document.getElementById('phase-m005-host-platform').value,
+          hidden:document.getElementById('phase-m005-hosting-details').hidden};
+        return {add,selected,customVisible,enabled,edit,disabled};
+      });
+      assert.equal(result.add.onGeneral,true,'Hosting controls should appear in the General tab');
+      assert.equal(result.add.selectOptions,true,'Hypervisor software should offer Custom / Other');
+      assert.equal(result.selected.product,'Proxmox VE','Recognised dropdown choice must update saved product field');
+      assert.equal(result.selected.customHidden,true,'Recognised choice must hide custom input');
+      assert.equal(result.customVisible,true,'Custom / Other must reveal custom input');
+      assert.equal(result.add.hosting,false);
+      assert.equal(result.add.duplicate,false);
+      assert.equal(result.enabled.serverService_Hypervisor,true);
+      assert.equal(result.enabled.hypervisorProduct,'Custom Hypervisor');
+      assert.equal(result.enabled.hypervisorVersion,'2026.1');
+      assert.equal(result.edit.hosting,true);
+      assert.equal(result.edit.flag,true);
+      assert.equal(result.edit.product,'Historical Platform');
+      assert.equal(result.edit.version,'Legacy 1');
+      assert.equal(result.disabled.flag,false);
+      assert.equal(result.disabled.product,'Historical Platform');
+      assert.equal(result.disabled.hidden,true);
+    });
+    await scenario('#134 physical hypervisor save persists through reload', async page => {
+      const result=await page.evaluate(async () => {
+        const hostId='fictional-134-persist-host';
+        appState.subnets.push({id:'fictional-134-persist-subnet',name:'Fictional hosting subnet',kind:'network',cidr:'10.88.72.0/29',gateway:'10.88.72.1',vlan:3872});
+        appState.devices.push({id:hostId,name:'Fictional hosting host',type:'Server - Physical',
+          mountType:'Desktop',location:'Unknown',status:'Active',primaryIp:'10.88.72.2',
+          typeDetails:{serverService_Hypervisor:false}});
+        openDeviceModal(hostId);
+        const set=(id,value)=>{const el=document.getElementById(id);if(!el)throw Error('Missing form control '+id);el.value=value;el.dispatchEvent(new Event('change',{bubbles:true}));};
+        set('dev-location','Unknown');
+        set('dev-mount-type','Desktop');
+        set('dev-subnet','fictional-134-persist-subnet');
+        set('dev-ip','10.88.72.2');
+        const enabled=document.getElementById('phase-m005-hosting-enabled');
+        enabled.checked=true;
+        enabled.dispatchEvent(new Event('change',{bubbles:true}));
+        set('phase-m005-host-platform-select','Microsoft Hyper-V');
+        set('phase-m005-host-version','2026');
+        await handleDeviceSubmit({preventDefault(){}},hostId);
+        return {stored:JSON.parse(localStorage.getItem('caffoot_state')||'{}').devices?.find(d=>d.id===hostId),
+          inMemory:appState.devices.find(d=>d.id===hostId)};
+      });
+      assert.equal(result.stored?.typeDetails?.serverService_Hypervisor,true);
+      assert.equal(result.stored?.typeDetails?.hypervisorProduct,'Microsoft Hyper-V');
+      assert.equal(result.stored?.typeDetails?.hypervisorVersion,'2026');
+      assert.equal(result.inMemory?.typeDetails?.hypervisorProduct,'Microsoft Hyper-V');
+      await page.reload({waitUntil:'load'});
+      const restored=await page.evaluate(() => {
+        const host=appState.devices.find(d=>d.id==='fictional-134-persist-host');
+        openDeviceModal(host.id);
+        return {host,checked:document.getElementById('phase-m005-hosting-enabled').checked,
+          selected:document.getElementById('phase-m005-host-platform-select').value,
+          version:document.getElementById('phase-m005-host-version').value};
+      });
+      assert.equal(restored.checked,true);
+      assert.equal(restored.selected,'Microsoft Hyper-V');
+      assert.equal(restored.version,'2026');
+    });
+    await scenario('#134 custom hypervisor JSON backup import and reload preserves host and guest', async page => {
+      const raw=await page.evaluate(() => {
+        const backup=JSON.parse(JSON.stringify(appState));
+        backup.devices.push(
+          {id:'fictional-134-import-host',name:'Fictional custom hypervisor host',
+            type:'Server - Physical',mountType:'Desktop',location:'Unknown',status:'Active',
+            typeDetails:{serverService_Hypervisor:true,hypervisorProduct:'Historical Custom Hypervisor',hypervisorVersion:'Legacy 4.2'}},
+          {id:'fictional-134-import-guest',name:'Fictional hosted VM',
+            type:'Server - Virtual',mountType:'Desktop',location:'Unknown',status:'Active',
+            virtualHostId:'fictional-134-import-host',virtualPlatform:'Historical Custom Hypervisor',
+            operatingSystem:'Historical Guest OS',operatingSystemVersion:'Legacy Guest 1'}
+        );
+        return backup;
+      });
+      page.on('dialog',dialog=>dialog.accept());
+      await page.locator('#import-file').setInputFiles({
+        name:'fictional-134-custom-hypervisor.json',mimeType:'application/json',
+        buffer:Buffer.from(JSON.stringify(raw))
+      });
+      await page.waitForFunction(() => {
+        const stored=localStorage.getItem('caffoot_state');
+        return !!stored && JSON.parse(stored).devices?.some(d=>d.id==='fictional-134-import-host');
+      },null,{timeout:10000});
+      await page.reload({waitUntil:'load'});
+      const result=await page.evaluate(() => {
+        const host=appState.devices.find(d=>d.id==='fictional-134-import-host');
+        const guest=appState.devices.find(d=>d.id==='fictional-134-import-guest');
+        openDeviceModal(host.id);
+        return {host,guest,checked:document.getElementById('phase-m005-hosting-enabled').checked,
+          choice:document.getElementById('phase-m005-host-platform-select').value,
+          product:document.getElementById('phase-m005-host-platform').value,
+          version:document.getElementById('phase-m005-host-version').value};
+      });
+      assert.equal(result.host.typeDetails.serverService_Hypervisor,true);
+      assert.equal(result.host.typeDetails.hypervisorProduct,'Historical Custom Hypervisor');
+      assert.equal(result.host.typeDetails.hypervisorVersion,'Legacy 4.2');
+      assert.equal(result.checked,true);
+      assert.equal(result.choice,'__custom__');
+      assert.equal(result.product,'Historical Custom Hypervisor');
+      assert.equal(result.version,'Legacy 4.2');
+      assert.equal(result.guest.virtualHostId,'fictional-134-import-host');
+      assert.equal(result.guest.virtualPlatform,'Historical Custom Hypervisor');
+      assert.equal(result.guest.operatingSystem,'Historical Guest OS');
     });
     await scenario('M-005 baseline orphan host validation', async page => {
       const result = await page.evaluate(() => {
