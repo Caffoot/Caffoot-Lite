@@ -2,7 +2,7 @@
 
 **Baseline:** Published Caffoot Lite v1.3.0, tag `v1.3.0`, commit `92d6a60b0e4bc9f73589b27820cb283def377dbd`.
 
-**Status:** Source inspected. Test scenarios designed. No automated or browser tests have been executed for this matrix.
+**Status:** Published v1.3.0 source inspected and 18 controlled browser scenarios designed but not individually executed. Draft PR #137 now has passing focused automated imported rack assertions and existing release/Chromium checks; see dated checkpoints below. Controlled browser fixture acceptance remains outstanding.
 
 ## Plain English purpose
 
@@ -10,7 +10,7 @@ Check that restoring an older or damaged backup cannot quietly introduce impossi
 
 ## Safety and evidence rules
 
-Use a disposable browser profile, a separate copy of the **published v1.3.0 standalone HTML**, and fictional data. First export a valid fictional backup from that release; make one controlled alteration per scenario. Keep the original backup unchanged. Record the exact fixture, browser version, source tag, current inventory, any confirmation or error, and exact `caffoot_state` and safety snapshot bytes before and after. Never run these destructive import experiments on genuine inventory. Record source inspection, test execution, browser verification and owner approval as separate gates.
+Use a disposable browser profile and fictional data. Retain a separate copy of the **published v1.3.0 standalone HTML** for historical baseline comparisons, but execute the new import safeguard acceptance against the **PR #137 candidate HTML** so the proposed change is actually tested. First export a valid fictional backup from that release; make one controlled alteration per scenario. Keep the original backup unchanged. Record the exact fixture, browser version, source tag, current inventory, any confirmation or error, and exact `caffoot_state` and safety snapshot bytes before and after. Never run these destructive import experiments on genuine inventory. Record source inspection, test execution, browser verification and owner approval as separate gates.
 
 ## Baseline facts from published source
 
@@ -94,3 +94,26 @@ Source inspection of published `v1.0.0`, `v1.1.2`, `v1.2.1` and `v1.3.0` confirm
 ## Issue #93 complete published tag source survey, 25 October 2026
 
 Completed source inspection across **all 11 published tags**: `v1.0.0`, `v1.0.1`, `v1.0.2`, `v1.0.3`, `V1.1.0`, `V1.1.0.1`, `v1.1.1`, `v1.1.2`, `v1.2.0`, `v1.2.1` and `v1.3.0`. In every tag, `validateRackPlacement()` contains device and horizontal accessory overlap checks, and `phase13CAccessoryError()` contains device and accessory collision checks. These are static source observations, not executed browser acceptance or proof that every save path invokes the functions. The normal editor's long-standing protection makes a new conflict repositioning UI disproportionate without contrary evidence. Imported malformed JSON remains a separate entry point requiring narrowly scoped assessment. Keep the 18 existing import scenarios as planned until matched to real executed evidence; do not treat historical source inspection as their completion. Do not implement any behaviour change without explicit approval.
+
+## Issue #93 automated verification checkpoint, 25 October 2026
+
+Draft PR #137 at commit `43f90c00dd8b5594db31768f84b0a419c11f59af` has four successful GitHub Actions runs: [release candidate validation](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40214913142), [consolidated Chromium regression](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40214913195), [documentation consistency](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40214913164), and [secret scan](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40214913180). The release candidate workflow executed `app/test-imported-rack-integrity.cjs` through the existing rack check command, alongside the existing backup contract, backup security and restore checks. The focused tests cover representative overlap, bounds, accessory type, face and rail cases. These results supersede failed interim runs on earlier PR revisions, which exposed and led to fixes for legacy missing accessory collections and isolated backup test dependencies.
+
+The WF02-T01 to WF02-T18 browser fixture execution register above remains **not executed**: the passing consolidated Chromium suite and Node checks do not establish that every named controlled import scenario was run with stored-byte evidence. Manual browser acceptance, full document cross-reference reconciliation and owner merge approval remain outstanding. The master audit must not be marked closed on the strength of these CI results alone. No merge or release has occurred.
+
+## Issue #93 focused browser acceptance disposition, 25 October 2026
+
+Review of the existing 18 scenario descriptions against successful PR #137 automated evidence at `fb317472` identifies a smaller manual acceptance set rather than re-running the entire historical matrix. The automated rack validator assertions exercise core collisions, bounds, faces, rails, type and duplicate ID cases. Existing backup contract and restore checks exercise separate migration and failure paths, but not all named browser fixtures. Preserve the original WF02-T01 to WF02-T18 register as **not individually executed**.
+
+**Proposed minimum new disposable-browser evidence, not yet executed:**
+
+1. **WF02-T01 and WF02-T10:** Import a valid fictional backup containing rack accessories, then a compatible legacy backup with `rackAccessories` absent. Verify records survive and the current inventory changes only on confirmed import.
+2. **WF02-T03 and WF02-T13:** Attempt a fictional same-face accessory/device collision and a device/device collision. Confirm both imports are rejected, the error is understandable, and the active inventory and safety snapshot bytes are unchanged.
+3. **WF02-T11 and WF02-T12:** Attempt an explicitly malformed accessory collection and an invalid accessory record. Confirm rejection without silently dropping accessories or replacing active inventory.
+4. **WF02-T05 and WF02-T06:** Confirm valid opposite-face placement and independent left/right vertical rails import without false collision warnings.
+
+Other individual scenarios retain pending fixture status and may be explicitly dispositioned using matching automated evidence or deferred with a reason during owner acceptance. Existing rollback and recovery tests should not be repeated without a demonstrated coverage gap. Use fictional inventory in a disposable browser profile; do not test destructive imports against real data. No manual test result is asserted here, and no merge or release is authorised.
+
+## Issue #93 executed Chromium acceptance, 25 October 2026
+
+PR #137 commit `d7cba9a78f414cc431dbc21aa8d4015882506fcf` passed [consolidated Chromium run 40218932774](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40218932774), [release candidate run 40218932991](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40218932991), [documentation run 40218932839](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40218932839) and [secret scan 40218932884](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40218932884). The disposable Chromium scenario in `app/test-browser-consolidated-audit.cjs` exercised actual JSON file selection and production import handling: overlapping horizontal accessories and malformed accessory collections were rejected without a restore confirmation; valid opposite-face accessories reached confirmation, which was cancelled. The test asserted unchanged in-memory inventory, `caffoot_state`, pre-restore safety snapshot and persistence after reload. These are executed targeted browser checks, not full execution of the original 18 individual WF02 fixtures. Other scenarios retain their recorded status; no claim is made for a successful accessory restore or each legacy/failure mode in this specific browser scenario. Product owner authorised merging into the v1.3.1 release branch when required. Combined release branch verification and publication are separate gates.

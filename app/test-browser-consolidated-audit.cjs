@@ -24,6 +24,51 @@ const { chromium } = require('playwright');
     } finally { await context.close(); }
   }
   try {
+    await scenario('M-010/M-019 browser import validation preserves inventory', async page => {
+      const before = await page.evaluate(() => {
+        if (!saveState()) throw Error('Cannot establish fictional baseline');
+        return {stored:localStorage.getItem('caffoot_state'),
+          active:JSON.stringify(appState), safety:localStorage.getItem('caffoot_phase11_pre_restore')};
+      });
+      const base = JSON.parse(before.active);
+      base.racks = [{id:'fixture-rack',name:'Fixture rack',heightU:12}];
+      base.rackAccessories = [
+        {id:'fixture-a',name:'Fixture A',type:'patch',rackId:'fixture-rack',face:'front',startU:2,heightU:2},
+        {id:'fixture-b',name:'Fixture B',type:'blank',rackId:'fixture-rack',face:'front',startU:3,heightU:1}
+      ];
+      let confirmations=0;
+      page.on('dialog', async d => { confirmations++; await d.dismiss(); });
+      async function attempt(name, candidate, expected) {
+        await page.locator('#import-file').setInputFiles({
+          name:name+'.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(candidate))
+        });
+        await page.waitForFunction(() => document.getElementById('import-file').value === '');
+        const result=await page.evaluate(() => ({
+          stored:localStorage.getItem('caffoot_state'),
+          active:JSON.stringify(appState),safety:localStorage.getItem('caffoot_phase11_pre_restore'),
+          error:document.getElementById('modal-container')?.innerText || ''
+        }));
+        assert.equal(result.stored,before.stored,name+' must preserve stored inventory');
+        assert.equal(result.active,before.active,name+' must preserve active inventory');
+        assert.equal(result.safety,before.safety,name+' must preserve safety snapshot');
+        if (expected === 'reject') assert.match(result.error,/overlap|invalid|integrity/i,name+' must explain rejection');
+        if (expected === 'confirm') assert.equal(confirmations,1,name+' should offer a restore confirmation');
+        await page.evaluate(() => { if (typeof closeModal === 'function') closeModal(); });
+      }
+      await attempt('overlapping-accessories',base,'reject');
+      assert.equal(confirmations,0,'Overlapping accessories must be rejected before confirmation');
+      const malformed={...base,rackAccessories:{}};
+      await attempt('malformed-accessory-collection',malformed,'reject');
+      assert.equal(confirmations,0,'Malformed accessories must be rejected before confirmation');
+      const valid={...base,rackAccessories:[
+        base.rackAccessories[0],
+        {...base.rackAccessories[1],face:'rear'}
+      ]};
+      await attempt('opposite-face-accessories',valid,'confirm');
+      await page.reload({waitUntil:'load'});
+      assert.equal(await page.evaluate(() => localStorage.getItem('caffoot_state')),before.stored,
+        'Rejected and cancelled imports must preserve inventory across reload');
+    });
     const key = 'caffoot_phase12b_prebulk_snapshot';
     const inventoryKey = 'caffoot_state';
     for (const mode of ['throw-snapshot', 'ignore-snapshot', 'throw-main', 'success', 'old-snapshot']) {
