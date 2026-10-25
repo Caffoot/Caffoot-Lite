@@ -350,7 +350,7 @@ const { chromium } = require('playwright');
         const backup = JSON.parse(JSON.stringify(appState));
         backup.subnets.push({id:'fictional-legacy-subnet',name:'Historical IPAM subnet',kind:'network',cidr:'10.88.77.0/29',gateway:'10.88.77.1',vlan:3877});
         backup.ipAllocations['10.88.77.2'] = {status:'Available',deviceId:'',hostname:'legacy-host',notes:'Historical address notes'};
-        backup.ipAllocations['10.88.77.3'] = {status:'Available',deviceId:'',hostname:'legacy-reservation',notes:'Different historical notes'};
+        backup.ipAllocations['10.88.77.3'] = {status:'Available',deviceId:'',reservedForDeviceId:'fictional-missing-historical-device',hostname:'legacy-reservation',notes:'Different historical notes'};
         return backup;
       });
       assert.equal(Object.prototype.hasOwnProperty.call(raw,'caffootBackup'),false,'Fixture must use legacy unversioned JSON');
@@ -381,10 +381,14 @@ const { chromium } = require('playwright');
       const persisted=await page.evaluate(() => ({
         first:appState.ipAllocations['10.88.77.2']?.notes,
         second:appState.ipAllocations['10.88.77.3']?.notes,
+        historicalReservation:appState.ipAllocations['10.88.77.3']?.reservedForDeviceId,
+        storedReservation:JSON.parse(localStorage.getItem('caffoot_state')).ipAllocations['10.88.77.3']?.reservedForDeviceId,
         storedFirst:JSON.parse(localStorage.getItem('caffoot_state')).ipAllocations['10.88.77.2']?.notes
       }));
       assert.equal(persisted.first,'Historical address notes');
       assert.equal(persisted.second,'Different historical notes');
+      assert.equal(persisted.historicalReservation,'fictional-missing-historical-device','Legacy reservation reference must not be silently rewritten');
+      assert.equal(persisted.storedReservation,'fictional-missing-historical-device','Stored legacy reservation reference must survive import');
       assert.equal(persisted.storedFirst,'Historical address notes');
     });
   } finally { await browser.close(); }
