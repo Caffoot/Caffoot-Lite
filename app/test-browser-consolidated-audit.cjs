@@ -348,6 +348,7 @@ const { chromium } = require('playwright');
     await scenario('M-006 N31 historical IPAM file import and reload', async page => {
       const raw = await page.evaluate(() => {
         const backup = JSON.parse(JSON.stringify(appState));
+        backup.subnets.push({id:'fictional-legacy-subnet',name:'Historical IPAM subnet',kind:'network',cidr:'10.88.77.0/29',gateway:'10.88.77.1',vlan:3877});
         backup.ipAllocations['10.88.77.2'] = {status:'Available',deviceId:'',hostname:'legacy-host',notes:'Historical address notes'};
         backup.ipAllocations['10.88.77.3'] = {status:'Available',deviceId:'',hostname:'legacy-reservation',notes:'Different historical notes'};
         return backup;
