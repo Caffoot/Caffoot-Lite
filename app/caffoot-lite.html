@@ -7278,7 +7278,7 @@ function hierarchyValidateTypes(subnets) {
             const serialNumber = document.getElementById('dev-serial').value.trim();
             const virtualPlatform = type==='Server - Virtual'?(document.getElementById('dev-virtual-platform')?.value||''):'';
             const virtualHostId = type==='Server - Virtual'?(document.getElementById('dev-virtual-host')?.value||''):'';
-                        const existingDeviceHostIsUnchanged = () => !!deviceId && getDeviceById(deviceId)?.virtualHostId === virtualHostId;
+            const existingDeviceHostIsUnchanged = () => !!deviceId && getDeviceById(deviceId)?.virtualHostId === virtualHostId;
             if(virtualHostId&&!appState.devices.some(d=>d.id===virtualHostId&&d.type==='Server - Physical'&&d.id!==deviceId&&((d.status!=='Retired'&&(d.typeDetails?.serverService_Hypervisor===true||d.serverService_Hypervisor===true))||(existingDeviceHostIsUnchanged()))))return showToast('Select an eligible Hypervisor host, or retain the existing legacy assignment.','error');
             if (!['Active','Maintenance','Retired'].includes(status)) return showToast('Invalid device status.', 'error');
             const notes = document.getElementById('dev-notes').value.trim();
@@ -7309,6 +7309,12 @@ function hierarchyValidateTypes(subnets) {
             if (existingDevice && existingDevice.type === 'Server - Physical' && type !== 'Server - Physical') {
                 const dependants = appState.devices.filter(d => d.id !== deviceId && d.virtualHostId === deviceId);
                 if (dependants.length) return showToast('Resolve hosted device relationships before changing this physical server type: ' + dependants.map(d => d.name || d.id).join(', '), 'error');
+            }
+            // Do not silently retire a host that still has assigned guests.
+            if (existingDevice && existingDevice.type === 'Server - Physical' && type === 'Server - Physical' &&
+                status === 'Retired' && existingDevice.status !== 'Retired' &&
+                appState.devices.some(guest => guest.id !== deviceId && guest.virtualHostId === deviceId)) {
+                return showToast('Resolve hosted virtual machines before retiring this physical server.', 'error');
             }
             // M-005: every dependent guest must receive an explicit disposition.
             let removalGuests = [];
