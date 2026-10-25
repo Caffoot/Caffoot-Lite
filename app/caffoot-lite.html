@@ -7188,8 +7188,11 @@ function hierarchyValidateTypes(subnets) {
                     </div>
                 </div>`;
                 const content = document.getElementById('modal-content');
-                if (!content) return resolve(null);
-                if (getComputedStyle(content).position === 'static') content.style.position = 'relative';
+                if (content && !content.closest('.hidden')) {
+                    if (getComputedStyle(content).position === 'static') content.style.position = 'relative';
+                } else {
+                    overlay.className = 'fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/65 p-4';
+                }
                 const returnFocus = document.activeElement;
                 const finish = value => { overlay.remove(); if (returnFocus?.isConnected) returnFocus.focus(); resolve(value); };
                 overlay.addEventListener('click', event => {
@@ -7211,7 +7214,7 @@ function hierarchyValidateTypes(subnets) {
                         else if (!event.shiftKey && index === controls.length-1) { event.preventDefault(); controls[0].focus(); }
                     }
                 });
-                content.appendChild(overlay);
+                (content && !content.closest('.hidden') ? content : document.body).appendChild(overlay);
                 overlay.querySelector('[data-action="cancel"]').focus();
             });
         }
