@@ -2,7 +2,7 @@
 
 **Baseline:** Published Caffoot Lite v1.3.0, tag `v1.3.0`, commit `92d6a60b0e4bc9f73589b27820cb283def377dbd`.
 
-**Status:** Source inspected. Test scenarios designed. No automated or browser tests have been executed for this matrix.
+**Status:** Published v1.3.0 source inspected and 18 controlled browser scenarios designed but not individually executed. Draft PR #137 now has passing focused automated imported rack assertions and existing release/Chromium checks; see dated checkpoints below. Controlled browser fixture acceptance remains outstanding.
 
 ## Plain English purpose
 
@@ -10,7 +10,7 @@ Check that restoring an older or damaged backup cannot quietly introduce impossi
 
 ## Safety and evidence rules
 
-Use a disposable browser profile, a separate copy of the **published v1.3.0 standalone HTML**, and fictional data. First export a valid fictional backup from that release; make one controlled alteration per scenario. Keep the original backup unchanged. Record the exact fixture, browser version, source tag, current inventory, any confirmation or error, and exact `caffoot_state` and safety snapshot bytes before and after. Never run these destructive import experiments on genuine inventory. Record source inspection, test execution, browser verification and owner approval as separate gates.
+Use a disposable browser profile and fictional data. Retain a separate copy of the **published v1.3.0 standalone HTML** for historical baseline comparisons, but execute the new import safeguard acceptance against the **PR #137 candidate HTML** so the proposed change is actually tested. First export a valid fictional backup from that release; make one controlled alteration per scenario. Keep the original backup unchanged. Record the exact fixture, browser version, source tag, current inventory, any confirmation or error, and exact `caffoot_state` and safety snapshot bytes before and after. Never run these destructive import experiments on genuine inventory. Record source inspection, test execution, browser verification and owner approval as separate gates.
 
 ## Baseline facts from published source
 
