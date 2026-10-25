@@ -7240,7 +7240,7 @@ function hierarchyValidateTypes(subnets) {
                 overlay.className = 'absolute inset-0 z-50 flex items-center justify-center bg-slate-950/65 p-4 rounded-2xl';
                 overlay.innerHTML = `<div class="w-full max-w-2xl max-h-full overflow-y-auto rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 p-6 shadow-2xl space-y-4">
                     <h3 id="phase-m005-hypervisor-title" class="text-lg font-bold">Resolve hosted virtual machines</h3>
-                    <p class="text-sm">Before removing the Hypervisor service from ${escapeHtml(hostName)}, choose what happens to each assigned virtual machine. Nothing changes until you confirm and save.</p>
+                    <p class="text-sm">Before disabling virtual machine hosting on ${escapeHtml(hostName)}, choose what happens to each assigned virtual machine. Nothing changes until you confirm and save.</p>
                     <div class="space-y-3">${guests.map((guest,index)=>`<div class="rounded-xl border border-slate-300 dark:border-slate-600 p-3">
                         <label class="form-label" for="phase-m005-guest-${index}">${escapeHtml(guest.name||guest.id)}</label>
                         <select id="phase-m005-guest-${index}" data-m005-guest="${index}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
