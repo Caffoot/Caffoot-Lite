@@ -359,13 +359,23 @@ const { chromium } = require('playwright');
         mimeType:'application/json',
         buffer:Buffer.from(JSON.stringify(raw))
       });
-      await page.waitForFunction(() => {
-        const saved=localStorage.getItem('caffoot_state');
-        if(!saved) return false;
-        const allocations=JSON.parse(saved).ipAllocations;
-        return allocations?.['10.88.77.2']?.notes==='Historical address notes' &&
-          allocations?.['10.88.77.3']?.notes==='Different historical notes';
-      },null,{timeout:10000});
+      try {
+        await page.waitForFunction(() => {
+          const saved=localStorage.getItem('caffoot_state');
+          if(!saved) return false;
+          const allocations=JSON.parse(saved).ipAllocations;
+          return allocations?.['10.88.77.2']?.notes==='Historical address notes' &&
+            allocations?.['10.88.77.3']?.notes==='Different historical notes';
+        },null,{timeout:10000});
+      } catch (error) {
+        const diagnostic=await page.evaluate(() => ({
+          modalText:document.getElementById('modal-container')?.innerText?.slice(0,1200)||'',
+          storedAllocations:Object.keys(JSON.parse(localStorage.getItem('caffoot_state')||'{}').ipAllocations||{}).slice(0,12),
+          inMemoryNotes:[appState.ipAllocations['10.88.77.2']?.notes,appState.ipAllocations['10.88.77.3']?.notes],
+          selectedFile:document.getElementById('import-file')?.files?.[0]?.name||null
+        }));
+        throw new Error('N31 import persistence not observed: '+JSON.stringify(diagnostic)+'; '+error.message);
+      }
       await page.reload({waitUntil:'load'});
       const persisted=await page.evaluate(() => ({
         first:appState.ipAllocations['10.88.77.2']?.notes,
