@@ -928,6 +928,43 @@ const { chromium } = require('playwright');
         assert.equal(result.savedAllocation,result.originalAllocation,type+' must persist IPAM without mutation');
       }
     });
+    await scenario('M-009 changed gateway cannot take another device address', async page => {
+      const result = await page.evaluate(() => {
+        const subnet = {id:'fictional-gateway-conflict',name:'Before rejected edit',kind:'network',cidr:'10.88.73.0/29',gateway:'10.88.73.1',vlan:3873};
+        const gatewayOwner = {id:'fictional-gateway-current-owner',name:'Fictional Router',type:'Router',primaryIp:subnet.gateway};
+        const conflictingOwner = {id:'fictional-gateway-other-owner',name:'Fictional Server',type:'Server',primaryIp:'10.88.73.2'};
+        appState.subnets.push(subnet);
+        appState.devices.push(gatewayOwner,conflictingOwner);
+        appState.ipAllocations[subnet.gateway] = {status:'Assigned',deviceId:gatewayOwner.id,reservedForDeviceId:'',notes:'Current gateway note'};
+        appState.ipAllocations[conflictingOwner.primaryIp] = {status:'Assigned',deviceId:conflictingOwner.id,reservedForDeviceId:'',notes:'Keep conflicting owner note'};
+        const beforeSubnet = JSON.stringify(subnet);
+        const beforeGateway = JSON.stringify(appState.ipAllocations[subnet.gateway]);
+        const beforeConflict = JSON.stringify(appState.ipAllocations[conflictingOwner.primaryIp]);
+        const beforeSaved = localStorage.getItem('caffoot_state');
+        const fields = {'sub-kind':'network','sub-cidr':subnet.cidr,'sub-name':'Should not save','sub-vlan':String(subnet.vlan),'sub-gw':conflictingOwner.primaryIp,'sub-desc':'Rejected edit','sub-parent':''};
+        for(const [id,value] of Object.entries(fields)){
+          let el=document.getElementById(id);
+          if(!el){el=document.createElement('input');el.id=id;document.body.appendChild(el);}
+          el.value=value;
+        }
+        handleSubnetSubmit({preventDefault(){}},subnet.id);
+        const result = {
+          subnet:JSON.stringify(appState.subnets.find(s=>s.id===subnet.id)),beforeSubnet,
+          gateway:JSON.stringify(appState.ipAllocations[subnet.gateway]),beforeGateway,
+          conflict:JSON.stringify(appState.ipAllocations[conflictingOwner.primaryIp]),beforeConflict,
+          storageUnchanged:localStorage.getItem('caffoot_state')===beforeSaved
+        };
+        appState.subnets=appState.subnets.filter(s=>s.id!==subnet.id);
+        appState.devices=appState.devices.filter(d=>![gatewayOwner.id,conflictingOwner.id].includes(d.id));
+        delete appState.ipAllocations[subnet.gateway];
+        delete appState.ipAllocations[conflictingOwner.primaryIp];
+        return result;
+      });
+      assert.equal(result.subnet,result.beforeSubnet,'Rejected gateway change must preserve subnet');
+      assert.equal(result.gateway,result.beforeGateway,'Rejected change must preserve original gateway owner and notes');
+      assert.equal(result.conflict,result.beforeConflict,'Rejected change must preserve conflicting owner and notes');
+      assert.equal(result.storageUnchanged,true,'Rejected gateway change must not persist inventory changes');
+    });
     await scenario('M-006 N22 individual and bulk release retain notes', async page => {
       const result=await page.evaluate(() => {
         const subnet={id:'fictional-release-subnet',name:'Release checks',kind:'network',cidr:'10.88.78.0/29',gateway:'10.88.78.1',vlan:3878};
