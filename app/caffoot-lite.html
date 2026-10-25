@@ -7157,43 +7157,63 @@ function hierarchyValidateTypes(subnets) {
             if (resolve) resolve(accepted);
         }
 
-        let phaseM005HypervisorResolve = null;
-        function phaseM005ConfirmHypervisorRemoval(hostName, guests) {
-            if (document.getElementById('phase-m005-hypervisor-dialog')) return Promise.resolve(false);
+        function phaseM005ConfirmHypervisorRemoval(hostName, guests, hostId) {
+            if (document.getElementById('phase-m005-hypervisor-dialog')) return Promise.resolve(null);
             return new Promise(resolve => {
-                phaseM005HypervisorResolve = resolve;
+                const candidates = appState.devices.filter(device =>
+                    device.id !== hostId && device.type === 'Server - Physical' && device.status !== 'Retired' &&
+                    (device.typeDetails?.serverService_Hypervisor === true || device.serverService_Hypervisor === true));
                 const overlay = document.createElement('div');
                 overlay.id = 'phase-m005-hypervisor-dialog';
-                overlay.setAttribute('role', 'alertdialog');
+                overlay.setAttribute('role', 'dialog');
                 overlay.setAttribute('aria-modal', 'true');
                 overlay.setAttribute('aria-labelledby', 'phase-m005-hypervisor-title');
-                overlay.setAttribute('aria-describedby', 'phase-m005-hypervisor-description');
                 overlay.className = 'absolute inset-0 z-50 flex items-center justify-center bg-slate-950/65 p-4 rounded-2xl';
-                overlay.innerHTML = `<div class="w-full max-w-lg rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 p-6 shadow-2xl space-y-4">
-                    <h3 id="phase-m005-hypervisor-title" class="text-lg font-bold">Remove Hypervisor service?</h3>
-                    <p id="phase-m005-hypervisor-description" class="text-sm">Removing the Hypervisor service from ${escapeHtml(hostName)} will leave these virtual machines assigned to this host:</p>
-                    <ul class="list-disc pl-5 max-h-48 overflow-y-auto text-sm">${guests.map(guest=>'<li>'+escapeHtml(guest.name||guest.id)+'</li>').join('')}</ul>
-                    <p class="text-sm">The Virtual Machines tab will remain visible with a configuration warning. No guest data or host relationships will be changed.</p>
+                overlay.innerHTML = `<div class="w-full max-w-2xl max-h-full overflow-y-auto rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 p-6 shadow-2xl space-y-4">
+                    <h3 id="phase-m005-hypervisor-title" class="text-lg font-bold">Resolve hosted virtual machines</h3>
+                    <p class="text-sm">Before removing the Hypervisor service from ${escapeHtml(hostName)}, choose what happens to each assigned virtual machine. Nothing changes until you confirm and save.</p>
+                    <div class="space-y-3">${guests.map((guest,index)=>`<div class="rounded-xl border border-slate-300 dark:border-slate-600 p-3">
+                        <label class="form-label" for="phase-m005-guest-${index}">${escapeHtml(guest.name||guest.id)}</label>
+                        <select id="phase-m005-guest-${index}" data-m005-guest="${index}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
+                            <option value="">Choose an action...</option>
+                            <option value="unassign">Unassign, keep virtual machine and previous host history</option>
+                            <option value="retire">Retire virtual machine, keep history</option>
+                            ${candidates.map(host=>'<option value="host:'+escapeHtml(host.id)+'">Reassign to '+escapeHtml(host.name||host.id)+'</option>').join('')}
+                        </select>
+                    </div>`).join('')}</div>
+                    <p class="text-sm">Reassignment changes the inventory host reference only. It does not move a real virtual machine. Retiring does not delete its record.</p>
                     <div class="flex flex-wrap justify-end gap-3">
-                        <button type="button" data-action="phase-m005-hypervisor-cancel" class="h-11 px-4 rounded-xl border border-slate-400 dark:border-slate-500 caffoot-modal-cancel">Keep Editing</button>
-                        <button type="button" data-action="phase-m005-hypervisor-accept" class="h-11 px-4 rounded-xl bg-rose-700 text-white font-bold">Remove Hypervisor service</button>
+                        <button type="button" data-action="cancel" class="h-11 px-4 rounded-xl border border-slate-400 caffoot-modal-cancel">Keep Editing</button>
+                        <button type="button" data-action="confirm" class="h-11 px-4 rounded-xl bg-rose-700 text-white font-bold">Confirm Guest Decisions</button>
                     </div>
                 </div>`;
                 const content = document.getElementById('modal-content');
+                if (!content) return resolve(null);
                 if (getComputedStyle(content).position === 'static') content.style.position = 'relative';
-                overlay._returnFocus = document.activeElement;
+                const returnFocus = document.activeElement;
+                const finish = value => { overlay.remove(); if (returnFocus?.isConnected) returnFocus.focus(); resolve(value); };
+                overlay.addEventListener('click', event => {
+                    const action = event.target.closest('[data-action]')?.dataset.action;
+                    if (action === 'cancel') finish(null);
+                    if (action !== 'confirm') return;
+                    const choices = [...overlay.querySelectorAll('[data-m005-guest]')].map(el=>el.value);
+                    if (choices.some(value=>!value)) return showToast('Choose an action for every virtual machine.', 'error');
+                    if (choices.some(value=>value.startsWith('host:') && !candidates.some(host=>host.id===value.slice(5))))
+                        return showToast('A selected destination host is no longer eligible.', 'error');
+                    finish(choices);
+                });
+                overlay.addEventListener('keydown', event => {
+                    if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); finish(null); }
+                    if (event.key === 'Tab') {
+                        const controls = [...overlay.querySelectorAll('select,button')];
+                        const index = controls.indexOf(document.activeElement);
+                        if (event.shiftKey && index === 0) { event.preventDefault(); controls[controls.length-1].focus(); }
+                        else if (!event.shiftKey && index === controls.length-1) { event.preventDefault(); controls[0].focus(); }
+                    }
+                });
                 content.appendChild(overlay);
-                overlay.querySelector('[data-action="phase-m005-hypervisor-cancel"]').focus();
+                overlay.querySelector('[data-action="cancel"]').focus();
             });
-        }
-        function phaseM005ResolveHypervisorRemoval(accepted) {
-            const overlay = document.getElementById('phase-m005-hypervisor-dialog');
-            const focus = overlay?._returnFocus;
-            overlay?.remove();
-            const resolve = phaseM005HypervisorResolve;
-            phaseM005HypervisorResolve = null;
-            if (focus?.isConnected) focus.focus();
-            if (resolve) resolve(accepted);
         }
 
         function phaseM005ConfirmPlatformChange(hostName, guests, oldPlatform, newPlatform) {
@@ -7289,16 +7309,21 @@ function hierarchyValidateTypes(subnets) {
                 const dependants = appState.devices.filter(d => d.id !== deviceId && d.virtualHostId === deviceId);
                 if (dependants.length) return showToast('Resolve hosted device relationships before changing this physical server type: ' + dependants.map(d => d.name || d.id).join(', '), 'error');
             }
-            // M-005: explicit acknowledgement before disabling the hypervisor on a host
-            // with existing guests. Guest links are never silently changed or removed.
+            // M-005: every dependent guest must receive an explicit disposition.
+            let removalGuests = [];
+            let removalChoices = [];
             if (existingDevice && existingDevice.type === 'Server - Physical' && type === 'Server - Physical') {
                 const wasHypervisor = existingDevice.typeDetails?.serverService_Hypervisor === true || existingDevice.serverService_Hypervisor === true;
                 const remainsHypervisor = typeDetails.serverService_Hypervisor === true;
                 if (wasHypervisor && !remainsHypervisor) {
                     const hostedGuests = appState.devices.filter(guest => guest.id !== deviceId && guest.virtualHostId === deviceId);
                     if (hostedGuests.length) {
-                        if (!await phaseM005ConfirmHypervisorRemoval(existingDevice.name, hostedGuests)) return;
-                        if (getDeviceById(deviceId) !== existingDevice || !document.getElementById('dev-type') || document.getElementById('dev-type').value !== type) return;
+                        const choices = await phaseM005ConfirmHypervisorRemoval(existingDevice.name, hostedGuests, deviceId);
+                        if (!choices) return;
+                        if (getDeviceById(deviceId) !== existingDevice || document.getElementById('dev-type')?.value !== type ||
+                            phase19BReadFields().serverService_Hypervisor === true) return;
+                        removalGuests = hostedGuests;
+                        removalChoices = choices;
                     }
                 }
             }
@@ -7343,6 +7368,27 @@ function hierarchyValidateTypes(subnets) {
                 const newDevice = { id: 'dev_' + Date.now(), name, type, mountType, location, notes, status, manufacturer, model, serialNumber, typeDetails, virtualPlatform, virtualHostId, ipReserved, primaryIp: '', rackId, face, rackUStart, rackUEnd, rackUHeight };
                 appState.devices.push(newDevice);
                 try { setDevicePrimaryIp(newDevice, primaryIp); syncDeviceIpamRecord(newDevice); } catch (error) { appState = JSON.parse(beforeDeviceSave); return showToast('Device/IPAM creation cancelled: ' + error.message, 'error'); }
+            }
+            for (let index = 0; index < removalGuests.length; index++) {
+                const guest = removalGuests[index];
+                const choice = removalChoices[index];
+                guest.previousVirtualHosts = [...(Array.isArray(guest.previousVirtualHosts) ? guest.previousVirtualHosts : []),
+                    {hostId:deviceId, changedAt:new Date().toISOString(), action:choice}];
+                if (choice === 'unassign') guest.virtualHostId = '';
+                else if (choice === 'retire') { guest.virtualHostId = ''; guest.status = 'Retired'; }
+                else if (choice.startsWith('host:')) {
+                    const destination = appState.devices.find(host => host.id === choice.slice(5) &&
+                        host.type === 'Server - Physical' && host.status !== 'Retired' &&
+                        (host.typeDetails?.serverService_Hypervisor === true || host.serverService_Hypervisor === true));
+                    if (!destination) { appState = JSON.parse(beforeDeviceSave); return showToast('Destination Hypervisor is no longer eligible.', 'error'); }
+                    guest.virtualHostId = destination.id;
+                    const destinationPlatform = String(destination.typeDetails?.hypervisorProduct || '').trim();
+                    if (destinationPlatform && guest.virtualPlatform !== destinationPlatform) {
+                        guest.previousVirtualPlatforms = [...(Array.isArray(guest.previousVirtualPlatforms) ? guest.previousVirtualPlatforms : []),
+                            {platform:guest.virtualPlatform || '', hostId:deviceId, changedAt:new Date().toISOString()}];
+                        guest.virtualPlatform = destinationPlatform;
+                    }
+                }
             }
             for (const guest of platformGuests) {
                 guest.previousVirtualPlatforms = [...(Array.isArray(guest.previousVirtualPlatforms) ? guest.previousVirtualPlatforms : []),
