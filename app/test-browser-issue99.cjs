@@ -359,6 +359,46 @@ const { chromium } = require('playwright');
     });
     for (const [key,value] of Object.entries(archiveChecks))
       assert.equal(value,true,'Issue #157 archive serialization regression failed: '+key);
+    // Issue #157: genuine application backup/import and reload, in this disposable browser context only.
+    const backupPage = await context.newPage();
+    try {
+      await backupPage.goto(pathToFileURL(path.join(__dirname,'dist','Caffoot-Lite.html')).href);
+      const backupJson = await backupPage.evaluate(() => {
+        appState = cloneDefaultData();
+        appState.installedSoftware = [{key:'issue157_backup_software',label:'Fictional Backup Software',deviceTypes:['Server - Physical'],archived:true}];
+        appState.serverFunctions = [{key:'issue157_backup_service',label:'Fictional Backup Service',archived:true}];
+        return JSON.stringify(phase20CreateBackup());
+      });
+      const checked = await backupPage.evaluate(json => {
+        const restored = phase16CCheckBackup(phase16CReadJson(json));
+        return restored.installedSoftware.some(x => x.key==='issue157_backup_software' && x.archived===true) &&
+          restored.serverFunctions.some(x => x.key==='issue157_backup_service' && x.archived===true);
+      }, backupJson);
+      assert.equal(checked,true,'Application backup validation must retain archived catalogue entries');
+      backupPage.on('dialog', dialog => dialog.accept());
+      await backupPage.locator('#import-file').setInputFiles({
+        name:'issue157-disposable-backup.json',mimeType:'application/json',buffer:Buffer.from(backupJson)
+      });
+      await backupPage.waitForFunction(() => {
+        try {
+          const stored=JSON.parse(localStorage.getItem('caffoot_state')||'null');
+          return stored?.installedSoftware?.some(x=>x.key==='issue157_backup_software'&&x.archived===true) &&
+            stored?.serverFunctions?.some(x=>x.key==='issue157_backup_service'&&x.archived===true);
+        } catch { return false; }
+      });
+      await backupPage.reload();
+      const afterReload = await backupPage.evaluate(() => ({
+        software:appState.installedSoftware.some(x=>x.key==='issue157_backup_software'&&x.archived===true),
+        service:appState.serverFunctions.some(x=>x.key==='issue157_backup_service'&&x.archived===true),
+        excludedSoftware:!phase120SoftwareOptions().some(x=>x.key==='issue157_backup_software'),
+        excludedService:!phase120AvailableServerServices().some(x=>x.key==='issue157_backup_service'),
+        recovery:phase17AStorageRecovery===null
+      }));
+      for(const [key,value] of Object.entries(afterReload))
+        assert.equal(value,true,'Issue #157 actual import/reload failed: '+key);
+    } finally {
+      await backupPage.close();
+    }
     console.log('PASS #99 focused form, bulk preview and accessory failure/retry and move/remove rollback');
 
   } finally {
