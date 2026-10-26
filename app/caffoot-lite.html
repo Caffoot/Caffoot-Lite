@@ -3366,6 +3366,30 @@ function hierarchyValidateTypes(subnets) {
             renderContent();
             showToast(remove?'Manufacturer suggestions removed.':'Manufacturer saved.');
         }
+        function phase120BuiltinManufacturerEditor(original){
+            const defaults=['Dell','HP','HPE','Lenovo','ASUS','Apple','Cisco','Samsung','Microsoft','Toshiba'];
+            const known=defaults.includes(original)||Object.values(phase120HardwareSeed).some(m=>Object.keys(m).includes(original));
+            if(!known)return;
+            const pref=phase120HardwarePreferences()['maker:'+original.toLowerCase()]||{};
+            const assigned=appState.devices.filter(d=>String(d.manufacturer||'').toLowerCase()===original.toLowerCase());
+            openModal('<div class="p-5 sm:p-7 space-y-4"><h3 class="text-lg font-bold">Manage Built-in Manufacturer</h3><p class="text-sm">Original: '+escapeHtml(original)+'. Existing devices and historical backups remain unchanged.</p><label class="block font-semibold text-sm" for="phase120-builtin-maker-name">Suggestion Name</label><input id="phase120-builtin-maker-name" maxlength="120" value="'+escapeHtml(pref.label||original)+'" class="w-full h-11 px-3 rounded-xl border dark:bg-slate-800"><label class="flex gap-2 items-center"><input id="phase120-builtin-maker-hidden" type="checkbox" '+(pref.hidden?'checked':'')+(assigned.length?' disabled':'')+'> Hide from new suggestions</label>'+(assigned.length?'<p class="text-sm text-amber-700">Cannot hide while assigned to: '+assigned.slice(0,5).map(d=>escapeHtml(d.name||d.hostname||d.id||'Unnamed device')).join(', ')+'</p>':'')+'<p id="phase120-builtin-maker-error" role="alert" class="text-sm text-rose-700"></p><div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-4 border rounded-xl caffoot-modal-cancel">Cancel</button><button type="button" data-action="phase120-builtin-maker-save" data-name="'+escapeHtml(original)+'" class="h-11 px-4 rounded-xl bg-blue-800 text-white">Save</button></div></div>');
+        }
+        function phase120BuiltinManufacturerSave(original){
+            const defaults=['Dell','HP','HPE','Lenovo','ASUS','Apple','Cisco','Samsung','Microsoft','Toshiba'];
+            if(!defaults.includes(original)&&!Object.values(phase120HardwareSeed).some(m=>Object.keys(m).includes(original)))return;
+            const label=String(document.getElementById('phase120-builtin-maker-name')?.value||'').trim();
+            const hidden=!!document.getElementById('phase120-builtin-maker-hidden')?.checked;
+            const error=document.getElementById('phase120-builtin-maker-error');
+            if(!label||label.length>120){if(error)error.textContent='Enter a manufacturer name of up to 120 characters.';return;}
+            if(hidden&&appState.devices.some(d=>String(d.manufacturer||'').toLowerCase()===original.toLowerCase())){if(error)error.textContent='Manufacturer is assigned to devices and cannot be hidden.';return;}
+            const prefs=phase120HardwarePreferences();
+            const duplicates=[...new Set([...Object.values(phase120HardwareSeed).flatMap(m=>Object.keys(m)),...defaults,...phase120HardwareCatalogue().map(x=>x.manufacturer)])].filter(n=>n.toLowerCase()!==original.toLowerCase());
+            if(duplicates.some(n=>String(prefs['maker:'+n.toLowerCase()]?.label||n).toLowerCase()===label.toLowerCase())){if(error)error.textContent='Another manufacturer suggestion already uses that name.';return;}
+            const previous=appState.hardwareSeedPreferences;
+            appState.hardwareSeedPreferences={...prefs,['maker:'+original.toLowerCase()]:{label,hidden}};
+            if(!saveState()){if(previous===undefined)delete appState.hardwareSeedPreferences;else appState.hardwareSeedPreferences=previous;showToast('Could not save manufacturer preference.','error');return;}
+            closeModal(true);renderContent();showToast('Built-in manufacturer preference saved.');
+        }
         function phase120ManufacturersHTML() {
             const map=new Map();
             function add(name,source,type,model) {
@@ -8989,6 +9013,8 @@ function hierarchyValidateTypes(subnets) {
                 case 'phase120-maker-reset': {const el=document.getElementById('phase120-maker-search');if(el){el.value='';el.dispatchEvent(new Event('input',{bubbles:true}));}break;}
                 case 'phase120-model-reset': ['phase120-model-search','phase120-model-maker','phase120-model-type','phase120-model-source'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';}); if(document.getElementById('phase120-model-in-use'))document.getElementById('phase120-model-in-use').checked=false; phase120FilterModels(); break;
                 case 'phase120-maker-add': phase120ManufacturerManager(); break;
+                case 'phase120-builtin-maker-edit': phase120BuiltinManufacturerEditor(name); break;
+                case 'phase120-builtin-maker-save': phase120BuiltinManufacturerSave(name); break;
                 case 'phase120-maker-edit': phase120ManufacturerManager(name); break;
                 case 'phase120-maker-remove': phase120ManufacturerManager(name,true); break;
                 case 'phase120-maker-all': document.querySelectorAll('input[name="phase120-maker-type"]:not(:disabled)').forEach(x=>x.checked=true); break;
