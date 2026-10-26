@@ -71,6 +71,23 @@ The last section of the handover must reproduce this continuity requirement or p
 To conserve the monthly GitHub Actions allowance, preserve required pull request checks and existing browser workflow path filters. The proposed workflow concurrency groups cancel older runs only when superseded on the same pull request or branch. Cancelled runs are not passing test evidence; the latest relevant run must finish successfully. A skipped required job can block merging, so do not use pull request path filters to suppress the required `release-documentation` job without separately verifying branch protection behaviour. Keep manual browser dispatch available for deliberate verification and record actual execution separately from source inspection. See `docs/audits/V1.3.0-DOCUMENTATION-COVERAGE-AUDIT.md` for the dated proposal and open verification gate.
 
 
+## Resource-conscious development, agreed 26 October 2026
+
+Caffoot Lite treats responsible use of computing resources, contributor time and infrastructure costs as a core engineering principle. Resource efficiency must never weaken inventory safety, security, accessibility, backwards compatibility, required checks or release approval.
+
+For GitHub Actions, apply these rules:
+
+1. Check existing executed evidence and the current workflow triggers before planning tests or opening a pull request. Distinguish historical evidence from verification of changed behaviour.
+2. Group related, reviewed changes into deliberate commits or batches where practical. Remember that opening a pull request and pushing further commits may each trigger multiple automatic workflows.
+3. Prefer focused local or browser checks for changed behaviour while retaining the mandatory integration and release checks at the appropriate gate. Never report an unexecuted test as passed.
+4. Record actual workflow run identifiers, conclusions and, when available, billable duration. A count of runs is not a count of billable minutes. Do not assume access to the owner's billing balance.
+5. Investigate waste using measured workflow usage before proposing changes to path filters, concurrency or runner configuration. Keep required checks, security coverage and manual verification available. Any workflow behaviour change requires the established agreement, verification and approval process.
+6. Reconcile test evidence and documentation with the exact source revision. Cancelled, skipped and superseded checks do not count as passing evidence.
+
+This principle applies to future maintenance and architecture choices too: favour straightforward, maintainable, offline-capable solutions that avoid unnecessary services and recurring cost. The existing Actions conservation requirements above remain in force.
+
+**Issue #99 / draft PR #155 checkpoint:** This policy update records the product owner's agreed ethos. It is documentation only, not a change to workflow triggers or application behaviour. Earlier PR activity caused automatic checks; do not describe that activity as no tests executed. The new focused issue #99 browser scenario remains unverified until its execution is explicitly evidenced. The outstanding master audit verification and release approval gates remain open.
+
 ## Recovering work in a new session
 
 Before resuming development after a conversation or contributor handover, follow the [new session recovery procedure](SESSION-RECOVERY.md). Verify live repository status rather than relying on a previous chat or handover document.
