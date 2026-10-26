@@ -32,33 +32,7 @@ jobs:
           full=true
           if [[ "$EVENT_NAME" == "pull_request" && "$BASE_REF" != "main" ]]; then
             if git diff --name-only "$BASE_SHA" "$HEAD_SHA" > "$RUNNER_TEMP/changed-files"; then
-              if grep -Eq '^(app/caffoot-lite[.]html|app/test-browser-consolidated-audit[.]cjs|[.]github/workflows/audit-consolidated-chromium[.]yml)
-        with:
-          node-version: '24'
-          cache: npm
-          cache-dependency-path: app/package-lock.json
-      - name: Install pinned build dependencies
-        working-directory: app
-        run: npm ci
-      - name: Build and verify standalone HTML
-        working-directory: app
-        run: npm run build && npm run check:build
-      - name: Install isolated browser test tools
-        run: |
-          npm install --prefix "$RUNNER_TEMP/caffoot-browser-tools" --no-save --no-package-lock --no-audit --no-fund playwright@1.56.1
-          "$RUNNER_TEMP/caffoot-browser-tools/node_modules/.bin/playwright" install --with-deps chromium
-      - name: Run consolidated audit scenarios in Chromium
-        if: steps.scope.outputs.full == 'true'
-        working-directory: app
-        env:
-          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tools/node_modules
-        run: node test-browser-consolidated-audit.cjs
-      - name: Run issue 99 focused form regression in Chromium
-        working-directory: app
-        env:
-          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tools/node_modules
-        run: node test-browser-issue99.cjs
- "$RUNNER_TEMP/changed-files"; then
+              if grep -Eq '^(app/caffoot-lite[.]html|app/test-browser-consolidated-audit[.]cjs|[.]github/workflows/audit-consolidated-chromium[.]yml)$' "$RUNNER_TEMP/changed-files"; then
                 full=true
               else
                 full=false
