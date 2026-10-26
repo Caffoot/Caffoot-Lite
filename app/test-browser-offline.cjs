@@ -313,7 +313,8 @@ const { chromium } = require('playwright');
       'Duplicate, reserved and out-of-subnet IP addresses must be rejected');
     assert(ipamIntegrity.unchanged, 'Rejected IP changes must retain original allocation');
     assert.equal(ipamIntegrity.synced.hostname, 'Updated device');
-    assert.equal(ipamIntegrity.synced.notes, 'Updated notes');
+    assert.equal(ipamIntegrity.synced.notes, 'Original notes',
+      'Device note edits must preserve address-specific IPAM notes');
     assert.equal(ipamIntegrity.moved.ip, '10.240.77.11');
     assert.equal(ipamIntegrity.moved.oldExists, false, 'Old owned allocation must be released');
     assert.equal(ipamIntegrity.moved.newAllocation.hostname, 'Updated device');
