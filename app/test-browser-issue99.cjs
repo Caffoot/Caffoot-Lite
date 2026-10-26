@@ -15,7 +15,6 @@ const { chromium } = require('playwright');
     const result = await page.evaluate(async () => {
       const wait = () => new Promise(resolve => setTimeout(resolve, 25));
       const storedBefore = localStorage.getItem('caffoot_state');
-      const memoryBefore = JSON.stringify(appState);
       // Parent device draft must survive both keep-editing and discard flows.
       deviceFormDraft = {deviceId:null,name:'Fictional unsaved device',type:'Server - Physical'};
       openSubnetModal();
@@ -32,8 +31,7 @@ const { chromium } = require('playwright');
       phase120DiscardChanges();
       await wait();
       const returnedToDevice = !!document.querySelector('form[data-device-form="true"]');
-      const parentDraftPreserved = document.getElementById('device-name')?.value === 'Fictional unsaved device' ||
-        document.querySelector('form[data-device-form="true"]')?.textContent?.includes('Fictional unsaved device');
+      const parentDraftPreserved = document.getElementById('dev-name')?.value === 'Fictional unsaved device';
       closeModal(true);
       deviceFormDraft = null;
       const subnet = {id:'issue99-fictional-subnet',name:'Fictional',kind:'network',cidr:'10.88.92.0/29',gateway:'10.88.92.1',vlan:3892};
@@ -49,7 +47,6 @@ const { chromium } = require('playwright');
       const pendingCleared = phase12BPending === null;
       const untouched = JSON.stringify(appState.ipAllocations) === allocationsBefore;
       closeModal(true);
-      appState = JSON.parse(memoryBefore);
       return {warned,stillSubnet,keptEditing,returnedToDevice,parentDraftPreserved,preview,restored,pendingCleared,untouched,
         storedUnchanged:localStorage.getItem('caffoot_state')===storedBefore};
     });
