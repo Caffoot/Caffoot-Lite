@@ -3519,10 +3519,10 @@ function hierarchyValidateTypes(subnets) {
         }
         function phase120SoftwareHTML(){
             const configured=phase19BSoftware();
-            const builtins=phase120SoftwareSuggestions.map(x=>({...x,source:'built-in',count:0}));
+            const builtins=phase120SoftwareSuggestions.map(x=>{const key=phase120BuiltinSoftwareKey(x.name);const override=configured.find(y=>y.key===key);return {name:override?.label||x.name,key,types:override?.deviceTypes||x.types,source:'built-in',archived:!!override?.archived,count:0};});
             const names=new Set(builtins.map(x=>x.name.toLowerCase()));
             const custom=configured.filter(x=>!x.archived&&!names.has(String(x.label||'').toLowerCase())).map(x=>({name:x.label,key:x.key,types:Array.isArray(x.deviceTypes)?x.deviceTypes:[],source:'configured',count:appState.devices.filter(d=>d.typeDetails?.[x.key]===true||d[x.key]===true).length}));
-            const items=[...builtins,...custom].map(x=>{
+            const items=[...builtins.filter(x=>!x.archived),...custom].map(x=>{
                 const option=phase120SoftwareOptions().find(o=>String(o.label||'').toLowerCase()===x.name.toLowerCase());
                 return {...x,configured:!!option,count:option?appState.devices.filter(d=>d.typeDetails?.[option.key]===true||d[option.key]===true).length:0};
             }).sort((a,b)=>a.name.localeCompare(b.name));
@@ -6505,7 +6505,8 @@ function hierarchyValidateTypes(subnets) {
             const configured=phase19BSoftware();
             const active=configured.filter(x=>!x.archived);
             const known=new Set(configured.map(x=>String(x.label||'').trim().toLowerCase()));
-            return [...active,...phase120SoftwareSuggestions.filter(x=>!known.has(x.name.toLowerCase())).map(x=>({key:phase120BuiltinSoftwareKey(x.name),label:x.name,deviceTypes:x.types,builtin:true}))].sort((a,b)=>String(a.label||'').localeCompare(String(b.label||''),undefined,{sensitivity:'base'}));
+            const overriddenKeys=new Set(configured.map(x=>x.key));
+            return [...active,...phase120SoftwareSuggestions.filter(x=>!overriddenKeys.has(phase120BuiltinSoftwareKey(x.name))&&!known.has(x.name.toLowerCase())).map(x=>({key:phase120BuiltinSoftwareKey(x.name),label:x.name,deviceTypes:x.types,builtin:true}))].sort((a,b)=>String(a.label||'').localeCompare(String(b.label||''),undefined,{sensitivity:'base'}));
         }
         function phase120SoftwareHidden(name,type){return (appState.softwareTypeExclusions||{})[name]?.includes(type)===true;}
         function phase120SoftwareToggle(name,type){
