@@ -176,3 +176,14 @@ The product owner reported manually opening the **Understanding backups** dialog
 ### Issue #97 additional verified evidence, 26 October 2026
 
 PR #170 commit `c84411e5`: Chromium run 40344626587 explicitly passed rack report occupancy, rack CSV export and archived device-detail display/assignment exclusion. CSV assertion checks exported bytes. Release validation 40344626723, documentation check 40344626727 and secret scan 40344626608 passed. Product owner manually checked the PR branch rack occupancy display and confirmed correct maths and exclusion of vertical 0U accessories. Dashboard display is therefore supported by manual acceptance; no separate automated dashboard DOM assertion is claimed. Archived assignment persistence across reload/unrelated edits remains subject to existing-evidence review. Existing unassignment rollback tests remain valid. No merge or release.
+
+
+### Issue #97 verification reconciliation, 26 October 2026
+
+PR #170 (branch `fix/97-rack-archived-details`, base `release/v1.3.2`) includes rack accessory occupancy and CSV/dashboard reporting, multi-U drag, archived software/service display and persistence, and compatible historical accessory identifiers (`fan` to `fan_tray`, `pdu` to `pdu_horizontal`, `vent` to `ventilation`) for both backup import and browser-storage startup. The import error dialog now offers explanatory recovery guidance. Migration does not mutate the original backup or silently overwrite browser storage; unknown types are still rejected.
+
+**Executed CI at `aeb25c7`:** [Chromium regression 40348476895](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40348476895) passed, including explicit startup normalisation and historical backup import scenarios; [release validation 40348475738](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40348475738), [documentation consistency 40348475952](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40348475952), and [secret scan 40348475709](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40348475709) all passed. Earlier passing focused rack and archived-assignment checks remain valid.
+
+**Manual product-owner acceptance:** rack occupancy and multi-U accessory drag worked; the original backup exported from Edge successfully imported into Firefox after the fix. This is reported manual verification, separate from automated evidence.
+
+**Still outstanding:** review combined PR and issue acceptance, reconcile PR description, and seek separate product-owner approval before any merge or release. Documentation-only changes do not require rerunning application tests.
