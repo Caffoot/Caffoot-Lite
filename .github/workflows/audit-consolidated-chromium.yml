@@ -41,21 +41,13 @@ jobs:
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_REF: ${{ github.base_ref }}
         run: |
-          # Fail safe: unknown events and unavailable diffs run the full suite.
           full=true
-          if [[ "${{ github.event_name }}" == "pull_request" && "${{ github.base_ref }}" != "main" ]]; then
+          if [[ "$EVENT_NAME" == "pull_request" && "$BASE_REF" != "main" ]]; then
             if git diff --name-only "$BASE_SHA" "$HEAD_SHA" > "$RUNNER_TEMP/changed-files"; then
-              if grep -Eq '^(app/caffoot-lite\\.html|app/test-browser-consolidated-audit\\.cjs|\\.github/workflows/audit-consolidated-chromium\\.yml)        working-directory: app
-        env:
-          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tools/node_modules
-        run: node test-browser-consolidated-audit.cjs
-      - name: Run issue 99 focused form regression in Chromium
-        working-directory: app
-        env:
-          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tools/node_modules
-        run: node test-browser-issue99.cjs
- "$RUNNER_TEMP/changed-files"; then
+              if grep -Eq '^(app/caffoot-lite[.]html|app/test-browser-consolidated-audit[.]cjs|[.]github/workflows/audit-consolidated-chromium[.]yml)$' "$RUNNER_TEMP/changed-files"; then
                 full=true
               else
                 full=false
