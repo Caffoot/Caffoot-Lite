@@ -2453,13 +2453,10 @@ function hierarchyValidateTypes(subnets) {
             const rackedDevices = devices.filter(d => d.rackId && rackIds.has(d.rackId)).length;
             const unmountedDevices = devices.length - rackedDevices;
             const rackCapacity = racks.reduce((sum, r) => sum + (Number(r.heightU) || 0), 0);
-            const occupiedUs = devices.reduce((sum, d) => {
-                if (!d.rackId) return sum;
-                const start = Number(d.rackUStart);
-                const end = Number(d.rackUEnd ?? d.rackUStart);
-                if (!Number.isInteger(start) || !Number.isInteger(end) || end < start) return sum;
-                return sum + (end - start + 1);
-            }, 0);
+            // Use the same per-face device and ordinary-accessory occupancy as rack reports.
+            // Front and rear can share U positions; count the fuller face once per rack.
+            const occupiedUs = phase10DReportData().racks.reduce(
+                (sum, rack) => sum + Math.max(rack.front, rack.rear), 0);
             const freeUs = Math.max(0, rackCapacity - occupiedUs);
             const occupancyPct = rackCapacity ? Math.min(100, Math.round((occupiedUs / rackCapacity) * 100)) : 0;
 
