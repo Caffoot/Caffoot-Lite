@@ -251,6 +251,81 @@ const { chromium } = require('playwright');
     });
     for (const [key,value] of Object.entries(catalogue))
       assert.equal(value,true,'Issue #157 catalogue removal regression failed: '+key);
+
+    // Issue #157: real catalogue editors, isolated in-memory fixtures and no storage writes.
+    const editorChecks = await page.evaluate(() => {
+      const originalState=appState, originalSave=saveState, originalToast=showToast;
+      const stored=localStorage.getItem('caffoot_state'), messages=[];
+      const results={};
+      const modelMaker=Object.keys(phase120HardwareSeed['Server - Physical']||{})[0];
+      if(!modelMaker)throw Error('Issue #157 test requires a built-in physical server manufacturer');
+      const fixture=()=>({
+        ...originalState,devices:[],
+        hardwareCatalogue:[
+          {id:'issue157-model-a',type:'Server - Physical',manufacturer:modelMaker,model:'Fictional Model A'},
+          {id:'issue157-model-b',type:'Server - Physical',manufacturer:modelMaker,model:'Fictional Model B'}],
+        installedSoftware:[
+          {key:'issue157-software-a',label:'Fictional Software A',deviceTypes:['Server - Physical']},
+          {key:'issue157-software-b',label:'Fictional Software B',deviceTypes:['Server - Physical']}],
+        serverFunctions:[
+          {key:'issue157-service-a',label:'Fictional Service A'},
+          {key:'issue157-service-b',label:'Fictional Service B'}]
+      });
+      const cases=[
+        {name:'model',open:()=>phase120ModelManager('issue157-model-a'),save:()=>phase120ModelSave('issue157-model-a'),
+         field:'phase120-model-name',original:'Fictional Model A',duplicate:'Fictional Model B',renamed:'Fictional Model Renamed',
+         current:()=>appState.hardwareCatalogue.find(x=>x.id==='issue157-model-a')?.model,
+         error:()=>document.getElementById('phase120-model-error')?.textContent||''},
+        {name:'software',open:()=>phase120SoftwareEdit('issue157-software-a'),save:()=>phase120SoftwareSaveCustom('issue157-software-a'),
+         field:'software-custom-name',original:'Fictional Software A',duplicate:'Fictional Software B',renamed:'Fictional Software Renamed',
+         current:()=>appState.installedSoftware.find(x=>x.key==='issue157-software-a')?.label,
+         error:()=>document.getElementById('software-custom-error')?.textContent||''},
+        {name:'service',open:()=>phase120ServerServiceEditor('issue157-service-a'),save:()=>phase120SaveServerService('issue157-service-a'),
+         field:'phase120-service-name',original:'Fictional Service A',duplicate:'Fictional Service B',renamed:'Fictional Service Renamed',
+         current:()=>appState.serverFunctions.find(x=>x.key==='issue157-service-a')?.label,
+         error:()=>messages.filter(x=>x.kind==='error').map(x=>x.message).join(' ')}
+      ];
+      try {
+        showToast=(message,kind)=>messages.push({message,kind});
+        for(const c of cases){
+          appState=fixture();
+          saveState=()=>false;
+          c.open();
+          const input=document.getElementById(c.field);
+          results[c.name+'Prefilled']=input?.value===c.original;
+          input.value=c.duplicate;
+          c.save();
+          results[c.name+'Duplicate']=c.current()===c.original && /already exists/i.test(c.error());
+          input.value=c.renamed;
+          c.save();
+          results[c.name+'Rollback']=c.current()===c.original &&
+            !!document.getElementById(c.field) && document.getElementById(c.field).value===c.renamed;
+          closeModal(true);
+          c.open();
+          document.getElementById(c.field).value=c.renamed;
+          document.querySelector('#modal-content [data-action="close-modal"]').click();
+          results[c.name+'CancelWarning']=!!document.getElementById('phase120-discard-dialog');
+          phase120KeepEditing();
+          results[c.name+'KeepEditing']=document.getElementById(c.field)?.value===c.renamed;
+          document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));
+          results[c.name+'EscapeWarning']=!!document.getElementById('phase120-discard-dialog');
+          phase120DiscardChanges();
+          results[c.name+'DiscardUnchanged']=c.current()===c.original;
+          saveState=()=>true;
+          c.open();
+          document.getElementById(c.field).value=c.renamed;
+          c.save();
+          results[c.name+'Rename']=c.current()===c.renamed;
+          closeModal(true);
+        }
+        results.storageUnchanged=localStorage.getItem('caffoot_state')===stored;
+        return results;
+      } finally {
+        appState=originalState;saveState=originalSave;showToast=originalToast;closeModal(true);
+      }
+    });
+    for (const [key,value] of Object.entries(editorChecks))
+      assert.equal(value,true,'Issue #157 catalogue editor regression failed: '+key);
     console.log('PASS #99 focused form, bulk preview and accessory failure/retry and move/remove rollback');
 
   } finally {
