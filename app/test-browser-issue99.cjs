@@ -53,6 +53,36 @@ const { chromium } = require('playwright');
       const racksUnchanged = JSON.stringify(appState.racks) === racksBefore;
       closeModal(true);
       deviceFormDraft = null;
+      // Header Close and keyboard Escape must use the same nested rack return journey.
+      const nestedExitResults = {};
+      for (const method of ['header','escape','clean']) {
+        deviceFormDraft = {deviceId:null,name:'Fictional '+method+' parent',type:'Server - Physical'};
+        deviceRackReturnPending = true;
+        openRackModal();
+        if (method !== 'clean') document.getElementById('rack-name').value = 'Fictional '+method+' rack';
+        if (method === 'escape') {
+          document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));
+        } else {
+          document.querySelector('#modal-content [data-action="close-modal"]').click();
+        }
+        const warned = !!document.getElementById('phase120-discard-dialog');
+        const rackRetained = !!document.querySelector('form[data-form-action="rack"]');
+        if (warned) {
+          phase120KeepEditing();
+          const kept = !!document.querySelector('form[data-form-action="rack"]') && deviceRackReturnPending;
+          if (method === 'escape') document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));
+          else document.querySelector('#modal-content [data-action="close-modal"]').click();
+          phase120DiscardChanges();
+          nestedExitResults[method+'Kept'] = kept;
+        }
+        await wait();
+        nestedExitResults[method+'Warning'] = method === 'clean' ? !warned : warned && rackRetained;
+        nestedExitResults[method+'Returned'] = !!document.querySelector('form[data-device-form="true"]') &&
+          document.getElementById('dev-name')?.value === 'Fictional '+method+' parent' &&
+          !deviceRackReturnPending && JSON.stringify(appState.racks) === racksBefore;
+        closeModal(true);
+        deviceFormDraft = null;
+      }
       const subnet = {id:'issue99-fictional-subnet',name:'Fictional',kind:'network',cidr:'10.88.92.0/29',gateway:'10.88.92.1',vlan:3892};
       appState.subnets.push(subnet);
       openBulkIpModal(subnet.id);
@@ -66,7 +96,7 @@ const { chromium } = require('playwright');
       const pendingCleared = phase12BPending === null;
       const untouched = JSON.stringify(appState.ipAllocations) === allocationsBefore;
       closeModal(true);
-      return {warned,stillSubnet,keptEditing,returnedToDevice,parentDraftPreserved,rackWarned,rackStillOpen,rackKept,rackReturned,rackParentPreserved,racksUnchanged,preview,restored,pendingCleared,untouched,
+      return {...nestedExitResults,warned,stillSubnet,keptEditing,returnedToDevice,parentDraftPreserved,rackWarned,rackStillOpen,rackKept,rackReturned,rackParentPreserved,racksUnchanged,preview,restored,pendingCleared,untouched,
         storedUnchanged:localStorage.getItem('caffoot_state')===storedBefore};
     });
     assert.equal(result.warned,true,'Edited subnet cancellation must warn');
@@ -74,6 +104,8 @@ const { chromium } = require('playwright');
     assert.equal(result.keptEditing,true,'Keep editing must retain subnet');
     assert.equal(result.returnedToDevice,true,'Discard must return to parent device');
     assert.equal(result.parentDraftPreserved,true,'Parent draft must survive');
+    for (const [key,value] of Object.entries(result).filter(([key]) => /^(header|escape|clean)/.test(key)))
+      assert.equal(value,true,'Nested rack exit failed: '+key);
     assert.equal(result.rackWarned,true,'Edited nested rack cancellation must warn');
     assert.equal(result.rackStillOpen,true,'Warning must leave rack form open');
     assert.equal(result.rackKept,true,'Keep Editing must preserve rack and return state');

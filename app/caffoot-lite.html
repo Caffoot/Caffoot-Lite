@@ -5414,6 +5414,8 @@ function hierarchyValidateTypes(subnets) {
                 }
                 if (deviceFormDraft && container.querySelector('form[data-form-action="subnet"]')) {
                     phase120ReturnFromSubnet();
+                } else if (deviceRackReturnPending && container.querySelector('form[data-form-action="rack"]')) {
+                    cancelRackFromDevice();
                 } else closeModal();
                 return;
             }
@@ -9043,7 +9045,7 @@ function hierarchyValidateTypes(subnets) {
                 case 'export-data': exportData(); break;
                 case 'cancel-subnet-modal': phase120ReturnFromSubnet(); break;
                 case 'phase12b-back': phase12BBackToEditing(); break;
-                case 'close-modal': { if (phase12BPending && !document.querySelector('#modal-content form[data-form-action="bulk-ip"]')) phase12BPending = null; closeModal(); break; }
+                case 'close-modal': { if (phase12BPending && !document.querySelector('#modal-content form[data-form-action="bulk-ip"]')) phase12BPending = null; if (deviceRackReturnPending && document.querySelector('#modal-content form[data-form-action="rack"]')) cancelRackFromDevice(); else closeModal(); break; }
                 default:
                     console.warn('Unhandled data-action:', action);
             }
