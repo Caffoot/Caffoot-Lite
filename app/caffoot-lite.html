@@ -8537,7 +8537,12 @@ function hierarchyValidateTypes(subnets) {
                 const before=JSON.stringify(appState);
                 if(!Array.isArray(appState.rackAccessories))appState.rackAccessories=[];
                 if(existing)Object.assign(existing,candidate);else appState.rackAccessories.push(candidate);
-                if(!saveState()){appState=JSON.parse(before);return;}
+                if(!saveState()){
+                    appState=JSON.parse(before);
+                    const feedback=modal.querySelector('#phase13c-error');
+                    if(feedback)feedback.textContent='Accessory could not be saved. Your previous inventory is unchanged. Your entries are still here so you can try again.';
+                    return;
+                }
                 closeModal();activeRackFace=candidate.face;renderContent();
             });
         }
