@@ -191,7 +191,7 @@ const { chromium } = require('playwright');
     assert.deepEqual(ipProbe.fields, [
       { id: 'ip-status', label: 'Status' },
       { id: 'ip-hostname', label: 'Hostname' },
-      { id: 'ip-notes', label: 'Notes' }
+      { id: 'ip-notes', label: 'IPAM Notes' }
     ], 'Every IPAM allocation field must have its matching accessible label');
     assert.equal(ipProbe.heading, 'Configure IP: 192.168.77.42<img src=x onerror=alert(1)>',
       'IP dialog heading must preserve the literal text');
