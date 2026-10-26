@@ -1,5 +1,8 @@
 # New session recovery procedure
 
+> **PR #123 merge checkpoint, 25 October 2026.** Issue #92 M-006 IPAM address notes fix was merged into `release/v1.3.1` as commit [`ccb5a2c`](https://github.com/Caffoot/Caffoot-Lite/commit/ccb5a2c070afd8642ef2d2c76ed604c5d0d28121). GitHub confirmed PR #123 merged at 07:00:23 UTC. All five workflows on the final PR head `de7cb9e` passed: consolidated Chromium regression, release candidate validation, release documentation consistency, secret scan and published v1.2.1 backup compatibility (runs 40168871029, 40168871062, 40168871030, 40168871022 and 40168871053). These are pre-merge checks, not a post-merge combined branch test. The earlier PR #123 evidence reconciliation below is retained as historical evidence and its draft and no-merge wording describes the earlier checkpoint, not the current status. Full WF-03 and WF-04 coverage was not claimed; bulk UI, gateway M-009 and missing reservation M-024 findings remain outstanding under issue #92. The v1.3.0 master audit remains administratively closed with carried forward gaps. No merge into `main`, publication or replacement of existing release ZIP files has occurred. This documentation-only checkpoint does not declare v1.3.1 release readiness.
+
+
 **Status:** Development procedure, proposed for review on the v1.3.1 development branch, 24 October 2026. This procedure does not replace existing approval and release controls.
 
 ## Purpose
@@ -15,6 +18,20 @@ A new ChatGPT conversation or contributor must be able to resume Caffoot Lite wo
 5. Identify the latest agreed product decisions, explicit permissions, work in progress and remaining risks from committed documentation and issue or PR discussion. A handover document is supporting context, not a substitute for live checks.
 6. Summarise the confirmed starting point in plain British English: published release, working branch and PR, current issue, implemented changes, actual test evidence, outstanding work and next proposed step. Identify any evidence that could not be checked.
 7. Follow the established sequence: Understand, Agree, Implement, Verify, Document, Reconcile, Approve and release. Do not change application behaviour, merge into main, publish a release or change repository protections without explicit product owner approval. Keep the standalone HTML experience and historical JSON backup compatibility protected.
+
+## Mandatory evidence first gate before proposing work
+
+**This gate applies at the start of every new ChatGPT session and again before proposing any investigation, test, fix or closure.** A new conversation is not a reason to repeat work.
+
+1. Identify the existing GitHub issue, its agreed acceptance criteria, decisions and the precise operation or failure condition under discussion. Check the current release, active branch, open PRs and relevant committed documentation first.
+2. Search the **existing** technical workflow, test matrices, workflow verification coverage register, central findings register, master audit, issue and PR discussions, committed test source and GitHub Actions runs and logs. Include historical runs from earlier issues and branches, not only scenarios named in the latest consolidated suite.
+3. Match evidence to the specific behaviour and acceptance criterion. Distinguish source inspection, a planned scenario, an executed and passing test, an executed and failing test, an unexecuted test and a genuine coverage gap. Check the tested revision and whether a later code change affects the evidence.
+4. Give the product owner a short **already completed / genuinely outstanding** summary with issue and run links. Explicitly explain why existing evidence does or does not satisfy the agreed requirement. **Do not equate an absent named scenario with a test never having been run.**
+5. **Do not propose or run duplicate tests, restart a resolved investigation, reopen completed work or expand a historical matrix into new mandatory scope** unless an evidenced regression, material code change, failed test or specific agreed acceptance gap justifies it. Record that justification in the existing issue before proceeding.
+6. If the evidence already satisfies the agreed acceptance criteria, propose reconciliation and closure rather than more tests. Preserve broader incomplete workflow coverage as separately identified work; do not block issue closure solely because an entire historical matrix is not certified.
+7. If GitHub evidence cannot be accessed or verified, say so and request the exact missing evidence. Do not reconstruct outcomes from conversational memory or call owner reported success independently verified.
+
+This evidence first gate is part of the established Understand and Agree stages. It does not grant permission to change application behaviour, merge or release. Keep the decision and evidence in existing GitHub records so the next session can resume without a separate handover.
 
 ## Checkpoint and handover discipline
 

@@ -1,5 +1,7 @@
 # GitHub planning and contributor handover
 
+> **Project board simplification, 25 October 2026.** The product owner confirmed that the Caffoot Lite Development GitHub Project has been made private. The board is retained as optional historical planning material, not a required development status or approval gate. Do not require the product owner to move cards or synchronise board columns. Use GitHub issues, pull requests, release milestones, existing roadmaps, findings, workflow documents and verified test evidence to establish actual progress. Project automation may still run, but its card states must not override those records. Earlier descriptions of the public board and mandatory stages below document historical configuration, not current procedure. No Project deletion or archive has been authorised. The privacy setting was confirmed by the product owner, not independently verified through the connector.
+
 **Status:** Four release milestones created and issues assigned; central Project board created with all 19 issues imported and seven workflow stages configured; public visibility shown by GitHub globe icon; permissions confirmed in GitHub: public visibility, organisation base role Read, product owner Admin. **Baseline:** Published v1.3.0. **Recorded:** 24 October 2026.
 
 ## Purpose

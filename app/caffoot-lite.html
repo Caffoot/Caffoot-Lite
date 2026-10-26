@@ -1511,7 +1511,7 @@ function hierarchyValidateTypes(subnets) {
             }
 
             // Repair recoverable device/IPAM drift instead of rejecting an otherwise usable state.
-            // The device record is the source of truth for its primary IP, hostname and notes.
+            // The device record is the source of truth for its primary IP and hostname. IPAM notes belong to the address.
             for (const device of state.devices) {
                 if (!device.primaryIp) continue;
 
@@ -1521,7 +1521,7 @@ function hierarchyValidateTypes(subnets) {
                         status: 'Assigned',
                         deviceId: device.id,
                         hostname: device.name || '',
-                        notes: device.notes || ''
+                        notes: ''
                     };
                     continue;
                 }
@@ -1532,7 +1532,7 @@ function hierarchyValidateTypes(subnets) {
                     existing.status = device.ipReserved ? 'Reserved' : 'Assigned';
                 }
                 existing.hostname = device.name || '';
-                existing.notes = device.notes || '';
+                // Preserve existing address-specific IPAM notes during normalisation.
             }
 
             // A device primary IP cannot be simultaneously assigned to another device.
@@ -1643,7 +1643,14 @@ function hierarchyValidateTypes(subnets) {
 
         let appState = loadStoredState();
         const startupIntegrityErrors = validateApplicationState();
-        if (startupIntegrityErrors.length) console.error('Startup integrity issues:', startupIntegrityErrors);
+        if (startupIntegrityErrors.length) {
+            console.error('Startup integrity issues:', startupIntegrityErrors);
+            if (!phase17AStorageRecovery) {
+                let originalStoredInventory = null;
+                try { originalStoredInventory = localStorage.getItem(STORAGE_KEY); } catch (error) { console.error('Unable to read invalid inventory for recovery:', error); }
+                phase17AStorageRecovery = { reason: 'Stored inventory failed integrity checks: ' + startupIntegrityErrors[0], raw: originalStoredInventory };
+            }
+        }
         // Do not write on startup: it could overwrite unreadable data or mask an integrity problem.
         function phase17ARecoveryBanner() {
             if (!phase17AStorageRecovery) return;
@@ -1895,7 +1902,9 @@ function hierarchyValidateTypes(subnets) {
             }
 
             if (oldIp && appState.ipAllocations[oldIp]?.deviceId === device.id) {
-                delete appState.ipAllocations[oldIp];
+                const oldAllocation = appState.ipAllocations[oldIp];
+                // Release ownership without discarding address-specific IPAM information.
+                appState.ipAllocations[oldIp] = { ...oldAllocation, status: 'Available', deviceId: '' };
             }
 
             device.primaryIp = trimmedIp;
@@ -1907,7 +1916,7 @@ function hierarchyValidateTypes(subnets) {
                     status: device.ipReserved ? 'Reserved' : 'Assigned',
                     deviceId: device.id,
                     hostname: device.name || existing.hostname || '',
-                    notes: device.notes || existing.notes || ''
+                    notes: existing.notes || ''
                 };
             }
         }
@@ -1923,7 +1932,7 @@ function hierarchyValidateTypes(subnets) {
                 status: device.ipReserved ? 'Reserved' : 'Assigned',
                 deviceId: device.id,
                 hostname: device.name || '',
-                notes: device.notes || ''
+                notes: existing.notes || ''
             };
         }
 
@@ -2217,7 +2226,7 @@ function hierarchyValidateTypes(subnets) {
                 if(existing && !existing.deviceId && existing.status && existing.status!=='Available') {
                     blocked.push(`${ip} is ${existing.status} without a matching owner. Review manually.`); continue;
                 }
-                const expected={status:d.ipReserved?'Reserved':'Assigned',deviceId:d.id,hostname:d.name||'',notes:d.notes||''};
+                const expected={status:d.ipReserved?'Reserved':'Assigned',deviceId:d.id,hostname:d.name||''};
                 if(!existing || Object.entries(expected).some(([k,v])=>existing[k]!==v)) {
                     fixes.push({ip,deviceId:d.id,name:d.name,expected,
                         reason:existing?'Synchronise device-owned IPAM fields':'Create missing device IPAM allocation'});
@@ -2836,7 +2845,7 @@ function hierarchyValidateTypes(subnets) {
                     if (Number.isInteger(u) && u >= 1 && u <= height) used.add(u);
                 }
             });
-            (appState.rackAccessories || []).filter(a => a.rackId === rack.id && a.face === face).forEach(a => {
+            (appState.rackAccessories || []).filter(a => a.rackId === rack.id && a.face === face && !['pdu_vertical','cable_vertical'].includes(a.type)).forEach(a => {
                 for (let u = Number(a.startU); u < Number(a.startU) + Number(a.heightU); u++) {
                     if (Number.isInteger(u) && u >= 1 && u <= height) used.add(u);
                 }
@@ -3647,7 +3656,7 @@ function hierarchyValidateTypes(subnets) {
                                 entries.forEach(name=>counts.set(name,(counts.get(name)||0)+1));
                             });
                             const groups=[...counts.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));
-                            return `<section class="${deviceIntelligenceTab===tab?'':'hidden'} bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 space-y-4"><h3 class="font-bold text-slate-900 dark:text-white">${heading}</h3><p class="text-sm text-slate-600 dark:text-slate-300">${kind==='os'?'Recorded operating system values across your devices.':'Recorded enabled software and service flags. Devices may have multiple entries.'}</p>${groups.length?groups.map(([name,count])=>`<div class="border-b border-slate-100 dark:border-slate-700 pb-2">${kind==='os' ? `<button type="button" data-action="device-os-drilldown" data-os="${escapeHtml(name)}" class="w-full flex justify-between gap-3 text-left text-sm rounded-lg p-2 hover:bg-indigo-50 dark:hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500" title="View matching devices in inventory"><span class="break-words text-indigo-700 dark:text-indigo-300 font-semibold">${escapeHtml(name)}</span><strong>${count}</strong></button>` : `<button type="button" data-action="device-intelligence-drilldown" data-kind="service" data-value="${escapeHtml(name)}" class="w-full flex justify-between gap-3 text-left text-sm rounded-lg p-2 hover:bg-indigo-50 dark:hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500"><span class="break-words text-indigo-700 dark:text-indigo-300 font-semibold">${escapeHtml(name)}</span><strong>${count}</strong></button>`}</div>`).join(''):'<p class="text-sm text-slate-600 dark:text-slate-300">No matching details recorded yet.</p>'}</section>`;
+                            return `<section class="${deviceIntelligenceTab===tab?'':'hidden'} bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 space-y-4"><h3 class="font-bold text-slate-900 dark:text-white">${heading}</h3><p class="text-sm text-slate-600 dark:text-slate-300">${kind==='os'?'Recorded operating system values across your devices.':'Recorded enabled software and service flags. Devices may have multiple entries.'}</p>${groups.length?groups.map(([name,count])=>`<div class="border-b border-slate-100 dark:border-slate-700 pb-2">${kind==='os' ? `<button type="button" data-action="device-os-drilldown" data-os="${escapeHtml(name)}" class="w-full flex justify-between gap-3 text-left text-sm rounded-lg p-2 hover:bg-indigo-50 dark:hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500" title="View matching devices in inventory"><span class="break-words text-indigo-700 dark:text-indigo-300 font-semibold">${escapeHtml(name)}</span><strong>${count}</strong></button>` : `<button type="button" data-action="device-intelligence-drilldown" data-kind="service" data-value="${escapeHtml(name)}" class="w-full flex justify-between gap-3 text-left text-sm rounded-lg p-2 hover:bg-indigo-50 dark:hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500"><span class="break-words text-indigo-700 dark:text-indigo-300 font-semibold">${escapeHtml(phase120StarterServerServices.find(service => service.key === name)?.label || name)}</span><strong>${count}</strong></button>`}</div>`).join(''):'<p class="text-sm text-slate-600 dark:text-slate-300">No matching details recorded yet.</p>'}</section>`;
                         }).join('')}
                     </section>
                     <section class="${phase14DeviceTab==='inventory'?'':'hidden'} space-y-4" data-device-panel="inventory">
@@ -4212,6 +4221,7 @@ function hierarchyValidateTypes(subnets) {
                     const status = gatewayProtected && (!alloc || alloc.status === 'Available') ? (appState.devices.some(d => d.primaryIp === ip) ? 'Assigned' : 'Reserved') : (alloc?.status || (appState.devices.some(d => d.primaryIp === ip) ? 'Assigned' : 'Available'));
                     const displayStatus = gatewayProtected ? `Gateway · ${status}` : status;
                     const reservedDevice = alloc?.reservedForDeviceId ? getDeviceById(alloc.reservedForDeviceId) : null;
+                    const missingReservedDevice = Boolean(alloc?.reservedForDeviceId && !reservedDevice);
                     
                     let badgeColor = 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600';
                     if (status === 'Assigned') badgeColor = 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/50 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800 font-semibold';
@@ -4226,7 +4236,7 @@ function hierarchyValidateTypes(subnets) {
                                 <span class="text-[10px] px-1.5 py-0.5 rounded bg-white/80 dark:bg-slate-800/80 shadow-xs">${escapeHtml(displayStatus)}</span>
                             </div>
                             <div class="text-xs truncate">
-                                <span class="font-medium text-slate-700 dark:text-slate-200">${reservedDevice && status === 'Reserved' ? 'For: ' + escapeHtml(reservedDevice.name) : (gatewayProtected ? (status === 'Assigned' ? 'Assigned to Network Device' : 'Reserved') : (alloc ? escapeHtml(alloc.hostname || 'Assigned IP') : 'Available'))}</span>
+                                <span class="font-medium text-slate-700 dark:text-slate-200">${missingReservedDevice ? 'Missing reserved device' : reservedDevice && status === 'Reserved' ? 'For: ' + escapeHtml(reservedDevice.name) : (gatewayProtected ? (status === 'Assigned' ? 'Assigned to Network Device' : 'Reserved') : (alloc ? escapeHtml(alloc.hostname || 'Assigned IP') : 'Available'))}</span>
                             </div>
                         </button>
                     `;
@@ -4438,7 +4448,7 @@ function hierarchyValidateTypes(subnets) {
                     blocked.push(ip); continue;
                 }
                 if(status==='Available') {
-                    if(old && old.status!=='Available') changes.push({ip,offset,old,updated:null});
+                    if(old && (old.status!=='Available' || old.deviceId || old.reservedForDeviceId)) changes.push({ip,offset,old,updated:{...old,status:'Available',deviceId:'',reservedForDeviceId:''}});
                 } else {
                     if(old?.status==='Assigned') {blocked.push(ip);continue;}
                     const updated={...old,status:'Reserved',deviceId:'',hostname:hostname?`${hostname}-${offset}`:(old?.hostname||''),notes:notes||old?.notes||''};
@@ -4468,7 +4478,7 @@ function hierarchyValidateTypes(subnets) {
                         </div>
                         <div class="form-section-card space-y-4"><div class="form-section-heading">Optional reservation labels</div>
                             <div><label for="bulk-hostname" class="form-label">Label Prefix</label><input id="bulk-hostname" maxlength="80" class="w-full border rounded-xl px-3 py-2 dark:bg-slate-700" placeholder="dhcp-pool"></div>
-                            <div><label for="bulk-notes" class="form-label">Notes</label><input id="bulk-notes" maxlength="240" class="w-full border rounded-xl px-3 py-2 dark:bg-slate-700"></div>
+                            <div><label for="bulk-notes" class="form-label">IPAM Notes</label><p class="text-xs text-slate-600 dark:text-slate-300">Notes belong to each selected IP address, not to devices. Entering notes replaces existing address notes on eligible reservations.</p><input id="bulk-notes" maxlength="240" class="w-full border rounded-xl px-3 py-2 dark:bg-slate-700"></div>
                         </div>
                         <p class="text-xs text-slate-600 dark:text-slate-300">Preview before applying. Existing device assignments and conflicting assigned records are protected.</p>
                         <p class="text-sm text-slate-700 dark:text-slate-200"><strong>IP Address Block:</strong> ${escapeHtml(appState.subnets.find(b => b.id === subnet.parentId)?.name || 'Unassigned')} — ${escapeHtml(subnet.name)} (VLAN ${escapeHtml(String(subnet.vlan))})</p>
@@ -4490,7 +4500,7 @@ function hierarchyValidateTypes(subnets) {
             openModal(`<div class="p-6 space-y-4"><h3 class="font-bold text-lg text-slate-900 dark:text-white">Confirm bulk ${status==='Reserved'?'reservation':'release'}</h3>
                 <p class="text-sm text-slate-700 dark:text-slate-200">${plan.changes.length} address(es) will change. ${plan.blocked.length} protected address(es) will be skipped.</p>
                 ${plan.blocked.length?`<p class="text-sm text-amber-900 dark:text-amber-200">Protected examples: ${escapeHtml(plan.blocked.slice(0,6).join(', '))}</p>`:''}
-                <p class="text-sm text-slate-700 dark:text-slate-200">Changes include: ${escapeHtml(sample||'none')}</p>
+                <p class="text-sm text-slate-700 dark:text-slate-200">Changes include: ${escapeHtml(sample||'none')}${status==='Reserved'&&notes?'<br>Entered IPAM notes will replace existing notes on eligible addresses.':''}</p>
                 <p class="text-xs text-slate-600 dark:text-slate-300">A safety snapshot is stored before changes are applied. Confirm only after reviewing the range.</p>
                 <div class="flex justify-end gap-3"><button type="button" data-action="close-modal" class="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-700 caffoot-modal-cancel">Cancel</button>
                 <button type="button" data-action="phase12b-apply" class="px-4 py-2 rounded-xl bg-blue-800 text-white font-semibold" ${!plan.changes.length?'disabled':''}>Apply ${plan.changes.length} changes</button></div></div>`);
@@ -4618,7 +4628,7 @@ function hierarchyValidateTypes(subnets) {
                                 <option value="">None (Top Level)</option>
                                 ${appState.subnets.filter(s => s.kind === 'container' && s.id !== subnetId).map(s => `<option value="${escapeHtml(s.id)}" ${subnet?.parentId === s.id ? 'selected' : ''}>${escapeHtml(s.cidr)} — ${escapeHtml(s.name)}</option>`).join('')}
                             </select>
-                            <label for="sub-desc" class="form-label">Description</label>
+                            <label for="sub-desc" class="form-label">Description</label><p class="text-xs text-slate-600 dark:text-slate-300">Describe this subnet or IP Address Block, not individual devices.</p>
                             <input type="text" id="sub-desc" value="${escapeHtml(subnet ? (subnet.description || '') : '')}" placeholder="Purpose or department" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white">
                         </div>
                         <div class="form-error" data-form-error role="alert"></div>
@@ -4781,7 +4791,17 @@ function hierarchyValidateTypes(subnets) {
                 return;
             }
 
-            if (appState.devices.some(d => d.primaryIp === gateway) || appState.ipAllocations[gateway]) {
+            // M-009: preserve an unchanged gateway owned by one eligible network device.
+            // Do not release or reassign an existing IPAM record during subnet edits.
+            const existingGatewaySubnet = subnetId ? appState.subnets.find(s => s.id === subnetId) : null;
+            const gatewayOwners = appState.devices.filter(d => d.primaryIp === gateway);
+            const gatewayAllocation = appState.ipAllocations[gateway];
+            const eligibleExistingGatewayOwner = existingGatewaySubnet?.gateway === gateway &&
+                gatewayOwners.length === 1 &&
+                ['Firewall', 'Router', 'Layer 3 Switch'].includes(gatewayOwners[0].type) &&
+                gatewayAllocation?.deviceId === gatewayOwners[0].id &&
+                (!gatewayAllocation.reservedForDeviceId || gatewayAllocation.reservedForDeviceId === gatewayOwners[0].id);
+            if ((gatewayOwners.length || gatewayAllocation) && !eligibleExistingGatewayOwner) {
                 showToast('Gateway IP is already assigned or reserved. Release that address before using it as a gateway.', 'error');
                 return;
             }
@@ -5108,13 +5128,16 @@ function hierarchyValidateTypes(subnets) {
                 return;
             }
             const alloc = appState.ipAllocations[ip] || { status: 'Available', hostname: '', notes: '' };
+            const orphanedReservation = alloc.reservedForDeviceId && !getDeviceById(alloc.reservedForDeviceId);
             openModal(`
                 <div class="p-6 sm:p-7 space-y-5">
                     <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-3">
                         <h3 class="font-bold text-base text-slate-900 dark:text-white">Configure IP: <span class="font-mono text-indigo-500">${escapeHtml(ip)}</span></h3>
                         <button data-action="close-modal" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
                     </div>
+                    ${orphanedReservation ? `<p role="status" class="text-sm text-amber-700 dark:text-amber-300">This IP has a historical reservation for a device that is no longer in the inventory. Editing the hostname or notes preserves this historical reference. To remove it, tick Release historical reservation when saving, or change a Reserved address to Available.</p>` : ''}
                     <form data-form-action="ip" data-ip="${escapeHtml(ip)}" class="form-shell space-y-5">
+                        ${orphanedReservation ? `<label class="flex items-center gap-2 text-sm"><input id="ip-release-orphan" type="checkbox"> Release historical reservation when saving</label>` : ''}
                         <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-tag"></i>Allocation</div>
                         <div>
                             <label for="ip-status" class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Status</label>
@@ -5129,7 +5152,7 @@ function hierarchyValidateTypes(subnets) {
                             <input type="text" id="ip-hostname" value="${escapeHtml(alloc.hostname || '')}" placeholder="server-node-01" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white font-mono">
                         </div>
                         <div>
-                            <label for="ip-notes" class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Notes</label>
+                            <label for="ip-notes" class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">IPAM Notes</label><p class="text-xs text-slate-600 dark:text-slate-300">Notes about this IP address, not an individual device.</p>
                             <input type="text" id="ip-notes" value="${escapeHtml(alloc.notes || '')}" placeholder="Purpose or assignment" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm text-slate-900 dark:text-white">
                         </div>
                         <div class="form-error" data-form-error role="alert"></div>
@@ -5147,6 +5170,7 @@ function hierarchyValidateTypes(subnets) {
             const status = document.getElementById('ip-status').value;
             const hostname = document.getElementById('ip-hostname').value;
             const notes = document.getElementById('ip-notes').value;
+            const releaseOrphan = Boolean(document.getElementById('ip-release-orphan')?.checked);
             const previousAllocation = appState.ipAllocations[ip] ? {...appState.ipAllocations[ip]} : null;
             const primaryDevice = findDeviceUsingIp(ip);
             if (phase10GatewaySubnet(ip)) {
@@ -5155,7 +5179,20 @@ function hierarchyValidateTypes(subnets) {
             }
 
             if (primaryDevice) {
-                showToast(`IP address ${ip} is the primary IP of ${primaryDevice.name}. Edit the device instead.`, 'error');
+                const existing = appState.ipAllocations[ip];
+                // A device-owned address may update its own IPAM notes, never its device notes or ownership.
+                if (!existing || status !== existing.status || hostname !== (existing.hostname || '') || releaseOrphan) {
+                    showToast(`IP address ${ip} is the primary IP of ${primaryDevice.name}. Only IPAM notes can be edited here; edit the device to change its assignment.`, 'error');
+                    return;
+                }
+                appState.ipAllocations[ip] = { ...existing, notes };
+                if (!saveState()) {
+                    appState.ipAllocations[ip] = previousAllocation;
+                    showToast('IP notes could not be saved. Previous allocation restored.', 'error');
+                    return;
+                }
+                closeModal(true);
+                renderContent();
                 return;
             }
 
@@ -5168,7 +5205,7 @@ function hierarchyValidateTypes(subnets) {
                         return;
                     }
                 }
-                delete appState.ipAllocations[ip];
+                if (existing || hostname || notes) appState.ipAllocations[ip] = { ...existing, status: 'Available', deviceId: '', reservedForDeviceId: existing?.status === 'Available' && !releaseOrphan ? (existing.reservedForDeviceId || '') : '', hostname, notes };
             } else {
                 const existing = appState.ipAllocations[ip] || {};
                 let deviceId = existing.deviceId || '';
@@ -5178,7 +5215,7 @@ function hierarchyValidateTypes(subnets) {
                         deviceId = '';
                     }
                 }
-                appState.ipAllocations[ip] = { ...existing, status, deviceId, hostname, notes, reservedForDeviceId: '' };
+                appState.ipAllocations[ip] = { ...existing, status, deviceId, hostname, notes, reservedForDeviceId: status === existing.status && !releaseOrphan ? (existing.reservedForDeviceId || '') : '' };
             }
             if (!saveState()) {
                 if (previousAllocation) appState.ipAllocations[ip] = previousAllocation;
@@ -5341,6 +5378,7 @@ function hierarchyValidateTypes(subnets) {
             if (event.key === 'Escape') {
                 event.preventDefault();
                 if(document.getElementById('phase18d-delete-dialog')){phase18DCancelDelete();return;}
+                if(document.getElementById('phase-m005-hypervisor-dialog')){document.querySelector('#phase-m005-hypervisor-dialog [data-action="cancel"]')?.click();return;}
                 if(document.getElementById('phase130-conversion-dialog')){phase130ResolveDeviceConversion(false);return;}
                 if(document.getElementById('phase130-restore-dialog')){phase130ResolveRestore(false);return;}
                 if(document.getElementById('phase120-rack-correction-dialog')){phase120ResolveRackCorrection(false);return;}
@@ -5358,7 +5396,7 @@ function hierarchyValidateTypes(subnets) {
                 return;
             }
             if (event.key !== 'Tab') return;
-            const activeDialog=document.getElementById('phase130-conversion-dialog')||document.getElementById('phase120-rack-correction-dialog')||document.getElementById('phase18d-delete-dialog')||document.getElementById('phase120-discard-dialog');
+            const activeDialog=document.getElementById('phase-m005-hypervisor-dialog')||document.getElementById('phase130-conversion-dialog')||document.getElementById('phase120-rack-correction-dialog')||document.getElementById('phase18d-delete-dialog')||document.getElementById('phase120-discard-dialog');
             const items = Array.from((activeDialog||container).querySelectorAll('a[href],button:not([disabled]),input:not([disabled]):not([type="hidden"]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')).filter(el => el.getClientRects().length);
             if (!items.length) { event.preventDefault(); document.getElementById('modal-content').focus(); return; }
             // Safari can omit buttons/selects from its native Tab order depending on
@@ -5464,6 +5502,7 @@ function hierarchyValidateTypes(subnets) {
                     if (!(await phase120ConfirmRackCorrection())) return;
                 }
             }
+            const previousRackSelection = selectedRackId;
             if (rack) {
                 rack.name = name;
                 rack.location = location;
@@ -5481,6 +5520,7 @@ function hierarchyValidateTypes(subnets) {
             }
             if (!saveState()) {
                 appState = JSON.parse(before);
+                selectedRackId = previousRackSelection;
                 showToast('Rack changes were not saved. Please check the validation message.', 'error');
                 return;
             }
@@ -5900,6 +5940,24 @@ function hierarchyValidateTypes(subnets) {
             const platformDetails=[['Operating system',deviceDetails.softwarePlatform||deviceDetails.os],['OS version',deviceDetails.softwareVersion],['Windows licence',deviceDetails.windowsLicence]].filter(([label])=>['server','computer'].includes(phase19BTypeGroups[String(d.type||'').toLowerCase().trim()]) || label==='Operating system' && activeFields.has('os')).filter(([,value])=>value!==undefined&&value!==null&&value!=='').map(([label,value])=>field(label,value)).join('');
             const historicalSnapshots = Array.isArray(d.previousTypeDetails) ? [...d.previousTypeDetails].reverse() : [];
             const historyRows = historicalSnapshots.map((snapshot,index)=>`<details class="rounded-xl border border-slate-300 dark:border-slate-600 p-3"><summary class="cursor-pointer font-semibold">${safe(snapshot.type||'Previous type')} — saved configuration ${index+1}</summary><dl class="phase14c-grid mt-3">${Object.entries(snapshot.details||{}).map(([key,value])=>field(phase19CDetailLabel(key,snapshot.type),typeof value==='boolean'?(value?'Yes':'No'):value)).join('')}</dl><button type="button" data-action="phase130-restore" data-id="${safe(d.id)}" data-index="${historicalSnapshots.length-1-index}" class="phase14c-primary mt-3">Restore Configuration</button></details>`).join('');
+            // M-005: read-only hosted guest visibility, including preserved legacy references.
+            const hostedGuests = d.type === 'Server - Physical'
+                ? appState.devices.filter(guest => guest.id !== d.id && guest.virtualHostId === d.id)
+                : [];
+            const hasRecordedHypervisor = d.type === 'Server - Physical' &&
+                (d.typeDetails?.serverService_Hypervisor === true || d.serverService_Hypervisor === true);
+            // Keep legacy hosted guests visible even when the hypervisor service was not recorded.
+            const showVirtualMachinesTab = d.type === 'Server - Physical' && (hasRecordedHypervisor || hostedGuests.length > 0);
+            const hypervisorNotice = showVirtualMachinesTab && !hasRecordedHypervisor
+                ? '<p role="status" class="text-sm text-amber-800 dark:text-amber-200 mb-3">Hosted virtual machines are recorded, but this server has no Hypervisor service selected. Existing relationships are preserved.</p>'
+                : '';
+            const hostingSection = d.type === 'Server - Physical'
+                ? section('Hosted virtual machines', 'fa-server', hostedGuests.length
+                    ? hostedGuests.map(guest => `<div class="phase14c-field"><dt>${safe(guest.name || guest.id)}</dt><dd><div class="flex flex-wrap items-center justify-between gap-2"><span>${safe(guest.type || 'Unknown type')} · ${safe(guest.status || 'Active')}</span><button type="button" data-action="phase14c-view-hosted-guest" data-id="${safe(guest.id)}" class="phase14c-primary shrink-0" aria-label="View details for ${safe(guest.name || guest.id)}">View details</button></div></dd></div>`).join('')
+                    : '<p class="text-sm text-slate-600 dark:text-slate-300">No hosted virtual machines recorded.</p>')
+                : d.virtualHostId
+                    ? section('Physical host', 'fa-server', field('Host', appState.devices.find(host => host.id === d.virtualHostId)?.name || 'Missing or unavailable host (legacy reference preserved)'))
+                    : '';
             const hardware = field('Manufacturer', d.manufacturer) + field('Model', d.model) + field('Serial number', d.serialNumber);
             const rackRows = mounted ? field('Rack', rack.name) + field('Face', d.face || 'front') + field('U position', uText) + field('Height', (Number(d.rackUHeight) || (uEnd-uStart+1) || 1) + 'U') : '';
             openModal(`<div class="phase14c-detail space-y-5 p-5 sm:p-7">
@@ -5910,13 +5968,18 @@ function hierarchyValidateTypes(subnets) {
                     <button type="button" data-action="close-modal" aria-label="Close device details" class="phase14c-close"><i class="fa-solid fa-xmark"></i></button>
                 </header>
                 <nav class="phase14c-tabs" role="tablist" aria-label="Device detail sections">
-                    ${[['overview','Overview'],['hardware','Hardware'],['network','Network'],['software','Software'],['location','Location'],...(historyRows?[['history','History']]:[])].map(([key,label],i)=>`<button type="button" role="tab" id="phase14c-tab-${key}" aria-controls="phase14c-panel-${key}" aria-selected="${i===0?'true':'false'}" tabindex="${i===0?'0':'-1'}" data-action="phase14c-tab" data-name="${key}" class="phase14c-tab ${i===0?'phase14c-tab-active':''}">${label}</button>`).join('')}
+                    ${[['overview','Overview'],...(showVirtualMachinesTab ? [['virtual-machines','Virtual Machines']] : []),['hardware','Hardware'],['network','Network'],['software','Software'],['location','Location'],...(historyRows?[['history','History']]:[])].map(([key,label],i)=>`<button type="button" role="tab" id="phase14c-tab-${key}" aria-controls="phase14c-panel-${key}" aria-selected="${i===0?'true':'false'}" tabindex="${i===0?'0':'-1'}" data-action="phase14c-tab" data-name="${key}" class="phase14c-tab ${i===0?'phase14c-tab-active':''}">${label}</button>`).join('')}
                 </nav>
                 <div class="phase14c-panels">
                     <div id="phase14c-panel-overview" role="tabpanel" aria-labelledby="phase14c-tab-overview" class="phase14c-panel">
                         ${section('Device overview', 'fa-circle-info', field('Device name', d.name) + field('Type', d.type) + field('Status', status) + field('Manufacturer', d.manufacturer) + field('Model', d.model) + field('Primary IP', d.primaryIp) + field('Location', d.location))}
+                        ${d.type === 'Server - Physical' ? '' : hostingSection}
                         ${d.notes ? `<section class="phase14c-section"><h4><i class="fa-solid fa-note-sticky mr-2" aria-hidden="true"></i>Notes</h4><p class="phase14c-notes">${safe(d.notes)}</p></section>` : ''}
                     </div>
+                    ${showVirtualMachinesTab ? `<div id="phase14c-panel-virtual-machines" role="tabpanel" aria-labelledby="phase14c-tab-virtual-machines" class="phase14c-panel" hidden>
+                        ${hypervisorNotice}
+                        ${hostingSection}
+                    </div>` : ''}
                     <div id="phase14c-panel-hardware" role="tabpanel" aria-labelledby="phase14c-tab-hardware" class="phase14c-panel" hidden>
                         ${section('Hardware & lifecycle', 'fa-microchip', hardware + (detailRows ? `<div class="phase19c-detail-subheading">Additional ${safe(d.type)} details</div>${detailRows}` : ''))}
                     </div>
@@ -6279,9 +6342,12 @@ function hierarchyValidateTypes(subnets) {
             phase120ManageHardwareCatalogue();
         }
         function phase120VirtualHardwareVisibility(){
-            const virtual=document.getElementById('dev-type')?.value==='Server - Virtual';
+            const type=document.getElementById('dev-type')?.value || '';
+            const virtual=type==='Server - Virtual';
             ['phase120-physical-manufacturer','phase120-physical-model'].forEach(id=>document.getElementById(id)?.classList.toggle('hidden',virtual));
             document.getElementById('phase120-virtual-fields')?.classList.toggle('hidden',!virtual);
+            document.getElementById('phase-m005-host-platform-fields')?.classList.toggle('hidden',type!=='Server - Physical');
+            phaseM134SyncHostingVisibility();
         }
         function phase120RefreshHardwareSuggestions(preserve=true) {
             const type=document.getElementById('dev-type')?.value||'';
@@ -6431,7 +6497,7 @@ function hierarchyValidateTypes(subnets) {
         }
         function phase19BRenderFields(type, values={}, section='all') {
             const keys=phase19BFieldsFor(type).filter(key =>
-                key !== 'os' && key !== 'windowsLicence' && (section === 'all' || (section === 'hardware' && !phase120IsSoftwareField(key)) || (section === 'services' && phase19BServerFunctionFields().includes(key)) || (section === 'installed' && phase120SoftwareOptions().some(x=>x.key===key)) || (section === 'software' && phase120IsSoftwareField(key))));
+                key !== 'os' && key !== 'windowsLicence' && !(type === 'Server - Physical' && key === 'serverService_Hypervisor' && section === 'services') && (section === 'all' || (section === 'hardware' && !phase120IsSoftwareField(key)) || (section === 'services' && phase19BServerFunctionFields().includes(key)) || (section === 'installed' && phase120SoftwareOptions().some(x=>x.key===key)) || (section === 'software' && phase120IsSoftwareField(key))));
             if(section==='installed'||section==='services'||section==='software')keys.sort((a,b)=>String(phase120AvailableServerServices().find(x=>x.key===a)?.label||phase120SoftwareOptions().find(x=>x.key===a)?.label||phase19BLabels[a]||a).localeCompare(String(phase120AvailableServerServices().find(x=>x.key===b)?.label||phase120SoftwareOptions().find(x=>x.key===b)?.label||phase19BLabels[b]||b),undefined,{sensitivity:'base'}));
             if (!keys.length) return '<p class="text-sm text-slate-600 dark:text-slate-300">'+(type ? 'No additional fields are configured for this type yet.' : 'Select a device type above to display its additional fields.')+'</p>';
             return '<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">'+keys.map(key=>{
@@ -6551,11 +6617,24 @@ function hierarchyValidateTypes(subnets) {
             phase120WireSoftwarePlatform();
         }
         let phase19BFormValues = {};
+        function phaseM134HostingEnabled() {
+            const control = document.getElementById('phase-m005-hosting-enabled');
+            return control ? control.checked : phase19BFormValues.serverService_Hypervisor === true;
+        }
+        function phaseM134SyncHostingVisibility() {
+            const enabled = phaseM134HostingEnabled();
+            const fields = document.getElementById('phase-m005-hosting-details');
+            if (fields) fields.hidden = !enabled;
+        }
         function phase19BReadFields() {
             phase120CaptureSoftwarePlatform();
             document.querySelectorAll('[data-phase19b-field]').forEach(el=>{
                 phase19BFormValues[el.dataset.phase19bField]=el.type==='checkbox'?el.checked:el.value;
             });
+            if (document.getElementById('dev-type')?.value === 'Server - Physical' &&
+                document.getElementById('phase-m005-hosting-enabled')) {
+                phase19BFormValues.serverService_Hypervisor = phaseM134HostingEnabled();
+            }
             return {...phase19BFormValues};
         }
         function phase19BRefreshFields() {
@@ -6567,6 +6646,9 @@ function hierarchyValidateTypes(subnets) {
             if(panel) panel.innerHTML=phase19BRenderFields(type,phase19BFormValues,'hardware');
             const serviceFields = document.getElementById('phase120-server-services-fields');
             if(serviceFields) serviceFields.innerHTML=phase19BRenderFields(type,phase19BFormValues,'services');
+            const hosting = document.getElementById('phase-m005-hosting-enabled');
+            if (hosting && type === 'Server - Physical') hosting.checked = phase19BFormValues.serverService_Hypervisor === true;
+            phaseM134SyncHostingVisibility();
             const installedFields = document.getElementById('phase120-installed-software-fields');
             if(installedFields) installedFields.innerHTML=phase19BRenderFields(type,phase19BFormValues,'installed');
             document.getElementById('phase19b-details-section')?.classList.toggle('hidden',!phase19BFieldsFor(type).some(key=>!phase120IsSoftwareField(key)));
@@ -6822,6 +6904,11 @@ function hierarchyValidateTypes(subnets) {
             const locations = getUniqueDeviceLocations();
             const currentType = draft?.type ?? device?.type ?? '';
             phase19BFormValues = {...(draft?.typeDetails ?? device?.typeDetails ?? {})};
+            if (currentType === 'Server - Physical' &&
+                phase19BFormValues.serverService_Hypervisor !== true &&
+                (draft ? draft.typeDetails?.serverService_Hypervisor === undefined : device?.serverService_Hypervisor === true)) {
+                phase19BFormValues.serverService_Hypervisor = true;
+            }
             const currentLoc = draft?.location ?? device?.location ?? '';
             const requestedMountType = draft?.mountType ?? device?.mountType ?? (device?.rackId ? 'Rack Mounted' : phase120DefaultMount(currentType));
             const mountType = phase19BAllowedMounts(currentType).includes(requestedMountType) ? requestedMountType : phase120DefaultMount(currentType);
@@ -6838,6 +6925,34 @@ function hierarchyValidateTypes(subnets) {
                         <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-circle-info"></i>Device details</div>
                         <div><label for="dev-name" class="block text-xs font-semibold mb-1">Device Name <span class="required-mark">*</span></label><input type="text" id="dev-name" required value="${escapeHtml(draft?.name ?? device?.name ?? '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="e.g. core-switch"></div>
                             <div><label for="dev-type" class="block text-xs font-semibold mb-1">Device Type</label><select id="dev-type" required class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" disabled ${currentType === '' ? 'selected' : ''}>Select a device type...</option>${types.map(t => `<option value="${escapeHtml(t)}" ${currentType === t ? 'selected' : ''}>${escapeHtml(t)}</option>`).join('')}</select></div>
+                            <div id="phase120-virtual-fields" class="hidden rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-slate-800 p-4 space-y-3">
+                                <p class="text-sm font-semibold text-blue-900 dark:text-blue-200">Virtual Machine Configuration</p>
+                                <p class="text-xs text-slate-600 dark:text-slate-300">Physical manufacturer and model do not apply to virtual servers. Existing saved values are retained.</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <div><label class="form-label" for="dev-virtual-platform">Virtualisation Platform (optional)</label><select id="dev-virtual-platform" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
+                                        ${['','VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng','Other'].map(x=>'<option value="'+escapeHtml(x)+'" '+((draft?.virtualPlatform ?? device?.virtualPlatform ?? '')===x?'selected':'')+'>'+escapeHtml(x||'Select Platform...')+'</option>').join('')}
+                                    </select></div>
+                                    <div><label class="form-label" for="dev-virtual-host">Host Device (optional)</label><select id="dev-virtual-host" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="">Not Specified</option>
+                                        ${appState.devices.filter(x=>x.id!==(device?.id||'')&&x.type==='Server - Physical'&&((x.status!=='Retired'&&(x.typeDetails?.serverService_Hypervisor===true||x.serverService_Hypervisor===true))||x.id===(draft?.virtualHostId??device?.virtualHostId??''))).map(x=>'<option value="'+escapeHtml(x.id)+'" '+((draft?.virtualHostId ?? device?.virtualHostId ?? '')===x.id?'selected':'')+'>'+escapeHtml(x.name)+(x.status==='Retired'||!(x.typeDetails?.serverService_Hypervisor===true||x.serverService_Hypervisor===true)?' (existing legacy assignment)':'')+'</option>').join('')}
+                                    </select></div>
+                                </div>
+                            </div>
+                            <div id="phase-m005-host-platform-fields" class="hidden rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-slate-800 p-4 space-y-3">
+                                <p class="text-sm font-semibold text-blue-900 dark:text-blue-200">Virtualisation / Hypervisor</p>
+                                <label class="flex items-start gap-3 text-sm"><input id="phase-m005-hosting-enabled" type="checkbox" ${phase19BFormValues.serverService_Hypervisor === true ? 'checked' : ''} class="mt-1"><span><strong>This physical server hosts virtual machines</strong><span class="block text-xs text-slate-600 dark:text-slate-300">Enable this option if the physical server will host virtual machines.</span></span></label>
+                                <div id="phase-m005-hosting-details" ${phase19BFormValues.serverService_Hypervisor === true ? '' : 'hidden'} class="space-y-3">
+                                    <p class="text-xs text-slate-600 dark:text-slate-300">Select a hypervisor or choose Custom / Other. Existing values are retained. Changes affecting hosted virtual machines require confirmation.</p>
+                                    <label for="phase-m005-host-platform" class="form-label">Hypervisor software</label>
+                                    <select id="phase-m005-host-platform-select" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" aria-label="Hypervisor software">
+                                        <option value="">Select hypervisor software...</option>
+                                        ${['VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng'].map(p=>`<option value="${escapeHtml(p)}" ${phase19BFormValues.hypervisorProduct===p?'selected':''}>${escapeHtml(p)}</option>`).join('')}
+                                        <option value="__custom__" ${phase19BFormValues.hypervisorProduct && !['VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng'].includes(phase19BFormValues.hypervisorProduct)?'selected':''}>Custom / Other...</option>
+                                    </select>
+                                    <input id="phase-m005-host-platform" data-phase19b-field="hypervisorProduct" type="text" maxlength="120" value="${escapeHtml(phase19BFormValues.hypervisorProduct || '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700 ${phase19BFormValues.hypervisorProduct && !['VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng'].includes(phase19BFormValues.hypervisorProduct)?'':'hidden'}" placeholder="Enter custom hypervisor software">
+                                    <label for="phase-m005-host-version" class="form-label">Hypervisor version (optional)</label>
+                                    <input id="phase-m005-host-version" data-phase19b-field="hypervisorVersion" type="text" maxlength="120" value="${escapeHtml(phase19BFormValues.hypervisorVersion || '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="e.g. 8.0">
+                                </div>
+                            </div>
                         </div>
                         <div class="form-section-card space-y-4">
                             <div class="form-section-heading"><i class="fa-solid fa-server"></i>Hardware &amp; lifecycle</div>
@@ -6852,18 +6967,6 @@ function hierarchyValidateTypes(subnets) {
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div id="phase120-physical-manufacturer"><label for="dev-manufacturer-select" class="form-label">Manufacturer (optional)</label><input id="dev-manufacturer" type="hidden" value="${escapeHtml(draft?.manufacturer ?? device?.manufacturer ?? '')}"><select id="dev-manufacturer-select" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></select><input id="dev-manufacturer-custom" type="text" maxlength="120" class="hidden mt-2 w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Enter Custom Manufacturer" aria-label="Custom Manufacturer"></div>
                                 <div id="phase120-physical-model"><label for="dev-model-select" class="form-label">Model (optional)</label><input id="dev-model" type="hidden" value="${escapeHtml(draft?.model ?? device?.model ?? '')}"><select id="dev-model-select" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></select><input id="dev-model-custom" type="text" maxlength="120" class="hidden mt-2 w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Enter Custom Model" aria-label="Custom Model"></div>
-                            </div>
-                            <div id="phase120-virtual-fields" class="hidden rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-slate-800 p-4 space-y-3">
-                                <p class="text-sm font-semibold text-blue-900 dark:text-blue-200">Virtual Machine Configuration</p>
-                                <p class="text-xs text-slate-600 dark:text-slate-300">Physical manufacturer and model do not apply to virtual servers. Existing saved values are retained.</p>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                    <div><label class="form-label" for="dev-virtual-platform">Virtualisation Platform (optional)</label><select id="dev-virtual-platform" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
-                                        ${['','VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng','Other'].map(x=>'<option value="'+escapeHtml(x)+'" '+((draft?.virtualPlatform ?? device?.virtualPlatform ?? '')===x?'selected':'')+'>'+escapeHtml(x||'Select Platform...')+'</option>').join('')}
-                                    </select></div>
-                                    <div><label class="form-label" for="dev-virtual-host">Host Device (optional)</label><select id="dev-virtual-host" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="">Not Specified</option>
-                                        ${appState.devices.filter(x=>x.id!==(device?.id||'')&&x.type==='Server - Physical').map(x=>'<option value="'+escapeHtml(x.id)+'" '+((draft?.virtualHostId ?? device?.virtualHostId ?? '')===x.id?'selected':'')+'>'+escapeHtml(x.name)+'</option>').join('')}
-                                    </select></div>
-                                </div>
                             </div>
                             <div><button type="button" data-action="hardware-catalog-manage" class="h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-500 text-sm font-semibold"><i class="fa-solid fa-list mr-1"></i>Manage Hardware Catalogue</button><p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Add reusable manufacturer and model suggestions for this device type.</p></div>
                             <div><label for="dev-serial" class="form-label">Serial number (optional)</label><input id="dev-serial" type="text" maxlength="120" value="${escapeHtml(draft?.serialNumber ?? device?.serialNumber ?? '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Manufacturer serial number"></div>
@@ -6913,6 +7016,16 @@ function hierarchyValidateTypes(subnets) {
                 });
             });
             phase120RefreshHardwareSuggestions();
+            document.getElementById('phase-m005-hosting-enabled')?.addEventListener('change', phaseM134SyncHostingVisibility);
+            document.getElementById('phase-m005-host-platform-select')?.addEventListener('change', event => {
+                const input = document.getElementById('phase-m005-host-platform');
+                if (!input) return;
+                const custom = event.target.value === '__custom__';
+                input.classList.toggle('hidden', !custom);
+                input.value = custom ? (['VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng'].includes(input.value) ? '' : input.value) : event.target.value;
+                if (custom) input.focus();
+            });
+            phaseM134SyncHostingVisibility();
             phase11DeviceCascade('initial');
             refreshDeviceIpOptions();
             ['dev-rack-id', 'dev-rack-height', 'dev-rack-face'].forEach(id => {
@@ -7122,6 +7235,111 @@ function hierarchyValidateTypes(subnets) {
             if (resolve) resolve(accepted);
         }
 
+        function phaseM005ConfirmHypervisorRemoval(hostName, guests, hostId) {
+            if (document.getElementById('phase-m005-hypervisor-dialog')) return Promise.resolve(null);
+            return new Promise(resolve => {
+                const candidates = appState.devices.filter(device =>
+                    device.id !== hostId && device.type === 'Server - Physical' && device.status !== 'Retired' &&
+                    (device.typeDetails?.serverService_Hypervisor === true || device.serverService_Hypervisor === true));
+                const overlay = document.createElement('div');
+                overlay.id = 'phase-m005-hypervisor-dialog';
+                overlay.setAttribute('role', 'dialog');
+                overlay.setAttribute('aria-modal', 'true');
+                overlay.setAttribute('aria-labelledby', 'phase-m005-hypervisor-title');
+                overlay.className = 'absolute inset-0 z-50 flex items-center justify-center bg-slate-950/65 p-4 rounded-2xl';
+                overlay.innerHTML = `<div class="w-full max-w-2xl max-h-full overflow-y-auto rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 p-6 shadow-2xl space-y-4">
+                    <h3 id="phase-m005-hypervisor-title" class="text-lg font-bold">Resolve hosted virtual machines</h3>
+                    <p class="text-sm">Before disabling virtual machine hosting on ${escapeHtml(hostName)}, choose what happens to each assigned virtual machine. Nothing changes until you confirm and save.</p>
+                    <div class="space-y-3">${guests.map((guest,index)=>`<div class="rounded-xl border border-slate-300 dark:border-slate-600 p-3">
+                        <label class="form-label" for="phase-m005-guest-${index}">${escapeHtml(guest.name||guest.id)}</label>
+                        <select id="phase-m005-guest-${index}" data-m005-guest="${index}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
+                            <option value="">Choose an action...</option>
+                            <option value="unassign">Unassign, keep virtual machine and previous host history</option>
+                            <option value="retire">Retire virtual machine, keep history</option>
+                            ${candidates.map(host=>'<option value="host:'+escapeHtml(host.id)+'">Reassign to '+escapeHtml(host.name||host.id)+'</option>').join('')}
+                        </select>
+                    </div>`).join('')}</div>
+                    <p class="text-sm">Reassignment changes the inventory host reference only. It does not move a real virtual machine. Retiring does not delete its record.</p>
+                    <div class="flex flex-wrap justify-end gap-3">
+                        <button type="button" data-action="cancel" class="h-11 px-4 rounded-xl border border-slate-400 caffoot-modal-cancel">Keep Editing</button>
+                        <button type="button" data-action="confirm" class="h-11 px-4 rounded-xl bg-rose-700 text-white font-bold">Confirm Guest Decisions</button>
+                    </div>
+                </div>`;
+                const content = document.getElementById('modal-content');
+                if (content && !content.closest('.hidden')) {
+                    if (getComputedStyle(content).position === 'static') content.style.position = 'relative';
+                } else {
+                    overlay.className = 'fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/65 p-4';
+                }
+                const returnFocus = document.activeElement;
+                const finish = value => { overlay.remove(); if (returnFocus?.isConnected) returnFocus.focus(); resolve(value); };
+                overlay.addEventListener('click', event => {
+                    const action = event.target.closest('[data-action]')?.dataset.action;
+                    if (action === 'cancel') finish(null);
+                    if (action !== 'confirm') return;
+                    const choices = [...overlay.querySelectorAll('[data-m005-guest]')].map(el=>el.value);
+                    if (choices.some(value=>!value)) return showToast('Choose an action for every virtual machine.', 'error');
+                    if (choices.some(value=>value.startsWith('host:') && !candidates.some(host=>host.id===value.slice(5))))
+                        return showToast('A selected destination host is no longer eligible.', 'error');
+                    finish(choices);
+                });
+                overlay.addEventListener('keydown', event => {
+                    if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); finish(null); }
+                    if (event.key === 'Tab') {
+                        const controls = [...overlay.querySelectorAll('select,button')];
+                        const index = controls.indexOf(document.activeElement);
+                        if (event.shiftKey && index === 0) { event.preventDefault(); controls[controls.length-1].focus(); }
+                        else if (!event.shiftKey && index === controls.length-1) { event.preventDefault(); controls[0].focus(); }
+                    }
+                });
+                (content && !content.closest('.hidden') ? content : document.body).appendChild(overlay);
+                overlay.querySelector('[data-action="cancel"]').focus();
+            });
+        }
+
+        function phaseM005ConfirmPlatformChange(hostName, guests, oldPlatform, newPlatform) {
+            if (document.getElementById('phase-m005-platform-dialog')) return Promise.resolve(false);
+            return new Promise(resolve => {
+                const overlay = document.createElement('div');
+                overlay.id = 'phase-m005-platform-dialog';
+                overlay.setAttribute('role', 'alertdialog');
+                overlay.setAttribute('aria-modal', 'true');
+                overlay.setAttribute('aria-labelledby', 'phase-m005-platform-title');
+                overlay.className = 'absolute inset-0 z-50 flex items-center justify-center bg-slate-950/65 p-4 rounded-2xl';
+                overlay.innerHTML = `<div class="w-full max-w-lg rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 p-6 shadow-2xl space-y-4">
+                    <h3 id="phase-m005-platform-title" class="text-lg font-bold">Update hosted virtual machines?</h3>
+                    <p class="text-sm">Changing the recorded Hypervisor on ${escapeHtml(hostName)} from ${escapeHtml(oldPlatform || 'Not specified')} to ${escapeHtml(newPlatform || 'Not specified')} will update the virtualisation platform of these assigned virtual machines:</p>
+                    <ul class="list-disc pl-5 max-h-48 overflow-y-auto text-sm">${guests.map(guest=>'<li>'+escapeHtml(guest.name||guest.id)+' ('+escapeHtml(guest.virtualPlatform||'Not specified')+' → '+escapeHtml(newPlatform)+')</li>').join('')}</ul>
+                    <p class="text-sm">Guest operating systems and host assignments will not change. This updates inventory records only and does not migrate any virtual machines.</p>
+                    <div class="flex flex-wrap justify-end gap-3">
+                        <button type="button" data-action="cancel" class="h-11 px-4 rounded-xl border border-slate-400 caffoot-modal-cancel">Keep Editing</button>
+                        <button type="button" data-action="confirm" class="h-11 px-4 rounded-xl bg-blue-700 text-white font-bold">Update Records</button>
+                    </div>
+                </div>`;
+                const content = document.getElementById('modal-content');
+                if (!content) return resolve(false);
+                if (getComputedStyle(content).position === 'static') content.style.position = 'relative';
+                const returnFocus = document.activeElement;
+                const finish = accepted => { overlay.remove(); if (returnFocus?.isConnected) returnFocus.focus(); resolve(accepted); };
+                overlay.addEventListener('click', event => {
+                    const action = event.target.closest('[data-action]')?.dataset.action;
+                    if (action === 'cancel') finish(false);
+                    if (action === 'confirm') finish(true);
+                });
+                overlay.addEventListener('keydown', event => {
+                    if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); finish(false); }
+                    if (event.key === 'Tab') {
+                        const controls = [...overlay.querySelectorAll('button')];
+                        const index = controls.indexOf(document.activeElement);
+                        if (event.shiftKey && index === 0) { event.preventDefault(); controls[controls.length-1].focus(); }
+                        else if (!event.shiftKey && index === controls.length-1) { event.preventDefault(); controls[0].focus(); }
+                    }
+                });
+                content.appendChild(overlay);
+                overlay.querySelector('[data-action="cancel"]').focus();
+            });
+        }
+
         async function handleDeviceSubmit(e, deviceId) {
             e.preventDefault();
             const name = document.getElementById('dev-name').value.trim();
@@ -7141,10 +7359,18 @@ function hierarchyValidateTypes(subnets) {
             const serialNumber = document.getElementById('dev-serial').value.trim();
             const virtualPlatform = type==='Server - Virtual'?(document.getElementById('dev-virtual-platform')?.value||''):'';
             const virtualHostId = type==='Server - Virtual'?(document.getElementById('dev-virtual-host')?.value||''):'';
-            if(virtualHostId&&!appState.devices.some(d=>d.id===virtualHostId&&d.type==='Server - Physical'&&d.id!==deviceId))return showToast('Select a valid physical host device.','error');
+            const existingDeviceHostIsUnchanged = () => !!deviceId && getDeviceById(deviceId)?.virtualHostId === virtualHostId;
+            if(virtualHostId&&!appState.devices.some(d=>d.id===virtualHostId&&d.type==='Server - Physical'&&d.id!==deviceId&&((d.status!=='Retired'&&(d.typeDetails?.serverService_Hypervisor===true||d.serverService_Hypervisor===true))||(existingDeviceHostIsUnchanged()))))return showToast('Select an eligible Hypervisor host, or retain the existing legacy assignment.','error');
             if (!['Active','Maintenance','Retired'].includes(status)) return showToast('Invalid device status.', 'error');
             const notes = document.getElementById('dev-notes').value.trim();
             let typeDetails = phase19BReadFields();
+            if (type === 'Server - Physical' && typeDetails.serverService_Hypervisor === true &&
+                !String(typeDetails.hypervisorProduct || '').trim() &&
+                !String(getDeviceById(deviceId)?.typeDetails?.hypervisorProduct || '').trim() &&
+                !(deviceId && (getDeviceById(deviceId)?.typeDetails?.serverService_Hypervisor === true ||
+                                getDeviceById(deviceId)?.serverService_Hypervisor === true))) {
+                return showToast('Select or enter a Hypervisor product to enable hosting.', 'error');
+            }
             if (!name) return showToast('Please enter a device name.', 'error');
             if (appState.devices.some(d => String(d.id) !== String(deviceId || '') && String(d.name || '').trim().toLowerCase() === name.toLowerCase())) return showToast('A device with this name already exists. Please enter a unique device name.', 'error');
             if (!type) return showToast('Please select a device type.', 'error');
@@ -7167,6 +7393,41 @@ function hierarchyValidateTypes(subnets) {
                 if (validationError) return showToast(validationError, 'error');
             }
             const existingDevice = deviceId ? getDeviceById(deviceId) : null;
+            // M-005: host conversion, retirement and loss of Hypervisor eligibility
+            // all require an explicit decision for every assigned guest.
+            let removalGuests = [];
+            let removalChoices = [];
+            if (existingDevice && existingDevice.type === 'Server - Physical') {
+                const wasHypervisor = existingDevice.typeDetails?.serverService_Hypervisor === true || existingDevice.serverService_Hypervisor === true;
+                const remainsHypervisor = type === 'Server - Physical' && typeDetails.serverService_Hypervisor === true;
+                const converting = type !== 'Server - Physical';
+                const retiring = status === 'Retired' && existingDevice.status !== 'Retired';
+                if (converting || retiring || (wasHypervisor && !remainsHypervisor)) {
+                    const hostedGuests = appState.devices.filter(guest => guest.id !== deviceId && guest.virtualHostId === deviceId);
+                    if (hostedGuests.length) {
+                        const choices = await phaseM005ConfirmHypervisorRemoval(existingDevice.name, hostedGuests, deviceId);
+                        if (!choices) return;
+                        if (getDeviceById(deviceId) !== existingDevice || document.getElementById('dev-type')?.value !== type ||
+                            document.getElementById('dev-status')?.value !== status ||
+                            (type === 'Server - Physical' && phase19BReadFields().serverService_Hypervisor !== typeDetails.serverService_Hypervisor)) return;
+                        removalGuests = hostedGuests;
+                        removalChoices = choices;
+                    }
+                }
+            }
+            // M-005: an explicit host Hypervisor product change updates assigned guests in one transaction.
+            let platformGuests = [];
+            const previousHypervisor = String(existingDevice?.typeDetails?.hypervisorProduct || '').trim();
+            const nextHypervisor = String(typeDetails.hypervisorProduct || '').trim();
+            if (existingDevice && existingDevice.type === 'Server - Physical' && type === 'Server - Physical' &&
+                previousHypervisor && nextHypervisor && previousHypervisor !== nextHypervisor && removalGuests.length === 0) {
+                platformGuests = appState.devices.filter(guest => guest.id !== deviceId && guest.virtualHostId === deviceId);
+                if (platformGuests.length) {
+                    if (!await phaseM005ConfirmPlatformChange(existingDevice.name, platformGuests, previousHypervisor, nextHypervisor)) return;
+                    if (getDeviceById(deviceId) !== existingDevice || document.getElementById('dev-type')?.value !== type ||
+                        document.getElementById('phase-m005-host-platform')?.value.trim() !== nextHypervisor) return;
+                }
+            }
             let conversionSnapshot = null;
             // Type-specific values remain in the unsaved draft when switching types.
             // Only known, incompatible populated fields are eligible for confirmed removal.
@@ -7196,6 +7457,32 @@ function hierarchyValidateTypes(subnets) {
                 appState.devices.push(newDevice);
                 try { setDevicePrimaryIp(newDevice, primaryIp); syncDeviceIpamRecord(newDevice); } catch (error) { appState = JSON.parse(beforeDeviceSave); return showToast('Device/IPAM creation cancelled: ' + error.message, 'error'); }
             }
+            for (let index = 0; index < removalGuests.length; index++) {
+                const guest = removalGuests[index];
+                const choice = removalChoices[index];
+                guest.previousVirtualHosts = [...(Array.isArray(guest.previousVirtualHosts) ? guest.previousVirtualHosts : []),
+                    {hostId:deviceId, changedAt:new Date().toISOString(), action:choice}];
+                if (choice === 'unassign') guest.virtualHostId = '';
+                else if (choice === 'retire') { guest.virtualHostId = ''; guest.status = 'Retired'; }
+                else if (choice.startsWith('host:')) {
+                    const destination = appState.devices.find(host => host.id === choice.slice(5) &&
+                        host.type === 'Server - Physical' && host.status !== 'Retired' &&
+                        (host.typeDetails?.serverService_Hypervisor === true || host.serverService_Hypervisor === true));
+                    if (!destination) { appState = JSON.parse(beforeDeviceSave); return showToast('Destination Hypervisor is no longer eligible.', 'error'); }
+                    guest.virtualHostId = destination.id;
+                    const destinationPlatform = String(destination.typeDetails?.hypervisorProduct || '').trim();
+                    if (destinationPlatform && guest.virtualPlatform !== destinationPlatform) {
+                        guest.previousVirtualPlatforms = [...(Array.isArray(guest.previousVirtualPlatforms) ? guest.previousVirtualPlatforms : []),
+                            {platform:guest.virtualPlatform || '', hostId:deviceId, changedAt:new Date().toISOString()}];
+                        guest.virtualPlatform = destinationPlatform;
+                    }
+                }
+            }
+            for (const guest of platformGuests) {
+                guest.previousVirtualPlatforms = [...(Array.isArray(guest.previousVirtualPlatforms) ? guest.previousVirtualPlatforms : []),
+                    {platform:guest.virtualPlatform || '', hostId:deviceId, changedAt:new Date().toISOString()}];
+                guest.virtualPlatform = nextHypervisor;
+            }
             if (!saveState()) {
                 appState = JSON.parse(beforeDeviceSave);
                 showToast('Device changes were not saved. Previous data restored.', 'error');
@@ -7204,20 +7491,54 @@ function hierarchyValidateTypes(subnets) {
             closeModal(true); renderContent();
         }
 
-        function deleteDevice(deviceId) {
+        async function deleteDevice(deviceId) {
             const device=getDeviceById(deviceId);
             if(!device) return;
+            const hostedDependants=appState.devices.filter(d=>d.id!==deviceId&&d.virtualHostId===deviceId);
+            let choices=[];
+            if(hostedDependants.length) {
+                // Use the same per guest review as retirement and Hypervisor removal.
+                // Deleting the host itself still requires the existing separate confirmation.
+                choices=await phaseM005ConfirmHypervisorRemoval(device.name,hostedDependants,deviceId);
+                if(!choices) return;
+                if(getDeviceById(deviceId)!==device ||
+                    hostedDependants.some(guest=>getDeviceById(guest.id)!==guest||guest.virtualHostId!==deviceId)) {
+                    return showToast('Inventory changed while reviewing guests. Please try again.','error');
+                }
+            }
             const related=Object.keys(appState.ipAllocations).filter(ip=>appState.ipAllocations[ip]?.deviceId===deviceId);
             const reserved=Object.keys(appState.ipAllocations).filter(ip=>appState.ipAllocations[ip]?.reservedForDeviceId===deviceId);
-            const message=`Delete device ${device.name}?\n\nPrimary IP: ${device.primaryIp||'none'}\nLinked IPAM records: ${related.length}\nOther reservations: ${reserved.length}\nRack: ${device.rackId?'mounted':'not mounted'}\n\nThis cannot be undone. Export a backup first.`;
+            const message=`Delete device ${device.name}?\n\nPrimary IP: ${device.primaryIp||'none'}\nLinked IPAM records: ${related.length}\nOther reservations: ${reserved.length}\nRack: ${device.rackId?'mounted':'not mounted'}\n\n${hostedDependants.length} hosted virtual machines will be resolved as selected.\n\nThis cannot be undone. Export a backup first.`;
             if(!confirm(message)) return;
             const before=JSON.stringify(appState);
-            for(const ip of related) delete appState.ipAllocations[ip];
-            for(const ip of reserved) if(appState.ipAllocations[ip]) appState.ipAllocations[ip].reservedForDeviceId='';
+            for(let index=0;index<hostedDependants.length;index++){
+                const guest=hostedDependants[index],choice=choices[index];
+                guest.previousVirtualHosts=[...(Array.isArray(guest.previousVirtualHosts)?guest.previousVirtualHosts:[]),
+                    {hostId:deviceId,changedAt:new Date().toISOString(),action:choice}];
+                if(choice==='unassign')guest.virtualHostId='';
+                else if(choice==='retire'){guest.virtualHostId='';guest.status='Retired';}
+                else if(choice.startsWith('host:')){
+                    const destination=appState.devices.find(host=>host.id===choice.slice(5)&&host.id!==deviceId&&
+                        host.type==='Server - Physical'&&host.status!=='Retired'&&
+                        (host.typeDetails?.serverService_Hypervisor===true||host.serverService_Hypervisor===true));
+                    if(!destination){appState=JSON.parse(before);return showToast('Destination Hypervisor is no longer eligible.','error');}
+                    guest.virtualHostId=destination.id;
+                    const platform=String(destination.typeDetails?.hypervisorProduct||'').trim();
+                    if(platform&&guest.virtualPlatform!==platform){
+                        guest.previousVirtualPlatforms=[...(Array.isArray(guest.previousVirtualPlatforms)?guest.previousVirtualPlatforms:[]),
+                            {platform:guest.virtualPlatform||'',hostId:deviceId,changedAt:new Date().toISOString()}];
+                        guest.virtualPlatform=platform;
+                    }
+                }else{appState=JSON.parse(before);return showToast('Invalid guest decision.','error');}
+            }
+            for(const ip of related){
+                const allocation=appState.ipAllocations[ip];
+                if(allocation)appState.ipAllocations[ip]={...allocation,status:'Available',deviceId:''};
+            }
+            for(const ip of reserved)if(appState.ipAllocations[ip])appState.ipAllocations[ip].reservedForDeviceId='';
             appState.devices=appState.devices.filter(d=>d.id!==deviceId);
             phase11BCommitDelete(before,'Device');
         }
-
 
         // Phase 16B: one purpose per settings section; existing handlers remain unchanged.
         let phase16ASection = 'backup';
@@ -7476,7 +7797,7 @@ function hierarchyValidateTypes(subnets) {
 
         const CAFFOOT_BACKUP_FORMAT = 'caffoot-inventory';
         const CAFFOOT_BACKUP_SCHEMA_VERSION = 1;
-        const CAFFOOT_LITE_VERSION = '1.3.0';
+        const CAFFOOT_LITE_VERSION = '1.3.1';
         function phase20CreateBackup(state = appState) {
             return {
                 ...JSON.parse(JSON.stringify(state)),
@@ -7623,9 +7944,61 @@ function hierarchyValidateTypes(subnets) {
                 function phase16CInvalidMounts(state) {
             return state.devices.filter(d => !phase19BAllowedMounts(d.type).includes(d.mountType || (d.rackId ? 'Rack Mounted' : 'Desktop')));
         }
+        // Validate rack occupancy only on the detached import candidate. Never alter positions.
+        function phase16CRackImportIssues(candidate) {
+            const issues = [];
+            const occupied = new Map();
+            const ids = new Set();
+            const validAccessoryTypes = new Set(['blank', 'patch', 'brush', 'cable', 'shelf', 'pdu_horizontal', 'ventilation', 'fan_tray', 'environmental_sensor', 'pdu_vertical', 'cable_vertical']);
+            const racks = new Map(candidate.racks.map(r => [r.id, r]));
+            const place = (record, label, rackId, face, start, height, rail) => {
+                const rack = racks.get(rackId);
+                if (!rack) { issues.push(label + ' references a missing rack.'); return; }
+                const limit = Number(rack.heightU);
+                if (!Number.isInteger(limit) || limit < 1 || !Number.isInteger(start) ||
+                    !Number.isInteger(height) || height < 1 || start < 1 || start + height - 1 > limit) {
+                    issues.push(label + ' has an invalid rack U position.'); return;
+                }
+                if (!['front', 'rear'].includes(face)) { issues.push(label + ' has an invalid rack face.'); return; }
+                const key = JSON.stringify([rackId, face, rail]);
+                const positions = occupied.get(key) || [];
+                const end = start + height - 1;
+                const collision = positions.find(p => start <= p.end && end >= p.start);
+                if (collision) issues.push(label + ' overlaps ' + collision.label + '.');
+                positions.push({start, end, label});
+                occupied.set(key, positions);
+            };
+            for (const device of candidate.devices) {
+                if (!device.rackId) continue;
+                const start = Number(device.rackUStart), height = Number(device.rackUHeight);
+                place(device, 'Device ' + String(device.name || device.id || '(unnamed)'),
+                    device.rackId, device.face || 'front', start, height, 'horizontal');
+            }
+            for (const accessory of (Array.isArray(candidate.rackAccessories) ? candidate.rackAccessories : [])) {
+                if (!accessory || typeof accessory !== 'object' || Array.isArray(accessory)) {
+                    issues.push('Backup contains an invalid rack accessory record.'); continue;
+                }
+                const label = 'Accessory ' + String(accessory.name || accessory.id || '(unnamed)');
+                if (!accessory.id || ids.has(accessory.id)) issues.push(label + ' has a missing or duplicate ID.');
+                ids.add(accessory.id);
+                if (!validAccessoryTypes.has(accessory.type)) {
+                    issues.push(label + ' has an unsupported accessory type.'); continue;
+                }
+                const vertical = accessory.type === 'pdu_vertical' || accessory.type === 'cable_vertical';
+                if (vertical && !['left', 'right'].includes(accessory.side)) {
+                    issues.push(label + ' has an invalid side rail.'); continue;
+                }
+                place(accessory, label, accessory.rackId, accessory.face,
+                    Number(accessory.startU), Number(accessory.heightU),
+                    vertical ? 'rail-' + accessory.side : 'horizontal');
+            }
+            return issues;
+        }
         function phase16CCheckBackup(raw) {
             phase16CRejectUnsafeKeys(raw);
             phase11ValidateBackupShape(raw);
+            if (Object.prototype.hasOwnProperty.call(raw, 'rackAccessories') && !Array.isArray(raw.rackAccessories))
+                throw new Error('Backup has an invalid rackAccessories collection.');
             phase20ValidateBackupVersion(raw);
             const candidate = phase20MigrateBackup(raw);
             const invalidMounts = phase16CInvalidMounts(candidate);
@@ -7638,6 +8011,7 @@ function hierarchyValidateTypes(subnets) {
             } finally {
                 appState = original;
             }
+            issues.push(...phase16CRackImportIssues(candidate));
             if (issues.length) throw new Error(`Inventory integrity check found ${issues.length} issue(s): ${issues.slice(0, 4).join('; ')}${issues.length > 4 ? '; and more' : ''}`);
             return candidate;
         }
@@ -7992,8 +8366,8 @@ function hierarchyValidateTypes(subnets) {
             ventilation: {label:'Ventilation panel',icon:'fa-wind'},
             fan_tray: {label:'Fan tray',icon:'fa-fan'},
             environmental_sensor: {label:'Environmental sensor (rack-mounted)',icon:'fa-temperature-half'},
-            pdu_vertical: {label:'Vertical 0U PDU',icon:'fa-plug',vertical:true},
-            cable_vertical: {label:'Vertical 0U cable manager',icon:'fa-bars-staggered',vertical:true}
+            pdu_vertical: {label:'Vertical PDU',icon:'fa-plug',vertical:true},
+            cable_vertical: {label:'Vertical Cable Manager',icon:'fa-bars-staggered',vertical:true}
         };
         // Phase 13D: CSS-only rack fascia art; no external images or data changes.
         function phase13DFascia(type, portCount = 24) {
@@ -8448,6 +8822,7 @@ function hierarchyValidateTypes(subnets) {
                 case 'phase14c-tab': phase14CSelectTab(name); break;
                 case 'archived-software-remove': phase120ConfirmArchivedUninstall(id,name); break;
                 case 'archived-software-confirm-uninstall': phase120RecordArchivedUninstall(id,name); break;
+                case 'phase14c-view-hosted-guest': phase14CViewDevice(id); break;
                 case 'phase14c-edit': closeModal(); openDeviceModal(id); break;
                 case 'phase14c-duplicate': closeModal(); duplicateDevice(id); break;
                 case 'phase14c-delete': closeModal(); deleteDevice(id); break;
