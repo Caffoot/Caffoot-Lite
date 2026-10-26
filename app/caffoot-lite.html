@@ -3595,6 +3595,7 @@ function hierarchyValidateTypes(subnets) {
         function phase120RestoreServerService(key){
             const entry=phase19BServerFunctions().find(x=>x.key===key&&x.archived);
             if(!entry)return;
+            if(phase120AvailableServerServices().some(x=>x.key!==key&&String(x.label||'').trim().toLowerCase()===String(entry.label||'').trim().toLowerCase())){showToast('Another available server service already uses that name. Rename it before restoring this one.','error');return;}
             const previous=appState.serverFunctions;
             appState.serverFunctions=previous.map(x=>x.key===key?{...x,archived:false}:x);
             if(!saveState()){appState.serverFunctions=previous;return showToast('Could not restore server service.','error');}
