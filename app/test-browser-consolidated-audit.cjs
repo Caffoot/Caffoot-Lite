@@ -1406,6 +1406,40 @@ const { chromium } = require('playwright');
       assert.match(result,/"Fixture 97 CSV rack","10","3","0","1","30"/,
         'Rack CSV should include 2U device and 1U shelf but not vertical 0U');
     });
+    await scenario('#97 archived device assignments persist across reload and unrelated edit', async page => {
+      await page.evaluate(() => {
+        appState.installedSoftware.push({key:'software_fixture97persist',label:'Fixture 97 retained software',archived:true});
+        appState.serverFunctions.push({key:'serverService_fixture97persist',label:'Fixture 97 retained service',archived:true});
+        appState.devices.push({id:'fixture97persist',name:'Fixture 97 retained device',type:'Server - Physical',
+          typeDetails:{software_fixture97persist:true,serverService_fixture97persist:true}});
+        if (!saveState()) throw Error('Unable to persist #97 baseline');
+      });
+      await page.reload({waitUntil:'load'});
+      const result=await page.evaluate(() => {
+        const device=appState.devices.find(d=>d.id==='fixture97persist');
+        if (!device) return {missing:true};
+        device.notes='Unrelated #97 note edit';
+        if (!saveState()) throw Error('Unable to persist unrelated edit');
+        phase14CViewDevice(device.id);
+        return {software:document.body.textContent.includes('Fixture 97 retained software'),
+          service:document.body.textContent.includes('Fixture 97 retained service'),
+          softwareAssigned:device.typeDetails?.software_fixture97persist,
+          serviceAssigned:device.typeDetails?.serverService_fixture97persist};
+      });
+      assert.equal(result.software,true,'Archived software must remain visible after reload');
+      assert.equal(result.service,true,'Archived service must remain visible after reload');
+      assert.equal(result.softwareAssigned,true,'Unrelated edit must preserve software assignment');
+      assert.equal(result.serviceAssigned,true,'Unrelated edit must preserve service assignment');
+      await page.reload({waitUntil:'load'});
+      const persisted=await page.evaluate(() => {
+        const d=appState.devices.find(x=>x.id==='fixture97persist');
+        return {notes:d?.notes,software:d?.typeDetails?.software_fixture97persist,
+          service:d?.typeDetails?.serverService_fixture97persist};
+      });
+      assert.equal(persisted.notes,'Unrelated #97 note edit');
+      assert.equal(persisted.software,true);
+      assert.equal(persisted.service,true);
+    });
     await scenario('#97 archived software and server service remain visible in device details', async page => {
       const result = await page.evaluate(() => {
         const software={key:'software_fixture97',label:'Fixture #97 legacy software',archived:true,deviceTypes:['Server - Physical']};
