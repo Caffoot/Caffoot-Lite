@@ -3464,7 +3464,7 @@ function hierarchyValidateTypes(subnets) {
                 if(!map.has(key))map.set(key,{model,manufacturer,type,sources:new Set(),devices:0});
                 map.get(key).sources.add(source);
             }
-            Object.entries(phase120HardwareSeed).forEach(([type,makers])=>Object.entries(makers).forEach(([manufacturer,models])=>models.forEach(model=>add(model,manufacturer,type,'Built-in'))));
+            Object.entries(phase120EffectiveHardwareSeed()).forEach(([type,makers])=>Object.entries(makers).forEach(([manufacturer,models])=>models.forEach(model=>add(model,manufacturer,type,'Built-in'))));
             phase120HardwareCatalogue().forEach(x=>add(x.model,x.manufacturer,x.type,'Custom'));
             appState.devices.forEach(d=>{
                 add(d.model,d.manufacturer,d.type,'Inventory');
@@ -6358,6 +6358,30 @@ function hierarchyValidateTypes(subnets) {
             'NAS': {'Synology':['DiskStation','RackStation'],'QNAP':['TS Series']}
         };
         // User-managed hardware suggestions are stored with the offline inventory.
+        // Saved preferences overlay immutable hardware seeds. Original keys remain
+        // stable so inventory records and older backups are never rewritten.
+        function phase120HardwarePreferences(){
+            const value=appState.hardwareSeedPreferences;
+            return isPlainObject(value)?value:{};
+        }
+        function phase120EffectiveHardwareSeed(){
+            const prefs=phase120HardwarePreferences(),result={};
+            Object.entries(phase120HardwareSeed).forEach(([type,makers])=>{
+                result[type]={};
+                Object.entries(makers).forEach(([maker,models])=>{
+                    const makerKey='maker:'+maker.toLowerCase();
+                    const makerPref=isPlainObject(prefs[makerKey])?prefs[makerKey]:{};
+                    if(makerPref.hidden)return;
+                    const label=String(makerPref.label||maker).trim()||maker;
+                    result[type][label]=models.flatMap(model=>{
+                        const key='model:'+JSON.stringify([type,maker,model]);
+                        const pref=isPlainObject(prefs[key])?prefs[key]:{};
+                        return pref.hidden?[]:[String(pref.label||model).trim()||model];
+                    });
+                });
+            });
+            return result;
+        }
         function phase120HardwareCatalogue(){
             return Array.isArray(appState.hardwareCatalogue)?appState.hardwareCatalogue:[];
         }
@@ -6424,7 +6448,7 @@ function hierarchyValidateTypes(subnets) {
             const makerCustom=document.getElementById('dev-manufacturer-custom');
             const modelCustom=document.getElementById('dev-model-custom');
             if(!maker||!model||!makerSelect||!modelSelect)return;
-            const seeds=phase120HardwareSeed[type]||{};
+            const seeds=phase120EffectiveHardwareSeed()[type]||{};
             const related=appState.devices.filter(d=>d.type===type);
             const catalog=phase120HardwareCatalogue().filter(x=>x.type===type);
             const makers=new Set([...Object.keys(seeds),...related.map(d=>String(d.manufacturer||'').trim()).filter(Boolean),...catalog.map(x=>x.manufacturer)]);
