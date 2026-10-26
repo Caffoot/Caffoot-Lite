@@ -3515,7 +3515,8 @@ function hierarchyValidateTypes(subnets) {
             const previous=appState.installedSoftware;
             const entry=phase19BSoftware().find(x=>x.key===key&&!x.archived)||phase120SoftwareSuggestions.filter(x=>phase120BuiltinSoftwareKey(x.name)===key).map(x=>({key,label:x.name,deviceTypes:x.types}))[0];
             if(!entry)return;
-            if(appState.devices.some(d=>d.typeDetails?.[key]===true||d[key]===true)){showToast('Software is assigned to a device and cannot be removed.','error');return;}
+            const assigned=appState.devices.filter(d=>d.typeDetails?.[key]===true||d[key]===true);
+            if(assigned.length){showToast('Software is assigned to '+assigned.slice(0,3).map(d=>d.name||d.hostname||d.id||'unnamed device').join(', ')+(assigned.length>3?' and others':'')+' and cannot be removed.','error');return;}
             const saved=phase19BSoftware();
             appState.installedSoftware=saved.some(x=>x.key===key)?saved.map(x=>x.key===key?{...x,archived:true}:x):[...saved,{...entry,archived:true}];
             if(!saveState()){appState.installedSoftware=previous;showToast('Could not remove software.','error');return;}
@@ -6338,7 +6339,8 @@ function hierarchyValidateTypes(subnets) {
         function phase120ArchiveServerService(key){
             const entry=phase120AvailableServerServices().find(x=>x.key===key);
             if(!entry)return;
-            if(appState.devices.some(d=>d.typeDetails?.[key]===true||d[key]===true)){showToast('Service is assigned to a device and cannot be removed.','error');return;}
+            const assigned=appState.devices.filter(d=>d.typeDetails?.[key]===true||d[key]===true);
+            if(assigned.length){showToast('Service is assigned to '+assigned.slice(0,3).map(d=>d.name||d.hostname||d.id||'unnamed device').join(', ')+(assigned.length>3?' and others':'')+' and cannot be removed.','error');return;}
             const previous=appState.serverFunctions;
             const saved=phase19BServerFunctions();
             appState.serverFunctions=saved.some(x=>x.key===key)?saved.map(x=>x.key===key?{...x,archived:true}:x):[...saved,{...entry,archived:true}];
