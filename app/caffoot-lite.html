@@ -3408,7 +3408,7 @@ function hierarchyValidateTypes(subnets) {
             const opts=(values,current)=>[...values].sort((a,b)=>a.localeCompare(b)).map(v=>'<option value="'+escapeHtml(v)+'"'+(v===current?' selected':'')+'>'+escapeHtml(v)+'</option>').join('');
             const used=item?appState.devices.filter(d=>d.model?.toLowerCase()===item.model.toLowerCase()&&d.manufacturer?.toLowerCase()===item.manufacturer.toLowerCase()&&d.type===item.type).length:0;
             openModal('<div class="p-5 sm:p-7 space-y-5"><div><h3 class="text-lg font-bold">'+(remove?'Remove Model Suggestion':item?'Edit Model Suggestion':'Add Model Suggestion')+'</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Custom suggestions only. Built-in models and saved devices are never changed.</p></div>'+
-                (remove?'<p class="text-sm">Remove <strong>'+escapeHtml(item.model)+'</strong> ('+escapeHtml(item.manufacturer)+' · '+escapeHtml(item.type)+')? '+used+' existing device(s) use this model and will remain unchanged.</p>':
+                (remove?'<p class="text-sm">Remove <strong>'+escapeHtml(item.model)+'</strong> ('+escapeHtml(item.manufacturer)+' · '+escapeHtml(item.type)+')? '+used+' existing device(s) use this model. '+(used?'Removal is blocked until those devices are updated.':'This unused custom suggestion can be removed.')+'</p>':
                 '<form id="phase120-model-form" data-form-action="model" onsubmit="return false" class="space-y-3"><div><label class="block text-sm font-semibold mb-1" for="phase120-model-name">Model Name</label><input id="phase120-model-name" maxlength="120" value="'+escapeHtml(item?.model||'')+'" class="w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-800"></div><div><label class="block text-sm font-semibold mb-1" for="phase120-model-manufacturer">Manufacturer</label><select id="phase120-model-manufacturer" class="w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-800"><option value="">Select Manufacturer</option>'+opts(makers,item?.manufacturer||'')+'</select></div><div><label class="block text-sm font-semibold mb-1" for="phase120-model-device-type">Device Type</label><select id="phase120-model-device-type" class="w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-800"><option value="">Select Device Type</option>'+opts(types,item?.type||'')+'</select><p id="phase120-model-type-note" class="text-xs text-slate-600 dark:text-slate-300 mt-1"></p></div><p id="phase120-model-error" role="alert" class="hidden text-sm text-rose-700 dark:text-rose-300"></p></form>')+
                 '<div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-4 rounded-xl border border-slate-300 dark:border-slate-600 caffoot-modal-cancel">Cancel</button><button type="button" data-action="'+(remove?'phase120-model-confirm-remove':'phase120-model-save')+'" data-name="'+escapeHtml(id)+'" class="h-11 px-4 rounded-xl text-white '+(remove?'bg-rose-700':'bg-blue-800')+'">'+(remove?'Remove Model':'Save Model')+'</button></div></div>');
             if(!remove){const field=document.getElementById('phase120-model-device-type');field.dataset.originalType=item?.type||'';field.dataset.originalMaker=item?.manufacturer||'';phase120ModelUpdateTypes();rememberModalForm();}
@@ -3430,7 +3430,11 @@ function hierarchyValidateTypes(subnets) {
                 const error=!model?'Enter a model name.':!manufacturer?'Select a manufacturer.':!type?'Select a device type.':!allowed.includes(type)&&!legacy?'This device type is not associated with this manufacturer. Update Manufacturers first.':builtin?'This is already a built-in model suggestion.':duplicate?'This model suggestion already exists.':'';
                 if(error){const el=document.getElementById('phase120-model-error');if(el){el.textContent=error;el.classList.remove('hidden');}return;}
             }
-            if(remove)items.splice(items.findIndex(x=>x.id===id),1);
+            if(remove){
+                const used=appState.devices.some(d=>String(d.model||'').trim().toLowerCase()===String(item.model||'').trim().toLowerCase()&&String(d.manufacturer||'').trim().toLowerCase()===String(item.manufacturer||'').trim().toLowerCase()&&d.type===item.type);
+                if(used){showToast('This model is used by a device. Edit that device before removing its model suggestion.','error');return;}
+                items.splice(items.findIndex(x=>x.id===id),1);
+            }
             else if(item)Object.assign(item,{model,manufacturer,type});
             else items.push({id:'hardware_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8),model,manufacturer,type});
             const previous=appState.hardwareCatalogue;
@@ -3489,12 +3493,13 @@ function hierarchyValidateTypes(subnets) {
             const entry=phase19BSoftware().find(x=>x.key===key&&!x.archived);
             if(!entry)return;
             const count=appState.devices.filter(d=>d.typeDetails?.[key]===true||d[key]===true).length;
-            openModal('<div class="p-5 sm:p-7 space-y-5"><h3 class="text-lg font-bold">Remove Custom Software?</h3><p class="text-sm text-slate-700 dark:text-slate-200">Remove <strong>'+escapeHtml(entry.label)+'</strong> from available software choices? '+count+' device(s) have this software recorded. Existing device records will not be deleted, and the catalogue entry will be retained for historical reference.</p><div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-4 rounded-xl border border-slate-300 dark:border-slate-600 caffoot-modal-cancel">Cancel</button><button type="button" data-action="software-custom-confirm-remove" data-name="'+escapeHtml(key)+'" class="h-11 px-4 rounded-xl bg-rose-700 hover:bg-rose-800 text-white">Remove Software</button></div></div>');
+            openModal('<div class="p-5 sm:p-7 space-y-5"><h3 class="text-lg font-bold">Remove Custom Software?</h3><p class="text-sm text-slate-700 dark:text-slate-200">Remove <strong>'+escapeHtml(entry.label)+'</strong> from available software choices? '+count+' device(s) have this software recorded. '+(count?'This software is in use and cannot be removed until its device assignments are updated.':'This unused software can be removed from available choices; its catalogue record will be retained for recovery.')+'</p><div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-4 rounded-xl border border-slate-300 dark:border-slate-600 caffoot-modal-cancel">Cancel</button><button type="button" data-action="software-custom-confirm-remove" data-name="'+escapeHtml(key)+'" class="h-11 px-4 rounded-xl bg-rose-700 hover:bg-rose-800 text-white">Remove Software</button></div></div>');
         }
         function phase120SoftwareArchive(key){
             const previous=appState.installedSoftware;
             const entry=phase19BSoftware().find(x=>x.key===key&&!x.archived);
             if(!entry)return;
+            if(appState.devices.some(d=>d.typeDetails?.[key]===true||d[key]===true)){showToast('Software is assigned to a device and cannot be removed.','error');return;}
             appState.installedSoftware=phase19BSoftware().map(x=>x.key===key?{...x,archived:true}:x);
             if(!saveState()){appState.installedSoftware=previous;showToast('Could not remove software.','error');return;}
             closeModal(true);renderContent();showToast('Software removed from available choices. Existing records preserved.');
@@ -6301,6 +6306,7 @@ function hierarchyValidateTypes(subnets) {
         function phase120ArchiveServerService(key){
             const entry=phase19BServerFunctions().find(x=>x.key===key&&!x.archived);
             if(!entry)return;
+            if(appState.devices.some(d=>d.typeDetails?.[key]===true||d[key]===true)){showToast('Service is assigned to a device and cannot be removed.','error');return;}
             const previous=appState.serverFunctions;
             appState.serverFunctions=phase19BServerFunctions().map(x=>x.key===key?{...x,archived:true}:x);
             if(!saveState()){appState.serverFunctions=previous;return showToast('Could not archive server service.','error');}
