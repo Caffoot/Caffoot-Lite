@@ -128,6 +128,39 @@ const { chromium } = require('playwright');
     });
     for (const [key,value] of Object.entries(accessoryOperations))
       assert.equal(value,true,'Accessory operation failed: '+key);
+    // M-026 gap: actual keyboard Escape, discard confirmation and focus return.
+    // Synthetic unsaved form, with no inventory mutation or storage write.
+    const keyboard = await page.evaluate(async () => {
+      const trigger = document.createElement('button');
+      trigger.textContent = 'Fictional modal trigger';
+      document.body.appendChild(trigger);
+      trigger.focus();
+      const saved = localStorage.getItem('caffoot_state');
+      try {
+        openModal('<h2>Fictional form</h2><form data-form-action="software" onsubmit="return false"><input id="issue99-keyboard-name" value="Before"><button type="submit">Save</button></form>');
+        const initialFocus = document.activeElement?.id === 'issue99-keyboard-name';
+        const input = document.getElementById('issue99-keyboard-name');
+        input.value = 'After';
+        input.dispatchEvent(new Event('input', {bubbles:true}));
+        document.dispatchEvent(new KeyboardEvent('keydown', {key:'Escape',bubbles:true,cancelable:true}));
+        const discardShown = !!document.getElementById('phase120-discard-dialog');
+        const remainsOpen = !document.getElementById('modal-container').classList.contains('hidden');
+        phase120KeepEditing();
+        const keepRetainsValue = document.getElementById('issue99-keyboard-name')?.value === 'After';
+        document.dispatchEvent(new KeyboardEvent('keydown', {key:'Escape',bubbles:true,cancelable:true}));
+        const warnedAgain = !!document.getElementById('phase120-discard-dialog');
+        phase120DiscardChanges();
+        const closed = document.getElementById('modal-container').classList.contains('hidden');
+        const focusRestored = document.activeElement === trigger;
+        return {initialFocus,discardShown,remainsOpen,keepRetainsValue,warnedAgain,closed,focusRestored,
+          storageUnchanged:localStorage.getItem('caffoot_state') === saved};
+      } finally {
+        closeModal(true);
+        trigger.remove();
+      }
+    });
+    for (const [key,value] of Object.entries(keyboard))
+      assert.equal(value,true,'Modal keyboard regression failed: '+key);
     console.log('PASS #99 focused form, bulk preview and accessory failure/retry and move/remove rollback');
 
   } finally {
