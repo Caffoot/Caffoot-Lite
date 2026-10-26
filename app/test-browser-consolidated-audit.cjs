@@ -1367,5 +1367,42 @@ const { chromium } = require('playwright');
       assert.equal(await page.evaluate(() => appState.serverFunctions.find(x => x.key === 'serverService_issue94fictional')?.archived),
         true,'Archived service must remain archived after reload');
     });
+    await scenario('#97 rack report and dashboard count ordinary accessories but not vertical 0U', async page => {
+      const result = await page.evaluate(() => {
+        appState.racks.push({id:'fixture97rack',name:'Fixture #97 rack',heightU:12});
+        appState.devices.push({id:'fixture97server',name:'Fixture #97 server',type:'Server - Physical',
+          rackId:'fixture97rack',face:'front',rackUStart:2,rackUEnd:3});
+        appState.rackAccessories.push(
+          {id:'fixture97shelf',name:'Shelf',type:'shelf',rackId:'fixture97rack',face:'front',startU:5,heightU:1},
+          {id:'fixture97horizontal',name:'PDU',type:'pdu_horizontal',rackId:'fixture97rack',face:'rear',startU:6,heightU:1},
+          {id:'fixture97vertical',name:'Vertical PDU',type:'pdu_vertical',rackId:'fixture97rack',face:'front',startU:1,heightU:12},
+          {id:'fixture97cable',name:'Vertical cable',type:'cable_vertical',rackId:'fixture97rack',face:'rear',startU:1,heightU:12}
+        );
+        const row=phase10DReportData().racks.find(r=>r.name==='Fixture #97 rack');
+        return {row};
+      });
+      assert.equal(result.row.front,3,'Front should include 2U server and 1U shelf');
+      assert.equal(result.row.rear,1,'Rear should include horizontal 1U PDU only');
+      assert.equal(result.row.percent,25,'Capacity uses fuller face, excluding vertical 0U');
+    });
+    await scenario('#97 archived software and server service remain visible in device details', async page => {
+      const result = await page.evaluate(() => {
+        const software={key:'software_fixture97',label:'Fixture #97 legacy software',archived:true,deviceTypes:['Server - Physical']};
+        const service={key:'serverService_fixture97',label:'Fixture #97 legacy service',archived:true};
+        appState.installedSoftware.push(software);
+        appState.serverFunctions.push(service);
+        appState.devices.push({id:'fixture97device',name:'Fixture #97 device',type:'Server - Physical',
+          typeDetails:{[software.key]:true,[service.key]:true}});
+        phase14CViewDevice('fixture97device');
+        const text=document.body.textContent||'';
+        return {software:text.includes(software.label),service:text.includes(service.label),
+          softwareAvailable:phase120SoftwareOptions().some(x=>x.key===software.key),
+          serviceAvailable:phase120AvailableServerServices().some(x=>x.key===service.key)};
+      });
+      assert.equal(result.software,true,'Archived installed software must appear');
+      assert.equal(result.service,true,'Archived enabled service must appear');
+      assert.equal(result.softwareAvailable,false,'Archived software must not be offered for assignment');
+      assert.equal(result.serviceAvailable,false,'Archived service must not be offered for assignment');
+    });
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode=1; });
