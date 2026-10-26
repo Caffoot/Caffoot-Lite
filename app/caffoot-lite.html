@@ -1389,6 +1389,15 @@ function hierarchyValidateTypes(subnets) {
             });
         }
 
+        // Canonicalise known historical rack accessory identifiers on detached data.
+        // Shared by startup loading and backup import; unknown types remain invalid.
+        function phase13CLegacyAccessoryTypes(accessories) {
+            const legacy={fan:'fan_tray',pdu:'pdu_horizontal',vent:'ventilation'};
+            return accessories.map(a=>{
+                if (!a || typeof a!=='object' || !Object.prototype.hasOwnProperty.call(legacy,a.type)) return a;
+                return {...a,type:legacy[a.type]};
+            });
+        }
         function normaliseState(raw) {
             if (!isPlainObject(raw)) throw new Error('Imported data must be a JSON object.');
 
@@ -1410,7 +1419,7 @@ function hierarchyValidateTypes(subnets) {
                 vlans: raw.vlans,
                 racks: raw.racks,
                 devices: phase120SeparateLegacyRackLocation(raw.devices),
-                rackAccessories: Array.isArray(raw.rackAccessories) ? raw.rackAccessories : [],
+                rackAccessories: Array.isArray(raw.rackAccessories) ? phase13CLegacyAccessoryTypes(raw.rackAccessories) : [],
                 deviceTypes: Array.isArray(raw.deviceTypes) ? raw.deviceTypes : cloneDefaultData().deviceTypes,
                 deviceTypeGraphics: isPlainObject(raw.deviceTypeGraphics) ? raw.deviceTypeGraphics : {},
                 deviceLocations: Array.isArray(raw.deviceLocations) ? raw.deviceLocations : cloneDefaultData().deviceLocations,
@@ -7874,12 +7883,6 @@ function hierarchyValidateTypes(subnets) {
             phase20ValidateBackupVersion(raw);
             const detached = JSON.parse(JSON.stringify(raw));
             const repairs = phase16CLegacyMountRepairs(detached);
-            // Historical rack accessory names remain compatible with newer catalogues.
-            const legacyAccessoryTypes = {fan:'fan_tray',pdu:'pdu_horizontal',vent:'ventilation'};
-            if (Array.isArray(detached.rackAccessories)) for (const accessory of detached.rackAccessories) {
-                if (accessory && typeof accessory === 'object' && Object.prototype.hasOwnProperty.call(legacyAccessoryTypes,accessory.type))
-                    accessory.type = legacyAccessoryTypes[accessory.type];
-            }
             const candidate = normaliseState(detached);
             if (repairs.length) Object.defineProperty(candidate, '_legacyMountRepairs', { value: repairs, enumerable: false });
             return candidate;
