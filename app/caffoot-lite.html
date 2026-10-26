@@ -3432,7 +3432,7 @@ function hierarchyValidateTypes(subnets) {
         function phase120ModelAllowedTypes(manufacturer){
             const key=String(manufacturer||'').trim().toLowerCase();
             if(!key)return [];
-            const builtin=Object.entries(phase120HardwareSeed).filter(([type,makers])=>type!=='Server - Virtual'&&Object.keys(makers).some(m=>m.toLowerCase()===key)).map(([type])=>type);
+            const builtin=Object.entries(phase120EffectiveHardwareSeed()).filter(([type,makers])=>type!=='Server - Virtual'&&Object.keys(makers).some(m=>m.toLowerCase()===key)).map(([type])=>type);
             const custom=phase120HardwareCatalogue().filter(x=>!x.model&&x.manufacturer.toLowerCase()===key&&x.type!=='Server - Virtual').map(x=>x.type);
             return [...new Set([...builtin,...custom])].sort((a,b)=>a.localeCompare(b));
         }
@@ -3451,7 +3451,7 @@ function hierarchyValidateTypes(subnets) {
         function phase120ModelManager(id='',remove=false){
             const item=phase120HardwareCatalogue().find(x=>x.id===id&&x.model);
             if(id&&!item)return;
-            const makers=new Set([...Object.values(phase120HardwareSeed).flatMap(x=>Object.keys(x)),...phase120HardwareCatalogue().map(x=>x.manufacturer),...appState.devices.map(x=>x.manufacturer)].filter(Boolean));
+            const makers=new Set([...Object.values(phase120EffectiveHardwareSeed()).flatMap(x=>Object.keys(x)),...phase120HardwareCatalogue().map(x=>x.manufacturer),...appState.devices.map(x=>x.manufacturer)].filter(Boolean));
             const types=item?phase120ModelAllowedTypes(item.manufacturer):[];
             const opts=(values,current)=>[...values].sort((a,b)=>a.localeCompare(b)).map(v=>'<option value="'+escapeHtml(v)+'"'+(v===current?' selected':'')+'>'+escapeHtml(v)+'</option>').join('');
             const used=item?appState.devices.filter(d=>d.model?.toLowerCase()===item.model.toLowerCase()&&d.manufacturer?.toLowerCase()===item.manufacturer.toLowerCase()&&d.type===item.type).length:0;
@@ -3470,7 +3470,7 @@ function hierarchyValidateTypes(subnets) {
                 model=String(document.getElementById('phase120-model-name')?.value||'').trim();
                 manufacturer=String(document.getElementById('phase120-model-manufacturer')?.value||'').trim();
                 type=String(document.getElementById('phase120-model-device-type')?.value||'').trim();
-                const seeded=(phase120HardwareSeed[type]||{});
+                const seeded=(phase120EffectiveHardwareSeed()[type]||{});
                 const builtin=Object.entries(seeded).some(([m,models])=>m.toLowerCase()===manufacturer.toLowerCase()&&models.some(v=>v.toLowerCase()===model.toLowerCase()));
                 const duplicate=items.some(x=>x.id!==id&&x.type===type&&x.manufacturer.toLowerCase()===manufacturer.toLowerCase()&&String(x.model||'').toLowerCase()===model.toLowerCase());
                 const allowed=phase120ModelAllowedTypes(manufacturer);
