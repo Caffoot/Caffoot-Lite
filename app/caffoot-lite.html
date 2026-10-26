@@ -2324,13 +2324,20 @@ function hierarchyValidateTypes(subnets) {
             const rackRows=racks.map(r=>{
                 const height=Number(r.heightU)||0;
                 const installed=devices.filter(d=>d.rackId===r.id);
+                const accessories=(Array.isArray(appState.rackAccessories)?appState.rackAccessories:[])
+                    .filter(a=>a.rackId===r.id && a.type!=='pdu_vertical' && a.type!=='cable_vertical');
                 // Front and rear occupancy are separately reported to avoid combining
                 // distinct faces as if they were one physical space.
-                const occupancy=face=>installed.filter(d=>(d.face||'front')===face)
-                    .reduce((sum,d)=>{
-                        const a=Number(d.rackUStart),b=Number(d.rackUEnd??d.rackUStart);
-                        return sum+(Number.isInteger(a)&&Number.isInteger(b)&&b>=a?b-a+1:0);
-                    },0);
+                const occupancy=face=>{
+                    const deviceU=installed.filter(d=>(d.face||'front')===face)
+                        .reduce((sum,d)=>{
+                            const a=Number(d.rackUStart),b=Number(d.rackUEnd??d.rackUStart);
+                            return sum+(Number.isInteger(a)&&Number.isInteger(b)&&b>=a?b-a+1:0);
+                        },0);
+                    const accessoryU=accessories.filter(a=>(a.face||'front')===face)
+                        .reduce((sum,a)=>sum+(Number(a.heightU)||0),0);
+                    return deviceU+accessoryU;
+                };
                 const front=occupancy('front'),rear=occupancy('rear');
                 const percent=height?Math.round(Math.max(front,rear)/height*100):0;
                 return {name:r.name||r.id,height,front,rear,devices:installed.length,percent};
@@ -5961,10 +5968,10 @@ function hierarchyValidateTypes(subnets) {
             const status = d.status || 'Active';
             const detailRows = phase19CDetailRows(d, field);
             const activeFields = new Set(phase19BFieldsFor(d.type));
-            const softwareEntries=[...phase120SoftwareOptions(),...phase19BSoftware().filter(x=>x.archived)].filter((x,i,all)=>all.findIndex(y=>y.key===x.key)===i).filter(x=>activeFields.has(x.key) && (d.typeDetails?.[x.key]===true||d[x.key]===true));
+            const softwareEntries=[...phase120SoftwareOptions(),...phase19BSoftware().filter(x=>x.archived)].filter((x,i,all)=>all.findIndex(y=>y.key===x.key)===i).filter(x=>(activeFields.has(x.key)||x.archived) && (d.typeDetails?.[x.key]===true||d[x.key]===true));
             const installedSoftware=softwareEntries.sort((a,b)=>String(a.label||'').localeCompare(String(b.label||''),undefined,{sensitivity:'base'})).map(x=>x.archived?`<div class="phase14c-field"><dt>${safe(x.label)}</dt><dd><span>Installed</span> <span class="inline-flex items-center gap-1 rounded-full border border-red-300 bg-red-50 px-2 py-0.5 text-xs font-bold text-red-700 dark:border-red-700 dark:bg-red-950/50 dark:text-red-300" title="Installed on this device; no longer available in the software catalogue"><i class="fa-solid fa-box-archive" aria-hidden="true"></i>Archived</span><button type="button" data-action="archived-software-remove" data-id="${safe(d.id)}" data-name="${safe(x.key)}" class="mt-2 block rounded-lg border border-red-300 px-2 py-1 text-xs font-semibold text-red-700 hover:bg-red-50 dark:border-red-700 dark:text-red-300 dark:hover:bg-red-950/40">Mark as Uninstalled</button></dd></div>`:field(x.label,'Installed')).join('');
             const deviceDetails=d.typeDetails||{};
-            const serverServiceEntries=[...phase120AvailableServerServices(),...phase19BServerFunctions().filter(x=>x.archived)].filter((x,i,all)=>all.findIndex(y=>y.key===x.key)===i).filter(x=>activeFields.has(x.key) && (deviceDetails[x.key]===true||d[x.key]===true)).sort((a,b)=>String(a.label||'').localeCompare(String(b.label||''),undefined,{sensitivity:'base'}));
+            const serverServiceEntries=[...phase120AvailableServerServices(),...phase19BServerFunctions().filter(x=>x.archived)].filter((x,i,all)=>all.findIndex(y=>y.key===x.key)===i).filter(x=>(activeFields.has(x.key)||x.archived) && (deviceDetails[x.key]===true||d[x.key]===true)).sort((a,b)=>String(a.label||'').localeCompare(String(b.label||''),undefined,{sensitivity:'base'}));
             const serverServices=serverServiceEntries.map(x=>`<div class="phase14c-field"><dt>${safe(x.label)}</dt><dd>Enabled${x.archived?' <span class="inline-flex items-center gap-1 rounded-full border border-red-300 bg-red-50 px-2 py-0.5 text-xs font-bold text-red-700 dark:border-red-700 dark:bg-red-950/50 dark:text-red-300"><i class="fa-solid fa-box-archive" aria-hidden="true"></i>Archived</span>':''}</dd></div>`).join('');
             const platformDetails=[['Operating system',deviceDetails.softwarePlatform||deviceDetails.os],['OS version',deviceDetails.softwareVersion],['Windows licence',deviceDetails.windowsLicence]].filter(([label])=>['server','computer'].includes(phase19BTypeGroups[String(d.type||'').toLowerCase().trim()]) || label==='Operating system' && activeFields.has('os')).filter(([,value])=>value!==undefined&&value!==null&&value!=='').map(([label,value])=>field(label,value)).join('');
             const historicalSnapshots = Array.isArray(d.previousTypeDetails) ? [...d.previousTypeDetails].reverse() : [];
