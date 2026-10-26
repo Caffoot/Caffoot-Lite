@@ -95,7 +95,40 @@ const { chromium } = require('playwright');
     assert.equal(accessory.valuesRetained,true,'Failed accessory save must preserve entered values');
     assert.equal(accessory.noStorageWrite,true,'Failure injection must not write browser inventory');
     assert.equal(accessory.retrySucceeded,true,'Retry must create exactly one accessory');
-    console.log('PASS #99 focused form, bulk preview and accessory failure/retry');
+    // Removal and movement failures must report errors without changing inventory.
+    const accessoryOperations = await page.evaluate(() => {
+      const previousState = appState;
+      const previousSave = saveState;
+      const previousToast = showToast;
+      const messages = [];
+      try {
+        appState = {...previousState,
+          racks:[...previousState.racks,{id:'issue99-ops-rack',name:'Fictional operations rack',heightU:42}],
+          rackAccessories:[...(previousState.rackAccessories||[]),{id:'issue99-ops-accessory',rackId:'issue99-ops-rack',type:'shelf',name:'Fictional accessory',face:'front',startU:1,heightU:1}]};
+        const initial = JSON.stringify(appState);
+        saveState = () => false;
+        showToast = (message,kind) => messages.push({message,kind});
+        phase13CMoveAccessory('issue99-ops-accessory','issue99-ops-rack',2);
+        const moveRolledBack = JSON.stringify(appState) === initial;
+        const moveExplained = messages.some(m => m.kind === 'error' && m.message.includes('Original placement restored'));
+        phase13CDeleteAccessory('issue99-ops-accessory');
+        const accept = document.getElementById('phase13c-remove-accept');
+        if (!accept) throw Error('Accessory removal confirmation missing');
+        accept.click();
+        const removalRolledBack = JSON.stringify(appState) === initial;
+        const removalExplained = messages.some(m => m.kind === 'error' && m.message.includes('previous inventory is unchanged'));
+        return {moveRolledBack,moveExplained,removalRolledBack,removalExplained};
+      } finally {
+        document.getElementById('phase13c-remove-confirm')?.remove();
+        saveState = previousSave;
+        showToast = previousToast;
+        appState = previousState;
+        closeModal(true);
+      }
+    });
+    for (const [key,value] of Object.entries(accessoryOperations))
+      assert.equal(value,true,'Accessory operation failed: '+key);
+    console.log('PASS #99 focused form, bulk preview and accessory failure/retry and move/remove rollback');
 
   } finally {
     await context.close();
