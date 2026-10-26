@@ -24,6 +24,71 @@ const { chromium } = require('playwright');
     } finally { await context.close(); }
   }
   try {
+    await scenario('M-017 readable invalid startup inventory enters protected recovery', async page => {
+      const original = await page.evaluate(() => {
+        const invalid = JSON.parse(JSON.stringify(appState));
+        invalid.devices.push({id:'duplicate-fixture',name:'Fixture one',type:'Server - Physical'});
+        invalid.devices.push({id:'duplicate-fixture',name:'Fixture two',type:'Server - Physical'});
+        const raw = JSON.stringify(invalid);
+        localStorage.setItem('caffoot_state', raw);
+        return raw;
+      });
+      await page.reload({waitUntil:'load'});
+      const result = await page.evaluate(() => ({
+        protected:!!phase17AStorageRecovery,
+        raw:phase17AStorageRecovery?.raw,
+        stored:localStorage.getItem('caffoot_state'),
+        banner:!!document.getElementById('phase17a-recovery'),
+        saved:saveState()
+      }));
+      assert.equal(result.protected,true,'Invalid readable inventory must enter recovery');
+      assert.equal(result.raw,original,'Original inventory must remain downloadable');
+      assert.equal(result.stored,original,'Startup and rejected save must not overwrite stored inventory');
+      assert.equal(result.banner,true,'Recovery must be visible');
+      assert.equal(result.saved,false,'Ordinary saves must be blocked in recovery');
+    });
+    await scenario('M-022 failed new rack save restores selection and stored inventory', async page => {
+      const result = await page.evaluate(async () => {
+        const beforeSelection = selectedRackId;
+        const beforeRacks = JSON.stringify(appState.racks);
+        const beforeStored = localStorage.getItem('caffoot_state');
+        openRackModal();
+        document.getElementById('rack-name').value = 'Fictional failed rack';
+        document.getElementById('rack-height').value = '42';
+        document.getElementById('rack-width').value = '600';
+        document.getElementById('rack-depth').value = '1000';
+        const original = Storage.prototype.setItem;
+        Storage.prototype.setItem = function(key,value) {
+          if (key === 'caffoot_state') return;
+          return original.call(this,key,value);
+        };
+        try {
+          await handleRackSubmit({preventDefault(){},target:document.querySelector('#rack-name').closest('form')},null);
+        } finally {
+          Storage.prototype.setItem = original;
+        }
+        return {
+          beforeSelection,afterSelection:selectedRackId,
+          beforeRacks,afterRacks:JSON.stringify(appState.racks),
+          beforeStored,afterStored:localStorage.getItem('caffoot_state')
+        };
+      });
+      assert.equal(result.afterSelection,result.beforeSelection,'Failed new rack must restore previous selection');
+      assert.equal(result.afterRacks,result.beforeRacks,'Failed new rack must restore inventory');
+      assert.equal(result.afterStored,result.beforeStored,'Ignored storage write must not alter saved inventory');
+    });
+    await scenario('M-017 dashboard service label preserves raw drilldown key', async page => {
+      const result = await page.evaluate(() => {
+        appState.devices.push({id:'hypervisor-label-fixture',name:'Hypervisor label fixture',type:'Server - Physical',typeDetails:{serverService_Hypervisor:true}});
+        phase14DeviceTab='overview';
+        deviceIntelligenceTab='software';
+        const html=renderDevicesHTML();
+        return {html,storedKey:appState.devices.at(-1).typeDetails.serverService_Hypervisor};
+      });
+      assert.match(result.html,/data-value="serverService_Hypervisor"/,'Dashboard must retain raw filter key');
+      assert.match(result.html,/>Hypervisor<\/span>/,'Dashboard must display friendly label');
+      assert.equal(result.storedKey,true,'Service value must remain unchanged');
+    });
     await scenario('M-010/M-019 browser import validation preserves inventory', async page => {
       const before = await page.evaluate(() => {
         if (!saveState()) throw Error('Cannot establish fictional baseline');
