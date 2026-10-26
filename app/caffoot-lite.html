@@ -3560,7 +3560,7 @@ function hierarchyValidateTypes(subnets) {
         document.addEventListener('input',event=>{if(['phase120-software-search','phase120-software-source','phase120-software-type','phase120-software-used'].includes(event.target?.id))phase120FilterSoftware();});
         document.addEventListener('change',event=>{if(['phase120-software-source','phase120-software-type','phase120-software-used'].includes(event.target?.id))phase120FilterSoftware();});
         function phase120ServerServiceEditor(key=''){
-            const item=phase19BServerFunctions().find(x=>x.key===key&&!x.archived);
+            const item=phase120AvailableServerServices().find(x=>x.key===key);
             if(key&&!item)return;
             openModal('<form data-form-action="server-service" onsubmit="return false" class="p-5 sm:p-7 space-y-5"><h3 class="text-lg font-bold text-slate-900 dark:text-white">'+(item?'Edit Server Service':'Add Custom Server Service')+'</h3><label for="phase120-service-name" class="block text-sm font-semibold">Service Name</label><input id="phase120-service-name" maxlength="80" class="w-full h-11 px-3 rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-800" value="'+escapeHtml(item?.label||'')+'"><div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-4 rounded-xl border border-slate-300 dark:border-slate-600 caffoot-modal-cancel">Cancel</button><button type="button" data-action="server-catalog-save" data-name="'+escapeHtml(key)+'" class="h-11 px-4 rounded-xl bg-blue-800 hover:bg-blue-700 text-white font-semibold">Save Service</button></div></form>');
         }
@@ -3570,7 +3570,8 @@ function hierarchyValidateTypes(subnets) {
             if([...phase19BServerFunctions(),...phase120StarterServerServices].some(x=>x.label.toLowerCase()===label.toLowerCase()&&x.key!==key))return showToast('That service name already exists.','error');
             const old=appState.serverFunctions;
             const items=phase19BServerFunctions().map(x=>({...x}));
-            if(key){const entry=items.find(x=>x.key===key&&!x.archived);if(!entry)return;entry.label=label;}
+            if(key){const entry=items.find(x=>x.key===key&&!x.archived);if(entry)entry.label=label;
+                else {const builtin=phase120StarterServerServices.find(x=>x.key===key);if(!builtin)return;items.push({...builtin,label});}}
             else items.push({key:'customServerFunction_'+Date.now().toString(36),label});
             appState.serverFunctions=items;
             if(!saveState()){appState.serverFunctions=old;return showToast('Could not save server service.','error');}
@@ -3592,7 +3593,7 @@ function hierarchyValidateTypes(subnets) {
             const rows=active.map(x=>{
                 const count=appState.devices.filter(d=>d.typeDetails?.[x.key]===true||d[x.key]===true).length;
                 const custom=saved.some(y=>y.key===x.key&&!y.archived);
-                return '<div class="rounded-xl border border-slate-200 dark:border-slate-700 p-4 flex flex-wrap items-center justify-between gap-3"><div class="flex-1 min-w-0"><h3 class="font-semibold text-slate-900 dark:text-white">'+escapeHtml(x.label)+'</h3><p class="text-xs text-slate-600 dark:text-slate-300 mt-1">'+(custom?'Configured service':'Built-in suggestion')+'</p></div><span class="text-sm font-semibold text-blue-700 dark:text-blue-300">'+count+' device'+(count===1?'':'s')+'</span>'+(custom?'<span class="flex gap-2"><button type="button" data-action="server-catalog-edit" data-name="'+escapeHtml(x.key)+'" class="h-9 px-3 rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700">Edit Service</button><button type="button" data-action="server-catalog-remove" data-name="'+escapeHtml(x.key)+'" class="h-9 px-3 rounded-lg border border-rose-400 text-rose-700 dark:text-rose-300 hover:bg-rose-50 dark:hover:bg-slate-700">Remove</button></span>':'')+'</div>';
+                return '<div class="rounded-xl border border-slate-200 dark:border-slate-700 p-4 flex flex-wrap items-center justify-between gap-3"><div class="flex-1 min-w-0"><h3 class="font-semibold text-slate-900 dark:text-white">'+escapeHtml(x.label)+'</h3><p class="text-xs text-slate-600 dark:text-slate-300 mt-1">'+(custom?'Configured service':'Built-in suggestion')+'</p></div><span class="text-sm font-semibold text-blue-700 dark:text-blue-300">'+count+' device'+(count===1?'':'s')+'</span>'+'<span class="flex gap-2"><button type="button" data-action="server-catalog-edit" data-name="'+escapeHtml(x.key)+'" class="h-9 px-3 rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700">Edit Service</button><button type="button" data-action="server-catalog-remove" data-name="'+escapeHtml(x.key)+'" class="h-9 px-3 rounded-lg border border-rose-400 text-rose-700 dark:text-rose-300 hover:bg-rose-50 dark:hover:bg-slate-700">Remove</button></span>'+'</div>';
             });
             return '<section class="space-y-5"><div class="flex items-start justify-between gap-4"><div><h2 class="text-xl font-bold text-slate-900 dark:text-white">Server Services</h2><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Manage available server services. Archiving preserves existing server records.</p></div><button type="button" data-action="server-catalog-add" class="shrink-0 h-11 px-4 rounded-xl bg-blue-800 hover:bg-blue-700 text-white font-semibold">Add Custom Service</button></div><div class="grid grid-cols-1 sm:grid-cols-3 gap-4">'+[['Available Services',active.length],['Used in Inventory',active.filter(x=>appState.devices.some(d=>d.typeDetails?.[x.key]===true||d[x.key]===true)).length],['Archived Services',saved.filter(x=>x.archived).length]].map(([label,n])=>'<div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5"><p class="text-sm text-slate-600 dark:text-slate-300">'+label+'</p><p class="text-3xl font-bold mt-2">'+n+'</p></div>').join('')+'</div><div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-3"><label for="phase120-service-search" class="block text-sm font-semibold">Search Server Services</label><input id="phase120-service-search" type="search" placeholder="Filter services by name" class="w-full h-11 px-3 rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-900" oninput="document.querySelectorAll(\'[data-service-row]\').forEach(r=>r.hidden=!r.dataset.serviceRow.includes(this.value.toLowerCase()))"></div><div class="space-y-3">'+active.map((x,i)=>'<div data-service-row="'+escapeHtml(x.label.toLowerCase())+'">'+rows[i]+'</div>').join('')+'</div><section class="space-y-3"><h3 class="text-lg font-bold">Archived Services ('+archived.length+')</h3><p class="text-sm text-slate-600 dark:text-slate-300">Archived services remain on existing device records. Restore a service to make it available for new assignments again.</p>'+(archivedRows||'<p class="text-sm text-slate-600 dark:text-slate-300">No archived services.</p>')+'</section></section>';
         }
@@ -6311,17 +6312,18 @@ function hierarchyValidateTypes(subnets) {
             phase19BManageFunctions();
         }
         function phase120ConfirmServerServiceArchive(key){
-            const entry=phase19BServerFunctions().find(x=>x.key===key&&!x.archived);
+            const entry=phase120AvailableServerServices().find(x=>x.key===key);
             if(!entry)return;
             const count=appState.devices.filter(d=>d.typeDetails?.[key]===true||d[key]===true).length;
             openModal('<div class="p-5 sm:p-7 space-y-5"><h3 class="text-lg font-bold text-slate-900 dark:text-white">Archive Server Service?</h3><p class="text-sm text-slate-700 dark:text-slate-200">Archive <strong>'+escapeHtml(entry.label)+'</strong>? It will no longer be available for new assignments. '+count+' device(s) currently have this service recorded, and their historical records will be preserved.</p><div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-4 rounded-xl border border-slate-300 dark:border-slate-600 caffoot-modal-cancel">Cancel</button><button type="button" data-action="server-service-confirm-archive" data-name="'+escapeHtml(key)+'" class="h-11 px-4 rounded-xl bg-rose-700 hover:bg-rose-800 text-white font-semibold">Archive Service</button></div></div>');
         }
         function phase120ArchiveServerService(key){
-            const entry=phase19BServerFunctions().find(x=>x.key===key&&!x.archived);
+            const entry=phase120AvailableServerServices().find(x=>x.key===key);
             if(!entry)return;
             if(appState.devices.some(d=>d.typeDetails?.[key]===true||d[key]===true)){showToast('Service is assigned to a device and cannot be removed.','error');return;}
             const previous=appState.serverFunctions;
-            appState.serverFunctions=phase19BServerFunctions().map(x=>x.key===key?{...x,archived:true}:x);
+            const saved=phase19BServerFunctions();
+            appState.serverFunctions=saved.some(x=>x.key===key)?saved.map(x=>x.key===key?{...x,archived:true}:x):[...saved,{...entry,archived:true}];
             if(!saveState()){appState.serverFunctions=previous;return showToast('Could not archive server service.','error');}
             closeModal(true);renderContent();showToast('Server service archived. Existing records preserved.');
         }
