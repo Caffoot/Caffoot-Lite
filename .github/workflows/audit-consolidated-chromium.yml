@@ -20,21 +20,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-          cache: npm
-          cache-dependency-path: app/package-lock.json
-      - name: Install pinned build dependencies
-        working-directory: app
-        run: npm ci
-      - name: Build and verify standalone HTML
-        working-directory: app
-        run: npm run build && npm run check:build
-      - name: Install isolated browser test tools
-        run: |
-          npm install --prefix "$RUNNER_TEMP/caffoot-browser-tools" --no-save --no-package-lock --no-audit --no-fund playwright@1.56.1
-          "$RUNNER_TEMP/caffoot-browser-tools/node_modules/.bin/playwright" install --with-deps chromium
       - name: Determine browser regression scope
         id: scope
         shell: bash
@@ -43,7 +28,18 @@ jobs:
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           EVENT_NAME: ${{ github.event_name }}
           BASE_REF: ${{ github.base_ref }}
+          EVENT_ACTION: ${{ github.event.action }}
+          PUSH_BEFORE: ${{ github.event.before }}
         run: |
+          # A documentation-only synchronisation must not reinstall Chromium.
+          # If GitHub does not provide a usable previous SHA, fail safe and test.
+          run_browser=true
+          if [[ "$EVENT_NAME" == "pull_request" && "$EVENT_ACTION" == "synchronize" && "$PUSH_BEFORE" =~ ^[0-9a-f]{40}$ ]] && git cat-file -e "$PUSH_BEFORE^{commit}" 2>/dev/null; then
+            if git diff --name-only "$PUSH_BEFORE" "$HEAD_SHA" > "$RUNNER_TEMP/pushed-files" && [[ -s "$RUNNER_TEMP/pushed-files" ]] && ! grep -Eqv '^(README([.]md)?|docs/|.*[.]md$)' "$RUNNER_TEMP/pushed-files"; then
+              run_browser=false
+            fi
+          fi
+          echo "run_browser=$run_browser" >> "$GITHUB_OUTPUT"
           full=true
           if [[ "$EVENT_NAME" == "pull_request" && "$BASE_REF" != "main" ]]; then
             if git diff --name-only "$BASE_SHA" "$HEAD_SHA" > "$RUNNER_TEMP/changed-files"; then
@@ -55,13 +51,33 @@ jobs:
             fi
           fi
           echo "full=$full" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-node@v4
+        if: steps.scope.outputs.run_browser == 'true'
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - name: Install pinned build dependencies
+        if: steps.scope.outputs.run_browser == 'true'
+        working-directory: app
+        run: npm ci
+      - name: Build and verify standalone HTML
+        if: steps.scope.outputs.run_browser == 'true'
+        working-directory: app
+        run: npm run build && npm run check:build
+      - name: Install isolated browser test tools
+        if: steps.scope.outputs.run_browser == 'true'
+        run: |
+          npm install --prefix "$RUNNER_TEMP/caffoot-browser-tools" --no-save --no-package-lock --no-audit --no-fund playwright@1.56.1
+          "$RUNNER_TEMP/caffoot-browser-tools/node_modules/.bin/playwright" install --with-deps chromium
       - name: Run consolidated audit scenarios in Chromium
-        if: steps.scope.outputs.full == 'true'
+        if: steps.scope.outputs.run_browser == 'true' && steps.scope.outputs.full == 'true'
         working-directory: app
         env:
           NODE_PATH: ${{ runner.temp }}/caffoot-browser-tools/node_modules
         run: node test-browser-consolidated-audit.cjs
       - name: Run issue 99 focused form regression in Chromium
+        if: steps.scope.outputs.run_browser == 'true'
         working-directory: app
         env:
           NODE_PATH: ${{ runner.temp }}/caffoot-browser-tools/node_modules
