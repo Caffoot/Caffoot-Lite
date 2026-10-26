@@ -3525,6 +3525,7 @@ function hierarchyValidateTypes(subnets) {
             const previous=appState.installedSoftware;
             const entry=phase19BSoftware().find(x=>x.key===key&&x.archived);
             if(!entry)return;
+            if(phase120SoftwareOptions().some(x=>x.key!==key&&String(x.label||'').trim().toLowerCase()===String(entry.label||'').trim().toLowerCase())){showToast('Another available software entry already uses that name. Rename it before restoring this one.','error');return;}
             appState.installedSoftware=phase19BSoftware().map(x=>x.key===key?{...x,archived:false}:x);
             if(!saveState()){appState.installedSoftware=previous;showToast('Could not restore software.','error');return;}
             renderContent();showToast('Software restored to available choices.');
