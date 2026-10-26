@@ -8760,6 +8760,23 @@ function hierarchyValidateTypes(subnets) {
                 requestAnimationFrame(() => ghost.remove());
             }
         });
+        // A multi-U item is rendered as one tall element. Resolve the actual U
+        // under the pointer rather than always using that element's top U.
+        function phase13DropPosition(event,target) {
+            const topU=Number(target.dataset.rackDropU);
+            const accessoryId=target.dataset.rackAccessory;
+            const deviceId=target.dataset.rackDevice;
+            const item=accessoryId?(appState.rackAccessories||[]).find(a=>a.id===accessoryId):
+                deviceId?appState.devices.find(d=>d.id===deviceId):null;
+            if(!item)return topU;
+            const height=accessoryId?Number(item.heightU):
+                Math.max(1,Number(item.rackUHeight)||(Number(item.rackUEnd)-Number(item.rackUStart)+1)||1);
+            if(!Number.isFinite(height)||height<=1)return topU;
+            const rect=target.getBoundingClientRect();
+            if(!rect.height)return topU;
+            const offset=Math.min(height-1,Math.max(0,Math.floor((event.clientY-rect.top)/rect.height*height)));
+            return topU-offset;
+        }
         document.addEventListener('dragover', event => {
             const target = event.target.closest('[data-rack-drop-u]');
             if (!target || (!phase13DraggedDeviceId&&!phase13CDraggedAccessoryId)) return;
@@ -8769,7 +8786,7 @@ function hierarchyValidateTypes(subnets) {
             const accessory=(appState.rackAccessories||[]).find(a=>a.id===phase13CDraggedAccessoryId);
             if (!device&&!accessory) return;
             const height = accessory?accessory.heightU:Math.max(1, Number(device.rackUHeight) || (Number(device.rackUEnd) - Number(device.rackUStart) + 1) || 1);
-            const startU = Number(target.dataset.rackDropU);
+            const startU = phase13DropPosition(event,target);
             const rackId = target.dataset.rackDropId;
             const error = accessory?phase13CAccessoryError({...accessory,rackId,face:activeRackFace,startU},accessory.id):validateRackPlacement(device.id, rackId, activeRackFace, startU, startU + height - 1);
             if (target.classList.contains('phase13-drop-target')) return;
@@ -8794,8 +8811,8 @@ function hierarchyValidateTypes(subnets) {
             const deviceId = phase13DraggedDeviceId, accessoryId=phase13CDraggedAccessoryId;
             phase13DraggedDeviceId = null;phase13CDraggedAccessoryId=null;
             phase13ClearDropPreview();
-            if(accessoryId)phase13CMoveAccessory(accessoryId,target.dataset.rackDropId,Number(target.dataset.rackDropU));
-            else phase13MoveDevice(deviceId, target.dataset.rackDropId, Number(target.dataset.rackDropU));
+            if(accessoryId)phase13CMoveAccessory(accessoryId,target.dataset.rackDropId,phase13DropPosition(event,target));
+            else phase13MoveDevice(deviceId, target.dataset.rackDropId, phase13DropPosition(event,target));
         });
         document.addEventListener('dragend', () => {
             phase17dStopAutoScroll();
