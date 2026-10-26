@@ -15,6 +15,10 @@
 9. Explain work to the product owner in plain English first. Technical documentation may use precise developer terminology.
 10. If a significant defect, unsafe behaviour or ambiguity is found, log its evidence and severity. Investigate and propose a remedy before declaring the relevant workflow verified. Any application code fix requires explicit approval and separate testing and release control.
 
+## Evidence first rule for every session
+
+Before proposing investigation, implementation or additional testing, follow the [mandatory evidence first gate](SESSION-RECOVERY.md#mandatory-evidence-first-gate-before-proposing-work). Review prior issue and PR decisions, historical test matrices, executed GitHub Actions logs and relevant source revisions against the **agreed acceptance criteria**. A missing test name in the current suite is not proof that the behaviour has never been tested. Do not repeat passing tests or widen the scope merely because a new chat has started. Record any genuine gap and its justification in the existing issue before proposing new tests. Reconcile and close work whose agreed requirements are already satisfied, while retaining unrelated workflow gaps accurately.
+
 ## Baseline project sequence
 
 - First, inspect the exact v1.3.0 release and document all existing workflows.
