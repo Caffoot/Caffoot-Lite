@@ -743,6 +743,45 @@ const { chromium } = require('playwright');
       });
       assert.equal(result.hostExists,false,'Unreferenced host deletion must remain available');
     });
+    await scenario('#134 virtual machine host selector is on General for Add and Edit', async page => {
+      const result = await page.evaluate(() => {
+        const host={id:'fixture-134-physical',name:'Fixture Hypervisor',type:'Server - Physical',status:'Active',typeDetails:{serverService_Hypervisor:true,hypervisorProduct:'Proxmox VE'}};
+        const guest={id:'fixture-134-guest',name:'Fixture Guest',type:'Server - Virtual',status:'Active',virtualHostId:host.id,virtualPlatform:'Proxmox VE',typeDetails:{}};
+        appState.devices.push(host,guest);
+        openDeviceModal();
+        const type=document.getElementById('dev-type');
+        type.value='Server - Virtual';
+        type.dispatchEvent(new Event('change',{bubbles:true}));
+        const virtualBlock=document.getElementById('phase120-virtual-fields');
+        const add={
+          inGeneral:!!document.querySelector('[data-device-form] .form-section-card:first-child #phase120-virtual-fields'),
+          inHardware:!!document.querySelector('[data-device-form] .form-section-card:nth-child(2) #phase120-virtual-fields'),
+          visible:!!virtualBlock&&!virtualBlock.classList.contains('hidden'),
+          hostAvailable:!!document.querySelector('#dev-virtual-host option[value="fixture-134-physical"]')
+        };
+        document.getElementById('dev-virtual-host').value=host.id;
+        const selected=document.getElementById('dev-virtual-host').value;
+        openDeviceModal(guest.id);
+        const edit={
+          inGeneral:!!document.querySelector('[data-device-form] .form-section-card:first-child #phase120-virtual-fields'),
+          selected:document.getElementById('dev-virtual-host')?.value,
+          visible:!document.getElementById('phase120-virtual-fields')?.classList.contains('hidden')
+        };
+        document.getElementById('dev-type').value='Desktop';
+        document.getElementById('dev-type').dispatchEvent(new Event('change',{bubbles:true}));
+        const hiddenForDesktop=document.getElementById('phase120-virtual-fields')?.classList.contains('hidden');
+        return {add,selected,edit,hiddenForDesktop};
+      });
+      assert.equal(result.add.inGeneral,true,'Virtual host selector belongs to General');
+      assert.equal(result.add.inHardware,false,'Hardware must not contain duplicate virtual host controls');
+      assert.equal(result.add.visible,true,'Add virtual server must reveal host controls');
+      assert.equal(result.add.hostAvailable,true,'Eligible hypervisor must be selectable');
+      assert.equal(result.selected,'fixture-134-physical');
+      assert.equal(result.edit.inGeneral,true,'Edit virtual server must use same General controls');
+      assert.equal(result.edit.visible,true,'Edit virtual server must reveal host controls');
+      assert.equal(result.edit.selected,'fixture-134-physical','Saved host selection must populate Edit');
+      assert.equal(result.hiddenForDesktop,true,'Unrelated device types must hide virtual controls');
+    });
     await scenario('#134 shared Add and Edit physical host controls preserve legacy values', async page => {
       const result = await page.evaluate(() => {
         const type='Server - Physical';
