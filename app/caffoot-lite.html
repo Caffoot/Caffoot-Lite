@@ -1389,6 +1389,15 @@ function hierarchyValidateTypes(subnets) {
             });
         }
 
+        // Canonicalise known historical rack accessory identifiers on detached data.
+        // Shared by startup loading and backup import; unknown types remain invalid.
+        function phase13CLegacyAccessoryTypes(accessories) {
+            const legacy={fan:'fan_tray',pdu:'pdu_horizontal',vent:'ventilation'};
+            return accessories.map(a=>{
+                if (!a || typeof a!=='object' || !Object.prototype.hasOwnProperty.call(legacy,a.type)) return a;
+                return {...a,type:legacy[a.type]};
+            });
+        }
         function normaliseState(raw) {
             if (!isPlainObject(raw)) throw new Error('Imported data must be a JSON object.');
 
@@ -1410,7 +1419,7 @@ function hierarchyValidateTypes(subnets) {
                 vlans: raw.vlans,
                 racks: raw.racks,
                 devices: phase120SeparateLegacyRackLocation(raw.devices),
-                rackAccessories: Array.isArray(raw.rackAccessories) ? raw.rackAccessories : [],
+                rackAccessories: Array.isArray(raw.rackAccessories) ? phase13CLegacyAccessoryTypes(raw.rackAccessories) : [],
                 deviceTypes: Array.isArray(raw.deviceTypes) ? raw.deviceTypes : cloneDefaultData().deviceTypes,
                 deviceTypeGraphics: isPlainObject(raw.deviceTypeGraphics) ? raw.deviceTypeGraphics : {},
                 deviceLocations: Array.isArray(raw.deviceLocations) ? raw.deviceLocations : cloneDefaultData().deviceLocations,
@@ -2324,13 +2333,20 @@ function hierarchyValidateTypes(subnets) {
             const rackRows=racks.map(r=>{
                 const height=Number(r.heightU)||0;
                 const installed=devices.filter(d=>d.rackId===r.id);
+                const accessories=(Array.isArray(appState.rackAccessories)?appState.rackAccessories:[])
+                    .filter(a=>a.rackId===r.id && a.type!=='pdu_vertical' && a.type!=='cable_vertical');
                 // Front and rear occupancy are separately reported to avoid combining
                 // distinct faces as if they were one physical space.
-                const occupancy=face=>installed.filter(d=>(d.face||'front')===face)
-                    .reduce((sum,d)=>{
-                        const a=Number(d.rackUStart),b=Number(d.rackUEnd??d.rackUStart);
-                        return sum+(Number.isInteger(a)&&Number.isInteger(b)&&b>=a?b-a+1:0);
-                    },0);
+                const occupancy=face=>{
+                    const deviceU=installed.filter(d=>(d.face||'front')===face)
+                        .reduce((sum,d)=>{
+                            const a=Number(d.rackUStart),b=Number(d.rackUEnd??d.rackUStart);
+                            return sum+(Number.isInteger(a)&&Number.isInteger(b)&&b>=a?b-a+1:0);
+                        },0);
+                    const accessoryU=accessories.filter(a=>(a.face||'front')===face)
+                        .reduce((sum,a)=>sum+(Number(a.heightU)||0),0);
+                    return deviceU+accessoryU;
+                };
                 const front=occupancy('front'),rear=occupancy('rear');
                 const percent=height?Math.round(Math.max(front,rear)/height*100):0;
                 return {name:r.name||r.id,height,front,rear,devices:installed.length,percent};
@@ -2446,13 +2462,10 @@ function hierarchyValidateTypes(subnets) {
             const rackedDevices = devices.filter(d => d.rackId && rackIds.has(d.rackId)).length;
             const unmountedDevices = devices.length - rackedDevices;
             const rackCapacity = racks.reduce((sum, r) => sum + (Number(r.heightU) || 0), 0);
-            const occupiedUs = devices.reduce((sum, d) => {
-                if (!d.rackId) return sum;
-                const start = Number(d.rackUStart);
-                const end = Number(d.rackUEnd ?? d.rackUStart);
-                if (!Number.isInteger(start) || !Number.isInteger(end) || end < start) return sum;
-                return sum + (end - start + 1);
-            }, 0);
+            // Use the same per-face device and ordinary-accessory occupancy as rack reports.
+            // Front and rear can share U positions; count the fuller face once per rack.
+            const occupiedUs = phase10DReportData().racks.reduce(
+                (sum, rack) => sum + Math.max(rack.front, rack.rear), 0);
             const freeUs = Math.max(0, rackCapacity - occupiedUs);
             const occupancyPct = rackCapacity ? Math.min(100, Math.round((occupiedUs / rackCapacity) * 100)) : 0;
 
@@ -5961,10 +5974,10 @@ function hierarchyValidateTypes(subnets) {
             const status = d.status || 'Active';
             const detailRows = phase19CDetailRows(d, field);
             const activeFields = new Set(phase19BFieldsFor(d.type));
-            const softwareEntries=[...phase120SoftwareOptions(),...phase19BSoftware().filter(x=>x.archived)].filter((x,i,all)=>all.findIndex(y=>y.key===x.key)===i).filter(x=>activeFields.has(x.key) && (d.typeDetails?.[x.key]===true||d[x.key]===true));
+            const softwareEntries=[...phase120SoftwareOptions(),...phase19BSoftware().filter(x=>x.archived)].filter((x,i,all)=>all.findIndex(y=>y.key===x.key)===i).filter(x=>(activeFields.has(x.key)||x.archived) && (d.typeDetails?.[x.key]===true||d[x.key]===true));
             const installedSoftware=softwareEntries.sort((a,b)=>String(a.label||'').localeCompare(String(b.label||''),undefined,{sensitivity:'base'})).map(x=>x.archived?`<div class="phase14c-field"><dt>${safe(x.label)}</dt><dd><span>Installed</span> <span class="inline-flex items-center gap-1 rounded-full border border-red-300 bg-red-50 px-2 py-0.5 text-xs font-bold text-red-700 dark:border-red-700 dark:bg-red-950/50 dark:text-red-300" title="Installed on this device; no longer available in the software catalogue"><i class="fa-solid fa-box-archive" aria-hidden="true"></i>Archived</span><button type="button" data-action="archived-software-remove" data-id="${safe(d.id)}" data-name="${safe(x.key)}" class="mt-2 block rounded-lg border border-red-300 px-2 py-1 text-xs font-semibold text-red-700 hover:bg-red-50 dark:border-red-700 dark:text-red-300 dark:hover:bg-red-950/40">Mark as Uninstalled</button></dd></div>`:field(x.label,'Installed')).join('');
             const deviceDetails=d.typeDetails||{};
-            const serverServiceEntries=[...phase120AvailableServerServices(),...phase19BServerFunctions().filter(x=>x.archived)].filter((x,i,all)=>all.findIndex(y=>y.key===x.key)===i).filter(x=>activeFields.has(x.key) && (deviceDetails[x.key]===true||d[x.key]===true)).sort((a,b)=>String(a.label||'').localeCompare(String(b.label||''),undefined,{sensitivity:'base'}));
+            const serverServiceEntries=[...phase120AvailableServerServices(),...phase19BServerFunctions().filter(x=>x.archived)].filter((x,i,all)=>all.findIndex(y=>y.key===x.key)===i).filter(x=>(activeFields.has(x.key)||x.archived) && (deviceDetails[x.key]===true||d[x.key]===true)).sort((a,b)=>String(a.label||'').localeCompare(String(b.label||''),undefined,{sensitivity:'base'}));
             const serverServices=serverServiceEntries.map(x=>`<div class="phase14c-field"><dt>${safe(x.label)}</dt><dd>Enabled${x.archived?' <span class="inline-flex items-center gap-1 rounded-full border border-red-300 bg-red-50 px-2 py-0.5 text-xs font-bold text-red-700 dark:border-red-700 dark:bg-red-950/50 dark:text-red-300"><i class="fa-solid fa-box-archive" aria-hidden="true"></i>Archived</span>':''}</dd></div>`).join('');
             const platformDetails=[['Operating system',deviceDetails.softwarePlatform||deviceDetails.os],['OS version',deviceDetails.softwareVersion],['Windows licence',deviceDetails.windowsLicence]].filter(([label])=>['server','computer'].includes(phase19BTypeGroups[String(d.type||'').toLowerCase().trim()]) || label==='Operating system' && activeFields.has('os')).filter(([,value])=>value!==undefined&&value!==null&&value!=='').map(([label,value])=>field(label,value)).join('');
             const historicalSnapshots = Array.isArray(d.previousTypeDetails) ? [...d.previousTypeDetails].reverse() : [];
@@ -8066,6 +8079,7 @@ function hierarchyValidateTypes(subnets) {
                 <h2 class="text-xl font-bold text-slate-900 dark:text-white">Backup Import Could Not Continue</h2>
                 <p class="text-sm text-slate-700 dark:text-slate-200">Your existing inventory has not been replaced.</p>
                 <div class="max-h-64 overflow-y-auto whitespace-pre-wrap break-words rounded-xl border border-amber-400 bg-amber-50 p-4 text-sm text-amber-950 dark:bg-slate-900 dark:text-amber-200">${escapeHtml(String(message))}</div>
+                <p class="text-sm text-slate-700 dark:text-slate-200">Check that this is a supported Caffoot Lite JSON backup. If the problem continues, keep the original backup unchanged and report the error details. Do not manually bypass inventory validation.</p>
                 <button type="button" onclick="closeModal()" class="rounded-xl bg-blue-800 px-5 py-2.5 font-semibold text-white">Close</button>
             </div>`);
         }
@@ -8756,6 +8770,23 @@ function hierarchyValidateTypes(subnets) {
                 requestAnimationFrame(() => ghost.remove());
             }
         });
+        // A multi-U item is rendered as one tall element. Resolve the actual U
+        // under the pointer rather than always using that element's top U.
+        function phase13DropPosition(event,target) {
+            const topU=Number(target.dataset.rackDropU);
+            const accessoryId=target.dataset.rackAccessory;
+            const deviceId=target.dataset.rackDevice;
+            const item=accessoryId?(appState.rackAccessories||[]).find(a=>a.id===accessoryId):
+                deviceId?appState.devices.find(d=>d.id===deviceId):null;
+            if(!item)return topU;
+            const height=accessoryId?Number(item.heightU):
+                Math.max(1,Number(item.rackUHeight)||(Number(item.rackUEnd)-Number(item.rackUStart)+1)||1);
+            if(!Number.isFinite(height)||height<=1)return topU;
+            const rect=target.getBoundingClientRect();
+            if(!rect.height)return topU;
+            const offset=Math.min(height-1,Math.max(0,Math.floor((event.clientY-rect.top)/rect.height*height)));
+            return topU-offset;
+        }
         document.addEventListener('dragover', event => {
             const target = event.target.closest('[data-rack-drop-u]');
             if (!target || (!phase13DraggedDeviceId&&!phase13CDraggedAccessoryId)) return;
@@ -8765,7 +8796,7 @@ function hierarchyValidateTypes(subnets) {
             const accessory=(appState.rackAccessories||[]).find(a=>a.id===phase13CDraggedAccessoryId);
             if (!device&&!accessory) return;
             const height = accessory?accessory.heightU:Math.max(1, Number(device.rackUHeight) || (Number(device.rackUEnd) - Number(device.rackUStart) + 1) || 1);
-            const startU = Number(target.dataset.rackDropU);
+            const startU = phase13DropPosition(event,target);
             const rackId = target.dataset.rackDropId;
             const error = accessory?phase13CAccessoryError({...accessory,rackId,face:activeRackFace,startU},accessory.id):validateRackPlacement(device.id, rackId, activeRackFace, startU, startU + height - 1);
             if (target.classList.contains('phase13-drop-target')) return;
@@ -8790,8 +8821,8 @@ function hierarchyValidateTypes(subnets) {
             const deviceId = phase13DraggedDeviceId, accessoryId=phase13CDraggedAccessoryId;
             phase13DraggedDeviceId = null;phase13CDraggedAccessoryId=null;
             phase13ClearDropPreview();
-            if(accessoryId)phase13CMoveAccessory(accessoryId,target.dataset.rackDropId,Number(target.dataset.rackDropU));
-            else phase13MoveDevice(deviceId, target.dataset.rackDropId, Number(target.dataset.rackDropU));
+            if(accessoryId)phase13CMoveAccessory(accessoryId,target.dataset.rackDropId,phase13DropPosition(event,target));
+            else phase13MoveDevice(deviceId, target.dataset.rackDropId, phase13DropPosition(event,target));
         });
         document.addEventListener('dragend', () => {
             phase17dStopAutoScroll();

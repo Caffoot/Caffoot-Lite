@@ -1367,5 +1367,163 @@ const { chromium } = require('playwright');
       assert.equal(await page.evaluate(() => appState.serverFunctions.find(x => x.key === 'serverService_issue94fictional')?.archived),
         true,'Archived service must remain archived after reload');
     });
+    await scenario('#97 rack report and dashboard count ordinary accessories but not vertical 0U', async page => {
+      const result = await page.evaluate(() => {
+        appState.racks.push({id:'fixture97rack',name:'Fixture #97 rack',heightU:12});
+        appState.devices.push({id:'fixture97server',name:'Fixture #97 server',type:'Server - Physical',
+          rackId:'fixture97rack',face:'front',rackUStart:2,rackUEnd:3});
+        appState.rackAccessories.push(
+          {id:'fixture97shelf',name:'Shelf',type:'shelf',rackId:'fixture97rack',face:'front',startU:5,heightU:1},
+          {id:'fixture97horizontal',name:'PDU',type:'pdu_horizontal',rackId:'fixture97rack',face:'rear',startU:6,heightU:1},
+          {id:'fixture97vertical',name:'Vertical PDU',type:'pdu_vertical',rackId:'fixture97rack',face:'front',startU:1,heightU:12},
+          {id:'fixture97cable',name:'Vertical cable',type:'cable_vertical',rackId:'fixture97rack',face:'rear',startU:1,heightU:12}
+        );
+        const row=phase10DReportData().racks.find(r=>r.name==='Fixture #97 rack');
+        return {row};
+      });
+      assert.equal(result.row.front,3,'Front should include 2U server and 1U shelf');
+      assert.equal(result.row.rear,1,'Rear should include horizontal 1U PDU only');
+      assert.equal(result.row.percent,25,'Capacity uses fuller face, excluding vertical 0U');
+    });
+    await scenario('#97 legacy rack accessory types normalise on browser startup', async page => {
+      await page.evaluate(() => {
+        const saved=JSON.parse(JSON.stringify(appState));
+        saved.racks.push({id:'fixture97startup',name:'Fixture 97 startup rack',heightU:9});
+        saved.rackAccessories.push({id:'fixture97startupfan',rackId:'fixture97startup',
+          face:'front',startU:1,heightU:2,type:'fan',name:'Historical fan'});
+        localStorage.setItem('caffoot_state',JSON.stringify(saved));
+      });
+      await page.reload({waitUntil:'load'});
+      const result=await page.evaluate(() => ({
+        type:appState.rackAccessories.find(a=>a.id==='fixture97startupfan')?.type,
+        recovery:!!phase17AStorageRecovery,
+        storedType:JSON.parse(localStorage.getItem('caffoot_state')).rackAccessories
+          .find(a=>a.id==='fixture97startupfan')?.type
+      }));
+      assert.equal(result.type,'fan_tray','Historical startup accessory should be canonicalised');
+      assert.equal(result.recovery,false,'Valid historical inventory must load without recovery');
+      assert.equal(result.storedType,'fan','Startup normalisation must not silently rewrite stored inventory');
+    });
+    await scenario('#97 legacy rack accessory backup types migrate safely', async page => {
+      const result=await page.evaluate(() => {
+        const raw=JSON.parse(JSON.stringify(appState));
+        raw.racks.push({id:'fixture97legacyrack',name:'Fixture 97 legacy rack',heightU:12});
+        raw.rackAccessories.push(
+          {id:'fixture97fan',rackId:'fixture97legacyrack',face:'front',startU:1,heightU:2,type:'fan',name:'Legacy fan'},
+          {id:'fixture97pdu',rackId:'fixture97legacyrack',face:'rear',startU:3,heightU:1,type:'pdu',name:'Legacy PDU'},
+          {id:'fixture97vent',rackId:'fixture97legacyrack',face:'front',startU:5,heightU:1,type:'vent',name:'Legacy vent'}
+        );
+        const original=JSON.stringify(raw);
+        const candidate=phase16CCheckBackup(raw);
+        const converted=candidate.rackAccessories.filter(x=>x.rackId==='fixture97legacyrack')
+          .map(x=>({type:x.type,startU:x.startU,heightU:x.heightU,face:x.face}));
+        const invalid=JSON.parse(original);
+        invalid.rackAccessories[invalid.rackAccessories.length-1].type='unknown_legacy_type';
+        let rejected=false;
+        try {phase16CCheckBackup(invalid);} catch(e){rejected=/unsupported accessory type/.test(e.message);}
+        return {untouched:JSON.stringify(raw)===original,converted,rejected};
+      });
+      assert.equal(result.untouched,true,'Import migration must not mutate the original backup');
+      assert.deepEqual(result.converted,[
+        {type:'fan_tray',startU:1,heightU:2,face:'front'},
+        {type:'pdu_horizontal',startU:3,heightU:1,face:'rear'},
+        {type:'ventilation',startU:5,heightU:1,face:'front'}
+      ]);
+      assert.equal(result.rejected,true,'Unknown accessory types must remain rejected');
+    });
+    await scenario('#97 multi-U accessory can drag one U within its own footprint', async page => {
+      const result=await page.evaluate(() => {
+        appState.racks.push({id:'fixture97drag',name:'Fixture 97 drag rack',heightU:9});
+        appState.rackAccessories.push({id:'fixture97drag6',name:'Fixture 97 six U accessory',
+          type:'shelf',rackId:'fixture97drag',face:'front',startU:1,heightU:6});
+        const target=document.createElement('div');
+        target.dataset.rackAccessory='fixture97drag6';
+        target.dataset.rackDropU='6';
+        target.getBoundingClientRect=()=>({top:100,height:240});
+        const resolved=phase13DropPosition({clientY:100+4*40+20},target);
+        const originalFace=activeRackFace;
+        activeRackFace='front';
+        let moved;
+        try { moved=phase13CMoveAccessory('fixture97drag6', 'fixture97drag', resolved); }
+        finally { activeRackFace=originalFace; }
+        return {resolved,moved,start:appState.rackAccessories.find(a=>a.id==='fixture97drag6')?.startU};
+      });
+      assert.equal(result.resolved,2,'Pointer over U2 must resolve to U2 rather than top U6');
+      assert.equal(result.start,2,'6U accessory should move to U2–U7');
+    });
+    await scenario('#97 rack CSV export uses accessory-aware report rows', async page => {
+      const result=await page.evaluate(async () => {
+        appState.racks.push({id:'fixture97csvrack',name:'Fixture 97 CSV rack',heightU:10});
+        appState.devices.push({id:'fixture97csvserver',name:'Fixture 97 CSV server',type:'Server - Physical',
+          rackId:'fixture97csvrack',face:'front',rackUStart:2,rackUEnd:3});
+        appState.rackAccessories.push(
+          {id:'fixture97csvshelf',name:'Shelf',type:'shelf',rackId:'fixture97csvrack',face:'front',startU:5,heightU:1},
+          {id:'fixture97csvvertical',name:'Vertical PDU',type:'pdu_vertical',rackId:'fixture97csvrack',face:'front',startU:1,heightU:10}
+        );
+        const original=URL.createObjectURL;
+        let exported=null;
+        URL.createObjectURL=blob=>{exported=blob;return 'blob:fixture97';};
+        const click=HTMLAnchorElement.prototype.click;
+        HTMLAnchorElement.prototype.click=function(){};
+        try { phase10DDownloadCsv('racks'); }
+        finally { URL.createObjectURL=original;HTMLAnchorElement.prototype.click=click; }
+        return exported ? await exported.text() : '';
+      });
+      assert.match(result,/"Fixture 97 CSV rack","10","3","0","1","30"/,
+        'Rack CSV should include 2U device and 1U shelf but not vertical 0U');
+    });
+    await scenario('#97 archived device assignments persist across reload and unrelated edit', async page => {
+      await page.evaluate(() => {
+        appState.installedSoftware.push({key:'software_fixture97persist',label:'Fixture 97 retained software',archived:true});
+        appState.serverFunctions.push({key:'serverService_fixture97persist',label:'Fixture 97 retained service',archived:true});
+        appState.devices.push({id:'fixture97persist',name:'Fixture 97 retained device',type:'Server - Physical',
+          typeDetails:{software_fixture97persist:true,serverService_fixture97persist:true}});
+        if (!saveState()) throw Error('Unable to persist #97 baseline');
+      });
+      await page.reload({waitUntil:'load'});
+      const result=await page.evaluate(() => {
+        const device=appState.devices.find(d=>d.id==='fixture97persist');
+        if (!device) return {missing:true};
+        device.notes='Unrelated #97 note edit';
+        if (!saveState()) throw Error('Unable to persist unrelated edit');
+        phase14CViewDevice(device.id);
+        return {software:document.body.textContent.includes('Fixture 97 retained software'),
+          service:document.body.textContent.includes('Fixture 97 retained service'),
+          softwareAssigned:device.typeDetails?.software_fixture97persist,
+          serviceAssigned:device.typeDetails?.serverService_fixture97persist};
+      });
+      assert.equal(result.software,true,'Archived software must remain visible after reload');
+      assert.equal(result.service,true,'Archived service must remain visible after reload');
+      assert.equal(result.softwareAssigned,true,'Unrelated edit must preserve software assignment');
+      assert.equal(result.serviceAssigned,true,'Unrelated edit must preserve service assignment');
+      await page.reload({waitUntil:'load'});
+      const persisted=await page.evaluate(() => {
+        const d=appState.devices.find(x=>x.id==='fixture97persist');
+        return {notes:d?.notes,software:d?.typeDetails?.software_fixture97persist,
+          service:d?.typeDetails?.serverService_fixture97persist};
+      });
+      assert.equal(persisted.notes,'Unrelated #97 note edit');
+      assert.equal(persisted.software,true);
+      assert.equal(persisted.service,true);
+    });
+    await scenario('#97 archived software and server service remain visible in device details', async page => {
+      const result = await page.evaluate(() => {
+        const software={key:'software_fixture97',label:'Fixture #97 legacy software',archived:true,deviceTypes:['Server - Physical']};
+        const service={key:'serverService_fixture97',label:'Fixture #97 legacy service',archived:true};
+        appState.installedSoftware.push(software);
+        appState.serverFunctions.push(service);
+        appState.devices.push({id:'fixture97device',name:'Fixture #97 device',type:'Server - Physical',
+          typeDetails:{[software.key]:true,[service.key]:true}});
+        phase14CViewDevice('fixture97device');
+        const text=document.body.textContent||'';
+        return {software:text.includes(software.label),service:text.includes(service.label),
+          softwareAvailable:phase120SoftwareOptions().some(x=>x.key===software.key),
+          serviceAvailable:phase120AvailableServerServices().some(x=>x.key===service.key)};
+      });
+      assert.equal(result.software,true,'Archived installed software must appear');
+      assert.equal(result.service,true,'Archived enabled service must appear');
+      assert.equal(result.softwareAvailable,false,'Archived software must not be offered for assignment');
+      assert.equal(result.serviceAvailable,false,'Archived service must not be offered for assignment');
+    });
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode=1; });
