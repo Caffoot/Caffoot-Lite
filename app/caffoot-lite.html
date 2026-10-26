@@ -7588,7 +7588,7 @@ function hierarchyValidateTypes(subnets) {
                     '</div><h3 class="phase16c-group-title">Advanced Recovery</h3>' +
                     '<p class="phase16c-group-note">Use these tools only when recovering or resetting inventory.</p>' +
                     '<div class="phase16c-group-grid">' +
-                    panel('Recovery Snapshot','Download a safety snapshot created by a restore or clean start. This option is unavailable until a snapshot exists.',button('phase11-download-snapshot','Download Safety Snapshot','fa-shield-halved',personalSafeStorageGet(SAFETY_SNAPSHOT_KEY)?'':'disabled')) +
+                    panel('Recover previous inventory','When you restore a backup or clear your inventory, Caffoot Lite keeps a safety copy of the previous data in this browser. Download it here if you need it. This option is unavailable until a recovery copy exists.',button('phase11-download-snapshot','Download recovery copy','fa-shield-halved',personalSafeStorageGet(SAFETY_SNAPSHOT_KEY)?'':'disabled')) +
                     panel('Danger Zone — Clear System','Permanently reset all inventory, IPAM records and managed options in this browser. Download a backup first.',button('phase16a-clear-system','Clear System / Clean Start','fa-triangle-exclamation')) +
                     '</div>';
             } else if (section === 'preferences') {
