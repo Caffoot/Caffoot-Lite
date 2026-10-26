@@ -257,11 +257,13 @@ const { chromium } = require('playwright');
       const originalState=appState, originalSave=saveState, originalToast=showToast;
       const stored=localStorage.getItem('caffoot_state'), messages=[];
       const results={};
+      const modelMaker=Object.keys(phase120HardwareSeed['Server - Physical']||{})[0];
+      if(!modelMaker)throw Error('Issue #157 test requires a built-in physical server manufacturer');
       const fixture=()=>({
         ...originalState,devices:[],
         hardwareCatalogue:[
-          {id:'issue157-model-a',type:'Server - Physical',manufacturer:'Fictional Maker',model:'Fictional Model A'},
-          {id:'issue157-model-b',type:'Server - Physical',manufacturer:'Fictional Maker',model:'Fictional Model B'}],
+          {id:'issue157-model-a',type:'Server - Physical',manufacturer:modelMaker,model:'Fictional Model A'},
+          {id:'issue157-model-b',type:'Server - Physical',manufacturer:modelMaker,model:'Fictional Model B'}],
         installedSoftware:[
           {key:'issue157-software-a',label:'Fictional Software A',deviceTypes:['Server - Physical']},
           {key:'issue157-software-b',label:'Fictional Software B',deviceTypes:['Server - Physical']}],
