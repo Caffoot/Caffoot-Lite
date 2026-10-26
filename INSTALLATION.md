@@ -12,11 +12,11 @@ Caffoot Lite is a standalone HTML application. You do **not** need Docker, Node.
 
 **Export JSON backups regularly and ALWAYS before upgrades, moves, renames or resets.** Save them outside the browser and test restoration. The backup may include sensitive network information.
 
-**Current published stable release:** [v1.3.0](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.0), published 21 October 2026. Earlier releases remain available on GitHub.
+**Current published stable release:** [v1.3.1](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.1), published 26 October 2026. Earlier releases remain available on GitHub.
 
 ## Download the released application
 
-Use the [latest stable release](https://github.com/Caffoot/Caffoot-Lite/releases/latest) to download the current published application. v1.3.0 includes the earlier Devices & Intelligence improvements and updated Network Rack management.
+Use the [latest stable release](https://github.com/Caffoot/Caffoot-Lite/releases/latest) to download the current published application. v1.3.1 builds on v1.3.0, which includes the earlier Devices & Intelligence improvements and updated Network Rack management.
 
 1. Visit the [Caffoot Lite GitHub repository](https://github.com/Caffoot/Caffoot-Lite).
 2. Open **Releases** and select the latest stable release.
@@ -27,9 +27,13 @@ Use the [latest stable release](https://github.com/Caffoot/Caffoot-Lite/releases
 
 If your browser downloads the file instead of opening it, use the browser's **File → Open File** option to open the saved `.html` file.
 
-## What's included in v1.3.0
+## What's included in v1.3.1
 
-v1.3.0 adds the **Network Racks** workspace with Rack Overview, Rack Inventory and Rack Accessories, including rack placement and capacity information. It also includes the earlier v1.2.0 Devices navigation, five-tab Add/Edit Device forms, Device Intelligence and Device Catalogues. See the [v1.3.0 release notes](RELEASE-NOTES-1.3.0.md) and the [historical v1.2.0 release notes](docs/archive/release-notes/RELEASE-NOTES-1.2.0.md). Always back up existing inventory before upgrading.
+v1.3.1 adds inventory safety, rack capacity, IP address reservation and physical hypervisor relationship improvements. See the [v1.3.1 release notes](RELEASE-NOTES-1.3.1.md).
+
+### Previously delivered in v1.3.0
+
+v1.3.0 adds the **Network Racks** workspace with Rack Overview, Rack Inventory and Rack Accessories, including rack placement and capacity information. It also includes the earlier v1.2.0 Devices navigation, five-tab Add/Edit Device forms, Device Intelligence and Device Catalogues. See the [historical v1.3.0 release notes](docs/archive/release-notes/RELEASE-NOTES-1.3.0.md) and the [historical v1.2.0 release notes](docs/archive/release-notes/RELEASE-NOTES-1.2.0.md). Always back up existing inventory before upgrading.
 
 ## First steps
 
@@ -73,7 +77,7 @@ The safe update guide and backups work offline. Newer backup schemas require a c
 
 ## Complete release package
 
-For the current published **v1.3.0** release, open the [v1.3.0 release page](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.0) and download the versioned `Caffoot-Lite-1.3.0.zip` asset, or use the standalone `Caffoot-Lite.html` asset. Extract the ZIP before opening the HTML file in your browser. Keep the included guides and licence information with the package. Where provided, use `SHA256SUMS` to check downloaded file integrity. The standalone HTML includes software notices in About Caffoot Lite, available offline. Example backups under `app/fixtures/` are fictional demonstrations; importing one replaces the current inventory after confirmation. For the earlier package, see the [historical v1.2.0 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.2.0).
+For the current published **v1.3.1** release, open the [v1.3.1 release page](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.1) and download the versioned `Caffoot-Lite-1.3.1.zip` asset, or use the standalone `Caffoot-Lite.html` asset. Extract the ZIP before opening the HTML file in your browser. Keep the included guides and licence information with the package. Where provided, use `SHA256SUMS` to check downloaded file integrity. The standalone HTML includes software notices in About Caffoot Lite, available offline. Example backups under `app/fixtures/` are fictional demonstrations; importing one replaces the current inventory after confirmation. For the earlier package, see the [historical v1.2.0 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.2.0).
 
 ### Local file storage scope
 
