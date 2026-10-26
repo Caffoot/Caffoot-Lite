@@ -1,13 +1,13 @@
 # Caffoot Lite — Development Roadmap
 
 **Updated:** 21 October 2026  
-**Current milestone:** v1.3.0 Rack Management published; v1.3.x maintenance and documentation alignment are being reviewed before substantial v1.4.0 development.  
+**Current milestone:** v1.3.1 maintenance published; v1.3.2 usability and release-process improvements are being scoped before substantial v1.4.0 development.  
 **Repository:** `Caffoot/Caffoot-Lite` (public)  
 **Release policy:** Publish publicly only after manual verification, security/privacy review and owner approval.
 
-**Current published stable release:** [v1.3.0](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.0), published 21 October 2026.
+**Current published stable release:** [v1.3.1](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.1), published 26 October 2026.
 
-Caffoot Lite is an offline, standalone single-HTML network inventory and IP address management application. v1.3.0 is the published Rack Management release following the v1.2.x Devices & Intelligence releases; earlier versions remain available as historical releases.
+Caffoot Lite is an offline, standalone single-HTML network inventory and IP address management application. v1.3.1 is the published maintenance release following v1.3.0 Rack Management and the v1.2.x Devices & Intelligence releases; earlier versions remain available as historical releases.
 
 ## Documentation checks for every release
 
@@ -21,7 +21,7 @@ Before publishing **every** new version (including patch releases), complete a d
 
 ## Proposed v1.3.x audit remediation sequence, 23 October 2026
 
-The proposed maintenance sequence is **v1.3.1 inventory safety and integrity**, **v1.3.2 usability and editing consistency**, then **v1.3.3 code clarity and outstanding audit reconciliation**. The [central audit remediation programme](docs/audits/AUDIT-FINDINGS-REMEDIATION-PROGRAMME.md#proposed-v13x-release-allocation-23-october-2026) assigns all 31 findings and tracks function naming, P11 explanatory comments, P12 workflow gates and imported rack fixtures. M-030 documentation accuracy controls apply to every release. Allocations remain provisional and do not authorise application changes, merges or publication. Published v1.3.0 is unchanged.
+The proposed maintenance sequence is **v1.3.1 inventory safety and integrity**, **v1.3.2 usability and editing consistency**, then **v1.3.3 code clarity and outstanding audit reconciliation**. The [central audit remediation programme](docs/audits/AUDIT-FINDINGS-REMEDIATION-PROGRAMME.md#proposed-v13x-release-allocation-23-october-2026) assigns all 31 findings and tracks function naming, P11 explanatory comments, P12 workflow gates and imported rack fixtures. M-030 documentation accuracy controls apply to every release. Allocations remain provisional and do not authorise application changes, merges or publication. Published v1.3.0 remains available as a historical release; v1.3.1 is the latest stable release.
 
 ## Current and proposed milestones
 

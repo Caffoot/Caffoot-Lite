@@ -42,4 +42,4 @@ The following items were recorded before publication and are preserved as a hist
 
 ## What's next
 
-v1.4.0 is an **architecture-first Data & Architecture Foundations** milestone. Storage, durability, migration, deployment simplicity and future multi-user security boundaries will be designed before implementation choices are made. See [ROADMAP.md](ROADMAP.md).
+v1.4.0 is an **architecture-first Data & Architecture Foundations** milestone. Storage, durability, migration, deployment simplicity and future multi-user security boundaries will be designed before implementation choices are made. See [ROADMAP.md](../../../ROADMAP.md).

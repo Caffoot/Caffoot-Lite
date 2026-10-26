@@ -2,6 +2,7 @@
 
 These are preserved release records for previous versions of Caffoot Lite. The latest published release notes remain at the repository root. Historical content is retained as originally written, including the release status stated at the time; consult the [GitHub releases page](https://github.com/Caffoot/Caffoot-Lite/releases) for published assets and dates.
 
+- [v1.3.0](RELEASE-NOTES-1.3.0.md)
 - [v1.2.1](RELEASE-NOTES-1.2.1.md)
 - [v1.2.0](RELEASE-NOTES-1.2.0.md)
 - [v1.1.2](RELEASE-NOTES-1.1.2.md)
