@@ -5,6 +5,7 @@ on:
     paths:
       - 'app/caffoot-lite.html'
       - 'app/test-browser-consolidated-audit.cjs'
+      - 'app/test-browser-issue99.cjs'
       - '.github/workflows/audit-consolidated-chromium.yml'
   workflow_dispatch:
 
@@ -37,3 +38,8 @@ jobs:
         env:
           NODE_PATH: ${{ runner.temp }}/caffoot-browser-tools/node_modules
         run: node test-browser-consolidated-audit.cjs
+      - name: Run issue 99 focused form regression in Chromium
+        working-directory: app
+        env:
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tools/node_modules
+        run: node test-browser-issue99.cjs
