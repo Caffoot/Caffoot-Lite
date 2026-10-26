@@ -326,6 +326,39 @@ const { chromium } = require('playwright');
     });
     for (const [key,value] of Object.entries(editorChecks))
       assert.equal(value,true,'Issue #157 catalogue editor regression failed: '+key);
+    // Issue #157: archive visibility, JSON backup shape and reload round-trip in isolated state.
+    const archiveChecks = await page.evaluate(() => {
+      const previousState=appState, previousSave=saveState, previousToast=showToast;
+      const stored=localStorage.getItem('caffoot_state'), messages=[];
+      try {
+        const keySoftware='issue157-archived-software', keyService='issue157-archived-service';
+        appState={...previousState,devices:[],
+          installedSoftware:[{key:keySoftware,label:'Fictional Archived Software',deviceTypes:['Server - Physical']}],
+          serverFunctions:[{key:keyService,label:'Fictional Archived Service'}]};
+        saveState=()=>true;
+        showToast=(message,kind)=>messages.push({message,kind});
+        phase120SoftwareArchive(keySoftware);
+        phase120ArchiveServerService(keyService);
+        const archived=appState.installedSoftware[0]?.archived===true &&
+          appState.serverFunctions[0]?.archived===true;
+        const absentFromChoices=!phase120AvailableServerServices().some(x=>x.key===keyService) &&
+          !phase120SoftwareOptions().some(x=>x.key===keySoftware);
+        const snapshot=JSON.stringify({installedSoftware:appState.installedSoftware,
+          serverFunctions:appState.serverFunctions});
+        const restored=JSON.parse(snapshot);
+        appState={...appState,...restored};
+        const roundTrip=appState.installedSoftware[0]?.key===keySoftware &&
+          appState.installedSoftware[0]?.archived===true &&
+          appState.serverFunctions[0]?.key===keyService &&
+          appState.serverFunctions[0]?.archived===true;
+        return {archived,absentFromChoices,roundTrip,
+          storageUnchanged:localStorage.getItem('caffoot_state')===stored};
+      } finally {
+        appState=previousState;saveState=previousSave;showToast=previousToast;closeModal(true);
+      }
+    });
+    for (const [key,value] of Object.entries(archiveChecks))
+      assert.equal(value,true,'Issue #157 archive serialization regression failed: '+key);
     console.log('PASS #99 focused form, bulk preview and accessory failure/retry and move/remove rollback');
 
   } finally {
