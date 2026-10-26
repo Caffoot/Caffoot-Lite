@@ -191,7 +191,7 @@ const { chromium } = require('playwright');
     assert.deepEqual(ipProbe.fields, [
       { id: 'ip-status', label: 'Status' },
       { id: 'ip-hostname', label: 'Hostname' },
-      { id: 'ip-notes', label: 'Notes' }
+      { id: 'ip-notes', label: 'IPAM Notes' }
     ], 'Every IPAM allocation field must have its matching accessible label');
     assert.equal(ipProbe.heading, 'Configure IP: 192.168.77.42<img src=x onerror=alert(1)>',
       'IP dialog heading must preserve the literal text');
@@ -294,7 +294,7 @@ const { chromium } = require('playwright');
         setDevicePrimaryIp(device, '10.240.77.11');
         const moved = {
           ip: device.primaryIp,
-          oldExists: Object.prototype.hasOwnProperty.call(appState.ipAllocations, keys[0]),
+          oldAllocation: { ...appState.ipAllocations[keys[0]] },
           newAllocation: { ...appState.ipAllocations['10.240.77.11'] }
         };
         return { rejected, unchanged: before === after, synced, moved };
@@ -313,9 +313,15 @@ const { chromium } = require('playwright');
       'Duplicate, reserved and out-of-subnet IP addresses must be rejected');
     assert(ipamIntegrity.unchanged, 'Rejected IP changes must retain original allocation');
     assert.equal(ipamIntegrity.synced.hostname, 'Updated device');
-    assert.equal(ipamIntegrity.synced.notes, 'Updated notes');
+    assert.equal(ipamIntegrity.synced.notes, 'Original notes',
+      'Device note edits must preserve address-specific IPAM notes');
     assert.equal(ipamIntegrity.moved.ip, '10.240.77.11');
-    assert.equal(ipamIntegrity.moved.oldExists, false, 'Old owned allocation must be released');
+    assert.equal(ipamIntegrity.moved.oldAllocation.status, 'Available',
+      'Old IPAM address must become available after reassignment');
+    assert.equal(ipamIntegrity.moved.oldAllocation.deviceId, '',
+      'Old IPAM address must no longer belong to the moved device');
+    assert.equal(ipamIntegrity.moved.oldAllocation.notes, 'Original notes',
+      'Old IPAM address notes must survive device reassignment');
     assert.equal(ipamIntegrity.moved.newAllocation.hostname, 'Updated device');
     assert.equal(ipamIntegrity.moved.newAllocation.deviceId, 'browser-ipam-device');
     console.log('PASS: Device/IPAM rejection, detail synchronisation and IP reassignment.');
