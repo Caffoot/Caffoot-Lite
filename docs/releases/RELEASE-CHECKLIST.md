@@ -1,5 +1,20 @@
 # Release Checklist
 
+## v1.3.1 final main release gate checkpoint, 26 October 2026
+
+- [x] Verify the exact integrated `main` source revision: `debb04075717a8985d19357ff6e9a5ab8f26e8a3`, including the approved test-only PR #152 merge.
+- [x] Verify standalone HTML and offline Chromium workflow on that SHA: [40290694847](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40290694847), successful.
+- [x] Verify release build, schema-v1 and legacy backup fixture checks, recovery and security checks, and package version on that SHA: [40291173317](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40291173317), successful.
+- [x] Verify the package workflow log reports exact ZIP members, licence notices and extracted byte hash checks passed; versioned ZIP `Caffoot-Lite-1.3.1.zip` generated, not published.
+- [x] Record uploaded candidate Actions artifact ID `12635737479`, archive digest `461ef3a61413c4c7ef8b2325d2a3edf50559b13f3b23238442609429245bc71a`. This is **not** the inner versioned ZIP checksum.
+- [x] Retain previously recorded product owner manual offline and disposable JSON backup/restore acceptance as owner-reported evidence from the earlier correctly versioned candidate, without claiming it was rerun on the final `main` SHA.
+- [x] Keep wider master audit findings and unexecuted workflow test scenarios open; do not reinterpret green targeted checks as full audit completion.
+- [ ] Review and approve this final documentation reconciliation PR and confirm release notes remain unpublished before the release.
+- [ ] Obtain separate explicit product owner approval to tag and publish v1.3.1. Earlier merge approval does not authorise publication.
+- [ ] Publish approved assets from the verified source and verify public ZIP, standalone HTML, SHA256SUMS and actual downloadable asset checksums.
+- [ ] Complete post-publication current-version claims, archive of previous notes, link checks and documentation closeout through a separate reviewed change.
+
+
 Use this checklist for every Caffoot Lite release, including patch releases. Keep changes on a reviewable branch and do not publish until the release owner approves.
 
 ## Before merging
