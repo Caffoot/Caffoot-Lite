@@ -7874,6 +7874,12 @@ function hierarchyValidateTypes(subnets) {
             phase20ValidateBackupVersion(raw);
             const detached = JSON.parse(JSON.stringify(raw));
             const repairs = phase16CLegacyMountRepairs(detached);
+            // Historical rack accessory names remain compatible with newer catalogues.
+            const legacyAccessoryTypes = {fan:'fan_tray',pdu:'pdu_horizontal',vent:'ventilation'};
+            if (Array.isArray(detached.rackAccessories)) for (const accessory of detached.rackAccessories) {
+                if (accessory && typeof accessory === 'object' && Object.prototype.hasOwnProperty.call(legacyAccessoryTypes,accessory.type))
+                    accessory.type = legacyAccessoryTypes[accessory.type];
+            }
             const candidate = normaliseState(detached);
             if (repairs.length) Object.defineProperty(candidate, '_legacyMountRepairs', { value: repairs, enumerable: false });
             return candidate;
@@ -8070,6 +8076,7 @@ function hierarchyValidateTypes(subnets) {
                 <h2 class="text-xl font-bold text-slate-900 dark:text-white">Backup Import Could Not Continue</h2>
                 <p class="text-sm text-slate-700 dark:text-slate-200">Your existing inventory has not been replaced.</p>
                 <div class="max-h-64 overflow-y-auto whitespace-pre-wrap break-words rounded-xl border border-amber-400 bg-amber-50 p-4 text-sm text-amber-950 dark:bg-slate-900 dark:text-amber-200">${escapeHtml(String(message))}</div>
+                <p class="text-sm text-slate-700 dark:text-slate-200">Check that this is a supported Caffoot Lite JSON backup. If the problem continues, keep the original backup unchanged and report the error details. Do not manually bypass inventory validation.</p>
                 <button type="button" onclick="closeModal()" class="rounded-xl bg-blue-800 px-5 py-2.5 font-semibold text-white">Close</button>
             </div>`);
         }
