@@ -2838,7 +2838,7 @@ function hierarchyValidateTypes(subnets) {
                     if (Number.isInteger(u) && u >= 1 && u <= height) used.add(u);
                 }
             });
-            (appState.rackAccessories || []).filter(a => a.rackId === rack.id && a.face === face).forEach(a => {
+            (appState.rackAccessories || []).filter(a => a.rackId === rack.id && a.face === face && !['pdu_vertical','cable_vertical'].includes(a.type)).forEach(a => {
                 for (let u = Number(a.startU); u < Number(a.startU) + Number(a.heightU); u++) {
                     if (Number.isInteger(u) && u >= 1 && u <= height) used.add(u);
                 }
@@ -8357,8 +8357,8 @@ function hierarchyValidateTypes(subnets) {
             ventilation: {label:'Ventilation panel',icon:'fa-wind'},
             fan_tray: {label:'Fan tray',icon:'fa-fan'},
             environmental_sensor: {label:'Environmental sensor (rack-mounted)',icon:'fa-temperature-half'},
-            pdu_vertical: {label:'Vertical 0U PDU',icon:'fa-plug',vertical:true},
-            cable_vertical: {label:'Vertical 0U cable manager',icon:'fa-bars-staggered',vertical:true}
+            pdu_vertical: {label:'Vertical PDU',icon:'fa-plug',vertical:true},
+            cable_vertical: {label:'Vertical Cable Manager',icon:'fa-bars-staggered',vertical:true}
         };
         // Phase 13D: CSS-only rack fascia art; no external images or data changes.
         function phase13DFascia(type, portCount = 24) {

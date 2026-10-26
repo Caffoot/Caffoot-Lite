@@ -120,6 +120,27 @@ const { chromium } = require('playwright');
         assert.equal(persisted.snapshot,result.snapshot);
       });
     }
+    await scenario('#140 vertical accessories do not consume rack U capacity', async page => {
+      const result = await page.evaluate(() => {
+        const rack={id:'fixture-140-rack',name:'18U fixture',heightU:18};
+        appState.racks.push(rack);
+        appState.devices.push({id:'fixture-140-server',name:'2U server',type:'Server - Physical',rackId:rack.id,face:'front',rackUStart:3,rackUEnd:4});
+        appState.rackAccessories.push(
+          {id:'fixture-140-pdu',name:'Vertical PDU',type:'pdu_vertical',rackId:rack.id,face:'front',side:'left',startU:1,heightU:18},
+          {id:'fixture-140-cable',name:'Vertical Cable Manager',type:'cable_vertical',rackId:rack.id,face:'rear',side:'right',startU:1,heightU:18}
+        );
+        const vertical={front:phase13LUsage(rack,'front'),rear:phase13LUsage(rack,'rear')};
+        appState.rackAccessories.push({id:'fixture-140-patch',name:'Patch panel',type:'patch',rackId:rack.id,face:'front',startU:5,heightU:1});
+        const horizontal=phase13LUsage(rack,'front');
+        return {vertical,horizontal};
+      });
+      assert.equal(result.vertical.front.occupied,2);
+      assert.equal(result.vertical.front.available,16);
+      assert.equal(result.vertical.rear.occupied,0);
+      assert.equal(result.vertical.rear.available,18);
+      assert.equal(result.horizontal.occupied,3,'Horizontal accessory must still consume one U');
+      assert.equal(result.horizontal.available,15);
+    });
     await scenario('M-001 failed rack unassignment', async page => {
       const result = await page.evaluate(() => {
         appState.racks.push({id:'fictional-rack',name:'Fictional rack',heightU:42});
