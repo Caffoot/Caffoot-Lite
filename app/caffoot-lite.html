@@ -4502,11 +4502,25 @@ function hierarchyValidateTypes(subnets) {
                 ${plan.blocked.length?`<p class="text-sm text-amber-900 dark:text-amber-200">Protected examples: ${escapeHtml(plan.blocked.slice(0,6).join(', '))}</p>`:''}
                 <p class="text-sm text-slate-700 dark:text-slate-200">Changes include: ${escapeHtml(sample||'none')}${status==='Reserved'&&notes?'<br>Entered IPAM notes will replace existing notes on eligible addresses.':''}</p>
                 <p class="text-xs text-slate-600 dark:text-slate-300">A safety snapshot is stored before changes are applied. Confirm only after reviewing the range.</p>
-                <div class="flex justify-end gap-3"><button type="button" data-action="close-modal" class="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-700 caffoot-modal-cancel">Cancel</button>
+                <div class="flex justify-end gap-3"><button type="button" data-action="phase12b-back" class="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-700 caffoot-modal-cancel">Back to editing</button>
                 <button type="button" data-action="phase12b-apply" class="px-4 py-2 rounded-xl bg-blue-800 text-white font-semibold" ${!plan.changes.length?'disabled':''}>Apply ${plan.changes.length} changes</button></div></div>`);
             phase12BPending={subnetId,start,end,status,hostname,notes};
         }
         let phase12BPending=null;
+        function phase12BBackToEditing() {
+            const request = phase12BPending;
+            phase12BPending = null;
+            if (!request) return closeModal();
+            openBulkIpModal(request.subnetId);
+            const values = {'bulk-start':request.start, 'bulk-end':request.end,
+                'bulk-status':request.status, 'bulk-hostname':request.hostname, 'bulk-notes':request.notes};
+            Object.entries(values).forEach(([id,value]) => {
+                const field = document.getElementById(id);
+                if (field) field.value = value;
+            });
+            rememberModalForm();
+            document.getElementById('bulk-start')?.focus();
+        }
         function phase12BApply() {
             const request=phase12BPending;
             phase12BPending=null;
@@ -5324,7 +5338,16 @@ function hierarchyValidateTypes(subnets) {
             phase120DiscardCallback=null;
             if(callback)callback();
         }
-        function closeModal(force = false) {
+        function phase120ReturnFromSubnet() {
+            const draft = deviceFormDraft;
+            closeModal(false, () => {
+                if (draft) {
+                    switchTab('devices');
+                    setTimeout(() => openDeviceModal(draft.deviceId || null), 0);
+                }
+            });
+        }
+        function closeModal(force = false, onClosed = null) {
             if (deviceOptionsReturnContent) {
                 phase19BReadSoftwareSelections();
                 phase19BReadFunctionSelections();
@@ -5338,12 +5361,13 @@ function hierarchyValidateTypes(subnets) {
             const editableForm = document.querySelector('#modal-content form[data-device-form="true"], #modal-content form[data-form-action="subnet"], #modal-content form[data-form-action="rack"], #modal-content form[data-form-action="ip"], #modal-content form[data-form-action="assign"], #modal-content form[data-form-action="bulk-ip"], #modal-content form[data-form-action="manufacturer"], #modal-content form[data-form-action="model"], #modal-content form[data-form-action="software"], #modal-content form[data-form-action="server-service"]');
             if (!force && editableForm && modalFormSnapshots.has(editableForm) &&
                 modalFormSnapshot(editableForm) !== modalFormSnapshots.get(editableForm) &&
-                !phase120ConfirmDiscard(() => closeModal(true))) return;
+                !phase120ConfirmDiscard(() => closeModal(true, onClosed))) return;
             const container = document.getElementById('modal-container');
             container.classList.add('hidden');
             container.classList.remove('flex');
             if (modalReturnFocus && modalReturnFocus.isConnected) modalReturnFocus.focus();
             modalReturnFocus = null;
+            if (typeof onClosed === 'function') onClosed();
         }
 
         function openModal(htmlContent) {
@@ -5388,10 +5412,7 @@ function hierarchyValidateTypes(subnets) {
                     return;
                 }
                 if (deviceFormDraft && container.querySelector('form[data-form-action="subnet"]')) {
-                    const draft = deviceFormDraft;
-                    closeModal(true);
-                    switchTab('devices');
-                    setTimeout(() => openDeviceModal(draft.deviceId || null), 0);
+                    phase120ReturnFromSubnet();
                 } else closeModal();
                 return;
             }
@@ -9001,8 +9022,9 @@ function hierarchyValidateTypes(subnets) {
                 case 'tab-racks': switchTab('racks'); break;
                 case 'toggle-dark-mode': toggleDarkMode(); break;
                 case 'export-data': exportData(); break;
-                case 'cancel-subnet-modal': { const draft = deviceFormDraft; closeModal(true); if (draft) { switchTab('devices'); setTimeout(() => openDeviceModal(draft.deviceId || null), 0); } break; }
-                case 'close-modal': closeModal(); break;
+                case 'cancel-subnet-modal': phase120ReturnFromSubnet(); break;
+                case 'phase12b-back': phase12BBackToEditing(); break;
+                case 'close-modal': { if (phase12BPending && !document.querySelector('#modal-content form[data-form-action="bulk-ip"]')) phase12BPending = null; closeModal(); break; }
                 default:
                     console.warn('Unhandled data-action:', action);
             }
