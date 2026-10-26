@@ -1317,5 +1317,55 @@ const { chromium } = require('playwright');
       assert.equal(after.second.notes,'Keep second address note');
       assert.equal(after.second.reservedForDeviceId,'');
     });
+    await scenario('#94 S11 failed device deletion restores persisted and in-memory inventory', async page => {
+      const result = await page.evaluate(() => {
+        const device = {id:'issue94-delete-device',name:'Issue 94 fictional device',type:'Server - Physical'};
+        appState.devices.push(device);
+        if (!saveState()) throw Error('Cannot establish fictional device baseline');
+        const beforeMemory = JSON.stringify(appState);
+        const beforeStored = localStorage.getItem('caffoot_state');
+        const original = Storage.prototype.setItem;
+        Storage.prototype.setItem = function(key,value) {
+          if (key === 'caffoot_state') return;
+          return original.call(this,key,value);
+        };
+        let committed;
+        try {
+          appState.devices = appState.devices.filter(d => d.id !== device.id);
+          committed = phase11BCommitDelete(beforeMemory,'Device');
+        } finally { Storage.prototype.setItem = original; }
+        return {committed,beforeMemory,afterMemory:JSON.stringify(appState),
+          beforeStored,afterStored:localStorage.getItem('caffoot_state')};
+      });
+      assert.equal(result.committed,false,'Failed device deletion must not report success');
+      assert.equal(result.afterMemory,result.beforeMemory,'Failed deletion must restore the inventory');
+      assert.equal(result.afterStored,result.beforeStored,'Failed deletion must preserve stored bytes');
+      await page.reload({waitUntil:'load'});
+      assert.equal(await page.evaluate(() => !!appState.devices.find(d => d.id === 'issue94-delete-device')),
+        true,'Deleted device must remain after reload');
+    });
+    await scenario('#94 S20 failed server service restoration preserves catalogue', async page => {
+      const result = await page.evaluate(() => {
+        const entry = {key:'serverService_issue94fictional',label:'Issue 94 fictional service',archived:true};
+        appState.serverFunctions = [...(appState.serverFunctions || []),entry];
+        if (!saveState()) throw Error('Cannot establish fictional catalogue baseline');
+        const beforeMemory = JSON.stringify(appState.serverFunctions);
+        const beforeStored = localStorage.getItem('caffoot_state');
+        const original = Storage.prototype.setItem;
+        Storage.prototype.setItem = function(key,value) {
+          if (key === 'caffoot_state') return;
+          return original.call(this,key,value);
+        };
+        try { phase120RestoreServerService(entry.key); }
+        finally { Storage.prototype.setItem = original; }
+        return {beforeMemory,afterMemory:JSON.stringify(appState.serverFunctions),
+          beforeStored,afterStored:localStorage.getItem('caffoot_state')};
+      });
+      assert.equal(result.afterMemory,result.beforeMemory,'Failed catalogue restore must roll back');
+      assert.equal(result.afterStored,result.beforeStored,'Failed catalogue restore must preserve stored bytes');
+      await page.reload({waitUntil:'load'});
+      assert.equal(await page.evaluate(() => appState.serverFunctions.find(x => x.key === 'serverService_issue94fictional')?.archived),
+        true,'Archived service must remain archived after reload');
+    });
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode=1; });
