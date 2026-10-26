@@ -218,6 +218,39 @@ const { chromium } = require('playwright');
     });
     for (const [key,value] of Object.entries(keyboard))
       assert.equal(value,true,'Modal keyboard regression failed: '+key);
+    // Issue #157: focused removal guards, no persisted test data.
+    const catalogue = await page.evaluate(() => {
+      const oldState = appState, oldSave = saveState, oldToast = showToast;
+      const messages = [];
+      try {
+        appState = {...oldState,
+          devices:[{id:'fictional',type:'Server - Physical',manufacturer:'Example',model:'Example Model',
+            typeDetails:{customSoftware_test:true,customServerFunction_test:true}}],
+          hardwareCatalogue:[{id:'model_test',type:'Server - Physical',manufacturer:'Example',model:'Example Model'}],
+          installedSoftware:[{key:'customSoftware_test',label:'Example Software',deviceTypes:['Server - Physical']}],
+          serverFunctions:[{key:'customServerFunction_test',label:'Example Service'}]};
+        saveState = () => true;
+        showToast = (message,kind) => messages.push({message,kind});
+        phase120ModelSave('model_test',true);
+        phase120SoftwareArchive('customSoftware_test');
+        phase120ArchiveServerService('customServerFunction_test');
+        const blocked = appState.hardwareCatalogue.length===1 &&
+          !appState.installedSoftware[0].archived && !appState.serverFunctions[0].archived &&
+          messages.filter(m=>m.kind==='error').length===3;
+        appState.devices=[];
+        phase120ModelSave('model_test',true);
+        phase120SoftwareArchive('customSoftware_test');
+        phase120ArchiveServerService('customServerFunction_test');
+        const unusedRemoved = appState.hardwareCatalogue.length===0 &&
+          appState.installedSoftware[0].archived===true &&
+          appState.serverFunctions[0].archived===true;
+        return {blocked,unusedRemoved};
+      } finally {
+        saveState=oldSave;showToast=oldToast;appState=oldState;closeModal(true);
+      }
+    });
+    for (const [key,value] of Object.entries(catalogue))
+      assert.equal(value,true,'Issue #157 catalogue removal regression failed: '+key);
     console.log('PASS #99 focused form, bulk preview and accessory failure/retry and move/remove rollback');
 
   } finally {
