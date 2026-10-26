@@ -8567,7 +8567,7 @@ function hierarchyValidateTypes(subnets) {
             overlay.remove();
             const before=JSON.stringify(appState);
             appState.rackAccessories=appState.rackAccessories.filter(a=>a.id!==id);
-            if(!saveState()){appState=JSON.parse(before);return;}closeModal();renderContent();
+            if(!saveState()){appState=JSON.parse(before);showToast('Accessory could not be removed. Your previous inventory is unchanged.','error');return;}closeModal();renderContent();
             });
         }
         function phase13CMoveAccessory(id,rackId,startU){
@@ -8578,7 +8578,7 @@ function hierarchyValidateTypes(subnets) {
             const error=phase13CAccessoryError(candidate,id);
             if(error){showToast(error,'error');return false;}
             const before=JSON.stringify(appState);Object.assign(a,candidate);
-            if(!saveState()){appState=JSON.parse(before);return false;}phase17dRenderPreservingRackScroll();return true;
+            if(!saveState()){appState=JSON.parse(before);showToast('Accessory move could not be saved. Original placement restored.','error');return false;}phase17dRenderPreservingRackScroll();return true;
         }
 
         // Phase 13A: single validated pathway for drag/drop and accessible click-to-move.
