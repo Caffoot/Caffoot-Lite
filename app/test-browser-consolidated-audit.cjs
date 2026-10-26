@@ -1385,6 +1385,27 @@ const { chromium } = require('playwright');
       assert.equal(result.row.rear,1,'Rear should include horizontal 1U PDU only');
       assert.equal(result.row.percent,25,'Capacity uses fuller face, excluding vertical 0U');
     });
+    await scenario('#97 rack CSV export uses accessory-aware report rows', async page => {
+      const result=await page.evaluate(async () => {
+        appState.racks.push({id:'fixture97csvrack',name:'Fixture 97 CSV rack',heightU:10});
+        appState.devices.push({id:'fixture97csvserver',name:'Fixture 97 CSV server',type:'Server - Physical',
+          rackId:'fixture97csvrack',face:'front',rackUStart:2,rackUEnd:3});
+        appState.rackAccessories.push(
+          {id:'fixture97csvshelf',name:'Shelf',type:'shelf',rackId:'fixture97csvrack',face:'front',startU:5,heightU:1},
+          {id:'fixture97csvvertical',name:'Vertical PDU',type:'pdu_vertical',rackId:'fixture97csvrack',face:'front',startU:1,heightU:10}
+        );
+        const original=URL.createObjectURL;
+        let exported=null;
+        URL.createObjectURL=blob=>{exported=blob;return 'blob:fixture97';};
+        const click=HTMLAnchorElement.prototype.click;
+        HTMLAnchorElement.prototype.click=function(){};
+        try { phase10DDownloadCsv('racks'); }
+        finally { URL.createObjectURL=original;HTMLAnchorElement.prototype.click=click; }
+        return exported ? await exported.text() : '';
+      });
+      assert.match(result,/"Fixture 97 CSV rack","10","3","0","1","30"/,
+        'Rack CSV should include 2U device and 1U shelf but not vertical 0U');
+    });
     await scenario('#97 archived software and server service remain visible in device details', async page => {
       const result = await page.evaluate(() => {
         const software={key:'software_fixture97',label:'Fixture #97 legacy software',archived:true,deviceTypes:['Server - Physical']};
