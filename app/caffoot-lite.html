@@ -3455,6 +3455,37 @@ function hierarchyValidateTypes(subnets) {
             if(!saveState()){if(previous===undefined)delete appState.hardwareCatalogue;else appState.hardwareCatalogue=previous;showToast('Could not save the model.','error');return;}
             closeModal(true);renderContent();showToast(remove?'Model suggestion removed.':'Model suggestion saved.');
         }
+        function phase120BuiltInModelEditor(key){
+            let identity;
+            try{identity=JSON.parse(key);}catch{return;}
+            if(!Array.isArray(identity)||identity.length!==3)return;
+            const [type,maker,model]=identity;
+            if(!(phase120HardwareSeed[type]?.[maker]||[]).includes(model))return;
+            const prefKey='model:'+key,pref=phase120HardwarePreferences()[prefKey]||{};
+            const users=appState.devices.filter(d=>d.type===type&&String(d.manufacturer||'').toLowerCase()===maker.toLowerCase()&&String(d.model||'').toLowerCase()===model.toLowerCase());
+            openModal('<div class="p-5 sm:p-7 space-y-4"><h3 class="text-lg font-bold">Manage Built-in Model</h3><p class="text-sm">Original: '+escapeHtml(maker)+' · '+escapeHtml(model)+' · '+escapeHtml(type)+'. Existing device records will not be renamed.</p><label class="block text-sm font-semibold" for="phase120-builtin-model-name">Suggestion Name</label><input id="phase120-builtin-model-name" maxlength="120" value="'+escapeHtml(pref.label||model)+'" class="w-full h-11 px-3 rounded-xl border dark:bg-slate-800"><label class="flex items-center gap-2"><input type="checkbox" id="phase120-builtin-model-hidden" '+(pref.hidden?'checked':'')+(users.length?' disabled':'')+'> Hide from new suggestions</label>'+(users.length?'<p class="text-sm text-amber-700">Hiding is blocked while used by: '+users.slice(0,5).map(d=>escapeHtml(d.name||d.hostname||d.id||'Unnamed device')).join(', ')+'</p>':'')+'<p id="phase120-builtin-model-error" role="alert" class="text-sm text-rose-700"></p><div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-4 border rounded-xl caffoot-modal-cancel">Cancel</button><button type="button" data-action="phase120-builtin-model-save" data-name="'+escapeHtml(key)+'" class="h-11 px-4 bg-blue-800 text-white rounded-xl">Save</button></div></div>');
+        }
+        function phase120BuiltInModelSave(key){
+            let identity;
+            try{identity=JSON.parse(key);}catch{return;}
+            if(!Array.isArray(identity)||identity.length!==3)return;
+            const [type,maker,model]=identity;
+            if(!(phase120HardwareSeed[type]?.[maker]||[]).includes(model))return;
+            const label=String(document.getElementById('phase120-builtin-model-name')?.value||'').trim();
+            const hidden=!!document.getElementById('phase120-builtin-model-hidden')?.checked;
+            const error=document.getElementById('phase120-builtin-model-error');
+            if(!label||label.length>120){if(error)error.textContent='Enter a model name of up to 120 characters.';return;}
+            const users=appState.devices.filter(d=>d.type===type&&String(d.manufacturer||'').toLowerCase()===maker.toLowerCase()&&String(d.model||'').toLowerCase()===model.toLowerCase());
+            if(hidden&&users.length){if(error)error.textContent='This model is assigned to devices and cannot be hidden.';return;}
+            const prefs=phase120HardwarePreferences(),next={...prefs,['model:'+key]:{label,hidden}};
+            const effective=phase120EffectiveHardwareSeed()[type]||{};
+            const other=[...(effective[maker]||[]).filter(x=>x.toLowerCase()!==String(prefs['model:'+key]?.label||model).toLowerCase()),...phase120HardwareCatalogue().filter(x=>x.type===type&&x.manufacturer.toLowerCase()===maker.toLowerCase()).map(x=>x.model)];
+            if(other.some(x=>String(x||'').toLowerCase()===label.toLowerCase())){if(error)error.textContent='This model suggestion already exists.';return;}
+            const previous=appState.hardwareSeedPreferences;
+            appState.hardwareSeedPreferences=next;
+            if(!saveState()){if(previous===undefined)delete appState.hardwareSeedPreferences;else appState.hardwareSeedPreferences=previous;showToast('Could not save model preference.','error');return;}
+            closeModal(true);renderContent();showToast('Built-in model preference saved.');
+        }
         function phase120ModelsHTML(){
             const map=new Map();
             function add(model,manufacturer,type,source){
@@ -8928,6 +8959,8 @@ function hierarchyValidateTypes(subnets) {
                 case 'software-custom-restore': phase120SoftwareRestore(name); break;
                 case 'phase120-software-reset': ['phase120-software-search','phase120-software-source','phase120-software-type'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';}); if(document.getElementById('phase120-software-used'))document.getElementById('phase120-software-used').checked=false; phase120FilterSoftware(); break;
                 case 'phase120-model-add': phase120ModelManager(); break;
+                case 'phase120-builtin-model-edit': phase120BuiltInModelEditor(name); break;
+                case 'phase120-builtin-model-save': phase120BuiltInModelSave(name); break;
                 case 'phase120-model-edit': phase120ModelManager(name); break;
                 case 'phase120-model-remove': phase120ModelManager(name,true); break;
                 case 'phase120-model-save': phase120ModelSave(name); break;
