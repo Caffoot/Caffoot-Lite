@@ -1385,6 +1385,25 @@ const { chromium } = require('playwright');
       assert.equal(result.row.rear,1,'Rear should include horizontal 1U PDU only');
       assert.equal(result.row.percent,25,'Capacity uses fuller face, excluding vertical 0U');
     });
+    await scenario('#97 legacy rack accessory types normalise on browser startup', async page => {
+      await page.evaluate(() => {
+        const saved=JSON.parse(JSON.stringify(appState));
+        saved.racks.push({id:'fixture97startup',name:'Fixture 97 startup rack',heightU:9});
+        saved.rackAccessories.push({id:'fixture97startupfan',rackId:'fixture97startup',
+          face:'front',startU:1,heightU:2,type:'fan',name:'Historical fan'});
+        localStorage.setItem('caffoot_state',JSON.stringify(saved));
+      });
+      await page.reload({waitUntil:'load'});
+      const result=await page.evaluate(() => ({
+        type:appState.rackAccessories.find(a=>a.id==='fixture97startupfan')?.type,
+        recovery:!!phase17AStorageRecovery,
+        storedType:JSON.parse(localStorage.getItem('caffoot_state')).rackAccessories
+          .find(a=>a.id==='fixture97startupfan')?.type
+      }));
+      assert.equal(result.type,'fan_tray','Historical startup accessory should be canonicalised');
+      assert.equal(result.recovery,false,'Valid historical inventory must load without recovery');
+      assert.equal(result.storedType,'fan','Startup normalisation must not silently rewrite stored inventory');
+    });
     await scenario('#97 legacy rack accessory backup types migrate safely', async page => {
       const result=await page.evaluate(() => {
         const raw=JSON.parse(JSON.stringify(appState));
