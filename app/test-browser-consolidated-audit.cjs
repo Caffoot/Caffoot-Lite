@@ -1385,6 +1385,26 @@ const { chromium } = require('playwright');
       assert.equal(result.row.rear,1,'Rear should include horizontal 1U PDU only');
       assert.equal(result.row.percent,25,'Capacity uses fuller face, excluding vertical 0U');
     });
+    await scenario('#97 multi-U accessory can drag one U within its own footprint', async page => {
+      const result=await page.evaluate(() => {
+        appState.racks.push({id:'fixture97drag',name:'Fixture 97 drag rack',heightU:9});
+        appState.rackAccessories.push({id:'fixture97drag6',name:'Fixture 97 six U accessory',
+          type:'shelf',rackId:'fixture97drag',face:'front',startU:1,heightU:6});
+        const target=document.createElement('div');
+        target.dataset.rackAccessory='fixture97drag6';
+        target.dataset.rackDropU='6';
+        target.getBoundingClientRect=()=>({top:100,height:240});
+        const resolved=phase13DropPosition({clientY:100+4*40+20},target);
+        const originalFace=activeRackFace;
+        activeRackFace='front';
+        let moved;
+        try { moved=phase13CMoveAccessory('fixture97drag6', 'fixture97drag', resolved); }
+        finally { activeRackFace=originalFace; }
+        return {resolved,moved,start:appState.rackAccessories.find(a=>a.id==='fixture97drag6')?.startU};
+      });
+      assert.equal(result.resolved,2,'Pointer over U2 must resolve to U2 rather than top U6');
+      assert.equal(result.start,2,'6U accessory should move to U2–U7');
+    });
     await scenario('#97 rack CSV export uses accessory-aware report rows', async page => {
       const result=await page.evaluate(async () => {
         appState.racks.push({id:'fixture97csvrack',name:'Fixture 97 CSV rack',heightU:10});
