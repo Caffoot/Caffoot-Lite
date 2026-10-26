@@ -60,7 +60,43 @@ const { chromium } = require('playwright');
     assert.equal(result.pendingCleared,true,'Back must clear pending application');
     assert.equal(result.untouched,true,'Preview and Back must not change IP allocations');
     assert.equal(result.storedUnchanged,true,'Neither journey may write inventory');
-    console.log('PASS #99 focused form cancellation and bulk preview return');
+    // Isolated accessory failure injection: no browser storage writes or real inventory.
+    const accessory = await page.evaluate(() => {
+      const originalState = appState;
+      const originalSave = saveState;
+      const storedBefore = localStorage.getItem('caffoot_state');
+      try {
+        appState = {...originalState, racks:[...originalState.racks, {id:'issue99-rack',name:'Fictional test rack',heightU:42}], rackAccessories:[...(originalState.rackAccessories||[])]};
+        phase13COpenAccessory('issue99-rack', 1);
+        const form = document.getElementById('phase13c-form');
+        if (!form) throw Error('Accessory editor did not open');
+        form.querySelector('[name="name"]').value = 'Fictional accessory retry';
+        const before = JSON.stringify(appState);
+        let attempts = 0;
+        saveState = () => { attempts++; return attempts > 1; };
+        form.requestSubmit();
+        const failedStateRestored = JSON.stringify(appState) === before;
+        const error = document.getElementById('phase13c-error')?.textContent || '';
+        const formRetained = document.getElementById('phase13c-form') === form;
+        const valuesRetained = form.querySelector('[name="name"]').value === 'Fictional accessory retry';
+        const noStorageWrite = localStorage.getItem('caffoot_state') === storedBefore;
+        form.requestSubmit();
+        const retrySucceeded = attempts === 2 && (appState.rackAccessories||[]).filter(a=>a.name==='Fictional accessory retry').length === 1;
+        return {failedStateRestored, errorShown:error.includes('could not be saved') && error.includes('try again'),formRetained,valuesRetained,noStorageWrite,retrySucceeded};
+      } finally {
+        saveState = originalSave;
+        appState = originalState;
+        closeModal(true);
+      }
+    });
+    assert.equal(accessory.failedStateRestored,true,'Failed accessory save must roll back inventory');
+    assert.equal(accessory.errorShown,true,'Failed accessory save must explain retry');
+    assert.equal(accessory.formRetained,true,'Failed accessory save must keep the editor open');
+    assert.equal(accessory.valuesRetained,true,'Failed accessory save must preserve entered values');
+    assert.equal(accessory.noStorageWrite,true,'Failure injection must not write browser inventory');
+    assert.equal(accessory.retrySucceeded,true,'Retry must create exactly one accessory');
+    console.log('PASS #99 focused form, bulk preview and accessory failure/retry');
+
   } finally {
     await context.close();
     await browser.close();
