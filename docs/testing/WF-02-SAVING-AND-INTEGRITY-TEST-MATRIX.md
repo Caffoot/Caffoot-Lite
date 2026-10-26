@@ -163,3 +163,13 @@ The authoritative current workflow register in [TECHNICAL-WORKFLOWS.md](../workf
 ## Consolidated evidence update, 23 October 2026
 
 Targeted failed save, safety copy readback and recovery assertions were previously executed in [Chromium run 39955498407](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39955498407), [39957395113](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39957395113) and [39959581469](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39959581469), covering specific M-001, M-011, M-012, M-018, M-020 and M-031 conditions. They do not certify every save caller or all cases in this original matrix. M-004 and M-022 still require source and existing evidence reconciliation. See [coverage register](WORKFLOW-VERIFICATION-COVERAGE-REGISTER.md). No new browser tests were executed for this documentation update.
+
+
+## Issue #94 targeted browser evidence, 26 October 2026
+
+Draft PR [#143](https://github.com/Caffoot/Caffoot-Lite/pull/143), source revision `dc55c2096719984f5de06c7a87afa5fb71febb31`, added two isolated fictional-inventory Chromium scenarios to the existing consolidated suite. The [Chromium run 40274662353](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40274662353), job `121414745752`, explicitly logged `PASS` for both:
+
+- **S11 representative device deletion failure:** Simulated ignored `caffoot_state` write through `phase11BCommitDelete()`; confirmed failed commit, identical in-memory inventory and stored bytes, and the device remaining after reload.
+- **S20 representative archived server service restoration failure:** Simulated ignored `caffoot_state` write through `phase120RestoreServerService()`; confirmed catalogue rollback, identical stored bytes and archived service retained after reload.
+
+All four PR checks passed on that revision: Chromium `40274662353`, release validation `40274662360`, documentation consistency `40274662324` and secret scan `40274662372`. These checks **do not** certify every deletion entry point, catalogue variant, storage exception or the full S01 to S30 matrix. PR #143 remains draft and unmerged at this checkpoint. No application behaviour was changed. The historical matrix and prior evidence remain valid; WF-02 and broader M-004 remain partially assessed.
