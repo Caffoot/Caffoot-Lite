@@ -7119,10 +7119,11 @@ function hierarchyValidateTypes(subnets) {
         function cancelRackFromDevice() {
             if (!deviceRackReturnPending) { closeModal(); return; }
             const draft = deviceFormDraft;
-            deviceRackReturnPending = false;
-            closeModal(true);
-            switchTab('devices');
-            setTimeout(() => openDeviceModal(draft?.deviceId || null), 0);
+            closeModal(false, () => {
+                deviceRackReturnPending = false;
+                switchTab('devices');
+                setTimeout(() => openDeviceModal(draft?.deviceId || null), 0);
+            });
         }
 
         function createSubnetFromDevice() {
