@@ -1385,6 +1385,33 @@ const { chromium } = require('playwright');
       assert.equal(result.row.rear,1,'Rear should include horizontal 1U PDU only');
       assert.equal(result.row.percent,25,'Capacity uses fuller face, excluding vertical 0U');
     });
+    await scenario('#97 legacy rack accessory backup types migrate safely', async page => {
+      const result=await page.evaluate(() => {
+        const raw=JSON.parse(JSON.stringify(appState));
+        raw.racks.push({id:'fixture97legacyrack',name:'Fixture 97 legacy rack',heightU:12});
+        raw.rackAccessories.push(
+          {id:'fixture97fan',rackId:'fixture97legacyrack',face:'front',startU:1,heightU:2,type:'fan',name:'Legacy fan'},
+          {id:'fixture97pdu',rackId:'fixture97legacyrack',face:'rear',startU:3,heightU:1,type:'pdu',name:'Legacy PDU'},
+          {id:'fixture97vent',rackId:'fixture97legacyrack',face:'front',startU:5,heightU:1,type:'vent',name:'Legacy vent'}
+        );
+        const original=JSON.stringify(raw);
+        const candidate=phase16CCheckBackup(raw);
+        const converted=candidate.rackAccessories.filter(x=>x.rackId==='fixture97legacyrack')
+          .map(x=>({type:x.type,startU:x.startU,heightU:x.heightU,face:x.face}));
+        const invalid=JSON.parse(original);
+        invalid.rackAccessories[invalid.rackAccessories.length-1].type='unknown_legacy_type';
+        let rejected=false;
+        try {phase16CCheckBackup(invalid);} catch(e){rejected=/unsupported accessory type/.test(e.message);}
+        return {untouched:JSON.stringify(raw)===original,converted,rejected};
+      });
+      assert.equal(result.untouched,true,'Import migration must not mutate the original backup');
+      assert.deepEqual(result.converted,[
+        {type:'fan_tray',startU:1,heightU:2,face:'front'},
+        {type:'pdu_horizontal',startU:3,heightU:1,face:'rear'},
+        {type:'ventilation',startU:5,heightU:1,face:'front'}
+      ]);
+      assert.equal(result.rejected,true,'Unknown accessory types must remain rejected');
+    });
     await scenario('#97 multi-U accessory can drag one U within its own footprint', async page => {
       const result=await page.evaluate(() => {
         appState.racks.push({id:'fixture97drag',name:'Fixture 97 drag rack',heightU:9});
