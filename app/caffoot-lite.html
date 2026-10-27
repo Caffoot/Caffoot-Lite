@@ -7110,7 +7110,7 @@ function hierarchyValidateTypes(subnets) {
                 phase19BFormValues.serverService_Hypervisor = true;
             }
             const currentLoc = draft?.location ?? device?.location ?? '';
-            const requestedMountType = draft?.mountType ?? device?.mountType ?? (device?.rackId ? 'Rack Mounted' : phase120DefaultMount(currentType));
+            const requestedMountType = currentType === 'Server - Virtual' ? 'Not Applicable' : (draft?.mountType ?? device?.mountType ?? (device?.rackId ? 'Rack Mounted' : phase120DefaultMount(currentType)));
             const mountType = phase19BAllowedMounts(currentType).includes(requestedMountType) ? requestedMountType : phase120DefaultMount(currentType);
             const currentSubnet = draft?.subnetId ? appState.subnets.find(s => s.id === draft.subnetId) : (device?.primaryIp ? getSubnetForIp(device.primaryIp) : null);
             const currentHeight = draft?.rackUHeight || (device?.rackUStart && device?.rackUEnd ? Math.max(1, Number(device.rackUEnd) - Number(device.rackUStart) + 1) : 1);
@@ -7552,8 +7552,13 @@ function hierarchyValidateTypes(subnets) {
             e.preventDefault();
             const name = document.getElementById('dev-name').value.trim();
             const type = document.getElementById('dev-type').value;
-            const mountType = document.getElementById('dev-mount-type').value;
-            const location = document.getElementById('dev-location').value;
+            const isVirtualServer = type === 'Server - Virtual';
+            const selectedHostId = document.getElementById('dev-virtual-host')?.value || '';
+            const selectedHost = appState.devices.find(d => d.id === selectedHostId);
+            // Physical placement is owned by the host, not by an individual VM.
+            // Keep legacy location when its host no longer exists.
+            const mountType = isVirtualServer ? 'Not Applicable' : document.getElementById('dev-mount-type').value;
+            const location = isVirtualServer ? (selectedHost?.location || getDeviceById(deviceId)?.location || 'Unknown') : document.getElementById('dev-location').value;
             if (location === '__caffoot_create_location__') {
                 showToast('Add or cancel the new location before saving this device.', 'error');
                 return;
