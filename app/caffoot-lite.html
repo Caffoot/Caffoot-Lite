@@ -175,15 +175,74 @@
 </style>
 
 <style id="ui-accessibility-pass">
+/* Caffoot website palette: shared theme foundations for issue #156.
+   Limit overrides to the application shell; preserve semantic status colours. */
+:root {
+  --caffoot-canvas: #F8F6F0;
+  --caffoot-card: #FFFFFF;
+  --caffoot-navigation: #101B28;
+  --caffoot-ink: #142232;
+  --caffoot-accent: #F47B20;
+}
+.dark {
+  --caffoot-canvas: #172635;
+  --caffoot-card: #202936;
+  --caffoot-navigation: #101B28;
+  --caffoot-ink: #FFFFFF;
+}
+body, #main-content { background-color: var(--caffoot-canvas) !important; }
+#sidebar { background-color: var(--caffoot-navigation) !important; }
+#app > main > header { background-color: var(--caffoot-card) !important; }
+#sidebar h1 { color: #FFFFFF !important; }
+#app > main > header { background-color: #101B28 !important; color: #FFFFFF; }
+#app > main > header #page-title { color: #FFFFFF !important; }
+/* Navigation uses the same navy and white palette in both themes.
+   Restrict selected styling to nav buttons and selected sidebar actions. */
+#sidebar nav button { color: #FFFFFF !important; }
+#sidebar nav button:hover { background-color: #26384B !important; color: #FFFFFF !important; }
+#sidebar nav .nav-btn:is(.bg-indigo-50, .dark\\:bg-slate-700\\/60),
+#sidebar nav button[aria-current="page"] {
+  background-color: #F47B20 !important;
+  color: #101B28 !important;
+}
+#sidebar nav button[aria-current="page"]:hover,
+#sidebar nav .nav-btn.bg-indigo-50:hover {
+  background-color: #F47B20 !important;
+  color: #101B28 !important;
+}
+#sidebar nav [class*="text-slate-"] { color: #FFFFFF !important; }
+#sidebar nav button:focus-visible { outline-color: #F47B20 !important; }
+/* Settings sits outside the nav element but must share its accessible navy styling. */
+#sidebar button[data-action="tab-settings"] { color: #FFFFFF !important; border-radius: var(--caffoot-radius-control, 8px); }
+#sidebar button[data-action="tab-settings"]:hover { background-color: #26384B !important; color: #FFFFFF !important; }
+#sidebar button[data-action="tab-settings"]:focus-visible { outline: 3px solid #F47B20 !important; outline-offset: 2px; }
+#sidebar button[data-action="tab-settings"][aria-current="page"],
+#sidebar button[data-action="tab-settings"].bg-indigo-50 { background-color: #F47B20 !important; color: #101B28 !important; }
+
+/* Website-inspired shared corner sizes, restricted to common app surfaces. */
+:root { --caffoot-radius-control: 8px; --caffoot-radius-card: 16px; --caffoot-radius-panel: 20px; }
+#sidebar nav button { border-radius: var(--caffoot-radius-control); }
+#main-content .rounded-xl { border-radius: var(--caffoot-radius-card); }
+#main-content .rounded-2xl { border-radius: var(--caffoot-radius-panel); }
+#main-content button.bg-indigo-600, #modal-content button.bg-indigo-600 {
+  background-color: #F47B20 !important;
+  color: #101B28 !important;
+  border-radius: var(--caffoot-radius-control);
+}
+#main-content button.bg-indigo-600:hover, #modal-content button.bg-indigo-600:hover {
+  background-color: #E66D12 !important;
+}
+
+
 /* Page-level accessibility and theme consistency pass */
 :root {
-  --ui-text: #172033;
+  --ui-text: #142232;
   --ui-text-muted: #4b5563;
   --ui-text-subtle: #6b7280;
   --ui-border: #cbd5e1;
   --ui-border-strong: #94a3b8;
   --ui-surface: #ffffff;
-  --ui-surface-alt: #f8fafc;
+  --ui-surface-alt: #F8F6F0;
   --ui-hover: #f1f5f9;
   --ui-focus: #2563eb;
 }
@@ -193,8 +252,8 @@
   --ui-text-subtle: #cbd5e1;
   --ui-border: #475569;
   --ui-border-strong: #64748b;
-  --ui-surface: #111827;
-  --ui-surface-alt: #1f2937;
+  --ui-surface: #202936;
+  --ui-surface-alt: #172635;
   --ui-hover: #273449;
   --ui-focus: #60a5fa;
 }
@@ -1068,14 +1127,10 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
         
         <!-- SIDEBAR NAVIGATION -->
         <aside id="sidebar" class="w-[272px] shrink-0 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex flex-col z-20 transition-all duration-300">
-            <div class="p-5 flex items-center justify-between border-b border-slate-200 dark:border-slate-700">
+            <div class="h-16 px-4 flex items-center justify-between border-b border-slate-600">
                 <div class="flex items-center space-x-3">
-                    <img src="../assets/caffoot-icon-1024.png" alt="Caffoot hedgehog mascot" width="48" height="48" class="w-12 h-12 rounded-xl object-cover shadow-lg flex-shrink-0">
-                    <div>
-                        <h1 class="font-bold text-xl leading-6 tracking-tight text-slate-900 dark:text-white">Caffoot Lite</h1>
-                        <div class="mt-1 text-xs leading-4 text-slate-600 dark:text-slate-300 font-medium">Infrastructure, Simplified.</div>
-                        <div class="mt-0.5 text-[11px] leading-4 text-slate-500 dark:text-slate-400">For HomeLabs and Small Teams</div>
-                    </div>
+                    <img src="../assets/caffoot-icon-1024.png" alt="Caffoot hedgehog mascot" width="40" height="40" class="w-10 h-10 rounded-xl object-cover shadow-lg flex-shrink-0">
+                    <h1 class="font-bold text-lg leading-6 tracking-tight text-white">Caffoot Lite</h1>
                 </div>
             </div>
 
@@ -3735,7 +3790,7 @@ function hierarchyValidateTypes(subnets) {
                                 const counts=new Map();
                                 appState.devices.forEach(d=>{
                                     const raw=String(d[field]||'').trim();
-                                    const name=raw && raw!=='Unknown' ? raw : 'Not Recorded';
+                                    const name=raw && raw!=='Unknown' ? (field==='type' && raw==='Server - Physical' ? 'Server' : field==='type' && raw==='Server - Virtual' ? 'Virtual Machine' : raw) : 'Not Recorded';
                                     counts.set(name,(counts.get(name)||0)+1);
                                 });
                                 const groups=[...counts.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));
@@ -3794,7 +3849,7 @@ function hierarchyValidateTypes(subnets) {
                     <section class="${phase14DeviceTab==='inventory'?'':'hidden'} space-y-4" data-device-panel="inventory">
                     <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 sm:p-5 flex flex-col gap-4">
                         <h3 class="text-base font-bold text-slate-900 dark:text-white">Search & filter devices</h3>
-                        ${(deviceOsFilter || deviceServiceFilter || deviceMissingFilter || deviceTypeFilter || deviceLocationFilter || deviceHardwareFilter) ? `<div class="flex flex-wrap items-center gap-3 rounded-xl border border-indigo-300 dark:border-indigo-700 bg-indigo-50 dark:bg-indigo-950/40 p-3 text-sm"><span class="font-semibold text-indigo-900 dark:text-indigo-200">${escapeHtml(deviceOsFilter ? "Operating System: "+deviceOsFilter : deviceServiceFilter ? "Software / Service: "+deviceServiceFilter : deviceMissingFilter ? ({ip:"Primary IP: Not Recorded",type:"Device Type: Not Recorded",location:"Location: Not Recorded"}[deviceMissingFilter]||"Data: Not Recorded") : deviceTypeFilter ? "Device Type: "+deviceTypeFilter : deviceHardwareFilter ? ({manufacturer:"Manufacturer",model:"Model",mountType:"Mounting Method"}[deviceHardwareFilter.field]+": "+deviceHardwareFilter.value) : "Location: "+deviceLocationFilter)}</span><span class="text-slate-700 dark:text-slate-200">${getVisibleDevices().length} matching devices</span><button type="button" data-action="phase14g-clear-filters" class="font-semibold text-indigo-700 dark:text-indigo-300 underline">Clear Filter</button></div>` : ''}
+                        ${(deviceOsFilter || deviceServiceFilter || deviceMissingFilter || deviceTypeFilter || deviceLocationFilter || deviceHardwareFilter) ? `<div class="flex flex-wrap items-center gap-3 rounded-xl border border-indigo-300 dark:border-indigo-700 bg-indigo-50 dark:bg-indigo-950/40 p-3 text-sm"><span class="font-semibold text-indigo-900 dark:text-indigo-200">${escapeHtml(deviceOsFilter ? "Operating System: "+deviceOsFilter : deviceServiceFilter ? "Software / Service: "+deviceServiceFilter : deviceMissingFilter ? ({ip:"Primary IP: Not Recorded",type:"Device Type: Not Recorded",location:"Location: Not Recorded"}[deviceMissingFilter]||"Data: Not Recorded") : deviceTypeFilter ? "Device Type: "+(deviceTypeFilter==='Server - Physical' ? 'Server' : deviceTypeFilter==='Server - Virtual' ? 'Virtual Machine' : deviceTypeFilter) : deviceHardwareFilter ? ({manufacturer:"Manufacturer",model:"Model",mountType:"Mounting Method"}[deviceHardwareFilter.field]+": "+deviceHardwareFilter.value) : "Location: "+deviceLocationFilter)}</span><span class="text-slate-700 dark:text-slate-200">${getVisibleDevices().length} matching devices</span><button type="button" data-action="phase14g-clear-filters" class="font-semibold text-indigo-700 dark:text-indigo-300 underline">Clear Filter</button></div>` : ''}
                         <label class="phase14h-search-label block w-full text-xs font-semibold text-slate-700 dark:text-slate-200">Search devices
                             <input id="device-search" type="search" placeholder="Name, IP, model, serial or location" value="${escapeHtml(deviceSearchTerm)}" class="mt-1 w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500" />
                         </label>
@@ -3809,7 +3864,7 @@ function hierarchyValidateTypes(subnets) {
                             <label class="text-xs font-semibold text-slate-700 dark:text-slate-200">Device type
                                 <select id="device-type-filter" class="mt-1 block min-w-36 rounded-xl bg-white dark:bg-slate-800 border border-slate-400 dark:border-slate-500 text-slate-900 dark:text-white">
                                     <option value="">All types</option>
-                                    ${getUniqueDeviceTypes().sort((a,b)=>a.localeCompare(b)).map(t=>`<option value="${escapeHtml(t)}" ${deviceTypeFilter === t ? 'selected' : ''}>${escapeHtml(t)}</option>`).join('')}
+                                    ${getUniqueDeviceTypes().sort((a,b)=>a.localeCompare(b)).map(t=>`<option value="${escapeHtml(t)}" ${deviceTypeFilter === t ? 'selected' : ''}>${escapeHtml(t==='Server - Physical' ? 'Server' : t==='Server - Virtual' ? 'Virtual Machine' : t)}</option>`).join('')}
                                 </select>
                             </label>
                             <label class="text-xs font-semibold text-slate-700 dark:text-slate-200">Device status
@@ -3877,7 +3932,7 @@ function hierarchyValidateTypes(subnets) {
                                     return `
                                         <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/20">
                                             <td class="py-3 px-4 min-w-[220px] font-semibold text-slate-900 dark:text-white"><button type="button" data-action="view-device" data-id="${escapeHtml(d.id)}" class="phase14c-name text-left whitespace-normal break-words hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-600" title="View device details">${escapeHtml(d.name)}</button>${d.serialNumber ? `<span class="block text-xs font-normal text-slate-500 dark:text-slate-400 sm:hidden">${escapeHtml(d.serialNumber)}</span>` : ''}</td>
-                                            <td class="py-3 px-4"><span class="px-2 py-0.5 rounded text-xs bg-slate-100 dark:bg-slate-700">${escapeHtml(d.type)}</span></td>
+                                            <td class="py-3 px-4"><span class="px-2 py-0.5 rounded text-xs bg-slate-100 dark:bg-slate-700">${escapeHtml(d.type==='Server - Physical' ? 'Server' : d.type==='Server - Virtual' ? 'Virtual Machine' : d.type)}</span></td>
                                             <td class="py-3 px-4 text-xs font-medium ${locationNeedsAttention ? 'text-rose-600 font-bold' : ''}">${escapeHtml(locText)}${locationNeedsAttention ? ' <span class="text-[10px] font-semibold uppercase">(needs attention)</span>' : ''}</td>
                                             <td class="py-3 px-4 font-mono text-xs text-indigo-600">${escapeHtml(d.primaryIp || 'None')}</td>
                                             <td class="py-3 px-4"><span class="inline-flex px-2.5 py-1 rounded-lg text-xs font-semibold ${d.status === 'Retired' ? 'bg-slate-200 text-slate-800 dark:bg-slate-600 dark:text-white' : d.status === 'Maintenance' ? 'bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-200' : 'bg-emerald-100 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-200'}">${escapeHtml(d.status || 'Active')}</span></td>
@@ -7849,7 +7904,7 @@ function hierarchyValidateTypes(subnets) {
             } else {
                 body = '<section class="phase16a-panel phase16c-about"><div class="phase16c-about-brand">' +
                     '<img src="../assets/caffoot-icon-1024.png" alt="Caffoot hedgehog logo" width="76" height="76">' +
-                    '<div><h3>Caffoot Lite</h3><strong>Infrastructure, Simplified.</strong><p>Network documentation for home labs and small teams.</p></div></div>' +
+                    '<div><h3>Caffoot Lite</h3><strong>Infrastructure, Simplified.</strong><p>For HomeLabs and Small Teams</p><p>Network documentation for home labs and small teams.</p></div></div>' +
                     '<div class="phase16c-about-version"><span>Installed Version</span><strong>' + escapeHtml(CAFFOOT_LITE_VERSION) + '</strong></div>' +
                     '<p>Manage devices, IP addresses, subnets and network racks in one standalone, offline-capable HTML application. Your inventory stays in this browser unless you export a JSON backup.</p>' +
                     '<h4>Project & Documentation</h4><div class="phase16c-about-links">' +
@@ -9068,7 +9123,7 @@ function hierarchyValidateTypes(subnets) {
                 case 'device-intelligence-tab': if (['overview','hardware','os','software','quality'].includes(target.dataset.tab)) { deviceIntelligenceTab=target.dataset.tab; renderContent(); } break;
                 case 'device-hardware-drilldown': { const field=String(target.dataset.field||''); const value=String(target.dataset.value||''); if (!['manufacturer','model','mountType'].includes(field) || !value) break; deviceOsFilter=''; deviceServiceFilter=''; deviceMissingFilter=''; deviceSearchTerm=''; deviceTypeFilter=''; deviceStatusFilter=''; deviceLocationFilter=''; deviceMountFilter=''; deviceAssignmentFilter=''; deviceHardwareFilter={field,value}; phase14DeviceTab='inventory'; switchTab('devices'); break; }
                 case 'device-os-drilldown': { const os=String(target.dataset.os||''); if (!os) break; deviceServiceFilter=''; deviceMissingFilter=''; deviceOsFilter=os; deviceHardwareFilter=null; deviceSearchTerm=''; deviceTypeFilter=''; deviceStatusFilter=''; deviceLocationFilter=''; deviceMountFilter=''; deviceAssignmentFilter=''; phase14DeviceTab='inventory'; switchTab('devices'); break; }
-                case 'device-intelligence-drilldown': { const kind=String(target.dataset.kind||''); const value=String(target.dataset.value||''); if (!['type','location','service','missing'].includes(kind) || !value) break; deviceOsFilter=''; deviceServiceFilter=''; deviceMissingFilter=''; deviceSearchTerm=''; deviceTypeFilter=''; deviceStatusFilter=''; deviceLocationFilter=''; deviceMountFilter=''; deviceAssignmentFilter=''; deviceHardwareFilter=null; if (kind==='type' && value!=='Not Recorded') deviceTypeFilter=value; else if(kind==='location' && value!=='Not Recorded') deviceLocationFilter=value; else if(kind==='service') deviceServiceFilter=value; else if(kind==='missing' && ['ip','type','location'].includes(value)) deviceMissingFilter=value; else if(kind==='type' && value==='Not Recorded') deviceMissingFilter='type'; else if(kind==='location' && value==='Not Recorded') deviceMissingFilter='location'; phase14DeviceTab='inventory'; switchTab('devices'); break; }
+                case 'device-intelligence-drilldown': { const kind=String(target.dataset.kind||''); const value=String(target.dataset.value||''); if (!['type','location','service','missing'].includes(kind) || !value) break; deviceOsFilter=''; deviceServiceFilter=''; deviceMissingFilter=''; deviceSearchTerm=''; deviceTypeFilter=''; deviceStatusFilter=''; deviceLocationFilter=''; deviceMountFilter=''; deviceAssignmentFilter=''; deviceHardwareFilter=null; if (kind==='type' && value!=='Not Recorded') deviceTypeFilter=value==='Server' ? 'Server - Physical' : value==='Virtual Machine' ? 'Server - Virtual' : value; else if(kind==='location' && value!=='Not Recorded') deviceLocationFilter=value; else if(kind==='service') deviceServiceFilter=value; else if(kind==='missing' && ['ip','type','location'].includes(value)) deviceMissingFilter=value; else if(kind==='type' && value==='Not Recorded') deviceMissingFilter='type'; else if(kind==='location' && value==='Not Recorded') deviceMissingFilter='location'; phase14DeviceTab='inventory'; switchTab('devices'); break; }
                 case 'phase120-manage-drilldown': {
                     deviceSearchTerm=''; deviceTypeFilter=''; deviceLocationFilter=''; deviceOsFilter=''; deviceServiceFilter=''; deviceMissingFilter=''; deviceHardwareFilter=null; deviceStatusFilter=''; deviceMountFilter=''; deviceAssignmentFilter='';
                     if(target.dataset.name==='Not Recorded')deviceMissingFilter=target.dataset.kind==='type'?'type':'location';
