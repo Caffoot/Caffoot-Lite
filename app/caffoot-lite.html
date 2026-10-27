@@ -6756,7 +6756,13 @@ function hierarchyValidateTypes(subnets) {
             return phase19BTypeGroups[normalized] || 'generic';
         }
         function phase120PlatformOptions(type) {
-            return phase120PlatformCatalog[phase120PlatformGroup(type)] || phase120PlatformCatalog.generic;
+            const choices = phase120PlatformCatalog[phase120PlatformGroup(type)] || phase120PlatformCatalog.generic;
+            // Dedicated host hypervisors are not normal guest OS suggestions.
+            // This filters the editor only: historical saved values and backups remain unchanged.
+            if (String(type || '').toLowerCase().trim() === 'server - virtual') {
+                return choices.filter(name => !['Proxmox VE', 'VMware ESXi', 'Microsoft Hyper-V', 'KVM', 'XCP-ng'].includes(name));
+            }
+            return choices;
         }
         // Historical major releases are offline suggestions, not support-status claims.
         const phase120PlatformVersions = Object.freeze({
