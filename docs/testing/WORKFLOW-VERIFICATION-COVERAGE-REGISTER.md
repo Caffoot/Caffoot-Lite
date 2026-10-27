@@ -187,3 +187,36 @@ PR #170 (branch `fix/97-rack-archived-details`, base `release/v1.3.2`) includes 
 **Manual product-owner acceptance:** rack occupancy and multi-U accessory drag worked; the original backup exported from Edge successfully imported into Firefox after the fix. This is reported manual verification, separate from automated evidence.
 
 **Still outstanding:** review combined PR and issue acceptance, reconcile PR description, and seek separate product-owner approval before any merge or release. Documentation-only changes do not require rerunning application tests.
+
+## Issue #157 / draft PR #172: built-in catalogue acceptance checkpoint, 27 October 2026
+
+The approved follow-up extends the previously merged custom catalogue safeguards to built-in manufacturer, model, software and server service suggestions. Draft PR #172 targets `release/v1.3.2`; application commit `5468f96a4182771205ce1fc315a96395d69e2000` passed release validation [40455065325](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40455065325), consolidated Chromium regression [40455065263](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40455065263), documentation consistency [40455065285](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40455065285), and secret scan [40455065257](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40455065257). The earlier #166–#169 custom catalogue and backup/reload evidence remains valid; do not rerun it solely because of this checkpoint.
+
+**Coverage boundary:** These green workflows do not, without scenario-level evidence, prove the newly added built-in rename/hide/restore and assigned-device guards. Source inspection confirms `phase120BuiltinManufacturerSave`, `phase120BuiltInModelSave`, `phase120SoftwareArchive` and `phase120EffectiveHardwareSeed` contain relevant handling; this is not an executed acceptance result. Still required: focused browser evidence for changed built-in behaviour, including Add/Edit Device suggestions, persistence and backup import/export; then reconcile WF-08, findings, master audit and roadmap. No merge to `main` or publication is authorised by this checkpoint.
+
+### #157 focused built-in acceptance cases (pending execution)
+
+Use a disposable offline inventory and the existing Chromium browser harness. This is a **test plan**, not a record of passed tests. Keep previously successful custom catalogue scenarios out of scope unless the changed code demonstrably affects them.
+
+| Case | Action | Required result | Evidence |
+| --- | --- | --- | --- |
+| Manufacturer | Rename a built-in suggestion, then open Add/Edit Device | New suggestion shown, original inventory manufacturer unchanged | Pending focused browser execution |
+| Manufacturer | Hide an unused built-in suggestion, then restore it | Hidden from new suggestions and restored on demand | Pending focused browser execution |
+| Manufacturer | Attempt to hide a built-in manufacturer assigned to a device, including under its renamed label | Block with device context; assignment and preference unchanged | Pending focused browser execution |
+| Model | Rename, hide and restore an unused built-in model | Device-type and manufacturer association preserved; inventory unchanged | Pending focused browser execution |
+| Model | Attempt to hide an assigned model after manufacturer/model rename | Block; no silent assignment change | Pending focused browser execution |
+| Software and services | Rename, archive and restore built-in entries; try archiving an assigned entry | Stable keys and device assignments preserved; assigned removal blocked | Pending focused browser execution |
+| Persistence | Save preferences, reload and export/import the application's JSON backup | Same preferences and existing inventory retained | Pending focused browser execution |
+| Compatibility and cancellation | Import a legacy backup without preferences; cancel modal or force failed save | Defaults retained; no partial writes | Pending focused browser execution |
+
+**Source review only, 27 October:** `phase20CreateBackup()` copies the state into exported JSON; `phase20MigrateBackup()` normalises a detached backup; built-in manufacturer and model preference saves restore their previous state if `saveState()` fails. These observations do not establish an executed backup round trip or UI acceptance. The four green workflows for `e9c5362` were automatically triggered by a documentation commit and are not a reason to repeat earlier application checks.
+
+### #157 executed Chromium acceptance checkpoint, 27 October 2026
+
+**Executed and passed:** draft PR #172 commit `194fbc3d5bfcac50fad2495ff8b51a81450d73d8`, [consolidated Chromium run 40461229700](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40461229700). The job's `Run issue 157 focused built-in catalogue checks in Chromium` step completed successfully. The consolidated audit step also passed. Release candidate validation [40461229585](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40461229585), documentation consistency [40461230024](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40461230024) and secret scan [40461229726](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40461229726) all passed on the same commit.
+
+`app/test-browser-issue157.cjs` executes built-in manufacturer/model rename, hide, restore and assigned-device guards; JSON backup migration checks; and built-in software/server service rename, archive, restore and assigned-device guards. These assertions passed as a single dedicated browser test step. **Coverage limits:** the test does not independently exercise a full user-driven export/download and import UI flow, reload persistence, cancellation, or simulated storage failure; those cases in the preceding acceptance matrix remain unverified by this new test. Do not mark the entire matrix complete on the strength of this run. Reuse previous successful coverage where applicable and add only genuinely necessary missing checks before merge readiness.
+
+### #157 final evidence reuse review, 27 October 2026
+
+Inspected existing test sources without rerunning them: `app/test-restore.cjs` includes simulated snapshot/save/rollback failures and preservation of the original stored inventory during failed import; `app/test-backup-contract.cjs` includes export/import round-trip preservation of optional state keys and legacy migration; `app/test-browser-issue99.cjs` includes browser Cancel, Close and Escape behaviour for nested subnet/rack forms and stored-state preservation. These tests cover shared backup and form infrastructure, **not every built-in catalogue-specific cancellation or storage-failure interaction**. The passing #157 Chromium run `40461229700` verifies the targeted catalogue mutations and guards. Remaining catalogue-specific cancellation and injected failure behaviour are source-reviewed but not independently exercised; do not claim a separate PASS. No extra test run is justified solely by this documentation review. PR #172 is still open, unmerged and 33 commits ahead of, zero behind, `release/v1.3.2` at this review.
