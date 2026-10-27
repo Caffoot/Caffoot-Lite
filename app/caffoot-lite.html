@@ -6546,6 +6546,10 @@ function hierarchyValidateTypes(subnets) {
             // A hidden required select otherwise prevents the submit handler running.
             const locationSelect=document.getElementById('dev-location');
             if(locationSelect) locationSelect.required=!virtual;
+            const typeSelect=document.getElementById('dev-type');
+            if(typeSelect) typeSelect.required=!virtual;
+            const purposeSelect=document.getElementById('dev-vm-purpose');
+            if(purposeSelect) purposeSelect.required=virtual;
             const rackHeight=document.getElementById('dev-rack-height');
             if(virtual && rackHeight) rackHeight.required=false;
             ['phase120-physical-manufacturer','phase120-physical-model'].forEach(id=>document.getElementById(id)?.classList.toggle('hidden',virtual));
@@ -6863,6 +6867,7 @@ function hierarchyValidateTypes(subnets) {
             document.getElementById('phase19b-manage-functions-button')?.classList.toggle('hidden',group!=='server');
             document.getElementById('phase19b-manage-software-button')?.classList.toggle('hidden',group!=='server'&&group!=='computer');
             phase19BUpdateMountChoices();
+            phase120VirtualHardwareVisibility();
         }
 
         function phase19BIsAccessPoint(type){return ['access point','ap','wireless access point'].includes(String(type||'').toLowerCase().trim());}
@@ -6899,9 +6904,9 @@ function hierarchyValidateTypes(subnets) {
             const mount=document.getElementById('dev-mount-type');
             if(!mount)return;
             const previous=mount.value;
-            const options=phase120SuggestedMounts(type);
-            const chosen=(options.includes(previous) || (previous && phase19BAllowedMounts(type).includes(previous))) ? previous : phase120DefaultMount(type);
-            mount.innerHTML='<option value="" disabled>Select mounting type...</option>'+phase19BMountOptions(type,chosen);
+            const options=phase120IsVirtualForm()?['Not Applicable']:phase120SuggestedMounts(type);
+            const chosen=phase120IsVirtualForm()?'Not Applicable':(options.includes(previous) || (previous && phase19BAllowedMounts(type).includes(previous))) ? previous : phase120DefaultMount(type);
+            mount.innerHTML='<option value="" disabled>Select mounting type...</option>'+ (phase120IsVirtualForm()?'<option value="Not Applicable">Not Applicable</option>':phase19BMountOptions(type,chosen));
             mount.value=chosen;
             toggleDeviceMountType();
         }
@@ -7265,6 +7270,7 @@ function hierarchyValidateTypes(subnets) {
             });
             updateDeviceRackLimits();
             phase19BUpdateMountChoices();
+            phase120VirtualHardwareVisibility();
             rememberModalForm();
             const deviceForm = document.querySelector('[data-device-form="true"]');
             if (deviceForm) {
@@ -7577,6 +7583,7 @@ function hierarchyValidateTypes(subnets) {
             const name = document.getElementById('dev-name').value.trim();
             const type = document.getElementById('dev-type').value;
             const isVirtualServer = phase120IsVirtualForm();
+            if (isVirtualServer && !['Server - Virtual','Desktop','Firewall','Router','NAS','Wireless LAN Controller'].includes(type)) return showToast('Select a valid VM purpose.', 'error');
             const selectedHostId = document.getElementById('dev-virtual-host')?.value || '';
             const selectedHost = appState.devices.find(d => d.id === selectedHostId);
             // Physical placement is owned by the host, not by an individual VM.
@@ -7594,8 +7601,8 @@ function hierarchyValidateTypes(subnets) {
             const manufacturer = document.getElementById('dev-manufacturer').value.trim();
             const model = document.getElementById('dev-model').value.trim();
             const serialNumber = document.getElementById('dev-serial').value.trim();
-            const virtualPlatform = isVirtualServer?(document.getElementById('dev-virtual-platform')?.value||''):'';
-            const virtualHostId = isVirtualServer?(document.getElementById('dev-virtual-host')?.value||''):'';
+            const virtualPlatform = isVirtualServer?(document.getElementById('dev-virtual-platform')?.value||''):(getDeviceById(deviceId)?.virtualPlatform||'');
+            const virtualHostId = isVirtualServer?(document.getElementById('dev-virtual-host')?.value||''):(getDeviceById(deviceId)?.virtualHostId||'');
             const existingDeviceHostIsUnchanged = () => !!deviceId && getDeviceById(deviceId)?.virtualHostId === virtualHostId;
             // #164: New virtual servers must have an eligible physical host. Preserve legacy edits.
             if(isVirtualServer && !virtualHostId && (!deviceId || !(getDeviceById(deviceId)?.isVirtual === true || getDeviceById(deviceId)?.type==='Server - Virtual')))return showToast('Select an eligible physical Hypervisor host for the new virtual machine.','error');
