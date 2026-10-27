@@ -193,3 +193,20 @@ PR #170 (branch `fix/97-rack-archived-details`, base `release/v1.3.2`) includes 
 The approved follow-up extends the previously merged custom catalogue safeguards to built-in manufacturer, model, software and server service suggestions. Draft PR #172 targets `release/v1.3.2`; application commit `5468f96a4182771205ce1fc315a96395d69e2000` passed release validation [40455065325](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40455065325), consolidated Chromium regression [40455065263](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40455065263), documentation consistency [40455065285](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40455065285), and secret scan [40455065257](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40455065257). The earlier #166–#169 custom catalogue and backup/reload evidence remains valid; do not rerun it solely because of this checkpoint.
 
 **Coverage boundary:** These green workflows do not, without scenario-level evidence, prove the newly added built-in rename/hide/restore and assigned-device guards. Source inspection confirms `phase120BuiltinManufacturerSave`, `phase120BuiltInModelSave`, `phase120SoftwareArchive` and `phase120EffectiveHardwareSeed` contain relevant handling; this is not an executed acceptance result. Still required: focused browser evidence for changed built-in behaviour, including Add/Edit Device suggestions, persistence and backup import/export; then reconcile WF-08, findings, master audit and roadmap. No merge to `main` or publication is authorised by this checkpoint.
+
+### #157 focused built-in acceptance cases (pending execution)
+
+Use a disposable offline inventory and the existing Chromium browser harness. This is a **test plan**, not a record of passed tests. Keep previously successful custom catalogue scenarios out of scope unless the changed code demonstrably affects them.
+
+| Case | Action | Required result | Evidence |
+| --- | --- | --- | --- |
+| Manufacturer | Rename a built-in suggestion, then open Add/Edit Device | New suggestion shown, original inventory manufacturer unchanged | Pending focused browser execution |
+| Manufacturer | Hide an unused built-in suggestion, then restore it | Hidden from new suggestions and restored on demand | Pending focused browser execution |
+| Manufacturer | Attempt to hide a built-in manufacturer assigned to a device, including under its renamed label | Block with device context; assignment and preference unchanged | Pending focused browser execution |
+| Model | Rename, hide and restore an unused built-in model | Device-type and manufacturer association preserved; inventory unchanged | Pending focused browser execution |
+| Model | Attempt to hide an assigned model after manufacturer/model rename | Block; no silent assignment change | Pending focused browser execution |
+| Software and services | Rename, archive and restore built-in entries; try archiving an assigned entry | Stable keys and device assignments preserved; assigned removal blocked | Pending focused browser execution |
+| Persistence | Save preferences, reload and export/import the application's JSON backup | Same preferences and existing inventory retained | Pending focused browser execution |
+| Compatibility and cancellation | Import a legacy backup without preferences; cancel modal or force failed save | Defaults retained; no partial writes | Pending focused browser execution |
+
+**Source review only, 27 October:** `phase20CreateBackup()` copies the state into exported JSON; `phase20MigrateBackup()` normalises a detached backup; built-in manufacturer and model preference saves restore their previous state if `saveState()` fails. These observations do not establish an executed backup round trip or UI acceptance. The four green workflows for `e9c5362` were automatically triggered by a documentation commit and are not a reason to repeat earlier application checks.
