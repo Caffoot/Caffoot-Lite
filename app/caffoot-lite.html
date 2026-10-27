@@ -8886,10 +8886,19 @@ function hierarchyValidateTypes(subnets) {
         document.addEventListener('dragend',()=>{
             phase13VDraggedId=null;phase13VClearPreview();
         });
+        let phase13DragGrabOffsetU = null;
         document.addEventListener('dragstart', event => {
             const source = event.target.closest('[data-rack-device]');
             const accessory=event.target.closest('[data-rack-accessory]');
             if(!source&&!accessory)return;
+            // Remember which U within the dragged item was grabbed, so moving
+            // across an empty U does not jump by the full equipment height.
+            const grabbed=source||accessory;
+            const grabbedRect=grabbed.getBoundingClientRect();
+            const grabbedHeight=accessory?Number((appState.rackAccessories||[]).find(a=>a.id===accessory.dataset.rackAccessory)?.heightU)||1:
+                Math.max(1,Number(appState.devices.find(d=>d.id===source.dataset.rackDevice)?.rackUHeight)||1);
+            phase13DragGrabOffsetU=grabbedRect.height>0?
+                Math.min(grabbedHeight-1,Math.max(0,Math.floor((event.clientY-grabbedRect.top)/grabbedRect.height*grabbedHeight))):0;
             phase13CDraggedAccessoryId=accessory?.dataset.rackAccessory||null;
             phase13DraggedDeviceId = source?.dataset.rackDevice||null;
             event.dataTransfer.effectAllowed = 'move';
@@ -8914,14 +8923,16 @@ function hierarchyValidateTypes(subnets) {
             const deviceId=target.dataset.rackDevice;
             const item=accessoryId?(appState.rackAccessories||[]).find(a=>a.id===accessoryId):
                 deviceId?appState.devices.find(d=>d.id===deviceId):null;
-            if(!item)return topU;
+            if(!item)return topU-(phase13DragGrabOffsetU??0);
             const height=accessoryId?Number(item.heightU):
                 Math.max(1,Number(item.rackUHeight)||(Number(item.rackUEnd)-Number(item.rackUStart)+1)||1);
             if(!Number.isFinite(height)||height<=1)return topU;
             const rect=target.getBoundingClientRect();
             if(!rect.height)return topU;
             const offset=Math.min(height-1,Math.max(0,Math.floor((event.clientY-rect.top)/rect.height*height)));
-            return topU-offset;
+            // The target's top U is its highest numbered U. Translate the
+            // pointer to the actual hovered U, then preserve the grab offset.
+            return topU-offset-(phase13DragGrabOffsetU??0);
         }
         document.addEventListener('dragover', event => {
             const target = event.target.closest('[data-rack-drop-u]');
@@ -8965,6 +8976,7 @@ function hierarchyValidateTypes(subnets) {
         document.addEventListener('dragend', () => {
             phase17dStopAutoScroll();
             phase13DraggedDeviceId = null;phase13CDraggedAccessoryId=null;
+            phase13DragGrabOffsetU=null;
             phase13ClearDropPreview();
         });
 
