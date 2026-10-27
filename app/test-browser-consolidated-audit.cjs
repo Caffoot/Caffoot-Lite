@@ -863,6 +863,41 @@ const { chromium } = require('playwright');
         assert.equal(choice.physicalHidden,true,'Physical device type controls must be hidden for a VM');
       }
     });
+    await scenario('#164 new VM requires host and rejects invalid hardware without mutation', async page => {
+      const result=await page.evaluate(async () => {
+        const host={id:'fixture-164-validation-host',name:'Fixture #164 Validation Host',type:'Server - Physical',
+          status:'Active',location:'Unknown',typeDetails:{serverService_Hypervisor:true,hypervisorProduct:'Proxmox VE'}};
+        appState.devices.push(host);
+        openDeviceModal();
+        const deployment=document.getElementById('dev-deployment');
+        deployment.value='virtual';
+        deployment.dispatchEvent(new Event('change',{bubbles:true}));
+        const purpose=document.getElementById('dev-vm-purpose');
+        purpose.value='Server - Virtual';
+        purpose.dispatchEvent(new Event('change',{bubbles:true}));
+        document.getElementById('dev-name').value='Fixture #164 New VM';
+        const originalToast=showToast;
+        const messages=[];
+        showToast=(message)=>messages.push(String(message));
+        try {
+          const before=appState.devices.length;
+          document.getElementById('dev-virtual-host').value='';
+          await handleDeviceSubmit({preventDefault(){}},null);
+          const missingHost={message:messages.at(-1),unchanged:appState.devices.length===before};
+          document.getElementById('dev-virtual-host').value=host.id;
+          const fields=Array.from(document.querySelectorAll('[data-phase19b-field]'));
+          const allocation=fields.find(x=>x.getAttribute('data-phase19b-field')==='vmVcpu');
+          if(!allocation)throw Error('vCPU allocation input missing');
+          allocation.value='-2';
+          await handleDeviceSubmit({preventDefault(){}},null);
+          return {missingHost,invalidAllocation:{message:messages.at(-1),unchanged:appState.devices.length===before}};
+        } finally {showToast=originalToast;}
+      });
+      assert.match(result.missingHost.message,/eligible physical Hypervisor host/);
+      assert.equal(result.missingHost.unchanged,true,'Missing host must not create a VM');
+      assert.match(result.invalidAllocation.message,/vCPU count must be a positive whole number/);
+      assert.equal(result.invalidAllocation.unchanged,true,'Invalid allocation must not create a VM');
+    });
     await scenario('#134 virtual machine host selector is on General for Add and Edit', async page => {
       const result = await page.evaluate(() => {
         const host={id:'fixture-134-physical',name:'Fixture Hypervisor',type:'Server - Physical',status:'Active',typeDetails:{serverService_Hypervisor:true,hypervisorProduct:'Proxmox VE'}};
