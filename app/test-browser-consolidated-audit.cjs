@@ -952,6 +952,41 @@ const { chromium } = require('playwright');
         assert.equal(device.isVirtual,true);
       }
     });
+    await scenario('#164 failed new VM storage write preserves inventory', async page => {
+      const result=await page.evaluate(async () => {
+        appState.subnets.push({id:'fixture-164-failure-subnet',name:'VM failure subnet',kind:'network',
+          cidr:'10.88.71.0/29',gateway:'10.88.71.1',vlan:3871});
+        appState.devices.push({id:'fixture-164-failure-host',name:'VM Failure Host',
+          type:'Server - Physical',status:'Active',location:'Unknown',mountType:'Desktop',
+          typeDetails:{serverService_Hypervisor:true,hypervisorProduct:'Proxmox VE'}});
+        saveState();
+        const beforeDevices=JSON.stringify(appState.devices);
+        const beforeStored=localStorage.getItem('caffoot_state');
+        openDeviceModal();
+        const set=(id,value)=>{const el=document.getElementById(id);
+          if(!el)throw Error('Missing '+id);el.value=value;
+          el.dispatchEvent(new Event('change',{bubbles:true}));};
+        set('dev-deployment','virtual');
+        set('dev-vm-purpose','Server - Virtual');
+        set('dev-name','Fixture #164 Failed VM');
+        set('dev-virtual-host','fixture-164-failure-host');
+        const subnet=document.getElementById('dev-subnet');
+        subnet.add(new Option('VM failure subnet','fixture-164-failure-subnet'));
+        set('dev-subnet','fixture-164-failure-subnet');
+        set('dev-ip','10.88.71.3');
+        const original=Storage.prototype.setItem;
+        Storage.prototype.setItem=function(key,value){
+          if(key==='caffoot_state')return;
+          return original.call(this,key,value);
+        };
+        try{await handleDeviceSubmit({preventDefault(){}},null);}
+        finally{Storage.prototype.setItem=original;}
+        return {beforeDevices,afterDevices:JSON.stringify(appState.devices),
+          beforeStored,afterStored:localStorage.getItem('caffoot_state')};
+      });
+      assert.equal(result.afterDevices,result.beforeDevices,'Failed VM save must restore inventory');
+      assert.equal(result.afterStored,result.beforeStored,'Failed VM save must preserve stored inventory');
+    });
     await scenario('#164 new VM saves and reopens with host and allocated hardware', async page => {
       const saved=await page.evaluate(async () => {
         appState.subnets.push({id:'fixture-164-save-subnet',name:'Fixture VM subnet',kind:'network',
