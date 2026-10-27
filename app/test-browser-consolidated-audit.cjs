@@ -1854,6 +1854,42 @@ const { chromium } = require('playwright');
       assert.equal(persisted.software,true);
       assert.equal(persisted.service,true);
     });
+    await scenario('#96 real device editor preserves archived and unknown historical fields', async page => {
+      await page.evaluate(() => {
+        appState.subnets.push({id:'fixture96-subnet',name:'Fixture 96 subnet',kind:'network',cidr:'10.88.96.0/29',gateway:'10.88.96.1',vlan:3896});
+        appState.installedSoftware.push({key:'software_fixture96_archived',label:'Fixture 96 archived software',archived:true});
+        appState.serverFunctions.push({key:'serverService_fixture96_archived',label:'Fixture 96 archived service',archived:true});
+        appState.devices.push({id:'fixture96-device',name:'Fixture 96 existing server',type:'Server - Physical',
+          isVirtual:false,mountType:'Desktop',location:'Unknown',status:'Active',primaryIp:'10.88.96.2',
+          notes:'Before editor change',typeDetails:{software_fixture96_archived:true,
+            serverService_fixture96_archived:true,legacyFixture96:'Historical custom value'}});
+        if(!saveState())throw Error('Unable to save #96 fixture');
+      });
+      const result=await page.evaluate(async () => {
+        openDeviceModal('fixture96-device');
+        const set=(id,value)=>{const el=document.getElementById(id);if(!el)throw Error('Missing editor field '+id);el.value=value;el.dispatchEvent(new Event('change',{bubbles:true}));};
+        set('dev-notes','After editor change');
+        set('dev-location','Unknown');
+        set('dev-mount-type','Desktop');
+        set('dev-subnet','fixture96-subnet');
+        set('dev-ip','10.88.96.2');
+        await handleDeviceSubmit({preventDefault(){}},'fixture96-device');
+        const d=appState.devices.find(x=>x.id==='fixture96-device');
+        return {notes:d?.notes,details:d?.typeDetails,stored:JSON.parse(localStorage.getItem('caffoot_state')).devices.find(x=>x.id==='fixture96-device')?.typeDetails};
+      });
+      assert.equal(result.notes,'After editor change','Real editor must save ordinary note change');
+      for(const details of [result.details,result.stored]){
+        assert.equal(details?.software_fixture96_archived,true,'Archived software must survive actual form submission');
+        assert.equal(details?.serverService_fixture96_archived,true,'Archived service must survive actual form submission');
+        assert.equal(details?.legacyFixture96,'Historical custom value','Unknown historical field must survive actual form submission');
+      }
+      await page.reload({waitUntil:'load'});
+      const persisted=await page.evaluate(()=>appState.devices.find(x=>x.id==='fixture96-device'));
+      assert.equal(persisted?.notes,'After editor change');
+      assert.equal(persisted?.typeDetails?.software_fixture96_archived,true);
+      assert.equal(persisted?.typeDetails?.serverService_fixture96_archived,true);
+      assert.equal(persisted?.typeDetails?.legacyFixture96,'Historical custom value');
+    });
     await scenario('#97 archived software and server service remain visible in device details', async page => {
       const result = await page.evaluate(() => {
         const software={key:'software_fixture97',label:'Fixture #97 legacy software',archived:true,deviceTypes:['Server - Physical']};
