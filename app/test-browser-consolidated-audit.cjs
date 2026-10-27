@@ -835,9 +835,12 @@ const { chromium } = require('playwright');
         const guest={id:'fixture-134-guest',name:'Fixture Guest',type:'Server - Virtual',status:'Active',virtualHostId:host.id,virtualPlatform:'Proxmox VE',typeDetails:{}};
         appState.devices.push(host,guest);
         openDeviceModal();
-        const type=document.getElementById('dev-type');
-        type.value='Server - Virtual';
-        type.dispatchEvent(new Event('change',{bubbles:true}));
+        const deployment=document.getElementById('dev-deployment');
+        deployment.value='virtual';
+        deployment.dispatchEvent(new Event('change',{bubbles:true}));
+        const purpose=document.getElementById('dev-vm-purpose');
+        purpose.value='Server - Virtual';
+        purpose.dispatchEvent(new Event('change',{bubbles:true}));
         const virtualBlock=document.getElementById('phase120-virtual-fields');
         const add={
           inGeneral:!!document.querySelector('[data-device-form] .form-section-card:first-child #phase120-virtual-fields'),
@@ -853,10 +856,9 @@ const { chromium } = require('playwright');
           selected:document.getElementById('dev-virtual-host')?.value,
           visible:!document.getElementById('phase120-virtual-fields')?.classList.contains('hidden')
         };
-        document.getElementById('dev-type').value='Desktop';
-        document.getElementById('dev-type').dispatchEvent(new Event('change',{bubbles:true}));
-        const hiddenForDesktop=document.getElementById('phase120-virtual-fields')?.classList.contains('hidden');
-        return {add,selected,edit,hiddenForDesktop};
+        const editDeploymentHidden=document.getElementById('dev-deployment')?.closest('.hidden')!==null;
+        const editVirtualIdentity=phase120IsVirtualForm();
+        return {add,selected,edit,editDeploymentHidden,editVirtualIdentity};
       });
       assert.equal(result.add.inGeneral,true,'Virtual host selector belongs to General');
       assert.equal(result.add.inHardware,false,'Hardware must not contain duplicate virtual host controls');
@@ -866,7 +868,8 @@ const { chromium } = require('playwright');
       assert.equal(result.edit.inGeneral,true,'Edit virtual server must use same General controls');
       assert.equal(result.edit.visible,true,'Edit virtual server must reveal host controls');
       assert.equal(result.edit.selected,'fixture-134-physical','Saved host selection must populate Edit');
-      assert.equal(result.hiddenForDesktop,true,'Unrelated device types must hide virtual controls');
+      assert.equal(result.editDeploymentHidden,true,'Edit must hide creation-only deployment choice');
+      assert.equal(result.editVirtualIdentity,true,'Edit must preserve the saved virtual identity');
     });
     await scenario('#134 shared Add and Edit physical host controls preserve legacy values', async page => {
       const result = await page.evaluate(() => {
