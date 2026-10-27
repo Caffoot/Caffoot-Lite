@@ -912,6 +912,8 @@ const { chromium } = require('playwright');
         set('dev-vm-purpose','Server - Virtual');
         set('dev-name','Fixture #164 Saved VM');
         set('dev-virtual-host','fixture-164-save-host');
+        const subnetSelect=document.getElementById('dev-subnet');
+        subnetSelect.add(new Option('Fixture VM subnet','fixture-164-save-subnet'));
         set('dev-subnet','fixture-164-save-subnet');
         set('dev-ip','10.88.69.3');
         set('dev-vmVcpu','4');
