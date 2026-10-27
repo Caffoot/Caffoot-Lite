@@ -193,7 +193,26 @@
 body, #main-content { background-color: var(--caffoot-canvas) !important; }
 #sidebar { background-color: var(--caffoot-navigation) !important; }
 #app > main > header { background-color: var(--caffoot-card) !important; }
-#sidebar h1 { color: var(--caffoot-ink) !important; }
+#sidebar h1 { color: #FFFFFF !important; }
+#app > main > header { background-color: #101B28 !important; color: #FFFFFF; }
+#app > main > header #page-title { color: #FFFFFF !important; }
+/* Navigation uses the same navy and white palette in both themes.
+   Restrict selected styling to nav buttons and selected sidebar actions. */
+#sidebar nav button { color: #FFFFFF !important; }
+#sidebar nav button:hover { background-color: #26384B !important; color: #FFFFFF !important; }
+#sidebar nav .nav-btn:is(.bg-indigo-50, .dark\\:bg-slate-700\\/60),
+#sidebar nav button[aria-current="page"] {
+  background-color: #F47B20 !important;
+  color: #101B28 !important;
+}
+#sidebar nav button[aria-current="page"]:hover,
+#sidebar nav .nav-btn.bg-indigo-50:hover {
+  background-color: #F47B20 !important;
+  color: #101B28 !important;
+}
+#sidebar nav [class*="text-slate-"] { color: #FFFFFF !important; }
+#sidebar nav button:focus-visible { outline-color: #F47B20 !important; }
+
 /* Page-level accessibility and theme consistency pass */
 :root {
   --ui-text: #142232;
