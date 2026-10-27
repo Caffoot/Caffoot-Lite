@@ -1494,6 +1494,38 @@ const { chromium } = require('playwright');
       assert.equal(result.down,2,'6U accessory must move one U down');
       assert.equal(result.up,1,'6U accessory must move one U back up');
     });
+    await scenario('#171 upwards drag preserves grabbed U offset over empty rack positions', async page => {
+      const result=await page.evaluate(() => {
+        appState.racks.push({id:'fixture171offsetrack',name:'Fixture 171 offset rack',heightU:12});
+        appState.rackAccessories.push({id:'fixture171offsetitem',name:'Fixture 171 4U item',
+          type:'shelf',rackId:'fixture171offsetrack',face:'front',startU:3,heightU:4});
+        const source=document.createElement('div');
+        source.dataset.rackAccessory='fixture171offsetitem';
+        source.dataset.rackDropU='6';
+        source.dataset.rackDropId='fixture171offsetrack';
+        source.draggable=true;
+        source.getBoundingClientRect=()=>({top:100,height:160});
+        document.body.appendChild(source);
+        const empty=document.createElement('div');
+        empty.dataset.rackDropU='7';
+        empty.dataset.rackDropId='fixture171offsetrack';
+        document.body.appendChild(empty);
+        const originalFace=activeRackFace;
+        activeRackFace='front';
+        try {
+          source.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,clientY:100+2*40+20,dataTransfer:new DataTransfer()}));
+          const start=phase13DropPosition({clientY:0},empty);
+          empty.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,clientY:0,dataTransfer:new DataTransfer()}));
+          return {start,placed:appState.rackAccessories.find(a=>a.id==='fixture171offsetitem').startU};
+        } finally {
+          source.dispatchEvent(new DragEvent('dragend',{bubbles:true,dataTransfer:new DataTransfer()}));
+          activeRackFace=originalFace;
+          source.remove();empty.remove();
+        }
+      });
+      assert.equal(result.start,5,'Moving one U above a 4U item must preserve grab offset');
+      assert.equal(result.placed,5,'Upward drop must reposition by one U rather than four');
+    });
     await scenario('#97 rack CSV export uses accessory-aware report rows', async page => {
       const result=await page.evaluate(async () => {
         appState.racks.push({id:'fixture97csvrack',name:'Fixture 97 CSV rack',heightU:10});
