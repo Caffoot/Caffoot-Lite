@@ -6128,6 +6128,10 @@ function hierarchyValidateTypes(subnets) {
                 : d.virtualHostId
                     ? section('Physical host', 'fa-server', field('Host', appState.devices.find(host => host.id === d.virtualHostId)?.name || 'Missing or unavailable host (legacy reference preserved)'))
                     : '';
+            const isVirtualDevice = d.type === 'Server - Virtual';
+            const virtualHardware = isVirtualDevice ? section('Allocated virtual hardware', 'fa-microchip',
+                field('vCPUs', d.vmVcpu) + field('Allocated RAM (GB)', d.vmRamGb) +
+                field('Virtual disk (GB)', d.vmDiskGb) + field('Virtual network adapters', d.vmNicCount)) : '';
             const hardware = field('Manufacturer', d.manufacturer) + field('Model', d.model) + field('Serial number', d.serialNumber);
             const rackRows = mounted ? field('Rack', rack.name) + field('Face', d.face || 'front') + field('U position', uText) + field('Height', (Number(d.rackUHeight) || (uEnd-uStart+1) || 1) + 'U') : '';
             openModal(`<div class="phase14c-detail space-y-5 p-5 sm:p-7">
@@ -6138,21 +6142,22 @@ function hierarchyValidateTypes(subnets) {
                     <button type="button" data-action="close-modal" aria-label="Close device details" class="phase14c-close"><i class="fa-solid fa-xmark"></i></button>
                 </header>
                 <nav class="phase14c-tabs" role="tablist" aria-label="Device detail sections">
-                    ${[['overview','Overview'],...(showVirtualMachinesTab ? [['virtual-machines','Virtual Machines']] : []),['hardware','Hardware'],['network','Network'],['software','Software'],['location','Location'],...(historyRows?[['history','History']]:[])].map(([key,label],i)=>`<button type="button" role="tab" id="phase14c-tab-${key}" aria-controls="phase14c-panel-${key}" aria-selected="${i===0?'true':'false'}" tabindex="${i===0?'0':'-1'}" data-action="phase14c-tab" data-name="${key}" class="phase14c-tab ${i===0?'phase14c-tab-active':''}">${label}</button>`).join('')}
+                    ${[['overview','Overview'],...(showVirtualMachinesTab ? [['virtual-machines','Virtual Machines']] : []),...(!isVirtualDevice ? [['hardware','Hardware']] : []),['network','Network'],['software','Software'],['location','Location'],...(historyRows?[['history','History']]:[])].map(([key,label],i)=>`<button type="button" role="tab" id="phase14c-tab-${key}" aria-controls="phase14c-panel-${key}" aria-selected="${i===0?'true':'false'}" tabindex="${i===0?'0':'-1'}" data-action="phase14c-tab" data-name="${key}" class="phase14c-tab ${i===0?'phase14c-tab-active':''}">${label}</button>`).join('')}
                 </nav>
                 <div class="phase14c-panels">
                     <div id="phase14c-panel-overview" role="tabpanel" aria-labelledby="phase14c-tab-overview" class="phase14c-panel">
                         ${section('Device overview', 'fa-circle-info', field('Device name', d.name) + field('Type', d.type) + field('Status', status) + field('Manufacturer', d.manufacturer) + field('Model', d.model) + field('Primary IP', d.primaryIp) + field('Location', d.location))}
                         ${d.type === 'Server - Physical' ? '' : hostingSection}
+                        ${virtualHardware}
                         ${d.notes ? `<section class="phase14c-section"><h4><i class="fa-solid fa-note-sticky mr-2" aria-hidden="true"></i>Notes</h4><p class="phase14c-notes">${safe(d.notes)}</p></section>` : ''}
                     </div>
                     ${showVirtualMachinesTab ? `<div id="phase14c-panel-virtual-machines" role="tabpanel" aria-labelledby="phase14c-tab-virtual-machines" class="phase14c-panel" hidden>
                         ${hypervisorNotice}
                         ${hostingSection}
                     </div>` : ''}
-                    <div id="phase14c-panel-hardware" role="tabpanel" aria-labelledby="phase14c-tab-hardware" class="phase14c-panel" hidden>
+                    ${!isVirtualDevice ? `<div id="phase14c-panel-hardware" role="tabpanel" aria-labelledby="phase14c-tab-hardware" class="phase14c-panel" hidden>
                         ${section('Hardware & lifecycle', 'fa-microchip', hardware + (detailRows ? `<div class="phase19c-detail-subheading">Additional ${safe(d.type)} details</div>${detailRows}` : ''))}
-                    </div>
+                    </div>` : ''}
                     <div id="phase14c-panel-network" role="tabpanel" aria-labelledby="phase14c-tab-network" class="phase14c-panel" hidden>
                         ${section('Network identity', 'fa-network-wired', field('Primary IP', d.primaryIp) + field('Subnet', subnet ? (subnet.cidr || subnet.name || subnet.network || subnet.id) : 'Not linked') + field('IP reserved', d.ipReserved ? 'Yes' : 'No'))}
                     </div>
@@ -6162,7 +6167,7 @@ function hierarchyValidateTypes(subnets) {
                         ${serverServices?section('Server Services', 'fa-server',serverServices):''}
                     </div>
                     <div id="phase14c-panel-location" role="tabpanel" aria-labelledby="phase14c-tab-location" class="phase14c-panel" hidden>
-                        ${section('Mounting & location', 'fa-location-dot', field('Mounting', d.mountType || (mounted ? 'Rack Mounted' : 'Desktop')) + field('Location', d.location) + rackRows)}
+                        ${section('Mounting & location', 'fa-location-dot', isVirtualDevice ? field('Location', d.location) : field('Mounting', d.mountType || (mounted ? 'Rack Mounted' : 'Desktop')) + field('Location', d.location) + rackRows)}
                     </div>
                     ${historyRows?`<div id="phase14c-panel-history" role="tabpanel" aria-labelledby="phase14c-tab-history" class="phase14c-panel" hidden><section class="phase14c-section"><h4>Previous Device Type Details</h4><p class="text-sm mb-3">Preserved for reference only; not part of the active configuration.</p>${historyRows}</section></div>`:''}
                 </div>
@@ -6992,9 +6997,10 @@ function hierarchyValidateTypes(subnets) {
             if (!form || form.querySelector('[data-device-tabs]')) return;
             const sections = Array.from(form.children).filter(el => el.classList.contains('form-section-card'));
             if (sections.length !== 5) return;
+            const isVirtualDevice = form.querySelector('#dev-type')?.value === 'Server - Virtual';
             const labels = [
                 ['general', 'General'],
-                ['hardware', 'Hardware'],
+                ...(!isVirtualDevice ? [['hardware', 'Hardware']] : []),
                 ['software', 'Software & Firmware'],
                 ['networking', 'Networking'],
                 ['notes', 'Notes']
@@ -7027,7 +7033,13 @@ function hierarchyValidateTypes(subnets) {
             form.insertBefore(nav, sections[0]);
             labels.forEach(([id]) => form.insertBefore(panels.get(id), sections[0]));
             panels.get('general').append(sections[0], sections[2]);
-            panels.get('hardware').append(sections[1]);
+            if (isVirtualDevice) {
+                // Retain existing hardware and mounting inputs in the form for legacy data safety.
+                sections[1].hidden = true;
+                panels.get('general').appendChild(sections[1]);
+            } else {
+                panels.get('hardware').append(sections[1]);
+            }
             panels.get('networking').append(sections[3]);
             panels.get('notes').append(sections[4]);
             // Move existing field nodes rather than cloning controls, preserving IDs and handlers.
@@ -7048,6 +7060,7 @@ function hierarchyValidateTypes(subnets) {
                 locationSection.appendChild(locationRow);
                 panels.get('general').insertBefore(locationSection, sections[2]);
             }
+            if (isVirtualDevice) sections[2].hidden = true;
             const mountHeading = sections[2].querySelector('.form-section-heading');
             if (mountHeading) mountHeading.textContent = 'Mounting & Rack Configuration';
             panels.get('notes').dataset.notesPanel = 'true';
