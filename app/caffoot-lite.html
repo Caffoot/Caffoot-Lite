@@ -6314,16 +6314,21 @@ function hierarchyValidateTypes(subnets) {
             const source = getDeviceById(deviceId);
             if (!source) return showToast('Device not found.', 'error');
             const subnet = source.primaryIp ? getSubnetForIp(source.primaryIp) : null;
-            const mounted = source.mountType === 'Rack Mounted' || !!source.rackId;
+            // Virtual devices are hosted by a hypervisor, never mounted in a rack themselves.
+            const mounted = !(source.isVirtual === true || source.type === 'Server - Virtual') && (source.mountType === 'Rack Mounted' || !!source.rackId);
             const height = Math.max(1, Number(source.rackUHeight) || (Number(source.rackUEnd) - Number(source.rackUStart) + 1) || 1);
             const draft = {
                 deviceId:null, duplicatedFrom:source.id, name:'', primaryIp:'',
-                subnetId:subnet?.id || '', type:source.type || '',
-                location:source.location || '', mountType:mounted ? 'Rack Mounted' : (source.mountType || 'Desktop'),
+                subnetId:subnet?.id || '', type:source.type || '', isVirtual:source.isVirtual === true || source.type === 'Server - Virtual',
+                location:source.location || '', mountType:(source.isVirtual === true || source.type === 'Server - Virtual') ? 'Not Applicable' : (mounted ? 'Rack Mounted' : (source.mountType || 'Desktop')),
                 rackId:mounted ? source.rackId || '' : '', face:source.face || 'front',
                 rackUHeight:height, rackUStart:1, ipReserved:!!source.ipReserved,
                 status:source.status || 'Active', manufacturer:source.manufacturer || '',
-                model:source.model || '', serialNumber:'', notes:source.notes || '', typeDetails:{...(source.typeDetails||{})}
+                model:source.model || '', serialNumber:'', notes:source.notes || '',
+                // #164: Copy VM host/platform and allocations into the editable draft.
+                // The new record still requires an eligible host on save; legacy exemptions do not carry over.
+                virtualPlatform:source.virtualPlatform || '', virtualHostId:source.virtualHostId || '',
+                typeDetails:{...(source.typeDetails||{})}
             };
             if (mounted && source.rackId) {
                 const rack = appState.racks.find(r => r.id === source.rackId);
@@ -6525,9 +6530,28 @@ function hierarchyValidateTypes(subnets) {
             if(!saveState()){if(previous===undefined)delete appState.hardwareCatalogue;else appState.hardwareCatalogue=previous;showToast('Could not save the catalogue.','error');return;}
             phase120ManageHardwareCatalogue();
         }
+        function phase120IsVirtualForm(){
+            const deployment=document.getElementById('dev-deployment');
+            return deployment ? deployment.value==='virtual' : document.getElementById('dev-type')?.value==='Server - Virtual';
+        }
         function phase120VirtualHardwareVisibility(){
             const type=document.getElementById('dev-type')?.value || '';
-            const virtual=type==='Server - Virtual';
+            const virtual=phase120IsVirtualForm();
+            // VM placement belongs to the host. Retain historical values in storage.
+            const mounting=document.getElementById('phase120-device-mounting');
+            if(mounting) mounting.classList.toggle('hidden',virtual);
+            const mountSelect=document.getElementById('dev-mount-type');
+            if(mountSelect) mountSelect.required=!virtual;
+            // The location is derived from the selected host when saving a VM.
+            // A hidden required select otherwise prevents the submit handler running.
+            const locationSelect=document.getElementById('dev-location');
+            if(locationSelect) locationSelect.required=!virtual;
+            const typeSelect=document.getElementById('dev-type');
+            if(typeSelect) typeSelect.required=!virtual;
+            const purposeSelect=document.getElementById('dev-vm-purpose');
+            if(purposeSelect) purposeSelect.required=virtual;
+            const rackHeight=document.getElementById('dev-rack-height');
+            if(virtual && rackHeight) rackHeight.required=false;
             ['phase120-physical-manufacturer','phase120-physical-model'].forEach(id=>document.getElementById(id)?.classList.toggle('hidden',virtual));
             document.getElementById('phase120-virtual-fields')?.classList.toggle('hidden',!virtual);
             document.getElementById('phase-m005-host-platform-fields')?.classList.toggle('hidden',type!=='Server - Physical');
@@ -6843,6 +6867,7 @@ function hierarchyValidateTypes(subnets) {
             document.getElementById('phase19b-manage-functions-button')?.classList.toggle('hidden',group!=='server');
             document.getElementById('phase19b-manage-software-button')?.classList.toggle('hidden',group!=='server'&&group!=='computer');
             phase19BUpdateMountChoices();
+            phase120VirtualHardwareVisibility();
         }
 
         function phase19BIsAccessPoint(type){return ['access point','ap','wireless access point'].includes(String(type||'').toLowerCase().trim());}
@@ -6879,9 +6904,9 @@ function hierarchyValidateTypes(subnets) {
             const mount=document.getElementById('dev-mount-type');
             if(!mount)return;
             const previous=mount.value;
-            const options=phase120SuggestedMounts(type);
-            const chosen=(options.includes(previous) || (previous && phase19BAllowedMounts(type).includes(previous))) ? previous : phase120DefaultMount(type);
-            mount.innerHTML='<option value="" disabled>Select mounting type...</option>'+phase19BMountOptions(type,chosen);
+            const options=phase120IsVirtualForm()?['Not Applicable']:phase120SuggestedMounts(type);
+            const chosen=phase120IsVirtualForm() ? 'Not Applicable' : ((options.includes(previous) || (previous && phase19BAllowedMounts(type).includes(previous))) ? previous : phase120DefaultMount(type));
+            mount.innerHTML='<option value="" disabled>Select mounting type...</option>'+ (phase120IsVirtualForm()?'<option value="Not Applicable">Not Applicable</option>':phase19BMountOptions(type,chosen));
             mount.value=chosen;
             toggleDeviceMountType();
         }
@@ -7088,6 +7113,11 @@ function hierarchyValidateTypes(subnets) {
             const types = getUniqueDeviceTypes();
             const locations = getUniqueDeviceLocations();
             const currentType = draft?.type ?? device?.type ?? '';
+            const hasEligiblePhysicalHost = appState.devices.some(d => d.type === 'Server - Physical' && d.status !== 'Retired' && (d.typeDetails?.serverService_Hypervisor === true || d.serverService_Hypervisor === true));
+            // Keep legacy virtual types selectable when editing, even without a current host.
+            const availableFormTypes = types.filter(t => t !== 'Server - Virtual');
+            const isExistingVirtual = (draft?.isVirtual ?? device?.isVirtual) === true || currentType === 'Server - Virtual';
+            const vmPurposes = [['Server','Server - Virtual'],['Desktop','Desktop'],['Firewall','Firewall'],['Router','Router'],['NAS','NAS'],['Wireless LAN Controller','Wireless LAN Controller']];
             phase19BFormValues = {...(draft?.typeDetails ?? device?.typeDetails ?? {})};
             if (currentType === 'Server - Physical' &&
                 phase19BFormValues.serverService_Hypervisor !== true &&
@@ -7095,7 +7125,7 @@ function hierarchyValidateTypes(subnets) {
                 phase19BFormValues.serverService_Hypervisor = true;
             }
             const currentLoc = draft?.location ?? device?.location ?? '';
-            const requestedMountType = draft?.mountType ?? device?.mountType ?? (device?.rackId ? 'Rack Mounted' : phase120DefaultMount(currentType));
+            const requestedMountType = isExistingVirtual ? 'Not Applicable' : (draft?.mountType ?? device?.mountType ?? (device?.rackId ? 'Rack Mounted' : phase120DefaultMount(currentType)));
             const mountType = phase19BAllowedMounts(currentType).includes(requestedMountType) ? requestedMountType : phase120DefaultMount(currentType);
             const currentSubnet = draft?.subnetId ? appState.subnets.find(s => s.id === draft.subnetId) : (device?.primaryIp ? getSubnetForIp(device.primaryIp) : null);
             const currentHeight = draft?.rackUHeight || (device?.rackUStart && device?.rackUEnd ? Math.max(1, Number(device.rackUEnd) - Number(device.rackUStart) + 1) : 1);
@@ -7109,7 +7139,8 @@ function hierarchyValidateTypes(subnets) {
                     <form data-device-form="true" data-device-id="${escapeHtml(device?.id || draft?.deviceId || '')}" class="form-shell">
                         <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-circle-info"></i>Device details</div>
                         <div><label for="dev-name" class="block text-xs font-semibold mb-1">Device Name <span class="required-mark">*</span></label><input type="text" id="dev-name" required value="${escapeHtml(draft?.name ?? device?.name ?? '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="e.g. core-switch"></div>
-                            <div><label for="dev-type" class="block text-xs font-semibold mb-1">Device Type</label><select id="dev-type" required class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" disabled ${currentType === '' ? 'selected' : ''}>Select a device type...</option>${types.map(t => `<option value="${escapeHtml(t)}" ${currentType === t ? 'selected' : ''}>${escapeHtml(t)}</option>`).join('')}</select></div>
+                            <div class="${device ? 'hidden' : ''}"><label for="dev-deployment" class="block text-xs font-semibold mb-1">Device deployment</label><select id="dev-deployment" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="physical" ${!isExistingVirtual?'selected':''}>Physical device</option>${hasEligiblePhysicalHost||isExistingVirtual?`<option value="virtual" ${isExistingVirtual?'selected':''}>Virtual Machine (VM)</option>`:''}</select><div id="phase120-physical-purpose" class="${isExistingVirtual || device ? 'hidden' : ''} mt-2"><label class="form-label" for="dev-type">Physical device type</label><select id="dev-type" required class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" disabled ${currentType === '' ? 'selected' : ''}>Select a device type...</option>${availableFormTypes.map(t => `<option value="${escapeHtml(t)}" ${currentType === t ? 'selected' : ''}>${escapeHtml(t === 'Server - Physical' ? 'Server' : t)}</option>`).join('')}<option value="Server - Virtual" ${currentType==='Server - Virtual'?'selected':''} hidden>Server - Virtual</option></select></div><div id="phase120-vm-purpose-wrap" class="${isExistingVirtual && !device ? '' : 'hidden'} mt-2"><label class="form-label" for="dev-vm-purpose">VM purpose</label><select id="dev-vm-purpose" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">${vmPurposes.map(([label,value])=>`<option value="${escapeHtml(value)}" ${currentType===value?'selected':''}>${escapeHtml(label)}</option>`).join('')}</select></div></div>
+                            ${device ? `<p class="text-sm font-semibold text-slate-700 dark:text-slate-200">Edit ${escapeHtml(isExistingVirtual ? 'Virtual ' : 'Physical ')}${escapeHtml(currentType === 'Server - Virtual' || currentType === 'Server - Physical' ? 'Server' : currentType)}</p>` : ''}
                             <div id="phase120-virtual-fields" class="hidden rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-slate-800 p-4 space-y-3">
                                 <p class="text-sm font-semibold text-blue-900 dark:text-blue-200">Virtual Machine Configuration</p>
                                 <p class="text-xs text-slate-600 dark:text-slate-300">Physical manufacturer and model do not apply to virtual servers. Existing saved values are retained.</p>
@@ -7117,9 +7148,16 @@ function hierarchyValidateTypes(subnets) {
                                     <div><label class="form-label" for="dev-virtual-platform">Virtualisation Platform (optional)</label><select id="dev-virtual-platform" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
                                         ${['','VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng','Other'].map(x=>'<option value="'+escapeHtml(x)+'" '+((draft?.virtualPlatform ?? device?.virtualPlatform ?? '')===x?'selected':'')+'>'+escapeHtml(x||'Select Platform...')+'</option>').join('')}
                                     </select></div>
-                                    <div><label class="form-label" for="dev-virtual-host">Host Device (optional)</label><select id="dev-virtual-host" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="">Not Specified</option>
+                                    <div><label class="form-label" for="dev-virtual-host">Physical Hypervisor Host ${device?.type === 'Server - Virtual' ? '(legacy assignments preserved)' : '(required)'}</label><select id="dev-virtual-host" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="">Not Specified</option>
                                         ${appState.devices.filter(x=>x.id!==(device?.id||'')&&x.type==='Server - Physical'&&((x.status!=='Retired'&&(x.typeDetails?.serverService_Hypervisor===true||x.serverService_Hypervisor===true))||x.id===(draft?.virtualHostId??device?.virtualHostId??''))).map(x=>'<option value="'+escapeHtml(x.id)+'" '+((draft?.virtualHostId ?? device?.virtualHostId ?? '')===x.id?'selected':'')+'>'+escapeHtml(x.name)+(x.status==='Retired'||!(x.typeDetails?.serverService_Hypervisor===true||x.serverService_Hypervisor===true)?' (existing legacy assignment)':'')+'</option>').join('')}
                                     </select></div>
+                                </div>
+                                <div class="border-t border-blue-200 dark:border-blue-800 pt-3 space-y-2">
+                                    <p class="text-sm font-semibold text-blue-900 dark:text-blue-200">Allocated Virtual Hardware</p>
+                                    <p class="text-xs text-slate-600 dark:text-slate-300">These allocations belong to the VM, not its physical host. Leave unknown values blank.</p>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        ${[['vmVcpu','vCPU count'],['vmRamGb','Allocated RAM (GB)'],['vmDiskGb','Virtual disk (GB)'],['vmNicCount','Virtual network adapters']].map(([key,label])=>`<div><label class="form-label" for="dev-${key}">${label}</label><input id="dev-${key}" data-phase19b-field="${key}" type="number" min="0" step="1" inputmode="numeric" value="${escapeHtml(phase19BFormValues[key] ?? '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></div>`).join('')}
+                                    </div>
                                 </div>
                             </div>
                             <div id="phase-m005-host-platform-fields" class="hidden rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-slate-800 p-4 space-y-3">
@@ -7157,7 +7195,7 @@ function hierarchyValidateTypes(subnets) {
                             <div><label for="dev-serial" class="form-label">Serial number (optional)</label><input id="dev-serial" type="text" maxlength="120" value="${escapeHtml(draft?.serialNumber ?? device?.serialNumber ?? '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Manufacturer serial number"></div>
                         <div class="form-section-card space-y-4 ${phase19BFieldsFor(currentType).length===0?'hidden':''}" id="phase19b-details-section" aria-live="polite"><div class="form-section-heading"><i class="fa-solid fa-list-check"></i>Additional details for this device type</div><div class="flex flex-wrap gap-2"><button type="button" id="phase19b-manage-functions-button" data-action="phase19b-manage-functions" class="h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-500 text-sm font-semibold ${phase19BTypeGroups[String(currentType||'').toLowerCase().trim()]==='server'?'':'hidden'}">Manage Server Options</button><button type="button" id="phase19b-manage-software-button" data-action="phase19b-manage-software" class="h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-500 text-sm font-semibold ${['server','computer'].includes(phase19BTypeGroups[String(currentType||'').toLowerCase().trim()])?'':'hidden'}">Manage Software Options</button></div><div id="phase19b-fields">${phase19BRenderFields(currentType,phase19BFormValues,'hardware')}</div></div>
                         </div>
-                        <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-rack"></i>Mounting & location</div><div><label for="dev-mount-type" class="form-label">Device Mounting <span class="required-mark">*</span></label><select id="dev-mount-type" required data-action="device-mount-type-change" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" disabled>Select mounting type...</option>${phase19BMountOptions(currentType,mountType)}</select></div>
+                        <div class="form-section-card space-y-4" id="phase120-device-mounting"><div class="form-section-heading"><i class="fa-solid fa-rack"></i>Mounting & location</div><div><label for="dev-mount-type" class="form-label">Device Mounting <span class="required-mark">*</span></label><select id="dev-mount-type" required data-action="device-mount-type-change" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" disabled>Select mounting type...</option>${phase19BMountOptions(currentType,mountType)}</select></div>
                         <div>
                             <label for="dev-location" class="block text-xs font-semibold mb-1">Location Area <span class="required-mark">*</span></label>
                             <select id="dev-location" required data-previous-location="${escapeHtml(currentLoc)}" data-action="device-location-change" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" disabled ${currentLoc === '' ? 'selected' : ''}>Select a location...</option>${locations.map(l => `<option value="${escapeHtml(l)}" ${currentLoc === l ? 'selected' : ''}>${escapeHtml(l)}</option>`).join('')}<option value="__caffoot_create_location__">+ Create new location…</option></select>
@@ -7188,6 +7226,21 @@ function hierarchyValidateTypes(subnets) {
             if (tabbedDeviceForm && draft?.activeDeviceTab) tabbedDeviceForm.dataset.initialDeviceTab = draft.activeDeviceTab;
             phase120InitializeDeviceTabs(tabbedDeviceForm);
             const phase19BTypeSelect=document.getElementById('dev-type');
+            const deploymentSelect=document.getElementById('dev-deployment');
+            const purposeSelect=document.getElementById('dev-vm-purpose');
+            const syncVmPurpose=()=>{
+                const virtual=deploymentSelect.value==='virtual';
+                document.getElementById('phase120-physical-purpose')?.classList.toggle('hidden',virtual);
+                document.getElementById('phase120-vm-purpose-wrap')?.classList.toggle('hidden',!virtual);
+                if(virtual) phase19BTypeSelect.value=purposeSelect.value;
+                else if(phase19BTypeSelect.value==='Server - Virtual') phase19BTypeSelect.value='Server - Physical';
+                // A hidden purpose must never leave the physical type unselected.
+                if(!virtual && !phase19BTypeSelect.value) phase19BTypeSelect.value='Server - Physical';
+                phase19BRefreshFields();
+                phase120RefreshHardwareSuggestions();
+            };
+            deploymentSelect?.addEventListener('change',syncVmPurpose);
+            purposeSelect?.addEventListener('change',syncVmPurpose);
             if(phase19BTypeSelect) {
                 phase19BTypeSelect.addEventListener('change',phase19BRefreshFields);
                 phase19BTypeSelect.addEventListener('change',phase120RefreshHardwareSuggestions);
@@ -7220,6 +7273,7 @@ function hierarchyValidateTypes(subnets) {
             });
             updateDeviceRackLimits();
             phase19BUpdateMountChoices();
+            phase120VirtualHardwareVisibility();
             rememberModalForm();
             const deviceForm = document.querySelector('[data-device-form="true"]');
             if (deviceForm) {
@@ -7250,6 +7304,7 @@ function hierarchyValidateTypes(subnets) {
                 activeDeviceTab: form.dataset.activeDeviceTab || 'general',
                 name: document.getElementById('dev-name')?.value || '',
                 type: document.getElementById('dev-type')?.value || '',
+                isVirtual: phase120IsVirtualForm(),
                 mountType: document.getElementById('dev-mount-type')?.value || '',
                 location: document.getElementById('dev-location')?.value || '',
                 rackId: document.getElementById('dev-rack-id')?.value || '',
@@ -7530,8 +7585,17 @@ function hierarchyValidateTypes(subnets) {
             e.preventDefault();
             const name = document.getElementById('dev-name').value.trim();
             const type = document.getElementById('dev-type').value;
-            const mountType = document.getElementById('dev-mount-type').value;
-            const location = document.getElementById('dev-location').value;
+            const isVirtualServer = phase120IsVirtualForm();
+            const originalDevice = deviceId ? getDeviceById(deviceId) : null;
+            if (deviceId && !originalDevice) return showToast('Device no longer exists.', 'error');
+            if (originalDevice && (type !== originalDevice.type || isVirtualServer !== (originalDevice.isVirtual === true || originalDevice.type === 'Server - Virtual'))) return showToast('Device identity cannot be changed. Create a new device instead.', 'error');
+            if (isVirtualServer && !['Server - Virtual','Desktop','Firewall','Router','NAS','Wireless LAN Controller'].includes(type)) return showToast('Select a valid VM purpose.', 'error');
+            const selectedHostId = document.getElementById('dev-virtual-host')?.value || '';
+            const selectedHost = appState.devices.find(d => d.id === selectedHostId);
+            // Physical placement is owned by the host, not by an individual VM.
+            // Keep legacy location when its host no longer exists.
+            const mountType = isVirtualServer ? 'Not Applicable' : document.getElementById('dev-mount-type').value;
+            const location = isVirtualServer ? (selectedHost?.location || getDeviceById(deviceId)?.location || 'Unknown') : document.getElementById('dev-location').value;
             if (location === '__caffoot_create_location__') {
                 showToast('Add or cancel the new location before saving this device.', 'error');
                 return;
@@ -7543,13 +7607,26 @@ function hierarchyValidateTypes(subnets) {
             const manufacturer = document.getElementById('dev-manufacturer').value.trim();
             const model = document.getElementById('dev-model').value.trim();
             const serialNumber = document.getElementById('dev-serial').value.trim();
-            const virtualPlatform = type==='Server - Virtual'?(document.getElementById('dev-virtual-platform')?.value||''):'';
-            const virtualHostId = type==='Server - Virtual'?(document.getElementById('dev-virtual-host')?.value||''):'';
+            // Preserve existing historical host metadata when editing a physical device.
+            const virtualPlatform = isVirtualServer?(document.getElementById('dev-virtual-platform')?.value||''):(getDeviceById(deviceId)?.virtualPlatform||'');
+            const virtualHostId = isVirtualServer?(document.getElementById('dev-virtual-host')?.value||''):(getDeviceById(deviceId)?.virtualHostId||'');
             const existingDeviceHostIsUnchanged = () => !!deviceId && getDeviceById(deviceId)?.virtualHostId === virtualHostId;
-            if(virtualHostId&&!appState.devices.some(d=>d.id===virtualHostId&&d.type==='Server - Physical'&&d.id!==deviceId&&((d.status!=='Retired'&&(d.typeDetails?.serverService_Hypervisor===true||d.serverService_Hypervisor===true))||(existingDeviceHostIsUnchanged()))))return showToast('Select an eligible Hypervisor host, or retain the existing legacy assignment.','error');
+            // #164: New VMs must have an eligible physical host. Preserve legacy edits.
+            if(isVirtualServer && !virtualHostId && (!deviceId || !(getDeviceById(deviceId)?.isVirtual === true || getDeviceById(deviceId)?.type==='Server - Virtual')))return showToast('Select an eligible physical Hypervisor host for the new virtual machine.','error');
+            if(isVirtualServer && virtualHostId&&!appState.devices.some(d=>d.id===virtualHostId&&d.type==='Server - Physical'&&d.id!==deviceId&&((d.status!=='Retired'&&(d.typeDetails?.serverService_Hypervisor===true||d.serverService_Hypervisor===true))||(existingDeviceHostIsUnchanged()))))return showToast('Select an eligible Hypervisor host, or retain the existing legacy assignment.','error');
             if (!['Active','Maintenance','Retired'].includes(status)) return showToast('Invalid device status.', 'error');
             const notes = document.getElementById('dev-notes').value.trim();
             let typeDetails = phase19BReadFields();
+            // #164: Optional VM allocations must be whole, positive numbers when supplied.
+            // Historical imports may omit these fields and remain unchanged.
+            if (isVirtualServer) {
+                for (const [key, label] of [['vmVcpu','vCPU count'],['vmRamGb','Allocated RAM'],['vmDiskGb','Virtual disk'],['vmNicCount','Virtual network adapters']]) {
+                    const raw = String(typeDetails[key] ?? '').trim();
+                    if (raw !== '' && (!/^\d+$/.test(raw) || !Number.isSafeInteger(Number(raw)) || Number(raw) < 1)) {
+                        return showToast(label + ' must be a positive whole number, or left blank.', 'error');
+                    }
+                }
+            }
             if (type === 'Server - Physical' && typeDetails.serverService_Hypervisor === true &&
                 !String(typeDetails.hypervisorProduct || '').trim() &&
                 !String(getDeviceById(deviceId)?.typeDetails?.hypervisorProduct || '').trim() &&
@@ -7560,7 +7637,7 @@ function hierarchyValidateTypes(subnets) {
             if (!name) return showToast('Please enter a device name.', 'error');
             if (appState.devices.some(d => String(d.id) !== String(deviceId || '') && String(d.name || '').trim().toLowerCase() === name.toLowerCase())) return showToast('A device with this name already exists. Please enter a unique device name.', 'error');
             if (!type) return showToast('Please select a device type.', 'error');
-            if (!mountType || !phase19BAllowedMounts(type).includes(mountType)) return showToast('Please select a valid mounting option for this device type.', 'error');
+            if (!mountType || (!isVirtualServer && !phase19BAllowedMounts(type).includes(mountType))) return showToast('Please select a valid mounting option for this device type.', 'error');
             if (!location) return showToast('Please select a location.', 'error');
             if (!subnetId) return showToast('Please select an existing subnet.', 'error');
             if (!primaryIp) return showToast('Please enter a primary IP address.', 'error');
@@ -7579,16 +7656,15 @@ function hierarchyValidateTypes(subnets) {
                 if (validationError) return showToast(validationError, 'error');
             }
             const existingDevice = deviceId ? getDeviceById(deviceId) : null;
-            // M-005: host conversion, retirement and loss of Hypervisor eligibility
-            // all require an explicit decision for every assigned guest.
+            // M-005: host retirement and loss of Hypervisor eligibility
+            // still require an explicit decision for every assigned guest.
             let removalGuests = [];
             let removalChoices = [];
             if (existingDevice && existingDevice.type === 'Server - Physical') {
                 const wasHypervisor = existingDevice.typeDetails?.serverService_Hypervisor === true || existingDevice.serverService_Hypervisor === true;
                 const remainsHypervisor = type === 'Server - Physical' && typeDetails.serverService_Hypervisor === true;
-                const converting = type !== 'Server - Physical';
                 const retiring = status === 'Retired' && existingDevice.status !== 'Retired';
-                if (converting || retiring || (wasHypervisor && !remainsHypervisor)) {
+                if (retiring || (wasHypervisor && !remainsHypervisor)) {
                     const hostedGuests = appState.devices.filter(guest => guest.id !== deviceId && guest.virtualHostId === deviceId);
                     if (hostedGuests.length) {
                         const choices = await phaseM005ConfirmHypervisorRemoval(existingDevice.name, hostedGuests, deviceId);
@@ -7614,32 +7690,15 @@ function hierarchyValidateTypes(subnets) {
                         document.getElementById('phase-m005-host-platform')?.value.trim() !== nextHypervisor) return;
                 }
             }
-            let conversionSnapshot = null;
-            // Type-specific values remain in the unsaved draft when switching types.
-            // Only known, incompatible populated fields are eligible for confirmed removal.
-            if (existingDevice && String(existingDevice.type || '').toLowerCase().trim() !== String(type || '').toLowerCase().trim()) {
-                const obsolete = phase130ObsoleteDeviceFields(existingDevice.type, type, typeDetails);
-                if (obsolete.length) {
-                    const accepted = await phase130ConfirmDeviceConversion(existingDevice.type, type, obsolete, typeDetails);
-                    if (!accepted) return;
-                    // Never apply a stale confirmation if the form or underlying record changed.
-                    if (!document.getElementById('dev-type') || document.getElementById('dev-type').value !== type ||
-                        getDeviceById(deviceId) !== existingDevice) return;
-                    typeDetails = {...typeDetails};
-                    conversionSnapshot = {type:existingDevice.type, details:Object.fromEntries(obsolete.map(key=>[key,typeDetails[key]]))};
-                    for (const key of obsolete) delete typeDetails[key];
-                }
-            }
             const beforeDeviceSave = JSON.stringify(appState);
             if (existingDevice) {
-                if (conversionSnapshot) existingDevice.previousTypeDetails = [...(Array.isArray(existingDevice.previousTypeDetails)?existingDevice.previousTypeDetails:[]),conversionSnapshot];
-                Object.assign(existingDevice, {status, manufacturer, model, serialNumber, typeDetails, virtualPlatform, virtualHostId});
+                Object.assign(existingDevice, {status, manufacturer, model, serialNumber, typeDetails, virtualPlatform, virtualHostId, isVirtual:isVirtualServer});
                 existingDevice.ipReserved = ipReserved;
                 existingDevice.name = name; existingDevice.type = type; existingDevice.mountType = mountType; existingDevice.location = location; existingDevice.notes = notes;
                 existingDevice.rackId = rackId; existingDevice.face = face; existingDevice.rackUStart = rackUStart; existingDevice.rackUEnd = rackUEnd; existingDevice.rackUHeight = rackUHeight;
                 try { setDevicePrimaryIp(existingDevice, primaryIp); syncDeviceIpamRecord(existingDevice); } catch (error) { appState = JSON.parse(beforeDeviceSave); return showToast('Device/IPAM update cancelled: ' + error.message, 'error'); }
             } else {
-                const newDevice = { id: 'dev_' + Date.now(), name, type, mountType, location, notes, status, manufacturer, model, serialNumber, typeDetails, virtualPlatform, virtualHostId, ipReserved, primaryIp: '', rackId, face, rackUStart, rackUEnd, rackUHeight };
+                const newDevice = { id: 'dev_' + Date.now(), name, type, mountType, location, notes, status, manufacturer, model, serialNumber, typeDetails, virtualPlatform, virtualHostId, isVirtual:isVirtualServer, ipReserved, primaryIp: '', rackId, face, rackUStart, rackUEnd, rackUHeight };
                 appState.devices.push(newDevice);
                 try { setDevicePrimaryIp(newDevice, primaryIp); syncDeviceIpamRecord(newDevice); } catch (error) { appState = JSON.parse(beforeDeviceSave); return showToast('Device/IPAM creation cancelled: ' + error.message, 'error'); }
             }
