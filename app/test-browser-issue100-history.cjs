@@ -82,5 +82,41 @@ const { chromium } = require('playwright');
       assert.equal(result.inventoryAvailable, true);
       assert.equal(result.historyRendered, true, 'Malformed history entries should not break the history screen: ' + result.error);
     });
+    await scenario('late clean reset verification must not claim a completed reset', async page => {
+      const result = await page.evaluate(() => {
+        const oldConfirm = window.confirm;
+        const oldGet = Storage.prototype.getItem;
+        const oldSet = Storage.prototype.setItem;
+        const beforeInventory = localStorage.getItem('caffoot_state');
+        const beforeEvents = JSON.parse(localStorage.getItem('caffoot_audit_v1') || '[]');
+        let stateWrites = 0, readsAfterWrite = 0;
+        window.confirm = () => true;
+        Storage.prototype.setItem = function(key, value) {
+          if (key === 'caffoot_state') { stateWrites++; readsAfterWrite = 0; }
+          return oldSet.call(this, key, value);
+        };
+        Storage.prototype.getItem = function(key) {
+          if (key === 'caffoot_state' && stateWrites === 1 && ++readsAfterWrite === 2)
+            return null; // After saveState's verified readback, fail the caller's extra check.
+          return oldGet.call(this, key);
+        };
+        try { phase16AClearSystem(); }
+        finally {
+          window.confirm = oldConfirm;
+          Storage.prototype.getItem = oldGet;
+          Storage.prototype.setItem = oldSet;
+        }
+        const afterEvents = JSON.parse(localStorage.getItem('caffoot_audit_v1') || '[]');
+        return {
+          stateWrites,
+          inventoryRestored: localStorage.getItem('caffoot_state') === beforeInventory,
+          falseResetEvent: afterEvents.slice(beforeEvents.length).some(e => e.reason === 'Clean inventory reset')
+        };
+      });
+      assert.ok(result.stateWrites >= 2, 'Expected initial save and subsequent rollback');
+      assert.equal(result.inventoryRestored, true, 'Inventory rollback must remain intact');
+      assert.equal(result.falseResetEvent, false, 'Rolled-back reset must not remain recorded as successful');
+    });
+
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });
