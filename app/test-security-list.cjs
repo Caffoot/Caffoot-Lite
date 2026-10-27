@@ -10,7 +10,20 @@ function extract(start,end) {
   return html.slice(a,b);
 }
 const code=extract('function escapeHtml(value)','function renderContent()')+'\n'+
+  extract('function phase180EffectivePlatform(device)','function getVisibleDevices()')+'\n'+
   extract('function renderDevicesHTML()','// --- PHASE 18D: MANAGED TYPES & LOCATIONS ---');
+const platformContext=vm.createContext({});
+vm.runInContext(extract('function phase180EffectivePlatform(device)','function getVisibleDevices()'),platformContext);
+const physical={type:'Server - Physical',typeDetails:{serverService_Hypervisor:true,softwarePlatform:'Windows Server',softwareVersion:'2022',hypervisorProduct:'Proxmox VE',hypervisorVersion:'9'}};
+assert.equal(platformContext.phase180EffectivePlatform(physical),'Proxmox VE');
+assert.equal(platformContext.phase180EffectiveVersion(physical),'9');
+physical.typeDetails.hypervisorProduct='';
+assert.equal(platformContext.phase180EffectivePlatform(physical),'Not Recorded','Missing hypervisor must not fall back to historical OS');
+physical.typeDetails.serverService_Hypervisor=false;
+assert.equal(platformContext.phase180EffectivePlatform(physical),'Windows Server');
+assert.equal(platformContext.phase180EffectiveVersion(physical),'2022');
+const guest={type:'Server - Virtual',typeDetails:{softwarePlatform:'Ubuntu',softwareVersion:'24.04',serverService_Hypervisor:true,hypervisorProduct:'Proxmox VE'}};
+assert.equal(platformContext.phase180EffectivePlatform(guest),'Ubuntu','Guest OS must remain independent');
 const payloads=[
   '<img src=x onerror=alert(1)>',
   '<svg onload=alert(1)>',

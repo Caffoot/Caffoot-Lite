@@ -47,6 +47,50 @@ const { chromium } = require('playwright');
       assert.equal(result.banner,true,'Recovery must be visible');
       assert.equal(result.saved,false,'Ordinary saves must be blocked in recovery');
     });
+    await scenario('M-014 recovery reset verifies persisted empty inventory', async page => {
+      await page.evaluate(() => localStorage.setItem('caffoot_state', '{invalid json'));
+      await page.reload({waitUntil:'load'});
+      assert.equal(await page.locator('#phase17a-recovery').count(),1);
+      page.on('dialog', dialog => dialog.accept());
+      await page.getByRole('button',{name:'Reset to empty inventory'}).click();
+      await page.waitForLoadState('load');
+      const result=await page.evaluate(() => ({
+        recovery:!!phase17AStorageRecovery,
+        stored:localStorage.getItem('caffoot_state'),
+        devices:appState.devices.length
+      }));
+      assert.equal(result.recovery,false,'Successful verified reset must leave recovery mode');
+      assert.equal(result.stored,JSON.stringify(JSON.parse(result.stored)),'Saved empty inventory must be valid JSON');
+      assert.equal(result.devices,0,'Reset must load empty inventory');
+    });
+    await scenario('M-014 ignored recovery reset write keeps original and does not reload', async page => {
+      const original='{invalid json';
+      await page.evaluate(raw => localStorage.setItem('caffoot_state',raw),original);
+      await page.reload({waitUntil:'load'});
+      await page.evaluate(() => {
+        const nativeSetItem=Storage.prototype.setItem;
+        Storage.prototype.setItem=function(key,value) {
+          if (key==='caffoot_state') return;
+          return nativeSetItem.call(this,key,value);
+        };
+      });
+      const dialogs=[];
+      page.on('dialog', async dialog => {
+        dialogs.push({type:dialog.type(),message:dialog.message()});
+        await dialog.accept();
+      });
+      await page.getByRole('button',{name:'Reset to empty inventory'}).click();
+      const result=await page.evaluate(() => ({
+        stored:localStorage.getItem('caffoot_state'),
+        recovery:!!phase17AStorageRecovery,
+        banner:!!document.getElementById('phase17a-recovery')
+      }));
+      assert.equal(result.stored,original,'Ignored write must preserve original stored bytes');
+      assert.equal(result.recovery,true,'Ignored write must not reload out of recovery');
+      assert.equal(result.banner,true,'Recovery controls must remain visible');
+      assert.equal(dialogs.filter(d=>d.type==='confirm').length,2,'Both confirmations must remain');
+      assert.ok(dialogs.some(d=>d.type==='alert' && d.message.includes('Reset failed:')),'Reset failure must be explained');
+    });
     await scenario('M-022 failed new rack save restores selection and stored inventory', async page => {
       const result = await page.evaluate(async () => {
         const beforeSelection = selectedRackId;
@@ -829,15 +873,284 @@ const { chromium } = require('playwright');
       });
       assert.equal(result.hostExists,false,'Unreferenced host deletion must remain available');
     });
+    await scenario('#164 VM-first purpose choices and eligible-host gating', async page => {
+      const result=await page.evaluate(() => {
+        const purposes=['Server - Virtual','Desktop','Firewall','Router','NAS','Wireless LAN Controller'];
+        openDeviceModal();
+        const noHostOption=!!document.querySelector('#dev-deployment option[value="virtual"]');
+        const host={id:'fixture-164-host',name:'Fixture #164 Hypervisor',type:'Server - Physical',status:'Active',
+          typeDetails:{serverService_Hypervisor:true,hypervisorProduct:'Proxmox VE'}};
+        appState.devices.push(host);
+        openDeviceModal();
+        const deployment=document.getElementById('dev-deployment');
+        const optionAvailable=!!deployment.querySelector('option[value="virtual"]');
+        deployment.value='virtual';
+        deployment.dispatchEvent(new Event('change',{bubbles:true}));
+        const purpose=document.getElementById('dev-vm-purpose');
+        const choices=purposes.map(type=>{
+          purpose.value=type;
+          purpose.dispatchEvent(new Event('change',{bubbles:true}));
+          return {purpose:type,actual:document.getElementById('dev-type').value,
+            hostVisible:!document.getElementById('phase120-virtual-fields').classList.contains('hidden'),
+            physicalHidden:document.getElementById('phase120-physical-purpose').classList.contains('hidden')};
+        });
+        return {noHostOption,optionAvailable,choices,
+          hostAvailable:!!document.querySelector('#dev-virtual-host option[value="fixture-164-host"]')};
+      });
+      assert.equal(result.noHostOption,false,'New VM must not be offered without an eligible host');
+      assert.equal(result.optionAvailable,true,'Eligible hypervisor must enable VM creation');
+      assert.equal(result.hostAvailable,true,'Eligible host must be selectable');
+      assert.equal(result.choices.length,6);
+      for(const choice of result.choices){
+        assert.equal(choice.actual,choice.purpose,'VM purpose must map to the saved device type');
+        assert.equal(choice.hostVisible,true,'VM host and hardware controls must remain visible');
+        assert.equal(choice.physicalHidden,true,'Physical device type controls must be hidden for a VM');
+      }
+    });
+    await scenario('#164 new VM requires host and rejects invalid hardware without mutation', async page => {
+      const result=await page.evaluate(async () => {
+        const host={id:'fixture-164-validation-host',name:'Fixture #164 Validation Host',type:'Server - Physical',
+          status:'Active',location:'Unknown',typeDetails:{serverService_Hypervisor:true,hypervisorProduct:'Proxmox VE'}};
+        appState.devices.push(host);
+        openDeviceModal();
+        const deployment=document.getElementById('dev-deployment');
+        deployment.value='virtual';
+        deployment.dispatchEvent(new Event('change',{bubbles:true}));
+        const purpose=document.getElementById('dev-vm-purpose');
+        purpose.value='Server - Virtual';
+        purpose.dispatchEvent(new Event('change',{bubbles:true}));
+        document.getElementById('dev-name').value='Fixture #164 New VM';
+        const originalToast=showToast;
+        const messages=[];
+        showToast=(message)=>messages.push(String(message));
+        try {
+          const before=appState.devices.length;
+          document.getElementById('dev-virtual-host').value='';
+          await handleDeviceSubmit({preventDefault(){}},null);
+          const missingHost={message:messages.at(-1),unchanged:appState.devices.length===before};
+          document.getElementById('dev-virtual-host').value=host.id;
+          const fields=Array.from(document.querySelectorAll('[data-phase19b-field]'));
+          const allocation=fields.find(x=>x.getAttribute('data-phase19b-field')==='vmVcpu');
+          if(!allocation)throw Error('vCPU allocation input missing');
+          allocation.value='-2';
+          await handleDeviceSubmit({preventDefault(){}},null);
+          return {missingHost,invalidAllocation:{message:messages.at(-1),unchanged:appState.devices.length===before}};
+        } finally {showToast=originalToast;}
+      });
+      assert.match(result.missingHost.message,/eligible physical Hypervisor host/);
+      assert.equal(result.missingHost.unchanged,true,'Missing host must not create a VM');
+      assert.match(result.invalidAllocation.message,/vCPU count must be a positive whole number/);
+      assert.equal(result.invalidAllocation.unchanged,true,'Invalid allocation must not create a VM');
+    });
+    await scenario('#164 VM purpose persistence and reload compatibility', async page => {
+      const purposes=['Desktop','Firewall','Router','NAS','Wireless LAN Controller'];
+      const created=await page.evaluate(async purposes => {
+        appState.subnets.push({id:'fixture-164-purposes-subnet',name:'VM purpose subnet',kind:'network',
+          cidr:'10.88.70.0/27',gateway:'10.88.70.1',vlan:3870});
+        appState.devices.push({id:'fixture-164-purposes-host',name:'VM Purpose Host',
+          type:'Server - Physical',status:'Active',location:'Unknown',mountType:'Desktop',
+          typeDetails:{serverService_Hypervisor:true,hypervisorProduct:'Proxmox VE'}});
+        const results=[];
+        for(let i=0;i<purposes.length;i++){
+          openDeviceModal();
+          const set=(id,value)=>{const el=document.getElementById(id);
+            if(!el)throw Error('Missing '+id);el.value=value;
+            el.dispatchEvent(new Event('change',{bubbles:true}));};
+          set('dev-deployment','virtual');
+          set('dev-vm-purpose',purposes[i]);
+          const name='Fixture #164 Purpose '+i;
+          set('dev-name',name);
+          set('dev-virtual-host','fixture-164-purposes-host');
+          const subnet=document.getElementById('dev-subnet');
+          subnet.add(new Option('VM purpose subnet','fixture-164-purposes-subnet'));
+          set('dev-subnet','fixture-164-purposes-subnet');
+          set('dev-ip','10.88.70.'+(i+3));
+          const messages=[];
+          const toast=showToast;
+          showToast=(message)=>messages.push(String(message));
+          try{await handleDeviceSubmit({preventDefault(){}},null);}
+          finally{showToast=toast;}
+          const device=appState.devices.find(d=>d.name===name);
+          results.push({name,type:device?.type,host:device?.virtualHostId,
+            isVirtual:device?.isVirtual,messages});
+          if(!device)break;
+        }
+        return results;
+      },purposes);
+      assert.equal(created.length,purposes.length,JSON.stringify(created));
+      for(let i=0;i<purposes.length;i++){
+        assert.equal(created[i].type,purposes[i],JSON.stringify(created[i]));
+        assert.equal(created[i].host,'fixture-164-purposes-host');
+        assert.equal(created[i].isVirtual,true);
+      }
+      await page.reload({waitUntil:'load'});
+      const persisted=await page.evaluate(() => appState.devices
+        .filter(d=>d.name?.startsWith('Fixture #164 Purpose '))
+        .map(d=>({name:d.name,type:d.type,host:d.virtualHostId,isVirtual:d.isVirtual})));
+      assert.equal(persisted.length,purposes.length);
+      for(let i=0;i<purposes.length;i++){
+        const device=persisted.find(d=>d.name==='Fixture #164 Purpose '+i);
+        assert.ok(device,'Purpose '+purposes[i]+' must survive reload');
+        assert.equal(device.type,purposes[i]);
+        assert.equal(device.host,'fixture-164-purposes-host');
+        assert.equal(device.isVirtual,true);
+      }
+    });
+    await scenario('#164 failed new VM storage write preserves inventory', async page => {
+      const result=await page.evaluate(async () => {
+        appState.subnets.push({id:'fixture-164-failure-subnet',name:'VM failure subnet',kind:'network',
+          cidr:'10.88.71.0/29',gateway:'10.88.71.1',vlan:3871});
+        appState.devices.push({id:'fixture-164-failure-host',name:'VM Failure Host',
+          type:'Server - Physical',status:'Active',location:'Unknown',mountType:'Desktop',
+          typeDetails:{serverService_Hypervisor:true,hypervisorProduct:'Proxmox VE'}});
+        saveState();
+        const beforeDevices=JSON.stringify(appState.devices);
+        const beforeStored=localStorage.getItem('caffoot_state');
+        openDeviceModal();
+        const set=(id,value)=>{const el=document.getElementById(id);
+          if(!el)throw Error('Missing '+id);el.value=value;
+          el.dispatchEvent(new Event('change',{bubbles:true}));};
+        set('dev-deployment','virtual');
+        set('dev-vm-purpose','Server - Virtual');
+        set('dev-name','Fixture #164 Failed VM');
+        set('dev-virtual-host','fixture-164-failure-host');
+        const subnet=document.getElementById('dev-subnet');
+        subnet.add(new Option('VM failure subnet','fixture-164-failure-subnet'));
+        set('dev-subnet','fixture-164-failure-subnet');
+        set('dev-ip','10.88.71.3');
+        const original=Storage.prototype.setItem;
+        Storage.prototype.setItem=function(key,value){
+          if(key==='caffoot_state')return;
+          return original.call(this,key,value);
+        };
+        try{await handleDeviceSubmit({preventDefault(){}},null);}
+        finally{Storage.prototype.setItem=original;}
+        return {beforeDevices,afterDevices:JSON.stringify(appState.devices),
+          beforeStored,afterStored:localStorage.getItem('caffoot_state')};
+      });
+      assert.equal(result.afterDevices,result.beforeDevices,'Failed VM save must restore inventory');
+      assert.equal(result.afterStored,result.beforeStored,'Failed VM save must preserve stored inventory');
+    });
+    await scenario('#164 new VM saves and reopens with host and allocated hardware', async page => {
+      const saved=await page.evaluate(async () => {
+        appState.subnets.push({id:'fixture-164-save-subnet',name:'Fixture VM subnet',kind:'network',
+          cidr:'10.88.69.0/29',gateway:'10.88.69.1',vlan:3869});
+        appState.devices.push({id:'fixture-164-save-host',name:'Fixture #164 Save Host',
+          type:'Server - Physical',status:'Active',location:'Unknown',mountType:'Desktop',
+          typeDetails:{serverService_Hypervisor:true,hypervisorProduct:'Proxmox VE'}});
+        openDeviceModal();
+        const set=(id,value)=>{const el=document.getElementById(id);if(!el)throw Error('Missing '+id);
+          el.value=value;el.dispatchEvent(new Event('change',{bubbles:true}));};
+        set('dev-deployment','virtual');
+        set('dev-vm-purpose','Server - Virtual');
+        set('dev-name','Fixture #164 Saved VM');
+        set('dev-virtual-host','fixture-164-save-host');
+        const subnetSelect=document.getElementById('dev-subnet');
+        subnetSelect.add(new Option('Fixture VM subnet','fixture-164-save-subnet'));
+        set('dev-subnet','fixture-164-save-subnet');
+        set('dev-ip','10.88.69.3');
+        set('dev-vmVcpu','4');
+        set('dev-vmRamGb','16');
+        set('dev-vmDiskGb','120');
+        set('dev-vmNicCount','2');
+        const messages=[];
+        const originalToast=showToast;
+        showToast=(message)=>messages.push(String(message));
+        try { await handleDeviceSubmit({preventDefault(){}},null); }
+        finally { showToast=originalToast; }
+        return {device:appState.devices.find(d=>d.name==='Fixture #164 Saved VM')||null,messages};
+      });
+      assert.ok(saved.device,'New VM must be saved. Validation: '+saved.messages.join(' | '));
+      const device=saved.device;
+      assert.equal(device.type,'Server - Virtual');
+      assert.equal(device.isVirtual,true);
+      assert.equal(device.virtualHostId,'fixture-164-save-host');
+      assert.equal(String(device.typeDetails.vmVcpu),'4');
+      assert.equal(String(device.typeDetails.vmRamGb),'16');
+      assert.equal(String(device.typeDetails.vmDiskGb),'120');
+      assert.equal(String(device.typeDetails.vmNicCount),'2');
+      await page.reload({waitUntil:'load'});
+      const reopened=await page.evaluate(() => {
+        const device=appState.devices.find(d=>d.name==='Fixture #164 Saved VM');
+        if(!device)return null;
+        openDeviceModal(device.id);
+        return {device,host:document.getElementById('dev-virtual-host')?.value,
+          vcpu:document.getElementById('dev-vmVcpu')?.value,
+          identityHidden:!!document.getElementById('dev-deployment')?.closest('.hidden')};
+      });
+      assert.ok(reopened,'Saved VM must survive reload');
+      assert.equal(reopened.host,'fixture-164-save-host');
+      assert.equal(reopened.vcpu,'4');
+      assert.equal(reopened.identityHidden,true);
+    });
+    await scenario('#164 duplicate VM preserves host and hardware in a new saved device', async page => {
+      const result=await page.evaluate(async () => {
+        const hostId='fixture-164-duplicate-host', sourceId='fixture-164-duplicate-source';
+        appState.subnets.push({id:'fixture-164-duplicate-subnet',name:'Duplicate VM subnet',kind:'network',
+          cidr:'10.88.68.0/29',gateway:'10.88.68.1',vlan:3868});
+        appState.devices.push(
+          {id:hostId,name:'Duplicate hypervisor',type:'Server - Physical',status:'Active',
+            location:'Unknown',mountType:'Desktop',typeDetails:{serverService_Hypervisor:true,hypervisorProduct:'Proxmox VE'}},
+          {id:sourceId,name:'Duplicate VM source',type:'Server - Virtual',isVirtual:true,
+            status:'Active',location:'Unknown',mountType:'Not Applicable',
+            virtualHostId:hostId,virtualPlatform:'Proxmox VE',
+            typeDetails:{vmVcpu:4,vmRamGb:16,vmDiskGb:120,vmNicCount:2}}
+        );
+        saveState();
+        duplicateDevice(sourceId);
+        const draft={deviceId:document.querySelector('[data-device-form]')?.dataset.deviceId,
+          name:document.getElementById('dev-name')?.value,
+          primaryIp:document.getElementById('dev-ip')?.value,
+          isVirtual:phase120IsVirtualForm(),
+          virtualHostId:document.getElementById('dev-virtual-host')?.value,
+          rackId:document.getElementById('dev-rack')?.value || ''};
+        const set=(id,value)=>{const el=document.getElementById(id);if(!el)throw Error('Missing '+id);
+          el.value=value;el.dispatchEvent(new Event('change',{bubbles:true}));};
+        set('dev-name','Fixture #164 Duplicate VM');
+        const subnet=document.getElementById('dev-subnet');
+        subnet.add(new Option('Duplicate VM subnet','fixture-164-duplicate-subnet'));
+        set('dev-subnet','fixture-164-duplicate-subnet');
+        set('dev-ip','10.88.68.3');
+        const messages=[], originalToast=showToast;
+        showToast=message=>messages.push(String(message));
+        try {await handleDeviceSubmit({preventDefault(){}},null);}
+        finally {showToast=originalToast;}
+        return {draft,sourceId,source:appState.devices.find(d=>d.id===sourceId),
+          copy:appState.devices.find(d=>d.name==='Fixture #164 Duplicate VM'),messages};
+      });
+      assert.equal(result.draft.deviceId,'','Duplicate form must not retain an existing device identity');
+      assert.equal(result.draft.name,'','Duplicate must require a new name');
+      assert.equal(result.draft.primaryIp,'','Duplicate must require a new address');
+      assert.equal(result.draft.isVirtual,true);
+      assert.equal(result.draft.virtualHostId,'fixture-164-duplicate-host');
+      assert.equal(result.draft.rackId,'');
+      assert.ok(result.copy,'Duplicated VM must save: '+result.messages.join(' | '));
+      assert.notEqual(result.copy.id,result.sourceId);
+      assert.equal(result.copy.isVirtual,true);
+      assert.equal(result.copy.type,'Server - Virtual');
+      assert.equal(result.copy.virtualHostId,'fixture-164-duplicate-host');
+      for(const [field,value] of Object.entries({vmVcpu:4,vmRamGb:16,vmDiskGb:120,vmNicCount:2}))
+        assert.equal(String(result.copy.typeDetails[field]),String(value),field+' must survive duplication');
+      assert.equal(result.source.name,'Duplicate VM source','Original VM must remain unchanged');
+      await page.reload({waitUntil:'load'});
+      const persisted=await page.evaluate(()=>appState.devices.find(d=>d.name==='Fixture #164 Duplicate VM'));
+      assert.ok(persisted,'Duplicated VM must survive reload');
+      assert.equal(persisted.virtualHostId,'fixture-164-duplicate-host');
+      assert.equal(persisted.isVirtual,true);
+      assert.equal(String(persisted.typeDetails.vmVcpu),'4');
+    });
     await scenario('#134 virtual machine host selector is on General for Add and Edit', async page => {
       const result = await page.evaluate(() => {
         const host={id:'fixture-134-physical',name:'Fixture Hypervisor',type:'Server - Physical',status:'Active',typeDetails:{serverService_Hypervisor:true,hypervisorProduct:'Proxmox VE'}};
         const guest={id:'fixture-134-guest',name:'Fixture Guest',type:'Server - Virtual',status:'Active',virtualHostId:host.id,virtualPlatform:'Proxmox VE',typeDetails:{}};
         appState.devices.push(host,guest);
         openDeviceModal();
-        const type=document.getElementById('dev-type');
-        type.value='Server - Virtual';
-        type.dispatchEvent(new Event('change',{bubbles:true}));
+        const deployment=document.getElementById('dev-deployment');
+        deployment.value='virtual';
+        deployment.dispatchEvent(new Event('change',{bubbles:true}));
+        const purpose=document.getElementById('dev-vm-purpose');
+        purpose.value='Server - Virtual';
+        purpose.dispatchEvent(new Event('change',{bubbles:true}));
         const virtualBlock=document.getElementById('phase120-virtual-fields');
         const add={
           inGeneral:!!document.querySelector('[data-device-form] .form-section-card:first-child #phase120-virtual-fields'),
@@ -853,10 +1166,9 @@ const { chromium } = require('playwright');
           selected:document.getElementById('dev-virtual-host')?.value,
           visible:!document.getElementById('phase120-virtual-fields')?.classList.contains('hidden')
         };
-        document.getElementById('dev-type').value='Desktop';
-        document.getElementById('dev-type').dispatchEvent(new Event('change',{bubbles:true}));
-        const hiddenForDesktop=document.getElementById('phase120-virtual-fields')?.classList.contains('hidden');
-        return {add,selected,edit,hiddenForDesktop};
+        const editDeploymentHidden=document.getElementById('dev-deployment')?.closest('.hidden')!==null;
+        const editVirtualIdentity=phase120IsVirtualForm();
+        return {add,selected,edit,editDeploymentHidden,editVirtualIdentity};
       });
       assert.equal(result.add.inGeneral,true,'Virtual host selector belongs to General');
       assert.equal(result.add.inHardware,false,'Hardware must not contain duplicate virtual host controls');
@@ -866,7 +1178,8 @@ const { chromium } = require('playwright');
       assert.equal(result.edit.inGeneral,true,'Edit virtual server must use same General controls');
       assert.equal(result.edit.visible,true,'Edit virtual server must reveal host controls');
       assert.equal(result.edit.selected,'fixture-134-physical','Saved host selection must populate Edit');
-      assert.equal(result.hiddenForDesktop,true,'Unrelated device types must hide virtual controls');
+      assert.equal(result.editDeploymentHidden,true,'Edit must hide creation-only deployment choice');
+      assert.equal(result.editVirtualIdentity,true,'Edit must preserve the saved virtual identity');
     });
     await scenario('#134 shared Add and Edit physical host controls preserve legacy values', async page => {
       const result = await page.evaluate(() => {
@@ -1020,26 +1333,7 @@ const { chromium } = require('playwright');
       console.log('OBSERVED M-005: general validation did not flag fictional orphan host reference');
     });
 
-    await scenario('M-005 conversion incoming dependency guard source check', async page => {
-      const result = await page.evaluate(() => {
-        appState.devices.push(
-          {id:'fictional-conversion-host',name:'Fictional conversion host',type:'Server - Physical',mountType:'Desktop',location:'Unknown'},
-          {id:'fictional-conversion-vm',name:'Fictional conversion VM',type:'Server - Virtual',mountType:'Desktop',location:'Unknown',virtualHostId:'fictional-conversion-host'}
-        );
-        const host=appState.devices.find(d=>d.id==='fictional-conversion-host');
-        // Baseline: existing device edit ultimately applies the selected type
-        // without checking incoming virtualHostId links. Avoid DOM simulation
-        // here; the complete form submission needs its own D13 browser case.
-        const incoming=appState.devices.filter(d=>d.virtualHostId===host.id).length;
-        const sourceHasIncomingGuard=handleDeviceSubmit.toString().includes('virtualHostId===deviceId') ||
-          handleDeviceSubmit.toString().includes('virtualHostId === deviceId');
-        return {incoming,sourceHasIncomingGuard};
-      });
-      assert.equal(result.incoming,1);
-      assert.equal(result.sourceHasIncomingGuard,true,'Conversion handler must check incoming host links');
-      console.log('PASS M-005: conversion source guard present; full D13 form submission remains pending');
-    });
-    await scenario('M-005 D13 actual conversion form handler protects hosted VMs', async page => {
+    await scenario('M-005 D13 permanent host identity protects dependent VMs', async page => {
       const result = await page.evaluate(async () => {
         const hostId='fictional-d13-host';
         appState.subnets.push({id:'fictional-d13-subnet',name:'D13 subnet',kind:'network',cidr:'10.88.76.0/29',gateway:'10.88.76.1',vlan:3876});
@@ -1048,7 +1342,10 @@ const { chromium } = require('playwright');
           {id:'fictional-d13-vm',name:'Fictional D13 VM',type:'Server - Virtual',mountType:'Desktop',location:'Unknown',virtualHostId:hostId}
         );
         openDeviceModal(hostId);
+        const deploymentHidden=!!document.getElementById('dev-deployment')?.closest('.hidden');
+        const typeHidden=!!document.getElementById('dev-type')?.closest('.hidden');
         const set=(id,value)=>{const el=document.getElementById(id);if(!el)throw Error('Missing form control '+id);el.value=value;el.dispatchEvent(new Event('change',{bubbles:true}));};
+        // Attempt an otherwise prohibited identity change programmatically.
         set('dev-type','Server - Virtual');
         set('dev-name','Fictional D13 host');
         set('dev-location','Unknown');
@@ -1058,24 +1355,21 @@ const { chromium } = require('playwright');
         const notices=[];
         const originalToast=showToast;
         showToast=(message,level)=>notices.push({message,level});
-        let guestDialogShown=false,guestNamed=false;
-        try {
-          const pending=handleDeviceSubmit({preventDefault(){}},hostId);
-          const dialog=document.getElementById('phase-m005-hypervisor-dialog');
-          guestDialogShown=!!dialog;
-          guestNamed=!!dialog?.textContent.includes('Fictional D13 VM');
-          dialog?.querySelector('[data-action="cancel"]')?.click();
-          await pending;
-        } finally {showToast=originalToast}
+        try {await handleDeviceSubmit({preventDefault(){}},hostId);}
+        finally {showToast=originalToast;}
         return {hostType:appState.devices.find(d=>d.id===hostId)?.type,
           vmHost:appState.devices.find(d=>d.id==='fictional-d13-vm')?.virtualHostId,
-          notices,guestDialogShown,guestNamed,conversionDialog:!!document.getElementById('phase130-conversion-dialog')};
+          notices,deploymentHidden,typeHidden,
+          guestDialog:!!document.getElementById('phase-m005-hypervisor-dialog'),
+          conversionDialog:!!document.getElementById('phase130-conversion-dialog')};
       });
-      assert.equal(result.hostType,'Server - Physical','Blocked conversion must preserve physical host type');
-      assert.equal(result.vmHost,'fictional-d13-host','Blocked conversion must preserve dependant link');
-      assert.equal(result.guestDialogShown,true,'Conversion must show guest resolution');
-      assert.equal(result.guestNamed,true,'Conversion must identify dependent VM');
-      assert.equal(result.conversionDialog,false,'Dependency guard must run before obsolete field confirmation');
+      assert.equal(result.deploymentHidden,true,'Edit must hide creation-only deployment selection');
+      assert.equal(result.typeHidden,true,'Edit must hide creation-only device type selection');
+      assert.equal(result.hostType,'Server - Physical','Blocked identity change must preserve physical host type');
+      assert.equal(result.vmHost,'fictional-d13-host','Blocked identity change must preserve dependent VM');
+      assert.equal(result.notices.some(n=>/Device identity cannot be changed/.test(n.message)),true,'Save must reject attempted identity change');
+      assert.equal(result.guestDialog,false,'Rejected identity change must not invoke guest resolution');
+      assert.equal(result.conversionDialog,false,'Rejected identity change must not invoke conversion dialogue');
     });
     await scenario('M-005 baseline detached legacy backup host reference', async page => {
       const result=await page.evaluate(() => {
@@ -1366,6 +1660,302 @@ const { chromium } = require('playwright');
       await page.reload({waitUntil:'load'});
       assert.equal(await page.evaluate(() => appState.serverFunctions.find(x => x.key === 'serverService_issue94fictional')?.archived),
         true,'Archived service must remain archived after reload');
+    });
+    await scenario('#97 rack report and dashboard count ordinary accessories but not vertical 0U', async page => {
+      const result = await page.evaluate(() => {
+        appState.racks.push({id:'fixture97rack',name:'Fixture #97 rack',heightU:12});
+        appState.devices.push({id:'fixture97server',name:'Fixture #97 server',type:'Server - Physical',
+          rackId:'fixture97rack',face:'front',rackUStart:2,rackUEnd:3});
+        appState.rackAccessories.push(
+          {id:'fixture97shelf',name:'Shelf',type:'shelf',rackId:'fixture97rack',face:'front',startU:5,heightU:1},
+          {id:'fixture97horizontal',name:'PDU',type:'pdu_horizontal',rackId:'fixture97rack',face:'rear',startU:6,heightU:1},
+          {id:'fixture97vertical',name:'Vertical PDU',type:'pdu_vertical',rackId:'fixture97rack',face:'front',startU:1,heightU:12},
+          {id:'fixture97cable',name:'Vertical cable',type:'cable_vertical',rackId:'fixture97rack',face:'rear',startU:1,heightU:12}
+        );
+        const row=phase10DReportData().racks.find(r=>r.name==='Fixture #97 rack');
+        return {row};
+      });
+      assert.equal(result.row.front,3,'Front should include 2U server and 1U shelf');
+      assert.equal(result.row.rear,1,'Rear should include horizontal 1U PDU only');
+      assert.equal(result.row.percent,25,'Capacity uses fuller face, excluding vertical 0U');
+    });
+    await scenario('#97 legacy rack accessory types normalise on browser startup', async page => {
+      await page.evaluate(() => {
+        const saved=JSON.parse(JSON.stringify(appState));
+        saved.racks.push({id:'fixture97startup',name:'Fixture 97 startup rack',heightU:9});
+        saved.rackAccessories.push({id:'fixture97startupfan',rackId:'fixture97startup',
+          face:'front',startU:1,heightU:2,type:'fan',name:'Historical fan'});
+        localStorage.setItem('caffoot_state',JSON.stringify(saved));
+      });
+      await page.reload({waitUntil:'load'});
+      const result=await page.evaluate(() => ({
+        type:appState.rackAccessories.find(a=>a.id==='fixture97startupfan')?.type,
+        recovery:!!phase17AStorageRecovery,
+        storedType:JSON.parse(localStorage.getItem('caffoot_state')).rackAccessories
+          .find(a=>a.id==='fixture97startupfan')?.type
+      }));
+      assert.equal(result.type,'fan_tray','Historical startup accessory should be canonicalised');
+      assert.equal(result.recovery,false,'Valid historical inventory must load without recovery');
+      assert.equal(result.storedType,'fan','Startup normalisation must not silently rewrite stored inventory');
+    });
+    await scenario('#97 legacy rack accessory backup types migrate safely', async page => {
+      const result=await page.evaluate(() => {
+        const raw=JSON.parse(JSON.stringify(appState));
+        raw.racks.push({id:'fixture97legacyrack',name:'Fixture 97 legacy rack',heightU:12});
+        raw.rackAccessories.push(
+          {id:'fixture97fan',rackId:'fixture97legacyrack',face:'front',startU:1,heightU:2,type:'fan',name:'Legacy fan'},
+          {id:'fixture97pdu',rackId:'fixture97legacyrack',face:'rear',startU:3,heightU:1,type:'pdu',name:'Legacy PDU'},
+          {id:'fixture97vent',rackId:'fixture97legacyrack',face:'front',startU:5,heightU:1,type:'vent',name:'Legacy vent'}
+        );
+        const original=JSON.stringify(raw);
+        const candidate=phase16CCheckBackup(raw);
+        const converted=candidate.rackAccessories.filter(x=>x.rackId==='fixture97legacyrack')
+          .map(x=>({type:x.type,startU:x.startU,heightU:x.heightU,face:x.face}));
+        const invalid=JSON.parse(original);
+        invalid.rackAccessories[invalid.rackAccessories.length-1].type='unknown_legacy_type';
+        let rejected=false;
+        try {phase16CCheckBackup(invalid);} catch(e){rejected=/unsupported accessory type/.test(e.message);}
+        return {untouched:JSON.stringify(raw)===original,converted,rejected};
+      });
+      assert.equal(result.untouched,true,'Import migration must not mutate the original backup');
+      assert.deepEqual(result.converted,[
+        {type:'fan_tray',startU:1,heightU:2,face:'front'},
+        {type:'pdu_horizontal',startU:3,heightU:1,face:'rear'},
+        {type:'ventilation',startU:5,heightU:1,face:'front'}
+      ]);
+      assert.equal(result.rejected,true,'Unknown accessory types must remain rejected');
+    });
+    await scenario('#97 multi-U accessory can drag one U within its own footprint', async page => {
+      const result=await page.evaluate(() => {
+        appState.racks.push({id:'fixture97drag',name:'Fixture 97 drag rack',heightU:9});
+        appState.rackAccessories.push({id:'fixture97drag6',name:'Fixture 97 six U accessory',
+          type:'shelf',rackId:'fixture97drag',face:'front',startU:1,heightU:6});
+        const target=document.createElement('div');
+        target.dataset.rackAccessory='fixture97drag6';
+        target.dataset.rackDropU='6';
+        target.getBoundingClientRect=()=>({top:80,height:240});
+        const grid=document.createElement('div');
+        grid.dataset.rackUGrid='true';
+        grid.getBoundingClientRect=()=>({top:0,bottom:360,height:360});
+        grid.appendChild(target);
+        document.body.appendChild(grid);
+        const resolved=phase13DropPosition({clientY:300},target);
+        const originalFace=activeRackFace;
+        activeRackFace='front';
+        let moved;
+        try { moved=phase13CMoveAccessory('fixture97drag6', 'fixture97drag', resolved); }
+        finally { activeRackFace=originalFace;grid.remove(); }
+        return {resolved,moved,start:appState.rackAccessories.find(a=>a.id==='fixture97drag6')?.startU};
+      });
+      assert.equal(result.resolved,2,'Pointer over U2 must resolve to U2 rather than top U6');
+      assert.equal(result.start,2,'6U accessory should move to U2–U7');
+    });
+    await scenario('#171 multi-U rack drag preview refreshes and movement works in both directions', async page => {
+      const result=await page.evaluate(() => {
+        appState.racks.push({id:'fixture171rack',name:'Fixture 171 rack',heightU:9});
+        appState.rackAccessories.push({id:'fixture171accessory',name:'Fixture 171 six U accessory',
+          type:'shelf',rackId:'fixture171rack',face:'front',startU:1,heightU:6});
+        const target=document.createElement('div');
+        target.dataset.rackDropId='fixture171rack';
+        target.dataset.rackDropU='6';
+        target.dataset.rackAccessory='fixture171accessory';
+        target.getBoundingClientRect=()=>({top:100,height:240});
+        const grid=document.createElement('div');
+        grid.dataset.rackUGrid='true';
+        grid.style.position='relative';
+        grid.style.height='360px';
+        grid.getBoundingClientRect=()=>({top:-40,bottom:320,height:360});
+        grid.appendChild(target);
+        document.body.appendChild(grid);
+        const originalFace=activeRackFace;
+        activeRackFace='front';
+        const dispatch=(type,y)=>target.dispatchEvent(new DragEvent(type,{
+          bubbles:true,cancelable:true,clientY:y,dataTransfer:new DataTransfer()
+        }));
+        const getStart=()=>appState.rackAccessories.find(a=>a.id==='fixture171accessory').startU;
+        try {
+          phase13CDraggedAccessoryId='fixture171accessory';
+          dispatch('dragover',280);
+          const first=grid.querySelector('.phase13-drop-preview');
+          const firstNonInteractive=first?.style.pointerEvents==='none';
+          dispatch('dragover',240);
+          const second=grid.querySelector('.phase13-drop-preview');
+          const refreshed=!!second && second!==first && grid.querySelectorAll('.phase13-drop-preview').length===1;
+          dispatch('drop',280);
+          const down=getStart();
+          phase13CDraggedAccessoryId='fixture171accessory';
+          dispatch('drop',320);
+          const up=getStart();
+          return {firstNonInteractive,refreshed,down,up};
+        } finally {
+          phase13CDraggedAccessoryId=null;
+          activeRackFace=originalFace;
+          phase13ClearDropPreview();
+          grid.remove();
+        }
+      });
+      assert.equal(result.firstNonInteractive,true,'Drag preview must not intercept pointer events');
+      assert.equal(result.refreshed,true,'Preview must refresh within the same multi-U target');
+      assert.equal(result.down,2,'6U accessory must move one U down');
+      assert.equal(result.up,1,'6U accessory must move one U back up');
+    });
+    await scenario('#171 upwards drag preserves grabbed U offset over empty rack positions', async page => {
+      const result=await page.evaluate(() => {
+        appState.racks.push({id:'fixture171offsetrack',name:'Fixture 171 offset rack',heightU:12});
+        appState.rackAccessories.push({id:'fixture171offsetitem',name:'Fixture 171 4U item',
+          type:'shelf',rackId:'fixture171offsetrack',face:'front',startU:3,heightU:4});
+        const source=document.createElement('div');
+        source.dataset.rackAccessory='fixture171offsetitem';
+        source.dataset.rackDropU='6';
+        source.dataset.rackDropId='fixture171offsetrack';
+        source.draggable=true;
+        source.getBoundingClientRect=()=>({top:100,height:160});
+        const grid=document.createElement('div');
+        grid.dataset.rackUGrid='true';
+        grid.style.position='relative';
+        grid.style.height='480px';
+        grid.getBoundingClientRect=()=>({top:0,bottom:480,height:480});
+        grid.appendChild(source);
+        document.body.appendChild(grid);
+        const empty=document.createElement('div');
+        empty.dataset.rackDropU='7';
+        empty.dataset.rackDropId='fixture171offsetrack';
+        grid.appendChild(empty);
+        const originalFace=activeRackFace;
+        activeRackFace='front';
+        try {
+          source.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,clientY:100+3*40+20,dataTransfer:new DataTransfer()}));
+          const start=phase13DropPosition({clientY:240},empty);
+          empty.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,clientY:240,dataTransfer:new DataTransfer()}));
+          const preview=grid.querySelector('.phase13-drop-preview');
+          const previewBottom=preview?.style.bottom;
+          const previewHeight=preview?.style.height;
+          empty.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,clientY:240,dataTransfer:new DataTransfer()}));
+          return {start,previewBottom,previewHeight,placed:appState.rackAccessories.find(a=>a.id==='fixture171offsetitem').startU};
+        } finally {
+          source.dispatchEvent(new DragEvent('dragend',{bubbles:true,dataTransfer:new DataTransfer()}));
+          activeRackFace=originalFace;
+          grid.remove();
+        }
+      });
+      assert.equal(result.start,4,'Moving one U above a 4U item must preserve grab offset');
+      assert.equal(result.previewBottom,'120px','Preview must align with U4 in rack grid coordinates');
+      assert.equal(result.previewHeight,'160px','4U equipment must always have a 4U preview');
+      assert.equal(result.placed,4,'Upward drop must reposition by one U rather than four');
+    });
+    await scenario('#97 rack CSV export uses accessory-aware report rows', async page => {
+      const result=await page.evaluate(async () => {
+        appState.racks.push({id:'fixture97csvrack',name:'Fixture 97 CSV rack',heightU:10});
+        appState.devices.push({id:'fixture97csvserver',name:'Fixture 97 CSV server',type:'Server - Physical',
+          rackId:'fixture97csvrack',face:'front',rackUStart:2,rackUEnd:3});
+        appState.rackAccessories.push(
+          {id:'fixture97csvshelf',name:'Shelf',type:'shelf',rackId:'fixture97csvrack',face:'front',startU:5,heightU:1},
+          {id:'fixture97csvvertical',name:'Vertical PDU',type:'pdu_vertical',rackId:'fixture97csvrack',face:'front',startU:1,heightU:10}
+        );
+        const original=URL.createObjectURL;
+        let exported=null;
+        URL.createObjectURL=blob=>{exported=blob;return 'blob:fixture97';};
+        const click=HTMLAnchorElement.prototype.click;
+        HTMLAnchorElement.prototype.click=function(){};
+        try { phase10DDownloadCsv('racks'); }
+        finally { URL.createObjectURL=original;HTMLAnchorElement.prototype.click=click; }
+        return exported ? await exported.text() : '';
+      });
+      assert.match(result,/"Fixture 97 CSV rack","10","3","0","1","30"/,
+        'Rack CSV should include 2U device and 1U shelf but not vertical 0U');
+    });
+    await scenario('#97 archived device assignments persist across reload and unrelated edit', async page => {
+      await page.evaluate(() => {
+        appState.installedSoftware.push({key:'software_fixture97persist',label:'Fixture 97 retained software',archived:true});
+        appState.serverFunctions.push({key:'serverService_fixture97persist',label:'Fixture 97 retained service',archived:true});
+        appState.devices.push({id:'fixture97persist',name:'Fixture 97 retained device',type:'Server - Physical',
+          typeDetails:{software_fixture97persist:true,serverService_fixture97persist:true}});
+        if (!saveState()) throw Error('Unable to persist #97 baseline');
+      });
+      await page.reload({waitUntil:'load'});
+      const result=await page.evaluate(() => {
+        const device=appState.devices.find(d=>d.id==='fixture97persist');
+        if (!device) return {missing:true};
+        device.notes='Unrelated #97 note edit';
+        if (!saveState()) throw Error('Unable to persist unrelated edit');
+        phase14CViewDevice(device.id);
+        return {software:document.body.textContent.includes('Fixture 97 retained software'),
+          service:document.body.textContent.includes('Fixture 97 retained service'),
+          softwareAssigned:device.typeDetails?.software_fixture97persist,
+          serviceAssigned:device.typeDetails?.serverService_fixture97persist};
+      });
+      assert.equal(result.software,true,'Archived software must remain visible after reload');
+      assert.equal(result.service,true,'Archived service must remain visible after reload');
+      assert.equal(result.softwareAssigned,true,'Unrelated edit must preserve software assignment');
+      assert.equal(result.serviceAssigned,true,'Unrelated edit must preserve service assignment');
+      await page.reload({waitUntil:'load'});
+      const persisted=await page.evaluate(() => {
+        const d=appState.devices.find(x=>x.id==='fixture97persist');
+        return {notes:d?.notes,software:d?.typeDetails?.software_fixture97persist,
+          service:d?.typeDetails?.serverService_fixture97persist};
+      });
+      assert.equal(persisted.notes,'Unrelated #97 note edit');
+      assert.equal(persisted.software,true);
+      assert.equal(persisted.service,true);
+    });
+    await scenario('#96 real device editor preserves archived and unknown historical fields', async page => {
+      await page.evaluate(() => {
+        appState.subnets.push({id:'fixture96-subnet',name:'Fixture 96 subnet',kind:'network',cidr:'10.88.96.0/29',gateway:'10.88.96.1',vlan:3896});
+        appState.installedSoftware.push({key:'software_fixture96_archived',label:'Fixture 96 archived software',archived:true});
+        appState.serverFunctions.push({key:'serverService_fixture96_archived',label:'Fixture 96 archived service',archived:true});
+        appState.devices.push({id:'fixture96-device',name:'Fixture 96 existing server',type:'Server - Physical',
+          isVirtual:false,mountType:'Desktop',location:'Unknown',status:'Active',primaryIp:'10.88.96.2',
+          notes:'Before editor change',typeDetails:{software_fixture96_archived:true,
+            serverService_fixture96_archived:true,legacyFixture96:'Historical custom value'}});
+        const fixture=appState.devices.find(d=>d.id==='fixture96-device');
+        fixture.primaryIp='';
+        setDevicePrimaryIp(fixture,'10.88.96.2');
+        syncDeviceIpamRecord(fixture);
+        if(!saveState())throw Error('Unable to save #96 fixture');
+      });
+      const result=await page.evaluate(async () => {
+        openDeviceModal('fixture96-device');
+        const set=(id,value)=>{const el=document.getElementById(id);if(!el)throw Error('Missing editor field '+id);el.value=value;el.dispatchEvent(new Event('change',{bubbles:true}));};
+        set('dev-notes','After editor change');
+        set('dev-location','Unknown');
+        set('dev-mount-type','Desktop');
+        set('dev-subnet','fixture96-subnet');
+        set('dev-ip','10.88.96.2');
+        await handleDeviceSubmit({preventDefault(){}},'fixture96-device');
+        const d=appState.devices.find(x=>x.id==='fixture96-device');
+        return {notes:d?.notes,details:d?.typeDetails,stored:JSON.parse(localStorage.getItem('caffoot_state')).devices.find(x=>x.id==='fixture96-device')?.typeDetails};
+      });
+      assert.equal(result.notes,'After editor change','Real editor must save ordinary note change');
+      for(const details of [result.details,result.stored]){
+        assert.equal(details?.software_fixture96_archived,true,'Archived software must survive actual form submission');
+        assert.equal(details?.serverService_fixture96_archived,true,'Archived service must survive actual form submission');
+        assert.equal(details?.legacyFixture96,'Historical custom value','Unknown historical field must survive actual form submission');
+      }
+      await page.reload({waitUntil:'load'});
+      const persisted=await page.evaluate(()=>appState.devices.find(x=>x.id==='fixture96-device'));
+      assert.equal(persisted?.notes,'After editor change');
+      assert.equal(persisted?.typeDetails?.software_fixture96_archived,true);
+      assert.equal(persisted?.typeDetails?.serverService_fixture96_archived,true);
+      assert.equal(persisted?.typeDetails?.legacyFixture96,'Historical custom value');
+    });
+    await scenario('#97 archived software and server service remain visible in device details', async page => {
+      const result = await page.evaluate(() => {
+        const software={key:'software_fixture97',label:'Fixture #97 legacy software',archived:true,deviceTypes:['Server - Physical']};
+        const service={key:'serverService_fixture97',label:'Fixture #97 legacy service',archived:true};
+        appState.installedSoftware.push(software);
+        appState.serverFunctions.push(service);
+        appState.devices.push({id:'fixture97device',name:'Fixture #97 device',type:'Server - Physical',
+          typeDetails:{[software.key]:true,[service.key]:true}});
+        phase14CViewDevice('fixture97device');
+        const text=document.body.textContent||'';
+        return {software:text.includes(software.label),service:text.includes(service.label),
+          softwareAvailable:phase120SoftwareOptions().some(x=>x.key===software.key),
+          serviceAvailable:phase120AvailableServerServices().some(x=>x.key===service.key)};
+      });
+      assert.equal(result.software,true,'Archived installed software must appear');
+      assert.equal(result.service,true,'Archived enabled service must appear');
+      assert.equal(result.softwareAvailable,false,'Archived software must not be offered for assignment');
+      assert.equal(result.serviceAvailable,false,'Archived service must not be offered for assignment');
     });
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode=1; });

@@ -10,6 +10,7 @@ function extract(from,to) {
   return html.slice(start,end);
 }
 const escapeSource=extract('function escapeHtml(value)','function renderContent()');
+const platformSource=extract('function phase180EffectivePlatform(device)','function getVisibleDevices()');
 const viewSource=extract('function phase14CViewDevice(deviceId)','function phase14CGoToRack(');
 const payloads=[
   '<img src=x onerror=alert(1)>',
@@ -38,7 +39,7 @@ for (const payload of payloads) {
     openModal:value=>{rendered=value;},
     showToast:()=>{throw Error('Device unexpectedly not found');}
   });
-  vm.runInContext(escapeSource+'\n'+viewSource,context);
+  vm.runInContext(escapeSource+'\n'+platformSource+'\n'+viewSource,context);
   const encoded=context.escapeHtml(payload);
   assert(!encoded.includes('<') && !encoded.includes('>'),'Angle brackets must be escaped');
   assert(!encoded.includes('"') && !encoded.includes("'"),'Quotes must be escaped');

@@ -28,6 +28,19 @@ assert(!roundtrip.deviceLocations.includes('Racked'),'legacy sentinel must not r
 assert.deepEqual(Array.from(roundtrip.deviceTypes.slice(0,raw.deviceTypes.length)),raw.deviceTypes,'original device types must survive export/import in order');
 assert(roundtrip.deviceTypes.includes('Layer 3 Switch'),'migration must retain the new Layer 3 Switch type');
 assert.equal(new Set(roundtrip.deviceTypes).size,roundtrip.deviceTypes.length,'device types must not be duplicated');
+// #164: New virtual hardware and host assignment must survive the existing backup contract.
+const vmBackup=JSON.parse(JSON.stringify(candidate));
+vmBackup.devices.push({id:'fixture-164-vm-backup',name:'VM backup fixture',type:'Server - Virtual',
+  status:'Active',isVirtual:true,virtualHostId:'example-server',
+  typeDetails:{vmVcpu:4,vmRamGb:16,vmDiskGb:120,vmNicCount:2}});
+const vmRoundtrip=context.phase16CCheckBackup(JSON.parse(JSON.stringify(context.phase20CreateBackup(vmBackup))));
+const restoredVm=vmRoundtrip.devices.find(d=>d.id==='fixture-164-vm-backup');
+assert.ok(restoredVm,'VM must survive backup export/import');
+assert.equal(restoredVm.type,'Server - Virtual');
+assert.equal(restoredVm.isVirtual,true);
+assert.equal(restoredVm.virtualHostId,'example-server');
+for(const [field,value] of Object.entries({vmVcpu:4,vmRamGb:16,vmDiskGb:120,vmNicCount:2}))
+  assert.equal(String(restoredVm.typeDetails[field]),String(value),field+' must survive VM backup round trip');
 const legacy=read('lite-legacy.example.json'),legacyBytes=JSON.stringify(legacy);
 const migrated=context.phase16CCheckBackup(legacy);
 assert.equal(migrated.devices[1].location,'Unknown');assert(migrated.deviceTypes.includes('Server - Physical'));assert.equal(JSON.stringify(legacy),legacyBytes);
