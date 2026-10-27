@@ -3145,7 +3145,7 @@ function hierarchyValidateTypes(subnets) {
                                     </div>
                                     <div class="phase13-vertical-layout" aria-label="0U vertical accessory rail preview">
                                         ${phase13VRenderRail(currentRack,verticalAccessories,"left")}
-                                        <div class="flex flex-col min-w-0">
+                                        <div class="flex flex-col min-w-0 relative" data-rack-u-grid="true">
                                             ${rackSlotsHtml}
                                         </div>
                                         ${phase13VRenderRail(currentRack,verticalAccessories,"right")}
@@ -8950,26 +8950,18 @@ function hierarchyValidateTypes(subnets) {
             // Refresh the preview even when the drop target element is unchanged.
             phase13ClearDropPreview();
             target.classList.add('phase13-drop-target');
+            const grid = target.closest('[data-rack-u-grid]');
+            if (!grid) return;
             const preview = document.createElement('div');
             preview.className = 'phase13-drop-preview' + (error ? ' phase13-invalid' : '');
             preview.style.pointerEvents = 'none';
             preview.style.height = `${height * 40}px`;
-            // Anchor the outline to the calculated starting U, not to the
-            // hovered element's bottom. Empty slots are 1U high whereas a
-            // mounted item is rendered as one multi-U element.
-            const hoveredItem = target.dataset.rackAccessory
-                ? (appState.rackAccessories||[]).find(a=>a.id===target.dataset.rackAccessory)
-                : target.dataset.rackDevice
-                    ? appState.devices.find(d=>d.id===target.dataset.rackDevice) : null;
-            const hoveredHeight = hoveredItem
-                ? (target.dataset.rackAccessory ? Number(hoveredItem.heightU) :
-                    Math.max(1,Number(hoveredItem.rackUHeight)||(Number(hoveredItem.rackUEnd)-Number(hoveredItem.rackUStart)+1)||1))
-                : 1;
-            const hoveredBottomU = Number(target.dataset.rackDropU)-hoveredHeight+1;
-            preview.style.bottom = `${(startU-hoveredBottomU)*40}px`;
+            // Rack grid runs from U1 at its bottom. Use that common origin
+            // regardless of the height of the element receiving dragover.
+            preview.style.bottom = `${(startU-1)*40}px`;
             preview.textContent = error ? `${height}U · Unavailable` : `${height}U · Drop here`;
             preview.setAttribute('aria-hidden', 'true');
-            target.appendChild(preview);
+            grid.appendChild(preview);
         });
         document.addEventListener('dragover', event => {
             if ((!phase13DraggedDeviceId && !phase13CDraggedAccessoryId) || event.target.closest('[data-rack-drop-u]')) return;
