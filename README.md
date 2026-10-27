@@ -78,13 +78,13 @@ Please read [SECURITY.md](SECURITY.md) before considering a hosted deployment. A
 - [User guide](USER-GUIDE.md)
 - [Feature overview](docs/features/FEATURE-OVERVIEW.md)
 - [Roadmap](ROADMAP.md)
-- [v1.3.2 candidate release notes](RELEASE-NOTES-1.3.2.md)
+- [v1.3.2 release notes](RELEASE-NOTES-1.3.2.md)
 - [Archived v1.3.1 release notes](docs/archive/release-notes/RELEASE-NOTES-1.3.1.md)
 - [Historical release notes](docs/archive/release-notes/README.md)
 - [Documentation index](docs/README.md)
 - [Contributing](CONTRIBUTING.md) and [backup format contract](BACKUP-FORMAT.md)
 
-**Current release:** [v1.3.1](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.1), published 26 October 2026.
+**Current release:** [v1.3.2](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.2), published 27 October 2026.
 
 Older versions such as v1.0.3 and v1.1.0 may report “Could not check releases” because of an update checker compatibility issue. This does not change inventory. Back up your data and use the [official releases](https://github.com/Caffoot/Caffoot-Lite/releases) and [upgrade instructions](INSTALLATION.md) to update manually.
 
