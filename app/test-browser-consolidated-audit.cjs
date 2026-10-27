@@ -1451,6 +1451,49 @@ const { chromium } = require('playwright');
       assert.equal(result.resolved,2,'Pointer over U2 must resolve to U2 rather than top U6');
       assert.equal(result.start,2,'6U accessory should move to U2–U7');
     });
+    await scenario('#171 multi-U rack drag preview refreshes and movement works in both directions', async page => {
+      const result=await page.evaluate(() => {
+        appState.racks.push({id:'fixture171rack',name:'Fixture 171 rack',heightU:9});
+        appState.rackAccessories.push({id:'fixture171accessory',name:'Fixture 171 six U accessory',
+          type:'shelf',rackId:'fixture171rack',face:'front',startU:1,heightU:6});
+        const target=document.createElement('div');
+        target.dataset.rackDropId='fixture171rack';
+        target.dataset.rackDropU='6';
+        target.dataset.rackAccessory='fixture171accessory';
+        target.getBoundingClientRect=()=>({top:100,height:240});
+        document.body.appendChild(target);
+        const originalFace=activeRackFace;
+        activeRackFace='front';
+        const dispatch=(type,y)=>target.dispatchEvent(new DragEvent(type,{
+          bubbles:true,cancelable:true,clientY:y,dataTransfer:new DataTransfer()
+        }));
+        const getStart=()=>appState.rackAccessories.find(a=>a.id==='fixture171accessory').startU;
+        try {
+          phase13CDraggedAccessoryId='fixture171accessory';
+          dispatch('dragover',100+4*40+20);
+          const first=target.querySelector('.phase13-drop-preview');
+          const firstNonInteractive=first?.style.pointerEvents==='none';
+          dispatch('dragover',100+3*40+20);
+          const second=target.querySelector('.phase13-drop-preview');
+          const refreshed=!!second && second!==first && target.querySelectorAll('.phase13-drop-preview').length===1;
+          dispatch('drop',100+4*40+20);
+          const down=getStart();
+          phase13CDraggedAccessoryId='fixture171accessory';
+          dispatch('drop',100+5*40+20);
+          const up=getStart();
+          return {firstNonInteractive,refreshed,down,up};
+        } finally {
+          phase13CDraggedAccessoryId=null;
+          activeRackFace=originalFace;
+          phase13ClearDropPreview();
+          target.remove();
+        }
+      });
+      assert.equal(result.firstNonInteractive,true,'Drag preview must not intercept pointer events');
+      assert.equal(result.refreshed,true,'Preview must refresh within the same multi-U target');
+      assert.equal(result.down,2,'6U accessory must move one U down');
+      assert.equal(result.up,1,'6U accessory must move one U back up');
+    });
     await scenario('#97 rack CSV export uses accessory-aware report rows', async page => {
       const result=await page.evaluate(async () => {
         appState.racks.push({id:'fixture97csvrack',name:'Fixture 97 CSV rack',heightU:10});
