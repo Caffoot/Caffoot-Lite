@@ -12,6 +12,8 @@ Caffoot Lite is a standalone HTML application. You do **not** need Docker, Node.
 
 **Export JSON backups regularly and ALWAYS before upgrades, moves, renames or resets.** Save them outside the browser and test restoration. The backup may include sensitive network information.
 
+**Release preparation:** v1.3.2 is the next candidate and is not yet published. Its release notes are in [RELEASE-NOTES-1.3.2.md](RELEASE-NOTES-1.3.2.md). The published stable release remains v1.3.1 until publication is approved.
+
 **Current published stable release:** [v1.3.1](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.1), published 26 October 2026. Earlier releases remain available on GitHub.
 
 ## Download the released application
