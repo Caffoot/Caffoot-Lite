@@ -3842,7 +3842,7 @@ function hierarchyValidateTypes(subnets) {
                     <section class="${phase14DeviceTab==='inventory'?'':'hidden'} space-y-4" data-device-panel="inventory">
                     <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 sm:p-5 flex flex-col gap-4">
                         <h3 class="text-base font-bold text-slate-900 dark:text-white">Search & filter devices</h3>
-                        ${(deviceOsFilter || deviceServiceFilter || deviceMissingFilter || deviceTypeFilter || deviceLocationFilter || deviceHardwareFilter) ? `<div class="flex flex-wrap items-center gap-3 rounded-xl border border-indigo-300 dark:border-indigo-700 bg-indigo-50 dark:bg-indigo-950/40 p-3 text-sm"><span class="font-semibold text-indigo-900 dark:text-indigo-200">${escapeHtml(deviceOsFilter ? "Operating System: "+deviceOsFilter : deviceServiceFilter ? "Software / Service: "+deviceServiceFilter : deviceMissingFilter ? ({ip:"Primary IP: Not Recorded",type:"Device Type: Not Recorded",location:"Location: Not Recorded"}[deviceMissingFilter]||"Data: Not Recorded") : deviceTypeFilter ? "Device Type: "+deviceTypeFilter : deviceHardwareFilter ? ({manufacturer:"Manufacturer",model:"Model",mountType:"Mounting Method"}[deviceHardwareFilter.field]+": "+deviceHardwareFilter.value) : "Location: "+deviceLocationFilter)}</span><span class="text-slate-700 dark:text-slate-200">${getVisibleDevices().length} matching devices</span><button type="button" data-action="phase14g-clear-filters" class="font-semibold text-indigo-700 dark:text-indigo-300 underline">Clear Filter</button></div>` : ''}
+                        ${(deviceOsFilter || deviceServiceFilter || deviceMissingFilter || deviceTypeFilter || deviceLocationFilter || deviceHardwareFilter) ? `<div class="flex flex-wrap items-center gap-3 rounded-xl border border-indigo-300 dark:border-indigo-700 bg-indigo-50 dark:bg-indigo-950/40 p-3 text-sm"><span class="font-semibold text-indigo-900 dark:text-indigo-200">${escapeHtml(deviceOsFilter ? "Operating System: "+deviceOsFilter : deviceServiceFilter ? "Software / Service: "+deviceServiceFilter : deviceMissingFilter ? ({ip:"Primary IP: Not Recorded",type:"Device Type: Not Recorded",location:"Location: Not Recorded"}[deviceMissingFilter]||"Data: Not Recorded") : deviceTypeFilter ? "Device Type: "+deviceTypeDisplayLabel(deviceTypeFilter) : deviceHardwareFilter ? ({manufacturer:"Manufacturer",model:"Model",mountType:"Mounting Method"}[deviceHardwareFilter.field]+": "+deviceHardwareFilter.value) : "Location: "+deviceLocationFilter)}</span><span class="text-slate-700 dark:text-slate-200">${getVisibleDevices().length} matching devices</span><button type="button" data-action="phase14g-clear-filters" class="font-semibold text-indigo-700 dark:text-indigo-300 underline">Clear Filter</button></div>` : ''}
                         <label class="phase14h-search-label block w-full text-xs font-semibold text-slate-700 dark:text-slate-200">Search devices
                             <input id="device-search" type="search" placeholder="Name, IP, model, serial or location" value="${escapeHtml(deviceSearchTerm)}" class="mt-1 w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500" />
                         </label>
@@ -3857,7 +3857,7 @@ function hierarchyValidateTypes(subnets) {
                             <label class="text-xs font-semibold text-slate-700 dark:text-slate-200">Device type
                                 <select id="device-type-filter" class="mt-1 block min-w-36 rounded-xl bg-white dark:bg-slate-800 border border-slate-400 dark:border-slate-500 text-slate-900 dark:text-white">
                                     <option value="">All types</option>
-                                    ${getUniqueDeviceTypes().sort((a,b)=>a.localeCompare(b)).map(t=>`<option value="${escapeHtml(t)}" ${deviceTypeFilter === t ? 'selected' : ''}>${escapeHtml(t)}</option>`).join('')}
+                                    ${getUniqueDeviceTypes().sort((a,b)=>deviceTypeDisplayLabel(a).localeCompare(deviceTypeDisplayLabel(b))).map(t=>`<option value="${escapeHtml(t)}" ${deviceTypeFilter === t ? 'selected' : ''}>${escapeHtml(deviceTypeDisplayLabel(t))}</option>`).join('')}
                                 </select>
                             </label>
                             <label class="text-xs font-semibold text-slate-700 dark:text-slate-200">Device status
@@ -3925,7 +3925,7 @@ function hierarchyValidateTypes(subnets) {
                                     return `
                                         <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/20">
                                             <td class="py-3 px-4 min-w-[220px] font-semibold text-slate-900 dark:text-white"><button type="button" data-action="view-device" data-id="${escapeHtml(d.id)}" class="phase14c-name text-left whitespace-normal break-words hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-600" title="View device details">${escapeHtml(d.name)}</button>${d.serialNumber ? `<span class="block text-xs font-normal text-slate-500 dark:text-slate-400 sm:hidden">${escapeHtml(d.serialNumber)}</span>` : ''}</td>
-                                            <td class="py-3 px-4"><span class="px-2 py-0.5 rounded text-xs bg-slate-100 dark:bg-slate-700">${escapeHtml(d.type)}</span></td>
+                                            <td class="py-3 px-4"><span class="px-2 py-0.5 rounded text-xs bg-slate-100 dark:bg-slate-700">${escapeHtml(deviceTypeDisplayLabel(d.type))}</span></td>
                                             <td class="py-3 px-4 text-xs font-medium ${locationNeedsAttention ? 'text-rose-600 font-bold' : ''}">${escapeHtml(locText)}${locationNeedsAttention ? ' <span class="text-[10px] font-semibold uppercase">(needs attention)</span>' : ''}</td>
                                             <td class="py-3 px-4 font-mono text-xs text-indigo-600">${escapeHtml(d.primaryIp || 'None')}</td>
                                             <td class="py-3 px-4"><span class="inline-flex px-2.5 py-1 rounded-lg text-xs font-semibold ${d.status === 'Retired' ? 'bg-slate-200 text-slate-800 dark:bg-slate-600 dark:text-white' : d.status === 'Maintenance' ? 'bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-200' : 'bg-emerald-100 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-200'}">${escapeHtml(d.status || 'Active')}</span></td>
@@ -3996,6 +3996,10 @@ function hierarchyValidateTypes(subnets) {
             const list = Array.isArray(appState[key]) ? appState[key] : [];
             return [...new Set([...list,...appState.devices.map(d=>d[prop])].filter(Boolean))]
                 .sort((a,b)=>a.localeCompare(b,undefined,{sensitivity:'base'}));
+        }
+        // Display labels only; preserve persisted device types and legacy backup compatibility.
+        function deviceTypeDisplayLabel(type) {
+            return type === 'Server - Physical' ? 'Server' : type === 'Server - Virtual' ? 'Virtual Machine' : type;
         }
         function getUniqueDeviceTypes() { return [...new Set([...phase18DList('type'), ...defaultData.deviceTypes])].sort((a,b)=>a.localeCompare(b,undefined,{sensitivity:'base'})); }
         function getUniqueDeviceLocations() { return phase18DList('location'); }
