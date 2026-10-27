@@ -9,6 +9,15 @@ on:
       - 'app/test-browser-issue157.cjs'
       - '.github/workflows/audit-consolidated-chromium.yml'
   workflow_dispatch:
+    inputs:
+      scope:
+        description: 'Browser test scope'
+        type: choice
+        required: true
+        default: consolidated
+        options:
+          - consolidated
+          - issue-100-history
 
 permissions:
   contents: read
@@ -72,21 +81,28 @@ jobs:
           npm install --prefix "$RUNNER_TEMP/caffoot-browser-tools" --no-save --no-package-lock --no-audit --no-fund playwright@1.56.1
           "$RUNNER_TEMP/caffoot-browser-tools/node_modules/.bin/playwright" install --with-deps chromium
       - name: Run consolidated audit scenarios in Chromium
-        if: steps.scope.outputs.run_browser == 'true' && steps.scope.outputs.full == 'true'
+        if: inputs.scope != 'issue-100-history' && steps.scope.outputs.run_browser == 'true' && steps.scope.outputs.full == 'true'
         working-directory: app
         env:
           NODE_PATH: ${{ runner.temp }}/caffoot-browser-tools/node_modules
         run: node test-browser-consolidated-audit.cjs
       - name: Run issue 99 focused form regression in Chromium
-        if: steps.scope.outputs.run_browser == 'true'
+        if: inputs.scope != 'issue-100-history' && steps.scope.outputs.run_browser == 'true'
         working-directory: app
         env:
           NODE_PATH: ${{ runner.temp }}/caffoot-browser-tools/node_modules
         run: node test-browser-issue99.cjs
 
       - name: Run issue 157 focused built-in catalogue checks in Chromium
-        if: steps.scope.outputs.run_browser == 'true'
+        if: inputs.scope != 'issue-100-history' && steps.scope.outputs.run_browser == 'true'
         working-directory: app
         env:
           NODE_PATH: ${{ runner.temp }}/caffoot-browser-tools/node_modules
         run: node test-browser-issue157.cjs
+
+      - name: Run issue 100 focused history checks in Chromium
+        if: github.event_name == 'workflow_dispatch' && inputs.scope == 'issue-100-history'
+        working-directory: app
+        env:
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tools/node_modules
+        run: node test-browser-issue100-history.cjs
