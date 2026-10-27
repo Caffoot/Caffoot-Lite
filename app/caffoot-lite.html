@@ -6538,6 +6538,10 @@ function hierarchyValidateTypes(subnets) {
             if(mounting) mounting.classList.toggle('hidden',virtual);
             const mountSelect=document.getElementById('dev-mount-type');
             if(mountSelect) mountSelect.required=!virtual;
+            // The location is derived from the selected host when saving a VM.
+            // A hidden required select otherwise prevents the submit handler running.
+            const locationSelect=document.getElementById('dev-location');
+            if(locationSelect) locationSelect.required=!virtual;
             const rackHeight=document.getElementById('dev-rack-height');
             if(virtual && rackHeight) rackHeight.required=false;
             ['phase120-physical-manufacturer','phase120-physical-model'].forEach(id=>document.getElementById(id)?.classList.toggle('hidden',virtual));
