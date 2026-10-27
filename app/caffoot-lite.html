@@ -3263,7 +3263,8 @@ function hierarchyValidateTypes(subnets) {
             const details = device?.typeDetails || {};
             const hypervisor = device?.type === 'Server - Physical' &&
                 (details.serverService_Hypervisor === true || device.serverService_Hypervisor === true);
-            return String((hypervisor ? details.hypervisorProduct : '') || details.softwarePlatform || details.os || '').trim() || 'Not Recorded';
+            // A hypervisor host must never be counted under its preserved historical guest/host OS.
+            return String(hypervisor ? (details.hypervisorProduct || '') : (details.softwarePlatform || details.os || '')).trim() || 'Not Recorded';
         }
         function phase180EffectiveVersion(device) {
             const details = device?.typeDetails || {};
