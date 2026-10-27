@@ -212,6 +212,13 @@ body, #main-content { background-color: var(--caffoot-canvas) !important; }
 }
 #sidebar nav [class*="text-slate-"] { color: #FFFFFF !important; }
 #sidebar nav button:focus-visible { outline-color: #F47B20 !important; }
+/* Settings sits outside the nav element but must share its accessible navy styling. */
+#sidebar button[data-action="tab-settings"] { color: #FFFFFF !important; border-radius: var(--caffoot-radius-control, 8px); }
+#sidebar button[data-action="tab-settings"]:hover { background-color: #26384B !important; color: #FFFFFF !important; }
+#sidebar button[data-action="tab-settings"]:focus-visible { outline: 3px solid #F47B20 !important; outline-offset: 2px; }
+#sidebar button[data-action="tab-settings"][aria-current="page"],
+#sidebar button[data-action="tab-settings"].bg-indigo-50 { background-color: #F47B20 !important; color: #101B28 !important; }
+
 /* Website-inspired shared corner sizes, restricted to common app surfaces. */
 :root { --caffoot-radius-control: 8px; --caffoot-radius-card: 16px; --caffoot-radius-panel: 20px; }
 #sidebar nav button { border-radius: var(--caffoot-radius-control); }
