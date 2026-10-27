@@ -88,6 +88,21 @@ This principle applies to future maintenance and architecture choices too: favou
 
 **Issue #99 / draft PR #155 checkpoint:** This policy update records the product owner's agreed ethos. It is documentation only, not a change to workflow triggers or application behaviour. Earlier PR activity caused automatic checks; do not describe that activity as no tests executed. The new focused issue #99 browser scenario remains unverified until its execution is explicitly evidenced. The outstanding master audit verification and release approval gates remain open.
 
+
+## Lite development and bug investigation, agreed 27 October 2026
+
+Use this approach for every issue, bug fix and feature, alongside the existing seven-stage process and resource-conscious testing rules. This is a clarification of the established workflow, not a new approval or release procedure.
+
+1. **Investigate the cause before changing code.** Reproduce or inspect the reported behaviour, trace shared functions and related workflows, and check whether an existing finding or issue already covers it. Distinguish an observed defect from a hypothesis.
+2. **Agree one coherent scope.** Identify affected forms, data paths, historical records and compatibility requirements together. Obtain product-owner approval for application behaviour changes; investigation alone is not implementation approval.
+3. **Make the smallest maintainable change.** Prefer existing functions and data structures, avoid duplicated controls and competing procedures, and group closely related implementation into a deliberate batch and as few PRs as practical.
+4. **Test what changed, not everything already tested.** Check existing passing evidence and workflow triggers first. Reuse valid results, identify actual gaps, and run focused checks for changed behaviour, integration risks and compatibility. Do not deliberately trigger duplicate CI or rerun passing application tests for documentation-only updates. Required release checks remain mandatory when their gate is reached.
+5. **Protect users' inventories.** Preserve saved data, legacy imports, backups and offline standalone operation. Do not silently discard historical fields when changing a form or converting a device.
+6. **Reconcile once in existing GitHub records.** Update affected audit, workflow, test, finding, roadmap and release documents at meaningful checkpoints, linking exact revisions and actual evidence. Do not create duplicate documents or unnecessary handovers.
+7. **Report the true state and next action.** State what changed, what was inspected, what was actually tested, what remains unverified and what approval is needed. Never equate source inspection with a passing runtime test; never merge or release without explicit approval.
+
+**Working principle:** Keep Caffoot Lite simple to use, develop, debug and maintain. Improve existing processes rather than introducing extra frameworks, paperwork or automation without a demonstrated need.
+
 ## Recovering work in a new session
 
 Before resuming development after a conversation or contributor handover, follow the [new session recovery procedure](SESSION-RECOVERY.md). Verify live repository status rather than relying on a previous chat or handover document.
