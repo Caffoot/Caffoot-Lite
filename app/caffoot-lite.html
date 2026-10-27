@@ -1888,7 +1888,8 @@ function hierarchyValidateTypes(subnets) {
             setTimeout(()=>URL.revokeObjectURL(url),1000);
         }
         function renderAuditHTML() {
-            const entries=auditHistory.slice().reverse();
+            // Ignore malformed local history records in the view without altering stored data.
+            const entries=auditHistory.filter(entry=>entry && typeof entry==='object' && !Array.isArray(entry) && Array.isArray(entry.changes)).slice().reverse();
             return `<div class="max-w-5xl mx-auto space-y-5">
                 <section class="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-2xl p-6 space-y-3">
                     <div class="flex items-center justify-between flex-wrap gap-3">
@@ -1900,7 +1901,7 @@ function hierarchyValidateTypes(subnets) {
                 </section>
                 ${entries.length ? entries.map(entry=>`<article class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-2xl p-4 space-y-3">
                     <div class="flex flex-wrap justify-between gap-2"><strong class="text-slate-900 dark:text-white">${escapeHtml(entry.reason || 'Inventory saved')}</strong><time class="text-xs text-slate-600 dark:text-slate-300">${escapeHtml(new Date(entry.at).toLocaleString())}</time></div>
-                    ${entry.changes.length ? `<ul class="space-y-2">${entry.changes.map(c=>`<li class="text-sm text-slate-800 dark:text-slate-200 border-l-4 ${c.action==='Deleted'?'border-rose-600':c.action==='Created'?'border-emerald-600':'border-blue-600'} pl-3"><strong>${escapeHtml(c.action)} ${escapeHtml(c.kind)}:</strong> ${escapeHtml(c.label)} ${c.fields?.length?`<span class="text-slate-600 dark:text-slate-300">(${escapeHtml(c.fields.join(', '))})</span>`:''}</li>`).join('')}</ul>`:'<p class="text-sm text-slate-700 dark:text-slate-200">Validated inventory replacement or save; no item-level differences.</p>'}
+                    ${entry.changes.length ? `<ul class="space-y-2">${entry.changes.filter(c=>c && typeof c==='object' && !Array.isArray(c)).map(c=>`<li class="text-sm text-slate-800 dark:text-slate-200 border-l-4 ${c.action==='Deleted'?'border-rose-600':c.action==='Created'?'border-emerald-600':'border-blue-600'} pl-3"><strong>${escapeHtml(c.action)} ${escapeHtml(c.kind)}:</strong> ${escapeHtml(c.label)} ${c.fields?.length?`<span class="text-slate-600 dark:text-slate-300">(${escapeHtml(c.fields.join(', '))})</span>`:''}</li>`).join('')}</ul>`:'<p class="text-sm text-slate-700 dark:text-slate-200">Validated inventory replacement or save; no item-level differences.</p>'}
                     ${entry.omitted?`<p class="text-xs text-amber-800 dark:text-amber-200">Plus ${entry.omitted} additional changes not displayed in this event.</p>`:''}
                 </article>`).join(''):'<div class="bg-white dark:bg-slate-800 border rounded-2xl p-8 text-center text-slate-700 dark:text-slate-200">No saved changes recorded yet. Create or edit a device to start the history.</div>'}
             </div>`;
