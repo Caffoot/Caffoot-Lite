@@ -1750,8 +1750,14 @@ function hierarchyValidateTypes(subnets) {
             reset.onclick = () => {
                 if (!confirm('This replaces the unreadable stored inventory with an empty Caffoot Lite inventory. Download the original data first. Continue?')) return;
                 if (!confirm('Final confirmation: overwrite the existing saved inventory?')) return;
-                try { localStorage.setItem(STORAGE_KEY,JSON.stringify(cloneDefaultData())); location.reload(); }
-                catch (error) { alert('Reset failed: '+String(error.message||error)); }
+                try {
+                    const emptySnapshot = JSON.stringify(cloneDefaultData());
+                    localStorage.setItem(STORAGE_KEY, emptySnapshot);
+                    if (localStorage.getItem(STORAGE_KEY) !== emptySnapshot) {
+                        throw new Error('Browser storage did not retain the empty inventory. Your existing data has not been confirmed as replaced.');
+                    }
+                    location.reload();
+                } catch (error) { alert('Reset failed: '+String(error.message||error)); }
             };
             banner.append(heading,message,download,reset);
             document.body.appendChild(banner);
