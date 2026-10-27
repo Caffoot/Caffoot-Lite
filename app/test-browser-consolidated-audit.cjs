@@ -1039,6 +1039,57 @@ const { chromium } = require('playwright');
       assert.equal(reopened.vcpu,'4');
       assert.equal(reopened.identityHidden,true);
     });
+    await scenario('#164 duplicate VM preserves host and hardware in a new saved device', async page => {
+      const result=await page.evaluate(async () => {
+        const hostId='fixture-164-duplicate-host', sourceId='fixture-164-duplicate-source';
+        appState.subnets.push({id:'fixture-164-duplicate-subnet',name:'Duplicate VM subnet',kind:'network',
+          cidr:'10.88.68.0/29',gateway:'10.88.68.1',vlan:3868});
+        appState.devices.push(
+          {id:hostId,name:'Duplicate hypervisor',type:'Server - Physical',status:'Active',
+            location:'Unknown',mountType:'Desktop',typeDetails:{serverService_Hypervisor:true,hypervisorProduct:'Proxmox VE'}},
+          {id:sourceId,name:'Duplicate VM source',type:'Server - Virtual',isVirtual:true,
+            status:'Active',location:'Unknown',mountType:'Not Applicable',
+            virtualHostId:hostId,virtualPlatform:'Proxmox VE',
+            typeDetails:{vmVcpu:4,vmRamGb:16,vmDiskGb:120,vmNicCount:2}}
+        );
+        saveState();
+        duplicateDevice(sourceId);
+        const draft={...deviceFormDraft,typeDetails:{...deviceFormDraft?.typeDetails}};
+        const set=(id,value)=>{const el=document.getElementById(id);if(!el)throw Error('Missing '+id);
+          el.value=value;el.dispatchEvent(new Event('change',{bubbles:true}));};
+        set('dev-name','Fixture #164 Duplicate VM');
+        const subnet=document.getElementById('dev-subnet');
+        subnet.add(new Option('Duplicate VM subnet','fixture-164-duplicate-subnet'));
+        set('dev-subnet','fixture-164-duplicate-subnet');
+        set('dev-ip','10.88.68.3');
+        const messages=[], originalToast=showToast;
+        showToast=message=>messages.push(String(message));
+        try {await handleDeviceSubmit({preventDefault(){}},null);}
+        finally {showToast=originalToast;}
+        return {draft,sourceId,source:appState.devices.find(d=>d.id===sourceId),
+          copy:appState.devices.find(d=>d.name==='Fixture #164 Duplicate VM'),messages};
+      });
+      assert.equal(result.draft.deviceId,null,'Duplicate must create a new identity');
+      assert.equal(result.draft.name,'','Duplicate must require a new name');
+      assert.equal(result.draft.primaryIp,'','Duplicate must require a new address');
+      assert.equal(result.draft.isVirtual,true);
+      assert.equal(result.draft.virtualHostId,'fixture-164-duplicate-host');
+      assert.equal(result.draft.rackId,'');
+      assert.ok(result.copy,'Duplicated VM must save: '+result.messages.join(' | '));
+      assert.notEqual(result.copy.id,result.sourceId);
+      assert.equal(result.copy.isVirtual,true);
+      assert.equal(result.copy.type,'Server - Virtual');
+      assert.equal(result.copy.virtualHostId,'fixture-164-duplicate-host');
+      for(const [field,value] of Object.entries({vmVcpu:4,vmRamGb:16,vmDiskGb:120,vmNicCount:2}))
+        assert.equal(String(result.copy.typeDetails[field]),String(value),field+' must survive duplication');
+      assert.equal(result.source.name,'Duplicate VM source','Original VM must remain unchanged');
+      await page.reload({waitUntil:'load'});
+      const persisted=await page.evaluate(()=>appState.devices.find(d=>d.name==='Fixture #164 Duplicate VM'));
+      assert.ok(persisted,'Duplicated VM must survive reload');
+      assert.equal(persisted.virtualHostId,'fixture-164-duplicate-host');
+      assert.equal(persisted.isVirtual,true);
+      assert.equal(String(persisted.typeDetails.vmVcpu),'4');
+    });
     await scenario('#134 virtual machine host selector is on General for Add and Edit', async page => {
       const result = await page.evaluate(() => {
         const host={id:'fixture-134-physical',name:'Fixture Hypervisor',type:'Server - Physical',status:'Active',typeDetails:{serverService_Hypervisor:true,hypervisorProduct:'Proxmox VE'}};
