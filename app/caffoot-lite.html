@@ -3259,12 +3259,24 @@ function hierarchyValidateTypes(subnets) {
         let deviceMountFilter = '';
         let deviceHardwareFilter = null;
         let deviceSort = 'name-asc';
+        function phase180EffectivePlatform(device) {
+            const details = device?.typeDetails || {};
+            const hypervisor = device?.type === 'Server - Physical' &&
+                (details.serverService_Hypervisor === true || device.serverService_Hypervisor === true);
+            return String((hypervisor ? details.hypervisorProduct : '') || details.softwarePlatform || details.os || '').trim() || 'Not Recorded';
+        }
+        function phase180EffectiveVersion(device) {
+            const details = device?.typeDetails || {};
+            return device?.type === 'Server - Physical' &&
+                (details.serverService_Hypervisor === true || device.serverService_Hypervisor === true)
+                ? String(details.hypervisorVersion || '').trim() : String(details.softwareVersion || '').trim();
+        }
         function getVisibleDevices() {
             const term = deviceSearchTerm.trim().toLowerCase();
             // Build the rack index once per filter operation, not once per device.
             const validRackIds = deviceMountFilter ? new Set(appState.racks.map(r => String(r.id))) : null;
             const filtered = appState.devices.filter(d =>
-                (!deviceOsFilter || (String(d.typeDetails?.softwarePlatform || d.typeDetails?.os || '').trim() || 'Not Recorded') === deviceOsFilter) &&
+                (!deviceOsFilter || phase180EffectivePlatform(d) === deviceOsFilter) &&
                 (!deviceServiceFilter || d.typeDetails?.[deviceServiceFilter] === true) &&
                 (!deviceMissingFilter || (deviceMissingFilter==='ip' ? !String(d.primaryIp||'').trim() : deviceMissingFilter==='type' ? (!String(d.type||'').trim() || d.type==='Unknown') : deviceMissingFilter==='location' ? (!String(d.location||'').trim() || d.location==='Unknown') : false)) &&
                 (!deviceTypeFilter || d.type === deviceTypeFilter) &&
@@ -3783,7 +3795,7 @@ function hierarchyValidateTypes(subnets) {
                             const counts=new Map();
                             appState.devices.forEach(d=>{
                                 const details=d.typeDetails && typeof d.typeDetails==='object'?d.typeDetails:{};
-                                const entries=kind==='os'?[String(details.softwarePlatform||details.os||'').trim()||'Not Recorded']:Object.entries(details).filter(([key,value])=>value===true && !['serialPort','usbPort'].includes(key)).map(([key])=>key);
+                                const entries=kind==='os'?[phase180EffectivePlatform(d)]:Object.entries(details).filter(([key,value])=>value===true && !['serialPort','usbPort'].includes(key)).map(([key])=>key);
                                 if(kind==='services' && !entries.length)return;
                                 entries.forEach(name=>counts.set(name,(counts.get(name)||0)+1));
                             });
@@ -6092,7 +6104,8 @@ function hierarchyValidateTypes(subnets) {
             const deviceDetails=d.typeDetails||{};
             const serverServiceEntries=[...phase120AvailableServerServices(),...phase19BServerFunctions().filter(x=>x.archived)].filter((x,i,all)=>all.findIndex(y=>y.key===x.key)===i).filter(x=>(activeFields.has(x.key)||x.archived) && (deviceDetails[x.key]===true||d[x.key]===true)).sort((a,b)=>String(a.label||'').localeCompare(String(b.label||''),undefined,{sensitivity:'base'}));
             const serverServices=serverServiceEntries.map(x=>`<div class="phase14c-field"><dt>${safe(x.label)}</dt><dd>Enabled${x.archived?' <span class="inline-flex items-center gap-1 rounded-full border border-red-300 bg-red-50 px-2 py-0.5 text-xs font-bold text-red-700 dark:border-red-700 dark:bg-red-950/50 dark:text-red-300"><i class="fa-solid fa-box-archive" aria-hidden="true"></i>Archived</span>':''}</dd></div>`).join('');
-            const platformDetails=[['Operating system',deviceDetails.softwarePlatform||deviceDetails.os],['OS version',deviceDetails.softwareVersion],['Windows licence',deviceDetails.windowsLicence]].filter(([label])=>['server','computer'].includes(phase19BTypeGroups[String(d.type||'').toLowerCase().trim()]) || label==='Operating system' && activeFields.has('os')).filter(([,value])=>value!==undefined&&value!==null&&value!=='').map(([label,value])=>field(label,value)).join('');
+            const isHypervisorHost=d.type==='Server - Physical' && (deviceDetails.serverService_Hypervisor===true || d.serverService_Hypervisor===true);
+            const platformDetails=[['Operating system',phase180EffectivePlatform(d)],['OS version',phase180EffectiveVersion(d)],...(isHypervisorHost?[]:[['Windows licence',deviceDetails.windowsLicence]])].filter(([label])=>['server','computer'].includes(phase19BTypeGroups[String(d.type||'').toLowerCase().trim()]) || label==='Operating system' && activeFields.has('os')).filter(([,value])=>value!==undefined&&value!==null&&value!=='').map(([label,value])=>field(label,value)).join('');
             const historicalSnapshots = Array.isArray(d.previousTypeDetails) ? [...d.previousTypeDetails].reverse() : [];
             const historyRows = historicalSnapshots.map((snapshot,index)=>`<details class="rounded-xl border border-slate-300 dark:border-slate-600 p-3"><summary class="cursor-pointer font-semibold">${safe(snapshot.type||'Previous type')} — saved configuration ${index+1}</summary><dl class="phase14c-grid mt-3">${Object.entries(snapshot.details||{}).map(([key,value])=>field(phase19CDetailLabel(key,snapshot.type),typeof value==='boolean'?(value?'Yes':'No'):value)).join('')}</dl><button type="button" data-action="phase130-restore" data-id="${safe(d.id)}" data-index="${historicalSnapshots.length-1-index}" class="phase14c-primary mt-3">Restore Configuration</button></details>`).join('');
             // M-005: read-only hosted guest visibility, including preserved legacy references.
@@ -6824,6 +6837,7 @@ function hierarchyValidateTypes(subnets) {
             const type = document.getElementById('dev-type')?.value || '';
             panel.outerHTML = phase120RenderSoftwarePlatform(type, phase19BFormValues);
             phase120WireSoftwarePlatform();
+            phaseM134SyncHostingVisibility();
         }
         let phase19BFormValues = {};
         function phaseM134HostingEnabled() {
@@ -6834,6 +6848,8 @@ function hierarchyValidateTypes(subnets) {
             const enabled = phaseM134HostingEnabled();
             const fields = document.getElementById('phase-m005-hosting-details');
             if (fields) fields.hidden = !enabled;
+            const platform = document.getElementById('phase120-software-platform');
+            if (platform) platform.hidden = document.getElementById('dev-type')?.value === 'Server - Physical' && enabled;
         }
         function phase19BReadFields() {
             phase120CaptureSoftwarePlatform();
@@ -7032,6 +7048,7 @@ function hierarchyValidateTypes(subnets) {
             platformContainer.innerHTML = phase120RenderSoftwarePlatform(form.querySelector('#dev-type')?.value || '', phase19BFormValues);
             panels.get('software').appendChild(platformContainer.firstElementChild);
             phase120WireSoftwarePlatform();
+            phaseM134SyncHostingVisibility();
             // Existing manager buttons and checkbox data stay on their original DOM nodes.
             const hardwareDetails = form.querySelector('#phase19b-details-section');
             if (hardwareDetails) {
