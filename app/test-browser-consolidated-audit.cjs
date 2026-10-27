@@ -1054,7 +1054,12 @@ const { chromium } = require('playwright');
         );
         saveState();
         duplicateDevice(sourceId);
-        const draft={...deviceFormDraft,typeDetails:{...deviceFormDraft?.typeDetails}};
+        const draft={deviceId:document.querySelector('[data-device-form]')?.dataset.deviceId,
+          name:document.getElementById('dev-name')?.value,
+          primaryIp:document.getElementById('dev-ip')?.value,
+          isVirtual:phase120IsVirtualForm(),
+          virtualHostId:document.getElementById('dev-virtual-host')?.value,
+          rackId:document.getElementById('dev-rack')?.value || ''};
         const set=(id,value)=>{const el=document.getElementById(id);if(!el)throw Error('Missing '+id);
           el.value=value;el.dispatchEvent(new Event('change',{bubbles:true}));};
         set('dev-name','Fixture #164 Duplicate VM');
@@ -1069,7 +1074,7 @@ const { chromium } = require('playwright');
         return {draft,sourceId,source:appState.devices.find(d=>d.id===sourceId),
           copy:appState.devices.find(d=>d.name==='Fixture #164 Duplicate VM'),messages};
       });
-      assert.equal(result.draft.deviceId == null,true,'Duplicate must not retain an existing device identity');
+      assert.equal(result.draft.deviceId,'','Duplicate form must not retain an existing device identity');
       assert.equal(result.draft.name,'','Duplicate must require a new name');
       assert.equal(result.draft.primaryIp,'','Duplicate must require a new address');
       assert.equal(result.draft.isVirtual,true);
