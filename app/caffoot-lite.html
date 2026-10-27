@@ -7124,6 +7124,13 @@ function hierarchyValidateTypes(subnets) {
                                         ${appState.devices.filter(x=>x.id!==(device?.id||'')&&x.type==='Server - Physical'&&((x.status!=='Retired'&&(x.typeDetails?.serverService_Hypervisor===true||x.serverService_Hypervisor===true))||x.id===(draft?.virtualHostId??device?.virtualHostId??''))).map(x=>'<option value="'+escapeHtml(x.id)+'" '+((draft?.virtualHostId ?? device?.virtualHostId ?? '')===x.id?'selected':'')+'>'+escapeHtml(x.name)+(x.status==='Retired'||!(x.typeDetails?.serverService_Hypervisor===true||x.serverService_Hypervisor===true)?' (existing legacy assignment)':'')+'</option>').join('')}
                                     </select></div>
                                 </div>
+                                <div class="border-t border-blue-200 dark:border-blue-800 pt-3 space-y-2">
+                                    <p class="text-sm font-semibold text-blue-900 dark:text-blue-200">Allocated Virtual Hardware</p>
+                                    <p class="text-xs text-slate-600 dark:text-slate-300">These allocations belong to the VM, not its physical host. Leave unknown values blank.</p>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        ${[['vmVcpu','vCPU count'],['vmRamGb','Allocated RAM (GB)'],['vmDiskGb','Virtual disk (GB)'],['vmNicCount','Virtual network adapters']].map(([key,label])=>`<div><label class="form-label" for="dev-${key}">${label}</label><input id="dev-${key}" data-phase19b-field="${key}" type="number" min="0" step="1" inputmode="numeric" value="${escapeHtml(phase19BFormValues[key] ?? '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></div>`).join('')}
+                                    </div>
+                                </div>
                             </div>
                             <div id="phase-m005-host-platform-fields" class="hidden rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-slate-800 p-4 space-y-3">
                                 <p class="text-sm font-semibold text-blue-900 dark:text-blue-200">Virtualisation / Hypervisor</p>
