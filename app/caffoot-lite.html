@@ -616,6 +616,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .phase14b-device-modal .phase120-device-tab:focus-visible{outline:2px solid #818cf8;outline-offset:2px;}
 .phase14b-device-modal .phase120-device-panel{display:flex;flex-direction:column;gap:18px;min-width:0;}
 .phase14b-device-modal .phase120-device-panel[hidden]{display:none!important;}
+        .phase14b-device-modal #phase120-software-platform[hidden]{display:none!important;}
 .phase14b-device-modal .phase120-device-empty{padding:20px;border:1px dashed #94a3b8;border-radius:12px;font-size:.875rem;line-height:1.6;}
 @media(max-width:600px){.phase14b-device-modal{padding:16px 14px 20px;}.phase14b-device-modal .phase120-device-tab{padding:10px 9px;}.phase14b-device-modal .phase120-device-panel .form-section-card{padding:14px;}}
 
@@ -3314,12 +3315,25 @@ function hierarchyValidateTypes(subnets) {
         let deviceMountFilter = '';
         let deviceHardwareFilter = null;
         let deviceSort = 'name-asc';
+        function phase180EffectivePlatform(device) {
+            const details = device?.typeDetails || {};
+            const hypervisor = device?.type === 'Server - Physical' &&
+                (details.serverService_Hypervisor === true || device.serverService_Hypervisor === true);
+            // A hypervisor host must never be counted under its preserved historical guest/host OS.
+            return String(hypervisor ? (details.hypervisorProduct || '') : (details.softwarePlatform || details.os || '')).trim() || 'Not Recorded';
+        }
+        function phase180EffectiveVersion(device) {
+            const details = device?.typeDetails || {};
+            return device?.type === 'Server - Physical' &&
+                (details.serverService_Hypervisor === true || device.serverService_Hypervisor === true)
+                ? String(details.hypervisorVersion || '').trim() : String(details.softwareVersion || '').trim();
+        }
         function getVisibleDevices() {
             const term = deviceSearchTerm.trim().toLowerCase();
             // Build the rack index once per filter operation, not once per device.
             const validRackIds = deviceMountFilter ? new Set(appState.racks.map(r => String(r.id))) : null;
             const filtered = appState.devices.filter(d =>
-                (!deviceOsFilter || (String(d.typeDetails?.softwarePlatform || d.typeDetails?.os || '').trim() || 'Not Recorded') === deviceOsFilter) &&
+                (!deviceOsFilter || phase180EffectivePlatform(d) === deviceOsFilter) &&
                 (!deviceServiceFilter || d.typeDetails?.[deviceServiceFilter] === true) &&
                 (!deviceMissingFilter || (deviceMissingFilter==='ip' ? !String(d.primaryIp||'').trim() : deviceMissingFilter==='type' ? (!String(d.type||'').trim() || d.type==='Unknown') : deviceMissingFilter==='location' ? (!String(d.location||'').trim() || d.location==='Unknown') : false)) &&
                 (!deviceTypeFilter || d.type === deviceTypeFilter) &&
@@ -3838,7 +3852,7 @@ function hierarchyValidateTypes(subnets) {
                             const counts=new Map();
                             appState.devices.forEach(d=>{
                                 const details=d.typeDetails && typeof d.typeDetails==='object'?d.typeDetails:{};
-                                const entries=kind==='os'?[String(details.softwarePlatform||details.os||'').trim()||'Not Recorded']:Object.entries(details).filter(([key,value])=>value===true && !['serialPort','usbPort'].includes(key)).map(([key])=>key);
+                                const entries=kind==='os'?[phase180EffectivePlatform(d)]:Object.entries(details).filter(([key,value])=>value===true && !['serialPort','usbPort'].includes(key)).map(([key])=>key);
                                 if(kind==='services' && !entries.length)return;
                                 entries.forEach(name=>counts.set(name,(counts.get(name)||0)+1));
                             });
@@ -6147,7 +6161,8 @@ function hierarchyValidateTypes(subnets) {
             const deviceDetails=d.typeDetails||{};
             const serverServiceEntries=[...phase120AvailableServerServices(),...phase19BServerFunctions().filter(x=>x.archived)].filter((x,i,all)=>all.findIndex(y=>y.key===x.key)===i).filter(x=>(activeFields.has(x.key)||x.archived) && (deviceDetails[x.key]===true||d[x.key]===true)).sort((a,b)=>String(a.label||'').localeCompare(String(b.label||''),undefined,{sensitivity:'base'}));
             const serverServices=serverServiceEntries.map(x=>`<div class="phase14c-field"><dt>${safe(x.label)}</dt><dd>Enabled${x.archived?' <span class="inline-flex items-center gap-1 rounded-full border border-red-300 bg-red-50 px-2 py-0.5 text-xs font-bold text-red-700 dark:border-red-700 dark:bg-red-950/50 dark:text-red-300"><i class="fa-solid fa-box-archive" aria-hidden="true"></i>Archived</span>':''}</dd></div>`).join('');
-            const platformDetails=[['Operating system',deviceDetails.softwarePlatform||deviceDetails.os],['OS version',deviceDetails.softwareVersion],['Windows licence',deviceDetails.windowsLicence]].filter(([label])=>['server','computer'].includes(phase19BTypeGroups[String(d.type||'').toLowerCase().trim()]) || label==='Operating system' && activeFields.has('os')).filter(([,value])=>value!==undefined&&value!==null&&value!=='').map(([label,value])=>field(label,value)).join('');
+            const isHypervisorHost=d.type==='Server - Physical' && (deviceDetails.serverService_Hypervisor===true || d.serverService_Hypervisor===true);
+            const platformDetails=[['Operating system',phase180EffectivePlatform(d)],['OS version',phase180EffectiveVersion(d)],...(isHypervisorHost?[]:[['Windows licence',deviceDetails.windowsLicence]])].filter(([label])=>['server','computer'].includes(phase19BTypeGroups[String(d.type||'').toLowerCase().trim()]) || label==='Operating system' && activeFields.has('os')).filter(([,value])=>value!==undefined&&value!==null&&value!=='').map(([label,value])=>field(label,value)).join('');
             const historicalSnapshots = Array.isArray(d.previousTypeDetails) ? [...d.previousTypeDetails].reverse() : [];
             const historyRows = historicalSnapshots.map((snapshot,index)=>`<details class="rounded-xl border border-slate-300 dark:border-slate-600 p-3"><summary class="cursor-pointer font-semibold">${safe(snapshot.type||'Previous type')} — saved configuration ${index+1}</summary><dl class="phase14c-grid mt-3">${Object.entries(snapshot.details||{}).map(([key,value])=>field(phase19CDetailLabel(key,snapshot.type),typeof value==='boolean'?(value?'Yes':'No'):value)).join('')}</dl><button type="button" data-action="phase130-restore" data-id="${safe(d.id)}" data-index="${historicalSnapshots.length-1-index}" class="phase14c-primary mt-3">Restore Configuration</button></details>`).join('');
             // M-005: read-only hosted guest visibility, including preserved legacy references.
@@ -6168,6 +6183,10 @@ function hierarchyValidateTypes(subnets) {
                 : d.virtualHostId
                     ? section('Physical host', 'fa-server', field('Host', appState.devices.find(host => host.id === d.virtualHostId)?.name || 'Missing or unavailable host (legacy reference preserved)'))
                     : '';
+            const isVirtualDevice = d.type === 'Server - Virtual';
+            const virtualHardware = isVirtualDevice ? section('Allocated virtual hardware', 'fa-microchip',
+                field('vCPUs', d.vmVcpu) + field('Allocated RAM (GB)', d.vmRamGb) +
+                field('Virtual disk (GB)', d.vmDiskGb) + field('Virtual network adapters', d.vmNicCount)) : '';
             const hardware = field('Manufacturer', d.manufacturer) + field('Model', d.model) + field('Serial number', d.serialNumber);
             const rackRows = mounted ? field('Rack', rack.name) + field('Face', d.face || 'front') + field('U position', uText) + field('Height', (Number(d.rackUHeight) || (uEnd-uStart+1) || 1) + 'U') : '';
             openModal(`<div class="phase14c-detail space-y-5 p-5 sm:p-7">
@@ -6178,21 +6197,22 @@ function hierarchyValidateTypes(subnets) {
                     <button type="button" data-action="close-modal" aria-label="Close device details" class="phase14c-close"><i class="fa-solid fa-xmark"></i></button>
                 </header>
                 <nav class="phase14c-tabs" role="tablist" aria-label="Device detail sections">
-                    ${[['overview','Overview'],...(showVirtualMachinesTab ? [['virtual-machines','Virtual Machines']] : []),['hardware','Hardware'],['network','Network'],['software','Software'],['location','Location'],...(historyRows?[['history','History']]:[])].map(([key,label],i)=>`<button type="button" role="tab" id="phase14c-tab-${key}" aria-controls="phase14c-panel-${key}" aria-selected="${i===0?'true':'false'}" tabindex="${i===0?'0':'-1'}" data-action="phase14c-tab" data-name="${key}" class="phase14c-tab ${i===0?'phase14c-tab-active':''}">${label}</button>`).join('')}
+                    ${[['overview','Overview'],...(showVirtualMachinesTab ? [['virtual-machines','Virtual Machines']] : []),...(!isVirtualDevice ? [['hardware','Hardware']] : []),['network','Network'],['software','Software'],['location','Location'],...(historyRows?[['history','History']]:[])].map(([key,label],i)=>`<button type="button" role="tab" id="phase14c-tab-${key}" aria-controls="phase14c-panel-${key}" aria-selected="${i===0?'true':'false'}" tabindex="${i===0?'0':'-1'}" data-action="phase14c-tab" data-name="${key}" class="phase14c-tab ${i===0?'phase14c-tab-active':''}">${label}</button>`).join('')}
                 </nav>
                 <div class="phase14c-panels">
                     <div id="phase14c-panel-overview" role="tabpanel" aria-labelledby="phase14c-tab-overview" class="phase14c-panel">
                         ${section('Device overview', 'fa-circle-info', field('Device name', d.name) + field('Type', d.type) + field('Status', status) + field('Manufacturer', d.manufacturer) + field('Model', d.model) + field('Primary IP', d.primaryIp) + field('Location', d.location))}
                         ${d.type === 'Server - Physical' ? '' : hostingSection}
+                        ${virtualHardware}
                         ${d.notes ? `<section class="phase14c-section"><h4><i class="fa-solid fa-note-sticky mr-2" aria-hidden="true"></i>Notes</h4><p class="phase14c-notes">${safe(d.notes)}</p></section>` : ''}
                     </div>
                     ${showVirtualMachinesTab ? `<div id="phase14c-panel-virtual-machines" role="tabpanel" aria-labelledby="phase14c-tab-virtual-machines" class="phase14c-panel" hidden>
                         ${hypervisorNotice}
                         ${hostingSection}
                     </div>` : ''}
-                    <div id="phase14c-panel-hardware" role="tabpanel" aria-labelledby="phase14c-tab-hardware" class="phase14c-panel" hidden>
+                    ${!isVirtualDevice ? `<div id="phase14c-panel-hardware" role="tabpanel" aria-labelledby="phase14c-tab-hardware" class="phase14c-panel" hidden>
                         ${section('Hardware & lifecycle', 'fa-microchip', hardware + (detailRows ? `<div class="phase19c-detail-subheading">Additional ${safe(d.type)} details</div>${detailRows}` : ''))}
-                    </div>
+                    </div>` : ''}
                     <div id="phase14c-panel-network" role="tabpanel" aria-labelledby="phase14c-tab-network" class="phase14c-panel" hidden>
                         ${section('Network identity', 'fa-network-wired', field('Primary IP', d.primaryIp) + field('Subnet', subnet ? (subnet.cidr || subnet.name || subnet.network || subnet.id) : 'Not linked') + field('IP reserved', d.ipReserved ? 'Yes' : 'No'))}
                     </div>
@@ -6202,7 +6222,7 @@ function hierarchyValidateTypes(subnets) {
                         ${serverServices?section('Server Services', 'fa-server',serverServices):''}
                     </div>
                     <div id="phase14c-panel-location" role="tabpanel" aria-labelledby="phase14c-tab-location" class="phase14c-panel" hidden>
-                        ${section('Mounting & location', 'fa-location-dot', field('Mounting', d.mountType || (mounted ? 'Rack Mounted' : 'Desktop')) + field('Location', d.location) + rackRows)}
+                        ${section('Mounting & location', 'fa-location-dot', isVirtualDevice ? field('Location', d.location) : field('Mounting', d.mountType || (mounted ? 'Rack Mounted' : 'Desktop')) + field('Location', d.location) + rackRows)}
                     </div>
                     ${historyRows?`<div id="phase14c-panel-history" role="tabpanel" aria-labelledby="phase14c-tab-history" class="phase14c-panel" hidden><section class="phase14c-section"><h4>Previous Device Type Details</h4><p class="text-sm mb-3">Preserved for reference only; not part of the active configuration.</p>${historyRows}</section></div>`:''}
                 </div>
@@ -6796,7 +6816,13 @@ function hierarchyValidateTypes(subnets) {
             return phase19BTypeGroups[normalized] || 'generic';
         }
         function phase120PlatformOptions(type) {
-            return phase120PlatformCatalog[phase120PlatformGroup(type)] || phase120PlatformCatalog.generic;
+            const choices = phase120PlatformCatalog[phase120PlatformGroup(type)] || phase120PlatformCatalog.generic;
+            // Dedicated host hypervisors are not normal guest OS suggestions.
+            // This filters the editor only: historical saved values and backups remain unchanged.
+            if (String(type || '').toLowerCase().trim() === 'server - virtual') {
+                return choices.filter(name => !['Proxmox VE', 'VMware ESXi', 'Microsoft Hyper-V', 'KVM', 'XCP-ng'].includes(name));
+            }
+            return choices;
         }
         // Historical major releases are offline suggestions, not support-status claims.
         const phase120PlatformVersions = Object.freeze({
@@ -6879,6 +6905,7 @@ function hierarchyValidateTypes(subnets) {
             const type = document.getElementById('dev-type')?.value || '';
             panel.outerHTML = phase120RenderSoftwarePlatform(type, phase19BFormValues);
             phase120WireSoftwarePlatform();
+            phaseM134SyncHostingVisibility();
         }
         let phase19BFormValues = {};
         function phaseM134HostingEnabled() {
@@ -6889,6 +6916,8 @@ function hierarchyValidateTypes(subnets) {
             const enabled = phaseM134HostingEnabled();
             const fields = document.getElementById('phase-m005-hosting-details');
             if (fields) fields.hidden = !enabled;
+            const platform = document.getElementById('phase120-software-platform');
+            if (platform) platform.hidden = document.getElementById('dev-type')?.value === 'Server - Physical' && enabled;
         }
         function phase19BReadFields() {
             phase120CaptureSoftwarePlatform();
@@ -7023,9 +7052,10 @@ function hierarchyValidateTypes(subnets) {
             if (!form || form.querySelector('[data-device-tabs]')) return;
             const sections = Array.from(form.children).filter(el => el.classList.contains('form-section-card'));
             if (sections.length !== 5) return;
+            const isVirtualDevice = form.querySelector('#dev-type')?.value === 'Server - Virtual';
             const labels = [
                 ['general', 'General'],
-                ['hardware', 'Hardware'],
+                ...(!isVirtualDevice ? [['hardware', 'Hardware']] : []),
                 ['software', 'Software & Firmware'],
                 ['networking', 'Networking'],
                 ['notes', 'Notes']
@@ -7058,7 +7088,13 @@ function hierarchyValidateTypes(subnets) {
             form.insertBefore(nav, sections[0]);
             labels.forEach(([id]) => form.insertBefore(panels.get(id), sections[0]));
             panels.get('general').append(sections[0], sections[2]);
-            panels.get('hardware').append(sections[1]);
+            if (isVirtualDevice) {
+                // Retain existing hardware and mounting inputs in the form for legacy data safety.
+                sections[1].hidden = true;
+                panels.get('general').appendChild(sections[1]);
+            } else {
+                panels.get('hardware').append(sections[1]);
+            }
             panels.get('networking').append(sections[3]);
             panels.get('notes').append(sections[4]);
             // Move existing field nodes rather than cloning controls, preserving IDs and handlers.
@@ -7079,6 +7115,7 @@ function hierarchyValidateTypes(subnets) {
                 locationSection.appendChild(locationRow);
                 panels.get('general').insertBefore(locationSection, sections[2]);
             }
+            if (isVirtualDevice) sections[2].hidden = true;
             const mountHeading = sections[2].querySelector('.form-section-heading');
             if (mountHeading) mountHeading.textContent = 'Mounting & Rack Configuration';
             panels.get('notes').dataset.notesPanel = 'true';
@@ -7087,6 +7124,7 @@ function hierarchyValidateTypes(subnets) {
             platformContainer.innerHTML = phase120RenderSoftwarePlatform(form.querySelector('#dev-type')?.value || '', phase19BFormValues);
             panels.get('software').appendChild(platformContainer.firstElementChild);
             phase120WireSoftwarePlatform();
+            phaseM134SyncHostingVisibility();
             // Existing manager buttons and checkbox data stay on their original DOM nodes.
             const hardwareDetails = form.querySelector('#phase19b-details-section');
             if (hardwareDetails) {
@@ -7200,7 +7238,7 @@ function hierarchyValidateTypes(subnets) {
                                 <p class="text-sm font-semibold text-blue-900 dark:text-blue-200">Virtual Machine Configuration</p>
                                 <p class="text-xs text-slate-600 dark:text-slate-300">Physical manufacturer and model do not apply to virtual servers. Existing saved values are retained.</p>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                    <div><label class="form-label" for="dev-virtual-platform">Virtualisation Platform (optional)</label><select id="dev-virtual-platform" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
+                                    <div hidden><label class="form-label" for="dev-virtual-platform">Virtualisation Platform (inherited from host)</label><select id="dev-virtual-platform" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
                                         ${['','VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng','Other'].map(x=>'<option value="'+escapeHtml(x)+'" '+((draft?.virtualPlatform ?? device?.virtualPlatform ?? '')===x?'selected':'')+'>'+escapeHtml(x||'Select Platform...')+'</option>').join('')}
                                     </select></div>
                                     <div><label class="form-label" for="dev-virtual-host">Physical Hypervisor Host ${device?.type === 'Server - Virtual' ? '(legacy assignments preserved)' : '(required)'}</label><select id="dev-virtual-host" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="">Not Specified</option>
@@ -7663,8 +7701,13 @@ function hierarchyValidateTypes(subnets) {
             const model = document.getElementById('dev-model').value.trim();
             const serialNumber = document.getElementById('dev-serial').value.trim();
             // Preserve existing historical host metadata when editing a physical device.
-            const virtualPlatform = isVirtualServer?(document.getElementById('dev-virtual-platform')?.value||''):(getDeviceById(deviceId)?.virtualPlatform||'');
             const virtualHostId = isVirtualServer?(document.getElementById('dev-virtual-host')?.value||''):(getDeviceById(deviceId)?.virtualHostId||'');
+            // #164: A VM inherits the platform from its selected physical hypervisor.
+            // Retain historical metadata when its host is absent or has no configured product.
+            const virtualHost = appState.devices.find(d=>d.id===virtualHostId&&d.type==='Server - Physical');
+            const virtualPlatform = isVirtualServer
+                ? (String(virtualHost?.typeDetails?.hypervisorProduct||'').trim() || getDeviceById(deviceId)?.virtualPlatform || '')
+                : (getDeviceById(deviceId)?.virtualPlatform||'');
             const existingDeviceHostIsUnchanged = () => !!deviceId && getDeviceById(deviceId)?.virtualHostId === virtualHostId;
             // #164: New VMs must have an eligible physical host. Preserve legacy edits.
             if(isVirtualServer && !virtualHostId && (!deviceId || !(getDeviceById(deviceId)?.isVirtual === true || getDeviceById(deviceId)?.type==='Server - Virtual')))return showToast('Select an eligible physical Hypervisor host for the new virtual machine.','error');
