@@ -1023,26 +1023,7 @@ const { chromium } = require('playwright');
       console.log('OBSERVED M-005: general validation did not flag fictional orphan host reference');
     });
 
-    await scenario('M-005 conversion incoming dependency guard source check', async page => {
-      const result = await page.evaluate(() => {
-        appState.devices.push(
-          {id:'fictional-conversion-host',name:'Fictional conversion host',type:'Server - Physical',mountType:'Desktop',location:'Unknown'},
-          {id:'fictional-conversion-vm',name:'Fictional conversion VM',type:'Server - Virtual',mountType:'Desktop',location:'Unknown',virtualHostId:'fictional-conversion-host'}
-        );
-        const host=appState.devices.find(d=>d.id==='fictional-conversion-host');
-        // Baseline: existing device edit ultimately applies the selected type
-        // without checking incoming virtualHostId links. Avoid DOM simulation
-        // here; the complete form submission needs its own D13 browser case.
-        const incoming=appState.devices.filter(d=>d.virtualHostId===host.id).length;
-        const sourceHasIncomingGuard=handleDeviceSubmit.toString().includes('virtualHostId===deviceId') ||
-          handleDeviceSubmit.toString().includes('virtualHostId === deviceId');
-        return {incoming,sourceHasIncomingGuard};
-      });
-      assert.equal(result.incoming,1);
-      assert.equal(result.sourceHasIncomingGuard,true,'Conversion handler must check incoming host links');
-      console.log('PASS M-005: conversion source guard present; full D13 form submission remains pending');
-    });
-    await scenario('M-005 D13 actual conversion form handler protects hosted VMs', async page => {
+    await scenario('M-005 D13 permanent host identity protects dependent VMs', async page => {
       const result = await page.evaluate(async () => {
         const hostId='fictional-d13-host';
         appState.subnets.push({id:'fictional-d13-subnet',name:'D13 subnet',kind:'network',cidr:'10.88.76.0/29',gateway:'10.88.76.1',vlan:3876});
@@ -1051,7 +1032,10 @@ const { chromium } = require('playwright');
           {id:'fictional-d13-vm',name:'Fictional D13 VM',type:'Server - Virtual',mountType:'Desktop',location:'Unknown',virtualHostId:hostId}
         );
         openDeviceModal(hostId);
+        const deploymentHidden=!!document.getElementById('dev-deployment')?.closest('.hidden');
+        const typeHidden=!!document.getElementById('dev-type')?.closest('.hidden');
         const set=(id,value)=>{const el=document.getElementById(id);if(!el)throw Error('Missing form control '+id);el.value=value;el.dispatchEvent(new Event('change',{bubbles:true}));};
+        // Attempt an otherwise prohibited identity change programmatically.
         set('dev-type','Server - Virtual');
         set('dev-name','Fictional D13 host');
         set('dev-location','Unknown');
@@ -1061,24 +1045,21 @@ const { chromium } = require('playwright');
         const notices=[];
         const originalToast=showToast;
         showToast=(message,level)=>notices.push({message,level});
-        let guestDialogShown=false,guestNamed=false;
-        try {
-          const pending=handleDeviceSubmit({preventDefault(){}},hostId);
-          const dialog=document.getElementById('phase-m005-hypervisor-dialog');
-          guestDialogShown=!!dialog;
-          guestNamed=!!dialog?.textContent.includes('Fictional D13 VM');
-          dialog?.querySelector('[data-action="cancel"]')?.click();
-          await pending;
-        } finally {showToast=originalToast}
+        try {await handleDeviceSubmit({preventDefault(){}},hostId);}
+        finally {showToast=originalToast;}
         return {hostType:appState.devices.find(d=>d.id===hostId)?.type,
           vmHost:appState.devices.find(d=>d.id==='fictional-d13-vm')?.virtualHostId,
-          notices,guestDialogShown,guestNamed,conversionDialog:!!document.getElementById('phase130-conversion-dialog')};
+          notices,deploymentHidden,typeHidden,
+          guestDialog:!!document.getElementById('phase-m005-hypervisor-dialog'),
+          conversionDialog:!!document.getElementById('phase130-conversion-dialog')};
       });
-      assert.equal(result.hostType,'Server - Physical','Blocked conversion must preserve physical host type');
-      assert.equal(result.vmHost,'fictional-d13-host','Blocked conversion must preserve dependant link');
-      assert.equal(result.guestDialogShown,true,'Conversion must show guest resolution');
-      assert.equal(result.guestNamed,true,'Conversion must identify dependent VM');
-      assert.equal(result.conversionDialog,false,'Dependency guard must run before obsolete field confirmation');
+      assert.equal(result.deploymentHidden,true,'Edit must hide creation-only deployment selection');
+      assert.equal(result.typeHidden,true,'Edit must hide creation-only device type selection');
+      assert.equal(result.hostType,'Server - Physical','Blocked identity change must preserve physical host type');
+      assert.equal(result.vmHost,'fictional-d13-host','Blocked identity change must preserve dependent VM');
+      assert.equal(result.notices.some(n=>/Device identity cannot be changed/.test(n.message)),true,'Save must reject attempted identity change');
+      assert.equal(result.guestDialog,false,'Rejected identity change must not invoke guest resolution');
+      assert.equal(result.conversionDialog,false,'Rejected identity change must not invoke conversion dialogue');
     });
     await scenario('M-005 baseline detached legacy backup host reference', async page => {
       const result=await page.evaluate(() => {
