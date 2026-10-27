@@ -1513,7 +1513,7 @@ const { chromium } = require('playwright');
         const originalFace=activeRackFace;
         activeRackFace='front';
         try {
-          source.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,clientY:100+2*40+20,dataTransfer:new DataTransfer()}));
+          source.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,clientY:100+3*40+20,dataTransfer:new DataTransfer()}));
           const start=phase13DropPosition({clientY:0},empty);
           empty.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,clientY:0,dataTransfer:new DataTransfer()}));
           return {start,placed:appState.rackAccessories.find(a=>a.id==='fixture171offsetitem').startU};
@@ -1523,8 +1523,8 @@ const { chromium } = require('playwright');
           source.remove();empty.remove();
         }
       });
-      assert.equal(result.start,5,'Moving one U above a 4U item must preserve grab offset');
-      assert.equal(result.placed,5,'Upward drop must reposition by one U rather than four');
+      assert.equal(result.start,4,'Moving one U above a 4U item must preserve grab offset');
+      assert.equal(result.placed,4,'Upward drop must reposition by one U rather than four');
     });
     await scenario('#97 rack CSV export uses accessory-aware report rows', async page => {
       const result=await page.evaluate(async () => {
