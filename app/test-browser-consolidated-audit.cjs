@@ -1515,8 +1515,10 @@ const { chromium } = require('playwright');
         try {
           source.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,clientY:100+3*40+20,dataTransfer:new DataTransfer()}));
           const start=phase13DropPosition({clientY:0},empty);
+          empty.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,clientY:0,dataTransfer:new DataTransfer()}));
+          const previewBottom=empty.querySelector('.phase13-drop-preview')?.style.bottom;
           empty.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,clientY:0,dataTransfer:new DataTransfer()}));
-          return {start,placed:appState.rackAccessories.find(a=>a.id==='fixture171offsetitem').startU};
+          return {start,previewBottom,placed:appState.rackAccessories.find(a=>a.id==='fixture171offsetitem').startU};
         } finally {
           source.dispatchEvent(new DragEvent('dragend',{bubbles:true,dataTransfer:new DataTransfer()}));
           activeRackFace=originalFace;
@@ -1524,6 +1526,7 @@ const { chromium } = require('playwright');
         }
       });
       assert.equal(result.start,4,'Moving one U above a 4U item must preserve grab offset');
+      assert.equal(result.previewBottom,'-120px','Preview must align with calculated U4, not hovered U7');
       assert.equal(result.placed,4,'Upward drop must reposition by one U rather than four');
     });
     await scenario('#97 rack CSV export uses accessory-aware report rows', async page => {
