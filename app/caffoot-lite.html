@@ -6323,7 +6323,11 @@ function hierarchyValidateTypes(subnets) {
                 rackId:mounted ? source.rackId || '' : '', face:source.face || 'front',
                 rackUHeight:height, rackUStart:1, ipReserved:!!source.ipReserved,
                 status:source.status || 'Active', manufacturer:source.manufacturer || '',
-                model:source.model || '', serialNumber:'', notes:source.notes || '', typeDetails:{...(source.typeDetails||{})}
+                model:source.model || '', serialNumber:'', notes:source.notes || '',
+                // #164: Copy VM host/platform and allocations into the editable draft.
+                // The new record still requires an eligible host on save; legacy exemptions do not carry over.
+                virtualPlatform:source.virtualPlatform || '', virtualHostId:source.virtualHostId || '',
+                typeDetails:{...(source.typeDetails||{})}
             };
             if (mounted && source.rackId) {
                 const rack = appState.racks.find(r => r.id === source.rackId);
