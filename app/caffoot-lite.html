@@ -3312,7 +3312,8 @@ function hierarchyValidateTypes(subnets) {
             const entry=phase120HardwareCatalogue().find(x=>x.id===id&&!x.model);
             const builtInName=typeof id==='string'&&id.startsWith('builtin:')?id.slice(8):'';
             const makerName=entry?.manufacturer||builtInName;
-            const seedTypes=Object.entries(phase120HardwareSeed).filter(([type,m])=>Object.keys(m).some(n=>n.toLowerCase()===makerName.toLowerCase())).map(([type])=>type);
+            const originalMaker=[...new Set([...Object.values(phase120HardwareSeed).flatMap(m=>Object.keys(m)),'Dell','HP','HPE','Lenovo','ASUS','Apple','Cisco','Samsung','Microsoft','Toshiba'])].find(n=>[n,String(phase120HardwarePreferences()['maker:'+n.toLowerCase()]?.label||n)].some(label=>label.toLowerCase()===String(makerName||'').toLowerCase()))||makerName;
+            const seedTypes=Object.entries(phase120HardwareSeed).filter(([type,m])=>Object.keys(m).some(n=>n.toLowerCase()===String(originalMaker||'').toLowerCase())).map(([type])=>type);
             const globalDefaults=['Dell','HP','HPE','Lenovo','ASUS','Apple','Cisco','Samsung','Microsoft','Toshiba'];
             const isBuiltIn=seedTypes.length>0||globalDefaults.some(n=>n.toLowerCase()===makerName.toLowerCase());
             const builtinTypes=new Set(seedTypes);
@@ -3334,7 +3335,8 @@ function hierarchyValidateTypes(subnets) {
             const entry=items.find(x=>x.id===id&&!x.model);
             const builtInName=typeof id==='string'&&id.startsWith('builtin:')?id.slice(8):'';
             const makerName=entry?.manufacturer||builtInName;
-            const seedTypes=Object.entries(phase120HardwareSeed).filter(([type,m])=>Object.keys(m).some(n=>n.toLowerCase()===makerName.toLowerCase())).map(([type])=>type);
+            const originalMaker=[...new Set([...Object.values(phase120HardwareSeed).flatMap(m=>Object.keys(m)),'Dell','HP','HPE','Lenovo','ASUS','Apple','Cisco','Samsung','Microsoft','Toshiba'])].find(n=>[n,String(phase120HardwarePreferences()['maker:'+n.toLowerCase()]?.label||n)].some(label=>label.toLowerCase()===String(makerName||'').toLowerCase()))||makerName;
+            const seedTypes=Object.entries(phase120HardwareSeed).filter(([type,m])=>Object.keys(m).some(n=>n.toLowerCase()===String(originalMaker||'').toLowerCase())).map(([type])=>type);
             const builtIn=seedTypes.length>0||['Dell','HP','HPE','Lenovo','ASUS','Apple','Cisco','Samsung','Microsoft','Toshiba'].some(n=>n.toLowerCase()===makerName.toLowerCase());
             if(id&&!entry&&!builtInName)return;
             if(remove&&builtIn){showToast('Built-in manufacturers cannot be removed.','error');return;}
