@@ -10,6 +10,7 @@ function extract(start,end) {
   return html.slice(a,b);
 }
 const code=extract('function escapeHtml(value)','function renderContent()')+'\n'+
+  extract('function phase180EffectivePlatform(device)','function getVisibleDevices()')+'\n'+
   extract('function renderDevicesHTML()','// --- PHASE 18D: MANAGED TYPES & LOCATIONS ---');
 const payloads=[
   '<img src=x onerror=alert(1)>',
