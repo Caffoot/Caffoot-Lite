@@ -121,5 +121,53 @@ const { chromium } = require('playwright');
       assert.equal(result.falseResetEvent, false, 'Rolled-back reset must not remain recorded as successful');
     });
 
+    await scenario('late backup restore verification must not claim a completed restore', async page => {
+      const result = await page.evaluate(async () => {
+        appState.deviceLocations.push('WF09 current inventory');
+        if (!saveState()) throw new Error('Unable to seed restore fixture');
+        const beforeInventory = localStorage.getItem('caffoot_state');
+        const beforeEvents = JSON.parse(localStorage.getItem('caffoot_audit_v1') || '[]');
+        const backup = JSON.parse(beforeInventory);
+        backup.deviceLocations.push('WF09 restored inventory');
+        const file = new File([JSON.stringify(backup)], 'wf09-restore.json', { type: 'application/json' });
+        const input = document.createElement('input');
+        input.type = 'file';
+        const transfer = new DataTransfer();
+        transfer.items.add(file);
+        input.files = transfer.files;
+        const oldConfirm = window.confirm;
+        const oldGet = Storage.prototype.getItem;
+        const oldSet = Storage.prototype.setItem;
+        let stateWrites = 0, readsAfterWrite = 0;
+        window.confirm = () => true;
+        Storage.prototype.setItem = function(key, value) {
+          if (key === 'caffoot_state') { stateWrites++; readsAfterWrite = 0; }
+          return oldSet.call(this, key, value);
+        };
+        Storage.prototype.getItem = function(key) {
+          if (key === 'caffoot_state' && stateWrites === 1 && ++readsAfterWrite === 2)
+            return null;
+          return oldGet.call(this, key);
+        };
+        try {
+          importData({ target: input });
+          await new Promise(resolve => setTimeout(resolve, 300));
+        } finally {
+          window.confirm = oldConfirm;
+          Storage.prototype.getItem = oldGet;
+          Storage.prototype.setItem = oldSet;
+        }
+        const afterEvents = JSON.parse(localStorage.getItem('caffoot_audit_v1') || '[]');
+        return {
+          stateWrites,
+          inventoryRestored: localStorage.getItem('caffoot_state') === beforeInventory,
+          falseRestoreEvent: afterEvents.slice(beforeEvents.length).some(e => e.reason === 'Backup restored')
+        };
+      });
+      assert.ok(result.stateWrites >= 2, 'Expected restore save and rollback; observed ' + JSON.stringify(result));
+      assert.equal(result.inventoryRestored, true, 'Restore failure must retain original inventory');
+      assert.equal(result.falseRestoreEvent, false, 'Rolled-back restore must not remain recorded as successful');
+    });
+
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });
