@@ -1863,6 +1863,10 @@ const { chromium } = require('playwright');
           isVirtual:false,mountType:'Desktop',location:'Unknown',status:'Active',primaryIp:'10.88.96.2',
           notes:'Before editor change',typeDetails:{software_fixture96_archived:true,
             serverService_fixture96_archived:true,legacyFixture96:'Historical custom value'}});
+        const fixture=appState.devices.find(d=>d.id==='fixture96-device');
+        fixture.primaryIp='';
+        setDevicePrimaryIp(fixture,'10.88.96.2');
+        syncDeviceIpamRecord(fixture);
         if(!saveState())throw Error('Unable to save #96 fixture');
       });
       const result=await page.evaluate(async () => {
