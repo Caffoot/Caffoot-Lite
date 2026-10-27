@@ -87,6 +87,8 @@ const { chromium } = require('playwright');
         const oldConfirm = window.confirm;
         const oldGet = Storage.prototype.getItem;
         const oldSet = Storage.prototype.setItem;
+        appState.deviceLocations.push('WF09 reset fixture location');
+        if (!saveState()) throw new Error('Unable to seed reset fixture inventory');
         const beforeInventory = localStorage.getItem('caffoot_state');
         const beforeEvents = JSON.parse(localStorage.getItem('caffoot_audit_v1') || '[]');
         let stateWrites = 0, readsAfterWrite = 0;
@@ -109,11 +111,12 @@ const { chromium } = require('playwright');
         const afterEvents = JSON.parse(localStorage.getItem('caffoot_audit_v1') || '[]');
         return {
           stateWrites,
+          readsAfterWrite,
           inventoryRestored: localStorage.getItem('caffoot_state') === beforeInventory,
           falseResetEvent: afterEvents.slice(beforeEvents.length).some(e => e.reason === 'Clean inventory reset')
         };
       });
-      assert.ok(result.stateWrites >= 2, 'Expected initial save and subsequent rollback');
+      assert.ok(result.stateWrites >= 2, 'Expected initial save and subsequent rollback; observed ' + JSON.stringify(result));
       assert.equal(result.inventoryRestored, true, 'Inventory rollback must remain intact');
       assert.equal(result.falseResetEvent, false, 'Rolled-back reset must not remain recorded as successful');
     });
