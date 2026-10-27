@@ -7607,11 +7607,11 @@ function hierarchyValidateTypes(subnets) {
             const manufacturer = document.getElementById('dev-manufacturer').value.trim();
             const model = document.getElementById('dev-model').value.trim();
             const serialNumber = document.getElementById('dev-serial').value.trim();
-            // Retain historical host metadata on physical conversion without treating it as an active assignment.
+            // Preserve existing historical host metadata when editing a physical device.
             const virtualPlatform = isVirtualServer?(document.getElementById('dev-virtual-platform')?.value||''):(getDeviceById(deviceId)?.virtualPlatform||'');
             const virtualHostId = isVirtualServer?(document.getElementById('dev-virtual-host')?.value||''):(getDeviceById(deviceId)?.virtualHostId||'');
             const existingDeviceHostIsUnchanged = () => !!deviceId && getDeviceById(deviceId)?.virtualHostId === virtualHostId;
-            // #164: New virtual servers must have an eligible physical host. Preserve legacy edits.
+            // #164: New VMs must have an eligible physical host. Preserve legacy edits.
             if(isVirtualServer && !virtualHostId && (!deviceId || !(getDeviceById(deviceId)?.isVirtual === true || getDeviceById(deviceId)?.type==='Server - Virtual')))return showToast('Select an eligible physical Hypervisor host for the new virtual machine.','error');
             if(isVirtualServer && virtualHostId&&!appState.devices.some(d=>d.id===virtualHostId&&d.type==='Server - Physical'&&d.id!==deviceId&&((d.status!=='Retired'&&(d.typeDetails?.serverService_Hypervisor===true||d.serverService_Hypervisor===true))||(existingDeviceHostIsUnchanged()))))return showToast('Select an eligible Hypervisor host, or retain the existing legacy assignment.','error');
             if (!['Active','Maintenance','Retired'].includes(status)) return showToast('Invalid device status.', 'error');
@@ -7690,25 +7690,8 @@ function hierarchyValidateTypes(subnets) {
                         document.getElementById('phase-m005-host-platform')?.value.trim() !== nextHypervisor) return;
                 }
             }
-            let conversionSnapshot = null;
-            // Type-specific values remain in the unsaved draft when switching types.
-            // Only known, incompatible populated fields are eligible for confirmed removal.
-            if (existingDevice && String(existingDevice.type || '').toLowerCase().trim() !== String(type || '').toLowerCase().trim()) {
-                const obsolete = phase130ObsoleteDeviceFields(existingDevice.type, type, typeDetails);
-                if (obsolete.length) {
-                    const accepted = await phase130ConfirmDeviceConversion(existingDevice.type, type, obsolete, typeDetails);
-                    if (!accepted) return;
-                    // Never apply a stale confirmation if the form or underlying record changed.
-                    if (!document.getElementById('dev-type') || document.getElementById('dev-type').value !== type ||
-                        getDeviceById(deviceId) !== existingDevice) return;
-                    typeDetails = {...typeDetails};
-                    conversionSnapshot = {type:existingDevice.type, details:Object.fromEntries(obsolete.map(key=>[key,typeDetails[key]]))};
-                    for (const key of obsolete) delete typeDetails[key];
-                }
-            }
             const beforeDeviceSave = JSON.stringify(appState);
             if (existingDevice) {
-                if (conversionSnapshot) existingDevice.previousTypeDetails = [...(Array.isArray(existingDevice.previousTypeDetails)?existingDevice.previousTypeDetails:[]),conversionSnapshot];
                 Object.assign(existingDevice, {status, manufacturer, model, serialNumber, typeDetails, virtualPlatform, virtualHostId, isVirtual:isVirtualServer});
                 existingDevice.ipReserved = ipReserved;
                 existingDevice.name = name; existingDevice.type = type; existingDevice.mountType = mountType; existingDevice.location = location; existingDevice.notes = notes;
