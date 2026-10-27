@@ -7562,6 +7562,16 @@ function hierarchyValidateTypes(subnets) {
             if (!['Active','Maintenance','Retired'].includes(status)) return showToast('Invalid device status.', 'error');
             const notes = document.getElementById('dev-notes').value.trim();
             let typeDetails = phase19BReadFields();
+            // #164: Optional VM allocations must be whole, positive numbers when supplied.
+            // Historical imports may omit these fields and remain unchanged.
+            if (type === 'Server - Virtual') {
+                for (const [key, label] of [['vmVcpu','vCPU count'],['vmRamGb','Allocated RAM'],['vmDiskGb','Virtual disk'],['vmNicCount','Virtual network adapters']]) {
+                    const raw = String(typeDetails[key] ?? '').trim();
+                    if (raw !== '' && (!/^\d+$/.test(raw) || !Number.isSafeInteger(Number(raw)) || Number(raw) < 1)) {
+                        return showToast(label + ' must be a positive whole number, or left blank.', 'error');
+                    }
+                }
+            }
             if (type === 'Server - Physical' && typeDetails.serverService_Hypervisor === true &&
                 !String(typeDetails.hypervisorProduct || '').trim() &&
                 !String(getDeviceById(deviceId)?.typeDetails?.hypervisorProduct || '').trim() &&
