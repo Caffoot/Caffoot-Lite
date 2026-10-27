@@ -6541,7 +6541,7 @@ function hierarchyValidateTypes(subnets) {
             const related=appState.devices.filter(d=>d.type===type);
             const catalog=phase120HardwareCatalogue().filter(x=>x.type===type);
             const makers=new Set([...Object.keys(seeds),...related.map(d=>String(d.manufacturer||'').trim()).filter(Boolean),...catalog.map(x=>x.manufacturer)]);
-            ['Dell','HP','HPE','Lenovo','ASUS','Apple','Cisco','Samsung','Microsoft','Toshiba'].forEach(m=>makers.add(m));
+            ['Dell','HP','HPE','Lenovo','ASUS','Apple','Cisco','Samsung','Microsoft','Toshiba'].forEach(m=>{const pref=phase120HardwarePreferences()['maker:'+m.toLowerCase()]||{};if(!pref.hidden)makers.add(String(pref.label||m).trim()||m);});
             const currentMaker=maker.value.trim();
             const makerValues=[...makers].sort((a,b)=>a.localeCompare(b));
             makerSelect.replaceChildren(new Option('Select Manufacturer...',''),...makerValues.map(v=>new Option(v,v)),new Option('Other / Custom Manufacturer','__custom__'));
