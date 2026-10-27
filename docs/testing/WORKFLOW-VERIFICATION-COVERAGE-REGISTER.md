@@ -50,7 +50,7 @@ Draft PR #132 on `release/v1.3.1` contains the narrowly scoped unchanged-gateway
 
 | Workflow | Recorded executed evidence | What remains unverified or requires a disposition |
 | --- | --- | --- |
-| WF-01 Startup and recovery | Recovery reset fault scenarios, run [39944710633](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39944710633) | Complete startup and recovery caller review; M-014 focused reset readback scenarios passed on draft PR #185 at `0568418`; full WF-01 remains partial |
+| WF-01 Startup and recovery | Recovery reset fault scenarios, run [39944710633](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39944710633) | Complete startup and recovery caller review; M-014 focused reset readback scenarios passed on PR #185 at `0568418`; M-015 routine normalisation intentionally silent by owner decision (#98); full WF-01 remains partial |
 | WF-02 Saving and integrity | Failed save and rollback assertions, runs [39957395113](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39957395113), [39959581469](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39959581469); M-012 [39955498407](https://github.com/Caffoot/Caffoot-Lite/actions/runs/39955498407) | Other save callers and complete failure matrix; M-004 and M-022 review |
 | WF-03 Device lifecycle | Device graphic rollback M-020, run 39957395113 | Full device lifecycle, relationships and form conversion paths; M-005 and M-008 |
 | WF-04 IPAM and networks | Bulk snapshot readback M-031, runs 39957395113 and 39959581469 | Subnet, VLAN, allocation and ownership combinations; M-006, M-009, M-024 |
