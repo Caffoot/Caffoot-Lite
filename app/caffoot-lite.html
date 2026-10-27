@@ -6533,6 +6533,13 @@ function hierarchyValidateTypes(subnets) {
         function phase120VirtualHardwareVisibility(){
             const type=document.getElementById('dev-type')?.value || '';
             const virtual=type==='Server - Virtual';
+            // VM placement belongs to the host. Retain historical values in storage.
+            const mounting=document.getElementById('phase120-device-mounting');
+            if(mounting) mounting.classList.toggle('hidden',virtual);
+            const mountSelect=document.getElementById('dev-mount-type');
+            if(mountSelect) mountSelect.required=!virtual;
+            const rackHeight=document.getElementById('dev-rack-height');
+            if(virtual && rackHeight) rackHeight.required=false;
             ['phase120-physical-manufacturer','phase120-physical-model'].forEach(id=>document.getElementById(id)?.classList.toggle('hidden',virtual));
             document.getElementById('phase120-virtual-fields')?.classList.toggle('hidden',!virtual);
             document.getElementById('phase-m005-host-platform-fields')?.classList.toggle('hidden',type!=='Server - Physical');
@@ -7172,7 +7179,7 @@ function hierarchyValidateTypes(subnets) {
                             <div><label for="dev-serial" class="form-label">Serial number (optional)</label><input id="dev-serial" type="text" maxlength="120" value="${escapeHtml(draft?.serialNumber ?? device?.serialNumber ?? '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Manufacturer serial number"></div>
                         <div class="form-section-card space-y-4 ${phase19BFieldsFor(currentType).length===0?'hidden':''}" id="phase19b-details-section" aria-live="polite"><div class="form-section-heading"><i class="fa-solid fa-list-check"></i>Additional details for this device type</div><div class="flex flex-wrap gap-2"><button type="button" id="phase19b-manage-functions-button" data-action="phase19b-manage-functions" class="h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-500 text-sm font-semibold ${phase19BTypeGroups[String(currentType||'').toLowerCase().trim()]==='server'?'':'hidden'}">Manage Server Options</button><button type="button" id="phase19b-manage-software-button" data-action="phase19b-manage-software" class="h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-500 text-sm font-semibold ${['server','computer'].includes(phase19BTypeGroups[String(currentType||'').toLowerCase().trim()])?'':'hidden'}">Manage Software Options</button></div><div id="phase19b-fields">${phase19BRenderFields(currentType,phase19BFormValues,'hardware')}</div></div>
                         </div>
-                        <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-rack"></i>Mounting & location</div><div><label for="dev-mount-type" class="form-label">Device Mounting <span class="required-mark">*</span></label><select id="dev-mount-type" required data-action="device-mount-type-change" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" disabled>Select mounting type...</option>${phase19BMountOptions(currentType,mountType)}</select></div>
+                        <div class="form-section-card space-y-4" id="phase120-device-mounting"><div class="form-section-heading"><i class="fa-solid fa-rack"></i>Mounting & location</div><div><label for="dev-mount-type" class="form-label">Device Mounting <span class="required-mark">*</span></label><select id="dev-mount-type" required data-action="device-mount-type-change" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" disabled>Select mounting type...</option>${phase19BMountOptions(currentType,mountType)}</select></div>
                         <div>
                             <label for="dev-location" class="block text-xs font-semibold mb-1">Location Area <span class="required-mark">*</span></label>
                             <select id="dev-location" required data-previous-location="${escapeHtml(currentLoc)}" data-action="device-location-change" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" disabled ${currentLoc === '' ? 'selected' : ''}>Select a location...</option>${locations.map(l => `<option value="${escapeHtml(l)}" ${currentLoc === l ? 'selected' : ''}>${escapeHtml(l)}</option>`).join('')}<option value="__caffoot_create_location__">+ Create new location…</option></select>
