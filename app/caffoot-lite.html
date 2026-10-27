@@ -7139,7 +7139,8 @@ function hierarchyValidateTypes(subnets) {
                     <form data-device-form="true" data-device-id="${escapeHtml(device?.id || draft?.deviceId || '')}" class="form-shell">
                         <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-circle-info"></i>Device details</div>
                         <div><label for="dev-name" class="block text-xs font-semibold mb-1">Device Name <span class="required-mark">*</span></label><input type="text" id="dev-name" required value="${escapeHtml(draft?.name ?? device?.name ?? '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="e.g. core-switch"></div>
-                            <div><label for="dev-type" class="block text-xs font-semibold mb-1">Device Type</label><select id="dev-deployment" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="physical" ${!isExistingVirtual?'selected':''}>Physical device</option>${hasEligiblePhysicalHost||isExistingVirtual?`<option value="virtual" ${isExistingVirtual?'selected':''}>Virtual Machine (VM)</option>`:''}</select><div id="phase120-physical-purpose" class="${isExistingVirtual?'hidden':''} mt-2"><label class="form-label" for="dev-type">Physical device type</label><select id="dev-type" required class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" disabled ${currentType === '' ? 'selected' : ''}>Select a device type...</option>${availableFormTypes.map(t => `<option value="${escapeHtml(t)}" ${currentType === t ? 'selected' : ''}>${escapeHtml(t === 'Server - Physical' ? 'Server' : t)}</option>`).join('')}<option value="Server - Virtual" ${currentType==='Server - Virtual'?'selected':''} hidden>Server - Virtual</option></select></div><div id="phase120-vm-purpose-wrap" class="${isExistingVirtual?'':'hidden'} mt-2"><label class="form-label" for="dev-vm-purpose">VM purpose</label><select id="dev-vm-purpose" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">${vmPurposes.map(([label,value])=>`<option value="${escapeHtml(value)}" ${currentType===value?'selected':''}>${escapeHtml(label)}</option>`).join('')}</select></div></div>
+                            <div class="${device ? 'hidden' : ''}"><label for="dev-deployment" class="block text-xs font-semibold mb-1">Device deployment</label><select id="dev-deployment" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="physical" ${!isExistingVirtual?'selected':''}>Physical device</option>${hasEligiblePhysicalHost||isExistingVirtual?`<option value="virtual" ${isExistingVirtual?'selected':''}>Virtual Machine (VM)</option>`:''}</select><div id="phase120-physical-purpose" class="${isExistingVirtual || device ? 'hidden' : ''} mt-2"><label class="form-label" for="dev-type">Physical device type</label><select id="dev-type" required class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" disabled ${currentType === '' ? 'selected' : ''}>Select a device type...</option>${availableFormTypes.map(t => `<option value="${escapeHtml(t)}" ${currentType === t ? 'selected' : ''}>${escapeHtml(t === 'Server - Physical' ? 'Server' : t)}</option>`).join('')}<option value="Server - Virtual" ${currentType==='Server - Virtual'?'selected':''} hidden>Server - Virtual</option></select></div><div id="phase120-vm-purpose-wrap" class="${isExistingVirtual && !device ? '' : 'hidden'} mt-2"><label class="form-label" for="dev-vm-purpose">VM purpose</label><select id="dev-vm-purpose" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">${vmPurposes.map(([label,value])=>`<option value="${escapeHtml(value)}" ${currentType===value?'selected':''}>${escapeHtml(label)}</option>`).join('')}</select></div></div>
+                            ${device ? `<p class="text-sm font-semibold text-slate-700 dark:text-slate-200">Edit ${escapeHtml(isExistingVirtual ? 'Virtual ' : 'Physical ')}${escapeHtml(currentType === 'Server - Virtual' || currentType === 'Server - Physical' ? 'Server' : currentType)}</p>` : ''}
                             <div id="phase120-virtual-fields" class="hidden rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-slate-800 p-4 space-y-3">
                                 <p class="text-sm font-semibold text-blue-900 dark:text-blue-200">Virtual Machine Configuration</p>
                                 <p class="text-xs text-slate-600 dark:text-slate-300">Physical manufacturer and model do not apply to virtual servers. Existing saved values are retained.</p>
@@ -7585,6 +7586,9 @@ function hierarchyValidateTypes(subnets) {
             const name = document.getElementById('dev-name').value.trim();
             const type = document.getElementById('dev-type').value;
             const isVirtualServer = phase120IsVirtualForm();
+            const originalDevice = deviceId ? getDeviceById(deviceId) : null;
+            if (deviceId && !originalDevice) return showToast('Device no longer exists.', 'error');
+            if (originalDevice && (type !== originalDevice.type || isVirtualServer !== (originalDevice.isVirtual === true || originalDevice.type === 'Server - Virtual'))) return showToast('Device identity cannot be changed. Create a new device instead.', 'error');
             if (isVirtualServer && !['Server - Virtual','Desktop','Firewall','Router','NAS','Wireless LAN Controller'].includes(type)) return showToast('Select a valid VM purpose.', 'error');
             const selectedHostId = document.getElementById('dev-virtual-host')?.value || '';
             const selectedHost = appState.devices.find(d => d.id === selectedHostId);
@@ -7652,16 +7656,15 @@ function hierarchyValidateTypes(subnets) {
                 if (validationError) return showToast(validationError, 'error');
             }
             const existingDevice = deviceId ? getDeviceById(deviceId) : null;
-            // M-005: host conversion, retirement and loss of Hypervisor eligibility
-            // all require an explicit decision for every assigned guest.
+            // M-005: host retirement and loss of Hypervisor eligibility
+            // still require an explicit decision for every assigned guest.
             let removalGuests = [];
             let removalChoices = [];
             if (existingDevice && existingDevice.type === 'Server - Physical') {
                 const wasHypervisor = existingDevice.typeDetails?.serverService_Hypervisor === true || existingDevice.serverService_Hypervisor === true;
                 const remainsHypervisor = type === 'Server - Physical' && typeDetails.serverService_Hypervisor === true;
-                const converting = type !== 'Server - Physical';
                 const retiring = status === 'Retired' && existingDevice.status !== 'Retired';
-                if (converting || retiring || (wasHypervisor && !remainsHypervisor)) {
+                if (retiring || (wasHypervisor && !remainsHypervisor)) {
                     const hostedGuests = appState.devices.filter(guest => guest.id !== deviceId && guest.virtualHostId === deviceId);
                     if (hostedGuests.length) {
                         const choices = await phaseM005ConfirmHypervisorRemoval(existingDevice.name, hostedGuests, deviceId);
