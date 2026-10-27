@@ -7088,6 +7088,9 @@ function hierarchyValidateTypes(subnets) {
             const types = getUniqueDeviceTypes();
             const locations = getUniqueDeviceLocations();
             const currentType = draft?.type ?? device?.type ?? '';
+            const hasEligiblePhysicalHost = appState.devices.some(d => d.type === 'Server - Physical' && d.status !== 'Retired' && (d.typeDetails?.serverService_Hypervisor === true || d.serverService_Hypervisor === true));
+            // Keep legacy virtual types selectable when editing, even without a current host.
+            const availableFormTypes = types.filter(t => t !== 'Server - Virtual' || hasEligiblePhysicalHost || currentType === 'Server - Virtual');
             phase19BFormValues = {...(draft?.typeDetails ?? device?.typeDetails ?? {})};
             if (currentType === 'Server - Physical' &&
                 phase19BFormValues.serverService_Hypervisor !== true &&
@@ -7109,7 +7112,7 @@ function hierarchyValidateTypes(subnets) {
                     <form data-device-form="true" data-device-id="${escapeHtml(device?.id || draft?.deviceId || '')}" class="form-shell">
                         <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-circle-info"></i>Device details</div>
                         <div><label for="dev-name" class="block text-xs font-semibold mb-1">Device Name <span class="required-mark">*</span></label><input type="text" id="dev-name" required value="${escapeHtml(draft?.name ?? device?.name ?? '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="e.g. core-switch"></div>
-                            <div><label for="dev-type" class="block text-xs font-semibold mb-1">Device Type</label><select id="dev-type" required class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" disabled ${currentType === '' ? 'selected' : ''}>Select a device type...</option>${types.map(t => `<option value="${escapeHtml(t)}" ${currentType === t ? 'selected' : ''}>${escapeHtml(t)}</option>`).join('')}</select></div>
+                            <div><label for="dev-type" class="block text-xs font-semibold mb-1">Device Type</label><select id="dev-type" required class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" disabled ${currentType === '' ? 'selected' : ''}>Select a device type...</option>${availableFormTypes.map(t => `<option value="${escapeHtml(t)}" ${currentType === t ? 'selected' : ''}>${escapeHtml(t === 'Server - Physical' ? 'Server' : t === 'Server - Virtual' ? 'Virtual Machine (VM) - Server' : t)}</option>`).join('')}</select></div>
                             <div id="phase120-virtual-fields" class="hidden rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-slate-800 p-4 space-y-3">
                                 <p class="text-sm font-semibold text-blue-900 dark:text-blue-200">Virtual Machine Configuration</p>
                                 <p class="text-xs text-slate-600 dark:text-slate-300">Physical manufacturer and model do not apply to virtual servers. Existing saved values are retained.</p>
@@ -7117,7 +7120,7 @@ function hierarchyValidateTypes(subnets) {
                                     <div><label class="form-label" for="dev-virtual-platform">Virtualisation Platform (optional)</label><select id="dev-virtual-platform" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
                                         ${['','VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng','Other'].map(x=>'<option value="'+escapeHtml(x)+'" '+((draft?.virtualPlatform ?? device?.virtualPlatform ?? '')===x?'selected':'')+'>'+escapeHtml(x||'Select Platform...')+'</option>').join('')}
                                     </select></div>
-                                    <div><label class="form-label" for="dev-virtual-host">Host Device (optional)</label><select id="dev-virtual-host" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="">Not Specified</option>
+                                    <div><label class="form-label" for="dev-virtual-host">Physical Hypervisor Host ${device?.type === 'Server - Virtual' ? '(legacy assignments preserved)' : '(required)'}</label><select id="dev-virtual-host" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="">Not Specified</option>
                                         ${appState.devices.filter(x=>x.id!==(device?.id||'')&&x.type==='Server - Physical'&&((x.status!=='Retired'&&(x.typeDetails?.serverService_Hypervisor===true||x.serverService_Hypervisor===true))||x.id===(draft?.virtualHostId??device?.virtualHostId??''))).map(x=>'<option value="'+escapeHtml(x.id)+'" '+((draft?.virtualHostId ?? device?.virtualHostId ?? '')===x.id?'selected':'')+'>'+escapeHtml(x.name)+(x.status==='Retired'||!(x.typeDetails?.serverService_Hypervisor===true||x.serverService_Hypervisor===true)?' (existing legacy assignment)':'')+'</option>').join('')}
                                     </select></div>
                                 </div>
