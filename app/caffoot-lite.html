@@ -6314,12 +6314,13 @@ function hierarchyValidateTypes(subnets) {
             const source = getDeviceById(deviceId);
             if (!source) return showToast('Device not found.', 'error');
             const subnet = source.primaryIp ? getSubnetForIp(source.primaryIp) : null;
-            const mounted = source.mountType === 'Rack Mounted' || !!source.rackId;
+            // A virtual server is hosted by its hypervisor, never mounted in a rack itself.
+            const mounted = source.type !== 'Server - Virtual' && (source.mountType === 'Rack Mounted' || !!source.rackId);
             const height = Math.max(1, Number(source.rackUHeight) || (Number(source.rackUEnd) - Number(source.rackUStart) + 1) || 1);
             const draft = {
                 deviceId:null, duplicatedFrom:source.id, name:'', primaryIp:'',
                 subnetId:subnet?.id || '', type:source.type || '',
-                location:source.location || '', mountType:mounted ? 'Rack Mounted' : (source.mountType || 'Desktop'),
+                location:source.location || '', mountType:source.type === 'Server - Virtual' ? 'Not Applicable' : (mounted ? 'Rack Mounted' : (source.mountType || 'Desktop')),
                 rackId:mounted ? source.rackId || '' : '', face:source.face || 'front',
                 rackUHeight:height, rackUStart:1, ipReserved:!!source.ipReserved,
                 status:source.status || 'Active', manufacturer:source.manufacturer || '',
