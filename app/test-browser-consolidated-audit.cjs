@@ -829,6 +829,40 @@ const { chromium } = require('playwright');
       });
       assert.equal(result.hostExists,false,'Unreferenced host deletion must remain available');
     });
+    await scenario('#164 VM-first purpose choices and eligible-host gating', async page => {
+      const result=await page.evaluate(() => {
+        const purposes=['Server - Virtual','Desktop','Firewall','Router','NAS','Wireless LAN Controller'];
+        openDeviceModal();
+        const noHostOption=!!document.querySelector('#dev-deployment option[value="virtual"]');
+        const host={id:'fixture-164-host',name:'Fixture #164 Hypervisor',type:'Server - Physical',status:'Active',
+          typeDetails:{serverService_Hypervisor:true,hypervisorProduct:'Proxmox VE'}};
+        appState.devices.push(host);
+        openDeviceModal();
+        const deployment=document.getElementById('dev-deployment');
+        const optionAvailable=!!deployment.querySelector('option[value="virtual"]');
+        deployment.value='virtual';
+        deployment.dispatchEvent(new Event('change',{bubbles:true}));
+        const purpose=document.getElementById('dev-vm-purpose');
+        const choices=purposes.map(type=>{
+          purpose.value=type;
+          purpose.dispatchEvent(new Event('change',{bubbles:true}));
+          return {purpose:type,actual:document.getElementById('dev-type').value,
+            hostVisible:!document.getElementById('phase120-virtual-fields').classList.contains('hidden'),
+            physicalHidden:document.getElementById('phase120-physical-purpose').classList.contains('hidden')};
+        });
+        return {noHostOption,optionAvailable,choices,
+          hostAvailable:!!document.querySelector('#dev-virtual-host option[value="fixture-164-host"]')};
+      });
+      assert.equal(result.noHostOption,false,'New VM must not be offered without an eligible host');
+      assert.equal(result.optionAvailable,true,'Eligible hypervisor must enable VM creation');
+      assert.equal(result.hostAvailable,true,'Eligible host must be selectable');
+      assert.equal(result.choices.length,6);
+      for(const choice of result.choices){
+        assert.equal(choice.actual,choice.purpose,'VM purpose must map to the saved device type');
+        assert.equal(choice.hostVisible,true,'VM host and hardware controls must remain visible');
+        assert.equal(choice.physicalHidden,true,'Physical device type controls must be hidden for a VM');
+      }
+    });
     await scenario('#134 virtual machine host selector is on General for Add and Edit', async page => {
       const result = await page.evaluate(() => {
         const host={id:'fixture-134-physical',name:'Fixture Hypervisor',type:'Server - Physical',status:'Active',typeDetails:{serverService_Hypervisor:true,hypervisorProduct:'Proxmox VE'}};
