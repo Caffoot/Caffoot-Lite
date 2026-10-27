@@ -175,15 +175,34 @@
 </style>
 
 <style id="ui-accessibility-pass">
+/* Caffoot website palette: shared theme foundations for issue #156.
+   Limit overrides to the application shell; preserve semantic status colours. */
+:root {
+  --caffoot-canvas: #F8F6F0;
+  --caffoot-card: #FFFFFF;
+  --caffoot-navigation: #FFFFFF;
+  --caffoot-ink: #142232;
+  --caffoot-accent: #F47B20;
+}
+.dark {
+  --caffoot-canvas: #172635;
+  --caffoot-card: #202936;
+  --caffoot-navigation: #101B28;
+  --caffoot-ink: #FFFFFF;
+}
+body, #main-content { background-color: var(--caffoot-canvas) !important; }
+#sidebar { background-color: var(--caffoot-navigation) !important; }
+#app > div > header { background-color: var(--caffoot-card) !important; }
+#sidebar h1 { color: var(--caffoot-ink) !important; }
 /* Page-level accessibility and theme consistency pass */
 :root {
-  --ui-text: #172033;
+  --ui-text: #142232;
   --ui-text-muted: #4b5563;
   --ui-text-subtle: #6b7280;
   --ui-border: #cbd5e1;
   --ui-border-strong: #94a3b8;
   --ui-surface: #ffffff;
-  --ui-surface-alt: #f8fafc;
+  --ui-surface-alt: #F8F6F0;
   --ui-hover: #f1f5f9;
   --ui-focus: #2563eb;
 }
@@ -193,8 +212,8 @@
   --ui-text-subtle: #cbd5e1;
   --ui-border: #475569;
   --ui-border-strong: #64748b;
-  --ui-surface: #111827;
-  --ui-surface-alt: #1f2937;
+  --ui-surface: #202936;
+  --ui-surface-alt: #172635;
   --ui-hover: #273449;
   --ui-focus: #60a5fa;
 }
