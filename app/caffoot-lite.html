@@ -3783,7 +3783,7 @@ function hierarchyValidateTypes(subnets) {
                                 const counts=new Map();
                                 appState.devices.forEach(d=>{
                                     const raw=String(d[field]||'').trim();
-                                    const name=raw && raw!=='Unknown' ? raw : 'Not Recorded';
+                                    const name=raw && raw!=='Unknown' ? (field==='type' ? deviceTypeDisplayLabel(raw) : raw) : 'Not Recorded';
                                     counts.set(name,(counts.get(name)||0)+1);
                                 });
                                 const groups=[...counts.entries()].sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));
