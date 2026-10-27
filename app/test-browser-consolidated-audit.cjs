@@ -918,17 +918,22 @@ const { chromium } = require('playwright');
         set('dev-vmRamGb','16');
         set('dev-vmDiskGb','120');
         set('dev-vmNicCount','2');
-        await handleDeviceSubmit({preventDefault(){}},null);
-        return appState.devices.find(d=>d.name==='Fixture #164 Saved VM')||null;
+        const messages=[];
+        const originalToast=showToast;
+        showToast=(message)=>messages.push(String(message));
+        try { await handleDeviceSubmit({preventDefault(){}},null); }
+        finally { showToast=originalToast; }
+        return {device:appState.devices.find(d=>d.name==='Fixture #164 Saved VM')||null,messages};
       });
-      assert.ok(saved,'New VM must be saved');
-      assert.equal(saved.type,'Server - Virtual');
-      assert.equal(saved.isVirtual,true);
-      assert.equal(saved.virtualHostId,'fixture-164-save-host');
-      assert.equal(String(saved.typeDetails.vmVcpu),'4');
-      assert.equal(String(saved.typeDetails.vmRamGb),'16');
-      assert.equal(String(saved.typeDetails.vmDiskGb),'120');
-      assert.equal(String(saved.typeDetails.vmNicCount),'2');
+      assert.ok(saved.device,'New VM must be saved. Validation: '+saved.messages.join(' | '));
+      const device=saved.device;
+      assert.equal(device.type,'Server - Virtual');
+      assert.equal(device.isVirtual,true);
+      assert.equal(device.virtualHostId,'fixture-164-save-host');
+      assert.equal(String(device.typeDetails.vmVcpu),'4');
+      assert.equal(String(device.typeDetails.vmRamGb),'16');
+      assert.equal(String(device.typeDetails.vmDiskGb),'120');
+      assert.equal(String(device.typeDetails.vmNicCount),'2');
       await page.reload({waitUntil:'load'});
       const reopened=await page.evaluate(() => {
         const device=appState.devices.find(d=>d.name==='Fixture #164 Saved VM');
