@@ -7164,7 +7164,7 @@ function hierarchyValidateTypes(subnets) {
                                 <p class="text-sm font-semibold text-blue-900 dark:text-blue-200">Virtual Machine Configuration</p>
                                 <p class="text-xs text-slate-600 dark:text-slate-300">Physical manufacturer and model do not apply to virtual servers. Existing saved values are retained.</p>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                    <div><label class="form-label" for="dev-virtual-platform">Virtualisation Platform (optional)</label><select id="dev-virtual-platform" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
+                                    <div hidden><label class="form-label" for="dev-virtual-platform">Virtualisation Platform (inherited from host)</label><select id="dev-virtual-platform" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
                                         ${['','VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng','Other'].map(x=>'<option value="'+escapeHtml(x)+'" '+((draft?.virtualPlatform ?? device?.virtualPlatform ?? '')===x?'selected':'')+'>'+escapeHtml(x||'Select Platform...')+'</option>').join('')}
                                     </select></div>
                                     <div><label class="form-label" for="dev-virtual-host">Physical Hypervisor Host ${device?.type === 'Server - Virtual' ? '(legacy assignments preserved)' : '(required)'}</label><select id="dev-virtual-host" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="">Not Specified</option>
@@ -7627,8 +7627,13 @@ function hierarchyValidateTypes(subnets) {
             const model = document.getElementById('dev-model').value.trim();
             const serialNumber = document.getElementById('dev-serial').value.trim();
             // Preserve existing historical host metadata when editing a physical device.
-            const virtualPlatform = isVirtualServer?(document.getElementById('dev-virtual-platform')?.value||''):(getDeviceById(deviceId)?.virtualPlatform||'');
             const virtualHostId = isVirtualServer?(document.getElementById('dev-virtual-host')?.value||''):(getDeviceById(deviceId)?.virtualHostId||'');
+            // #164: A VM inherits the platform from its selected physical hypervisor.
+            // Retain historical metadata when its host is absent or has no configured product.
+            const virtualHost = appState.devices.find(d=>d.id===virtualHostId&&d.type==='Server - Physical');
+            const virtualPlatform = isVirtualServer
+                ? (String(virtualHost?.typeDetails?.hypervisorProduct||'').trim() || getDeviceById(deviceId)?.virtualPlatform || '')
+                : (getDeviceById(deviceId)?.virtualPlatform||'');
             const existingDeviceHostIsUnchanged = () => !!deviceId && getDeviceById(deviceId)?.virtualHostId === virtualHostId;
             // #164: New VMs must have an eligible physical host. Preserve legacy edits.
             if(isVirtualServer && !virtualHostId && (!deviceId || !(getDeviceById(deviceId)?.isVirtual === true || getDeviceById(deviceId)?.type==='Server - Virtual')))return showToast('Select an eligible physical Hypervisor host for the new virtual machine.','error');
