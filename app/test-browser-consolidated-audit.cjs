@@ -47,6 +47,50 @@ const { chromium } = require('playwright');
       assert.equal(result.banner,true,'Recovery must be visible');
       assert.equal(result.saved,false,'Ordinary saves must be blocked in recovery');
     });
+    await scenario('M-014 recovery reset verifies persisted empty inventory', async page => {
+      await page.evaluate(() => localStorage.setItem('caffoot_state', '{invalid json'));
+      await page.reload({waitUntil:'load'});
+      assert.equal(await page.locator('#phase17a-recovery').count(),1);
+      page.on('dialog', dialog => dialog.accept());
+      await page.getByRole('button',{name:'Reset to empty inventory'}).click();
+      await page.waitForLoadState('load');
+      const result=await page.evaluate(() => ({
+        recovery:!!phase17AStorageRecovery,
+        stored:localStorage.getItem('caffoot_state'),
+        devices:appState.devices.length
+      }));
+      assert.equal(result.recovery,false,'Successful verified reset must leave recovery mode');
+      assert.equal(result.stored,JSON.stringify(JSON.parse(result.stored)),'Saved empty inventory must be valid JSON');
+      assert.equal(result.devices,0,'Reset must load empty inventory');
+    });
+    await scenario('M-014 ignored recovery reset write keeps original and does not reload', async page => {
+      const original='{invalid json';
+      await page.evaluate(raw => localStorage.setItem('caffoot_state',raw),original);
+      await page.reload({waitUntil:'load'});
+      await page.evaluate(() => {
+        const nativeSetItem=Storage.prototype.setItem;
+        Storage.prototype.setItem=function(key,value) {
+          if (key==='caffoot_state') return;
+          return nativeSetItem.call(this,key,value);
+        };
+      });
+      const dialogs=[];
+      page.on('dialog', async dialog => {
+        dialogs.push({type:dialog.type(),message:dialog.message()});
+        await dialog.accept();
+      });
+      await page.getByRole('button',{name:'Reset to empty inventory'}).click();
+      const result=await page.evaluate(() => ({
+        stored:localStorage.getItem('caffoot_state'),
+        recovery:!!phase17AStorageRecovery,
+        banner:!!document.getElementById('phase17a-recovery')
+      }));
+      assert.equal(result.stored,original,'Ignored write must preserve original stored bytes');
+      assert.equal(result.recovery,true,'Ignored write must not reload out of recovery');
+      assert.equal(result.banner,true,'Recovery controls must remain visible');
+      assert.equal(dialogs.filter(d=>d.type==='confirm').length,2,'Both confirmations must remain');
+      assert.ok(dialogs.some(d=>d.type==='alert' && d.message.includes('Reset failed:')),'Reset failure must be explained');
+    });
     await scenario('M-022 failed new rack save restores selection and stored inventory', async page => {
       const result = await page.evaluate(async () => {
         const beforeSelection = selectedRackId;
