@@ -8966,10 +8966,14 @@ function hierarchyValidateTypes(subnets) {
             if (!target || (!phase13DraggedDeviceId&&!phase13CDraggedAccessoryId)) { phase13ClearDropPreview(); return; }
             event.preventDefault();
             const deviceId = phase13DraggedDeviceId, accessoryId=phase13CDraggedAccessoryId;
+            // Resolve placement before clearing the preview or drag state.
+            // Clearing can change the grid geometry and must not affect the drop.
+            const startU = phase13DropPosition(event,target);
+            const rackId = target.dataset.rackDropId;
             phase13DraggedDeviceId = null;phase13CDraggedAccessoryId=null;
             phase13ClearDropPreview();
-            if(accessoryId)phase13CMoveAccessory(accessoryId,target.dataset.rackDropId,phase13DropPosition(event,target));
-            else phase13MoveDevice(deviceId, target.dataset.rackDropId, phase13DropPosition(event,target));
+            if(accessoryId)phase13CMoveAccessory(accessoryId,rackId,startU);
+            else phase13MoveDevice(deviceId,rackId,startU);
         });
         document.addEventListener('dragend', () => {
             phase17dStopAutoScroll();
