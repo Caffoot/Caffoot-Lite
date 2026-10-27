@@ -1069,7 +1069,7 @@ const { chromium } = require('playwright');
         return {draft,sourceId,source:appState.devices.find(d=>d.id===sourceId),
           copy:appState.devices.find(d=>d.name==='Fixture #164 Duplicate VM'),messages};
       });
-      assert.equal(result.draft.deviceId,null,'Duplicate must create a new identity');
+      assert.equal(result.draft.deviceId == null,true,'Duplicate must not retain an existing device identity');
       assert.equal(result.draft.name,'','Duplicate must require a new name');
       assert.equal(result.draft.primaryIp,'','Duplicate must require a new address');
       assert.equal(result.draft.isVirtual,true);
