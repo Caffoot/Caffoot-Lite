@@ -1536,7 +1536,7 @@ const { chromium } = require('playwright');
           const preview=grid.querySelector('.phase13-drop-preview');
           const previewBottom=preview?.style.bottom;
           const previewHeight=preview?.style.height;
-          empty.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,clientY:0,dataTransfer:new DataTransfer()}));
+          empty.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,clientY:240,dataTransfer:new DataTransfer()}));
           return {start,previewBottom,previewHeight,placed:appState.rackAccessories.find(a=>a.id==='fixture171offsetitem').startU};
         } finally {
           source.dispatchEvent(new DragEvent('dragend',{bubbles:true,dataTransfer:new DataTransfer()}));
