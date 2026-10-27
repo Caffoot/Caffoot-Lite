@@ -3315,7 +3315,7 @@ function hierarchyValidateTypes(subnets) {
             const originalMaker=[...new Set([...Object.values(phase120HardwareSeed).flatMap(m=>Object.keys(m)),'Dell','HP','HPE','Lenovo','ASUS','Apple','Cisco','Samsung','Microsoft','Toshiba'])].find(n=>[n,String(phase120HardwarePreferences()['maker:'+n.toLowerCase()]?.label||n)].some(label=>label.toLowerCase()===String(makerName||'').toLowerCase()))||makerName;
             const seedTypes=Object.entries(phase120HardwareSeed).filter(([type,m])=>Object.keys(m).some(n=>n.toLowerCase()===String(originalMaker||'').toLowerCase())).map(([type])=>type);
             const globalDefaults=['Dell','HP','HPE','Lenovo','ASUS','Apple','Cisco','Samsung','Microsoft','Toshiba'];
-            const isBuiltIn=seedTypes.length>0||globalDefaults.some(n=>n.toLowerCase()===makerName.toLowerCase());
+            const isBuiltIn=seedTypes.length>0||globalDefaults.some(n=>n.toLowerCase()===String(originalMaker||'').toLowerCase());
             const builtinTypes=new Set(seedTypes);
             const editableName=!isBuiltIn;
             if(id&&!entry&&!builtInName)return;
@@ -3337,7 +3337,7 @@ function hierarchyValidateTypes(subnets) {
             const makerName=entry?.manufacturer||builtInName;
             const originalMaker=[...new Set([...Object.values(phase120HardwareSeed).flatMap(m=>Object.keys(m)),'Dell','HP','HPE','Lenovo','ASUS','Apple','Cisco','Samsung','Microsoft','Toshiba'])].find(n=>[n,String(phase120HardwarePreferences()['maker:'+n.toLowerCase()]?.label||n)].some(label=>label.toLowerCase()===String(makerName||'').toLowerCase()))||makerName;
             const seedTypes=Object.entries(phase120HardwareSeed).filter(([type,m])=>Object.keys(m).some(n=>n.toLowerCase()===String(originalMaker||'').toLowerCase())).map(([type])=>type);
-            const builtIn=seedTypes.length>0||['Dell','HP','HPE','Lenovo','ASUS','Apple','Cisco','Samsung','Microsoft','Toshiba'].some(n=>n.toLowerCase()===makerName.toLowerCase());
+            const builtIn=seedTypes.length>0||['Dell','HP','HPE','Lenovo','ASUS','Apple','Cisco','Samsung','Microsoft','Toshiba'].some(n=>n.toLowerCase()===String(originalMaker||'').toLowerCase());
             if(id&&!entry&&!builtInName)return;
             if(remove&&builtIn){showToast('Built-in manufacturers cannot be removed.','error');return;}
             const previousName=makerName?.toLowerCase();
