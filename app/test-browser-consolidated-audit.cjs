@@ -898,6 +898,51 @@ const { chromium } = require('playwright');
       assert.match(result.invalidAllocation.message,/vCPU count must be a positive whole number/);
       assert.equal(result.invalidAllocation.unchanged,true,'Invalid allocation must not create a VM');
     });
+    await scenario('#164 new VM saves and reopens with host and allocated hardware', async page => {
+      const saved=await page.evaluate(async () => {
+        appState.subnets.push({id:'fixture-164-save-subnet',name:'Fixture VM subnet',kind:'network',
+          cidr:'10.88.69.0/29',gateway:'10.88.69.1',vlan:3869});
+        appState.devices.push({id:'fixture-164-save-host',name:'Fixture #164 Save Host',
+          type:'Server - Physical',status:'Active',location:'Unknown',mountType:'Desktop',
+          typeDetails:{serverService_Hypervisor:true,hypervisorProduct:'Proxmox VE'}});
+        openDeviceModal();
+        const set=(id,value)=>{const el=document.getElementById(id);if(!el)throw Error('Missing '+id);
+          el.value=value;el.dispatchEvent(new Event('change',{bubbles:true}));};
+        set('dev-deployment','virtual');
+        set('dev-vm-purpose','Server - Virtual');
+        set('dev-name','Fixture #164 Saved VM');
+        set('dev-virtual-host','fixture-164-save-host');
+        set('dev-subnet','fixture-164-save-subnet');
+        set('dev-ip','10.88.69.3');
+        set('dev-vmVcpu','4');
+        set('dev-vmRamGb','16');
+        set('dev-vmDiskGb','120');
+        set('dev-vmNicCount','2');
+        await handleDeviceSubmit({preventDefault(){}},null);
+        return appState.devices.find(d=>d.name==='Fixture #164 Saved VM')||null;
+      });
+      assert.ok(saved,'New VM must be saved');
+      assert.equal(saved.type,'Server - Virtual');
+      assert.equal(saved.isVirtual,true);
+      assert.equal(saved.virtualHostId,'fixture-164-save-host');
+      assert.equal(String(saved.typeDetails.vmVcpu),'4');
+      assert.equal(String(saved.typeDetails.vmRamGb),'16');
+      assert.equal(String(saved.typeDetails.vmDiskGb),'120');
+      assert.equal(String(saved.typeDetails.vmNicCount),'2');
+      await page.reload({waitUntil:'load'});
+      const reopened=await page.evaluate(() => {
+        const device=appState.devices.find(d=>d.name==='Fixture #164 Saved VM');
+        if(!device)return null;
+        openDeviceModal(device.id);
+        return {device,host:document.getElementById('dev-virtual-host')?.value,
+          vcpu:document.getElementById('dev-vmVcpu')?.value,
+          identityHidden:!!document.getElementById('dev-deployment')?.closest('.hidden')};
+      });
+      assert.ok(reopened,'Saved VM must survive reload');
+      assert.equal(reopened.host,'fixture-164-save-host');
+      assert.equal(reopened.vcpu,'4');
+      assert.equal(reopened.identityHidden,true);
+    });
     await scenario('#134 virtual machine host selector is on General for Add and Edit', async page => {
       const result = await page.evaluate(() => {
         const host={id:'fixture-134-physical',name:'Fixture Hypervisor',type:'Server - Physical',status:'Active',typeDetails:{serverService_Hypervisor:true,hypervisorProduct:'Proxmox VE'}};
