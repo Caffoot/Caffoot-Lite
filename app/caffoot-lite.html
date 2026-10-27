@@ -923,6 +923,12 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 /* Phase 18B polish: one consistent, contained dialog for either equipment type. */
 #modal-content.phase18b-balanced-modal { width: min(620px, calc(100vw - 28px)); max-width: 620px; max-height: min(88dvh, 780px); overflow-y: auto; overscroll-behavior: contain; }
 #modal-content.phase18b-balanced-modal .phase18b-balanced-dialog { min-height: 490px; display: flex; flex-direction: column; gap: 0; }
+/* #175: the accessory form uses its natural compact height, like vertical accessory editing. */
+#modal-content.phase18b-balanced-modal .phase18b-balanced-dialog:has(> #phase13c-form) { min-height: 0; }
+#modal-content.phase18b-balanced-modal .phase18b-balanced-dialog > #phase13c-form { flex: 0 0 auto; gap: 0; }
+#modal-content.phase18b-balanced-modal .phase18b-balanced-dialog > #phase13c-form > div:last-child { margin-top: 0; }
+#modal-content.phase18b-balanced-modal .phase18b-balanced-dialog:has(> #phase13c-form) .phase18b-placement-switch { margin-bottom: 12px; }
+
 #modal-content.phase18b-balanced-modal .phase18b-placement-switch { flex-shrink: 0; margin: 0 0 20px; }
 #modal-content.phase18b-balanced-modal .phase18b-balanced-dialog > form { display: flex; flex-direction: column; flex: 1; gap: 14px; }
 #modal-content.phase18b-balanced-modal .phase18b-balanced-dialog > form > .form-actions,
