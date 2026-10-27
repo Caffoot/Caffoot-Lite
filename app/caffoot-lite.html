@@ -6905,7 +6905,7 @@ function hierarchyValidateTypes(subnets) {
             if(!mount)return;
             const previous=mount.value;
             const options=phase120IsVirtualForm()?['Not Applicable']:phase120SuggestedMounts(type);
-            const chosen=phase120IsVirtualForm()?'Not Applicable':(options.includes(previous) || (previous && phase19BAllowedMounts(type).includes(previous))) ? previous : phase120DefaultMount(type);
+            const chosen=phase120IsVirtualForm() ? 'Not Applicable' : ((options.includes(previous) || (previous && phase19BAllowedMounts(type).includes(previous))) ? previous : phase120DefaultMount(type));
             mount.innerHTML='<option value="" disabled>Select mounting type...</option>'+ (phase120IsVirtualForm()?'<option value="Not Applicable">Not Applicable</option>':phase19BMountOptions(type,chosen));
             mount.value=chosen;
             toggleDeviceMountType();
@@ -7233,6 +7233,8 @@ function hierarchyValidateTypes(subnets) {
                 document.getElementById('phase120-vm-purpose-wrap')?.classList.toggle('hidden',!virtual);
                 if(virtual) phase19BTypeSelect.value=purposeSelect.value;
                 else if(phase19BTypeSelect.value==='Server - Virtual') phase19BTypeSelect.value='Server - Physical';
+                // A hidden purpose must never leave the physical type unselected.
+                if(!virtual && !phase19BTypeSelect.value) phase19BTypeSelect.value='Server - Physical';
                 phase19BRefreshFields();
                 phase120RefreshHardwareSuggestions();
             };
@@ -7601,12 +7603,13 @@ function hierarchyValidateTypes(subnets) {
             const manufacturer = document.getElementById('dev-manufacturer').value.trim();
             const model = document.getElementById('dev-model').value.trim();
             const serialNumber = document.getElementById('dev-serial').value.trim();
+            // Retain historical host metadata on physical conversion without treating it as an active assignment.
             const virtualPlatform = isVirtualServer?(document.getElementById('dev-virtual-platform')?.value||''):(getDeviceById(deviceId)?.virtualPlatform||'');
             const virtualHostId = isVirtualServer?(document.getElementById('dev-virtual-host')?.value||''):(getDeviceById(deviceId)?.virtualHostId||'');
             const existingDeviceHostIsUnchanged = () => !!deviceId && getDeviceById(deviceId)?.virtualHostId === virtualHostId;
             // #164: New virtual servers must have an eligible physical host. Preserve legacy edits.
             if(isVirtualServer && !virtualHostId && (!deviceId || !(getDeviceById(deviceId)?.isVirtual === true || getDeviceById(deviceId)?.type==='Server - Virtual')))return showToast('Select an eligible physical Hypervisor host for the new virtual machine.','error');
-            if(virtualHostId&&!appState.devices.some(d=>d.id===virtualHostId&&d.type==='Server - Physical'&&d.id!==deviceId&&((d.status!=='Retired'&&(d.typeDetails?.serverService_Hypervisor===true||d.serverService_Hypervisor===true))||(existingDeviceHostIsUnchanged()))))return showToast('Select an eligible Hypervisor host, or retain the existing legacy assignment.','error');
+            if(isVirtualServer && virtualHostId&&!appState.devices.some(d=>d.id===virtualHostId&&d.type==='Server - Physical'&&d.id!==deviceId&&((d.status!=='Retired'&&(d.typeDetails?.serverService_Hypervisor===true||d.serverService_Hypervisor===true))||(existingDeviceHostIsUnchanged()))))return showToast('Select an eligible Hypervisor host, or retain the existing legacy assignment.','error');
             if (!['Active','Maintenance','Retired'].includes(status)) return showToast('Invalid device status.', 'error');
             const notes = document.getElementById('dev-notes').value.trim();
             let typeDetails = phase19BReadFields();
