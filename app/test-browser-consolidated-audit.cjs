@@ -898,6 +898,60 @@ const { chromium } = require('playwright');
       assert.match(result.invalidAllocation.message,/vCPU count must be a positive whole number/);
       assert.equal(result.invalidAllocation.unchanged,true,'Invalid allocation must not create a VM');
     });
+    await scenario('#164 VM purpose persistence and reload compatibility', async page => {
+      const purposes=['Desktop','Firewall','Router','NAS','Wireless LAN Controller'];
+      const created=await page.evaluate(async purposes => {
+        appState.subnets.push({id:'fixture-164-purposes-subnet',name:'VM purpose subnet',kind:'network',
+          cidr:'10.88.70.0/27',gateway:'10.88.70.1',vlan:3870});
+        appState.devices.push({id:'fixture-164-purposes-host',name:'VM Purpose Host',
+          type:'Server - Physical',status:'Active',location:'Unknown',mountType:'Desktop',
+          typeDetails:{serverService_Hypervisor:true,hypervisorProduct:'Proxmox VE'}});
+        const results=[];
+        for(let i=0;i<purposes.length;i++){
+          openDeviceModal();
+          const set=(id,value)=>{const el=document.getElementById(id);
+            if(!el)throw Error('Missing '+id);el.value=value;
+            el.dispatchEvent(new Event('change',{bubbles:true}));};
+          set('dev-deployment','virtual');
+          set('dev-vm-purpose',purposes[i]);
+          const name='Fixture #164 Purpose '+i;
+          set('dev-name',name);
+          set('dev-virtual-host','fixture-164-purposes-host');
+          const subnet=document.getElementById('dev-subnet');
+          subnet.add(new Option('VM purpose subnet','fixture-164-purposes-subnet'));
+          set('dev-subnet','fixture-164-purposes-subnet');
+          set('dev-ip','10.88.70.'+(i+3));
+          const messages=[];
+          const toast=showToast;
+          showToast=(message)=>messages.push(String(message));
+          try{await handleDeviceSubmit({preventDefault(){}},null);}
+          finally{showToast=toast;}
+          const device=appState.devices.find(d=>d.name===name);
+          results.push({name,type:device?.type,host:device?.virtualHostId,
+            isVirtual:device?.isVirtual,messages});
+          if(!device)break;
+        }
+        return results;
+      },purposes);
+      assert.equal(created.length,purposes.length,JSON.stringify(created));
+      for(let i=0;i<purposes.length;i++){
+        assert.equal(created[i].type,purposes[i],JSON.stringify(created[i]));
+        assert.equal(created[i].host,'fixture-164-purposes-host');
+        assert.equal(created[i].isVirtual,true);
+      }
+      await page.reload({waitUntil:'load'});
+      const persisted=await page.evaluate(() => appState.devices
+        .filter(d=>d.name?.startsWith('Fixture #164 Purpose '))
+        .map(d=>({name:d.name,type:d.type,host:d.virtualHostId,isVirtual:d.isVirtual})));
+      assert.equal(persisted.length,purposes.length);
+      for(let i=0;i<purposes.length;i++){
+        const device=persisted.find(d=>d.name==='Fixture #164 Purpose '+i);
+        assert.ok(device,'Purpose '+purposes[i]+' must survive reload');
+        assert.equal(device.type,purposes[i]);
+        assert.equal(device.host,'fixture-164-purposes-host');
+        assert.equal(device.isVirtual,true);
+      }
+    });
     await scenario('#164 new VM saves and reopens with host and allocated hardware', async page => {
       const saved=await page.evaluate(async () => {
         appState.subnets.push({id:'fixture-164-save-subnet',name:'Fixture VM subnet',kind:'network',
