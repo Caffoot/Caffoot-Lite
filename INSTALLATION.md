@@ -31,7 +31,7 @@ If your browser downloads the file instead of opening it, use the browser's **Fi
 
 ## What's included in v1.3.1
 
-v1.3.1 adds inventory safety, rack capacity, IP address reservation and physical hypervisor relationship improvements. See the [v1.3.1 release notes](RELEASE-NOTES-1.3.1.md).
+v1.3.1 adds inventory safety, rack capacity, IP address reservation and physical hypervisor relationship improvements. See the [v1.3.1 release notes](docs/archive/release-notes/RELEASE-NOTES-1.3.1.md).
 
 ### Previously delivered in v1.3.0
 
