@@ -8935,11 +8935,13 @@ function hierarchyValidateTypes(subnets) {
             const startU = phase13DropPosition(event,target);
             const rackId = target.dataset.rackDropId;
             const error = accessory?phase13CAccessoryError({...accessory,rackId,face:activeRackFace,startU},accessory.id):validateRackPlacement(device.id, rackId, activeRackFace, startU, startU + height - 1);
-            if (target.classList.contains('phase13-drop-target')) return;
+            // The pointer can move between U positions within one tall rack item.
+            // Refresh the preview even when the drop target element is unchanged.
             phase13ClearDropPreview();
             target.classList.add('phase13-drop-target');
             const preview = document.createElement('div');
             preview.className = 'phase13-drop-preview' + (error ? ' phase13-invalid' : '');
+            preview.style.pointerEvents = 'none';
             preview.style.height = `${height * 40}px`;
             preview.textContent = error ? `${height}U · Unavailable` : `${height}U · Drop here`;
             preview.setAttribute('aria-hidden', 'true');
