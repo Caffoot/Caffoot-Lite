@@ -8915,27 +8915,21 @@ function hierarchyValidateTypes(subnets) {
                 requestAnimationFrame(() => ghost.remove());
             }
         });
-        // A multi-U item is rendered as one tall element. Resolve the actual U
-        // under the pointer rather than always using that element's top U.
+        // Match the working vertical rail: calculate placement from the whole rack
+        // surface, independently of the size of the element beneath the pointer.
         function phase13DropPosition(event,target) {
-            const topU=Number(target.dataset.rackDropU);
-            const accessoryId=target.dataset.rackAccessory;
-            const deviceId=target.dataset.rackDevice;
-            const item=accessoryId?(appState.rackAccessories||[]).find(a=>a.id===accessoryId):
-                deviceId?appState.devices.find(d=>d.id===deviceId):null;
-            if(!item)return topU-(phase13DragGrabOffsetU??0);
-            const height=accessoryId?Number(item.heightU):
-                Math.max(1,Number(item.rackUHeight)||(Number(item.rackUEnd)-Number(item.rackUStart)+1)||1);
-            if(!Number.isFinite(height)||height<=1)return topU;
-            const rect=target.getBoundingClientRect();
-            if(!rect.height)return topU;
-            const offset=Math.min(height-1,Math.max(0,Math.floor((event.clientY-rect.top)/rect.height*height)));
-            // The target's top U is its highest numbered U. Translate the
-            // pointer to the actual hovered U, then preserve the grab offset.
-            return topU-offset-(phase13DragGrabOffsetU??0);
+            const grid=target.closest('[data-rack-u-grid]');
+            if (!grid) return Number(target.dataset.rackDropU);
+            const rect=grid.getBoundingClientRect();
+            const rack=appState.racks.find(r=>r.id===target.dataset.rackDropId);
+            const total=Number(rack?.heightU)||Math.round(rect.height/40);
+            if (!rect.height||!total) return Number(target.dataset.rackDropU);
+            const pointerU=Math.max(1,Math.min(total,Math.floor((rect.bottom-event.clientY)/rect.height*total)+1));
+            return pointerU-(phase13DragGrabOffsetU??0);
         }
         document.addEventListener('dragover', event => {
-            const target = event.target.closest('[data-rack-drop-u]');
+            const grid = event.target.closest('[data-rack-u-grid]');
+            const target = grid?.querySelector('[data-rack-drop-u]');
             if (!target || (!phase13DraggedDeviceId&&!phase13CDraggedAccessoryId)) return;
             event.preventDefault();
             event.dataTransfer.dropEffect = 'move';
@@ -8950,8 +8944,6 @@ function hierarchyValidateTypes(subnets) {
             // Refresh the preview even when the drop target element is unchanged.
             phase13ClearDropPreview();
             target.classList.add('phase13-drop-target');
-            const grid = target.closest('[data-rack-u-grid]');
-            if (!grid) return;
             const preview = document.createElement('div');
             preview.className = 'phase13-drop-preview' + (error ? ' phase13-invalid' : '');
             preview.style.pointerEvents = 'none';
@@ -8964,12 +8956,13 @@ function hierarchyValidateTypes(subnets) {
             grid.appendChild(preview);
         });
         document.addEventListener('dragover', event => {
-            if ((!phase13DraggedDeviceId && !phase13CDraggedAccessoryId) || event.target.closest('[data-rack-drop-u]')) return;
+            if ((!phase13DraggedDeviceId && !phase13CDraggedAccessoryId) || event.target.closest('[data-rack-u-grid]')) return;
             phase13ClearDropPreview();
         });
         document.addEventListener('drop', event => {
             phase17dStopAutoScroll();
-            const target = event.target.closest('[data-rack-drop-u]');
+            const grid = event.target.closest('[data-rack-u-grid]');
+            const target = grid?.querySelector('[data-rack-drop-u]');
             if (!target || (!phase13DraggedDeviceId&&!phase13CDraggedAccessoryId)) { phase13ClearDropPreview(); return; }
             event.preventDefault();
             const deviceId = phase13DraggedDeviceId, accessoryId=phase13CDraggedAccessoryId;
