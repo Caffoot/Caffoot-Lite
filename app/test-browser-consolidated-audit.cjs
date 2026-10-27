@@ -1439,17 +1439,115 @@ const { chromium } = require('playwright');
         const target=document.createElement('div');
         target.dataset.rackAccessory='fixture97drag6';
         target.dataset.rackDropU='6';
-        target.getBoundingClientRect=()=>({top:100,height:240});
-        const resolved=phase13DropPosition({clientY:100+4*40+20},target);
+        target.getBoundingClientRect=()=>({top:80,height:240});
+        const grid=document.createElement('div');
+        grid.dataset.rackUGrid='true';
+        grid.getBoundingClientRect=()=>({top:0,bottom:360,height:360});
+        grid.appendChild(target);
+        document.body.appendChild(grid);
+        const resolved=phase13DropPosition({clientY:300},target);
         const originalFace=activeRackFace;
         activeRackFace='front';
         let moved;
         try { moved=phase13CMoveAccessory('fixture97drag6', 'fixture97drag', resolved); }
-        finally { activeRackFace=originalFace; }
+        finally { activeRackFace=originalFace;grid.remove(); }
         return {resolved,moved,start:appState.rackAccessories.find(a=>a.id==='fixture97drag6')?.startU};
       });
       assert.equal(result.resolved,2,'Pointer over U2 must resolve to U2 rather than top U6');
       assert.equal(result.start,2,'6U accessory should move to U2–U7');
+    });
+    await scenario('#171 multi-U rack drag preview refreshes and movement works in both directions', async page => {
+      const result=await page.evaluate(() => {
+        appState.racks.push({id:'fixture171rack',name:'Fixture 171 rack',heightU:9});
+        appState.rackAccessories.push({id:'fixture171accessory',name:'Fixture 171 six U accessory',
+          type:'shelf',rackId:'fixture171rack',face:'front',startU:1,heightU:6});
+        const target=document.createElement('div');
+        target.dataset.rackDropId='fixture171rack';
+        target.dataset.rackDropU='6';
+        target.dataset.rackAccessory='fixture171accessory';
+        target.getBoundingClientRect=()=>({top:100,height:240});
+        const grid=document.createElement('div');
+        grid.dataset.rackUGrid='true';
+        grid.style.position='relative';
+        grid.style.height='360px';
+        grid.getBoundingClientRect=()=>({top:-40,bottom:320,height:360});
+        grid.appendChild(target);
+        document.body.appendChild(grid);
+        const originalFace=activeRackFace;
+        activeRackFace='front';
+        const dispatch=(type,y)=>target.dispatchEvent(new DragEvent(type,{
+          bubbles:true,cancelable:true,clientY:y,dataTransfer:new DataTransfer()
+        }));
+        const getStart=()=>appState.rackAccessories.find(a=>a.id==='fixture171accessory').startU;
+        try {
+          phase13CDraggedAccessoryId='fixture171accessory';
+          dispatch('dragover',280);
+          const first=grid.querySelector('.phase13-drop-preview');
+          const firstNonInteractive=first?.style.pointerEvents==='none';
+          dispatch('dragover',240);
+          const second=grid.querySelector('.phase13-drop-preview');
+          const refreshed=!!second && second!==first && grid.querySelectorAll('.phase13-drop-preview').length===1;
+          dispatch('drop',280);
+          const down=getStart();
+          phase13CDraggedAccessoryId='fixture171accessory';
+          dispatch('drop',320);
+          const up=getStart();
+          return {firstNonInteractive,refreshed,down,up};
+        } finally {
+          phase13CDraggedAccessoryId=null;
+          activeRackFace=originalFace;
+          phase13ClearDropPreview();
+          grid.remove();
+        }
+      });
+      assert.equal(result.firstNonInteractive,true,'Drag preview must not intercept pointer events');
+      assert.equal(result.refreshed,true,'Preview must refresh within the same multi-U target');
+      assert.equal(result.down,2,'6U accessory must move one U down');
+      assert.equal(result.up,1,'6U accessory must move one U back up');
+    });
+    await scenario('#171 upwards drag preserves grabbed U offset over empty rack positions', async page => {
+      const result=await page.evaluate(() => {
+        appState.racks.push({id:'fixture171offsetrack',name:'Fixture 171 offset rack',heightU:12});
+        appState.rackAccessories.push({id:'fixture171offsetitem',name:'Fixture 171 4U item',
+          type:'shelf',rackId:'fixture171offsetrack',face:'front',startU:3,heightU:4});
+        const source=document.createElement('div');
+        source.dataset.rackAccessory='fixture171offsetitem';
+        source.dataset.rackDropU='6';
+        source.dataset.rackDropId='fixture171offsetrack';
+        source.draggable=true;
+        source.getBoundingClientRect=()=>({top:100,height:160});
+        const grid=document.createElement('div');
+        grid.dataset.rackUGrid='true';
+        grid.style.position='relative';
+        grid.style.height='480px';
+        grid.getBoundingClientRect=()=>({top:0,bottom:480,height:480});
+        grid.appendChild(source);
+        document.body.appendChild(grid);
+        const empty=document.createElement('div');
+        empty.dataset.rackDropU='7';
+        empty.dataset.rackDropId='fixture171offsetrack';
+        grid.appendChild(empty);
+        const originalFace=activeRackFace;
+        activeRackFace='front';
+        try {
+          source.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,clientY:100+3*40+20,dataTransfer:new DataTransfer()}));
+          const start=phase13DropPosition({clientY:240},empty);
+          empty.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,clientY:240,dataTransfer:new DataTransfer()}));
+          const preview=grid.querySelector('.phase13-drop-preview');
+          const previewBottom=preview?.style.bottom;
+          const previewHeight=preview?.style.height;
+          empty.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,clientY:240,dataTransfer:new DataTransfer()}));
+          return {start,previewBottom,previewHeight,placed:appState.rackAccessories.find(a=>a.id==='fixture171offsetitem').startU};
+        } finally {
+          source.dispatchEvent(new DragEvent('dragend',{bubbles:true,dataTransfer:new DataTransfer()}));
+          activeRackFace=originalFace;
+          grid.remove();
+        }
+      });
+      assert.equal(result.start,4,'Moving one U above a 4U item must preserve grab offset');
+      assert.equal(result.previewBottom,'120px','Preview must align with U4 in rack grid coordinates');
+      assert.equal(result.previewHeight,'160px','4U equipment must always have a 4U preview');
+      assert.equal(result.placed,4,'Upward drop must reposition by one U rather than four');
     });
     await scenario('#97 rack CSV export uses accessory-aware report rows', async page => {
       const result=await page.evaluate(async () => {

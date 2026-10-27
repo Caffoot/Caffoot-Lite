@@ -3145,7 +3145,7 @@ function hierarchyValidateTypes(subnets) {
                                     </div>
                                     <div class="phase13-vertical-layout" aria-label="0U vertical accessory rail preview">
                                         ${phase13VRenderRail(currentRack,verticalAccessories,"left")}
-                                        <div class="flex flex-col min-w-0">
+                                        <div class="flex flex-col min-w-0 relative" data-rack-u-grid="true">
                                             ${rackSlotsHtml}
                                         </div>
                                         ${phase13VRenderRail(currentRack,verticalAccessories,"right")}
@@ -8886,10 +8886,19 @@ function hierarchyValidateTypes(subnets) {
         document.addEventListener('dragend',()=>{
             phase13VDraggedId=null;phase13VClearPreview();
         });
+        let phase13DragGrabOffsetU = null;
         document.addEventListener('dragstart', event => {
             const source = event.target.closest('[data-rack-device]');
             const accessory=event.target.closest('[data-rack-accessory]');
             if(!source&&!accessory)return;
+            // Remember which U within the dragged item was grabbed, so moving
+            // across an empty U does not jump by the full equipment height.
+            const grabbed=source||accessory;
+            const grabbedRect=grabbed.getBoundingClientRect();
+            const grabbedHeight=accessory?Number((appState.rackAccessories||[]).find(a=>a.id===accessory.dataset.rackAccessory)?.heightU)||1:
+                Math.max(1,Number(appState.devices.find(d=>d.id===source.dataset.rackDevice)?.rackUHeight)||1);
+            phase13DragGrabOffsetU=grabbedRect.height>0?
+                Math.min(grabbedHeight-1,Math.max(0,Math.floor((event.clientY-grabbedRect.top)/grabbedRect.height*grabbedHeight))):0;
             phase13CDraggedAccessoryId=accessory?.dataset.rackAccessory||null;
             phase13DraggedDeviceId = source?.dataset.rackDevice||null;
             event.dataTransfer.effectAllowed = 'move';
@@ -8906,25 +8915,21 @@ function hierarchyValidateTypes(subnets) {
                 requestAnimationFrame(() => ghost.remove());
             }
         });
-        // A multi-U item is rendered as one tall element. Resolve the actual U
-        // under the pointer rather than always using that element's top U.
+        // Match the working vertical rail: calculate placement from the whole rack
+        // surface, independently of the size of the element beneath the pointer.
         function phase13DropPosition(event,target) {
-            const topU=Number(target.dataset.rackDropU);
-            const accessoryId=target.dataset.rackAccessory;
-            const deviceId=target.dataset.rackDevice;
-            const item=accessoryId?(appState.rackAccessories||[]).find(a=>a.id===accessoryId):
-                deviceId?appState.devices.find(d=>d.id===deviceId):null;
-            if(!item)return topU;
-            const height=accessoryId?Number(item.heightU):
-                Math.max(1,Number(item.rackUHeight)||(Number(item.rackUEnd)-Number(item.rackUStart)+1)||1);
-            if(!Number.isFinite(height)||height<=1)return topU;
-            const rect=target.getBoundingClientRect();
-            if(!rect.height)return topU;
-            const offset=Math.min(height-1,Math.max(0,Math.floor((event.clientY-rect.top)/rect.height*height)));
-            return topU-offset;
+            const grid=target.closest('[data-rack-u-grid]');
+            if (!grid) return Number(target.dataset.rackDropU);
+            const rect=grid.getBoundingClientRect();
+            const rack=appState.racks.find(r=>r.id===target.dataset.rackDropId);
+            const total=Number(rack?.heightU)||Math.round(rect.height/40);
+            if (!rect.height||!total) return Number(target.dataset.rackDropU);
+            const pointerU=Math.max(1,Math.min(total,Math.floor((rect.bottom-event.clientY)/rect.height*total)+1));
+            return pointerU-(phase13DragGrabOffsetU??0);
         }
         document.addEventListener('dragover', event => {
-            const target = event.target.closest('[data-rack-drop-u]');
+            const grid = event.target.closest('[data-rack-u-grid]');
+            const target = grid?.querySelector('[data-rack-drop-u]');
             if (!target || (!phase13DraggedDeviceId&&!phase13CDraggedAccessoryId)) return;
             event.preventDefault();
             event.dataTransfer.dropEffect = 'move';
@@ -8935,34 +8940,45 @@ function hierarchyValidateTypes(subnets) {
             const startU = phase13DropPosition(event,target);
             const rackId = target.dataset.rackDropId;
             const error = accessory?phase13CAccessoryError({...accessory,rackId,face:activeRackFace,startU},accessory.id):validateRackPlacement(device.id, rackId, activeRackFace, startU, startU + height - 1);
-            if (target.classList.contains('phase13-drop-target')) return;
+            // The pointer can move between U positions within one tall rack item.
+            // Refresh the preview even when the drop target element is unchanged.
             phase13ClearDropPreview();
             target.classList.add('phase13-drop-target');
             const preview = document.createElement('div');
             preview.className = 'phase13-drop-preview' + (error ? ' phase13-invalid' : '');
+            preview.style.pointerEvents = 'none';
             preview.style.height = `${height * 40}px`;
+            // Rack grid runs from U1 at its bottom. Use that common origin
+            // regardless of the height of the element receiving dragover.
+            preview.style.bottom = `${(startU-1)*40}px`;
             preview.textContent = error ? `${height}U · Unavailable` : `${height}U · Drop here`;
             preview.setAttribute('aria-hidden', 'true');
-            target.appendChild(preview);
+            grid.appendChild(preview);
         });
         document.addEventListener('dragover', event => {
-            if ((!phase13DraggedDeviceId && !phase13CDraggedAccessoryId) || event.target.closest('[data-rack-drop-u]')) return;
+            if ((!phase13DraggedDeviceId && !phase13CDraggedAccessoryId) || event.target.closest('[data-rack-u-grid]')) return;
             phase13ClearDropPreview();
         });
         document.addEventListener('drop', event => {
             phase17dStopAutoScroll();
-            const target = event.target.closest('[data-rack-drop-u]');
+            const grid = event.target.closest('[data-rack-u-grid]');
+            const target = grid?.querySelector('[data-rack-drop-u]');
             if (!target || (!phase13DraggedDeviceId&&!phase13CDraggedAccessoryId)) { phase13ClearDropPreview(); return; }
             event.preventDefault();
             const deviceId = phase13DraggedDeviceId, accessoryId=phase13CDraggedAccessoryId;
+            // Resolve placement before clearing the preview or drag state.
+            // Clearing can change the grid geometry and must not affect the drop.
+            const startU = phase13DropPosition(event,target);
+            const rackId = target.dataset.rackDropId;
             phase13DraggedDeviceId = null;phase13CDraggedAccessoryId=null;
             phase13ClearDropPreview();
-            if(accessoryId)phase13CMoveAccessory(accessoryId,target.dataset.rackDropId,phase13DropPosition(event,target));
-            else phase13MoveDevice(deviceId, target.dataset.rackDropId, phase13DropPosition(event,target));
+            if(accessoryId)phase13CMoveAccessory(accessoryId,rackId,startU);
+            else phase13MoveDevice(deviceId,rackId,startU);
         });
         document.addEventListener('dragend', () => {
             phase17dStopAutoScroll();
             phase13DraggedDeviceId = null;phase13CDraggedAccessoryId=null;
+            phase13DragGrabOffsetU=null;
             phase13ClearDropPreview();
         });
 
