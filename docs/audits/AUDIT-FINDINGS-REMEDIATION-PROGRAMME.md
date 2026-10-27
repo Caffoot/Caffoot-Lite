@@ -102,7 +102,7 @@ Statuses here are intentionally conservative. **Corrected in main** means merged
 | M-012 | Integrity repair safety and failed save handling | Corrected in main, targeted Chromium pass, PR #77 | Carry into maintenance release verification |
 | M-013 | Rack accessories omitted from occupancy reporting | Proposed improvement | Agree common occupancy rules |
 | M-014 | Unclear recovery reset feedback on ignored storage writes | Focused fix verified on draft PR #185 | Reset now verifies exact storage readback before reload and reports ignored writes; Chromium and other checks passed at `0568418`. Full WF-01 remains partial. |
-| M-015 | Visibility of automatic inventory normalisation | Proposed improvement | Decide what changes need explanation |
+| M-015 | Visibility of automatic inventory normalisation | Design resolved, no application change required (#98) | Product owner agreed safe routine normalisation remains silent. Startup normalises in memory without overwriting stored bytes; invalid data enters protected recovery, and failed saves retain existing errors. Revisit only if a concrete unreported harmful change is reproduced. |
 | M-016 | Published v1.3.0 documentation consistency | Historical documentation finding | Confirm final disposition against original register |
 | M-017 | Readable but invalid inventory at startup | Targeted fix verified on PR #139 | Protected recovery browser test passed; full WF-01 gate remains partial |
 | M-018 | Failed save after creating a location | Corrected in main, targeted Chromium pass, PR #79 | Carry into maintenance release verification |
