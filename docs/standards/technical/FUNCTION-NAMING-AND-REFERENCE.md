@@ -1,7 +1,7 @@
 # Caffoot Lite Function Naming and Reference
 
-**Status:** Draft documentation standard and initial source-verified examples. No application functions renamed.
-**Baseline:** v1.3.0 source inspection on `main`; exact published release provenance remains to be confirmed.
+**Current status (28 October 2026):** Historical naming inventory and proposed mappings are retained below. Approved descriptive renames and source comment clean-up are implemented and verified on draft PR #195, not yet merged. See the implementation checkpoints later in this document and the [developer coding and naming reference](../coding/DEVELOPER-CODING-AND-NAMING-REFERENCE.md).
+**Historical baseline:** v1.3.0 source inspection on `main`; published HTML provenance was reconciled on 22 October 2026 as recorded below.
 
 ## Published HTML provenance reconciliation, 22 October 2026
 
