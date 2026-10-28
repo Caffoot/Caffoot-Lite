@@ -7,6 +7,10 @@
 
 The published `v1.3.0` tag and current `main` have the same `app/caffoot-lite.html` blob SHA `e8a24f6370a1bb572287aad91a314a3e4a189d94` (8,634 lines). This confirms the HTML source used for the earlier `main` inspections matches the published HTML. The function reference remains a **partial, evolving inventory**, not an exhaustive declaration-by-declaration audit. Significant function callers, responsibilities and P11 source comments still require completion review. No functions have been renamed.
 
+## Public-facing source comment standard (product-owner decision, 28 October 2026)
+
+All source comments are public-facing technical documentation and must use clear **British English**. Write for a developer new to Caffoot Lite, returning after a long absence, or learning to code. Do not assume knowledge of the project's development phases, audit identifiers, historical conversations or internal shorthand. Explain unfamiliar terms where useful. Function names should describe actual behaviour rather than the phase in which they were introduced. Comments should explain **why** a decision or safeguard exists, especially data preservation, compatibility, recovery and rollback; do not merely paraphrase a self-explanatory statement. Describe implemented behaviour accurately, not aspirations. Avoid unexplained phase, P11 or M-number references; retain traceability in the audit records rather than making it a prerequisite for understanding source code. Keep comments in sync with changes, concise enough to remain useful, and approachable to less experienced developers. Renaming existing functions requires a separate, explicit product-owner approval after caller/dependency review and proportionate focused verification; this documentation decision alone authorises no application change.
+
 ## Purpose
 
 Future contributors should understand what each important function does without needing to know the development phase in which it was introduced. Existing historical names must remain documented until an approved and tested change replaces them.
