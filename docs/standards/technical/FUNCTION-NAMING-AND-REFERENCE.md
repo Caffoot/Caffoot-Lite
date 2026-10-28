@@ -280,6 +280,15 @@ Seven phase-prefixed functions have no other exact-name occurrence, including `p
 
 **#192 assessment boundary:** No confirmed removable code, measurable performance bottleneck or safely shared duplicated block has yet been demonstrated. Next examine function bodies, caller paths, nested scopes and data-preservation requirements. Refactoring requires separately approved scope and focused verification. No application source changed; no tests executed.
 
+### #192 conversion compatibility finding, 28 October 2026
+
+A deeper source inspection distinguishes **two different historical conversion paths**:
+
+- `phase130ConfirmDeviceConversion()` (around line 7548) builds a conversion confirmation dialogue and has no other exact-name reference. Its `phase130ResolveDeviceConversion()` helper still has event-dispatch and Escape-key callers, apparently supporting that dialogue. This is a **candidate for reachability investigation**, not yet approved redundant code.
+- `phase130RestoreHistory()` (around line 6331) is a separate **live historical-configuration restoration function**. It invokes `phase130ObsoleteDeviceFields()`, asks for confirmation using `phase130ConfirmRestore()`, and explicitly describes a device-type change to the user. The restore function must be reviewed against the agreed immutable device-type rule and historical data-preservation requirements before changing either code path. Do not conflate it with the apparently uncalled conversion dialogue.
+
+**Open question for product-owner decision after investigation:** should historical configuration restoration be allowed to change the device type, or should it only restore compatible fields while retaining the current immutable type? No change authorised or made; no tests run. Static reference evidence alone does not prove runtime reachability.
+
 ## Purpose
 
 Future contributors should understand what each important function does without needing to know the development phase in which it was introduced. Existing historical names must remain documented until an approved and tested change replaces them.
