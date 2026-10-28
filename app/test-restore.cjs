@@ -35,7 +35,9 @@ async function scenario(mode) {
   };
   ctx = vm.createContext({
     appState:original, localStorage:storage, STORAGE_KEY:key, SAFETY_SNAPSHOT_KEY:safety,
-    nextAuditReason:'',auditBaseline:JSON.stringify(original),
+    nextAuditReason:'',auditBaseline:JSON.stringify(original),auditHistory:[],AUDIT_KEY:'audit_test',
+    restoreAuditAfterRolledBackOperation:()=>{},
+    phase16CAPMountConflicts:()=>[],
     phase17AStorageRecovery:null,phase17ARecoveryBanner:()=>{ctx.bannerShown=true;},
     selectedSubnetId:'',selectedRackId:'',
     FileReader:FakeReader,
