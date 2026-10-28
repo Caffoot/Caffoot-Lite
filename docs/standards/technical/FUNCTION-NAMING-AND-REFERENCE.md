@@ -256,6 +256,22 @@ This is a **first-pass heuristic grouping based on existing identifier words**, 
 
 **Next:** Inspect implementation and all reference forms within each group, produce the full proposed rename mapping, and highlight ambiguous or externally referenced names for owner review. This grouping does not authorise renaming.
 
+### #101 zero-reference exceptions inspected, 28 October 2026
+
+Seven named declarations had no other exact literal identifier occurrence in the current HTML. **This is not evidence that removal is safe**; their bodies were inspected to identify the intended responsibilities and any legacy or compatibility implications. The names below are *descriptive review candidates only*, not approved changes.
+
+| Existing name | Source-inspected responsibility | Suggested descriptive name | Disposition |
+| --- | --- | --- | --- |
+| `phase12Overlap()` | Compare parsed CIDR network ranges for overlap | `doIpv4SubnetsOverlap()` | Check whether superseded by another validator; preserve until dependency review |
+| `phase11CPanelHTML()` | Generate an integrity-repair preview panel | `renderIntegrityRepairPreviewHtml()` | Verify whether panel is reached through another renderer or obsolete path |
+| `phase13GFascia()` | Generate device fascia graphics using configured or default presets | `renderDeviceFasciaHtml()` | Check newer graphics path before considering removal |
+| `phase11BIntegrityIssues()` | Collect inventory integrity issues including IP and rack relationships | `findInventoryIntegrityIssues()` | Safety-related; do not remove merely because no direct call is found |
+| `phase130ConfirmDeviceConversion()` | Open an asynchronous device-conversion confirmation dialogue | `confirmDeviceTypeConversion()` | Historical conversion workflow; investigate against agreed immutable device-type rules before any change |
+| `phase11SafetyPanelHTML()` | Generate the backup and restore safety information panel | `renderBackupSafetyPanelHtml()` | Preserve safety messaging until UI reachability is established |
+| `phase13DFascia()` | Generate rack accessory fascia graphics, including patch and brush panels | `renderRackAccessoryFasciaHtml()` | Check rack renderer references and historical compatibility |
+
+**Important:** The source contains both historical device-conversion logic and newer rules governing device types. Their coexistence is a reason for careful review, not permission to delete or rewrite them. No function was removed or renamed. No application tests were run. All seven require caller and reachability verification before an implementation proposal.
+
 ## Purpose
 
 Future contributors should understand what each important function does without needing to know the development phase in which it was introduced. Existing historical names must remain documented until an approved and tested change replaces them.
