@@ -37,9 +37,9 @@ function inspect(read, expected, mode, published) {
 function publicationGate(read, version) {
   const errors = inspect(read, version, 'published');
   const required = {
-    'README.md': [/\\*\\*Development status:\\*\\*/i],
-    'USER-GUIDE.md': [/\\*\\*Current published version:\\*\\*\\s*v(\\d+\\.\\d+\\.\\d+)/i],
-    ['RELEASE-NOTES-' + version + '.md']: [/\\*\\*Status:\\*\\*\\s*Published stable release/i]
+    'README.md': [/\*\*Development status:\*\*/i],
+    'USER-GUIDE.md': [/\*\*Current published version:\*\*\s*v(\d+\.\d+\.\d+)/i],
+    ['RELEASE-NOTES-' + version + '.md']: [/\*\*Status:\*\*\s*Published stable release/i]
   };
   for (const [file, patterns] of Object.entries(required)) {
     let content;
@@ -54,7 +54,7 @@ function publicationGate(read, version) {
     let content;
     try { content = read(file); } catch (_) { continue; }
     const opening = content.slice(0, 1800);
-    if (/\\b(?:candidate release notes|release preparation|not yet published|under review|not a publication announcement|in preparation)\\b/i.test(opening))
+    if (/\b(?:candidate release notes|release preparation|not yet published|under review|not a publication announcement|in preparation)\b/i.test(opening))
       errors.push(file + ': preparation wording remains in publication introduction');
   }
   return errors;
