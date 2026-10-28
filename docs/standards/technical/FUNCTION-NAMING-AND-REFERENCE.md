@@ -30,6 +30,20 @@ All source comments are public-facing technical documentation and must use clear
 
 **Next:** Inspect each high-priority function's implementation, callers, references in HTML event handlers and compatibility constraints before suggesting a specific descriptive name. Document the purpose and safeguards in British English, readable by a newcomer. Do not bulk rename or run application tests for this documentation checkpoint. Reconcile P11 comments against current source rather than transplanting obsolete v1.3.0 line references.
 
+### #101 first five implementation-verified naming candidates, 28 October 2026
+
+The following definitions were inspected in the current `release/v1.3.3` HTML, rather than inferred from their names. Suggested names are **proposals only**, not implemented aliases or approved renames. Reference counts in the earlier checkpoint are textual estimates, not verified runtime caller counts.
+
+| Existing function | Verified responsibility | Suggested name | Important dependency or distinction |
+| --- | --- | --- | --- |
+| `phase19BSoftware()` | Returns the saved installed-software array, or an empty array if malformed or absent | `getInstalledSoftware()` | Reads `appState.installedSoftware`; does not itself filter archived entries |
+| `phase120HardwarePreferences()` | Returns the stored hardware seed preferences object, or an empty object if invalid | `getHardwareSeedPreferences()` | Uses `isPlainObject`; fallback is not a persisted repair |
+| `phase120HardwareCatalogue()` | Returns stored hardware catalogue array, or an empty array if missing or invalid | `getHardwareCatalogue()` | Reads `appState.hardwareCatalogue`; does not itself filter types |
+| `phase12IpString(n)` | Converts a numeric IPv4 value into four dotted decimal octets | `formatIpv4Address()` | Input is expected to be a numeric IPv4 representation; no validation is performed here |
+| `phase120SoftwareOptions()` | Combines active configured software with non-overridden built-in suggestions and sorts labels | `getAvailableSoftwareOptions()` | Depends on `phase19BSoftware()`, `phase120BuiltinSoftwareKey()` and suggestion metadata; archived configured entries are omitted |
+
+**Caller-review boundary:** Definitions and literal invocation locations have been inspected. Event-handler strings, aliasing, dynamic invocation and the complete transitive dependency graph have **not** been verified. Before any approved rename, check those references and update all callers together, then run only affected focused checks. No behaviour or public data schema changes are proposed.
+
 ## Purpose
 
 Future contributors should understand what each important function does without needing to know the development phase in which it was introduced. Existing historical names must remain documented until an approved and tested change replaces them.
