@@ -10,7 +10,7 @@ function extract(start, end) {
   return html.slice(a, b);
 }
 const loader = extract('function loadStoredState()', 'let appState = loadStoredState();');
-const guard = extract('function phase16CRejectUnsafeKeys(', 'function phase11ValidateBackupShape(');
+const guard = extract('function rejectUnsafeBackupKeys(', 'function validateBackupStructure(');
 function run(json) {
   const store = new Map([['caffoot_state', json]]);
   const context = vm.createContext({
@@ -21,8 +21,8 @@ function run(json) {
     normaliseState: value => value,
     console: {error: () => {}}
   });
-  vm.runInContext('let phase17AStorageRecovery = null;\n' + loader + '\n' + guard + '\n' +
-    'globalThis.testResult = loadStoredState(); globalThis.testRecovery = phase17AStorageRecovery;', context);
+  vm.runInContext('let storageRecoveryFailure = null;\n' + loader + '\n' + guard + '\n' +
+    'globalThis.testResult = loadStoredState(); globalThis.testRecovery = storageRecoveryFailure;', context);
   return {result:context.testResult, recovery:context.testRecovery, stored:store.get('caffoot_state')};
 }
 const valid = '{"devices":[{"id":"legacy","name":"Legacy"}],"subnets":[],"racks":[],"ipAllocations":{}}';

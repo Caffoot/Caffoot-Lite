@@ -6,6 +6,8 @@ Free, open-source, offline IP address management (IPAM), network inventory and r
 
 Keep track of devices, IP addresses, subnets, VLANs, locations and network racks in one place. Caffoot Lite runs as a **single HTML file** in a modern browser. No account, Docker, database or web server is needed for the published standalone release.
 
+**Development status:** Caffoot Lite is actively developed and maintained. The latest published stable release is v1.3.3. Planned future Docker/database capabilities are not available in the published standalone application. See the [roadmap](ROADMAP.md) and [open issues](https://github.com/Caffoot/Caffoot-Lite/issues) for ongoing work.
+
 ## Get started in minutes
 
 **[Download the latest stable Caffoot Lite release](https://github.com/Caffoot/Caffoot-Lite/releases/latest)**
@@ -78,13 +80,14 @@ Please read [SECURITY.md](SECURITY.md) before considering a hosted deployment. A
 - [User guide](USER-GUIDE.md)
 - [Feature overview](docs/features/FEATURE-OVERVIEW.md)
 - [Roadmap](ROADMAP.md)
-- [v1.3.2 release notes](RELEASE-NOTES-1.3.2.md)
+- [v1.3.3 release notes](RELEASE-NOTES-1.3.3.md)
+- [Published v1.3.2 release notes](RELEASE-NOTES-1.3.2.md)
 - [Archived v1.3.1 release notes](docs/archive/release-notes/RELEASE-NOTES-1.3.1.md)
 - [Historical release notes](docs/archive/release-notes/README.md)
 - [Documentation index](docs/README.md)
 - [Contributing](CONTRIBUTING.md) and [backup format contract](BACKUP-FORMAT.md)
 
-**Current release:** [v1.3.2](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.2), published 27 October 2026.
+**Current release:** [v1.3.3](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3). Earlier published releases remain available.
 
 Older versions such as v1.0.3 and v1.1.0 may report “Could not check releases” because of an update checker compatibility issue. This does not change inventory. Back up your data and use the [official releases](https://github.com/Caffoot/Caffoot-Lite/releases) and [upgrade instructions](INSTALLATION.md) to update manually.
 

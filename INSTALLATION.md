@@ -12,13 +12,11 @@ Caffoot Lite is a standalone HTML application. You do **not** need Docker, Node.
 
 **Export JSON backups regularly and ALWAYS before upgrades, moves, renames or resets.** Save them outside the browser and test restoration. The backup may include sensitive network information.
 
-**Release notes:** [v1.3.2 release notes](RELEASE-NOTES-1.3.2.md). Published release assets and checksums were verified by the product owner; see [issue #107](https://github.com/Caffoot/Caffoot-Lite/issues/107) for evidence and remaining documentation reconciliation.
-
-**Current published stable release:** [v1.3.2](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.2), published 27 October 2026. Earlier releases remain available on GitHub.
+**Current published stable release:** [v1.3.3](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3). Earlier releases remain available on GitHub.
 
 ## Download the released application
 
-Use the [latest stable release](https://github.com/Caffoot/Caffoot-Lite/releases/latest) to download the current published application. v1.3.2 builds on v1.3.1 and v1.3.0, which includes the earlier Devices & Intelligence improvements and updated Network Rack management.
+Use the [latest stable release](https://github.com/Caffoot/Caffoot-Lite/releases/latest) to download the current published application. v1.3.3 completes the final standalone HTML-only maintenance release, building on v1.3.2 device catalogue, virtual machine and hypervisor refinements.
 
 1. Visit the [Caffoot Lite GitHub repository](https://github.com/Caffoot/Caffoot-Lite).
 2. Open **Releases** and select the latest stable release.
@@ -29,7 +27,15 @@ Use the [latest stable release](https://github.com/Caffoot/Caffoot-Lite/releases
 
 If your browser downloads the file instead of opening it, use the browser's **File → Open File** option to open the saved `.html` file.
 
-## What's included in v1.3.1
+## What's included in v1.3.3
+
+v1.3.3 includes the agreed maintenance corrections, clearer function naming and targeted data-integrity verification. See the [v1.3.3 release notes](RELEASE-NOTES-1.3.3.md).
+
+### Previously delivered in v1.3.2
+
+v1.3.2 adds device catalogue refinements, virtual machine and hypervisor improvements, and theme updates. See the [v1.3.2 release notes](RELEASE-NOTES-1.3.2.md).
+
+### Previously delivered in v1.3.1
 
 v1.3.1 adds inventory safety, rack capacity, IP address reservation and physical hypervisor relationship improvements. See the [v1.3.1 release notes](docs/archive/release-notes/RELEASE-NOTES-1.3.1.md).
 
@@ -79,7 +85,7 @@ The safe update guide and backups work offline. Newer backup schemas require a c
 
 ## Complete release package
 
-For the current published **v1.3.1** release, open the [v1.3.1 release page](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.1) and download the versioned `Caffoot-Lite-1.3.1.zip` asset, or use the standalone `Caffoot-Lite.html` asset. Extract the ZIP before opening the HTML file in your browser. Keep the included guides and licence information with the package. Where provided, use `SHA256SUMS` to check downloaded file integrity. The standalone HTML includes software notices in About Caffoot Lite, available offline. Example backups under `app/fixtures/` are fictional demonstrations; importing one replaces the current inventory after confirmation. For the earlier package, see the [historical v1.2.0 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.2.0).
+For the current published **v1.3.3** release, open the [v1.3.3 release page](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3) and download the versioned `Caffoot-Lite-1.3.3.zip` asset, or use the standalone `Caffoot-Lite.html` asset. Extract the ZIP before opening the HTML file in your browser. Keep the included guides and licence information with the package. Where provided, use `SHA256SUMS` to check downloaded file integrity. The standalone HTML includes software notices in About Caffoot Lite, available offline. Example backups under `app/fixtures/` are fictional demonstrations; importing one replaces the current inventory after confirmation. For the earlier package, see the [historical v1.2.0 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.2.0).
 
 ### Local file storage scope
 

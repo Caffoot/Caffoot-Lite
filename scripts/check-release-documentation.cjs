@@ -33,6 +33,33 @@ function inspect(read, expected, mode, published) {
   }
   return errors;
 }
+
+function publicationGate(read, version) {
+  const errors = inspect(read, version, 'published');
+  const required = {
+    'README.md': [/\*\*Development status:\*\*/i],
+    'USER-GUIDE.md': [/\*\*Current published version:\*\*\s*v(\d+\.\d+\.\d+)/i],
+    ['RELEASE-NOTES-' + version + '.md']: [/\*\*Status:\*\*\s*Published stable release/i]
+  };
+  for (const [file, patterns] of Object.entries(required)) {
+    let content;
+    try { content = read(file); } catch (_) { errors.push(file + ': missing or unreadable'); continue; }
+    for (const pattern of patterns) {
+      const match = content.match(pattern);
+      if (!match) errors.push(file + ': missing publication statement');
+      else if (match[1] && match[1] !== version) errors.push(file + ': claims v' + match[1] + ', expected v' + version);
+    }
+  }
+  for (const file of ['README.md', 'INSTALLATION.md', 'USER-GUIDE.md', 'RELEASE-NOTES-' + version + '.md']) {
+    let content;
+    try { content = read(file); } catch (_) { continue; }
+    const opening = content.slice(0, 1800);
+    if (/\b(?:candidate release notes|release preparation|not yet published|under review|not a publication announcement|in preparation)\b/i.test(opening))
+      errors.push(file + ': preparation wording remains in publication introduction');
+  }
+  return errors;
+}
+
 function parse(args) {
   const mode = args.includes('--candidate') ? 'candidate' : 'published';
   if (args.includes('--candidate') && args.includes('--published')) throw Error('Choose one mode');
@@ -114,6 +141,21 @@ if (process.argv.includes('--audit-self-test')) {
   const errors = auditCoverage(file => fs.readFileSync(path.join(root, file), 'utf8'));
   if (errors.length) { errors.forEach(x => console.error('FAIL: ' + x)); process.exitCode = 1; }
   else console.log('PASS: required audit documents, findings, workflows and imported rack scenarios');
+ } else if (process.argv.includes('--publication-self-test')) {
+  const version = '1.3.3';
+  const docs = {
+    'README.md': '**Development status:** Actively developed.\n**Current release:** [v1.3.3](url)',
+    'INSTALLATION.md': '**Current published stable release:** [v1.3.3](url)',
+    'SECURITY.md': 'latest published stable release is **[v1.3.3](url)**',
+    'ROADMAP.md': '**Current published stable release:** [v1.3.3](url)',
+    'USER-GUIDE.md': '**Current published version:** v1.3.3',
+    'RELEASE-NOTES-1.3.3.md': '# Caffoot Lite v1.3.3\n**Status:** Published stable release'
+  };
+  const read = file => docs[file];
+  assert.deepEqual(publicationGate(read, version), []);
+  assert(publicationGate(file => file === 'USER-GUIDE.md' ? '**Current published version:** v1.3.2' : read(file), version).some(x => x.includes('USER-GUIDE.md')));
+  assert(publicationGate(file => file === 'INSTALLATION.md' ? '**Release preparation:** v1.3.3 is under review.\n' + read(file) : read(file), version).some(x => x.includes('preparation wording')));
+  console.log('PASS: publication gate positive, stale version and preparation wording fixtures');
 } else if (process.argv.includes('--self-test')) {
   const fixtures = {
     'README.md': '**Current release:** [v1.3.0](url)\nHistorical v1.2.1',
@@ -135,7 +177,8 @@ if (process.argv.includes('--audit-self-test')) {
 } else {
   try {
     const {mode, version, published} = parse(process.argv.slice(2));
-    const errors = inspect(file => fs.readFileSync(path.join(root, file), 'utf8'), version, mode, published);
+    const read = file => fs.readFileSync(path.join(root, file), 'utf8');
+    const errors = process.argv.includes('--publication') ? publicationGate(read, version) : inspect(read, version, mode, published);
     if (errors.length) { errors.forEach(error => console.error('FAIL: ' + error)); process.exitCode = 1; }
     else console.log('PASS: ' + mode + ' release documentation version statements checked.');
   } catch (error) { console.error('FAIL: ' + error.message); process.exitCode = 1; }

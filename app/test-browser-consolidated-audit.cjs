@@ -35,10 +35,10 @@ const { chromium } = require('playwright');
       });
       await page.reload({waitUntil:'load'});
       const result = await page.evaluate(() => ({
-        protected:!!phase17AStorageRecovery,
-        raw:phase17AStorageRecovery?.raw,
+        protected:!!storageRecoveryFailure,
+        raw:storageRecoveryFailure?.raw,
         stored:localStorage.getItem('caffoot_state'),
-        banner:!!document.getElementById('phase17a-recovery'),
+        banner:!!document.getElementById('storage-recovery-banner'),
         saved:saveState()
       }));
       assert.equal(result.protected,true,'Invalid readable inventory must enter recovery');
@@ -50,12 +50,12 @@ const { chromium } = require('playwright');
     await scenario('M-014 recovery reset verifies persisted empty inventory', async page => {
       await page.evaluate(() => localStorage.setItem('caffoot_state', '{invalid json'));
       await page.reload({waitUntil:'load'});
-      assert.equal(await page.locator('#phase17a-recovery').count(),1);
+      assert.equal(await page.locator('#storage-recovery-banner').count(),1);
       page.on('dialog', dialog => dialog.accept());
       await page.getByRole('button',{name:'Reset to empty inventory'}).click();
       await page.waitForLoadState('load');
       const result=await page.evaluate(() => ({
-        recovery:!!phase17AStorageRecovery,
+        recovery:!!storageRecoveryFailure,
         stored:localStorage.getItem('caffoot_state'),
         devices:appState.devices.length
       }));
@@ -82,8 +82,8 @@ const { chromium } = require('playwright');
       await page.getByRole('button',{name:'Reset to empty inventory'}).click();
       const result=await page.evaluate(() => ({
         stored:localStorage.getItem('caffoot_state'),
-        recovery:!!phase17AStorageRecovery,
-        banner:!!document.getElementById('phase17a-recovery')
+        recovery:!!storageRecoveryFailure,
+        banner:!!document.getElementById('storage-recovery-banner')
       }));
       assert.equal(result.stored,original,'Ignored write must preserve original stored bytes');
       assert.equal(result.recovery,true,'Ignored write must not reload out of recovery');
@@ -124,7 +124,7 @@ const { chromium } = require('playwright');
     await scenario('M-017 dashboard service label preserves raw drilldown key', async page => {
       const result = await page.evaluate(() => {
         appState.devices.push({id:'hypervisor-label-fixture',name:'Hypervisor label fixture',type:'Server - Physical',typeDetails:{serverService_Hypervisor:true}});
-        phase14DeviceTab='overview';
+        activeDeviceDetailsTab='overview';
         deviceIntelligenceTab='software';
         const html=renderDevicesHTML();
         return {html,storedKey:appState.devices.at(-1).typeDetails.serverService_Hypervisor};
@@ -178,6 +178,69 @@ const { chromium } = require('playwright');
       assert.equal(await page.evaluate(() => localStorage.getItem('caffoot_state')),before.stored,
         'Rejected and cancelled imports must preserve inventory across reload');
     });
+    // #103: only the missing browser import acceptance paths, not the full historical matrix.
+    for (const kind of ['accessory-restore','legacy-no-accessories','device-accessory-collision',
+      'device-device-collision','malformed-accessory-record','independent-rails']) {
+      await scenario('#103 rack import ' + kind, async page => {
+        const initial=await page.evaluate(() => {
+          if(!saveState()) throw Error('Cannot establish fictional rack import baseline');
+          return {stored:localStorage.getItem('caffoot_state'),
+            safety:localStorage.getItem('caffoot_phase11_pre_restore')};
+        });
+        const candidate=JSON.parse(initial.stored);
+        candidate.racks=[{id:'fixture103rack',name:'Fictional rack 103',heightU:12}];
+        candidate.devices=[];
+        candidate.rackAccessories=[{id:'fixture103patch',name:'Fictional patch',
+          type:'patch',rackId:'fixture103rack',face:'front',startU:2,heightU:1}];
+        if(kind==='legacy-no-accessories') delete candidate.rackAccessories;
+        if(kind==='device-accessory-collision'||kind==='device-device-collision') {
+          candidate.devices=[{id:'fixture103device1',name:'Fictional server one',
+            type:'Server - Physical',mountType:'Rack Mounted',rackId:'fixture103rack',face:'front',rackUStart:2,rackUEnd:3,rackUHeight:2}];
+          if(kind==='device-device-collision') {
+            candidate.rackAccessories=[];
+            candidate.devices.push({id:'fixture103device2',name:'Fictional server two',
+              type:'Server - Physical',mountType:'Rack Mounted',rackId:'fixture103rack',face:'front',rackUStart:3,rackUEnd:3,rackUHeight:1});
+          }
+        }
+        if(kind==='malformed-accessory-record') candidate.rackAccessories=[null];
+        if(kind==='independent-rails') candidate.rackAccessories=[
+          {id:'fixture103left',name:'Fictional left rail',type:'pdu_vertical',
+            rackId:'fixture103rack',face:'front',side:'left',startU:1,heightU:12},
+          {id:'fixture103right',name:'Fictional right rail',type:'cable_vertical',
+            rackId:'fixture103rack',face:'front',side:'right',startU:1,heightU:12}
+        ];
+        const reject=['device-accessory-collision','device-device-collision','malformed-accessory-record'].includes(kind);
+        let confirms=0;
+        page.on('dialog',dialog=>{if(dialog.type()==='confirm')confirms++;return dialog.accept()});
+        await page.locator('#import-file').setInputFiles({
+          name:'fictional-103-'+kind+'.json',mimeType:'application/json',
+          buffer:Buffer.from(JSON.stringify(candidate))
+        });
+        await page.waitForFunction(()=>document.getElementById('import-file').value==='');
+        const outcome=await page.evaluate(()=>({
+          stored:localStorage.getItem('caffoot_state'),
+          safety:localStorage.getItem('caffoot_phase11_pre_restore'),
+          active:JSON.stringify(appState),
+          error:document.getElementById('modal-container')?.innerText||''
+        }));
+        if(reject){
+          assert.equal(confirms,0,kind+' must reject before confirmation');
+          assert.equal(outcome.stored,initial.stored,kind+' must preserve stored inventory');
+          assert.equal(outcome.safety,initial.safety,kind+' must preserve existing safety copy');
+          assert.match(outcome.error,/overlap|invalid|integrity/i,kind+' must explain rejection');
+        }else{
+          assert.ok(confirms>=1,kind+' must request import confirmation');
+          const imported=JSON.parse(outcome.stored);
+          assert.ok(imported.racks.some(r=>r.id==='fixture103rack'),kind+' must restore rack');
+          assert.equal(imported.rackAccessories?.length||0,
+            kind==='legacy-no-accessories'?0:kind==='independent-rails'?2:1,
+            kind+' must preserve expected accessories');
+        }
+        await page.reload({waitUntil:'load'});
+        assert.equal(await page.evaluate(()=>localStorage.getItem('caffoot_state')),outcome.stored,
+          kind+' must persist expected inventory after reload');
+      });
+    }
     const key = 'caffoot_phase12b_prebulk_snapshot';
     const inventoryKey = 'caffoot_state';
     for (const mode of ['throw-snapshot', 'ignore-snapshot', 'throw-main', 'success', 'old-snapshot']) {
@@ -196,9 +259,9 @@ const { chromium } = require('playwright');
             if (k === inventoryKey && mode === 'throw-main') throw Error('fictional main save failure');
             return original.call(this,k,v);
           };
-          phase12BPending = {subnetId:subnet.id,start:2,end:2,status:'Reserved',hostname:'fictional',notes:'audit'};
+          pendingBulkIpAssignment = {subnetId:subnet.id,start:2,end:2,status:'Reserved',hostname:'fictional',notes:'audit'};
           let thrown = null;
-          try { phase12BApply(); } catch(e) { thrown=String(e); }
+          try { applyBulkIpChanges(); } catch(e) { thrown=String(e); }
           Storage.prototype.setItem = original;
           return {before,priorSnapshot,after:JSON.stringify(appState),
             primary:localStorage.getItem(inventoryKey),snapshot:localStorage.getItem(key),
@@ -238,9 +301,9 @@ const { chromium } = require('playwright');
           {id:'fixture-140-pdu',name:'Vertical PDU',type:'pdu_vertical',rackId:rack.id,face:'front',side:'left',startU:1,heightU:18},
           {id:'fixture-140-cable',name:'Vertical Cable Manager',type:'cable_vertical',rackId:rack.id,face:'rear',side:'right',startU:1,heightU:18}
         );
-        const vertical={front:phase13LUsage(rack,'front'),rear:phase13LUsage(rack,'rear')};
+        const vertical={front:getOccupiedRackUnits(rack,'front'),rear:getOccupiedRackUnits(rack,'rear')};
         appState.rackAccessories.push({id:'fixture-140-patch',name:'Patch panel',type:'patch',rackId:rack.id,face:'front',startU:5,heightU:1});
-        const horizontal=phase13LUsage(rack,'front');
+        const horizontal=getOccupiedRackUnits(rack,'front');
         return {vertical,horizontal};
       });
       assert.equal(result.vertical.front.occupied,2);
@@ -275,11 +338,11 @@ const { chromium } = require('playwright');
       const result=await page.evaluate(() => {
         appState.devices.push({id:'fictional-graphic-device',name:'Fictional graphic device',type:'Server'});
         const type='Server';
-        const presets=Object.keys(phase13GPresets).filter(x=>x!=='automatic');
+        const presets=Object.keys(deviceFasciaGraphicPresets).filter(x=>x!=='automatic');
         if(!presets.length) return {blocked:'No graphic presets'};
-        document.getElementById('phase13g-style')?.remove();
+        document.getElementById('rack-style')?.remove();
         const select=document.createElement('select');
-        select.id='phase13g-style';
+        select.id='rack-style';
         select.innerHTML='<option value="'+presets[0]+'">'+presets[0]+'</option>';
         document.body.appendChild(select);
         const before=JSON.stringify(appState);
@@ -287,7 +350,7 @@ const { chromium } = require('playwright');
         const original=Storage.prototype.setItem;
         Storage.prototype.setItem=function(k,v){if(k==='caffoot_state')throw Error('fictional save failure');return original.call(this,k,v)};
         let thrown=null;
-        try {phase13GSaveGraphics(type)}catch(e){thrown=String(e)}
+        try {saveDeviceTypeRackFasciaSettings(type)}catch(e){thrown=String(e)}
         Storage.prototype.setItem=original;
         return {before,stored:localStorage.getItem('caffoot_state'),after:JSON.stringify(appState),thrown,type};
       });
@@ -338,10 +401,10 @@ const { chromium } = require('playwright');
         let error=null;
         try {
           select.value='Room B';
-          phase130HandleLocationChange(select);
+          handleDeviceLocationSelectionChange(select);
           select.value='__caffoot_create_location__';
-          phase130HandleLocationChange(select);
-          phase130CancelCustomLocation();
+          handleDeviceLocationSelectionChange(select);
+          cancelCustomDeviceLocation();
         } catch(e) {error=String(e)}
         return {error,selected:select.value,panelHidden:panel.hidden};
       });
@@ -367,9 +430,9 @@ const { chromium } = require('playwright');
             if(k==='caffoot_state'&&mode==='throw-main')throw Error('fictional repair main failure');
             return original.call(this,k,v);
           };
-          phase11CPreview={snapshot:before,plan:phase11CPlan()};
+          inventoryIntegrityRepairPreview={snapshot:before,plan:planDeviceIpAllocationIntegrityRepairs()};
           let thrown=null;
-          try {phase11CApplyRepair()}catch(e){thrown=String(e)}
+          try {applyPreviewedInventoryIntegrityRepairs()}catch(e){thrown=String(e)}
           Storage.prototype.setItem=original;
           return {before,old,stored:localStorage.getItem('caffoot_state'),snapshot:localStorage.getItem(key),
             after:JSON.stringify(appState),allocated:!!appState.ipAllocations['10.87.76.2'],thrown};
@@ -427,11 +490,11 @@ const { chromium } = require('playwright');
           Storage.prototype.setItem=window.__auditOriginalSetItem||Storage.prototype.setItem;
           delete window.__auditOriginalSetItem;
           return {stored:localStorage.getItem('caffoot_state'),safety:localStorage.getItem('caffoot_phase11_pre_restore'),
-            recoveryActive:!!phase17AStorageRecovery,
-            recoveryReason:phase17AStorageRecovery?.reason||'',
-            recoveryRaw:phase17AStorageRecovery?.raw||null,
-            bannerPresent:!!document.getElementById('phase17a-recovery'),
-            blockedSave:phase17AStorageRecovery ? saveState() : null};
+            recoveryActive:!!storageRecoveryFailure,
+            recoveryReason:storageRecoveryFailure?.reason||'',
+            recoveryRaw:storageRecoveryFailure?.raw||null,
+            bannerPresent:!!document.getElementById('storage-recovery-banner'),
+            blockedSave:storageRecoveryFailure ? saveState() : null};
         });
         assert(accepted>=1,'Import confirmation was not shown');
         assert.equal(outcome.stored,initial.original);
@@ -459,10 +522,10 @@ const { chromium } = require('playwright');
           {id:'fictional-display-vm-a',name:'Fictional web VM',type:'Server - Virtual',status:'Active',virtualHostId:'fictional-display-host'},
           {id:'fictional-display-vm-b',name:'Fictional database VM',type:'Server - Virtual',status:'Maintenance',virtualHostId:'fictional-display-host'}
         );
-        phase14CViewDevice('fictional-display-host');
-        const tab=document.getElementById('phase14c-tab-virtual-machines');
-        phase14CSelectTab('virtual-machines');
-        const panel=document.getElementById('phase14c-panel-virtual-machines');
+        openDeviceDetailView('fictional-display-host');
+        const tab=document.getElementById('device-details-tab-virtual-machines');
+        selectDeviceDetailsTab('virtual-machines');
+        const panel=document.getElementById('device-details-panel-virtual-machines');
         return {text:panel?.textContent||'',tabSelected:tab?.getAttribute('aria-selected'),panelVisible:!panel?.hidden,links:appState.devices.filter(d=>d.virtualHostId==='fictional-display-host').length};
       });
       assert.equal(result.tabSelected,'true','Virtual Machines tab must be selected');
@@ -479,12 +542,12 @@ const { chromium } = require('playwright');
           {id:'fictional-nav-host',name:'Fictional navigation host',type:'Server - Physical',location:'Unknown'},
           {id:'fictional-nav-guest',name:'Fictional navigation guest',type:'Server - Virtual',location:'Unknown',virtualHostId:'fictional-nav-host'}
         );
-        phase14CViewDevice('fictional-nav-host');
-        phase14CSelectTab('virtual-machines');
-        const button=document.querySelector('#phase14c-panel-virtual-machines [data-action="phase14c-view-hosted-guest"][data-id="fictional-nav-guest"]');
+        openDeviceDetailView('fictional-nav-host');
+        selectDeviceDetailsTab('virtual-machines');
+        const button=document.querySelector('#device-details-panel-virtual-machines [data-action="view-hosted-virtual-machine"][data-id="fictional-nav-guest"]');
         if(!button)return {buttonFound:false};
         button.click();
-        return {buttonFound:true,detailText:document.querySelector('.phase14c-detail')?.textContent||'',
+        return {buttonFound:true,detailText:document.querySelector('.device-details-dialog')?.textContent||'',
           hostId:appState.devices.find(d=>d.id==='fictional-nav-guest')?.virtualHostId};
       });
       assert.equal(result.buttonFound,true,'Guest details button must be present');
@@ -495,18 +558,18 @@ const { chromium } = require('playwright');
     await scenario('M-005 physical host details show empty guest state', async page => {
       const text = await page.evaluate(() => {
         appState.devices.push({id:'fictional-display-empty',name:'Fictional empty host',type:'Server - Physical',location:'Unknown',typeDetails:{serverService_Hypervisor:true}});
-        phase14CViewDevice('fictional-display-empty');
-        phase14CSelectTab('virtual-machines');
-        return document.getElementById('phase14c-panel-virtual-machines')?.textContent||'';
+        openDeviceDetailView('fictional-display-empty');
+        selectDeviceDetailsTab('virtual-machines');
+        return document.getElementById('device-details-panel-virtual-machines')?.textContent||'';
       });
       assert.match(text,/No hosted virtual machines recorded/);
     });
     await scenario('M-005 no VM tab without hypervisor or hosted guests', async page => {
       const result = await page.evaluate(() => {
         appState.devices.push({id:'fictional-no-hypervisor',name:'Fictional ordinary physical server',type:'Server - Physical',location:'Unknown'});
-        phase14CViewDevice('fictional-no-hypervisor');
-        return {tab:!!document.getElementById('phase14c-tab-virtual-machines'),
-          panel:!!document.getElementById('phase14c-panel-virtual-machines')};
+        openDeviceDetailView('fictional-no-hypervisor');
+        return {tab:!!document.getElementById('device-details-tab-virtual-machines'),
+          panel:!!document.getElementById('device-details-panel-virtual-machines')};
       });
       assert.equal(result.tab,false);
       assert.equal(result.panel,false);
@@ -517,10 +580,10 @@ const { chromium } = require('playwright');
           {id:'fictional-legacy-host',name:'Fictional legacy host',type:'Server - Physical',location:'Unknown'},
           {id:'fictional-legacy-guest',name:'Fictional legacy guest',type:'Server - Virtual',location:'Unknown',virtualHostId:'fictional-legacy-host'}
         );
-        phase14CViewDevice('fictional-legacy-host');
-        phase14CSelectTab('virtual-machines');
-        return {tab:!!document.getElementById('phase14c-tab-virtual-machines'),
-          text:document.getElementById('phase14c-panel-virtual-machines')?.textContent||'',
+        openDeviceDetailView('fictional-legacy-host');
+        selectDeviceDetailsTab('virtual-machines');
+        return {tab:!!document.getElementById('device-details-tab-virtual-machines'),
+          text:document.getElementById('device-details-panel-virtual-machines')?.textContent||'',
           hostId:appState.devices.find(d=>d.id==='fictional-legacy-guest')?.virtualHostId};
       });
       assert.equal(result.tab,true);
@@ -536,12 +599,12 @@ const { chromium } = require('playwright');
         content.innerHTML='<button id="fictional-hypervisor-origin" type="button">Original control</button>';
         const origin=document.getElementById('fictional-hypervisor-origin');
         origin.focus();
-        const pending=phaseM005ConfirmHypervisorRemoval('Fictional host', [{id:'guest-one',name:'Fictional guest'}], 'fictional-host');
-        const dialog=document.getElementById('phase-m005-hypervisor-dialog');
+        const pending=requestHypervisorGuestReassignment('Fictional host', [{id:'guest-one',name:'Fictional guest'}], 'fictional-host');
+        const dialog=document.getElementById('hypervisor-selection-dialog');
         const text=dialog?.textContent||'';
         document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));
         const accepted=await pending;
-        return {accepted,removed:!document.getElementById('phase-m005-hypervisor-dialog'),
+        return {accepted,removed:!document.getElementById('hypervisor-selection-dialog'),
           focusRestored:document.activeElement===origin,originStillPresent:!!document.getElementById('fictional-hypervisor-origin'),text};
       });
       assert.equal(result.accepted,null);
@@ -559,18 +622,18 @@ const { chromium } = require('playwright');
         content.innerHTML='<button id="fictional-hypervisor-origin-2" type="button">Original control</button>';
         const origin=document.getElementById('fictional-hypervisor-origin-2');
         origin.focus();
-        const cancelPending=phaseM005ConfirmHypervisorRemoval('Fictional host', [{id:'guest-two',name:'Guest two'}], 'fictional-host');
-        document.querySelector('#phase-m005-hypervisor-dialog [data-action="cancel"]').click();
+        const cancelPending=requestHypervisorGuestReassignment('Fictional host', [{id:'guest-two',name:'Guest two'}], 'fictional-host');
+        document.querySelector('#hypervisor-selection-dialog [data-action="cancel"]').click();
         const cancelled=await cancelPending;
         const cancelFocus=document.activeElement===origin;
-        const acceptPending=phaseM005ConfirmHypervisorRemoval('Fictional host', [{id:'guest-two',name:'Guest two'}], 'fictional-host');
-        document.querySelector('#phase-m005-hypervisor-dialog [data-action="confirm"]').click();
-        const stillOpen=!!document.getElementById('phase-m005-hypervisor-dialog');
+        const acceptPending=requestHypervisorGuestReassignment('Fictional host', [{id:'guest-two',name:'Guest two'}], 'fictional-host');
+        document.querySelector('#hypervisor-selection-dialog [data-action="confirm"]').click();
+        const stillOpen=!!document.getElementById('hypervisor-selection-dialog');
         document.querySelector('[data-m005-guest="0"]').value='unassign';
-        document.querySelector('#phase-m005-hypervisor-dialog [data-action="confirm"]').click();
+        document.querySelector('#hypervisor-selection-dialog [data-action="confirm"]').click();
         const accepted=await acceptPending;
         return {cancelled,accepted,cancelFocus,acceptFocus:document.activeElement===origin,
-          stillOpen,removed:!document.getElementById('phase-m005-hypervisor-dialog')};
+          stillOpen,removed:!document.getElementById('hypervisor-selection-dialog')};
       });
       assert.equal(result.cancelled,null);
       assert.deepEqual(result.accepted,['unassign']);
@@ -596,21 +659,21 @@ const { chromium } = require('playwright');
           set('dev-mount-type','Desktop');
           set('dev-subnet','fictional-hypervisor-form-subnet');
           set('dev-ip','10.88.74.2');
-          const hypervisor=document.getElementById('phase-m005-hosting-enabled');
+          const hypervisor=document.getElementById('device-hosting-enabled');
            if(!hypervisor)throw Error('Shared hosting checkbox missing');
            hypervisor.checked=false;
            hypervisor.dispatchEvent(new Event('change',{bubbles:true}));
           const pending=handleDeviceSubmit({preventDefault(){}},hostId);
           await Promise.resolve();
-          const dialog=document.getElementById('phase-m005-hypervisor-dialog');
+          const dialog=document.getElementById('hypervisor-selection-dialog');
           if(!dialog)throw Error('Expected hypervisor confirmation missing');
           if(decision==='escape')document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));
-          else { document.querySelector('[data-m005-guest="0"]').value='unassign'; document.querySelector('#phase-m005-hypervisor-dialog [data-action="confirm"]').click(); }
+          else { document.querySelector('[data-m005-guest="0"]').value='unassign'; document.querySelector('#hypervisor-selection-dialog [data-action="confirm"]').click(); }
           await pending;
           const host=appState.devices.find(d=>d.id===hostId);
           const guest=appState.devices.find(d=>d.id==='fictional-hypervisor-form-vm');
           return {before,after:localStorage.getItem('caffoot_state'),hypervisor:host.typeDetails?.serverService_Hypervisor,
-            guestHost:guest.virtualHostId,dialogClosed:!document.getElementById('phase-m005-hypervisor-dialog'),
+            guestHost:guest.virtualHostId,dialogClosed:!document.getElementById('hypervisor-selection-dialog'),
             formStillOpen:!!document.getElementById('dev-name')};
         },decision);
         assert.equal(result.dialogClosed,true);
@@ -643,7 +706,7 @@ const { chromium } = require('playwright');
         set('dev-mount-type','Desktop');
         set('dev-subnet','fictional-hypervisor-failed-subnet');
         set('dev-ip','10.88.73.2');
-        const checkbox=document.getElementById('phase-m005-hosting-enabled');
+        const checkbox=document.getElementById('device-hosting-enabled');
         if(!checkbox)throw Error('Shared hosting checkbox missing');
         checkbox.checked=false;
         checkbox.dispatchEvent(new Event('change',{bubbles:true}));
@@ -656,7 +719,7 @@ const { chromium } = require('playwright');
         try {
           const pending=handleDeviceSubmit({preventDefault(){}},hostId);
           await Promise.resolve();
-          const confirm=document.querySelector('#phase-m005-hypervisor-dialog [data-action="confirm"]');
+          const confirm=document.querySelector('#hypervisor-selection-dialog [data-action="confirm"]');
           if(!confirm)throw Error('Expected hypervisor confirmation missing');
           document.querySelector('[data-m005-guest="0"]').value='unassign';
           confirm.click();
@@ -680,8 +743,8 @@ const { chromium } = require('playwright');
     await scenario('M-005 legacy missing physical host remains visible', async page => {
       const result = await page.evaluate(() => {
         appState.devices.push({id:'fictional-display-orphan',name:'Fictional orphan guest',type:'Server - Virtual',location:'Unknown',virtualHostId:'fictional-absent-host'});
-        phase14CViewDevice('fictional-display-orphan');
-        return {text:document.getElementById('phase14c-panel-overview')?.textContent||'',
+        openDeviceDetailView('fictional-display-orphan');
+        return {text:document.getElementById('device-details-panel-overview')?.textContent||'',
           original:appState.devices.find(d=>d.id==='fictional-display-orphan')?.virtualHostId};
       });
       assert.match(result.text,/Missing or unavailable host/);
@@ -696,12 +759,12 @@ const { chromium } = require('playwright');
         );
         const before=JSON.stringify(appState);
         const pending=deleteDevice('fictional-host-001');
-        const dialog=document.getElementById('phase-m005-hypervisor-dialog');
+        const dialog=document.getElementById('hypervisor-selection-dialog');
         const guestLabels=dialog?.textContent||'';
         dialog?.querySelector('[data-action="cancel"]')?.click();
         await pending;
         return {before,after:JSON.stringify(appState),dialogShown:!!dialog,
-          guestLabels,dialogRemoved:!document.getElementById('phase-m005-hypervisor-dialog')};
+          guestLabels,dialogRemoved:!document.getElementById('hypervisor-selection-dialog')};
       });
       assert.equal(result.dialogShown,true,'Host deletion must show guest decisions');
       assert.match(result.guestLabels,/Fictional VM 1/);
@@ -719,10 +782,10 @@ const { chromium } = require('playwright');
         window.confirm=()=>true;
         try {
           const pending=deleteDevice(host.id);
-          const selector=document.querySelector('#phase-m005-hypervisor-dialog [data-m005-guest="0"]');
+          const selector=document.querySelector('#hypervisor-selection-dialog [data-m005-guest="0"]');
           if(!selector)throw Error('Guest decision selector missing');
           selector.value='host:'+destination.id;
-          document.querySelector('#phase-m005-hypervisor-dialog [data-action="confirm"]').click();
+          document.querySelector('#hypervisor-selection-dialog [data-action="confirm"]').click();
           await pending;
         } finally {window.confirm=originalConfirm}
         const updated=appState.devices.find(d=>d.id===guest.id);
@@ -746,10 +809,10 @@ const { chromium } = require('playwright');
         window.confirm=()=>true;
         try {
           const pending=deleteDevice(host.id);
-          const selector=document.querySelector('#phase-m005-hypervisor-dialog [data-m005-guest="0"]');
+          const selector=document.querySelector('#hypervisor-selection-dialog [data-m005-guest="0"]');
           if(!selector)throw Error('Guest decision selector missing');
           selector.value='retire';
-          document.querySelector('#phase-m005-hypervisor-dialog [data-action="confirm"]').click();
+          document.querySelector('#hypervisor-selection-dialog [data-action="confirm"]').click();
           await pending;
         } finally {window.confirm=originalConfirm}
         const updated=appState.devices.find(d=>d.id===guest.id);
@@ -778,12 +841,12 @@ const { chromium } = require('playwright');
         window.confirm=()=>true;
         try {
           const pending=deleteDevice(source.id);
-          const selectors=[...document.querySelectorAll('#phase-m005-hypervisor-dialog [data-m005-guest]')];
+          const selectors=[...document.querySelectorAll('#hypervisor-selection-dialog [data-m005-guest]')];
           if(selectors.length!==3)throw Error('Expected three guest decisions');
           selectors[0].value='unassign';
           selectors[1].value='retire';
           selectors[2].value='host:'+target.id;
-          document.querySelector('#phase-m005-hypervisor-dialog [data-action="confirm"]').click();
+          document.querySelector('#hypervisor-selection-dialog [data-action="confirm"]').click();
           await pending;
         } finally {window.confirm=originalConfirm}
         return {sourceExists:!!appState.devices.find(d=>d.id===source.id),
@@ -819,7 +882,7 @@ const { chromium } = require('playwright');
         window.__m005UiBefore=JSON.stringify(appState);
         window.__m005UiPending=deleteDevice('fictional-ui-host');
       });
-      const dialog=page.locator('#phase-m005-hypervisor-dialog');
+      const dialog=page.locator('#hypervisor-selection-dialog');
       await dialog.waitFor();
       await dialog.locator('[data-action="confirm"]').click();
       assert.equal(await dialog.count(),1,'Missing guest choice must keep dialog open');
@@ -845,7 +908,7 @@ const { chromium } = require('playwright');
         localStorage.setItem('caffoot_state',JSON.stringify(appState));
         window.__m005UiConfirmPending=deleteDevice('fictional-ui-confirm-host');
       });
-      const dialog=page.locator('#phase-m005-hypervisor-dialog');
+      const dialog=page.locator('#hypervisor-selection-dialog');
       await dialog.waitFor();
       await dialog.locator('[data-m005-guest="0"]').selectOption('retire');
       page.once('dialog',d=>d.accept());
@@ -891,8 +954,8 @@ const { chromium } = require('playwright');
           purpose.value=type;
           purpose.dispatchEvent(new Event('change',{bubbles:true}));
           return {purpose:type,actual:document.getElementById('dev-type').value,
-            hostVisible:!document.getElementById('phase120-virtual-fields').classList.contains('hidden'),
-            physicalHidden:document.getElementById('phase120-physical-purpose').classList.contains('hidden')};
+            hostVisible:!document.getElementById('virtual-fields').classList.contains('hidden'),
+            physicalHidden:document.getElementById('device-form-physical-purpose').classList.contains('hidden')};
         });
         return {noHostOption,optionAvailable,choices,
           hostAvailable:!!document.querySelector('#dev-virtual-host option[value="fixture-164-host"]')};
@@ -929,8 +992,8 @@ const { chromium } = require('playwright');
           await handleDeviceSubmit({preventDefault(){}},null);
           const missingHost={message:messages.at(-1),unchanged:appState.devices.length===before};
           document.getElementById('dev-virtual-host').value=host.id;
-          const fields=Array.from(document.querySelectorAll('[data-phase19b-field]'));
-          const allocation=fields.find(x=>x.getAttribute('data-phase19b-field')==='vmVcpu');
+          const fields=Array.from(document.querySelectorAll('[data-device-detail-field]'));
+          const allocation=fields.find(x=>x.getAttribute('data-device-detail-field')==='vmVcpu');
           if(!allocation)throw Error('vCPU allocation input missing');
           allocation.value='-2';
           await handleDeviceSubmit({preventDefault(){}},null);
@@ -1101,7 +1164,7 @@ const { chromium } = require('playwright');
         const draft={deviceId:document.querySelector('[data-device-form]')?.dataset.deviceId,
           name:document.getElementById('dev-name')?.value,
           primaryIp:document.getElementById('dev-ip')?.value,
-          isVirtual:phase120IsVirtualForm(),
+          isVirtual:isVirtualDeviceForm(),
           virtualHostId:document.getElementById('dev-virtual-host')?.value,
           rackId:document.getElementById('dev-rack')?.value || ''};
         const set=(id,value)=>{const el=document.getElementById(id);if(!el)throw Error('Missing '+id);
@@ -1151,10 +1214,10 @@ const { chromium } = require('playwright');
         const purpose=document.getElementById('dev-vm-purpose');
         purpose.value='Server - Virtual';
         purpose.dispatchEvent(new Event('change',{bubbles:true}));
-        const virtualBlock=document.getElementById('phase120-virtual-fields');
+        const virtualBlock=document.getElementById('virtual-fields');
         const add={
-          inGeneral:!!document.querySelector('[data-device-form] .form-section-card:first-child #phase120-virtual-fields'),
-          inHardware:!!document.querySelector('[data-device-form] .form-section-card:nth-child(2) #phase120-virtual-fields'),
+          inGeneral:!!document.querySelector('[data-device-form] .form-section-card:first-child #virtual-fields'),
+          inHardware:!!document.querySelector('[data-device-form] .form-section-card:nth-child(2) #virtual-fields'),
           visible:!!virtualBlock&&!virtualBlock.classList.contains('hidden'),
           hostAvailable:!!document.querySelector('#dev-virtual-host option[value="fixture-134-physical"]')
         };
@@ -1162,12 +1225,12 @@ const { chromium } = require('playwright');
         const selected=document.getElementById('dev-virtual-host').value;
         openDeviceModal(guest.id);
         const edit={
-          inGeneral:!!document.querySelector('[data-device-form] .form-section-card:first-child #phase120-virtual-fields'),
+          inGeneral:!!document.querySelector('[data-device-form] .form-section-card:first-child #virtual-fields'),
           selected:document.getElementById('dev-virtual-host')?.value,
-          visible:!document.getElementById('phase120-virtual-fields')?.classList.contains('hidden')
+          visible:!document.getElementById('virtual-fields')?.classList.contains('hidden')
         };
         const editDeploymentHidden=document.getElementById('dev-deployment')?.closest('.hidden')!==null;
-        const editVirtualIdentity=phase120IsVirtualForm();
+        const editVirtualIdentity=isVirtualDeviceForm();
         return {add,selected,edit,editDeploymentHidden,editVirtualIdentity};
       });
       assert.equal(result.add.inGeneral,true,'Virtual host selector belongs to General');
@@ -1186,38 +1249,38 @@ const { chromium } = require('playwright');
         const type='Server - Physical';
         openDeviceModal();
         document.getElementById('dev-type').value=type;
-        phase19BRefreshFields();
-        const add={onGeneral:!!document.querySelector('[data-device-form] .form-section-card:first-child #phase-m005-host-platform-fields'),
-          selectOptions:!!document.querySelector('#phase-m005-host-platform-select option[value="__custom__"]'),
-          hosting:document.getElementById('phase-m005-hosting-enabled')?.checked,
-          duplicate:!!document.querySelector('#phase120-server-services-fields [data-phase19b-field="serverService_Hypervisor"]')};
-        document.getElementById('phase-m005-hosting-enabled').checked=true;
-        document.getElementById('phase-m005-hosting-enabled').dispatchEvent(new Event('change',{bubbles:true}));
-        const productSelect=document.getElementById('phase-m005-host-platform-select');
+        refreshDeviceDetailFields();
+        const add={onGeneral:!!document.querySelector('[data-device-form] .form-section-card:first-child #host-platform-fields'),
+          selectOptions:!!document.querySelector('#host-platform-select option[value="__custom__"]'),
+          hosting:document.getElementById('device-hosting-enabled')?.checked,
+          duplicate:!!document.querySelector('#server-services-fields [data-device-detail-field="serverService_Hypervisor"]')};
+        document.getElementById('device-hosting-enabled').checked=true;
+        document.getElementById('device-hosting-enabled').dispatchEvent(new Event('change',{bubbles:true}));
+        const productSelect=document.getElementById('host-platform-select');
         productSelect.value='Proxmox VE';
         productSelect.dispatchEvent(new Event('change',{bubbles:true}));
-        const selected={product:document.getElementById('phase-m005-host-platform').value,
-          customHidden:document.getElementById('phase-m005-host-platform').classList.contains('hidden')};
+        const selected={product:document.getElementById('host-platform').value,
+          customHidden:document.getElementById('host-platform').classList.contains('hidden')};
         productSelect.value='__custom__';
         productSelect.dispatchEvent(new Event('change',{bubbles:true}));
-        const customVisible=!document.getElementById('phase-m005-host-platform').classList.contains('hidden');
-        document.getElementById('phase-m005-host-platform').value='Custom Hypervisor';
-        document.getElementById('phase-m005-host-version').value='2026.1';
-        const enabled=phase19BReadFields();
+        const customVisible=!document.getElementById('host-platform').classList.contains('hidden');
+        document.getElementById('host-platform').value='Custom Hypervisor';
+        document.getElementById('host-version').value='2026.1';
+        const enabled=captureDeviceDetailFieldValues();
         const host={id:'fictional-134-host',name:'Historical host',type,status:'Active',
           mountType:'Desktop',location:'Unknown',serverService_Hypervisor:true,
           typeDetails:{hypervisorProduct:'Historical Platform',hypervisorVersion:'Legacy 1'}};
         appState.devices.push(host);
         openDeviceModal(host.id);
-        const edit={hosting:document.getElementById('phase-m005-hosting-enabled')?.checked,
-          product:document.getElementById('phase-m005-host-platform')?.value,
-          version:document.getElementById('phase-m005-host-version')?.value,
-          flag:phase19BReadFields().serverService_Hypervisor};
-        document.getElementById('phase-m005-hosting-enabled').checked=false;
-        document.getElementById('phase-m005-hosting-enabled').dispatchEvent(new Event('change',{bubbles:true}));
-        const disabled={flag:phase19BReadFields().serverService_Hypervisor,
-          product:document.getElementById('phase-m005-host-platform').value,
-          hidden:document.getElementById('phase-m005-hosting-details').hidden};
+        const edit={hosting:document.getElementById('device-hosting-enabled')?.checked,
+          product:document.getElementById('host-platform')?.value,
+          version:document.getElementById('host-version')?.value,
+          flag:captureDeviceDetailFieldValues().serverService_Hypervisor};
+        document.getElementById('device-hosting-enabled').checked=false;
+        document.getElementById('device-hosting-enabled').dispatchEvent(new Event('change',{bubbles:true}));
+        const disabled={flag:captureDeviceDetailFieldValues().serverService_Hypervisor,
+          product:document.getElementById('host-platform').value,
+          hidden:document.getElementById('device-hosting-details').hidden};
         return {add,selected,customVisible,enabled,edit,disabled};
       });
       assert.equal(result.add.onGeneral,true,'Hosting controls should appear in the General tab');
@@ -1251,11 +1314,11 @@ const { chromium } = require('playwright');
         set('dev-mount-type','Desktop');
         set('dev-subnet','fictional-134-persist-subnet');
         set('dev-ip','10.88.72.2');
-        const enabled=document.getElementById('phase-m005-hosting-enabled');
+        const enabled=document.getElementById('device-hosting-enabled');
         enabled.checked=true;
         enabled.dispatchEvent(new Event('change',{bubbles:true}));
-        set('phase-m005-host-platform-select','Microsoft Hyper-V');
-        set('phase-m005-host-version','2026');
+        set('host-platform-select','Microsoft Hyper-V');
+        set('host-version','2026');
         await handleDeviceSubmit({preventDefault(){}},hostId);
         return {stored:JSON.parse(localStorage.getItem('caffoot_state')||'{}').devices?.find(d=>d.id===hostId),
           inMemory:appState.devices.find(d=>d.id===hostId)};
@@ -1268,9 +1331,9 @@ const { chromium } = require('playwright');
       const restored=await page.evaluate(() => {
         const host=appState.devices.find(d=>d.id==='fictional-134-persist-host');
         openDeviceModal(host.id);
-        return {host,checked:document.getElementById('phase-m005-hosting-enabled').checked,
-          selected:document.getElementById('phase-m005-host-platform-select').value,
-          version:document.getElementById('phase-m005-host-version').value};
+        return {host,checked:document.getElementById('device-hosting-enabled').checked,
+          selected:document.getElementById('host-platform-select').value,
+          version:document.getElementById('host-version').value};
       });
       assert.equal(restored.checked,true);
       assert.equal(restored.selected,'Microsoft Hyper-V');
@@ -1304,10 +1367,10 @@ const { chromium } = require('playwright');
         const host=appState.devices.find(d=>d.id==='fictional-134-import-host');
         const guest=appState.devices.find(d=>d.id==='fictional-134-import-guest');
         openDeviceModal(host.id);
-        return {host,guest,checked:document.getElementById('phase-m005-hosting-enabled').checked,
-          choice:document.getElementById('phase-m005-host-platform-select').value,
-          product:document.getElementById('phase-m005-host-platform').value,
-          version:document.getElementById('phase-m005-host-version').value};
+        return {host,guest,checked:document.getElementById('device-hosting-enabled').checked,
+          choice:document.getElementById('host-platform-select').value,
+          product:document.getElementById('host-platform').value,
+          version:document.getElementById('host-version').value};
       });
       assert.equal(result.host.typeDetails.serverService_Hypervisor,true);
       assert.equal(result.host.typeDetails.hypervisorProduct,'Historical Custom Hypervisor');
@@ -1360,8 +1423,8 @@ const { chromium } = require('playwright');
         return {hostType:appState.devices.find(d=>d.id===hostId)?.type,
           vmHost:appState.devices.find(d=>d.id==='fictional-d13-vm')?.virtualHostId,
           notices,deploymentHidden,typeHidden,
-          guestDialog:!!document.getElementById('phase-m005-hypervisor-dialog'),
-          conversionDialog:!!document.getElementById('phase130-conversion-dialog')};
+          guestDialog:!!document.getElementById('hypervisor-selection-dialog'),
+          conversionDialog:!!document.getElementById('conversion-dialog')};
       });
       assert.equal(result.deploymentHidden,true,'Edit must hide creation-only deployment selection');
       assert.equal(result.typeHidden,true,'Edit must hide creation-only device type selection');
@@ -1379,7 +1442,7 @@ const { chromium } = require('playwright');
           virtualHostId:'fictional-missing-legacy-host'});
         const before=JSON.stringify(raw);
         let candidate=null,error=null;
-        try {candidate=phase16CCheckBackup(raw);}
+        try {candidate=validateAndNormaliseBackupForImport(raw);}
         catch(e){error=String(e.message||e);}
         return {error,rawUnchanged:JSON.stringify(raw)===before,
           hostId:candidate?.devices.find(d=>d.id==='fictional-legacy-vm')?.virtualHostId||null};
@@ -1584,9 +1647,9 @@ const { chromium } = require('playwright');
         }
         handleIpSubmit({preventDefault(){}},first);
         const individual=JSON.parse(JSON.stringify(appState.ipAllocations[first]));
-        const plan=phase12BBulkPlan(subnet,3,3,'Available','','');
-        phase12BPending={subnetId:subnet.id,start:3,end:3,status:'Available',hostname:'',notes:''};
-        phase12BApply();
+        const plan=planBulkSubnetAddressAssignment(subnet,3,3,'Available','','');
+        pendingBulkIpAssignment={subnetId:subnet.id,start:3,end:3,status:'Available',hostname:'',notes:''};
+        applyBulkIpChanges();
         return {individual,planChanges:plan.changes.length,bulk:appState.ipAllocations[second],saved:JSON.parse(localStorage.getItem('caffoot_state')).ipAllocations};
       });
       assert.equal(result.individual.status,'Available');
@@ -1626,7 +1689,7 @@ const { chromium } = require('playwright');
         let committed;
         try {
           appState.devices = appState.devices.filter(d => d.id !== device.id);
-          committed = phase11BCommitDelete(beforeMemory,'Device');
+          committed = commitDeletionWithRollback(beforeMemory,'Device');
         } finally { Storage.prototype.setItem = original; }
         return {committed,beforeMemory,afterMemory:JSON.stringify(appState),
           beforeStored,afterStored:localStorage.getItem('caffoot_state')};
@@ -1650,7 +1713,7 @@ const { chromium } = require('playwright');
           if (key === 'caffoot_state') return;
           return original.call(this,key,value);
         };
-        try { phase120RestoreServerService(entry.key); }
+        try { restoreArchivedServerService(entry.key); }
         finally { Storage.prototype.setItem = original; }
         return {beforeMemory,afterMemory:JSON.stringify(appState.serverFunctions),
           beforeStored,afterStored:localStorage.getItem('caffoot_state')};
@@ -1672,7 +1735,7 @@ const { chromium } = require('playwright');
           {id:'fixture97vertical',name:'Vertical PDU',type:'pdu_vertical',rackId:'fixture97rack',face:'front',startU:1,heightU:12},
           {id:'fixture97cable',name:'Vertical cable',type:'cable_vertical',rackId:'fixture97rack',face:'rear',startU:1,heightU:12}
         );
-        const row=phase10DReportData().racks.find(r=>r.name==='Fixture #97 rack');
+        const row=buildInventoryReportData().racks.find(r=>r.name==='Fixture #97 rack');
         return {row};
       });
       assert.equal(result.row.front,3,'Front should include 2U server and 1U shelf');
@@ -1690,7 +1753,7 @@ const { chromium } = require('playwright');
       await page.reload({waitUntil:'load'});
       const result=await page.evaluate(() => ({
         type:appState.rackAccessories.find(a=>a.id==='fixture97startupfan')?.type,
-        recovery:!!phase17AStorageRecovery,
+        recovery:!!storageRecoveryFailure,
         storedType:JSON.parse(localStorage.getItem('caffoot_state')).rackAccessories
           .find(a=>a.id==='fixture97startupfan')?.type
       }));
@@ -1708,13 +1771,13 @@ const { chromium } = require('playwright');
           {id:'fixture97vent',rackId:'fixture97legacyrack',face:'front',startU:5,heightU:1,type:'vent',name:'Legacy vent'}
         );
         const original=JSON.stringify(raw);
-        const candidate=phase16CCheckBackup(raw);
+        const candidate=validateAndNormaliseBackupForImport(raw);
         const converted=candidate.rackAccessories.filter(x=>x.rackId==='fixture97legacyrack')
           .map(x=>({type:x.type,startU:x.startU,heightU:x.heightU,face:x.face}));
         const invalid=JSON.parse(original);
         invalid.rackAccessories[invalid.rackAccessories.length-1].type='unknown_legacy_type';
         let rejected=false;
-        try {phase16CCheckBackup(invalid);} catch(e){rejected=/unsupported accessory type/.test(e.message);}
+        try {validateAndNormaliseBackupForImport(invalid);} catch(e){rejected=/unsupported accessory type/.test(e.message);}
         return {untouched:JSON.stringify(raw)===original,converted,rejected};
       });
       assert.equal(result.untouched,true,'Import migration must not mutate the original backup');
@@ -1739,11 +1802,11 @@ const { chromium } = require('playwright');
         grid.getBoundingClientRect=()=>({top:0,bottom:360,height:360});
         grid.appendChild(target);
         document.body.appendChild(grid);
-        const resolved=phase13DropPosition({clientY:300},target);
+        const resolved=getRackDropPosition({clientY:300},target);
         const originalFace=activeRackFace;
         activeRackFace='front';
         let moved;
-        try { moved=phase13CMoveAccessory('fixture97drag6', 'fixture97drag', resolved); }
+        try { moved=moveRackAccessoryToPosition('fixture97drag6', 'fixture97drag', resolved); }
         finally { activeRackFace=originalFace;grid.remove(); }
         return {resolved,moved,start:appState.rackAccessories.find(a=>a.id==='fixture97drag6')?.startU};
       });
@@ -1774,23 +1837,23 @@ const { chromium } = require('playwright');
         }));
         const getStart=()=>appState.rackAccessories.find(a=>a.id==='fixture171accessory').startU;
         try {
-          phase13CDraggedAccessoryId='fixture171accessory';
+          draggedRackAccessoryId='fixture171accessory';
           dispatch('dragover',280);
-          const first=grid.querySelector('.phase13-drop-preview');
+          const first=grid.querySelector('.rack-drag-preview');
           const firstNonInteractive=first?.style.pointerEvents==='none';
           dispatch('dragover',240);
-          const second=grid.querySelector('.phase13-drop-preview');
-          const refreshed=!!second && second!==first && grid.querySelectorAll('.phase13-drop-preview').length===1;
+          const second=grid.querySelector('.rack-drag-preview');
+          const refreshed=!!second && second!==first && grid.querySelectorAll('.rack-drag-preview').length===1;
           dispatch('drop',280);
           const down=getStart();
-          phase13CDraggedAccessoryId='fixture171accessory';
+          draggedRackAccessoryId='fixture171accessory';
           dispatch('drop',320);
           const up=getStart();
           return {firstNonInteractive,refreshed,down,up};
         } finally {
-          phase13CDraggedAccessoryId=null;
+          draggedRackAccessoryId=null;
           activeRackFace=originalFace;
-          phase13ClearDropPreview();
+          clearRackDropPreview();
           grid.remove();
         }
       });
@@ -1825,9 +1888,9 @@ const { chromium } = require('playwright');
         activeRackFace='front';
         try {
           source.dispatchEvent(new DragEvent('dragstart',{bubbles:true,cancelable:true,clientY:100+3*40+20,dataTransfer:new DataTransfer()}));
-          const start=phase13DropPosition({clientY:240},empty);
+          const start=getRackDropPosition({clientY:240},empty);
           empty.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,clientY:240,dataTransfer:new DataTransfer()}));
-          const preview=grid.querySelector('.phase13-drop-preview');
+          const preview=grid.querySelector('.rack-drag-preview');
           const previewBottom=preview?.style.bottom;
           const previewHeight=preview?.style.height;
           empty.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,clientY:240,dataTransfer:new DataTransfer()}));
@@ -1857,7 +1920,7 @@ const { chromium } = require('playwright');
         URL.createObjectURL=blob=>{exported=blob;return 'blob:fixture97';};
         const click=HTMLAnchorElement.prototype.click;
         HTMLAnchorElement.prototype.click=function(){};
-        try { phase10DDownloadCsv('racks'); }
+        try { downloadInventoryReportCsv('racks'); }
         finally { URL.createObjectURL=original;HTMLAnchorElement.prototype.click=click; }
         return exported ? await exported.text() : '';
       });
@@ -1878,7 +1941,7 @@ const { chromium } = require('playwright');
         if (!device) return {missing:true};
         device.notes='Unrelated #97 note edit';
         if (!saveState()) throw Error('Unable to persist unrelated edit');
-        phase14CViewDevice(device.id);
+        openDeviceDetailView(device.id);
         return {software:document.body.textContent.includes('Fixture 97 retained software'),
           service:document.body.textContent.includes('Fixture 97 retained service'),
           softwareAssigned:device.typeDetails?.software_fixture97persist,
@@ -1946,11 +2009,11 @@ const { chromium } = require('playwright');
         appState.serverFunctions.push(service);
         appState.devices.push({id:'fixture97device',name:'Fixture #97 device',type:'Server - Physical',
           typeDetails:{[software.key]:true,[service.key]:true}});
-        phase14CViewDevice('fixture97device');
+        openDeviceDetailView('fixture97device');
         const text=document.body.textContent||'';
         return {software:text.includes(software.label),service:text.includes(service.label),
-          softwareAvailable:phase120SoftwareOptions().some(x=>x.key===software.key),
-          serviceAvailable:phase120AvailableServerServices().some(x=>x.key===service.key)};
+          softwareAvailable:getAvailableSoftwareCatalogueEntries().some(x=>x.key===software.key),
+          serviceAvailable:getAvailableServerServiceCatalogueEntries().some(x=>x.key===service.key)};
       });
       assert.equal(result.software,true,'Archived installed software must appear');
       assert.equal(result.service,true,'Archived enabled service must appear');

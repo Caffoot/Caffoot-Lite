@@ -7,7 +7,7 @@ const html = fs.readFileSync(path.join(__dirname, 'caffoot-lite.html'), 'utf8');
 const start = html.indexOf('function importData(event)');
 const end = html.indexOf("document.addEventListener('submit'", start);
 assert(start >= 0 && end > start, 'Restore handler must be available');
-const helperStart = html.indexOf('function phase16CShowImportError(');
+const helperStart = html.indexOf('function showBackupImportError(');
 assert(helperStart >= 0 && helperStart < start, 'Persistent import error helper must exist');
 const code = html.slice(helperStart, end);
 async function scenario(mode) {
@@ -35,17 +35,19 @@ async function scenario(mode) {
   };
   ctx = vm.createContext({
     appState:original, localStorage:storage, STORAGE_KEY:key, SAFETY_SNAPSHOT_KEY:safety,
-    nextAuditReason:'',auditBaseline:JSON.stringify(original),
-    phase17AStorageRecovery:null,phase17ARecoveryBanner:()=>{ctx.bannerShown=true;},
+    nextAuditReason:'',auditBaseline:JSON.stringify(original),auditHistory:[],AUDIT_KEY:'audit_test',
+    restoreAuditAfterRolledBackOperation:()=>{},
+    findAccessPointMountConflictsInBackup:()=>[],
+    storageRecoveryFailure:null,showStorageRecoveryBanner:()=>{ctx.bannerShown=true;},
     selectedSubnetId:'',selectedRackId:'',
     FileReader:FakeReader,
-    phase16CReadJson:JSON.parse,
-    phase16CRejectUnsafeKeys:()=>{},
-    phase11ValidateBackupShape:()=>{},
-    phase20ValidateBackupVersion:()=>{},
-    phase20MigrateBackup:v=>v,
-    phase19BIsAccessPoint:()=>false,
-    phase16CCheckBackup:v => {
+    parseBackupJsonWithHelpfulError:JSON.parse,
+    rejectUnsafeBackupKeys:()=>{},
+    validateBackupStructure:()=>{},
+    validateBackupVersion:()=>{},
+    normaliseImportedBackupAndPlanLegacyMountRepairs:v=>v,
+    isWirelessAccessPointDeviceType:()=>false,
+    validateAndNormaliseBackupForImport:v => {
       if(!v || !Array.isArray(v.devices)) throw Error('Invalid inventory');
       return v;
     },
@@ -76,8 +78,8 @@ for(const mode of ['snapshot-fails','save-fails','rollback-fails']){
   assert.equal(v.input.value,'',mode+' must clear file input');
 }
 const blocked=await scenario('rollback-fails');
-assert(blocked.ctx.phase17AStorageRecovery, 'Failed rollback must activate recovery mode');
-assert.equal(blocked.ctx.phase17AStorageRecovery.raw,JSON.stringify(blocked.original), 'Recovery mode must retain original snapshot');
+assert(blocked.ctx.storageRecoveryFailure, 'Failed rollback must activate recovery mode');
+assert.equal(blocked.ctx.storageRecoveryFailure.raw,JSON.stringify(blocked.original), 'Recovery mode must retain original snapshot');
 assert.equal(blocked.ctx.bannerShown,true, 'Recovery banner must be displayed');
 assert.equal(blocked.store.get(blocked.safety),JSON.stringify(blocked.original), 'Safety snapshot must survive failed rollback');
 const ok=await scenario('success');

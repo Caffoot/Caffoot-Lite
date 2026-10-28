@@ -4,18 +4,18 @@ const fs = require('node:fs');
 const path = require('node:path');
 const html = fs.readFileSync(path.join(__dirname, 'caffoot-lite.html'), 'utf8');
 for (const fragment of [
-  'const phase120PlatformCatalog = Object.freeze({',
+  'const platformOptionsByDeviceGroup = Object.freeze({',
   "network: ['FortiOS','PAN-OS','pfSense','OPNsense'",
   "nas: ['Synology DSM','QNAP QTS'",
   "if (normalized === 'wireless lan controller') return 'controller';",
   "if (normalized === 'layer 3 switch') return 'switch';",
-  'id="phase120-platform-select"',
+  'id="platform-select"',
   'Custom / Other...',
-  'phase120WireSoftwarePlatform();',
+  'bindSoftwarePlatformFields();',
   'min-w-[220px]',
-  'phase120RenderSoftwarePlatform(type, phase19BFormValues)',
-  'phase120CaptureSoftwarePlatform();',
-  'phase19BFormValues.softwarePlatform = name.value',
-  'phase19BFormValues.softwareVersion = version.value'
+  'renderSoftwarePlatformFields(type, deviceDetailFormValues)',
+  'captureSoftwarePlatformFields();',
+  'deviceDetailFormValues.softwarePlatform = name.value',
+  'deviceDetailFormValues.softwareVersion = version.value'
 ]) assert.ok(html.includes(fragment), 'Missing platform contract: ' + fragment);
 console.log('PASS: offline platform suggestions, type mappings, and persistence wiring.');

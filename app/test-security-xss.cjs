@@ -10,8 +10,8 @@ function extract(from,to) {
   return html.slice(start,end);
 }
 const escapeSource=extract('function escapeHtml(value)','function renderContent()');
-const platformSource=extract('function phase180EffectivePlatform(device)','function getVisibleDevices()');
-const viewSource=extract('function phase14CViewDevice(deviceId)','function phase14CGoToRack(');
+const platformSource=extract('function getEffectiveDevicePlatform(device)','function getVisibleDevices()');
+const viewSource=extract('function openDeviceDetailView(deviceId)','function navigateToDeviceRack(');
 const payloads=[
   '<img src=x onerror=alert(1)>',
   '<svg onload=alert(1)>',
@@ -30,12 +30,12 @@ for (const payload of payloads) {
   const context=vm.createContext({
     appState:{devices:[device],racks:[]},
     getSubnetForIp:()=>null,
-    phase120SoftwareOptions:()=>[],
-    phase19BSoftware:()=>[],
-    phase120AvailableServerServices:()=>[],
-    phase19BServerFunctions:()=>[],
-    phase19CDetailRows:()=>'', phase19BFieldsFor:()=>[],
-    phase19BTypeGroups:{}, phase19CDetailLabel:key=>key,
+    getAvailableSoftwareCatalogueEntries:()=>[],
+    getConfiguredSoftwareCatalogueEntries:()=>[],
+    getAvailableServerServiceCatalogueEntries:()=>[],
+    getConfiguredServerServiceCatalogueEntries:()=>[],
+    buildDeviceDetailRows:()=>'', getDetailFieldsForDeviceType:()=>[],
+    deviceTypeDetailGroups:{}, getDeviceDetailFieldLabel:key=>key,
     openModal:value=>{rendered=value;},
     showToast:()=>{throw Error('Device unexpectedly not found');}
   });
@@ -43,7 +43,7 @@ for (const payload of payloads) {
   const encoded=context.escapeHtml(payload);
   assert(!encoded.includes('<') && !encoded.includes('>'),'Angle brackets must be escaped');
   assert(!encoded.includes('"') && !encoded.includes("'"),'Quotes must be escaped');
-  context.phase14CViewDevice(payload);
+  context.openDeviceDetailView(payload);
   assert(rendered.includes(encoded),'Payload must be visible as escaped text');
   assert(!rendered.includes(payload),'Raw payload must never reach device details HTML');
   assert(!/<(?:script|svg|img)\b/i.test(rendered),'No injected executable elements');

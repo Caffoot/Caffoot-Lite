@@ -1,11 +1,309 @@
 # Caffoot Lite Function Naming and Reference
 
-**Status:** Draft documentation standard and initial source-verified examples. No application functions renamed.
-**Baseline:** v1.3.0 source inspection on `main`; exact published release provenance remains to be confirmed.
+**Current status (28 October 2026):** Historical naming inventory and proposed mappings are retained below. Approved descriptive renames and source comment clean-up are implemented and verified on draft PR #195, not yet merged. See the implementation checkpoints later in this document and the [developer coding and naming reference](../coding/DEVELOPER-CODING-AND-NAMING-REFERENCE.md).
+**Historical baseline:** v1.3.0 source inspection on `main`; published HTML provenance was reconciled on 22 October 2026 as recorded below.
 
 ## Published HTML provenance reconciliation, 22 October 2026
 
 The published `v1.3.0` tag and current `main` have the same `app/caffoot-lite.html` blob SHA `e8a24f6370a1bb572287aad91a314a3e4a189d94` (8,634 lines). This confirms the HTML source used for the earlier `main` inspections matches the published HTML. The function reference remains a **partial, evolving inventory**, not an exhaustive declaration-by-declaration audit. Significant function callers, responsibilities and P11 source comments still require completion review. No functions have been renamed.
+
+## Public-facing source comment standard (product-owner decision, 28 October 2026)
+
+All source comments are public-facing technical documentation and must use clear **British English**. Write for a developer new to Caffoot Lite, returning after a long absence, or learning to code. Do not assume knowledge of the project's development phases, audit identifiers, historical conversations or internal shorthand. Explain unfamiliar terms where useful. Function names should describe actual behaviour rather than the phase in which they were introduced. Comments should explain **why** a decision or safeguard exists, especially data preservation, compatibility, recovery and rollback; do not merely paraphrase a self-explanatory statement. Describe implemented behaviour accurately, not aspirations. Avoid unexplained phase, P11 or M-number references; retain traceability in the audit records rather than making it a prerequisite for understanding source code. Keep comments in sync with changes, concise enough to remain useful, and approachable to less experienced developers. Renaming existing functions requires a separate, explicit product-owner approval after caller/dependency review and proportionate focused verification; this documentation decision alone authorises no application change.
+
+## #101 current-branch naming inventory checkpoint, 28 October 2026
+
+**Source inspection only:** `app/caffoot-lite.html` on `release/v1.3.3` contains **183 named function declarations** beginning with `phase` (simple `function name(...)` declarations counted; this is not a complete inventory of arrow functions, expressions or dynamic references). The historic phase prefix is not self-explanatory. The following are prioritisation candidates based on a literal textual count of references to each name followed by `(`, excluding its declaration. Counts do **not** establish the actual runtime call graph or rule out event attributes, aliases and string references. No rename is approved or implemented.
+
+| Existing identifier | Approximate textual call references | Review priority |
+| --- | ---: | --- |
+| `phase19BSoftware()` | 20 | High, widely referenced software selection helper; confirm exact return semantics and all callers |
+| `phase120HardwarePreferences()` | 19 | High, hardware preferences and form dependencies |
+| `phase120HardwareCatalogue()` | 16 | High, catalogue integration |
+| `phase12IpString()` | 14 | High, IP address representation and formatting |
+| `phase120SoftwareOptions()` | 14 | High, software selection dependencies |
+| `phase19BAllowedMounts()` | 12 | High, mounting restrictions and safety |
+| `phase19BServerFunctions()` | 11 | High, server function field dependencies |
+| `phase12Cidr()` | 10 | High, CIDR interpretation and IPAM safety |
+| `phase120AvailableServerServices()` | 10 | High, server service selection |
+| `phase120BuiltinSoftwareKey()` | 10 | High, built-in catalogue identity |
+
+**Next:** Inspect each high-priority function's implementation, callers, references in HTML event handlers and compatibility constraints before suggesting a specific descriptive name. Document the purpose and safeguards in British English, readable by a newcomer. Do not bulk rename or run application tests for this documentation checkpoint. Reconcile P11 comments against current source rather than transplanting obsolete v1.3.0 line references.
+
+### #101 first five implementation-verified naming candidates, 28 October 2026
+
+The following definitions were inspected in the current `release/v1.3.3` HTML, rather than inferred from their names. Suggested names are **proposals only**, not implemented aliases or approved renames. Reference counts in the earlier checkpoint are textual estimates, not verified runtime caller counts.
+
+| Existing function | Verified responsibility | Suggested name | Important dependency or distinction |
+| --- | --- | --- | --- |
+| `phase19BSoftware()` | Returns the saved installed-software array, or an empty array if malformed or absent | `getInstalledSoftware()` | Reads `appState.installedSoftware`; does not itself filter archived entries |
+| `phase120HardwarePreferences()` | Returns the stored hardware seed preferences object, or an empty object if invalid | `getHardwareSeedPreferences()` | Uses `isPlainObject`; fallback is not a persisted repair |
+| `phase120HardwareCatalogue()` | Returns stored hardware catalogue array, or an empty array if missing or invalid | `getHardwareCatalogue()` | Reads `appState.hardwareCatalogue`; does not itself filter types |
+| `phase12IpString(n)` | Converts a numeric IPv4 value into four dotted decimal octets | `formatIpv4Address()` | Input is expected to be a numeric IPv4 representation; no validation is performed here |
+| `phase120SoftwareOptions()` | Combines active configured software with non-overridden built-in suggestions and sorts labels | `getAvailableSoftwareOptions()` | Depends on `phase19BSoftware()`, `phase120BuiltinSoftwareKey()` and suggestion metadata; archived configured entries are omitted |
+
+**Caller-review boundary:** Definitions and literal invocation locations have been inspected. Event-handler strings, aliasing, dynamic invocation and the complete transitive dependency graph have **not** been verified. Before any approved rename, check those references and update all callers together, then run only affected focused checks. No behaviour or public data schema changes are proposed.
+
+## #101 complete phase-prefixed declaration inventory, 28 October 2026
+
+**Automated static source inventory, not a runtime caller audit:** All 183 declarations matching `function phase...(` in `app/caffoot-lite.html` on `release/v1.3.3` are listed below in source order. Line numbers are specific to this inspected revision. A reference count means literal appearances of the identifier excluding its declaration; a call-like count means appearances followed immediately by `(` excluding its declaration. Neither metric proves execution, distinguishes comments/strings or captures indirect calls. **7 declarations have zero additional literal references**; do not assume they are unused without checking HTML event attributes, dynamic references and browser globals. **10 have ten or more literal references.** This is a complete inventory of the stated declaration pattern, **not** all JavaScript functions or an approved rename map. Existing five implementation-verified suggestions above remain valid; all other names require semantic inspection before replacement.
+
+| Existing declaration | Source line | Literal references | Call-like references |
+| --- | ---: | ---: | ---: |
+| `phase12IpNumber()` | 1258 | 3 | 3 |
+| `phase12IpString()` | 1262 | 14 | 14 |
+| `phase12Cidr()` | 1265 | 10 | 10 |
+| `phase12Overlap()` | 1274 | 0 | 0 |
+| `phase12Usable()` | 1278 | 6 | 6 |
+| `phase120SeparateLegacyRackLocation()` | 1442 | 1 | 1 |
+| `phase13CLegacyAccessoryTypes()` | 1456 | 1 | 1 |
+| `phase17ARecoveryBanner()` | 1726 | 3 | 3 |
+| `phase11CPlan()` | 2300 | 1 | 1 |
+| `phase11CPreviewRepair()` | 2335 | 1 | 1 |
+| `phase11CDownloadSnapshot()` | 2339 | 1 | 1 |
+| `phase11CApplyRepair()` | 2347 | 1 | 1 |
+| `phase11CPanelHTML()` | 2385 | 0 | 0 |
+| `phase10DReportData()` | 2405 | 3 | 3 |
+| `phase10DCsvCell()` | 2444 | 1 | 0 |
+| `phase10DDownloadCsv()` | 2450 | 1 | 1 |
+| `phase10DReportsHTML()` | 2476 | 1 | 1 |
+| `phase13GDefault()` | 2892 | 1 | 1 |
+| `phase13GFascia()` | 2901 | 0 | 0 |
+| `phase13GOpenGraphics()` | 2914 | 1 | 1 |
+| `phase13GSaveGraphics()` | 2919 | 1 | 1 |
+| `phase13LUsage()` | 2934 | 2 | 2 |
+| `phase13LFreeRuns()` | 2949 | 1 | 1 |
+| `phase13LPrintRack()` | 2959 | 1 | 1 |
+| `phase180EffectivePlatform()` | 3337 | 3 | 3 |
+| `phase180EffectiveVersion()` | 3344 | 1 | 1 |
+| `phase120FilterModels()` | 3375 | 3 | 3 |
+| `phase120ManufacturerManager()` | 3405 | 3 | 3 |
+| `phase120ManufacturerSave()` | 3427 | 2 | 2 |
+| `phase120BuiltinManufacturerEditor()` | 3465 | 1 | 1 |
+| `phase120BuiltinManufacturerSave()` | 3473 | 1 | 1 |
+| `phase120ManufacturersHTML()` | 3489 | 2 | 2 |
+| `phase120ModelAllowedTypes()` | 3528 | 3 | 3 |
+| `phase120ModelUpdateTypes()` | 3535 | 2 | 2 |
+| `phase120ModelManager()` | 3547 | 3 | 3 |
+| `phase120ModelSave()` | 3560 | 2 | 2 |
+| `phase120BuiltInModelEditor()` | 3589 | 1 | 1 |
+| `phase120BuiltInModelSave()` | 3599 | 1 | 1 |
+| `phase120ModelsHTML()` | 3621 | 2 | 2 |
+| `phase120SoftwareEdit()` | 3666 | 2 | 2 |
+| `phase120SoftwareSaveCustom()` | 3674 | 1 | 1 |
+| `phase120SoftwareRemove()` | 3689 | 1 | 1 |
+| `phase120SoftwareArchive()` | 3697 | 1 | 1 |
+| `phase120SoftwareRestore()` | 3708 | 1 | 1 |
+| `phase120SoftwareHTML()` | 3717 | 2 | 2 |
+| `phase120EnableSoftware()` | 3733 | 1 | 1 |
+| `phase120FilterSoftware()` | 3744 | 3 | 3 |
+| `phase120ServerServiceEditor()` | 3761 | 2 | 2 |
+| `phase120SaveServerService()` | 3766 | 1 | 1 |
+| `phase120RestoreServerService()` | 3779 | 1 | 1 |
+| `phase120ServerServicesHTML()` | 3788 | 1 | 1 |
+| `phase18DList()` | 4033 | 6 | 6 |
+| `phase18DProtected()` | 4042 | 3 | 3 |
+| `phase18DOpen()` | 4045 | 4 | 4 |
+| `phase18DConfirmDelete()` | 4089 | 4 | 2 |
+| `phase18DCancelDelete()` | 4118 | 3 | 3 |
+| `phase18DConfirmDeleteAction()` | 4125 | 1 | 1 |
+| `phase18DCommit()` | 4133 | 5 | 5 |
+| `phase18DRename()` | 4171 | 3 | 3 |
+| `phase18DCancelRename()` | 4196 | 3 | 3 |
+| `phase10GatewaySubnet()` | 4222 | 3 | 3 |
+| `phase10SubnetSummary()` | 4226 | 4 | 4 |
+| `phase12BBulkPlan()` | 4654 | 2 | 2 |
+| `phase12BBackToEditing()` | 4730 | 1 | 1 |
+| `phase12BApply()` | 4744 | 1 | 1 |
+| `phase11BSubnetDependencies()` | 5120 | 3 | 3 |
+| `phase11BIntegrityIssues()` | 5125 | 0 | 0 |
+| `phase11BCommitDelete()` | 5146 | 4 | 4 |
+| `phase19BKeepDeviceForm()` | 5468 | 3 | 3 |
+| `phase120ConfirmDiscard()` | 5488 | 2 | 2 |
+| `phase120ConfirmRackCorrection()` | 5514 | 1 | 1 |
+| `phase120ResolveRackCorrection()` | 5540 | 3 | 3 |
+| `phase120KeepEditing()` | 5549 | 2 | 2 |
+| `phase120DiscardChanges()` | 5555 | 1 | 1 |
+| `phase120ReturnFromSubnet()` | 5561 | 2 | 2 |
+| `phase18BOpenPlacement()` | 5800 | 3 | 3 |
+| `phase11DeviceTopBlock()` | 6035 | 4 | 4 |
+| `phase11DeviceCascade()` | 6044 | 3 | 3 |
+| `phase19CDetailLabel()` | 6141 | 5 | 5 |
+| `phase19CDetailRows()` | 6146 | 1 | 1 |
+| `phase14CViewDevice()` | 6162 | 6 | 5 |
+| `phase120ConfirmArchivedUninstall()` | 6257 | 1 | 1 |
+| `phase120RecordArchivedUninstall()` | 6263 | 1 | 1 |
+| `phase14CSelectTab()` | 6282 | 3 | 3 |
+| `phase130ConfirmRestore()` | 6296 | 1 | 1 |
+| `phase130ResolveRestore()` | 6322 | 3 | 3 |
+| `phase130RestoreHistory()` | 6331 | 1 | 1 |
+| `phase14CGoToRack()` | 6379 | 1 | 1 |
+| `phase19BServerFunctions()` | 6477 | 11 | 11 |
+| `phase120AvailableServerServices()` | 6482 | 10 | 10 |
+| `phase19BServerFunctionFields()` | 6487 | 6 | 6 |
+| `phase19BManageFunctions()` | 6488 | 2 | 2 |
+| `phase19BReadFunctionSelections()` | 6498 | 2 | 2 |
+| `phase19BUpdateFunction()` | 6504 | 3 | 3 |
+| `phase120ConfirmServerServiceArchive()` | 6525 | 2 | 2 |
+| `phase120ArchiveServerService()` | 6533 | 1 | 1 |
+| `phase120HardwarePreferences()` | 6557 | 19 | 19 |
+| `phase120EffectiveHardwareSeed()` | 6561 | 6 | 6 |
+| `phase120HardwareCatalogue()` | 6579 | 16 | 16 |
+| `phase120HardwareCatalogType()` | 6583 | 3 | 3 |
+| `phase120ManageHardwareCatalogue()` | 6586 | 2 | 2 |
+| `phase120UpdateHardwareCatalogue()` | 6599 | 3 | 3 |
+| `phase120IsVirtualForm()` | 6627 | 6 | 6 |
+| `phase120VirtualHardwareVisibility()` | 6631 | 3 | 3 |
+| `phase120RefreshHardwareSuggestions()` | 6654 | 5 | 4 |
+| `phase120HardwareSelectionChanged()` | 6687 | 1 | 1 |
+| `phase19BSoftware()` | 6704 | 22 | 20 |
+| `phase19BSoftwareFields()` | 6707 | 1 | 1 |
+| `phase19BManageSoftware()` | 6708 | 2 | 2 |
+| `phase19BReadSoftwareSelections()` | 6718 | 2 | 2 |
+| `phase19BUpdateSoftware()` | 6724 | 3 | 3 |
+| `phase120BuiltinSoftwareKey()` | 6760 | 10 | 10 |
+| `phase120SoftwareOptions()` | 6761 | 14 | 14 |
+| `phase120SoftwareHidden()` | 6768 | 3 | 3 |
+| `phase120SoftwareToggle()` | 6769 | 1 | 1 |
+| `phase120SoftwareTypeControls()` | 6780 | 1 | 1 |
+| `phase120SoftwareFieldsFor()` | 6784 | 3 | 3 |
+| `phase19BFieldsFor()` | 6787 | 8 | 8 |
+| `phase120IsSoftwareField()` | 6794 | 4 | 4 |
+| `phase19BRenderFields()` | 6801 | 6 | 6 |
+| `phase120PlatformGroup()` | 6831 | 2 | 2 |
+| `phase120PlatformOptions()` | 6837 | 1 | 1 |
+| `phase120VersionOptions()` | 6857 | 3 | 3 |
+| `phase120IsWindowsPlatform()` | 6860 | 1 | 1 |
+| `phase120RenderSoftwarePlatform()` | 6863 | 2 | 2 |
+| `phase120WireSoftwarePlatform()` | 6882 | 2 | 2 |
+| `phase120CaptureSoftwarePlatform()` | 6912 | 5 | 5 |
+| `phase120RefreshSoftwarePlatform()` | 6920 | 2 | 2 |
+| `phaseM134HostingEnabled()` | 6930 | 2 | 2 |
+| `phaseM134SyncHostingVisibility()` | 6934 | 6 | 5 |
+| `phase19BReadFields()` | 6941 | 5 | 5 |
+| `phase19BRefreshFields()` | 6952 | 4 | 2 |
+| `phase19BIsAccessPoint()` | 6976 | 3 | 3 |
+| `phase19BAllowedMounts()` | 6980 | 12 | 12 |
+| `phase120SuggestedMounts()` | 6984 | 3 | 3 |
+| `phase120DefaultMount()` | 6997 | 3 | 3 |
+| `phase19BMountOptions()` | 7000 | 2 | 2 |
+| `phase19BUpdateMountChoices()` | 7005 | 2 | 2 |
+| `phase120InitializeNotesEditor()` | 7018 | 1 | 1 |
+| `phase120InitializeDeviceTabs()` | 7070 | 1 | 1 |
+| `phase130HandleLocationChange()` | 7472 | 1 | 1 |
+| `phase130CancelCustomLocation()` | 7486 | 1 | 1 |
+| `phase130ObsoleteDeviceFields()` | 7535 | 1 | 1 |
+| `phase130ConfirmDeviceConversion()` | 7548 | 0 | 0 |
+| `phase130ResolveDeviceConversion()` | 7581 | 3 | 3 |
+| `phaseM005ConfirmHypervisorRemoval()` | 7591 | 2 | 2 |
+| `phaseM005ConfirmPlatformChange()` | 7653 | 1 | 1 |
+| `phase16ABackupHelp()` | 7914 | 1 | 1 |
+| `phase16ARenderSettings()` | 7924 | 1 | 1 |
+| `phase16ACheckSafety()` | 8061 | 1 | 1 |
+| `phase16AClearSystem()` | 8095 | 1 | 1 |
+| `phase20CreateBackup()` | 8178 | 1 | 1 |
+| `phase20ValidateBackupVersion()` | 8190 | 3 | 3 |
+| `phase20MigrateBackup()` | 8205 | 1 | 1 |
+| `phase16CRejectUnsafeKeys()` | 8226 | 3 | 3 |
+| `phase11ValidateBackupShape()` | 8241 | 2 | 2 |
+| `phase11DownloadSnapshot()` | 8258 | 1 | 1 |
+| `phase11SafetyPanelHTML()` | 8267 | 0 | 0 |
+| `phase16CLegacyMountRepairs()` | 8283 | 1 | 1 |
+| `phase16CInvalidMounts()` | 8321 | 1 | 1 |
+| `phase16CRackImportIssues()` | 8325 | 1 | 1 |
+| `phase16CCheckBackup()` | 8374 | 2 | 2 |
+| `phase16CReadJson()` | 8395 | 1 | 1 |
+| `phase16CShowImportError()` | 8400 | 3 | 3 |
+| `phase16CReviewLegacyMountRepairs()` | 8410 | 1 | 1 |
+| `phase16CAPMountConflicts()` | 8465 | 1 | 1 |
+| `phase16CChooseAPMounts()` | 8476 | 1 | 1 |
+| `phase16CApplyAPChoices()` | 8530 | 1 | 1 |
+| `phase13DFascia()` | 8754 | 0 | 0 |
+| `phase13CAccessoryError()` | 8765 | 5 | 5 |
+| `phase13VRenderRail()` | 8781 | 2 | 2 |
+| `phase13COpenAccessory()` | 8792 | 4 | 4 |
+| `phase13CDeleteAccessory()` | 8899 | 2 | 2 |
+| `phase13CMoveAccessory()` | 8922 | 1 | 1 |
+| `phase13MoveDevice()` | 8934 | 1 | 1 |
+| `phase13ClearDropPreview()` | 8959 | 5 | 5 |
+| `phase17dRenderPreservingRackScroll()` | 8963 | 2 | 2 |
+| `phase17dStopAutoScroll()` | 8975 | 8 | 8 |
+| `phase17dScrollTick()` | 8981 | 2 | 0 |
+| `phase17dTrackDrag()` | 8990 | 1 | 0 |
+| `phase13VTarget()` | 9021 | 2 | 2 |
+| `phase13VClearPreview()` | 9031 | 3 | 3 |
+| `phase13DropPosition()` | 9110 | 2 | 2 |
+
+**Next decision gate:** Group the entries by actual behaviour and document the proposed descriptive names and dependencies in this existing reference. Flag HTML event attributes, indirect calls, collisions and compatibility exposure before any implementation. No application changes or tests were performed for this static inventory.
+
+### Bulk triage by identifier, 28 October 2026
+
+This is a **first-pass heuristic grouping based on existing identifier words**, not verified behaviour. Each function appears in exactly one category; cross-cutting responsibilities and ambiguous names must be checked against implementation. It avoids treating 183 entries as 183 separate review discussions.
+
+**IPAM / network (10):** `phase12IpNumber`, `phase12IpString`, `phase12Cidr`, `phase12Overlap`, `phase12Usable`, `phase10GatewaySubnet`, `phase10SubnetSummary`, `phase12BBulkPlan`, `phase11BSubnetDependencies`, `phase120ReturnFromSubnet`.
+
+**Rack / accessories (30):** `phase120SeparateLegacyRackLocation`, `phase13CLegacyAccessoryTypes`, `phase13GFascia`, `phase13LPrintRack`, `phase120ConfirmRackCorrection`, `phase120ResolveRackCorrection`, `phase14CGoToRack`, `phase19BAllowedMounts`, `phase120SuggestedMounts`, `phase120DefaultMount`, `phase19BMountOptions`, `phase19BUpdateMountChoices`, `phase16CLegacyMountRepairs`, `phase16CInvalidMounts`, `phase16CRackImportIssues`, `phase16CReviewLegacyMountRepairs`, `phase16CAPMountConflicts`, `phase16CChooseAPMounts`, `phase13DFascia`, `phase13CAccessoryError`, `phase13VRenderRail`, `phase13COpenAccessory`, `phase13CDeleteAccessory`, `phase13CMoveAccessory`, `phase13ClearDropPreview`, `phase17dRenderPreservingRackScroll`, `phase17dStopAutoScroll`, `phase17dScrollTick`, `phase17dTrackDrag`, `phase13DropPosition`.
+
+**Backup / recovery / validation (19):** `phase17ARecoveryBanner`, `phase11CPreviewRepair`, `phase11CDownloadSnapshot`, `phase11CApplyRepair`, `phase120SoftwareRestore`, `phase120RestoreServerService`, `phase130ConfirmRestore`, `phase130ResolveRestore`, `phase130RestoreHistory`, `phase16ABackupHelp`, `phase16AClearSystem`, `phase20CreateBackup`, `phase20ValidateBackupVersion`, `phase20MigrateBackup`, `phase16CRejectUnsafeKeys`, `phase11ValidateBackupShape`, `phase11DownloadSnapshot`, `phase16CCheckBackup`, `phase16CShowImportError`.
+
+**Catalogue / software / hardware (51):** `phase120FilterModels`, `phase120ManufacturerManager`, `phase120ManufacturerSave`, `phase120BuiltinManufacturerEditor`, `phase120BuiltinManufacturerSave`, `phase120ManufacturersHTML`, `phase120ModelAllowedTypes`, `phase120ModelUpdateTypes`, `phase120ModelManager`, `phase120ModelSave`, `phase120BuiltInModelEditor`, `phase120BuiltInModelSave`, `phase120ModelsHTML`, `phase120SoftwareEdit`, `phase120SoftwareSaveCustom`, `phase120SoftwareRemove`, `phase120SoftwareArchive`, `phase120SoftwareHTML`, `phase120EnableSoftware`, `phase120FilterSoftware`, `phase120ServerServiceEditor`, `phase120SaveServerService`, `phase120ServerServicesHTML`, `phase120AvailableServerServices`, `phase120ConfirmServerServiceArchive`, `phase120ArchiveServerService`, `phase120HardwarePreferences`, `phase120EffectiveHardwareSeed`, `phase120HardwareCatalogue`, `phase120HardwareCatalogType`, `phase120ManageHardwareCatalogue`, `phase120UpdateHardwareCatalogue`, `phase120VirtualHardwareVisibility`, `phase120RefreshHardwareSuggestions`, `phase120HardwareSelectionChanged`, `phase19BSoftware`, `phase19BSoftwareFields`, `phase19BManageSoftware`, `phase19BReadSoftwareSelections`, `phase19BUpdateSoftware`, `phase120BuiltinSoftwareKey`, `phase120SoftwareOptions`, `phase120SoftwareHidden`, `phase120SoftwareToggle`, `phase120SoftwareTypeControls`, `phase120SoftwareFieldsFor`, `phase120IsSoftwareField`, `phase120RenderSoftwarePlatform`, `phase120WireSoftwarePlatform`, `phase120CaptureSoftwarePlatform`, `phase120RefreshSoftwarePlatform`.
+
+**Device / virtualisation (20):** `phase180EffectivePlatform`, `phase19BKeepDeviceForm`, `phase11DeviceTopBlock`, `phase11DeviceCascade`, `phase14CViewDevice`, `phase19BServerFunctions`, `phase19BServerFunctionFields`, `phase120IsVirtualForm`, `phase19BFieldsFor`, `phase120PlatformGroup`, `phase120PlatformOptions`, `phase120IsWindowsPlatform`, `phaseM134HostingEnabled`, `phaseM134SyncHostingVisibility`, `phase120InitializeDeviceTabs`, `phase130ObsoleteDeviceFields`, `phase130ConfirmDeviceConversion`, `phase130ResolveDeviceConversion`, `phaseM005ConfirmPlatformChange`, `phase13MoveDevice`.
+
+**Reports / export (4):** `phase10DReportData`, `phase10DCsvCell`, `phase10DDownloadCsv`, `phase10DReportsHTML`.
+
+**Other / needs manual classification (49):** `phase11CPlan`, `phase11CPanelHTML`, `phase13GDefault`, `phase13GOpenGraphics`, `phase13GSaveGraphics`, `phase13LUsage`, `phase13LFreeRuns`, `phase180EffectiveVersion`, `phase18DList`, `phase18DProtected`, `phase18DOpen`, `phase18DConfirmDelete`, `phase18DCancelDelete`, `phase18DConfirmDeleteAction`, `phase18DCommit`, `phase18DRename`, `phase18DCancelRename`, `phase12BBackToEditing`, `phase12BApply`, `phase11BIntegrityIssues`, `phase11BCommitDelete`, `phase120ConfirmDiscard`, `phase120KeepEditing`, `phase120DiscardChanges`, `phase18BOpenPlacement`, `phase19CDetailLabel`, `phase19CDetailRows`, `phase120ConfirmArchivedUninstall`, `phase120RecordArchivedUninstall`, `phase14CSelectTab`, `phase19BManageFunctions`, `phase19BReadFunctionSelections`, `phase19BUpdateFunction`, `phase19BRenderFields`, `phase120VersionOptions`, `phase19BReadFields`, `phase19BRefreshFields`, `phase19BIsAccessPoint`, `phase120InitializeNotesEditor`, `phase130HandleLocationChange`, `phase130CancelCustomLocation`, `phaseM005ConfirmHypervisorRemoval`, `phase16ARenderSettings`, `phase16ACheckSafety`, `phase11SafetyPanelHTML`, `phase16CReadJson`, `phase16CApplyAPChoices`, `phase13VTarget`, `phase13VClearPreview`.
+
+**Next:** Inspect implementation and all reference forms within each group, produce the full proposed rename mapping, and highlight ambiguous or externally referenced names for owner review. This grouping does not authorise renaming.
+
+### #101 zero-reference exceptions inspected, 28 October 2026
+
+Seven named declarations had no other exact literal identifier occurrence in the current HTML. **This is not evidence that removal is safe**; their bodies were inspected to identify the intended responsibilities and any legacy or compatibility implications. The names below are *descriptive review candidates only*, not approved changes.
+
+| Existing name | Source-inspected responsibility | Suggested descriptive name | Disposition |
+| --- | --- | --- | --- |
+| `phase12Overlap()` | Compare parsed CIDR network ranges for overlap | `doIpv4SubnetsOverlap()` | Check whether superseded by another validator; preserve until dependency review |
+| `phase11CPanelHTML()` | Generate an integrity-repair preview panel | `renderIntegrityRepairPreviewHtml()` | Verify whether panel is reached through another renderer or obsolete path |
+| `phase13GFascia()` | Generate device fascia graphics using configured or default presets | `renderDeviceFasciaHtml()` | Check newer graphics path before considering removal |
+| `phase11BIntegrityIssues()` | Collect inventory integrity issues including IP and rack relationships | `findInventoryIntegrityIssues()` | Safety-related; do not remove merely because no direct call is found |
+| `phase130ConfirmDeviceConversion()` | Open an asynchronous device-conversion confirmation dialogue | `confirmDeviceTypeConversion()` | Historical conversion workflow; investigate against agreed immutable device-type rules before any change |
+| `phase11SafetyPanelHTML()` | Generate the backup and restore safety information panel | `renderBackupSafetyPanelHtml()` | Preserve safety messaging until UI reachability is established |
+| `phase13DFascia()` | Generate rack accessory fascia graphics, including patch and brush panels | `renderRackAccessoryFasciaHtml()` | Check rack renderer references and historical compatibility |
+
+**Important:** The source contains both historical device-conversion logic and newer rules governing device types. Their coexistence is a reason for careful review, not permission to delete or rewrite them. No function was removed or renamed. No application tests were run. All seven require caller and reachability verification before an implementation proposal.
+
+### #101 and #192 joint source inspection, 28 October 2026
+
+The current `release/v1.3.3` HTML contains **296 named `function` declarations** using a simple textual pattern, including the 183 phase-prefixed declarations previously inventoried. This is not a count of all arrow functions, callbacks or function expressions. A name-only duplicate scan found `add()` declared twice, but each is nested inside a different catalogue-rendering function (`phase120ManufacturersHTML()` and `phase120ModelsHTML()`). They have distinct local scopes and responsibilities. **This is not a confirmed duplicate global declaration, defect or safe consolidation opportunity.**
+
+Seven phase-prefixed functions have no other exact-name occurrence, including `phase130ConfirmDeviceConversion()` and `phase11BIntegrityIssues()`. Source inspection confirms the conversion dialogue implementation and integrity checks exist, but reachability and compatibility consequences have not been established. Do not remove them on this evidence. The older device-conversion path merits comparison against the approved fixed device-type design, including historical backups and editing workflows.
+
+**#192 assessment boundary:** No confirmed removable code, measurable performance bottleneck or safely shared duplicated block has yet been demonstrated. Next examine function bodies, caller paths, nested scopes and data-preservation requirements. Refactoring requires separately approved scope and focused verification. No application source changed; no tests executed.
+
+### #192 conversion compatibility finding, 28 October 2026
+
+A deeper source inspection distinguishes **two different historical conversion paths**:
+
+- `phase130ConfirmDeviceConversion()` (around line 7548) builds a conversion confirmation dialogue and has no other exact-name reference. Its `phase130ResolveDeviceConversion()` helper still has event-dispatch and Escape-key callers, apparently supporting that dialogue. This is a **candidate for reachability investigation**, not yet approved redundant code.
+- `phase130RestoreHistory()` (around line 6331) is a separate **live historical-configuration restoration function**. It invokes `phase130ObsoleteDeviceFields()`, asks for confirmation using `phase130ConfirmRestore()`, and explicitly describes a device-type change to the user. The restore function must be reviewed against the agreed immutable device-type rule and historical data-preservation requirements before changing either code path. Do not conflate it with the apparently uncalled conversion dialogue.
+
+**Open question for product-owner decision after investigation:** should historical configuration restoration be allowed to change the device type, or should it only restore compatible fields while retaining the current immutable type? No change authorised or made; no tests run. Static reference evidence alone does not prove runtime reachability.
+
+### #192 historical restore reachability and behaviour, 28 October 2026
+
+**Confirmed by source inspection, not by executing the application:** `phase14CViewDevice()` builds the History tab from `previousTypeDetails`, and each snapshot is rendered with a `data-action="phase130-restore"` button (around line 6186). The delegated action handler calls `phase130RestoreHistory(id, Number(actionEl.dataset.index))` (around line 9254). Therefore the restore path is wired into the user interface and must not be classified as dead code.
+
+`phase130RestoreHistory()` (around lines 6331–6377) checks the snapshot, selects recognised destination fields, uses `phase130ObsoleteDeviceFields()` to identify incompatible current values, displays a confirmation, archives selected overwritten/incompatible values, **assigns `device.type = snapshot.type`**, then persists with `saveState()` and rolls back `appState` on failure. The source comments explicitly preserve earlier snapshots. This behaviour potentially conflicts with the agreed fixed device-type rule, even though it remains accessible through historical configuration restoration.
+
+**Recommendation for product-owner consideration:** preserve the ability to *view* every historical configuration and all stored historical data. Investigate whether Restore Configuration should be restricted to same-type restoration or replaced by an explicitly non-destructive compatible-field restore. Before proposing any change, check what users would lose, any existing test expectations and compatibility with historic backups. Do not silently alter existing restore behaviour, remove historical snapshots or claim runtime verification. No application changes or tests have occurred.
+
+### #192 agreed historical-data preservation, 28 October 2026
+
+**Product-owner decision:** preserve **all historical configurations and their data** during the v1.3.3 code clean-up. This is an approved preservation constraint, **not approval to alter the Restore Configuration behaviour**.
+
+Further source inspection confirms that the History tab is conditionally displayed when `previousTypeDetails` contains snapshots; each snapshot remains readable and has a Restore Configuration action. The restoration handler currently changes `device.type` as well as fields, and preserves previous snapshots when saving. This must be reviewed alongside the fixed-type design. The preservation requirement applies even if a historical snapshot is not eligible for restoration under a future approved rule. No historical entries may be silently discarded or rewritten as part of clean-up.
+
+**Next evidence needed before proposing implementation:** existing test coverage for History/Restore Configuration and backup round-tripping, and an explicit decision on same-type versus compatible-field restoration. Source inspection only; no tests executed or application code changed.
 
 ## Purpose
 
@@ -291,3 +589,48 @@ A declaration scan of the published HTML found 274 named function declarations o
 **Ordered storage safeguards:** After user confirmation, `importData()` captures the original in-memory state, the existing stored inventory bytes (`currentSnapshot`) and the previous safety copy (`previousSafetySnapshot`). It writes the pre-restore safety copy and checks the exact bytes by immediate readback. Only then does it set `appState` to the validated candidate and call `saveState()`. It reads the newly stored inventory back and compares its normalised form with the candidate. On failure, it restores the original in-memory state, writes back the original stored bytes and verifies them, then restores the previous safety copy (including the absent case) and verifies that too. If either rollback check fails, it enters protected recovery mode, displays a banner and blocks further saves through the existing recovery guard. Otherwise it reports the cancelled restore and retains the earlier inventory.
 
 **Evidence boundary:** PR #81 and Chromium run 39959581469 previously exercised the main save failure, ignored previous safety copy restoration, recovery banner, retained original bytes and subsequent save blocking. The source inspection above was not a new browser test. The complete implementations of every called helper, all backup variants and all failure combinations have **not** been individually reverified at this checkpoint. The old statement above that this call chain was untraced is superseded for the top-level import path, but wider helper internals remain open.
+
+
+## #101 implementation and verification checkpoint, 28 October 2026
+
+The earlier inventories, proposed names and dated source inspections above remain historical evidence. They describe the state at their recorded revisions and are not a claim that the phase-prefixed names remain current in the #101 implementation branch.
+
+**Implementation:** Draft [PR #195](https://github.com/Caffoot/Caffoot-Lite/pull/195), head `fix/101-descriptive-identifiers`, base `release/v1.3.3`, applies the approved descriptive internal naming and corresponding caller, DOM selector, action and test-reference changes. The application HTML and 29 test/check scripts are changed. Three historical localStorage keys retain their original spellings for saved-inventory and backup compatibility. Removed legacy names in intentional negative assertions remain negative checks, not missed renames. This work does not authorise the separately scoped #192 dead-code removal.
+
+**Actual verified evidence on PR head `1dcee570a3b1d6cecaee580dba40ea035bd884df`:** consolidated Chromium regression [40684693871](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40684693871), release candidate validation [40684693997](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40684693997), release documentation consistency [40684693904](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40684693904), and Git history secret scan [40684693911](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40684693911) all **passed**. The consolidated browser run includes the audit, #99, #157, legacy device history and #100 checks. Previously successful release-branch focused history/rollback run 40594804262 is retained where applicable. Earlier failing PR-head runs were superseded by these passing checks. No application tests are required solely because documentation is reconciled.
+
+**Naming map interpretation:** The earlier proposal table is a dated review record, not an exact machine-readable statement of the final implementation. Where proposed names differ, the current PR-head HTML and matching updated test scripts are authoritative for actual names. Do not copy old phase-prefixed examples into new application code or change persisted contracts to make names uniform.
+
+**Remaining gate:** Reconcile the existing technical workflows, master audit, findings register, test evidence, roadmap and release records where affected; review the final documentation diff and compatibility boundaries. PR #195 remains draft and unmerged. Explicit product-owner approval is required separately before merge or release.
+
+
+### #192 focused removal checkpoint, 28 October 2026
+
+The product owner explicitly approved the narrow first clean-up batch after reviewing the reachability findings. Commit [25f6f5b](https://github.com/Caffoot/Caffoot-Lite/commit/25f6f5b197ee7143ee5b7b7f96f631ea1a117401) on `release/v1.3.3` removes the uncalled `confirmDeviceTypeConversion()` dialogue, its `resolveDeviceTypeConversion()` helper, pending resolver state, conversion action cases, and related Escape/Tab handling. It also removes the uncalled `renderBackupSafetyPanelHtml()` renderer. Current Settings backup controls, `downloadPreRestoreSafetySnapshot()`, inventory history, and existing backup validation/import logic are retained.
+
+**Source verification actually performed:** fetched the committed HTML from GitHub; confirmed the removed function names, dialogue identifier and conversion resolver have no remaining textual references, and that the existing `download-snapshot` handler and `previousTypeDetails` support remain. These are source inspections, **not executed browser tests**. The commit-specific workflow lookup returned no pull-request-triggered runs; it does not establish whether branch-triggered workflows ran. Earlier passing tests for unchanged behaviour remain valid, but any focused verification required for changed modal keyboard handling or backup settings is still to be decided from existing test coverage. Do not declare this batch fully verified yet.
+
+**Outstanding #192 scope:** The five other already-renamed zero-reference candidates (`doIpv4SubnetsOverlap`, `findInventoryIntegrityIssues`, `renderIntegrityRepairPreviewHtml`, `renderDeviceFasciaHtml`, `renderRackAccessoryFasciaHtml`) remain untouched pending reachability and safety review. No merge into `main` or release was authorised. This checkpoint supersedes the historical draft/unmerged PR #195 wording above for current status; PR #195 was merged before this #192 commit. The master audit, findings register and release gate still require reconciliation against this implementation and its evidence.
+
+
+### #192 second approved removal, 28 October 2026
+
+Following explicit product-owner approval, commit [3999d3b](https://github.com/Caffoot/Caffoot-Lite/commit/3999d3be1b1d17852e534929d7e41f938230053f) on `release/v1.3.3` removes only three declaration-only helpers: `doIpv4SubnetsOverlap()`, `renderDeviceFasciaHtml()`, and `renderRackAccessoryFasciaHtml()`. Source inspection before the change found no direct named callers. The existing `parseSupportedIpv4Subnet()` helper, rack graphics presets/configuration, active rack renderer and both integrity-related candidates were preserved. The commit was made directly to the release branch under the approved scope; no PR merge into `main` or release was performed.
+
+**Evidence status:** Static reference/dependency checks performed before committing, including exact-name occurrence checks and explicit checks that protected functions remained in the generated replacement source. Browser tests have **not** been executed for this commit. The earlier #192 removal's focused Settings backup controls and modal keyboard verification remain outstanding; verify together only where coverage is genuinely missing, reusing valid earlier passing evidence. Master audit, findings register and release gate reconciliation remain open. Do not describe either #192 batch as fully browser-verified yet.
+
+
+### #192 focused browser verification, 28 October 2026
+
+**Confirmed passing evidence:** [GitHub Actions run 40698740608, job 122852454030](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40698740608/job/122852454030), manually dispatched on `release/v1.3.3` at head `2ed3ad0f465c0aa33fc332746a090e25d7a69dc5`. Job conclusion **success**. Standalone build and HTML verification passed; the selected `node test-browser-upgrade.cjs` Chromium step passed. The job log reports passing populated backup export, moved/renamed-file restore, cancellation, future-schema rejection, persistence, offline update guide and embedded licences. The test also includes preservation of legacy read-only device-type history on import, export and reload, and checks for backup, restore and safety-backup Settings controls. Unrelated consolidated, issue #99, issue #157 and issue #100 browser scenarios were **skipped**, not rerun. No full regression was executed.
+
+**Earlier failure:** [run 40698342609](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40698342609/job/122851044501) failed because the old test called the obsolete `phase20CreateBackup()` name. Test-only correction `2ed3ad0` updated the current backup and device-history references; the succeeding run above resolves that specific failure without an application-code change. Focused workflow-dispatch scope was added in `a9fb467`. Source-only removals `25f6f5b` and `3999d3b` precede the verified test revision.
+
+**Scope limit and outstanding work:** This run verifies the upgrade compatibility scenarios actually executed, not every rack interaction, all modal focus cases, or the separate inventory integrity repair system. The two preserved integrity helpers, `renderIntegrityRepairPreviewHtml()` and `findInventoryIntegrityIssues()`, remain investigation-only and must not be removed without a dedicated safety review and product-owner approval. Master audit, central findings and v1.3.3 release gate should be reconciled against this evidence. Earlier checkpoint notes describing browser tests as not yet executed are historical and are superseded for the executed upgrade scenario by this entry. Issue #192 remains open pending reconciliation.
+
+
+### Issue #192 agreed investigation closeout assessment, 28 October 2026
+
+**Completed within approved scope:** Caller/dependency inspection and two owner-approved small removal batches (`25f6f5b`, `3999d3b`) eliminated five unused helpers. The current upgrade compatibility test explicitly asserts that `previousTypeDetails` survives import, export and reload, remains visible as read-only History, and has no restore action; its focused Chromium execution [40698740608](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40698740608) passed. Existing historical-reservation Chromium [40167139071](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40167139071) and WF-04 manual preservation/release evidence are reused. No further regression is warranted for unchanged code.
+
+**Consciously retained:** `renderIntegrityRepairPreviewHtml()` and `findInventoryIntegrityIssues()` are uncalled but associated with diagnostic/recovery and historical reservation semantics; they have not been removed. Active Settings safety check, IPAM editor, integrity planner, snapshot and deletion rollback paths remain. Future redesign is a separate decision, not unfinished approval to remove them. This is an investigation and agreed maintenance closeout assessment only; no claim of complete #108 release acceptance. The issue owner may close #192 once this retained-scope decision and evidence are accepted; no release or merge to `main` is authorised by such closure.

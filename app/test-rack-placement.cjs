@@ -24,8 +24,8 @@ assert.match(place('d2','front',8,9), /accessory/i, 'Accessory collision must fa
 assert.match(place('d2','front',12,13), /between U1/i, 'Rack boundary must be enforced');
 assert.equal(place('d1','front',3,4), null, 'Moving device must ignore its own previous position');
 assert.equal(place('d2','front',9,10), null, 'Free positions must be allowed');
-vm.runInContext(extract('phase13CAccessoryError','phase13COpenAccessory'), ctx);
-const accessory = (id,face,start,height) => ctx.phase13CAccessoryError({id,rackId:'r1',face,startU:start,heightU:height},id);
+vm.runInContext(extract('validateRackAccessoryPlacement','openRackAccessoryEditor'), ctx);
+const accessory = (id,face,start,height) => ctx.validateRackAccessoryPlacement({id,rackId:'r1',face,startU:start,heightU:height},id);
 assert.match(accessory('a2','front',4,1), /device/i, 'Accessory cannot overlap device');
 assert.match(accessory('a2','front',8,1), /accessory/i, 'Accessory cannot overlap accessory');
 assert.equal(accessory('a2','rear',8,1), null, 'Rear accessory may share front U');
