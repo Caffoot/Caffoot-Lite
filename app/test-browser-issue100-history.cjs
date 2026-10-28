@@ -102,7 +102,7 @@ const { chromium } = require('playwright');
             return null; // After saveState's verified readback, fail the caller's extra check.
           return oldGet.call(this, key);
         };
-        try { phase16AClearSystem(); }
+        try { requestInventoryReset(); }
         finally {
           window.confirm = oldConfirm;
           Storage.prototype.getItem = oldGet;
