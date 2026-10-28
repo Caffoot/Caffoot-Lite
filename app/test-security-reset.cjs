@@ -30,6 +30,8 @@ function scenario(mode) {
         appState:original, phase17AStorageRecovery:null,
         localStorage:storage, STORAGE_KEY:key, SAFETY_SNAPSHOT_KEY:safetyKey,
         nextAuditReason:'', selectedSubnetId:'old', selectedRackId:'old',
+        auditHistory:[], AUDIT_KEY:'audit-test',
+        restoreAuditAfterRolledBackOperation:()=>{},
         cloneDefaultData:()=>clean,
         phase16CCheckBackup:x=>x,
         saveState:()=>{

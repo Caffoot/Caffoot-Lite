@@ -25,11 +25,33 @@ const {pathToFileURL}=require('node:url'),{chromium}=require('playwright');
  await page.evaluate(()=>{appState=cloneDefaultData();if(!saveState())throw Error('Cannot save destination baseline');currentTab='settings';phase16ASection='backup';renderContent();});
  const baseline=await snapshot();approve=false;await upload(bytes);assert.deepEqual(await snapshot(),baseline,'Cancelled import into moved file must preserve destination');
  approve=true;await upload(bytes);
- const after=await snapshot();
+ let after=await snapshot();
  const inventory=await page.evaluate(()=>phase20CreateBackup());
  for(const key of Object.keys(backup).filter(k=>k!=='caffootBackup'))assert.equal(JSON.stringify(inventory[key]),JSON.stringify(backup[key]),'Moved-file restore must preserve '+key);
  assert.equal(after.safety,baseline.stored);
  await page.reload();assert.deepEqual(await snapshot(),after,'Restored inventory must persist in renamed file');
+ // #192: legacy device-type history must remain read-only and survive backup round-trips.
+ const legacy=JSON.parse(bytes);
+ legacy.devices[0].previousTypeDetails=[{type:'Printer',details:{model:'Legacy fictional printer',serialNumber:'HISTORY-ONLY'}}];
+ await upload(Buffer.from(JSON.stringify(legacy)));
+ assert.equal(JSON.stringify(await page.evaluate(()=>appState.devices[0].previousTypeDetails)),JSON.stringify(legacy.devices[0].previousTypeDetails),'Legacy history must survive import');
+ await page.evaluate(()=>phase14CViewDevice(appState.devices[0].id));
+ await page.locator('#phase14c-tab-history').click();
+ await page.locator('#phase14c-panel-history details summary').first().click();
+ const historyModal=await page.locator('#modal-content').innerText();
+ assert.match(historyModal,/Previous Device Type Details/,'Legacy history must remain visible');
+ assert.match(historyModal,/Legacy fictional printer/,'Legacy snapshot fields must remain visible');
+ assert.equal(await page.locator('[data-action="phase130-restore"]').count(),0,'Legacy history must not offer configuration restoration');
+ await page.keyboard.press('Escape');
+ const roundTrip=await page.evaluate(()=>phase20CreateBackup());
+ assert.equal(JSON.stringify(roundTrip.devices[0].previousTypeDetails),JSON.stringify(legacy.devices[0].previousTypeDetails),'Legacy history must survive export');
+ await page.reload();
+ assert.equal(JSON.stringify(await page.evaluate(()=>appState.devices[0].previousTypeDetails)),JSON.stringify(legacy.devices[0].previousTypeDetails),'Legacy history must survive reload');
+ await upload(bytes);
+ const restoredBaseline=await snapshot();
+ assert.equal(restoredBaseline.active,after.active,'Original fixture must be restored after legacy-history check');
+ assert.equal(restoredBaseline.stored,after.stored,'Original fixture must persist after legacy-history check');
+ after=restoredBaseline;
  const bad=JSON.parse(bytes);bad.caffootBackup.schemaVersion=2;const count=confirmations;await upload(Buffer.from(JSON.stringify(bad)));assert.deepEqual(await snapshot(),after);assert.equal(confirmations,count,'Unsupported schema must reject before confirmation');
  // The expected rejection is displayed in a modal; dismiss it before testing
  // controls behind the modal, and verify that dismissal leaves data untouched.
