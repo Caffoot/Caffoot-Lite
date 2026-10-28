@@ -15,6 +15,6 @@ assert.match(source, /<textarea id="dev-notes" rows="18"/, 'Notes supports multi
 assert.doesNotMatch(source, /<input type="text" id="dev-notes"/, 'Old single-line notes field removed');
 assert.match(source, /function initialiseNotesEditor\(form\)/, 'Notes editor initializes');
 assert.match(source, /data-notes-format="bold"/, 'Markdown formatting toolbar available');
-assert.match(source, /id="phase120-notes-preview"/, 'Markdown preview available');
+assert.match(source, /id="notes-preview"/, 'Markdown preview available');
 assert.match(source, /preview\.replaceChildren\(\)/, 'Preview uses DOM rather than HTML injection');
 console.log('PASS: five-tab layout, mounting placement, multiline notes and tab draft contract.');
