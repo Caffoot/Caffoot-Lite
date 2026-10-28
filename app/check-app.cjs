@@ -338,7 +338,7 @@ const subnetDepsEnd = html.indexOf('function commitDeletionWithRollback(', subne
 const subnetDeleteStart = html.indexOf('function deleteSubnet(');
 const subnetDeleteEnd = html.indexOf('function deleteVlan(', subnetDeleteStart);
 const rackDeleteStart = html.indexOf('function deleteRack(');
-const rackDeleteEnd = html.indexOf('// Phase 18B:', rackDeleteStart);
+const rackDeleteEnd = html.indexOf('function openRackSlotPlacementDialog(', rackDeleteStart);
 assert(subnetDepsStart >= 0 && subnetDepsEnd > subnetDepsStart && subnetDeleteStart >= 0 && subnetDeleteEnd > subnetDeleteStart && rackDeleteStart >= 0 && rackDeleteEnd > rackDeleteStart, 'subnet/rack deletion helpers must exist');
 const deletionFixture = {
   appState: {
