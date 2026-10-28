@@ -10,7 +10,7 @@
 
 **Issue #164, PR #178 (27 October 2026):** VM-first creation and fixed device identity are implemented in a draft v1.3.2 PR. Focused Chromium acceptance passed in run 40490305172, alongside three successful validation workflows. Additional acceptance evidence remains under review. No merge or release approval.
 
-**Current published stable release:** [v1.3.1](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.1), published 26 October 2026.
+**Current published stable release:** [v1.3.2](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.2), published 27 October 2026.
 
 Caffoot Lite is an offline, standalone single-HTML network inventory and IP address management application. v1.3.1 is the published maintenance release following v1.3.0 Rack Management and the v1.2.x Devices & Intelligence releases; earlier versions remain available as historical releases.
 
