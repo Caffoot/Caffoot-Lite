@@ -67,7 +67,7 @@
         .dark .option-tile { background:#1e293b; border-color:#475569; color:#f1f5f9; }
         .dark .option-tile:has(input:checked) { background:#453414; border-color:#fbbf24; }
         .dark .option-status { background:#78350f; color:#fef3c7; }
-        /* Phase 7A — individual form layout */
+        /* individual form layout */
         .form-shell { max-width: 900px; margin: 0 auto; }
         .form-section-card { padding: 1rem; border: 1px solid rgb(226 232 240); border-radius: 0.9rem; background: rgb(248 250 252 / .55); }
         .dark .form-section-card { border-color: rgb(51 65 85); background: rgb(15 23 42 / .35); }
@@ -109,7 +109,7 @@
 .dark #modal-content :is(input,select,textarea,button):focus-visible { outline-color: #a5b4fc; }
 #modal-content .grid > * { min-width: 0; }
 @media (max-width: 640px) { #modal-content { max-width: calc(100vw - 1rem); } }
-/* Phase 19C: compact divider within the hardware details grid. */
+/* compact divider within the hardware details grid. */
 .device-details-detail-subheading { grid-column: 1 / -1; padding-top: .85rem; margin-top: .25rem; border-top: 1px solid var(--border-color, #cbd5e1); font-size: .75rem; font-weight: 750; letter-spacing: .03em; color: #475569; }
 .dark .device-details-detail-subheading { color: #cbd5e1; border-color: #475569; }
 
@@ -123,7 +123,7 @@
 </style>
 
 <style>
-/* Phase 7 - consistent modal/form layout */
+/* consistent modal/form layout */
 #modal-container { align-items: center; }
 #modal-content { max-width: 64rem; max-height: 90vh; overflow-y: auto; }
 #modal-content form { width: 100%; }
@@ -314,7 +314,7 @@ button:disabled, input:disabled, select:disabled, textarea:disabled {
 </style>
 
 <style id="rack-accessibility-qa-styles">
-/* Phase 7B: legibility and consistent controls in light/dark themes */
+/* legibility and consistent controls in light/dark themes */
 :root { --qa-muted: #475569; --qa-border: #94a3b8; --qa-focus: #1d4ed8; }
 .dark { --qa-muted: #cbd5e1; --qa-border: #64748b; --qa-focus: #a5b4fc; }
 #modal-content input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
@@ -483,7 +483,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .rack-patch-panel-12 .rack-accessory-port,.rack-patch-panel-24 .rack-accessory-port,.rack-patch-panel-48 .rack-accessory-port{display:block!important;width:100%;min-width:0;max-width:none;height:9px}
 @media(max-width:640px){.rack-patch-panel-48{gap:1px;padding:2px}.rack-patch-panel-48 .rack-accessory-port{border-width:1px}}
 
-/* Phase 13E refinement: let patch-panel ports occupy all usable rack width. */
+/* let patch-panel ports occupy all usable rack width. */
 .rack-accessory-item.rack-accessory-patch-panel{gap:6px;padding-left:8px;padding-right:8px}
 .rack-accessory-item.rack-accessory-patch-panel > .flex.items-center{flex:1 1 auto;min-width:0;gap:6px}
 .rack-accessory-item.rack-accessory-patch-panel .rack-accessory-content{flex:1 1 auto;width:100%;min-width:0;gap:0}
@@ -495,7 +495,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .rack-accessory-item.rack-accessory-patch-panel .rack-accessory-port{min-width:0}
 @media(max-width:640px){.rack-accessory-item.rack-accessory-patch-panel{padding-left:4px;padding-right:4px;gap:3px}.rack-accessory-item.rack-accessory-patch-panel > .flex.items-center{gap:3px}.rack-accessory-item.rack-accessory-patch-panel .rack-patch-panel-48{gap:1px;padding:2px}}
 
-/* Phase 13E refinement: use the full usable rack width for ALL accessory fascias.
+/* use the full usable rack width for ALL accessory fascias.
    Retain the left U marker and right edit/remove actions. */
 .rack-workspace .rack-accessory-item:is(.rack-accessory-blank-panel,.rack-accessory-brush-panel,.rack-accessory-cable,.rack-accessory-shelf){gap:6px;padding-left:8px;padding-right:8px}
 .rack-workspace .rack-accessory-item:is(.rack-accessory-blank-panel,.rack-accessory-brush-panel,.rack-accessory-cable,.rack-accessory-shelf) > .flex.items-center{flex:1 1 auto;min-width:0;gap:6px}
@@ -643,7 +643,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .dark .device-modal .device-heading{border-bottom-color:#475569;}
 .dark .device-modal .device-form-tabs{border-bottom-color:#475569;}
 .dark .device-modal .form-actions{border-top-color:#475569;}
-/* Phase 14B: only the Add/Edit/Duplicate Device dialog */
+/* only the Add/Edit/Duplicate Device dialog */
 #modal-content:has(.device-modal){width:min(96vw,1100px)!important;max-width:1100px!important;height:min(850px,calc(100dvh - 32px));max-height:calc(100dvh - 32px);overflow:hidden;padding:0!important;}
 .device-modal{height:100%;min-height:0;display:flex;flex-direction:column;}
 .device-modal .device-heading{flex:0 0 auto;}
@@ -737,7 +737,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 @media (prefers-reduced-motion: reduce) { .rack-located-device { animation: none; outline: 3px solid #fbbf24; outline-offset: -3px; } }
 </style>
 <style id="device-inventory-actions-styles">
-/* Phase 14F: simplify the inventory's row actions while preserving existing action handlers. */
+/* simplify the inventory's row actions while preserving existing action handlers. */
 .device-table-wrapper{overflow-x:auto;overflow-y:visible}
 .device-actions{display:inline-flex;align-items:center;justify-content:flex-end;gap:7px;white-space:nowrap}
 .device-detail-summary{background:#dcfce7;color:#14532d;border:1px solid #86efac;border-radius:9px;padding:8px 12px;min-height:38px;font-size:12px;font-weight:700}
@@ -770,7 +770,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 @media(max-width:640px){.device-devices .device-table-wrapper{max-width:100%;overflow-x:auto}.device-devices [data-device-panel="inventory"] label{max-width:100%}}
 </style>
 <style id="device-inventory-polish-styles">
-/* Phase 14H: consistent alignment and control sizing, scoped to device inventory filters. */
+/* consistent alignment and control sizing, scoped to device inventory filters. */
 .device-devices .filter-row{align-items:flex-end;gap:12px}
 .device-devices .filter-row>label{display:flex;flex-direction:column;justify-content:flex-end;gap:6px;min-width:144px;margin:0;line-height:1.25}
 .device-devices .filter-row>label>select{box-sizing:border-box;display:block;width:100%;height:44px;min-height:44px;max-height:44px;margin:0;padding:0 34px 0 12px;border-radius:12px;font-size:14px;line-height:normal;vertical-align:middle}
@@ -793,7 +793,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 @media(max-width:640px){.device-devices [data-device-panel="inventory"] .filter-row{grid-template-columns:repeat(auto-fit,minmax(145px,1fr))}}
 </style>
 <style id="dashboard-statistics-styles">
-/* Phase 15A: dashboard-only visual system, retains existing page behaviour */
+/* dashboard-only visual system, retains existing page behaviour */
 .dashboard-stats .dashboard-stat{min-width:0;box-shadow:0 2px 8px rgba(15,23,42,.035)}
 .dashboard-stats .dashboard-stat:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(15,23,42,.08)}
 .dashboard-stat-icon{width:38px;height:38px;display:inline-flex;align-items:center;justify-content:center;border-radius:12px;background:#dbeafe;color:#1d4ed8;font-size:16px;flex-shrink:0}
@@ -932,7 +932,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 </style>
 
 <style id="interface-consistency-styles">
-/* Phase 18A: accessible, consistent application controls without changing rack geometry. */
+/* accessible, consistent application controls without changing rack geometry. */
 :root { --control-focus-colour:#2563eb; --control-border-colour:#94a3b8; }
 .dark { --control-focus-colour:#93c5fd; --control-border-colour:#64748b; }
 /* Use a visible keyboard-only focus indicator, including dynamically rendered controls. */
@@ -980,7 +980,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 @media(max-width:420px){.device-catalogue-choice{font-size:12px;padding:8px 5px}}
 </style>
 <style id="rack-placement-balanced-dialog-styles">
-/* Phase 18B polish: one consistent, contained dialog for either equipment type. */
+/* one consistent, contained dialog for either equipment type. */
 #modal-content.rack-balanced-modal { width: min(620px, calc(100vw - 28px)); max-width: 620px; max-height: min(88dvh, 780px); overflow-y: auto; overscroll-behavior: contain; }
 #modal-content.rack-balanced-modal .rack-balanced-dialog { min-height: 490px; display: flex; flex-direction: column; gap: 0; }
 /* #175: the accessory form uses its natural compact height, like vertical accessory editing. */
@@ -1004,7 +1004,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 }
 </style>
 <style id="interface-final-polish-styles">
-/* Phase 18C: presentation-only refinements; rack geometry and drag logic untouched. */
+/* presentation-only refinements; rack geometry and drag logic untouched. */
 #main-content :is(.inventory-tabs,.ipam-tabs,.dashboard-tabs,.settings-tabs) { scrollbar-width: thin; }
 #main-content :is(.inventory-tab,.select-ipam-tab,.dashboard-tab-control,.settings-tab) { line-height:1.35; }
 #main-content :is(.inventory-tab,.select-ipam-tab,.dashboard-tab-control,.settings-tab):focus-visible { outline-offset: -2px; }
@@ -1037,7 +1037,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 </style>
 
 <style id="device-form-global-action-styles">
-/* Phase 19D.2: presentation-only; preserve existing event actions and validation. */
+/* presentation-only; preserve existing event actions and validation. */
 #modal-content .form-actions,
 #modal-content .rack-form-actions { justify-content:flex-end; align-items:center; gap:12px; }
 #modal-content .form-actions button,
@@ -1179,7 +1179,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 <button data-action="tab-audit" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700/50 hover:text-indigo-600 dark:hover:text-indigo-400" data-tab="audit"><i class="fa-solid fa-clock-rotate-left w-5 text-center"></i><span>Change History</span></button>
                 
             </nav>
-            <!-- Phase 16D: application-wide controls live in Settings & Data. -->
+            <!-- application-wide controls live in Settings & Data. -->
             <div class="px-4 pb-4 pt-3 border-t border-slate-200 dark:border-slate-700">
                 <button data-action="tab-settings" data-tab="settings" aria-label="Open Settings and Data" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700/50 hover:text-indigo-600 dark:hover:text-indigo-400"><i class="fa-solid fa-gear w-5 text-center"></i><span>Settings & Data</span></button>
             </div>
@@ -1254,7 +1254,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             });
         }
 
-        // Phase 12A: unsigned IPv4 math; supported host ranges /23 through /30.
+        // unsigned IPv4 math; supported host ranges /23 through /30.
         function parseIpv4AddressToNumber(ip) {
             if (!isValidIpv4(ip)) return null;
             return ip.split('.').reduce((n,part)=>((n*256)+Number(part)),0);
@@ -1494,7 +1494,7 @@ function hierarchyValidateTypes(subnets) {
             state.deviceTypes = [...new Set([...state.deviceTypes, ...discoveredTypes, 'Layer 3 Switch', 'Wireless LAN Controller'])];
             state.deviceLocations = [...new Set([...state.deviceLocations, ...discoveredLocations, 'Unknown'])].filter(location => location !== 'Blank' && location !== 'Racked');
 
-            // Phase 5 migration: Blank is no longer a valid managed location.
+            // Blank is no longer a valid managed location.
             state.devices.forEach(device => {
                 if (device.location === 'Blank' || !device.location) device.location = 'Unknown';
             });
@@ -1685,7 +1685,7 @@ function hierarchyValidateTypes(subnets) {
         // Caffoot Lite v1 uses its own browser storage namespace.
         const STORAGE_KEY = 'caffoot_state';
 
-        // Phase 17A: preserve unreadable stored data. Never overwrite it on startup.
+        // preserve unreadable stored data. Never overwrite it on startup.
         let storageRecoveryFailure = null;
         function loadStoredState() {
             let stored;
@@ -1774,7 +1774,7 @@ function hierarchyValidateTypes(subnets) {
         let v13RackDetailOpen = false;
         let v13RackOverviewTab = 'capacity';
         let selectedRackAccessoryType = 'blank';
-        // Phase 6: temporarily preserve the device form while creating a missing subnet.
+        // temporarily preserve the device form while creating a missing subnet.
         let deviceFormDraft = null;
         let ipViewRange = '1-32';
         let ipAddressGridPage = 0;
@@ -1819,7 +1819,7 @@ function hierarchyValidateTypes(subnets) {
             caffootSetTheme(document.documentElement.classList.contains('dark') ? 'light' : 'dark');
         }
 
-        // Phase 10C: a compact, local, best-effort audit trail.
+        // a compact, local, best-effort audit trail.
         // Audit records are metadata only; backup JSON still contains the complete inventory.
         const AUDIT_KEY = 'caffoot_audit_v1';
         const AUDIT_LIMIT = 200;
@@ -1950,7 +1950,7 @@ function hierarchyValidateTypes(subnets) {
             }
         }
 
-        // Phase 1 data-integrity helpers
+        // Inventory data-integrity helpers
         function getDeviceById(deviceId) {
             return appState.devices.find(d => d.id === deviceId);
         }
@@ -1967,7 +1967,7 @@ function hierarchyValidateTypes(subnets) {
             if (trimmedIp && findDeviceUsingIp(trimmedIp, device.id)) {
                 throw new Error(`IP address ${trimmedIp} is already assigned to another device.`);
             }
-            // Phase 17C: refuse to take an IPAM address owned by a different device.
+            // refuse to take an IPAM address owned by a different device.
             // Validate before releasing the old address so a failed edit leaves it intact.
             if (trimmedIp) {
                 const gatewaySubnet = findSubnetUsingGatewayAddress(trimmedIp);
@@ -2069,7 +2069,7 @@ function hierarchyValidateTypes(subnets) {
             msg.textContent = message;
             icon.className = type === 'success' ? 'fa-solid fa-circle-check text-emerald-400 text-lg' : 'fa-solid fa-circle-exclamation text-amber-400 text-lg';
 
-            // Phase 7A: mirror validation errors inside the currently open form.
+            // mirror validation errors inside the currently open form.
             if (type === 'error') {
                 const formError = document.querySelector('#modal-container form [data-form-error]');
                 if (formError) {
@@ -2235,7 +2235,7 @@ function hierarchyValidateTypes(subnets) {
             renderContent();
         }
 
-        // Phase 3: safely render user-controlled values into HTML and inline event attributes.
+        // safely render user-controlled values into HTML and inline event attributes.
         function escapeHtml(value) {
             return String(value ?? '')
                 .replace(/&/g, '&amp;')
@@ -2272,7 +2272,7 @@ function hierarchyValidateTypes(subnets) {
         }
         function renderContent() {
             const container = document.getElementById('main-content');
-            // Phase 17B: replace the view once, avoiding an extra DOM teardown.
+            // replace the view once, avoiding an extra DOM teardown.
             let html = '';
             if (currentTab === 'dashboard') html = (!browserStorageNoticeAcknowledged ? browserStorageWarning(true) : '') + renderDashboardHTML();
             else if (currentTab === 'ipam') html = renderIpamHTML();
@@ -2294,7 +2294,7 @@ function hierarchyValidateTypes(subnets) {
         }
 
 
-        // Phase 11C: conservative repair planner. Never changes source data during preview.
+        // conservative repair planner. Never changes source data during preview.
         let inventoryIntegrityRepairPreview = null;
         const PHASE11C_SNAPSHOT_KEY = 'caffoot_phase11c_pre_repair_v1';
         function planDeviceIpAllocationIntegrityRepairs(state=appState) {
@@ -2401,7 +2401,7 @@ function hierarchyValidateTypes(subnets) {
             </section>`;
         }
 
-        // Phase 10D reports: read-only, generated from the current inventory.
+        // read-only, generated from the current inventory.
         function buildInventoryReportData() {
             const devices=Array.isArray(appState.devices)?appState.devices:[];
             const racks=Array.isArray(appState.racks)?appState.racks:[];
@@ -2558,7 +2558,7 @@ function hierarchyValidateTypes(subnets) {
             const topTypes = Object.entries(typeCounts).sort((a, b) => b[1] - a[1]).slice(0, 6);
             const maxTypeCount = Math.max(1, ...topTypes.map(([, count]) => count));
 
-            // Phase 15B: use each subnet's real usable host capacity (/23 through /30).
+            // use each subnet's real usable host capacity (/23 through /30).
             const subnetStats = subnets.map(subnet => {
                 const summary = calculateSubnetUtilisationSummary(subnet);
                 return { ...subnet, used: summary.assigned + summary.reserved,
@@ -2708,7 +2708,7 @@ function hierarchyValidateTypes(subnets) {
                     <div class="mt-2 h-1.5 rounded-full bg-slate-200 dark:bg-slate-600 overflow-hidden"><div class="h-full rounded-full ${subnet.percentage >= 85 ? 'bg-amber-500' : 'bg-emerald-500'}" style="width:${Math.max(subnet.percentage, subnet.used ? 1 : 0)}%"></div></div>
                 </div>`).join('') : `<p class="text-sm text-slate-500 dark:text-slate-400">No subnets configured.</p>`;
 
-            // Phase 15B visual insights are computed from current application state.
+            // Visual insights are computed from current application state.
             const insightSegment = (label, value, total, colour) => `<div class="dashboard-legend-row"><span class="dashboard-dot ${colour}"></span><span>${escapeHtml(label)}</span><strong>${value}</strong><span class="dashboard-muted">${total ? Math.round(value / total * 100) : 0}%</span></div>`;
             const statusCounts = devices.reduce((map, d) => { const key = String(d.status || 'Active').trim() || 'Active'; map[key] = (map[key] || 0) + 1; return map; }, {});
             const statusEntries = Object.entries(statusCounts).sort((a,b) => b[1] - a[1]);
@@ -2887,7 +2887,7 @@ function hierarchyValidateTypes(subnets) {
             }
         }
 
-        // Phase 13G: lightweight, offline rack fascias configured per managed device type.
+        // lightweight, offline rack fascias configured per managed device type.
         const deviceFasciaGraphicPresets = {automatic:'Automatic',switch24:'24-port switch',switch48:'48-port switch',server:'Server',router:'Router / firewall',storage:'Storage / NAS',ups:'UPS / PDU',plain:'Plain front panel'};
         function getDefaultDeviceFasciaGraphic(type) {
             const t=String(type||'').toLowerCase();
@@ -2929,7 +2929,7 @@ function hierarchyValidateTypes(subnets) {
             }
             openManageTypesModal();renderContent();
         }
-        // Phase 13L: calculate occupancy by unique U slots, not by summing item heights.
+        // calculate occupancy by unique U slots, not by summing item heights.
         let rackAccessoryPlacementHeightU = 1;
         function getOccupiedRackUnits(rack, face) {
             const used = new Set();
@@ -2984,7 +2984,7 @@ function hierarchyValidateTypes(subnets) {
             w.print();
         }
 
-        // v1.3.0 Phase 1A: estate-wide, read-only rack overview. Existing rack editor/elevations are unchanged.
+        // estate-wide, read-only rack overview. Existing rack editor/elevations are unchanged.
         function renderRackHubV13() {
             const racks=appState.racks||[], devices=appState.devices||[], accessories=appState.rackAccessories||[];
             const totalU=racks.reduce((sum,r)=>sum+(Number(r.heightU)||0),0);
@@ -4028,7 +4028,7 @@ function hierarchyValidateTypes(subnets) {
             `;
         }
 
-        // --- PHASE 18D: MANAGED TYPES & LOCATIONS ---
+        // --- MANAGED TYPES & LOCATIONS ---
         let deviceTypeLocationSearchFilters = {type:'',location:''};
         function getManagedDeviceTypeOrLocationNames(kind) {
             const key = kind === 'type' ? 'deviceTypes' : 'deviceLocations';
@@ -4217,7 +4217,7 @@ function hierarchyValidateTypes(subnets) {
         let ipamStatusFilter = 'All';
         let ipamAddressSearch = '';
         let activeIpamTab = 'overview';
-        // Phase 10A: operate on the existing /24 IPAM address grid without
+        // operate on the existing /24 IPAM address grid without
         // assuming that every stored subnet is a /24.
         function findSubnetUsingGatewayAddress(ip) {
             return appState.subnets.find(s => s.kind !== 'container' && s.gateway === ip && isUsableHostAddressInSubnet(ip, s.cidr)) || null;
@@ -4650,7 +4650,7 @@ function hierarchyValidateTypes(subnets) {
             renderContent();
         }
 
-        // Phase 12B: CIDR-aware, bounded bulk edits. Offset 1 is the first usable IP.
+        // CIDR-aware, bounded bulk edits. Offset 1 is the first usable IP.
         function planBulkSubnetAddressAssignment(subnet, start, end, status, hostname, notes) {
             const range=parseSupportedIpv4Subnet(subnet?.cidr);
             if (!range) return {error:'Unsupported or invalid subnet.'};
@@ -5025,7 +5025,7 @@ function hierarchyValidateTypes(subnets) {
                 return;
             }
 
-            // M-009: preserve an unchanged gateway owned by one eligible network device.
+            // preserve an unchanged gateway owned by one eligible network device.
             // Do not release or reassign an existing IPAM record during subnet edits.
             const existingGatewaySubnet = subnetId ? appState.subnets.find(s => s.id === subnetId) : null;
             const gatewayOwners = appState.devices.filter(d => d.primaryIp === gateway);
@@ -5115,7 +5115,7 @@ function hierarchyValidateTypes(subnets) {
 
         function ipBelongsToSubnet(ip,cidr) { return isUsableHostAddressInSubnet(ip,cidr); }
 
-        // Phase 11B: refuse destructive operations with dependent records.
+        // refuse destructive operations with dependent records.
         // Users can deliberately detach/reassign dependencies first.
         function getDevicesAndIpAllocationsInSubnet(subnet, state=appState) {
             const devices=state.devices.filter(d=>d.primaryIp && ipBelongsToSubnet(d.primaryIp,subnet.cidr));
@@ -5795,7 +5795,7 @@ function hierarchyValidateTypes(subnets) {
             if(!commitDeletionWithRollback(before,'Rack')) { selectedRackId=previousSelection; renderContent(); }
         }
 
-        // Phase 18B: one placement workflow for a clicked empty rack U.
+        // one placement workflow for a clicked empty rack U.
         function openRackSlotPlacementDialog(rackId, slotU, mode = 'device') {
             const rack = appState.racks.find(r => r.id === rackId);
             if (!rack) return;
@@ -6135,7 +6135,7 @@ function hierarchyValidateTypes(subnets) {
             }
         }
 
-        // Phase 19C: read-only details follow the same order as the Add/Edit form.
+        // read-only details follow the same order as the Add/Edit form.
         // Use the current managed labels, including renamed software and server functions.
         function getDeviceDetailFieldLabel(key, type) {
             if (deviceTypeDetailGroups[String(type || '').toLowerCase().trim()] === 'router' && key === 'networkConnection') return 'WAN connection method';
@@ -6183,7 +6183,7 @@ function hierarchyValidateTypes(subnets) {
             const platformDetails=[['Operating system',getEffectiveDevicePlatform(d)],['OS version',getEffectiveDevicePlatformVersion(d)],...(isHypervisorHost?[]:[['Windows licence',deviceDetails.windowsLicence]])].filter(([label])=>['server','computer'].includes(deviceTypeDetailGroups[String(d.type||'').toLowerCase().trim()]) || label==='Operating system' && activeFields.has('os')).filter(([,value])=>value!==undefined&&value!==null&&value!=='').map(([label,value])=>field(label,value)).join('');
             const historicalSnapshots = Array.isArray(d.previousTypeDetails) ? [...d.previousTypeDetails].reverse() : [];
             const historyRows = historicalSnapshots.map((snapshot,index)=>`<details class="rounded-xl border border-slate-300 dark:border-slate-600 p-3"><summary class="cursor-pointer font-semibold">${safe(snapshot.type||'Previous type')} — saved configuration ${index+1}</summary><dl class="device-details-layout-grid mt-3">${Object.entries(snapshot.details||{}).map(([key,value])=>field(getDeviceDetailFieldLabel(key,snapshot.type),typeof value==='boolean'?(value?'Yes':'No'):value)).join('')}</dl></details>`).join('');
-            // M-005: read-only hosted guest visibility, including preserved legacy references.
+            // read-only hosted guest visibility, including preserved legacy references.
             const hostedGuests = d.type === 'Server - Physical'
                 ? appState.devices.filter(guest => guest.id !== d.id && guest.virtualHostId === d.id)
                 : [];
@@ -6369,7 +6369,7 @@ function hierarchyValidateTypes(subnets) {
         }
 
 
-        // Phase 19B: Access-inspired device type detail profiles. Optional fields are stored
+        // Access-inspired device type detail profiles. Optional fields are stored
         // on each device; switching types hides, but never erases, previously entered values.
         const deviceDetailFieldProfiles = {"network":["networkCard","networkConnection"],"printer":["networkCard","networkConnection","printerColour","printerDesign"],"computer":["windowsLicence","os","networkCard","networkConnection","processor","graphics","memory","memoryUnit","storage","storageUnit","Swan","MicrosoftOffice","Planet","SpindleSoftware","Preactor","RedLionApp","SalesBase","HelpDesk","ProductionITHelpDeskDashboards","PDA","TMS","PhoneBook","EasyLabel"],"server":["windowsLicence","os","networkCard","networkConnection","processor","graphics","memory","memoryUnit","storage","storageUnit","SwanServer","SQLServer","TMSServer","printserver","keriserver","ActiveDirectory","AntivirusSoftware","DNS","DHCP","ExchangeServer","BackupSoftware","PlanetDB","SystemsDatabaseBackEndTables","PDASystem","raid","driveCount"],"nas":["networkCard","networkConnection","memory","memoryUnit","storage","storageUnit","raid","driveCount"],"phone":["handsetCount"],"ups":["powerOutlets","serialPort","usbPort"],"tape":["networkCard","networkConnection","driveCount"],"ap":[]};
         deviceDetailFieldProfiles.switch=['portCount','networkCard','networkConnection'];
@@ -7691,7 +7691,7 @@ function hierarchyValidateTypes(subnets) {
                 if (validationError) return showToast(validationError, 'error');
             }
             const existingDevice = deviceId ? getDeviceById(deviceId) : null;
-            // M-005: host retirement and loss of Hypervisor eligibility
+            // host retirement and loss of Hypervisor eligibility
             // still require an explicit decision for every assigned guest.
             let removalGuests = [];
             let removalChoices = [];
@@ -7712,7 +7712,7 @@ function hierarchyValidateTypes(subnets) {
                     }
                 }
             }
-            // M-005: an explicit host Hypervisor product change updates assigned guests in one transaction.
+            // an explicit host Hypervisor product change updates assigned guests in one transaction.
             let platformGuests = [];
             const previousHypervisor = String(existingDevice?.typeDetails?.hypervisorProduct || '').trim();
             const nextHypervisor = String(typeDetails.hypervisorProduct || '').trim();
@@ -7820,7 +7820,7 @@ function hierarchyValidateTypes(subnets) {
             commitDeletionWithRollback(before,'Device');
         }
 
-        // Phase 16B: one purpose per settings section; existing handlers remain unchanged.
+        // one purpose per settings section; existing handlers remain unchanged.
         let activeSettingsSection = 'backup';
         // A browser may block localStorage (including for file:// pages).
         // Reading optional recovery indicators must not prevent Settings from rendering.
@@ -8138,7 +8138,7 @@ function hierarchyValidateTypes(subnets) {
             dlAnchor.remove();
         }
 
-        // Phase 11A: safety snapshots are kept separately from active inventory.
+        // safety snapshots are kept separately from active inventory.
         const SAFETY_SNAPSHOT_KEY = 'caffoot_phase11_pre_restore';
         // Reject dangerous object keys before migration, merging or rendering imported JSON.
         function rejectUnsafeBackupKeys(root) {
@@ -8195,7 +8195,7 @@ function hierarchyValidateTypes(subnets) {
             </section>`;
         }
 
-        // Phase 16C: inspect an imported file without changing the saved inventory.
+        // inspect an imported file without changing the saved inventory.
         // Compatibility repair is intentionally limited to device-type/mounting mismatches.
         // Never mutate the original backup; all other integrity failures still block restore.
         function planLegacyComputerMountingCorrections(candidate) {
@@ -8668,7 +8668,7 @@ function hierarchyValidateTypes(subnets) {
             pdu_vertical: {label:'Vertical PDU',icon:'fa-plug',vertical:true},
             cable_vertical: {label:'Vertical Cable Manager',icon:'fa-bars-staggered',vertical:true}
         };
-        // Phase 13D: CSS-only rack fascia art; no external images or data changes.
+        // CSS-only rack fascia art; no external images or data changes.
         function renderRackAccessoryFasciaHtml(type, portCount = 24) {
             if (type === 'patch') { const count=[12,24,48].includes(Number(portCount))?Number(portCount):24; return `<span class="rack-accessory-fascia rack-accessory-patch-panel rack-patch-panel-${count}" aria-hidden="true" title="${count} RJ45 ports">${Array.from({length:count},(_,i)=>`<span class="rack-accessory-port" title="Port ${i+1}"><i></i></span>`).join('')}</span>`; }
             if (type === 'brush') return `<span class="rack-accessory-fascia rack-accessory-brush-panel" aria-hidden="true"><span class="rack-accessory-bristles"></span></span>`;
@@ -8848,7 +8848,7 @@ function hierarchyValidateTypes(subnets) {
             if(!saveState()){appState=JSON.parse(before);showToast('Accessory move could not be saved. Original placement restored.','error');return false;}renderRackViewPreservingScrollPosition();return true;
         }
 
-        // Phase 13A: single validated pathway for drag/drop and accessible click-to-move.
+        // single validated pathway for drag/drop and accessible click-to-move.
         function moveDeviceToRackPosition(deviceId, rackId, targetU) {
             const device = appState.devices.find(d => d.id === deviceId);
             if (!device || !rackId) { showToast('Device or rack was not found.', 'error'); return false; }
@@ -8885,7 +8885,7 @@ function hierarchyValidateTypes(subnets) {
             const next = document.querySelector('[data-rack-scroll="true"]');
             if (next) next.scrollTop = scrollTop;
         }
-        // Phase 17D: drag near the top/bottom of the rack viewport to scroll its
+        // drag near the top/bottom of the rack viewport to scroll its
         // contents, not the surrounding page. Never alter rack placement rules.
         let rackDragAutoScrollFrame = null;
         let rackDragAutoScrollContainer = null;
@@ -9090,7 +9090,7 @@ function hierarchyValidateTypes(subnets) {
             clearRackDropPreview();
         });
 
-        // Phase 4: centralised event delegation for dynamically-rendered controls.
+        // centralised event delegation for dynamically-rendered controls.
         // Buttons/links carry data-action rather than inline JavaScript. This keeps
         // user-entered values out of executable HTML attributes and means one handler
         // continues to work after renderContent() replaces #content.
