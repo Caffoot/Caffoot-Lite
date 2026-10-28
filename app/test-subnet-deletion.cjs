@@ -5,7 +5,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 
 const html = fs.readFileSync(path.join(__dirname, 'caffoot-lite.html'), 'utf8');
-const from = html.indexOf('function phase11BSubnetDependencies(');
+const from = html.indexOf('function getDevicesAndIpAllocationsInSubnet(');
 const to = html.indexOf('function deleteVlan(', from);
 assert(from !== -1 && to > from, 'Subnet deletion handlers must exist');
 const source = html.slice(from, to);
@@ -25,7 +25,7 @@ function scenario({reserved=false,device=false,save=true}={}) {
     const ctx=vm.createContext({
         appState:state, selectedSubnetId:'net', 
         document:{querySelector:()=>({dataset:{id:'net'}})},
-        phase12Usable:(ip,cidr)=>ip.startsWith(cidr.split('/')[0].replace(/\.0$/,'' )+'.'),
+        isUsableHostAddressInSubnet:(ip,cidr)=>ip.startsWith(cidr.split('/')[0].replace(/\.0$/,'' )+'.'),
         ipBelongsToSubnet:(ip,cidr)=>ip.startsWith(cidr.split('/')[0].replace(/\.0$/,'' )+'.'),
         escapeHtml:String,openModal:html=>{modal=html;},closeModal:()=>{},
         showToast:(message)=>notices.push(message),

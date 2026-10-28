@@ -23,7 +23,7 @@ const checks = [
   ['accessory name', 'escapeHtml(a.name||kind.label)'],
   ['accessory drag ID', 'data-rack-accessory="${escapeHtml(a.id)}"'],
   ['accessory action ID', 'data-id="${escapeHtml(a.id)}"'],
-  ['accessory name in equipment list', "escapeHtml(a.name||phase13CAccessoryTypes[a.type]?.label||'Accessory')"]
+  ['accessory name in equipment list', "escapeHtml(a.name||rackAccessoryTypeDefinitions[a.type]?.label||'Accessory')"]
 ];
 for (const [label,pattern] of checks)
   assert(renderer.includes(pattern), 'Missing rack output-encoding guard: '+label);

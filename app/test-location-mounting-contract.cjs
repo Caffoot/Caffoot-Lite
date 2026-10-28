@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const source = fs.readFileSync(path.join(__dirname, 'caffoot-lite.html'), 'utf8');
-assert.match(source, /devices: phase120SeparateLegacyRackLocation\(raw\.devices\)/, 'Legacy devices normalized on load/import');
+assert.match(source, /devices: migrateLegacyRackLocation\(raw\.devices\)/, 'Legacy devices normalized on load/import');
 assert.match(source, /deviceLocations: \['Unknown'\]/, 'Racked no longer default location');
 assert.doesNotMatch(source, /location\.value\s*=\s*'Racked'/, 'Mounting must not force location');
 assert.doesNotMatch(source, /location\.disabled\s*=\s*true/, 'Mounting must not disable location');
@@ -11,8 +11,8 @@ assert.doesNotMatch(source, /device\.location\s*=\s*'Racked'/, 'Rack moves must 
 assert.doesNotMatch(source, /device\.mountType\s*!==\s*'Rack Mounted'\s*\|\|\s*device\.location\s*!==\s*'Racked'/, 'Rack validation must not require sentinel');
 assert.match(source, /if \(!location \|\| location === 'Racked'\)/, 'Save rejects obsolete location sentinel');
 // v1.2.0 physical-server mounting and backwards-compatibility regression checks.
-const allowedMounts = source.match(/function phase19BAllowedMounts\(type\)\s*\{([\s\S]*?)\n\s*\}/)?.[1] || '';
-const suggestedMounts = source.match(/function phase120SuggestedMounts\(type\)\s*\{([\s\S]*?)\n\s*\}/)?.[1] || '';
+const allowedMounts = source.match(/function getRecognisedDeviceMountTypes\(type\)\s*\{([\s\S]*?)\n\s*\}/)?.[1] || '';
+const suggestedMounts = source.match(/function getSuggestedMountTypes\(type\)\s*\{([\s\S]*?)\n\s*\}/)?.[1] || '';
 assert.match(allowedMounts, /'Floor Standing'/, 'Historical Floor Standing mounting remains supported');
 assert.match(allowedMounts, /'Tower \/ Floor Standing'/, 'Tower mounting passes validation');
 assert.match(suggestedMounts, /normalized==='server'\|\|normalized==='server - physical'\|\|normalized==='physical server'/, 'Physical server types use dedicated mounting suggestions');
@@ -22,8 +22,8 @@ assert.doesNotMatch(suggestedMounts, /,'Shelf Mounted'/, 'Duplicate Shelf Mounte
 assert.match(source, /if \(mountType === 'Rack Mounted'\)\s*\{/, 'Rack-specific save requirements remain conditional');
 
 // v1.3.0: opening a legacy device editor must preserve a valid historical mount.
-const mountRefresh = source.match(/function phase19BUpdateMountChoices\(\)\s*\{([\s\S]*?)\n\s*\}/)?.[1] || '';
-assert.match(mountRefresh, /phase19BAllowedMounts\(type\)\.includes\(previous\)/, 'Valid legacy mounting is preserved when opening the editor');
+const mountRefresh = source.match(/function updateDeviceMountChoices\(\)\s*\{([\s\S]*?)\n\s*\}/)?.[1] || '';
+assert.match(mountRefresh, /getRecognisedDeviceMountTypes\(type\)\.includes\(previous\)/, 'Valid legacy mounting is preserved when opening the editor');
 assert.match(mountRefresh, /options\.includes\(previous\)/, 'Suggested mounting remains preserved');
-assert.match(mountRefresh, /phase120DefaultMount\(type\)/, 'Invalid mounting still falls back to the type default');
+assert.match(mountRefresh, /getDefaultMountType\(type\)/, 'Invalid mounting still falls back to the type default');
 console.log('PASS: location/rack separation and tower-server mounting source contracts.');
