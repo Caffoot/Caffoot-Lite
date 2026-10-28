@@ -5623,7 +5623,6 @@ function hierarchyValidateTypes(subnets) {
                 event.preventDefault();
                 if(document.getElementById('delete-dialog')){cancelDeviceCatalogueEntryDeletion();return;}
                 if(document.getElementById('hypervisor-selection-dialog')){document.querySelector('#hypervisor-selection-dialog [data-action="cancel"]')?.click();return;}
-                if(document.getElementById('conversion-dialog')){resolveDeviceTypeConversion(false);return;}
                 if(document.getElementById('rack-correction-dialog')){resolveRackPlacementCorrection(false);return;}
                 if(document.getElementById('discard-dialog')){keepEditingDeviceForm();return;}
                 if (container.querySelector('.device-catalogue-manager[data-device-catalogue-editing="true"]')) {
@@ -5638,7 +5637,7 @@ function hierarchyValidateTypes(subnets) {
                 return;
             }
             if (event.key !== 'Tab') return;
-            const activeDialog=document.getElementById('hypervisor-selection-dialog')||document.getElementById('conversion-dialog')||document.getElementById('rack-correction-dialog')||document.getElementById('delete-dialog')||document.getElementById('discard-dialog');
+            const activeDialog=document.getElementById('hypervisor-selection-dialog')||document.getElementById('rack-correction-dialog')||document.getElementById('delete-dialog')||document.getElementById('discard-dialog');
             const items = Array.from((activeDialog||container).querySelectorAll('a[href],button:not([disabled]),input:not([disabled]):not([type="hidden"]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')).filter(el => el.getClientRects().length);
             if (!items.length) { event.preventDefault(); document.getElementById('modal-content').focus(); return; }
             // Safari can omit buttons/selects from its native Tab order depending on
@@ -7462,50 +7461,6 @@ function hierarchyValidateTypes(subnets) {
             return Object.keys(details||{}).filter(key=>known.has(key)&&!allowed.has(key)&&
                 details[key]!==''&&details[key]!==null&&details[key]!==undefined&&details[key]!==false);
         }
-        let resolvePendingDeviceTypeConversion = null;
-        function confirmDeviceTypeConversion(oldType, newType, keys, details) {
-            if (document.getElementById('conversion-dialog')) return Promise.resolve(false);
-            return new Promise(resolve => {
-                resolvePendingDeviceTypeConversion = resolve;
-                const overlay = document.createElement('div');
-                overlay.id = 'conversion-dialog';
-                overlay.setAttribute('role', 'alertdialog');
-                overlay.setAttribute('aria-modal', 'true');
-                overlay.setAttribute('aria-labelledby', 'device-type-conversion-title');
-                overlay.setAttribute('aria-describedby', 'conversion-description');
-                overlay.className = 'absolute inset-0 z-50 flex items-center justify-center bg-slate-950/65 p-4 rounded-2xl';
-                const labels = keys.map(key => {
-                    const label = getDeviceDetailFieldLabel(key, oldType);
-                    const value = details[key] === true ? 'Selected' : String(details[key]);
-                    return '<li class="break-words">' + escapeHtml(label) + ': ' + escapeHtml(value) + '</li>';
-                }).join('');
-                overlay.innerHTML = `<div class="w-full max-w-lg rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 p-6 shadow-2xl space-y-4">
-                    <h3 id="device-type-conversion-title" class="text-lg font-bold text-slate-900 dark:text-white">Confirm Device Type Change</h3>
-                    <p id="conversion-description" class="text-sm text-slate-700 dark:text-slate-200">Changing from ${escapeHtml(oldType)} to ${escapeHtml(newType)} will preserve these incompatible details as read-only history rather than keeping them active:</p>
-                    <ul class="list-disc pl-5 max-h-48 overflow-y-auto text-sm text-slate-800 dark:text-slate-100 space-y-1">${labels}</ul>
-                    <p class="text-sm text-slate-700 dark:text-slate-200">Shared details and unrecognised historical fields will be preserved. You can review previous configurations in device details.</p>
-                    <div class="flex flex-wrap justify-end gap-3">
-                        <button type="button" data-action="conversion-cancel" class="h-11 px-4 rounded-xl border border-slate-400 dark:border-slate-500 text-slate-900 dark:text-white caffoot-modal-cancel">Keep Editing</button>
-                        <button type="button" data-action="conversion-accept" class="h-11 px-4 rounded-xl bg-rose-700 hover:bg-rose-800 text-white font-bold">Preserve History &amp; Save</button>
-                    </div>
-                </div>`;
-                const content = document.getElementById('modal-content');
-                if (getComputedStyle(content).position === 'static') content.style.position = 'relative';
-                overlay._returnFocus = document.activeElement;
-                content.appendChild(overlay);
-                overlay.querySelector('[data-action="conversion-cancel"]').focus();
-            });
-        }
-        function resolveDeviceTypeConversion(accepted) {
-            const overlay = document.getElementById('conversion-dialog');
-            const focus = overlay?._returnFocus;
-            overlay?.remove();
-            const resolve = resolvePendingDeviceTypeConversion;
-            resolvePendingDeviceTypeConversion = null;
-            if (focus?.isConnected) focus.focus();
-            if (resolve) resolve(accepted);
-        }
-
         function requestHypervisorGuestReassignment(hostName, guests, hostId) {
             if (document.getElementById('hypervisor-selection-dialog')) return Promise.resolve(null);
             return new Promise(resolve => {
@@ -8182,19 +8137,6 @@ function hierarchyValidateTypes(subnets) {
             document.body.appendChild(a); a.click(); a.remove();
             setTimeout(()=>URL.revokeObjectURL(url),1000);
         }
-        function renderBackupSafetyPanelHtml() {
-            const exists = !!personalSafeStorageGet(SAFETY_SNAPSHOT_KEY);
-            return `<section class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 space-y-3">
-                <h3 class="text-base font-bold text-slate-900 dark:text-white">Backup &amp; restore safety</h3>
-                <p class="text-sm text-slate-700 dark:text-slate-200">Before replacing your inventory with an imported backup, Caffoot Lite validates the backup structure and saves a separate copy of the existing inventory. This copy is retained until the next successful restore.</p>
-                <div class="flex flex-wrap gap-2">
-                    <button type="button" data-action="export-backup" class="px-4 py-2.5 rounded-xl bg-blue-800 text-white font-semibold">Export Current Inventory</button>
-                    <button type="button" data-action="download-snapshot" ${exists?'':'disabled'} class="px-4 py-2.5 rounded-xl bg-slate-700 text-white font-semibold disabled:opacity-40">Download pre-restore snapshot</button>
-                </div>
-                <p class="text-xs text-slate-600 dark:text-slate-300">${exists?'A pre-restore snapshot is stored in this browser. Download it to keep a separate copy.':'No pre-restore snapshot yet.'} Browser storage is not a substitute for exported backups.</p>
-            </section>`;
-        }
-
         // inspect an imported file without changing the saved inventory.
         // Compatibility repair is intentionally limited to device-type/mounting mismatches.
         // Never mutate the original backup; all other integrity failures still block restore.
@@ -9186,8 +9128,6 @@ function hierarchyValidateTypes(subnets) {
                 case 'server-service-confirm-archive': archiveServerService(name); break;
                 case 'add-device-type-or-location': applyDeviceCatalogueChange(target.dataset.kind,'add','',document.getElementById('device-catalogue-new-entry-input')?.value||''); break;
                 case 'search-device-catalogue': deviceTypeLocationSearchFilters[target.dataset.kind]=document.getElementById('device-catalogue-search-input')?.value||'';openDeviceCatalogueManager(target.dataset.kind); break;
-                case 'conversion-cancel': resolveDeviceTypeConversion(false); break;
-                case 'conversion-accept': resolveDeviceTypeConversion(true); break;
                 case 'rack-correction-cancel': resolveRackPlacementCorrection(false); break;
                 case 'rack-correction-accept': resolveRackPlacementCorrection(true); break;
                 case 'keep-editing': keepEditingDeviceForm(); break;
