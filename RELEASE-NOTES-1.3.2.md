@@ -1,6 +1,7 @@
 # Caffoot Lite v1.3.2 release notes
 
 **Version:** v1.3.2.
+**Status:** Published stable release (27 October 2026).
 **Previous stable release:** v1.3.1 (26 October 2026).
 
 ## Changes in v1.3.2
