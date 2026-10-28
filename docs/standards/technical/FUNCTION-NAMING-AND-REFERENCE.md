@@ -289,6 +289,14 @@ A deeper source inspection distinguishes **two different historical conversion p
 
 **Open question for product-owner decision after investigation:** should historical configuration restoration be allowed to change the device type, or should it only restore compatible fields while retaining the current immutable type? No change authorised or made; no tests run. Static reference evidence alone does not prove runtime reachability.
 
+### #192 historical restore reachability and behaviour, 28 October 2026
+
+**Confirmed by source inspection, not by executing the application:** `phase14CViewDevice()` builds the History tab from `previousTypeDetails`, and each snapshot is rendered with a `data-action="phase130-restore"` button (around line 6186). The delegated action handler calls `phase130RestoreHistory(id, Number(actionEl.dataset.index))` (around line 9254). Therefore the restore path is wired into the user interface and must not be classified as dead code.
+
+`phase130RestoreHistory()` (around lines 6331–6377) checks the snapshot, selects recognised destination fields, uses `phase130ObsoleteDeviceFields()` to identify incompatible current values, displays a confirmation, archives selected overwritten/incompatible values, **assigns `device.type = snapshot.type`**, then persists with `saveState()` and rolls back `appState` on failure. The source comments explicitly preserve earlier snapshots. This behaviour potentially conflicts with the agreed fixed device-type rule, even though it remains accessible through historical configuration restoration.
+
+**Recommendation for product-owner consideration:** preserve the ability to *view* every historical configuration and all stored historical data. Investigate whether Restore Configuration should be restricted to same-type restoration or replaced by an explicitly non-destructive compatible-field restore. Before proposing any change, check what users would lose, any existing test expectations and compatibility with historic backups. Do not silently alter existing restore behaviour, remove historical snapshots or claim runtime verification. No application changes or tests have occurred.
+
 ## Purpose
 
 Future contributors should understand what each important function does without needing to know the development phase in which it was introduced. Existing historical names must remain documented until an approved and tested change replaces them.
