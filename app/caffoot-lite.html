@@ -2788,7 +2788,7 @@ function hierarchyValidateTypes(subnets) {
                             ['IP addresses', totalTrackedIps, `${assignedIps} assigned · ${reservedIps} reserved`, 'fa-network-wired', 'emerald', 'tab-ipam'],
                             ['Subnets', subnets.length, 'Managed networks', 'fa-diagram-project', 'indigo', 'tab-ipam'],
                             ['Racks', racks.length, `${rackedDevices} mounted devices`, 'fa-hard-drive', 'slate', 'dashboard-racks-overview']
-                        ].map(([label,value,detail,icon,tone,action]) => `<button type="button" data-action="${action}" class="dashboard-stat phase15a-${tone} text-left bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 sm:p-5 transition-colors hover:border-blue-400 dark:hover:border-sky-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500" aria-label="${label}: ${value}. Open section">
+                        ].map(([label,value,detail,icon,tone,action]) => `<button type="button" data-action="${action}" class="dashboard-stat dashboard-stat-${tone} text-left bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 sm:p-5 transition-colors hover:border-blue-400 dark:hover:border-sky-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500" aria-label="${label}: ${value}. Open section">
                             <div class="flex items-center justify-between gap-2"><span class="text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">${label}</span><span class="dashboard-stat-icon"><i class="fa-solid ${icon}" aria-hidden="true"></i></span></div>
                             <p class="text-3xl font-extrabold text-slate-900 dark:text-white mt-3">${value}</p>
                             <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">${detail}</p>
@@ -2909,7 +2909,7 @@ function hierarchyValidateTypes(subnets) {
             else if(preset==='storage')contents='<span class="rack-bays"><i></i><i></i><i></i><i></i><i></i><i></i></span>';
             else if(preset==='ups')contents='<span class="rack-led"></span><span class="rack-display">POWER</span>';
             else contents='<span class="rack-display">'+escapeHtml(type||'DEVICE')+'</span>';
-            return `<span class="rack-fascia phase13g-${preset}" title="${escapeHtml(type||'Device')} front panel" aria-hidden="true">${contents}</span>`;
+            return `<span class="rack-fascia rack-fascia-${preset}" title="${escapeHtml(type||'Device')} front panel" aria-hidden="true">${contents}</span>`;
         }
         function openDeviceTypeRackFasciaSettings(type) {
             if(!getUniqueDeviceTypes().includes(type))return;
@@ -3421,7 +3421,7 @@ function hierarchyValidateTypes(subnets) {
             openModal('<div class="p-5 sm:p-7 space-y-5"><div><h3 class="text-lg font-bold text-slate-900 dark:text-white">'+(deleting?'Remove Manufacturer Suggestions':makerName?'Manage Manufacturer':'Add Manufacturer')+'</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Associate a manufacturer with multiple device types. Built-in suggestions, model entries and existing device records are retained.</p></div>'+
                 (deleting?'<p class="text-sm text-slate-800 dark:text-slate-200">Remove custom manufacturer-only suggestions for <strong>'+escapeHtml(entry.manufacturer)+'</strong> across '+matches.length+' device type(s)? '+affected+' existing device(s) use this manufacturer; their records will remain unchanged.</p>':
                 '<form data-form-action="manufacturer" id="manufacturer-form" class="space-y-4" onsubmit="return false"><div><label class="block text-sm font-semibold mb-2" for="manufacturer-name">Manufacturer Name</label><input id="manufacturer-name" required maxlength="120" value="'+escapeHtml(makerName||'')+'" '+(isBuiltIn?'readonly':'')+' class="w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-800"><p id="manufacturer-error" role="alert" class="hidden text-sm text-rose-700 dark:text-rose-300 mt-2"></p></div>'+(isBuiltIn?'<p class="text-xs text-blue-700 dark:text-blue-300">Built-in manufacturer names and their default associations are protected. You can add custom device-type associations.</p>':'')+'<fieldset><legend class="font-semibold text-sm mb-2">Associated Device Types</legend><div class="flex gap-2 mb-3"><button type="button" data-action="manufacturer-all" class="h-9 px-3 rounded-lg border border-slate-300 dark:border-slate-600 text-sm">Select All</button><button type="button" data-action="manufacturer-none" class="h-9 px-3 rounded-lg border border-slate-300 dark:border-slate-600 text-sm">Clear All</button></div><div class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[38vh] overflow-y-auto">'+checks+'</div></fieldset></form>')+
-                '<div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-5 rounded-xl border border-slate-300 dark:border-slate-600 caffoot-modal-cancel">Cancel</button><button type="button" data-action="'+(deleting?'phase120-maker-confirm-remove':'phase120-maker-save')+'" data-name="'+escapeHtml(id)+'" class="h-11 px-5 rounded-xl text-white '+(deleting?'bg-rose-700':'bg-blue-800')+'">'+(deleting?'Remove Suggestions':'Save Manufacturer')+'</button></div></div>');
+                '<div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-5 rounded-xl border border-slate-300 dark:border-slate-600 caffoot-modal-cancel">Cancel</button><button type="button" data-action="'+(deleting?'confirm-remove-catalogue-manufacturer':'save-catalogue-manufacturer')+'" data-name="'+escapeHtml(id)+'" class="h-11 px-5 rounded-xl text-white '+(deleting?'bg-rose-700':'bg-blue-800')+'">'+(deleting?'Remove Suggestions':'Save Manufacturer')+'</button></div></div>');
             if(!deleting)rememberModalForm();
         }
         function saveHardwareManufacturer(id='',remove=false){
@@ -3554,7 +3554,7 @@ function hierarchyValidateTypes(subnets) {
             openModal('<div class="p-5 sm:p-7 space-y-5"><div><h3 class="text-lg font-bold">'+(remove?'Remove Model Suggestion':item?'Edit Model Suggestion':'Add Model Suggestion')+'</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Custom suggestions only. Built-in models and saved devices are never changed.</p></div>'+
                 (remove?'<p class="text-sm">Remove <strong>'+escapeHtml(item.model)+'</strong> ('+escapeHtml(item.manufacturer)+' · '+escapeHtml(item.type)+')? '+used+' existing device(s) use this model. '+(used?'Removal is blocked until those devices are updated.':'This unused custom suggestion can be removed.')+'</p>':
                 '<form id="model-form" data-form-action="model" onsubmit="return false" class="space-y-3"><div><label class="block text-sm font-semibold mb-1" for="model-name">Model Name</label><input id="model-name" maxlength="120" value="'+escapeHtml(item?.model||'')+'" class="w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-800"></div><div><label class="block text-sm font-semibold mb-1" for="hardware-model-manufacturer-select">Manufacturer</label><select id="hardware-model-manufacturer-select" class="w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-800"><option value="">Select Manufacturer</option>'+opts(makers,item?.manufacturer||'')+'</select></div><div><label class="block text-sm font-semibold mb-1" for="model-device-type">Device Type</label><select id="model-device-type" class="w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-800"><option value="">Select Device Type</option>'+opts(types,item?.type||'')+'</select><p id="hardware-model-device-type-note" class="text-xs text-slate-600 dark:text-slate-300 mt-1"></p></div><p id="model-error" role="alert" class="hidden text-sm text-rose-700 dark:text-rose-300"></p></form>')+
-                '<div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-4 rounded-xl border border-slate-300 dark:border-slate-600 caffoot-modal-cancel">Cancel</button><button type="button" data-action="'+(remove?'phase120-model-confirm-remove':'phase120-model-save')+'" data-name="'+escapeHtml(id)+'" class="h-11 px-4 rounded-xl text-white '+(remove?'bg-rose-700':'bg-blue-800')+'">'+(remove?'Remove Model':'Save Model')+'</button></div></div>');
+                '<div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-4 rounded-xl border border-slate-300 dark:border-slate-600 caffoot-modal-cancel">Cancel</button><button type="button" data-action="'+(remove?'confirm-remove-catalogue-model':'save-catalogue-model')+'" data-name="'+escapeHtml(id)+'" class="h-11 px-4 rounded-xl text-white '+(remove?'bg-rose-700':'bg-blue-800')+'">'+(remove?'Remove Model':'Save Model')+'</button></div></div>');
             if(!remove){const field=document.getElementById('model-device-type');field.dataset.originalType=item?.type||'';field.dataset.originalMaker=item?.manufacturer||'';refreshModelDeviceTypeChoices();rememberModalForm();}
         }
         function saveHardwareModel(id='',remove=false){
@@ -4173,7 +4173,7 @@ function hierarchyValidateTypes(subnets) {
             if(!manager)return;
             const label=kind==='type'?'Device Type':'Device Location';
             const savedContent=manager.innerHTML;
-            manager._phase18dReturnFocusName=n;
+            manager._deviceCatalogueReturnFocusName=n;
             manager.innerHTML=`<div class="space-y-5">
                 <div class="flex items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-700 pb-4">
                     <div><h3 class="text-lg font-bold text-slate-900 dark:text-white">Edit ${label}</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Update the name and return to the management list.</p></div>
@@ -4189,25 +4189,25 @@ function hierarchyValidateTypes(subnets) {
                 </div>
             </div>`;
             manager.dataset.deviceCatalogueEditing='true';
-            manager._phase18dSavedContent=savedContent;
+            manager._deviceCatalogueSavedContent=savedContent;
             const input=manager.querySelector('#device-catalogue-rename-value');
             input?.focus();input?.select();
         }
         function cancelDeviceCatalogueEntryRename(force=false){
             const editor=document.querySelector('.device-catalogue-manager[data-device-catalogue-editing="true"]');
             const input=editor?.querySelector('#device-catalogue-rename-value');
-            if(!force && input && input.value!==editor._phase18dReturnFocusName){
+            if(!force && input && input.value!==editor._deviceCatalogueReturnFocusName){
                 confirmDiscardDeviceFormChanges(()=>cancelDeviceCatalogueEntryRename(true));return;
             }
             const manager=document.querySelector('.device-catalogue-manager');
             if(!manager)return;
-            if(manager._phase18dSavedContent){
-                manager.innerHTML=manager._phase18dSavedContent;
-                delete manager._phase18dSavedContent;
+            if(manager._deviceCatalogueSavedContent){
+                manager.innerHTML=manager._deviceCatalogueSavedContent;
+                delete manager._deviceCatalogueSavedContent;
                 delete manager.dataset.deviceCatalogueEditing;
-                const button=[...manager.querySelectorAll('[data-action="rename-device-catalogue-entry"]')].find(b=>b.dataset.name===manager._phase18dReturnFocusName);
+                const button=[...manager.querySelectorAll('[data-action="rename-device-catalogue-entry"]')].find(b=>b.dataset.name===manager._deviceCatalogueReturnFocusName);
                 (button||manager.querySelector('button'))?.focus();
-                delete manager._phase18dReturnFocusName;
+                delete manager._deviceCatalogueReturnFocusName;
             }
         }
         function deleteDeviceType(n){applyDeviceCatalogueChange('type','delete',n);}
@@ -7522,8 +7522,8 @@ function hierarchyValidateTypes(subnets) {
                     <h3 id="hypervisor-selection-title" class="text-lg font-bold">Resolve hosted virtual machines</h3>
                     <p class="text-sm">Before disabling virtual machine hosting on ${escapeHtml(hostName)}, choose what happens to each assigned virtual machine. Nothing changes until you confirm and save.</p>
                     <div class="space-y-3">${guests.map((guest,index)=>`<div class="rounded-xl border border-slate-300 dark:border-slate-600 p-3">
-                        <label class="form-label" for="phase-m005-guest-${index}">${escapeHtml(guest.name||guest.id)}</label>
-                        <select id="phase-m005-guest-${index}" data-m005-guest="${index}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
+                        <label class="form-label" for="virtual-machine-guest-${index}">${escapeHtml(guest.name||guest.id)}</label>
+                        <select id="virtual-machine-guest-${index}" data-m005-guest="${index}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
                             <option value="">Choose an action...</option>
                             <option value="unassign">Unassign, keep virtual machine and previous host history</option>
                             <option value="retire">Retire virtual machine, keep history</option>
@@ -7849,10 +7849,10 @@ function hierarchyValidateTypes(subnets) {
                 body = '<h3 class="settings-group-title">Back Up & Restore</h3>' +
                     '<div class="settings-group-grid">' +
                     panel('Back up your inventory','Download a complete JSON copy of your devices, IPAM, subnets and racks. Store it somewhere safe outside this browser.',button('export-backup','Download Backup','fa-download') + '<button type="button" data-action="backup-help" class="settings-action settings-help-action" aria-label="Understanding backups and automatic safety backups"><i class="fa-solid fa-circle-question" aria-hidden="true"></i>Understanding backups</button>') +
-                    panel('Restore a backup','Choose a saved JSON backup. Review its contents before confirming; Caffoot verifies a safety copy first.',button('phase16a-import','Choose Backup File','fa-upload')) +
+                    panel('Restore a backup','Choose a saved JSON backup. Review its contents before confirming; Caffoot verifies a safety copy first.',button('choose-backup-import','Choose Backup File','fa-upload')) +
                     '</div><h3 class="settings-group-title">Maintenance & Safety</h3>' +
                     '<div class="settings-group-grid">' +
-                    panel('Inventory Safety Check','Check your inventory integrity without changing any data.',button('phase16a-check-safety','Check Inventory Safety','fa-shield-halved')) +
+                    panel('Inventory Safety Check','Check your inventory integrity without changing any data.',button('check-inventory-safety','Check Inventory Safety','fa-shield-halved')) +
                     panel('Update Caffoot Lite','Check for published releases when online. Back up your data before switching HTML files.',button('caffoot-check-updates','Check for Updates','fa-arrow-rotate-right') + button('caffoot-update-guide','Safe Update Guide','fa-circle-info') + '<p id="caffoot-update-status" class="update-status" role="status" aria-live="polite">Update checks are manual and require internet access. No inventory is sent or changed.</p>') +
                     '</div><h3 class="settings-group-title">Advanced Recovery</h3>' +
                     '<p class="settings-group-note">Use these tools only when recovering or resetting inventory.</p>' +
@@ -9131,7 +9131,7 @@ function hierarchyValidateTypes(subnets) {
                 case 'server-catalog-save': saveServerServiceEntry(name); break;
                 case 'server-catalog-remove': confirmServerServiceArchive(name); break;
                 case 'server-catalog-restore': restoreArchivedServerService(name); break;
-                case 'phase120-software-enable': enableSuggestedSoftware(name); break;
+                case 'enable-suggested-software': enableSuggestedSoftware(name); break;
                 case 'software-toggle': toggleSoftwareForDeviceType(name,target.dataset.type); break;
                 case 'software-custom-add': openSoftwareCatalogueEditor(); break;
                 case 'software-custom-edit': openSoftwareCatalogueEditor(name); break;
@@ -9145,8 +9145,8 @@ function hierarchyValidateTypes(subnets) {
                 case 'built-in-model-save': saveBuiltInHardwareModelOverride(name); break;
                 case 'model-edit': openHardwareModelManager(name); break;
                 case 'model-remove': openHardwareModelManager(name,true); break;
-                case 'phase120-model-save': saveHardwareModel(name); break;
-                case 'phase120-model-confirm-remove': saveHardwareModel(name,true); break;
+                case 'save-catalogue-model': saveHardwareModel(name); break;
+                case 'confirm-remove-catalogue-model': saveHardwareModel(name,true); break;
                 case 'manufacturer-reset': {const el=document.getElementById('manufacturer-search');if(el){el.value='';el.dispatchEvent(new Event('input',{bubbles:true}));}break;}
                 case 'model-reset': ['model-search','hardware-model-manufacturer-filter','model-type','model-source'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';}); if(document.getElementById('hardware-model-in-use'))document.getElementById('hardware-model-in-use').checked=false; filterHardwareModels(); break;
                 case 'manufacturer-add': openHardwareManufacturerManager(); break;
@@ -9156,8 +9156,8 @@ function hierarchyValidateTypes(subnets) {
                 case 'manufacturer-remove': openHardwareManufacturerManager(name,true); break;
                 case 'manufacturer-all': document.querySelectorAll('input[name="catalogue-manufacturer-device-type"]:not(:disabled)').forEach(x=>x.checked=true); break;
                 case 'manufacturer-none': document.querySelectorAll('input[name="catalogue-manufacturer-device-type"]:not(:disabled)').forEach(x=>x.checked=false); break;
-                case 'phase120-maker-save': saveHardwareManufacturer(name); break;
-                case 'phase120-maker-confirm-remove': saveHardwareManufacturer(name,true); break;
+                case 'save-catalogue-manufacturer': saveHardwareManufacturer(name); break;
+                case 'confirm-remove-catalogue-manufacturer': saveHardwareManufacturer(name,true); break;
                 case 'open-device-modal': openDeviceModal(); break;
                 case 'edit-device': openDeviceModal(id); break;
                 case 'view-device': openDeviceDetailView(id); break;
@@ -9207,7 +9207,7 @@ function hierarchyValidateTypes(subnets) {
                 case 'cancel-rack-from-device': cancelRackFromDevice(); break;
                 case 'delete-device-type': deleteDeviceType(name); break;
                 case 'edit-device-type': editDeviceTypePrompt(name); break;
-                case 'phase13g-graphic': openDeviceTypeRackFasciaSettings(name); break;
+                case 'edit-device-fascia-graphic': openDeviceTypeRackFasciaSettings(name); break;
                 case 'save-rack-fascia-graphic': saveDeviceTypeRackFasciaSettings(name); break;
                 case 'delete-location': deleteDeviceLocation(name); break;
                 case 'edit-location': editDeviceLocationPrompt(name); break;
@@ -9215,7 +9215,7 @@ function hierarchyValidateTypes(subnets) {
                 case 'edit-rack': openRackModal(id); break;
                 case 'correct-rack-specifications': openRackModal(id, true); break;
                 case 'delete-rack': deleteRack(id); break;
-                case 'phase13c-add': openRackAccessoryEditor(selectedRackId,1); break;
+                case 'add-rack-accessory': openRackAccessoryEditor(selectedRackId,1); break;
                 case 'add-vertical-rack-accessory': selectedRackAccessoryType='pdu_vertical';openRackAccessoryEditor(target.dataset.rackId,1);selectedRackAccessoryType='blank'; {const f=document.querySelector('#rack-accessory-form [name="side"]');if(f){f.value=target.dataset.side;f.dispatchEvent(new Event('change'));}} break;
                 case 'edit-rack-accessory': {const a=(appState.rackAccessories||[]).find(a=>a.id===id);if(a)openRackAccessoryEditor(a.rackId,a.startU,id);break;}
                 case 'delete-rack-accessory': requestRackAccessoryDeletion(id); break;
@@ -9227,7 +9227,7 @@ function hierarchyValidateTypes(subnets) {
                 case 'print-rack-capacity-details': printRackElevation(id || selectedRackId); break;
                 case 'select-rack-accessory-height': rackAccessoryPlacementHeightU = Number(target.dataset.height) || 1; renderContent(); break;
                 case 'mount-rack-accessory': openAssignDeviceModal(selectedRackId, Number(target.dataset.u)); break;
-                case 'phase13f-mount': {
+                case 'mount-rack-accessory': {
                     const rack = appState.racks.find(r => r.id === selectedRackId) || appState.racks[0];
                     if (!rack) { showToast('Create a rack first.', 'error'); break; }
                     const candidate = Array.from({length: Number(rack.heightU)}, (_, i) => i + 1).find(u => !validateRackPlacement(null, rack.id, activeRackFace, u, u));
@@ -9281,7 +9281,7 @@ function hierarchyValidateTypes(subnets) {
                 case 'tab-ipam': switchTab('ipam'); break;
                 case 'tab-audit': switchTab('audit'); break;
                 case 'export-audit': exportAuditHistory(); break;
-                case 'phase16a-check-safety': compareCurrentInventoryWithSavedBrowserStorage(); break;
+                case 'check-inventory-safety': compareCurrentInventoryWithSavedBrowserStorage(); break;
                 case 'caffoot-licences': caffootShowLicences(); break;
                 case 'caffoot-check-updates': caffootCheckUpdates(); break;
                 case 'caffoot-update-guide': caffootUpdateGuide(); break;
@@ -9295,8 +9295,8 @@ function hierarchyValidateTypes(subnets) {
                 
                 case 'tab-settings': switchTab('settings'); break;
                 case 'select-settings-section': if (['backup','preferences','help','about'].includes(target.dataset.section)) { activeSettingsSection=target.dataset.section; renderContent(); } break;
-                case 'phase16a-import': document.getElementById('import-file')?.click(); break;
-                case 'phase16a-theme': toggleDarkMode(); renderContent(); break;
+                case 'choose-backup-import': document.getElementById('import-file')?.click(); break;
+                case 'toggle-settings-theme': toggleDarkMode(); renderContent(); break;
                 case 'change-appearance-theme': caffootSetTheme(target.dataset.theme); break;
                 case 'preview-inventory-integrity-repairs': previewInventoryIntegrityRepairs(); break;
                 case 'apply-inventory-integrity-repairs': applyPreviewedInventoryIntegrityRepairs(); break;
