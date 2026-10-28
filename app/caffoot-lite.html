@@ -4005,7 +4005,7 @@ function hierarchyValidateTypes(subnets) {
                                 counts.set(key,(counts.get(key)||0)+1);
                             });
                             const missing=counts.get('Not Recorded')||0;
-                            const rows=[...new Set([...values.filter(v=>v&&v!=='Unknown'),'Not Recorded'])].map(name=>({name,count:counts.get(name)||0})).filter(x=>x.count||x.name!=='Not Recorded').sort((a,b)=>b.count-a.count||a.name.localeCompare(b.name));
+                            const rows=[...new Set([...values.filter(v=>v&&v!=='Unknown'),'Not Recorded'])].map(name=>({name,label:isType?(name==='Server - Physical'?'Server':name==='Server - Virtual'?'Virtual Machine':name):name,count:counts.get(name)||0})).filter(x=>x.count||x.name!=='Not Recorded').sort((a,b)=>b.count-a.count||a.label.localeCompare(b.label));
                             const max=Math.max(1,...rows.map(x=>x.count));
                             return `<div class="flex flex-wrap items-start justify-between gap-4">
                                 <div><h2 class="text-xl font-extrabold text-slate-900 dark:text-white">${isType?'Device Types':'Device Locations'}</h2>
@@ -4017,8 +4017,8 @@ function hierarchyValidateTypes(subnets) {
                             </div>
                             <div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4">
                                 <div><h3 class="font-bold text-slate-900 dark:text-white">${isType?'Devices by Type':'Devices by Location'}</h3><p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Select a row to view matching devices in Device Inventory.</p></div>
-                                ${rows.length?rows.map(({name,count})=>`<button type="button" data-action="open-catalogue-details" data-kind="${field}" data-name="${escapeHtml(name)}" class="w-full text-left rounded-xl border border-slate-200 dark:border-slate-600 p-3 hover:bg-blue-50 dark:hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500">
-                                    <div class="flex justify-between gap-3 text-sm"><span class="font-semibold text-slate-900 dark:text-white break-words">${escapeHtml(name)}</span><span class="shrink-0 font-bold text-blue-700 dark:text-blue-300">${count} device${count===1?'':'s'} <i class="fa-solid fa-arrow-right ml-1" aria-hidden="true"></i></span></div>
+                                ${rows.length?rows.map(({name,label,count})=>`<button type="button" data-action="open-catalogue-details" data-kind="${field}" data-name="${escapeHtml(name)}" class="w-full text-left rounded-xl border border-slate-200 dark:border-slate-600 p-3 hover:bg-blue-50 dark:hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500">
+                                    <div class="flex justify-between gap-3 text-sm"><span class="font-semibold text-slate-900 dark:text-white break-words">${escapeHtml(label)}</span><span class="shrink-0 font-bold text-blue-700 dark:text-blue-300">${count} device${count===1?'':'s'} <i class="fa-solid fa-arrow-right ml-1" aria-hidden="true"></i></span></div>
                                     <div class="mt-2 h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden"><div class="h-full rounded-full bg-blue-600" style="width:${Math.max(0,Math.min(100,100*count/max))}%"></div></div>
                                 </button>`).join(''):'<p class="text-sm text-slate-600 dark:text-slate-300">No devices recorded yet. Add a device to populate this overview.</p>'}
                             </div>`;
