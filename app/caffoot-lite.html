@@ -6540,6 +6540,16 @@ function hierarchyValidateTypes(subnets) {
             // A hidden required select otherwise prevents the submit handler running.
             const locationSelect=document.getElementById('dev-location');
             if(locationSelect) locationSelect.required=!virtual;
+            // Keep Add Device tabs in sync with deployment selection.
+            const locationArea=document.getElementById('device-form-location-area');
+            if(locationArea) locationArea.hidden=virtual;
+            const hardwareTab=document.getElementById('device-form-tab-hardware');
+            if(hardwareTab){
+                hardwareTab.hidden=virtual;
+                hardwareTab.classList.toggle('hidden',virtual);
+                if(virtual && document.querySelector('[data-device-form="true"]')?.dataset.activeDeviceTab==='hardware')
+                    document.getElementById('device-form-tab-general')?.click();
+            }
             const typeSelect=document.getElementById('dev-type');
             if(typeSelect) typeSelect.required=!virtual;
             const purposeSelect=document.getElementById('dev-vm-purpose');
@@ -6971,10 +6981,10 @@ function hierarchyValidateTypes(subnets) {
             if (!form || form.querySelector('[data-device-tabs]')) return;
             const sections = Array.from(form.children).filter(el => el.classList.contains('form-section-card'));
             if (sections.length !== 5) return;
-            const isVirtualDevice = form.querySelector('#dev-type')?.value === 'Server - Virtual';
+            const isVirtualDevice = isVirtualDeviceForm();
             const labels = [
                 ['general', 'General'],
-                ...(!isVirtualDevice ? [['hardware', 'Hardware']] : []),
+                ['hardware', 'Hardware'],
                 ['software', 'Software & Firmware'],
                 ['networking', 'Networking'],
                 ['notes', 'Notes']
@@ -7007,13 +7017,8 @@ function hierarchyValidateTypes(subnets) {
             form.insertBefore(nav, sections[0]);
             labels.forEach(([id]) => form.insertBefore(panels.get(id), sections[0]));
             panels.get('general').append(sections[0], sections[2]);
-            if (isVirtualDevice) {
-                // Retain existing hardware and mounting inputs in the form for legacy data safety.
-                sections[1].hidden = true;
-                panels.get('general').appendChild(sections[1]);
-            } else {
-                panels.get('hardware').append(sections[1]);
-            }
+            // Keep hardware inputs mounted for legacy preservation, but hide the tab for VMs.
+            panels.get('hardware').append(sections[1]);
             panels.get('networking').append(sections[3]);
             panels.get('notes').append(sections[4]);
             // Move existing field nodes rather than cloning controls, preserving IDs and handlers.
@@ -7030,11 +7035,11 @@ function hierarchyValidateTypes(subnets) {
             if (locationRow && locationRow.contains(form.querySelector('#dev-custom-location'))) {
                 const locationSection = document.createElement('div');
                 locationSection.className = 'form-section-card space-y-4';
+                locationSection.id = 'device-form-location-area';
                 locationSection.innerHTML = '<div class="form-section-heading"><i class="fa-solid fa-location-dot" aria-hidden="true"></i>Location Area</div>';
                 locationSection.appendChild(locationRow);
                 panels.get('general').insertBefore(locationSection, sections[2]);
             }
-            if (isVirtualDevice) sections[2].hidden = true;
             const mountHeading = sections[2].querySelector('.form-section-heading');
             if (mountHeading) mountHeading.textContent = 'Mounting & Rack Configuration';
             panels.get('notes').dataset.notesPanel = 'true';
