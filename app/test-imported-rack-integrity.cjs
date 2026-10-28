@@ -7,7 +7,7 @@ const start = source.indexOf('        function findRackImportConflicts(');
 const end = source.indexOf('        function validateAndNormaliseBackupForImport(', start);
 assert.ok(start >= 0 && end > start, 'Import rack validator must exist');
 const typesStart = source.indexOf('        const rackAccessoryTypeDefinitions = {');
-const typesEnd = source.indexOf('        // Phase 13D:', typesStart);
+const typesEnd = source.indexOf('        function renderRackAccessoryFasciaHtml(', typesStart);
 assert.ok(typesStart >= 0 && typesEnd > typesStart);
 const ctx = vm.createContext({});
 vm.runInContext(source.slice(typesStart, typesEnd) + source.slice(start, end) + '\nthis.check = findRackImportConflicts;', ctx);
