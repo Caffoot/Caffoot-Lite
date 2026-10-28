@@ -37,6 +37,7 @@ const {pathToFileURL}=require('node:url'),{chromium}=require('playwright');
  assert.equal(JSON.stringify(await page.evaluate(()=>appState.devices[0].previousTypeDetails)),JSON.stringify(legacy.devices[0].previousTypeDetails),'Legacy history must survive import');
  await page.evaluate(()=>phase14CViewDevice(appState.devices[0].id));
  await page.locator('#phase14c-tab-history').click();
+ await page.locator('#phase14c-panel-history details summary').first().click();
  const historyModal=await page.locator('#modal-content').innerText();
  assert.match(historyModal,/Previous Device Type Details/,'Legacy history must remain visible');
  assert.match(historyModal,/Legacy fictional printer/,'Legacy snapshot fields must remain visible');
