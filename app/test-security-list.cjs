@@ -11,7 +11,7 @@ function extract(start,end) {
 }
 const code=extract('function escapeHtml(value)','function renderContent()')+'\n'+
   extract('function getEffectiveDevicePlatform(device)','function getVisibleDevices()')+'\n'+
-  extract('function renderDevicesHTML()','// --- PHASE 18D: MANAGED TYPES & LOCATIONS ---');
+  extract('function renderDevicesHTML()','// --- MANAGED TYPES & LOCATIONS ---');
 const platformContext=vm.createContext({});
 vm.runInContext(extract('function getEffectiveDevicePlatform(device)','function getVisibleDevices()'),platformContext);
 const physical={type:'Server - Physical',typeDetails:{serverService_Hypervisor:true,softwarePlatform:'Windows Server',softwareVersion:'2022',hypervisorProduct:'Proxmox VE',hypervisorVersion:'9'}};
