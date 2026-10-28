@@ -24,10 +24,10 @@ assert(!html.includes('function diagnosticTests()'), 'obsolete diagnostic tests 
 assert(!html.includes('function renderDiagnosticsHTML()'), 'obsolete diagnostics view must be removed');
 assert(!html.includes("case 'run-diagnostics':"), 'obsolete diagnostics handler must be removed');
 assert(/personalSafeStorageGet\(SAFETY_SNAPSHOT_KEY\)\?'':'disabled'\)\)\s*\+\s*panel\('Danger Zone/.test(html), 'Danger zone must be concatenated into Data Management HTML');
-assert(html.includes("case 'phase16a-clear-system': phase16AClearSystem();"), 'Clear system action must be wired');
-assert(html.includes('function phase16AClearSystem()'), 'Clear system handler must exist');
+assert(html.includes("case 'clear-inventory-data': requestInventoryReset();"), 'Clear system action must be wired');
+assert(html.includes('function requestInventoryReset()'), 'Clear system handler must exist');
 assert(html.includes('localStorage.setItem(SAFETY_SNAPSHOT_KEY, snapshot)'), 'Clear system must create recovery snapshot');
-assert(html.includes('const candidate = phase16CCheckBackup(cleanStart);'), 'Clear system must validate the explicitly cleared starter data');
+assert(html.includes('const candidate = validateAndNormaliseBackupForImport(cleanStart);'), 'Clear system must validate the explicitly cleared starter data');
 assert(html.includes('function suggestSubnetGateway()'), 'Automatic gateway suggestion must remain');
 assert(html.includes("event.target.id === 'sub-cidr'"), 'CIDR input must trigger automatic gateway suggestion');
 assert(html.includes("event.target.id === 'sub-gw'"), 'Manual gateway edits must be preserved');
@@ -39,18 +39,18 @@ assert(html.includes('aria-invalid'), 'Invalid CIDR must be announced accessibly
 assert(html.includes('Caffoot Lite supports subnet sizes /23 through /30.'), 'Unsupported prefix must be explained');
 assert(html.includes("if (!subnet && subnetTypeSelect.value === 'network') suggestSubnetGateway();"), 'New network subnet modal must initialize gateway suggestion without treating IP Address Blocks as networks');
 assert(html.includes("form.dataset.subnetId"), 'Existing subnet gateways must not be automatically replaced');
-assert(html.includes('function phase11CPlan('), 'IPAM repair planner must remain');
-assert(html.includes('...phase120SoftwareFieldsFor(type)'), 'computer software options must be rendered');
-assert(html.includes('...phase19BServerFunctionFields()'), 'server feature options must be rendered');
-assert(/if\s*\(phase11BCommitDelete\(before,\s*isNetwork\s*\?\s*'Subnet & VLAN'\s*:\s*'IP Address Block'\)\)\s*closeModal\(\);\s*else\s*selectedSubnetId\s*=\s*previousSelection\s*;/.test(html), 'failed subnet deletion must restore selected subnet');
-assert(html.includes("if(!phase11BCommitDelete(before,'Rack')) { selectedRackId=previousSelection; renderContent(); }"), 'failed rack deletion must restore selected rack');
-assert(html.includes('function phase11CApplyRepair('), 'IPAM repair commit must remain');
+assert(html.includes('function planDeviceIpAllocationIntegrityRepairs('), 'IPAM repair planner must remain');
+assert(html.includes('...getSoftwareFieldsForDeviceType(type)'), 'computer software options must be rendered');
+assert(html.includes('...getAvailableServerServiceFieldKeys()'), 'server feature options must be rendered');
+assert(/if\s*\(commitDeletionWithRollback\(before,\s*isNetwork\s*\?\s*'Subnet & VLAN'\s*:\s*'IP Address Block'\)\)\s*closeModal\(\);\s*else\s*selectedSubnetId\s*=\s*previousSelection\s*;/.test(html), 'failed subnet deletion must restore selected subnet');
+assert(html.includes("if(!commitDeletionWithRollback(before,'Rack')) { selectedRackId=previousSelection; renderContent(); }"), 'failed rack deletion must restore selected rack');
+assert(html.includes('function applyPreviewedInventoryIntegrityRepairs('), 'IPAM repair commit must remain');
 
 /* v1.1: Manage Subnets must not expose edit actions for a different address block. */
 assert(html.includes("const availableNetworks = appState.subnets.filter("), 'IPAM must derive a filtered list of active networks');
 assert(html.includes("(s.parentId || '') === ipamManageBlockFilter"), 'active subnet list must respect the selected address block');
 assert(html.includes("const subnet = availableNetworks.find(s => s.id === selectedSubnetId) || availableNetworks[0] || null;"), 'stale subnet selection must fall back within the filtered block');
-assert(html.includes("if (phase12CIpamTab === 'manage' && !subnet) return renderSubnetHierarchyPreview();"), 'empty filtered blocks must not expose unrelated subnet actions');
+assert(html.includes("if (activeIpamTab === 'manage' && !subnet) return renderSubnetHierarchyPreview();"), 'empty filtered blocks must not expose unrelated subnet actions');
 assert(html.includes("availableNetworks.map(s =>"), 'active subnet dropdown must use filtered networks');
 assert(html.includes('data-action="bulk-ip" data-id="${escapeHtml(subnet.id)}"'), 'bulk edit must target filtered active subnet');
 assert(html.includes('data-action="edit-subnet" data-id="${escapeHtml(subnet.id)}"'), 'subnet edit must target filtered active subnet');
@@ -58,20 +58,20 @@ assert(html.includes("showToast('Choose a subnet from the selected IP Address Bl
 console.log('v1.1 filtered active subnet and edit action safeguards passed.');
 
 assert(!html.includes("case 'tab-diagnostics':"), 'diagnostics action must be removed');
-assert(html.includes('data-action="phase19b-manage-functions"'), 'server options manager must be accessible');
+assert(html.includes('data-action="manage-server-services"'), 'server options manager must be accessible');
 assert(html.includes('data-device-panel="manage"'), 'Devices management workspace must remain');
 assert(html.includes('>Manage Server Options</button>'), 'server options manager must be in Devices');
 assert(html.includes('>Manage Software Options</button>'), 'software options manager must be in Devices');
-assert(!html.includes("button('phase19b-manage-functions','Manage Server Options'"), 'server options manager must not appear in Settings maintenance');
-assert(html.includes('data-action="phase19b-manage-software"'), 'software options manager must be accessible');
+assert(!html.includes("button('manage-server-services','Manage Server Options'"), 'server options manager must not appear in Settings maintenance');
+assert(html.includes('data-action="manage-installed-software"'), 'software options manager must be accessible');
 assert(html.includes("const STORAGE_KEY = 'caffoot_state'"), 'Caffoot inventory storage key must remain');
 assert(!/netmini_[a-z0-9_]+/.test(html), 'Legacy NetMini browser storage keys must be removed');
-assert(html.includes('function phase17ARecoveryBanner()'), 'recovery banner must remain');
+assert(html.includes('function showStorageRecoveryBanner()'), 'recovery banner must remain');
 assert(html.includes('Caffoot Lite recovery mode'), 'recovery banner must use Lite branding');
-assert(html.includes('phase16c-about-brand'), 'About branding panel must remain');
+assert(html.includes('settings-about-brand'), 'About branding panel must remain');
 assert(html.includes("['help','Help & Guides','fa-book-open']"), 'offline Help & Guides tab must remain');
-assert(html.includes('phase16c-help-topics'), 'expandable offline help topics must remain');
-assert(html.includes('phase16c-about-version'), 'About version display must remain');
+assert(html.includes('settings-help-topics'), 'expandable offline help topics must remain');
+assert(html.includes('settings-about-version'), 'About version display must remain');
 assert(!html.includes("panel('Application version'"), 'redundant application version panel must stay removed');
 assert(html.includes('Reset to empty inventory'), 'recovery reset must describe empty inventory');
 assert(!html.includes('Reset to sample inventory'), 'obsolete sample inventory label must be removed');
@@ -117,10 +117,10 @@ const ipamContext = {
 vm.createContext(ipamContext);
 vm.runInContext(html.slice(helperStart, helperEnd), ipamContext);
 // Load the production gateway lookup into this isolated device/IPAM test context.
-const ipamGatewayHelperStart = html.indexOf('function phase10GatewaySubnet(');
-const ipamGatewayHelperEnd = html.indexOf('function phase10SubnetSummary(', ipamGatewayHelperStart);
+const ipamGatewayHelperStart = html.indexOf('function findSubnetUsingGatewayAddress(');
+const ipamGatewayHelperEnd = html.indexOf('function calculateSubnetUtilisationSummary(', ipamGatewayHelperStart);
 assert(ipamGatewayHelperStart >= 0 && ipamGatewayHelperEnd > ipamGatewayHelperStart, 'gateway protection helper must exist');
-ipamContext.phase12Usable = ipamContext.ipBelongsToSubnet;
+ipamContext.isUsableHostAddressInSubnet = ipamContext.ipBelongsToSubnet;
 vm.runInContext(html.slice(ipamGatewayHelperStart, ipamGatewayHelperEnd), ipamContext);
 const { appState: state } = ipamContext;
 const a = { id: 'test-a', name: 'server-a', notes: 'Original notes', primaryIp: '', ipReserved: false };
@@ -190,7 +190,7 @@ console.log('Rack accessory placement fixtures passed.');
 
 const deleteStart = html.indexOf('async function deleteDevice(');
 const deleteEnd = html.indexOf('// Phase 16B:', deleteStart);
-const commitStart = html.indexOf('function phase11BCommitDelete(');
+const commitStart = html.indexOf('function commitDeletionWithRollback(');
 const commitEnd = html.indexOf('function deleteSubnet(', commitStart);
 assert(deleteStart >= 0 && deleteEnd > deleteStart, 'device deletion function must exist');
 assert(commitStart >= 0 && commitEnd > commitStart, 'transactional deletion helper must exist');
@@ -233,9 +233,9 @@ assert.match(lastToast, /not deleted/, 'failed deletion reports error');
 console.log('Device deletion and rollback fixtures passed.');
 
 })().catch(error => { console.error(error); process.exitCode = 1; });
-const shapeStart = html.indexOf('function phase11ValidateBackupShape(');
-const shapeEnd = html.indexOf('function phase11DownloadSnapshot(', shapeStart);
-const jsonStart = html.indexOf('function phase16CReadJson(');
+const shapeStart = html.indexOf('function validateBackupStructure(');
+const shapeEnd = html.indexOf('function downloadPreRestoreSafetySnapshot(', shapeStart);
+const jsonStart = html.indexOf('function parseBackupJsonWithHelpfulError(');
 const jsonEnd = html.indexOf('function importData(', jsonStart);
 assert(shapeStart >= 0 && shapeEnd > shapeStart, 'backup shape validator exists');
 assert(jsonStart >= 0 && jsonEnd > jsonStart, 'JSON reader exists');
@@ -243,14 +243,14 @@ const backupContext = {};
 vm.createContext(backupContext);
 vm.runInContext(html.slice(shapeStart, shapeEnd) + '\n' + html.slice(jsonStart, jsonEnd), backupContext);
 const validBackup = { devices: [], subnets: [], racks: [], vlans: [], ipAllocations: {} };
-assert.equal(backupContext.phase11ValidateBackupShape(validBackup), true, 'empty backup is structurally valid');
-assert.equal(backupContext.phase11ValidateBackupShape(backupContext.phase16CReadJson(JSON.stringify(validBackup))), true, 'exported JSON can be read');
-assert.throws(() => backupContext.phase16CReadJson('{broken'), /not valid JSON/, 'invalid JSON rejected');
-assert.throws(() => backupContext.phase11ValidateBackupShape([]), /JSON object/, 'array root rejected');
-assert.throws(() => backupContext.phase11ValidateBackupShape({ ...validBackup, devices: null }), /devices array/, 'missing devices rejected');
-assert.throws(() => backupContext.phase11ValidateBackupShape({ ...validBackup, ipAllocations: [] }), /IP allocation table/, 'invalid allocation table rejected');
-assert.throws(() => backupContext.phase11ValidateBackupShape({ ...validBackup, racks: [null] }), /invalid entries/, 'invalid rack rejected');
-assert.throws(() => backupContext.phase11ValidateBackupShape({ ...validBackup, devices: Array(50001).fill({}) }), /too many devices/, 'oversized device list rejected');
+assert.equal(backupContext.validateBackupStructure(validBackup), true, 'empty backup is structurally valid');
+assert.equal(backupContext.validateBackupStructure(backupContext.parseBackupJsonWithHelpfulError(JSON.stringify(validBackup))), true, 'exported JSON can be read');
+assert.throws(() => backupContext.parseBackupJsonWithHelpfulError('{broken'), /not valid JSON/, 'invalid JSON rejected');
+assert.throws(() => backupContext.validateBackupStructure([]), /JSON object/, 'array root rejected');
+assert.throws(() => backupContext.validateBackupStructure({ ...validBackup, devices: null }), /devices array/, 'missing devices rejected');
+assert.throws(() => backupContext.validateBackupStructure({ ...validBackup, ipAllocations: [] }), /IP allocation table/, 'invalid allocation table rejected');
+assert.throws(() => backupContext.validateBackupStructure({ ...validBackup, racks: [null] }), /invalid entries/, 'invalid rack rejected');
+assert.throws(() => backupContext.validateBackupStructure({ ...validBackup, devices: Array(50001).fill({}) }), /too many devices/, 'oversized device list rejected');
 assert(html.includes('caffoot_lite_backup_'), 'backup filename uses Caffoot branding');
 assert(html.includes('caffoot_lite_pre_restore_safety_snapshot.json'), 'recovery filename uses Caffoot branding');
 assert(html.includes('older compatible JSON backup'), 'older backup compatibility is described');
@@ -268,8 +268,8 @@ assert(ipPickerSource.includes('if (available.length < 50) available.push(ip)'),
 assert(ipPickerSource.includes('if (ip === subnet.gateway && ip !== currentIp) continue;'), 'IP dropdown must exclude gateway except when showing the current address');
 assert(ipPickerSource.includes("appState.devices.some(d => d.id === editingId && d.primaryIp === ip)"), 'Existing gateway address must only be retained for its owning device');
 
-assert(html.includes("case 'phase16a-check-safety': phase16ACheckSafety(); break;"), 'Inventory safety check must be wired');
-assert(html.includes('function phase16ACheckSafety()'), 'Inventory safety check must remain');
+assert(html.includes("case 'phase16a-check-safety': compareCurrentInventoryWithSavedBrowserStorage(); break;"), 'Inventory safety check must be wired');
+assert(html.includes('function compareCurrentInventoryWithSavedBrowserStorage()'), 'Inventory safety check must remain');
 assert(html.includes('const issues = validateApplicationState();'), 'Inventory safety check must validate integrity');
 assert(html.includes('The saved inventory differs from the currently displayed inventory.'), 'Safety check must compare saved inventory');
 assert(html.includes("panel('Inventory Safety Check'"), 'Safety check must appear in Data Management');
@@ -297,44 +297,44 @@ for (const [cidr, gateway] of [
   ['192.168.1.64/26', '192.168.1.65'],
   ['10.1.2.0/30', '10.1.2.1']
 ]) {
-  const range = cidrContext.phase12Cidr(cidr);
+  const range = cidrContext.parseSupportedIpv4Subnet(cidr);
   assert(range, cidr + ' must be accepted');
-  assert.equal(cidrContext.phase12IpString(range.first), gateway, cidr + ' gateway');
+  assert.equal(cidrContext.formatIpv4Address(range.first), gateway, cidr + ' gateway');
   assert(cidrContext.subnetCidrFeedback(cidr).message.includes(gateway), cidr + ' feedback');
 }
-assert.equal(cidrContext.phase12Cidr('192.168.1.0/23'), null, 'misaligned /23 rejected');
+assert.equal(cidrContext.parseSupportedIpv4Subnet('192.168.1.0/23'), null, 'misaligned /23 rejected');
 assert(cidrContext.subnetCidrFeedback('192.168.1.0/23').message.includes('192.168.0.0/23'), 'misaligned /23 suggests valid network');
 assert.match(cidrContext.subnetCidrFeedback('10.0.0.0/22').message, /supports subnet sizes/, 'unsupported prefix explained');
 assert.equal(cidrContext.subnetCidrFeedback('192.168.1.0/23').invalid, true, 'misaligned subnet visibly invalid');
 console.log('RC1 subnet gateway and CIDR validation fixtures passed.');
 
-const managedStart = html.indexOf('function phase19BServerFunctions(');
-const managedEnd = html.indexOf('function phase19BServerFunctionFields(', managedStart);
-const softwareStart = html.indexOf('function phase19BSoftware()');
-const softwareEnd = html.indexOf('function phase19BSoftwareFields(', softwareStart);
+const managedStart = html.indexOf('function getConfiguredServerServiceCatalogueEntries(');
+const managedEnd = html.indexOf('function getAvailableServerServiceFieldKeys(', managedStart);
+const softwareStart = html.indexOf('function getConfiguredSoftwareCatalogueEntries()');
+const softwareEnd = html.indexOf('function getConfiguredSoftwareCatalogueFieldKeys(', softwareStart);
 assert(managedStart >= 0 && managedEnd > managedStart && softwareStart >= 0 && softwareEnd > softwareStart, 'managed option readers must exist');
 const managedContext = {
   appState: { serverFunctions: [], installedSoftware: [], managedOptionsCleared: false },
-  phase19BDefaultServerFunctions: ['DNS'],
-  phase19BDefaultSoftware: ['Office'],
-  phase19BLabels: { DNS: 'DNS', Office: 'Office' }
+  legacyServerServiceFieldKeys: ['DNS'],
+  legacySoftwareFieldKeys: ['Office'],
+  deviceDetailFieldLabels: { DNS: 'DNS', Office: 'Office' }
 };
 vm.createContext(managedContext);
 vm.runInContext(html.slice(managedStart, managedEnd) + '\n' + html.slice(softwareStart, softwareEnd), managedContext);
-assert.equal(managedContext.phase19BServerFunctions().length, 0, 'fresh installation starts with empty server options');
-assert.equal(managedContext.phase19BSoftware().length, 0, 'fresh installation starts with empty software options');
+assert.equal(managedContext.getConfiguredServerServiceCatalogueEntries().length, 0, 'fresh installation starts with empty server options');
+assert.equal(managedContext.getConfiguredSoftwareCatalogueEntries().length, 0, 'fresh installation starts with empty software options');
 managedContext.appState.managedOptionsCleared = true;
-assert.equal(managedContext.phase19BServerFunctions().length, 0, 'clean start must not resurrect server options');
-assert.equal(managedContext.phase19BSoftware().length, 0, 'clean start must not resurrect software options');
+assert.equal(managedContext.getConfiguredServerServiceCatalogueEntries().length, 0, 'clean start must not resurrect server options');
+assert.equal(managedContext.getConfiguredSoftwareCatalogueEntries().length, 0, 'clean start must not resurrect software options');
 managedContext.appState.serverFunctions = [{ key: 'Custom', label: 'Custom' }];
 managedContext.appState.installedSoftware = [{ key: 'CustomApp', label: 'Custom App' }];
-assert.equal(managedContext.phase19BServerFunctions()[0].key, 'Custom', 'custom server option preserved');
-assert.equal(managedContext.phase19BSoftware()[0].key, 'CustomApp', 'custom software option preserved');
+assert.equal(managedContext.getConfiguredServerServiceCatalogueEntries()[0].key, 'Custom', 'custom server option preserved');
+assert.equal(managedContext.getConfiguredSoftwareCatalogueEntries()[0].key, 'CustomApp', 'custom software option preserved');
 console.log('RC1 managed options reset fixtures passed.');
 
 /* RC1 transactional deletion: real subnet/rack handlers, dependencies and rollback. */
-const subnetDepsStart = html.indexOf('function phase11BSubnetDependencies(');
-const subnetDepsEnd = html.indexOf('function phase11BCommitDelete(', subnetDepsStart);
+const subnetDepsStart = html.indexOf('function getDevicesAndIpAllocationsInSubnet(');
+const subnetDepsEnd = html.indexOf('function commitDeletionWithRollback(', subnetDepsStart);
 const subnetDeleteStart = html.indexOf('function deleteSubnet(');
 const subnetDeleteEnd = html.indexOf('function deleteVlan(', subnetDeleteStart);
 const rackDeleteStart = html.indexOf('function deleteRack(');
@@ -433,8 +433,8 @@ assert(html.includes('font-semibold text-slate-700 dark:text-slate-200 opacity-1
 assert(html.includes('font-mono font-bold text-slate-700 dark:text-slate-200 group-hover:text-emerald-800'), 'rack U numbers must have readable contrast');
 console.log('RC1 rack empty-slot contrast safeguards passed.');
 
-assert(html.includes('.phase13k-elevation .phase13-empty > span{color:#f1f5f9!important;opacity:1!important}'), 'navy rack elevation must use visible light text in either theme');
-assert(html.includes('.phase13k-elevation .phase13-empty:focus-visible > span{color:#a7f3d0!important}'), 'keyboard-focused rack slots must keep readable text');
+assert(html.includes('.rack-elevation .rack-empty-state > span{color:#f1f5f9!important;opacity:1!important}'), 'navy rack elevation must use visible light text in either theme');
+assert(html.includes('.rack-elevation .rack-empty-state:focus-visible > span{color:#a7f3d0!important}'), 'keyboard-focused rack slots must keep readable text');
 console.log('RC1 rack elevation contrast regression checks passed.');
 
 // RC1: labels must remain associated with essential Device and Subnet controls.
@@ -492,7 +492,7 @@ const vlanDeleteEnd = html.indexOf('function openIpModal(ip)', vlanDeleteStart);
 assert(vlanDeleteStart >= 0 && vlanDeleteEnd > vlanDeleteStart, 'VLAN deletion handler must exist');
 const vlanDeleteCode = html.slice(vlanDeleteStart, vlanDeleteEnd);
 assert(vlanDeleteCode.includes('const before = JSON.stringify(appState);'), 'VLAN deletion must capture a rollback snapshot');
-assert(vlanDeleteCode.includes("phase11BCommitDelete(before, 'VLAN');"), 'VLAN deletion must use verified-save rollback helper');
+assert(vlanDeleteCode.includes("commitDeletionWithRollback(before, 'VLAN');"), 'VLAN deletion must use verified-save rollback helper');
 assert(!vlanDeleteCode.includes('saveState();'), 'VLAN deletion must not bypass rollback helper');
 console.log('VLAN deletion rollback safeguards passed.');
 
@@ -550,7 +550,7 @@ assert(ipSubmitCode.includes('else delete appState.ipAllocations[ip];'),
   'failed new Available allocation save must restore the absent record');
 console.log('M-006 Available address notes and failed-save source contracts passed.');
 
-const bulkPlanStart = html.indexOf('function phase12BBulkPlan(');
+const bulkPlanStart = html.indexOf('function planBulkSubnetAddressAssignment(');
 const bulkPlanEnd = html.indexOf('function openBulkIpModal(', bulkPlanStart);
 assert(bulkPlanStart >= 0 && bulkPlanEnd > bulkPlanStart, 'bulk IPAM planner must exist');
 const bulkPlanCode = html.slice(bulkPlanStart, bulkPlanEnd);
@@ -571,13 +571,13 @@ const legacyContext = {
   isPlainObject: x => x !== null && typeof x === 'object' && !Array.isArray(x),
   cloneDefaultData: () => ({deviceTypes:[],deviceLocations:[],rackAccessories:[],subnets:[],vlans:[],racks:[],devices:[],ipAllocations:{}}),
   STATE_VERSION: 1,
-  phase120SeparateLegacyRackLocation: devices => devices,
+  migrateLegacyRackLocation: devices => devices,
   isValidCidr24: () => true,
   isValidIpv4: () => true,
-  phase12Usable: () => true,
+  isUsableHostAddressInSubnet: () => true,
   hierarchyValidate: () => [],
   hierarchyValidateTypes: () => [],
-  phase19BAllowedMounts: () => ['Desktop'],
+  getRecognisedDeviceMountTypes: () => ['Desktop'],
   ipBelongsToSubnet: () => true
 };
 vm.createContext(legacyContext);
@@ -601,18 +601,18 @@ console.log('M-006 historical JSON normalisation runtime fixture passed.');
 
 
 // Exercise the actual legacy backup migration entry point, not only normaliseState.
-const migrationStart = html.indexOf('function phase20MigrateBackup(raw)');
+const migrationStart = html.indexOf('function normaliseImportedBackupAndPlanLegacyMountRepairs(raw)');
 const migrationEnd = html.indexOf('function exportData()', migrationStart);
 assert(migrationStart >= 0 && migrationEnd > migrationStart, 'production migration helper must exist');
-legacyContext.phase20ValidateBackupVersion = raw => {
+legacyContext.validateBackupVersion = raw => {
   assert.equal(Object.prototype.hasOwnProperty.call(raw, 'caffootBackup'), false, 'fixture must be a legacy unversioned export');
   return 0;
 };
-legacyContext.phase16CLegacyMountRepairs = () => [];
+legacyContext.planLegacyComputerMountingCorrections = () => [];
 vm.runInContext(html.slice(migrationStart, migrationEnd), legacyContext);
 const legacyInput = JSON.parse(JSON.stringify(legacyBackup));
 const beforeMigration = JSON.stringify(legacyInput);
-const migratedLegacy = legacyContext.phase20MigrateBackup(legacyInput);
+const migratedLegacy = legacyContext.normaliseImportedBackupAndPlanLegacyMountRepairs(legacyInput);
 assert.equal(JSON.stringify(legacyInput), beforeMigration, 'migration must not mutate historical input backup');
 assert.equal(migratedLegacy.ipAllocations['192.168.40.10'].notes, 'Historical address notes', 'migration must retain address notes');
 assert.equal(migratedLegacy.ipAllocations['192.168.40.11'].reservedForDeviceId, 'retired-device', 'migration must retain historical reservation reference');
