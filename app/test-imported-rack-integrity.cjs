@@ -6,11 +6,9 @@ const source = fs.readFileSync(require('node:path').join(__dirname, 'caffoot-lit
 const start = source.indexOf('        function findRackImportConflicts(');
 const end = source.indexOf('        function validateAndNormaliseBackupForImport(', start);
 assert.ok(start >= 0 && end > start, 'Import rack validator must exist');
-const typesStart = source.indexOf('        const rackAccessoryTypeDefinitions = {');
-const typesEnd = source.indexOf('        function renderRackAccessoryFasciaHtml(', typesStart);
-assert.ok(typesStart >= 0 && typesEnd > typesStart);
+// The import validator is self-contained; do not extract unrelated rack UI code.
 const ctx = vm.createContext({});
-vm.runInContext(source.slice(typesStart, typesEnd) + source.slice(start, end) + '\nthis.check = findRackImportConflicts;', ctx);
+vm.runInContext(source.slice(start, end) + '\nthis.check = findRackImportConflicts;', ctx);
 const rack = {id:'r1',heightU:12};
 const device = (id,face,start,height) => ({id,name:id,rackId:'r1',face,rackUStart:start,rackUHeight:height});
 const acc = (id,type,face,start,height,side) => ({id,name:id,rackId:'r1',type,face,startU:start,heightU:height,side});
