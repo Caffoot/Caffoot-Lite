@@ -11,6 +11,25 @@ The published `v1.3.0` tag and current `main` have the same `app/caffoot-lite.ht
 
 All source comments are public-facing technical documentation and must use clear **British English**. Write for a developer new to Caffoot Lite, returning after a long absence, or learning to code. Do not assume knowledge of the project's development phases, audit identifiers, historical conversations or internal shorthand. Explain unfamiliar terms where useful. Function names should describe actual behaviour rather than the phase in which they were introduced. Comments should explain **why** a decision or safeguard exists, especially data preservation, compatibility, recovery and rollback; do not merely paraphrase a self-explanatory statement. Describe implemented behaviour accurately, not aspirations. Avoid unexplained phase, P11 or M-number references; retain traceability in the audit records rather than making it a prerequisite for understanding source code. Keep comments in sync with changes, concise enough to remain useful, and approachable to less experienced developers. Renaming existing functions requires a separate, explicit product-owner approval after caller/dependency review and proportionate focused verification; this documentation decision alone authorises no application change.
 
+## #101 current-branch naming inventory checkpoint, 28 October 2026
+
+**Source inspection only:** `app/caffoot-lite.html` on `release/v1.3.3` contains **183 named function declarations** beginning with `phase` (simple `function name(...)` declarations counted; this is not a complete inventory of arrow functions, expressions or dynamic references). The historic phase prefix is not self-explanatory. The following are prioritisation candidates based on a literal textual count of references to each name followed by `(`, excluding its declaration. Counts do **not** establish the actual runtime call graph or rule out event attributes, aliases and string references. No rename is approved or implemented.
+
+| Existing identifier | Approximate textual call references | Review priority |
+| --- | ---: | --- |
+| `phase19BSoftware()` | 20 | High, widely referenced software selection helper; confirm exact return semantics and all callers |
+| `phase120HardwarePreferences()` | 19 | High, hardware preferences and form dependencies |
+| `phase120HardwareCatalogue()` | 16 | High, catalogue integration |
+| `phase12IpString()` | 14 | High, IP address representation and formatting |
+| `phase120SoftwareOptions()` | 14 | High, software selection dependencies |
+| `phase19BAllowedMounts()` | 12 | High, mounting restrictions and safety |
+| `phase19BServerFunctions()` | 11 | High, server function field dependencies |
+| `phase12Cidr()` | 10 | High, CIDR interpretation and IPAM safety |
+| `phase120AvailableServerServices()` | 10 | High, server service selection |
+| `phase120BuiltinSoftwareKey()` | 10 | High, built-in catalogue identity |
+
+**Next:** Inspect each high-priority function's implementation, callers, references in HTML event handlers and compatibility constraints before suggesting a specific descriptive name. Document the purpose and safeguards in British English, readable by a newcomer. Do not bulk rename or run application tests for this documentation checkpoint. Reconcile P11 comments against current source rather than transplanting obsolete v1.3.0 line references.
+
 ## Purpose
 
 Future contributors should understand what each important function does without needing to know the development phase in which it was introduced. Existing historical names must remain documented until an approved and tested change replaces them.
