@@ -2,9 +2,9 @@
 
 **Infrastructure, Simplified. — For HomeLabs and Small Teams**
 
-**Current published version:** v1.3.2. Device catalogues, virtual machines, hypervisor hosting and theme refinements are described in the [v1.3.2 release notes](RELEASE-NOTES-1.3.2.md). v1.3.3 is a candidate under review, not a published release.
+**Current published version:** v1.3.3. See the [v1.3.3 release notes](RELEASE-NOTES-1.3.3.md) for final standalone maintenance changes and the [v1.3.2 release notes](RELEASE-NOTES-1.3.2.md) for earlier device catalogue, virtual machine, hypervisor and theme improvements.
 
-This guide covers the published v1.3.2 functionality and retains guidance for features introduced in earlier versions, including Devices & Intelligence and rack management. The redesigned Settings & Data interface was introduced in v1.1.1, with security hardening in v1.1.2.
+This guide covers the published v1.3.3 functionality and retains guidance for features introduced in earlier versions, including Devices & Intelligence and rack management. The redesigned Settings & Data interface was introduced in v1.1.1, with security hardening in v1.1.2.
 
 ## Devices & Intelligence in v1.3.0
 
