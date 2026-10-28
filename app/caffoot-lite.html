@@ -6533,7 +6533,11 @@ function hierarchyValidateTypes(subnets) {
             const virtual=isVirtualDeviceForm();
             // VM placement belongs to the host. Retain historical values in storage.
             const mounting=document.getElementById('device-form-mounting-options');
-            if(mounting) mounting.classList.toggle('hidden',virtual);
+            if(mounting){
+                mounting.hidden=virtual;
+                mounting.classList.toggle('hidden',virtual);
+                mounting.style.display=virtual?'none':'';
+            }
             const mountSelect=document.getElementById('dev-mount-type');
             if(mountSelect) mountSelect.required=!virtual;
             // The location is derived from the selected host when saving a VM.
@@ -6542,7 +6546,11 @@ function hierarchyValidateTypes(subnets) {
             if(locationSelect) locationSelect.required=!virtual;
             // Keep Add Device tabs in sync with deployment selection.
             const locationArea=document.getElementById('device-form-location-area');
-            if(locationArea) locationArea.hidden=virtual;
+            if(locationArea){
+                locationArea.hidden=virtual;
+                locationArea.classList.toggle('hidden',virtual);
+                locationArea.style.display=virtual?'none':'';
+            }
             const hardwareTab=document.getElementById('device-form-tab-hardware');
             if(hardwareTab){
                 hardwareTab.hidden=virtual;
