@@ -189,7 +189,7 @@ console.log('Rack accessory placement fixtures passed.');
 
 
 const deleteStart = html.indexOf('async function deleteDevice(');
-const deleteEnd = html.indexOf('// Phase 16B:', deleteStart);
+const deleteEnd = html.indexOf('let activeSettingsSection =', deleteStart);
 const commitStart = html.indexOf('function commitDeletionWithRollback(');
 const commitEnd = html.indexOf('function deleteSubnet(', commitStart);
 assert(deleteStart >= 0 && deleteEnd > deleteStart, 'device deletion function must exist');
