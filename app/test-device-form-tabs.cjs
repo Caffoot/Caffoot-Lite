@@ -2,7 +2,7 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const source = fs.readFileSync(__dirname + '/caffoot-lite.html', 'utf8');
-const tabs = source.slice(source.indexOf('function phase120InitializeDeviceTabs('), source.indexOf('function openDeviceModal('));
+const tabs = source.slice(source.indexOf('function initialiseDeviceTabs('), source.indexOf('function openDeviceModal('));
 assert.match(tabs, /\['notes', 'Notes'\]/, 'Notes is a fifth tab');
 assert.match(tabs, /panels\.get\('general'\)\.append\(sections\[0\], sections\[2\]\)/, 'Mounting is on General');
 assert.match(tabs, /panels\.get\('hardware'\)\.append\(sections\[1\]\)/, 'Hardware excludes mounting');
@@ -13,7 +13,7 @@ assert.match(source, /activeDeviceTab: form\.dataset\.activeDeviceTab/, 'Draft r
 assert.match(source, /draft\?\.activeDeviceTab\) tabbedDeviceForm\.dataset\.initialDeviceTab/, 'Reopened device restores tab');
 assert.match(source, /<textarea id="dev-notes" rows="18"/, 'Notes supports multiline content');
 assert.doesNotMatch(source, /<input type="text" id="dev-notes"/, 'Old single-line notes field removed');
-assert.match(source, /function phase120InitializeNotesEditor\(form\)/, 'Notes editor initializes');
+assert.match(source, /function initialiseNotesEditor\(form\)/, 'Notes editor initializes');
 assert.match(source, /data-notes-format="bold"/, 'Markdown formatting toolbar available');
 assert.match(source, /id="phase120-notes-preview"/, 'Markdown preview available');
 assert.match(source, /preview\.replaceChildren\(\)/, 'Preview uses DOM rather than HTML injection');
