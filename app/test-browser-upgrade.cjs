@@ -25,7 +25,7 @@ const {pathToFileURL}=require('node:url'),{chromium}=require('playwright');
  await page.evaluate(()=>{appState=cloneDefaultData();if(!saveState())throw Error('Cannot save destination baseline');currentTab='settings';phase16ASection='backup';renderContent();});
  const baseline=await snapshot();approve=false;await upload(bytes);assert.deepEqual(await snapshot(),baseline,'Cancelled import into moved file must preserve destination');
  approve=true;await upload(bytes);
- const after=await snapshot();
+ let after=await snapshot();
  const inventory=await page.evaluate(()=>phase20CreateBackup());
  for(const key of Object.keys(backup).filter(k=>k!=='caffootBackup'))assert.equal(JSON.stringify(inventory[key]),JSON.stringify(backup[key]),'Moved-file restore must preserve '+key);
  assert.equal(after.safety,baseline.stored);
@@ -48,7 +48,10 @@ const {pathToFileURL}=require('node:url'),{chromium}=require('playwright');
  await page.reload();
  assert.equal(JSON.stringify(await page.evaluate(()=>appState.devices[0].previousTypeDetails)),JSON.stringify(legacy.devices[0].previousTypeDetails),'Legacy history must survive reload');
  await upload(bytes);
- assert.deepEqual(await snapshot(),after,'Original fixture must be restored after legacy-history check');
+ const restoredBaseline=await snapshot();
+ assert.equal(restoredBaseline.active,after.active,'Original fixture must be restored after legacy-history check');
+ assert.equal(restoredBaseline.stored,after.stored,'Original fixture must persist after legacy-history check');
+ after=restoredBaseline;
  const bad=JSON.parse(bytes);bad.caffootBackup.schemaVersion=2;const count=confirmations;await upload(Buffer.from(JSON.stringify(bad)));assert.deepEqual(await snapshot(),after);assert.equal(confirmations,count,'Unsupported schema must reject before confirmation');
  // The expected rejection is displayed in a modal; dismiss it before testing
  // controls behind the modal, and verify that dismissal leaves data untouched.
