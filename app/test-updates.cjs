@@ -3,7 +3,7 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const vm=require('node:vm');
 const html=fs.readFileSync(__dirname+'/caffoot-lite.html','utf8');
-const code=html.slice(html.indexOf('function caffootCompareVersions('),html.indexOf('function phase16ACheckSafety('));
+const code=html.slice(html.indexOf('function caffootCompareVersions('),html.indexOf('function compareCurrentInventoryWithSavedBrowserStorage('));
 async function run(response, offline=false) {
  const status={textContent:''};let calls=0;
  const context=vm.createContext({BigInt,AbortController,setTimeout,clearTimeout,CAFFOOT_LITE_VERSION:'1.0.0-rc.1',document:{getElementById:()=>status},navigator:{onLine:!offline},fetch:async(url,options)=>{calls++;assert.equal(url,'https://api.github.com/repos/caffoot/Caffoot-Lite/releases/latest');assert.equal(options.credentials,'omit');if(response instanceof Error)throw response;return response;}});
