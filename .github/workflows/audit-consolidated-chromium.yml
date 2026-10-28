@@ -19,6 +19,7 @@ on:
         options:
           - consolidated
           - issue-100-history
+          - upgrade-compatibility
 
 permissions:
   contents: read
@@ -87,27 +88,34 @@ jobs:
           npm install --prefix "$RUNNER_TEMP/caffoot-browser-tools" --no-save --no-package-lock --no-audit --no-fund playwright@1.56.1
           "$RUNNER_TEMP/caffoot-browser-tools/node_modules/.bin/playwright" install --with-deps chromium
       - name: Run consolidated audit scenarios in Chromium
-        if: inputs.scope != 'issue-100-history' && steps.scope.outputs.run_browser == 'true' && steps.scope.outputs.full == 'true'
+        if: inputs.scope != 'issue-100-history' && inputs.scope != 'upgrade-compatibility' && steps.scope.outputs.run_browser == 'true' && steps.scope.outputs.full == 'true'
         working-directory: app
         env:
           NODE_PATH: ${{ runner.temp }}/caffoot-browser-tools/node_modules
         run: node test-browser-consolidated-audit.cjs
+      - name: Run manually selected upgrade compatibility in Chromium
+        if: github.event_name == 'workflow_dispatch' && inputs.scope == 'upgrade-compatibility' && steps.scope.outputs.run_browser == 'true'
+        working-directory: app
+        env:
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tools/node_modules
+        run: node test-browser-upgrade.cjs
+
       - name: Run issue 99 focused form regression in Chromium
-        if: inputs.scope != 'issue-100-history' && steps.scope.outputs.run_browser == 'true'
+        if: inputs.scope != 'issue-100-history' && inputs.scope != 'upgrade-compatibility' && steps.scope.outputs.run_browser == 'true'
         working-directory: app
         env:
           NODE_PATH: ${{ runner.temp }}/caffoot-browser-tools/node_modules
         run: node test-browser-issue99.cjs
 
       - name: Run issue 157 focused built-in catalogue checks in Chromium
-        if: inputs.scope != 'issue-100-history' && steps.scope.outputs.run_browser == 'true'
+        if: inputs.scope != 'issue-100-history' && inputs.scope != 'upgrade-compatibility' && steps.scope.outputs.run_browser == 'true'
         working-directory: app
         env:
           NODE_PATH: ${{ runner.temp }}/caffoot-browser-tools/node_modules
         run: node test-browser-issue157.cjs
 
       - name: Run focused legacy device history upgrade compatibility in Chromium
-        if: inputs.scope != 'issue-100-history' && steps.scope.outputs.run_browser == 'true' && steps.scope.outputs.upgrade == 'true'
+        if: inputs.scope != 'issue-100-history' && inputs.scope != 'upgrade-compatibility' && steps.scope.outputs.run_browser == 'true' && steps.scope.outputs.upgrade == 'true'
         working-directory: app
         env:
           NODE_PATH: ${{ runner.temp }}/caffoot-browser-tools/node_modules
