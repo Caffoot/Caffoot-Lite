@@ -195,11 +195,11 @@ const { chromium } = require('playwright');
         if(kind==='legacy-no-accessories') delete candidate.rackAccessories;
         if(kind==='device-accessory-collision'||kind==='device-device-collision') {
           candidate.devices=[{id:'fixture103device1',name:'Fictional server one',
-            type:'Server - Physical',rackId:'fixture103rack',face:'front',rackUStart:2,rackUHeight:2}];
+            type:'Server - Physical',mountType:'Rack Mounted',rackId:'fixture103rack',face:'front',rackUStart:2,rackUEnd:3,rackUHeight:2}];
           if(kind==='device-device-collision') {
             candidate.rackAccessories=[];
             candidate.devices.push({id:'fixture103device2',name:'Fictional server two',
-              type:'Server - Physical',rackId:'fixture103rack',face:'front',rackUStart:3,rackUHeight:1});
+              type:'Server - Physical',mountType:'Rack Mounted',rackId:'fixture103rack',face:'front',rackUStart:3,rackUEnd:3,rackUHeight:1});
           }
         }
         if(kind==='malformed-accessory-record') candidate.rackAccessories=[null];
