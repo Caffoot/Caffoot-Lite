@@ -297,6 +297,14 @@ A deeper source inspection distinguishes **two different historical conversion p
 
 **Recommendation for product-owner consideration:** preserve the ability to *view* every historical configuration and all stored historical data. Investigate whether Restore Configuration should be restricted to same-type restoration or replaced by an explicitly non-destructive compatible-field restore. Before proposing any change, check what users would lose, any existing test expectations and compatibility with historic backups. Do not silently alter existing restore behaviour, remove historical snapshots or claim runtime verification. No application changes or tests have occurred.
 
+### #192 agreed historical-data preservation, 28 October 2026
+
+**Product-owner decision:** preserve **all historical configurations and their data** during the v1.3.3 code clean-up. This is an approved preservation constraint, **not approval to alter the Restore Configuration behaviour**.
+
+Further source inspection confirms that the History tab is conditionally displayed when `previousTypeDetails` contains snapshots; each snapshot remains readable and has a Restore Configuration action. The restoration handler currently changes `device.type` as well as fields, and preserves previous snapshots when saving. This must be reviewed alongside the fixed-type design. The preservation requirement applies even if a historical snapshot is not eligible for restoration under a future approved rule. No historical entries may be silently discarded or rewritten as part of clean-up.
+
+**Next evidence needed before proposing implementation:** existing test coverage for History/Restore Configuration and backup round-tripping, and an explicit decision on same-type versus compatible-field restoration. Source inspection only; no tests executed or application code changed.
+
 ## Purpose
 
 Future contributors should understand what each important function does without needing to know the development phase in which it was introduced. Existing historical names must remain documented until an approved and tested change replaces them.
