@@ -62,6 +62,11 @@ jobs:
             fi
           fi
           echo "full=$full" >> "$GITHUB_OUTPUT"
+          upgrade=false
+          if [[ "$EVENT_NAME" == "pull_request" ]] && git diff --name-only "$BASE_SHA" "$HEAD_SHA" | grep -Fxq 'app/test-browser-upgrade.cjs'; then
+            upgrade=true
+          fi
+          echo "upgrade=$upgrade" >> "$GITHUB_OUTPUT"
       - uses: actions/setup-node@v4
         if: steps.scope.outputs.run_browser == 'true'
         with:
@@ -102,7 +107,7 @@ jobs:
         run: node test-browser-issue157.cjs
 
       - name: Run focused legacy device history upgrade compatibility in Chromium
-        if: inputs.scope != 'issue-100-history' && steps.scope.outputs.run_browser == 'true' && steps.scope.outputs.full == 'false'
+        if: inputs.scope != 'issue-100-history' && steps.scope.outputs.run_browser == 'true' && steps.scope.outputs.upgrade == 'true'
         working-directory: app
         env:
           NODE_PATH: ${{ runner.temp }}/caffoot-browser-tools/node_modules
