@@ -178,6 +178,69 @@ const { chromium } = require('playwright');
       assert.equal(await page.evaluate(() => localStorage.getItem('caffoot_state')),before.stored,
         'Rejected and cancelled imports must preserve inventory across reload');
     });
+    // #103: only the missing browser import acceptance paths, not the full historical matrix.
+    for (const kind of ['accessory-restore','legacy-no-accessories','device-accessory-collision',
+      'device-device-collision','malformed-accessory-record','independent-rails']) {
+      await scenario('#103 rack import ' + kind, async page => {
+        const initial=await page.evaluate(() => {
+          if(!saveState()) throw Error('Cannot establish fictional rack import baseline');
+          return {stored:localStorage.getItem('caffoot_state'),
+            safety:localStorage.getItem('caffoot_phase11_pre_restore')};
+        });
+        const candidate=JSON.parse(initial.stored);
+        candidate.racks=[{id:'fixture103rack',name:'Fictional rack 103',heightU:12}];
+        candidate.devices=[];
+        candidate.rackAccessories=[{id:'fixture103patch',name:'Fictional patch',
+          type:'patch',rackId:'fixture103rack',face:'front',startU:2,heightU:1}];
+        if(kind==='legacy-no-accessories') delete candidate.rackAccessories;
+        if(kind==='device-accessory-collision'||kind==='device-device-collision') {
+          candidate.devices=[{id:'fixture103device1',name:'Fictional server one',
+            type:'Server - Physical',mountType:'Rack Mounted',rackId:'fixture103rack',face:'front',rackUStart:2,rackUEnd:3,rackUHeight:2}];
+          if(kind==='device-device-collision') {
+            candidate.rackAccessories=[];
+            candidate.devices.push({id:'fixture103device2',name:'Fictional server two',
+              type:'Server - Physical',mountType:'Rack Mounted',rackId:'fixture103rack',face:'front',rackUStart:3,rackUEnd:3,rackUHeight:1});
+          }
+        }
+        if(kind==='malformed-accessory-record') candidate.rackAccessories=[null];
+        if(kind==='independent-rails') candidate.rackAccessories=[
+          {id:'fixture103left',name:'Fictional left rail',type:'pdu_vertical',
+            rackId:'fixture103rack',face:'front',side:'left',startU:1,heightU:12},
+          {id:'fixture103right',name:'Fictional right rail',type:'cable_vertical',
+            rackId:'fixture103rack',face:'front',side:'right',startU:1,heightU:12}
+        ];
+        const reject=['device-accessory-collision','device-device-collision','malformed-accessory-record'].includes(kind);
+        let confirms=0;
+        page.on('dialog',dialog=>{if(dialog.type()==='confirm')confirms++;return dialog.accept()});
+        await page.locator('#import-file').setInputFiles({
+          name:'fictional-103-'+kind+'.json',mimeType:'application/json',
+          buffer:Buffer.from(JSON.stringify(candidate))
+        });
+        await page.waitForFunction(()=>document.getElementById('import-file').value==='');
+        const outcome=await page.evaluate(()=>({
+          stored:localStorage.getItem('caffoot_state'),
+          safety:localStorage.getItem('caffoot_phase11_pre_restore'),
+          active:JSON.stringify(appState),
+          error:document.getElementById('modal-container')?.innerText||''
+        }));
+        if(reject){
+          assert.equal(confirms,0,kind+' must reject before confirmation');
+          assert.equal(outcome.stored,initial.stored,kind+' must preserve stored inventory');
+          assert.equal(outcome.safety,initial.safety,kind+' must preserve existing safety copy');
+          assert.match(outcome.error,/overlap|invalid|integrity/i,kind+' must explain rejection');
+        }else{
+          assert.ok(confirms>=1,kind+' must request import confirmation');
+          const imported=JSON.parse(outcome.stored);
+          assert.ok(imported.racks.some(r=>r.id==='fixture103rack'),kind+' must restore rack');
+          assert.equal(imported.rackAccessories?.length||0,
+            kind==='legacy-no-accessories'?0:kind==='independent-rails'?2:1,
+            kind+' must preserve expected accessories');
+        }
+        await page.reload({waitUntil:'load'});
+        assert.equal(await page.evaluate(()=>localStorage.getItem('caffoot_state')),outcome.stored,
+          kind+' must persist expected inventory after reload');
+      });
+    }
     const key = 'caffoot_phase12b_prebulk_snapshot';
     const inventoryKey = 'caffoot_state';
     for (const mode of ['throw-snapshot', 'ignore-snapshot', 'throw-main', 'success', 'old-snapshot']) {
