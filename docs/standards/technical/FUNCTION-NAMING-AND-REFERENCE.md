@@ -272,6 +272,14 @@ Seven named declarations had no other exact literal identifier occurrence in the
 
 **Important:** The source contains both historical device-conversion logic and newer rules governing device types. Their coexistence is a reason for careful review, not permission to delete or rewrite them. No function was removed or renamed. No application tests were run. All seven require caller and reachability verification before an implementation proposal.
 
+### #101 and #192 joint source inspection, 28 October 2026
+
+The current `release/v1.3.3` HTML contains **296 named `function` declarations** using a simple textual pattern, including the 183 phase-prefixed declarations previously inventoried. This is not a count of all arrow functions, callbacks or function expressions. A name-only duplicate scan found `add()` declared twice, but each is nested inside a different catalogue-rendering function (`phase120ManufacturersHTML()` and `phase120ModelsHTML()`). They have distinct local scopes and responsibilities. **This is not a confirmed duplicate global declaration, defect or safe consolidation opportunity.**
+
+Seven phase-prefixed functions have no other exact-name occurrence, including `phase130ConfirmDeviceConversion()` and `phase11BIntegrityIssues()`. Source inspection confirms the conversion dialogue implementation and integrity checks exist, but reachability and compatibility consequences have not been established. Do not remove them on this evidence. The older device-conversion path merits comparison against the approved fixed device-type design, including historical backups and editing workflows.
+
+**#192 assessment boundary:** No confirmed removable code, measurable performance bottleneck or safely shared duplicated block has yet been demonstrated. Next examine function bodies, caller paths, nested scopes and data-preservation requirements. Refactoring requires separately approved scope and focused verification. No application source changed; no tests executed.
+
 ## Purpose
 
 Future contributors should understand what each important function does without needing to know the development phase in which it was introduced. Existing historical names must remain documented until an approved and tested change replaces them.
