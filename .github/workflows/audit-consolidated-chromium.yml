@@ -8,6 +8,7 @@ on:
       - 'app/test-browser-issue99.cjs'
       - 'app/test-browser-issue157.cjs'
       - '.github/workflows/audit-consolidated-chromium.yml'
+      - 'app/test-browser-upgrade.cjs'
   workflow_dispatch:
     inputs:
       scope:
@@ -99,6 +100,13 @@ jobs:
         env:
           NODE_PATH: ${{ runner.temp }}/caffoot-browser-tools/node_modules
         run: node test-browser-issue157.cjs
+
+      - name: Run focused legacy device history upgrade compatibility in Chromium
+        if: inputs.scope != 'issue-100-history' && steps.scope.outputs.run_browser == 'true' && steps.scope.outputs.full == 'false'
+        working-directory: app
+        env:
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tools/node_modules
+        run: node test-browser-upgrade.cjs
 
       - name: Run issue 100 focused history checks in Chromium
         if: github.event_name == 'workflow_dispatch' && inputs.scope == 'issue-100-history'
