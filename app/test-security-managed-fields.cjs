@@ -26,12 +26,12 @@ const ctx=vm.createContext({
 });
 vm.runInContext(html.slice(escapeBegin,escapeEnd)+'\n'+html.slice(begin,end),ctx);
 const result=ctx.renderDeviceDetailFields('server',{[hostile]:true});
-assert(result.includes('data-phase19b-field="x&quot; autofocus onfocus=&quot;alert(1)"'));
-assert(!result.includes('data-phase19b-field="x" autofocus'));
+assert(result.includes('data-device-detail-field="x&quot; autofocus onfocus=&quot;alert(1)"'));
+assert(!result.includes('data-device-detail-field="x" autofocus'));
 const ctx2=vm.createContext({...ctx,getAvailableServerServiceFieldKeys:()=>[],getConfiguredSoftwareCatalogueFieldKeys:()=>[]});
 vm.runInContext(html.slice(escapeBegin,escapeEnd)+'\n'+html.slice(begin,end),ctx2);
 const input=ctx2.renderDeviceDetailFields('server',{[hostile]:'hello'});
-assert(input.includes('id="phase19b-x&quot; autofocus onfocus=&quot;alert(1)"'));
-assert(input.includes('for="phase19b-x&quot; autofocus onfocus=&quot;alert(1)"'));
-assert(!input.includes('id="phase19b-x" autofocus'));
+assert(input.includes('id="device-detail-x&quot; autofocus onfocus=&quot;alert(1)"'));
+assert(input.includes('for="device-detail-x&quot; autofocus onfocus=&quot;alert(1)"'));
+assert(!input.includes('id="device-detail-x" autofocus'));
 console.log('PASS: imported managed field keys remain escaped in checkbox, input, id and label attributes.');
