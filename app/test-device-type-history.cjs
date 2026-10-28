@@ -12,7 +12,7 @@ for (const token of [
   'isVirtualServer !== (originalDevice.isVirtual === true',
   'const historicalSnapshots = Array.isArray(d.previousTypeDetails)',
   'Object.entries(snapshot.details||{})',
-  'phase14CSelectTab',
+  'selectDeviceDetailsTab',
   'Legacy device-type configurations remain visible as read-only history.'
 ]) assert.ok(source.includes(token), 'Missing read-only device history contract: ' + token);
 for (const token of [
