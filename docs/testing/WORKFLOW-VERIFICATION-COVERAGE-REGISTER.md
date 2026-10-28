@@ -278,3 +278,25 @@ Following the approved descriptive identifier implementation, the application so
 The WF-01 to WF-13 overview above is a historical evidence inventory, not a claim that all workflow gates are complete. For WF-02/WF-05/WF-06/WF-11/WF-12, preserve the successful M-010/M-019 [Chromium import run 40218932774](https://github.com/Caffoot/Caffoot-Lite/actions/runs/40218932774), focused rack validator assertions and M-011 shared import rollback/recovery evidence. The actual browser import covered overlapping accessories, malformed accessory collection and cancellation of a valid opposite-face candidate with unchanged inventory and safety snapshot. Rack validator tests separately cover device/accessory and device/device overlaps, bounds, rack references, faces, rails and malformed entries. The M-011 browser tests cover failed import save and protected recovery. These are distinct coverage layers; none proves all eighteen WF02-T01 to WF02-T18 controlled browser fixtures were individually executed.
 
 The [WF-02 imported rack matrix](WF-02-IMPORTED-RACK-TEST-MATRIX.md) now records the scenario-level mapping and minimal proposed remaining acceptance decisions. Issue #93's M-010/M-019 remediation is complete within its approved scope. Issue #103 remains open for per-workflow evidence and explicit deferral decisions, and issue #108 remains the release-level owner approval gate. **No application tests were executed for this documentation-only update.** Previously passing checks remain valid. Do not claim the wider audit is complete or rerun all tests merely to update evidence wording.
+
+## #103 batched WF-01 to WF-13 operative evidence disposition, 28 October 2026
+
+**Current baseline, 28 October 2026:** Published stable `v1.3.2`; documentation-only PR #199 merged into `release/v1.3.3` at `3ec7f0546818ac3b1b87507cc755ab8033aecf56`. Previously passing application evidence is retained. No application tests were run for this reconciliation. Issue #103 remains open until all individual workflow gate decisions are approved; #108 remains the separate release approval gate. Earlier dated statements are historical, not present-day release or PR statuses.
+
+| Workflow | Reused executed evidence or source boundary | Genuine outstanding decision |
+| --- | --- | --- |
+| WF-01 | Recovery reset fault checks 39944710633; #98 normalisation decision; #185 focused reset readback | Reconcile complete startup caller gate, do not repeat proven reset cases |
+| WF-02 | Failed save/rollback 39957395113 and 39959581469; M-012 39955498407; #93 rack import browser 40218932774 | Remaining save callers and exact rack fixture dispositions; see WF-02 matrix |
+| WF-03 | M-020 failed graphic save 39957395113; #164 VM form and host tests; #96 historical notes preservation | Explicit device lifecycle gate, identity and untested variants |
+| WF-04 | M-031 bulk IPAM readback 39957395113 and 39959581469; #92 manual acceptance and targeted checks | Record remaining subnet/VLAN/ownership permutations, not blanket regression |
+| WF-05 | M-001 failed rack unassignment 39957395113; #93 rack validator and Chromium import; #171 placement evidence | Exact placement and accessory fixture disposition, M-013 scope |
+| WF-06 | Published backup compatibility 39961182872; browser import rollback 39959581469; #192 upgrade compatibility 40698740608 | Legacy accessory-positive import and other untested backup shapes |
+| WF-07 | M-018 custom location failed save 39957395113; #99 form and keyboard-focused Chromium evidence | Explicit accessibility and common form gate |
+| WF-08 | #157 built-in catalogue targeted Chromium acceptance recorded in this register | Service/catalogue lifecycle variants not evidenced by targeted acceptance |
+| WF-09 | #100 M-003/M-029 targeted history/inventory reconciliation | Remaining preferences and audit history gate; avoid reopening accepted #100 scope |
+| WF-10 | Published asset check 39961182872; #199 docs consistency 40713829906 and secret scan 40713830031 | Candidate-specific v1.3.3 package, release and security sign-off under #108 |
+| WF-11 | Published backup compatibility 39961182872; #192 upgrade import/reload 40698740608 | Other historic migration edge cases and exact fixture decisions |
+| WF-12 | Recovery reset 39944710633; failed save/rollback 39959581469; #94 representative failures | Other caller/failure matrix dispositions, do not conflate source tracing with tests |
+| WF-13 | Existing workflow runs, #199 docs checks and exact commit references above | Final evidence traceability and owner sign-off across all thirteen workflows |
+
+**Disposition:** All thirteen remain *partially assessed* at the wider P12 audit gate. Successful targeted issue scopes remain closed and are not re-opened. The entries above distinguish verified focused behaviours from incomplete comprehensive gates. No new runtime verification is authorised or claimed by this documentation update. Next decide whether each remaining case is genuinely release-blocking or may be explicitly deferred; record product owner decisions before closing #103 or #108.
