@@ -484,7 +484,7 @@ const { chromium } = require('playwright');
         const button=document.querySelector('#device-details-panel-virtual-machines [data-action="view-hosted-virtual-machine"][data-id="fictional-nav-guest"]');
         if(!button)return {buttonFound:false};
         button.click();
-        return {buttonFound:true,detailText:document.querySelector('.device-details-detail')?.textContent||'',
+        return {buttonFound:true,detailText:document.querySelector('.device-details-dialog')?.textContent||'',
           hostId:appState.devices.find(d=>d.id==='fictional-nav-guest')?.virtualHostId};
       });
       assert.equal(result.buttonFound,true,'Guest details button must be present');
