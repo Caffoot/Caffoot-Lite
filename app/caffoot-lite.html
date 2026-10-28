@@ -1271,10 +1271,6 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             if(raw!==network) return null;
             return {prefix,network,last:network+size-1,first:network+1,lastHost:network+size-2,capacity:size-2,size};
         }
-        function doIpv4SubnetsOverlap(a,b) {
-            const x=parseSupportedIpv4Subnet(a),y=parseSupportedIpv4Subnet(b);
-            return !!(x&&y&&x.network<=y.last&&y.network<=x.last);
-        }
         function isUsableHostAddressInSubnet(ip,cidr) {
             const x=parseSupportedIpv4Subnet(cidr),n=parseIpv4AddressToNumber(ip);
             return !!(x&&n!==null&&n>=x.first&&n<=x.lastHost);
@@ -2897,19 +2893,6 @@ function hierarchyValidateTypes(subnets) {
             if(t.includes('nas')||t.includes('storage'))return 'storage';
             if(t.includes('ups')||t.includes('pdu'))return 'ups';
             return 'plain';
-        }
-        function renderDeviceFasciaHtml(type) {
-            const chosen=appState.deviceTypeGraphics?.[type];
-            const preset=deviceFasciaGraphicPresets[chosen]&&chosen!=='automatic'?chosen:getDefaultDeviceFasciaGraphic(type);
-            const ports=count=>`<span class="rack-ports">${Array.from({length:count},(_,i)=>`<i title="Port ${i+1}"></i>`).join('')}</span>`;
-            let contents='';
-            if(preset==='switch24'||preset==='switch48')contents=ports(preset==='switch48'?48:24);
-            else if(preset==='server')contents='<span class="rack-bays"><i></i><i></i><i></i><i></i></span><span class="rack-led"></span>';
-            else if(preset==='router')contents='<span class="rack-led"></span>'+ports(6);
-            else if(preset==='storage')contents='<span class="rack-bays"><i></i><i></i><i></i><i></i><i></i><i></i></span>';
-            else if(preset==='ups')contents='<span class="rack-led"></span><span class="rack-display">POWER</span>';
-            else contents='<span class="rack-display">'+escapeHtml(type||'DEVICE')+'</span>';
-            return `<span class="rack-fascia rack-fascia-${preset}" title="${escapeHtml(type||'Device')} front panel" aria-hidden="true">${contents}</span>`;
         }
         function openDeviceTypeRackFasciaSettings(type) {
             if(!getUniqueDeviceTypes().includes(type))return;
@@ -8611,17 +8594,6 @@ function hierarchyValidateTypes(subnets) {
             cable_vertical: {label:'Vertical Cable Manager',icon:'fa-bars-staggered',vertical:true}
         };
         // CSS-only rack fascia art; no external images or data changes.
-        function renderRackAccessoryFasciaHtml(type, portCount = 24) {
-            if (type === 'patch') { const count=[12,24,48].includes(Number(portCount))?Number(portCount):24; return `<span class="rack-accessory-fascia rack-accessory-patch-panel rack-patch-panel-${count}" aria-hidden="true" title="${count} RJ45 ports">${Array.from({length:count},(_,i)=>`<span class="rack-accessory-port" title="Port ${i+1}"><i></i></span>`).join('')}</span>`; }
-            if (type === 'brush') return `<span class="rack-accessory-fascia rack-accessory-brush-panel" aria-hidden="true"><span class="rack-accessory-bristles"></span></span>`;
-            if (type === 'cable') return `<span class="rack-accessory-fascia rack-accessory-cable" aria-hidden="true">${Array.from({length:8},()=>'<i></i>').join('')}</span>`;
-            if (type === 'pdu_horizontal') return `<span class="rack-accessory-fascia rack-accessory-blank-panel" aria-hidden="true">⚡ PDU · AC outlets</span>`;
-            if (type === 'ventilation') return `<span class="rack-accessory-fascia rack-accessory-brush-panel" aria-hidden="true">Ventilation panel</span>`;
-            if (type === 'fan_tray') return `<span class="rack-accessory-fascia rack-accessory-blank-panel" aria-hidden="true">Fan tray · airflow</span>`;
-            if (type === 'environmental_sensor') return `<span class="rack-accessory-fascia rack-accessory-blank-panel" aria-hidden="true">Temperature / humidity sensor</span>`;
-            if (type === 'shelf') return `<span class="rack-accessory-fascia rack-accessory-shelf" aria-hidden="true"><i></i><i></i><i></i><i></i></span>`;
-            return `<span class="rack-accessory-fascia rack-accessory-blank-panel" aria-hidden="true"><i></i><i></i></span>`;
-        }
         function validateRackAccessoryPlacement(candidate, excludeId = null) {
             const rack = appState.racks.find(r=>r.id===candidate.rackId);
             if (!rack || !['front','rear'].includes(candidate.face)) return 'Choose a valid rack and face.';
