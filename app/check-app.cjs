@@ -268,7 +268,7 @@ assert(ipPickerSource.includes('if (available.length < 50) available.push(ip)'),
 assert(ipPickerSource.includes('if (ip === subnet.gateway && ip !== currentIp) continue;'), 'IP dropdown must exclude gateway except when showing the current address');
 assert(ipPickerSource.includes("appState.devices.some(d => d.id === editingId && d.primaryIp === ip)"), 'Existing gateway address must only be retained for its owning device');
 
-assert(html.includes("case 'phase16a-check-safety': compareCurrentInventoryWithSavedBrowserStorage(); break;"), 'Inventory safety check must be wired');
+assert(html.includes("case 'check-inventory-safety': compareCurrentInventoryWithSavedBrowserStorage(); break;"), 'Inventory safety check must be wired');
 assert(html.includes('function compareCurrentInventoryWithSavedBrowserStorage()'), 'Inventory safety check must remain');
 assert(html.includes('const issues = validateApplicationState();'), 'Inventory safety check must validate integrity');
 assert(html.includes('The saved inventory differs from the currently displayed inventory.'), 'Safety check must compare saved inventory');
