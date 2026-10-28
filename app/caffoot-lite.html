@@ -5624,7 +5624,6 @@ function hierarchyValidateTypes(subnets) {
                 if(document.getElementById('phase18d-delete-dialog')){phase18DCancelDelete();return;}
                 if(document.getElementById('phase-m005-hypervisor-dialog')){document.querySelector('#phase-m005-hypervisor-dialog [data-action="cancel"]')?.click();return;}
                 if(document.getElementById('phase130-conversion-dialog')){phase130ResolveDeviceConversion(false);return;}
-                if(document.getElementById('phase130-restore-dialog')){phase130ResolveRestore(false);return;}
                 if(document.getElementById('phase120-rack-correction-dialog')){phase120ResolveRackCorrection(false);return;}
                 if(document.getElementById('phase120-discard-dialog')){phase120KeepEditing();return;}
                 if (container.querySelector('.phase18d-manager[data-phase18d-editing="true"]')) {
@@ -6183,7 +6182,7 @@ function hierarchyValidateTypes(subnets) {
             const isHypervisorHost=d.type==='Server - Physical' && (deviceDetails.serverService_Hypervisor===true || d.serverService_Hypervisor===true);
             const platformDetails=[['Operating system',phase180EffectivePlatform(d)],['OS version',phase180EffectiveVersion(d)],...(isHypervisorHost?[]:[['Windows licence',deviceDetails.windowsLicence]])].filter(([label])=>['server','computer'].includes(phase19BTypeGroups[String(d.type||'').toLowerCase().trim()]) || label==='Operating system' && activeFields.has('os')).filter(([,value])=>value!==undefined&&value!==null&&value!=='').map(([label,value])=>field(label,value)).join('');
             const historicalSnapshots = Array.isArray(d.previousTypeDetails) ? [...d.previousTypeDetails].reverse() : [];
-            const historyRows = historicalSnapshots.map((snapshot,index)=>`<details class="rounded-xl border border-slate-300 dark:border-slate-600 p-3"><summary class="cursor-pointer font-semibold">${safe(snapshot.type||'Previous type')} — saved configuration ${index+1}</summary><dl class="phase14c-grid mt-3">${Object.entries(snapshot.details||{}).map(([key,value])=>field(phase19CDetailLabel(key,snapshot.type),typeof value==='boolean'?(value?'Yes':'No'):value)).join('')}</dl><button type="button" data-action="phase130-restore" data-id="${safe(d.id)}" data-index="${historicalSnapshots.length-1-index}" class="phase14c-primary mt-3">Restore Configuration</button></details>`).join('');
+            const historyRows = historicalSnapshots.map((snapshot,index)=>`<details class="rounded-xl border border-slate-300 dark:border-slate-600 p-3"><summary class="cursor-pointer font-semibold">${safe(snapshot.type||'Previous type')} — saved configuration ${index+1}</summary><dl class="phase14c-grid mt-3">${Object.entries(snapshot.details||{}).map(([key,value])=>field(phase19CDetailLabel(key,snapshot.type),typeof value==='boolean'?(value?'Yes':'No'):value)).join('')}</dl></details>`).join('');
             // M-005: read-only hosted guest visibility, including preserved legacy references.
             const hostedGuests = d.type === 'Server - Physical'
                 ? appState.devices.filter(guest => guest.id !== d.id && guest.virtualHostId === d.id)
@@ -6292,89 +6291,8 @@ function hierarchyValidateTypes(subnets) {
                 tab.classList.toggle('phase14c-tab-active',active);
             });
         }
-        let phase130RestoreResolve = null;
-        function phase130ConfirmRestore(description) {
-            if (document.getElementById('phase130-restore-dialog')) return Promise.resolve(false);
-            return new Promise(resolve => {
-                phase130RestoreResolve = resolve;
-                const overlay = document.createElement('div');
-                overlay.id = 'phase130-restore-dialog';
-                overlay.setAttribute('role','alertdialog');
-                overlay.setAttribute('aria-modal','true');
-                overlay.setAttribute('aria-labelledby','phase130-restore-title');
-                overlay.setAttribute('aria-describedby','phase130-restore-description');
-                overlay.className = 'absolute inset-0 z-50 flex items-center justify-center bg-slate-950/65 p-4 rounded-2xl';
-                overlay.innerHTML = `<div class="w-full max-w-lg rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 p-6 shadow-2xl space-y-4">
-                    <h3 id="phase130-restore-title" class="text-lg font-bold text-slate-900 dark:text-white">Restore Previous Configuration</h3>
-                    <p id="phase130-restore-description" class="text-sm text-slate-700 dark:text-slate-200 whitespace-pre-wrap break-words max-h-64 overflow-y-auto">${escapeHtml(description)}</p>
-                    <div class="flex flex-wrap justify-end gap-3">
-                        <button type="button" data-action="phase130-restore-cancel" class="h-11 px-4 rounded-xl border border-slate-400 dark:border-slate-500 text-slate-900 dark:text-white caffoot-modal-cancel">Keep Current Configuration</button>
-                        <button type="button" data-action="phase130-restore-accept" class="h-11 px-4 rounded-xl bg-indigo-700 hover:bg-indigo-800 text-white font-bold">Restore Configuration</button>
-                    </div></div>`;
-                const content = document.getElementById('modal-content');
-                if (!content) { phase130RestoreResolve = null; resolve(false); return; }
-                if (getComputedStyle(content).position === 'static') content.style.position = 'relative';
-                overlay._returnFocus = document.activeElement;
-                content.appendChild(overlay);
-                overlay.querySelector('[data-action="phase130-restore-cancel"]').focus();
-            });
-        }
-        function phase130ResolveRestore(accepted) {
-            const overlay = document.getElementById('phase130-restore-dialog');
-            const focus = overlay?._returnFocus;
-            overlay?.remove();
-            const resolve = phase130RestoreResolve;
-            phase130RestoreResolve = null;
-            if (focus?.isConnected) focus.focus();
-            if (resolve) resolve(accepted);
-        }
-        async function phase130RestoreHistory(deviceId, index) {
-            const device = getDeviceById(deviceId);
-            const entries = Array.isArray(device?.previousTypeDetails) ? device.previousTypeDetails : [];
-            const snapshot = entries[index];
-            if (!Number.isInteger(index) || index < 0 || index >= entries.length) { showToast('Previous configuration not found.', 'error'); return; }
-            if (!device || !snapshot || !snapshot.type || !snapshot.details || typeof snapshot.details !== 'object' || Array.isArray(snapshot.details)) {
-                showToast('Previous configuration not found.', 'error'); return;
-            }
-            const current = device.typeDetails && typeof device.typeDetails === 'object' ? device.typeDetails : {};
-            const destination = new Set(phase19BFieldsFor(snapshot.type));
-            if (['computer','server'].includes(phase19BTypeGroups[String(snapshot.type).toLowerCase().trim()])) {
-                destination.add('softwarePlatform'); destination.add('softwareVersion'); destination.add('windowsLicence');
-            }
-            const restore = Object.entries(snapshot.details).filter(([key,value]) => destination.has(key) && value !== null && value !== undefined);
-            const obsolete = phase130ObsoleteDeviceFields(device.type, snapshot.type, current);
-            const changes = restore.map(([key,value]) => phase19CDetailLabel(key,snapshot.type)+': '+String(value===true?'Yes':value));
-            const description = 'Restore '+snapshot.type+' configuration? Device type will change from '+device.type+'. '+(changes.length?'Restored fields: '+changes.join('; ')+'. ':'')+
-                (obsolete.length?'Current incompatible fields will be preserved as history: '+obsolete.map(key=>phase19CDetailLabel(key,device.type)).join(', ')+'. ':'')+
-                'Device name, IP address, location and rack assignment will not change. Existing matching fields will be replaced.';
-            const accepted = await phase130ConfirmRestore(description);
-            if (!accepted) return;
-            if (getDeviceById(deviceId) !== device || device.previousTypeDetails?.[index] !== snapshot) return;
-            const before = JSON.stringify(appState);
-            const nextDetails = {...current};
-            // Preserve both incompatible fields and values that restoration will overwrite.
-            const archived = Object.fromEntries(obsolete.map(key=>[key,current[key]]));
-            for (const [key,value] of restore) {
-                if (Object.prototype.hasOwnProperty.call(current,key) &&
-                    JSON.stringify(current[key]) !== JSON.stringify(value)) archived[key] = current[key];
-            }
-            for (const key of obsolete) delete nextDetails[key];
-            for (const [key,value] of restore) nextDetails[key] = value;
-            device.type = snapshot.type;
-            device.typeDetails = nextDetails;
-            // Restoring a snapshot must never consume it: earlier configurations remain available.
-            const nextHistory = entries.slice();
-            if (Object.keys(archived).length) nextHistory.push({type:JSON.parse(before).devices.find(d=>String(d.id)===String(deviceId)).type,details:archived});
-            device.previousTypeDetails = nextHistory;
-            if (!saveState()) {
-                appState = JSON.parse(before);
-                return;
-            }
-            closeModal();
-            renderContent();
-            phase14CViewDevice(deviceId);
-            phase14CSelectTab('history');
-        }
+        // Legacy device-type configurations remain visible as read-only history.
+        // Do not restore them into active devices: identity and type are immutable.
 
         function phase14CGoToRack(deviceId) {
             const d = appState.devices.find(device => String(device.id) === String(deviceId));
@@ -9251,9 +9169,6 @@ function hierarchyValidateTypes(subnets) {
                 case 'phase14c-duplicate': closeModal(); duplicateDevice(id); break;
                 case 'phase14c-delete': closeModal(); deleteDevice(id); break;
                 case 'phase14c-rack': phase14CGoToRack(id); break;
-                case 'phase130-restore': phase130RestoreHistory(id, Number(actionEl.dataset.index)); break;
-                case 'phase130-restore-cancel': phase130ResolveRestore(false); break;
-                case 'phase130-restore-accept': phase130ResolveRestore(true); break;
                 case 'duplicate-device': duplicateDevice(id); break;
                 case 'delete-device': deleteDevice(id); break;
                 case 'hardware-catalog-manage': phase120ManageHardwareCatalogue(); break;
