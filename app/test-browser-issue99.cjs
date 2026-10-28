@@ -23,12 +23,12 @@ const { chromium } = require('playwright');
       if (!field) throw Error('Subnet name input missing');
       field.value = 'Fictional unsaved subnet';
       document.querySelector('[data-action="cancel-subnet-modal"]').click();
-      const warned = !!document.getElementById('phase120-discard-dialog');
+      const warned = !!document.getElementById('discard-dialog');
       const stillSubnet = !!document.querySelector('form[data-form-action="subnet"]');
-      phase120KeepEditing();
+      keepEditingDeviceForm();
       const keptEditing = !!document.querySelector('form[data-form-action="subnet"]');
       document.querySelector('[data-action="cancel-subnet-modal"]').click();
-      phase120DiscardChanges();
+      discardDeviceFormChanges();
       await wait();
       const returnedToDevice = !!document.querySelector('form[data-device-form="true"]');
       const parentDraftPreserved = document.getElementById('dev-name')?.value === 'Fictional unsaved device';
@@ -41,12 +41,12 @@ const { chromium } = require('playwright');
       document.getElementById('rack-name').value = 'Fictional unsaved rack';
       const racksBefore = JSON.stringify(appState.racks);
       cancelRackFromDevice();
-      const rackWarned = !!document.getElementById('phase120-discard-dialog');
+      const rackWarned = !!document.getElementById('discard-dialog');
       const rackStillOpen = !!document.querySelector('form[data-form-action="rack"]');
-      phase120KeepEditing();
+      keepEditingDeviceForm();
       const rackKept = !!document.querySelector('form[data-form-action="rack"]') && deviceRackReturnPending;
       cancelRackFromDevice();
-      phase120DiscardChanges();
+      discardDeviceFormChanges();
       await wait();
       const rackReturned = !!document.querySelector('form[data-device-form="true"]');
       const rackParentPreserved = document.getElementById('dev-name')?.value === 'Fictional rack parent';
@@ -65,14 +65,14 @@ const { chromium } = require('playwright');
         } else {
           document.querySelector('#modal-content [data-action="close-modal"]').click();
         }
-        const warned = !!document.getElementById('phase120-discard-dialog');
+        const warned = !!document.getElementById('discard-dialog');
         const rackRetained = !!document.querySelector('form[data-form-action="rack"]');
         if (warned) {
-          phase120KeepEditing();
+          keepEditingDeviceForm();
           const kept = !!document.querySelector('form[data-form-action="rack"]') && deviceRackReturnPending;
           if (method === 'escape') document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));
           else document.querySelector('#modal-content [data-action="close-modal"]').click();
-          phase120DiscardChanges();
+          discardDeviceFormChanges();
           nestedExitResults[method+'Kept'] = kept;
         }
         await wait();
@@ -90,10 +90,10 @@ const { chromium } = require('playwright');
       for (const [id,value] of Object.entries(values)) document.getElementById(id).value = value;
       const allocationsBefore = JSON.stringify(appState.ipAllocations);
       handleBulkIpSubmit({preventDefault(){}},subnet.id);
-      const preview = !!document.querySelector('[data-action="phase12b-back"]');
-      document.querySelector('[data-action="phase12b-back"]')?.click();
+      const preview = !!document.querySelector('[data-action="return-from-bulk-ip-assignment"]');
+      document.querySelector('[data-action="return-from-bulk-ip-assignment"]')?.click();
       const restored = Object.entries(values).every(([id,value]) => document.getElementById(id)?.value === value);
-      const pendingCleared = phase12BPending === null;
+      const pendingCleared = pendingBulkIpAssignment === null;
       const untouched = JSON.stringify(appState.ipAllocations) === allocationsBefore;
       closeModal(true);
       return {...nestedExitResults,warned,stillSubnet,keptEditing,returnedToDevice,parentDraftPreserved,rackWarned,rackStillOpen,rackKept,rackReturned,rackParentPreserved,racksUnchanged,preview,restored,pendingCleared,untouched,
@@ -124,8 +124,8 @@ const { chromium } = require('playwright');
       const storedBefore = localStorage.getItem('caffoot_state');
       try {
         appState = {...originalState, racks:[...originalState.racks, {id:'issue99-rack',name:'Fictional test rack',heightU:42}], rackAccessories:[...(originalState.rackAccessories||[])]};
-        phase13COpenAccessory('issue99-rack', 1);
-        const form = document.getElementById('phase13c-form');
+        openRackAccessoryEditor('issue99-rack', 1);
+        const form = document.getElementById('rack-accessory-form');
         if (!form) throw Error('Accessory editor did not open');
         form.querySelector('[name="name"]').value = 'Fictional accessory retry';
         const before = JSON.stringify(appState);
@@ -133,8 +133,8 @@ const { chromium } = require('playwright');
         saveState = () => { attempts++; return attempts > 1; };
         form.requestSubmit();
         const failedStateRestored = JSON.stringify(appState) === before;
-        const error = document.getElementById('phase13c-error')?.textContent || '';
-        const formRetained = document.getElementById('phase13c-form') === form;
+        const error = document.getElementById('rack-accessory-form-error')?.textContent || '';
+        const formRetained = document.getElementById('rack-accessory-form') === form;
         const valuesRetained = form.querySelector('[name="name"]').value === 'Fictional accessory retry';
         const noStorageWrite = localStorage.getItem('caffoot_state') === storedBefore;
         form.requestSubmit();
@@ -165,18 +165,18 @@ const { chromium } = require('playwright');
         const initial = JSON.stringify(appState);
         saveState = () => false;
         showToast = (message,kind) => messages.push({message,kind});
-        phase13CMoveAccessory('issue99-ops-accessory','issue99-ops-rack',2);
+        moveRackAccessoryToPosition('issue99-ops-accessory','issue99-ops-rack',2);
         const moveRolledBack = JSON.stringify(appState) === initial;
         const moveExplained = messages.some(m => m.kind === 'error' && m.message.includes('Original placement restored'));
-        phase13CDeleteAccessory('issue99-ops-accessory');
-        const accept = document.getElementById('phase13c-remove-accept');
+        requestRackAccessoryDeletion('issue99-ops-accessory');
+        const accept = document.getElementById('remove-accept');
         if (!accept) throw Error('Accessory removal confirmation missing');
         accept.click();
         const removalRolledBack = JSON.stringify(appState) === initial;
         const removalExplained = messages.some(m => m.kind === 'error' && m.message.includes('previous inventory is unchanged'));
         return {moveRolledBack,moveExplained,removalRolledBack,removalExplained};
       } finally {
-        document.getElementById('phase13c-remove-confirm')?.remove();
+        document.getElementById('remove-confirm')?.remove();
         saveState = previousSave;
         showToast = previousToast;
         appState = previousState;
@@ -200,13 +200,13 @@ const { chromium } = require('playwright');
         input.value = 'After';
         input.dispatchEvent(new Event('input', {bubbles:true}));
         document.dispatchEvent(new KeyboardEvent('keydown', {key:'Escape',bubbles:true,cancelable:true}));
-        const discardShown = !!document.getElementById('phase120-discard-dialog');
+        const discardShown = !!document.getElementById('discard-dialog');
         const remainsOpen = !document.getElementById('modal-container').classList.contains('hidden');
-        phase120KeepEditing();
+        keepEditingDeviceForm();
         const keepRetainsValue = document.getElementById('issue99-keyboard-name')?.value === 'After';
         document.dispatchEvent(new KeyboardEvent('keydown', {key:'Escape',bubbles:true,cancelable:true}));
-        const warnedAgain = !!document.getElementById('phase120-discard-dialog');
-        phase120DiscardChanges();
+        const warnedAgain = !!document.getElementById('discard-dialog');
+        discardDeviceFormChanges();
         const closed = document.getElementById('modal-container').classList.contains('hidden');
         const focusRestored = document.activeElement === trigger;
         return {initialFocus,discardShown,remainsOpen,keepRetainsValue,warnedAgain,closed,focusRestored,
@@ -231,16 +231,16 @@ const { chromium } = require('playwright');
           serverFunctions:[{key:'customServerFunction_test',label:'Example Service'}]};
         saveState = () => true;
         showToast = (message,kind) => messages.push({message,kind});
-        phase120ModelSave('model_test',true);
-        phase120SoftwareArchive('customSoftware_test');
-        phase120ArchiveServerService('customServerFunction_test');
+        saveHardwareModel('model_test',true);
+        archiveSoftwareCatalogueEntry('customSoftware_test');
+        archiveServerService('customServerFunction_test');
         const blocked = appState.hardwareCatalogue.length===1 &&
           !appState.installedSoftware[0].archived && !appState.serverFunctions[0].archived &&
           messages.filter(m=>m.kind==='error').length===3;
         appState.devices=[];
-        phase120ModelSave('model_test',true);
-        phase120SoftwareArchive('customSoftware_test');
-        phase120ArchiveServerService('customServerFunction_test');
+        saveHardwareModel('model_test',true);
+        archiveSoftwareCatalogueEntry('customSoftware_test');
+        archiveServerService('customServerFunction_test');
         const unusedRemoved = appState.hardwareCatalogue.length===0 &&
           appState.installedSoftware[0].archived===true &&
           appState.serverFunctions[0].archived===true;
@@ -257,7 +257,7 @@ const { chromium } = require('playwright');
       const originalState=appState, originalSave=saveState, originalToast=showToast;
       const stored=localStorage.getItem('caffoot_state'), messages=[];
       const results={};
-      const modelMaker=Object.keys(phase120HardwareSeed['Server - Physical']||{})[0];
+      const modelMaker=Object.keys(builtInHardwareSuggestions['Server - Physical']||{})[0];
       if(!modelMaker)throw Error('Issue #157 test requires a built-in physical server manufacturer');
       const fixture=()=>({
         ...originalState,devices:[],
@@ -272,16 +272,16 @@ const { chromium } = require('playwright');
           {key:'issue157-service-b',label:'Fictional Service B'}]
       });
       const cases=[
-        {name:'model',open:()=>phase120ModelManager('issue157-model-a'),save:()=>phase120ModelSave('issue157-model-a'),
-         field:'phase120-model-name',original:'Fictional Model A',duplicate:'Fictional Model B',renamed:'Fictional Model Renamed',
+        {name:'model',open:()=>openHardwareModelManager('issue157-model-a'),save:()=>saveHardwareModel('issue157-model-a'),
+         field:'model-name',original:'Fictional Model A',duplicate:'Fictional Model B',renamed:'Fictional Model Renamed',
          current:()=>appState.hardwareCatalogue.find(x=>x.id==='issue157-model-a')?.model,
-         error:()=>document.getElementById('phase120-model-error')?.textContent||''},
-        {name:'software',open:()=>phase120SoftwareEdit('issue157-software-a'),save:()=>phase120SoftwareSaveCustom('issue157-software-a'),
+         error:()=>document.getElementById('model-error')?.textContent||''},
+        {name:'software',open:()=>openSoftwareCatalogueEditor('issue157-software-a'),save:()=>saveCustomSoftwareEntry('issue157-software-a'),
          field:'software-custom-name',original:'Fictional Software A',duplicate:'Fictional Software B',renamed:'Fictional Software Renamed',
          current:()=>appState.installedSoftware.find(x=>x.key==='issue157-software-a')?.label,
          error:()=>document.getElementById('software-custom-error')?.textContent||''},
-        {name:'service',open:()=>phase120ServerServiceEditor('issue157-service-a'),save:()=>phase120SaveServerService('issue157-service-a'),
-         field:'phase120-service-name',original:'Fictional Service A',duplicate:'Fictional Service B',renamed:'Fictional Service Renamed',
+        {name:'service',open:()=>openServerServiceEditor('issue157-service-a'),save:()=>saveServerServiceEntry('issue157-service-a'),
+         field:'server-service-name-input',original:'Fictional Service A',duplicate:'Fictional Service B',renamed:'Fictional Service Renamed',
          current:()=>appState.serverFunctions.find(x=>x.key==='issue157-service-a')?.label,
          error:()=>messages.filter(x=>x.kind==='error').map(x=>x.message).join(' ')}
       ];
@@ -304,12 +304,12 @@ const { chromium } = require('playwright');
           c.open();
           document.getElementById(c.field).value=c.renamed;
           document.querySelector('#modal-content [data-action="close-modal"]').click();
-          results[c.name+'CancelWarning']=!!document.getElementById('phase120-discard-dialog');
-          phase120KeepEditing();
+          results[c.name+'CancelWarning']=!!document.getElementById('discard-dialog');
+          keepEditingDeviceForm();
           results[c.name+'KeepEditing']=document.getElementById(c.field)?.value===c.renamed;
           document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));
-          results[c.name+'EscapeWarning']=!!document.getElementById('phase120-discard-dialog');
-          phase120DiscardChanges();
+          results[c.name+'EscapeWarning']=!!document.getElementById('discard-dialog');
+          discardDeviceFormChanges();
           results[c.name+'DiscardUnchanged']=c.current()===c.original;
           saveState=()=>true;
           c.open();
@@ -337,12 +337,12 @@ const { chromium } = require('playwright');
           serverFunctions:[{key:keyService,label:'Fictional Archived Service'}]};
         saveState=()=>true;
         showToast=(message,kind)=>messages.push({message,kind});
-        phase120SoftwareArchive(keySoftware);
-        phase120ArchiveServerService(keyService);
+        archiveSoftwareCatalogueEntry(keySoftware);
+        archiveServerService(keyService);
         const archived=appState.installedSoftware[0]?.archived===true &&
           appState.serverFunctions[0]?.archived===true;
-        const absentFromChoices=!phase120AvailableServerServices().some(x=>x.key===keyService) &&
-          !phase120SoftwareOptions().some(x=>x.key===keySoftware);
+        const absentFromChoices=!getAvailableServerServiceCatalogueEntries().some(x=>x.key===keyService) &&
+          !getAvailableSoftwareCatalogueEntries().some(x=>x.key===keySoftware);
         const snapshot=JSON.stringify({installedSoftware:appState.installedSoftware,
           serverFunctions:appState.serverFunctions});
         const restored=JSON.parse(snapshot);
@@ -367,10 +367,10 @@ const { chromium } = require('playwright');
         appState = cloneDefaultData();
         appState.installedSoftware = [{key:'issue157_backup_software',label:'Fictional Backup Software',deviceTypes:['Server - Physical'],archived:true}];
         appState.serverFunctions = [{key:'issue157_backup_service',label:'Fictional Backup Service',archived:true}];
-        return JSON.stringify(phase20CreateBackup());
+        return JSON.stringify(createInventoryBackup());
       });
       const checked = await backupPage.evaluate(json => {
-        const restored = phase16CCheckBackup(phase16CReadJson(json));
+        const restored = validateAndNormaliseBackupForImport(parseBackupJsonWithHelpfulError(json));
         return restored.installedSoftware.some(x => x.key==='issue157_backup_software' && x.archived===true) &&
           restored.serverFunctions.some(x => x.key==='issue157_backup_service' && x.archived===true);
       }, backupJson);
@@ -390,9 +390,9 @@ const { chromium } = require('playwright');
       const afterReload = await backupPage.evaluate(() => ({
         software:appState.installedSoftware.some(x=>x.key==='issue157_backup_software'&&x.archived===true),
         service:appState.serverFunctions.some(x=>x.key==='issue157_backup_service'&&x.archived===true),
-        excludedSoftware:!phase120SoftwareOptions().some(x=>x.key==='issue157_backup_software'),
-        excludedService:!phase120AvailableServerServices().some(x=>x.key==='issue157_backup_service'),
-        recovery:phase17AStorageRecovery===null
+        excludedSoftware:!getAvailableSoftwareCatalogueEntries().some(x=>x.key==='issue157_backup_software'),
+        excludedService:!getAvailableServerServiceCatalogueEntries().some(x=>x.key==='issue157_backup_service'),
+        recovery:storageRecoveryFailure===null
       }));
       for(const [key,value] of Object.entries(afterReload))
         assert.equal(value,true,'Issue #157 actual import/reload failed: '+key);
