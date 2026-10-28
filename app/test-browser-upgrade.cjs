@@ -30,6 +30,23 @@ const {pathToFileURL}=require('node:url'),{chromium}=require('playwright');
  for(const key of Object.keys(backup).filter(k=>k!=='caffootBackup'))assert.equal(JSON.stringify(inventory[key]),JSON.stringify(backup[key]),'Moved-file restore must preserve '+key);
  assert.equal(after.safety,baseline.stored);
  await page.reload();assert.deepEqual(await snapshot(),after,'Restored inventory must persist in renamed file');
+ // #192: legacy device-type history must remain read-only and survive backup round-trips.
+ const legacy=JSON.parse(bytes);
+ legacy.devices[0].previousTypeDetails=[{type:'Printer',details:{model:'Legacy fictional printer',serialNumber:'HISTORY-ONLY'}}];
+ await upload(Buffer.from(JSON.stringify(legacy)));
+ assert.equal(JSON.stringify(await page.evaluate(()=>appState.devices[0].previousTypeDetails)),JSON.stringify(legacy.devices[0].previousTypeDetails),'Legacy history must survive import');
+ await page.evaluate(()=>phase14CViewDevice(appState.devices[0].id));
+ const historyModal=await page.locator('#modal-content').innerText();
+ assert.match(historyModal,/Previous Device Type Details/,'Legacy history must remain visible');
+ assert.match(historyModal,/Legacy fictional printer/,'Legacy snapshot fields must remain visible');
+ assert.equal(await page.locator('[data-action="phase130-restore"]').count(),0,'Legacy history must not offer configuration restoration');
+ await page.keyboard.press('Escape');
+ const roundTrip=await page.evaluate(()=>phase20CreateBackup());
+ assert.equal(JSON.stringify(roundTrip.devices[0].previousTypeDetails),JSON.stringify(legacy.devices[0].previousTypeDetails),'Legacy history must survive export');
+ await page.reload();
+ assert.equal(JSON.stringify(await page.evaluate(()=>appState.devices[0].previousTypeDetails)),JSON.stringify(legacy.devices[0].previousTypeDetails),'Legacy history must survive reload');
+ await upload(bytes);
+ assert.deepEqual(await snapshot(),after,'Original fixture must be restored after legacy-history check');
  const bad=JSON.parse(bytes);bad.caffootBackup.schemaVersion=2;const count=confirmations;await upload(Buffer.from(JSON.stringify(bad)));assert.deepEqual(await snapshot(),after);assert.equal(confirmations,count,'Unsupported schema must reject before confirmation');
  // The expected rejection is displayed in a modal; dismiss it before testing
  // controls behind the modal, and verify that dismissal leaves data untouched.
