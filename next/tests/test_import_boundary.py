@@ -9,7 +9,7 @@ import json
 import sqlite3
 import unittest
 
-from backend.inventory import ImportRejected, inspect_export, inspect_import_relationships, preview_inventory_counts, reconstruct_inventory, stage_inventory
+from backend.inventory import ImportRejected, inspect_export, inspect_device_mounts, inspect_import_relationships, preview_inventory_counts, reconstruct_inventory, stage_inventory
 from backend.schema import initialise_database
 from test_inventory import fixture
 
@@ -160,6 +160,35 @@ class ImportBoundaryTests(unittest.TestCase):
     def test_detached_relationship_diagnostics_allow_unlinked_available_ip(self):
         data = fixture()
         self.assertEqual(inspect_import_relationships(data), [])
+
+    def test_published_mount_types_are_all_accepted_without_type_restrictions(self):
+        data = fixture()
+        mounts = (
+            "Desktop", "Tabletop / Shelf Mounted", "Shelf Mounted",
+            "Rack Mounted", "Wall Mounted", "Ceiling Mounted", "Pole Mounted",
+            "DIN Rail Mounted", "Under-Desk Mounted", "Floor Standing",
+            "Tower / Floor Standing", "Handheld", "Mobile", "Vehicle Mounted",
+            "Not Applicable", "Unknown",
+        )
+        data["devices"] = [
+            {"id": str(i), "name": "DEVICE-" + str(i), "type": "Laptop",
+             "mountType": mount}
+            for i, mount in enumerate(mounts)
+        ]
+        self.assertEqual(inspect_device_mounts(data), [])
+
+    def test_mount_diagnostics_preserve_source_and_reject_unknown_mount(self):
+        data = fixture()
+        data["devices"][0]["mountType"] = "Unrecognised Mount"
+        untouched = copy.deepcopy(data)
+        self.assertEqual(inspect_device_mounts(data), [data["devices"][0]])
+        self.assertEqual(data, untouched)
+
+    def test_missing_mount_uses_published_rack_or_desktop_fallback(self):
+        data = fixture()
+        self.assertEqual(inspect_device_mounts(data), [])
+        data["devices"][0]["rackId"] = "rack-1"
+        self.assertEqual(inspect_device_mounts(data), [])
 
     def test_optional_unknown_top_level_fields_survive(self):
         data = fixture()
