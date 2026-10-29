@@ -68,3 +68,18 @@ This reference records verified observations from direct reads of the published 
 - **History tab:** published device-detail rendering distinguishes current type-compatible fields from historical fields; do not flatten or discard values just because the active form for a device type no longer exposes them.
 
 **Open verification:** enumerate all historical top-level service/software flags and type-specific detail keys from source and retained tests before freezing a device attribute schema. The above findings are source-verified; any proposed table representation remains provisional.
+
+
+## Additional verified findings — dynamic device fields and software preferences (2026-10-29)
+
+Published v1.3.3 dynamically derives `getDetailFieldsForDeviceType(type)` from `deviceTypeDetailGroups`, `deviceDetailFieldProfiles`, configured server services, and available software catalogue entries. Device `typeDetails` is therefore variable by device type and catalogue state, not a universal fixed set of SQL columns. Preserve supported unrecognised/historical keys and their value types, including booleans, numeric fields, units and strings.
+
+- `booleanDeviceDetailFields` includes legacy software and server-service flags (e.g. `Swan`, `SQLServer`, `ActiveDirectory`, `DNS`, `DHCP`, `BackupSoftware`) plus hardware booleans `serialPort` and `usbPort`. `numericDeviceDetailFields` includes `memory`, `storage`, `driveCount`, `handsetCount`, `powerOutlets`. Other device detail values use existing field choices/labels; do not coerce historical types without matching published normalisation.
+- `getAvailableSoftwareCatalogueEntries` merges non-archived configured entries with built-in suggestions. Built-in entries have generated `catalogSoftware_...` keys and `builtin:true`; configured keys/labels can override or suppress suggestions. Do not persist inferred built-in suggestions as if they were explicitly configured catalogue records.
+- `getSoftwareFieldsForDeviceType` filters entries by `deviceTypes` (case-insensitive) and, for built-in suggestions, by `appState.softwareTypeExclusions`. This top-level map is an additional preserved managed inventory setting not listed in the original default-data inventory; preserve it and any supported historical settings rather than reducing migration to a fixed default-data key list.
+- `getEffectiveDevicePlatform` and `getEffectiveDevicePlatformVersion` choose hypervisor product/version for physical hypervisors, otherwise software platform/OS/version; they also recognise historical top-level `serverService_Hypervisor`. This is a derived read behaviour and must be reconstructed without changing filters or labels.
+- Device details and historical tabs depend on current type compatibility and retained values. A field hidden by type/catalogue changes is not automatically deleted from persisted device history.
+
+**Proposed mapping refinement:** keep device identity/host relationship in relational core, store supported variable `typeDetails` and historical attributes as device-scoped flexible data, and preserve `softwareTypeExclusions` within managed inventory settings. Maintain the v1.3.3 read projection for software/service availability. These are implementation proposals, not approved SQL or permission to code.
+
+**Still to verify:** full `deviceDetailFieldProfiles` by device category, save-time coercion/retention of hidden keys, catalogue rename/delete behaviours and tests; distinguish every persisted managed setting from view-only suggestions.
