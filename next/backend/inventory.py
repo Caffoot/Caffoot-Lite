@@ -106,9 +106,6 @@ def inspect_export(raw: bytes):
         not isinstance(meta.get("exportedAt"), str),
     )):
         raise ImportRejected("A published v1.3.3 export is required")
-    for key in REQUIRED:
-        if key not in data:
-            raise ImportRejected("Missing inventory collection: " + key)
     # Published normaliseState requires VLANs; the early structural gate does not.
     if not isinstance(data.get("vlans"), list):
         raise ImportRejected("Imported data is missing a valid vlans array.")
