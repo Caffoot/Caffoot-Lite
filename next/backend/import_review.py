@@ -94,6 +94,15 @@ def confirm_detached_import_review(review, *, legacy_mount_approved=False,
         raise ValueError("Legacy mounting corrections require explicit approval.")
     if not replacement_confirmed:
         raise ValueError("Inventory replacement requires explicit confirmation.")
+    # Review objects are detached data, not trusted authorisation tokens.
+    # Recheck integrity in case a caller changed the candidate after preview.
+    candidate = review["candidate"]
+    if inspect_device_mounts(candidate):
+        raise ValueError("Reviewed candidate has unsupported mounting types.")
+    issues = validate_detached_application_state(candidate)
+    issues.extend(find_rack_import_conflicts(candidate))
+    if issues:
+        raise ValueError("Reviewed candidate failed integrity revalidation.")
     # Do not change the review or mark it as permission to persist. The
     # eventual authenticated backend must revalidate before any database write.
     return review["candidate"]
