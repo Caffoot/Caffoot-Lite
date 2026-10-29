@@ -4,7 +4,6 @@ on:
   pull_request:
     paths:
       - 'app/**'
-      - 'RELEASE-NOTES-*.md'
       - '.github/workflows/validate-hotfix.yml'
   workflow_dispatch:
 
