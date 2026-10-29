@@ -37,6 +37,37 @@ class ImportReviewTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "v1.3.3 export"):
             prepare_published_export_review(json.dumps(source).encode("utf-8"))
 
+    def test_access_point_review_blocks_candidate_until_choices_supplied(self):
+        source = fixture()
+        source["devices"][0].update({
+            "type": "Access Point", "mountType": "Desktop",
+        })
+        source["caffootBackup"] = {
+            "format": "caffoot-inventory", "schemaVersion": 1,
+            "app": "Caffoot Lite", "appVersion": "1.3.3",
+            "exportedAt": "2026-10-29T12:00:00Z",
+        }
+        raw = json.dumps(source).encode("utf-8")
+        review = prepare_published_export_review(raw)
+        self.assertFalse(review["approved"])
+        self.assertFalse(review["persistenceAllowed"])
+        if review["requiresAccessPointMountReview"]:
+            self.assertTrue(review["accessPointMountConflicts"])
+            self.assertNotIn("candidate", review)
+
+    def test_unrequested_access_point_choices_are_rejected(self):
+        source = fixture()
+        source["caffootBackup"] = {
+            "format": "caffoot-inventory", "schemaVersion": 1,
+            "app": "Caffoot Lite", "appVersion": "1.3.3",
+            "exportedAt": "2026-10-29T12:00:00Z",
+        }
+        with self.assertRaisesRegex(ValueError, "No Access Point mounting choices"):
+            prepare_published_export_review(
+                json.dumps(source).encode("utf-8"),
+                access_point_choices={"unexpected": "Desktop"},
+            )
+
     def test_candidate_is_detached_and_never_approved(self):
         source = fixture()
         original = copy.deepcopy(source)
