@@ -65,6 +65,40 @@ class StagingTests(unittest.TestCase):
         with self.assertRaisesRegex(ImportRejected, "10 MiB"):
             inspect_export(b"x" * (10 * 1024 * 1024 + 1))
 
+    def test_reject_missing_backup_metadata(self):
+        data = fixture()
+        del data["caffootBackup"]
+        with self.assertRaisesRegex(ImportRejected, "v1.3.3"):
+            inspect_export(json.dumps(data).encode())
+
+    def test_reject_wrong_backup_format(self):
+        data = fixture()
+        data["caffootBackup"]["format"] = "different-format"
+        with self.assertRaisesRegex(ImportRejected, "v1.3.3"):
+            inspect_export(json.dumps(data).encode())
+
+    def test_reject_invalid_required_collection(self):
+        data = fixture()
+        data["devices"] = {"d1": {"name": "LAB-01"}}
+        with self.assertRaisesRegex(ImportRejected, "devices"):
+            inspect_export(json.dumps(data).encode())
+
+    def test_reject_invalid_ipam_record(self):
+        data = fixture()
+        data["ipAllocations"]["192.0.2.4"] = "not a record"
+        with self.assertRaisesRegex(ImportRejected, "IP allocation record"):
+            inspect_export(json.dumps(data).encode())
+
+    def test_reject_nested_unsafe_key(self):
+        data = fixture()
+        data["extraHistoricalOption"] = [{"safe": {"constructor": "bad"}}]
+        with self.assertRaisesRegex(ImportRejected, "Unsafe"):
+            inspect_export(json.dumps(data).encode())
+
+    def test_reject_non_object_root(self):
+        with self.assertRaisesRegex(ImportRejected, "inventory object"):
+            inspect_export(b"[]")
+
     def test_rollback_preserves_prior_inventory(self):
         data = inspect_export(json.dumps(fixture()).encode())
         stage_inventory(self.db, data)
