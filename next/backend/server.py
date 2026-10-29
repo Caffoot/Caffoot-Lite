@@ -11,11 +11,15 @@ from pathlib import Path
 
 from .schema import initialise_database as migrate_database
 from .request_auth import authenticated_account, csrf_for_session
-from .http_security import read_session_cookie
+from .http_security import read_session_cookie, session_cookie, clear_session_cookie
+from .request_auth import login, logout
+from .http_security import require_same_origin
 
 DB_PATH = Path(os.environ.get("CAFFOOT_DB_PATH", "/data/caffoot.sqlite3"))
 HOST = os.environ.get("CAFFOOT_HOST", "0.0.0.0")
 PORT = int(os.environ.get("CAFFOOT_PORT", "8080"))
+PUBLIC_ORIGIN = os.environ.get("CAFFOOT_PUBLIC_ORIGIN", "")
+MAX_LOGIN_BYTES = 4096
 
 
 def connect():
@@ -62,13 +66,63 @@ class Handler(BaseHTTPRequestHandler):
         else:
             self.respond(404, {"error": "not found"})
 
-    def respond(self, status, payload):
+    def do_POST(self):
+        if self.path not in ("/api/login", "/api/logout"):
+            self.respond(404, {"error": "not found"})
+            return
+        origin = self.headers.get("Origin")
+        if not PUBLIC_ORIGIN or not require_same_origin(origin, PUBLIC_ORIGIN):
+            self.respond(403, {"error": "forbidden"})
+            return
+        if self.path == "/api/logout":
+            with connect() as connection:
+                ok = logout(
+                    connection, self.headers.get("Cookie"), origin, PUBLIC_ORIGIN,
+                    self.headers.get("X-CSRF-Token"),
+                )
+            if not ok:
+                self.respond(403, {"error": "forbidden"})
+                return
+            self.respond(200, {"status": "signed out"},
+                         cookie=clear_session_cookie())
+            return
+        length = self.headers.get("Content-Length")
+        if length is None or not length.isdecimal() or not 0 < int(length) <= MAX_LOGIN_BYTES:
+            self.respond(400, {"error": "invalid request"})
+            return
+        if self.headers.get("Content-Type", "").split(";")[0].strip().lower() != "application/json":
+            self.respond(415, {"error": "JSON required"})
+            return
+        try:
+            payload = json.loads(self.rfile.read(int(length)))
+        except (UnicodeDecodeError, ValueError):
+            self.respond(400, {"error": "invalid JSON"})
+            return
+        if not isinstance(payload, dict) or not isinstance(payload.get("username"), str) or not isinstance(payload.get("password"), str):
+            self.respond(400, {"error": "invalid credentials"})
+            return
+        if len(payload["username"]) > 256 or len(payload["password"]) > 4096 or not isinstance(payload.get("mfa_code"), (str, type(None))):
+            self.respond(400, {"error": "invalid credentials"})
+            return
+        with connect() as connection:
+            token = login(
+                connection, self.client_address[0], payload["username"],
+                payload["password"], mfa_code=payload.get("mfa_code"),
+            )
+        if token is None:
+            self.respond(401, {"error": "invalid credentials"})
+            return
+        self.respond(200, {"status": "signed in"}, cookie=session_cookie(token))
+
+    def respond(self, status, payload, *, cookie=None):
         body = json.dumps(payload).encode("utf-8")
         self.send_response(status)
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
         self.send_header("Cache-Control", "no-store")
         self.send_header("X-Content-Type-Options", "nosniff")
+        if cookie is not None:
+            self.send_header("Set-Cookie", cookie)
         self.end_headers()
         self.wfile.write(body)
 
