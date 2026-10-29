@@ -9,7 +9,7 @@ import json
 import sqlite3
 import unittest
 
-from backend.inventory import ImportRejected, inspect_export, preview_inventory_counts, reconstruct_inventory, stage_inventory
+from backend.inventory import ImportRejected, inspect_export, inspect_import_relationships, preview_inventory_counts, reconstruct_inventory, stage_inventory
 from backend.schema import initialise_database
 from test_inventory import fixture
 
@@ -136,6 +136,30 @@ class ImportBoundaryTests(unittest.TestCase):
         self.assertEqual(
             self.db.execute("SELECT COUNT(*) FROM inventory_devices").fetchone()[0], 0
         )
+
+    def test_detached_relationship_diagnostics_find_source_defined_conflicts(self):
+        data = fixture()
+        data["devices"].append({"id": "d1", "name": "LAB-02", "primaryIp": "192.0.2.4"})
+        data["devices"][0]["primaryIp"] = "192.0.2.4"
+        data["devices"][0]["rackId"] = "missing-rack"
+        data["ipAllocations"]["192.0.2.5"] = {
+            "deviceId": "missing-device", "status": "Assigned"
+        }
+        original = copy.deepcopy(data)
+        issues = inspect_import_relationships(data)
+        self.assertTrue(any("Duplicate devices ID" in issue for issue in issues))
+        self.assertTrue(any("Duplicate primary IP" in issue for issue in issues))
+        self.assertTrue(any("IPAM is out of sync" in issue for issue in issues))
+        self.assertTrue(any("missing rack" in issue for issue in issues))
+        self.assertTrue(any("missing device" in issue for issue in issues))
+        self.assertEqual(data, original)
+        self.assertEqual(
+            self.db.execute("SELECT COUNT(*) FROM inventory_devices").fetchone()[0], 0
+        )
+
+    def test_detached_relationship_diagnostics_allow_unlinked_available_ip(self):
+        data = fixture()
+        self.assertEqual(inspect_import_relationships(data), [])
 
     def test_optional_unknown_top_level_fields_survive(self):
         data = fixture()
