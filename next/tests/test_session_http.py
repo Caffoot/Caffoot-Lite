@@ -129,6 +129,61 @@ class SessionHttpTests(unittest.TestCase):
         self.assertEqual(snapshot["sections"], {"Devices": True, "IPAM": False, "Racks": False})
         self.assertEqual(self.request("/api/inventory/state")[0], 401)
 
+    def test_device_edit_reservation_conflict_cancel_and_expiry(self):
+        with sqlite3.connect(self.path) as db:
+            db.execute("INSERT INTO inventory_devices(id,name,record_json,ordinal) VALUES(?,?,?,?)",
+                       ("device-1", "Switch", '{"id":"device-1","name":"Switch"}', 0))
+            db.execute("INSERT INTO inventory_devices(id,name,record_json,ordinal) VALUES(?,?,?,?)",
+                       ("device-2", "Router", '{"id":"device-2","name":"Router"}', 1))
+            db.commit()
+        with patch("backend.server.PUBLIC_ORIGIN", "https://caffoot.example"):
+            csrf = csrf_for_session(self.token)
+            status, result = self.post("/api/users/create",
+                                       {"username": "second", "password": "initial"}, self.token, csrf)
+            self.assertEqual(status, 200)
+            second_id = result["id"]
+            with sqlite3.connect(self.path) as db:
+                db.execute("UPDATE accounts SET mfa_secret=?,mfa_confirmed=1 WHERE id=?",
+                           ("JBSWY3DPEHPK3PXP", second_id))
+                db.commit()
+            status, _ = self.post("/api/users/permission",
+                                  {"userId": second_id, "section": "Devices", "level": "edit"},
+                                  self.token, csrf)
+            self.assertEqual(status, 200)
+            with sqlite3.connect(self.path) as db:
+                second_token = login_session(db, "second", "initial",
+                                             mfa_code=code_at("JBSWY3DPEHPK3PXP", time.time()))
+            self.assertIsNotNone(second_token)
+            second_csrf = csrf_for_session(second_token)
+            status, _ = self.post("/api/devices/edit/start", {"deviceId": "device-1"},
+                                  self.token, csrf)
+            self.assertEqual(status, 200)
+            status, _ = self.post("/api/devices/edit/start", {"deviceId": "device-1"},
+                                  second_token, second_csrf)
+            self.assertEqual(status, 400)
+            status, _ = self.post("/api/devices/edit/start", {"deviceId": "device-2"},
+                                  second_token, second_csrf)
+            self.assertEqual(status, 200)
+            status, _ = self.post("/api/devices/edit/cancel", {"deviceId": "device-1"},
+                                  second_token, second_csrf)
+            self.assertEqual(status, 200)
+            status, _ = self.post("/api/devices/edit/start", {"deviceId": "device-1"},
+                                  second_token, second_csrf)
+            self.assertEqual(status, 400)
+            status, _ = self.post("/api/devices/edit/cancel", {"deviceId": "device-1"},
+                                  self.token, csrf)
+            self.assertEqual(status, 200)
+            status, _ = self.post("/api/devices/edit/start", {"deviceId": "device-1"},
+                                  second_token, second_csrf)
+            self.assertEqual(status, 200)
+            with sqlite3.connect(self.path) as db:
+                db.execute("UPDATE device_edit_reservations SET expires_at=0 WHERE device_id=?",
+                           ("device-1",))
+                db.commit()
+            status, _ = self.post("/api/devices/edit/start", {"deviceId": "device-1"},
+                                  self.token, csrf)
+            self.assertEqual(status, 200)
+
     def test_anonymous_request_is_rejected(self):
         status, body, cache = self.request("/api/session")
         self.assertEqual(status, 401)
