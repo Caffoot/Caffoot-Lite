@@ -24,10 +24,11 @@ button:disabled{opacity:.5}button.secondary{background:#475569}button.small{widt
 const $=id=>document.getElementById(id);
 let mode='login';
 let csrfToken='';
+let signedInUser='';
 async function showSession(){
  const r=await fetch('/api/session',{cache:'no-store'});
  if(!r.ok)return false;
- const session=await r.json();csrfToken=session.csrf_token;
+ const session=await r.json();csrfToken=session.csrf_token;signedInUser=session.username;
  $('form').hidden=true;$('signed-in').hidden=false;
  $('intro').textContent='Signed in';
  $('signed-in-message').textContent='Signed in as '+session.username+'. The inventory interface is being connected to the central database.';
@@ -90,6 +91,7 @@ async function loadUsers(){
   }
   for(const [name,path,field,value] of [[user.active?'Disable':'Enable','/api/users/active','active',!user.active],[user.isAdmin?'Remove admin':'Make admin','/api/users/admin','isAdmin',!user.isAdmin],['Delete','/api/users/delete',null,null]]){
    const button=document.createElement('button');button.className='small secondary';button.textContent=name;
+   button.disabled=user.username.toLowerCase()===signedInUser.toLowerCase();
    button.addEventListener('click',()=>{if(name==='Delete'&&!confirm('Delete '+user.username+'?'))return;adminAction(path,{userId:user.id,...(field?{[field]:value}:{})})});panel.append(button);
   }
   host.append(panel);
@@ -97,7 +99,7 @@ async function loadUsers(){
 }
 async function adminAction(path,data){
  try{await request(path,data);$('account-message').textContent='Updated successfully';await loadUsers()}
- catch(error){$('account-message').textContent=error.message;await loadUsers()}
+ catch(error){$('account-message').textContent=error.message;try{await loadUsers()}catch(refreshError){$('account-message').textContent+='; '+refreshError.message}}
 }
 $('create-user').addEventListener('submit',async event=>{
  event.preventDefault();await adminAction('/api/users/create',{username:$('new-username').value,password:$('initial-password').value});$('create-user').reset();
@@ -105,7 +107,7 @@ $('create-user').addEventListener('submit',async event=>{
 $('change-password').addEventListener('submit',async event=>{
  event.preventDefault();try{
   await request('/api/account/password',{currentPassword:$('current-password').value,newPassword:$('new-password').value});
-  csrfToken='';$('signed-in').hidden=true;mode='login';display();$('message').textContent='Password changed. Sign in again.';
+  csrfToken='';signedInUser='';$('signed-in').hidden=true;mode='login';display();$('message').textContent='Password changed. Sign in again.';
  }catch(error){$('account-message').textContent=error.message}
 });
 $('sign-out').addEventListener('click',async()=>{
