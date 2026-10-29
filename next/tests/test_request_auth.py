@@ -136,6 +136,43 @@ class RequestAuthenticationTests(unittest.TestCase):
                 self.db, raw, **dict(args, csrf_header="invalid")
             )
 
+    def test_import_rejects_stale_preview_without_replacing_current_inventory(self):
+        import json
+        from backend.import_service import (
+            preview_published_export, replace_from_published_export,
+        )
+        from backend.inventory import reconstruct_inventory, stage_inventory
+        from test_import_review import fixture
+        source = fixture()
+        source["caffootBackup"] = {
+            "format": "caffoot-inventory", "schemaVersion": 1,
+            "app": "Caffoot Lite", "appVersion": "1.3.3",
+            "exportedAt": "2026-10-29T12:00:00Z",
+        }
+        raw = json.dumps(source).encode()
+        args = dict(cookie_header=self.cookie, origin=ORIGIN,
+                    allowed_origin=ORIGIN, csrf_header=self.csrf, now=60)
+        preview = preview_published_export(self.db, raw, **args)
+        self.assertEqual(len(preview["inventoryRevision"]), 64)
+        changed = fixture()
+        changed["devices"][0]["name"] = "Another user's change"
+        stage_inventory(self.db, changed)
+        before = reconstruct_inventory(self.db)
+        with self.assertRaisesRegex(ValueError, "changed since import preview"):
+            replace_from_published_export(
+                self.db, raw, **args, replacement_confirmed=True,
+                expected_inventory_revision=preview["inventoryRevision"],
+            )
+        self.assertEqual(reconstruct_inventory(self.db), before)
+        fresh = preview_published_export(self.db, raw, **args)
+        self.assertTrue(replace_from_published_export(
+            self.db, raw, **args, replacement_confirmed=True,
+            expected_inventory_revision=fresh["inventoryRevision"],
+        ))
+        self.assertEqual(
+            reconstruct_inventory(self.db)["devices"][0]["name"], "PC"
+        )
+
     def test_session_bound_identity_and_mutation(self):
         self.assertEqual(authenticated_account(self.db, self.cookie, now=60), self.admin)
         self.assertEqual(authorised_mutation(
