@@ -1,0 +1,74 @@
+"""Read-only import review orchestration regression tests."""
+import copy
+import unittest
+
+from backend.import_review import prepare_detached_import_review
+
+
+def fixture():
+    return {
+        "subnets": [{"id": "s", "name": "Office", "cidr": "10.0.0.0/24",
+                     "gateway": "10.0.0.1", "vlan": 20}],
+        "vlans": [{"id": "v", "name": "Office", "vlanId": 20}],
+        "racks": [],
+        "devices": [{"id": "d", "name": "PC", "type": "Desktop",
+                     "mountType": "Desktop", "location": "Office",
+                     "primaryIp": "10.0.0.10"}],
+        "ipAllocations": {"10.0.0.10": {"status": "Assigned",
+                                       "deviceId": "d", "notes": "keep"}},
+    }
+
+
+class ImportReviewTests(unittest.TestCase):
+    def test_candidate_is_detached_and_never_approved(self):
+        source = fixture()
+        original = copy.deepcopy(source)
+        review = prepare_detached_import_review(source)
+        self.assertEqual(source, original)
+        self.assertIsNot(review["candidate"], source)
+        self.assertFalse(review["approved"])
+        self.assertFalse(review["persistenceAllowed"])
+        self.assertFalse(review["requiresLegacyMountReview"])
+        self.assertEqual(review["diagnostics"]["ipam"], [])
+
+    def test_mounting_review_is_explicitly_required(self):
+        source = fixture()
+        source["devices"][0].update({"mountType": "Rack Mounted", "location": "Racked"})
+        review = prepare_detached_import_review(source)
+        self.assertTrue(review["requiresLegacyMountReview"])
+        self.assertTrue(review["legacyMountRepairs"])
+        self.assertEqual(review["candidate"]["devices"][0]["mountType"], "Desktop")
+        self.assertEqual(source["devices"][0]["mountType"], "Rack Mounted")
+        self.assertFalse(review["persistenceAllowed"])
+
+    def test_invalid_subnet_rejected_without_mutation(self):
+        source = fixture()
+        source["subnets"][0]["cidr"] = "invalid"
+        original = copy.deepcopy(source)
+        with self.assertRaises(ValueError):
+            prepare_detached_import_review(source)
+        self.assertEqual(source, original)
+
+    def test_rack_conflicts_are_reported_not_approved(self):
+        source = fixture()
+        source["racks"] = [{"id": "r", "heightU": 12}]
+        source["devices"] = [
+            {"id": "a", "name": "A", "type": "Server - Physical",
+             "mountType": "Rack Mounted", "rackId": "r",
+             "location": "Office", "rackUStart": 1, "rackUHeight": 2, "rackUEnd": 2},
+            {"id": "b", "name": "B", "type": "Server - Physical",
+             "mountType": "Rack Mounted", "rackId": "r",
+             "location": "Office", "rackUStart": 2, "rackUHeight": 2, "rackUEnd": 3},
+        ]
+        source["ipAllocations"] = {}
+        review = prepare_detached_import_review(source)
+        self.assertTrue(review["diagnostics"]["rackConflicts"])
+        self.assertFalse(review["persistenceAllowed"])
+
+    def test_ipam_notes_survive_review(self):
+        review = prepare_detached_import_review(fixture())
+        self.assertEqual(review["candidate"]["ipAllocations"]["10.0.0.10"]["notes"], "keep")
+
+
+if __name__ == "__main__":
+    unittest.main()
