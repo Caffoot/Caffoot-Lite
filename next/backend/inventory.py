@@ -56,6 +56,30 @@ def _reject_nonfinite(value):
     raise ImportRejected("Non-finite JSON number")
 
 
+def validate_published_structure(data):
+    """Published v1.3.3 validateBackupStructure's structural requirements.
+
+    This is only the early structural stage, not normaliseState,
+    validateApplicationState, or import confirmation.
+    """
+    if not isinstance(data, dict):
+        raise ImportRejected("Backup must be a JSON object.")
+    for key in ("devices", "subnets", "racks"):
+        records = data.get(key)
+        if not isinstance(records, list):
+            raise ImportRejected("Backup is missing a valid " + key + " array.")
+        if len(records) > 50000:
+            raise ImportRejected("Backup contains too many " + key + " records.")
+        if any(not isinstance(item, dict) for item in records):
+            raise ImportRejected("Backup has invalid entries in " + key + ".")
+    ipam = data.get("ipAllocations")
+    if not isinstance(ipam, dict):
+        raise ImportRejected("Backup is missing a valid IP allocation table.")
+    if len(ipam) > 100000:
+        raise ImportRejected("Backup contains too many IP allocations.")
+    return True
+
+
 def inspect_export(raw: bytes):
     """Reject obviously incompatible inputs before detached validation.
 
@@ -72,6 +96,7 @@ def inspect_export(raw: bytes):
     if not isinstance(data, dict):
         raise ImportRejected("Expected inventory object")
     _check_keys(data)
+    validate_published_structure(data)
     meta = data.get("caffootBackup")
     if not isinstance(meta, dict) or any((
         meta.get("format") != "caffoot-inventory",
