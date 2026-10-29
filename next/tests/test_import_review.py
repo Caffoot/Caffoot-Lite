@@ -3,7 +3,7 @@ import copy
 import json
 import unittest
 
-from backend.import_review import prepare_detached_import_review, prepare_published_export_review
+from backend.import_review import prepare_detached_import_review, prepare_published_export_review, confirm_detached_import_review
 from backend.inventory import preview_inventory_counts
 
 
@@ -22,6 +22,49 @@ def fixture():
 
 
 class ImportReviewTests(unittest.TestCase):
+
+    def test_explicit_confirmation_required_for_normal_import(self):
+        review = prepare_detached_import_review(fixture())
+        with self.assertRaisesRegex(ValueError, "explicit confirmation"):
+            confirm_detached_import_review(review)
+        candidate = confirm_detached_import_review(
+            review, replacement_confirmed=True
+        )
+        self.assertIs(candidate, review["candidate"])
+        self.assertFalse(review["approved"])
+        self.assertFalse(review["persistenceAllowed"])
+
+    def test_mounting_decisions_cannot_be_skipped(self):
+        pending_ap = {
+            "requiresAccessPointMountReview": True,
+            "approved": False, "persistenceAllowed": False,
+        }
+        with self.assertRaisesRegex(ValueError, "Access Point"):
+            confirm_detached_import_review(
+                pending_ap, replacement_confirmed=True
+            )
+        pending_legacy = prepare_detached_import_review(fixture())
+        pending_legacy["requiresLegacyMountReview"] = True
+        with self.assertRaisesRegex(ValueError, "Legacy mounting"):
+            confirm_detached_import_review(
+                pending_legacy, replacement_confirmed=True
+            )
+        self.assertIs(
+            confirm_detached_import_review(
+                pending_legacy, legacy_mount_approved=True,
+                replacement_confirmed=True,
+            ),
+            pending_legacy["candidate"],
+        )
+        self.assertFalse(pending_legacy["persistenceAllowed"])
+
+    def test_confirmation_rejects_missing_candidate(self):
+        with self.assertRaisesRegex(ValueError, "validated import candidate"):
+            confirm_detached_import_review(
+                {"approved": True, "persistenceAllowed": True},
+                replacement_confirmed=True,
+            )
+
     def test_normal_published_export_preserves_custom_inventory_fields(self):
         source = fixture()
         source["devices"][0]["assetTag"] = "ASSET-204"
