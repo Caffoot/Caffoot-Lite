@@ -16,7 +16,15 @@ Replace the example IP with your own. For an HTTPS reverse proxy, use the **exte
 
 Run `docker compose up --build -d`, then open `CAFFOOT_WEB_ADDRESS` in the browser. The development server currently provides only API endpoints, not a user interface. The health endpoint for direct access is `https://<server-address>:<published-port>/health`. The published port can be changed with `CAFFOOT_PORT`; the container always listens internally on port 8080. Include the published port in the browser address for direct access unless it is 443. For a reverse proxy, use the external HTTPS domain in `CAFFOOT_WEB_ADDRESS`, the application server IP/hostname in `CAFFOOT_SERVER_ADDRESS`, and the published host port in `CAFFOOT_PORT`. A self-signed certificate is generated once and stored under the persistent `/data/tls` volume path. A browser will not automatically trust it; verify the certificate identity/fingerprint out of band and establish trust before using real credentials. For a reverse proxy, configure HTTPS to the upstream and verify its certificate through an explicitly managed trust policy; do not assume plain HTTP upstream is supported.
 
-The container's own HTTPS health check is a local liveness probe and does not establish external certificate trust. Do not delete the named data volume if retaining inventory or certificate identity. Full deployment testing and certificate lifecycle documentation remain outstanding.
+To inspect the certificate fingerprint after startup, run this from the directory containing `compose.yaml`:
+
+```sh
+docker compose exec caffoot-next openssl x509 -in /data/tls/server.crt -noout -fingerprint -sha256 -subject -dates -ext subjectAltName
+```
+
+Compare the SHA-256 fingerprint against a separately trusted copy before trusting the certificate in your browser or reverse proxy. The certificate's Subject Alternative Name must include the IP address or hostname used to reach the Caffoot server. If you change `CAFFOOT_SERVER_ADDRESS` after first startup, the existing persisted certificate is **not** silently regenerated; inspect its identities and explicitly plan a safe replacement if required. Keep the private key private. A self-signed certificate is not publicly trusted merely because the application generated it.
+
+The container's own HTTPS health check is a local liveness probe and does not establish external certificate trust. Do not delete the named data volume if retaining inventory or certificate identity. The Docker Compose lifecycle smoke test runs in GitHub Actions and verifies published port mapping, persisted certificate identity and SQLite data across restart and container recreation. The certificate is not automatically renewed; before expiry, plan a controlled certificate rotation and update client/proxy trust. Never delete the data volume as a certificate-rotation shortcut.
 
 ## Next gates
 
