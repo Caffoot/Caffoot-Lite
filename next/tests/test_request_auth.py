@@ -4,7 +4,7 @@ from backend.accounts import bootstrap_first_admin, confirm_admin_mfa
 from backend.http_security import COOKIE_NAME
 from backend.mfa import code_at
 from backend.request_auth import (
-    login, csrf_for_session, authenticated_account, authorised_mutation, logout,
+    login, csrf_for_session, authenticated_account, authorised_mutation, authorised_inventory_import, logout,
 )
 from backend.schema import initialise_database
 
@@ -25,6 +25,27 @@ class RequestAuthenticationTests(unittest.TestCase):
 
     def tearDown(self):
         self.db.close()
+
+
+    def test_import_requires_authenticated_session_origin_and_csrf(self):
+        authorise = lambda cookie, origin, proof, now=60: authorised_inventory_import(
+            self.db, cookie, origin, ORIGIN, proof, now=now
+        )
+        self.assertEqual(authorise(self.cookie, ORIGIN, self.csrf), self.admin)
+        self.assertIsNone(authorise("", ORIGIN, self.csrf))
+        self.assertIsNone(authorise(self.cookie, "https://other.example", self.csrf))
+        self.assertIsNone(authorise(self.cookie, ORIGIN, "0" * 64))
+        self.assertIsNone(authorise(self.cookie, ORIGIN, self.csrf, now=50000))
+
+    def test_import_denied_after_account_deactivation(self):
+        self.assertEqual(authorised_inventory_import(
+            self.db, self.cookie, ORIGIN, ORIGIN, self.csrf, now=60
+        ), self.admin)
+        self.db.execute("UPDATE accounts SET active=0 WHERE id=?", (self.admin,))
+        self.db.commit()
+        self.assertIsNone(authorised_inventory_import(
+            self.db, self.cookie, ORIGIN, ORIGIN, self.csrf, now=60
+        ))
 
     def test_session_bound_identity_and_mutation(self):
         self.assertEqual(authenticated_account(self.db, self.cookie, now=60), self.admin)
