@@ -85,7 +85,14 @@ class ImportDrafts:
                 allowed_origin, csrf_header, legacy_mount_approved=False,
                 replacement_confirmed=False, now=None):
         """Consume the draft once; recheck auth and inventory under write lock."""
+        from backend.request_auth import authorised_inventory_import
         with self._lock:
+            # Reject invalid CSRF and revoked permissions before consuming a draft.
+            if authorised_inventory_import(
+                connection, cookie_header, origin, allowed_origin,
+                csrf_header, now=now
+            ) is None:
+                raise PermissionError("Authenticated import access required")
             draft = self._get(draft_id, cookie_header)
             if not draft["ready"]:
                 raise ValueError("Access Point mounting review is required")
