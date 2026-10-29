@@ -22,6 +22,22 @@ class ImportBoundaryTests(unittest.TestCase):
     def tearDown(self):
         self.db.close()
 
+    def test_permission_recheck_runs_under_write_lock_before_any_deletion(self):
+        good = inspect_export(json.dumps(fixture()).encode())
+        stage_inventory(self.db, good)
+        before = reconstruct_inventory(self.db)
+        observed = []
+
+        def revoked(connection):
+            observed.append(connection.in_transaction)
+            raise PermissionError("permission revoked")
+
+        with self.assertRaisesRegex(PermissionError, "permission revoked"):
+            stage_inventory(self.db, good, pre_write_check=revoked)
+        self.assertEqual(observed, [True])
+        self.assertEqual(reconstruct_inventory(self.db), before)
+        self.assertFalse(self.db.in_transaction)
+
     def test_failed_second_import_preserves_all_collections_and_settings(self):
         good = inspect_export(json.dumps(fixture()).encode())
         stage_inventory(self.db, good)
