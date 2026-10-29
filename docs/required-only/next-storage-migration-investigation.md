@@ -406,3 +406,82 @@ A device save may change the device record, device/IPAM allocation and multiple 
 **Concrete preservation cases:** rack-mounted physical server with front-face U14–15 and a reserved primary IP; vertical PDU/cable accessory side-rail records plus a normal blank panel; active/retired VM records and host/platform history; assigned and released IPAM allocations; extensive `typeDetails` boolean software/service keys; `hardwareSeedPreferences` overlay entries. Preserve the exact original bytes as a comparison fixture, and compare Next's normalised inventory projection to the v1.3.3 accepted state rather than imposing a new field whitelist.
 
 **Remaining gates:** (1) review and explicitly approve minimal SQLite physical schema/backend contract and security/edit-reservation implementation details under #215; (2) execute the genuine fixture import and round-trip/behavioural checks once implementation is authorised and exists; (3) retain targeted acceptance cases for custom installed-software/server-function catalogue entries, bulk actions, and other features absent from this one fixture; (4) obtain explicit product-owner approval before writing code. No implementation, DDL freeze, tests or new features are authorised by receipt of the fixture.
+
+
+## Consolidated implementation-ready architecture proposal — REVIEW / APPROVAL GATE (2026-10-29)
+
+**Authority:** issue #215 and published v1.3.3. This is one proposed technical contract, not a new product specification, final DDL, permission to implement or permission to alter inventory UX. Where source behaviour is uncertain, preserve v1.3.3 outcomes and resolve with targeted tests rather than inventing changes.
+
+### 1. Deployment and authority
+
+- One small Docker application/backend serving the existing v1.3.3 UI assets, with persistent SQLite database on a mounted volume; straightforward Compose and Portainer stack instructions, suitable for Pi 5 (8 GB). No Redis, broker, distributed cache, cloud dependency, second inventory store or speculative services.
+- Serve the UI and API from one origin where practicable; browser holds only session/presentation state, not authoritative inventory. Backend checks authorisation and data validity for every mutation; browser checks remain for the familiar interactive experience.
+- Initialise database schema through ordered, transactional migrations on startup. A failed migration must stop startup safely, not overwrite inventory. Do not introduce an application-managed backup UI; document external container/volume/database-consistent backup and restore.
+- SQLite foreign-key enforcement, busy timeout and short write transactions; avoid long transactions across user confirmation or editing. Enable WAL only when compatible with the deployment filesystem and backup procedure. A corrupt/unreadable DB must not trigger empty-state replacement.
+
+### 2. Proposed physical data ownership (exact DDL deferred to code review)
+
+| Authority | Minimal persisted representation | Compatibility projection / safeguard |
+| --- | --- | --- |
+| Device identity and attributes | `devices(id, name, type, mount_type, location, status, manufacturer, model, serial_number, notes, virtual_host_id, is_virtual, revision, extra_json)`; `extra_json` includes `typeDetails` and all supported unpromoted device/historical properties | Preserve stable IDs, nested arrays/order, top-level legacy detail keys, unknown supported properties and optional-field presence; never replace whole device with form-only fields. Device `subnetId` is **not** a proven persisted field. |
+| Address blocks | `subnets` with stable IDs, hierarchy, CIDR, gateway/VLAN and retained extra fields; `vlans` with stable IDs, parent scope, number and extra fields | Preserve hierarchical constraints, parent-scoped VLAN semantics, existing flat legacy records and order where observable. |
+| IPAM | `ip_allocations` keyed by IP, with status, owner device ID, reserved-for ID, hostname, notes and extra fields; a single canonical current device-primary-IP association is derived from owner/status | Project `primaryIp` and `ipReserved` into v1.3.3 device shape. Preserve released address metadata; independently reserved IPs and reserved-for links must not be collapsed into device ownership. Define explicit read projection for imported sparse/legacy records and validate round-trip against the fixture before locking DDL. |
+| Racks | `racks` with stable ID, dimensions/location/type and extra fields; `device_rack_placements` one row per currently placed device; `rack_accessories` with stable ID, rack/face/side/U fields and extra fields | Project `rackId`, `face`, `rackUStart`, `rackUEnd`, `rackUHeight` into familiar device shape. Keep vertical PDU/cable side-rail rules distinct from normal rack U occupancy. |
+| Managed options | Small `inventory_settings` keys for optional singleton values and ordered catalogue collections, or dedicated narrow catalogue tables where relationships demand them | Preserve `deviceTypes`, `deviceTypeGraphics`, `deviceLocations`, `serverFunctions`, `installedSoftware`, `managedOptionsCleared`, `hardwareCatalogue`, `hardwareSeedPreferences`, `softwareTypeExclusions`; preserve order, stable keys, archive flags, and missing-vs-present semantics. No full-inventory JSON authority. |
+| Change History | `change_history` records with timestamp, reason, changes, omitted count and retention limit | Preserve familiar view and independent history export; limit to 200 events / 60 changes per event. No claim that old browser history is part of the inventory JSON. |
+| Accounts/security | `users`, credentials, MFA enrolment material and per-section role/grant records; schema separated from inventory | Import must not replace, reset or modify accounts, MFA or grants. |
+| Edit leases | `device_edit_reservations(device_id, user_id, token_hash_or_id, expires_at, base_revision)` or equivalent | Backend-enforced exclusivity across Devices/IPAM/Racks; read-only views never lock. |
+
+**Schema discipline:** retain source-record ordering wherever v1.3.3 makes it visible; store JSON only for variable per-record details and small configuration values, not a second whole-inventory snapshot. Promote fields to columns only when needed for constraints/joins. Use explicit projection adapters to return v1.3.3-shaped records to the existing UI. Foreign keys must not reject historical records that v1.3.3 accepts: investigate each optional/orphan relationship and preserve compatible validation/repair outcomes instead of silently deleting data.
+
+### 3. Backend contract and transaction boundaries
+
+- Read: one consistent inventory projection for Devices, IPAM, Racks and Settings; section-scoped reads may optimise later without changing existing UI behaviour. Read errors are visible failures, never silent defaults.
+- Writes: thin backend commands matching **existing** user actions (device create/edit/delete and guest choices; subnet/VLAN edits; IPAM assign/release/reserve and bulk changes; rack/accessory edits; catalogue changes; inventory import). Avoid generic unrestricted row-update APIs.
+- Each write authenticates the session, checks the effective section permission and MFA requirement, validates the current authoritative database state, applies all affected device/IPAM/rack/guest/catalogue mutations and Change History atomically, and returns the updated familiar projection. Failed validation, conflict, timeout or DB write rolls back everything.
+- Device edits: require valid lease plus matching device revision; perform cross-section validation in the same write transaction. Any direct IPAM or rack operation that changes a device's primary IP or placement must respect the same device lease and stale-write rules, even if invoked from another screen. Non-device operations should not need a gratuitous device lease when they do not touch a device.
+- User confirmations and review/correction steps happen **before** opening the write transaction. At commit, recheck revisions, lease, ownership, conflicts and permissions to prevent time-of-check/time-of-use races.
+- Use ordinary HTTP success/error responses mapped to existing v1.3.3 user-visible outcomes. Auth failures, stale revision, locked device and DB failure need clear necessary new messaging, but no redesign of existing inventory forms.
+
+### 4. First-admin, RBAC, MFA and sessions — proposed minimum
+
+- First-run bootstrap is allowed only while **no account exists**. Installer chooses username/password; bootstrap atomically creates the first administrator in a pending-MFA state. Inventory access remains blocked until mandatory MFA enrolment is completed. No seeded account, public registration or reusable bootstrap path.
+- Passwords stored using a contemporary salted password-hashing scheme; server-side session cookies marked HttpOnly, Secure where HTTPS is used, and SameSite; anti-CSRF protection for state-changing requests. Never store plaintext password, session secrets or MFA seeds in inventory exports or logs. Deployment guidance must explain HTTPS for non-local access.
+- Admin can create users, grant/revoke per-section Devices/IPAM/Racks read/edit access and change passwords under approved rules. Default new-user grants: none. Admins and any user with effective edit rights must complete MFA; read-only MFA remains optional. No additional roles/features beyond #215.
+- Enforce self-protection and last-active-admin invariants in the backend transaction for deletion, disable and demotion; never rely on disabled buttons alone. Recheck grants on every write; revoke access on session-sensitive changes.
+- MFA implementation choice (e.g. authenticator-app TOTP, enrolment/recovery details) and session lifetimes remain **technical security decisions to review**, not invented product requirements. Keep the design proportionate to a small self-hosted application.
+
+### 5. Device edit reservation — proposed minimum
+
+- On Edit: authenticate/authorise; atomically acquire lease only if none active for that device; return opaque token, device revision and expiry. Same user in a second tab is not automatically the lease holder without its token.
+- On Save: check current lease ownership/token/expiry and base revision inside the write transaction; apply changes and increment revision; release lease only after successful commit. On Cancel: release the matching lease. Abandoned leases expire server-side; no perpetual locks.
+- Choose a short, bounded expiry and lightweight renewal **only while an edit form remains active**, avoiding premature loss during normal editing; exact duration is an implementation parameter to validate, not a new user-facing feature.
+- Competing IP/rack edits must fail safely. Editing a different device remains possible; viewing never takes a lease. Authentication expiry or permission revocation prevents save even if a lease record still exists.
+
+### 6. One-way v1.3.3 import and migration acceptance
+
+- Accept only a supported **fresh v1.3.3 export** with valid `caffootBackup` metadata; metadata can establish expected format/version but is not cryptographic proof of source. Enforce published file-size/unsafe-key/shape checks and familiar Access Point mounting review, legacy correction, integrity validation, preview, final confirmation and cancellation order where applicable.
+- Build a detached candidate inventory, normalise with source-compatible semantics, then validate all references, uniqueness, IPAM status, rack collisions and existing safeguards. Do not silently drop historical/optional fields. Import replaces **inventory only** in one database transaction; preserve accounts, MFA and grants. Failure/cancel leaves previous inventory intact.
+- The confirmed 2026-10-29 v1.3.3 export is the primary acceptance fixture (fingerprint recorded above). Verify imported counts, IDs, exact optional/historical values, released IPAM metadata, rack side rails, software/service selections and managed preferences; compare **normalised** exported source state against backend v1.3.3 projection. A successful JSON parse alone is not acceptance.
+- Run targeted additional cases for custom installed software/server services, archive/restore, catalogue rename/delete, bulk IPAM, subnet/VLAN hierarchy, guest reassignment/cancel, conflicting rack/IP assignments, orphan/repair rules, failed transactions and concurrent edit leases. Do not fabricate a pass result; these are future tests.
+- No direct older HTML backup import, reverse export, browser safety snapshot/recovery flow or ongoing application JSON backup system.
+
+### 7. Efficient authorised implementation sequence — proposed
+
+1. **Foundation:** minimal Docker/Portainer packaging, SQLite startup/migrations, backend health/error handling and serving existing UI without redesign. Verify Pi deployment.
+2. **Inventory projection and import:** physical schema plus source-compatible projection, inventory-only atomic v1.3.3 import, real fixture checks and negative/rollback cases.
+3. **Existing inventory operations:** migrate device/IPAM/rack/catalogue/history writes in batches by atomic relationship; preserve existing screens and validate with published regression evidence.
+4. **Accounts and access:** bootstrap, MFA, user management and section grants; test no-access defaults and admin safeguards. No deployment release before security controls are complete.
+5. **Concurrent editing and integration:** leases/revisions across Devices/IPAM/Racks, two-user conflict tests, complete compatibility regression and small-hardware smoke checks.
+6. **Release gate:** simple documented installation, external backup/restore instructions, passing agreed acceptance matrix, explicit approval for any unavoidable visible deviation, product-owner release approval.
+
+Sequence is **not** permission to publish an insecure intermediate application: development checkpoints may be private; release requires all #215 safeguards.
+
+### 8. Decisions and evidence still needed before first code
+
+- Product owner reviews this single consolidated technical proposal and explicitly authorises implementation; #215 remains sole product specification.
+- Engineering review confirms precise DDL/projection choices, security/MFA/session specifics, and lease expiry/renewal. These are implementation-level choices, not reasons to reopen existing inventory functionality.
+- Actual v1.3.3 fixture is available in this conversation; its bytes are not committed to GitHub. Make it available to the future implementation/test environment through an approved, non-sensitive fixture handoff; do not invent a GitHub fixture path.
+- Existing historical tests and findings must be reconciled against published fixes during implementation; unexecuted fixture and concurrency tests remain **pending**, not passed.
+
+**Approval status:** PROPOSAL ONLY. No code, DDL, tests, deployment or new document created by this planning batch.
