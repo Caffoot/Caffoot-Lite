@@ -96,7 +96,7 @@ class StagingTests(unittest.TestCase):
             inspect_export(json.dumps(data).encode())
 
     def test_reject_non_object_root(self):
-        with self.assertRaisesRegex(ImportRejected, "JSON object"):
+        with self.assertRaisesRegex(ImportRejected, "Expected inventory object"):
             inspect_export(b"[]")
 
     def test_published_structure_rejects_missing_subnets(self):
