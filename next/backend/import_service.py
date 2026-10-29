@@ -33,5 +33,14 @@ def replace_from_published_export(connection, raw_bytes, *,
     )
     # The transaction either replaces all inventory or rolls it all back.
     # Account, permission, session and history tables are never touched.
-    stage_inventory(connection, candidate)
+    # Recheck identity and permissions after acquiring SQLite's write lock;
+    # a concurrent administrator may have revoked access during review.
+    def require_current_permission(locked_connection):
+        if authorised_inventory_import(
+            locked_connection, cookie_header, origin, allowed_origin,
+            csrf_header, now=now
+        ) is None:
+            raise PermissionError('Inventory import permission was revoked')
+
+    stage_inventory(connection, candidate, pre_write_check=require_current_permission)
     return True
