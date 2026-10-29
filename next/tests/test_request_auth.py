@@ -94,7 +94,9 @@ class RequestAuthenticationTests(unittest.TestCase):
             "app": "Caffoot Lite", "appVersion": "1.3.3",
             "exportedAt": "2026-10-29T12:00:00Z",
         }
-        source["devices"][0]["primaryIp"] = "10.0.0.99"
+        # The published normalisation pipeline repairs missing IPAM links.
+        # An address outside every configured subnet is genuinely invalid.
+        source["devices"][0]["primaryIp"] = "192.0.2.99"
         with self.assertRaises(ValueError):
             replace_from_published_export(
                 self.db, json.dumps(source).encode(),
