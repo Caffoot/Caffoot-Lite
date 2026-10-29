@@ -139,6 +139,38 @@ class StagingTests(unittest.TestCase):
         data["vlans"] = [{"id": "v"}] * 50001
         self.assertEqual(len(inspect_export(json.dumps(data).encode())["vlans"]), 50001)
 
+    def test_staging_never_changes_accounts_permissions_or_sessions(self):
+        self.db.execute(
+            "INSERT INTO accounts(username,password_hash,is_admin,mfa_secret,mfa_confirmed) "
+            "VALUES('owner','hashed',1,'mfa-secret',1)"
+        )
+        account_id = self.db.execute(
+            "SELECT id FROM accounts WHERE username='owner'"
+        ).fetchone()[0]
+        self.db.execute(
+            "INSERT INTO account_permissions(account_id,section,level) VALUES(?, 'Devices', 'edit')",
+            (account_id,),
+        )
+        self.db.execute(
+            "INSERT INTO account_sessions(token_hash,account_id,expires_at,created_at) "
+            "VALUES('session-hash',?,9999999999,1)", (account_id,),
+        )
+        self.db.commit()
+        def snapshot():
+            return (
+                self.db.execute("SELECT * FROM accounts").fetchall(),
+                self.db.execute("SELECT * FROM account_permissions").fetchall(),
+                self.db.execute("SELECT * FROM account_sessions").fetchall(),
+            )
+        before = snapshot()
+        stage_inventory(self.db, inspect_export(json.dumps(fixture()).encode()))
+        self.assertEqual(snapshot(), before)
+        invalid = fixture()
+        invalid["devices"].append({"id": "d1", "name": "duplicate"})
+        with self.assertRaises(sqlite3.IntegrityError):
+            stage_inventory(self.db, invalid)
+        self.assertEqual(snapshot(), before)
+
     def test_rollback_preserves_prior_inventory(self):
         data = inspect_export(json.dumps(fixture()).encode())
         stage_inventory(self.db, data)
