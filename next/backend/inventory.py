@@ -43,6 +43,19 @@ def _check_keys(value):
             _check_keys(child)
 
 
+def _unique_object(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ImportRejected("Duplicate JSON key")
+        result[key] = value
+    return result
+
+
+def _reject_nonfinite(value):
+    raise ImportRejected("Non-finite JSON number")
+
+
 def inspect_export(raw: bytes):
     """Reject obviously incompatible inputs before detached validation.
 
@@ -51,7 +64,7 @@ def inspect_export(raw: bytes):
     if len(raw) > MAX_BYTES:
         raise ImportRejected("Export exceeds 10 MiB")
     try:
-        data = json.loads(raw)
+        data = json.loads(\n            raw, object_pairs_hook=_unique_object, parse_constant=_reject_nonfinite\n        )
     except (UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise ImportRejected("Invalid JSON export") from exc
     if not isinstance(data, dict):
