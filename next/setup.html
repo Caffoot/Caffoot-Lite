@@ -18,7 +18,7 @@ button:disabled{opacity:.5}button.secondary{background:#475569}button.small{widt
 <label for="password">Password</label><input id="password" type="password" autocomplete="current-password" required></div>
 <div id="enrolment" hidden><p>Add this secret to your authenticator app, then enter its six-digit code to finish setup.</p><p id="secret"></p></div>
 <div id="code-field" hidden><label for="code">Authenticator code</label><input id="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6"></div>
-<p id="message" role="alert"></p><button id="submit" type="submit">Continue</button></form><section id="signed-in" hidden><p id="signed-in-message"></p><section class="panel"><h2>Change password</h2><form id="change-password"><label for="current-password">Current password</label><input id="current-password" type="password" autocomplete="current-password" required><label for="new-password">New password</label><input id="new-password" type="password" autocomplete="new-password" required><button type="submit">Change password</button></form></section><section id="account-panel" class="panel" hidden><h2>Users</h2><form id="create-user"><label for="new-username">Username</label><input id="new-username" required maxlength="256"><label for="initial-password">Initial password</label><input id="initial-password" type="password" required><button type="submit">Create user</button></form><div id="users-table"></div></section><p id="account-message" role="status"></p><button id="sign-out" class="secondary" type="button">Sign out</button></section>
+<p id="message" role="alert"></p><button id="submit" type="submit">Continue</button></form><section id="signed-in" hidden><p id="signed-in-message"></p><section id="mfa-panel" class="panel" hidden><h2>Authenticator setup</h2><p>Enrol an authenticator before receiving editing or administrator access.</p><form id="start-mfa"><label for="mfa-password">Your password</label><input id="mfa-password" type="password" autocomplete="current-password" required><button type="submit">Start MFA enrolment</button></form><form id="confirm-mfa" hidden><p>Add this secret to your authenticator app:</p><p id="user-mfa-secret"></p><label for="user-mfa-code">Six-digit authenticator code</label><input id="user-mfa-code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required><button type="submit">Confirm MFA</button></form></section><section class="panel"><h2>Change password</h2><form id="change-password"><label for="current-password">Current password</label><input id="current-password" type="password" autocomplete="current-password" required><label for="new-password">New password</label><input id="new-password" type="password" autocomplete="new-password" required><button type="submit">Change password</button></form></section><section id="account-panel" class="panel" hidden><h2>Users</h2><form id="create-user"><label for="new-username">Username</label><input id="new-username" required maxlength="256"><label for="initial-password">Initial password</label><input id="initial-password" type="password" required><button type="submit">Create user</button></form><div id="users-table"></div></section><p id="account-message" role="status"></p><button id="sign-out" class="secondary" type="button">Sign out</button></section>
 </main><script>
 'use strict';
 const $=id=>document.getElementById(id);
@@ -33,6 +33,7 @@ async function showSession(){
  $('intro').textContent='Signed in';
  $('signed-in-message').textContent='Signed in as '+session.username+'. The inventory interface is being connected to the central database.';
  $('account-panel').hidden=!session.is_admin;
+ $('mfa-panel').hidden=!!session.mfa_enrolled;
  if(session.is_admin)await loadUsers();
  return true;
 }
@@ -72,6 +73,19 @@ $('form').addEventListener('submit',async e=>{
  finally{$('submit').disabled=false}
 });
 
+$('start-mfa').addEventListener('submit',async event=>{
+ event.preventDefault();try{
+  const result=await request('/api/account/mfa/start',{password:$('mfa-password').value});
+  $('user-mfa-secret').textContent=result.mfaSecret;$('start-mfa').hidden=true;$('confirm-mfa').hidden=false;
+ }catch(error){$('account-message').textContent=error.message}
+});
+$('confirm-mfa').addEventListener('submit',async event=>{
+ event.preventDefault();try{
+  await request('/api/account/mfa/confirm',{code:$('user-mfa-code').value});
+  csrfToken='';signedInUser='';$('signed-in').hidden=true;mode='login';display();
+  $('message').textContent='MFA enrolled. Sign in with your authenticator code.';
+ }catch(error){$('account-message').textContent=error.message}
+});
 async function loadUsers(){
  const r=await fetch('/api/users');if(!r.ok)throw Error('Unable to load users');
  const data=await r.json();const host=$('users-table');host.replaceChildren();
