@@ -16,7 +16,8 @@ from .import_drafts import ImportDrafts
 from .request_auth import authenticated_account, csrf_for_session
 from .http_security import read_session_cookie, session_cookie, clear_session_cookie
 from .request_auth import login, logout
-from .permissions import can_access, create_user, set_permission
+from .permissions import (can_access, create_user, set_permission,
+                          set_account_active, set_administrator, delete_user)
 from .request_auth import authorised_mutation
 from .http_security import require_same_origin
 from .tls import ensure_certificate
@@ -222,7 +223,8 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(404, {"error": "not found"})
 
     def do_POST(self):
-        if self.path in ("/api/users/create", "/api/users/permission", "/api/account/password"):
+        if self.path in ("/api/users/create", "/api/users/permission", "/api/users/active",
+                         "/api/users/admin", "/api/users/delete", "/api/account/password"):
             self.handle_user_mutation()
             return
         if self.path in IMPORT_ROUTES:
@@ -362,11 +364,31 @@ class Handler(BaseHTTPRequestHandler):
                         raise ValueError("Username and password required")
                     user_id = create_user(connection, actor, payload["username"], payload["password"])
                     result = {"id": user_id}
-                else:
+                elif self.path == "/api/users/permission":
                     if set(payload) != {"userId", "section", "level"} or type(payload["userId"]) is not int:
                         raise ValueError("Invalid permission request")
                     set_permission(connection, actor, payload["userId"], payload["section"], payload["level"])
                     result = {"status": "updated"}
+                else:
+                    if type(payload.get("userId")) is not int:
+                        raise ValueError("Invalid user identifier")
+                    if self.path == "/api/users/delete":
+                        if set(payload) != {"userId"}:
+                            raise ValueError("Invalid delete request")
+                        delete_user(connection, actor, payload["userId"])
+                        result = {"status": "deleted"}
+                    elif self.path == "/api/users/active":
+                        if set(payload) != {"userId", "active"}:
+                            raise ValueError("Invalid account status request")
+                        set_account_active(connection, actor, payload["userId"], payload["active"])
+                        result = {"status": "updated"}
+                    elif self.path == "/api/users/admin":
+                        if set(payload) != {"userId", "isAdmin"}:
+                            raise ValueError("Invalid administrator request")
+                        set_administrator(connection, actor, payload["userId"], payload["isAdmin"])
+                        result = {"status": "updated"}
+                    else:
+                        raise ValueError("Unknown account operation")
         except PermissionError:
             self.respond(403, {"error": "forbidden"})
             return
