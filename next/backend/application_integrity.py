@@ -4,7 +4,7 @@ Returns diagnostics in the exact source stage order. This is not an import
 approval or persistence API.
 """
 from backend.inventory import RECOGNISED_MOUNTS
-from backend.ipam_validation import inspect_ipam_integrity
+from backend.ipam_validation import ip_belongs_to_subnet
 from backend.normalisation_pipeline import _valid_supported_cidr
 from backend.normalisation_validation import _number, _valid_ipv4
 from backend.subnet_validation import validate_subnet_hierarchy, validate_subnet_types
@@ -18,7 +18,7 @@ def validate_detached_application_state(candidate):
     racks = candidate["racks"]
     errors.extend(validate_subnet_hierarchy(subnets))
     errors.extend(validate_subnet_types(subnets))
-    subnet_ids, vlan_numbers, device_ids = set(), set(), set()
+    subnet_ids, vlan_numbers, device_ids, primary_ips = set(), set(), set(), set()
 
     for subnet in subnets:
         identifier = subnet.get("id")
@@ -30,11 +30,7 @@ def validate_detached_application_state(candidate):
         if not _valid_supported_cidr(subnet.get("cidr")):
             errors.append(f"Invalid subnet CIDR: {subnet.get('cidr')}")
         if (not _valid_ipv4(subnet.get("gateway")) or
-                not any(
-                    __import__("backend.ipam_validation", fromlist=["ip_belongs_to_subnet"])
-                    .ip_belongs_to_subnet(subnet.get("gateway"), subnet.get("cidr"))
-                    for _ in (0,)
-                )):
+                not ip_belongs_to_subnet(subnet.get("gateway"), subnet.get("cidr"))):
             errors.append(
                 f"Invalid gateway for subnet {subnet.get('name') or subnet.get('cidr')}."
             )
@@ -63,6 +59,19 @@ def validate_detached_application_state(candidate):
             )
         if device.get("location") == "Blank":
             errors.append(f"Device {name} still uses the retired Blank location.")
+        ip = device.get("primaryIp")
+        if ip:
+            if ip in primary_ips:
+                errors.append(f"Duplicate primary IP: {ip}.")
+            primary_ips.add(ip)
+            if not any(ip_belongs_to_subnet(ip, s.get("cidr")) for s in subnets):
+                errors.append(f"Primary IP {ip} on {name} has no subnet.")
+            allocation = candidate["ipAllocations"].get(ip)
+            expected = "Reserved" if device.get("ipReserved") else "Assigned"
+            if (not isinstance(allocation, dict) or
+                    allocation.get("deviceId") != identifier or
+                    allocation.get("status") != expected):
+                errors.append(f"IPAM is out of sync for {name} ({ip}).")
         if device.get("rackId"):
             rack = next((r for r in racks if r.get("id") == device["rackId"]), None)
             if rack is None:
@@ -74,8 +83,17 @@ def validate_detached_application_state(candidate):
                     _number(device.get("rackUHeight")) - 1):
                 errors.append(f"Rack U range is inconsistent for {name}.")
 
-    # Published source interleaves device IPAM checks with device/rack checks.
-    # Insert IPAM device diagnostics at the corresponding device position below
-    # in a later parity refinement; all findings are still surfaced here.
-    errors.extend(inspect_ipam_integrity(candidate))
+    by_id = {device.get("id"): device for device in devices}
+    for ip, allocation in candidate["ipAllocations"].items():
+        if not any(ip_belongs_to_subnet(ip, s.get("cidr")) for s in subnets):
+            errors.append(f"IPAM allocation {ip} is outside all configured subnets.")
+        linked = allocation.get("deviceId") if isinstance(allocation, dict) else None
+        if linked:
+            device = by_id.get(linked)
+            if device is None:
+                errors.append(f"IPAM allocation {ip} references a missing device.")
+            elif (device.get("primaryIp") != ip or
+                  allocation.get("status") !=
+                  ("Reserved" if device.get("ipReserved") else "Assigned")):
+                errors.append(f"IPAM/device mismatch for {ip}.")
     return errors
