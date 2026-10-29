@@ -89,6 +89,34 @@ class Handler(BaseHTTPRequestHandler):
                 configured = connection.execute("SELECT 1 FROM accounts LIMIT 1").fetchone() is not None
                 pending = connection.execute("SELECT 1 FROM accounts WHERE is_admin=1 AND mfa_confirmed=0 LIMIT 1").fetchone() is not None
             self.respond(200, {"setupRequired": not configured, "enrollmentPending": pending})
+        elif self.path == "/api/users":
+            with connect() as connection:
+                account_id = authenticated_account(connection, self.headers.get("Cookie"))
+                if account_id is None:
+                    self.respond(401, {"error": "unauthorised"})
+                    return
+                administrator = connection.execute(
+                    "SELECT is_admin,active,mfa_confirmed FROM accounts WHERE id=?",
+                    (account_id,),
+                ).fetchone()
+                if administrator != (1, 1, 1):
+                    self.respond(403, {"error": "forbidden"})
+                    return
+                users = []
+                for user_id, username, is_admin, active, mfa_confirmed in connection.execute(
+                    "SELECT id,username,is_admin,active,mfa_confirmed FROM accounts ORDER BY id"
+                ):
+                    permissions = {section: level for section, level in connection.execute(
+                        "SELECT section,level FROM account_permissions WHERE account_id=?",
+                        (user_id,),
+                    )}
+                    users.append({
+                        "id": user_id, "username": username,
+                        "isAdmin": bool(is_admin), "active": bool(active),
+                        "mfaEnrolled": bool(mfa_confirmed),
+                        "permissions": permissions,
+                    })
+                self.respond(200, {"users": users})
         elif self.path == "/api/inventory/sections":
             with connect() as connection:
                 account_id = authenticated_account(connection, self.headers.get("Cookie"))
