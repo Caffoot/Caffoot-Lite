@@ -205,6 +205,57 @@ class ImportBoundaryTests(unittest.TestCase):
                 before_security[table],
             )
 
+
+    def test_failed_reviewed_replacement_preserves_security_and_inventory(self):
+        """Late failure during reviewed staging leaves all existing data intact."""
+        from backend.import_review import prepare_published_export_review
+        from test_import_review import fixture as review_fixture
+
+        self.db.execute(
+            "INSERT INTO accounts(username,password_hash,is_admin,mfa_secret,mfa_confirmed) "
+            "VALUES('admin','hash',1,'secret',1)"
+        )
+        self.db.execute(
+            "INSERT INTO account_permissions(account_id,section,level) "
+            "VALUES(1,'IPAM','edit')"
+        )
+        self.db.execute(
+            "INSERT INTO account_sessions(token_hash,account_id,expires_at,created_at) "
+            "VALUES('session',1,9999999999,1)"
+        )
+        self.db.execute(
+            "INSERT INTO inventory_change_history(record_json) VALUES(?)",
+            (json.dumps({"reason": "existing change"}),),
+        )
+        self.db.commit()
+        stage_inventory(self.db, inspect_export(json.dumps(fixture()).encode()))
+        before_inventory = reconstruct_inventory(self.db)
+        protected = ("accounts", "account_permissions", "account_sessions",
+                     "inventory_change_history")
+        before_protected = {
+            table: self.db.execute("SELECT * FROM " + table).fetchall()
+            for table in protected
+        }
+        source = review_fixture()
+        source["caffootBackup"] = fixture()["caffootBackup"]
+        review = prepare_published_export_review(json.dumps(source).encode())
+        self.assertFalse(review["approved"])
+        self.assertFalse(review["persistenceAllowed"])
+        # Inject failure after inventory rows have begun replacing the old state.
+        self.db.execute("""
+            CREATE TRIGGER fail_reviewed_restore
+            BEFORE INSERT ON inventory_ip_allocations
+            BEGIN SELECT RAISE(ABORT, 'simulated disk failure'); END
+        """)
+        with self.assertRaisesRegex(sqlite3.IntegrityError, "simulated disk failure"):
+            stage_inventory(self.db, review["candidate"])
+        self.assertEqual(reconstruct_inventory(self.db), before_inventory)
+        for table in protected:
+            self.assertEqual(
+                self.db.execute("SELECT * FROM " + table).fetchall(),
+                before_protected[table],
+            )
+
     def test_replacement_preview_counts_without_writing_inventory(self):
         current = fixture()
         candidate = copy.deepcopy(current)
