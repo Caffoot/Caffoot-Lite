@@ -5,11 +5,24 @@ UI confirmation must be verified before production use. A caller cannot bypass
 the published format gate by providing a prebuilt review or candidate.
 """
 import json
+import hashlib
+import hmac
 
 from backend.import_review import prepare_published_export_review
 from backend.inventory import (
     _write_detached, reconstruct_inventory, preview_inventory_counts,
 )
+
+
+class StaleRestorePreview(ValueError):
+    """Inventory changed after preview; re-review before replacement."""
+
+
+def inventory_preview_token(inventory):
+    """Stable digest for a detached inventory preview (not an auth token)."""
+    encoded = json.dumps(inventory, sort_keys=True, ensure_ascii=False,
+                         separators=(",", ":")).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
 
 
 class RestoreCancelled(ValueError):
@@ -30,7 +43,8 @@ def prepare_restore_confirmation(raw_bytes, *, access_point_choices=None,
 def restore_reviewed_export_offline(connection, raw_bytes, *,
                                     access_point_choices=None,
                                     legacy_mount_approved=False,
-                                    final_confirmed=False):
+                                    final_confirmed=False,
+                                    expected_inventory_token=None):
     """Isolated backend test path, NOT a live or authenticated import API.
 
     Revalidates raw bytes; never trusts a caller-provided candidate. The
@@ -51,6 +65,11 @@ def restore_reviewed_export_offline(connection, raw_bytes, *,
     connection.execute("BEGIN IMMEDIATE")
     try:
         current = reconstruct_inventory(connection)
+        if expected_inventory_token is not None and not hmac.compare_digest(
+                inventory_preview_token(current), expected_inventory_token):
+            raise StaleRestorePreview(
+                "Inventory changed since review; restore must be reviewed again."
+            )
         summary = preview_inventory_counts(candidate, current)
         snapshot = json.dumps(current, ensure_ascii=False, separators=(",", ":"))
         connection.execute(
