@@ -66,6 +66,16 @@ def initialise_database():
 
 class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
+        if self.path in ("/", "/setup"):
+            body = (Path(__file__).resolve().parent.parent / "setup.html").read_bytes()
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Length", str(len(body)))
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("X-Content-Type-Options", "nosniff")
+            self.end_headers()
+            self.wfile.write(body)
+            return
         if self.path == "/health":
             try:
                 with connect() as connection:
