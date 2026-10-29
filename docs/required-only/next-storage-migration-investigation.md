@@ -69,8 +69,25 @@ Evidence sources: [legacy backup compatibility matrix](testing--LEGACY-BACKUP-IM
 
 ## Product-owner scope clarification — 2026-10-29
 
-#215 was updated to require **v1.3.3-exported JSON only** for Next import. Older HTML users must upgrade to v1.3.3 first, verify inventory, and create a fresh export. Earlier paragraphs discussing older schema import are retained solely as historical source/evidence context, not Next acceptance requirements. Suggested notice for current documentation: “Moving to Caffoot Lite Next? Import is supported from JSON inventory backups exported by Caffoot Lite v1.3.3 only. If you use an earlier HTML version, upgrade to v1.3.3, check your inventory, then export a new JSON backup before migrating.” Published release assets/tags must not be modified retrospectively.
+#215 was updated to require **v1.3.3-exported JSON only** for Next import. Older HTML users must upgrade to v1.3.3 first, verify inventory, and create a fresh export. Earlier paragraphs discussing older schema import are retained solely as historical source/evidence context, not Next acceptance requirements. The current User Guide notice was merged to `main` through [PR #216](https://github.com/Caffoot/Caffoot-Lite/pull/216), then changed to the release-neutral wording “the next version of Caffoot Lite” through [PR #217](https://github.com/Caffoot/Caffoot-Lite/pull/217). Published release assets/tags were not modified.
 
 ## Verified v1.3.3 export identification — 2026-10-29
 
-Published v1.3.3 defines `CAFFOOT_BACKUP_FORMAT = 'caffoot-inventory'`, `CAFFOOT_BACKUP_SCHEMA_VERSION = 1` and `CAFFOOT_LITE_VERSION = '1.3.3'`. `createInventoryBackup(state)` deep-copies the current inventory and adds `caffootBackup: { format, schemaVersion, app: 'Caffoot Lite', appVersion, exportedAt }`. **Schema version 1 alone does not prove that a backup was exported by v1.3.3.** The approved Next import contract is a fresh v1.3.3 export, not arbitrary schema-v1 files. Implementation should validate the agreed export metadata and inventory integrity; do not claim this metadata is cryptographic proof of provenance. The documentation notice for existing users is proposed via [PR #216](https://github.com/Caffoot/Caffoot-Lite/pull/216), pending merge into `main`.
+Published v1.3.3 defines `CAFFOOT_BACKUP_FORMAT = 'caffoot-inventory'`, `CAFFOOT_BACKUP_SCHEMA_VERSION = 1` and `CAFFOOT_LITE_VERSION = '1.3.3'`. `createInventoryBackup(state)` deep-copies the current inventory and adds `caffootBackup: { format, schemaVersion, app: 'Caffoot Lite', appVersion, exportedAt }`. **Schema version 1 alone does not prove that a backup was exported by v1.3.3.** The approved Next import contract is a fresh v1.3.3 export, not arbitrary schema-v1 files. Implementation should validate the agreed export metadata and inventory integrity; do not claim this metadata is cryptographic proof of provenance. The documentation notice for existing users is merged in `main` (PRs #216 and #217).
+
+## Preliminary authoritative data boundaries — source and #215 alignment (2026-10-29)
+
+This is an **ownership map for review**, not database DDL, a new workflow, or approval to implement. Published v1.3.3 embeds cross-section fields within browser state; #215 requires one authoritative database owner and the same visible results.
+
+| Existing displayed/edited information | One authoritative owner in Next | Cross-section consequence |
+| --- | --- | --- |
+| Device identity, name, type, attributes, status, type-specific/historical fields, host/guest links | Devices | IPAM and Racks reference stable device IDs; existing edit-time identity restriction remains |
+| Subnets, VLAN domains, IP allocation status, reservation, assigned device and primary IP | IPAM | Device forms read and save through IPAM ownership; never store a second authoritative device primary IP |
+| Rack definition, device face/U placement, accessories and independent vertical side rails | Racks | Device forms read and save through Racks ownership; never store a second authoritative device rack placement |
+| Configured device types, managed options, service/software catalogue and exclusions | Shared inventory configuration, with one backend authority | Device forms derive the same available fields and labels; archive and assignment guards remain |
+| Change History events | Backend Change History | Preserve existing event semantics/limits and existing visible history; no new enterprise audit feature |
+| User credentials, MFA, roles and access grants | Separate authentication/authorisation data | Inventory import replaces **only inventory**; never touches accounts or grants |
+
+**Save boundary:** a device save may affect Devices, IPAM and Racks together. #215 requires the backend to validate the effective user's permissions, exclusive device edit reservation and revision, plus existing allocation/placement constraints, and commit all affected records in one SQLite transaction or none. A cross-section update must not be split into independent commits. Reading or editing another device remains possible subject to existing rules and approved RBAC.
+
+**Remaining source-verification gate:** enumerate exact save-path field writes and error/rollback outcomes for published `handleDeviceSubmit`, subnet/IP allocation handlers and rack/accessory handlers, and reconcile with retained tests before proposing physical tables or APIs. Do not derive a new data relationship from a field name alone.
