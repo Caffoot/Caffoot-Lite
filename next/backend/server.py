@@ -16,6 +16,7 @@ from .import_drafts import ImportDrafts
 from .request_auth import authenticated_account, csrf_for_session
 from .http_security import read_session_cookie, session_cookie, clear_session_cookie
 from .request_auth import login, logout
+from .permissions import can_access
 from .http_security import require_same_origin
 from .tls import ensure_certificate
 from .deployment_settings import validate_published_port
@@ -88,6 +89,32 @@ class Handler(BaseHTTPRequestHandler):
                 configured = connection.execute("SELECT 1 FROM accounts LIMIT 1").fetchone() is not None
                 pending = connection.execute("SELECT 1 FROM accounts WHERE is_admin=1 AND mfa_confirmed=0 LIMIT 1").fetchone() is not None
             self.respond(200, {"setupRequired": not configured, "enrollmentPending": pending})
+        elif self.path == "/api/inventory/sections":
+            with connect() as connection:
+                account_id = authenticated_account(connection, self.headers.get("Cookie"))
+                if account_id is None:
+                    self.respond(401, {"error": "unauthorised"})
+                    return
+                permissions = {}
+                for section in ("Devices", "IPAM", "Racks"):
+                    permissions[section] = {
+                        "read": can_access(connection, account_id, section),
+                        "edit": can_access(connection, account_id, section, edit=True),
+                    }
+                self.respond(200, {"sections": permissions})
+        elif self.path == "/api/inventory/devices":
+            with connect() as connection:
+                account_id = authenticated_account(connection, self.headers.get("Cookie"))
+                if account_id is None:
+                    self.respond(401, {"error": "unauthorised"})
+                    return
+                if not can_access(connection, account_id, "Devices"):
+                    self.respond(403, {"error": "forbidden"})
+                    return
+                devices = [json.loads(row[0]) for row in connection.execute(
+                    "SELECT record_json FROM inventory_devices ORDER BY ordinal"
+                )]
+                self.respond(200, {"devices": devices})
         elif self.path == "/api/session":
             with connect() as connection:
                 cookie = self.headers.get("Cookie")
