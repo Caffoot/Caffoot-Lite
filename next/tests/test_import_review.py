@@ -4,6 +4,7 @@ import json
 import unittest
 
 from backend.import_review import prepare_detached_import_review, prepare_published_export_review
+from backend.inventory import preview_inventory_counts
 
 
 def fixture():
@@ -50,6 +51,21 @@ class ImportReviewTests(unittest.TestCase):
         )
         self.assertFalse(review["approved"])
         self.assertFalse(review["persistenceAllowed"])
+
+    def test_restore_confirmation_counts_match_published_v133(self):
+        candidate = fixture()
+        current = fixture()
+        current["devices"].append({"id": "second", "name": "Second"})
+        current["racks"] = [{"id": "rack"}]
+        before = copy.deepcopy((candidate, current))
+        preview = preview_inventory_counts(candidate, current)
+        self.assertEqual(preview["backup"], {
+            "devices": 1, "racks": 0, "subnets": 1, "ipAllocations": 1,
+        })
+        self.assertEqual(preview["current"], {
+            "devices": 2, "racks": 1, "subnets": 1,
+        })
+        self.assertEqual((candidate, current), before)
 
     def test_published_export_gate_precedes_detached_review(self):
         source = fixture()
