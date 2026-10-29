@@ -1,0 +1,85 @@
+"""SQLite schema foundation for Caffoot Lite Next.
+
+These tables are internal only. No v1.3.3 inventory is imported or served yet.
+Record JSON is retained to preserve optional and historical fields during the
+later source-compatible projection work.
+"""
+import sqlite3
+
+SCHEMA_VERSION = 2
+
+DDL = """
+CREATE TABLE IF NOT EXISTS inventory_devices (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL COLLATE NOCASE UNIQUE,
+    record_json TEXT NOT NULL CHECK(json_valid(record_json)),
+    revision INTEGER NOT NULL DEFAULT 0 CHECK(revision >= 0),
+    ordinal INTEGER NOT NULL UNIQUE
+);
+CREATE TABLE IF NOT EXISTS inventory_subnets (
+    id TEXT PRIMARY KEY,
+    record_json TEXT NOT NULL CHECK(json_valid(record_json)),
+    ordinal INTEGER NOT NULL UNIQUE
+);
+CREATE TABLE IF NOT EXISTS inventory_vlans (
+    id TEXT PRIMARY KEY,
+    record_json TEXT NOT NULL CHECK(json_valid(record_json)),
+    ordinal INTEGER NOT NULL UNIQUE
+);
+CREATE TABLE IF NOT EXISTS inventory_racks (
+    id TEXT PRIMARY KEY,
+    record_json TEXT NOT NULL CHECK(json_valid(record_json)),
+    ordinal INTEGER NOT NULL UNIQUE
+);
+CREATE TABLE IF NOT EXISTS inventory_rack_accessories (
+    id TEXT PRIMARY KEY,
+    rack_id TEXT NOT NULL,
+    record_json TEXT NOT NULL CHECK(json_valid(record_json)),
+    ordinal INTEGER NOT NULL UNIQUE
+);
+CREATE INDEX IF NOT EXISTS idx_rack_accessories_rack
+    ON inventory_rack_accessories(rack_id);
+CREATE TABLE IF NOT EXISTS inventory_ip_allocations (
+    ip TEXT PRIMARY KEY,
+    record_json TEXT NOT NULL CHECK(json_valid(record_json))
+);
+CREATE TABLE IF NOT EXISTS inventory_settings (
+    key TEXT PRIMARY KEY,
+    value_json TEXT NOT NULL CHECK(json_valid(value_json))
+);
+CREATE TABLE IF NOT EXISTS inventory_change_history (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    record_json TEXT NOT NULL CHECK(json_valid(record_json))
+);
+"""
+
+def initialise_database(connection: sqlite3.Connection) -> None:
+    """Apply schema changes in one transaction; fail closed on newer versions."""
+    connection.execute("BEGIN IMMEDIATE")
+    try:
+        connection.execute("""
+            CREATE TABLE IF NOT EXISTS schema_migrations (
+                version INTEGER PRIMARY KEY,
+                applied_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        versions = {row[0] for row in connection.execute(
+            "SELECT version FROM schema_migrations"
+        )}
+        if versions and max(versions) > SCHEMA_VERSION:
+            raise RuntimeError("Database schema is newer than this application")
+        if 1 not in versions:
+            connection.execute(
+                "INSERT INTO schema_migrations (version) VALUES (1)"
+            )
+        if 2 not in versions:
+            for statement in DDL.split(";"):
+                if statement.strip():
+                    connection.execute(statement)
+            connection.execute(
+                "INSERT INTO schema_migrations (version) VALUES (2)"
+            )
+        connection.commit()
+    except BaseException:
+        connection.rollback()
+        raise
