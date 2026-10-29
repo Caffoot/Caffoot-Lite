@@ -123,6 +123,50 @@ def inspect_export(raw: bytes):
     return data
 
 
+def inspect_import_relationships(data):
+    """Read-only diagnostics for a subset of published integrity rules.
+
+    Not a substitute for normaliseState, hierarchy validation, mounting
+    review, rack conflicts or validateApplicationState. No write path uses it.
+    """
+    issues = []
+    for collection in ("devices", "subnets", "vlans"):
+        seen = set()
+        for record in data[collection]:
+            identifier = record.get("id")
+            if not identifier:
+                issues.append("Missing " + collection + " ID")
+            elif identifier in seen:
+                issues.append("Duplicate " + collection + " ID: " + str(identifier))
+            else:
+                seen.add(identifier)
+
+    device_ids = {d.get("id") for d in data["devices"]}
+    rack_ids = {r.get("id") for r in data["racks"]}
+    primary_ips = set()
+    for device in data["devices"]:
+        name = str(device.get("name") or "(unnamed)")
+        ip = device.get("primaryIp")
+        if ip:
+            if ip in primary_ips:
+                issues.append("Duplicate primary IP: " + str(ip))
+            primary_ips.add(ip)
+            allocation = data["ipAllocations"].get(ip)
+            status = "Reserved" if device.get("ipReserved") else "Assigned"
+            if (not isinstance(allocation, dict) or
+                    allocation.get("deviceId") != device.get("id") or
+                    allocation.get("status") != status):
+                issues.append("IPAM is out of sync for " + name + " (" + str(ip) + ")")
+        if device.get("rackId") and device["rackId"] not in rack_ids:
+            issues.append("Device " + name + " references a missing rack.")
+
+    for ip, allocation in data["ipAllocations"].items():
+        linked = allocation.get("deviceId")
+        if linked and linked not in device_ids:
+            issues.append("IPAM allocation " + ip + " references a missing device.")
+    return issues
+
+
 def preview_inventory_counts(candidate, current):
     """Detached counts for the published v1.3.3 replacement review.
 
