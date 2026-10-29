@@ -30,15 +30,15 @@ async function request(path,data){
 function display(){
  $('form').hidden=false;$('message').textContent='';
  $('enrolment').hidden=mode!=='enrol';
- $('code-field').hidden=mode==='setup';
- $('intro').textContent=mode==='setup'?'Create the first administrator account. MFA is required.':mode==='enrol'?'Complete administrator MFA enrolment.':'Sign in to Caffoot Lite.';
- $('submit').textContent=mode==='setup'?'Create administrator':mode==='enrol'?'Confirm MFA':'Sign in';
+ $('code-field').hidden=mode==='setup'||mode==='resume';
+ $('intro').textContent=mode==='setup'?'Create the first administrator account. MFA is required.':mode==='enrol'?'Complete administrator MFA enrolment.':mode==='resume'?'Sign in with your administrator credentials to resume MFA enrolment.':'Sign in to Caffoot Lite.';
+ $('submit').textContent=mode==='setup'?'Create administrator':mode==='enrol'?'Confirm MFA':mode==='resume'?'Continue enrolment':'Sign in';
  $('password').autocomplete=mode==='setup'?'new-password':'current-password';
- $('code').required=mode!=='setup';
+ $('code').required=mode==='enrol'||mode==='login';
 }
 (async()=>{try{
  const r=await fetch('/api/setup/status');if(!r.ok)throw Error('Unable to check setup');
- mode=(await r.json()).setupRequired?'setup':'login';display();
+ const status=await r.json();mode=status.setupRequired?'setup':status.enrollmentPending?'resume':'login';display();
 }catch(e){$('intro').textContent=e.message}})();
 $('form').addEventListener('submit',async e=>{
  e.preventDefault();$('submit').disabled=true;$('message').textContent='';
@@ -46,6 +46,8 @@ $('form').addEventListener('submit',async e=>{
  try{
  if(mode==='setup'){
    const r=await request('/api/setup',data);$('secret').textContent=r.mfaSecret;mode='enrol';display();
+ }else if(mode==='resume'){
+   const r=await request('/api/setup/mfa-secret',data);$('secret').textContent=r.mfaSecret;mode='enrol';display();
  }else if(mode==='enrol'){
    await request('/api/setup/mfa',{...data,mfa_code:$('code').value});mode='login';display();$('message').style.color='#166534';$('message').textContent='MFA enrolled. Sign in to continue.';
  }else{
