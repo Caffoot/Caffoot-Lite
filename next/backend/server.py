@@ -394,19 +394,28 @@ class Handler(BaseHTTPRequestHandler):
                     try:
                         connection.execute("DELETE FROM device_edit_reservations WHERE expires_at<=?", (now,))
                         if self.path.endswith("/start"):
-                            if connection.execute("SELECT 1 FROM inventory_devices WHERE id=?", (device_id,)).fetchone() is None:
+                            device = connection.execute("SELECT revision FROM inventory_devices WHERE id=?", (device_id,)).fetchone()
+                            if device is None:
                                 raise ValueError("Device not found")
                             existing = connection.execute(
                                 "SELECT account_id FROM device_edit_reservations WHERE device_id=?", (device_id,)
                             ).fetchone()
                             if existing and existing[0] != actor:
                                 raise ValueError("Device is being edited by another user")
+                            if existing:
+                                reservation_revision = connection.execute(
+                                    "SELECT base_revision FROM device_edit_reservations WHERE device_id=?",
+                                    (device_id,),
+                                ).fetchone()[0]
+                            else:
+                                reservation_revision = device[0]
                             connection.execute(
-                                "INSERT INTO device_edit_reservations(device_id,account_id,expires_at) VALUES(?,?,?) "
+                                "INSERT INTO device_edit_reservations(device_id,account_id,expires_at,base_revision) VALUES(?,?,?,?) "
                                 "ON CONFLICT(device_id) DO UPDATE SET expires_at=excluded.expires_at",
-                                (device_id, actor, now + 300),
+                                (device_id, actor, now + 300, reservation_revision),
                             )
-                            result = {"status": "reserved", "expiresAt": now + 300}
+                            result = {"status": "reserved", "expiresAt": now + 300,
+                                      "revision": reservation_revision}
                         else:
                             connection.execute(
                                 "DELETE FROM device_edit_reservations WHERE device_id=? AND account_id=?",
