@@ -96,8 +96,26 @@ class StagingTests(unittest.TestCase):
             inspect_export(json.dumps(data).encode())
 
     def test_reject_non_object_root(self):
-        with self.assertRaisesRegex(ImportRejected, "inventory object"):
+        with self.assertRaisesRegex(ImportRejected, "JSON object"):
             inspect_export(b"[]")
+
+    def test_published_structure_rejects_missing_subnets(self):
+        data = fixture()
+        del data["subnets"]
+        with self.assertRaisesRegex(ImportRejected, "valid subnets array"):
+            inspect_export(json.dumps(data).encode())
+
+    def test_published_structure_rejects_array_records(self):
+        data = fixture()
+        data["racks"] = [[]]
+        with self.assertRaisesRegex(ImportRejected, "invalid entries in racks"):
+            inspect_export(json.dumps(data).encode())
+
+    def test_published_structure_rejects_missing_ipam_table(self):
+        data = fixture()
+        del data["ipAllocations"]
+        with self.assertRaisesRegex(ImportRejected, "valid IP allocation table"):
+            inspect_export(json.dumps(data).encode())
 
     def test_rollback_preserves_prior_inventory(self):
         data = inspect_export(json.dumps(fixture()).encode())
