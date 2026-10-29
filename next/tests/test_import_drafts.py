@@ -91,6 +91,24 @@ class ImportDraftTests(unittest.TestCase):
             )
         self.assertEqual(reconstruct_inventory(self.db)["devices"], [])
 
+    def test_authenticated_cancel_rejects_bad_csrf_without_losing_draft(self):
+        draft_id, _ = self.drafts.begin(self.db, export(fixture()), **self.args)
+        with self.assertRaises(PermissionError):
+            self.drafts.cancel_authenticated(
+                self.db, draft_id, **dict(self.args, csrf_header="invalid")
+            )
+        self.assertTrue(self.drafts.confirm(
+            self.db, draft_id, replacement_confirmed=True, **self.args
+        ))
+
+    def test_authenticated_cancel_revokes_draft(self):
+        draft_id, _ = self.drafts.begin(self.db, export(fixture()), **self.args)
+        self.drafts.cancel_authenticated(self.db, draft_id, **self.args)
+        with self.assertRaisesRegex(ValueError, "Unknown or expired"):
+            self.drafts.confirm(
+                self.db, draft_id, replacement_confirmed=True, **self.args
+            )
+
     def test_access_point_choices_are_required_and_server_rebuilt(self):
         draft_id, preview = self.drafts.begin(
             self.db, export(published_backup()), **self.args
