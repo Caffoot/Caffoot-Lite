@@ -6,7 +6,7 @@ Welcome to the Caffoot Lite contributor documentation. Start with the [contribut
 
 - [Getting started](getting-started/README.md): installation, user and backup guidance
 
-- [Features](features/FEATURE-OVERVIEW.md): descriptions of capabilities available in published v1.3.0, with limitations and website reference guidance
+- [Features](features/FEATURE-OVERVIEW.md): feature descriptions with version-specific baseline and website reference guidance
 - [Standards](standards/README.md): development rules, naming and documentation policy
 - [Workflows](workflows/README.md): current application behaviour and safeguards
 - [Testing](testing/README.md): planned scenarios and regression checks
@@ -16,7 +16,7 @@ Welcome to the Caffoot Lite contributor documentation. Start with the [contribut
 - [Releases](releases/README.md): release process documentation
 - [Archive](archive/README.md): superseded documentation organised by release
 
-The published roadmap and **current release notes** remain at the repository root. [Earlier release notes](archive/release-notes/README.md) are preserved in the archive. Automated test scripts remain in their existing application directories.
+The [active v1.4 milestone roadmap](../ROADMAP.md#active-development-v14-docker-release-family-29-october-2026) and **current release notes** remain at the repository root. The published stable baseline is v1.3.3; the proposed Docker/database v1.4 release family is not yet implemented. [Earlier release notes](archive/release-notes/README.md) are preserved in the archive. Automated test scripts remain in their existing application directories.
 
 The WF-01 to WF-10 source-inspection checkpoints for v1.3.0 are complete. This does not mean every suspected issue has been reproduced or browser regression tests have been run. Documentation closeout and the first-time user experience review remain outstanding. Keep current behaviour separate from proposed changes.
 
