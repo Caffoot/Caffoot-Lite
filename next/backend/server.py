@@ -9,6 +9,8 @@ import sqlite3
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
+from .schema import initialise_database as migrate_database
+
 DB_PATH = Path(os.environ.get("CAFFOOT_DB_PATH", "/data/caffoot.sqlite3"))
 HOST = os.environ.get("CAFFOOT_HOST", "0.0.0.0")
 PORT = int(os.environ.get("CAFFOOT_PORT", "8080"))
@@ -24,15 +26,7 @@ def connect():
 
 def initialise_database():
     with connect() as connection:
-        connection.execute("""
-            CREATE TABLE IF NOT EXISTS schema_migrations (
-                version INTEGER PRIMARY KEY,
-                applied_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-            )
-        """)
-        connection.execute(
-            "INSERT OR IGNORE INTO schema_migrations (version) VALUES (1)"
-        )
+        migrate_database(connection)
 
 
 class Handler(BaseHTTPRequestHandler):
