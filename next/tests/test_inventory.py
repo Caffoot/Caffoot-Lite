@@ -96,7 +96,7 @@ class StagingTests(unittest.TestCase):
             inspect_export(json.dumps(data).encode())
 
     def test_reject_non_object_root(self):
-        with self.assertRaisesRegex(ImportRejected, "Expected inventory object"):
+        with self.assertRaisesRegex(ImportRejected, "Backup must be a JSON object"):
             inspect_export(b"[]")
 
     def test_published_structure_rejects_missing_subnets(self):
@@ -116,6 +116,28 @@ class StagingTests(unittest.TestCase):
         del data["ipAllocations"]
         with self.assertRaisesRegex(ImportRejected, "valid IP allocation table"):
             inspect_export(json.dumps(data).encode())
+
+    def test_missing_vlans_is_a_later_normalisation_gate(self):
+        data = fixture()
+        del data["vlans"]
+        with self.assertRaisesRegex(ImportRejected, "valid vlans array"):
+            inspect_export(json.dumps(data).encode())
+
+    def test_optional_rack_accessories_may_be_absent(self):
+        data = fixture()
+        del data["rackAccessories"]
+        self.assertNotIn("rackAccessories", inspect_export(json.dumps(data).encode()))
+
+    def test_optional_rack_accessories_must_be_array(self):
+        data = fixture()
+        data["rackAccessories"] = {}
+        with self.assertRaisesRegex(ImportRejected, "invalid rackAccessories"):
+            inspect_export(json.dumps(data).encode())
+
+    def test_published_early_gate_does_not_limit_vlan_count_to_50000(self):
+        data = fixture()
+        data["vlans"] = [{"id": "v"}] * 50001
+        self.assertEqual(len(inspect_export(json.dumps(data).encode())["vlans"]), 50001)
 
     def test_rollback_preserves_prior_inventory(self):
         data = inspect_export(json.dumps(fixture()).encode())
