@@ -106,6 +106,11 @@ def set_account_active(connection, actor_id, target_id, active):
         _target(connection, target_id)
         if actor_id == target_id:
             raise ValueError("Administrators cannot disable themselves")
+        target_admin, _ = _target(connection, target_id)
+        if not active and target_admin and connection.execute(
+            "SELECT count(*) FROM accounts WHERE is_admin=1 AND active=1"
+        ).fetchone()[0] <= 1:
+            raise ValueError("Cannot disable the last active administrator")
         connection.execute(
             "UPDATE accounts SET active=? WHERE id=?", (int(active), target_id)
         )
@@ -122,8 +127,40 @@ def delete_user(connection, actor_id, target_id):
         _target(connection, target_id)
         if actor_id == target_id:
             raise ValueError("Administrators cannot delete themselves")
+        target_admin, target_active = _target(connection, target_id)
+        if target_admin and target_active and connection.execute(
+            "SELECT count(*) FROM accounts WHERE is_admin=1 AND active=1"
+        ).fetchone()[0] <= 1:
+            raise ValueError("Cannot delete the last active administrator")
         connection.execute("DELETE FROM account_permissions WHERE account_id=?", (target_id,))
         connection.execute("DELETE FROM accounts WHERE id=?", (target_id,))
+        connection.commit()
+    except BaseException:
+        connection.rollback()
+        raise
+
+
+def set_administrator(connection, actor_id, target_id, is_admin):
+    """Manage administrator status without self-demotion or last-admin removal."""
+    if not isinstance(is_admin, bool):
+        raise ValueError("Invalid administrator status")
+    connection.execute("BEGIN IMMEDIATE")
+    try:
+        _admin(connection, actor_id)
+        target_admin, target_active = _target(connection, target_id)
+        if not is_admin and actor_id == target_id:
+            raise ValueError("Administrators cannot demote themselves")
+        if is_admin and not connection.execute(
+            "SELECT mfa_confirmed FROM accounts WHERE id=?", (target_id,)
+        ).fetchone()[0]:
+            raise ValueError("MFA enrolment required for administrators")
+        if target_admin and target_active and not is_admin and connection.execute(
+            "SELECT count(*) FROM accounts WHERE is_admin=1 AND active=1"
+        ).fetchone()[0] <= 1:
+            raise ValueError("Cannot demote the last active administrator")
+        connection.execute(
+            "UPDATE accounts SET is_admin=? WHERE id=?", (int(is_admin), target_id)
+        )
         connection.commit()
     except BaseException:
         connection.rollback()
