@@ -68,6 +68,46 @@ class ImportBoundaryTests(unittest.TestCase):
         self.assertEqual(len(history), 1)
         self.assertEqual(json.loads(history[0][0])["reason"], "prior change")
 
+    def test_inspection_and_staging_do_not_mutate_source(self):
+        original = fixture()
+        original["devices"][0]["typeDetails"]["nested"] = [
+            {"enabled": False, "value": None}
+        ]
+        untouched = copy.deepcopy(original)
+        inspected = inspect_export(json.dumps(original).encode())
+        self.assertEqual(original, untouched)
+        stage_inventory(self.db, inspected)
+        self.assertEqual(inspected, untouched)
+        self.assertEqual(original, untouched)
+
+    def test_staging_does_not_commit_a_rejected_replacement(self):
+        first = inspect_export(json.dumps(fixture()).encode())
+        stage_inventory(self.db, first)
+        before = reconstruct_inventory(self.db)
+        replacement = copy.deepcopy(first)
+        replacement["devices"][0]["name"] = "REPLACED"
+        replacement["rackAccessories"] = [{"id": "accessory-1", "rackId": "rack-1"}]
+        replacement["devices"].append({"id": "d2", "name": ""})
+        with self.assertRaisesRegex(ImportRejected, "Missing device name"):
+            stage_inventory(self.db, replacement)
+        self.assertEqual(reconstruct_inventory(self.db), before)
+
+    def test_failed_import_does_not_erase_change_history(self):
+        self.db.execute(
+            "INSERT INTO inventory_change_history(record_json) VALUES(?)",
+            (json.dumps({"reason": "before rejected import"}),),
+        )
+        self.db.commit()
+        bad = fixture()
+        bad["devices"].append({"id": "d1", "name": "collision"})
+        with self.assertRaises(sqlite3.IntegrityError):
+            stage_inventory(self.db, bad)
+        rows = self.db.execute(
+            "SELECT record_json FROM inventory_change_history"
+        ).fetchall()
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(json.loads(rows[0][0])["reason"], "before rejected import")
+
     def test_optional_unknown_top_level_fields_survive(self):
         data = fixture()
         data["futureUnrecognisedState"] = {
