@@ -3,7 +3,10 @@
 This is NOT an import acceptance gate. Full validateApplicationState parity,
 backup version gate and explicit confirmation are required before persistence.
 """
-from backend.access_point_review import (\n    find_access_point_mount_conflicts, apply_access_point_mount_choices,\n)\nfrom backend.legacy_mounting import plan_legacy_computer_mounting_corrections
+from backend.access_point_review import (
+    find_access_point_mount_conflicts, apply_access_point_mount_choices,
+)
+from backend.legacy_mounting import plan_legacy_computer_mounting_corrections
 from backend.normalisation_pipeline import normalise_detached_v133_state
 from backend.inventory import inspect_device_mounts, inspect_export
 from backend.import_diagnostics import inspect_detached_candidate
