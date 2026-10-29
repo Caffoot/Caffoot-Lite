@@ -108,6 +108,55 @@ class ImportBoundaryTests(unittest.TestCase):
         self.assertEqual(len(rows), 1)
         self.assertEqual(json.loads(rows[0][0])["reason"], "before rejected import")
 
+
+    def test_cancelled_review_never_reaches_database_staging(self):
+        """Cancellation at confirmation leaves existing inventory untouched."""
+        from backend.import_review import prepare_published_export_review
+        from test_import_review import fixture as review_fixture
+        current = inspect_export(json.dumps(fixture()).encode())
+        stage_inventory(self.db, current)
+        before = reconstruct_inventory(self.db)
+        candidate = review_fixture()
+        candidate["caffootBackup"] = fixture()["caffootBackup"]
+        review = prepare_published_export_review(json.dumps(candidate).encode())
+        self.assertFalse(review["approved"])
+        self.assertFalse(review["persistenceAllowed"])
+        self.assertFalse(review["requiresLegacyMountReview"])
+        self.assertFalse(review["requiresAccessPointMountReview"])
+        # The user cancels: no stage_inventory call occurs.
+        self.assertEqual(reconstruct_inventory(self.db), before)
+
+    def test_late_sqlite_failure_rolls_back_all_inventory_sections(self):
+        """An error after replacement starts cannot partially restore inventory."""
+        original = inspect_export(json.dumps(fixture()).encode())
+        stage_inventory(self.db, original)
+        self.db.execute(
+            "INSERT INTO inventory_change_history(record_json) VALUES(?)",
+            (json.dumps({"reason": "existing history"}),),
+        )
+        self.db.commit()
+        before = reconstruct_inventory(self.db)
+        history_before = self.db.execute(
+            "SELECT record_json FROM inventory_change_history"
+        ).fetchall()
+        replacement = copy.deepcopy(original)
+        replacement["devices"][0]["name"] = "REPLACEMENT"
+        replacement["extraHistoricalOption"] = {"new": "value"}
+        replacement["ipAllocations"]["192.0.2.5"] = {"status": "Available"}
+        self.db.execute("""
+            CREATE TRIGGER fail_late_allocation
+            BEFORE INSERT ON inventory_ip_allocations
+            WHEN NEW.ip = '192.0.2.5'
+            BEGIN SELECT RAISE(ABORT, 'injected late failure'); END
+        """)
+        with self.assertRaisesRegex(sqlite3.IntegrityError, "injected late failure"):
+            stage_inventory(self.db, replacement)
+        self.assertEqual(reconstruct_inventory(self.db), before)
+        self.assertEqual(
+            self.db.execute("SELECT record_json FROM inventory_change_history").fetchall(),
+            history_before,
+        )
+
     def test_replacement_preview_counts_without_writing_inventory(self):
         current = fixture()
         candidate = copy.deepcopy(current)
