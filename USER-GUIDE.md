@@ -46,6 +46,12 @@ The **Dashboard** summarises inventory and network information based on your loc
 
 Open **Settings & Data** for **Data Management**, **Preferences**, **Help & Guides** and **About Caffoot Lite**. These tabs are present in the published v1.3.0 release. The redesigned Settings interface was introduced in v1.1.1; older releases may have different labels and placement.
 
+### Preparing for Caffoot Lite Next (Docker edition)
+
+**Migration into Caffoot Lite Next is supported only from a JSON inventory backup exported by published Caffoot Lite v1.3.3.** If you use an older HTML version, upgrade to v1.3.3 first, confirm your devices, IPAM, racks and other inventory are correct, then use **Download Backup** in v1.3.3 to create a fresh JSON file for migration. Keep a separate copy of that backup until you have verified the imported inventory in Next.
+
+Older HTML backup files are **not directly supported** for import into Next. This restriction applies to **Next**, not to the existing restore capabilities of v1.3.3. Next is still under development; this notice does not mean it is already available.
+
 ### Data Management — Back Up & Restore
 
 **First backup:** After adding useful inventory, open **Settings & Data → Data Management → Back Up & Restore** and select **Download Backup**. Keep the resulting JSON file somewhere safe outside the browser. Repeat this before upgrading, moving the HTML file or importing another inventory.
