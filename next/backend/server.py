@@ -11,6 +11,7 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 from .schema import initialise_database as migrate_database
+from .accounts import bootstrap_first_admin, confirm_admin_mfa
 from .import_drafts import ImportDrafts
 from .request_auth import authenticated_account, csrf_for_session
 from .http_security import read_session_cookie, session_cookie, clear_session_cookie
@@ -72,6 +73,10 @@ class Handler(BaseHTTPRequestHandler):
                 self.respond(200, {"status": "ok"})
             except sqlite3.Error:
                 self.respond(503, {"status": "unavailable"})
+        elif self.path == "/api/setup/status":
+            with connect() as connection:
+                configured = connection.execute("SELECT 1 FROM accounts LIMIT 1").fetchone() is not None
+            self.respond(200, {"setupRequired": not configured})
         elif self.path == "/api/session":
             with connect() as connection:
                 cookie = self.headers.get("Cookie")
@@ -98,7 +103,7 @@ class Handler(BaseHTTPRequestHandler):
         if self.path in IMPORT_ROUTES:
             self.handle_import()
             return
-        if self.path not in ("/api/login", "/api/logout"):
+        if self.path not in ("/api/login", "/api/logout", "/api/setup", "/api/setup/mfa"):
             self.respond(404, {"error": "not found"})
             return
         origin = self.headers.get("Origin")
@@ -134,6 +139,32 @@ class Handler(BaseHTTPRequestHandler):
             return
         if len(payload["username"]) > 256 or len(payload["password"]) > 4096 or not isinstance(payload.get("mfa_code"), (str, type(None))):
             self.respond(400, {"error": "invalid credentials"})
+            return
+        if self.path in ("/api/setup", "/api/setup/mfa"):
+            if set(payload) - ({"username", "password"} if self.path == "/api/setup" else {"username", "password", "mfa_code"}):
+                self.respond(400, {"error": "unexpected setup fields"})
+                return
+            with connect() as connection:
+                try:
+                    if self.path == "/api/setup":
+                        account_id, secret = bootstrap_first_admin(
+                            connection, payload["username"], payload["password"]
+                        )
+                        self.respond(200, {"accountId": account_id, "mfaSecret": secret})
+                    else:
+                        from .accounts import verify_password
+                        row = connection.execute(
+                            "SELECT id,password_hash FROM accounts WHERE username=? AND is_admin=1",
+                            (payload["username"],)
+                        ).fetchone()
+                        if row is None or not verify_password(payload["password"], row[1]):
+                            raise ValueError("Invalid administrator credentials")
+                        confirm_admin_mfa(connection, row[0], payload.get("mfa_code"))
+                        self.respond(200, {"status": "mfa enrolled"})
+                except ValueError as exc:
+                    self.respond(400, {"error": str(exc)})
+                except sqlite3.IntegrityError:
+                    self.respond(400, {"error": "administrator already exists"})
             return
         with connect() as connection:
             token = login(
