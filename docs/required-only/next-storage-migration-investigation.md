@@ -129,3 +129,22 @@ These findings are **existing v1.3.3 behaviours only**, not new requirements or 
 The AP and legacy mounting reviews are **conditional on actual detected conflicts/repairs**, not mandatory screens for every import or schema version. The source does not establish that a particular schema version always triggers either review. No new import repair options are authorised.
 
 **Open:** reconcile these exact rules with retained test evidence, including schema 0/1 fixtures and negative import cases, before drafting API/DDL.
+
+
+## Retained test-evidence reconciliation — first pass (2026-10-29)
+
+Reviewed on `Next`:
+- [Legacy backup import compatibility matrix](testing--LEGACY-BACKUP-IMPORT-COMPATIBILITY-MATRIX.md)
+- [Workflow verification coverage register](testing--WORKFLOW-VERIFICATION-COVERAGE-REGISTER.md)
+- [Technical workflows](workflows--TECHNICAL-WORKFLOWS.md)
+
+**Verified historical evidence, with its stated limits:**
+
+- The legacy compatibility matrix records successful Chromium scenarios for guest unassign/retire/reassign decisions and preservation of guest operating systems, custom historical notes, previous host history and platform history (historical #91, commit `6b66eb2`, run `40179316087`). It also records a JSON import/reload scenario for a fictional historical virtual machine with a missing host, checking host reference, hypervisor platform, guest OS and a custom historical value (commit `0a9c009`, run `40178800515`). These are fictional fixture/browser-handler tests, **not** all real customer backups or full manual UI acceptance.
+- The workflow coverage register records a disposable Chromium backup/reload test for archived custom software and server services (historical #157, commit `7d14d195`, run `40338184346`). That checkpoint expressly does **not** establish archived historical assignment rendering in the device display; do not infer it.
+- The technical workflows document records a focused `release/v1.3.3` five-scenario history/rollback run `40594804262`, including late restore/reset rollback and no false successful history entry. These are **browser-storage-era** tests; Next must preserve failure atomicity and Change History outcomes via #215's SQLite transaction model, **not** reproduce browser safety snapshots or browser recovery UI.
+- The workflow register includes owner-reported manual v1.2.0 schema-v1 import acceptance but explicitly notes it was **not exhaustive field-by-field verification**. Do not infer every schema-0/schema-1 historical variant was tested.
+
+**Evidence handling:** The reviewed documents contain dated historical pre-publication checkpoints and statements that issues/PRs were open *at those dates*. Do not treat those statements as current release or issue status. Published v1.3.3 source and issue #215 remain the governing baseline/scope; reconcile test coverage against later fixes and publication before making implementation claims.
+
+**Still unverified:** complete schema-0/schema-1 fixture coverage, every conditional AP/legacy mounting decision branch, all catalogue archive/display combinations and Next's eventual database transaction outcomes. No tests were executed in this investigation.
