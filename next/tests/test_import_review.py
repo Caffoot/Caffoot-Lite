@@ -1,8 +1,9 @@
 """Read-only import review orchestration regression tests."""
 import copy
+import json
 import unittest
 
-from backend.import_review import prepare_detached_import_review
+from backend.import_review import prepare_detached_import_review, prepare_published_export_review
 
 
 def fixture():
@@ -20,6 +21,22 @@ def fixture():
 
 
 class ImportReviewTests(unittest.TestCase):
+    def test_published_export_gate_precedes_detached_review(self):
+        source = fixture()
+        source["caffootBackup"] = {
+            "format": "caffoot-inventory", "schemaVersion": 1,
+            "app": "Caffoot Lite", "appVersion": "1.3.3",
+            "exportedAt": "2026-10-29T12:00:00Z",
+        }
+        raw = json.dumps(source).encode("utf-8")
+        review = prepare_published_export_review(raw)
+        self.assertFalse(review["approved"])
+        self.assertFalse(review["persistenceAllowed"])
+        self.assertEqual(review["candidate"]["devices"][0]["name"], "PC")
+        source["caffootBackup"]["appVersion"] = "1.3.2"
+        with self.assertRaisesRegex(ValueError, "v1.3.3 export"):
+            prepare_published_export_review(json.dumps(source).encode("utf-8"))
+
     def test_candidate_is_detached_and_never_approved(self):
         source = fixture()
         original = copy.deepcopy(source)
