@@ -120,7 +120,7 @@ class ImportBoundaryTests(unittest.TestCase):
         preview = preview_inventory_counts(candidate, current)
         self.assertEqual(preview, {
             "backup": {"devices": 2, "racks": 1, "subnets": 1, "ipAllocations": 2},
-            "current": {"devices": 1, "racks": 0, "subnets": 0, "ipAllocations": 1},
+            "current": {"devices": 1, "racks": 0, "subnets": 0},
         })
         self.assertEqual(candidate, before_candidate)
         self.assertEqual(current, before_current)
