@@ -322,3 +322,44 @@ Additional published v1.3.3 source inspection, **not newly run tests**:
 **Future acceptance assertions:** export/import with manufacturer and model overrides (renamed, hidden and assigned), stable original preference keys, hardware suggestions, software exclusions, archived catalogue entries, persisted configured order versus display sort, and host/type history. Check save failures and rejected hide operations leave state intact. These are requirements for later approved tests, not claims that tests have been run.
 
 **Open:** exhaustive per-device optional field census and a genuine exported v1.3.3 fixture remain unverified. No DDL/API freeze or implementation authority follows from this investigation.
+
+
+## Consolidated device-field census and export evidence gate — 2026-10-29
+
+**Authority:** published `v1.3.3/app/caffoot-lite.html`, specifically `captureDeviceFormDraft`, device save/create branches, `getDetailFieldsForDeviceType`, `deviceDetailFieldProfiles`, host reassignment and `createInventoryBackup`. This is source inspection, **not execution against a genuine export**.
+
+### Published new-device core fields
+
+The `newDevice` object in the device save handler contains: `id`, `name`, `type`, `mountType`, `location`, `notes`, `status`, `manufacturer`, `model`, `serialNumber`, `typeDetails`, `virtualPlatform`, `virtualHostId`, `isVirtual`, `ipReserved`, `primaryIp`, `rackId`, `face`, `rackUStart`, `rackUEnd`, `rackUHeight`. `setDevicePrimaryIp` and `syncDeviceIpamRecord` then coordinate the device IP with `ipAllocations`. An existing-device edit uses `Object.assign` and individual assignments, **not replacement of the entire device object**. Consequently unknown/historical properties on imported devices must not be stripped simply because the editor does not write them.
+
+The published device form draft explicitly captures `subnetId` for the selected subnet, but the new-device object above does **not** include a persisted `subnetId` property. Subnet selection and primary IP are validated against existing subnet records. Avoid inventing a required device `subnetId` foreign key solely from the form draft.
+
+### Optional, nested and historical device values
+
+- `typeDetails` is an extensible object whose keys are selected by device type and available software/service catalogues. The source includes built-in physical fields and historical software/service keys; configured entries introduce further keys. Preserve all imported nested keys and values, including ones not currently displayed.
+- Published code checks both `device.typeDetails[key]` **and** historical top-level `device[key]` for software and service assignments. An archived-software uninstall handler can set both to `false` when the legacy top-level property exists. These are distinct persisted representations; never discard or silently collapse one during import.
+- `previousVirtualHosts` is an optional ordered array of records `{hostId,changedAt,action}` appended during guest reassignment/retirement/host deletion.
+- `previousVirtualPlatforms` is an optional ordered array of `{platform,hostId,changedAt}` appended when a guest's hypervisor platform changes. Preserve the previous platform and original host identifier, not merely the current `virtualPlatform` and `virtualHostId`.
+- `previousTypeDetails` is read by the published device History view; the source reverses a copy only for presentation. Its original nested records and order are inventory data, even if no writer is observed in this published source. Do not fabricate a new writer or remove imported historical records.
+- `isVirtual`, `ipReserved`, rack face/U fields, `serialNumber`, `status`, `mountType` and the optional history fields all need coverage beyond the visible name/type/IP basics.
+
+### Transaction and compatibility implications
+
+A device save may change the device record, device/IPAM allocation and multiple hosted guests (host IDs, guest status, historical host/platform arrays). Existing source restores the previous in-memory inventory on a failed save. Next must commit these related inventory changes together or reject them together; never expose a partially updated device/guest/IPAM state. Preserve the existing per-guest review, cancellation, eligibility and stale-review checks.
+
+`createInventoryBackup` deep-copies and spreads **the entire inventory state**, then adds `caffootBackup` with format `caffoot-inventory`, schema version `1`, application `Caffoot Lite`, version `1.3.3` and an export timestamp. Therefore the correct preservation boundary is the accepted normalised v1.3.3 inventory object, **not** a whitelist of new-device constructor keys, current UI fields or default-state keys. Next's import policy remains **fresh published v1.3.3 JSON only** per #215; metadata alone does not prove file provenance.
+
+### Single-batch acceptance fixture matrix for later approved execution
+
+1. Minimal valid published v1.3.3 export, and a populated export with all default-state collections.
+2. Optional top-level `hardwareCatalogue`, `hardwareSeedPreferences`, `softwareTypeExclusions` absent versus present, plus `managedOptionsCleared` true versus false.
+3. Device core fields including physical/rack/virtual variants, `ipReserved`, IPAM allocation links and all rack placement coordinates.
+4. Dynamic `typeDetails` including unknown/custom keys, archived configured services/software, hidden software selections, and legacy top-level true/false flags.
+5. `previousVirtualHosts`, `previousVirtualPlatforms`, `previousTypeDetails` with multiple ordered entries, old host IDs, timestamps and actions.
+6. Host retirement, deletion, hypervisor removal and platform change affecting several guests; verify cancellation, stale review rejection and full transaction rollback.
+7. Catalogue overrides with stable seed keys, custom hardware suggestions, configured entry order and archived state; verify effective choices without rewriting existing devices.
+8. Import validation/review/correction/cancellation and final confirmation; prove that user accounts, roles and MFA are never included in inventory replacement.
+9. Reject metadata-absent/older-version exports for Next even though the published HTML importer has historical legacy acceptance paths; require a fresh v1.3.3 export.
+10. Compare pre-export inventory to **accepted normalised** post-import inventory, including unknown optional keys and ordered historical arrays, while separately checking the unchanged published screens/workflows.
+
+**Evidence status / no fabricated fixture:** the published exporter and source paths are verified; no real user-generated v1.3.3 JSON export was provided or run in this investigation. A source-derived hypothetical JSON sample must not be labelled a genuine export or successful round-trip. The fixture execution and exhaustive validation of arbitrary historical imported properties remain open until such evidence is available and implementation/testing is separately authorised. No schema/API freeze and no implementation approval are implied.
