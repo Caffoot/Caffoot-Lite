@@ -8,6 +8,7 @@ import os
 import sqlite3
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from urllib.parse import urlsplit
 
 from .schema import initialise_database as migrate_database
 from .request_auth import authenticated_account, csrf_for_session
@@ -22,7 +23,25 @@ PORT = int(os.environ.get("CAFFOOT_PORT", "8080"))
 PUBLIC_ORIGIN = os.environ.get("CAFFOOT_PUBLIC_ORIGIN", "")
 MAX_LOGIN_BYTES = 4096
 TLS_DIR = Path(os.environ.get("CAFFOOT_TLS_DIR", "/data/tls"))
-TLS_NAMES = os.environ.get("CAFFOOT_TLS_NAMES", "localhost,127.0.0.1")
+TLS_NAMES = os.environ.get("CAFFOOT_TLS_NAMES", "")
+
+
+def validate_public_origin(value):
+    """Accept only an explicit canonical HTTPS browser origin."""
+    if not isinstance(value, str) or not value or value != value.strip():
+        raise ValueError("CAFFOOT_PUBLIC_ORIGIN is required")
+    try:
+        parsed = urlsplit(value)
+        port = parsed.port
+    except ValueError as exc:
+        raise ValueError("invalid HTTPS origin") from exc
+    if (parsed.scheme != "https" or not parsed.hostname or
+            parsed.username is not None or parsed.password is not None or
+            parsed.path or parsed.query or parsed.fragment or
+            parsed.netloc.endswith(":") or
+            value != "https://" + parsed.netloc):
+        raise ValueError("CAFFOOT_PUBLIC_ORIGIN must be an HTTPS origin without path or credentials")
+    return value
 
 
 def connect():
@@ -132,8 +151,9 @@ class Handler(BaseHTTPRequestHandler):
 
 def main():
     initialise_database()
-    if not PUBLIC_ORIGIN.startswith("https://"):
-        raise RuntimeError("CAFFOOT_PUBLIC_ORIGIN must be an explicit HTTPS origin")
+    validate_public_origin(PUBLIC_ORIGIN)
+    if not TLS_NAMES:
+        raise RuntimeError("CAFFOOT_TLS_NAMES must identify the TLS hostname or IP")
     context = ensure_certificate(TLS_DIR, TLS_NAMES)
     server = ThreadingHTTPServer((HOST, PORT), Handler)
     server.socket = context.wrap_socket(server.socket, server_side=True)

@@ -2,8 +2,8 @@ services:
   caffoot-next:
     build: .
     environment:
-      CAFFOOT_PUBLIC_ORIGIN: "${CAFFOOT_PUBLIC_ORIGIN:-https://localhost:8080}"
-      CAFFOOT_TLS_NAMES: "${CAFFOOT_TLS_NAMES:-localhost,127.0.0.1}"
+      CAFFOOT_PUBLIC_ORIGIN: "${CAFFOOT_PUBLIC_ORIGIN:?Set the HTTPS browser address in CAFFOOT_PUBLIC_ORIGIN}"
+      CAFFOOT_TLS_NAMES: "${CAFFOOT_TLS_NAMES:?Set the TLS hostname or IP in CAFFOOT_TLS_NAMES}"
     ports:
       - "8080:8080"
     volumes:

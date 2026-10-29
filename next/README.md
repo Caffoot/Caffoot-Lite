@@ -2,11 +2,20 @@
 
 This directory is the first **non-production** implementation checkpoint for issue #215. It is **not** the inventory application and does not yet expose the published v1.3.3 UI, authentication, or inventory API. This is deliberate: serving the old HTML unmodified would leave browser storage authoritative and misrepresent migration readiness.
 
-## Local foundation smoke check
+## HTTPS development deployment (not yet a complete application)
 
-From this directory run `docker compose up --build -d` and check `http://127.0.0.1:8080/health`. Expected response: `{"status":"ok"}`. Run `docker compose down` to stop; the named `caffoot_data` volume remains. Do **not** use `docker compose down -v` when preserving data.
+Set **your own** browser address and certificate identities before running Compose. Nothing is hard-coded for a particular installer. For example, in a local `.env` file alongside `compose.yaml`:
 
-The bind is loopback-only for this early development checkpoint. This is **not** a public deployment recipe or a completed Portainer stack. No inventory import, user setup, login or UI is available yet.
+```dotenv
+CAFFOOT_PUBLIC_ORIGIN=https://10.128.20.3:8080
+CAFFOOT_TLS_NAMES=10.128.20.3
+```
+
+Replace the example IP with your own. For an HTTPS reverse proxy, use the **external** browser origin (for example `https://inventory.example.uk`) and set `CAFFOOT_TLS_NAMES` to the hostname or IP used by the proxy for the encrypted upstream connection. Never derive the trusted origin from client-supplied Host or forwarding headers. Both values are required; Compose refuses to start without them. Keep `.env` out of source control.
+
+Run `docker compose up --build -d`, then open `CAFFOOT_PUBLIC_ORIGIN` in the browser. The development server currently provides only API endpoints, not a user interface. The health endpoint is `https://<host>:8080/health` for direct access. A self-signed certificate is generated once and stored under the persistent `/data/tls` volume path. A browser will not automatically trust it; verify the certificate identity/fingerprint out of band and establish trust before using real credentials. For a reverse proxy, configure HTTPS to the upstream and verify its certificate through an explicitly managed trust policy; do not assume plain HTTP upstream is supported.
+
+The container's own HTTPS health check is a local liveness probe and does not establish external certificate trust. Do not delete the named data volume if retaining inventory or certificate identity. Full deployment testing and certificate lifecycle documentation remain outstanding.
 
 ## Next gates
 
