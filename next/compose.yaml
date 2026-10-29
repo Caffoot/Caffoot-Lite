@@ -2,10 +2,11 @@ services:
   caffoot-next:
     build: .
     environment:
-      CAFFOOT_PUBLIC_ORIGIN: "${CAFFOOT_PUBLIC_ORIGIN:?Set the HTTPS browser address in CAFFOOT_PUBLIC_ORIGIN}"
-      CAFFOOT_TLS_NAMES: "${CAFFOOT_TLS_NAMES:?Set the TLS hostname or IP in CAFFOOT_TLS_NAMES}"
+      CAFFOOT_WEB_ADDRESS: "${CAFFOOT_WEB_ADDRESS:?Set the HTTPS browser address in CAFFOOT_WEB_ADDRESS}"
+      CAFFOOT_SERVER_ADDRESS: "${CAFFOOT_SERVER_ADDRESS:?Set the server IP or hostname in CAFFOOT_SERVER_ADDRESS}"
+      CAFFOOT_PORT: "${CAFFOOT_PORT:-8080}"
     ports:
-      - "8080:8080"
+      - "${CAFFOOT_PORT:-8080}:8080"
     volumes:
       - caffoot_data:/data
     restart: unless-stopped

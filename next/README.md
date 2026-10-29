@@ -7,13 +7,14 @@ This directory is the first **non-production** implementation checkpoint for iss
 Set **your own** browser address and certificate identities before running Compose. Nothing is hard-coded for a particular installer. For example, in a local `.env` file alongside `compose.yaml`:
 
 ```dotenv
-CAFFOOT_PUBLIC_ORIGIN=https://10.128.20.3:8080
-CAFFOOT_TLS_NAMES=10.128.20.3
+CAFFOOT_WEB_ADDRESS=https://10.128.20.3:8080
+CAFFOOT_SERVER_ADDRESS=10.128.20.3
+CAFFOOT_PORT=8080
 ```
 
-Replace the example IP with your own. For an HTTPS reverse proxy, use the **external** browser origin (for example `https://inventory.example.uk`) and set `CAFFOOT_TLS_NAMES` to the hostname or IP used by the proxy for the encrypted upstream connection. Never derive the trusted origin from client-supplied Host or forwarding headers. Both values are required; Compose refuses to start without them. Keep `.env` out of source control.
+Replace the example IP with your own. For an HTTPS reverse proxy, use the **external** browser origin (for example `https://inventory.example.uk`) and set `CAFFOOT_SERVER_ADDRESS` to the hostname or IP used by the proxy for the encrypted upstream connection. Never derive the trusted origin from client-supplied Host or forwarding headers. The web address and server address are required; the published port defaults to 8080 and must be between 1 and 65535; Compose refuses to start without them. Keep `.env` out of source control.
 
-Run `docker compose up --build -d`, then open `CAFFOOT_PUBLIC_ORIGIN` in the browser. The development server currently provides only API endpoints, not a user interface. The health endpoint is `https://<host>:8080/health` for direct access. A self-signed certificate is generated once and stored under the persistent `/data/tls` volume path. A browser will not automatically trust it; verify the certificate identity/fingerprint out of band and establish trust before using real credentials. For a reverse proxy, configure HTTPS to the upstream and verify its certificate through an explicitly managed trust policy; do not assume plain HTTP upstream is supported.
+Run `docker compose up --build -d`, then open `CAFFOOT_WEB_ADDRESS` in the browser. The development server currently provides only API endpoints, not a user interface. The health endpoint for direct access is `https://<server-address>:<published-port>/health`. The published port can be changed with `CAFFOOT_PORT`; the container always listens internally on port 8080. Include the published port in the browser address for direct access unless it is 443. For a reverse proxy, use the external HTTPS domain in `CAFFOOT_WEB_ADDRESS`, the application server IP/hostname in `CAFFOOT_SERVER_ADDRESS`, and the published host port in `CAFFOOT_PORT`. A self-signed certificate is generated once and stored under the persistent `/data/tls` volume path. A browser will not automatically trust it; verify the certificate identity/fingerprint out of band and establish trust before using real credentials. For a reverse proxy, configure HTTPS to the upstream and verify its certificate through an explicitly managed trust policy; do not assume plain HTTP upstream is supported.
 
 The container's own HTTPS health check is a local liveness probe and does not establish external certificate trust. Do not delete the named data volume if retaining inventory or certificate identity. Full deployment testing and certificate lifecycle documentation remain outstanding.
 
