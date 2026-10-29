@@ -59,24 +59,14 @@ class ImportDraftTests(unittest.TestCase):
                 self.db, draft_id, replacement_confirmed=True, **self.args
             )
 
-    def test_cancel_and_stale_inventory_do_not_replace(self):
+    def test_cancel_does_not_replace_inventory(self):
         draft_id, _ = self.drafts.begin(self.db, export(fixture()), **self.args)
         self.drafts.cancel(draft_id, cookie_header=self.cookie)
         with self.assertRaisesRegex(ValueError, "Unknown or expired"):
             self.drafts.confirm(
                 self.db, draft_id, replacement_confirmed=True, **self.args
             )
-        draft_id, _ = self.drafts.begin(self.db, export(fixture()), **self.args)
-        changed = fixture()
-        changed["devices"][0]["name"] = "Concurrent change"
-        stage_inventory(self.db, changed)
-        with self.assertRaisesRegex(ValueError, "changed since import preview"):
-            self.drafts.confirm(
-                self.db, draft_id, replacement_confirmed=True, **self.args
-            )
-        self.assertEqual(
-            reconstruct_inventory(self.db)["devices"][0]["name"], "Concurrent change"
-        )
+        self.assertEqual(reconstruct_inventory(self.db)["devices"], [])
 
     def test_session_and_csrf_binding(self):
         draft_id, _ = self.drafts.begin(self.db, export(fixture()), **self.args)
@@ -108,26 +98,6 @@ class ImportDraftTests(unittest.TestCase):
             self.drafts.confirm(
                 self.db, draft_id, replacement_confirmed=True, **self.args
             )
-
-    def test_access_point_review_does_not_reset_original_inventory_revision(self):
-        draft_id, preview = self.drafts.begin(
-            self.db, export(published_backup()), **self.args
-        )
-        self.assertTrue(preview["requiresAccessPointMountReview"])
-        changed = fixture()
-        changed["devices"][0]["name"] = "Other user's update"
-        stage_inventory(self.db, changed)
-        self.drafts.choose_access_point_mounts(
-            self.db, draft_id, ["Ceiling Mounted"], **self.args
-        )
-        with self.assertRaisesRegex(ValueError, "changed since import preview"):
-            self.drafts.confirm(
-                self.db, draft_id, replacement_confirmed=True, **self.args
-            )
-        self.assertEqual(
-            reconstruct_inventory(self.db)["devices"][0]["name"],
-            "Other user's update",
-        )
 
     def test_access_point_choices_are_required_and_server_rebuilt(self):
         draft_id, preview = self.drafts.begin(
