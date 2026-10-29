@@ -94,6 +94,38 @@ class FullImportBoundaryTests(unittest.TestCase):
         self.assertEqual(review["candidate"]["devices"][0]["name"], "Different")
         self.assertEqual(reconstruct_inventory(self.db), before)
 
+    def test_failed_staging_rolls_back_entire_inventory_replacement(self):
+        # An invalid duplicate device ID fails after DELETE/INSERT has begun.
+        # The previous inventory must remain byte-for-byte reconstructable.
+        before = reconstruct_inventory(self.db)
+        replacement = backup()
+        replacement["devices"][0]["name"] = "Replacement"
+        replacement["devices"].append({
+            "id": "d", "name": "Duplicate ID", "type": "Router",
+            "mountType": "Desktop",
+        })
+        with self.assertRaises(sqlite3.IntegrityError):
+            stage_inventory(self.db, replacement)
+        self.assertEqual(reconstruct_inventory(self.db), before)
+
+    def test_failed_staging_does_not_modify_account_tables(self):
+        # Inventory replacement must not touch separately owned account data.
+        self.db.execute(
+            "CREATE TABLE user_accounts (id TEXT PRIMARY KEY, role TEXT NOT NULL)"
+        )
+        self.db.execute(
+            "INSERT INTO user_accounts (id, role) VALUES ('admin', 'admin')"
+        )
+        self.db.commit()
+        replacement = backup()
+        replacement["devices"].append(copy.deepcopy(replacement["devices"][0]))
+        with self.assertRaises(sqlite3.IntegrityError):
+            stage_inventory(self.db, replacement)
+        self.assertEqual(
+            self.db.execute("SELECT id, role FROM user_accounts").fetchall(),
+            [("admin", "admin")],
+        )
+
     def test_staging_after_review_preserves_historical_fields(self):
         source = backup()
         review = prepare_detached_import_review(source)
