@@ -1,6 +1,6 @@
 """Offline-only v1.3.3 inventory migration transaction.
 
-Issue #215: application backups are external; no app-managed restore snapshots.
+Issue #215: import is inventory-only and atomic.
 This is not a live endpoint or a substitute for source parity and RBAC.
 """
 from backend.import_review import prepare_published_export_review

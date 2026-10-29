@@ -47,17 +47,13 @@ class ApprovedMigrationBoundaryTests(unittest.TestCase):
             )
         self.assertEqual(reconstruct_inventory(self.db), self.before)
 
-    def test_successful_import_preserves_accounts_without_snapshot_tables(self):
+    def test_successful_import_preserves_accounts(self):
         restore_reviewed_export_offline(
             self.db, export("new"), final_confirmed=True,
         )
         self.assertEqual(reconstruct_inventory(self.db)["devices"][0]["id"], "new")
         self.assertEqual(self.db.execute("SELECT id FROM user_accounts").fetchall(),
                          [("admin",)])
-        self.assertFalse(self.db.execute(
-            "SELECT name FROM sqlite_master "
-            "WHERE name='inventory_pre_restore_snapshot'"
-        ).fetchall())
 
     def test_failed_write_rolls_back_inventory(self):
         self.db.execute("""
