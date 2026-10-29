@@ -12,6 +12,7 @@ from urllib.parse import urlsplit
 
 from .schema import initialise_database as migrate_database
 from .accounts import bootstrap_first_admin, confirm_admin_mfa, verify_password, hash_password
+from .mfa import new_secret, verify_code
 from .import_drafts import ImportDrafts
 from .request_auth import authenticated_account, csrf_for_session
 from .http_security import read_session_cookie, session_cookie, clear_session_cookie
@@ -224,7 +225,8 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         if self.path in ("/api/users/create", "/api/users/permission", "/api/users/active",
-                         "/api/users/admin", "/api/users/delete", "/api/account/password"):
+                         "/api/users/admin", "/api/users/delete", "/api/account/password",
+                         "/api/account/mfa/start", "/api/account/mfa/confirm"):
             self.handle_user_mutation()
             return
         if self.path in IMPORT_ROUTES:
@@ -334,7 +336,40 @@ class Handler(BaseHTTPRequestHandler):
                 if actor is None:
                     self.respond(403, {"error": "forbidden"})
                     return
-                if self.path == "/api/account/password":
+                if self.path == "/api/account/mfa/start":
+                    if set(payload) != {"password"}:
+                        raise ValueError("Password required")
+                    row = connection.execute(
+                        "SELECT password_hash,mfa_secret,mfa_confirmed FROM accounts WHERE id=?",
+                        (actor,),
+                    ).fetchone()
+                    if row is None or not verify_password(payload["password"], row[0]):
+                        raise ValueError("Invalid password")
+                    if row[2]:
+                        raise ValueError("MFA already enrolled")
+                    secret = row[1] or new_secret()
+                    if not row[1]:
+                        connection.execute("UPDATE accounts SET mfa_secret=? WHERE id=?", (secret, actor))
+                        connection.commit()
+                    result = {"mfaSecret": secret}
+                elif self.path == "/api/account/mfa/confirm":
+                    if set(payload) != {"code"}:
+                        raise ValueError("Authenticator code required")
+                    row = connection.execute(
+                        "SELECT mfa_secret,mfa_confirmed FROM accounts WHERE id=?", (actor,)
+                    ).fetchone()
+                    if row is None or row[1] or not row[0] or not verify_code(row[0], payload["code"]):
+                        raise ValueError("Invalid authenticator code")
+                    connection.execute("BEGIN IMMEDIATE")
+                    try:
+                        connection.execute("UPDATE accounts SET mfa_confirmed=1 WHERE id=?", (actor,))
+                        connection.execute("DELETE FROM account_sessions WHERE account_id=?", (actor,))
+                        connection.commit()
+                    except BaseException:
+                        connection.rollback()
+                        raise
+                    result = {"status": "mfa enrolled"}
+                elif self.path == "/api/account/password":
                     if set(payload) != {"currentPassword", "newPassword"}:
                         raise ValueError("Current and new passwords required")
                     current_password = payload["currentPassword"]
