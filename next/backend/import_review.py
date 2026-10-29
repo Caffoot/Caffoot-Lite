@@ -76,3 +76,24 @@ def prepare_published_export_review(raw_bytes, access_point_choices=None):
     review["accessPointMountConflicts"] = conflicts
     review["requiresAccessPointMountReview"] = False
     return review
+
+
+def confirm_detached_import_review(review, *, legacy_mount_approved=False,
+                                   replacement_confirmed=False):
+    """Offline confirmation gate; never writes to SQLite or trusts UI flags.
+
+    The caller must have already resolved the Access Point stage and obtained
+    any required legacy mounting approval. This is NOT authentication,
+    authorisation, or a live import endpoint.
+    """
+    if not isinstance(review, dict) or review.get("requiresAccessPointMountReview"):
+        raise ValueError("Access Point mounting review must be completed first.")
+    if not isinstance(review.get("candidate"), dict):
+        raise ValueError("A fully validated import candidate is required.")
+    if review.get("requiresLegacyMountReview") and not legacy_mount_approved:
+        raise ValueError("Legacy mounting corrections require explicit approval.")
+    if not replacement_confirmed:
+        raise ValueError("Inventory replacement requires explicit confirmation.")
+    # Do not change the review or mark it as permission to persist. The
+    # eventual authenticated backend must revalidate before any database write.
+    return review["candidate"]
