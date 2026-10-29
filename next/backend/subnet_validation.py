@@ -165,7 +165,7 @@ def _ip_number(value):
         return None
     parts = value.split(".")
     if len(parts) != 4 or any(
-        not re.fullmatch(r"\\d{1,3}", part) or int(part) > 255
+        not re.fullmatch(r"\d{1,3}", part) or int(part) > 255
         for part in parts
     ):
         return None
