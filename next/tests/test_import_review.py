@@ -61,9 +61,8 @@ class ImportReviewTests(unittest.TestCase):
              "location": "Office", "rackUStart": 2, "rackUHeight": 2, "rackUEnd": 3},
         ]
         source["ipAllocations"] = {}
-        review = prepare_detached_import_review(source)
-        self.assertTrue(review["diagnostics"]["rackConflicts"])
-        self.assertFalse(review["persistenceAllowed"])
+        with self.assertRaisesRegex(ValueError, "overlaps"):
+            prepare_detached_import_review(source)
 
     def test_ipam_notes_survive_review(self):
         review = prepare_detached_import_review(fixture())
