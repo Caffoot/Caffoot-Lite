@@ -79,6 +79,39 @@ class ImportReviewTests(unittest.TestCase):
         self.assertFalse(review["requiresLegacyMountReview"])
         self.assertEqual(review["diagnostics"]["ipam"], [])
 
+    def test_legacy_computer_correction_is_proposed_not_approved(self):
+        source = fixture()
+        source["devices"][0].update({
+            "type": "Laptop", "mountType": "Rack Mounted",
+            "rackId": "", "location": "Racked",
+        })
+        original = copy.deepcopy(source)
+        review = prepare_detached_import_review(source)
+        self.assertEqual(source, original)
+        self.assertTrue(review["requiresLegacyMountReview"])
+        self.assertEqual(len(review["legacyMountRepairs"]), 1)
+        self.assertEqual(
+            review["candidate"]["devices"][0]["mountType"], "Desktop"
+        )
+        self.assertFalse(review["approved"])
+        self.assertFalse(review["persistenceAllowed"])
+
+    def test_review_does_not_mutate_original_on_validation_failure(self):
+        source = fixture()
+        source["devices"][0]["primaryIp"] = "198.51.100.99"
+        original = copy.deepcopy(source)
+        with self.assertRaises(ValueError):
+            prepare_detached_import_review(source)
+        self.assertEqual(source, original)
+
+    def test_review_of_ordinary_inventory_requires_no_mount_corrections(self):
+        source = fixture()
+        review = prepare_detached_import_review(source)
+        self.assertEqual(review["legacyMountRepairs"], [])
+        self.assertFalse(review["requiresLegacyMountReview"])
+        self.assertFalse(review["approved"])
+        self.assertFalse(review["persistenceAllowed"])
+
     def test_mounting_review_is_explicitly_required(self):
         source = fixture()
         source["devices"][0].update({"mountType": "Rack Mounted", "location": "Racked"})
