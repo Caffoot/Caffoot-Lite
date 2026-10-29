@@ -119,7 +119,14 @@ def _write_detached(connection: sqlite3.Connection, data):
             "INSERT INTO inventory_ip_allocations(ip,record_json) VALUES(?,?)",
             (ip, _json(record)),
         )
-    # Preserve all accepted top-level inventory options, including future\n    # or historical optional fields. Backup metadata is not inventory.\n    for key, value in data.items():\n        if key not in COLLECTIONS and key not in ("ipAllocations", "caffootBackup"):\n            connection.execute(\n                "INSERT INTO inventory_settings(key,value_json) VALUES(?,?)",\n                (key, _json(value)),\n            )
+    # Preserve optional and historical top-level inventory settings.
+    # Backup metadata is not authoritative inventory state.
+    for key, value in data.items():
+        if key not in COLLECTIONS and key not in ("ipAllocations", "caffootBackup"):
+            connection.execute(
+                "INSERT INTO inventory_settings(key,value_json) VALUES(?,?)",
+                (key, _json(value)),
+            )
 
 
 def stage_inventory(connection: sqlite3.Connection, data):
