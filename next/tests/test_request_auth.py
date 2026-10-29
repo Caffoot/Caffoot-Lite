@@ -47,6 +47,65 @@ class RequestAuthenticationTests(unittest.TestCase):
             self.db, self.cookie, ORIGIN, ORIGIN, self.csrf, now=60
         ))
 
+
+    def test_offline_import_requires_final_confirmation_and_preserves_accounts(self):
+        import json
+        from backend.import_service import replace_from_published_export
+        from backend.inventory import reconstruct_inventory
+        from test_import_review import fixture
+        source = fixture()
+        source["caffootBackup"] = {
+            "format": "caffoot-inventory", "schemaVersion": 1,
+            "app": "Caffoot Lite", "appVersion": "1.3.3",
+            "exportedAt": "2026-10-29T12:00:00Z",
+        }
+        raw = json.dumps(source).encode()
+        args = dict(cookie_header=self.cookie, origin=ORIGIN,
+                    allowed_origin=ORIGIN, csrf_header=self.csrf, now=60)
+        before_accounts = self.db.execute("SELECT * FROM accounts").fetchall()
+        with self.assertRaisesRegex(ValueError, "explicit confirmation"):
+            replace_from_published_export(self.db, raw, **args)
+        self.assertEqual(self.db.execute(
+            "SELECT count(*) FROM inventory_devices"
+        ).fetchone()[0], 0)
+        with self.assertRaises(PermissionError):
+            replace_from_published_export(
+                self.db, raw, **dict(args, csrf_header="0" * 64),
+                replacement_confirmed=True,
+            )
+        self.assertTrue(replace_from_published_export(
+            self.db, raw, **args, replacement_confirmed=True
+        ))
+        self.assertEqual(
+            reconstruct_inventory(self.db)["devices"][0]["name"], "PC"
+        )
+        self.assertEqual(
+            self.db.execute("SELECT * FROM accounts").fetchall(),
+            before_accounts,
+        )
+
+    def test_offline_import_rejects_untrusted_export_before_writing(self):
+        import json
+        from backend.import_service import replace_from_published_export
+        from test_import_review import fixture
+        source = fixture()
+        source["caffootBackup"] = {
+            "format": "caffoot-inventory", "schemaVersion": 1,
+            "app": "Caffoot Lite", "appVersion": "1.3.3",
+            "exportedAt": "2026-10-29T12:00:00Z",
+        }
+        source["devices"][0]["primaryIp"] = "10.0.0.99"
+        with self.assertRaises(ValueError):
+            replace_from_published_export(
+                self.db, json.dumps(source).encode(),
+                cookie_header=self.cookie, origin=ORIGIN,
+                allowed_origin=ORIGIN, csrf_header=self.csrf,
+                replacement_confirmed=True, now=60,
+            )
+        self.assertEqual(self.db.execute(
+            "SELECT count(*) FROM inventory_devices"
+        ).fetchone()[0], 0)
+
     def test_session_bound_identity_and_mutation(self):
         self.assertEqual(authenticated_account(self.db, self.cookie, now=60), self.admin)
         self.assertEqual(authorised_mutation(
