@@ -86,7 +86,8 @@ class Handler(BaseHTTPRequestHandler):
         elif self.path == "/api/setup/status":
             with connect() as connection:
                 configured = connection.execute("SELECT 1 FROM accounts LIMIT 1").fetchone() is not None
-            self.respond(200, {"setupRequired": not configured})
+            pending = connection.execute("SELECT 1 FROM accounts WHERE is_admin=1 AND mfa_confirmed=0 LIMIT 1").fetchone() is not None
+            self.respond(200, {"setupRequired": not configured, "enrollmentPending": pending})
         elif self.path == "/api/session":
             with connect() as connection:
                 cookie = self.headers.get("Cookie")
@@ -113,7 +114,7 @@ class Handler(BaseHTTPRequestHandler):
         if self.path in IMPORT_ROUTES:
             self.handle_import()
             return
-        if self.path not in ("/api/login", "/api/logout", "/api/setup", "/api/setup/mfa"):
+        if self.path not in ("/api/login", "/api/logout", "/api/setup", "/api/setup/mfa", "/api/setup/mfa-secret"):
             self.respond(404, {"error": "not found"})
             return
         origin = self.headers.get("Origin")
@@ -150,8 +151,8 @@ class Handler(BaseHTTPRequestHandler):
         if len(payload["username"]) > 256 or len(payload["password"]) > 4096 or not isinstance(payload.get("mfa_code"), (str, type(None))):
             self.respond(400, {"error": "invalid credentials"})
             return
-        if self.path in ("/api/setup", "/api/setup/mfa"):
-            if set(payload) - ({"username", "password"} if self.path == "/api/setup" else {"username", "password", "mfa_code"}):
+        if self.path in ("/api/setup", "/api/setup/mfa", "/api/setup/mfa-secret"):
+            if set(payload) - ({"username", "password"} if self.path == "/api/setup" else {"username", "password", "mfa_code"} if self.path == "/api/setup/mfa" else {"username", "password"}):
                 self.respond(400, {"error": "unexpected setup fields"})
                 return
             with connect() as connection:
@@ -169,8 +170,14 @@ class Handler(BaseHTTPRequestHandler):
                         ).fetchone()
                         if row is None or not verify_password(payload["password"], row[1]):
                             raise ValueError("Invalid administrator credentials")
-                        confirm_admin_mfa(connection, row[0], payload.get("mfa_code"))
-                        self.respond(200, {"status": "mfa enrolled"})
+                        if self.path == "/api/setup/mfa-secret":
+                            pending = connection.execute("SELECT mfa_secret FROM accounts WHERE id=? AND mfa_confirmed=0", (row[0],)).fetchone()
+                            if pending is None:
+                                raise ValueError("MFA already enrolled")
+                            self.respond(200, {"mfaSecret": pending[0]})
+                        else:
+                            confirm_admin_mfa(connection, row[0], payload.get("mfa_code"))
+                            self.respond(200, {"status": "mfa enrolled"})
                 except ValueError as exc:
                     self.respond(400, {"error": str(exc)})
                 except sqlite3.IntegrityError:
