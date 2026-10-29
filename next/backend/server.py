@@ -209,7 +209,7 @@ class Handler(BaseHTTPRequestHandler):
                     self.respond(401, {"error": "unauthorised"})
                     return
                 account = connection.execute(
-                    "SELECT username,is_admin FROM accounts WHERE id=?",
+                    "SELECT username,is_admin,mfa_confirmed FROM accounts WHERE id=?",
                     (account_id,),
                 ).fetchone()
                 if account is None:
@@ -218,6 +218,7 @@ class Handler(BaseHTTPRequestHandler):
                 self.respond(200, {
                     "username": account[0],
                     "is_admin": bool(account[1]),
+                    "mfa_enrolled": bool(account[2]),
                     "csrf_token": csrf_for_session(read_session_cookie(cookie)),
                 })
         else:
