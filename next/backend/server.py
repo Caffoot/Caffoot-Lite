@@ -11,6 +11,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlsplit
 
+from .device_saves import save_reserved_device
 from .schema import initialise_database as migrate_database
 from .accounts import bootstrap_first_admin, confirm_admin_mfa, verify_password, hash_password
 from .mfa import new_secret, verify_code
@@ -270,7 +271,8 @@ class Handler(BaseHTTPRequestHandler):
         if self.path in ("/api/users/create", "/api/users/permission", "/api/users/active",
                          "/api/users/admin", "/api/users/delete", "/api/account/password",
                          "/api/account/mfa/start", "/api/account/mfa/confirm",
-                         "/api/devices/edit/start", "/api/devices/edit/cancel"):
+                         "/api/devices/edit/start", "/api/devices/edit/cancel",
+                         "/api/devices/edit/save"):
             self.handle_user_mutation()
             return
         if self.path in IMPORT_ROUTES:
@@ -380,7 +382,14 @@ class Handler(BaseHTTPRequestHandler):
                 if actor is None:
                     self.respond(403, {"error": "forbidden"})
                     return
-                if self.path in ("/api/devices/edit/start", "/api/devices/edit/cancel"):
+                if self.path == "/api/devices/edit/save":
+                    if set(payload) not in ({"deviceId", "revision", "record"},
+                                            {"deviceId", "revision", "record", "section"}):
+                        raise ValueError("Invalid device save request")
+                    result = {"revision": save_reserved_device(
+                        connection, actor, payload["deviceId"], payload["revision"],
+                        payload["record"], payload.get("section", "Devices"))}
+                elif self.path in ("/api/devices/edit/start", "/api/devices/edit/cancel"):
                     if set(payload) not in ({"deviceId"}, {"deviceId", "section"}) or not isinstance(payload["deviceId"], str):
                         raise ValueError("Device identifier required")
                     section = payload.get("section", "Devices")
