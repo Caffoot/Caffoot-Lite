@@ -14,6 +14,7 @@ import unittest
 from pathlib import Path
 
 from backend.inventory import inspect_export, reconstruct_inventory, stage_inventory
+from backend.import_review import prepare_published_export_review
 from backend.schema import initialise_database
 from test_inventory import fixture
 
@@ -31,6 +32,27 @@ class GenuineExportRoundTrip(unittest.TestCase):
         path = Path(os.environ["CAFFOOT_V133_FIXTURE"])
         original = inspect_export(path.read_bytes())
         self.assert_round_trip(original)
+
+    @unittest.skipUnless(
+        os.environ.get("CAFFOOT_V133_FIXTURE"),
+        "Set CAFFOOT_V133_FIXTURE to a private genuine v1.3.3 export",
+    )
+    def test_genuine_export_full_review_remains_read_only(self):
+        """Exercise the real published export through the full review pipeline."""
+        raw = Path(os.environ["CAFFOOT_V133_FIXTURE"]).read_bytes()
+        with sqlite3.connect(":memory:") as db:
+            initialise_database(db)
+            before = reconstruct_inventory(db)
+            review = prepare_published_export_review(raw)
+            self.assertFalse(review["approved"])
+            self.assertFalse(review["persistenceAllowed"])
+            self.assertEqual(reconstruct_inventory(db), before)
+            if review.get("requiresAccessPointMountReview"):
+                self.assertTrue(review["accessPointMountConflicts"])
+                self.assertNotIn("candidate", review)
+            else:
+                self.assertIn("candidate", review)
+                self.assertIn("diagnostics", review)
 
     def assert_round_trip(self, original):
         with sqlite3.connect(":memory:") as db:
