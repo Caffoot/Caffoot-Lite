@@ -5,6 +5,8 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     CAFFOOT_DB_PATH=/data/caffoot.sqlite3 \
     CAFFOOT_PORT=8080
 
+RUN apk add --no-cache openssl
+
 WORKDIR /opt/caffoot
 COPY backend/ ./backend/
 RUN mkdir -p /data && chown -R 10001:10001 /data /opt/caffoot

@@ -14,12 +14,15 @@ from .request_auth import authenticated_account, csrf_for_session
 from .http_security import read_session_cookie, session_cookie, clear_session_cookie
 from .request_auth import login, logout
 from .http_security import require_same_origin
+from .tls import ensure_certificate
 
 DB_PATH = Path(os.environ.get("CAFFOOT_DB_PATH", "/data/caffoot.sqlite3"))
 HOST = os.environ.get("CAFFOOT_HOST", "0.0.0.0")
 PORT = int(os.environ.get("CAFFOOT_PORT", "8080"))
 PUBLIC_ORIGIN = os.environ.get("CAFFOOT_PUBLIC_ORIGIN", "")
 MAX_LOGIN_BYTES = 4096
+TLS_DIR = Path(os.environ.get("CAFFOOT_TLS_DIR", "/data/tls"))
+TLS_NAMES = os.environ.get("CAFFOOT_TLS_NAMES", "localhost,127.0.0.1")
 
 
 def connect():
@@ -129,7 +132,11 @@ class Handler(BaseHTTPRequestHandler):
 
 def main():
     initialise_database()
+    if not PUBLIC_ORIGIN.startswith("https://"):
+        raise RuntimeError("CAFFOOT_PUBLIC_ORIGIN must be an explicit HTTPS origin")
+    context = ensure_certificate(TLS_DIR, TLS_NAMES)
     server = ThreadingHTTPServer((HOST, PORT), Handler)
+    server.socket = context.wrap_socket(server.socket, server_side=True)
     server.serve_forever()
 
 

@@ -1,13 +1,16 @@
 services:
   caffoot-next:
     build: .
+    environment:
+      CAFFOOT_PUBLIC_ORIGIN: "${CAFFOOT_PUBLIC_ORIGIN:-https://localhost:8080}"
+      CAFFOOT_TLS_NAMES: "${CAFFOOT_TLS_NAMES:-localhost,127.0.0.1}"
     ports:
-      - "127.0.0.1:8080:8080"
+      - "8080:8080"
     volumes:
       - caffoot_data:/data
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=3)"]
+      test: ["CMD", "python", "-c", "import ssl, urllib.request; urllib.request.urlopen('https://127.0.0.1:8080/health', context=ssl._create_unverified_context(), timeout=3)"]
       interval: 30s
       timeout: 5s
       retries: 3
