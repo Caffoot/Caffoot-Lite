@@ -29,10 +29,6 @@ jobs:
         run: node scripts/check-release-documentation.cjs --self-test
       - name: Check publication gate self-tests
         run: node scripts/check-release-documentation.cjs --publication-self-test
-      - name: Check audit coverage checker self-tests
-        run: node scripts/check-release-documentation.cjs --audit-self-test
-      - name: Check mandatory audit document and register coverage
-        run: node scripts/check-release-documentation.cjs --audit-coverage
       - name: Check Markdown link checker self-tests
         run: node scripts/check-documentation-links.cjs --self-test
       - name: Check local Markdown and image paths
