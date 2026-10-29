@@ -57,3 +57,14 @@ The current v1.3.3 device object includes primary IP and rack position, and norm
 ## Provenance / confidence
 
 This reference records verified observations from direct reads of the published v1.3.3 HTML during the current investigation, plus explicitly labelled proposals and #215 requirements. It is not a claim that tests have been executed or that every source field has been catalogued. GitHub source and issue #215 remain authoritative.
+
+
+## Additional verified compatibility findings — nested device history and legacy aliases (2026-10-29)
+
+- **Virtual platform history:** when a guest changes host or a host's hypervisor product changes, published code can append `previousVirtualPlatforms` entries with `platform`, `hostId`, `changedAt`. This is separate from `previousVirtualHosts` and must be preserved in order, without inventing a new user-facing history workflow.
+- **Hypervisor eligibility:** a replacement host must be an active `Server - Physical` with the Hypervisor service enabled. Published code checks both `typeDetails.serverService_Hypervisor` and the historical top-level `serverService_Hypervisor` boolean. The migration must not silently discard or ignore historical top-level service flags when reconstructing eligibility.
+- **Legacy rack accessory type aliases:** published `normaliseLegacyRackAccessoryTypes` converts `fan` → `fan_tray`, `pdu` → `pdu_horizontal`, and `vent` → `ventilation` on a detached copy. Unknown types are not silently accepted. Preserve these accepted conversions and the resulting placement validations.
+- **Legacy device location:** published `migrateLegacyRackLocation` converts `location: "Racked"` to `"Unknown"` when the device is rack-mounted or has a rack ID. Do not treat that historical display location as a rack-placement authority.
+- **History tab:** published device-detail rendering distinguishes current type-compatible fields from historical fields; do not flatten or discard values just because the active form for a device type no longer exposes them.
+
+**Open verification:** enumerate all historical top-level service/software flags and type-specific detail keys from source and retained tests before freezing a device attribute schema. The above findings are source-verified; any proposed table representation remains provisional.
