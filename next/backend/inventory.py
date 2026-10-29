@@ -203,7 +203,12 @@ def preview_inventory_counts(candidate, current):
             "ipAllocations": len(data["ipAllocations"]),
         }
 
-    return {"backup": counts(candidate), "current": counts(current)}
+    backup = counts(candidate)
+    current_counts = counts(current)
+    # Published v1.3.3 confirmation displays IPAM count for the backup,
+    # but only device, rack and subnet counts for current inventory.
+    current_counts.pop("ipAllocations")
+    return {"backup": backup, "current": current_counts}
 
 
 def _write_detached(connection: sqlite3.Connection, data):
