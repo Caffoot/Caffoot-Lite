@@ -80,6 +80,11 @@ def normalise_detached_v133_state(raw):
     """
     if not isinstance(raw, dict):
         raise ValueError("Imported data must be a JSON object.")
+    for key in ("subnets", "vlans", "racks", "devices"):
+        if not isinstance(raw.get(key), list):
+            raise ValueError(f"Imported data is missing a valid {key} array.")
+    if not isinstance(raw.get("ipAllocations"), dict):
+        raise ValueError("Imported data is missing a valid ipAllocations object.")
     state = copy.deepcopy(PUBLISHED_DEFAULTS)
     state.update(copy.deepcopy(raw))
     state = normalise_published_fields(
