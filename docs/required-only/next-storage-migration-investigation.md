@@ -111,3 +111,21 @@ These findings are **existing v1.3.3 behaviours only**, not new requirements or 
 4. **Legacy computer mounting:** `planLegacyComputerMountingCorrections` targets specifically desktop/laptop/tablet legacy `Racked` location or incompatible/orphaned rack mounting. For qualifying cases it proposes a Desktop mount or retains a valid non-rack mount, sets location to Unknown and clears rack placement on a detached import candidate; unknown mount values and dangling references still fail validation. These corrections are import compatibility only, **not** device-type changes or a general repair feature.
 
 **Pending evidence:** locate and compare VLAN create/edit validation; verify the import UI review/confirmation and schema applicability; review installed-software and service rename/restore tests. No implementation authorised.
+
+
+## Verified source checks — VLAN validation and exact legacy import sequence (2026-10-29)
+
+**VLAN validation:** published `normaliseState` validation requires each VLAN to have an ID and name, an integer `vlanId` from 1 through 4094, a unique record ID, and a unique combination of `parentId || '__unassigned__'` and VLAN number. This confirms **parent-domain-scoped** uniqueness for persisted VLAN records. The subnet edit path `handleSubnetSubmit` looks up existing VLANs by number **and parent domain**, updates matching name/description or creates a new scoped VLAN. Separate live-state integrity checks also enforce subnet VLAN uniqueness within the parent IP Address Block. These are the source-observed rules; do not infer a new standalone VLAN editor.
+
+**Legacy JSON import order, as implemented in `importData`:**
+1. Reject file over 10 MiB; read UTF-8; parse JSON with existing error handling.
+2. Reject unsafe object keys; validate backup structure and version metadata.
+3. Detect Access Point mounting conflicts; if present, obtain explicit per-conflict user choices. Cancel stops import. Apply chosen corrections on a deep copy.
+4. Validate/normalise reviewed backup into a detached candidate, including legacy mounting repair planning and inventory validation.
+5. If legacy mounting repairs are proposed, display the existing compatibility review; cancellation stops import.
+6. Show a final native confirmation with file name, incoming device/rack/subnet/IPAM counts and current device/rack/subnet counts; cancellation stops import.
+7. Published browser implementation then creates/verifies a safety snapshot, persists and verifies the replacement, rolls back on failure, and shows success/failure. **For Next, #215 replaces this browser-specific persistence machinery with atomic inventory-only SQLite replacement**; do not recreate safety snapshots, recovery banners, JSON backup workflow, or obsolete snapshot wording. Preserve the applicable user decisions, validation, preview/confirmation and no-partial-replacement outcome.
+
+The AP and legacy mounting reviews are **conditional on actual detected conflicts/repairs**, not mandatory screens for every import or schema version. The source does not establish that a particular schema version always triggers either review. No new import repair options are authorised.
+
+**Open:** reconcile these exact rules with retained test evidence, including schema 0/1 fixtures and negative import cases, before drafting API/DDL.
