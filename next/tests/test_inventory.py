@@ -171,6 +171,32 @@ class StagingTests(unittest.TestCase):
             stage_inventory(self.db, invalid)
         self.assertEqual(snapshot(), before)
 
+    def test_failed_accessory_insert_rolls_back_all_inventory_sections(self):
+        original = inspect_export(json.dumps(fixture()).encode())
+        stage_inventory(self.db, original)
+        before = reconstruct_inventory(self.db)
+        replacement = fixture()
+        replacement["devices"][0]["name"] = "CHANGED-NAME"
+        replacement["rackAccessories"] = [
+            {"id": "accessory-1", "rackId": "rack-1", "name": "Panel A"},
+            {"id": "accessory-1", "rackId": "rack-1", "name": "Panel B"},
+        ]
+        with self.assertRaises(sqlite3.IntegrityError):
+            stage_inventory(self.db, replacement)
+        self.assertEqual(reconstruct_inventory(self.db), before)
+
+    def test_successful_staging_replaces_only_inventory_sections(self):
+        first = inspect_export(json.dumps(fixture()).encode())
+        stage_inventory(self.db, first)
+        replacement = fixture()
+        replacement["devices"] = [{"id": "new", "name": "NEW-DEVICE"}]
+        replacement["extraHistoricalOption"] = {"changed": True}
+        stage_inventory(self.db, inspect_export(json.dumps(replacement).encode()))
+        rebuilt = reconstruct_inventory(self.db)
+        self.assertEqual(rebuilt["devices"], replacement["devices"])
+        self.assertEqual(rebuilt["extraHistoricalOption"], {"changed": True})
+        self.assertEqual(len(rebuilt["devices"]), 1)
+
     def test_rollback_preserves_prior_inventory(self):
         data = inspect_export(json.dumps(fixture()).encode())
         stage_inventory(self.db, data)
