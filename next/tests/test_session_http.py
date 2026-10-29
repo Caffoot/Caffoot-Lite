@@ -12,7 +12,7 @@ from unittest.mock import patch
 from backend.accounts import bootstrap_first_admin, confirm_admin_mfa
 from backend.http_security import COOKIE_NAME
 from backend.request_auth import csrf_for_session
-from backend.mfa import code_at
+from backend.mfa import code_at, new_secret
 from backend.schema import initialise_database
 from backend.server import Handler
 from backend.sessions import login_session
@@ -142,9 +142,10 @@ class SessionHttpTests(unittest.TestCase):
                                        {"username": "second", "password": "initial"}, self.token, csrf)
             self.assertEqual(status, 200)
             second_id = result["id"]
+            second_secret = new_secret()
             with sqlite3.connect(self.path) as db:
                 db.execute("UPDATE accounts SET mfa_secret=?,mfa_confirmed=1 WHERE id=?",
-                           ("JBSWY3DPEHPK3PXP", second_id))
+                           (second_secret, second_id))
                 db.commit()
             status, _ = self.post("/api/users/permission",
                                   {"userId": second_id, "section": "Devices", "level": "edit"},
@@ -152,7 +153,7 @@ class SessionHttpTests(unittest.TestCase):
             self.assertEqual(status, 200)
             with sqlite3.connect(self.path) as db:
                 second_token = login_session(db, "second", "initial",
-                                             mfa_code=code_at("JBSWY3DPEHPK3PXP", time.time()))
+                                             mfa_code=code_at(second_secret, time.time()))
             self.assertIsNotNone(second_token)
             second_csrf = csrf_for_session(second_token)
             status, _ = self.post("/api/devices/edit/start", {"deviceId": "device-1"},
