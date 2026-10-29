@@ -94,7 +94,7 @@ def inspect_export(raw: bytes):
     except (UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise ImportRejected("Invalid JSON export") from exc
     if not isinstance(data, dict):
-        raise ImportRejected("Expected inventory object")
+        raise ImportRejected("Backup must be a JSON object.")
     _check_keys(data)
     validate_published_structure(data)
     meta = data.get("caffootBackup")
@@ -109,11 +109,14 @@ def inspect_export(raw: bytes):
     for key in REQUIRED:
         if key not in data:
             raise ImportRejected("Missing inventory collection: " + key)
-    for key in COLLECTIONS:
-        records = data.get(key, [])
-        if not isinstance(records, list) or len(records) > 50000:
-            raise ImportRejected("Invalid inventory collection: " + key)
-        if any(not isinstance(item, dict) for item in records):
+    # Published normaliseState requires VLANs; the early structural gate does not.
+    if not isinstance(data.get("vlans"), list):
+        raise ImportRejected("Imported data is missing a valid vlans array.")
+    # Published import checks this optional collection independently.
+    if "rackAccessories" in data and not isinstance(data["rackAccessories"], list):
+        raise ImportRejected("Backup has an invalid rackAccessories collection.")
+    for key in ("vlans", "rackAccessories"):
+        if any(not isinstance(item, dict) for item in data.get(key, [])):
             raise ImportRejected("Invalid inventory record: " + key)
     ipam = data["ipAllocations"]
     if not isinstance(ipam, dict) or len(ipam) > 100000:
