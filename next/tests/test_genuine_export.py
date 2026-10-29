@@ -37,10 +37,14 @@ class GenuineExportRoundTrip(unittest.TestCase):
             initialise_database(db)
             stage_inventory(db, candidate)
             restored = reconstruct_inventory(db)
-        self.assertEqual(restored, {
+        expected = {
             key: value for key, value in candidate.items()
             if key != "caffootBackup"
-        })
+        }
+        # SQLite reconstruction always includes the optional accessories
+        # collection, even when the reviewed source omitted it.
+        expected.setdefault("rackAccessories", [])
+        self.assertEqual(restored, expected)
         self.assertEqual(
             restored["devices"][0]["id"], candidate["devices"][0]["id"]
         )
