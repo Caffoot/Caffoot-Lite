@@ -108,6 +108,34 @@ class RequestAuthenticationTests(unittest.TestCase):
             "SELECT count(*) FROM inventory_devices"
         ).fetchone()[0], 0)
 
+    def test_offline_import_preview_is_read_only_and_requires_authentication(self):
+        import json
+        from backend.import_service import preview_published_export
+        from test_import_review import fixture
+        source = fixture()
+        source["caffootBackup"] = {
+            "format": "caffoot-inventory", "schemaVersion": 1,
+            "app": "Caffoot Lite", "appVersion": "1.3.3",
+            "exportedAt": "2026-10-29T12:00:00Z",
+        }
+        raw = json.dumps(source).encode()
+        args = dict(cookie_header=self.cookie, origin=ORIGIN,
+                    allowed_origin=ORIGIN, csrf_header=self.csrf, now=60)
+        result = preview_published_export(self.db, raw, **args)
+        self.assertFalse(result["approved"])
+        self.assertFalse(result["persistenceAllowed"])
+        self.assertNotIn("candidate", result)
+        self.assertEqual(result["counts"]["backup"]["devices"], 1)
+        self.assertEqual(result["counts"]["current"]["devices"], 0)
+        self.assertNotIn("ipAllocations", result["counts"]["current"])
+        self.assertEqual(self.db.execute(
+            "SELECT count(*) FROM inventory_devices"
+        ).fetchone()[0], 0)
+        with self.assertRaises(PermissionError):
+            preview_published_export(
+                self.db, raw, **dict(args, csrf_header="invalid")
+            )
+
     def test_session_bound_identity_and_mutation(self):
         self.assertEqual(authenticated_account(self.db, self.cookie, now=60), self.admin)
         self.assertEqual(authorised_mutation(
