@@ -6,7 +6,7 @@ Free, open-source, offline IP address management (IPAM), network inventory and r
 
 Keep track of devices, IP addresses, subnets, VLANs, locations and network racks in one place. Caffoot Lite runs as a **single HTML file** in a modern browser. No account, Docker, database or web server is needed for the published standalone release.
 
-**Development status:** Caffoot Lite is actively developed and maintained. The latest published stable release is v1.3.3. Planned future Docker/database capabilities are not available in the published standalone application. See the [roadmap](ROADMAP.md) and [open issues](https://github.com/Caffoot/Caffoot-Lite/issues) for ongoing work.
+**Development status:** Caffoot Lite is actively developed and maintained. The latest published stable release is v1.3.3. Planned future Docker/database capabilities are not available in the published standalone application. See the [approved Next specification](https://github.com/Caffoot/Caffoot-Lite/issues/215) and [open issues](https://github.com/Caffoot/Caffoot-Lite/issues) for ongoing work.
 
 ## Get started in minutes
 
@@ -34,7 +34,6 @@ For step-by-step help, see the [installation and upgrade guide](INSTALLATION.md)
 | **Overview and data quality** | Inventory summaries and saved-record consistency information |
 | **Data management** | JSON backup and restore, maintenance and recovery tools |
 
-Caffoot Lite is a documentation tool, **not** a live network discovery or monitoring service. Read the [feature overview](docs/features/FEATURE-OVERVIEW.md) for more detail.
 
 ## See it in action
 
@@ -78,12 +77,9 @@ Please read [SECURITY.md](SECURITY.md) before considering a hosted deployment. A
 
 - [Installation, upgrades and troubleshooting](INSTALLATION.md)
 - [User guide](USER-GUIDE.md)
-- [Feature overview](docs/features/FEATURE-OVERVIEW.md)
-- [Roadmap](ROADMAP.md)
+- [Next specification](https://github.com/Caffoot/Caffoot-Lite/issues/215)
 - [v1.3.3 release notes](RELEASE-NOTES-1.3.3.md)
 - [Published v1.3.2 release notes](RELEASE-NOTES-1.3.2.md)
-- [Archived v1.3.1 release notes](docs/archive/release-notes/RELEASE-NOTES-1.3.1.md)
-- [Historical release notes](docs/archive/release-notes/README.md)
 - [Documentation index](docs/README.md)
 - [Contributing](CONTRIBUTING.md) and [backup format contract](BACKUP-FORMAT.md)
 
@@ -105,7 +101,7 @@ npm install
 npm run release
 ```
 
-The build produces `app/dist/Caffoot-Lite.html`. Automated checks and manual browser verification are recommended before distributing a build. The GitHub Actions build and validation workflows are available; use the published release assets for normal installation. See [contributing guidance](CONTRIBUTING.md) and the [technical documentation](docs/README.md).
+The build produces `app/dist/Caffoot-Lite.html`. Automated checks and manual browser verification are recommended before distributing a build. The GitHub Actions build and validation workflows are available; use the published release assets for normal installation. See [contributing guidance](CONTRIBUTING.md) and the [retained technical references](docs/required-only/README.md).
 
 ## Licence and branding
 
