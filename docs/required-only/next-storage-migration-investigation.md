@@ -1,162 +1,68 @@
-# Next — v1.3.3 storage migration investigation (working reference)
+# Next — verified v1.3.3 compatibility investigation
 
-**Status:** Read-only technical investigation and planning; **not an implementation authorisation**.  
-**Authority:** [Issue #215](https://github.com/Caffoot/Caffoot-Lite/issues/215) alone defines approved scope and acceptance. If this reference conflicts with #215 or published v1.3.3 behaviour, the latter evidence and #215 prevail.  
-**Baseline:** [Published v1.3.3 HTML](https://github.com/Caffoot/Caffoot-Lite/blob/v1.3.3/app/caffoot-lite.html).  
-**Branch:** Next. No application changes are authorised by this document.
+**Status:** Technical evidence and open checks only. **No implementation authorised.**
+**Sole Next scope/acceptance authority:** [Issue #215](https://github.com/Caffoot/Caffoot-Lite/issues/215).
+**Behavioural baseline:** [Published v1.3.3 application](https://github.com/Caffoot/Caffoot-Lite/blob/v1.3.3/app/caffoot-lite.html).
+**Working branch:** `Next`. If this reference conflicts with #215 or the published source, correct this reference; never infer approval from it.
 
-## Prior handover and work retained
+## 1. Scope boundary
 
-Earlier sessions established the published v1.3.3 baseline, Next branch, required-only technical documentation, and reconciliation of historical audits and fixes. Preserve existing screens, workflows, import correction choices, custom/historical data, tests and safeguards. Do not re-open closed findings or introduce new inventory features. Earlier preparation was not lost; this file consolidates **the recent source-level mapping** rather than claiming to reproduce every prior chat or test result. Consult existing GitHub documents and test evidence before implementation.
+Next replaces authoritative browser inventory storage with a backend and central SQLite database, deployed simply via Docker Compose/Portainer. Only #215's approved accounts, MFA, RBAC, first-run setup and simultaneous device edit-reservation behaviour may be added. Existing Devices, IPAM and Racks functionality, appearance, terminology, validations and outcomes remain those of published v1.3.3.
 
-## Verified published-source storage
+No new inventory features, device-type change workflow, ticketing, public registration, UI redesign or unapproved repair flows. Do not reproduce browser safety snapshots/recovery banners or ongoing in-app JSON export: #215 deliberately replaces those storage-specific mechanisms. Legacy JSON **import** remains, with existing applicable validation/review/confirmation. No implementation, new tests, merge or release is authorised by this document.
 
-The browser state includes `devices`, `subnets`, `vlans`, `racks`, `rackAccessories`, `ipAllocations`, `deviceTypes`, `deviceTypeGraphics`, `deviceLocations`, `serverFunctions`, `installedSoftware`, `managedOptionsCleared`, and other supported fields identified by source/test evidence. Normalisation merges original root data; preservation and validation of individual fields must be verified, not assumed.
+## 2. Verified published-source inventory and relationships
 
-- **New device:** `id`, `name`, `type`, `mountType`, `location`, `notes`, `status`, `manufacturer`, `model`, `serialNumber`, `typeDetails`, `virtualPlatform`, `virtualHostId`, `isVirtual`, `ipReserved`, `primaryIp`, `rackId`, `face`, `rackUStart`, `rackUEnd`, `rackUHeight`. Host changes can append `previousVirtualHosts` entries containing `hostId`, `changedAt`, `action`.
-- **New rack:** `id`, `name`, `heightU`, `widthMm`, `depthMm`, formatted `depth`, `type`, `location`.
-- **Rack accessory:** `id`, `rackId`, `type`, `name`, `face`, `startU`, `heightU`, `side`, `portCount`. Vertical `pdu_vertical` and `cable_vertical` use left/right 0U side rails, separately from horizontal face occupancy. Placement validation rejects overlaps and out-of-range U positions.
-- **Subnet:** existing fields are spread into the proposed record on edit; known fields include `id`, `cidr`, `name`, `vlan`, `gateway`, `description`, optional `parentId` and historical hierarchy attributes such as `kind`.
-- **VLAN:** observed fields include `id`, `vlanId`, `name`, `description`, `color`, optional `parentId`. Exact uniqueness scope remains to be verified against the published validators and tests.
-- **IP allocation:** keyed by IP; includes `status`, `deviceId`, `hostname`, `notes`, and possible `reservedForDeviceId` and other preserved fields. Existing code validates gateway/device-type restrictions, configured subnet membership, reservations and conflicting owners before releasing an old address; released addresses retain address-specific metadata.
-- **Managed settings:** device types, locations, graphics, software and server service catalogues; software/service entries have stable `key`, `label`, optional `deviceTypes` and archival data. Removing a catalogue option does not imply erasing existing device values. Built-in suggestions are not automatically saved options.
+Published state includes `devices`, `subnets`, `vlans`, `racks`, `rackAccessories`, `ipAllocations`, `deviceTypes`, `deviceTypeGraphics`, `deviceLocations`, `serverFunctions`, `installedSoftware`, `managedOptionsCleared` and `softwareTypeExclusions`. These are **observed** keys, not a claim of an exhaustive field inventory. `normaliseState` merges default data with supported incoming state and performs legacy repairs; field-specific retention must be verified rather than assumed.
 
-These are observed fields, **not an exhaustive assertion that no other historical fields exist**.
+- **Devices:** observed core fields include `id`, `name`, `type`, `mountType`, `location`, `notes`, `status`, `manufacturer`, `model`, `serialNumber`, `typeDetails`, `virtualPlatform`, `virtualHostId`, `isVirtual`, `ipReserved`, `primaryIp`, `rackId`, `face`, `rackUStart`, `rackUEnd`, `rackUHeight`. Host changes may record `previousVirtualHosts` (`hostId`, `changedAt`, `action`) and `previousVirtualPlatforms` (`platform`, `hostId`, `changedAt`). Existing `handleDeviceSubmit` **rejects changing an existing device's type or virtual identity** with “Device identity cannot be changed. Create a new device instead.” No type-change workflow exists to migrate.
+- **Variable details:** `getDetailFieldsForDeviceType` derives fields from device-type profiles and configured catalogues. `typeDetails` can contain supported historical booleans, numbers, strings and other type-specific values; historical top-level service flags such as `serverService_Hypervisor` are read by eligibility/platform logic. Preserve verified legacy and historical values without inventing controls for hidden fields. Replacement hypervisor hosts must meet published active physical-server/Hypervisor-service eligibility.
+- **IPAM:** subnets include `id`, `cidr`, `name`, `vlan`, `gateway`, `description` and possible `parentId`/`kind`; VLANs include `id`, `vlanId`, `name`, `description`, `color`, possible `parentId`. `normaliseState` validation requires VLAN number integer 1–4094, unique VLAN record ID, and unique **(parent domain, VLAN number)** combination; the unassigned domain is shared. Subnet save matches VLAN by number **and** parent domain. Legacy VLAN ownership reconciliation refuses ambiguous/orphaned records and checks duplicate numbers within a domain. IP allocations are keyed by IP and can hold `status`, `deviceId`, `hostname`, `notes`, `reservedForDeviceId` and supported historical metadata. Preserve published primary-IP, gateway, subnet membership, reservation and competing-owner checks, including rollback on failed save.
+- **Racks:** racks have observed `id`, `name`, `heightU`, `widthMm`, `depthMm`, `depth`, `type`, `location`; accessories include `id`, `rackId`, `type`, `name`, `face`, `startU`, `heightU`, `side`, `portCount`. Preserve device/accessory collisions, U range and face occupancy; vertical `pdu_vertical` and `cable_vertical` use independent left/right 0U rails. Existing alias normalisation maps `fan`→`fan_tray`, `pdu`→`pdu_horizontal`, `vent`→`ventilation`; no other aliases are authorised.
+- **Managed catalogues:** configured software/services use stable keys, labels, applicability and archived state. Built-in software suggestions are derived, not automatically saved catalogue entries; `softwareTypeExclusions` affects available suggestions. Renaming a configured service retains its key. Software/service archival is **blocked while assigned** (checks nested and historical top-level flags); otherwise the entry is archived, not hard-deleted. Restoring archived software checks for conflicting available names. Published device details show assigned archived entries, supported by later test evidence.
+- **History:** `recordAudit` retains at most 200 events, up to 60 change entries per event plus omitted count; existing categories include devices, subnets, racks, VLANs, allocations, device types and locations. Preserve existing Change History behaviour, not enterprise auditing. Published v1.3.3 History shows historical device details but deliberately **does not** include the removed “Restore Configuration” action.
 
-## Proposed ownership mapping (subject to review)
+## 3. Legacy JSON import — verified sequence and boundaries
 
-| SQLite logical records | Authority and reconstruction |
+Published `importData`:
+1. Rejects files over 10 MiB; reads UTF-8 JSON and reports parse errors; recursively rejects unsafe object keys `__proto__`, `prototype`, `constructor`.
+2. Validates required `devices`, `subnets`, `racks` arrays (50,000 maximum each), `ipAllocations` object (100,000 maximum), optional `rackAccessories` type and backup version metadata. No `caffootBackup` metadata is accepted as schema 0; supported metadata-bearing schema versions are checked against the published maximum, with newer versions rejected.
+3. Detects incompatible Access Point mounting/rack assignments **before** normalisation; only when present, asks for explicit mounting choices and applies them to a deep copy. Cancel leaves inventory intact.
+4. `normaliseImportedBackupAndPlanLegacyMountRepairs` creates another detached copy. For qualifying desktop/laptop/tablet legacy mount/location inconsistencies, it plans the existing correction (valid non-rack/Desktop mounting, Unknown location, cleared rack placement). It does not change device type or accept unknown mounts/dangling references.
+5. `validateAndNormaliseBackupForImport` checks invalid mounts, complete application integrity and rack placement conflicts on the candidate. Only when planned legacy corrections exist does it show the existing review; cancellation stops import.
+6. Presents the existing final confirmation with file name and incoming/current inventory counts. Cancel or validation failure leaves current inventory untouched. Published browser code then uses a verified safety snapshot, save verification and rollback. **Next must instead perform an atomic, inventory-only database replacement, leaving accounts, passwords, MFA and permissions untouched, per #215.** Do not reproduce browser snapshot/recovery machinery or its obsolete confirmation wording.
+
+These conditional reviews are not guaranteed for every backup or particular schema version. Do not infer additional correction choices or universal acceptance of arbitrary unknown fields.
+
+## 4. #215 architectural constraints — not additional functionality
+
+- Device owns identity and host/guest relations; IPAM owns allocation, reservation and primary IP; Racks owns placement. Published device objects contain IP and rack fields, but Next must reconstruct the same displayed representation from **one** authoritative database model, not competing copies.
+- Backend enforces existing validations atomically, including stale/competing IP and rack writes. Viewing is never locked; #215's short-lived exclusive **device** edit reservation spans Devices/IPAM/Racks, released on Save/Cancel/expiry.
+- First administrator chooses credentials and enrols MFA; no hard-coded example username or public signup. Admins manage users; newly created users initially have no inventory access. Enforce approved role permissions and MFA, password changes and self/last-admin safeguards.
+- SQLite table names, flexible field storage and API shapes are **unapproved implementation choices**, not requirements. Do not freeze DDL from this reference alone.
+
+## 5. Historical evidence reconciled against later fixes
+
+These are recorded test results, **not tests run during this investigation**. Earlier dated documents may describe draft PRs/open findings subsequently resolved; never use their historical status as current status.
+
+| Behaviour | Recorded evidence and limitation |
 | --- | --- |
-| `devices` | Device identity, attributes, host–guest relationships and record-scoped historical/custom fields |
-| `subnets`, `vlans`, `ip_allocations` | IPAM owns hierarchy, VLANs, allocations, reservations and primary device IP assignment |
-| `racks`, `rack_device_placements`, `rack_accessories` | Racks owns definitions and all placement facts |
-| `managed_settings` | Existing managed lists, catalogues and graphics with stable keys |
-| `change_history` | Existing event content and retention semantics |
-| Separate authentication/permissions tables | Never overwritten by inventory migration |
+| Guest unassign/retire/reassign, history and custom values | Legacy import matrix: #91 Chromium `40179316087` and historical missing-host JSON import/reload `40178800515`. Fictional fixtures, not every real backup. |
+| Archived custom software/service backup/reload | Workflow coverage: #157 Chromium `40338184346`. That test alone did not prove display of archived assignments. |
+| Archived assigned software/service **device-detail display** | **Later** #97 focused Chromium `40343778804`, followed by recorded regression `40348476895`. Supersedes the earlier display-evidence gap for tested cases. |
+| Legacy accessory aliases and import/startup normalisation | #97 reconciliation and Chromium `40348476895`; corroborates the three published aliases, not arbitrary aliases. |
+| Rack accessory import and collisions | Test-only PR #201: six fictional Chromium cases, including legacy no-accessory backup, malformed accessories, collisions and independent rails. |
+| History persistence and late restore/reset rollback | Technical workflows: focused v1.3.3 Chromium `40594804262` (five scenarios). Browser-specific mechanism is **not** to be reproduced in Next. |
+| Device History read-only and absent Restore Configuration | v1.3.3 browser upgrade test recorded in workflow coverage/audit programme; historical snapshots retained, restoration action removed. |
+| Older schema-v1 import | Owner-reported manual v1.2.0 import in workflow register; explicitly **not** exhaustive field-by-field acceptance. |
 
-The current v1.3.3 device object includes primary IP and rack position, and normalisation repairs IPAM from device fields. **Next intentionally changes internal authority** under #215: the backend must assemble the same user-visible device representation from authoritative IPAM and Racks relations. No competing stored copies or whole-inventory JSON authority. Record-specific flexible attributes are permissible for supported variable/historical values; they must not duplicate authoritative allocation/placement fields. The table names above are provisional, not approved DDL.
+Evidence sources: [legacy backup compatibility matrix](testing--LEGACY-BACKUP-IMPORT-COMPATIBILITY-MATRIX.md), [workflow verification coverage register](testing--WORKFLOW-VERIFICATION-COVERAGE-REGISTER.md), [technical workflows](workflows--TECHNICAL-WORKFLOWS.md), [audit remediation programme](audits--AUDIT-FINDINGS-REMEDIATION-PROGRAMME.md). Historical recommendations for extra startup recovery UI are **not** approved by #215.
 
-## Existing validation and migration behaviour to preserve
+## 6. Outstanding verification before design approval
 
-- Legacy Settings JSON import accepts supported schema 0 and schema 1, validates version metadata, rejects unsafe object keys (`__proto__`, `prototype`, `constructor`), requires arrays for devices/subnets/racks and object `ipAllocations`, checks 50,000 maximum per required collection and 100,000 allocations, and limits input files to 10 MiB.
-- Import runs on detached candidate data; Retain the source-supported Access Point/legacy mounting correction choices and their applicable review steps; verify which steps apply to each supported import schema. Validate inventory integrity and rack collisions, show the existing preview and require the existing final confirmation. Cancellation or failure leaves inventory intact. Preserve IDs, managed options, supported historical/custom attributes and relationships as established by published source and tests.
-- In Next, perform an inventory-only atomic database replacement; never overwrite accounts, passwords, MFA or permissions. Browser safety snapshots, recovery banners and ongoing JSON export/backup are **not** carried forward. Ongoing backup/restore uses external Docker/volume/database tools, per #215.
-- IPAM checks include primary-IP uniqueness, subnet membership, gateway eligibility and independent reservation ownership; stale/competing writes must be rejected. Rack checks include front/rear face, U range, device/accessory collisions, and independent vertical side-rail occupancy.
-- Published `auditChanges` compares devices, subnets, racks, VLANs, IPAM allocations, device types and locations; do not invent new tracked categories. `recordAudit` retains up to 200 events, up to 60 change entries per event and `omitted` count, with timestamp/reason/action/kind/label/changed fields. Backend must preserve outcomes and limits without an enterprise audit redesign.
-- New first administrator chooses credentials and enrols mandatory MFA; admins create users, no public registration, default new-user inventory access denied until granted, MFA mandatory for effective editors/admins, read-only optional, and protect own/last active admin. Two viewers can view concurrently; one short-lived device edit reservation across Devices/IPAM/Racks; save/cancel/expiry and stale-save rules per #215.
+1. Compare actual published v1.3.3 test fixtures and negative import cases against schema-0/schema-1 handling, including conditional AP and legacy mounting reviews. Do not claim exhaustive real-backup coverage.
+2. Verify full save-time treatment of supported historical/hidden `typeDetails`, software/service rename/archive/restore variants and legacy top-level flags against source and tests; do not assume arbitrary unknown values are supported.
+3. Verify exact existing IPAM, rack, device save and Change History outcomes, including failure/rollback, against retained tests and subsequent fixes.
+4. Only then propose minimal field mapping, transaction/API boundaries and database DDL that implement #215 without changing v1.3.3 workflows. Seek product-owner decisions on genuine ambiguities, **never guess**.
 
-## Design checkpoints remaining before implementation approval
-
-1. Verify all nested `typeDetails` and historical field variants against tests and retained technical workflows, including orphaned catalogue keys and legacy schema 0/1.
-2. Define precise field-to-table and reverse reconstruction mapping, preserving supported unknown fields and data types without duplicate authorities.
-3. Define atomic device save, IP/rack conflict validation, device edit reservation/revision and permission checks at the backend boundary.
-4. Define legacy import conversion and review sequence, transaction boundaries and rollback; explicitly test that user accounts remain untouched.
-5. Compare compatibility outcomes against published v1.3.3 and existing passing test evidence; reconcile historical findings against later fixes.
-6. Review proposed SQLite DDL and API only after this evidence pass. **No coding, new tests, merges or releases until separately authorised.**
-
-## Provenance / confidence
-
-This reference records verified observations from direct reads of the published v1.3.3 HTML during the current investigation, plus explicitly labelled proposals and #215 requirements. It is not a claim that tests have been executed or that every source field has been catalogued. GitHub source and issue #215 remain authoritative.
-
-
-## Additional verified compatibility findings — nested device history and legacy aliases (2026-10-29)
-
-- **Virtual platform history:** when a guest changes host or a host's hypervisor product changes, published code can append `previousVirtualPlatforms` entries with `platform`, `hostId`, `changedAt`. This is separate from `previousVirtualHosts` and must be preserved in order, without inventing a new user-facing history workflow.
-- **Hypervisor eligibility:** a replacement host must be an active `Server - Physical` with the Hypervisor service enabled. Published code checks both `typeDetails.serverService_Hypervisor` and the historical top-level `serverService_Hypervisor` boolean. The migration must not silently discard or ignore historical top-level service flags when reconstructing eligibility.
-- **Legacy rack accessory type aliases:** published `normaliseLegacyRackAccessoryTypes` converts `fan` → `fan_tray`, `pdu` → `pdu_horizontal`, and `vent` → `ventilation` on a detached copy. Unknown types are not silently accepted. Preserve these accepted conversions and the resulting placement validations.
-- **Legacy device location:** published `migrateLegacyRackLocation` converts `location: "Racked"` to `"Unknown"` when the device is rack-mounted or has a rack ID. Do not treat that historical display location as a rack-placement authority.
-- **History tab:** published device-detail rendering distinguishes current type-compatible fields from historical fields; do not flatten or discard values just because the active form for a device type no longer exposes them.
-
-**Open verification:** enumerate all historical top-level service/software flags and type-specific detail keys from source and retained tests before freezing a device attribute schema. The above findings are source-verified; any proposed table representation remains provisional.
-
-
-## Additional verified findings — dynamic device fields and software preferences (2026-10-29)
-
-Published v1.3.3 dynamically derives `getDetailFieldsForDeviceType(type)` from `deviceTypeDetailGroups`, `deviceDetailFieldProfiles`, configured server services, and available software catalogue entries. Device `typeDetails` is therefore variable by device type and catalogue state, not a universal fixed set of SQL columns. Preserve supported historical/custom keys and their value types as verified by published validation and import behaviour; do not treat arbitrary unrecognised keys as automatically approved functionality.
-
-- `booleanDeviceDetailFields` includes legacy software and server-service flags (e.g. `Swan`, `SQLServer`, `ActiveDirectory`, `DNS`, `DHCP`, `BackupSoftware`) plus hardware booleans `serialPort` and `usbPort`. `numericDeviceDetailFields` includes `memory`, `storage`, `driveCount`, `handsetCount`, `powerOutlets`. Other device detail values use existing field choices/labels; do not coerce historical types without matching published normalisation.
-- `getAvailableSoftwareCatalogueEntries` merges non-archived configured entries with built-in suggestions. Built-in entries have generated `catalogSoftware_...` keys and `builtin:true`; configured keys/labels can override or suppress suggestions. Do not persist inferred built-in suggestions as if they were explicitly configured catalogue records.
-- `getSoftwareFieldsForDeviceType` filters entries by `deviceTypes` (case-insensitive) and, for built-in suggestions, by `appState.softwareTypeExclusions`. This top-level map is an additional preserved managed inventory setting not listed in the original default-data inventory; preserve it and any supported historical settings rather than reducing migration to a fixed default-data key list.
-- `getEffectiveDevicePlatform` and `getEffectiveDevicePlatformVersion` choose hypervisor product/version for physical hypervisors, otherwise software platform/OS/version; they also recognise historical top-level `serverService_Hypervisor`. This is a derived read behaviour and must be reconstructed without changing filters or labels.
-- Device details and historical tabs depend on current type compatibility and retained values. **Existing device identity/type cannot be changed through the edit workflow**: `handleDeviceSubmit` rejects any edit where `type !== originalDevice.type` or the virtual identity differs, with `Device identity cannot be changed. Create a new device instead.` Hidden fields can arise from historical imports, managed catalogue changes, or older representations; they must not be described as arising from a supported device-type change.
-
-**Proposed mapping refinement:** keep device identity/host relationship in relational core, consider proportionate device-scoped storage for verified variable `typeDetails` and supported historical attributes, and preserve `softwareTypeExclusions` within managed inventory settings. Maintain the v1.3.3 read projection for software/service availability. These are implementation proposals, not approved SQL or permission to code.
-
-**Still to verify:** full `deviceDetailFieldProfiles` by device category, save-time coercion/retention of hidden keys, catalogue rename/delete behaviours and tests; distinguish every persisted managed setting from view-only suggestions.
-
-## Correction — immutable device identity (2026-10-29)
-
-Product owner identified an inaccurate earlier explanation that historical fields must survive *device-type changes*. Published v1.3.3 does **not** permit changing an existing device's type. Verified in `handleDeviceSubmit`: on edit, the submitted type and virtual identity are checked against the original device and a mismatch produces `Device identity cannot be changed. Create a new device instead.` Next must retain this validation and outcome. Preserve historical/custom fields from supported imports and catalogue changes without inventing a device-type-change workflow. This corrects the earlier narrative; no scope change is authorised.
-
-## Scope discipline and review disposition (2026-10-29)
-
-**Mandatory:** #215 is the only approved Next specification; published v1.3.3 and existing test evidence establish baseline behaviour. No inferred feature, schema choice or historic workaround is authorised by this investigation. Where evidence is incomplete, mark **unverified** and investigate or ask the product owner. Never silently promote a proposal to a requirement.
-
-**Explicitly excluded:** editing an existing device's type or virtual identity (published edit handler prohibits it); new controls for hidden historical fields; automatic promotion of built-in catalogue suggestions to saved options; any new inventory workflow, UI redesign or browser-era backup/recovery feature not authorised by #215.
-
-**Retained solely as compatibility evidence:** historical field names, old accessory aliases, old location repairs and prior virtual host/platform histories. These document how existing supported data is read or imported; they are **not** invitations to expose additional workflows.
-
-**Open verification before design:** exact VLAN uniqueness scope; schema-specific import review/correction paths; whether a given unknown field is supported by published validation; catalogue rename/remove behaviour; save-time handling of hidden detail keys. Do not resolve these by assumption.
-
-**Provisional only:** table names, flexible attribute representation and other database mapping suggestions in this document. Their sole purpose is to evaluate a minimal implementation of #215, not to prescribe extra architecture.
-
-
-## Verified source checks — VLAN reconciliation, catalogue archive, import mounting (2026-10-29)
-
-These findings are **existing v1.3.3 behaviours only**, not new requirements or workflows.
-
-1. **Legacy VLAN ownership reconciliation:** `reconcileLegacyVlanOwnership` first refuses ambiguous/orphaned records. It proposes ownership for uniquely matched records and checks uniqueness using `(parentId || '__unassigned__') + ':' + String(vlanId)`; a duplicate in the same domain blocks that reconciliation. This **does not establish** the complete VLAN create/edit uniqueness rules; those remain unverified.
-2. **Server-service archive:** `confirmServerServiceArchive` shows assigned-device counts/names. `archiveServerService` independently blocks archival if any device uses the service, checking both `typeDetails[key]` and historical top-level `device[key]`. Otherwise it archives the configured record or records an archived override for a built-in option; the stable key and existing device values are not deleted. Renaming an existing configured service changes its label while retaining its key.
-3. **Installed-software removal:** `confirmSoftwareCatalogueRemoval` displays assigned-device information; `archiveSoftwareCatalogueEntry` blocks removal while any device has the software assigned (nested or historical top-level), then archives the entry, retaining its key and existing records. `restoreArchivedSoftwareEntry` checks for a conflicting available label before restoring. Do not collapse these into a generic delete.
-4. **Legacy computer mounting:** `planLegacyComputerMountingCorrections` targets specifically desktop/laptop/tablet legacy `Racked` location or incompatible/orphaned rack mounting. For qualifying cases it proposes a Desktop mount or retains a valid non-rack mount, sets location to Unknown and clears rack placement on a detached import candidate; unknown mount values and dangling references still fail validation. These corrections are import compatibility only, **not** device-type changes or a general repair feature.
-
-**Pending evidence:** locate and compare VLAN create/edit validation; verify the import UI review/confirmation and schema applicability; review installed-software and service rename/restore tests. No implementation authorised.
-
-
-## Verified source checks — VLAN validation and exact legacy import sequence (2026-10-29)
-
-**VLAN validation:** published `normaliseState` validation requires each VLAN to have an ID and name, an integer `vlanId` from 1 through 4094, a unique record ID, and a unique combination of `parentId || '__unassigned__'` and VLAN number. This confirms **parent-domain-scoped** uniqueness for persisted VLAN records. The subnet edit path `handleSubnetSubmit` looks up existing VLANs by number **and parent domain**, updates matching name/description or creates a new scoped VLAN. Separate live-state integrity checks also enforce subnet VLAN uniqueness within the parent IP Address Block. These are the source-observed rules; do not infer a new standalone VLAN editor.
-
-**Legacy JSON import order, as implemented in `importData`:**
-1. Reject file over 10 MiB; read UTF-8; parse JSON with existing error handling.
-2. Reject unsafe object keys; validate backup structure and version metadata.
-3. Detect Access Point mounting conflicts; if present, obtain explicit per-conflict user choices. Cancel stops import. Apply chosen corrections on a deep copy.
-4. Validate/normalise reviewed backup into a detached candidate, including legacy mounting repair planning and inventory validation.
-5. If legacy mounting repairs are proposed, display the existing compatibility review; cancellation stops import.
-6. Show a final native confirmation with file name, incoming device/rack/subnet/IPAM counts and current device/rack/subnet counts; cancellation stops import.
-7. Published browser implementation then creates/verifies a safety snapshot, persists and verifies the replacement, rolls back on failure, and shows success/failure. **For Next, #215 replaces this browser-specific persistence machinery with atomic inventory-only SQLite replacement**; do not recreate safety snapshots, recovery banners, JSON backup workflow, or obsolete snapshot wording. Preserve the applicable user decisions, validation, preview/confirmation and no-partial-replacement outcome.
-
-The AP and legacy mounting reviews are **conditional on actual detected conflicts/repairs**, not mandatory screens for every import or schema version. The source does not establish that a particular schema version always triggers either review. No new import repair options are authorised.
-
-**Open:** reconcile these exact rules with retained test evidence, including schema 0/1 fixtures and negative import cases, before drafting API/DDL.
-
-
-## Retained test-evidence reconciliation — first pass (2026-10-29)
-
-Reviewed on `Next`:
-- [Legacy backup import compatibility matrix](testing--LEGACY-BACKUP-IMPORT-COMPATIBILITY-MATRIX.md)
-- [Workflow verification coverage register](testing--WORKFLOW-VERIFICATION-COVERAGE-REGISTER.md)
-- [Technical workflows](workflows--TECHNICAL-WORKFLOWS.md)
-
-**Verified historical evidence, with its stated limits:**
-
-- The legacy compatibility matrix records successful Chromium scenarios for guest unassign/retire/reassign decisions and preservation of guest operating systems, custom historical notes, previous host history and platform history (historical #91, commit `6b66eb2`, run `40179316087`). It also records a JSON import/reload scenario for a fictional historical virtual machine with a missing host, checking host reference, hypervisor platform, guest OS and a custom historical value (commit `0a9c009`, run `40178800515`). These are fictional fixture/browser-handler tests, **not** all real customer backups or full manual UI acceptance.
-- The workflow coverage register records a disposable Chromium backup/reload test for archived custom software and server services (historical #157, commit `7d14d195`, run `40338184346`). That checkpoint alone does **not** establish archived historical assignment rendering in the device display. **Later evidence supersedes that gap:** the audit remediation programme records a focused #97 Chromium pass for archived assigned software and server services remaining visible in device details (run `40343778804`), plus subsequent regression evidence (run `40348476895`). Do not preserve the earlier gap as though no later verification existed.
-- The technical workflows document records a focused `release/v1.3.3` five-scenario history/rollback run `40594804262`, including late restore/reset rollback and no false successful history entry. These are **browser-storage-era** tests; Next must preserve failure atomicity and Change History outcomes via #215's SQLite transaction model, **not** reproduce browser safety snapshots or browser recovery UI.
-- The workflow register includes owner-reported manual v1.2.0 schema-v1 import acceptance but explicitly notes it was **not exhaustive field-by-field verification**. Do not infer every schema-0/schema-1 historical variant was tested.
-
-**Evidence handling:** The reviewed documents contain dated historical pre-publication checkpoints and statements that issues/PRs were open *at those dates*. Do not treat those statements as current release or issue status. Published v1.3.3 source and issue #215 remain the governing baseline/scope; reconcile test coverage against later fixes and publication before making implementation claims.
-
-**Still unverified:** complete schema-0/schema-1 fixture coverage, every conditional AP/legacy mounting decision branch, all catalogue archive/display combinations and Next's eventual database transaction outcomes. No tests were executed in this investigation.
-
-## Later-fix reconciliation — archive display, legacy types and rack import (2026-10-29)
-
-The retained audit findings programme and workflow coverage register contain **later verification** than some early compatibility-matrix checkpoints:
-
-- **Archived assigned catalogues:** the earlier #157 backup/reload test did not establish device-detail display, but subsequent #97 focused Chromium run `40343778804` explicitly passed archived software/server-service visibility in device details. The later regression run `40348476895` is also recorded. **Treat the earlier display-evidence gap as superseded for those executed scenarios**, not as an unresolved historical defect.
-- **Legacy rack accessory aliases:** the #97 reconciliation records startup normalisation and backup import handling of `fan` → `fan_tray`, `pdu` → `pdu_horizontal`, `vent` → `ventilation`, with passing Chromium run `40348476895`. This corroborates the published v1.3.3 source; it does not authorise other aliases.
-- **Rack import collisions and 0U rails:** test-only PR #201 is recorded as merged to the v1.3.3 release branch. Six fictional Chromium scenarios cover accessory restore, backups without accessories, device/accessory and device/device conflicts, malformed accessory records and independent rails. These support only the scenarios tested, not universal backup compatibility.
-- **Device History:** the approved v1.3.3 change removed the device-type History Restore Configuration action, retaining read-only historical snapshot details and ordinary backup routes. The retained register records a focused browser upgrade scenario checking the restoration control is absent and historical snapshots remain. **Do not recreate that removed action in Next**.
-- **Scope caution:** an older compatibility-matrix recommendation to add a startup migration review/recovery policy was a proposal, not #215 approval. Do **not** import that proposal into Next's design; #215 expressly excludes browser safety snapshot/recovery mechanisms.
-
-These are evidence reconciliations, not new features, new tests, or authorisation to implement. Remaining coverage gaps must be evaluated against final published v1.3.3 and #215 without assuming they justify extra work.
+**Provenance:** source-level findings above were read from the published v1.3.3 HTML; test claims are attributed to retained GitHub records, not independently rerun. This reference does not authorise implementation.
