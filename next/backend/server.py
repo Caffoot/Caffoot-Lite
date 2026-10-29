@@ -10,6 +10,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 from .schema import initialise_database as migrate_database
+from .request_auth import authenticated_account, csrf_for_session
+from .http_security import read_session_cookie
 
 DB_PATH = Path(os.environ.get("CAFFOOT_DB_PATH", "/data/caffoot.sqlite3"))
 HOST = os.environ.get("CAFFOOT_HOST", "0.0.0.0")
@@ -38,6 +40,25 @@ class Handler(BaseHTTPRequestHandler):
                 self.respond(200, {"status": "ok"})
             except sqlite3.Error:
                 self.respond(503, {"status": "unavailable"})
+        elif self.path == "/api/session":
+            with connect() as connection:
+                cookie = self.headers.get("Cookie")
+                account_id = authenticated_account(connection, cookie)
+                if account_id is None:
+                    self.respond(401, {"error": "unauthorised"})
+                    return
+                account = connection.execute(
+                    "SELECT username,is_admin FROM accounts WHERE id=?",
+                    (account_id,),
+                ).fetchone()
+                if account is None:
+                    self.respond(401, {"error": "unauthorised"})
+                    return
+                self.respond(200, {
+                    "username": account[0],
+                    "is_admin": bool(account[1]),
+                    "csrf_token": csrf_for_session(read_session_cookie(cookie)),
+                })
         else:
             self.respond(404, {"error": "not found"})
 
@@ -47,6 +68,7 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
         self.send_header("Cache-Control", "no-store")
+        self.send_header("X-Content-Type-Options", "nosniff")
         self.end_headers()
         self.wfile.write(body)
 
