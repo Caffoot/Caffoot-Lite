@@ -1,10 +1,6 @@
 # Architecture
 
-- [DISCOVERABILITY](DISCOVERABILITY.md)
-- [TAILWIND V4 EVALUATION](TAILWIND-V4-EVALUATION.md)
-- [V1.1 IPAM HIERARCHY DESIGN](V1.1-IPAM-HIERARCHY-DESIGN.md)
-- [V1.2.0 DEVICE FORM TABS PLAN](V1.2.0-DEVICE-FORM-TABS-PLAN.md)
-- [V1.2.0 DEVICE MOUNTING REVIEW](V1.2.0-DEVICE-MOUNTING-REVIEW.md)
-- [V1.2.0 LOCATION MOUNTING SEPARATION](V1.2.0-LOCATION-MOUNTING-SEPARATION.md)
+- [v1.4 architecture and data preservation contract](V1.4-ARCHITECTURE-AND-DATA-CONTRACT.md): active Docker design constraints, existing-data migration and unresolved technology decisions
+- [v1.4 foundation and release plan](../roadmaps/V1.4-FOUNDATION-AND-RELEASE-PLAN.md): scope and release sequencing
 
-Documentation and historical records are distinct from evidence of executed tests.
+The older v1.1 and v1.2 design proposals in this directory are historical, not active v1.4 requirements. Their original revisions remain in Git history. Distinguish proposals, inspected source and executed test evidence.
