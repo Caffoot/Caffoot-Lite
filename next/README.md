@@ -21,3 +21,13 @@ Run schema tests from `next/` with `python -m unittest discover -s tests -v` (Py
 ## Isolated inventory staging checkpoint
 
 `backend/inventory.py` now contains an **offline-only** format gate, transactional staging writer and source-shaped reconstruction helper. It is intentionally **not exposed as an HTTP import endpoint** and is **not safe for live imports** until the complete published v1.3.3 normalisation, validation, Access Point review, correction and final confirmation sequence is implemented. Its low-level staging writer is for already-reviewed data and isolated tests only. It preserves optional top-level inventory settings and record JSON but deliberately excludes `caffootBackup` metadata from inventory storage. `tests/test_inventory.py` adds isolated round-trip, rejection and rollback cases. Neither these tests nor the genuine fixture have been executed against this new code yet.
+
+## Private genuine v1.3.3 export regression
+
+The opt-in `tests/test_genuine_export.py` round-trip test checks all inventory collections, optional/historical fields, device ordering, and repeated staging against an actual exported backup. Keep the backup **outside the repository**. From `next/`, run:
+
+```sh
+CAFFOOT_V133_FIXTURE=/absolute/path/to/private-v1.3.3-backup.json python -m unittest discover -s tests -v
+```
+
+The test skips when the environment variable is unset (including normal GitHub Actions). The uploaded reference export is not published or embedded in source control. The test verifies only lossless staging/reconstruction, **not** the published UI import's full validation, review or confirmation sequence.
