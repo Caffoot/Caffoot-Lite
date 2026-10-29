@@ -109,6 +109,26 @@ class ImportDraftTests(unittest.TestCase):
                 self.db, draft_id, replacement_confirmed=True, **self.args
             )
 
+    def test_access_point_review_does_not_reset_original_inventory_revision(self):
+        draft_id, preview = self.drafts.begin(
+            self.db, export(published_backup()), **self.args
+        )
+        self.assertTrue(preview["requiresAccessPointMountReview"])
+        changed = fixture()
+        changed["devices"][0]["name"] = "Other user's update"
+        stage_inventory(self.db, changed)
+        self.drafts.choose_access_point_mounts(
+            self.db, draft_id, ["Ceiling Mounted"], **self.args
+        )
+        with self.assertRaisesRegex(ValueError, "changed since import preview"):
+            self.drafts.confirm(
+                self.db, draft_id, replacement_confirmed=True, **self.args
+            )
+        self.assertEqual(
+            reconstruct_inventory(self.db)["devices"][0]["name"],
+            "Other user's update",
+        )
+
     def test_access_point_choices_are_required_and_server_rebuilt(self):
         draft_id, preview = self.drafts.begin(
             self.db, export(published_backup()), **self.args
