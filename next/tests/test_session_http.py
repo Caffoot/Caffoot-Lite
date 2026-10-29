@@ -156,9 +156,17 @@ class SessionHttpTests(unittest.TestCase):
                                              mfa_code=code_at(second_secret, time.time()))
             self.assertIsNotNone(second_token)
             second_csrf = csrf_for_session(second_token)
-            status, _ = self.post("/api/devices/edit/start", {"deviceId": "device-1"},
-                                  self.token, csrf)
+            status, reservation = self.post("/api/devices/edit/start", {"deviceId": "device-1"},
+                                            self.token, csrf)
             self.assertEqual(status, 200)
+            self.assertEqual(reservation["revision"], 0)
+            with sqlite3.connect(self.path) as db:
+                db.execute("UPDATE inventory_devices SET revision=revision+1 WHERE id=?", ("device-1",))
+                db.commit()
+            status, repeated = self.post("/api/devices/edit/start", {"deviceId": "device-1"},
+                                         self.token, csrf)
+            self.assertEqual(status, 200)
+            self.assertEqual(repeated["revision"], 0)
             status, _ = self.post("/api/devices/edit/start", {"deviceId": "device-1", "section": "IPAM"},
                                   second_token, second_csrf)
             self.assertEqual(status, 400)
