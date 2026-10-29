@@ -9,6 +9,7 @@ RUN apk add --no-cache openssl
 
 WORKDIR /opt/caffoot
 COPY backend/ ./backend/
+COPY setup.html ./setup.html
 RUN mkdir -p /data && chown -R 10001:10001 /data /opt/caffoot
 USER 10001:10001
 EXPOSE 8080
