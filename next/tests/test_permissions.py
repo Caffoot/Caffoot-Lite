@@ -4,7 +4,7 @@ import unittest
 from backend.accounts import bootstrap_first_admin, confirm_admin_mfa
 from backend.mfa import code_at
 from backend.permissions import (
-    create_user, set_permission, can_access, set_account_active, delete_user,
+    create_user, set_permission, can_access, can_replace_inventory, set_account_active, delete_user,
 )
 from backend.schema import initialise_database
 
@@ -19,6 +19,41 @@ class PermissionsTests(unittest.TestCase):
 
     def tearDown(self):
         self.db.close()
+
+
+    def test_full_inventory_replacement_requires_all_section_edit_permissions(self):
+        self.assertTrue(can_replace_inventory(self.db, self.admin))
+        user = create_user(self.db, self.admin, "importer", "secret")
+        self.assertFalse(can_replace_inventory(self.db, user))
+        self.db.execute(
+            "UPDATE accounts SET mfa_secret=?,mfa_confirmed=1 WHERE id=?",
+            ("TEST-ONLY-SECRET", user),
+        )
+        self.db.commit()
+        for section in ("Devices", "IPAM"):
+            set_permission(self.db, self.admin, user, section, "edit")
+        self.assertFalse(can_replace_inventory(self.db, user))
+        set_permission(self.db, self.admin, user, "Racks", "read")
+        self.assertFalse(can_replace_inventory(self.db, user))
+        set_permission(self.db, self.admin, user, "Racks", "edit")
+        self.assertTrue(can_replace_inventory(self.db, user))
+        set_permission(self.db, self.admin, user, "IPAM", None)
+        self.assertFalse(can_replace_inventory(self.db, user))
+
+    def test_inactive_or_unverified_admin_cannot_replace_inventory(self):
+        self.assertTrue(can_replace_inventory(self.db, self.admin))
+        self.db.execute(
+            "UPDATE accounts SET mfa_confirmed=0 WHERE id=?", (self.admin,)
+        )
+        self.db.commit()
+        self.assertFalse(can_replace_inventory(self.db, self.admin))
+        self.db.execute(
+            "UPDATE accounts SET mfa_confirmed=1,active=0 WHERE id=?",
+            (self.admin,),
+        )
+        self.db.commit()
+        self.assertFalse(can_replace_inventory(self.db, self.admin))
+        self.assertFalse(can_replace_inventory(self.db, -1))
 
     def test_default_no_access_and_section_scoping(self):
         user = create_user(self.db, self.admin, "viewer", "secret")
