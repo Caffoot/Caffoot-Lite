@@ -15,17 +15,24 @@ from pathlib import Path
 
 from backend.inventory import inspect_export, reconstruct_inventory, stage_inventory
 from backend.schema import initialise_database
+from test_inventory import fixture
 
 
 class GenuineExportRoundTrip(unittest.TestCase):
+    def test_synthetic_export_reconstructs_without_data_loss(self):
+        original = inspect_export(json.dumps(fixture()).encode())
+        self.assert_round_trip(original)
+
     @unittest.skipUnless(
         os.environ.get("CAFFOOT_V133_FIXTURE"),
         "Set CAFFOOT_V133_FIXTURE to a private genuine v1.3.3 export",
     )
     def test_genuine_export_reconstructs_without_data_loss(self):
         path = Path(os.environ["CAFFOOT_V133_FIXTURE"])
-        raw = path.read_bytes()
-        original = inspect_export(raw)
+        original = inspect_export(path.read_bytes())
+        self.assert_round_trip(original)
+
+    def assert_round_trip(self, original):
         with sqlite3.connect(":memory:") as db:
             initialise_database(db)
             stage_inventory(db, original)
