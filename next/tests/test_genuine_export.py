@@ -24,6 +24,28 @@ class GenuineExportRoundTrip(unittest.TestCase):
         original = inspect_export(json.dumps(fixture()).encode())
         self.assert_round_trip(original)
 
+    def test_reviewed_v133_candidate_round_trips_without_inventory_loss(self):
+        """Normal export follows review -> offline SQLite -> reconstruction."""
+        raw = json.dumps(fixture()).encode("utf-8")
+        review = prepare_published_export_review(raw)
+        self.assertFalse(review["requiresAccessPointMountReview"])
+        self.assertFalse(review["requiresLegacyMountReview"])
+        self.assertFalse(review["approved"])
+        self.assertFalse(review["persistenceAllowed"])
+        candidate = review["candidate"]
+        with sqlite3.connect(":memory:") as db:
+            initialise_database(db)
+            stage_inventory(db, candidate)
+            restored = reconstruct_inventory(db)
+        self.assertEqual(restored, {
+            key: value for key, value in candidate.items()
+            if key != "caffootBackup"
+        })
+        self.assertEqual(
+            restored["devices"][0]["id"], candidate["devices"][0]["id"]
+        )
+        self.assertEqual(restored["ipAllocations"], candidate["ipAllocations"])
+
     @unittest.skipUnless(
         os.environ.get("CAFFOOT_V133_FIXTURE"),
         "Set CAFFOOT_V133_FIXTURE to a private genuine v1.3.3 export",
