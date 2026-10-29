@@ -17,6 +17,7 @@ from backend.inventory import inspect_export, reconstruct_inventory, stage_inven
 from backend.import_review import prepare_published_export_review
 from backend.schema import initialise_database
 from test_inventory import fixture
+from test_import_review import fixture as valid_review_fixture
 
 
 class GenuineExportRoundTrip(unittest.TestCase):
@@ -26,7 +27,9 @@ class GenuineExportRoundTrip(unittest.TestCase):
 
     def test_reviewed_v133_candidate_round_trips_without_inventory_loss(self):
         """Normal export follows review -> offline SQLite -> reconstruction."""
-        raw = json.dumps(fixture()).encode("utf-8")
+        source = valid_review_fixture()
+        source["caffootBackup"] = fixture()["caffootBackup"]
+        raw = json.dumps(source).encode("utf-8")
         review = prepare_published_export_review(raw)
         self.assertFalse(review["requiresAccessPointMountReview"])
         self.assertFalse(review["requiresLegacyMountReview"])
