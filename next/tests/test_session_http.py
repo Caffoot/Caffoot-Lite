@@ -148,7 +148,7 @@ class SessionHttpTests(unittest.TestCase):
                            (second_secret, second_id))
                 db.commit()
             status, _ = self.post("/api/users/permission",
-                                  {"userId": second_id, "section": "Devices", "level": "edit"},
+                                  {"userId": second_id, "section": "IPAM", "level": "edit"},
                                   self.token, csrf)
             self.assertEqual(status, 200)
             with sqlite3.connect(self.path) as db:
@@ -159,22 +159,22 @@ class SessionHttpTests(unittest.TestCase):
             status, _ = self.post("/api/devices/edit/start", {"deviceId": "device-1"},
                                   self.token, csrf)
             self.assertEqual(status, 200)
-            status, _ = self.post("/api/devices/edit/start", {"deviceId": "device-1"},
+            status, _ = self.post("/api/devices/edit/start", {"deviceId": "device-1", "section": "IPAM"},
                                   second_token, second_csrf)
             self.assertEqual(status, 400)
-            status, _ = self.post("/api/devices/edit/start", {"deviceId": "device-2"},
+            status, _ = self.post("/api/devices/edit/start", {"deviceId": "device-2", "section": "IPAM"},
                                   second_token, second_csrf)
             self.assertEqual(status, 200)
-            status, _ = self.post("/api/devices/edit/cancel", {"deviceId": "device-1"},
+            status, _ = self.post("/api/devices/edit/cancel", {"deviceId": "device-1", "section": "IPAM"},
                                   second_token, second_csrf)
             self.assertEqual(status, 200)
-            status, _ = self.post("/api/devices/edit/start", {"deviceId": "device-1"},
+            status, _ = self.post("/api/devices/edit/start", {"deviceId": "device-1", "section": "IPAM"},
                                   second_token, second_csrf)
             self.assertEqual(status, 400)
             status, _ = self.post("/api/devices/edit/cancel", {"deviceId": "device-1"},
                                   self.token, csrf)
             self.assertEqual(status, 200)
-            status, _ = self.post("/api/devices/edit/start", {"deviceId": "device-1"},
+            status, _ = self.post("/api/devices/edit/start", {"deviceId": "device-1", "section": "IPAM"},
                                   second_token, second_csrf)
             self.assertEqual(status, 200)
             with sqlite3.connect(self.path) as db:
