@@ -123,6 +123,23 @@ def inspect_export(raw: bytes):
     return data
 
 
+def preview_inventory_counts(candidate, current):
+    """Detached counts for the published v1.3.3 replacement review.
+
+    Call only after source-compatible normalisation and integrity validation.
+    This does not approve, mutate or persist an import. The UI owns confirmation.
+    """
+    def counts(data):
+        return {
+            "devices": len(data["devices"]),
+            "racks": len(data["racks"]),
+            "subnets": len(data["subnets"]),
+            "ipAllocations": len(data["ipAllocations"]),
+        }
+
+    return {"backup": counts(candidate), "current": counts(current)}
+
+
 def _write_detached(connection: sqlite3.Connection, data):
     """Low-level staging writer. Caller MUST complete full source validation.
 
