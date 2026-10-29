@@ -11,6 +11,7 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 from .schema import initialise_database as migrate_database
+from .import_drafts import ImportDrafts
 from .request_auth import authenticated_account, csrf_for_session
 from .http_security import read_session_cookie, session_cookie, clear_session_cookie
 from .request_auth import login, logout
@@ -23,6 +24,10 @@ HOST = os.environ.get("CAFFOOT_HOST", "0.0.0.0")
 PORT = 8080  # Fixed internal port; Compose publishes the configurable host port.
 PUBLIC_ORIGIN = os.environ.get("CAFFOOT_WEB_ADDRESS", "")
 MAX_LOGIN_BYTES = 4096
+MAX_IMPORT_BYTES = 10 * 1024 * 1024
+IMPORT_DRAFTS = ImportDrafts()
+IMPORT_ROUTES = frozenset(("/api/import/preview", "/api/import/access-point-choices",
+                           "/api/import/confirm", "/api/import/cancel"))
 TLS_DIR = Path(os.environ.get("CAFFOOT_TLS_DIR", "/data/tls"))
 TLS_NAMES = os.environ.get("CAFFOOT_SERVER_ADDRESS", "")
 
@@ -90,6 +95,9 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(404, {"error": "not found"})
 
     def do_POST(self):
+        if self.path in IMPORT_ROUTES:
+            self.handle_import()
+            return
         if self.path not in ("/api/login", "/api/logout"):
             self.respond(404, {"error": "not found"})
             return
@@ -136,6 +144,76 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(401, {"error": "invalid credentials"})
             return
         self.respond(200, {"status": "signed in"}, cookie=session_cookie(token))
+
+    def handle_import(self):
+        """Authenticated server-owned import stages; never accept a candidate."""
+        origin = self.headers.get("Origin")
+        if not PUBLIC_ORIGIN or not require_same_origin(origin, PUBLIC_ORIGIN):
+            self.respond(403, {"error": "forbidden"})
+            return
+        route = self.path
+        content_type = self.headers.get("Content-Type", "").split(";")[0].strip().lower()
+        if content_type != ("application/octet-stream" if route.endswith("/preview") else "application/json"):
+            self.respond(415, {"error": "invalid content type"})
+            return
+        length = self.headers.get("Content-Length")
+        limit = MAX_IMPORT_BYTES if route.endswith("/preview") else MAX_LOGIN_BYTES
+        if length is None or not length.isdecimal() or not 0 < int(length) <= limit:
+            self.respond(413, {"error": "invalid request size"})
+            return
+        body = self.rfile.read(int(length))
+        args = {
+            "cookie_header": self.headers.get("Cookie"),
+            "origin": origin, "allowed_origin": PUBLIC_ORIGIN,
+            "csrf_header": self.headers.get("X-CSRF-Token"),
+        }
+        try:
+            payload = None
+            if route != "/api/import/preview":
+                payload = json.loads(body)
+                if not isinstance(payload, dict) or not isinstance(payload.get("draftId"), str):
+                    raise ValueError("Invalid import draft request")
+                if len(payload["draftId"]) > 128:
+                    raise ValueError("Invalid import draft identifier")
+                if set(payload) - {"draftId", "choices", "legacyMountApproved", "replacementConfirmed"}:
+                    raise ValueError("Unexpected import request fields")
+            with connect() as connection:
+                if route == "/api/import/preview":
+                    draft_id, review = IMPORT_DRAFTS.begin(connection, body, **args)
+                    result = {"draftId": draft_id, "review": review}
+                elif route == "/api/import/access-point-choices":
+                    if not isinstance(payload.get("choices"), list):
+                        raise ValueError("Access Point choices required")
+                    review = IMPORT_DRAFTS.choose_access_point_mounts(
+                        connection, payload["draftId"], payload["choices"], **args
+                    )
+                    result = {"review": review}
+                elif route == "/api/import/cancel":
+                    IMPORT_DRAFTS.cancel_authenticated(
+                        connection, payload["draftId"], **args
+                    )
+                    result = {"status": "cancelled"}
+                else:
+                    if (type(payload.get("legacyMountApproved", False)) is not bool or
+                            type(payload.get("replacementConfirmed", False)) is not bool):
+                        raise ValueError("Invalid confirmation flags")
+                    IMPORT_DRAFTS.confirm(
+                        connection, payload["draftId"],
+                        legacy_mount_approved=payload.get("legacyMountApproved", False),
+                        replacement_confirmed=payload.get("replacementConfirmed", False),
+                        **args
+                    )
+                    result = {"status": "imported"}
+        except PermissionError:
+            self.respond(403, {"error": "forbidden"})
+            return
+        except (ValueError, TypeError) as exc:
+            self.respond(400, {"error": str(exc)})
+            return
+        except sqlite3.Error:
+            self.respond(503, {"error": "database unavailable"})
+            return
+        self.respond(200, result)
 
     def respond(self, status, payload, *, cookie=None):
         body = json.dumps(payload).encode("utf-8")
