@@ -64,7 +64,9 @@ def inspect_export(raw: bytes):
     if len(raw) > MAX_BYTES:
         raise ImportRejected("Export exceeds 10 MiB")
     try:
-        data = json.loads(\n            raw, object_pairs_hook=_unique_object, parse_constant=_reject_nonfinite\n        )
+        data = json.loads(
+            raw, object_pairs_hook=_unique_object, parse_constant=_reject_nonfinite
+        )
     except (UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise ImportRejected("Invalid JSON export") from exc
     if not isinstance(data, dict):
