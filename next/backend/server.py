@@ -173,6 +173,47 @@ class Handler(BaseHTTPRequestHandler):
                         )],
                     }
                 self.respond(200, result)
+        elif self.path == "/api/inventory/state":
+            """Return one permission-filtered SQLite snapshot for the inventory UI."""
+            with connect() as connection:
+                account_id = authenticated_account(connection, self.headers.get("Cookie"))
+                if account_id is None:
+                    self.respond(401, {"error": "unauthorised"})
+                    return
+                sections = {section: can_access(connection, account_id, section)
+                            for section in ("Devices", "IPAM", "Racks")}
+                if not any(sections.values()):
+                    self.respond(403, {"error": "forbidden"})
+                    return
+                result = {"sections": sections}
+                if sections["Devices"]:
+                    result["devices"] = [json.loads(raw) for (raw,) in connection.execute(
+                        "SELECT record_json FROM inventory_devices ORDER BY ordinal"
+                    )]
+                if sections["IPAM"]:
+                    result["subnets"] = [json.loads(raw) for (raw,) in connection.execute(
+                        "SELECT record_json FROM inventory_subnets ORDER BY ordinal"
+                    )]
+                    result["vlans"] = [json.loads(raw) for (raw,) in connection.execute(
+                        "SELECT record_json FROM inventory_vlans ORDER BY ordinal"
+                    )]
+                    result["ipAllocations"] = {ip: json.loads(raw) for ip, raw in connection.execute(
+                        "SELECT ip,record_json FROM inventory_ip_allocations ORDER BY rowid"
+                    )}
+                if sections["Racks"]:
+                    result["racks"] = [json.loads(raw) for (raw,) in connection.execute(
+                        "SELECT record_json FROM inventory_racks ORDER BY ordinal"
+                    )]
+                    result["rackAccessories"] = [json.loads(raw) for (raw,) in connection.execute(
+                        "SELECT record_json FROM inventory_rack_accessories ORDER BY ordinal"
+                    )]
+                result["settings"] = {key: json.loads(raw) for key, raw in connection.execute(
+                    "SELECT key,value_json FROM inventory_settings"
+                )}
+                result["changeHistory"] = [json.loads(raw) for (raw,) in connection.execute(
+                    "SELECT record_json FROM inventory_change_history ORDER BY id"
+                )]
+                self.respond(200, result)
         elif self.path == "/api/inventory/settings":
             with connect() as connection:
                 account_id = authenticated_account(connection, self.headers.get("Cookie"))
