@@ -129,3 +129,89 @@ def validate_subnet_hierarchy(subnets):
                 errors.append("Overlapping unrelated subnets: " + str(left.get("cidr")) +
                               " and " + str(right.get("cidr")))
     return errors
+
+
+def _js_number(value):
+    """Number() coercion for published VLAN validation."""
+    import math
+    if value is None:
+        return 0.0
+    if isinstance(value, bool):
+        return float(value)
+    if isinstance(value, (int, float)):
+        return float(value)
+    if isinstance(value, str):
+        if not value.strip():
+            return 0.0
+        try:
+            return float(value)
+        except ValueError:
+            return math.nan
+    return math.nan
+
+
+def _js_string(value):
+    if value is None:
+        return "null"
+    if value is True:
+        return "true"
+    if value is False:
+        return "false"
+    return str(value)
+
+
+def _ip_number(value):
+    if not isinstance(value, str):
+        return None
+    parts = value.split(".")
+    if len(parts) != 4 or any(
+        not re.fullmatch(r"\\d{1,3}", part) or int(part) > 255
+        for part in parts
+    ):
+        return None
+    result = 0
+    for part in parts:
+        result = result * 256 + int(part)
+    return result
+
+
+def validate_subnet_types(subnets):
+    """Mirror published hierarchyValidateTypes diagnostics and ordering."""
+    import math
+    if not isinstance(subnets, list):
+        return ["Subnets must be an array."]
+    errors = []
+    for subnet in subnets:
+        if not isinstance(subnet, dict):
+            errors.append("Invalid subnet record.")
+            continue
+        kind = subnet.get("kind", "network")
+        identifier = _js_string(subnet.get("id"))
+        if kind not in ("network", "container", "reserved", "loopback"):
+            errors.append("Invalid subnet kind: " + identifier)
+            continue
+        cidr = subnet.get("cidr")
+        parsed = parse_hierarchy_cidr(cidr)
+        if not parsed or not parsed["aligned"]:
+            errors.append("Invalid subnet CIDR: " + _js_string(cidr))
+            continue
+        if kind == "network":
+            if parsed["prefix"] > 30 or parsed["prefix"] < 1:
+                errors.append("Network requires a /1–/30 CIDR: " + _js_string(cidr))
+            vlan = _js_number(subnet.get("vlan"))
+            if (subnet.get("vlan") is None or subnet.get("vlan") == "" or
+                    not math.isfinite(vlan) or not vlan.is_integer() or
+                    vlan < 1 or vlan > 4094):
+                errors.append("Network requires VLAN 1–4094: " + identifier)
+            gateway = _ip_number(subnet.get("gateway"))
+            if (gateway is None or gateway <= parsed["start"] or
+                    gateway >= parsed["end"]):
+                errors.append("Network requires a usable gateway: " + identifier)
+        else:
+            if kind == "loopback" and parsed["prefix"] != 32:
+                errors.append("Loopback requires /32: " + identifier)
+            if subnet.get("gateway") is not None and subnet["gateway"] != "":
+                errors.append(kind + " must not have a gateway: " + identifier)
+            if subnet.get("vlan") is not None and subnet["vlan"] != "":
+                errors.append(kind + " must not have a VLAN: " + identifier)
+    return errors
