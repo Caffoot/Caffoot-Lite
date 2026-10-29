@@ -1,8 +1,4 @@
-"""Minimal Caffoot Lite Next backend foundation.
-
-No inventory endpoints are exposed until the v1.3.3-compatible database
-projection, authentication and permissions are implemented.
-"""
+"""Caffoot Lite Next HTTPS backend and inventory integration groundwork."""
 import json
 import os
 import sqlite3
