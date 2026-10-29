@@ -18,11 +18,21 @@ button:disabled{opacity:.5}#message{color:#b91c1c}#secret{overflow-wrap:anywhere
 <label for="password">Password</label><input id="password" type="password" autocomplete="current-password" required></div>
 <div id="enrolment" hidden><p>Add this secret to your authenticator app, then enter its six-digit code to finish setup.</p><p id="secret"></p></div>
 <div id="code-field" hidden><label for="code">Authenticator code</label><input id="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6"></div>
-<p id="message" role="alert"></p><button id="submit" type="submit">Continue</button></form>
+<p id="message" role="alert"></p><button id="submit" type="submit">Continue</button></form><section id="signed-in" hidden><p id="signed-in-message"></p><button id="sign-out" type="button">Sign out</button></section>
 </main><script>
 'use strict';
 const $=id=>document.getElementById(id);
 let mode='login';
+let csrfToken='';
+async function showSession(){
+ const r=await fetch('/api/session',{cache:'no-store'});
+ if(!r.ok)return false;
+ const session=await r.json();csrfToken=session.csrf_token;
+ $('form').hidden=true;$('signed-in').hidden=false;
+ $('intro').textContent='Signed in';
+ $('signed-in-message').textContent='Signed in as '+session.username+'. The inventory interface is being connected to the central database.';
+ return true;
+}
 async function request(path,data){
  const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
  const payload=await r.json();if(!r.ok)throw Error(payload.error||'Request failed');return payload;
@@ -37,6 +47,7 @@ function display(){
  $('code').required=mode==='enrol'||mode==='login';
 }
 (async()=>{try{
+ if(await showSession())return;
  const r=await fetch('/api/setup/status');if(!r.ok)throw Error('Unable to check setup');
  const status=await r.json();mode=status.setupRequired?'setup':status.enrollmentPending?'resume':'login';display();
 }catch(e){$('intro').textContent=e.message}})();
@@ -52,10 +63,16 @@ $('form').addEventListener('submit',async e=>{
    await request('/api/setup/mfa',{...data,mfa_code:$('code').value});mode='login';display();$('message').style.color='#166534';$('message').textContent='MFA enrolled. Sign in to continue.';
  }else{
    await request('/api/login',{...data,mfa_code:$('code').value});
-   $('intro').textContent='Signed in. The inventory interface is still being connected to the database.';
-   $('form').hidden=true;
+   if(!await showSession())throw Error('Unable to load session');
  }
  }catch(err){$('message').style.color='#b91c1c';$('message').textContent=err.message}
  finally{$('submit').disabled=false}
+});
+$('sign-out').addEventListener('click',async()=>{
+ try{
+  const r=await fetch('/api/logout',{method:'POST',headers:{'X-CSRF-Token':csrfToken}});
+  if(!r.ok)throw Error('Sign out failed');
+  csrfToken='';$('signed-in').hidden=true;mode='login';display();
+ }catch(e){$('signed-in-message').textContent=e.message}
 });
 </script></body></html>
