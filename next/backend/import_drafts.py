@@ -10,7 +10,7 @@ import time
 
 from backend.http_security import read_session_cookie
 from backend.import_service import (
-    preview_published_export, replace_from_published_export,
+    preview_published_export, replace_from_published_export, inventory_revision,
 )
 
 
@@ -58,7 +58,7 @@ class ImportDrafts:
             self._drafts[draft_id] = {
                 "raw": bytes(raw_bytes), "session": self._identity(cookie_header),
                 "expires": current + self._ttl, "choices": None,
-                "revision": preview.get("inventoryRevision"),
+                "revision": preview.get("inventoryRevision") or inventory_revision(connection),
                 "ready": not preview["requiresAccessPointMountReview"],
             }
             return draft_id, preview
@@ -78,7 +78,8 @@ class ImportDrafts:
                 raise ValueError("All Access Point mounting choices are required")
             draft["choices"] = list(choices)
             draft["ready"] = True
-            draft["revision"] = preview["inventoryRevision"]
+            # Keep the initial preview revision: AP review must not accept
+            # intervening changes to another user's inventory.
             return preview
 
     def confirm(self, connection, draft_id, *, cookie_header, origin,
