@@ -51,13 +51,15 @@ class SessionTests(unittest.TestCase):
         token = login_session(self.db, "reader", "password", now=59)
         self.assertIsNone(session_account(self.db, "invalid", now=60))
         set_permission(self.db, self.admin, user, "Devices", "read")
-        self.assertEqual(session_account(self.db, token, now=60), user)
+        self.assertIsNone(session_account(self.db, token, now=60))
+        fresh_token = login_session(self.db, "reader", "password", now=59)
+        self.assertEqual(session_account(self.db, fresh_token, now=60), user)
         self.db.execute(
             "INSERT INTO account_permissions(account_id,section,level) VALUES(?,?,?)",
             (user, "IPAM", "edit"),
         )
         self.db.commit()
-        self.assertIsNone(session_account(self.db, token, now=60))
+        self.assertIsNone(session_account(self.db, fresh_token, now=60))
 
 if __name__ == "__main__":
     unittest.main()
