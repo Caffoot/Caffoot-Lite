@@ -44,7 +44,7 @@ function display(){
  $('intro').textContent=mode==='setup'?'Create the first administrator account. MFA is required.':mode==='enrol'?'Complete administrator MFA enrolment.':mode==='resume'?'Sign in with your administrator credentials to resume MFA enrolment.':'Sign in to Caffoot Lite.';
  $('submit').textContent=mode==='setup'?'Create administrator':mode==='enrol'?'Confirm MFA':mode==='resume'?'Continue enrolment':'Sign in';
  $('password').autocomplete=mode==='setup'?'new-password':'current-password';
- $('code').required=mode==='enrol'||mode==='login';
+ $('code').required=mode==='enrol';
 }
 (async()=>{try{
  if(await showSession())return;
