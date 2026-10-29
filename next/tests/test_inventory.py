@@ -47,6 +47,24 @@ class StagingTests(unittest.TestCase):
         with self.assertRaises(ImportRejected):
             inspect_export(json.dumps(data).encode())
 
+    def test_reject_duplicate_keys(self):
+        raw = json.dumps(fixture()).replace(
+            '"devices":', '"devices": [], "devices":', 1
+        ).encode()
+        with self.assertRaisesRegex(ImportRejected, "Duplicate"):
+            inspect_export(raw)
+
+    def test_reject_nonfinite_json_number(self):
+        raw = json.dumps(fixture()).replace(
+            '"stateVersion"', '"stateVersion"', 1
+        ).replace('"extraHistoricalOption":', '"bad": NaN, "extraHistoricalOption":', 1).encode()
+        with self.assertRaisesRegex(ImportRejected, "Non-finite"):
+            inspect_export(raw)
+
+    def test_reject_oversized_export(self):
+        with self.assertRaisesRegex(ImportRejected, "10 MiB"):
+            inspect_export(b"x" * (10 * 1024 * 1024 + 1))
+
     def test_rollback_preserves_prior_inventory(self):
         data = inspect_export(json.dumps(fixture()).encode())
         stage_inventory(self.db, data)
