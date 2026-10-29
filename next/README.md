@@ -40,6 +40,12 @@ Run schema tests from `next/` with `python -m unittest discover -s tests -v` (Py
 
 `backend/inventory.py` now contains an **offline-only** format gate, transactional staging writer and source-shaped reconstruction helper. It is intentionally **not exposed as an HTTP import endpoint** and is **not safe for live imports** until the complete published v1.3.3 normalisation, validation, Access Point review, correction and final confirmation sequence is implemented. Its low-level staging writer is for already-reviewed data and isolated tests only. It preserves optional top-level inventory settings and record JSON but deliberately excludes `caffootBackup` metadata from inventory storage. `tests/test_inventory.py` adds isolated round-trip, rejection and rollback cases. The automated inventory staging tests have passed in CI, including regression coverage that inventory staging leaves accounts, MFA, permissions and sessions unchanged. This is not evidence of a complete live import. A genuine private v1.3.3 export test still requires the fixture to be supplied explicitly.
 
+## Published v1.3.3 import compatibility boundary
+
+The source of truth is the **published** `v1.3.3` tag, particularly `app/caffoot-lite.html` (`createInventoryBackup`, `validateBackupVersion`, `normaliseImportedBackupAndPlanLegacyMountRepairs`, `planLegacyComputerMountingCorrections` and `findAccessPointMountConflictsInBackup`). Next accepts only backups freshly exported from published v1.3.3; users of earlier HTML versions must upgrade to v1.3.3 first.
+
+Source inspection confirms that **v1.3.3 itself retains** both the legacy computer mounting review and the Access Point mounting review in its import path. A freshly exported, healthy v1.3.3 inventory ordinarily needs neither, but these safeguards must not be removed merely because older-version imports are unsupported. Preserve the source-ordered validation and explicit user review when a v1.3.3 export actually triggers them. Do **not** expand this into support for older backup formats or add new migration prompts. The detached review remains non-authoritative and cannot write to live inventory.
+
 ## Private genuine v1.3.3 export regression
 
 The opt-in `tests/test_genuine_export.py` round-trip test checks all inventory collections, optional/historical fields, device ordering, and repeated staging against an actual exported backup. Keep the backup **outside the repository**. From `next/`, run:
