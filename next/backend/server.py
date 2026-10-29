@@ -11,7 +11,7 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 from .schema import initialise_database as migrate_database
-from .accounts import bootstrap_first_admin, confirm_admin_mfa
+from .accounts import bootstrap_first_admin, confirm_admin_mfa, verify_password, hash_password
 from .import_drafts import ImportDrafts
 from .request_auth import authenticated_account, csrf_for_session
 from .http_security import read_session_cookie, session_cookie, clear_session_cookie
@@ -222,7 +222,7 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(404, {"error": "not found"})
 
     def do_POST(self):
-        if self.path in ("/api/users/create", "/api/users/permission"):
+        if self.path in ("/api/users/create", "/api/users/permission", "/api/account/password"):
             self.handle_user_mutation()
             return
         if self.path in IMPORT_ROUTES:
@@ -332,7 +332,32 @@ class Handler(BaseHTTPRequestHandler):
                 if actor is None:
                     self.respond(403, {"error": "forbidden"})
                     return
-                if self.path == "/api/users/create":
+                if self.path == "/api/account/password":
+                    if set(payload) != {"currentPassword", "newPassword"}:
+                        raise ValueError("Current and new passwords required")
+                    current_password = payload["currentPassword"]
+                    new_password = payload["newPassword"]
+                    row = connection.execute(
+                        "SELECT password_hash FROM accounts WHERE id=?", (actor,)
+                    ).fetchone()
+                    if row is None or not verify_password(current_password, row[0]):
+                        raise ValueError("Current password is incorrect")
+                    replacement_hash = hash_password(new_password)
+                    connection.execute("BEGIN IMMEDIATE")
+                    try:
+                        connection.execute(
+                            "UPDATE accounts SET password_hash=? WHERE id=?",
+                            (replacement_hash, actor),
+                        )
+                        connection.execute(
+                            "DELETE FROM account_sessions WHERE account_id=?", (actor,)
+                        )
+                        connection.commit()
+                    except BaseException:
+                        connection.rollback()
+                        raise
+                    result = {"status": "password changed"}
+                elif self.path == "/api/users/create":
                     if set(payload) != {"username", "password"}:
                         raise ValueError("Username and password required")
                     user_id = create_user(connection, actor, payload["username"], payload["password"])
