@@ -94,6 +94,41 @@ class SessionHttpTests(unittest.TestCase):
             self.assertEqual(status, 200)
             self.assertEqual(self.request("/api/session", COOKIE_NAME + "=" + self.token)[0], 401)
 
+    def test_inventory_snapshot_is_sqlite_owned_and_permission_filtered(self):
+        with sqlite3.connect(self.path) as db:
+            db.execute("INSERT INTO inventory_devices(id,name,record_json,ordinal) "
+                       "VALUES(?,?,?,?)", ("device-1", "Switch", '{"id":"device-1","name":"Switch"}', 0))
+            db.execute("INSERT INTO inventory_subnets(id,record_json,ordinal) "
+                       "VALUES(?,?,?)", ("subnet-1", '{"id":"subnet-1"}', 0))
+            db.commit()
+        status, raw, _ = self.request("/api/inventory/state", COOKIE_NAME + "=" + self.token)
+        self.assertEqual(status, 200)
+        snapshot = json.loads(raw)
+        self.assertEqual(snapshot["devices"][0]["name"], "Switch")
+        self.assertEqual(snapshot["subnets"][0]["id"], "subnet-1")
+        with patch("backend.server.PUBLIC_ORIGIN", "https://caffoot.example"):
+            csrf = csrf_for_session(self.token)
+            status, result = self.post("/api/users/create",
+                                       {"username": "reader", "password": "initial"},
+                                       self.token, csrf)
+            self.assertEqual(status, 200)
+            user_id = result["id"]
+            status, _ = self.post("/api/users/permission",
+                                  {"userId": user_id, "section": "Devices", "level": "read"},
+                                  self.token, csrf)
+            self.assertEqual(status, 200)
+        with sqlite3.connect(self.path) as db:
+            reader_token = login_session(db, "reader", "initial")
+        status, raw, _ = self.request("/api/inventory/state", COOKIE_NAME + "=" + reader_token)
+        self.assertEqual(status, 200)
+        snapshot = json.loads(raw)
+        self.assertEqual(len(snapshot["devices"]), 1)
+        self.assertNotIn("subnets", snapshot)
+        self.assertNotIn("ipAllocations", snapshot)
+        self.assertNotIn("racks", snapshot)
+        self.assertEqual(snapshot["sections"], {"Devices": True, "IPAM": False, "Racks": False})
+        self.assertEqual(self.request("/api/inventory/state")[0], 401)
+
     def test_anonymous_request_is_rejected(self):
         status, body, cache = self.request("/api/session")
         self.assertEqual(status, 401)
