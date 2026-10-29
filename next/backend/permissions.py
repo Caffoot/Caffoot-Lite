@@ -69,6 +69,9 @@ def set_permission(connection, actor_id, target_id, section, level):
                 "DO UPDATE SET level=excluded.level",
                 (target_id, section, level),
             )
+        connection.execute(
+            "DELETE FROM account_sessions WHERE account_id=?", (target_id,)
+        )
         connection.commit()
     except BaseException:
         connection.rollback()
@@ -113,6 +116,9 @@ def set_account_active(connection, actor_id, target_id, active):
             raise ValueError("Cannot disable the last active administrator")
         connection.execute(
             "UPDATE accounts SET active=? WHERE id=?", (int(active), target_id)
+        )
+        connection.execute(
+            "DELETE FROM account_sessions WHERE account_id=?", (target_id,)
         )
         connection.commit()
     except BaseException:
@@ -160,6 +166,9 @@ def set_administrator(connection, actor_id, target_id, is_admin):
             raise ValueError("Cannot demote the last active administrator")
         connection.execute(
             "UPDATE accounts SET is_admin=? WHERE id=?", (int(is_admin), target_id)
+        )
+        connection.execute(
+            "DELETE FROM account_sessions WHERE account_id=?", (target_id,)
         )
         connection.commit()
     except BaseException:

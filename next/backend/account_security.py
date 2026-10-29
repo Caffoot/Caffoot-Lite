@@ -19,6 +19,9 @@ def change_own_password(connection, account_id, current_password, new_password):
         connection.execute(
             "UPDATE accounts SET password_hash=? WHERE id=?", (new_hash, account_id)
         )
+        connection.execute(
+            "DELETE FROM account_sessions WHERE account_id=?", (account_id,)
+        )
         connection.commit()
     except BaseException:
         connection.rollback()
