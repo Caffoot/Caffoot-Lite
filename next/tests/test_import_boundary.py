@@ -157,6 +157,54 @@ class ImportBoundaryTests(unittest.TestCase):
             history_before,
         )
 
+
+    def test_reviewed_candidate_replaces_inventory_but_not_security(self):
+        """Detached v1.3.3 candidate can replace data without changing users."""
+        from backend.import_review import prepare_published_export_review
+        from test_import_review import fixture as review_fixture
+        self.db.execute(
+            "INSERT INTO accounts(username,password_hash,is_admin,mfa_secret,mfa_confirmed) "
+            "VALUES('admin','hash',1,'secret',1)"
+        )
+        self.db.execute(
+            "INSERT INTO account_permissions(account_id,section,level) "
+            "VALUES(1,'Devices','edit')"
+        )
+        self.db.execute(
+            "INSERT INTO account_sessions(token_hash,account_id,expires_at,created_at) "
+            "VALUES('session',1,9999999999,1)"
+        )
+        self.db.execute(
+            "INSERT INTO inventory_change_history(record_json) VALUES(?)",
+            (json.dumps({"reason": "previous inventory activity"}),),
+        )
+        self.db.commit()
+        original = inspect_export(json.dumps(fixture()).encode())
+        stage_inventory(self.db, original)
+        security_tables = (
+            "accounts", "account_permissions", "account_sessions",
+            "inventory_change_history",
+        )
+        before_security = {
+            table: self.db.execute("SELECT * FROM " + table).fetchall()
+            for table in security_tables
+        }
+        source = review_fixture()
+        source["caffootBackup"] = fixture()["caffootBackup"]
+        review = prepare_published_export_review(json.dumps(source).encode())
+        self.assertFalse(review["approved"])
+        self.assertFalse(review["persistenceAllowed"])
+        # This is an isolated database-layer test, not an import approval flow.
+        stage_inventory(self.db, review["candidate"])
+        restored = reconstruct_inventory(self.db)
+        self.assertEqual(restored["devices"], review["candidate"]["devices"])
+        self.assertEqual(restored["ipAllocations"], review["candidate"]["ipAllocations"])
+        for table in security_tables:
+            self.assertEqual(
+                self.db.execute("SELECT * FROM " + table).fetchall(),
+                before_security[table],
+            )
+
     def test_replacement_preview_counts_without_writing_inventory(self):
         current = fixture()
         candidate = copy.deepcopy(current)
