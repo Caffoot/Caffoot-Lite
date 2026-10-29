@@ -9,7 +9,7 @@ h1{margin:0 0 8px;font-size:25px}p{color:#475569;line-height:1.5}
 label{display:block;font-size:13px;font-weight:700;margin:18px 0 6px}
 input{box-sizing:border-box;width:100%;min-height:44px;padding:10px;border:1px solid #64748b;border-radius:8px;font:inherit}
 button{width:100%;margin-top:22px;padding:13px;border:0;border-radius:8px;background:#4f46e5;color:white;font:inherit;font-weight:700;cursor:pointer}
-button:disabled{opacity:.5}#message{color:#b91c1c}#secret{overflow-wrap:anywhere;font-weight:700;color:#0f172a}
+button:disabled{opacity:.5}button.secondary{background:#475569}button.small{width:auto;margin:5px;padding:8px 12px;font-size:13px}section.panel{border-top:1px solid #cbd5e1;margin-top:20px;padding-top:15px}table{width:100%;border-collapse:collapse;font-size:13px}td,th{text-align:left;padding:7px;border-bottom:1px solid #e2e8f0}select{padding:7px;max-width:100%}#account-panel{width:100%}main:has(#signed-in:not([hidden])){width:min(720px,calc(100% - 40px))}#message{color:#b91c1c}#secret{overflow-wrap:anywhere;font-weight:700;color:#0f172a}
 [hidden]{display:none!important}
 </style></head><body><main>
 <h1>Caffoot Lite</h1><p id="intro">Loading…</p>
@@ -18,7 +18,7 @@ button:disabled{opacity:.5}#message{color:#b91c1c}#secret{overflow-wrap:anywhere
 <label for="password">Password</label><input id="password" type="password" autocomplete="current-password" required></div>
 <div id="enrolment" hidden><p>Add this secret to your authenticator app, then enter its six-digit code to finish setup.</p><p id="secret"></p></div>
 <div id="code-field" hidden><label for="code">Authenticator code</label><input id="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6"></div>
-<p id="message" role="alert"></p><button id="submit" type="submit">Continue</button></form><section id="signed-in" hidden><p id="signed-in-message"></p><button id="sign-out" type="button">Sign out</button></section>
+<p id="message" role="alert"></p><button id="submit" type="submit">Continue</button></form><section id="signed-in" hidden><p id="signed-in-message"></p><section class="panel"><h2>Change password</h2><form id="change-password"><label for="current-password">Current password</label><input id="current-password" type="password" autocomplete="current-password" required><label for="new-password">New password</label><input id="new-password" type="password" autocomplete="new-password" required><button type="submit">Change password</button></form></section><section id="account-panel" class="panel" hidden><h2>Users</h2><form id="create-user"><label for="new-username">Username</label><input id="new-username" required maxlength="256"><label for="initial-password">Initial password</label><input id="initial-password" type="password" required><button type="submit">Create user</button></form><div id="users-table"></div></section><p id="account-message" role="status"></p><button id="sign-out" class="secondary" type="button">Sign out</button></section>
 </main><script>
 'use strict';
 const $=id=>document.getElementById(id);
@@ -31,10 +31,12 @@ async function showSession(){
  $('form').hidden=true;$('signed-in').hidden=false;
  $('intro').textContent='Signed in';
  $('signed-in-message').textContent='Signed in as '+session.username+'. The inventory interface is being connected to the central database.';
+ $('account-panel').hidden=!session.is_admin;
+ if(session.is_admin)await loadUsers();
  return true;
 }
 async function request(path,data){
- const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+ const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json',...(csrfToken?{'X-CSRF-Token':csrfToken}:{})},body:JSON.stringify(data)});
  const payload=await r.json();if(!r.ok)throw Error(payload.error||'Request failed');return payload;
 }
 function display(){
@@ -67,6 +69,44 @@ $('form').addEventListener('submit',async e=>{
  }
  }catch(err){$('message').style.color='#b91c1c';$('message').textContent=err.message}
  finally{$('submit').disabled=false}
+});
+
+async function loadUsers(){
+ const r=await fetch('/api/users');if(!r.ok)throw Error('Unable to load users');
+ const data=await r.json();const host=$('users-table');host.replaceChildren();
+ for(const user of data.users){
+  const panel=document.createElement('section');panel.className='panel';
+  const heading=document.createElement('h3');heading.textContent=user.username+(user.isAdmin?' (administrator)':'');panel.append(heading);
+  const info=document.createElement('p');info.textContent=(user.active?'Active':'Disabled')+' · MFA '+(user.mfaEnrolled?'enrolled':'not enrolled');panel.append(info);
+  for(const section of ['Devices','IPAM','Racks']){
+   const label=document.createElement('label');label.textContent=section+' ';
+   const select=document.createElement('select');
+   for(const [value,name] of [['','No access'],['read','Read'],['edit','Edit']]){
+    const option=document.createElement('option');option.value=value;option.textContent=name;select.append(option);
+   }
+   select.value=user.permissions[section]||'';select.disabled=user.isAdmin;
+   select.addEventListener('change',()=>adminAction('/api/users/permission',{userId:user.id,section,level:select.value||null}));
+   label.append(select);panel.append(label);
+  }
+  for(const [name,path,field,value] of [[user.active?'Disable':'Enable','/api/users/active','active',!user.active],[user.isAdmin?'Remove admin':'Make admin','/api/users/admin','isAdmin',!user.isAdmin],['Delete','/api/users/delete',null,null]]){
+   const button=document.createElement('button');button.className='small secondary';button.textContent=name;
+   button.addEventListener('click',()=>{if(name==='Delete'&&!confirm('Delete '+user.username+'?'))return;adminAction(path,{userId:user.id,...(field?{[field]:value}:{})})});panel.append(button);
+  }
+  host.append(panel);
+ }
+}
+async function adminAction(path,data){
+ try{await request(path,data);$('account-message').textContent='Updated successfully';await loadUsers()}
+ catch(error){$('account-message').textContent=error.message;await loadUsers()}
+}
+$('create-user').addEventListener('submit',async event=>{
+ event.preventDefault();await adminAction('/api/users/create',{username:$('new-username').value,password:$('initial-password').value});$('create-user').reset();
+});
+$('change-password').addEventListener('submit',async event=>{
+ event.preventDefault();try{
+  await request('/api/account/password',{currentPassword:$('current-password').value,newPassword:$('new-password').value});
+  csrfToken='';$('signed-in').hidden=true;mode='login';display();$('message').textContent='Password changed. Sign in again.';
+ }catch(error){$('account-message').textContent=error.message}
 });
 $('sign-out').addEventListener('click',async()=>{
  try{
