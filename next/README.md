@@ -24,7 +24,7 @@ docker compose exec caffoot-next openssl x509 -in /data/tls/server.crt -noout -f
 
 Compare the SHA-256 fingerprint against a separately trusted copy before trusting the certificate in your browser or reverse proxy. The certificate's Subject Alternative Name must include the IP address or hostname used to reach the Caffoot server. If you change `CAFFOOT_SERVER_ADDRESS` after first startup, the existing persisted certificate is **not** silently regenerated; inspect its identities and explicitly plan a safe replacement if required. Keep the private key private. A self-signed certificate is not publicly trusted merely because the application generated it.
 
-The container's own HTTPS health check is a local liveness probe and does not establish external certificate trust. Do not delete the named data volume if retaining inventory or certificate identity. The Docker Compose lifecycle smoke test runs in GitHub Actions and verifies published port mapping, persisted certificate identity and SQLite data across restart and container recreation. The certificate is not automatically renewed; before expiry, plan a controlled certificate rotation and update client/proxy trust. Never delete the data volume as a certificate-rotation shortcut.
+The container's own HTTPS health check is a local liveness probe and does not establish external certificate trust. Do not delete the named data volume if retaining inventory or certificate identity.  The certificate is not automatically renewed; before expiry, plan a controlled certificate rotation and update client/proxy trust. Never delete the data volume as a certificate-rotation shortcut.
 
 ## Next gates
 
@@ -34,7 +34,7 @@ Complete and verify the published v1.3.3-compatible inventory import review, cor
 
 The backend now applies a versioned SQLite schema transactionally on startup. Internal tables cover devices, subnets, VLANs, racks, accessories, IP allocations, inventory settings and change history. The JSON record columns deliberately retain variable and historical v1.3.3 fields while source-compatible projection and atomic import are implemented; this is not an alternative browser inventory store. The schema currently holds no imported data and exposes no inventory API.
 
-Run schema tests from `next/` with `python -m unittest discover -s tests -v` (Python 3.12 with SQLite JSON support). These tests check schema repeatability, forward-version refusal and basic constraints; they do **not** establish import compatibility. The opt-in real Docker Compose lifecycle smoke test has passed in GitHub Actions, covering configurable published port, TLS certificate persistence and SQLite persistence after restart and container recreation. Full v1.3.3 UI and inventory compatibility remain unverified.
+The opt-in real Docker Compose lifecycle smoke test has passed in GitHub Actions, covering configurable published port, TLS certificate persistence and SQLite persistence after restart and container recreation. Full v1.3.3 UI and inventory compatibility remain unverified.
 
 ## Isolated inventory staging checkpoint
 
@@ -48,10 +48,4 @@ Source inspection confirms that **v1.3.3 itself retains** both the legacy comput
 
 ## Private genuine v1.3.3 export regression
 
-The opt-in `tests/test_genuine_export.py` round-trip test checks all inventory collections, optional/historical fields, device ordering, and repeated staging against an actual exported backup. Keep the backup **outside the repository**. From `next/`, run:
-
-```sh
-CAFFOOT_V133_FIXTURE=/absolute/path/to/private-v1.3.3-backup.json python -m unittest discover -s tests -v
-```
-
-The test skips when the environment variable is unset (including normal GitHub Actions). The uploaded reference export is not published or embedded in source control. The test verifies only lossless staging/reconstruction, **not** the published UI import's full validation, review or confirmation sequence.
+The optional `tests/test_genuine_export.py` round-trip check covers all inventory collections, optional/historical fields, device ordering, and repeated staging against an actual exported backup. Keep the backup **outside the repository**. The test skips when the environment variable is unset (including normal GitHub Actions). The uploaded reference export is not published or embedded in source control. The test verifies only lossless staging/reconstruction, **not** the published UI import's full validation, review or confirmation sequence.
