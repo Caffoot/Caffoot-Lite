@@ -21,6 +21,36 @@ def fixture():
 
 
 class ImportReviewTests(unittest.TestCase):
+    def test_normal_published_export_preserves_custom_inventory_fields(self):
+        source = fixture()
+        source["devices"][0]["assetTag"] = "ASSET-204"
+        source["devices"][0]["notes"] = "Keep this exact note"
+        source["ipAllocations"]["10.0.0.10"]["notes"] = "Reserved for office"
+        source["customInventorySetting"] = {"nested": ["keep", 42]}
+        source["caffootBackup"] = {
+            "format": "caffoot-inventory", "schemaVersion": 1,
+            "app": "Caffoot Lite", "appVersion": "1.3.3",
+            "exportedAt": "2026-10-29T12:00:00Z",
+        }
+        original = copy.deepcopy(source)
+        review = prepare_published_export_review(json.dumps(source).encode("utf-8"))
+        self.assertEqual(source, original)
+        self.assertFalse(review["requiresAccessPointMountReview"])
+        self.assertFalse(review["requiresLegacyMountReview"])
+        self.assertEqual(review["legacyMountRepairs"], [])
+        self.assertEqual(review["candidate"]["devices"][0]["assetTag"], "ASSET-204")
+        self.assertEqual(review["candidate"]["devices"][0]["notes"], "Keep this exact note")
+        self.assertEqual(
+            review["candidate"]["ipAllocations"]["10.0.0.10"]["notes"],
+            "Reserved for office",
+        )
+        self.assertEqual(
+            review["candidate"]["customInventorySetting"],
+            {"nested": ["keep", 42]},
+        )
+        self.assertFalse(review["approved"])
+        self.assertFalse(review["persistenceAllowed"])
+
     def test_published_export_gate_precedes_detached_review(self):
         source = fixture()
         source["caffootBackup"] = {
