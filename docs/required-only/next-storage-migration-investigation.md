@@ -391,3 +391,18 @@ A device save may change the device record, device/IPAM allocation and multiple 
 **Next design consequence:** database transactions should preserve the IPAM address record and history event outcomes without recreating localStorage write-verification, browser snapshots or a competing JSON inventory authority. Any backend event persistence decision must remain proportionate to #215 and the established Change History behaviour. No new audit feature or implementation authorised.
 
 **Fixture checkpoint:** awaiting a user-edited/exported published v1.3.3 inventory file; until supplied, only source-level expectations are verified.
+
+
+## Genuine published v1.3.3 export fixture received — 2026-10-29
+
+**Provenance:** Product owner confirms that `caffoot_lite_backup_2026-10-29-2.json` was exported through the normal backup function of the latest published v1.3.3 HTML application after importing synthetic test inventory and making edits. This is **user-confirmed provenance**, not independently witnessed browser execution. The attached file is conversation evidence, not a file committed to GitHub.
+
+**Immutable fixture fingerprint:** SHA-256 `169ab3b1882aadc4c6e27c1b3c8c4139d9fd88789f81dd0c03971427ccc30b14`; 29,958 bytes. `caffootBackup`: `format:caffoot-inventory`, `schemaVersion:1`, `app:Caffoot Lite`, `appVersion:1.3.3`, `exportedAt:2026-10-29T13:25:29.119Z`. `stateVersion:3`.
+
+**Read-only JSON census:** 27 devices; 1 subnet; 1 VLAN; 1 rack; 3 rack accessories; 7 IPAM allocation records; 10 configured device types; 5 device locations; 2 hardware seed preference overlays; 0 custom installed-software catalogue entries; 0 custom server-function catalogue entries. Four devices have nonempty `previousVirtualHosts`; seven have nonempty `previousVirtualPlatforms`. Software/service values are present in device `typeDetails` despite the empty custom catalogues.
+
+**Targeted structural checks performed:** JSON parsed successfully; all populated current `virtualHostId` values resolve to existing device IDs; each device with a populated `primaryIp` has an `ipAllocations` record whose `deviceId` matches. These are **partial static consistency checks**, not execution of the full published validator, a reimport test, or a Next migration test. Do not claim broader compatibility or acceptance.
+
+**Concrete preservation cases:** rack-mounted physical server with front-face U14–15 and a reserved primary IP; vertical PDU/cable accessory side-rail records plus a normal blank panel; active/retired VM records and host/platform history; assigned and released IPAM allocations; extensive `typeDetails` boolean software/service keys; `hardwareSeedPreferences` overlay entries. Preserve the exact original bytes as a comparison fixture, and compare Next's normalised inventory projection to the v1.3.3 accepted state rather than imposing a new field whitelist.
+
+**Remaining gates:** (1) review and explicitly approve minimal SQLite physical schema/backend contract and security/edit-reservation implementation details under #215; (2) execute the genuine fixture import and round-trip/behavioural checks once implementation is authorised and exists; (3) retain targeted acceptance cases for custom installed-software/server-function catalogue entries, bulk actions, and other features absent from this one fixture; (4) obtain explicit product-owner approval before writing code. No implementation, DDL freeze, tests or new features are authorised by receipt of the fixture.
