@@ -25,9 +25,10 @@ class SessionHttpTests(unittest.TestCase):
             db.execute("PRAGMA foreign_keys=ON")
             initialise_database(db)
             admin, secret = bootstrap_first_admin(db, "owner", "password")
-            confirm_admin_mfa(db, admin, code_at(secret), timestamp=time.time())
+            timestamp = time.time()
+            confirm_admin_mfa(db, admin, code_at(secret, timestamp), timestamp=timestamp)
             self.token = login_session(
-                db, "owner", "password", mfa_code=code_at(secret)
+                db, "owner", "password", mfa_code=code_at(secret, timestamp), now=timestamp
             )
         self.path_patch = patch("backend.server.DB_PATH", self.path)
         self.path_patch.start()
