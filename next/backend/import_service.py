@@ -7,7 +7,7 @@ are independently checked before the atomic SQLite replacement.
 from backend.import_review import (
     prepare_published_export_review, confirm_detached_import_review,
 )
-from backend.inventory import stage_inventory
+from backend.inventory import stage_inventory, reconstruct_inventory, preview_inventory_counts
 from backend.request_auth import authorised_inventory_import
 
 
@@ -44,3 +44,37 @@ def replace_from_published_export(connection, raw_bytes, *,
 
     stage_inventory(connection, candidate, pre_write_check=require_current_permission)
     return True
+
+
+def preview_published_export(connection, raw_bytes, *,
+                             cookie_header, origin, allowed_origin,
+                             csrf_header, access_point_choices=None, now=None):
+    """Read-only, authenticated preparation for the published import reviews.
+
+    Access Point decisions come first. Only a fully validated candidate gets
+    replacement counts. This returns no approval and never persists inventory.
+    The eventual HTTP workflow must retain original bytes server-side.
+    """
+    if authorised_inventory_import(
+        connection, cookie_header, origin, allowed_origin, csrf_header, now=now
+    ) is None:
+        raise PermissionError("Authenticated full inventory edit access required")
+    review = prepare_published_export_review(raw_bytes, access_point_choices)
+    if review.get("requiresAccessPointMountReview"):
+        return {
+            "requiresAccessPointMountReview": True,
+            "accessPointMountConflicts": review["accessPointMountConflicts"],
+            "approved": False,
+            "persistenceAllowed": False,
+        }
+    return {
+        "requiresAccessPointMountReview": False,
+        "accessPointMountConflicts": review["accessPointMountConflicts"],
+        "requiresLegacyMountReview": review["requiresLegacyMountReview"],
+        "legacyMountRepairs": review["legacyMountRepairs"],
+        "counts": preview_inventory_counts(
+            review["candidate"], reconstruct_inventory(connection)
+        ),
+        "approved": False,
+        "persistenceAllowed": False,
+    }
