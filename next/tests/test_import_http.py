@@ -35,7 +35,7 @@ class ImportHttpTests(unittest.TestCase):
             patch.object(server, "DB_PATH", self.path),
             patch.object(server, "PUBLIC_ORIGIN", ORIGIN),
             patch.object(server, "IMPORT_DRAFTS", self.drafts),
-            patch("backend.request_auth.time.time", return_value=60),
+            patch("backend.sessions.time.time", return_value=60),
         ]
         for item in self.patches:
             item.start()
