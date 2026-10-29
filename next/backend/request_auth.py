@@ -76,3 +76,20 @@ def logout(connection, cookie_header, origin, allowed_origin, csrf_header,
         return False
     logout_session(connection, read_session_cookie(cookie_header))
     return True
+
+
+def authorised_inventory_import(connection, cookie_header, origin,
+                                allowed_origin, csrf_header, *, now=None):
+    """Require a verified session and edit access to every inventory section.
+
+    Returns the authenticated account ID or None. This does not approve an
+    import, validate its contents, or write to the database.
+    """
+    from backend.permissions import can_replace_inventory
+
+    account_id = authorised_mutation(
+        connection, cookie_header, origin, allowed_origin, csrf_header, now=now
+    )
+    if account_id is None or not can_replace_inventory(connection, account_id):
+        return None
+    return account_id
