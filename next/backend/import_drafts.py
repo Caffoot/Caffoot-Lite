@@ -10,7 +10,7 @@ import time
 
 from backend.http_security import read_session_cookie
 from backend.import_service import (
-    preview_published_export, replace_from_published_export, inventory_revision,
+    preview_published_export, replace_from_published_export,
 )
 
 
@@ -58,7 +58,6 @@ class ImportDrafts:
             self._drafts[draft_id] = {
                 "raw": bytes(raw_bytes), "session": self._identity(cookie_header),
                 "expires": current + self._ttl, "choices": None,
-                "revision": preview.get("inventoryRevision") or inventory_revision(connection),
                 "ready": not preview["requiresAccessPointMountReview"],
             }
             return draft_id, preview
@@ -78,14 +77,12 @@ class ImportDrafts:
                 raise ValueError("All Access Point mounting choices are required")
             draft["choices"] = list(choices)
             draft["ready"] = True
-            # Keep the initial preview revision: AP review must not accept
-            # intervening changes to another user's inventory.
             return preview
 
     def confirm(self, connection, draft_id, *, cookie_header, origin,
                 allowed_origin, csrf_header, legacy_mount_approved=False,
                 replacement_confirmed=False, now=None):
-        """Consume the draft once; recheck auth and inventory under write lock."""
+        """Consume the draft once; require authentication and confirmation."""
         from backend.request_auth import authorised_inventory_import
         with self._lock:
             # Reject invalid CSRF and revoked permissions before consuming a draft.
@@ -108,7 +105,7 @@ class ImportDrafts:
                 csrf_header=csrf_header, access_point_choices=draft["choices"],
                 legacy_mount_approved=legacy_mount_approved,
                 replacement_confirmed=True,
-                expected_inventory_revision=draft["revision"], now=now,
+                now=now,
             )
 
     def cancel(self, draft_id, *, cookie_header):
