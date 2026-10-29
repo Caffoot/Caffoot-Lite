@@ -35,6 +35,35 @@ class AccessPointReviewTests(unittest.TestCase):
         self.assertEqual(fixed["devices"][1], raw["devices"][1])
         self.assertEqual(fixed["devices"][2], raw["devices"][2])
 
+    def test_multiple_access_points_require_complete_ordered_choices(self):
+        raw = {"racks": [], "devices": [
+            {"id": "ap-one", "type": "Access Point", "mountType": "Invalid",
+             "location": "Racked"},
+            {"id": "ap-two", "type": "Wireless Access Point", "mountType": "Invalid",
+             "location": "Office"},
+            {"id": "router", "type": "Router", "mountType": "Desktop"},
+        ]}
+        before = copy.deepcopy(raw)
+        conflicts = find_access_point_mount_conflicts(raw)
+        self.assertEqual([c["id"] for c in conflicts], ["ap-one", "ap-two"])
+        with self.assertRaises(ValueError):
+            apply_access_point_mount_choices(raw, conflicts, ["Ceiling Mounted"])
+        with self.assertRaises(ValueError):
+            apply_access_point_mount_choices(
+                raw, conflicts, ["Ceiling Mounted", "Invalid"]
+            )
+        self.assertEqual(raw, before)
+        corrected = apply_access_point_mount_choices(
+            raw, conflicts, ["Ceiling Mounted", "Wall Mounted"]
+        )
+        self.assertEqual(raw, before)
+        self.assertEqual(
+            [d["mountType"] for d in corrected["devices"]],
+            ["Ceiling Mounted", "Wall Mounted", "Desktop"],
+        )
+        self.assertEqual(corrected["devices"][0]["location"], "Unknown")
+        self.assertEqual(corrected["devices"][1]["location"], "Office")
+
     def test_incomplete_or_invalid_choices_do_not_change_source(self):
         raw = {"racks": [], "devices": [
             {"id": "ap", "type": "Access Point", "mountType": "Invalid"}
