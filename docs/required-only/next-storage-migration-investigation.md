@@ -215,3 +215,61 @@ Additional published v1.3.3 source inspection, **not newly run tests**:
 - **Inventory reset:** the published clean reset sets `managedOptionsCleared=true` on the default inventory. This setting must remain distinguishable from an empty managed catalogue when reconstructing the inventory view; do not infer reset from an empty table.
 
 **Candidate schema refinement:** `devices` and managed catalogue records need a safe per-record representation of legacy top-level dynamic keys and nested `typeDetails`; indexed typed columns should cover stable relationships, but no user data may be dropped during conversion. History should be generated from the *projected v1.3.3 inventory shape* with the same diff categories/limits, not from generic SQL row changes. Confirm import acceptance using real v1.3.3-export fixtures, then specify DDL and endpoint transactions only after separate authorisation. No application changes, tests, or approvals implied.
+
+## Consolidated review gate — minimal SQLite specification candidate (2026-10-29)
+
+**Authority and status:** issue #215 is the single approved working specification; published v1.3.3 is the functional/visual baseline. This section consolidates the source-based investigation above into **one reviewable candidate**. It is *not* approved DDL, an implementation task, a new roadmap, or a request to alter existing UI. Where evidence is incomplete, this section explicitly leaves the choice open.
+
+### A. Authoritative inventory model and v1.3.3 projection
+
+| Owner in Next | Stable identity / relationship | What the unchanged UI must receive |
+| --- | --- | --- |
+| `devices` | Published string device IDs; typed identity, name, type, lifecycle, mount/location, hardware and VM host reference; per-device structured extension for `typeDetails`, previous-type/host/platform history and accepted dynamic keys | Same device objects and field presence as accepted v1.3.3 state; never rewrite device IDs or turn historical host IDs into current assignments |
+| `subnets` | Published subnet IDs; CIDR, kind, parent address block, network-only VLAN/gateway, name/description | Same hierarchical/flat records and original optional-field semantics; enforce network versus container/reservation/loopback rules |
+| `vlans` | Published VLAN IDs, VLAN number and optional parent domain; metadata and colour | Same parent-scoped identity and subnet-triggered reconciliation |
+| `ip_allocations` plus a single primary-IP assignment relationship | IP-address key, allocation status, device owner, reserved-for-device, hostname, notes, accepted extensions | Same IP-keyed `ipAllocations` map and projected device `primaryIp`/`ipReserved`; preserve released address records and independent reservations |
+| `racks` | Published rack IDs, physical dimensions, location, type and accepted extension | Same rack records including historical `depth` display value where supported |
+| `device_rack_placements` | At most one active device placement, referencing existing device/rack IDs; face/U range | Same `rackId`, `face`, `rackUStart`, `rackUEnd`, `rackUHeight` device fields; never imply a VM has independent physical rack placement |
+| `rack_accessories` | Published accessory IDs, rack reference, face, U range, type, side/port-specific attributes | Same accessory list and front/rear/vertical side-rail occupancy behaviour |
+| Inventory configuration/catalogues | Ordered device types, graphics, locations, software, services, `managedOptionsCleared`, accepted settings | Same arrays, stable catalogue keys, built-in overrides, archived entries and device assignments, including legacy top-level flags |
+| `change_history` | Bounded events, reasons, changed fields, omission counts | Same visible diff categories and limits: 200 events, 60 changes/event, 16 field names/updated item; no generic all-table audit redesign |
+| Accounts/security (separate) | User IDs, password verification, MFA credentials, roles/grants and edit leases | Only the separately approved bootstrap, authentication, user management and RBAC additions; **never** inventory import data |
+
+**Data modelling rule:** no duplicate authoritative inventory snapshots in SQLite or localStorage. Flexible JSON is acceptable for *one record's existing variable fields* or small catalogue/settings values; it is not an excuse to store the entire inventory as an opaque blob. Exact SQL column names, types and indices remain unapproved.
+
+### B. Transaction boundaries and conflict rules
+
+| Operation | Required atomic scope | Compatibility checks |
+| --- | --- | --- |
+| Device create/edit | Device identity and details, primary-IP owner/status/hostname, rack placement, dependent guest choices/history, applicable Change History | Published name/type/mount/host/IP/rack validations; #215 device edit lease and stale revision for editing |
+| Device delete | Guest reassignment/unassignment/retirement, device removal, IP release and rack vacancy, applicable history | Existing confirmations, dependent guest decisions and rollback; no partial guest or IP changes |
+| Subnet/VLAN edit or delete | Hierarchy, gateway/VLAN reconciliation, dependent allocations and devices, applicable history | Existing address-block hierarchy, parent-scoped VLAN rules and dependency safeguards |
+| Direct/bulk IPAM edit | Allocation/reservation/status/notes changes and any affected device projections, applicable history | Gateway protection, notes-only primary-IP editing, bulk preview/revalidation, all-or-nothing commit |
+| Rack/accessory edit or move | Rack dimensions, device placements, accessory occupancy and applicable history | Front/rear and side-specific collision checks, rack U bounds, vertical 0U capacity exception |
+| Clean reset or approved v1.3.3 JSON import | Replace **inventory domain only** after complete validation; preserve accounts/security | Existing review/confirmation and no partial restore; do not recreate browser snapshot mechanism |
+| User/role/MFA change | Security tables only, with bootstrap and last-admin protections | No public registration; new user initially has no inventory grants; MFA enforced by effective permission |
+
+**Concurrent editing:** server owns edit reservations and revision checks. Viewing is non-locking. Every write rechecks permissions and affected inventory invariants in its transaction; IPAM/rack paths must not bypass a device edit reservation when changing that device. Do not lock unrelated device viewing or editing. This is a design requirement, not a selected SQLite locking/lease implementation.
+
+### C. Compatibility acceptance matrix for the future authorised build
+
+1. **Baseline comparison:** compare published v1.3.3 screens, labels, form validation, confirmations, workflows and outputs against the Docker version; deviations need explicit product-owner approval.
+2. **Import fidelity:** test a fresh v1.3.3-export JSON fixture containing real accepted data across every collection, custom/archived catalogues, dynamic/historical device fields, nested type details, VM hosts, primary IPs, reservations, racks and vertical accessories. Validate envelope and published structural/integrity rules. Compare accepted inventory state before and after backend projection, accounting only for source-defined normalisation.
+3. **Atomicity:** inject a failure during each multi-record operation and verify unchanged inventory and relationships. Confirm bulk IPAM cancellation and stale revalidation do not partially commit.
+4. **Concurrency:** test two users viewing the same device, exclusive Edit reservation, editing different devices, lease expiry, Cancel/Save release, stale writes, and conflicting IP/rack assignments; test RBAC/MFA checks on every write path.
+5. **History fidelity:** compare v1.3.3 diff categories, reason, field lists, event/field caps, and behaviour when inventory changes but history cannot be persisted; do not add new visible categories without approval.
+6. **Security separation:** import/reset must never replace users, passwords, MFA, grants or bootstrap state; prevent self-delete/self-disable/self-demotion and removal of last active admin.
+7. **Deployment:** one clear Compose/Portainer route, persistent SQLite storage, straightforward first-run admin/MFA, and practical operation on Pi 5 (8 GB) alongside existing containers. No performance claim before measurement.
+
+### D. Remaining design decisions — do not infer approval
+
+| Decision | Current evidence | Resolution gate |
+| --- | --- | --- |
+| Exact DDL/column layout and full dynamic field census | Principal v1.3.3 write paths mapped; not every legacy optional key enumerated | Inspect remaining source paths and representative published v1.3.3 fixture before DDL |
+| Primary-IP relational representation and accepted legacy repair | Published save rejects device/IPAM mismatch; import has normalisation/repair paths | Trace complete import acceptance and repair decisions before choosing constraints |
+| Per-record flexible JSON and catalogue order | Dynamic service/software flags and historical details confirmed | Verify full catalogue handler shapes and import round-trip before freezing schema |
+| History persistence failure semantics | v1.3.3 can save inventory but fail to persist separate browser history; Next must centralise storage | Obtain explicit owner decision if a changed visible failure result is unavoidable |
+| Lease scope on direct IPAM/rack operations | #215 requires device edit reservations shared across Devices/IPAM/Racks | Specify conflict checks without inventing new workflow; verify against approved behaviour |
+| User/security storage details | #215 approves features and safeguards, not specific password/MFA schema | Security design review before implementation; avoid speculative features |
+
+**Checkpoint verdict:** enough source-backed detail to guide a *future* minimal implementation proposal, but **not** enough to claim exact DDL, full fixture coverage, approved deviation or build readiness. The next useful read-only task is to verify the remaining import and catalogue source branches against actual published v1.3.3 fixtures and tighten this matrix. Continue in large batches; avoid additional redundant root documents. No implementation, test runs, merges or releases authorised by this checkpoint.
