@@ -381,10 +381,13 @@ class Handler(BaseHTTPRequestHandler):
                     self.respond(403, {"error": "forbidden"})
                     return
                 if self.path in ("/api/devices/edit/start", "/api/devices/edit/cancel"):
-                    if set(payload) != {"deviceId"} or not isinstance(payload["deviceId"], str):
+                    if set(payload) not in ({"deviceId"}, {"deviceId", "section"}) or not isinstance(payload["deviceId"], str):
                         raise ValueError("Device identifier required")
-                    if not can_access(connection, actor, "Devices", edit=True):
-                        raise PermissionError("Devices edit permission required")
+                    section = payload.get("section", "Devices")
+                    if section not in ("Devices", "IPAM", "Racks"):
+                        raise ValueError("Invalid inventory section")
+                    if not can_access(connection, actor, section, edit=True):
+                        raise PermissionError("Section edit permission required")
                     device_id = payload["deviceId"]
                     now = int(time.time())
                     connection.execute("BEGIN IMMEDIATE")
