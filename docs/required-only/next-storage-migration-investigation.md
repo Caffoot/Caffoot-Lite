@@ -99,3 +99,15 @@ Product owner identified an inaccurate earlier explanation that historical field
 **Open verification before design:** exact VLAN uniqueness scope; schema-specific import review/correction paths; whether a given unknown field is supported by published validation; catalogue rename/remove behaviour; save-time handling of hidden detail keys. Do not resolve these by assumption.
 
 **Provisional only:** table names, flexible attribute representation and other database mapping suggestions in this document. Their sole purpose is to evaluate a minimal implementation of #215, not to prescribe extra architecture.
+
+
+## Verified source checks — VLAN reconciliation, catalogue archive, import mounting (2026-10-29)
+
+These findings are **existing v1.3.3 behaviours only**, not new requirements or workflows.
+
+1. **Legacy VLAN ownership reconciliation:** `reconcileLegacyVlanOwnership` first refuses ambiguous/orphaned records. It proposes ownership for uniquely matched records and checks uniqueness using `(parentId || '__unassigned__') + ':' + String(vlanId)`; a duplicate in the same domain blocks that reconciliation. This **does not establish** the complete VLAN create/edit uniqueness rules; those remain unverified.
+2. **Server-service archive:** `confirmServerServiceArchive` shows assigned-device counts/names. `archiveServerService` independently blocks archival if any device uses the service, checking both `typeDetails[key]` and historical top-level `device[key]`. Otherwise it archives the configured record or records an archived override for a built-in option; the stable key and existing device values are not deleted. Renaming an existing configured service changes its label while retaining its key.
+3. **Installed-software removal:** `confirmSoftwareCatalogueRemoval` displays assigned-device information; `archiveSoftwareCatalogueEntry` blocks removal while any device has the software assigned (nested or historical top-level), then archives the entry, retaining its key and existing records. `restoreArchivedSoftwareEntry` checks for a conflicting available label before restoring. Do not collapse these into a generic delete.
+4. **Legacy computer mounting:** `planLegacyComputerMountingCorrections` targets specifically desktop/laptop/tablet legacy `Racked` location or incompatible/orphaned rack mounting. For qualifying cases it proposes a Desktop mount or retains a valid non-rack mount, sets location to Unknown and clears rack placement on a detached import candidate; unknown mount values and dangling references still fail validation. These corrections are import compatibility only, **not** device-type changes or a general repair feature.
+
+**Pending evidence:** locate and compare VLAN create/edit validation; verify the import UI review/confirmation and schema applicability; review installed-software and service rename/restore tests. No implementation authorised.
