@@ -257,13 +257,15 @@ def _write_detached(connection: sqlite3.Connection, data):
             )
 
 
-def stage_inventory(connection: sqlite3.Connection, data):
+def stage_inventory(connection: sqlite3.Connection, data, *, pre_write_check=None):
     """Atomically stage already-reviewed data in an isolated test database.
 
     This is deliberately not connected to any application API.
     """
     connection.execute("BEGIN IMMEDIATE")
     try:
+        if pre_write_check is not None:
+            pre_write_check(connection)
         _write_detached(connection, data)
         connection.commit()
     except BaseException:
