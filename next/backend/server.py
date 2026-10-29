@@ -16,7 +16,8 @@ from .import_drafts import ImportDrafts
 from .request_auth import authenticated_account, csrf_for_session
 from .http_security import read_session_cookie, session_cookie, clear_session_cookie
 from .request_auth import login, logout
-from .permissions import can_access
+from .permissions import can_access, create_user, set_permission
+from .request_auth import authorised_mutation
 from .http_security import require_same_origin
 from .tls import ensure_certificate
 from .deployment_settings import validate_published_port
@@ -221,6 +222,9 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(404, {"error": "not found"})
 
     def do_POST(self):
+        if self.path in ("/api/users/create", "/api/users/permission"):
+            self.handle_user_mutation()
+            return
         if self.path in IMPORT_ROUTES:
             self.handle_import()
             return
@@ -302,6 +306,49 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(401, {"error": "invalid credentials"})
             return
         self.respond(200, {"status": "signed in"}, cookie=session_cookie(token))
+
+    def handle_user_mutation(self):
+        """Administrator-only account creation and section permission changes."""
+        origin = self.headers.get("Origin")
+        if not PUBLIC_ORIGIN or not require_same_origin(origin, PUBLIC_ORIGIN):
+            self.respond(403, {"error": "forbidden"})
+            return
+        length = self.headers.get("Content-Length")
+        if length is None or not length.isdecimal() or not 0 < int(length) <= MAX_LOGIN_BYTES:
+            self.respond(400, {"error": "invalid request size"})
+            return
+        if self.headers.get("Content-Type", "").split(";")[0].strip().lower() != "application/json":
+            self.respond(415, {"error": "JSON required"})
+            return
+        try:
+            payload = json.loads(self.rfile.read(int(length)))
+            if not isinstance(payload, dict):
+                raise ValueError("Invalid user request")
+            with connect() as connection:
+                actor = authorised_mutation(
+                    connection, self.headers.get("Cookie"), origin, PUBLIC_ORIGIN,
+                    self.headers.get("X-CSRF-Token"),
+                )
+                if actor is None:
+                    self.respond(403, {"error": "forbidden"})
+                    return
+                if self.path == "/api/users/create":
+                    if set(payload) != {"username", "password"}:
+                        raise ValueError("Username and password required")
+                    user_id = create_user(connection, actor, payload["username"], payload["password"])
+                    result = {"id": user_id}
+                else:
+                    if set(payload) != {"userId", "section", "level"} or type(payload["userId"]) is not int:
+                        raise ValueError("Invalid permission request")
+                    set_permission(connection, actor, payload["userId"], payload["section"], payload["level"])
+                    result = {"status": "updated"}
+        except PermissionError:
+            self.respond(403, {"error": "forbidden"})
+            return
+        except (ValueError, TypeError, sqlite3.IntegrityError) as exc:
+            self.respond(400, {"error": str(exc)})
+            return
+        self.respond(200, result)
 
     def handle_import(self):
         """Authenticated server-owned import stages; never accept a candidate."""
