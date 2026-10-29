@@ -1,5 +1,11 @@
 # Roadmaps
 
+## Active v1.4 planning
+
+- [v1.4 foundation and provisional release plan](V1.4-FOUNDATION-AND-RELEASE-PLAN.md): current Docker direction, phased v1.4.x scope, Lite rules, documentation authority and historical archive safeguards. This is planning, not implementation approval.
+
+## Historical planning and migration records
+
 - [ROADMAP DESIGN NOTES](ROADMAP-DESIGN-NOTES.md)
 - [Proposed v1.3.1 to v1.3.3 release allocation](../audits/AUDIT-FINDINGS-REMEDIATION-PROGRAMME.md#proposed-v13x-release-allocation-23-october-2026): data safety, usability, code clarity and all audit workstreams
 - [V1.3.1 maintenance roadmap](V1.3.1-MAINTENANCE-ROADMAP.md): concise proposed release scope
