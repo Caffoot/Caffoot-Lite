@@ -4,6 +4,9 @@ No HTTP route calls this module. The caller must pass the original export,
 not a client-supplied candidate. Authentication, review and final confirmation
 are independently checked before the atomic SQLite replacement.
 """
+import hashlib
+import json
+
 from backend.import_review import (
     prepare_published_export_review, confirm_detached_import_review,
 )
@@ -15,7 +18,8 @@ def replace_from_published_export(connection, raw_bytes, *,
                                   cookie_header, origin, allowed_origin,
                                   csrf_header, access_point_choices=None,
                                   legacy_mount_approved=False,
-                                  replacement_confirmed=False, now=None):
+                                  replacement_confirmed=False, now=None,
+                                  expected_inventory_revision=None):
     """One-shot offline adapter; caller collects v1.3.3 review decisions first.
 
     Never accept candidate inventory from the client. Rebuild it from original
@@ -42,7 +46,13 @@ def replace_from_published_export(connection, raw_bytes, *,
         ) is None:
             raise PermissionError('Inventory import permission was revoked')
 
-    stage_inventory(connection, candidate, pre_write_check=require_current_permission)
+    def require_unchanged_inventory(locked_connection):
+        require_current_permission(locked_connection)
+        if (expected_inventory_revision is not None and
+                inventory_revision(locked_connection) != expected_inventory_revision):
+            raise ValueError("Inventory changed since import preview; review again.")
+
+    stage_inventory(connection, candidate, pre_write_check=require_unchanged_inventory)
     return True
 
 
@@ -72,9 +82,23 @@ def preview_published_export(connection, raw_bytes, *,
         "accessPointMountConflicts": review["accessPointMountConflicts"],
         "requiresLegacyMountReview": review["requiresLegacyMountReview"],
         "legacyMountRepairs": review["legacyMountRepairs"],
+        "inventoryRevision": inventory_revision(connection),
         "counts": preview_inventory_counts(
             review["candidate"], reconstruct_inventory(connection)
         ),
         "approved": False,
         "persistenceAllowed": False,
     }
+
+
+def inventory_revision(connection):
+    """Stable digest of current inventory, including settings and IPAM.
+
+    Used to reject confirmation if another user changed inventory since the
+    replacement preview. Not a client-supplied authorisation token.
+    """
+    state = reconstruct_inventory(connection)
+    canonical = json.dumps(
+        state, sort_keys=True, separators=(",", ":"), ensure_ascii=False
+    ).encode("utf-8")
+    return hashlib.sha256(canonical).hexdigest()
