@@ -86,7 +86,7 @@ class Handler(BaseHTTPRequestHandler):
         elif self.path == "/api/setup/status":
             with connect() as connection:
                 configured = connection.execute("SELECT 1 FROM accounts LIMIT 1").fetchone() is not None
-            pending = connection.execute("SELECT 1 FROM accounts WHERE is_admin=1 AND mfa_confirmed=0 LIMIT 1").fetchone() is not None
+                pending = connection.execute("SELECT 1 FROM accounts WHERE is_admin=1 AND mfa_confirmed=0 LIMIT 1").fetchone() is not None
             self.respond(200, {"setupRequired": not configured, "enrollmentPending": pending})
         elif self.path == "/api/session":
             with connect() as connection:
