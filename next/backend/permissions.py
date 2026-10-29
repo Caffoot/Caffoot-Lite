@@ -174,3 +174,15 @@ def set_administrator(connection, actor_id, target_id, is_admin):
     except BaseException:
         connection.rollback()
         raise
+
+
+def can_replace_inventory(connection, account_id):
+    """Full v1.3.3 import replaces Devices, IPAM and Racks together.
+
+    Reuse established section permissions; never allow a partial-section
+    editor to replace inventory belonging to other sections.
+    Authentication and CSRF checks remain the responsibility of the request
+    boundary. No import route or persistence is enabled by this predicate.
+    """
+    return all(can_access(connection, account_id, section, edit=True)
+               for section in SECTIONS)
