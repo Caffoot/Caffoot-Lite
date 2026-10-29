@@ -9,7 +9,7 @@
 
 Next replaces authoritative browser inventory storage with a backend and central SQLite database, deployed simply via Docker Compose/Portainer. Only #215's approved accounts, MFA, RBAC, first-run setup and simultaneous device edit-reservation behaviour may be added. Existing Devices, IPAM and Racks functionality, appearance, terminology, validations and outcomes remain those of published v1.3.3.
 
-No new inventory features, device-type change workflow, ticketing, public registration, UI redesign or unapproved repair flows. Do not reproduce browser safety snapshots/recovery banners or ongoing in-app JSON export: #215 deliberately replaces those storage-specific mechanisms. Legacy JSON **import** remains, with existing applicable validation/review/confirmation. No implementation, new tests, merge or release is authorised by this document.
+No new inventory features, device-type change workflow, ticketing, public registration, UI redesign or unapproved repair flows. Do not reproduce browser safety snapshots/recovery banners or ongoing in-app JSON export: #215 deliberately replaces those storage-specific mechanisms. Legacy JSON **import** remains for fresh backups exported from published v1.3.3 only, with applicable validation/review/confirmation. Users on older HTML releases must first upgrade to v1.3.3, check their inventory, and export a new JSON backup. Direct schema-0/schema-1 import is no longer required by revised #215. No implementation, new tests, merge or release is authorised by this document.
 
 ## 2. Verified published-source inventory and relationships
 
@@ -26,7 +26,7 @@ Published state includes `devices`, `subnets`, `vlans`, `racks`, `rackAccessorie
 
 Published `importData`:
 1. Rejects files over 10 MiB; reads UTF-8 JSON and reports parse errors; recursively rejects unsafe object keys `__proto__`, `prototype`, `constructor`.
-2. Validates required `devices`, `subnets`, `racks` arrays (50,000 maximum each), `ipAllocations` object (100,000 maximum), optional `rackAccessories` type and backup version metadata. No `caffootBackup` metadata is accepted as schema 0; supported metadata-bearing schema versions are checked against the published maximum, with newer versions rejected.
+2. Validates required `devices`, `subnets`, `racks` arrays (50,000 maximum each), `ipAllocations` object (100,000 maximum), optional `rackAccessories` type and backup version metadata. Published v1.3.3 historically recognises missing `caffootBackup` metadata as schema 0 and validates supported metadata-bearing versions. **This describes source history, not Next's newly narrowed import contract:** #215 now supports only fresh v1.3.3 exports.
 3. Detects incompatible Access Point mounting/rack assignments **before** normalisation; only when present, asks for explicit mounting choices and applies them to a deep copy. Cancel leaves inventory intact.
 4. `normaliseImportedBackupAndPlanLegacyMountRepairs` creates another detached copy. For qualifying desktop/laptop/tablet legacy mount/location inconsistencies, it plans the existing correction (valid non-rack/Desktop mounting, Unknown location, cleared rack placement). It does not change device type or accept unknown mounts/dangling references.
 5. `validateAndNormaliseBackupForImport` checks invalid mounts, complete application integrity and rack placement conflicts on the candidate. Only when planned legacy corrections exist does it show the existing review; cancellation stops import.
@@ -60,9 +60,13 @@ Evidence sources: [legacy backup compatibility matrix](testing--LEGACY-BACKUP-IM
 
 ## 6. Outstanding verification before design approval
 
-1. Compare actual published v1.3.3 test fixtures and negative import cases against schema-0/schema-1 handling, including conditional AP and legacy mounting reviews. Do not claim exhaustive real-backup coverage.
+1. Verify that fresh v1.3.3 JSON exports import completely and atomically, including inventory relationships, optional historical fields, and negative validation cases. Older schema-0/schema-1 direct import is out of Next scope after the product-owner decision; it remains a v1.3.3 upgrade concern.
 2. Verify full save-time treatment of supported historical/hidden `typeDetails`, software/service rename/archive/restore variants and legacy top-level flags against source and tests; do not assume arbitrary unknown values are supported.
 3. Verify exact existing IPAM, rack, device save and Change History outcomes, including failure/rollback, against retained tests and subsequent fixes.
 4. Only then propose minimal field mapping, transaction/API boundaries and database DDL that implement #215 without changing v1.3.3 workflows. Seek product-owner decisions on genuine ambiguities, **never guess**.
 
 **Provenance:** source-level findings above were read from the published v1.3.3 HTML; test claims are attributed to retained GitHub records, not independently rerun. This reference does not authorise implementation.
+
+## Product-owner scope clarification — 2026-10-29
+
+#215 was updated to require **v1.3.3-exported JSON only** for Next import. Older HTML users must upgrade to v1.3.3 first, verify inventory, and create a fresh export. Earlier paragraphs discussing older schema import are retained solely as historical source/evidence context, not Next acceptance requirements. Suggested notice for current documentation: “Moving to Caffoot Lite Next? Import is supported from JSON inventory backups exported by Caffoot Lite v1.3.3 only. If you use an earlier HTML version, upgrade to v1.3.3, check your inventory, then export a new JSON backup before migrating.” Published release assets/tags must not be modified retrospectively.
