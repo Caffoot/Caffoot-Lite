@@ -65,6 +65,25 @@ class ImportReviewTests(unittest.TestCase):
                 replacement_confirmed=True,
             )
 
+
+    def test_confirmation_revalidates_modified_candidate(self):
+        review = prepare_detached_import_review(fixture())
+        review["candidate"]["devices"][0]["primaryIp"] = "10.0.0.99"
+        with self.assertRaisesRegex(ValueError, "integrity revalidation"):
+            confirm_detached_import_review(
+                review, replacement_confirmed=True
+            )
+        self.assertFalse(review["approved"])
+        self.assertFalse(review["persistenceAllowed"])
+
+    def test_confirmation_rejects_modified_mounting(self):
+        review = prepare_detached_import_review(fixture())
+        review["candidate"]["devices"][0]["mountType"] = "Unrecognised"
+        with self.assertRaisesRegex(ValueError, "unsupported mounting"):
+            confirm_detached_import_review(
+                review, replacement_confirmed=True
+            )
+
     def test_normal_published_export_preserves_custom_inventory_fields(self):
         source = fixture()
         source["devices"][0]["assetTag"] = "ASSET-204"
