@@ -123,6 +123,28 @@ def inspect_export(raw: bytes):
     return data
 
 
+RECOGNISED_MOUNTS = frozenset((
+    "Desktop", "Tabletop / Shelf Mounted", "Shelf Mounted", "Rack Mounted",
+    "Wall Mounted", "Ceiling Mounted", "Pole Mounted", "DIN Rail Mounted",
+    "Under-Desk Mounted", "Floor Standing", "Tower / Floor Standing",
+    "Handheld", "Mobile", "Vehicle Mounted", "Not Applicable", "Unknown",
+))
+
+
+def inspect_device_mounts(data):
+    """Published getRecognisedDeviceMountTypes / findInvalidDeviceMounts subset.
+
+    Suggestions for particular device types are not restrictions on imports.
+    This is a read-only diagnostic, not the full import validation pipeline.
+    """
+    return [
+        device for device in data["devices"]
+        if (device.get("mountType") or
+            ("Rack Mounted" if device.get("rackId") else "Desktop"))
+        not in RECOGNISED_MOUNTS
+    ]
+
+
 def inspect_import_relationships(data):
     """Read-only diagnostics for a subset of published integrity rules.
 
