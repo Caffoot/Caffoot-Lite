@@ -102,19 +102,46 @@ class Handler(BaseHTTPRequestHandler):
                         "edit": can_access(connection, account_id, section, edit=True),
                     }
                 self.respond(200, {"sections": permissions})
-        elif self.path == "/api/inventory/devices":
+        elif self.path in ("/api/inventory/devices", "/api/inventory/ipam", "/api/inventory/racks"):
+            section = {
+                "/api/inventory/devices": "Devices",
+                "/api/inventory/ipam": "IPAM",
+                "/api/inventory/racks": "Racks",
+            }[self.path]
             with connect() as connection:
                 account_id = authenticated_account(connection, self.headers.get("Cookie"))
                 if account_id is None:
                     self.respond(401, {"error": "unauthorised"})
                     return
-                if not can_access(connection, account_id, "Devices"):
+                if not can_access(connection, account_id, section):
                     self.respond(403, {"error": "forbidden"})
                     return
-                devices = [json.loads(row[0]) for row in connection.execute(
-                    "SELECT record_json FROM inventory_devices ORDER BY ordinal"
-                )]
-                self.respond(200, {"devices": devices})
+                if section == "Devices":
+                    result = {"devices": [json.loads(raw) for (raw,) in connection.execute(
+                        "SELECT record_json FROM inventory_devices ORDER BY ordinal"
+                    )]}
+                elif section == "IPAM":
+                    result = {
+                        "subnets": [json.loads(raw) for (raw,) in connection.execute(
+                            "SELECT record_json FROM inventory_subnets ORDER BY ordinal"
+                        )],
+                        "vlans": [json.loads(raw) for (raw,) in connection.execute(
+                            "SELECT record_json FROM inventory_vlans ORDER BY ordinal"
+                        )],
+                        "ipAllocations": {ip: json.loads(raw) for ip, raw in connection.execute(
+                            "SELECT ip,record_json FROM inventory_ip_allocations ORDER BY rowid"
+                        )},
+                    }
+                else:
+                    result = {
+                        "racks": [json.loads(raw) for (raw,) in connection.execute(
+                            "SELECT record_json FROM inventory_racks ORDER BY ordinal"
+                        )],
+                        "rackAccessories": [json.loads(raw) for (raw,) in connection.execute(
+                            "SELECT record_json FROM inventory_rack_accessories ORDER BY ordinal"
+                        )],
+                    }
+                self.respond(200, result)
         elif self.path == "/api/session":
             with connect() as connection:
                 cookie = self.headers.get("Cookie")
