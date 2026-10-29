@@ -1,14 +1,6 @@
 name: Next Docker Compose lifecycle
 
 on:
-  push:
-    branches: [Next]
-    paths:
-      - "next/compose.yaml"
-      - "next/Dockerfile"
-      - "next/backend/**"
-      - "next/tests/test_compose_lifecycle.py"
-      - ".github/workflows/next-compose-lifecycle.yml"
   workflow_dispatch:
 
 permissions:
