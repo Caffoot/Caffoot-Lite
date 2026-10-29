@@ -9,7 +9,7 @@ import json
 import sqlite3
 import unittest
 
-from backend.inventory import ImportRejected, inspect_export, reconstruct_inventory, stage_inventory
+from backend.inventory import ImportRejected, inspect_export, preview_inventory_counts, reconstruct_inventory, stage_inventory
 from backend.schema import initialise_database
 from test_inventory import fixture
 
@@ -107,6 +107,35 @@ class ImportBoundaryTests(unittest.TestCase):
         ).fetchall()
         self.assertEqual(len(rows), 1)
         self.assertEqual(json.loads(rows[0][0])["reason"], "before rejected import")
+
+    def test_replacement_preview_counts_without_writing_inventory(self):
+        current = fixture()
+        candidate = copy.deepcopy(current)
+        candidate["devices"].append({"id": "d2", "name": "LAB-02"})
+        candidate["racks"].append({"id": "r1", "name": "RACK-01"})
+        candidate["subnets"].append({"id": "s1", "name": "NET-01"})
+        candidate["ipAllocations"]["192.0.2.5"] = {"status": "Available"}
+        before_candidate = copy.deepcopy(candidate)
+        before_current = copy.deepcopy(current)
+        preview = preview_inventory_counts(candidate, current)
+        self.assertEqual(preview, {
+            "backup": {"devices": 2, "racks": 1, "subnets": 1, "ipAllocations": 2},
+            "current": {"devices": 1, "racks": 0, "subnets": 0, "ipAllocations": 1},
+        })
+        self.assertEqual(candidate, before_candidate)
+        self.assertEqual(current, before_current)
+        self.assertEqual(
+            self.db.execute("SELECT COUNT(*) FROM inventory_devices").fetchone()[0], 0
+        )
+
+    def test_preview_does_not_imply_import_approval(self):
+        invalid = fixture()
+        invalid["devices"].append({"id": "d1", "name": "duplicate"})
+        preview = preview_inventory_counts(invalid, fixture())
+        self.assertEqual(preview["backup"]["devices"], 2)
+        self.assertEqual(
+            self.db.execute("SELECT COUNT(*) FROM inventory_devices").fetchone()[0], 0
+        )
 
     def test_optional_unknown_top_level_fields_survive(self):
         data = fixture()
