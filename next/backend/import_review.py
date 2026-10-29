@@ -3,7 +3,7 @@
 This is NOT an import acceptance gate. Full validateApplicationState parity,
 backup version gate and explicit confirmation are required before persistence.
 """
-from backend.legacy_mounting import plan_legacy_computer_mounting_corrections
+from backend.access_point_review import (\n    find_access_point_mount_conflicts, apply_access_point_mount_choices,\n)\nfrom backend.legacy_mounting import plan_legacy_computer_mounting_corrections
 from backend.normalisation_pipeline import normalise_detached_v133_state
 from backend.inventory import inspect_device_mounts, inspect_export
 from backend.import_diagnostics import inspect_detached_candidate
@@ -41,9 +41,35 @@ def prepare_detached_import_review(raw):
     }
 
 
-def prepare_published_export_review(raw_bytes):
+def inspect_published_export_mounting(raw_bytes):
+    """Read-only first stage of the published import sequence.
+
+    Access Point mounting decisions precede normalisation. Callers must
+    explicitly collect every choice or cancel; nothing is written here.
+    """
+    raw = inspect_export(raw_bytes)
+    return find_access_point_mount_conflicts(raw)
+
+
+def prepare_published_export_review(raw_bytes, access_point_choices=None):
     """Apply the existing v1.3.3 export gate before detached review.
 
     This remains read-only and does not approve persistence.
     """
-    return prepare_detached_import_review(inspect_export(raw_bytes))
+    raw = inspect_export(raw_bytes)
+    conflicts = find_access_point_mount_conflicts(raw)
+    if conflicts:
+        if access_point_choices is None:
+            return {
+                "accessPointMountConflicts": conflicts,
+                "requiresAccessPointMountReview": True,
+                "approved": False,
+                "persistenceAllowed": False,
+            }
+        raw = apply_access_point_mount_choices(raw, conflicts, access_point_choices)
+    elif access_point_choices is not None and access_point_choices:
+        raise ValueError("No Access Point mounting choices are required.")
+    review = prepare_detached_import_review(raw)
+    review["accessPointMountConflicts"] = conflicts
+    review["requiresAccessPointMountReview"] = False
+    return review
