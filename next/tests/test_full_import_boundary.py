@@ -8,7 +8,7 @@ import unittest
 
 from backend.import_review import prepare_detached_import_review
 from backend.inventory import reconstruct_inventory, stage_inventory
-from backend.schema import migrate
+from backend.schema import initialise_database
 
 
 def backup():
@@ -32,7 +32,7 @@ def backup():
 class FullImportBoundaryTests(unittest.TestCase):
     def setUp(self):
         self.db = sqlite3.connect(":memory:")
-        migrate(self.db)
+        initialise_database(self.db)
         self.original = backup()
         stage_inventory(self.db, self.original)
 
