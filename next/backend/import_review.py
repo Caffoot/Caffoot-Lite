@@ -5,7 +5,7 @@ backup version gate and explicit confirmation are required before persistence.
 """
 from backend.legacy_mounting import plan_legacy_computer_mounting_corrections
 from backend.normalisation_pipeline import normalise_detached_v133_state
-from backend.inventory import inspect_device_mounts
+from backend.inventory import inspect_device_mounts, inspect_export
 from backend.import_diagnostics import inspect_detached_candidate
 from backend.application_integrity import validate_detached_application_state
 from backend.rack_validation import find_rack_import_conflicts
@@ -39,3 +39,11 @@ def prepare_detached_import_review(raw):
         "approved": False,
         "persistenceAllowed": False,
     }
+
+
+def prepare_published_export_review(raw_bytes):
+    """Apply the existing v1.3.3 export gate before detached review.
+
+    This remains read-only and does not approve persistence.
+    """
+    return prepare_detached_import_review(inspect_export(raw_bytes))
