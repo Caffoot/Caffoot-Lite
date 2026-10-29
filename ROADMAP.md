@@ -8,7 +8,7 @@
 
 
 **Updated:** 28 October 2026  
-**Current milestone:** v1.3.3 is the published final standalone HTML-only maintenance release. The later Docker/database direction is separately planned for v1.4.0. The later Docker/database direction is separately planned for v1.4.0.  
+**Current milestone:** v1.3.3 is the published final standalone HTML-only maintenance release. The Docker/database evolution is actively planned for v1.4.0.  
 **Repository:** `Caffoot/Caffoot-Lite` (public)  
 **Release policy:** Publish publicly only after manual verification, security/privacy review and owner approval.
 
@@ -17,6 +17,30 @@
 **Current published stable release:** [v1.3.3](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3).
 
 Caffoot Lite is an offline, standalone single-HTML network inventory and IP address management application. v1.3.1 is the published maintenance release following v1.3.0 Rack Management and the v1.2.x Devices & Intelligence releases; earlier versions remain available as historical releases.
+
+## Active development: v1.4 Docker release family (29 October 2026)
+
+**Published baseline:** [v1.3.3](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3) is the final standalone HTML-only feature release. The active direction is **one self-hosted Docker/database Caffoot Lite product**, retaining proven interface behaviour and safe import of historical inventories and JSON backups. The older optional-Docker and indefinite standalone-development proposals further down this document are **historical**, not the active plan. No application implementation, merge or publication is authorised by this roadmap.
+
+The authoritative [v1.4 foundation and phased plan](docs/roadmaps/V1.4-FOUNDATION-AND-RELEASE-PLAN.md) records Lite installation, ARM64 Raspberry Pi and AMD64 targets, security/MFA, persistence, safe migrations, backup/verified restore, upgrade and rollback requirements, website documentation reuse, and outstanding design decisions. **No demonstrated recovery path, no release.** Feature allocations are provisional and have no promised delivery dates.
+
+| Milestone | Scope | Planning issue | Release gate |
+| --- | --- | --- | --- |
+| [v1.4.0](https://github.com/Caffoot/Caffoot-Lite/milestone/4) | Docker/database, migration, authentication, backup/restore and existing functionality | [#105](https://github.com/Caffoot/Caffoot-Lite/issues/105) | [#109](https://github.com/Caffoot/Caffoot-Lite/issues/109) |
+| [v1.4.1](https://github.com/Caffoot/Caffoot-Lite/milestone/10) | Users, departments and assignments | [#208](https://github.com/Caffoot/Caffoot-Lite/issues/208) | To plan |
+| [v1.4.2](https://github.com/Caffoot/Caffoot-Lite/milestone/11) | Tickets and self-service | [#209](https://github.com/Caffoot/Caffoot-Lite/issues/209) | To plan |
+| [v1.4.3](https://github.com/Caffoot/Caffoot-Lite/milestone/12) | Documents and attachments | [#210](https://github.com/Caffoot/Caffoot-Lite/issues/210) | To plan |
+| [v1.4.4](https://github.com/Caffoot/Caffoot-Lite/milestone/13) | Email notifications and email-to-ticket | [#211](https://github.com/Caffoot/Caffoot-Lite/issues/211) | To plan |
+| [v1.4.5](https://github.com/Caffoot/Caffoot-Lite/milestone/14) | LDAP/AD/OIDC | [#212](https://github.com/Caffoot/Caffoot-Lite/issues/212) | To plan |
+| [v1.4.6](https://github.com/Caffoot/Caffoot-Lite/milestone/15) | IP addressing, interfaces and relationships | [#110](https://github.com/Caffoot/Caffoot-Lite/issues/110), [#182](https://github.com/Caffoot/Caffoot-Lite/issues/182) | [#115](https://github.com/Caffoot/Caffoot-Lite/issues/115) |
+| [v1.4.7](https://github.com/Caffoot/Caffoot-Lite/milestone/16) | Cabling and connectivity | [#111](https://github.com/Caffoot/Caffoot-Lite/issues/111) | [#116](https://github.com/Caffoot/Caffoot-Lite/issues/116) |
+| [v1.4.8](https://github.com/Caffoot/Caffoot-Lite/milestone/17) | Search, reporting and topology | [#112](https://github.com/Caffoot/Caffoot-Lite/issues/112) | [#117](https://github.com/Caffoot/Caffoot-Lite/issues/117) |
+| [v1.4.9](https://github.com/Caffoot/Caffoot-Lite/milestone/18) | Network environments | [#113](https://github.com/Caffoot/Caffoot-Lite/issues/113) | [#118](https://github.com/Caffoot/Caffoot-Lite/issues/118) |
+| [v1.4.10](https://github.com/Caffoot/Caffoot-Lite/milestone/19) | Network migration and lifecycle | [#114](https://github.com/Caffoot/Caffoot-Lite/issues/114) | [#119](https://github.com/Caffoot/Caffoot-Lite/issues/119) |
+
+The historical v1.5.0–v1.9.0 planning sections and milestone records are preserved below pending archiving and compatibility-link review. Their issues have been reassigned to the planned v1.4.6–v1.4.10 milestones. The old milestone objects #5–#9 have **not** been retired. Release gates remain unexecuted checklists, not passed tests. Draft [PR #207](https://github.com/Caffoot/Caffoot-Lite/pull/207) contains the documentation foundation and targets `release/v1.4.0`.
+
+## Historical roadmap and release checkpoints
 
 ## Documentation checks for every release
 
