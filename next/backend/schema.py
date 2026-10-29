@@ -6,7 +6,7 @@ later source-compatible projection work.
 """
 import sqlite3
 
-SCHEMA_VERSION = 5
+SCHEMA_VERSION = 6
 
 DDL = """
 CREATE TABLE IF NOT EXISTS inventory_devices (
@@ -123,6 +123,15 @@ def initialise_database(connection: sqlite3.Connection) -> None:
             connection.execute(
                 "INSERT INTO schema_migrations (version) VALUES (5)"
             )
+        if 6 not in versions:
+            connection.execute("""
+                CREATE TABLE device_edit_reservations (
+                    device_id TEXT PRIMARY KEY REFERENCES inventory_devices(id) ON DELETE CASCADE,
+                    account_id INTEGER NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
+                    expires_at INTEGER NOT NULL
+                )
+            """)
+            connection.execute("INSERT INTO schema_migrations (version) VALUES (6)")
         connection.commit()
     except BaseException:
         connection.rollback()
