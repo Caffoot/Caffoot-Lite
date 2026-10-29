@@ -6,6 +6,7 @@ projection, authentication and permissions are implemented.
 import json
 import os
 import sqlite3
+import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -268,7 +269,8 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         if self.path in ("/api/users/create", "/api/users/permission", "/api/users/active",
                          "/api/users/admin", "/api/users/delete", "/api/account/password",
-                         "/api/account/mfa/start", "/api/account/mfa/confirm"):
+                         "/api/account/mfa/start", "/api/account/mfa/confirm",
+                         "/api/devices/edit/start", "/api/devices/edit/cancel"):
             self.handle_user_mutation()
             return
         if self.path in IMPORT_ROUTES:
@@ -378,7 +380,41 @@ class Handler(BaseHTTPRequestHandler):
                 if actor is None:
                     self.respond(403, {"error": "forbidden"})
                     return
-                if self.path == "/api/account/mfa/start":
+                if self.path in ("/api/devices/edit/start", "/api/devices/edit/cancel"):
+                    if set(payload) != {"deviceId"} or not isinstance(payload["deviceId"], str):
+                        raise ValueError("Device identifier required")
+                    if not can_access(connection, actor, "Devices", edit=True):
+                        raise PermissionError("Devices edit permission required")
+                    device_id = payload["deviceId"]
+                    now = int(time.time())
+                    connection.execute("BEGIN IMMEDIATE")
+                    try:
+                        connection.execute("DELETE FROM device_edit_reservations WHERE expires_at<=?", (now,))
+                        if self.path.endswith("/start"):
+                            if connection.execute("SELECT 1 FROM inventory_devices WHERE id=?", (device_id,)).fetchone() is None:
+                                raise ValueError("Device not found")
+                            existing = connection.execute(
+                                "SELECT account_id FROM device_edit_reservations WHERE device_id=?", (device_id,)
+                            ).fetchone()
+                            if existing and existing[0] != actor:
+                                raise ValueError("Device is being edited by another user")
+                            connection.execute(
+                                "INSERT INTO device_edit_reservations(device_id,account_id,expires_at) VALUES(?,?,?) "
+                                "ON CONFLICT(device_id) DO UPDATE SET expires_at=excluded.expires_at",
+                                (device_id, actor, now + 300),
+                            )
+                            result = {"status": "reserved", "expiresAt": now + 300}
+                        else:
+                            connection.execute(
+                                "DELETE FROM device_edit_reservations WHERE device_id=? AND account_id=?",
+                                (device_id, actor),
+                            )
+                            result = {"status": "released"}
+                        connection.commit()
+                    except BaseException:
+                        connection.rollback()
+                        raise
+                elif self.path == "/api/account/mfa/start":
                     if set(payload) != {"password"}:
                         raise ValueError("Password required")
                     row = connection.execute(
