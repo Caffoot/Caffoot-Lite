@@ -107,3 +107,15 @@ class ImportDrafts:
         with self._lock:
             self._get(draft_id, cookie_header)
             self._drafts.pop(draft_id)
+
+    def cancel_authenticated(self, connection, draft_id, *, cookie_header,
+                             origin, allowed_origin, csrf_header, now=None):
+        """Cancel only with current authenticated full-import permissions."""
+        from backend.request_auth import authorised_inventory_import
+        with self._lock:
+            if authorised_inventory_import(
+                connection, cookie_header, origin, allowed_origin,
+                csrf_header, now=now
+            ) is None:
+                raise PermissionError("Authenticated import access required")
+            self.cancel(draft_id, cookie_header=cookie_header)
