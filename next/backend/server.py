@@ -142,6 +142,20 @@ class Handler(BaseHTTPRequestHandler):
                         )],
                     }
                 self.respond(200, result)
+        elif self.path == "/api/inventory/settings":
+            with connect() as connection:
+                account_id = authenticated_account(connection, self.headers.get("Cookie"))
+                if account_id is None:
+                    self.respond(401, {"error": "unauthorised"})
+                    return
+                if not any(can_access(connection, account_id, section)
+                           for section in ("Devices", "IPAM", "Racks")):
+                    self.respond(403, {"error": "forbidden"})
+                    return
+                settings = {key: json.loads(raw) for key, raw in connection.execute(
+                    "SELECT key,value_json FROM inventory_settings"
+                )}
+                self.respond(200, {"settings": settings})
         elif self.path == "/api/inventory/history":
             with connect() as connection:
                 account_id = authenticated_account(connection, self.headers.get("Cookie"))
