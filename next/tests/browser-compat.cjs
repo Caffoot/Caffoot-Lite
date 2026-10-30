@@ -450,8 +450,16 @@ async function run(){
     await viewer.locator('[data-action="select-account-section"][data-section="'+tab+'"]').click();
     assert.ok(await viewer.locator('[data-action="select-account-section"][data-section="'+tab+'"]').isVisible());
   }
+  const denied=await viewer.evaluate(async()=>{
+    const session=await (await fetch('/api/session')).json();
+    const result=await fetch('/api/inventory/reset',{method:'POST',headers:{
+      'Content-Type':'application/json','X-CSRF-Token':session.csrf_token
+    },body:JSON.stringify({confirmed:true})});
+    return result.status;
+  });
+  assert.equal(denied,403,'System maintenance must require administrator access');
   await readContext.close();
-  console.log('Password-only read access, hidden editing controls, account preferences passed');
+  console.log('Password-only read access, hidden editing controls and administrator-only maintenance passed');
 
   await page.evaluate(()=>switchTab('settings'));
   await page.locator('[data-action="clear-inventory-data"]').waitFor();
