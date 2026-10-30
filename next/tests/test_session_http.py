@@ -70,7 +70,7 @@ class SessionHttpTests(unittest.TestCase):
             "devices": [{"id":"linked-device", "name":"Router",
                          "mountType":"Desktop", "primaryIp":"10.0.0.10"}],
             "subnets":[{"id":"network","name":"Network",
-                         "cidr":"10.0.0.0/24","vlan":20}],
+                         "cidr":"10.0.0.0/24","gateway":"10.0.0.1","vlan":20}],
             "vlans":[],"racks":[],"rackAccessories":[],
             "ipAllocations":{"10.0.0.10":{"deviceId":"linked-device",
                                           "status":"Assigned","hostname":"Router"}}
