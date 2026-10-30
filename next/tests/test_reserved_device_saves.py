@@ -103,5 +103,65 @@ class ReservedDeviceSaveTests(unittest.TestCase):
         ).fetchone()[0], 0)
 
 
+    def test_rename_refreshes_ipam_hostname_and_history(self):
+        self.assertEqual(self.save(dict(self.original, name="Renamed")), 1)
+        allocation = json.loads(self.db.execute(
+            "SELECT record_json FROM inventory_ip_allocations WHERE ip='10.0.0.10'"
+        ).fetchone()[0])
+        self.assertEqual(allocation["hostname"], "Renamed")
+        event = json.loads(self.db.execute(
+            "SELECT record_json FROM inventory_change_history"
+        ).fetchone()[0])
+        self.assertEqual([change["kind"] for change in event["changes"]],
+                         ["Device", "IPAM"])
+        self.assertEqual(event["changes"][0]["fields"], ["name"])
+        self.assertEqual(event["changes"][1]["fields"], ["hostname"])
+
+    def test_rack_move_is_recorded_with_device_change(self):
+        self.assertEqual(self.save(dict(self.original, rackUStart=2, rackUEnd=2)), 1)
+        event = json.loads(self.db.execute(
+            "SELECT record_json FROM inventory_change_history"
+        ).fetchone()[0])
+        self.assertEqual(len(event["changes"]), 1)
+        self.assertEqual(event["changes"][0]["kind"], "Device")
+        self.assertEqual(event["changes"][0]["fields"], ["rackUStart", "rackUEnd"])
+
+    def test_history_retains_published_two_hundred_event_limit(self):
+        for index in range(200):
+            self.db.execute(
+                "INSERT INTO inventory_change_history(record_json) VALUES(?)",
+                (json.dumps({"at": str(index), "changes": []}),)
+            )
+        self.db.commit()
+        self.assertEqual(self.save(dict(self.original, name="Renamed")), 1)
+        events = [json.loads(raw) for (raw,) in self.db.execute(
+            "SELECT record_json FROM inventory_change_history ORDER BY id"
+        )]
+        self.assertEqual(len(events), 200)
+        self.assertEqual(events[0]["at"], "1")
+        self.assertEqual(events[-1]["changes"][0]["label"], "Renamed")
+
+    def test_expired_reservation_rejects_save_without_history(self):
+        self.db.execute(
+            "UPDATE device_edit_reservations SET expires_at=? WHERE device_id='d1'",
+            (int(time.time()) - 1,)
+        )
+        self.db.commit()
+        with self.assertRaisesRegex(ValueError, "reservation is no longer valid"):
+            self.save(dict(self.original, name="Renamed"))
+        self.assertEqual(self.db.execute(
+            "SELECT COUNT(*) FROM inventory_change_history"
+        ).fetchone()[0], 0)
+
+    def test_stale_revision_rejects_save_without_history(self):
+        self.db.execute("UPDATE inventory_devices SET revision=1 WHERE id='d1'")
+        self.db.commit()
+        with self.assertRaisesRegex(ValueError, "changed since editing began"):
+            self.save(dict(self.original, name="Renamed"))
+        self.assertEqual(self.db.execute(
+            "SELECT COUNT(*) FROM inventory_change_history"
+        ).fetchone()[0], 0)
+
+
 if __name__ == "__main__":
     unittest.main()
