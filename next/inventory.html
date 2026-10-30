@@ -6359,7 +6359,7 @@ function hierarchyValidateTypes(subnets) {
                 deviceDetailFormValues[el.dataset.serverServiceSelect]=el.checked;
             });
         }
-        function updateServerServiceCatalogue(action,key='') {
+        async function updateServerServiceCatalogue(action,key='') {
             captureServerServiceSelections();
             const items=getConfiguredServerServiceCatalogueEntries().map(x=>({...x}));
             const old=items.find(x=>x.key===key);
@@ -6377,7 +6377,7 @@ function hierarchyValidateTypes(subnets) {
             }else if(action==='rename')old.label=label;
             else return;
             appState.serverFunctions=items;
-            if(!saveState()){const prior=JSON.parse(snapshot);Object.keys(appState).forEach(k=>delete appState[k]);Object.assign(appState,prior);showToast('Could not save the change.','error');return;}
+            if(!await nextSettingsBridge.save('serverFunctions')){const prior=JSON.parse(snapshot);Object.keys(appState).forEach(k=>delete appState[k]);Object.assign(appState,prior);showToast('Could not save the change.','error');return;}
             openServerServiceManager();
         }
         function confirmServerServiceArchive(key){
@@ -6454,7 +6454,7 @@ function hierarchyValidateTypes(subnets) {
                 <div class="flex justify-end"><button type="button" data-action="close-modal" class="h-11 px-5 rounded-xl bg-blue-800 text-white">Done</button></div>
             </div>`);
         }
-        function updateHardwareCatalogue(action,id=''){
+        async function updateHardwareCatalogue(action,id=''){
             const type=getSelectedHardwareCatalogueDeviceType()||'Device';
             const items=getConfiguredHardwareCatalogueEntries().map(x=>({...x}));
             const entry=items.find(x=>x.id===id);
@@ -6479,7 +6479,7 @@ function hierarchyValidateTypes(subnets) {
             else items.splice(items.findIndex(x=>x.id===id),1);
             const previous=appState.hardwareCatalogue;
             appState.hardwareCatalogue=items;
-            if(!saveState()){if(previous===undefined)delete appState.hardwareCatalogue;else appState.hardwareCatalogue=previous;showToast('Could not save the catalogue.','error');return;}
+            if(!await nextSettingsBridge.save('hardwareCatalogue')){if(previous===undefined)delete appState.hardwareCatalogue;else appState.hardwareCatalogue=previous;showToast('Could not save the catalogue.','error');return;}
             openHardwareCatalogueManager();
         }
         function isVirtualDeviceForm(){
@@ -6597,7 +6597,7 @@ function hierarchyValidateTypes(subnets) {
                 deviceDetailFormValues[el.dataset.installedSoftwareSelect]=el.checked;
             });
         }
-        function updateConfiguredSoftwareCatalogue(action,key=''){
+        async function updateConfiguredSoftwareCatalogue(action,key=''){
             captureInstalledSoftwareSelections();
             const items=getConfiguredSoftwareCatalogueEntries().map(x=>({...x}));
             const old=items.find(x=>x.key===key);
@@ -6613,7 +6613,7 @@ function hierarchyValidateTypes(subnets) {
             else if(action==='rename')old.label=label;
             else items.splice(items.findIndex(x=>x.key===key),1);
             appState.installedSoftware=items;
-            if(!saveState()){const prior=JSON.parse(snapshot);Object.keys(appState).forEach(k=>delete appState[k]);Object.assign(appState,prior);showToast('Could not save the change.','error');return;}
+            if(!await nextSettingsBridge.save('installedSoftware')){const prior=JSON.parse(snapshot);Object.keys(appState).forEach(k=>delete appState[k]);Object.assign(appState,prior);showToast('Could not save the change.','error');return;}
             openConfiguredSoftwareCatalogueManager();
         }
         const deviceDetailFieldLabels = {"portCount":"Number of ports","networkCard":"Network card","networkConnection":"Network connection method","printerColour":"Printer colour type","printerDesign":"Printer design type","windowsLicence":"Windows licence","os":"Operating system","processor":"Processor","graphics":"Graphics card","memory":"Memory size","memoryUnit":"Memory unit","storage":"Storage size","storageUnit":"Storage unit","raid":"RAID type","driveCount":"Number of hard drives","handsetCount":"Number of handsets","powerOutlets":"UPS power outlets","serialPort":"UPS serial port","usbPort":"UPS USB port","Swan":"Swan","MicrosoftOffice":"Microsoft Office","Planet":"Planet","SpindleSoftware":"Spindle Software","Preactor":"Preactor","RedLionApp":"Red Lion App","SalesBase":"Sales Base","HelpDesk":"Help Desk","ProductionITHelpDeskDashboards":"Production I T Help Desk Dashboards","PDA":"P D A","TMS":"T M S","PhoneBook":"Phone Book","EasyLabel":"Easy Label","SwanServer":"Swan Server","SQLServer":"S Q L Server","TMSServer":"T M S Server","printserver":"printserver","keriserver":"keriserver","ActiveDirectory":"Active Directory","AntivirusSoftware":"Antivirus Software","DNS":"D N S","DHCP":"D H C P","ExchangeServer":"Exchange Server","BackupSoftware":"Backup Software","PlanetDB":"Planet D B","SystemsDatabaseBackEndTables":"Systems Database Back End Tables","PDASystem":"P D A System"};
@@ -7367,7 +7367,7 @@ function hierarchyValidateTypes(subnets) {
             if (input) input.value = '';
             // Rack mounting is controlled independently by the device mounting type.
         }
-        function addCustomLocationOption() {
+        async function addCustomLocationOption() {
             const input = document.getElementById('dev-custom-location');
             const select = document.getElementById('dev-location');
             if (!input || !select) return;
@@ -7384,7 +7384,7 @@ function hierarchyValidateTypes(subnets) {
                 const before = JSON.stringify(appState);
                 if (!Array.isArray(appState.deviceLocations)) appState.deviceLocations = [];
                 if (!appState.deviceLocations.some(l => l.toLowerCase() === newVal.toLowerCase())) appState.deviceLocations.push(newVal);
-                if (!saveState()) {
+                if (!await nextSettingsBridge.save('deviceLocations')) {
                     appState = JSON.parse(before);
                     opt.remove();
                     select.value = '__caffoot_create_location__';
@@ -9320,7 +9320,11 @@ window.addEventListener('load', async () => {
     'software-custom-restore','enable-suggested-software',
     'server-catalog-add','server-catalog-edit','server-catalog-save',
     'server-catalog-remove','server-catalog-restore',
-    'server-service-confirm-archive','software-toggle'
+    'server-service-confirm-archive','software-toggle',
+    'hardware-catalog-add','hardware-catalog-edit','hardware-catalog-remove',
+    'add-service','rename-service','delete-service',
+    'add-software','rename-software','delete-software',
+    'add-custom-location'
   ]);
   const actionCanEditRack = new Set(['open-rack-modal','edit-rack',
     'correct-rack-specifications','delete-rack','add-rack-accessory',
