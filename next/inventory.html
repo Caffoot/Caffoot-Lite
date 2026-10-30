@@ -1888,6 +1888,7 @@ function hierarchyValidateTypes(subnets) {
         let nextImportModalClosed = null;
         let nextIpamBridge = null;
         let nextRackBridge = null;
+        let nextSettingsBridge = null;
         let nextRenderUsers = () => '';
         let nextImportAllowed = false;
         function saveState() { showToast('This inventory operation is not yet connected to SQLite.', 'error'); return false; }
@@ -2844,14 +2845,14 @@ function hierarchyValidateTypes(subnets) {
             const current=appState.deviceTypeGraphics?.[type]||'automatic';
             openModal(`<div class="p-6 space-y-4"><div class="flex items-center justify-between"><h3 class="font-bold text-lg text-slate-900 dark:text-white">Rack graphic: ${escapeHtml(type)}</h3><button data-action="close-modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button></div><p class="text-sm text-slate-600 dark:text-slate-300">Choose a front-panel design for every rack-mounted device of this type. This does not affect inventory or rack placement.</p><label class="block text-sm font-semibold text-slate-900 dark:text-white">Graphic style<select id="rack-style" class="rack-accessory-field">${Object.entries(deviceFasciaGraphicPresets).map(([key,label])=>`<option value="${key}" ${current===key?'selected':''}>${label}</option>`).join('')}</select></label><div class="flex justify-end gap-2"><button type="button" data-action="open-manage-types" class="rack-secondary caffoot-modal-cancel">Cancel</button><button type="button" data-action="save-rack-fascia-graphic" data-name="${escapeHtml(type)}" class="rack-primary">Save Graphic</button></div></div>`);
         }
-        function saveDeviceTypeRackFasciaSettings(type) {
+        async function saveDeviceTypeRackFasciaSettings(type) {
             const choice=document.getElementById('rack-style')?.value;
             if(!getUniqueDeviceTypes().includes(type)||!Object.hasOwn(deviceFasciaGraphicPresets,choice))return;
             if(!isPlainObject(appState.deviceTypeGraphics))appState.deviceTypeGraphics={};
             const before = JSON.stringify(appState);
             if(choice==='automatic')delete appState.deviceTypeGraphics[type];
             else appState.deviceTypeGraphics[type]=choice;
-            if (!saveState()) {
+            if (!await nextSettingsBridge.save('deviceTypeGraphics')) {
                 appState = JSON.parse(before);
                 showToast('Device graphic was not saved; previous selection restored.', 'error');
             }
@@ -3352,7 +3353,7 @@ function hierarchyValidateTypes(subnets) {
                 '<div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-5 rounded-xl border border-slate-300 dark:border-slate-600 caffoot-modal-cancel">Cancel</button><button type="button" data-action="'+(deleting?'confirm-remove-catalogue-manufacturer':'save-catalogue-manufacturer')+'" data-name="'+escapeHtml(id)+'" class="h-11 px-5 rounded-xl text-white '+(deleting?'bg-rose-700':'bg-blue-800')+'">'+(deleting?'Remove Suggestions':'Save Manufacturer')+'</button></div></div>');
             if(!deleting)rememberModalForm();
         }
-        function saveHardwareManufacturer(id='',remove=false){
+        async function saveHardwareManufacturer(id='',remove=false){
             const items=getConfiguredHardwareCatalogueEntries().map(x=>({...x}));
             const entry=items.find(x=>x.id===id&&!x.model);
             const builtInName=typeof id==='string'&&id.startsWith('builtin:')?id.slice(8):'';
@@ -3385,7 +3386,7 @@ function hierarchyValidateTypes(subnets) {
             }
             const previous=appState.hardwareCatalogue;
             appState.hardwareCatalogue=keep;
-            if(!saveState()){if(previous===undefined)delete appState.hardwareCatalogue;else appState.hardwareCatalogue=previous;showToast('Could not save the catalogue.','error');return;}
+            if(!await nextSettingsBridge.save('hardwareCatalogue')){if(previous===undefined)delete appState.hardwareCatalogue;else appState.hardwareCatalogue=previous;showToast('Could not save the catalogue.','error');return;}
             closeModal(true);
             renderContent();
             showToast(remove?'Manufacturer suggestions removed.':'Manufacturer saved.');
@@ -3398,7 +3399,7 @@ function hierarchyValidateTypes(subnets) {
             const assigned=appState.devices.filter(d=>[original,String(pref.label||original)].some(name=>String(d.manufacturer||'').trim().toLowerCase()===name.trim().toLowerCase()));
             openModal('<div class="p-5 sm:p-7 space-y-4"><h3 class="text-lg font-bold">Manage Built-in Manufacturer</h3><p class="text-sm">Original: '+escapeHtml(original)+'. Existing devices and historical backups remain unchanged.</p><label class="block font-semibold text-sm" for="built-in-manufacturer-name">Suggestion Name</label><input id="built-in-manufacturer-name" maxlength="120" value="'+escapeHtml(pref.label||original)+'" class="w-full h-11 px-3 rounded-xl border dark:bg-slate-800"><label class="flex gap-2 items-center"><input id="built-in-manufacturer-hidden" type="checkbox" '+(pref.hidden?'checked':'')+(assigned.length?' disabled':'')+'> Hide from new suggestions</label>'+(assigned.length?'<p class="text-sm text-amber-700">Cannot hide while assigned to: '+assigned.slice(0,5).map(d=>escapeHtml(d.name||d.hostname||d.id||'Unnamed device')).join(', ')+'</p>':'')+'<p id="built-in-manufacturer-error" role="alert" class="text-sm text-rose-700"></p><div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-4 border rounded-xl caffoot-modal-cancel">Cancel</button><button type="button" data-action="built-in-manufacturer-save" data-name="'+escapeHtml(original)+'" class="h-11 px-4 rounded-xl bg-blue-800 text-white">Save</button></div></div>');
         }
-        function saveBuiltInManufacturerOverride(original){
+        async function saveBuiltInManufacturerOverride(original){
             const defaults=['Dell','HP','HPE','Lenovo','ASUS','Apple','Cisco','Samsung','Microsoft','Toshiba'];
             if(!defaults.includes(original)&&!Object.values(builtInHardwareSuggestions).some(m=>Object.keys(m).includes(original)))return;
             const label=String(document.getElementById('built-in-manufacturer-name')?.value||'').trim();
@@ -3411,7 +3412,7 @@ function hierarchyValidateTypes(subnets) {
             if(duplicates.some(n=>String(prefs['maker:'+n.toLowerCase()]?.label||n).toLowerCase()===label.toLowerCase())){if(error)error.textContent='Another manufacturer suggestion already uses that name.';return;}
             const previous=appState.hardwareSeedPreferences;
             appState.hardwareSeedPreferences={...prefs,['maker:'+original.toLowerCase()]:{label,hidden}};
-            if(!saveState()){if(previous===undefined)delete appState.hardwareSeedPreferences;else appState.hardwareSeedPreferences=previous;showToast('Could not save manufacturer preference.','error');return;}
+            if(!await nextSettingsBridge.save('hardwareSeedPreferences')){if(previous===undefined)delete appState.hardwareSeedPreferences;else appState.hardwareSeedPreferences=previous;showToast('Could not save manufacturer preference.','error');return;}
             closeModal(true);renderContent();showToast('Built-in manufacturer preference saved.');
         }
         function renderHardwareManufacturersHtml() {
@@ -3485,7 +3486,7 @@ function hierarchyValidateTypes(subnets) {
                 '<div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-4 rounded-xl border border-slate-300 dark:border-slate-600 caffoot-modal-cancel">Cancel</button><button type="button" data-action="'+(remove?'confirm-remove-catalogue-model':'save-catalogue-model')+'" data-name="'+escapeHtml(id)+'" class="h-11 px-4 rounded-xl text-white '+(remove?'bg-rose-700':'bg-blue-800')+'">'+(remove?'Remove Model':'Save Model')+'</button></div></div>');
             if(!remove){const field=document.getElementById('model-device-type');field.dataset.originalType=item?.type||'';field.dataset.originalMaker=item?.manufacturer||'';refreshModelDeviceTypeChoices();rememberModalForm();}
         }
-        function saveHardwareModel(id='',remove=false){
+        async function saveHardwareModel(id='',remove=false){
             const items=getConfiguredHardwareCatalogueEntries().map(x=>({...x}));
             const item=items.find(x=>x.id===id&&x.model);
             if(id&&!item)return;
@@ -3511,7 +3512,7 @@ function hierarchyValidateTypes(subnets) {
             else items.push({id:'hardware_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8),model,manufacturer,type});
             const previous=appState.hardwareCatalogue;
             appState.hardwareCatalogue=items;
-            if(!saveState()){if(previous===undefined)delete appState.hardwareCatalogue;else appState.hardwareCatalogue=previous;showToast('Could not save the model.','error');return;}
+            if(!await nextSettingsBridge.save('hardwareCatalogue')){if(previous===undefined)delete appState.hardwareCatalogue;else appState.hardwareCatalogue=previous;showToast('Could not save the model.','error');return;}
             closeModal(true);renderContent();showToast(remove?'Model suggestion removed.':'Model suggestion saved.');
         }
         function openBuiltInHardwareModelEditor(key){
@@ -3524,7 +3525,7 @@ function hierarchyValidateTypes(subnets) {
             const users=appState.devices.filter(d=>d.type===type&&[maker,String(getHardwareSeedPreferences()['maker:'+maker.toLowerCase()]?.label||maker)].some(name=>String(d.manufacturer||'').trim().toLowerCase()===name.trim().toLowerCase())&&[model,String(getHardwareSeedPreferences()['model:'+key]?.label||model)].some(name=>String(d.model||'').trim().toLowerCase()===name.trim().toLowerCase()));
             openModal('<div class="p-5 sm:p-7 space-y-4"><h3 class="text-lg font-bold">Manage Built-in Model</h3><p class="text-sm">Original: '+escapeHtml(maker)+' · '+escapeHtml(model)+' · '+escapeHtml(type)+'. Existing device records will not be renamed.</p><label class="block text-sm font-semibold" for="built-in-model-name">Suggestion Name</label><input id="built-in-model-name" maxlength="120" value="'+escapeHtml(pref.label||model)+'" class="w-full h-11 px-3 rounded-xl border dark:bg-slate-800"><label class="flex items-center gap-2"><input type="checkbox" id="built-in-model-hidden" '+(pref.hidden?'checked':'')+(users.length?' disabled':'')+'> Hide from new suggestions</label>'+(users.length?'<p class="text-sm text-amber-700">Hiding is blocked while used by: '+users.slice(0,5).map(d=>escapeHtml(d.name||d.hostname||d.id||'Unnamed device')).join(', ')+'</p>':'')+'<p id="built-in-model-error" role="alert" class="text-sm text-rose-700"></p><div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-4 border rounded-xl caffoot-modal-cancel">Cancel</button><button type="button" data-action="built-in-model-save" data-name="'+escapeHtml(key)+'" class="h-11 px-4 bg-blue-800 text-white rounded-xl">Save</button></div></div>');
         }
-        function saveBuiltInHardwareModelOverride(key){
+        async function saveBuiltInHardwareModelOverride(key){
             let identity;
             try{identity=JSON.parse(key);}catch{return;}
             if(!Array.isArray(identity)||identity.length!==3)return;
@@ -3543,7 +3544,7 @@ function hierarchyValidateTypes(subnets) {
             if(other.some(x=>String(x||'').toLowerCase()===label.toLowerCase())){if(error)error.textContent='This model suggestion already exists.';return;}
             const previous=appState.hardwareSeedPreferences;
             appState.hardwareSeedPreferences=next;
-            if(!saveState()){if(previous===undefined)delete appState.hardwareSeedPreferences;else appState.hardwareSeedPreferences=previous;showToast('Could not save model preference.','error');return;}
+            if(!await nextSettingsBridge.save('hardwareSeedPreferences')){if(previous===undefined)delete appState.hardwareSeedPreferences;else appState.hardwareSeedPreferences=previous;showToast('Could not save model preference.','error');return;}
             closeModal(true);renderContent();showToast('Built-in model preference saved.');
         }
         function renderHardwareModelsHtml(){
@@ -3599,7 +3600,7 @@ function hierarchyValidateTypes(subnets) {
             openModal('<div class="p-5 sm:p-7 space-y-4"><h3 class="text-lg font-bold">'+(entry?'Edit Custom Software':'Add Custom Software')+'</h3><p class="text-sm text-slate-600 dark:text-slate-300">Availability does not change recorded installations.</p><form data-form-action="software" onsubmit="return false"><label class="block text-sm font-semibold mb-2" for="software-custom-name">Software Name</label><input id="software-custom-name" maxlength="80" value="'+escapeHtml(entry?.label||'')+'" class="w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-800"><fieldset class="mt-4"><legend class="font-semibold text-sm mb-2">Device Types</legend><div class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[40vh] overflow-y-auto">'+types.map(t=>'<label class="flex gap-2 items-center rounded-xl border border-slate-300 dark:border-slate-600 p-3 text-sm"><input type="checkbox" name="software-custom-type" value="'+escapeHtml(t)+'" '+(selected.has(t)?'checked':'')+'>'+escapeHtml(t)+'</label>').join('')+'</div></fieldset><p id="software-custom-error" role="alert" class="text-sm text-rose-700 dark:text-rose-300 mt-2"></p></form><div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-4 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors font-medium">Cancel</button><button type="button" data-action="software-custom-save" data-name="'+escapeHtml(key)+'" class="h-11 px-4 rounded-xl bg-blue-800 text-white">Save Software</button></div></div>');
             rememberModalForm();
         }
-        function saveCustomSoftwareEntry(key=''){
+        async function saveCustomSoftwareEntry(key=''){
             const name=String(document.getElementById('software-custom-name')?.value||'').trim();
             const types=[...document.querySelectorAll('input[name="software-custom-type"]:checked')].map(x=>x.value);
             const entries=getConfiguredSoftwareCatalogueEntries().map(x=>({...x}));
@@ -3611,7 +3612,7 @@ function hierarchyValidateTypes(subnets) {
             else if(key){const builtin=builtInSoftwareSuggestions.find(x=>createBuiltInSoftwareCatalogueKey(x.name)===key);if(!builtin)return;entries.push({key,label:name,deviceTypes:types});}
             else entries.push({key:'customSoftware_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8),label:name,deviceTypes:types});
             const previous=appState.installedSoftware;appState.installedSoftware=entries;
-            if(!saveState()){appState.installedSoftware=previous;showToast('Could not save software.','error');return;}
+            if(!await nextSettingsBridge.save('installedSoftware')){appState.installedSoftware=previous;showToast('Could not save software.','error');return;}
             closeModal(true);renderContent();showToast('Custom software saved.');
         }
         function confirmSoftwareCatalogueRemoval(key){
@@ -3622,7 +3623,7 @@ function hierarchyValidateTypes(subnets) {
             const names=users.slice(0,5).map(d=>escapeHtml(d.name||d.hostname||d.id||'Unnamed device')).join(', ');
             openModal('<div class="p-5 sm:p-7 space-y-5"><h3 class="text-lg font-bold">Remove Software?</h3><p class="text-sm text-slate-700 dark:text-slate-200">Remove <strong>'+escapeHtml(entry.label)+'</strong> from available software choices? '+count+' device(s) have this software recorded. '+(count?'This software is in use by '+names+(count>5?' and '+(count-5)+' more':'')+' and cannot be removed until those assignments are updated.':'This unused software can be removed from available choices; its catalogue record will be retained for recovery.')+'</p><div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-4 rounded-xl border border-slate-300 dark:border-slate-600 caffoot-modal-cancel">Cancel</button><button type="button" data-action="software-custom-confirm-remove" data-name="'+escapeHtml(key)+'" class="h-11 px-4 rounded-xl bg-rose-700 hover:bg-rose-800 text-white">Remove Software</button></div></div>');
         }
-        function archiveSoftwareCatalogueEntry(key){
+        async function archiveSoftwareCatalogueEntry(key){
             const previous=appState.installedSoftware;
             const entry=getConfiguredSoftwareCatalogueEntries().find(x=>x.key===key&&!x.archived)||builtInSoftwareSuggestions.filter(x=>createBuiltInSoftwareCatalogueKey(x.name)===key).map(x=>({key,label:x.name,deviceTypes:x.types}))[0];
             if(!entry)return;
@@ -3630,16 +3631,16 @@ function hierarchyValidateTypes(subnets) {
             if(assigned.length){showToast('Software is assigned to '+assigned.slice(0,3).map(d=>d.name||d.hostname||d.id||'unnamed device').join(', ')+(assigned.length>3?' and others':'')+' and cannot be removed.','error');return;}
             const saved=getConfiguredSoftwareCatalogueEntries();
             appState.installedSoftware=saved.some(x=>x.key===key)?saved.map(x=>x.key===key?{...x,archived:true}:x):[...saved,{...entry,archived:true}];
-            if(!saveState()){appState.installedSoftware=previous;showToast('Could not remove software.','error');return;}
+            if(!await nextSettingsBridge.save('installedSoftware')){appState.installedSoftware=previous;showToast('Could not remove software.','error');return;}
             closeModal(true);renderContent();showToast('Software removed from available choices. Existing records preserved.');
         }
-        function restoreArchivedSoftwareEntry(key){
+        async function restoreArchivedSoftwareEntry(key){
             const previous=appState.installedSoftware;
             const entry=getConfiguredSoftwareCatalogueEntries().find(x=>x.key===key&&x.archived);
             if(!entry)return;
             if(getAvailableSoftwareCatalogueEntries().some(x=>x.key!==key&&String(x.label||'').trim().toLowerCase()===String(entry.label||'').trim().toLowerCase())){showToast('Another available software entry already uses that name. Rename it before restoring this one.','error');return;}
             appState.installedSoftware=getConfiguredSoftwareCatalogueEntries().map(x=>x.key===key?{...x,archived:false}:x);
-            if(!saveState()){appState.installedSoftware=previous;showToast('Could not restore software.','error');return;}
+            if(!await nextSettingsBridge.save('installedSoftware')){appState.installedSoftware=previous;showToast('Could not restore software.','error');return;}
             renderContent();showToast('Software restored to available choices.');
         }
         function renderSoftwareCatalogueHtml(){
@@ -3658,14 +3659,14 @@ function hierarchyValidateTypes(subnets) {
             const archivedRows=archived.map(x=>'<div class="rounded-xl border border-slate-200 dark:border-slate-700 p-4 flex flex-wrap items-center justify-between gap-3"><div class="min-w-0 flex-1"><strong>'+escapeHtml(x.label)+'</strong><p class="text-xs text-slate-600 dark:text-slate-300">Hidden from new assignments. Existing device records remain unchanged.</p></div><button type="button" data-action="software-custom-restore" data-name="'+escapeHtml(x.key)+'" class="h-9 px-3 rounded-lg border border-blue-400 text-blue-800 dark:text-blue-300">Restore Software</button></div>').join('');
             return '<section class="space-y-5"><div class="flex items-start justify-between gap-4"><div><h2 class="text-xl font-bold">Software</h2><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Browse built-in software suggestions by device type. Suggestions do not mean software is installed. Existing configured software and device records are preserved.</p></div><button type="button" data-action="software-custom-add" class="shrink-0 h-11 px-4 rounded-xl bg-blue-800 hover:bg-blue-700 text-white font-semibold">Add Custom Software</button></div><div class="grid grid-cols-1 sm:grid-cols-3 gap-4">'+card('Software Suggestions',items.length)+card('Used in Inventory',items.filter(x=>x.count>0).length)+card('Configured Software',configured.length)+'</div><div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-3"><label for="software-search" class="block text-sm font-semibold">Search Software</label><input id="software-search" type="search" placeholder="Filter software by name" class="w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-900"><div class="flex flex-wrap gap-3 items-end"><label class="text-sm">Device Type <select id="software-type" class="block mt-1 h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-900"><option value="">All Device Types</option>'+types.map(t=>'<option value="'+escapeHtml(t)+'">'+escapeHtml(t)+'</option>').join('')+'</select></label><label class="text-sm">Source <select id="software-source" class="block mt-1 h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-900"><option value="">All Sources</option><option value="built-in">Built-in Suggestions</option><option value="configured">Configured Software</option></select></label><label class="flex items-center gap-2 text-sm pb-2"><input id="software-used" type="checkbox">In Use Only</label><button type="button" data-action="software-reset" class="ml-auto min-h-10 px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm font-semibold text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-slate-700 active:bg-blue-100 dark:active:bg-slate-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-600 transition-colors">Reset Filters</button></div><p id="software-catalogue-count" class="text-xs text-slate-600 dark:text-slate-300" aria-live="polite">'+items.length+' software options shown</p><div class="space-y-2 max-h-[65vh] overflow-y-auto">'+rows+'</div><p id="software-empty" class="hidden text-sm text-slate-600 dark:text-slate-300">No software matches these filters.</p></div><section class="space-y-3"><h3 class="text-lg font-bold">Hidden Software ('+archived.length+')</h3>'+(archivedRows||'<p class="text-sm text-slate-600 dark:text-slate-300">No hidden software.</p>')+'</section></section>';
         }
-        function enableSuggestedSoftware(name){
+        async function enableSuggestedSoftware(name){
             const suggestion=builtInSoftwareSuggestions.find(x=>x.name===name);
             if(!suggestion)return;
             if(getConfiguredSoftwareCatalogueEntries().some(x=>x.label.toLowerCase()===name.toLowerCase())){showToast('This software is already configured.');return;}
             const snapshot=JSON.stringify(appState);
             const key='customSoftware_'+Date.now().toString(36);
             appState.installedSoftware=[...getConfiguredSoftwareCatalogueEntries(),{key,label:suggestion.name,deviceTypes:suggestion.types}];
-            if(!saveState()){const previous=JSON.parse(snapshot);Object.keys(appState).forEach(k=>delete appState[k]);Object.assign(appState,previous);showToast('Could not save software option.','error');return;}
+            if(!await nextSettingsBridge.save('installedSoftware')){const previous=JSON.parse(snapshot);Object.keys(appState).forEach(k=>delete appState[k]);Object.assign(appState,previous);showToast('Could not save software option.','error');return;}
             switchTab('devices');
             showToast(suggestion.name+' is now available on compatible device forms.');
         }
@@ -3691,7 +3692,7 @@ function hierarchyValidateTypes(subnets) {
             if(key&&!item)return;
             openModal('<form data-form-action="server-service" onsubmit="return false" class="p-5 sm:p-7 space-y-5"><h3 class="text-lg font-bold text-slate-900 dark:text-white">'+(item?'Edit Server Service':'Add Custom Server Service')+'</h3><label for="server-service-name-input" class="block text-sm font-semibold">Service Name</label><input id="server-service-name-input" maxlength="80" class="w-full h-11 px-3 rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-800" value="'+escapeHtml(item?.label||'')+'"><div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-4 rounded-xl border border-slate-300 dark:border-slate-600 caffoot-modal-cancel">Cancel</button><button type="button" data-action="server-catalog-save" data-name="'+escapeHtml(key)+'" class="h-11 px-4 rounded-xl bg-blue-800 hover:bg-blue-700 text-white font-semibold">Save Service</button></div></form>');
         }
-        function saveServerServiceEntry(key){
+        async function saveServerServiceEntry(key){
             const label=String(document.getElementById('server-service-name-input')?.value||'').trim();
             if(!label||label.length>80)return showToast('Enter a service name (up to 80 characters).','error');
             if([...getConfiguredServerServiceCatalogueEntries(),...builtInServerServiceSuggestions].some(x=>x.label.toLowerCase()===label.toLowerCase()&&x.key!==key))return showToast('That service name already exists.','error');
@@ -3701,16 +3702,16 @@ function hierarchyValidateTypes(subnets) {
                 else {const builtin=builtInServerServiceSuggestions.find(x=>x.key===key);if(!builtin)return;items.push({...builtin,label});}}
             else items.push({key:'customServerFunction_'+Date.now().toString(36),label});
             appState.serverFunctions=items;
-            if(!saveState()){appState.serverFunctions=old;return showToast('Could not save server service.','error');}
+            if(!await nextSettingsBridge.save('serverFunctions')){appState.serverFunctions=old;return showToast('Could not save server service.','error');}
             closeModal(true);renderContent();showToast('Server service saved.');
         }
-        function restoreArchivedServerService(key){
+        async function restoreArchivedServerService(key){
             const entry=getConfiguredServerServiceCatalogueEntries().find(x=>x.key===key&&x.archived);
             if(!entry)return;
             if(getAvailableServerServiceCatalogueEntries().some(x=>x.key!==key&&String(x.label||'').trim().toLowerCase()===String(entry.label||'').trim().toLowerCase())){showToast('Another available server service already uses that name. Rename it before restoring this one.','error');return;}
             const previous=appState.serverFunctions;
             appState.serverFunctions=previous.map(x=>x.key===key?{...x,archived:false}:x);
-            if(!saveState()){appState.serverFunctions=previous;return showToast('Could not restore server service.','error');}
+            if(!await nextSettingsBridge.save('serverFunctions')){appState.serverFunctions=previous;return showToast('Could not restore server service.','error');}
             renderContent();showToast('Server service restored. Existing device assignments preserved.');
         }
         function renderServerServicesCatalogueHtml(){
@@ -6387,7 +6388,7 @@ function hierarchyValidateTypes(subnets) {
             const names=users.slice(0,5).map(d=>escapeHtml(d.name||d.hostname||d.id||'Unnamed device')).join(', ');
             openModal('<div class="p-5 sm:p-7 space-y-5"><h3 class="text-lg font-bold text-slate-900 dark:text-white">Archive Server Service?</h3><p class="text-sm text-slate-700 dark:text-slate-200">Archive <strong>'+escapeHtml(entry.label)+'</strong>? It will no longer be available for new assignments. '+count+' device(s) currently have this service recorded, and their historical records will be preserved. '+(count?'Removal is blocked while assigned to: '+names+(count>5?' and '+(count-5)+' more':'')+'.':'')+'</p><div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-4 rounded-xl border border-slate-300 dark:border-slate-600 caffoot-modal-cancel">Cancel</button><button type="button" data-action="server-service-confirm-archive" data-name="'+escapeHtml(key)+'" class="h-11 px-4 rounded-xl bg-rose-700 hover:bg-rose-800 text-white font-semibold">Archive Service</button></div></div>');
         }
-        function archiveServerService(key){
+        async function archiveServerService(key){
             const entry=getAvailableServerServiceCatalogueEntries().find(x=>x.key===key);
             if(!entry)return;
             const assigned=appState.devices.filter(d=>d.typeDetails?.[key]===true||d[key]===true);
@@ -6395,7 +6396,7 @@ function hierarchyValidateTypes(subnets) {
             const previous=appState.serverFunctions;
             const saved=getConfiguredServerServiceCatalogueEntries();
             appState.serverFunctions=saved.some(x=>x.key===key)?saved.map(x=>x.key===key?{...x,archived:true}:x):[...saved,{...entry,archived:true}];
-            if(!saveState()){appState.serverFunctions=previous;return showToast('Could not archive server service.','error');}
+            if(!await nextSettingsBridge.save('serverFunctions')){appState.serverFunctions=previous;return showToast('Could not archive server service.','error');}
             closeModal(true);renderContent();showToast('Server service archived. Existing records preserved.');
         }
         // Hardware suggestions are advisory: typed values remain authoritative.
@@ -6641,7 +6642,7 @@ function hierarchyValidateTypes(subnets) {
             return [...active,...builtInSoftwareSuggestions.filter(x=>!overriddenKeys.has(createBuiltInSoftwareCatalogueKey(x.name))&&!known.has(x.name.toLowerCase())).map(x=>({key:createBuiltInSoftwareCatalogueKey(x.name),label:x.name,deviceTypes:x.types,builtin:true}))].sort((a,b)=>String(a.label||'').localeCompare(String(b.label||''),undefined,{sensitivity:'base'}));
         }
         function isSoftwareHiddenForDeviceType(name,type){return (appState.softwareTypeExclusions||{})[name]?.includes(type)===true;}
-        function toggleSoftwareForDeviceType(name,type){
+        async function toggleSoftwareForDeviceType(name,type){
             const entry=builtInSoftwareSuggestions.find(x=>x.name===name);
             if(!entry||!entry.types.includes(type))return;
             const previous=appState.softwareTypeExclusions;
@@ -6649,7 +6650,7 @@ function hierarchyValidateTypes(subnets) {
             if(set.has(type))set.delete(type);else set.add(type);
             if(set.size)next[name]=[...set];else delete next[name];
             appState.softwareTypeExclusions=next;
-            if(!saveState()){appState.softwareTypeExclusions=previous;showToast('Unable to save software preference.','error');return;}
+            if(!await nextSettingsBridge.save('softwareTypeExclusions')){appState.softwareTypeExclusions=previous;showToast('Unable to save software preference.','error');return;}
             renderContent();
         }
         function renderSoftwareDeviceTypeControls(name){
@@ -9307,6 +9308,20 @@ window.addEventListener('load', async () => {
   const actionCanEditIpam = new Set(['bulk-ip','apply-bulk-ip-assignment',
     'edit-subnet','edit-ipam-block','delete-vlan','reconcile-legacy-vlans',
     'delete-subnet','confirm-delete-subnet']);
+  const actionCanEditManaged = new Set([
+    'edit-device-fascia-graphic','save-rack-fascia-graphic',
+    'manufacturer-add','manufacturer-edit','manufacturer-remove',
+    'save-catalogue-manufacturer','confirm-remove-catalogue-manufacturer',
+    'built-in-manufacturer-edit','built-in-manufacturer-save',
+    'model-add','model-edit','model-remove','save-catalogue-model',
+    'confirm-remove-catalogue-model','built-in-model-edit','built-in-model-save',
+    'software-custom-add','software-custom-edit','software-custom-remove',
+    'software-custom-confirm-remove','software-custom-save',
+    'software-custom-restore','enable-suggested-software',
+    'server-catalog-add','server-catalog-edit','server-catalog-save',
+    'server-catalog-remove','server-catalog-restore',
+    'server-service-confirm-archive','software-toggle'
+  ]);
   const actionCanEditRack = new Set(['open-rack-modal','edit-rack',
     'correct-rack-specifications','delete-rack','add-rack-accessory',
     'add-vertical-rack-accessory','edit-rack-accessory','delete-rack-accessory',
@@ -9321,6 +9336,8 @@ window.addEventListener('load', async () => {
   function isBlockedAction(action, element = null) {
     if (editPermissions.Devices && action === 'confirm' &&
         element && element.closest('#hypervisor-selection-dialog,#platform-dialog')) return false;
+    if (actionCanEditManaged.has(action))
+      return !editPermissions.Devices;
     return (blockedActions.test(action) ||
       action === 'reconcile-legacy-vlans' || action === 'open-rack-modal' ||
       action === 'correct-rack-specifications') &&
@@ -9493,6 +9510,23 @@ window.addEventListener('load', async () => {
         await postInventory('/api/ipam/subnets/save',{changes});
         await refreshCentralInventory(false);
         showToast(successMessage);
+        return true;
+      } catch(error) {
+        showToast(error.message,'error');
+        return false;
+      } finally { pendingSave=false; }
+    }
+  };
+  nextSettingsBridge = {
+    async save(key) {
+      if (!editPermissions.Devices || pendingSave) {
+        showToast('Devices edit permission required or another save is in progress.','error');
+        return false;
+      }
+      pendingSave=true;
+      try {
+        await postInventory('/api/inventory/settings/save',{key,value:appState[key]});
+        await refreshCentralInventory(false);
         return true;
       } catch(error) {
         showToast(error.message,'error');

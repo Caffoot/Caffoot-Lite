@@ -44,3 +44,12 @@ class InventorySettingsTests(unittest.TestCase):
         self.assertEqual(self.db.execute(
             "SELECT count(*) FROM inventory_settings"
         ).fetchone()[0], 0)
+
+    def test_ipam_only_edit_cannot_modify_device_managed_settings(self):
+        with patch("backend.settings_saves.can_access",
+                   side_effect=lambda _c, _a, section, edit=False: section == "IPAM"):
+            with self.assertRaises(PermissionError):
+                save_inventory_setting(self.db, 1, "installedSoftware", [])
+        self.assertEqual(self.db.execute(
+            "SELECT COUNT(*) FROM inventory_settings"
+        ).fetchone()[0], 0)

@@ -5,15 +5,11 @@ from datetime import datetime, timezone
 from .inventory import SETTINGS
 from .permissions import can_access
 
-# These are inventory settings, not account or deployment configuration.
-EDIT_SECTIONS = ("Devices", "IPAM", "Racks")
-
-
+# Managed hardware, software and device options belong to Devices.
 def save_inventory_setting(connection, account_id, key, value):
     if key not in SETTINGS:
         raise ValueError("Unknown inventory setting")
-    if not any(can_access(connection, account_id, section, edit=True)
-               for section in EDIT_SECTIONS):
+    if not can_access(connection, account_id, "Devices", edit=True):
         raise PermissionError("Inventory edit permission required")
     encoded = json.dumps(value, ensure_ascii=False, allow_nan=False)
     connection.execute("BEGIN IMMEDIATE")
