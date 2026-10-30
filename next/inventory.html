@@ -9232,7 +9232,7 @@ window.addEventListener('load', async () => {
     if (!response.ok) throw new Error(result.error || 'Unable to save inventory.');
     return result;
   }
-  const actionCanEditIpam = new Set(['bulk-ip','apply-bulk-ip-assignment',
+  const actionCanEditIpam = new Set(['open-subnet-modal','bulk-ip','apply-bulk-ip-assignment',
     'edit-subnet','edit-ipam-block','delete-vlan','reconcile-legacy-vlans',
     'delete-subnet','confirm-delete-subnet','apply-inventory-integrity-repairs',
     'create-subnet-from-device']);
@@ -9300,7 +9300,7 @@ window.addEventListener('load', async () => {
       !(editPermissions.Racks && actionCanEditRack.has(action));
   }
   function applyAllowedControls() {
-    for(const root of [document.getElementById('main-content'), document.getElementById('modal-content')]){
+    for(const root of [document.getElementById('sidebar'), document.getElementById('main-content'), document.getElementById('modal-content')]){
       if(!root) continue;
       root.querySelectorAll('button').forEach(button=>{
         const blocked=isBlockedAction(button.dataset.action || '',button);
