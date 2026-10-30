@@ -242,6 +242,27 @@ class ReservedDeviceSaveTests(unittest.TestCase):
         ).fetchone()[0], 0)
 
 
+    def test_archived_software_installation_change_preserves_other_device_data(self):
+        original = dict(self.original, typeDetails={
+            "customSoftware_historic": True, "otherKey": "historical"
+        })
+        self.db.execute(
+            "UPDATE inventory_devices SET record_json=? WHERE id='d1'",
+            (json.dumps(original),)
+        )
+        self.db.commit()
+        updated = dict(original, typeDetails={
+            "customSoftware_historic": False, "otherKey": "historical"
+        })
+        self.assertEqual(self.save(updated), 1)
+        actual = json.loads(self.db.execute(
+            "SELECT record_json FROM inventory_devices WHERE id='d1'"
+        ).fetchone()[0])
+        self.assertEqual(actual["typeDetails"], updated["typeDetails"])
+        self.assertEqual(actual["primaryIp"], "10.0.0.10")
+        self.assertEqual(actual["rackId"], "r1")
+
+
 if __name__ == "__main__":
     unittest.main()
 
