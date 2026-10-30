@@ -62,6 +62,28 @@ class IndependentIpamTests(unittest.TestCase):
         self.assertEqual(self.allocation("10.0.0.10"), before)
         self.assertIsNone(self.allocation("10.0.0.21"))
 
+    def test_device_owned_ipam_notes_only_preserves_assignment(self):
+        ip = "10.0.0.10"
+        original = self.allocation(ip)
+        updated = dict(original, notes="Access point port")
+        self.change(ip, updated)
+        self.assertEqual(self.allocation(ip), updated)
+        events = [json.loads(row[0]) for row in self.db.execute(
+            "SELECT record_json FROM inventory_change_history"
+        )]
+        self.assertEqual(events[-1]["changes"][0]["fields"], ["notes"])
+
+    def test_device_owned_ipam_changes_other_than_notes_still_rejected(self):
+        ip = "10.0.0.10"
+        original = self.allocation(ip)
+        for updated in (dict(original, status="Available"),
+                        dict(original, hostname="Different"),
+                        dict(original, deviceId=""),
+                        None):
+            with self.assertRaisesRegex(ValueError, "Device-linked"):
+                self.change(ip, updated)
+            self.assertEqual(self.allocation(ip), original)
+
     def test_outside_subnet_rolls_back(self):
         with self.assertRaises(ValueError):
             self.change("192.168.2.10", {"deviceId": "", "status": "Reserved"})

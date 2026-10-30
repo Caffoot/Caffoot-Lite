@@ -55,6 +55,49 @@ class SessionHttpTests(unittest.TestCase):
         conn.close()
         return status, body, cache
 
+    def test_inventory_assets_are_served_from_existing_published_files(self):
+        asset_root = Path(__file__).resolve().parents[2] / "assets"
+        with patch("backend.server.ASSET_ROOT", asset_root):
+            for asset in ("favicon.ico","apple-touch-icon.png","caffoot-icon-1024.png"):
+                status, raw, _ = self.request("/assets/" + asset)
+                self.assertEqual(status, 200)
+                self.assertEqual(raw, (asset_root / asset).read_bytes())
+        self.assertEqual(self.request("/assets/not-in-application.png")[0], 404)
+
+    def test_ipam_notes_on_device_primary_ip_http(self):
+        from backend.inventory import stage_inventory
+        state = {
+            "devices": [{"id":"linked-device", "name":"Router",
+                         "mountType":"Desktop", "primaryIp":"10.0.0.10"}],
+            "subnets":[{"id":"network","name":"Network",
+                         "cidr":"10.0.0.0/24","vlan":20}],
+            "vlans":[],"racks":[],"rackAccessories":[],
+            "ipAllocations":{"10.0.0.10":{"deviceId":"linked-device",
+                                          "status":"Assigned","hostname":"Router"}}
+        }
+        with sqlite3.connect(self.path) as db:
+            stage_inventory(db,state)
+        with patch("backend.server.PUBLIC_ORIGIN", "https://caffoot.example"):
+            csrf = csrf_for_session(self.token)
+            status, result = self.post("/api/ipam/allocation/save",{
+                "ip":"10.0.0.10",
+                "record":{"deviceId":"linked-device","status":"Assigned",
+                          "hostname":"Router","notes":"Rack port A"}
+            },self.token,csrf)
+            self.assertEqual(status,200,result)
+            status, rejected = self.post("/api/ipam/allocation/save",{
+                "ip":"10.0.0.10",
+                "record":{"deviceId":"linked-device","status":"Available",
+                          "hostname":"Router","notes":"Rack port A"}
+            },self.token,csrf)
+            self.assertEqual(status,400,rejected)
+        with sqlite3.connect(self.path) as db:
+            saved = json.loads(db.execute(
+                "SELECT record_json FROM inventory_ip_allocations WHERE ip='10.0.0.10'"
+            ).fetchone()[0])
+        self.assertEqual(saved["status"],"Assigned")
+        self.assertEqual(saved["notes"],"Rack port A")
+
     def test_admin_inventory_page_contains_users_and_migration_navigation(self):
         status, body, cache = self.request(
             "/inventory", COOKIE_NAME + "=" + self.token

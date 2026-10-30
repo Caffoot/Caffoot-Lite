@@ -31,6 +31,10 @@ PORT = 8080  # Fixed internal port; Compose publishes the configurable host port
 PUBLIC_ORIGIN = os.environ.get("CAFFOOT_WEB_ADDRESS", "")
 MAX_LOGIN_BYTES = 4096
 MAX_IMPORT_BYTES = 10 * 1024 * 1024
+ASSET_ROOT = Path(__file__).resolve().parent.parent / "assets"
+PUBLIC_ASSETS = {"favicon.ico": "image/x-icon",
+                 "apple-touch-icon.png": "image/png",
+                 "caffoot-icon-1024.png": "image/png"}
 IMPORT_DRAFTS = ImportDrafts()
 IMPORT_ROUTES = frozenset(("/api/import/preview", "/api/import/access-point-choices",
                            "/api/import/confirm", "/api/import/cancel"))
@@ -71,6 +75,21 @@ def initialise_database():
 
 class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
+        if self.path.startswith("/assets/") and self.path[8:] in PUBLIC_ASSETS:
+            name = self.path[8:]
+            try:
+                data = (ASSET_ROOT / name).read_bytes()
+            except OSError:
+                self.respond(503, {"error": "branding asset unavailable"})
+                return
+            self.send_response(200)
+            self.send_header("Content-Type", PUBLIC_ASSETS[name])
+            self.send_header("Content-Length", str(len(data)))
+            self.send_header("Cache-Control", "public, max-age=86400")
+            self.send_header("X-Content-Type-Options", "nosniff")
+            self.end_headers()
+            self.wfile.write(data)
+            return
         if self.path in ("/", "/setup"):
             body = (Path(__file__).resolve().parent.parent / "setup.html").read_bytes()
             self.send_response(200)

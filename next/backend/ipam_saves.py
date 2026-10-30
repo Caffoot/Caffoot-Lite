@@ -18,8 +18,11 @@ def change_independent_allocation(connection, account_id, ip, record):
         state = reconstruct_inventory(connection)
         before = state["ipAllocations"].get(ip)
         if before and before.get("deviceId"):
-            raise ValueError("Device-linked IP assignments must be edited through the device")
-        if record is not None and record.get("deviceId"):
+            if (record is None or
+                    {key for key in set(before) | set(record)
+                     if before.get(key) != record.get(key)} - {"notes"}):
+                raise ValueError("Device-linked IP assignments must be edited through the device")
+        elif record is not None and record.get("deviceId"):
             raise ValueError("Device-linked IP assignments must be edited through the device")
         if record is None:
             if before is None:

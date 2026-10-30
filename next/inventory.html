@@ -1886,6 +1886,7 @@ function hierarchyValidateTypes(subnets) {
         let nextDeviceBridge = null;
         let nextDeviceModalClosed = null;
         let nextImportModalClosed = null;
+        let nextIpamBridge = null;
         let nextRenderUsers = () => '';
         let nextImportAllowed = false;
         function saveState() { showToast('This inventory operation is not yet connected to SQLite.', 'error'); return false; }
@@ -5323,9 +5324,12 @@ function hierarchyValidateTypes(subnets) {
                     </form>
                 </div>
             `);
+            if (!nextIpamBridge?.canEdit()) {
+                document.querySelectorAll('#modal-content form[data-form-action="ip"] input, #modal-content form[data-form-action="ip"] select, #modal-content form[data-form-action="ip"] button[type="submit"]').forEach(element => { element.disabled = true; });
+            }
         }
 
-        function handleIpSubmit(e, ip) {
+        async function handleIpSubmit(e, ip) {
             e.preventDefault();
             const status = document.getElementById('ip-status').value;
             const hostname = document.getElementById('ip-hostname').value;
@@ -5338,15 +5342,15 @@ function hierarchyValidateTypes(subnets) {
                 return;
             }
 
-            if (primaryDevice) {
+            if (primaryDevice || previousAllocation?.deviceId) {
                 const existing = appState.ipAllocations[ip];
                 // A device-owned address may update its own IPAM notes, never its device notes or ownership.
                 if (!existing || status !== existing.status || hostname !== (existing.hostname || '') || releaseOrphan) {
-                    showToast(`IP address ${ip} is the primary IP of ${primaryDevice.name}. Only IPAM notes can be edited here; edit the device to change its assignment.`, 'error');
+                    showToast(`IP address ${ip} is the primary IP of ${primaryDevice?.name || existing.deviceId}. Only IPAM notes can be edited here; edit the device to change its assignment.`, 'error');
                     return;
                 }
                 appState.ipAllocations[ip] = { ...existing, notes };
-                if (!saveState()) {
+                if (!nextIpamBridge || !await nextIpamBridge.save(ip, previousAllocation)) {
                     appState.ipAllocations[ip] = previousAllocation;
                     showToast('IP notes could not be saved. Previous allocation restored.', 'error');
                     return;
@@ -5377,7 +5381,7 @@ function hierarchyValidateTypes(subnets) {
                 }
                 appState.ipAllocations[ip] = { ...existing, status, deviceId, hostname, notes, reservedForDeviceId: status === existing.status && !releaseOrphan ? (existing.reservedForDeviceId || '') : '' };
             }
-            if (!saveState()) {
+            if (!nextIpamBridge || !await nextIpamBridge.save(ip, previousAllocation)) {
                 if (previousAllocation) appState.ipAllocations[ip] = previousAllocation;
                 else delete appState.ipAllocations[ip];
                 showToast('IP changes could not be saved. Previous allocation restored.', 'error');
@@ -9375,6 +9379,31 @@ window.addEventListener('load', async () => {
       return false;
     } finally { pendingSave=false; }
   }
+  nextIpamBridge = {
+    canEdit: () => !!editPermissions.IPAM,
+    async save(ip, previous) {
+      if (!editPermissions.IPAM) {
+        showToast('IPAM edit permission required.', 'error');
+        return false;
+      }
+      const record = appState.ipAllocations[ip] || null;
+      if (JSON.stringify(record) === JSON.stringify(previous)) return true;
+      try {
+        await postInventory(record ? '/api/ipam/allocation/save' : '/api/ipam/allocation/delete',
+          record ? {ip,record} : {ip});
+        try { await refreshCentralInventory(false); }
+        catch (error) {
+          showToast('IPAM changes saved. Unable to refresh the latest inventory.', 'error');
+          return true;
+        }
+        showToast('IPAM changes saved.');
+        return true;
+      } catch (error) {
+        showToast(error.message, 'error');
+        return false;
+      }
+    }
+  };
   async function reserveForDelete(deviceId) {
     if (!editPermissions.Devices) throw new Error('Devices edit permission required.');
     await refreshCentralInventory(false);
@@ -9646,7 +9675,8 @@ window.addEventListener('load', async () => {
     if (!element) return;
     const action = element.dataset.action || '';
     if (isBlockedAction(action, element) || (element.matches('button') && element.type==='submit' &&
-        !element.closest('form[data-device-form="true"],#next-user-create-form'))) {
+        !element.closest('form[data-device-form="true"],#next-user-create-form') &&
+        !(editPermissions.IPAM && element.closest('form[data-form-action="ip"]')))) {
       event.preventDefault();
       event.stopImmediatePropagation();
       showToast('This inventory operation is not yet connected to SQLite.', 'error');
@@ -9654,6 +9684,7 @@ window.addEventListener('load', async () => {
   },true);
   document.addEventListener('submit',event => {
     if ((editPermissions.Devices && event.target.matches('form[data-device-form="true"]')) ||
+        (editPermissions.IPAM && event.target.matches('form[data-form-action="ip"]')) ||
         (sessionIsAdmin && event.target.matches('#next-user-create-form'))) return;
     event.preventDefault();event.stopImmediatePropagation();
   },true);
