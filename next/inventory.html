@@ -1890,6 +1890,7 @@ function hierarchyValidateTypes(subnets) {
         let nextRackBridge = null;
         let nextSettingsBridge = null;
         let nextDeviceCatalogueBridge = null;
+        let nextResetBridge = null;
         let nextRenderUsers = () => '';
         let nextImportAllowed = false;
         function saveState() { showToast('This inventory operation is not yet connected to SQLite.', 'error'); return false; }
@@ -7752,6 +7753,11 @@ function hierarchyValidateTypes(subnets) {
                         '<button type="button" data-action="next-import-pick" class="settings-action" '+(nextImportAllowed?'':'disabled')+'><i class="fa-solid fa-upload" aria-hidden="true"></i>Choose Backup File</button>') +
                     panel('Database backups',
                         'Ongoing backup and restoration are handled by your Docker, Portainer or volume backup application. This JSON import is for one-way migration only.') +
+                    '</div><h3 class="settings-group-title">Maintenance & Safety</h3>' +
+                    '<div class="settings-group-grid">' +
+                    panel('Danger Zone — Clear System',
+                        'Permanently reset all central inventory, IPAM records and managed options. Your accounts and permissions are kept.',
+                        button('clear-inventory-data','Clear System / Clean Start','fa-triangle-exclamation')) +
                     '</div>';
             } else if (section === 'preferences') {
                 const preference = caffootThemePreference();
@@ -7902,10 +7908,6 @@ function hierarchyValidateTypes(subnets) {
         }
 
         function requestInventoryReset() {
-            if (storageRecoveryFailure) {
-                showToast('Recovery mode: saved data is protected. Resolve storage issues before resetting.', 'error');
-                return;
-            }
             const summary = [
                 appState.devices.length + ' devices',
                 appState.racks.length + ' racks',
@@ -7918,67 +7920,15 @@ function hierarchyValidateTypes(subnets) {
                 '',
                 'ALL inventory, IPAM records, managed server options and software options will be replaced.',
                 '',
-                'Download a JSON backup first if you want to keep this data.',
+                'Database backup and restoration are handled by your Docker or volume backup application.',
                 '',
                 'Press OK to reset or Cancel to keep everything.'
             ].join('\n'))) return;
-            const original = appState;
-            const key = typeof STORAGE_KEY !== 'undefined' ? STORAGE_KEY : 'caffoot_state';
-            let previousSaved, previousSafety;
-            const previousHistory = auditHistory.slice();
-            let previousStoredHistory;
-            try {
-                previousStoredHistory = localStorage.getItem(AUDIT_KEY);
-                previousSaved = localStorage.getItem(key);
-                previousSafety = localStorage.getItem(SAFETY_SNAPSHOT_KEY);
-                const snapshot = previousSaved || JSON.stringify(original);
-                const cleanStart = cloneDefaultData();
-                cleanStart.managedOptionsCleared = true;
-                const candidate = validateAndNormaliseBackupForImport(cleanStart);
-                localStorage.setItem(SAFETY_SNAPSHOT_KEY, snapshot);
-                if (localStorage.getItem(SAFETY_SNAPSHOT_KEY) !== snapshot)
-                    throw new Error('Could not verify the recovery snapshot.');
-                appState = candidate;
-                nextAuditReason = 'Clean inventory reset';
-                if (!saveState()) throw new Error('Could not save the clean inventory.');
-                const stored = localStorage.getItem(key);
-                if (!stored || JSON.stringify(normaliseState(JSON.parse(stored))) !== JSON.stringify(candidate))
-                    throw new Error('Could not verify the clean inventory in browser storage.');
-                selectedSubnetId = '';
-                selectedRackId = '';
-                renderContent();
-                showToast('Caffoot Lite has been reset to a clean inventory.', 'success');
-            } catch (error) {
-                appState = original;
-                nextAuditReason = '';
-                try {
-                    if (previousSaved !== undefined) {
-                        if (previousSaved === null) localStorage.removeItem(key);
-                        else localStorage.setItem(key, previousSaved);
-                    }
-                    if (previousSafety !== undefined) {
-                        if (previousSafety === null) localStorage.removeItem(SAFETY_SNAPSHOT_KEY);
-                        else localStorage.setItem(SAFETY_SNAPSHOT_KEY, previousSafety);
-                    }
-                    // Storage writes can silently fail. Verify both restored values before allowing edits.
-                    if (previousSaved !== undefined && localStorage.getItem(key) !== previousSaved)
-                        throw new Error('Inventory rollback verification failed.');
-                    if (previousSafety !== undefined && localStorage.getItem(SAFETY_SNAPSHOT_KEY) !== previousSafety)
-                        throw new Error('Safety snapshot rollback verification failed.');
-                    if (previousStoredHistory !== undefined) restoreAuditAfterRolledBackOperation(previousHistory, previousStoredHistory);
-                    auditBaseline = JSON.stringify(original);
-                } catch (rollbackError) {
-                    storageRecoveryFailure = { reason: 'Clean reset rollback could not be verified. Further saves are blocked.', raw: previousSaved === undefined ? null : previousSaved };
-                    // Browser recovery is not used with SQLite.
-                    console.error('Reset rollback failed:', rollbackError);
-                    showToast('Reset failed; storage rollback failed. Further saves are blocked; export the original stored data from the recovery banner.', 'error');
-                    renderContent();
-                    return;
-                }
-                renderContent();
-                console.error('Clean inventory reset failed:', error);
-                showToast('Reset cancelled: ' + error.message, 'error');
+            if (!nextResetBridge) {
+                showToast('This inventory operation is not yet connected to SQLite.', 'error');
+                return;
             }
+            void nextResetBridge.reset();
         }
 
         const CAFFOOT_BACKUP_FORMAT = 'caffoot-inventory';
@@ -9327,6 +9277,8 @@ window.addEventListener('load', async () => {
   ]);
   const blockedActions = /^(add|create|edit|delete|remove|save|restore|reset|import|export|repair|assign|reserve|release|clear|bulk|duplicate|move|place|unplace|update|change|apply|confirm|choose-backup)/i;
   function isBlockedAction(action, element = null) {
+    if (action === 'clear-inventory-data')
+      return !['Devices','IPAM','Racks'].every(section => editPermissions[section]);
     if (editPermissions.Devices && action === 'confirm' &&
         element && element.closest('#hypervisor-selection-dialog,#platform-dialog')) return false;
     if (actionCanEditManaged.has(action) || actionCanEditDevice.has(action))
@@ -9523,6 +9475,27 @@ window.addEventListener('load', async () => {
         return true;
       } catch(error) {
         showToast(error.message,'error');
+        return false;
+      } finally { pendingSave=false; }
+    }
+  };
+  nextResetBridge = {
+    async reset() {
+      if (!['Devices','IPAM','Racks'].every(section => editPermissions[section]) || pendingSave) {
+        showToast('All inventory section edit permissions required or another save is in progress.','error');
+        return false;
+      }
+      pendingSave=true;
+      try {
+        await postInventory('/api/inventory/reset', {confirmed:true});
+        await refreshCentralInventory(false);
+        selectedSubnetId = '';
+        selectedRackId = '';
+        renderContent();
+        showToast('Caffoot Lite has been reset to a clean inventory.', 'success');
+        return true;
+      } catch(error) {
+        showToast('Reset cancelled: '+error.message,'error');
         return false;
       } finally { pendingSave=false; }
     }

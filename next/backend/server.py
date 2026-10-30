@@ -14,6 +14,7 @@ from .collection_saves import (change_inventory_record,
                                delete_subnet_with_dependencies)
 from .settings_saves import save_inventory_setting
 from .device_catalogue import change_device_catalogue
+from .reset_inventory import reset_inventory
 from .schema import initialise_database as migrate_database
 from .accounts import bootstrap_first_admin, confirm_admin_mfa, verify_password, hash_password
 from .mfa import new_secret, verify_code
@@ -333,7 +334,7 @@ class Handler(BaseHTTPRequestHandler):
                          "/api/ipam/subnets/save", "/api/ipam/subnets/delete",
                          "/api/inventory/record/save",
                          "/api/inventory/record/delete", "/api/inventory/settings/save",
-                         "/api/inventory/device-catalogue/change"):
+                         "/api/inventory/device-catalogue/change", "/api/inventory/reset"):
             self.handle_user_mutation()
             return
         if self.path in IMPORT_ROUTES:
@@ -450,6 +451,11 @@ class Handler(BaseHTTPRequestHandler):
                         raise ValueError("Invalid inventory settings request")
                     save_inventory_setting(connection, actor, payload["key"], payload["value"])
                     result = {"status": "saved"}
+                elif self.path == "/api/inventory/reset":
+                    if payload != {"confirmed": True}:
+                        raise ValueError("Clean Start confirmation required")
+                    reset_inventory(connection, actor)
+                    result = {"status": "reset"}
                 elif self.path == "/api/inventory/device-catalogue/change":
                     if set(payload) != {"kind", "operation", "oldName", "newName", "expectedDevices"}:
                         raise ValueError("Invalid managed catalogue request")
