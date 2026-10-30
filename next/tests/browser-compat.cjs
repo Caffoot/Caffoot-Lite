@@ -115,7 +115,7 @@ async function run(){
   await modal(page,'openDeviceModal');
   await page.locator('#dev-name').fill('browser-device');
   await page.locator('#dev-type').selectOption('Desktop');
-  await page.locator('#dev-mount-type').selectOption('Desktop');
+  await page.locator('#dev-mount-type').selectOption('Tabletop / Shelf Mounted');
   await page.locator('#dev-location').selectOption('Office');
   await page.locator('#dev-block').selectOption('__unassigned__');
   await page.locator('#dev-vlan').selectOption('17');
