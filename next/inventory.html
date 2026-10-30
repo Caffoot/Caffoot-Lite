@@ -4614,26 +4614,15 @@ function hierarchyValidateTypes(subnets) {
         }
         async function applyBulkIpChanges() {
             const request=pendingBulkIpAssignment;
-            if(!request || pendingSave) return showToast('Bulk preview expired. Start again.','error');
+            if(!request) return showToast('Bulk preview expired. Start again.','error');
             const subnet=appState.subnets.find(s=>s.id===request.subnetId);
             const plan=planBulkSubnetAddressAssignment(subnet,request.start,request.end,request.status,request.hostname,request.notes);
             if(plan.error||!plan.changes?.length) return showToast(plan.error||'No eligible addresses remain.','error');
-            pendingSave=true;
-            try {
-                await postInventory('/api/ipam/allocation/bulk',{
-                    changes:plan.changes.map(change=>({ip:change.ip,record:change.updated}))
-                });
-                pendingBulkIpAssignment=null;
-                closeModal(true);
-                try { await refreshCentralInventory(); }
-                catch(error) {
-                    showToast('Bulk IPAM changes saved. Unable to refresh the latest inventory.','error');
-                    return;
-                }
-                showToast('Bulk IPAM changes saved.');
-            } catch(error) {
-                showToast(error.message,'error');
-            } finally { pendingSave=false; }
+            // Central persistence belongs to Next's permission-aware SQLite bridge.
+            if(!nextIpamBridge || !await nextIpamBridge.saveBulk(plan.changes)) return;
+            pendingBulkIpAssignment=null;
+            closeModal(true);
+            renderContent();
         }
 
         // Suggest the first usable address when creating a subnet. Manual edits are respected.
@@ -9349,6 +9338,28 @@ window.addEventListener('load', async () => {
   }
   nextIpamBridge = {
     canEdit: () => !!editPermissions.IPAM,
+    async saveBulk(changes) {
+      if (!editPermissions.IPAM || pendingSave) {
+        showToast('IPAM edit permission required or another save is in progress.', 'error');
+        return false;
+      }
+      pendingSave=true;
+      try {
+        await postInventory('/api/ipam/allocation/bulk',{
+          changes:changes.map(change=>({ip:change.ip,record:change.updated}))
+        });
+        try { await refreshCentralInventory(false); }
+        catch(error) {
+          showToast('Bulk IPAM changes saved. Unable to refresh the latest inventory.', 'error');
+          return true;
+        }
+        showToast('Bulk IPAM changes saved.');
+        return true;
+      } catch(error) {
+        showToast(error.message, 'error');
+        return false;
+      } finally { pendingSave=false; }
+    },
     async save(ip, previous) {
       if (!editPermissions.IPAM) {
         showToast('IPAM edit permission required.', 'error');
