@@ -13,6 +13,7 @@ from .collection_saves import (change_inventory_record,
                                change_ipam_subnet_and_vlan_records,
                                delete_subnet_with_dependencies)
 from .settings_saves import save_inventory_setting
+from .device_catalogue import change_device_catalogue
 from .schema import initialise_database as migrate_database
 from .accounts import bootstrap_first_admin, confirm_admin_mfa, verify_password, hash_password
 from .mfa import new_secret, verify_code
@@ -331,7 +332,8 @@ class Handler(BaseHTTPRequestHandler):
                          "/api/ipam/allocation/delete", "/api/ipam/allocation/bulk",
                          "/api/ipam/subnets/save", "/api/ipam/subnets/delete",
                          "/api/inventory/record/save",
-                         "/api/inventory/record/delete", "/api/inventory/settings/save"):
+                         "/api/inventory/record/delete", "/api/inventory/settings/save",
+                         "/api/inventory/device-catalogue/change"):
             self.handle_user_mutation()
             return
         if self.path in IMPORT_ROUTES:
@@ -448,6 +450,14 @@ class Handler(BaseHTTPRequestHandler):
                         raise ValueError("Invalid inventory settings request")
                     save_inventory_setting(connection, actor, payload["key"], payload["value"])
                     result = {"status": "saved"}
+                elif self.path == "/api/inventory/device-catalogue/change":
+                    if set(payload) != {"kind", "operation", "oldName", "newName", "expectedDevices"}:
+                        raise ValueError("Invalid managed catalogue request")
+                    affected = change_device_catalogue(
+                        connection, actor, payload["kind"], payload["operation"],
+                        payload["oldName"], payload["newName"], payload["expectedDevices"]
+                    )
+                    result = {"status": "saved", "affectedDevices": affected}
                 elif self.path in ("/api/inventory/record/save", "/api/inventory/record/delete"):
                     expected = ({"collection", "id", "record"}
                                 if self.path.endswith("/save") else {"collection", "id"})

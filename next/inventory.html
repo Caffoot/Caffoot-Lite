@@ -1889,6 +1889,7 @@ function hierarchyValidateTypes(subnets) {
         let nextIpamBridge = null;
         let nextRackBridge = null;
         let nextSettingsBridge = null;
+        let nextDeviceCatalogueBridge = null;
         let nextRenderUsers = () => '';
         let nextImportAllowed = false;
         function saveState() { showToast('This inventory operation is not yet connected to SQLite.', 'error'); return false; }
@@ -4032,7 +4033,7 @@ function hierarchyValidateTypes(subnets) {
             overlay.innerHTML=`<div class="w-full max-w-md rounded-2xl border border-rose-300 dark:border-rose-700 bg-white dark:bg-slate-800 p-6 shadow-2xl space-y-4">
                 <h3 id="device-catalogue-delete-title" class="text-lg font-bold text-slate-900 dark:text-white">Delete ${kind==='type'?'Device Type':'Location'}?</h3>
                 <p class="font-semibold break-words text-slate-900 dark:text-white">${escapeHtml(name)}</p>
-                <p id="delete-description" class="text-sm text-slate-700 dark:text-slate-200">This ${kind==='type'?'device type':'location'} is assigned to <strong>${affected} device${affected===1?'':'s'}</strong>. ${affected?'Affected devices will be changed to Unknown.':'No existing devices will be changed.'} Deletion cannot be undone except by restoring a backup.</p>
+                <p id="delete-description" class="text-sm text-slate-700 dark:text-slate-200">This ${kind==='type'?'device type':'location'} is assigned to <strong>${affected} device${affected===1?'':'s'}</strong>. ${affected?'Affected devices will be changed to Unknown.':'No existing devices will be changed.'} Deletion cannot be undone.</p>
                 <div class="flex flex-wrap justify-end gap-3">
                     <button type="button" data-action="cancel-delete" class="h-11 px-4 rounded-xl border border-slate-400 dark:border-slate-500 text-slate-900 dark:text-white caffoot-modal-cancel">Cancel</button>
                     <button type="button" data-action="confirm-delete" class="h-11 px-4 rounded-xl bg-rose-700 hover:bg-rose-800 text-white font-bold">Delete</button>
@@ -4075,25 +4076,9 @@ function hierarchyValidateTypes(subnets) {
             if(operation==='rename' && oldName===name)return;
             const affected=appState.devices.filter(d=>d[prop]===oldName).length;
             if(operation==='delete' && !deviceTypeLocationDeletionApproved){requestDeviceCatalogueEntryDeletion(kind,oldName);return;}
-            const snapshot=JSON.stringify(appState);
-            if(operation==='add')appState[key]=[...new Set([...(appState[key]||[]),name])];
-            else if(operation==='rename'){
-                appState[key]=[...new Set([...(appState[key]||[]).map(n=>n===oldName?name:n),name])];
-                appState.devices.forEach(d=>{if(d[prop]===oldName)d[prop]=name;});
-                if(kind==='type' && appState.deviceTypeGraphics && Object.hasOwn(appState.deviceTypeGraphics,oldName)){
-                    appState.deviceTypeGraphics[name]=appState.deviceTypeGraphics[oldName];delete appState.deviceTypeGraphics[oldName];
-                }
-            } else {
-                appState[key]=(appState[key]||[]).filter(n=>n!==oldName);
-                appState.devices.forEach(d=>{if(d[prop]===oldName)d[prop]='Unknown';});
-                if(kind==='type'&&appState.deviceTypeGraphics)delete appState.deviceTypeGraphics[oldName];
-            }
-            if(!saveState()){
-                const prior=JSON.parse(snapshot);Object.keys(appState).forEach(k=>delete appState[k]);Object.assign(appState,prior);
-                showToast('Change not saved; original data restored.','error');return;
-            }
-            showToast(operation==='delete'?`${affected} device(s) set to Unknown; ${kind} deleted.`:`${kind==='type'?'Type':'Location'} ${operation==='add'?'added':'renamed'} successfully.`,'success');
-            openDeviceCatalogueManager(kind);renderContent();
+            if(!nextDeviceCatalogueBridge){showToast("This inventory operation is not yet connected to SQLite.","error");return;}
+            void nextDeviceCatalogueBridge.change(kind,operation,oldName,name);
+
         }
         function editDeviceTypePrompt(n){openDeviceTypeOrLocationRename('type',n);}
         function editDeviceLocationPrompt(n){openDeviceTypeOrLocationRename('location',n);}
@@ -9324,7 +9309,10 @@ window.addEventListener('load', async () => {
     'hardware-catalog-add','hardware-catalog-edit','hardware-catalog-remove',
     'add-service','rename-service','delete-service',
     'add-software','rename-software','delete-software',
-    'add-custom-location'
+    'add-custom-location','add-device-type-or-location','save-rename',
+    'rename-device-catalogue-entry','delete-device-type-or-location',
+    'delete-device-type','delete-location','edit-device-type','edit-location',
+    'confirm-delete'
   ]);
   const actionCanEditRack = new Set(['open-rack-modal','edit-rack',
     'correct-rack-specifications','delete-rack','add-rack-accessory',
@@ -9532,6 +9520,33 @@ window.addEventListener('load', async () => {
       try {
         await postInventory('/api/inventory/settings/save',{key,value:appState[key]});
         await refreshCentralInventory(false);
+        return true;
+      } catch(error) {
+        showToast(error.message,'error');
+        return false;
+      } finally { pendingSave=false; }
+    }
+  };
+  nextDeviceCatalogueBridge = {
+    async change(kind,operation,oldName,newName) {
+      if (!editPermissions.Devices || pendingSave) {
+        showToast('Devices edit permission required or another save is in progress.','error');
+        return false;
+      }
+      const field=kind==='type'?'type':'location';
+      const expectedDevices=operation==='add' ? [] :
+        appState.devices.filter(device=>device[field]===oldName).map(device=>device.id);
+      pendingSave=true;
+      try {
+        const result=await postInventory('/api/inventory/device-catalogue/change',{
+          kind,operation,oldName,newName,expectedDevices
+        });
+        await refreshCentralInventory(false);
+        showToast(operation==='delete'
+          ? result.affectedDevices+' device(s) set to Unknown; '+kind+' deleted.'
+          : (kind==='type'?'Type':'Location')+' '+(operation==='add'?'added':'renamed')+' successfully.','success');
+        openDeviceCatalogueManager(kind);
+        renderContent();
         return true;
       } catch(error) {
         showToast(error.message,'error');
