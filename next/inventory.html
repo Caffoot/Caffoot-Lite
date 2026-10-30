@@ -1864,14 +1864,14 @@ function hierarchyValidateTypes(subnets) {
             setTimeout(()=>URL.revokeObjectURL(url),1000);
         }
         function renderAuditHTML() {
-            // Ignore malformed local history records in the view without altering stored data.
+            // Ignore malformed history records in the view without altering stored data.
             const entries=auditHistory.filter(entry=>entry && typeof entry==='object' && !Array.isArray(entry) && Array.isArray(entry.changes)).slice().reverse();
             return `<div class="max-w-5xl mx-auto space-y-5">
                 <section class="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-2xl p-6 space-y-3">
                     <div class="flex items-center justify-between flex-wrap gap-3">
                         <div><h3 class="font-bold text-lg text-slate-900 dark:text-white">Change History</h3>
                         <p class="text-sm text-slate-700 dark:text-slate-200 mt-1">History of successful inventory changes saved in the central database. Up to ${AUDIT_LIMIT} events are retained.</p></div>
-                        
+                        <button type="button" data-action="export-audit" class="px-4 py-2.5 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold"><i class="fa-solid fa-download mr-2"></i>Export history</button>
                     </div>
                     <p class="text-xs text-slate-600 dark:text-slate-300">Change History is stored centrally and shared across authorised users.</p>
                 </section>
@@ -9185,7 +9185,8 @@ window.addEventListener('load', async () => {
   }
   const actionCanEditIpam = new Set(['bulk-ip','apply-bulk-ip-assignment',
     'edit-subnet','edit-ipam-block','delete-vlan','reconcile-legacy-vlans',
-    'delete-subnet','confirm-delete-subnet','apply-inventory-integrity-repairs']);
+    'delete-subnet','confirm-delete-subnet','apply-inventory-integrity-repairs',
+    'create-subnet-from-device']);
   const actionCanEditManaged = new Set([
     'edit-device-fascia-graphic','save-rack-fascia-graphic',
     'manufacturer-add','manufacturer-edit','manufacturer-remove',
@@ -9211,15 +9212,21 @@ window.addEventListener('load', async () => {
     'correct-rack-specifications','delete-rack','add-rack-accessory',
     'add-vertical-rack-accessory','edit-rack-accessory','delete-rack-accessory',
     'place-rack-item','placement-device','placement-accessory',
-    'assign-device','unassign-device','mount-rack-accessory']);
+    'assign-device','unassign-device','mount-rack-accessory',
+    'create-rack-from-device']);
   const actionCanEditDevice = new Set([
     'open-device-modal','edit-device','edit-device-from-details',
     'delete-device','delete-device-from-details',
     'duplicate-device','duplicate-device-from-details',
     'archived-software-remove','archived-software-confirm-uninstall'
   ]);
+  const readOnlyActions = new Set([
+    'clear-device-filters','change-appearance-theme',
+    'export-audit','export-selected-inventory-csv'
+  ]);
   const blockedActions = /^(add|create|edit|delete|remove|save|restore|reset|import|export|repair|assign|reserve|release|clear|bulk|duplicate|move|place|unplace|update|change|apply|confirm|choose-backup)/i;
   function isBlockedAction(action, element = null) {
+    if (readOnlyActions.has(action)) return false;
     if (action === 'check-inventory-safety')
       return !['Devices','IPAM','Racks'].every(section => permissions[section]);
     if (action === 'apply-inventory-integrity-repairs')
