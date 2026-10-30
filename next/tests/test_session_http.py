@@ -12,7 +12,7 @@ from unittest.mock import patch
 from backend.accounts import bootstrap_first_admin, confirm_admin_mfa
 from backend.http_security import COOKIE_NAME
 from backend.request_auth import csrf_for_session
-from backend.mfa import code_at, new_secret
+from backend.mfa import code_at, new_secret, provisioning_uri
 from backend.schema import initialise_database
 from backend.server import Handler
 from backend.sessions import login_session
@@ -58,7 +58,7 @@ class SessionHttpTests(unittest.TestCase):
     def test_inventory_assets_are_served_from_existing_published_files(self):
         asset_root = Path(__file__).resolve().parents[2] / "assets"
         with patch("backend.server.ASSET_ROOT", asset_root):
-            for asset in ("favicon.ico","apple-touch-icon.png","caffoot-icon-1024.png"):
+            for asset in ("favicon.ico","apple-touch-icon.png","caffoot-icon-1024.png","qrcode.min.js"):
                 status, raw, _ = self.request("/assets/" + asset)
                 self.assertEqual(status, 200)
                 self.assertEqual(raw, (asset_root / asset).read_bytes())
@@ -127,6 +127,24 @@ class SessionHttpTests(unittest.TestCase):
         status, body = response.status, json.loads(response.read())
         conn.close()
         return status, body
+
+    def test_user_mfa_start_supplies_authenticator_qr_uri(self):
+        with patch("backend.server.PUBLIC_ORIGIN", "https://caffoot.example"):
+            status, user = self.post(
+                "/api/users/create", {"username": "qr-user", "password": "initial"},
+                self.token, csrf_for_session(self.token),
+            )
+            self.assertEqual(status, 200)
+            with sqlite3.connect(self.path) as db:
+                user_token = login_session(db, "qr-user", "initial")
+            self.assertIsNotNone(user_token)
+            status, enrolled = self.post(
+                "/api/account/mfa/start", {"password": "initial"},
+                user_token, csrf_for_session(user_token),
+            )
+            self.assertEqual(status, 200)
+            self.assertEqual(enrolled["mfaUri"],
+                             provisioning_uri("qr-user", enrolled["mfaSecret"]))
 
     def test_account_management_and_password_change_http(self):
         with patch("backend.server.PUBLIC_ORIGIN", "https://caffoot.example"):

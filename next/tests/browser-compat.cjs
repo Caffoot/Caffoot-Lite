@@ -74,6 +74,10 @@ async function run(){
   await page.locator('#enrolment:not([hidden])').waitFor();
   const secret=(await page.locator('#secret').textContent()).trim();
   assert.ok(secret.length>=16,'MFA enrolment secret missing');
+  await page.waitForFunction(()=>{
+    const img=document.querySelector('#setup-qr img');
+    return img && img.complete && img.naturalWidth>0;
+  });
   await page.locator('#code').fill(mfaCode(secret));
   await page.locator('#submit').click();
   await page.getByText('MFA enrolled. Sign in to continue.').waitFor();
@@ -282,6 +286,10 @@ async function run(){
   await editor.locator('#confirm-mfa:not([hidden])').waitFor();
   const editorSecret=(await editor.locator('#user-mfa-secret').textContent()).trim();
   assert.ok(editorSecret.length>=16,'Editor MFA secret missing');
+  await editor.waitForFunction(()=>{
+    const img=document.querySelector('#user-mfa-qr img');
+    return img && img.complete && img.naturalWidth>0;
+  });
   await editor.locator('#user-mfa-code').fill(mfaCode(editorSecret));
   await editor.locator('#confirm-mfa button[type="submit"]').click();
   await editor.waitForFunction(()=>document.querySelector('#signed-in')?.hidden===true);

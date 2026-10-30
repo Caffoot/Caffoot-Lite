@@ -9,22 +9,30 @@ h1{margin:0 0 8px;font-size:25px}p{color:#475569;line-height:1.5}
 label{display:block;font-size:13px;font-weight:700;margin:18px 0 6px}
 input{box-sizing:border-box;width:100%;min-height:44px;padding:10px;border:1px solid #64748b;border-radius:8px;font:inherit}
 button{width:100%;margin-top:22px;padding:13px;border:0;border-radius:8px;background:#4f46e5;color:white;font:inherit;font-weight:700;cursor:pointer}
-button:disabled{opacity:.5}button.secondary{background:#475569}button.small{width:auto;margin:5px;padding:8px 12px;font-size:13px}section.panel{border-top:1px solid #cbd5e1;margin-top:20px;padding-top:15px}table{width:100%;border-collapse:collapse;font-size:13px}td,th{text-align:left;padding:7px;border-bottom:1px solid #e2e8f0}select{padding:7px;max-width:100%}#account-panel{width:100%}main:has(#signed-in:not([hidden])){width:min(720px,calc(100% - 40px))}#message{color:#b91c1c}#secret{overflow-wrap:anywhere;font-weight:700;color:#0f172a}
+button:disabled{opacity:.5}button.secondary{background:#475569}button.small{width:auto;margin:5px;padding:8px 12px;font-size:13px}section.panel{border-top:1px solid #cbd5e1;margin-top:20px;padding-top:15px}#setup-qr,#user-mfa-qr{width:204px;min-height:204px;margin:14px auto;padding:10px;background:#fff}#setup-qr img,#user-mfa-qr img{display:block}details{margin:12px 0}summary{cursor:pointer}table{width:100%;border-collapse:collapse;font-size:13px}td,th{text-align:left;padding:7px;border-bottom:1px solid #e2e8f0}select{padding:7px;max-width:100%}#account-panel{width:100%}main:has(#signed-in:not([hidden])){width:min(720px,calc(100% - 40px))}#message{color:#b91c1c}#secret{overflow-wrap:anywhere;font-weight:700;color:#0f172a}
 [hidden]{display:none!important}
 </style></head><body><main>
 <h1>Caffoot Lite</h1><p id="intro">Loading…</p>
 <form id="form" hidden>
 <div id="credentials"><label for="username">Username</label><input id="username" autocomplete="username" required maxlength="256">
 <label for="password">Password</label><input id="password" type="password" autocomplete="current-password" required></div>
-<div id="enrolment" hidden><p>Add this secret to your authenticator app, then enter its six-digit code to finish setup.</p><p id="secret"></p></div>
+<div id="enrolment" hidden><p>Scan this QR code in your authenticator app, then enter its six-digit code to finish setup.</p><div id="setup-qr" role="img" aria-label="Authenticator setup QR code"></div><details><summary>Can’t scan? Show setup key</summary><p id="secret"></p></details></div>
 <div id="code-field" hidden><label for="code">Authenticator code</label><input id="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6"></div>
-<p id="message" role="alert"></p><button id="submit" type="submit">Continue</button></form><section id="signed-in" hidden><p id="signed-in-message"></p><p><a href="/inventory" id="open-inventory">Open inventory</a></p><section id="mfa-panel" class="panel" hidden><h2>Authenticator setup</h2><p>Enrol an authenticator before receiving editing or administrator access.</p><form id="start-mfa"><label for="mfa-password">Your password</label><input id="mfa-password" type="password" autocomplete="current-password" required><button type="submit">Start MFA enrolment</button></form><form id="confirm-mfa" hidden><p>Add this secret to your authenticator app:</p><p id="user-mfa-secret"></p><label for="user-mfa-code">Six-digit authenticator code</label><input id="user-mfa-code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required><button type="submit">Confirm MFA</button></form></section><section class="panel"><h2>Change password</h2><form id="change-password"><label for="current-password">Current password</label><input id="current-password" type="password" autocomplete="current-password" required><label for="new-password">New password</label><input id="new-password" type="password" autocomplete="new-password" required><button type="submit">Change password</button></form></section><section id="account-panel" class="panel" hidden><h2>Users</h2><form id="create-user"><label for="new-username">Username</label><input id="new-username" required maxlength="256"><label for="initial-password">Initial password</label><input id="initial-password" type="password" required><button type="submit">Create user</button></form><div id="users-table"></div></section><p id="account-message" role="status"></p><button id="sign-out" class="secondary" type="button">Sign out</button></section>
-</main><script>
+<p id="message" role="alert"></p><button id="submit" type="submit">Continue</button></form><section id="signed-in" hidden><p id="signed-in-message"></p><p><a href="/inventory" id="open-inventory">Open inventory</a></p><section id="mfa-panel" class="panel" hidden><h2>Authenticator setup</h2><p>Enrol an authenticator before receiving editing or administrator access.</p><form id="start-mfa"><label for="mfa-password">Your password</label><input id="mfa-password" type="password" autocomplete="current-password" required><button type="submit">Start MFA enrolment</button></form><form id="confirm-mfa" hidden><p>Scan this QR code in your authenticator app:</p><div id="user-mfa-qr" role="img" aria-label="Authenticator setup QR code"></div><details><summary>Can’t scan? Show setup key</summary><p id="user-mfa-secret"></p></details><label for="user-mfa-code">Six-digit authenticator code</label><input id="user-mfa-code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required><button type="submit">Confirm MFA</button></form></section><section class="panel"><h2>Change password</h2><form id="change-password"><label for="current-password">Current password</label><input id="current-password" type="password" autocomplete="current-password" required><label for="new-password">New password</label><input id="new-password" type="password" autocomplete="new-password" required><button type="submit">Change password</button></form></section><section id="account-panel" class="panel" hidden><h2>Users</h2><form id="create-user"><label for="new-username">Username</label><input id="new-username" required maxlength="256"><label for="initial-password">Initial password</label><input id="initial-password" type="password" required><button type="submit">Create user</button></form><div id="users-table"></div></section><p id="account-message" role="status"></p><button id="sign-out" class="secondary" type="button">Sign out</button></section>
+</main><script src="/assets/qrcode.min.js"></script><script>
 'use strict';
 const $=id=>document.getElementById(id);
 let mode='login';
 let csrfToken='';
 let signedInUser='';
+function showMfaQr(id,uri){
+ const holder=$(id);holder.replaceChildren();
+ try{
+  new QRCode(holder,{text:uri,width:204,height:204,correctLevel:QRCode.CorrectLevel.M});
+ }catch(error){
+  holder.textContent='QR code unavailable. Use the setup key below.';
+ }
+}
 async function showSession(){
  const r=await fetch('/api/session',{cache:'no-store'});
  if(!r.ok)return false;
@@ -60,9 +68,9 @@ $('form').addEventListener('submit',async e=>{
  const data={username:$('username').value,password:$('password').value};
  try{
  if(mode==='setup'){
-   const r=await request('/api/setup',data);$('secret').textContent=r.mfaSecret;mode='enrol';display();
+   const r=await request('/api/setup',data);$('secret').textContent=r.mfaSecret;mode='enrol';display();showMfaQr('setup-qr',r.mfaUri);
  }else if(mode==='resume'){
-   const r=await request('/api/setup/mfa-secret',data);$('secret').textContent=r.mfaSecret;mode='enrol';display();
+   const r=await request('/api/setup/mfa-secret',data);$('secret').textContent=r.mfaSecret;mode='enrol';display();showMfaQr('setup-qr',r.mfaUri);
  }else if(mode==='enrol'){
    await request('/api/setup/mfa',{...data,mfa_code:$('code').value});mode='login';display();$('message').style.color='#166534';$('message').textContent='MFA enrolled. Sign in to continue.';
  }else{
@@ -76,7 +84,7 @@ $('form').addEventListener('submit',async e=>{
 $('start-mfa').addEventListener('submit',async event=>{
  event.preventDefault();try{
   const result=await request('/api/account/mfa/start',{password:$('mfa-password').value});
-  $('user-mfa-secret').textContent=result.mfaSecret;$('start-mfa').hidden=true;$('confirm-mfa').hidden=false;
+  $('user-mfa-secret').textContent=result.mfaSecret;$('start-mfa').hidden=true;$('confirm-mfa').hidden=false;showMfaQr('user-mfa-qr',result.mfaUri);
  }catch(error){$('account-message').textContent=error.message}
 });
 $('confirm-mfa').addEventListener('submit',async event=>{

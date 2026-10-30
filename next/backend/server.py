@@ -18,7 +18,7 @@ from .reset_inventory import reset_inventory
 from .ipam_repair import apply_ipam_repairs
 from .schema import initialise_database as migrate_database
 from .accounts import bootstrap_first_admin, confirm_admin_mfa, verify_password, hash_password
-from .mfa import new_secret, verify_code
+from .mfa import new_secret, provisioning_uri, verify_code
 from .import_drafts import ImportDrafts
 from .request_auth import authenticated_account, csrf_for_session
 from .http_security import read_session_cookie, session_cookie, clear_session_cookie
@@ -39,7 +39,8 @@ MAX_IMPORT_BYTES = 10 * 1024 * 1024
 ASSET_ROOT = Path(__file__).resolve().parent.parent / "assets"
 PUBLIC_ASSETS = {"favicon.ico": "image/x-icon",
                  "apple-touch-icon.png": "image/png",
-                 "caffoot-icon-1024.png": "image/png"}
+                 "caffoot-icon-1024.png": "image/png",
+                 "qrcode.min.js": "application/javascript; charset=utf-8"}
 IMPORT_DRAFTS = ImportDrafts()
 IMPORT_ROUTES = frozenset(("/api/import/preview", "/api/import/access-point-choices",
                            "/api/import/confirm", "/api/import/cancel"))
@@ -389,11 +390,12 @@ class Handler(BaseHTTPRequestHandler):
                         account_id, secret = bootstrap_first_admin(
                             connection, payload["username"], payload["password"]
                         )
-                        self.respond(200, {"accountId": account_id, "mfaSecret": secret})
+                        self.respond(200, {"accountId": account_id, "mfaSecret": secret,
+                                           "mfaUri": provisioning_uri(payload["username"].strip(), secret)})
                     else:
                         from .accounts import verify_password
                         row = connection.execute(
-                            "SELECT id,password_hash FROM accounts WHERE username=? AND is_admin=1",
+                            "SELECT id,password_hash,username FROM accounts WHERE username=? AND is_admin=1",
                             (payload["username"],)
                         ).fetchone()
                         if row is None or not verify_password(payload["password"], row[1]):
@@ -402,7 +404,8 @@ class Handler(BaseHTTPRequestHandler):
                             pending = connection.execute("SELECT mfa_secret FROM accounts WHERE id=? AND mfa_confirmed=0", (row[0],)).fetchone()
                             if pending is None:
                                 raise ValueError("MFA already enrolled")
-                            self.respond(200, {"mfaSecret": pending[0]})
+                            self.respond(200, {"mfaSecret": pending[0],
+                                               "mfaUri": provisioning_uri(row[2], pending[0])})
                         else:
                             confirm_admin_mfa(connection, row[0], payload.get("mfa_code"))
                             self.respond(200, {"status": "mfa enrolled"})
@@ -581,18 +584,18 @@ class Handler(BaseHTTPRequestHandler):
                     if set(payload) != {"password"}:
                         raise ValueError("Password required")
                     row = connection.execute(
-                        "SELECT password_hash,mfa_secret,mfa_confirmed FROM accounts WHERE id=?",
+                        "SELECT username,password_hash,mfa_secret,mfa_confirmed FROM accounts WHERE id=?",
                         (actor,),
                     ).fetchone()
-                    if row is None or not verify_password(payload["password"], row[0]):
+                    if row is None or not verify_password(payload["password"], row[1]):
                         raise ValueError("Invalid password")
-                    if row[2]:
+                    if row[3]:
                         raise ValueError("MFA already enrolled")
-                    secret = row[1] or new_secret()
-                    if not row[1]:
+                    secret = row[2] or new_secret()
+                    if not row[2]:
                         connection.execute("UPDATE accounts SET mfa_secret=? WHERE id=?", (secret, actor))
                         connection.commit()
-                    result = {"mfaSecret": secret}
+                    result = {"mfaSecret": secret, "mfaUri": provisioning_uri(row[0], secret)}
                 elif self.path == "/api/account/mfa/confirm":
                     if set(payload) != {"code"}:
                         raise ValueError("Authenticator code required")

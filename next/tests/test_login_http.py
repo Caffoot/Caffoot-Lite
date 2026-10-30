@@ -10,7 +10,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from backend.accounts import bootstrap_first_admin, confirm_admin_mfa
-from backend.mfa import code_at
+from backend.mfa import code_at, provisioning_uri
 from backend.schema import initialise_database
 from backend.server import Handler
 
@@ -53,6 +53,25 @@ class LoginHttpTests(unittest.TestCase):
         cookie = response.getheader("Set-Cookie")
         conn.close()
         return status, body, cookie
+
+    def test_first_admin_and_resume_supply_authenticator_qr_uri(self):
+        with sqlite3.connect(self.path) as db:
+            db.execute("DELETE FROM accounts")
+        headers = {"Origin": ORIGIN, "Content-Type": "application/json"}
+        status, created, _ = self.request(
+            "POST", "/api/setup",
+            {"username": "New Owner", "password": "test-password"}, headers,
+        )
+        self.assertEqual(status, 200)
+        self.assertEqual(created["mfaUri"],
+                         provisioning_uri("New Owner", created["mfaSecret"]))
+        status, resumed, _ = self.request(
+            "POST", "/api/setup/mfa-secret",
+            {"username": "New Owner", "password": "test-password"}, headers,
+        )
+        self.assertEqual(status, 200)
+        self.assertEqual(resumed["mfaSecret"], created["mfaSecret"])
+        self.assertEqual(resumed["mfaUri"], created["mfaUri"])
 
     def test_login_session_logout(self):
         headers = {"Origin": ORIGIN, "Content-Type": "application/json"}
