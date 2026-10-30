@@ -9246,6 +9246,20 @@ window.addEventListener('load', async () => {
     auditHistory = Array.isArray(snapshot.changeHistory) ? snapshot.changeHistory : [];
     auditBaseline = JSON.stringify(appState);
     const permissions = snapshot.sections || {};
+    // Inventory state is refreshed from SQLite when another user has saved.
+    // The viewer never writes a stale browser snapshot back to the server.
+    async function refreshCentralInventory() {
+      const response = await fetch('/api/inventory/state', {cache:'no-store'});
+      if (!response.ok) throw new Error('Unable to refresh central inventory.');
+      const next = await response.json();
+      for (const key of collections) {
+        if (Object.prototype.hasOwnProperty.call(next,key)) appState[key] = next[key];
+      }
+      for (const [key,value] of Object.entries(next.settings || {})) appState[key]=value;
+      auditHistory = Array.isArray(next.changeHistory) ? next.changeHistory : [];
+      auditBaseline = JSON.stringify(appState);
+      renderContent();
+    }
     // The published interface is unchanged. Until backend saves are connected,
     // present it strictly as a central-inventory viewer, never as a local editor.
     const section = {devices:'Devices',ipam:'IPAM',racks:'Racks'};
@@ -9266,27 +9280,35 @@ window.addEventListener('load', async () => {
     notice.style.cssText='position:fixed;bottom:12px;left:12px;z-index:9999;background:#1e293b;color:white;padding:10px 14px;border-radius:8px;font:14px sans-serif;max-width:460px';
     notice.textContent='Central inventory view — editing is not yet enabled in this development build.';
     document.body.appendChild(notice);
+    // Keep all unconnected mutations blocked, including modal actions.
     const blockedActions = /^(add|create|edit|delete|remove|save|restore|reset|import|export|repair|assign|reserve|release|clear|bulk|duplicate|move|place|unplace|update|change|apply|confirm|choose-backup)/i;
     function applyReadOnly() {
       const root = document.getElementById('main-content');
       if (!root) return;
-      root.querySelectorAll('input,textarea,select').forEach(el=>{el.disabled=true});
-      root.querySelectorAll('button').forEach(el=>{
-        const action=el.dataset.action || '';
-        if (blockedActions.test(action) || el.type==='submit') el.disabled=true;
+      root.querySelectorAll('button').forEach(el => {
+        if (blockedActions.test(el.dataset.action || '') || el.type === 'submit') el.disabled = true;
       });
+      // Search and filter inputs are useful in the central inventory viewer.
+      // Do not disable them: doing so breaks established read-only browsing.
     }
     document.addEventListener('click', event => {
-      const el=event.target.closest('button,[data-action]');
+      const el = event.target.closest('button,[data-action]');
       if (!el) return;
-      if (blockedActions.test(el.dataset.action || '') || (el.matches('button') && el.type==='submit')) {
-        event.preventDefault();event.stopImmediatePropagation();
+      if (blockedActions.test(el.dataset.action || '') ||
+          (el.matches('button') && el.type === 'submit')) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
         showToast('Editing is not yet enabled in this development build.', 'error');
       }
     }, true);
-    document.addEventListener('submit', event => {event.preventDefault();event.stopImmediatePropagation()},true);
-    const root=document.getElementById('main-content');
-    new MutationObserver(applyReadOnly).observe(root,{childList:true,subtree:true});
+    document.addEventListener('submit', event => {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }, true);
+    const root = document.getElementById('main-content');
+    // Do not observe attributes: disabling controls would otherwise trigger
+    // a render loop. The existing view changes are tracked by child nodes.
+    new MutationObserver(applyReadOnly).observe(root, {childList:true,subtree:true});
     // Session and account management stay in the approved signed-in area.
     const sessionResponse = await fetch('/api/session', {cache:'no-store'});
     if (sessionResponse.ok) {
@@ -9297,6 +9319,17 @@ window.addEventListener('load', async () => {
       link.style.cssText='position:fixed;top:12px;right:12px;z-index:9999;background:#312e81;color:white;padding:8px 12px;border-radius:8px;font:13px sans-serif';
       document.body.append(link);
     }
+    const refresh = document.createElement('button');
+    refresh.type = 'button';
+    refresh.textContent = 'Refresh inventory';
+    refresh.style.cssText='position:fixed;bottom:12px;right:12px;z-index:9999;background:#312e81;color:white;padding:10px 14px;border-radius:8px;font:14px sans-serif';
+    refresh.addEventListener('click', async () => {
+      refresh.disabled = true;
+      try { await refreshCentralInventory(); showToast('Inventory refreshed'); }
+      catch (error) { showToast(error.message,'error'); }
+      finally { refresh.disabled = false; }
+    });
+    document.body.append(refresh);
     switchTab('dashboard');
   } catch (error) {
     document.getElementById('main-content').replaceChildren();
