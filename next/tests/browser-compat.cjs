@@ -157,7 +157,34 @@ async function run(){
   await page.locator('#bulk-hostname').fill('pool');
   await page.locator('#bulk-notes').fill('Bulk notes');
   await page.locator('form[data-form-action="bulk-ip"] button[type="submit"]').click();
+  const previewState=await page.evaluate(()=>({
+    request:pendingBulkIpAssignment,
+    blocked:isBlockedAction('apply-bulk-ip-assignment'),
+    changes:pendingBulkIpAssignment
+      ? planBulkSubnetAddressAssignment(
+          appState.subnets.find(s=>s.id===pendingBulkIpAssignment.subnetId),
+          pendingBulkIpAssignment.start,pendingBulkIpAssignment.end,
+          pendingBulkIpAssignment.status,pendingBulkIpAssignment.hostname,
+          pendingBulkIpAssignment.notes).changes.map(x=>x.ip) : [],
+    buttonDisabled:document.querySelector('[data-action="apply-bulk-ip-assignment"]')?.disabled
+  }));
+  assert.equal(previewState.blocked,false,'IPAM editor must be permitted to confirm bulk reservations');
+  assert.deepEqual(previewState.changes,['10.64.20.20','10.64.20.21','10.64.20.22'],
+    'Published bulk confirmation should preview the selected addresses');
+  const bulkResponse=page.waitForResponse(res=>res.url().endsWith('/api/ipam/allocation/bulk'),{timeout:7000});
   await page.locator('[data-action="apply-bulk-ip-assignment"]').click();
+  try {
+    assert.equal((await bulkResponse).status(),200,'Bulk IPAM save request rejected');
+  } catch(error) {
+    const afterward=await page.evaluate(()=>({
+      request:pendingBulkIpAssignment,
+      pendingSave,
+      blocked:isBlockedAction('apply-bulk-ip-assignment'),
+      dialogText:document.querySelector('#modal-content')?.textContent?.slice(-350),
+      toast:document.getElementById('toast-message')?.textContent
+    }));
+    throw Error('Bulk IPAM confirmation failed: '+JSON.stringify({previewState,afterward})+'; '+error.message);
+  }
   await persisted(page,s=>[20,21,22].every(n=>
     s.ipAllocations['10.64.20.'+n]?.status==='Reserved'),'Bulk IPAM reservation');
   assert.equal((await state(page)).ipAllocations['10.64.20.20'].notes,'Bulk notes');
