@@ -117,6 +117,7 @@ async function run(){
   await page.locator('#dev-type').selectOption('Desktop');
   await page.locator('#dev-mount-type').selectOption('Tabletop / Shelf Mounted');
   await page.locator('#dev-location').selectOption('Office');
+  await page.getByRole('tab',{name:'Networking'}).click();
   await page.locator('#dev-block').selectOption('__unassigned__');
   await page.locator('#dev-vlan').selectOption('17');
   const options=await page.locator('#dev-subnet option').evaluateAll(nodes=>nodes.map(x=>({id:x.value,label:x.textContent})));
