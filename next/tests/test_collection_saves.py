@@ -117,3 +117,38 @@ class CollectionSaveTests(unittest.TestCase):
                     self.db, 1, [{"collection": "subnets", "id": "s",
                                   "record": {"id": "s", "name": "Block"}}]
                 )
+
+    def test_vlan_delete_refuses_its_linked_network(self):
+        network = {"id": "net", "cidr": "10.0.0.0/24", "name": "Network",
+                   "vlan": 10, "gateway": "10.0.0.1"}
+        vlan = {"id": "v1", "name": "Network", "vlanId": 10}
+        self.change_ipam([
+            {"collection": "subnets", "id": "net", "record": network},
+            {"collection": "vlans", "id": "v1", "record": vlan},
+        ])
+        with self.assertRaisesRegex(ValueError, "Delete or reassign"):
+            self.change_ipam([
+                {"collection": "vlans", "id": "v1", "record": None},
+            ])
+        self.assertEqual(self.records("vlans"), [vlan])
+        self.change_ipam([
+            {"collection": "subnets", "id": "net", "record": None},
+            {"collection": "vlans", "id": "v1", "record": None},
+        ])
+        self.assertEqual(self.records("vlans"), [])
+
+    def test_legacy_vlan_ownership_can_be_updated(self):
+        block = {"id": "block", "kind": "container",
+                 "cidr": "10.0.0.0/16", "name": "Block"}
+        network = {"id": "net", "cidr": "10.0.0.0/24",
+                   "name": "Network", "vlan": 10, "gateway": "10.0.0.1",
+                   "parentId": "block"}
+        vlan = {"id": "v1", "name": "Network", "vlanId": 10}
+        self.change_ipam([
+            {"collection": "subnets", "id": "block", "record": block},
+            {"collection": "subnets", "id": "net", "record": network},
+            {"collection": "vlans", "id": "v1", "record": vlan},
+        ])
+        associated = dict(vlan, parentId="block")
+        self.change_ipam([{"collection": "vlans", "id": "v1", "record": associated}])
+        self.assertEqual(self.records("vlans"), [associated])

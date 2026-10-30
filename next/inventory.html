@@ -1400,7 +1400,7 @@ function hierarchyValidateTypes(subnets) {
             });
         }
 
-        function reconcileLegacyVlanOwnership() {
+        async function reconcileLegacyVlanOwnership() {
             const preview = previewLegacyVlanOwnershipInApp();
             const candidates = preview.filter(item => item.status === 'unique' && item.parentId);
             if (!candidates.length) {
@@ -1425,10 +1425,10 @@ function hierarchyValidateTypes(subnets) {
                 seen.add(key);
             }
             if (!window.confirm('Assign IP Address Block ownership to ' + candidates.length +
-                ' uniquely matched legacy VLAN records? Unassigned records will stay unchanged. Export a backup first.')) return;
+                ' uniquely matched legacy VLAN records? Unassigned records will stay unchanged.')) return;
             const before = JSON.stringify(appState);
             appState.vlans = proposed;
-            if (!saveState()) {
+            if (!nextIpamBridge || !await nextIpamBridge.saveSubnet(before, 'VLAN ownership updated.')) {
                 appState = JSON.parse(before);
                 showToast('Reconciliation was not saved; inventory restored.', 'error');
                 return;
@@ -5257,7 +5257,7 @@ function hierarchyValidateTypes(subnets) {
             else selectedSubnetId = previousSelection;
         }
 
-        function deleteVlan(vId) {
+        async function deleteVlan(vId) {
             const vlan = appState.vlans.find(v => v.id === vId);
             if (!vlan) return;
             // Match VLAN number AND parent block. Legacy records without parentId share the unassigned domain.
@@ -5275,7 +5275,11 @@ function hierarchyValidateTypes(subnets) {
             if (confirm('Delete this VLAN?')) {
                 const before = JSON.stringify(appState);
                 appState.vlans = appState.vlans.filter(v => v.id !== vId);
-                commitDeletionWithRollback(before, 'VLAN');
+                if (!nextIpamBridge || !await nextIpamBridge.saveSubnet(before, 'VLAN deleted.')) {
+                    appState = JSON.parse(before);
+                    renderContent();
+                    showToast('VLAN was not deleted because the changes could not be saved.', 'error');
+                } else renderContent();
             }
         }
 
@@ -9275,7 +9279,7 @@ window.addEventListener('load', async () => {
     return result;
   }
   const actionCanEditIpam = new Set(['bulk-ip','apply-bulk-ip-assignment',
-    'edit-subnet','edit-ipam-block']);
+    'edit-subnet','edit-ipam-block','delete-vlan','reconcile-legacy-vlans']);
   const actionCanEditDevice = new Set([
     'open-device-modal','edit-device','edit-device-from-details',
     'delete-device','delete-device-from-details',
@@ -9285,7 +9289,7 @@ window.addEventListener('load', async () => {
   function isBlockedAction(action, element = null) {
     if (editPermissions.Devices && action === 'confirm' &&
         element && element.closest('#hypervisor-selection-dialog,#platform-dialog')) return false;
-    return blockedActions.test(action) &&
+    return (blockedActions.test(action) || action === 'reconcile-legacy-vlans') &&
       !(editPermissions.Devices && actionCanEditDevice.has(action)) &&
       !(editPermissions.IPAM && actionCanEditIpam.has(action));
   }
@@ -9409,7 +9413,7 @@ window.addEventListener('load', async () => {
         return false;
       }
     },
-    async saveSubnet(beforeJson) {
+    async saveSubnet(beforeJson, successMessage='Subnet changes saved.') {
       if (!editPermissions.IPAM || pendingSave) {
         showToast('IPAM edit permission required or another save is in progress.', 'error');
         return false;
@@ -9430,7 +9434,7 @@ window.addEventListener('load', async () => {
       try {
         await postInventory('/api/ipam/subnets/save',{changes});
         await refreshCentralInventory(false);
-        showToast('Subnet changes saved.');
+        showToast(successMessage);
         return true;
       } catch(error) {
         showToast(error.message,'error');

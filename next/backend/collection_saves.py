@@ -5,7 +5,8 @@ from datetime import datetime, timezone
 from .application_integrity import validate_detached_application_state
 from .inventory import COLLECTIONS, reconstruct_inventory
 from .ipam_validation import ip_belongs_to_subnet
-from .normalisation_validation import validate_normalisation_devices, validate_normalisation_vlans
+from .normalisation_validation import (_number, validate_normalisation_devices,
+                                        validate_normalisation_vlans)
 from .permissions import can_access
 from .rack_validation import find_rack_import_conflicts
 
@@ -136,6 +137,22 @@ def change_ipam_subnet_and_vlan_records(connection, account_id, changes):
                 state[collection] = [record if item["id"] == identifier else item
                                      for item in records]
             operations.append((collection, identifier, record, existing))
+
+        # The published VLAN removal workflow refuses to remove a linked VLAN.
+        for collection, identifier, record, existing in operations:
+            if collection != "vlans" or record is not None or existing is None:
+                continue
+            domain = existing.get("parentId") or "__unassigned__"
+            linked = any(
+                (not subnet.get("kind") or subnet.get("kind") == "network") and
+                _number(subnet.get("vlan")) == _number(existing.get("vlanId")) and
+                (subnet.get("parentId") or "__unassigned__") == domain
+                for subnet in state["subnets"]
+            )
+            if linked:
+                raise ValueError(
+                    "Delete or reassign the linked subnet before deleting this VLAN."
+                )
 
         # Retain the published form's CIDR dependency and gateway rules.
         for collection, identifier, record, _ in operations:
