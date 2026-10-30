@@ -10,6 +10,10 @@ from .permissions import can_access
 from .rack_validation import find_rack_import_conflicts
 
 
+_RACK_PLACEMENT_FIELDS = frozenset((
+    "rackId", "face", "rackUStart", "rackUEnd", "rackUHeight", "mountType",
+))
+
 _GUEST_FIELDS = frozenset((
     "virtualHostId", "status", "virtualPlatform",
     "previousVirtualHosts", "previousVirtualPlatforms",
@@ -117,6 +121,11 @@ def save_reserved_device(connection, account_id, device_id, revision, record, se
             raise ValueError("Device has changed since editing began")
         candidate = reconstruct_inventory(connection)
         previous = next(device for device in candidate["devices"] if device["id"] == device_id)
+        if section == "Racks":
+            changed = {key for key in set(previous) | set(record)
+                       if previous.get(key) != record.get(key)}
+            if not changed.issubset(_RACK_PLACEMENT_FIELDS):
+                raise PermissionError("Racks edit permission allows rack placement changes only")
         candidate["devices"] = [record if device["id"] == device_id else device
                                 for device in candidate["devices"]]
         if related_devices and not can_access(connection, account_id, "Devices", edit=True):

@@ -5764,6 +5764,9 @@ function hierarchyValidateTypes(subnets) {
         }
 
         function openAssignDeviceModal(rackId, slotU, editDeviceId = null) {
+            if (!nextRackBridge?.canEdit()) {
+                showToast('Racks edit permission required.', 'error'); return;
+            }
             const rack = appState.racks.find(r => r.id === rackId);
             if (!rack) { showToast('Select a rack before mounting a device.', 'error'); return; }
             const occupant = appState.devices.find(d => d.rackId === rackId && (d.face || 'front') === activeRackFace &&
@@ -5853,7 +5856,7 @@ function hierarchyValidateTypes(subnets) {
             select.value = String(chosen);
         }
 
-        function handleAssignSubmit(e, rackId, defaultSlot) {
+        async function handleAssignSubmit(e, rackId, defaultSlot) {
             e.preventDefault();
             const before = JSON.stringify(appState);
             const deviceId = document.getElementById('assign-device-id')?.value;
@@ -5888,7 +5891,7 @@ function hierarchyValidateTypes(subnets) {
                 // Preserve the physical location when moving between racks.
             }
 
-            if (!saveState()) {
+            if (!nextRackBridge || !await nextRackBridge.savePlacement(deviceId)) {
                 appState = JSON.parse(before);
                 showToast('Rack move was not saved; your previous placement was restored.', 'error');
                 return;
@@ -5898,7 +5901,7 @@ function hierarchyValidateTypes(subnets) {
             renderContent();
         }
 
-        function unassignDevice(deviceId) {
+        async function unassignDevice(deviceId) {
             const device = appState.devices.find(d => d.id === deviceId);
             if (device) {
                 const before = JSON.stringify(appState);
@@ -5907,7 +5910,7 @@ function hierarchyValidateTypes(subnets) {
                 device.rackUEnd = null;
                 // Preserve the physical location when unassigning a rack.
                 device.mountType = 'Desktop';
-                if (!saveState()) {
+                if (!nextRackBridge || !await nextRackBridge.savePlacement(deviceId)) {
                     appState = JSON.parse(before);
                     showToast('Rack unassignment was not saved; original placement restored.', 'error');
                 }
@@ -8729,7 +8732,7 @@ function hierarchyValidateTypes(subnets) {
             closeModal();renderContent();
             });
         }
-        function moveRackAccessoryToPosition(id,rackId,startU){
+        async function moveRackAccessoryToPosition(id,rackId,startU){
             const a=(appState.rackAccessories||[]).find(x=>x.id===id);
             if(!a)return false;
             if(rackAccessoryTypeDefinitions[a.type]?.vertical)return false;
@@ -8737,11 +8740,16 @@ function hierarchyValidateTypes(subnets) {
             const error=validateRackAccessoryPlacement(candidate,id);
             if(error){showToast(error,'error');return false;}
             const before=JSON.stringify(appState);Object.assign(a,candidate);
-            if(!saveState()){appState=JSON.parse(before);showToast('Accessory move could not be saved. Original placement restored.','error');return false;}renderRackViewPreservingScrollPosition();return true;
+            if (!nextRackBridge || !await nextRackBridge.saveAccessory(id,candidate)) {
+                appState=JSON.parse(before);
+                showToast('Accessory move could not be saved. Original placement restored.','error');
+                return false;
+            }
+            renderRackViewPreservingScrollPosition();return true;
         }
 
         // single validated pathway for drag/drop and accessible click-to-move.
-        function moveDeviceToRackPosition(deviceId, rackId, targetU) {
+        async function moveDeviceToRackPosition(deviceId, rackId, targetU) {
             const device = appState.devices.find(d => d.id === deviceId);
             if (!device || !rackId) { showToast('Device or rack was not found.', 'error'); return false; }
             const height = Math.max(1, Number(device.rackUHeight) || (Number(device.rackUEnd) - Number(device.rackUStart) + 1) || 1);
@@ -8757,7 +8765,7 @@ function hierarchyValidateTypes(subnets) {
             device.rackUHeight = height;
             device.mountType = 'Rack Mounted';
             // Drag-and-drop rack placement must preserve the physical location.
-            if (!saveState()) {
+            if (!nextRackBridge || !await nextRackBridge.savePlacement(deviceId)) {
                 appState = JSON.parse(before);
                 showToast('Move could not be saved; original placement restored.', 'error');
                 return false;
@@ -8844,6 +8852,7 @@ function hierarchyValidateTypes(subnets) {
         }
         document.addEventListener('dragstart',event=>{
             const source=event.target.closest('[data-vertical-accessory]');
+            if (source && !nextRackBridge?.canEdit()) { event.preventDefault(); return; }
             if(!source)return;
             draggedVerticalRackAccessoryId=source.dataset.verticalAccessory;
             event.dataTransfer.effectAllowed='move';
@@ -8869,7 +8878,7 @@ function hierarchyValidateTypes(subnets) {
             rail.appendChild(preview);
             event.dataTransfer.dropEffect=invalid?'none':'move';
         });
-        document.addEventListener('drop',event=>{
+        document.addEventListener('drop',async event=>{
             if(!draggedVerticalRackAccessoryId)return;
             event.preventDefault();event.stopImmediatePropagation();
             const rail=event.target.closest('.vertical-rack-accessory-rail');
@@ -8880,7 +8889,11 @@ function hierarchyValidateTypes(subnets) {
             if(!placement||placement.error){if(placement?.error)showToast(placement.error,'error');return;}
             const before=JSON.stringify(appState);
             Object.assign(a,placement.candidate);
-            if(!saveState()){appState=JSON.parse(before);return;}
+            if (!nextRackBridge || !await nextRackBridge.saveAccessory(a.id, a)) {
+                appState=JSON.parse(before);
+                showToast('Accessory move could not be saved. Original placement restored.','error');
+                return;
+            }
             renderContent();
         });
         document.addEventListener('dragend',()=>{
@@ -8891,6 +8904,7 @@ function hierarchyValidateTypes(subnets) {
             const source = event.target.closest('[data-rack-device]');
             const accessory=event.target.closest('[data-rack-accessory]');
             if(!source&&!accessory)return;
+            if (!nextRackBridge?.canEdit()) { event.preventDefault(); return; }
             // Remember which U within the dragged item was grabbed, so moving
             // across an empty U does not jump by the full equipment height.
             const grabbed=source||accessory;
@@ -9299,7 +9313,9 @@ window.addEventListener('load', async () => {
     'edit-subnet','edit-ipam-block','delete-vlan','reconcile-legacy-vlans']);
   const actionCanEditRack = new Set(['open-rack-modal','edit-rack',
     'correct-rack-specifications','delete-rack','add-rack-accessory',
-    'add-vertical-rack-accessory','edit-rack-accessory','delete-rack-accessory']);
+    'add-vertical-rack-accessory','edit-rack-accessory','delete-rack-accessory',
+    'place-rack-item','placement-device','placement-accessory',
+    'assign-device','unassign-device','mount-rack-accessory']);
   const actionCanEditDevice = new Set([
     'open-device-modal','edit-device','edit-device-from-details',
     'delete-device','delete-device-from-details',
@@ -9325,7 +9341,7 @@ window.addEventListener('load', async () => {
             (sessionIsAdmin && button.closest('#next-user-create-form')) ||
             (editPermissions.Devices && button.closest('form[data-device-form="true"]')) ||
             (editPermissions.IPAM && button.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"]')) ||
-            (editPermissions.Racks && button.closest('form[data-form-action="rack"],#rack-accessory-form'))
+            (editPermissions.Racks && button.closest('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form'))
           ))) button.disabled = true;
     });
   }
@@ -9468,6 +9484,41 @@ window.addEventListener('load', async () => {
   };
   nextRackBridge = {
     canEdit: () => !!editPermissions.Racks,
+    async savePlacement(deviceId) {
+      if (!editPermissions.Racks || pendingSave) {
+        showToast('Racks edit permission required or another save is in progress.','error');
+        return false;
+      }
+      const record=appState.devices.find(device=>device.id===deviceId);
+      if (!record) { showToast('Device no longer exists.','error'); return false; }
+      pendingSave=true;
+      let reserved=false;
+      try {
+        const reservation=await postInventory('/api/devices/edit/start',{deviceId,section:'Racks'});
+        reserved=true;
+        if (deviceRevisions[deviceId] !== undefined &&
+            deviceRevisions[deviceId] !== reservation.revision)
+          throw new Error('Device has changed since editing began. Refresh the inventory.');
+        await postInventory('/api/devices/edit/save',{
+          deviceId,revision:reservation.revision,record,section:'Racks'
+        });
+        reserved=false;
+        try { await refreshCentralInventory(false); }
+        catch(error) {
+          showToast('Rack placement saved. Unable to refresh the latest inventory.','error');
+          return true;
+        }
+        showToast('Rack placement saved.');
+        return true;
+      } catch(error) {
+        showToast(error.message,'error');
+        return false;
+      } finally {
+        if (reserved)
+          await postInventory('/api/devices/edit/cancel',{deviceId,section:'Racks'}).catch(()=>{});
+        pendingSave=false;
+      }
+    },
     async save(rackId, record) {
       return this.persist('racks',rackId,record);
     },
@@ -9769,7 +9820,7 @@ window.addEventListener('load', async () => {
     if (isBlockedAction(action, element) || (element.matches('button') && element.type==='submit' &&
         !element.closest('form[data-device-form="true"],#next-user-create-form') &&
         !(editPermissions.IPAM && element.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"]')) &&
-        !(editPermissions.Racks && element.closest('form[data-form-action="rack"],#rack-accessory-form')))) {
+        !(editPermissions.Racks && element.closest('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form')))) {
       event.preventDefault();
       event.stopImmediatePropagation();
       showToast('This inventory operation is not yet connected to SQLite.', 'error');
@@ -9778,7 +9829,7 @@ window.addEventListener('load', async () => {
   document.addEventListener('submit',event => {
     if ((editPermissions.Devices && event.target.matches('form[data-device-form="true"]')) ||
         (editPermissions.IPAM && event.target.matches('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"]')) ||
-        (editPermissions.Racks && event.target.matches('form[data-form-action="rack"],#rack-accessory-form')) ||
+        (editPermissions.Racks && event.target.matches('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form')) ||
         (sessionIsAdmin && event.target.matches('#next-user-create-form'))) return;
     event.preventDefault();event.stopImmediatePropagation();
   },true);

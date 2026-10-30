@@ -420,3 +420,35 @@ class DeleteReservedDeviceTests(ReservedDeviceSaveTests):
         self.assertIsNotNone(self.db.execute(
             "SELECT id FROM inventory_devices WHERE id='d1'"
         ).fetchone())
+
+    def test_racks_section_can_move_device_with_reservation(self):
+        moved = dict(self.original, rackUStart=2, rackUEnd=2)
+        with patch("backend.device_saves.can_access",
+                   side_effect=lambda _c, _a, section, edit=False: section == "Racks"):
+            self.assertEqual(save_reserved_device(
+                self.db, 1, "d1", 0, moved, section="Racks"
+            ), 1)
+        result = self.db.execute(
+            "SELECT record_json FROM inventory_devices WHERE id='d1'"
+        ).fetchone()
+        self.assertEqual(json.loads(result[0])["rackUStart"], 2)
+
+    def test_racks_edit_permission_does_not_allow_unrelated_device_changes(self):
+        before = self.snapshot()
+        with patch("backend.device_saves.can_access",
+                   side_effect=lambda _c, _a, section, edit=False: section == "Racks"):
+            with self.assertRaisesRegex(PermissionError, "rack placement"):
+                save_reserved_device(self.db, 1, "d1", 0,
+                    dict(self.original, name="Unapproved"), section="Racks")
+        self.assertEqual(self.snapshot(), before)
+
+    def test_racks_section_collision_keeps_device_and_reservation(self):
+        before = self.snapshot()
+        with patch("backend.device_saves.can_access",
+                   side_effect=lambda _c, _a, section, edit=False: section == "Racks"):
+            with self.assertRaisesRegex(ValueError, "overlaps"):
+                save_reserved_device(
+                    self.db, 1, "d1", 0,
+                    dict(self.original, rackUStart=3, rackUEnd=3), section="Racks"
+                )
+        self.assertEqual(self.snapshot(), before)
