@@ -1891,6 +1891,7 @@ function hierarchyValidateTypes(subnets) {
         let nextSettingsBridge = null;
         let nextDeviceCatalogueBridge = null;
         let nextResetBridge = null;
+        let nextIntegrityRepairBridge = null;
         let nextRenderUsers = () => '';
         let nextImportAllowed = false;
         function saveState() { showToast('This inventory operation is not yet connected to SQLite.', 'error'); return false; }
@@ -2240,7 +2241,6 @@ function hierarchyValidateTypes(subnets) {
 
         // conservative repair planner. Never changes source data during preview.
         let inventoryIntegrityRepairPreview = null;
-        const PHASE11C_SNAPSHOT_KEY = 'caffoot_phase11c_pre_repair_v1';
         function planDeviceIpAllocationIntegrityRepairs(state=appState) {
             const fixes=[], blocked=[];
             const owners=new Map();
@@ -2277,71 +2277,27 @@ function hierarchyValidateTypes(subnets) {
             return {fixes,blocked};
         }
         function previewInventoryIntegrityRepairs() {
-            inventoryIntegrityRepairPreview={snapshot:JSON.stringify(appState),plan:planDeviceIpAllocationIntegrityRepairs()};
-            renderContent();
-        }
-        function downloadPreRepairInventorySnapshot() {
-            const raw=localStorage.getItem(PHASE11C_SNAPSHOT_KEY);
-            if(!raw) return showToast('No pre-repair snapshot is available.','error');
-            const url=URL.createObjectURL(new Blob([raw],{type:'application/json'}));
-            const a=document.createElement('a'); a.href=url;
-            a.download='caffoot_lite_pre_repair_snapshot.json'; document.body.appendChild(a);a.click();a.remove();
-            setTimeout(()=>URL.revokeObjectURL(url),1000);
+            if (!nextIntegrityRepairBridge) return;
+            void nextIntegrityRepairBridge.preview();
         }
         function applyPreviewedInventoryIntegrityRepairs() {
-            if(!inventoryIntegrityRepairPreview) return showToast('Run a repair preview first.','error');
-            if(JSON.stringify(appState)!==inventoryIntegrityRepairPreview.snapshot) {
-                inventoryIntegrityRepairPreview=null;renderContent();
-                return showToast('Inventory changed. Preview repairs again.','error');
-            }
-            const {fixes}=inventoryIntegrityRepairPreview.plan;
-            if(!fixes.length) return showToast('No safe repairs are pending.','error');
-            if(!confirm(`Apply ${fixes.length} proposed IPAM repair(s)? A pre-repair snapshot will be stored first. Conflicts are not changed.`)) return;
-            const before=JSON.stringify(appState);
-            const previousSnapshot=localStorage.getItem(PHASE11C_SNAPSHOT_KEY);
-            try {
-                // Snapshot must persist before any in-memory changes are made.
-                localStorage.setItem(PHASE11C_SNAPSHOT_KEY,before);
-                if(localStorage.getItem(PHASE11C_SNAPSHOT_KEY)!==before) throw new Error('Pre-repair safety snapshot could not be verified.');
-                for(const f of fixes) {
-                    const d=appState.devices.find(d=>d.id===f.deviceId && d.primaryIp===f.ip);
-                    if(!d) throw new Error('A device changed during repair.');
-                    const existing=appState.ipAllocations[f.ip] || {};
-                    if(existing.deviceId && existing.deviceId!==d.id) throw new Error('Conflicting IPAM owner.');
-                    appState.ipAllocations[f.ip]={...existing,...f.expected};
-                }
-                nextAuditReason='Phase 11C confirmed IPAM repairs';
-                if(!saveState()) throw new Error('Inventory validation or save failed.');
-                inventoryIntegrityRepairPreview=null;
-                renderContent();
-            } catch(error) {
-                appState=JSON.parse(before);
-                nextAuditReason='';
-                try {
-                    if(previousSnapshot===null) localStorage.removeItem(PHASE11C_SNAPSHOT_KEY);
-                    else localStorage.setItem(PHASE11C_SNAPSHOT_KEY,previousSnapshot);
-                } catch(_) {}
-                inventoryIntegrityRepairPreview=null;
-                renderContent();
-                showToast('Repair cancelled: '+error.message,'error');
-            }
+            if (!nextIntegrityRepairBridge) return;
+            void nextIntegrityRepairBridge.apply();
         }
         function renderIntegrityRepairPreviewHtml() {
             const preview=inventoryIntegrityRepairPreview;
-            const snapshotExists=!!personalSafeStorageGet(PHASE11C_SNAPSHOT_KEY);
             return `<section class="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-2xl p-5 space-y-4">
                 <h3 class="text-base font-bold text-slate-900 dark:text-white">Integrity Repair Preview</h3>
                 <p class="text-sm text-slate-700 dark:text-slate-200">Preview safe IPAM synchronisation changes before applying them. Conflicting owners, duplicate IPs, orphaned records and rack problems require manual review. No devices or racks are deleted.</p>
                 <div class="flex flex-wrap gap-2">
                     <button type="button" data-action="preview-inventory-integrity-repairs" class="px-4 py-2.5 rounded-xl bg-blue-800 text-white font-semibold">Preview Repairs</button>
-                    <button type="button" data-action="create-inventory-integrity-snapshot" ${snapshotExists?'':'disabled'} class="px-4 py-2.5 rounded-xl bg-slate-700 text-white font-semibold disabled:opacity-40">Download pre-repair snapshot</button>
                 </div>
                 ${preview?`<div class="space-y-3"><p class="font-semibold text-slate-900 dark:text-white">${preview.plan.fixes.length} proposed safe repair(s) · ${preview.plan.blocked.length} item(s) requiring review</p>
                     ${preview.plan.fixes.length?`<ul class="space-y-2">${preview.plan.fixes.map(f=>`<li class="text-sm text-slate-800 dark:text-slate-200 border-l-4 border-blue-600 pl-3">${escapeHtml(f.ip)} · ${escapeHtml(f.name)} — ${escapeHtml(f.reason)}</li>`).join('')}</ul>`:'<p class="text-sm text-slate-700 dark:text-slate-200">No safe automatic repairs are needed.</p>'}
                     ${preview.plan.blocked.length?`<div class="rounded-xl border border-amber-400 p-3 space-y-2"><strong class="text-amber-900 dark:text-amber-200">Manual review required</strong><ul class="space-y-1">${preview.plan.blocked.map(x=>`<li class="text-sm text-slate-800 dark:text-slate-200">${escapeHtml(x)}</li>`).join('')}</ul></div>`:''}
                     ${preview.plan.fixes.length?'<button type="button" data-action="apply-inventory-integrity-repairs" class="px-4 py-2.5 rounded-xl bg-emerald-800 text-white font-semibold">Confirm And Apply Safe Repairs</button>':''}
                 </div>`:''}
-                <p class="text-xs text-slate-600 dark:text-slate-300">A browser-local snapshot is written before applying repairs. Download it for independent protection. Repair previews do not change saved data.</p>
+                <p class="text-xs text-slate-600 dark:text-slate-300">Repair previews do not change central inventory. Confirmed changes are saved in SQLite.</p>
             </section>`;
         }
 
@@ -5056,13 +5012,6 @@ function hierarchyValidateTypes(subnets) {
             }
             return issues;
         }
-        function commitDeletionWithRollback(before, label) {
-            if(saveState()) { renderContent(); return true; }
-            appState=JSON.parse(before);
-            renderContent();
-            showToast(`${label} was not deleted because the changes could not be saved.`, 'error');
-            return false;
-        }
         function showSubnetDeletionBlocked(subnet, blockedIps) {
             const block = appState.subnets.find(s => s.id === subnet.parentId);
             const rows = blockedIps.map(ip => {
@@ -7755,6 +7704,9 @@ function hierarchyValidateTypes(subnets) {
                         'Ongoing backup and restoration are handled by your Docker, Portainer or volume backup application. This JSON import is for one-way migration only.') +
                     '</div><h3 class="settings-group-title">Maintenance & Safety</h3>' +
                     '<div class="settings-group-grid">' +
+                    panel('Inventory Safety Check',
+                        'Check central inventory integrity without changing saved records.',
+                        button('check-inventory-safety','Check Inventory Safety','fa-shield-halved')) +
                     panel('Danger Zone — Clear System',
                         'Permanently reset all central inventory, IPAM records and managed options. Your accounts and permissions are kept.',
                         button('clear-inventory-data','Clear System / Clean Start','fa-triangle-exclamation')) +
@@ -7873,37 +7825,24 @@ function hierarchyValidateTypes(subnets) {
             }
         }
 
-        function compareCurrentInventoryWithSavedBrowserStorage() {
+        async function checkInventorySafety() {
             try {
+                if (!nextIntegrityRepairBridge) throw new Error('Central inventory unavailable.');
+                await nextIntegrityRepairBridge.reload();
                 const issues = validateApplicationState();
-                const key = typeof STORAGE_KEY !== 'undefined' ? STORAGE_KEY : 'caffoot_state';
-                const stored = localStorage.getItem(key);
-                if (!stored) issues.push('No saved inventory was found in browser storage.');
-                else {
-                    try {
-                        const saved = normaliseState(JSON.parse(stored));
-                        const current = normaliseState(JSON.parse(JSON.stringify(appState)));
-                        if (JSON.stringify(saved) !== JSON.stringify(current))
-                            issues.push('The saved inventory differs from the currently displayed inventory.');
-                    } catch (error) {
-                        issues.push('Saved browser inventory cannot be read: ' + error.message);
-                    }
-                }
                 if (issues.length) {
                     window.alert('INVENTORY SAFETY CHECK — ACTION REQUIRED\n\n' +
                         issues.slice(0, 12).map((issue, i) => (i + 1) + '. ' + issue).join('\n') +
                         (issues.length > 12 ? '\n...and ' + (issues.length - 12) + ' more issue(s).' : '') +
-                        '\n\nExport a JSON backup before making changes.');
+                        '\n\nReview the affected inventory records before making changes.');
                     return;
                 }
                 window.alert('INVENTORY SAFETY CHECK PASSED\n\n' +
                     appState.devices.length + ' devices, ' + appState.racks.length + ' racks, ' +
                     appState.subnets.length + ' subnets and ' + Object.keys(appState.ipAllocations).length +
-                    ' IPAM records checked.\n\nBrowser storage matches the active inventory. ' +
-                    'Keep a downloaded JSON backup as well: browser storage is not a permanent backup.');
-            } catch (error) {
-                window.alert('INVENTORY SAFETY CHECK FAILED\n\n' + error.message +
-                    '\n\nExport a JSON backup before making changes.');
+                    ' IPAM records checked.\n\nCentral inventory loaded successfully.');
+            } catch(error) {
+                window.alert('INVENTORY SAFETY CHECK FAILED\n\n' + error.message);
             }
         }
 
@@ -9116,7 +9055,7 @@ function hierarchyValidateTypes(subnets) {
                 case 'tab-ipam': switchTab('ipam'); break;
                 case 'tab-audit': switchTab('audit'); break;
                 case 'export-audit': exportAuditHistory(); break;
-                case 'check-inventory-safety': compareCurrentInventoryWithSavedBrowserStorage(); break;
+                case 'check-inventory-safety': void checkInventorySafety(); break;
                 case 'caffoot-licences': caffootShowLicences(); break;
                 case 'caffoot-check-updates': caffootCheckUpdates(); break;
                 case 'caffoot-update-guide': caffootUpdateGuide(); break;
@@ -9136,7 +9075,6 @@ function hierarchyValidateTypes(subnets) {
                 case 'change-appearance-theme': caffootSetTheme(target.dataset.theme); break;
                 case 'preview-inventory-integrity-repairs': previewInventoryIntegrityRepairs(); break;
                 case 'apply-inventory-integrity-repairs': applyPreviewedInventoryIntegrityRepairs(); break;
-                case 'create-inventory-integrity-snapshot': downloadPreRepairInventorySnapshot(); break;
                 case 'open-alert': {
                     const destination = target.dataset.destination;
                     const deviceId = target.dataset.deviceId;
@@ -9242,7 +9180,7 @@ window.addEventListener('load', async () => {
   }
   const actionCanEditIpam = new Set(['bulk-ip','apply-bulk-ip-assignment',
     'edit-subnet','edit-ipam-block','delete-vlan','reconcile-legacy-vlans',
-    'delete-subnet','confirm-delete-subnet']);
+    'delete-subnet','confirm-delete-subnet','apply-inventory-integrity-repairs']);
   const actionCanEditManaged = new Set([
     'edit-device-fascia-graphic','save-rack-fascia-graphic',
     'manufacturer-add','manufacturer-edit','manufacturer-remove',
@@ -9277,6 +9215,10 @@ window.addEventListener('load', async () => {
   ]);
   const blockedActions = /^(add|create|edit|delete|remove|save|restore|reset|import|export|repair|assign|reserve|release|clear|bulk|duplicate|move|place|unplace|update|change|apply|confirm|choose-backup)/i;
   function isBlockedAction(action, element = null) {
+    if (action === 'apply-inventory-integrity-repairs')
+      return !(permissions.Devices && editPermissions.IPAM);
+    if (action === 'preview-inventory-integrity-repairs')
+      return !(permissions.Devices && permissions.IPAM);
     if (action === 'clear-inventory-data')
       return !['Devices','IPAM','Racks'].every(section => editPermissions[section]);
     if (editPermissions.Devices && action === 'confirm' &&
@@ -9479,6 +9421,52 @@ window.addEventListener('load', async () => {
       } finally { pendingSave=false; }
     }
   };
+  nextIntegrityRepairBridge = {
+    reload: async () => refreshCentralInventory(false),
+    async preview() {
+      if (!permissions.Devices || !permissions.IPAM) {
+        showToast('Devices and IPAM view permissions required.','error');
+        return;
+      }
+      try {
+        await refreshCentralInventory(false);
+        inventoryIntegrityRepairPreview = {
+          snapshot: JSON.stringify(appState),
+          plan: planDeviceIpAllocationIntegrityRepairs()
+        };
+        renderContent();
+      } catch(error) {showToast(error.message,'error');}
+    },
+    async apply() {
+      const preview=inventoryIntegrityRepairPreview;
+      if (!preview) return showToast('Run a repair preview first.','error');
+      if (!editPermissions.IPAM || !permissions.Devices || pendingSave)
+        return showToast('IPAM edit permission required or another save is in progress.','error');
+      if (!preview.plan.fixes.length)
+        return showToast('No safe repairs are pending.','error');
+      if (!confirm('Apply '+preview.plan.fixes.length+
+        ' proposed IPAM repair(s)? Conflicts are not changed.')) return;
+      pendingSave=true;
+      try {
+        await refreshCentralInventory(false);
+        if (JSON.stringify(appState)!==preview.snapshot)
+          throw new Error('Inventory changed. Preview repairs again.');
+        const result=await postInventory('/api/inventory/ipam/repair',{
+          expectedFixes:preview.plan.fixes.map(fix=>({ip:fix.ip,deviceId:fix.deviceId}))
+        });
+        inventoryIntegrityRepairPreview=null;
+        await refreshCentralInventory(false);
+        renderContent();
+        showToast(result.count+' IPAM repair(s) saved.','success');
+        return true;
+      } catch(error) {
+        inventoryIntegrityRepairPreview=null;
+        renderContent();
+        showToast('Repair cancelled: '+error.message,'error');
+        return false;
+      } finally {pendingSave=false;}
+    }
+  };
   nextResetBridge = {
     async reset() {
       if (!['Devices','IPAM','Racks'].every(section => editPermissions[section]) || pendingSave) {
@@ -9488,7 +9476,13 @@ window.addEventListener('load', async () => {
       pendingSave=true;
       try {
         await postInventory('/api/inventory/reset', {confirmed:true});
-        await refreshCentralInventory(false);
+        appState = cloneDefaultData();
+        try { await refreshCentralInventory(false); }
+        catch(error) {
+          renderContent();
+          showToast('Clean Start saved. Unable to refresh the latest inventory.','error');
+          return true;
+        }
         selectedSubnetId = '';
         selectedRackId = '';
         renderContent();

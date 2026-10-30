@@ -15,6 +15,7 @@ from .collection_saves import (change_inventory_record,
 from .settings_saves import save_inventory_setting
 from .device_catalogue import change_device_catalogue
 from .reset_inventory import reset_inventory
+from .ipam_repair import apply_ipam_repairs
 from .schema import initialise_database as migrate_database
 from .accounts import bootstrap_first_admin, confirm_admin_mfa, verify_password, hash_password
 from .mfa import new_secret, verify_code
@@ -334,7 +335,8 @@ class Handler(BaseHTTPRequestHandler):
                          "/api/ipam/subnets/save", "/api/ipam/subnets/delete",
                          "/api/inventory/record/save",
                          "/api/inventory/record/delete", "/api/inventory/settings/save",
-                         "/api/inventory/device-catalogue/change", "/api/inventory/reset"):
+                         "/api/inventory/device-catalogue/change", "/api/inventory/reset",
+                         "/api/inventory/ipam/repair"):
             self.handle_user_mutation()
             return
         if self.path in IMPORT_ROUTES:
@@ -451,6 +453,11 @@ class Handler(BaseHTTPRequestHandler):
                         raise ValueError("Invalid inventory settings request")
                     save_inventory_setting(connection, actor, payload["key"], payload["value"])
                     result = {"status": "saved"}
+                elif self.path == "/api/inventory/ipam/repair":
+                    if set(payload) != {"expectedFixes"}:
+                        raise ValueError("Invalid IPAM repair request")
+                    repaired = apply_ipam_repairs(connection, actor, payload["expectedFixes"])
+                    result = {"status": "repaired", "count": repaired}
                 elif self.path == "/api/inventory/reset":
                     if payload != {"confirmed": True}:
                         raise ValueError("Clean Start confirmation required")
