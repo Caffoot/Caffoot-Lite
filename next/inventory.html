@@ -9935,13 +9935,6 @@ window.addEventListener('load', async () => {
     link.textContent=session.is_admin ? 'Users and account settings' : 'Account settings';
     link.style.cssText='position:fixed;top:12px;right:12px;z-index:9999;background:#312e81;color:white;padding:8px 12px;border-radius:8px;font:13px sans-serif';
     document.body.append(link);
-    const notice=document.createElement('div');
-    notice.setAttribute('role','status');
-    notice.style.cssText='position:fixed;bottom:12px;left:12px;z-index:9999;background:#1e293b;color:white;padding:10px 14px;border-radius:8px;font:13px sans-serif;max-width:460px';
-    notice.textContent=editPermissions.Devices
-      ? 'Devices save to SQLite. Other inventory editing is still being connected.'
-      : 'Central inventory view — editing requires the relevant permission.';
-    document.body.append(notice);
     const refresh=document.createElement('button');
     refresh.type='button';refresh.textContent='Refresh inventory';
     refresh.style.cssText='position:fixed;bottom:12px;right:12px;z-index:9999;background:#312e81;color:white;padding:10px 14px;border-radius:8px;font:14px sans-serif';

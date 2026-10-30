@@ -147,6 +147,85 @@ async function run(){
   await page.evaluate(()=>closeModal(true));
   console.log('Dependent location rename/delete and reload passed');
 
+  // Approved acceptance: new accounts initially lack inventory access.
+  await page.evaluate(()=>switchTab('users'));
+  await page.locator('#next-user-create-form input[name="username"]').fill('editor');
+  await page.locator('#next-user-create-form input[name="password"]').fill(password+'-Editor');
+  await page.locator('#next-user-create-form button[type="submit"]').click();
+  await page.waitForFunction(()=>[...document.querySelectorAll('#main-content h3')]
+    .some(h=>h.textContent.trim()==='editor'));
+  const editorId=await page.evaluate(async()=>{
+    const r=await fetch('/api/users',{cache:'no-store'});
+    if(!r.ok)throw Error('Unable to read users');
+    return (await r.json()).users.find(user=>user.username==='editor')?.id;
+  });
+  assert.ok(Number.isInteger(editorId),'User not saved to SQLite');
+  const second=await browser.newContext({
+    ignoreHTTPSErrors:true,viewport:{width:1440,height:950}
+  });
+  const editor=await second.newPage();
+  editor.setDefaultTimeout(12000);
+  await editor.goto(address+'/setup');
+  await editor.locator('#username').fill('editor');
+  await editor.locator('#password').fill(password+'-Editor');
+  await editor.locator('#submit').click();
+  await editor.locator('#signed-in:not([hidden])').waitFor();
+  assert.equal((await second.request.get(address+'/inventory')).status(),403,
+    'Newly created user must have no access');
+  await editor.locator('#mfa-panel:not([hidden])').waitFor();
+  await editor.locator('#mfa-password').fill(password+'-Editor');
+  await editor.locator('#start-mfa button[type="submit"]').click();
+  await editor.locator('#confirm-mfa:not([hidden])').waitFor();
+  const editorSecret=(await editor.locator('#user-mfa-secret').textContent()).trim();
+  assert.ok(editorSecret.length>=16,'Editor MFA secret missing');
+  await editor.locator('#user-mfa-code').fill(mfaCode(editorSecret));
+  await editor.locator('#confirm-mfa button[type="submit"]').click();
+  await editor.waitForFunction(()=>document.querySelector('#signed-in')?.hidden===true);
+
+  await page.locator('[data-next-user-permission][data-user-id="'+editorId+'"][data-section="Devices"]').selectOption('edit');
+  await page.waitForFunction(async id=>{
+    const r=await fetch('/api/users',{cache:'no-store'});
+    return r.ok && (await r.json()).users.find(user=>user.id===id)?.permissions.Devices==='edit';
+  },editorId);
+  await editor.locator('#username').fill('editor');
+  await editor.locator('#password').fill(password+'-Editor');
+  await editor.locator('#code').fill(mfaCode(editorSecret));
+  await editor.locator('#submit').click();
+  await editor.locator('#signed-in:not([hidden])').waitFor();
+  await editor.goto(address+'/inventory');
+  await editor.getByRole('button',{name:'Refresh inventory'}).waitFor();
+  assert.ok((await state(editor)).devices.some(d=>d.id===device.id),
+    'Second authenticated browser must see the shared device');
+  assert.ok(await editor.locator('#next-users-nav').evaluate(el=>el.classList.contains('hidden')),
+    'Users management must be administrator-only');
+  console.log('User creation, initially no access, editor MFA, permissions and shared viewing passed');
+
+  // Simple exclusive reservation across two simultaneous browsers.
+  const ownerStarted=page.waitForResponse(res=>res.url().endsWith('/api/devices/edit/start'));
+  await page.evaluate(id=>openDeviceModal(id),device.id);
+  assert.equal((await ownerStarted).status(),200);
+  await page.locator('#dev-name').waitFor();
+  const competing=editor.waitForResponse(res=>res.url().endsWith('/api/devices/edit/start'));
+  await editor.evaluate(id=>openDeviceModal(id),device.id);
+  assert.notEqual((await competing).status(),200,
+    'A second user must not reserve the same device');
+  assert.ok((await state(editor)).devices.some(d=>d.id===device.id),
+    'A competing edit must not prevent inventory viewing');
+
+  const ownerCancelled=page.waitForResponse(res=>res.url().endsWith('/api/devices/edit/cancel'));
+  await page.evaluate(()=>closeModal(true));
+  assert.equal((await ownerCancelled).status(),200);
+  const editorStarted=editor.waitForResponse(res=>res.url().endsWith('/api/devices/edit/start'));
+  await editor.evaluate(id=>openDeviceModal(id),device.id);
+  assert.equal((await editorStarted).status(),200,
+    'The device must be editable after the first user cancels');
+  await editor.locator('#dev-name').waitFor();
+  const editorCancelled=editor.waitForResponse(res=>res.url().endsWith('/api/devices/edit/cancel'));
+  await editor.evaluate(()=>closeModal(true));
+  assert.equal((await editorCancelled).status(),200);
+  await second.close();
+  console.log('Two-user exclusive device edit reservations passed');
+
   await page.evaluate(()=>switchTab('settings'));
   await page.locator('[data-action="clear-inventory-data"]').waitFor();
   page.once('dialog',d=>d.accept());
