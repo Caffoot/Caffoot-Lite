@@ -32,6 +32,22 @@ The existing backend checks and focused HTTPS/Chromium test run in GitHub Action
 
 The existing `tests/test_compose_lifecycle.py` is an **opt-in** Docker milestone test. Run the `Next Docker Compose lifecycle` GitHub Actions workflow manually at an integration milestone to verify published port configuration, persistent SQLite data and TLS certificate continuity across restart and recreation. A real Raspberry Pi 5/Portainer acceptance test is still required before release.
 
+## Simplest Portainer Web editor installation (prebuilt test image)
+
+For your Raspberry Pi 5, use **Stacks → Add stack → Web editor** and paste the complete configuration from [portainer-stack.yaml](portainer-stack.yaml). There is no Git source, username, token or Docker build needed on the Pi. The prebuilt `next-test` Docker image is built on the **Next** branch for `linux/arm64` (Pi 5) and `linux/amd64`. It is an **unreleased integration test image**, not a published Caffoot Lite release.
+
+Before deploying: confirm that the GitHub container package `ghcr.io/caffoot/caffoot-lite-next:next-test` is **public**. GitHub initially creates new packages private; the repository owner must change the package visibility to public under its package settings. A public GHCR image can then be pulled anonymously by Portainer. Don't enter a GitHub personal access token in Portainer for a public container image.
+
+The sample is already configured to persist data at `/portainer/Files/AppData/Config/caffoot_data`. On the Pi prepare the folder first:
+
+```sh
+sudo install -d -m 0750 -o 10001 -g 10001 /portainer/Files/AppData/Config/caffoot_data
+```
+
+Replace the illustrative address `10.128.20.3` with your Pi's real address if different. If port `8443` is occupied, change both `8443:8080` in the `ports` line and `:8443` in `CAFFOOT_WEB_ADDRESS`, as well as `CAFFOOT_PORT`. Keep `8080` after the colon in the port mapping because that is the container's fixed internal port. This stack uses the same SQLite backend, authentication and HTTPS implementation as the Git/Compose installation described below.
+
+When an updated test image is explicitly built at a future milestone, use Portainer's **Pull latest image** option when updating this stack; an existing running container does not change just because the registry tag changes. Do not use an unreleased `next-test` image as a production release.
+
 ## Raspberry Pi 5 installation through Portainer
 
 This uses the existing **Next** Docker Compose application, not a different image or inventory implementation. Portainer can deploy a Compose file directly from a Git repository, so you do not need to copy project files onto the Pi. Choose the Pi's ordinary Docker Standalone environment in Portainer.

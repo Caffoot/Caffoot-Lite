@@ -1,0 +1,41 @@
+name: Next prebuilt Portainer image
+
+# Build at an explicit integration milestone, not on every Next code commit.
+on:
+  push:
+    branches: [Next]
+    paths:
+      - ".github/workflows/next-portainer-image.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-image:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish Next test image for Pi 5 and PCs
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./next/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ghcr.io/caffoot/caffoot-lite-next:next-test
+            ghcr.io/caffoot/caffoot-lite-next:next-${{ github.sha }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/Caffoot/Caffoot-Lite
+            org.opencontainers.image.title=Caffoot Lite Next (unreleased test image)
+          provenance: false

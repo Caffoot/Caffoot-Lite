@@ -1,0 +1,21 @@
+# Caffoot Lite Next — Raspberry Pi 5 / Portainer test stack.
+# Replace the example address if your Pi uses a different one.
+# If 8443 is already taken, change the host port AND the web address.
+services:
+  caffoot-next:
+    image: ghcr.io/caffoot/caffoot-lite-next:next-test
+    container_name: caffoot-next
+    restart: unless-stopped
+    environment:
+      CAFFOOT_WEB_ADDRESS: "https://10.128.20.3:8443"
+      CAFFOOT_SERVER_ADDRESS: "10.128.20.3"
+      CAFFOOT_PORT: "8443"
+    ports:
+      - "8443:8080"
+    volumes:
+      - /portainer/Files/AppData/Config/caffoot_data:/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import ssl,urllib.request; urllib.request.urlopen('https://127.0.0.1:8080/health',context=ssl._create_unverified_context(),timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
