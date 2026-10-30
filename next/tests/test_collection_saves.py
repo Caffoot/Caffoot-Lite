@@ -4,7 +4,7 @@ import sqlite3
 import unittest
 from unittest.mock import patch
 
-from backend.collection_saves import change_inventory_record
+from backend.collection_saves import change_inventory_record, change_ipam_subnet_and_vlan_records
 from backend.inventory import stage_inventory
 from backend.schema import initialise_database
 
@@ -70,3 +70,50 @@ class CollectionSaveTests(unittest.TestCase):
             with self.assertRaises(PermissionError):
                 change_inventory_record(self.db, 1, "racks", "r1",
                                         {"id": "r1", "name": "Rack", "heightU": 12})
+ 
+    def change_ipam(self, changes):
+        with patch("backend.collection_saves.can_access", return_value=True):
+            change_ipam_subnet_and_vlan_records(self.db, 1, changes)
+
+    def test_network_and_linked_vlan_saved_in_one_transaction(self):
+        block = {"id": "block", "kind": "container",
+                 "cidr": "10.0.0.0/16", "name": "Main block", "parentId": None}
+        network = {"id": "net", "cidr": "10.0.0.0/24", "name": "Admin",
+                   "vlan": 10, "gateway": "10.0.0.1", "parentId": "block"}
+        vlan = {"id": "v1", "name": "Admin", "vlanId": 10,
+                "color": "indigo", "parentId": "block"}
+        self.change_ipam([
+            {"collection": "subnets", "id": "block", "record": block},
+            {"collection": "subnets", "id": "net", "record": network},
+            {"collection": "vlans", "id": "v1", "record": vlan}
+        ])
+        self.assertEqual(self.records("subnets"), [block, network])
+        self.assertEqual(self.records("vlans"), [vlan])
+        edited = dict(network, name="New name")
+        new_vlan = dict(vlan, name="New name")
+        self.change_ipam([
+            {"collection": "subnets", "id": "net", "record": edited},
+            {"collection": "vlans", "id": "v1", "record": new_vlan}
+        ])
+        self.assertEqual(self.records("subnets"), [block, edited])
+        self.assertEqual(self.records("vlans"), [new_vlan])
+
+    def test_failed_linked_vlan_save_preserves_original_subnet(self):
+        network = {"id": "net", "cidr": "10.0.0.0/24", "name": "Valid",
+                   "vlan": 10, "gateway": "10.0.0.1"}
+        with self.assertRaises(ValueError):
+            self.change_ipam([
+                {"collection": "subnets", "id": "net", "record": network},
+                {"collection": "vlans", "id": "bad",
+                 "record": {"id": "bad", "name": "Invalid", "vlanId": 5000}}
+            ])
+        self.assertEqual(self.records("subnets"), [])
+        self.assertEqual(self.records("vlans"), [])
+
+    def test_ipam_subnet_batch_requires_edit_permission(self):
+        with patch("backend.collection_saves.can_access", return_value=False):
+            with self.assertRaises(PermissionError):
+                change_ipam_subnet_and_vlan_records(
+                    self.db, 1, [{"collection": "subnets", "id": "s",
+                                  "record": {"id": "s", "name": "Block"}}]
+                )

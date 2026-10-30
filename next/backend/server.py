@@ -9,7 +9,7 @@ from urllib.parse import urlsplit
 
 from .device_saves import create_device, delete_reserved_device, save_reserved_device
 from .ipam_saves import change_independent_allocation, change_bulk_allocations
-from .collection_saves import change_inventory_record
+from .collection_saves import change_inventory_record, change_ipam_subnet_and_vlan_records
 from .settings_saves import save_inventory_setting
 from .schema import initialise_database as migrate_database
 from .accounts import bootstrap_first_admin, confirm_admin_mfa, verify_password, hash_password
@@ -327,6 +327,7 @@ class Handler(BaseHTTPRequestHandler):
                          "/api/devices/edit/save", "/api/devices/create",
                          "/api/devices/delete", "/api/ipam/allocation/save",
                          "/api/ipam/allocation/delete", "/api/ipam/allocation/bulk",
+                         "/api/ipam/subnets/save",
                          "/api/inventory/record/save",
                          "/api/inventory/record/delete", "/api/inventory/settings/save"):
             self.handle_user_mutation()
@@ -462,6 +463,13 @@ class Handler(BaseHTTPRequestHandler):
                     change_independent_allocation(
                         connection, actor, payload["ip"],
                         payload["record"] if self.path.endswith("/save") else None,
+                    )
+                    result = {"status": "saved"}
+                elif self.path == "/api/ipam/subnets/save":
+                    if set(payload) != {"changes"}:
+                        raise ValueError("Invalid subnet save request")
+                    change_ipam_subnet_and_vlan_records(
+                        connection, actor, payload["changes"]
                     )
                     result = {"status": "saved"}
                 elif self.path == "/api/ipam/allocation/bulk":
