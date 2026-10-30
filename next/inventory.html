@@ -9226,6 +9226,10 @@ window.addEventListener('load', async () => {
   ]);
   const blockedActions = /^(add|create|edit|delete|remove|save|restore|reset|import|export|repair|assign|reserve|release|clear|bulk|duplicate|move|place|unplace|update|change|apply|confirm|choose-backup)/i;
   function isBlockedAction(action, element = null) {
+    // The published file picker also receives a click. Do not intercept it
+    // for an authorised one-way import; the backend rechecks full edit access.
+    if (action === 'import-file' || action === 'next-import-pick')
+      return !nextImportAllowed;
     if (readOnlyActions.has(action)) return false;
     if (action === 'check-inventory-safety')
       return !['Devices','IPAM','Racks'].every(section => permissions[section]);
