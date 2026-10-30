@@ -7,6 +7,7 @@ name: Next prebuilt Portainer image
 # Pi 5 acceptance refresh: Users overview, live account summaries and sidebar submenu verified.
 # Pi 5 acceptance refresh: responsive compact Device General tab and full-width Users/History verified.
 # Pi 5 acceptance refresh: read-only presentation, personal settings, searchable selectors and staged MFA sign-in verified.
+# Pi 5 acceptance refresh: unobtrusive MFA guidance verified for unenrolled viewers and admin access controls.
 on:
   push:
     branches: [Next]
