@@ -55,6 +55,12 @@ class SessionHttpTests(unittest.TestCase):
         conn.close()
         return status, body, cache
 
+    def test_inventory_requires_authenticated_inventory_access(self):
+        status, body, cache = self.request("/inventory")
+        self.assertEqual(status, 401)
+        self.assertIn(b"unauthorised", body)
+        self.assertEqual(cache, "no-store")
+
     def post(self, path, data, token=None, csrf=None):
         conn = http.client.HTTPConnection("127.0.0.1", self.server.server_port)
         headers = {"Content-Type": "application/json", "Origin": "https://caffoot.example"}

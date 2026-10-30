@@ -11,7 +11,7 @@ WORKDIR /opt/caffoot
 COPY next/backend/ ./backend/
 COPY next/setup.html ./setup.html
 # Exact published interface retained for integration; not yet served.
-COPY app/caffoot-lite.html ./inventory.html
+COPY next/inventory.html ./inventory.html
 RUN mkdir -p /data && chown -R 10001:10001 /data /opt/caffoot
 USER 10001:10001
 EXPOSE 8080
