@@ -89,6 +89,8 @@ async function run(){
   await page.locator('#next-account-nav').waitFor();
   await page.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='Dashboard Overview');
   console.log('First administrator, MFA, sign-in and direct Dashboard arrival passed');
+  assert.equal(await page.locator('#next-dashboard-mfa-notice').count(),0,
+    'Enrolled administrators must not see MFA setup guidance');
   assert.equal(await page.getByRole('button',{name:'Refresh inventory'}).count(),0);
   for(const tab of ['ipam','devices','racks','audit','users','settings']){
     const navigation=page.locator('#sidebar [data-action="tab-'+tab+'"]');
@@ -369,6 +371,8 @@ async function run(){
   await editor.waitForURL('**/inventory');
   await editor.locator('#next-account-nav').waitFor();
   await editor.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='Dashboard Overview');
+  assert.equal(await editor.locator('#next-dashboard-mfa-notice').count(),0,
+    'Enrolled editors must not see MFA setup guidance');
   await editor.locator('#sidebar #next-account-nav').click();
   await editor.locator('#next-account-password-form').waitFor();
   assert.equal(await editor.locator('#page-title').textContent(),'My account');
@@ -424,6 +428,14 @@ async function run(){
     return (await r.json()).users.find(u=>u.username==='viewer')?.id;
   });
   assert.ok(Number.isInteger(viewerId));
+  const blockedEdit=page.locator('[data-next-user-permission][data-user-id="'+viewerId+'"][data-section="Devices"]');
+  await blockedEdit.selectOption('edit');
+  await page.waitForFunction(()=>document.querySelector('#toast-message')?.textContent.includes('must set up MFA in My account'));
+  await page.waitForFunction(id=>document.querySelector('[data-next-user-permission][data-user-id="'+id+'"][data-section="Devices"]')?.value==='',viewerId);
+  assert.equal(await page.evaluate(async id=>{
+    const user=(await (await fetch('/api/users')).json()).users.find(u=>u.id===id);
+    return user?.permissions?.Devices||null;
+  },viewerId),null,'Unenrolled users must not receive Edit permissions');
   for(const section of ['Devices','IPAM','Racks'])
     await page.locator('[data-next-user-permission][data-user-id="'+viewerId+'"][data-section="'+section+'"]').selectOption('read');
   await page.waitForFunction(async id=>{
@@ -438,6 +450,12 @@ async function run(){
   assert.ok(await viewer.locator('#code-field').evaluate(e=>e.hidden));
   await viewer.locator('#submit').click();
   await viewer.waitForURL('**/inventory');
+  await viewer.locator('#next-dashboard-mfa-notice').waitFor();
+  await viewer.locator('#next-dashboard-mfa-notice [data-action="select-account-section"]').click();
+  assert.equal(await viewer.locator('#page-title').textContent(),'My account');
+  await viewer.locator('#next-account-mfa-start').waitFor();
+  await viewer.locator('#sidebar [data-action="tab-dashboard"]').click();
+  await viewer.locator('#next-dashboard-mfa-notice').waitFor();
   assert.ok(await viewer.locator('#next-settings-nav').isHidden());
   assert.ok(await viewer.locator('#next-users-nav').isHidden());
   await viewer.locator('#sidebar [data-action="tab-devices"]').click();

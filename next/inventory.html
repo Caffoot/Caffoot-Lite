@@ -2725,6 +2725,15 @@ function hierarchyValidateTypes(subnets) {
                         </div>
                     </section>
 
+                    ${window.nextMfaEnrolled === false ? `<section id="next-dashboard-mfa-notice" role="note" class="rounded-2xl border border-sky-200 bg-sky-50 dark:border-sky-800 dark:bg-sky-950/30 p-4 sm:p-5">
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+                            <i class="fa-solid fa-shield-halved text-blue-700 dark:text-sky-300 text-xl" aria-hidden="true"></i>
+                            <div class="flex-1 min-w-0"><h3 class="font-bold text-slate-900 dark:text-white">Authenticator setup</h3>
+                            <p class="text-sm text-slate-700 dark:text-slate-200 mt-1">Editing inventory requires two-factor authentication. Read-only access does not. Set up your authenticator in My account before an administrator can grant editing permissions.</p></div>
+                            <button type="button" data-action="select-account-section" data-section="security" class="self-start sm:self-auto shrink-0 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold px-4 py-2.5">Set up MFA</button>
+                        </div>
+                    </section>` : ''}
+
                     <nav class="dashboard-tabs" aria-label="Dashboard sections" role="tablist">
                         ${[['overview','Overview','fa-house'],['insights','Network Insights','fa-chart-pie'],['activity','Activity & Alerts','fa-bell']].map(([id,label,icon])=>`<button type="button" role="tab" id="dashboard-tab-${id}" aria-controls="dashboard-panel-${id}" aria-selected="${activeDashboardTab===id}" tabindex="${activeDashboardTab===id?'0':'-1'}" class="dashboard-tab-control ${activeDashboardTab===id?'is-active':''}" data-action="dashboard-tab" data-dashboard-tab="${id}"><i class="fa-solid ${icon}" aria-hidden="true"></i><span>${label}</span></button>`).join('')}
                     </nav>
@@ -9996,6 +10005,8 @@ window.addEventListener('load', async () => {
         escapeHtml(user.username)+(user.isAdmin?' (administrator)':'')+'</h3>' +
         '<span class="text-sm text-slate-600 dark:text-slate-300">' +
         (user.active?'Active':'Disabled')+' · MFA '+(user.mfaEnrolled?'enrolled':'not enrolled')+'</span></div>';
+      if (!user.mfaEnrolled && !user.isAdmin)
+        html+='<p class="text-sm text-slate-600 dark:text-slate-300">Editing or administrator access requires MFA. Ask this user to set up their authenticator under My account → Password &amp; MFA first.</p>';
       if (user.isAdmin) html+='<p class="text-sm text-slate-600 dark:text-slate-300">Administrator: all inventory sections.</p>';
       else {
         html+='<div class="flex flex-wrap gap-4">';
@@ -10208,7 +10219,10 @@ window.addEventListener('load', async () => {
       userId:Number(select.dataset.userId),section:select.dataset.section,
       level:select.value||null
     }).catch(async error=>{
-      showToast(error.message,'error');
+      const message = /^MFA enrolment required for (editing|administrators)$/.test(error.message)
+        ? 'This user must set up MFA in My account before editing or administrator access can be granted.'
+        : error.message;
+      showToast(message,'error');
       await loadCentralUsers().catch(()=>{});
     });
   },true);
@@ -10272,6 +10286,7 @@ window.addEventListener('load', async () => {
     sessionIsAdmin=!!session.is_admin;
     signedInUsername=session.username;
     sessionMfaEnrolled=!!session.mfa_enrolled;
+    window.nextMfaEnrolled=sessionMfaEnrolled;
     document.getElementById('next-users-nav').classList.toggle('hidden', !sessionIsAdmin);
     document.getElementById('next-settings-nav').classList.toggle('hidden', !sessionIsAdmin);
     if (sessionIsAdmin) await loadCentralUsers();
