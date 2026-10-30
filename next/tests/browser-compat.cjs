@@ -96,7 +96,12 @@ async function run(){
       'This inventory operation is not yet connected to SQLite.');
   }
   await page.locator('#sidebar [data-action="tab-users"]').click();
-  await page.getByRole('heading',{name:'User Management'}).waitFor();
+  await page.getByRole('heading',{name:'User Management Overview'}).waitFor();
+  await page.getByText('Total users',{exact:true}).waitFor();
+  await page.getByText('Administrators',{exact:true}).waitFor();
+  await page.getByText('Users by role',{exact:true}).waitFor();
+  await page.getByText('MFA enrolment',{exact:true}).waitFor();
+  assert.ok(await page.locator('#users-sidebar-actions').isVisible());
   assert.equal(await page.locator('#next-account-password-form').count(),0,
     'User Management must not contain personal account settings');
   await page.locator('#sidebar #next-account-nav').click();
@@ -275,11 +280,18 @@ async function run(){
 
   // Approved acceptance: new accounts initially lack inventory access.
   await page.evaluate(()=>switchTab('users'));
+  await page.locator('#users-sidebar-actions [data-action="sidebar-users-add"]').click();
   await page.locator('#next-user-create-form input[name="username"]').fill('editor');
   await page.locator('#next-user-create-form input[name="password"]').fill(password+'-Editor');
   await page.locator('#next-user-create-form button[type="submit"]').click();
   await page.waitForFunction(()=>[...document.querySelectorAll('#main-content h3')]
     .some(h=>h.textContent.trim()==='editor'));
+  assert.equal(await page.locator('#users-sidebar-actions [data-action="sidebar-users-list"]').getAttribute('aria-current'),'page');
+  await page.locator('#users-sidebar-actions [data-action="sidebar-users-overview"]').click();
+  await page.getByText('Users by role',{exact:true}).waitFor();
+  assert.equal(await page.getByText('Total users',{exact:true}).locator('..').locator('p').textContent(),'2');
+  assert.equal(await page.getByText('Administrators',{exact:true}).locator('..').locator('p').textContent(),'1');
+  await page.locator('#users-sidebar-actions [data-action="sidebar-users-list"]').click();
   const editorId=await page.evaluate(async()=>{
     const r=await fetch('/api/users',{cache:'no-store'});
     if(!r.ok)throw Error('Unable to read users');
