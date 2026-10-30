@@ -237,6 +237,67 @@ async function run(){
   assert.deepEqual(clean.settings.deviceLocations,['Unknown']);
   assert.equal(clean.changeHistory.at(-1).reason,'Clean inventory reset');
   console.log('Confirmed Clean Start persisted with central Change History');
+
+  // Generate the backup with the unchanged published v1.3.3 exporter itself.
+  const published=await context.newPage();
+  await published.goto('file://'+path.resolve(root,'..','app','caffoot-lite.html'));
+  const v133={
+    subnets:[{id:'legacy-subnet',name:'Office',cidr:'10.0.0.0/24',
+              gateway:'10.0.0.1',vlan:20}],
+    vlans:[{id:'legacy-vlan',name:'Office',vlanId:20}],
+    racks:[],rackAccessories:[],
+    devices:[{id:'legacy-device',name:'legacy-pc',type:'Desktop',
+              mountType:'Desktop',location:'Office',primaryIp:'10.0.0.10',
+              assetTag:'ASSET-204',notes:'Preserve this published device note'}],
+    ipAllocations:{'10.0.0.10':{status:'Assigned',deviceId:'legacy-device',
+                                 notes:'Preserve this IPAM note'}},
+    deviceTypes:['Desktop','Unknown'],deviceLocations:['Unknown','Office'],
+    historicalSetting:{keep:[1,2,3]}
+  };
+  const exported=await published.evaluate(source=>{
+    if(typeof createInventoryBackup!=='function')
+      throw Error('Published v1.3.3 backup exporter is unavailable');
+    return createInventoryBackup(source);
+  },v133);
+  await published.close();
+  assert.equal(exported.caffootBackup.appVersion,'1.3.3');
+  const file={name:'caffoot_lite_backup_v1.3.3.json',
+    mimeType:'application/json',buffer:Buffer.from(JSON.stringify(exported))};
+  await page.evaluate(()=>switchTab('settings'));
+  async function chooseBackup(){
+    const chooser=page.waitForEvent('filechooser');
+    await page.locator('[data-action="next-import-pick"]').click();
+    await (await chooser).setFiles(file);
+    await page.getByRole('heading',{name:'Import Inventory from v1.3.3'}).waitFor();
+    await page.getByText('Review the complete inventory replacement',{exact:false}).waitFor();
+  }
+  await chooseBackup();
+  // Cancel must not mutate central inventory.
+  const cancelledImport=page.waitForResponse(res=>res.url().endsWith('/api/import/cancel'));
+  await page.locator('[data-next-import-action="cancel"]').click();
+  assert.equal((await cancelledImport).status(),200);
+  assert.equal((await state(page)).devices.length,0);
+  await chooseBackup();
+  const confirmation=page.locator('#next-import-replace-approval');
+  await confirmation.check();
+  await page.locator('[data-next-import-action="confirm"]').click();
+  const imported=await persisted(page,s=>s.devices.some(d=>d.id==='legacy-device'),'v1.3.3 import');
+  const legacy=imported.devices.find(d=>d.id==='legacy-device');
+  assert.equal(legacy.assetTag,'ASSET-204');
+  assert.equal(legacy.notes,'Preserve this published device note');
+  assert.equal(imported.ipAllocations['10.0.0.10'].notes,'Preserve this IPAM note');
+  assert.deepEqual(imported.settings.historicalSetting,{keep:[1,2,3]});
+  assert.equal(imported.subnets[0].id,'legacy-subnet');
+  const accountNames=await page.evaluate(async()=>{
+    const response=await fetch('/api/users',{cache:'no-store'});
+    if(!response.ok)throw Error('Users cannot be read after import');
+    return (await response.json()).users.map(x=>x.username);
+  });
+  assert.ok(accountNames.includes('owner')&&accountNames.includes('editor'),
+    'Import must preserve users and their account settings');
+  await page.reload();
+  assert.equal((await state(page)).devices[0].id,'legacy-device');
+  console.log('Published v1.3.3 export, cancelled review, confirmed one-way import, history fields and account retention passed');
   assert.deepEqual(errors,[],'Browser JavaScript errors');
 }
 run().then(async()=>{
