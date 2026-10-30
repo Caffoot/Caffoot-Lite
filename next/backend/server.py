@@ -10,6 +10,7 @@ from urllib.parse import urlsplit
 from .device_saves import create_device, delete_reserved_device, save_reserved_device
 from .ipam_saves import change_independent_allocation
 from .collection_saves import change_inventory_record
+from .settings_saves import save_inventory_setting
 from .schema import initialise_database as migrate_database
 from .accounts import bootstrap_first_admin, confirm_admin_mfa, verify_password, hash_password
 from .mfa import new_secret, verify_code
@@ -288,7 +289,7 @@ class Handler(BaseHTTPRequestHandler):
                          "/api/devices/edit/save", "/api/devices/create",
                          "/api/devices/delete", "/api/ipam/allocation/save",
                          "/api/ipam/allocation/delete", "/api/inventory/record/save",
-                         "/api/inventory/record/delete"):
+                         "/api/inventory/record/delete", "/api/inventory/settings/save"):
             self.handle_user_mutation()
             return
         if self.path in IMPORT_ROUTES:
@@ -398,7 +399,12 @@ class Handler(BaseHTTPRequestHandler):
                 if actor is None:
                     self.respond(403, {"error": "forbidden"})
                     return
-                if self.path in ("/api/inventory/record/save", "/api/inventory/record/delete"):
+                if self.path == "/api/inventory/settings/save":
+                    if set(payload) != {"key", "value"}:
+                        raise ValueError("Invalid inventory settings request")
+                    save_inventory_setting(connection, actor, payload["key"], payload["value"])
+                    result = {"status": "saved"}
+                elif self.path in ("/api/inventory/record/save", "/api/inventory/record/delete"):
                     expected = ({"collection", "id", "record"}
                                 if self.path.endswith("/save") else {"collection", "id"})
                     if set(payload) != expected:
