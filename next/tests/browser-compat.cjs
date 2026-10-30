@@ -98,7 +98,7 @@ async function run(){
   await page.locator('#sidebar [data-action="tab-users"]').click();
   await page.getByRole('heading',{name:'User Management Overview'}).waitFor();
   await page.getByText('Total users',{exact:true}).waitFor();
-  await page.getByText('Administrators',{exact:true}).waitFor();
+  await page.getByRole('heading',{name:'Administrators',exact:true}).waitFor();
   await page.getByText('Users by role',{exact:true}).waitFor();
   await page.getByText('MFA enrolment',{exact:true}).waitFor();
   assert.ok(await page.locator('#users-sidebar-actions').isVisible());
@@ -290,7 +290,7 @@ async function run(){
   await page.locator('#users-sidebar-actions [data-action="sidebar-users-overview"]').click();
   await page.getByText('Users by role',{exact:true}).waitFor();
   assert.equal(await page.getByText('Total users',{exact:true}).locator('..').locator('..').locator('p').textContent(),'2');
-  assert.equal(await page.getByText('Administrators',{exact:true}).locator('..').locator('..').locator('p').textContent(),'1');
+  assert.equal(await page.getByRole('heading',{name:'Administrators',exact:true}).locator('..').locator('..').locator('p').textContent(),'1');
   await page.locator('#users-sidebar-actions [data-action="sidebar-users-list"]').click();
   const editorId=await page.evaluate(async()=>{
     const r=await fetch('/api/users',{cache:'no-store'});
