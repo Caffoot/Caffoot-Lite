@@ -7829,6 +7829,8 @@ function hierarchyValidateTypes(subnets) {
             try {
                 if (!nextIntegrityRepairBridge) throw new Error('Central inventory unavailable.');
                 await nextIntegrityRepairBridge.reload();
+                if (!['Devices','IPAM','Racks'].every(section => nextIntegrityRepairBridge.canViewSection(section)))
+                    throw new Error('Access to Devices, IPAM and Racks is required for this whole-inventory check.');
                 const issues = validateApplicationState();
                 if (issues.length) {
                     window.alert('INVENTORY SAFETY CHECK — ACTION REQUIRED\n\n' +
@@ -9159,11 +9161,14 @@ window.addEventListener('load', async () => {
     editPermissions = state.editPermissions || {};
     nextImportAllowed = ['Devices','IPAM','Racks'].every(key => editPermissions[key]);
     deviceRevisions = state.deviceRevisions || {};
+    // A replacement import or Clean Start can remove optional managed settings.
+    // Reconstruct the entire display state from SQLite, not stale browser values.
+    const fresh=cloneDefaultData();
     for (const key of collections) {
-      if (Object.prototype.hasOwnProperty.call(state,key)) appState[key] = state[key];
-      else appState[key] = key === 'ipAllocations' ? {} : [];
+      if (Object.prototype.hasOwnProperty.call(state,key)) fresh[key] = state[key];
     }
-    for (const [key,value] of Object.entries(state.settings || {})) appState[key] = value;
+    for (const [key,value] of Object.entries(state.settings || {})) fresh[key] = value;
+    appState = fresh;
     auditHistory = Array.isArray(state.changeHistory) ? state.changeHistory : [];
     auditBaseline = JSON.stringify(appState);
     if (render) renderContent();
@@ -9215,6 +9220,8 @@ window.addEventListener('load', async () => {
   ]);
   const blockedActions = /^(add|create|edit|delete|remove|save|restore|reset|import|export|repair|assign|reserve|release|clear|bulk|duplicate|move|place|unplace|update|change|apply|confirm|choose-backup)/i;
   function isBlockedAction(action, element = null) {
+    if (action === 'check-inventory-safety')
+      return !['Devices','IPAM','Racks'].every(section => permissions[section]);
     if (action === 'apply-inventory-integrity-repairs')
       return !(permissions.Devices && editPermissions.IPAM);
     if (action === 'preview-inventory-integrity-repairs')
@@ -9423,6 +9430,7 @@ window.addEventListener('load', async () => {
   };
   nextIntegrityRepairBridge = {
     reload: async () => refreshCentralInventory(false),
+    canViewSection: section => !!permissions[section],
     async preview() {
       if (!permissions.Devices || !permissions.IPAM) {
         showToast('Devices and IPAM view permissions required.','error');
