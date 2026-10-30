@@ -24,7 +24,7 @@ def _check_primary_ip_claim(allocations, new_ip, device_id, old_ip=""):
     if allocation is None:
         return
     if allocation.get("deviceId") not in (None, "", device_id):
-        raise ValueError(f"IP address {new_ip} is linked to another device in IPAM.")
+        raise ValueError("Primary IP is assigned to another device")
     if allocation.get("reservedForDeviceId") not in (None, "", device_id):
         raise ValueError(f"IP address {new_ip} is reserved for another device.")
     if (new_ip != old_ip and not allocation.get("deviceId") and
