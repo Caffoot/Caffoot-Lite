@@ -89,7 +89,7 @@ async function run(){
   await page.locator('#next-account-nav').waitFor();
   assert.equal(await page.getByRole('button',{name:'Refresh inventory'}).count(),0);
   for(const tab of ['ipam','devices','racks','audit','users','settings']){
-    const navigation=page.locator('[data-action="tab-'+tab+'"]');
+    const navigation=page.locator('#sidebar [data-action="tab-'+tab+'"]');
     assert.ok(await navigation.isEnabled(),'Navigation disabled: '+tab);
     await navigation.click();
     assert.notEqual(await page.locator('#toast-message').textContent(),
