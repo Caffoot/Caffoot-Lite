@@ -9,6 +9,7 @@ from urllib.parse import urlsplit
 
 from .device_saves import create_device, delete_reserved_device, save_reserved_device
 from .ipam_saves import change_independent_allocation
+from .collection_saves import change_inventory_record
 from .schema import initialise_database as migrate_database
 from .accounts import bootstrap_first_admin, confirm_admin_mfa, verify_password, hash_password
 from .mfa import new_secret, verify_code
@@ -286,7 +287,8 @@ class Handler(BaseHTTPRequestHandler):
                          "/api/devices/edit/start", "/api/devices/edit/cancel",
                          "/api/devices/edit/save", "/api/devices/create",
                          "/api/devices/delete", "/api/ipam/allocation/save",
-                         "/api/ipam/allocation/delete"):
+                         "/api/ipam/allocation/delete", "/api/inventory/record/save",
+                         "/api/inventory/record/delete"):
             self.handle_user_mutation()
             return
         if self.path in IMPORT_ROUTES:
@@ -396,7 +398,17 @@ class Handler(BaseHTTPRequestHandler):
                 if actor is None:
                     self.respond(403, {"error": "forbidden"})
                     return
-                if self.path in ("/api/ipam/allocation/save", "/api/ipam/allocation/delete"):
+                if self.path in ("/api/inventory/record/save", "/api/inventory/record/delete"):
+                    expected = ({"collection", "id", "record"}
+                                if self.path.endswith("/save") else {"collection", "id"})
+                    if set(payload) != expected:
+                        raise ValueError("Invalid inventory request")
+                    change_inventory_record(
+                        connection, actor, payload["collection"], payload["id"],
+                        payload["record"] if self.path.endswith("/save") else None,
+                    )
+                    result = {"status": "saved"}
+                elif self.path in ("/api/ipam/allocation/save", "/api/ipam/allocation/delete"):
                     expected = ({"ip", "record"} if self.path.endswith("/save") else {"ip"})
                     if set(payload) != expected:
                         raise ValueError("Invalid IPAM request")
