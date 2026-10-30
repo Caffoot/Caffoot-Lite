@@ -199,18 +199,28 @@ async function run(){
   await page.locator('#dev-name').fill('rack-switch');
   await page.locator('#dev-type').selectOption('Switch');
   await page.locator('#dev-mount-type').selectOption('Rack Mounted');
+  await page.locator('#dev-location').selectOption('Unknown');
+  await page.locator('#dev-rack-id').selectOption(rackId);
+  await page.locator('#dev-rack-face').selectOption('front');
+  await page.locator('#dev-rack-height').fill('1');
+  await page.locator('#dev-rack-u').selectOption('5');
+  await page.getByRole('tab',{name:'Networking'}).click();
+  await page.locator('#dev-block').selectOption('__unassigned__');
+  await page.locator('#dev-vlan').selectOption('17');
+  await page.locator('#dev-subnet').selectOption(subnetId);
+  await page.locator('#dev-ip').fill('10.64.20.11');
   await page.locator('form[data-device-form="true"] button[type="submit"]').click();
-  const switchState=await persisted(page,s=>s.devices.some(d=>d.name==='rack-switch'),
-                                  'Rack-mounted device creation');
+  const switchState=await persisted(page,s=>s.devices.some(d=>d.name==='rack-switch' &&
+    d.rackId===rackId && Number(d.rackUStart)===5),'Rack-mounted device creation');
   const rackSwitch=switchState.devices.find(d=>d.name==='rack-switch');
+  assert.equal(switchState.ipAllocations['10.64.20.11'].deviceId,rackSwitch.id);
   await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
-  await page.evaluate(id=>openAssignDeviceModal(id,5),rackId);
-  await page.locator('#assign-device-id').selectOption(rackSwitch.id);
+  await page.evaluate(({id,deviceId})=>openAssignDeviceModal(id,6,deviceId),{id:rackId,deviceId:rackSwitch.id});
   await page.locator('#assign-face').selectOption('front');
-  await page.locator('#assign-u-start').selectOption('5');
+  await page.locator('#assign-u-start').selectOption('6');
   await page.locator('form[data-form-action="assign"] button[type="submit"]').click();
   await persisted(page,s=>s.devices.some(d=>d.id===rackSwitch.id && d.rackId===rackId &&
-    Number(d.rackUStart)===5),'Rack device placement');
+    Number(d.rackUStart)===6),'Rack device move');
   await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
   await page.evaluate(id=>openRackAccessoryEditor(id,3),rackId);
   await page.locator('#rack-accessory-form [name="type"]').selectOption('patch');
