@@ -191,11 +191,14 @@ class Handler(BaseHTTPRequestHandler):
                     section: can_access(connection, account_id, section, edit=True)
                     for section in ("Devices", "IPAM", "Racks")
                 }
+                # Only expose revisions for records the caller can actually
+                # view. IPAM/Racks editors still need revisions to reserve a
+                # device whose placement or primary allocation they change.
                 result["deviceRevisions"] = {
                     device_id: revision for device_id, revision in connection.execute(
                         "SELECT id,revision FROM inventory_devices ORDER BY ordinal"
                     )
-                } if any(result["editPermissions"].values()) else {}
+                } if sections["Devices"] and any(result["editPermissions"].values()) else {}
                 if sections["Devices"]:
                     result["devices"] = [json.loads(raw) for (raw,) in connection.execute(
                         "SELECT record_json FROM inventory_devices ORDER BY ordinal"

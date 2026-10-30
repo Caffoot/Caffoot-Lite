@@ -135,6 +135,49 @@ class SessionHttpTests(unittest.TestCase):
                          {"Devices": False, "IPAM": False, "Racks": False})
         self.assertEqual(self.request("/api/inventory/state")[0], 401)
 
+    def test_ipam_editor_does_not_receive_hidden_device_revisions(self):
+        with sqlite3.connect(self.path) as db:
+            db.execute(
+                "INSERT INTO inventory_devices(id,name,record_json,ordinal) VALUES(?,?,?,?)",
+                ("hidden-device", "Hidden", '{"id":"hidden-device","name":"Hidden"}', 0),
+            )
+            db.commit()
+        with patch("backend.server.PUBLIC_ORIGIN", "https://caffoot.example"):
+            csrf = csrf_for_session(self.token)
+            status, created = self.post(
+                "/api/users/create", {"username": "ipam-editor", "password": "initial"},
+                self.token, csrf,
+            )
+            self.assertEqual(status, 200)
+            editor_id = created["id"]
+            secret = new_secret()
+            with sqlite3.connect(self.path) as db:
+                db.execute(
+                    "UPDATE accounts SET mfa_secret=?,mfa_confirmed=1 WHERE id=?",
+                    (secret, editor_id),
+                )
+                db.commit()
+            status, _ = self.post(
+                "/api/users/permission",
+                {"userId": editor_id, "section": "IPAM", "level": "edit"},
+                self.token, csrf,
+            )
+            self.assertEqual(status, 200)
+        with sqlite3.connect(self.path) as db:
+            editor_token = login_session(
+                db, "ipam-editor", "initial",
+                mfa_code=code_at(secret, time.time()),
+            )
+        status, raw, _ = self.request(
+            "/api/inventory/state", COOKIE_NAME + "=" + editor_token
+        )
+        self.assertEqual(status, 200)
+        snapshot = json.loads(raw)
+        self.assertNotIn("devices", snapshot)
+        self.assertEqual(snapshot["deviceRevisions"], {})
+        self.assertEqual(snapshot["editPermissions"]["IPAM"], True)
+        self.assertEqual(snapshot["editPermissions"]["Devices"], False)
+
     def test_device_edit_reservation_conflict_cancel_and_expiry(self):
         with sqlite3.connect(self.path) as db:
             db.execute("INSERT INTO inventory_devices(id,name,record_json,ordinal) VALUES(?,?,?,?)",
