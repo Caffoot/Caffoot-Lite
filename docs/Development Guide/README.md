@@ -29,6 +29,7 @@ For example, when somebody edits a device, the browser requests an exclusive, te
 | [05 — Inventory and migration](05-Inventory-and-Migration.md) | Data relationships, v1.3.3 compatibility and importing |
 | [06 — Coding and naming conventions](06-Coding-and-Naming-Conventions.md) | How existing functions, variables and UI hooks are named |
 | [07 — Function and code reference](07-Function-and-Code-Reference.md) | Where to find an implementation before changing it |
+| [Full Function Index](Function-Index.md) | Source-pinned declaration locations, static call-like reference counts and example reference sites |
 | [08 — Testing and maintenance](08-Testing-and-Maintenance.md) | How to check a change and protect the published baseline |
 
 Each technical chapter starts with **In simple terms**, then adds details for developers. Follow links rather than reading all eight chapters in order.

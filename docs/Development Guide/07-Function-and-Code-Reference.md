@@ -4,6 +4,8 @@
 
 This page tells you where to look. Search for a function's exact name, then read the source and its callers before changing anything. Line numbers change, so this guide uses file paths and searchable identifiers.
 
+For the full source-pinned list of named functions, line locations and clearly qualified reference counts, see the [Function Index](Function-Index.md). It complements this short maintainer reference; static counts are not a verified runtime call graph.
+
 ## Entry points
 
 | Source | Search terms | Responsibility |
