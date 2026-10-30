@@ -245,6 +245,7 @@ async function run(){
   await persisted(page,s=>s.rackAccessories.some(a=>a.name==='Browser Vertical PDU' &&
     a.side==='left'&&a.type==='pdu_vertical'),'Rack vertical accessory');
   await page.reload();
+  await page.getByRole('button',{name:'Refresh inventory'}).waitFor();
   const rackSaved=await state(page);
   assert.equal(rackSaved.devices.find(d=>d.id===rackSwitch.id).rackId,rackId);
   assert.equal(rackSaved.rackAccessories.length,2);
