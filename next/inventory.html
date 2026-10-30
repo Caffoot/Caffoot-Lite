@@ -681,6 +681,13 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .device-modal .device-form-invalid-field{border-color:#ef4444!important;box-shadow:0 0 0 1px #ef4444!important;}
 .device-modal .form-actions{display:flex;justify-content:flex-end;gap:12px;align-items:center;padding-top:15px;border-top:1px solid #94a3b855;}
 .device-modal .form-actions button{min-height:42px;padding:10px 18px;font-size:.875rem;}
+/* #215 approved desktop compactness: same Device General fields, responsive columns. */
+@media(min-width:900px){
+  .device-modal #device-form-panel-general{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-content:start;align-items:start;}
+  .device-modal #device-form-panel-general>.form-section-card{min-width:0;padding:16px;gap:12px;}
+  .device-modal #device-form-panel-general>.form-section-card>:not([hidden])~:not([hidden]){margin-top:0;}
+  .device-modal #device-form-panel-general .form-section-heading{padding-bottom:8px;}
+}
 @media(max-width:640px){.device-modal{padding:17px 15px 22px}.device-modal .form-section-card{padding:15px}.device-modal .device-form-rack-configuration .rack-grid,.device-modal .network-grid{grid-template-columns:minmax(0,1fr)}.device-modal .form-actions button{flex:1}}
 </style>
 <style id="device-details-action-styles">
@@ -1875,7 +1882,7 @@ function hierarchyValidateTypes(subnets) {
         function renderAuditHTML() {
             // Ignore malformed history records in the view without altering stored data.
             const entries=auditHistory.filter(entry=>entry && typeof entry==='object' && !Array.isArray(entry) && Array.isArray(entry.changes)).slice().reverse();
-            return `<div class="max-w-5xl mx-auto space-y-5">
+            return `<div class="w-full space-y-5">
                 <section class="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-2xl p-6 space-y-3">
                     <div class="flex items-center justify-between flex-wrap gap-3">
                         <div><h3 class="font-bold text-lg text-slate-900 dark:text-white">Change History</h3>
@@ -9761,7 +9768,7 @@ window.addEventListener('load', async () => {
       ?'An overview of user accounts, administrator access and MFA enrolment.'
       :activeUsersTab==='list'?'Manage accounts and access to Devices, IPAM and Racks.'
       :'Create a user account. Inventory access is granted separately.';
-    let html='<div class="max-w-6xl mx-auto space-y-5 text-slate-800 dark:text-slate-100">' +
+    let html='<div class="w-full space-y-5 text-slate-800 dark:text-slate-100">' +
       '<section class="rounded-2xl bg-blue-800 text-white p-6 sm:p-7">' +
       '<div class="flex items-center gap-4"><i class="fa-solid fa-users text-2xl" aria-hidden="true"></i><div>' +
       '<h2 class="text-xl font-bold">'+heading+'</h2>' +

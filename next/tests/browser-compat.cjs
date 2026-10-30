@@ -95,8 +95,13 @@ async function run(){
     assert.notEqual(await page.locator('#toast-message').textContent(),
       'This inventory operation is not yet connected to SQLite.');
   }
+  await page.locator('#sidebar [data-action="tab-audit"]').click();
+  assert.ok(await page.locator('#main-content > div.w-full').isVisible(),
+    'Change History should fill the inventory workspace');
   await page.locator('#sidebar [data-action="tab-users"]').click();
   await page.getByRole('heading',{name:'User Management Overview'}).waitFor();
+  assert.ok(await page.locator('#main-content > div.w-full').isVisible(),
+    'Users overview should fill the inventory workspace');
   await page.getByText('Total users',{exact:true}).waitFor();
   await page.getByRole('heading',{name:'Administrators',exact:true}).waitFor();
   await page.getByText('Users by role',{exact:true}).waitFor();
@@ -140,6 +145,16 @@ async function run(){
   console.log('Managed location add passed');
 
   await modal(page,'openDeviceModal');
+  const general=page.locator('#device-form-panel-general');
+  await general.waitFor();
+  assert.equal(await general.evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),2,
+    'Device General form must use desktop columns');
+  await page.setViewportSize({width:740,height:900});
+  assert.notEqual(await general.evaluate(el=>getComputedStyle(el).display),'grid',
+    'Device General form must remain stacked on narrow screens');
+  await page.setViewportSize({width:1440,height:950});
+  assert.ok(await page.locator('#dev-name').isVisible(),
+    'Responsive layout must preserve Device Name field');
   await page.locator('#dev-name').fill('browser-device');
   await page.locator('#dev-type').selectOption('Desktop');
   await page.locator('#dev-mount-type').selectOption('Tabletop / Shelf Mounted');
