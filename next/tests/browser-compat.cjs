@@ -441,6 +441,9 @@ async function run(){
   assert.ok(await viewer.locator('#next-users-nav').isHidden());
   await viewer.locator('#sidebar [data-action="tab-devices"]').click();
   assert.ok(await viewer.locator('#devices-sidebar-actions [data-action="open-device-modal"]').isHidden());
+  await viewer.evaluate(()=>openDeviceModal());
+  assert.ok(await viewer.locator('#modal-container').evaluate(el=>el.classList.contains('hidden')),
+    'Read-only users must not be able to open the Device editor');
   await viewer.locator('#sidebar [data-action="tab-ipam"]').click();
   assert.ok(await viewer.locator('#ipam-sidebar-actions [data-action="open-subnet-modal"]').isHidden());
   await viewer.locator('#sidebar [data-action="tab-racks"]').click();
