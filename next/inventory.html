@@ -5694,8 +5694,7 @@ function hierarchyValidateTypes(subnets) {
                 appState.racks.push(newRack);
                 selectedRackId = newRack.id;
             }
-            const savedRack = appState.racks.find(item => item.id === selectedRackId) ||
-                (rackId ? appState.racks.find(item => item.id === rackId) : null);
+            const savedRack = appState.racks.find(item => item.id === (rackId || selectedRackId));
             if (!nextRackBridge || !savedRack ||
                 !await nextRackBridge.save(savedRack.id, savedRack)) {
                 appState = JSON.parse(before);
@@ -8592,6 +8591,10 @@ function hierarchyValidateTypes(subnets) {
             return `<div class="rack-vertical-rail vertical-rack-accessory-rail" data-rack-id="${escapeHtml(rack.id)}" data-side="${side}" aria-label="${side} 0U rail as viewed from ${activeRackFace} face"><button type="button" data-action="add-vertical-rack-accessory" data-side="${side}" data-rack-id="${escapeHtml(rack.id)}" class="vertical-rack-accessory-add-control" title="Add vertical 0U accessory on ${side}" aria-label="Add vertical 0U accessory on ${side}"></button>${blocks}</div>`;
         }
         function openRackAccessoryEditor(rackId, startU = 1, editId = null) {
+            if (!nextRackBridge?.canEdit()) {
+                showToast('Racks edit permission required.', 'error');
+                return;
+            }
             const rack=appState.racks.find(r=>r.id===rackId);
             if(!rack) return;
             const existing=(appState.rackAccessories||[]).find(a=>a.id===editId);
@@ -8679,7 +8682,7 @@ function hierarchyValidateTypes(subnets) {
             heightInput.addEventListener('change',refreshAccessoryOptions);
             heightInput.addEventListener('blur',refreshAccessoryOptions);
             refreshAccessoryOptions();
-            modal.querySelector('#rack-accessory-form').addEventListener('submit',event=>{
+            modal.querySelector('#rack-accessory-form').addEventListener('submit',async event=>{
                 event.preventDefault();
                 if(startSelect.disabled){modal.querySelector('#rack-accessory-form-error').textContent='No available rack position for this accessory.';return;}
                 const data=new FormData(event.currentTarget);
@@ -8689,7 +8692,7 @@ function hierarchyValidateTypes(subnets) {
                 const before=JSON.stringify(appState);
                 if(!Array.isArray(appState.rackAccessories))appState.rackAccessories=[];
                 if(existing)Object.assign(existing,candidate);else appState.rackAccessories.push(candidate);
-                if(!saveState()){
+                if (!await nextRackBridge.saveAccessory(candidate.id,candidate)) {
                     appState=JSON.parse(before);
                     const feedback=modal.querySelector('#rack-accessory-form-error');
                     if(feedback)feedback.textContent='Accessory could not be saved. Your previous inventory is unchanged. Your entries are still here so you can try again.';
@@ -8714,11 +8717,16 @@ function hierarchyValidateTypes(subnets) {
             overlay.querySelector('#remove-cancel').addEventListener('click',cancel);
             overlay.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();event.stopPropagation();cancel();}});
             overlay.querySelector('#remove-cancel').focus();
-            overlay.querySelector('#remove-accept').addEventListener('click',()=>{
+            overlay.querySelector('#remove-accept').addEventListener('click',async ()=>{
             overlay.remove();
             const before=JSON.stringify(appState);
             appState.rackAccessories=appState.rackAccessories.filter(a=>a.id!==id);
-            if(!saveState()){appState=JSON.parse(before);showToast('Accessory could not be removed. Your previous inventory is unchanged.','error');return;}closeModal();renderContent();
+            if (!nextRackBridge || !await nextRackBridge.saveAccessory(id,null)) {
+                appState=JSON.parse(before);
+                showToast('Accessory could not be removed. Your previous inventory is unchanged.','error');
+                return;
+            }
+            closeModal();renderContent();
             });
         }
         function moveRackAccessoryToPosition(id,rackId,startU){
@@ -9290,7 +9298,8 @@ window.addEventListener('load', async () => {
   const actionCanEditIpam = new Set(['bulk-ip','apply-bulk-ip-assignment',
     'edit-subnet','edit-ipam-block','delete-vlan','reconcile-legacy-vlans']);
   const actionCanEditRack = new Set(['open-rack-modal','edit-rack',
-    'correct-rack-specifications','delete-rack']);
+    'correct-rack-specifications','delete-rack','add-rack-accessory',
+    'add-vertical-rack-accessory','edit-rack-accessory','delete-rack-accessory']);
   const actionCanEditDevice = new Set([
     'open-device-modal','edit-device','edit-device-from-details',
     'delete-device','delete-device-from-details',
@@ -9316,7 +9325,7 @@ window.addEventListener('load', async () => {
             (sessionIsAdmin && button.closest('#next-user-create-form')) ||
             (editPermissions.Devices && button.closest('form[data-device-form="true"]')) ||
             (editPermissions.IPAM && button.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"]')) ||
-            (editPermissions.Racks && button.closest('form[data-form-action="rack"]'))
+            (editPermissions.Racks && button.closest('form[data-form-action="rack"],#rack-accessory-form'))
           ))) button.disabled = true;
     });
   }
@@ -9458,7 +9467,14 @@ window.addEventListener('load', async () => {
     }
   };
   nextRackBridge = {
+    canEdit: () => !!editPermissions.Racks,
     async save(rackId, record) {
+      return this.persist('racks',rackId,record);
+    },
+    async saveAccessory(accessoryId,record) {
+      return this.persist('rackAccessories',accessoryId,record);
+    },
+    async persist(collection,recordId,record) {
       if (!editPermissions.Racks || pendingSave) {
         showToast('Racks edit permission required or another save is in progress.', 'error');
         return false;
@@ -9466,7 +9482,7 @@ window.addEventListener('load', async () => {
       pendingSave=true;
       try {
         await postInventory(record ? '/api/inventory/record/save' : '/api/inventory/record/delete',
-          record ? {collection:'racks',id:rackId,record} : {collection:'racks',id:rackId});
+          record ? {collection,id:recordId,record} : {collection,id:recordId});
         try { await refreshCentralInventory(false); }
         catch(error) {
           showToast('Rack changes saved. Unable to refresh the latest inventory.','error');
@@ -9753,7 +9769,7 @@ window.addEventListener('load', async () => {
     if (isBlockedAction(action, element) || (element.matches('button') && element.type==='submit' &&
         !element.closest('form[data-device-form="true"],#next-user-create-form') &&
         !(editPermissions.IPAM && element.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"]')) &&
-        !(editPermissions.Racks && element.closest('form[data-form-action="rack"]')))) {
+        !(editPermissions.Racks && element.closest('form[data-form-action="rack"],#rack-accessory-form')))) {
       event.preventDefault();
       event.stopImmediatePropagation();
       showToast('This inventory operation is not yet connected to SQLite.', 'error');
@@ -9762,7 +9778,7 @@ window.addEventListener('load', async () => {
   document.addEventListener('submit',event => {
     if ((editPermissions.Devices && event.target.matches('form[data-device-form="true"]')) ||
         (editPermissions.IPAM && event.target.matches('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"]')) ||
-        (editPermissions.Racks && event.target.matches('form[data-form-action="rack"]')) ||
+        (editPermissions.Racks && event.target.matches('form[data-form-action="rack"],#rack-accessory-form')) ||
         (sessionIsAdmin && event.target.matches('#next-user-create-form'))) return;
     event.preventDefault();event.stopImmediatePropagation();
   },true);

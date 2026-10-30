@@ -152,3 +152,21 @@ class CollectionSaveTests(unittest.TestCase):
         associated = dict(vlan, parentId="block")
         self.change_ipam([{"collection": "vlans", "id": "v1", "record": associated}])
         self.assertEqual(self.records("vlans"), [associated])
+ 
+    def test_rack_accessory_create_edit_and_delete_through_collection_save(self):
+        rack = {"id": "r1", "name": "Rack One", "heightU": 12}
+        self.change("racks", "r1", rack)
+        accessory = {"id": "a1", "rackId": "r1", "type": "patch",
+                     "name": "Panel", "face": "front", "startU": 2,
+                     "heightU": 1, "side": None, "portCount": 24}
+        self.change("rackAccessories", "a1", accessory)
+        self.assertEqual(self.records("rack_accessories"), [accessory])
+        edited = dict(accessory, name="Fibre Panel")
+        self.change("rackAccessories", "a1", edited)
+        self.assertEqual(self.records("rack_accessories"), [edited])
+        conflicting = dict(accessory, id="a2", name="Another")
+        with self.assertRaises(ValueError):
+            self.change("rackAccessories", "a2", conflicting)
+        self.assertEqual(self.records("rack_accessories"), [edited])
+        self.change("rackAccessories", "a1", None)
+        self.assertEqual(self.records("rack_accessories"), [])
