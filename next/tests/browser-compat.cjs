@@ -289,8 +289,8 @@ async function run(){
   assert.equal(await page.locator('#users-sidebar-actions [data-action="sidebar-users-list"]').getAttribute('aria-current'),'page');
   await page.locator('#users-sidebar-actions [data-action="sidebar-users-overview"]').click();
   await page.getByText('Users by role',{exact:true}).waitFor();
-  assert.equal(await page.getByText('Total users',{exact:true}).locator('..').locator('p').textContent(),'2');
-  assert.equal(await page.getByText('Administrators',{exact:true}).locator('..').locator('p').textContent(),'1');
+  assert.equal(await page.getByText('Total users',{exact:true}).locator('..').locator('..').locator('p').textContent(),'2');
+  assert.equal(await page.getByText('Administrators',{exact:true}).locator('..').locator('..').locator('p').textContent(),'1');
   await page.locator('#users-sidebar-actions [data-action="sidebar-users-list"]').click();
   const editorId=await page.evaluate(async()=>{
     const r=await fetch('/api/users',{cache:'no-store'});
