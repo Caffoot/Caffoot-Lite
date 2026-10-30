@@ -86,7 +86,20 @@ async function run(){
   await page.locator('#signed-in:not([hidden])').waitFor();
   console.log('First administrator, MFA and sign-in passed');
   await page.goto(address+'/inventory');
-  await page.getByRole('button',{name:'Refresh inventory'}).waitFor();
+  await page.locator('#next-account-nav').waitFor();
+  assert.equal(await page.getByRole('button',{name:'Refresh inventory'}).count(),0);
+  for(const tab of ['ipam','devices','racks','audit','users','settings']){
+    const navigation=page.locator('[data-action="tab-'+tab+'"]');
+    assert.ok(await navigation.isEnabled(),'Navigation disabled: '+tab);
+    await navigation.click();
+    assert.notEqual(await page.locator('#toast-message').textContent(),
+      'This inventory operation is not yet connected to SQLite.');
+  }
+  await page.locator('[data-action="tab-users"]').click();
+  await page.locator('#next-account-password-form').waitFor();
+  await page.locator('#next-account-nav').click();
+  assert.equal(await page.locator('#page-title').textContent(),'Users');
+  await page.locator('[data-action="tab-dashboard"]').click();
   assert.equal((await state(page)).sections.Devices,true);
   console.log('Authenticated central inventory rendered');
 
@@ -187,7 +200,7 @@ async function run(){
   await page.locator('[data-action="save-rename"][data-kind="location"]').click();
   await persisted(page,s=>s.devices.some(d=>d.id===device.id&&d.location==='Workshop'),'Location rename');
   await page.reload();
-  await page.getByRole('button',{name:'Refresh inventory'}).waitFor();
+  await page.locator('#next-account-nav').waitFor();
   assert.equal((await state(page)).devices.find(d=>d.id===device.id).location,'Workshop');
   await modal(page,'openManageLocationsModal');
   await page.locator('[data-action="delete-device-type-or-location"][data-kind="location"][data-name="Workshop"]').click();
@@ -249,7 +262,7 @@ async function run(){
   await persisted(page,s=>s.rackAccessories.some(a=>a.name==='Browser Vertical PDU' &&
     a.side==='left'&&a.type==='pdu_vertical'),'Rack vertical accessory');
   await page.reload();
-  await page.getByRole('button',{name:'Refresh inventory'}).waitFor();
+  await page.locator('#next-account-nav').waitFor();
   const rackSaved=await state(page);
   assert.equal(rackSaved.devices.find(d=>d.id===rackSwitch.id).rackId,rackId);
   assert.equal(rackSaved.rackAccessories.length,2);
@@ -305,7 +318,11 @@ async function run(){
   await editor.locator('#submit').click();
   await editor.locator('#signed-in:not([hidden])').waitFor();
   await editor.goto(address+'/inventory');
-  await editor.getByRole('button',{name:'Refresh inventory'}).waitFor();
+  await editor.locator('#next-account-nav').waitFor();
+  await editor.locator('#next-account-nav').click();
+  await editor.locator('#next-account-password-form').waitFor();
+  assert.equal(await editor.locator('#page-title').textContent(),'My account');
+  await editor.locator('[data-action="tab-devices"]').click();
   assert.ok((await state(editor)).devices.some(d=>d.id===device.id),
     'Second authenticated browser must see the shared device');
   assert.ok(await editor.locator('#next-users-nav').evaluate(el=>el.classList.contains('hidden')),

@@ -1198,6 +1198,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 <div class="flex items-center space-x-4">
                     <h2 id="page-title" class="text-xl font-bold text-slate-900 dark:text-white">Dashboard</h2>
                 </div>
+                <button type="button" id="next-account-nav" class="px-4 py-2 rounded-xl bg-indigo-700 text-white text-sm font-semibold">My account</button>
             </header>
 
             <!-- Dynamic Tab Content Container -->
@@ -1222,6 +1223,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
         <span id="toast-message">Action completed successfully.</span>
     </div>
 
+    <script src="/assets/qrcode.min.js"></script>
     <script>
         const defaultData = {
             subnets: [],
@@ -1893,6 +1895,7 @@ function hierarchyValidateTypes(subnets) {
         let nextResetBridge = null;
         let nextIntegrityRepairBridge = null;
         let nextRenderUsers = () => '';
+        let nextRenderAccount = () => '';
         let nextImportAllowed = false;
         function saveState() { showToast('This inventory operation is not yet connected to SQLite.', 'error'); return false; }
 
@@ -2175,7 +2178,9 @@ function hierarchyValidateTypes(subnets) {
 
 
                 audit: 'Change History & Data Safety',
-                settings: 'Settings & Data Management'
+                settings: 'Settings & Data Management',
+                users: 'Users',
+                account: 'My account'
             };
             document.getElementById('page-title').textContent = titles[tabId];
             renderContent();
@@ -2226,6 +2231,7 @@ function hierarchyValidateTypes(subnets) {
             else if (currentTab === 'racks') html = renderRackHubV13();
             else if (currentTab === 'audit') html = renderAuditHTML();
             else if (currentTab === 'users') html = nextRenderUsers();
+            else if (currentTab === 'account') html = nextRenderAccount();
             else if (currentTab === 'settings') html = renderApplicationSettings();
             container.innerHTML = html;
             const rackScroll = container.querySelector('[data-rack-scroll="true"]');
@@ -9244,7 +9250,8 @@ window.addEventListener('load', async () => {
     if (!root) return;
     root.querySelectorAll('button').forEach(button => {
       if (isBlockedAction(button.dataset.action || '', button) ||
-          (button.type === 'submit' && !(
+          (button.type === 'submit' && button.form && !(
+            button.closest('#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm') ||
             (sessionIsAdmin && button.closest('#next-user-create-form')) ||
             (editPermissions.Devices && button.closest('form[data-device-form="true"]')) ||
             (editPermissions.IPAM && button.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"]')) ||
@@ -9689,6 +9696,37 @@ window.addEventListener('load', async () => {
   nextDeviceBridge = {save:saveDevice,reserveForDelete,remove:removeDevice,
     cancelDelete,saveArchivedInstallation};
 
+  // Self-service account controls follow the established Users card styling.
+  let sessionMfaEnrolled=false;
+  function renderAccountSections(){
+    const card='rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 p-5 space-y-3';
+    const field='block w-full max-w-sm border rounded-lg p-2 mt-1 text-slate-900';
+    const button='px-4 py-2 rounded-xl bg-indigo-700 text-white font-semibold';
+    let html='<section class="'+card+'"><h3 class="font-bold">Change password</h3>' +
+      '<form id="next-account-password-form" class="space-y-3">' +
+      '<label class="block text-sm font-semibold">Current password<input name="currentPassword" type="password" autocomplete="current-password" required class="'+field+'"></label>' +
+      '<label class="block text-sm font-semibold">New password<input name="newPassword" type="password" autocomplete="new-password" required class="'+field+'"></label>' +
+      '<button type="submit" class="'+button+'">Change password</button></form></section>';
+    if(sessionMfaEnrolled) {
+      html+='<section class="'+card+'"><h3 class="font-bold">Authenticator</h3><p class="text-sm">MFA enrolled</p></section>';
+    } else {
+      html+='<section class="'+card+'"><h3 class="font-bold">Authenticator setup</h3>' +
+        '<p class="text-sm">Enrol an authenticator before receiving edit or administrator access.</p>' +
+        '<form id="next-account-mfa-start" class="space-y-3"><label class="block text-sm font-semibold">Your password<input name="password" type="password" autocomplete="current-password" required class="'+field+'"></label>' +
+        '<button type="submit" class="'+button+'">Start MFA enrolment</button></form>' +
+        '<div id="next-account-mfa-details" hidden><p class="text-sm">Scan this QR code with your authenticator.</p>' +
+        '<div id="next-account-mfa-qr" class="w-fit mx-auto bg-white p-3" role="img" aria-label="Authenticator setup QR code"></div>' +
+        '<details><summary class="cursor-pointer text-sm">Can’t scan? Show setup key</summary><p id="next-account-mfa-secret" class="break-all font-semibold"></p></details>' +
+        '<form id="next-account-mfa-confirm" class="space-y-3"><label class="block text-sm font-semibold">Six-digit authenticator code<input name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required class="'+field+'"></label>' +
+        '<button type="submit" class="'+button+'">Confirm MFA</button></form></div></section>';
+    }
+    return html+'<button type="button" id="next-account-signout" class="px-4 py-2 rounded-xl bg-slate-700 text-white text-sm font-semibold">Sign out</button>';
+  }
+  nextRenderAccount=function(){
+    return '<div class="max-w-5xl mx-auto space-y-5 text-slate-800 dark:text-slate-100">' +
+      '<div><h2 class="text-xl font-bold">My account</h2><p class="text-sm">Password and authenticator settings.</p></div>' +
+      renderAccountSections()+'</div>';
+  };
   // Users: administrator-only section, following the published sidebar and panel style.
   let users = null;
   nextRenderUsers = function() {
@@ -9731,7 +9769,7 @@ window.addEventListener('load', async () => {
       }
       html += '</div></section>';
     }
-    return html + '<p class="text-sm">For your password and MFA settings, open <a href="/setup" class="text-indigo-700 dark:text-indigo-300 underline">Account settings</a>.</p></div>';
+    return html + '<h2 class="text-xl font-bold pt-2">My account</h2>' + renderAccountSections() + '</div>';
   };
   let signedInUsername = '';
   async function loadCentralUsers() {
@@ -9865,6 +9903,41 @@ window.addEventListener('load', async () => {
     event.target.value='';
     void chooseImportFile(file);
   },true);
+  // Reuse existing authenticated account APIs; password and MFA changes end the session.
+  document.addEventListener('submit',event=>{
+    const form=event.target;
+    const id=form.id;
+    if(!['next-account-password-form','next-account-mfa-start','next-account-mfa-confirm'].includes(id))return;
+    event.preventDefault();event.stopImmediatePropagation();
+    const data=new FormData(form),submit=form.querySelector('button[type="submit"]');
+    submit.disabled=true;
+    void (async()=>{
+      if(id==='next-account-password-form'){
+        await postInventory('/api/account/password',{
+          currentPassword:data.get('currentPassword'),newPassword:data.get('newPassword')
+        });
+        window.location.assign('/setup');
+      }else if(id==='next-account-mfa-start'){
+        const result=await postInventory('/api/account/mfa/start',{password:data.get('password')});
+        const panel=document.getElementById('next-account-mfa-details');
+        document.getElementById('next-account-mfa-secret').textContent=result.mfaSecret;
+        form.hidden=true;panel.hidden=false;
+        const holder=document.getElementById('next-account-mfa-qr');
+        try{
+          new QRCode(holder,{text:result.mfaUri,width:204,height:204,correctLevel:QRCode.CorrectLevel.M});
+        }catch(error){holder.textContent='QR code unavailable. Use the setup key below.';}
+      }else{
+        await postInventory('/api/account/mfa/confirm',{code:data.get('code')});
+        window.location.assign('/setup');
+      }
+    })().catch(error=>showToast(error.message,'error')).finally(()=>{submit.disabled=false;});
+  },true);
+  document.addEventListener('click',event=>{
+    if(event.target.id!=='next-account-signout')return;
+    event.preventDefault();
+    void postInventory('/api/logout',{}).then(()=>window.location.assign('/setup'))
+      .catch(error=>showToast(error.message,'error'));
+  },true);
   document.addEventListener('submit',event=>{
     if (event.target.id !== 'next-user-create-form' || !sessionIsAdmin) return;
     event.preventDefault();event.stopImmediatePropagation();
@@ -9917,8 +9990,8 @@ window.addEventListener('load', async () => {
     const element = event.target.closest('button,[data-action]');
     if (!element) return;
     const action = element.dataset.action || '';
-    if (isBlockedAction(action, element) || (element.matches('button') && element.type==='submit' &&
-        !element.closest('form[data-device-form="true"],#next-user-create-form') &&
+    if (isBlockedAction(action, element) || (element.matches('button') && element.type==='submit' && element.form &&
+        !element.closest('form[data-device-form="true"],#next-user-create-form,#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm') &&
         !(editPermissions.IPAM && element.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"]')) &&
         !(editPermissions.Racks && element.closest('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form')))) {
       event.preventDefault();
@@ -9927,7 +10000,8 @@ window.addEventListener('load', async () => {
     }
   },true);
   document.addEventListener('submit',event => {
-    if ((editPermissions.Devices && event.target.matches('form[data-device-form="true"]')) ||
+    if (event.target.matches('#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm') ||
+        (editPermissions.Devices && event.target.matches('form[data-device-form="true"]')) ||
         (editPermissions.IPAM && event.target.matches('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"]')) ||
         (editPermissions.Racks && event.target.matches('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form')) ||
         (sessionIsAdmin && event.target.matches('#next-user-create-form'))) return;
@@ -9942,24 +10016,11 @@ window.addEventListener('load', async () => {
     csrfToken=session.csrf_token;
     sessionIsAdmin=!!session.is_admin;
     signedInUsername=session.username;
+    sessionMfaEnrolled=!!session.mfa_enrolled;
+    document.getElementById('next-account-nav').addEventListener('click',()=>switchTab(sessionIsAdmin?'users':'account'));
     document.getElementById('next-users-nav').classList.toggle('hidden', !sessionIsAdmin);
     if (sessionIsAdmin) await loadCentralUsers();
     await refreshCentralInventory(false);
-    const link=document.createElement('a');
-    link.href='/setup';
-    link.textContent=session.is_admin ? 'Users and account settings' : 'Account settings';
-    link.style.cssText='position:fixed;top:12px;right:12px;z-index:9999;background:#312e81;color:white;padding:8px 12px;border-radius:8px;font:13px sans-serif';
-    document.body.append(link);
-    const refresh=document.createElement('button');
-    refresh.type='button';refresh.textContent='Refresh inventory';
-    refresh.style.cssText='position:fixed;bottom:12px;right:12px;z-index:9999;background:#312e81;color:white;padding:10px 14px;border-radius:8px;font:14px sans-serif';
-    refresh.addEventListener('click',async()=>{
-      refresh.disabled=true;
-      try{await refreshCentralInventory();showToast('Inventory refreshed.');}
-      catch(error){showToast(error.message,'error');}
-      finally{refresh.disabled=false;}
-    });
-    document.body.append(refresh);
     // Hide only the browser-backup actions excluded from Next by issue #215.
     document.querySelectorAll('[data-action="settings-backup"],[data-action="export-data"],[data-action="export-backup"]').forEach(el=>el.hidden=true);
     switchTab('dashboard');
