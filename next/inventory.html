@@ -9280,6 +9280,7 @@ window.addEventListener('load', async () => {
     if (action === 'import-file' || action === 'next-import-pick')
       return !nextImportAllowed;
     if (readOnlyActions.has(action)) return false;
+    if (action === 'open-subnet-modal') return !editPermissions.IPAM;
     if (action === 'check-inventory-safety')
       return !['Devices','IPAM','Racks'].every(section => permissions[section]);
     if (action === 'apply-inventory-integrity-repairs')
