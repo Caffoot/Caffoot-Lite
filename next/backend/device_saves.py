@@ -16,6 +16,25 @@ _GUEST_FIELDS = frozenset((
 ))
 
 
+def _check_primary_ip_claim(allocations, new_ip, device_id, old_ip=""):
+    """Apply the published primary-IP ownership and reservation checks."""
+    if not new_ip:
+        return
+    allocation = allocations.get(new_ip)
+    if allocation is None:
+        return
+    if allocation.get("deviceId") not in (None, "", device_id):
+        raise ValueError(f"IP address {new_ip} is linked to another device in IPAM.")
+    if allocation.get("reservedForDeviceId") not in (None, "", device_id):
+        raise ValueError(f"IP address {new_ip} is reserved for another device.")
+    if (new_ip != old_ip and not allocation.get("deviceId") and
+            allocation.get("status") in ("Reserved", "Assigned") and
+            allocation.get("reservedForDeviceId") != device_id):
+        raise ValueError(
+            f"IP address {new_ip} is already {allocation['status'].lower()} in IPAM."
+        )
+
+
 def _prepare_related_guests(connection, candidate, host_id, related_devices, account_id):
     """Validate the published host/guest choices within the host transaction."""
     if related_devices is None:
@@ -112,10 +131,7 @@ def save_reserved_device(connection, account_id, device_id, revision, record, se
         new_ip = record.get("primaryIp")
         allocations = candidate["ipAllocations"]
         before_allocations = json.loads(json.dumps(allocations))
-        if new_ip:
-            current = allocations.get(new_ip)
-            if current and current.get("deviceId") not in (None, "", device_id):
-                raise ValueError("Primary IP is assigned to another device")
+        _check_primary_ip_claim(allocations, new_ip, device_id, old_ip)
         if old_ip and old_ip != new_ip:
             old_allocation = allocations.get(old_ip)
             if old_allocation and old_allocation.get("deviceId") == device_id:
@@ -205,9 +221,8 @@ def create_device(connection, account_id, record):
         candidate["devices"].append(record)
         new_ip = record.get("primaryIp")
         if new_ip:
+            _check_primary_ip_claim(candidate["ipAllocations"], new_ip, record["id"])
             allocation = candidate["ipAllocations"].get(new_ip)
-            if allocation and allocation.get("deviceId") not in (None, ""):
-                raise ValueError("Primary IP is assigned to another device")
             if allocation is None:
                 allocation = {"status": "Available", "deviceId": "", "hostname": "", "notes": ""}
                 candidate["ipAllocations"][new_ip] = allocation
@@ -290,12 +305,20 @@ def delete_reserved_device(connection, account_id, device_id, revision, related_
         # The published inventory's relationships must remain valid after deletion.
         # Do not silently delete dependent virtual machines or other records.
         old_ip = previous.get("primaryIp")
-        old_allocation = candidate["ipAllocations"].get(old_ip) if old_ip else None
-        if old_allocation and old_allocation.get("deviceId") == device_id:
-            old_allocation["deviceId"] = ""
-            if old_allocation.get("status") in ("Assigned", "Reserved"):
-                old_allocation["status"] = "Available"
-            old_allocation["hostname"] = ""
+        allocation_updates = {}
+        for ip, allocation in candidate["ipAllocations"].items():
+            if allocation.get("deviceId") != device_id and allocation.get("reservedForDeviceId") != device_id:
+                continue
+            before = dict(allocation)
+            if allocation.get("deviceId") == device_id:
+                allocation["deviceId"] = ""
+                allocation["status"] = "Available"
+                if ip == old_ip:
+                    allocation["hostname"] = ""
+            if allocation.get("reservedForDeviceId") == device_id:
+                allocation["reservedForDeviceId"] = ""
+            if before != allocation:
+                allocation_updates[ip] = (before, allocation)
         errors = validate_detached_application_state(candidate)
         if errors:
             raise ValueError(errors[0])
@@ -304,19 +327,21 @@ def delete_reserved_device(connection, account_id, device_id, revision, related_
             raise ValueError(conflicts[0])
         _persist_related_guests(connection, related_updates)
         connection.execute("DELETE FROM inventory_devices WHERE id=?", (device_id,))
-        if old_allocation and old_ip:
+        for ip, (_, allocation) in allocation_updates.items():
             connection.execute(
                 "UPDATE inventory_ip_allocations SET record_json=? WHERE ip=?",
-                (json.dumps(old_allocation, ensure_ascii=False, allow_nan=False), old_ip),
+                (json.dumps(allocation, ensure_ascii=False, allow_nan=False), ip),
             )
         changes = [{"action": "Deleted", "kind": "Device",
                     "label": previous["name"][:100], "fields": []}]
         for old_guest, new_guest, fields in related_updates:
             changes.append({"action":"Updated", "kind":"Device",
                             "label":new_guest["name"][:100], "fields":sorted(fields)[:16]})
-        if old_allocation and old_ip:
+        for ip, (before, after) in allocation_updates.items():
+            fields = [key for key in dict.fromkeys((*before, *after))
+                      if before.get(key) != after.get(key)]
             changes.append({"action": "Updated", "kind": "IPAM",
-                            "label": old_ip, "fields": ["deviceId", "status", "hostname"]})
+                            "label": ip, "fields": fields[:16]})
         event = {"at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
                  "reason": "Inventory saved", "changes": changes, "omitted": 0}
         connection.execute(

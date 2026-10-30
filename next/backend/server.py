@@ -400,7 +400,9 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(403, {"error": "forbidden"})
             return
         length = self.headers.get("Content-Length")
-        if length is None or not length.isdecimal() or not 0 < int(length) <= MAX_LOGIN_BYTES:
+        inventory_path = self.path.startswith(("/api/devices/", "/api/ipam/", "/api/inventory/"))
+        request_limit = MAX_IMPORT_BYTES if inventory_path else MAX_LOGIN_BYTES
+        if length is None or not length.isdecimal() or not 0 < int(length) <= request_limit:
             self.respond(400, {"error": "invalid request size"})
             return
         if self.headers.get("Content-Type", "").split(";")[0].strip().lower() != "application/json":

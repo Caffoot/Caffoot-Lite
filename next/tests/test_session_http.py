@@ -217,6 +217,23 @@ class SessionHttpTests(unittest.TestCase):
                 "SELECT COUNT(*) FROM inventory_change_history"
             ).fetchone()[0], 3)
 
+    def test_published_device_notes_exceed_login_request_limit(self):
+        # The published notes textarea is intentionally unbounded; a normal
+        # device save must not be rejected by the 4 KiB login payload limit.
+        record = {"id":"notes","name":"Notes","mountType":"Desktop",
+                  "notes":"a" * 5000}
+        with patch("backend.server.PUBLIC_ORIGIN", "https://caffoot.example"):
+            status, result = self.post(
+                "/api/devices/create", {"record":record}, self.token,
+                csrf_for_session(self.token)
+            )
+        self.assertEqual(status, 200)
+        with sqlite3.connect(self.path) as db:
+            stored = json.loads(db.execute(
+                "SELECT record_json FROM inventory_devices WHERE id='notes'"
+            ).fetchone()[0])
+        self.assertEqual(stored["notes"], record["notes"])
+
     def test_device_edit_reservation_conflict_cancel_and_expiry(self):
         with sqlite3.connect(self.path) as db:
             db.execute("INSERT INTO inventory_devices(id,name,record_json,ordinal) VALUES(?,?,?,?)",

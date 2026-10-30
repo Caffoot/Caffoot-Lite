@@ -128,6 +128,46 @@ class ReservedDeviceSaveTests(unittest.TestCase):
                                                        "record":bad_guest}])
         self.assertEqual(self.snapshot(), before)
 
+    def test_host_guest_choice_saves_with_host_and_revisions(self):
+        guest = json.loads(self.db.execute(
+            "SELECT record_json FROM inventory_devices WHERE id='d2'"
+        ).fetchone()[0])
+        guest["virtualHostId"] = "d1"
+        self.db.execute(
+            "UPDATE inventory_devices SET record_json=? WHERE id='d2'",
+            (json.dumps(guest),)
+        )
+        self.db.commit()
+        updated_guest = dict(guest, virtualHostId="",
+                             previousVirtualHosts=[{"hostId":"d1", "action":"unassign"}])
+        with patch("backend.device_saves.can_access", return_value=True):
+            self.assertEqual(save_reserved_device(
+                self.db, 1, "d1", 0, dict(self.original, name="Renamed"),
+                related_devices=[{"deviceId":"d2", "revision":0, "record":updated_guest}]
+            ), 1)
+        stored_guest, revision = self.db.execute(
+            "SELECT record_json,revision FROM inventory_devices WHERE id='d2'"
+        ).fetchone()
+        self.assertEqual(json.loads(stored_guest), updated_guest)
+        self.assertEqual(revision, 1)
+        kinds = [change["kind"] for (raw,) in self.db.execute(
+            "SELECT record_json FROM inventory_change_history"
+        ) for change in json.loads(raw)["changes"]]
+        self.assertEqual(kinds.count("Device"), 2)
+
+    def test_edit_primary_ip_respects_independent_reservations(self):
+        self.db.execute(
+            "INSERT INTO inventory_ip_allocations(ip,record_json) VALUES(?,?)",
+            ("10.0.0.20", json.dumps({
+                "status":"Reserved", "deviceId":"", "reservedForDeviceId":"d2"
+            }))
+        )
+        self.db.commit()
+        before = self.snapshot()
+        with self.assertRaisesRegex(ValueError, "reserved for another device"):
+            self.save(dict(self.original, primaryIp="10.0.0.20"))
+        self.assertEqual(self.snapshot(), before)
+
     def test_unmodified_device_save(self):
         self.assertEqual(self.save(dict(self.original)), 1)
         self.assertEqual(self.db.execute(
@@ -267,6 +307,20 @@ class CreateDeviceTests(unittest.TestCase):
             "SELECT COUNT(*) FROM inventory_devices"
         ).fetchone()[0], 1)
 
+    def test_create_refuses_reserved_ipam_address(self):
+        self.db.execute(
+            "INSERT INTO inventory_ip_allocations(ip,record_json) VALUES(?,?)",
+            ("10.0.0.20", json.dumps({
+                "status":"Reserved", "deviceId":"", "reservedForDeviceId":"another-device"
+            }))
+        )
+        self.db.commit()
+        with self.assertRaisesRegex(ValueError, "reserved for another device"):
+            self.create(self.record)
+        self.assertEqual(self.db.execute(
+            "SELECT COUNT(*) FROM inventory_devices"
+        ).fetchone()[0], 0)
+
     def test_requires_devices_edit_permission(self):
         with patch("backend.device_saves.can_access", return_value=False):
             with self.assertRaises(PermissionError):
@@ -279,6 +333,50 @@ class DeleteReservedDeviceTests(ReservedDeviceSaveTests):
     def delete(self, revision=0):
         with patch("backend.device_saves.can_access", return_value=True):
             return delete_reserved_device(self.db, 1, "d1", revision)
+
+    def test_delete_clears_independent_device_reservations(self):
+        self.db.execute(
+            "INSERT INTO inventory_ip_allocations(ip,record_json) VALUES(?,?)",
+            ("10.0.0.20", json.dumps({
+                "status":"Reserved", "deviceId":"", "reservedForDeviceId":"d1",
+                "notes":"Keep existing note"
+            }))
+        )
+        self.db.commit()
+        self.assertTrue(self.delete())
+        record = json.loads(self.db.execute(
+            "SELECT record_json FROM inventory_ip_allocations WHERE ip='10.0.0.20'"
+        ).fetchone()[0])
+        self.assertEqual(record["reservedForDeviceId"], "")
+        self.assertEqual(record["notes"], "Keep existing note")
+        history = json.loads(self.db.execute(
+            "SELECT record_json FROM inventory_change_history"
+        ).fetchone()[0])
+        self.assertIn("10.0.0.20", [change["label"] for change in history["changes"]])
+
+    def test_delete_host_and_guest_choice_commit_together(self):
+        guest = json.loads(self.db.execute(
+            "SELECT record_json FROM inventory_devices WHERE id='d2'"
+        ).fetchone()[0])
+        guest["virtualHostId"] = "d1"
+        self.db.execute(
+            "UPDATE inventory_devices SET record_json=? WHERE id='d2'",
+            (json.dumps(guest),)
+        )
+        self.db.commit()
+        updated_guest = dict(guest, virtualHostId="", status="Retired",
+                             previousVirtualHosts=[{"hostId":"d1", "action":"retire"}])
+        with patch("backend.device_saves.can_access", return_value=True):
+            self.assertTrue(delete_reserved_device(
+                self.db, 1, "d1", 0,
+                related_devices=[{"deviceId":"d2", "revision":0, "record":updated_guest}]
+            ))
+        self.assertIsNone(self.db.execute(
+            "SELECT id FROM inventory_devices WHERE id='d1'"
+        ).fetchone())
+        self.assertEqual(json.loads(self.db.execute(
+            "SELECT record_json FROM inventory_devices WHERE id='d2'"
+        ).fetchone()[0]), updated_guest)
 
     def test_delete_releases_ip_and_records_history(self):
         self.assertTrue(self.delete())

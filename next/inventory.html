@@ -7667,11 +7667,12 @@ function hierarchyValidateTypes(subnets) {
         }
 
         async function deleteDevice(deviceId) {
-            const device=getDeviceById(deviceId);
-            if(!device || !nextDeviceBridge) return;
+            if (!nextDeviceBridge) return;
             try { await nextDeviceBridge.reserveForDelete(deviceId); }
             catch (error) { showToast(error.message, 'error'); return; }
             try {
+            const device=getDeviceById(deviceId);
+            if (!device) { showToast('Device no longer exists.', 'error'); return; }
             const hostedDependants=appState.devices.filter(d=>d.id!==deviceId&&d.virtualHostId===deviceId);
             let choices=[];
             if(hostedDependants.length) {
@@ -9365,7 +9366,8 @@ window.addEventListener('load', async () => {
         : {record};
       await postInventory(deviceId ? '/api/devices/edit/save' : '/api/devices/create',payload);
       activeEdit = null;
-      await refreshCentralInventory(false);
+      try { await refreshCentralInventory(false); }
+      catch (error) { showToast('Device saved. Unable to refresh the latest inventory.', 'error'); return true; }
       showToast('Device saved.');
       return true;
     } catch (error) {
@@ -9375,9 +9377,11 @@ window.addEventListener('load', async () => {
   }
   async function reserveForDelete(deviceId) {
     if (!editPermissions.Devices) throw new Error('Devices edit permission required.');
+    await refreshCentralInventory(false);
+    if (!appState.devices.some(device => device.id === deviceId))
+      throw new Error('Device no longer exists.');
     const reservation = await postInventory('/api/devices/edit/start',{deviceId});
     activeDelete = {deviceId,revision:reservation.revision};
-    await refreshCentralInventory(false);
   }
   async function removeDevice(beforeJson,deviceId) {
     if (pendingSave) return false;
@@ -9391,7 +9395,12 @@ window.addEventListener('load', async () => {
         relatedDevices:relatedChanges(before,deviceId)
       });
       activeDelete = null;
-      await refreshCentralInventory();
+      try { await refreshCentralInventory(); }
+      catch (error) {
+        renderContent();
+        showToast('Device deleted. Unable to refresh the latest inventory.', 'error');
+        return true;
+      }
       showToast('Device deleted.');
       return true;
     } catch(error) {
