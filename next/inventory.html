@@ -1880,7 +1880,9 @@ function hierarchyValidateTypes(subnets) {
             </div>`;
         }
 
-        function saveState() { showToast('Editing is not yet enabled in this development build.', 'error'); return false; }
+        let nextDeviceBridge = null;
+        let nextDeviceModalClosed = null;
+        function saveState() { showToast('This inventory operation is not yet connected to SQLite.', 'error'); return false; }
 
         // Inventory data-integrity helpers
         function getDeviceById(deviceId) {
@@ -5508,6 +5510,7 @@ function hierarchyValidateTypes(subnets) {
             const container = document.getElementById('modal-container');
             container.classList.add('hidden');
             container.classList.remove('flex');
+            if (nextDeviceModalClosed) nextDeviceModalClosed();
             if (modalReturnFocus && modalReturnFocus.isConnected) modalReturnFocus.focus();
             modalReturnFocus = null;
             if (typeof onClosed === 'function') onClosed();
@@ -7656,9 +7659,8 @@ function hierarchyValidateTypes(subnets) {
                     {platform:guest.virtualPlatform || '', hostId:deviceId, changedAt:new Date().toISOString()}];
                 guest.virtualPlatform = nextHypervisor;
             }
-            if (!saveState()) {
+            if (!nextDeviceBridge || !await nextDeviceBridge.save(beforeDeviceSave, deviceId)) {
                 appState = JSON.parse(beforeDeviceSave);
-                showToast('Device changes were not saved. Previous data restored.', 'error');
                 return;
             }
             closeModal(true); renderContent();
@@ -7666,7 +7668,10 @@ function hierarchyValidateTypes(subnets) {
 
         async function deleteDevice(deviceId) {
             const device=getDeviceById(deviceId);
-            if(!device) return;
+            if(!device || !nextDeviceBridge) return;
+            try { await nextDeviceBridge.reserveForDelete(deviceId); }
+            catch (error) { showToast(error.message, 'error'); return; }
+            try {
             const hostedDependants=appState.devices.filter(d=>d.id!==deviceId&&d.virtualHostId===deviceId);
             let choices=[];
             if(hostedDependants.length) {
@@ -7681,7 +7686,7 @@ function hierarchyValidateTypes(subnets) {
             }
             const related=Object.keys(appState.ipAllocations).filter(ip=>appState.ipAllocations[ip]?.deviceId===deviceId);
             const reserved=Object.keys(appState.ipAllocations).filter(ip=>appState.ipAllocations[ip]?.reservedForDeviceId===deviceId);
-            const message=`Delete device ${device.name}?\n\nPrimary IP: ${device.primaryIp||'none'}\nLinked IPAM records: ${related.length}\nOther reservations: ${reserved.length}\nRack: ${device.rackId?'mounted':'not mounted'}\n\n${hostedDependants.length} hosted virtual machines will be resolved as selected.\n\nThis cannot be undone. Export a backup first.`;
+            const message=`Delete device ${device.name}?\n\nPrimary IP: ${device.primaryIp||'none'}\nLinked IPAM records: ${related.length}\nOther reservations: ${reserved.length}\nRack: ${device.rackId?'mounted':'not mounted'}\n\n${hostedDependants.length} hosted virtual machines will be resolved as selected.\n\nThis cannot be undone.`;
             if(!confirm(message)) return;
             const before=JSON.stringify(appState);
             for(let index=0;index<hostedDependants.length;index++){
@@ -7710,7 +7715,8 @@ function hierarchyValidateTypes(subnets) {
             }
             for(const ip of reserved)if(appState.ipAllocations[ip])appState.ipAllocations[ip].reservedForDeviceId='';
             appState.devices=appState.devices.filter(d=>d.id!==deviceId);
-            commitDeletionWithRollback(before,'Device');
+            await nextDeviceBridge.remove(before, deviceId);
+            } finally { await nextDeviceBridge.cancelDelete(deviceId); }
         }
 
         // one purpose per settings section; existing handlers remain unchanged.
@@ -9232,114 +9238,232 @@ function hierarchyValidateTypes(subnets) {
 
         window.onload = function() { /* inventory is loaded after authentication */ };
     
-// Next uses the authoritative server snapshot, never browser inventory storage.
-// Inventory editing is withheld until each published mutation is wired to SQLite.
+// Caffoot Lite Next: published inventory UI, authoritative SQLite persistence.
 window.addEventListener('load', async () => {
-  try {
+  const collections = ['devices','subnets','vlans','racks','rackAccessories','ipAllocations'];
+  const section = {devices:'Devices',ipam:'IPAM',racks:'Racks'};
+  let permissions = {};
+  let editPermissions = {};
+  let deviceRevisions = {};
+  let csrfToken = '';
+  let activeEdit = null;
+  let pendingSave = false;
+  let activeDelete = null;
+  async function refreshCentralInventory(render = true) {
     const response = await fetch('/api/inventory/state', {cache:'no-store'});
     if (!response.ok) throw new Error(response.status === 401 ? 'Please sign in first.' : 'Unable to load central inventory.');
-    const snapshot = await response.json();
-    const collections = ['devices','subnets','vlans','racks','rackAccessories','ipAllocations'];
-    for (const key of collections) if (Object.prototype.hasOwnProperty.call(snapshot,key)) appState[key] = snapshot[key];
-    // SQLite settings use the same published inventory keys, nested in the API response.
-    for (const [key,value] of Object.entries(snapshot.settings || {})) appState[key] = value;
-    auditHistory = Array.isArray(snapshot.changeHistory) ? snapshot.changeHistory : [];
+    const state = await response.json();
+    permissions = state.sections || {};
+    editPermissions = state.editPermissions || {};
+    deviceRevisions = state.deviceRevisions || {};
+    for (const key of collections) {
+      if (Object.prototype.hasOwnProperty.call(state,key)) appState[key] = state[key];
+      else appState[key] = key === 'ipAllocations' ? {} : [];
+    }
+    for (const [key,value] of Object.entries(state.settings || {})) appState[key] = value;
+    auditHistory = Array.isArray(state.changeHistory) ? state.changeHistory : [];
     auditBaseline = JSON.stringify(appState);
-    const permissions = snapshot.sections || {};
-    // Inventory state is refreshed from SQLite when another user has saved.
-    // The viewer never writes a stale browser snapshot back to the server.
-    async function refreshCentralInventory() {
-      const response = await fetch('/api/inventory/state', {cache:'no-store'});
-      if (!response.ok) throw new Error('Unable to refresh central inventory.');
-      const next = await response.json();
-      for (const key of collections) {
-        if (Object.prototype.hasOwnProperty.call(next,key)) appState[key] = next[key];
-      }
-      for (const [key,value] of Object.entries(next.settings || {})) appState[key]=value;
-      auditHistory = Array.isArray(next.changeHistory) ? next.changeHistory : [];
-      auditBaseline = JSON.stringify(appState);
-      renderContent();
+    if (render) renderContent();
+  }
+  async function postInventory(path, data) {
+    const response = await fetch(path, {
+      method:'POST',
+      headers:{'Content-Type':'application/json','X-CSRF-Token':csrfToken},
+      body:JSON.stringify(data)
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'Unable to save inventory.');
+    return result;
+  }
+  const actionCanEditDevice = new Set([
+    'open-device-modal','edit-device','edit-device-from-details',
+    'delete-device','delete-device-from-details',
+    'duplicate-device','duplicate-device-from-details'
+  ]);
+  const blockedActions = /^(add|create|edit|delete|remove|save|restore|reset|import|export|repair|assign|reserve|release|clear|bulk|duplicate|move|place|unplace|update|change|apply|confirm|choose-backup)/i;
+  function isBlockedAction(action) {
+    return blockedActions.test(action) && !(editPermissions.Devices && actionCanEditDevice.has(action));
+  }
+  function applyAllowedControls() {
+    const root = document.getElementById('main-content');
+    if (!root) return;
+    root.querySelectorAll('button').forEach(button => {
+      if (isBlockedAction(button.dataset.action || '') || button.type === 'submit') button.disabled = true;
+    });
+  }
+  const originalSwitchTab = switchTab;
+  switchTab = function(tab) {
+    if (section[tab] && !permissions[section[tab]]) {
+      showToast('You do not have access to this section.', 'error');
+      return;
     }
-    // The published interface is unchanged. Until backend saves are connected,
-    // present it strictly as a central-inventory viewer, never as a local editor.
-    const section = {devices:'Devices',ipam:'IPAM',racks:'Racks'};
-    const originalSwitchTab = switchTab;
-    switchTab = function(tab) {
-      if (section[tab] && !permissions[section[tab]]) {
-        showToast('You do not have access to this section.', 'error');
-        return;
+    originalSwitchTab(tab);
+    applyAllowedControls();
+  };
+  const originalOpenDeviceModal = openDeviceModal;
+  openDeviceModal = function(deviceId = null) {
+    if (!editPermissions.Devices) {
+      showToast('Devices edit permission required.', 'error');
+      return;
+    }
+    if (!deviceId) {
+      originalOpenDeviceModal(null);
+      return;
+    }
+    (async () => {
+      try {
+        if (!activeEdit || activeEdit.deviceId !== deviceId) {
+          if (activeEdit) await postInventory('/api/devices/edit/cancel', {deviceId:activeEdit.deviceId});
+          activeEdit = null;
+          const reservation = await postInventory('/api/devices/edit/start', {deviceId});
+          activeEdit = {deviceId, revision:reservation.revision};
+        }
+        await refreshCentralInventory(false);
+        if (!appState.devices.some(device=>device.id===deviceId))
+          throw new Error('Device no longer exists.');
+        originalOpenDeviceModal(deviceId);
+      } catch (error) {
+        if (activeEdit && activeEdit.deviceId===deviceId) {
+          await postInventory('/api/devices/edit/cancel', {deviceId}).catch(()=>{});
+          activeEdit = null;
+        }
+        showToast(error.message,'error');
       }
-      originalSwitchTab(tab);
-      applyReadOnly();
-    };
-    // Do not offer the published browser-only backup/recovery controls.
-    document.querySelectorAll('[data-action="settings-backup"],[data-action="export-data"],[data-action="export-backup"]').forEach(el=>el.hidden=true);
-    const notice = document.createElement('div');
-    notice.id='next-readonly-notice';
-    notice.setAttribute('role','status');
-    notice.style.cssText='position:fixed;bottom:12px;left:12px;z-index:9999;background:#1e293b;color:white;padding:10px 14px;border-radius:8px;font:14px sans-serif;max-width:460px';
-    notice.textContent='Central inventory view — editing is not yet enabled in this development build.';
-    document.body.appendChild(notice);
-    // Keep all unconnected mutations blocked, including modal actions.
-    const blockedActions = /^(add|create|edit|delete|remove|save|restore|reset|import|export|repair|assign|reserve|release|clear|bulk|duplicate|move|place|unplace|update|change|apply|confirm|choose-backup)/i;
-    function applyReadOnly() {
-      const root = document.getElementById('main-content');
-      if (!root) return;
-      root.querySelectorAll('button').forEach(el => {
-        if (blockedActions.test(el.dataset.action || '') || el.type === 'submit') el.disabled = true;
+    })();
+  };
+  nextDeviceModalClosed = function() {
+    if (!activeEdit) return;
+    const deviceId = activeEdit.deviceId;
+    activeEdit = null;
+    postInventory('/api/devices/edit/cancel',{deviceId}).catch(error=>showToast(error.message,'error'));
+  };
+  function relatedChanges(before, deletedId = null) {
+    const oldById = new Map(before.devices.map(device=>[device.id,device]));
+    const related = [];
+    for (const record of appState.devices) {
+      const previous = oldById.get(record.id);
+      if (!previous || record.id === deletedId || JSON.stringify(previous)===JSON.stringify(record)) continue;
+      if (!(record.id in deviceRevisions)) throw new Error('Device revision unavailable. Refresh the inventory.');
+      related.push({deviceId:record.id, revision:deviceRevisions[record.id], record});
+    }
+    return related;
+  }
+  async function saveDevice(beforeJson, deviceId) {
+    if (pendingSave) return false;
+    pendingSave = true;
+    try {
+      const before=JSON.parse(beforeJson);
+      const record=deviceId
+        ? appState.devices.find(device=>device.id===deviceId)
+        : appState.devices.find(device=>!before.devices.some(previous=>previous.id===device.id));
+      if (!record) throw new Error('The device to save was not found.');
+      const relatedDevices = relatedChanges(before, deviceId);
+      if (deviceId && (!activeEdit || activeEdit.deviceId!==deviceId))
+        throw new Error('Device edit reservation is no longer active.');
+      const payload = deviceId
+        ? {deviceId, revision:activeEdit.revision, record, relatedDevices}
+        : {record};
+      await postInventory(deviceId ? '/api/devices/edit/save' : '/api/devices/create',payload);
+      activeEdit = null;
+      await refreshCentralInventory(false);
+      showToast('Device saved.');
+      return true;
+    } catch (error) {
+      showToast(error.message,'error');
+      return false;
+    } finally { pendingSave=false; }
+  }
+  async function reserveForDelete(deviceId) {
+    if (!editPermissions.Devices) throw new Error('Devices edit permission required.');
+    const reservation = await postInventory('/api/devices/edit/start',{deviceId});
+    activeDelete = {deviceId,revision:reservation.revision};
+    await refreshCentralInventory(false);
+  }
+  async function removeDevice(beforeJson,deviceId) {
+    if (pendingSave) return false;
+    pendingSave = true;
+    try {
+      if (!activeDelete || activeDelete.deviceId!==deviceId)
+        throw new Error('Device edit reservation is no longer active.');
+      const before=JSON.parse(beforeJson);
+      await postInventory('/api/devices/delete',{
+        deviceId, revision:activeDelete.revision,
+        relatedDevices:relatedChanges(before,deviceId)
       });
-      // Search and filter inputs are useful in the central inventory viewer.
-      // Do not disable them: doing so breaks established read-only browsing.
-    }
-    document.addEventListener('click', event => {
-      const el = event.target.closest('button,[data-action]');
-      if (!el) return;
-      if (blockedActions.test(el.dataset.action || '') ||
-          (el.matches('button') && el.type === 'submit')) {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        showToast('Editing is not yet enabled in this development build.', 'error');
-      }
-    }, true);
-    document.addEventListener('submit', event => {
+      activeDelete = null;
+      await refreshCentralInventory();
+      showToast('Device deleted.');
+      return true;
+    } catch(error) {
+      appState=JSON.parse(beforeJson);
+      showToast(error.message,'error');
+      return false;
+    } finally { pendingSave=false; }
+  }
+  async function cancelDelete(deviceId) {
+    if (!activeDelete || activeDelete.deviceId!==deviceId) return;
+    activeDelete = null;
+    try { await postInventory('/api/devices/edit/cancel',{deviceId}); }
+    catch(error) { showToast(error.message,'error'); }
+  }
+  nextDeviceBridge = {save:saveDevice,reserveForDelete,remove:removeDevice,cancelDelete};
+  document.addEventListener('click', event => {
+    const element = event.target.closest('button,[data-action]');
+    if (!element) return;
+    const action = element.dataset.action || '';
+    if (isBlockedAction(action) || (element.matches('button') && element.type==='submit' &&
+        !element.closest('form[data-device-form="true"]'))) {
       event.preventDefault();
       event.stopImmediatePropagation();
-    }, true);
-    const root = document.getElementById('main-content');
-    // Do not observe attributes: disabling controls would otherwise trigger
-    // a render loop. The existing view changes are tracked by child nodes.
-    new MutationObserver(applyReadOnly).observe(root, {childList:true,subtree:true});
-    // Session and account management stay in the approved signed-in area.
-    const sessionResponse = await fetch('/api/session', {cache:'no-store'});
-    if (sessionResponse.ok) {
-      const session = await sessionResponse.json();
-      const link = document.createElement('a');
-      link.href = '/setup';
-      link.textContent = session.is_admin ? 'Users and account settings' : 'Account settings';
-      link.style.cssText='position:fixed;top:12px;right:12px;z-index:9999;background:#312e81;color:white;padding:8px 12px;border-radius:8px;font:13px sans-serif';
-      document.body.append(link);
+      showToast('This inventory operation is not yet connected to SQLite.', 'error');
     }
-    const refresh = document.createElement('button');
-    refresh.type = 'button';
-    refresh.textContent = 'Refresh inventory';
+  },true);
+  document.addEventListener('submit',event => {
+    if (editPermissions.Devices && event.target.matches('form[data-device-form="true"]')) return;
+    event.preventDefault();event.stopImmediatePropagation();
+  },true);
+  const root=document.getElementById('main-content');
+  new MutationObserver(applyAllowedControls).observe(root,{childList:true,subtree:true});
+  try {
+    const sessionResponse=await fetch('/api/session',{cache:'no-store'});
+    if(!sessionResponse.ok) throw new Error('Please sign in first.');
+    const session=await sessionResponse.json();
+    csrfToken=session.csrf_token;
+    await refreshCentralInventory(false);
+    const link=document.createElement('a');
+    link.href='/setup';
+    link.textContent=session.is_admin ? 'Users and account settings' : 'Account settings';
+    link.style.cssText='position:fixed;top:12px;right:12px;z-index:9999;background:#312e81;color:white;padding:8px 12px;border-radius:8px;font:13px sans-serif';
+    document.body.append(link);
+    const notice=document.createElement('div');
+    notice.setAttribute('role','status');
+    notice.style.cssText='position:fixed;bottom:12px;left:12px;z-index:9999;background:#1e293b;color:white;padding:10px 14px;border-radius:8px;font:13px sans-serif;max-width:460px';
+    notice.textContent=editPermissions.Devices
+      ? 'Devices save to SQLite. Other inventory editing is still being connected.'
+      : 'Central inventory view — editing requires the relevant permission.';
+    document.body.append(notice);
+    const refresh=document.createElement('button');
+    refresh.type='button';refresh.textContent='Refresh inventory';
     refresh.style.cssText='position:fixed;bottom:12px;right:12px;z-index:9999;background:#312e81;color:white;padding:10px 14px;border-radius:8px;font:14px sans-serif';
-    refresh.addEventListener('click', async () => {
-      refresh.disabled = true;
-      try { await refreshCentralInventory(); showToast('Inventory refreshed'); }
-      catch (error) { showToast(error.message,'error'); }
-      finally { refresh.disabled = false; }
+    refresh.addEventListener('click',async()=>{
+      refresh.disabled=true;
+      try{await refreshCentralInventory();showToast('Inventory refreshed.');}
+      catch(error){showToast(error.message,'error');}
+      finally{refresh.disabled=false;}
     });
     document.body.append(refresh);
+    // Hide only the browser-backup actions excluded from Next by issue #215.
+    document.querySelectorAll('[data-action="settings-backup"],[data-action="export-data"],[data-action="export-backup"]').forEach(el=>el.hidden=true);
     switchTab('dashboard');
-  } catch (error) {
-    document.getElementById('main-content').replaceChildren();
+  }catch(error){
+    const container=document.getElementById('main-content');
+    container.replaceChildren();
     const warning=document.createElement('p');
     warning.textContent=error.message;
     warning.style.cssText='padding:24px;color:#b91c1c;font-weight:bold';
-    document.getElementById('main-content').append(warning);
+    container.append(warning);
   }
 });
-
 </script>
 </body>
 </html>

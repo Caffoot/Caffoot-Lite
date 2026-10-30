@@ -10,7 +10,69 @@ from .permissions import can_access
 from .rack_validation import find_rack_import_conflicts
 
 
-def save_reserved_device(connection, account_id, device_id, revision, record, section="Devices"):
+_GUEST_FIELDS = frozenset((
+    "virtualHostId", "status", "virtualPlatform",
+    "previousVirtualHosts", "previousVirtualPlatforms",
+))
+
+
+def _prepare_related_guests(connection, candidate, host_id, related_devices, account_id):
+    """Validate the published host/guest choices within the host transaction."""
+    if related_devices is None:
+        return []
+    if not isinstance(related_devices, list):
+        raise ValueError("Invalid related device changes")
+    originals = {record["id"]: record for record in candidate["devices"]}
+    updates = []
+    seen = set()
+    now = int(time.time())
+    for item in related_devices:
+        if not isinstance(item, dict) or set(item) != {"deviceId", "revision", "record"}:
+            raise ValueError("Invalid related device change")
+        guest_id, revision, record = item["deviceId"], item["revision"], item["record"]
+        if (not isinstance(guest_id, str) or guest_id == host_id or guest_id in seen
+                or type(revision) is not int or revision < 0 or not isinstance(record, dict)
+                or record.get("id") != guest_id):
+            raise ValueError("Invalid related device change")
+        seen.add(guest_id)
+        previous = originals.get(guest_id)
+        if previous is None or previous.get("virtualHostId") != host_id:
+            raise ValueError("Related device is not hosted by this device")
+        changed = {key for key in set(previous) | set(record)
+                   if previous.get(key) != record.get(key)}
+        if not changed or not changed.issubset(_GUEST_FIELDS):
+            raise ValueError("Unsupported related device change")
+        row = connection.execute(
+            "SELECT revision FROM inventory_devices WHERE id=?", (guest_id,)
+        ).fetchone()
+        if row is None or row[0] != revision:
+            raise ValueError("Related device has changed since editing began")
+        reservation = connection.execute(
+            "SELECT account_id,expires_at FROM device_edit_reservations WHERE device_id=?",
+            (guest_id,)
+        ).fetchone()
+        if reservation and reservation[1] > now and reservation[0] != account_id:
+            raise ValueError("Related device is being edited by another user")
+        updates.append((previous, record, changed))
+    replacements = {record["id"]: record for _, record, _ in updates}
+    candidate["devices"] = [replacements.get(record["id"], record)
+                            for record in candidate["devices"]]
+    return updates
+
+
+def _persist_related_guests(connection, updates):
+    changes = []
+    for previous, record, changed in updates:
+        connection.execute(
+            "UPDATE inventory_devices SET name=?,record_json=?,revision=revision+1 WHERE id=?",
+            (record["name"], json.dumps(record, ensure_ascii=False, allow_nan=False), record["id"]),
+        )
+        changes.append({"action": "Updated", "kind": "Device",
+                        "label": str(record["name"])[:100], "fields": sorted(changed)[:16]})
+    return changes
+
+
+def save_reserved_device(connection, account_id, device_id, revision, record, section="Devices", related_devices=None):
     """Commit one reserved device change only if its original revision still matches."""
     if section not in ("Devices", "IPAM", "Racks") or not can_access(
         connection, account_id, section, edit=True
@@ -38,6 +100,11 @@ def save_reserved_device(connection, account_id, device_id, revision, record, se
         previous = next(device for device in candidate["devices"] if device["id"] == device_id)
         candidate["devices"] = [record if device["id"] == device_id else device
                                 for device in candidate["devices"]]
+        if related_devices and not can_access(connection, account_id, "Devices", edit=True):
+            raise PermissionError("Devices edit permission required for related changes")
+        related_updates = _prepare_related_guests(
+            connection, candidate, device_id, related_devices, account_id
+        )
 
         # IPAM owns assignments: update the shared allocation table in the same
         # transaction as the device, never leave a second device-only IP authority.
@@ -81,7 +148,7 @@ def save_reserved_device(connection, account_id, device_id, revision, record, se
                     "ON CONFLICT(ip) DO UPDATE SET record_json=excluded.record_json",
                     (ip, json.dumps(allocations[ip], ensure_ascii=False, allow_nan=False)),
                 )
-        changes = []
+        changes = _persist_related_guests(connection, related_updates)
         if previous != record:
             fields = [key for key in dict.fromkeys((*previous, *record))
                       if key != "id" and previous.get(key) != record.get(key)]
@@ -193,7 +260,7 @@ def create_device(connection, account_id, record):
         raise
 
 
-def delete_reserved_device(connection, account_id, device_id, revision):
+def delete_reserved_device(connection, account_id, device_id, revision, related_devices=None):
     """Delete an exclusively reserved device and release its IPAM assignment."""
     if not can_access(connection, account_id, "Devices", edit=True):
         raise PermissionError("Devices edit permission required")
@@ -217,6 +284,9 @@ def delete_reserved_device(connection, account_id, device_id, revision):
         candidate["devices"] = [
             device for device in candidate["devices"] if device["id"] != device_id
         ]
+        related_updates = _prepare_related_guests(
+            connection, candidate, device_id, related_devices, account_id
+        )
         # The published inventory's relationships must remain valid after deletion.
         # Do not silently delete dependent virtual machines or other records.
         old_ip = previous.get("primaryIp")
@@ -232,6 +302,7 @@ def delete_reserved_device(connection, account_id, device_id, revision):
         conflicts = find_rack_import_conflicts(candidate)
         if conflicts:
             raise ValueError(conflicts[0])
+        _persist_related_guests(connection, related_updates)
         connection.execute("DELETE FROM inventory_devices WHERE id=?", (device_id,))
         if old_allocation and old_ip:
             connection.execute(
@@ -240,6 +311,9 @@ def delete_reserved_device(connection, account_id, device_id, revision):
             )
         changes = [{"action": "Deleted", "kind": "Device",
                     "label": previous["name"][:100], "fields": []}]
+        for old_guest, new_guest, fields in related_updates:
+            changes.append({"action":"Updated", "kind":"Device",
+                            "label":new_guest["name"][:100], "fields":sorted(fields)[:16]})
         if old_allocation and old_ip:
             changes.append({"action": "Updated", "kind": "IPAM",
                             "label": old_ip, "fields": ["deviceId", "status", "hostname"]})

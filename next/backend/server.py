@@ -443,10 +443,11 @@ class Handler(BaseHTTPRequestHandler):
                     )
                     result = {"status": "saved"}
                 elif self.path == "/api/devices/delete":
-                    if set(payload) != {"deviceId", "revision"}:
+                    if set(payload) not in ({"deviceId", "revision"},
+                                            {"deviceId", "revision", "relatedDevices"}):
                         raise ValueError("Invalid device delete request")
                     delete_reserved_device(connection, actor, payload["deviceId"],
-                                           payload["revision"])
+                                           payload["revision"], payload.get("relatedDevices"))
                     result = {"status": "deleted"}
                 elif self.path == "/api/devices/create":
                     if set(payload) != {"record"}:
@@ -454,11 +455,14 @@ class Handler(BaseHTTPRequestHandler):
                     result = {"revision": create_device(connection, actor, payload["record"])}
                 elif self.path == "/api/devices/edit/save":
                     if set(payload) not in ({"deviceId", "revision", "record"},
-                                            {"deviceId", "revision", "record", "section"}):
+                                            {"deviceId", "revision", "record", "section"},
+                                            {"deviceId", "revision", "record", "relatedDevices"},
+                                            {"deviceId", "revision", "record", "section", "relatedDevices"}):
                         raise ValueError("Invalid device save request")
                     result = {"revision": save_reserved_device(
                         connection, actor, payload["deviceId"], payload["revision"],
-                        payload["record"], payload.get("section", "Devices"))}
+                        payload["record"], payload.get("section", "Devices"),
+                        payload.get("relatedDevices"))}
                 elif self.path in ("/api/devices/edit/start", "/api/devices/edit/cancel"):
                     if set(payload) not in ({"deviceId"}, {"deviceId", "section"}) or not isinstance(payload["deviceId"], str):
                         raise ValueError("Device identifier required")

@@ -89,6 +89,45 @@ class ReservedDeviceSaveTests(unittest.TestCase):
             self.save(dict(self.original, rackUStart=3, rackUEnd=3))
         self.assertEqual(self.snapshot(), before)
 
+    def test_related_changes_reject_non_guest_and_leave_database_unchanged(self):
+        before = self.snapshot()
+        unrelated = dict(self.db.execute(
+            "SELECT record_json FROM inventory_devices WHERE id='d2'"
+        ).fetchone() and json.loads(self.db.execute(
+            "SELECT record_json FROM inventory_devices WHERE id='d2'"
+        ).fetchone()[0]), status="Retired")
+        with patch("backend.device_saves.can_access", return_value=True):
+            with self.assertRaisesRegex(ValueError, "not hosted"):
+                save_reserved_device(self.db, 1, "d1", 0,
+                                     dict(self.original, name="Renamed"),
+                                     related_devices=[{"deviceId":"d2", "revision":0,
+                                                       "record":unrelated}])
+        self.assertEqual(self.snapshot(), before)
+        self.assertEqual(self.db.execute(
+            "SELECT COUNT(*) FROM inventory_change_history"
+        ).fetchone()[0], 0)
+
+    def test_related_changes_reject_unapproved_device_properties(self):
+        # The host edit may only carry the published dependent guest decisions,
+        # never arbitrary edits of unrelated device data.
+        before = self.snapshot()
+        guest = json.loads(self.db.execute(
+            "SELECT record_json FROM inventory_devices WHERE id='d2'"
+        ).fetchone()[0])
+        guest["virtualHostId"] = "d1"
+        self.db.execute(
+            "UPDATE inventory_devices SET record_json=? WHERE id='d2'",
+            (json.dumps(guest),)
+        )
+        self.db.commit()
+        bad_guest = dict(guest, name="Unexpected rename")
+        with patch("backend.device_saves.can_access", return_value=True):
+            with self.assertRaisesRegex(ValueError, "Unsupported related"):
+                save_reserved_device(self.db, 1, "d1", 0, dict(self.original),
+                                     related_devices=[{"deviceId":"d2","revision":0,
+                                                       "record":bad_guest}])
+        self.assertEqual(self.snapshot(), before)
+
     def test_unmodified_device_save(self):
         self.assertEqual(self.save(dict(self.original)), 1)
         self.assertEqual(self.db.execute(

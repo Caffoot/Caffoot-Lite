@@ -184,6 +184,39 @@ class SessionHttpTests(unittest.TestCase):
         self.assertEqual(snapshot["editPermissions"]["IPAM"], True)
         self.assertEqual(snapshot["editPermissions"]["Devices"], False)
 
+    def test_device_create_edit_delete_through_authenticated_http(self):
+        record = {"id":"http-new","name":"HTTP New","mountType":"Desktop","primaryIp":""}
+        with patch("backend.server.PUBLIC_ORIGIN", "https://caffoot.example"):
+            csrf = csrf_for_session(self.token)
+            status, created = self.post("/api/devices/create",
+                                        {"record":record}, self.token, csrf)
+            self.assertEqual(status, 200)
+            self.assertEqual(created["revision"], 0)
+            status, reserved = self.post("/api/devices/edit/start",
+                                         {"deviceId":"http-new"}, self.token, csrf)
+            self.assertEqual(status, 200)
+            renamed = dict(record, name="HTTP Renamed")
+            status, saved = self.post("/api/devices/edit/save", {
+                "deviceId":"http-new","revision":reserved["revision"],
+                "record":renamed,"relatedDevices":[]}, self.token, csrf)
+            self.assertEqual(status, 200)
+            self.assertEqual(saved["revision"], 1)
+            status, reserved = self.post("/api/devices/edit/start",
+                                         {"deviceId":"http-new"}, self.token, csrf)
+            self.assertEqual(status, 200)
+            status, deleted = self.post("/api/devices/delete", {
+                "deviceId":"http-new","revision":reserved["revision"],
+                "relatedDevices":[]}, self.token, csrf)
+            self.assertEqual(status, 200)
+            self.assertEqual(deleted["status"], "deleted")
+        with sqlite3.connect(self.path) as db:
+            self.assertEqual(db.execute(
+                "SELECT COUNT(*) FROM inventory_devices WHERE id='http-new'"
+            ).fetchone()[0], 0)
+            self.assertEqual(db.execute(
+                "SELECT COUNT(*) FROM inventory_change_history"
+            ).fetchone()[0], 3)
+
     def test_device_edit_reservation_conflict_cancel_and_expiry(self):
         with sqlite3.connect(self.path) as db:
             db.execute("INSERT INTO inventory_devices(id,name,record_json,ordinal) VALUES(?,?,?,?)",
