@@ -85,7 +85,7 @@ async function run(){
   await page.locator('#submit').click();
   await page.waitForURL('**/inventory');
   await page.locator('#next-account-nav').waitFor();
-  assert.equal(await page.locator('#page-title').textContent(),'Dashboard Overview');
+  await page.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='Dashboard Overview');
   console.log('First administrator, MFA, sign-in and direct Dashboard arrival passed');
   assert.equal(await page.getByRole('button',{name:'Refresh inventory'}).count(),0);
   for(const tab of ['ipam','devices','racks','audit','users','settings']){
@@ -324,7 +324,7 @@ async function run(){
   await editor.locator('#submit').click();
   await editor.waitForURL('**/inventory');
   await editor.locator('#next-account-nav').waitFor();
-  assert.equal(await editor.locator('#page-title').textContent(),'Dashboard Overview');
+  await editor.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='Dashboard Overview');
   await editor.locator('#sidebar #next-account-nav').click();
   await editor.locator('#next-account-password-form').waitFor();
   assert.equal(await editor.locator('#page-title').textContent(),'My account');
