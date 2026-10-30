@@ -5,7 +5,7 @@ import time
 import unittest
 from unittest.mock import patch
 
-from backend.device_saves import save_reserved_device
+from backend.device_saves import create_device, save_reserved_device
 from backend.inventory import stage_inventory
 from backend.schema import initialise_database
 
@@ -165,3 +165,73 @@ class ReservedDeviceSaveTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+class CreateDeviceTests(unittest.TestCase):
+    def setUp(self):
+        self.db = sqlite3.connect(":memory:")
+        initialise_database(self.db)
+        stage_inventory(self.db, {
+            "devices": [],
+            "subnets": [{"id": "s1", "name": "Network", "cidr": "10.0.0.0/24",
+                         "gateway": "10.0.0.1", "vlan": 20}],
+            "vlans": [], "racks": [], "rackAccessories": [], "ipAllocations": {},
+        })
+        self.record = {"id": "new1", "name": "New", "mountType": "Desktop",
+                       "primaryIp": "10.0.0.20"}
+
+    def tearDown(self):
+        self.db.close()
+
+    def create(self, record):
+        with patch("backend.device_saves.can_access", return_value=True):
+            return create_device(self.db, 1, record)
+
+    def test_create_commits_device_ipam_and_history(self):
+        self.assertEqual(self.create(self.record), 0)
+        saved = self.db.execute(
+            "SELECT record_json,revision FROM inventory_devices WHERE id='new1'"
+        ).fetchone()
+        self.assertEqual(json.loads(saved[0]), self.record)
+        self.assertEqual(saved[1], 0)
+        ip = json.loads(self.db.execute(
+            "SELECT record_json FROM inventory_ip_allocations WHERE ip='10.0.0.20'"
+        ).fetchone()[0])
+        self.assertEqual(ip["deviceId"], "new1")
+        history = json.loads(self.db.execute(
+            "SELECT record_json FROM inventory_change_history"
+        ).fetchone()[0])
+        self.assertEqual([item["kind"] for item in history["changes"]],
+                         ["Device", "IPAM"])
+
+    def test_duplicate_identifier_and_name_do_not_mutate_inventory(self):
+        self.create(self.record)
+        for duplicate in (self.record, dict(self.record, id="new2", primaryIp="10.0.0.21")):
+            with self.assertRaises((ValueError, sqlite3.IntegrityError)):
+                self.create(duplicate)
+        self.assertEqual(self.db.execute(
+            "SELECT COUNT(*) FROM inventory_devices"
+        ).fetchone()[0], 1)
+        self.assertEqual(self.db.execute(
+            "SELECT COUNT(*) FROM inventory_change_history"
+        ).fetchone()[0], 1)
+
+    def test_competing_ip_and_bad_rack_roll_back(self):
+        self.create(self.record)
+        for invalid in (
+            dict(self.record, id="new2", name="Other"),
+            dict(self.record, id="new2", name="Other", primaryIp="",
+                 mountType="Rack Mounted", rackId="missing"),
+        ):
+            with self.assertRaises(ValueError):
+                self.create(invalid)
+        self.assertEqual(self.db.execute(
+            "SELECT COUNT(*) FROM inventory_devices"
+        ).fetchone()[0], 1)
+
+    def test_requires_devices_edit_permission(self):
+        with patch("backend.device_saves.can_access", return_value=False):
+            with self.assertRaises(PermissionError):
+                create_device(self.db, 1, self.record)
+        self.assertEqual(self.db.execute(
+            "SELECT COUNT(*) FROM inventory_devices"
+        ).fetchone()[0], 0)

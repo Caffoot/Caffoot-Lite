@@ -120,3 +120,74 @@ def save_reserved_device(connection, account_id, device_id, revision, record, se
     except BaseException:
         connection.rollback()
         raise
+
+
+def create_device(connection, account_id, record):
+    """Create a published-shape device with its IPAM allocation atomically."""
+    if not can_access(connection, account_id, "Devices", edit=True):
+        raise PermissionError("Devices edit permission required")
+    if (not isinstance(record, dict) or not isinstance(record.get("id"), str)
+            or not record["id"] or not isinstance(record.get("name"), str)
+            or not record["name"].strip()):
+        raise ValueError("Invalid device")
+    connection.execute("BEGIN IMMEDIATE")
+    try:
+        candidate = reconstruct_inventory(connection)
+        if any(device.get("id") == record["id"] for device in candidate["devices"]):
+            raise ValueError("Device identifier already exists")
+        candidate["devices"].append(record)
+        new_ip = record.get("primaryIp")
+        if new_ip:
+            allocation = candidate["ipAllocations"].get(new_ip)
+            if allocation and allocation.get("deviceId") not in (None, ""):
+                raise ValueError("Primary IP is assigned to another device")
+            if allocation is None:
+                allocation = {"status": "Available", "deviceId": "", "hostname": "", "notes": ""}
+                candidate["ipAllocations"][new_ip] = allocation
+            allocation.update({
+                "deviceId": record["id"],
+                "status": "Reserved" if record.get("ipReserved") else "Assigned",
+                "hostname": record["name"],
+            })
+        validate_normalisation_devices(candidate)
+        errors = validate_detached_application_state(candidate)
+        if errors:
+            raise ValueError(errors[0])
+        conflicts = find_rack_import_conflicts(candidate)
+        if conflicts:
+            raise ValueError(conflicts[0])
+        ordinal = connection.execute(
+            "SELECT COALESCE(MAX(ordinal),-1)+1 FROM inventory_devices"
+        ).fetchone()[0]
+        connection.execute(
+            "INSERT INTO inventory_devices(id,name,record_json,ordinal) VALUES(?,?,?,?)",
+            (record["id"], record["name"],
+             json.dumps(record, ensure_ascii=False, allow_nan=False), ordinal),
+        )
+        if new_ip:
+            connection.execute(
+                "INSERT INTO inventory_ip_allocations(ip,record_json) VALUES(?,?) "
+                "ON CONFLICT(ip) DO UPDATE SET record_json=excluded.record_json",
+                (new_ip, json.dumps(candidate["ipAllocations"][new_ip],
+                                    ensure_ascii=False, allow_nan=False)),
+            )
+        changes = [{"action": "Created", "kind": "Device",
+                    "label": record["name"][:100], "fields": []}]
+        if new_ip:
+            changes.append({"action": "Updated", "kind": "IPAM",
+                            "label": new_ip, "fields": ["deviceId", "status", "hostname"]})
+        event = {"at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+                 "reason": "Inventory saved", "changes": changes, "omitted": 0}
+        connection.execute(
+            "INSERT INTO inventory_change_history(record_json) VALUES(?)",
+            (json.dumps(event, ensure_ascii=False),),
+        )
+        connection.execute(
+            "DELETE FROM inventory_change_history WHERE id NOT IN "
+            "(SELECT id FROM inventory_change_history ORDER BY id DESC LIMIT 200)"
+        )
+        connection.commit()
+        return 0
+    except BaseException:
+        connection.rollback()
+        raise

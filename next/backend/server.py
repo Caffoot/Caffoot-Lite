@@ -7,7 +7,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlsplit
 
-from .device_saves import save_reserved_device
+from .device_saves import create_device, save_reserved_device
 from .schema import initialise_database as migrate_database
 from .accounts import bootstrap_first_admin, confirm_admin_mfa, verify_password, hash_password
 from .mfa import new_secret, verify_code
@@ -283,7 +283,7 @@ class Handler(BaseHTTPRequestHandler):
                          "/api/users/admin", "/api/users/delete", "/api/account/password",
                          "/api/account/mfa/start", "/api/account/mfa/confirm",
                          "/api/devices/edit/start", "/api/devices/edit/cancel",
-                         "/api/devices/edit/save"):
+                         "/api/devices/edit/save", "/api/devices/create"):
             self.handle_user_mutation()
             return
         if self.path in IMPORT_ROUTES:
@@ -393,7 +393,11 @@ class Handler(BaseHTTPRequestHandler):
                 if actor is None:
                     self.respond(403, {"error": "forbidden"})
                     return
-                if self.path == "/api/devices/edit/save":
+                if self.path == "/api/devices/create":
+                    if set(payload) != {"record"}:
+                        raise ValueError("Invalid device create request")
+                    result = {"revision": create_device(connection, actor, payload["record"])}
+                elif self.path == "/api/devices/edit/save":
                     if set(payload) not in ({"deviceId", "revision", "record"},
                                             {"deviceId", "revision", "record", "section"}):
                         raise ValueError("Invalid device save request")
