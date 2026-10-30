@@ -5,6 +5,7 @@ name: Next prebuilt Portainer image
 # Pi 5 UI acceptance refresh: navigation and Users/account alignment verified.
 # Pi 5 acceptance refresh: dashboard sign-in, sidebar account and Users visual consistency verified.
 # Pi 5 acceptance refresh: Users overview, live account summaries and sidebar submenu verified.
+# Pi 5 acceptance refresh: responsive compact Device General tab and full-width Users/History verified.
 on:
   push:
     branches: [Next]
