@@ -17,10 +17,10 @@ class ReservedDeviceSaveTests(unittest.TestCase):
         state = {
             "devices": [
                 {"id": "d1", "name": "One", "mountType": "Rack Mounted",
-                 "rackId": "r1", "rackUStart": 1, "rackUHeight": 1,
+                 "rackId": "r1", "location": "Unknown", "rackUStart": 1, "rackUHeight": 1,
                  "rackUEnd": 1, "primaryIp": "10.0.0.10"},
                 {"id": "d2", "name": "Two", "mountType": "Rack Mounted",
-                 "rackId": "r1", "rackUStart": 3, "rackUHeight": 1,
+                 "rackId": "r1", "location": "Unknown", "rackUStart": 3, "rackUHeight": 1,
                  "rackUEnd": 3, "primaryIp": "10.0.0.11"},
             ],
             "subnets": [{"id": "s1", "name": "Network", "cidr": "10.0.0.0/24",
