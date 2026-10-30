@@ -105,6 +105,9 @@ class SessionHttpTests(unittest.TestCase):
         self.assertEqual(status, 200)
         snapshot = json.loads(raw)
         self.assertEqual(snapshot["devices"][0]["name"], "Switch")
+        self.assertEqual(snapshot["deviceRevisions"], {"device-1": 0})
+        self.assertEqual(snapshot["editPermissions"],
+                         {"Devices": True, "IPAM": True, "Racks": True})
         self.assertEqual(snapshot["subnets"][0]["id"], "subnet-1")
         with patch("backend.server.PUBLIC_ORIGIN", "https://caffoot.example"):
             csrf = csrf_for_session(self.token)
@@ -127,6 +130,9 @@ class SessionHttpTests(unittest.TestCase):
         self.assertNotIn("ipAllocations", snapshot)
         self.assertNotIn("racks", snapshot)
         self.assertEqual(snapshot["sections"], {"Devices": True, "IPAM": False, "Racks": False})
+        self.assertEqual(snapshot["deviceRevisions"], {})
+        self.assertEqual(snapshot["editPermissions"],
+                         {"Devices": False, "IPAM": False, "Racks": False})
         self.assertEqual(self.request("/api/inventory/state")[0], 401)
 
     def test_device_edit_reservation_conflict_cancel_and_expiry(self):

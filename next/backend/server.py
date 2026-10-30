@@ -184,6 +184,18 @@ class Handler(BaseHTTPRequestHandler):
                     self.respond(403, {"error": "forbidden"})
                     return
                 result = {"sections": sections}
+                # The published device records remain unchanged. Revisions and
+                # edit permissions are separate backend metadata for the shared
+                # edit-reservation workflow.
+                result["editPermissions"] = {
+                    section: can_access(connection, account_id, section, edit=True)
+                    for section in ("Devices", "IPAM", "Racks")
+                }
+                result["deviceRevisions"] = {
+                    device_id: revision for device_id, revision in connection.execute(
+                        "SELECT id,revision FROM inventory_devices ORDER BY ordinal"
+                    )
+                } if any(result["editPermissions"].values()) else {}
                 if sections["Devices"]:
                     result["devices"] = [json.loads(raw) for (raw,) in connection.execute(
                         "SELECT record_json FROM inventory_devices ORDER BY ordinal"
