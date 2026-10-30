@@ -1,6 +1,7 @@
 """Reserved device record saves against the authoritative SQLite inventory."""
 import json
 import time
+from datetime import datetime, timezone
 
 from .application_integrity import validate_detached_application_state
 from .inventory import reconstruct_inventory
@@ -43,6 +44,7 @@ def save_reserved_device(connection, account_id, device_id, revision, record, se
         old_ip = previous.get("primaryIp")
         new_ip = record.get("primaryIp")
         allocations = candidate["ipAllocations"]
+        before_allocations = json.loads(json.dumps(allocations))
         if new_ip:
             current = allocations.get(new_ip)
             if current and current.get("deviceId") not in (None, "", device_id):
@@ -79,6 +81,39 @@ def save_reserved_device(connection, account_id, device_id, revision, record, se
                     "ON CONFLICT(ip) DO UPDATE SET record_json=excluded.record_json",
                     (ip, json.dumps(allocations[ip], ensure_ascii=False, allow_nan=False)),
                 )
+        changes = []
+        if previous != record:
+            fields = [key for key in dict.fromkeys((*previous, *record))
+                      if key != "id" and previous.get(key) != record.get(key)]
+            changes.append({"action": "Updated", "kind": "Device",
+                            "label": str(record["name"])[:100], "fields": fields[:16]})
+        for ip in dict.fromkeys((old_ip, new_ip)):
+            if not ip:
+                continue
+            before_ip = before_allocations.get(ip)
+            after_ip = allocations.get(ip)
+            if before_ip == after_ip:
+                continue
+            action = ("Created" if before_ip is None else
+                      "Deleted" if after_ip is None else "Updated")
+            fields = ([key for key in dict.fromkeys(
+                (*(before_ip or {}), *(after_ip or {})))
+                if (before_ip or {}).get(key) != (after_ip or {}).get(key)][:16]
+                if action == "Updated" else [])
+            changes.append({"action": action, "kind": "IPAM",
+                            "label": ip, "fields": fields})
+        if changes:
+            event = {"at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+                     "reason": "Inventory saved", "changes": changes[:60],
+                     "omitted": max(0, len(changes) - 60)}
+            connection.execute(
+                "INSERT INTO inventory_change_history(record_json) VALUES(?)",
+                (json.dumps(event, ensure_ascii=False),),
+            )
+            connection.execute(
+                "DELETE FROM inventory_change_history WHERE id NOT IN "
+                "(SELECT id FROM inventory_change_history ORDER BY id DESC LIMIT 200)"
+            )
         connection.execute("DELETE FROM device_edit_reservations WHERE device_id=?", (device_id,))
         connection.commit()
         return revision + 1

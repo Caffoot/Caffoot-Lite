@@ -67,6 +67,12 @@ class ReservedDeviceSaveTests(unittest.TestCase):
         self.assertEqual(allocations["10.0.0.12"]["hostname"], "Renamed")
         self.assertEqual(allocations["10.0.0.10"]["status"], "Available")
         self.assertEqual(allocations["10.0.0.10"]["deviceId"], "")
+        events = [json.loads(raw) for (raw,) in self.db.execute(
+            "SELECT record_json FROM inventory_change_history"
+        )]
+        self.assertEqual(len(events), 1)
+        self.assertEqual([change["kind"] for change in events[0]["changes"]],
+                         ["Device", "IPAM", "IPAM"])
         self.assertIsNone(self.db.execute(
             "SELECT 1 FROM device_edit_reservations WHERE device_id='d1'"
         ).fetchone())
@@ -85,6 +91,16 @@ class ReservedDeviceSaveTests(unittest.TestCase):
 
     def test_unmodified_device_save(self):
         self.assertEqual(self.save(dict(self.original)), 1)
+        self.assertEqual(self.db.execute(
+            "SELECT COUNT(*) FROM inventory_change_history"
+        ).fetchone()[0], 0)
+
+    def test_rejected_save_has_no_history(self):
+        with self.assertRaises(ValueError):
+            self.save(dict(self.original, primaryIp="10.0.0.11"))
+        self.assertEqual(self.db.execute(
+            "SELECT COUNT(*) FROM inventory_change_history"
+        ).fetchone()[0], 0)
 
 
 if __name__ == "__main__":
