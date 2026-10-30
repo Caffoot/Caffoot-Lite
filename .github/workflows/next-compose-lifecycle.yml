@@ -1,11 +1,6 @@
 name: Next Docker Compose lifecycle
 
 on:
-  # Single integration-milestone run on Next, without placing the workflow on main.
-  push:
-    branches: [Next]
-    paths:
-      - '.github/workflows/next-compose-lifecycle.yml'
   workflow_dispatch:
 
 permissions:
