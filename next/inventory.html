@@ -681,6 +681,20 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .device-modal .device-form-invalid-field{border-color:#ef4444!important;box-shadow:0 0 0 1px #ef4444!important;}
 .device-modal .form-actions{display:flex;justify-content:flex-end;gap:12px;align-items:center;padding-top:15px;border-top:1px solid #94a3b855;}
 .device-modal .form-actions button{min-height:42px;padding:10px 18px;font-size:.875rem;}
+/* Approved compact selector presentation, retaining native values and change events. */
+#main-content select:not([multiple]),#modal-content select:not([multiple]){border-radius:10px;min-height:40px;font-size:.875rem}
+#main-content select:focus-visible,#modal-content select:focus-visible{outline:2px solid #4f46e5;outline-offset:2px}
+.caffoot-search-native{position:absolute!important;width:1px!important;height:1px!important;min-height:1px!important;opacity:0!important;pointer-events:none!important}
+.caffoot-search-trigger{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-height:40px;padding:9px 12px;border:1px solid #94a3b8;border-radius:10px;background:#fff;color:#0f172a;font-size:.875rem;text-align:left}
+.caffoot-search-trigger:focus-visible{outline:2px solid #4f46e5;outline-offset:2px}
+.dark .caffoot-search-trigger{background:#334155;border-color:#64748b;color:#f8fafc}
+.caffoot-search-popup{position:fixed;z-index:1000;background:#fff;border:1px solid #94a3b8;border-radius:12px;padding:8px;box-shadow:0 15px 35px #0f172a30;min-width:180px;color:#0f172a}
+.dark .caffoot-search-popup{background:#1e293b;border-color:#64748b;color:#f8fafc}
+.caffoot-search-input{box-sizing:border-box;width:100%;min-height:40px;border:1px solid #94a3b8;border-radius:8px;padding:8px 10px;background:transparent;color:inherit}
+.caffoot-search-options{max-height:208px;overflow-y:auto;margin-top:6px}
+.caffoot-search-options button{display:block;width:100%;padding:8px 10px;border-radius:8px;text-align:left;font-size:.875rem;color:inherit;background:transparent}
+.caffoot-search-options button:hover,.caffoot-search-options button:focus-visible,.caffoot-search-options button[aria-selected="true"]{background:#dbeafe;color:#1e3a8a}
+.dark .caffoot-search-options button:hover,.dark .caffoot-search-options button:focus-visible,.dark .caffoot-search-options button[aria-selected="true"]{background:#334155;color:#fff}
 /* #215 approved desktop compactness: same Device General fields, responsive columns. */
 @media(min-width:900px){
   .device-modal #device-form-panel-general{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-content:start;align-items:start;}
@@ -1198,7 +1212,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             <div class="px-4 pb-4 pt-3 border-t border-slate-200 dark:border-slate-700">
                 <nav aria-label="Account and settings" class="space-y-1.5">
                     <button type="button" id="next-account-nav" data-action="tab-account" data-tab="account" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700/50 hover:text-indigo-600 dark:hover:text-indigo-400"><i class="fa-solid fa-user-gear w-5 text-center" aria-hidden="true"></i><span>My account</span></button>
-                    <button data-action="tab-settings" data-tab="settings" aria-label="Open Settings and Data" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700/50 hover:text-indigo-600 dark:hover:text-indigo-400"><i class="fa-solid fa-gear w-5 text-center"></i><span>Settings & Data</span></button>
+                    <button id="next-settings-nav" data-action="tab-settings" data-tab="settings" aria-label="Open Settings and Data" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700/50 hover:text-indigo-600 dark:hover:text-indigo-400"><i class="fa-solid fa-gear w-5 text-center"></i><span>Settings & Data</span></button>
                 </nav>
             </div>
         </aside>
@@ -1911,6 +1925,7 @@ function hierarchyValidateTypes(subnets) {
         let nextRenderUsers = () => '';
         let activeUsersTab = 'overview';
         let nextRenderAccount = () => '';
+        let activeAccountSection = 'security';
         let nextImportAllowed = false;
         function saveState() { showToast('This inventory operation is not yet connected to SQLite.', 'error'); return false; }
 
@@ -7710,8 +7725,49 @@ function hierarchyValidateTypes(subnets) {
                 '<div class="flex justify-end"><button type="button" data-action="backup-help-close" class="settings-action">Close</button></div></div>');
         }
 
+        function renderPersonalSettingsBody(section) {
+            const button = (action,label,icon,extra='') => `<button type="button" data-action="${action}" ${extra} class="settings-action"><i class="fa-solid ${icon}" aria-hidden="true"></i>${label}</button>`;
+            let body = '';
+            if (section === 'preferences') {
+                const preference = caffootThemePreference();
+                const themeChoice = (mode,label,icon,description) => '<button type="button" data-action="change-appearance-theme" data-theme="' + mode + '" aria-pressed="' + (preference === mode) + '" class="theme-choice' + (preference === mode ? ' settings-theme-selected' : '') + '"><i class="fa-solid ' + icon + '" aria-hidden="true"></i><span><strong>' + label + '</strong><small>' + description + '</small></span><i class="fa-solid fa-check settings-theme-check" aria-hidden="true"></i></button>';
+                body = '<section class="settings-panel settings-appearance"><h3>Appearance</h3><p>Choose how Caffoot Lite looks on this device. Your selection is remembered in this browser.</p><div class="theme-options">' +
+                    themeChoice('light','Light Mode','fa-sun','Always use the light theme') +
+                    themeChoice('dark','Dark Mode','fa-moon','Always use the dark theme') +
+                    themeChoice('system','Use System Setting','fa-desktop','Follow your device appearance') +
+                    '</div></section>';
+            } else if (section === 'help') {
+                const helpTopics = [
+                    ['Getting Started', 'Create your administrator on first run and enrol MFA. Then use Devices, IPAM and Network Racks just as in published v1.3.3. Authorised users work from the same central inventory.'],
+                    ['Import from v1.3.3', 'Under Import Inventory, choose a fresh JSON backup exported from published v1.3.3 and review all required corrections before confirming replacement. For older HTML versions, upgrade to v1.3.3 before exporting.'],
+                    ['Devices, IPAM and Racks', 'Manage the familiar devices, primary IP assignments, subnets, VLANs, racks and accessories. Device editing reserves that device for one user at a time.'],
+                    ['Users and MFA', 'Administrators manage users and permissions in the Users section. New users have no access until permissions are granted. MFA is required for editing and administration.'],
+                    ['Database backup and recovery', 'Use your established Docker, Portainer or database volume backup application. Caffoot Lite Next has no ongoing inventory JSON backup export.'],
+                    ['Appearance', 'Appearance Preferences offers Light Mode, Dark Mode and Use System Setting. This appearance preference remains local to your browser.']
+                ];
+                body = '<section class="settings-panel backup-import-help"><h3>Help & Guides</h3><p>Built into Caffoot Lite and available without an internet connection. Choose a topic to read the guidance. For more detailed instructions, see the online User Guide linked in About Caffoot Lite.</p>' +
+                    '<div class="settings-help-topics">' + helpTopics.map(([title,content]) => '<details class="settings-help-topic"><summary>' + title + '</summary><p>' + content + '</p></details>').join('') + '</div></section>';
+            } else {
+                body = '<section class="settings-panel settings-about"><div class="settings-about-brand">' +
+                    '<img src="../assets/caffoot-icon-1024.png" alt="Caffoot hedgehog logo" width="76" height="76">' +
+                    '<div><h3>Caffoot Lite</h3><strong>Infrastructure, Simplified.</strong><p>For HomeLabs and Small Teams</p><p>Network documentation for home labs and small teams.</p></div></div>' +
+                    '<div class="settings-about-version"><span>Installed Version</span><strong>Next (development)</strong></div>' +
+                    '<p>Manage devices, IP addresses, subnets and network racks using a shared central SQLite database with authorised multi-user access.</p>' +
+                    '<h4>Project & Documentation</h4><div class="settings-about-links">' +
+                    '<a href="https://github.com/Caffoot/Caffoot-Lite" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-github" aria-hidden="true"></i> Official GitHub Repository <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>' +
+                    '<a href="https://github.com/Caffoot/Caffoot-Lite/blob/main/USER-GUIDE.md" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-book-open" aria-hidden="true"></i> User Guide <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>' +
+                    '<a href="https://github.com/Caffoot/Caffoot-Lite/blob/main/INSTALLATION.md" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Installation Guide <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>' +
+                    '<a href="https://github.com/Caffoot/Caffoot-Lite/releases" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-tag" aria-hidden="true"></i> Release Notes <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>' +
+                    '</div><p class="settings-about-offline">External links require an internet connection. Caffoot Lite Next uses its central server and SQLite database.</p>' +
+                    '<p>For offline instructions, open Help & Guides in My account.</p>' +
+                    '<div class="settings-buttons">' + button('caffoot-licences','Software Licences','fa-file-lines') + '</div></section>';
+            }
+
+            return body;
+        }
+
         function renderApplicationSettings() {
-            const section = ['backup','preferences','help','about'].includes(activeSettingsSection) ? activeSettingsSection : 'backup';
+            const section = 'backup';
             const button = (action,label,icon,extra='') => `<button type="button" data-action="${action}" ${extra} class="settings-action"><i class="fa-solid ${icon}" aria-hidden="true"></i>${label}</button>`;
             const panel = (title,desc,inner='') => `<section class="settings-panel"><h3>${title}</h3><p>${desc}</p>${inner ? `<div class="settings-buttons">${inner}</div>` : ''}</section>`;
             let body = '';
@@ -7732,42 +7788,9 @@ function hierarchyValidateTypes(subnets) {
                         'Permanently reset all central inventory, IPAM records and managed options. Your accounts and permissions are kept.',
                         button('clear-inventory-data','Clear System / Clean Start','fa-triangle-exclamation')) +
                     '</div>';
-            } else if (section === 'preferences') {
-                const preference = caffootThemePreference();
-                const themeChoice = (mode,label,icon,description) => '<button type="button" data-action="change-appearance-theme" data-theme="' + mode + '" aria-pressed="' + (preference === mode) + '" class="theme-choice' + (preference === mode ? ' settings-theme-selected' : '') + '"><i class="fa-solid ' + icon + '" aria-hidden="true"></i><span><strong>' + label + '</strong><small>' + description + '</small></span><i class="fa-solid fa-check settings-theme-check" aria-hidden="true"></i></button>';
-                body = '<section class="settings-panel settings-appearance"><h3>Appearance</h3><p>Choose how Caffoot Lite looks on this device. Your selection is remembered in this browser.</p><div class="theme-options">' +
-                    themeChoice('light','Light Mode','fa-sun','Always use the light theme') +
-                    themeChoice('dark','Dark Mode','fa-moon','Always use the dark theme') +
-                    themeChoice('system','Use System Setting','fa-desktop','Follow your device appearance') +
-                    '</div></section>';
-            } else if (section === 'help') {
-                const helpTopics = [
-                    ['Getting Started', 'Create your administrator on first run and enrol MFA. Then use Devices, IPAM and Network Racks just as in published v1.3.3. Authorised users work from the same central inventory.'],
-                    ['Import from v1.3.3', 'Under Import Inventory, choose a fresh JSON backup exported from published v1.3.3 and review all required corrections before confirming replacement. For older HTML versions, upgrade to v1.3.3 before exporting.'],
-                    ['Devices, IPAM and Racks', 'Manage the familiar devices, primary IP assignments, subnets, VLANs, racks and accessories. Device editing reserves that device for one user at a time.'],
-                    ['Users and MFA', 'Administrators manage users and permissions in the Users section. New users have no access until permissions are granted. MFA is required for editing and administration.'],
-                    ['Database backup and recovery', 'Use your established Docker, Portainer or database volume backup application. Caffoot Lite Next has no ongoing inventory JSON backup export.'],
-                    ['Appearance', 'Preferences offers Light Mode, Dark Mode and Use System Setting. This appearance preference remains local to your browser.']
-                ];
-                body = '<section class="settings-panel backup-import-help"><h3>Help & Guides</h3><p>Built into Caffoot Lite and available without an internet connection. Choose a topic to read the guidance. For more detailed instructions, see the online User Guide linked in About Caffoot Lite.</p>' +
-                    '<div class="settings-help-topics">' + helpTopics.map(([title,content]) => '<details class="settings-help-topic"><summary>' + title + '</summary><p>' + content + '</p></details>').join('') + '</div></section>';
-            } else {
-                body = '<section class="settings-panel settings-about"><div class="settings-about-brand">' +
-                    '<img src="../assets/caffoot-icon-1024.png" alt="Caffoot hedgehog logo" width="76" height="76">' +
-                    '<div><h3>Caffoot Lite</h3><strong>Infrastructure, Simplified.</strong><p>For HomeLabs and Small Teams</p><p>Network documentation for home labs and small teams.</p></div></div>' +
-                    '<div class="settings-about-version"><span>Installed Version</span><strong>Next (development)</strong></div>' +
-                    '<p>Manage devices, IP addresses, subnets and network racks using a shared central SQLite database with authorised multi-user access.</p>' +
-                    '<h4>Project & Documentation</h4><div class="settings-about-links">' +
-                    '<a href="https://github.com/Caffoot/Caffoot-Lite" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-github" aria-hidden="true"></i> Official GitHub Repository <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>' +
-                    '<a href="https://github.com/Caffoot/Caffoot-Lite/blob/main/USER-GUIDE.md" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-book-open" aria-hidden="true"></i> User Guide <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>' +
-                    '<a href="https://github.com/Caffoot/Caffoot-Lite/blob/main/INSTALLATION.md" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Installation Guide <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>' +
-                    '<a href="https://github.com/Caffoot/Caffoot-Lite/releases" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-tag" aria-hidden="true"></i> Release Notes <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>' +
-                    '</div><p class="settings-about-offline">External links require an internet connection. Caffoot Lite Next uses its central server and SQLite database.</p>' +
-                    '<p>For offline instructions, open the Help & Guides tab in Settings & Data.</p>' +
-                    '<div class="settings-buttons">' + button('caffoot-licences','Software Licences','fa-file-lines') + '</div></section>';
             }
-            const tabs = [['backup','Import Inventory','fa-database'],['preferences','Preferences','fa-palette'],['help','Help & Guides','fa-book-open'],['about','About Caffoot Lite','fa-circle-info']];
-            return `<div class="settings-workspace backup-workspace"><div class="settings-intro"><h2>Settings & Data</h2><p>Manage your data, appearance and application health — without duplicate tools.</p></div>
+            const tabs = [['backup','Import Inventory','fa-database']];
+            return `<div class="settings-workspace backup-workspace"><div class="settings-intro"><h2>Settings & Data</h2><p>Administrator controls for central inventory and application maintenance.</p></div>
                 <div class="settings-tabs" role="group" aria-label="Settings sections">${tabs.map(([id,label,icon])=>`<button type="button" data-action="select-settings-section" data-section="${id}" aria-pressed="${section===id}" class="settings-tab ${section===id?'settings-tab-active':''}"><i class="fa-solid ${icon}" aria-hidden="true"></i>${label}</button>`).join('')}</div>
                 <div class="${section==='backup'?'settings-groups':'settings-grid'}">${body}</div></div>`;
         }
@@ -9096,7 +9119,8 @@ function hierarchyValidateTypes(subnets) {
                 case 'sidebar-users-list': activeUsersTab='list'; switchTab('users'); break;
                 case 'sidebar-users-add': activeUsersTab='add'; switchTab('users'); break;
                 case 'tab-account': switchTab('account'); break;
-                case 'select-settings-section': if (['backup','preferences','help','about'].includes(target.dataset.section)) { activeSettingsSection=target.dataset.section; renderContent(); } break;
+                case 'select-settings-section': if (target.dataset.section==='backup') { activeSettingsSection='backup'; renderContent(); } break;
+                case 'select-account-section': if (['security','preferences','help','about'].includes(target.dataset.section)) { activeAccountSection=target.dataset.section; switchTab('account'); } break;
                 case 'choose-backup-import': document.getElementById('import-file')?.click(); break;
                 case 'toggle-settings-theme': toggleDarkMode(); renderContent(); break;
                 case 'change-appearance-theme': caffootSetTheme(target.dataset.theme); break;
@@ -9276,22 +9300,157 @@ window.addEventListener('load', async () => {
       !(editPermissions.Racks && actionCanEditRack.has(action));
   }
   function applyAllowedControls() {
-    const root = document.getElementById('main-content');
-    if (!root) return;
-    root.querySelectorAll('button').forEach(button => {
-      if (isBlockedAction(button.dataset.action || '', button) ||
-          (button.type === 'submit' && button.form && !(
-            button.closest('#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm') ||
-            (sessionIsAdmin && button.closest('#next-user-create-form')) ||
-            (editPermissions.Devices && button.closest('form[data-device-form="true"]')) ||
-            (editPermissions.IPAM && button.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"]')) ||
-            (editPermissions.Racks && button.closest('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form'))
-          ))) button.disabled = true;
-    });
+    for(const root of [document.getElementById('main-content'), document.getElementById('modal-content')]){
+      if(!root) continue;
+      root.querySelectorAll('button').forEach(button=>{
+        const blocked=isBlockedAction(button.dataset.action || '',button);
+        const unsupportedSubmit=button.type==='submit' && button.form && !(
+          button.closest('#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm') ||
+          (sessionIsAdmin && button.closest('#next-user-create-form')) ||
+          (editPermissions.Devices && button.closest('form[data-device-form="true"]')) ||
+          (editPermissions.IPAM && button.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"]')) ||
+          (editPermissions.Racks && button.closest('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form'))
+        );
+        if(blocked || unsupportedSubmit){
+          button.disabled=true;
+          // Hide unavailable modifying actions for read-only users, while
+          // retaining existing backend safeguards and editor behaviour.
+          if(!sessionIsAdmin) button.hidden=true;
+        }
+      });
+    }
   }
+  // The original native select remains authoritative for validation and
+  // dependent inventory handlers. Only longer lists receive a searchable view.
+  let openSearchPopup=null;
+  const popupSources=new Map();
+  function enhanceLongSelects(){
+    for(const [popup,select] of popupSources){
+      if(!select.isConnected){
+        popup.remove();popupSources.delete(popup);
+      }
+    }
+    for(const select of document.querySelectorAll('#main-content select,#modal-content select')){
+      if(select.dataset.caffootSearch || select.multiple || select.disabled ||
+         [...select.options].filter(o=>!o.hidden).length<9)continue;
+      select.dataset.caffootSearch='true';
+      select.classList.add('caffoot-search-native');
+      select.tabIndex=-1;
+      const host=document.createElement('div');
+      host.className='caffoot-select-host';
+      const trigger=document.createElement('button');
+      trigger.type='button';
+      trigger.className='caffoot-search-trigger';
+      const caption=document.createElement('span');
+      caption.style.cssText='min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
+      const arrow=document.createElement('i');
+      arrow.className='fa-solid fa-chevron-down';
+      arrow.setAttribute('aria-hidden','true');
+      trigger.append(caption,arrow);
+      const label=document.querySelector('label[for="'+select.id+'"]');
+      trigger.setAttribute('aria-label',label?.textContent?.trim()||select.getAttribute('aria-label')||'Select option');
+      trigger.setAttribute('aria-haspopup','listbox');
+      trigger.setAttribute('aria-expanded','false');
+      const popup=document.createElement('div');
+      popup.className='caffoot-search-popup';
+      popup.hidden=true;
+      const search=document.createElement('input');
+      search.type='search';search.className='caffoot-search-input';
+      search.placeholder='Search options...';
+      search.setAttribute('aria-label','Search '+trigger.getAttribute('aria-label'));
+      const results=document.createElement('div');
+      results.className='caffoot-search-options';
+      results.setAttribute('role','listbox');
+      popup.append(search,results);
+      document.body.append(popup);
+      popupSources.set(popup,select);
+      select.insertAdjacentElement('afterend',host);
+      host.append(trigger);
+      function sync(){
+        const selected=select.selectedOptions[0];
+        const value=selected?.textContent?.trim()||'Select...';
+        if(caption.textContent!==value)caption.textContent=value;
+        trigger.disabled=select.disabled;
+      }
+      function close(){
+        popup.hidden=true;trigger.setAttribute('aria-expanded','false');
+        if(openSearchPopup===close)openSearchPopup=null;
+      }
+      function choose(option){
+        select.value=option.value;
+        select.dispatchEvent(new Event('change',{bubbles:true}));
+        sync();close();trigger.focus();
+      }
+      function draw(){
+        results.replaceChildren();
+        const query=search.value.trim().toLowerCase();
+        const options=[...select.options].filter(o=>!o.disabled&&!o.hidden&&o.textContent.toLowerCase().includes(query));
+        for(const option of options){
+          const row=document.createElement('button');
+          row.type='button';row.textContent=option.textContent;
+          row.setAttribute('role','option');row.setAttribute('aria-selected',String(option.selected));
+          row.addEventListener('click',()=>choose(option));
+          results.append(row);
+        }
+        if(!options.length){
+          const empty=document.createElement('p');
+          empty.textContent='No matching options';
+          empty.style.cssText='padding:10px;font-size:13px';
+          results.append(empty);
+        }
+      }
+      function open(){
+        if(openSearchPopup&&openSearchPopup!==close)openSearchPopup();
+        search.value='';sync();draw();
+        const rect=trigger.getBoundingClientRect();
+        const width=Math.max(rect.width,180);
+        const availableBelow=window.innerHeight-rect.bottom-12;
+        const availableAbove=rect.top-12;
+        const height=Math.min(270,Math.max(160,Math.max(availableBelow,availableAbove)));
+        popup.style.width=width+'px';
+        popup.style.maxHeight=height+'px';
+        popup.style.overflowY='auto';
+        popup.style.left=Math.max(8,Math.min(rect.left,window.innerWidth-width-8))+'px';
+        popup.style.top=(availableBelow>=height||availableBelow>=availableAbove?
+          Math.min(window.innerHeight-height-8,rect.bottom+4):
+          Math.max(8,rect.top-height-4))+'px';
+        popup.hidden=false;trigger.setAttribute('aria-expanded','true');
+        openSearchPopup=close;search.value='';search.focus();
+      }
+      trigger.addEventListener('click',()=>popup.hidden?open():close());
+      if(label)label.addEventListener('click',e=>{e.preventDefault();open();});
+      search.addEventListener('input',draw);
+      search.addEventListener('keydown',event=>{
+        if(event.key==='Escape'){event.preventDefault();close();trigger.focus();}
+        else if(event.key==='ArrowDown'){event.preventDefault();results.querySelector('button')?.focus();}
+        else if(event.key==='Enter'){event.preventDefault();results.querySelector('button')?.click();}
+      });
+      results.addEventListener('keydown',event=>{
+        if(event.key==='Escape'){event.preventDefault();close();trigger.focus();}
+        if(event.key==='ArrowDown'||event.key==='ArrowUp'){
+          event.preventDefault();
+          const options=[...results.querySelectorAll('button')];
+          const index=options.indexOf(document.activeElement);
+          options[Math.max(0,Math.min(options.length-1,index+(event.key==='ArrowDown'?1:-1)))]?.focus();
+        }
+      });
+      select.addEventListener('change',sync);
+      // Detached fields are disposed with their modal or page on the next render.
+      sync();
+    }
+  }
+  document.addEventListener('click',event=>{
+    if(openSearchPopup && !event.target.closest('.caffoot-search-popup,.caffoot-select-host'))openSearchPopup();
+  },true);
+  document.addEventListener('keydown',event=>{
+    if(event.key==='Escape'&&openSearchPopup)openSearchPopup();
+  },true);
+  const enhanceSelects=()=>enhanceLongSelects();
+  new MutationObserver(enhanceSelects).observe(document.getElementById('main-content'),{childList:true,subtree:true});
+  new MutationObserver(enhanceSelects).observe(document.getElementById('modal-content'),{childList:true,subtree:true});
   const originalSwitchTab = switchTab;
   switchTab = function(tab) {
-    if ((tab === 'users' && !sessionIsAdmin) ||
+    if (((tab === 'users' || tab === 'settings') && !sessionIsAdmin) ||
         (section[tab] && !permissions[section[tab]])) {
       showToast('You do not have access to this section.', 'error');
       return;
@@ -9753,9 +9912,14 @@ window.addEventListener('load', async () => {
     return html+'<button type="button" id="next-account-signout" class="px-4 py-2 rounded-xl bg-slate-700 text-white text-sm font-semibold">Sign out</button>';
   }
   nextRenderAccount=function(){
-    return '<div class="max-w-5xl mx-auto space-y-5 text-slate-800 dark:text-slate-100">' +
-      '<div><h2 class="text-xl font-bold">My account</h2><p class="text-sm">Password and authenticator settings.</p></div>' +
-      renderAccountSections()+'</div>';
+    const tabs=[['security','Password & MFA','fa-user-shield'],['preferences','Appearance Preferences','fa-palette'],
+      ['help','Help & Guides','fa-book-open'],['about','About Caffoot Lite','fa-circle-info']];
+    const selected=activeAccountSection;
+    return '<div class="w-full space-y-5 text-slate-800 dark:text-slate-100">' +
+      '<div><h2 class="text-xl font-bold">My account</h2><p class="text-sm">Manage your account and personal preferences.</p></div>' +
+      '<div class="settings-tabs" role="group" aria-label="My account sections">' +
+      tabs.map(([id,label,icon])=>'<button type="button" data-action="select-account-section" data-section="'+id+'" aria-pressed="'+(selected===id)+'" class="settings-tab '+(selected===id?'settings-tab-active':'')+'"><i class="fa-solid '+icon+'" aria-hidden="true"></i>'+label+'</button>').join('')+
+      '</div>'+(selected==='security'?renderAccountSections():renderPersonalSettingsBody(selected))+'</div>';
   };
   // Users: administrator-only section, following the published sidebar and panel style.
   let users = null;
@@ -10085,7 +10249,7 @@ window.addEventListener('load', async () => {
         !(editPermissions.Racks && element.closest('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form')))) {
       event.preventDefault();
       event.stopImmediatePropagation();
-      showToast('This inventory operation is not yet connected to SQLite.', 'error');
+      showToast(!sessionIsAdmin ? 'Edit permission is required for this action.' : 'This inventory operation is not yet connected to SQLite.', 'error');
     }
   },true);
   document.addEventListener('submit',event => {
@@ -10098,6 +10262,7 @@ window.addEventListener('load', async () => {
   },true);
   const root=document.getElementById('main-content');
   new MutationObserver(applyAllowedControls).observe(root,{childList:true,subtree:true});
+  new MutationObserver(applyAllowedControls).observe(document.getElementById('modal-content'),{childList:true,subtree:true});
   try {
     const sessionResponse=await fetch('/api/session',{cache:'no-store'});
     if(!sessionResponse.ok) throw new Error('Please sign in first.');
@@ -10107,6 +10272,7 @@ window.addEventListener('load', async () => {
     signedInUsername=session.username;
     sessionMfaEnrolled=!!session.mfa_enrolled;
     document.getElementById('next-users-nav').classList.toggle('hidden', !sessionIsAdmin);
+    document.getElementById('next-settings-nav').classList.toggle('hidden', !sessionIsAdmin);
     if (sessionIsAdmin) await loadCentralUsers();
     await refreshCentralInventory(false);
     // Hide only the browser-backup actions excluded from Next by issue #215.

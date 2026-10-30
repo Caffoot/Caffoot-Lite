@@ -57,17 +57,23 @@ async function request(path,data){
 function display(){
  $('form').hidden=false;$('message').textContent='';
  $('enrolment').hidden=mode!=='enrol';
- $('code-field').hidden=mode==='setup'||mode==='resume';
- $('intro').textContent=mode==='setup'?'Create the first administrator account. MFA is required.':mode==='enrol'?'Complete administrator MFA enrolment.':mode==='resume'?'Sign in with your administrator credentials to resume MFA enrolment.':'Sign in to Caffoot Lite.';
- $('submit').textContent=mode==='setup'?'Create administrator':mode==='enrol'?'Confirm MFA':mode==='resume'?'Continue enrolment':'Sign in';
+ $('code-field').hidden=mode!=='enrol' && mode!=='login-mfa';
+ $('intro').textContent=mode==='setup'?'Create the first administrator account. MFA is required.':mode==='enrol'?'Complete administrator MFA enrolment.':mode==='resume'?'Sign in with your administrator credentials to resume MFA enrolment.':mode==='login-mfa'?'Enter your authenticator code to complete sign-in.':'Sign in to Caffoot Lite.';
+ $('submit').textContent=mode==='setup'?'Create administrator':mode==='enrol'?'Confirm MFA':mode==='resume'?'Continue enrolment':mode==='login-mfa'?'Verify and sign in':'Sign in';
  $('password').autocomplete=mode==='setup'?'new-password':'current-password';
- $('code').required=mode==='enrol';
+ $('code').required=mode==='enrol'||mode==='login-mfa';
 }
 (async()=>{try{
  if(await showSession())return;
  const r=await fetch('/api/setup/status');if(!r.ok)throw Error('Unable to check setup');
  const status=await r.json();mode=status.setupRequired?'setup':status.enrollmentPending?'resume':'login';display();
 }catch(e){$('intro').textContent=e.message}})();
+$('username').addEventListener('input',()=>{if(mode==='login-mfa'){mode='login';$('code').value='';display();}});
+$('password').addEventListener('input',()=>{if(mode==='login-mfa'){mode='login';$('code').value='';display();}});
+$('code').addEventListener('input',()=>{
+ if(mode==='login-mfa' && /^[0-9]{6}$/.test($('code').value) && !$('submit').disabled)
+   $('form').requestSubmit();
+});
 $('form').addEventListener('submit',async e=>{
  e.preventDefault();$('submit').disabled=true;$('message').textContent='';
  const data={username:$('username').value,password:$('password').value};
@@ -79,8 +85,15 @@ $('form').addEventListener('submit',async e=>{
  }else if(mode==='enrol'){
    await request('/api/setup/mfa',{...data,mfa_code:$('code').value});mode='login';display();$('message').style.color='#166534';$('message').textContent='MFA enrolled. Sign in to continue.';
  }else{
-   await request('/api/login',{...data,mfa_code:$('code').value});
-   if(!await showSession())throw Error('Unable to load session');
+   try{
+     await request('/api/login',{...data,...(mode==='login-mfa'?{mfa_code:$('code').value}:{})});
+     if(!await showSession())throw Error('Unable to load session');
+   }catch(error){
+     if(mode==='login' && error.message==='invalid credentials'){
+       mode='login-mfa';display();$('code').focus();
+       $('message').textContent='If your account uses an authenticator, enter its code. Otherwise check your username and password.';
+     }else throw error;
+   }
  }
  }catch(err){$('message').style.color='#b91c1c';$('message').textContent=err.message}
  finally{$('submit').disabled=false}

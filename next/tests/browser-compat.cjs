@@ -81,8 +81,10 @@ async function run(){
   await page.locator('#code').fill(mfaCode(secret));
   await page.locator('#submit').click();
   await page.getByText('MFA enrolled. Sign in to continue.').waitFor();
-  await page.locator('#code').fill(mfaCode(secret));
+  assert.ok(await page.locator('#code-field').evaluate(el=>el.hidden),'Authenticator code should be hidden before sign-in');
   await page.locator('#submit').click();
+  await page.locator('#code-field:not([hidden])').waitFor();
+  await page.locator('#code').fill(mfaCode(secret));
   await page.waitForURL('**/inventory');
   await page.locator('#next-account-nav').waitFor();
   await page.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='Dashboard Overview');
@@ -112,6 +114,11 @@ async function run(){
   await page.locator('#sidebar #next-account-nav').click();
   assert.equal(await page.locator('#page-title').textContent(),'My account');
   await page.locator('#next-account-password-form').waitFor();
+  for(const [area,selector] of [['preferences','.theme-choice'],['help','.settings-help-topic'],['about','.settings-about']]){
+    await page.locator('[data-action="select-account-section"][data-section="'+area+'"]').click();
+    await page.locator(selector).first().waitFor();
+  }
+  await page.locator('[data-action="select-account-section"][data-section="security"]').click();
   await page.locator('#sidebar [data-action="tab-users"]').click();
   assert.equal(await page.locator('#page-title').textContent(),'Users');
   await page.locator('#sidebar [data-action="tab-dashboard"]').click();
@@ -156,7 +163,13 @@ async function run(){
   assert.ok(await page.locator('#dev-name').isVisible(),
     'Responsive layout must preserve Device Name field');
   await page.locator('#dev-name').fill('browser-device');
-  await page.locator('#dev-type').selectOption('Desktop');
+  const typeSelector=page.locator('#dev-type + .caffoot-select-host .caffoot-search-trigger');
+  await typeSelector.waitFor();
+  await typeSelector.click();
+  await page.locator('.caffoot-search-popup:not([hidden]) input[type="search"]').fill('Desk');
+  await page.locator('.caffoot-search-popup:not([hidden]) [role="option"]',{hasText:'Desktop'}).click();
+  assert.equal(await page.locator('#dev-type').inputValue(),'Desktop',
+    'Searchable selector must preserve the original native selection');
   await page.locator('#dev-mount-type').selectOption('Tabletop / Shelf Mounted');
   await page.locator('#dev-location').selectOption('Office');
   await page.getByRole('tab',{name:'Networking'}).click();
@@ -341,14 +354,18 @@ async function run(){
   await editor.waitForFunction(()=>document.querySelector('#signed-in')?.hidden===true);
 
   await page.locator('[data-next-user-permission][data-user-id="'+editorId+'"][data-section="Devices"]').selectOption('edit');
+  await page.locator('[data-next-user-permission][data-user-id="'+editorId+'"][data-section="IPAM"]').selectOption('read');
+  await page.locator('[data-next-user-permission][data-user-id="'+editorId+'"][data-section="Racks"]').selectOption('read');
   await page.waitForFunction(async id=>{
     const r=await fetch('/api/users',{cache:'no-store'});
     return r.ok && (await r.json()).users.find(user=>user.id===id)?.permissions.Devices==='edit';
   },editorId);
   await editor.locator('#username').fill('editor');
   await editor.locator('#password').fill(password+'-Editor');
-  await editor.locator('#code').fill(mfaCode(editorSecret));
+  assert.ok(await editor.locator('#code-field').evaluate(el=>el.hidden));
   await editor.locator('#submit').click();
+  await editor.locator('#code-field:not([hidden])').waitFor();
+  await editor.locator('#code').fill(mfaCode(editorSecret));
   await editor.waitForURL('**/inventory');
   await editor.locator('#next-account-nav').waitFor();
   await editor.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='Dashboard Overview');
@@ -360,6 +377,14 @@ async function run(){
     'Second authenticated browser must see the shared device');
   assert.ok(await editor.locator('#next-users-nav').evaluate(el=>el.classList.contains('hidden')),
     'Users management must be administrator-only');
+  assert.ok(await editor.locator('#next-settings-nav').evaluate(el=>el.classList.contains('hidden')),
+    'Settings & Data must be administrator-only');
+  await editor.locator('#sidebar [data-action="tab-ipam"]').click();
+  assert.ok(await editor.locator('#ipam-sidebar-actions [data-action="open-subnet-modal"]').isHidden());
+  await editor.locator('#sidebar [data-action="tab-racks"]').click();
+  assert.ok(await editor.locator('#racks-sidebar-actions [data-action="open-rack-modal"]').isHidden());
+  await editor.locator('#sidebar [data-action="tab-devices"]').click();
+  console.log('Mixed editing and read-only section visibility passed');
   console.log('User creation, initially no access, editor MFA, permissions and shared viewing passed');
 
   // Simple exclusive reservation across two simultaneous browsers.
@@ -387,6 +412,46 @@ async function run(){
   assert.equal((await editorCancelled).status(),200);
   await second.close();
   console.log('Two-user exclusive device edit reservations passed');
+  // Read-only account must be able to sign in without MFA.
+  await page.evaluate(()=>switchTab('users'));
+  await page.locator('#users-sidebar-actions [data-action="sidebar-users-add"]').click();
+  await page.locator('#next-user-create-form input[name="username"]').fill('viewer');
+  await page.locator('#next-user-create-form input[name="password"]').fill(password+'-Viewer');
+  await page.locator('#next-user-create-form button[type="submit"]').click();
+  const viewerId=await page.evaluate(async()=>{
+    const r=await fetch('/api/users');
+    return (await r.json()).users.find(u=>u.username==='viewer')?.id;
+  });
+  assert.ok(Number.isInteger(viewerId));
+  for(const section of ['Devices','IPAM','Racks'])
+    await page.locator('[data-next-user-permission][data-user-id="'+viewerId+'"][data-section="'+section+'"]').selectOption('read');
+  await page.waitForFunction(async id=>{
+    const user=(await (await fetch('/api/users')).json()).users.find(u=>u.id===id);
+    return ['Devices','IPAM','Racks'].every(key=>user?.permissions[key]==='read');
+  },viewerId);
+  const readContext=await browser.newContext({ignoreHTTPSErrors:true});
+  const viewer=await readContext.newPage();
+  await viewer.goto(address+'/setup');
+  await viewer.locator('#username').fill('viewer');
+  await viewer.locator('#password').fill(password+'-Viewer');
+  assert.ok(await viewer.locator('#code-field').evaluate(e=>e.hidden));
+  await viewer.locator('#submit').click();
+  await viewer.waitForURL('**/inventory');
+  assert.ok(await viewer.locator('#next-settings-nav').isHidden());
+  assert.ok(await viewer.locator('#next-users-nav').isHidden());
+  await viewer.locator('#sidebar [data-action="tab-devices"]').click();
+  assert.ok(await viewer.locator('#devices-sidebar-actions [data-action="open-device-modal"]').isHidden());
+  await viewer.locator('#sidebar [data-action="tab-ipam"]').click();
+  assert.ok(await viewer.locator('#ipam-sidebar-actions [data-action="open-subnet-modal"]').isHidden());
+  await viewer.locator('#sidebar [data-action="tab-racks"]').click();
+  assert.ok(await viewer.locator('#racks-sidebar-actions [data-action="open-rack-modal"]').isHidden());
+  await viewer.locator('#sidebar #next-account-nav').click();
+  for(const tab of ['preferences','help','about']){
+    await viewer.locator('[data-action="select-account-section"][data-section="'+tab+'"]').click();
+    assert.ok(await viewer.locator('[data-action="select-account-section"][data-section="'+tab+'"]').isVisible());
+  }
+  await readContext.close();
+  console.log('Password-only read access, hidden editing controls, account preferences passed');
 
   await page.evaluate(()=>switchTab('settings'));
   await page.locator('[data-action="clear-inventory-data"]').waitFor();

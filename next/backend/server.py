@@ -455,6 +455,11 @@ class Handler(BaseHTTPRequestHandler):
                 if actor is None:
                     self.respond(403, {"error": "forbidden"})
                     return
+                if self.path == "/api/inventory/reset" and not connection.execute(
+                    "SELECT 1 FROM accounts WHERE id=? AND is_admin=1", (actor,)
+                ).fetchone():
+                    self.respond(403, {"error": "forbidden"})
+                    return
                 if self.path == "/api/inventory/settings/save":
                     if set(payload) != {"key", "value"}:
                         raise ValueError("Invalid inventory settings request")
@@ -713,6 +718,12 @@ class Handler(BaseHTTPRequestHandler):
                 if set(payload) - {"draftId", "choices", "legacyMountApproved", "replacementConfirmed"}:
                     raise ValueError("Unexpected import request fields")
             with connect() as connection:
+                actor = authenticated_account(connection, self.headers.get("Cookie"))
+                if actor is None or not connection.execute(
+                    "SELECT 1 FROM accounts WHERE id=? AND is_admin=1", (actor,)
+                ).fetchone():
+                    self.respond(403, {"error": "forbidden"})
+                    return
                 if route == "/api/import/preview":
                     draft_id, review = IMPORT_DRAFTS.begin(connection, body, **args)
                     result = {"draftId": draft_id, "review": review}
