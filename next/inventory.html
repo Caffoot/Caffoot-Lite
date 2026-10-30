@@ -1177,6 +1177,9 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                     <button type="button" data-action="open-rack-modal" class="w-full text-left px-3 py-2 mt-3 rounded-lg text-xs font-semibold text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-slate-700 sidebar-add-device"><i class="fa-solid fa-plus mr-2"></i>Add Rack</button>
                 </div>
                 <button data-action="tab-audit" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700/50 hover:text-indigo-600 dark:hover:text-indigo-400" data-tab="audit"><i class="fa-solid fa-clock-rotate-left w-5 text-center"></i><span>Change History</span></button>
+                <button type="button" id="next-users-nav" data-action="tab-users" data-tab="users" class="nav-btn hidden w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700/50 hover:text-indigo-600 dark:hover:text-indigo-400">
+                    <i class="fa-solid fa-users w-5 text-center" aria-hidden="true"></i><span>Users</span>
+                </button>
                 
             </nav>
             <!-- application-wide controls live in Settings & Data. -->
@@ -1185,7 +1188,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             </div>
         </aside>
         <!-- Hidden backup input retained for Settings restore and existing import workflow. -->
-        <input type="file" id="import-file" class="hidden" accept=".json,application/json" data-action="import-file" aria-label="Choose Caffoot Lite or older compatible backup JSON file">
+        <input type="file" id="import-file" class="hidden" accept=".json,application/json" data-action="import-file" aria-label="Choose published Caffoot Lite v1.3.3 JSON inventory backup">
 
 
         <!-- MAIN CONTENT AREA -->
@@ -1882,6 +1885,9 @@ function hierarchyValidateTypes(subnets) {
 
         let nextDeviceBridge = null;
         let nextDeviceModalClosed = null;
+        let nextImportModalClosed = null;
+        let nextRenderUsers = () => '';
+        let nextImportAllowed = false;
         function saveState() { showToast('This inventory operation is not yet connected to SQLite.', 'error'); return false; }
 
         // Inventory data-integrity helpers
@@ -2213,13 +2219,8 @@ function hierarchyValidateTypes(subnets) {
             else if (currentTab === 'devices') html = renderDevicesHTML();
             else if (currentTab === 'racks') html = renderRackHubV13();
             else if (currentTab === 'audit') html = renderAuditHTML();
-
-
-            else if (currentTab === 'settings') {
-                // Next has no browser backup/export, safety snapshots or reset.
-                if (activeSettingsSection === 'backup') activeSettingsSection = 'preferences';
-                html = renderApplicationSettings();
-            }
+            else if (currentTab === 'users') html = nextRenderUsers();
+            else if (currentTab === 'settings') html = renderApplicationSettings();
             container.innerHTML = html;
             const rackScroll = container.querySelector('[data-rack-scroll="true"]');
             if (rackScroll) {
@@ -5511,6 +5512,7 @@ function hierarchyValidateTypes(subnets) {
             container.classList.add('hidden');
             container.classList.remove('flex');
             if (nextDeviceModalClosed) nextDeviceModalClosed();
+            if (nextImportModalClosed) nextImportModalClosed();
             if (modalReturnFocus && modalReturnFocus.isConnected) modalReturnFocus.focus();
             modalReturnFocus = null;
             if (typeof onClosed === 'function') onClosed();
@@ -7745,20 +7747,13 @@ function hierarchyValidateTypes(subnets) {
             const panel = (title,desc,inner='') => `<section class="settings-panel"><h3>${title}</h3><p>${desc}</p>${inner ? `<div class="settings-buttons">${inner}</div>` : ''}</section>`;
             let body = '';
             if (section === 'backup') {
-                // One prominent backup action; keep restore, safety and recovery handlers unchanged.
-                body = '<h3 class="settings-group-title">Back Up & Restore</h3>' +
+                body = '<h3 class="settings-group-title">Import Inventory</h3>' +
                     '<div class="settings-group-grid">' +
-                    panel('Back up your inventory','Download a complete JSON copy of your devices, IPAM, subnets and racks. Store it somewhere safe outside this browser.',button('export-backup','Download Backup','fa-download') + '<button type="button" data-action="backup-help" class="settings-action settings-help-action" aria-label="Understanding backups and automatic safety backups"><i class="fa-solid fa-circle-question" aria-hidden="true"></i>Understanding backups</button>') +
-                    panel('Restore a backup','Choose a saved JSON backup. Review its contents before confirming; Caffoot verifies a safety copy first.',button('choose-backup-import','Choose Backup File','fa-upload')) +
-                    '</div><h3 class="settings-group-title">Maintenance & Safety</h3>' +
-                    '<div class="settings-group-grid">' +
-                    panel('Inventory Safety Check','Check your inventory integrity without changing any data.',button('check-inventory-safety','Check Inventory Safety','fa-shield-halved')) +
-                    panel('Update Caffoot Lite','Check for published releases when online. Back up your data before switching HTML files.',button('caffoot-check-updates','Check for Updates','fa-arrow-rotate-right') + button('caffoot-update-guide','Safe Update Guide','fa-circle-info') + '<p id="caffoot-update-status" class="update-status" role="status" aria-live="polite">Update checks are manual and require internet access. No inventory is sent or changed.</p>') +
-                    '</div><h3 class="settings-group-title">Advanced Recovery</h3>' +
-                    '<p class="settings-group-note">Use these tools only when recovering or resetting inventory.</p>' +
-                    '<div class="settings-group-grid">' +
-                    panel('Automatic safety backup','Before a restore or clear operation, Caffoot Lite keeps a safety backup of your previous inventory in this browser. Download it if you need it. This option is unavailable until a safety backup exists.',button('download-snapshot','Download safety backup','fa-shield-halved',personalSafeStorageGet(SAFETY_SNAPSHOT_KEY)?'':'disabled')) +
-                    panel('Danger Zone — Clear System','Permanently reset all inventory, IPAM records and managed options in this browser. Download a backup first.',button('clear-inventory-data','Clear System / Clean Start','fa-triangle-exclamation')) +
+                    panel('Import from published v1.3.3',
+                        'Choose a JSON inventory backup exported from Caffoot Lite v1.3.3. Review its contents and any corrections before replacing the central inventory.',
+                        '<button type="button" data-action="next-import-pick" class="settings-action" '+(nextImportAllowed?'':'disabled')+'><i class="fa-solid fa-upload" aria-hidden="true"></i>Choose Backup File</button>') +
+                    panel('Database backups',
+                        'Ongoing backup and restoration are handled by your Docker, Portainer or volume backup application. This JSON import is for one-way migration only.') +
                     '</div>';
             } else if (section === 'preferences') {
                 const preference = caffootThemePreference();
@@ -7770,14 +7765,12 @@ function hierarchyValidateTypes(subnets) {
                     '</div></section>';
             } else if (section === 'help') {
                 const helpTopics = [
-                    ['Getting Started', 'Create an IP Address Block under IPAM → Manage Subnets, then add a Network / VLAN subnet within it. Add devices in Device Inventory and use Network Racks to document rack-mounted equipment. The Dashboard summarises the inventory saved in this browser.'],
-                    ['IPAM & Subnets', 'Use IPAM to create and inspect subnets, allocations and reservations. Check CIDR boundaries, VLAN scope and gateway suggestions against your actual network before saving. Review the active subnet and parent block before bulk edits.'],
-                    ['Devices & Locations', 'Add devices from Device Inventory. Choose the appropriate type, location and an address from an existing subnet. Confirm IP assignments after edits or deletions. Rack Mounted devices need a valid rack and available U positions.'],
-                    ['Network Racks', 'Use Network Racks to create cabinets and place equipment. Verify the rack face, U position and device height before saving. Occupied positions and overlapping equipment must be resolved before placement.'],
-                    ['Backups & Restore', 'Open Data Management → Back Up & Restore and select Download Backup. Save the JSON outside the browser. Choose Backup File only when ready to replace the current inventory; review the validation summary and confirmation. Restore does not merge inventories.'],
-                    ['Updates & Recovery', 'In Data Management, select Safe Update Guide for offline update steps. Check for Updates requires an internet connection and never installs the HTML automatically. Recovery snapshots are temporary safeguards; Clear System / Clean Start is destructive. Always export a backup first.'],
-                    ['Appearance & Inventory Health', 'Preferences offers Light Mode, Dark Mode and Use System Setting. Dashboard Inventory Health checks saved-record consistency, not network reachability, browser storage reliability or backup availability.'],
-                    ['Troubleshooting & Storage', 'Your inventory is stored in this browser, not in the HTML file. If it looks empty, check the browser/profile and file location. Browser file storage rules vary; do not clear browser data. Restore a saved JSON backup if needed.']
+                    ['Getting Started', 'Create your administrator on first run and enrol MFA. Then use Devices, IPAM and Network Racks just as in published v1.3.3. Authorised users work from the same central inventory.'],
+                    ['Import from v1.3.3', 'Under Import Inventory, choose a fresh JSON backup exported from published v1.3.3 and review all required corrections before confirming replacement. For older HTML versions, upgrade to v1.3.3 before exporting.'],
+                    ['Devices, IPAM and Racks', 'Manage the familiar devices, primary IP assignments, subnets, VLANs, racks and accessories. Device editing reserves that device for one user at a time.'],
+                    ['Users and MFA', 'Administrators manage users and permissions in the Users section. New users have no access until permissions are granted. MFA is required for editing and administration.'],
+                    ['Database backup and recovery', 'Use your established Docker, Portainer or database volume backup application. Caffoot Lite Next has no ongoing inventory JSON backup export.'],
+                    ['Appearance', 'Preferences offers Light Mode, Dark Mode and Use System Setting. This appearance preference remains local to your browser.']
                 ];
                 body = '<section class="settings-panel backup-import-help"><h3>Help & Guides</h3><p>Built into Caffoot Lite and available without an internet connection. Choose a topic to read the guidance. For more detailed instructions, see the online User Guide linked in About Caffoot Lite.</p>' +
                     '<div class="settings-help-topics">' + helpTopics.map(([title,content]) => '<details class="settings-help-topic"><summary>' + title + '</summary><p>' + content + '</p></details>').join('') + '</div></section>';
@@ -7785,21 +7778,21 @@ function hierarchyValidateTypes(subnets) {
                 body = '<section class="settings-panel settings-about"><div class="settings-about-brand">' +
                     '<img src="../assets/caffoot-icon-1024.png" alt="Caffoot hedgehog logo" width="76" height="76">' +
                     '<div><h3>Caffoot Lite</h3><strong>Infrastructure, Simplified.</strong><p>For HomeLabs and Small Teams</p><p>Network documentation for home labs and small teams.</p></div></div>' +
-                    '<div class="settings-about-version"><span>Installed Version</span><strong>' + escapeHtml(CAFFOOT_LITE_VERSION) + '</strong></div>' +
-                    '<p>Manage devices, IP addresses, subnets and network racks in one standalone, offline-capable HTML application. Your inventory stays in this browser unless you export a JSON backup.</p>' +
+                    '<div class="settings-about-version"><span>Installed Version</span><strong>Next (development)</strong></div>' +
+                    '<p>Manage devices, IP addresses, subnets and network racks using a shared central SQLite database with authorised multi-user access.</p>' +
                     '<h4>Project & Documentation</h4><div class="settings-about-links">' +
                     '<a href="https://github.com/Caffoot/Caffoot-Lite" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-github" aria-hidden="true"></i> Official GitHub Repository <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>' +
                     '<a href="https://github.com/Caffoot/Caffoot-Lite/blob/main/USER-GUIDE.md" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-book-open" aria-hidden="true"></i> User Guide <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>' +
                     '<a href="https://github.com/Caffoot/Caffoot-Lite/blob/main/INSTALLATION.md" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Installation Guide <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>' +
                     '<a href="https://github.com/Caffoot/Caffoot-Lite/releases" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-tag" aria-hidden="true"></i> Release Notes <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>' +
-                    '</div><p class="settings-about-offline">External links require an internet connection; Caffoot Lite itself remains usable offline.</p>' +
+                    '</div><p class="settings-about-offline">External links require an internet connection. Caffoot Lite Next uses its central server and SQLite database.</p>' +
                     '<p>For offline instructions, open the Help & Guides tab in Settings & Data.</p>' +
                     '<div class="settings-buttons">' + button('caffoot-licences','Software Licences','fa-file-lines') + '</div></section>';
             }
-            const tabs = [['backup','Data Management','fa-database'],['preferences','Preferences','fa-palette'],['help','Help & Guides','fa-book-open'],['about','About Caffoot Lite','fa-circle-info']];
+            const tabs = [['backup','Import Inventory','fa-database'],['preferences','Preferences','fa-palette'],['help','Help & Guides','fa-book-open'],['about','About Caffoot Lite','fa-circle-info']];
             return `<div class="settings-workspace backup-workspace"><div class="settings-intro"><h2>Settings & Data</h2><p>Manage your data, appearance and application health — without duplicate tools.</p></div>
                 <div class="settings-tabs" role="group" aria-label="Settings sections">${tabs.map(([id,label,icon])=>`<button type="button" data-action="select-settings-section" data-section="${id}" aria-pressed="${section===id}" class="settings-tab ${section===id?'settings-tab-active':''}"><i class="fa-solid ${icon}" aria-hidden="true"></i>${label}</button>`).join('')}</div>
-                ${section==='backup'?browserStorageWarning(false, false):''}<div class="${section==='backup'?'settings-groups':'settings-grid'}">${body}</div>${section==='backup'?'<p class="settings-warning"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Browser storage is not a reliable long-term backup. Keep exported JSON files somewhere safe, especially before restoring data or changing browsers.</p>':''}</div>`;
+                <div class="${section==='backup'?'settings-groups':'settings-grid'}">${body}</div></div>`;
         }
 
         // Manual release checks never read or send inventory, or change browser storage.
@@ -9168,6 +9161,7 @@ function hierarchyValidateTypes(subnets) {
                 case 'export-selected-inventory-csv': downloadInventoryReportCsv(target.dataset.report); break;
                 
                 case 'tab-settings': switchTab('settings'); break;
+                case 'tab-users': switchTab('users'); break;
                 case 'select-settings-section': if (['backup','preferences','help','about'].includes(target.dataset.section)) { activeSettingsSection=target.dataset.section; renderContent(); } break;
                 case 'choose-backup-import': document.getElementById('import-file')?.click(); break;
                 case 'toggle-settings-theme': toggleDarkMode(); renderContent(); break;
@@ -9250,12 +9244,14 @@ window.addEventListener('load', async () => {
   let activeEdit = null;
   let pendingSave = false;
   let activeDelete = null;
+  let sessionIsAdmin = false;
   async function refreshCentralInventory(render = true) {
     const response = await fetch('/api/inventory/state', {cache:'no-store'});
     if (!response.ok) throw new Error(response.status === 401 ? 'Please sign in first.' : 'Unable to load central inventory.');
     const state = await response.json();
     permissions = state.sections || {};
     editPermissions = state.editPermissions || {};
+    nextImportAllowed = ['Devices','IPAM','Racks'].every(key => editPermissions[key]);
     deviceRevisions = state.deviceRevisions || {};
     for (const key of collections) {
       if (Object.prototype.hasOwnProperty.call(state,key)) appState[key] = state[key];
@@ -9282,19 +9278,23 @@ window.addEventListener('load', async () => {
     'duplicate-device','duplicate-device-from-details'
   ]);
   const blockedActions = /^(add|create|edit|delete|remove|save|restore|reset|import|export|repair|assign|reserve|release|clear|bulk|duplicate|move|place|unplace|update|change|apply|confirm|choose-backup)/i;
-  function isBlockedAction(action) {
+  function isBlockedAction(action, element = null) {
+    if (editPermissions.Devices && action === 'confirm' &&
+        element && element.closest('#hypervisor-selection-dialog,#platform-dialog')) return false;
     return blockedActions.test(action) && !(editPermissions.Devices && actionCanEditDevice.has(action));
   }
   function applyAllowedControls() {
     const root = document.getElementById('main-content');
     if (!root) return;
     root.querySelectorAll('button').forEach(button => {
-      if (isBlockedAction(button.dataset.action || '') || button.type === 'submit') button.disabled = true;
+      if (isBlockedAction(button.dataset.action || '', button) ||
+          (button.type === 'submit' && !button.closest('#next-user-create-form'))) button.disabled = true;
     });
   }
   const originalSwitchTab = switchTab;
   switchTab = function(tab) {
-    if (section[tab] && !permissions[section[tab]]) {
+    if ((tab === 'users' && !sessionIsAdmin) ||
+        (section[tab] && !permissions[section[tab]])) {
       showToast('You do not have access to this section.', 'error');
       return;
     }
@@ -9416,19 +9416,245 @@ window.addEventListener('load', async () => {
     catch(error) { showToast(error.message,'error'); }
   }
   nextDeviceBridge = {save:saveDevice,reserveForDelete,remove:removeDevice,cancelDelete};
+
+  // Users: administrator-only section, following the published sidebar and panel style.
+  let users = null;
+  nextRenderUsers = function() {
+    if (!sessionIsAdmin) return '';
+    const card = 'rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 p-5 space-y-3';
+    let html = '<div class="max-w-5xl mx-auto space-y-5 text-slate-800 dark:text-slate-100">' +
+      '<div><h2 class="text-xl font-bold">Users</h2><p class="text-sm text-slate-600 dark:text-slate-300">Manage accounts and access to Devices, IPAM and Racks.</p></div>' +
+      '<section class="' + card + '"><h3 class="font-bold">Create User</h3>' +
+      '<form id="next-user-create-form" class="flex flex-wrap items-end gap-3">' +
+      '<label class="text-sm font-semibold">Username <input name="username" autocomplete="off" required maxlength="256" class="block border rounded-lg p-2 text-slate-900"></label>' +
+      '<label class="text-sm font-semibold">Initial password <input name="password" type="password" autocomplete="new-password" required class="block border rounded-lg p-2 text-slate-900"></label>' +
+      '<button type="submit" class="px-4 py-2 rounded-xl bg-indigo-700 text-white font-semibold">Create User</button></form></section>';
+    if (!users) return html + '<p role="status">Loading users...</p></div>';
+    for (const user of users) {
+      const own = user.username.toLowerCase() === signedInUsername.toLowerCase();
+      html += '<section class="' + card + '"><div class="flex flex-wrap items-center justify-between gap-2">' +
+        '<h3 class="font-bold">' + escapeHtml(user.username) + (user.isAdmin ? ' (administrator)' : '') + '</h3>' +
+        '<span class="text-sm">' + (user.active?'Active':'Disabled') + ' · MFA ' + (user.mfaEnrolled?'enrolled':'not enrolled') + '</span></div>';
+      if (user.isAdmin) html += '<p class="text-sm">Administrator: all inventory sections.</p>';
+      else {
+        html += '<div class="flex flex-wrap gap-4">';
+        for (const sectionName of ['Devices','IPAM','Racks']) {
+          html += '<label class="text-sm font-semibold">' + sectionName +
+            '<select data-next-user-permission data-user-id="' + user.id + '" data-section="' + sectionName +
+            '" class="block border rounded-lg p-2 mt-1 bg-white dark:bg-slate-700">';
+          for (const [value,name] of [['','No access'],['read','Read'],['edit','Edit']])
+            html += '<option value="' + value + '"' + ((user.permissions[sectionName]||'')===value?' selected':'') + '>' + name + '</option>';
+          html += '</select></label>';
+        }
+        html += '</div>';
+      }
+      html += '<div class="flex flex-wrap gap-2">';
+      for (const [kind,title] of [['active',user.active?'Disable':'Enable'],
+                                   ['admin',user.isAdmin?'Remove admin':'Make admin'],
+                                   ['delete','Delete']]) {
+        html += '<button type="button" data-next-user-operation="' + kind +
+          '" data-user-id="' + user.id +
+          '" class="px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 text-sm font-semibold"'+
+          (own?' disabled':'')+'>' + title + '</button>';
+      }
+      html += '</div></section>';
+    }
+    return html + '<p class="text-sm">For your password and MFA settings, open <a href="/setup" class="text-indigo-700 dark:text-indigo-300 underline">Account settings</a>.</p></div>';
+  };
+  let signedInUsername = '';
+  async function loadCentralUsers() {
+    const response=await fetch('/api/users',{cache:'no-store'});
+    if (!response.ok) throw new Error('Unable to load users.');
+    users=(await response.json()).users;
+    if (currentTab === 'users') renderContent();
+  }
+  async function changeCentralUser(path,payload) {
+    await postInventory(path,payload);
+    await loadCentralUsers();
+    showToast('Users updated.');
+  }
+
+  // Published v1.3.3 import decisions stay explicit. Original JSON is held by
+  // the server draft; no inventory data is written to browser storage.
+  let importDraft=null;
+  let importWorking=false;
+  const accessPointMounts=['Tabletop / Shelf Mounted','Ceiling Mounted','Wall Mounted','Pole Mounted','Desktop'];
+  function importPanel(body) {
+    openModal('<div class="p-6 sm:p-7 space-y-4 text-slate-900 dark:text-white">' +
+      '<h2 class="text-xl font-bold">Import Inventory from v1.3.3</h2>' + body + '</div>');
+  }
+  async function cancelImport() {
+    if (!importDraft || importWorking) return;
+    const id=importDraft.id;
+    importDraft=null;
+    await postInventory('/api/import/cancel',{draftId:id}).catch(error=>showToast(error.message,'error'));
+  }
+  nextImportModalClosed=function(){ void cancelImport(); };
+  function showImportReview(review) {
+    if (!importDraft) return;
+    if (review.requiresAccessPointMountReview) {
+      const conflicts=review.accessPointMountConflicts||[];
+      let rows='<p class="text-sm">Review each Access Point mounting choice before continuing. Existing rack assignments will be cleared for these Access Points.</p>';
+      for (const item of conflicts) {
+        rows+='<label class="block text-sm font-semibold">' + escapeHtml(item.name||item.id||'Access Point') +
+          ' — ' + escapeHtml(item.mountType||'Unknown') + ' (' + escapeHtml(item.rack||'none') + ')' +
+          '<select data-next-ap-mount class="block w-full border rounded-xl p-2 mt-1 bg-white dark:bg-slate-700" required>' +
+          '<option value="">Select mounting type...</option>';
+        for (const mount of accessPointMounts) rows+='<option value="' + escapeHtml(mount) + '">' + escapeHtml(mount) + '</option>';
+        rows+='</select></label>';
+      }
+      importPanel(rows + '<div class="flex justify-end gap-3"><button type="button" data-next-import-action="cancel" class="caffoot-modal-cancel px-4 py-2">Cancel</button>' +
+        '<button type="button" data-next-import-action="choices" class="px-4 py-2 rounded-xl bg-indigo-700 text-white">Continue</button></div>');
+      return;
+    }
+    const counts=review.counts||{};
+    const current=counts.current||{},incoming=counts.backup||{};
+    let body='<p class="text-sm">Review the complete inventory replacement before confirming. Existing inventory will not be merged.</p>' +
+      '<div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr><th class="text-left p-2">Inventory</th><th class="text-right p-2">Current</th><th class="text-right p-2">Import</th></tr></thead><tbody>';
+    for (const [key,label] of [['devices','Devices'],['racks','Racks'],['subnets','Subnets'],['ipAllocations','IPAM allocations']])
+      body+='<tr class="border-t dark:border-slate-600"><th class="text-left p-2">' + label + '</th><td class="text-right p-2">' +
+        (current[key]===undefined?'—':Number(current[key])) + '</td><td class="text-right p-2">' +
+        Number(incoming[key]||0) + '</td></tr>';
+    body+='</tbody></table></div>';
+    if (review.requiresLegacyMountReview) {
+      const fixes=review.legacyMountRepairs||[];
+      body+='<div class="border border-amber-500 rounded-xl p-3 space-y-2"><h3 class="font-bold">Review legacy computer mounting corrections</h3>';
+      for (const item of fixes)
+        body+='<p class="text-sm">' + escapeHtml(item.name||item.id||'Device') + ': ' +
+          escapeHtml(item.mountType||'Unknown') + ' → ' + escapeHtml(item.proposedMountType||'Desktop') +
+          ' (Location: Unknown)</p>';
+      body+='<label class="flex gap-2 text-sm"><input type="checkbox" id="next-import-legacy-approval"> I approve these mounting corrections.</label></div>';
+    }
+    body+='<label class="flex gap-2 text-sm font-semibold"><input type="checkbox" id="next-import-replace-approval"> I understand that this replaces all existing central inventory (not user accounts or permissions).</label>' +
+      '<div class="flex justify-end gap-3"><button type="button" data-next-import-action="cancel" class="caffoot-modal-cancel px-4 py-2">Cancel</button>' +
+      '<button type="button" data-next-import-action="confirm" class="px-4 py-2 rounded-xl bg-indigo-700 text-white">Confirm Import</button></div>';
+    importPanel(body);
+  }
+  async function chooseImportFile(file) {
+    if (!file) return;
+    if (!nextImportAllowed) { showToast('Edit permission is required for Devices, IPAM and Racks.', 'error'); return; }
+    if (importDraft) await cancelImport();
+    if (file.size > 10*1024*1024) { showToast('Import file exceeds the supported size.', 'error'); return; }
+    importWorking=true;
+    try {
+      const response=await fetch('/api/import/preview',{
+        method:'POST',headers:{'Content-Type':'application/octet-stream','X-CSRF-Token':csrfToken},body:file
+      });
+      const payload=await response.json();
+      if (!response.ok) throw new Error(payload.error||'Unable to review import.');
+      importDraft={id:payload.draftId};
+      showImportReview(payload.review);
+    } catch(error) { showToast(error.message,'error'); }
+    finally { importWorking=false; }
+  }
+  async function actOnImport(action) {
+    if (action==='cancel') { await cancelImport(); closeModal(true); return; }
+    if (!importDraft || importWorking) return;
+    let url,payload;
+    if (action==='choices') {
+      const selectors=[...document.querySelectorAll('#modal-content [data-next-ap-mount]')];
+      const choices=selectors.map(input=>input.value);
+      if (choices.some(value=>!accessPointMounts.includes(value))) {
+        showToast('Select a mounting type for every Access Point.','error');return;
+      }
+      url='/api/import/access-point-choices';
+      payload={draftId:importDraft.id,choices};
+    } else if (action==='confirm') {
+      if (!document.getElementById('next-import-replace-approval')?.checked) {
+        showToast('Confirm that this import replaces existing inventory.','error');return;
+      }
+      if (document.getElementById('next-import-legacy-approval') &&
+          !document.getElementById('next-import-legacy-approval').checked) {
+        showToast('Review and approve the mounting corrections.','error');return;
+      }
+      url='/api/import/confirm';
+      payload={draftId:importDraft.id,replacementConfirmed:true,
+               legacyMountApproved:!!document.getElementById('next-import-legacy-approval')?.checked};
+    } else return;
+    importWorking=true;
+    try {
+      const result=await postInventory(url,payload);
+      if (action==='choices') showImportReview(result.review);
+      else {
+        importDraft=null;
+        closeModal(true);
+        await refreshCentralInventory();
+        showToast('Inventory imported.');
+      }
+    } catch(error) {
+      if (action==='confirm') importDraft=null; // Server consumes confirmation drafts.
+      showToast(error.message,'error');
+    } finally { importWorking=false; }
+  }
+  // Capture import-file change before the published browser-only import handler.
+  document.getElementById('import-file').addEventListener('change',event=>{
+    event.stopImmediatePropagation();
+    const file=event.target.files?.[0];
+    event.target.value='';
+    void chooseImportFile(file);
+  },true);
+  document.addEventListener('submit',event=>{
+    if (event.target.id !== 'next-user-create-form' || !sessionIsAdmin) return;
+    event.preventDefault();event.stopImmediatePropagation();
+    const form=event.target;
+    const fields=new FormData(form);
+    void changeCentralUser('/api/users/create',{
+      username:fields.get('username'),password:fields.get('password')
+    }).then(()=>form.reset()).catch(error=>showToast(error.message,'error'));
+  },true);
+  document.addEventListener('change',event=>{
+    const select=event.target.closest('[data-next-user-permission]');
+    if (!select || !sessionIsAdmin) return;
+    void changeCentralUser('/api/users/permission',{
+      userId:Number(select.dataset.userId),section:select.dataset.section,
+      level:select.value||null
+    }).catch(async error=>{
+      showToast(error.message,'error');
+      await loadCentralUsers().catch(()=>{});
+    });
+  },true);
+  document.addEventListener('click',event=>{
+    const element=event.target.closest('[data-next-user-operation],[data-next-import-action],[data-action="next-import-pick"]');
+    if (!element) return;
+    event.preventDefault();event.stopImmediatePropagation();
+    if (element.dataset.action==='next-import-pick') {
+      if (nextImportAllowed) document.getElementById('import-file').click();
+      return;
+    }
+    if (element.dataset.nextImportAction) {
+      void actOnImport(element.dataset.nextImportAction);return;
+    }
+    if (!sessionIsAdmin) return;
+    const id=Number(element.dataset.userId);
+    const user=(users||[]).find(entry=>entry.id===id);
+    if (!user || user.username.toLowerCase()===signedInUsername.toLowerCase()) return;
+    const kind=element.dataset.nextUserOperation;
+    let path,payload;
+    if (kind==='delete') {
+      if (!confirm('Delete ' + user.username + '?')) return;
+      path='/api/users/delete';payload={userId:id};
+    } else if (kind==='active') {
+      path='/api/users/active';payload={userId:id,active:!user.active};
+    } else if (kind==='admin') {
+      path='/api/users/admin';payload={userId:id,isAdmin:!user.isAdmin};
+    } else return;
+    void changeCentralUser(path,payload).catch(error=>showToast(error.message,'error'));
+  },true);
+
   document.addEventListener('click', event => {
     const element = event.target.closest('button,[data-action]');
     if (!element) return;
     const action = element.dataset.action || '';
-    if (isBlockedAction(action) || (element.matches('button') && element.type==='submit' &&
-        !element.closest('form[data-device-form="true"]'))) {
+    if (isBlockedAction(action, element) || (element.matches('button') && element.type==='submit' &&
+        !element.closest('form[data-device-form="true"],#next-user-create-form'))) {
       event.preventDefault();
       event.stopImmediatePropagation();
       showToast('This inventory operation is not yet connected to SQLite.', 'error');
     }
   },true);
   document.addEventListener('submit',event => {
-    if (editPermissions.Devices && event.target.matches('form[data-device-form="true"]')) return;
+    if ((editPermissions.Devices && event.target.matches('form[data-device-form="true"]')) ||
+        (sessionIsAdmin && event.target.matches('#next-user-create-form'))) return;
     event.preventDefault();event.stopImmediatePropagation();
   },true);
   const root=document.getElementById('main-content');
@@ -9438,6 +9664,10 @@ window.addEventListener('load', async () => {
     if(!sessionResponse.ok) throw new Error('Please sign in first.');
     const session=await sessionResponse.json();
     csrfToken=session.csrf_token;
+    sessionIsAdmin=!!session.is_admin;
+    signedInUsername=session.username;
+    document.getElementById('next-users-nav').classList.toggle('hidden', !sessionIsAdmin);
+    if (sessionIsAdmin) await loadCentralUsers();
     await refreshCentralInventory(false);
     const link=document.createElement('a');
     link.href='/setup';

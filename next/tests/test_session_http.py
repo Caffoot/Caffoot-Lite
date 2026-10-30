@@ -55,6 +55,17 @@ class SessionHttpTests(unittest.TestCase):
         conn.close()
         return status, body, cache
 
+    def test_admin_inventory_page_contains_users_and_migration_navigation(self):
+        status, body, cache = self.request(
+            "/inventory", COOKIE_NAME + "=" + self.token
+        )
+        self.assertEqual(status, 200)
+        self.assertEqual(cache, "no-store")
+        self.assertIn(b'data-action="tab-users"', body)
+        self.assertIn(b'data-action="next-import-pick"', body)
+        self.assertIn(b'data-next-import-action="confirm"', body)
+        self.assertNotIn(b"Your inventory is NOT saved in this browser", body)
+
     def test_inventory_requires_authenticated_inventory_access(self):
         status, body, cache = self.request("/inventory")
         self.assertEqual(status, 401)
