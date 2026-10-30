@@ -191,3 +191,71 @@ def create_device(connection, account_id, record):
     except BaseException:
         connection.rollback()
         raise
+
+
+def delete_reserved_device(connection, account_id, device_id, revision):
+    """Delete an exclusively reserved device and release its IPAM assignment."""
+    if not can_access(connection, account_id, "Devices", edit=True):
+        raise PermissionError("Devices edit permission required")
+    if not isinstance(device_id, str) or not device_id or type(revision) is not int or revision < 0:
+        raise ValueError("Invalid device deletion")
+    connection.execute("BEGIN IMMEDIATE")
+    try:
+        row = connection.execute(
+            "SELECT record_json,revision FROM inventory_devices WHERE id=?", (device_id,)
+        ).fetchone()
+        reservation = connection.execute(
+            "SELECT account_id,expires_at,base_revision FROM device_edit_reservations WHERE device_id=?",
+            (device_id,),
+        ).fetchone()
+        if row is None or reservation is None or reservation[0] != account_id or reservation[1] <= int(time.time()):
+            raise ValueError("Device edit reservation is no longer valid")
+        if row[1] != revision or reservation[2] != revision:
+            raise ValueError("Device has changed since editing began")
+        previous = json.loads(row[0])
+        candidate = reconstruct_inventory(connection)
+        candidate["devices"] = [
+            device for device in candidate["devices"] if device["id"] != device_id
+        ]
+        # The published inventory's relationships must remain valid after deletion.
+        # Do not silently delete dependent virtual machines or other records.
+        old_ip = previous.get("primaryIp")
+        old_allocation = candidate["ipAllocations"].get(old_ip) if old_ip else None
+        if old_allocation and old_allocation.get("deviceId") == device_id:
+            old_allocation["deviceId"] = ""
+            if old_allocation.get("status") in ("Assigned", "Reserved"):
+                old_allocation["status"] = "Available"
+            old_allocation["hostname"] = ""
+        errors = validate_detached_application_state(candidate)
+        if errors:
+            raise ValueError(errors[0])
+        conflicts = find_rack_import_conflicts(candidate)
+        if conflicts:
+            raise ValueError(conflicts[0])
+        connection.execute("DELETE FROM inventory_devices WHERE id=?", (device_id,))
+        if old_allocation and old_ip:
+            connection.execute(
+                "UPDATE inventory_ip_allocations SET record_json=? WHERE ip=?",
+                (json.dumps(old_allocation, ensure_ascii=False, allow_nan=False), old_ip),
+            )
+        changes = [{"action": "Deleted", "kind": "Device",
+                    "label": previous["name"][:100], "fields": []}]
+        if old_allocation and old_ip:
+            changes.append({"action": "Updated", "kind": "IPAM",
+                            "label": old_ip, "fields": ["deviceId", "status", "hostname"]})
+        event = {"at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+                 "reason": "Inventory saved", "changes": changes, "omitted": 0}
+        connection.execute(
+            "INSERT INTO inventory_change_history(record_json) VALUES(?)",
+            (json.dumps(event, ensure_ascii=False),),
+        )
+        connection.execute(
+            "DELETE FROM inventory_change_history WHERE id NOT IN "
+            "(SELECT id FROM inventory_change_history ORDER BY id DESC LIMIT 200)"
+        )
+        connection.execute("DELETE FROM device_edit_reservations WHERE device_id=?", (device_id,))
+        connection.commit()
+        return True
+    except BaseException:
+        connection.rollback()
+        raise

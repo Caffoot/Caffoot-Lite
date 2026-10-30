@@ -5,7 +5,7 @@ import time
 import unittest
 from unittest.mock import patch
 
-from backend.device_saves import create_device, save_reserved_device
+from backend.device_saves import create_device, delete_reserved_device, save_reserved_device
 from backend.inventory import stage_inventory
 from backend.schema import initialise_database
 
@@ -235,3 +235,51 @@ class CreateDeviceTests(unittest.TestCase):
         self.assertEqual(self.db.execute(
             "SELECT COUNT(*) FROM inventory_devices"
         ).fetchone()[0], 0)
+
+class DeleteReservedDeviceTests(ReservedDeviceSaveTests):
+    def delete(self, revision=0):
+        with patch("backend.device_saves.can_access", return_value=True):
+            return delete_reserved_device(self.db, 1, "d1", revision)
+
+    def test_delete_releases_ip_and_records_history(self):
+        self.assertTrue(self.delete())
+        self.assertIsNone(self.db.execute(
+            "SELECT id FROM inventory_devices WHERE id='d1'"
+        ).fetchone())
+        allocation = json.loads(self.db.execute(
+            "SELECT record_json FROM inventory_ip_allocations WHERE ip='10.0.0.10'"
+        ).fetchone()[0])
+        self.assertEqual(allocation["status"], "Available")
+        self.assertEqual(allocation["deviceId"], "")
+        event = json.loads(self.db.execute(
+            "SELECT record_json FROM inventory_change_history"
+        ).fetchone()[0])
+        self.assertEqual([change["action"] for change in event["changes"]],
+                         ["Deleted", "Updated"])
+        self.assertIsNone(self.db.execute(
+            "SELECT 1 FROM device_edit_reservations WHERE device_id='d1'"
+        ).fetchone())
+
+    def test_stale_revision_preserves_device(self):
+        before = self.snapshot()
+        with self.assertRaisesRegex(ValueError, "changed"):
+            self.delete(1)
+        self.assertEqual(self.snapshot(), before)
+
+    def test_expired_reservation_preserves_device(self):
+        self.db.execute(
+            "UPDATE device_edit_reservations SET expires_at=0 WHERE device_id='d1'"
+        )
+        self.db.commit()
+        before = self.snapshot()
+        with self.assertRaisesRegex(ValueError, "no longer valid"):
+            self.delete()
+        self.assertEqual(self.snapshot(), before)
+
+    def test_requires_edit_permission(self):
+        with patch("backend.device_saves.can_access", return_value=False):
+            with self.assertRaises(PermissionError):
+                delete_reserved_device(self.db, 1, "d1", 0)
+        self.assertIsNotNone(self.db.execute(
+            "SELECT id FROM inventory_devices WHERE id='d1'"
+        ).fetchone())
