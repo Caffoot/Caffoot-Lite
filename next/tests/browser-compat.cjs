@@ -418,6 +418,7 @@ async function run(){
   await page.locator('#next-user-create-form input[name="username"]').fill('viewer');
   await page.locator('#next-user-create-form input[name="password"]').fill(password+'-Viewer');
   await page.locator('#next-user-create-form button[type="submit"]').click();
+  await page.waitForFunction(()=>[...document.querySelectorAll('#main-content h3')].some(node=>node.textContent.trim()==='viewer'));
   const viewerId=await page.evaluate(async()=>{
     const r=await fetch('/api/users');
     return (await r.json()).users.find(u=>u.username==='viewer')?.id;
