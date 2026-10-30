@@ -8,7 +8,7 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 from .device_saves import create_device, delete_reserved_device, save_reserved_device
-from .ipam_saves import change_independent_allocation
+from .ipam_saves import change_independent_allocation, change_bulk_allocations
 from .collection_saves import change_inventory_record
 from .settings_saves import save_inventory_setting
 from .schema import initialise_database as migrate_database
@@ -326,7 +326,8 @@ class Handler(BaseHTTPRequestHandler):
                          "/api/devices/edit/start", "/api/devices/edit/cancel",
                          "/api/devices/edit/save", "/api/devices/create",
                          "/api/devices/delete", "/api/ipam/allocation/save",
-                         "/api/ipam/allocation/delete", "/api/inventory/record/save",
+                         "/api/ipam/allocation/delete", "/api/ipam/allocation/bulk",
+                         "/api/inventory/record/save",
                          "/api/inventory/record/delete", "/api/inventory/settings/save"):
             self.handle_user_mutation()
             return
@@ -462,6 +463,11 @@ class Handler(BaseHTTPRequestHandler):
                         connection, actor, payload["ip"],
                         payload["record"] if self.path.endswith("/save") else None,
                     )
+                    result = {"status": "saved"}
+                elif self.path == "/api/ipam/allocation/bulk":
+                    if set(payload) != {"changes"}:
+                        raise ValueError("Invalid bulk IPAM request")
+                    change_bulk_allocations(connection, actor, payload["changes"])
                     result = {"status": "saved"}
                 elif self.path == "/api/devices/delete":
                     if set(payload) not in ({"deviceId", "revision"},

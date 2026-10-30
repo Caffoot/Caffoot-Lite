@@ -5,7 +5,7 @@ import unittest
 from unittest.mock import patch
 
 from backend.inventory import stage_inventory
-from backend.ipam_saves import change_independent_allocation
+from backend.ipam_saves import change_independent_allocation, change_bulk_allocations
 from backend.schema import initialise_database
 
 
@@ -94,4 +94,42 @@ class IndependentIpamTests(unittest.TestCase):
             with self.assertRaises(PermissionError):
                 change_independent_allocation(
                     self.db, 1, "10.0.0.20", {"deviceId": "", "status": "Reserved"}
+                )
+
+    def bulk(self, changes):
+        with patch("backend.ipam_saves.can_access", return_value=True):
+            change_bulk_allocations(self.db, 1, changes)
+
+    def test_published_bulk_reservations_and_release_commit_together(self):
+        changes = [
+            {"ip": "10.0.0.20", "record": {"status": "Reserved", "deviceId": "",
+                                          "hostname": "pool-20", "notes": "DHCP"}},
+            {"ip": "10.0.0.21", "record": {"status": "Reserved", "deviceId": "",
+                                          "hostname": "pool-21", "notes": "DHCP"}},
+        ]
+        self.bulk(changes)
+        for change in changes:
+            self.assertEqual(self.allocation(change["ip"]), change["record"])
+        self.bulk([
+            {"ip": change["ip"], "record": dict(change["record"], status="Available")}
+            for change in changes
+        ])
+        self.assertTrue(all(self.allocation(change["ip"])["status"] == "Available"
+                            for change in changes))
+
+    def test_bulk_protects_device_addresses_gateway_and_rolls_back_every_change(self):
+        candidate = {"ip": "10.0.0.20", "record": {"status": "Reserved", "deviceId": ""}}
+        for protected in ("10.0.0.10", "10.0.0.1"):
+            with self.assertRaisesRegex(ValueError, "Protected IP"):
+                self.bulk([candidate, {"ip": protected,
+                                      "record": {"status": "Reserved", "deviceId": ""}}])
+            self.assertIsNone(self.allocation("10.0.0.20"))
+            self.assertEqual(self.allocation("10.0.0.10")["deviceId"], "d1")
+
+    def test_bulk_requires_ipam_edit_permission(self):
+        with patch("backend.ipam_saves.can_access", return_value=False):
+            with self.assertRaises(PermissionError):
+                change_bulk_allocations(
+                    self.db, 1, [{"ip": "10.0.0.20",
+                                  "record": {"status": "Reserved", "deviceId": ""}}]
                 )

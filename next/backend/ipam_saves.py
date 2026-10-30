@@ -62,3 +62,63 @@ def change_independent_allocation(connection, account_id, ip, record):
     except BaseException:
         connection.rollback()
         raise
+
+
+def change_bulk_allocations(connection, account_id, changes):
+    """Commit the published bulk IP reservation/release preview atomically."""
+    if not can_access(connection, account_id, "IPAM", edit=True):
+        raise PermissionError("IPAM edit permission required")
+    if not isinstance(changes, list) or not 1 <= len(changes) <= 512:
+        raise ValueError("Bulk IPAM operation must contain 1 to 512 addresses")
+    connection.execute("BEGIN IMMEDIATE")
+    try:
+        state = reconstruct_inventory(connection)
+        gateways = {subnet.get("gateway") for subnet in state["subnets"]}
+        primary_ips = {device.get("primaryIp") for device in state["devices"]}
+        seen = set()
+        updates = []
+        for change in changes:
+            if (not isinstance(change, dict) or set(change) != {"ip", "record"} or
+                    not isinstance(change["ip"], str) or not isinstance(change["record"], dict)):
+                raise ValueError("Invalid bulk IPAM change")
+            ip, record = change["ip"], change["record"]
+            if ip in seen:
+                raise ValueError("Duplicate IPAM address in bulk operation")
+            seen.add(ip)
+            previous = state["ipAllocations"].get(ip)
+            if (ip in gateways or ip in primary_ips or
+                    (previous and (previous.get("deviceId") or previous.get("status") == "Assigned")) or
+                    record.get("deviceId") or record.get("status") not in ("Reserved", "Available")):
+                raise ValueError("Protected IP address " + ip + " cannot be changed in bulk")
+            state["ipAllocations"][ip] = record
+            if previous != record:
+                updates.append((ip, record, previous))
+
+        errors = validate_detached_application_state(state)
+        if errors:
+            raise ValueError(errors[0])
+        for ip, record, _ in updates:
+            connection.execute(
+                "INSERT INTO inventory_ip_allocations(ip,record_json) VALUES(?,?) "
+                "ON CONFLICT(ip) DO UPDATE SET record_json=excluded.record_json",
+                (ip, json.dumps(record, ensure_ascii=False, allow_nan=False)),
+            )
+        if updates:
+            events = [{"action": "Created" if previous is None else "Updated",
+                       "kind": "IPAM", "label": ip, "fields": []}
+                      for ip, _, previous in updates[:16]]
+            entry = {"at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+                     "reason": "Bulk IPAM saved", "changes": events,
+                     "omitted": max(0, len(updates) - len(events))}
+            connection.execute(
+                "INSERT INTO inventory_change_history(record_json) VALUES(?)",
+                (json.dumps(entry, ensure_ascii=False),),
+            )
+            connection.execute(
+                "DELETE FROM inventory_change_history WHERE id NOT IN "
+                "(SELECT id FROM inventory_change_history ORDER BY id DESC LIMIT 200)"
+            )
+        connection.commit()
+    except BaseException:
+        connection.rollback()
+        raise

@@ -4648,7 +4648,7 @@ function hierarchyValidateTypes(subnets) {
                 <p class="text-sm text-slate-700 dark:text-slate-200">${plan.changes.length} address(es) will change. ${plan.blocked.length} protected address(es) will be skipped.</p>
                 ${plan.blocked.length?`<p class="text-sm text-amber-900 dark:text-amber-200">Protected examples: ${escapeHtml(plan.blocked.slice(0,6).join(', '))}</p>`:''}
                 <p class="text-sm text-slate-700 dark:text-slate-200">Changes include: ${escapeHtml(sample||'none')}${status==='Reserved'&&notes?'<br>Entered IPAM notes will replace existing notes on eligible addresses.':''}</p>
-                <p class="text-xs text-slate-600 dark:text-slate-300">A safety snapshot is stored before changes are applied. Confirm only after reviewing the range.</p>
+                <p class="text-xs text-slate-600 dark:text-slate-300">Changes are saved together to the central inventory. Confirm only after reviewing the range.</p>
                 <div class="flex justify-end gap-3"><button type="button" data-action="return-from-bulk-ip-assignment" class="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-700 caffoot-modal-cancel">Back to editing</button>
                 <button type="button" data-action="apply-bulk-ip-assignment" class="px-4 py-2 rounded-xl bg-blue-800 text-white font-semibold" ${!plan.changes.length?'disabled':''}>Apply ${plan.changes.length} changes</button></div></div>`);
             pendingBulkIpAssignment={subnetId,start,end,status,hostname,notes};
@@ -4668,30 +4668,28 @@ function hierarchyValidateTypes(subnets) {
             rememberModalForm();
             document.getElementById('bulk-start')?.focus();
         }
-        function applyBulkIpChanges() {
+        async function applyBulkIpChanges() {
             const request=pendingBulkIpAssignment;
-            pendingBulkIpAssignment=null;
-            if(!request) return showToast('Bulk preview expired. Start again.','error');
+            if(!request || pendingSave) return showToast('Bulk preview expired. Start again.','error');
             const subnet=appState.subnets.find(s=>s.id===request.subnetId);
             const plan=planBulkSubnetAddressAssignment(subnet,request.start,request.end,request.status,request.hostname,request.notes);
             if(plan.error||!plan.changes?.length) return showToast(plan.error||'No eligible addresses remain.','error');
-            const before=JSON.stringify(appState);
+            pendingSave=true;
             try {
-                localStorage.setItem('caffoot_phase12b_prebulk_snapshot',before);
-                if(localStorage.getItem('caffoot_phase12b_prebulk_snapshot')!==before)
-                    throw new Error('Safety snapshot verification failed.');
-            } catch(error) {return showToast('Safety snapshot could not be saved or verified. Bulk operation cancelled.','error');}
-            for(const change of plan.changes) {
-                if(change.updated===null) delete appState.ipAllocations[change.ip];
-                else appState.ipAllocations[change.ip]=change.updated;
-            }
-            nextAuditReason='Bulk IPAM '+request.status.toLowerCase();
-            if(!saveState()) {
-                appState=JSON.parse(before);
-                nextAuditReason='';
-                return showToast('Bulk operation was not saved; original inventory restored in memory.','error');
-            }
-            closeModal();renderContent();
+                await postInventory('/api/ipam/allocation/bulk',{
+                    changes:plan.changes.map(change=>({ip:change.ip,record:change.updated}))
+                });
+                pendingBulkIpAssignment=null;
+                closeModal(true);
+                try { await refreshCentralInventory(); }
+                catch(error) {
+                    showToast('Bulk IPAM changes saved. Unable to refresh the latest inventory.','error');
+                    return;
+                }
+                showToast('Bulk IPAM changes saved.');
+            } catch(error) {
+                showToast(error.message,'error');
+            } finally { pendingSave=false; }
         }
 
         // Suggest the first usable address when creating a subnet. Manual edits are respected.
@@ -9276,6 +9274,7 @@ window.addEventListener('load', async () => {
     if (!response.ok) throw new Error(result.error || 'Unable to save inventory.');
     return result;
   }
+  const actionCanEditIpam = new Set(['bulk-ip','apply-bulk-ip-assignment']);
   const actionCanEditDevice = new Set([
     'open-device-modal','edit-device','edit-device-from-details',
     'delete-device','delete-device-from-details',
@@ -9285,14 +9284,17 @@ window.addEventListener('load', async () => {
   function isBlockedAction(action, element = null) {
     if (editPermissions.Devices && action === 'confirm' &&
         element && element.closest('#hypervisor-selection-dialog,#platform-dialog')) return false;
-    return blockedActions.test(action) && !(editPermissions.Devices && actionCanEditDevice.has(action));
+    return blockedActions.test(action) &&
+      !(editPermissions.Devices && actionCanEditDevice.has(action)) &&
+      !(editPermissions.IPAM && actionCanEditIpam.has(action));
   }
   function applyAllowedControls() {
     const root = document.getElementById('main-content');
     if (!root) return;
     root.querySelectorAll('button').forEach(button => {
       if (isBlockedAction(button.dataset.action || '', button) ||
-          (button.type === 'submit' && !button.closest('#next-user-create-form'))) button.disabled = true;
+          (button.type === 'submit' &&
+            !button.closest('#next-user-create-form,form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-device-form="true"]'))) button.disabled = true;
     });
   }
   const originalSwitchTab = switchTab;
@@ -9676,7 +9678,7 @@ window.addEventListener('load', async () => {
     const action = element.dataset.action || '';
     if (isBlockedAction(action, element) || (element.matches('button') && element.type==='submit' &&
         !element.closest('form[data-device-form="true"],#next-user-create-form') &&
-        !(editPermissions.IPAM && element.closest('form[data-form-action="ip"]')))) {
+        !(editPermissions.IPAM && element.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"]')))) {
       event.preventDefault();
       event.stopImmediatePropagation();
       showToast('This inventory operation is not yet connected to SQLite.', 'error');
@@ -9684,7 +9686,7 @@ window.addEventListener('load', async () => {
   },true);
   document.addEventListener('submit',event => {
     if ((editPermissions.Devices && event.target.matches('form[data-device-form="true"]')) ||
-        (editPermissions.IPAM && event.target.matches('form[data-form-action="ip"]')) ||
+        (editPermissions.IPAM && event.target.matches('form[data-form-action="ip"],form[data-form-action="bulk-ip"]')) ||
         (sessionIsAdmin && event.target.matches('#next-user-create-form'))) return;
     event.preventDefault();event.stopImmediatePropagation();
   },true);
