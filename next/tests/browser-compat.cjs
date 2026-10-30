@@ -265,6 +265,8 @@ async function run(){
     mimeType:'application/json',buffer:Buffer.from(JSON.stringify(exported))};
   await page.evaluate(()=>switchTab('settings'));
   async function chooseBackup(){
+    assert.equal(await page.locator('[data-action="next-import-pick"]').isEnabled(),true,
+      'Authorised import button must remain usable');
     const chooser=page.waitForEvent('filechooser');
     await page.locator('[data-action="next-import-pick"]').click();
     await (await chooser).setFiles(file);
