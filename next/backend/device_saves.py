@@ -6,6 +6,7 @@ from .application_integrity import validate_detached_application_state
 from .inventory import reconstruct_inventory
 from .normalisation_validation import validate_normalisation_devices
 from .permissions import can_access
+from .rack_validation import find_rack_import_conflicts
 
 
 def save_reserved_device(connection, account_id, device_id, revision, record, section="Devices"):
@@ -52,6 +53,7 @@ def save_reserved_device(connection, account_id, device_id, revision, record, se
                 old_allocation["deviceId"] = ""
                 if old_allocation.get("status") in ("Assigned", "Reserved"):
                     old_allocation["status"] = "Available"
+                old_allocation["hostname"] = ""
         if new_ip:
             allocation = allocations.setdefault(new_ip, {
                 "status": "Assigned", "deviceId": "", "hostname": "", "notes": ""
@@ -63,6 +65,9 @@ def save_reserved_device(connection, account_id, device_id, revision, record, se
         errors = validate_detached_application_state(candidate)
         if errors:
             raise ValueError(errors[0])
+        rack_conflicts = find_rack_import_conflicts(candidate)
+        if rack_conflicts:
+            raise ValueError(rack_conflicts[0])
         connection.execute(
             "UPDATE inventory_devices SET name=?,record_json=?,revision=revision+1 WHERE id=?",
             (record["name"], json.dumps(record, ensure_ascii=False, allow_nan=False), device_id),
