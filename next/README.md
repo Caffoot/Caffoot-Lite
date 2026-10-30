@@ -24,13 +24,59 @@ docker compose exec caffoot-next openssl x509 -in /data/tls/server.crt -noout -f
 
 Compare the SHA-256 fingerprint against a separately trusted copy before trusting the certificate in your browser or reverse proxy. The certificate's Subject Alternative Name must include the IP address or hostname used to reach the Caffoot server. If you change `CAFFOOT_SERVER_ADDRESS` after first startup, the existing persisted certificate is **not** silently regenerated; inspect its identities and explicitly plan a safe replacement if required. Keep the private key private. A self-signed certificate is not publicly trusted merely because the application generated it.
 
-The container's own HTTPS health check is a local liveness probe and does not establish external certificate trust. Do not delete the named data volume if retaining inventory or certificate identity.  The certificate is not automatically renewed; before expiry, plan a controlled certificate rotation and update client/proxy trust. Never delete the data volume as a certificate-rotation shortcut.
+The container's own HTTPS health check is a local liveness probe and does not establish external certificate trust. Do not delete the persistent data volume or host bind-mount folder if retaining inventory or certificate identity.  The certificate is not automatically renewed; before expiry, plan a controlled certificate rotation and update client/proxy trust. Never delete the data volume as a certificate-rotation shortcut.
 
 ## Verification status
 
 The existing backend checks and focused HTTPS/Chromium test run in GitHub Actions. They cover first-run MFA, central inventory and Change History, user creation and access permissions, competing device edit reservations, familiar Devices/IPAM/Racks forms, Clean Start and a real v1.3.3 backup created by the published exporter. These checks do not yet prove all published v1.3.3 interactions or Raspberry Pi 5 performance.
 
 The existing `tests/test_compose_lifecycle.py` is an **opt-in** Docker milestone test. Run the `Next Docker Compose lifecycle` GitHub Actions workflow manually at an integration milestone to verify published port configuration, persistent SQLite data and TLS certificate continuity across restart and recreation. A real Raspberry Pi 5/Portainer acceptance test is still required before release.
+
+## Raspberry Pi 5 installation through Portainer
+
+This uses the existing **Next** Docker Compose application, not a different image or inventory implementation. Portainer can deploy a Compose file directly from a Git repository, so you do not need to copy project files onto the Pi. Choose the Pi's ordinary Docker Standalone environment in Portainer.
+
+**1. Prepare the data folder on the Pi.** In a terminal on the Raspberry Pi, run:
+
+```sh
+sudo install -d -m 0750 -o 10001 -g 10001 /portainer/Files/AppData/Config/caffoot_data
+```
+
+The container runs as user/group `10001:10001`. Only the `caffoot_data` directory needs those permissions; **do not change permissions or ownership on the parent AppData folders or any other container's data**.
+
+**2. Add the stack.** In Portainer, open **Stacks → Add stack → Git repository** and enter:
+
+| Portainer field | Value |
+| --- | --- |
+| Stack name | `caffoot-next` |
+| Repository URL | `https://github.com/Caffoot/Caffoot-Lite.git` |
+| Repository reference / branch | `Next` |
+| Compose path | `next/compose.yaml` |
+
+Portainer retrieves this branch and builds the application image using the existing `next/Dockerfile`. Leave automatic GitOps updates off for this unreleased Pi acceptance installation; update deliberately while development is ongoing. If Portainer asks for a source, choose **Create new source / Git repository**. Do not choose `main`, which is the published HTML application's branch.
+
+**3. Set the four stack environment variables** using Portainer's **Environment variables** section. The values below are *illustrative*: replace `10.128.20.3` with the Pi's actual address, and pick an unused host port (here `8443`).
+
+```dotenv
+CAFFOOT_WEB_ADDRESS=https://10.128.20.3:8443
+CAFFOOT_SERVER_ADDRESS=10.128.20.3
+CAFFOOT_PORT=8443
+CAFFOOT_DATA_PATH=/portainer/Files/AppData/Config/caffoot_data
+```
+
+`CAFFOOT_DATA_PATH` selects the **host** folder that is mounted at `/data` **inside** the container. The other three settings are the approved HTTPS browser address, certificate identity and external port. The container always listens on internal port `8080`. For a reverse proxy, set `CAFFOOT_WEB_ADDRESS` to the actual public HTTPS URL, use the Pi's actual HTTPS server address for `CAFFOOT_SERVER_ADDRESS`, and set `CAFFOOT_PORT` to the port the proxy reaches. Keep the proxy's upstream connection HTTPS and verify the upstream certificate.
+
+**4. Select Deploy the stack.** Once it is running and healthy, use your configured HTTPS address. The first visit opens the account setup workflow: choose your own first administrator username/password and complete compulsory MFA. There is no preset administrator. If you have inventory from published v1.3.3, export a fresh JSON backup from that version, then use Next's Settings import review and explicit confirmation. Migration never replaces accounts.
+
+For a directly accessed self-signed HTTPS server, check the certificate's fingerprint and Subject Alternative Name against the Pi's trusted server information **before** using real credentials. You can inspect them from Portainer's container **Console** using:
+
+```sh
+openssl x509 -in /data/tls/server.crt -noout -fingerprint -sha256 -subject -dates -ext subjectAltName
+```
+
+Do not simply click past browser certificate warnings. Establish trust using the approved HTTPS procedure above. The database and certificate persist under the host's `caffoot_data` folder; leave this folder intact when recreating or updating the container. Back up and restore it with the existing external volume/container backup process, not the one-way v1.3.3 JSON migration.
+
+If you do not set `CAFFOOT_DATA_PATH`, the original `caffoot_data` Docker-managed named volume remains the default. Avoid changing `CAFFOOT_DATA_PATH` after setup without deliberately moving your existing persisted data.
 
 ## Published v1.3.3 import compatibility boundary
 
