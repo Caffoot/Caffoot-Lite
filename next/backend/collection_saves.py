@@ -1,5 +1,6 @@
 """Transactional inventory collection changes for published IPAM and Racks workflows."""
 import json
+import time
 from datetime import datetime, timezone
 
 from .application_integrity import validate_detached_application_state
@@ -236,6 +237,127 @@ def change_ipam_subnet_and_vlan_records(connection, account_id, changes):
                 "DELETE FROM inventory_change_history WHERE id NOT IN "
                 "(SELECT id FROM inventory_change_history ORDER BY id DESC LIMIT 200)"
             )
+        connection.commit()
+    except BaseException:
+        connection.rollback()
+        raise
+
+
+def delete_subnet_with_dependencies(connection, account_id, subnet_id,
+                                    expected_devices, expected_ips):
+    """Published reviewed subnet deletion, including device detachment, in one save."""
+    if not can_access(connection, account_id, "IPAM", edit=True):
+        raise PermissionError("IPAM edit permission required")
+    if (not isinstance(subnet_id, str) or not subnet_id or
+            not isinstance(expected_devices, list) or
+            not isinstance(expected_ips, list)):
+        raise ValueError("Invalid subnet deletion request")
+    connection.execute("BEGIN IMMEDIATE")
+    try:
+        state = reconstruct_inventory(connection)
+        subnet = next((s for s in state["subnets"] if s["id"] == subnet_id), None)
+        if subnet is None:
+            raise ValueError("Subnet no longer exists.")
+        if any(s.get("parentId") == subnet_id for s in state["subnets"]):
+            raise ValueError("Dependencies changed; deletion cancelled. Review the subnet again.")
+        cidr = subnet.get("cidr")
+        devices = [d for d in state["devices"] if d.get("primaryIp") and
+                   ip_belongs_to_subnet(d["primaryIp"], cidr)]
+        ips = [ip for ip in state["ipAllocations"] if ip_belongs_to_subnet(ip, cidr)]
+        owners = {d["primaryIp"]: d for d in devices}
+        for ip in ips:
+            a = state["ipAllocations"][ip]
+            if ip not in owners or a.get("deviceId") != owners[ip]["id"] or a.get("reservedForDeviceId"):
+                raise ValueError("Dependencies changed; deletion cancelled. Review the subnet again.")
+        if any(d["primaryIp"] not in state["ipAllocations"] for d in devices):
+            raise ValueError("Dependencies changed; deletion cancelled. Review the subnet again.")
+        actual_devices = sorted((d["id"], d["primaryIp"]) for d in devices)
+        if (actual_devices != sorted(
+                (d.get("id"), d.get("ip")) for d in expected_devices
+                if isinstance(d, dict)) or
+                len(expected_devices) != len(actual_devices) or
+                sorted(ips) != sorted(expected_ips)):
+            raise ValueError("Subnet or dependent records changed after preview. Deletion cancelled; please review again.")
+
+        network = not subnet.get("kind") or subnet.get("kind") == "network"
+        domain = subnet.get("parentId") or "__unassigned__"
+        linked = ([v for v in state["vlans"]
+                   if _number(v.get("vlanId")) == _number(subnet.get("vlan")) and
+                   (v.get("parentId") or "__unassigned__") == domain]
+                  if network else [])
+        if (len(linked) > 1 or
+                (network and not linked and any(
+                    _number(v.get("vlanId")) == _number(subnet.get("vlan")) and
+                    not v.get("parentId") for v in state["vlans"])) or
+                any(s["id"] != subnet_id and
+                    (not s.get("kind") or s.get("kind") == "network") and
+                    _number(s.get("vlan")) == _number(subnet.get("vlan")) and
+                    (s.get("parentId") or "__unassigned__") == domain
+                    for s in state["subnets"])):
+            raise ValueError("VLAN ownership changed; deletion cancelled.")
+
+        now = int(time.time())
+        for device in devices:
+            reservation = connection.execute(
+                "SELECT account_id,expires_at FROM device_edit_reservations WHERE device_id=?",
+                (device["id"],)
+            ).fetchone()
+            if reservation and reservation[1] > now and reservation[0] != account_id:
+                raise ValueError("Device is being edited by another user")
+
+        # Published confirmation retains the previous IP as device metadata,
+        # and removes active allocation records with the deleted subnet.
+        for device in devices:
+            device["previousPrimaryIp"] = device["primaryIp"]
+            device["primaryIp"] = ""
+        for ip in ips:
+            del state["ipAllocations"][ip]
+        state["subnets"] = [s for s in state["subnets"] if s["id"] != subnet_id]
+        if linked:
+            state["vlans"] = [v for v in state["vlans"] if v["id"] != linked[0]["id"]]
+        validate_normalisation_vlans(state)
+        validate_normalisation_devices(state)
+        errors = validate_detached_application_state(state)
+        if errors:
+            raise ValueError(errors[0])
+
+        for device in devices:
+            connection.execute(
+                "UPDATE inventory_devices SET record_json=?,revision=revision+1 WHERE id=?",
+                (json.dumps(device, ensure_ascii=False, allow_nan=False), device["id"])
+            )
+            connection.execute(
+                "DELETE FROM device_edit_reservations WHERE device_id=? AND account_id=?",
+                (device["id"], account_id)
+            )
+        for ip in ips:
+            connection.execute("DELETE FROM inventory_ip_allocations WHERE ip=?", (ip,))
+        connection.execute("DELETE FROM inventory_subnets WHERE id=?", (subnet_id,))
+        if linked:
+            connection.execute("DELETE FROM inventory_vlans WHERE id=?", (linked[0]["id"],))
+        changes = [{"action": "Updated", "kind": "Device",
+                    "label": str(d["name"])[:100],
+                    "fields": ["previousPrimaryIp", "primaryIp"]} for d in devices]
+        changes.extend({"action": "Deleted", "kind": "IPAM",
+                        "label": ip, "fields": []} for ip in ips)
+        changes.append({"action": "Deleted", "kind": "IPAM",
+                        "label": str(subnet.get("name") or subnet_id)[:100],
+                        "fields": []})
+        if linked:
+            changes.append({"action": "Deleted", "kind": "IPAM",
+                            "label": str(linked[0].get("name") or linked[0]["id"])[:100],
+                            "fields": []})
+        event = {"at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+                 "reason": "Inventory saved", "changes": changes[:60],
+                 "omitted": max(0, len(changes) - 60)}
+        connection.execute(
+            "INSERT INTO inventory_change_history(record_json) VALUES(?)",
+            (json.dumps(event, ensure_ascii=False),)
+        )
+        connection.execute(
+            "DELETE FROM inventory_change_history WHERE id NOT IN "
+            "(SELECT id FROM inventory_change_history ORDER BY id DESC LIMIT 200)"
+        )
         connection.commit()
     except BaseException:
         connection.rollback()

@@ -4,7 +4,9 @@ import sqlite3
 import unittest
 from unittest.mock import patch
 
-from backend.collection_saves import change_inventory_record, change_ipam_subnet_and_vlan_records
+from backend.collection_saves import (change_inventory_record,
+                                      change_ipam_subnet_and_vlan_records,
+                                      delete_subnet_with_dependencies)
 from backend.inventory import stage_inventory
 from backend.schema import initialise_database
 
@@ -170,3 +172,61 @@ class CollectionSaveTests(unittest.TestCase):
         self.assertEqual(self.records("rack_accessories"), [edited])
         self.change("rackAccessories", "a1", None)
         self.assertEqual(self.records("rack_accessories"), [])
+
+    def test_reviewed_subnet_delete_detaches_primary_ip_and_linked_vlan_atomically(self):
+        network = {"id": "network", "name": "Network", "cidr": "10.0.0.0/24",
+                   "gateway": "10.0.0.1", "vlan": 10}
+        vlan = {"id": "vlan", "name": "Network", "vlanId": 10}
+        self.change_ipam([
+            {"collection": "subnets", "id": "network", "record": network},
+            {"collection": "vlans", "id": "vlan", "record": vlan},
+        ])
+        device = {"id": "d1", "name": "Router", "mountType": "Desktop",
+                  "primaryIp": "10.0.0.10"}
+        self.db.execute(
+            "INSERT INTO inventory_devices(id,name,record_json,ordinal) VALUES(?,?,?,?)",
+            ("d1", "Router", json.dumps(device), 0)
+        )
+        self.db.execute(
+            "INSERT INTO inventory_ip_allocations(ip,record_json) VALUES(?,?)",
+            ("10.0.0.10", json.dumps({"deviceId": "d1", "status": "Assigned",
+                                     "hostname": "Router"}))
+        )
+        self.db.commit()
+        with patch("backend.collection_saves.can_access", return_value=True):
+            delete_subnet_with_dependencies(
+                self.db, 1, "network", [{"id": "d1", "ip": "10.0.0.10"}],
+                ["10.0.0.10"]
+            )
+        self.assertEqual(self.records("subnets"), [])
+        self.assertEqual(self.records("vlans"), [])
+        self.assertIsNone(self.db.execute(
+            "SELECT 1 FROM inventory_ip_allocations WHERE ip='10.0.0.10'"
+        ).fetchone())
+        raw, revision = self.db.execute(
+            "SELECT record_json,revision FROM inventory_devices WHERE id='d1'"
+        ).fetchone()
+        saved = json.loads(raw)
+        self.assertEqual(saved["previousPrimaryIp"], "10.0.0.10")
+        self.assertEqual(saved["primaryIp"], "")
+        self.assertEqual(revision, 1)
+
+    def test_subnet_delete_rejects_independent_reservations_and_preserves_all(self):
+        network = {"id": "network", "name": "Network", "cidr": "10.0.0.0/24",
+                   "gateway": "10.0.0.1", "vlan": 10}
+        self.change_ipam([
+            {"collection": "subnets", "id": "network", "record": network}
+        ])
+        self.db.execute(
+            "INSERT INTO inventory_ip_allocations(ip,record_json) VALUES(?,?)",
+            ("10.0.0.20", json.dumps({"status": "Reserved", "deviceId": ""}))
+        )
+        self.db.commit()
+        original = self.records("subnets")
+        with patch("backend.collection_saves.can_access", return_value=True):
+            with self.assertRaisesRegex(ValueError, "Dependencies changed"):
+                delete_subnet_with_dependencies(self.db, 1, "network", [], ["10.0.0.20"])
+        self.assertEqual(self.records("subnets"), original)
+        self.assertIsNotNone(self.db.execute(
+            "SELECT 1 FROM inventory_ip_allocations WHERE ip='10.0.0.20'"
+        ).fetchone())

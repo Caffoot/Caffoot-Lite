@@ -5223,7 +5223,7 @@ function hierarchyValidateTypes(subnets) {
             deleteSubnetCommit(subId);
         }
 
-        function deleteSubnetCommit(subId) {
+        async function deleteSubnetCommit(subId) {
             const subnet = appState.subnets.find(s => s.id === subId);
             if (!subnet) return;
             const deps = getDevicesAndIpAllocationsInSubnet(subnet);
@@ -5244,18 +5244,13 @@ function hierarchyValidateTypes(subnets) {
                 showToast('VLAN ownership changed; deletion cancelled.', 'error');
                 return;
             }
-            const before = JSON.stringify(appState);
-            for (const device of deps.devices) {
-                // Keep the last address as informational metadata, not an active allocation.
-                device.previousPrimaryIp = device.primaryIp;
-                setDevicePrimaryIp(device, '');
+            const expectedDevices = deps.devices.map(device => ({id:device.id, ip:device.primaryIp}));
+            if (!nextIpamBridge || !await nextIpamBridge.deleteSubnet(subId, expectedDevices, deps.allocations)) {
+                showToast('Subnet was not deleted; previous inventory is unchanged.', 'error');
+                return;
             }
-            const previousSelection = selectedSubnetId;
-            appState.subnets = appState.subnets.filter(x => x.id !== subId);
-            if (linked.length) appState.vlans = appState.vlans.filter(v => v.id !== linked[0].id);
             selectedSubnetId = appState.subnets[0]?.id || '';
-            if (commitDeletionWithRollback(before, isNetwork ? 'Subnet & VLAN' : 'IP Address Block')) closeModal();
-            else selectedSubnetId = previousSelection;
+            renderContent();
         }
 
         async function deleteVlan(vId) {
@@ -9310,7 +9305,8 @@ window.addEventListener('load', async () => {
     return result;
   }
   const actionCanEditIpam = new Set(['bulk-ip','apply-bulk-ip-assignment',
-    'edit-subnet','edit-ipam-block','delete-vlan','reconcile-legacy-vlans']);
+    'edit-subnet','edit-ipam-block','delete-vlan','reconcile-legacy-vlans',
+    'delete-subnet','confirm-delete-subnet']);
   const actionCanEditRack = new Set(['open-rack-modal','edit-rack',
     'correct-rack-specifications','delete-rack','add-rack-accessory',
     'add-vertical-rack-accessory','edit-rack-accessory','delete-rack-accessory',
@@ -9452,6 +9448,28 @@ window.addEventListener('load', async () => {
         showToast(error.message, 'error');
         return false;
       }
+    },
+    async deleteSubnet(subnetId,expectedDevices,expectedIps) {
+      if (!editPermissions.IPAM || pendingSave) {
+        showToast('IPAM edit permission required or another save is in progress.','error');
+        return false;
+      }
+      pendingSave=true;
+      try {
+        await postInventory('/api/ipam/subnets/delete',{
+          subnetId, expectedDevices, expectedIps
+        });
+        try { await refreshCentralInventory(false); }
+        catch(error) {
+          showToast('Subnet deleted. Unable to refresh the latest inventory.','error');
+          return true;
+        }
+        showToast('Subnet deleted.');
+        return true;
+      } catch(error) {
+        showToast(error.message,'error');
+        return false;
+      } finally { pendingSave=false; }
     },
     async saveSubnet(beforeJson, successMessage='Subnet changes saved.') {
       if (!editPermissions.IPAM || pendingSave) {
