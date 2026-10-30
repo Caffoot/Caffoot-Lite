@@ -1887,6 +1887,7 @@ function hierarchyValidateTypes(subnets) {
         let nextDeviceModalClosed = null;
         let nextImportModalClosed = null;
         let nextIpamBridge = null;
+        let nextRackBridge = null;
         let nextRenderUsers = () => '';
         let nextImportAllowed = false;
         function saveState() { showToast('This inventory operation is not yet connected to SQLite.', 'error'); return false; }
@@ -5693,7 +5694,10 @@ function hierarchyValidateTypes(subnets) {
                 appState.racks.push(newRack);
                 selectedRackId = newRack.id;
             }
-            if (!saveState()) {
+            const savedRack = appState.racks.find(item => item.id === selectedRackId) ||
+                (rackId ? appState.racks.find(item => item.id === rackId) : null);
+            if (!nextRackBridge || !savedRack ||
+                !await nextRackBridge.save(savedRack.id, savedRack)) {
                 appState = JSON.parse(before);
                 selectedRackId = previousRackSelection;
                 showToast('Rack changes were not saved. Please check the validation message.', 'error');
@@ -5712,7 +5716,7 @@ function hierarchyValidateTypes(subnets) {
             }
         }
 
-        function deleteRack(rackId) {
+        async function deleteRack(rackId) {
             const rack=appState.racks.find(r=>r.id===rackId);
             if(!rack) return;
             const mounted=appState.devices.filter(d=>d.rackId===rackId);
@@ -5725,7 +5729,12 @@ function hierarchyValidateTypes(subnets) {
             const previousSelection=selectedRackId;
             appState.racks=appState.racks.filter(r=>r.id!==rackId);
             selectedRackId=appState.racks[0]?.id||'';
-            if(!commitDeletionWithRollback(before,'Rack')) { selectedRackId=previousSelection; renderContent(); }
+            if (!nextRackBridge || !await nextRackBridge.save(rackId,null)) {
+                appState=JSON.parse(before);
+                selectedRackId=previousSelection;
+                showToast('Rack was not deleted because the changes could not be saved.','error');
+            }
+            renderContent();
         }
 
         // one placement workflow for a clicked empty rack U.
@@ -9280,6 +9289,8 @@ window.addEventListener('load', async () => {
   }
   const actionCanEditIpam = new Set(['bulk-ip','apply-bulk-ip-assignment',
     'edit-subnet','edit-ipam-block','delete-vlan','reconcile-legacy-vlans']);
+  const actionCanEditRack = new Set(['open-rack-modal','edit-rack',
+    'correct-rack-specifications','delete-rack']);
   const actionCanEditDevice = new Set([
     'open-device-modal','edit-device','edit-device-from-details',
     'delete-device','delete-device-from-details',
@@ -9289,9 +9300,12 @@ window.addEventListener('load', async () => {
   function isBlockedAction(action, element = null) {
     if (editPermissions.Devices && action === 'confirm' &&
         element && element.closest('#hypervisor-selection-dialog,#platform-dialog')) return false;
-    return (blockedActions.test(action) || action === 'reconcile-legacy-vlans') &&
+    return (blockedActions.test(action) ||
+      action === 'reconcile-legacy-vlans' || action === 'open-rack-modal' ||
+      action === 'correct-rack-specifications') &&
       !(editPermissions.Devices && actionCanEditDevice.has(action)) &&
-      !(editPermissions.IPAM && actionCanEditIpam.has(action));
+      !(editPermissions.IPAM && actionCanEditIpam.has(action)) &&
+      !(editPermissions.Racks && actionCanEditRack.has(action));
   }
   function applyAllowedControls() {
     const root = document.getElementById('main-content');
@@ -9301,7 +9315,8 @@ window.addEventListener('load', async () => {
           (button.type === 'submit' && !(
             (sessionIsAdmin && button.closest('#next-user-create-form')) ||
             (editPermissions.Devices && button.closest('form[data-device-form="true"]')) ||
-            (editPermissions.IPAM && button.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"]'))
+            (editPermissions.IPAM && button.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"]')) ||
+            (editPermissions.Racks && button.closest('form[data-form-action="rack"]'))
           ))) button.disabled = true;
     });
   }
@@ -9435,6 +9450,29 @@ window.addEventListener('load', async () => {
         await postInventory('/api/ipam/subnets/save',{changes});
         await refreshCentralInventory(false);
         showToast(successMessage);
+        return true;
+      } catch(error) {
+        showToast(error.message,'error');
+        return false;
+      } finally { pendingSave=false; }
+    }
+  };
+  nextRackBridge = {
+    async save(rackId, record) {
+      if (!editPermissions.Racks || pendingSave) {
+        showToast('Racks edit permission required or another save is in progress.', 'error');
+        return false;
+      }
+      pendingSave=true;
+      try {
+        await postInventory(record ? '/api/inventory/record/save' : '/api/inventory/record/delete',
+          record ? {collection:'racks',id:rackId,record} : {collection:'racks',id:rackId});
+        try { await refreshCentralInventory(false); }
+        catch(error) {
+          showToast('Rack changes saved. Unable to refresh the latest inventory.','error');
+          return true;
+        }
+        showToast('Rack changes saved.');
         return true;
       } catch(error) {
         showToast(error.message,'error');
@@ -9714,7 +9752,8 @@ window.addEventListener('load', async () => {
     const action = element.dataset.action || '';
     if (isBlockedAction(action, element) || (element.matches('button') && element.type==='submit' &&
         !element.closest('form[data-device-form="true"],#next-user-create-form') &&
-        !(editPermissions.IPAM && element.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"]')))) {
+        !(editPermissions.IPAM && element.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"]')) &&
+        !(editPermissions.Racks && element.closest('form[data-form-action="rack"]')))) {
       event.preventDefault();
       event.stopImmediatePropagation();
       showToast('This inventory operation is not yet connected to SQLite.', 'error');
@@ -9723,6 +9762,7 @@ window.addEventListener('load', async () => {
   document.addEventListener('submit',event => {
     if ((editPermissions.Devices && event.target.matches('form[data-device-form="true"]')) ||
         (editPermissions.IPAM && event.target.matches('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"]')) ||
+        (editPermissions.Racks && event.target.matches('form[data-form-action="rack"]')) ||
         (sessionIsAdmin && event.target.matches('#next-user-create-form'))) return;
     event.preventDefault();event.stopImmediatePropagation();
   },true);
