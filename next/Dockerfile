@@ -8,8 +8,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 RUN apk add --no-cache openssl
 
 WORKDIR /opt/caffoot
-COPY backend/ ./backend/
-COPY setup.html ./setup.html
+COPY next/backend/ ./backend/
+COPY next/setup.html ./setup.html
+# Exact published interface retained for integration; not yet served.
+COPY app/caffoot-lite.html ./inventory.html
 RUN mkdir -p /data && chown -R 10001:10001 /data /opt/caffoot
 USER 10001:10001
 EXPOSE 8080
