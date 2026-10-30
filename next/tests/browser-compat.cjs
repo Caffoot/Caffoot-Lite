@@ -11,6 +11,9 @@ const address='https://127.0.0.1:8080';
 const password='Test-Administrator-Password-2026!';
 const logfile=path.join(tmp,'backend.log');
 let server,browser;
+const temporaryAssetLink=path.join(root,'assets');
+const linkCreated=!fs.existsSync(temporaryAssetLink);
+if(linkCreated)fs.symlinkSync(path.join(root,'..','assets'),temporaryAssetLink,'dir');
 function mfaCode(secret){
   const p=spawnSync('python3',['-c',
     'from backend.mfa import code_at; import sys,time; print(code_at(sys.argv[1],time.time()))',secret],
@@ -34,6 +37,7 @@ async function persisted(page,test,label){
   throw Error(label+' not saved centrally; toast: '+await page.locator('#toast-message').textContent());
 }
 async function modal(page,name){
+  await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
   await page.evaluate(name=>{
     if(typeof window[name]!=='function')throw Error('Missing published modal '+name);
     window[name]();
@@ -90,18 +94,21 @@ async function run(){
   await page.locator('form[data-form-action="subnet"] button[type="submit"]').click();
   const sub=await persisted(page,s=>s.subnets.some(x=>x.name==='Browser Network'),'Subnet');
   assert.equal(sub.vlans.length,1);
+  await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
   console.log('Subnet and linked VLAN form passed');
 
   await modal(page,'openRackModal');
   await page.locator('#rack-name').fill('Browser Rack');
   await page.locator('form[data-form-action="rack"] button[type="submit"]').click();
   await persisted(page,s=>s.racks.some(x=>x.name==='Browser Rack'),'Rack');
+  await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
   console.log('Rack form passed');
 
   await modal(page,'openManageLocationsModal');
   await page.locator('#device-catalogue-new-entry-input').fill('Office');
   await page.locator('[data-action="add-device-type-or-location"][data-kind="location"]').click();
   await persisted(page,s=>s.settings.deviceLocations?.includes('Office'),'Location');
+  await page.waitForFunction(()=>document.getElementById('toast-message')?.textContent.includes('Location added successfully.'));
   await page.evaluate(()=>closeModal(true));
   console.log('Managed location add passed');
 
@@ -135,6 +142,8 @@ async function run(){
   await page.locator('[data-action="delete-device-type-or-location"][data-kind="location"][data-name="Workshop"]').click();
   await page.locator('[data-action="confirm-delete"]').click();
   await persisted(page,s=>s.devices.some(d=>d.id===device.id&&d.location==='Unknown'),'Location delete');
+  await page.waitForFunction(()=>document.getElementById('toast-message')?.textContent.includes('deleted.'));
+  await page.evaluate(()=>closeModal(true));
   console.log('Dependent location rename/delete and reload passed');
 
   await page.evaluate(()=>switchTab('settings'));
@@ -154,10 +163,12 @@ run().then(async()=>{
   console.log('PASS: Caffoot Next focused Chromium compatibility');
   await browser?.close();server?.kill('SIGTERM');
   fs.rmSync(tmp,{recursive:true,force:true});
+  if(linkCreated)fs.rmSync(temporaryAssetLink);
 }).catch(async e=>{
   console.error('FAIL: '+(e.stack||e));
   if(fs.existsSync(logfile))console.error('Server log:\n'+fs.readFileSync(logfile,'utf8').slice(-13000));
   await browser?.close().catch(()=>{});
   server?.kill('SIGTERM');
+  if(linkCreated)fs.rmSync(temporaryAssetLink,{force:true});
   process.exitCode=1;
 });
