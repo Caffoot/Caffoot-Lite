@@ -37,11 +37,16 @@ async function showSession(){
  const r=await fetch('/api/session',{cache:'no-store'});
  if(!r.ok)return false;
  const session=await r.json();csrfToken=session.csrf_token;signedInUser=session.username;
+ if(session.can_enter_inventory){
+  window.location.replace('/inventory');
+  return true;
+ }
  $('form').hidden=true;$('signed-in').hidden=false;
  $('intro').textContent='Signed in';
  $('signed-in-message').textContent='Signed in as '+session.username+'.';
  $('account-panel').hidden=!session.is_admin;
  $('mfa-panel').hidden=!!session.mfa_enrolled;
+ $('open-inventory').hidden=true;
  if(session.is_admin)await loadUsers();
  return true;
 }

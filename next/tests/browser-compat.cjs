@@ -83,10 +83,10 @@ async function run(){
   await page.getByText('MFA enrolled. Sign in to continue.').waitFor();
   await page.locator('#code').fill(mfaCode(secret));
   await page.locator('#submit').click();
-  await page.locator('#signed-in:not([hidden])').waitFor();
-  console.log('First administrator, MFA and sign-in passed');
-  await page.goto(address+'/inventory');
+  await page.waitForURL('**/inventory');
   await page.locator('#next-account-nav').waitFor();
+  assert.equal(await page.locator('#page-title').textContent(),'Dashboard Overview');
+  console.log('First administrator, MFA, sign-in and direct Dashboard arrival passed');
   assert.equal(await page.getByRole('button',{name:'Refresh inventory'}).count(),0);
   for(const tab of ['ipam','devices','racks','audit','users','settings']){
     const navigation=page.locator('#sidebar [data-action="tab-'+tab+'"]');
@@ -95,11 +95,16 @@ async function run(){
     assert.notEqual(await page.locator('#toast-message').textContent(),
       'This inventory operation is not yet connected to SQLite.');
   }
-  await page.locator('[data-action="tab-users"]').click();
+  await page.locator('#sidebar [data-action="tab-users"]').click();
+  await page.getByRole('heading',{name:'User Management'}).waitFor();
+  assert.equal(await page.locator('#next-account-password-form').count(),0,
+    'User Management must not contain personal account settings');
+  await page.locator('#sidebar #next-account-nav').click();
+  assert.equal(await page.locator('#page-title').textContent(),'My account');
   await page.locator('#next-account-password-form').waitFor();
-  await page.locator('#next-account-nav').click();
+  await page.locator('#sidebar [data-action="tab-users"]').click();
   assert.equal(await page.locator('#page-title').textContent(),'Users');
-  await page.locator('[data-action="tab-dashboard"]').click();
+  await page.locator('#sidebar [data-action="tab-dashboard"]').click();
   assert.equal((await state(page)).sections.Devices,true);
   console.log('Authenticated central inventory rendered');
 
@@ -291,6 +296,7 @@ async function run(){
   await editor.locator('#password').fill(password+'-Editor');
   await editor.locator('#submit').click();
   await editor.locator('#signed-in:not([hidden])').waitFor();
+  assert.ok(editor.url().endsWith('/setup'),'Users without inventory access must remain on account page');
   assert.equal((await second.request.get(address+'/inventory')).status(),403,
     'Newly created user must have no access');
   await editor.locator('#mfa-panel:not([hidden])').waitFor();
@@ -316,10 +322,10 @@ async function run(){
   await editor.locator('#password').fill(password+'-Editor');
   await editor.locator('#code').fill(mfaCode(editorSecret));
   await editor.locator('#submit').click();
-  await editor.locator('#signed-in:not([hidden])').waitFor();
-  await editor.goto(address+'/inventory');
+  await editor.waitForURL('**/inventory');
   await editor.locator('#next-account-nav').waitFor();
-  await editor.locator('#next-account-nav').click();
+  assert.equal(await editor.locator('#page-title').textContent(),'Dashboard Overview');
+  await editor.locator('#sidebar #next-account-nav').click();
   await editor.locator('#next-account-password-form').waitFor();
   assert.equal(await editor.locator('#page-title').textContent(),'My account');
   await editor.locator('[data-action="tab-devices"]').click();

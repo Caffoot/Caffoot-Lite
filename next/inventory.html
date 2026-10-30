@@ -1184,7 +1184,10 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             </nav>
             <!-- application-wide controls live in Settings & Data. -->
             <div class="px-4 pb-4 pt-3 border-t border-slate-200 dark:border-slate-700">
-                <button data-action="tab-settings" data-tab="settings" aria-label="Open Settings and Data" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700/50 hover:text-indigo-600 dark:hover:text-indigo-400"><i class="fa-solid fa-gear w-5 text-center"></i><span>Settings & Data</span></button>
+                <nav aria-label="Account and settings" class="space-y-1.5">
+                    <button type="button" id="next-account-nav" data-action="tab-account" data-tab="account" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700/50 hover:text-indigo-600 dark:hover:text-indigo-400"><i class="fa-solid fa-user-gear w-5 text-center" aria-hidden="true"></i><span>My account</span></button>
+                    <button data-action="tab-settings" data-tab="settings" aria-label="Open Settings and Data" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700/50 hover:text-indigo-600 dark:hover:text-indigo-400"><i class="fa-solid fa-gear w-5 text-center"></i><span>Settings & Data</span></button>
+                </nav>
             </div>
         </aside>
         <!-- Hidden backup input retained for Settings restore and existing import workflow. -->
@@ -1198,7 +1201,6 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                 <div class="flex items-center space-x-4">
                     <h2 id="page-title" class="text-xl font-bold text-slate-900 dark:text-white">Dashboard</h2>
                 </div>
-                <button type="button" id="next-account-nav" class="px-4 py-2 rounded-xl bg-indigo-700 text-white text-sm font-semibold">My account</button>
             </header>
 
             <!-- Dynamic Tab Content Container -->
@@ -9066,6 +9068,7 @@ function hierarchyValidateTypes(subnets) {
                 
                 case 'tab-settings': switchTab('settings'); break;
                 case 'tab-users': switchTab('users'); break;
+                case 'tab-account': switchTab('account'); break;
                 case 'select-settings-section': if (['backup','preferences','help','about'].includes(target.dataset.section)) { activeSettingsSection=target.dataset.section; renderContent(); } break;
                 case 'choose-backup-import': document.getElementById('import-file')?.click(); break;
                 case 'toggle-settings-theme': toggleDarkMode(); renderContent(); break;
@@ -9731,45 +9734,55 @@ window.addEventListener('load', async () => {
   let users = null;
   nextRenderUsers = function() {
     if (!sessionIsAdmin) return '';
-    const card = 'rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 p-5 space-y-3';
-    let html = '<div class="max-w-5xl mx-auto space-y-5 text-slate-800 dark:text-slate-100">' +
-      '<div><h2 class="text-xl font-bold">Users</h2><p class="text-sm text-slate-600 dark:text-slate-300">Manage accounts and access to Devices, IPAM and Racks.</p></div>' +
-      '<section class="' + card + '"><h3 class="font-bold">Create User</h3>' +
-      '<form id="next-user-create-form" class="flex flex-wrap items-end gap-3">' +
-      '<label class="text-sm font-semibold">Username <input name="username" autocomplete="off" required maxlength="256" class="block border rounded-lg p-2 text-slate-900"></label>' +
-      '<label class="text-sm font-semibold">Initial password <input name="password" type="password" autocomplete="new-password" required class="block border rounded-lg p-2 text-slate-900"></label>' +
-      '<button type="submit" class="px-4 py-2 rounded-xl bg-indigo-700 text-white font-semibold">Create User</button></form></section>';
+    const card='rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 sm:p-6 space-y-4';
+    const field='block w-full h-11 mt-1 border border-slate-300 dark:border-slate-600 rounded-xl px-3 bg-white dark:bg-slate-700 text-slate-900 dark:text-white';
+    let html='<div class="max-w-6xl mx-auto space-y-5 text-slate-800 dark:text-slate-100">' +
+      '<section class="rounded-2xl bg-blue-800 text-white p-6 sm:p-7">' +
+      '<div class="flex items-center gap-4"><i class="fa-solid fa-users text-2xl" aria-hidden="true"></i><div>' +
+      '<h2 class="text-xl font-bold">User Management</h2>' +
+      '<p class="text-sm text-blue-100 mt-1">Manage accounts and access to Devices, IPAM and Racks.</p>' +
+      '</div></div></section>' +
+      '<section class="'+card+'"><div><h3 class="text-lg font-bold">Create User</h3>' +
+      '<p class="text-sm text-slate-600 dark:text-slate-300 mt-1">New users start without inventory access until an administrator grants it.</p></div>' +
+      '<form id="next-user-create-form" class="flex flex-wrap items-end gap-4">' +
+      '<label class="text-sm font-semibold flex-1 min-w-[190px]">Username<input name="username" autocomplete="off" required maxlength="256" class="'+field+'"></label>' +
+      '<label class="text-sm font-semibold flex-1 min-w-[190px]">Initial password<input name="password" type="password" autocomplete="new-password" required class="'+field+'"></label>' +
+      '<button type="submit" class="h-11 px-5 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold">Create User</button>' +
+      '</form></section>' +
+      '<h2 class="text-lg font-bold pt-1">Existing users</h2>';
     if (!users) return html + '<p role="status">Loading users...</p></div>';
     for (const user of users) {
-      const own = user.username.toLowerCase() === signedInUsername.toLowerCase();
-      html += '<section class="' + card + '"><div class="flex flex-wrap items-center justify-between gap-2">' +
-        '<h3 class="font-bold">' + escapeHtml(user.username) + (user.isAdmin ? ' (administrator)' : '') + '</h3>' +
-        '<span class="text-sm">' + (user.active?'Active':'Disabled') + ' · MFA ' + (user.mfaEnrolled?'enrolled':'not enrolled') + '</span></div>';
-      if (user.isAdmin) html += '<p class="text-sm">Administrator: all inventory sections.</p>';
+      const own=user.username.toLowerCase()===signedInUsername.toLowerCase();
+      html+='<section class="'+card+'"><div class="flex flex-wrap items-center justify-between gap-3">' +
+        '<h3 class="text-lg font-bold"><i class="fa-solid fa-circle-user text-blue-800 dark:text-sky-300 mr-2" aria-hidden="true"></i>' +
+        escapeHtml(user.username)+(user.isAdmin?' (administrator)':'')+'</h3>' +
+        '<span class="text-sm text-slate-600 dark:text-slate-300">' +
+        (user.active?'Active':'Disabled')+' · MFA '+(user.mfaEnrolled?'enrolled':'not enrolled')+'</span></div>';
+      if (user.isAdmin) html+='<p class="text-sm text-slate-600 dark:text-slate-300">Administrator: all inventory sections.</p>';
       else {
-        html += '<div class="flex flex-wrap gap-4">';
+        html+='<div class="flex flex-wrap gap-4">';
         for (const sectionName of ['Devices','IPAM','Racks']) {
-          html += '<label class="text-sm font-semibold">' + sectionName +
-            '<select data-next-user-permission data-user-id="' + user.id + '" data-section="' + sectionName +
-            '" class="block border rounded-lg p-2 mt-1 bg-white dark:bg-slate-700">';
+          html+='<label class="text-sm font-semibold flex-1 min-w-[140px]">'+sectionName+
+            '<select data-next-user-permission data-user-id="'+user.id+'" data-section="'+sectionName+
+            '" class="'+field+'">';
           for (const [value,name] of [['','No access'],['read','Read'],['edit','Edit']])
-            html += '<option value="' + value + '"' + ((user.permissions[sectionName]||'')===value?' selected':'') + '>' + name + '</option>';
-          html += '</select></label>';
+            html+='<option value="'+value+'"'+((user.permissions[sectionName]||'')===value?' selected':'')+'>'+name+'</option>';
+          html+='</select></label>';
         }
-        html += '</div>';
+        html+='</div>';
       }
-      html += '<div class="flex flex-wrap gap-2">';
+      html+='<div class="flex flex-wrap gap-2 pt-1">';
       for (const [kind,title] of [['active',user.active?'Disable':'Enable'],
                                    ['admin',user.isAdmin?'Remove admin':'Make admin'],
                                    ['delete','Delete']]) {
-        html += '<button type="button" data-next-user-operation="' + kind +
-          '" data-user-id="' + user.id +
-          '" class="px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 text-sm font-semibold"'+
-          (own?' disabled':'')+'>' + title + '</button>';
+        html+='<button type="button" data-next-user-operation="'+kind+
+          '" data-user-id="'+user.id+
+          '" class="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 text-sm font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"'+
+          (own?' disabled':'')+'>'+title+'</button>';
       }
-      html += '</div></section>';
+      html+='</div></section>';
     }
-    return html + '<h2 class="text-xl font-bold pt-2">My account</h2>' + renderAccountSections() + '</div>';
+    return html+'</div>';
   };
   let signedInUsername = '';
   async function loadCentralUsers() {
@@ -10017,7 +10030,6 @@ window.addEventListener('load', async () => {
     sessionIsAdmin=!!session.is_admin;
     signedInUsername=session.username;
     sessionMfaEnrolled=!!session.mfa_enrolled;
-    document.getElementById('next-account-nav').addEventListener('click',()=>switchTab(sessionIsAdmin?'users':'account'));
     document.getElementById('next-users-nav').classList.toggle('hidden', !sessionIsAdmin);
     if (sessionIsAdmin) await loadCentralUsers();
     await refreshCentralInventory(false);

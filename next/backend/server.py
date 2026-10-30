@@ -320,6 +320,10 @@ class Handler(BaseHTTPRequestHandler):
                     "username": account[0],
                     "is_admin": bool(account[1]),
                     "mfa_enrolled": bool(account[2]),
+                    "can_enter_inventory": any(
+                        can_access(connection, account_id, section)
+                        for section in ("Devices", "IPAM", "Racks")
+                    ),
                     "csrf_token": csrf_for_session(read_session_cookie(cookie)),
                 })
         else:
