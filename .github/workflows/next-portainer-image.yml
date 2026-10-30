@@ -1,6 +1,7 @@
 name: Next prebuilt Portainer image
 
 # Build at an explicit integration milestone, not on every Next code commit.
+# Pi 5 acceptance image refresh: verified local MFA QR enrolment (30 October 2026).
 on:
   push:
     branches: [Next]
