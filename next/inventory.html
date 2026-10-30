@@ -1686,15 +1686,8 @@ function hierarchyValidateTypes(subnets) {
         function loadStoredState() { return cloneDefaultData(); }
 
         let appState = loadStoredState();
-        const startupIntegrityErrors = validateApplicationState();
-        if (startupIntegrityErrors.length) {
-            console.error('Startup integrity issues:', startupIntegrityErrors);
-            if (!storageRecoveryFailure) {
-                let originalStoredInventory = null;
-                try { originalStoredInventory = localStorage.getItem(STORAGE_KEY); } catch (error) { console.error('Unable to read invalid inventory for recovery:', error); }
-                storageRecoveryFailure = { reason: 'Stored inventory failed integrity checks: ' + startupIntegrityErrors[0], raw: originalStoredInventory };
-            }
-        }
+        // The server supplies the authoritative state after authentication.
+        // Browser recovery of old inventory is not applicable in Next.
         // Do not write on startup: it could overwrite unreadable data or mask an integrity problem.
         function showStorageRecoveryBanner() {
             if (!storageRecoveryFailure) return;
@@ -1796,12 +1789,7 @@ function hierarchyValidateTypes(subnets) {
         // Audit records are metadata only; backup JSON still contains the complete inventory.
         const AUDIT_KEY = 'caffoot_audit_v1';
         const AUDIT_LIMIT = 200;
-        function readAuditHistory() {
-            try {
-                const parsed = JSON.parse(localStorage.getItem(AUDIT_KEY) || '[]');
-                return Array.isArray(parsed) ? parsed.slice(-AUDIT_LIMIT) : [];
-            } catch (_) { return []; }
-        }
+        function readAuditHistory() { return []; }
         let auditHistory = readAuditHistory();
         let auditBaseline = JSON.stringify(appState);
         let nextAuditReason = '';
@@ -1880,9 +1868,9 @@ function hierarchyValidateTypes(subnets) {
                     <div class="flex items-center justify-between flex-wrap gap-3">
                         <div><h3 class="font-bold text-lg text-slate-900 dark:text-white">Change History</h3>
                         <p class="text-sm text-slate-700 dark:text-slate-200 mt-1">History of successful inventory changes saved in the central database. Up to ${AUDIT_LIMIT} events are retained.</p></div>
-                        <button type="button" data-action="export-audit" class="px-4 py-2.5 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold"><i class="fa-solid fa-download mr-2"></i>Export history</button>
+                        
                     </div>
-                    <p class="text-xs text-slate-600 dark:text-slate-300">This is not a tamper-proof or multi-user audit system. Clearing browser storage removes this history. Export it separately; standard inventory backups do not include audit history. No old/new field values are stored.</p>
+                    <p class="text-xs text-slate-600 dark:text-slate-300">Change History is stored centrally and shared across authorised users.</p>
                 </section>
                 ${entries.length ? entries.map(entry=>`<article class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-2xl p-4 space-y-3">
                     <div class="flex flex-wrap justify-between gap-2"><strong class="text-slate-900 dark:text-white">${escapeHtml(entry.reason || 'Inventory saved')}</strong><time class="text-xs text-slate-600 dark:text-slate-300">${escapeHtml(new Date(entry.at).toLocaleString())}</time></div>
@@ -2225,7 +2213,11 @@ function hierarchyValidateTypes(subnets) {
             else if (currentTab === 'audit') html = renderAuditHTML();
 
 
-            else if (currentTab === 'settings') html = renderApplicationSettings();
+            else if (currentTab === 'settings') {
+                // Next has no browser backup/export, safety snapshots or reset.
+                if (activeSettingsSection === 'backup') activeSettingsSection = 'preferences';
+                html = renderApplicationSettings();
+            }
             container.innerHTML = html;
             const rackScroll = container.querySelector('[data-rack-scroll="true"]');
             if (rackScroll) {
@@ -9238,10 +9230,7 @@ function hierarchyValidateTypes(subnets) {
             if(empty) empty.classList.toggle('hidden',shown!==0 || !(appState.racks||[]).length);
         });
 
-        window.onload = function() {
-            switchTab('dashboard');
-            showStorageRecoveryBanner();
-        };
+        window.onload = function() { /* inventory is loaded after authentication */ };
     
 // Next uses the authoritative server snapshot, never browser inventory storage.
 // Inventory editing is withheld until each published mutation is wired to SQLite.
@@ -9252,9 +9241,8 @@ window.addEventListener('load', async () => {
     const snapshot = await response.json();
     const collections = ['devices','subnets','vlans','racks','rackAccessories','ipAllocations'];
     for (const key of collections) if (Object.prototype.hasOwnProperty.call(snapshot,key)) appState[key] = snapshot[key];
-    for (const [key,value] of Object.entries(snapshot)) {
-      if (!collections.includes(key) && !['sections','editPermissions','deviceRevisions'].includes(key)) appState[key]=value;
-    }
+    // SQLite settings use the same published inventory keys, nested in the API response.
+    for (const [key,value] of Object.entries(snapshot.settings || {})) appState[key] = value;
     auditHistory = Array.isArray(snapshot.changeHistory) ? snapshot.changeHistory : [];
     auditBaseline = JSON.stringify(appState);
     const permissions = snapshot.sections || {};
@@ -9270,6 +9258,8 @@ window.addEventListener('load', async () => {
       originalSwitchTab(tab);
       applyReadOnly();
     };
+    // Do not offer the published browser-only backup/recovery controls.
+    document.querySelectorAll('[data-action="settings-backup"],[data-action="export-data"],[data-action="export-backup"]').forEach(el=>el.hidden=true);
     const notice = document.createElement('div');
     notice.id='next-readonly-notice';
     notice.setAttribute('role','status');
