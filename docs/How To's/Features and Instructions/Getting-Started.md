@@ -4,6 +4,10 @@
 
 ## Your first visit
 
+The sign-in screen below is from the actual Docker/SQLite application, shown without any entered credentials.
+
+![Caffoot Lite branded sign-in screen with empty username and password fields](../../screenshots/docker-sign-in.png)
+
 The Docker application keeps one shared inventory in its central database. Each person uses their own account; an administrator decides which sections that person may read or edit. There is **no public registration**.
 
 1. Install the application and configure its HTTPS address, certificate and persistent data directory using the [Docker/Portainer guide](../../../next/README.md).
@@ -15,6 +19,10 @@ The Docker application keeps one shared inventory in its central database. Each 
 For a self-signed HTTPS certificate, **check the identity and fingerprint before trusting it**. Do not blindly bypass a certificate warning when supplying real credentials.
 
 ## Where to find things
+
+The Dashboard's **Network Insights** tab summarises a fictional lab inventory in the screenshot below.
+
+![Caffoot Lite Dashboard Network Insights showing fictional devices, IP utilisation and rack capacity](../../screenshots/docker-dashboard.png)
 
 - **Dashboard:** inventory overview and convenient shortcuts.
 - **Devices:** physical/virtual equipment, network identity, hardware/software details and location.

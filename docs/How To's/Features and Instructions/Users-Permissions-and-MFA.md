@@ -6,6 +6,10 @@
 
 Caffoot Lite has **no public registration**. The first account on a new database becomes its administrator after mandatory MFA setup. Administrators create additional users under **Users**. New users have **no inventory access until permission is granted**. This protects the inventory from accidental over-sharing.
 
+An administrator's **Users → Overview** displays account counts, roles and MFA enrolment status, as shown using fictional accounts below.
+
+![Caffoot Lite Users overview showing fictional account totals, roles and MFA enrolment progress](../../screenshots/docker-users.png)
+
 ## Create a user — worked example
 
 Imagine you want a colleague to inspect devices and maintain IP address notes without editing equipment properties.

@@ -8,6 +8,10 @@ Caffoot Lite documents the rack enclosure's name, physical type and dimensions, 
 
 Users require **Racks Edit** to change rack data or equipment placement. Racks Read permits inspection but not movement.
 
+This is the actual front elevation of a fictional 12U **Lab Rack**, with a mounted switch, patch panel and vertical PDU.
+
+![Caffoot Lite Lab Rack front elevation showing rack units, mounted equipment and capacity details](../../screenshots/docker-racks.png)
+
 ## Worked example — create a rack
 
 Imagine a fictional **Lab Rack** in **Lab Equipment Room**. Measure your own enclosure before entering dimensions.

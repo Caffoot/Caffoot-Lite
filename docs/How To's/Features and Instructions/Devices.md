@@ -6,6 +6,10 @@
 
 A device can describe a physical server, switch, workstation, printer or another supported type, with its network address, status, location, optional rack position and type-specific hardware/software information. Supported virtual machines have their own host-related details. Caffoot keeps the established v1.3.3 fields and validations; **not every device type presents the same additional fields**.
 
+The **Device Inventory** view shows saved equipment and its primary addresses. All names and addresses in this screenshot are fictional.
+
+![Caffoot Lite Device Inventory listing fictional desktop and switch records with IP addresses](../../screenshots/docker-devices-inventory.png)
+
 ## Prepare before you add a device
 
 - Use [IPAM](IPAM.md) to add its assignable **Network / VLAN** subnet first.
@@ -29,6 +33,10 @@ Imagine recording *lab-switch-01*, a fictional switch on subnet 192.168.50.0/24.
 The application refuses invalid addresses, incompatible rack positions and other relationship errors; follow the message rather than attempting to force the save.
 
 ## View an existing device
+
+The **Details** action opens the familiar read-only device view, with separate tabs for additional information.
+
+![Caffoot Lite read-only switch device details with tabs for hardware, network, software and location](../../screenshots/docker-device-details.png)
 
 Select a device from the inventory. Its read-only details allow you to inspect sections such as Overview, Hardware, Network, Software, Location and History where relevant. Opening and viewing a device **does not reserve it for editing**.
 

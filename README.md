@@ -20,6 +20,18 @@
 
 The Docker edition adds **central SQLite storage**, first-run administrator setup, administrator-managed users, section-based read/edit permissions and MFA for administrators and editors. Two users can view the same device, edit different devices simultaneously and see each other's saved changes when navigating or reopening records. Temporary device edit reservations prevent competing edits.
 
+## Application screenshots — Docker/SQLite edition
+
+These are genuine Chromium screenshots of the unreleased Docker application, using an isolated database and fictional lab inventory. No production inventory or personal account details are shown.
+
+![Caffoot Lite Network Insights dashboard with fictional IPAM, device and rack summaries](docs/screenshots/docker-dashboard.png)
+
+| Device Inventory | Rack Elevation |
+| --- | --- |
+| ![Caffoot Lite device inventory with fictional lab equipment](docs/screenshots/docker-devices-inventory.png) | ![Caffoot Lite rack front elevation with a fictional switch and patch panel](docs/screenshots/docker-racks.png) |
+
+See the [full Features and Instructions guides](docs/How%20To%27s/Features%20and%20Instructions/README.md) for more genuine screenshots alongside detailed workflows.
+
 ## Trying the unreleased Docker edition
 
 The easiest tested method is **Portainer → Stacks → Add stack → Web editor**.

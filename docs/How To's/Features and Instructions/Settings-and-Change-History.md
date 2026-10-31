@@ -6,6 +6,10 @@
 
 **Settings & Data** is an administrator-only system area. **My account** is available to every signed-in user for personal settings, security and Help & Guides. Keeping them separate means a read-only colleague can update their own password or appearance preference without receiving inventory administration rights.
 
+All signed-in users can find short, locally readable topics under **My account → Help & Guides**, with links to these longer guides.
+
+![Caffoot Lite My account Help and Guides with expandable help topics](../../screenshots/docker-help-guides.png)
+
 ## My account — step by step
 
 1. Choose **My account** near the bottom of the sidebar.

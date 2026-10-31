@@ -8,6 +8,12 @@ An **IP Address Block** groups address space; a **Network / VLAN** is an assigna
 
 You need **IPAM Edit** to create/update networks or change independent address allocations. A Devices editor with only IPAM Read cannot alter a primary IP through the device form.
 
+The following genuine views show the fictional **Lab Network** in Manage Subnets and the individual IP allocation grid.
+
+![Caffoot Lite IPAM Manage Subnets page showing a fictional Lab Network and VLAN](../../screenshots/docker-ipam-subnets.png)
+
+![Caffoot Lite IPAM address grid with assigned, reserved and available fictional lab addresses](../../screenshots/docker-ipam-addresses.png)
+
 ## Worked example — add a Network / VLAN
 
 Use the following fictional test plan only if it does not conflict with your network: CIDR **192.168.50.0/24**, name **Lab Network**, VLAN **50**, gateway **192.168.50.1**.
