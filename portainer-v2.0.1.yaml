@@ -1,9 +1,9 @@
-# Caffoot Lite v2.0 — Portainer / Docker Compose release stack.
+# Caffoot Lite v2.0.1 — Portainer / Docker Compose release stack.
 # Replace the example IP address, port and /data host path for your installation.
-# The v2.0 image is published at the official release gate; not the earlier next-test image.
+# Pull only after the official v2.0.1 tag and image build are published.
 services:
   caffoot-lite:
-    image: ghcr.io/caffoot/caffoot-lite:v2.0
+    image: ghcr.io/caffoot/caffoot-lite:v2.0.1
     container_name: caffoot-lite
     restart: unless-stopped
     environment:
