@@ -45,7 +45,7 @@ Each technical chapter starts with **In simple terms**, then adds details for de
 - [`next/compose.yaml`](../../next/compose.yaml), [`next/portainer-stack.yaml`](../../next/portainer-stack.yaml) and [`next/Dockerfile`](../../next/Dockerfile): deployment configuration.
 - [`app/caffoot-lite.html` at v1.3.3](https://github.com/Caffoot/Caffoot-Lite/blob/v1.3.3/app/caffoot-lite.html): **published** inventory behaviour to preserve.
 
-For current installation instructions see [`next/README.md`](../../next/README.md); the release-facing root README is scheduled for Stage 3, not rewritten by Stage 1.
+For current installation instructions see [`next/README.md`](../../next/README.md). The [root README](../../README.md) now introduces the published HTML edition and the unreleased Docker/SQLite build; neither document announces a new published release.
 
 ## Before making a change
 
