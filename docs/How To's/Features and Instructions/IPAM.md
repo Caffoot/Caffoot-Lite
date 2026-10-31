@@ -10,9 +10,9 @@ You need **IPAM Edit** to create/update networks or change independent address a
 
 The following genuine views show the fictional **Lab Network** in Manage Subnets and the individual IP allocation grid.
 
-![Caffoot Lite IPAM Manage Subnets page showing a fictional Lab Network and VLAN](../../screenshots/docker-ipam-subnets.png)
+![Caffoot Lite IPAM Manage Subnets page showing a fictional Lab Network and VLAN](../../screenshots/ipam-subnets.png)
 
-![Caffoot Lite IPAM address grid with assigned, reserved and available fictional lab addresses](../../screenshots/docker-ipam-addresses.png)
+![Caffoot Lite IPAM address grid with assigned, reserved and available fictional lab addresses](../../screenshots/ipam-addresses.png)
 
 ## Worked example — add a Network / VLAN
 

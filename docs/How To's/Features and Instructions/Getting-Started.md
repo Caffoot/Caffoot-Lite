@@ -6,7 +6,7 @@
 
 The sign-in screen below is from the actual Docker/SQLite application, shown without any entered credentials.
 
-![Caffoot Lite branded sign-in screen with empty username and password fields](../../screenshots/docker-sign-in.png)
+![Caffoot Lite branded sign-in screen with empty username and password fields](../../screenshots/sign-in.png)
 
 The Docker application keeps one shared inventory in its central database. Each person uses their own account; an administrator decides which sections that person may read or edit. There is **no public registration**.
 
@@ -22,7 +22,7 @@ For a self-signed HTTPS certificate, **check the identity and fingerprint before
 
 The Dashboard's **Network Insights** tab summarises a fictional lab inventory in the screenshot below.
 
-![Caffoot Lite Dashboard Network Insights showing fictional devices, IP utilisation and rack capacity](../../screenshots/docker-dashboard.png)
+![Caffoot Lite Dashboard Network Insights showing fictional devices, IP utilisation and rack capacity](../../screenshots/dashboard.png)
 
 - **Dashboard:** inventory overview and convenient shortcuts.
 - **Devices:** physical/virtual equipment, network identity, hardware/software details and location.

@@ -10,7 +10,7 @@ Users require **Racks Edit** to change rack data or equipment placement. Racks R
 
 This is the actual front elevation of a fictional 12U **Lab Rack**, with a mounted switch, patch panel and vertical PDU.
 
-![Caffoot Lite Lab Rack front elevation showing rack units, mounted equipment and capacity details](../../screenshots/docker-racks.png)
+![Caffoot Lite Lab Rack front elevation showing rack units, mounted equipment and capacity details](../../screenshots/racks.png)
 
 ## Worked example — create a rack
 

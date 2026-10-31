@@ -8,7 +8,7 @@ Caffoot Lite has **no public registration**. The first account on a new database
 
 An administrator's **Users → Overview** displays account counts, roles and MFA enrolment status, as shown using fictional accounts below.
 
-![Caffoot Lite Users overview showing fictional account totals, roles and MFA enrolment progress](../../screenshots/docker-users.png)
+![Caffoot Lite Users overview showing fictional account totals, roles and MFA enrolment progress](../../screenshots/users.png)
 
 ## Create a user — worked example
 

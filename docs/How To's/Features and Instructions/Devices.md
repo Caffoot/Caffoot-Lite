@@ -8,7 +8,7 @@ A device can describe a physical server, switch, workstation, printer or another
 
 The **Device Inventory** view shows saved equipment and its primary addresses. All names and addresses in this screenshot are fictional.
 
-![Caffoot Lite Device Inventory listing fictional desktop and switch records with IP addresses](../../screenshots/docker-devices-inventory.png)
+![Caffoot Lite Device Inventory listing fictional desktop and switch records with IP addresses](../../screenshots/devices-inventory.png)
 
 ## Prepare before you add a device
 
@@ -36,7 +36,7 @@ The application refuses invalid addresses, incompatible rack positions and other
 
 The **Details** action opens the familiar read-only device view, with separate tabs for additional information.
 
-![Caffoot Lite read-only switch device details with tabs for hardware, network, software and location](../../screenshots/docker-device-details.png)
+![Caffoot Lite read-only switch device details with tabs for hardware, network, software and location](../../screenshots/device-details.png)
 
 Select a device from the inventory. Its read-only details allow you to inspect sections such as Overview, Hardware, Network, Software, Location and History where relevant. Opening and viewing a device **does not reserve it for editing**.
 
