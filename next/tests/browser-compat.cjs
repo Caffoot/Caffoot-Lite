@@ -145,6 +145,21 @@ async function run(){
   for(const [area,selector] of [['preferences','.theme-choice'],['help','.settings-help-topic'],['about','.settings-about']]){
     await page.locator('[data-action="select-account-section"][data-section="'+area+'"]').click();
     await page.locator(selector).first().waitFor();
+    if(area==='help'){
+      const links=page.locator('.settings-help-topic a[href*="/Features%20and%20Instructions/"]');
+      assert.equal(await links.count(),8,'Existing help topics should link to the verified full guides');
+      for(const link of await links.all()){
+        assert.equal(await link.getAttribute('target'),'_blank');
+        assert.match(await link.getAttribute('rel'),/noopener/);
+      }
+      assert.equal(await page.locator('.settings-help-topic').count(),6,'Built-in help topics must remain');
+    }
+    if(area==='about'){
+      assert.equal(await page.getByRole('link',{name:/User Guide/}).getAttribute('href'),
+        'https://github.com/Caffoot/Caffoot-Lite/blob/Next/docs/How%20To%27s/Features%20and%20Instructions/README.md');
+      assert.equal(await page.getByRole('link',{name:/Installation Guide/}).getAttribute('href'),
+        'https://github.com/Caffoot/Caffoot-Lite/blob/Next/next/README.md');
+    }
   }
   await page.locator('[data-action="select-account-section"][data-section="security"]').click();
   await page.locator('#sidebar [data-action="tab-users"]').click();

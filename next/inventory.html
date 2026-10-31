@@ -7762,16 +7762,21 @@ function hierarchyValidateTypes(subnets) {
                     themeChoice('system','Use System Setting','fa-desktop','Follow your device appearance') +
                     '</div></section>';
             } else if (section === 'help') {
+                // The authoritative Markdown user guides are shared with GitHub and the future website.
+                const guideRoot = 'https://github.com/Caffoot/Caffoot-Lite/blob/Next/docs/How%20To%27s/Features%20and%20Instructions/';
                 const helpTopics = [
-                    ['Getting Started', 'Create your administrator on first run and enrol MFA. Then use Devices, IPAM and Network Racks just as in published v1.3.3. Authorised users work from the same central inventory.'],
-                    ['Import from v1.3.3', 'Under Import Inventory, choose a fresh JSON backup exported from published v1.3.3 and review all required corrections before confirming replacement. For older HTML versions, upgrade to v1.3.3 before exporting.'],
-                    ['Devices, IPAM and Racks', 'Manage the familiar devices, primary IP assignments, subnets, VLANs, racks and accessories. Device editing reserves that device for one user at a time.'],
-                    ['Users and MFA', 'Administrators manage users and permissions in the Users section. New users have no access until permissions are granted. MFA is required for editing and administration.'],
-                    ['Database backup and recovery', 'Use your established Docker, Portainer or database volume backup application. Caffoot Lite has no ongoing inventory JSON backup export.'],
-                    ['Appearance', 'Appearance Preferences offers Light Mode, Dark Mode and Use System Setting. This appearance preference remains local to your browser.']
+                    ['Getting Started', 'Create your administrator on first run and enrol MFA. Then use Devices, IPAM and Network Racks just as in published v1.3.3. Authorised users work from the same central inventory.', [['Getting Started', 'Getting-Started.md']]],
+                    ['Import from v1.3.3', 'Under Import Inventory, choose a fresh JSON backup exported from published v1.3.3 and review all required corrections before confirming replacement. For older HTML versions, upgrade to v1.3.3 before exporting.', [['Migration', 'Migration-Backup-and-Restore.md']]],
+                    ['Devices, IPAM and Racks', 'Manage the familiar devices, primary IP assignments, subnets, VLANs, racks and accessories. Device editing reserves that device for one user at a time.', [['Devices', 'Devices.md'], ['IPAM', 'IPAM.md'], ['Racks', 'Racks.md']]],
+                    ['Users and MFA', 'Administrators manage users and permissions in the Users section. New users have no access until permissions are granted. MFA is required for editing and administration.', [['Users and MFA', 'Users-Permissions-and-MFA.md']]],
+                    ['Database backup and recovery', 'Use your established Docker, Portainer or database volume backup application. Caffoot Lite has no ongoing inventory JSON backup export.', [['Backup and restore', 'Migration-Backup-and-Restore.md']]],
+                    ['Appearance', 'Appearance Preferences offers Light Mode, Dark Mode and Use System Setting. This appearance preference remains local to your browser.', [['Settings', 'Settings-and-Change-History.md']]]
                 ];
-                body = '<section class="settings-panel backup-import-help"><h3>Help & Guides</h3><p>Built into Caffoot Lite and available without an internet connection. Choose a topic to read the guidance. For more detailed instructions, see the online User Guide linked in About Caffoot Lite.</p>' +
-                    '<div class="settings-help-topics">' + helpTopics.map(([title,content]) => '<details class="settings-help-topic"><summary>' + title + '</summary><p>' + content + '</p></details>').join('') + '</div></section>';
+                const guideLinks = guides => '<div class="flex flex-wrap gap-x-5 gap-y-2 px-5 pb-4">' + guides.map(([label,file]) =>
+                    '<a href="' + guideRoot + encodeURIComponent(file) + '" target="_blank" rel="noopener noreferrer" class="text-sm font-semibold text-indigo-700 dark:text-indigo-300 hover:underline focus-visible:underline" aria-label="Read full ' + label + ' guide (opens new tab)">Read full ' + label + ' guide <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>'
+                ).join('') + '</div>';
+                body = '<section class="settings-panel backup-import-help"><h3>Help & Guides</h3><p>These short topics remain available without the internet. Choose Read full guide to open the detailed instructions in a new tab when online.</p>' +
+                    '<div class="settings-help-topics">' + helpTopics.map(([title,content,guides]) => '<details class="settings-help-topic"><summary>' + title + '</summary><p>' + content + '</p>' + guideLinks(guides) + '</details>').join('') + '</div></section>';
             } else {
                 body = '<section class="settings-panel settings-about"><div class="settings-about-brand">' +
                     '<img src="../assets/caffoot-icon-1024.png" alt="Caffoot hedgehog logo" width="76" height="76">' +
@@ -7780,8 +7785,8 @@ function hierarchyValidateTypes(subnets) {
                     '<p>Manage devices, IP addresses, subnets and network racks using a shared central SQLite database with authorised multi-user access.</p>' +
                     '<h4>Project & Documentation</h4><div class="settings-about-links">' +
                     '<a href="https://github.com/Caffoot/Caffoot-Lite" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-github" aria-hidden="true"></i> Official GitHub Repository <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>' +
-                    '<a href="https://github.com/Caffoot/Caffoot-Lite/blob/main/USER-GUIDE.md" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-book-open" aria-hidden="true"></i> User Guide <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>' +
-                    '<a href="https://github.com/Caffoot/Caffoot-Lite/blob/main/INSTALLATION.md" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Installation Guide <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>' +
+                    '<a href="https://github.com/Caffoot/Caffoot-Lite/blob/Next/docs/How%20To%27s/Features%20and%20Instructions/README.md" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-book-open" aria-hidden="true"></i> User Guide <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>' +
+                    '<a href="https://github.com/Caffoot/Caffoot-Lite/blob/Next/next/README.md" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Installation Guide <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>' +
                     '<a href="https://github.com/Caffoot/Caffoot-Lite/releases" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-tag" aria-hidden="true"></i> Release Notes <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>' +
                     '</div><p class="settings-about-offline">External links require an internet connection. Caffoot Lite uses its central server and SQLite database.</p>' +
                     '<p>For offline instructions, open Help & Guides in My account.</p>' +

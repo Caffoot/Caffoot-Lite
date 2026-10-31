@@ -26,6 +26,10 @@ Compare the SHA-256 fingerprint against a separately trusted copy before trustin
 
 The container's own HTTPS health check is a local liveness probe and does not establish external certificate trust. Do not delete the persistent data volume or host bind-mount folder if retaining inventory or certificate identity.  The certificate is not automatically renewed; before expiry, plan a controlled certificate rotation and update client/proxy trust. Never delete the data volume as a certificate-rotation shortcut.
 
+## Full user instructions
+
+For worked examples and detailed steps covering **Devices, IPAM, Racks, Users and MFA, Settings and Change History**, see the shared [Features and Instructions user guide](../docs/How%20To%27s/Features%20and%20Instructions/README.md). These same Markdown guides are intended for the future website help section; the short help inside **My account → Help & Guides** remains available without public Internet access.
+
 ## Approved visual identity and font availability
 
 The Docker edition uses the existing Caffoot hedgehog artwork and **“Infrastructure, Simplified.”** on the first-run administrator and sign-in screen. The setup and inventory interfaces request the approved **Inter** font when an external font service is reachable. When it is not, readable local system-font fallbacks apply. Internet access is **not required** for normal local HTTPS sign-in, MFA, inventory access, editing or SQLite database operations. This is an approved appearance-only difference from published v1.3.3; it does not change any inventory workflow.

@@ -57,6 +57,7 @@ Back up and restore that persistent data with **external container, volume or fi
 
 ## Documentation and development
 
+- [Features and Instructions — complete user guides](docs/How%20To%27s/Features%20and%20Instructions/README.md) — step-by-step Devices, IPAM, Racks, Users/MFA, Settings/History and migration/backup instructions
 - [Docker/Portainer installation and operational guidance](next/README.md)
 - [Development Guide](docs/Development%20Guide/README.md) — architecture, SQLite schema, backend/API, authentication, editing reservations, inventory migration and tests
 - [Published v1.3.3](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3) — existing HTML edition and release resources
