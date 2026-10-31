@@ -19,6 +19,10 @@ Existing rendering such as `renderDevicesHTML` and `renderRackHubV13` is retaine
 
 The UI hides edit controls from read-only users, but that is presentation only. The backend performs authorisation again for every protected operation.
 
+## Approved appearance and font loading
+
+The Docker application's first-run and sign-in page uses the existing Caffoot hedgehog, the tagline **“Infrastructure, Simplified.”** and the approved warm-background styling. The inventory screens retain their established layout and controls. Both pages prefer **Inter**, with system-font fallbacks when the external font stylesheet is unavailable. The normal HTTPS authentication, editing and SQLite operations do not depend on the font provider; the published single-file v1.3.3 application retains its separate offline-first behaviour. This is the specific visual-only approval in [#215 §20](https://github.com/Caffoot/Caffoot-Lite/issues/215), not a permission to redesign inventory dialogs.
+
 ## HTTP endpoints
 
 The live route list is defined by the conditions in `Handler.do_GET` and `Handler.do_POST`, not by this summary. Particularly useful route groups are:

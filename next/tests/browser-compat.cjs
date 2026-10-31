@@ -109,6 +109,10 @@ async function run(){
   assert.ok((await page.locator('html').evaluate(el=>getComputedStyle(el).fontFamily)).includes('Inter'),
     'Inventory, Users, Settings and My account must inherit Inter typography');
   await page.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='Dashboard Overview');
+  for(const selector of ['#sidebar','#page-title','#main-content']){
+    assert.ok((await page.locator(selector).evaluate(el=>getComputedStyle(el).fontFamily)).includes('Inter'),
+      'Branded inventory typography should apply to '+selector);
+  }
   console.log('First administrator, MFA, sign-in and direct Dashboard arrival passed');
   assert.equal(await page.locator('#next-dashboard-mfa-notice').count(),0,
     'Enrolled administrators must not see MFA setup guidance');

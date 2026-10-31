@@ -1,6 +1,6 @@
-# Caffoot Lite Next — unreleased development build
+# Caffoot Lite — Docker/SQLite edition (unreleased)
 
-Caffoot Lite Next implements the approved central SQLite inventory application from [issue #215](https://github.com/Caffoot/Caffoot-Lite/issues/215). It serves the established v1.3.3 inventory interface with backend persistence, first-run administrator setup, MFA, administrator-managed users and device edit reservations. The supported v1.3.3 JSON backup import is a one-way migration, not an ongoing backup system. This is **not yet a published release**. Stage 2 Raspberry Pi 5 acceptance of inventory, multi-user workflows, persistence and a one-off external file-copy restore has been completed; release documentation, approved visual identity, proportional security review and final release approval are still outstanding.
+The Docker/SQLite edition of **Caffoot Lite** implements the approved central inventory application from [issue #215](https://github.com/Caffoot/Caffoot-Lite/issues/215). It serves the established v1.3.3 inventory interface with backend persistence, first-run administrator setup, MFA, administrator-managed users and device edit reservations. The supported v1.3.3 JSON backup import is a one-way migration, not an ongoing backup system. This is **not yet a published release**. Stage 2 Raspberry Pi 5 acceptance of inventory, multi-user workflows, persistence and a one-off manual file-copy restore has been completed. The approved Caffoot sign-in branding is in place; release screenshots, remaining visual/name checks, the proportional security review and final release approval remain outstanding.
 
 ## HTTPS Docker Compose / Portainer setup
 
@@ -32,7 +32,7 @@ The Docker edition uses the existing Caffoot hedgehog artwork and **“Infrastru
 
 ## Verification status
 
-The existing backend checks and focused HTTPS/Chromium test run in GitHub Actions. They cover first-run MFA, central inventory and Change History, user creation and access permissions, competing device edit reservations, familiar Devices/IPAM/Racks forms, Clean Start and a real v1.3.3 backup created by the published exporter. These checks do not yet prove all published v1.3.3 interactions or Raspberry Pi 5 performance.
+The existing backend checks and focused HTTPS/Chromium test run in GitHub Actions. They cover first-run MFA, central inventory and Change History, user creation and access permissions, competing device edit reservations, familiar Devices/IPAM/Racks forms, Clean Start and a real v1.3.3 backup created by the published exporter. These checks are not an exhaustive proof of every published v1.3.3 interaction. The agreed real Raspberry Pi 5 acceptance has been completed and recorded in [#218](https://github.com/Caffoot/Caffoot-Lite/issues/218).
 
 The existing `tests/test_compose_lifecycle.py` is an **opt-in** Docker milestone test. Run the `Next Docker Compose lifecycle` GitHub Actions workflow manually at an integration milestone to verify published port configuration, persistent SQLite data and TLS certificate continuity across restart and recreation. The product owner has now completed the agreed Raspberry Pi 5/Portainer Stage 2 acceptance, including container recreation and a manual stopped-container backup/restore. That acceptance does **not** replace the later release security review, nor prove automated or off-host backup protection.
 
