@@ -14,6 +14,7 @@ name: Next prebuilt Portainer image
 # Pi 5 acceptance refresh: on-demand shared inventory freshness when users navigate and open records.
 # Pi 5 Stage 4 visual acceptance: approved sign-in branding, Inter typography and browser-tab title.
 # Pi 5 Stage 4 review: restore approved warm background glow and remove the orange sign-in card top stripe.
+# Pi 5 Stage 4 favicon review: declare existing browser icon on branded sign-in page.
 on:
   push:
     branches: [Next]
