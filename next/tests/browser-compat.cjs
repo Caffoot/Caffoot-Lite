@@ -67,6 +67,16 @@ async function run(){
   assert.ok(online,'HTTPS server failed to start');
   console.log('HTTPS and SQLite startup passed');
   await page.goto(address+'/setup');
+  await page.locator('.brand-header img[src="/assets/caffoot-icon-1024.png"]').waitFor();
+  assert.equal(await page.locator('.brand-tagline').textContent(),'Infrastructure, Simplified.');
+  assert.ok((await page.locator('main').evaluate(el=>getComputedStyle(el).fontFamily)).includes('Inter'),
+    'First-run setup must use the approved Inter font stack');
+  await page.setViewportSize({width:375,height:812});
+  assert.ok(await page.locator('main').evaluate(el=>{
+    const rect=el.getBoundingClientRect();
+    return rect.left>=0 && rect.right<=window.innerWidth;
+  }),'Branded setup panel must fit a narrow screen');
+  await page.setViewportSize({width:1440,height:950});
   await page.waitForFunction(()=>document.querySelector('#intro')?.textContent.includes('Create the first administrator'));
   await page.locator('#username').fill('owner');
   await page.locator('#password').fill(password);
@@ -87,6 +97,8 @@ async function run(){
   await page.locator('#code').fill(mfaCode(secret));
   await page.waitForURL('**/inventory');
   await page.locator('#next-account-nav').waitFor();
+  assert.ok((await page.locator('html').evaluate(el=>getComputedStyle(el).fontFamily)).includes('Inter'),
+    'Inventory, Users, Settings and My account must inherit Inter typography');
   await page.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='Dashboard Overview');
   console.log('First administrator, MFA, sign-in and direct Dashboard arrival passed');
   assert.equal(await page.locator('#next-dashboard-mfa-notice').count(),0,

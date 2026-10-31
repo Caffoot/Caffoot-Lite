@@ -26,6 +26,10 @@ Compare the SHA-256 fingerprint against a separately trusted copy before trustin
 
 The container's own HTTPS health check is a local liveness probe and does not establish external certificate trust. Do not delete the persistent data volume or host bind-mount folder if retaining inventory or certificate identity.  The certificate is not automatically renewed; before expiry, plan a controlled certificate rotation and update client/proxy trust. Never delete the data volume as a certificate-rotation shortcut.
 
+## Approved visual identity and font availability
+
+The Docker edition uses the existing Caffoot hedgehog artwork and **“Infrastructure, Simplified.”** on the first-run administrator and sign-in screen. The setup and inventory interfaces request the approved **Inter** font when an external font service is reachable. When it is not, readable local system-font fallbacks apply. Internet access is **not required** for normal local HTTPS sign-in, MFA, inventory access, editing or SQLite database operations. This is an approved appearance-only difference from published v1.3.3; it does not change any inventory workflow.
+
 ## Verification status
 
 The existing backend checks and focused HTTPS/Chromium test run in GitHub Actions. They cover first-run MFA, central inventory and Change History, user creation and access permissions, competing device edit reservations, familiar Devices/IPAM/Racks forms, Clean Start and a real v1.3.3 backup created by the published exporter. These checks do not yet prove all published v1.3.3 interactions or Raspberry Pi 5 performance.

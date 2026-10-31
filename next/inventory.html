@@ -28,10 +28,13 @@
     </script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Consistent native UI typography; no unavailable Inter font dependency. -->
+    <!-- Inter typography is optional online; local inventory operation always has system fallbacks. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
     <style>
-        /* Use one offline-safe UI font stack for every page, including Dashboard. */
-        html { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; }
+        /* Match Caffoot typography without changing the established inventory layouts. */
+        html { font-family: Inter, 'Segoe UI', Tahoma, Arial, sans-serif; }
         body, button, input, select, textarea { font-family: inherit; }
         /* Tailwind's font-sans utility otherwise selects a different system stack. */
         .font-sans { font-family: inherit; }
