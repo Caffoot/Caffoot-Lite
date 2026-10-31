@@ -1,40 +1,22 @@
-## What is changing and why?
+## Caffoot Lite Next — change review
 
-<!-- Briefly describe the change and link the existing issue, roadmap item or audit register if applicable. No separate plan document is required. -->
+**Authority:** [Issue #215](https://github.com/Caffoot/Caffoot-Lite/issues/215) is the sole approved Next build specification. Published v1.3.3 is the functional and visual compatibility baseline. Do not introduce unapproved user-visible deviations.
 
-## Caffoot Lite merge checks
+### Scope
 
-Tick the relevant items. Write `N/A` with a short reason where a check does not apply. Keep this proportionate to the change.
+- What changed and why?
+- Which part of #215 authorises this change?
+- Does it preserve existing v1.3.3 workflows, names, validation, relationships, safeguards and import compatibility?
 
-- [ ] **Understand and agree:** Existing behaviour, scope, expected outcome and relevant dependencies have been checked; material changes to scope have been agreed.
-- [ ] **Implement:** Only the agreed changes are included, with any new risks or discoveries recorded.
-- [ ] **Verify:** Relevant automated or manual checks have been performed and results recorded below. Unrun or blocked tests are identified, not described as passing.
-- [ ] **Document:** Affected technical workflows, function references, P11 explanatory comments, user guidance, roadmap and release documentation have been reviewed and updated where relevant, or marked N/A below.
-- [ ] **Reconcile:** The result meets the agreed acceptance criteria; remaining risks and deferred items are linked and explained.
-- [ ] **Approve:** Product owner approval is obtained before merging. Release publication requires separate explicit approval.
+### Verification
 
-### Existing implementation and checks reviewed
+- List relevant existing tests and new or updated tests, with actual results and revision tested.
+- Record unrun, blocked or failed checks accurately; never describe historical evidence as a current pass.
+- Check documentation references and reconcile historical audit findings against subsequent fixes.
 
-<!-- Identify relevant existing functionality, tests and GitHub Actions before proposing additions. State the actual gap and why this does not duplicate an existing safeguard. -->
+### Approval
 
-### Verification evidence
+- Identify any unavoidable user-visible difference and obtain explicit product owner approval **before implementation**.
+- Obtain product owner approval before merge; publication requires separate approval.
 
-<!-- Commands and results, browser checks, screenshots or existing valid evidence. For documentation-only changes, note focused link/format checks and why application tests are N/A. -->
-
-### Documentation review
-
-<!-- Explicitly cover affected technical workflows, test matrices, findings register, master audit, function references, roadmap, release checklist and version statements. State N/A with a reason for unaffected areas. A passing link check does not prove technical accuracy. -->
-
-<!-- List updated documents or briefly explain why no documentation updates are needed. Include technical workflows when behaviour changes. -->
-
-### Evidence and documentation reconciliation
-
-<!-- Mandatory acceptance gate: confirm that source revision, published version, workflows, findings, test matrices, roadmap, release documentation and master audit agree. If any check is pending, do not mark documentation complete or ready to merge. -->
-
-<!-- Confirm that current statuses, test execution claims, links and published versus merged version descriptions agree. State any checks not executed. -->
-
-### Outstanding issues or deferred work
-
-<!-- State 'None' if applicable. Do not silently omit failed or unexecuted checks. -->
-
-> Follow [the permanent development and audit process](../docs/standards/technical/TECHNICAL-DOCUMENTATION-POLICY.md). This checklist is a review aid, not permission to bypass approval or release controls.
+Historical v1.3.x audit notes are available in the [pre-cleanup Git snapshot](https://github.com/Caffoot/Caffoot-Lite/tree/049262f196be494074f698a72f377153f202171b/docs/required-only). Use the [current Development Guide](../docs/Development%20Guide/README.md) and the published v1.3.3 source for operative implementation evidence; #215 alone defines Next's approved scope.

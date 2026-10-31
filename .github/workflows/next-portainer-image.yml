@@ -1,0 +1,56 @@
+name: Next prebuilt Portainer image
+
+# Build at an explicit integration milestone, not on every Next code commit.
+# Pi 5 acceptance image refresh: verified local MFA QR enrolment (30 October 2026).
+# Pi 5 UI acceptance refresh: navigation and Users/account alignment verified.
+# Pi 5 acceptance refresh: dashboard sign-in, sidebar account and Users visual consistency verified.
+# Pi 5 acceptance refresh: Users overview, live account summaries and sidebar submenu verified.
+# Pi 5 acceptance refresh: responsive compact Device General tab and full-width Users/History verified.
+# Pi 5 acceptance refresh: read-only presentation, personal settings, searchable selectors and staged MFA sign-in verified.
+# Pi 5 acceptance refresh: unobtrusive MFA guidance verified for unenrolled viewers and admin access controls.
+# Pi 5 acceptance refresh: mixed Devices/IPAM/Racks edit rights and device creation permission boundary verified.
+# Pi 5 acceptance refresh: signed-in username and named device edit reservation notice for two-user testing.
+# Pi 5 acceptance refresh: corrected welcome name contrast using the existing Caffoot orange accent.
+# Pi 5 acceptance refresh: on-demand shared inventory freshness when users navigate and open records.
+# Pi 5 Stage 4 visual acceptance: approved sign-in branding, Inter typography and browser-tab title.
+# Pi 5 Stage 4 review: restore approved warm background glow and remove the orange sign-in card top stripe.
+# Pi 5 Stage 4 favicon review: declare existing browser icon on branded sign-in page.
+# Pi 5 release documentation review: link existing Help and About to shared long-form user guides.
+on:
+  push:
+    branches: [Next]
+    paths:
+      - ".github/workflows/next-portainer-image.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-image:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish Next test image for Pi 5 and PCs
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./next/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ghcr.io/caffoot/caffoot-lite-next:next-test
+            ghcr.io/caffoot/caffoot-lite-next:next-${{ github.sha }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/Caffoot/Caffoot-Lite
+            org.opencontainers.image.title=Caffoot Lite Next (unreleased test image)
+          provenance: false

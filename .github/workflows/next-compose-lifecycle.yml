@@ -1,0 +1,21 @@
+name: Next Docker Compose lifecycle
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  compose-lifecycle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Docker Compose availability
+        run: docker compose version
+      - name: Verify configurable port, persistent TLS and database after restart/recreate
+        working-directory: next
+        env:
+          CAFFOOT_DOCKER_SMOKE: "1"
+        run: python3 -m unittest discover -s tests -p 'test_compose_lifecycle.py' -v

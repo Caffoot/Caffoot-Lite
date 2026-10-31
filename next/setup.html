@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Caffoot Lite — Infrastructure, Simplified.</title>
+<link rel="icon" href="/assets/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+:root {
+  font-family: Inter, 'Segoe UI', Tahoma, Arial, sans-serif;
+  color: #172033;
+  background: #172033;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 24px 16px;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(ellipse at 15% 12%, #7c461e 0%, transparent 35%),
+              linear-gradient(145deg, #152336 0%, #101927 85%);
+}
+main {
+  width: min(460px, 100%);
+  padding: 30px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  box-shadow: 0 22px 60px #090f1b55;
+}
+main:has(#signed-in:not([hidden])) { width: min(720px, 100%); }
+.brand-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+}
+.brand-logo {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  flex: none;
+  border-radius: 16px;
+  box-shadow: 0 4px 14px #0f172a1a;
+}
+.brand-name { min-width: 0; }
+h1 { margin: 0 0 4px; font-size: 26px; line-height: 1.2; font-weight: 800; letter-spacing: -.025em; }
+.brand-tagline { margin: 0; color: #a84e0c; font-size: 13px; font-weight: 700; letter-spacing: .01em; }
+h2 { margin-top: 4px; font-size: 19px; }
+h3 { font-size: 16px; }
+#intro { margin: 0 0 16px; font-weight: 500; }
+p { color: #475569; line-height: 1.55; }
+label { display: block; font-size: 13px; font-weight: 700; margin: 18px 0 6px; }
+input {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid #64748b;
+  border-radius: 10px;
+  background: #fff;
+  color: #172033;
+  font: inherit;
+}
+button {
+  width: 100%;
+  min-height: 44px;
+  margin-top: 22px;
+  padding: 12px 14px;
+  border: 0;
+  border-radius: 10px;
+  background: #f47b20;
+  color: #172033;
+  font: inherit;
+  font-weight: 750;
+  cursor: pointer;
+}
+button:hover:not(:disabled) { background: #e66d16; }
+button:disabled { opacity: .5; cursor: not-allowed; }
+button.secondary { background: #334155; color: #fff; }
+button.secondary:hover:not(:disabled) { background: #1e293b; }
+button.small { width: auto; min-height: 38px; margin: 5px; padding: 8px 12px; font-size: 13px; }
+:is(a,button,input,select,summary):focus-visible { outline: 3px solid #c45f0e; outline-offset: 3px; }
+a { color: #a84e0c; font-weight: 650; }
+section.panel { border-top: 1px solid #cbd5e1; margin-top: 20px; padding-top: 15px; }
+#setup-qr, #user-mfa-qr { width: 224px; min-height: 224px; margin: 14px auto; padding: 10px; background: #fff; }
+#setup-qr img, #user-mfa-qr img { display: block; }
+details { margin: 12px 0; }
+summary { cursor: pointer; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+td, th { text-align: left; padding: 7px; border-bottom: 1px solid #e2e8f0; }
+select { padding: 7px; max-width: 100%; font: inherit; }
+#account-panel { width: 100%; }
+#message { color: #b91c1c; }
+#secret { overflow-wrap: anywhere; font-weight: 700; color: #0f172a; }
+[hidden] { display: none !important; }
+@media (max-width: 480px) {
+  body { padding: 14px 10px; }
+  main { padding: 22px 18px; border-radius: 16px; }
+  .brand-header { gap: 12px; }
+  .brand-logo { width: 56px; height: 56px; border-radius: 14px; }
+  h1 { font-size: 23px; }
+  .brand-tagline { font-size: 12px; }
+}
+</style></head><body><main>
+<header class="brand-header">
+  <img class="brand-logo" src="/assets/caffoot-icon-1024.png" alt="Caffoot hedgehog logo" width="64" height="64">
+  <div class="brand-name"><h1>Caffoot Lite</h1><p class="brand-tagline">Infrastructure, Simplified.</p></div>
+</header>
+<p id="intro">Loading…</p>
+<form id="form" hidden>
+<div id="credentials"><label for="username">Username</label><input id="username" autocomplete="username" required maxlength="256">
+<label for="password">Password</label><input id="password" type="password" autocomplete="current-password" required></div>
+<div id="enrolment" hidden><p>Scan this QR code in your authenticator app, then enter its six-digit code to finish setup.</p><div id="setup-qr" role="img" aria-label="Authenticator setup QR code"></div><details><summary>Can’t scan? Show setup key</summary><p id="secret"></p></details></div>
+<div id="code-field" hidden><label for="code">Authenticator code</label><input id="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6"></div>
+<p id="message" role="alert"></p><button id="submit" type="submit">Continue</button></form><section id="signed-in" hidden><p id="signed-in-message"></p><p><a href="/inventory" id="open-inventory">Open inventory</a></p><section id="mfa-panel" class="panel" hidden><h2>Authenticator setup</h2><p>Enrol an authenticator before receiving editing or administrator access.</p><form id="start-mfa"><label for="mfa-password">Your password</label><input id="mfa-password" type="password" autocomplete="current-password" required><button type="submit">Start MFA enrolment</button></form><form id="confirm-mfa" hidden><p>Scan this QR code in your authenticator app:</p><div id="user-mfa-qr" role="img" aria-label="Authenticator setup QR code"></div><details><summary>Can’t scan? Show setup key</summary><p id="user-mfa-secret"></p></details><label for="user-mfa-code">Six-digit authenticator code</label><input id="user-mfa-code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required><button type="submit">Confirm MFA</button></form></section><section class="panel"><h2>Change password</h2><form id="change-password"><label for="current-password">Current password</label><input id="current-password" type="password" autocomplete="current-password" required><label for="new-password">New password</label><input id="new-password" type="password" autocomplete="new-password" required><button type="submit">Change password</button></form></section><section id="account-panel" class="panel" hidden><h2>Users</h2><form id="create-user"><label for="new-username">Username</label><input id="new-username" required maxlength="256"><label for="initial-password">Initial password</label><input id="initial-password" type="password" required><button type="submit">Create user</button></form><div id="users-table"></div></section><p id="account-message" role="status"></p><button id="sign-out" class="secondary" type="button">Sign out</button></section>
+</main><script src="/assets/qrcode.min.js"></script><script>
+'use strict';
+const $=id=>document.getElementById(id);
+let mode='login';
+let csrfToken='';
+let signedInUser='';
+function showMfaQr(id,uri){
+ const holder=$(id);holder.replaceChildren();
+ try{
+  new QRCode(holder,{text:uri,width:204,height:204,correctLevel:QRCode.CorrectLevel.M});
+ }catch(error){
+  holder.textContent='QR code unavailable. Use the setup key below.';
+ }
+}
+async function showSession(){
+ const r=await fetch('/api/session',{cache:'no-store'});
+ if(!r.ok)return false;
+ const session=await r.json();csrfToken=session.csrf_token;signedInUser=session.username;
+ if(session.can_enter_inventory){
+  window.location.replace('/inventory');
+  return true;
+ }
+ $('form').hidden=true;$('signed-in').hidden=false;
+ $('intro').textContent='Signed in';
+ $('signed-in-message').textContent='Signed in as '+session.username+'.';
+ $('account-panel').hidden=!session.is_admin;
+ $('mfa-panel').hidden=!!session.mfa_enrolled;
+ $('open-inventory').hidden=true;
+ if(session.is_admin)await loadUsers();
+ return true;
+}
+async function request(path,data){
+ const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json',...(csrfToken?{'X-CSRF-Token':csrfToken}:{})},body:JSON.stringify(data)});
+ const payload=await r.json();if(!r.ok)throw Error(payload.error||'Request failed');return payload;
+}
+function display(){
+ $('form').hidden=false;$('message').textContent='';
+ $('enrolment').hidden=mode!=='enrol';
+ $('code-field').hidden=mode!=='enrol' && mode!=='login-mfa';
+ $('intro').textContent=mode==='setup'?'Create the first administrator account. MFA is required.':mode==='enrol'?'Complete administrator MFA enrolment.':mode==='resume'?'Sign in with your administrator credentials to resume MFA enrolment.':mode==='login-mfa'?'Enter your authenticator code to complete sign-in.':'Sign in to Caffoot Lite.';
+ $('submit').textContent=mode==='setup'?'Create administrator':mode==='enrol'?'Confirm MFA':mode==='resume'?'Continue enrolment':mode==='login-mfa'?'Verify and sign in':'Sign in';
+ $('password').autocomplete=mode==='setup'?'new-password':'current-password';
+ $('code').required=mode==='enrol'||mode==='login-mfa';
+}
+(async()=>{try{
+ if(await showSession())return;
+ const r=await fetch('/api/setup/status');if(!r.ok)throw Error('Unable to check setup');
+ const status=await r.json();mode=status.setupRequired?'setup':status.enrollmentPending?'resume':'login';display();
+}catch(e){$('intro').textContent=e.message}})();
+$('username').addEventListener('input',()=>{if(mode==='login-mfa'){mode='login';$('code').value='';display();}});
+$('password').addEventListener('input',()=>{if(mode==='login-mfa'){mode='login';$('code').value='';display();}});
+$('code').addEventListener('input',()=>{
+ if(mode==='login-mfa' && /^[0-9]{6}$/.test($('code').value) && !$('submit').disabled)
+   $('form').requestSubmit();
+});
+$('form').addEventListener('submit',async e=>{
+ e.preventDefault();$('submit').disabled=true;$('message').textContent='';
+ const data={username:$('username').value,password:$('password').value};
+ try{
+ if(mode==='setup'){
+   const r=await request('/api/setup',data);$('secret').textContent=r.mfaSecret;mode='enrol';display();showMfaQr('setup-qr',r.mfaUri);
+ }else if(mode==='resume'){
+   const r=await request('/api/setup/mfa-secret',data);$('secret').textContent=r.mfaSecret;mode='enrol';display();showMfaQr('setup-qr',r.mfaUri);
+ }else if(mode==='enrol'){
+   await request('/api/setup/mfa',{...data,mfa_code:$('code').value});mode='login';display();$('message').style.color='#166534';$('message').textContent='MFA enrolled. Sign in to continue.';
+ }else{
+   try{
+     await request('/api/login',{...data,...(mode==='login-mfa'?{mfa_code:$('code').value}:{})});
+     if(!await showSession())throw Error('Unable to load session');
+   }catch(error){
+     if(mode==='login' && error.message==='invalid credentials'){
+       mode='login-mfa';display();$('code').focus();
+       $('message').textContent='If your account uses an authenticator, enter its code. Otherwise check your username and password.';
+     }else throw error;
+   }
+ }
+ }catch(err){$('message').style.color='#b91c1c';$('message').textContent=err.message}
+ finally{$('submit').disabled=false}
+});
+
+$('start-mfa').addEventListener('submit',async event=>{
+ event.preventDefault();try{
+  const result=await request('/api/account/mfa/start',{password:$('mfa-password').value});
+  $('user-mfa-secret').textContent=result.mfaSecret;$('start-mfa').hidden=true;$('confirm-mfa').hidden=false;showMfaQr('user-mfa-qr',result.mfaUri);
+ }catch(error){$('account-message').textContent=error.message}
+});
+$('confirm-mfa').addEventListener('submit',async event=>{
+ event.preventDefault();try{
+  await request('/api/account/mfa/confirm',{code:$('user-mfa-code').value});
+  csrfToken='';signedInUser='';$('signed-in').hidden=true;mode='login';display();
+  $('message').textContent='MFA enrolled. Sign in with your authenticator code.';
+ }catch(error){$('account-message').textContent=error.message}
+});
+async function loadUsers(){
+ const r=await fetch('/api/users');if(!r.ok)throw Error('Unable to load users');
+ const data=await r.json();const host=$('users-table');host.replaceChildren();
+ for(const user of data.users){
+  const panel=document.createElement('section');panel.className='panel';
+  const heading=document.createElement('h3');heading.textContent=user.username+(user.isAdmin?' (administrator)':'');panel.append(heading);
+  const info=document.createElement('p');info.textContent=(user.active?'Active':'Disabled')+' · MFA '+(user.mfaEnrolled?'enrolled':'not enrolled');panel.append(info);
+  for(const section of ['Devices','IPAM','Racks']){
+   const label=document.createElement('label');label.textContent=section+' ';
+   const select=document.createElement('select');
+   for(const [value,name] of [['','No access'],['read','Read'],['edit','Edit']]){
+    const option=document.createElement('option');option.value=value;option.textContent=name;select.append(option);
+   }
+   select.value=user.permissions[section]||'';select.disabled=user.isAdmin;
+   select.addEventListener('change',()=>adminAction('/api/users/permission',{userId:user.id,section,level:select.value||null}));
+   label.append(select);panel.append(label);
+  }
+  for(const [name,path,field,value] of [[user.active?'Disable':'Enable','/api/users/active','active',!user.active],[user.isAdmin?'Remove admin':'Make admin','/api/users/admin','isAdmin',!user.isAdmin],['Delete','/api/users/delete',null,null]]){
+   const button=document.createElement('button');button.className='small secondary';button.textContent=name;
+   button.disabled=user.username.toLowerCase()===signedInUser.toLowerCase();
+   button.addEventListener('click',()=>{if(name==='Delete'&&!confirm('Delete '+user.username+'?'))return;adminAction(path,{userId:user.id,...(field?{[field]:value}:{})})});panel.append(button);
+  }
+  host.append(panel);
+ }
+}
+async function adminAction(path,data){
+ try{await request(path,data);$('account-message').textContent='Updated successfully';await loadUsers()}
+ catch(error){$('account-message').textContent=error.message;try{await loadUsers()}catch(refreshError){$('account-message').textContent+='; '+refreshError.message}}
+}
+$('create-user').addEventListener('submit',async event=>{
+ event.preventDefault();await adminAction('/api/users/create',{username:$('new-username').value,password:$('initial-password').value});$('create-user').reset();
+});
+$('change-password').addEventListener('submit',async event=>{
+ event.preventDefault();try{
+  await request('/api/account/password',{currentPassword:$('current-password').value,newPassword:$('new-password').value});
+  csrfToken='';signedInUser='';$('signed-in').hidden=true;mode='login';display();$('message').textContent='Password changed. Sign in again.';
+ }catch(error){$('account-message').textContent=error.message}
+});
+$('sign-out').addEventListener('click',async()=>{
+ try{
+  const r=await fetch('/api/logout',{method:'POST',headers:{'X-CSRF-Token':csrfToken}});
+  if(!r.ok)throw Error('Sign out failed');
+  csrfToken='';$('signed-in').hidden=true;mode='login';display();
+ }catch(e){$('signed-in-message').textContent=e.message}
+});
+</script></body></html>

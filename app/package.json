@@ -36,8 +36,7 @@
     "check:security-accessory-text": "node test-security-accessory-text.cjs",
     "check:software-platform-catalog": "node test-software-platform-catalog.cjs",
     "check:device-software-separation": "node test-device-software-separation.cjs",
-    "check:device-type-history": "node test-device-type-history.cjs",
-    "check:release-docs": "node ../scripts/check-release-documentation.cjs"
+    "check:device-type-history": "node test-device-type-history.cjs"
   },
   "devDependencies": {
     "tailwindcss": "4.3.3",

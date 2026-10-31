@@ -1,0 +1,211 @@
+"""Offline staging tests; not a published-v1.3.3 validator acceptance test."""
+import json
+import sqlite3
+import unittest
+
+from backend.inventory import ImportRejected, inspect_export, reconstruct_inventory, stage_inventory
+from backend.schema import initialise_database
+
+
+def fixture():
+    return {
+        "devices": [{"id": "d1", "name": "LAB-01", "typeDetails": {"custom": True},
+                     "previousVirtualHosts": [{"hostId": "old", "action": "unassign"}]}],
+        "subnets": [], "vlans": [], "racks": [], "rackAccessories": [],
+        "ipAllocations": {"192.0.2.4": {"status": "Available", "notes": "retained"}},
+        "hardwareSeedPreferences": {"model:[\"Desktop\",\"HP\",\"EliteDesk\"]": {"hidden": False}},
+        "extraHistoricalOption": {"kept": True},
+        "caffootBackup": {"format": "caffoot-inventory", "schemaVersion": 1,
+                         "app": "Caffoot Lite", "appVersion": "1.3.3",
+                         "exportedAt": "2026-10-29T00:00:00Z"},
+    }
+
+
+class StagingTests(unittest.TestCase):
+    def setUp(self):
+        self.db = sqlite3.connect(":memory:")
+        initialise_database(self.db)
+
+    def tearDown(self):
+        self.db.close()
+
+    def test_round_trip_preserves_inventory_values(self):
+        data = inspect_export(json.dumps(fixture()).encode())
+        stage_inventory(self.db, data)
+        expected = {k: v for k, v in data.items() if k != "caffootBackup"}
+        self.assertEqual(reconstruct_inventory(self.db), expected)
+
+    def test_reject_old_export(self):
+        data = fixture()
+        data["caffootBackup"]["appVersion"] = "1.3.2"
+        with self.assertRaises(ImportRejected):
+            inspect_export(json.dumps(data).encode())
+
+    def test_reject_unsafe_keys(self):
+        data = fixture()
+        data["devices"][0]["typeDetails"]["__proto__"] = {}
+        with self.assertRaises(ImportRejected):
+            inspect_export(json.dumps(data).encode())
+
+    def test_reject_duplicate_keys(self):
+        raw = json.dumps(fixture()).replace(
+            '"devices":', '"devices": [], "devices":', 1
+        ).encode()
+        with self.assertRaisesRegex(ImportRejected, "Duplicate"):
+            inspect_export(raw)
+
+    def test_reject_nonfinite_json_number(self):
+        raw = json.dumps(fixture()).replace(
+            '"stateVersion"', '"stateVersion"', 1
+        ).replace('"extraHistoricalOption":', '"bad": NaN, "extraHistoricalOption":', 1).encode()
+        with self.assertRaisesRegex(ImportRejected, "Non-finite"):
+            inspect_export(raw)
+
+    def test_reject_oversized_export(self):
+        with self.assertRaisesRegex(ImportRejected, "10 MiB"):
+            inspect_export(b"x" * (10 * 1024 * 1024 + 1))
+
+    def test_reject_missing_backup_metadata(self):
+        data = fixture()
+        del data["caffootBackup"]
+        with self.assertRaisesRegex(ImportRejected, "v1.3.3"):
+            inspect_export(json.dumps(data).encode())
+
+    def test_reject_wrong_backup_format(self):
+        data = fixture()
+        data["caffootBackup"]["format"] = "different-format"
+        with self.assertRaisesRegex(ImportRejected, "v1.3.3"):
+            inspect_export(json.dumps(data).encode())
+
+    def test_reject_invalid_required_collection(self):
+        data = fixture()
+        data["devices"] = {"d1": {"name": "LAB-01"}}
+        with self.assertRaisesRegex(ImportRejected, "devices"):
+            inspect_export(json.dumps(data).encode())
+
+    def test_reject_invalid_ipam_record(self):
+        data = fixture()
+        data["ipAllocations"]["192.0.2.4"] = "not a record"
+        with self.assertRaisesRegex(ImportRejected, "IP allocation record"):
+            inspect_export(json.dumps(data).encode())
+
+    def test_reject_nested_unsafe_key(self):
+        data = fixture()
+        data["extraHistoricalOption"] = [{"safe": {"constructor": "bad"}}]
+        with self.assertRaisesRegex(ImportRejected, "Unsafe"):
+            inspect_export(json.dumps(data).encode())
+
+    def test_reject_non_object_root(self):
+        with self.assertRaisesRegex(ImportRejected, "Backup must be a JSON object"):
+            inspect_export(b"[]")
+
+    def test_published_structure_rejects_missing_subnets(self):
+        data = fixture()
+        del data["subnets"]
+        with self.assertRaisesRegex(ImportRejected, "valid subnets array"):
+            inspect_export(json.dumps(data).encode())
+
+    def test_published_structure_rejects_array_records(self):
+        data = fixture()
+        data["racks"] = [[]]
+        with self.assertRaisesRegex(ImportRejected, "invalid entries in racks"):
+            inspect_export(json.dumps(data).encode())
+
+    def test_published_structure_rejects_missing_ipam_table(self):
+        data = fixture()
+        del data["ipAllocations"]
+        with self.assertRaisesRegex(ImportRejected, "valid IP allocation table"):
+            inspect_export(json.dumps(data).encode())
+
+    def test_missing_vlans_is_a_later_normalisation_gate(self):
+        data = fixture()
+        del data["vlans"]
+        with self.assertRaisesRegex(ImportRejected, "valid vlans array"):
+            inspect_export(json.dumps(data).encode())
+
+    def test_optional_rack_accessories_may_be_absent(self):
+        data = fixture()
+        del data["rackAccessories"]
+        self.assertNotIn("rackAccessories", inspect_export(json.dumps(data).encode()))
+
+    def test_optional_rack_accessories_must_be_array(self):
+        data = fixture()
+        data["rackAccessories"] = {}
+        with self.assertRaisesRegex(ImportRejected, "invalid rackAccessories"):
+            inspect_export(json.dumps(data).encode())
+
+    def test_published_early_gate_does_not_limit_vlan_count_to_50000(self):
+        data = fixture()
+        data["vlans"] = [{"id": "v"}] * 50001
+        self.assertEqual(len(inspect_export(json.dumps(data).encode())["vlans"]), 50001)
+
+    def test_staging_never_changes_accounts_permissions_or_sessions(self):
+        self.db.execute(
+            "INSERT INTO accounts(username,password_hash,is_admin,mfa_secret,mfa_confirmed) "
+            "VALUES('owner','hashed',1,'mfa-secret',1)"
+        )
+        account_id = self.db.execute(
+            "SELECT id FROM accounts WHERE username='owner'"
+        ).fetchone()[0]
+        self.db.execute(
+            "INSERT INTO account_permissions(account_id,section,level) VALUES(?, 'Devices', 'edit')",
+            (account_id,),
+        )
+        self.db.execute(
+            "INSERT INTO account_sessions(token_hash,account_id,expires_at,created_at) "
+            "VALUES('session-hash',?,9999999999,1)", (account_id,),
+        )
+        self.db.commit()
+        def snapshot():
+            return (
+                self.db.execute("SELECT * FROM accounts").fetchall(),
+                self.db.execute("SELECT * FROM account_permissions").fetchall(),
+                self.db.execute("SELECT * FROM account_sessions").fetchall(),
+            )
+        before = snapshot()
+        stage_inventory(self.db, inspect_export(json.dumps(fixture()).encode()))
+        self.assertEqual(snapshot(), before)
+        invalid = fixture()
+        invalid["devices"].append({"id": "d1", "name": "duplicate"})
+        with self.assertRaises(sqlite3.IntegrityError):
+            stage_inventory(self.db, invalid)
+        self.assertEqual(snapshot(), before)
+
+    def test_failed_accessory_insert_rolls_back_all_inventory_sections(self):
+        original = inspect_export(json.dumps(fixture()).encode())
+        stage_inventory(self.db, original)
+        before = reconstruct_inventory(self.db)
+        replacement = fixture()
+        replacement["devices"][0]["name"] = "CHANGED-NAME"
+        replacement["rackAccessories"] = [
+            {"id": "accessory-1", "rackId": "rack-1", "name": "Panel A"},
+            {"id": "accessory-1", "rackId": "rack-1", "name": "Panel B"},
+        ]
+        with self.assertRaises(sqlite3.IntegrityError):
+            stage_inventory(self.db, replacement)
+        self.assertEqual(reconstruct_inventory(self.db), before)
+
+    def test_successful_staging_replaces_only_inventory_sections(self):
+        first = inspect_export(json.dumps(fixture()).encode())
+        stage_inventory(self.db, first)
+        replacement = fixture()
+        replacement["devices"] = [{"id": "new", "name": "NEW-DEVICE"}]
+        replacement["extraHistoricalOption"] = {"changed": True}
+        stage_inventory(self.db, inspect_export(json.dumps(replacement).encode()))
+        rebuilt = reconstruct_inventory(self.db)
+        self.assertEqual(rebuilt["devices"], replacement["devices"])
+        self.assertEqual(rebuilt["extraHistoricalOption"], {"changed": True})
+        self.assertEqual(len(rebuilt["devices"]), 1)
+
+    def test_rollback_preserves_prior_inventory(self):
+        data = inspect_export(json.dumps(fixture()).encode())
+        stage_inventory(self.db, data)
+        bad = fixture()
+        bad["devices"].append({"id": "d1", "name": "duplicate"})
+        with self.assertRaises(sqlite3.IntegrityError):
+            stage_inventory(self.db, bad)
+        self.assertEqual(reconstruct_inventory(self.db)["devices"], data["devices"])
+
+
+if __name__ == "__main__":
+    unittest.main()
