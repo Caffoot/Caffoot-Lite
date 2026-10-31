@@ -10,6 +10,7 @@ name: Next prebuilt Portainer image
 # Pi 5 acceptance refresh: unobtrusive MFA guidance verified for unenrolled viewers and admin access controls.
 # Pi 5 acceptance refresh: mixed Devices/IPAM/Racks edit rights and device creation permission boundary verified.
 # Pi 5 acceptance refresh: signed-in username and named device edit reservation notice for two-user testing.
+# Pi 5 acceptance refresh: corrected welcome name contrast using the existing Caffoot orange accent.
 on:
   push:
     branches: [Next]
