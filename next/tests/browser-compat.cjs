@@ -67,6 +67,7 @@ async function run(){
   assert.ok(online,'HTTPS server failed to start');
   console.log('HTTPS and SQLite startup passed');
   await page.goto(address+'/setup');
+  assert.equal(await page.title(),'Caffoot Lite — Infrastructure, Simplified.','Setup browser tab must use Caffoot branding');
   await page.locator('.brand-header img[src="/assets/caffoot-icon-1024.png"]').waitFor();
   assert.equal(await page.locator('.brand-tagline').textContent(),'Infrastructure, Simplified.');
   assert.ok((await page.locator('main').evaluate(el=>getComputedStyle(el).fontFamily)).includes('Inter'),
@@ -96,6 +97,7 @@ async function run(){
   await page.locator('#code-field:not([hidden])').waitFor();
   await page.locator('#code').fill(mfaCode(secret));
   await page.waitForURL('**/inventory');
+  assert.equal(await page.title(),'Caffoot Lite — Infrastructure, Simplified.','Inventory browser tab must use Caffoot branding');
   await page.locator('#next-account-nav').waitFor();
   // Tailwind preflight loads later than the inline stylesheet; assert the resulting computed family.
   assert.ok((await page.locator('html').evaluate(el=>getComputedStyle(el).fontFamily)).includes('Inter'),
