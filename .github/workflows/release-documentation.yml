@@ -1,0 +1,33 @@
+name: Release documentation consistency
+
+# Retain the existing required 'release-documentation' branch check.
+# The previous checker depended on obsolete standalone-era documentation.
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  release-documentation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check approved release documentation paths
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          required = (
+              'README.md',
+              'next/README.md',
+              'next/portainer-v2.0.yaml',
+              'docs/Release-Notes-v2.0.md',
+              "docs/How To's/Features and Instructions/README.md",
+              'docs/Development Guide/README.md',
+          )
+          for name in required:
+              if not Path(name).is_file():
+                  raise SystemExit(f'Expected approved release document missing: {name}')
+              print('OK:', name)
+          PY
