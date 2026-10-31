@@ -616,8 +616,12 @@ async function run(){
   console.log('Confirmed Clean Start persisted with central Change History');
 
   // Generate the backup with the unchanged published v1.3.3 exporter itself.
+  const v133Source=spawnSync('git',['show','v1.3.3:app/caffoot-lite.html'],{cwd:root,encoding:'utf8',maxBuffer:8*1024*1024});
+  if(v133Source.status!==0)throw Error('Published v1.3.3 source unavailable: '+v133Source.stderr);
+  const publishedFile=path.join(tmp,'caffoot-lite-v1.3.3.html');
+  fs.writeFileSync(publishedFile,v133Source.stdout);
   const published=await context.newPage();
-  await published.goto('file://'+path.resolve(root,'..','app','caffoot-lite.html'));
+  await published.goto('file://'+publishedFile);
   const v133={
     subnets:[{id:'legacy-subnet',name:'Office',cidr:'10.0.0.0/24',
               gateway:'10.0.0.1',vlan:20}],

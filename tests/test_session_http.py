@@ -57,7 +57,7 @@ class SessionHttpTests(unittest.TestCase):
         return status, body, cache
 
     def test_inventory_assets_are_served_from_existing_published_files(self):
-        asset_root = Path(__file__).resolve().parents[2] / "assets"
+        asset_root = Path(__file__).resolve().parents[1] / "assets"
         with patch("backend.server.ASSET_ROOT", asset_root):
             for asset in ("favicon.ico","apple-touch-icon.png","caffoot-icon-1024.png","qrcode.min.js","tailwind.css"):
                 status, raw, _ = self.request("/assets/" + asset)
