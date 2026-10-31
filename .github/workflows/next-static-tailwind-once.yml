@@ -113,8 +113,7 @@ jobs:
           )
           replace_once(
               "next/tests/browser-compat.cjs",
-              '''  await page.waitForURL('**/inventory');
-              assert.equal(await page.title()''',
+              "  await page.waitForURL('**/inventory');",
               '''  await page.waitForURL('**/inventory');
               assert.equal(await page.locator('script[src*="cdn.tailwindcss.com"]').count(),0,
                 'Inventory must not load remote Tailwind JavaScript');
@@ -127,7 +126,7 @@ jobs:
                 'Compiled inventory utilities must be present');
               assert.equal(await page.locator('#sidebar').evaluate(el=>getComputedStyle(el).display),'flex',
                 'Tailwind utility layout must remain active');
-              assert.equal(await page.title()'''
+              '''
           )
           PY
           git diff --check
