@@ -7,9 +7,9 @@ The website source inspected for this draft is the private `Caffoot/Caffoot-Webs
 ## Keep the two editions unambiguous
 
 - **Published Caffoot Lite v1.3.3:** a standalone HTML application, with browser-local inventory storage and the existing JSON backup/restore workflow. It requires neither Docker nor an account. Keep its [published release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3) available.
-- **Caffoot Lite v2.0 (Docker/SQLite):** currently an **approved release candidate, not yet published**, bringing the familiar inventory screens to a central SQLite database, HTTPS, first-run administrator setup, MFA, account management and section permissions. Its supported JSON import is a **one-way migration from a fresh published v1.3.3 backup**, not an ongoing Docker backup/restore feature.
+- **Caffoot Lite v2.0 (Docker/SQLite):** published as v2.0, with the root-only source layout update planned for v2.0.1, bringing the familiar inventory screens to a central SQLite database, HTTPS, first-run administrator setup, MFA, account management and section permissions. Its supported JSON import is a **one-way migration from a fresh published v1.3.3 backup**, not an ongoing Docker backup/restore feature.
 
-The website currently describes the published HTML edition accurately. **Do not put the release-only wording below on the public site until Stage 8 publication approval.** In particular, do not replace the existing `releases/latest` download link with an unreleased `next-test` image, or turn standalone instructions into Docker instructions without explicitly distinguishing the editions.
+The website currently describes the published HTML edition accurately. **The website publication remains staged on its separate PR until the versioned production image and public access are verified.** In particular, do not replace the existing `releases/latest` download link with an unreleased `next-test` image, or turn standalone instructions into Docker instructions without explicitly distinguishing the editions.
 
 ## Website-ready copy — use only after the Docker edition is released
 
@@ -41,7 +41,7 @@ The website currently describes the published HTML edition accurately. **Do not 
 
 Install the Docker edition using Docker Compose or a Portainer stack, including on a Raspberry Pi 5. Set your HTTPS browser address, server certificate identity and published host port, and preserve the container's `/data` mount for its SQLite database and certificate. On first visit, create your own administrator and complete MFA. There are no preset administrator credentials.
 
-For the exact stack, commands, folder ownership, direct HTTPS certificate trust and reverse-proxy requirements, use the [Docker/Portainer installation guide](../next/README.md). The container listens internally on port `8080`; its host port is configurable. Do not copy example host IP addresses, expose an unreleased test image as production-ready, or suggest plain HTTP upstream.
+For the exact stack, commands, folder ownership, direct HTTPS certificate trust and reverse-proxy requirements, use the [Docker/Portainer installation guide](../INSTALLATION.md). The container listens internally on port `8080`; its host port is configurable. Do not copy example host IP addresses, expose an unreleased test image as production-ready, or suggest plain HTTP upstream.
 
 ### Website migration and backup summary
 
@@ -85,10 +85,10 @@ Do **not** copy the seven detailed guides into the website repository. Link read
 | Preferences and history | [Settings and Change History](How%20To%27s/Features%20and%20Instructions/Settings-and-Change-History.md) |
 | Accounts, roles and MFA | [Users, Permissions and MFA](How%20To%27s/Features%20and%20Instructions/Users-Permissions-and-MFA.md) |
 | Data migration / external backup | [Migration, Backup and Restore](How%20To%27s/Features%20and%20Instructions/Migration-Backup-and-Restore.md) |
-| Docker, Portainer and HTTPS | [Installation guide](../next/README.md) |
+| Docker, Portainer and HTTPS | [Installation guide](../INSTALLATION.md) |
 | Feature overview / downloads | [Repository README](../README.md) |
 
-**Website HTML link destinations while staging on `Next`:** `https://github.com/Caffoot/Caffoot-Lite/blob/Next/docs/How%20To%27s/Features%20and%20Instructions/` followed by the exact guide filename above; the installation destination is `https://github.com/Caffoot/Caffoot-Lite/blob/Next/next/README.md`. These are **development-source** links, not promises about the eventual published branch. At release, check the chosen permanent destinations and verify them before replacing website links. Use `rel="noopener noreferrer"` with any `target="_blank"` links.
+**Website HTML link destinations while staging on `Next`:** `https://github.com/Caffoot/Caffoot-Lite/blob/main/docs/How%20To%27s/Features%20and%20Instructions/` followed by the exact guide filename above; the installation destination is `https://github.com/Caffoot/Caffoot-Lite/blob/Next/INSTALLATION.md`. These are **development-source** links, not promises about the eventual published branch. At release, check the chosen permanent destinations and verify them before replacing website links. Use `rel="noopener noreferrer"` with any `target="_blank"` links.
 
 ## Verified genuine screenshots for the website
 

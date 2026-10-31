@@ -10,7 +10,7 @@ The sign-in screen below is from the actual Docker/SQLite application, shown wit
 
 The Docker application keeps one shared inventory in its central database. Each person uses their own account; an administrator decides which sections that person may read or edit. There is **no public registration**.
 
-1. Install the application and configure its HTTPS address, certificate and persistent data directory using the [Docker/Portainer guide](../../../next/README.md).
+1. Install the application and configure its HTTPS address, certificate and persistent data directory using the [Docker/Portainer guide](../../../INSTALLATION.md).
 2. On a **new database**, open the configured HTTPS address. Set your own first administrator username and password. There is no hard-coded administrator.
 3. Follow the on-screen authenticator setup. Scan the QR code (or enter the displayed secret) into an authenticator app, then confirm the six-digit code.
 4. At the **Sign in** form, enter username and password. Enter an authenticator code when the application requests one. Users without required MFA do not see an unnecessary code field before sign-in.

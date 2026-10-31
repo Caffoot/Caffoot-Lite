@@ -1,10 +1,10 @@
-# Caffoot Lite — Raspberry Pi 5 / Portainer test stack (unreleased).
-# Replace the example address if your Pi uses a different one.
-# If 8443 is already taken, change the host port AND the web address.
+# Caffoot Lite v2.0.1 — Portainer / Docker Compose release stack.
+# Replace the example IP address, port and /data host path for your installation.
+# Pull only after the official v2.0.1 tag and image build are published.
 services:
-  caffoot-next:
-    image: ghcr.io/caffoot/caffoot-lite-next:next-test
-    container_name: caffoot-next
+  caffoot-lite:
+    image: ghcr.io/caffoot/caffoot-lite:v2.0.1
+    container_name: caffoot-lite
     restart: unless-stopped
     environment:
       CAFFOOT_WEB_ADDRESS: "https://10.128.20.3:8443"

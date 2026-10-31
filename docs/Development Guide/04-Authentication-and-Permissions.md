@@ -6,19 +6,19 @@ The first person deploying Caffoot Lite chooses an administrator username and pa
 
 ## Account and sign-in path
 
-- [`accounts.py`](../../next/backend/accounts.py): `bootstrap_first_admin` only works before an account exists; `confirm_admin_mfa` verifies the first authenticator code. Password hashes use PBKDF2-HMAC-SHA256 with a per-password salt and the current source-defined work factor.
-- [`mfa.py`](../../next/backend/mfa.py): new TOTP secret, authenticator provisioning URI, code generation and verification.
-- [`authentication.py`](../../next/backend/authentication.py): validates account credentials and any required authenticator code.
-- [`request_auth.py`](../../next/backend/request_auth.py): `login` applies login throttling; `authenticated_account` and `authorised_mutation` establish the session and mutation boundary.
-- [`sessions.py`](../../next/backend/sessions.py): issues random opaque session tokens, stores **only their hashes** in SQLite and checks expiry/account eligibility. Current `SESSION_SECONDS` is **12 hours**.
-- [`http_security.py`](../../next/backend/http_security.py): a host-only `caffoot_session` cookie with `Secure`, `HttpOnly` and `SameSite=Strict`; same-origin/CSRF checks for modifications.
-- [`server.py`](../../next/backend/server.py): the actual HTTPS routes, response handling and session checks. It does **not** accept arbitrary forwarded headers as the trusted external origin.
+- [`accounts.py`](../../backend/accounts.py): `bootstrap_first_admin` only works before an account exists; `confirm_admin_mfa` verifies the first authenticator code. Password hashes use PBKDF2-HMAC-SHA256 with a per-password salt and the current source-defined work factor.
+- [`mfa.py`](../../backend/mfa.py): new TOTP secret, authenticator provisioning URI, code generation and verification.
+- [`authentication.py`](../../backend/authentication.py): validates account credentials and any required authenticator code.
+- [`request_auth.py`](../../backend/request_auth.py): `login` applies login throttling; `authenticated_account` and `authorised_mutation` establish the session and mutation boundary.
+- [`sessions.py`](../../backend/sessions.py): issues random opaque session tokens, stores **only their hashes** in SQLite and checks expiry/account eligibility. Current `SESSION_SECONDS` is **12 hours**.
+- [`http_security.py`](../../backend/http_security.py): a host-only `caffoot_session` cookie with `Secure`, `HttpOnly` and `SameSite=Strict`; same-origin/CSRF checks for modifications.
+- [`server.py`](../../backend/server.py): the actual HTTPS routes, response handling and session checks. It does **not** accept arbitrary forwarded headers as the trusted external origin.
 
 The configured `CAFFOOT_WEB_ADDRESS` defines the permitted HTTPS origin; altering a frontend control cannot change backend access rights.
 
 ## Roles and permissions
 
-The source of truth for role decisions is [`permissions.py`](../../next/backend/permissions.py).
+The source of truth for role decisions is [`permissions.py`](../../backend/permissions.py).
 
 | Account state | Effective inventory access |
 | --- | --- |
