@@ -1,6 +1,11 @@
 name: Next Docker Compose lifecycle
 
 on:
+  # One-time Stage 8 Docker lifecycle check; restore dispatch-only after verification.
+  push:
+    branches: [Next]
+    paths:
+      - ".github/workflows/next-compose-lifecycle.yml"
   workflow_dispatch:
 
 permissions:
