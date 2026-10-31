@@ -100,6 +100,7 @@ async function run(){
       'This inventory operation is not yet connected to SQLite.');
   }
   await page.locator('#sidebar [data-action="tab-audit"]').click();
+  await page.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='Change History & Data Safety');
   assert.ok(await page.locator('#main-content > div.w-full').isVisible(),
     'Change History should fill the inventory workspace');
   await page.locator('#sidebar [data-action="tab-users"]').click();
