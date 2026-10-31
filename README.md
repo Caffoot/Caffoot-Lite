@@ -76,4 +76,4 @@ Back up and restore that persistent data with **external container, volume or fi
 - [Approved Docker edition specification — #215](https://github.com/Caffoot/Caffoot-Lite/issues/215)
 - [Release preparation and acceptance — #218](https://github.com/Caffoot/Caffoot-Lite/issues/218)
 
-The Docker edition has **not** been merged, versioned or released. Documentation, screenshot verification and approved repository cleanup are complete; website preparation, proportionate security review and explicit product-owner release approval remain.
+The Docker edition has **not** been merged, versioned or released. Documentation, screenshots, approved repository cleanup, website-material preparation and the proportionate security review are complete. Final release-candidate verification and explicit product-owner approval remain; nothing has been merged, versioned, tagged or published.

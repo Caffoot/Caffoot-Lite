@@ -113,5 +113,5 @@ All nine source images were captured from the real Docker/SQLite app with fictio
 3. Distinguish standalone/browser JSON backups from Docker/external SQLite backups in **all affected** feature pages, FAQ, hero text, screenshots and metadata. Do not simply globally replace “HTML” with “Docker”.
 4. Remove retired-product marketing from the existing website's creator description, FAQ, editions panel and informational metadata. Do not invent a replacement product.
 5. Recheck the final accessible website links, image descriptions, mobile/desktop presentation and published text **after** a separately approved website update. This draft is not evidence of live-site rendering or launch.
-6. Stage 7 remains the separate approved proportionate security review; Stage 8 remains the explicit product-owner release and website-publication approval.
+6. Stage 7's proportionate security review has been completed and recorded in #218. Stage 8 remains the explicit product-owner release and website-publication approval.
 
