@@ -9301,6 +9301,8 @@ window.addEventListener('load', async () => {
     if (action === 'import-file' || action === 'next-import-pick')
       return !nextImportAllowed;
     if (readOnlyActions.has(action)) return false;
+    if (['open-device-modal','duplicate-device','duplicate-device-from-details'].includes(action))
+      return !(editPermissions.Devices && editPermissions.IPAM);
     if (action === 'open-subnet-modal') return !editPermissions.IPAM;
     if (action === 'check-inventory-safety')
       return !['Devices','IPAM','Racks'].every(section => permissions[section]);
@@ -9496,12 +9498,10 @@ window.addEventListener('load', async () => {
       if (button) button.hidden = true;
     }
     if (!editPermissions.Racks) {
-      if (deviceId) {
-        form.dataset.racksReadOnly = 'true';
-        for (const id of ['dev-rack-id','dev-rack-face','dev-rack-u','dev-rack-height']) {
-          const field = document.getElementById(id);
-          if (field) field.disabled = true;
-        }
+      if (deviceId) form.dataset.racksReadOnly = 'true';
+      for (const id of ['dev-rack-id','dev-rack-face','dev-rack-u','dev-rack-height']) {
+        const field = document.getElementById(id);
+        if (field) field.disabled = true;
       }
       const button = form.querySelector('[data-action="create-rack-from-device"]');
       if (button) button.hidden = true;
