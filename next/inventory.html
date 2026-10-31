@@ -7508,6 +7508,9 @@ function hierarchyValidateTypes(subnets) {
             const type = document.getElementById('dev-type').value;
             const isVirtualServer = isVirtualDeviceForm();
             const originalDevice = deviceId ? getDeviceById(deviceId) : null;
+            const formPermissions = document.querySelector('[data-device-form="true"]')?.dataset || {};
+            const ipamReadOnly = !!originalDevice && formPermissions.ipamReadOnly === 'true';
+            const racksReadOnly = !!originalDevice && formPermissions.racksReadOnly === 'true';
             if (deviceId && !originalDevice) return showToast('Device no longer exists.', 'error');
             if (originalDevice && (type !== originalDevice.type || isVirtualServer !== (originalDevice.isVirtual === true || originalDevice.type === 'Server - Virtual'))) return showToast('Device identity cannot be changed. Create a new device instead.', 'error');
             if (isVirtualServer && !['Server - Virtual','Desktop','Firewall','Router','NAS','Wireless LAN Controller'].includes(type)) return showToast('Select a valid VM purpose.', 'error');
@@ -7515,15 +7518,17 @@ function hierarchyValidateTypes(subnets) {
             const selectedHost = appState.devices.find(d => d.id === selectedHostId);
             // Physical placement is owned by the host, not by an individual VM.
             // Keep legacy location when its host no longer exists.
-            const mountType = isVirtualServer ? 'Not Applicable' : document.getElementById('dev-mount-type').value;
+            const mountType = isVirtualServer ? 'Not Applicable' :
+                racksReadOnly && (originalDevice.rackId || originalDevice.mountType === 'Rack Mounted')
+                    ? originalDevice.mountType : document.getElementById('dev-mount-type').value;
             const location = isVirtualServer ? (selectedHost?.location || getDeviceById(deviceId)?.location || 'Unknown') : document.getElementById('dev-location').value;
             if (location === '__caffoot_create_location__') {
                 showToast('Add or cancel the new location before saving this device.', 'error');
                 return;
             }
-            const subnetId = document.getElementById('dev-subnet').value;
-            const primaryIp = document.getElementById('dev-ip').value.trim();
-            const ipReserved = document.getElementById('dev-ip-reserved').checked;
+            const primaryIp = ipamReadOnly ? originalDevice.primaryIp : document.getElementById('dev-ip').value.trim();
+            const subnetId = ipamReadOnly ? (getSubnetForIp(primaryIp)?.id || '') : document.getElementById('dev-subnet').value;
+            const ipReserved = ipamReadOnly ? originalDevice.ipReserved : document.getElementById('dev-ip-reserved').checked;
             const status = document.getElementById('dev-status').value;
             const manufacturer = document.getElementById('dev-manufacturer').value.trim();
             const model = document.getElementById('dev-model').value.trim();
@@ -7572,7 +7577,7 @@ function hierarchyValidateTypes(subnets) {
             if (!subnet || !matchingSubnet || matchingSubnet.id !== subnet.id) return showToast('The primary IP must belong to the selected existing subnet.', 'error');
             if (findDeviceUsingIp(primaryIp, deviceId)) return showToast(`IP address ${primaryIp} is already assigned to another device.`, 'error');
             let rackId = '', face = 'front', rackUStart = null, rackUEnd = null, rackUHeight = null;
-            if (mountType === 'Rack Mounted') {
+            if (mountType === 'Rack Mounted' && !racksReadOnly) {
                 if (!location || location === 'Racked') return showToast('Select a physical Location Area or Unknown.', 'error');
                 rackId = document.getElementById('dev-rack-id').value; face = document.getElementById('dev-rack-face').value;
                 rackUStart = parseInt(document.getElementById('dev-rack-u').value, 10); rackUHeight = parseInt(document.getElementById('dev-rack-height').value, 10);
@@ -7580,6 +7585,13 @@ function hierarchyValidateTypes(subnets) {
                 rackUEnd = rackUStart + rackUHeight - 1;
                 const validationError = validateRackPlacement(deviceId, rackId, face, rackUStart, rackUEnd);
                 if (validationError) return showToast(validationError, 'error');
+            }
+            if (racksReadOnly) {
+                rackId = originalDevice.rackId ?? '';
+                face = originalDevice.face ?? null;
+                rackUStart = originalDevice.rackUStart ?? null;
+                rackUEnd = originalDevice.rackUEnd ?? null;
+                rackUHeight = originalDevice.rackUHeight ?? null;
             }
             const existingDevice = deviceId ? getDeviceById(deviceId) : null;
             // host retirement and loss of Hypervisor eligibility
@@ -9469,13 +9481,58 @@ window.addEventListener('load', async () => {
     applyAllowedControls();
   };
   const originalOpenDeviceModal = openDeviceModal;
+  function applyDeviceFormSectionPermissions(deviceId) {
+    const form = document.querySelector('#modal-content form[data-device-form="true"]');
+    if (!form) return;
+    if (!editPermissions.IPAM) {
+      if (deviceId) {
+        form.dataset.ipamReadOnly = 'true';
+        for (const id of ['dev-block','dev-vlan','dev-subnet','dev-ip','dev-ip-available','dev-ip-reserved']) {
+          const field = document.getElementById(id);
+          if (field) field.disabled = true;
+        }
+      }
+      const button = form.querySelector('[data-action="create-subnet-from-device"]');
+      if (button) button.hidden = true;
+    }
+    if (!editPermissions.Racks) {
+      if (deviceId) {
+        form.dataset.racksReadOnly = 'true';
+        for (const id of ['dev-rack-id','dev-rack-face','dev-rack-u','dev-rack-height']) {
+          const field = document.getElementById(id);
+          if (field) field.disabled = true;
+        }
+      }
+      const button = form.querySelector('[data-action="create-rack-from-device"]');
+      if (button) button.hidden = true;
+      const mount = document.getElementById('dev-mount-type');
+      const existing = deviceId ? appState.devices.find(device => device.id === deviceId) : null;
+      if (mount && existing && (existing.rackId || existing.mountType === 'Rack Mounted')) {
+        mount.disabled = true;
+      } else if (mount) {
+        // Keep non-rack mounting choices editable without granting rack placement.
+        const forbidRackMount = () => {
+          for (const option of mount.options) {
+            if (option.value === 'Rack Mounted') option.disabled = true;
+          }
+        };
+        forbidRackMount();
+        new MutationObserver(forbidRackMount).observe(mount,{childList:true});
+      }
+    }
+  }
   openDeviceModal = function(deviceId = null) {
     if (!editPermissions.Devices) {
       showToast('Devices edit permission required.', 'error');
       return;
     }
     if (!deviceId) {
+      if (!editPermissions.IPAM) {
+        showToast('Devices and IPAM edit permission required to add a device.', 'error');
+        return;
+      }
       originalOpenDeviceModal(null);
+      applyDeviceFormSectionPermissions(null);
       return;
     }
     (async () => {
@@ -9490,6 +9547,7 @@ window.addEventListener('load', async () => {
         if (!appState.devices.some(device=>device.id===deviceId))
           throw new Error('Device no longer exists.');
         originalOpenDeviceModal(deviceId);
+        applyDeviceFormSectionPermissions(deviceId);
       } catch (error) {
         if (activeEdit && activeEdit.deviceId===deviceId) {
           await postInventory('/api/devices/edit/cancel', {deviceId}).catch(()=>{});

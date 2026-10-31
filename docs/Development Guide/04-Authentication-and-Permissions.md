@@ -29,7 +29,7 @@ The source of truth for role decisions is [`permissions.py`](../../next/backend/
 | Administrator or editor without completed MFA | Cannot exercise privileged access until MFA requirements are met |
 | Inactive account | No inventory access |
 
-Section grants are stored for `Devices`, `IPAM` and `Racks`. The backend checks the right for the **specific operation**, including cross-section dependencies. For example, a Racks editor may update rack placement but cannot change unrelated device fields through that permission. The read-only/mixed-permission UI hides irrelevant modification controls without replacing backend checks.
+Section grants are stored for `Devices`, `IPAM` and `Racks`. The backend checks the right for the **specific operation**, including cross-section dependencies. Ordinary device properties require Devices Edit; changing a primary IP or its reservation requires IPAM Edit; changing rack/U placement or rack mounting requires Racks Edit. Adding a device requires Devices Edit **and** IPAM Edit, plus Racks Edit if rack-mounted. A Racks-only editor may move a device but not change its unrelated properties, and an IPAM-only editor cannot bypass Devices permissions through the shared save API. The mixed-permission Device form shows IP/rack fields read-only when the respective rights are absent; the backend independently enforces these boundaries.
 
 Only administrators can manage other users. The code prevents administrators from deleting, disabling or demoting themselves and protects the last active administrator. Granting Edit or Administrator status requires the recipient's MFA enrolment. Session rows are cleared after relevant security-sensitive account changes.
 

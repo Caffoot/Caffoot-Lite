@@ -263,6 +263,48 @@ class ReservedDeviceSaveTests(unittest.TestCase):
         self.assertEqual(actual["rackId"], "r1")
 
 
+    def test_devices_only_editor_can_rename_without_ipam_or_racks_edit(self):
+        with patch("backend.device_saves.can_access",
+                   side_effect=lambda _c, _a, section, edit=False: section == "Devices"):
+            self.assertEqual(save_reserved_device(
+                self.db, 1, "d1", 0, dict(self.original, name="Renamed")
+            ), 1)
+
+    def test_devices_only_editor_cannot_change_primary_ip_or_reservation(self):
+        before = self.snapshot()
+        with patch("backend.device_saves.can_access",
+                   side_effect=lambda _c, _a, section, edit=False: section == "Devices"):
+            for updated in (dict(self.original, primaryIp="10.0.0.12"),
+                            dict(self.original, ipReserved=True)):
+                with self.assertRaisesRegex(PermissionError, "IPAM edit"):
+                    save_reserved_device(self.db, 1, "d1", 0, updated)
+        self.assertEqual(self.snapshot(), before)
+
+    def test_devices_only_editor_cannot_move_or_unmount_a_racked_device(self):
+        before = self.snapshot()
+        with patch("backend.device_saves.can_access",
+                   side_effect=lambda _c, _a, section, edit=False: section == "Devices"):
+            for updated in (dict(self.original, rackUStart=2, rackUEnd=2),
+                            dict(self.original, rackId="", mountType="Desktop")):
+                with self.assertRaisesRegex(PermissionError, "Racks edit"):
+                    save_reserved_device(self.db, 1, "d1", 0, updated)
+        self.assertEqual(self.snapshot(), before)
+
+    def test_ipam_only_save_cannot_modify_unrelated_device_details(self):
+        before = self.snapshot()
+        with patch("backend.device_saves.can_access",
+                   side_effect=lambda _c, _a, section, edit=False: section == "IPAM"):
+            with self.assertRaisesRegex(PermissionError, "IPAM edit permission allows"):
+                save_reserved_device(self.db, 1, "d1", 0,
+                    dict(self.original, name="Unauthorised"), section="IPAM")
+            self.assertEqual(save_reserved_device(self.db, 1, "d1", 0,
+                dict(self.original, primaryIp="10.0.0.12"), section="IPAM"), 1)
+        self.assertEqual(self.db.execute(
+            "SELECT name FROM inventory_devices WHERE id='d1'"
+        ).fetchone()[0], "One")
+        self.assertNotEqual(self.snapshot(), before)
+
+
 if __name__ == "__main__":
     unittest.main()
 
@@ -349,6 +391,31 @@ class CreateDeviceTests(unittest.TestCase):
         self.assertEqual(self.db.execute(
             "SELECT COUNT(*) FROM inventory_devices"
         ).fetchone()[0], 0)
+
+    def test_add_requires_devices_and_ipam_edit(self):
+        with patch("backend.device_saves.can_access",
+                   side_effect=lambda _c, _a, section, edit=False: section == "Devices"):
+            with self.assertRaisesRegex(PermissionError, "IPAM edit"):
+                create_device(self.db, 1, self.record)
+        self.assertEqual(self.db.execute(
+            "SELECT COUNT(*) FROM inventory_devices"
+        ).fetchone()[0], 0)
+
+    def test_add_rack_mounted_requires_racks_edit_too(self):
+        self.db.execute(
+            "INSERT INTO inventory_racks(id,record_json,ordinal) VALUES(?,?,?)",
+            ("r1", json.dumps({"id": "r1", "name": "Rack", "heightU": 12}), 0)
+        )
+        self.db.commit()
+        mounted = dict(self.record, rackId="r1", mountType="Rack Mounted",
+                       face="front", rackUStart=1, rackUEnd=1, rackUHeight=1)
+        with patch("backend.device_saves.can_access",
+                   side_effect=lambda _c, _a, section, edit=False:
+                   section in ("Devices", "IPAM")):
+            with self.assertRaisesRegex(PermissionError, "Racks edit"):
+                create_device(self.db, 1, mounted)
+            self.assertEqual(create_device(self.db, 1, self.record), 0)
+
 
 class DeleteReservedDeviceTests(ReservedDeviceSaveTests):
     def delete(self, revision=0):

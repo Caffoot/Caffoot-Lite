@@ -121,11 +121,26 @@ def save_reserved_device(connection, account_id, device_id, revision, record, se
             raise ValueError("Device has changed since editing began")
         candidate = reconstruct_inventory(connection)
         previous = next(device for device in candidate["devices"] if device["id"] == device_id)
+        changed = {key for key in set(previous) | set(record)
+                   if previous.get(key) != record.get(key)}
         if section == "Racks":
-            changed = {key for key in set(previous) | set(record)
-                       if previous.get(key) != record.get(key)}
             if not changed.issubset(_RACK_PLACEMENT_FIELDS):
                 raise PermissionError("Racks edit permission allows rack placement changes only")
+        elif section == "IPAM":
+            if not changed.issubset({"primaryIp", "ipReserved"}):
+                raise PermissionError("IPAM edit permission allows IP assignments only")
+        else:
+            if (changed.intersection({"primaryIp", "ipReserved"}) and
+                    not can_access(connection, account_id, "IPAM", edit=True)):
+                raise PermissionError("IPAM edit permission required for IP assignment changes")
+            rack_placement_changed = bool(changed.intersection(
+                _RACK_PLACEMENT_FIELDS - {"mountType"}
+            )) or ("mountType" in changed and "Rack Mounted" in (
+                previous.get("mountType"), record.get("mountType")
+            ))
+            if (rack_placement_changed and
+                    not can_access(connection, account_id, "Racks", edit=True)):
+                raise PermissionError("Racks edit permission required for rack placement changes")
         candidate["devices"] = [record if device["id"] == device_id else device
                                 for device in candidate["devices"]]
         if related_devices and not can_access(connection, account_id, "Devices", edit=True):
@@ -218,10 +233,16 @@ def create_device(connection, account_id, record):
     """Create a published-shape device with its IPAM allocation atomically."""
     if not can_access(connection, account_id, "Devices", edit=True):
         raise PermissionError("Devices edit permission required")
+    if not can_access(connection, account_id, "IPAM", edit=True):
+        raise PermissionError("IPAM edit permission required to add a device")
     if (not isinstance(record, dict) or not isinstance(record.get("id"), str)
             or not record["id"] or not isinstance(record.get("name"), str)
             or not record["name"].strip()):
         raise ValueError("Invalid device")
+    if (record.get("rackId") or record.get("mountType") == "Rack Mounted") and not can_access(
+        connection, account_id, "Racks", edit=True
+    ):
+        raise PermissionError("Racks edit permission required to add a rack-mounted device")
     connection.execute("BEGIN IMMEDIATE")
     try:
         candidate = reconstruct_inventory(connection)
