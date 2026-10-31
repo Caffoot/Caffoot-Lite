@@ -1,4 +1,4 @@
-# Approved #215 section 24: disposable browser capture for release user guides.
+# Approved #215 section 24: disposable browser capture for release user guides; wait for rendered panels.
 name: Next documentation screenshots
 
 on:
