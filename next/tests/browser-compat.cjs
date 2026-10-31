@@ -203,6 +203,11 @@ async function run(){
 
   await modal(page,'openRackModal');
   await page.locator('#rack-name').fill('Lab Rack');
+  if(process.env.CAFFOOT_DOC_SCREENSHOTS==='1'){
+    await page.locator('#rack-height').selectOption('custom');
+    await page.locator('#rack-height-custom').fill('12');
+    await page.locator('#rack-location').fill('Lab Room');
+  }
   await page.locator('form[data-form-action="rack"] button[type="submit"]').click();
   await persisted(page,s=>s.racks.some(x=>x.name==='Lab Rack'),'Rack');
   await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
@@ -371,6 +376,22 @@ async function run(){
   assert.equal(rackSaved.rackAccessories.length,2);
   console.log('Rack device placement, patch panel and vertical PDU persisted after reload');
   if(process.env.CAFFOOT_DOC_SCREENSHOTS==='1'){
+    // Test the dependency-deletion path above as normal, then use tidy fictional records in public images.
+    await modal(page,'openManageLocationsModal');
+    await page.locator('#device-catalogue-new-entry-input').fill('Lab Room');
+    await page.locator('[data-action="add-device-type-or-location"][data-kind="location"]').click();
+    await persisted(page,state=>state.settings.deviceLocations?.includes('Lab Room'),'Screenshot location');
+    await page.waitForFunction(()=>document.getElementById('toast-message')?.textContent.includes('Location added successfully.'));
+    await page.evaluate(()=>closeModal(true));
+    for(const sample of [device,rackSwitch]){
+      await page.evaluate(id=>openDeviceModal(id),sample.id);
+      await page.locator('#dev-location').waitFor();
+      await page.locator('#dev-location').selectOption('Lab Room');
+      await page.locator('form[data-device-form="true"] button[type="submit"]').click();
+      await persisted(page,state=>state.devices.some(d=>d.id===sample.id&&d.location==='Lab Room'),
+        'Screenshot device location');
+      await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
+    }
     await page.locator('#sidebar [data-action="tab-dashboard"]').click();
     await page.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='Dashboard Overview');
     await page.locator('#dashboard-tab-insights').click();
@@ -391,6 +412,7 @@ async function run(){
     await documentationScreenshot(page,'ipam-addresses','#main-content');
     await page.locator('#sidebar [data-action="tab-racks"]').click();
     await page.locator('#racks-sidebar-actions [data-action="sidebar-racks-inventory"]').click();
+    await page.locator('[data-action="v13-open-rack"][data-id="'+rackId+'"]').first().click();
     await page.locator('#v13-rack-detail-select').waitFor();
     await documentationScreenshot(page,'racks','#main-content');
     await page.locator('#sidebar #next-account-nav').click();
