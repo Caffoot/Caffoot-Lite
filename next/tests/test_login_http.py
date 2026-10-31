@@ -73,6 +73,27 @@ class LoginHttpTests(unittest.TestCase):
         self.assertEqual(resumed["mfaSecret"], created["mfaSecret"])
         self.assertEqual(resumed["mfaUri"], created["mfaUri"])
 
+    def test_pending_admin_secret_recovery_is_throttled(self):
+        with sqlite3.connect(self.path) as db:
+            db.execute("DELETE FROM accounts")
+            bootstrap_first_admin(db, "pending-throttle-owner", "correct-password")
+        headers = {"Origin": ORIGIN, "Content-Type": "application/json"}
+        for _ in range(5):
+            status, response, _ = self.request(
+                "POST", "/api/setup/mfa-secret",
+                {"username": "pending-throttle-owner", "password": "incorrect"},
+                headers,
+            )
+            self.assertEqual(status, 400)
+            self.assertNotIn("mfaSecret", response)
+        status, response, _ = self.request(
+            "POST", "/api/setup/mfa-secret",
+            {"username": "pending-throttle-owner", "password": "correct-password"},
+            headers,
+        )
+        self.assertEqual(status, 400)
+        self.assertNotIn("mfaSecret", response)
+
     def test_login_session_logout(self):
         headers = {"Origin": ORIGIN, "Content-Type": "application/json"}
         status, _, cookie = self.request(

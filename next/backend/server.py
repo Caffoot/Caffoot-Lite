@@ -22,7 +22,7 @@ from .mfa import new_secret, provisioning_uri, verify_code
 from .import_drafts import ImportDrafts
 from .request_auth import authenticated_account, csrf_for_session
 from .http_security import read_session_cookie, session_cookie, clear_session_cookie
-from .request_auth import login, logout
+from .request_auth import login, logout, THROTTLE
 from .permissions import (can_access, create_user, set_permission,
                           set_account_active, set_administrator, delete_user)
 from .request_auth import authorised_mutation
@@ -80,6 +80,13 @@ def initialise_database():
 
 
 class Handler(BaseHTTPRequestHandler):
+    def end_headers(self):
+        # Block framing without restricting the established inline inventory scripts.
+        self.send_header("X-Frame-Options", "DENY")
+        self.send_header("Content-Security-Policy", "frame-ancestors 'none'")
+        self.send_header("Referrer-Policy", "no-referrer")
+        super().end_headers()
+
     def do_GET(self):
         if self.path.startswith("/assets/") and self.path[8:] in PUBLIC_ASSETS:
             name = self.path[8:]
@@ -394,6 +401,13 @@ class Handler(BaseHTTPRequestHandler):
             if set(payload) - ({"username", "password"} if self.path == "/api/setup" else {"username", "password", "mfa_code"} if self.path == "/api/setup/mfa" else {"username", "password"}):
                 self.respond(400, {"error": "unexpected setup fields"})
                 return
+            # Pending administrator password/MFA checks are public until first setup finishes.
+            # Apply the existing per-peer/account throttle to these credential proofs too.
+            if self.path != "/api/setup" and not THROTTLE.allowed(
+                self.client_address[0], payload["username"]
+            ):
+                self.respond(400, {"error": "Invalid administrator credentials"})
+                return
             with connect() as connection:
                 try:
                     if self.path == "/api/setup":
@@ -409,15 +423,22 @@ class Handler(BaseHTTPRequestHandler):
                             (payload["username"],)
                         ).fetchone()
                         if row is None or not verify_password(payload["password"], row[1]):
+                            THROTTLE.failed(self.client_address[0], payload["username"])
                             raise ValueError("Invalid administrator credentials")
                         if self.path == "/api/setup/mfa-secret":
                             pending = connection.execute("SELECT mfa_secret FROM accounts WHERE id=? AND mfa_confirmed=0", (row[0],)).fetchone()
                             if pending is None:
                                 raise ValueError("MFA already enrolled")
+                            THROTTLE.succeeded(self.client_address[0], payload["username"])
                             self.respond(200, {"mfaSecret": pending[0],
                                                "mfaUri": provisioning_uri(row[2], pending[0])})
                         else:
-                            confirm_admin_mfa(connection, row[0], payload.get("mfa_code"))
+                            try:
+                                confirm_admin_mfa(connection, row[0], payload.get("mfa_code"))
+                            except ValueError:
+                                THROTTLE.failed(self.client_address[0], payload["username"])
+                                raise
+                            THROTTLE.succeeded(self.client_address[0], payload["username"])
                             self.respond(200, {"status": "mfa enrolled"})
                 except ValueError as exc:
                     self.respond(400, {"error": str(exc)})

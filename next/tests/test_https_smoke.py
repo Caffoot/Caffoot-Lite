@@ -35,7 +35,18 @@ class HttpsSmokeTests(unittest.TestCase):
                         client.request("GET", "/health")
                         response = client.getresponse()
                         self.assertEqual(response.status, 200)
+                        self.assertEqual(response.getheader("X-Frame-Options"), "DENY")
+                        self.assertEqual(response.getheader("Content-Security-Policy"),
+                                         "frame-ancestors 'none'")
+                        self.assertEqual(response.getheader("Referrer-Policy"), "no-referrer")
                         self.assertIn(b'"ok"', response.read())
+                        client.request("GET", "/setup")
+                        setup = client.getresponse()
+                        self.assertEqual(setup.status, 200)
+                        self.assertEqual(setup.getheader("X-Frame-Options"), "DENY")
+                        self.assertEqual(setup.getheader("Content-Security-Policy"),
+                                         "frame-ancestors 'none'")
+                        self.assertIn(b"Caffoot Lite", setup.read())
                     finally:
                         client.close()
                     with self.assertRaises((ConnectionError, OSError, TimeoutError,
