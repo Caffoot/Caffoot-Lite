@@ -8,15 +8,15 @@ Before changing Caffoot Lite, identify the existing behaviour that must remain i
 
 | Source | Purpose |
 | --- | --- |
-| [`next/tests/`](../../next/tests/) | Python unit checks for schema, users, sessions, access, imports, device/IPAM/rack operations and validation |
-| [`next/tests/browser-compat.cjs`](../../next/tests/browser-compat.cjs) | Chromium/Playwright checks of approved browser workflows |
-| [`next/tests/test_compose_lifecycle.py`](../../next/tests/test_compose_lifecycle.py) | Optional Docker lifecycle test for port and persistent database/certificate |
-| [`app/`](../../app/) | Original HTML application's code and tests |
+| [`tests/`](../../tests/) | Python unit checks for schema, users, sessions, access, imports, device/IPAM/rack operations and validation |
+| [`tests/browser-compat.cjs`](../../tests/browser-compat.cjs) | Chromium/Playwright checks of approved browser workflows |
+| [`tests/test_compose_lifecycle.py`](../../tests/test_compose_lifecycle.py) | Optional Docker lifecycle test for port and persistent database/certificate |
+| [`app/` at the published v1.3.3 tag](https://github.com/Caffoot/Caffoot-Lite/tree/v1.3.3/app) | Original HTML application's historical source and tests, excluded from v2.0.1 |
 | [Published v1.3.3 source and tests](https://github.com/Caffoot/Caffoot-Lite/tree/v1.3.3/app) | Authoritative published inventory compatibility baseline; check later fixes before using older audit findings |
 
 ## Archived audit and migration evidence
 
-The 25 earlier audit, workflow, test-matrix and draft migration documents are accessible in the [pre-cleanup Git snapshot](https://github.com/Caffoot/Caffoot-Lite/tree/049262f196be494074f698a72f377153f202171b/docs/required-only). They document historical observations and test provenance from v1.3.0 through v1.3.3, including subsequent fixes. Use published [v1.3.3 source/tests](https://github.com/Caffoot/Caffoot-Lite/tree/v1.3.3/app), current [Next tests](../../next/tests/) and actual [GitHub Actions results](https://github.com/Caffoot/Caffoot-Lite/actions) to decide whether an old finding still applies. Proposed tests in the archive are not automatically executed or requirements.
+The 25 earlier audit, workflow, test-matrix and draft migration documents are accessible in the [pre-cleanup Git snapshot](https://github.com/Caffoot/Caffoot-Lite/tree/049262f196be494074f698a72f377153f202171b/docs/required-only). They document historical observations and test provenance from v1.3.0 through v1.3.3, including subsequent fixes. Use published [v1.3.3 source/tests](https://github.com/Caffoot/Caffoot-Lite/tree/v1.3.3/app), current [Next tests](../../tests/) and actual [GitHub Actions results](https://github.com/Caffoot/Caffoot-Lite/actions) to decide whether an old finding still applies. Proposed tests in the archive are not automatically executed or requirements.
 
 ## GitHub Actions
 

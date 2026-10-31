@@ -26,11 +26,11 @@ The source of truth is the published v1.3.3 tag and the current Docker source/te
 
 ### Preserved data contracts — carried forward from source review
 
-The published v1.3.3 export and the current [SQLite projection](../../next/backend/inventory.py) use the inventory collections `devices`, `subnets`, `vlans`, `racks`, `rackAccessories` and `ipAllocations`. The backend's `SETTINGS` fields include `deviceTypes`, `deviceTypeGraphics`, `deviceLocations`, `serverFunctions`, `installedSoftware`, `managedOptionsCleared`, `stateVersion`, `hardwareCatalogue`, `hardwareSeedPreferences` and `softwareTypeExclusions`. These and unknown supported historical/custom values must not be silently dropped.
+The published v1.3.3 export and the current [SQLite projection](../../backend/inventory.py) use the inventory collections `devices`, `subnets`, `vlans`, `racks`, `rackAccessories` and `ipAllocations`. The backend's `SETTINGS` fields include `deviceTypes`, `deviceTypeGraphics`, `deviceLocations`, `serverFunctions`, `installedSoftware`, `managedOptionsCleared`, `stateVersion`, `hardwareCatalogue`, `hardwareSeedPreferences` and `softwareTypeExclusions`. These and unknown supported historical/custom values must not be silently dropped.
 
 Device records may carry `typeDetails`, `virtualHostId`, `primaryIp`, mounting/location fields and other optional historical properties. The exact available fields and relationships come from the published application and its current validators, not a fixed list in this guide. Importing retains the existing Access Point and legacy mounting reviews when triggered by the supplied v1.3.3 export, without adding support for older direct imports.
 
-Source-shaped records are reconstructed by [`inventory.reconstruct_inventory`](../../next/backend/inventory.py) for compatibility checks and display. Core authoritative data remains divided across SQLite tables; save modules must keep linked IP/rack outcomes consistent. See [database ownership](02-Database.md).
+Source-shaped records are reconstructed by [`inventory.reconstruct_inventory`](../../backend/inventory.py) for compatibility checks and display. Core authoritative data remains divided across SQLite tables; save modules must keep linked IP/rack outcomes consistent. See [database ownership](02-Database.md).
 
 ## Supported one-way import
 
@@ -38,12 +38,12 @@ The **only supported source** is a fresh JSON inventory export from the publishe
 
 The implemented route chain is:
 
-1. `server.Handler.handle_import` receives `/api/import/preview`, checks a logged-in administrator and forwards to [`ImportDrafts.begin`](../../next/backend/import_drafts.py).
-2. [`inventory.inspect_export`](../../next/backend/inventory.py) checks the JSON and published-export metadata. Metadata is a **format gate**, not cryptographic proof of where a file originated.
-3. [`import_review.prepare_published_export_review`](../../next/backend/import_review.py) preserves the existing Access Point mounting review *before* the remaining detached normalisation, legacy mounting review and integrity checks.
-4. [`import_service.preview_published_export`](../../next/backend/import_service.py) produces a non-persistent preview and replacement counts when the review is ready. The server retains original file bytes in a **short-lived in-memory draft** tied to the session; the UI cannot submit its own candidate inventory for saving.
+1. `server.Handler.handle_import` receives `/api/import/preview`, checks a logged-in administrator and forwards to [`ImportDrafts.begin`](../../backend/import_drafts.py).
+2. [`inventory.inspect_export`](../../backend/inventory.py) checks the JSON and published-export metadata. Metadata is a **format gate**, not cryptographic proof of where a file originated.
+3. [`import_review.prepare_published_export_review`](../../backend/import_review.py) preserves the existing Access Point mounting review *before* the remaining detached normalisation, legacy mounting review and integrity checks.
+4. [`import_service.preview_published_export`](../../backend/import_service.py) produces a non-persistent preview and replacement counts when the review is ready. The server retains original file bytes in a **short-lived in-memory draft** tied to the session; the UI cannot submit its own candidate inventory for saving.
 5. `/api/import/access-point-choices` collects any required Access Point corrections. `/api/import/cancel` discards the draft without replacing inventory.
-6. `/api/import/confirm` requires the documented reviews and explicit replacement confirmation. [`import_service.replace_from_published_export`](../../next/backend/import_service.py) re-derives and validates the candidate, checks permission again inside the database write transaction, and calls [`inventory.stage_inventory`](../../next/backend/inventory.py).
+6. `/api/import/confirm` requires the documented reviews and explicit replacement confirmation. [`import_service.replace_from_published_export`](../../backend/import_service.py) re-derives and validates the candidate, checks permission again inside the database write transaction, and calls [`inventory.stage_inventory`](../../backend/inventory.py).
 7. The transaction replaces inventory-only tables and either commits or rolls back. It does **not** overwrite accounts, passwords, MFA, permissions or sessions.
 
 The server's `/api/import/*` routes are **live**. Several module docstrings still say “offline only” because they describe an earlier checkpoint; always check the current handler and tests rather than repeating that obsolete status. Avoid changing those modules as part of documentation work.

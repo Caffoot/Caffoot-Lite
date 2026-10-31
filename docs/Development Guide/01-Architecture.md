@@ -8,13 +8,13 @@ The Docker version of Caffoot Lite is a small web application, not a collection 
 
 | Part | Source | Responsibility |
 | --- | --- | --- |
-| Container image | [`next/Dockerfile`](../../next/Dockerfile) | Python 3.12 Alpine image, copies the backend, browser pages and selected assets; runs as UID/GID 10001 |
-| Local build/Compose | [`next/compose.yaml`](../../next/compose.yaml) | Builds the application, maps a configurable host port and mounts persistent `/data` |
-| Portainer test deployment | [`next/portainer-stack.yaml`](../../next/portainer-stack.yaml) | Uses the prebuilt, **unreleased** multi-architecture test image |
-| HTTP/HTTPS server | [`next/backend/server.py`](../../next/backend/server.py) | Python standard-library `ThreadingHTTPServer`, route dispatch, SQLite connections |
-| Pages | [`next/setup.html`](../../next/setup.html) and [`next/inventory.html`](../../next/inventory.html) | Account setup/sign-in and familiar inventory screens |
-| Backend domain modules | [`next/backend/`](../../next/backend/) | Authentication, authorisation, inventory operations, validation and import |
-| Durable storage | [`next/backend/schema.py`](../../next/backend/schema.py) | SQLite tables under the persistent mount |
+| Container image | [`Dockerfile`](../../Dockerfile) | Python 3.12 Alpine image, copies the backend, browser pages and selected assets; runs as UID/GID 10001 |
+| Local build/Compose | [`compose.yaml`](../../compose.yaml) | Builds the application, maps a configurable host port and mounts persistent `/data` |
+| Portainer test deployment | [`portainer-v2.0.1.yaml`](../../portainer-stack.yaml) | Uses the prebuilt, **unreleased** multi-architecture test image |
+| HTTP/HTTPS server | [`backend/server.py`](../../backend/server.py) | Python standard-library `ThreadingHTTPServer`, route dispatch, SQLite connections |
+| Pages | [`setup.html`](../../setup.html) and [`inventory.html`](../../inventory.html) | Account setup/sign-in and familiar inventory screens |
+| Backend domain modules | [`backend/`](../../backend/) | Authentication, authorisation, inventory operations, validation and import |
+| Durable storage | [`backend/schema.py`](../../backend/schema.py) | SQLite tables under the persistent mount |
 
 The server listens on **HTTPS on internal port 8080**. `CAFFOOT_PORT` controls the **host-published port** in the Compose/Portainer deployment. They are different settings.
 
@@ -37,7 +37,7 @@ The browser still maintains temporary display/form state and personal appearance
 - `CAFFOOT_PORT` defaults to 8080 for the host-published port; the container remains on port 8080.
 - A first-start self-signed certificate is generated and persisted; installers must verify its identity/fingerprint and establish trust. A reverse proxy must also connect to the backend over HTTPS, with upstream certificate trust handled explicitly.
 
-See [installation and certificate instructions](../../next/README.md). That document contains examples rather than hard-coded defaults for your own network.
+See [installation and certificate instructions](../../INSTALLATION.md). That document contains examples rather than hard-coded defaults for your own network.
 
 ## Boundaries worth preserving
 

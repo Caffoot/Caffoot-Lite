@@ -4,7 +4,7 @@
 
 Names are signposts: a developer should be able to search for a function and understand what it does. Caffoot Lite already has established naming conventions, so preserve them instead of introducing a new style.
 
-The conventions below reflect [current Next source](../../next/inventory.html) and the [source-pinned Function Index](Function-Index.md). Earlier naming proposals and audit notes remain available in [historical Git evidence](https://github.com/Caffoot/Caffoot-Lite/tree/049262f196be494074f698a72f377153f202171b/docs/required-only), but do not override published v1.3.3 or issue #215.
+The conventions below reflect [current v2.0.1 source](../../inventory.html) and the [source-pinned Function Index](Function-Index.md). Earlier naming proposals and audit notes remain available in [historical Git evidence](https://github.com/Caffoot/Caffoot-Lite/tree/049262f196be494074f698a72f377153f202171b/docs/required-only), but do not override published v1.3.3 or issue #215.
 
 ## JavaScript and HTML
 
@@ -19,13 +19,13 @@ The conventions below reflect [current Next source](../../next/inventory.html) a
 | HTML hooks | `id`, `data-action`, `data-form-action` | Keep selectors, delegated handlers and accessibility attributes synchronised |
 | CSS classes | `rack-accessory-item`, `rack-accessory-port` | Name the component and its role |
 
-The current [`next/inventory.html`](../../next/inventory.html) also uses `refreshCentralInventory`, `postInventory` and `applyAllowedControls`. Reuse existing handlers and functions rather than duplicating their job. Do not rename established inventory IDs, functions or CSS hooks for cosmetic reasons: even a tidy-looking rename could change v1.3.3 behaviour.
+The current [`inventory.html`](../../inventory.html) also uses `refreshCentralInventory`, `postInventory` and `applyAllowedControls`. Reuse existing handlers and functions rather than duplicating their job. Do not rename established inventory IDs, functions or CSS hooks for cosmetic reasons: even a tidy-looking rename could change v1.3.3 behaviour.
 
 ## Python
 
 The backend uses `snake_case` functions/modules and `UPPER_SNAKE_CASE` constants. Verified examples include `initialise_database`, `reconstruct_inventory`, `save_reserved_device`, `set_permission`, `SCHEMA_VERSION` and `SESSION_SECONDS`. Classes/exceptions use names such as `Handler`, `ImportDrafts` and `ImportRejected`.
 
-Place code with its established owner: [`server.py`](../../next/backend/server.py) handles requests, [`permissions.py`](../../next/backend/permissions.py) determines access, [`device_saves.py`](../../next/backend/device_saves.py) handles device writes and [`schema.py`](../../next/backend/schema.py) defines SQLite migrations. Do not create extra layers without an approved need.
+Place code with its established owner: [`server.py`](../../backend/server.py) handles requests, [`permissions.py`](../../backend/permissions.py) determines access, [`device_saves.py`](../../backend/device_saves.py) handles device writes and [`schema.py`](../../backend/schema.py) defines SQLite migrations. Do not create extra layers without an approved need.
 
 ## Preserving data contracts
 
@@ -37,4 +37,4 @@ Write comments in plain British English explaining *why* a validation or compati
 
 Several current module docstrings still say “offline” or “future” although the HTTP server now calls them. Treat actual call paths and current tests as evidence. Correct stale descriptions without changing behaviour, and do not turn this guide into a new product specification.
 
-**Before editing:** read [#215](https://github.com/Caffoot/Caffoot-Lite/issues/215), inspect current Next code, compare inventory work with [published v1.3.3](https://github.com/Caffoot/Caffoot-Lite/blob/v1.3.3/app/caffoot-lite.html), then consult [the code reference](07-Function-and-Code-Reference.md) and [testing guide](08-Testing-and-Maintenance.md).
+**Before editing:** read [#215](https://github.com/Caffoot/Caffoot-Lite/issues/215), inspect current v2.0.1 code, compare inventory work with [published v1.3.3](https://github.com/Caffoot/Caffoot-Lite/blob/v1.3.3/app/caffoot-lite.html), then consult [the code reference](07-Function-and-Code-Reference.md) and [testing guide](08-Testing-and-Maintenance.md).
