@@ -1,6 +1,6 @@
-# Caffoot Lite — Docker/SQLite edition (unreleased)
+# Caffoot Lite v2.0 — Docker/SQLite installation (release candidate)
 
-The Docker/SQLite edition of **Caffoot Lite** implements the approved central inventory application from [issue #215](https://github.com/Caffoot/Caffoot-Lite/issues/215). It serves the established v1.3.3 inventory interface with backend persistence, first-run administrator setup, MFA, administrator-managed users and device edit reservations. The supported v1.3.3 JSON backup import is a one-way migration, not an ongoing backup system. This is **not yet a published release**. Stage 2 Raspberry Pi 5 acceptance of inventory, multi-user workflows, persistence and a one-off manual file-copy restore has been completed. The approved Caffoot sign-in branding and genuine application screenshots have been completed and reviewed. The [root README](../README.md) shows the Docker edition using fictional inventory. Website-material preparation and the proportionate security review are complete; final candidate verification and explicit product-owner release approval remain outstanding.
+The Docker/SQLite edition of **Caffoot Lite** implements the approved central inventory application from [issue #215](https://github.com/Caffoot/Caffoot-Lite/issues/215). It serves the established v1.3.3 inventory interface with backend persistence, first-run administrator setup, MFA, administrator-managed users and device edit reservations. The supported v1.3.3 JSON backup import is a one-way migration, not an ongoing backup system. **v2.0 is the approved release version, but this candidate has not yet been published.** Stage 2 Raspberry Pi 5 acceptance of inventory, multi-user workflows, persistence and a one-off manual file-copy restore has been completed. The approved Caffoot sign-in branding and genuine application screenshots have been completed and reviewed. The [root README](../README.md) shows the Docker edition using fictional inventory. Website-material preparation and the proportionate security review are complete; final candidate verification and explicit product-owner release approval remain outstanding.
 
 ## HTTPS Docker Compose / Portainer setup
 
@@ -40,9 +40,9 @@ The Docker edition uses the existing Caffoot hedgehog artwork and **“Infrastru
 
 The existing backend checks and focused HTTPS/Chromium test run in GitHub Actions. They cover first-run MFA, central inventory and Change History, user creation and access permissions, competing device edit reservations, familiar Devices/IPAM/Racks forms, Clean Start and a real v1.3.3 backup created by the published exporter. These checks are not an exhaustive proof of every published v1.3.3 interaction. The agreed real Raspberry Pi 5 acceptance has been completed and recorded in [#218](https://github.com/Caffoot/Caffoot-Lite/issues/218).
 
-The existing `tests/test_compose_lifecycle.py` is an **opt-in** Docker milestone test. Run the `Next Docker Compose lifecycle` GitHub Actions workflow manually at an integration milestone to verify published port configuration, persistent SQLite data and TLS certificate continuity across restart and recreation. The product owner has now completed the agreed Raspberry Pi 5/Portainer Stage 2 acceptance, including container recreation and a manual stopped-container backup/restore. That acceptance does **not** replace the later release security review, nor prove automated or off-host backup protection.
+The existing `tests/test_compose_lifecycle.py` is an **opt-in** Docker milestone test. The `Next Docker Compose lifecycle` GitHub Actions workflow passed during Stage 8, verifying published port configuration, persistent SQLite data and TLS certificate continuity across restart and recreation. The product owner has now completed the agreed Raspberry Pi 5/Portainer Stage 2 acceptance, including container recreation and a manual stopped-container backup/restore. That acceptance does **not** replace the later release security review, nor prove automated or off-host backup protection.
 
-## Simplest Portainer Web editor installation (prebuilt test image)
+## Portainer Web editor installation (prebuilt acceptance image)
 
 For your Raspberry Pi 5, use **Stacks → Add stack → Web editor** and paste the complete configuration from [portainer-stack.yaml](portainer-stack.yaml). There is no Git source, username, token or Docker build needed on the Pi. The prebuilt `next-test` Docker image is built on the **Next** branch for `linux/arm64` (Pi 5) and `linux/amd64`. It is an **unreleased integration test image**, not a published Caffoot Lite release.
 
@@ -56,7 +56,7 @@ sudo install -d -m 0750 -o 10001 -g 10001 /portainer/Files/AppData/Config/caffoo
 
 Replace the illustrative address `10.128.20.3` with your Pi's real address if different. If port `8443` is occupied, change both `8443:8080` in the `ports` line and `:8443` in `CAFFOOT_WEB_ADDRESS`, as well as `CAFFOOT_PORT`. Keep `8080` after the colon in the port mapping because that is the container's fixed internal port. This stack uses the same SQLite backend, authentication and HTTPS implementation as the Git/Compose installation described below.
 
-When an updated test image is explicitly built at a future milestone, use Portainer's **Pull latest image** option when updating this stack; an existing running container does not change just because the registry tag changes. Do not use an unreleased `next-test` image as a production release.
+For an approved acceptance-image refresh, use Portainer's **Pull latest image** option when updating this stack; an existing running container does not change just because the registry tag changes. **Do not use the unreleased `next-test` image for production.** The official v2.0 release image reference will be documented when published.
 
 ## Raspberry Pi 5 installation through Portainer
 
@@ -92,7 +92,7 @@ CAFFOOT_DATA_PATH=/portainer/Files/AppData/Config/caffoot_data
 
 `CAFFOOT_DATA_PATH` selects the **host** folder that is mounted at `/data` **inside** the container. The other three settings are the approved HTTPS browser address, certificate identity and external port. The container always listens on internal port `8080`. For a reverse proxy, set `CAFFOOT_WEB_ADDRESS` to the actual public HTTPS URL, use the Pi's actual HTTPS server address for `CAFFOOT_SERVER_ADDRESS`, and set `CAFFOOT_PORT` to the port the proxy reaches. Keep the proxy's upstream connection HTTPS and verify the upstream certificate.
 
-**4. Select Deploy the stack.** Once it is running and healthy, use your configured HTTPS address. The first visit opens the account setup workflow: choose your own first administrator username/password and complete compulsory MFA. There is no preset administrator. If you have inventory from published v1.3.3, export a fresh JSON backup from that version, then use Next's Settings import review and explicit confirmation. Migration never replaces accounts.
+**4. Select Deploy the stack.** Once it is running and healthy, use your configured HTTPS address. The first visit opens the account setup workflow: choose your own first administrator username/password and complete compulsory MFA. There is no preset administrator. If you have inventory from published v1.3.3, export a fresh JSON backup from that version, then use **Settings & Data → Import Inventory** to review and explicitly confirm replacement. Migration never replaces accounts.
 
 For a directly accessed self-signed HTTPS server, check the certificate's fingerprint and Subject Alternative Name against the Pi's trusted server information **before** using real credentials. You can inspect them from Portainer's container **Console** using:
 

@@ -7,9 +7,9 @@
 | Edition | Status | Where to start |
 | --- | --- | --- |
 | **Caffoot Lite v1.3.3** | **Published HTML release**. The established, usable single-browser application. | [Download the published release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3) |
-| **Caffoot Lite — Docker/SQLite edition (`Next`)** | **Unreleased test build**. The same familiar inventory workflows with shared database storage and accounts. Raspberry Pi acceptance of inventory and multi-user workflows is complete; release preparation is still in progress. | [Docker/Portainer installation guide](next/README.md) |
+| **Caffoot Lite v2.0 — Docker/SQLite** | **Approved release candidate; not published yet.** The familiar inventory with central SQLite, authorised multi-user access and MFA. | [Docker/Portainer installation guide](next/README.md) |
 
-**The Docker edition is not yet a published replacement for v1.3.3.** Please do not deploy the `next-test` container image as a production release.
+**Caffoot Lite v2.0 has been approved as the next major release version, but it is not published yet.** The `next-test` container image is for acceptance testing, not production. The published v1.3.3 standalone HTML release remains available.
 
 ## Features
 
@@ -22,7 +22,7 @@ The Docker edition adds **central SQLite storage**, first-run administrator setu
 
 ## Application screenshots — Docker/SQLite edition
 
-These are genuine Chromium screenshots of the unreleased Docker application, using an isolated database and fictional lab inventory. No production inventory or personal account details are shown.
+These are genuine Chromium screenshots of the v2.0 Docker release candidate, using an isolated database and fictional lab inventory. No production inventory or personal account details are shown.
 
 ![Caffoot Lite Network Insights dashboard with fictional IPAM, device and rack summaries](docs/screenshots/dashboard.png)
 
@@ -32,7 +32,7 @@ These are genuine Chromium screenshots of the unreleased Docker application, usi
 
 See the [full Features and Instructions guides](docs/How%20To%27s/Features%20and%20Instructions/README.md) for more genuine screenshots alongside detailed workflows.
 
-## Trying the unreleased Docker edition
+## Trying the v2.0 release candidate
 
 The easiest tested method is **Portainer → Stacks → Add stack → Web editor**.
 
@@ -76,4 +76,4 @@ Back up and restore that persistent data with **external container, volume or fi
 - [Approved Docker edition specification — #215](https://github.com/Caffoot/Caffoot-Lite/issues/215)
 - [Release preparation and acceptance — #218](https://github.com/Caffoot/Caffoot-Lite/issues/218)
 
-The Docker edition has **not** been merged, versioned or released. Documentation, screenshots, approved repository cleanup, website-material preparation and the proportionate security review are complete. Final release-candidate verification and explicit product-owner approval remain; nothing has been merged, versioned, tagged or published.
+**Release status:** v2.0 is the approved version designation, not yet a published release. The application has passed backend, Chromium and Docker checks, and administrator Dashboard/Settings acceptance on the Raspberry Pi. Final release packaging, image and website publication still require completion and confirmation. See [v2.0 release notes](docs/Release-Notes-v2.0.md) and [release tracker #218](https://github.com/Caffoot/Caffoot-Lite/issues/218).

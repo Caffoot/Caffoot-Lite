@@ -185,10 +185,11 @@ async function run(){
       assert.equal(await page.locator('.settings-help-topic').count(),6,'Built-in help topics must remain');
     }
     if(area==='about'){
+      assert.ok(await page.getByText('Caffoot Lite v2.0',{exact:true}).isVisible(), 'About must identify the approved release version');
       assert.equal(await page.getByRole('link',{name:/User Guide/}).getAttribute('href'),
-        'https://github.com/Caffoot/Caffoot-Lite/blob/Next/docs/How%20To%27s/Features%20and%20Instructions/README.md');
+        'https://github.com/Caffoot/Caffoot-Lite/blob/main/docs/How%20To%27s/Features%20and%20Instructions/README.md');
       assert.equal(await page.getByRole('link',{name:/Installation Guide/}).getAttribute('href'),
-        'https://github.com/Caffoot/Caffoot-Lite/blob/Next/next/README.md');
+        'https://github.com/Caffoot/Caffoot-Lite/blob/main/next/README.md');
     }
   }
   await page.locator('[data-action="select-account-section"][data-section="security"]').click();

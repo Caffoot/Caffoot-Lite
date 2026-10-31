@@ -1,13 +1,13 @@
 # Caffoot Lite — website release material (draft, not published)
 
-**Status: Stage 6 preparation only, 31 October 2026.** This is website-specific copy and a publication handover, **not** a second set of user guides, a new product specification, or approval to change the live website. [Issue #215](https://github.com/Caffoot/Caffoot-Lite/issues/215) governs the product; [#218](https://github.com/Caffoot/Caffoot-Lite/issues/218) records release readiness. No Docker edition version, release date, tag, or website publication has been approved.
+**Status: Stage 6 preparation only, 31 October 2026.** This is website-specific copy and a publication handover, **not** a second set of user guides, a new product specification, or approval to change the live website. [Issue #215](https://github.com/Caffoot/Caffoot-Lite/issues/215) governs the product; [#218](https://github.com/Caffoot/Caffoot-Lite/issues/218) records release readiness. **Caffoot Lite v2.0** is now the approved Docker/SQLite release designation under #215 §28; the final release date, production image/tag and live website publication remain pending.
 
 The website source inspected for this draft is the private `Caffoot/Caffoot-Website` repository at `main`, commit `938a7e8a17b6ac30083c88ba0ac42c3d6fefa15b`. Its current `index.html` is a single-page site with sections including `#home`, `#about-lite`, `#features`, `#getting-started`, `#showcase`, `#lite`, `#download`, `#faq` and existing `#feature/*` views. The separate `llms.txt` also describes the currently published standalone HTML application. The existing live website has **not** been modified or independently browser-verified during this draft.
 
 ## Keep the two editions unambiguous
 
 - **Published Caffoot Lite v1.3.3:** a standalone HTML application, with browser-local inventory storage and the existing JSON backup/restore workflow. It requires neither Docker nor an account. Keep its [published release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3) available.
-- **Caffoot Lite Docker/SQLite edition:** currently an **unreleased test build**, bringing the familiar inventory screens to a central SQLite database, HTTPS, first-run administrator setup, MFA, account management and section permissions. Its supported JSON import is a **one-way migration from a fresh published v1.3.3 backup**, not an ongoing Docker backup/restore feature.
+- **Caffoot Lite v2.0 (Docker/SQLite):** currently an **approved release candidate, not yet published**, bringing the familiar inventory screens to a central SQLite database, HTTPS, first-run administrator setup, MFA, account management and section permissions. Its supported JSON import is a **one-way migration from a fresh published v1.3.3 backup**, not an ongoing Docker backup/restore feature.
 
 The website currently describes the published HTML edition accurately. **Do not put the release-only wording below on the public site until Stage 8 publication approval.** In particular, do not replace the existing `releases/latest` download link with an unreleased `next-test` image, or turn standalone instructions into Docker instructions without explicitly distinguishing the editions.
 
@@ -15,7 +15,7 @@ The website currently describes the published HTML edition accurately. **Do not 
 
 ### Introductory section
 
-**Headline:** Caffoot Lite. Familiar inventory, shared with your team.
+**Headline:** Caffoot Lite v2.0. Familiar inventory, shared with your team.
 
 **Introduction:** Document devices, IPv4 addresses, VLANs and network racks in one straightforward application. Choose the standalone HTML edition for an individual browser, or install Caffoot Lite with Docker to keep a shared inventory in SQLite for authorised colleagues. The familiar Devices, IPAM, Racks and Change History workflows remain at the heart of both.
 
@@ -65,11 +65,11 @@ Use a **fresh JSON backup exported by published Caffoot Lite v1.3.3**, then revi
 
 ### Short release announcement — hold until explicit approval
 
-**Headline:** Caffoot Lite is ready for shared inventory.
+**Headline:** Caffoot Lite v2.0 — shared inventory, familiar workflows.
 
 The familiar Caffoot Lite inventory experience is now available in a Docker/SQLite edition, alongside the published standalone HTML application. Keep track of your Devices, IPAM, Racks and Change History with administrator-managed accounts, MFA and a central database. Bring supported inventory over using a fresh published v1.3.3 backup and its review process, then protect your new installation with external backups.
 
-Read the installation and [step-by-step user guides](How%20To%27s/Features%20and%20Instructions/README.md) before getting started. **Publication, download links and any version number must be confirmed at Stage 8.**
+Read the installation and [step-by-step user guides](How%20To%27s/Features%20and%20Instructions/README.md) before getting started. **The v2.0 version name is approved. Publication, production image and download links require the final Stage 8 release gate.**
 
 ## Single-source help and link map
 
