@@ -14,20 +14,6 @@ let server,browser;
 const temporaryAssetLink=path.join(root,'assets');
 const linkCreated=!fs.existsSync(temporaryAssetLink);
 if(linkCreated)fs.symlinkSync(path.join(root,'..','assets'),temporaryAssetLink,'dir');
-
-async function documentationScreenshot(page,name,expectedSelector){
-  if(process.env.CAFFOOT_DOC_SCREENSHOTS!=='1')return;
-  if(expectedSelector)await page.locator(expectedSelector).first().waitFor({state:'visible',timeout:12000});
-  await page.waitForFunction(()=>!document.getElementById('toast') || document.getElementById('toast').classList.contains('opacity-0'));
-  await page.waitForTimeout(350);
-  const png=await page.screenshot({type:'png',animations:'disabled',fullPage:false});
-  assert.ok(png.length>12000,'Documentation screenshot was unexpectedly empty: '+name);
-  // Real screenshots are exported in bounded chunks for visual review before repository inclusion.
-  const encoded=png.toString('base64');
-  for(let i=0,start=0;start<encoded.length;i++,start+=8000)
-    console.log('CAFFOOT_DOC_IMAGE_CHUNK '+name+' '+i+' '+encoded.slice(start,start+8000));
-  console.log('Documentation screenshot captured: '+name+' ('+png.length+' PNG bytes)');
-}
 function mfaCode(secret){
   const p=spawnSync('python3',['-c',
     'from backend.mfa import code_at; import sys,time; print(code_at(sys.argv[1],time.time()))',secret],
@@ -113,15 +99,6 @@ async function run(){
   await page.locator('#submit').click();
   await page.getByText('MFA enrolled. Sign in to continue.').waitFor();
   assert.ok(await page.locator('#code-field').evaluate(el=>el.hidden),'Authenticator code should be hidden before sign-in');
-  if(process.env.CAFFOOT_DOC_SCREENSHOTS==='1'){
-    await page.reload();
-    await page.waitForFunction(()=>document.querySelector('#intro')?.textContent.includes('Sign in'));
-    await page.locator('#username').fill('');
-    await page.locator('#password').fill('');
-    await documentationScreenshot(page,'sign-in','#submit');
-    await page.locator('#username').fill('owner');
-    await page.locator('#password').fill(password);
-  }
   await page.locator('#submit').click();
   await page.locator('#code-field:not([hidden])').waitFor();
   await page.locator('#code').fill(mfaCode(secret));
@@ -193,24 +170,19 @@ async function run(){
 
   await modal(page,'openSubnetModal');
   await page.locator('#sub-cidr').fill('10.64.20.0/24');
-  await page.locator('#sub-name').fill('Lab Network');
+  await page.locator('#sub-name').fill('Browser Network');
   await page.locator('#sub-vlan').fill('17');
   await page.locator('#sub-gw').fill('10.64.20.1');
   await page.locator('form[data-form-action="subnet"] button[type="submit"]').click();
-  const sub=await persisted(page,s=>s.subnets.some(x=>x.name==='Lab Network'),'Subnet');
+  const sub=await persisted(page,s=>s.subnets.some(x=>x.name==='Browser Network'),'Subnet');
   assert.equal(sub.vlans.length,1);
   await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
   console.log('Subnet and linked VLAN form passed');
 
   await modal(page,'openRackModal');
-  await page.locator('#rack-name').fill('Lab Rack');
-  if(process.env.CAFFOOT_DOC_SCREENSHOTS==='1'){
-    await page.locator('#rack-height').selectOption('custom');
-    await page.locator('#rack-height-custom').fill('12');
-    await page.locator('#rack-location').fill('Lab Room');
-  }
+  await page.locator('#rack-name').fill('Browser Rack');
   await page.locator('form[data-form-action="rack"] button[type="submit"]').click();
-  await persisted(page,s=>s.racks.some(x=>x.name==='Lab Rack'),'Rack');
+  await persisted(page,s=>s.racks.some(x=>x.name==='Browser Rack'),'Rack');
   await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
   console.log('Rack form passed');
 
@@ -233,7 +205,7 @@ async function run(){
   await page.setViewportSize({width:1440,height:950});
   assert.ok(await page.locator('#dev-name').isVisible(),
     'Responsive layout must preserve Device Name field');
-  await page.locator('#dev-name').fill('lab-desktop-01');
+  await page.locator('#dev-name').fill('browser-device');
   const typeSelector=page.locator('#dev-type + .caffoot-select-host .caffoot-search-trigger');
   await typeSelector.waitFor();
   await typeSelector.click();
@@ -252,8 +224,8 @@ async function run(){
   await page.locator('#dev-subnet').selectOption(selected.id);
   await page.locator('#dev-ip').fill('10.64.20.10');
   await page.locator('form[data-device-form="true"] button[type="submit"]').click();
-  const saved=await persisted(page,s=>s.devices.some(d=>d.name==='lab-desktop-01'),'Device');
-  const device=saved.devices.find(d=>d.name==='lab-desktop-01');
+  const saved=await persisted(page,s=>s.devices.some(d=>d.name==='browser-device'),'Device');
+  const device=saved.devices.find(d=>d.name==='browser-device');
   assert.equal(saved.ipAllocations['10.64.20.10'].deviceId,device.id);
   console.log('Device form and primary IPAM allocation passed');
 
@@ -268,14 +240,14 @@ async function run(){
   await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
   await page.evaluate(()=>openIpModal('10.64.20.15'));
   await page.locator('#ip-status').selectOption('Reserved');
-  await page.locator('#ip-hostname').fill('lab-spare-01');
+  await page.locator('#ip-hostname').fill('spare-address');
   await page.locator('#ip-notes').fill('Independent reservation');
   await page.locator('form[data-form-action="ip"] button[type="submit"]').click();
   await persisted(page,s=>s.ipAllocations['10.64.20.15']?.status==='Reserved',
                   'Independent IPAM reservation');
   assert.equal((await state(page)).ipAllocations['10.64.20.15'].notes,'Independent reservation');
   await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
-  const subnetId=sub.subnets.find(x=>x.name==='Lab Network').id;
+  const subnetId=sub.subnets.find(x=>x.name==='Browser Network').id;
   await page.evaluate(id=>openBulkIpModal(id),subnetId);
   await page.locator('#bulk-start').fill('20');
   await page.locator('#bulk-end').fill('22');
@@ -300,7 +272,7 @@ async function run(){
     s.ipAllocations['10.64.20.'+n]?.status==='Reserved'),'Bulk IPAM reservation');
   assert.equal((await state(page)).ipAllocations['10.64.20.20'].notes,'Bulk notes');
   await page.reload();
-  assert.equal((await state(page)).ipAllocations['10.64.20.15'].hostname,'lab-spare-01');
+  assert.equal((await state(page)).ipAllocations['10.64.20.15'].hostname,'spare-address');
   console.log('Published IPAM notes, independent reservation and bulk allocation saved and reloaded');
 
   await modal(page,'openManageLocationsModal');
@@ -320,9 +292,9 @@ async function run(){
   console.log('Dependent location rename/delete and reload passed');
 
   // Published rack placement and accessory forms persist through central SQLite.
-  const rackId=(await state(page)).racks.find(r=>r.name==='Lab Rack').id;
+  const rackId=(await state(page)).racks.find(r=>r.name==='Browser Rack').id;
   await modal(page,'openDeviceModal');
-  await page.locator('#dev-name').fill('lab-switch-01');
+  await page.locator('#dev-name').fill('rack-switch');
   await page.locator('#dev-type').selectOption('Switch');
   await page.locator('#dev-mount-type').selectOption('Rack Mounted');
   await page.locator('#dev-location').selectOption('Unknown');
@@ -336,9 +308,9 @@ async function run(){
   await page.locator('#dev-subnet').selectOption(subnetId);
   await page.locator('#dev-ip').fill('10.64.20.11');
   await page.locator('form[data-device-form="true"] button[type="submit"]').click();
-  const switchState=await persisted(page,s=>s.devices.some(d=>d.name==='lab-switch-01' &&
+  const switchState=await persisted(page,s=>s.devices.some(d=>d.name==='rack-switch' &&
     d.rackId===rackId && Number(d.rackUStart)===5),'Rack-mounted device creation');
-  const rackSwitch=switchState.devices.find(d=>d.name==='lab-switch-01');
+  const rackSwitch=switchState.devices.find(d=>d.name==='rack-switch');
   assert.equal(switchState.ipAllocations['10.64.20.11'].deviceId,rackSwitch.id);
   await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
   await page.evaluate(({id,deviceId})=>openAssignDeviceModal(id,6,deviceId),{id:rackId,deviceId:rackSwitch.id});
@@ -350,11 +322,11 @@ async function run(){
   await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
   await page.evaluate(id=>openRackAccessoryEditor(id,3),rackId);
   await page.locator('#rack-accessory-form [name="type"]').selectOption('patch');
-  await page.locator('#rack-accessory-form [name="name"]').fill('24-Port Patch Panel');
+  await page.locator('#rack-accessory-form [name="name"]').fill('Browser Patch Panel');
   await page.locator('#rack-accessory-form [name="portCount"]').selectOption('24');
   await page.locator('#rack-accessory-form [name="startU"]').selectOption('3');
   await page.locator('#rack-accessory-form button[type="submit"]').click();
-  await persisted(page,s=>s.rackAccessories.some(a=>a.name==='24-Port Patch Panel' &&
+  await persisted(page,s=>s.rackAccessories.some(a=>a.name==='Browser Patch Panel' &&
     a.rackId===rackId && Number(a.startU)===3),'Rack horizontal accessory');
   await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
   await page.evaluate(id=>{
@@ -362,13 +334,13 @@ async function run(){
     openRackAccessoryEditor(id,1);
   },rackId);
   await page.locator('#rack-accessory-form [name="type"]').selectOption('pdu_vertical');
-  await page.locator('#rack-accessory-form [name="name"]').fill('Vertical PDU');
+  await page.locator('#rack-accessory-form [name="name"]').fill('Browser Vertical PDU');
   await page.locator('#rack-accessory-form [name="side"]').selectOption('left');
   await page.locator('#rack-accessory-form [name="heightU"]').fill('5');
   await page.locator('#rack-accessory-form [name="heightU"]').blur();
   await page.locator('#rack-accessory-form [name="startU"]').selectOption('1');
   await page.locator('#rack-accessory-form button[type="submit"]').click();
-  await persisted(page,s=>s.rackAccessories.some(a=>a.name==='Vertical PDU' &&
+  await persisted(page,s=>s.rackAccessories.some(a=>a.name==='Browser Vertical PDU' &&
     a.side==='left'&&a.type==='pdu_vertical'),'Rack vertical accessory');
   await page.reload();
   await page.locator('#next-account-nav').waitFor();
@@ -376,51 +348,6 @@ async function run(){
   assert.equal(rackSaved.devices.find(d=>d.id===rackSwitch.id).rackId,rackId);
   assert.equal(rackSaved.rackAccessories.length,2);
   console.log('Rack device placement, patch panel and vertical PDU persisted after reload');
-  if(process.env.CAFFOOT_DOC_SCREENSHOTS==='1'){
-    // Test the dependency-deletion path above as normal, then use tidy fictional records in public images.
-    await modal(page,'openManageLocationsModal');
-    await page.locator('#device-catalogue-new-entry-input').fill('Lab Room');
-    await page.locator('[data-action="add-device-type-or-location"][data-kind="location"]').click();
-    await persisted(page,state=>state.settings.deviceLocations?.includes('Lab Room'),'Screenshot location');
-    await page.waitForFunction(()=>document.getElementById('toast-message')?.textContent.includes('Location added successfully.'));
-    await page.evaluate(()=>closeModal(true));
-    for(const sample of [device,rackSwitch]){
-      await page.evaluate(id=>openDeviceModal(id),sample.id);
-      await page.locator('#dev-location').waitFor();
-      await page.locator('#dev-location').selectOption('Lab Room');
-      await page.locator('form[data-device-form="true"] button[type="submit"]').click();
-      await persisted(page,state=>state.devices.some(d=>d.id===sample.id&&d.location==='Lab Room'),
-        'Screenshot device location');
-      await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
-    }
-    await page.locator('#sidebar [data-action="tab-dashboard"]').click();
-    await page.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='Dashboard Overview');
-    await page.locator('#dashboard-tab-insights').click();
-    await documentationScreenshot(page,'dashboard','#dashboard-panel-insights');
-    await page.locator('#sidebar [data-action="tab-devices"]').click();
-    await page.locator('#devices-sidebar-actions [data-action="sidebar-devices-inventory"]').click();
-    await page.locator('[data-action="view-device"][data-id="'+rackSwitch.id+'"]').first().waitFor();
-    await documentationScreenshot(page,'devices-inventory','#main-content');
-    await page.evaluate(id=>openDeviceDetailView(id),rackSwitch.id);
-    await page.locator('.device-details-dialog').waitFor();
-    await documentationScreenshot(page,'device-details','.device-details-dialog');
-    await page.evaluate(()=>closeModal(true));
-    await page.locator('#sidebar [data-action="tab-ipam"]').click();
-    await page.locator('#ipam-sidebar-actions [data-action="sidebar-ipam-manage"]').click();
-    await documentationScreenshot(page,'ipam-subnets','#main-content');
-    await page.locator('#ipam-sidebar-actions [data-action="sidebar-ipam-addresses"]').click();
-    await page.locator('[data-action="open-ip"][data-ip="10.64.20.11"]').first().waitFor();
-    await documentationScreenshot(page,'ipam-addresses','#main-content');
-    await page.locator('#sidebar [data-action="tab-racks"]').click();
-    await page.locator('#racks-sidebar-actions [data-action="sidebar-racks-inventory"]').click();
-    await page.locator('[data-action="v13-open-rack"][data-id="'+rackId+'"]').first().click();
-    await page.locator('#v13-rack-detail-select').waitFor();
-    await documentationScreenshot(page,'racks','#main-content');
-    await page.locator('#sidebar #next-account-nav').click();
-    await page.locator('[data-action="select-account-section"][data-section="help"]').click();
-    await page.locator('.settings-help-topic').first().waitFor();
-    await documentationScreenshot(page,'help-guides','.settings-help-topic');
-  }
 
   // Approved acceptance: new accounts initially lack inventory access.
   await page.evaluate(()=>switchTab('users'));
@@ -435,7 +362,6 @@ async function run(){
   await page.getByText('Users by role',{exact:true}).waitFor();
   assert.equal(await page.getByText('Total users',{exact:true}).locator('..').locator('..').locator('p').textContent(),'2');
   assert.equal(await page.getByRole('heading',{name:'Administrators',exact:true}).locator('..').locator('..').locator('p').textContent(),'1');
-  await documentationScreenshot(page,'users','#main-content');
   await page.locator('#users-sidebar-actions [data-action="sidebar-users-list"]').click();
   const editorId=await page.evaluate(async()=>{
     const r=await fetch('/api/users',{cache:'no-store'});
