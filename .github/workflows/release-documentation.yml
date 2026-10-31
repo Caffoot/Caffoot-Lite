@@ -22,7 +22,7 @@ jobs:
               'README.md',
               'INSTALLATION.md',
               'portainer-v2.0.1.yaml',
-              'docs/Release-Notes-v2.0.md',
+              'docs/Release-Notes-v2.0.1.md',
               "docs/How To's/Features and Instructions/README.md",
               'docs/Development Guide/README.md',
           )
