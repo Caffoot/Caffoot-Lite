@@ -114,9 +114,12 @@ async function run(){
   await page.getByText('MFA enrolled. Sign in to continue.').waitFor();
   assert.ok(await page.locator('#code-field').evaluate(el=>el.hidden),'Authenticator code should be hidden before sign-in');
   if(process.env.CAFFOOT_DOC_SCREENSHOTS==='1'){
-    await page.locator('#username').fill('owner');
+    await page.reload();
+    await page.waitForFunction(()=>document.querySelector('#intro')?.textContent.includes('Sign in'));
+    await page.locator('#username').fill('');
     await page.locator('#password').fill('');
     await documentationScreenshot(page,'sign-in','#submit');
+    await page.locator('#username').fill('owner');
     await page.locator('#password').fill(password);
   }
   await page.locator('#submit').click();
@@ -371,10 +374,11 @@ async function run(){
   if(process.env.CAFFOOT_DOC_SCREENSHOTS==='1'){
     await page.locator('#sidebar [data-action="tab-dashboard"]').click();
     await page.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='Dashboard Overview');
-    await documentationScreenshot(page,'dashboard','#main-content');
+    await page.locator('#dashboard-tab-insights').click();
+    await documentationScreenshot(page,'dashboard','#dashboard-panel-insights');
     await page.locator('#sidebar [data-action="tab-devices"]').click();
     await page.locator('#devices-sidebar-actions [data-action="sidebar-devices-inventory"]').click();
-    await page.locator('[data-action="view-device"][data-id="'+rackSwitch.id+'"]').waitFor();
+    await page.locator('[data-action="view-device"][data-id="'+rackSwitch.id+'"]').first().waitFor();
     await documentationScreenshot(page,'devices-inventory','#main-content');
     await page.evaluate(id=>openDeviceDetailView(id),rackSwitch.id);
     await page.locator('.device-details-dialog').waitFor();
@@ -384,7 +388,7 @@ async function run(){
     await page.locator('#ipam-sidebar-actions [data-action="sidebar-ipam-manage"]').click();
     await documentationScreenshot(page,'ipam-subnets','#main-content');
     await page.locator('#ipam-sidebar-actions [data-action="sidebar-ipam-addresses"]').click();
-    await page.locator('[data-action="open-ip"][data-ip="10.64.20.11"]').waitFor();
+    await page.locator('[data-action="open-ip"][data-ip="10.64.20.11"]').first().waitFor();
     await documentationScreenshot(page,'ipam-addresses','#main-content');
     await page.locator('#sidebar [data-action="tab-racks"]').click();
     await page.locator('#racks-sidebar-actions [data-action="sidebar-racks-inventory"]').click();
