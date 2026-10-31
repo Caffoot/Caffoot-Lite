@@ -34,7 +34,7 @@ For worked examples and detailed steps covering **Devices, IPAM, Racks, Users an
 
 ## Approved visual identity and font availability
 
-The Docker edition uses the existing Caffoot hedgehog artwork and **“Infrastructure, Simplified.”** on the first-run administrator and sign-in screen. The setup and inventory interfaces request the approved **Inter** font when an external font service is reachable. When it is not, readable local system-font fallbacks apply. Internet access is **not required** for normal local HTTPS sign-in, MFA, inventory access, editing or SQLite database operations. This is an approved appearance-only difference from published v1.3.3; it does not change any inventory workflow.
+The Docker edition uses the existing Caffoot hedgehog artwork and **“Infrastructure, Simplified.”** on the first-run administrator and sign-in screen. The inventory interface now serves its core Tailwind utilities from the bundled local stylesheet rather than executing remote Tailwind JavaScript. The setup and inventory interfaces request the approved **Inter** font when an external font service is reachable. When it is not, readable local system-font fallbacks apply. Internet access is **not required** for normal local HTTPS sign-in, MFA, inventory access, editing or SQLite database operations. This is an approved appearance-only difference from published v1.3.3; it does not change any inventory workflow.
 
 ## Verification status
 
