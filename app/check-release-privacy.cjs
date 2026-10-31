@@ -24,7 +24,9 @@ const prohibited = [
   /\.(?:zip|bak|tmp)$/i
 ];
 const exceptions = new Set(['app/fixtures/lite-schema-v1.example.json', 'app/fixtures/lite-legacy.example.json']);
-const bad = names.filter(n => !exceptions.has(n) && prohibited.some(re => re.test(n)));
+// Reviewed Next Python unit-test source modules are not generated inventory data.
+const reviewedTestModules = new Set(['next/tests/test_inventory.py', 'next/tests/test_reset_inventory.py']);
+const bad = names.filter(n => !exceptions.has(n) && !reviewedTestModules.has(n) && prohibited.some(re => re.test(n)));
 assert.deepEqual(bad, [], 'Potentially sensitive or generated tracked files: ' + bad.join(', '));
 const fixtures = [...exceptions];
 for (const name of fixtures) {
