@@ -1,0 +1,162 @@
+name: Temporary Next Tailwind compilation (self-removing)
+
+on:
+  push:
+    branches: [Next]
+    paths:
+      - ".github/workflows/next-static-tailwind-once.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  static-css:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build a one-time local Tailwind v3 stylesheet from inventory source
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/caffoot-tailwind"
+          npm install --prefix "$RUNNER_TEMP/caffoot-tailwind" --no-save --no-package-lock --no-audit --no-fund tailwindcss@3.4.17
+          cat > "$RUNNER_TEMP/caffoot-tailwind/input.css" <<'EOF'
+          @tailwind base;
+          @tailwind components;
+          @tailwind utilities;
+          EOF
+          cat > "$RUNNER_TEMP/caffoot-tailwind/tailwind.config.cjs" <<'EOF'
+          module.exports = {
+            content: ['./next/inventory.html'],
+            darkMode: 'class',
+            theme: {
+              extend: {
+                colors: {
+                  brand: {
+                    50: '#eef2ff', 100: '#e0e7ff', 500: '#6366f1',
+                    600: '#4f46e5', 700: '#4338ca'
+                  }
+                }
+              }
+            },
+            plugins: []
+          };
+          EOF
+          "$RUNNER_TEMP/caffoot-tailwind/node_modules/.bin/tailwindcss" \
+            -c "$RUNNER_TEMP/caffoot-tailwind/tailwind.config.cjs" \
+            -i "$RUNNER_TEMP/caffoot-tailwind/input.css" \
+            -o assets/tailwind.css --minify
+          python3 - <<'PY'
+          from pathlib import Path
+          css = Path("assets/tailwind.css")
+          if len(css.read_bytes()) < 25_000:
+              raise RuntimeError("Generated stylesheet unexpectedly small")
+          css.write_text("/*! Tailwind CSS v3.4.17 | MIT License | https://tailwindcss.com */\n"
+                         + css.read_text(), encoding="utf-8")
+
+          def replace_once(path, old, new):
+              target = Path(path)
+              text = target.read_text(encoding="utf-8")
+              if text.count(old) != 1:
+                  raise RuntimeError(f"Unexpected {path} anchor: {old[:90]}")
+              target.write_text(text.replace(old, new), encoding="utf-8")
+
+          replace_once(
+              "next/inventory.html",
+              '''    <!-- Tailwind CSS -->
+              <script src="https://cdn.tailwindcss.com"></script>
+              <script>
+                  tailwind.config = {
+                      darkMode: 'class',
+                      theme: {
+                          extend: {
+                              colors: {
+                                  brand: {
+                                      50: '#eef2ff',
+                                      100: '#e0e7ff',
+                                      500: '#6366f1',
+                                      600: '#4f46e5',
+                                      700: '#4338ca',
+                                  }
+                              }
+                          }
+                      }
+                  }
+              </script>''',
+              '''    <!-- Compiled Tailwind v3 utilities, served locally: no third-party runtime JavaScript. -->
+              <link rel="stylesheet" href="/assets/tailwind.css">'''
+          )
+          replace_once(
+              "next/backend/server.py",
+              '''                 "qrcode.min.js": "application/javascript; charset=utf-8"}''',
+              '''                 "qrcode.min.js": "application/javascript; charset=utf-8",
+                               "tailwind.css": "text/css; charset=utf-8"}'''
+          )
+          replace_once(
+              "next/Dockerfile",
+              "COPY assets/favicon.ico assets/apple-touch-icon.png assets/caffoot-icon-1024.png assets/qrcode.min.js ./assets/",
+              "COPY assets/favicon.ico assets/apple-touch-icon.png assets/caffoot-icon-1024.png assets/qrcode.min.js assets/tailwind.css ./assets/"
+          )
+          replace_once(
+              "next/tests/test_session_http.py",
+              '''("favicon.ico","apple-touch-icon.png","caffoot-icon-1024.png","qrcode.min.js")''',
+              '''("favicon.ico","apple-touch-icon.png","caffoot-icon-1024.png","qrcode.min.js","tailwind.css")'''
+          )
+          replace_once(
+              "next/tests/browser-compat.cjs",
+              '''  await page.waitForURL('**/inventory');
+              assert.equal(await page.title()''',
+              '''  await page.waitForURL('**/inventory');
+              assert.equal(await page.locator('script[src*="cdn.tailwindcss.com"]').count(),0,
+                'Inventory must not load remote Tailwind JavaScript');
+              assert.equal(await page.locator('link[href="/assets/tailwind.css"]').count(),1,
+                'Inventory must load the local Tailwind stylesheet');
+              const staticCSS=await page.request.get(address+'/assets/tailwind.css');
+              assert.equal(staticCSS.status(),200,'Static stylesheet must be served by the backend');
+              assert.match(staticCSS.headers()['content-type']||'',/text\/css/);
+              assert.ok((await staticCSS.text()).includes('bg-white'),
+                'Compiled inventory utilities must be present');
+              assert.equal(await page.locator('#sidebar').evaluate(el=>getComputedStyle(el).display),'flex',
+                'Tailwind utility layout must remain active');
+              assert.equal(await page.title()'''
+          )
+          PY
+          git diff --check
+          test -s assets/tailwind.css
+          test "$(grep -Fc 'href="/assets/tailwind.css"' next/inventory.html)" -eq 1
+          ! grep -Fq 'cdn.tailwindcss.com' next/inventory.html
+      - name: Exercise the approved browser journey with locally served CSS
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --prefix "$RUNNER_TEMP/caffoot-next-browser" --no-save --no-package-lock --no-audit --no-fund playwright@1.56.1
+          "$RUNNER_TEMP/caffoot-next-browser/node_modules/.bin/playwright" install --with-deps chromium
+          cd next
+          NODE_PATH="$RUNNER_TEMP/caffoot-next-browser/node_modules" node tests/browser-compat.cjs
+      - name: Run focused backend/asset and HTTPS checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd next
+          python -m unittest discover -s tests -p 'test_session_http.py' -v
+          python -m unittest discover -s tests -p 'test_https_smoke.py' -v
+      - name: Commit verified local stylesheet and remove this temporary workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          git rm .github/workflows/next-static-tailwind-once.yml
+          git add assets/tailwind.css next/inventory.html next/backend/server.py next/Dockerfile next/tests/test_session_http.py next/tests/browser-compat.cjs
+          git diff --cached --check
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Replace remote Tailwind runtime with verified local static CSS"
+          git push origin HEAD:Next
