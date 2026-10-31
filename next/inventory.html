@@ -2551,7 +2551,7 @@ function hierarchyValidateTypes(subnets) {
                 const changes = Array.isArray(entry.changes) ? entry.changes : [];
                 const preview = changes.slice(0, 3).map(change => `<li><strong>${escapeHtml(change.action || 'Changed')} ${escapeHtml(change.kind || 'record')}:</strong> ${escapeHtml(change.label || '')}</li>`).join('');
                 return `<article class="dashboard-event"><span class="dashboard-event-dot" aria-hidden="true"></span><div class="min-w-0"><div class="flex flex-wrap justify-between gap-2"><strong class="text-sm text-slate-900 dark:text-white">${escapeHtml(entry.reason || 'Inventory saved')}</strong><time class="text-xs text-slate-600 dark:text-slate-300">${escapeHtml(time)}</time></div>${preview ? `<ul class="mt-1.5 text-xs text-slate-600 dark:text-slate-300 space-y-1">${preview}</ul>` : '<p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Inventory saved without item-level changes.</p>'}${changes.length>3?`<p class="mt-1 text-xs text-slate-500">+${changes.length-3} more changes</p>`:''}</div></article>`;
-            }).join('') : `<p class="dashboard-no-results">${dashboardActivityFilter === 'all' ? 'No recent saved changes on this browser.' : 'No saved changes match this filter.'}</p>`;
+            }).join('') : `<p class="dashboard-no-results">${dashboardActivityFilter === 'all' ? 'No recent saved changes in the central inventory.' : 'No saved changes match this filter.'}</p>`;
             const dashboardWarningRowsHtml = filteredDashboardAlerts.length ? filteredDashboardAlerts.map(alert => {
                 const critical = alert.level === 'danger';
                 const label = critical ? 'Critical' : 'Warning';
@@ -2737,24 +2737,21 @@ function hierarchyValidateTypes(subnets) {
                         </button>`).join('')}
                     </section>
 
-                    <section class="bg-white dark:bg-slate-800 p-5 rounded-2xl border ${integrityHealthy ? 'border-emerald-200 dark:border-emerald-800' : 'border-rose-200 dark:border-rose-800'}">
+                    ${window.nextSessionIsAdmin === true && !integrityHealthy ? `<section id="next-dashboard-inventory-health" role="alert" class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-rose-200 dark:border-rose-800">
                         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                             <div class="flex items-start gap-3">
-                                <div class="w-10 h-10 rounded-xl ${integrityHealthy ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-300' : 'bg-rose-50 text-rose-600 dark:bg-rose-950/40 dark:text-rose-300'} flex items-center justify-center">
-                                    <i class="fa-solid ${integrityHealthy ? 'fa-shield-halved' : 'fa-triangle-exclamation'}"></i>
+                                <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 dark:bg-rose-950/40 dark:text-rose-300 flex items-center justify-center">
+                                    <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
                                 </div>
                                 <div>
-                                    <h4 class="font-bold text-slate-900 dark:text-white">Inventory Health</h4>
-                                    <p class="text-xs text-slate-500 mt-1">Checks saved inventory records for known inconsistencies in devices, IPAM, subnets, VLANs and rack assignments. This does not test browser storage safety, backups or live network availability.</p>
+                                    <h4 class="font-bold text-rose-700 dark:text-rose-300">Inventory Health — attention required</h4>
+                                    <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Existing inventory consistency checks found issues in saved records. Review the details below and the affected inventory before making changes.</p>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-2">
-                                <span class="px-3 py-1.5 rounded-full text-xs font-bold ${integrityHealthy ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300' : 'bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300'}">${integrityHealthy ? 'Healthy' : `${integrityErrors.length} issue${integrityErrors.length === 1 ? '' : 's'}`}</span>
-                            </div>
+                            <span class="px-3 py-1.5 rounded-full text-xs font-bold bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300">${integrityErrors.length} issue${integrityErrors.length === 1 ? '' : 's'}</span>
                         </div>
-                        ${integrityHealthy ? `<div class="mt-4 p-3 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/20 text-xs text-emerald-700 dark:text-emerald-300"><i class="fa-solid fa-circle-check mr-2"></i>No issues detected by the current inventory consistency checks. Keep a separate JSON backup; this result does not verify browser storage or network devices.</div>` : `<div class="mt-4 space-y-2">${integrityPreview.map(error => `<div class="flex items-start gap-2 p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/20 text-xs text-rose-700 dark:text-rose-300"><i class="fa-solid fa-circle-exclamation mt-0.5"></i><span>${escapeHtml(error)}</span></div>`).join('')}${integrityErrors.length > integrityPreview.length ? `<p class="text-[11px] text-slate-500 pt-1">Showing the first ${integrityPreview.length} of ${integrityErrors.length} issues.</p>` : ''}</div>`}
-                    </section>
-
+                        <div class="mt-4 space-y-2">${integrityPreview.map(error => `<div class="flex items-start gap-2 p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/20 text-xs text-rose-700 dark:text-rose-300"><i class="fa-solid fa-circle-exclamation mt-0.5" aria-hidden="true"></i><span>${escapeHtml(error)}</span></div>`).join('')}${integrityErrors.length > integrityPreview.length ? `<p class="text-[11px] text-slate-500 pt-1">Showing the first ${integrityPreview.length} of ${integrityErrors.length} issues.</p>` : ''}</div>
+                    </section>` : ''}
                     ${networkSnapshot}
                     </div>
                     <div id="dashboard-panel-insights" role="tabpanel" aria-labelledby="dashboard-tab-insights" class="dashboard-tab-panel space-y-5" ${activeDashboardTab==='insights'?'':'hidden'}>
@@ -2778,10 +2775,10 @@ function hierarchyValidateTypes(subnets) {
                     <section class="dashboard-summary" aria-label="Activity and alert summary">
                         <div class="dashboard-summary-item"><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i><div><strong>${filteredDashboardAuditEntries.length}</strong><span>Recent save events</span></div></div>
                         <div class="dashboard-summary-item"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i><div><strong>${alerts.length}</strong><span>Network warnings</span></div></div>
-                        <div class="dashboard-summary-item"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i><div><strong>${integrityErrors.length}</strong><span>Integrity issues</span></div></div>
+                        ${window.nextSessionIsAdmin === true ? `<div class="dashboard-summary-item"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i><div><strong>${integrityErrors.length}</strong><span>Integrity issues</span></div></div>` : ''}
                     </section>
                     <section class="dashboard-columns">
-                        <div class="dashboard-activity-card"><div class="dashboard-activity-heading"><div><h3>Recent Activity</h3><p>Saved changes on this browser</p></div><button type="button" data-action="tab-audit" class="dashboard-link">Full history <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div>${dashboardActivityFilterControlsHtml}<div class="dashboard-activity-timeline">${dashboardActivityTimelineHtml}</div></div>
+                        <div class="dashboard-activity-card"><div class="dashboard-activity-heading"><div><h3>Recent Activity</h3><p>Saved changes in the central database</p></div><button type="button" data-action="tab-audit" class="dashboard-link">Full history <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div>${dashboardActivityFilterControlsHtml}<div class="dashboard-activity-timeline">${dashboardActivityTimelineHtml}</div></div>
                         <div class="dashboard-activity-card"><div class="dashboard-activity-heading"><div><h3>Warnings & attention</h3><p>Network consistency and capacity</p></div><span class="dashboard-count">${alerts.length} total</span></div>${dashboardAlertFilterControlsHtml}<ul class="dashboard-warnings">${dashboardWarningRowsHtml}</ul>${alerts.filter(a => dashboardAlertSeverityFilter === 'all' || (dashboardAlertSeverityFilter === 'critical' ? a.level === 'danger' : a.level !== 'danger')).length>filteredDashboardAlerts.length?`<p class="dashboard-more">Showing ${filteredDashboardAlerts.length} of ${alerts.length} warnings</p>`:''}<div class="dashboard-links"><button type="button" data-action="tab-ipam">Open IPAM</button><button type="button" data-action="tab-racks">Open Racks</button></div></div>
                     </section>
                     <section class="dashboard-report-panel bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5"><h3 class="font-bold text-slate-900 dark:text-white mb-3">Reports & exports</h3>${renderInventoryReportsHtml()}</section>
@@ -7714,7 +7711,6 @@ function hierarchyValidateTypes(subnets) {
         }
 
         // one purpose per settings section; existing handlers remain unchanged.
-        let activeSettingsSection = 'backup';
         // A browser may block localStorage (including for file:// pages).
         // Reading optional recovery indicators must not prevent Settings from rendering.
         function personalSafeStorageGet(key) {
@@ -7801,9 +7797,7 @@ function hierarchyValidateTypes(subnets) {
                         button('clear-inventory-data','Clear System / Clean Start','fa-triangle-exclamation')) +
                     '</div>';
             }
-            const tabs = [['backup','Import Inventory','fa-database']];
             return `<div class="settings-workspace backup-workspace"><div class="settings-intro"><h2>Settings & Data</h2><p>Administrator controls for central inventory and application maintenance.</p></div>
-                <div class="settings-tabs" role="group" aria-label="Settings sections">${tabs.map(([id,label,icon])=>`<button type="button" data-action="select-settings-section" data-section="${id}" aria-pressed="${section===id}" class="settings-tab ${section===id?'settings-tab-active':''}"><i class="fa-solid ${icon}" aria-hidden="true"></i>${label}</button>`).join('')}</div>
                 <div class="${section==='backup'?'settings-groups':'settings-grid'}">${body}</div></div>`;
         }
 
@@ -9131,7 +9125,6 @@ function hierarchyValidateTypes(subnets) {
                 case 'sidebar-users-list': activeUsersTab='list'; switchTab('users'); break;
                 case 'sidebar-users-add': activeUsersTab='add'; switchTab('users'); break;
                 case 'tab-account': switchTab('account'); break;
-                case 'select-settings-section': if (target.dataset.section==='backup') { activeSettingsSection='backup'; renderContent(); } break;
                 case 'select-account-section': if (['security','preferences','help','about'].includes(target.dataset.section)) { activeAccountSection=target.dataset.section; switchTab('account'); } break;
                 case 'choose-backup-import': document.getElementById('import-file')?.click(); break;
                 case 'toggle-settings-theme': toggleDarkMode(); renderContent(); break;
@@ -10408,6 +10401,7 @@ window.addEventListener('load', async () => {
     const session=await sessionResponse.json();
     csrfToken=session.csrf_token;
     sessionIsAdmin=!!session.is_admin;
+    window.nextSessionIsAdmin=sessionIsAdmin;
     signedInUsername=session.username;
     document.getElementById('next-welcome-name').textContent = 'Welcome ' + signedInUsername;
     sessionMfaEnrolled=!!session.mfa_enrolled;

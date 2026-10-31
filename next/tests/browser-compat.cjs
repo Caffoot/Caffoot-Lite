@@ -127,6 +127,10 @@ async function run(){
   console.log('First administrator, MFA, sign-in and direct Dashboard arrival passed');
   assert.equal(await page.locator('#next-dashboard-mfa-notice').count(),0,
     'Enrolled administrators must not see MFA setup guidance');
+  assert.equal(await page.locator('#next-dashboard-inventory-health').count(),0,
+    'Healthy administrator Dashboard must hide Inventory Health');
+  assert.equal(await page.getByText('Keep a separate JSON backup',{exact:false}).count(),0,
+    'Docker Dashboard must not show browser-era JSON backup advice');
   assert.equal(await page.getByRole('button',{name:'Refresh inventory'}).count(),0);
   for(const tab of ['ipam','devices','racks','audit','users','settings']){
     const navigation=page.locator('#sidebar [data-action="tab-'+tab+'"]');
@@ -135,6 +139,21 @@ async function run(){
     assert.notEqual(await page.locator('#toast-message').textContent(),
       'This inventory operation is not yet connected to SQLite.');
   }
+  await page.locator('#sidebar [data-action="tab-settings"]').click();
+  assert.equal(await page.locator('.settings-tabs').count(),0,
+    'Single Settings subsection must not show a redundant full-width tab');
+  assert.ok(await page.getByRole('heading',{name:'Import Inventory',exact:true}).isVisible(),
+    'Import Inventory section heading must remain');
+  assert.ok(await page.locator('[data-action="next-import-pick"]').isEnabled(),
+    'Administrator legacy migration picker must remain');
+  assert.ok(await page.locator('[data-action="clear-inventory-data"]').isEnabled(),
+    'Administrator Clear System safeguard must remain');
+  const safetyResult=new Promise(resolve=>page.once('dialog',async dialog=>{
+    const message=dialog.message();await dialog.accept();resolve(message);
+  }));
+  await page.locator('[data-action="check-inventory-safety"]').click();
+  assert.match(await safetyResult,/INVENTORY SAFETY CHECK PASSED/,
+    'Manual safety check must still reload and validate central inventory');
   await page.locator('#sidebar [data-action="tab-audit"]').click();
   await page.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='Change History & Data Safety');
   assert.ok(await page.locator('#main-content > div.w-full').isVisible(),
@@ -239,6 +258,21 @@ async function run(){
   const device=saved.devices.find(d=>d.name==='browser-device');
   assert.equal(saved.ipAllocations['10.64.20.10'].deviceId,device.id);
   console.log('Device form and primary IPAM allocation passed');
+
+  // A detected inconsistency appears only as an administrator warning; no data is saved.
+  await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
+  await page.evaluate(()=>{
+    switchTab('dashboard');
+    appState.devices.push({...appState.devices.find(d=>d.name==='browser-device')});
+    renderContent();
+  });
+  const health=page.locator('#next-dashboard-inventory-health');
+  assert.equal(await health.count(),1,'Admin must see actual inventory inconsistencies');
+  assert.ok(await health.getByText(/Duplicate or missing device ID/).isVisible());
+  assert.ok(await health.evaluate(el=>el.classList.contains('border-rose-200')),
+    'Inventory warning must use established rose warning palette');
+  await page.evaluate(()=>{appState.devices.pop();renderContent();});
+  assert.equal(await health.count(),0,'Corrected inventory must hide the warning');
 
   // Published IPAM paths: device-linked notes and independent reservations.
   await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
@@ -425,6 +459,13 @@ async function run(){
   await editor.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='Dashboard Overview');
   assert.equal(await editor.locator('#next-dashboard-mfa-notice').count(),0,
     'Enrolled editors must not see MFA setup guidance');
+  await editor.evaluate(()=>{appState.devices.push({...appState.devices[0]});renderContent();});
+  assert.equal(await editor.locator('#next-dashboard-inventory-health').count(),0,
+    'Non-administrator editor must not see inventory health warnings');
+  await editor.locator('[data-dashboard-tab="activity"]').click();
+  assert.equal(await editor.getByText('Integrity issues',{exact:true}).count(),0,
+    'Non-administrator editor must not see integrity health totals');
+  await editor.evaluate(()=>{appState.devices.pop();renderContent();});
   await editor.locator('#sidebar #next-account-nav').click();
   await editor.locator('#next-account-password-form').waitFor();
   assert.equal(await editor.locator('#page-title').textContent(),'My account');
@@ -530,6 +571,10 @@ async function run(){
   await viewer.locator('#next-account-mfa-start').waitFor();
   await viewer.locator('#sidebar [data-action="tab-dashboard"]').click();
   await viewer.locator('#next-dashboard-mfa-notice').waitFor();
+  await viewer.evaluate(()=>{appState.devices.push({...appState.devices[0]});renderContent();});
+  assert.equal(await viewer.locator('#next-dashboard-inventory-health').count(),0,
+    'Read-only viewer must not see inventory health warnings');
+  await viewer.evaluate(()=>{appState.devices.pop();renderContent();});
   assert.ok(await viewer.locator('#next-settings-nav').isHidden());
   assert.ok(await viewer.locator('#next-users-nav').isHidden());
   await viewer.locator('#sidebar [data-action="tab-devices"]').click();
