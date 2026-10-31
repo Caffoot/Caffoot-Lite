@@ -20,8 +20,8 @@ jobs:
           from pathlib import Path
           required = (
               'README.md',
-              'next/README.md',
-              'next/portainer-v2.0.yaml',
+              'INSTALLATION.md',
+              'portainer-v2.0.1.yaml',
               'docs/Release-Notes-v2.0.md',
               "docs/How To's/Features and Instructions/README.md",
               'docs/Development Guide/README.md',

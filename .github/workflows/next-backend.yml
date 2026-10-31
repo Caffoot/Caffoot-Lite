@@ -4,11 +4,17 @@ on:
   push:
     branches: [Next]
     paths:
-      - "next/**"
+      - "backend/**"
+      - "tests/**"
+      - "inventory.html"
+      - "setup.html"
       - ".github/workflows/next-backend.yml"
   pull_request:
     paths:
-      - "next/**"
+      - "backend/**"
+      - "tests/**"
+      - "inventory.html"
+      - "setup.html"
       - ".github/workflows/next-backend.yml"
   workflow_dispatch:
 
@@ -17,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: next
+        working-directory: .
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

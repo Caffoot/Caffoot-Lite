@@ -1,8 +1,8 @@
 services:
-  caffoot-next:
+  caffoot-lite:
     build:
-      context: ..
-      dockerfile: next/Dockerfile
+      context: .
+      dockerfile: Dockerfile
     environment:
       CAFFOOT_WEB_ADDRESS: "${CAFFOOT_WEB_ADDRESS:?Set the HTTPS browser address in CAFFOOT_WEB_ADDRESS}"
       CAFFOOT_SERVER_ADDRESS: "${CAFFOOT_SERVER_ADDRESS:?Set the server IP or hostname in CAFFOOT_SERVER_ADDRESS}"

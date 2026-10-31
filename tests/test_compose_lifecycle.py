@@ -1,6 +1,6 @@
 """Opt-in real Docker Compose lifecycle verification.
 
-Run from next/: CAFFOOT_DOCKER_SMOKE=1 python -m unittest tests.test_compose_lifecycle -v
+Run from repository root: CAFFOOT_DOCKER_SMOKE=1 python -m unittest tests.test_compose_lifecycle -v
 Requires Docker Compose and permission to access the Docker daemon.
 Uses a uniquely named temporary Compose project and removes its volume afterward.
 """
@@ -32,10 +32,10 @@ class ComposeLifecycleTests(unittest.TestCase):
             return subprocess.run([*command, *args], cwd=root, env=env,
                                   check=True, capture_output=True, text=True).stdout.strip()
         def inside(script):
-            return run("exec", "-T", "caffoot-next", "python", "-c", script)
+            return run("exec", "-T", "caffoot-lite", "python", "-c", script)
         try:
             run("up", "--build", "-d", "--wait")
-            self.assertEqual(run("port", "caffoot-next", "8080").split(":")[-1], str(port))
+            self.assertEqual(run("port", "caffoot-lite", "8080").split(":")[-1], str(port))
             self.assertEqual(inside(
                 "import pathlib; p=pathlib.Path('/opt/caffoot/inventory.html'); "
                 "print(p.is_file() and p.stat().st_size > 800000)"), "True")
@@ -44,7 +44,7 @@ class ComposeLifecycleTests(unittest.TestCase):
             inside("import sqlite3; c=sqlite3.connect('/data/caffoot.sqlite3'); "
                    "c.execute('CREATE TABLE IF NOT EXISTS smoke_marker (value TEXT)'); "
                    "c.execute(\"INSERT INTO smoke_marker VALUES ('persisted')\"); c.commit()")
-            run("restart", "caffoot-next")
+            run("restart", "caffoot-lite")
             self.assertEqual(fingerprint, inside(
                 "import hashlib,pathlib; print(hashlib.sha256(pathlib.Path('/data/tls/server.crt').read_bytes()).hexdigest())"))
             self.assertEqual(inside(

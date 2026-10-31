@@ -1,11 +1,11 @@
-name: Caffoot Lite v2.0 release image
+name: Caffoot Lite v2.0.1 release image
 
-# Runs only when the approved v2.0 Git tag is created at the final release gate.
+# Runs only when the approved v2.0.1 Git tag is created at the final release gate.
 # Publishes the separately named, versioned image; does not change next-test.
 on:
   push:
     tags:
-      - "v2.0"
+      - "v2.0.1"
 
 permissions:
   contents: read
@@ -24,16 +24,16 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Publish Caffoot Lite v2.0 for Raspberry Pi 5 and PCs
+      - name: Publish Caffoot Lite v2.0.1 for Raspberry Pi 5 and PCs
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./next/Dockerfile
+          file: ./Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ghcr.io/caffoot/caffoot-lite:v2.0
+          tags: ghcr.io/caffoot/caffoot-lite:v2.0.1
           labels: |
             org.opencontainers.image.source=https://github.com/Caffoot/Caffoot-Lite
             org.opencontainers.image.title=Caffoot Lite
-            org.opencontainers.image.version=v2.0
+            org.opencontainers.image.version=v2.0.1
           provenance: false
