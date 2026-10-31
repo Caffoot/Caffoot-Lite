@@ -76,6 +76,7 @@ class LoginHttpTests(unittest.TestCase):
     def test_pending_admin_secret_recovery_is_throttled(self):
         with sqlite3.connect(self.path) as db:
             db.execute("DELETE FROM accounts")
+            db.commit()
             bootstrap_first_admin(db, "pending-throttle-owner", "correct-password")
         headers = {"Origin": ORIGIN, "Content-Type": "application/json"}
         for _ in range(5):

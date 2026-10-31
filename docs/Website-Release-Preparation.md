@@ -8,7 +8,6 @@ The website source inspected for this draft is the private `Caffoot/Caffoot-Webs
 
 - **Published Caffoot Lite v1.3.3:** a standalone HTML application, with browser-local inventory storage and the existing JSON backup/restore workflow. It requires neither Docker nor an account. Keep its [published release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3) available.
 - **Caffoot Lite Docker/SQLite edition:** currently an **unreleased test build**, bringing the familiar inventory screens to a central SQLite database, HTTPS, first-run administrator setup, MFA, account management and section permissions. Its supported JSON import is a **one-way migration from a fresh published v1.3.3 backup**, not an ongoing Docker backup/restore feature.
-- **Caffoot Pro:** a separate future product. Do not imply that Docker is exclusive to Pro, or promise Pro features, availability or prices not approved elsewhere.
 
 The website currently describes the published HTML edition accurately. **Do not put the release-only wording below on the public site until Stage 8 publication approval.** In particular, do not replace the existing `releases/latest` download link with an unreleased `next-test` image, or turn standalone instructions into Docker instructions without explicitly distinguishing the editions.
 
@@ -112,7 +111,7 @@ All nine source images were captured from the real Docker/SQLite app with fictio
 1. Keep the live `Caffoot-Website/main` and current standalone download, backup/security guidance, SEO text and `llms.txt` unchanged during Stage 6. The website source is currently single-page with hash-based features; no architecture change is authorised by this preparation.
 2. At the approved release gate, decide and verify which URLs identify the actual published Docker edition, its version, downloadable image and canonical guides. Do not link the website's production download button to `next-test`.
 3. Distinguish standalone/browser JSON backups from Docker/external SQLite backups in **all affected** feature pages, FAQ, hero text, screenshots and metadata. Do not simply globally replace “HTML” with “Docker”.
-4. Check the website's existing “Pro — Planned” wording so it does not incorrectly suggest that Docker is a Pro-only capability. Do not invent or advertise Pro commitments.
+4. Remove retired-product marketing from the existing website's creator description, FAQ, editions panel and informational metadata. Do not invent a replacement product.
 5. Recheck the final accessible website links, image descriptions, mobile/desktop presentation and published text **after** a separately approved website update. This draft is not evidence of live-site rendering or launch.
 6. Stage 7 remains the separate approved proportionate security review; Stage 8 remains the explicit product-owner release and website-publication approval.
 
