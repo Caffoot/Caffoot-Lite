@@ -68,6 +68,12 @@ async function run(){
   console.log('HTTPS and SQLite startup passed');
   await page.goto(address+'/setup');
   assert.equal(await page.title(),'Caffoot Lite — Infrastructure, Simplified.','Setup browser tab must use Caffoot branding');
+  assert.equal(await page.locator('link[rel="icon"]').getAttribute('href'),'/assets/favicon.ico',
+    'Sign-in and first-run setup must declare the existing Caffoot favicon');
+  assert.equal(await page.locator('link[rel="apple-touch-icon"]').getAttribute('href'),'/assets/apple-touch-icon.png',
+    'Sign-in and first-run setup must declare the existing touch icon');
+  const faviconResponse=await page.request.get(address+'/assets/favicon.ico');
+  assert.equal(faviconResponse.status(),200,'Existing Caffoot favicon should be served to browsers');
   await page.locator('.brand-header img[src="/assets/caffoot-icon-1024.png"]').waitFor();
   assert.equal(await page.locator('.brand-tagline').textContent(),'Infrastructure, Simplified.');
   assert.ok((await page.locator('main').evaluate(el=>getComputedStyle(el).fontFamily)).includes('Inter'),
