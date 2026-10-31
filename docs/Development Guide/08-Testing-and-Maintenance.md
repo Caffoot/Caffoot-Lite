@@ -51,6 +51,6 @@ The link checker does not validate external sites or application behaviour. Chro
 
 ## Remaining acceptance
 
-As of 30 October 2026, focused backend/browser tests and the Pi image build have passed on the relevant preceding code. Remaining manual work includes Raspberry Pi MFA guidance, two-user editing, v1.3.3 inventory compatibility and relevant external backup/restore/persistence checks. See [#218](https://github.com/Caffoot/Caffoot-Lite/issues/218). Passing tests **alone do not approve the release**.
+As of 31 October 2026, the product owner has completed the agreed **Stage 2 Raspberry Pi 5 acceptance**: MFA guidance, independent two-user editing and on-demand shared view freshness, v1.3.3 inventory compatibility, container recreation and a one-off **same-device manual database copy/restore**. The latest focused backend, browser and Pi image builds passed, as recorded in [#218](https://github.com/Caffoot/Caffoot-Lite/issues/218). The local restore test is **not** evidence of off-host backup resilience, and Stage 3 documentation, later visual/security work and explicit release approval remain outstanding. Passing tests **alone do not approve release**.
 
 [Start here](README.md) · [Inventory migration](05-Inventory-and-Migration.md)
