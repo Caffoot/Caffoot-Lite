@@ -18,7 +18,7 @@
 ## Import into Docker/SQLite — step by step
 
 1. Sign in as an administrator.
-2. Open **Settings & Data → Import Inventory**.
+2. Open **Settings & Data** and find the **Import Inventory** section heading.
 3. Under **Import from published v1.3.3**, choose **Choose Backup File** and select the fresh JSON export from published v1.3.3.
 4. Read the **Import Inventory from v1.3.3** review screen. Check device, IPAM, rack and historical/custom fields, plus any required corrections. Where access-point mounting choices are required, review each selection; older mount assignments may need to be cleared for those specific records.
 5. If anything looks wrong, **Cancel**, correct the source or review choice as appropriate, then start again. The review is not the final save.

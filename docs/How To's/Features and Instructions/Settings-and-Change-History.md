@@ -24,7 +24,7 @@ Open **Settings & Data** in the sidebar with an administrator account. The exist
 
 - **Import Inventory / Import from published v1.3.3:** choose a supported JSON export and review the proposed inventory replacement before confirming it. This is *one-way migration*; not a routine backup/restore service.
 - **Database backups:** guidance for external Docker/volume/database backup tooling. The running Docker edition has no ongoing in-browser JSON backup export.
-- **Inventory Safety Check:** inspect the built-in inventory safety information before making potentially destructive changes.
+- **Inventory Safety Check:** choose **Check Inventory Safety** to reload the central inventory and run the existing on-demand consistency checks without changing saved records.
 - **Danger Zone — Clear System / Clean Start:** a deliberate destructive inventory operation with confirmation. Do not use it as a repair shortcut or without understanding what will be cleared.
 
 Managed device types, manufacturers/models and locations are available through the relevant existing device catalogue controls. They remain governed by their actual permissions; these are not new system-wide settings for every viewer.
