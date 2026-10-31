@@ -1,6 +1,6 @@
 # Caffoot Lite Next — unreleased development build
 
-Caffoot Lite Next implements the approved central SQLite inventory application from [issue #215](https://github.com/Caffoot/Caffoot-Lite/issues/215). It serves the established v1.3.3 inventory interface with backend persistence, first-run administrator setup, MFA, administrator-managed users and device edit reservations. The supported v1.3.3 JSON backup import is a one-way migration, not an ongoing backup system. This is **not yet a published release**; broader acceptance and Raspberry Pi 5 testing remain outstanding.
+Caffoot Lite Next implements the approved central SQLite inventory application from [issue #215](https://github.com/Caffoot/Caffoot-Lite/issues/215). It serves the established v1.3.3 inventory interface with backend persistence, first-run administrator setup, MFA, administrator-managed users and device edit reservations. The supported v1.3.3 JSON backup import is a one-way migration, not an ongoing backup system. This is **not yet a published release**. Stage 2 Raspberry Pi 5 acceptance of inventory, multi-user workflows, persistence and a one-off external file-copy restore has been completed; release documentation, approved visual identity, proportional security review and final release approval are still outstanding.
 
 ## HTTPS Docker Compose / Portainer setup
 
@@ -30,7 +30,7 @@ The container's own HTTPS health check is a local liveness probe and does not es
 
 The existing backend checks and focused HTTPS/Chromium test run in GitHub Actions. They cover first-run MFA, central inventory and Change History, user creation and access permissions, competing device edit reservations, familiar Devices/IPAM/Racks forms, Clean Start and a real v1.3.3 backup created by the published exporter. These checks do not yet prove all published v1.3.3 interactions or Raspberry Pi 5 performance.
 
-The existing `tests/test_compose_lifecycle.py` is an **opt-in** Docker milestone test. Run the `Next Docker Compose lifecycle` GitHub Actions workflow manually at an integration milestone to verify published port configuration, persistent SQLite data and TLS certificate continuity across restart and recreation. A real Raspberry Pi 5/Portainer acceptance test is still required before release.
+The existing `tests/test_compose_lifecycle.py` is an **opt-in** Docker milestone test. Run the `Next Docker Compose lifecycle` GitHub Actions workflow manually at an integration milestone to verify published port configuration, persistent SQLite data and TLS certificate continuity across restart and recreation. The product owner has now completed the agreed Raspberry Pi 5/Portainer Stage 2 acceptance, including container recreation and a manual stopped-container backup/restore. That acceptance does **not** replace the later release security review, nor prove automated or off-host backup protection.
 
 ## Simplest Portainer Web editor installation (prebuilt test image)
 
@@ -93,6 +93,16 @@ openssl x509 -in /data/tls/server.crt -noout -fingerprint -sha256 -subject -date
 Do not simply click past browser certificate warnings. Establish trust using the approved HTTPS procedure above. The database and certificate persist under the host's `caffoot_data` folder; leave this folder intact when recreating or updating the container. Back up and restore it with the existing external volume/container backup process, not the one-way v1.3.3 JSON migration.
 
 If you do not set `CAFFOOT_DATA_PATH`, the original `caffoot_data` Docker-managed named volume remains the default. Avoid changing `CAFFOOT_DATA_PATH` after setup without deliberately moving your existing persisted data.
+
+## External backup and recovery of your Docker installation
+
+The Docker edition does **not** offer an ongoing in-app JSON export/restore service. The fresh **v1.3.3** JSON import described below is only for one-way migration.
+
+The application stores its SQLite database at `/data/caffoot.sqlite3`, with persistent HTTPS certificate material under `/data/tls`. Keep the **entire** `/data` mount when recreating or updating the container. On the example Pi Portainer stack, this is the host folder `/portainer/Files/AppData/Config/caffoot_data`.
+
+Use your existing external container/volume backup solution. For a straightforward **manual copy**, first stop the Caffoot container so SQLite is no longer being written, then copy the entire persistent data directory to a separately protected backup location. Start the container again once copying is complete. For restoration, stop the container, restore the backed-up persistent files into the correctly mapped data directory with their original ownership and permissions, and start the container. Verify your account sign-in, inventory and HTTPS identity. **Do not delete your only working database or certificate files to test restoration.** A disposable test environment or separate temporary restore location is preferable.
+
+On the Raspberry Pi test host, the product owner successfully recreated the running container without losing inventory, then separately stopped it, copied its data, restored the copied database and restarted with the existing inventory functioning. That was a **local manual recovery exercise**: it was **not** an off-device backup and would not protect against failure or loss of the Pi's storage. Real deployments should secure backup copies **outside the Docker host** and verify their restore process. Protect backups containing user credentials and TLS private-key material.
 
 ## Published v1.3.3 import compatibility boundary
 
