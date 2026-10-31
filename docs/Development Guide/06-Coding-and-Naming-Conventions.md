@@ -4,7 +4,7 @@
 
 Names are signposts: a developer should be able to search for a function and understand what it does. Caffoot Lite already has established naming conventions, so preserve them instead of introducing a new style.
 
-The [existing v1.3.x naming reference](../required-only/standards--coding--DEVELOPER-CODING-AND-NAMING-REFERENCE.md) is useful source evidence, but its older browser-storage and release notes do not all apply to the Docker application.
+The conventions below reflect [current Next source](../../next/inventory.html) and the [source-pinned Function Index](Function-Index.md). Earlier naming proposals and audit notes remain available in [historical Git evidence](https://github.com/Caffoot/Caffoot-Lite/tree/049262f196be494074f698a72f377153f202171b/docs/required-only), but do not override published v1.3.3 or issue #215.
 
 ## JavaScript and HTML
 

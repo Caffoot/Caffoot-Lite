@@ -15,7 +15,7 @@ Use the source from [published tag `v1.3.3`](https://github.com/Caffoot/Caffoot-
 - `findAccessPointMountConflictsInBackup` for Access Point mounting choices.
 - `renderDevicesHTML` and `renderRackHubV13` for the established device and rack interface.
 
-The retained [technical workflows](../required-only/workflows--TECHNICAL-WORKFLOWS.md), [migration investigation](../required-only/next-storage-migration-investigation.md) and [workflow verification register](../required-only/testing--WORKFLOW-VERIFICATION-COVERAGE-REGISTER.md) are supporting **evidence**, not permission to reintroduce obsolete browser-storage features. Check later v1.3.3 fixes before treating an older audit observation as unresolved.
+The source of truth is the published v1.3.3 tag and the current Docker source/tests. The earlier v1.3.0 audits, workflow matrices and initial Next migration investigation are kept in [this exact Git history snapshot](https://github.com/Caffoot/Caffoot-Lite/tree/049262f196be494074f698a72f377153f202171b/docs/required-only), not as live requirements. Their findings and proposed changes must be checked against later published fixes before being treated as outstanding.
 
 ## Data and relationships
 
@@ -23,6 +23,12 @@ The retained [technical workflows](../required-only/workflows--TECHNICAL-WORKFLO
 - **IPAM:** blocks/subnets, VLANs, primary device IPs, independent allocations/reservations, gateway restrictions, notes, dependent and bulk operations.
 - **Racks:** rack definitions, placement, faces, capacity, rack accessories and vertical side-rail items, with collision/dependency rules.
 - **Change History:** retains existing event information and limits while moving event storage to SQLite.
+
+### Preserved data contracts — carried forward from source review
+
+The published v1.3.3 export and the current [SQLite projection](../../next/backend/inventory.py) use the inventory collections `devices`, `subnets`, `vlans`, `racks`, `rackAccessories` and `ipAllocations`. The backend's `SETTINGS` fields include `deviceTypes`, `deviceTypeGraphics`, `deviceLocations`, `serverFunctions`, `installedSoftware`, `managedOptionsCleared`, `stateVersion`, `hardwareCatalogue`, `hardwareSeedPreferences` and `softwareTypeExclusions`. These and unknown supported historical/custom values must not be silently dropped.
+
+Device records may carry `typeDetails`, `virtualHostId`, `primaryIp`, mounting/location fields and other optional historical properties. The exact available fields and relationships come from the published application and its current validators, not a fixed list in this guide. Importing retains the existing Access Point and legacy mounting reviews when triggered by the supplied v1.3.3 export, without adding support for older direct imports.
 
 Source-shaped records are reconstructed by [`inventory.reconstruct_inventory`](../../next/backend/inventory.py) for compatibility checks and display. Core authoritative data remains divided across SQLite tables; save modules must keep linked IP/rack outcomes consistent. See [database ownership](02-Database.md).
 

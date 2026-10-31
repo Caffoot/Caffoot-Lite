@@ -12,7 +12,11 @@ Before changing Caffoot Lite, identify the existing behaviour that must remain i
 | [`next/tests/browser-compat.cjs`](../../next/tests/browser-compat.cjs) | Chromium/Playwright checks of approved browser workflows |
 | [`next/tests/test_compose_lifecycle.py`](../../next/tests/test_compose_lifecycle.py) | Optional Docker lifecycle test for port and persistent database/certificate |
 | [`app/`](../../app/) | Original HTML application's code and tests |
-| [`docs/required-only/`](../required-only/README.md) | Historical workflow, audit and test evidence — check later fixes before treating findings as open |
+| [Published v1.3.3 source and tests](https://github.com/Caffoot/Caffoot-Lite/tree/v1.3.3/app) | Authoritative published inventory compatibility baseline; check later fixes before using older audit findings |
+
+## Archived audit and migration evidence
+
+The 25 earlier audit, workflow, test-matrix and draft migration documents are accessible in the [pre-cleanup Git snapshot](https://github.com/Caffoot/Caffoot-Lite/tree/049262f196be494074f698a72f377153f202171b/docs/required-only). They document historical observations and test provenance from v1.3.0 through v1.3.3, including subsequent fixes. Use published [v1.3.3 source/tests](https://github.com/Caffoot/Caffoot-Lite/tree/v1.3.3/app), current [Next tests](../../next/tests/) and actual [GitHub Actions results](https://github.com/Caffoot/Caffoot-Lite/actions) to decide whether an old finding still applies. Proposed tests in the archive are not automatically executed or requirements.
 
 ## GitHub Actions
 
@@ -51,6 +55,6 @@ The link checker does not validate external sites or application behaviour. Chro
 
 ## Remaining acceptance
 
-As of 31 October 2026, the product owner has completed the agreed **Stage 2 Raspberry Pi 5 acceptance**: MFA guidance, independent two-user editing and on-demand shared view freshness, v1.3.3 inventory compatibility, container recreation and a one-off **same-device manual database copy/restore**. The latest focused backend, browser and Pi image builds passed, as recorded in [#218](https://github.com/Caffoot/Caffoot-Lite/issues/218). The local restore test is **not** evidence of off-host backup resilience, and Stage 3 documentation, later visual/security work and explicit release approval remain outstanding. Passing tests **alone do not approve release**.
+As of 31 October 2026, the product owner has completed the agreed **Stage 2 Raspberry Pi 5 acceptance**: MFA guidance, independent two-user editing and on-demand shared view freshness, v1.3.3 inventory compatibility, container recreation and a one-off **same-device manual database copy/restore**. The latest focused backend, browser and Pi image builds passed, as recorded in [#218](https://github.com/Caffoot/Caffoot-Lite/issues/218). The local restore test is **not** evidence of off-host backup resilience. Stages 3 (documentation) and 4 (approved visual verification) are complete; Stage 5 repository reconciliation, Stage 6 website preparation, Stage 7 security review and Stage 8 explicit release approval remain. Passing tests **alone do not approve release**.
 
 [Start here](README.md) · [Inventory migration](05-Inventory-and-Migration.md)

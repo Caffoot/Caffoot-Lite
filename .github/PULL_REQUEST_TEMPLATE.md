@@ -19,4 +19,4 @@
 - Identify any unavoidable user-visible difference and obtain explicit product owner approval **before implementation**.
 - Obtain product owner approval before merge; publication requires separate approval.
 
-The temporary reference collection is at [docs/required-only](../docs/required-only/README.md). It is evidence, not a second specification.
+Historical v1.3.x audit notes are available in the [pre-cleanup Git snapshot](https://github.com/Caffoot/Caffoot-Lite/tree/049262f196be494074f698a72f377153f202171b/docs/required-only). Use the [current Development Guide](../docs/Development%20Guide/README.md) and the published v1.3.3 source for operative implementation evidence; #215 alone defines Next's approved scope.

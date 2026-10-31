@@ -14,7 +14,7 @@ This is a **searchable map of named functions in the current unreleased Docker a
 - **Purpose** uses an existing nearby comment or docstring only when suitable; otherwise **Name cue** is a search hint inferred from the identifier, not a confirmed behavioural description. Read the actual source, call path and tests before changing code.
 - **†** means multiple declarations share the same unqualified identifier within that language; its count is not attributable to one declaration.
 
-See [07 — Function and Code Reference](07-Function-and-Code-Reference.md) for a curated starting map, [Coding and Naming Conventions](06-Coding-and-Naming-Conventions.md) for established patterns, and [issue #215](https://github.com/Caffoot/Caffoot-Lite/issues/215) for the authoritative approved specification. The old [audit naming document](../required-only/standards--technical--FUNCTION-NAMING-AND-REFERENCE.md) is preserved as historical evidence.
+See [07 — Function and Code Reference](07-Function-and-Code-Reference.md) for a curated starting map, [Coding and Naming Conventions](06-Coding-and-Naming-Conventions.md) for established patterns, and [issue #215](https://github.com/Caffoot/Caffoot-Lite/issues/215) for the authoritative approved specification. Earlier naming/audit investigations remain in [historical Git evidence](https://github.com/Caffoot/Caffoot-Lite/tree/049262f196be494074f698a72f377153f202171b/docs/required-only), rather than the active documentation.
 
 ## Frontend JavaScript
 
