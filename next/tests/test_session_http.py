@@ -14,6 +14,7 @@ from backend.http_security import COOKIE_NAME
 from backend.request_auth import csrf_for_session
 from backend.mfa import code_at, new_secret, provisioning_uri
 from backend.schema import initialise_database
+from backend.permissions import create_user
 from backend.server import Handler
 from backend.sessions import login_session
 
@@ -172,6 +173,32 @@ class SessionHttpTests(unittest.TestCase):
             self.assertEqual(status, 200)
             self.assertEqual(self.request("/api/session", COOKIE_NAME + "=" + self.token)[0], 401)
 
+    def test_device_editor_name_visible_and_competing_edit_still_refused(self):
+        with sqlite3.connect(self.path) as db:
+            owner_id = db.execute("SELECT id FROM accounts WHERE username='owner'").fetchone()[0]
+            editor_id = create_user(db, owner_id, "Steve", "initial")
+            db.execute("INSERT INTO inventory_devices(id,name,record_json,ordinal) VALUES(?,?,?,?)",
+                       ("device-1", "Test Server", '{"id":"device-1","name":"Test Server"}', 0))
+            db.execute("INSERT INTO device_edit_reservations(device_id,account_id,expires_at,base_revision) "
+                       "VALUES(?,?,?,0)", ("device-1", editor_id, int(time.time()) + 300))
+            db.commit()
+        cookie = COOKIE_NAME + "=" + self.token
+        status, raw, _ = self.request("/api/inventory/state", cookie)
+        self.assertEqual(status, 200)
+        self.assertEqual(json.loads(raw)["deviceEditors"], {"device-1": "Steve"})
+        with patch("backend.server.PUBLIC_ORIGIN", "https://caffoot.example"):
+            status, rejected = self.post(
+                "/api/devices/edit/start", {"deviceId": "device-1"},
+                self.token, csrf_for_session(self.token))
+        self.assertEqual(status, 400)
+        self.assertEqual(rejected["error"], "Device is being edited by Steve")
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE device_edit_reservations SET expires_at=? WHERE device_id=?",
+                       (int(time.time()) - 1, "device-1"))
+            db.commit()
+        status, raw, _ = self.request("/api/inventory/state", cookie)
+        self.assertEqual(status, 200)
+        self.assertEqual(json.loads(raw)["deviceEditors"], {})
     def test_inventory_snapshot_is_sqlite_owned_and_permission_filtered(self):
         with sqlite3.connect(self.path) as db:
             db.execute("INSERT INTO inventory_devices(id,name,record_json,ordinal) "

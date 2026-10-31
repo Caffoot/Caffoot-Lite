@@ -247,6 +247,12 @@ class Handler(BaseHTTPRequestHandler):
                     )
                 } if sections["Devices"] and any(result["editPermissions"].values()) else {}
                 if sections["Devices"]:
+                    result["deviceEditors"] = {device_id: username for device_id, username in connection.execute(
+                        "SELECT reservation.device_id, account.username "
+                        "FROM device_edit_reservations AS reservation "
+                        "JOIN accounts AS account ON account.id=reservation.account_id "
+                        "WHERE reservation.expires_at>?", (int(time.time()),)
+                    )}
                     result["devices"] = [json.loads(raw) for (raw,) in connection.execute(
                         "SELECT record_json FROM inventory_devices ORDER BY ordinal"
                     )]
@@ -561,10 +567,13 @@ class Handler(BaseHTTPRequestHandler):
                             if device is None:
                                 raise ValueError("Device not found")
                             existing = connection.execute(
-                                "SELECT account_id FROM device_edit_reservations WHERE device_id=?", (device_id,)
+                                "SELECT reservation.account_id, account.username "
+                                "FROM device_edit_reservations AS reservation "
+                                "JOIN accounts AS account ON account.id=reservation.account_id "
+                                "WHERE reservation.device_id=?", (device_id,)
                             ).fetchone()
                             if existing and existing[0] != actor:
-                                raise ValueError("Device is being edited by another user")
+                                raise ValueError("Device is being edited by " + existing[1])
                             if existing:
                                 reservation_revision = connection.execute(
                                     "SELECT base_revision FROM device_edit_reservations WHERE device_id=?",

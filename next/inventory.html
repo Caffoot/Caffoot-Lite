@@ -1210,6 +1210,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
             </nav>
             <!-- application-wide controls live in Settings & Data. -->
             <div class="px-4 pb-4 pt-3 border-t border-slate-200 dark:border-slate-700">
+                <p id="next-welcome-name" class="mb-2 px-4 text-sm font-semibold text-slate-700 dark:text-slate-200 break-words"></p>
                 <nav aria-label="Account and settings" class="space-y-1.5">
                     <button type="button" id="next-account-nav" data-action="tab-account" data-tab="account" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700/50 hover:text-indigo-600 dark:hover:text-indigo-400"><i class="fa-solid fa-user-gear w-5 text-center" aria-hidden="true"></i><span>My account</span></button>
                     <button id="next-settings-nav" data-action="tab-settings" data-tab="settings" aria-label="Open Settings and Data" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700/50 hover:text-indigo-600 dark:hover:text-indigo-400"><i class="fa-solid fa-gear w-5 text-center"></i><span>Settings & Data</span></button>
@@ -9008,7 +9009,7 @@ function hierarchyValidateTypes(subnets) {
                 case 'archived-software-remove': confirmUninstallOfArchivedSoftware(id,name); break;
                 case 'archived-software-confirm-uninstall': recordUninstallOfArchivedSoftware(id,name); break;
                 case 'view-hosted-virtual-machine': openDeviceDetailView(id); break;
-                case 'edit-device-from-details': closeModal(); openDeviceModal(id); break;
+                case 'edit-device-from-details': openDeviceModal(id); break;
                 case 'duplicate-device-from-details': closeModal(); duplicateDevice(id); break;
                 case 'delete-device-from-details': closeModal(); deleteDevice(id); break;
                 case 'navigate-to-device-rack': navigateToDeviceRack(id); break;
@@ -9218,6 +9219,7 @@ window.addEventListener('load', async () => {
   let permissions = {};
   let editPermissions = {};
   let deviceRevisions = {};
+  let deviceEditors = {};
   let csrfToken = '';
   let activeEdit = null;
   let pendingSave = false;
@@ -9231,6 +9233,7 @@ window.addEventListener('load', async () => {
     editPermissions = state.editPermissions || {};
     nextImportAllowed = ['Devices','IPAM','Racks'].every(key => editPermissions[key]);
     deviceRevisions = state.deviceRevisions || {};
+    deviceEditors = state.deviceEditors || {};
     // A replacement import or Clean Start can remove optional managed settings.
     // Reconstruct the entire display state from SQLite, not stale browser values.
     const fresh=cloneDefaultData();
@@ -9482,6 +9485,41 @@ window.addEventListener('load', async () => {
     originalSwitchTab(tab);
     applyAllowedControls();
   };
+  // Keep the published read-only device details open during a competing edit.
+  const originalOpenDeviceDetailView = openDeviceDetailView;
+  function updateDeviceEditorNotice(deviceId) {
+    const dialog = document.querySelector('.device-details-dialog');
+    const editButton = dialog?.querySelector('[data-action="edit-device-from-details"]');
+    if (!editButton || String(editButton.dataset.id) !== String(deviceId)) return;
+    const editor = deviceEditors[String(deviceId)];
+    const locked = !!editor && editor.toLowerCase() !== signedInUsername.toLowerCase();
+    let notice = dialog.querySelector('[data-device-editor-notice]');
+    if (locked) {
+      if (!notice) {
+        notice = document.createElement('p');
+        notice.dataset.deviceEditorNotice = 'true';
+        notice.setAttribute('role', 'status');
+        notice.className = 'rounded-lg border border-red-400 bg-red-50 px-4 py-3 text-sm font-semibold text-red-800 dark:border-red-600 dark:bg-red-950/50 dark:text-red-200 break-words';
+        dialog.querySelector('header').after(notice);
+      }
+      notice.textContent = 'Currently being edited by ' + editor + '. You can view this device, but editing is unavailable until ' + editor + ' finishes.';
+      editButton.disabled = true;
+      editButton.classList.add('opacity-50', 'cursor-not-allowed');
+    } else {
+      notice?.remove();
+      if (editPermissions.Devices) {
+        editButton.disabled = false;
+        editButton.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+    }
+  }
+  openDeviceDetailView = function(deviceId) {
+    originalOpenDeviceDetailView(deviceId);
+    updateDeviceEditorNotice(deviceId);
+    // Refresh reservation ownership when details open; viewing itself never locks.
+    void refreshCentralInventory(false).then(() => updateDeviceEditorNotice(deviceId))
+      .catch(error => showToast(error.message, 'error'));
+  };
   const originalOpenDeviceModal = openDeviceModal;
   function applyDeviceFormSectionPermissions(deviceId) {
     const form = document.querySelector('#modal-content form[data-device-form="true"]');
@@ -9553,7 +9591,13 @@ window.addEventListener('load', async () => {
           await postInventory('/api/devices/edit/cancel', {deviceId}).catch(()=>{});
           activeEdit = null;
         }
-        showToast(error.message,'error');
+        if (error.message.startsWith('Device is being edited by ')) {
+          deviceEditors[String(deviceId)] = error.message.slice('Device is being edited by '.length);
+          if (!document.querySelector('.device-details-dialog')) originalOpenDeviceDetailView(deviceId);
+          updateDeviceEditorNotice(deviceId);
+        } else {
+          showToast(error.message,'error');
+        }
       }
     })();
   };
@@ -10343,6 +10387,7 @@ window.addEventListener('load', async () => {
     csrfToken=session.csrf_token;
     sessionIsAdmin=!!session.is_admin;
     signedInUsername=session.username;
+    document.getElementById('next-welcome-name').textContent = 'Welcome ' + signedInUsername;
     sessionMfaEnrolled=!!session.mfa_enrolled;
     window.nextMfaEnrolled=sessionMfaEnrolled;
     document.getElementById('next-users-nav').classList.toggle('hidden', !sessionIsAdmin);
