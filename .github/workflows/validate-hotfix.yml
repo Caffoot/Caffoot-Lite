@@ -12,6 +12,9 @@ permissions:
 
 jobs:
   test-and-package:
+    # The Docker/SQLite Next release uses its own backend and Chromium checks.
+    # Keep this v1.3.3 standalone release packaging gate for other PRs.
+    if: github.event_name != 'pull_request' || github.head_ref != 'Next'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     defaults:
