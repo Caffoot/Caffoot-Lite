@@ -1,6 +1,7 @@
 name: Next prebuilt Portainer image
 
 # Build at an explicit integration milestone, not on every Next code commit.
+# Product-owner-approved one-time Stage 8 Raspberry Pi test-image refresh (31 October 2026).
 # Pi 5 acceptance image refresh: verified local MFA QR enrolment (30 October 2026).
 # Pi 5 UI acceptance refresh: navigation and Users/account alignment verified.
 # Pi 5 acceptance refresh: dashboard sign-in, sidebar account and Users visual consistency verified.
