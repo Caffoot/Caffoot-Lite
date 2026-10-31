@@ -1,4 +1,4 @@
-# Approved #215 section 24: disposable browser capture for release user guides; capture settled screens without transient save notifications.
+# Approved #215 section 24: disposable browser capture for release user guides; capture settled screens, including sign-in without a toast element.
 name: Next documentation screenshots
 
 on:

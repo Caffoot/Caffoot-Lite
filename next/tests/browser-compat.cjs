@@ -18,7 +18,7 @@ if(linkCreated)fs.symlinkSync(path.join(root,'..','assets'),temporaryAssetLink,'
 async function documentationScreenshot(page,name,expectedSelector){
   if(process.env.CAFFOOT_DOC_SCREENSHOTS!=='1')return;
   if(expectedSelector)await page.locator(expectedSelector).first().waitFor({state:'visible',timeout:12000});
-  await page.waitForFunction(()=>document.getElementById('toast')?.classList.contains('opacity-0'));
+  await page.waitForFunction(()=>!document.getElementById('toast') || document.getElementById('toast').classList.contains('opacity-0'));
   await page.waitForTimeout(350);
   const png=await page.screenshot({type:'png',animations:'disabled',fullPage:false});
   assert.ok(png.length>12000,'Documentation screenshot was unexpectedly empty: '+name);
