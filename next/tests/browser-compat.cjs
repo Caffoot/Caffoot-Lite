@@ -391,6 +391,28 @@ async function run(){
   console.log('Mixed editing and read-only section visibility passed');
   console.log('User creation, initially no access, editor MFA, permissions and shared viewing passed');
 
+  // A second browser must read fresh SQLite inventory on navigation and on opening a record.
+  await page.evaluate(()=>openIpModal('10.64.20.15'));
+  await page.locator('#ip-notes').fill('Remote note after editor sign-in');
+  await page.locator('form[data-form-action="ip"] button[type="submit"]').click();
+  await persisted(page,s=>s.ipAllocations['10.64.20.15']?.notes==='Remote note after editor sign-in',
+                  'Remote IP note');
+  await editor.locator('#sidebar [data-action="tab-ipam"]').click();
+  await editor.waitForFunction(()=>appState.ipAllocations['10.64.20.15']?.notes==='Remote note after editor sign-in');
+  await editor.locator('#ipam-sidebar-actions [data-action="sidebar-ipam-addresses"]').click();
+  await editor.locator('[data-action="open-ip"][data-ip="10.64.20.15"]').waitFor();
+  await page.evaluate(()=>openIpModal('10.64.20.15'));
+  await page.locator('#ip-notes').fill('Newer remote IP note');
+  await page.locator('form[data-form-action="ip"] button[type="submit"]').click();
+  await persisted(page,s=>s.ipAllocations['10.64.20.15']?.notes==='Newer remote IP note',
+                  'Newer remote IP note');
+  await editor.locator('[data-action="open-ip"][data-ip="10.64.20.15"]').click();
+  await editor.locator('#ip-notes').waitFor();
+  assert.equal(await editor.locator('#ip-notes').inputValue(),'Newer remote IP note',
+    'Opening an IP after another user saves must not show stale notes');
+  await editor.evaluate(()=>closeModal(true));
+  console.log('Multi-user IPAM navigation and record-opening freshness passed');
+
   // Simple exclusive reservation across two simultaneous browsers.
   const ownerStarted=page.waitForResponse(res=>res.url().endsWith('/api/devices/edit/start'));
   await page.evaluate(id=>openDeviceModal(id),device.id);
