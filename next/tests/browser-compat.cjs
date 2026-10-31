@@ -97,6 +97,7 @@ async function run(){
   await page.locator('#code').fill(mfaCode(secret));
   await page.waitForURL('**/inventory');
   await page.locator('#next-account-nav').waitFor();
+  // Tailwind preflight loads later than the inline stylesheet; assert the resulting computed family.
   assert.ok((await page.locator('html').evaluate(el=>getComputedStyle(el).fontFamily)).includes('Inter'),
     'Inventory, Users, Settings and My account must inherit Inter typography');
   await page.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='Dashboard Overview');
