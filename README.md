@@ -41,7 +41,7 @@ The easiest tested method is **Portainer → Stacks → Add stack → Web editor
 3. Keep a **persistent** mount for `/data`. The example Raspberry Pi host path is `/portainer/Files/AppData/Config/caffoot_data`; choose a suitable path for your installation and set its permissions as described in the [installation guide](next/README.md).
 4. Deploy the stack, open your configured HTTPS address, create the first administrator account and complete mandatory MFA enrolment.
 
-The full [installation guide](next/README.md) also explains Docker Compose, HTTPS certificates, reverse proxies, environment settings, database persistence and migration.
+The full [installation guide](next/README.md) also explains Docker Compose, HTTPS certificates, reverse proxies, environment settings, database persistence and migration. The [versioned v2.0 Portainer stack](next/portainer-v2.0.yaml) is prepared for **the official release image**, not the existing `next-test` image; use it only after the release image has been published and verified.
 
 ### Installation settings in plain English
 

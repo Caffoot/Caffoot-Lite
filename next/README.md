@@ -42,6 +42,14 @@ The existing backend checks and focused HTTPS/Chromium test run in GitHub Action
 
 The existing `tests/test_compose_lifecycle.py` is an **opt-in** Docker milestone test. The `Next Docker Compose lifecycle` GitHub Actions workflow passed during Stage 8, verifying published port configuration, persistent SQLite data and TLS certificate continuity across restart and recreation. The product owner has now completed the agreed Raspberry Pi 5/Portainer Stage 2 acceptance, including container recreation and a manual stopped-container backup/restore. That acceptance does **not** replace the later release security review, nor prove automated or off-host backup protection.
 
+## Caffoot Lite v2.0 production image (after official publication)
+
+The approved v2.0 release uses the versioned **`ghcr.io/caffoot/caffoot-lite:v2.0`** image for AMD64 and ARM64, with a paste-ready [Portainer / Compose release stack](portainer-v2.0.yaml). This is **separate from the unreleased `next-test` acceptance image**. Before the v2.0 release tag and image build finish, do not deploy this release stack.
+
+For a new Portainer installation: open **Stacks → Add stack → Web editor**, copy [`portainer-v2.0.yaml`](portainer-v2.0.yaml), and change the example server address, host port and persistent bind-mount path to fit your machine. Prepare the data directory for container UID/GID `10001:10001` as below; deploy and complete first-run administrator MFA. To upgrade an existing `next-test` Portainer stack, keep the **same existing host path mounted at `/data`**, make a consistent external backup first, and update the existing stack rather than starting an independent empty installation.
+
+**Package visibility:** GitHub Container Registry may initially make a new package private. The repository owner must confirm that `ghcr.io/caffoot/caffoot-lite` is public before anonymous Portainer pulls will work; never place a personal access token in a public stack. The published v2.0 release notes and image-build status must be checked before treating this image as production-ready.
+
 ## Portainer Web editor installation (prebuilt acceptance image)
 
 For your Raspberry Pi 5, use **Stacks → Add stack → Web editor** and paste the complete configuration from [portainer-stack.yaml](portainer-stack.yaml). There is no Git source, username, token or Docker build needed on the Pi. The prebuilt `next-test` Docker image is built on the **Next** branch for `linux/arm64` (Pi 5) and `linux/amd64`. It is an **unreleased integration test image**, not a published Caffoot Lite release.

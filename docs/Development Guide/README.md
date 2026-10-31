@@ -2,7 +2,7 @@
 
 Welcome. This guide explains **how Caffoot Lite actually works**, from the everyday user experience through to the Python backend, SQLite database and tests. It is written for the product owner, new contributors and maintainers.
 
-**Status:** This guide describes the current, unreleased Docker/SQLite implementation on the `Next` branch. It is *not* a release announcement or a new specification. [Issue #215](https://github.com/Caffoot/Caffoot-Lite/issues/215) controls the approved application behaviour and the published [v1.3.3 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3) remains the inventory compatibility baseline. [Issue #218](https://github.com/Caffoot/Caffoot-Lite/issues/218) tracks release preparation and remaining acceptance.
+**Status:** This guide describes the approved Caffoot Lite v2.0 Docker/SQLite implementation developed on the `Next` branch. It is release-preparation documentation until final publication. It is *not* a release announcement or a new specification. [Issue #215](https://github.com/Caffoot/Caffoot-Lite/issues/215) controls the approved application behaviour and the published [v1.3.3 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3) remains the inventory compatibility baseline. [Issue #218](https://github.com/Caffoot/Caffoot-Lite/issues/218) tracks release preparation and remaining acceptance.
 
 ## In simple terms
 

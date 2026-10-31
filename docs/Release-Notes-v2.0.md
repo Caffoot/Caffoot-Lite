@@ -27,6 +27,7 @@ Keep the persistent `/data` directory: it contains `caffoot.sqlite3` and HTTPS c
 ## Get started
 
 - [Installation and HTTPS instructions](../next/README.md)
+- [Versioned v2.0 Portainer installation stack](../next/portainer-v2.0.yaml) — available when the official image is published
 - [Complete Features and Instructions](How%20To's/Features%20and%20Instructions/README.md)
 - [Approved specification](https://github.com/Caffoot/Caffoot-Lite/issues/215)
 - [Release acceptance evidence](https://github.com/Caffoot/Caffoot-Lite/issues/218)
