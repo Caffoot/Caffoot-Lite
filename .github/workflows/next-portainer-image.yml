@@ -12,6 +12,7 @@ name: Next prebuilt Portainer image
 # Pi 5 acceptance refresh: signed-in username and named device edit reservation notice for two-user testing.
 # Pi 5 acceptance refresh: corrected welcome name contrast using the existing Caffoot orange accent.
 # Pi 5 acceptance refresh: on-demand shared inventory freshness when users navigate and open records.
+# Pi 5 Stage 4 visual acceptance: approved sign-in branding, Inter typography and browser-tab title.
 on:
   push:
     branches: [Next]
