@@ -9475,6 +9475,38 @@ window.addEventListener('load', async () => {
   const enhanceSelects=()=>enhanceLongSelects();
   new MutationObserver(enhanceSelects).observe(document.getElementById('main-content'),{childList:true,subtree:true});
   new MutationObserver(enhanceSelects).observe(document.getElementById('modal-content'),{childList:true,subtree:true});
+  // Refresh SQLite-backed inventory when another user may have changed it.
+  // Only read/navigation actions are deferred; do not replace an open edit draft.
+  const freshNavigationActions = new Set([
+    'tab-dashboard','tab-devices','tab-ipam','tab-racks','tab-audit','tab-settings',
+    'dashboard-tab','inventory-tab','device-intelligence-tab',
+    'select-ipam-tab','ipam-open-block','ipam-show-all-blocks',
+    'select-rack','select-rack-tab','rack-face-front','rack-face-rear',
+    'v13-open-rack','v13-overview-tab','open-alert',
+    'view-device','view-hosted-virtual-machine','edit-device','edit-device-from-details',
+    'open-device-modal','open-ip','select-next-available-ip-address',
+    'open-rack-modal','edit-rack','correct-rack-specifications','edit-rack-accessory',
+    'open-subnet-modal','edit-subnet','edit-ipam-block','open-subnet-by-vlan','bulk-ip'
+  ]);
+  let resumingFreshNavigation = false;
+  document.addEventListener('click', event => {
+    if (resumingFreshNavigation) return;
+    const element = event.target.closest('[data-action]');
+    if (!element) return;
+    const action = element.dataset.action || '';
+    if (!(freshNavigationActions.has(action) ||
+          /^sidebar-(devices|ipam|racks)-/.test(action))) return;
+    if (isBlockedAction(action, element) || pendingSave || activeEdit || activeDelete ||
+        document.querySelector('#modal-container:not(.hidden) form')) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    void refreshCentralInventory(false).then(() => {
+      if (!element.isConnected) return;
+      resumingFreshNavigation = true;
+      try { element.click(); }
+      finally { resumingFreshNavigation = false; }
+    }).catch(error => showToast(error.message, 'error'));
+  }, true);
   const originalSwitchTab = switchTab;
   switchTab = function(tab) {
     if (((tab === 'users' || tab === 'settings') && !sessionIsAdmin) ||
