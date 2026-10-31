@@ -103,6 +103,17 @@ async function run(){
   await page.locator('#code-field:not([hidden])').waitFor();
   await page.locator('#code').fill(mfaCode(secret));
   await page.waitForURL('**/inventory');
+    assert.equal(await page.locator('script[src*="cdn.tailwindcss.com"]').count(),0,
+      'Inventory must not load remote Tailwind JavaScript');
+    assert.equal(await page.locator('link[href="/assets/tailwind.css"]').count(),1,
+      'Inventory must load the local Tailwind stylesheet');
+    const staticCSS=await page.request.get(address+'/assets/tailwind.css');
+    assert.equal(staticCSS.status(),200,'Static stylesheet must be served by the backend');
+    assert.match(staticCSS.headers()['content-type']||'',/text\/css/);
+    assert.ok((await staticCSS.text()).includes('bg-white'),
+      'Compiled inventory utilities must be present');
+    assert.equal(await page.locator('#sidebar').evaluate(el=>getComputedStyle(el).display),'flex',
+      'Tailwind utility layout must remain active');
   assert.equal(await page.title(),'Caffoot Lite — Infrastructure, Simplified.','Inventory browser tab must use Caffoot branding');
   await page.locator('#next-account-nav').waitFor();
   // Tailwind preflight loads later than the inline stylesheet; assert the resulting computed family.

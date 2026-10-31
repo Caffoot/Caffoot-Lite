@@ -59,7 +59,7 @@ class SessionHttpTests(unittest.TestCase):
     def test_inventory_assets_are_served_from_existing_published_files(self):
         asset_root = Path(__file__).resolve().parents[2] / "assets"
         with patch("backend.server.ASSET_ROOT", asset_root):
-            for asset in ("favicon.ico","apple-touch-icon.png","caffoot-icon-1024.png","qrcode.min.js"):
+            for asset in ("favicon.ico","apple-touch-icon.png","caffoot-icon-1024.png","qrcode.min.js","tailwind.css"):
                 status, raw, _ = self.request("/assets/" + asset)
                 self.assertEqual(status, 200)
                 self.assertEqual(raw, (asset_root / asset).read_bytes())

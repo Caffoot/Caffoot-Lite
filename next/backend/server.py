@@ -40,7 +40,8 @@ ASSET_ROOT = Path(__file__).resolve().parent.parent / "assets"
 PUBLIC_ASSETS = {"favicon.ico": "image/x-icon",
                  "apple-touch-icon.png": "image/png",
                  "caffoot-icon-1024.png": "image/png",
-                 "qrcode.min.js": "application/javascript; charset=utf-8"}
+                 "qrcode.min.js": "application/javascript; charset=utf-8",
+                     "tailwind.css": "text/css; charset=utf-8"}
 IMPORT_DRAFTS = ImportDrafts()
 IMPORT_ROUTES = frozenset(("/api/import/preview", "/api/import/access-point-choices",
                            "/api/import/confirm", "/api/import/cancel"))
