@@ -9,6 +9,7 @@ name: Next prebuilt Portainer image
 # Pi 5 acceptance refresh: read-only presentation, personal settings, searchable selectors and staged MFA sign-in verified.
 # Pi 5 acceptance refresh: unobtrusive MFA guidance verified for unenrolled viewers and admin access controls.
 # Pi 5 acceptance refresh: mixed Devices/IPAM/Racks edit rights and device creation permission boundary verified.
+# Pi 5 acceptance refresh: signed-in username and named device edit reservation notice for two-user testing.
 on:
   push:
     branches: [Next]
