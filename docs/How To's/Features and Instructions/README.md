@@ -25,7 +25,7 @@ The guides describe the **real application**, use fictional examples and disting
 5. Review the result across Devices, IPAM, Racks and **Change History**.
 6. If colleagues will use the system, create their accounts and explicitly grant section access.
 
-The detailed [Docker/Portainer installation instructions](../../../next/README.md) are separate from everyday feature guidance.
+The detailed [Docker/Portainer installation instructions](../../../INSTALLATION.md) are separate from everyday feature guidance.
 
 ## How the shared application behaves
 
@@ -39,4 +39,4 @@ The detailed [Docker/Portainer installation instructions](../../../next/README.m
 
 All signed-in users can open **My account → Help & Guides** for short built-in help without a public Internet connection. Each topic can also open its longer **Read full guide** in a separate browser tab. The documentation link requires access to GitHub; normal local inventory work does not.
 
-**Release status:** The Docker/SQLite edition is still unreleased. The scope is governed by [#215](https://github.com/Caffoot/Caffoot-Lite/issues/215) and progress by [#218](https://github.com/Caffoot/Caffoot-Lite/issues/218). The linked guides now include reviewed screenshots of the running Docker application, captured with entirely fictional lab data.
+**Release history:** v2.0 introduced the Docker/SQLite edition; v2.0.1 preserves that application while cleaning the published source layout. The standalone [v1.3.3](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3) release remains available for one-way JSON migration.

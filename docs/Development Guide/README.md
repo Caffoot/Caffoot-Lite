@@ -2,7 +2,7 @@
 
 Welcome. This guide explains **how Caffoot Lite actually works**, from the everyday user experience through to the Python backend, SQLite database and tests. It is written for the product owner, new contributors and maintainers.
 
-**Status:** This guide describes the approved Caffoot Lite v2.0 Docker/SQLite implementation developed on the `Next` branch. It is release-preparation documentation until final publication. It is *not* a release announcement or a new specification. [Issue #215](https://github.com/Caffoot/Caffoot-Lite/issues/215) controls the approved application behaviour and the published [v1.3.3 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3) remains the inventory compatibility baseline. [Issue #218](https://github.com/Caffoot/Caffoot-Lite/issues/218) tracks release preparation and remaining acceptance.
+**Status:** This guide describes the v2.0.1 Docker/SQLite application with backend, tests and deployment sources at the repository root. [Issue #215](https://github.com/Caffoot/Caffoot-Lite/issues/215) controls the approved functionality. The original [v2.0](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0) and standalone [v1.3.3](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3) tags are preserved.
 
 ## In simple terms
 
@@ -36,16 +36,16 @@ Each technical chapter starts with **In simple terms**, then adds details for de
 
 ## Quick source map
 
-- [`next/inventory.html`](../../next/inventory.html): the established inventory interface with the Next integration layer.
-- [`next/setup.html`](../../next/setup.html): first-run administrator and sign-in interface.
-- [`next/backend/server.py`](../../next/backend/server.py): HTTPS entry point, routes and request handling.
-- [`next/backend/schema.py`](../../next/backend/schema.py): SQLite tables and schema upgrades.
-- [`next/backend/`](../../next/backend/): permissions, saves, import and validation modules.
-- [`next/tests/`](../../next/tests/): backend and browser compatibility checks.
-- [`next/compose.yaml`](../../next/compose.yaml), [`next/portainer-stack.yaml`](../../next/portainer-stack.yaml) and [`next/Dockerfile`](../../next/Dockerfile): deployment configuration.
+- [`inventory.html`](../../inventory.html): the established inventory interface with the Next integration layer.
+- [`setup.html`](../../setup.html): first-run administrator and sign-in interface.
+- [`backend/server.py`](../../backend/server.py): HTTPS entry point, routes and request handling.
+- [`backend/schema.py`](../../backend/schema.py): SQLite tables and schema upgrades.
+- [`backend/`](../../backend/): permissions, saves, import and validation modules.
+- [`tests/`](../../tests/): backend and browser compatibility checks.
+- [`compose.yaml`](../../compose.yaml), [`portainer-v2.0.1.yaml`](../../portainer-stack.yaml) and [`Dockerfile`](../../Dockerfile): deployment configuration.
 - [`app/caffoot-lite.html` at v1.3.3](https://github.com/Caffoot/Caffoot-Lite/blob/v1.3.3/app/caffoot-lite.html): **published** inventory behaviour to preserve.
 
-For current installation instructions see [`next/README.md`](../../next/README.md). The [root README](../../README.md) now introduces the published HTML edition and the unreleased Docker/SQLite build; neither document announces a new published release.
+For current installation instructions see [`INSTALLATION.md`](../../INSTALLATION.md). The [root README](../../README.md) now introduces the published HTML edition and the unreleased Docker/SQLite build; neither document announces a new published release.
 
 ## Before making a change
 

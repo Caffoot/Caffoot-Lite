@@ -35,7 +35,7 @@ In the tested Raspberry Pi Portainer example, the host directory is:
 
     /portainer/Files/AppData/Config/caffoot_data
 
-Choose the correct host path for your actual installation rather than assuming the Pi example applies to every machine. The Docker process uses a non-root account; see the [installation guide](../../../next/README.md) for ownership and Compose/Portainer settings.
+Choose the correct host path for your actual installation rather than assuming the Pi example applies to every machine. The Docker process uses a non-root account; see the [installation guide](../../../INSTALLATION.md) for ownership and Compose/Portainer settings.
 
 ## Make a manual consistent backup
 
@@ -67,4 +67,4 @@ The product owner verified a local stopped-container copy/restore on a disposabl
 - **Clear System / Clean Start:** a destructive inventory maintenance action, not a restore mechanism.
 - **Change History:** explains saved changes but is not a copy of the application database.
 
-For exact deployment examples, environment names and certificate verification, follow [Docker and Portainer installation](../../../next/README.md).
+For exact deployment examples, environment names and certificate verification, follow [Docker and Portainer installation](../../../INSTALLATION.md).
