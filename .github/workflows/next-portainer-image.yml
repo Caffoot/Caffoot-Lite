@@ -13,7 +13,7 @@ name: Next prebuilt Portainer image
 # Pi 5 acceptance refresh: corrected welcome name contrast using the existing Caffoot orange accent.
 # Pi 5 acceptance refresh: on-demand shared inventory freshness when users navigate and open records.
 # Pi 5 Stage 4 visual acceptance: approved sign-in branding, Inter typography and browser-tab title.
-# Pi 5 Stage 4 review: replace orange sign-in background glow with soft slate haze.
+# Pi 5 Stage 4 review: restore approved warm background glow and remove the orange sign-in card top stripe.
 on:
   push:
     branches: [Next]
