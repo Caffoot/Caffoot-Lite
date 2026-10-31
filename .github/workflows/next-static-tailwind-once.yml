@@ -125,8 +125,7 @@ jobs:
               assert.ok((await staticCSS.text()).includes('bg-white'),
                 'Compiled inventory utilities must be present');
               assert.equal(await page.locator('#sidebar').evaluate(el=>getComputedStyle(el).display),'flex',
-                'Tailwind utility layout must remain active');
-              '''
+                'Tailwind utility layout must remain active');'''
           )
           PY
           git diff --check
