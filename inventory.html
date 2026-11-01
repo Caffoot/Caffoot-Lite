@@ -10365,7 +10365,7 @@ window.addEventListener('load', async () => {
       root.querySelectorAll('button').forEach(button=>{
         const blocked=isBlockedAction(button.dataset.action || '',button);
         const unsupportedSubmit=button.type==='submit' && button.form && !(
-          button.closest('#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm') ||
+          button.closest('#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#v21-profile-form') ||
           (sessionIsAdmin && button.closest('#next-user-create-form')) ||
           (editPermissions.Devices && button.closest('form[data-device-form="true"]')) ||
           (editPermissions.IPAM && button.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"]')) ||
