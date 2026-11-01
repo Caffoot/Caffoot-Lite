@@ -10,7 +10,7 @@ body:
 
         Please explain what happened in your own words. Screenshots are welcome, but optional.
 
-        **Security or privacy concern?** Please do not publish passwords, authentication codes, tokens, private IP addresses, personal data or exploit details here. Read our [Security Reporting Guide](../../SECURITY.md) first.
+        **Security or privacy concern?** Please do not publish passwords, authentication codes, tokens, private IP addresses, personal data or exploit details here. Read our [Security Reporting Guide](https://github.com/Caffoot/Caffoot-Lite/blob/main/SECURITY.md) first.
   - type: input
     id: version
     attributes:
