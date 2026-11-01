@@ -9,8 +9,8 @@ The published [v2.0 release](https://github.com/Caffoot/Caffoot-Lite/releases/ta
 Set **your own** browser address and certificate identities before running Compose. Nothing is hard-coded for a particular installer. For example, in a local `.env` file alongside `compose.yaml`:
 
 ```dotenv
-CAFFOOT_WEB_ADDRESS=https://10.128.20.3:8080
-CAFFOOT_SERVER_ADDRESS=10.128.20.3
+CAFFOOT_WEB_ADDRESS=https://192.168.1.100:8080
+CAFFOOT_SERVER_ADDRESS=192.168.1.100
 CAFFOOT_PORT=8080
 ```
 
@@ -74,7 +74,9 @@ If upgrading an existing Docker deployment, make a consistent external backup of
 
 ## Building directly from the source repository
 
-Clone the v2.0.1 release and use the repository-root [`compose.yaml`](compose.yaml) and [`Dockerfile`](Dockerfile). Set your local `.env` values as shown above, then run `docker compose up --build -d` from the root. For Portainer's Git-repository mode, use repository `https://github.com/Caffoot/Caffoot-Lite.git`, reference `v2.0.1` and Compose path `compose.yaml`. The service is named `caffoot-lite`, and the image build copies `backend/`, `inventory.html`, `setup.html` and the required `assets/` from the root. The same `/data` backup and HTTPS rules apply.
+Clone the v2.0.1 release and use the repository-root [`compose.yaml`](compose.yaml) and [`Dockerfile`](Dockerfile). Set your local `.env` values as shown above, then run `docker compose up --build -d` from the root. For Portainer's Git-repository mode, use repository `https://github.com/Caffoot/Caffoot-Lite.git`, reference `v2.0.1` and Compose path `compose.yaml`. The repository-root `compose.yaml` already uses the named `caffoot_data` volume by default. For an existing deployment that uses a host folder, keep the existing `CAFFOOT_DATA_PATH` value in `.env` (or your existing mapping) instead of moving to a fresh volume. You can explicitly set `CAFFOOT_DATA_PATH=/srv/caffoot-lite/data` for a new custom bind-mount installation, after preparing that directory with the correct permissions. Compose may prefix named volumes with the project name; check the actual volume name before running backups.
+
+The service is named `caffoot-lite`, and the image build copies `backend/`, `inventory.html`, `setup.html` and the required `assets/` from the root. The same `/data` backup and HTTPS rules apply.
 
 ## External backup and recovery of your Docker installation
 
