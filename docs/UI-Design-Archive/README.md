@@ -1,7 +1,7 @@
 # Caffoot Lite — Premium UI Design Archive
 
 **Prepared:** 1 November 2026  
-**Status:** Documentation-only draft pull request with the exact self-contained **Settings & Data 04.1** and **historical My Account Draft 01** interactive HTML already version-controlled. **PNG previews and the newly approved My Account Personal Details image are still awaiting upload to GitHub**; see [Asset Register](02-asset-register.md).  
+**Status:** Documentation-only draft pull request with the exact self-contained **Settings & Data 04.1** and **historical My Account Draft 01** interactive HTML version-controlled. **The original PNGs are now safely preserved inside the [verified GitHub design-asset ZIP](assets/caffoot-ui-approved-artifacts-2026-11-01.zip)**, which also includes the **approved My Account Personal Details image**. Those PNGs have not yet been extracted as individually previewable GitHub image files; see [Asset Register](02-asset-register.md).  
 **Product-owner decision register:** [GitHub #227](https://github.com/Caffoot/Caffoot-Lite/issues/227)  
 **Future Ideas Register:** [GitHub #222](https://github.com/Caffoot/Caffoot-Lite/issues/222)
 
@@ -13,7 +13,8 @@ Screens previously had to be reconstructed several times because the actual appr
 
 - **Shared design system:** [Global sidebar, branding, typography and layout](00-shared-design-system.md).
 - **Individual screen agreements:** [Screens directory](screens/) — the approved directions have been copied from #227 into stable Markdown files. These documents record **layout, fields, states, permissions and owner corrections**. Do **not** re-open already settled design choices merely because the original artwork is missing.
-- **Visual asset register:** [Present, absent and superseded images/prototypes](02-asset-register.md) — always distinguish actual files in GitHub from files merely available elsewhere.
+- **Original visual-asset bundle:** [Download the actual approved-image and prototype ZIP from GitHub](assets/caffoot-ui-approved-artifacts-2026-11-01.zip) (2,891,301 bytes; SHA-256 `c2f7af01ffc471f45795806f04c34779acf9273c5f1c9d6b64512ed39171baa5`) — includes the approved revised My Account PNG, Settings & Data 04.1 previews, historical My Account previews and original HTML/records. The ZIP is verified, but the PNGs are not individual repository preview files.
+- **Visual asset register:** [Present, absent and superseded images/prototypes](02-asset-register.md) — always distinguish images contained inside the GitHub ZIP from separately viewable files.
 - **Frozen reference copy of issue #227:** [Owner decisions snapshot](01-issue-227-snapshot.md) — created from the issue text, not reconstructed from memory. The live issue remains the decision register for later changes.
 
 ## Current agreed state
