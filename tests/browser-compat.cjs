@@ -195,6 +195,28 @@ async function run(){
   await page.setViewportSize({width:1440,height:950});
   console.log('v2.1 light premium page header, account shortcut, active navigation and mobile layout passed');
 
+  // v2.1 Stage 3: empty welcome, retained Dashboard tabs, actions and reports.
+  assert.ok(await page.locator("#v21-dashboard-empty").isVisible());
+  assert.ok(await page.getByRole("heading",{name:"Infrastructure Overview"}).isVisible());
+  assert.equal(await page.locator(".dashboard-stats .dashboard-stat").count(),4);
+  assert.ok((await page.locator(".dashboard-stats .dashboard-stat p.text-3xl").allTextContents()).every(v=>v.trim()==="0"));
+  assert.ok(await page.locator(".v21-dashboard-quick [data-action=\"open-device-modal\"]").isVisible());
+  assert.ok(await page.locator(".v21-dashboard-quick [data-action=\"open-rack-modal\"]").isVisible());
+  await page.locator('[data-dashboard-tab="insights"]').click();
+  assert.ok(await page.locator("#dashboard-panel-insights").isVisible());
+  assert.ok(await page.getByText("Rack Capacity By Face").isVisible());
+  await page.locator('[data-dashboard-tab="activity"]').click();
+  assert.ok(await page.locator("#dashboard-panel-activity").isVisible());
+  assert.ok(await page.getByRole("heading",{name:/Reports & exports/i}).isVisible());
+  await page.locator('[data-dashboard-tab="overview"]').click();
+  await page.setViewportSize({width:390,height:812});
+  await sidebarToggle.click();
+  await page.waitForFunction(()=>document.getElementById("sidebar")?.getBoundingClientRect().width<=80);
+  assert.ok(await page.locator(".v21-dashboard").evaluate(el=>el.getBoundingClientRect().right<=innerWidth+2 && el.scrollWidth<=el.clientWidth+2),
+    "Dashboard must fit a narrow browser without clipping content");
+  await page.setViewportSize({width:1440,height:950});
+  await sidebarToggle.click();
+  console.log("v2.1 premium Dashboard empty state, sections and mobile layout passed");
   console.log('First administrator, MFA, sign-in and direct Dashboard arrival passed');
   assert.equal(await page.locator('#next-dashboard-mfa-notice').count(),0,
     'Enrolled administrators must not see MFA setup guidance');
@@ -338,6 +360,8 @@ async function run(){
     appState.devices.push({...appState.devices.find(d=>d.name==='browser-device')});
     renderContent();
   });
+  assert.equal(await page.locator('#v21-dashboard-empty').count(),0,
+    'Saved devices and networks must suppress the empty-inventory welcome');
   const health=page.locator('#next-dashboard-inventory-health');
   assert.equal(await health.count(),1,'Admin must see actual inventory inconsistencies');
   assert.ok(await health.getByText(/Duplicate or missing device ID/).isVisible());
@@ -532,6 +556,8 @@ async function run(){
   assert.equal(await editor.locator('#next-dashboard-mfa-notice').count(),0,
     'Enrolled editors must not see MFA setup guidance');
   await editor.evaluate(()=>{appState.devices.push({...appState.devices[0]});renderContent();});
+  assert.equal(await editor.locator('.v21-dashboard-quick [data-action="open-rack-modal"]').count(),0,
+    'Editors with read-only Racks must not be offered Add Rack');
   assert.equal(await editor.locator('#next-dashboard-inventory-health').count(),0,
     'Non-administrator editor must not see inventory health warnings');
   await editor.locator('[data-dashboard-tab="activity"]').click();
