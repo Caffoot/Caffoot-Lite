@@ -1,0 +1,79 @@
+name: "🐛 Report A Bug"
+description: "Tell us when something in Caffoot Lite is not working as expected."
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping improve Caffoot Lite! You do not need to be a developer to report a bug.
+
+        Please explain what happened in your own words. Screenshots are welcome, but optional.
+
+        **Security or privacy concern?** Please do not publish passwords, authentication codes, tokens, private IP addresses, personal data or exploit details here. Read our [Security Reporting Guide](https://github.com/Caffoot/Caffoot-Lite/blob/main/SECURITY.md) first.
+  - type: input
+    id: version
+    attributes:
+      label: "Caffoot Lite Version"
+      description: "You can find this under My Account > About Caffoot Lite."
+      placeholder: "For example, v2.0.1"
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: "Where Did It Happen?"
+      options:
+        - "Installation / Portainer"
+        - "Sign-In & MFA"
+        - "Dashboard"
+        - "Device Inventory"
+        - "IPAM"
+        - "Network Racks"
+        - "Change History"
+        - "Users & Permissions"
+        - "My Account"
+        - "Settings & Data"
+        - "Other"
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: "What Happened?"
+      description: "Tell us what went wrong. You can use everyday language."
+      placeholder: "I opened a rack, selected a device and..."
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: "What Did You Expect?"
+      description: "What did you think should happen?"
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: "How Can We Reproduce It?"
+      description: "List the steps you followed if you can. It's fine if you're unsure."
+      placeholder: |
+        1. Open...
+        2. Choose...
+        3. Observe...
+    validations:
+      required: false
+  - type: textarea
+    id: installation
+    attributes:
+      label: "Installation Details"
+      description: "Optional. Tell us whether you use Docker, Portainer, a reverse proxy or a particular browser."
+    validations:
+      required: false
+  - type: textarea
+    id: attachments
+    attributes:
+      label: "Screenshots Or Additional Information"
+      description: "Optional. Before sharing logs or screenshots, remove credentials, tokens, private network addresses and personal details."
+    validations:
+      required: false

@@ -28,6 +28,20 @@ For Portainer, copy [`portainer-v2.0.1.yaml`](portainer-v2.0.1.yaml) into **Stac
 
 See the [complete Features and Instructions user guides](docs/How%20To%27s/Features%20and%20Instructions/README.md) for detailed examples, controls and screenshots.
 
+## Help Build Caffoot Lite
+
+**Caffoot Lite is an open-source community project, and everyone is welcome to help.** You don't need to be a developer or have written code before.
+
+You can contribute by reporting a bug, testing the application, improving a help guide, suggesting a useful feature, answering a question or sharing a clear example. Even pointing out something confusing is valuable.
+
+- **[Report A Bug, Suggest A Feature Or Ask A Question](https://github.com/Caffoot/Caffoot-Lite/issues/new/choose)** — choose a simple issue form and describe it in your own words.
+- **[Improve The Documentation](https://github.com/Caffoot/Caffoot-Lite/issues/new/choose)** — suggest clearer wording, screenshots or missing instructions, with no programming required.
+- **[Explore Good First Issues](https://github.com/Caffoot/Caffoot-Lite/labels/good%20first%20issue)** and **[Help Wanted](https://github.com/Caffoot/Caffoot-Lite/labels/help%20wanted)** — find appropriately scoped tasks where community help would be useful.
+- **[Community Participation Guide](docs/Community-Participation.md)** — find out what labels mean and how to get involved.
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** — the shared naming, documentation, plain-English code-comment and review standards for all contributors, including maintainers.
+
+Ideas are welcome, but feature implementation only begins after its scope is agreed and approved. Please [report potential security vulnerabilities privately](SECURITY.md), not in public issues.
+
 ## Migrating your standalone inventory
 
 Export a fresh JSON backup using **published Caffoot Lite v1.3.3**. Users of earlier standalone HTML editions must first upgrade to v1.3.3. After setting up your v2.0.1 administrator account, go to **Settings & Data → Import Inventory**, review the proposed replacement and confirm it. This is a **one-way migration**, not a routine database backup. It does not replace user accounts, MFA or permissions.

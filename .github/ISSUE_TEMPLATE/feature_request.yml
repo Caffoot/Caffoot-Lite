@@ -1,0 +1,42 @@
+name: "💡 Suggest A Feature"
+description: "Share an idea for making Caffoot Lite more useful."
+title: "[Feature Request]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        We welcome ideas from everyone, whether or not you write code.
+
+        Tell us about the problem you would like to solve. You do not need a complete technical design.
+
+        Feature suggestions are reviewed and discussed before any work is approved. Opening an issue does **not** automatically authorise implementation.
+  - type: textarea
+    id: problem
+    attributes:
+      label: "What Problem Would This Solve?"
+      description: "Describe the task or difficulty in plain language."
+      placeholder: "When I manage several racks, it is difficult to..."
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: "What Would You Like Caffoot Lite To Do?"
+      description: "Describe your idea in your own words. A rough suggestion is absolutely fine."
+    validations:
+      required: true
+  - type: textarea
+    id: benefits
+    attributes:
+      label: "Who Would This Help?"
+      description: "Optional. For example, home-lab users, small IT teams, administrators or read-only users."
+    validations:
+      required: false
+  - type: textarea
+    id: examples
+    attributes:
+      label: "Examples, Sketches Or Other Thoughts"
+      description: "Optional. Screenshots, drawings or links can help explain your idea."
+    validations:
+      required: false

@@ -1,0 +1,44 @@
+name: "❓ Ask A Question"
+description: "Ask for help using, installing or understanding Caffoot Lite."
+title: "[Question]: "
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Questions are welcome, including questions from people just getting started.
+
+        Please check our [Installation Guide](https://github.com/Caffoot/Caffoot-Lite/blob/main/INSTALLATION.md) and [Feature Guides](https://github.com/Caffoot/Caffoot-Lite/blob/main/docs/How%20To%27s/Features%20and%20Instructions/README.md) if they might help. You can still ask here if you get stuck.
+
+        Please do not post passwords, tokens, authentication codes or private information.
+  - type: dropdown
+    id: area
+    attributes:
+      label: "What Is Your Question About?"
+      options:
+        - "Installation / Portainer"
+        - "Sign-In & MFA"
+        - "Device Inventory"
+        - "IPAM"
+        - "Network Racks"
+        - "Users & Permissions"
+        - "My Account"
+        - "Backup & Restore"
+        - "Contributing To Caffoot Lite"
+        - "Something Else"
+    validations:
+      required: true
+  - type: textarea
+    id: question
+    attributes:
+      label: "How Can We Help?"
+      description: "Ask in your own words. No technical background is required."
+    validations:
+      required: true
+  - type: textarea
+    id: tried
+    attributes:
+      label: "What Have You Tried?"
+      description: "Optional. This can help others give you a more useful answer."
+    validations:
+      required: false
