@@ -172,7 +172,7 @@ class SessionHttpTests(unittest.TestCase):
             self.assertEqual(self.post("/api/account/profile",
                 {**fields,"username":"renamed"},token,csrf)[0],400)
             self.assertEqual(self.post("/api/account/profile",
-                {**fields,"firstName":"\\nno"},token,csrf)[0],400)
+                {**fields,"firstName":"\nno"},token,csrf)[0],400)
             self.assertEqual(self.post("/api/account/photo",{
                 "mediaType":"image/svg+xml","contentBase64":base64.b64encode(png).decode()
                 },token,csrf)[0],400)
