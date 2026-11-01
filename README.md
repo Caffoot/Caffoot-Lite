@@ -34,13 +34,14 @@ See the [complete Features and Instructions user guides](docs/How%20To%27s/Featu
 
 You can contribute by reporting a bug, testing the application, improving a help guide, suggesting a useful feature, answering a question or sharing a clear example. Even pointing out something confusing is valuable.
 
-- **[Report A Bug, Suggest A Feature Or Ask A Question](https://github.com/Caffoot/Caffoot-Lite/issues/new/choose)** — choose a simple issue form and describe it in your own words.
+- **[Suggest A Feature Or Future Improvement](https://github.com/Caffoot/Caffoot-Lite/issues/new/choose)** — open one issue per idea. Check the [Future Ideas Index #222](https://github.com/Caffoot/Caffoot-Lite/issues/222) first to see whether it is already being discussed.
+- **[Report A Bug Or Ask A Question](https://github.com/Caffoot/Caffoot-Lite/issues/new/choose)** — choose the relevant issue form and explain it in your own words.
 - **[Improve The Documentation](https://github.com/Caffoot/Caffoot-Lite/issues/new/choose)** — suggest clearer wording, screenshots or missing instructions, with no programming required.
 - **[Explore Good First Issues](https://github.com/Caffoot/Caffoot-Lite/labels/good%20first%20issue)** and **[Help Wanted](https://github.com/Caffoot/Caffoot-Lite/labels/help%20wanted)** — find appropriately scoped tasks where community help would be useful.
 - **[Community Participation Guide](docs/Community-Participation.md)** — find out what labels mean and how to get involved.
 - **[CONTRIBUTING.md](CONTRIBUTING.md)** — the shared naming, documentation, plain-English code-comment and review standards for all contributors, including maintainers.
 
-Ideas are welcome, but feature implementation only begins after its scope is agreed and approved. Please [report potential security vulnerabilities privately](SECURITY.md), not in public issues.
+**Every idea and its decisions belong in its own GitHub issue**, not in a new comment on the future-ideas index. The product owner sets priorities and decides what gets built. Suggesting an improvement is always welcome and never requires a technical specification. Please [report potential security vulnerabilities privately](SECURITY.md), not in public issues.
 
 ## Migrating your standalone inventory
 
@@ -68,6 +69,6 @@ For direct HTTPS, verify and trust the application certificate before entering c
 - [Contributing To Caffoot Lite — mandatory naming, UI and documentation standards](CONTRIBUTING.md)
 - [Development Guide](docs/Development%20Guide/README.md)
 - [Standalone v1.3.3 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3)
-- [Historical v2.0/v2.0.1 implementation specification #215](https://github.com/Caffoot/Caffoot-Lite/issues/215) and [release tracker #218](https://github.com/Caffoot/Caffoot-Lite/issues/218); [future ideas #222](https://github.com/Caffoot/Caffoot-Lite/issues/222) (discussion only)
+- [Historical v2.0/v2.0.1 implementation specification #215](https://github.com/Caffoot/Caffoot-Lite/issues/215) and [release tracker #218](https://github.com/Caffoot/Caffoot-Lite/issues/218); [Future Ideas Index #222](https://github.com/Caffoot/Caffoot-Lite/issues/222) and [Feature Request form](https://github.com/Caffoot/Caffoot-Lite/issues/new/choose)
 
 **Version history:** [v2.0](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0) introduced the Docker/SQLite multi-user edition. v2.0.1 preserves its functionality while moving the Docker source to the root and excluding the legacy standalone build tree from this release's source archive.

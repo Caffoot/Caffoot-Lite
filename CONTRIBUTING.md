@@ -6,9 +6,9 @@ Thank you for helping improve Caffoot Lite. We want contributors to find underst
 
 Caffoot Lite v2.0.1 is the released Docker/SQLite baseline. Before writing code, read the [Development Guide](docs/Development%20Guide/README.md), the [Coding And Naming Conventions](docs/Development%20Guide/06-Coding-and-Naming-Conventions.md), and the [Function Index](docs/Development%20Guide/Function-Index.md). Check existing source, tests and relevant approved GitHub decisions.
 
-An idea in [Future Ideas Register #222](https://github.com/Caffoot/Caffoot-Lite/issues/222) is **not** implementation approval. Discuss proposed features or changes and obtain the product owner's explicit agreement on their scope before implementation. Historical issues #215 and #218 describe completed release work; they are not blanket restrictions on future versions.
+**One feature or improvement per GitHub issue.** Anyone is welcome to [suggest a feature](https://github.com/Caffoot/Caffoot-Lite/issues/new/choose) or join an existing discussion. [Future Ideas Index #222](https://github.com/Caffoot/Caffoot-Lite/issues/222) links existing ideas; new requests should have their own issues. Record discussions, product-owner decisions, changes of scope and acceptance feedback in the relevant issue. The product owner decides what gets built and when; contributors should not start unrelated work or publish anything on their own initiative. Historical issues #215 and #218 are completed release history, not restrictions on future development.
 
-Keep changes focused and explain which agreement or identified defect they address. Do not add speculative features, unnecessary infrastructure or unrelated architecture changes.
+Keep changes focused and link the relevant issue and recorded decision. Use testing proportionate to the work. **Do not start speculative features, unsolicited audits, unnecessary engineering investigations or unrelated architectural changes.**
 
 ## Mandatory Naming And UI Standards
 
@@ -60,7 +60,7 @@ Review permissions and MFA enforcement on the **server**, not merely by hiding i
 
 ## Before Opening A Pull Request
 
-1. Confirm the change's approved scope and explain it in plain British English.
+1. Link the relevant issue, follow the product owner's agreed direction, and explain the actual change in plain British English.
 2. Review the code and references before renaming; change callers, selectors, tests and documentation together.
 3. Run proportionate tests and record actual results. Say plainly what was not run or could not be checked.
 4. Complete the pull request template, including the naming, UI, documentation, Function Index and compatibility checks.
@@ -68,4 +68,4 @@ Review permissions and MFA enforcement on the **server**, not merely by hiding i
 
 Automated checks can catch syntax, documentation omissions and some naming problems; **human review remains essential** to establish whether names are genuinely clear. Do not claim CI guarantees semantic naming quality.
 
-The [v2.0.1 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.1) remains the published baseline. Each future change must be separately authorised, reviewed, tested and approved before merge. Publication requires its own approval.
+The [v2.0.1 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.1) remains the published baseline. **The product owner directs the project and never needs permission to make its decisions.** Contributors should implement the agreed request, test and document it proportionately, and never publish preview images or releases without the owner's explicit instruction.
