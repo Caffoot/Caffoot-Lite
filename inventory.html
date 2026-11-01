@@ -9577,10 +9577,14 @@ function hierarchyValidateTypes(subnets) {
                 case 'unassign-device': unassignDevice(id); break;
                 case 'open-subnet-modal': {
                     openSubnetModal();
-                    // Address Block shortcut preselects the published form's existing type.
-                    if(target.dataset.subnetKind==='container'){
+                    // Both shortcuts select an existing published form type explicitly.
+                    // No change to the form's validation, ownership, or save behaviour.
+                    if(['network','container'].includes(target.dataset.subnetKind)){
                         const select=document.getElementById('sub-kind');
-                        if(select){select.value='container';select.dispatchEvent(new Event('change',{bubbles:true}));}
+                        if(select){
+                            select.value=target.dataset.subnetKind;
+                            select.dispatchEvent(new Event('change',{bubbles:true}));
+                        }
                     }
                     break;
                 }
