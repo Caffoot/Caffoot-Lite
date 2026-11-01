@@ -961,6 +961,7 @@ async function run(){
   console.log('Password-only read access, hidden editing controls and administrator-only maintenance passed');
 
   await page.evaluate(()=>switchTab('settings'));
+  await page.locator('.v21-settings-041-tabs [data-section="maintenance"]').click();
   await page.locator('[data-action="clear-inventory-data"]').waitFor();
   page.once('dialog',d=>d.accept());
   await page.locator('[data-action="clear-inventory-data"]').click();
