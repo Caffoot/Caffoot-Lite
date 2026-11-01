@@ -243,6 +243,22 @@ async function run(){
     'Administrator legacy migration picker must remain');
   assert.ok(await page.locator('[data-action="clear-inventory-data"]').isEnabled(),
     'Administrator Clear System safeguard must remain');
+  // Stage 9: real Docker backup instructions, no invented export, same safety controls.
+  await page.locator('#v21-settings-backup-guide').waitFor({state:'visible'});
+  const guide=page.locator('#v21-settings-backup-guide');
+  assert.ok(await guide.getByRole('heading',{name:'Docker-managed named volume'}).isVisible());
+  assert.ok(await guide.getByRole('heading',{name:'Host bind-mounted folder'}).isVisible());
+  assert.ok(await guide.getByText('/data/caffoot.sqlite3',{exact:true}).isVisible());
+  assert.ok(await guide.getByText('/data/tls',{exact:true}).isVisible());
+  const guideText=await guide.textContent();
+  assert.match(guideText,/Portainer stack or Compose project name/);
+  assert.match(guideText,/Stop Caffoot Lite/);
+  assert.match(guideText,/not an ongoing SQLite\/database backup/);
+  assert.equal(await guide.locator('button').count(),0,
+    'Backup instructions must not offer a fake in-app database backup action');
+  assert.ok(await page.locator('[data-action="check-inventory-safety"]').isEnabled());
+  assert.ok(await page.locator('[data-action="clear-inventory-data"]').isEnabled());
+  console.log('Stage 9 Docker/SQLite backup guide, existing Settings safety actions passed');
   const safetyResult=new Promise(resolve=>page.once('dialog',async dialog=>{
     const message=dialog.message();await dialog.accept();resolve(message);
   }));

@@ -1560,6 +1560,57 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 @media(max-width:620px){.v21-users-root #next-user-create-form,.v21-user-permission-grid{grid-template-columns:1fr}.v21-users-filters>div:nth-child(2){flex:1 1 180px}.v21-users-row-meta{width:100%;margin-left:60px}.v21-user-profile .v21-users-row-meta{margin-left:0}.v21-users-root>section:first-child{padding:20px}}
 @media(prefers-reduced-motion:reduce){.v21-users-row{transition:none}}
 </style>
+<style id="caffoot-v21-settings-style">
+/* Stage 9: preserve the published Settings arrangement; premium surface only. */
+.v21-settings{width:100%;max-width:1240px;color:#263c52}
+.v21-settings .settings-intro{margin:0 0 21px;padding:23px 25px;background:linear-gradient(115deg,#162b41,#304b66);border:1px solid #334f6a;border-radius:17px;color:#fff;box-shadow:0 3px 15px #142a460f}
+.v21-settings .settings-intro h2{color:#fff;font-size:22px;line-height:1.25;font-weight:790;letter-spacing:-.025em}
+.v21-settings .settings-intro p{font-size:12px;line-height:1.65;margin-top:7px;color:#e0eaf4}
+.v21-settings .settings-group-title{font-size:17px;font-weight:780;letter-spacing:-.015em;color:#1f354a;margin:23px 0 12px}
+.v21-settings .settings-group-title:first-child{margin-top:3px}
+.v21-settings .settings-group-grid{gap:15px}
+.v21-settings .settings-panel{padding:21px;border:1px solid #dbe5ee;border-radius:16px;background:#fff;box-shadow:0 2px 12px #1d334d0a}
+.v21-settings .settings-panel h3{font-size:15px;font-weight:770;color:#1d344b;letter-spacing:-.01em}
+.v21-settings .settings-panel p{font-size:12px;line-height:1.7;color:#64798d}
+.v21-settings .settings-action{background:#e96c17;color:#fff;border:1px solid #e96c17;border-radius:10px;min-height:43px;font-size:12px;font-weight:750}
+.v21-settings .settings-action:hover{background:#c85b11;color:#fff;border-color:#c85b11}
+.v21-settings .settings-action:focus-visible{outline:3px solid #f47b20;outline-offset:3px}
+.v21-settings .settings-action:disabled{background:#e9eef3;color:#64758a;border-color:#cedae5}
+.v21-settings .settings-panel:has([data-action="clear-inventory-data"]){background:#fffafa;border:2px solid #ce565b}
+.v21-settings .settings-panel:has([data-action="clear-inventory-data"]) h3{color:#af323c}
+.v21-settings .settings-action[data-action="clear-inventory-data"]{background:#b72b36;border:2px solid #98252d;color:#fff}
+.v21-settings .settings-action[data-action="clear-inventory-data"]:hover{background:#95212b}
+.v21-settings .settings-action[data-action="clear-inventory-data"]:focus-visible{outline-color:#dc4452}
+.v21-settings .v21-settings-backup-guide{margin:19px 0 25px;padding:22px;background:#f7fafc;border:1px solid #d6e2ed;border-radius:17px}
+.v21-settings .v21-settings-backup-title{display:flex;align-items:flex-start;gap:12px;margin-bottom:15px}
+.v21-settings .v21-settings-backup-title>i{width:43px;height:43px;flex:0 0 43px;display:grid;place-items:center;border-radius:12px;background:#ffedde;color:#cb6319;font-size:18px}
+.v21-settings .v21-settings-backup-guide h3{font-size:16px;font-weight:780;letter-spacing:-.01em;color:#1c364f}
+.v21-settings .v21-settings-backup-guide p,.v21-settings .v21-settings-backup-guide li{font-size:12px;line-height:1.8;color:#4c6277}
+.v21-settings .v21-settings-backup-guide strong{font-weight:770;color:#223a50}
+.v21-settings .v21-settings-backup-guide code{display:inline-block;background:#e9eff5;color:#263c50;border-radius:5px;padding:1px 5px;font-size:11px;overflow-wrap:anywhere}
+.v21-settings .v21-settings-backup-methods{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;margin:17px 0}
+.v21-settings .v21-settings-backup-method{padding:18px;background:#fff;border:1px solid #dbe5ee;border-radius:13px;min-width:0}
+.v21-settings .v21-settings-backup-method h4{font-size:13px;font-weight:780;margin-bottom:10px;color:#1e3950}
+.v21-settings .v21-settings-backup-method h4 i{margin-right:8px;color:#d66c19}
+.v21-settings .v21-settings-backup-method ol{padding-left:21px;list-style:decimal}
+.v21-settings .v21-settings-backup-method li{margin:5px 0}
+.v21-settings .v21-settings-backup-safety{padding:14px 16px;background:#fff6e9;border:1px solid #efd2ab;border-radius:11px}
+.v21-settings .v21-settings-backup-safety p{color:#845b24}
+.v21-settings .v21-settings-backup-safety strong{color:#77470d}
+.dark .v21-settings{color:#eef4fa}
+.dark .v21-settings .settings-intro{background:linear-gradient(115deg,#102237,#233b56)}
+.dark .v21-settings .settings-group-title,.dark .v21-settings .settings-panel h3,.dark .v21-settings .v21-settings-backup-guide h3,.dark .v21-settings .v21-settings-backup-method h4,.dark .v21-settings .v21-settings-backup-guide strong{color:#f0f6fd}
+.dark .v21-settings .settings-panel,.dark .v21-settings .v21-settings-backup-method{background:#25374b;border-color:#4c6277}
+.dark .v21-settings .settings-panel p,.dark .v21-settings .v21-settings-backup-guide p,.dark .v21-settings .v21-settings-backup-guide li{color:#c5d6e6}
+.dark .v21-settings .v21-settings-backup-guide{background:#1d2e42;border-color:#4a6179}
+.dark .v21-settings .v21-settings-backup-guide code{background:#354b60;color:#e9f2fb}
+.dark .v21-settings .v21-settings-backup-safety{background:#42341f;border-color:#916632}
+.dark .v21-settings .v21-settings-backup-safety p{color:#efd3a5}
+.dark .v21-settings .v21-settings-backup-safety strong{color:#ffdfaa}
+.dark .v21-settings .settings-panel:has([data-action="clear-inventory-data"]){background:#38272e;border-color:#d86d74}
+.dark .v21-settings .settings-panel:has([data-action="clear-inventory-data"]) h3{color:#ffc0c3}
+@media(max-width:720px){.v21-settings .v21-settings-backup-methods{grid-template-columns:1fr}.v21-settings .v21-settings-backup-guide{padding:16px}.v21-settings .settings-panel{min-height:0}.v21-settings .settings-intro{padding:19px}}
+</style>
 <style id="caffoot-v21-shell-style">
 /* v2.1 shared page shell; match the approved My Account type scale and brand. */
 .v21-skip-link { position:fixed; top:8px; left:12px; z-index:100; transform:translateY(-160%); padding:11px 16px; background:#fff; color:#142232; border:3px solid #F47B20; border-radius:9px; font-weight:700; }
@@ -8459,6 +8510,37 @@ function hierarchyValidateTypes(subnets) {
             const section = 'backup';
             const button = (action,label,icon,extra='') => `<button type="button" data-action="${action}" ${extra} class="settings-action"><i class="fa-solid ${icon}" aria-hidden="true"></i>${label}</button>`;
             const panel = (title,desc,inner='') => `<section class="settings-panel"><h3>${title}</h3><p>${desc}</p>${inner ? `<div class="settings-buttons">${inner}</div>` : ''}</section>`;
+
+            // Documentation-only page content based on INSTALLATION.md. No backup process
+            // or new recovery API: the v1.3.3 JSON import remains one-way migration.
+            const backupGuide = `<section id="v21-settings-backup-guide" class="v21-settings-backup-guide" aria-labelledby="v21-settings-backup-heading">
+                <div class="v21-settings-backup-title"><i class="fa-solid fa-database" aria-hidden="true"></i>
+                    <div><h3 id="v21-settings-backup-heading">Back up your Docker / SQLite installation</h3>
+                        <p>Keep a protected copy of the <strong>entire</strong> persistent <code>/data</code> mount — not merely an imported JSON file.</p></div>
+                </div>
+                <p><strong>What is stored:</strong> Caffoot Lite keeps its SQLite inventory and user-account database at
+                    <code>/data/caffoot.sqlite3</code>, and persistent HTTPS certificate material under
+                    <code>/data/tls</code>. Your backup must preserve <strong>both</strong> along with other contents of the same <code>/data</code> mount.</p>
+                <div class="v21-settings-backup-methods">
+                    <section class="v21-settings-backup-method" aria-labelledby="v21-settings-volume-heading">
+                        <h4 id="v21-settings-volume-heading"><i class="fa-solid fa-box-archive" aria-hidden="true"></i>Docker-managed named volume</h4>
+                        <ol><li>In Portainer or Docker, identify the actual volume mapped to the container's <code>/data</code>. The name may include the Portainer stack or Compose project name.</li>
+                            <li><strong>Stop Caffoot Lite</strong> before a manual copy so the SQLite database is no longer being written.</li>
+                            <li>Use a trusted volume-backup tool to copy the whole volume, including the database and TLS material, to separate protected storage.</li>
+                            <li>To restore, stop the container again, restore all contents to the <strong>same intended named volume</strong>, preserve permissions and ownership, restart and check your inventory.</li></ol>
+                    </section>
+                    <section class="v21-settings-backup-method" aria-labelledby="v21-settings-bind-heading">
+                        <h4 id="v21-settings-bind-heading"><i class="fa-solid fa-folder-open" aria-hidden="true"></i>Host bind-mounted folder</h4>
+                        <ol><li>Find the actual host path mapped to <code>/data</code>; for example, <code>/srv/caffoot-lite/data:/data</code>. Your own location may differ.</li>
+                            <li><strong>Stop Caffoot Lite</strong> before manually copying the directory.</li>
+                            <li>Copy the entire configured host folder, including <code>caffoot.sqlite3</code> and <code>tls/</code>, to separately protected storage.</li>
+                            <li>To restore, stop the container, restore the full folder to the original bind-mount path with correct ownership and permissions, restart and verify accounts and inventory.</li></ol>
+                    </section>
+                </div>
+                <div class="v21-settings-backup-safety">
+                    <p><strong>Important:</strong> a backup contains sensitive account and infrastructure details. Do not switch an existing <code>/data</code> mount to an empty volume expecting records to migrate. Test your restore procedure. The <strong>published v1.3.3 JSON import is a one-way migration</strong>, not an ongoing SQLite/database backup.</p>
+                </div>
+            </section>`;
             let body = '';
             if (section === 'backup') {
                 body = '<h3 class="settings-group-title">Import Inventory</h3>' +
@@ -8468,7 +8550,7 @@ function hierarchyValidateTypes(subnets) {
                         '<button type="button" data-action="next-import-pick" class="settings-action" '+(nextImportAllowed?'':'disabled')+'><i class="fa-solid fa-upload" aria-hidden="true"></i>Choose Backup File</button>') +
                     panel('Database backups',
                         'Ongoing backup and restoration are handled by your Docker, Portainer or volume backup application. This JSON import is for one-way migration only.') +
-                    '</div><h3 class="settings-group-title">Maintenance & Safety</h3>' +
+                    '</div>' + backupGuide + '<h3 class="settings-group-title">Maintenance & Safety</h3>' +
                     '<div class="settings-group-grid">' +
                     panel('Inventory Safety Check',
                         'Check central inventory integrity without changing saved records.',
@@ -8478,7 +8560,7 @@ function hierarchyValidateTypes(subnets) {
                         button('clear-inventory-data','Clear System / Clean Start','fa-triangle-exclamation')) +
                     '</div>';
             }
-            return `<div class="settings-workspace backup-workspace"><div class="settings-intro"><h2>Settings & Data</h2><p>Administrator controls for central inventory and application maintenance.</p></div>
+            return `<div class="settings-workspace backup-workspace v21-settings"><div class="settings-intro"><h2>Settings & Data</h2><p>Administrator controls for central inventory and application maintenance.</p></div>
                 <div class="${section==='backup'?'settings-groups':'settings-grid'}">${body}</div></div>`;
         }
 
