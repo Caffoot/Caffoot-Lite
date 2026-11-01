@@ -1661,6 +1661,25 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 @media(max-width:450px){.v21-account-tiles{grid-template-columns:1fr}.v21-account-identity{gap:11px}.v21-account-identity h3{font-size:18px}.v21-account-avatar{width:53px;height:53px;flex-basis:53px;font-size:19px}.v21-account-tabs{gap:17px}}
 </style>
 
+<style id="caffoot-v21-profile-active">
+/* Stage 11 optional profiles: all displayed names/photos come from the user's own session. */
+.v21-account-avatar-photo{object-fit:cover;object-position:center;background:#eaf0f5}
+.v21-header-avatar img{display:block;width:100%;height:100%;border-radius:50%;object-fit:cover}
+.v21-account-photo .v21-account-avatar-photo{border-radius:50%;width:88px;height:88px}
+.v21-account-photo .v21-account-photo-actions{display:grid;justify-items:center;gap:7px}
+.v21-account-photo button:not(:disabled){color:#b45c20;background:#fff7ee;border-color:#e9c39f}
+.v21-account-photo button:not(:disabled):hover{background:#ffe9d6}
+.v21-account-photo button.v21-account-remove-photo{color:#a54040;border-color:#edc5c5;background:#fff4f4}
+.v21-account-fields input:not([readonly]):not(:disabled){background:#fff;color:#253f55}
+.v21-account-fields input:not([readonly]):focus{border-color:#df7c34}
+.v21-account-fields .v21-account-email-hint{display:block;font-size:10.5px;color:#927044;line-height:1.5;font-weight:550}
+.v21-account-form-actions span{flex:1 1 150px}
+.v21-account-profile-pending{display:block;font-size:11px;color:#607b90}
+.v21-account-profile-pending[hidden]{display:none}
+.dark .v21-account-fields input:not([readonly]):not(:disabled){background:#2f455b;color:#f1f7fd}
+.dark .v21-account-fields .v21-account-email-hint{color:#efc89d}
+@media(max-width:680px){.v21-account-photo .v21-account-photo-actions{justify-items:start}}
+</style>
 <style id="caffoot-v21-settings-style">
 /* Stage 9: preserve the published Settings arrangement; premium surface only. */
 .v21-settings{width:100%;max-width:1240px;color:#263c52}
@@ -11045,6 +11064,20 @@ window.addEventListener('load', async () => {
 
   // Self-service account controls follow the established Users card styling.
   let sessionMfaEnrolled=false;
+  let signedInProfile={firstName:'',lastName:'',emailAddress:'',displayName:'',emailVerified:false,hasPhoto:false};
+  let profilePhotoRevision=0;
+  function accountDisplayName(){return signedInProfile.displayName||signedInUsername||'';}
+  function profilePhotoMarkup(initial,extraClass=''){
+    if(signedInProfile.hasPhoto)return '<img class="v21-account-avatar v21-account-avatar-photo '+extraClass+'" src="/api/account/photo?v='+profilePhotoRevision+'" alt="Your profile photograph">';
+    return '<span class="v21-account-avatar '+extraClass+'" aria-label="Profile image placeholder">'+escapeHtml(initial)+'</span>';
+  }
+  function updateAccountIdentity(){
+    document.getElementById('v21-header-username').textContent=accountDisplayName();
+    const holder=document.getElementById('v21-header-avatar');
+    if(signedInProfile.hasPhoto){
+      const photo=document.createElement('img');photo.src='/api/account/photo?v='+profilePhotoRevision;photo.alt='';holder.replaceChildren(photo);
+    }else holder.textContent=(signedInUsername||'').trim().charAt(0).toLocaleUpperCase()||'?';
+  }
   function renderAccountSections(){
     const card='rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 p-5 space-y-3';
     const field='block w-full max-w-sm border rounded-lg p-2 mt-1 text-slate-900';
@@ -11070,38 +11103,44 @@ window.addEventListener('load', async () => {
     return html+'<button type="button" id="next-account-signout" class="px-4 py-2 rounded-xl bg-slate-700 text-white text-sm font-semibold">Sign out</button>';
   }
 
-  // Stage 10: the approved Overview is read-only until protected profile storage is scoped.
+  // Stage 11: existing SQLite accounts own optional profile fields and photo bytes.
   function renderAccountOverview(){
-    const username=escapeHtml(signedInUsername || '');
-    const initial=escapeHtml((signedInUsername || '').trim().charAt(0).toUpperCase() || '?');
-    const role=sessionIsAdmin ? 'Administrator' : 'Standard User';
-    const mfa=sessionMfaEnrolled ? 'MFA Enrolled' : 'MFA Not Enrolled';
+    const username=escapeHtml(signedInUsername||'');
+    const initial=(signedInUsername||'').trim().charAt(0).toUpperCase()||'?';
+    const role=sessionIsAdmin?'Administrator':'Standard User';
+    const mfa=sessionMfaEnrolled?'MFA Enrolled':'MFA Not Enrolled';
     const preference=caffootThemePreference();
-    const appearance=preference==='dark' ? 'Dark Mode' : preference==='light' ? 'Light Mode' : 'Use System Setting';
-    const futureField=(name,id)=>'<label for="'+id+'">'+name+'<input id="'+id+'" type="text" disabled placeholder="Available in a future stage" autocomplete="off"></label>';
+    const appearance=preference==='dark'?'Dark Mode':preference==='light'?'Light Mode':'Use System Setting';
+    const profileField=(name,id,key,type='text',autocomplete='off',length=120)=>
+      '<label for="'+id+'">'+name+'<input id="'+id+'" name="'+key+'" type="'+type+'" value="'+escapeHtml(signedInProfile[key]||'')+'" maxlength="'+length+'" autocomplete="'+autocomplete+'"></label>';
     return `
       <div class="v21-account-layout">
         <div class="v21-account-main">
           <section class="v21-account-card" aria-labelledby="v21-personal-details-title">
             <div class="v21-account-card-heading"><i class="fa-solid fa-address-card" aria-hidden="true"></i><div><h3 id="v21-personal-details-title">Personal Details</h3><p>Manage how your personal information appears in Caffoot Lite.</p></div></div>
             <div class="v21-account-detail-layout">
-              <div class="v21-account-photo"><span class="v21-account-avatar" aria-label="Profile image placeholder">${initial}</span>
-                <button type="button" disabled title="Profile image storage is not yet available"><i class="fa-solid fa-camera" aria-hidden="true"></i> Upload Profile Image</button>
-                <small>Optional photo upload — planned. No image is collected or stored.</small>
+              <div class="v21-account-photo">
+                ${profilePhotoMarkup(initial)}
+                <div class="v21-account-photo-actions">
+                  <button type="button" id="v21-profile-upload"><i class="fa-solid fa-camera" aria-hidden="true"></i> ${signedInProfile.hasPhoto?'Change Profile Image':'Upload Profile Image'}</button>
+                  ${signedInProfile.hasPhoto?'<button type="button" id="v21-profile-remove" class="v21-account-remove-photo">Remove Image</button>':''}
+                  <input id="v21-profile-image-file" type="file" accept="image/png,image/jpeg,image/webp" hidden aria-label="Choose JPG PNG or WEBP profile image">
+                </div>
+                <small>Optional JPG, PNG or WEBP image, up to 5 MB.</small>
               </div>
-              <div>
+              <form id="v21-profile-form">
                 <div class="v21-account-fields">
-                  ${futureField('First Name','v21-profile-first-name')}
-                  ${futureField('Last Name','v21-profile-last-name')}
-                  ${futureField('Email Address','v21-profile-email')}
-                  ${futureField('Display Name','v21-profile-display-name')}
+                  ${profileField('First Name','v21-profile-first-name','firstName','text','given-name',100)}
+                  ${profileField('Last Name','v21-profile-last-name','lastName','text','family-name',100)}
+                  <div><label for="v21-profile-email">Email Address<input id="v21-profile-email" name="emailAddress" type="email" value="${escapeHtml(signedInProfile.emailAddress||'')}" maxlength="254" autocomplete="email"></label><small class="v21-account-email-hint">Optional. Not verified for password recovery.</small></div>
+                  ${profileField('Display Name','v21-profile-display-name','displayName','text','nickname',120)}
                   <label class="v21-account-field-wide" for="v21-profile-username">Username
                     <input id="v21-profile-username" type="text" value="${username}" readonly aria-describedby="v21-username-readonly">
                     <span class="v21-account-readonly" id="v21-username-readonly"><i class="fa-solid fa-lock" aria-hidden="true"></i> Read-Only — your sign-in identifier never changes here.</span>
                   </label>
                 </div>
-                <div class="v21-account-form-actions"><span>Profile editing pending secure storage</span><button type="button" class="v21-account-primary" disabled>Save Personal Details</button></div>
-              </div>
+                <div class="v21-account-form-actions"><span>All details are optional</span><button type="submit" class="v21-account-primary">Save Personal Details</button></div>
+              </form>
             </div>
           </section>
           <section class="v21-account-card" aria-labelledby="v21-account-security-title">
@@ -11114,7 +11153,7 @@ window.addEventListener('load', async () => {
             <button type="button" class="v21-account-secondary" data-action="select-account-section" data-section="security"><i class="fa-solid fa-lock" aria-hidden="true"></i>Manage Security</button>
           </section>
           <section class="v21-account-card" aria-labelledby="v21-account-services-title">
-            <div class="v21-account-card-heading"><i class="fa-solid fa-grid-2" aria-hidden="true"></i><div><h3 id="v21-account-services-title">Your Services</h3><p>Personal services planned for a later version.</p></div></div>
+            <div class="v21-account-card-heading"><i class="fa-solid fa-laptop" aria-hidden="true"></i><div><h3 id="v21-account-services-title">Your Services</h3><p>Personal services planned for a later version.</p></div></div>
             <div class="v21-account-tiles">
               <div><i class="fa-solid fa-laptop" aria-hidden="true"></i><h4>My Devices <span class="v21-account-planned">Planned</span></h4><p>View devices assigned to your account when assignments become available.</p></div>
               <div><i class="fa-solid fa-ticket" aria-hidden="true"></i><h4>My Support Tickets <span class="v21-account-planned">Planned</span></h4><p>Follow your support requests when ticketing becomes available.</p></div>
@@ -11135,8 +11174,8 @@ window.addEventListener('load', async () => {
     return `<div class="v21-account">
       <header class="v21-account-intro"><span class="v21-account-eyebrow">Your Personal Workspace</span><h2>My Account</h2><p>Everything about your account, in one place. Simple today, ready for tomorrow.</p></header>
       <section class="v21-account-hero" aria-label="Account identity">
-        <div class="v21-account-identity"><span class="v21-account-avatar" aria-hidden="true">${escapeHtml((signedInUsername||'').trim().charAt(0).toUpperCase()||'?')}</span>
-          <div><h3>${escapeHtml(signedInUsername||'')}</h3><p>Your Caffoot Lite account</p><div class="v21-account-badges">
+        <div class="v21-account-identity">${profilePhotoMarkup((signedInUsername||'').trim().charAt(0).toUpperCase()||'?')}
+          <div><h3>${escapeHtml(accountDisplayName())}</h3><p>Your Caffoot Lite account</p><div class="v21-account-badges">
           <span>${sessionIsAdmin?'Administrator':'Standard User'}</span><span>${sessionMfaEnrolled?'MFA Enrolled':'MFA Not Enrolled'}</span><span>Signed In</span>
           </div></div></div>
         <div class="v21-account-security-state"><small>Account Security</small><strong><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> ${sessionMfaEnrolled?'Protected By MFA':'MFA Setup Available'}</strong></div>
@@ -11432,6 +11471,58 @@ window.addEventListener('load', async () => {
     event.target.value='';
     void chooseImportFile(file);
   },true);
+  // Profile operations use only the existing authenticated session and CSRF proof.
+  // Uploaded images are private database objects, never URLs chosen by the user.
+  document.addEventListener('submit',event=>{
+    if(event.target.id!=='v21-profile-form')return;
+    event.preventDefault();event.stopImmediatePropagation();
+    const form=event.target,button=form.querySelector('button[type="submit"]');
+    if(button.disabled)return;
+    button.disabled=true;
+    const values=Object.fromEntries(new FormData(form));
+    void postInventory('/api/account/profile',values).then(result=>{
+      signedInProfile=result.profile;
+      updateAccountIdentity();
+      renderContent();
+      showToast('Personal details saved.');
+    }).catch(error=>showToast(error.message,'error')).finally(()=>{button.disabled=false;});
+  },true);
+  document.addEventListener('click',event=>{
+    const id=event.target.closest('button')?.id;
+    if(id==='v21-profile-upload'){
+      event.preventDefault();
+      document.getElementById('v21-profile-image-file')?.click();
+    }else if(id==='v21-profile-remove'){
+      event.preventDefault();
+      if(!confirm('Remove your profile image?'))return;
+      const button=event.target.closest('button');button.disabled=true;
+      void postInventory('/api/account/photo/remove',{confirmed:true}).then(result=>{
+        signedInProfile=result.profile;profilePhotoRevision++;
+        updateAccountIdentity();renderContent();showToast('Profile image removed.');
+      }).catch(error=>{button.disabled=false;showToast(error.message,'error');});
+    }
+  },true);
+  document.addEventListener('change',event=>{
+    if(event.target.id!=='v21-profile-image-file')return;
+    const file=event.target.files?.[0];
+    event.target.value='';
+    if(!file)return;
+    if(!['image/png','image/jpeg','image/webp'].includes(file.type)||file.size>5*1024*1024||!file.size){
+      showToast('Choose a JPG, PNG or WEBP image no larger than 5 MB.','error');return;
+    }
+    const button=document.getElementById('v21-profile-upload');
+    if(button)button.disabled=true;
+    const reader=new FileReader();
+    reader.onerror=()=>{if(button)button.disabled=false;showToast('Unable to read profile image.','error');};
+    reader.onload=()=>{
+      const encoded=String(reader.result||'').split(',')[1];
+      void postInventory('/api/account/photo',{mediaType:file.type,contentBase64:encoded}).then(result=>{
+        signedInProfile=result.profile;profilePhotoRevision++;
+        updateAccountIdentity();renderContent();showToast('Profile image saved.');
+      }).catch(error=>showToast(error.message,'error')).finally(()=>{if(button)button.disabled=false;});
+    };
+    reader.readAsDataURL(file);
+  },true);
   // Reuse existing authenticated account APIs; password and MFA changes end the session.
   document.addEventListener('submit',event=>{
     const form=event.target;
@@ -11568,7 +11659,7 @@ window.addEventListener('load', async () => {
     if (!element) return;
     const action = element.dataset.action || '';
     if (isBlockedAction(action, element) || (element.matches('button') && element.type==='submit' && element.form &&
-        !element.closest('form[data-device-form="true"],#next-user-create-form,#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm') &&
+        !element.closest('form[data-device-form="true"],#next-user-create-form,#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#v21-profile-form') &&
         !(editPermissions.IPAM && element.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"]')) &&
         !(editPermissions.Racks && element.closest('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form')))) {
       event.preventDefault();
@@ -11577,7 +11668,7 @@ window.addEventListener('load', async () => {
     }
   },true);
   document.addEventListener('submit',event => {
-    if (event.target.matches('#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm') ||
+    if (event.target.matches('#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#v21-profile-form') ||
         (editPermissions.Devices && event.target.matches('form[data-device-form="true"]')) ||
         (editPermissions.IPAM && event.target.matches('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"]')) ||
         (editPermissions.Racks && event.target.matches('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form')) ||
@@ -11597,8 +11688,8 @@ window.addEventListener('load', async () => {
     signedInUsername=session.username;
     document.getElementById('next-welcome-name').textContent = 'Welcome ' + signedInUsername;
     // Header identity is presentation-only and never substitutes for session authorization.
-    document.getElementById('v21-header-username').textContent = signedInUsername;
-    document.getElementById('v21-header-avatar').textContent = signedInUsername.trim().charAt(0).toLocaleUpperCase() || '?';
+    signedInProfile=session.profile||signedInProfile;
+    updateAccountIdentity();
     sessionMfaEnrolled=!!session.mfa_enrolled;
     window.nextMfaEnrolled=sessionMfaEnrolled;
     document.getElementById('next-users-nav').classList.toggle('hidden', !sessionIsAdmin);
