@@ -33,9 +33,10 @@ def read_profile(connection, account_id):
 def _clean_field(field, value):
     if not isinstance(value, str) or len(value) > FIELD_LIMITS[field]:
         raise ValueError("Invalid " + field + " field")
-    text = value.strip()
-    if any(ord(char) < 32 or ord(char) == 127 for char in text):
+    # Reject controls before trimming so leading/trailing CRLF cannot disappear.
+    if any(ord(char) < 32 or ord(char) == 127 for char in value):
         raise ValueError("Control characters are not allowed in profile details")
+    text = value.strip()
     if field == "emailAddress" and text:
         # Optional email is not a verified recovery address in this version.
         if not re.fullmatch(r"[^\s@]{1,64}@[^\s@]+\.[^\s@]+", text, re.ASCII):
