@@ -17,6 +17,8 @@ from .device_catalogue import change_device_catalogue
 from .reset_inventory import reset_inventory
 from .ipam_repair import apply_ipam_repairs
 from .schema import initialise_database as migrate_database
+from .profiles import (MAX_PHOTO_BYTES, read_profile, read_photo,
+                       save_profile, save_photo, delete_photo)
 from .accounts import bootstrap_first_admin, confirm_admin_mfa, verify_password, hash_password
 from .mfa import new_secret, provisioning_uri, verify_code
 from .import_drafts import ImportDrafts
@@ -316,6 +318,25 @@ class Handler(BaseHTTPRequestHandler):
                     "SELECT record_json FROM inventory_change_history ORDER BY id"
                 )]
                 self.respond(200, {"changeHistory": history})
+        elif self.path == "/api/account/photo":
+            # Authenticated self-only photograph; never a public/static asset.
+            with connect() as connection:
+                account_id = authenticated_account(connection, self.headers.get("Cookie"))
+                if account_id is None:
+                    self.respond(401, {"error": "unauthorised"})
+                    return
+                photo = read_photo(connection, account_id)
+            if not photo:
+                self.respond(404, {"error": "not found"})
+                return
+            data, mime = photo
+            self.send_response(200)
+            self.send_header("Content-Type", mime)
+            self.send_header("Content-Length", str(len(data)))
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("X-Content-Type-Options", "nosniff")
+            self.end_headers()
+            self.wfile.write(data)
         elif self.path == "/api/session":
             with connect() as connection:
                 cookie = self.headers.get("Cookie")
@@ -334,6 +355,7 @@ class Handler(BaseHTTPRequestHandler):
                     "username": account[0],
                     "is_admin": bool(account[1]),
                     "mfa_enrolled": bool(account[2]),
+                    "profile": read_profile(connection, account_id),
                     "can_enter_inventory": any(
                         can_access(connection, account_id, section)
                         for section in ("Devices", "IPAM", "Racks")
@@ -347,6 +369,8 @@ class Handler(BaseHTTPRequestHandler):
         if self.path in ("/api/users/create", "/api/users/permission", "/api/users/active",
                          "/api/users/admin", "/api/users/delete", "/api/account/password",
                          "/api/account/mfa/start", "/api/account/mfa/confirm",
+                         "/api/account/profile", "/api/account/photo",
+                         "/api/account/photo/remove",
                          "/api/devices/edit/start", "/api/devices/edit/cancel",
                          "/api/devices/edit/save", "/api/devices/create",
                          "/api/devices/delete", "/api/ipam/allocation/save",
@@ -464,7 +488,12 @@ class Handler(BaseHTTPRequestHandler):
             return
         length = self.headers.get("Content-Length")
         inventory_path = self.path.startswith(("/api/devices/", "/api/ipam/", "/api/inventory/"))
-        request_limit = MAX_IMPORT_BYTES if inventory_path else MAX_LOGIN_BYTES
+        # The photograph travels as bounded base64 JSON; normal account requests
+        # retain their original 4 KB limit.
+        photo_path = self.path == "/api/account/photo"
+        request_limit = ((MAX_PHOTO_BYTES + 2) // 3) * 4 + 2048 if photo_path else (
+            MAX_IMPORT_BYTES if inventory_path else MAX_LOGIN_BYTES
+        )
         if length is None or not length.isdecimal() or not 0 < int(length) <= request_limit:
             self.respond(400, {"error": "invalid request size"})
             return
@@ -488,7 +517,18 @@ class Handler(BaseHTTPRequestHandler):
                 ).fetchone():
                     self.respond(403, {"error": "forbidden"})
                     return
-                if self.path == "/api/inventory/settings/save":
+                if self.path == "/api/account/profile":
+                    result = {"status": "saved", "profile":
+                              save_profile(connection, actor, payload)}
+                elif self.path == "/api/account/photo":
+                    result = {"status": "saved", "profile":
+                              save_photo(connection, actor, payload)}
+                elif self.path == "/api/account/photo/remove":
+                    if payload != {"confirmed": True}:
+                        raise ValueError("Photo removal confirmation required")
+                    result = {"status": "removed", "profile":
+                              delete_photo(connection, actor)}
+                elif self.path == "/api/inventory/settings/save":
                     if set(payload) != {"key", "value"}:
                         raise ValueError("Invalid inventory settings request")
                     save_inventory_setting(connection, actor, payload["key"], payload["value"])
