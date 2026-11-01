@@ -31,18 +31,18 @@ The importer preserves supported inventory data and relationships. It does **not
 
 The container uses **/data/caffoot.sqlite3** for SQLite and **/data/tls** for persistent HTTPS certificate material. The data mount must survive image updates and container recreation.
 
-In the tested Raspberry Pi Portainer example, the host directory is:
+For a **new standard installation**, Docker automatically creates the named `caffoot_data` volume and mounts it at `/data` inside the container. The volume's actual name may be prefixed with the Portainer stack or Compose project name. Find it under **Portainer → Volumes**. No host folder needs to be created manually.
 
-    /portainer/Files/AppData/Config/caffoot_data
+A **custom host directory** is also supported, for example `/srv/caffoot-lite/data:/data`. Configure write permissions for the application's non-root UID/GID `10001:10001`.
 
-Choose the correct host path for your actual installation rather than assuming the Pi example applies to every machine. The Docker process uses a non-root account; see the [installation guide](../../../INSTALLATION.md) for ownership and Compose/Portainer settings.
+For **existing installations**, keep the original `/data` mount. Do not change from a host directory to an empty named volume simply because the new example uses one; data does not migrate automatically. See the [installation guide](../../../INSTALLATION.md) for both storage choices.
 
 ## Make a manual consistent backup
 
 Use your existing trusted Docker, server or NAS backup tools. For a simple **stopped-container** file backup:
 
 1. Ensure no one is making inventory changes; stop the Caffoot container in Portainer or Docker.
-2. Copy the **entire persistent data directory**, including the database and TLS certificate/key material, to a protected backup destination.
+2. Identify the actual named volume in **Portainer → Volumes** (it may be stack-prefixed) or locate your custom host bind mount. Use a trusted volume-backup utility or temporary helper container for a named volume, or a stopped-container directory copy for a bind mount. Copy the **entire persistent data directory**, including the database and TLS certificate/key material, to a protected backup destination.
 3. Verify that the copy contains the expected database and TLS files.
 4. Start the normal container again and confirm that sign-in and inventory still work.
 5. Store a separate backup **off the Caffoot server** for resilience against hardware failure, and protect the files from unauthorised access.
@@ -54,7 +54,7 @@ Do not copy an actively changing SQLite database as ordinary files and assume it
 A restoration test is safest in a *separate test folder/isolated installation* rather than by overwriting your only functioning database.
 
 1. Check that the backup is complete and corresponds to the intended installation.
-2. Stop the target container, then restore the saved data directory into the path mounted as **/data**, retaining correct ownership/permissions.
+2. Stop the target container, then restore the complete saved data into the **existing named volume or host directory mounted as /data**, retaining correct ownership/permissions. Identify the target volume carefully; switching to a new empty volume does not automatically restore or migrate the original data.
 3. Start the target container and verify HTTPS identity, administrator sign-in, inventory, related IPAM/rack data and any account permissions.
 4. Keep the original known-working files until recovery has been verified. Do not delete your only database or TLS private key just to run an acceptance test.
 
