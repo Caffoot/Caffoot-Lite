@@ -203,6 +203,7 @@ async function run(){
   assert.ok(await page.locator(".v21-dashboard-quick [data-action=\"open-device-modal\"]").isVisible());
   assert.ok(await page.locator(".v21-dashboard-quick [data-action=\"open-rack-modal\"]").isVisible());
   await page.locator('[data-dashboard-tab="insights"]').click();
+  console.log("Dashboard insights state:",await page.evaluate(()=>({selected:document.querySelector("#dashboard-tab-insights")?.getAttribute("aria-selected"),hidden:document.querySelector("#dashboard-panel-insights")?.hidden,parentHidden:!!document.querySelector("#dashboard-panel-insights")?.closest("[hidden]"),activeTab:document.querySelector(".dashboard-tab-control.is-active")?.id,display:getComputedStyle(document.querySelector("#dashboard-panel-insights")).display})));
   assert.ok(await page.locator("#dashboard-panel-insights").isVisible());
   assert.ok(await page.getByText("Rack Capacity By Face").isVisible());
   await page.locator('[data-dashboard-tab="activity"]').click();
