@@ -13,6 +13,8 @@ Thank you for contributing. This checklist applies to **maintainers and communit
 - [ ] Every new or changed JavaScript/Python/CSS/HTML identifier has a clear, descriptive name following the established language conventions.
 - [ ] User-facing headings, buttons, tabs, form labels, navigation and short statuses use agreed **Title Case**, with technical acronyms preserved. Explanatory prose remains readable.
 - [ ] No new opaque `phase`/`stage`/`next`/temporary names or stale development-stage comments are introduced.
+- [ ] New and changed source comments and docstrings use plain **British English** and explain what code does and why in terms someone new to coding can understand; they contain no AI-oriented instructions or unexplained expert shorthand.
+- [ ] Existing comments affected by the change remain accurate and understandable, or have been updated or removed.
 - [ ] All relevant callers, event handlers, selectors, imports and tests have been updated alongside any refactor.
 - [ ] Affected development, user and configuration documentation is updated **in this PR**.
 - [ ] Named function additions, removals, moves or renames are reflected in the [Function Index](../docs/Development%20Guide/Function-Index.md) with accurate source revision and navigation links; or explain why this PR makes no relevant function-index change.
