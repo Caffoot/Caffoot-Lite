@@ -1127,6 +1127,46 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 }
 .dark #modal-content button.caffoot-modal-cancel:hover { background:#6b2438 !important; }
 </style>
+<style id="caffoot-v21-shell-style">
+/* v2.1 shared page shell; match the approved My Account type scale and brand. */
+.v21-skip-link { position:fixed; top:8px; left:12px; z-index:100; transform:translateY(-160%); padding:11px 16px; background:#fff; color:#142232; border:3px solid #F47B20; border-radius:9px; font-weight:700; }
+.v21-skip-link:focus { transform:translateY(0); }
+#app > main { min-width:0; }
+#app > main > .v21-shell-header {
+    background:#FFFFFF !important; color:#142232 !important;
+    min-height:74px; height:auto; flex-shrink:0; padding:12px clamp(14px,2vw,30px);
+    border-bottom:1px solid #DEE5EB !important; gap:16px;
+}
+.dark #app > main > .v21-shell-header { background:#202936 !important; color:#F3F6FA !important; border-bottom-color:#37475A !important; }
+.v21-header-crumb { display:flex; min-width:0; align-items:center; gap:13px; font-size:14px; line-height:1.35; white-space:nowrap; }
+.v21-header-product { color:#667587; font-weight:600; flex-shrink:0; }
+.dark .v21-header-product { color:#AEBCCB; }
+.v21-header-chevron { color:#A3ADBA; font-size:9px; flex-shrink:0; }
+.v21-header-page { margin:0; min-width:0; overflow:hidden; text-overflow:ellipsis; font-size:15px; line-height:1.4; font-weight:750; letter-spacing:-.015em; }
+#app > main > .v21-shell-header #page-title { color:#142232 !important; }
+.dark #app > main > .v21-shell-header #page-title { color:#F3F6FA !important; }
+.v21-header-account { display:flex; align-items:center; justify-content:flex-end; gap:10px; min-width:0; flex-shrink:0; padding:5px 8px 5px 5px; border:1px solid transparent; border-radius:12px; font-size:13px; font-weight:650; color:inherit; }
+.v21-header-account:hover { background:#F3F6F9; border-color:#E1E7EF; }
+.dark .v21-header-account:hover { background:#2D3B4D; border-color:#425268; }
+.v21-header-account:focus-visible { outline:3px solid #F47B20 !important; outline-offset:2px; }
+.v21-header-avatar { display:grid; place-items:center; flex-shrink:0; width:37px; height:37px; border-radius:50%; background:#24364A; color:#FFFFFF; font-size:14px; font-weight:750; border:2px solid #F47B20; }
+.v21-header-username { max-width:170px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.v21-header-account-chevron { font-size:9px; opacity:.6; }
+#main-content { min-width:0; }
+#main-content > * { min-width:0; }
+@media (max-width:650px) {
+ #app > main > .v21-shell-header { min-height:62px; padding:9px 12px; gap:8px; }
+ .v21-header-crumb { gap:8px; font-size:12px; }
+ .v21-header-product { display:none; }
+ .v21-header-chevron { display:none; }
+ .v21-header-page { font-size:13px; }
+ .v21-header-account { gap:0; padding:3px; }
+ .v21-header-username, .v21-header-account-chevron { display:none; }
+ .v21-header-avatar { width:34px; height:34px; }
+ #main-content { padding:14px !important; }
+}
+@media (prefers-reduced-motion: reduce) { .v21-skip-link { transition:none; } }
+</style>
 <style id="caffoot-v21-sidebar-style">
 /* v2.1 premium navigation: keep published route actions, roles and submenus intact. */
 #sidebar { width: 272px; min-width: 272px; }
@@ -1158,6 +1198,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 </style>
 </head>
 <body class="h-full bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-200">
+    <a class="v21-skip-link" href="#main-content">Skip to main content</a>
 
     <div id="app" class="flex h-full overflow-hidden">
         
@@ -1244,15 +1285,22 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 
         <!-- MAIN CONTENT AREA -->
         <main class="flex-1 flex flex-col overflow-hidden">
-            <!-- Top Header -->
-            <header class="h-16 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 flex items-center justify-between z-10">
-                <div class="flex items-center space-x-4">
-                    <h2 id="page-title" class="text-xl font-bold text-slate-900 dark:text-white">Dashboard</h2>
+            <!-- Shared premium shell header. Dynamic page titles and existing actions remain intact. -->
+            <header class="v21-shell-header flex items-center justify-between z-10" aria-label="Application header">
+                <div class="v21-header-crumb" aria-label="Current section">
+                    <span class="v21-header-product">Caffoot Lite</span>
+                    <i class="fa-solid fa-chevron-right v21-header-chevron" aria-hidden="true"></i>
+                    <h2 id="page-title" class="v21-header-page" title="Current page">Dashboard</h2>
                 </div>
+                <button type="button" id="v21-account-shortcut" data-action="tab-account" class="v21-header-account" aria-label="Open My Account">
+                    <span class="v21-header-avatar" id="v21-header-avatar" aria-hidden="true">?</span>
+                    <span id="v21-header-username" class="v21-header-username"></span>
+                    <i class="fa-solid fa-chevron-down v21-header-account-chevron" aria-hidden="true"></i>
+                </button>
             </header>
 
             <!-- Dynamic Tab Content Container -->
-            <div class="flex-1 overflow-y-auto custom-scrollbar p-6 bg-slate-50 dark:bg-slate-900" id="main-content">
+            <div class="flex-1 overflow-y-auto custom-scrollbar p-6 bg-slate-50 dark:bg-slate-900" id="main-content" tabindex="-1">
                 <!-- Content injected dynamically -->
             </div>
         </main>
@@ -2227,9 +2275,11 @@ function hierarchyValidateTypes(subnets) {
                 if(btn.dataset.tab === tabId) {
                     btn.classList.add('bg-indigo-50', 'dark:bg-slate-700/60', 'text-indigo-600', 'dark:text-indigo-400');
                     btn.classList.remove('text-slate-600', 'dark:text-slate-300');
+                    btn.setAttribute('aria-current','page');
                 } else {
                     btn.classList.remove('bg-indigo-50', 'dark:bg-slate-700/60', 'text-indigo-600', 'dark:text-indigo-400');
                     btn.classList.add('text-slate-600', 'dark:text-slate-300');
+                    btn.removeAttribute('aria-current');
                 }
             });
 
@@ -10440,6 +10490,9 @@ window.addEventListener('load', async () => {
     window.nextSessionIsAdmin=sessionIsAdmin;
     signedInUsername=session.username;
     document.getElementById('next-welcome-name').textContent = 'Welcome ' + signedInUsername;
+    // Header identity is presentation-only and never substitutes for session authorization.
+    document.getElementById('v21-header-username').textContent = signedInUsername;
+    document.getElementById('v21-header-avatar').textContent = signedInUsername.trim().charAt(0).toLocaleUpperCase() || '?';
     sessionMfaEnrolled=!!session.mfa_enrolled;
     window.nextMfaEnrolled=sessionMfaEnrolled;
     document.getElementById('next-users-nav').classList.toggle('hidden', !sessionIsAdmin);
