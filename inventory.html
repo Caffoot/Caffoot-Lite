@@ -1254,6 +1254,67 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 @media(max-width:1050px){.v21-directory-split{grid-template-columns:minmax(0,1fr)}.v21-directory-list{max-height:340px}}
 @media(max-width:580px){.v21-device-preview-grid{grid-template-columns:1fr}.v21-device-view-choice{width:100%}.v21-device-view-choice button{flex:1 1 auto}.v21-directory-preview{padding:17px}.v21-device-detail-page .device-details-action-footer button{flex:1 1 132px}.v21-device-heading h2{font-size:18px}}
 </style>
+<style id="caffoot-v21-device-editor-style">
+/* v2.1 premium Device editor: visual presentation only.
+   Keep v2.0.1 tab visibility, VM/host behaviour, field nodes and save paths. */
+#modal-content:has(.device-modal.v21-device-editor){border-color:#ccd8e4!important;box-shadow:0 26px 72px rgba(13,29,47,.25)}
+.v21-device-editor{padding:0!important;background:#f4f7fa;color:#1a2e43}
+.v21-device-editor .device-heading{display:flex;align-items:center;gap:17px;margin:0;padding:22px 27px;border:0;background:linear-gradient(115deg,#16283d 0%,#27415c 100%);color:#fff}
+.v21-device-editor .v21-form-heading-mark{display:grid;place-items:center;flex-shrink:0;width:46px;height:46px;border:1px solid #ffffff38;border-radius:14px;background:#ffffff12;color:#ffb375;font-size:19px}
+.v21-device-editor .v21-form-heading-copy{flex:1;min-width:0}
+.v21-device-editor .v21-form-eyebrow{display:block;margin-bottom:4px;font-size:10px;letter-spacing:.13em;text-transform:uppercase;font-weight:800;color:#ffc18f}
+.v21-device-editor .device-heading h3{font-size:clamp(19px,2vw,25px);line-height:1.2;font-weight:780;letter-spacing:-.025em;color:#fff}
+.v21-device-editor .v21-form-description{margin-top:6px;font-size:12px;line-height:1.5;color:#d5e1ed}
+.v21-device-editor .device-heading [data-action="close-modal"]{display:grid;place-items:center;flex-shrink:0;width:40px;height:40px;border:1px solid #ffffff40;border-radius:10px;background:#ffffff15;color:#fff}
+.v21-device-editor .device-heading [data-action="close-modal"]:hover{background:#ffffff30}
+.v21-device-editor .device-heading [data-action="close-modal"]:focus-visible{outline:3px solid #f47b20;outline-offset:2px}
+.v21-device-editor .form-shell{padding:0 24px 20px;margin:0;gap:0;background:#f4f7fa}
+.v21-device-editor .device-form-tabs{display:flex;align-items:center;flex-wrap:nowrap;gap:5px;padding:13px 0 0;margin-bottom:14px;background:transparent;border-bottom:1px solid #dce4ed;scrollbar-width:thin}
+.v21-device-editor .device-form-tab{flex:0 0 auto;min-height:46px;white-space:nowrap;padding:12px 16px;border:0;border-bottom:3px solid transparent;border-radius:9px 9px 0 0;color:#516477;font-size:12px;font-weight:740}
+.v21-device-editor .device-form-tab:hover:not([aria-selected="true"]){background:#e7edf4;color:#1c354e;border:0;border-bottom:3px solid transparent}
+.v21-device-editor .device-form-tab[aria-selected="true"]{background:#fff;color:#1d3043;border:0;border-bottom:3px solid #f47b20;box-shadow:0 -2px 8px #1021350c}
+.v21-device-editor .device-form-tab:focus-visible{outline:3px solid #f47b20;outline-offset:-3px}
+.v21-device-editor .device-form-panel{gap:15px;padding:2px 4px 12px 1px}
+.v21-device-editor .form-section-card{background:#fff;border:1px solid #d9e3ed;border-radius:15px;padding:20px;gap:14px;box-shadow:0 2px 12px rgba(20,34,50,.03)}
+.v21-device-editor .form-section-heading{font-size:13px;font-weight:780;letter-spacing:-.01em;color:#213448;border-bottom-color:#e5ebf1}
+.v21-device-editor .form-section-heading i{color:#e87319}
+.v21-device-editor label:not(.flex),.v21-device-editor .form-label,.v21-device-editor .device-ip-label{font-size:12px;font-weight:700;line-height:1.55;color:#455a6d}
+.v21-device-editor :is(input:not([type="checkbox"]),select,textarea){color:#24384b;background:#fff;border-color:#c2cedb}
+.v21-device-editor :is(input:not([type="checkbox"]),select,textarea):focus-visible{outline:3px solid #f47b20;outline-offset:1px;border-color:#df711e}
+.v21-device-editor input[type="checkbox"]{accent-color:#e87319}
+.v21-device-editor .device-help{font-size:12px;color:#65798c}
+.v21-device-editor :is(.form-section-card,.network-grid,.rack-grid)>*{min-width:0}
+.v21-device-editor .device-form-rack-configuration{background:#f4f8fc;border-color:#dce4ed;border-radius:13px}
+.v21-device-editor .device-form-rack-configuration .block.text-xs.font-bold{color:#b35c18}
+.v21-device-editor .form-section-card [data-action="manage-installed-software"],.v21-device-editor .form-section-card [data-action="manage-server-services"]{min-height:42px;border:1px solid #f1c49e;background:#fff6ee;color:#995016;font-size:12px;font-weight:750;border-radius:10px}
+.v21-device-editor .form-section-card [data-action="manage-installed-software"]:hover,.v21-device-editor .form-section-card [data-action="manage-server-services"]:hover{background:#ffebd8;border-color:#e87319}
+.v21-device-editor .form-section-card [data-action="manage-installed-software"]:focus-visible,.v21-device-editor .form-section-card [data-action="manage-server-services"]:focus-visible{outline:3px solid #f47b20;outline-offset:2px}
+.v21-device-editor .form-actions{margin-top:14px;padding:15px 0 0;border-color:#dce4ed;gap:11px}
+.v21-device-editor .form-actions button{min-height:44px;font-size:13px;font-weight:740;border-radius:10px}
+.v21-device-editor .form-actions button[type="submit"]{background:#e96c17;color:#fff;padding:11px 22px;border:1px solid #e96c17}
+.v21-device-editor .form-actions button[type="submit"]:hover{background:#c85b10;border-color:#c85b10}
+.v21-device-editor .form-actions button[type="submit"]:focus-visible{outline:3px solid #f47b20;outline-offset:2px}
+.v21-device-editor #virtual-fields,.v21-device-editor #host-platform-fields{border-color:#cbddeb;background:#f7f9fc;border-radius:13px}
+.v21-device-editor #virtual-fields>p:first-child,.v21-device-editor #host-platform-fields>p:first-child{color:#243e5b}
+.dark .v21-device-editor,.dark .v21-device-editor .form-shell{background:#182537;color:#eef3fb}
+.dark .v21-device-editor .device-heading{background:linear-gradient(115deg,#111f30,#223c57)}
+.dark .v21-device-editor .device-form-tabs{border-color:#44566b}
+.dark .v21-device-editor .device-form-tab{color:#cbd6e3}
+.dark .v21-device-editor .device-form-tab:hover:not([aria-selected="true"]){background:#33485d;color:#fff}
+.dark .v21-device-editor .device-form-tab[aria-selected="true"]{background:#2d4054;color:#fff}
+.dark .v21-device-editor .form-section-card{background:#223247;border-color:#475c72}
+.dark .v21-device-editor .form-section-heading{color:#f1f5fc;border-color:#45576a}
+.dark .v21-device-editor label:not(.flex),.dark .v21-device-editor .form-label,.dark .v21-device-editor .device-ip-label{color:#ced9e7}
+.dark .v21-device-editor :is(input:not([type="checkbox"]),select,textarea){background:#304458;color:#f6f8fc;border-color:#64758b}
+.dark .v21-device-editor .device-help{color:#c5d1de}
+.dark .v21-device-editor .device-form-rack-configuration,.dark .v21-device-editor #virtual-fields,.dark .v21-device-editor #host-platform-fields{background:#27384b;border-color:#556a81}
+.dark .v21-device-editor #virtual-fields>p:first-child,.dark .v21-device-editor #host-platform-fields>p:first-child{color:#e9f2fb}
+.dark .v21-device-editor .form-section-card [data-action="manage-installed-software"],.dark .v21-device-editor .form-section-card [data-action="manage-server-services"]{background:#473525;color:#ffd1ae;border-color:#94613f}
+.dark .v21-device-editor .form-actions{border-color:#45576a}
+@media(max-width:720px){.v21-device-editor .device-heading{padding:18px}.v21-device-editor .form-shell{padding:0 15px 16px}.v21-device-editor .device-form-tab{padding:10px 12px}.v21-device-editor .form-section-card{padding:16px}}
+@media(max-width:480px){.v21-device-editor .v21-form-heading-mark{display:none}.v21-device-editor .device-heading h3{font-size:19px}.v21-device-editor .device-heading{gap:9px}.v21-device-editor .device-form-tab{padding:10px 11px}.v21-device-editor .form-actions{flex-wrap:wrap}.v21-device-editor .form-actions button{flex:1 1 120px}}
+@media(prefers-reduced-motion:reduce){.v21-device-editor .device-form-tab{transition:none}}
+</style>
 <style id="caffoot-v21-shell-style">
 /* v2.1 shared page shell; match the approved My Account type scale and brand. */
 .v21-skip-link { position:fixed; top:8px; left:12px; z-index:100; transform:translateY(-160%); padding:11px 16px; background:#fff; color:#142232; border:3px solid #F47B20; border-radius:9px; font-weight:700; }
@@ -7372,9 +7433,14 @@ function hierarchyValidateTypes(subnets) {
             const currentSubnet = draft?.subnetId ? appState.subnets.find(s => s.id === draft.subnetId) : (device?.primaryIp ? getSubnetForIp(device.primaryIp) : null);
             const currentHeight = draft?.rackUHeight || (device?.rackUStart && device?.rackUEnd ? Math.max(1, Number(device.rackUEnd) - Number(device.rackUStart) + 1) : 1);
             openModal(`
-                <div class="device-modal">
+                <div class="device-modal v21-device-editor">
                     <div class="device-heading">
-                        <h3 class="font-bold text-base">${device ? 'Edit Device' : isDuplicate ? 'Duplicate Device' : 'Add New Device'}</h3>
+                        <span class="v21-form-heading-mark" aria-hidden="true"><i class="fa-solid fa-server"></i></span>
+                        <div class="v21-form-heading-copy">
+                            <span class="v21-form-eyebrow">Device management</span>
+                            <h3 class="font-bold text-base">${device ? 'Edit Device' : isDuplicate ? 'Duplicate Device' : 'Add New Device'}</h3>
+                            <p class="v21-form-description">${device ? 'Update this saved inventory record.' : isDuplicate ? 'Create a separate inventory record from this device.' : 'Register a physical device or virtual machine.'}</p>
+                        </div>
                         <button type="button" data-action="close-modal" aria-label="Close dialog"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
                     </div>
                     ${isDuplicate ? '<p class="rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-300 dark:border-blue-700 p-3 text-sm text-blue-900 dark:text-sky-100" role="status"><strong>Creating a new device from a copy.</strong> Enter a unique hostname and IP address. Serial number and IP are cleared; check the mounting position before saving. The original device is unchanged.</p>' : ''}

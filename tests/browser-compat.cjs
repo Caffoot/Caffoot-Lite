@@ -321,6 +321,18 @@ async function run(){
   console.log('Managed location add passed');
 
   await modal(page,'openDeviceModal');
+  // Stage 5 is a presentation-only redesign: retain the published hardware tab and fields.
+  assert.ok(await page.locator('.device-modal.v21-device-editor').isVisible(),
+    'Add Device uses the approved premium presentation');
+  assert.ok(await page.locator('.v21-form-heading-copy').getByRole('heading',{name:'Add New Device'}).isVisible());
+  assert.equal(await page.locator('.device-form-tabs [role="tab"]').count(),5,
+    'No existing device form tabs may be dropped');
+  await page.getByRole('tab',{name:'Hardware',exact:true}).click();
+  assert.ok(await page.locator('#device-form-panel-hardware #dev-manufacturer-select').isVisible());
+  assert.ok(await page.locator('#device-form-panel-hardware #dev-serial').isVisible());
+  await page.getByRole('tab',{name:'Software & Firmware'}).click();
+  assert.ok(await page.locator('#device-form-panel-software').isVisible());
+  await page.getByRole('tab',{name:'General',exact:true}).click();
   const general=page.locator('#device-form-panel-general');
   await general.waitFor();
   assert.equal(await general.evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),2,
@@ -354,6 +366,30 @@ async function run(){
   const device=saved.devices.find(d=>d.name==='browser-device');
   assert.equal(saved.ipAllocations['10.64.20.10'].deviceId,device.id);
   console.log('Device form and primary IPAM allocation passed');
+  // Existing v2.0.1 VM behaviour: the Hardware tab remains hidden and
+  // VM allocations/host controls stay in General, without any new save logic.
+  await page.evaluate(()=>{
+    const physical=appState.devices[0];
+    appState.devices.push({...physical,id:'v21-test-only-hypervisor',
+      name:'v21-test-only-hypervisor',type:'Server - Physical',status:'Active',
+      serverService_Hypervisor:true,
+      typeDetails:{...(physical?.typeDetails||{}),serverService_Hypervisor:true}});
+    openDeviceModal();
+  });
+  await page.locator('#dev-deployment').selectOption('virtual');
+  assert.ok(await page.locator('#device-form-tab-hardware').isHidden(),
+    'VMs must retain the v2.0.1 physical-only Hardware tab rule');
+  assert.ok(await page.locator('#virtual-fields').isVisible(),
+    'VMs must retain their existing virtual host and allocation fields');
+  assert.ok(await page.locator('#dev-virtual-host').isVisible());
+  assert.ok(await page.locator('#dev-vmVcpu').isVisible());
+  await page.evaluate(()=>{
+    closeModal(true);
+    const idx=appState.devices.findIndex(d=>d.id==='v21-test-only-hypervisor');
+    if(idx>=0)appState.devices.splice(idx,1);
+  });
+  console.log('Stage 5 VM hardware visibility and existing allocation controls passed');
+
 
 
   // v2.1 Stage 4: directory selection is read-only; existing table stays available.
