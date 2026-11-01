@@ -124,6 +124,45 @@ async function run(){
     assert.ok((await page.locator(selector).evaluate(el=>getComputedStyle(el).fontFamily)).includes('Inter'),
       'Branded inventory typography should apply to '+selector);
   }
+  // v2.1: the approved sidebar collapses without changing account or inventory state.
+  const sidebarToggle=page.locator('#v21-sidebar-toggle');
+  assert.ok(await sidebarToggle.isVisible(),'Premium sidebar must have a bottom collapse control');
+  assert.equal(await sidebarToggle.getAttribute('aria-expanded'),'true');
+  assert.equal(await page.locator('.v21-brand-tagline').textContent(),'Infrastructure, Simplified.');
+  assert.ok(await page.locator('.v21-wordmark-lite').isVisible(),
+    'Approved navy/orange Caffoot Lite wordmark must be visible');
+  await sidebarToggle.click();
+  assert.equal(await sidebarToggle.getAttribute('aria-expanded'),'false');
+  assert.ok(await page.locator('#sidebar').evaluate(el=>el.classList.contains('v21-is-collapsed')));
+  assert.equal(await page.locator('#sidebar [data-action="tab-ipam"]').getAttribute('aria-label'),'IPAM',
+    'Collapsed navigation must keep accessible labels');
+  assert.ok(await page.locator('#sidebar [data-action="tab-ipam"]').isVisible(),
+    'Collapsed navigation must retain primary actions');
+  assert.ok(!(await page.locator('#ipam-sidebar-actions').isVisible()),
+    'Collapsed sidebar must conceal secondary actions without deleting them');
+  await page.locator('#sidebar [data-action="tab-ipam"]').click();
+  await page.waitForFunction(()=>document.querySelector('#page-title')?.textContent.includes('IPAM'));
+  await page.reload();
+  await sidebarToggle.waitFor();
+  assert.equal(await sidebarToggle.getAttribute('aria-expanded'),'false',
+    'Sidebar choice must survive reload');
+  await page.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='Dashboard Overview');
+  await sidebarToggle.click();
+  assert.equal(await sidebarToggle.getAttribute('aria-expanded'),'true',
+    'Expanded navigation must be available on demand');
+  await page.setViewportSize({width:390,height:812});
+  await sidebarToggle.click(); // Compact view gives the main content usable width.
+  assert.ok(await page.locator('#sidebar').evaluate(el=>el.getBoundingClientRect().width<=80),
+    'Compact navigation must fit a narrow viewport');
+  await sidebarToggle.click(); // Expanded mobile menu overlays instead of squeezing the page.
+  assert.equal(await page.locator('#sidebar').evaluate(el=>getComputedStyle(el).position),'absolute');
+  await page.keyboard.press('Escape');
+  assert.equal(await sidebarToggle.getAttribute('aria-expanded'),'false',
+    'Escape should dismiss expanded navigation on small screens');
+  await page.setViewportSize({width:1440,height:950});
+  await sidebarToggle.click();
+  assert.equal(await sidebarToggle.getAttribute('aria-expanded'),'true');
+  console.log('v2.1 premium sidebar branding, collapse, persistence, keyboard and mobile navigation passed');
   console.log('First administrator, MFA, sign-in and direct Dashboard arrival passed');
   assert.equal(await page.locator('#next-dashboard-mfa-notice').count(),0,
     'Enrolled administrators must not see MFA setup guidance');
