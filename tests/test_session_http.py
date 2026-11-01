@@ -1,3 +1,4 @@
+import base64
 import http.client
 import json
 import sqlite3
@@ -146,6 +147,67 @@ class SessionHttpTests(unittest.TestCase):
             self.assertEqual(status, 200)
             self.assertEqual(enrolled["mfaUri"],
                              provisioning_uri("qr-user", enrolled["mfaSecret"]))
+
+
+    def test_optional_profile_storage_and_private_photo(self):
+        """Account profiles never change identities, session MFA or inventory access."""
+        token = self.token
+        csrf = csrf_for_session(token)
+        cookie = COOKIE_NAME + "=" + token
+        fields = {"firstName":"Jane", "lastName":"Example",
+                  "emailAddress":"jane@example.test","displayName":"Jane E"}
+        png = base64.b64decode(
+            "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJ"
+            "AAAADUlEQVQIHWP4z8DwHwAFgAI/ScL8/QAAAABJRU5ErkJggg==")
+        with patch("backend.server.PUBLIC_ORIGIN", "https://caffoot.example"):
+            self.assertEqual(self.post("/api/account/profile", fields, token)[0],403)
+            status, saved = self.post("/api/account/profile", fields, token, csrf)
+            self.assertEqual(status,200,saved)
+            self.assertEqual(saved["profile"]["displayName"], "Jane E")
+            self.assertFalse(saved["profile"]["emailVerified"])
+            session=json.loads(self.request("/api/session",cookie)[1])
+            self.assertEqual(session["username"],"owner")
+            self.assertEqual(session["profile"]["firstName"],"Jane")
+            self.assertFalse(session["profile"]["hasPhoto"])
+            self.assertEqual(self.post("/api/account/profile",
+                {**fields,"username":"renamed"},token,csrf)[0],400)
+            self.assertEqual(self.post("/api/account/profile",
+                {**fields,"firstName":"\\nno"},token,csrf)[0],400)
+            self.assertEqual(self.post("/api/account/photo",{
+                "mediaType":"image/svg+xml","contentBase64":base64.b64encode(png).decode()
+                },token,csrf)[0],400)
+            self.assertEqual(self.post("/api/account/photo",{
+                "mediaType":"image/png","contentBase64":"bogus"},token,csrf)[0],400)
+            status,result=self.post("/api/account/photo",{
+                "mediaType":"image/png","contentBase64":base64.b64encode(png).decode()
+                },token,csrf)
+            self.assertEqual(status,200,result)
+            self.assertTrue(result["profile"]["hasPhoto"])
+            self.assertEqual(self.request("/api/account/photo")[0],401)
+            self.assertEqual(self.request("/api/account/photo",cookie)[1],png)
+            status,user=self.post("/api/users/create",{
+                "username":"profile-reader","password":"reader-password"},token,csrf)
+            self.assertEqual(status,200,user)
+            with sqlite3.connect(self.path) as db:
+                other=login_session(db,"profile-reader","reader-password")
+            self.assertIsNotNone(other)
+            other_cookie=COOKIE_NAME + "=" + other
+            self.assertEqual(json.loads(self.request("/api/session",other_cookie)[1])
+                             ["profile"]["displayName"],"")
+            self.assertEqual(self.request("/api/account/photo",other_cookie)[0],404)
+            self.assertEqual(self.post("/api/account/profile",{
+                "firstName":"Sam","lastName":"","emailAddress":"","displayName":""
+            },other,csrf_for_session(other))[0],200)
+            self.assertEqual(json.loads(self.request("/api/session",cookie)[1])
+                             ["profile"]["firstName"],"Jane")
+            status,removed=self.post("/api/account/photo/remove",
+                                   {"confirmed":True},token,csrf)
+            self.assertEqual(status,200,removed)
+            self.assertFalse(removed["profile"]["hasPhoto"])
+            self.assertEqual(self.request("/api/account/photo",cookie)[0],404)
+        with sqlite3.connect(self.path) as db:
+            self.assertEqual(db.execute("SELECT id,is_admin,mfa_confirmed FROM accounts "
+                          "WHERE username='owner'").fetchone(),(1,1,1))
 
     def test_account_management_and_password_change_http(self):
         with patch("backend.server.PUBLIC_ORIGIN", "https://caffoot.example"):
