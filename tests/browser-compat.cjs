@@ -539,9 +539,13 @@ async function run(){
       vmVcpu:2,vmRamGb:8,vmDiskGb:64,vmNicCount:1,previousTypeDetails:[]});
     openDeviceDetailView('temporary-browser-vm');
   },rackSwitch.id);
-  await page.getByRole('tab',{name:'VM Hardware',exact:true}).click();
-  assert.ok(await page.locator('#device-details-panel-hardware').getByText('Allocated virtual hardware').isVisible());
+  assert.equal(await page.getByRole('tab',{name:'Hardware',exact:true}).count(),0,
+    'Virtual machines must not gain a Hardware tab in full-page Device Details');
+  assert.equal(await page.locator('#device-details-panel-hardware').count(),0,
+    'VM hardware tab panel must remain physical-only');
   await page.getByRole('tab',{name:'Overview',exact:true}).click();
+  assert.ok(await page.locator('#device-details-panel-overview').getByText('Allocated virtual hardware').isVisible(),
+    'Existing VM allocations remain in Overview with their hypervisor relationship');
   assert.ok(await page.locator('#device-details-panel-overview').getByText('rack-switch').isVisible(),
     'Virtual machine must retain its recorded physical host relationship');
   await page.getByRole('tab',{name:'Location',exact:true}).click();
