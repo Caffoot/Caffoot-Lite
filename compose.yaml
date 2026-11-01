@@ -9,6 +9,8 @@ services:
       CAFFOOT_PORT: "${CAFFOOT_PORT:-8080}"
     ports:
       - "${CAFFOOT_PORT:-8080}:8080"
+    # The default uses a Docker-managed named volume. Keep CAFFOOT_DATA_PATH
+    # unchanged if an existing installation uses a custom host directory.
     volumes:
       - "${CAFFOOT_DATA_PATH:-caffoot_data}:/data"
     restart: unless-stopped
