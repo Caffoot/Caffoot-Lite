@@ -441,7 +441,9 @@ async function run(){
   assert.ok(await page.getByRole('heading',{name:'Rack Overview',exact:true}).isVisible());
   assert.equal(await page.locator('.v21-racks [data-action="v13-overview-tab"]').count(),3,
     'Existing capacity, equipment and locations charts stay available');
-  await page.locator('#sidebar [data-action="sidebar-racks-inventory"]').click();
+  if(!(await page.locator('#v21-section-tools').evaluate(el=>el.open)))
+    await page.locator('#v21-section-tools summary').click();
+  await page.locator('#racks-sidebar-actions [data-action="sidebar-racks-inventory"]').click();
   await page.locator('.v21-racks [aria-label="Rack inventory"]').waitFor({state:'visible'});
   assert.ok(await page.getByRole('heading',{name:'Rack Inventory',exact:true}).isVisible());
   assert.ok(await page.locator('.v21-racks [data-action="open-rack-modal"]').isVisible());
@@ -644,7 +646,9 @@ async function run(){
   const rackId=(await state(page)).racks.find(r=>r.name==='Browser Rack').id;
 
   await page.locator('#sidebar [data-action="tab-racks"]').click();
-  await page.locator('#sidebar [data-action="sidebar-racks-inventory"]').click();
+  if(!(await page.locator('#v21-section-tools').evaluate(el=>el.open)))
+    await page.locator('#v21-section-tools summary').click();
+  await page.locator('#racks-sidebar-actions [data-action="sidebar-racks-inventory"]').click();
   await page.locator('.v21-racks [data-action="v13-open-rack"]').first().click();
   await page.locator('.v21-racks .rack-workspace').waitFor({state:'visible'});
   assert.ok(await page.getByRole('heading',{name:'Rack Workspace',exact:true}).isVisible());
