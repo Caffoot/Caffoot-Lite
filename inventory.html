@@ -1621,6 +1621,65 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 #main-content :is(.v21-dashboard,.v21-device-directory,.v21-device-detail-page,.v21-ipam,.v21-racks,.v21-users-root,.v21-settings) :is(p,dd,td,li){line-height:1.6}
 #main-content :is(.v21-dashboard,.v21-device-directory,.v21-device-detail-page,.v21-ipam,.v21-racks,.v21-users-root,.v21-settings) :is(input,select,textarea,button){font-family:inherit}
 </style>
+<style id="caffoot-v21-settings-041">
+/* Stage 9 accepted Settings & Data Concept 04.1, scoped to this page. */
+.v21-settings.settings-041 .settings-intro{background:none;border:0;box-shadow:none;padding:0;margin:0 0 19px}
+.v21-settings.settings-041 .settings-intro h2{color:#223c54;font-size:27px;font-weight:790}
+.v21-settings.settings-041 .settings-intro p{color:#687f94;font-size:13px}
+.v21-settings-041-eyebrow{font-size:10px;color:#d57b34;font-weight:820;letter-spacing:.13em;text-transform:uppercase}
+.v21-settings-041-context{display:flex;align-items:center;gap:12px;padding:13px 16px;margin-bottom:20px;background:#e9f1f7;border:1px solid #dae6ef;border-radius:12px;color:#526e87;font-size:12px}
+.v21-settings-041-tabs{display:flex;gap:25px;overflow-x:auto;scrollbar-width:thin;border-bottom:1px solid #dbe5ee;margin-bottom:22px}
+.v21-settings-041-tabs button{display:inline-flex;align-items:center;gap:8px;white-space:nowrap;min-height:47px;padding:11px 4px 14px;border:0;border-bottom:3px solid transparent;color:#71869a;font-size:12px;font-weight:740}
+.v21-settings-041-tabs button[aria-selected="true"]{border-bottom-color:#ed8532;color:#25415a}
+.v21-settings-041-tabs button:focus-visible,.v21-settings-041-command button:focus-visible{outline:3px solid #f47b20;outline-offset:-2px}
+.v21-settings-041-section-heading{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin:0 0 17px}
+.v21-settings-041-section-heading h3{font-size:17px;font-weight:780;color:#253d54}
+.v21-settings-041-section-heading p{font-size:12px;color:#718698;margin-top:4px}
+.v21-settings-041-tag{border-radius:99px;background:#f0f5f9;padding:7px 12px;font-size:10px;font-weight:700;color:#6c8297}
+.v21-settings-041-data{display:grid;grid-template-columns:minmax(0,1.37fr) minmax(280px,1fr);gap:17px;align-items:start}
+.v21-settings-041-data .v21-settings-backup-guide{margin:0}
+.v21-settings-041-side{display:grid;gap:15px}
+.v21-settings-041-side .settings-panel{min-height:0}
+.v21-settings-041-flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:14px 0;font-size:11px;font-weight:740;color:#5a7288}
+.v21-settings-041-flow span{background:#eef3f8;border:1px solid #dfe8f1;border-radius:8px;padding:7px 10px}
+.v21-settings-041-side .settings-buttons{justify-content:flex-end}
+.v21-settings-041-command{background:#172d43;border-radius:10px;overflow:hidden;margin:12px 0;border:1px solid #38546e}
+.v21-settings-041-command>div{background:#2b465f;display:flex;align-items:center;justify-content:space-between;gap:9px;padding:9px 12px;font-size:11px;font-weight:730;color:#e7f1f8}
+.v21-settings-041-command button{padding:5px 9px;background:#f4f7fa;color:#244058;font-size:11px;border-radius:7px;font-weight:770}
+.v21-settings-041-command pre{padding:12px;color:#f0f5fb;font-size:11px;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere}
+.v21-settings-041-email{display:grid;gap:16px}
+.v21-settings-041-email-head{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:22px;background:#1b344e;border-radius:15px;color:#fff}
+.v21-settings-041-email-head h3{color:#fff;font-size:18px;font-weight:770}
+.v21-settings-041-email-head p{color:#d9e6f2;font-size:12px;margin-top:6px}
+.v21-settings-041-email-head span{border:1px solid #879eb7;border-radius:99px;padding:7px 12px;color:#e8f1f9;font-size:11px;font-weight:720}
+.v21-settings-041-columns{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(250px,.8fr);gap:15px}
+.v21-settings-041-email .settings-panel{min-height:0}
+.v21-settings-041-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.v21-settings-041-fields label,.v21-settings-041-test-label{font-size:12px;font-weight:725;color:#4e657b}
+.v21-settings-041-fields input,.v21-settings-041-fields select,.v21-settings-041-test-label input{display:block;width:100%;margin-top:6px;min-height:42px;padding:9px 12px;background:#f1f5f8;border:1px solid #d0dce7;border-radius:9px;color:#708397;font-size:12px}
+.v21-settings-041-auth{display:flex;align-items:center;gap:10px;margin-top:8px}
+.v21-settings-041-auth input[type=checkbox]{width:37px!important;min-width:37px!important;max-width:37px!important;height:22px;min-height:22px;padding:0;margin:0;flex:0 0 37px;accent-color:#ed8532}
+.v21-settings-041-email .settings-panel p{line-height:1.7}
+.v21-settings-041-features{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:13px}
+.v21-settings-041-features>div{background:#f8fafc;border:1px solid #e1e9ef;border-radius:11px;padding:14px}
+.v21-settings-041-features h4{font-size:12px;font-weight:770;color:#2a455e}
+.v21-settings-041-features p{font-size:11px;color:#738698;line-height:1.6}
+.dark .v21-settings.settings-041 .settings-intro h2,.dark .v21-settings-041-section-heading h3{color:#edf5fc}
+.dark .v21-settings-041-context{background:#273e54;border-color:#50667e;color:#dce8f3}
+.dark .v21-settings-041-tabs{border-color:#4e6277}
+.dark .v21-settings-041-tabs button{color:#c1d1de}
+.dark .v21-settings-041-tabs button[aria-selected=true]{color:#ffd2a8}
+.dark .v21-settings-041-tag{background:#2e4359;color:#d5e4f2}
+.dark .v21-settings-041-section-heading p{color:#bfcedc}
+.dark .v21-settings-041-email .settings-panel{background:#273a4e;border-color:#52677d}
+.dark .v21-settings-041-fields label,.dark .v21-settings-041-test-label{color:#d7e4ef}
+.dark .v21-settings-041-fields input,.dark .v21-settings-041-fields select,.dark .v21-settings-041-test-label input{background:#344a60;border-color:#687d90;color:#c7d6e3}
+.dark .v21-settings-041-features>div{background:#2a3e52;border-color:#51677d}
+.dark .v21-settings-041-features h4{color:#e4f0fa}
+.dark .v21-settings-041-features p{color:#c6d5e4}
+@media(max-width:1060px){.v21-settings-041-data,.v21-settings-041-columns{grid-template-columns:1fr}}
+@media(max-width:680px){.v21-settings-041-fields,.v21-settings-041-features{grid-template-columns:1fr}.v21-settings-041-tabs{gap:12px}.v21-settings.settings-041 .settings-intro h2{font-size:23px}}
+</style>
 <style id="caffoot-v21-shell-style">
 /* v2.1 shared page shell; match the approved My Account type scale and brand. */
 .v21-skip-link { position:fixed; top:8px; left:12px; z-index:100; transform:translateY(-160%); padding:11px 16px; background:#fff; color:#142232; border:3px solid #F47B20; border-radius:9px; font-weight:700; }
@@ -8516,11 +8575,10 @@ function hierarchyValidateTypes(subnets) {
             return body;
         }
 
+        let activeSettingsPage = 'data'; // Owner-approved 04.1 visual tabs.
         function renderApplicationSettings() {
-            const section = 'backup';
-            const button = (action,label,icon,extra='') => `<button type="button" data-action="${action}" ${extra} class="settings-action"><i class="fa-solid ${icon}" aria-hidden="true"></i>${label}</button>`;
-            const panel = (title,desc,inner='') => `<section class="settings-panel"><h3>${title}</h3><p>${desc}</p>${inner ? `<div class="settings-buttons">${inner}</div>` : ''}</section>`;
-
+            const button=(action,label,icon,extra='')=>`<button type="button" data-action="${action}" ${extra} class="settings-action"><i class="fa-solid ${icon}" aria-hidden="true"></i>${label}</button>`;
+            const panel=(name,description,actions)=>`<section class="settings-panel"><h3>${name}</h3><p>${description}</p><div class="settings-buttons">${actions}</div></section>`;
             // Documentation-only page content based on INSTALLATION.md. No backup process
             // or new recovery API: the v1.3.3 JSON import remains one-way migration.
             const backupGuide = `<section id="v21-settings-backup-guide" class="v21-settings-backup-guide" aria-labelledby="v21-settings-backup-heading">
@@ -8551,27 +8609,83 @@ function hierarchyValidateTypes(subnets) {
                     <p><strong>Important:</strong> a backup contains sensitive account and infrastructure details. Do not switch an existing <code>/data</code> mount to an empty volume expecting records to migrate. Test your restore procedure. The <strong>published v1.3.3 JSON import is a one-way migration</strong>, not an ongoing SQLite/database backup.</p>
                 </div>
             </section>`;
-            let body = '';
-            if (section === 'backup') {
-                body = '<h3 class="settings-group-title">Import Inventory</h3>' +
-                    '<div class="settings-group-grid">' +
-                    panel('Import from published v1.3.3',
-                        'Choose a JSON inventory backup exported from Caffoot Lite v1.3.3. Review its contents and any corrections before replacing the central inventory.',
-                        '<button type="button" data-action="next-import-pick" class="settings-action" '+(nextImportAllowed?'':'disabled')+'><i class="fa-solid fa-upload" aria-hidden="true"></i>Choose Backup File</button>') +
-                    panel('Database backups',
-                        'Ongoing backup and restoration are handled by your Docker, Portainer or volume backup application. This JSON import is for one-way migration only.') +
-                    '</div>' + backupGuide + '<h3 class="settings-group-title">Maintenance & Safety</h3>' +
-                    '<div class="settings-group-grid">' +
-                    panel('Inventory Safety Check',
-                        'Check central inventory integrity without changing saved records.',
-                        button('check-inventory-safety','Check Inventory Safety','fa-shield-halved')) +
-                    panel('Danger Zone — Clear System',
-                        'Permanently reset all central inventory, IPAM records and managed options. Your accounts and permissions are kept.',
-                        button('clear-inventory-data','Clear System / Clean Start','fa-triangle-exclamation')) +
-                    '</div>';
+
+            const pages=[['data','Data & Backups','fa-database'],['email','Email Settings','fa-envelope'],['maintenance','System Maintenance','fa-screwdriver-wrench']];
+            const nav=`<div role="tablist" aria-label="Settings Sections" class="v21-settings-041-tabs">
+                ${pages.map(([id,title,icon])=>`<button type="button" role="tab" data-action="v21-settings-page" data-section="${id}"
+                    aria-controls="v21-settings-current-panel" aria-selected="${activeSettingsPage===id}" id="v21-settings-tab-${id}">
+                    <i class="fa-solid ${icon}" aria-hidden="true"></i>${title}</button>`).join('')}
+            </div>`;
+            let body='',heading='',subtitle='',tag='';
+            if(activeSettingsPage==='data'){
+                heading='Protect Your Caffoot Data';subtitle='Real backup guidance, directly in the application.';tag='Docker / SQLite';
+                const withExamples=backupGuide.replace('<div class="v21-settings-backup-safety">',
+                    `<div class="v21-settings-041-commands" aria-label="Example named-volume commands">
+                        <div class="v21-settings-041-command"><div><span>Find Your Actual Docker Volume</span><button type="button" data-action="v21-copy-settings-command" data-source-id="v21-settings-command-list">Copy</button></div>
+                            <pre id="v21-settings-command-list">docker volume ls --format '{{.Name}}' | grep caffoot</pre></div>
+                        <div class="v21-settings-041-command"><div><span>Archive the Verified Volume (After Stopping Caffoot)</span><button type="button" data-action="v21-copy-settings-command" data-source-id="v21-settings-command-archive">Copy</button></div>
+                            <pre id="v21-settings-command-archive">docker run --rm -v ACTUAL_VOLUME_NAME:/source:ro -v "$PWD":/backup alpine sh -c 'cd /source &amp;&amp; tar -czf /backup/caffoot-data-backup.tar.gz .'</pre></div>
+                        <p class="mt-2">Linux Docker-host example only: replace <code>ACTUAL_VOLUME_NAME</code> with your verified volume name. Stop Caffoot first. Use separate guidance for host bind mounts.</p>
+                    </div><div class="v21-settings-backup-safety">`);
+                body=`<div class="v21-settings-041-data">
+                    <div>${withExamples}</div>
+                    <div class="v21-settings-041-side">
+                        <section class="settings-panel"><h3>Import Inventory</h3>
+                            <p>Import a JSON inventory backup exported from published Caffoot Lite v1.3.3. The original validation, corrections, review and explicit confirmation remain unchanged.</p>
+                            <div class="v21-settings-041-flow"><span>Select File</span> → <span>Review</span> → <span>Confirm</span></div>
+                            <p>One-way migration only — not an ongoing SQLite backup.</p>
+                            <div class="settings-buttons"><button type="button" data-action="next-import-pick" class="settings-action" ${nextImportAllowed?'':'disabled'}><i class="fa-solid fa-upload" aria-hidden="true"></i>Import Inventory</button></div></section>
+                        <section class="settings-panel"><h3>Storage & Recovery</h3>
+                            <p>New installations normally use Docker-managed named storage. Existing installations must keep their original <code>/data</code> mount; switching to an empty volume does not migrate records.</p>
+                            <div class="settings-buttons"><a href="https://github.com/Caffoot/Caffoot-Lite/blob/main/INSTALLATION.md" target="_blank" rel="noopener noreferrer">Full Installation &amp; Backup Guidance</a></div></section>
+                    </div>
+                </div>`;
+            }else if(activeSettingsPage==='maintenance'){
+                heading='System Maintenance';subtitle='Existing protected administrator maintenance controls.';tag='Administrator Only';
+                body=`<div class="settings-group-grid">
+                    ${panel('Inventory Safety Check','Check central inventory integrity without changing saved records.',button('check-inventory-safety','Check Inventory Safety','fa-shield-halved'))}
+                    ${panel('Danger Zone — Clear System','Permanently reset central inventory, IPAM and managed options with the existing confirmation. Accounts and permissions are preserved.',button('clear-inventory-data','Clear System / Clean Start','fa-triangle-exclamation'))}
+                </div>`;
+            }else{
+                heading='Outgoing Email Configuration';subtitle='Optional SMTP delivery for account recovery and administrator notifications.';tag='Implementation Pending';
+                body=`<section class="v21-settings-041-email" aria-label="Email Settings preview">
+                    <div class="v21-settings-041-email-head"><div><h3>Email Settings</h3><p>The approved SMTP layout is ready; secure configuration and mail delivery are not yet connected.</p></div><span>Not Available Yet</span></div>
+                    <div class="v21-settings-041-columns">
+                        <section class="settings-panel"><h3>SMTP Server &amp; Sender Identity</h3>
+                            <fieldset disabled><div class="v21-settings-041-fields">
+                                <label>SMTP Server<input placeholder="smtp.example.net"></label>
+                                <label>Port<input type="number" placeholder="587"></label>
+                                <label>Connection Security<select><option>STARTTLS</option><option>SSL / TLS</option></select></label>
+                                <label>SMTP Authentication<span class="v21-settings-041-auth"><input type="checkbox" aria-label="SMTP Authentication" disabled><span>Username &amp; Password</span></span></label>
+                                <label>Username<input placeholder="SMTP username"></label>
+                                <label>Password<input type="password" placeholder="Not configured"></label>
+                                <label>From Name<input placeholder="Caffoot Lite"></label>
+                                <label>From Email Address<input type="email" placeholder="notifications@example.com"></label>
+                            </div></fieldset><p>Configuration is disabled until approved secret handling, SMTP settings and server-side validation are implemented.</p>
+                            <div class="settings-buttons"><button type="button" class="settings-action" disabled>Save Email Settings — Pending</button></div>
+                        </section>
+                        <section class="settings-panel"><h3>Send A Test Email</h3><p>Testing mail delivery is separate from saving connection details.</p>
+                            <label class="v21-settings-041-test-label">Recipient Email Address<input type="email" disabled placeholder="you@example.com"></label>
+                            <div class="settings-buttons"><button type="button" class="settings-action" disabled>Send Test Email — Pending</button></div>
+                            <p>Email is optional; ordinary Caffoot Lite use continues without it.</p>
+                        </section>
+                    </div>
+                    <section class="settings-panel"><h3>Email-Enabled Features</h3><div class="v21-settings-041-features">
+                        <div><h4>Password Recovery — Planned</h4><p>Verified-email recovery with MFA safeguards and protected emergency host-only recovery.</p></div>
+                        <div><h4>Administrator Notifications — Planned</h4><p>Important account and security events, with appropriate recipients and rate limits.</p></div>
+                        <div><h4>Audit &amp; Report Delivery — Future</h4><p>Privacy and permissions require separate review.</p></div>
+                        <div><h4>Service Desk &amp; Tickets — Future</h4><p>Future product scope; ticketing is not active.</p></div>
+                    </div></section>
+                </section>`;
             }
-            return `<div class="settings-workspace backup-workspace v21-settings"><div class="settings-intro"><h2>Settings & Data</h2><p>Administrator controls for central inventory and application maintenance.</p></div>
-                <div class="${section==='backup'?'settings-groups':'settings-grid'}">${body}</div></div>`;
+            return `<div class="settings-workspace backup-workspace v21-settings settings-041">
+                <div class="settings-intro"><span class="v21-settings-041-eyebrow">System Administration</span><h2>Settings &amp; Data</h2><p>Manage your installation, backups and administrative maintenance.</p></div>
+                <div class="v21-settings-041-context"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i><span><strong>Administrator Workspace</strong> — central Docker / SQLite inventory.</span></div>
+                ${nav}<section role="tabpanel" id="v21-settings-current-panel" aria-labelledby="v21-settings-tab-${activeSettingsPage}">
+                    <div class="v21-settings-041-section-heading"><div><h3>${heading}</h3><p>${subtitle}</p></div><span class="v21-settings-041-tag">${tag}</span></div>
+                    ${body}
+                </section>
+            </div>`;
         }
 
         // Manual release checks never read or send inventory, or change browser storage.
@@ -9923,6 +10037,14 @@ function hierarchyValidateTypes(subnets) {
                 case 'export-selected-inventory-csv': downloadInventoryReportCsv(target.dataset.report); break;
                 
                 case 'tab-settings': switchTab('settings'); break;
+                case 'v21-settings-page': if(['data','email','maintenance'].includes(target.dataset.section)){activeSettingsPage=target.dataset.section;renderContent();} break;
+                case 'v21-copy-settings-command': {
+                    const text=document.getElementById(target.dataset.sourceId)?.innerText;
+                    if(!text){showToast('Example command unavailable.','error');break;}
+                    if(!navigator.clipboard?.writeText){showToast('Clipboard unavailable: select and copy the command text.','error');break;}
+                    void navigator.clipboard.writeText(text).then(()=>showToast('Example copied. Verify the volume name before use.')).catch(()=>showToast('Clipboard unavailable: select and copy the command text.','error'));
+                    break;
+                }
                 case 'tab-users': switchTab('users'); break;
                 case 'sidebar-users-overview': activeUsersTab='overview'; switchTab('users'); break;
                 case 'sidebar-users-list': selectedUserWorkspaceId=null; activeUsersTab='list'; switchTab('users'); break;

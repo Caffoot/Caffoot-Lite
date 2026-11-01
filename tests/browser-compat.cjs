@@ -235,14 +235,18 @@ async function run(){
       'This inventory operation is not yet connected to SQLite.');
   }
   await page.locator('#sidebar [data-action="tab-settings"]').click();
-  assert.equal(await page.locator('.settings-tabs').count(),0,
-    'Single Settings subsection must not show a redundant full-width tab');
-  assert.ok(await page.getByRole('heading',{name:'Import Inventory',exact:true}).isVisible(),
-    'Import Inventory section heading must remain');
-  assert.ok(await page.locator('[data-action="next-import-pick"]').isEnabled(),
-    'Administrator legacy migration picker must remain');
-  assert.ok(await page.locator('[data-action="clear-inventory-data"]').isEnabled(),
-    'Administrator Clear System safeguard must remain');
+  assert.equal(await page.locator('.v21-settings-041-tabs [role="tab"]').count(),3,
+    'Accepted 04.1 design contains Data & Backups, Email Settings and System Maintenance');
+  assert.ok(await page.getByRole('heading',{name:'Import Inventory',exact:true}).isVisible());
+  assert.ok(await page.locator('[data-action="next-import-pick"]').isEnabled());
+  await page.locator('.v21-settings-041-tabs [data-section="email"]').click();
+  assert.ok(await page.getByRole('heading',{name:'Outgoing Email Configuration'}).isVisible());
+  assert.ok(await page.getByText('Not Available Yet',{exact:true}).isVisible());
+  assert.ok(await page.locator('.v21-settings-041-auth input[type="checkbox"]').evaluate(el=>getComputedStyle(el).width==='37px'),
+    'Approved 04.1 SMTP Authentication switch stays compact');
+  assert.ok(await page.locator('.v21-settings-041-fields input[type="password"]').isDisabled());
+  assert.ok(await page.getByRole('button',{name:'Send Test Email — Pending'}).isDisabled());
+  await page.locator('.v21-settings-041-tabs [data-section="data"]').click();
   // Stage 9: real Docker backup instructions, no invented export, same safety controls.
   await page.locator('#v21-settings-backup-guide').waitFor({state:'visible'});
   const guide=page.locator('#v21-settings-backup-guide');
@@ -256,9 +260,11 @@ async function run(){
   assert.match(guideText,/not an ongoing SQLite\/database backup/);
   assert.equal(await guide.locator('button').count(),0,
     'Backup instructions must not offer a fake in-app database backup action');
+  assert.equal(await page.locator('[data-action="v21-copy-settings-command"]').count(),2);
+  await page.locator('.v21-settings-041-tabs [data-section="maintenance"]').click();
   assert.ok(await page.locator('[data-action="check-inventory-safety"]').isEnabled());
   assert.ok(await page.locator('[data-action="clear-inventory-data"]').isEnabled());
-  console.log('Stage 9 Docker/SQLite backup guide, existing Settings safety actions passed');
+  console.log('Stage 9 archived 04.1 layout, backup examples, planned SMTP and original Settings safeguards passed');
   const safetyResult=new Promise(resolve=>page.once('dialog',async dialog=>{
     const message=dialog.message();await dialog.accept();resolve(message);
   }));
