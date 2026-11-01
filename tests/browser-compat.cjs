@@ -355,6 +355,33 @@ async function run(){
   assert.equal(saved.ipAllocations['10.64.20.10'].deviceId,device.id);
   console.log('Device form and primary IPAM allocation passed');
 
+
+  // v2.1 Stage 4: directory selection is read-only; existing table stays available.
+  await page.locator('#sidebar [data-action="tab-devices"]').click();
+  await page.locator('.v21-directory-split').waitFor({state:'visible'});
+  assert.ok(await page.getByRole('heading',{name:'Device Directory'}).isVisible());
+  assert.ok(await page.locator('#v21-directory-preview').getByText('browser-device',{exact:true}).isVisible());
+  assert.ok(await page.locator('#modal-container').evaluate(el=>el.classList.contains('hidden')),
+    'Selecting a directory device must not start editing or open a modal');
+  await page.locator('[data-action="device-directory-view"][data-view="cards"]').click();
+  assert.ok(await page.locator('.v21-device-cards').isVisible());
+  await page.locator('[data-action="device-directory-view"][data-view="table"]').click();
+  assert.ok(await page.locator('.device-table-wrapper').isVisible(),
+    'Published device table and its original actions must remain available');
+  await page.locator('[data-action="device-directory-view"][data-view="directory"]').click();
+  await page.locator('#v21-directory-preview [data-action="view-device"]').click();
+  await page.locator('.v21-device-detail-page').waitFor({state:'visible'});
+  assert.equal(await page.locator('#modal-container').evaluate(el=>el.classList.contains('hidden')),true,
+    'View Full Details must be a dedicated page, not a popup');
+  await page.getByRole('tab',{name:'Hardware',exact:true}).click();
+  assert.ok(await page.locator('#device-details-panel-hardware').isVisible());
+  await page.getByRole('tab',{name:'Location',exact:true}).click();
+  assert.equal(await page.locator('.v21-device-rack-preview').count(),0,
+    'Unracked devices must not show a fictional rack location');
+  await page.locator('[data-action="device-detail-back"]').first().click();
+  await page.locator('.v21-directory-split').waitFor({state:'visible'});
+  console.log('v2.1 Devices Directory, Cards, retained Table and full-page details passed');
+
   // A detected inconsistency appears only as an administrator warning; no data is saved.
   await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
   await page.evaluate(()=>{

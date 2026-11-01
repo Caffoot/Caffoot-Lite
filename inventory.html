@@ -1183,6 +1183,77 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 @media(max-width:460px){.v21-dashboard .dashboard-stats{grid-template-columns:minmax(0,1fr)}.v21-dashboard-intro-mark{display:none}.v21-dashboard-empty-icon{width:36px;height:36px}}
 @media(prefers-reduced-motion:reduce){.v21-dashboard .dashboard-stat{transform:none!important;transition:none}}
 </style>
+<style id="caffoot-v21-devices-style">
+/* v2.1 Stage 4: approved Directory + Details and contextual full-page device inspection. */
+.v21-device-directory{display:grid;gap:16px;min-width:0}
+.v21-device-heading{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px}
+.v21-device-heading h2{font-size:20px;line-height:1.2;font-weight:760;letter-spacing:-.025em;color:#18293a}
+.v21-device-heading p{font-size:12px;color:#657589;line-height:1.6;margin-top:5px}
+.v21-device-view-choice{display:flex;flex-wrap:wrap;gap:6px;border:1px solid #d9e2eb;border-radius:12px;padding:4px;background:#f0f4f8}
+.v21-device-view-choice button{display:inline-flex;gap:7px;align-items:center;justify-content:center;border-radius:9px;padding:9px 13px;font-size:12px;font-weight:700;color:#526477;min-height:41px}
+.v21-device-view-choice button[aria-pressed="true"]{background:#fff;color:#1c3245;box-shadow:0 1px 5px #14223217}
+.v21-device-view-choice button[aria-pressed="true"] i{color:#e66c18}
+.v21-device-view-choice button:focus-visible,.v21-device-directory button:focus-visible,.v21-device-detail-page button:focus-visible{outline:3px solid #f47b20;outline-offset:2px}
+.v21-directory-split{display:grid;grid-template-columns:minmax(240px,.95fr) minmax(0,1.55fr);gap:16px;align-items:start;min-width:0}
+.v21-directory-list,.v21-directory-preview,.v21-device-card{min-width:0;background:#fff;border:1px solid #dae3ec;border-radius:17px;box-shadow:0 2px 12px #14223208}
+.v21-directory-list{padding:9px;max-height:min(630px,78vh);overflow-y:auto;scrollbar-width:thin}
+.v21-directory-entry{width:100%;display:flex;align-items:center;gap:11px;text-align:left;padding:14px 13px;border:1px solid transparent;border-radius:12px;color:#203448;margin:2px 0}
+.v21-directory-entry:hover{background:#f2f6fa}
+.v21-directory-entry[aria-current="true"]{background:#fff7f0;border-color:#f5c49e;box-shadow:inset 3px 0 #f47b20}
+.v21-directory-entry-icon,.v21-device-card-icon{display:grid;place-items:center;flex-shrink:0;width:42px;height:42px;background:#edf2f7;border-radius:12px;color:#36516c;font-size:16px}
+.v21-directory-entry span{min-width:0}.v21-directory-entry strong{display:block;font-size:13px;font-weight:750;overflow-wrap:anywhere}.v21-directory-entry small{display:block;font-size:11px;color:#68798b;margin-top:4px;overflow-wrap:anywhere}
+.v21-directory-preview{padding:23px}
+.v21-directory-preview-heading{display:flex;align-items:center;gap:13px;padding-bottom:17px;border-bottom:1px solid #e1e8ef}
+.v21-directory-preview h3{font-size:19px;font-weight:760;letter-spacing:-.02em;color:#18293a;overflow-wrap:anywhere}
+.v21-device-status{display:inline-flex;border:1px solid #c6ead8;border-radius:99px;background:#e7f7ee;color:#116b42;font-size:11px;font-weight:750;padding:5px 10px}
+.v21-device-status.is-maintenance{color:#925509;background:#fff5dd;border-color:#f4dfae}
+.v21-device-status.is-retired{color:#566477;background:#eef2f6;border-color:#d7e0e9}
+.v21-device-preview-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px 20px;margin:21px 0}
+.v21-device-preview-grid div{min-width:0}.v21-device-preview-grid dt{font-size:11px;font-weight:650;color:#6b7a8a;margin-bottom:5px}.v21-device-preview-grid dd{font-size:13px;font-weight:650;color:#192d3e;overflow-wrap:anywhere}
+.v21-device-preview-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap;border-top:1px solid #e1e8ef;padding-top:17px}
+.v21-device-action{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:40px;padding:10px 13px;border-radius:10px;border:1px solid #ccd8e3;color:#30465b;font-size:12px;font-weight:700;background:#fff}
+.v21-device-action:hover{border-color:#f47b20;background:#fff8f2}
+.v21-device-action-primary{background:#e96e16;color:#fff;border-color:#e96e16}
+.v21-device-action-primary:hover{background:#ce5e11;color:#fff;border-color:#ce5e11}
+.v21-device-action-danger{color:#ac3637;border-color:#ecc2c3}
+.v21-device-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,255px),1fr));gap:14px}
+.v21-device-card{padding:17px;display:flex;flex-direction:column;gap:13px}
+.v21-device-card h3{font-size:14px;font-weight:750;color:#193044;overflow-wrap:anywhere}
+.v21-device-card p{font-size:12px;color:#68798b;overflow-wrap:anywhere}
+.v21-device-card-select{display:flex;align-items:center;gap:11px;text-align:left;min-height:48px}
+.v21-device-card .v21-device-preview-actions{margin-top:auto}
+.v21-device-empty{padding:28px;border:1px dashed #bdcad8;border-radius:16px;text-align:center;color:#64758a;background:#fff}
+.v21-device-detail-page{height:auto!important;max-height:none!important;min-height:0;overflow:visible!important;gap:17px;padding:0!important}
+.v21-device-detail-page .device-panels{overflow:visible!important;flex:auto;min-height:0}
+.v21-device-detail-page .device-tabs{flex-wrap:wrap;overflow:visible;padding-bottom:9px;gap:7px}
+.v21-device-detail-page .device-details-tab[aria-selected="true"]{color:#18293a;background:#fff6ef;border-color:#f4c79e;border-bottom:2px solid #ee771e}
+.v21-device-detail-page .device-details-section{background:#fff;border:1px solid #dae3ed;border-radius:16px;padding:20px}
+.v21-device-detail-page .device-details-section h4{font-size:15px;font-weight:750}
+.v21-device-detail-page .device-details-field dt{font-size:12px}
+.v21-device-detail-page .device-details-field dd{font-size:14px}
+.v21-device-detail-page .device-details-panel{gap:15px}
+.v21-device-detail-page .device-details-action-footer{justify-content:flex-start;padding:17px 0;border-top:1px solid #dae3ed}
+.v21-device-detail-back{display:inline-flex;align-items:center;gap:8px;min-height:41px;border:1px solid #c9d6e4;padding:10px 13px;border-radius:10px;font-size:12px;font-weight:750;color:#344d61;background:#fff}
+.v21-device-detail-back:hover{border-color:#f47b20;background:#fff6ee}
+.v21-device-rack-preview{display:flex;gap:16px;align-items:center;flex-wrap:wrap;padding:16px;border:1px solid #dae3ed;background:#fff;border-radius:16px}
+.v21-device-rack-preview-track{position:relative;width:66px;height:162px;border:5px solid #3b4b60;border-radius:8px;background:repeating-linear-gradient(to bottom,#e8eef4 0,#e8eef4 6px,#d4dde7 7px,#e8eef4 8px);flex-shrink:0}
+.v21-device-rack-preview-unit{position:absolute;left:4px;right:4px;min-height:4px;border-radius:3px;background:#f47b20;border:1px solid #b7500a;box-shadow:0 1px 3px #18293a4d}
+.v21-device-rack-preview h4{font-weight:750;font-size:13px;color:#203448}
+.v21-device-rack-preview p{font-size:12px;line-height:1.6;color:#68798b}
+.dark .v21-device-heading h2,.dark .v21-directory-preview h3,.dark .v21-device-card h3,.dark .v21-device-preview-grid dd,.dark .v21-device-rack-preview h4{color:#f2f6fb}
+.dark .v21-device-heading p,.dark .v21-directory-entry small,.dark .v21-device-preview-grid dt,.dark .v21-device-card p,.dark .v21-device-rack-preview p{color:#c6d1de}
+.dark .v21-directory-list,.dark .v21-directory-preview,.dark .v21-device-card,.dark .v21-device-empty,.dark .v21-device-detail-page .device-details-section,.dark .v21-device-rack-preview{background:#202e3d;border-color:#44566c}
+.dark .v21-directory-entry{color:#e7eef8}.dark .v21-directory-entry:hover{background:#314457}.dark .v21-directory-entry[aria-current="true"]{background:#473827;border-color:#855d3c}
+.dark .v21-device-view-choice{background:#182638;border-color:#44566c}.dark .v21-device-view-choice button{color:#cad5e1}.dark .v21-device-view-choice button[aria-pressed="true"]{background:#33475d;color:#fff}
+.dark .v21-directory-entry-icon,.dark .v21-device-card-icon{background:#35475b;color:#e2e9f3}
+.dark .v21-directory-preview-heading,.dark .v21-device-preview-actions,.dark .v21-device-detail-page .device-details-action-footer{border-color:#44566c}
+.dark .v21-device-action,.dark .v21-device-detail-back{background:#2a3a4d;color:#ecf2fa;border-color:#536781}.dark .v21-device-action:hover,.dark .v21-device-detail-back:hover{background:#3a4e64;border-color:#f47b20}
+.dark .v21-device-action-primary{background:#e96e16;border-color:#e96e16;color:#fff}
+.dark .v21-device-detail-page .device-details-tab[aria-selected="true"]{background:#433324;color:#fff;border-color:#ee771e}
+.dark .v21-device-rack-preview-track{background:repeating-linear-gradient(to bottom,#34495d 0,#34495d 6px,#566b80 7px,#34495d 8px)}
+@media(max-width:1050px){.v21-directory-split{grid-template-columns:minmax(0,1fr)}.v21-directory-list{max-height:340px}}
+@media(max-width:580px){.v21-device-preview-grid{grid-template-columns:1fr}.v21-device-view-choice{width:100%}.v21-device-view-choice button{flex:1 1 auto}.v21-directory-preview{padding:17px}.v21-device-detail-page .device-details-action-footer button{flex:1 1 132px}.v21-device-heading h2{font-size:18px}}
+</style>
 <style id="caffoot-v21-shell-style">
 /* v2.1 shared page shell; match the approved My Account type scale and brand. */
 .v21-skip-link { position:fixed; top:8px; left:12px; z-index:100; transform:translateY(-160%); padding:11px 16px; background:#fff; color:#142232; border:3px solid #F47B20; border-radius:9px; font-weight:700; }
@@ -3387,7 +3458,10 @@ function hierarchyValidateTypes(subnets) {
         }
 
         // --- DEVICES VIEW (With Manage Type & Location Buttons) ---
-        let activeDeviceDetailsTab = 'overview';
+        let activeDeviceDetailsTab = 'inventory';
+        let deviceDirectoryView = 'directory'; // Default: approved Directory + Details.
+        let selectedDirectoryDeviceId = '';
+        let deviceFullPageId = '';
         let deviceIntelligenceTab = 'overview';
         let deviceOsFilter = '';
         let deviceServiceFilter = '';
@@ -3863,7 +3937,66 @@ function hierarchyValidateTypes(subnets) {
             });
             return '<section class="space-y-5"><div class="flex items-start justify-between gap-4"><div><h2 class="text-xl font-bold text-slate-900 dark:text-white">Server Services</h2><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Manage available server services. Archiving preserves existing server records.</p></div><button type="button" data-action="server-catalog-add" class="shrink-0 h-11 px-4 rounded-xl bg-blue-800 hover:bg-blue-700 text-white font-semibold">Add Custom Service</button></div><div class="grid grid-cols-1 sm:grid-cols-3 gap-4">'+[['Available Services',active.length],['Used in Inventory',active.filter(x=>appState.devices.some(d=>d.typeDetails?.[x.key]===true||d[x.key]===true)).length],['Archived Services',saved.filter(x=>x.archived).length]].map(([label,n])=>'<div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5"><p class="text-sm text-slate-600 dark:text-slate-300">'+label+'</p><p class="text-3xl font-bold mt-2">'+n+'</p></div>').join('')+'</div><div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-3"><label for="service-search" class="block text-sm font-semibold">Search Server Services</label><input id="service-search" type="search" placeholder="Filter services by name" class="w-full h-11 px-3 rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-900" oninput="document.querySelectorAll(\'[data-service-row]\').forEach(r=>r.hidden=!r.dataset.serviceRow.includes(this.value.toLowerCase()))"></div><div class="space-y-3">'+active.map((x,i)=>'<div data-service-row="'+escapeHtml(x.label.toLowerCase())+'">'+rows[i]+'</div>').join('')+'</div><section class="space-y-3"><h3 class="text-lg font-bold">Archived Services ('+archived.length+')</h3><p class="text-sm text-slate-600 dark:text-slate-300">Archived services remain on existing device records. Restore a service to make it available for new assignments again.</p>'+(archivedRows||'<p class="text-sm text-slate-600 dark:text-slate-300">No archived services.</p>')+'</section></section>';
         }
+
+        // Read-only browse presentations share the existing filters, sorting and backend state.
+        // Device selection is intentionally local: it never starts an edit reservation.
+        function renderPremiumDeviceDirectory() {
+            const visible = getVisibleDevices();
+            const actions = window.caffootDeviceActions || {};
+            const selected = visible.find(d=>String(d.id)===String(selectedDirectoryDeviceId)) || visible[0];
+            const safe = value => escapeHtml(value===undefined||value===null||value===''?'—':String(value));
+            const statusClass = value => String(value)==='Retired'?'is-retired':String(value)==='Maintenance'?'is-maintenance':'';
+            const badge = d => `<span class="v21-device-status ${statusClass(d.status)}">${safe(d.status||'Active')}</span>`;
+            const full = d => `<button type="button" data-action="view-device" data-id="${safe(d.id)}" class="v21-device-action v21-device-action-primary"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>View Full Details</button>`;
+            const tools = (d, compact=false) => `
+                ${full(d)}
+                ${!compact && d.rackId && appState.racks.some(r=>String(r.id)===String(d.rackId))?`<button type="button" data-action="navigate-to-device-rack" data-id="${safe(d.id)}" class="v21-device-action"><i class="fa-solid fa-server" aria-hidden="true"></i>View in Rack</button>`:''}
+                ${actions.canEdit?`<button type="button" data-action="edit-device" data-id="${safe(d.id)}" class="v21-device-action"><i class="fa-solid fa-pen" aria-hidden="true"></i>Edit</button>`:''}
+                ${actions.canDuplicate?`<button type="button" data-action="duplicate-device" data-id="${safe(d.id)}" class="v21-device-action"><i class="fa-solid fa-copy" aria-hidden="true"></i>Duplicate</button>`:''}
+                ${actions.canEdit&&!compact?`<button type="button" data-action="delete-device" data-id="${safe(d.id)}" class="v21-device-action v21-device-action-danger"><i class="fa-solid fa-trash" aria-hidden="true"></i>Delete</button>`:''}`;
+            const heading = `<div class="v21-device-heading">
+                <div><h2>Device Directory</h2><p>Select a device to see its details, or choose the Cards or Table view.</p></div>
+                <div class="v21-device-view-choice" role="group" aria-label="Device display">
+                ${[['directory','Directory + Details','fa-list'],['cards','Device Cards','fa-grip'],['table','Table','fa-table']].map(([value,label,icon])=>`<button type="button" data-action="device-directory-view" data-view="${value}" aria-pressed="${deviceDirectoryView===value}"><i class="fa-solid ${icon}" aria-hidden="true"></i>${label}</button>`).join('')}
+                </div>
+            </div>`;
+            const empty = `<div class="v21-device-empty"><i class="fa-solid fa-server" aria-hidden="true"></i><p class="mt-2">${appState.devices.length?'No devices match your search or filters.':'No devices recorded yet.'}</p></div>`;
+            const preview = selected?`<article class="v21-directory-preview" id="v21-directory-preview" aria-label="Selected device preview">
+                <div class="v21-directory-preview-heading"><span class="v21-directory-entry-icon"><i class="fa-solid ${getCategoryIcon(selected.type)}" aria-hidden="true"></i></span>
+                    <div class="min-w-0"><p class="text-xs font-bold text-amber-700 dark:text-amber-300 mb-1">Selected device</p><h3>${safe(selected.name)}</h3></div><span class="ml-auto">${badge(selected)}</span></div>
+                <dl class="v21-device-preview-grid">
+                    <div><dt>Device type</dt><dd>${safe(selected.type==='Server - Physical'?'Server':selected.type==='Server - Virtual'?'Virtual Machine':selected.type)}</dd></div>
+                    <div><dt>Primary IP</dt><dd>${safe(selected.primaryIp)}</dd></div>
+                    <div><dt>Location</dt><dd>${safe(selected.location)}</dd></div>
+                    <div><dt>Manufacturer / model</dt><dd>${safe([selected.manufacturer,selected.model].filter(Boolean).join(' '))}</dd></div>
+                    <div><dt>Serial number</dt><dd>${safe(selected.serialNumber)}</dd></div>
+                    <div><dt>Rack / host</dt><dd>${safe(selected.rackId?appState.racks.find(r=>String(r.id)===String(selected.rackId))?.name:selected.virtualHostId?appState.devices.find(d=>String(d.id)===String(selected.virtualHostId))?.name:'Not assigned')}</dd></div>
+                </dl><div class="v21-device-preview-actions">${tools(selected)}</div>
+            </article>`:empty;
+            const directory = visible.length ? `<div class="v21-directory-split">
+                <div class="v21-directory-list" aria-label="Devices" role="group">
+                    ${visible.map(d=>`<button type="button" data-action="device-directory-select" data-id="${safe(d.id)}" aria-current="${String(d.id)===String(selected.id)}" class="v21-directory-entry">
+                        <span class="v21-directory-entry-icon"><i class="fa-solid ${getCategoryIcon(d.type)}" aria-hidden="true"></i></span>
+                        <span><strong>${safe(d.name)}</strong><small>${safe(d.type)} · ${safe(d.primaryIp)}</small></span>
+                    </button>`).join('')}
+                </div>${preview}</div>`:empty;
+            const cards = visible.length ? `<div class="v21-device-cards">
+                ${visible.map(d=>`<article class="v21-device-card">
+                    <button type="button" data-action="device-directory-select" data-id="${safe(d.id)}" class="v21-device-card-select">
+                        <span class="v21-device-card-icon"><i class="fa-solid ${getCategoryIcon(d.type)}" aria-hidden="true"></i></span>
+                        <span><h3>${safe(d.name)}</h3><p>${safe(d.type)}</p></span>
+                    </button>
+                    <div>${badge(d)}</div><p>${safe(d.primaryIp)} · ${safe(d.location)}</p>
+                    <div class="v21-device-preview-actions">${tools(d,true)}</div>
+                </article>`).join('')}</div>`:empty;
+            return `<div class="v21-device-directory">${heading}${deviceDirectoryView==='directory'?directory:deviceDirectoryView==='cards'?cards:''}</div>`;
+        }
+
         function renderDevicesHTML() {
+            if (deviceFullPageId) {
+                if (appState.devices.some(d=>String(d.id)===String(deviceFullPageId))) return renderFullDeviceDetailsHTML(deviceFullPageId);
+                deviceFullPageId = '';
+            }
             if(activeDeviceDetailsTab==='manufacturers')return '<div class="space-y-5 device-devices">'+renderHardwareManufacturersHtml()+'</div>';
             if(activeDeviceDetailsTab==='models')return '<div class="space-y-5 device-devices">'+renderHardwareModelsHtml()+'</div>';
             if(activeDeviceDetailsTab==='software')return '<div class="space-y-5 device-devices">'+renderSoftwareCatalogueHtml()+'</div>';
@@ -4004,7 +4137,8 @@ function hierarchyValidateTypes(subnets) {
                     <div class="device-results" aria-live="polite"><span>Showing <strong>${getVisibleDevices().length}</strong> of ${appState.devices.length} devices</span>
                         ${(deviceOsFilter || deviceServiceFilter || deviceMissingFilter || deviceSearchTerm || deviceTypeFilter || deviceStatusFilter || deviceLocationFilter || deviceMountFilter || deviceAssignmentFilter) ? `<button type="button" data-action="clear-device-filters" class="device-form-reset-button"><i class="fa-solid fa-xmark" aria-hidden="true"></i> Clear filters</button>` : ''}
                     </div>
-                    <div class="bg-white dark:bg-slate-800 rounded-2xl border shadow-sm device-table-wrapper">
+                    ${renderPremiumDeviceDirectory()}
+                    <div class="${deviceDirectoryView==='table'?'':'hidden'} bg-white dark:bg-slate-800 rounded-2xl border shadow-sm device-table-wrapper">
                         <table class="w-full min-w-[1050px] text-left border-collapse">
                             <thead>
                                 <tr class="border-b text-xs font-semibold text-slate-500 uppercase">
@@ -6201,9 +6335,9 @@ function hierarchyValidateTypes(subnets) {
                 });
             return rows.join('');
         }
-        function openDeviceDetailView(deviceId) {
+        function renderFullDeviceDetailsHTML(deviceId) {
             const d = appState.devices.find(device => String(device.id) === String(deviceId));
-            if (!d) return showToast('Device not found.', 'error');
+            if (!d) return '<p role="alert">Device not found.</p>';
             const rack = appState.racks.find(r => String(r.id) === String(d.rackId));
             const subnet = d.primaryIp ? getSubnetForIp(d.primaryIp) : null;
             const mounted = !!d.rackId && !!rack;
@@ -6250,15 +6384,27 @@ function hierarchyValidateTypes(subnets) {
                 field('Virtual disk (GB)', d.vmDiskGb) + field('Virtual network adapters', d.vmNicCount)) : '';
             const hardware = field('Manufacturer', d.manufacturer) + field('Model', d.model) + field('Serial number', d.serialNumber);
             const rackRows = mounted ? field('Rack', rack.name) + field('Face', d.face || 'front') + field('U position', uText) + field('Height', (Number(d.rackUHeight) || (uEnd-uStart+1) || 1) + 'U') : '';
-            openModal(`<div class="device-details-dialog space-y-5 p-5 sm:p-7">
+            // Contextual rack illustration only for a valid, explicitly rack-mounted record.
+            const heightU = Number(rack?.heightU) || 0;
+            const validRackPosition = mounted && d.mountType === 'Rack Mounted' &&
+                ['front','rear'].includes(String(d.face)) &&
+                Number.isInteger(uStart) && Number.isInteger(uEnd) &&
+                uStart >= 1 && uEnd >= uStart && uEnd <= heightU;
+            const rackPreview = validRackPosition ? `<aside class="v21-device-rack-preview" aria-label="Rack placement preview">
+                <div class="v21-device-rack-preview-track" role="img" aria-label="${safe(rack.name)}, ${safe(d.face)}, U${uStart} to U${uEnd} of ${heightU}">
+                    <span class="v21-device-rack-preview-unit" style="top:${((heightU-uEnd)/heightU*100).toFixed(2)}%;height:${((uEnd-uStart+1)/heightU*100).toFixed(2)}%"></span>
+                </div><div class="min-w-0"><h4>${safe(rack.name)}</h4><p>${safe(d.face==='rear'?'Rear':'Front')} face · ${safe(uText)} · ${heightU}U rack</p>
+                <p>Position shown from the saved rack placement.</p><button type="button" data-action="navigate-to-device-rack" data-id="${safe(d.id)}" class="v21-device-action mt-3"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>View in Rack</button></div>
+            </aside>` : '';
+            return `<div class="device-details-dialog v21-device-detail-page space-y-5 p-5 sm:p-7" data-device-id="${safe(d.id)}">
                 <header class="flex items-start justify-between gap-3">
-                    <div class="min-w-0"><p class="text-xs font-bold uppercase tracking-wider text-blue-700 dark:text-sky-300">Device details</p>
+                    <div class="min-w-0"><button type="button" data-action="device-detail-back" class="v21-device-detail-back mb-3"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>Back To Device Inventory</button><p class="text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-amber-300">Device details</p>
                     <h3 class="text-xl font-bold text-slate-900 dark:text-white break-words">${safe(d.name)}</h3>
                     <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">${safe(d.type)} · ${safe(d.location)} · <span class="font-semibold">${safe(status)}</span></p></div>
-                    <button type="button" data-action="close-modal" aria-label="Close device details" class="device-details-close-button"><i class="fa-solid fa-xmark"></i></button>
+
                 </header>
                 <nav class="device-tabs" role="tablist" aria-label="Device detail sections">
-                    ${[['overview','Overview'],...(showVirtualMachinesTab ? [['virtual-machines','Virtual Machines']] : []),...(!isVirtualDevice ? [['hardware','Hardware']] : []),['network','Network'],['software','Software'],['location','Location'],...(historyRows?[['history','History']]:[])].map(([key,label],i)=>`<button type="button" role="tab" id="device-details-tab-${key}" aria-controls="device-details-panel-${key}" aria-selected="${i===0?'true':'false'}" tabindex="${i===0?'0':'-1'}" data-action="select-device-details-tab" data-name="${key}" class="device-details-tab ${i===0?'device-details-tab-active':''}">${label}</button>`).join('')}
+                    ${[['overview','Overview'],...(showVirtualMachinesTab ? [['virtual-machines','Virtual Machines']] : []),['hardware',isVirtualDevice?'VM Hardware':'Hardware'],['network','Network'],['software','Software'],['location','Location'],...(historyRows?[['history','History']]:[])].map(([key,label],i)=>`<button type="button" role="tab" id="device-details-tab-${key}" aria-controls="device-details-panel-${key}" aria-selected="${i===0?'true':'false'}" tabindex="${i===0?'0':'-1'}" data-action="select-device-details-tab" data-name="${key}" class="device-details-tab ${i===0?'device-details-tab-active':''}">${label}</button>`).join('')}
                 </nav>
                 <div class="device-panels">
                     <div id="device-details-panel-overview" role="tabpanel" aria-labelledby="device-details-tab-overview" class="device-details-panel">
@@ -6271,9 +6417,9 @@ function hierarchyValidateTypes(subnets) {
                         ${hypervisorNotice}
                         ${hostingSection}
                     </div>` : ''}
-                    ${!isVirtualDevice ? `<div id="device-details-panel-hardware" role="tabpanel" aria-labelledby="device-details-tab-hardware" class="device-details-panel" hidden>
-                        ${section('Hardware & lifecycle', 'fa-microchip', hardware + (detailRows ? `<div class="device-details-detail-subheading">Additional ${safe(d.type)} details</div>${detailRows}` : ''))}
-                    </div>` : ''}
+                    <div id="device-details-panel-hardware" role="tabpanel" aria-labelledby="device-details-tab-hardware" class="device-details-panel" hidden>
+                        ${isVirtualDevice?virtualHardware:section('Hardware & lifecycle', 'fa-microchip', hardware + (detailRows ? `<div class="device-details-detail-subheading">Additional ${safe(d.type)} details</div>${detailRows}` : ''))}
+                    </div>
                     <div id="device-details-panel-network" role="tabpanel" aria-labelledby="device-details-tab-network" class="device-details-panel" hidden>
                         ${section('Network identity', 'fa-network-wired', field('Primary IP', d.primaryIp) + field('Subnet', subnet ? (subnet.cidr || subnet.name || subnet.network || subnet.id) : 'Not linked') + field('IP reserved', d.ipReserved ? 'Yes' : 'No'))}
                     </div>
@@ -6284,6 +6430,7 @@ function hierarchyValidateTypes(subnets) {
                     </div>
                     <div id="device-details-panel-location" role="tabpanel" aria-labelledby="device-details-tab-location" class="device-details-panel" hidden>
                         ${section('Mounting & location', 'fa-location-dot', isVirtualDevice ? field('Location', d.location) : field('Mounting', d.mountType || (mounted ? 'Rack Mounted' : 'Desktop')) + field('Location', d.location) + rackRows)}
+                        ${rackPreview}
                     </div>
                     ${historyRows?`<div id="device-details-panel-history" role="tabpanel" aria-labelledby="device-details-tab-history" class="device-details-panel" hidden><section class="device-details-section"><h4>Previous Device Type Details</h4><p class="text-sm mb-3">Preserved for reference only; not part of the active configuration.</p>${historyRows}</section></div>`:''}
                 </div>
@@ -6292,9 +6439,16 @@ function hierarchyValidateTypes(subnets) {
                     ${mounted ? `<button type="button" data-action="navigate-to-device-rack" data-id="${safe(d.id)}" class="device-details-secondary-action"><i class="fa-solid fa-server" aria-hidden="true"></i>View in rack</button>` : ''}
                     <button type="button" data-action="edit-device-from-details" data-id="${safe(d.id)}" class="device-details-edit-action"><i class="fa-solid fa-pen" aria-hidden="true"></i>Edit device</button>
                     <button type="button" data-action="delete-device-from-details" data-id="${safe(d.id)}" class="inline-flex items-center justify-center rounded-xl border border-rose-300 bg-rose-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-rose-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600 dark:border-rose-500 dark:bg-rose-700 dark:hover:bg-rose-600"><i class="fa-solid fa-trash mr-1" aria-hidden="true"></i>Delete device</button>
-                    <button type="button" data-action="close-modal" class="device-details-close-action"><i class="fa-solid fa-check" aria-hidden="true"></i>Close</button>
+                    <button type="button" data-action="device-detail-back" class="device-details-close-action"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>Back to Inventory</button>
                 </footer>
-            </div>`);
+            </div>`;
+        }
+        function openDeviceDetailView(deviceId) {
+            if (!appState.devices.some(d=>String(d.id)===String(deviceId))) return showToast('Device not found.','error');
+            deviceFullPageId = String(deviceId);
+            activeDeviceDetailsTab = 'inventory';
+            if (currentTab !== 'devices') switchTab('devices');
+            else renderContent();
         }
         function confirmUninstallOfArchivedSoftware(deviceId,key){
             const device=appState.devices.find(d=>String(d.id)===String(deviceId));
@@ -9075,7 +9229,7 @@ function hierarchyValidateTypes(subnets) {
             switch (action) {
                 case 'clear-device-filters': deviceServiceFilter = ''; deviceMissingFilter = ''; deviceOsFilter = ''; deviceSearchTerm = ''; deviceTypeFilter = ''; deviceStatusFilter = ''; deviceLocationFilter = ''; deviceMountFilter = ''; deviceAssignmentFilter = ''; deviceHardwareFilter = null; renderContent(); break;
                 case 'inventory-tab': if (['inventory','manage'].includes(target.dataset.tab)) { activeDeviceDetailsTab=target.dataset.tab==='manage'?'types':target.dataset.tab; switchTab('devices'); } break;
-                case 'sidebar-devices-overview': activeDeviceDetailsTab='overview'; switchTab('devices'); break;
+                case 'sidebar-devices-overview': deviceFullPageId=''; activeDeviceDetailsTab='overview'; switchTab('devices'); break;
                 case 'device-intelligence-tab': if (['overview','hardware','os','software','quality'].includes(target.dataset.tab)) { deviceIntelligenceTab=target.dataset.tab; renderContent(); } break;
                 case 'device-hardware-drilldown': { const field=String(target.dataset.field||''); const value=String(target.dataset.value||''); if (!['manufacturer','model','mountType'].includes(field) || !value) break; deviceOsFilter=''; deviceServiceFilter=''; deviceMissingFilter=''; deviceSearchTerm=''; deviceTypeFilter=''; deviceStatusFilter=''; deviceLocationFilter=''; deviceMountFilter=''; deviceAssignmentFilter=''; deviceHardwareFilter={field,value}; activeDeviceDetailsTab='inventory'; switchTab('devices'); break; }
                 case 'device-os-drilldown': { const os=String(target.dataset.os||''); if (!os) break; deviceServiceFilter=''; deviceMissingFilter=''; deviceOsFilter=os; deviceHardwareFilter=null; deviceSearchTerm=''; deviceTypeFilter=''; deviceStatusFilter=''; deviceLocationFilter=''; deviceMountFilter=''; deviceAssignmentFilter=''; activeDeviceDetailsTab='inventory'; switchTab('devices'); break; }
@@ -9087,13 +9241,13 @@ function hierarchyValidateTypes(subnets) {
                     else deviceLocationFilter=target.dataset.name;
                     activeDeviceDetailsTab='inventory';switchTab('devices');break;
                 }
-                case 'sidebar-devices-inventory': activeDeviceDetailsTab='inventory'; switchTab('devices'); break;
-                case 'sidebar-devices-types': activeDeviceDetailsTab='types'; switchTab('devices'); break;
-                case 'sidebar-devices-locations': activeDeviceDetailsTab='locations'; switchTab('devices'); break;
-                case 'sidebar-devices-manufacturers': activeDeviceDetailsTab='manufacturers'; switchTab('devices'); break;
-                case 'sidebar-devices-models': activeDeviceDetailsTab='models'; switchTab('devices'); break;
-                case 'sidebar-devices-software': activeDeviceDetailsTab='software'; switchTab('devices'); break;
-                case 'sidebar-devices-services': activeDeviceDetailsTab='services'; switchTab('devices'); break;
+                case 'sidebar-devices-inventory': deviceFullPageId=''; activeDeviceDetailsTab='inventory'; switchTab('devices'); break;
+                case 'sidebar-devices-types': deviceFullPageId=''; activeDeviceDetailsTab='types'; switchTab('devices'); break;
+                case 'sidebar-devices-locations': deviceFullPageId=''; activeDeviceDetailsTab='locations'; switchTab('devices'); break;
+                case 'sidebar-devices-manufacturers': deviceFullPageId=''; activeDeviceDetailsTab='manufacturers'; switchTab('devices'); break;
+                case 'sidebar-devices-models': deviceFullPageId=''; activeDeviceDetailsTab='models'; switchTab('devices'); break;
+                case 'sidebar-devices-software': deviceFullPageId=''; activeDeviceDetailsTab='software'; switchTab('devices'); break;
+                case 'sidebar-devices-services': deviceFullPageId=''; activeDeviceDetailsTab='services'; switchTab('devices'); break;
                 case 'server-catalog-add': openServerServiceEditor(); break;
                 case 'server-catalog-edit': openServerServiceEditor(name); break;
                 case 'server-catalog-save': saveServerServiceEntry(name); break;
@@ -9128,6 +9282,9 @@ function hierarchyValidateTypes(subnets) {
                 case 'confirm-remove-catalogue-manufacturer': saveHardwareManufacturer(name,true); break;
                 case 'open-device-modal': openDeviceModal(); break;
                 case 'edit-device': openDeviceModal(id); break;
+                case 'device-directory-view': if (['directory','cards','table'].includes(target.dataset.view)) { deviceDirectoryView=target.dataset.view; renderContent(); } break;
+                case 'device-directory-select': selectedDirectoryDeviceId=id; renderContent(); break;
+                case 'device-detail-back': deviceFullPageId=''; activeDeviceDetailsTab='inventory'; renderContent(); break;
                 case 'view-device': openDeviceDetailView(id); break;
                 case 'select-device-details-tab': selectDeviceDetailsTab(name); break;
                 case 'archived-software-remove': confirmUninstallOfArchivedSoftware(id,name); break;
@@ -9299,7 +9456,7 @@ function hierarchyValidateTypes(subnets) {
                     break;
                 }
                 case 'tab-dashboard': switchTab('dashboard'); break;
-                case 'tab-devices': switchTab('devices'); break;
+                case 'tab-devices': deviceFullPageId=''; activeDeviceDetailsTab='inventory'; switchTab('devices'); break;
 
 
                 case 'tab-ipam': switchTab('ipam'); break;
@@ -9354,6 +9511,8 @@ window.addEventListener('load', async () => {
     const state = await response.json();
     permissions = state.sections || {};
     editPermissions = state.editPermissions || {};
+    // Browsing a device never requests an edit reservation; only render permitted actions.
+    window.caffootDeviceActions = {canEdit:!!editPermissions.Devices,canDuplicate:!!(editPermissions.Devices&&editPermissions.IPAM)};
     // Display convenience only; server-side permission checks remain authoritative.
     window.caffootDashboardActions = {canAddDevice: !!(editPermissions.Devices && editPermissions.IPAM), canAddRack: !!editPermissions.Racks, canViewIpam: !!permissions.IPAM};
     nextImportAllowed = ['Devices','IPAM','Racks'].every(key => editPermissions[key]);
