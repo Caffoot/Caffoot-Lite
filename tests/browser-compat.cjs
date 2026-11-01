@@ -141,7 +141,7 @@ async function run(){
   assert.ok(!(await page.locator('#ipam-sidebar-actions').isVisible()),
     'Collapsed sidebar must conceal secondary actions without deleting them');
   await page.locator('#sidebar [data-action="tab-ipam"]').click();
-  await page.waitForFunction(()=>document.querySelector('#page-title')?.textContent.includes('IPAM'));
+  await page.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='IP Address Management, Subnets & VLANs');
   await page.reload();
   await sidebarToggle.waitFor();
   assert.equal(await sidebarToggle.getAttribute('aria-expanded'),'false',
