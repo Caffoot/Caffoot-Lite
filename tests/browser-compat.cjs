@@ -336,7 +336,7 @@ async function run(){
         'https://github.com/Caffoot/Caffoot-Lite/blob/main/INSTALLATION.md');
     }
   }
-  await page.locator('[data-action="select-account-section"][data-section="security"]').click();
+  await page.locator('.v21-account-tabs [data-section="security"]').click();
   await page.locator('#next-account-password-form').waitFor();
   assert.ok(await page.getByRole('button',{name:'Change password'}).isEnabled(),
     'Original password change must still be available in Security');
@@ -839,7 +839,7 @@ async function run(){
     'Non-administrator editor must not see integrity health totals');
   await editor.evaluate(()=>{appState.devices.pop();renderContent();});
   await editor.locator('#sidebar #next-account-nav').click();
-  await editor.locator('[data-action="select-account-section"][data-section="security"]').click();
+  await editor.locator('.v21-account-tabs [data-section="security"]').click();
   await editor.locator('#next-account-password-form').waitFor();
   assert.equal(await editor.locator('#page-title').textContent(),'My account');
   await editor.locator('[data-action="tab-devices"]').click();
