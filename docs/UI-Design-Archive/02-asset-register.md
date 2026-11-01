@@ -5,11 +5,20 @@
 | Visual reference | Status and actual filenames | Approval / role |
 | --- | --- | --- |
 | My Account — latest approved overview | **Available in design session, NOT in GitHub:** `caffoot_lite_my_account_dashboard.png`; SHA-256 `ec177564f48a1e3100f9a198498b28d07fa9a0179c49ec12575964cd936d98dc` | **Approved** Personal Details, round profile image and application-wide typography/angled logo |
-| Settings & Data 04.1 | **Available in design session, NOT in GitHub:** `caffoot-settings-data-concept-04.1-design-pack.zip`; SHA-256 `e77b4b30fee3e4e95eeb1f4415b202bd18ee811d56eafdbb5a096b68ea55896a` | **Approved direction**, with compact SMTP authentication switch |
-| My Account earlier Draft 01 | **Available in design session, NOT in GitHub:** `caffoot-my-account-draft-01-design-pack.zip`; SHA-256 `733b091e4b377d38f08e1fe30dbeb6972f4dcbd8396e184b9c299d51f8a3caa0` | **Superseded** overview; contains historical interactive panels and screenshots |
+| Settings & Data 04.1 | **Interactive HTML and design record NOW IN GITHUB** (see [Settings & Data 04.1](assets/settings-and-data/04.1/caffoot-settings-data-concept-04.1.html) and [record](assets/settings-and-data/04.1/caffoot-settings-data-concept-04.1-design-record.md)); original screenshots are **NOT in GitHub**. Source pack: `caffoot-settings-data-concept-04.1-design-pack.zip`; SHA-256 `e77b4b30fee3e4e95eeb1f4415b202bd18ee811d56eafdbb5a096b68ea55896a` | **Approved direction**, with compact SMTP authentication switch |
+| My Account earlier Draft 01 | **Historical interactive HTML and design record NOW IN GITHUB** (see [Draft 01](assets/my-account/draft-01-historical/caffoot-my-account-draft-01.html) and [record](assets/my-account/draft-01-historical/caffoot-my-account-draft-01-design-record.md)); original screenshots are **NOT in GitHub**. Source pack: `caffoot-my-account-draft-01-design-pack.zip`; SHA-256 `733b091e4b377d38f08e1fe30dbeb6972f4dcbd8396e184b9c299d51f8a3caa0` | **Superseded** overview; contains historical interactive panels and screenshots |
 | Sign In / First-Time Setup | **Original visual not in GitHub**; documented in [#227](https://github.com/Caffoot/Caffoot-Lite/issues/227) | Approved text direction; original preview image not available |
 | Dashboard / Device Inventory / Device Details / Device Editor / IPAM / Rack screens | **Original visual previews not all recoverable**; screen-by-screen agreements are preserved in [archive screens](screens/) and #227 | Use actual approved directions, not synthetic replacements |
 | Change History → Audit Trail / Users & Permissions | **Original visual previews not confirmed available as files**; agreed design directions preserved in screen records | Preserve documented preferred layouts |
+
+## Currently version-controlled interactive references
+
+- [Settings & Data 04.1 self-contained interactive HTML](assets/settings-and-data/04.1/caffoot-settings-data-concept-04.1.html) — approved visual direction, compact SMTP toggle
+- [Settings & Data 04.1 detailed record](assets/settings-and-data/04.1/caffoot-settings-data-concept-04.1-design-record.md)
+- [My Account Draft 01 self-contained interactive HTML](assets/my-account/draft-01-historical/caffoot-my-account-draft-01.html) — **superseded Overview**, useful historic Security/Appearance/Help interactions
+- [My Account Draft 01 historical detailed record](assets/my-account/draft-01-historical/caffoot-my-account-draft-01-design-record.md)
+
+The approved **My Account Personal Details** visual is still an image awaiting the original PNG upload. The older Draft 01 HTML MUST NOT be presented as that approved revision.
 
 ## Files to place into the repository when available
 
