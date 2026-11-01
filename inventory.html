@@ -1864,9 +1864,14 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 </style>
 <style id="caffoot-v21-sidebar-style">
 /* v2.1 premium navigation: keep published route actions, roles and submenus intact. */
-#sidebar { width: 272px; min-width: 272px; }
+#sidebar { width: 272px; min-width: 272px; min-height:0; overflow:hidden; }
+#sidebar > nav { min-height:0; flex:1 1 0%; overflow-y:auto; overscroll-behavior:contain; }
+#sidebar > .v21-sidebar-brand,
+#sidebar > div:has(> nav[aria-label="Account and settings"]),
+#sidebar > .v21-sidebar-toggle-footer { flex:0 0 auto; }
+#sidebar > nav [id$="-sidebar-actions"] { scroll-margin-bottom:12px; }
 #sidebar .v21-sidebar-brand { min-height: 80px; gap: 12px; }
-#sidebar .v21-brand-mark { width: 43px; height: 43px; transform: rotate(-9deg); box-shadow: 0 5px 16px rgba(0,0,0,.22); }
+#sidebar .v21-brand-mark { width: 43px; height: 43px; transform: rotate(9deg); box-shadow: 0 5px 16px rgba(0,0,0,.22); }
 #sidebar .v21-wordmark-lite { color: #F47B20; }
 #sidebar .v21-brand-tagline { margin: 3px 0 0; color: #C5D0DD; font-size: 10px; font-weight: 600; letter-spacing: .025em; white-space: nowrap; }
 #sidebar .v21-sidebar-toggle { display: flex; width: 100%; min-height: 44px; align-items: center; gap: 12px; padding: 9px 16px; border-radius: 8px; color: #F1F5F9; font-size: 13px; font-weight: 600; text-align: left; }

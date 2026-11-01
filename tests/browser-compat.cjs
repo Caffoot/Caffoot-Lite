@@ -775,6 +775,13 @@ async function run(){
 
   // Approved acceptance: new accounts initially lack inventory access.
   await page.evaluate(()=>switchTab('users'));
+  // Preserve remembered compact navigation: reveal the submenu through the
+  // approved single footer control before selecting a nested destination.
+  if (await page.locator('#sidebar').evaluate(el=>el.classList.contains('v21-is-collapsed')))
+    await page.locator('#v21-sidebar-toggle').click();
+  assert.ok(await page.locator('#sidebar > nav').evaluate(el=>
+    getComputedStyle(el).overflowY==='auto' && el.scrollHeight >= el.clientHeight
+  ),'Expanded navigation must have an independent scroll area above fixed account controls');
   await page.locator('#users-sidebar-actions [data-action="sidebar-users-add"]').click();
   await page.locator('#next-user-create-form input[name="username"]').fill('editor');
   await page.locator('#next-user-create-form input[name="password"]').fill(password+'-Editor');
