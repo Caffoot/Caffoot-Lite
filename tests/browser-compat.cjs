@@ -704,12 +704,34 @@ async function run(){
   assert.equal(await page.getByText('Total users',{exact:true}).locator('..').locator('..').locator('p').textContent(),'2');
   assert.equal(await page.getByRole('heading',{name:'Administrators',exact:true}).locator('..').locator('..').locator('p').textContent(),'1');
   await page.locator('#users-sidebar-actions [data-action="sidebar-users-list"]').click();
+  await page.locator('.v21-users-directory').waitFor({state:'visible'});
+  assert.ok(await page.getByRole('heading',{name:'Users Directory'}).isVisible());
+  assert.ok(await page.locator('.v21-users-directory [data-action="sidebar-users-add"]').isVisible(),
+    'Approved Add User action remains prominent');
+  assert.equal(await page.locator('.v21-users-row').count(),2);
+  await page.locator('#v21-users-search').fill('editor');
+  assert.equal(await page.locator('.v21-users-row:visible').count(),1);
+  await page.locator('#v21-users-search').fill('nonexistent');
+  assert.equal(await page.locator('.v21-users-row:visible').count(),0);
+  await page.locator('#v21-users-search').fill('');
+  await page.locator('#v21-users-filter').selectOption('admin');
+  assert.equal(await page.locator('.v21-users-row:visible').count(),1);
+  await page.locator('#v21-users-filter').selectOption('all');
   const editorId=await page.evaluate(async()=>{
     const r=await fetch('/api/users',{cache:'no-store'});
     if(!r.ok)throw Error('Unable to read users');
     return (await r.json()).users.find(user=>user.username==='editor')?.id;
   });
   assert.ok(Number.isInteger(editorId),'User not saved to SQLite');
+  await page.locator('.v21-users-row[data-id="'+editorId+'"]').click();
+  await page.locator('.v21-user-workspace').waitFor({state:'visible'});
+  assert.ok(await page.locator('[data-action="back-to-all-users"]').isVisible(),
+    'A selected account must have a prominent full-page Back To All Users action');
+  for(const heading of ['Overview','Permissions','Security','Account Management'])
+    assert.ok(await page.locator('.v21-user-workspace').getByRole('heading',{name:heading,exact:true}).isVisible());
+  assert.equal(await page.locator('.v21-user-account-actions button').count(),3,
+    'Account management must keep enable/disable, administrator and delete actions');
+  console.log('Stage 8 Users Directory, full-page Workspace and original account operations passed');
   const second=await browser.newContext({
     ignoreHTTPSErrors:true,viewport:{width:1440,height:950}
   });
@@ -841,6 +863,8 @@ async function run(){
     return (await r.json()).users.find(u=>u.username==='viewer')?.id;
   });
   assert.ok(Number.isInteger(viewerId));
+  await page.locator('.v21-users-row[data-id="'+viewerId+'"]').click();
+  await page.locator('.v21-user-workspace').waitFor({state:'visible'});
   const blockedEdit=page.locator('[data-next-user-permission][data-user-id="'+viewerId+'"][data-section="Devices"]');
   await blockedEdit.selectOption('edit');
   await page.waitForFunction(()=>document.querySelector('#toast-message')?.textContent.includes('must set up MFA in My account'));

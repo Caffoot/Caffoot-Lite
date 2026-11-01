@@ -1478,6 +1478,88 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 @media(max-width:700px){.v21-racks .rack-workspace>div:first-child{padding:15px}.v21-racks .rack-workspace .rack-tabs{gap:5px}.v21-racks .rack-workspace-tab{padding:10px 11px}.v21-racks [aria-label="Visual rack view"]>div{gap:16px!important}}
 @media(prefers-reduced-motion:reduce){.v21-racks [data-v13-rack-row]{transition:none}}
 </style>
+<style id="caffoot-v21-users-style">
+/* Stage 8 approved Users Directory + full-page Workspace; existing permission logic unchanged. */
+.v21-users-root{min-width:0;max-width:100%;color:#20374d}
+.v21-users-root>section:first-child{background:linear-gradient(116deg,#162b42,#294560);border:1px solid #344f67;border-radius:17px;box-shadow:0 3px 16px #112b430e}
+.v21-users-root>section:first-child h2{font-size:21px;font-weight:790;letter-spacing:-.025em;line-height:1.2}
+.v21-users-root>section:first-child p{font-size:12px;line-height:1.65;color:#dae6f3}
+.v21-users-root .v21-users-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;flex-wrap:wrap}
+.v21-users-root .v21-users-heading h3{font-size:20px;line-height:1.3;letter-spacing:-.02em;font-weight:790;color:#193248}
+.v21-users-root .v21-users-heading p{font-size:12px;color:#698093;line-height:1.65;margin-top:5px}
+.v21-users-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:43px;padding:10px 15px;border:1px solid #cedae6;border-radius:11px;background:#fff;color:#264059;font-size:12px;font-weight:760}
+.v21-users-btn:hover{border-color:#e96c17;background:#fff6ef}
+.v21-users-btn-primary{background:#e96c17;color:#fff;border-color:#e96c17}
+.v21-users-btn-primary:hover{background:#ca5c11;border-color:#ca5c11;color:#fff}
+.v21-users-btn-back{border-color:#efb98d;background:#fff6ef;color:#a24f14}
+.v21-users-btn-back:hover{background:#ffebd7;border-color:#e96c17}
+.v21-users-root button:focus-visible,.v21-users-root input:focus-visible,.v21-users-root select:focus-visible{outline:3px solid #f47b20;outline-offset:2px}
+.v21-users-directory{display:grid;gap:15px;min-width:0}
+.v21-users-filters{display:flex;align-items:end;flex-wrap:wrap;gap:14px;background:#fff;border:1px solid #dce5ed;border-radius:15px;padding:15px 18px}
+.v21-users-filters label{display:block;font-size:11px;font-weight:750;color:#51687b;margin-bottom:6px}
+.v21-users-filters input,.v21-users-filters select{display:block;box-sizing:border-box;width:100%;min-height:43px;padding:10px 12px;border:1px solid #c9d6e3;border-radius:10px;background:#fff;color:#263e53;font-size:13px}
+.v21-users-filters>div:first-child{flex:1 1 255px;min-width:200px}
+.v21-users-filters>div:nth-child(2){flex:0 1 220px;min-width:155px}
+.v21-users-count{font-size:12px;color:#698091;font-weight:700;align-self:center}
+.v21-users-rows{display:grid;gap:10px}
+.v21-users-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;width:100%;text-align:left;background:#fff;border:1px solid #dce5ee;border-radius:15px;padding:17px 19px;box-shadow:0 2px 11px #142e4b0a;color:#24394d}
+.v21-users-row:hover{border-color:#eeaf81;box-shadow:0 5px 18px #142d4814;background:#fffdfa}
+.v21-users-row[hidden]{display:none!important}
+.v21-users-row-identity{display:flex;align-items:center;gap:13px;min-width:0;flex:1}
+.v21-users-avatar{width:47px;height:47px;display:grid;place-items:center;flex:none;background:#eaf1f8;border-radius:15px;color:#34516b;font-size:17px;font-weight:790}
+.v21-users-row h3{font-size:14px;font-weight:780;line-height:1.35;color:#182f44;overflow-wrap:anywhere}
+.v21-users-row small{display:block;margin-top:4px;font-size:11px;color:#718598;overflow-wrap:anywhere}
+.v21-users-row-meta{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.v21-users-status{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:6px 10px;border:1px solid #c5e9d7;border-radius:99px;background:#eaf8ef;color:#0e7148;font-size:11px;font-weight:750}
+.v21-users-status.is-inactive{background:#f1f3f7;color:#667588;border-color:#d9e2eb}
+.v21-users-status.is-pending{background:#fff5e1;color:#8d5a14;border-color:#f0deae}
+.v21-users-status.is-role{background:#edf4fc;color:#335f90;border-color:#d1e3f5}
+.v21-users-row-arrow{color:#bd6a26}
+.v21-users-empty{padding:27px;text-align:center;color:#72869b;background:#fff;border:1px dashed #c8d5e1;border-radius:15px}
+.v21-user-workspace{display:grid;gap:15px;min-width:0}
+.v21-user-profile{display:flex;align-items:center;flex-wrap:wrap;gap:17px;padding:20px;background:#fff;border:1px solid #dce5ed;border-radius:16px}
+.v21-user-profile .v21-users-avatar{width:68px;height:68px;border-radius:20px;font-size:23px}
+.v21-user-profile h3{font-size:21px;font-weight:790;color:#1b324a;overflow-wrap:anywhere}
+.v21-user-profile p{font-size:12px;color:#697e90;margin-top:5px}
+.v21-user-profile .v21-users-row-meta{margin-left:auto}
+.v21-user-workspace-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.v21-user-panel{min-width:0;padding:20px 22px;border:1px solid #dce5ee;border-radius:16px;background:#fff;box-shadow:0 2px 12px #1b33470a}
+.v21-user-panel h4{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:785;color:#1e354b;margin-bottom:13px}
+.v21-user-panel h4 i{color:#df711a}
+.v21-user-panel>p{font-size:12px;color:#63788b;line-height:1.7}
+.v21-user-attributes{display:grid;gap:12px}
+.v21-user-attributes div{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:11px;border-bottom:1px solid #e5edf3;font-size:12px}
+.v21-user-attributes dt{color:#677c8e;font-weight:660}
+.v21-user-attributes dd{font-weight:750;color:#1d3448;text-align:right;overflow-wrap:anywhere}
+.v21-user-permission-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.v21-user-permission-grid label{font-size:12px;font-weight:740;color:#375167;min-width:0}
+.v21-user-permission-grid select{width:100%;min-height:44px;border:1px solid #bfcede;border-radius:11px;padding:9px 12px;background:#fff;color:#1b334b;font-size:12px;margin-top:7px}
+.v21-user-account-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding-top:3px}
+.v21-user-account-actions button{min-height:42px;padding:10px 14px;border-radius:10px;border:1px solid #cdd9e4;color:#30485f;font-size:12px;font-weight:750}
+.v21-user-account-actions button:hover:not(:disabled){border-color:#e78132;background:#fff6ee}
+.v21-user-account-actions button[data-next-user-operation="delete"]{color:#ab3439;border-color:#efc6ca}
+.v21-user-account-actions button:disabled{opacity:.52;cursor:not-allowed}
+.v21-users-root #next-user-create-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;align-items:end}
+.v21-users-root #next-user-create-form button{grid-column:1/-1;justify-self:start;background:#e96c17;border:1px solid #e96c17;border-radius:10px;padding:10px 18px}
+.v21-users-root #next-user-create-form button:hover{background:#ca5b12}
+.v21-users-root>div.grid>section,.v21-users-root>div.grid>section .rounded-2xl{border-color:#dce5ee}
+.dark .v21-users-root,.dark .v21-users-root .v21-users-heading h3,.dark .v21-user-profile h3,.dark .v21-user-panel h4,.dark .v21-users-row h3,.dark .v21-user-attributes dd{color:#edf4fb}
+.dark .v21-users-root .v21-users-heading p,.dark .v21-user-profile p,.dark .v21-user-panel>p,.dark .v21-users-row small,.dark .v21-users-count{color:#c8d7e4}
+.dark .v21-users-filters,.dark .v21-users-row,.dark .v21-user-profile,.dark .v21-user-panel,.dark .v21-users-empty{background:#25384c;border-color:#4f6378}
+.dark .v21-users-row:hover{background:#30465a;border-color:#dd975f}
+.dark .v21-users-avatar{background:#3b5065;color:#eff6fd}
+.dark .v21-users-filters label,.dark .v21-user-permission-grid label,.dark .v21-user-attributes dt{color:#c5d6e5}
+.dark .v21-users-filters input,.dark .v21-users-filters select,.dark .v21-user-permission-grid select{background:#304659;color:#f3f7fc;border-color:#64778a}
+.dark .v21-user-attributes div{border-color:#485e73}
+.dark .v21-user-account-actions button{border-color:#5b7187;color:#e3eef8;background:#2e4255}
+.dark .v21-users-btn{background:#30485d;color:#f4f8fc;border-color:#63788d}
+.dark .v21-users-btn-primary{background:#e96c17;border-color:#e96c17;color:#fff}
+.dark .v21-users-btn-back{background:#493525;color:#ffd5b4;border-color:#a36d47}
+.dark .v21-user-account-actions button[data-next-user-operation="delete"]{color:#f3a9ad;border-color:#8e5862}
+@media(max-width:850px){.v21-user-workspace-cards{grid-template-columns:1fr}}
+@media(max-width:620px){.v21-users-root #next-user-create-form,.v21-user-permission-grid{grid-template-columns:1fr}.v21-users-filters>div:nth-child(2){flex:1 1 180px}.v21-users-row-meta{width:100%;margin-left:60px}.v21-user-profile .v21-users-row-meta{margin-left:0}.v21-users-root>section:first-child{padding:20px}}
+@media(prefers-reduced-motion:reduce){.v21-users-row{transition:none}}
+</style>
 <style id="caffoot-v21-shell-style">
 /* v2.1 shared page shell; match the approved My Account type scale and brand. */
 .v21-skip-link { position:fixed; top:8px; left:12px; z-index:100; transform:translateY(-160%); padding:11px 16px; background:#fff; color:#142232; border:3px solid #F47B20; border-radius:9px; font-weight:700; }
@@ -9751,7 +9833,7 @@ function hierarchyValidateTypes(subnets) {
                 case 'tab-settings': switchTab('settings'); break;
                 case 'tab-users': switchTab('users'); break;
                 case 'sidebar-users-overview': activeUsersTab='overview'; switchTab('users'); break;
-                case 'sidebar-users-list': activeUsersTab='list'; switchTab('users'); break;
+                case 'sidebar-users-list': selectedUserWorkspaceId=null; activeUsersTab='list'; switchTab('users'); break;
                 case 'sidebar-users-add': activeUsersTab='add'; switchTab('users'); break;
                 case 'tab-account': switchTab('account'); break;
                 case 'select-account-section': if (['security','preferences','help','about'].includes(target.dataset.section)) { activeAccountSection=target.dataset.section; switchTab('account'); } break;
@@ -10684,6 +10766,7 @@ window.addEventListener('load', async () => {
   };
   // Users: administrator-only section, following the published sidebar and panel style.
   let users = null;
+  let selectedUserWorkspaceId = null; // Presentation state, never a privilege or edit reservation.
   nextRenderUsers = function() {
     if (!sessionIsAdmin) return '';
     const card='rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 sm:p-6 space-y-4';
@@ -10693,7 +10776,7 @@ window.addEventListener('load', async () => {
       ?'An overview of user accounts, administrator access and MFA enrolment.'
       :activeUsersTab==='list'?'Manage accounts and access to Devices, IPAM and Racks.'
       :'Create a user account. Inventory access is granted separately.';
-    let html='<div class="w-full space-y-5 text-slate-800 dark:text-slate-100">' +
+    let html='<div class="v21-users-root w-full space-y-5 text-slate-800 dark:text-slate-100">' +
       '<section class="rounded-2xl bg-blue-800 text-white p-6 sm:p-7">' +
       '<div class="flex items-center gap-4"><i class="fa-solid fa-users text-2xl" aria-hidden="true"></i><div>' +
       '<h2 class="text-xl font-bold">'+heading+'</h2>' +
@@ -10749,41 +10832,87 @@ window.addEventListener('load', async () => {
         '<button type="submit" class="h-11 px-5 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold">Create User</button>' +
         '</form></section></div>';
     }
-    for (const user of users) {
-      const own=user.username.toLowerCase()===signedInUsername.toLowerCase();
-      html+='<section class="'+card+'"><div class="flex flex-wrap items-center justify-between gap-3">' +
-        '<h3 class="text-lg font-bold"><i class="fa-solid fa-circle-user text-blue-800 dark:text-sky-300 mr-2" aria-hidden="true"></i>' +
-        escapeHtml(user.username)+(user.isAdmin?' (administrator)':'')+'</h3>' +
-        '<span class="text-sm text-slate-600 dark:text-slate-300">' +
-        (user.active?'Active':'Disabled')+' · MFA '+(user.mfaEnrolled?'enrolled':'not enrolled')+'</span></div>';
-      if (!user.mfaEnrolled && !user.isAdmin)
-        html+='<p class="text-sm text-slate-600 dark:text-slate-300">Editing or administrator access requires MFA. Ask this user to set up their authenticator under My account → Password &amp; MFA first.</p>';
-      if (user.isAdmin) html+='<p class="text-sm text-slate-600 dark:text-slate-300">Administrator: all inventory sections.</p>';
-      else {
-        html+='<div class="flex flex-wrap gap-4">';
-        for (const sectionName of ['Devices','IPAM','Racks']) {
-          html+='<label class="text-sm font-semibold flex-1 min-w-[140px]">'+sectionName+
-            '<select data-next-user-permission data-user-id="'+user.id+'" data-section="'+sectionName+
-            '" class="'+field+'">';
-          for (const [value,name] of [['','No access'],['read','Read'],['edit','Edit']])
-            html+='<option value="'+value+'"'+((user.permissions[sectionName]||'')===value?' selected':'')+'>'+name+'</option>';
-          html+='</select></label>';
-        }
-        html+='</div>';
-      }
-      html+='<div class="flex flex-wrap gap-2 pt-1">';
-      for (const [kind,title] of [['active',user.active?'Disable':'Enable'],
-                                   ['admin',user.isAdmin?'Remove admin':'Make admin'],
-                                   ['delete','Delete']]) {
-        html+='<button type="button" data-next-user-operation="'+kind+
-          '" data-user-id="'+user.id+
-          '" class="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 text-sm font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"'+
-          (own?' disabled':'')+'>'+title+'</button>';
-      }
-      html+='</div></section>';
+    // Directory displays saved account summaries. Selecting a row is read-only;
+    // editing privileges remain controlled by the original server-side handlers.
+    const chosen=users.find(user=>String(user.id)===String(selectedUserWorkspaceId));
+    const safe=value=>escapeHtml(String(value==null?'':value));
+    const access=user=>user.isAdmin?'Full administrator access':
+      ['Devices','IPAM','Racks'].map(section=>section+': '+({read:'Read Only',edit:'Edit'}[user.permissions?.[section]]||'No Access')).join(' · ');
+    const avatar=user=>`<span class="v21-users-avatar" aria-hidden="true">${safe((user.username||'?').charAt(0).toUpperCase())}</span>`;
+    const badges=user=>`<span class="v21-users-status ${user.active?'':'is-inactive'}">${user.active?'Active':'Disabled'}</span>
+        ${user.isAdmin?'<span class="v21-users-status is-role">Administrator</span>':'<span class="v21-users-status is-role">Standard user</span>'}
+        <span class="v21-users-status ${user.mfaEnrolled?'':'is-pending'}">MFA ${user.mfaEnrolled?'enrolled':'not enrolled'}</span>`;
+    if (!chosen) {
+      // Invalid/missing selections resolve to the directory rather than a stale profile.
+      selectedUserWorkspaceId=null;
+      html+=`<section class="v21-users-directory" aria-label="Users Directory">
+        <div class="v21-users-heading"><div><h3>Users Directory</h3><p>Select an account to inspect permissions, security and management options.</p></div>
+          <button type="button" data-action="sidebar-users-add" class="v21-users-btn v21-users-btn-primary"><i class="fa-solid fa-plus" aria-hidden="true"></i>Add User</button></div>
+        <div class="v21-users-filters">
+          <div><label for="v21-users-search">Search users</label><input id="v21-users-search" type="search" autocomplete="off" placeholder="Find username or access…"></div>
+          <div><label for="v21-users-filter">Filter accounts</label><select id="v21-users-filter">
+              <option value="all">All accounts</option><option value="active">Active</option>
+              <option value="disabled">Disabled</option><option value="admin">Administrators</option>
+              <option value="mfa-pending">MFA not enrolled</option>
+            </select></div>
+          <span class="v21-users-count" id="v21-users-match-count" role="status">${users.length} account${users.length===1?'':'s'}</span>
+        </div>
+        <div class="v21-users-rows">
+          ${users.map(user=>`<button type="button" data-action="open-user-workspace" data-id="${safe(user.id)}"
+              data-v21-user-row data-search="${safe((user.username+' '+access(user)).toLowerCase())}" data-active="${user.active?'true':'false'}"
+              data-admin="${user.isAdmin?'true':'false'}" data-mfa="${user.mfaEnrolled?'true':'false'}"
+              class="v21-users-row" aria-label="Open ${safe(user.username)} user workspace">
+              <span class="v21-users-row-identity">${avatar(user)}
+                <span><h3>${safe(user.username)}</h3><small>${safe(access(user))}</small></span></span>
+              <span class="v21-users-row-meta">${badges(user)}<i class="fa-solid fa-chevron-right v21-users-row-arrow" aria-hidden="true"></i></span>
+            </button>`).join('')}
+          <p id="v21-users-no-matches" class="v21-users-empty" hidden>No users match the current search or filter.</p>
+        </div>
+      </section>`;
+      return html+'</div>';
     }
+    const own=chosen.username.toLowerCase()===signedInUsername.toLowerCase();
+    const row=(label,value)=>`<div><dt>${label}</dt><dd>${safe(value)}</dd></div>`;
+    const attrs=`<dl class="v21-user-attributes">
+       ${row('Username',chosen.username)}${row('Role',chosen.isAdmin?'Administrator':'Standard user')}
+       ${row('Status',chosen.active?'Active':'Disabled')}${row('Inventory access',chosen.isAdmin?'All sections':'Section-specific')}
+      </dl>`;
+    let permissionBody;
+    if (chosen.isAdmin) permissionBody='<p>Administrator access includes Devices, IPAM and Racks. Existing administration and MFA safeguards remain in force.</p>';
+    else {
+      permissionBody=`<div class="v21-user-permission-grid">
+        ${['Devices','IPAM','Racks'].map(section=>`<label>${section}
+          <select data-next-user-permission data-user-id="${safe(chosen.id)}" data-section="${section}" aria-label="${section} permission">
+          ${[['','No Access'],['read','Read Only'],['edit','Edit']].map(([value,name])=>`<option value="${value}" ${(chosen.permissions?.[section]||'')===value?'selected':''}>${name}</option>`).join('')}
+          </select></label>`).join('')}
+      </div>`;
+    }
+    const operations=[['active',chosen.active?'Disable':'Enable'],['admin',chosen.isAdmin?'Remove admin':'Make admin'],['delete','Delete']];
+    html+=`<div class="v21-user-workspace" aria-label="User Workspace">
+      <div class="v21-users-heading">
+        <div><h3>User Workspace</h3><p>Review this account's saved status, inventory permissions and security settings.</p></div>
+        <button type="button" data-action="back-to-all-users" class="v21-users-btn v21-users-btn-back"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i>Back To All Users</button>
+      </div>
+      <section class="v21-user-profile">${avatar(chosen)}<div><h3>${safe(chosen.username)}</h3><p>Account details and access management</p></div>
+        <div class="v21-users-row-meta">${badges(chosen)}</div></section>
+      <div class="v21-user-workspace-cards">
+        <section class="v21-user-panel" aria-labelledby="v21-user-overview-heading"><h4 id="v21-user-overview-heading"><i class="fa-solid fa-circle-user" aria-hidden="true"></i>Overview</h4>${attrs}</section>
+        <section class="v21-user-panel" aria-labelledby="v21-user-security-heading">
+          <h4 id="v21-user-security-heading"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i>Security</h4>
+          <dl class="v21-user-attributes">${row('Multi-factor authentication',chosen.mfaEnrolled?'Enrolled':'Not enrolled')}${row('Account sign-in',chosen.active?'Enabled':'Disabled')}</dl>
+          ${!chosen.mfaEnrolled&&!chosen.isAdmin?'<p class="mt-3">Editing or administrator access requires MFA. Ask this user to set up their authenticator under My account → Password &amp; MFA first.</p>':''}
+        </section>
+        <section class="v21-user-panel" aria-labelledby="v21-user-permissions-heading"><h4 id="v21-user-permissions-heading"><i class="fa-solid fa-key" aria-hidden="true"></i>Permissions</h4>${permissionBody}</section>
+        <section class="v21-user-panel" aria-labelledby="v21-user-management-heading">
+          <h4 id="v21-user-management-heading"><i class="fa-solid fa-user-gear" aria-hidden="true"></i>Account Management</h4>
+          <p class="mb-3">${own?'Your own administrator account is protected from these changes.':'Changes to roles, status and account deletion follow the existing backend safeguards.'}</p>
+          <div class="v21-user-account-actions">
+            ${operations.map(([kind,label])=>`<button type="button" data-next-user-operation="${kind}" data-user-id="${safe(chosen.id)}" ${own?'disabled':''}>${label}</button>`).join('')}
+          </div>
+        </section>
+      </div>
+    </div>`;
     return html+'</div>';
-  };
   let signedInUsername = '';
   async function loadCentralUsers() {
     const response=await fetch('/api/users',{cache:'no-store'});
@@ -10951,6 +11080,47 @@ window.addEventListener('load', async () => {
     void postInventory('/api/logout',{}).then(()=>window.location.assign('/setup'))
       .catch(error=>showToast(error.message,'error'));
   },true);
+  // Presentation-only navigation. Backend user permissions and account handlers are unchanged.
+  document.addEventListener('click',event=>{
+    const element=event.target.closest('[data-action="open-user-workspace"],[data-action="back-to-all-users"]');
+    if(!element || !sessionIsAdmin)return;
+    event.preventDefault();
+    if(element.dataset.action==='back-to-all-users'){
+      selectedUserWorkspaceId=null;
+      activeUsersTab='list';
+    }else{
+      const user=(users||[]).find(u=>String(u.id)===String(element.dataset.id));
+      if(!user)return;
+      selectedUserWorkspaceId=String(user.id);
+      activeUsersTab='list';
+    }
+    renderContent();
+  },true);
+  function filterPremiumUsersDirectory(){
+    const rows=[...document.querySelectorAll('[data-v21-user-row]')];
+    if(!rows.length)return;
+    const query=(document.getElementById('v21-users-search')?.value||'').trim().toLowerCase();
+    const filter=document.getElementById('v21-users-filter')?.value||'all';
+    let count=0;
+    rows.forEach(row=>{
+      const matchText=!query||(row.dataset.search||'').includes(query);
+      const matchState=filter==='all'||filter==='active'&&row.dataset.active==='true'||
+        filter==='disabled'&&row.dataset.active==='false'||filter==='admin'&&row.dataset.admin==='true'||
+        filter==='mfa-pending'&&row.dataset.mfa==='false';
+      row.hidden=!(matchText&&matchState);
+      if(!row.hidden)count++;
+    });
+    const status=document.getElementById('v21-users-match-count');
+    if(status)status.textContent=count+' matching account'+(count===1?'':'s');
+    const empty=document.getElementById('v21-users-no-matches');
+    if(empty)empty.hidden=count!==0;
+  }
+  document.addEventListener('input',event=>{
+    if(event.target?.id==='v21-users-search')filterPremiumUsersDirectory();
+  });
+  document.addEventListener('change',event=>{
+    if(event.target?.id==='v21-users-filter')filterPremiumUsersDirectory();
+  });
   document.addEventListener('submit',event=>{
     if (event.target.id !== 'next-user-create-form' || !sessionIsAdmin) return;
     event.preventDefault();event.stopImmediatePropagation();
@@ -10959,6 +11129,7 @@ window.addEventListener('load', async () => {
     void changeCentralUser('/api/users/create',{
       username:fields.get('username'),password:fields.get('password')
     }).then(()=>{
+      selectedUserWorkspaceId=null;
       activeUsersTab='list';
       switchTab('users');
     }).catch(error=>showToast(error.message,'error'));
