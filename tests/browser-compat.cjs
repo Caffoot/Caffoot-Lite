@@ -84,11 +84,20 @@ async function run(){
     return rect.left>=0 && rect.right<=window.innerWidth;
   }),'Branded setup panel must fit a narrow screen');
   await page.setViewportSize({width:1440,height:950});
-  await page.waitForFunction(()=>document.querySelector('#intro')?.textContent.includes('Create the first administrator'));
+  await page.locator('#setup-welcome:not([hidden])').waitFor();
+  assert.ok(await page.locator('.auth-brand-message').isVisible(),
+    'The approved two-panel Caffoot brand must appear during first-run setup');
+  assert.equal(await page.locator('#setup-step-count').textContent(),'01 / 04');
+  await page.locator('#begin-setup').click();
+  assert.equal(await page.locator('#auth-title').textContent(),'Create Your Administrator Account');
+  assert.equal(await page.locator('#setup-step-count').textContent(),'02 / 04');
   await page.locator('#username').fill('owner');
   await page.locator('#password').fill(password);
+  await page.locator('#confirm-password').fill(password);
   await page.locator('#submit').click();
   await page.locator('#enrolment:not([hidden])').waitFor();
+  assert.equal(await page.locator('#auth-title').textContent(),'Secure Your Account');
+  assert.equal(await page.locator('#setup-step-count').textContent(),'03 / 04');
   const secret=(await page.locator('#secret').textContent()).trim();
   assert.ok(secret.length>=16,'MFA enrolment secret missing');
   await page.waitForFunction(()=>{
@@ -97,11 +106,10 @@ async function run(){
   });
   await page.locator('#code').fill(mfaCode(secret));
   await page.locator('#submit').click();
-  await page.getByText('MFA enrolled. Sign in to continue.').waitFor();
-  assert.ok(await page.locator('#code-field').evaluate(el=>el.hidden),'Authenticator code should be hidden before sign-in');
-  await page.locator('#submit').click();
-  await page.locator('#code-field:not([hidden])').waitFor();
-  await page.locator('#code').fill(mfaCode(secret));
+  await page.locator('#setup-complete:not([hidden])').waitFor();
+  assert.equal(await page.locator('#auth-title').textContent(),"You're All Set!");
+  assert.equal(await page.locator('#setup-step-count').textContent(),'04 / 04');
+  await page.locator('#finish-setup').click();
   await page.waitForURL('**/inventory');
   assert.equal(await page.locator('script[src*="cdn.tailwindcss.com"]').count(),0,
     'Inventory must not load remote Tailwind JavaScript');
