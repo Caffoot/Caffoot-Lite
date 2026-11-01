@@ -26,6 +26,41 @@ class SchemaTests(unittest.TestCase):
         )]
         self.assertEqual(versions, list(range(1, SCHEMA_VERSION + 1)))
 
+    def test_v2_0_1_accounts_upgrade_to_optional_profiles_without_changes(self):
+        """Migration adds a child table without rebuilding logins or MFA records."""
+        self.connection.execute("CREATE TABLE schema_migrations (version INTEGER PRIMARY KEY)")
+        for version in range(1, 8):
+            self.connection.execute("INSERT INTO schema_migrations(version) VALUES (?)",
+                                    (version,))
+        self.connection.execute("""
+            CREATE TABLE accounts (
+                id INTEGER PRIMARY KEY, username TEXT UNIQUE, password_hash TEXT,
+                is_admin INTEGER, mfa_secret TEXT, mfa_confirmed INTEGER,
+                active INTEGER
+            )
+        """)
+        self.connection.execute("""
+            INSERT INTO accounts VALUES (7,'existing','unchanged_hash',1,'mfa-key',1,1)
+        """)
+        self.connection.commit()
+        initialise_database(self.connection)
+        self.assertEqual(self.connection.execute(
+            "SELECT * FROM accounts WHERE id=7").fetchone(),
+            (7, "existing", "unchanged_hash", 1, "mfa-key", 1, 1))
+        self.connection.execute("""
+            INSERT INTO account_profiles (account_id,display_name)
+            VALUES (7,'Someone')
+        """)
+        self.connection.commit()
+        initialise_database(self.connection)
+        self.assertEqual(self.connection.execute(
+            "SELECT display_name FROM account_profiles WHERE account_id=7"
+        ).fetchone()[0],"Someone")
+        self.connection.execute("DELETE FROM accounts WHERE id=7")
+        self.connection.commit()
+        self.assertIsNone(self.connection.execute(
+            "SELECT * FROM account_profiles WHERE account_id=7").fetchone())
+
     def test_reject_newer_database_without_downgrade(self):
         initialise_database(self.connection)
         self.connection.execute(
