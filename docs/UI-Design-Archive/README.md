@@ -1,7 +1,7 @@
 # Caffoot Lite — Premium UI Design Archive
 
 **Prepared:** 1 November 2026  
-**Status:** Design record archived as a **documentation-only pull request**. The actual visual/HTML assets still require separate binary upload; see [Asset Register](02-asset-register.md).  
+**Status:** Documentation-only draft pull request with the exact self-contained **Settings & Data 04.1** and **historical My Account Draft 01** interactive HTML already version-controlled. **PNG previews and the newly approved My Account Personal Details image are still awaiting upload to GitHub**; see [Asset Register](02-asset-register.md).  
 **Product-owner decision register:** [GitHub #227](https://github.com/Caffoot/Caffoot-Lite/issues/227)  
 **Future Ideas Register:** [GitHub #222](https://github.com/Caffoot/Caffoot-Lite/issues/222)
 
