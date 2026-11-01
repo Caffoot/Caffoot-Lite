@@ -181,29 +181,55 @@ async function run(){
   await page.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='My account');
   assert.equal(await page.locator('#sidebar [data-action="tab-account"]').getAttribute('aria-current'),'page');
   assert.equal(await page.locator('#sidebar [data-action="tab-dashboard"]').getAttribute('aria-current'),null);
-  // Stage 10: approved My Account Overview and honest, disabled future profile storage.
+  // Stage 11: optional data actually persists under the authenticated account.
   await page.locator('#v21-personal-details-title').waitFor();
   assert.equal(await page.locator('.v21-account-tabs [aria-selected="true"]').getAttribute('data-section'),'overview');
   assert.equal(await page.locator('#v21-profile-username').inputValue(),'owner');
   assert.equal(await page.locator('#v21-profile-username').getAttribute('readonly'),'',
-    'Published username must remain an unchanged sign-in identifier');
+    'The original username must remain read-only');
   for(const id of ['first-name','last-name','email','display-name'])
-    assert.ok(await page.locator('#v21-profile-'+id).isDisabled(),'Unimplemented profile fields must not accept unsaved input: '+id);
-  assert.ok(await page.getByRole('button',{name:'Upload Profile Image'}).isDisabled(),
-    'Do not accept photos before secure storage and ownership checks exist');
-  assert.ok(await page.getByRole('button',{name:'Save Personal Details'}).isDisabled(),
-    'Do not offer a false save before the profile backend is ready');
-  assert.ok(await page.locator('.v21-account-hero').isVisible(),'Premium full-width identity banner must be visible');
-  assert.match(await page.locator('.v21-account-security-state').textContent(),/Protected By MFA/,
-    'Account security must reflect the actual session MFA state');
-  assert.equal(await page.locator('.v21-account-tiles .v21-account-planned').count(),2,
-    'Future My Devices and ticket areas must be visibly marked planned');
-  assert.equal(await page.locator('.v21-account-tabs [role="tab"]').count(),5,
-    'Approved sections must preserve Overview, Security, Appearance, Help and About');
+    assert.ok(await page.locator('#v21-profile-'+id).isEnabled(),'Optional profile field should be editable: '+id);
+  assert.ok(await page.locator('.v21-account-hero').isVisible());
+  assert.match(await page.locator('.v21-account-security-state').textContent(),/Protected By MFA/);
+  assert.equal(await page.locator('.v21-account-tiles .v21-account-planned').count(),2);
+  assert.equal(await page.locator('.v21-account-tabs [role="tab"]').count(),5);
+  await page.locator('#v21-profile-first-name').fill('Jane');
+  await page.locator('#v21-profile-last-name').fill('Example');
+  await page.locator('#v21-profile-email').fill('jane@example.test');
+  await page.locator('#v21-profile-display-name').fill('Jane E');
+  await page.getByRole('button',{name:'Save Personal Details'}).click();
+  await page.waitForFunction(()=>document.querySelector('#v21-header-username')?.textContent==='Jane E');
+  assert.equal(await page.locator('#v21-profile-username').inputValue(),'owner',
+    'Saving display name must not rename the sign-in identifier');
+  await page.reload();
+  await page.locator('#next-account-nav').waitFor();
+  await page.locator('#v21-account-shortcut').click();
+  await page.locator('#v21-profile-first-name').waitFor();
+  assert.equal(await page.locator('#v21-profile-first-name').inputValue(),'Jane');
+  assert.equal(await page.locator('#v21-profile-display-name').inputValue(),'Jane E');
+  assert.equal(await page.locator('#v21-profile-email').inputValue(),'jane@example.test');
+  const pngData=await page.evaluate(()=>{
+    const canvas=document.createElement('canvas');
+    canvas.width=2;canvas.height=2;
+    canvas.getContext('2d').fillRect(0,0,2,2);
+    return canvas.toDataURL('image/png').split(',')[1];
+  });
+  await page.locator('#v21-profile-image-file').setInputFiles({
+    name:'avatar.png',mimeType:'image/png',buffer:Buffer.from(pngData,'base64')
+  });
+  await page.locator('.v21-account-photo img.v21-account-avatar-photo').waitFor();
+  assert.equal((await page.request.get(address+'/api/account/photo')).status(),200,
+    'Authorised account photograph should be available from the private endpoint');
+  assert.ok(await page.locator('#v21-header-avatar img').isVisible());
+  page.once('dialog',dialog=>dialog.accept());
+  await page.getByRole('button',{name:'Remove Image'}).click();
+  await page.getByRole('button',{name:'Upload Profile Image'}).waitFor();
+  assert.equal((await page.request.get(address+'/api/account/photo')).status(),404);
   await page.setViewportSize({width:390,height:812});
   assert.ok(await page.locator('#main-content').evaluate(el=>el.scrollWidth<=el.clientWidth+2),
     'My Account must not overflow the narrow mobile workspace');
   await page.setViewportSize({width:1440,height:950});
+  console.log('Stage 11 optional profile persistence, upload, private retrieval, remove and mobile layout passed');
   await page.locator('#sidebar [data-action="tab-dashboard"]').click();
   await page.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='Dashboard Overview');
   assert.ok(await page.locator('.v21-skip-link').count(),
