@@ -410,6 +410,7 @@ async function run(){
   const device=saved.devices.find(d=>d.name==='browser-device');
   assert.equal(saved.ipAllocations['10.64.20.10'].deviceId,device.id);
   console.log('Device form and primary IPAM allocation passed');
+  await page.waitForFunction(()=>document.getElementById('modal-container')?.classList.contains('hidden'));
   // Existing v2.0.1 VM behaviour: the Hardware tab remains hidden and
   // VM allocations/host controls stay in General, without any new save logic.
   await page.evaluate(()=>{
