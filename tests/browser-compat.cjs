@@ -483,6 +483,37 @@ async function run(){
   const rackSwitch=switchState.devices.find(d=>d.name==='rack-switch');
   assert.equal(switchState.ipAllocations['10.64.20.11'].deviceId,rackSwitch.id);
   await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
+  // Rack preview uses the real saved face and U position, not a fabricated rack.
+  await page.evaluate(id=>openDeviceDetailView(id),rackSwitch.id);
+  await page.locator('.v21-device-detail-page').waitFor({state:'visible'});
+  await page.getByRole('tab',{name:'Location',exact:true}).click();
+  assert.ok(await page.locator('.v21-device-rack-preview').isVisible(),
+    'Valid rack-mounted device should have a small contextual placement illustration');
+  assert.ok(await page.locator('.v21-device-rack-preview').getByText(/Front face.*U5/).isVisible());
+  assert.ok((await page.locator('.v21-device-rack-preview-track').getAttribute('aria-label')).includes('U5'));
+  await page.locator('[data-action="device-detail-back"]').first().click();
+
+  // A VM receives its own Hardware tab and recorded physical host, but no rack illustration.
+  // This temporary preview-only record is never posted to SQLite.
+  await page.evaluate(hostId=>{
+    const host=appState.devices.find(d=>String(d.id)===String(hostId));
+    appState.devices.push({...host,id:'temporary-browser-vm',name:'temporary-browser-vm',
+      type:'Server - Virtual',isVirtual:true,virtualHostId:hostId,
+      mountType:'Not Applicable',rackId:null,face:null,rackUStart:null,rackUEnd:null,
+      vmVcpu:2,vmRamGb:8,vmDiskGb:64,vmNicCount:1,previousTypeDetails:[]});
+    openDeviceDetailView('temporary-browser-vm');
+  },rackSwitch.id);
+  await page.getByRole('tab',{name:'VM Hardware',exact:true}).click();
+  assert.ok(await page.locator('#device-details-panel-hardware').getByText('Allocated virtual hardware').isVisible());
+  await page.getByRole('tab',{name:'Overview',exact:true}).click();
+  assert.ok(await page.locator('#device-details-panel-overview').getByText('rack-switch').isVisible(),
+    'Virtual machine must retain its recorded physical host relationship');
+  await page.getByRole('tab',{name:'Location',exact:true}).click();
+  assert.equal(await page.locator('.v21-device-rack-preview').count(),0);
+  await page.reload();
+  await page.locator('#next-account-nav').waitFor();
+  console.log('v2.1 contextual rack placement and virtual-machine hardware passed');
+
   await page.evaluate(({id,deviceId})=>openAssignDeviceModal(id,6,deviceId),{id:rackId,deviceId:rackSwitch.id});
   await page.locator('#assign-face').selectOption('front');
   await page.locator('#assign-u-start').selectOption('6');
@@ -705,6 +736,15 @@ async function run(){
   assert.ok(await viewer.locator('#next-settings-nav').isHidden());
   assert.ok(await viewer.locator('#next-users-nav').isHidden());
   await viewer.locator('#sidebar [data-action="tab-devices"]').click();
+  await viewer.locator('.v21-directory-split').waitFor({state:'visible'});
+  assert.equal(await viewer.locator('#v21-directory-preview [data-action="edit-device"]').count(),0);
+  assert.equal(await viewer.locator('#v21-directory-preview [data-action="duplicate-device"]').count(),0);
+  assert.equal(await viewer.locator('#v21-directory-preview [data-action="delete-device"]').count(),0);
+  await viewer.locator('#v21-directory-preview [data-action="view-device"]').click();
+  await viewer.locator('.v21-device-detail-page').waitFor({state:'visible'});
+  assert.ok(await viewer.getByRole('tab',{name:'Software',exact:true}).isVisible());
+  await viewer.locator('[data-action="device-detail-back"]').first().click();
+  await viewer.locator('.v21-directory-split').waitFor({state:'visible'});
   assert.ok(await viewer.locator('#devices-sidebar-actions [data-action="open-device-modal"]').isHidden());
   await viewer.evaluate(()=>openDeviceModal());
   assert.ok(await viewer.locator('#modal-container').evaluate(el=>el.classList.contains('hidden')),
