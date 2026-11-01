@@ -1560,6 +1560,107 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 @media(max-width:620px){.v21-users-root #next-user-create-form,.v21-user-permission-grid{grid-template-columns:1fr}.v21-users-filters>div:nth-child(2){flex:1 1 180px}.v21-users-row-meta{width:100%;margin-left:60px}.v21-user-profile .v21-users-row-meta{margin-left:0}.v21-users-root>section:first-child{padding:20px}}
 @media(prefers-reduced-motion:reduce){.v21-users-row{transition:none}}
 </style>
+
+<style id="caffoot-v21-my-account-style">
+/* Stage 10: approved My Account visual workspace; no new account persistence or security routes. */
+.v21-account{width:100%;max-width:1340px;margin:0 auto;color:#243d54;font-size:13px}
+.v21-account-intro{margin-bottom:20px}
+.v21-account-eyebrow{color:#db7730;text-transform:uppercase;letter-spacing:.13em;font-size:10px;font-weight:820}
+.v21-account-intro h2{font-size:27px;font-weight:800;line-height:1.2;letter-spacing:-.025em;color:#233e58;margin:5px 0 7px}
+.v21-account-intro p{color:#667f95;font-size:13px;line-height:1.65}
+.v21-account-hero{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;padding:25px 28px;background:linear-gradient(113deg,#162b41,#2e4d68);border-radius:17px;border:1px solid #3b5269;color:white;box-shadow:0 8px 24px #152b4115}
+.v21-account-identity{display:flex;align-items:center;gap:19px;min-width:0}
+.v21-account-avatar{width:67px;height:67px;flex:0 0 67px;border-radius:50%;display:grid;place-items:center;font-size:23px;font-weight:780;color:white;background:#4d687d;border:3px solid #efa05a}
+.v21-account-identity h3{font-size:22px;font-weight:790;color:white;line-height:1.3;overflow-wrap:anywhere}
+.v21-account-identity p{font-size:12px;color:#ccdbe8;margin-top:5px}
+.v21-account-badges{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin-top:10px}
+.v21-account-badges span{padding:4px 9px;border:1px solid #7890a3;border-radius:50px;font-size:10.5px;font-weight:690;color:#f6fbff}
+.v21-account-security-state{text-align:right;min-width:145px}
+.v21-account-security-state small{display:block;font-size:10px;font-weight:780;letter-spacing:.12em;text-transform:uppercase;color:#b7cadb}
+.v21-account-security-state strong{display:block;margin-top:6px;font-size:13px;font-weight:760;color:#fff}
+.v21-account-tabs{display:flex;gap:24px;overflow-x:auto;scrollbar-width:thin;border-bottom:1px solid #d7e1e9;margin:21px 0}
+.v21-account-tabs button{display:inline-flex;align-items:center;gap:8px;min-height:47px;white-space:nowrap;padding:11px 4px 13px;border-bottom:3px solid transparent;color:#6c8297;font-weight:730;font-size:12px}
+.v21-account-tabs button[aria-selected="true"]{border-color:#e77c2f;color:#28455f}
+.v21-account-tabs button:hover{color:#b95712}
+.v21-account :is(button,a,input):focus-visible{outline:3px solid #f47b20;outline-offset:3px}
+.v21-account-layout{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(270px,1fr);gap:18px;align-items:start}
+.v21-account-main,.v21-account-side{display:grid;gap:17px;min-width:0}
+.v21-account-card{padding:22px 24px;background:#fff;border:1px solid #dae4ed;border-radius:16px;box-shadow:0 3px 15px #16314a0a;min-width:0}
+.v21-account-card-heading{display:flex;align-items:center;gap:11px;margin-bottom:17px}
+.v21-account-card-heading>i{width:37px;height:37px;flex:0 0 37px;display:grid;place-items:center;color:#d66c20;background:#fff1e5;border-radius:10px;font-size:16px}
+.v21-account-card h3{font-size:16px;font-weight:780;line-height:1.3;color:#263f57}
+.v21-account-card h4{font-size:13px;font-weight:780;color:#263f57}
+.v21-account-card p{font-size:12px;line-height:1.65;color:#687f91}
+.v21-account-card .v21-account-muted{color:#71889a;font-size:11.5px}
+.v21-account-detail-layout{display:grid;grid-template-columns:135px minmax(0,1fr);align-items:start;gap:22px}
+.v21-account-photo{display:grid;justify-items:center;text-align:center;gap:10px}
+.v21-account-photo .v21-account-avatar{width:88px;height:88px;font-size:30px;border-color:#e58c45;color:#29455f;background:#eaf0f5}
+.v21-account-photo button{border:1px solid #ccd8e3;background:#f0f4f8;color:#657b8f;padding:9px 10px;border-radius:9px;font-size:11.5px;font-weight:720}
+.v21-account-photo button:disabled{cursor:not-allowed}
+.v21-account-photo small{font-size:10.5px;line-height:1.6;color:#7c8ea0}
+.v21-account-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.v21-account-fields label{display:grid;gap:5px;font-size:11.5px;font-weight:720;color:#3b5267;min-width:0}
+.v21-account-fields input{width:100%;min-width:0;height:42px;padding:0 12px;background:#f6f8fa;border:1px solid #d6e0e9;border-radius:9px;font-size:12.5px;color:#50677b}
+.v21-account-fields input:disabled{opacity:1;cursor:not-allowed}
+.v21-account-fields input[readonly]{background:#f0f4f7;color:#314b62}
+.v21-account-fields .v21-account-field-wide{grid-column:1/-1}
+.v21-account-readonly{display:flex;gap:6px;align-items:center;color:#7890a4;font-size:10.5px;font-weight:650}
+.v21-account-form-actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:11px;margin-top:15px}
+.v21-account-form-actions span{font-size:11px;color:#7e6571}
+.v21-account-primary,.v21-account-secondary{display:inline-flex;align-items:center;justify-content:center;gap:9px;border-radius:10px;min-height:42px;padding:10px 15px;font-size:12px;font-weight:760}
+.v21-account-primary{color:white;background:#e96c17;border:1px solid #e96c17}
+.v21-account-primary:hover:not(:disabled){background:#c7580d}
+.v21-account-primary:disabled{background:#e9eef2;border-color:#d6e1e9;color:#647a8d;cursor:not-allowed}
+.v21-account-secondary{color:#c36622;background:#fff8f2;border:1px solid #eed5c0}
+.v21-account-secondary:hover{background:#ffecdd}
+.v21-account-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:15px 0}
+.v21-account-summary>div{padding:11px 13px;background:#f6f9fb;border:1px solid #e1eaf1;border-radius:10px;min-width:0}
+.v21-account-summary span{display:block;color:#688196;font-size:10.5px;font-weight:700}
+.v21-account-summary strong{display:block;color:#2c455b;font-size:12px;margin-top:4px;overflow-wrap:anywhere}
+.v21-account-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.v21-account-tiles>div{border:1px solid #e0e8ee;border-radius:12px;padding:14px;background:#f9fbfd}
+.v21-account-tiles i{color:#dd782c;font-size:16px}
+.v21-account-tiles h4{margin:9px 0 5px}
+.v21-account-planned{font-size:9.5px;font-weight:790;text-transform:uppercase;letter-spacing:.09em;color:#a96220;background:#fff1dc;border-radius:99px;padding:4px 7px;margin-left:8px}
+.v21-account-util{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px}
+.v21-account-util span{font-size:11.5px;color:#435f76;font-weight:730}
+.v21-account-session button{color:#a94343;background:#fff2f2;border-color:#edcaca}
+.v21-account-session button:hover{background:#fce4e4}
+.v21-account-section{display:grid;gap:16px;max-width:860px}
+.v21-account-section>section{margin:0}
+.v21-account-section #next-account-password-form{display:grid;gap:14px;margin-top:15px}
+.v21-account-section #next-account-password-form label,.v21-account-section #next-account-mfa-start label,.v21-account-section #next-account-mfa-confirm label{color:#385267}
+.v21-account-section input[type=password],.v21-account-section input[name=code]{height:44px;background:#fff;border:1px solid #bdccd9;border-radius:9px;color:#263f56}
+.v21-account-section button[type=submit]{min-height:42px;background:#e96c17;border-radius:9px;font-size:12px;font-weight:730}
+.v21-account-section .settings-panel{max-width:none;width:100%}
+.v21-account-section .settings-action{background:#e96c17;border-color:#e96c17}
+.v21-account-section .settings-action:hover{background:#c65c12}
+.dark .v21-account,.dark .v21-account-intro h2{color:#f0f6fb}
+.dark .v21-account-intro p{color:#c1d1e0}
+.dark .v21-account-card{background:#25384b;border-color:#4c6379}
+.dark .v21-account-card h3,.dark .v21-account-card h4{color:#f0f6ff}
+.dark .v21-account-card p,.dark .v21-account-card .v21-account-muted{color:#c4d5e4}
+.dark .v21-account-tabs{border-color:#42566b}
+.dark .v21-account-tabs button{color:#b4c7d9}
+.dark .v21-account-tabs button[aria-selected="true"]{color:#ffd6b9}
+.dark .v21-account-fields label{color:#d2e1ed}
+.dark .v21-account-fields input,.dark .v21-account-fields input[readonly]{background:#314a60;color:#e0ebf5;border-color:#526d81}
+.dark .v21-account-readonly{color:#bdccdc}
+.dark .v21-account-photo .v21-account-avatar{background:#38546b;color:#f2f7fc}
+.dark .v21-account-photo button{background:#30485d;color:#c9d7e6;border-color:#597083}
+.dark .v21-account-form-actions span{color:#dcbec0}
+.dark .v21-account-summary>div,.dark .v21-account-tiles>div{background:#30475b;border-color:#52687c}
+.dark .v21-account-summary span,.dark .v21-account-util span{color:#bfd0dd}
+.dark .v21-account-summary strong{color:#edf5ff}
+.dark .v21-account-secondary{background:#453528;color:#ffd3b1;border-color:#93633d}
+.dark .v21-account-planned{background:#604323;color:#ffe1bd}
+.dark .v21-account-session button{background:#502e35;color:#ffd6d6;border-color:#87535b}
+.dark .v21-account-section input[type=password],.dark .v21-account-section input[name=code]{background:#30475c;border-color:#637a8e;color:#f0f6fc}
+@media(max-width:1000px){.v21-account-layout{grid-template-columns:1fr}}
+@media(max-width:680px){.v21-account-hero{padding:20px}.v21-account-security-state{text-align:left}.v21-account-detail-layout{grid-template-columns:1fr}.v21-account-photo{justify-items:start;text-align:left}.v21-account-fields{grid-template-columns:1fr}.v21-account-summary{grid-template-columns:1fr}.v21-account-card{padding:18px}.v21-account-intro h2{font-size:24px}}
+@media(max-width:450px){.v21-account-tiles{grid-template-columns:1fr}.v21-account-identity{gap:11px}.v21-account-identity h3{font-size:18px}.v21-account-avatar{width:53px;height:53px;flex-basis:53px;font-size:19px}.v21-account-tabs{gap:17px}}
+</style>
+
 <style id="caffoot-v21-settings-style">
 /* Stage 9: preserve the published Settings arrangement; premium surface only. */
 .v21-settings{width:100%;max-width:1240px;color:#263c52}
@@ -1615,11 +1716,11 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 /* Global owner-approved My Account Personal Details typographic hierarchy.
    Presentation only: preserve the existing controls, forms and Rack/Device logic. */
 #main-content{--v21-type-page:25px;--v21-type-card:16px;--v21-type-body:13px;--v21-type-label:12px;--v21-type-small:11.5px;--v21-type-label-weight:650;--v21-type-heading-weight:770;font-family:Inter,'Segoe UI',Tahoma,Arial,sans-serif;line-height:1.55}
-#main-content :is(.v21-dashboard,.v21-device-directory,.v21-device-detail-page,.v21-ipam,.v21-racks,.v21-users-root,.v21-settings){font-family:inherit;font-weight:500}
-#main-content :is(.v21-dashboard,.v21-device-directory,.v21-device-detail-page,.v21-ipam,.v21-racks,.v21-users-root,.v21-settings) :is(label,dt,th){font-weight:var(--v21-type-label-weight)}
-#main-content :is(.v21-dashboard,.v21-device-directory,.v21-device-detail-page,.v21-ipam,.v21-racks,.v21-users-root,.v21-settings) :is(h2,h3,h4){font-weight:var(--v21-type-heading-weight);line-height:1.3;letter-spacing:-.01em}
-#main-content :is(.v21-dashboard,.v21-device-directory,.v21-device-detail-page,.v21-ipam,.v21-racks,.v21-users-root,.v21-settings) :is(p,dd,td,li){line-height:1.6}
-#main-content :is(.v21-dashboard,.v21-device-directory,.v21-device-detail-page,.v21-ipam,.v21-racks,.v21-users-root,.v21-settings) :is(input,select,textarea,button){font-family:inherit}
+#main-content :is(.v21-dashboard,.v21-device-directory,.v21-device-detail-page,.v21-ipam,.v21-racks,.v21-users-root,.v21-settings,.v21-account){font-family:inherit;font-weight:500}
+#main-content :is(.v21-dashboard,.v21-device-directory,.v21-device-detail-page,.v21-ipam,.v21-racks,.v21-users-root,.v21-settings,.v21-account) :is(label,dt,th){font-weight:var(--v21-type-label-weight)}
+#main-content :is(.v21-dashboard,.v21-device-directory,.v21-device-detail-page,.v21-ipam,.v21-racks,.v21-users-root,.v21-settings,.v21-account) :is(h2,h3,h4){font-weight:var(--v21-type-heading-weight);line-height:1.3;letter-spacing:-.01em}
+#main-content :is(.v21-dashboard,.v21-device-directory,.v21-device-detail-page,.v21-ipam,.v21-racks,.v21-users-root,.v21-settings,.v21-account) :is(p,dd,td,li){line-height:1.6}
+#main-content :is(.v21-dashboard,.v21-device-directory,.v21-device-detail-page,.v21-ipam,.v21-racks,.v21-users-root,.v21-settings,.v21-account) :is(input,select,textarea,button){font-family:inherit}
 </style>
 <style id="caffoot-v21-settings-041">
 /* Stage 9 accepted Settings & Data Concept 04.1, scoped to this page. */
@@ -2548,7 +2649,7 @@ function hierarchyValidateTypes(subnets) {
         let nextRenderUsers = () => '';
         let activeUsersTab = 'overview';
         let nextRenderAccount = () => '';
-        let activeAccountSection = 'security';
+        let activeAccountSection = 'overview';
         let nextImportAllowed = false;
         function saveState() { showToast('This inventory operation is not yet connected to SQLite.', 'error'); return false; }
 
@@ -10050,7 +10151,7 @@ function hierarchyValidateTypes(subnets) {
                 case 'sidebar-users-list': selectedUserWorkspaceId=null; activeUsersTab='list'; switchTab('users'); break;
                 case 'sidebar-users-add': activeUsersTab='add'; switchTab('users'); break;
                 case 'tab-account': switchTab('account'); break;
-                case 'select-account-section': if (['security','preferences','help','about'].includes(target.dataset.section)) { activeAccountSection=target.dataset.section; switchTab('account'); } break;
+                case 'select-account-section': if (['overview','security','preferences','help','about'].includes(target.dataset.section)) { activeAccountSection=target.dataset.section; switchTab('account'); } break;
                 case 'choose-backup-import': document.getElementById('import-file')?.click(); break;
                 case 'toggle-settings-theme': toggleDarkMode(); renderContent(); break;
                 case 'change-appearance-theme': caffootSetTheme(target.dataset.theme); break;
@@ -10968,15 +11069,86 @@ window.addEventListener('load', async () => {
     }
     return html+'<button type="button" id="next-account-signout" class="px-4 py-2 rounded-xl bg-slate-700 text-white text-sm font-semibold">Sign out</button>';
   }
+
+  // Stage 10: the approved Overview is read-only until protected profile storage is scoped.
+  function renderAccountOverview(){
+    const username=escapeHtml(signedInUsername || '');
+    const initial=escapeHtml((signedInUsername || '').trim().charAt(0).toUpperCase() || '?');
+    const role=sessionIsAdmin ? 'Administrator' : 'Standard User';
+    const mfa=sessionMfaEnrolled ? 'MFA Enrolled' : 'MFA Not Enrolled';
+    const preference=caffootThemePreference();
+    const appearance=preference==='dark' ? 'Dark Mode' : preference==='light' ? 'Light Mode' : 'Use System Setting';
+    const futureField=(name,id)=>'<label for="'+id+'">'+name+'<input id="'+id+'" type="text" disabled placeholder="Available in a future stage" autocomplete="off"></label>';
+    return `
+      <div class="v21-account-layout">
+        <div class="v21-account-main">
+          <section class="v21-account-card" aria-labelledby="v21-personal-details-title">
+            <div class="v21-account-card-heading"><i class="fa-solid fa-address-card" aria-hidden="true"></i><div><h3 id="v21-personal-details-title">Personal Details</h3><p>Manage how your personal information appears in Caffoot Lite.</p></div></div>
+            <div class="v21-account-detail-layout">
+              <div class="v21-account-photo"><span class="v21-account-avatar" aria-label="Profile image placeholder">${initial}</span>
+                <button type="button" disabled title="Profile image storage is not yet available"><i class="fa-solid fa-camera" aria-hidden="true"></i> Upload Profile Image</button>
+                <small>Optional photo upload — planned. No image is collected or stored.</small>
+              </div>
+              <div>
+                <div class="v21-account-fields">
+                  ${futureField('First Name','v21-profile-first-name')}
+                  ${futureField('Last Name','v21-profile-last-name')}
+                  ${futureField('Email Address','v21-profile-email')}
+                  ${futureField('Display Name','v21-profile-display-name')}
+                  <label class="v21-account-field-wide" for="v21-profile-username">Username
+                    <input id="v21-profile-username" type="text" value="${username}" readonly aria-describedby="v21-username-readonly">
+                    <span class="v21-account-readonly" id="v21-username-readonly"><i class="fa-solid fa-lock" aria-hidden="true"></i> Read-Only — your sign-in identifier never changes here.</span>
+                  </label>
+                </div>
+                <div class="v21-account-form-actions"><span>Profile editing pending secure storage</span><button type="button" class="v21-account-primary" disabled>Save Personal Details</button></div>
+              </div>
+            </div>
+          </section>
+          <section class="v21-account-card" aria-labelledby="v21-account-security-title">
+            <div class="v21-account-card-heading"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i><div><h3 id="v21-account-security-title">Account &amp; Security</h3><p>Your existing sign-in and security settings.</p></div></div>
+            <div class="v21-account-summary">
+              <div><span>Username</span><strong>${username}</strong></div>
+              <div><span>Role</span><strong>${role}</strong></div>
+              <div><span>Authenticator</span><strong>${mfa}</strong></div>
+            </div>
+            <button type="button" class="v21-account-secondary" data-action="select-account-section" data-section="security"><i class="fa-solid fa-lock" aria-hidden="true"></i>Manage Security</button>
+          </section>
+          <section class="v21-account-card" aria-labelledby="v21-account-services-title">
+            <div class="v21-account-card-heading"><i class="fa-solid fa-grid-2" aria-hidden="true"></i><div><h3 id="v21-account-services-title">Your Services</h3><p>Personal services planned for a later version.</p></div></div>
+            <div class="v21-account-tiles">
+              <div><i class="fa-solid fa-laptop" aria-hidden="true"></i><h4>My Devices <span class="v21-account-planned">Planned</span></h4><p>View devices assigned to your account when assignments become available.</p></div>
+              <div><i class="fa-solid fa-ticket" aria-hidden="true"></i><h4>My Support Tickets <span class="v21-account-planned">Planned</span></h4><p>Follow your support requests when ticketing becomes available.</p></div>
+            </div>
+          </section>
+        </div>
+        <aside class="v21-account-side" aria-label="Personal account shortcuts">
+          <section class="v21-account-card"><div class="v21-account-card-heading"><i class="fa-solid fa-palette" aria-hidden="true"></i><h3>Personal Preferences</h3></div><p>Appearance on this browser</p><div class="v21-account-util"><span>${appearance}</span><button type="button" class="v21-account-secondary" data-action="select-account-section" data-section="preferences">Change Appearance</button></div></section>
+          <section class="v21-account-card"><div class="v21-account-card-heading"><i class="fa-solid fa-book-open" aria-hidden="true"></i><h3>Help &amp; Guides</h3></div><p>Find practical guidance for devices, IPAM, Racks, access and backups.</p><div class="v21-account-util"><button type="button" class="v21-account-secondary" data-action="select-account-section" data-section="help">Explore Help &amp; Guides</button></div></section>
+          <section class="v21-account-card v21-account-session"><div class="v21-account-card-heading"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i><h3>Session</h3></div><p>Sign out safely when you have finished working.</p><div class="v21-account-util"><button type="button" class="v21-account-secondary" id="next-account-signout"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>Sign Out</button></div></section>
+        </aside>
+      </div>`;
+  }
   nextRenderAccount=function(){
-    const tabs=[['security','Password & MFA','fa-user-shield'],['preferences','Appearance Preferences','fa-palette'],
-      ['help','Help & Guides','fa-book-open'],['about','About Caffoot Lite','fa-circle-info']];
+    const tabs=[['overview','Overview','fa-house'],['security','Security','fa-user-shield'],
+      ['preferences','Appearance','fa-palette'],['help','Help & Guides','fa-book-open'],['about','About','fa-circle-info']];
     const selected=activeAccountSection;
-    return '<div class="w-full space-y-5 text-slate-800 dark:text-slate-100">' +
-      '<div><h2 class="text-xl font-bold">My account</h2><p class="text-sm">Manage your account and personal preferences.</p></div>' +
-      '<div class="settings-tabs" role="group" aria-label="My account sections">' +
-      tabs.map(([id,label,icon])=>'<button type="button" data-action="select-account-section" data-section="'+id+'" aria-pressed="'+(selected===id)+'" class="settings-tab '+(selected===id?'settings-tab-active':'')+'"><i class="fa-solid '+icon+'" aria-hidden="true"></i>'+label+'</button>').join('')+
-      '</div>'+(selected==='security'?renderAccountSections():renderPersonalSettingsBody(selected))+'</div>';
+    return `<div class="v21-account">
+      <header class="v21-account-intro"><span class="v21-account-eyebrow">Your Personal Workspace</span><h2>My Account</h2><p>Everything about your account, in one place. Simple today, ready for tomorrow.</p></header>
+      <section class="v21-account-hero" aria-label="Account identity">
+        <div class="v21-account-identity"><span class="v21-account-avatar" aria-hidden="true">${escapeHtml((signedInUsername||'').trim().charAt(0).toUpperCase()||'?')}</span>
+          <div><h3>${escapeHtml(signedInUsername||'')}</h3><p>Your Caffoot Lite account</p><div class="v21-account-badges">
+          <span>${sessionIsAdmin?'Administrator':'Standard User'}</span><span>${sessionMfaEnrolled?'MFA Enrolled':'MFA Not Enrolled'}</span><span>Signed In</span>
+          </div></div></div>
+        <div class="v21-account-security-state"><small>Account Security</small><strong><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> ${sessionMfaEnrolled?'Protected By MFA':'MFA Setup Available'}</strong></div>
+      </section>
+      <nav class="v21-account-tabs" aria-label="My Account sections" role="tablist">
+        ${tabs.map(([id,label,icon])=>'<button type="button" role="tab" aria-selected="'+(selected===id)+'" data-action="select-account-section" data-section="'+id+'"><i class="fa-solid '+icon+'" aria-hidden="true"></i>'+label+'</button>').join('')}
+      </nav>
+      <div class="v21-account-section-container" role="tabpanel" aria-label="${tabs.find(tab=>tab[0]===selected)?.[1]||'Overview'}">
+        ${selected==='overview'?renderAccountOverview():selected==='security'?'<div class="v21-account-section">'+renderAccountSections()+'</div>':'<div class="v21-account-section">'+renderPersonalSettingsBody(selected)+'</div>'}
+      </div>
+      <p class="v21-account-muted" style="margin-top:23px;font-size:11px;color:#778da0">Caffoot Lite · Infrastructure, Simplified.</p>
+    </div>`;
   };
   // Users: administrator-only section, following the published sidebar and panel style.
   let users = null;
