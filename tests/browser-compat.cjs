@@ -181,6 +181,29 @@ async function run(){
   await page.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='My account');
   assert.equal(await page.locator('#sidebar [data-action="tab-account"]').getAttribute('aria-current'),'page');
   assert.equal(await page.locator('#sidebar [data-action="tab-dashboard"]').getAttribute('aria-current'),null);
+  // Stage 10: approved My Account Overview and honest, disabled future profile storage.
+  await page.locator('#v21-personal-details-title').waitFor();
+  assert.equal(await page.locator('.v21-account-tabs [aria-selected="true"]').getAttribute('data-section'),'overview');
+  assert.equal(await page.locator('#v21-profile-username').inputValue(),'owner');
+  assert.equal(await page.locator('#v21-profile-username').getAttribute('readonly'),'',
+    'Published username must remain an unchanged sign-in identifier');
+  for(const id of ['first-name','last-name','email','display-name'])
+    assert.ok(await page.locator('#v21-profile-'+id).isDisabled(),'Unimplemented profile fields must not accept unsaved input: '+id);
+  assert.ok(await page.getByRole('button',{name:'Upload Profile Image'}).isDisabled(),
+    'Do not accept photos before secure storage and ownership checks exist');
+  assert.ok(await page.getByRole('button',{name:'Save Personal Details'}).isDisabled(),
+    'Do not offer a false save before the profile backend is ready');
+  assert.ok(await page.locator('.v21-account-hero').isVisible(),'Premium full-width identity banner must be visible');
+  assert.match(await page.locator('.v21-account-security-state').textContent(),/Protected By MFA/,
+    'Account security must reflect the actual session MFA state');
+  assert.equal(await page.locator('.v21-account-tiles .v21-account-planned').count(),2,
+    'Future My Devices and ticket areas must be visibly marked planned');
+  assert.equal(await page.locator('.v21-account-tabs [role="tab"]').count(),5,
+    'Approved sections must preserve Overview, Security, Appearance, Help and About');
+  await page.setViewportSize({width:390,height:812});
+  assert.ok(await page.locator('#main-content').evaluate(el=>el.scrollWidth<=el.clientWidth+2),
+    'My Account must not overflow the narrow mobile workspace');
+  await page.setViewportSize({width:1440,height:950});
   await page.locator('#sidebar [data-action="tab-dashboard"]').click();
   await page.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='Dashboard Overview');
   assert.ok(await page.locator('.v21-skip-link').count(),
@@ -290,6 +313,8 @@ async function run(){
     'User Management must not contain personal account settings');
   await page.locator('#sidebar #next-account-nav').click();
   assert.equal(await page.locator('#page-title').textContent(),'My account');
+  await page.locator('[data-action="select-account-section"][data-section="overview"]').click();
+  await page.getByRole('button',{name:'Manage Security'}).click();
   await page.locator('#next-account-password-form').waitFor();
   for(const [area,selector] of [['preferences','.theme-choice'],['help','.settings-help-topic'],['about','.settings-about']]){
     await page.locator('[data-action="select-account-section"][data-section="'+area+'"]').click();
@@ -312,6 +337,9 @@ async function run(){
     }
   }
   await page.locator('[data-action="select-account-section"][data-section="security"]').click();
+  await page.locator('#next-account-password-form').waitFor();
+  assert.ok(await page.getByRole('button',{name:'Change password'}).isEnabled(),
+    'Original password change must still be available in Security');
   await page.locator('#sidebar [data-action="tab-users"]').click();
   assert.equal(await page.locator('#page-title').textContent(),'Users');
   await page.locator('#sidebar [data-action="tab-dashboard"]').click();
@@ -811,6 +839,7 @@ async function run(){
     'Non-administrator editor must not see integrity health totals');
   await editor.evaluate(()=>{appState.devices.pop();renderContent();});
   await editor.locator('#sidebar #next-account-nav').click();
+  await editor.locator('[data-action="select-account-section"][data-section="security"]').click();
   await editor.locator('#next-account-password-form').waitFor();
   assert.equal(await editor.locator('#page-title').textContent(),'My account');
   await editor.locator('[data-action="tab-devices"]').click();
