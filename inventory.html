@@ -2609,7 +2609,7 @@ function hierarchyValidateTypes(subnets) {
             const subnets = Array.isArray(appState.subnets) ? appState.subnets : [];
             const allocations = isPlainObject(appState.ipAllocations) ? appState.ipAllocations : {};
             // Show A clean start only while the core inventory is truly empty.
-            const hasCoreInventory = devices.length > 0 || racks.length > 0 || subnets.length > 0 || Object.keys(allocations).length > 0 || (appState.rackAccessories || []).length > 0;
+            const hasCoreInventory = devices.length > 0 || racks.length > 0 || subnets.length > 0 || Object.keys(allocations).length > 0 || (appState.rackAccessories || []).length > 0 || (appState.vlans || []).length > 0;
 
             const activeDevices = devices.filter(d => (d.status || 'Active').toLowerCase() === 'active').length;
             const inactiveDevices = devices.length - activeDevices;
@@ -2729,7 +2729,8 @@ function hierarchyValidateTypes(subnets) {
                 <div class="v21-dashboard-quick-actions">
                     ${dashboardActions.canAddDevice ? `<button type="button" data-action="open-device-modal" class="v21-dashboard-action v21-dashboard-action-primary"><i class="fa-solid fa-plus" aria-hidden="true"></i>Add Device</button>` : ''}
                     ${dashboardActions.canAddRack ? `<button type="button" data-action="open-rack-modal" class="v21-dashboard-action"><i class="fa-solid fa-server" aria-hidden="true"></i>Add Rack</button>` : ''}
-                    <button type="button" data-action="tab-ipam" class="v21-dashboard-action"><i class="fa-solid fa-network-wired" aria-hidden="true"></i>Open IPAM</button>
+                    ${dashboardActions.canViewIpam ? `<button type="button" data-action="tab-ipam" class="v21-dashboard-action"><i class="fa-solid fa-network-wired" aria-hidden="true"></i>Open IPAM</button>` : ''}
+                    ${!dashboardActions.canAddDevice && !dashboardActions.canAddRack && !dashboardActions.canViewIpam ? '<span class="text-xs text-slate-600 dark:text-slate-300">No inventory shortcuts available to this account.</span>' : ''}
                 </div></section>`;
 
             const rackCards = racks.length ? racks.map(rack => {
@@ -9354,7 +9355,7 @@ window.addEventListener('load', async () => {
     permissions = state.sections || {};
     editPermissions = state.editPermissions || {};
     // Display convenience only; server-side permission checks remain authoritative.
-    window.caffootDashboardActions = {canAddDevice: !!(editPermissions.Devices && editPermissions.IPAM), canAddRack: !!editPermissions.Racks};
+    window.caffootDashboardActions = {canAddDevice: !!(editPermissions.Devices && editPermissions.IPAM), canAddRack: !!editPermissions.Racks, canViewIpam: !!permissions.IPAM};
     nextImportAllowed = ['Devices','IPAM','Racks'].every(key => editPermissions[key]);
     deviceRevisions = state.deviceRevisions || {};
     deviceEditors = state.deviceEditors || {};
