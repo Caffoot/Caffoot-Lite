@@ -218,6 +218,11 @@ async function run(){
     name:'avatar.png',mimeType:'image/png',buffer:Buffer.from(pngData,'base64')
   });
   await page.locator('.v21-account-photo img.v21-account-avatar-photo').waitFor();
+  await page.waitForFunction(()=>{const img=document.querySelector('.v21-account-photo img.v21-account-avatar-photo');return !!img && img.complete && img.naturalWidth>0;});
+  assert.ok(await page.locator('#v21-header-avatar img').evaluate(img=>img.complete&&img.naturalWidth>0),
+    'Header avatar must actually decode the private profile image, not merely render a broken image element');
+  assert.equal((await page.request.get(address+'/api/account/photo?v=1')).status(),200,
+    'Versioned private image URLs must work with safe cache-busting queries');
   assert.equal((await page.request.get(address+'/api/account/photo')).status(),200,
     'Authorised account photograph should be available from the private endpoint');
   assert.ok(await page.locator('#v21-header-avatar img').isVisible());
@@ -355,11 +360,11 @@ async function run(){
       assert.equal(await page.locator('.settings-help-topic').count(),6,'Built-in help topics must remain');
     }
     if(area==='about'){
-      assert.ok(await page.getByText('Caffoot Lite v2.0.1',{exact:true}).isVisible(), 'About must identify the approved release version');
+      assert.ok(await page.getByText('Caffoot Lite v2.1 Preview',{exact:true}).isVisible(), 'About must identify the preview version');
       assert.equal(await page.getByRole('link',{name:/User Guide/}).getAttribute('href'),
-        'https://github.com/Caffoot/Caffoot-Lite/blob/main/docs/How%20To%27s/Features%20and%20Instructions/README.md');
+        'https://github.com/Caffoot/Caffoot-Lite/blob/v2.1/docs/How%20To%27s/Features%20and%20Instructions/README.md');
       assert.equal(await page.getByRole('link',{name:/Installation Guide/}).getAttribute('href'),
-        'https://github.com/Caffoot/Caffoot-Lite/blob/main/INSTALLATION.md');
+        'https://github.com/Caffoot/Caffoot-Lite/blob/v2.1/INSTALLATION.md');
     }
   }
   await page.locator('.v21-account-tabs [data-section="security"]').click();

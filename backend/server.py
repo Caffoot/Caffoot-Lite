@@ -318,7 +318,7 @@ class Handler(BaseHTTPRequestHandler):
                     "SELECT record_json FROM inventory_change_history ORDER BY id"
                 )]
                 self.respond(200, {"changeHistory": history})
-        elif self.path == "/api/account/photo":
+        elif urlsplit(self.path).path == "/api/account/photo":
             # Authenticated self-only photograph; never a public/static asset.
             with connect() as connection:
                 account_id = authenticated_account(connection, self.headers.get("Cookie"))

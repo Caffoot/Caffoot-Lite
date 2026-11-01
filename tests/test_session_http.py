@@ -185,6 +185,7 @@ class SessionHttpTests(unittest.TestCase):
             self.assertTrue(result["profile"]["hasPhoto"])
             self.assertEqual(self.request("/api/account/photo")[0],401)
             self.assertEqual(self.request("/api/account/photo",cookie)[1],png)
+            self.assertEqual(self.request("/api/account/photo?v=1",cookie)[1],png)
             status,user=self.post("/api/users/create",{
                 "username":"profile-reader","password":"reader-password"},token,csrf)
             self.assertEqual(status,200,user)

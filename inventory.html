@@ -8662,7 +8662,7 @@ function hierarchyValidateTypes(subnets) {
                     '</div></section>';
             } else if (section === 'help') {
                 // The authoritative Markdown user guides are shared with GitHub and the future website.
-                const guideRoot = 'https://github.com/Caffoot/Caffoot-Lite/blob/main/docs/How%20To%27s/Features%20and%20Instructions/';
+                const guideRoot = 'https://github.com/Caffoot/Caffoot-Lite/blob/v2.1/docs/How%20To%27s/Features%20and%20Instructions/';
                 const helpTopics = [
                     ['Getting Started', 'Create your administrator on first run and enrol MFA. Then use Devices, IPAM and Network Racks just as in published v1.3.3. Authorised users work from the same central inventory.', [['Getting Started', 'Getting-Started.md']]],
                     ['Import from v1.3.3', 'Under Import Inventory, choose a fresh JSON backup exported from published v1.3.3 and review all required corrections before confirming replacement. For older HTML versions, upgrade to v1.3.3 before exporting.', [['Migration', 'Migration-Backup-and-Restore.md']]],
@@ -8684,8 +8684,8 @@ function hierarchyValidateTypes(subnets) {
                     '<p>Manage devices, IP addresses, subnets and network racks using a shared central SQLite database with authorised multi-user access.</p>' +
                     '<h4>Project & Documentation</h4><div class="settings-about-links">' +
                     '<a href="https://github.com/Caffoot/Caffoot-Lite" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-github" aria-hidden="true"></i> Official GitHub Repository <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>' +
-                    '<a href="https://github.com/Caffoot/Caffoot-Lite/blob/main/docs/How%20To%27s/Features%20and%20Instructions/README.md" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-book-open" aria-hidden="true"></i> User Guide <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>' +
-                    '<a href="https://github.com/Caffoot/Caffoot-Lite/blob/main/INSTALLATION.md" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Installation Guide <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>' +
+                    '<a href="https://github.com/Caffoot/Caffoot-Lite/blob/v2.1/docs/How%20To%27s/Features%20and%20Instructions/README.md" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-book-open" aria-hidden="true"></i> User Guide <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>' +
+                    '<a href="https://github.com/Caffoot/Caffoot-Lite/blob/v2.1/INSTALLATION.md" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Installation Guide <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>' +
                     '<a href="https://github.com/Caffoot/Caffoot-Lite/releases" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-tag" aria-hidden="true"></i> Release Notes <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>' +
                     '</div><p class="settings-about-offline">External links require an internet connection. Caffoot Lite uses its central server and SQLite database.</p>' +
                     '<p>For offline instructions, open Help & Guides in My account.</p>' +
@@ -8757,7 +8757,7 @@ function hierarchyValidateTypes(subnets) {
                             <div class="settings-buttons"><button type="button" data-action="next-import-pick" class="settings-action" ${nextImportAllowed?'':'disabled'}><i class="fa-solid fa-upload" aria-hidden="true"></i>Import Inventory</button></div></section>
                         <section class="settings-panel"><h3>Storage & Recovery</h3>
                             <p>New installations normally use Docker-managed named storage. Existing installations must keep their original <code>/data</code> mount; switching to an empty volume does not migrate records.</p>
-                            <div class="settings-buttons"><a href="https://github.com/Caffoot/Caffoot-Lite/blob/main/INSTALLATION.md" target="_blank" rel="noopener noreferrer">Full Installation &amp; Backup Guidance</a></div></section>
+                            <div class="settings-buttons"><a href="https://github.com/Caffoot/Caffoot-Lite/blob/v2.1/INSTALLATION.md" target="_blank" rel="noopener noreferrer">Full Installation &amp; Backup Guidance</a></div></section>
                     </div>
                 </div>`;
             }else if(activeSettingsPage==='maintenance'){
