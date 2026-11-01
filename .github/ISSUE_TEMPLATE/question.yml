@@ -8,7 +8,7 @@ body:
       value: |
         Questions are welcome, including questions from people just getting started.
 
-        Please check our [Installation Guide](../../INSTALLATION.md) and [Feature Guides](../../docs/How%20To's/Features%20and%20Instructions/README.md) if they might help. You can still ask here if you get stuck.
+        Please check our [Installation Guide](https://github.com/Caffoot/Caffoot-Lite/blob/main/INSTALLATION.md) and [Feature Guides](https://github.com/Caffoot/Caffoot-Lite/blob/main/docs/How%20To%27s/Features%20and%20Instructions/README.md) if they might help. You can still ask here if you get stuck.
 
         Please do not post passwords, tokens, authentication codes or private information.
   - type: dropdown
