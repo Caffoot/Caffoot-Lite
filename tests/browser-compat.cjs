@@ -512,6 +512,10 @@ async function run(){
   assert.equal(await page.locator('.v21-device-rack-preview').count(),0);
   await page.reload();
   await page.locator('#next-account-nav').waitFor();
+  await page.waitForFunction(({deviceId,rackId})=>
+    appState.devices.some(d=>String(d.id)===String(deviceId)) &&
+    appState.racks.some(r=>String(r.id)===String(rackId)),
+    {deviceId:rackSwitch.id,rackId});
   console.log('v2.1 contextual rack placement and virtual-machine hardware passed');
 
   await page.evaluate(({id,deviceId})=>openAssignDeviceModal(id,6,deviceId),{id:rackId,deviceId:rackSwitch.id});
