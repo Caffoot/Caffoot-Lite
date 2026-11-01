@@ -258,8 +258,10 @@ async function run(){
   assert.match(guideText,/Portainer stack or Compose project name/);
   assert.match(guideText,/Stop Caffoot Lite/);
   assert.match(guideText,/not an ongoing SQLite\/database backup/);
-  assert.equal(await guide.locator('button').count(),0,
-    'Backup instructions must not offer a fake in-app database backup action');
+  assert.equal(await guide.locator('button').count(),2,
+    'Approved 04.1 backup guidance has two example-command Copy buttons');
+  assert.equal(await guide.locator('[data-action="v21-copy-settings-command"]').count(),2,
+    'Example Copy buttons must not perform database backup or restore actions');
   assert.equal(await page.locator('[data-action="v21-copy-settings-command"]').count(),2);
   await page.locator('.v21-settings-041-tabs [data-section="maintenance"]').click();
   assert.ok(await page.locator('[data-action="check-inventory-safety"]').isEnabled());
