@@ -1611,6 +1611,16 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .dark .v21-settings .settings-panel:has([data-action="clear-inventory-data"]) h3{color:#ffc0c3}
 @media(max-width:720px){.v21-settings .v21-settings-backup-methods{grid-template-columns:1fr}.v21-settings .v21-settings-backup-guide{padding:16px}.v21-settings .settings-panel{min-height:0}.v21-settings .settings-intro{padding:19px}}
 </style>
+<style id="caffoot-v21-unified-typography">
+/* Global owner-approved My Account Personal Details typographic hierarchy.
+   Presentation only: preserve the existing controls, forms and Rack/Device logic. */
+#main-content{--v21-type-page:25px;--v21-type-card:16px;--v21-type-body:13px;--v21-type-label:12px;--v21-type-small:11.5px;--v21-type-label-weight:650;--v21-type-heading-weight:770;font-family:Inter,'Segoe UI',Tahoma,Arial,sans-serif;line-height:1.55}
+#main-content :is(.v21-dashboard,.v21-device-directory,.v21-device-detail-page,.v21-ipam,.v21-racks,.v21-users-root,.v21-settings){font-family:inherit;font-weight:500}
+#main-content :is(.v21-dashboard,.v21-device-directory,.v21-device-detail-page,.v21-ipam,.v21-racks,.v21-users-root,.v21-settings) :is(label,dt,th){font-weight:var(--v21-type-label-weight)}
+#main-content :is(.v21-dashboard,.v21-device-directory,.v21-device-detail-page,.v21-ipam,.v21-racks,.v21-users-root,.v21-settings) :is(h2,h3,h4){font-weight:var(--v21-type-heading-weight);line-height:1.3;letter-spacing:-.01em}
+#main-content :is(.v21-dashboard,.v21-device-directory,.v21-device-detail-page,.v21-ipam,.v21-racks,.v21-users-root,.v21-settings) :is(p,dd,td,li){line-height:1.6}
+#main-content :is(.v21-dashboard,.v21-device-directory,.v21-device-detail-page,.v21-ipam,.v21-racks,.v21-users-root,.v21-settings) :is(input,select,textarea,button){font-family:inherit}
+</style>
 <style id="caffoot-v21-shell-style">
 /* v2.1 shared page shell; match the approved My Account type scale and brand. */
 .v21-skip-link { position:fixed; top:8px; left:12px; z-index:100; transform:translateY(-160%); padding:11px 16px; background:#fff; color:#142232; border:3px solid #F47B20; border-radius:9px; font-weight:700; }
