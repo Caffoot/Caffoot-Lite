@@ -6465,7 +6465,7 @@ function hierarchyValidateTypes(subnets) {
 
                 </header>
                 <nav class="device-tabs" role="tablist" aria-label="Device detail sections">
-                    ${[['overview','Overview'],...(showVirtualMachinesTab ? [['virtual-machines','Virtual Machines']] : []),['hardware',isVirtualDevice?'VM Hardware':'Hardware'],['network','Network'],['software','Software'],['location','Location'],...(historyRows?[['history','History']]:[])].map(([key,label],i)=>`<button type="button" role="tab" id="device-details-tab-${key}" aria-controls="device-details-panel-${key}" aria-selected="${i===0?'true':'false'}" tabindex="${i===0?'0':'-1'}" data-action="select-device-details-tab" data-name="${key}" class="device-details-tab ${i===0?'device-details-tab-active':''}">${label}</button>`).join('')}
+                    ${[['overview','Overview'],...(showVirtualMachinesTab ? [['virtual-machines','Virtual Machines']] : []),...(!isVirtualDevice ? [['hardware','Hardware']] : []),['network','Network'],['software','Software'],['location','Location'],...(historyRows?[['history','History']]:[])].map(([key,label],i)=>`<button type="button" role="tab" id="device-details-tab-${key}" aria-controls="device-details-panel-${key}" aria-selected="${i===0?'true':'false'}" tabindex="${i===0?'0':'-1'}" data-action="select-device-details-tab" data-name="${key}" class="device-details-tab ${i===0?'device-details-tab-active':''}">${label}</button>`).join('')}
                 </nav>
                 <div class="device-panels">
                     <div id="device-details-panel-overview" role="tabpanel" aria-labelledby="device-details-tab-overview" class="device-details-panel">
@@ -6478,9 +6478,9 @@ function hierarchyValidateTypes(subnets) {
                         ${hypervisorNotice}
                         ${hostingSection}
                     </div>` : ''}
-                    <div id="device-details-panel-hardware" role="tabpanel" aria-labelledby="device-details-tab-hardware" class="device-details-panel" hidden>
-                        ${isVirtualDevice?virtualHardware:section('Hardware & lifecycle', 'fa-microchip', hardware + (detailRows ? `<div class="device-details-detail-subheading">Additional ${safe(d.type)} details</div>${detailRows}` : ''))}
-                    </div>
+                    ${!isVirtualDevice ? `<div id="device-details-panel-hardware" role="tabpanel" aria-labelledby="device-details-tab-hardware" class="device-details-panel" hidden>
+                        ${section('Hardware & lifecycle', 'fa-microchip', hardware + (detailRows ? `<div class="device-details-detail-subheading">Additional ${safe(d.type)} details</div>${detailRows}` : ''))}
+                    </div>` : ''}
                     <div id="device-details-panel-network" role="tabpanel" aria-labelledby="device-details-tab-network" class="device-details-panel" hidden>
                         ${section('Network identity', 'fa-network-wired', field('Primary IP', d.primaryIp) + field('Subnet', subnet ? (subnet.cidr || subnet.name || subnet.network || subnet.id) : 'Not linked') + field('IP reserved', d.ipReserved ? 'Yes' : 'No'))}
                     </div>
