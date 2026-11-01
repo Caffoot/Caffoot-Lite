@@ -152,8 +152,9 @@ async function run(){
     'Expanded navigation must be available on demand');
   await page.setViewportSize({width:390,height:812});
   await sidebarToggle.click(); // Compact view gives the main content usable width.
-  assert.ok(await page.locator('#sidebar').evaluate(el=>el.getBoundingClientRect().width<=80),
-    'Compact navigation must fit a narrow viewport');
+  await page.waitForFunction(()=>document.getElementById('sidebar')?.getBoundingClientRect().width<=80);
+  assert.ok(await page.locator('#sidebar').evaluate(el=>el.classList.contains('v21-is-collapsed')),
+    'Compact navigation must fit a narrow viewport once its width transition finishes');
   await sidebarToggle.click(); // Expanded mobile menu overlays instead of squeezing the page.
   assert.equal(await page.locator('#sidebar').evaluate(el=>getComputedStyle(el).position),'absolute');
   await page.keyboard.press('Escape');
