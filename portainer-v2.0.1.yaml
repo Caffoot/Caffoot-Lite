@@ -1,21 +1,25 @@
-# Caffoot Lite v2.0.1 — Portainer / Docker Compose release stack.
-# Replace the example IP address, port and /data host path for your installation.
-# Pull only after the official v2.0.1 tag and image build are published.
+# Caffoot Lite v2.0.1 — Portainer / Docker Compose installation example.
+# Change the example server IP address and port to suit your installation.
+# New installations use a Docker-managed named volume for persistent data.
+# IMPORTANT: Existing installations must keep their current /data mount.
 services:
   caffoot-lite:
     image: ghcr.io/caffoot/caffoot-lite:v2.0.1
     container_name: caffoot-lite
     restart: unless-stopped
     environment:
-      CAFFOOT_WEB_ADDRESS: "https://10.128.20.3:8443"
-      CAFFOOT_SERVER_ADDRESS: "10.128.20.3"
+      CAFFOOT_WEB_ADDRESS: "https://192.168.1.100:8443"
+      CAFFOOT_SERVER_ADDRESS: "192.168.1.100"
       CAFFOOT_PORT: "8443"
     ports:
       - "8443:8080"
     volumes:
-      - /portainer/Files/AppData/Config/caffoot_data:/data
+      - caffoot_data:/data
     healthcheck:
       test: ["CMD", "python", "-c", "import ssl,urllib.request; urllib.request.urlopen('https://127.0.0.1:8080/health',context=ssl._create_unverified_context(),timeout=3)"]
       interval: 30s
       timeout: 5s
       retries: 3
+
+volumes:
+  caffoot_data:
