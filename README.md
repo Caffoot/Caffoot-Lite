@@ -43,8 +43,9 @@ For direct HTTPS, verify and trust the application certificate before entering c
 - [Installation, HTTPS, Portainer and backup instructions](INSTALLATION.md)
 - [v2.0.1 release notes](docs/Release-Notes-v2.0.1.md)
 - [Detailed user guides and screenshots](docs/How%20To%27s/Features%20and%20Instructions/README.md)
+- [Contributing To Caffoot Lite — mandatory naming, UI and documentation standards](CONTRIBUTING.md)
 - [Development Guide](docs/Development%20Guide/README.md)
 - [Standalone v1.3.3 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3)
-- [Approved implementation specification #215](https://github.com/Caffoot/Caffoot-Lite/issues/215) and [release tracker #218](https://github.com/Caffoot/Caffoot-Lite/issues/218)
+- [Historical v2.0/v2.0.1 implementation specification #215](https://github.com/Caffoot/Caffoot-Lite/issues/215) and [release tracker #218](https://github.com/Caffoot/Caffoot-Lite/issues/218); [future ideas #222](https://github.com/Caffoot/Caffoot-Lite/issues/222) (discussion only)
 
 **Version history:** [v2.0](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0) introduced the Docker/SQLite multi-user edition. v2.0.1 preserves its functionality while moving the Docker source to the root and excluding the legacy standalone build tree from this release's source archive.
