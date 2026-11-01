@@ -323,6 +323,11 @@ async function run(){
     'Address Blocks must continue using the published no-VLAN form validation');
   await page.evaluate(()=>closeModal(true));
   await page.locator('.v21-ipam-actions [data-subnet-kind="network"]').click();
+  // Existing click interception refreshes central SQLite state before replacing
+  // the hidden previous form. Wait for the new, visible network form.
+  await page.waitForFunction(() =>
+    !document.getElementById('modal-container')?.classList.contains('hidden') &&
+    document.getElementById('sub-kind')?.value==='network');
   assert.equal(await page.locator('#sub-kind').inputValue(),'network',
     'Add Network retains the existing Network / VLAN form');
   await page.evaluate(()=>closeModal(true));
