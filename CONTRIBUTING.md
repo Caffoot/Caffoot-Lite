@@ -18,9 +18,29 @@ Every new or modified code component must use a meaningful, searchable name that
 - **Python:** descriptive `snake_case` functions, methods, modules and variables; `PascalCase` classes and `UPPER_SNAKE_CASE` constants.
 - **HTML/CSS:** descriptive semantic `kebab-case` IDs, classes and event/action hooks; keep selectors, event handlers, accessibility labels and CSS aligned.
 - **UI labels:** use **Title Case** for headings, navigation, tabs, buttons, form and table labels, and short statuses; preserve established acronyms such as IPAM, MFA, VLAN and LDAP. Use readable sentence case for explanations and instructional prose.
-- **Comments:** explain responsibilities, constraints and reasons in clear British English. Avoid cryptic abbreviations, obsolete version prefixes and references to development stages as substitutes for meaning.
+- **Comments and docstrings:** treat these as **public-facing community documentation**, written in clear British English for people with little or no coding experience. Explain what code does and, where useful, why it is needed. They must not be written primarily for professional developers or AI tools. Avoid cryptic abbreviations, unexplained jargon, obsolete version prefixes and development-stage references.
 
 Do not introduce names such as `phase3Handler`, `newThing2` or `tempFix`. Historical names should be improved when an approved change touches them or during an approved clean-up. **Clarity and maintainability are valid reasons to rename code**, provided every affected reference and test is updated safely.
+
+## Source Comments Are Public-Facing Documentation
+
+Comments in JavaScript, Python, HTML, CSS and other project-owned code are part of what the community reads. **Write them for someone who is new to programming, not for an expert or an AI assistant.** A reader should be able to understand the purpose of the code without needing to already know its implementation details.
+
+- Use plain, natural **British English**, with accurate spelling and complete explanations where needed.
+- Explain **what a section does**, what it affects and **why a rule or safeguard matters**. Define necessary technical terms in everyday language.
+- Describe surprising behaviour and important safety or data-compatibility rules. Do not merely repeat a clear function name or comment on every obvious line.
+- Keep explanations concise enough to remain useful; if a whole workflow needs teaching, link to a maintained developer or user guide rather than embedding a large essay.
+- Do not use private shorthand, AI-specific instructions, prompts, development diary notes, unexplained acronyms or phase numbers.
+- Update or remove a comment whenever the code changes so it never confidently describes behaviour that is no longer true.
+
+**Example:**
+
+```python
+# Stop two people from changing the same device at once.
+# This protects the first person's changes from being overwritten.
+```
+
+This standard applies equally to code written by maintainers and code submitted by community contributors. Comments are reviewed alongside the code, not treated as optional decoration.
 
 ## Documentation Is Part Of The Change
 
