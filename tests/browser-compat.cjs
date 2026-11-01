@@ -1122,8 +1122,11 @@ async function run(){
   // All My Account panels must use the same full content width as Devices.
   await page.locator('#sidebar #next-account-nav').click();
   await page.locator('.v21-account').waitFor();
-  assert.ok(await page.locator('.v21-account').evaluate(el=>
-    el.getBoundingClientRect().width>=el.parentElement.getBoundingClientRect().width-4));
+  assert.ok(await page.locator('.v21-account').evaluate(el=>{
+    const parent=el.parentElement,style=getComputedStyle(parent);
+    const contentWidth=parent.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight);
+    return Math.abs(el.getBoundingClientRect().width-contentWidth)<=4;
+  }),'My Account must fill the available content width, excluding container padding');
   await page.locator('.v21-account-tabs [data-section="preferences"]').click();
   assert.ok(await page.locator('.v21-account-section').evaluate(el=>
     el.getBoundingClientRect().width>=el.parentElement.getBoundingClientRect().width-4));
