@@ -495,6 +495,21 @@ async function run(){
   await page.locator('.caffoot-search-popup:not([hidden]) [role="option"]',{hasText:'Desktop'}).click();
   assert.equal(await page.locator('#dev-type').inputValue(),'Desktop',
     'Searchable selector must preserve the original native selection');
+  // The approved Software & Notes managers operate on the ORIGINAL device form.
+  // Opening one must not throw away the unsaved name, chosen type or tab state.
+  await page.getByRole('tab',{name:'Software & Firmware'}).click();
+  const softwareManager=page.locator('#device-form-panel-software #manage-installed-software-button');
+  assert.ok(await softwareManager.isVisible(),'Existing Installed Software manager must remain available for desktops');
+  await softwareManager.click();
+  await page.locator('.device-catalogue-manager').getByRole('heading',{name:'Manage Installed Software'}).waitFor();
+  await page.locator('.device-catalogue-manager [data-action="close-modal"]',{hasText:'Done'}).click();
+  assert.equal(await page.locator('#dev-name').inputValue(),'browser-device',
+    'Managing software must not discard unsaved Device Name');
+  assert.equal(await page.locator('#dev-type').inputValue(),'Desktop',
+    'Managing software must retain the selected device type');
+  await page.getByRole('tab',{name:'General',exact:true}).click();
+  assert.equal(await page.locator('.v21-device-editor #dev-name').evaluate(el=>getComputedStyle(el).fontSize),'13px',
+    'Original Add/Edit controls must use the approved form typography');
   await page.locator('#dev-mount-type').selectOption('Tabletop / Shelf Mounted');
   await page.locator('#dev-location').selectOption('Office');
   await page.getByRole('tab',{name:'Networking'}).click();
