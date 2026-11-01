@@ -1800,6 +1800,28 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 @media(max-width:1060px){.v21-settings-041-data,.v21-settings-041-columns{grid-template-columns:1fr}}
 @media(max-width:680px){.v21-settings-041-fields,.v21-settings-041-features{grid-template-columns:1fr}.v21-settings-041-tabs{gap:12px}.v21-settings.settings-041 .settings-intro h2{font-size:23px}}
 </style>
+<style id="caffoot-v21-account-signout-typography">
+/* Owner review: one readable typography rhythm across the approved form workspaces.
+   Do not override the status badges, icon glyphs or existing section permissions. */
+.v21-account-tabs{margin-bottom:12px}
+.v21-account-signout-action{display:inline-flex;align-items:center;gap:8px;margin:0 0 19px;min-height:39px;padding:8px 13px;border:1px solid #e8c9c9;border-radius:10px;background:#fff5f4;color:#a83f43;font:700 12px/1.45 Inter,'Segoe UI',sans-serif}
+.v21-account-signout-action:hover{background:#fce7e7;border-color:#d99b9b}
+.v21-account-signout-action:focus-visible{outline:3px solid #f47b20;outline-offset:3px}
+.v21-account-signout-action:disabled{opacity:.65;cursor:wait}
+.dark .v21-account-signout-action{background:#4e2e33;color:#ffd8db;border-color:#885259}
+#main-content :is(.v21-dashboard,.v21-device-directory,.v21-device-detail-page,.v21-ipam,.v21-racks,.v21-users-root,.v21-settings,.v21-account) :is(form label,form legend,.v21-settings-041-test-label){
+  font-size:var(--v21-type-label,12px);font-weight:var(--v21-type-label-weight,650);line-height:1.55
+}
+#main-content :is(.v21-dashboard,.v21-device-directory,.v21-device-detail-page,.v21-ipam,.v21-racks,.v21-users-root,.v21-settings,.v21-account) :is(form input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),form select,form textarea){
+  font-family:inherit;font-size:var(--v21-type-body,13px);font-weight:500;line-height:1.5
+}
+#main-content :is(.v21-dashboard,.v21-device-directory,.v21-device-detail-page,.v21-ipam,.v21-racks,.v21-users-root,.v21-settings,.v21-account) :is(form button,.settings-action){
+  font-family:inherit;font-size:var(--v21-type-body,13px);font-weight:700
+}
+#modal-content :is(form label,form legend){font-family:Inter,'Segoe UI',sans-serif;font-size:12px;font-weight:650;line-height:1.55}
+#modal-content :is(form input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),form select,form textarea){font-family:Inter,'Segoe UI',sans-serif;font-size:13px;font-weight:500}
+#modal-content form button{font-family:Inter,'Segoe UI',sans-serif;font-size:13px;font-weight:700}
+</style>
 <style id="caffoot-v21-shell-style">
 /* v2.1 shared page shell; match the approved My Account type scale and brand. */
 .v21-skip-link { position:fixed; top:8px; left:12px; z-index:100; transform:translateY(-160%); padding:11px 16px; background:#fff; color:#142232; border:3px solid #F47B20; border-radius:9px; font-weight:700; }
@@ -11100,7 +11122,7 @@ window.addEventListener('load', async () => {
         '<form id="next-account-mfa-confirm" class="space-y-3"><label class="block text-sm font-semibold">Six-digit authenticator code<input name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required class="'+field+'"></label>' +
         '<button type="submit" class="'+button+'">Confirm MFA</button></form></div></section>';
     }
-    return html+'<button type="button" id="next-account-signout" class="px-4 py-2 rounded-xl bg-slate-700 text-white text-sm font-semibold">Sign out</button>';
+    return html;
   }
 
   // Stage 11: existing SQLite accounts own optional profile fields and photo bytes.
@@ -11163,7 +11185,7 @@ window.addEventListener('load', async () => {
         <aside class="v21-account-side" aria-label="Personal account shortcuts">
           <section class="v21-account-card"><div class="v21-account-card-heading"><i class="fa-solid fa-palette" aria-hidden="true"></i><h3>Personal Preferences</h3></div><p>Appearance on this browser</p><div class="v21-account-util"><span>${appearance}</span><button type="button" class="v21-account-secondary" data-action="select-account-section" data-section="preferences">Change Appearance</button></div></section>
           <section class="v21-account-card"><div class="v21-account-card-heading"><i class="fa-solid fa-book-open" aria-hidden="true"></i><h3>Help &amp; Guides</h3></div><p>Find practical guidance for devices, IPAM, Racks, access and backups.</p><div class="v21-account-util"><button type="button" class="v21-account-secondary" data-action="select-account-section" data-section="help">Explore Help &amp; Guides</button></div></section>
-          <section class="v21-account-card v21-account-session"><div class="v21-account-card-heading"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i><h3>Session</h3></div><p>Sign out safely when you have finished working.</p><div class="v21-account-util"><button type="button" class="v21-account-secondary" id="next-account-signout"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>Sign Out</button></div></section>
+          <section class="v21-account-card v21-account-session"><div class="v21-account-card-heading"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i><h3>Session</h3></div><p>Sign out safely when you have finished working.</p><div class="v21-account-util"><button type="button" class="v21-account-secondary" data-account-signout><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i>Sign Out</button></div></section>
         </aside>
       </div>`;
   }
@@ -11183,6 +11205,7 @@ window.addEventListener('load', async () => {
       <nav class="v21-account-tabs" aria-label="My Account sections" role="tablist">
         ${tabs.map(([id,label,icon])=>'<button type="button" role="tab" aria-selected="'+(selected===id)+'" data-action="select-account-section" data-section="'+id+'"><i class="fa-solid '+icon+'" aria-hidden="true"></i>'+label+'</button>').join('')}
       </nav>
+      <button type="button" class="v21-account-signout-action" data-account-signout title="End this session securely"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Sign Out</button>
       <div class="v21-account-section-container" role="tabpanel" aria-label="${tabs.find(tab=>tab[0]===selected)?.[1]||'Overview'}">
         ${selected==='overview'?renderAccountOverview():selected==='security'?'<div class="v21-account-section">'+renderAccountSections()+'</div>':'<div class="v21-account-section">'+renderPersonalSettingsBody(selected)+'</div>'}
       </div>
@@ -11552,11 +11575,22 @@ window.addEventListener('load', async () => {
       }
     })().catch(error=>showToast(error.message,'error')).finally(()=>{submit.disabled=false;});
   },true);
+  // Sign out works on every account tab, including clicks on the nested icon.
+  // Revocation is completed server-side before redirecting; never fake success.
+  let signoutPending=false;
   document.addEventListener('click',event=>{
-    if(event.target.id!=='next-account-signout')return;
+    const button=event.target.closest('[data-account-signout]');
+    if(!button || signoutPending)return;
     event.preventDefault();
+    event.stopImmediatePropagation();
+    signoutPending=true;
+    document.querySelectorAll('[data-account-signout]').forEach(item=>{item.disabled=true;});
     void postInventory('/api/logout',{}).then(()=>window.location.assign('/setup'))
-      .catch(error=>showToast(error.message,'error'));
+      .catch(error=>{
+        signoutPending=false;
+        document.querySelectorAll('[data-account-signout]').forEach(item=>{item.disabled=false;});
+        showToast(error.message,'error');
+      });
   },true);
   // Presentation-only navigation. Backend user permissions and account handlers are unchanged.
   document.addEventListener('click',event=>{

@@ -1099,6 +1099,18 @@ async function run(){
   await page.reload();
   assert.equal((await state(page)).devices[0].id,'legacy-device');
   console.log('Published v1.3.3 export, cancelled review, confirmed one-way import, history fields and account retention passed');
+  // Sign out must be available on ALL account tabs, react to an icon click
+  // and revoke the existing server-side session before showing /setup.
+  await page.locator('#sidebar #next-account-nav').click();
+  await page.locator('.v21-account-tabs [data-section="preferences"]').click();
+  assert.ok(await page.locator('[data-account-signout]').first().isVisible(),
+    'Sign Out must be available outside the Overview and Security panels');
+  await page.locator('.v21-account-signout-action i').click();
+  await page.waitForURL('**/setup');
+  assert.equal(await page.evaluate(async()=> (await fetch('/api/session',{cache:'no-store'})).status),401,
+    'Sign Out must revoke the session on the backend, not just navigate to the sign-in page');
+  assert.equal(await page.locator('[data-account-signout]').count(),0,
+    'Logged out users must not retain an authenticated My Account page');
   assert.deepEqual(errors,[],'Browser JavaScript errors');
 }
 run().then(async()=>{
