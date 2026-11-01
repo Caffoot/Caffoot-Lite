@@ -339,6 +339,9 @@ async function run(){
   await page.getByRole('heading',{name:'Administrators',exact:true}).waitFor();
   await page.getByText('Users by role',{exact:true}).waitFor();
   await page.getByText('MFA enrolment',{exact:true}).waitFor();
+  assert.ok(await page.locator('#v21-section-tools-dock').isVisible());
+  assert.equal(await page.locator('#sidebar > nav > [id$="-sidebar-actions"]').count(),0);
+  await page.locator('#v21-section-tools summary').click();
   assert.ok(await page.locator('#users-sidebar-actions').isVisible());
   assert.equal(await page.locator('#next-account-password-form').count(),0,
     'User Management must not contain personal account settings');
@@ -782,6 +785,8 @@ async function run(){
   assert.ok(await page.locator('#sidebar > nav').evaluate(el=>
     getComputedStyle(el).overflowY==='auto' && el.scrollHeight >= el.clientHeight
   ),'Expanded navigation must have an independent scroll area above fixed account controls');
+  if(!(await page.locator('#v21-section-tools').evaluate(el=>el.open)))
+    await page.locator('#v21-section-tools summary').click();
   await page.locator('#users-sidebar-actions [data-action="sidebar-users-add"]').click();
   await page.locator('#next-user-create-form input[name="username"]').fill('editor');
   await page.locator('#next-user-create-form input[name="password"]').fill(password+'-Editor');
@@ -903,6 +908,8 @@ async function run(){
                   'Remote IP note');
   await editor.locator('#sidebar [data-action="tab-ipam"]').click();
   await editor.waitForFunction(()=>appState.ipAllocations['10.64.20.15']?.notes==='Remote note after editor sign-in');
+  if(!(await editor.locator('#v21-section-tools').evaluate(el=>el.open)))
+    await editor.locator('#v21-section-tools summary').click();
   await editor.locator('#ipam-sidebar-actions [data-action="sidebar-ipam-addresses"]').click();
   await editor.locator('[data-action="open-ip"][data-ip="10.64.20.15"]').waitFor();
   await page.evaluate(()=>openIpModal('10.64.20.15'));
@@ -944,6 +951,8 @@ async function run(){
   console.log('Two-user exclusive device edit reservations passed');
   // Read-only account must be able to sign in without MFA.
   await page.evaluate(()=>switchTab('users'));
+  if(!(await page.locator('#v21-section-tools').evaluate(el=>el.open)))
+    await page.locator('#v21-section-tools summary').click();
   await page.locator('#users-sidebar-actions [data-action="sidebar-users-add"]').click();
   await page.locator('#next-user-create-form input[name="username"]').fill('viewer');
   await page.locator('#next-user-create-form input[name="password"]').fill(password+'-Viewer');
@@ -1106,6 +1115,14 @@ async function run(){
   await page.reload();
   assert.equal((await state(page)).devices[0].id,'legacy-device');
   console.log('Published v1.3.3 export, cancelled review, confirmed one-way import, history fields and account retention passed');
+  // All My Account panels must use the same full content width as Devices.
+  await page.locator('#sidebar #next-account-nav').click();
+  await page.locator('.v21-account').waitFor();
+  assert.ok(await page.locator('.v21-account').evaluate(el=>
+    el.getBoundingClientRect().width>=el.parentElement.getBoundingClientRect().width-4));
+  await page.locator('.v21-account-tabs [data-section="preferences"]').click();
+  assert.ok(await page.locator('.v21-account-section').evaluate(el=>
+    el.getBoundingClientRect().width>=el.parentElement.getBoundingClientRect().width-4));
   // Sign out must be available on ALL account tabs, react to an icon click
   // and revoke the existing server-side session before showing /setup.
   await page.locator('#sidebar #next-account-nav').click();
