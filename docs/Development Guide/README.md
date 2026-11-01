@@ -2,7 +2,7 @@
 
 Welcome. This guide explains **how Caffoot Lite actually works**, from the everyday user experience through to the Python backend, SQLite database and tests. It is written for the product owner, new contributors and maintainers.
 
-**Status:** This guide describes the v2.0.1 Docker/SQLite application with backend, tests and deployment sources at the repository root. [Issue #215](https://github.com/Caffoot/Caffoot-Lite/issues/215) controls the approved functionality. The original [v2.0](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0) and standalone [v1.3.3](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3) tags are preserved.
+**Status:** This guide describes the released v2.0.1 Docker/SQLite baseline, with backend, tests and deployment sources at the repository root. [Issue #215](https://github.com/Caffoot/Caffoot-Lite/issues/215) documents completed historical work; it does not control future development. [CONTRIBUTING.md](../../CONTRIBUTING.md) describes the mandatory standards for every future contribution. The original [v2.0](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0) and standalone [v1.3.3](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3) tags are preserved.
 
 ## In simple terms
 
@@ -27,16 +27,16 @@ For example, when somebody edits a device, the browser requests an exclusive, te
 | [03 — Frontend and backend](03-Frontend-and-Backend.md) | How browser actions reach backend functions and APIs |
 | [04 — Authentication and permissions](04-Authentication-and-Permissions.md) | Sign-in, MFA, user accounts and access rules |
 | [05 — Inventory and migration](05-Inventory-and-Migration.md) | Data relationships, v1.3.3 compatibility and importing |
-| [06 — Coding and naming conventions](06-Coding-and-Naming-Conventions.md) | How existing functions, variables and UI hooks are named |
+| [06 — Coding and naming conventions](06-Coding-and-Naming-Conventions.md) | Mandatory standards for naming, UI labels, refactoring and documentation |
 | [07 — Function and code reference](07-Function-and-Code-Reference.md) | Where to find an implementation before changing it |
 | [Full Function Index](Function-Index.md) | Source-pinned declaration locations, static call-like reference counts and example reference sites |
 | [08 — Testing and maintenance](08-Testing-and-Maintenance.md) | How to check a change and protect the published baseline |
 
-Each technical chapter starts with **In simple terms**, then adds details for developers. Follow links rather than reading all eight chapters in order.
+All contributors should first read [CONTRIBUTING.md](../../CONTRIBUTING.md) and complete the repository pull-request checklist. Each technical chapter starts with **In simple terms**, then adds details for developers. Follow links rather than reading all eight chapters in order.
 
 ## Quick source map
 
-- [`inventory.html`](../../inventory.html): the established inventory interface with the Next integration layer.
+- [`inventory.html`](../../inventory.html): the established inventory interface and its central SQLite integration.
 - [`setup.html`](../../setup.html): first-run administrator and sign-in interface.
 - [`backend/server.py`](../../backend/server.py): HTTPS entry point, routes and request handling.
 - [`backend/schema.py`](../../backend/schema.py): SQLite tables and schema upgrades.
@@ -45,8 +45,8 @@ Each technical chapter starts with **In simple terms**, then adds details for de
 - [`compose.yaml`](../../compose.yaml), [`portainer-v2.0.1.yaml`](../../portainer-stack.yaml) and [`Dockerfile`](../../Dockerfile): deployment configuration.
 - [`app/caffoot-lite.html` at v1.3.3](https://github.com/Caffoot/Caffoot-Lite/blob/v1.3.3/app/caffoot-lite.html): **published** inventory behaviour to preserve.
 
-For current installation instructions see [`INSTALLATION.md`](../../INSTALLATION.md). The [root README](../../README.md) now introduces the published HTML edition and the unreleased Docker/SQLite build; neither document announces a new published release.
+For current installation instructions see [`INSTALLATION.md`](../../INSTALLATION.md). The [root README](../../README.md) describes the published v2.0.1 Docker/SQLite edition.
 
 ## Before making a change
 
-Read #215 directly, inspect the current `Next` branch and relevant source, compare established inventory behaviour with the **published tag** rather than assumptions, and reuse existing tests. Historical audit findings may already have been fixed. A new feature, visual deviation or expanded architecture must not be inferred from this guide. **No release or rename is authorised by these documents.**
+Read the approved scope for the proposed change, inspect the current main-branch source, review the Function Index and relevant tests, and compare established inventory behaviour with the **published v2.0.1 baseline** rather than assumptions. Historical audit findings may already have been fixed. Source renaming for clarity is a welcome, separately approved maintenance activity: update every dependent reference, test and guide. [Future Ideas Register #222](https://github.com/Caffoot/Caffoot-Lite/issues/222) alone does not authorise implementation.
