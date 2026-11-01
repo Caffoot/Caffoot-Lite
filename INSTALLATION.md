@@ -46,17 +46,31 @@ The existing `tests/test_compose_lifecycle.py` is an **opt-in** Docker milestone
 
 ## Official v2.0.1 Portainer installation
 
-For a simple installation, use **Portainer → Stacks → Add stack → Web editor**. Copy the entire [v2.0.1 stack](portainer-v2.0.1.yaml) and change the example address, port and persistent host path for your server. Its image is `ghcr.io/caffoot/caffoot-lite:v2.0.1` (ARM64 Raspberry Pi 5 and AMD64 PC). Confirm the [v2.0.1 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.1) and image workflow succeeded before pulling it. The GHCR package must be **Public** to permit anonymous pulls; never embed an access token in a public stack.
+For a simple **new** installation, use **Portainer → Stacks → Add stack → Web editor**. Copy the entire [v2.0.1 stack](portainer-v2.0.1.yaml) and change the example server address and port. The default storage is a Docker-managed **named volume**; there is no host folder to create. Its image is `ghcr.io/caffoot/caffoot-lite:v2.0.1` (ARM64 Raspberry Pi 5 and AMD64 PC). Confirm the [v2.0.1 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.1) and image workflow succeeded before pulling it. The GHCR package must be **Public** to permit anonymous pulls; never embed an access token in a public stack.
 
-The provided example uses `10.128.20.3:8443` and host bind mount `/portainer/Files/AppData/Config/caffoot_data:/data`. Adapt these to your installation. Prepare the data directory on the Docker host so the container's non-root UID/GID 10001 can write to it:
+The supplied example uses **192.168.1.100:8443 as a placeholder**. Replace it with the address of your server before deploying. Its standard storage mapping is:
+
+```yaml
+volumes:
+  - caffoot_data:/data
+```
+
+The stack declares `caffoot_data` in a separate top-level `volumes:` section. Docker automatically creates and manages this persistent volume. For a normal new installation, you do **not** need to create or change the permissions of a host folder. The actual volume may have a project/stack prefix (for example, `yourstack_caffoot_data`): use **Portainer → Volumes** to identify the real name.
+
+**Prefer a custom host folder?** You can replace the named-volume mapping with `/srv/caffoot-lite/data:/data` or another folder of your choice. For the optional bind mount, prepare the folder with permissions for the container's non-root UID/GID `10001:10001`:
 
 ```sh
-sudo install -d -m 0750 -o 10001 -g 10001 /portainer/Files/AppData/Config/caffoot_data
+sudo install -d -m 0750 -o 10001 -g 10001 /srv/caffoot-lite/data
 ```
+
+If using a bind mount, the now-unused top-level `volumes: caffoot_data:` declaration can be removed. Any other valid host path is fine if it is writable by the application user.
+
+**Existing installations must retain their current `/data` mapping.** Changing an existing host path to a new named volume without migrating data can cause the application to appear empty while the original database remains in the previous storage location.
+
 
 If 8443 is occupied, change **both** the published `ports` value (e.g. `8444:8080`) and `CAFFOOT_WEB_ADDRESS` / `CAFFOOT_PORT`. Keep internal port `8080` fixed. After deployment, open the configured HTTPS address, complete first-run administrator setup and required MFA. Check the certificate identity and establish trust before entering real credentials, as explained above.
 
-If upgrading an existing Docker deployment, make a consistent external backup of the mounted `/data` folder with the container stopped, **retain the same host folder mounted as `/data`** and update your existing Portainer stack's image tag. Do not create a separate empty stack for an existing database.
+If upgrading an existing Docker deployment, make a consistent external backup of the data mounted at `/data` while the container is stopped, **retain the same existing named volume or host folder mounted as `/data`**, and update the existing Portainer stack's image tag. Do not create a separate empty stack or attach a new empty volume to an existing database.
 
 ## Building directly from the source repository
 
@@ -66,9 +80,15 @@ Clone the v2.0.1 release and use the repository-root [`compose.yaml`](compose.ya
 
 The Docker edition does **not** offer an ongoing in-app JSON export/restore service. The fresh **v1.3.3** JSON import described below is only for one-way migration.
 
-The application stores its SQLite database at `/data/caffoot.sqlite3`, with persistent HTTPS certificate material under `/data/tls`. Keep the **entire** `/data` mount when recreating or updating the container. On the example Pi Portainer stack, this is the host folder `/portainer/Files/AppData/Config/caffoot_data`.
+The application stores its SQLite database at `/data/caffoot.sqlite3`, with persistent HTTPS certificate material under `/data/tls`. Keep the **entire** `/data` mount when recreating or updating the container. For new installations, the default is a **Docker-managed named volume**, not an ordinary host directory. Docker may prefix the name with the stack or Compose project name. Existing installations may instead use a custom host directory, which must be preserved.
 
-Use your existing external container/volume backup solution. For a straightforward **manual copy**, first stop the Caffoot container so SQLite is no longer being written, then copy the entire persistent data directory to a separately protected backup location. Start the container again once copying is complete. For restoration, stop the container, restore the backed-up persistent files into the correctly mapped data directory with their original ownership and permissions, and start the container. Verify your account sign-in, inventory and HTTPS identity. **Do not delete your only working database or certificate files to test restoration.** A disposable test environment or separate temporary restore location is preferable.
+Use your existing external container/volume backup solution. For a straightforward **manual copy**, first stop the Caffoot container so SQLite is no longer being written, then copy the entire persistent data directory to a separately protected backup location.
+
+**Named-volume backup:** In **Portainer → Volumes**, identify the **actual** volume used by the Caffoot Lite stack; the name may include the stack name. Confirm that it contains the expected database and `tls` directory. With Caffoot Lite stopped, use a trusted Docker volume-backup utility or temporary helper container to copy the complete volume contents. Do not assume the files are always under `/var/lib/docker/volumes`; Docker chooses the storage location.
+
+**Host-directory backup:** If you chose a bind mount such as `/srv/caffoot-lite/data:/data`, stop Caffoot Lite and copy the **entire configured host directory**, including SQLite and TLS files.
+
+**Restoring a named-volume backup:** Stop the target container, identify and verify the intended persistent volume, restore the full saved contents (including database and TLS files, retaining correct permissions/ownership), restart and verify sign-in, inventory and HTTPS identity. Test a restore in a separate, disposable installation whenever practical. Never overwrite your only working data to test the backup. Start the container again once copying is complete. For restoration, stop the container, restore the backed-up persistent files into the correctly mapped data directory with their original ownership and permissions, and start the container. Verify your account sign-in, inventory and HTTPS identity. **Do not delete your only working database or certificate files to test restoration.** A disposable test environment or separate temporary restore location is preferable.
 
 On the Raspberry Pi test host, the product owner successfully recreated the running container without losing inventory, then separately stopped it, copied its data, restored the copied database and restarted with the existing inventory functioning. That was a **local manual recovery exercise**: it was **not** an off-device backup and would not protect against failure or loss of the Pi's storage. Real deployments should secure backup copies **outside the Docker host** and verify their restore process. Protect backups containing user credentials and TLS private-key material.
 
