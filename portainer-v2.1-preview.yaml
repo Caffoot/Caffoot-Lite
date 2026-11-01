@@ -1,0 +1,26 @@
+# Caffoot Lite v2.1 PREVIEW ONLY — isolated Portainer stack for evaluation.
+# Replace 192.168.1.100 with the IP/hostname of YOUR Docker server.
+# Do not run this against the published v2.0.1 data volume or bind mount.
+# Requires successful multi-architecture GitHub preview image build.
+services:
+  caffoot-v21-preview:
+    image: ghcr.io/caffoot/caffoot-lite:v2.1-preview
+    container_name: caffoot-v21-preview
+    restart: unless-stopped
+    environment:
+      CAFFOOT_WEB_ADDRESS: "https://192.168.1.100:8444"
+      CAFFOOT_SERVER_ADDRESS: "192.168.1.100"
+      CAFFOOT_PORT: "8444"
+    ports:
+      - "8444:8080"
+    volumes:
+      - caffoot_v21_preview_data:/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import ssl,urllib.request; urllib.request.urlopen('https://127.0.0.1:8080/health',context=ssl._create_unverified_context(),timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  caffoot_v21_preview_data:
+    name: caffoot_v21_preview_data

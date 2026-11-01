@@ -85,3 +85,11 @@ Administrators can review an account in **User List**, adjust allowed section gr
 **Device can be edited, but IP/rack fields are locked:** Grant the appropriate IPAM/Racks editing right *only if* the user's responsibilities justify it.
 
 See [Devices](Devices.md), [IPAM](IPAM.md), [Racks](Racks.md) and [Getting Started](Getting-Started.md).
+
+## My Account personal details — v2.1 development preview
+
+The v2.1 preview provides **My Account → Overview** with optional **First Name, Last Name, Email Address, Display Name** and a round **Profile Image**. The existing **Username** is shown read-only: your login identity does not change when you choose a display name. Leave any personal field blank if you wish; when there is no display name, the app falls back to your username.
+
+To save optional details, open **My Account → Overview**, enter the fields you want, and choose **Save Personal Details**. For a photograph, choose **Upload Profile Image**, select a JPG, PNG or WEBP image up to 5 MB and use **Remove Image** if you wish to return to the initials avatar. Details and photographs are kept in the same SQLite database as the accounts; they survive a normal container recreation with the original `/data` mount and should be included in your protected database backups. A user can save their own account details; these controls do not change permissions or administrator status.
+
+**Email is optional and currently unverified.** Entering an email address does not activate password reset emails, email notifications or recovery. Password changes and MFA remain under **My Account → Security** with the existing safeguards. Email delivery, verification and recovery are approved v2.1 future development work, not available in this preview.

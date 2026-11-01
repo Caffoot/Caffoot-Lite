@@ -1,73 +1,48 @@
-# Caffoot Lite v2.0.1
+# Caffoot Lite v2.1 — Development Preview
 
-**Infrastructure, Simplified.** Free, open-source IPAM, device inventory, network rack documentation and Change History for home labs and small IT teams.
+**Infrastructure, Simplified.** Free, open-source infrastructure documentation for home labs and small IT teams: IP address management (IPAM), device inventory, network racks and secure multi-user access.
 
-Caffoot Lite v2.0.1 is the Docker/SQLite, multi-user edition of Caffoot Lite, built from the approved v2.0 functionality. It uses a **central SQLite database**, first-run administrator setup, mandatory MFA for administrators and editors, administrator-managed permissions, and simultaneous authenticated inventory access. Familiar v1.3.3 Devices, IPAM, Racks and Change History workflows are preserved.
+> **Unreleased preview — not the production release.** The `v2.1` branch is the approved development line. Its interface and features are still under owner review and further development. The released, supported version remains **[v2.0.1](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.1)**, with production image `ghcr.io/caffoot/caffoot-lite:v2.0.1`. Never point an existing production stack at the preview image or share its production `/data` mount.
 
-The repository root contains the Docker application's source: `backend/`, `inventory.html`, `setup.html`, `assets/`, `Dockerfile`, `compose.yaml`, `tests/` and documentation. The old `next/` development folder and the standalone HTML build copy are **not part of the v2.0.1 source archive**. The original standalone version remains separately available in the [published v1.3.3 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3).
+## Try the v2.1 preview
 
-## Install Caffoot Lite
+A separate, multi-architecture **test image** is built from this branch by [the preview build workflow](.github/workflows/v21-preview-image.yml). After its successful publication, the preview image tag is:
 
-**Official Docker image:** `ghcr.io/caffoot/caffoot-lite:v2.0.1` (Raspberry Pi 5 ARM64 and PC AMD64).
+```text
+ghcr.io/caffoot/caffoot-lite:v2.1-preview
+```
 
-Before installing, confirm the [v2.0.1 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.1) and container build are published and the image is publicly accessible. This is a Docker application: **GitHub's automatic source-code ZIP and tarball are not the Docker installation package.**
+Open **Portainer → Stacks → Add stack → Web editor**, paste [`portainer-v2.1-preview.yaml`](portainer-v2.1-preview.yaml), replace the example Pi/server IP address, and deploy as **caffoot-v21-preview**. The sample uses port **8444** and its **own named data volume** — not the live v2.0.1 database. Never swap the existing production service's image tag to try this. See the [preview installation and safety instructions](INSTALLATION.md#v21-development-preview--portainer-test-installation) before signing in.
 
-For Portainer, copy [`portainer-v2.0.1.yaml`](portainer-v2.0.1.yaml) into **Stacks → Add stack → Web editor**, adjust your server address and port, and deploy. For new installations, Docker creates the persistent named volume automatically; no host directory is required. For Docker Compose builds from source, use [`compose.yaml`](compose.yaml) and [`Dockerfile`](Dockerfile) at the repository root.
+If the image has not yet been built or the GHCR package is not public, Portainer cannot pull it. Confirm [GitHub Actions](https://github.com/Caffoot/Caffoot-Lite/actions/workflows/v21-preview-image.yml) succeeded before deploying. This is **not** a final release or upgrade recommendation.
 
-**Read the [installation and HTTPS guide](INSTALLATION.md)** for complete Portainer/Docker Compose steps, initial administrator setup, MFA, reverse proxy, certificate trust and data backups. No public registration is offered.
+## What is available in this development preview?
 
-## Features
+- **Premium, responsive Caffoot interface:** branded collapsible sidebar, clearer Dashboard, Devices directory and full details, IPAM, Rack views, Users, Settings & Data, and My Account, using the approved typography and palette.
+- **Existing inventory functionality retained:** device and VM details, IPAM/subnet/VLAN records, front/rear rack views and printing, authorised changes, imports and shared SQLite inventory.
+- **Optional account profiles:** First/Last Name, Display Name, optional unverified email and authenticated circular photographs, saved in the existing SQLite `/data` store. The original username remains the sign-in identifier.
+- **Existing security retained:** password-based sign-in, MFA, role permissions, secure sessions and administrator-controlled access.
 
-- **Devices:** track hardware, software, physical and virtual systems, historical/custom fields and relationships.
-- **IPAM:** document IPv4 blocks, subnets, VLANs, gateways, reservations and device address allocations.
-- **Network Racks:** visualise cabinets, front/rear mounting positions, rack units and accessories.
-- **Shared inventory:** multiple users, section-based read/edit permissions, authenticated changes and temporary device editing reservations.
-- **Management:** administrator-controlled user accounts, MFA and familiar Change History.
+**Not yet built:** SMTP settings, verified-email recovery, protected full Audit Trail, assigned-user devices, support tickets and other future ideas. Future feature placeholders in the interface are not operational services. The existing Change History remains in place for now. See the [development status and remaining acceptance work](docs/v2.1-preview-status.md) and [owner-approved scope in issue #227](https://github.com/Caffoot/Caffoot-Lite/issues/227). PR [#229](https://github.com/Caffoot/Caffoot-Lite/pull/229) records the completed first 11 development stages before this dedicated branch was created.
 
-![Caffoot Lite dashboard showing example network inventory](docs/screenshots/dashboard.png)
+## Data, backups and security
 
-See the [complete Features and Instructions user guides](docs/How%20To%27s/Features%20and%20Instructions/README.md) for detailed examples, controls and screenshots.
+Caffoot Lite runs as a Docker/SQLite application with its database and HTTPS certificate material under the container's persistent `/data` directory. **The v2.1 preview must use separate test storage**. An existing v2.0.1 database would undergo forward-only schema migration when started under v2.1; do not experiment on your sole working copy or assume you can roll back that database to v2.0.1.
 
-## Help Build Caffoot Lite
+For your live system, keep its existing Portainer stack, image, HTTPS settings and `/data` mapping unchanged. Keep a consistent, protected backup of its entire `/data` directory. Follow the [published v2.0.1 installation and backup guide](https://github.com/Caffoot/Caffoot-Lite/blob/v2.0.1/INSTALLATION.md) for production use.
 
-**Caffoot Lite is an open-source community project, and everyone is welcome to help.** You don't need to be a developer or have written code before.
-
-You can contribute by reporting a bug, testing the application, improving a help guide, suggesting a useful feature, answering a question or sharing a clear example. Even pointing out something confusing is valuable.
-
-- **[Report A Bug, Suggest A Feature Or Ask A Question](https://github.com/Caffoot/Caffoot-Lite/issues/new/choose)** — choose a simple issue form and describe it in your own words.
-- **[Improve The Documentation](https://github.com/Caffoot/Caffoot-Lite/issues/new/choose)** — suggest clearer wording, screenshots or missing instructions, with no programming required.
-- **[Explore Good First Issues](https://github.com/Caffoot/Caffoot-Lite/labels/good%20first%20issue)** and **[Help Wanted](https://github.com/Caffoot/Caffoot-Lite/labels/help%20wanted)** — find appropriately scoped tasks where community help would be useful.
-- **[Community Participation Guide](docs/Community-Participation.md)** — find out what labels mean and how to get involved.
-- **[CONTRIBUTING.md](CONTRIBUTING.md)** — the shared naming, documentation, plain-English code-comment and review standards for all contributors, including maintainers.
-
-Ideas are welcome, but feature implementation only begins after its scope is agreed and approved. Please [report potential security vulnerabilities privately](SECURITY.md), not in public issues.
-
-## Migrating your standalone inventory
-
-Export a fresh JSON backup using **published Caffoot Lite v1.3.3**. Users of earlier standalone HTML editions must first upgrade to v1.3.3. After setting up your v2.0.1 administrator account, go to **Settings & Data → Import Inventory**, review the proposed replacement and confirm it. This is a **one-way migration**, not a routine database backup. It does not replace user accounts, MFA or permissions.
-
-## Where Your Data Is Stored
-
-**New installations:** Docker manages a persistent `caffoot_data` volume, mounted at `/data` inside Caffoot Lite. The actual Docker volume name may be prefixed by your Compose project or Portainer stack name. Find it under **Portainer → Volumes**.
-
-**Existing installations:** Keep your original `/data` mapping when updating, whether it is a named volume or custom host directory. Switching to a different, empty volume does **not** migrate your existing database and can make the application appear empty.
-
-**Optional custom location:** You may replace `caffoot_data:/data` with a host bind mount such as `/srv/caffoot-lite/data:/data`. Give the container's non-root UID/GID `10001:10001` access to the directory. See the [installation guide](INSTALLATION.md).
-
-## Backups and HTTPS
-
-The authoritative database and HTTPS certificate material live under the persistent Docker `/data` mount (`caffoot.sqlite3` and `tls/`). Keep this directory when restarting or recreating the container. Back it up with trusted **external** Docker/volume/file backup tools; for a manual consistent copy, stop the container first. Keep securely protected backups away from the host and verify that they can be restored. No in-app ongoing Docker JSON backup/restore is provided.
-
-For direct HTTPS, verify and trust the application certificate before entering credentials. Configure reverse proxies for HTTPS upstream connections, trusted certificates and restricted exposure of the published Docker port. See [INSTALLATION.md](INSTALLATION.md).
+Only published **standalone v1.3.3** JSON backups are accepted for the established *one-way* inventory import. Import is not the ongoing backup system. This development preview should use disposable accounts and inventory wherever practical.
 
 ## Documentation
 
-- [Installation, HTTPS, Portainer and backup instructions](INSTALLATION.md)
-- [v2.0.1 release notes](docs/Release-Notes-v2.0.1.md)
-- [Detailed user guides and screenshots](docs/How%20To%27s/Features%20and%20Instructions/README.md)
-- [Contributing To Caffoot Lite — mandatory naming, UI and documentation standards](CONTRIBUTING.md)
-- [Development Guide](docs/Development%20Guide/README.md)
-- [Standalone v1.3.3 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3)
-- [Historical v2.0/v2.0.1 implementation specification #215](https://github.com/Caffoot/Caffoot-Lite/issues/215) and [release tracker #218](https://github.com/Caffoot/Caffoot-Lite/issues/218); [future ideas #222](https://github.com/Caffoot/Caffoot-Lite/issues/222) (discussion only)
+- [Install and test the v2.1 preview safely](INSTALLATION.md#v21-development-preview--portainer-test-installation)
+- [Preview build/status, scope and checks](docs/v2.1-preview-status.md)
+- [Detailed Features and Instructions](docs/How%20To%27s/Features%20and%20Instructions/README.md)
+- [Architecture and Development Guide](docs/Development%20Guide/README.md)
+- [Contributing](CONTRIBUTING.md) · [Community Participation](docs/Community-Participation.md) · [Report an issue](https://github.com/Caffoot/Caffoot-Lite/issues/new/choose)
+- [Historical v2.0.1 release documentation](https://github.com/Caffoot/Caffoot-Lite/blob/v2.0.1/README.md) · [v1.3.3 standalone release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3)
+- [Approved v2.1 scope #227](https://github.com/Caffoot/Caffoot-Lite/issues/227) · [Future Ideas Register #222](https://github.com/Caffoot/Caffoot-Lite/issues/222) (ideas only)
 
-**Version history:** [v2.0](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0) introduced the Docker/SQLite multi-user edition. v2.0.1 preserves its functionality while moving the Docker source to the root and excluding the legacy standalone build tree from this release's source archive.
+**Website:** [caffoot.co.uk](https://caffoot.co.uk) continues to describe the published release until the product owner separately approves publication of v2.1.
+
+Caffoot Lite is open source and contributions are welcome. Changes to the application require a newly agreed and product-owner-approved specification; development previews are not production releases.

@@ -58,3 +58,10 @@ The link checker does not validate external sites or application behaviour. Chro
 As of 31 October 2026, the product owner has completed the agreed **Stage 2 Raspberry Pi 5 acceptance**: MFA guidance, independent two-user editing and on-demand shared view freshness, v1.3.3 inventory compatibility, container recreation and a one-off **same-device manual database copy/restore**. The latest focused backend, browser and Pi image builds passed, as recorded in [#218](https://github.com/Caffoot/Caffoot-Lite/issues/218). The local restore test is **not** evidence of off-host backup resilience. Stages 3 (documentation), 4 (approved visual verification), 5 (controlled repository cleanup), 6 (website-material preparation) and 7 (proportionate security review) are complete. Stage 8 final release-candidate verification and explicit product-owner approval remain. Passing tests **alone do not approve release**.
 
 [Start here](README.md) · [Inventory migration](05-Inventory-and-Migration.md)
+
+
+## v2.1 preview deployment checkpoint
+
+The unreleased `v2.1` branch has its own [ARM64/AMD64 preview-image workflow](../../.github/workflows/v21-preview-image.yml) and [isolated Portainer stack](../../portainer-v2.1-preview.yaml). The build job runs backend regressions before publishing `ghcr.io/caffoot/caffoot-lite:v2.1-preview`. Normal pull-request browser and security checks remain separate; image publication does **not** mean final release acceptance. Only the approved release process may publish a v2.1 production tag.
+
+A v2.0.1 database must not be used as the sole test copy: schema 8 adds optional account profiles and is a forward-only migration. Test on a disposable, separately mounted data volume, and keep the original v2.0.1 installation and external backups intact. The production website remains versioned independently until the product owner approves a release.

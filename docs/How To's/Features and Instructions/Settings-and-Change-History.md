@@ -48,3 +48,9 @@ Suppose *lab-switch-01* receives an updated device note. The editor saves the de
 - Clear System and one-way v1.3.3 import have different consequences. Review their confirmation carefully.
 
 See [Users, Permissions and MFA](Users-Permissions-and-MFA.md) and [Migration, Backup and Restore](Migration-Backup-and-Restore.md).
+
+## v2.1 preview — Settings and Change History status
+
+The v2.1 branch includes the approved premium **Settings & Data** presentation for administrators and a refreshed **My Account → Appearance** section for individuals. The existing Light/Dark/System theme preference remains stored in each browser; the saved account profile is kept centrally in SQLite instead.
+
+The fuller searchable **Audit Trail** is approved but **not yet implemented**. The existing Change History remains in this preview, including its current limitations; do not treat it as a finished v2.1 Audit Trail or a database backup mechanism. SMTP settings, verified email and recovery are also not yet active. See [current preview status](../../v2.1-preview-status.md).

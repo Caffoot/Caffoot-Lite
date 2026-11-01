@@ -8,7 +8,7 @@ The code keeps Devices, IPAM and Racks records in separate tables, along with ac
 
 ## Source and schema version
 
-The exact definitions are in [`backend/schema.py`](../../backend/schema.py). At the 30 October 2026 checkpoint, `SCHEMA_VERSION = 7`. The function `initialise_database(connection)` applies missing numbered migrations in a transaction and rejects databases marked newer than this application.
+The exact definitions are in [`backend/schema.py`](../../backend/schema.py). The published v2.0.1 baseline used schema **7**; the unreleased v2.1 profile implementation uses `SCHEMA_VERSION = 8`. The function `initialise_database(connection)` applies missing numbered migrations in a transaction and rejects databases marked newer than this application.
 
 | Table | Primary key and relevant columns | What it contains |
 | --- | --- | --- |
@@ -22,6 +22,7 @@ The exact definitions are in [`backend/schema.py`](../../backend/schema.py). At 
 | `inventory_settings` | `key`, `value_json` | Managed lists, optional/historical top-level inventory settings |
 | `inventory_change_history` | auto-increment `id`, `record_json` | Change History records |
 | `accounts` | numeric `id`, unique `username`, `password_hash`, `is_admin`, `mfa_secret`, `mfa_confirmed`, `active` | Local users and account security |
+| `account_profiles` | `account_id` (foreign key to `accounts`), names, unverified email, photo MIME and bounded image bytes | Optional per-user personal details and private photographs; cascade removal when its account is deleted |
 | `account_permissions` | (`account_id`, `section`), `level` | `Devices`/`IPAM`/`Racks` read or edit grants |
 | `account_sessions` | `token_hash`, `account_id`, `expires_at`, `created_at` | Expiring sessions; expiry index |
 | `device_edit_reservations` | `device_id`, `account_id`, `expires_at`, `base_revision` | Current exclusive per-device editing reservation |
@@ -33,7 +34,7 @@ The `record_json`/`value_json` columns have SQLite JSON-validity checks. The sch
 - **Devices:** device identities, properties and host/guest/device relationships. The device record may carry a `primaryIp` or rack presentation fields, but those must agree with shared authority.
 - **IPAM:** authoritative IP allocations, assignments and reservations; device updates alter allocation records in the **same transaction**.
 - **Racks:** definitions and accessory records; device placement is validated against shared rack occupancy, faces, collisions and capacity.
-- **Accounts:** not part of exported/migrated inventory; user passwords, MFA, sessions and permissions are never overwritten by a v1.3.3 inventory import.
+- **Accounts and optional profiles:** user/password/MFA/permissions are separate from inventory. Schema 8 adds `account_profiles` for first/last/display names, optional unverified email and optional image bytes. The existing `accounts.username` stays the login identity. Importing v1.3.3 inventory does not overwrite accounts or profiles. Profile photo bytes are private and included in the same SQLite backup.
 
 ## How writing works
 

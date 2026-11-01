@@ -21,7 +21,7 @@ The UI hides edit controls from read-only users, but that is presentation only. 
 
 ## Approved appearance and font loading
 
-The Docker application's first-run and sign-in page uses the existing Caffoot hedgehog, the tagline **“Infrastructure, Simplified.”** and the approved warm-background styling. The inventory screens retain their established layout and controls. Both pages prefer **Inter**, with system-font fallbacks when the external font stylesheet is unavailable. The normal HTTPS authentication, editing and SQLite operations do not depend on the font provider; the published single-file v1.3.3 application retains its separate offline-first behaviour. This is the specific visual-only approval in [#215 §20](https://github.com/Caffoot/Caffoot-Lite/issues/215), not a permission to redesign inventory dialogs.
+The Docker application's first-run and sign-in page uses the existing Caffoot hedgehog, the tagline **“Infrastructure, Simplified.”** and the approved warm-background styling. The **unreleased v2.1 preview** introduces the premium interface approved in [#227](https://github.com/Caffoot/Caffoot-Lite/issues/227), while preserving existing Devices, IPAM, Racks, permissions and workflow safeguards. Both pages prefer **Inter**, with system-font fallbacks when the external font stylesheet is unavailable. The normal HTTPS authentication, editing and SQLite operations do not depend on the font provider; the published single-file v1.3.3 application retains its separate offline-first behaviour. Published v2.0.1 work is described historically in [#215](https://github.com/Caffoot/Caffoot-Lite/issues/215), but the subsequently approved v2.1 scope in [#227](https://github.com/Caffoot/Caffoot-Lite/issues/227) governs the current redesign.
 
 ## Local Tailwind stylesheet
 
@@ -38,7 +38,7 @@ The live route list is defined by the conditions in `Handler.do_GET` and `Handle
 | Pages and health | `/setup`, `/inventory`, `/health` |
 | Setup and sign-in | `/api/setup/status`, `/api/setup`, `/api/setup/mfa-secret`, `/api/setup/mfa`, `/api/login`, `/api/logout`, `/api/session` |
 | User accounts | `/api/users`, `/api/users/create`, `/api/users/permission`, `/api/users/active`, `/api/users/admin`, `/api/users/delete` |
-| Own account | `/api/account/password`, `/api/account/mfa/start`, `/api/account/mfa/confirm` |
+| Own account | `/api/account/password`, `/api/account/mfa/start`, `/api/account/mfa/confirm`, `/api/account/profile` (POST), `/api/account/photo` (authenticated GET/POST), `/api/account/photo/remove` (POST) |
 | Read inventory | `/api/inventory/state`, `/api/inventory/sections`, `/api/inventory/devices`, `/api/inventory/ipam`, `/api/inventory/racks`, `/api/inventory/settings`, `/api/inventory/history` |
 | Device changes | `/api/devices/create`, `/api/devices/edit/start`, `/api/devices/edit/save`, `/api/devices/edit/cancel`, `/api/devices/delete` |
 | IPAM | `/api/ipam/allocation/save`, `/api/ipam/allocation/delete`, `/api/ipam/allocation/bulk`, `/api/ipam/subnets/save`, `/api/ipam/subnets/delete`, `/api/inventory/ipam/repair` |
@@ -46,6 +46,8 @@ The live route list is defined by the conditions in `Handler.do_GET` and `Handle
 | v1.3.3 import | `/api/import/preview`, `/api/import/access-point-choices`, `/api/import/confirm`, `/api/import/cancel` |
 
 These routes use the same HTTPS server, not a second service. The backend derives the user from the validated session rather than trusting a browser-supplied user ID. The exact JSON request/response fields should always be read from the handler and its matching UI caller.
+
+The v2.1 **optional profile** API uses the existing session and CSRF validation and writes only to the current user's `account_profiles` record. Image data is served only to the authenticated owner with `no-store` and `nosniff`; it is not a public asset. See [`backend/profiles.py`](../../backend/profiles.py) for field/image validation. No SMTP, verified-email recovery or full Audit Trail API is active yet.
 
 ## Example: editing a device
 

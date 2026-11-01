@@ -1,4 +1,24 @@
-# Caffoot Lite v2.0.1 — Docker / SQLite installation
+# Caffoot Lite v2.1 — Preview and published v2.0.1 installation
+
+> **Development branch notice:** These instructions include an unreleased **v2.1 preview** for evaluation. For production, use the already published [v2.0.1 instructions](https://github.com/Caffoot/Caffoot-Lite/blob/v2.0.1/INSTALLATION.md) and tagged `v2.0.1` container. A preview is **not** an upgrade for your existing installation.
+
+## v2.1 development preview — Portainer test installation
+
+1. In GitHub, confirm the [v2.1 preview image workflow](https://github.com/Caffoot/Caffoot-Lite/actions/workflows/v21-preview-image.yml) succeeded and the image `ghcr.io/caffoot/caffoot-lite:v2.1-preview` is pullable from GHCR. If it has not published yet, do not try the old `next-test` image.
+2. Open **Portainer → Stacks → Add stack → Web editor**, name the new stack **caffoot-v21-preview**, and paste [`portainer-v2.1-preview.yaml`](portainer-v2.1-preview.yaml).
+3. Replace **192.168.1.100** in *both* environment fields with your Raspberry Pi/Docker server IP. The example uses **8444** for a separate HTTPS port. Keep `CAFFOOT_WEB_ADDRESS` consistent with the address and port you will use in the browser; change the sample port if it is occupied.
+4. Confirm the service name **caffoot-v21-preview**, published port **8444:8080** and dedicated `caffoot_v21_preview_data:/data` mount. **Do not** reuse your existing v2.0.1 container name, port, host folder, named volume or database.
+5. Deploy the new stack, check its container is healthy, and browse to **https://YOUR_PI_IP:8444/setup**. The test instance starts with a new, empty database. Create a disposable preview administrator and enrol MFA, following the usual first-run process. Inspect and trust its separate HTTPS certificate carefully before submitting credentials.
+6. Explore the new interface, add disposable test inventory, and test **My Account → Overview** for personal details and profile photographs. Report issues with screenshots and precise steps through [the development PR](https://github.com/Caffoot/Caffoot-Lite/pull/229).
+
+**Do not perform an in-place upgrade of your production v2.0.1 stack to the preview.** New optional account fields add SQLite schema migration v8, which older v2.0.1 cannot read as an older schema version. Retain and independently back up your original `/data` volume. The dedicated preview named volume retains its own test data across preview container recreation, but it must not be attached to your live v2.0.1 stack.
+
+If Portainer reports *manifest unknown* or *pull access denied*, the image may not yet have been published, or the GHCR package may need to be made public. Confirm the workflow and package visibility rather than using an unrelated image or embedding access tokens in a shared stack.
+
+The rest of this document retains the established v2.0.1 HTTPS, backup, existing-stack and import procedures as a stable reference. The authoritative v2.1 preview status is in [docs/v2.1-preview-status.md](docs/v2.1-preview-status.md).
+
+---
+
 
 Caffoot Lite **v2.0.1** packages the established Docker/SQLite application in a clean repository-root layout. It preserves the approved v2.0 functionality: central SQLite inventory, familiar Devices/IPAM/Racks/Change History, administrator setup, MFA, permissions and simultaneous multi-user access. Only **published standalone v1.3.3 JSON inventory backups** are accepted for one-way migration. For everyday use, follow the [Features and Instructions guides](docs/How%20To's/Features%20and%20Instructions/README.md).
 
@@ -44,7 +64,7 @@ The existing backend checks and focused HTTPS/Chromium test run in GitHub Action
 
 The existing `tests/test_compose_lifecycle.py` is an **opt-in** Docker milestone test. The `Next Docker Compose lifecycle` GitHub Actions workflow passed during Stage 8, verifying published port configuration, persistent SQLite data and TLS certificate continuity across restart and recreation. The product owner has now completed the agreed Raspberry Pi 5/Portainer Stage 2 acceptance, including container recreation and a manual stopped-container backup/restore. That acceptance does **not** replace the later release security review, nor prove automated or off-host backup protection.
 
-## Official v2.0.1 Portainer installation
+## Published v2.0.1 Portainer installation (stable)
 
 For a simple **new** installation, use **Portainer → Stacks → Add stack → Web editor**. Copy the entire [v2.0.1 stack](portainer-v2.0.1.yaml) and change the example server address and port. The default storage is a Docker-managed **named volume**; there is no host folder to create. Its image is `ghcr.io/caffoot/caffoot-lite:v2.0.1` (ARM64 Raspberry Pi 5 and AMD64 PC). Confirm the [v2.0.1 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.1) and image workflow succeeded before pulling it. The GHCR package must be **Public** to permit anonymous pulls; never embed an access token in a public stack.
 
@@ -74,7 +94,7 @@ If upgrading an existing Docker deployment, make a consistent external backup of
 
 ## Building directly from the source repository
 
-Clone the v2.0.1 release and use the repository-root [`compose.yaml`](compose.yaml) and [`Dockerfile`](Dockerfile). Set your local `.env` values as shown above, then run `docker compose up --build -d` from the root. For Portainer's Git-repository mode, use repository `https://github.com/Caffoot/Caffoot-Lite.git`, reference `v2.0.1` and Compose path `compose.yaml`. The repository-root `compose.yaml` already uses the named `caffoot_data` volume by default. For an existing deployment that uses a host folder, keep the existing `CAFFOOT_DATA_PATH` value in `.env` (or your existing mapping) instead of moving to a fresh volume. You can explicitly set `CAFFOOT_DATA_PATH=/srv/caffoot-lite/data` for a new custom bind-mount installation, after preparing that directory with the correct permissions. Compose may prefix named volumes with the project name; check the actual volume name before running backups.
+For the published stable version, clone the v2.0.1 tag. For a source-only v2.1 preview build, check out the `v2.1` branch, and use the repository-root [`compose.yaml`](compose.yaml) and [`Dockerfile`](Dockerfile). Set your local `.env` values as shown above, then run `docker compose up --build -d` from the root. For Portainer's Git-repository mode, use repository `https://github.com/Caffoot/Caffoot-Lite.git`, reference `v2.0.1` and Compose path `compose.yaml`. The repository-root `compose.yaml` already uses the named `caffoot_data` volume by default. For an existing deployment that uses a host folder, keep the existing `CAFFOOT_DATA_PATH` value in `.env` (or your existing mapping) instead of moving to a fresh volume. You can explicitly set `CAFFOOT_DATA_PATH=/srv/caffoot-lite/data` for a new custom bind-mount installation, after preparing that directory with the correct permissions. Compose may prefix named volumes with the project name; check the actual volume name before running backups.
 
 The service is named `caffoot-lite`, and the image build copies `backend/`, `inventory.html`, `setup.html` and the required `assets/` from the root. The same `/data` backup and HTTPS rules apply.
 

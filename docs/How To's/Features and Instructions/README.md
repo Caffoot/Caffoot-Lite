@@ -1,6 +1,6 @@
 # Caffoot Lite — Features and Instructions
 
-Welcome to the Caffoot Lite user guides. These step-by-step instructions cover the Docker/SQLite edition currently being prepared for release. Its established inventory screens and safeguards follow the published v1.3.3 application, while its accounts and shared database are new.
+Welcome to the Caffoot Lite user guides. The published Docker/SQLite **v2.0.1** release is the stable foundation; the **v2.1 branch is an unreleased development preview** with a premium interface and optional saved account profiles. Existing inventory, account and permission behaviour remains the authority unless a v2.1 improvement is explicitly described. Use [the preview status guide](../../v2.1-preview-status.md) for current progress and work not yet implemented.
 
 The guides describe the **real application**, use fictional examples and distinguish viewer and editor permissions. They are maintained here as the single source for GitHub and the future website's help section. The separate [Development Guide](../../Development%20Guide/README.md) explains the implementation for developers.
 

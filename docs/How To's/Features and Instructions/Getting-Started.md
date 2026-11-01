@@ -65,3 +65,7 @@ A user may view a device that somebody else is editing, but cannot edit it simul
 **Why isn't a subnet offered?** Record the assignable Network/VLAN under IPAM first; an IP Address Block alone is not the same thing.
 
 **What protects my inventory if the Pi fails?** Your persistent Docker data must be backed up to separate storage. See [Migration, Backup and Restore](Migration-Backup-and-Restore.md).
+
+## v2.1 preview navigation (not yet released)
+
+The v2.1 branch introduces a premium navy navigation sidebar, including a bottom **Collapse Menu** control and retained section submenus. The central header opens **My Account**. The underlying authentication, section permissions and SQLite inventory remain intact; collapsed navigation does not grant or remove rights. The `v2.1` preview is separate from the released v2.0.1 application. See [preview installation](../../../INSTALLATION.md#v21-development-preview--portainer-test-installation).
