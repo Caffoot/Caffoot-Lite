@@ -164,6 +164,37 @@ async function run(){
   await sidebarToggle.click();
   assert.equal(await sidebarToggle.getAttribute('aria-expanded'),'true');
   console.log('v2.1 premium sidebar branding, collapse, persistence, keyboard and mobile navigation passed');
+  // v2.1 shared shell: clear breadcrumb, authenticated account shortcut and safe responsive layout.
+  const shellHeader=page.locator('#app > main > .v21-shell-header');
+  assert.ok(await shellHeader.isVisible(),'Premium shared header should be present');
+  assert.equal(await shellHeader.evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(255, 255, 255)',
+    'Light theme must use the approved light header, not the legacy navy top bar');
+  assert.equal(await page.locator('.v21-header-product').textContent(),'Caffoot Lite');
+  assert.equal(await page.locator('.v21-header-page').textContent(),'Dashboard Overview');
+  assert.equal(await page.locator('#v21-header-username').textContent(),'owner',
+    'The top account shortcut must show the authenticated username, not a fabricated display name');
+  assert.equal(await page.locator('#v21-header-avatar').textContent(),'O',
+    'The round account avatar must have a usable fallback initial');
+  assert.equal(await page.locator('#sidebar [data-action="tab-dashboard"]').getAttribute('aria-current'),'page',
+    'The active page must be announced in the sidebar');
+  await page.locator('#v21-account-shortcut').click();
+  await page.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='My account');
+  assert.equal(await page.locator('#sidebar [data-action="tab-account"]').getAttribute('aria-current'),'page');
+  assert.equal(await page.locator('#sidebar [data-action="tab-dashboard"]').getAttribute('aria-current'),null);
+  await page.locator('#sidebar [data-action="tab-dashboard"]').click();
+  await page.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='Dashboard Overview');
+  assert.ok(await page.locator('.v21-skip-link').count(),
+    'Keyboard users must have a Skip to main content link');
+  assert.equal(await page.locator('#main-content').getAttribute('tabindex'),'-1',
+    'Skip link target must accept keyboard focus');
+  await page.setViewportSize({width:390,height:812});
+  assert.ok(await shellHeader.evaluate(el=>{
+    const bounds=el.getBoundingClientRect();
+    return bounds.left>=0 && bounds.right<=innerWidth && el.scrollWidth<=el.clientWidth+1;
+  }),'Header must fit the mobile viewport without horizontal overflow');
+  await page.setViewportSize({width:1440,height:950});
+  console.log('v2.1 light premium page header, account shortcut, active navigation and mobile layout passed');
+
   console.log('First administrator, MFA, sign-in and direct Dashboard arrival passed');
   assert.equal(await page.locator('#next-dashboard-mfa-notice').count(),0,
     'Enrolled administrators must not see MFA setup guidance');
