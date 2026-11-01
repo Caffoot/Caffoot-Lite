@@ -39,11 +39,35 @@ Renaming existing identifiers for contributor clarity is welcome **when the chan
 
 Preserve published inventory record fields such as `rackAccessories`, `ipAllocations`, `primaryIp`, `rackId`, `deviceId` and `virtualHostId` unless a separately approved compatibility plan intentionally changes their public meaning or representation. Python/SQL names such as `record_json` and `base_revision` must also remain compatible. An API payload key must match both frontend and backend, and cannot be renamed casually.
 
+## Code Comments And Docstrings — Written For Everyone
+
+**Source comments are public-facing documentation for the Caffoot Lite community.** Write them in clear **British English** for a reader who is learning to code or has no programming background. The intended audience is a person trying to understand the application, **not a professional developer or an AI tool**.
+
+For comments in JavaScript, Python, HTML, CSS and other project-owned code:
+
+- Explain **what the code does** in ordinary words. Where helpful, also explain **why it does it**, what may change and what problem it prevents.
+- Use short, complete, accurate explanations and define specialist terminology when it is necessary.
+- Make important security, data-protection, compatibility or unusual behaviour understandable without assuming prior knowledge.
+- Avoid unexplained acronyms, dense jargon, AI-facing prompts, personal shorthand, phase/stage labels and temporary development notes.
+- Do not comment on every self-explanatory statement; unnecessary comments can make code harder to understand.
+- Keep comments in step with the code. Update or remove a comment when its explanation becomes inaccurate.
+
+For example, prefer:
+
+```javascript
+// Stop another user from editing this device while someone else is saving changes.
+// This prevents one person's work from accidentally replacing another person's work.
+```
+
+over a cryptic note such as `// lock CAS v2, retry handler`.
+
+Names and comments work together: use descriptive identifiers, then use plain-language comments to clarify the behaviour or reasoning that the name alone cannot convey. Longer explanations belong in maintained guides, with clear links from the relevant code.
+
 ## Documentation And Function Index
 
 **Keep the documentation accurate as you work.** When functions are added, deleted, moved or renamed, regenerate and review [`Function-Index.md`](Function-Index.md) in the **same PR**, with the correct source snapshot, function links and reference locations. Its textual call-like reference counts do not establish whether a function is used. Documentation for interfaces, components, configuration, security, user workflows and data relationships belongs in the relevant guides too; not every individual line requires an index entry.
 
-Write comments in plain British English explaining constraints and reasons, rather than recording a diary of development phases. Correct stale docstrings (some v2.0.1 backend modules still mention 'offline' or 'future' despite serving requests).
+Apply the public-facing comment standard above to source comments and docstrings. Correct stale descriptions (some v2.0.1 backend modules still mention 'offline' or 'future' despite serving requests).
 
 ## Acceptance And Review
 
