@@ -846,7 +846,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 @media(max-width:720px){.backup-workspace .settings-grid{grid-template-columns:1fr}.backup-workspace .settings-panel{min-height:0}}
 </style>
 <style id="settings-layout-styles">
-.settings-workspace.backup-workspace{max-width:1240px;width:100%}
+.settings-workspace.backup-workspace{max-width:none;width:100%;margin:0}
 .settings-groups{display:block}
 .settings-group-title{font-size:17px;font-weight:800;margin:22px 0 10px}
 .settings-group-title:first-child{margin-top:4px}
@@ -1671,7 +1671,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 <style id="caffoot-v21-profile-active">
 /* Stage 11 optional profiles: all displayed names/photos come from the user's own session. */
 .v21-account-avatar-photo{object-fit:cover;object-position:center;background:#eaf0f5}
-.v21-header-avatar img{display:block;width:100%;height:100%;border-radius:50%;object-fit:cover}
+.v21-header-avatar img{display:block;width:100%;height:100%;min-width:0;min-height:0;aspect-ratio:1;border-radius:50%;object-fit:cover;object-position:center}
 .v21-account-photo .v21-account-avatar-photo{border-radius:50%;width:88px;height:88px}
 .v21-account-photo .v21-account-photo-actions{display:grid;justify-items:center;gap:7px}
 .v21-account-photo button:not(:disabled){color:#b45c20;background:#fff7ee;border-color:#e9c39f}
@@ -1851,7 +1851,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .v21-header-account:hover { background:#F3F6F9; border-color:#E1E7EF; }
 .dark .v21-header-account:hover { background:#2D3B4D; border-color:#425268; }
 .v21-header-account:focus-visible { outline:3px solid #F47B20 !important; outline-offset:2px; }
-.v21-header-avatar { display:grid; place-items:center; flex-shrink:0; width:37px; height:37px; border-radius:50%; background:#24364A; color:#FFFFFF; font-size:14px; font-weight:750; border:2px solid #F47B20; }
+.v21-header-avatar { display:grid; place-items:center; flex:0 0 37px; width:37px; height:37px; min-width:37px; min-height:37px; aspect-ratio:1; overflow:hidden; padding:0; border-radius:50%; background:#24364A; color:#FFFFFF; font-size:14px; font-weight:750; border:2px solid #F47B20; }
 .v21-header-username { max-width:170px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .v21-header-account-chevron { font-size:9px; opacity:.6; }
 #main-content { min-width:0; }
@@ -1864,7 +1864,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
  .v21-header-page { font-size:13px; }
  .v21-header-account { gap:0; padding:3px; }
  .v21-header-username, .v21-header-account-chevron { display:none; }
- .v21-header-avatar { width:34px; height:34px; }
+ .v21-header-avatar { width:34px; height:34px; min-width:34px; min-height:34px; flex-basis:34px; }
  #main-content { padding:14px !important; }
 }
 @media (prefers-reduced-motion: reduce) { .v21-skip-link { transition:none; } }
@@ -11246,13 +11246,6 @@ window.addEventListener('load', async () => {
     const selected=activeAccountSection;
     return `<div class="v21-account">
       <header class="v21-account-intro"><span class="v21-account-eyebrow">Your Personal Workspace</span><h2>My Account</h2><p>Everything about your account, in one place. Simple today, ready for tomorrow.</p></header>
-      <section class="v21-account-hero" aria-label="Account identity">
-        <div class="v21-account-identity">${profilePhotoMarkup((signedInUsername||'').trim().charAt(0).toUpperCase()||'?')}
-          <div><h3>${escapeHtml(accountDisplayName())}</h3><p>Your Caffoot Lite account</p><div class="v21-account-badges">
-          <span>${sessionIsAdmin?'Administrator':'Standard User'}</span><span>${sessionMfaEnrolled?'MFA Enrolled':'MFA Not Enrolled'}</span><span>Signed In</span>
-          </div></div></div>
-        <div class="v21-account-security-state"><small>Account Security</small><strong><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> ${sessionMfaEnrolled?'Protected By MFA':'MFA Setup Available'}</strong></div>
-      </section>
       <nav class="v21-account-tabs" aria-label="My Account sections" role="tablist">
         ${tabs.map(([id,label,icon])=>'<button type="button" role="tab" aria-selected="'+(selected===id)+'" data-action="select-account-section" data-section="'+id+'"><i class="fa-solid '+icon+'" aria-hidden="true"></i>'+label+'</button>').join('')}
       </nav>
