@@ -349,6 +349,18 @@ async function run(){
   console.log('Stage 6 Networks directory, original IP tiles and range tabs passed');
 
 
+  // Stage 7 presentation only: rack arrangement, controls and rules are unchanged.
+  await page.locator('#sidebar [data-action="tab-racks"]').click();
+  await page.locator('.v21-racks [aria-label="Estate-wide rack overview"]').waitFor({state:'visible'});
+  assert.ok(await page.getByRole('heading',{name:'Rack Overview',exact:true}).isVisible());
+  assert.equal(await page.locator('.v21-racks [data-action="v13-overview-tab"]').count(),3,
+    'Existing capacity, equipment and locations charts stay available');
+  await page.locator('#sidebar [data-action="sidebar-racks-inventory"]').click();
+  await page.locator('.v21-racks [aria-label="Rack inventory"]').waitFor({state:'visible'});
+  assert.ok(await page.getByRole('heading',{name:'Rack Inventory',exact:true}).isVisible());
+  assert.ok(await page.locator('.v21-racks [data-action="open-rack-modal"]').isVisible());
+  console.log('Stage 7 original Rack Overview and Inventory navigation retained');
+
   await modal(page,'openRackModal');
   await page.locator('#rack-name').fill('Browser Rack');
   await page.locator('form[data-form-action="rack"] button[type="submit"]').click();
@@ -544,6 +556,45 @@ async function run(){
 
   // Published rack placement and accessory forms persist through central SQLite.
   const rackId=(await state(page)).racks.find(r=>r.name==='Browser Rack').id;
+
+  await page.locator('#sidebar [data-action="tab-racks"]').click();
+  await page.locator('#sidebar [data-action="sidebar-racks-inventory"]').click();
+  await page.locator('.v21-racks [data-action="v13-open-rack"]').first().click();
+  await page.locator('.v21-racks .rack-workspace').waitFor({state:'visible'});
+  assert.ok(await page.getByRole('heading',{name:'Rack Workspace',exact:true}).isVisible());
+  assert.ok(await page.locator('.v21-racks [data-action="rack-face-front"]').isVisible());
+  assert.ok(await page.locator('.v21-racks [data-action="rack-face-rear"]').isVisible());
+  assert.ok(await page.locator('.v21-racks .rack-vertical-rail-labels').getByText('L',{exact:true}).isVisible());
+  assert.ok(await page.locator('.v21-racks .rack-vertical-rail-labels').getByText('R',{exact:true}).isVisible());
+  assert.equal(await page.locator('.v21-racks .vertical-rack-accessory-rail').count(),2,
+    'Both existing 0U accessory rails must remain visible');
+  assert.ok(await page.locator('.v21-racks [data-action="print-rack-capacity-details"]').isVisible(),
+    'Existing front/rear Print/PDF workflow remains available');
+  await page.locator('.v21-racks [data-action="rack-face-rear"]').click();
+  await page.locator('.v21-racks [data-action="rack-face-rear"][aria-pressed="true"]').waitFor({state:'visible'});
+  assert.ok(await page.locator('.v21-racks [aria-label="Visual rack view"]').getByText(/rear View/i).isVisible());
+  await page.locator('.v21-racks [data-action="rack-face-front"]').click();
+  await page.locator('.v21-racks [data-action="rack-face-front"][aria-pressed="true"]').waitFor({state:'visible'});
+  await page.locator('.v21-racks [data-action="select-rack-tab"][data-tab="equipment"]').click();
+  await page.locator('.v21-racks [aria-label="Mounted equipment"]').waitFor({state:'visible'});
+  await page.locator('.v21-racks [data-action="select-rack-tab"][data-tab="settings"]').click();
+  await page.locator('.v21-racks [aria-label="Rack settings"]').waitFor({state:'visible'});
+  for(const action of ['edit-rack','correct-rack-specifications','delete-rack'])
+    assert.ok(await page.locator('.v21-racks [data-action="'+action+'"]').isVisible(),
+      'Preserve distinct Rack Settings action: '+action);
+  await page.locator('.v21-racks [data-action="edit-rack"]').click();
+  await page.locator('form[data-form-action="rack"]').waitFor({state:'visible'});
+  assert.ok(await page.locator('#rack-height').isDisabled(),
+    'Normal Edit Rack must keep physical rack specifications locked');
+  await page.evaluate(()=>closeModal(true));
+  await page.locator('.v21-racks [data-action="correct-rack-specifications"]').click();
+  await page.locator('form[data-form-action="rack"][data-correction="true"]').waitFor({state:'visible'});
+  assert.ok(await page.locator('#rack-height').isEnabled(),
+    'Protected Correct Rack Specifications form retains editable height');
+  await page.evaluate(()=>closeModal(true));
+  console.log('Stage 7 front/rear, L/R rails, print and protected rack settings passed');
+
+
   await modal(page,'openDeviceModal');
   await page.locator('#dev-name').fill('rack-switch');
   await page.locator('#dev-type').selectOption('Switch');

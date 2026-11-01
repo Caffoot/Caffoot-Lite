@@ -1386,6 +1386,98 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 @media(max-width:600px){.v21-ipam-network-fields{grid-template-columns:1fr}.v21-ipam-network-preview{padding:17px}.v21-ipam-actions{width:100%}.v21-ipam-actions button{flex:1}.v21-ipam-view-tabs button{flex:1 1 auto}.v21-ipam-header h2{font-size:19px}}
 @media(prefers-reduced-motion:reduce){.v21-ipam .ipam-address-card{transition:none}}
 </style>
+<style id="caffoot-v21-racks-style">
+/* Stage 7: owner-approved, premium RESTYLE of v2.0.1 Racks only.
+   Rack geometry, L/R 0U rails, Front/Rear colours, printing, forms and rules are unchanged. */
+.v21-racks{min-width:0;display:grid;gap:17px;font-size:13px;color:#25394e}
+.v21-racks [aria-label="Estate-wide rack overview"]>div:first-child h2,
+.v21-racks [aria-label="Rack inventory"]>div:first-child h2,
+.v21-racks [aria-label="Rack Accessories"]>h2,
+.v21-racks .rack-workspace>div:first-child h2{font-size:21px;font-weight:780;letter-spacing:-.025em;line-height:1.25;color:#1a3047}
+.v21-racks [aria-label="Estate-wide rack overview"]>div:first-child p,
+.v21-racks [aria-label="Rack inventory"]>div:first-child p{font-size:12px;line-height:1.65;color:#677a8d}
+.v21-racks :is([aria-label="Estate-wide rack overview"],[aria-label="Rack inventory"],[aria-label="Rack Accessories"]) :is(.rounded-2xl){border-color:#dce5ee;box-shadow:0 2px 12px #142f4909}
+.v21-racks [aria-label="Estate-wide rack overview"]>div.grid>div{border-radius:16px;padding:19px;background:#fff}
+.v21-racks [aria-label="Estate-wide rack overview"]>div.grid>div>div:last-child{font-size:26px;letter-spacing:-.03em;font-weight:780}
+.v21-racks [aria-label="Rack inventory"]>div.grid>button[data-v13-rack-row]{border-color:#dce5ed;border-radius:17px;padding:21px;background:#fff;min-height:205px;box-shadow:0 2px 12px #142e460a;transition:box-shadow .17s,border-color .17s}
+.v21-racks [data-v13-rack-row]:hover{border-color:#eeac7c!important;box-shadow:0 5px 20px #162b4415!important}
+.v21-racks [data-v13-rack-row]:focus-visible{outline:3px solid #f47b20;outline-offset:2px}
+.v21-racks [data-v13-rack-row]>div:first-child>div:first-child{background:#fff3e8;color:#d66513}
+.v21-racks [data-v13-rack-row] h3{font-size:15px;font-weight:780;letter-spacing:-.01em}
+.v21-racks [data-v13-rack-row]>div:last-child{color:#b95712}
+.v21-racks #v13-rack-search,.v21-racks #v13-rack-detail-select{min-height:43px;max-width:100%;border:1px solid #c7d4e1;border-radius:11px;background:#fff;color:#253e53;font-size:13px}
+.v21-racks [data-action="open-rack-modal"]{background:#e96b15;color:#fff;border-radius:11px;min-height:43px;padding:11px 16px;font-size:12px;font-weight:760}
+.v21-racks [data-action="open-rack-modal"]:hover{background:#cb5c10}
+.v21-racks [aria-label="Rack overview charts"] button{min-height:43px;border-radius:10px;font-size:12px}
+.v21-racks [aria-label="Rack overview charts"] button[aria-pressed="true"]{background:#fff3e8!important;border:1px solid #f0ba92!important;color:#a84c0d!important;box-shadow:inset 0 -2px #e96c17}
+.v21-racks [aria-label="Rack overview charts"] button:focus-visible{outline:3px solid #f47b20;outline-offset:2px}
+.v21-racks .rack-workspace{min-width:0}
+.v21-racks .rack-workspace>div:first-child,.v21-racks .rack-workspace>div:nth-child(2){border-color:#dce5ee;border-radius:16px;box-shadow:0 2px 12px #142f4908}
+.v21-racks .rack-workspace>div:first-child{padding:18px 21px}
+.v21-racks .rack-workspace .rack-tabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:thin;padding:4px 0}
+.v21-racks .rack-workspace-tab{min-height:43px;padding:10px 15px;border-radius:10px;font-size:12px;font-weight:750;color:#52677a;background:#f0f4f8;border:1px solid #dde5ed}
+.v21-racks .rack-workspace-tab:hover{background:#e7edf4;color:#1c354b}
+.v21-racks .rack-workspace-tab.rack-tab-selected{background:#fff4ea!important;color:#a9510e!important;border:1px solid #efc09b!important;box-shadow:inset 0 -2px #e96c17}
+.v21-racks .rack-workspace-tab:focus-visible{outline:3px solid #f47b20;outline-offset:2px}
+.v21-racks [data-action="rack-face-front"],.v21-racks [data-action="rack-face-rear"]{min-height:39px;padding:9px 14px;border-radius:9px;font-size:12px}
+.v21-racks [data-action="rack-face-front"][aria-pressed="true"]{color:#047747!important;background:#e5f8ee!important;box-shadow:inset 0 -2px #159563}
+.v21-racks [data-action="rack-face-rear"][aria-pressed="true"]{color:#aa530d!important;background:#fff0dd!important;box-shadow:inset 0 -2px #e87721}
+.v21-racks [data-action="rack-face-front"]:focus-visible,.v21-racks [data-action="rack-face-rear"]:focus-visible{outline:3px solid #f47b20;outline-offset:2px}
+.v21-racks .rack-workspace [aria-label="Visual rack view"]>div{gap:24px}
+.v21-racks .rack-workspace [aria-label="Visual rack view"]>div>div{border-radius:16px;border-color:#dce5ee}
+.v21-racks .rack-scroll{background:#eef3f7}
+.v21-racks .rack-elevation{border-color:#6f8398!important;border-radius:11px;max-width:100%}
+.v21-racks .rack-elevation .rack-vertical-rail-labels{background:#1e334a;color:#edf3fa;font-size:11px}
+.v21-racks .rack-elevation .rack-vertical-rail-labels span:first-child,
+.v21-racks .rack-elevation .rack-vertical-rail-labels span:last-child{font-weight:900;color:#ffc08c}
+.v21-racks .rack-device{box-shadow:0 1px 4px #14293d12}
+.v21-racks .rack-device-name{font-weight:780}
+.v21-racks .rack-empty-state:hover{background:#eff7ef}
+.v21-racks .rack-secondary{border-color:#d7e1ea!important;color:#334b60!important;border-radius:10px!important}
+.v21-racks .rack-secondary:hover{border-color:#e87721!important;background:#fff6ef!important}
+.v21-racks .rack-primary{background:#fff4e9!important;border-color:#efc19e!important;color:#a84f0e!important;border-radius:10px!important}
+.v21-racks .rack-primary:hover{background:#ffe8d3!important;border-color:#e87721!important}
+.v21-racks .rack-danger{border-radius:10px!important}
+.v21-racks .rack-secondary:focus-visible,.v21-racks .rack-primary:focus-visible,.v21-racks .rack-danger:focus-visible{outline:3px solid #f47b20;outline-offset:2px}
+.v21-racks [aria-label="Rack settings"] dl>div{background:#f7f9fc;border:1px solid #e0e8f0;border-radius:11px;padding:13px}
+.v21-racks [aria-label="Mounted equipment"] th{font-size:12px;font-weight:760}
+.v21-racks [data-action="print-rack-capacity-details"]{white-space:nowrap}
+#modal-content:has(form[data-form-action="rack"]),#modal-content:has(form[data-form-action="assign"]),#modal-content:has(#rack-accessory-form){border-color:#cedae5;box-shadow:0 22px 64px #12273a36}
+#modal-content:has(form[data-form-action="rack"])>div>div:first-child,#modal-content:has(form[data-form-action="assign"])>div>div:first-child,
+#modal-content:has(#rack-accessory-form) .accessory-modal>div:first-child{border-radius:12px;padding:17px 19px;border:1px solid #dce5ee;background:linear-gradient(115deg,#182d43,#314c67);color:#fff}
+#modal-content:has(form[data-form-action="rack"])>div>div:first-child h3,
+#modal-content:has(form[data-form-action="assign"])>div>div:first-child h3,
+#modal-content:has(#rack-accessory-form) .accessory-modal>div:first-child h2{font-size:18px;font-weight:770;color:#fff}
+#modal-content:has(form[data-form-action="assign"])>div>div:first-child p,
+#modal-content:has(#rack-accessory-form) .accessory-modal>div:first-child p{color:#deebf5}
+#modal-content:has(form[data-form-action="rack"]) :is(.form-section-card),#modal-content:has(form[data-form-action="assign"]) :is(.form-section-card),
+#modal-content:has(#rack-accessory-form) fieldset{border:1px solid #dbe5ef;border-radius:14px;background:#fbfcfe;padding:18px}
+#modal-content:has(form[data-form-action="rack"]) .form-section-heading i,#modal-content:has(form[data-form-action="assign"]) .form-section-heading i{color:#e8751a}
+#modal-content:has(form[data-form-action="rack"]) :is(input,select),#modal-content:has(form[data-form-action="assign"]) :is(input,select),#modal-content:has(#rack-accessory-form) :is(input,select){border-radius:10px;min-height:42px}
+#modal-content:has(form[data-form-action="rack"]) :is(input,select):focus-visible,#modal-content:has(form[data-form-action="assign"]) :is(input,select):focus-visible,
+#modal-content:has(#rack-accessory-form) :is(input,select):focus-visible{outline:3px solid #f47b20;outline-offset:1px}
+#modal-content:has(form[data-form-action="rack"]) .rack-form-actions button[type="submit"],
+#modal-content:has(form[data-form-action="assign"]) button[type="submit"],
+#modal-content:has(#rack-accessory-form) button[type="submit"]{background:#e96c17!important;border-color:#e96c17!important;color:#fff!important;border-radius:10px;font-weight:760}
+#modal-content:has(form[data-form-action="rack"]) .rack-form-actions button[type="submit"]:hover,#modal-content:has(form[data-form-action="assign"]) button[type="submit"]:hover,#modal-content:has(#rack-accessory-form) button[type="submit"]:hover{background:#cb5c10!important}
+.dark .v21-racks,.dark .v21-racks [aria-label="Rack inventory"] h2,.dark .v21-racks [aria-label="Rack Accessories"] h2,.dark .v21-racks .rack-workspace>div:first-child h2{color:#f0f5fc}
+.dark .v21-racks [data-v13-rack-row],.dark .v21-racks [aria-label="Estate-wide rack overview"]>div.grid>div{background:#25384a;border-color:#4f6276}
+.dark .v21-racks [data-v13-rack-row]>div:first-child>div:first-child{background:#4a3728;color:#ffc18c}
+.dark .v21-racks .rack-workspace>div:first-child,.dark .v21-racks .rack-workspace>div:nth-child(2){border-color:#4c6074}
+.dark .v21-racks .rack-workspace-tab{background:#31465a;color:#dce7f3;border-color:#52677b}
+.dark .v21-racks .rack-workspace-tab.rack-tab-selected{background:#473525!important;color:#ffd0a4!important;border-color:#97633e!important}
+.dark .v21-racks .rack-scroll{background:#172536}
+.dark .v21-racks #v13-rack-search,.dark .v21-racks #v13-rack-detail-select{background:#2d4053;border-color:#5d7388;color:#f1f6fc}
+.dark .v21-racks [data-action="rack-face-front"][aria-pressed="true"]{background:#174a36!important;color:#bbf7d0!important}
+.dark .v21-racks [data-action="rack-face-rear"][aria-pressed="true"]{background:#573a20!important;color:#ffdbaf!important}
+.dark .v21-racks .rack-primary{background:#473527!important;color:#ffd3af!important;border-color:#8e5e3b!important}
+.dark .v21-racks .rack-secondary{background:#2c4054!important;color:#ebf2f9!important;border-color:#597088!important}
+.dark .v21-racks [aria-label="Rack settings"] dl>div{background:#293b4f;border-color:#4c6279}
+.dark #modal-content:has(form[data-form-action="rack"]) :is(.form-section-card),.dark #modal-content:has(form[data-form-action="assign"]) :is(.form-section-card),
+.dark #modal-content:has(#rack-accessory-form) fieldset{background:#283a4d;border-color:#50647a}
+@media(max-width:700px){.v21-racks .rack-workspace>div:first-child{padding:15px}.v21-racks .rack-workspace .rack-tabs{gap:5px}.v21-racks .rack-workspace-tab{padding:10px 11px}.v21-racks [aria-label="Visual rack view"]>div{gap:16px!important}}
+@media(prefers-reduced-motion:reduce){.v21-racks [data-v13-rack-row]{transition:none}}
+</style>
 <style id="caffoot-v21-shell-style">
 /* v2.1 shared page shell; match the approved My Account type scale and brand. */
 .v21-skip-link { position:fixed; top:8px; left:12px; z-index:100; transform:translateY(-160%); padding:11px 16px; background:#fff; color:#142232; border:3px solid #F47B20; border-radius:9px; font-weight:700; }
@@ -2613,7 +2705,7 @@ function hierarchyValidateTypes(subnets) {
             if (currentTab === 'dashboard') html = renderDashboardHTML();
             else if (currentTab === 'ipam') html = '<div class="v21-ipam">' + renderPremiumIpamHeaderHTML() + renderIpamHTML() + '</div>';
             else if (currentTab === 'devices') html = renderDevicesHTML();
-            else if (currentTab === 'racks') html = renderRackHubV13();
+            else if (currentTab === 'racks') html = '<div class="v21-racks">' + renderRackHubV13() + '</div>';
             else if (currentTab === 'audit') html = renderAuditHTML();
             else if (currentTab === 'users') html = nextRenderUsers();
             else if (currentTab === 'account') html = nextRenderAccount();
