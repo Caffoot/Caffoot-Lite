@@ -10913,6 +10913,7 @@ window.addEventListener('load', async () => {
       </div>
     </div>`;
     return html+'</div>';
+  };
   let signedInUsername = '';
   async function loadCentralUsers() {
     const response=await fetch('/api/users',{cache:'no-store'});
