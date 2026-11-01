@@ -305,6 +305,45 @@ async function run(){
   await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
   console.log('Subnet and linked VLAN form passed');
 
+  // Stage 6: premium IPAM directory retains the published IPAM backend and tile controls.
+  await page.locator('#sidebar [data-action="tab-ipam"]').click();
+  await page.locator('.v21-ipam-directory').waitFor({state:'visible'});
+  assert.ok(await page.getByRole('heading',{name:'Networks & VLANs',exact:true}).isVisible());
+  assert.ok(await page.locator('#v21-ipam-selected-network').getByText('Browser Network',{exact:true}).isVisible());
+  assert.equal(await page.locator('[data-ipam-directory-row]').count(),1);
+  await page.locator('#v21-ipam-network-search').fill('17');
+  assert.ok(await page.locator('[data-ipam-directory-row]').isVisible());
+  await page.locator('#v21-ipam-network-search').fill('unmatched network');
+  assert.ok(await page.locator('[data-ipam-directory-row]').isHidden());
+  await page.locator('#v21-ipam-network-search').fill('');
+  await page.locator('.v21-ipam-actions [data-subnet-kind="container"]').click();
+  await page.locator('#sub-kind').waitFor();
+  assert.equal(await page.locator('#sub-kind').inputValue(),'container');
+  assert.ok(await page.locator('#sub-vlan').isDisabled(),
+    'Address Blocks must continue using the published no-VLAN form validation');
+  await page.evaluate(()=>closeModal(true));
+  await page.locator('.v21-ipam-actions [data-subnet-kind="network"]').click();
+  assert.equal(await page.locator('#sub-kind').inputValue(),'network',
+    'Add Network retains the existing Network / VLAN form');
+  await page.evaluate(()=>closeModal(true));
+  await page.locator('#v21-ipam-selected-network [data-action="ipam-directory-show-addresses"]').click();
+  await page.locator('[data-ipam-panel="addresses"]').waitFor({state:'visible'});
+  assert.ok(await page.getByRole('heading',{name:'IP Addresses',exact:true}).isVisible());
+  assert.ok(await page.locator('[data-action="ip-range-1-32"]').isVisible());
+  assert.ok(await page.locator('.ipam-address-grid').isVisible(),
+    'The original selectable IP address tile grid must remain visible');
+  assert.equal(await page.locator('.ipam-address-grid [data-action="open-ip"]').count(),32,
+    'The initial /24 host-range still displays exactly 32 IP address tiles');
+  await page.locator('[data-action="ip-range-33-64"]').click();
+  assert.ok(await page.locator('.ipam-address-grid [data-ip="10.64.20.33"]').isVisible(),
+    'Published host-range navigation must still display matching address tiles');
+  await page.locator('.v21-ipam-view-tabs [data-tab="manage"]').click();
+  await page.locator('[data-ipam-panel="manage"]').waitFor({state:'visible'});
+  assert.ok(await page.getByRole('heading',{name:'Address Blocks',exact:true}).isVisible());
+  assert.ok(await page.getByText('VLAN Ownership Check',{exact:true}).isVisible());
+  console.log('Stage 6 Networks directory, original IP tiles and range tabs passed');
+
+
   await modal(page,'openRackModal');
   await page.locator('#rack-name').fill('Browser Rack');
   await page.locator('form[data-form-action="rack"] button[type="submit"]').click();
@@ -794,6 +833,9 @@ async function run(){
   assert.ok(await viewer.locator('#modal-container').evaluate(el=>el.classList.contains('hidden')),
     'Read-only users must not be able to open the Device editor');
   await viewer.locator('#sidebar [data-action="tab-ipam"]').click();
+  await viewer.locator('.v21-ipam-header').waitFor({state:'visible'});
+  assert.equal(await viewer.locator('.v21-ipam-actions [data-action="open-subnet-modal"]').count(),0,
+    'Read-only users must not be offered either IPAM Add action');
   assert.ok(await viewer.locator('#ipam-sidebar-actions [data-action="open-subnet-modal"]').isHidden());
   await viewer.locator('#sidebar [data-action="tab-racks"]').click();
   assert.ok(await viewer.locator('#racks-sidebar-actions [data-action="open-rack-modal"]').isHidden());

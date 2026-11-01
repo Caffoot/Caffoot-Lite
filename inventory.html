@@ -1315,6 +1315,76 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 @media(max-width:480px){.v21-device-editor .v21-form-heading-mark{display:none}.v21-device-editor .device-heading h3{font-size:19px}.v21-device-editor .device-heading{gap:9px}.v21-device-editor .device-form-tab{padding:10px 11px}.v21-device-editor .form-actions{flex-wrap:wrap}.v21-device-editor .form-actions button{flex:1 1 120px}}
 @media(prefers-reduced-motion:reduce){.v21-device-editor .device-form-tab{transition:none}}
 </style>
+<style id="caffoot-v21-ipam-style">
+/* Premium v2.1 IPAM: interface only; preserve v2.0.1 addressing and tile grid. */
+.v21-ipam{display:grid;gap:17px;min-width:0;color:#20384e}
+.v21-ipam-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.v21-ipam-header h2{font-size:22px;line-height:1.25;font-weight:780;letter-spacing:-.025em;color:#1c3248}
+.v21-ipam-header p{font-size:12px;line-height:1.6;color:#6a7e91;margin-top:5px;max-width:560px}
+.v21-ipam-actions{display:flex;gap:9px;flex-wrap:wrap}
+.v21-ipam-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:42px;padding:10px 14px;border:1px solid #cad7e4;border-radius:11px;background:#fff;color:#32495d;font-size:12px;font-weight:745}
+.v21-ipam-btn:hover{border-color:#ea8b43;background:#fff7f0}
+.v21-ipam-btn-primary{background:#e96c17;color:#fff;border-color:#e96c17}
+.v21-ipam-btn-primary:hover{background:#ca5810;color:#fff;border-color:#ca5810}
+.v21-ipam-view-tabs{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:0 0 12px;border-bottom:1px solid #d9e2ec}
+.v21-ipam-view-tabs button{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:10px 14px;border:1px solid transparent;border-radius:10px;background:#edf2f7;color:#506378;font-size:12px;font-weight:745}
+.v21-ipam-view-tabs button:hover{background:#e2eaf2;color:#1c3145}
+.v21-ipam-view-tabs button[aria-current="page"]{background:#fff5ed;border-color:#f1c7a5;color:#a64e0d}
+.v21-ipam button:focus-visible,.v21-ipam input:focus-visible,.v21-ipam select:focus-visible{outline:3px solid #f47b20;outline-offset:2px}
+.v21-ipam [data-ipam-panel="overview"]>section:first-child dl>div{background:#fff;border-color:#dae4ee;border-radius:15px;box-shadow:0 2px 12px #1d30460a}
+.v21-ipam-directory{display:grid;gap:14px;min-width:0}
+.v21-ipam-directory-title{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.v21-ipam-directory-title h3{font-size:16px;font-weight:780;letter-spacing:-.015em;color:#193048}
+.v21-ipam-directory-title p{font-size:12px;margin-top:5px;color:#65798b}
+.v21-ipam-directory-layout{display:grid;grid-template-columns:minmax(230px,.9fr) minmax(0,1.4fr);gap:16px;align-items:start;min-width:0}
+.v21-ipam-directory-list,.v21-ipam-network-preview{min-width:0;background:#fff;border:1px solid #dce5ed;border-radius:16px;box-shadow:0 2px 12px #142e450a}
+.v21-ipam-directory-list{padding:13px}
+.v21-ipam-directory-list label{display:block;font-size:11px;font-weight:740;color:#54687a;margin-bottom:7px}
+.v21-ipam-directory-list input{width:100%;min-height:43px;box-sizing:border-box;padding:10px 12px;border:1px solid #c2cfdb;background:#fff;color:#183248;border-radius:10px;font-size:13px}
+.v21-ipam-directory-items{max-height:430px;overflow-y:auto;scrollbar-width:thin;overscroll-behavior:contain;margin-top:8px}
+.v21-ipam-network-row{display:flex;align-items:center;gap:11px;width:100%;padding:13px 10px;text-align:left;border:1px solid transparent;border-radius:11px;color:#233a4d}
+.v21-ipam-network-row:hover{background:#f0f5f9}
+.v21-ipam-network-row[aria-current="true"]{background:#fff5ed;border-color:#f1c8a4;box-shadow:inset 3px 0 #e96c17}
+.v21-ipam-network-icon{display:grid;place-items:center;flex-shrink:0;width:39px;height:39px;border-radius:11px;background:#edf3f8;color:#415c73}
+.v21-ipam-network-row span{min-width:0}
+.v21-ipam-network-row strong{display:block;font-size:13px;font-weight:770;overflow-wrap:anywhere}
+.v21-ipam-network-row small{display:block;font-size:11px;color:#6b7f91;margin-top:4px;overflow-wrap:anywhere}
+.v21-ipam-network-preview{padding:22px}
+.v21-ipam-network-preview h4{font-size:18px;font-weight:780;letter-spacing:-.015em;color:#1a3048;overflow-wrap:anywhere}
+.v21-ipam-network-preview p{font-size:12px;color:#6a7e90;line-height:1.55;overflow-wrap:anywhere}
+.v21-ipam-network-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px 20px;margin:20px 0}
+.v21-ipam-network-fields div{min-width:0}
+.v21-ipam-network-fields dt{font-size:11px;font-weight:730;color:#718496;margin-bottom:5px}
+.v21-ipam-network-fields dd{font-size:13px;font-weight:740;color:#1e354a;overflow-wrap:anywhere}
+.v21-ipam-progress{height:9px;overflow:hidden;border-radius:99px;background:#e5ebf2}
+.v21-ipam-progress span{display:block;height:100%;background:#e96c17}
+.v21-ipam-preview-actions{display:flex;flex-wrap:wrap;align-items:center;gap:9px;border-top:1px solid #e1e9f0;padding-top:16px;margin-top:16px}
+.v21-ipam-search-count{margin-top:8px;font-size:11px;color:#708296}
+.v21-ipam-directory-empty{padding:21px;background:#f9fbfd;border:1px dashed #bfcede;border-radius:12px;text-align:center;font-size:12px;color:#738597}
+.v21-ipam .ipam-address-grid{grid-template-columns:repeat(auto-fill,minmax(min(100%,145px),1fr))!important;gap:12px}
+.v21-ipam .ipam-address-card{min-height:94px;border-radius:12px}
+.v21-ipam .ipam-address-card:hover{border-color:#e88a40;box-shadow:0 4px 15px #233a4d14}
+.v21-ipam .ipam-alloc-toolbar{border-color:#dbe5ee}
+.dark .v21-ipam-header h2,.dark .v21-ipam-directory-title h3,.dark .v21-ipam-network-preview h4,.dark .v21-ipam-network-fields dd{color:#f3f7fc}
+.dark .v21-ipam-header p,.dark .v21-ipam-directory-title p,.dark .v21-ipam-network-row small,.dark .v21-ipam-network-preview p,.dark .v21-ipam-network-fields dt,.dark .v21-ipam-search-count{color:#cbd7e3}
+.dark .v21-ipam-view-tabs{border-color:#47596e}
+.dark .v21-ipam-view-tabs button{background:#304459;color:#d0dbe7}
+.dark .v21-ipam-view-tabs button[aria-current="page"]{background:#473425;border-color:#98613d;color:#ffd1ae}
+.dark .v21-ipam-directory-list,.dark .v21-ipam-network-preview,.dark .v21-ipam [data-ipam-panel="overview"]>section:first-child dl>div{background:#24364a;border-color:#4e6379}
+.dark .v21-ipam-network-row{color:#eef4fa}
+.dark .v21-ipam-network-row:hover{background:#344a5f}
+.dark .v21-ipam-network-row[aria-current="true"]{background:#473526;border-color:#956441}
+.dark .v21-ipam-network-icon{background:#34495d;color:#dce6f0}
+.dark .v21-ipam-directory-list input{background:#304459;color:#f4f8fc;border-color:#64778a}
+.dark .v21-ipam-btn{background:#2c4055;color:#e7f1fa;border-color:#566b80}
+.dark .v21-ipam-btn-primary{background:#e96c17;color:#fff;border-color:#e96c17}
+.dark .v21-ipam-preview-actions{border-color:#4d6175}
+.dark .v21-ipam-progress{background:#41556a}
+.dark .v21-ipam-directory-empty{background:#293d51;border-color:#53697f;color:#d4dfeb}
+@media(max-width:1080px){.v21-ipam-directory-layout{grid-template-columns:1fr}.v21-ipam-directory-items{max-height:310px}}
+@media(max-width:600px){.v21-ipam-network-fields{grid-template-columns:1fr}.v21-ipam-network-preview{padding:17px}.v21-ipam-actions{width:100%}.v21-ipam-actions button{flex:1}.v21-ipam-view-tabs button{flex:1 1 auto}.v21-ipam-header h2{font-size:19px}}
+@media(prefers-reduced-motion:reduce){.v21-ipam .ipam-address-card{transition:none}}
+</style>
 <style id="caffoot-v21-shell-style">
 /* v2.1 shared page shell; match the approved My Account type scale and brand. */
 .v21-skip-link { position:fixed; top:8px; left:12px; z-index:100; transform:translateY(-160%); padding:11px 16px; background:#fff; color:#142232; border:3px solid #F47B20; border-radius:9px; font-weight:700; }
@@ -2360,6 +2430,19 @@ function hierarchyValidateTypes(subnets) {
             error.classList.add('is-visible');
         }, true);
 
+        // Read-only v2.1 directory filter: no SQLite or allocation changes.
+        document.addEventListener('input',function(event){
+            if(event.target?.id!=='v21-ipam-network-search')return;
+            const query=event.target.value.toLowerCase().trim();
+            let count=0;
+            document.querySelectorAll('[data-ipam-directory-row]').forEach(row=>{
+                const visible=!query||(row.dataset.search||'').includes(query);
+                row.hidden=!visible;row.classList.toggle('hidden',!visible);
+                if(visible)count++;
+            });
+            const status=document.getElementById('v21-ipam-network-count');
+            if(status)status.textContent=count+' matching network'+(count===1?'':'s')+'.';
+        });
         // Read-only Overview search filters cards, including their child network identifiers.
         document.addEventListener('input', function(event) {
             if (event.target?.id !== 'ipam-overview-search') return;
@@ -2527,7 +2610,7 @@ function hierarchyValidateTypes(subnets) {
             // replace the view once, avoiding an extra DOM teardown.
             let html = '';
             if (currentTab === 'dashboard') html = renderDashboardHTML();
-            else if (currentTab === 'ipam') html = renderIpamHTML();
+            else if (currentTab === 'ipam') html = '<div class="v21-ipam">' + renderPremiumIpamHeaderHTML() + renderIpamHTML() + '</div>';
             else if (currentTab === 'devices') html = renderDevicesHTML();
             else if (currentTab === 'racks') html = renderRackHubV13();
             else if (currentTab === 'audit') html = renderAuditHTML();
@@ -4529,6 +4612,68 @@ function hierarchyValidateTypes(subnets) {
             return '<section class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-3" aria-label="Subnet Hierarchy"><h3 class="font-bold text-base text-slate-900 dark:text-white">Subnet Hierarchy</h3><p class="text-xs text-slate-500 dark:text-slate-400">Expand IP Address Blocks to view child networks. Use Edit to rename or update a subnet.</p>' + (roots || '<p class="text-sm text-slate-500">No Subnets Yet</p>') + (orphaned.length ? '<p class="text-xs text-rose-600">Some subnet relationships could not be displayed.</p>' : '') + '</section>';
         }
 
+
+        // Stage 6 IPAM presentation. Underlying address, VLAN and subnet logic is unchanged.
+        let ipamDirectorySelectedNetworkId = '';
+        function renderPremiumIpamHeaderHTML() {
+            const canEdit=!!window.caffootIpamActions?.canEdit;
+            const descriptions={overview:['Networks & VLANs','Browse saved networks, VLANs and address allocation totals.'],
+                addresses:['IP Addresses','The existing address tiles, host ranges and allocation tools.'],
+                manage:['Address Blocks','Review existing address blocks, VLAN ownership and subnet tools.']};
+            const [heading,subheading]=descriptions[activeIpamTab] || descriptions.overview;
+            const tabs=[['overview','Networks & VLANs','fa-network-wired'],['addresses','IP Addresses','fa-grip'],['manage','Address Blocks','fa-layer-group']];
+            return `<header class="v21-ipam-header"><div><h2>${heading}</h2><p>${subheading}</p></div>
+                ${canEdit?`<div class="v21-ipam-actions">
+                    <button type="button" data-action="open-subnet-modal" data-subnet-kind="network" class="v21-ipam-btn v21-ipam-btn-primary"><i class="fa-solid fa-plus" aria-hidden="true"></i>Add Network</button>
+                    <button type="button" data-action="open-subnet-modal" data-subnet-kind="container" class="v21-ipam-btn"><i class="fa-solid fa-layer-group" aria-hidden="true"></i>Add Address Block</button>
+                </div>`:''}</header>
+                <nav class="v21-ipam-view-tabs" aria-label="IPAM views">
+                ${tabs.map(([id,label,icon])=>`<button type="button" data-action="select-ipam-tab" data-tab="${id}" aria-current="${activeIpamTab===id?'page':'false'}"><i class="fa-solid ${icon}" aria-hidden="true"></i>${label}</button>`).join('')}</nav>`;
+        }
+        function renderPremiumIpamNetworkDirectoryHTML(networks) {
+            const blocks=appState.subnets.filter(sub=>sub.kind==='container');
+            const chosen=networks.find(n=>String(n.id)===String(ipamDirectorySelectedNetworkId))||networks[0]||null;
+            const safe=v=>escapeHtml(v===undefined||v===null||v===''?'—':String(v));
+            const items=networks.length?networks.map(n=>{
+                const block=blocks.find(b=>String(b.id)===String(n.parentId||''));
+                const search=[n.name,n.cidr,n.vlan,n.description,block?.name,block?.cidr].join(' ').toLowerCase();
+                return `<button type="button" data-action="ipam-directory-select-network" data-id="${safe(n.id)}" data-ipam-directory-row data-search="${escapeHtml(search)}" aria-current="${String(chosen.id)===String(n.id)}" class="v21-ipam-network-row">
+                    <span class="v21-ipam-network-icon"><i class="fa-solid fa-network-wired" aria-hidden="true"></i></span>
+                    <span><strong>${safe(n.name||n.cidr)}</strong><small>${safe(n.cidr)} · VLAN ${safe(n.vlan)}</small></span>
+                </button>`;
+            }).join(''):'<p class="v21-ipam-directory-empty">No networks yet. Add a Network / VLAN using the existing subnet form.</p>';
+            let details='<div class="v21-ipam-directory-empty">Select or add a network to see its saved details.</div>';
+            if(chosen) {
+                const summary=calculateSubnetUtilisationSummary(chosen);
+                const block=blocks.find(b=>String(b.id)===String(chosen.parentId||''));
+                const fields=[['CIDR',chosen.cidr],['VLAN',chosen.vlan],['Gateway',chosen.gateway||'Not configured'],
+                    ['Parent address block',block?(block.name||block.cidr)+' ('+block.cidr+')':'None'],
+                    ['Usable addresses',summary.supported?summary.capacity:'Unsupported range'],
+                    ['Assigned',summary.supported?summary.assigned:'—'],['Reserved',summary.supported?summary.reserved:'—'],
+                    ['Available',summary.supported?summary.available:'—']];
+                const utilisation=summary.supported?Math.max(0,Math.min(100,Number(summary.utilisation)||0)):0;
+                details=`<article class="v21-ipam-network-preview" id="v21-ipam-selected-network" aria-label="Selected network details">
+                    <h4>${safe(chosen.name||chosen.cidr)}</h4><p class="mt-1">${safe(chosen.description||'Saved Network / VLAN')} · ${safe(chosen.cidr)}</p>
+                    <dl class="v21-ipam-network-fields">${fields.map(([label,value])=>`<div><dt>${label}</dt><dd>${safe(value)}</dd></div>`).join('')}</dl>
+                    <p class="mb-2 font-semibold">Saved address utilisation · ${utilisation}%</p>
+                    <div class="v21-ipam-progress" role="progressbar" aria-label="Selected network utilisation" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${utilisation}"><span style="width:${utilisation}%"></span></div>
+                    <div class="v21-ipam-preview-actions">
+                        <button type="button" data-action="ipam-directory-show-addresses" data-id="${safe(chosen.id)}" class="v21-ipam-btn v21-ipam-btn-primary"><i class="fa-solid fa-grip" aria-hidden="true"></i>View IP Addresses</button>
+                        <button type="button" data-action="ipam-directory-show-blocks" data-id="${safe(chosen.id)}" class="v21-ipam-btn"><i class="fa-solid fa-layer-group" aria-hidden="true"></i>Address Blocks &amp; Tools</button>
+                    </div>
+                </article>`;
+            }
+            return `<section class="v21-ipam-directory" aria-label="Networks and VLANs directory">
+                <div class="v21-ipam-directory-title"><div><h3>Network Directory</h3><p>Select a network to inspect its saved VLAN, gateway, parent block and allocations.</p></div><span class="text-xs font-semibold text-slate-500 dark:text-slate-300">${networks.length} network${networks.length===1?'':'s'}</span></div>
+                <div class="v21-ipam-directory-layout"><div class="v21-ipam-directory-list">
+                    <label for="v21-ipam-network-search">Find a network, CIDR or VLAN</label>
+                    <input id="v21-ipam-network-search" type="search" autocomplete="off" placeholder="Search saved networks…">
+                    <p class="v21-ipam-search-count" role="status" id="v21-ipam-network-count">Showing ${networks.length} networks.</p>
+                    <div class="v21-ipam-directory-items" aria-label="Saved networks">${items}</div>
+                </div>${details}</div>
+            </section>`;
+        }
+
         function renderIpamHTML() {
             // v1.1 IPAM Overview stage 1: inventory-wide, read-only totals.
             // Return before selected-network rendering so Overview never depends on its dropdown.
@@ -4581,6 +4726,7 @@ function hierarchyValidateTypes(subnets) {
                             </div>`).join('')}
                         </dl>
                     </section>
+                    ${renderPremiumIpamNetworkDirectoryHTML(networks)}
                     <section class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5 space-y-2" aria-labelledby="ipam-network-summary-heading">
                         <h4 id="ipam-network-summary-heading" class="font-bold text-slate-900 dark:text-white">Network Summary</h4>
                         <label for="ipam-overview-search" class="sr-only">Search blocks or networks by name, CIDR or VLAN</label>
@@ -9428,7 +9574,30 @@ function hierarchyValidateTypes(subnets) {
                 case 'placement-accessory': openRackSlotPlacementDialog(target.dataset.rackId, Number(target.dataset.u), 'accessory'); break;
                 case 'assign-device': openAssignDeviceModal(target.dataset.rackId, Number(target.dataset.u), target.dataset.deviceId || null); break;
                 case 'unassign-device': unassignDevice(id); break;
-                case 'open-subnet-modal': openSubnetModal(); break;
+                case 'open-subnet-modal': {
+                    openSubnetModal();
+                    // Address Block shortcut preselects the published form's existing type.
+                    if(target.dataset.subnetKind==='container'){
+                        const select=document.getElementById('sub-kind');
+                        if(select){select.value='container';select.dispatchEvent(new Event('change',{bubbles:true}));}
+                    }
+                    break;
+                }
+                case 'ipam-directory-select-network':
+                    if(appState.subnets.some(s=>String(s.id)===String(id)&&(s.kind||'network')==='network')){
+                        ipamDirectorySelectedNetworkId=id;renderContent();
+                    }
+                    break;
+                case 'ipam-directory-show-addresses':
+                    if(appState.subnets.some(s=>String(s.id)===String(id)&&(s.kind||'network')==='network')){
+                        selectedSubnetId=id;ipAddressGridPage=0;activeIpamTab='addresses';renderContent();
+                    }
+                    break;
+                case 'ipam-directory-show-blocks':
+                    if(appState.subnets.some(s=>String(s.id)===String(id)&&(s.kind||'network')==='network')){
+                        selectedSubnetId=id;ipamManageBlockFilter=null;activeIpamTab='manage';renderContent();
+                    }
+                    break;
                 case 'edit-subnet': openSubnetModal(id); break;
                 case 'delete-subnet': deleteSubnet(id); break;
                 case 'confirm-delete-subnet': confirmDeleteSubnet(id); break;
@@ -9579,6 +9748,7 @@ window.addEventListener('load', async () => {
     editPermissions = state.editPermissions || {};
     // Browsing a device never requests an edit reservation; only render permitted actions.
     window.caffootDeviceActions = {canEdit:!!editPermissions.Devices,canDuplicate:!!(editPermissions.Devices&&editPermissions.IPAM)};
+    window.caffootIpamActions = {canEdit:!!editPermissions.IPAM};
     // Display convenience only; server-side permission checks remain authoritative.
     window.caffootDashboardActions = {canAddDevice: !!(editPermissions.Devices && editPermissions.IPAM), canAddRack: !!editPermissions.Racks, canViewIpam: !!permissions.IPAM};
     nextImportAllowed = ['Devices','IPAM','Racks'].every(key => editPermissions[key]);
