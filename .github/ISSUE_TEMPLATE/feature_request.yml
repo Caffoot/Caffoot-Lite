@@ -1,4 +1,4 @@
-name: "💡 Suggest A Feature"
+name: "💡 Suggest A Feature / Future Request"
 description: "Share an idea for making Caffoot Lite more useful."
 title: "[Feature Request]: "
 labels: ["enhancement"]
@@ -10,7 +10,9 @@ body:
 
         Tell us about the problem you would like to solve. You do not need a complete technical design.
 
-        Feature suggestions are reviewed and discussed before any work is approved. Opening an issue does **not** automatically authorise implementation.
+        Check the [Future Ideas Index #222](https://github.com/Caffoot/Caffoot-Lite/issues/222) and existing issues first. Add your thoughts to an existing issue when appropriate; otherwise, open **one issue per idea** here.
+
+        We will discuss and record decisions in that issue. No technical design is needed. The project owner decides what gets built and when.
   - type: textarea
     id: problem
     attributes:
