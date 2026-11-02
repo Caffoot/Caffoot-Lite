@@ -22,12 +22,13 @@ These files are **subsequent new designs**, prepared after the original two ZIPs
 | **My Account** | [Draft 06](approved/my-account-draft-06.html) | **Approved and locked**. Global application visual/layout/navigation standard, including top-right My Account, clean sidebar, personal details and planned non-functional cards. |
 | **Settings & Data** | [Draft 02](approved/settings-data-draft-02.html) | **Approved and locked**. Three tabs, backup/SMTP/maintenance reference; “Administrator Only” badge removed, actual permissions unchanged. |
 | **Dashboard** | [Draft 02](approved/dashboard-draft-02.html) | **Approved under owner's stated correction, now met**. The three illustrative-data banners were removed from Overview, Network Insights and Activity & Alerts. |
-| **Devices — Device Inventory** | [Draft 02](approved/devices-inventory-draft-02.html) | **Approved and locked**. Same form layout and Add Device placement as Draft 01; table rows use **Details only** instead of an overlapping three-dot menu. Existing edit/duplicate/delete/rack actions remain in the real v2.0.1 Details dialog. The other Devices sections still need their own designs. |
+| **Devices — Device Inventory** | [Draft 02](approved/devices-inventory-draft-02.html) | **Approved and locked**. Same form layout and Add Device placement as Draft 01; table rows use **Details only** instead of an overlapping three-dot menu. Existing edit/duplicate/delete/rack actions remain in the real v2.0.1 Details dialog. The other Devices catalogue/management sections still need their own designs. |
+| **Devices — Overview / Device Intelligence** | [Draft 03](approved/devices-overview-draft-03.html) | **Approved and locked**. All five Device Intelligence tabs retained; clicking chart categories opens Device Inventory directly with the matching filter, following existing v2.0.1 behaviour. No extra result lists or redundant helper strip below the charts. |
 | **Sign In / First Run** | [Draft 02](references/sign-in-first-run-draft-02.html) | **Preferred early design, not formally locked**. Upright-logo CSS correction to Draft 01; verify full styling and flows before final acceptance. |
 
 **The Dashboard preview's figures, names, IPs, activity and warnings are still made-up layout samples; they are not a new data source.** The owner's decision was to remove the repetitive on-screen sample-data banners, not to alter the v2.0.1 saved-data model.
 
-**Only the standalone HTML sources are committed in this PR.** The companion screenshot-and-HTML design ZIPs remain available as chat downloads and have **not** been committed as binaries. Do not claim the ZIP packs or their screenshots are stored here. Render the HTML to inspect the visual forms.
+**Only the standalone HTML sources are preserved in this directory.** The companion screenshot-and-HTML design ZIPs remain available as chat downloads and have **not** been committed as binaries. Do not claim the ZIP packs or their screenshots are stored here. Render the HTML to inspect the visual forms.
 
 **Publication rule:** no Docker/GHCR preview images may be published publicly before the product owner approves the completed application release. Approval of a mockup is not permission to implement or release it.
 
@@ -35,7 +36,7 @@ These files are **subsequent new designs**, prepared after the original two ZIPs
 
 The owner **did not receive downloadable copies** of the designed Sign In / First-Time Setup, Dashboard, Devices, IPAM or Network Racks screens. Those original design screenshots/HTML **are not present in either supplied ZIP**. The existing `docs/screenshots` files elsewhere in the repository represent the published application, not proof of approved redesign artwork.
 
-A newer **Dashboard Draft 02** and **Sign In / First Run Draft 02** have since been created and are separately identified above. The original older mockups remain unavailable; **Devices now has an accepted Inventory screen, but its other sections (Overview, Types, Locations and Catalogues) still need individual designs; IPAM and Network Racks have not yet received new standalone screen designs under #244**. Do not invent files or claim that older missing artwork was recovered.
+A newer **Dashboard Draft 02** and **Sign In / First Run Draft 02** have since been created and are separately identified above. The original older mockups remain unavailable; **Devices now has accepted Inventory and Overview / Device Intelligence screens, but Types, Locations and Catalogues still need individual designs; IPAM and Network Racks have not yet received new standalone screen designs under #244**. Do not invent files or claim that older missing artwork was recovered.
 
 ## Working boundary
 
