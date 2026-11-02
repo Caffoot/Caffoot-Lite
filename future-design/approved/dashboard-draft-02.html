@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+
+<!DOCTYPE html>
+
+<html lang="en-GB"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Caffoot Lite — Dashboard — Visual Design Draft 02</title>
+<style>
+:root{--navy:#142b43;--navy2:#203b55;--ink:#223b53;--muted:#637c92;--line:#e1e8ee;--canvas:#f5f7fa;--white:#fff;--orange:#ed8532;--orange2:#d87327;--shadow:0 7px 26px rgba(31,51,73,.04);--radius:15px}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--canvas);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:var(--ink);font-size:13px}button,input,select{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid rgba(238,135,55,.32);outline-offset:2px}.shell{min-height:100vh;display:grid;grid-template-columns:215px minmax(0,1fr)}.sidebar{background:var(--navy);color:#d2dce5;display:flex;flex-direction:column;min-height:100vh;padding:20px 13px 15px;gap:12px;position:sticky;top:0;height:100vh}.brand{display:flex;align-items:center;gap:10px;margin:1px 7px 21px}.brand img{width:42px;height:42px;border-radius:10px}.brand-name{font-size:16px;font-weight:750;letter-spacing:-.55px;color:white}.brand-name span{color:#ffac6c}.brand-sub{font-size:9px;letter-spacing:.045em;color:#94abc1;margin-top:3px}.nav-label{font-weight:700;letter-spacing:.13em;font-size:10px;color:#829ab2;margin:10px 11px 4px}.nav-item{display:flex;align-items:center;gap:12px;width:100%;padding:11px 13px;border:0;text-align:left;border-radius:10px;color:#d2dfeb;background:none;font-weight:550}.nav-item svg{width:17px;height:17px;stroke-width:1.8;flex-shrink:0}.nav-item.current{background:#2e465e;color:#fff}.nav-item.current svg{color:#ffa164}.nav-item.subtle:hover,.sidebar-button:hover{background:#253c54}.nav-bottom{margin-top:auto;border-top:1px solid #365069;padding-top:11px;display:grid;gap:5px}.identity{display:flex;align-items:center;gap:10px;margin:8px 7px 9px}.avatar{width:32px;height:32px;background:#3c5872;color:#ffba83;border-radius:50%;display:grid;place-items:center;font-weight:800}.identity .who{color:white;font-size:11px;font-weight:700}.identity .meta{font-size:10px;color:#a9bfd1;margin-top:3px}.sidebar-button{border:0;background:#243d56;color:#c7d7e6;border-radius:9px;padding:9px;display:flex;align-items:center;justify-content:center;gap:9px;font-size:11px;margin-top:9px}.sidebar-button svg{width:15px;height:15px;color:#f5a66a}.sidebar.collapsed{width:65px}.shell.collapsed{grid-template-columns:65px minmax(0,1fr)}.collapsed .nav-item{justify-content:center;padding:12px}.collapsed .brand{justify-content:center;margin:0 0 22px}.collapsed .brand img{width:37px;height:37px}.collapsed .brand-text,.collapsed .nav-label,.collapsed .nav-text,.collapsed .identity-text,.collapsed .collapse-text{display:none}.collapsed .identity{justify-content:center;margin:5px 0}.workspace{min-width:0}.topbar{height:64px;border-bottom:1px solid var(--line);background:var(--white);display:flex;align-items:center;justify-content:space-between;padding:0 clamp(20px,3vw,44px)}.crumb{display:flex;align-items:center;gap:10px;font-size:12px;color:#75899a}.crumb b{color:#34526b;font-weight:650}.top-right{display:flex;align-items:center;gap:11px}.top-right .role{font-size:11px;color:#8597a7}.top-right .topavatar{display:grid;place-items:center;border-radius:50%;height:31px;width:31px;background:#edf2f6;color:#5e7892;font-weight:800}.main{max-width:1350px;margin:auto;padding:32px clamp(20px,3vw,44px) 50px}.eyebrow{font-size:10px;letter-spacing:.15em;color:#d27931;font-weight:850;margin-bottom:7px}.header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}.header h1{font-size:30px;line-height:1.15;color:#1f3850;margin:0 0 8px;letter-spacing:-1.1px;font-weight:790}.header p{margin:0;color:#697f94;font-size:13px;line-height:1.6}.version{color:#5e7891;background:#fff;border:1px solid var(--line);padding:9px 13px;border-radius:9px;font-size:11px;white-space:nowrap;font-weight:600}.context{margin-top:23px;background:#eaf1f7;border:1px solid #dae6ef;border-radius:12px;padding:13px 17px;display:flex;align-items:flex-start;gap:12px;color:#4b6a85;font-size:12px;line-height:1.5}.context svg{flex-shrink:0;width:17px;height:17px;color:#6386a3}.tabs{display:flex;gap:25px;margin-top:27px;border-bottom:1px solid #dfe7ee;overflow-x:auto}.tab{appearance:none;border:0;border-bottom:3px solid transparent;padding:0 4px 15px;white-space:nowrap;color:#7890a6;font-size:12px;font-weight:700;background:transparent;display:flex;align-items:center;gap:9px}.tab svg{width:16px;height:16px}.tab.active{color:#1e3850;border-bottom-color:#ef8b3a}.section{display:none;padding-top:23px;animation:fade .18s ease}.section.active{display:block}@keyframes fade{from{opacity:.7;transform:translateY(3px)}to{opacity:1;transform:none}}.section-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:15px;gap:12px}.section-heading h2{font-size:17px;margin:0;color:#263d55;letter-spacing:-.35px}.section-heading p{font-size:11px;color:#73889a;margin:5px 0 0}.smalltag{background:#f0f4f8;color:#7790a7;border-radius:50px;padding:6px 11px;font-weight:650;font-size:10px;white-space:nowrap}.two-col{display:grid;grid-template-columns:minmax(0,1.37fr) minmax(310px,1fr);gap:17px}.card{background:white;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);min-width:0;overflow:hidden}.card-padded{padding:22px}.card-head{display:flex;align-items:flex-start;gap:12px}.iconwrap{width:40px;height:40px;flex:none;display:grid;place-items:center;border-radius:11px;background:#eaf0f7;color:#6685a1}.iconwrap svg{width:20px;height:20px}.iconwrap.orange{background:#fff2e5;color:#cc7d30}.iconwrap.green{background:#e8f6f0;color:#3c917b}.iconwrap.red{background:#fff0ed;color:#cb665f}.card h3{font-size:15px;margin:0 0 4px;letter-spacing:-.2px}.sub{font-size:11.5px;color:#70859a;line-height:1.6;margin:0}.divider{border-top:1px solid #e8edf2;margin:18px 0}.pill{border-radius:30px;display:inline-flex;align-items:center;gap:6px;padding:6px 10px;font-size:10px;font-weight:700;background:#f1f4f7;color:#7d8da0}.dot{width:7px;height:7px;border-radius:50%;background:#a3b1bf}.dot.green{background:#51a287}.row-between{display:flex;justify-content:space-between;align-items:center;gap:12px}.steps{display:grid;gap:14px;margin-top:17px}.step{display:grid;grid-template-columns:27px 1fr;gap:11px;align-items:start}.num{width:26px;height:26px;border-radius:8px;background:#ecf2f8;display:grid;place-items:center;color:#557791;font-size:11px;font-weight:850}.step b{font-size:12px;color:#345069}.step p{margin:3px 0 0;line-height:1.5;color:#667d93;font-size:11px}.cmd{background:#192f45;color:#eff6fc;border-radius:10px;padding:13px 14px;margin-top:12px;position:relative;overflow:auto}.cmd pre{margin:0;white-space:pre-wrap;word-break:break-word;font:11px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace;padding-right:56px}.copy{position:absolute;right:9px;top:9px;border:1px solid #415970;color:#d8e6f2;background:#2b465e;padding:5px 9px;border-radius:6px;font-size:10px}.hint{margin-top:13px;background:#fff7ed;border:1px solid #f6e6d2;padding:12px;border-radius:9px;font-size:11px;color:#946e44;line-height:1.5}.inline-link{font-size:11px;color:#c4752f;text-decoration:none;font-weight:750;display:inline-flex;align-items:center;gap:5px;margin-top:13px}.lower{margin-top:17px}.import-body{margin-top:18px;color:#6f8498;font-size:11.5px;line-height:1.7}.import-flow{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:15px}.mini-step{border:1px solid #e4eaf1;background:#f6f9fc;color:#607d94;padding:9px 10px;border-radius:9px;font-weight:650;font-size:10px}.arrow{color:#adbecd}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid #e0e8ee;padding:10px 15px;border-radius:9px;background:#fff;color:#425e78;font-size:11px;font-weight:750;white-space:nowrap}.btn svg{width:15px;height:15px}.btn-primary{background:var(--orange);color:white;border-color:var(--orange)}.btn-primary:hover{background:var(--orange2)}.btn-outline:hover{background:#f5f8fb}.btn:disabled{opacity:.6;cursor:default}.foot-note{font-size:10px;color:#8b9eaf;line-height:1.55}.email-top{background:linear-gradient(105deg,#19314a,#26445e);color:#fff;padding:23px 25px;display:flex;gap:14px;align-items:center;justify-content:space-between}.email-top h3{color:#fff;font-size:17px;margin:0 0 6px}.email-top p{margin:0;color:#b9cbd9;font-size:11.5px}.email-top .iconwrap{background:#3c5369;color:#ffb579}.email-top .pill{background:#385168;color:#d7e6f1}.email-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(280px,.85fr);gap:18px;margin-top:18px}.fields{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:15px}.field{min-width:0}.field label{display:block;font-size:11px;color:#526d84;font-weight:700;margin-bottom:7px}.field input,.field select{width:100%;border:1px solid #dce5ed;background:#fff;color:#354e64;border-radius:9px;padding:10px 11px;font-size:12px;min-width:0;outline:none}.field input:focus,.field select:focus{border-color:#e6a369;box-shadow:0 0 0 3px #fff0e3}.field small{display:block;margin-top:6px;font-size:10px;color:#95a3b1}.span2{grid-column:1/-1}.toggle-row{display:flex;align-items:center;gap:11px}.switch{appearance:none;width:37px;height:21px;border-radius:30px;background:#cbd6e0;position:relative;cursor:pointer;border:0;transition:background .18s}.switch:after{content:"";position:absolute;top:3px;left:3px;width:15px;height:15px;background:white;border-radius:50%;transition:transform .18s}.switch:checked{background:#e98939}.switch:checked:after{transform:translateX(16px)}.field-title{font-size:13px;font-weight:800;color:#334d66;margin:0 0 14px}.helptext{color:#72899d;font-size:11px;line-height:1.5}.feature-row{display:flex;gap:13px;align-items:flex-start;padding:14px 0;border-bottom:1px solid #edf0f4}.feature-row:last-child{border:0}.feature-row h4{margin:0 0 5px;font-size:12px}.feature-row p{color:#728a9e;font-size:11px;line-height:1.5;margin:0}.feature-row .pill{margin-left:auto}.email-actions{display:flex;gap:9px;justify-content:flex-end;margin-top:17px;flex-wrap:wrap}.notice{padding:12px 14px;border-radius:10px;background:#f2f6fa;color:#56758f;line-height:1.5;font-size:11px;margin-top:16px}.danger{background:#fff6f3;border:1px solid #f1d5ce;border-radius:10px;padding:14px;color:#955950;line-height:1.55;font-size:11px}.footer{margin-top:24px;border-top:1px solid #e2e9f0;padding:15px 0;color:#98a8b7;font-size:10px;display:flex;justify-content:space-between}.toast{position:fixed;right:24px;bottom:22px;background:#172e45;color:white;padding:13px 17px;border-radius:11px;box-shadow:0 16px 50px #101e2e44;z-index:100;max-width:360px;font-size:12px;line-height:1.5;transform:translateY(90px);opacity:0;transition:all .25s;pointer-events:none}.toast.show{transform:translateY(0);opacity:1}.statusline{padding:12px;border-radius:10px;background:#f1f7f4;color:#397969;font-size:11px;line-height:1.55;margin-top:12px}.modal-back{position:fixed;inset:0;background:#10253dbb;z-index:30;display:none;place-items:center;padding:18px}.modal-back.open{display:grid}.modal{max-width:470px;width:100%;background:#fff;padding:25px;border-radius:15px;box-shadow:0 30px 80px #0003}.modal h3{margin:12px 0 8px;font-size:18px}.modal p{font-size:12px;line-height:1.6;color:#7b8d9d}.caption{color:#8497aa;font-size:10px;margin-top:13px;line-height:1.55}.section .card .card-head h3,.section .card h3{font-weight:750}.muted-bullet{font-size:11px;color:#8294a6}.grid-compact{display:grid;grid-template-columns:1fr 1fr;gap:16px}.bigmetric{font-size:24px;font-weight:820;letter-spacing:-.7px}.sample-note{color:#8b9eae;font-size:10px;margin-top:15px}
+@media(max-width:1080px){.two-col,.email-grid{grid-template-columns:1fr}.main{padding:25px 24px}.topbar{padding:0 24px}}@media(max-width:720px){.shell{grid-template-columns:65px minmax(0,1fr)}.sidebar{width:65px;padding:16px 8px}.brand{justify-content:center;margin:0 0 16px}.brand img{width:36px;height:36px}.brand-text,.nav-label,.nav-text,.identity-text,.collapse-text{display:none}.nav-item{justify-content:center;padding:11px}.identity{justify-content:center}.main{padding:24px 13px}.topbar{height:54px;padding:0 14px}.top-right .role{display:none}.version{display:none}.header h1{font-size:25px}.fields{grid-template-columns:1fr}.span2{grid-column:auto}.email-top{flex-wrap:wrap}.card-padded{padding:16px}.footer{gap:10px}.tabs{gap:18px}}
+
+
+.account-hero{background:linear-gradient(107deg,#18324a,#2b4b66);border:1px solid #294860;border-radius:16px;color:#fff;padding:26px 29px;display:flex;align-items:center;gap:19px;min-width:0}
+.account-avatar{height:64px;width:64px;flex:none;border-radius:16px;background:linear-gradient(130deg,#ed8a38,#cc6c23);display:grid;place-items:center;font-weight:850;font-size:23px;box-shadow:0 6px 18px rgba(0,0,0,.1)}
+.account-hero h2{font-size:22px;color:#fff;margin:0 0 7px;letter-spacing:-.5px}.account-hero p{color:#aec4d5;font-size:11.5px;margin:0}.hero-tags{display:flex;gap:7px;margin-top:13px;flex-wrap:wrap}.hero-tag{display:inline-flex;align-items:center;gap:6px;background:#3a566e;color:#d3e2ee;font-size:10px;border-radius:6px;padding:6px 9px;font-weight:650}.hero-tag svg{color:#ffb77f}
+.hero-right{margin-left:auto;text-align:right;display:grid;gap:8px;justify-items:end}.hero-right .hero-small{font-size:10px;color:#afc3d3}.hero-right .hero-strong{font-size:12px;color:#fff;font-weight:750}
+.subnav{margin-top:24px;display:flex;gap:22px;border-bottom:1px solid var(--line);overflow-x:auto}.subnav button{color:#7189a0;background:transparent;border:0;border-bottom:3px solid transparent;font-size:12px;font-weight:700;padding:0 4px 14px;display:inline-flex;gap:8px;align-items:center;white-space:nowrap}.subnav button svg{width:16px;height:16px}.subnav button.active{color:#27435a;border-bottom-color:#ed8532}
+.account-panel{display:none;padding-top:23px;animation:fade .18s ease}.account-panel.active{display:block}.account-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(280px,.86fr);gap:17px}
+.group-title{margin-bottom:15px}.group-title h2{font-size:17px;letter-spacing:-.4px;color:#273f59;margin:0}.group-title p{font-size:11px;line-height:1.6;color:#8497a9;margin:5px 0 0}
+.preview-entry{display:flex;align-items:center;gap:12px;padding:15px 0;border-bottom:1px solid #ebf0f4}.preview-entry:last-child{border-bottom:0}.preview-entry h4{font-size:12px;margin:0 0 5px;color:#2c455e}.preview-entry p{margin:0;font-size:11px;line-height:1.5;color:#8498a9}.grow{flex:1;min-width:0}.accent-line{height:3px;width:27px;border-radius:4px;background:#f09645;margin:15px 0}.soft-card{background:#f7f9fc;border:1px solid #e7edf3;border-radius:11px;padding:15px}.soft-card h4{font-size:12px;color:#36536b;margin:0 0 7px}.soft-card p{font-size:11px;color:#7890a3;line-height:1.55;margin:0}
+.quick-action{cursor:pointer;border:1px solid #e6ecf2;background:#fafcfe;padding:15px;text-align:left;border-radius:11px;display:flex;gap:12px;align-items:center;width:100%;min-width:0;color:inherit;transition:background .15s,transform .15s}.quick-action:hover{background:#f0f5f9;transform:translateY(-1px)}.quick-action .action-title{font-size:12px;font-weight:750;color:#304c64;margin:0 0 5px}.quick-action .action-description{font-size:10.5px;color:#7b92a5;line-height:1.45}
+.future-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.future-card{border:1px dashed #d7e2eb;background:linear-gradient(145deg,#fbfcfe,#f3f7fb);border-radius:12px;padding:18px;min-width:0;position:relative}.future-card h4{font-size:13px;color:#3b566d;margin:12px 0 6px}.future-card p{color:#8093a5;font-size:11px;line-height:1.6;margin:0}.future-label{font-size:9px;letter-spacing:.05em;text-transform:uppercase;font-weight:800;color:#a48055;background:#fff1e2;border-radius:7px;padding:5px 8px;position:absolute;right:12px;top:12px}.future-icon{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:#e9f0f6;color:#6c8ca6}
+.account-inline{display:grid;grid-template-columns:1fr 1fr;gap:15px}.summary-line{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid #edf1f4}.summary-line:last-child{border:0}.summary-line b{font-size:11px;color:#334f67}.summary-line span{font-size:11px;color:#71889d;margin-left:auto}.security-band{display:flex;gap:12px;padding:15px;background:#eff7f3;border:1px solid #dcece3;border-radius:11px;color:#39836b;font-size:11px;line-height:1.5}.security-band svg{flex:none}
+.security-actions{display:grid;gap:15px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.form-grid .full{grid-column:1/-1}.expander{border:1px solid #e2eaf0;border-radius:11px;overflow:hidden}.expander button{display:flex;justify-content:space-between;align-items:center;width:100%;padding:16px;border:0;background:#f9fbfd;text-align:left;color:#2f4b63;font-weight:750;font-size:12px}.expander .body{display:none;padding:0 16px 16px;color:#71889d;line-height:1.65;font-size:11px}.expander.open .body{display:block}.expander.open button{background:#f2f6f9}
+.theme-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.theme-option{background:#fff;border:1px solid #dce6ee;border-radius:12px;padding:12px;cursor:pointer;color:#3b586f;text-align:left}.theme-option.selected{border-color:#eda36a;box-shadow:0 0 0 2px #fff0e0}.theme-swatch{height:85px;display:grid;grid-template-columns:30% 1fr;overflow:hidden;border:1px solid #d9e4ed;border-radius:8px;margin-bottom:12px}.theme-option .optionname{font-size:11px;font-weight:750}.theme-option .optiondetail{display:block;font-size:10px;color:#879aab;margin-top:5px}.swatch-main{padding:11px;display:grid;gap:7px;align-content:start}.swatch-line{height:7px;border-radius:3px;width:80%;opacity:.7}.settings-value{font-size:12px;color:#324d66;font-weight:750}
+.info-row{display:flex;gap:12px;align-items:center;padding:15px 0;border-bottom:1px solid #e9eef3}.info-row:last-child{border:0}.info-row label{color:#8396a9;font-size:11px;width:38%}.info-row b{color:#2e4861;font-size:11.5px}
+.footer{border-top:1px solid #e0e8ef;margin-top:23px;padding-top:16px;color:#98a8b8;font-size:10px;display:flex;justify-content:space-between;gap:10px}
+.toast{position:fixed;z-index:90;bottom:24px;left:50%;transform:translateX(-50%) translateY(15px);background:#203b55;color:#fff;padding:13px 20px;border-radius:10px;font-size:12px;box-shadow:0 14px 35px #182f4560;opacity:0;pointer-events:none;transition:.2s;max-width:calc(100% - 32px)}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(max-width:1080px){.account-grid{grid-template-columns:1fr}.main{padding:25px 24px}.topbar{padding:0 24px}}
+@media(max-width:720px){.account-hero{padding:17px;gap:12px}.hero-right{display:none}.account-avatar{height:48px;width:48px;font-size:17px}.account-hero h2{font-size:17px}.subnav{gap:15px}.future-grid,.account-inline,.form-grid{grid-template-columns:1fr}.form-grid .full{grid-column:auto}.theme-options{grid-template-columns:1fr}.theme-swatch{height:56px}.header h1{font-size:25px}.main{padding:24px 13px}.card-padded{padding:16px}}
+
+/* My Account draft 03: revised Personal Details composition, no rotated brand marks. */
+.brand img,.brand img:hover,.brand img:focus{transform:none!important;rotate:none!important}
+.account-panel[data-section="overview"]{padding-top:16px}
+.account-grid{grid-template-columns:minmax(0,1.64fr) minmax(272px,.90fr);gap:15px}
+.personal-card{padding:18px 20px 15px;overflow:visible}
+.personal-card .card-head{margin-bottom:13px;align-items:center}
+.personal-card .card-head h3{font-size:14px;margin:0 0 3px;letter-spacing:-.2px}
+.personal-card .card-head p{margin:0;font-size:11px;color:#647f96}
+.personal-card .iconwrap{width:37px;height:37px;border-radius:10px}
+.personal-form{display:grid;grid-template-columns:172px minmax(0,1fr);gap:19px;align-items:start}
+.photo-area{border-right:1px solid #e5edf2;display:flex;flex-direction:column;align-items:center;padding:4px 16px 6px 0;min-width:0}
+.profile-photo{width:106px;height:106px;border-radius:50%;overflow:hidden;background:linear-gradient(135deg,#f0f3f8,#e4eaf0);border:1px solid #d2dce6;display:flex;align-items:center;justify-content:center;margin:0 0 12px;box-shadow:0 2px 4px #1329450a}
+.profile-placeholder{display:block;width:100%;height:100%}
+#photo-preview-image{width:100%;height:100%;object-fit:cover}
+.photo-upload{font-size:10.5px;padding:10px 9px;text-align:center;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;min-height:35px;white-space:nowrap;width:100%}
+.photo-remove{font-size:10px;background:transparent;color:#af5828;padding:3px;margin-top:4px;border:0;cursor:pointer;text-decoration:underline}
+.photo-hint{text-align:center;color:#879aab;font-size:10px;line-height:1.5;margin:7px 0 0}
+.visually-hidden{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.personal-fields{min-width:0}
+.personal-field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 14px}
+.personal-field{display:flex;flex-direction:column;gap:5px;color:#294762;font-size:10.5px;font-weight:750;min-width:0}
+.personal-field input{width:100%;border:1px solid #cbd8e4;border-radius:7px;padding:9px 11px;height:37px;min-width:0;background:white;color:#254058;font-size:11px;font-weight:500}
+.personal-field input:focus,.locked-username input:focus{outline:3px solid #ed85323b;border-color:#ed8532}
+.personal-wide{grid-column:1/-1}
+.username-readonly{display:grid;grid-template-columns:100px minmax(0,1fr);align-items:center;gap:10px;margin-top:12px;padding:7px 9px;background:#f0f4f8;border-radius:9px;min-width:0}
+.username-readonly label{font-size:10.5px;color:#2e4b65;font-weight:800;line-height:1.2}
+.username-help{display:block;font-size:9px;font-weight:500;color:#788da2;margin-top:3px}
+.locked-username{display:flex;min-width:0;align-items:center;gap:6px;border:1px solid #dce4ec;background:#e9eff5;border-radius:7px;padding:0 8px}
+.locked-username input{width:100%;min-width:0;background:transparent;color:#687f95;border:0;height:29px;font:inherit;font-size:11px}
+.locked-username span{white-space:nowrap;color:#627c91;font-size:9px}
+.personal-actions{margin-top:12px;display:flex;justify-content:flex-end}
+.personal-actions button{font-size:10.5px;min-height:36px}
+.personal-demo-note{font-size:9px;color:#8495a5;line-height:1.5;margin:12px 0 0;border-top:1px solid #f0f3f5;padding-top:8px}
+.account-grid>.card{min-width:0}
+@media(max-width:1130px){.account-grid{grid-template-columns:minmax(0,1fr)}.personal-form{grid-template-columns:175px minmax(0,1fr)}}
+@media(max-width:850px){.personal-form{grid-template-columns:145px minmax(0,1fr)}.photo-area{padding-right:12px}.profile-photo{width:95px;height:95px}.username-readonly{grid-template-columns:1fr;gap:5px}}
+@media(max-width:600px){.personal-card{padding:15px}.personal-form{grid-template-columns:1fr}.photo-area{border-right:0;border-bottom:1px solid #e5edf2;padding:4px 0 14px;gap:5px}.photo-upload{width:auto;padding:9px 16px}.profile-photo{width:97px;height:97px}.personal-field-grid{gap:10px}.personal-actions button{width:100%}}
+@media(max-width:430px){.personal-field-grid{grid-template-columns:1fr}.personal-wide{grid-column:auto}}
+
+/* Draft 03: owner-reviewed refinements — consistent width, legibility and account access. */
+.main{width:100%;max-width:none;margin:0;padding:30px clamp(22px,3vw,46px) 48px}
+body{font-size:14px}
+.brand img,.brand img:hover,.brand img:focus{transform:none!important;rotate:none!important}
+.header h1{font-size:31px}
+.header p{font-size:14px}
+.nav-item{font-size:13px}
+.nav-label,.eyebrow{font-size:11px}
+.nav-bottom{gap:8px}
+.account-link{width:100%;border:1px solid transparent;background:transparent;color:#fff;text-align:left;cursor:pointer;padding:11px 8px;margin:4px 0;border-radius:10px;display:flex;gap:11px;align-items:center;min-width:0}
+.account-link:hover,.account-link.current{background:#29445f}
+.account-link:focus-visible{outline:3px solid #f4a569;outline-offset:1px}
+.account-link .avatar{flex:0 0 38px;width:38px;height:38px;font-size:15px}
+.account-link .identity-text{display:block;min-width:0}
+.account-link .who{display:block;font-size:15px;font-weight:780;line-height:1.2;overflow-wrap:anywhere}
+.account-link .meta{display:block;font-size:11.5px;line-height:1.3;letter-spacing:.01em;margin-top:5px;color:#bacbda}
+.sidebar.collapsed .account-link{padding:8px 0;margin:4px 0;justify-content:center}
+.sidebar.collapsed .account-link .identity-text{display:none}
+.sidebar.collapsed .account-link .avatar{flex-basis:38px}
+.subnav{margin-top:22px}
+.subnav button{font-size:13.5px}
+.group-title h2,.section-heading h2{font-size:18px}
+.group-title p,.section-heading p,.sub,.import-body,.helptext{font-size:13px}
+.card h3,.personal-card .card-head h3{font-size:16px}
+.personal-card .card-head p{font-size:13px}
+.field label,.personal-field,.username-readonly label{font-size:12.5px}
+.personal-field input,.field input,.field select{font-size:13px;min-height:41px}
+.personal-field input{height:42px}
+.username-help,.locked-username span{font-size:11px}
+.locked-username input{font-size:13px;height:35px}
+.btn,.personal-actions button,.photo-upload{font-size:12.5px;min-height:40px}
+.photo-hint,.personal-demo-note,.foot-note{font-size:11.5px}
+.info-row,.summary-line,.feature-row,.step p{font-size:12.5px}
+.account-grid{grid-template-columns:minmax(0,1.55fr) minmax(300px,.92fr)}
+.personal-form{grid-template-columns:180px minmax(0,1fr)}
+@media(max-width:1130px){.account-grid{grid-template-columns:1fr}.personal-form{grid-template-columns:180px minmax(0,1fr)}}
+@media(max-width:850px){.personal-form{grid-template-columns:145px minmax(0,1fr)}}
+@media(max-width:720px){.main{padding:24px 16px 40px}.account-link{padding:9px 0;justify-content:center}.account-link .identity-text{display:none}.account-link .avatar{flex-basis:38px}.subnav{gap:13px}}
+@media(max-width:600px){.personal-form{grid-template-columns:1fr}}
+@media(max-width:430px){.personal-field-grid{grid-template-columns:1fr}}
+
+/* Draft 06: keep the normal page header; Sign Out sits in its action position. */
+.header-signout{white-space:nowrap;display:inline-flex;align-items:center;gap:8px;min-height:39px;padding:8px 14px}
+.tab-intro{margin:10px 0 16px;color:#72899d;font-size:13px;line-height:1.55}
+.appearance-buttons{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.appearance-buttons button{border-radius:8px;border:1px solid #dce6ee;background:#fafcfe;color:#365169;font-weight:730;font-size:13px;min-height:38px;flex:1 1 68px;padding:8px 12px;cursor:pointer}
+.appearance-buttons button.selected{color:#9d4b15;background:#fff0e2;border-color:#ed9856;box-shadow:0 0 0 1px #ed985633}
+.future-compact{padding-top:16px;padding-bottom:16px}
+.future-compact .row-between{gap:10px;flex-wrap:wrap}
+.future-compact .card-head{margin:0;align-items:center}
+.future-compact .smalltag{white-space:nowrap}
+/* The actual image file is sourced from the original Caffoot Lite repository. Never rotate any branding. */
+.brand img,.brand img:hover,.brand img:focus{transform:none!important;rotate:none!important}
+@media(max-width:720px){.header-signout{padding:8px 10px;font-size:12px}.future-compact .smalltag{margin-left:48px}}
+
+/* One account entry in the universal header; no duplicate identity in the sidebar. */
+.header-account{display:inline-flex;align-items:center;gap:10px;border:1px solid #e2eaf0;background:#fff;border-radius:11px;color:#29445e;padding:5px 12px 5px 5px;min-height:42px;font-size:13px;font-weight:750;white-space:nowrap;cursor:pointer}
+.header-account:hover{border-color:#e6a671;background:#fffaf6}
+.header-account:focus-visible{outline:3px solid rgba(238,135,55,.33);outline-offset:2px}
+.header-account-photo{width:32px;height:32px;display:grid;place-items:center;flex-shrink:0;border-radius:50%;overflow:hidden;background:#f6e5d6;color:#a85d25;font-size:14px;font-weight:800}
+.header-account-photo img{display:block;width:100%;height:100%;object-fit:cover}
+.header-account-photo img[hidden]{display:none}
+.header-account-text{color:#29445e}
+@media(max-width:720px){.header-account{padding:4px;border-radius:50%;min-height:40px}.header-account-text{display:none}.header-account-photo{width:32px;height:32px}}
+
+/* Settings & Data Draft 02 — adapts the original 04.1 content to the approved My Account 06 design system. */
+
+
+.settings-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(285px,.92fr);gap:17px}
+.settings-stack{display:grid;gap:16px;align-content:start;min-width:0}
+.heading-fill{flex:1;min-width:0}
+.mini-tag{display:inline-flex;align-items:center;align-self:flex-start;white-space:nowrap;font-size:10.5px;font-weight:750;padding:7px 10px;border-radius:15px;background:#f2f5f8;color:#7a8fa4}
+.card-copy{font-size:13px;line-height:1.75;color:#637b90;margin:0 0 17px}
+.muted-note{font-size:11.5px;line-height:1.65;color:#8094a6;margin:14px 0 0}
+.steps{list-style:none;padding:0;margin:0;display:grid;gap:0}
+.steps li{display:flex;gap:13px;padding:13px 0;border-bottom:1px solid #ebf0f4;min-width:0}
+.steps li:first-child{padding-top:0}
+.steps li:last-child{border:0;padding-bottom:6px}
+.steps li>div{min-width:0;flex:1}
+.step-index{display:grid;place-items:center;flex:none;width:31px;height:31px;border-radius:9px;background:#fff1e7;color:#c77732;font-size:11px;font-weight:850}
+.steps strong{font-size:13.5px;color:#304a63;line-height:1.4}
+.steps p{color:#71889c;font-size:12.5px;line-height:1.7;margin:4px 0 0}
+.steps code:not(.command code){font-size:12px;background:#f4f7fa;padding:2px 5px;border-radius:4px}
+.command{margin-top:10px;display:flex;gap:8px;align-items:flex-start;background:#182c40;border-radius:9px;padding:12px;min-width:0}
+.command code{display:block;flex:1;white-space:pre-wrap;overflow-wrap:anywhere;color:#d5e4ee;font-size:11.4px;line-height:1.6;tab-size:2}
+.command button{align-self:flex-start;border:1px solid #3b566e;background:#2a455d;color:white;border-radius:7px;padding:6px 9px;font-size:11px;display:flex;align-items:center;gap:5px;cursor:pointer}
+.command button:hover{background:#3c5b74}
+.command button svg{width:13px;height:13px}
+.help-strip{display:flex;align-items:flex-start;gap:10px;margin-top:16px;background:#f3f7fa;padding:12px;border-radius:9px;color:#617b92;font-size:12px;line-height:1.65}
+.help-strip svg{width:17px;height:17px;flex:none;margin-top:2px}
+.flowline{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:14px 0 18px;font-size:11.5px;color:#58738a;font-weight:750}
+.flowline span:nth-child(even){color:#d18b56}
+.flowline span:nth-child(odd){background:#f3f7fa;padding:7px 9px;border-radius:7px}
+.full-button{width:100%;margin-top:5px;white-space:normal;text-align:center}
+.concise-card .card-head{align-items:center}
+.mini-section{font-size:12.5px;font-weight:800;color:#3b5770;margin-bottom:12px}
+.setting-field{display:block;font-size:12.5px;font-weight:720;color:#526d83;min-width:0}
+.setting-field input,.setting-field select{display:block;margin-top:7px;border:1px solid #dce5ed;background:#fff;color:#304e67;border-radius:9px;padding:11px 12px;font-size:13px;font-weight:500;width:100%;height:42px;min-width:0}
+.setting-field input:focus,.setting-field select:focus{outline:3px solid rgba(237,133,50,.21);border-color:#e99c5d}
+.setting-field input::placeholder{color:#a1aeba}
+.smtp-fields{grid-template-columns:minmax(0,1fr) minmax(0,1fr);row-gap:15px}
+.toggle-settings{display:flex;justify-content:space-between;align-items:center;gap:16px;border-top:1px solid #eaf0f4;border-bottom:1px solid #eaf0f4;padding:15px 0;margin:19px 0 14px}
+.toggle-settings strong{display:block;font-size:13.5px;color:#3a5269}
+.toggle-settings span:not(.toggle-slider){display:block;color:#8296a7;font-size:11.5px;line-height:1.5;margin-top:5px}
+.toggle{display:flex;position:relative;flex-shrink:0;cursor:pointer}
+.toggle input{position:absolute;opacity:0;width:1px;height:1px}
+.toggle-slider{height:26px;width:47px;border-radius:20px;background:#c6d2dc;position:relative;display:block;transition:background .2s}
+.toggle-slider:before{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;background:#fff;border-radius:50%;box-shadow:0 1px 3px #152c4444;transition:transform .2s}
+.toggle input:checked+.toggle-slider{background:#ed8532}
+.toggle input:checked+.toggle-slider:before{transform:translateX(21px)}
+.toggle input:focus-visible+.toggle-slider{outline:3px solid rgba(237,133,50,.35);outline-offset:3px}
+.auth-fields.is-off{opacity:.43}
+.form-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:22px}
+.preview-note{padding-top:12px;border-top:1px solid #eff2f6;margin-top:17px}
+.future-item{display:flex;align-items:center;justify-content:space-between;gap:9px;padding:11px 0;border-bottom:1px solid #eaf0f4;color:#4d6881;font-size:12.5px;font-weight:650}
+.future-item span{color:#8398ab;background:#f2f6f9;border-radius:20px;padding:5px 9px;font-size:10px}
+.future-item:last-of-type{border-bottom:0}
+.danger-panel{display:flex;align-items:center;justify-content:space-between;gap:16px;background:#fff7f5;border:1px solid #f2dcd6;border-radius:11px;padding:17px;margin-bottom:4px}
+.danger-panel strong{color:#a44e42;font-size:13.5px}
+.danger-panel p{margin:7px 0 0;font-size:12.5px;color:#896761;line-height:1.65}
+.danger-button{flex:none;color:#ab4c40;border-color:#e8c6c0;background:#fff;font-weight:750}
+.danger-button:hover{background:#fff1ec}
+.preview-modal{position:fixed;inset:0;background:#0e2439b6;z-index:90;display:none;align-items:center;justify-content:center;padding:18px}
+.preview-modal.open{display:flex}
+.modal-card{background:white;border-radius:15px;padding:24px;max-width:480px;width:100%;box-shadow:0 24px 70px #162d4755}
+.modal-card h3{font-size:17px;margin:12px 0}
+.modal-card p{color:#708398;font-size:13px;line-height:1.65}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px;flex-wrap:wrap}
+@media(max-width:1150px){.settings-grid{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:720px){.settings-stack{gap:13px}.card-padded{padding:17px}.header{align-items:center}.settings-grid{gap:13px}}
+@media(max-width:510px){.smtp-fields{grid-template-columns:1fr}.danger-panel{flex-wrap:wrap}.danger-button{width:100%}.command{flex-direction:column}.command button{align-self:flex-end}.card-head{flex-wrap:wrap}.mini-tag{margin-left:52px}}
+
+/* Dashboard visual draft: reuses the exact global shell/card/tab styling from the approved account/settings designs. */
+.db-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:17px}
+.db-metric{border:1px solid var(--line);background:white;border-radius:15px;padding:20px 21px;text-align:left;box-shadow:var(--shadow);color:var(--ink);min-width:0;width:100%;display:flex;flex-direction:column;gap:7px}
+.db-metric:hover{border-color:#edb486;background:#fffdfb}.db-metric:focus-visible{outline:3px solid #ed8532}
+.db-metric-head{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#5c768e;font-size:12px;font-weight:750}
+.db-metric-head .iconwrap{width:35px;height:35px}.db-metric strong{font-size:31px;line-height:1.12;letter-spacing:-1px;color:#203951}
+.db-metric small{font-size:11px;color:#7890a6;line-height:1.4}
+.db-two{display:grid;grid-template-columns:minmax(0,1.43fr) minmax(300px,1fr);gap:17px;align-items:start}
+.db-stack{display:grid;gap:16px;align-content:start;min-width:0}
+.db-card{padding:22px}.db-card .card-head{align-items:center}.db-actionrow{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-top:18px}
+.db-slimrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 0;border-top:1px solid #e9edf2;min-width:0}
+.db-slimrow:first-of-type{border-top:0}.db-slimrow[hidden]{display:none!important}.db-slimrow strong{color:#324d66;font-size:12px}.db-muted{color:#7890a6;font-size:11.5px;line-height:1.6}
+.db-badge{border-radius:999px;background:#f0f5f9;color:#7790a5;font-size:10px;font-weight:750;padding:5px 9px;white-space:nowrap}
+.db-good{background:#e8f5f0;color:#398569}.db-warning{background:#fff2df;color:#a76528}
+.db-bar{width:100%;height:9px;border-radius:99px;overflow:hidden;background:#eaf0f4;margin:9px 0 5px}
+.db-bar>span{display:block;height:100%;border-radius:99px;background:#ed8532;max-width:100%}
+.db-progress-title{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:12px;font-weight:700;color:#455e76}
+.db-progress-title strong{font-size:11px;color:#6b8499}.db-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px;align-items:stretch}
+.db-legend{display:grid;gap:10px;margin-top:15px}.db-legend>div{display:grid;grid-template-columns:10px minmax(0,1fr) auto;gap:8px;align-items:center;font-size:12px;color:#617c91}
+.db-dot{width:8px;height:8px;border-radius:50%;background:#ed8532}.db-dot.green{background:#4a9c86}.db-dot.blue{background:#7396bb}.db-dot.gray{background:#a8b6c2}
+.db-hero-row{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap}
+.db-main-title{font-size:18px;margin:0;color:#273f56}.db-btn-outline{width:100%;margin-top:13px}
+.db-report-buttons{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.db-alertlist{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:10px}
+.db-alertlist li{display:flex;gap:11px;align-items:flex-start;padding:11px;border-radius:10px;background:#f7f9fb;color:#546e84;font-size:12px;line-height:1.5}
+.db-alertlist li strong{color:#28435c}.db-insights-4{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.db-insights-4 .db-card{min-height:235px}.db-stat-number{font-size:28px;font-weight:800;letter-spacing:-.7px;color:#29445c}
+.db-filters{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.db-filters select{min-width:135px;border:1px solid #dfe7ef;border-radius:8px;padding:9px;background:#fff;color:#38546d;font-size:12px}
+.db-callout{background:#fff9f1;border:1px solid #f4e2ce;border-radius:10px;padding:11px 15px;color:#7c684f;font-size:11px;line-height:1.55;margin:0 0 16px}
+.db-section{margin-top:18px}.db-span-all{grid-column:1/-1}
+.db-empty-note{font-size:11.5px;color:#7b8da0}
+@media(max-width:1120px){.db-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.db-two{grid-template-columns:minmax(0,1fr)}.db-insights-4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.db-insights-4,.db-grid{grid-template-columns:minmax(0,1fr)}.db-card{padding:18px}.db-summary{gap:10px}.db-metric{padding:15px}.db-metric strong{font-size:25px}.db-metric-head .iconwrap{width:30px;height:30px}.db-actionrow .btn{flex:1;min-width:110px}.db-filters select{min-width:0;flex:1}}
+</style></head><body>
+<svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden" xmlns="http://www.w3.org/2000/svg"><symbol id="i-grid" viewbox="0 0 24 24"><rect height="7" rx="1" width="7" x="3" y="3"></rect><rect height="7" rx="1" width="7" x="14" y="3"></rect><rect height="7" rx="1" width="7" x="3" y="14"></rect><rect height="7" rx="1" width="7" x="14" y="14"></rect></symbol><symbol id="i-box" viewbox="0 0 24 24"><rect height="18" rx="2" width="16" x="4" y="3"></rect><path d="M4 9h16M8 6h1M8 13h8M8 17h8"></path></symbol><symbol id="i-network" viewbox="0 0 24 24"><rect height="6" rx="1" width="6" x="9" y="2"></rect><rect height="6" rx="1" width="6" x="2" y="16"></rect><rect height="6" rx="1" width="6" x="16" y="16"></rect><path d="M12 8v4M5 16v-4h14v4"></path></symbol><symbol id="i-rack" viewbox="0 0 24 24"><rect height="20" rx="2" width="14" x="5" y="2"></rect><path d="M8 6h8M8 11h8M8 16h8M8 20h8"></path><circle cx="8" cy="6" r=".5"></circle><circle cx="8" cy="11" r=".5"></circle></symbol><symbol id="i-history" viewbox="0 0 24 24"><path d="M3 11a9 9 0 1 1 2.5 6.5M3 4v7h7M12 7v5l3 2"></path></symbol><symbol id="i-users" viewbox="0 0 24 24"><circle cx="9" cy="8" r="3"></circle><path d="M3 20v-2a6 6 0 0 1 12 0v2M16 5a3 3 0 0 1 0 6M18 14a5 5 0 0 1 3 5v1"></path></symbol><symbol id="i-settings" viewbox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M10 2h4l.8 2.6 2 1.1 2.6-.7 2 3.5-1.8 2v2.5l1.8 2-2 3.5-2.6-.7-2 1.1L14 22h-4l-.8-2.6-2-1.1-2.6.7-2-3.5 1.8-2v-2.5l-1.8-2 2-3.5 2.6.7 2-1.1Z"></path></symbol><symbol id="i-shield" viewbox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.5 8.5 8 11 4.5-2.5 8-6 8-11V5Z"></path><path d="m9 12 2 2 4-5"></path></symbol><symbol id="i-database" viewbox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v14c0 2 4 3 9 3s9-1 9-3V5M3 12c0 2 4 3 9 3s9-1 9-3"></path></symbol><symbol id="i-download" viewbox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 17v4h16v-4"></path></symbol><symbol id="i-upload" viewbox="0 0 24 24"><path d="M12 21V9m-5 5 5-5 5 5M4 7V3h16v4"></path></symbol><symbol id="i-mail" viewbox="0 0 24 24"><rect height="14" rx="2" width="20" x="2" y="5"></rect><path d="m2 7 10 7 10-7"></path></symbol><symbol id="i-tool" viewbox="0 0 24 24"><path d="M14 4a6 6 0 0 0-7 7L2 16l6 6 5-5a6 6 0 0 0 7-7l-5 4-5-5Z"></path></symbol><symbol id="i-info" viewbox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M12 11v6m0-10h.01"></path></symbol><symbol id="i-chevron" viewbox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></symbol><symbol id="i-copy" viewbox="0 0 24 24"><rect height="13" rx="2" width="13" x="8" y="8"></rect><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"></path></symbol><symbol id="i-send" viewbox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4 20-7ZM11 13l11-11"></path></symbol><symbol id="i-alert" viewbox="0 0 24 24"><path d="M12 3 2 21h20L12 3Zm0 6v5m0 4h.01"></path></symbol><symbol id="i-lock" viewbox="0 0 24 24"><rect height="12" rx="2" width="16" x="4" y="10"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></symbol><symbol id="i-user" viewbox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4 22v-3a8 8 0 0 1 16 0v3"></path></symbol></svg>
+<div class="shell" id="shell">
+<aside aria-label="Application Navigation" class="sidebar" id="sidebar">
+<div class="brand"><img alt="Caffoot hedgehog logo" id="hedgehog" src="https://raw.githubusercontent.com/Caffoot/Caffoot-Lite/main/assets/caffoot-logo-256.png"/><div class="brand-text"><div class="brand-name">Caffoot <span>Lite</span></div><div class="brand-sub">INFRASTRUCTURE, SIMPLIFIED.</div></div></div>
+<div class="nav-label">WORKSPACE</div><div class="nav-item current"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-grid"></use></svg><span class="nav-text">Dashboard</span></div><div class="nav-item subtle" onclick="showNotice('Design preview only. This does not open another application screen.')" role="button" tabindex="0"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-box"></use></svg><span class="nav-text">Devices</span></div><div class="nav-item subtle" onclick="showNotice('Design preview only. This does not open another application screen.')" role="button" tabindex="0"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-network"></use></svg><span class="nav-text">IPAM</span></div><div class="nav-item subtle" onclick="showNotice('Design preview only. This does not open another application screen.')" role="button" tabindex="0"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-rack"></use></svg><span class="nav-text">Network Racks</span></div><div class="nav-item subtle" onclick="showNotice('Design preview only. This does not open another application screen.')" role="button" tabindex="0"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-history"></use></svg><span class="nav-text">Audit Trail</span></div><div class="nav-item subtle" onclick="showNotice('Design preview only. This does not open another application screen.')" role="button" tabindex="0"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-users"></use></svg><span class="nav-text">Users</span></div>
+<div class="nav-bottom">
+<div class="nav-item subtle" onclick="showNotice('Design preview only. This does not open another application screen.')" role="button" tabindex="0"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-settings"></use></svg><span class="nav-text">Settings &amp; Data</span></div>
+<button aria-label="Collapse Or Expand Menu" class="sidebar-button" onclick="toggleSidebar()" title="Collapse or expand sidebar"><svg aria-hidden="true" fill="none" height="15" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="15"><use href="#i-box"></use></svg><span class="collapse-text">Collapse Menu</span></button>
+</div>
+</aside>
+<div class="workspace">
+<header class="topbar"><div class="crumb"><span>Caffoot Lite</span><span>›</span><b>Dashboard</b></div><div class="top-right"><button aria-label="Open My Account" class="header-account" onclick="showNotice('Design preview: this opens the approved My Account screen in the finished application.')" title="Open My Account" type="button"><span class="header-account-photo"><span aria-hidden="true" class="header-account-initial" id="header-account-initial">A</span><img alt="" hidden="" id="header-account-image" src=""/></span><span class="header-account-text">My Account</span></button></div></header>
+<main class="main">
+<div class="eyebrow">YOUR INFRASTRUCTURE AT A GLANCE</div>
+<div class="header"><div><h1>Dashboard</h1><p>An organised view of your saved Devices, IPAM and Network Racks.</p></div></div>
+<nav aria-label="Dashboard Sections" class="subnav" role="tablist">
+<button aria-selected="true" class="active" data-tab="overview" onclick="showTab('overview')" role="tab" type="button"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-grid"></use></svg> Overview</button>
+<button aria-selected="false" data-tab="insights" onclick="showTab('insights')" role="tab" type="button"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-network"></use></svg> Network Insights</button>
+<button aria-selected="false" data-tab="activity" onclick="showTab('activity')" role="tab" type="button"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-history"></use></svg> Activity &amp; Alerts</button>
+</nav>
+<section class="account-panel active" data-section="overview" role="tabpanel">
+<div class="db-summary">
+<button class="db-metric" onclick="showNotice('Preview only — Devices would open the existing device inventory.')" type="button"><span class="db-metric-head">Devices <span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-box"></use></svg></span></span><strong>42</strong><small>36 active · 6 other</small></button>
+<button class="db-metric" onclick="showNotice('Preview only — IPAM would open the existing IP address area.')" type="button"><span class="db-metric-head">IP Addresses <span class="iconwrap green"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-network"></use></svg></span></span><strong>128</strong><small>104 assigned · 24 reserved</small></button>
+<button class="db-metric" onclick="showNotice('Preview only — IPAM would show existing subnets.')" type="button"><span class="db-metric-head">Subnets <span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-network"></use></svg></span></span><strong>12</strong><small>Managed networks</small></button>
+<button class="db-metric" onclick="showNotice('Preview only — Network Racks would open the existing rack overview.')" type="button"><span class="db-metric-head">Racks <span class="iconwrap orange"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-rack"></use></svg></span></span><strong>4</strong><small>18 mounted devices</small></button>
+</div>
+<div class="db-two">
+<div class="db-stack">
+<div class="card db-card">
+<div class="card-head"><span class="iconwrap orange"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-grid"></use></svg></span><div><h3>Quick Access</h3><p class="sub">Existing actions, available according to the signed-in user’s permissions.</p></div></div>
+<div class="db-actionrow"><button class="btn btn-primary" onclick="showNotice('Design preview only — Add Device is handled by the existing v2.0.1 application.')" type="button">Add Device</button><button class="btn btn-outline" onclick="showNotice('Design preview only — Add Rack is handled by the existing v2.0.1 application.')" type="button">Add Rack</button><button class="btn btn-outline" onclick="showNotice('Design preview only — Open IPAM is handled by the existing v2.0.1 application.')" type="button">Open IPAM</button></div>
+</div>
+<div class="card db-card">
+<div class="card-head"><span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-box"></use></svg></span><div><h3>Recent Devices</h3><p class="sub">The latest records in your saved inventory.</p></div></div>
+<div class="divider"></div>
+<div class="db-slimrow"><div><strong>Hypervisor-01</strong><div class="db-muted">Server · 10.0.10.20</div></div><span class="db-badge db-good">Active</span></div>
+<div class="db-slimrow"><div><strong>Core-Switch-01</strong><div class="db-muted">Network Switch · 10.0.10.2</div></div><span class="db-badge db-good">Active</span></div>
+<div class="db-slimrow"><div><strong>Storage-01</strong><div class="db-muted">Storage · 10.0.10.30</div></div><span class="db-badge">Maintenance</span></div>
+<button class="btn btn-outline" onclick="showNotice('Design preview only — View All Devices is handled by the existing v2.0.1 application.')" type="button">View All Devices</button>
+</div>
+<div class="card db-card">
+<div class="card-head"><span class="iconwrap green"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-network"></use></svg></span><div><h3>Subnet Utilisation</h3><p class="sub">Usable addresses across existing CIDR networks.</p></div></div>
+<div class="divider"></div>
+<div class="db-progress-title"><span>Management · 10.0.10.0/24</span><strong>67%</strong></div><div class="db-bar"><span style="width:67%;background:#4a9c86"></span></div>
+<div class="db-progress-title" style="margin-top:18px"><span>Workstations · 10.0.20.0/24</span><strong>43%</strong></div><div class="db-bar"><span style="width:43%;background:#6d95be"></span></div>
+<div class="db-progress-title" style="margin-top:18px"><span>Guest · 10.0.30.0/24</span><strong>18%</strong></div><div class="db-bar"><span style="width:18%;background:#ed8532"></span></div>
+<p class="db-muted" style="margin-bottom:0">Details, reservations and allocations remain managed within IPAM.</p>
+</div>
+</div>
+<div class="db-stack">
+<div class="card db-card">
+<div class="card-head"><span class="iconwrap orange"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-rack"></use></svg></span><div><h3>Rack Capacity</h3><p class="sub">Used U-space across your cabinets.</p></div></div>
+<div class="divider"></div>
+<div class="db-progress-title"><span>Rack A</span><strong>18 / 42U</strong></div><div class="db-bar"><span style="width:43%;background:#7799b5"></span></div>
+<div class="db-progress-title" style="margin-top:14px"><span>Rack B</span><strong>28 / 42U</strong></div><div class="db-bar"><span style="width:67%;background:#7799b5"></span></div>
+<div class="db-progress-title" style="margin-top:14px"><span>Rack C</span><strong>30 / 42U</strong></div><div class="db-bar"><span style="width:71%;background:#ed8532"></span></div>
+<button class="btn btn-outline" onclick="showNotice('Design preview only — Open Network Racks is handled by the existing v2.0.1 application.')" type="button">Open Network Racks</button>
+</div>
+<div class="card db-card">
+<div class="card-head"><span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-network"></use></svg></span><div><h3>Network Allocation Overview</h3><p class="sub">A summary of your stored addressing data.</p></div></div>
+<div class="divider"></div>
+<div class="db-legend"><div><span class="db-dot blue"></span><span>Assigned</span><strong>104</strong></div><div><span class="db-dot"></span><span>Reserved</span><strong>24</strong></div><div><span class="db-dot green"></span><span>Available</span><strong>682</strong></div></div>
+<button class="btn btn-outline" onclick="showNotice('Design preview only — View IP Allocations is handled by the existing v2.0.1 application.')" type="button">View IP Allocations</button>
+</div>
+<div class="card db-card">
+<div class="card-head"><span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-info"></use></svg></span><div><h3>Inventory Status</h3><p class="sub">A concise snapshot of your saved inventory.</p></div></div>
+<div class="divider"></div>
+<div class="db-slimrow"><strong>Devices</strong><span class="db-badge">42 tracked</span></div>
+<div class="db-slimrow"><strong>Subnets</strong><span class="db-badge">12 configured</span></div>
+<div class="db-slimrow"><strong>Racks</strong><span class="db-badge">4 configured</span></div>
+<p class="db-muted" style="margin-bottom:0">Administrator-only Inventory Health warnings appear only when the real checks detect an issue.</p>
+</div>
+</div>
+</div>
+</section>
+<section class="account-panel" data-section="insights" role="tabpanel">
+<div class="db-insights-4">
+<div class="card db-card"><div class="card-head"><span class="iconwrap orange"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-network"></use></svg></span><div><h3>IP Address Utilisation</h3><p class="sub">Allocated or reserved addresses across managed subnets.</p></div></div><div class="divider"></div><div class="db-stat-number">16%</div><div class="db-bar"><span style="width:16%;background:#7197b9"></span></div><div class="db-legend"><div><span class="db-dot blue"></span><span>Assigned</span><strong>104</strong></div><div><span class="db-dot"></span><span>Reserved</span><strong>24</strong></div><div><span class="db-dot green"></span><span>Available</span><strong>682</strong></div></div></div>
+<div class="card db-card"><div class="card-head"><span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-box"></use></svg></span><div><h3>Device Status</h3><p class="sub">Status distribution in the saved inventory.</p></div></div><div class="divider"></div><div class="db-stat-number">42 <span class="db-muted">devices</span></div><div class="db-legend"><div><span class="db-dot green"></span><span>Active</span><strong>36</strong></div><div><span class="db-dot"></span><span>Maintenance</span><strong>4</strong></div><div><span class="db-dot gray"></span><span>Other</span><strong>2</strong></div></div></div>
+<div class="card db-card"><div class="card-head"><span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-box"></use></svg></span><div><h3>Hardware Distribution</h3><p class="sub">Device categories by inventory count.</p></div></div><div class="divider"></div><div class="db-progress-title"><span>Servers</span><strong>18</strong></div><div class="db-bar"><span style="width:100%;background:#77a8a1"></span></div><div class="db-progress-title"><span>Network</span><strong>12</strong></div><div class="db-bar"><span style="width:67%;background:#77a8a1"></span></div><div class="db-progress-title"><span>Storage</span><strong>8</strong></div><div class="db-bar"><span style="width:44%;background:#77a8a1"></span></div></div>
+<div class="card db-card"><div class="card-head"><span class="iconwrap orange"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-rack"></use></svg></span><div><h3>Rack Capacity by Face</h3><p class="sub">Front and rear U occupancy, including accessories.</p></div></div><div class="divider"></div><div class="db-progress-title"><span>Rack A — Front</span><strong>18 / 42U</strong></div><div class="db-bar"><span style="width:43%;background:#7396bb"></span></div><div class="db-progress-title"><span>Rack A — Rear</span><strong>9 / 42U</strong></div><div class="db-bar"><span style="width:21%;background:#4a9c86"></span></div><div class="db-progress-title"><span>Rack B — Front</span><strong>28 / 42U</strong></div><div class="db-bar"><span style="width:67%;background:#ed8532"></span></div><div class="db-progress-title"><span>Rack B — Rear</span><strong>14 / 42U</strong></div><div class="db-bar"><span style="width:33%;background:#7396bb"></span></div></div>
+</div>
+<div class="db-section card db-card"><div class="card-head"><span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-rack"></use></svg></span><div><h3>Rack Details</h3><p class="sub">The existing rack list and per-rack links stay available in this section.</p></div></div><div class="divider"></div><div class="db-grid"><div class="db-slimrow"><strong>Rack A</strong><span class="db-badge">42U</span></div><div class="db-slimrow"><strong>Rack B</strong><span class="db-badge">42U</span></div><div class="db-slimrow"><strong>Rack C</strong><span class="db-badge">42U</span></div><div class="db-slimrow"><strong>Rack D</strong><span class="db-badge">24U</span></div></div><div class="db-actionrow"><button class="btn btn-outline" onclick="showNotice('Design preview only — Open Rack Details is handled by the existing v2.0.1 application.')" type="button">Open Rack Details</button></div></div>
+</section>
+<section class="account-panel" data-section="activity" role="tabpanel">
+<div class="db-summary" style="grid-template-columns:repeat(2,minmax(0,1fr))"><div class="card db-card"><div class="card-head"><span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-history"></use></svg></span><div><h3>Recent Save Events</h3><p class="sub">Saved inventory changes.</p></div></div><div class="db-stat-number" style="margin-top:12px">7</div></div><div class="card db-card"><div class="card-head"><span class="iconwrap orange"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-alert"></use></svg></span><div><h3>Network Warnings</h3><p class="sub">Existing consistency and capacity checks.</p></div></div><div class="db-stat-number" style="margin-top:12px">2</div></div></div>
+<div class="db-two">
+<div class="db-stack"><div class="card db-card"><div class="card-head"><span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-history"></use></svg></span><div><h3>Recent Activity</h3><p class="sub">Existing saved-change timeline and filters.</p></div></div><div class="divider"></div><div class="db-filters"><label class="db-muted" for="activity-filter">Activity type</label><select id="activity-filter" onchange="filterPreview('activity')"><option value="all">All Changes</option><option value="devices">Devices</option><option value="network">Network</option><option value="racks">Racks</option></select></div><div id="activity-results"><div class="db-slimrow" data-kind="devices"><div><strong>Hypervisor-01 updated</strong><div class="db-muted">Device · Example saved change</div></div><span class="db-badge">Today</span></div><div class="db-slimrow" data-kind="network"><div><strong>IP reservation updated</strong><div class="db-muted">IPAM · Example saved change</div></div><span class="db-badge">Yesterday</span></div><div class="db-slimrow" data-kind="racks"><div><strong>Rack B placement updated</strong><div class="db-muted">Rack · Example saved change</div></div><span class="db-badge">Earlier</span></div></div><p class="db-empty-note" hidden="" id="activity-empty">No saved changes match this filter.</p><div class="db-actionrow"><button class="btn btn-outline" onclick="showNotice('Design preview only — Full Change History is handled by the existing v2.0.1 application.')" type="button">Full Change History</button></div></div></div>
+<div class="db-stack"><div class="card db-card"><div class="card-head"><span class="iconwrap orange"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-alert"></use></svg></span><div><h3>Warnings &amp; Attention</h3><p class="sub">IPAM linkage, duplicate IP and rack capacity warnings.</p></div></div><div class="divider"></div><div class="db-filters"><label class="db-muted" for="alert-filter">Severity</label><select id="alert-filter" onchange="filterPreview('alert')"><option value="all">All Severities</option><option value="warning">Warning</option><option value="critical">Critical</option></select></div><div id="alert-results"><div class="db-slimrow" data-kind="warning"><div><strong>Rack B nearing capacity</strong><div class="db-muted">Example capacity warning</div></div><span class="db-badge db-warning">Warning</span></div><div class="db-slimrow" data-kind="critical"><div><strong>Duplicate IP allocation</strong><div class="db-muted">Example existing validation alert</div></div><span class="db-badge db-warning">Critical</span></div></div><p class="db-empty-note" hidden="" id="alert-empty">No saved warnings match this filter.</p></div></div>
+</div>
+<div class="db-section card db-card"><div class="card-head"><span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-download"></use></svg></span><div><h3>Reports &amp; Exports</h3><p class="sub">Preserve all CSV and downloadable reports available in v2.0.1.</p></div></div><div class="divider"></div><p class="db-muted">Existing report types, controls and permission requirements must stay intact. These are visual examples; the final list will be matched against the published application.</p><div class="db-report-buttons"><button class="btn btn-outline" onclick="showNotice('Design preview only — Device Inventory CSV is handled by the existing v2.0.1 application.')" type="button">Device Inventory CSV</button><button class="btn btn-outline" onclick="showNotice('Design preview only — IPAM CSV is handled by the existing v2.0.1 application.')" type="button">IPAM CSV</button><button class="btn btn-outline" onclick="showNotice('Design preview only — Rack Report is handled by the existing v2.0.1 application.')" type="button">Rack Report</button></div></div>
+</section>
+<footer class="footer"><span>Caffoot Lite · Infrastructure, Simplified.</span><span>Dashboard · Visual Design Draft 02 · Design preview only</span></footer>
+</main>
+</div></div><div aria-live="polite" class="toast" id="toast" role="status"></div>
+<script>
+let toastTimer;
+function showNotice(message){const el=document.getElementById('toast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),4000)}
+function showTab(name){document.querySelectorAll('[data-section]').forEach(el=>el.classList.toggle('active',el.dataset.section===name));document.querySelectorAll('[data-tab]').forEach(el=>{const active=el.dataset.tab===name;el.classList.toggle('active',active);el.setAttribute('aria-selected',String(active));});try{history.replaceState(null,'','#'+name)}catch(e){}window.scrollTo({top:0,behavior:'instant'});}
+function toggleSidebar(){const side=document.getElementById('sidebar');side.classList.toggle('collapsed');document.getElementById('shell').classList.toggle('collapsed');document.querySelector('.collapse-text').textContent=side.classList.contains('collapsed')?'Expand Menu':'Collapse Menu';try{localStorage.setItem('caffootDashboardPreviewSidebar',side.classList.contains('collapsed')?'collapsed':'expanded')}catch(e){}}
+function filterPreview(type){const choice=document.getElementById(type==='activity'?'activity-filter':'alert-filter').value;const root=document.getElementById(type==='activity'?'activity-results':'alert-results');let visible=0;root.querySelectorAll('[data-kind]').forEach(row=>{const yes=choice==='all'||choice===row.dataset.kind;row.hidden=!yes;if(yes)visible++});document.getElementById(type+'-empty').hidden=visible!==0;}
+try{if(localStorage.getItem('caffootDashboardPreviewSidebar')==='collapsed'){document.getElementById('sidebar').classList.add('collapsed');document.getElementById('shell').classList.add('collapsed');document.querySelector('.collapse-text').textContent='Expand Menu'}}catch(e){}
+if(['overview','insights','activity'].includes(location.hash.slice(1)))showTab(location.hash.slice(1));
+</script></body></html>
