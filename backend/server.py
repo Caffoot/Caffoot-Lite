@@ -25,6 +25,7 @@ from .http_security import read_session_cookie, session_cookie, clear_session_co
 from .request_auth import login, logout, THROTTLE
 from .permissions import (can_access, create_user, set_permission,
                           set_account_active, set_administrator, delete_user)
+from .history_permissions import visible_change_history
 from .request_auth import authorised_mutation
 from .http_security import require_same_origin
 from .tls import ensure_certificate
@@ -284,9 +285,7 @@ class Handler(BaseHTTPRequestHandler):
                 result["settings"] = {key: json.loads(raw) for key, raw in connection.execute(
                     "SELECT key,value_json FROM inventory_settings"
                 )}
-                result["changeHistory"] = [json.loads(raw) for (raw,) in connection.execute(
-                    "SELECT record_json FROM inventory_change_history ORDER BY id"
-                )]
+                result["changeHistory"] = visible_change_history(connection, account_id)
                 self.respond(200, result)
         elif self.path == "/api/inventory/settings":
             with connect() as connection:
@@ -312,9 +311,7 @@ class Handler(BaseHTTPRequestHandler):
                            for section in ("Devices", "IPAM", "Racks")):
                     self.respond(403, {"error": "forbidden"})
                     return
-                history = [json.loads(raw) for (raw,) in connection.execute(
-                    "SELECT record_json FROM inventory_change_history ORDER BY id"
-                )]
+                history = visible_change_history(connection, account_id)
                 self.respond(200, {"changeHistory": history})
         elif self.path == "/api/session":
             with connect() as connection:
