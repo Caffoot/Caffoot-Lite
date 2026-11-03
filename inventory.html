@@ -906,6 +906,10 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .dark .device-devices [data-device-panel="inventory"] table tbody tr:hover{background:#334155}
 </style>
 <style id="approved-devices-management-styles">
+/* Match the approved orange primary actions on each Devices catalogue page. */
+.device-devices :is([data-action="manufacturer-add"],[data-action="model-add"],[data-action="software-custom-add"],[data-action="server-catalog-add"]){background:#ed8532;border:1px solid #ed8532;border-radius:9px;color:#fff;font-size:12px;font-weight:750;box-shadow:none}
+.device-devices :is([data-action="manufacturer-add"],[data-action="model-add"],[data-action="software-custom-add"],[data-action="server-catalog-add"]):hover{background:#d87327}
+
 /* Use the same readable card, input and action style for the existing
    Devices catalogues, without altering their management operations. */
 .device-devices :is(section,article).bg-white{border-color:#e1e8ee;border-radius:15px}
