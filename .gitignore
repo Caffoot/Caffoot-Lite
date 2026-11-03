@@ -27,3 +27,6 @@ caffoot-test-*.json
 *.swp
 *.bak
 *.tmp
+
+# Compiled, review-only v2.1 workspace assets
+/workspace-dist/
