@@ -182,6 +182,22 @@ async function run(){
   const screens = path.join(root,'browser-screenshots');
   fs.mkdirSync(screens,{recursive:true});
   await page.screenshot({path:path.join(screens,'dashboard-approved-html-desktop.png'),fullPage:true});
+  // The saved Light / Dark / System setting must remain usable with the new
+  // HTML layout. Only the existing dark class is toggled for this check.
+  await page.evaluate(()=>document.documentElement.classList.add('dark'));
+  const darkAppearance=await page.evaluate(()=>({
+    canvas:getComputedStyle(document.querySelector('#main-content')).backgroundColor,
+    header:getComputedStyle(document.querySelector('#caffoot-app-topbar')).backgroundColor,
+    card:getComputedStyle(document.querySelector('#dashboard-panel-overview .db-card')).backgroundColor
+  }));
+  assert.equal(darkAppearance.canvas,'rgb(23, 38, 53)',
+    'Existing dark-mode canvas must remain dark');
+  assert.equal(darkAppearance.header,'rgb(32, 41, 54)',
+    'Existing dark-mode header must remain dark');
+  assert.equal(darkAppearance.card,'rgb(32, 41, 54)',
+    'Approved Dashboard cards must remain readable in dark mode');
+  await page.screenshot({path:path.join(screens,'dashboard-approved-html-dark.png'),fullPage:true});
+  await page.evaluate(()=>document.documentElement.classList.remove('dark'));
   await page.setViewportSize({width:390,height:844});
   const mobile = await page.evaluate(()=>({
     content:document.documentElement.scrollWidth,viewport:window.innerWidth,
