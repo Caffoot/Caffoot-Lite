@@ -8,7 +8,8 @@
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
     "test:browser": "node test/browser-check.mjs",
-    "test:static": "node test/static-check.mjs"
+    "test:static": "node test/static-check.mjs",
+    "build:workspace": "vite build --config vite.workspace.config.js"
   },
   "devDependencies": {
     "svelte": "5.57.2",
