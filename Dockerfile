@@ -4,7 +4,7 @@ FROM node:22-alpine AS workspace-builder
 # present in the final application image, and the fictional pilot is excluded.
 WORKDIR /build
 COPY pilots/svelte-device-details/ ./pilots/svelte-device-details/
-COPY assets/caffoot-logo-256.png ./assets/caffoot-logo-256.png
+COPY assets/caffoot-logo-256.png assets/caffoot-icon-1024.png ./assets/
 WORKDIR /build/pilots/svelte-device-details
 RUN npm install --no-audit --no-fund && npm run build:workspace && npm run build:signin
 
