@@ -895,6 +895,27 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .device-devices :is(input,select,textarea):focus-visible{outline:3px solid #ed8532;outline-offset:2px}
 .device-devices button:focus-visible{outline:3px solid #ed8532;outline-offset:2px}
 .dark .device-devices :is(section,article).bg-white{border-color:#475569}
+
+/* Catalogue and management pages use the same heading and action hierarchy.
+   Their established selectors, data fields and safeguards are not replaced. */
+.device-devices>div.space-y-5>div.flex:first-child h2,
+.device-devices>div.flex:first-child h2,
+.device-devices [data-device-panel="manage"] h2{color:#1f3850;font-size:clamp(1.5rem,2.3vw,1.9rem);font-weight:790;letter-spacing:-.035em}
+.device-devices>div.flex:first-child p,
+.device-devices [data-device-panel="manage"]>div:first-child p{color:#697f94;line-height:1.6}
+.device-devices [data-device-panel="manage"] .rounded-2xl.bg-white,
+.device-devices .grid>.rounded-2xl.bg-white{border:1px solid #e1e8ee;border-radius:15px;box-shadow:0 7px 26px rgba(31,51,73,.04)}
+.device-devices [data-device-panel="manage"]>div:first-child button{background:#ed8532;border-radius:9px;color:#fff;font-weight:750}
+.device-devices [data-device-panel="manage"]>div:first-child button:hover{background:#d87327}
+.device-devices :is(input,select,textarea).rounded-xl{border-radius:9px}
+.device-devices .rounded-2xl.bg-white :is(h3,h4){font-weight:750;letter-spacing:-.015em}
+.dark .device-devices>div.space-y-5>div.flex:first-child h2,
+.dark .device-devices>div.flex:first-child h2,
+.dark .device-devices [data-device-panel="manage"] h2{color:#f8fafc}
+.dark .device-devices>div.flex:first-child p,
+.dark .device-devices [data-device-panel="manage"]>div:first-child p{color:#cbd5e1}
+.dark .device-devices [data-device-panel="manage"] .rounded-2xl.bg-white,
+.dark .device-devices .grid>.rounded-2xl.bg-white{border-color:#475569;box-shadow:none}
 </style>
 <style id="inventory-catalogue-layout-styles">
 /* Device Inventory: use the available workspace width at 100% browser zoom. */
