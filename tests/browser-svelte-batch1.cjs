@@ -174,14 +174,24 @@ async function testFirstRunAndMfa() {
   page.on('pageerror',error=>errors.push(error.message));
   await page.goto(address+'/sign-in/',{waitUntil:'domcontentloaded'});
   await page.getByRole('heading',{name:'Welcome to Caffoot Lite'}).waitFor();
+  assert.equal(await page.locator('.auth-shell .brand-side').count(),1,
+    'Live first-run uses the approved Sign In shell');
+  assert.equal(await page.locator('.steps-track span').count(),4,
+    'Approved four-stage setup indicator must be present');
   await page.screenshot({path:path.join(screenshots,'signin-first-run-1280.png'),fullPage:true});
+  await page.setViewportSize({width:390,height:844});
+  const firstRunWidths=await page.evaluate(()=>({scroll:document.documentElement.scrollWidth,viewport:innerWidth}));
+  assert.ok(firstRunWidths.scroll<=firstRunWidths.viewport+2,
+    'First Run must not overflow on mobile: '+JSON.stringify(firstRunWidths));
+  await page.screenshot({path:path.join(screenshots,'signin-first-run-mobile-390.png'),fullPage:true});
+  await page.setViewportSize({width:1280,height:850});
   await page.getByRole('button',{name:'Get Started'}).click();
   await page.getByLabel('Username',{exact:true}).fill('new-owner');
   await page.getByLabel('Password',{exact:true}).fill('correct-horse-battery-staple');
   await page.getByLabel('Confirm Password').fill('correct-horse-battery-staple');
   await page.getByRole('button',{name:'Continue to Authenticator Setup'}).click();
   await page.getByRole('heading',{name:'Secure Your Account'}).waitFor();
-  const secret=(await page.locator('.secret code').textContent()).trim();
+  const secret=(await page.locator('.key code').textContent()).trim();
   assert.ok(secret.length>8,'The authenticator setup key should be visible');
   await page.screenshot({path:path.join(screenshots,'signin-authenticator-1280.png'),fullPage:true});
 
@@ -192,7 +202,7 @@ async function testFirstRunAndMfa() {
   await page.getByLabel('Password',{exact:true}).fill('correct-horse-battery-staple');
   await page.getByRole('button',{name:'Continue Enrolment'}).click();
   await page.getByRole('heading',{name:'Secure Your Account'}).waitFor();
-  assert.equal((await page.locator('.secret code').textContent()).trim(),secret,
+  assert.equal((await page.locator('.key code').textContent()).trim(),secret,
     'Recovery must keep the administrator authenticator secret');
   await page.getByLabel('Six-Digit Authenticator Code').fill(codeFor(secret));
   await page.getByRole('button',{name:'Confirm MFA Setup'}).click();
@@ -213,7 +223,8 @@ async function testFirstRunAndMfa() {
       '; invalid fields='+JSON.stringify(invalid)+
       ' ('+page.url()+')',{cause:caught});
   }
-  await page.getByRole('button',{name:'Return to Sign In'}).click();
+  await page.getByRole('button',{name:'Continue to Sign In'}).click();
+  await page.screenshot({path:path.join(screenshots,'signin-login-1280.png'),fullPage:true});
   await page.getByLabel('Username',{exact:true}).fill('new-owner');
   await page.getByLabel('Password',{exact:true}).fill('correct-horse-battery-staple');
   await page.getByRole('button',{name:'Sign In',exact:true}).click();
