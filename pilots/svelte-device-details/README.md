@@ -62,3 +62,32 @@ Automated tests cover the route's disabled-by-default setting, authentication an
 **Still to do later, after separate agreement:** live editing and reservations, real save/validation flows, complete catalogues, detailed history, full permissions across Devices/IPAM/Racks, and wider UI migration. This small experiment does not claim that these are implemented.
 
 The [v2.1 development issue](https://github.com/Caffoot/Caffoot-Lite/issues/266) records what we have approved. Neither this experiment nor its tests authorise a merge or release.
+
+## Stage 2A: first Svelte workspace (development branch only)
+
+This first **production-facing integration batch** uses the same real read-only
+Devices implementation with reusable navigation and header components.
+
+- `npm run build:workspace` builds a **separate** `workspace-dist/` static
+  bundle. It does not ship the fictional-data pilot.
+- Docker uses a temporary Node builder stage and copies only the compiled
+  workspace files into the final Python image. Node is not required at runtime.
+- The Python server serves `/workspace/` only when
+  `CAFFOOT_SVELTE_WORKSPACE=1`, with an authenticated account that has at
+  least one existing Devices, IPAM or Racks section permission. This switch
+  is **off by default** and is not enabled in the published Compose files.
+- The new sidebar displays only permitted sections. Unconverted areas and the
+  top-right **My Account** link go to their real existing `/inventory#section`
+  screens; the unchanged backend still decides what is authorised.
+- Devices are **read only** in this new workspace. All existing Add/Edit/Save,
+  IPAM, Racks, account and administrator actions remain available from the
+  established application. No storage or business rule is migrated.
+
+Run `python -m unittest discover -s tests -p test_svelte_workspace_http.py -v`
+to check route protection. The branch's Stage 2A GitHub Actions workflow also
+tests the real browser using a disposable SQLite fixture, runs the existing
+browser regression, builds a Docker image without publishing it and retains
+screenshots for owner review. This is not evidence of acceptance until the
+tests and screenshots have actually been reviewed.
+
+The full release remains v2.0.3. No public preview or new version is authorised.
