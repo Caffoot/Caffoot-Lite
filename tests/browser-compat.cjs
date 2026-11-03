@@ -182,6 +182,18 @@ async function run(){
   const screens = path.join(root,'browser-screenshots');
   fs.mkdirSync(screens,{recursive:true});
   await page.screenshot({path:path.join(screens,'dashboard-approved-html-desktop.png'),fullPage:true});
+  await page.locator('[data-dashboard-tab="insights"]').click();
+  await page.locator('#dashboard-panel-insights').waitFor({state:'visible'});
+  assert.equal(await page.locator('#dashboard-panel-insights .dashboard-summary-panel').count(),4,
+    'Approved Network Insights must still contain four live detail cards');
+  await page.screenshot({path:path.join(screens,'dashboard-approved-html-insights.png'),fullPage:true});
+  await page.locator('[data-dashboard-tab="activity"]').click();
+  await page.locator('#dashboard-panel-activity').waitFor({state:'visible'});
+  assert.equal(await page.locator('#dashboard-panel-activity .dashboard-activity-card').count(),2,
+    'Approved Activity & Alerts must retain activity and warning panels');
+  await page.screenshot({path:path.join(screens,'dashboard-approved-html-activity.png'),fullPage:true});
+  await page.locator('[data-dashboard-tab="overview"]').click();
+  await page.locator('#dashboard-panel-overview').waitFor({state:'visible'});
   // The saved Light / Dark / System setting must remain usable with the new
   // HTML layout. Only the existing dark class is toggled for this check.
   await page.evaluate(()=>document.documentElement.classList.add('dark'));
