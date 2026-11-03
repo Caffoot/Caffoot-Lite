@@ -1,10 +1,11 @@
 <script>
   export let workspaceMode = false;
   export let username = '';
+  export let sectionTitle = 'Devices';
 </script>
 
 <header class="topbar">
-  <div class="breadcrumb">Workspace <span aria-hidden="true">›</span> <strong>Devices</strong></div>
+  <div class="breadcrumb">Workspace <span aria-hidden="true">›</span> <strong>{sectionTitle}</strong></div>
   {#if workspaceMode}
     <a class="account" href="/inventory#account" aria-label="Open My Account in Caffoot Lite">
       <span class="avatar" aria-hidden="true">{(username || 'A').slice(0,1).toUpperCase()}</span>
