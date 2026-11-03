@@ -1237,7 +1237,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
  .caffoot-dashboard .db-two{grid-template-columns:minmax(0,1fr)}
 }
 @media(max-width:720px){
- #app>#sidebar{width:65px!important;flex-basis:65px!important;padding:16px 8px!important}
+ #app>#sidebar{width:65px!important;min-width:65px!important;max-width:65px!important;flex:0 0 65px!important;padding:16px 8px!important;overflow-x:hidden}
  #sidebar .caffoot-brand{justify-content:center;margin:0 0 16px}
  #sidebar .caffoot-brand img{width:36px;height:36px}
  #sidebar .caffoot-brand-text,#sidebar .caffoot-nav-label,#sidebar .nav-btn span,#sidebar .caffoot-collapse-label{display:none!important}
