@@ -572,6 +572,8 @@ async function run(){
   await manufacturerTypes.nth(1).check();
   assert.equal(await page.locator('#modal-content input[name="catalogue-manufacturer-device-type"]:checked').count(),2);
   await page.locator('#modal-content [data-action="close-modal"]').click();
+  await page.locator('#discard-dialog [data-action="discard-device-form-changes"]').click();
+  await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
   await page.locator('#devices-sidebar-actions [data-action="sidebar-devices-software"]').click();
   await page.locator('[data-action="software-custom-add"]').click();
   const softwareTypes=page.locator('#modal-content input[name="software-custom-type"]');
@@ -581,6 +583,8 @@ async function run(){
   await softwareTypes.nth(1).check();
   assert.equal(await page.locator('#modal-content input[name="software-custom-type"]:checked').count(),2);
   await page.locator('#modal-content [data-action="close-modal"]').click();
+  await page.locator('#discard-dialog [data-action="discard-device-form-changes"]').click();
+  await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
   console.log('Manufacturer and Custom Software multi-type selection passed');
 
   await page.locator('#devices-sidebar-actions [data-action="sidebar-devices-inventory"]').click();
