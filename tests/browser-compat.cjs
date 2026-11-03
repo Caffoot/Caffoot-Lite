@@ -126,6 +126,11 @@ async function run(){
   }
   // Compare the actual authenticated HTML page with the approved Dashboard
   // Draft 02's shared shell, card layout and controls.
+  // The established navigation transition briefly fades its colour after sign-in.
+  // Check the final rendered colour, not a half-finished animation.
+  await page.waitForFunction(() => getComputedStyle(
+    document.querySelector('#sidebar [data-action="tab-dashboard"]')
+  ).backgroundColor === 'rgb(46, 70, 94)');
   const approvedUI = await page.evaluate(() => {
     const css = selector => getComputedStyle(document.querySelector(selector));
     const navItems = [...document.querySelectorAll('#sidebar .caffoot-primary-nav > .nav-btn')]
