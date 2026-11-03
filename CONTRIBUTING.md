@@ -4,7 +4,7 @@ Thank you for helping improve Caffoot Lite. We want contributors to find underst
 
 ## Start With An Agreed Scope
 
-Caffoot Lite v2.0.2 is the current published Docker/SQLite baseline. Before writing code, read the [Development Guide](docs/Development%20Guide/README.md), the [Coding And Naming Conventions](docs/Development%20Guide/06-Coding-and-Naming-Conventions.md), and the [Function Index](docs/Development%20Guide/Function-Index.md). Check existing source, tests and relevant approved GitHub decisions.
+Caffoot Lite v2.0.2 is the current published Docker/SQLite baseline. Before writing code, read the [Development Guide](docs/development-guide/README.md), the [Coding And Naming Conventions](docs/development-guide/06-Coding-and-Naming-Conventions.md), and the [Function Index](docs/development-guide/Function-Index.md). Check existing source, tests and relevant approved GitHub decisions.
 
 **One feature or improvement per GitHub issue.** Anyone is welcome to [suggest a feature](https://github.com/Caffoot/Caffoot-Lite/issues/new/choose) or join an existing discussion. [Future Ideas Index #222](https://github.com/Caffoot/Caffoot-Lite/issues/222) links existing ideas; new requests should have their own issues. Record discussions, product-owner decisions, changes of scope and acceptance feedback in the relevant issue. The product owner decides what gets built and when; contributors should not start unrelated work or publish anything on their own initiative. Historical issues #215 and #218 are completed release history, not restrictions on future development.
 
@@ -17,6 +17,7 @@ Every new or modified code component must use a meaningful, searchable name that
 - **JavaScript:** descriptive `camelCase` functions and variables, preferably verb plus domain, such as `renderDeviceDetails`, `validateRackPlacement` and `saveUserPermissions`.
 - **Python:** descriptive `snake_case` functions, methods, modules and variables; `PascalCase` classes and `UPPER_SNAKE_CASE` constants.
 - **HTML/CSS:** descriptive semantic `kebab-case` IDs, classes and event/action hooks; keep selectors, event handlers, accessibility labels and CSS aligned.
+- **Repository folders:** descriptive lowercase `kebab-case`, with hyphens rather than spaces or apostrophes (for example `docs/development-guide`). Preserve conventional filenames and language-specific Python names; review every dependent link, test and workflow before moving an existing folder.
 - **UI labels:** use **Title Case** for headings, navigation, tabs, buttons, form and table labels, and short statuses; preserve established acronyms such as IPAM, MFA, VLAN and LDAP. Use readable sentence case for explanations and instructional prose.
 - **Comments and docstrings:** treat these as **public-facing community documentation**, written in clear British English for people with little or no coding experience. Explain what code does and, where useful, why it is needed. They must not be written primarily for professional developers or AI tools. Avoid cryptic abbreviations, unexplained jargon, obsolete version prefixes and development-stage references.
 
@@ -47,8 +48,8 @@ This standard applies equally to code written by maintainers and code submitted 
 Do not leave documentation for a later release or for another contributor.
 
 - Update the relevant guides for changed behaviour, controls, data flows, deployment steps, configuration or security rules.
-- **When functions are added, removed, moved or renamed, regenerate and review** [`docs/Development Guide/Function-Index.md`](docs/Development%20Guide/Function-Index.md) in the same pull request, keeping its source revision and links truthful. The index is a navigation aid, **not** proof that a function is unused; textual reference counts are not a call graph.
-- Update the [Function And Code Reference](docs/Development%20Guide/07-Function-and-Code-Reference.md) and other architecture or user guides where affected.
+- **When functions are added, removed, moved or renamed, regenerate and review** [`docs/development-guide/Function-Index.md`](docs/development-guide/Function-Index.md) in the same pull request, keeping its source revision and links truthful. The index is a navigation aid, **not** proof that a function is unused; textual reference counts are not a call graph.
+- Update the [Function And Code Reference](docs/development-guide/07-Function-and-Code-Reference.md) and other architecture or user guides where affected.
 - New source lines do not each need an entry in a function index. Every meaningful new or changed function should be indexed; document components and behaviour at the appropriate level.
 - Remove outdated user-facing development terminology in the part of the application being changed.
 

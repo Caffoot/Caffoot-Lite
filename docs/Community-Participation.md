@@ -36,7 +36,7 @@ These initial categories use GitHub's standard label names, where available. Rep
 3. Confirm a bug before promising a fix. If the report may reveal a security weakness, stop public technical discussion and follow [Security Reporting](../SECURITY.md).
 4. Keep **one idea per issue**. [Future Ideas Index #222](https://github.com/Caffoot/Caffoot-Lite/issues/222) is a directory, not a place for new requests. Record decisions, changes and acceptance feedback in the individual issue. A feature request starts a discussion, not an automatic implementation.
 5. Only mark an issue `good first issue` or `help wanted` once its scope and expected outcome are agreed and an external contributor could act on it.
-6. If somebody wants to contribute, help them find the [Development Guide](Development%20Guide/README.md), source-code naming rules, clear British English comment standards and required documentation.
+6. If somebody wants to contribute, help them find the [Development Guide](development-guide/README.md), source-code naming rules, clear British English comment standards and required documentation.
 7. Before merging a pull request, apply proportionate tests, readability and documentation checks to maintainers and community contributors. Avoid unrelated audits and unrequested public preview images.
 
 Be welcoming, patient and direct. A first-time contributor should never have to understand the entire codebase to report a spelling error or describe a problem they encountered.

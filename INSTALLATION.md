@@ -46,7 +46,7 @@ The existing `tests/test_compose_lifecycle.py` is an **opt-in** Docker milestone
 
 ## Official v2.0.2 Portainer installation
 
-For a simple **new** installation, use **Portainer → Stacks → Add stack → Web editor**. Copy the entire [v2.0.2 stack](portainer-v2.0.2.yaml) and change the example server address and port. The default storage is a Docker-managed **named volume**; there is no host folder to create. Its image is `ghcr.io/caffoot/caffoot-lite:v2.0.2` (ARM64 Raspberry Pi 5 and AMD64 PC). Confirm the [v2.0.2 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.2) and image workflow succeeded before pulling it. The GHCR package must be **Public** to permit anonymous pulls; never embed an access token in a public stack.
+For a simple **new** installation, use **Portainer → Stacks → Add stack → Web editor**. Copy the entire [v2.0.2 stack](docs/historical/portainer/portainer-v2.0.2.yaml) and change the example server address and port. The default storage is a Docker-managed **named volume**; there is no host folder to create. Its image is `ghcr.io/caffoot/caffoot-lite:v2.0.2` (ARM64 Raspberry Pi 5 and AMD64 PC). Confirm the [v2.0.2 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.2) and image workflow succeeded before pulling it. The GHCR package must be **Public** to permit anonymous pulls; never embed an access token in a public stack.
 
 The supplied example uses **192.168.1.100:8443 as a placeholder**. Replace it with the address of your server before deploying. Its standard storage mapping is:
 
