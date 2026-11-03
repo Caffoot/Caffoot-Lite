@@ -85,7 +85,7 @@ async function run() {
       faces: [...document.fonts].filter(face =>
         face.family === 'Inter Variable' && face.status === 'loaded').length,
       loadedFontUrls: performance.getEntriesByType('resource')
-        .filter(resource => /\\.woff2(?:\\?|$)/.test(resource.name))
+        .filter(resource => /\.woff2(?:\?|$)/.test(resource.name))
         .map(resource => resource.name)
     };
   });
