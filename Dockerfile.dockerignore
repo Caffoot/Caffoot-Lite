@@ -4,3 +4,10 @@ __pycache__/
 *.sqlite3-*
 .env
 .git/
+
+# Keep local Svelte dependencies, generated assets and screenshots out of context.
+pilots/**/node_modules/
+pilots/**/dist/
+pilots/**/workspace-dist/
+pilots/**/playwright-screenshots/
+pilots/**/test-results/
