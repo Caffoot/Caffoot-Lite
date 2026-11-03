@@ -159,9 +159,11 @@ async function run(){
   await page.locator('#sidebar [data-action="toggle-sidebar"]').click();
   assert.ok(await page.locator('#app').evaluate(el=>el.classList.contains('caffoot-sidebar-collapsed')),
     'Collapse button must collapse the existing working sidebar');
+  await page.waitForFunction(()=>Math.abs(document.querySelector('#sidebar').getBoundingClientRect().width-65)<1);
   await page.locator('#sidebar [data-action="toggle-sidebar"]').click();
   assert.ok(await page.locator('#app').evaluate(el=>!el.classList.contains('caffoot-sidebar-collapsed')),
     'Collapse button must also restore the navigation');
+  await page.waitForFunction(()=>Math.abs(document.querySelector('#sidebar').getBoundingClientRect().width-215)<1);
   const screens = path.join(root,'browser-screenshots');
   fs.mkdirSync(screens,{recursive:true});
   await page.screenshot({path:path.join(screens,'dashboard-approved-html-desktop.png'),fullPage:true});
