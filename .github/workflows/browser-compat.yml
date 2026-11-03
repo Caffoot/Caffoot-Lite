@@ -36,8 +36,8 @@ jobs:
           grep -Fq 'COPY inventory.html ./inventory.html' Dockerfile
           tar -czf "$RUNNER_TEMP/caffoot-pr277-html-build-context.tar.gz" \
             Dockerfile Dockerfile.dockerignore backend setup.html inventory.html assets
-          tar -xOzf "$RUNNER_TEMP/caffoot-pr277-html-build-context.tar.gz" inventory.html \
-            | grep -Fq 'YOUR INFRASTRUCTURE AT A GLANCE'
+          tar -xOzf "$RUNNER_TEMP/caffoot-pr277-html-build-context.tar.gz" inventory.html > "$RUNNER_TEMP/pr277-verify-inventory.html"
+          grep -Fq 'YOUR INFRASTRUCTURE AT A GLANCE' "$RUNNER_TEMP/pr277-verify-inventory.html"
           tar -tzf "$RUNNER_TEMP/caffoot-pr277-html-build-context.tar.gz" \
             | grep -Fx 'assets/caffoot-logo-256.png'
           printf 'Private HTML test build context checked for commit %s\n' "$(git rev-parse HEAD)"
