@@ -408,6 +408,8 @@ async function run(){
   assert.equal(await page.locator('.rack-elevation [data-rack-device]').count(),0,
     'A front-mounted switch must not appear on the rear face');
   await page.locator('[data-action="rack-face-front"]').click();
+  await page.waitForFunction(()=>document.querySelector('[data-action="rack-face-front"]')?.getAttribute('aria-pressed')==='true',
+    null,{timeout:5000});
   assert.equal(await page.locator('[data-action="rack-face-front"]').getAttribute('aria-pressed'),'true');
   await page.locator('.rack-elevation [data-rack-device="'+rackSwitch.id+'"]').waitFor();
   assert.ok(await page.locator('[aria-label="Side orientation as viewed from front face"]').isVisible());
