@@ -71,7 +71,7 @@ For direct HTTPS, verify and trust the application certificate before entering c
 - [Contributing To Caffoot Lite — mandatory naming, UI and documentation standards](CONTRIBUTING.md)
 - [Development Guide](docs/development-guide/README.md)
 - [v2.0.3 development handover (historical)](docs/historical/development-handovers/v2.0.3.md)
-- [Security-fix and release checklist](docs/development-guide/Security-Fixes-and-Releases.md)
+- [Security-fix and release checklist, including the owner-controlled one-click publishing process](docs/development-guide/Security-Fixes-and-Releases.md)
 - [Standalone v1.3.3 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3)
 - [Historical v2.0/v2.0.1 implementation specification #215](https://github.com/Caffoot/Caffoot-Lite/issues/215) and [release tracker #218](https://github.com/Caffoot/Caffoot-Lite/issues/218); [Future Ideas Index #222](https://github.com/Caffoot/Caffoot-Lite/issues/222) and [Feature Request form](https://github.com/Caffoot/Caffoot-Lite/issues/new/choose)
 

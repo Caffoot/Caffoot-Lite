@@ -29,6 +29,6 @@ Read the [upgrade instructions](../../../INSTALLATION.md#upgrading-an-existing-v
 
 ## Release verification
 
-These notes are prepared **before publication**. A merged PR and passing source checks are not a published release. Confirm the final release gate, actual test results, AMD64/ARM64 image publication and public GHCR access before advertising v2.0.3 as downloadable. A separate product-owner decision is required for the release tag, Docker publication and any website update.
+Publishing a source pull request does **not** publish the application. The owner-approved [Publish Caffoot Lite workflow](../../../.github/workflows/publish-release.yml) runs release checks before creating the tag, publishing the AMD64/ARM64 image and issuing this GitHub Release. Check the successful Actions run and public image availability before installing. Website updates and production deployments remain separate decisions.
 
 For security concerns, please [report privately](../../../SECURITY.md).

@@ -25,9 +25,10 @@ The 25 earlier audit, workflow, test-matrix and draft migration documents are ac
 - [Compose lifecycle](../../.github/workflows/compose-lifecycle.yml) — opt-in Docker integration check.
 - [Release documentation](../../.github/workflows/release-documentation.yml) — required `release-documentation` pull-request status check; its check identifier must remain stable.
 - [Git history secret scan](../../.github/workflows/git-history-secrets.yml) — full-history secret scan on pull requests and main.
-- [v2.0.3 image publication](../../.github/workflows/v2-release-image.yml) — version-specific release workflow triggered by the approved v2.0.2 tag.
+- [Publish Caffoot Lite](../../.github/workflows/publish-release.yml) — owner-started release workflow with read-only pull-request preflight and shared release checks; publication requires a separate explicit owner decision.
+- [Release preflight verifier](../../scripts/verify_release.py) and [focused tests](../../tests/test_release_preflight.py) — verify that the version shown in About matches release notes, Portainer and current installation guidance, without publishing anything.
 
-Workflows have path filters and are run at relevant milestones to conserve CI minutes. A documentation-only commit may not trigger a backend or browser run; don't claim it did.
+Workflows have path filters to conserve CI minutes. A documentation-only PR may not trigger backend or browser checks; don't claim it did. The manual publishing workflow calls the existing test workflows at the release gate, regardless of PR path filters, and publishes nothing unless each required job succeeds.
 
 ## Maintenance procedure
 

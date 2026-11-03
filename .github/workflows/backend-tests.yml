@@ -17,6 +17,7 @@ on:
       - "setup.html"
       - ".github/workflows/backend-tests.yml"
   workflow_dispatch:
+  workflow_call:
 
 jobs:
   backend-tests:
