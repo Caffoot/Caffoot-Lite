@@ -121,6 +121,19 @@ async function testSignedInData() {
   const fullAdminPage=await fullAdminContext.newPage();
   await fullAdminPage.goto(address+'/workspace/dashboard/',{waitUntil:'domcontentloaded'});
   await fullAdminPage.getByRole('heading',{name:'Dashboard',exact:true}).waitFor();
+  // Compare the live visual foundations to the owner-approved Dashboard Draft 02.
+  const approvedVisuals=await fullAdminPage.evaluate(()=>({
+    eyebrow:document.querySelector('.main .eyebrow')?.textContent?.trim(),
+    topbar:getComputedStyle(document.querySelector('.topbar')).backgroundColor,
+    sidebar:getComputedStyle(document.querySelector('.sidebar')).backgroundColor,
+    activeNav:getComputedStyle(document.querySelector('.sidebar .nav-item.current')).backgroundColor,
+    sidebarText:document.querySelector('.nav-label')?.textContent?.trim()
+  }));
+  assert.equal(approvedVisuals.eyebrow,'YOUR INFRASTRUCTURE AT A GLANCE');
+  assert.equal(approvedVisuals.topbar,'rgb(255, 255, 255)');
+  assert.equal(approvedVisuals.sidebar,'rgb(20, 43, 67)');
+  assert.equal(approvedVisuals.activeNav,'rgb(46, 70, 94)');
+  assert.equal(approvedVisuals.sidebarText,'WORKSPACE');
   await fullAdminPage.getByRole('heading',{name:'Network Allocation Overview'}).waitFor();
   await fullAdminPage.getByRole('heading',{name:'Rack Capacity'}).waitFor();
   const desktopColumns=await fullAdminPage.locator('#dash-panel-overview .db-two').first().evaluate(el=>{
