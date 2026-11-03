@@ -816,6 +816,18 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 <style id="approved-device-details-and-forms-styles">
 /* Device Details and the Add/Edit/Duplicate dialog share the approved
    presentation. Existing tabs, validation, actions and save handling stay unchanged. */
+.device-details-dialog .device-tabs{gap:19px;align-items:center;overflow-x:auto;white-space:nowrap;margin-top:16px;border-bottom:1px solid #e7edf2;padding-bottom:0;scrollbar-width:thin}
+.device-details-dialog .device-details-tab{flex:none;padding:9px 3px 11px;border:0;border-bottom:3px solid transparent;border-radius:0;background:transparent;color:#7d93a8;font-size:12px;font-weight:700;box-shadow:none}
+.device-details-dialog .device-details-tab:hover:not([aria-selected="true"]){border:0;border-bottom:3px solid #f2bd91;border-radius:0;background:transparent;color:#1b3853}
+.device-details-dialog .device-details-tab[aria-selected="true"],
+.device-details-dialog .device-details-tab[aria-selected="true"]:hover{border:0;border-bottom:3px solid #ee8432;border-radius:0;background:transparent;color:#1b3853}
+.device-details-dialog .device-details-tab:focus-visible{outline:3px solid #ee8432;outline-offset:-3px}
+.dark .device-details-dialog .device-tabs{border-bottom-color:#475569}
+.dark .device-details-dialog .device-details-tab{color:#cbd5e1}
+.dark .device-details-dialog .device-details-tab:hover:not([aria-selected="true"]){background:transparent;border-bottom-color:#fb923c;color:#fff}
+.dark .device-details-dialog .device-details-tab[aria-selected="true"],
+.dark .device-details-dialog .device-details-tab[aria-selected="true"]:hover{background:transparent;border-bottom-color:#fb923c;color:#fff}
+@media(max-width:640px){.device-details-dialog .device-tabs{gap:15px}}
 .device-details-section{border:1px solid #e1e8ee;border-radius:15px;background:#fff;box-shadow:0 7px 26px rgba(31,51,73,.04)}
 .device-details-section h4{color:#263d55;font-weight:750;letter-spacing:-.02em}
 .device-details-field dt{color:#637c92;font-size:11px;font-weight:700}
