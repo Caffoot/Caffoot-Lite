@@ -87,21 +87,17 @@ class SvelteWorkspaceRouteTests(unittest.TestCase):
             client.close()
         return result
 
-    def test_private_test_home_opens_new_sign_in_only_when_both_switches_enabled(self):
-        with patch("backend.server.PRIVATE_SVELTE_HOME", True):
-            with patch("backend.server.WORKSPACE_ENABLED", True):
-                status, headers, _ = self.request("/")
-                self.assertEqual(status, 302)
-                self.assertEqual(headers["Location"], "/sign-in/")
-                self.assertEqual(headers["Cache-Control"], "no-store")
-                self.assertEqual(self.request("/sign-in/")[0], 200)
-                self.assertEqual(self.request("/setup")[0], 200)
-                self.assertEqual(self.request("/inventory", self.admin_token)[0], 200)
-            with patch("backend.server.WORKSPACE_ENABLED", False):
-                self.assertEqual(self.request("/")[0], 200)
-        with patch("backend.server.PRIVATE_SVELTE_HOME", False):
-            with patch("backend.server.WORKSPACE_ENABLED", True):
-                self.assertEqual(self.request("/")[0], 200)
+    def test_private_test_home_opens_signin_only_when_workspace_enabled(self):
+        with patch("backend.server.WORKSPACE_ENABLED", True):
+            status, headers, _ = self.request("/")
+            self.assertEqual(status, 302)
+            self.assertEqual(headers["Location"], "/sign-in/")
+            self.assertEqual(headers["Cache-Control"], "no-store")
+            self.assertEqual(self.request("/sign-in/")[0], 200)
+            self.assertEqual(self.request("/setup")[0], 200)
+            self.assertEqual(self.request("/inventory", self.admin_token)[0], 200)
+        with patch("backend.server.WORKSPACE_ENABLED", False):
+            self.assertEqual(self.request("/")[0], 200)
 
     def test_workspace_off_by_default(self):
         with patch("backend.server.WORKSPACE_ENABLED", False):
