@@ -1,4 +1,4 @@
-name: v2.1 Stage 2A Svelte workspace
+name: v2.1 Batch 1 Svelte workspace and sign-in
 
 on:
   pull_request:
@@ -9,6 +9,7 @@ on:
       - 'backend/server.py'
       - 'tests/test_svelte_workspace_http.py'
       - 'tests/browser-svelte-workspace.cjs'
+      - 'tests/browser-svelte-batch1.cjs'
       - 'pilots/svelte-device-details/**'
       - '.github/workflows/svelte-workspace-stage-2a.yml'
   workflow_dispatch:
@@ -18,7 +19,7 @@ permissions:
 
 jobs:
   workspace:
-    name: Build, browser-test and check Docker workspace
+    name: Build and check protected workspace, Dashboard and Sign In
     runs-on: ubuntu-24.04
     timeout-minutes: 24
     steps:
@@ -40,9 +41,12 @@ jobs:
           npm run build
           npm run test:static
           node --test test/integration-data.test.mjs
+          npm run test:dashboard-data
       - name: Build the new standalone workspace assets
         working-directory: pilots/svelte-device-details
-        run: npm run build:workspace
+        run: |
+          npm run build:workspace
+          npm run build:signin
       - name: Check workspace route, security and current application routes
         run: python -m unittest discover -s tests -p test_svelte_workspace_http.py -v
       - name: Run full backend regression
@@ -54,19 +58,31 @@ jobs:
         env:
           NODE_PATH: ${{ github.workspace }}/pilots/svelte-device-details/node_modules
         run: node tests/browser-svelte-workspace.cjs
+      - name: Test Sign In, first-time MFA, Dashboard and independent permissions
+        env:
+          NODE_PATH: ${{ github.workspace }}/pilots/svelte-device-details/node_modules
+        run: node tests/browser-svelte-batch1.cjs
       - name: Recheck all existing Caffoot Lite browser interactions
         env:
           NODE_PATH: ${{ github.workspace }}/pilots/svelte-device-details/node_modules
         run: node tests/browser-compat.cjs
       - name: Docker build including static Svelte, without a Node runtime
         run: |
-          docker build -t caffoot-stage-2a:test .
-          docker run --rm --entrypoint sh caffoot-stage-2a:test -c 'test -f /opt/caffoot/inventory.html && test -f /opt/caffoot/workspace-dist/workspace.html && test -f /opt/caffoot/workspace-dist/OFL-Inter.txt && ls /opt/caffoot/workspace-dist/assets/*.woff2 >/dev/null && ! command -v node'
+          docker build -t caffoot-batch1:test .
+          docker run --rm --entrypoint sh caffoot-batch1:test -c 'test -f /opt/caffoot/inventory.html && test -f /opt/caffoot/workspace-dist/workspace.html && test -f /opt/caffoot/workspace-dist/dashboard.html && test -f /opt/caffoot/signin-dist/signin.html && test -f /opt/caffoot/workspace-dist/OFL-Inter.txt && ls /opt/caffoot/workspace-dist/assets/*.woff2 >/dev/null && ! command -v node'
       - name: Save review screenshots without publishing an image
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: stage-2a-svelte-workspace-screenshots
+          name: batch1-svelte-workspace-screenshots
           path: pilots/svelte-device-details/workspace-screenshots/
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Save Batch 1 Dashboard and Sign In screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: batch1-svelte-dashboard-signin-screenshots
+          path: pilots/svelte-device-details/batch1-screenshots/
           if-no-files-found: ignore
           retention-days: 14
