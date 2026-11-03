@@ -56,6 +56,8 @@ SIGNIN_DIST = Path(__file__).resolve().parent.parent / "signin-dist"
 WORKSPACE_ROUTE = "/workspace/"
 WORKSPACE_DIST = Path(__file__).resolve().parent.parent / "workspace-dist"
 WORKSPACE_ENABLED = os.environ.get("CAFFOOT_SVELTE_WORKSPACE", "") == "1"
+# Private test-only home page. Never changes a normal installation by default.
+PRIVATE_SVELTE_HOME = os.environ.get("CAFFOOT_TEST_SVELTE_HOME", "") == "1"
 SVELTE_DEV_MIME = {".js": "text/javascript; charset=utf-8",
                    ".css": "text/css; charset=utf-8",
                    ".png": "image/png",
@@ -186,6 +188,14 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_GET(self):
+        if self.path == "/" and WORKSPACE_ENABLED and PRIVATE_SVELTE_HOME:
+            # In the private test stack, open the approved new sign-in flow.
+            # /setup and /inventory remain available for unfinished functions.
+            self.send_response(302)
+            self.send_header("Location", SIGNIN_ROUTE)
+            self.send_header("Cache-Control", "no-store")
+            self.end_headers()
+            return
         if self.path.startswith(SIGNIN_ROUTE):
             self.serve_svelte_signin()
             return
