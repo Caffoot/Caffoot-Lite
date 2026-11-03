@@ -563,6 +563,8 @@ async function run(){
   }
   await page.locator('#devices-sidebar-actions [data-action="sidebar-devices-inventory"]').click();
   await page.locator('[data-device-panel="inventory"] .device-table-wrapper').waitFor();
+  assert.ok(await page.locator('[data-device-panel="inventory"] .device-inventory-add-device').isVisible(),
+    'An authorised administrator must see Add Device in the Inventory heading');
   assert.equal(await page.locator('[data-device-panel="inventory"] .device-menu').count(),0,
     'Inventory rows must not have the removed three-dot action menu');
   const rackDeviceRow=page.locator('[data-device-panel="inventory"] tbody tr')
