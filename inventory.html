@@ -813,6 +813,47 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .device-devices .search-label>input{box-sizing:border-box;height:44px;min-height:44px;margin:0}
 @media(max-width:640px){.device-devices .filter-row>label{flex:1 1 145px;min-width:0}}
 </style>
+<style id="approved-devices-inventory-styles">
+/* The Inventory keeps its original search, filters and saved-device actions.
+   Only the layout and colours change to match the agreed Devices design. */
+.device-devices [data-device-panel="inventory"]>.bg-white,
+.device-devices [data-device-panel="inventory"]>.device-table-wrapper{border:1px solid #e1e8ee;border-radius:15px;box-shadow:0 7px 26px rgba(31,51,73,.04)}
+.device-devices [data-device-panel="inventory"] h3{font-size:17px;font-weight:750;letter-spacing:-.35px;color:#263d55}
+.device-devices [data-device-panel="inventory"] .search-label,
+.device-devices [data-device-panel="inventory"] .filter-row>label{font-size:12px;font-weight:700;color:#526d84}
+.device-devices [data-device-panel="inventory"] .search-label>input,
+.device-devices [data-device-panel="inventory"] .filter-row select{border:1px solid #dce5ed;border-radius:9px;background:#fff;color:#354e64;min-height:44px;font-size:13px}
+.device-devices [data-device-panel="inventory"] :is(input,select,button):focus-visible{outline:3px solid #ed8532;outline-offset:2px}
+.device-devices [data-device-panel="inventory"] [data-action="open-device-modal"]{background:#ed8532;border:1px solid #ed8532;border-radius:9px;color:#fff;box-shadow:none;min-height:42px;font-size:12px;font-weight:750}
+.device-devices [data-device-panel="inventory"] [data-action="open-device-modal"]:hover{background:#d87327}
+.device-devices [data-device-panel="inventory"] .device-table-wrapper{overflow-x:auto}
+.device-devices [data-device-panel="inventory"] table{border-collapse:separate;border-spacing:0}
+.device-devices [data-device-panel="inventory"] table thead{background:#f6f9fc;color:#526d84}
+.device-devices [data-device-panel="inventory"] table th{font-size:11px;font-weight:750;letter-spacing:.02em}
+.device-devices [data-device-panel="inventory"] table tbody tr:hover{background:#f6f9fc}
+.device-devices [data-device-panel="inventory"] .device-results{color:#637c92;font-size:12px}
+.device-devices [data-device-panel="inventory"] .device-form-reset-button{border-color:#dce5ed;color:#425e78;border-radius:9px}
+.dark .device-devices [data-device-panel="inventory"]>.bg-white,
+.dark .device-devices [data-device-panel="inventory"]>.device-table-wrapper{border-color:#475569;box-shadow:none}
+.dark .device-devices [data-device-panel="inventory"] h3{color:#f1f5f9}
+.dark .device-devices [data-device-panel="inventory"] .search-label,
+.dark .device-devices [data-device-panel="inventory"] .filter-row>label{color:#cbd5e1}
+.dark .device-devices [data-device-panel="inventory"] .search-label>input,
+.dark .device-devices [data-device-panel="inventory"] .filter-row select{background:#1e293b;border-color:#64748b;color:#f8fafc}
+.dark .device-devices [data-device-panel="inventory"] table thead{background:#334155;color:#e2e8f0}
+.dark .device-devices [data-device-panel="inventory"] table tbody tr:hover{background:#334155}
+</style>
+<style id="approved-devices-management-styles">
+/* Use the same readable card, input and action style for the existing
+   Devices catalogues, without altering their management operations. */
+.device-devices :is(section,article).bg-white{border-color:#e1e8ee;border-radius:15px}
+.device-devices :is(section,article).bg-white h2,
+.device-devices :is(section,article).bg-white h3{letter-spacing:-.02em}
+.device-devices :is(input,select,textarea){accent-color:#ed8532}
+.device-devices :is(input,select,textarea):focus-visible{outline:3px solid #ed8532;outline-offset:2px}
+.device-devices button:focus-visible{outline:3px solid #ed8532;outline-offset:2px}
+.dark .device-devices :is(section,article).bg-white{border-color:#475569}
+</style>
 <style id="inventory-catalogue-layout-styles">
 /* Device Inventory: use the available workspace width at 100% browser zoom. */
 #main-content:has(.device-devices [data-device-panel="inventory"]:not(.hidden)){min-width:0;padding-left:clamp(12px,2vw,24px);padding-right:clamp(12px,2vw,24px)}
