@@ -4169,16 +4169,7 @@ function hierarchyValidateTypes(subnets) {
                                             <td class="py-3 px-4 text-right">
                                                 <div class="device-actions">
                                                     <button type="button" data-action="view-device" data-id="${escapeHtml(d.id)}" class="device-detail-summary"><i class="fa-solid fa-eye mr-1" aria-hidden="true"></i>Details</button>
-                                                    <details class="device-menu">
-                                                        <summary aria-label="Actions for ${escapeHtml(d.name)}" title="More device actions"><i class="fa-solid fa-ellipsis-vertical" aria-hidden="true"></i><span class="sr-only">More actions for ${escapeHtml(d.name)}</span></summary>
-                                                        <div class="device-menu-items">
-                                                            ${rack ? `<button type="button" role="menuitem" data-action="navigate-to-device-rack" data-id="${escapeHtml(d.id)}"><i class="fa-solid fa-server" aria-hidden="true"></i>View in rack</button>` : ''}
-                                                            <button type="button" role="menuitem" data-action="edit-device" data-id="${escapeHtml(d.id)}"><i class="fa-solid fa-pen" aria-hidden="true"></i>Edit device</button>
-                                                            <button type="button" role="menuitem" data-action="duplicate-device" data-id="${escapeHtml(d.id)}"><i class="fa-solid fa-copy" aria-hidden="true"></i>Duplicate</button>
-                                                            <div class="device-menu-separator"></div>
-                                                            <button type="button" role="menuitem" data-action="delete-device" data-id="${escapeHtml(d.id)}" class="device-danger"><i class="fa-solid fa-trash" aria-hidden="true"></i>Delete device</button>
-                                                        </div>
-                                                    </details>
+
                                                 </div>
                                             </td>
                                         </tr>
