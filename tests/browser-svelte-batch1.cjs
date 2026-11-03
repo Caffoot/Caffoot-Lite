@@ -113,7 +113,7 @@ async function testSignedInData() {
   await adminPage.goto(address+'/workspace/dashboard/',{waitUntil:'networkidle'});
   await adminPage.getByRole('heading',{name:'Dashboard',exact:true}).waitFor();
   assert.equal(await adminPage.getByRole('link',{name:'IP Addresses'}).count(),1);
-  assert.equal(await adminPage.getByRole('link',{name:'Network Racks'}).count(),1);
+  assert.equal(await adminPage.locator('.metric-grid').getByRole('link',{name:'Network Racks'}).count(),1);
   const sizes=await adminPage.evaluate(()=>({
     content:document.documentElement.scrollWidth,screen:innerWidth
   }));
