@@ -1,33 +1,36 @@
-# Caffoot Lite — Change Review
+# Caffoot Lite — Pull Request
 
-Thank you for contributing. This checklist applies to **maintainers and community contributors**. Read [CONTRIBUTING.md](../CONTRIBUTING.md) and the [Coding And Naming Conventions](../docs/development-guide/06-Coding-and-Naming-Conventions.md) before submitting.
+Thanks for helping improve Caffoot Lite! A short, clear explanation is more useful than a long development diary. See [CONTRIBUTING.md](../CONTRIBUTING.md) for our community writing and coding standards.
 
-## Purpose And Approval
+## Why are we making this change?
 
-- What is changing, and why does it benefit users or contributors?
-- Link the relevant product-owner-approved scope, issue or confirmed defect. **Ideas in #222 are not authorisation to implement them.**
-- Does this intentionally change a released v2.0.1 workflow or control? Identify any deviations requiring product-owner approval.
+Tell us what problem this solves or what it improves. Link the relevant issue and agreed scope so reviewers can find the discussion. An idea or feature request alone isn't approval to start implementation.
 
-## Mandatory Contribution Checklist
+## What changed?
 
-- [ ] Every new or changed JavaScript/Python/CSS/HTML identifier has a clear, descriptive name following the established language conventions.
-- [ ] User-facing headings, buttons, tabs, form labels, navigation and short statuses use agreed **Title Case**, with technical acronyms preserved. Explanatory prose remains readable.
-- [ ] No new opaque `phase`/`stage`/`next`/temporary names or stale development-stage comments are introduced.
-- [ ] New or renamed repository folders use descriptive lowercase `kebab-case`, and all affected links, application help URLs, workflows and tests remain valid.
-- [ ] New and changed source comments and docstrings use plain **British English** and explain what code does and why in terms someone new to coding can understand; they contain no AI-oriented instructions or unexplained expert shorthand.
-- [ ] Existing comments affected by the change remain accurate and understandable, or have been updated or removed.
-- [ ] All relevant callers, event handlers, selectors, imports and tests have been updated alongside any refactor.
-- [ ] Affected development, user and configuration documentation is updated **in this PR**.
-- [ ] Named function additions, removals, moves or renames are reflected in the [Function Index](../docs/development-guide/Function-Index.md) with accurate source revision and navigation links; or explain why this PR makes no relevant function-index change.
-- [ ] Existing behaviour, user data, permissions, MFA, import and installation compatibility have been checked as appropriate.
-- [ ] Any unavoidable public contract or compatibility exception has been identified, justified and explicitly approved.
+Explain the main changes in everyday language. If you've left anything for a later release, mention it here.
 
-## Verification
+## How have you checked it?
 
-List the tests or checks actually run, with outcomes and the source revision checked. Record any skipped, blocked or failed tests honestly. Do not report historical test results as current.
+List the tests or checks you **actually ran**, with results. Mention any failed, skipped or unavailable checks honestly. Don't present an earlier test run as evidence for new changes.
 
-## Review And Merge
+## Anything to be aware of?
 
-Changes that do not meet the naming, presentation, documentation and safety standards are returned for correction. Where a compatibility constraint requires an exception, explain it and obtain explicit approval. **Product-owner approval is required before merge; publishing a release requires separate approval.**
+Note any effect on existing data, permissions, MFA, backups, Docker installations or user workflows. If nothing changes for existing users, a short sentence is enough. Keep sensitive security details in the [private reporting process](../SECURITY.md), not in public PR discussion.
 
-Historical [#215](https://github.com/Caffoot/Caffoot-Lite/issues/215) and [#218](https://github.com/Caffoot/Caffoot-Lite/issues/218) governed completed v2.0/v2.0.1 work, not every future change.
+## Before we merge
+
+Tick the checks relevant to your change. If one doesn't apply, say so rather than doing unnecessary work.
+
+- [ ] This change follows the agreed scope and links the relevant issue or decision.
+- [ ] New code names, folder paths and interface labels follow our [naming conventions](../docs/development-guide/06-Coding-and-Naming-Conventions.md).
+- [ ] New or changed code comments are accurate, understandable and written in plain British English.
+- [ ] Callers, imports, selectors, tests and documentation affected by a rename or refactor have been updated.
+- [ ] Relevant user and developer guides, plus the [current development handover](../docs/development-guide/Current-Development-Status.md), have been updated where needed.
+- [ ] If functions were added, removed or renamed, the [Function Index](../docs/development-guide/Function-Index.md) is accurate, or the reason no update is needed is explained.
+- [ ] Existing functionality, permissions, security and installation compatibility have been checked as appropriate.
+- [ ] Tests run, results and any remaining limitations are described above.
+
+We review changes against the agreed scope, coding standards and actual test evidence. **The project maintainer must approve a merge; publishing a release is a separate decision.**
+
+The completed v2.0/v2.0.1 work in [#215](https://github.com/Caffoot/Caffoot-Lite/issues/215) and [#218](https://github.com/Caffoot/Caffoot-Lite/issues/218) is historical context, not a new restriction on improvements.

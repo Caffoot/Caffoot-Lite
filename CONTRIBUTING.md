@@ -10,6 +10,19 @@ Caffoot Lite v2.0.2 is the current published Docker/SQLite baseline. Before writ
 
 Keep changes focused and link the relevant issue and recorded decision. Use testing proportionate to the work. **Do not start speculative features, unsolicited audits, unnecessary engineering investigations or unrelated architectural changes.**
 
+## How We Write For Our Community
+
+Caffoot Lite is an open-source project for real people. Write **issues, pull requests, guides, release notes and review comments** in clear, friendly **British English**. The same standard applies to maintainers, contributors and AI-assisted drafts.
+
+- Start with **what matters to readers**: what isn't working, why a change helps, and what they'll notice. Prefer short headings such as **Why**, **What changed**, **Checks** and **Anything to be aware of?**
+- Use natural, direct language such as "This fixes…", "We've updated…" and "Before merging, check…". Avoid internal status reports, repetitive "the product owner approved" phrasing, corporate jargon, unnecessary capital letters and text written as instructions to an AI.
+- **Be welcoming.** Don't assume someone already knows our codebase, GitHub or Docker. Explain unfamiliar terms briefly where they're needed.
+- **Keep records useful, not enormous.** Link to the issue or previous decision instead of copying conversations or reproducing test logs. Say what was checked, what still needs attention and what was deliberately left alone.
+- **Keep technical truth and authority.** Identify the person or decision when it actually matters, especially for scope, compatibility, security, merge and release approval. A friendly style must never imply that a proposal is approved, a skipped test passed or a release was published.
+- AI assistance is fine; whoever submits a contribution remains responsible for verifying and reviewing it. Write for community readers, not for an AI tool.
+
+Don't rewrite completed issues, old PRs or historical records just to change their tone. Apply this style to new work, and improve current documents when there's a genuine reason to edit them.
+
 ## Mandatory Naming And UI Standards
 
 Every new or modified code component must use a meaningful, searchable name that tells a reader **what it is or what it does**, not when or in which development phase it was written.
@@ -73,4 +86,4 @@ For a short, practical security-fix and release sequence, use the [owner checkli
 
 Automated checks can catch syntax, documentation omissions and some naming problems; **human review remains essential** to establish whether names are genuinely clear. Do not claim CI guarantees semantic naming quality.
 
-The [v2.0.2 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.2) is the current published baseline. **The product owner directs the project and never needs permission to make its decisions.** Contributors should implement the agreed request, test and document it proportionately, and never publish preview images or releases without the owner's explicit instruction.
+The [v2.0.2 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.2) is our current published baseline. The project maintainer agrees the scope and timing of changes and makes the final merge and release decisions. Please work within the agreed scope, test and document what you change, and don't publish preview images or releases unless we've agreed to do so.
