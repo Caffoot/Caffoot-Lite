@@ -14,4 +14,4 @@ When a newer version is prepared for release, keep its Portainer YAML in the rep
 
 For the **current installation**, start with the [main README](../../README.md) and [installation guide](../../INSTALLATION.md). The README links directly to the latest published Portainer example.
 
-Earlier standalone and Docker releases remain accessible through [GitHub Releases](https://github.com/Caffoot/Caffoot-Lite/releases). Approved interface designs are retained separately under [`future-design/`](../../future-design/).
+Earlier standalone and Docker releases remain accessible through [GitHub Releases](https://github.com/Caffoot/Caffoot-Lite/releases).

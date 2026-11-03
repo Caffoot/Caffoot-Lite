@@ -6,9 +6,7 @@ Use the handover to pick up where the last session finished. The relevant GitHub
 
 ## Current work
 
-- [v2.1 — UI Redesign](v2.1.md) — current position, first development pilot and next steps
-- [Issue #266 — UI Redesign](https://github.com/Caffoot/Caffoot-Lite/issues/266) — agreed direction and development checklist
-- [Approved UI designs](../../future-design/README.md) — the exact accepted visual references
+No active development handover is currently recorded. The abandoned interface redesign has been closed. The published v2.0.3 release remains the working baseline; completed release work is recorded in [historical handovers](../historical/development-handovers/).
 
 ## Keeping this useful
 
