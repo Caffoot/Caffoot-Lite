@@ -49,6 +49,11 @@ PUBLIC_ASSETS = {"favicon.ico": "image/x-icon",
 SVELTE_DEV_ROUTE = "/__dev/svelte-device-details/"
 SVELTE_DEV_DIST = Path(__file__).resolve().parent.parent / "pilots" / "svelte-device-details" / "dist"
 SVELTE_DEV_ENABLED = os.environ.get("CAFFOOT_DEV_SVELTE_DETAILS", "") == "1"
+# First production-facing workspace is packaged as static files but stays off
+# until explicitly enabled in a private test installation.
+WORKSPACE_ROUTE = "/workspace/"
+WORKSPACE_DIST = Path(__file__).resolve().parent.parent / "workspace-dist"
+WORKSPACE_ENABLED = os.environ.get("CAFFOOT_SVELTE_WORKSPACE", "") == "1"
 SVELTE_DEV_MIME = {".js": "text/javascript; charset=utf-8",
                    ".css": "text/css; charset=utf-8",
                    ".png": "image/png",
@@ -102,8 +107,20 @@ class Handler(BaseHTTPRequestHandler):
         super().end_headers()
 
     def serve_svelte_dev_preview(self):
-        """Protected, opt-in, read-only Svelte experiment. Never replace /inventory."""
-        if not SVELTE_DEV_ENABLED:
+        """Keep the original isolated pilot's route and permissions intact."""
+        self.serve_svelte_static(SVELTE_DEV_ROUTE, SVELTE_DEV_DIST,
+                                 SVELTE_DEV_ENABLED, "integration.html",
+                                 require_devices=True)
+
+    def serve_svelte_workspace(self):
+        """Opt-in, authenticated shared workspace; all existing writes remain in /inventory."""
+        self.serve_svelte_static(WORKSPACE_ROUTE, WORKSPACE_DIST,
+                                 WORKSPACE_ENABLED, "workspace.html",
+                                 require_devices=False)
+
+    def serve_svelte_static(self, root, dist, enabled, entry, require_devices):
+        """Serve only known compiled frontend files to authorised sessions."""
+        if not enabled:
             self.respond(404, {"error": "not found"})
             return
         with connect() as connection:
@@ -111,20 +128,24 @@ class Handler(BaseHTTPRequestHandler):
             if account_id is None:
                 self.respond(401, {"error": "unauthorised"})
                 return
-            if not can_access(connection, account_id, "Devices"):
+            allowed = (can_access(connection, account_id, "Devices")
+                       if require_devices else
+                       any(can_access(connection, account_id, section)
+                           for section in ("Devices", "IPAM", "Racks")))
+            if not allowed:
                 self.respond(403, {"error": "forbidden"})
                 return
 
-        if self.path == SVELTE_DEV_ROUTE:
-            path = SVELTE_DEV_DIST / "integration.html"
+        if self.path == root:
+            path = dist / entry
             content_type = "text/html; charset=utf-8"
-        elif self.path.startswith(SVELTE_DEV_ROUTE + "assets/"):
-            name = self.path[len(SVELTE_DEV_ROUTE + "assets/"):]
-            # Only flat Vite build assets; no user-controlled path traversal.
+        elif self.path.startswith(root + "assets/"):
+            name = self.path[len(root + "assets/"):]
+            # Only flat build assets: no source files or traversal.
             if not re.fullmatch(r"[A-Za-z0-9_-][A-Za-z0-9._-]*\.(?:js|css|png|svg|woff2?)", name):
                 self.respond(404, {"error": "not found"})
                 return
-            path = SVELTE_DEV_DIST / "assets" / name
+            path = dist / "assets" / name
             content_type = SVELTE_DEV_MIME.get(path.suffix)
         else:
             self.respond(404, {"error": "not found"})
@@ -151,6 +172,9 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_GET(self):
+        if self.path.startswith(WORKSPACE_ROUTE):
+            self.serve_svelte_workspace()
+            return
         if self.path.startswith(SVELTE_DEV_ROUTE):
             self.serve_svelte_dev_preview()
             return
