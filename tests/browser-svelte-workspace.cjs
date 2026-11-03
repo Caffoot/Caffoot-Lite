@@ -105,6 +105,7 @@ async function run() {
     'Devices-only viewers must not be offered IPAM');
   assert.equal(await page.getByRole('link',{name:'Users',exact:true}).count(),0,
     'Normal users must not see administrator navigation');
+  await page.getByRole('link',{name:'Devices',exact:true}).waitFor();
   assert.equal(await page.getByRole('link',{name:'Devices',exact:true}).count(),1);
   assert.equal(await page.getByRole('link',{name:'Dashboard',exact:true}).count(),1);
   assert.ok(!requests.some(p=>p.startsWith('/api/inventory/ipam:') ||
