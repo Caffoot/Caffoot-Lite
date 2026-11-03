@@ -51,6 +51,8 @@ SVELTE_DEV_DIST = Path(__file__).resolve().parent.parent / "pilots" / "svelte-de
 SVELTE_DEV_ENABLED = os.environ.get("CAFFOOT_DEV_SVELTE_DETAILS", "") == "1"
 # First production-facing workspace is packaged as static files but stays off
 # until explicitly enabled in a private test installation.
+SIGNIN_ROUTE = "/sign-in/"
+SIGNIN_DIST = Path(__file__).resolve().parent.parent / "signin-dist"
 WORKSPACE_ROUTE = "/workspace/"
 WORKSPACE_DIST = Path(__file__).resolve().parent.parent / "workspace-dist"
 WORKSPACE_ENABLED = os.environ.get("CAFFOOT_SVELTE_WORKSPACE", "") == "1"
@@ -113,31 +115,43 @@ class Handler(BaseHTTPRequestHandler):
                                  require_devices=True)
 
     def serve_svelte_workspace(self):
-        """Opt-in, authenticated shared workspace; all existing writes remain in /inventory."""
+        """Serve the private workspace while the original application remains available."""
         self.serve_svelte_static(WORKSPACE_ROUTE, WORKSPACE_DIST,
                                  WORKSPACE_ENABLED, "workspace.html",
                                  require_devices=False)
 
-    def serve_svelte_static(self, root, dist, enabled, entry, require_devices):
+    def serve_svelte_signin(self):
+        """Show the opt-in sign-in screen without requiring an existing session."""
+        self.serve_svelte_static(SIGNIN_ROUTE, SIGNIN_DIST,
+                                 WORKSPACE_ENABLED, "signin.html",
+                                 require_devices=False, public=True)
+
+    def serve_svelte_static(self, root, dist, enabled, entry, require_devices, public=False):
         """Serve only known compiled frontend files to authorised sessions."""
         if not enabled:
             self.respond(404, {"error": "not found"})
             return
-        with connect() as connection:
-            account_id = authenticated_account(connection, self.headers.get("Cookie"))
-            if account_id is None:
-                self.respond(401, {"error": "unauthorised"})
-                return
-            allowed = (can_access(connection, account_id, "Devices")
-                       if require_devices else
-                       any(can_access(connection, account_id, section)
-                           for section in ("Devices", "IPAM", "Racks")))
-            if not allowed:
-                self.respond(403, {"error": "forbidden"})
-                return
+        # Sign In assets must load before the first account or session exists.
+        # All workspace and isolated-pilot assets still require authorisation.
+        if not public:
+            with connect() as connection:
+                account_id = authenticated_account(connection, self.headers.get("Cookie"))
+                if account_id is None:
+                    self.respond(401, {"error": "unauthorised"})
+                    return
+                allowed = (can_access(connection, account_id, "Devices")
+                           if require_devices else
+                           any(can_access(connection, account_id, section)
+                               for section in ("Devices", "IPAM", "Racks")))
+                if not allowed:
+                    self.respond(403, {"error": "forbidden"})
+                    return
 
         if self.path == root:
             path = dist / entry
+            content_type = "text/html; charset=utf-8"
+        elif root == WORKSPACE_ROUTE and self.path == WORKSPACE_ROUTE + "dashboard/":
+            path = dist / "dashboard.html"
             content_type = "text/html; charset=utf-8"
         elif self.path.startswith(root + "assets/"):
             name = self.path[len(root + "assets/"):]
@@ -166,12 +180,15 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("X-Content-Type-Options", "nosniff")
         self.send_header("Content-Security-Policy",
                          "default-src 'none'; script-src 'self'; style-src 'self'; "
-                         "img-src 'self'; connect-src 'self'; font-src 'self'; "
+                         "img-src 'self' data:; connect-src 'self'; font-src 'self'; "
                          "base-uri 'none'; object-src 'none'; frame-ancestors 'none'")
         self.end_headers()
         self.wfile.write(body)
 
     def do_GET(self):
+        if self.path.startswith(SIGNIN_ROUTE):
+            self.serve_svelte_signin()
+            return
         if self.path.startswith(WORKSPACE_ROUTE):
             self.serve_svelte_workspace()
             return
