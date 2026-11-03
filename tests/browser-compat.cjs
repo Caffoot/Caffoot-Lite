@@ -553,6 +553,14 @@ async function run(){
   // An inventory row has one Details action. Editing and deletion remain available
   // inside the details view, including the link to the device's rack.
   await page.locator('#sidebar [data-action="tab-devices"]').click();
+  // Real saved-data screenshots for each Devices area, not standalone design images.
+  for(const section of ['overview','inventory','types','locations','manufacturers',
+                        'models','software','services']){
+    await page.locator('#devices-sidebar-actions [data-action="sidebar-devices-'+section+'"]').click();
+    await page.locator('#main-content').screenshot({
+      path:path.join(screens,'devices-'+section+'-working-html.png')
+    });
+  }
   await page.locator('#devices-sidebar-actions [data-action="sidebar-devices-inventory"]').click();
   await page.locator('[data-device-panel="inventory"] .device-table-wrapper').waitFor();
   assert.equal(await page.locator('[data-device-panel="inventory"] .device-menu').count(),0,
@@ -563,6 +571,7 @@ async function run(){
     'Each inventory row must have one Details button');
   await rackDeviceRow.locator('button.device-detail-summary').click();
   await page.locator('.device-details-action-footer').waitFor({state:'visible'});
+  await page.screenshot({path:path.join(screens,'devices-details-working-html.png'),fullPage:true});
   for(const action of ['edit-device-from-details','duplicate-device-from-details',
                        'delete-device-from-details','navigate-to-device-rack']){
     assert.equal(await page.locator('.device-details-action-footer [data-action="'+action+'"]').count(),1,
