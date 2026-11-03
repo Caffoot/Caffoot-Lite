@@ -10435,12 +10435,10 @@ window.addEventListener('load', async () => {
         editPermissions.Devices && editPermissions.IPAM;
       const addRack = destination === 'racks' && requestedAction === 'add' &&
         editPermissions.Racks;
-      const selector = addDevice ? '#devices-sidebar-actions [data-action="open-device-modal"]' :
-        addRack ? '#racks-sidebar-actions [data-action="open-rack-modal"]' : null;
-      if (selector) {
-        const button = document.querySelector(selector);
-        if (button && !button.disabled && !button.hidden) button.click();
-      }
+      // Use the existing modal functions directly after normal permission
+      // checks; a synthetic click during initial page loading is unreliable.
+      if (addDevice && !isBlockedAction('open-device-modal')) openDeviceModal();
+      else if (addRack && !isBlockedAction('open-rack-modal')) openRackModal();
     }
   }catch(error){
     const container=document.getElementById('main-content');
