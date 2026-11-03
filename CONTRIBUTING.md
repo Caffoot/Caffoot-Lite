@@ -21,6 +21,31 @@ Caffoot Lite is an open-source project for real people. Write **issues, pull req
 - **Keep technical truth and authority.** Identify the person or decision when it actually matters, especially for scope, compatibility, security, merge and release approval. A friendly style must never imply that a proposal is approved, a skipped test passed or a release was published.
 - AI assistance is fine; whoever submits a contribution remains responsible for verifying and reviewing it. Write for community readers, not for an AI tool.
 
+### Before Posting An Issue Or Pull Request Update
+
+**The same writing standard applies to everyone who maintains Caffoot Lite, including AI-assisted work.** It covers issue descriptions, issue comments, pull requests, review comments, progress updates and merge or release notes. A technical update is still a public message to the community.
+
+Before publishing an update, check that it:
+
+1. **Leads with what happened and why it matters.** Tell readers what has changed for them, rather than opening with an internal stage name or a technical report.
+2. **Explains essential checks in everyday words.** Say what was tested and whether it passed. Link to detailed evidence for people who want it rather than filling the comment with commit numbers, logs or unexplained terms.
+3. **Makes the current position clear.** Explain what's available now, what's unchanged and what happens next. Record approvals, merge decisions and release decisions precisely when they matter.
+4. **Sounds like a person talking to the community.** Use friendly, clear British English; remove internal shorthand, repetitive approval statements and unnecessary technical detail. Keep it short unless more detail genuinely helps.
+
+For example, a completed change could be reported like this (illustrative wording, **not a current project status report**):
+
+> **Device Details preview updated**
+>
+> We've improved the new Device Details preview so the text is easier to read and the appearance stays consistent across desktop and mobile screens.
+>
+> The browser and Docker checks passed. The existing application and saved data have not changed.
+>
+> The new screen is still a preview. We'll agree the next part of the work before making it available to everyone.
+
+**Maintainers and reviewers must check the writing as well as the code.** The pull-request checklist explicitly includes descriptions and public progress comments. If an update doesn't meet this standard, improve it before posting or request clearer wording before approving the change. Apply the same self-check when posting updates directly to an issue without a pull request.
+
+Automated tests cannot reliably decide whether English is friendly or understandable. Passing GitHub checks is **not** a substitute for that human review. These expectations are for people maintaining and reviewing the project; **people reporting a problem or asking for help are welcome to write in their own words**.
+
 Don't rewrite completed issues, old PRs or historical records just to change their tone. Apply this style to new work, and improve current documents when there's a genuine reason to edit them.
 
 ## Mandatory Naming And UI Standards

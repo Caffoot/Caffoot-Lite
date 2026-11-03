@@ -22,6 +22,7 @@ Note any effect on existing data, permissions, MFA, backups, Docker installation
 
 Tick the checks relevant to your change. If one doesn't apply, say so rather than doing unnecessary work.
 
+- [ ] The pull request description **and our linked issue/PR progress comments** are written in friendly, clear British English for community readers. They explain what changed, why it matters, what was checked and what happens next. See [Before Posting An Issue Or Pull Request Update](../CONTRIBUTING.md#before-posting-an-issue-or-pull-request-update). **This applies to every PR, including maintainer and AI-assisted work.**
 - [ ] This change follows the agreed scope and links the relevant issue or decision.
 - [ ] New code names, folder paths and interface labels follow our [naming conventions](../docs/development-guide/06-Coding-and-Naming-Conventions.md).
 - [ ] New or changed code comments are accurate, understandable and written in plain British English.
@@ -30,6 +31,8 @@ Tick the checks relevant to your change. If one doesn't apply, say so rather tha
 - [ ] If functions were added, removed or renamed, the [Function Index](../docs/development-guide/Function-Index.md) is accurate, or the reason no update is needed is explained.
 - [ ] Existing functionality, permissions, security and installation compatibility have been checked as appropriate.
 - [ ] Tests run, results and any remaining limitations are described above.
+
+**Maintainer review:** Check public explanations and progress comments as well as the code. If the writing is too technical or unclear, ask for a clearer version before approving the merge. Green automated checks do not verify writing quality.
 
 We review changes against the agreed scope, coding standards and actual test evidence. **The project maintainer must approve a merge; publishing a release is a separate decision.**
 
