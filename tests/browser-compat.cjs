@@ -561,6 +561,28 @@ async function run(){
       path:path.join(screens,'devices-'+section+'-working-html.png')
     });
   }
+  // Manufacturer and Custom Software must allow more than one Device Type.
+  // Check the real forms without saving changes to the test inventory.
+  await page.locator('#devices-sidebar-actions [data-action="sidebar-devices-manufacturers"]').click();
+  await page.locator('[data-action="manufacturer-add"]').click();
+  const manufacturerTypes=page.locator('#modal-content input[name="catalogue-manufacturer-device-type"]');
+  assert.ok(await manufacturerTypes.count()>=2,
+    'The manufacturer form must offer multiple Device Type checkboxes');
+  await manufacturerTypes.nth(0).check();
+  await manufacturerTypes.nth(1).check();
+  assert.equal(await page.locator('#modal-content input[name="catalogue-manufacturer-device-type"]:checked').count(),2);
+  await page.locator('#modal-content [data-action="close-modal"]').click();
+  await page.locator('#devices-sidebar-actions [data-action="sidebar-devices-software"]').click();
+  await page.locator('[data-action="software-custom-add"]').click();
+  const softwareTypes=page.locator('#modal-content input[name="software-custom-type"]');
+  assert.ok(await softwareTypes.count()>=2,
+    'Custom Software must offer multiple Device Type checkboxes');
+  await softwareTypes.nth(0).check();
+  await softwareTypes.nth(1).check();
+  assert.equal(await page.locator('#modal-content input[name="software-custom-type"]:checked').count(),2);
+  await page.locator('#modal-content [data-action="close-modal"]').click();
+  console.log('Manufacturer and Custom Software multi-type selection passed');
+
   await page.setViewportSize({width:390,height:844});
   await page.locator('#devices-sidebar-actions [data-action="sidebar-devices-inventory"]').click();
   await page.locator('[data-device-panel="inventory"] .device-table-wrapper').waitFor();
