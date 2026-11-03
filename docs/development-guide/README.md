@@ -32,6 +32,7 @@ For example, when somebody edits a device, the browser requests an exclusive, te
 | [Full Function Index](Function-Index.md) | Source-pinned declaration locations, static call-like reference counts and example reference sites |
 | [08 — Testing and maintenance](08-Testing-and-Maintenance.md) | How to check a change and protect the published baseline |
 | [Security fixes and releases — owner checklist](Security-Fixes-and-Releases.md) | The short, safe path from private report or approved change to a verified release |
+| [v2.1 development handover (active)](../development-handovers/v2.1.md) | Where the current UI redesign stands and what happens next |
 | [v2.0.3 development handover (historical)](../historical/development-handovers/v2.0.3.md) | Completed v2.0.3 decisions and work, kept as a dated record |
 
 All contributors should first read [CONTRIBUTING.md](../../CONTRIBUTING.md) and complete the repository pull-request checklist. Each technical chapter starts with **In simple terms**, then adds details for developers. Follow links rather than reading all eight chapters in order.
