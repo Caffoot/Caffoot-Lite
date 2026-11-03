@@ -26,7 +26,7 @@ jobs:
               'docs/historical/portainer/portainer-v2.0.2.yaml',
               'docs/historical/release-notes/Release-Notes-v2.0.2.md',
               "docs/How To's/Features and Instructions/README.md",
-              'docs/Development Guide/README.md',
+              'docs/development-guide/README.md',
           )
           for name in required:
               if not Path(name).is_file():

@@ -2,7 +2,7 @@
 
 Welcome to the Caffoot Lite user guides. These step-by-step instructions cover the published v2.0.2 Docker/SQLite edition. Its established inventory screens and safeguards follow the published v1.3.3 application, while its accounts and shared database are new.
 
-The guides describe the **real application**, use fictional examples and distinguish viewer and editor permissions. They are maintained here as the shared source for GitHub and website help references. The separate [Development Guide](../../Development%20Guide/README.md) explains the implementation for developers.
+The guides describe the **real application**, use fictional examples and distinguish viewer and editor permissions. They are maintained here as the shared source for GitHub and website help references. The separate [Development Guide](../../development-guide/README.md) explains the implementation for developers.
 
 ## Find your guide
 

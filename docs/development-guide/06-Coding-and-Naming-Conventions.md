@@ -27,6 +27,14 @@ Use descriptive `snake_case` for functions, variables and module names, `PascalC
 
 Follow established responsibility boundaries: `server.py` handles requests, `permissions.py` determines access, `device_saves.py` handles device writes and `schema.py` defines SQLite migrations. Avoid extra layers without an approved need.
 
+## Repository Folder Names
+
+Use **lowercase `kebab-case`** for new and renamed repository directories: descriptive words separated by hyphens, with no spaces, apostrophes, mixed capitals or temporary development-stage labels. For example, `docs/development-guide/`, `docs/historical/release-notes/` and the planned `docs/how-tos/features-and-instructions/`.
+
+This directory convention is different from **Title Case in the user interface** and language-specific source naming. Keep established filenames such as `README.md`, `INSTALLATION.md` and `Dockerfile`, and keep Python modules in `snake_case`.
+
+Before renaming a directory, review all Markdown links, GitHub issue and pull-request templates, workflow paths, application help URLs, tests and external website references. Update them together and verify that **existing published installations still work**. In particular, Caffoot Lite v2.0.2 ships with Help & Guides URLs pointing at the existing `docs/How To's/Features and Instructions/` folder; keep that folder accessible until a separately approved, backward-compatible migration is ready. A folder rename needs the product owner's approval and proportionate testing.
+
 ## User-Facing UI Text
 
 Use **Title Case** consistently for navigation, page headings, tabs, buttons, form labels, table headings and brief statuses: **Add User**, **Back To All Users**, **No Access**, **Read Only**, **MFA Enrolled**. Keep technical acronyms correctly capitalised: IPAM, MFA, VLAN, LDAP, SQLite. Use ordinary sentence case for help text, instructions, error details and paragraphs, prioritising readability and accessibility.
