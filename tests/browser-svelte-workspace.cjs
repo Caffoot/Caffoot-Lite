@@ -67,6 +67,39 @@ async function run() {
   page.on('pageerror', e=>errors.push(e.message));
   assert.equal((await page.goto(address+'/workspace/',{waitUntil:'networkidle'})).status(),200);
   await page.getByRole('heading',{name:'Devices · Read-only workspace'}).waitFor();
+  // The owner's accepted My Account Draft 06 defines the shared typography.
+  // Check actual loaded local font faces, not merely a CSS fallback declaration.
+  const type = await page.evaluate(async () => {
+    await document.fonts.ready;
+    const style = selector => {
+      const element = document.querySelector(selector);
+      if (!element) throw Error('Missing typography element: '+selector);
+      const css = getComputedStyle(element);
+      return {size:css.fontSize, weight:css.fontWeight, family:css.fontFamily};
+    };
+    return {
+      base: style('body'),
+      nav: style('.shell.production .side-nav a'),
+      brand: style('.shell.production .brand-name'),
+      heading: style('.shell.production .page-heading h1'),
+      faces: [...document.fonts].filter(face =>
+        face.family === 'Inter Variable' && face.status === 'loaded').length,
+      loadedFontUrls: performance.getEntriesByType('resource')
+        .filter(resource => /\\.woff2(?:\\?|$)/.test(resource.name))
+        .map(resource => resource.name)
+    };
+  });
+  assert.ok(type.base.family.includes('Inter Variable'), 'Inter Variable must be the primary font');
+  assert.equal(type.base.size,'14px','Approved body typography must be 14px');
+  assert.equal(type.nav.size,'13px','Approved navigation typography must be 13px');
+  assert.equal(type.nav.weight,'550','Use the actual variable-font navigation weight');
+  assert.equal(type.brand.weight,'750','Approved brand label weight');
+  assert.equal(type.heading.size,'31px','Approved title size');
+  assert.equal(type.heading.weight,'790','Approved title variable weight');
+  assert.ok(type.faces > 0, 'An Inter Variable font must actually load');
+  assert.ok(type.loadedFontUrls.length > 0, 'Bundle local WOFF2 assets, never rely on system fonts');
+  assert.ok(type.loadedFontUrls.every(url=>new URL(url).origin===address),
+    'Inter files must load from the Caffoot Lite server only');
   assert.equal(await page.getByRole('link',{name:'My Account'}).count(),1);
   assert.equal(await page.getByRole('link',{name:'IPAM',exact:true}).count(),0,
     'Devices-only viewers must not be offered IPAM');
