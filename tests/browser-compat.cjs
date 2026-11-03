@@ -133,6 +133,9 @@ async function run(){
     return {
       sidebar: css('#sidebar').backgroundColor,
       width: Math.round(document.querySelector('#sidebar').getBoundingClientRect().width),
+      currentNavigation: css('#sidebar [data-action="tab-dashboard"]').backgroundColor,
+      brandClipped: document.querySelector('#sidebar .caffoot-brand-sub').scrollWidth >
+        document.querySelector('#sidebar .caffoot-brand-sub').clientWidth+1,
       header: css('#caffoot-app-topbar').backgroundColor,
       title: document.querySelector('.caffoot-dashboard-heading h1')?.textContent,
       eyebrow: document.querySelector('.caffoot-dashboard-eyebrow')?.textContent,
@@ -144,6 +147,10 @@ async function run(){
   });
   assert.equal(approvedUI.sidebar,'rgb(20, 43, 67)','Sidebar must use approved navy colour');
   assert.equal(approvedUI.width,215,'Desktop sidebar must use approved width');
+  assert.equal(approvedUI.currentNavigation,'rgb(46, 70, 94)',
+    'Selected navigation must use approved navy highlight, not legacy orange');
+  assert.equal(approvedUI.brandClipped,false,
+    'The Caffoot Lite brand tagline must fit within the sidebar');
   assert.equal(approvedUI.header,'rgb(255, 255, 255)','Approved top bar must be white');
   assert.equal(approvedUI.title,'Dashboard');
   assert.equal(approvedUI.eyebrow,'YOUR INFRASTRUCTURE AT A GLANCE');
