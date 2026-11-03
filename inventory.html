@@ -1209,6 +1209,14 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .caffoot-dashboard .db-card h3{font-size:16px;line-height:1.3;font-weight:750;color:#263d55;letter-spacing:-.2px;margin:0 0 4px}
 .caffoot-dashboard .db-card-head p{font-size:13px;line-height:1.6;color:#70859a;margin:0}
 .caffoot-dashboard .db-card-rule{border-top:1px solid #e8edf2;margin:18px 0}
+.caffoot-dashboard .dashboard-insights{background:transparent!important;border:0!important;box-shadow:none!important}
+.caffoot-dashboard .db-rack-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.caffoot-dashboard .db-rack-row{display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;padding:13px 14px;border:1px solid #e1e8ee;border-radius:10px;background:#f9fbfd;color:#324d66;font-size:12px;min-width:0;cursor:pointer}
+.caffoot-dashboard .db-rack-row:hover{border-color:#edb486;background:#fffdfb}
+.caffoot-dashboard .db-rack-row strong{overflow-wrap:anywhere}
+.caffoot-dashboard .dashboard-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.caffoot-dashboard .dashboard-summary.has-integrity{grid-template-columns:repeat(3,minmax(0,1fr))}
+
 .caffoot-dashboard .db-status-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:13px 0;border-bottom:1px solid #e9edf2;font-size:12px}
 .caffoot-dashboard .db-status-row strong{color:#324d66;font-size:12px}
 .caffoot-dashboard .db-status-row:last-of-type{border-bottom:0}
@@ -1283,12 +1291,17 @@ html.dark .caffoot-dashboard .dashboard-insights h3,
 html.dark .caffoot-dashboard .dashboard-activity-heading h3{color:#f1f5f9}
 html.dark .caffoot-dashboard .db-error-card{background:#3e2b2b;border-color:#a65f5b}
 html.dark .caffoot-dashboard .db-error-card p{color:#ffd4ce}
+html.dark .caffoot-dashboard .db-rack-row{background:#293a4b;border-color:#405366;color:#e2e8f0}
+html.dark .caffoot-dashboard .db-rack-row:hover{background:#354a60;border-color:#edb486}
+
 @media(max-width:1120px){
  #app>#sidebar{width:215px!important;flex-basis:215px!important}
  .caffoot-dashboard .db-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
  .caffoot-dashboard .db-two{grid-template-columns:minmax(0,1fr)}
 }
 @media(max-width:720px){
+ .caffoot-dashboard .db-rack-list{grid-template-columns:minmax(0,1fr)}
+ .caffoot-dashboard .dashboard-summary,.caffoot-dashboard .dashboard-summary.has-integrity{grid-template-columns:minmax(0,1fr)}
  #app>#sidebar{width:65px!important;min-width:65px!important;max-width:65px!important;flex:0 0 65px!important;padding:16px 8px!important;overflow-x:hidden}
  #sidebar .caffoot-brand{justify-content:center;margin:0 0 16px}
  #sidebar .caffoot-brand img{width:36px;height:36px}
@@ -2670,13 +2683,6 @@ function hierarchyValidateTypes(subnets) {
             const rackIds = new Set(racks.map(r => r.id));
             const rackedDevices = devices.filter(d => d.rackId && rackIds.has(d.rackId)).length;
             const unmountedDevices = devices.length - rackedDevices;
-            const rackCapacity = racks.reduce((sum, r) => sum + (Number(r.heightU) || 0), 0);
-            // Use the same per-face device and ordinary-accessory occupancy as rack reports.
-            // Front and rear can share U positions; count the fuller face once per rack.
-            const occupiedUs = buildInventoryReportData().racks.reduce(
-                (sum, rack) => sum + Math.max(rack.front, rack.rear), 0);
-            const freeUs = Math.max(0, rackCapacity - occupiedUs);
-            const occupancyPct = rackCapacity ? Math.min(100, Math.round((occupiedUs / rackCapacity) * 100)) : 0;
 
             const typeCounts = devices.reduce((map, d) => {
                 const type = d.type || 'Other';
@@ -2754,7 +2760,6 @@ function hierarchyValidateTypes(subnets) {
             }).join('') : `<li class="dashboard-alert-clear-button"><i class="fa-solid fa-circle-check" aria-hidden="true"></i>${alerts.length ? 'No warnings match this severity filter.' : 'No IPAM linkage, duplicate IP, missing rack or rack-capacity warnings detected.'}</li>`;
             const dashboardActivityFilterControlsHtml = `<div class="dashboard-filter-controls"><label for="activity-filter">Activity type<select id="activity-filter" data-dashboard-filter="activity"><option value="all" ${dashboardActivityFilter==='all'?'selected':''}>All changes</option><option value="devices" ${dashboardActivityFilter==='devices'?'selected':''}>Devices</option><option value="network" ${dashboardActivityFilter==='network'?'selected':''}>IPAM & networks</option><option value="racks" ${dashboardActivityFilter==='racks'?'selected':''}>Racks</option></select></label></div>`;
             const dashboardAlertFilterControlsHtml = `<div class="dashboard-filter-controls"><label for="alert-filter">Severity<select id="alert-filter" data-dashboard-filter="alerts"><option value="all" ${dashboardAlertSeverityFilter==='all'?'selected':''}>All severities</option><option value="critical" ${dashboardAlertSeverityFilter==='critical'?'selected':''}>Critical only</option><option value="warning" ${dashboardAlertSeverityFilter==='warning'?'selected':''}>Warnings only</option></select></label></div>`;
-            const visibleAlerts = alerts.slice(0, 6);
             const integrityErrors = validateApplicationState();
             const integrityHealthy = integrityErrors.length === 0;
             const integrityPreview = integrityErrors.slice(0, 5);
@@ -2789,27 +2794,12 @@ function hierarchyValidateTypes(subnets) {
 
                 </div>`;
 
-            const rackCards = racks.length ? racks.map(rack => {
-                const rackDevices = devices.filter(d => d.rackId === rack.id);
-                const used = rackDevices.reduce((sum, d) => {
-                    const start = Number(d.rackUStart);
-                    const end = Number(d.rackUEnd ?? d.rackUStart);
-                    return Number.isInteger(start) && Number.isInteger(end) && end >= start ? sum + (end - start + 1) : sum;
-                }, 0);
-                const height = Number(rack.heightU) || 0;
-                const pct = height ? Math.min(100, Math.round((used / height) * 100)) : 0;
-                return `
-                    <button type="button" data-action="select-rack" data-id="${escapeHtml(rack.id)}" class="text-left w-full p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-500/60 hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
-                        <div class="flex items-center justify-between gap-3">
-                            <div class="min-w-0">
-                                <p class="font-semibold text-sm text-slate-800 dark:text-slate-100 truncate">${escapeHtml(rack.name)}</p>
-                                <p class="text-xs text-slate-500 dark:text-slate-400">${rackDevices.length} device${rackDevices.length === 1 ? '' : 's'} · ${height}U</p>
-                            </div>
-                            <span class="text-xs font-bold text-slate-600 dark:text-slate-300">${pct}%</span>
-                        </div>
-                        <div class="mt-2 h-2 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden"><div class="h-full rounded-full ${pct >= 85 ? 'bg-amber-500' : 'bg-sky-600 dark:bg-sky-400'}" style="width:${pct}%"></div></div>
-                    </button>`;
-            }).join('') : `<p class="text-sm text-slate-500 dark:text-slate-400">No racks configured yet.</p>`;
+            // The approved Rack Details panel keeps the existing rack-selection action.
+            const rackCards = racks.length ? racks.map(rack =>
+                `<button type="button" data-action="select-rack" data-id="${escapeHtml(rack.id)}" class="db-rack-row">
+                    <strong>${escapeHtml(rack.name)}</strong>
+                    <span class="db-status-badge">${Number(rack.heightU) || 0}U</span>
+                </button>`).join('') : '<p class="db-muted">No racks configured yet.</p>';
 
             const recentDevices = devices.slice().reverse().slice(0, 6);
             const deviceRows = recentDevices.length ? recentDevices.map(device => `
@@ -2866,7 +2856,6 @@ function hierarchyValidateTypes(subnets) {
                 return {rack, faces};
             });
             const networkInsights = `<section class="dashboard-insights" aria-label="Network insights">
-                <div class="dashboard-chart-heading"><div><h3>Network Insights</h3><p>Live utilisation and inventory distribution</p></div></div>
                 <div class="dashboard-layout-grid">
                     <article class="dashboard-summary-panel"><h4>IP address utilisation</h4><p class="dashboard-muted">${totalSubnetCapacity.toLocaleString()} usable addresses across ${subnets.length} subnets</p>
                         <div class="dashboard-bar" role="progressbar" aria-label="IP utilisation" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${ipUtilisation}"><span style="width:${ipUtilisation}%;background:#2563eb"></span></div>
@@ -2888,11 +2877,7 @@ function hierarchyValidateTypes(subnets) {
                 </div>
             </section>`;
 
-            const alertRows = visibleAlerts.length ? visibleAlerts.map(alert => {
-                const classes = alert.level === 'danger'
-                    ? 'bg-rose-50 text-rose-700 dark:bg-rose-950/30 dark:text-rose-300'
-                    : 'bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-300';
-                return `<div class="flex items-start gap-3 p-3 rounded-xl ${classes}"><i class="fa-solid ${alert.icon} mt-0.5"></i><p class="text-xs font-medium leading-5">${escapeHtml(alert.text)}</p></div>`;
+            return `<div class="flex items-start gap-3 p-3 rounded-xl ${classes}"><i class="fa-solid ${alert.icon} mt-0.5"></i><p class="text-xs font-medium leading-5">${escapeHtml(alert.text)}</p></div>`;
             }).join('') : `<div class="flex items-center gap-3 p-3 rounded-xl bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-300"><i class="fa-solid fa-circle-check"></i><p class="text-xs font-medium">No integrity or capacity warnings detected.</p></div>`;
 
             return `
@@ -2981,26 +2966,18 @@ function hierarchyValidateTypes(subnets) {
                     </div>
                     <div id="dashboard-panel-insights" role="tabpanel" aria-labelledby="dashboard-tab-insights" class="dashboard-tab-panel space-y-5" ${activeDashboardTab==='insights'?'':'hidden'}>
                     ${networkInsights}
-
-                    <section class="grid grid-cols-1 xl:grid-cols-3 gap-5 mt-8">
-                        <div class="xl:col-span-2 bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700">
-                            <div class="flex items-center justify-between mb-4"><div><h4 class="font-bold text-slate-900 dark:text-white">Rack Capacity</h4><p class="text-xs text-slate-500 mt-1">Used U-space across your cabinets</p></div><span class="text-sm font-bold text-slate-700 dark:text-slate-200">${occupiedUs}/${rackCapacity}U</span></div>
-                            <div class="h-3 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden"><div class="h-full rounded-full ${occupancyPct >= 85 ? 'bg-amber-500' : 'bg-sky-600 dark:bg-sky-400'}" style="width:${occupancyPct}%"></div></div>
-                            <div class="flex justify-between mt-2 text-[11px] text-slate-500"><span>0U</span><span>${occupancyPct}% occupied</span><span>${rackCapacity}U</span></div>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-5">${rackCards}</div>
-                        </div>
-                        <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700">
-                            <div class="flex items-center justify-between mb-4"><div><h4 class="font-bold text-slate-900 dark:text-white">Health & alerts</h4><p class="text-xs text-slate-500 mt-1">Integrity and capacity checks</p></div><span class="text-xs font-bold ${visibleAlerts.length ? 'text-amber-600' : 'text-emerald-600'}">${alerts.length} alert${alerts.length === 1 ? '' : 's'}</span></div>
-                            <div class="space-y-2">${alertRows}</div>
-                        </div>
+                    <section class="db-card db-rack-details">
+                        <div class="db-card-head"><span class="db-iconwrap orange"><i class="fa-solid fa-server" aria-hidden="true"></i></span><div><h3>Rack Details</h3><p>The existing rack list and per-rack links stay available in this section.</p></div></div>
+                        <div class="db-card-rule"></div>
+                        <div class="db-rack-list">${rackCards}</div>
+                        <button type="button" data-action="tab-racks" class="db-outline-button">Open Rack Details</button>
                     </section>
-
                     </div>
                     <div id="dashboard-panel-activity" role="tabpanel" aria-labelledby="dashboard-tab-activity" class="dashboard-tab-panel space-y-5" ${activeDashboardTab==='activity'?'':'hidden'}>
-                    <section class="dashboard-summary" aria-label="Activity and alert summary">
+                    <section class="dashboard-summary ${window.nextSessionIsAdmin === true && integrityErrors.length ? 'has-integrity' : ''}" aria-label="Activity and alert summary">
                         <div class="dashboard-summary-item"><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i><div><strong>${filteredDashboardAuditEntries.length}</strong><span>Recent save events</span></div></div>
                         <div class="dashboard-summary-item"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i><div><strong>${alerts.length}</strong><span>Network warnings</span></div></div>
-                        ${window.nextSessionIsAdmin === true ? `<div class="dashboard-summary-item"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i><div><strong>${integrityErrors.length}</strong><span>Integrity issues</span></div></div>` : ''}
+                        ${window.nextSessionIsAdmin === true && integrityErrors.length ? `<div class="dashboard-summary-item"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i><div><strong>${integrityErrors.length}</strong><span>Integrity issues</span></div></div>` : ''}
                     </section>
                     <section class="dashboard-columns">
                         <div class="dashboard-activity-card"><div class="dashboard-activity-heading"><div><h3>Recent Activity</h3><p>Saved changes in the central database</p></div><button type="button" data-action="tab-audit" class="dashboard-link">Full history <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div>${dashboardActivityFilterControlsHtml}<div class="dashboard-activity-timeline">${dashboardActivityTimelineHtml}</div></div>
