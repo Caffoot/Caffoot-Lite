@@ -107,6 +107,36 @@ async function testSignedInData() {
     fullPage:true});
   await ipamContext.close();
 
+  // Capture all three approved Dashboard tabs at desktop width with the same
+  // administrator fixture, rather than comparing a restricted view to the design.
+  const fullAdminContext=await browser.newContext({ignoreHTTPSErrors:true,
+    viewport:{width:1440,height:900}});
+  await fullAdminContext.addCookies([{name:fixture.cookie_name,value:fixture.admin,url:address,
+    secure:true,sameSite:'Strict'}]);
+  const fullAdminPage=await fullAdminContext.newPage();
+  await fullAdminPage.goto(address+'/workspace/dashboard/',{waitUntil:'domcontentloaded'});
+  await fullAdminPage.getByRole('heading',{name:'Dashboard',exact:true}).waitFor();
+  await fullAdminPage.getByRole('heading',{name:'Network Allocation Overview'}).waitFor();
+  await fullAdminPage.getByRole('heading',{name:'Rack Capacity'}).waitFor();
+  const desktopColumns=await fullAdminPage.locator('#dash-panel-overview .db-two').first().evaluate(el=>{
+    const columns=getComputedStyle(el).gridTemplateColumns.split(' ').map(parseFloat);
+    return columns;
+  });
+  assert.equal(desktopColumns.length,2,'Approved Desktop Dashboard has two columns');
+  assert.ok(desktopColumns[0]>desktopColumns[1],
+    'Approved desktop design has a wider left column');
+  await fullAdminPage.screenshot({path:path.join(screenshots,'dashboard-admin-overview-1440.png'),
+    fullPage:true});
+  await fullAdminPage.getByRole('tab',{name:'Network Insights'}).click();
+  await fullAdminPage.getByRole('heading',{name:'Rack Details'}).waitFor();
+  await fullAdminPage.screenshot({path:path.join(screenshots,'dashboard-admin-insights-1440.png'),
+    fullPage:true});
+  await fullAdminPage.getByRole('tab',{name:'Activity & Alerts'}).click();
+  await fullAdminPage.getByRole('heading',{name:'Reports & Exports'}).waitFor();
+  await fullAdminPage.screenshot({path:path.join(screenshots,'dashboard-admin-activity-1440.png'),
+    fullPage:true});
+  await fullAdminContext.close();
+
   const adminContext=await browser.newContext({ignoreHTTPSErrors:true,
     viewport:{width:390,height:844}});
   await adminContext.addCookies([{name:fixture.cookie_name,value:fixture.admin,url:address,

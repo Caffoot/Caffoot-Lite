@@ -108,7 +108,6 @@
       <div class="eyebrow">YOUR INFRASTRUCTURE AT A GLANCE</div>
       <div class="header db-hero-row">
         <div><h1>Dashboard</h1><p>An organised view of your saved Devices, IPAM and Network Racks.</p></div>
-        <button type="button" class="btn btn-outline db-refresh" on:click={refresh} disabled={loading}>Refresh</button>
       </div>
 
       {#if loading}
