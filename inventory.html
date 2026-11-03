@@ -552,7 +552,36 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .rack-elevation .rack-empty-state:focus-visible > span{color:#a7f3d0!important}
 
 .rack-elevation .rack-drag-preview{z-index:5}
-</style><style id="device-inventory-styles">
+</style><style id="approved-devices-overview-styles">
+/* Keep the Devices overview visually consistent with the approved Dashboard.
+   These rules only change presentation; the existing inventory and filter actions remain in place. */
+.device-devices [data-device-panel="overview"]{min-width:0;width:100%}
+.device-devices [data-device-panel="overview"]>div:first-child h2{font-size:clamp(1.55rem,2.4vw,1.9rem);line-height:1.2;letter-spacing:-.035em;font-weight:800;color:#1f3850}
+.device-devices [data-device-panel="overview"]>div:first-child p{color:#697f94;line-height:1.6}
+.device-devices [data-device-panel="overview"] nav[aria-label="Device Intelligence Sections"]{display:flex;flex-wrap:nowrap;gap:24px;overflow-x:auto;border-bottom:1px solid #dfe7ee;border-radius:0;background:transparent;padding:0}
+.device-devices [data-device-panel="overview"] nav[aria-label="Device Intelligence Sections"] button{flex:none;min-height:44px;border:0;border-bottom:3px solid transparent;border-radius:0;padding:10px 4px 13px;background:transparent;box-shadow:none;color:#7189a0;font-size:12px;font-weight:700;white-space:nowrap}
+.device-devices [data-device-panel="overview"] nav[aria-label="Device Intelligence Sections"] button[aria-current="page"]{color:#1e3850;border-bottom-color:#ed8532}
+.device-devices [data-device-panel="overview"] nav[aria-label="Device Intelligence Sections"] button:focus-visible{outline:3px solid #ed8532;outline-offset:-3px}
+.device-devices [data-device-panel="overview"] section.bg-white,
+.device-devices [data-device-panel="overview"] div.bg-white.rounded-2xl{border-color:#e1e8ee;border-radius:15px;box-shadow:0 7px 26px rgba(31,51,73,.04)}
+.device-devices [data-device-panel="overview"] section h3{color:#263d55;font-size:15px;font-weight:750}
+.device-devices [data-device-panel="overview"] [data-action="device-intelligence-drilldown"],
+.device-devices [data-device-panel="overview"] [data-action="device-hardware-drilldown"],
+.device-devices [data-device-panel="overview"] [data-action="device-os-drilldown"]{border-radius:8px}
+.device-devices [data-device-panel="overview"] [data-action="device-intelligence-drilldown"]:focus-visible,
+.device-devices [data-device-panel="overview"] [data-action="device-hardware-drilldown"]:focus-visible,
+.device-devices [data-device-panel="overview"] [data-action="device-os-drilldown"]:focus-visible{outline:3px solid #ed8532;outline-offset:2px}
+.dark .device-devices [data-device-panel="overview"]>div:first-child h2,
+.dark .device-devices [data-device-panel="overview"] section h3{color:#f1f5f9}
+.dark .device-devices [data-device-panel="overview"]>div:first-child p{color:#cbd5e1}
+.dark .device-devices [data-device-panel="overview"] nav[aria-label="Device Intelligence Sections"]{border-bottom-color:#475569}
+.dark .device-devices [data-device-panel="overview"] nav[aria-label="Device Intelligence Sections"] button{color:#cbd5e1}
+.dark .device-devices [data-device-panel="overview"] nav[aria-label="Device Intelligence Sections"] button[aria-current="page"]{color:#fff;border-bottom-color:#fb923c}
+.dark .device-devices [data-device-panel="overview"] section.bg-white,
+.dark .device-devices [data-device-panel="overview"] div.bg-white.rounded-2xl{border-color:#475569;box-shadow:none}
+@media(max-width:640px){.device-devices [data-device-panel="overview"] nav[aria-label="Device Intelligence Sections"]{gap:16px}}
+</style>
+<style id="device-inventory-styles">
 .inventory-tabs{display:flex;gap:8px;overflow-x:auto;padding:2px 0}
 .inventory-tab{min-height:44px;flex:1 0 auto;border:1px solid #94a3b8;border-radius:12px;background:#f8fafc;color:#334155;padding:10px 16px;font-weight:650;font-size:14px}
 .inventory-tab:hover{background:#e2e8f0}
