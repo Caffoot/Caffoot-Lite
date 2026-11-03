@@ -5,11 +5,12 @@
   export let workspaceMode = false;
   export let sections = {};
   export let isAdmin = false;
+  export let activeSection = 'devices';
   export let onToggle = () => {};
 
   // Until each Svelte section is complete, link to the real working v2.0.3 screen.
   const items = [
-    {id:'dashboard', label:'Dashboard', icon:'▦', href:'/inventory#dashboard'},
+    {id:'dashboard', label:'Dashboard', icon:'▦', href:'/workspace/dashboard/'},
     {id:'devices', label:'Devices', icon:'▣', href:'/workspace/', permission:'Devices'},
     {id:'ipam', label:'IPAM', icon:'⌘', href:'/inventory#ipam', permission:'IPAM'},
     {id:'racks', label:'Network Racks', icon:'▤', href:'/inventory#racks', permission:'Racks'},
@@ -37,16 +38,16 @@
     {#each items as item (item.id)}
       {#if workspaceMode}
         {#if permitted(item, sections, isAdmin)}
-          <a href={item.href} class:current={item.id === 'devices'}
-            aria-current={item.id === 'devices' ? 'page' : undefined} title={item.label}>
+          <a href={item.href} class:current={item.id === activeSection}
+            aria-current={item.id === activeSection ? 'page' : undefined} title={item.label}>
             <span class="nav-glyph" aria-hidden="true">{item.icon}</span>
             {#if !collapsed}<span>{item.label}</span>{/if}
           </a>
         {/if}
       {:else}
-        <button type="button" disabled={item.id !== 'devices'}
-          class:current={item.id === 'devices'}
-          aria-current={item.id === 'devices' ? 'page' : undefined} title={item.label}>
+        <button type="button" disabled={item.id !== activeSection}
+          class:current={item.id === activeSection}
+          aria-current={item.id === activeSection ? 'page' : undefined} title={item.label}>
           <span class="nav-glyph" aria-hidden="true">{item.icon}</span>
           {#if !collapsed}<span>{item.label}</span>{/if}
         </button>
