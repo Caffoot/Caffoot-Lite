@@ -18,9 +18,9 @@
     {id:'settings', label:'Settings & Data', icon:'⚙', href:'/inventory#settings', admin:true}
   ];
 
-  function permitted(item) {
-    if (item.admin) return isAdmin;
-    if (item.permission) return Boolean(sections[item.permission]?.read);
+  function permitted(item, permissions, admin) {
+    if (item.admin) return admin;
+    if (item.permission) return Boolean(permissions[item.permission]?.read);
     return true;
   }
 </script>
@@ -36,7 +36,7 @@
   <nav class="side-nav" aria-label="Main Sections">
     {#each items as item (item.id)}
       {#if workspaceMode}
-        {#if permitted(item)}
+        {#if permitted(item, sections, isAdmin)}
           <a href={item.href} class:current={item.id === 'devices'}
             aria-current={item.id === 'devices' ? 'page' : undefined} title={item.label}>
             <span class="nav-glyph" aria-hidden="true">{item.icon}</span>
