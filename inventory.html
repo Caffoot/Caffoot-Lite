@@ -1127,6 +1127,136 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 }
 .dark #modal-content button.caffoot-modal-cancel:hover { background:#6b2438 !important; }
 </style>
+
+<style id="caffoot-approved-html-dashboard-styles">
+/* Approved Dashboard Draft 02 and My Account Draft 06: appearance only.
+   The existing HTML actions, permissions and stored data remain authoritative. */
+#app{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:#223b53;background:#f5f7fa;font-size:14px}
+#app>#sidebar{width:215px!important;flex:0 0 215px!important;min-width:0;padding:20px 13px 15px;background:#142b43!important;color:#d2dce5;border:0!important;height:100%;gap:12px}
+#sidebar .caffoot-brand{display:flex;align-items:center;gap:10px;margin:1px 7px 16px;min-height:50px}
+#sidebar .caffoot-brand img{width:42px;height:42px;border-radius:10px;flex-shrink:0;object-fit:contain;transform:none!important}
+#sidebar .caffoot-brand-name{font-size:16px;font-weight:750;letter-spacing:-.55px;color:#fff;white-space:nowrap}
+#sidebar .caffoot-brand-name span{color:#ffac6c}
+#sidebar .caffoot-brand-sub{font-size:9px;font-weight:500;letter-spacing:.045em;color:#94abc1;margin-top:3px;white-space:nowrap}
+#sidebar .caffoot-primary-nav{padding:0!important;display:flex;flex-direction:column;gap:2px;min-height:0}
+#sidebar .caffoot-nav-label{font-size:10px;font-weight:700;letter-spacing:.13em;color:#829ab2;margin:10px 11px 4px}
+#sidebar .nav-btn{display:flex;align-items:center;gap:12px;min-height:41px;width:100%;margin:0!important;padding:11px 13px!important;color:#d2dfeb!important;background:transparent!important;border:0;border-radius:10px;text-align:left;font-size:13px!important;font-weight:550!important;box-shadow:none!important}
+#sidebar .nav-btn>i{width:17px!important;text-align:center;flex:0 0 17px;color:#b0c4d7}
+#sidebar .nav-btn:hover,#sidebar .nav-btn:focus-visible{background:#253c54!important;color:#fff!important}
+#sidebar .nav-btn.caffoot-nav-active{background:#2e465e!important;color:#fff!important;font-weight:650!important}
+#sidebar .nav-btn.caffoot-nav-active>i{color:#ffa164}
+#sidebar .nav-btn.hidden{display:none!important}
+#sidebar [id$="-sidebar-actions"]{border-left:1px solid #365069;margin:0 0 5px 23px!important;padding:2px 0 2px 9px!important;min-width:0}
+#sidebar [id$="-sidebar-actions"].hidden{display:none!important}
+#sidebar [id$="-sidebar-actions"] button{color:#c3d3e3!important;border-radius:8px!important;padding:9px 6px!important;font-size:11.5px!important;text-align:left;min-height:34px}
+#sidebar [id$="-sidebar-actions"] button:hover{background:#29445e!important;color:#fff!important}
+#sidebar>div:last-child{padding:10px 0 0!important;border-top:1px solid #365069!important}
+#sidebar>div:last-child>p{display:none}
+#sidebar>div:last-child nav{margin:0!important}
+#sidebar #next-account-nav{display:none!important}
+#sidebar #next-settings-nav{display:flex!important}
+#sidebar .caffoot-collapse-button{width:100%;margin-top:9px;padding:9px 10px;background:#243d56;color:#c7d7e6;display:flex;align-items:center;justify-content:center;gap:9px;border-radius:9px;border:0;min-height:33px;font-size:11px;font-weight:650}
+#sidebar .caffoot-collapse-button i{color:#f5a66a}
+#sidebar .caffoot-collapse-button:hover{background:#2c4a65}
+#sidebar button:focus-visible{outline:3px solid #f5a66a;outline-offset:2px}
+#caffoot-app-topbar{height:64px!important;min-height:64px;background:#fff!important;padding:0 clamp(20px,3vw,44px)!important;border-bottom:1px solid #e1e8ee!important}
+#caffoot-app-topbar .caffoot-breadcrumb{display:flex;align-items:center;gap:10px;min-width:0;color:#75899a;font-size:12px}
+#caffoot-app-topbar #page-title{font-size:12px!important;line-height:1.3;font-weight:650!important;letter-spacing:0;color:#34526b!important;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#caffoot-app-topbar .caffoot-header-account{display:inline-flex;align-items:center;gap:10px;min-height:42px;flex:none;border:1px solid #e2eaf0;background:#fff;border-radius:11px;color:#29445e;font-size:13px;font-weight:750;padding:5px 12px 5px 5px;white-space:nowrap;cursor:pointer}
+#caffoot-app-topbar .caffoot-header-account:hover{border-color:#e6a671;background:#fffaf6}
+#caffoot-app-topbar .caffoot-header-account:focus-visible{outline:3px solid rgba(238,135,55,.33);outline-offset:2px}
+#caffoot-app-topbar .caffoot-header-avatar{display:grid;place-items:center;flex:0 0 32px;width:32px;height:32px;border-radius:50%;background:#f6e5d6;color:#a85d25;font-weight:800;font-size:14px}
+#main-content{background:#f5f7fa!important;padding:30px clamp(22px,3vw,46px) 48px!important;min-width:0}
+#app.caffoot-sidebar-collapsed>#sidebar{width:65px!important;flex-basis:65px!important;padding:16px 8px!important}
+#app.caffoot-sidebar-collapsed #sidebar .caffoot-brand{justify-content:center;margin:0 0 18px}
+#app.caffoot-sidebar-collapsed #sidebar .caffoot-brand img{width:37px;height:37px}
+#app.caffoot-sidebar-collapsed #sidebar .caffoot-brand-text,
+#app.caffoot-sidebar-collapsed #sidebar .caffoot-nav-label,
+#app.caffoot-sidebar-collapsed #sidebar .nav-btn span,
+#app.caffoot-sidebar-collapsed #sidebar .caffoot-collapse-label{display:none!important}
+#app.caffoot-sidebar-collapsed #sidebar .nav-btn{justify-content:center;padding:12px 6px!important}
+#app.caffoot-sidebar-collapsed #sidebar [id$="-sidebar-actions"]{display:none!important}
+#app.caffoot-sidebar-collapsed #sidebar .nav-btn>i{flex:0 0 17px}
+#app.caffoot-dashboard-visible #main-content{background:#f5f7fa!important}
+.caffoot-dashboard{width:100%;color:#223b53}
+.caffoot-dashboard-eyebrow{font-size:11px;font-weight:850;color:#d27931;letter-spacing:.15em;margin-bottom:7px}
+.caffoot-dashboard-heading{margin-bottom:0}
+.caffoot-dashboard-heading h1{font-size:31px;line-height:1.15;margin:0 0 8px;letter-spacing:-1.1px;font-weight:790;color:#1f3850}
+.caffoot-dashboard-heading p{font-size:14px;color:#697f94;line-height:1.6;margin:0}
+.caffoot-dashboard .dashboard-tabs{display:flex;flex-wrap:nowrap;gap:22px;align-items:center;margin:24px 0 0;padding:0;border:0;border-bottom:1px solid #e1e8ee;overflow-x:auto;background:transparent;border-radius:0}
+.caffoot-dashboard .dashboard-tab-control{border:0!important;border-bottom:3px solid transparent!important;border-radius:0!important;background:transparent!important;color:#7189a0!important;display:inline-flex;gap:8px;align-items:center;padding:0 4px 14px!important;margin:0;font-size:13.5px!important;font-weight:700!important;white-space:nowrap;min-height:0;box-shadow:none!important}
+.caffoot-dashboard .dashboard-tab-control.is-active{color:#27435a!important;border-bottom-color:#ed8532!important}
+.caffoot-dashboard .dashboard-tab-control i{font-size:15px}
+.caffoot-dashboard .dashboard-tab-panel:not([hidden]){padding-top:23px}
+.caffoot-dashboard .db-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin:0 0 17px}
+.caffoot-dashboard .db-metric{border:1px solid #e1e8ee!important;background:#fff!important;border-radius:15px;padding:20px 21px;text-align:left;color:#223b53;min-width:0;width:100%;display:flex;flex-direction:column;gap:7px;box-shadow:0 7px 26px rgba(31,51,73,.04);cursor:pointer}
+.caffoot-dashboard .db-metric:hover{border-color:#edb486!important;background:#fffdfb!important}
+.caffoot-dashboard .db-metric:focus-visible{outline:3px solid #ed8532;outline-offset:2px}
+.caffoot-dashboard .db-metric-head{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#5c768e;font-size:12px;font-weight:750}
+.caffoot-dashboard .db-iconwrap{display:grid;place-items:center;flex:0 0 40px;width:40px;height:40px;border-radius:11px;background:#eaf0f7;color:#6685a1;font-size:18px}
+.caffoot-dashboard .db-metric-head .db-iconwrap{flex-basis:35px;width:35px;height:35px}
+.caffoot-dashboard .db-iconwrap.orange{background:#fff2e5;color:#cc7d30}
+.caffoot-dashboard .db-iconwrap.green{background:#e8f6f0;color:#3c917b}
+.caffoot-dashboard .db-metric strong{font-size:31px;line-height:1.12;letter-spacing:-1px;font-weight:820;color:#203951}
+.caffoot-dashboard .db-metric small{font-size:11px;color:#7890a6;line-height:1.4}
+.caffoot-dashboard .db-two{display:grid;grid-template-columns:minmax(0,1.43fr) minmax(300px,1fr);gap:17px;align-items:start}
+.caffoot-dashboard .db-stack{display:grid;align-content:start;gap:16px;min-width:0}
+.caffoot-dashboard .db-card{min-width:0;background:#fff;border:1px solid #e1e8ee;border-radius:15px;box-shadow:0 7px 26px rgba(31,51,73,.04);padding:22px;overflow:hidden}
+.caffoot-dashboard .db-card-head{display:flex;align-items:center;gap:12px}
+.caffoot-dashboard .db-card h3{font-size:16px;line-height:1.3;font-weight:750;color:#263d55;letter-spacing:-.2px;margin:0 0 4px}
+.caffoot-dashboard .db-card-head p{font-size:13px;line-height:1.6;color:#70859a;margin:0}
+.caffoot-dashboard .db-card-rule{border-top:1px solid #e8edf2;margin:18px 0}
+.caffoot-dashboard .db-actionrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.caffoot-dashboard .db-actionrow>div{display:contents}
+.caffoot-dashboard .db-actionrow button,.caffoot-dashboard .db-outline-button{border:1px solid #e0e8ee;border-radius:9px;background:#fff;color:#425e78;font-size:12.5px;font-weight:750;min-height:40px;padding:10px 15px;white-space:nowrap}
+.caffoot-dashboard .db-actionrow button:first-child{background:#ed8532!important;border-color:#ed8532!important;color:#fff!important}
+.caffoot-dashboard .db-actionrow button:first-child:hover{background:#d87327!important}
+.caffoot-dashboard .db-outline-button{width:100%;margin-top:14px}
+.caffoot-dashboard .db-outline-button:hover,.caffoot-dashboard .db-actionrow button:not(:first-child):hover{background:#f5f8fb}
+.caffoot-dashboard .db-device-rows>div{padding:13px 0;border-bottom:1px solid #e9edf2}
+.caffoot-dashboard .db-device-rows>div:last-child{border-bottom:0}
+.caffoot-dashboard .db-progress-title{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:12px;font-weight:700;color:#455e76;margin-top:16px}
+.caffoot-dashboard .db-progress-title:first-of-type{margin-top:0}
+.caffoot-dashboard .db-progress-title strong{font-size:11px;color:#6b8499}
+.caffoot-dashboard .db-bar{width:100%;height:9px;border-radius:99px;overflow:hidden;background:#eaf0f4;margin:9px 0 5px}
+.caffoot-dashboard .db-bar>span{display:block;height:100%;border-radius:99px;max-width:100%}
+.caffoot-dashboard .db-muted{margin:12px 0 0;color:#7890a6;font-size:11.5px;line-height:1.6}
+.caffoot-dashboard .db-legend{display:grid;gap:10px;margin-top:15px}
+.caffoot-dashboard .db-legend>div{display:grid;grid-template-columns:10px minmax(0,1fr) auto;gap:8px;align-items:center;font-size:12px;color:#617c91}
+.caffoot-dashboard .db-legend strong{color:#29445c}
+.caffoot-dashboard .db-dot{width:8px;height:8px;border-radius:50%;background:#ed8532}
+.caffoot-dashboard .db-dot.blue{background:#7396bb}
+.caffoot-dashboard .db-dot.green{background:#4a9c86}
+.caffoot-dashboard .db-error-card{border-color:#e9aaa2;background:#fff8f6}
+.caffoot-dashboard .db-error-card p{color:#944d43;font-size:12px}
+.caffoot-dashboard .dashboard-insights,.caffoot-dashboard .dashboard-activity-card,.caffoot-dashboard .dashboard-summary-panel,.caffoot-dashboard .dashboard-report-panel{border-color:#e1e8ee;background:#fff;box-shadow:0 7px 26px rgba(31,51,73,.04)}
+.caffoot-dashboard .dashboard-insights h3,.caffoot-dashboard .dashboard-activity-heading h3{color:#263d55}
+@media(max-width:1120px){
+ #app>#sidebar{width:215px!important;flex-basis:215px!important}
+ .caffoot-dashboard .db-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .caffoot-dashboard .db-two{grid-template-columns:minmax(0,1fr)}
+}
+@media(max-width:720px){
+ #app>#sidebar{width:65px!important;flex-basis:65px!important;padding:16px 8px!important}
+ #sidebar .caffoot-brand{justify-content:center;margin:0 0 16px}
+ #sidebar .caffoot-brand img{width:36px;height:36px}
+ #sidebar .caffoot-brand-text,#sidebar .caffoot-nav-label,#sidebar .nav-btn span,#sidebar .caffoot-collapse-label{display:none!important}
+ #sidebar .nav-btn{justify-content:center;padding:11px 6px!important}
+ #sidebar [id$="-sidebar-actions"]{display:none!important}
+ #caffoot-app-topbar{height:54px!important;min-height:54px;padding:0 14px!important}
+ #caffoot-app-topbar .caffoot-header-account{padding:4px;min-height:40px;border-radius:50%}
+ #caffoot-app-topbar .caffoot-header-account-text{display:none}
+ #main-content{padding:24px 16px 40px!important}
+ .caffoot-dashboard-heading h1{font-size:25px}
+ .caffoot-dashboard .db-summary{gap:10px}
+ .caffoot-dashboard .db-metric{padding:15px}
+ .caffoot-dashboard .db-metric strong{font-size:25px}
+ .caffoot-dashboard .db-metric-head .db-iconwrap{width:30px;height:30px;flex-basis:30px}
+ .caffoot-dashboard .db-card{padding:18px}
+ .caffoot-dashboard .dashboard-tabs{gap:13px}
+ .caffoot-dashboard .db-actionrow button{flex:1 1 110px}
+}
+</style>
 </head>
 <body class="h-full bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-200">
 
@@ -2199,6 +2329,7 @@ function hierarchyValidateTypes(subnets) {
                 else btn.removeAttribute('aria-current');
             });
             document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.toggle('caffoot-nav-active', btn.dataset.tab === tabId);
                 if(btn.dataset.tab === tabId) {
                     btn.classList.add('bg-indigo-50', 'dark:bg-slate-700/60', 'text-indigo-600', 'dark:text-indigo-400');
                     btn.classList.remove('text-slate-600', 'dark:text-slate-300');
@@ -2576,13 +2707,15 @@ function hierarchyValidateTypes(subnets) {
             const integrityHealthy = integrityErrors.length === 0;
             const integrityPreview = integrityErrors.slice(0, 5);
 
-            const networkSnapshot = `<section class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 space-y-4">
-                <div class="flex items-center justify-between gap-3 flex-wrap"><h3 class="text-base font-bold text-slate-900 dark:text-white">Network Allocation Overview</h3><span class="text-sm text-slate-600 dark:text-slate-300">${subnets.length} subnets · ${reservedDeviceCount} device IP reservations</span></div>
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    ${[['Assigned',subnetAssigned,'text-blue-800 dark:text-sky-200'],['Reserved',subnetReserved,'text-amber-800 dark:text-amber-300'],['Available',Math.max(0,totalSubnetCapacity-subnetAssigned-subnetReserved),'text-emerald-700 dark:text-emerald-300'],['Utilisation',ipUtilisation+'%','text-slate-900 dark:text-white']].map(([label,value,cls])=>`<div class="rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700/40 p-4"><p class="text-xs font-semibold text-slate-600 dark:text-slate-300">${label}</p><p class="mt-1 text-2xl font-bold ${cls}">${value}</p></div>`).join('')}
+            const networkSnapshot = `<section class="db-card">
+                <div class="db-card-head"><span class="db-iconwrap"><i class="fa-solid fa-network-wired" aria-hidden="true"></i></span><div><h3>Network Allocation Overview</h3><p>A summary of your stored addressing data.</p></div></div>
+                <div class="db-card-rule"></div>
+                <div class="db-legend">
+                    <div><span class="db-dot blue"></span><span>Assigned</span><strong>${subnetAssigned}</strong></div>
+                    <div><span class="db-dot"></span><span>Reserved</span><strong>${subnetReserved}</strong></div>
+                    <div><span class="db-dot green"></span><span>Available</span><strong>${Math.max(0,totalSubnetCapacity-subnetAssigned-subnetReserved)}</strong></div>
                 </div>
-                <div class="h-3 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700" role="progressbar" aria-label="IP allocation utilisation" aria-valuenow="${ipUtilisation}" aria-valuemin="0" aria-valuemax="100"><div class="h-full bg-blue-700 dark:bg-sky-400 rounded-full" style="width:${ipUtilisation}%"></div></div>
-                <button type="button" data-action="tab-ipam" class="px-4 py-2.5 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold text-sm">View IP allocations <i class="fa-solid fa-arrow-right ml-1"></i></button>
+                <button type="button" data-action="tab-ipam" class="db-outline-button">View IP Allocations</button>
             </section>`;
             const statusPill = (label, count, classes) => `
                 <div class="flex items-center justify-between px-3 py-2 rounded-xl ${classes}">
