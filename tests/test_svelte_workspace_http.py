@@ -99,6 +99,20 @@ class SvelteWorkspaceRouteTests(unittest.TestCase):
         with patch("backend.server.WORKSPACE_ENABLED", False):
             self.assertEqual(self.request("/")[0], 200)
 
+    def test_private_test_does_not_leave_users_on_old_dashboard(self):
+        with patch("backend.server.WORKSPACE_ENABLED", True):
+            # Existing legacy forms and device links must still render.
+            status, _, body = self.request("/inventory", self.admin_token)
+            self.assertEqual(status, 200)
+            self.assertIn(b'data-caffoot-private-dashboard', body)
+            self.assertIn(b'window.location.replace("/workspace/dashboard/")', body)
+            self.assertIn(b'window.location.hash', body)
+            self.assertEqual(self.request("/workspace/dashboard/", self.admin_token)[0], 200)
+        with patch("backend.server.WORKSPACE_ENABLED", False):
+            status, _, body = self.request("/inventory", self.admin_token)
+            self.assertEqual(status, 200)
+            self.assertNotIn(b'data-caffoot-private-dashboard', body)
+
     def test_workspace_off_by_default(self):
         with patch("backend.server.WORKSPACE_ENABLED", False):
             self.assertEqual(self.request("/workspace/", self.admin_token)[0], 404)
