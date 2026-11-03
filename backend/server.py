@@ -142,7 +142,7 @@ class Handler(BaseHTTPRequestHandler):
         elif self.path.startswith(root + "assets/"):
             name = self.path[len(root + "assets/"):]
             # Only flat build assets: no source files or traversal.
-            if not re.fullmatch(r"[A-Za-z0-9_-][A-Za-z0-9._-]*\\.(?:js|css|png|svg|woff2?)", name):
+            if not re.fullmatch(r"[A-Za-z0-9_-][A-Za-z0-9._-]*\.(?:js|css|png|svg|woff2?)", name):
                 self.respond(404, {"error": "not found"})
                 return
             path = dist / "assets" / name
