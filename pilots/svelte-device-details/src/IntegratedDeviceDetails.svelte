@@ -1,11 +1,16 @@
 <script>
   import { onMount, tick } from 'svelte';
-  import logoUrl from '../../../assets/caffoot-logo-256.png';
+  import WorkspaceNavigation from './WorkspaceNavigation.svelte';
+  import WorkspaceHeader from './WorkspaceHeader.svelte';
   import {
     loadDevices, isVirtual, isHypervisor, platformFor, versionFor,
     findHost, hostedGuests, rackFor, savedSelections
   } from './integration-data.js';
 
+  export let workspaceMode = false;
+  let navSections = {};
+  let username = '';
+  let sessionIsAdmin = false;
   let devices = [];
   let racks = [];
   let rackAccess = false;
@@ -37,7 +42,40 @@
       [['history', 'History']] : [])
   ] : [];
 
-  onMount(() => { refresh(); });
+  onMount(() => {
+    if (workspaceMode) void initialiseWorkspace();
+    else void refresh();
+  });
+
+  async function initialiseWorkspace() {
+    try {
+      // Reuse the published session and section-permissions APIs.
+      const [sessionResponse, permissionResponse] = await Promise.all([
+        fetch('/api/session', {credentials:'same-origin', cache:'no-store'}),
+        fetch('/api/inventory/sections', {credentials:'same-origin', cache:'no-store'})
+      ]);
+      if (!sessionResponse.ok || !permissionResponse.ok) {
+        throw new Error('Please sign in to view the workspace.');
+      }
+      const session = await sessionResponse.json();
+      const access = await permissionResponse.json();
+      username = session.username || '';
+      sessionIsAdmin = Boolean(session.is_admin);
+      navSections = access.sections || {};
+      if (navSections.Devices?.read) {
+        await refresh();
+      } else {
+        // An IPAM/Racks-only user can still use the approved navigation.
+        error = 'You do not have Devices access. Choose a section available to your account.';
+        forbidden = true;
+        loading = false;
+      }
+    } catch (caught) {
+      error = caught.message || 'Unable to load the workspace.';
+      unauthorised = true;
+      loading = false;
+    }
+  }
 
   async function refresh() {
     loading = true;
@@ -98,44 +136,16 @@
 
 <svelte:window on:keydown={handleKey}/>
 
-<div class:collapsed class="shell">
-  <aside class="sidebar" aria-label="Application Navigation">
-    <div class="brand">
-      <img class="logo" src={logoUrl} alt="Caffoot hedgehog logo"/>
-      {#if !collapsed}
-        <div><div class="brand-name">Caffoot <span>Lite</span></div><div class="brand-caption">INFRASTRUCTURE, SIMPLIFIED.</div></div>
-      {/if}
-    </div>
-    {#if !collapsed}<div class="nav-caption">WORKSPACE</div>{/if}
-    <nav class="side-nav" aria-label="Main Sections">
-      {#each sections as section}
-        <button type="button" disabled={section !== 'Devices'} class:current={section === 'Devices'} title={section}
-          aria-current={section === 'Devices' ? 'page' : undefined}>
-          <span class="nav-glyph" aria-hidden="true">{section === 'Devices' ? '▣' : section === 'IPAM' ? '⌘' : section === 'Network Racks' ? '▤' : section === 'Audit Trail' ? '◷' : section === 'Users' ? '♙' : section === 'Settings & Data' ? '⚙' : '▦'}</span>
-          {#if !collapsed}<span>{section}</span>{/if}
-        </button>
-      {/each}
-    </nav>
-    <div class="nav-bottom">
-      <button class="collapse-btn" type="button" on:click={() => collapsed = !collapsed} aria-expanded={!collapsed} aria-label={collapsed ? 'Expand Menu' : 'Collapse Menu'}>
-        <span aria-hidden="true">{collapsed ? '»' : '«'}</span>{#if !collapsed}<span>Collapse Menu</span>{/if}
-      </button>
-    </div>
-  </aside>
-
+<div class:collapsed class:production={workspaceMode} class="shell">
+  <WorkspaceNavigation {collapsed} {workspaceMode} sections={navSections}
+    isAdmin={sessionIsAdmin} onToggle={() => collapsed = !collapsed} />
   <div class="workspace">
-    <header class="topbar">
-      <div class="breadcrumb">Workspace <span>›</span> <strong>Devices</strong></div>
-      <a class="account" href="/inventory" aria-label="Return to existing Caffoot Lite application">
-        <span class="avatar">A</span><span class="account-label">Back to Caffoot Lite</span>
-      </a>
-    </header>
-
+    <WorkspaceHeader {workspaceMode} {username} />
     <main class="main-content">
       <div class="eyebrow">INFRASTRUCTURE INVENTORY</div>
       <div class="page-heading">
         <div><h1>Devices</h1><p>Explore the devices recorded in your inventory.</p></div>
-        <span class="preview-label">Read-only integration test</span>
+        <span class="preview-label">{workspaceMode ? 'Read-only workspace' : 'Read-only integration test'}</span>
       </div>
       <div class="top-tabs" role="tablist" aria-label="Device Sections">
         <button type="button" role="tab" aria-selected="false" disabled>Overview</button>
@@ -150,10 +160,12 @@
 
       <section class="intro-card" aria-label="Integration test information">
         <div>
-          <h2>Real Device Details · Read Only</h2>
-          <p>This development-only screen reads the existing Caffoot Lite Devices API. It cannot edit, create, delete, allocate or save any records. Use the normal application for all other functions.</p>
+          <h2>{workspaceMode ? 'Devices · Read-only workspace' : 'Real Device Details · Read Only'}</h2>
+          <p>{workspaceMode
+            ? 'These details come from your saved inventory. For now, use the existing interface to add, edit or manage records; no actions have been removed.'
+            : 'This development-only screen reads the existing Caffoot Lite Devices API. It cannot edit, create, delete, allocate or save any records. Use the normal application for all other functions.'}</p>
         </div>
-        <a class="btn btn-outline" href="/inventory">Open existing app</a>
+        <a class="btn btn-outline" href={workspaceMode ? '/inventory#devices' : '/inventory'}>{workspaceMode ? 'Manage in existing app' : 'Open existing app'}</a>
       </section>
 
       {#if loading}
