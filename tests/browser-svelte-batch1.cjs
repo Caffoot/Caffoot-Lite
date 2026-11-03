@@ -151,7 +151,17 @@ async function testSignedInData() {
   await fullAdminPage.getByRole('tab',{name:'Overview'}).click();
   await fullAdminPage.getByRole('link',{name:'Add Device'}).click();
   await fullAdminPage.waitForURL('**/inventory#devices/add');
-  await fullAdminPage.locator('#modal-content form[data-device-form="true"]').waitFor();
+  await fullAdminPage.waitForTimeout(1500);
+  console.log('Add Device hand-off diagnostics:',JSON.stringify(await fullAdminPage.evaluate(()=>{
+    const button=document.querySelector('#devices-sidebar-actions [data-action="open-device-modal"]');
+    const modal=document.getElementById('modal-container');
+    return {ready:document.readyState,pageTitle:document.getElementById('page-title')?.textContent,
+      expectedHash:location.hash,buttonPresent:!!button,buttonDisabled:button?.disabled,
+      buttonHidden:button?.hidden,modalPresent:!!modal,modalHidden:modal?.classList.contains('hidden'),
+      formPresent:!!document.querySelector('#modal-content form[data-device-form="true"]'),
+      mainContainerPresent:!!document.getElementById('main-content')};
+  })));
+  await fullAdminPage.locator('#modal-content form[data-device-form="true"]').waitFor({timeout:5000});
   await fullAdminPage.goto(address+'/workspace/dashboard/',{waitUntil:'domcontentloaded'});
   await fullAdminPage.getByRole('link',{name:'Add Rack'}).click();
   await fullAdminPage.waitForURL('**/inventory#racks/add');
