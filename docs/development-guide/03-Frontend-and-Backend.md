@@ -21,7 +21,15 @@ The UI hides edit controls from read-only users, but that is presentation only. 
 
 ## Approved appearance and font loading
 
-The Docker application's first-run and sign-in page uses the existing Caffoot hedgehog, the tagline **“Infrastructure, Simplified.”** and the approved warm-background styling. The inventory screens retain their established layout and controls. Both pages prefer **Inter**, with system-font fallbacks when the external font stylesheet is unavailable. The normal HTTPS authentication, editing and SQLite operations do not depend on the font provider; the published single-file v1.3.3 application retains its separate offline-first behaviour. This is the specific visual-only approval in [#215 §20](https://github.com/Caffoot/Caffoot-Lite/issues/215), not a permission to redesign inventory dialogs.
+The Docker application's first-run and sign-in page uses the existing Caffoot hedgehog, the tagline **“Infrastructure, Simplified.”** and the approved warm-background styling. Both pages prefer **Inter**, with system-font fallbacks when the external font stylesheet is unavailable. The normal HTTPS authentication, editing and SQLite operations do not depend on the font provider; the published single-file v1.3.3 application retains its separate offline-first behaviour. The first-run appearance was approved in [#215 §20](https://github.com/Caffoot/Caffoot-Lite/issues/215).
+
+### Existing HTML Dashboard and navigation
+
+The Docker inventory page uses **the original HTML and JavaScript**, not a separate frontend framework. Its shared navy sidebar, white header and Dashboard composition follow the owner's previously accepted [Dashboard Draft 02](https://github.com/Caffoot/Caffoot-Lite/blob/c26db4a56bbc30f95b56201e81a7a76d13c6037b/future-design/approved/dashboard-draft-02.html) and [My Account Draft 06](https://github.com/Caffoot/Caffoot-Lite/blob/c26db4a56bbc30f95b56201e81a7a76d13c6037b/future-design/approved/my-account-draft-06.html) visual sources. Those drafts remain in Git history; the cancelled framework-migration files and `future-design` directory have **not** been restored to `main`.
+
+The styles for this limited refresh are in `inventory.html` under `caffoot-approved-html-dashboard-styles`. The Dashboard continues to use `renderDashboardHTML` with real saved data, the existing `data-action` controls, permission checks and three Dashboard tabs. Sidebar sections and nested actions remain wired to the same handlers. The original light, dark and system appearance choices remain available.
+
+For a later approved visual change, inspect the existing render function, its controls and this style section before editing; **do not replace live actions with preview-only buttons or rewrite the backend for a CSS change**. The real Chromium checks in `tests/browser-compat.cjs` verify representative navigation, form behaviour, key Dashboard layout rules and responsive widths. Screenshots help check appearance but do not replace a functional test or product-owner review.
 
 ## Local Tailwind stylesheet
 
