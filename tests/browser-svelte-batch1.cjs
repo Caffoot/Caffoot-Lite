@@ -65,7 +65,7 @@ async function testSignedInData() {
   const page=await context.newPage();
   const browserErrors=[];
   page.on('pageerror',e=>browserErrors.push(e.message));
-  assert.equal((await page.goto(address+'/sign-in/',{waitUntil:'networkidle'})).status(),200);
+  assert.equal((await page.goto(address+'/sign-in/',{waitUntil:'domcontentloaded'})).status(),200);
   await page.getByRole('heading',{name:'Welcome Back'}).waitFor();
   await page.getByLabel('Username',{exact:true}).fill('viewer');
   await page.getByLabel('Password',{exact:true}).fill('password');
@@ -97,7 +97,7 @@ async function testSignedInData() {
   const ipamPage=await ipamContext.newPage();
   const requests=[];
   ipamPage.on('request',r=>requests.push(new URL(r.url()).pathname));
-  await ipamPage.goto(address+'/workspace/dashboard/',{waitUntil:'networkidle'});
+  await ipamPage.goto(address+'/workspace/dashboard/',{waitUntil:'domcontentloaded'});
   await ipamPage.getByRole('heading',{name:'Dashboard',exact:true}).waitFor();
   assert.equal(await ipamPage.getByRole('link',{name:'Devices',exact:true}).count(),0);
   assert.ok(!requests.includes('/api/inventory/devices'));
@@ -110,7 +110,7 @@ async function testSignedInData() {
   await adminContext.addCookies([{name:fixture.cookie_name,value:fixture.admin,url:address,
     secure:true,sameSite:'Strict'}]);
   const adminPage=await adminContext.newPage();
-  await adminPage.goto(address+'/workspace/dashboard/',{waitUntil:'networkidle'});
+  await adminPage.goto(address+'/workspace/dashboard/',{waitUntil:'domcontentloaded'});
   await adminPage.getByRole('heading',{name:'Dashboard',exact:true}).waitFor();
   assert.equal(await adminPage.getByRole('link',{name:'IP Addresses'}).count(),1);
   assert.equal(await adminPage.locator('.metric-grid').getByRole('link',{name:'Network Racks'}).count(),1);
@@ -132,7 +132,7 @@ async function testFirstRunAndMfa() {
   const page=await context.newPage();
   const errors=[];
   page.on('pageerror',error=>errors.push(error.message));
-  await page.goto(address+'/sign-in/',{waitUntil:'networkidle'});
+  await page.goto(address+'/sign-in/',{waitUntil:'domcontentloaded'});
   await page.getByRole('heading',{name:'Welcome to Caffoot Lite'}).waitFor();
   await page.screenshot({path:path.join(screenshots,'signin-first-run-1280.png'),fullPage:true});
   await page.getByRole('button',{name:'Get Started'}).click();
@@ -146,7 +146,7 @@ async function testFirstRunAndMfa() {
   await page.screenshot({path:path.join(screenshots,'signin-authenticator-1280.png'),fullPage:true});
 
   // Refreshing during setup must allow resuming with existing credentials.
-  await page.reload({waitUntil:'networkidle'});
+  await page.reload({waitUntil:'domcontentloaded'});
   await page.getByRole('heading',{name:'Finish Administrator Setup'}).waitFor();
   await page.getByLabel('Administrator Username').fill('new-owner');
   await page.getByLabel('Password',{exact:true}).fill('correct-horse-battery-staple');
