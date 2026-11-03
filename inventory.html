@@ -868,6 +868,14 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 @media(max-width:640px){.device-modal .device-form-tabs{gap:14px}.device-modal .device-heading h3{font-size:18px}}
 </style>
 <style id="approved-devices-inventory-styles">
+/* Keep the approved Inventory heading and Add Device action visible above the table. */
+.device-devices [data-device-panel="inventory"] .device-inventory-heading{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:8px}
+.device-devices [data-device-panel="inventory"] .device-inventory-heading h2{font-size:17px;font-weight:750;letter-spacing:-.35px;color:#263d55}
+.device-devices [data-device-panel="inventory"] .device-inventory-heading p{margin-top:4px;color:#70859a;font-size:12px}
+.device-devices [data-device-panel="inventory"] .device-inventory-add-device{display:inline-flex;align-items:center;gap:5px;min-height:42px;padding:9px 15px;white-space:nowrap}
+.dark .device-devices [data-device-panel="inventory"] .device-inventory-heading h2{color:#f8fafc}
+.dark .device-devices [data-device-panel="inventory"] .device-inventory-heading p{color:#cbd5e1}
+
 /* The Inventory keeps its original search, filters and saved-device actions.
    Only the layout and colours change to match the agreed Devices design. */
 .device-devices [data-device-panel="inventory"]>.bg-white,
@@ -4152,9 +4160,9 @@ function hierarchyValidateTypes(subnets) {
                     </section>
                     <section class="${activeDeviceDetailsTab==='inventory'?'':'hidden'} space-y-4" data-device-panel="inventory">
                     <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 sm:p-5 flex flex-col gap-4">
-                        <h3 class="text-base font-bold text-slate-900 dark:text-white">Search & filter devices</h3>
+                        <h3 class="text-base font-bold text-slate-900 dark:text-white">Search &amp; Filter Devices</h3>
                         ${(deviceOsFilter || deviceServiceFilter || deviceMissingFilter || deviceTypeFilter || deviceLocationFilter || deviceHardwareFilter) ? `<div class="flex flex-wrap items-center gap-3 rounded-xl border border-indigo-300 dark:border-indigo-700 bg-indigo-50 dark:bg-indigo-950/40 p-3 text-sm"><span class="font-semibold text-indigo-900 dark:text-indigo-200">${escapeHtml(deviceOsFilter ? "Operating System: "+deviceOsFilter : deviceServiceFilter ? "Software / Service: "+deviceServiceFilter : deviceMissingFilter ? ({ip:"Primary IP: Not Recorded",type:"Device Type: Not Recorded",location:"Location: Not Recorded"}[deviceMissingFilter]||"Data: Not Recorded") : deviceTypeFilter ? "Device Type: "+(deviceTypeFilter==='Server - Physical' ? 'Server' : deviceTypeFilter==='Server - Virtual' ? 'Virtual Machine' : deviceTypeFilter) : deviceHardwareFilter ? ({manufacturer:"Manufacturer",model:"Model",mountType:"Mounting Method"}[deviceHardwareFilter.field]+": "+deviceHardwareFilter.value) : "Location: "+deviceLocationFilter)}</span><span class="text-slate-700 dark:text-slate-200">${getVisibleDevices().length} matching devices</span><button type="button" data-action="clear-device-filters" class="font-semibold text-indigo-700 dark:text-indigo-300 underline">Clear Filter</button></div>` : ''}
-                        <label class="search-label block w-full text-xs font-semibold text-slate-700 dark:text-slate-200">Search devices
+                        <label class="search-label block w-full text-xs font-semibold text-slate-700 dark:text-slate-200">Search Devices
                             <input id="device-search" type="search" placeholder="Name, IP, model, serial or location" value="${escapeHtml(deviceSearchTerm)}" class="mt-1 w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500" />
                         </label>
                         <div class="filter-row flex flex-wrap gap-3 items-end">
@@ -4205,6 +4213,12 @@ function hierarchyValidateTypes(subnets) {
                                 <i class="fa-solid fa-plus mr-1.5"></i> Add Device
                             </button>
                         </div>
+                    </div>
+                    <div class="device-inventory-heading">
+                        <div><h2>Device Inventory</h2><p>The devices saved in your inventory.</p></div>
+                        <button type="button" data-action="open-device-modal" class="device-inventory-add-device">
+                            <i class="fa-solid fa-plus mr-1.5" aria-hidden="true"></i>Add Device
+                        </button>
                     </div>
                     <div class="device-results" aria-live="polite"><span>Showing <strong>${getVisibleDevices().length}</strong> of ${appState.devices.length} devices</span>
                         ${(deviceOsFilter || deviceServiceFilter || deviceMissingFilter || deviceSearchTerm || deviceTypeFilter || deviceStatusFilter || deviceLocationFilter || deviceMountFilter || deviceAssignmentFilter) ? `<button type="button" data-action="clear-device-filters" class="device-form-reset-button"><i class="fa-solid fa-xmark" aria-hidden="true"></i> Clear filters</button>` : ''}
