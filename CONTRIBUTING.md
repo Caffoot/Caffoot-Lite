@@ -45,7 +45,7 @@ This standard applies equally to code written by maintainers and code submitted 
 
 ## Documentation Is Part Of The Change
 
-Do not leave documentation for a later release or for another contributor.
+Do not leave documentation for a later release or for another contributor. For each approved development batch, update the [current development handover](docs/development-guide/Current-Development-Status.md) with meaningful completed work, evidence, decisions, what remains and what must not be repeated. At the published-release gate, archive that version's handover and remove active links to it; open a new handover only once the following development scope is agreed.
 
 - Update the relevant guides for changed behaviour, controls, data flows, deployment steps, configuration or security rules.
 - **When functions are added, removed, moved or renamed, regenerate and review** [`docs/development-guide/Function-Index.md`](docs/development-guide/Function-Index.md) in the same pull request, keeping its source revision and links truthful. The index is a navigation aid, **not** proof that a function is unused; textual reference counts are not a call graph.

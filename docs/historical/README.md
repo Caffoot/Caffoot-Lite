@@ -4,6 +4,8 @@ This directory preserves version-specific release material and completed website
 
 ## Archived materials
 
+**Completed development handovers:** Each release-preparation PR moves the finished active handover into `docs/historical/development-handovers/` using a version-specific filename (for example `v2.0.3.md`). These documents are **historical snapshots**, never permission to restart old tasks. This folder will first appear when a handover is actually archived at a future release gate.
+
 - [Release notes](release-notes/) — published v2.0.1 and v2.0.2 release notes.
 - [Portainer examples](portainer/) — version-specific installation stacks associated with those releases.
 - [Website release preparation](website/Website-Release-Preparation.md) — the original Docker/SQLite website-launch planning record.
