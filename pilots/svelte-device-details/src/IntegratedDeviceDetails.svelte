@@ -24,6 +24,8 @@
   let dialog;
   let lastTrigger;
 
+  $: unavailableWorkspace = workspaceMode && forbidden && !unauthorised &&
+    !navSections.Devices?.read;
   $: device = devices.find(item => item.id === currentId);
   $: virtual = isVirtual(device);
   $: guests = device ? hostedGuests(device, devices) : [];
@@ -139,13 +141,17 @@
   <WorkspaceNavigation {collapsed} {workspaceMode} sections={navSections}
     isAdmin={sessionIsAdmin} onToggle={() => collapsed = !collapsed} />
   <div class="workspace">
-    <WorkspaceHeader {workspaceMode} {username} />
+    <WorkspaceHeader {workspaceMode} {username}
+      sectionTitle={unavailableWorkspace ? 'Workspace' : 'Devices'} />
     <main class="main-content">
       <div class="eyebrow">INFRASTRUCTURE INVENTORY</div>
       <div class="page-heading">
-        <div><h1>Devices</h1><p>Explore the devices recorded in your inventory.</p></div>
+        <div><h1>{unavailableWorkspace ? 'Workspace' : 'Devices'}</h1>
+          <p>{unavailableWorkspace ? 'Choose a section available to your account.' :
+            'Explore the devices recorded in your inventory.'}</p></div>
         <span class="preview-label">{workspaceMode ? 'Read-only workspace' : 'Read-only integration test'}</span>
       </div>
+      {#if !unavailableWorkspace}
       <div class="top-tabs" role="tablist" aria-label="Device Sections">
         <button type="button" role="tab" aria-selected="false" disabled>Overview</button>
         <button type="button" role="tab" aria-selected="true">Device Inventory</button>
@@ -156,7 +162,9 @@
         <button type="button" role="tab" aria-selected="false" disabled>Software</button>
         <button type="button" role="tab" aria-selected="false" disabled>Server Services</button>
       </div>
+      {/if}
 
+      {#if !unavailableWorkspace}
       <section class="intro-card" aria-label="Integration test information">
         <div>
           <h2>{workspaceMode ? 'Devices · Read-only workspace' : 'Real Device Details · Read Only'}</h2>
@@ -166,8 +174,15 @@
         </div>
         <a class="btn btn-outline" href={workspaceMode ? '/inventory#devices' : '/inventory'}>{workspaceMode ? 'Manage in existing app' : 'Open existing app'}</a>
       </section>
+      {/if}
 
-      {#if loading}
+      {#if unavailableWorkspace}
+        <section class="inventory-card integration-message" role="status">
+          <h2>Choose an available section</h2>
+          <p>Your account does not have access to Devices. Use the sidebar to open a section you can access in the existing Caffoot Lite interface.</p>
+          <a class="btn btn-outline" href="/inventory">Open existing app</a>
+        </section>
+      {:else if loading}
         <section class="inventory-card integration-message" role="status"><p>Loading devices…</p></section>
       {:else if error}
         <section class="inventory-card integration-message" role="alert">
