@@ -583,8 +583,8 @@ async function run(){
   await page.locator('#modal-content [data-action="close-modal"]').click();
   console.log('Manufacturer and Custom Software multi-type selection passed');
 
-  await page.setViewportSize({width:390,height:844});
   await page.locator('#devices-sidebar-actions [data-action="sidebar-devices-inventory"]').click();
+  await page.setViewportSize({width:390,height:844});
   await page.locator('[data-device-panel="inventory"] .device-table-wrapper').waitFor();
   const devicesMobileWidth=await page.evaluate(()=>({
     scrollWidth:document.documentElement.scrollWidth,
