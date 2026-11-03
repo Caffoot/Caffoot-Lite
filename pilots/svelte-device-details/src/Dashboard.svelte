@@ -1,5 +1,6 @@
 <script>
   import { onMount } from 'svelte';
+  import './dashboard-approved.css';
   import WorkspaceNavigation from './WorkspaceNavigation.svelte';
   import WorkspaceHeader from './WorkspaceHeader.svelte';
   import { summariseDashboard, dashboardCsv } from './dashboard-data.js';
@@ -83,296 +84,309 @@
   }
 
   const legacy = section => '/inventory#'+section;
+
+  const barColours = ['#4a9c86','#6d95be','#ed8532'];
+  const percent = value => Math.max(0,Math.min(100,Number(value)||0));
+  const usedOnRack = rack => rack.front===null ? null : Math.max(rack.front,rack.rear);
+  const eventTitle = event => event.reason || (event.changes && event.changes[0]?.label) || 'Saved inventory change';
 </script>
 
-<div class="shell production" class:collapsed>
+{#snippet head(title,subtitle,icon,tone='')}
+  <div class="card-head">
+    <span class={'iconwrap '+tone}><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href={'#i-'+icon}></use></svg></span>
+    <div><h3>{title}</h3><p class="sub">{subtitle}</p></div>
+  </div>
+{/snippet}
+
+<svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden" xmlns="http://www.w3.org/2000/svg"><symbol id="i-grid" viewbox="0 0 24 24"><rect height="7" rx="1" width="7" x="3" y="3"></rect><rect height="7" rx="1" width="7" x="14" y="3"></rect><rect height="7" rx="1" width="7" x="3" y="14"></rect><rect height="7" rx="1" width="7" x="14" y="14"></rect></symbol><symbol id="i-box" viewbox="0 0 24 24"><rect height="18" rx="2" width="16" x="4" y="3"></rect><path d="M4 9h16M8 6h1M8 13h8M8 17h8"></path></symbol><symbol id="i-network" viewbox="0 0 24 24"><rect height="6" rx="1" width="6" x="9" y="2"></rect><rect height="6" rx="1" width="6" x="2" y="16"></rect><rect height="6" rx="1" width="6" x="16" y="16"></rect><path d="M12 8v4M5 16v-4h14v4"></path></symbol><symbol id="i-rack" viewbox="0 0 24 24"><rect height="20" rx="2" width="14" x="5" y="2"></rect><path d="M8 6h8M8 11h8M8 16h8M8 20h8"></path><circle cx="8" cy="6" r=".5"></circle><circle cx="8" cy="11" r=".5"></circle></symbol><symbol id="i-history" viewbox="0 0 24 24"><path d="M3 11a9 9 0 1 1 2.5 6.5M3 4v7h7M12 7v5l3 2"></path></symbol><symbol id="i-users" viewbox="0 0 24 24"><circle cx="9" cy="8" r="3"></circle><path d="M3 20v-2a6 6 0 0 1 12 0v2M16 5a3 3 0 0 1 0 6M18 14a5 5 0 0 1 3 5v1"></path></symbol><symbol id="i-settings" viewbox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M10 2h4l.8 2.6 2 1.1 2.6-.7 2 3.5-1.8 2v2.5l1.8 2-2 3.5-2.6-.7-2 1.1L14 22h-4l-.8-2.6-2-1.1-2.6.7-2-3.5 1.8-2v-2.5l-1.8-2 2-3.5 2.6.7 2-1.1Z"></path></symbol><symbol id="i-shield" viewbox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.5 8.5 8 11 4.5-2.5 8-6 8-11V5Z"></path><path d="m9 12 2 2 4-5"></path></symbol><symbol id="i-database" viewbox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v14c0 2 4 3 9 3s9-1 9-3V5M3 12c0 2 4 3 9 3s9-1 9-3"></path></symbol><symbol id="i-download" viewbox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 17v4h16v-4"></path></symbol><symbol id="i-upload" viewbox="0 0 24 24"><path d="M12 21V9m-5 5 5-5 5 5M4 7V3h16v4"></path></symbol><symbol id="i-mail" viewbox="0 0 24 24"><rect height="14" rx="2" width="20" x="2" y="5"></rect><path d="m2 7 10 7 10-7"></path></symbol><symbol id="i-tool" viewbox="0 0 24 24"><path d="M14 4a6 6 0 0 0-7 7L2 16l6 6 5-5a6 6 0 0 0 7-7l-5 4-5-5Z"></path></symbol><symbol id="i-info" viewbox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M12 11v6m0-10h.01"></path></symbol><symbol id="i-chevron" viewbox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></symbol><symbol id="i-copy" viewbox="0 0 24 24"><rect height="13" rx="2" width="13" x="8" y="8"></rect><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"></path></symbol><symbol id="i-send" viewbox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4 20-7ZM11 13l11-11"></path></symbol><symbol id="i-alert" viewbox="0 0 24 24"><path d="M12 3 2 21h20L12 3Zm0 6v5m0 4h.01"></path></symbol><symbol id="i-lock" viewbox="0 0 24 24"><rect height="12" rx="2" width="16" x="4" y="10"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></symbol><symbol id="i-user" viewbox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4 22v-3a8 8 0 0 1 16 0v3"></path></symbol></svg>
+<div class="shell production dashboard-shell" class:collapsed>
   <WorkspaceNavigation {collapsed} workspaceMode sections={sections} {isAdmin}
     activeSection="dashboard" onToggle={() => collapsed = !collapsed}/>
   <div class="workspace">
     <WorkspaceHeader workspaceMode {username} sectionTitle="Dashboard"/>
-    <main class="main-content dashboard">
+    <main class="main dashboard-content">
       <div class="eyebrow">YOUR INFRASTRUCTURE AT A GLANCE</div>
-      <div class="page-heading">
-        <div>
-          <h1>Dashboard</h1>
-          <p>An organised view of your saved Devices, IPAM and Network Racks.</p>
-        </div>
-        <button type="button" class="btn btn-outline" on:click={refresh} disabled={loading}>
-          Refresh
-        </button>
+      <div class="header db-hero-row">
+        <div><h1>Dashboard</h1><p>An organised view of your saved Devices, IPAM and Network Racks.</p></div>
+        <button type="button" class="btn btn-outline db-refresh" on:click={refresh} disabled={loading}>Refresh</button>
       </div>
+
       {#if loading}
-        <section role="status" class="dash-card message">Loading your Dashboard…</section>
+        <section role="status" class="card db-card db-section">Loading your Dashboard…</section>
       {:else if error && !summary}
-        <section role="alert" class="dash-card message">
+        <section role="alert" class="card db-card db-section">
           <h2>Unable to show the Dashboard</h2><p>{error}</p>
           <a class="btn btn-outline" href="/setup">Open Sign In</a>
-          <button class="btn btn-outline" on:click={refresh}>Try Again</button>
+          <button type="button" class="btn btn-outline" on:click={refresh}>Try Again</button>
         </section>
       {:else if summary}
         {#if !mfaEnrolled}
-          <section role="note" class="dash-alert">
-            <strong>Set Up Your Authenticator</strong>
-            <span>Editing requires multi-factor authentication. Read-only access does not.</span>
+          <section role="note" class="db-callout">
+            <strong>Set Up Your Authenticator.</strong> Editing requires multi-factor authentication.
             <a href={legacy('account')}>Open Account Security</a>
           </section>
         {/if}
         {#if isAdmin && summary.healthIssues.length>0}
-          <section class="dash-alert" role="alert">
-            <strong>Inventory Health — attention required</strong>
-            <span>Potential consistency problems found. Use the existing Dashboard for the full check.</span>
+          <section role="alert" class="db-callout">
+            <strong>Inventory Health — attention required.</strong>
+            Potential consistency problems found.
             <a href={legacy('dashboard')}>Review Inventory Health</a>
           </section>
         {/if}
-        <nav class="dash-tabs" role="tablist" aria-label="Dashboard Sections">
+        <nav aria-label="Dashboard Sections" class="subnav" role="tablist">
           {#each tabs as tab}
-            <button type="button" role="tab" id={'dash-tab-'+tab.id}
-              aria-controls={'dash-panel-'+tab.id} aria-selected={selectedTab===tab.id}
-              class:active={selectedTab===tab.id} on:click={() => selectedTab=tab.id}>
+            <button aria-selected={selectedTab===tab.id} class:active={selectedTab===tab.id}
+              role="tab" id={'dash-tab-'+tab.id} aria-controls={'dash-panel-'+tab.id}
+              on:click={() => selectedTab=tab.id} type="button">
+              <svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href={tab.id==='overview'?'#i-grid':tab.id==='insights'?'#i-network':'#i-history'}></use></svg>
               {tab.label}
             </button>
           {/each}
         </nav>
-
         {#if selectedTab==='overview'}
-          <section role="tabpanel" aria-labelledby="dash-tab-overview" id="dash-panel-overview">
-            <div class="metric-grid">
+          <section class="account-panel active" role="tabpanel" id="dash-panel-overview" aria-labelledby="dash-tab-overview">
+            <div class="db-summary metric-grid">
               {#if summary.access.Devices}
-                <a class="metric" href={legacy('devices')}><span>Devices</span><strong>{summary.deviceCount}</strong><small>{summary.activeDevices} active</small></a>
+                <a class="db-metric" href={legacy('devices')} aria-label="Devices">
+                  <span class="db-metric-head">Devices <span class="iconwrap"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><use href="#i-box"></use></svg></span></span>
+                  <strong>{summary.deviceCount}</strong><small>{summary.activeDevices} active · {summary.deviceCount-summary.activeDevices} other</small>
+                </a>
               {/if}
               {#if summary.access.IPAM}
-                <a class="metric" href={legacy('ipam')}><span>IP Addresses</span><strong>{summary.ipAssigned}</strong><small>{summary.ipReserved} reserved</small></a>
-                <a class="metric" href={legacy('ipam')}><span>Subnets</span><strong>{summary.subnetCount}</strong><small>Managed networks</small></a>
+                <a class="db-metric" href={legacy('ipam')} aria-label="IP Addresses">
+                  <span class="db-metric-head">IP Addresses <span class="iconwrap green"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><use href="#i-network"></use></svg></span></span>
+                  <strong>{summary.ipAssigned+summary.ipReserved}</strong><small>{summary.ipAssigned} assigned · {summary.ipReserved} reserved</small>
+                </a>
+                <a class="db-metric" href={legacy('ipam')} aria-label="Subnets">
+                  <span class="db-metric-head">Subnets <span class="iconwrap"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><use href="#i-network"></use></svg></span></span>
+                  <strong>{summary.subnetCount}</strong><small>Managed networks</small>
+                </a>
               {/if}
               {#if summary.access.Racks}
-                <a class="metric" href={legacy('racks')}><span>Network Racks</span><strong>{summary.rackCount}</strong><small>Recorded cabinets</small></a>
+                <a class="db-metric" href={legacy('racks')} aria-label="Network Racks">
+                  <span class="db-metric-head">Racks <span class="iconwrap orange"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><use href="#i-rack"></use></svg></span></span>
+                  <strong>{summary.rackCount}</strong><small>{summary.access.Devices ? summary.devices.filter(device=>device.rackId).length+' mounted devices' : 'Recorded cabinets'}</small>
+                </a>
               {/if}
             </div>
-
-            <div class="dash-grid">
-              <article class="dash-card">
-                <header><h2>Quick Access</h2><p>Use the working application for actions not yet converted.</p></header>
-                <div class="dash-actions">
-                  {#if summary.access.Devices}
-                    <a class="btn btn-outline" href={legacy('devices')}>View Devices</a>
-                    {#if permissions.Devices && permissions.IPAM}
-                      <a class="btn btn-primary" href={legacy('devices')}>Add Device in Existing App</a>
+            <div class="db-two">
+              <div class="db-stack">
+                <div class="card db-card">
+                  {@render head('Quick Access','Existing actions, available according to the signed-in user’s permissions.','grid','orange')}
+                  <div class="db-actionrow">
+                    {#if summary.access.Devices}
+                      {#if permissions.Devices && permissions.IPAM}
+                        <a class="btn btn-primary" href={legacy('devices')}>Add Device</a>
+                      {:else}
+                        <a class="btn btn-outline" href={legacy('devices')}>View Devices</a>
+                      {/if}
                     {/if}
-                  {/if}
-                  {#if summary.access.IPAM}<a class="btn btn-outline" href={legacy('ipam')}>Open IPAM</a>{/if}
-                  {#if summary.access.Racks}
-                    <a class="btn btn-outline" href={legacy('racks')}>View Racks</a>
-                    {#if permissions.Racks}
-                      <a class="btn btn-outline" href={legacy('racks')}>Add Rack in Existing App</a>
+                    {#if summary.access.Racks}
+                      <a class="btn btn-outline" href={legacy('racks')}>{permissions.Racks?'Add Rack':'Open Network Racks'}</a>
                     {/if}
-                  {/if}
+                    {#if summary.access.IPAM}<a class="btn btn-outline" href={legacy('ipam')}>Open IPAM</a>{/if}
+                  </div>
                 </div>
-              </article>
-              {#if summary.access.Devices}
-                <article class="dash-card">
-                  <header><h2>Recent Devices</h2><p>The most recent records in your inventory.</p></header>
-                  {#if summary.devices.length}
-                    <div class="dash-rows">
-                      {#each summary.devices.slice(-5).reverse() as item}
-                        <a href={legacy('devices')} class="dash-row"><span>{item.name || 'Unnamed Device'}</span><small>{item.status || 'Active'}</small></a>
+                {#if summary.access.Devices}
+                  <div class="card db-card">
+                    {@render head('Recent Devices','The latest records in your saved inventory.','box')}
+                    <div class="divider"></div>
+                    {#if summary.devices.length}
+                      {#each summary.devices.slice(-5).reverse() as device}
+                        <div class="db-slimrow">
+                          <div><strong>{device.name || 'Unnamed Device'}</strong><div class="db-muted">{device.type || 'Device'} · {device.primaryIp || 'No IP address'}</div></div>
+                          <span class:db-good={(device.status||'Active').toLowerCase()==='active'} class="db-badge">{device.status || 'Active'}</span>
+                        </div>
                       {/each}
-                    </div>
-                  {:else}<p class="empty">No devices have been recorded yet.</p>{/if}
-                </article>
-              {/if}
-              {#if summary.access.IPAM}
-                <article class="dash-card">
-                  <header><h2>Subnet Utilisation</h2><p>Usable addresses across your networks.</p></header>
-                  {#if summary.ipRows.length}
-                    <div class="dash-rows">
-                      {#each summary.ipRows.slice(0,5) as item}
-                        <div class="dash-row"><span>{item.name || item.cidr}</span>
-                          <small>{item.supported?item.utilisation+'%':'Not supported'}</small></div>
+                    {:else}<p class="db-empty-note">No devices have been recorded yet.</p>{/if}
+                    <a class="btn btn-outline" href={legacy('devices')}>View All Devices</a>
+                  </div>
+                {/if}
+                {#if summary.access.IPAM}
+                  <div class="card db-card">
+                    {@render head('Subnet Utilisation','Usable addresses across existing CIDR networks.','network','green')}
+                    <div class="divider"></div>
+                    {#if summary.ipRows.length}
+                      {#each summary.ipRows.slice(0,5) as subnet,i}
+                        <div class="db-progress-title" style:margin-top={i===0?'0':'18px'}>
+                          <span>{subnet.name || subnet.cidr}{subnet.name && subnet.cidr ? ' · '+subnet.cidr : ''}</span>
+                          <strong>{subnet.supported?subnet.utilisation+'%':'N/A'}</strong>
+                        </div>
+                        <div class="db-bar"><span style:width={percent(subnet.utilisation)+'%'} style:background={barColours[i%3]}></span></div>
                       {/each}
-                    </div>
-                  {:else}<p class="empty">No subnets have been recorded yet.</p>{/if}
-                </article>
-              {/if}
-              {#if summary.access.Racks}
-                <article class="dash-card">
-                  <header><h2>Rack Capacity</h2><p>Front and rear rack space where your account has the relevant access.</p></header>
-                  {#if summary.rackRows.length}
-                    <div class="dash-rows">
-                      {#each summary.rackRows.slice(0,5) as item}
-                        <div class="dash-row"><span>{item.name}</span>
-                          <small>{item.percent===null ? item.height+'U · Placement requires Devices access' :
-                            item.front+'U front / '+item.rear+'U rear / '+item.height+'U'}</small></div>
+                    {:else}<p class="db-empty-note">No subnets have been recorded yet.</p>{/if}
+                    <p class="db-muted" style="margin-bottom:0">Details, reservations and allocations remain managed within IPAM.</p>
+                  </div>
+                {/if}
+              </div>
+              <div class="db-stack">
+                {#if summary.access.Racks}
+                  <div class="card db-card">
+                    {@render head('Rack Capacity','Used U-space across your cabinets.','rack','orange')}
+                    <div class="divider"></div>
+                    {#if summary.rackRows.length}
+                      {#each summary.rackRows.slice(0,5) as rack,i}
+                        <div class="db-progress-title" style:margin-top={i===0?'0':'14px'}>
+                          <span>{rack.name}</span>
+                          <strong>{usedOnRack(rack)===null?'Placement requires Devices access':usedOnRack(rack)+' / '+rack.height+'U'}</strong>
+                        </div>
+                        {#if usedOnRack(rack)!==null}
+                          <div class="db-bar"><span style:width={percent(rack.percent)+'%'} style:background={rack.percent>=70?'#ed8532':'#7799b5'}></span></div>
+                        {/if}
                       {/each}
+                    {:else}<p class="db-empty-note">No racks have been recorded yet.</p>{/if}
+                    <a class="btn btn-outline" href={legacy('racks')}>Open Network Racks</a>
+                  </div>
+                {/if}
+                {#if summary.access.IPAM}
+                  <div class="card db-card">
+                    {@render head('Network Allocation Overview','A summary of your stored addressing data.','network')}
+                    <div class="divider"></div>
+                    <div class="db-legend">
+                      <div><span class="db-dot blue"></span><span>Assigned</span><strong>{summary.assignedInSubnets}</strong></div>
+                      <div><span class="db-dot"></span><span>Reserved</span><strong>{summary.reservedInSubnets}</strong></div>
+                      <div><span class="db-dot green"></span><span>Available</span><strong>{summary.totalAvailable}</strong></div>
                     </div>
-                  {:else}<p class="empty">No racks have been recorded yet.</p>{/if}
-                </article>
-              {/if}
-              {#if summary.access.IPAM}
-                <article class="dash-card">
-                  <header><h2>Network Allocation Overview</h2><p>Saved IP addresses in your accessible networks.</p></header>
-                  <div class="distribution"><span>Assigned</span><strong>{summary.assignedInSubnets}</strong></div>
-                  <div class="distribution"><span>Reserved</span><strong>{summary.reservedInSubnets}</strong></div>
-                  <div class="distribution"><span>Available</span><strong>{summary.totalAvailable}</strong></div>
-                  <div class="distribution"><span>Utilisation</span><strong>{summary.ipUtilisation}%</strong></div>
-                  <progress max="100" value={summary.ipUtilisation} aria-label="Overall IP allocation utilisation"></progress>
-                  <p class="empty">{summary.usableCapacity} usable addresses across your managed networks</p>
-                </article>
-              {/if}
-              <article class="dash-card">
-                <header><h2>Inventory Status</h2><p>Only the areas your account is permitted to view.</p></header>
-                {#if summary.access.Devices}<div class="dash-row"><span>Devices</span><strong>{summary.deviceCount} tracked</strong></div>{/if}
-                {#if summary.access.IPAM}<div class="dash-row"><span>Subnets</span><strong>{summary.subnetCount} configured</strong></div>{/if}
-                {#if summary.access.Racks}<div class="dash-row"><span>Racks</span><strong>{summary.rackCount} configured</strong></div>{/if}
-              </article>
+                    <a class="btn btn-outline" href={legacy('ipam')}>View IP Allocations</a>
+                  </div>
+                {/if}
+                <div class="card db-card">
+                  {@render head('Inventory Status','A concise snapshot of your saved inventory.','info')}
+                  <div class="divider"></div>
+                  {#if summary.access.Devices}<div class="db-slimrow"><strong>Devices</strong><span class="db-badge">{summary.deviceCount} tracked</span></div>{/if}
+                  {#if summary.access.IPAM}<div class="db-slimrow"><strong>Subnets</strong><span class="db-badge">{summary.subnetCount} configured</span></div>{/if}
+                  {#if summary.access.Racks}<div class="db-slimrow"><strong>Racks</strong><span class="db-badge">{summary.rackCount} configured</span></div>{/if}
+                  {#if isAdmin}<p class="db-muted" style="margin-bottom:0">Administrator-only Inventory Health warnings appear only when the real checks detect an issue.</p>{/if}
+                </div>
+              </div>
             </div>
           </section>
         {:else if selectedTab==='insights'}
-          <section role="tabpanel" aria-labelledby="dash-tab-insights" id="dash-panel-insights">
-            <div class="dash-grid">
+          <section class="account-panel active" role="tabpanel" id="dash-panel-insights" aria-labelledby="dash-tab-insights">
+            <div class="db-insights-4">
               {#if summary.access.IPAM}
-                <article class="dash-card"><header><h2>IP Address Utilisation</h2><p>Assigned and reserved addresses in managed networks.</p></header>
-                  {#each summary.ipRows as item}
-                    <div class="distribution"><span>{item.name || item.cidr}</span><strong>{item.supported?item.utilisation+'%':'N/A'}</strong></div>
-                    {#if item.supported}<progress max="100" value={item.utilisation} aria-label={'Utilisation for '+(item.name||item.cidr)}></progress>{/if}
-                  {:else}<p class="empty">No managed networks yet.</p>{/each}
-                </article>
+                <div class="card db-card">
+                  {@render head('IP Address Utilisation','Allocated or reserved addresses across managed subnets.','network','orange')}
+                  <div class="divider"></div>
+                  <div class="db-stat-number">{summary.ipUtilisation}%</div>
+                  <div class="db-bar"><span style:width={percent(summary.ipUtilisation)+'%'} style="background:#7197b9"></span></div>
+                  <div class="db-legend">
+                    <div><span class="db-dot blue"></span><span>Assigned</span><strong>{summary.assignedInSubnets}</strong></div>
+                    <div><span class="db-dot"></span><span>Reserved</span><strong>{summary.reservedInSubnets}</strong></div>
+                    <div><span class="db-dot green"></span><span>Available</span><strong>{summary.totalAvailable}</strong></div>
+                  </div>
+                </div>
               {/if}
               {#if summary.access.Devices}
-                <article class="dash-card"><header><h2>Device Status</h2><p>Status distribution from your saved inventory.</p></header>
-                  {#each summary.statuses as item}
-                    <div class="distribution"><span>{item[0]}</span><strong>{item[1]}</strong></div>
-                  {:else}<p class="empty">No devices recorded yet.</p>{/each}
-                </article>
-                <article class="dash-card"><header><h2>Hardware Distribution</h2><p>Device categories in the inventory.</p></header>
-                  {#each summary.types as item}
-                    <div class="distribution"><span>{item[0]}</span><strong>{item[1]}</strong></div>
-                  {:else}<p class="empty">No device types recorded yet.</p>{/each}
-                </article>
-              {/if}
-              {#if summary.access.Racks}
-                <article class="dash-card"><header><h2>Rack Capacity by Face</h2><p>Front and rear occupancy.</p></header>
-                  {#each summary.rackRows as item}
-                    <div class="distribution"><span>{item.name}</span><strong>{item.percent===null?'Requires Devices access':item.percent+'%'}</strong></div>
-                    {#if item.percent!==null}<progress max="100" value={Math.min(100,item.percent)} aria-label={'Rack occupancy for '+item.name}></progress>{/if}
-                  {:else}<p class="empty">No racks recorded yet.</p>{/each}
-                </article>
-              {/if}
-              {#if summary.access.Racks}
-                <article class="dash-card">
-                  <header><h2>Rack Details</h2><p>Open the existing Rack screen for each cabinet.</p></header>
-                  {#each summary.rackRows as item}
-                    <a class="dash-row" href={legacy('racks')}><span>{item.name}</span><strong>{item.height}U</strong></a>
-                  {:else}<p class="empty">No racks recorded yet.</p>{/each}
-                </article>
-              {/if}
-              <article class="dash-card">
-                <header><h2>Reports &amp; Exports</h2><p>Download the information your account is allowed to view.</p></header>
-                <div class="dash-actions">
-                  {#if summary.access.Devices}<button class="btn btn-outline" on:click={() => download('devices')}>Devices CSV</button>{/if}
-                  {#if summary.access.IPAM}<button class="btn btn-outline" on:click={() => download('subnets')}>Subnets CSV</button>{/if}
-                  {#if summary.access.Racks}<button class="btn btn-outline" on:click={() => download('racks')}>Racks CSV</button>{/if}
-                </div>
-              </article>
-            </div>
-          </section>
-        {:else}
-          <section role="tabpanel" aria-labelledby="dash-tab-activity" id="dash-panel-activity">
-            <div class="metric-grid">
-              <article class="metric"><span>Recent Save Events</span><strong>{summary.events.length}</strong><small>Visible to your account</small></article>
-              <article class="metric"><span>Network Warnings</span><strong>{summary.warnings.length}</strong><small>Potential issues in accessible records</small></article>
-            </div>
-            <div class="dash-grid">
-              <article class="dash-card">
-                <header><h2>Recent Activity</h2><p>Saved changes visible to your account.</p></header>
-                <label class="dash-filter">Activity Type
-                  <select bind:value={activityFilter}>
-                    <option value="all">All Activity</option><option value="devices">Devices</option>
-                    <option value="network">Network</option><option value="racks">Racks</option>
-                  </select>
-                </label>
-                {#each visibleEvents as event}
-                  <div class="dash-event">
-                    <div class="dash-row">
-                      <strong>{event.reason || 'Inventory saved'}</strong>
-                      <small>{event.at && !Number.isNaN(new Date(event.at).getTime())
-                        ?new Date(event.at).toLocaleString('en-GB'):'Date unavailable'}</small>
-                    </div>
-                    {#each (event.changes || []).slice(0,3) as change}
-                      <p class="event-detail">{change.action || 'Changed'} {change.kind || 'record'}: {change.label || ''}</p>
+                <div class="card db-card">
+                  {@render head('Device Status','Status distribution in the saved inventory.','box')}
+                  <div class="divider"></div>
+                  <div class="db-stat-number">{summary.deviceCount} <span class="db-muted">devices</span></div>
+                  <div class="db-legend">
+                    {#each summary.statuses as status,i}
+                      <div><span class={'db-dot '+(i===0?'green':i===2?'gray':'')}></span><span>{status[0]}</span><strong>{status[1]}</strong></div>
                     {/each}
                   </div>
-                {:else}<p class="empty">No activity to show for this selection.</p>{/each}
-                <a href={legacy('audit')} class="dash-more">Open Change History</a>
-              </article>
-              <article class="dash-card">
-                <header><h2>Warnings &amp; Attention</h2><p>Capacity warnings at 85% or more.</p></header>
-                <label class="dash-filter">Severity
-                  <select bind:value={warningFilter}>
-                    <option value="all">All Severities</option>
-                    <option value="critical">Critical only</option>
-                    <option value="warning">Warnings only</option>
-                  </select>
-                </label>
-                {#each visibleWarnings as item}
-                  <a class="dash-row" href={legacy(item.target || 'dashboard')}>
-                    <span><strong>{item.severity==='critical'?'Critical':'Warning'}:</strong> {item.text}</span>
-                  </a>
-                {:else}<p class="empty">No warnings match this selection.</p>{/each}
-                <a href={legacy('dashboard')} class="dash-more">View Existing Dashboard Checks</a>
-              </article>
+                </div>
+                <div class="card db-card">
+                  {@render head('Hardware Distribution','Device categories by inventory count.','box')}
+                  <div class="divider"></div>
+                  {#if summary.types.length}
+                    {#each summary.types.slice(0,6) as type}
+                      <div class="db-progress-title"><span>{type[0]}</span><strong>{type[1]}</strong></div>
+                      <div class="db-bar"><span style:width={percent(type[1]/Math.max(1,summary.types[0][1])*100)+'%'} style="background:#77a8a1"></span></div>
+                    {/each}
+                  {:else}<p class="db-empty-note">No devices have been recorded yet.</p>{/if}
+                </div>
+              {/if}
+              {#if summary.access.Racks}
+                <div class="card db-card">
+                  {@render head('Rack Capacity by Face','Front and rear U occupancy, including accessories.','rack','orange')}
+                  <div class="divider"></div>
+                  {#if summary.rackRows.length}
+                    {#each summary.rackRows.slice(0,3) as rack}
+                      <div class="db-progress-title"><span>{rack.name} — Front</span><strong>{rack.front===null?'Not available':rack.front+' / '+rack.height+'U'}</strong></div>
+                      {#if rack.front!==null}<div class="db-bar"><span style:width={percent(rack.front/rack.height*100)+'%'} style="background:#7396bb"></span></div>{/if}
+                      <div class="db-progress-title"><span>{rack.name} — Rear</span><strong>{rack.rear===null?'Not available':rack.rear+' / '+rack.height+'U'}</strong></div>
+                      {#if rack.rear!==null}<div class="db-bar"><span style:width={percent(rack.rear/rack.height*100)+'%'} style="background:#4a9c86"></span></div>{/if}
+                    {/each}
+                  {:else}<p class="db-empty-note">No racks have been recorded yet.</p>{/if}
+                </div>
+              {/if}
+            </div>
+            {#if summary.access.Racks}
+              <div class="db-section card db-card">
+                {@render head('Rack Details','The existing rack list and per-rack links stay available in this section.','rack')}
+                <div class="divider"></div>
+                <div class="db-grid">
+                  {#each summary.rackRows as rack}
+                    <div class="db-slimrow"><strong>{rack.name}</strong><span class="db-badge">{rack.height}U</span></div>
+                  {/each}
+                </div>
+                <div class="db-actionrow"><a class="btn btn-outline" href={legacy('racks')}>Open Rack Details</a></div>
+              </div>
+            {/if}
+          </section>
+        {:else}
+          <section class="account-panel active" role="tabpanel" id="dash-panel-activity" aria-labelledby="dash-tab-activity">
+            <div class="db-summary db-activity-summary">
+              <div class="card db-card">
+                {@render head('Recent Save Events','Saved inventory changes.','history')}
+                <div class="db-stat-number" style="margin-top:12px">{summary.events.length}</div>
+              </div>
+              <div class="card db-card">
+                {@render head('Network Warnings','Existing consistency and capacity checks.','alert','orange')}
+                <div class="db-stat-number" style="margin-top:12px">{summary.warnings.length}</div>
+              </div>
+            </div>
+            <div class="db-two">
+              <div class="db-stack">
+                <div class="card db-card">
+                  {@render head('Recent Activity','Existing saved-change timeline and filters.','history')}
+                  <div class="divider"></div>
+                  <div class="db-filters">
+                    <label class="db-muted" for="activity-filter">Activity type</label>
+                    <select id="activity-filter" bind:value={activityFilter}><option value="all">All Changes</option><option value="devices">Devices</option><option value="network">Network</option><option value="racks">Racks</option></select>
+                  </div>
+                  {#if visibleEvents.length}
+                    {#each visibleEvents as event}
+                      <div class="db-slimrow"><div><strong>{eventTitle(event)}</strong><div class="db-muted">{(event.changes||[]).map(change=>change.label||change.kind).filter(Boolean).join(', ')}</div></div><span class="db-badge">Saved</span></div>
+                    {/each}
+                  {:else}<p class="db-empty-note">No saved changes match this filter.</p>{/if}
+                  <div class="db-actionrow"><a class="btn btn-outline" href={legacy('audit')}>Full Change History</a></div>
+                </div>
+              </div>
+              <div class="db-stack">
+                <div class="card db-card">
+                  {@render head('Warnings & Attention','IPAM linkage, duplicate IP and rack capacity warnings.','alert','orange')}
+                  <div class="divider"></div>
+                  <div class="db-filters">
+                    <label class="db-muted" for="alert-filter">Severity</label>
+                    <select id="alert-filter" bind:value={warningFilter}><option value="all">All Severities</option><option value="warning">Warning</option><option value="critical">Critical</option></select>
+                  </div>
+                  {#if visibleWarnings.length}
+                    {#each visibleWarnings as warning}
+                      <div class="db-slimrow"><div><strong>{warning.text}</strong><div class="db-muted">{warning.kind} · Saved inventory checks</div></div><span class="db-badge db-warning">{warning.severity}</span></div>
+                    {/each}
+                  {:else}<p class="db-empty-note">No saved warnings match this filter.</p>{/if}
+                </div>
+              </div>
+            </div>
+            <div class="db-section card db-card">
+              {@render head('Reports & Exports','Preserve all CSV and downloadable reports available in the existing application.','download')}
+              <div class="divider"></div>
+              <p class="db-muted">Existing report types, controls and permission requirements remain intact.</p>
+              <div class="db-report-buttons">
+                {#if summary.access.Devices}<button class="btn btn-outline" type="button" on:click={() => download('devices')}>Device Inventory CSV</button>{/if}
+                {#if summary.access.IPAM}<button class="btn btn-outline" type="button" on:click={() => download('subnets')}>IPAM CSV</button>{/if}
+                {#if summary.access.Racks}<button class="btn btn-outline" type="button" on:click={() => download('racks')}>Rack Report</button>{/if}
+              </div>
             </div>
           </section>
         {/if}
-        {#if error}<p role="alert" class="dash-alert">{error}</p>{/if}
+        {#if error}<p role="alert" class="db-callout">{error}</p>{/if}
       {/if}
+      <footer class="footer"><span>Caffoot Lite · Infrastructure, Simplified.</span><span>Dashboard</span></footer>
     </main>
   </div>
 </div>
-
-<style>
-  .dashboard { max-width: none; }
-  .dash-tabs { display:flex; gap:25px; border-bottom:1px solid #dfe7ee; margin:23px 0 24px; overflow-x:auto; }
-  .dash-tabs button { background:none; border:0; border-bottom:3px solid transparent; font-size:13.5px;
-    color:#7890a6; font-weight:700; padding:0 4px 15px; white-space:nowrap; }
-  .dash-tabs button.active { border-bottom-color:#ed8532; color:#1e3850; }
-  .metric-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:15px; margin-bottom:18px; }
-  .metric { background:#fff; border:1px solid #e1e8ee; border-radius:15px; padding:20px; display:grid; gap:7px;
-    text-decoration:none; color:#244057; }
-  .metric span { font-size:12px; color:#6a8398; font-weight:650; }
-  .metric strong { font-size:29px; letter-spacing:-1px; }
-  .metric small { font-size:11px; color:#7990a4; }
-  .metric:hover { border-color:#e5a06e; }
-  .dash-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; }
-  .dash-card { background:#fff; border:1px solid #e1e8ee; border-radius:15px; padding:22px; min-width:0;
-    box-shadow:0 7px 26px rgba(31,51,73,.04); }
-  .dash-card header { margin-bottom:18px; }
-  .dash-card h2 { margin:0 0 5px; font-size:16px; color:#223b53; font-weight:750; }
-  .dash-card header p { font-size:12px; line-height:1.5; color:#70859a; margin:0; }
-  .dash-actions { display:flex; flex-wrap:wrap; gap:10px; }
-  .dash-actions a { text-decoration:none; }
-  .dash-rows { display:grid; }
-  .dash-row { display:flex; align-items:center; justify-content:space-between; gap:13px;
-    padding:12px 0; border-bottom:1px solid #edf0f4; font-size:13px; color:#29445e; }
-  .dash-row:last-child { border-bottom:0; }
-  .dash-row small { text-align:right; color:#71879b; }
-  .dash-event { border-bottom:1px solid #edf0f4; padding-bottom:10px; }
-  .dash-event .dash-row { border-bottom:0; }
-  .event-detail { margin:4px 0; font-size:12px; line-height:1.5; color:#73879b; }
-  a.dash-row { text-decoration:none; }
-  a.dash-row:hover { color:#b66025; }
-  .empty { margin:12px 0; font-size:13px; color:#8194a6; }
-  .distribution { display:flex; justify-content:space-between; gap:14px; margin:15px 0 6px; font-size:13px; }
-  progress { display:block; width:100%; height:10px; accent-color:#ed8532; }
-  .dash-filter { display:grid; gap:7px; margin-bottom:16px; color:#38546b; font-size:12px; font-weight:700; }
-  select { width:100%; border:1px solid #dce5ed; background:#fff; border-radius:9px; padding:10px; color:#254058; }
-  .dash-more { display:inline-block; margin-top:16px; color:#b76527; font-size:12px; font-weight:700; }
-  .message { margin-top:24px; }
-  .dash-alert { display:flex; align-items:center; flex-wrap:wrap; gap:12px; margin-top:18px; margin-bottom:12px;
-    border:1px solid #f2dcc2; background:#fff7ed; border-radius:12px; padding:14px 18px; font-size:13px; }
-  .dash-alert a { color:#a85c22; }
-  @media(max-width:1100px) { .metric-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
-  @media(max-width:850px) { .dash-grid { grid-template-columns:1fr; } }
-  @media(max-width:550px) { .metric-grid { grid-template-columns:1fr 1fr; gap:10px; }
-    .metric { padding:14px; } .dash-card { padding:16px; } .dash-row { align-items:start; flex-wrap:wrap; }
-  }
-</style>

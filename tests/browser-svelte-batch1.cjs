@@ -80,12 +80,14 @@ async function testSignedInData() {
   await page.screenshot({path:path.join(screenshots,'dashboard-devices-reader-1440.png'),
     fullPage:true});
   await page.getByRole('tab',{name:'Network Insights'}).click();
-  assert.equal(await page.getByRole('button',{name:'Subnets CSV'}).count(),0);
+  assert.equal(await page.getByRole('heading',{name:'Reports & Exports'}).count(),0,
+    'Approved reports section belongs under Activity & Alerts');
+  await page.getByRole('tab',{name:'Activity & Alerts'}).click();
+  assert.equal(await page.getByRole('button',{name:'IPAM CSV'}).count(),0);
   const download=page.waitForEvent('download');
-  await page.getByRole('button',{name:'Devices CSV'}).click();
+  await page.getByRole('button',{name:'Device Inventory CSV'}).click();
   const exported=await download;
   assert.ok(exported.suggestedFilename().endsWith('.csv'));
-  await page.getByRole('tab',{name:'Activity & Alerts'}).click();
   await page.getByRole('heading',{name:'Recent Activity'}).waitFor();
   await page.screenshot({path:path.join(screenshots,'dashboard-devices-reader-activity.png'),
     fullPage:true});
