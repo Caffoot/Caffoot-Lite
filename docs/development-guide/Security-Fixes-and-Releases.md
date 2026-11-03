@@ -25,6 +25,17 @@ The current [image workflow](../../.github/workflows/v2-release-image.yml) is ti
 
 The existing [release documentation check](../../.github/workflows/release-documentation.yml) retains the protected-branch job identifier `release-documentation`. The [backend tests](../../.github/workflows/backend-tests.yml), [browser tests](../../.github/workflows/browser-compat.yml), [Docker lifecycle test](../../.github/workflows/compose-lifecycle.yml) and [Git history secret scan](../../.github/workflows/git-history-secrets.yml) have different triggers. Inspect the actual run for the relevant commit: **a skipped or untriggered workflow is not a pass**. See [GitHub Actions](https://github.com/Caffoot/Caffoot-Lite/actions).
 
+### Archive the completed development handover before publication
+
+In the **product-owner-approved release-preparation PR, before creating the release tag**:
+
+1. Update [Current Development Status](Current-Development-Status.md) with what was **actually** delivered, links to approved PRs/tests, deferred work and the final release decision. Do not describe planned work as completed.
+2. Move that version's active handover into `docs/historical/development-handovers/` using a version-specific name, for example `v2.0.3.md`. Mark the archived document **historical** at its top; update its relative links to work from the new folder.
+3. Remove or replace links to the old active file in the root README, Development Guide, contributor guidance and any other referencing document. Check the resulting links and normal required GitHub checks. **Do not leave a stale "Current Development Status" document masquerading as active.**
+4. Only create the next active handover once the product owner has agreed the **next** version's development scope. If no scope is approved, leave no active handover and use GitHub's current published release and closed issue/PR evidence as the starting point.
+
+Archiving is part of release preparation, **not** an automatic background action. Publication, merging and the next implementation phase each still require product-owner approval.
+
 ### Keep the owner experience simple
 
 Whenever available, the assistant or maintainer should prepare the branch, PR, changelog and evidence, then give the owner **one clear decision at a time**: approve the scope, approve the merge, approve the release, and separately approve advisory disclosure when needed. Do not ask the owner to repeat completed work or perform needless manual Git operations. If GitHub permissions require a direct owner action, provide the exact page and plain-English instruction; never imply an action succeeded without verification.
