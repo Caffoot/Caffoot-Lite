@@ -160,8 +160,18 @@ async function testFirstRunAndMfa() {
     await page.getByRole('heading',{name:"You're All Set!"}).waitFor({timeout:8000});
   } catch (caught) {
     const errors=await page.getByRole('alert').allTextContents();
+    const headings=await page.getByRole('heading').allTextContents();
+    const invalid=await page.locator('input:invalid').evaluateAll(inputs=>inputs.map(input=>({
+      label:input.closest('label')?.textContent?.trim().slice(0,45)||'Unknown',
+      pattern:input.validity.patternMismatch,
+      length:input.value.length,
+      missing:input.validity.valueMissing
+    })));
     throw new Error('First administrator MFA confirmation did not complete: '+
-      (errors.join('; ') || 'no visible error')+' ('+page.url()+')',{cause:caught});
+      (errors.join('; ') || 'no visible error')+
+      '; headings='+JSON.stringify(headings)+
+      '; invalid fields='+JSON.stringify(invalid)+
+      ' ('+page.url()+')',{cause:caught});
   }
   await page.getByRole('button',{name:'Return to Sign In'}).click();
   await page.getByLabel('Username',{exact:true}).fill('new-owner');
