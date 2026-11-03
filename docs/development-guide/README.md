@@ -44,7 +44,7 @@ All contributors should first read [CONTRIBUTING.md](../../CONTRIBUTING.md) and 
 - [`backend/schema.py`](../../backend/schema.py): SQLite tables and schema upgrades.
 - [`backend/`](../../backend/): permissions, saves, import and validation modules.
 - [`tests/`](../../tests/): backend and browser compatibility checks.
-- [`compose.yaml`](../../compose.yaml), [`portainer-v2.0.3.yaml`](../historical/portainer/portainer-v2.0.3.yaml) and [`Dockerfile`](../../Dockerfile): deployment configuration.
+- [`compose.yaml`](../../compose.yaml), [`portainer-v2.0.3.yaml`](../../portainer-v2.0.3.yaml) and [`Dockerfile`](../../Dockerfile): deployment configuration.
 - [`app/caffoot-lite.html` at v1.3.3](https://github.com/Caffoot/Caffoot-Lite/blob/v1.3.3/app/caffoot-lite.html): **published** inventory behaviour to preserve.
 
 For current installation instructions see [`INSTALLATION.md`](../../INSTALLATION.md). The [root README](../../README.md) describes the published v2.0.3 Docker/SQLite edition.

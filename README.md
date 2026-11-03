@@ -12,7 +12,7 @@ The repository root contains the Docker application's source: `backend/`, `inven
 
 Before installing, confirm the [v2.0.3 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.3) and container build are published and the image is publicly accessible. This is a Docker application: **GitHub's automatic source-code ZIP and tarball are not the Docker installation package.**
 
-For Portainer, copy [`portainer-v2.0.3.yaml`](docs/historical/portainer/portainer-v2.0.3.yaml) into **Stacks → Add stack → Web editor**, adjust your server address and port, and deploy. For new installations, Docker creates the persistent named volume automatically; no host directory is required. For Docker Compose builds from source, use [`compose.yaml`](compose.yaml) and [`Dockerfile`](Dockerfile) at the repository root.
+For Portainer, use the current-release [`portainer-v2.0.3.yaml`](portainer-v2.0.3.yaml) from the repository root into **Stacks → Add stack → Web editor**, adjust your server address and port, and deploy. For new installations, Docker creates the persistent named volume automatically; no host directory is required. For Docker Compose builds from source, use [`compose.yaml`](compose.yaml) and [`Dockerfile`](Dockerfile) at the repository root.
 
 **Read the [installation and HTTPS guide](INSTALLATION.md)** for complete Portainer/Docker Compose steps, initial administrator setup, MFA, reverse proxy, certificate trust and data backups. No public registration is offered.
 

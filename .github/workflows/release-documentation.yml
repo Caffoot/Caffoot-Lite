@@ -25,7 +25,7 @@ jobs:
               'docs/historical/release-notes/Release-Notes-v2.0.1.md',
               'docs/historical/portainer/portainer-v2.0.2.yaml',
               'docs/historical/release-notes/Release-Notes-v2.0.2.md',
-              'docs/historical/portainer/portainer-v2.0.3.yaml',
+              'portainer-v2.0.3.yaml',
               'docs/historical/release-notes/Release-Notes-v2.0.3.md',
               'docs/historical/development-handovers/v2.0.3.md',
               "docs/How To's/Features and Instructions/README.md",
