@@ -33,19 +33,21 @@ jobs:
         run: |
           test "$(git rev-parse --short=12 HEAD)" != ""
           grep -Fq 'YOUR INFRASTRUCTURE AT A GLANCE' inventory.html
+          grep -Fq 'approved-devices-inventory-styles' inventory.html
           grep -Fq 'COPY inventory.html ./inventory.html' Dockerfile
-          tar -czf "$RUNNER_TEMP/caffoot-pr277-html-build-context.tar.gz" \
+          tar -czf "$RUNNER_TEMP/caffoot-pr279-devices-build-context.tar.gz" \
             Dockerfile Dockerfile.dockerignore backend setup.html inventory.html assets
-          tar -xOzf "$RUNNER_TEMP/caffoot-pr277-html-build-context.tar.gz" inventory.html > "$RUNNER_TEMP/pr277-verify-inventory.html"
-          grep -Fq 'YOUR INFRASTRUCTURE AT A GLANCE' "$RUNNER_TEMP/pr277-verify-inventory.html"
-          tar -tzf "$RUNNER_TEMP/caffoot-pr277-html-build-context.tar.gz" \
+          tar -xOzf "$RUNNER_TEMP/caffoot-pr279-devices-build-context.tar.gz" inventory.html > "$RUNNER_TEMP/pr279-verify-inventory.html"
+          grep -Fq 'YOUR INFRASTRUCTURE AT A GLANCE' "$RUNNER_TEMP/pr279-verify-inventory.html"
+          grep -Fq 'approved-devices-inventory-styles' "$RUNNER_TEMP/pr279-verify-inventory.html"
+          tar -tzf "$RUNNER_TEMP/caffoot-pr279-devices-build-context.tar.gz" \
             | grep -Fx 'assets/caffoot-logo-256.png'
           printf 'Private HTML test build context checked for commit %s\n' "$(git rev-parse HEAD)"
       - name: Keep Portainer test build context
         uses: actions/upload-artifact@v4
         with:
-          name: caffoot-pr277-portainer-build-context
-          path: ${{ runner.temp }}/caffoot-pr277-html-build-context.tar.gz
+          name: caffoot-pr279-devices-portainer-build-context
+          path: ${{ runner.temp }}/caffoot-pr279-devices-build-context.tar.gz
           if-no-files-found: error
           retention-days: 14
       - uses: actions/setup-python@v5
@@ -64,11 +66,11 @@ jobs:
           NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
         run: node tests/browser-compat.cjs
 
-      - name: Save actual Dashboard browser screenshots
+      - name: Save real Dashboard and Devices browser screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: approved-html-dashboard-screenshots
+          name: approved-html-dashboard-and-devices-screenshots
           path: browser-screenshots/
           if-no-files-found: ignore
           retention-days: 14
