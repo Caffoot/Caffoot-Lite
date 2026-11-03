@@ -1,0 +1,64 @@
+name: Svelte read-only device integration
+
+on:
+  pull_request:
+    paths:
+      - 'backend/server.py'
+      - 'tests/test_svelte_readonly_http.py'
+      - 'tests/browser-svelte-readonly.cjs'
+      - 'tests/svelte_readonly_fixture.py'
+      - 'pilots/svelte-device-details/**'
+      - '.github/workflows/svelte-readonly-integration.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  read-only-integration:
+    name: Build and verify protected real-device preview
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Svelte and isolated browser test tools
+        working-directory: pilots/svelte-device-details
+        run: npm install --no-audit --no-fund
+      - name: Build both standalone Svelte pages
+        working-directory: pilots/svelte-device-details
+        run: npm run build
+      - name: Check the original fictional-data pilot still builds
+        working-directory: pilots/svelte-device-details
+        run: npm run test:static
+      - name: Check the permission-aware frontend data adapter
+        working-directory: pilots/svelte-device-details
+        run: node --test test/integration-data.test.mjs
+      - name: Check Python route protections and old pages
+        run: python -m unittest discover -s tests -p test_svelte_readonly_http.py -v
+      - name: Install Chromium
+        working-directory: pilots/svelte-device-details
+        run: npx playwright install --with-deps chromium
+      - name: Test a real HTTPS session and SQLite inventory in Chromium
+        env:
+          NODE_PATH: ${{ github.workspace }}/pilots/svelte-device-details/node_modules
+        run: node tests/browser-svelte-readonly.cjs
+      - name: Recheck the existing Caffoot Lite browser workflows
+        env:
+          NODE_PATH: ${{ github.workspace }}/pilots/svelte-device-details/node_modules
+        run: node tests/browser-compat.cjs
+      - name: Keep screenshot evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: svelte-readonly-integration-screenshots
+          path: pilots/svelte-device-details/playwright-screenshots/
+          if-no-files-found: ignore
+          retention-days: 14

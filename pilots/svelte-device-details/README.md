@@ -41,3 +41,24 @@ Everything on screen is **fictional demonstration data**. The Save Device button
 - Final visual acceptance and a separately agreed decision about whether to adopt Svelte.
 
 No public Docker/GHCR preview image is built or published. We will review the pilot results before considering any production integration or release.
+
+
+## Read-only integration with the existing Caffoot Lite backend
+
+The second, separately agreed experiment adds a **real-data, read-only entry point**, `integration.html`. It is not the fictional-data pilot described above.
+
+The normal Python application will serve it at `/__dev/svelte-device-details/` **only when all three conditions hold**:
+
+1. The test server has been explicitly started with `CAFFOOT_DEV_SVELTE_DETAILS=1`.
+2. The Svelte build has been created locally under this folder's `dist/`.
+3. The browser has an authenticated session with **Devices Read** permission or higher.
+
+A normal v2.0.3 installation has none of the preview build files copied into its Docker image, and the route is switched **off by default**. The ordinary `/setup`, `/inventory`, API requests and Docker installation remain unchanged.
+
+To try the real-data integration, use a **disposable local database**, never a production inventory. Build the frontend with `npm run build` and start the existing Python server with its normal HTTPS settings and the additional development-only environment flag. The preview uses the existing `/api/inventory/sections`, `/api/inventory/devices` and (only when permitted) `/api/inventory/racks` endpoints. It never requests IPAM data or makes a write request. There are no Edit, Save or Delete controls.
+
+Automated tests cover the route's disabled-by-default setting, authentication and section permissions, static-file safety, actual browser rendering and important physical/virtual differences. The new workflow also confirms that the old login and inventory routes remain available. The existing full backend tests run separately on every relevant pull request.
+
+**Still to do later, after separate agreement:** live editing and reservations, real save/validation flows, complete catalogues, detailed history, full permissions across Devices/IPAM/Racks, and wider UI migration. This small experiment does not claim that these are implemented.
+
+The [v2.1 development issue](https://github.com/Caffoot/Caffoot-Lite/issues/266) records what we have approved. Neither this experiment nor its tests authorise a merge or release.

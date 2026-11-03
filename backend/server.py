@@ -1,6 +1,7 @@
 """Caffoot Lite Next HTTPS backend and inventory integration groundwork."""
 import json
 import os
+import re
 import sqlite3
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -43,6 +44,17 @@ PUBLIC_ASSETS = {"favicon.ico": "image/x-icon",
                  "caffoot-icon-1024.png": "image/png",
                  "qrcode.min.js": "application/javascript; charset=utf-8",
                      "tailwind.css": "text/css; charset=utf-8"}
+# The opt-in frontend integration preview is never part of a normal deployment.
+# It serves development-built static files only; the released /inventory stays as-is.
+SVELTE_DEV_ROUTE = "/__dev/svelte-device-details/"
+SVELTE_DEV_DIST = Path(__file__).resolve().parent.parent / "pilots" / "svelte-device-details" / "dist"
+SVELTE_DEV_ENABLED = os.environ.get("CAFFOOT_DEV_SVELTE_DETAILS", "") == "1"
+SVELTE_DEV_MIME = {".js": "text/javascript; charset=utf-8",
+                   ".css": "text/css; charset=utf-8",
+                   ".png": "image/png",
+                   ".svg": "image/svg+xml",
+                   ".woff": "font/woff",
+                   ".woff2": "font/woff2"}
 IMPORT_DRAFTS = ImportDrafts()
 IMPORT_ROUTES = frozenset(("/api/import/preview", "/api/import/access-point-choices",
                            "/api/import/confirm", "/api/import/cancel"))
@@ -89,7 +101,59 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Referrer-Policy", "no-referrer")
         super().end_headers()
 
+    def serve_svelte_dev_preview(self):
+        """Protected, opt-in, read-only Svelte experiment. Never replace /inventory."""
+        if not SVELTE_DEV_ENABLED:
+            self.respond(404, {"error": "not found"})
+            return
+        with connect() as connection:
+            account_id = authenticated_account(connection, self.headers.get("Cookie"))
+            if account_id is None:
+                self.respond(401, {"error": "unauthorised"})
+                return
+            if not can_access(connection, account_id, "Devices"):
+                self.respond(403, {"error": "forbidden"})
+                return
+
+        if self.path == SVELTE_DEV_ROUTE:
+            path = SVELTE_DEV_DIST / "integration.html"
+            content_type = "text/html; charset=utf-8"
+        elif self.path.startswith(SVELTE_DEV_ROUTE + "assets/"):
+            name = self.path[len(SVELTE_DEV_ROUTE + "assets/"):]
+            # Only flat Vite build assets; no user-controlled path traversal.
+            if not re.fullmatch(r"[A-Za-z0-9_-][A-Za-z0-9._-]*\.(?:js|css|png|svg|woff2?)", name):
+                self.respond(404, {"error": "not found"})
+                return
+            path = SVELTE_DEV_DIST / "assets" / name
+            content_type = SVELTE_DEV_MIME.get(path.suffix)
+        else:
+            self.respond(404, {"error": "not found"})
+            return
+
+        if not content_type:
+            self.respond(404, {"error": "not found"})
+            return
+        try:
+            body = path.read_bytes()
+        except OSError:
+            self.respond(404, {"error": "not found"})
+            return
+        self.send_response(200)
+        self.send_header("Content-Type", content_type)
+        self.send_header("Content-Length", str(len(body)))
+        self.send_header("Cache-Control", "no-store")
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("Content-Security-Policy",
+                         "default-src 'none'; script-src 'self'; style-src 'self'; "
+                         "img-src 'self'; connect-src 'self'; font-src 'self'; "
+                         "base-uri 'none'; object-src 'none'; frame-ancestors 'none'")
+        self.end_headers()
+        self.wfile.write(body)
+
     def do_GET(self):
+        if self.path.startswith(SVELTE_DEV_ROUTE):
+            self.serve_svelte_dev_preview()
+            return
         if self.path.startswith("/assets/") and self.path[8:] in PUBLIC_ASSETS:
             name = self.path[8:]
             try:
