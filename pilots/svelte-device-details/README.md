@@ -91,3 +91,21 @@ screenshots for owner review. This is not evidence of acceptance until the
 tests and screenshots have actually been reviewed.
 
 The full release remains v2.0.3. No public preview or new version is authorised.
+
+### Approved Inter typography — Stage 2A
+
+The approved My Account Draft 06 defines the shared font scale and weights.
+The workspace uses locally bundled **Inter Variable** (normal weight axis)
+through `@fontsource-variable/inter@5.3.0`; Vite emits the WOFF2 assets under
+`/workspace/assets/`. This deliberately avoids external font/CDN requests,
+so rendering remains consistent in offline self-hosted installations.
+
+Typography overrides are isolated in `src/workspace-typography.css` and
+imported only by `src/workspace-main.js`. The pre-existing experimental pilot
+and published `/inventory` are not restyled by this change. The browser test
+asserts an actual Inter Variable font load and the owner's accepted main text,
+navigation, title and brand weights. The font is covered by the **SIL Open Font
+License 1.1**; its full licence is copied from the package into the final
+Docker image as `/opt/caffoot/workspace-dist/OFL-Inter.txt`. Source and
+copyright: [Fontsource's Inter package](https://fontsource.org/fonts/inter),
+copyright 2016 the Inter Project Authors.
