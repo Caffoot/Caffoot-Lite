@@ -446,6 +446,11 @@ async function run(){
   await page.locator('#dev-location').selectOption('Unknown');
   await page.locator('#device-hosting-enabled').check();
   await page.locator('#host-platform-select').selectOption('Proxmox VE');
+  await page.getByRole('tab',{name:'Networking'}).click();
+  await page.locator('#dev-block').selectOption('__unassigned__');
+  await page.locator('#dev-vlan').selectOption('17');
+  await page.locator('#dev-subnet').selectOption(subnetId);
+  await page.locator('#dev-ip').fill('10.64.20.12');
   await page.locator('form[data-device-form="true"] button[type="submit"]').click();
   const hostState=await persisted(page,s=>s.devices.some(d=>d.name==='browser-hypervisor' &&
     d.typeDetails?.serverService_Hypervisor===true),'Physical hypervisor');
@@ -461,6 +466,11 @@ async function run(){
     'VMs must not offer the physical Hardware tab');
   assert.ok(await page.locator('#device-form-mounting-options').isHidden(),
     'VMs must not offer independent rack placement');
+  await page.getByRole('tab',{name:'Networking'}).click();
+  await page.locator('#dev-block').selectOption('__unassigned__');
+  await page.locator('#dev-vlan').selectOption('17');
+  await page.locator('#dev-subnet').selectOption(subnetId);
+  await page.locator('#dev-ip').fill('10.64.20.13');
   await page.locator('form[data-device-form="true"] button[type="submit"]').click();
   const vmState=await persisted(page,s=>s.devices.some(d=>d.name==='browser-vm' &&
     d.virtualHostId===hypervisor.id),'Hosted virtual machine');
