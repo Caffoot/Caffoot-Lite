@@ -1,0 +1,20 @@
+import assert from 'node:assert/strict';
+import { readFileSync, readdirSync, existsSync } from 'node:fs';
+import { join } from 'node:path';
+
+const here = new URL('../', import.meta.url);
+const app = readFileSync(new URL('../src/App.svelte', import.meta.url), 'utf8');
+const data = readFileSync(new URL('../src/pilot-data.js', import.meta.url), 'utf8');
+const readme = readFileSync(new URL('../README.md', import.meta.url), 'utf8');
+const dist = new URL('../dist/', import.meta.url);
+const files = readdirSync(dist);
+assert.ok(files.includes('index.html'), 'The build must contain a standalone index.html');
+assert.ok(files.includes('assets'), 'The build must contain local static assets');
+assert.ok(files.includes('index.html') && existsSync(new URL('../dist/assets/', import.meta.url)));
+assert.ok(!app.includes('fetch('), 'The pilot must not fetch real inventory or make HTTP API calls');
+assert.ok(!app.includes('dangerouslySetInnerHTML') && !app.includes('{@html'), 'Sample text must not become raw HTML');
+assert.ok(app.includes('savePreview'), 'The only Save demonstration must stay separate from real app saves');
+assert.ok(app.includes('readOnly'), 'A read-only example must remain available');
+assert.ok(data.includes('Fictional preview records only'), 'The records must be explicitly labelled fictional');
+assert.ok(readme.includes('does not save'), 'The documentation must explain that nothing is saved');
+console.log('Pilot contract checks passed. Static output:', join(here.pathname, 'dist'));
