@@ -25,6 +25,14 @@ class SvelteWorkspaceRouteTests(unittest.TestCase):
         self.db = self.root / "inventory.sqlite3"
         self.dist = self.root / "workspace-dist"
         (self.dist / "assets").mkdir(parents=True)
+        (self.dist / "dashboard.html").write_text(
+            "<html><title>Dashboard build fixture</title></html>", encoding="utf-8")
+        self.signin_dist = self.root / "signin-dist"
+        (self.signin_dist / "assets").mkdir(parents=True)
+        (self.signin_dist / "signin.html").write_text(
+            "<html><title>Sign In build fixture</title></html>", encoding="utf-8")
+        (self.signin_dist / "assets" / "signin-123.js").write_text(
+            "console.log('signin');", encoding="utf-8")
         (self.dist / "workspace.html").write_text(
             "<html><title>Workspace build fixture</title></html>", encoding="utf-8")
         (self.dist / "assets" / "workspace-123.js").write_text(
@@ -48,6 +56,7 @@ class SvelteWorkspaceRouteTests(unittest.TestCase):
         self.patchers = [
             patch("backend.server.DB_PATH", self.db),
             patch("backend.server.WORKSPACE_DIST", self.dist),
+            patch("backend.server.SIGNIN_DIST", self.signin_dist),
         ]
         for item in self.patchers:
             item.start()
@@ -81,6 +90,8 @@ class SvelteWorkspaceRouteTests(unittest.TestCase):
     def test_workspace_off_by_default(self):
         with patch("backend.server.WORKSPACE_ENABLED", False):
             self.assertEqual(self.request("/workspace/", self.admin_token)[0], 404)
+            self.assertEqual(self.request("/workspace/dashboard/", self.admin_token)[0], 404)
+            self.assertEqual(self.request("/sign-in/")[0], 404)
             self.assertEqual(self.request(
                 "/workspace/assets/workspace-123.js", self.admin_token)[0], 404)
 
@@ -94,6 +105,32 @@ class SvelteWorkspaceRouteTests(unittest.TestCase):
             self.assertEqual(self.request(
                 "/workspace/assets/workspace-123.js", self.blocked_token)[0], 403)
             self.assertEqual(self.request("/api/inventory/devices", self.ipam_token)[0], 403)
+
+    def test_new_dashboard_requires_the_same_inventory_access(self):
+        with patch("backend.server.WORKSPACE_ENABLED", True):
+            self.assertEqual(self.request("/workspace/dashboard/")[0], 401)
+            self.assertEqual(self.request(
+                "/workspace/dashboard/", self.blocked_token)[0], 403)
+            status, headers, body = self.request(
+                "/workspace/dashboard/", self.ipam_token)
+            self.assertEqual(status, 200)
+            self.assertIn(b"Dashboard build fixture", body)
+            self.assertIn("script-src 'self'", headers["Content-Security-Policy"])
+
+    def test_opt_in_sign_in_is_public_but_only_serves_known_static_files(self):
+        with patch("backend.server.WORKSPACE_ENABLED", True):
+            status, headers, body = self.request("/sign-in/")
+            self.assertEqual(status, 200)
+            self.assertIn(b"Sign In build fixture", body)
+            self.assertEqual(headers["Cache-Control"], "no-store")
+            self.assertIn("img-src 'self' data:", headers["Content-Security-Policy"])
+            self.assertEqual(self.request("/sign-in/assets/signin-123.js")[0], 200)
+            for path in ("src/signin-main.js", "dashboard.html",
+                         "assets/../signin.html", "assets/.env.js",
+                         "assets/private.py", "assets/not-there.js"):
+                self.assertEqual(self.request("/sign-in/" + path)[0], 404, path)
+            self.assertEqual(self.request("/workspace/")[0], 401)
+            self.assertEqual(self.request("/inventory")[0], 401)
 
     def test_only_compiled_assets_are_served_with_safe_headers(self):
         with patch("backend.server.WORKSPACE_ENABLED", True):
