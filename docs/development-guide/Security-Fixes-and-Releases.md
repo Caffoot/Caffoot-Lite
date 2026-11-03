@@ -21,7 +21,7 @@ This is Caffoot Lite's **short, repeatable process** for correcting security pro
 
 ### Important release-workflow check
 
-The current [image workflow](../../.github/workflows/v2-release-image.yml) is tied **specifically to the `v2.0.2` Git tag and image name**. It will **not** publish v2.0.3 just because that new tag is created. For every next release, prepare and approve the correct trigger, image tag and version metadata **before** creating the release tag. A simpler reusable workflow can be explored separately, but it is **not implemented or authorised by this guide**.
+The [release image workflow](../../.github/workflows/v2-release-image.yml) targets **the `v2.0.3` Git tag and image**, and does not run until that approved matching tag is pushed. For every later release, prepare and approve the exact tag trigger, image name and version metadata **before** creating the next release tag. A simpler reusable workflow can be explored separately, but it is **not implemented or authorised by this guide**.
 
 The existing [release documentation check](../../.github/workflows/release-documentation.yml) retains the protected-branch job identifier `release-documentation`. The [backend tests](../../.github/workflows/backend-tests.yml), [browser tests](../../.github/workflows/browser-compat.yml), [Docker lifecycle test](../../.github/workflows/compose-lifecycle.yml) and [Git history secret scan](../../.github/workflows/git-history-secrets.yml) have different triggers. Inspect the actual run for the relevant commit: **a skipped or untriggered workflow is not a pass**. See [GitHub Actions](https://github.com/Caffoot/Caffoot-Lite/actions).
 
@@ -29,7 +29,7 @@ The existing [release documentation check](../../.github/workflows/release-docum
 
 In the **product-owner-approved release-preparation PR, before creating the release tag**:
 
-1. Update [Current Development Status](Current-Development-Status.md) with what was **actually** delivered, links to approved PRs/tests, deferred work and the final release decision. Do not describe planned work as completed.
+1. Update the **active development status for that version, if present**, with what was actually delivered, merged PRs and tests, deferred work and the release decision. The [v2.0.3 development handover](../historical/development-handovers/v2.0.3.md) is the archived example. Do not describe planned work as completed.
 2. Move that version's active handover into `docs/historical/development-handovers/` using a version-specific name, for example `v2.0.3.md`. Mark the archived document **historical** at its top; update its relative links to work from the new folder.
 3. Remove or replace links to the old active file in the root README, Development Guide, contributor guidance and any other referencing document. Check the resulting links and normal required GitHub checks. **Do not leave a stale "Current Development Status" document masquerading as active.**
 4. Only create the next active handover once the product owner has agreed the **next** version's development scope. If no scope is approved, leave no active handover and use GitHub's current published release and closed issue/PR evidence as the starting point.

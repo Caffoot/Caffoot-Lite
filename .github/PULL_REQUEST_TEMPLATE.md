@@ -26,7 +26,7 @@ Tick the checks relevant to your change. If one doesn't apply, say so rather tha
 - [ ] New code names, folder paths and interface labels follow our [naming conventions](../docs/development-guide/06-Coding-and-Naming-Conventions.md).
 - [ ] New or changed code comments are accurate, understandable and written in plain British English.
 - [ ] Callers, imports, selectors, tests and documentation affected by a rename or refactor have been updated.
-- [ ] Relevant user and developer guides, plus the [current development handover](../docs/development-guide/Current-Development-Status.md), have been updated where needed.
+- [ ] Relevant user and developer guides, plus the active handover (when one exists), or the [archived v2.0.3 handover](../docs/historical/development-handovers/v2.0.3.md), have been updated where needed.
 - [ ] If functions were added, removed or renamed, the [Function Index](../docs/development-guide/Function-Index.md) is accurate, or the reason no update is needed is explained.
 - [ ] Existing functionality, permissions, security and installation compatibility have been checked as appropriate.
 - [ ] Tests run, results and any remaining limitations are described above.

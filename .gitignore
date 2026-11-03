@@ -1,6 +1,4 @@
 # Build output and installed dependencies
-app/node_modules/
-app/dist/
 .DS_Store
 Thumbs.db
 
@@ -15,8 +13,8 @@ Thumbs.db
 id_rsa
 id_ed25519
 
-# Local test inventories and generated datasets; reviewed fixtures under
-# app/fixtures/ are intentional source-controlled examples.
+# Local test inventories and generated datasets; reviewed test fixtures in
+# the current repository remain version-controlled examples.
 caffoot-test-*.json
 *caffoot*dummy*data*.json
 *caffoot*dummy*generator*
