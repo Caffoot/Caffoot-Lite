@@ -209,7 +209,7 @@
         <form on:submit|preventDefault={finishEnrolment}>
           <label>Six-Digit Authenticator Code
             <input bind:value={mfaCode} autocomplete="one-time-code" inputmode="numeric"
-              pattern="[0-9]{6}" maxlength="6" required/></label>
+              pattern={'[0-9]{6}'} maxlength="6" required/></label>
           {#if error}<p role="alert" class="error">{error}</p>{/if}
           <button class="primary" type="submit" disabled={busy}>Confirm MFA Setup</button>
         </form>
@@ -241,7 +241,7 @@
           {#if mode==='login-mfa'}
             <label>Authenticator Code
               <input bind:value={mfaCode} autocomplete="one-time-code" inputmode="numeric"
-                pattern="[0-9]{6}" maxlength="6" required/></label>
+                pattern={'[0-9]{6}'} maxlength="6" required/></label>
           {/if}
           {#if error}<p role="alert" class="error">{error}</p>{/if}
           {#if success}<p role="status" class="success">{success}</p>{/if}
