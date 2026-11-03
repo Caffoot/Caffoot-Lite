@@ -83,10 +83,7 @@ async function run() {
       brand: style('.shell.production .brand-name'),
       heading: style('.shell.production .page-heading h1'),
       faces: [...document.fonts].filter(face =>
-        face.family === 'Inter Variable' && face.status === 'loaded').length,
-      loadedFontUrls: performance.getEntriesByType('resource')
-        .filter(resource => /\.woff2(?:\?|$)/.test(resource.name))
-        .map(resource => resource.name)
+        face.family === 'Inter Variable' && face.status === 'loaded').length
     };
   });
   assert.ok(type.base.family.includes('Inter Variable'), 'Inter Variable must be the primary font');
@@ -97,8 +94,11 @@ async function run() {
   assert.equal(type.heading.size,'31px','Approved title size');
   assert.equal(type.heading.weight,'790','Approved title variable weight');
   assert.ok(type.faces > 0, 'An Inter Variable font must actually load');
-  assert.ok(type.loadedFontUrls.length > 0, 'Bundle local WOFF2 assets, never rely on system fonts');
-  assert.ok(type.loadedFontUrls.every(url=>new URL(url).origin===address),
+  // Network events are more reliable than ResourceTiming entries for fonts
+  // in headless Chromium. Capture requests from before first navigation.
+  const fontRequests = requests.filter(request => request.endsWith('.woff2:GET'));
+  assert.ok(fontRequests.length > 0, 'Bundle local WOFF2 assets, never rely on system fonts');
+  assert.ok(fontRequests.every(request => request.startsWith('/workspace/assets/')),
     'Inter files must load from the Caffoot Lite server only');
   assert.equal(await page.getByRole('link',{name:'My Account'}).count(),1);
   assert.equal(await page.getByRole('link',{name:'IPAM',exact:true}).count(),0,
