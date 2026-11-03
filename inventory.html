@@ -1238,6 +1238,50 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .caffoot-dashboard .db-error-card p{color:#944d43;font-size:12px}
 .caffoot-dashboard .dashboard-insights,.caffoot-dashboard .dashboard-activity-card,.caffoot-dashboard .dashboard-summary-panel,.caffoot-dashboard .dashboard-report-panel{border-color:#e1e8ee;background:#fff;box-shadow:0 7px 26px rgba(31,51,73,.04)}
 .caffoot-dashboard .dashboard-insights h3,.caffoot-dashboard .dashboard-activity-heading h3{color:#263d55}
+
+/* Preserve the established dark appearance where the new HTML layout is used. */
+html.dark #app{background:var(--caffoot-canvas)!important;color:var(--caffoot-ink)}
+html.dark #main-content{background:var(--caffoot-canvas)!important}
+html.dark #app > main > #caffoot-app-topbar{background:var(--caffoot-card)!important;border-bottom-color:#405366!important}
+html.dark #caffoot-app-topbar #page-title{color:#f1f5f9!important}
+html.dark #caffoot-app-topbar .caffoot-breadcrumb{color:#a9bdd0}
+html.dark #caffoot-app-topbar .caffoot-header-account{background:#283747;color:#eef2f7;border-color:#405366}
+html.dark #caffoot-app-topbar .caffoot-header-account:hover{background:#33475b}
+html.dark .caffoot-dashboard{color:#e2e8f0}
+html.dark .caffoot-dashboard-heading h1{color:#f1f5f9}
+html.dark .caffoot-dashboard-heading p{color:#acbfd2}
+html.dark .caffoot-dashboard .dashboard-tabs{border-bottom-color:#405366}
+html.dark .caffoot-dashboard .dashboard-tab-control{color:#adc2d6!important}
+html.dark .caffoot-dashboard .dashboard-tab-control.is-active{color:#ffbd85!important}
+html.dark .caffoot-dashboard .db-metric{background:var(--caffoot-card)!important;border-color:#405366!important;color:#e2e8f0}
+html.dark .caffoot-dashboard .db-metric:hover{background:#293a4b!important;border-color:#edb486!important}
+html.dark .caffoot-dashboard .db-metric strong{color:#f1f5f9}
+html.dark .caffoot-dashboard .db-metric-head,
+html.dark .caffoot-dashboard .db-metric small{color:#b3c5d5}
+html.dark .caffoot-dashboard .db-card{background:var(--caffoot-card);border-color:#405366;color:#e2e8f0}
+html.dark .caffoot-dashboard .db-card h3{color:#f1f5f9}
+html.dark .caffoot-dashboard .db-card-head p,
+html.dark .caffoot-dashboard .db-muted{color:#b3c5d5}
+html.dark .caffoot-dashboard .db-card-rule,
+html.dark .caffoot-dashboard .db-status-row,
+html.dark .caffoot-dashboard .db-device-rows>div{border-color:#405366}
+html.dark .caffoot-dashboard .db-status-row strong,
+html.dark .caffoot-dashboard .db-legend strong,
+html.dark .caffoot-dashboard .db-progress-title{color:#e2e8f0}
+html.dark .caffoot-dashboard .db-status-badge{background:#334a61;color:#e2e8f0}
+html.dark .caffoot-dashboard .db-bar{background:#3b4c5d}
+html.dark .caffoot-dashboard .db-actionrow button:not(:first-child),
+html.dark .caffoot-dashboard .db-outline-button{background:#293a4b;color:#e2e8f0;border-color:#53687c}
+html.dark .caffoot-dashboard .db-actionrow button:not(:first-child):hover,
+html.dark .caffoot-dashboard .db-outline-button:hover{background:#354a60}
+html.dark .caffoot-dashboard .dashboard-insights,
+html.dark .caffoot-dashboard .dashboard-activity-card,
+html.dark .caffoot-dashboard .dashboard-summary-panel,
+html.dark .caffoot-dashboard .dashboard-report-panel{background:var(--caffoot-card);border-color:#405366}
+html.dark .caffoot-dashboard .dashboard-insights h3,
+html.dark .caffoot-dashboard .dashboard-activity-heading h3{color:#f1f5f9}
+html.dark .caffoot-dashboard .db-error-card{background:#3e2b2b;border-color:#a65f5b}
+html.dark .caffoot-dashboard .db-error-card p{color:#ffd4ce}
 @media(max-width:1120px){
  #app>#sidebar{width:215px!important;flex-basis:215px!important}
  .caffoot-dashboard .db-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
