@@ -399,7 +399,10 @@ async function run(){
   await page.locator('#sidebar [data-action="tab-racks"]').click();
   await page.locator('#racks-sidebar-actions [data-action="sidebar-racks-inventory"]').click();
   await page.locator('[data-action="v13-open-rack"][data-id="'+rackId+'"]').click();
+  await page.locator('.rack-elevation [data-rack-device="'+rackSwitch.id+'"]').waitFor();
   await page.locator('[data-action="rack-face-rear"]').click();
+  await page.waitForFunction(()=>document.querySelector('[data-action="rack-face-rear"]')?.getAttribute('aria-pressed')==='true',
+    null,{timeout:5000});
   assert.equal(await page.locator('[data-action="rack-face-rear"]').getAttribute('aria-pressed'),'true');
   assert.ok(await page.locator('[aria-label="Side orientation as viewed from rear face"]').isVisible());
   assert.equal(await page.locator('.rack-elevation [data-rack-device]').count(),0,
