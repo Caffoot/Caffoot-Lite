@@ -813,6 +813,48 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .device-devices .search-label>input{box-sizing:border-box;height:44px;min-height:44px;margin:0}
 @media(max-width:640px){.device-devices .filter-row>label{flex:1 1 145px;min-width:0}}
 </style>
+<style id="approved-device-details-and-forms-styles">
+/* Device Details and the Add/Edit/Duplicate dialog share the approved
+   presentation. Existing tabs, validation, actions and save handling stay unchanged. */
+.device-details-section{border:1px solid #e1e8ee;border-radius:15px;background:#fff;box-shadow:0 7px 26px rgba(31,51,73,.04)}
+.device-details-section h4{color:#263d55;font-weight:750;letter-spacing:-.02em}
+.device-details-field dt{color:#637c92;font-size:11px;font-weight:700}
+.device-details-field dd{color:#223b53;font-size:13px}
+.device-details-action-footer{border-top-color:#e1e8ee;gap:10px}
+.device-details-action-footer button{border-radius:9px;font-size:12px;font-weight:750}
+.device-details-action-footer .device-details-secondary-action{background:#fff;color:#425e78;border-color:#dce5ed}
+.device-details-action-footer .device-details-secondary-action:hover{background:#f5f8fb}
+.device-details-action-footer .device-details-edit-action{background:#ed8532;border-color:#ed8532;color:#fff}
+.device-details-action-footer .device-details-edit-action:hover{background:#d87327}
+.device-details-action-footer button:focus-visible{outline:3px solid #ed8532;outline-offset:2px}
+.device-modal .device-heading{border-bottom:1px solid #e1e8ee;padding-bottom:17px;margin-bottom:16px}
+.device-modal .device-heading h3{color:#1f3850;font-size:20px;font-weight:790;letter-spacing:-.04em}
+.device-modal .device-form-tabs{gap:18px;border-bottom:1px solid #dfe7ee;padding-bottom:0}
+.device-modal .device-form-tab{border:0;border-bottom:3px solid transparent;border-radius:0;background:transparent;padding:12px 4px 14px;color:#7189a0;font-size:12px;font-weight:700;white-space:nowrap}
+.device-modal .device-form-tab:hover:not([aria-selected="true"]){background:transparent;border-bottom-color:#f0b47c;color:#1e3850}
+.device-modal .device-form-tab[aria-selected="true"]{background:transparent;border-bottom-color:#ed8532;color:#1e3850}
+.device-modal .device-form-tab:focus-visible{outline:3px solid #ed8532;outline-offset:-3px}
+.device-modal .form-section-card{border-color:#e1e8ee;border-radius:12px;background:#f8fafc}
+.device-modal .form-section-heading{color:#345069;font-weight:750;letter-spacing:.03em}
+.device-modal .form-label{color:#526d84;font-size:12px}
+.device-modal .form-help{color:#70859a}
+.device-modal .form-actions{border-top:1px solid #e1e8ee}
+.device-modal .form-actions button:focus-visible{outline:3px solid #ed8532;outline-offset:2px}
+.dark .device-details-section{background:#1e293b;border-color:#475569;box-shadow:none}
+.dark .device-details-section h4,.dark .device-details-field dd{color:#f8fafc}
+.dark .device-details-field dt{color:#cbd5e1}
+.dark .device-details-action-footer{border-color:#475569}
+.dark .device-details-action-footer .device-details-secondary-action{background:#334155;border-color:#64748b;color:#f1f5f9}
+.dark .device-modal .device-heading,.dark .device-modal .device-form-tabs,.dark .device-modal .form-actions{border-color:#475569}
+.dark .device-modal .device-heading h3{color:#f8fafc}
+.dark .device-modal .device-form-tab{color:#cbd5e1}
+.dark .device-modal .device-form-tab:hover:not([aria-selected="true"]){background:transparent;border-bottom-color:#fb923c;color:#fff}
+.dark .device-modal .device-form-tab[aria-selected="true"]{background:transparent;border-bottom-color:#fb923c;color:#fff}
+.dark .device-modal .form-section-card{border-color:#475569;background:#0f172a}
+.dark .device-modal .form-section-heading,.dark .device-modal .form-label{color:#e2e8f0}
+.dark .device-modal .form-help{color:#cbd5e1}
+@media(max-width:640px){.device-modal .device-form-tabs{gap:14px}.device-modal .device-heading h3{font-size:18px}}
+</style>
 <style id="approved-devices-inventory-styles">
 /* The Inventory keeps its original search, filters and saved-device actions.
    Only the layout and colours change to match the agreed Devices design. */
