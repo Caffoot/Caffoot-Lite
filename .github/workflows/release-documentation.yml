@@ -1,10 +1,11 @@
 name: Release documentation consistency
 
-# Retain the existing required 'release-documentation' branch check.
-# The previous checker depended on obsolete standalone-era documentation.
+# Keep the required 'release-documentation' branch check unchanged.
+# A reusable check also protects manual releases, without version-specific edits.
 on:
   pull_request:
   workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read
@@ -14,30 +15,56 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Check approved release documentation paths
+      - name: Check release documentation and compatibility paths
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import re
+
+          readme = Path('README.md').read_text(encoding='utf-8')
+          match = re.match(r'# Caffoot Lite (v[0-9]+\.[0-9]+(?:\.[0-9]+)?)\s*\n', readme)
+          if not match:
+              raise SystemExit('README title must identify the current release version')
+          version = match.group(1)
+
+          current_stack = f'portainer-{version}.yaml'
+          current_notes = f'docs/historical/release-notes/Release-Notes-{version}.md'
           required = (
               'README.md',
               'INSTALLATION.md',
-              'docs/historical/portainer/portainer-v2.0.1.yaml',
-              'docs/historical/release-notes/Release-Notes-v2.0.1.md',
-              'docs/historical/portainer/portainer-v2.0.2.yaml',
-              'docs/historical/release-notes/Release-Notes-v2.0.2.md',
-              'portainer-v2.0.3.yaml',
-              'docs/historical/release-notes/Release-Notes-v2.0.3.md',
-              'docs/historical/development-handovers/v2.0.3.md',
+              current_stack,
+              current_notes,
+              f'docs/historical/development-handovers/{version}.md',
               "docs/How To's/Features and Instructions/README.md",
               'docs/how-tos/features-and-instructions/README.md',
               'docs/development-guide/README.md',
           )
           for name in required:
               if not Path(name).is_file():
-                  raise SystemExit(f'Expected approved release document missing: {name}')
+                  raise SystemExit(f'Expected release document missing: {name}')
               print('OK:', name)
-          # Published v2.0.2 installations still use the original guide URLs.
-          # Every old-path guide must match its official copy byte-for-byte.
+
+          root_stacks = {path.name for path in Path('.').glob('portainer-v*.yaml')}
+          if root_stacks != {current_stack}:
+              raise SystemExit(f'Expected only {current_stack} in the repository root; found {sorted(root_stacks)}')
+
+          # Older releases keep their historical Portainer files and notes.
+          older_stacks = {
+              path.name.removeprefix('portainer-').removesuffix('.yaml')
+              for path in Path('docs/historical/portainer').glob('portainer-v*.yaml')
+          }
+          older_notes = {
+              path.name.removeprefix('Release-Notes-').removesuffix('.md')
+              for path in Path('docs/historical/release-notes').glob('Release-Notes-v*.md')
+          } - {version}
+          if older_stacks != older_notes:
+              raise SystemExit(
+                  'Historical release notes and Portainer examples disagree: '
+                  f'{sorted(older_stacks ^ older_notes)}'
+              )
+
+          # Published older installations use the previous guide URLs.
+          # Both directories must contain matching, byte-identical guides.
           official = Path('docs/how-tos/features-and-instructions')
           original = Path("docs/How To's/Features and Instructions")
           guide_names = {
@@ -48,7 +75,9 @@ jobs:
           for directory in (official, original):
               found = {file.name for file in directory.glob('*.md')}
               if found != guide_names:
-                  raise SystemExit(f'Guide files missing or unexpected in {directory}: {sorted(found ^ guide_names)}')
+                  raise SystemExit(
+                      f'Guide files missing or unexpected in {directory}: {sorted(found ^ guide_names)}'
+                  )
           for name in sorted(guide_names):
               if (official / name).read_bytes() != (original / name).read_bytes():
                   raise SystemExit(f'Published guide compatibility copy differs: {name}')

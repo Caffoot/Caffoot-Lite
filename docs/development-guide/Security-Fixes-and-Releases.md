@@ -21,7 +21,27 @@ This is Caffoot Lite's **short, repeatable process** for correcting security pro
 
 ### Important release-workflow check
 
-The [release image workflow](../../.github/workflows/v2-release-image.yml) targets **the `v2.0.3` Git tag and image**, and does not run until that approved matching tag is pushed. For every later release, prepare and approve the exact tag trigger, image name and version metadata **before** creating the next release tag. A simpler reusable workflow can be explored separately, but it is **not implemented or authorised by this guide**.
+### Publish Caffoot Lite in one controlled run
+
+The [Publish Caffoot Lite workflow](../../.github/workflows/publish-release.yml) is the **only publishing entry point**. It runs on a manual GitHub Actions request, rather than publishing automatically when a PR is merged or a tag is pushed. It supports stable version numbers such as `2.0.3` and `2.1`; the leading `v` is optional.
+
+After the version's development and release-preparation pull requests have been reviewed and merged, and **only after the owner has explicitly approved publication**:
+
+1. Open [GitHub → Actions](https://github.com/Caffoot/Caffoot-Lite/actions), choose **Publish Caffoot Lite**, then **Run workflow**.
+2. Select **main**, enter the approved version number, and select **Run workflow**.
+3. Review the workflow results. Do **not** tell users to pull the new image until the GitHub Release and the public multi-platform image are confirmed.
+
+The workflow permits publication only by the approved maintainer's GitHub login, `sdelnevo`, including re-runs, and only from protected `main`. Changing the permitted account needs a reviewed, separately approved update. This does **not** require a personal access token or account credentials in the repository.
+
+Before making anything public, the workflow checks the About-page version, README, installation guide, root Portainer file, release notes, historical handover and duplicate version tags. It rejects a version that is not newer than the latest published release. It then runs our **existing backend, Chromium, Docker persistence, release-documentation and Git-history tests**, sharing their maintained definitions rather than creating alternative checks.
+
+Once those checks pass, GitHub creates the new tag at the **exact tested commit**, builds and pushes the AMD64/ARM64 Docker image, checks both platforms and attempts an anonymous registry read to confirm public access. **Only then** does it publish the GitHub Release using the approved release-notes file. Creating a tag using the workflow's standard `GITHUB_TOKEN` does not start a second publication workflow; the old tag-triggered image workflow has been replaced.
+
+**If any publication step fails:** stop and inspect the Actions log, tag, GHCR image and GitHub Release. A failed run may have created a tag or image already; those operations are not one atomic transaction. The duplicate-tag safeguard will intentionally refuse an ordinary re-run. Agree a focused recovery before trying again; never silently delete, rewrite or retag an existing release.
+
+**Safe testing:** Pull requests modifying the release process run read-only preflight tests with **no tag, image or GitHub Release creation**. The existing required `release-documentation` check retains its job identifier. Each actual release still requires its own approved version references and documentation; the publishing workflow itself should not need a version-specific rewrite.
+
+Website publication, production deployment and any security-advisory disclosure remain separate decisions.
 
 The existing [release documentation check](../../.github/workflows/release-documentation.yml) retains the protected-branch job identifier `release-documentation`. The [backend tests](../../.github/workflows/backend-tests.yml), [browser tests](../../.github/workflows/browser-compat.yml), [Docker lifecycle test](../../.github/workflows/compose-lifecycle.yml) and [Git history secret scan](../../.github/workflows/git-history-secrets.yml) have different triggers. Inspect the actual run for the relevant commit: **a skipped or untriggered workflow is not a pass**. See [GitHub Actions](https://github.com/Caffoot/Caffoot-Lite/actions).
 
