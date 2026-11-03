@@ -550,6 +550,26 @@ async function run(){
   }
   console.log('Rack front/rear view, L/R markers and printable elevations passed');
 
+  // An inventory row has one Details action. Editing and deletion remain available
+  // inside the details view, including the link to the device's rack.
+  await page.locator('#sidebar [data-action="tab-devices"]').click();
+  await page.locator('#devices-sidebar-actions [data-action="sidebar-devices-inventory"]').click();
+  await page.locator('[data-device-panel="inventory"] .device-table-wrapper').waitFor();
+  assert.equal(await page.locator('[data-device-panel="inventory"] .device-menu').count(),0,
+    'Inventory rows must not have the removed three-dot action menu');
+  const rackDeviceRow=page.locator('[data-device-panel="inventory"] tbody tr')
+    .filter({has:page.locator('[data-action="view-device"][data-id="'+rackSwitch.id+'"]')});
+  assert.equal(await rackDeviceRow.locator('button.device-detail-summary').count(),1,
+    'Each inventory row must have one Details button');
+  await rackDeviceRow.locator('button.device-detail-summary').click();
+  for(const action of ['edit-device-from-details','duplicate-device-from-details',
+                       'delete-device-from-details','navigate-to-device-rack']){
+    assert.equal(await page.locator('.device-details-action-footer [data-action="'+action+'"]').count(),1,
+      'Device Details must retain '+action);
+  }
+  await page.locator('.device-details-action-footer [data-action="close-modal"]').click();
+  console.log('Single inventory Details action and existing device actions passed');
+
   // The VM form must use an eligible physical hypervisor, not a separate rack position.
   await page.locator('#sidebar [data-action="tab-devices"]').click();
   await modal(page,'openDeviceModal');
