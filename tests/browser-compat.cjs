@@ -621,6 +621,7 @@ async function run(){
   // The VM form must use an eligible physical hypervisor, not a separate rack position.
   await page.locator('#sidebar [data-action="tab-devices"]').click();
   await modal(page,'openDeviceModal');
+  await page.screenshot({path:path.join(screens,'devices-add-form-working-html.png'),fullPage:true});
   await page.locator('#dev-name').fill('browser-hypervisor');
   await page.locator('#dev-type').selectOption('Server - Physical');
   await page.locator('#dev-mount-type').selectOption('Tower / Floor Standing');
