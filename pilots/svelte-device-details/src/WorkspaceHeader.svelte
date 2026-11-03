@@ -10,7 +10,7 @@
   </div>
   <div class="top-right">
     {#if workspaceMode}
-      <a class="header-account" href="/inventory#account" aria-label="Open My Account">
+      <a class="header-account" href="/inventory#account" aria-label="Open My Account in Caffoot Lite">
         <span class="header-account-photo" aria-hidden="true">
           <span class="header-account-initial">{(username || 'A').slice(0,1).toUpperCase()}</span>
         </span>
