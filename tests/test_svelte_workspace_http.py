@@ -69,7 +69,11 @@ class SvelteWorkspaceRouteTests(unittest.TestCase):
         try:
             client.request("GET", path, headers=headers)
             response = client.getresponse()
-            result = (response.status, dict(response.getheaders()), response.read())
+            collected = {}
+            for name, value in response.getheaders():
+                collected[name] = (collected[name] + "; " + value
+                                   if name in collected else value)
+            result = (response.status, collected, response.read())
         finally:
             client.close()
         return result
