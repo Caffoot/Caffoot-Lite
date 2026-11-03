@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [svelte()],
   base: './',
   build: {
-    outDir: 'workspace-dist',
+    outDir: '../../workspace-dist',
     emptyOutDir: true,
     rollupOptions: {
       input: {workspace: fileURLToPath(new URL('./workspace.html', import.meta.url))}
