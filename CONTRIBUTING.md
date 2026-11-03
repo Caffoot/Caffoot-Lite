@@ -59,6 +59,10 @@ Preserve user data, permissions, existing features and self-hosted installation 
 
 Review permissions and MFA enforcement on the **server**, not merely by hiding interface controls. Test related editing rights across Devices, IPAM and Racks; consider existing device edit reservations, backups, import, security and concurrent users where relevant.
 
+## Security Fixes And Published Releases
+
+For a short, practical security-fix and release sequence, use the [owner checklist](docs/development-guide/Security-Fixes-and-Releases.md). Report sensitive findings through [SECURITY.md](SECURITY.md), never a public issue. Product-owner approval is required separately for code changes, merging, release publication and security-advisory disclosure.
+
 ## Before Opening A Pull Request
 
 1. Link the relevant issue, follow the product owner's agreed direction, and explain the actual change in plain British English.
