@@ -2878,9 +2878,6 @@ function hierarchyValidateTypes(subnets) {
                 </div>
             </section>`;
 
-            return `<div class="flex items-start gap-3 p-3 rounded-xl ${classes}"><i class="fa-solid ${alert.icon} mt-0.5"></i><p class="text-xs font-medium leading-5">${escapeHtml(alert.text)}</p></div>`;
-            }).join('') : `<div class="flex items-center gap-3 p-3 rounded-xl bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-300"><i class="fa-solid fa-circle-check"></i><p class="text-xs font-medium">No integrity or capacity warnings detected.</p></div>`;
-
             return `
                 <div class="caffoot-dashboard">
                     <div class="caffoot-dashboard-eyebrow">YOUR INFRASTRUCTURE AT A GLANCE</div>
