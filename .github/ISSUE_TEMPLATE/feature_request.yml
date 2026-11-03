@@ -12,7 +12,7 @@ body:
 
         Check the [Future Ideas Index #222](https://github.com/Caffoot/Caffoot-Lite/issues/222) and existing issues first. Add your thoughts to an existing issue when appropriate; otherwise, open **one issue per idea** here.
 
-        We will discuss and record decisions in that issue. No technical design is needed. The project owner decides what gets built and when.
+        We'll discuss the idea in its issue before deciding what to build. There is no need to prepare a technical design or start coding before we've agreed the scope.
   - type: textarea
     id: problem
     attributes:

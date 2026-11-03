@@ -8,7 +8,7 @@
 ## 1. Published baseline and checkpoint
 
 - **Latest published application:** [v2.0.2](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.2), released **2 November 2026**. Docker/SQLite, Python backend, existing multi-user Devices, IPAM, Racks, Change History, MFA and permissions. It is the **published functional baseline** even where `main` has received documentation-only housekeeping since the tag.
-- **Repository at checkpoint:** protected [`main`](https://github.com/Caffoot/Caffoot-Lite/tree/main), commit `1cbfc1dd2a1ff6438dc4869192dc70a94be5fe75` after [PR #259](https://github.com/Caffoot/Caffoot-Lite/pull/259). At that check, no open pull requests and no other branches. These facts **must be verified again** at the start of a new session.
+- **Repository at checkpoint:** protected [`main`](https://github.com/Caffoot/Caffoot-Lite/tree/main), commit `05ad8bdc61cb5bf74f00145df72a84276aca1319` after [PR #260](https://github.com/Caffoot/Caffoot-Lite/pull/260). At that check, no open pull requests and no other branches. These facts **must be verified again** at the start of a new session.
 - **v2.0.3 is not released.** Its detailed work scope, implementation batches and release gate have **not** been approved. This handover is the agreed preparation for scoping it, not permission to start coding.
 
 ## 2. Completed — do not do again
@@ -20,6 +20,7 @@
 | Remove obsolete `Next` workflow names and tidy legacy guidance | Merged [PR #257](https://github.com/Caffoot/Caffoot-Lite/pull/257) | Do not repeat the workflow cleanup or restore discarded temporary terminology |
 | Archive old version documents; enforce consistent naming; move Development Guide | Merged [PR #258](https://github.com/Caffoot/Caffoot-Lite/pull/258) | Do not move version documents back into the root or redo the already-completed folder renames |
 | Straightforward security correction and release owner checklist | Merged [PR #259](https://github.com/Caffoot/Caffoot-Lite/pull/259), [owner checklist](Security-Fixes-and-Releases.md) | Do not design another release process; follow the one already documented |
+| Active status and release-time handover archiving rules | Merged [PR #260](https://github.com/Caffoot/Caffoot-Lite/pull/260), [release owner checklist](Security-Fixes-and-Releases.md) | Don't recreate handovers from scratch each chat; update this one and archive it at the release gate |
 
 Completed issue and PR records are **evidence**, not instructions to regenerate their deliverables.
 
@@ -47,6 +48,8 @@ The **premium application-wide UI refresh** is a separate subsequent stage, gove
 Other ideas remain in [#222](https://github.com/Caffoot/Caffoot-Lite/issues/222) and their dedicated issues. **An idea is not authority to build it.**
 
 ## 5. Working rules across new chats and PRs
+
+**Community writing decision (3 November 2026):** Use natural, welcoming British English for new GitHub issues, PRs and documentation. Start with the reason and the change, explain tests plainly, and avoid repetitive third-person approval/status language or AI-oriented prose. Preserve actual decision authority, accurate test records and private security reporting. The maintained standard is in [CONTRIBUTING.md](../../CONTRIBUTING.md); our issue and PR templates should follow it. **Do not rewrite historical issues and PRs** simply to change their tone.
 
 1. **At session start:** Read this file, then check **live** GitHub `main`, open PRs, relevant issues, latest release and current checks. Distinguish **published v2.0.2 functionality** from unpublished proposals or old issue wording. Prefer newer explicitly approved decisions.
 2. **Before changing anything:** Confirm the exact owner-approved scope, affected behaviour and tests. Reuse existing evidence and solutions. No unsolicited new issues, code, build workflow, release, architecture commitment or design changes.
