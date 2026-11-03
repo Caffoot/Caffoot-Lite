@@ -68,7 +68,7 @@ The [v2.1 development issue](https://github.com/Caffoot/Caffoot-Lite/issues/266)
 This first **production-facing integration batch** uses the same real read-only
 Devices implementation with reusable navigation and header components.
 
-- `npm run build:workspace` builds a **separate** `workspace-dist/` static
+- `npm run build:workspace` builds a **separate** repository-root `workspace-dist/` static
   bundle. It does not ship the fictional-data pilot.
 - Docker uses a temporary Node builder stage and copies only the compiled
   workspace files into the final Python image. Node is not required at runtime.
