@@ -1241,7 +1241,8 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 
 /* Preserve the established dark appearance where the new HTML layout is used. */
 html.dark #app{background:var(--caffoot-canvas)!important;color:var(--caffoot-ink)}
-html.dark #main-content{background:var(--caffoot-canvas)!important}
+html.dark #main-content,
+html.dark #app.caffoot-dashboard-visible #main-content{background:var(--caffoot-canvas)!important}
 html.dark #app > main > #caffoot-app-topbar{background:var(--caffoot-card)!important;border-bottom-color:#405366!important}
 html.dark #caffoot-app-topbar #page-title{color:#f1f5f9!important}
 html.dark #caffoot-app-topbar .caffoot-breadcrumb{color:#a9bdd0}
