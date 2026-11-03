@@ -10,7 +10,7 @@ The Docker version of Caffoot Lite is a small web application, not a collection 
 | --- | --- | --- |
 | Container image | [`Dockerfile`](../../Dockerfile) | Python 3.12 Alpine image, copies the backend, browser pages and selected assets; runs as UID/GID 10001 |
 | Local build/Compose | [`compose.yaml`](../../compose.yaml) | Builds the application, maps a configurable host port and mounts persistent `/data` |
-| Portainer test deployment | [`portainer-v2.0.1.yaml`](../../portainer-stack.yaml) | Uses the prebuilt, **unreleased** multi-architecture test image |
+| Portainer deployment example | [`portainer-v2.0.2.yaml`](../historical/portainer/portainer-v2.0.2.yaml) | Uses the published versioned ARM64/AMD64 application image with persistent `/data` storage |
 | HTTP/HTTPS server | [`backend/server.py`](../../backend/server.py) | Python standard-library `ThreadingHTTPServer`, route dispatch, SQLite connections |
 | Pages | [`setup.html`](../../setup.html) and [`inventory.html`](../../inventory.html) | Account setup/sign-in and familiar inventory screens |
 | Backend domain modules | [`backend/`](../../backend/) | Authentication, authorisation, inventory operations, validation and import |
@@ -31,7 +31,7 @@ The browser still maintains temporary display/form state and personal appearance
 ## Persistence and deployment
 
 - The database normally lives at `/data/caffoot.sqlite3` (`CAFFOOT_DB_PATH` in the image); generated TLS material is persisted under `/data/tls`.
-- The local Compose file uses `CAFFOOT_DATA_PATH` to select either a host folder or the default Docker volume. The Portainer test stack gives an example Pi host bind mount. Do not confuse that sample path with a universal requirement.
+- The local Compose file uses `CAFFOOT_DATA_PATH` to select either a host folder or the default Docker volume. The versioned Portainer example uses a Docker-managed named volume by default; existing installations must retain their actual `/data` mapping.
 - `CAFFOOT_WEB_ADDRESS` is the exact external **HTTPS origin** used in the browser, including an unusual port when applicable.
 - `CAFFOOT_SERVER_ADDRESS` is the hostname or IP identity used for the application's TLS certificate. A proxy's public name and the backend server identity may differ.
 - `CAFFOOT_PORT` defaults to 8080 for the host-published port; the container remains on port 8080.

@@ -1,6 +1,6 @@
 # Caffoot Lite — website release material (historical draft)
 
-> **Historical planning record (31 October 2026):** The original material below is preserved for release history and must not be used as current publication instructions. Caffoot Lite v2.0.2 was published on 2 November 2026. For up-to-date information, see the [main README](../README.md), [installation guide](../INSTALLATION.md) and [v2.0.2 release notes](Release-Notes-v2.0.2.md).
+> **Historical planning record (31 October 2026):** The original material below is preserved for release history and must not be used as current publication instructions. Caffoot Lite v2.0.2 was published on 2 November 2026. For up-to-date information, see the [main README](../../../README.md), [installation guide](../../../INSTALLATION.md) and [v2.0.2 release notes](../release-notes/Release-Notes-v2.0.2.md).
 
 ---
 
@@ -45,7 +45,7 @@ The website currently describes the published HTML edition accurately. **The web
 
 Install the Docker edition using Docker Compose or a Portainer stack, including on a Raspberry Pi 5. Set your HTTPS browser address, server certificate identity and published host port, and preserve the container's `/data` mount for its SQLite database and certificate. On first visit, create your own administrator and complete MFA. There are no preset administrator credentials.
 
-For the exact stack, commands, folder ownership, direct HTTPS certificate trust and reverse-proxy requirements, use the [Docker/Portainer installation guide](../INSTALLATION.md). The container listens internally on port `8080`; its host port is configurable. Do not copy example host IP addresses, expose an unreleased test image as production-ready, or suggest plain HTTP upstream.
+For the exact stack, commands, folder ownership, direct HTTPS certificate trust and reverse-proxy requirements, use the [Docker/Portainer installation guide](../../../INSTALLATION.md). The container listens internally on port `8080`; its host port is configurable. Do not copy example host IP addresses, expose an unreleased test image as production-ready, or suggest plain HTTP upstream.
 
 ### Website migration and backup summary
 
@@ -53,7 +53,7 @@ For the exact stack, commands, folder ownership, direct HTTPS certificate trust 
 
 Use a **fresh JSON backup exported by published Caffoot Lite v1.3.3**, then review and explicitly confirm the one-way inventory import after your Docker administrator and MFA are configured. If your standalone HTML application is older than v1.3.3, update to v1.3.3 and export again first. Existing user accounts, MFA, roles and permissions are not replaced by this import.
 
-**Docker backups are different:** your running installation keeps its records in the persistent SQLite database and HTTPS files under `/data`. Back up and restore the persistent data using trusted external Docker/volume or file-backup tools; a stopped-container copy is a straightforward way to obtain a consistent file backup. Keep protected backups off the Docker host and verify recovery. **Do not advertise ongoing Docker JSON export/restore within the app.** Read the [migration and backup guide](How%20To%27s/Features%20and%20Instructions/Migration-Backup-and-Restore.md).
+**Docker backups are different:** your running installation keeps its records in the persistent SQLite database and HTTPS files under `/data`. Back up and restore the persistent data using trusted external Docker/volume or file-backup tools; a stopped-container copy is a straightforward way to obtain a consistent file backup. Keep protected backups off the Docker host and verify recovery. **Do not advertise ongoing Docker JSON export/restore within the app.** Read the [migration and backup guide](../../How%20To%27s/Features%20and%20Instructions/Migration-Backup-and-Restore.md).
 
 ### FAQ entries that distinguish editions
 
@@ -73,7 +73,7 @@ Use a **fresh JSON backup exported by published Caffoot Lite v1.3.3**, then revi
 
 The familiar Caffoot Lite inventory experience is now available in a Docker/SQLite edition, alongside the published standalone HTML application. Keep track of your Devices, IPAM, Racks and Change History with administrator-managed accounts, MFA and a central database. Bring supported inventory over using a fresh published v1.3.3 backup and its review process, then protect your new installation with external backups.
 
-Read the installation and [step-by-step user guides](How%20To%27s/Features%20and%20Instructions/README.md) before getting started. **The v2.0 version name is approved. Publication, production image and download links require the final Stage 8 release gate.**
+Read the installation and [step-by-step user guides](../../How%20To%27s/Features%20and%20Instructions/README.md) before getting started. **The v2.0 version name is approved. Publication, production image and download links require the final Stage 8 release gate.**
 
 ## Single-source help and link map
 
@@ -81,34 +81,34 @@ Do **not** copy the seven detailed guides into the website repository. Link read
 
 | Website destination | Authoritative source in Caffoot Lite |
 | --- | --- |
-| Help index | [Features and Instructions](How%20To%27s/Features%20and%20Instructions/README.md) |
-| First visit / getting started | [Getting Started](How%20To%27s/Features%20and%20Instructions/Getting-Started.md) |
-| Equipment | [Devices](How%20To%27s/Features%20and%20Instructions/Devices.md) |
-| Addressing | [IPAM](How%20To%27s/Features%20and%20Instructions/IPAM.md) |
-| Rack elevations | [Racks](How%20To%27s/Features%20and%20Instructions/Racks.md) |
-| Preferences and history | [Settings and Change History](How%20To%27s/Features%20and%20Instructions/Settings-and-Change-History.md) |
-| Accounts, roles and MFA | [Users, Permissions and MFA](How%20To%27s/Features%20and%20Instructions/Users-Permissions-and-MFA.md) |
-| Data migration / external backup | [Migration, Backup and Restore](How%20To%27s/Features%20and%20Instructions/Migration-Backup-and-Restore.md) |
-| Docker, Portainer and HTTPS | [Installation guide](../INSTALLATION.md) |
-| Feature overview / downloads | [Repository README](../README.md) |
+| Help index | [Features and Instructions](../../How%20To%27s/Features%20and%20Instructions/README.md) |
+| First visit / getting started | [Getting Started](../../How%20To%27s/Features%20and%20Instructions/Getting-Started.md) |
+| Equipment | [Devices](../../How%20To%27s/Features%20and%20Instructions/Devices.md) |
+| Addressing | [IPAM](../../How%20To%27s/Features%20and%20Instructions/IPAM.md) |
+| Rack elevations | [Racks](../../How%20To%27s/Features%20and%20Instructions/Racks.md) |
+| Preferences and history | [Settings and Change History](../../How%20To%27s/Features%20and%20Instructions/Settings-and-Change-History.md) |
+| Accounts, roles and MFA | [Users, Permissions and MFA](../../How%20To%27s/Features%20and%20Instructions/Users-Permissions-and-MFA.md) |
+| Data migration / external backup | [Migration, Backup and Restore](../../How%20To%27s/Features%20and%20Instructions/Migration-Backup-and-Restore.md) |
+| Docker, Portainer and HTTPS | [Installation guide](../../../INSTALLATION.md) |
+| Feature overview / downloads | [Repository README](../../../README.md) |
 
 **Website HTML link destinations while staging on `Next`:** `https://github.com/Caffoot/Caffoot-Lite/blob/main/docs/How%20To%27s/Features%20and%20Instructions/` followed by the exact guide filename above; the installation destination is `https://github.com/Caffoot/Caffoot-Lite/blob/Next/INSTALLATION.md`. These are **development-source** links, not promises about the eventual published branch. At release, check the chosen permanent destinations and verify them before replacing website links. Use `rel="noopener noreferrer"` with any `target="_blank"` links.
 
 ## Verified genuine screenshots for the website
 
-All nine source images were captured from the real Docker/SQLite app with fictional inventory, visually accepted by the product owner and saved under [`docs/screenshots/`](screenshots/). **No mock-ups or personal inventory.** Use the actual PNG files, not the older HTML-era website `assets/dashboard.png`/`assets/devices.png`/`assets/racks.png` if presenting the new Docker edition. Add suitable `alt` text when displaying them; older standalone screenshots should remain clearly labelled as belonging to the standalone edition if retained.
+All nine source images were captured from the real Docker/SQLite app with fictional inventory, visually accepted by the product owner and saved under [`docs/screenshots/`](../../screenshots/). **No mock-ups or personal inventory.** Use the actual PNG files, not the older HTML-era website `assets/dashboard.png`/`assets/devices.png`/`assets/racks.png` if presenting the new Docker edition. Add suitable `alt` text when displaying them; older standalone screenshots should remain clearly labelled as belonging to the standalone edition if retained.
 
 | Website context | Source image | Suggested accessible alt text |
 | --- | --- | --- |
-| Main Docker overview | [Dashboard](screenshots/dashboard.png) | Caffoot Lite Network Insights with sample IP address, device and rack summaries |
-| Branded access | [Sign-in](screenshots/sign-in.png) | Caffoot Lite sign-in page before credentials are entered |
-| Devices | [Device inventory](screenshots/devices-inventory.png) | Fictional desktop and switch records in Caffoot Lite Devices |
-| Device detail | [Device details](screenshots/device-details.png) | Read-only switch details with network, hardware and location tabs |
-| IPAM subnet management | [Subnets](screenshots/ipam-subnets.png) | Caffoot Lite subnet list showing a sample Lab Network |
-| IPAM allocations | [Addresses](screenshots/ipam-addresses.png) | Sample IP address grid showing assigned, reserved and free addresses |
-| Rack management | [Rack elevation](screenshots/racks.png) | Front elevation of a fictional rack containing mounted network equipment |
-| Self-service help | [Help and Guides](screenshots/help-guides.png) | My account Help and Guides topics for signed-in users |
-| User administration | [Users](screenshots/users.png) | User Management overview showing sample roles and MFA enrolment counts |
+| Main Docker overview | [Dashboard](../../screenshots/dashboard.png) | Caffoot Lite Network Insights with sample IP address, device and rack summaries |
+| Branded access | [Sign-in](../../screenshots/sign-in.png) | Caffoot Lite sign-in page before credentials are entered |
+| Devices | [Device inventory](../../screenshots/devices-inventory.png) | Fictional desktop and switch records in Caffoot Lite Devices |
+| Device detail | [Device details](../../screenshots/device-details.png) | Read-only switch details with network, hardware and location tabs |
+| IPAM subnet management | [Subnets](../../screenshots/ipam-subnets.png) | Caffoot Lite subnet list showing a sample Lab Network |
+| IPAM allocations | [Addresses](../../screenshots/ipam-addresses.png) | Sample IP address grid showing assigned, reserved and free addresses |
+| Rack management | [Rack elevation](../../screenshots/racks.png) | Front elevation of a fictional rack containing mounted network equipment |
+| Self-service help | [Help and Guides](../../screenshots/help-guides.png) | My account Help and Guides topics for signed-in users |
+| User administration | [Users](../../screenshots/users.png) | User Management overview showing sample roles and MFA enrolment counts |
 
 ## Publication handover — no action before approval
 
