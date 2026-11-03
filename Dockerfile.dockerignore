@@ -14,3 +14,5 @@ pilots/**/test-results/
 
 # Never copy local compiled workspace into the Docker build context.
 /workspace-dist/
+
+signin-dist/
