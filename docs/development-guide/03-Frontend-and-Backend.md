@@ -39,6 +39,10 @@ The draft adds descriptive CSS sections in `inventory.html`: `approved-devices-o
 
 The inventory rows retain a single **Details** action. Its detail view already provides Edit, Duplicate, Delete and View in Rack (when applicable), so the extra row menu is unnecessary. Changes to labels or layout should not remove those underlying actions.
 
+The Inventory heading also includes an **Add Device** action. It uses the existing `open-device-modal` handler, so the central permission checks continue to control visibility and editing rights. Device Details tabs follow the accepted orange-underlined navigation, and the main catalogue Add buttons follow the same orange primary-action styling.
+
+The browser compatibility workflow records screenshots from the working HTML application for all eight Devices navigation areas and for Device Details. Its separate `caffoot-pr279-devices-portainer-build-context` artifact is a private test package, not a published container image. The packaging step checks the Dashboard and Devices markers within the archived `inventory.html` to avoid accidentally testing an older source file.
+
 **This is unfinished development work**, not a release or a claim of design approval. Before acceptance, compare every Devices screen with the approved versions and run browser, permission, data and private Docker checks. The separate private test installation must not use production's `/data` store.
 
 ## Local Tailwind stylesheet
