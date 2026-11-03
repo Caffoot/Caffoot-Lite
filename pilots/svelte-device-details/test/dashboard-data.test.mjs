@@ -82,3 +82,14 @@ test('Related-record warnings require access to both relevant sections',()=>{
   assert.ok(complete.warnings.some(item=>/missing rack/.test(item.text)));
   assert.equal(complete.healthIssues.length,1);
 });
+
+test('IPAM orphan warnings match the published Dashboard without exposing restricted Devices',()=>{
+  const orphan={'10.12.0.44':{status:'Assigned',deviceId:'missing'}};
+  const full=summariseDashboard({sections:{Devices:true,IPAM:true,Racks:false},
+    devices:[host],subnets:[subnet],ipAllocations:orphan});
+  assert.ok(full.warnings.some(warning=>warning.kind==='IPAM' &&
+    /references a missing device/.test(warning.text)));
+  const restricted=summariseDashboard({sections:{Devices:false,IPAM:true,Racks:false},
+    subnets:[subnet],ipAllocations:orphan});
+  assert.ok(!restricted.warnings.some(warning=>/references a missing device/.test(warning.text)));
+});

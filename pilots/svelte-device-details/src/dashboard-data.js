@@ -120,6 +120,15 @@ export function summariseDashboard(snapshot, history = []) {
         text:(device.name||'Device')+' is not linked correctly in IPAM',target:'devices'});
     }
   }
+  if(hasDevices&&hasIpam){
+    const deviceIds=new Set(devices.map(device=>device.id));
+    for(const [ip,allocation] of Object.entries(allocations)){
+      if(allocation?.deviceId && !deviceIds.has(allocation.deviceId)){
+        alerts.push({kind:'IPAM',severity:'critical',
+          text:ip+' references a missing device',target:'ipam'});
+      }
+    }
+  }
   if(hasDevices&&hasRacks){
     const rackIds=new Set(racks.map(r=>r.id));
     for(const device of devices){

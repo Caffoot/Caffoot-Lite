@@ -91,6 +91,11 @@ async function testSignedInData() {
   await page.getByRole('heading',{name:'Recent Activity'}).waitFor();
   await page.screenshot({path:path.join(screenshots,'dashboard-devices-reader-activity.png'),
     fullPage:true});
+  await page.goto(address+'/inventory#devices/add',{waitUntil:'domcontentloaded'});
+  await page.locator('#main-content').waitFor();
+  await page.waitForFunction(()=>document.getElementById('sidebar')?.querySelector('button[data-action="open-device-modal"]')?.disabled === true);
+  assert.equal(await page.locator('#modal-content form[data-device-form="true"]').count(),0,
+    'A read-only Devices account must not open the add form using a URL fragment');
 
   // The same route must never retrieve Devices for an IPAM-only account.
   const ipamContext=await browser.newContext({ignoreHTTPSErrors:true});
@@ -109,7 +114,7 @@ async function testSignedInData() {
 
   // Capture all three approved Dashboard tabs at desktop width with the same
   // administrator fixture, rather than comparing a restricted view to the design.
-  const fullAdminContext=await browser.newContext({ignoreHTTPSErrors:true,
+  const fullAdminContext=await browser.newContext({ignoreHTTPSErrors:true,acceptDownloads:true,
     viewport:{width:1440,height:900}});
   await fullAdminContext.addCookies([{name:fixture.cookie_name,value:fixture.admin,url:address,
     secure:true,sameSite:'Strict'}]);
@@ -135,6 +140,22 @@ async function testSignedInData() {
   await fullAdminPage.getByRole('heading',{name:'Reports & Exports'}).waitFor();
   await fullAdminPage.screenshot({path:path.join(screenshots,'dashboard-admin-activity-1440.png'),
     fullPage:true});
+  // The existing three export actions must all work with permission-filtered data.
+  for (const [label,kind] of [['Device Inventory CSV','devices'],['IPAM CSV','subnets'],['Rack Report','racks']]) {
+    const [file]=await Promise.all([
+      fullAdminPage.waitForEvent('download'),
+      fullAdminPage.getByRole('button',{name:label}).click()
+    ]);
+    assert.ok(file.suggestedFilename().includes('_'+kind+'_'),label+' must download its report');
+  }
+  await fullAdminPage.getByRole('tab',{name:'Overview'}).click();
+  await fullAdminPage.getByRole('link',{name:'Add Device'}).click();
+  await fullAdminPage.waitForURL('**/inventory#devices/add');
+  await fullAdminPage.locator('#modal-content form[data-device-form="true"]').waitFor();
+  await fullAdminPage.goto(address+'/workspace/dashboard/',{waitUntil:'domcontentloaded'});
+  await fullAdminPage.getByRole('link',{name:'Add Rack'}).click();
+  await fullAdminPage.waitForURL('**/inventory#racks/add');
+  await fullAdminPage.locator('#modal-content form[data-form-action="rack"]').waitFor();
   await fullAdminContext.close();
 
   const adminContext=await browser.newContext({ignoreHTTPSErrors:true,
@@ -178,6 +199,7 @@ async function testFirstRunAndMfa() {
     'Live first-run uses the approved Sign In shell');
   assert.equal(await page.locator('.steps-track span').count(),4,
     'Approved four-stage setup indicator must be present');
+  await page.locator('.screen.active').evaluate(el=>Promise.all(el.getAnimations().map(animation=>animation.finished)));
   await page.screenshot({path:path.join(screenshots,'signin-first-run-1280.png'),fullPage:true});
   await page.setViewportSize({width:390,height:844});
   const firstRunWidths=await page.evaluate(()=>({scroll:document.documentElement.scrollWidth,viewport:innerWidth}));
@@ -193,6 +215,7 @@ async function testFirstRunAndMfa() {
   await page.getByRole('heading',{name:'Secure Your Account'}).waitFor();
   const secret=(await page.locator('.key code').textContent()).trim();
   assert.ok(secret.length>8,'The authenticator setup key should be visible');
+  await page.locator('.screen.active').evaluate(el=>Promise.all(el.getAnimations().map(animation=>animation.finished)));
   await page.screenshot({path:path.join(screenshots,'signin-authenticator-1280.png'),fullPage:true});
 
   // Refreshing during setup must allow resuming with existing credentials.
@@ -224,6 +247,7 @@ async function testFirstRunAndMfa() {
       ' ('+page.url()+')',{cause:caught});
   }
   await page.getByRole('button',{name:'Continue to Sign In'}).click();
+  await page.locator('.screen.active').evaluate(el=>Promise.all(el.getAnimations().map(animation=>animation.finished)));
   await page.screenshot({path:path.join(screenshots,'signin-login-1280.png'),fullPage:true});
   await page.getByLabel('Username',{exact:true}).fill('new-owner');
   await page.getByLabel('Password',{exact:true}).fill('correct-horse-battery-staple');

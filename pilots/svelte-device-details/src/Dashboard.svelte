@@ -28,7 +28,7 @@
       ? event.changes.map(change=>(change.kind || '')+' '+(change.label || '')).join(' ') : '');
     return activityFilter==='devices' ? /device/i.test(text) :
       activityFilter==='network' ? /ipam|subnet|address|allocation|vlan/i.test(text) :
-      /rack/i.test(text);
+      /rack|accessory|mount/i.test(text);
   }).slice(0,12) : [];
   $: visibleWarnings = summary ? summary.warnings.filter(item =>
     warningFilter==='all'||warningFilter===item.severity).slice(0,12) : [];
@@ -84,11 +84,16 @@
   }
 
   const legacy = section => '/inventory#'+section;
+  const legacyAdd = section => '/inventory#'+section+'/add';
 
   const barColours = ['#4a9c86','#6d95be','#ed8532'];
   const percent = value => Math.max(0,Math.min(100,Number(value)||0));
   const usedOnRack = rack => rack.front===null ? null : Math.max(rack.front,rack.rear);
   const eventTitle = event => event.reason || (event.changes && event.changes[0]?.label) || 'Saved inventory change';
+  const eventTime = timestamp => {
+    const date = new Date(timestamp);
+    return Number.isNaN(date.getTime()) ? 'Date unavailable' : date.toLocaleString();
+  };
 </script>
 
 {#snippet head(title,subtitle,icon,tone='')}
@@ -175,13 +180,13 @@
                   <div class="db-actionrow">
                     {#if summary.access.Devices}
                       {#if permissions.Devices && permissions.IPAM}
-                        <a class="btn btn-primary" href={legacy('devices')}>Add Device</a>
+                        <a class="btn btn-primary" href={legacyAdd('devices')}>Add Device</a>
                       {:else}
                         <a class="btn btn-outline" href={legacy('devices')}>View Devices</a>
                       {/if}
                     {/if}
                     {#if summary.access.Racks}
-                      <a class="btn btn-outline" href={legacy('racks')}>{permissions.Racks?'Add Rack':'Open Network Racks'}</a>
+                      <a class="btn btn-outline" href={permissions.Racks?legacyAdd('racks'):legacy('racks')}>{permissions.Racks?'Add Rack':'Open Network Racks'}</a>
                     {/if}
                     {#if summary.access.IPAM}<a class="btn btn-outline" href={legacy('ipam')}>Open IPAM</a>{/if}
                   </div>
@@ -349,7 +354,7 @@
                   </div>
                   {#if visibleEvents.length}
                     {#each visibleEvents as event}
-                      <div class="db-slimrow"><div><strong>{eventTitle(event)}</strong><div class="db-muted">{(event.changes||[]).map(change=>change.label||change.kind).filter(Boolean).join(', ')}</div></div><span class="db-badge">Saved</span></div>
+                      <div class="db-slimrow"><div><strong>{eventTitle(event)}</strong><div class="db-muted">{(event.changes||[]).map(change=>change.label||change.kind).filter(Boolean).join(', ')}</div></div><time class="db-muted" datetime={event.at||undefined}>{eventTime(event.at)}</time></div>
                     {/each}
                   {:else}<p class="db-empty-note">No saved changes match this filter.</p>{/if}
                   <div class="db-actionrow"><a class="btn btn-outline" href={legacy('audit')}>Full Change History</a></div>
@@ -365,7 +370,7 @@
                   </div>
                   {#if visibleWarnings.length}
                     {#each visibleWarnings as warning}
-                      <div class="db-slimrow"><div><strong>{warning.text}</strong><div class="db-muted">{warning.kind} · Saved inventory checks</div></div><span class="db-badge db-warning">{warning.severity}</span></div>
+                      <div class="db-slimrow"><a class="db-warning-link" href={legacy(warning.target)}><strong>{warning.text}</strong><div class="db-muted">{warning.kind} · Saved inventory checks</div></a><span class="db-badge db-warning">{warning.severity}</span></div>
                     {/each}
                   {:else}<p class="db-empty-note">No saved warnings match this filter.</p>{/if}
                 </div>

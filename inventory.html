@@ -10415,7 +10415,7 @@ window.addEventListener('load', async () => {
     switchTab('dashboard');
     // Safe hand-off from the first Svelte workspace while screens are migrated.
     // Fragment links never alter authentication or server permissions.
-    const destination = window.location.hash.slice(1);
+    const [destination, requestedAction] = window.location.hash.slice(1).split('/', 2);
     const legacyDestination = {
       dashboard:'dashboard', devices:'devices', ipam:'ipam',
       racks:'racks', audit:'audit', users:'users',
@@ -10427,7 +10427,21 @@ window.addEventListener('load', async () => {
       (legacyDestination === 'racks' && permissions.Racks?.read) ||
       (legacyDestination === 'audit' && ['Devices','IPAM','Racks'].some(area => permissions[area]?.read)) ||
       (sessionIsAdmin && ['users','settings'].includes(legacyDestination));
-    if (legacyDestination && canOpen) switchTab(legacyDestination);
+    if (legacyDestination && canOpen) {
+      switchTab(legacyDestination);
+      // Open the existing add form when a permitted Svelte shortcut requests it.
+      // The regular edit checks still govern the original form and its saves.
+      const addDevice = destination === 'devices' && requestedAction === 'add' &&
+        editPermissions.Devices && editPermissions.IPAM;
+      const addRack = destination === 'racks' && requestedAction === 'add' &&
+        editPermissions.Racks;
+      const selector = addDevice ? '#devices-sidebar-actions [data-action="open-device-modal"]' :
+        addRack ? '#racks-sidebar-actions [data-action="open-rack-modal"]' : null;
+      if (selector) {
+        const button = document.querySelector(selector);
+        if (button && !button.disabled && !button.hidden) button.click();
+      }
+    }
   }catch(error){
     const container=document.getElementById('main-content');
     container.replaceChildren();
