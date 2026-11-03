@@ -1,15 +1,15 @@
 # Caffoot Lite — Current Development Status
 
-> **ACTIVE DEVELOPMENT HANDOVER — PLANNING ONLY (v2.0.3).**
-> Last verified against public GitHub on **3 November 2026**. This is **not** a release note or an implementation authorisation. Always recheck today's repository state; the status here is a dated checkpoint, not live telemetry.
+> **ACTIVE DEVELOPMENT HANDOVER — v2.0.3 (UNRELEASED).**
+> Last verified against public GitHub on **3 November 2026**. This records approved work, not permission for new scope, merging or publication. Always recheck today's repository state; the status here is a dated checkpoint, not live telemetry.
 >
 > **IMPORTANT:** This document must be **archived and removed from the active location during the v2.0.3 release-preparation PR, before the release tag is published**. See [Security Fixes And Releases](Security-Fixes-and-Releases.md#archive-the-completed-development-handover-before-publication). Do **not** reuse a completed version's handover as the next version's instructions.
 
 ## 1. Published baseline and checkpoint
 
 - **Latest published application:** [v2.0.2](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.2), released **2 November 2026**. Docker/SQLite, Python backend, existing multi-user Devices, IPAM, Racks, Change History, MFA and permissions. It is the **published functional baseline** even where `main` has received documentation-only housekeeping since the tag.
-- **Repository at checkpoint:** protected [`main`](https://github.com/Caffoot/Caffoot-Lite/tree/main), commit `05ad8bdc61cb5bf74f00145df72a84276aca1319` after [PR #260](https://github.com/Caffoot/Caffoot-Lite/pull/260). At that check, no open pull requests and no other branches. These facts **must be verified again** at the start of a new session.
-- **v2.0.3 is not released.** Its detailed work scope, implementation batches and release gate have **not** been approved. This handover is the agreed preparation for scoping it, not permission to start coding.
+- **Repository at checkpoint:** protected [`main`](https://github.com/Caffoot/Caffoot-Lite/tree/main), merge commit [`67acd546`](https://github.com/Caffoot/Caffoot-Lite/commit/67acd546f0f424032e3caae09232d86170304e80) following merged [PR #262](https://github.com/Caffoot/Caffoot-Lite/pull/262) on **3 November 2026**. There were no open pull requests before the new How To compatibility batch began. Recheck GitHub at the start of each session.
+- **v2.0.3 is not released.** The first functional-baseline batch has merged; the How To compatibility batch is separately approved for review. Further scope, merging and the eventual release gate each require explicit product-owner approval.
 
 ## 2. Completed — do not do again
 
@@ -21,25 +21,28 @@
 | Archive old version documents; enforce consistent naming; move Development Guide | Merged [PR #258](https://github.com/Caffoot/Caffoot-Lite/pull/258) | Do not move version documents back into the root or redo the already-completed folder renames |
 | Straightforward security correction and release owner checklist | Merged [PR #259](https://github.com/Caffoot/Caffoot-Lite/pull/259), [owner checklist](Security-Fixes-and-Releases.md) | Do not design another release process; follow the one already documented |
 | Active status and release-time handover archiving rules | Merged [PR #260](https://github.com/Caffoot/Caffoot-Lite/pull/260), [release owner checklist](Security-Fixes-and-Releases.md) | Don't recreate handovers from scratch each chat; update this one and archive it at the release gate |
+| v2.0.3 About version, refreshed Function Index (494 entries), Rack/VM browser regression checks | Merged [PR #262](https://github.com/Caffoot/Caffoot-Lite/pull/262) on 3 November 2026, all four GitHub checks passed; merge commit [`67acd546`](https://github.com/Caffoot/Caffoot-Lite/commit/67acd546f0f424032e3caae09232d86170304e80) | Do not repeat these fixes, the index refresh or completed tests |
 
 Completed issue and PR records are **evidence**, not instructions to regenerate their deliverables.
 
-## 3. v2.0.3 — approved first batch, remaining scope to agree
+## 3. v2.0.3 — completed work and agreed next batch
 
-**Product-owner direction:** a **small, proportionate functional audit, evidenced bug fixes, justified code/frontend cleanup, accurate documentation and tests** to provide a stable baseline for the subsequent interface refresh. Avoid a full second migration, speculative refactor, sweeping security re-audit or engineering for its own sake.
+**Product-owner direction:** a **small, proportionate functional audit, evidenced bug fixes, justified code/frontend cleanup, accurate documentation and tests** to provide a stable baseline for the later interface refresh. Avoid a full second migration, speculative refactor, sweeping security re-audit or engineering for its own sake.
 
-Candidate work to **scope and explicitly approve before implementation**:
+**Completed on 3 November 2026:** [PR #262](https://github.com/Caffoot/Caffoot-Lite/pull/262) was merged into protected `main` after all four required checks passed. It corrected the upcoming v2.0.3 About label, refreshed the Function Index to 494 entries, and added focused Rack front/rear/printing and VM host-selection browser checks. Do not repeat this batch. The corrected About label does **not** mean v2.0.3 has been released.
 
-- Review the actual v2.0.2 user-facing workflows against the backend, permissions and existing tests, **reusing** the [Development Guide](README.md), [Function Index](Function-Index.md) and tests rather than rebuilding them. Focus on demonstrated gaps.
-- Correct reproducible bugs in owner-approved batches, preserving data and installation compatibility, Device/VM relationships, IPAM and Rack behaviour.
-- Tidy obsolete frontend/code names **only where beneficial and approved**, keeping function references and the Function Index truthful.
-- Plan the agreed rename `docs/How To's/Features and Instructions/` to `docs/how-tos/features-and-instructions/` **as part of v2.0.3 release work**. **Compatibility constraint:** published v2.0.2 images already contain URLs pointing to the old `main` path. Simply moving files would break existing users' Help & Guides links. Approve a backward-compatible old-path arrangement, update new app links/tests/website references and verify old v2.0.2 links still work before removing anything.
-- Prepare and verify a **v2.0.3-specific release-image trigger and tag**, because the [current workflow](../../.github/workflows/v2-release-image.yml) is tied to v2.0.2. No tag or image work is authorised by this note.
-- Use [proportionate recurring security checks](Security-Fixes-and-Releases.md#proportionate-recurring-security-checks) relevant to actual changes, not a duplicate v2.0.2 review.
+**Approved How To compatibility batch (3 November 2026; awaiting review):**
 
-**First batch approved (3 November 2026):** The read-only review identified a stale About version (`v2.0.1` in published v2.0.2), a Function Index missing the v2.0.2 history-permissions module, and browser coverage gaps for Rack front/rear switching/printing and VM host selection. This PR proposes: an About label for the upcoming **v2.0.3** (not released); a focused index refresh; and regression tests of those existing workflows. **No redesign, database/schema change, installation change or Svelte work is included.** Existing backend tests cover host/guest and rack rules; do not recreate them.
+- Make `docs/how-tos/features-and-instructions/` the official home for the eight existing guide files. Retain the original eight files at `docs/How To's/Features and Instructions/` as identical copies. Published v2.0.2 images point to the old `main` URLs, so moving them outright would break older Help & Guides links.
+- Point the upcoming v2.0.3 application guide links, current README/installation/community guidance and relevant GitHub question template to the new location. Leave historical release notes and approved v2.1 interface design drafts unchanged.
+- Extend the protected `release-documentation` check to confirm that all eight guides exist under both paths and match byte-for-byte. Update the existing browser regression assertions for the new link destinations. Verify the original paths remain present for v2.0.2 users.
+- Keep the application, permissions, data, database/schema, Docker installation and release workflows otherwise unchanged. Website content remains a separate deployment decision; no website publication is authorised.
 
-**Next action:** Review the proposed first-batch PR and its actual CI evidence, resolve any failures, and request separate approval before merging. The How To path-compatibility rename and v2.0.3 release preparation remain future, separately reviewed batches. Archive this handover **during release preparation**, not now.
+**Future consideration only:** The product owner suggested that a later version might remove the old directory. This is **not approved for implementation**. Publishing a newer image does not change the old URLs embedded in v2.0.2; any later removal needs a separately agreed, reliable way to keep those links working (or an explicit decision about the consequences).
+
+**Other possible v2.0.3 work — not yet approved:** Investigate evidenced workflow bugs or justified code clean-up in separately scoped batches. Prepare a v2.0.3 release-image trigger only when authorised: the existing image workflow still targets v2.0.2. Use proportional security and regression checks for actual changes rather than repeating the completed security review.
+
+**Next action:** Review the How To compatibility PR and its actual GitHub checks; resolve any failures and obtain the product owner's **separate approval before merging**. Do not merge, tag, publish, start the v2.1 redesign or archive this active handover yet. At v2.0.3 release preparation, follow the mandatory archive instructions in section 6.
 
 ## 4. Later direction — v2.1 interface refresh
 

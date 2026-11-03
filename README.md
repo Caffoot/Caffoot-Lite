@@ -26,7 +26,7 @@ For Portainer, copy [`portainer-v2.0.2.yaml`](docs/historical/portainer/portaine
 
 ![Caffoot Lite dashboard showing example network inventory](docs/screenshots/dashboard.png)
 
-See the [complete Features and Instructions user guides](docs/How%20To%27s/Features%20and%20Instructions/README.md) for detailed examples, controls and screenshots.
+See the [complete Features and Instructions user guides](docs/how-tos/features-and-instructions/README.md) for detailed examples, controls and screenshots.
 
 ## Help Build Caffoot Lite
 
@@ -66,7 +66,7 @@ For direct HTTPS, verify and trust the application certificate before entering c
 - [Installation, HTTPS, Portainer and backup instructions](INSTALLATION.md)
 - [v2.0.2 release notes](docs/historical/release-notes/Release-Notes-v2.0.2.md)
 - [Previous v2.0.1 release notes](docs/historical/release-notes/Release-Notes-v2.0.1.md)
-- [Detailed user guides and screenshots](docs/How%20To%27s/Features%20and%20Instructions/README.md)
+- [Detailed user guides and screenshots](docs/how-tos/features-and-instructions/README.md)
 - [Contributing To Caffoot Lite — mandatory naming, UI and documentation standards](CONTRIBUTING.md)
 - [Development Guide](docs/development-guide/README.md)
 - [Current development handover — planned work, not released features](docs/development-guide/Current-Development-Status.md)
