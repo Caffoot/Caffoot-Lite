@@ -1,8 +1,8 @@
-# Caffoot Lite v2.0.2 — Docker / SQLite installation
+# Caffoot Lite v2.0.3 — Docker / SQLite installation
 
-Caffoot Lite **v2.0.2** builds on the established v2.0.1 Docker/SQLite application, retaining its repository-root layout and supported workflows. It preserves the approved v2.0 functionality: central SQLite inventory, familiar Devices/IPAM/Racks/Change History, administrator setup, MFA, permissions and simultaneous multi-user access. Only **published standalone v1.3.3 JSON inventory backups** are accepted for one-way migration. For everyday use, follow the [Features and Instructions guides](docs/how-tos/features-and-instructions/README.md).
+Caffoot Lite **v2.0.3** builds on the established v2.0.2 Docker/SQLite application, retaining its repository-root layout and supported workflows. It preserves the approved v2.0 functionality: central SQLite inventory, familiar Devices/IPAM/Racks/Change History, administrator setup, MFA, permissions and simultaneous multi-user access. Only **published standalone v1.3.3 JSON inventory backups** are accepted for one-way migration. For everyday use, follow the [Features and Instructions guides](docs/how-tos/features-and-instructions/README.md).
 
-Earlier v2.0 and v2.0.1 releases remain available. The current [v2.0.2 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.2) uses the published image `ghcr.io/caffoot/caffoot-lite:v2.0.2`, with ARM64 and AMD64 builds. Use this versioned production image, not an old development test image.
+Earlier v2.0, v2.0.1 and v2.0.2 releases remain available. The [v2.0.3 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.3) uses the versioned image `ghcr.io/caffoot/caffoot-lite:v2.0.3`, with ARM64 and AMD64 builds. Use this versioned production image, not an old development test image.
 
 ## HTTPS Docker Compose / Portainer setup
 
@@ -40,13 +40,13 @@ The Docker edition uses the existing Caffoot hedgehog artwork and **“Infrastru
 
 ## Verification status
 
-The existing backend checks and focused HTTPS/Chromium tests run in GitHub Actions. They cover first-run MFA, central inventory and Change History, user creation and access permissions, competing device edit reservations, familiar Devices/IPAM/Racks forms, Clean Start and a real v1.3.3 backup created by the published exporter. Previous v2.0.1 acceptance results are historical; v2.0.2 has its own published release and build verification. These checks are not an exhaustive proof of every published v1.3.3 interaction. The agreed real Raspberry Pi 5 acceptance has been completed and recorded in [#218](https://github.com/Caffoot/Caffoot-Lite/issues/218).
+The existing backend checks and focused HTTPS/Chromium tests run in GitHub Actions. They cover first-run MFA, central inventory and Change History, user creation and access permissions, competing device edit reservations, familiar Devices/IPAM/Racks forms, Clean Start and a real v1.3.3 backup created by the published exporter. Previous v2.0.1 and v2.0.2 results are historical; check the v2.0.3 release's own CI and image-build results before installing it. These checks are not an exhaustive proof of every published v1.3.3 interaction. The agreed real Raspberry Pi 5 acceptance has been completed and recorded in [#218](https://github.com/Caffoot/Caffoot-Lite/issues/218).
 
 The existing `tests/test_compose_lifecycle.py` is an **opt-in** Docker milestone test. The Docker Compose lifecycle GitHub Actions workflow (previously called `Next Docker Compose lifecycle`) passed during the original Stage 8 release review, verifying published port configuration, persistent SQLite data and TLS certificate continuity across restart and recreation. The product owner has now completed the agreed Raspberry Pi 5/Portainer Stage 2 acceptance, including container recreation and a manual stopped-container backup/restore. That acceptance did **not** replace the subsequently completed security review, nor prove automated or off-host backup protection.
 
-## Official v2.0.2 Portainer installation
+## Official v2.0.3 Portainer installation
 
-For a simple **new** installation, use **Portainer → Stacks → Add stack → Web editor**. Copy the entire [v2.0.2 stack](docs/historical/portainer/portainer-v2.0.2.yaml) and change the example server address and port. The default storage is a Docker-managed **named volume**; there is no host folder to create. Its image is `ghcr.io/caffoot/caffoot-lite:v2.0.2` (ARM64 Raspberry Pi 5 and AMD64 PC). Confirm the [v2.0.2 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.2) and image workflow succeeded before pulling it. The GHCR package must be **Public** to permit anonymous pulls; never embed an access token in a public stack.
+For a simple **new** installation, use **Portainer → Stacks → Add stack → Web editor**. Copy the entire [v2.0.3 stack](portainer-v2.0.3.yaml) and change the example server address and port. The default storage is a Docker-managed **named volume**; there is no host folder to create. Its image is `ghcr.io/caffoot/caffoot-lite:v2.0.3` (ARM64 Raspberry Pi 5 and AMD64 PC). Confirm the [v2.0.3 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.3) and image workflow succeeded before pulling it. The GHCR package must be **Public** to permit anonymous pulls; never embed an access token in a public stack.
 
 The supplied example uses **192.168.1.100:8443 as a placeholder**. Replace it with the address of your server before deploying. Its standard storage mapping is:
 
@@ -76,9 +76,17 @@ To upgrade to v2.0.2, update the **existing** Portainer stack in place rather th
 
 After the updated container starts, verify your existing account can sign in, the inventory is intact and the HTTPS certificate identity is unchanged. If anything is wrong, stop the container and recover from your verified external backup; do not perform recovery experiments against your only live data copy. No routine JSON export/import is part of a Docker version upgrade.
 
+### Upgrading an existing v2.0.2 installation to v2.0.3
+
+Keep your existing Portainer stack and **the exact same `/data` volume or host-directory mapping**. Stop Caffoot Lite and back up the complete persistent data (including `caffoot.sqlite3` and `tls/`) using your trusted external backup process. Change only the image tag in the existing stack from `v2.0.2` to `v2.0.3`, then redeploy. Keep your HTTPS address, published port, permissions and storage configuration as they were. Do not create a second stack, replace a working named volume or import a JSON backup as part of the upgrade.
+
+Afterwards, check sign-in and MFA, your existing Devices/IPAM/Racks data, Change History and HTTPS certificate identity. If any problem appears, stop and use your verified backup/recovery plan rather than testing destructive changes on your only live data.
+
+**Earlier installations:** The v2.0.1 → v2.0.2 instructions immediately above are retained because older release notes link directly to that heading. You can read those historical steps before planning an upgrade to the current version.
+
 ## Building directly from the source repository
 
-Clone the v2.0.2 release and use the repository-root [`compose.yaml`](compose.yaml) and [`Dockerfile`](Dockerfile). Set your local `.env` values as shown above, then run `docker compose up --build -d` from the root. For Portainer's Git-repository mode, use repository `https://github.com/Caffoot/Caffoot-Lite.git`, reference `v2.0.2` and Compose path `compose.yaml`. The repository-root `compose.yaml` already uses the named `caffoot_data` volume by default. For an existing deployment that uses a host folder, keep the existing `CAFFOOT_DATA_PATH` value in `.env` (or your existing mapping) instead of moving to a fresh volume. You can explicitly set `CAFFOOT_DATA_PATH=/srv/caffoot-lite/data` for a new custom bind-mount installation, after preparing that directory with the correct permissions. Compose may prefix named volumes with the project name; check the actual volume name before running backups.
+Clone the v2.0.3 release and use the repository-root [`compose.yaml`](compose.yaml) and [`Dockerfile`](Dockerfile). Set your local `.env` values as shown above, then run `docker compose up --build -d` from the root. For Portainer's Git-repository mode, use repository `https://github.com/Caffoot/Caffoot-Lite.git`, reference `v2.0.3` and Compose path `compose.yaml`. The repository-root `compose.yaml` already uses the named `caffoot_data` volume by default. For an existing deployment that uses a host folder, keep the existing `CAFFOOT_DATA_PATH` value in `.env` (or your existing mapping) instead of moving to a fresh volume. You can explicitly set `CAFFOOT_DATA_PATH=/srv/caffoot-lite/data` for a new custom bind-mount installation, after preparing that directory with the correct permissions. Compose may prefix named volumes with the project name; check the actual volume name before running backups.
 
 The service is named `caffoot-lite`, and the image build copies `backend/`, `inventory.html`, `setup.html` and the required `assets/` from the root. The same `/data` backup and HTTPS rules apply.
 
@@ -100,9 +108,9 @@ On the Raspberry Pi test host, the product owner successfully recreated the runn
 
 ## Published v1.3.3 import compatibility boundary
 
-The source of truth is the **published** `v1.3.3` tag, particularly [`app/caffoot-lite.html` at the v1.3.3 tag](https://github.com/Caffoot/Caffoot-Lite/blob/v1.3.3/app/caffoot-lite.html) (`createInventoryBackup`, `validateBackupVersion`, `normaliseImportedBackupAndPlanLegacyMountRepairs`, `planLegacyComputerMountingCorrections` and `findAccessPointMountConflictsInBackup`). v2.0.2 accepts only backups freshly exported from published v1.3.3; users of earlier HTML versions must upgrade to v1.3.3 first.
+The source of truth is the **published** `v1.3.3` tag, particularly [`app/caffoot-lite.html` at the v1.3.3 tag](https://github.com/Caffoot/Caffoot-Lite/blob/v1.3.3/app/caffoot-lite.html) (`createInventoryBackup`, `validateBackupVersion`, `normaliseImportedBackupAndPlanLegacyMountRepairs`, `planLegacyComputerMountingCorrections` and `findAccessPointMountConflictsInBackup`). v2.0.3 accepts only backups freshly exported from published v1.3.3; users of earlier HTML versions must upgrade to v1.3.3 first.
 
-Published v1.3.3 retains both the legacy computer mounting review and the Access Point mounting review in its import path. A freshly exported, healthy v1.3.3 inventory ordinarily needs neither, but these safeguards must not be removed merely because older-version imports are unsupported. Preserve the source-ordered validation and explicit user review when a v1.3.3 export actually triggers them. Do **not** expand this into support for older backup formats or add new migration prompts. The live v2.0.2 import retains the published reviews and requires explicit confirmation before replacing inventory in a SQLite transaction.
+Published v1.3.3 retains both the legacy computer mounting review and the Access Point mounting review in its import path. A freshly exported, healthy v1.3.3 inventory ordinarily needs neither, but these safeguards must not be removed merely because older-version imports are unsupported. Preserve the source-ordered validation and explicit user review when a v1.3.3 export actually triggers them. Do **not** expand this into support for older backup formats or add new migration prompts. The v2.0.3 import retains the published reviews and requires explicit confirmation before replacing inventory in a SQLite transaction.
 
 ## Private genuine v1.3.3 export regression
 

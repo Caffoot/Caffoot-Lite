@@ -25,13 +25,13 @@ The 25 earlier audit, workflow, test-matrix and draft migration documents are ac
 - [Compose lifecycle](../../.github/workflows/compose-lifecycle.yml) — opt-in Docker integration check.
 - [Release documentation](../../.github/workflows/release-documentation.yml) — required `release-documentation` pull-request status check; its check identifier must remain stable.
 - [Git history secret scan](../../.github/workflows/git-history-secrets.yml) — full-history secret scan on pull requests and main.
-- [v2.0.2 image publication](../../.github/workflows/v2-release-image.yml) — version-specific release workflow triggered by the approved v2.0.2 tag.
+- [v2.0.3 image publication](../../.github/workflows/v2-release-image.yml) — version-specific release workflow triggered by the approved v2.0.2 tag.
 
 Workflows have path filters and are run at relevant milestones to conserve CI minutes. A documentation-only commit may not trigger a backend or browser run; don't claim it did.
 
 ## Maintenance procedure
 
-**Across chat sessions:** Start with the [current development handover](Current-Development-Status.md), verify its dated claims against current GitHub state and approved issues, and review existing evidence **before** repeating tests or investigations. The handover must be updated as meaningful work is completed. During the release-preparation PR it is moved into the versioned [historical documentation](../historical/README.md), and active links are removed or replaced. See the [release owner checklist](Security-Fixes-and-Releases.md).
+**Across chat sessions:** Check current GitHub state and approved issues before resuming work. The [v2.0.3 development handover](../historical/development-handovers/v2.0.3.md) is a completed historical record, not an instruction to restart old work. A later version gets a new active handover only after its scope is agreed, which is archived at its own release gate. See the [release owner checklist](Security-Fixes-and-Releases.md).
 
 1. Review the product-owner-approved scope, current decisions and the [contribution guide](../../CONTRIBUTING.md). [#215](https://github.com/Caffoot/Caffoot-Lite/issues/215) and [#218](https://github.com/Caffoot/Caffoot-Lite/issues/218) are completed historical release records, not live development restrictions.
 2. Verify the protected `main` branch, relevant CI and [published v1.3.3 compatibility baseline](https://github.com/Caffoot/Caffoot-Lite/tree/v1.3.3).

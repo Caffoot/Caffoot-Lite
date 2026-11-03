@@ -4,7 +4,7 @@ Thank you for helping improve Caffoot Lite. We want contributors to find underst
 
 ## Start With An Agreed Scope
 
-Caffoot Lite v2.0.2 is the current published Docker/SQLite baseline. Before writing code, read the [Development Guide](docs/development-guide/README.md), the [Coding And Naming Conventions](docs/development-guide/06-Coding-and-Naming-Conventions.md), and the [Function Index](docs/development-guide/Function-Index.md). Check existing source, tests and relevant approved GitHub decisions.
+Caffoot Lite v2.0.3 is the current Docker/SQLite release; v2.0.2 remains its published security-maintenance predecessor. Before writing code, read the [Development Guide](docs/development-guide/README.md), the [Coding And Naming Conventions](docs/development-guide/06-Coding-and-Naming-Conventions.md), and the [Function Index](docs/development-guide/Function-Index.md). Check existing source, tests and relevant approved GitHub decisions.
 
 **One feature or improvement per GitHub issue.** Anyone is welcome to [suggest a feature](https://github.com/Caffoot/Caffoot-Lite/issues/new/choose) or join an existing discussion. [Future Ideas Index #222](https://github.com/Caffoot/Caffoot-Lite/issues/222) links existing ideas; new requests should have their own issues. Record discussions, product-owner decisions, changes of scope and acceptance feedback in the relevant issue. The product owner decides what gets built and when; contributors should not start unrelated work or publish anything on their own initiative. Historical issues #215 and #218 are completed release history, not restrictions on future development.
 
@@ -58,7 +58,7 @@ This standard applies equally to code written by maintainers and code submitted 
 
 ## Documentation Is Part Of The Change
 
-Do not leave documentation for a later release or for another contributor. For each approved development batch, update the [current development handover](docs/development-guide/Current-Development-Status.md) with meaningful completed work, evidence, decisions, what remains and what must not be repeated. At the published-release gate, archive that version's handover and remove active links to it; open a new handover only once the following development scope is agreed.
+Do not leave documentation for a later release or for another contributor. For each approved development batch, update the **active handover for that version, if one exists**, with completed work, evidence, decisions and remaining work. At publication, archive the completed handover and remove active links; create a new active handover only once the following development scope is agreed. The [v2.0.3 handover](docs/historical/development-handovers/v2.0.3.md) is preserved as history.
 
 - Update the relevant guides for changed behaviour, controls, data flows, deployment steps, configuration or security rules.
 - **When functions are added, removed, moved or renamed, regenerate and review** [`docs/development-guide/Function-Index.md`](docs/development-guide/Function-Index.md) in the same pull request, keeping its source revision and links truthful. The index is a navigation aid, **not** proof that a function is unused; textual reference counts are not a call graph.
@@ -86,4 +86,4 @@ For a short, practical security-fix and release sequence, use the [owner checkli
 
 Automated checks can catch syntax, documentation omissions and some naming problems; **human review remains essential** to establish whether names are genuinely clear. Do not claim CI guarantees semantic naming quality.
 
-The [v2.0.2 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.2) is our current published baseline. The project maintainer agrees the scope and timing of changes and makes the final merge and release decisions. Please work within the agreed scope, test and document what you change, and don't publish preview images or releases unless we've agreed to do so.
+The [v2.0.3 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.3) is the current published baseline. The project maintainer agrees the scope and timing of changes and makes the final merge and release decisions. Please work within the agreed scope, test and document what you change, and don't publish preview images or releases unless we've agreed to do so.

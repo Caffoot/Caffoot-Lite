@@ -1,18 +1,18 @@
-# Caffoot Lite v2.0.2
+# Caffoot Lite v2.0.3
 
 **Infrastructure, Simplified.** Free, open-source IPAM, device inventory, network rack documentation and Change History for home labs and small IT teams.
 
-Caffoot Lite v2.0.2 is a focused security maintenance update to the established Docker/SQLite, multi-user Caffoot Lite application. It uses a **central SQLite database**, first-run administrator setup, mandatory MFA for administrators and editors, administrator-managed permissions, and simultaneous authenticated inventory access. Familiar v1.3.3 Devices, IPAM, Racks and Change History workflows are preserved.
+Caffoot Lite v2.0.3 is a maintenance update to the established Docker/SQLite, multi-user application, bringing refreshed user guides and focused compatibility checks on top of the v2.0.2 security release. It uses a **central SQLite database**, first-run administrator setup, mandatory MFA for administrators and editors, administrator-managed permissions, and simultaneous authenticated inventory access. Familiar v1.3.3 Devices, IPAM, Racks and Change History workflows are preserved.
 
 The repository root contains the Docker application's source: `backend/`, `inventory.html`, `setup.html`, `assets/`, `Dockerfile`, `compose.yaml`, `tests/` and documentation. The old `next/` development folder and standalone HTML build copy remain excluded, as established in v2.0.1. The original standalone version remains separately available in the [published v1.3.3 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3).
 
 ## Install Caffoot Lite
 
-**Official Docker image:** `ghcr.io/caffoot/caffoot-lite:v2.0.2` (Raspberry Pi 5 ARM64 and PC AMD64).
+**Official Docker image:** `ghcr.io/caffoot/caffoot-lite:v2.0.3` (Raspberry Pi 5 ARM64 and PC AMD64).
 
-Before installing, confirm the [v2.0.2 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.2) and container build are published and the image is publicly accessible. This is a Docker application: **GitHub's automatic source-code ZIP and tarball are not the Docker installation package.**
+Before installing, confirm the [v2.0.3 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.3) and container build are published and the image is publicly accessible. This is a Docker application: **GitHub's automatic source-code ZIP and tarball are not the Docker installation package.**
 
-For Portainer, copy [`portainer-v2.0.2.yaml`](docs/historical/portainer/portainer-v2.0.2.yaml) into **Stacks → Add stack → Web editor**, adjust your server address and port, and deploy. For new installations, Docker creates the persistent named volume automatically; no host directory is required. For Docker Compose builds from source, use [`compose.yaml`](compose.yaml) and [`Dockerfile`](Dockerfile) at the repository root.
+For Portainer, use the current-release [`portainer-v2.0.3.yaml`](portainer-v2.0.3.yaml) from the repository root into **Stacks → Add stack → Web editor**, adjust your server address and port, and deploy. For new installations, Docker creates the persistent named volume automatically; no host directory is required. For Docker Compose builds from source, use [`compose.yaml`](compose.yaml) and [`Dockerfile`](Dockerfile) at the repository root.
 
 **Read the [installation and HTTPS guide](INSTALLATION.md)** for complete Portainer/Docker Compose steps, initial administrator setup, MFA, reverse proxy, certificate trust and data backups. No public registration is offered.
 
@@ -64,14 +64,15 @@ For direct HTTPS, verify and trust the application certificate before entering c
 ## Documentation
 
 - [Installation, HTTPS, Portainer and backup instructions](INSTALLATION.md)
-- [v2.0.2 release notes](docs/historical/release-notes/Release-Notes-v2.0.2.md)
+- [v2.0.3 release notes](docs/historical/release-notes/Release-Notes-v2.0.3.md)
+- [Previous v2.0.2 release notes](docs/historical/release-notes/Release-Notes-v2.0.2.md)
 - [Previous v2.0.1 release notes](docs/historical/release-notes/Release-Notes-v2.0.1.md)
 - [Detailed user guides and screenshots](docs/how-tos/features-and-instructions/README.md)
 - [Contributing To Caffoot Lite — mandatory naming, UI and documentation standards](CONTRIBUTING.md)
 - [Development Guide](docs/development-guide/README.md)
-- [Current development handover — planned work, not released features](docs/development-guide/Current-Development-Status.md)
+- [v2.0.3 development handover (historical)](docs/historical/development-handovers/v2.0.3.md)
 - [Security-fix and release checklist](docs/development-guide/Security-Fixes-and-Releases.md)
 - [Standalone v1.3.3 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3)
 - [Historical v2.0/v2.0.1 implementation specification #215](https://github.com/Caffoot/Caffoot-Lite/issues/215) and [release tracker #218](https://github.com/Caffoot/Caffoot-Lite/issues/218); [Future Ideas Index #222](https://github.com/Caffoot/Caffoot-Lite/issues/222) and [Feature Request form](https://github.com/Caffoot/Caffoot-Lite/issues/new/choose)
 
-**Version history:** [v2.0](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0) introduced the Docker/SQLite multi-user edition. [v2.0.1](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.1) moved the Docker source to the repository root. v2.0.2 is a focused security maintenance update with no planned changes to the supported inventory workflows or stored-data format.
+**Version history:** [v2.0](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0) introduced the Docker/SQLite multi-user edition. [v2.0.1](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.1) moved the Docker source to the repository root. v2.0.2 delivered a focused security correction. v2.0.3 updates the documentation, code-reference baseline and existing browser regression coverage without changing the supported inventory data format.

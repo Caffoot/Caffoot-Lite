@@ -16,7 +16,7 @@ body:
     attributes:
       label: "Caffoot Lite Version"
       description: "You can find this under My Account > About Caffoot Lite."
-      placeholder: "For example, v2.0.1"
+      placeholder: "For example, v2.0.3"
     validations:
       required: true
   - type: dropdown
