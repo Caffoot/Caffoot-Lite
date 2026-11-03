@@ -20,9 +20,9 @@
     { id: 'settings', label: 'Settings & Data', href: '/inventory#settings', admin: true }
   ];
 
-  function permitted(item) {
-    if (item.admin) return isAdmin;
-    if (item.permission) return Boolean(sections[item.permission]?.read);
+  function permitted(item, permissions, admin) {
+    if (item.admin) return admin;
+    if (item.permission) return Boolean(permissions[item.permission]?.read);
     return true;
   }
 
@@ -50,7 +50,7 @@
   <div class="nav-label">WORKSPACE</div>
   <nav class="side-nav" aria-label="Main Sections">
     {#each items.filter(item => item.id !== 'settings') as item (item.id)}
-      {#if permitted(item)}
+      {#if permitted(item, sections, isAdmin)}
         {#if workspaceMode}
           <a class="nav-item" class:current={item.id === activeSection} href={item.href}
             title={item.label} aria-current={item.id === activeSection ? 'page' : undefined}>
@@ -83,7 +83,7 @@
     {/each}
   </nav>
   <div class="nav-bottom">
-    {#if permitted(items[6])}
+    {#if permitted(items[6], sections, isAdmin)}
       <a href="/inventory#settings" class="nav-item" class:current={activeSection === 'settings'}
         title="Settings & Data" aria-current={activeSection === 'settings' ? 'page' : undefined}>
         <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
