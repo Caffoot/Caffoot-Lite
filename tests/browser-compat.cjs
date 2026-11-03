@@ -115,15 +115,67 @@ async function run(){
   assert.equal(await page.locator('#sidebar').evaluate(el=>getComputedStyle(el).display),'flex',
     'Tailwind utility layout must remain active');
   assert.equal(await page.title(),'Caffoot Lite — Infrastructure, Simplified.','Inventory browser tab must use Caffoot branding');
-  await page.locator('#next-account-nav').waitFor();
+  await page.locator('#caffoot-app-topbar [data-action="tab-account"]').waitFor();
   // Verify the approved computed typeface with the locally served Tailwind preflight.
   assert.ok((await page.locator('html').evaluate(el=>getComputedStyle(el).fontFamily)).includes('Inter'),
     'Inventory, Users, Settings and My account must inherit Inter typography');
-  await page.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='Dashboard Overview');
+  await page.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='Dashboard');
   for(const selector of ['#sidebar','#page-title','#main-content']){
     assert.ok((await page.locator(selector).evaluate(el=>getComputedStyle(el).fontFamily)).includes('Inter'),
       'Branded inventory typography should apply to '+selector);
   }
+  // Compare the actual authenticated HTML page with the approved Dashboard
+  // Draft 02's shared shell, card layout and controls.
+  const approvedUI = await page.evaluate(() => {
+    const css = selector => getComputedStyle(document.querySelector(selector));
+    const navItems = [...document.querySelectorAll('#sidebar .caffoot-primary-nav > .nav-btn')]
+      .map(item => item.dataset.tab).filter(Boolean);
+    return {
+      sidebar: css('#sidebar').backgroundColor,
+      width: Math.round(document.querySelector('#sidebar').getBoundingClientRect().width),
+      header: css('#caffoot-app-topbar').backgroundColor,
+      title: document.querySelector('.caffoot-dashboard-heading h1')?.textContent,
+      eyebrow: document.querySelector('.caffoot-dashboard-eyebrow')?.textContent,
+      tabs: [...document.querySelectorAll('.caffoot-dashboard .dashboard-tab-control')].map(x=>x.textContent.trim()),
+      metrics: document.querySelectorAll('#dashboard-panel-overview .db-metric').length,
+      columns: css('#dashboard-panel-overview .db-two').gridTemplateColumns.split(' ').map(parseFloat),
+      navItems
+    };
+  });
+  assert.equal(approvedUI.sidebar,'rgb(20, 43, 67)','Sidebar must use approved navy colour');
+  assert.equal(approvedUI.width,215,'Desktop sidebar must use approved width');
+  assert.equal(approvedUI.header,'rgb(255, 255, 255)','Approved top bar must be white');
+  assert.equal(approvedUI.title,'Dashboard');
+  assert.equal(approvedUI.eyebrow,'YOUR INFRASTRUCTURE AT A GLANCE');
+  assert.deepEqual(approvedUI.tabs,['Overview','Network Insights','Activity & Alerts']);
+  assert.equal(approvedUI.metrics,4,'Approved Dashboard must have four live summary cards');
+  assert.equal(approvedUI.columns.length,2,'Desktop overview must have two columns');
+  assert.ok(approvedUI.columns[0]>approvedUI.columns[1],'Approved overview has wider left column');
+  assert.deepEqual(approvedUI.navItems.slice(0,6),
+    ['dashboard','devices','ipam','racks','audit','users'],
+    'Navigation must keep all sections in the approved order');
+  const logo = await page.request.get(address+'/assets/caffoot-logo-256.png');
+  assert.equal(logo.status(),200,'Approved Caffoot logo must be served locally');
+  await page.locator('#sidebar [data-action="toggle-sidebar"]').click();
+  assert.ok(await page.locator('#app').evaluate(el=>el.classList.contains('caffoot-sidebar-collapsed')),
+    'Collapse button must collapse the existing working sidebar');
+  await page.locator('#sidebar [data-action="toggle-sidebar"]').click();
+  assert.ok(await page.locator('#app').evaluate(el=>!el.classList.contains('caffoot-sidebar-collapsed')),
+    'Collapse button must also restore the navigation');
+  const screens = path.join(root,'browser-screenshots');
+  fs.mkdirSync(screens,{recursive:true});
+  await page.screenshot({path:path.join(screens,'dashboard-approved-html-desktop.png'),fullPage:true});
+  await page.setViewportSize({width:390,height:844});
+  const mobile = await page.evaluate(()=>({
+    content:document.documentElement.scrollWidth,viewport:window.innerWidth,
+    sidebar:Math.round(document.querySelector('#sidebar').getBoundingClientRect().width)
+  }));
+  assert.ok(mobile.content<=mobile.viewport+2,
+    'Approved Dashboard must not overflow mobile viewport: '+JSON.stringify(mobile));
+  assert.equal(mobile.sidebar,65,'Approved compact mobile navigation must remain visible');
+  await page.screenshot({path:path.join(screens,'dashboard-approved-html-mobile.png'),fullPage:true});
+  await page.setViewportSize({width:1440,height:950});
+  console.log('Approved HTML Dashboard shell, real cards, navigation and mobile layout passed');
   console.log('First administrator, MFA, sign-in and direct Dashboard arrival passed');
   assert.equal(await page.locator('#next-dashboard-mfa-notice').count(),0,
     'Enrolled administrators must not see MFA setup guidance');
@@ -169,7 +221,7 @@ async function run(){
   assert.ok(await page.locator('#users-sidebar-actions').isVisible());
   assert.equal(await page.locator('#next-account-password-form').count(),0,
     'User Management must not contain personal account settings');
-  await page.locator('#sidebar #next-account-nav').click();
+  await page.locator('#caffoot-app-topbar [data-action="tab-account"]').click();
   assert.equal(await page.locator('#page-title').textContent(),'My account');
   await page.locator('#next-account-password-form').waitFor();
   for(const [area,selector] of [['preferences','.theme-choice'],['help','.settings-help-topic'],['about','.settings-about']]){
@@ -270,8 +322,8 @@ async function run(){
   const health=page.locator('#next-dashboard-inventory-health');
   assert.equal(await health.count(),1,'Admin must see actual inventory inconsistencies');
   assert.ok(await health.getByText(/Duplicate or missing device ID/).isVisible());
-  assert.ok(await health.evaluate(el=>el.classList.contains('border-rose-200')),
-    'Inventory warning must use established rose warning palette');
+  assert.ok(await health.evaluate(el=>el.classList.contains('db-error-card')),
+    'Inventory warning must retain a visible warning treatment');
   await page.evaluate(()=>{appState.devices.pop();renderContent();});
   assert.equal(await health.count(),0,'Corrected inventory must hide the warning');
 
@@ -327,7 +379,7 @@ async function run(){
   await page.locator('[data-action="save-rename"][data-kind="location"]').click();
   await persisted(page,s=>s.devices.some(d=>d.id===device.id&&d.location==='Workshop'),'Location rename');
   await page.reload();
-  await page.locator('#next-account-nav').waitFor();
+  await page.locator('#caffoot-app-topbar [data-action="tab-account"]').waitFor();
   assert.equal((await state(page)).devices.find(d=>d.id===device.id).location,'Workshop');
   await modal(page,'openManageLocationsModal');
   await page.locator('[data-action="delete-device-type-or-location"][data-kind="location"][data-name="Workshop"]').click();
@@ -389,7 +441,7 @@ async function run(){
   await persisted(page,s=>s.rackAccessories.some(a=>a.name==='Browser Vertical PDU' &&
     a.side==='left'&&a.type==='pdu_vertical'),'Rack vertical accessory');
   await page.reload();
-  await page.locator('#next-account-nav').waitFor();
+  await page.locator('#caffoot-app-topbar [data-action="tab-account"]').waitFor();
   const rackSaved=await state(page);
   assert.equal(rackSaved.devices.find(d=>d.id===rackSwitch.id).rackId,rackId);
   assert.equal(rackSaved.rackAccessories.length,2);
@@ -542,8 +594,8 @@ async function run(){
   await editor.locator('#code-field:not([hidden])').waitFor();
   await editor.locator('#code').fill(mfaCode(editorSecret));
   await editor.waitForURL('**/inventory');
-  await editor.locator('#next-account-nav').waitFor();
-  await editor.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='Dashboard Overview');
+  await editor.locator('#caffoot-app-topbar [data-action="tab-account"]').waitFor();
+  await editor.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='Dashboard');
   assert.equal(await editor.locator('#next-dashboard-mfa-notice').count(),0,
     'Enrolled editors must not see MFA setup guidance');
   await editor.evaluate(()=>{appState.devices.push({...appState.devices[0]});renderContent();});
@@ -553,7 +605,7 @@ async function run(){
   assert.equal(await editor.getByText('Integrity issues',{exact:true}).count(),0,
     'Non-administrator editor must not see integrity health totals');
   await editor.evaluate(()=>{appState.devices.pop();renderContent();});
-  await editor.locator('#sidebar #next-account-nav').click();
+  await editor.locator('#caffoot-app-topbar [data-action="tab-account"]').click();
   await editor.locator('#next-account-password-form').waitFor();
   assert.equal(await editor.locator('#page-title').textContent(),'My account');
   await editor.locator('[data-action="tab-devices"]').click();
@@ -673,7 +725,7 @@ async function run(){
   assert.ok(await viewer.locator('#ipam-sidebar-actions [data-action="open-subnet-modal"]').isHidden());
   await viewer.locator('#sidebar [data-action="tab-racks"]').click();
   assert.ok(await viewer.locator('#racks-sidebar-actions [data-action="open-rack-modal"]').isHidden());
-  await viewer.locator('#sidebar #next-account-nav').click();
+  await viewer.locator('#caffoot-app-topbar [data-action="tab-account"]').click();
   for(const tab of ['preferences','help','about']){
     await viewer.locator('[data-action="select-account-section"][data-section="'+tab+'"]').click();
     assert.ok(await viewer.locator('[data-action="select-account-section"][data-section="'+tab+'"]').isVisible());
