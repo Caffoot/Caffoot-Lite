@@ -103,6 +103,9 @@ async function run(){
   await page.locator('#code-field:not([hidden])').waitFor();
   await page.locator('#code').fill(mfaCode(secret));
   await page.waitForURL('**/inventory');
+  await page.waitForLoadState('domcontentloaded');
+  assert.deepEqual(errors,[],
+    'Inventory JavaScript must parse and initialise without browser errors');
   assert.equal(await page.locator('script[src*="cdn.tailwindcss.com"]').count(),0,
     'Inventory must not load remote Tailwind JavaScript');
   assert.equal(await page.locator('link[href="/assets/tailwind.css"]').count(),1,
