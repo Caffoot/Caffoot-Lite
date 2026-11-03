@@ -61,7 +61,7 @@ jobs:
       - name: Docker build including static Svelte, without a Node runtime
         run: |
           docker build -t caffoot-stage-2a:test .
-          docker run --rm --entrypoint sh caffoot-stage-2a:test -c 'test -f /opt/caffoot/inventory.html && test -f /opt/caffoot/workspace-dist/workspace.html && ! command -v node'
+          docker run --rm --entrypoint sh caffoot-stage-2a:test -c 'test -f /opt/caffoot/inventory.html && test -f /opt/caffoot/workspace-dist/workspace.html && test -f /opt/caffoot/workspace-dist/OFL-Inter.txt && ls /opt/caffoot/workspace-dist/assets/*.woff2 >/dev/null && ! command -v node'
       - name: Save review screenshots without publishing an image
         if: always()
         uses: actions/upload-artifact@v4
