@@ -156,6 +156,9 @@ async function testSignedInData() {
   await fullAdminPage.getByRole('link',{name:'Add Rack'}).click();
   await fullAdminPage.waitForURL('**/inventory#racks/add');
   await fullAdminPage.locator('#modal-content form[data-form-action="rack"]').waitFor();
+  await fullAdminPage.goto(address+'/inventory',{waitUntil:'domcontentloaded'});
+  await fullAdminPage.waitForURL('**/workspace/dashboard/');
+  await fullAdminPage.getByRole('heading',{name:'Dashboard',exact:true}).waitFor();
   await fullAdminContext.close();
 
   const adminContext=await browser.newContext({ignoreHTTPSErrors:true,
