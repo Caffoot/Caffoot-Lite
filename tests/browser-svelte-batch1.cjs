@@ -152,9 +152,17 @@ async function testFirstRunAndMfa() {
   await page.getByLabel('Password',{exact:true}).fill('correct-horse-battery-staple');
   await page.getByRole('button',{name:'Continue Enrolment'}).click();
   await page.getByRole('heading',{name:'Secure Your Account'}).waitFor();
+  assert.equal((await page.locator('.secret code').textContent()).trim(),secret,
+    'Recovery must keep the administrator authenticator secret');
   await page.getByLabel('Six-Digit Authenticator Code').fill(codeFor(secret));
   await page.getByRole('button',{name:'Confirm MFA Setup'}).click();
-  await page.getByRole('heading',{name:"You're All Set!"}).waitFor();
+  try {
+    await page.getByRole('heading',{name:"You're All Set!"}).waitFor({timeout:8000});
+  } catch (caught) {
+    const errors=await page.getByRole('alert').allTextContents();
+    throw new Error('First administrator MFA confirmation did not complete: '+
+      (errors.join('; ') || 'no visible error')+' ('+page.url()+')',{cause:caught});
+  }
   await page.getByRole('button',{name:'Return to Sign In'}).click();
   await page.getByLabel('Username',{exact:true}).fill('new-owner');
   await page.getByLabel('Password',{exact:true}).fill('correct-horse-battery-staple');
