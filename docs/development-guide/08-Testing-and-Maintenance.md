@@ -2,7 +2,7 @@
 
 ## In simple terms
 
-Before changing Caffoot Lite, identify the existing behaviour that must remain intact, then verify the affected path. Reuse existing tests and evidence. Green automation is useful, but **the product owner must still approve release**.
+Before changing Caffoot Lite, identify the existing behaviour that must remain intact, then verify the affected path. Reuse existing tests and evidence. Green automation is useful, but **the product owner must still approve release**. For the practical owner-facing decision points, see [Security Fixes and Releases](Security-Fixes-and-Releases.md).
 
 ## Existing test evidence
 
