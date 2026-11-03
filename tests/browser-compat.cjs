@@ -852,6 +852,9 @@ async function run(){
   assert.ok(await viewer.locator('#next-users-nav').isHidden());
   await viewer.locator('#sidebar [data-action="tab-devices"]').click();
   assert.ok(await viewer.locator('#devices-sidebar-actions [data-action="open-device-modal"]').isHidden());
+  await viewer.locator('#devices-sidebar-actions [data-action="sidebar-devices-inventory"]').click();
+  await viewer.locator('[data-device-panel="inventory"] .device-inventory-add-device')
+    .waitFor({state:'hidden'});
   await viewer.evaluate(()=>openDeviceModal());
   assert.ok(await viewer.locator('#modal-container').evaluate(el=>el.classList.contains('hidden')),
     'Read-only users must not be able to open the Device editor');
