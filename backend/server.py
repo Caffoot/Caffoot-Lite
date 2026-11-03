@@ -239,6 +239,25 @@ class Handler(BaseHTTPRequestHandler):
                     self.respond(403, {"error": "forbidden"})
                     return
             body = (Path(__file__).resolve().parent.parent / "inventory.html").read_bytes()
+            if WORKSPACE_ENABLED:
+                # Private test only: the legacy app still handles unfinished
+                # screens, but no longer presents its old Dashboard by default.
+                # A browser hash is not sent over HTTP, so inspect it client-side.
+                start_in_svelte = (
+                    b'<script data-caffoot-private-dashboard>'
+                    b'(function(){'
+                    b'function openNewDashboard(){'
+                    b'var section=window.location.hash;'
+                    b'if(!section||section==="#dashboard"){'
+                    b'window.location.replace("/workspace/dashboard/");'
+                    b'}'
+                    b'}'
+                    b'window.addEventListener("hashchange",openNewDashboard);'
+                    b'openNewDashboard();'
+                    b'})();'
+                    b'</script>'
+                )
+                body = body.replace(b"</head>", start_in_svelte + b"</head>", 1)
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.send_header("Content-Length", str(len(body)))
