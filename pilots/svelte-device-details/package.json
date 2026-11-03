@@ -9,7 +9,9 @@
     "build": "vite build",
     "test:browser": "node test/browser-check.mjs",
     "test:static": "node test/static-check.mjs",
-    "build:workspace": "vite build --config vite.workspace.config.js"
+    "build:workspace": "vite build --config vite.workspace.config.js",
+    "build:signin": "vite build --config vite.signin.config.js",
+    "test:dashboard-data": "node --test test/dashboard-data.test.mjs"
   },
   "devDependencies": {
     "svelte": "5.57.2",
