@@ -16,6 +16,7 @@ function parseCidr(cidr) {
   const address = parts.reduce((sum, part) => sum * 256 + Number(part), 0) >>> 0;
   const mask = (0xffffffff << (32 - prefix)) >>> 0;
   const network = (address & mask) >>> 0;
+  if (network !== address) return null; // Reject unaligned CIDRs, as the published IPAM does.
   const broadcast = (network + 2 ** (32 - prefix) - 1) >>> 0;
   return {first:network + 1, last:broadcast - 1, capacity:broadcast - network - 1};
 }
@@ -55,7 +56,7 @@ export function summariseRack(rack, devices = [], accessories = [], includePlace
   const installed=array(devices).filter(device=>device.rackId === rack?.id);
   const occupants=array(accessories).filter(item=>item.rackId===rack?.id &&
     !['pdu_vertical','cable_vertical'].includes(item.type));
-  const used = face => installed.filter(item=>(item.face || 'front')===face)
+  const used = face => installed.filter(item=>(item.rackFace || item.face || 'front')===face)
     .reduce((sum,item)=>{
       const first=Number(item.rackUStart),last=Number(item.rackUEnd ?? item.rackUStart);
       return sum+(Number.isInteger(first)&&Number.isInteger(last)&&last>=first?last-first+1:0);
@@ -95,6 +96,38 @@ export function summariseDashboard(snapshot, history = []) {
   const types=Object.entries(typeCounts).sort((a,b)=>b[1]-a[1]);
   const locations=Object.entries(locationCounts).sort((a,b)=>b[1]-a[1]);
   const events=array(history);
+  const usableCapacity=ipRows.reduce((n,r)=>n+r.capacity,0);
+  const assignedInSubnets=ipRows.reduce((n,r)=>n+r.assigned,0);
+  const reservedInSubnets=ipRows.reduce((n,r)=>n+r.reserved,0);
+  const totalAvailable=Math.max(0,usableCapacity-assignedInSubnets-reservedInSubnets);
+  const ipUtilisation=usableCapacity?Math.round((assignedInSubnets+reservedInSubnets)/usableCapacity*100):0;
+  const alerts=[
+    ...ipRows.filter(r=>r.supported&&r.utilisation>=85).map(r=>({kind:'IPAM',name:r.name||r.cidr,
+      percent:r.utilisation,severity:'warning',target:'ipam',text:'Subnet '+(r.name||r.cidr)+' is '+r.utilisation+'% used'})),
+    ...rackRows.filter(r=>r.percent!==null&&r.percent>=85).map(r=>({kind:'Racks',name:r.name,
+      percent:r.percent,severity:'warning',target:'racks',text:'Rack '+r.name+' is '+r.percent+'% occupied'}))
+  ];
+  // Cross-area diagnostics require permission for both sides of a relationship.
+  if(hasDevices&&hasIpam){
+    const addresses=new Set();
+    for(const device of devices){
+      if(!device.primaryIp)continue;
+      if(addresses.has(device.primaryIp))alerts.push({kind:'Devices',severity:'critical',
+        text:'Duplicate primary IP: '+device.primaryIp,target:'devices'});
+      addresses.add(device.primaryIp);
+      const alloc=allocations[device.primaryIp];
+      if(!alloc||alloc.deviceId!==device.id)alerts.push({kind:'Devices',severity:'warning',
+        text:(device.name||'Device')+' is not linked correctly in IPAM',target:'devices'});
+    }
+  }
+  if(hasDevices&&hasRacks){
+    const rackIds=new Set(racks.map(r=>r.id));
+    for(const device of devices){
+      if(device.rackId&&!rackIds.has(device.rackId))alerts.push({kind:'Racks',severity:'critical',
+        text:(device.name||'Device')+' references a missing rack',target:'devices'});
+    }
+  }
+  const healthIssues=alerts.filter(a=>a.severity==='critical').map(a=>a.text);
   return {
     access:{Devices:hasDevices,IPAM:hasIpam,Racks:hasRacks},
     devices,racks,subnets,ipRows,rackRows,statuses,types,locations,
@@ -102,13 +135,12 @@ export function summariseDashboard(snapshot, history = []) {
     activeDevices:devices.filter(item=>(item.status||'Active').toLowerCase()==='active').length,
     ipAssigned:Object.values(allocations).filter(item=>item?.status==='Assigned').length,
     ipReserved:Object.values(allocations).filter(item=>item?.status==='Reserved').length,
+    usableCapacity,assignedInSubnets,reservedInSubnets,totalAvailable,ipUtilisation,
+    healthIssues,
     rackCount:racks.length,
     deviceCount:devices.length,
     subnetCount:subnets.length,
-    warnings:[
-      ...ipRows.filter(item=>item.supported && item.utilisation>=85).map(item=>({kind:'IPAM',name:item.name,percent:item.utilisation})),
-      ...rackRows.filter(item=>item.percent!==null && item.percent>=85).map(item=>({kind:'Racks',name:item.name,percent:item.percent}))
-    ]
+    warnings:alerts
   };
 }
 

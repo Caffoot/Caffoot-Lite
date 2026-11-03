@@ -17,6 +17,8 @@ test('Subnet numbers follow the published gateway and allocation rules',()=>{
   assert.equal(r.available,251);
   assert.equal(r.utilisation,1);
   assert.equal(summariseSubnet({name:'block',cidr:'10.1.0.0/16'}).supported,false);
+  assert.equal(summariseSubnet({cidr:'10.12.0.1/24'}).supported,false,
+    'Subnets must use aligned CIDRs');
 });
 
 test('Rack space is calculated separately for front and rear',()=>{
@@ -50,6 +52,9 @@ test('Combined authorised sections produce the existing report columns',()=>{
   const result=summariseDashboard(state);
   assert.equal(result.rackRows[0].front,2);
   assert.equal(result.ipRows[0].assigned,2);
+  assert.equal(result.usableCapacity,254);
+  assert.equal(result.totalAvailable,251);
+  assert.equal(result.ipUtilisation,1);
   assert.ok(dashboardCsv('devices',result).includes('Rack A'));
   assert.ok(dashboardCsv('subnets',result).includes('"Capacity"'));
   assert.ok(dashboardCsv('racks',result).includes('"Maximum face occupancy %"'));
@@ -63,4 +68,17 @@ test('A restricted Dashboard never treats absent data as zero authorised records
   assert.equal(data.devices.length,0);
   assert.equal(data.ipRows.length,1);
   assert.throws(()=>dashboardCsv('devices',data));
+  assert.equal(data.warnings.some(item=>item.kind==='Devices'),false);
+});
+
+test('Related-record warnings require access to both relevant sections',()=>{
+  const faulty={...host,primaryIp:'10.12.0.12',rackId:'missing-rack'};
+  const restricted=summariseDashboard({sections:{Devices:true,IPAM:false,Racks:false},
+    devices:[faulty]});
+  assert.equal(restricted.warnings.length,0);
+  const complete=summariseDashboard({sections:{Devices:true,IPAM:true,Racks:true},
+    devices:[faulty],racks:[rack],subnets:[subnet],ipAllocations:allocation});
+  assert.ok(complete.warnings.some(item=>/not linked correctly in IPAM/.test(item.text)));
+  assert.ok(complete.warnings.some(item=>/missing rack/.test(item.text)));
+  assert.equal(complete.healthIssues.length,1);
 });

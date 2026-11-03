@@ -30,7 +30,7 @@
       /rack/i.test(text);
   }).slice(0,12) : [];
   $: visibleWarnings = summary ? summary.warnings.filter(item =>
-    warningFilter==='all' || (warningFilter==='network' ? item.kind==='IPAM' : item.kind==='Racks')) : [];
+    warningFilter==='all'||warningFilter===item.severity).slice(0,12) : [];
 
   onMount(() => { void refresh(); });
 
@@ -117,6 +117,13 @@
             <a href={legacy('account')}>Open Account Security</a>
           </section>
         {/if}
+        {#if isAdmin && summary.healthIssues.length>0}
+          <section class="dash-alert" role="alert">
+            <strong>Inventory Health — attention required</strong>
+            <span>Potential consistency problems found. Use the existing Dashboard for the full check.</span>
+            <a href={legacy('dashboard')}>Review Inventory Health</a>
+          </section>
+        {/if}
         <nav class="dash-tabs" role="tablist" aria-label="Dashboard Sections">
           {#each tabs as tab}
             <button type="button" role="tab" id={'dash-tab-'+tab.id}
@@ -200,6 +207,23 @@
                   {:else}<p class="empty">No racks have been recorded yet.</p>{/if}
                 </article>
               {/if}
+              {#if summary.access.IPAM}
+                <article class="dash-card">
+                  <header><h2>Network Allocation Overview</h2><p>Saved IP addresses in your accessible networks.</p></header>
+                  <div class="distribution"><span>Assigned</span><strong>{summary.assignedInSubnets}</strong></div>
+                  <div class="distribution"><span>Reserved</span><strong>{summary.reservedInSubnets}</strong></div>
+                  <div class="distribution"><span>Available</span><strong>{summary.totalAvailable}</strong></div>
+                  <div class="distribution"><span>Utilisation</span><strong>{summary.ipUtilisation}%</strong></div>
+                  <progress max="100" value={summary.ipUtilisation} aria-label="Overall IP allocation utilisation"></progress>
+                  <p class="empty">{summary.usableCapacity} usable addresses across your managed networks</p>
+                </article>
+              {/if}
+              <article class="dash-card">
+                <header><h2>Inventory Status</h2><p>Only the areas your account is permitted to view.</p></header>
+                {#if summary.access.Devices}<div class="dash-row"><span>Devices</span><strong>{summary.deviceCount} tracked</strong></div>{/if}
+                {#if summary.access.IPAM}<div class="dash-row"><span>Subnets</span><strong>{summary.subnetCount} configured</strong></div>{/if}
+                {#if summary.access.Racks}<div class="dash-row"><span>Racks</span><strong>{summary.rackCount} configured</strong></div>{/if}
+              </article>
             </div>
           </section>
         {:else if selectedTab==='insights'}
@@ -233,6 +257,14 @@
                   {:else}<p class="empty">No racks recorded yet.</p>{/each}
                 </article>
               {/if}
+              {#if summary.access.Racks}
+                <article class="dash-card">
+                  <header><h2>Rack Details</h2><p>Open the existing Rack screen for each cabinet.</p></header>
+                  {#each summary.rackRows as item}
+                    <a class="dash-row" href={legacy('racks')}><span>{item.name}</span><strong>{item.height}U</strong></a>
+                  {:else}<p class="empty">No racks recorded yet.</p>{/each}
+                </article>
+              {/if}
               <article class="dash-card">
                 <header><h2>Reports &amp; Exports</h2><p>Download the information your account is allowed to view.</p></header>
                 <div class="dash-actions">
@@ -245,6 +277,10 @@
           </section>
         {:else}
           <section role="tabpanel" aria-labelledby="dash-tab-activity" id="dash-panel-activity">
+            <div class="metric-grid">
+              <article class="metric"><span>Recent Save Events</span><strong>{summary.events.length}</strong><small>Visible to your account</small></article>
+              <article class="metric"><span>Network Warnings</span><strong>{summary.warnings.length}</strong><small>Potential issues in accessible records</small></article>
+            </div>
             <div class="dash-grid">
               <article class="dash-card">
                 <header><h2>Recent Activity</h2><p>Saved changes visible to your account.</p></header>
@@ -255,23 +291,33 @@
                   </select>
                 </label>
                 {#each visibleEvents as event}
-                  <div class="dash-row"><span>{event.reason || 'Inventory Change'}</span>
-                    <small>{event.timestamp || 'Recorded change'}</small></div>
+                  <div class="dash-event">
+                    <div class="dash-row">
+                      <strong>{event.reason || 'Inventory saved'}</strong>
+                      <small>{event.at && !Number.isNaN(new Date(event.at).getTime())
+                        ?new Date(event.at).toLocaleString('en-GB'):'Date unavailable'}</small>
+                    </div>
+                    {#each (event.changes || []).slice(0,3) as change}
+                      <p class="event-detail">{change.action || 'Changed'} {change.kind || 'record'}: {change.label || ''}</p>
+                    {/each}
+                  </div>
                 {:else}<p class="empty">No activity to show for this selection.</p>{/each}
                 <a href={legacy('audit')} class="dash-more">Open Change History</a>
               </article>
               <article class="dash-card">
                 <header><h2>Warnings &amp; Attention</h2><p>Capacity warnings at 85% or more.</p></header>
-                <label class="dash-filter">Area
+                <label class="dash-filter">Severity
                   <select bind:value={warningFilter}>
-                    <option value="all">All Areas</option>
-                    {#if summary.access.IPAM}<option value="network">IPAM</option>{/if}
-                    {#if summary.access.Racks}<option value="racks">Racks</option>{/if}
+                    <option value="all">All Severities</option>
+                    <option value="critical">Critical only</option>
+                    <option value="warning">Warnings only</option>
                   </select>
                 </label>
                 {#each visibleWarnings as item}
-                  <div class="dash-row"><span>{item.kind}: {item.name}</span><strong>{item.percent}%</strong></div>
-                {:else}<p class="empty">No capacity warnings for this selection.</p>{/each}
+                  <a class="dash-row" href={legacy(item.target || 'dashboard')}>
+                    <span><strong>{item.severity==='critical'?'Critical':'Warning'}:</strong> {item.text}</span>
+                  </a>
+                {:else}<p class="empty">No warnings match this selection.</p>{/each}
                 <a href={legacy('dashboard')} class="dash-more">View Existing Dashboard Checks</a>
               </article>
             </div>
@@ -309,6 +355,9 @@
     padding:12px 0; border-bottom:1px solid #edf0f4; font-size:13px; color:#29445e; }
   .dash-row:last-child { border-bottom:0; }
   .dash-row small { text-align:right; color:#71879b; }
+  .dash-event { border-bottom:1px solid #edf0f4; padding-bottom:10px; }
+  .dash-event .dash-row { border-bottom:0; }
+  .event-detail { margin:4px 0; font-size:12px; line-height:1.5; color:#73879b; }
   a.dash-row { text-decoration:none; }
   a.dash-row:hover { color:#b66025; }
   .empty { margin:12px 0; font-size:13px; color:#8194a6; }

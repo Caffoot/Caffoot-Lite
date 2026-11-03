@@ -114,6 +114,14 @@ async function testSignedInData() {
   await adminPage.getByRole('heading',{name:'Dashboard',exact:true}).waitFor();
   assert.equal(await adminPage.getByRole('link',{name:'IP Addresses'}).count(),1);
   assert.equal(await adminPage.locator('.metric-grid').getByRole('link',{name:'Network Racks'}).count(),1);
+  await adminPage.getByRole('heading',{name:'Network Allocation Overview'}).waitFor();
+  await adminPage.getByRole('heading',{name:'Inventory Status'}).waitFor();
+  await adminPage.getByRole('tab',{name:'Network Insights'}).click();
+  await adminPage.getByRole('heading',{name:'Rack Details'}).waitFor();
+  await adminPage.getByRole('tab',{name:'Activity & Alerts'}).click();
+  await adminPage.getByText('Recent Save Events').waitFor();
+  await adminPage.getByText('Network Warnings').waitFor();
+  await adminPage.getByRole('tab',{name:'Overview'}).click();
   const sizes=await adminPage.evaluate(()=>({
     content:document.documentElement.scrollWidth,screen:innerWidth
   }));
