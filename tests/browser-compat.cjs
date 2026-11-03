@@ -561,7 +561,17 @@ async function run(){
       path:path.join(screens,'devices-'+section+'-working-html.png')
     });
   }
+  await page.setViewportSize({width:390,height:844});
   await page.locator('#devices-sidebar-actions [data-action="sidebar-devices-inventory"]').click();
+  await page.locator('[data-device-panel="inventory"] .device-table-wrapper').waitFor();
+  const devicesMobileWidth=await page.evaluate(()=>({
+    scrollWidth:document.documentElement.scrollWidth,
+    viewportWidth:document.documentElement.clientWidth
+  }));
+  assert.ok(devicesMobileWidth.scrollWidth<=devicesMobileWidth.viewportWidth+2,
+    'Device Inventory must not overflow the mobile page: '+JSON.stringify(devicesMobileWidth));
+  await page.screenshot({path:path.join(screens,'devices-inventory-mobile-working-html.png'),fullPage:true});
+  await page.setViewportSize({width:1440,height:950});
   await page.locator('[data-device-panel="inventory"] .device-table-wrapper').waitFor();
   assert.ok(await page.locator('[data-device-panel="inventory"] .device-inventory-add-device').isVisible(),
     'An authorised administrator must see Add Device in the Inventory heading');
@@ -573,6 +583,10 @@ async function run(){
     'Each inventory row must have one Details button');
   await rackDeviceRow.locator('button.device-detail-summary').click();
   await page.locator('.device-details-action-footer').waitFor({state:'visible'});
+  const selectedDetailTabColour=await page.locator('.device-details-tab[aria-selected="true"]')
+    .evaluate(element=>getComputedStyle(element).borderBottomColor);
+  assert.equal(selectedDetailTabColour,'rgb(238, 132, 50)',
+    'Device Details must use the orange underline from the accepted design');
   await page.screenshot({path:path.join(screens,'devices-details-working-html.png'),fullPage:true});
   for(const action of ['edit-device-from-details','duplicate-device-from-details',
                        'delete-device-from-details','navigate-to-device-rack']){
