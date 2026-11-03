@@ -31,6 +31,16 @@ The styles for this limited refresh are in `inventory.html` under `caffoot-appro
 
 For a later approved visual change, inspect the existing render function, its controls and this style section before editing; **do not replace live actions with preview-only buttons or rewrite the backend for a CSS change**. The real Chromium checks in `tests/browser-compat.cjs` verify representative navigation, form behaviour, key Dashboard layout rules and responsive widths. Screenshots help check appearance but do not replace a functional test or product-owner review.
 
+### Devices appearance under development
+
+The Devices visual refresh is tracked in [issue #278](https://github.com/Caffoot/Caffoot-Lite/issues/278) and [draft PR #279](https://github.com/Caffoot/Caffoot-Lite/pull/279). Its approved references are held in Git history, rather than in a new design folder.
+
+The draft adds descriptive CSS sections in `inventory.html`: `approved-devices-overview-styles`, `approved-devices-inventory-styles`, `approved-devices-management-styles` and `approved-device-details-and-forms-styles`. These rules change visual presentation only. The existing `renderDevicesHTML` function, device detail view, event handlers, validation, editing reservations and server permissions remain the source of working behaviour.
+
+The inventory rows retain a single **Details** action. Its detail view already provides Edit, Duplicate, Delete and View in Rack (when applicable), so the extra row menu is unnecessary. Changes to labels or layout should not remove those underlying actions.
+
+**This is unfinished development work**, not a release or a claim of design approval. Before acceptance, compare every Devices screen with the approved versions and run browser, permission, data and private Docker checks. The separate private test installation must not use production's `/data` store.
+
 ## Local Tailwind stylesheet
 
 The Docker edition ships [`assets/tailwind.css`](../../assets/tailwind.css), a **static Tailwind CSS v3.4.17** build generated from the utility classes in `inventory.html`, preserving the existing `darkMode: 'class'` behaviour and established `brand` colour values. The HTTPS backend serves this file from `/assets/tailwind.css` and the Dockerfile bundles it. **There is no externally loaded Tailwind JavaScript, Node.js requirement or CSS compilation during installation or at runtime.**
