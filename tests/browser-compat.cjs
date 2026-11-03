@@ -562,6 +562,7 @@ async function run(){
   assert.equal(await rackDeviceRow.locator('button.device-detail-summary').count(),1,
     'Each inventory row must have one Details button');
   await rackDeviceRow.locator('button.device-detail-summary').click();
+  await page.locator('.device-details-action-footer').waitFor({state:'visible'});
   for(const action of ['edit-device-from-details','duplicate-device-from-details',
                        'delete-device-from-details','navigate-to-device-rack']){
     assert.equal(await page.locator('.device-details-action-footer [data-action="'+action+'"]').count(),1,
