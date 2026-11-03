@@ -48,7 +48,7 @@
     </div>
   </div>
   <div class="nav-label">WORKSPACE</div>
-  <nav aria-label="Main Sections">
+  <nav class="side-nav" aria-label="Main Sections">
     {#each items.filter(item => item.id !== 'settings') as item (item.id)}
       {#if permitted(item)}
         {#if workspaceMode}
