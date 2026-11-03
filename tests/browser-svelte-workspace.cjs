@@ -111,7 +111,10 @@ async function run() {
   const ipamRequests=[];
   ipamPage.on('request',r=>ipamRequests.push(new URL(r.url()).pathname));
   assert.equal((await ipamPage.goto(address+'/workspace/',{waitUntil:'networkidle'})).status(),200);
-  await ipamPage.getByText('You do not have Devices access.').waitFor();
+  await ipamPage.getByRole('heading',{name:'Choose an available section'}).waitFor();
+  await ipamPage.getByRole('heading',{name:'Workspace',exact:true}).waitFor();
+  assert.equal(await ipamPage.getByRole('tab').count(),0,
+    'No Devices tabs should be offered to an IPAM-only reader');
   assert.equal(await ipamPage.getByRole('link',{name:'Devices',exact:true}).count(),0);
   assert.equal(await ipamPage.getByRole('link',{name:'IPAM',exact:true}).count(),1);
   assert.ok(!ipamRequests.includes('/api/inventory/devices'));
