@@ -1,4 +1,4 @@
-name: Next Docker Compose lifecycle
+name: Caffoot Lite Docker Compose lifecycle
 
 on:
   pull_request:
@@ -6,7 +6,7 @@ on:
       - "Dockerfile"
       - "compose.yaml"
       - "tests/test_compose_lifecycle.py"
-      - ".github/workflows/next-compose-lifecycle.yml"
+      - ".github/workflows/compose-lifecycle.yml"
   workflow_dispatch:
 
 permissions:

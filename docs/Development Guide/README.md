@@ -2,7 +2,7 @@
 
 Welcome. This guide explains **how Caffoot Lite actually works**, from the everyday user experience through to the Python backend, SQLite database and tests. It is written for the product owner, new contributors and maintainers.
 
-**Status:** This guide describes the released v2.0.1 Docker/SQLite baseline, with backend, tests and deployment sources at the repository root. [Issue #215](https://github.com/Caffoot/Caffoot-Lite/issues/215) documents completed historical work; it does not control future development. [CONTRIBUTING.md](../../CONTRIBUTING.md) describes the mandatory standards for every future contribution. The original [v2.0](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0) and standalone [v1.3.3](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3) tags are preserved.
+**Status:** This guide describes the released v2.0.2 Docker/SQLite baseline, with backend, tests and deployment sources at the repository root. [Issue #215](https://github.com/Caffoot/Caffoot-Lite/issues/215) documents completed historical work; it does not control future development. [CONTRIBUTING.md](../../CONTRIBUTING.md) describes the mandatory standards for every future contribution. The original [v2.0](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0) and standalone [v1.3.3](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3) tags are preserved.
 
 ## In simple terms
 
@@ -42,11 +42,11 @@ All contributors should first read [CONTRIBUTING.md](../../CONTRIBUTING.md) and 
 - [`backend/schema.py`](../../backend/schema.py): SQLite tables and schema upgrades.
 - [`backend/`](../../backend/): permissions, saves, import and validation modules.
 - [`tests/`](../../tests/): backend and browser compatibility checks.
-- [`compose.yaml`](../../compose.yaml), [`portainer-v2.0.1.yaml`](../../portainer-stack.yaml) and [`Dockerfile`](../../Dockerfile): deployment configuration.
+- [`compose.yaml`](../../compose.yaml), [`portainer-v2.0.2.yaml`](../../portainer-v2.0.2.yaml) and [`Dockerfile`](../../Dockerfile): deployment configuration.
 - [`app/caffoot-lite.html` at v1.3.3](https://github.com/Caffoot/Caffoot-Lite/blob/v1.3.3/app/caffoot-lite.html): **published** inventory behaviour to preserve.
 
-For current installation instructions see [`INSTALLATION.md`](../../INSTALLATION.md). The [root README](../../README.md) describes the published v2.0.1 Docker/SQLite edition.
+For current installation instructions see [`INSTALLATION.md`](../../INSTALLATION.md). The [root README](../../README.md) describes the published v2.0.2 Docker/SQLite edition.
 
 ## Before making a change
 
-Read the approved scope for the proposed change, inspect the current main-branch source, review the Function Index and relevant tests, and compare established inventory behaviour with the **published v2.0.1 baseline** rather than assumptions. Historical audit findings may already have been fixed. Source renaming for clarity is a welcome, separately approved maintenance activity: update every dependent reference, test and guide. [Future Ideas Register #222](https://github.com/Caffoot/Caffoot-Lite/issues/222) alone does not authorise implementation.
+Read the approved scope for the proposed change, inspect the current main-branch source, review the Function Index and relevant tests, and compare established inventory behaviour with the **published v2.0.2 baseline** rather than assumptions. Historical audit findings may already have been fixed. Source renaming for clarity is a welcome, separately approved maintenance activity: update every dependent reference, test and guide. [Future Ideas Register #222](https://github.com/Caffoot/Caffoot-Lite/issues/222) alone does not authorise implementation.

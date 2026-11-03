@@ -1,21 +1,21 @@
-name: Next backend checks
+name: Caffoot Lite backend tests
 
 on:
   push:
-    branches: [Next]
+    branches: [main]
     paths:
       - "backend/**"
       - "tests/**"
       - "inventory.html"
       - "setup.html"
-      - ".github/workflows/next-backend.yml"
+      - ".github/workflows/backend-tests.yml"
   pull_request:
     paths:
       - "backend/**"
       - "tests/**"
       - "inventory.html"
       - "setup.html"
-      - ".github/workflows/next-backend.yml"
+      - ".github/workflows/backend-tests.yml"
   workflow_dispatch:
 
 jobs:

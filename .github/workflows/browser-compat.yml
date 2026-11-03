@@ -1,24 +1,24 @@
-name: Next browser compatibility milestone
+name: Caffoot Lite browser compatibility
 
 on:
   push:
-    branches: [Next]
+    branches: [main]
     paths:
       - "tests/browser-compat.cjs"
-      - ".github/workflows/next-browser-compat.yml"
+      - ".github/workflows/browser-compat.yml"
   pull_request:
     paths:
       - "tests/browser-compat.cjs"
       - "inventory.html"
       - "setup.html"
-      - ".github/workflows/next-browser-compat.yml"
+      - ".github/workflows/browser-compat.yml"
   workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  next-browser:
+  browser-compat:
     runs-on: ubuntu-24.04
     timeout-minutes: 18
     steps:
@@ -33,10 +33,10 @@ jobs:
           node-version: "24"
       - name: Install isolated Chromium test tools
         run: |
-          npm install --prefix "$RUNNER_TEMP/caffoot-next-browser" --no-save --no-package-lock --no-audit --no-fund playwright@1.56.1
-          "$RUNNER_TEMP/caffoot-next-browser/node_modules/.bin/playwright" install --with-deps chromium
+          npm install --prefix "$RUNNER_TEMP/caffoot-browser-tests" --no-save --no-package-lock --no-audit --no-fund playwright@1.56.1
+          "$RUNNER_TEMP/caffoot-browser-tests/node_modules/.bin/playwright" install --with-deps chromium
       - name: Exercise approved first-run MFA and inventory UI
         working-directory: .
         env:
-          NODE_PATH: ${{ runner.temp }}/caffoot-next-browser/node_modules
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
         run: node tests/browser-compat.cjs

@@ -1,8 +1,8 @@
 # Caffoot Lite — Features and Instructions
 
-Welcome to the Caffoot Lite user guides. These step-by-step instructions cover the Docker/SQLite edition currently being prepared for release. Its established inventory screens and safeguards follow the published v1.3.3 application, while its accounts and shared database are new.
+Welcome to the Caffoot Lite user guides. These step-by-step instructions cover the published v2.0.2 Docker/SQLite edition. Its established inventory screens and safeguards follow the published v1.3.3 application, while its accounts and shared database are new.
 
-The guides describe the **real application**, use fictional examples and distinguish viewer and editor permissions. They are maintained here as the single source for GitHub and the future website's help section. The separate [Development Guide](../../Development%20Guide/README.md) explains the implementation for developers.
+The guides describe the **real application**, use fictional examples and distinguish viewer and editor permissions. They are maintained here as the shared source for GitHub and website help references. The separate [Development Guide](../../Development%20Guide/README.md) explains the implementation for developers.
 
 ## Find your guide
 
@@ -39,4 +39,4 @@ The detailed [Docker/Portainer installation instructions](../../../INSTALLATION.
 
 All signed-in users can open **My account → Help & Guides** for short built-in help without a public Internet connection. Each topic can also open its longer **Read full guide** in a separate browser tab. The documentation link requires access to GitHub; normal local inventory work does not.
 
-**Release history:** v2.0 introduced the Docker/SQLite edition; v2.0.1 preserves that application while cleaning the published source layout. The standalone [v1.3.3](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3) release remains available for one-way JSON migration.
+**Release history:** v2.0 introduced the Docker/SQLite edition; v2.0.1 moved its source to the repository root; v2.0.2 delivered a security correction. The standalone [v1.3.3](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3) release remains available for one-way JSON migration.
