@@ -31,7 +31,7 @@ Completed issue and PR records are **evidence**, not instructions to regenerate 
 
 **Completed on 3 November 2026:** [PR #262](https://github.com/Caffoot/Caffoot-Lite/pull/262) was merged into protected `main` after all four required checks passed. It corrected the upcoming v2.0.3 About label, refreshed the Function Index to 494 entries, and added focused Rack front/rear/printing and VM host-selection browser checks. Do not repeat this batch. The corrected About label does **not** mean v2.0.3 has been released.
 
-**Approved How To compatibility batch (3 November 2026; awaiting review):**
+**Approved How To compatibility batch (3 November 2026; in [draft PR #263](https://github.com/Caffoot/Caffoot-Lite/pull/263), awaiting review):**
 
 - Make `docs/how-tos/features-and-instructions/` the official home for the eight existing guide files. Retain the original eight files at `docs/How To's/Features and Instructions/` as identical copies. Published v2.0.2 images point to the old `main` URLs, so moving them outright would break older Help & Guides links.
 - Point the upcoming v2.0.3 application guide links, current README/installation/community guidance and relevant GitHub question template to the new location. Leave historical release notes and approved v2.1 interface design drafts unchanged.
@@ -42,7 +42,7 @@ Completed issue and PR records are **evidence**, not instructions to regenerate 
 
 **Other possible v2.0.3 work — not yet approved:** Investigate evidenced workflow bugs or justified code clean-up in separately scoped batches. Prepare a v2.0.3 release-image trigger only when authorised: the existing image workflow still targets v2.0.2. Use proportional security and regression checks for actual changes rather than repeating the completed security review.
 
-**Next action:** Review the How To compatibility PR and its actual GitHub checks; resolve any failures and obtain the product owner's **separate approval before merging**. Do not merge, tag, publish, start the v2.1 redesign or archive this active handover yet. At v2.0.3 release preparation, follow the mandatory archive instructions in section 6.
+**Next action:** Review [draft PR #263](https://github.com/Caffoot/Caffoot-Lite/pull/263) and its actual GitHub checks; resolve any failures and obtain the product owner's **separate approval before merging**. Do not merge, tag, publish, start the v2.1 redesign or archive this active handover yet. At v2.0.3 release preparation, follow the mandatory archive instructions in section 6.
 
 ## 4. Later direction — v2.1 interface refresh
 
