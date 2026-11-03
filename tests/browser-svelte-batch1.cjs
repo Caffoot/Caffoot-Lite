@@ -59,7 +59,7 @@ async function launchServer(port,db) {
 async function testSignedInData() {
   const db=path.join(temp,'existing.sqlite3');
   const fixture=makeFixture(db);
-  const address=await launchServer(8081,db);
+  const address=await launchServer(8080,db);
   const context=await browser.newContext({ignoreHTTPSErrors:true,acceptDownloads:true,
     viewport:{width:1440,height:900}});
   const page=await context.newPage();
@@ -126,7 +126,7 @@ async function testSignedInData() {
 }
 
 async function testFirstRunAndMfa() {
-  const address=await launchServer(8082,path.join(temp,'first-run.sqlite3'));
+  const address=await launchServer(8080,path.join(temp,'first-run.sqlite3'));
   const context=await browser.newContext({ignoreHTTPSErrors:true,
     viewport:{width:1280,height:850}});
   const page=await context.newPage();
@@ -172,6 +172,16 @@ async function run(){
   fs.mkdirSync(screenshots,{recursive:true});
   browser=await chromium.launch({headless:true});
   await testSignedInData();
+  // Caffoot Lite deliberately listens on its fixed internal port 8080.
+  // Stop the first disposable server before testing a fresh installation.
+  for (const child of servers) {
+    if (child.exitCode===null) {
+      const exited=new Promise(resolve=>child.once('exit',resolve));
+      child.kill('SIGTERM');
+      await exited;
+    }
+  }
+  servers.length=0;
   await testFirstRunAndMfa();
   console.log('Approved Batch 1 Sign In, MFA, recovery, Dashboard and permissions passed.');
 }
