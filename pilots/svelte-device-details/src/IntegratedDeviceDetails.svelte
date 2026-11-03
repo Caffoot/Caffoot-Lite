@@ -24,7 +24,6 @@
   let dialog;
   let lastTrigger;
 
-  const sections = ['Dashboard', 'Devices', 'IPAM', 'Network Racks', 'Audit Trail', 'Users', 'Settings & Data'];
   $: device = devices.find(item => item.id === currentId);
   $: virtual = isVirtual(device);
   $: guests = device ? hostedGuests(device, devices) : [];
@@ -206,7 +205,7 @@
 
 {#if device}
   <div class="overlay">
-    <section class="dialog" role="dialog" aria-modal="true" tabindex="-1" aria-labelledby="device-details-title" bind:this={dialog}>
+    <div class="dialog" role="dialog" aria-modal="true" tabindex="-1" aria-labelledby="device-details-title" bind:this={dialog}>
       <header class="dialog-head">
         <div class="dialog-title-row">
           <div><p class="dialog-eyebrow">DEVICE DETAILS</p>
@@ -365,7 +364,7 @@
         <span class="integration-readonly">Read-only · no changes can be saved</span>
         <button class="btn btn-outline" type="button" on:click={closeDetails}>Close</button>
       </footer>
-    </section>
+    </div>
   </div>
 {/if}
 
@@ -376,7 +375,6 @@
   .integration-readonly { margin-right: auto; font-size: 11px; color: #6b8194; font-weight: 750; }
   .integration-detail-note { margin-top: 15px !important; font-style: italic; }
   .intro-card a { white-space: nowrap; text-decoration: none; }
-  .account { text-decoration: none; }
   .related + .related { margin-top: 10px; }
   @media (max-width:640px) {.intro-card a{align-self:flex-start}.integration-readonly{max-width:155px;}}
 </style>
