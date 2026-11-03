@@ -156,6 +156,9 @@ async function run(){
   assert.equal(approvedUI.eyebrow,'YOUR INFRASTRUCTURE AT A GLANCE');
   assert.deepEqual(approvedUI.tabs,['Overview','Network Insights','Activity & Alerts']);
   assert.equal(approvedUI.metrics,4,'Approved Dashboard must have four live summary cards');
+  await page.getByRole('heading',{name:'Inventory Status',exact:true}).waitFor();
+  assert.equal(await page.locator('#dashboard-panel-overview .db-status-row').count(),3,
+    'Approved Inventory Status must retain live Devices, Subnets and Racks totals');
   assert.equal(approvedUI.columns.length,2,'Desktop overview must have two columns');
   assert.ok(approvedUI.columns[0]>approvedUI.columns[1],'Approved overview has wider left column');
   assert.deepEqual(approvedUI.navItems.slice(0,6),
