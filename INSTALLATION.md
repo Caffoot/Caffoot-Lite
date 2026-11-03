@@ -1,6 +1,6 @@
 # Caffoot Lite v2.0.2 — Docker / SQLite installation
 
-Caffoot Lite **v2.0.2** builds on the established v2.0.1 Docker/SQLite application, retaining its repository-root layout and supported workflows. It preserves the approved v2.0 functionality: central SQLite inventory, familiar Devices/IPAM/Racks/Change History, administrator setup, MFA, permissions and simultaneous multi-user access. Only **published standalone v1.3.3 JSON inventory backups** are accepted for one-way migration. For everyday use, follow the [Features and Instructions guides](docs/How%20To's/Features%20and%20Instructions/README.md).
+Caffoot Lite **v2.0.2** builds on the established v2.0.1 Docker/SQLite application, retaining its repository-root layout and supported workflows. It preserves the approved v2.0 functionality: central SQLite inventory, familiar Devices/IPAM/Racks/Change History, administrator setup, MFA, permissions and simultaneous multi-user access. Only **published standalone v1.3.3 JSON inventory backups** are accepted for one-way migration. For everyday use, follow the [Features and Instructions guides](docs/how-tos/features-and-instructions/README.md).
 
 Earlier v2.0 and v2.0.1 releases remain available. The current [v2.0.2 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.2) uses the published image `ghcr.io/caffoot/caffoot-lite:v2.0.2`, with ARM64 and AMD64 builds. Use this versioned production image, not an old development test image.
 
@@ -32,7 +32,7 @@ The container's own HTTPS health check is a local liveness probe and does not es
 
 ## Full user instructions
 
-For worked examples and detailed steps covering **Devices, IPAM, Racks, Users and MFA, Settings and Change History**, see the shared [Features and Instructions user guide](docs/How%20To%27s/Features%20and%20Instructions/README.md). These same Markdown guides are intended for the future website help section; the short help inside **My account → Help & Guides** remains available without public Internet access.
+For worked examples and detailed steps covering **Devices, IPAM, Racks, Users and MFA, Settings and Change History**, see the shared [Features and Instructions user guide](docs/how-tos/features-and-instructions/README.md). These same Markdown guides are intended for the future website help section; the short help inside **My account → Help & Guides** remains available without public Internet access.
 
 ## Approved visual identity and font availability
 

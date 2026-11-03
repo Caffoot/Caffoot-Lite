@@ -176,7 +176,7 @@ async function run(){
     await page.locator('[data-action="select-account-section"][data-section="'+area+'"]').click();
     await page.locator(selector).first().waitFor();
     if(area==='help'){
-      const links=page.locator('.settings-help-topic a[href*="/Features%20and%20Instructions/"]');
+      const links=page.locator('.settings-help-topic a[href*="/docs/how-tos/features-and-instructions/"]');
       assert.equal(await links.count(),8,'Existing help topics should link to the verified full guides');
       for(const link of await links.all()){
         assert.equal(await link.getAttribute('target'),'_blank');
@@ -187,7 +187,7 @@ async function run(){
     if(area==='about'){
       assert.ok(await page.getByText('Caffoot Lite v2.0.3',{exact:true}).isVisible(), 'About must show the version being prepared for release');
       assert.equal(await page.getByRole('link',{name:/User Guide/}).getAttribute('href'),
-        'https://github.com/Caffoot/Caffoot-Lite/blob/main/docs/How%20To%27s/Features%20and%20Instructions/README.md');
+        'https://github.com/Caffoot/Caffoot-Lite/blob/main/docs/how-tos/features-and-instructions/README.md');
       assert.equal(await page.getByRole('link',{name:/Installation Guide/}).getAttribute('href'),
         'https://github.com/Caffoot/Caffoot-Lite/blob/main/INSTALLATION.md');
     }

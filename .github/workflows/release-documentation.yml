@@ -26,10 +26,28 @@ jobs:
               'docs/historical/portainer/portainer-v2.0.2.yaml',
               'docs/historical/release-notes/Release-Notes-v2.0.2.md',
               "docs/How To's/Features and Instructions/README.md",
+              'docs/how-tos/features-and-instructions/README.md',
               'docs/development-guide/README.md',
           )
           for name in required:
               if not Path(name).is_file():
                   raise SystemExit(f'Expected approved release document missing: {name}')
               print('OK:', name)
+          # Published v2.0.2 installations still use the original guide URLs.
+          # Every old-path guide must match its official copy byte-for-byte.
+          official = Path('docs/how-tos/features-and-instructions')
+          original = Path("docs/How To's/Features and Instructions")
+          guide_names = {
+              'README.md', 'Devices.md', 'Getting-Started.md', 'IPAM.md',
+              'Migration-Backup-and-Restore.md', 'Racks.md',
+              'Settings-and-Change-History.md', 'Users-Permissions-and-MFA.md',
+          }
+          for directory in (official, original):
+              found = {file.name for file in directory.glob('*.md')}
+              if found != guide_names:
+                  raise SystemExit(f'Guide files missing or unexpected in {directory}: {sorted(found ^ guide_names)}')
+          for name in sorted(guide_names):
+              if (official / name).read_bytes() != (original / name).read_bytes():
+                  raise SystemExit(f'Published guide compatibility copy differs: {name}')
+              print('Guide paths agree:', name)
           PY

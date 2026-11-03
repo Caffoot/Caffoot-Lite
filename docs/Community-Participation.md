@@ -6,7 +6,7 @@ Caffoot Lite is for people who use it, document it, test it and build it. **You 
 
 - [Suggest A Future Feature](https://github.com/Caffoot/Caffoot-Lite/issues/new/choose) with **one idea per issue**. Check the [Future Ideas Index #222](https://github.com/Caffoot/Caffoot-Lite/issues/222) first; if your idea already has an issue, add your thoughts there.
 - [Open An Issue](https://github.com/Caffoot/Caffoot-Lite/issues/new/choose) to report a bug, improve a guide or ask a question.
-- [Read The Feature Guides](How%20To's/Features%20and%20Instructions/README.md) and tell us what could be clearer.
+- [Read The Feature Guides](how-tos/features-and-instructions/README.md) and tell us what could be clearer.
 - [Explore Good First Issues](https://github.com/Caffoot/Caffoot-Lite/labels/good%20first%20issue) for approachable tasks identified by maintainers.
 - [Explore Help Wanted Issues](https://github.com/Caffoot/Caffoot-Lite/labels/help%20wanted) for work where maintainers have asked for help.
 - [Read CONTRIBUTING.md](../CONTRIBUTING.md) before proposing code or documentation changes.
