@@ -1,0 +1,47 @@
+name: Svelte Device Details pilot
+
+on:
+  pull_request:
+    paths:
+      - 'pilots/svelte-device-details/**'
+      - '.github/workflows/svelte-device-details-pilot.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pilot:
+    name: Build and check isolated Svelte pilot
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: pilots/svelte-device-details
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pilot-only build and browser tools
+        run: npm install --no-audit --no-fund
+      - name: Compile to static HTML, CSS and JavaScript
+        run: npm run build
+      - name: Check offline, non-saving pilot boundaries
+        run: npm run test:static
+      - name: Install Chromium for visual checks
+        run: npx playwright install --with-deps chromium
+      - name: Test compiled static site with Python web server
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 --directory dist > /tmp/caffoot-svelte-pilot-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          sleep 2
+          PILOT_URL=http://127.0.0.1:4173/ npm run test:browser
+      - name: Keep example screenshots for review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: svelte-device-details-pilot-screenshots
+          path: pilots/svelte-device-details/playwright-screenshots/
+          if-no-files-found: ignore
+          retention-days: 14
