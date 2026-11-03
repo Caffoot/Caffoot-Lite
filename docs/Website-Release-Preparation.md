@@ -1,4 +1,8 @@
-# Caffoot Lite — website release material (draft, not published)
+# Caffoot Lite — website release material (historical draft)
+
+> **Historical planning record (31 October 2026):** The original material below is preserved for release history and must not be used as current publication instructions. Caffoot Lite v2.0.2 was published on 2 November 2026. For up-to-date information, see the [main README](../README.md), [installation guide](../INSTALLATION.md) and [v2.0.2 release notes](Release-Notes-v2.0.2.md).
+
+---
 
 **Status: Stage 6 preparation only, 31 October 2026.** This is website-specific copy and a publication handover, **not** a second set of user guides, a new product specification, or approval to change the live website. [Issue #215](https://github.com/Caffoot/Caffoot-Lite/issues/215) governs the product; [#218](https://github.com/Caffoot/Caffoot-Lite/issues/218) records release readiness. **Caffoot Lite v2.0** is now the approved Docker/SQLite release designation under #215 §28; the final release date, production image/tag and live website publication remain pending.
 

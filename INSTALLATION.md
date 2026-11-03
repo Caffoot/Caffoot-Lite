@@ -2,7 +2,7 @@
 
 Caffoot Lite **v2.0.2** builds on the established v2.0.1 Docker/SQLite application, retaining its repository-root layout and supported workflows. It preserves the approved v2.0 functionality: central SQLite inventory, familiar Devices/IPAM/Racks/Change History, administrator setup, MFA, permissions and simultaneous multi-user access. Only **published standalone v1.3.3 JSON inventory backups** are accepted for one-way migration. For everyday use, follow the [Features and Instructions guides](docs/How%20To's/Features%20and%20Instructions/README.md).
 
-Earlier v2.0 and v2.0.1 releases remain available. For v2.0.2, use the tagged production image `ghcr.io/caffoot/caffoot-lite:v2.0.2` **only after** the [v2.0.2 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.2) and its ARM64/AMD64 image build are confirmed. Until then, use the published v2.0.1 image. The development `next-test` image is not the production package.
+Earlier v2.0 and v2.0.1 releases remain available. The current [v2.0.2 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.2) uses the published image `ghcr.io/caffoot/caffoot-lite:v2.0.2`, with ARM64 and AMD64 builds. Use this versioned production image, not an old development test image.
 
 ## HTTPS Docker Compose / Portainer setup
 
@@ -40,9 +40,9 @@ The Docker edition uses the existing Caffoot hedgehog artwork and **“Infrastru
 
 ## Verification status
 
-The existing backend checks and focused HTTPS/Chromium tests run in GitHub Actions. They cover first-run MFA, central inventory and Change History, user creation and access permissions, competing device edit reservations, familiar Devices/IPAM/Racks forms, Clean Start and a real v1.3.3 backup created by the published exporter. Previous v2.0.1 acceptance results are historical; a v2.0.2 image must be checked separately before production deployment. These checks are not an exhaustive proof of every published v1.3.3 interaction. The agreed real Raspberry Pi 5 acceptance has been completed and recorded in [#218](https://github.com/Caffoot/Caffoot-Lite/issues/218).
+The existing backend checks and focused HTTPS/Chromium tests run in GitHub Actions. They cover first-run MFA, central inventory and Change History, user creation and access permissions, competing device edit reservations, familiar Devices/IPAM/Racks forms, Clean Start and a real v1.3.3 backup created by the published exporter. Previous v2.0.1 acceptance results are historical; v2.0.2 has its own published release and build verification. These checks are not an exhaustive proof of every published v1.3.3 interaction. The agreed real Raspberry Pi 5 acceptance has been completed and recorded in [#218](https://github.com/Caffoot/Caffoot-Lite/issues/218).
 
-The existing `tests/test_compose_lifecycle.py` is an **opt-in** Docker milestone test. The `Next Docker Compose lifecycle` GitHub Actions workflow passed during Stage 8, verifying published port configuration, persistent SQLite data and TLS certificate continuity across restart and recreation. The product owner has now completed the agreed Raspberry Pi 5/Portainer Stage 2 acceptance, including container recreation and a manual stopped-container backup/restore. That acceptance does **not** replace the later release security review, nor prove automated or off-host backup protection.
+The existing `tests/test_compose_lifecycle.py` is an **opt-in** Docker milestone test. The Docker Compose lifecycle GitHub Actions workflow (previously called `Next Docker Compose lifecycle`) passed during the original Stage 8 release review, verifying published port configuration, persistent SQLite data and TLS certificate continuity across restart and recreation. The product owner has now completed the agreed Raspberry Pi 5/Portainer Stage 2 acceptance, including container recreation and a manual stopped-container backup/restore. That acceptance did **not** replace the subsequently completed security review, nor prove automated or off-host backup protection.
 
 ## Official v2.0.2 Portainer installation
 
@@ -72,7 +72,7 @@ If 8443 is occupied, change **both** the published `ports` value (e.g. `8444:808
 
 ### Upgrading an existing v2.0.1 installation to v2.0.2
 
-Once v2.0.2 is published, update the **existing** Portainer stack in place rather than creating a second stack. Stop the current container, make a consistent external backup of the **entire existing `/data` mount** (including `caffoot.sqlite3` and `tls/`), then change only the existing image tag from `v2.0.1` to `v2.0.2` and redeploy. **Keep the same existing named volume or host directory mapped to `/data`**, along with your HTTPS address and published port. If your current stack uses a custom bind mount, retain that actual mapping instead of copying the named-volume example over it. Do not delete or replace the volume.
+To upgrade to v2.0.2, update the **existing** Portainer stack in place rather than creating a second stack. Stop the current container, make a consistent external backup of the **entire existing `/data` mount** (including `caffoot.sqlite3` and `tls/`), then change only the existing image tag from `v2.0.1` to `v2.0.2` and redeploy. **Keep the same existing named volume or host directory mapped to `/data`**, along with your HTTPS address and published port. If your current stack uses a custom bind mount, retain that actual mapping instead of copying the named-volume example over it. Do not delete or replace the volume.
 
 After the updated container starts, verify your existing account can sign in, the inventory is intact and the HTTPS certificate identity is unchanged. If anything is wrong, stop the container and recover from your verified external backup; do not perform recovery experiments against your only live data copy. No routine JSON export/import is part of a Docker version upgrade.
 

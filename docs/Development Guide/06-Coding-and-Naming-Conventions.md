@@ -4,7 +4,7 @@
 
 A contributor should be able to search for an identifier and understand what it does. **Meaningful names, consistent UI wording and accurate documentation are mandatory contribution standards for all future Caffoot Lite development**, whether a change comes from the product team or the community. See [CONTRIBUTING.md](../../CONTRIBUTING.md) and the [source-pinned Function Index](Function-Index.md).
 
-The patterns below reflect the released v2.0.1 source. Existing historical names are not endorsements of opaque or version-based naming. **Clarity and maintainability are valid reasons to rename code** during approved work.
+The patterns below reflect the current released Docker/SQLite source. Existing historical names are not endorsements of opaque or version-based naming. **Clarity and maintainability are valid reasons to rename code** during approved work.
 
 ## JavaScript And HTML
 
@@ -67,7 +67,7 @@ Names and comments work together: use descriptive identifiers, then use plain-la
 
 **Keep the documentation accurate as you work.** When functions are added, deleted, moved or renamed, regenerate and review [`Function-Index.md`](Function-Index.md) in the **same PR**, with the correct source snapshot, function links and reference locations. Its textual call-like reference counts do not establish whether a function is used. Documentation for interfaces, components, configuration, security, user workflows and data relationships belongs in the relevant guides too; not every individual line requires an index entry.
 
-Apply the public-facing comment standard above to source comments and docstrings. Correct stale descriptions (some v2.0.1 backend modules still mention 'offline' or 'future' despite serving requests).
+Apply the public-facing comment standard above to source comments and docstrings. Correct stale descriptions (some existing backend modules still mention 'offline' or 'future' despite serving requests).
 
 ## Acceptance And Review
 
