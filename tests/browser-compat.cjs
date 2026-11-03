@@ -185,7 +185,7 @@ async function run(){
       assert.equal(await page.locator('.settings-help-topic').count(),6,'Built-in help topics must remain');
     }
     if(area==='about'){
-      assert.ok(await page.getByText('Caffoot Lite v2.0.1',{exact:true}).isVisible(), 'About must identify the approved release version');
+      assert.ok(await page.getByText('Caffoot Lite v2.0.3',{exact:true}).isVisible(), 'About must show the version being prepared for release');
       assert.equal(await page.getByRole('link',{name:/User Guide/}).getAttribute('href'),
         'https://github.com/Caffoot/Caffoot-Lite/blob/main/docs/How%20To%27s/Features%20and%20Instructions/README.md');
       assert.equal(await page.getByRole('link',{name:/Installation Guide/}).getAttribute('href'),
@@ -394,6 +394,92 @@ async function run(){
   assert.equal(rackSaved.devices.find(d=>d.id===rackSwitch.id).rackId,rackId);
   assert.equal(rackSaved.rackAccessories.length,2);
   console.log('Rack device placement, patch panel and vertical PDU persisted after reload');
+
+  // Preserve the front/rear rack view and its printable elevations.
+  await page.locator('#sidebar [data-action="tab-racks"]').click();
+  await page.locator('#racks-sidebar-actions [data-action="sidebar-racks-inventory"]').click();
+  await page.locator('[data-action="v13-open-rack"][data-id="'+rackId+'"]').click();
+  await page.locator('.rack-elevation [data-rack-device="'+rackSwitch.id+'"]').waitFor();
+  await page.locator('[data-action="rack-face-rear"]').click();
+  await page.waitForFunction(()=>document.querySelector('[data-action="rack-face-rear"]')?.getAttribute('aria-pressed')==='true',
+    null,{timeout:5000});
+  assert.equal(await page.locator('[data-action="rack-face-rear"]').getAttribute('aria-pressed'),'true');
+  assert.ok(await page.locator('[aria-label="Side orientation as viewed from rear face"]').isVisible());
+  assert.equal(await page.locator('.rack-elevation [data-rack-device]').count(),0,
+    'A front-mounted switch must not appear on the rear face');
+  await page.locator('[data-action="rack-face-front"]').click();
+  await page.waitForFunction(()=>document.querySelector('[data-action="rack-face-front"]')?.getAttribute('aria-pressed')==='true',
+    null,{timeout:5000});
+  assert.equal(await page.locator('[data-action="rack-face-front"]').getAttribute('aria-pressed'),'true');
+  await page.locator('.rack-elevation [data-rack-device="'+rackSwitch.id+'"]').waitFor();
+  assert.ok(await page.locator('[aria-label="Side orientation as viewed from front face"]').isVisible());
+  // Exercise the real print action, capturing its HTML without invoking the system print dialog.
+  await page.evaluate(()=>{
+    window.__rackPrintMarkup='';
+    window.__rackOriginalOpen=window.open;
+    window.open=()=>({document:{open(){},write(html){window.__rackPrintMarkup=html;},close(){}},
+      focus(){},print(){}});
+  });
+  let rackPrintMarkup='';
+  try{
+    await page.locator('[data-action="print-rack-capacity-details"]').click();
+    rackPrintMarkup=await page.evaluate(()=>window.__rackPrintMarkup);
+  }finally{
+    await page.evaluate(()=>{
+      window.open=window.__rackOriginalOpen;
+      delete window.__rackOriginalOpen;
+      delete window.__rackPrintMarkup;
+    });
+  }
+  for(const label of ['Front elevation','Rear elevation','Vertical rail accessories (0U)',
+                      'rack-switch','Browser Patch Panel','Browser Vertical PDU']){
+    assert.ok(rackPrintMarkup.includes(label),'Rack print view is missing '+label);
+  }
+  console.log('Rack front/rear view, L/R markers and printable elevations passed');
+
+  // The VM form must use an eligible physical hypervisor, not a separate rack position.
+  await page.locator('#sidebar [data-action="tab-devices"]').click();
+  await modal(page,'openDeviceModal');
+  await page.locator('#dev-name').fill('browser-hypervisor');
+  await page.locator('#dev-type').selectOption('Server - Physical');
+  await page.locator('#dev-mount-type').selectOption('Tower / Floor Standing');
+  await page.locator('#dev-location').selectOption('Unknown');
+  await page.locator('#device-hosting-enabled').check();
+  await page.locator('#host-platform-select').selectOption('Proxmox VE');
+  await page.getByRole('tab',{name:'Networking'}).click();
+  await page.locator('#dev-block').selectOption('__unassigned__');
+  await page.locator('#dev-vlan').selectOption('17');
+  await page.locator('#dev-subnet').selectOption(subnetId);
+  await page.locator('#dev-ip').fill('10.64.20.12');
+  await page.locator('form[data-device-form="true"] button[type="submit"]').click();
+  const hostState=await persisted(page,s=>s.devices.some(d=>d.name==='browser-hypervisor' &&
+    d.typeDetails?.serverService_Hypervisor===true),'Physical hypervisor');
+  const hypervisor=hostState.devices.find(d=>d.name==='browser-hypervisor');
+  assert.equal(hypervisor.typeDetails.hypervisorProduct,'Proxmox VE');
+  await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
+  await modal(page,'openDeviceModal');
+  await page.locator('#dev-name').fill('browser-vm');
+  await page.locator('#dev-deployment').selectOption('virtual');
+  await page.locator('#dev-vm-purpose').selectOption('Server - Virtual');
+  await page.locator('#dev-virtual-host').selectOption(hypervisor.id);
+  assert.ok(await page.locator('#device-form-tab-hardware').isHidden(),
+    'VMs must not offer the physical Hardware tab');
+  assert.ok(await page.locator('#device-form-mounting-options').isHidden(),
+    'VMs must not offer independent rack placement');
+  await page.getByRole('tab',{name:'Networking'}).click();
+  await page.locator('#dev-block').selectOption('__unassigned__');
+  await page.locator('#dev-vlan').selectOption('17');
+  await page.locator('#dev-subnet').selectOption(subnetId);
+  await page.locator('#dev-ip').fill('10.64.20.13');
+  await page.locator('form[data-device-form="true"] button[type="submit"]').click();
+  const vmState=await persisted(page,s=>s.devices.some(d=>d.name==='browser-vm' &&
+    d.virtualHostId===hypervisor.id),'Hosted virtual machine');
+  const vm=vmState.devices.find(d=>d.name==='browser-vm');
+  assert.equal(vm.virtualPlatform,'Proxmox VE');
+  assert.equal(vm.location,hypervisor.location);
+  assert.equal(vm.mountType,'Not Applicable');
+  assert.ok(!vm.rackId,'Physical rack placement must be owned by the hypervisor');
+  console.log('Physical hypervisor selection and VM inheritance passed');
 
   // Approved acceptance: new accounts initially lack inventory access.
   await page.evaluate(()=>switchTab('users'));

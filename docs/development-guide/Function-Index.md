@@ -2,9 +2,9 @@
 
 ## In simple terms
 
-This is a **searchable map of named functions in the v2.0.1 Docker application**. Follow a function name or line link to see its actual code. It helps locate work and estimate how widely a function name is referenced; it does **not** decide that a function is safe to remove or change.
+This is a **searchable map of named functions in the current v2.0.3 preparation baseline**. v2.0.3 has not yet been published. Follow a function name or line link to see its actual code. It helps locate work and estimate how widely a function name is referenced; it does **not** decide that a function is safe to remove or change.
 
-**Indexed source commit:** [`b1f78df4b637`](https://github.com/Caffoot/Caffoot-Lite/commit/b1f78df4b637a3f1391b64d215802ced05bd45e7) (30 October 2026). **Coverage:** 2 frontend HTML source files and 37 Python backend modules. **Recorded definitions:** 357 JavaScript and 136 Python, **493 altogether**. Unit-test sources are deliberately excluded from the counts.
+**Indexed source checkpoint:** [`10cecba4`](https://github.com/Caffoot/Caffoot-Lite/commit/10cecba42668cc383aaa0a79af66602a8d3b7e3f) (3 November 2026, published v2.0.2 source). **Coverage:** 2 frontend HTML files and 38 Python backend modules. **Recorded definitions:** 357 JavaScript and 137 Python, **494 altogether**. Original 493 descriptions and call-like reference counts were retained where code is unchanged; links affected by later server/device-save edits were remapped to the current files, and the v2.0.2 history-permissions function was added. Counts remain textual hints, not runtime evidence. Unit tests are excluded.
 
 ### Reading the columns
 
@@ -422,8 +422,8 @@ Named Python `def` / `async def` declarations, including methods, are indexed. F
 | --- | ---: | ---: | --- | --- |
 | [`hash_password`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/accounts.py#L15) | 15 | 4 | [`account_security.py:18`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/account_security.py#L18), [`accounts.py:56`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/accounts.py#L56) | Name cue: Hash password. |
 | [`verify_password`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/accounts.py#L23) | 23 | 6 | [`account_security.py:16`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/account_security.py#L16), [`account_security.py:39`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/account_security.py#L39) | Name cue: Verify password. |
-| [`bootstrap_first_admin`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/accounts.py#L42) | 42 | 1 | [`server.py:394`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L394) | Source comment/docstring: Create only the first administrator; enrolment remains mandatory. |
-| [`confirm_admin_mfa`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/accounts.py#L65) | 65 | 1 | [`server.py:414`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L414) | Source comment/docstring: Activate first-admin MFA only after an authenticator code verifies. |
+| [`bootstrap_first_admin`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/accounts.py#L42) | 42 | 1 | [`server.py:412`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L412) | Source comment/docstring: Create only the first administrator; enrolment remains mandatory. |
+| [`confirm_admin_mfa`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/accounts.py#L65) | 65 | 1 | [`server.py:434`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L434) | Source comment/docstring: Activate first-admin MFA only after an authenticator code verifies. |
 
 ### [`backend/application_integrity.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/application_integrity.py)
 
@@ -447,9 +447,9 @@ Named Python `def` / `async def` declarations, including methods, are indexed. F
 
 | Function | Line | Call-like references | Example matches | Purpose / description |
 | --- | ---: | ---: | --- | --- |
-| [`change_inventory_record`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/collection_saves.py#L18) | 18 | 1 | [`server.py:491`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L491) | Source comment/docstring: Create, update or delete one source-shaped record without replacing other inventory. |
-| [`change_ipam_subnet_and_vlan_records`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/collection_saves.py#L106) | 106 | 1 | [`server.py:516`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L516) | Source comment/docstring: Save the published subnet form's linked subnet/VLAN edits as one transaction. |
-| [`delete_subnet_with_dependencies`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/collection_saves.py#L246) | 246 | 1 | [`server.py:508`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L508) | Name cue: Delete subnet with dependencies. |
+| [`change_inventory_record`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/collection_saves.py#L18) | 18 | 1 | [`server.py:516`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L516) | Source comment/docstring: Create, update or delete one source-shaped record without replacing other inventory. |
+| [`change_ipam_subnet_and_vlan_records`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/collection_saves.py#L106) | 106 | 1 | [`server.py:541`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L541) | Source comment/docstring: Save the published subnet form's linked subnet/VLAN edits as one transaction. |
+| [`delete_subnet_with_dependencies`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/collection_saves.py#L246) | 246 | 1 | [`server.py:533`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L533) | Name cue: Delete subnet with dependencies. |
 
 ### [`backend/deployment_settings.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/deployment_settings.py)
 
@@ -457,7 +457,7 @@ Named Python `def` / `async def` declarations, including methods, are indexed. F
 
 | Function | Line | Call-like references | Example matches | Purpose / description |
 | --- | ---: | ---: | --- | --- |
-| [`validate_published_port`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/deployment_settings.py#L5) | 5 | 1 | [`server.py:779`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L779) | Name cue: Validate published port. |
+| [`validate_published_port`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/deployment_settings.py#L5) | 5 | 1 | [`server.py:807`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L807) | Name cue: Validate published port. |
 
 ### [`backend/device_catalogue.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_catalogue.py)
 
@@ -465,7 +465,7 @@ Named Python `def` / `async def` declarations, including methods, are indexed. F
 
 | Function | Line | Call-like references | Example matches | Purpose / description |
 | --- | ---: | ---: | --- | --- |
-| [`change_device_catalogue`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_catalogue.py#L14) | 14 | 1 | [`server.py:481`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L481) | Name cue: Change device catalogue. |
+| [`change_device_catalogue`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_catalogue.py#L14) | 14 | 1 | [`server.py:506`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L506) | Name cue: Change device catalogue. |
 
 ### [`backend/device_saves.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py)
 
@@ -473,12 +473,20 @@ Named Python `def` / `async def` declarations, including methods, are indexed. F
 
 | Function | Line | Call-like references | Example matches | Purpose / description |
 | --- | ---: | ---: | --- | --- |
-| [`_check_primary_ip_claim`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py#L23) | 23 | 2 | [`device_saves.py:143`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py#L143), [`device_saves.py:233`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py#L233) | Source comment/docstring: Apply the published primary-IP ownership and reservation checks. |
-| [`_prepare_related_guests`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py#L42) | 42 | 2 | [`device_saves.py:133`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py#L133), [`device_saves.py:311`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py#L311) | Source comment/docstring: Validate the published host/guest choices within the host transaction. |
-| [`_persist_related_guests`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py#L86) | 86 | 2 | [`device_saves.py:176`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py#L176), [`device_saves.py:337`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py#L337) | Name cue: Persist related guests. |
-| [`save_reserved_device`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py#L98) | 98 | 1 | [`server.py:542`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L542) | Source comment/docstring: Commit one reserved device change only if its original revision still matches. |
-| [`create_device`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py#L217) | 217 | 1 | [`server.py:535`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L535) | Source comment/docstring: Create a published-shape device with its IPAM allocation atomically. |
-| [`delete_reserved_device`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py#L287) | 287 | 1 | [`server.py:529`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L529) | Source comment/docstring: Delete an exclusively reserved device and release its IPAM assignment. |
+| [`_check_primary_ip_claim`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py#L23) | 23 | 2 | [`device_saves.py:158`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py#L158), [`device_saves.py:254`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py#L254) | Source comment/docstring: Apply the published primary-IP ownership and reservation checks. |
+| [`_prepare_related_guests`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py#L42) | 42 | 2 | [`device_saves.py:148`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py#L148), [`device_saves.py:332`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py#L332) | Source comment/docstring: Validate the published host/guest choices within the host transaction. |
+| [`_persist_related_guests`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py#L86) | 86 | 2 | [`device_saves.py:191`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py#L191), [`device_saves.py:358`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py#L358) | Name cue: Persist related guests. |
+| [`save_reserved_device`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py#L98) | 98 | 1 | [`server.py:567`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L567) | Source comment/docstring: Commit one reserved device change only if its original revision still matches. |
+| [`create_device`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py#L232) | 232 | 1 | [`server.py:560`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L560) | Source comment/docstring: Create a published-shape device with its IPAM allocation atomically. |
+| [`delete_reserved_device`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py#L308) | 308 | 1 | [`server.py:554`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L554) | Source comment/docstring: Delete an exclusively reserved device and release its IPAM assignment. |
+
+### [`backend/history_permissions.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/history_permissions.py)
+
+**1 indexed definition.** Added in v2.0.2 to filter Change History responses by the reader's current permissions.
+
+| Function | Line | Call-like references | Example matches | Purpose / description |
+| --- | ---: | ---: | --- | --- |
+| [`visible_change_history`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/history_permissions.py#L30) | 30 | 2 | [`server.py:288`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L288), [`server.py:314`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L314) | Filter stored Change History at read time without changing the underlying events. |
 
 ### [`backend/http_security.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/http_security.py)
 
@@ -486,12 +494,12 @@ Named Python `def` / `async def` declarations, including methods, are indexed. F
 
 | Function | Line | Call-like references | Example matches | Purpose / description |
 | --- | ---: | ---: | --- | --- |
-| [`session_cookie`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/http_security.py#L14) | 14 | 1 | [`server.py:429`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L429) | Source comment/docstring: Issue a host-only, HttpOnly, SameSite=Strict cookie. |
-| [`clear_session_cookie`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/http_security.py#L29) | 29 | 1 | [`server.py:367`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L367) | Name cue: Clear session cookie. |
+| [`session_cookie`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/http_security.py#L14) | 14 | 1 | [`server.py:454`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L454) | Source comment/docstring: Issue a host-only, HttpOnly, SameSite=Strict cookie. |
+| [`clear_session_cookie`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/http_security.py#L29) | 29 | 1 | [`server.py:378`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L378) | Name cue: Clear session cookie. |
 | [`read_session_cookie`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/http_security.py#L42) | 42 | 5 | [`import_drafts.py:25`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L25), [`request_auth.py:52`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L52) | Source comment/docstring: Never accept a duplicate cookie name or malformed token. |
 | [`new_csrf_token`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/http_security.py#L63) | 63 | 0 | — | Name cue: New csrf token. |
 | [`check_csrf`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/http_security.py#L67) | 67 | 1 | [`request_auth.py:64`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L64) | Source comment/docstring: Double-submit requests require a secret tied to the current session. |
-| [`require_same_origin`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/http_security.py#L78) | 78 | 4 | [`request_auth.py:62`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L62), [`server.py:354`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L354) | Source comment/docstring: Reject absent, malformed and cross-origin state-changing requests. |
+| [`require_same_origin`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/http_security.py#L78) | 78 | 4 | [`request_auth.py:62`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L62), [`server.py:365`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L365) | Source comment/docstring: Reject absent, malformed and cross-origin state-changing requests. |
 
 ### [`backend/import_commit.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_commit.py)
 
@@ -519,11 +527,11 @@ Named Python `def` / `async def` declarations, including methods, are indexed. F
 | [`ImportDrafts.__init__`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L18) † | 18 | 0 | — | Check source for this historical/special-purpose identifier. |
 | [`ImportDrafts._identity`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L24) | 24 | 2 | [`import_drafts.py:36`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L36), [`import_drafts.py:59`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L59) | Name cue: Identity. |
 | [`ImportDrafts._get`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L30) | 30 | 3 | [`import_drafts.py:70`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L70), [`import_drafts.py:94`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L94) | Name cue: Get. |
-| [`ImportDrafts.begin`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L41) | 41 | 1 | [`server.py:728`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L728) | Name cue: Begin. |
-| [`ImportDrafts.choose_access_point_mounts`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L65) | 65 | 1 | [`server.py:733`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L733) | Name cue: Choose access point mounts. |
-| [`ImportDrafts.confirm`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L82) | 82 | 1 | [`server.py:746`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L746) | Name cue: Confirm. |
+| [`ImportDrafts.begin`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L41) | 41 | 1 | [`server.py:756`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L756) | Name cue: Begin. |
+| [`ImportDrafts.choose_access_point_mounts`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L65) | 65 | 1 | [`server.py:761`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L761) | Name cue: Choose access point mounts. |
+| [`ImportDrafts.confirm`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L82) | 82 | 1 | [`server.py:774`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L774) | Name cue: Confirm. |
 | [`ImportDrafts.cancel`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L111) | 111 | 1 | [`import_drafts.py:126`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L126) | Name cue: Cancel. |
-| [`ImportDrafts.cancel_authenticated`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L116) | 116 | 1 | [`server.py:738`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L738) | Name cue: Cancel authenticated. |
+| [`ImportDrafts.cancel_authenticated`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L116) | 116 | 1 | [`server.py:766`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L766) | Name cue: Cancel authenticated. |
 
 ### [`backend/import_review.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_review.py)
 
@@ -581,7 +589,7 @@ Named Python `def` / `async def` declarations, including methods, are indexed. F
 | Function | Line | Call-like references | Example matches | Purpose / description |
 | --- | ---: | ---: | --- | --- |
 | [`plan_ipam_repairs`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/ipam_repair.py#L14) | 14 | 1 | [`ipam_repair.py:63`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/ipam_repair.py#L63) | Source comment/docstring: Derive only the safe device-owned IPAM synchronisations in v1.3.3. |
-| [`apply_ipam_repairs`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/ipam_repair.py#L45) | 45 | 1 | [`server.py:471`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L471) | Source comment/docstring: Replan from locked SQLite state; never accept client-proposed allocation values. |
+| [`apply_ipam_repairs`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/ipam_repair.py#L45) | 45 | 1 | [`server.py:496`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L496) | Source comment/docstring: Replan from locked SQLite state; never accept client-proposed allocation values. |
 
 ### [`backend/ipam_saves.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/ipam_saves.py)
 
@@ -589,8 +597,8 @@ Named Python `def` / `async def` declarations, including methods, are indexed. F
 
 | Function | Line | Call-like references | Example matches | Purpose / description |
 | --- | ---: | ---: | --- | --- |
-| [`change_independent_allocation`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/ipam_saves.py#L10) | 10 | 1 | [`server.py:500`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L500) | Source comment/docstring: Save or delete an unassigned IP allocation without altering device-owned links. |
-| [`change_bulk_allocations`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/ipam_saves.py#L67) | 67 | 1 | [`server.py:523`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L523) | Source comment/docstring: Commit the published bulk IP reservation/release preview atomically. |
+| [`change_independent_allocation`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/ipam_saves.py#L10) | 10 | 1 | [`server.py:525`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L525) | Source comment/docstring: Save or delete an unassigned IP allocation without altering device-owned links. |
+| [`change_bulk_allocations`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/ipam_saves.py#L67) | 67 | 1 | [`server.py:548`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L548) | Source comment/docstring: Commit the published bulk IP reservation/release preview atomically. |
 
 ### [`backend/ipam_validation.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/ipam_validation.py)
 
@@ -631,7 +639,7 @@ Named Python `def` / `async def` declarations, including methods, are indexed. F
 | --- | ---: | ---: | --- | --- |
 | [`new_secret`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/mfa.py#L19) | 19 | 3 | [`account_security.py:43`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/account_security.py#L43), [`accounts.py:52`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/accounts.py#L52) | Source comment/docstring: Generate a unique 160-bit authenticator secret. |
 | [`_secret_bytes`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/mfa.py#L24) | 24 | 2 | [`mfa.py:41`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/mfa.py#L41), [`mfa.py:57`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/mfa.py#L57) | Name cue: Secret bytes. |
-| [`provisioning_uri`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/mfa.py#L37) | 37 | 3 | [`server.py:398`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L398), [`server.py:412`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L412) | Source comment/docstring: Standard otpauth URI; a QR renderer will encode this exact value. |
+| [`provisioning_uri`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/mfa.py#L37) | 37 | 3 | [`server.py:416`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L416), [`server.py:432`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L432) | Source comment/docstring: Standard otpauth URI; a QR renderer will encode this exact value. |
 | [`code_at`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/mfa.py#L51) | 51 | 1 | [`mfa.py:74`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/mfa.py#L74) | Source comment/docstring: RFC 6238 SHA1 TOTP with six digits and a 30-second period. |
 | [`verify_code`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/mfa.py#L64) | 64 | 4 | [`account_security.py:65`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/account_security.py#L65), [`accounts.py:77`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/accounts.py#L77) | Source comment/docstring: Accept adjacent time steps for clock drift; reject malformed input. |
 
@@ -682,12 +690,12 @@ Named Python `def` / `async def` declarations, including methods, are indexed. F
 | --- | ---: | ---: | --- | --- |
 | [`_admin`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/permissions.py#L12) | 12 | 5 | [`permissions.py:35`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/permissions.py#L35), [`permissions.py:52`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/permissions.py#L52) | Name cue: Admin. |
 | [`_target`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/permissions.py#L21) | 21 | 6 | [`permissions.py:53`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/permissions.py#L53), [`permissions.py:109`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/permissions.py#L109) | Name cue: Target. |
-| [`create_user`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/permissions.py#L30) | 30 | 1 | [`server.py:653`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L653) | Name cue: Create user. |
-| [`set_permission`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/permissions.py#L47) | 47 | 1 | [`server.py:658`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L658) | Name cue: Set permission. |
+| [`create_user`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/permissions.py#L30) | 30 | 1 | [`server.py:681`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L681) | Name cue: Create user. |
+| [`set_permission`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/permissions.py#L47) | 47 | 1 | [`server.py:686`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L686) | Name cue: Set permission. |
 | [`can_access`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/permissions.py#L81) | 81 | 28 | [`collection_saves.py:21`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/collection_saves.py#L21), [`collection_saves.py:108`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/collection_saves.py#L108) | Name cue: Can access. |
-| [`set_account_active`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/permissions.py#L103) | 103 | 1 | [`server.py:671`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L671) | Name cue: Set account active. |
-| [`delete_user`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/permissions.py#L129) | 129 | 1 | [`server.py:666`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L666) | Name cue: Delete user. |
-| [`set_administrator`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/permissions.py#L149) | 149 | 1 | [`server.py:676`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L676) | Source comment/docstring: Manage administrator status without self-demotion or last-admin removal. |
+| [`set_account_active`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/permissions.py#L103) | 103 | 1 | [`server.py:699`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L699) | Name cue: Set account active. |
+| [`delete_user`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/permissions.py#L129) | 129 | 1 | [`server.py:694`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L694) | Name cue: Delete user. |
+| [`set_administrator`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/permissions.py#L149) | 149 | 1 | [`server.py:704`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L704) | Source comment/docstring: Manage administrator status without self-demotion or last-admin removal. |
 | [`can_replace_inventory`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/permissions.py#L179) | 179 | 1 | [`request_auth.py:93`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L93) | Source comment/docstring: Full v1.3.3 import replaces Devices, IPAM and Racks together. |
 
 ### [`backend/rack_validation.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/rack_validation.py)
@@ -708,11 +716,11 @@ Named Python `def` / `async def` declarations, including methods, are indexed. F
 
 | Function | Line | Call-like references | Example matches | Purpose / description |
 | --- | ---: | ---: | --- | --- |
-| [`login`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L20) | 20 | 1 | [`server.py:422`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L422) | Source comment/docstring: Throttle invalid credentials; return a session token or None. |
-| [`csrf_for_session`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L36) | 36 | 2 | [`request_auth.py:64`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L64), [`server.py:327`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L327) | Source comment/docstring: Derive a per-session request proof without persisting another secret. |
-| [`authenticated_account`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L51) | 51 | 9 | [`server.py:111`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L111), [`server.py:142`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L142) | Name cue: Authenticated account. |
+| [`login`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L20) | 20 | 1 | [`server.py:447`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L447) | Source comment/docstring: Throttle invalid credentials; return a session token or None. |
+| [`csrf_for_session`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L36) | 36 | 2 | [`request_auth.py:64`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L64), [`server.py:338`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L338) | Source comment/docstring: Derive a per-session request proof without persisting another secret. |
+| [`authenticated_account`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L51) | 51 | 9 | [`server.py:120`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L120), [`server.py:151`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L151) | Name cue: Authenticated account. |
 | [`authorised_mutation`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L58) | 58 | 3 | [`request_auth.py:72`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L72), [`request_auth.py:90`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L90) | Name cue: Authorised mutation. |
-| [`logout`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L69) | 69 | 1 | [`server.py:359`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L359) | Name cue: Logout. |
+| [`logout`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L69) | 69 | 1 | [`server.py:370`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L370) | Name cue: Logout. |
 | [`authorised_inventory_import`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L81) | 81 | 5 | [`import_drafts.py:89`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L89), [`import_drafts.py:121`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L121) | Name cue: Authorised inventory import. |
 
 ### [`backend/reset_inventory.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/reset_inventory.py)
@@ -721,7 +729,7 @@ Named Python `def` / `async def` declarations, including methods, are indexed. F
 
 | Function | Line | Call-like references | Example matches | Purpose / description |
 | --- | ---: | ---: | --- | --- |
-| [`reset_inventory`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/reset_inventory.py#L12) | 12 | 1 | [`server.py:476`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L476) | Source comment/docstring: Published Clean Start inventory defaults and Change History, atomically. |
+| [`reset_inventory`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/reset_inventory.py#L12) | 12 | 1 | [`server.py:501`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L501) | Source comment/docstring: Published Clean Start inventory defaults and Change History, atomically. |
 
 ### [`backend/schema.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/schema.py)
 
@@ -729,7 +737,7 @@ Named Python `def` / `async def` declarations, including methods, are indexed. F
 
 | Function | Line | Call-like references | Example matches | Purpose / description |
 | --- | ---: | ---: | --- | --- |
-| [`initialise_database`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/schema.py#L56) † | 56 | 1 | [`server.py:778`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L778) | Source comment/docstring: Apply schema changes in one transaction; fail closed on newer versions. |
+| [`initialise_database`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/schema.py#L56) † | 56 | 1 | [`server.py:806`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L806) | Source comment/docstring: Apply schema changes in one transaction; fail closed on newer versions. |
 
 ### [`backend/server.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py)
 
@@ -737,15 +745,15 @@ Named Python `def` / `async def` declarations, including methods, are indexed. F
 
 | Function | Line | Call-like references | Example matches | Purpose / description |
 | --- | ---: | ---: | --- | --- |
-| [`validate_public_origin`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L51) | 51 | 1 | [`server.py:780`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L780) | Source comment/docstring: Accept only an explicit canonical HTTPS browser origin. |
-| [`connect`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L69) | 69 | 17 | [`server.py:71`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L71), [`server.py:78`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L78) | Name cue: Connect. |
-| [`initialise_database`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L77) † | 77 | 1 | [`server.py:778`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L778) | Name cue: Initialise database. |
-| [`Handler.do_GET`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L83) | 83 | 0 | — | Name cue: Do GET. |
-| [`Handler.do_POST`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L332) | 332 | 0 | — | Name cue: Do POST. |
-| [`Handler.handle_user_mutation`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L431) | 431 | 1 | [`server.py:345`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L345) | Source comment/docstring: Administrator-only account creation and section permission changes. |
-| [`Handler.handle_import`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L688) | 688 | 1 | [`server.py:348`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L348) | Source comment/docstring: Authenticated server-owned import stages; never accept a candidate. |
-| [`Handler.respond`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L764) | 764 | 60 | [`server.py:89`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L89), [`server.py:113`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L113) | Name cue: Respond. |
-| [`main`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L777) | 777 | 1 | [`server.py:790`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L790) | Name cue: Main. |
+| [`validate_public_origin`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L53) | 53 | 1 | [`server.py:808`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L808) | Source comment/docstring: Accept only an explicit canonical HTTPS browser origin. |
+| [`connect`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L71) | 71 | 17 | [`server.py:73`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L73), [`server.py:80`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L80) | Name cue: Connect. |
+| [`initialise_database`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L79) † | 77 | 1 | [`server.py:806`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L806) | Name cue: Initialise database. |
+| [`Handler.do_GET`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L92) | 92 | 0 | — | Name cue: Do GET. |
+| [`Handler.do_POST`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L343) | 343 | 0 | — | Name cue: Do POST. |
+| [`Handler.handle_user_mutation`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L456) | 456 | 1 | [`server.py:356`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L356) | Source comment/docstring: Administrator-only account creation and section permission changes. |
+| [`Handler.handle_import`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L716) | 716 | 1 | [`server.py:359`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L359) | Source comment/docstring: Authenticated server-owned import stages; never accept a candidate. |
+| [`Handler.respond`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L792) | 792 | 60 | [`server.py:98`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L98), [`server.py:122`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L122) | Name cue: Respond. |
+| [`main`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L805) | 805 | 1 | [`server.py:818`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L818) | Name cue: Main. |
 
 ### [`backend/sessions.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/sessions.py)
 
@@ -765,7 +773,7 @@ Named Python `def` / `async def` declarations, including methods, are indexed. F
 
 | Function | Line | Call-like references | Example matches | Purpose / description |
 | --- | ---: | ---: | --- | --- |
-| [`save_inventory_setting`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/settings_saves.py#L9) | 9 | 1 | [`server.py:466`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L466) | Name cue: Save inventory setting. |
+| [`save_inventory_setting`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/settings_saves.py#L9) | 9 | 1 | [`server.py:491`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L491) | Name cue: Save inventory setting. |
 
 ### [`backend/subnet_validation.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/subnet_validation.py)
 
@@ -788,8 +796,8 @@ Named Python `def` / `async def` declarations, including methods, are indexed. F
 | Function | Line | Call-like references | Example matches | Purpose / description |
 | --- | ---: | ---: | --- | --- |
 | [`subject_alternative_names`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/tls.py#L12) | 12 | 1 | [`tls.py:41`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/tls.py#L41) | Name cue: Subject alternative names. |
-| [`ensure_certificate`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/tls.py#L33) | 33 | 1 | [`server.py:783`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L783) | Source comment/docstring: Generate once; never silently replace an existing certificate or key. |
+| [`ensure_certificate`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/tls.py#L33) | 33 | 1 | [`server.py:811`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L811) | Source comment/docstring: Generate once; never silently replace an existing certificate or key. |
 
 ## Maintenance notes
 
-This is a **snapshot**, not a live call graph. When source changes, repeat the same declared-source scan for the new commit and update the pinned reference rather than retaining stale counts or line numbers. Do not add a new production dependency or runtime instrumentation solely to generate documentation. Never remove or rename a function based on a zero or low textual count alone; inspect event bindings, aliases, compatibility requirements and the published v1.3.3 behaviour first.
+This is a **source snapshot**, not a live call graph. Its indexed code predates the proposed v2.0.3 About/test edits in this PR, which do not add named functions. The record stays useful for navigation; the next source-changing batch must check it again. When source changes, repeat the same declared-source scan for the new commit and update the pinned reference rather than retaining stale counts or line numbers. Do not add a new production dependency or runtime instrumentation solely to generate documentation. Never remove or rename a function based on a zero or low textual count alone; inspect event bindings, aliases, compatibility requirements and the published v1.3.3 behaviour first.

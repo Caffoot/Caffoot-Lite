@@ -24,7 +24,7 @@
 
 Completed issue and PR records are **evidence**, not instructions to regenerate their deliverables.
 
-## 3. Next direction — v2.0.3 scope to agree
+## 3. v2.0.3 — approved first batch, remaining scope to agree
 
 **Product-owner direction:** a **small, proportionate functional audit, evidenced bug fixes, justified code/frontend cleanup, accurate documentation and tests** to provide a stable baseline for the subsequent interface refresh. Avoid a full second migration, speculative refactor, sweeping security re-audit or engineering for its own sake.
 
@@ -37,7 +37,9 @@ Candidate work to **scope and explicitly approve before implementation**:
 - Prepare and verify a **v2.0.3-specific release-image trigger and tag**, because the [current workflow](../../.github/workflows/v2-release-image.yml) is tied to v2.0.2. No tag or image work is authorised by this note.
 - Use [proportionate recurring security checks](Security-Fixes-and-Releases.md#proportionate-recurring-security-checks) relevant to actual changes, not a duplicate v2.0.2 review.
 
-**Immediate next action:** agree the v2.0.3 scope and the smallest first test/audit batch with the product owner, then record explicit approval **before** starting code or opening implementation issues/PRs.
+**First batch approved (3 November 2026):** The read-only review identified a stale About version (`v2.0.1` in published v2.0.2), a Function Index missing the v2.0.2 history-permissions module, and browser coverage gaps for Rack front/rear switching/printing and VM host selection. This PR proposes: an About label for the upcoming **v2.0.3** (not released); a focused index refresh; and regression tests of those existing workflows. **No redesign, database/schema change, installation change or Svelte work is included.** Existing backend tests cover host/guest and rack rules; do not recreate them.
+
+**Next action:** Review the proposed first-batch PR and its actual CI evidence, resolve any failures, and request separate approval before merging. The How To path-compatibility rename and v2.0.3 release preparation remain future, separately reviewed batches. Archive this handover **during release preparation**, not now.
 
 ## 4. Later direction — v2.1 interface refresh
 
