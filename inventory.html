@@ -10421,11 +10421,12 @@ window.addEventListener('load', async () => {
       racks:'racks', audit:'audit', users:'users',
       settings:'settings', account:'account'
     }[destination];
+    // Inventory-state sections are booleans (the separate sections API uses read/edit objects).
     const canOpen = legacyDestination === 'dashboard' || legacyDestination === 'account' ||
-      (legacyDestination === 'devices' && permissions.Devices?.read) ||
-      (legacyDestination === 'ipam' && permissions.IPAM?.read) ||
-      (legacyDestination === 'racks' && permissions.Racks?.read) ||
-      (legacyDestination === 'audit' && ['Devices','IPAM','Racks'].some(area => permissions[area]?.read)) ||
+      (legacyDestination === 'devices' && permissions.Devices === true) ||
+      (legacyDestination === 'ipam' && permissions.IPAM === true) ||
+      (legacyDestination === 'racks' && permissions.Racks === true) ||
+      (legacyDestination === 'audit' && ['Devices','IPAM','Racks'].some(area => permissions[area] === true)) ||
       (sessionIsAdmin && ['users','settings'].includes(legacyDestination));
     if (legacyDestination && canOpen) {
       switchTab(legacyDestination);
