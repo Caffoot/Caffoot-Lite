@@ -1134,28 +1134,20 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
         
         <!-- SIDEBAR NAVIGATION -->
         <aside id="sidebar" class="w-[272px] shrink-0 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex flex-col z-20 transition-all duration-300">
-            <div class="h-16 px-4 flex items-center justify-between border-b border-slate-600">
-                <div class="flex items-center space-x-3">
-                    <img src="../assets/caffoot-icon-1024.png" alt="Caffoot hedgehog mascot" width="40" height="40" class="w-10 h-10 rounded-xl object-cover shadow-lg flex-shrink-0">
-                    <h1 class="font-bold text-lg leading-6 tracking-tight text-white">Caffoot Lite</h1>
+            <div class="caffoot-brand">
+                <img src="/assets/caffoot-logo-256.png" alt="Caffoot hedgehog logo" width="42" height="42">
+                <div class="caffoot-brand-text">
+                    <div class="caffoot-brand-name">Caffoot <span>Lite</span></div>
+                    <div class="caffoot-brand-sub">INFRASTRUCTURE, SIMPLIFIED.</div>
                 </div>
             </div>
 
-            <nav class="flex-1 p-4 space-y-1.5 overflow-y-auto custom-scrollbar">
+            <nav class="caffoot-primary-nav flex-1 p-4 space-y-1.5 overflow-y-auto custom-scrollbar" aria-label="Main Sections">
+                <div class="caffoot-nav-label">WORKSPACE</div>
                 <button data-action="tab-dashboard" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700/50 hover:text-indigo-600 dark:hover:text-indigo-400" data-tab="dashboard">
                     <i class="fa-solid fa-chart-pie w-5 text-center"></i>
                     <span>Dashboard</span>
                 </button>
-                <button data-action="tab-ipam" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700/50 hover:text-indigo-600 dark:hover:text-indigo-400" data-tab="ipam">
-                    <i class="fa-solid fa-diagram-project w-5 text-center"></i>
-                    <span>IPAM</span>
-                </button>
-                <div id="ipam-sidebar-actions" class="hidden ml-6 pl-3 border-l border-slate-200 dark:border-slate-700 space-y-1" aria-label="IPAM Actions">
-                    <button type="button" data-action="sidebar-ipam-overview" class="w-full text-left px-3 py-2 rounded-lg text-xs text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700">Overview</button>
-                    <button type="button" data-action="sidebar-ipam-addresses" class="w-full text-left px-3 py-2 rounded-lg text-xs text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700">IP Addresses</button>
-                    <button type="button" data-action="sidebar-ipam-manage" class="w-full text-left px-3 py-2 rounded-lg text-xs text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700">Manage Subnets</button>
-                    <button type="button" data-action="open-subnet-modal" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-slate-700"><i class="fa-solid fa-plus mr-2"></i>Add Subnet</button>
-                </div>
                 <button data-action="tab-devices" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700/50 hover:text-indigo-600 dark:hover:text-indigo-400" data-tab="devices">
                     <i class="fa-solid fa-server w-5 text-center"></i>
                     <span>Devices</span>
@@ -1172,6 +1164,16 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                     <button type="button" data-action="sidebar-devices-services" class="w-full text-left px-3 py-2 rounded-lg text-xs text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700">Server Services</button>
                     <button type="button" data-action="open-device-modal" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-slate-700 sidebar-add-device"><i class="fa-solid fa-plus mr-2"></i>Add Device</button>
                 </div>
+                <button data-action="tab-ipam" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700/50 hover:text-indigo-600 dark:hover:text-indigo-400" data-tab="ipam">
+                    <i class="fa-solid fa-diagram-project w-5 text-center"></i>
+                    <span>IPAM</span>
+                </button>
+                <div id="ipam-sidebar-actions" class="hidden ml-6 pl-3 border-l border-slate-200 dark:border-slate-700 space-y-1" aria-label="IPAM Actions">
+                    <button type="button" data-action="sidebar-ipam-overview" class="w-full text-left px-3 py-2 rounded-lg text-xs text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700">Overview</button>
+                    <button type="button" data-action="sidebar-ipam-addresses" class="w-full text-left px-3 py-2 rounded-lg text-xs text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700">IP Addresses</button>
+                    <button type="button" data-action="sidebar-ipam-manage" class="w-full text-left px-3 py-2 rounded-lg text-xs text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700">Manage Subnets</button>
+                    <button type="button" data-action="open-subnet-modal" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-slate-700"><i class="fa-solid fa-plus mr-2"></i>Add Subnet</button>
+                </div>
                 <button data-action="tab-racks" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700/50 hover:text-indigo-600 dark:hover:text-indigo-400" data-tab="racks">
                     <i class="fa-solid fa-hard-drive w-5 text-center"></i>
                     <span>Network Racks</span>
@@ -1182,7 +1184,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                     <button type="button" data-action="sidebar-racks-accessories" class="w-full text-left px-3 py-2 rounded-lg text-xs text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700">Rack Accessories</button>
                     <button type="button" data-action="open-rack-modal" class="w-full text-left px-3 py-2 mt-3 rounded-lg text-xs font-semibold text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-slate-700 sidebar-add-device"><i class="fa-solid fa-plus mr-2"></i>Add Rack</button>
                 </div>
-                <button data-action="tab-audit" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700/50 hover:text-indigo-600 dark:hover:text-indigo-400" data-tab="audit"><i class="fa-solid fa-clock-rotate-left w-5 text-center"></i><span>Change History</span></button>
+                <button data-action="tab-audit" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700/50 hover:text-indigo-600 dark:hover:text-indigo-400" data-tab="audit"><i class="fa-solid fa-clock-rotate-left w-5 text-center"></i><span>Audit Trail</span></button>
                 <button type="button" id="next-users-nav" data-action="tab-users" data-tab="users" class="nav-btn hidden w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700/50 hover:text-indigo-600 dark:hover:text-indigo-400">
                     <i class="fa-solid fa-users w-5 text-center" aria-hidden="true"></i><span>Users</span>
                 </button>
@@ -1200,6 +1202,10 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
                     <button type="button" id="next-account-nav" data-action="tab-account" data-tab="account" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700/50 hover:text-indigo-600 dark:hover:text-indigo-400"><i class="fa-solid fa-user-gear w-5 text-center" aria-hidden="true"></i><span>My account</span></button>
                     <button id="next-settings-nav" data-action="tab-settings" data-tab="settings" aria-label="Open Settings and Data" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-slate-600 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-slate-700/50 hover:text-indigo-600 dark:hover:text-indigo-400"><i class="fa-solid fa-gear w-5 text-center"></i><span>Settings & Data</span></button>
                 </nav>
+                <button type="button" class="caffoot-collapse-button" data-action="toggle-sidebar" aria-expanded="true" aria-label="Collapse Menu" title="Collapse or expand sidebar">
+                    <i class="fa-solid fa-angles-left" aria-hidden="true"></i>
+                    <span class="caffoot-collapse-label">Collapse Menu</span>
+                </button>
             </div>
         </aside>
         <!-- Hidden backup input retained for Settings restore and existing import workflow. -->
@@ -1209,10 +1215,15 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
         <!-- MAIN CONTENT AREA -->
         <main class="flex-1 flex flex-col overflow-hidden">
             <!-- Top Header -->
-            <header class="h-16 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 flex items-center justify-between z-10">
-                <div class="flex items-center space-x-4">
-                    <h2 id="page-title" class="text-xl font-bold text-slate-900 dark:text-white">Dashboard</h2>
+            <header id="caffoot-app-topbar" class="h-16 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 flex items-center justify-between z-10">
+                <div class="caffoot-breadcrumb">
+                    <span>Caffoot Lite</span><span aria-hidden="true">›</span>
+                    <h2 id="page-title">Dashboard</h2>
                 </div>
+                <button type="button" data-action="tab-account" class="caffoot-header-account" aria-label="Open My Account" title="Open My Account">
+                    <span class="caffoot-header-avatar" aria-hidden="true" id="caffoot-account-initial">A</span>
+                    <span class="caffoot-header-account-text">My Account</span>
+                </button>
             </header>
 
             <!-- Dynamic Tab Content Container -->
@@ -2198,7 +2209,7 @@ function hierarchyValidateTypes(subnets) {
             });
 
             const titles = {
-                dashboard: 'Dashboard Overview',
+                dashboard: 'Dashboard',
                 ipam: 'IP Address Management, Subnets & VLANs',
                 devices: 'Devices',
                 racks: 'Network Racks & Elevations',
@@ -2210,6 +2221,7 @@ function hierarchyValidateTypes(subnets) {
                 account: 'My account'
             };
             document.getElementById('page-title').textContent = titles[tabId];
+            document.getElementById('app').classList.toggle('caffoot-dashboard-visible', tabId === 'dashboard');
             renderContent();
         }
 
@@ -2699,17 +2711,12 @@ function hierarchyValidateTypes(subnets) {
             }).join('') : `<div class="flex items-center gap-3 p-3 rounded-xl bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-300"><i class="fa-solid fa-circle-check"></i><p class="text-xs font-medium">No integrity or capacity warnings detected.</p></div>`;
 
             return `
-                <div class="space-y-6">
-                    <section class="bg-gradient-to-br from-blue-800 to-sky-700 text-white rounded-2xl p-5 sm:p-6 shadow-sm">
-                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
-                            <div>
-                                <p class="text-xs font-semibold uppercase tracking-wider text-white">Network overview</p>
-                                <h3 class="text-2xl font-bold mt-1">Network Overview</h3>
-                                <p class="text-sm text-white mt-1">A live summary of devices, addressing and rack space. Select a summary card to open its workspace.</p>
-                            </div>
-                            ${quickActions}
-                        </div>
-                    </section>
+                <div class="caffoot-dashboard">
+                    <div class="caffoot-dashboard-eyebrow">YOUR INFRASTRUCTURE AT A GLANCE</div>
+                    <div class="caffoot-dashboard-heading">
+                        <h1>Dashboard</h1>
+                        <p>An organised view of your saved Devices, IPAM and Network Racks.</p>
+                    </div>
 
                     ${window.nextMfaEnrolled === false ? `<section id="next-dashboard-mfa-notice" role="note" class="rounded-2xl border border-sky-200 bg-sky-50 dark:border-sky-800 dark:bg-sky-950/30 p-4 sm:p-5">
                         <div class="flex flex-col sm:flex-row sm:items-center gap-4">
@@ -2723,36 +2730,61 @@ function hierarchyValidateTypes(subnets) {
                     <nav class="dashboard-tabs" aria-label="Dashboard sections" role="tablist">
                         ${[['overview','Overview','fa-house'],['insights','Network Insights','fa-chart-pie'],['activity','Activity & Alerts','fa-bell']].map(([id,label,icon])=>`<button type="button" role="tab" id="dashboard-tab-${id}" aria-controls="dashboard-panel-${id}" aria-selected="${activeDashboardTab===id}" tabindex="${activeDashboardTab===id?'0':'-1'}" class="dashboard-tab-control ${activeDashboardTab===id?'is-active':''}" data-action="dashboard-tab" data-dashboard-tab="${id}"><i class="fa-solid ${icon}" aria-hidden="true"></i><span>${label}</span></button>`).join('')}
                     </nav>
-                    <div id="dashboard-panel-overview" role="tabpanel" aria-labelledby="dashboard-tab-overview" class="dashboard-tab-panel space-y-5" ${activeDashboardTab==='overview'?'':'hidden'}>
-                    <section class="dashboard-stats grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4" aria-label="Network summary">
-                        ${[
-                            ['Devices', devices.length, `${activeDevices} active · ${inactiveDevices} other`, 'fa-server', 'blue', 'tab-devices'],
-                            ['IP addresses', totalTrackedIps, `${assignedIps} assigned · ${reservedIps} reserved`, 'fa-network-wired', 'emerald', 'tab-ipam'],
-                            ['Subnets', subnets.length, 'Managed networks', 'fa-diagram-project', 'indigo', 'tab-ipam'],
-                            ['Racks', racks.length, `${rackedDevices} mounted devices`, 'fa-hard-drive', 'slate', 'dashboard-racks-overview']
-                        ].map(([label,value,detail,icon,tone,action]) => `<button type="button" data-action="${action}" class="dashboard-stat dashboard-stat-${tone} text-left bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 sm:p-5 transition-colors hover:border-blue-400 dark:hover:border-sky-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500" aria-label="${label}: ${value}. Open section">
-                            <div class="flex items-center justify-between gap-2"><span class="text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">${label}</span><span class="dashboard-stat-icon"><i class="fa-solid ${icon}" aria-hidden="true"></i></span></div>
-                            <p class="text-3xl font-extrabold text-slate-900 dark:text-white mt-3">${value}</p>
-                            <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">${detail}</p>
-                        </button>`).join('')}
-                    </section>
-
-                    ${window.nextSessionIsAdmin === true && !integrityHealthy ? `<section id="next-dashboard-inventory-health" role="alert" class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-rose-200 dark:border-rose-800">
-                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                            <div class="flex items-start gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 dark:bg-rose-950/40 dark:text-rose-300 flex items-center justify-center">
-                                    <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-bold text-rose-700 dark:text-rose-300">Inventory Health — attention required</h4>
-                                    <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Existing inventory consistency checks found issues in saved records. Review the details below and the affected inventory before making changes.</p>
-                                </div>
+                    <div id="dashboard-panel-overview" role="tabpanel" aria-labelledby="dashboard-tab-overview" class="dashboard-tab-panel" ${activeDashboardTab==='overview'?'':'hidden'}>
+                        <section class="dashboard-stats db-summary" aria-label="Network summary">
+                            ${[
+                                ['Devices', devices.length, `${activeDevices} active · ${inactiveDevices} other`, 'fa-server', 'tab-devices'],
+                                ['IP Addresses', totalTrackedIps, `${assignedIps} assigned · ${reservedIps} reserved`, 'fa-network-wired', 'tab-ipam'],
+                                ['Subnets', subnets.length, 'Managed networks', 'fa-diagram-project', 'tab-ipam'],
+                                ['Racks', racks.length, `${rackedDevices} mounted devices`, 'fa-server', 'dashboard-racks-overview']
+                            ].map(([label,value,detail,icon,action],index) => `<button type="button" data-action="${action}" class="dashboard-stat db-metric" aria-label="${label}: ${value}. Open section">
+                                <span class="db-metric-head">${label}<span class="db-iconwrap ${index===1?'green':index===3?'orange':''}"><i class="fa-solid ${icon}" aria-hidden="true"></i></span></span>
+                                <strong>${value}</strong><small>${detail}</small>
+                            </button>`).join('')}
+                        </section>
+                        ${window.nextSessionIsAdmin === true && !integrityHealthy ? `<section id="next-dashboard-inventory-health" role="alert" class="db-card db-error-card">
+                            <h3>Inventory Health — attention required</h3>
+                            <p>Existing inventory consistency checks found issues in saved records.</p>
+                            <div>${integrityPreview.map(error => `<p>${escapeHtml(error)}</p>`).join('')}</div>
+                        </section>` : ''}
+                        <div class="db-two">
+                            <div class="db-stack">
+                                <section class="db-card">
+                                    <div class="db-card-head"><span class="db-iconwrap orange"><i class="fa-solid fa-table-cells-large" aria-hidden="true"></i></span><div><h3>Quick Access</h3><p>Existing actions, available according to your permissions.</p></div></div>
+                                    <div class="db-actionrow">${quickActions}</div>
+                                </section>
+                                <section class="db-card">
+                                    <div class="db-card-head"><span class="db-iconwrap"><i class="fa-solid fa-server" aria-hidden="true"></i></span><div><h3>Recent Devices</h3><p>The latest records in your saved inventory.</p></div></div>
+                                    <div class="db-card-rule"></div>
+                                    <div class="db-device-rows">${deviceRows}</div>
+                                    <button type="button" data-action="tab-devices" class="db-outline-button">View All Devices</button>
+                                </section>
+                                <section class="db-card">
+                                    <div class="db-card-head"><span class="db-iconwrap green"><i class="fa-solid fa-network-wired" aria-hidden="true"></i></span><div><h3>Subnet Utilisation</h3><p>Usable addresses across existing CIDR networks.</p></div></div>
+                                    <div class="db-card-rule"></div>
+                                    ${subnetStats.length ? subnetStats.slice(0,3).map(subnet => `
+                                        <div class="db-progress-title"><span>${escapeHtml(subnet.name)} · ${escapeHtml(subnet.cidr)}</span><strong>${subnet.percentage}%</strong></div>
+                                        <div class="db-bar" role="progressbar" aria-label="${escapeHtml(subnet.name)} utilisation" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${subnet.percentage}"><span style="width:${subnet.percentage}%;background:#4a9c86"></span></div>
+                                    `).join('') : '<p class="db-muted">No subnets configured yet.</p>'}
+                                    <p class="db-muted">Details, reservations and allocations remain managed within IPAM.</p>
+                                </section>
                             </div>
-                            <span class="px-3 py-1.5 rounded-full text-xs font-bold bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300">${integrityErrors.length} issue${integrityErrors.length === 1 ? '' : 's'}</span>
+                            <div class="db-stack">
+                                <section class="db-card">
+                                    <div class="db-card-head"><span class="db-iconwrap orange"><i class="fa-solid fa-server" aria-hidden="true"></i></span><div><h3>Rack Capacity</h3><p>Used U-space across your cabinets.</p></div></div>
+                                    <div class="db-card-rule"></div>
+                                    ${rackInsights.length ? rackInsights.slice(0,3).map(({rack,faces}) => {
+                                        const used = Math.max(...faces.map(face=>face.used));
+                                        const capacity = Number(rack.heightU)||0;
+                                        const pct = capacity ? Math.round(used/capacity*100) : 0;
+                                        return `<div class="db-progress-title"><span>${escapeHtml(rack.name)}</span><strong>${used} / ${capacity}U</strong></div>
+                                        <div class="db-bar" role="progressbar" aria-label="${escapeHtml(rack.name)} occupied rack units" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><span style="width:${pct}%;background:${pct>=85?'#ed8532':'#7799b5'}"></span></div>`;
+                                    }).join('') : '<p class="db-muted">No network racks configured yet.</p>'}
+                                    <button type="button" data-action="tab-racks" class="db-outline-button">Open Network Racks</button>
+                                </section>
+                                ${networkSnapshot}
+                            </div>
                         </div>
-                        <div class="mt-4 space-y-2">${integrityPreview.map(error => `<div class="flex items-start gap-2 p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/20 text-xs text-rose-700 dark:text-rose-300"><i class="fa-solid fa-circle-exclamation mt-0.5" aria-hidden="true"></i><span>${escapeHtml(error)}</span></div>`).join('')}${integrityErrors.length > integrityPreview.length ? `<p class="text-[11px] text-slate-500 pt-1">Showing the first ${integrityPreview.length} of ${integrityErrors.length} issues.</p>` : ''}</div>
-                    </section>` : ''}
-                    ${networkSnapshot}
                     </div>
                     <div id="dashboard-panel-insights" role="tabpanel" aria-labelledby="dashboard-tab-insights" class="dashboard-tab-panel space-y-5" ${activeDashboardTab==='insights'?'':'hidden'}>
                     ${networkInsights}
@@ -9158,6 +9190,15 @@ function hierarchyValidateTypes(subnets) {
                     }
                     break;
                 }
+                case 'toggle-sidebar': {
+                    const app = document.getElementById('app');
+                    const collapsed = app.classList.toggle('caffoot-sidebar-collapsed');
+                    target.setAttribute('aria-expanded', String(!collapsed));
+                    target.setAttribute('aria-label', collapsed ? 'Expand Menu' : 'Collapse Menu');
+                    target.querySelector('.caffoot-collapse-label').textContent = collapsed ? 'Expand Menu' : 'Collapse Menu';
+                    target.querySelector('i').className = collapsed ? 'fa-solid fa-angles-right' : 'fa-solid fa-angles-left';
+                    break;
+                }
                 case 'tab-dashboard': switchTab('dashboard'); break;
                 case 'tab-devices': switchTab('devices'); break;
 
@@ -10403,6 +10444,7 @@ window.addEventListener('load', async () => {
     sessionIsAdmin=!!session.is_admin;
     window.nextSessionIsAdmin=sessionIsAdmin;
     signedInUsername=session.username;
+    document.getElementById('caffoot-account-initial').textContent=(signedInUsername?.[0] || 'A').toUpperCase();
     document.getElementById('next-welcome-name').textContent = 'Welcome ' + signedInUsername;
     sessionMfaEnrolled=!!session.mfa_enrolled;
     window.nextMfaEnrolled=sessionMfaEnrolled;
