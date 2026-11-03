@@ -186,17 +186,27 @@ async function run(){
   await page.locator('#dashboard-panel-insights').waitFor({state:'visible'});
   assert.equal(await page.locator('#dashboard-panel-insights .dashboard-summary-panel').count(),4,
     'Approved Network Insights must still contain four live detail cards');
+  await page.getByRole('heading',{name:'Rack Details',exact:true}).waitFor();
+  assert.ok(await page.locator('#dashboard-panel-insights [data-action="tab-racks"]').isEnabled(),
+    'Rack Details must open the existing working rack section');
   await page.screenshot({path:path.join(screens,'dashboard-approved-html-insights.png'),fullPage:true});
   await page.locator('[data-dashboard-tab="activity"]').click();
   await page.locator('#dashboard-panel-activity').waitFor({state:'visible'});
   assert.equal(await page.locator('#dashboard-panel-activity .dashboard-activity-card').count(),2,
     'Approved Activity & Alerts must retain activity and warning panels');
+  assert.equal(await page.locator('#dashboard-panel-activity .dashboard-summary-item').count(),2,
+    'Healthy administrator Activity & Alerts uses the two approved summary cards');
   await page.screenshot({path:path.join(screens,'dashboard-approved-html-activity.png'),fullPage:true});
   await page.locator('[data-dashboard-tab="overview"]').click();
   await page.locator('#dashboard-panel-overview').waitFor({state:'visible'});
   // The saved Light / Dark / System setting must remain usable with the new
   // HTML layout. Only the existing dark class is toggled for this check.
   await page.evaluate(()=>document.documentElement.classList.add('dark'));
+  await page.waitForFunction(()=>{
+    const color=sel=>getComputedStyle(document.querySelector(sel)).color;
+    return color('#caffoot-app-topbar #page-title')==='rgb(241, 245, 249)' &&
+      color('#dashboard-tab-overview')==='rgb(255, 189, 133)';
+  });
   const darkAppearance=await page.evaluate(()=>({
     canvas:getComputedStyle(document.querySelector('#main-content')).backgroundColor,
     header:getComputedStyle(document.querySelector('#caffoot-app-topbar')).backgroundColor,
@@ -210,6 +220,9 @@ async function run(){
     'Approved Dashboard cards must remain readable in dark mode');
   await page.screenshot({path:path.join(screens,'dashboard-approved-html-dark.png'),fullPage:true});
   await page.evaluate(()=>document.documentElement.classList.remove('dark'));
+  await page.waitForFunction(() => getComputedStyle(
+    document.querySelector('#dashboard-panel-overview .db-actionrow [data-action="open-rack-modal"]')
+  ).backgroundColor === 'rgb(255, 255, 255)');
   await page.setViewportSize({width:390,height:844});
   const mobile = await page.evaluate(()=>({
     content:document.documentElement.scrollWidth,viewport:window.innerWidth,
