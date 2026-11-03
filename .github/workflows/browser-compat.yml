@@ -41,3 +41,12 @@ jobs:
         env:
           NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
         run: node tests/browser-compat.cjs
+
+      - name: Save actual Dashboard browser screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: approved-html-dashboard-screenshots
+          path: browser-screenshots/
+          if-no-files-found: ignore
+          retention-days: 14
