@@ -269,6 +269,22 @@ async function run(){
     'Enrolled administrators must not see MFA setup guidance');
   assert.equal(await page.locator('#next-dashboard-inventory-health').count(),0,
     'Healthy administrator Dashboard must hide Inventory Health');
+  // Dashboard Draft 02 source four-card grid, rack layout and mobile stacking.
+  await page.locator('#main-content [data-dashboard-tab="insights"]').click();
+  const draft02Insights=page.locator('#main-content #dashboard-panel-insights');
+  await draft02Insights.waitFor({state:'visible'});
+  assert.equal(await draft02Insights.locator('.db-insights-4 > .card.db-card').count(),4);
+  assert.deepEqual(await draft02Insights.locator('.db-insights-4 .card-head h3').allTextContents(),
+    ['IP Address Utilisation','Device Status','Hardware Distribution','Rack Capacity by Face']);
+  assert.equal(await draft02Insights.locator('.db-insights-4 .divider').count(),4);
+  assert.ok(await draft02Insights.locator('.db-section.card.db-card .db-grid').isVisible());
+  assert.ok(await draft02Insights.locator('.db-section .db-actionrow [data-action="tab-racks"]').isVisible());
+  const draft02Viewport=page.viewportSize();
+  await page.setViewportSize({width:390,height:844});
+  const narrowColumns=await draft02Insights.locator('.db-insights-4').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length);
+  assert.equal(narrowColumns,1,'Approved four insight cards must stack into one mobile column');
+  await page.setViewportSize(draft02Viewport);
+  await page.locator('#main-content [data-dashboard-tab="overview"]').click();
   assert.equal(await page.getByText('Keep a separate JSON backup',{exact:false}).count(),0,
     'Docker Dashboard must not show browser-era JSON backup advice');
   assert.equal(await page.getByRole('button',{name:'Refresh inventory'}).count(),0);
