@@ -1257,6 +1257,57 @@ async function run(){
   await page.locator('#dev-name').fill('browser-hypervisor');
   await page.locator('#dev-type').selectOption('Server - Physical');
   await approvedEditor.getByRole('tab',{name:'Hardware'}).click();
+
+  // Exact Batch 04 inline Manufacturer/Model additions must be saved through
+  // the existing hardware catalogue while keeping the Device editor open.
+  const hardwareTab=approvedEditor.locator('#device-form-panel-hardware');
+  const addManufacturer=hardwareTab.locator('[data-action="device-inline-quick-open"][data-kind="manufacturer"]');
+  const addModel=hardwareTab.locator('[data-action="device-inline-quick-open"][data-kind="model"]');
+  assert.ok(await addManufacturer.isVisible()&&await addModel.isVisible(),
+    'Pinned Batch 04 hardware editor must offer both inline quick-add buttons');
+  await addManufacturer.click();
+  const makerPanel=hardwareTab.locator('.device-review-inline-create[data-review-create="manufacturer"]');
+  assert.ok(await makerPanel.isVisible(),'Approved inline Manufacturer panel must open in place');
+  assert.ok(await makerPanel.locator('[data-review-associated-types="manufacturer"] input[value="Server - Physical"]').isChecked(),
+    'The current physical type must be selected by default');
+  await makerPanel.locator('[data-review-new-name="manufacturer"]').fill('Browser Inline Manufacturer');
+  await makerPanel.locator('[data-action="device-inline-quick-save"]').click();
+  await persisted(page,s=>s.settings.hardwareCatalogue?.some(x=>
+    x.manufacturer==='Browser Inline Manufacturer'&&x.type==='Server - Physical'&&!x.model),
+    'Inline manufacturer');
+  await page.waitForFunction(()=>document.getElementById('dev-manufacturer')?.value==='Browser Inline Manufacturer');
+  assert.equal(await approvedEditor.locator('#dev-manufacturer-select').inputValue(),'Browser Inline Manufacturer',
+    'Saved manufacturer must be selected in the existing device form');
+  assert.ok(await makerPanel.isHidden(),'Successful inline creation must dismiss the Manufacturer panel');
+  await addModel.click();
+  const modelPanel=hardwareTab.locator('.device-review-inline-create[data-review-create="model"]');
+  assert.ok(await modelPanel.isVisible(),'Approved inline Model panel must open in place');
+  await modelPanel.locator('[data-review-new-name="model"]').fill('Browser Inline Model');
+  await modelPanel.locator('[data-action="device-inline-quick-save"]').click();
+  await persisted(page,s=>s.settings.hardwareCatalogue?.some(x=>
+    x.manufacturer==='Browser Inline Manufacturer'&&x.model==='Browser Inline Model'&&x.type==='Server - Physical'),
+    'Inline model');
+  await page.waitForFunction(()=>document.getElementById('dev-model')?.value==='Browser Inline Model');
+  assert.equal(await approvedEditor.locator('#dev-model-select').inputValue(),'Browser Inline Model',
+    'Saved model must be selected in the existing device form');
+  await addManufacturer.click();
+  await makerPanel.locator('[data-review-new-name="manufacturer"]').fill('Browser Inline Manufacturer');
+  await makerPanel.locator('[data-action="device-inline-quick-save"]').click();
+  assert.match(await makerPanel.locator('[data-review-create-error]').textContent(),/already exists/,
+    'Duplicate manufacturers must be rejected without mutating the saved catalogue');
+  await makerPanel.locator('[data-action="device-inline-quick-cancel"]').click();
+  assert.ok(await makerPanel.isHidden(),'Cancel must dismiss the source-style inline panel');
+  await page.setViewportSize({width:420,height:900});
+  await addModel.click();
+  assert.equal(await modelPanel.locator('.device-review-inline-add-actions .device-review-field').evaluate(el=>
+    Math.round(el.getBoundingClientRect().width)),
+    await modelPanel.locator('.device-review-inline-add-actions').evaluate(el=>
+    Math.round(el.getBoundingClientRect().width)),
+    'Approved inline hardware form field must span its mobile container');
+  await modelPanel.locator('[data-action="device-inline-quick-cancel"]').click();
+  await page.setViewportSize({width:1440,height:950});
+  console.log('Approved inline hardware catalogue, SQLite persistence, duplicate protection and mobile layout passed');
+
   const dynamicDeviceFields=approvedEditor.locator('#device-detail-fields-panel .device-review-form-grid');
   assert.ok(await dynamicDeviceFields.locator('.device-review-field input,.device-review-field select').count()>0,
     'Type-specific hardware details must use the original source field wrappers and keep editable controls');
