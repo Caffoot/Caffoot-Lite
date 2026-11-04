@@ -11392,7 +11392,7 @@ window.addEventListener('load', async () => {
     if (!element) return;
     const action = element.dataset.action || '';
     if (isBlockedAction(action, element) || (element.matches('button') && element.type==='submit' && element.form &&
-        !element.closest('form[data-device-form="true"],#next-user-create-form,#next-user-profile-form,#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#personal-details-form') &&
+        !element.closest('form[data-device-form="true"],#next-user-create-form,#next-user-profile-form,#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#personal-details-form,#approved-smtp-form,#approved-smtp-test-form') &&
         !(editPermissions.IPAM && element.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"]')) &&
         !(editPermissions.Racks && element.closest('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form')))) {
       event.preventDefault();
@@ -11401,7 +11401,7 @@ window.addEventListener('load', async () => {
     }
   },true);
   document.addEventListener('submit',event => {
-    if (event.target.matches('#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#personal-details-form,#next-user-profile-form,#approved-smtp-form,#approved-smtp-test-form,#approved-smtp-form,#approved-smtp-test-form') ||
+    if (event.target.matches('#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#personal-details-form,#next-user-profile-form,#approved-smtp-form,#approved-smtp-test-form') ||
         (editPermissions.Devices && event.target.matches('form[data-device-form="true"]')) ||
         (editPermissions.IPAM && event.target.matches('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"]')) ||
         (editPermissions.Racks && event.target.matches('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form')) ||
