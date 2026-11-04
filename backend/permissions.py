@@ -5,6 +5,7 @@ MFA-verified administrator before passing their account ID.
 """
 from backend.accounts import hash_password
 from backend.audit_events import record_actor_event
+from backend.profiles import validate_profile_details
 
 SECTIONS = ("Devices", "IPAM", "Racks")
 LEVELS = ("read", "edit")
@@ -28,9 +29,12 @@ def _target(connection, target_id):
     return row
 
 
-def create_user(connection, actor_id, username, password):
+def create_user(connection, actor_id, username, password, profile=None):
     if not isinstance(username, str) or not username.strip():
         raise ValueError("Username is required")
+    # Validate before beginning a transaction, so an invalid optional field
+    # never creates part of an account or accidentally verifies an email.
+    details = validate_profile_details(profile) if profile is not None else None
     connection.execute("BEGIN IMMEDIATE")
     try:
         _admin(connection, actor_id)
@@ -38,10 +42,17 @@ def create_user(connection, actor_id, username, password):
             "INSERT INTO accounts(username,password_hash) VALUES(?,?)",
             (username.strip(), hash_password(password)),
         )
+        if details is not None:
+            connection.execute(
+                "INSERT INTO account_profiles(account_id,first_name,last_name,"
+                "display_name,email,email_verified) VALUES(?,?,?,?,?,0)",
+                (cursor.lastrowid, details["firstName"], details["lastName"],
+                 details["displayName"], details["email"]),
+            )
         record_actor_event(
             connection, actor_id, kind="Account", action="Created",
             label=username.strip(), reason="Account created",
-            fields=["Account"],
+            fields=["Account"] + (["Personal details"] if details is not None else []),
         )
         connection.commit()
         return cursor.lastrowid
