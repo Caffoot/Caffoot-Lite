@@ -1578,6 +1578,8 @@ async function run(){
     'The physical host must use the original full-width Hosted Virtual Machines card');
   assert.ok(await hostedVmPanel.getByText('Guests are linked to this physical server.',{exact:true}).isVisible(),
     'The original related-devices explanation must be preserved');
+  assert.ok(await hostedVmPanel.getByText('Existing host–guest relationships remain unchanged.',{exact:true}).isVisible(),
+    'Approved related-record guidance must remain visible below the saved VM previews');
   const hostedVmRecord=hostedVmPanel.locator('.record-preview.device-details-related-record');
   assert.equal(await hostedVmRecord.count(),1,
     'Hosted guests must use the approved related-record preview, not legacy fact rows');
