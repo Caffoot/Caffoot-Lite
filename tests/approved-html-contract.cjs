@@ -95,6 +95,30 @@ if (!/class="subnav device-tabs"/.test(liveInventory)) {
   missing.push('inventory.html is missing the approved in-page Devices tab structure');
 }
 
+// Each approved standalone design includes a recognisable page component.
+// Require its *markup* in the live HTML, not just a style rule. These checks
+// deliberately remain red during integration; they cannot replace human
+// comparison of the actual rendered screens.
+const requiredMarkup = [
+  ['Dashboard', liveInventory, /class="[^"]*db-grid[^"]*"/],
+  ['My Account', liveInventory, /class="[^"]*account-grid[^"]*"/],
+  ['Settings & Data', liveInventory, /class="[^"]*settings-grid[^"]*"/],
+  ['Devices Overview', liveInventory, /class="[^"]*intelligence-metric[^"]*"/],
+  ['Device Inventory', liveInventory, /class="[^"]*device-toolbar[^"]*"/],
+  ['Device Details and Forms', liveInventory, /class="[^"]*device-review-dialog[^"]*"/],
+  ['Devices Catalogues', liveInventory, /class="[^"]*catalog-card[^"]*"/],
+  ['IPAM', liveInventory, /class="[^"]*ipam-stats[^"]*"/],
+  ['Network Racks', liveInventory, /class="[^"]*rack-directory[^"]*"/],
+  ['Users & Permissions', liveInventory, /class="[^"]*userrow[^"]*"/],
+  ['Sign In and First Run', liveSetup, /class="[^"]*welcome-list[^"]*"/],
+  ['Audit Trail', liveInventory, /class="[^"]*audit-pane[^"]*"/]
+];
+for (const [area, html, pattern] of requiredMarkup) {
+  if (!pattern.test(html)) {
+    missing.push(`${area}: approved page structure has not been integrated`);
+  }
+}
+
 if (missing.length) {
   console.error('\nApproved interface integration is NOT complete:');
   for (const item of missing) console.error(`- ${item}`);
