@@ -8524,6 +8524,14 @@ function openIpModal(ip) {
             const hostingFields = sections[0].querySelector('#host-platform-fields');
             if (hostingFields) {
                 hostingFields.classList.add('form-section-card', 'device-review-panel', 'device-review-hypervisor-configuration');
+                const previousTitle = hostingFields.querySelector(':scope > p');
+                if (previousTitle) {
+                    const heading = document.createElement('h3');
+                    heading.innerHTML = '<span class="mini-icon" aria-hidden="true">▣</span>Virtualisation / Hypervisor';
+                    const subtitle = document.createElement('p');
+                    subtitle.textContent = 'Physical servers that host VMs retain their hypervisor configuration.';
+                    previousTitle.replaceWith(heading, subtitle);
+                }
                 softwareGrid.appendChild(hostingFields);
             }
             bindSoftwarePlatformFields();
