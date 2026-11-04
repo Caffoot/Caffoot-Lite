@@ -714,6 +714,7 @@ async function run(){
   await page.locator('#main-content [data-action="approved-device-section"][data-tab="overview"]').click();
   await page.locator('#main-content [data-action="device-intelligence-tab"][data-tab="software"]').click();
   const approvedSoftware=page.locator('#main-content .intelligence-panel[data-insight-panel="software"]');
+  await approvedSoftware.waitFor({state:'visible'});
   assert.ok(await approvedSoftware.isVisible(),'Approved Software & Services panel must be visible');
   assert.deepEqual(await approvedSoftware.locator('article.intelligence-card h3').allTextContents(),
     ['Software & Services','Installed software','Devices with Archived Software'],
