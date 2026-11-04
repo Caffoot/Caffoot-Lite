@@ -154,6 +154,7 @@ async function run(){
   assert.ok(await page.locator('#main-content .ipam-card #ipam-overview-search').isVisible(),
     'Approved IPAM Overview must keep working subnet search');
   await page.locator('#sidebar [data-action="tab-racks"]').click();
+  await page.locator('#main-content [data-action="approved-rack-section"][data-section-tab="overview"]').click();
   await page.locator('#main-content .racks-grid #rack-overview-stats').waitFor();
   assert.equal(await page.locator('#main-content .rack-stat').count(),4,
     'Approved Network Racks Overview must show four live totals');
@@ -575,6 +576,8 @@ async function run(){
   await editor.locator('#confirm-mfa button[type="submit"]').click();
   await editor.waitForFunction(()=>document.querySelector('#signed-in')?.hidden===true);
 
+  await page.locator('#main-content [data-action="users-open-editor"][data-user-id="'+editorId+'"]').click();
+  await page.locator('#main-content .users-management-modal').waitFor();
   await page.locator('[data-next-user-permission][data-user-id="'+editorId+'"][data-section="Devices"]').selectOption('edit');
   await page.locator('[data-next-user-permission][data-user-id="'+editorId+'"][data-section="IPAM"]').selectOption('read');
   await page.locator('[data-next-user-permission][data-user-id="'+editorId+'"][data-section="Racks"]').selectOption('read');
@@ -677,6 +680,8 @@ async function run(){
     return (await r.json()).users.find(u=>u.username==='viewer')?.id;
   });
   assert.ok(Number.isInteger(viewerId));
+  await page.locator('#main-content [data-action="users-open-editor"][data-user-id="'+viewerId+'"]').click();
+  await page.locator('#main-content .users-management-modal').waitFor();
   const blockedEdit=page.locator('[data-next-user-permission][data-user-id="'+viewerId+'"][data-section="Devices"]');
   await blockedEdit.selectOption('edit');
   await page.waitForFunction(()=>document.querySelector('#toast-message')?.textContent.includes('must set up MFA in My account'));
