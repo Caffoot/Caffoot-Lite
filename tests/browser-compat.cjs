@@ -1560,6 +1560,18 @@ async function run(){
     'VM Device Details must not expose physical hardware');
   assert.ok(await deviceReview.getByRole('heading',{name:'Allocated virtual hardware'}).isVisible(),
     'Approved Device Details must show VM-owned virtual hardware');
+  const relatedHost= deviceReview.locator('#device-details-panel-overview .device-review-panel.full')
+    .filter({has:deviceReview.getByRole('heading',{name:'Physical Host'})});
+  assert.ok(await relatedHost.isVisible(),
+    'VM details must use the approved full-width Physical Host source card');
+  assert.ok(await relatedHost.getByText('browser-hypervisor',{exact:true}).isVisible(),
+    'The VM host card must render the saved physical host');
+  await relatedHost.getByRole('button',{name:'View Host'}).click();
+  assert.ok(await deviceReview.locator('.device-review-head h2')
+    .getByText('browser-hypervisor',{exact:true}).isVisible(),
+    'View Host must navigate to the real physical host record');
+  await page.evaluate(id=>openDeviceDetailView(id),vm.id);
+  await deviceReview.getByRole('heading',{name:'Allocated virtual hardware'}).waitFor();
   await deviceReview.getByRole('tab',{name:'Software'}).click();
   const vmDetailsSoftware=deviceReview.locator('#device-details-panel-software');
   assert.ok(await vmDetailsSoftware.locator(':scope > .device-review-panel').first()
@@ -1581,6 +1593,16 @@ async function run(){
     'Approved VM Details dialog must span the mobile viewport');
 
   await page.setViewportSize({width:1440,height:950});
+  await deviceReview.locator('[data-action="close-modal"]').first().click();
+  await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
+  await page.evaluate(id=>openDeviceDetailView(id),rackSwitch.id);
+  await deviceReview.getByRole('tab',{name:'Location'}).click();
+  const rackNavigationCard=deviceReview.locator('#device-details-panel-location > .device-review-panel.full')
+    .filter({has:deviceReview.getByRole('heading',{name:'Rack Navigation'})});
+  assert.ok(await rackNavigationCard.isVisible(),
+    'Approved Details Location tab must contain a distinct full-width Rack Navigation card for racked devices');
+  assert.equal(await rackNavigationCard.locator('[data-action="navigate-to-device-rack"]').getAttribute('data-id'),
+    rackSwitch.id,'Approved Rack Navigation must use the saved device ID');
   await deviceReview.locator('[data-action="close-modal"]').first().click();
   await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
   await modal(page,'openManageLocationsModal');
