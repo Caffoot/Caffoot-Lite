@@ -1930,6 +1930,8 @@ html.dark .caffoot-dashboard .db-rack-row:hover{background:#354a60;border-color:
 #modal-content .device-modal.device-review-dialog #device-form-panel-general .device-review-panel.full{grid-column:1/-1}
 /* The approved VM card is mounted for existing save handlers, but must not appear on physical forms. */
 #modal-content .device-modal.device-review-dialog #virtual-fields.hidden{display:none!important}
+#modal-content .device-modal.device-review-dialog #virtual-fields .device-review-hint{margin:15px 0}
+#modal-content .device-modal.device-review-dialog #virtual-fields .device-review-form-grid{min-width:0}
 </style><style id="approved-racks-draft-04-live">
 .rack-stat{background:white;border:1px solid #e0e8ee;padding:20px;border-radius:14px;min-width:0;box-shadow:var(--shadow)}.rack-stat .metric-name{color:#637c91;font-size:12px;font-weight:750}.rack-stat strong{font-size:29px;display:block;color:#203b54;margin-top:10px;letter-spacing:-.8px}.rack-stat small{font-size:11px;color:#899bac}.rack-card{background:#fff;border:1px solid #dfe7ee;border-radius:15px;box-shadow:var(--shadow);min-width:0}.rack-card.pad{padding:21px}.rack-card-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;margin-bottom:16px}.rack-card h2,.rack-card h3{font-size:17px;letter-spacing:-.3px;color:#29445c;margin:0;font-weight:790}.rack-card p{font-size:12px;line-height:1.6;color:#788fa3;margin:5px 0 0}
 .racks-two{display:grid;grid-template-columns:1.45fr 1fr;gap:17px;align-items:start}.racks-hub-bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:13px;margin:0 0 17px}.racks-hub-bar h2{font-size:18px;margin:0 0 4px;color:#29445c}.racks-hub-bar p{font-size:12px;color:#778fa3;margin:0}.racks-search-label{display:grid;gap:8px;font-size:12px;font-weight:720;color:#46617a;min-width:min(100%,280px)}.rack-text-input,.rack-select,.rack-field input,.rack-field select{width:100%;border:1px solid #d7e2eb;border-radius:9px;min-height:41px;padding:9px 12px;background:#fff;color:#304d66;font-size:13px;min-width:0}.rack-field input:disabled,.rack-field select:disabled{background:#f1f4f7;color:#71869a}.rack-text-input:focus,.rack-select:focus,.rack-field input:focus,.rack-field select:focus{outline:2px solid #efa76f;outline-offset:1px}
@@ -8415,9 +8417,28 @@ function openIpModal(ip) {
                     heading.innerHTML = '<span class="mini-icon" aria-hidden="true">▣</span>Virtual Machine Configuration';
                     vmTitle.replaceWith(heading);
                 }
-                virtualFields.querySelector(':scope > .grid')?.classList.add('device-review-form-grid');
+                // The pinned Batch 04 source separates the host assignment, inherited
+                // platform guidance, and allocated VM resources in this single card.
+                const vmDescription = virtualFields.querySelector(':scope > p');
+                if (vmDescription) vmDescription.textContent =
+                    'Virtual machines are attached to a physical hypervisor. Physical manufacturer and model do not apply.';
+                const hostGrid = virtualFields.querySelector(':scope > .grid');
+                hostGrid?.classList.add('device-review-form-grid');
+                if (hostGrid) {
+                    const hint = document.createElement('div');
+                    hint.className = 'device-review-hint';
+                    hint.textContent = 'The virtualisation platform comes from the selected physical hypervisor. It is not configured separately on this VM.';
+                    hostGrid.insertAdjacentElement('afterend', hint);
+                }
                 const allocations = virtualFields.querySelector('[data-device-detail-field="vmVcpu"]')?.parentElement?.parentElement;
                 allocations?.classList.add('device-review-form-grid');
+                const allocationSection = allocations?.parentElement;
+                const allocationLabel = allocationSection?.querySelector(':scope > p');
+                if (allocationLabel) {
+                    const heading = document.createElement('h3');
+                    heading.textContent = 'Allocated Virtual Hardware';
+                    allocationLabel.replaceWith(heading);
+                }
                 generalGrid.insertBefore(virtualFields, sections[2]);
             }
             // Keep hardware inputs mounted for legacy preservation, but hide the tab for VMs.
