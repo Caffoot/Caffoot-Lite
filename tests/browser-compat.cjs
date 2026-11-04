@@ -135,7 +135,7 @@ async function run(){
   const deviceTypeRows=page.locator('#main-content [data-catalog-row="type"]');
   const deviceTypeTotal=await deviceTypeRows.count();
   assert.ok(deviceTypeTotal>0,'Configured device types must appear in the approved catalogue layout');
-  assert.ok(await page.locator('#main-content [data-action="open-manage-types"]').isVisible(),
+  assert.ok(await page.locator('#main-content .catalog-header [data-action="open-manage-types"]').isVisible(),
     'The existing Manage Device Types action must remain available');
   await page.locator('#main-content input[data-catalogue-search="type"]').fill('no-existing-device-type-match-2026');
   assert.equal(await page.locator('#main-content [data-catalog-row="type"]:visible').count(),0,
@@ -145,8 +145,14 @@ async function run(){
     'Clearing the catalogue search must restore all device types');
   await page.locator('#main-content [data-action="approved-device-section"][data-tab="locations"]').click();
   await page.locator('#main-content .catalog-card [data-catalog-list="location"]').waitFor();
-  assert.ok(await page.locator('#main-content [data-action="open-manage-locations"]').isVisible(),
+  assert.ok(await page.locator('#main-content .catalog-header [data-action="open-manage-locations"]').isVisible(),
     'The existing Manage Locations action must remain available');
+  await page.locator('#sidebar [data-action="tab-ipam"]').click();
+  await page.locator('#main-content .ipam-stats').waitFor();
+  assert.equal(await page.locator('#main-content .ipam-stat').count(),4,
+    'Approved IPAM Overview must show the four live saved-inventory totals');
+  assert.ok(await page.locator('#main-content .ipam-card #ipam-overview-search').isVisible(),
+    'Approved IPAM Overview must keep working subnet search');
   await page.locator('#sidebar [data-action="tab-dashboard"]').click();
   assert.equal(await page.title(),'Caffoot Lite — Infrastructure, Simplified.','Inventory browser tab must use Caffoot branding');
   await page.locator('#app .header-account').waitFor();
