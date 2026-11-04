@@ -1683,7 +1683,64 @@ html.dark .caffoot-dashboard .db-rack-row:hover{background:#354a60;border-color:
 #main-content .rack-workspace .rack-face-control button:focus-visible{outline:2px solid #ed8532;outline-offset:2px}
 @media(max-width:720px){#main-content .rack-workspace .rack-detail-controls{width:100%}#main-content .rack-workspace .rack-detail-controls label{flex:1}#main-content .rack-workspace .rack-subtabs{width:100%}}
 </style>
-</head>
+<style id="approved-device-details-batch04">
+/* Approved Batch 04 device details component styles (live data, existing actions). */
+.device-review-dialog{width:min(1030px,100%);height:min(870px,calc(100dvh - 40px));max-height:calc(100dvh - 40px);background:#f5f7fa;border:1px solid #dce5ec;border-radius:17px;box-shadow:0 28px 80px #0b1f32a8;overflow:hidden;display:flex;flex-direction:column;color:#223b53}
+.device-review-head{background:#fff;border-bottom:1px solid #dee7ee;padding:20px 25px 16px;flex-shrink:0}
+.device-review-headline{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.device-review-eyebrow{font-size:10px;color:#d36c20;text-transform:uppercase;letter-spacing:.12em;font-weight:800;margin:0 0 6px}
+.device-review-head h2{font-size:24px;line-height:1.15;letter-spacing:-.65px;margin:0;color:#17324c;font-weight:800}
+.device-review-sub{font-size:12px;color:#71869a;margin:8px 0 0}
+.device-review-close{width:36px;height:36px;min-width:36px;border:1px solid #dce4eb;background:#fff;border-radius:9px;font-weight:700;color:#50697e;font-size:20px}
+.device-review-tabs{display:flex;gap:19px;align-items:center;overflow-x:auto;white-space:nowrap;margin-top:16px;border-bottom:1px solid #e7edf2;scrollbar-width:thin}
+.device-review-tab{padding:9px 3px 11px;border:0;border-bottom:3px solid transparent;background:none;font-weight:700;font-size:12px;color:#7d93a8;flex-shrink:0}
+.device-review-tab[aria-selected="true"]{border-bottom-color:#ee8432;color:#1b3853}
+.device-review-body{padding:22px 25px;overflow-y:auto;overscroll-behavior:contain;flex:1;min-height:0}
+.device-review-footer{display:flex;gap:9px;align-items:center;justify-content:flex-end;flex-wrap:wrap;background:#fff;border-top:1px solid #e0e8ef;padding:15px 24px;flex-shrink:0}
+.device-review-footer .btn{min-height:38px}
+.device-review-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.device-review-panel{background:#fff;border:1px solid #dfe6ed;border-radius:14px;padding:20px;min-width:0;box-shadow:0 5px 15px #17324c05}
+.device-review-panel.full{grid-column:1/-1}
+.device-review-panel h3{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:800;color:#213b55;margin:0 0 8px}
+.device-review-panel .mini-icon{background:#fff0e5;color:#d86f25;border-radius:10px;padding:9px;font-size:15px}
+.device-review-panel p{margin:0 0 13px;color:#728ba0;font-size:12px;line-height:1.55}
+.device-review-facts{display:grid;grid-template-columns:1fr 1fr;gap:0 18px;margin:3px 0 0}
+.device-review-facts>div{min-width:0;padding:12px 0;border-top:1px solid #edf1f5}
+.device-review-facts dt{font-weight:700;color:#7890a4;font-size:11px;margin-bottom:5px}
+.device-review-facts dd{margin:0;font-weight:700;font-size:13px;overflow-wrap:anywhere;color:#24415b}
+.device-review-body .chip{display:inline-flex;align-items:center;background:#e8f5ee;color:#238b62;border-radius:20px;padding:4px 9px;font-weight:800;font-size:11px}
+.device-review-body .chip.wait{background:#fff1e6;color:#b76d26}.device-review-body .chip.mute{background:#ebeff4;color:#607b91}
+
+#modal-content:has(.device-review-dialog){width:min(1030px,calc(100vw - 40px));max-width:1030px;max-height:calc(100dvh - 40px);overflow:hidden;padding:0;border:0;border-radius:17px;background:transparent}
+#modal-content .device-details-dialog.device-review-dialog{width:100%;min-height:0;height:min(870px,calc(100dvh - 40px));max-height:calc(100dvh - 40px);background:#f5f7fa;display:flex;flex-direction:column;overflow:hidden}
+#modal-content .device-details-dialog .device-review-tabs{gap:19px;padding:0;margin-top:16px;border-bottom:1px solid #e7edf2}
+#modal-content .device-details-dialog .device-details-tab.device-review-tab{padding:9px 3px 11px;border:0;border-bottom:3px solid transparent;border-radius:0;background:none;color:#7d93a8;font-size:12px;font-weight:700}
+#modal-content .device-details-dialog .device-details-tab.device-review-tab[aria-selected="true"]{color:#1b3853;border-bottom-color:#ee8432;background:none}
+#modal-content .device-details-dialog .device-panels.device-review-body{padding:22px 25px;overflow-y:auto;background:#f5f7fa;flex:1;min-height:0}
+#modal-content .device-details-dialog .device-details-panel.device-review-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-content:start}
+#modal-content .device-details-dialog .device-details-panel[hidden]{display:none}
+#modal-content .device-details-dialog .device-details-section.device-review-panel{background:#fff;border:1px solid #dfe6ed;border-radius:14px;padding:20px;box-shadow:0 5px 15px #17324c05;min-width:0}
+#modal-content .device-details-dialog .device-details-section.device-review-panel h3{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:800;color:#213b55;margin-bottom:8px}
+#modal-content .device-details-dialog .device-details-section.device-review-panel h3 .mini-icon{background:#fff0e5;color:#d86f25;border-radius:10px;padding:9px}
+#modal-content .device-details-dialog .device-review-facts.device-details-layout-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px}
+#modal-content .device-details-dialog .device-review-facts .device-details-field{padding:12px 0;border-top:1px solid #edf1f5;min-width:0}
+#modal-content .device-details-dialog .device-review-facts .device-details-field dt{font-size:11px;color:#7890a4;font-weight:700;margin-bottom:5px}
+#modal-content .device-details-dialog .device-review-facts .device-details-field dd{font-size:13px;color:#24415b;font-weight:700;overflow-wrap:anywhere}
+#modal-content .device-details-dialog .device-review-panel.full,
+#modal-content .device-details-dialog #device-details-panel-hardware>.device-review-panel,
+#modal-content .device-details-dialog #device-details-panel-network>.device-review-panel,
+#modal-content .device-details-dialog #device-details-panel-location>.device-review-panel,
+#modal-content .device-details-dialog #device-details-panel-history>.device-review-panel,
+#modal-content .device-details-dialog #device-details-panel-virtual-machines>.device-review-panel{grid-column:1/-1}
+#modal-content .device-details-dialog .device-review-panel .device-details-notes{white-space:pre-wrap;color:#607b91;font-size:12px}
+#modal-content .device-details-dialog .device-review-footer.device-details-action-footer{flex-shrink:0;margin:0;display:flex;gap:9px;justify-content:flex-end;background:#fff;border-top:1px solid #e0e8ef;padding:15px 24px}
+#modal-content .device-details-dialog .device-review-footer .btn{min-height:38px;padding:9px 13px;border-radius:9px;font-weight:750;font-size:12px}
+#modal-content .device-details-dialog .device-review-footer .btn-outline{background:#fff;border:1px solid #d5e2eb;color:#38546c}
+#modal-content .device-details-dialog .device-review-footer .btn-primary{background:#ed8532;border:1px solid #ed8532;color:#fff}
+#modal-content .device-details-dialog .device-review-footer .device-review-danger{background:#fff!important;color:#a23e46!important;border:1px solid #e7bdbd!important}
+@media(max-width:700px){#modal-content:has(.device-review-dialog){width:100vw;max-width:100vw;max-height:100dvh;border-radius:0}#modal-content .device-details-dialog.device-review-dialog{height:100dvh;max-height:100dvh;border-radius:0}#modal-content .device-details-dialog .device-review-head{padding:16px 15px 12px}#modal-content .device-details-dialog .device-review-head h2{font-size:20px}#modal-content .device-details-dialog .device-panels.device-review-body{padding:15px}#modal-content .device-details-dialog .device-review-footer.device-details-action-footer{padding:12px 15px;justify-content:stretch}#modal-content .device-details-dialog .device-review-footer .btn{flex:1 1 auto}#modal-content .device-details-dialog .device-details-panel.device-review-grid{grid-template-columns:1fr;gap:12px}#modal-content .device-details-dialog .device-review-facts.device-details-layout-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:0 10px}}
+@media(max-width:420px){#modal-content .device-details-dialog .device-review-facts.device-details-layout-grid{grid-template-columns:1fr}}
+</style></head>
 <body class="h-full bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-200">
 
     <div id="app" class="shell">
@@ -6832,7 +6889,7 @@ function hierarchyValidateTypes(subnets) {
                 ? `U${uStart}${Number.isFinite(uEnd) && uEnd > uStart ? '–U' + uEnd : ''}` : 'Not assigned';
             const safe = value => escapeHtml(value === undefined || value === null || value === '' ? '—' : String(value));
             const field = (label, value) => `<div class="device-details-field"><dt>${escapeHtml(label)}</dt><dd>${safe(value)}</dd></div>`;
-            const section = (title, icon, body) => `<section class="device-details-section"><h4><i class="fa-solid ${icon} mr-2" aria-hidden="true"></i>${escapeHtml(title)}</h4><dl class="device-details-layout-grid">${body}</dl></section>`;
+            const section = (title, icon, body) => `<section class="device-details-section device-review-panel"><h3><span class="mini-icon"><i class="fa-solid ${icon}" aria-hidden="true"></i></span>${escapeHtml(title)}</h3><dl class="device-details-layout-grid device-review-facts">${body}</dl></section>`;
             const status = d.status || 'Active';
             const detailRows = buildDeviceDetailRows(d, field);
             const activeFields = new Set(getDetailFieldsForDeviceType(d.type));
@@ -6869,49 +6926,54 @@ function hierarchyValidateTypes(subnets) {
                 field('Virtual disk (GB)', d.vmDiskGb) + field('Virtual network adapters', d.vmNicCount)) : '';
             const hardware = field('Manufacturer', d.manufacturer) + field('Model', d.model) + field('Serial number', d.serialNumber);
             const rackRows = mounted ? field('Rack', rack.name) + field('Face', d.face || 'front') + field('U position', uText) + field('Height', (Number(d.rackUHeight) || (uEnd-uStart+1) || 1) + 'U') : '';
-            openModal(`<div class="device-details-dialog space-y-5 p-5 sm:p-7">
-                <header class="flex items-start justify-between gap-3">
-                    <div class="min-w-0"><p class="text-xs font-bold uppercase tracking-wider text-blue-700 dark:text-sky-300">Device details</p>
-                    <h3 class="text-xl font-bold text-slate-900 dark:text-white break-words">${safe(d.name)}</h3>
-                    <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">${safe(d.type)} · ${safe(d.location)} · <span class="font-semibold">${safe(status)}</span></p></div>
-                    <button type="button" data-action="close-modal" aria-label="Close device details" class="device-details-close-button"><i class="fa-solid fa-xmark"></i></button>
-                </header>
-                <nav class="device-tabs" role="tablist" aria-label="Device detail sections">
-                    ${[['overview','Overview'],...(showVirtualMachinesTab ? [['virtual-machines','Virtual Machines']] : []),...(!isVirtualDevice ? [['hardware','Hardware']] : []),['network','Network'],['software','Software'],['location','Location'],...(historyRows?[['history','History']]:[])].map(([key,label],i)=>`<button type="button" role="tab" id="device-details-tab-${key}" aria-controls="device-details-panel-${key}" aria-selected="${i===0?'true':'false'}" tabindex="${i===0?'0':'-1'}" data-action="select-device-details-tab" data-name="${key}" class="device-details-tab ${i===0?'device-details-tab-active':''}">${label}</button>`).join('')}
+            openModal(`<div class="device-details-dialog device-review-dialog">
+                <header class="device-review-head">
+                  <div class="device-review-headline">
+                    <div class="min-w-0"><p class="device-review-eyebrow">DEVICE DETAILS</p><h2 class="break-words">${safe(d.name)}</h2>
+                    <p class="device-review-sub">${safe(d.type)} · ${safe(d.location)} · ${safe(status)}</p></div>
+                    <button type="button" data-action="close-modal" aria-label="Close device details" class="device-review-close">×</button>
+                  </div>
+                <nav class="device-tabs device-review-tabs" role="tablist" aria-label="Device detail sections">
+                    ${[['overview','Overview'],...(showVirtualMachinesTab ? [['virtual-machines','Virtual Machines']] : []),...(!isVirtualDevice ? [['hardware','Hardware']] : []),['network','Network'],['software','Software'],['location','Location'],...(historyRows?[['history','History']]:[])].map(([key,label],i)=>`<button type="button" role="tab" id="device-details-tab-${key}" aria-controls="device-details-panel-${key}" aria-selected="${i===0?'true':'false'}" tabindex="${i===0?'0':'-1'}" data-action="select-device-details-tab" data-name="${key}" class="device-details-tab device-review-tab ${i===0?'device-details-tab-active':''}">${label}</button>`).join('')}
                 </nav>
-                <div class="device-panels">
-                    <div id="device-details-panel-overview" role="tabpanel" aria-labelledby="device-details-tab-overview" class="device-details-panel">
-                        ${section('Device overview', 'fa-circle-info', field('Device name', d.name) + field('Type', d.type) + field('Status', status) + field('Manufacturer', d.manufacturer) + field('Model', d.model) + field('Primary IP', d.primaryIp) + field('Location', d.location))}
-                        ${d.type === 'Server - Physical' ? '' : hostingSection}
-                        ${virtualHardware}
-                        ${d.notes ? `<section class="device-details-section"><h4><i class="fa-solid fa-note-sticky mr-2" aria-hidden="true"></i>Notes</h4><p class="device-details-notes">${safe(d.notes)}</p></section>` : ''}
+                </header>
+                <div class="device-panels device-review-body">
+                    <div id="device-details-panel-overview" role="tabpanel" aria-labelledby="device-details-tab-overview" class="device-details-panel device-review-grid">
+                        ${section('Device Overview', 'fa-circle-info',
+                            field('Device name',d.name)+field('Type',d.type)+field('Status',status)+field('Primary IP',d.primaryIp)+field('Location',d.location)+field('Operating System',getEffectiveDevicePlatform(d)))}
+                        ${isVirtualDevice ? virtualHardware :
+                            section('At a Glance','fa-microchip',
+                              field('Manufacturer',d.manufacturer)+field('Model',d.model)+field('Serial number',d.serialNumber)+
+                              field('Mounting',d.mountType||(mounted?'Rack Mounted':'Desktop'))+field('Rack',mounted?rack.name:'Not racked'))}
+                        ${d.type==='Server - Physical'?'':hostingSection}
+                        <section class="device-details-section device-review-panel full"><h3><span class="mini-icon"><i class="fa-solid fa-note-sticky" aria-hidden="true"></i></span>Notes</h3><p class="device-details-notes">${d.notes?safe(d.notes):'No additional notes have been recorded.'}</p></section>
                     </div>
-                    ${showVirtualMachinesTab ? `<div id="device-details-panel-virtual-machines" role="tabpanel" aria-labelledby="device-details-tab-virtual-machines" class="device-details-panel" hidden>
+                    ${showVirtualMachinesTab ? `<div id="device-details-panel-virtual-machines" role="tabpanel" aria-labelledby="device-details-tab-virtual-machines" class="device-details-panel device-review-grid" hidden>
                         ${hypervisorNotice}
                         ${hostingSection}
                     </div>` : ''}
-                    ${!isVirtualDevice ? `<div id="device-details-panel-hardware" role="tabpanel" aria-labelledby="device-details-tab-hardware" class="device-details-panel" hidden>
+                    ${!isVirtualDevice ? `<div id="device-details-panel-hardware" role="tabpanel" aria-labelledby="device-details-tab-hardware" class="device-details-panel device-review-grid" hidden>
                         ${section('Hardware & lifecycle', 'fa-microchip', hardware + (detailRows ? `<div class="device-details-detail-subheading">Additional ${safe(d.type)} details</div>${detailRows}` : ''))}
                     </div>` : ''}
-                    <div id="device-details-panel-network" role="tabpanel" aria-labelledby="device-details-tab-network" class="device-details-panel" hidden>
+                    <div id="device-details-panel-network" role="tabpanel" aria-labelledby="device-details-tab-network" class="device-details-panel device-review-grid" hidden>
                         ${section('Network identity', 'fa-network-wired', field('Primary IP', d.primaryIp) + field('Subnet', subnet ? (subnet.cidr || subnet.name || subnet.network || subnet.id) : 'Not linked') + field('IP reserved', d.ipReserved ? 'Yes' : 'No'))}
                     </div>
-                    <div id="device-details-panel-software" role="tabpanel" aria-labelledby="device-details-tab-software" class="device-details-panel" hidden>
+                    <div id="device-details-panel-software" role="tabpanel" aria-labelledby="device-details-tab-software" class="device-details-panel device-review-grid" hidden>
                         ${section('Installed software', 'fa-laptop-code', installedSoftware || '<p class="text-sm text-slate-600 dark:text-slate-300">No installed software recorded.</p>')}
                         ${platformDetails?section('Operating System', 'fa-desktop',platformDetails):''}
                         ${serverServices?section('Server Services', 'fa-server',serverServices):''}
                     </div>
-                    <div id="device-details-panel-location" role="tabpanel" aria-labelledby="device-details-tab-location" class="device-details-panel" hidden>
+                    <div id="device-details-panel-location" role="tabpanel" aria-labelledby="device-details-tab-location" class="device-details-panel device-review-grid" hidden>
                         ${section('Mounting & location', 'fa-location-dot', isVirtualDevice ? field('Location', d.location) : field('Mounting', d.mountType || (mounted ? 'Rack Mounted' : 'Desktop')) + field('Location', d.location) + rackRows)}
                     </div>
-                    ${historyRows?`<div id="device-details-panel-history" role="tabpanel" aria-labelledby="device-details-tab-history" class="device-details-panel" hidden><section class="device-details-section"><h4>Previous Device Type Details</h4><p class="text-sm mb-3">Preserved for reference only; not part of the active configuration.</p>${historyRows}</section></div>`:''}
+                    ${historyRows?`<div id="device-details-panel-history" role="tabpanel" aria-labelledby="device-details-tab-history" class="device-details-panel device-review-grid" hidden><section class="device-details-section"><h4>Previous Device Type Details</h4><p class="text-sm mb-3">Preserved for reference only; not part of the active configuration.</p>${historyRows}</section></div>`:''}
                 </div>
-                <footer class="device-details-action-footer">
-                    <button type="button" data-action="duplicate-device-from-details" data-id="${safe(d.id)}" class="device-details-secondary-action"><i class="fa-solid fa-copy" aria-hidden="true"></i>Duplicate</button>
-                    ${mounted ? `<button type="button" data-action="navigate-to-device-rack" data-id="${safe(d.id)}" class="device-details-secondary-action"><i class="fa-solid fa-server" aria-hidden="true"></i>View in rack</button>` : ''}
-                    <button type="button" data-action="edit-device-from-details" data-id="${safe(d.id)}" class="device-details-edit-action"><i class="fa-solid fa-pen" aria-hidden="true"></i>Edit device</button>
-                    <button type="button" data-action="delete-device-from-details" data-id="${safe(d.id)}" class="inline-flex items-center justify-center rounded-xl border border-rose-300 bg-rose-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-rose-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600 dark:border-rose-500 dark:bg-rose-700 dark:hover:bg-rose-600"><i class="fa-solid fa-trash mr-1" aria-hidden="true"></i>Delete device</button>
-                    <button type="button" data-action="close-modal" class="device-details-close-action"><i class="fa-solid fa-check" aria-hidden="true"></i>Close</button>
+                <footer class="device-details-action-footer device-review-footer">
+                    <button type="button" data-action="duplicate-device-from-details" data-id="${safe(d.id)}" class="btn btn-outline device-details-secondary-action"><i class="fa-solid fa-copy" aria-hidden="true"></i>Duplicate</button>
+                    ${mounted ? `<button type="button" data-action="navigate-to-device-rack" data-id="${safe(d.id)}" class="btn btn-outline device-details-secondary-action"><i class="fa-solid fa-server" aria-hidden="true"></i>View in rack</button>` : ''}
+                    <button type="button" data-action="edit-device-from-details" data-id="${safe(d.id)}" class="btn btn-primary device-details-edit-action"><i class="fa-solid fa-pen" aria-hidden="true"></i>Edit device</button>
+                    <button type="button" data-action="delete-device-from-details" data-id="${safe(d.id)}" class="btn device-review-danger"><i class="fa-solid fa-trash mr-1" aria-hidden="true"></i>Delete device</button>
+                    <button type="button" data-action="close-modal" class="btn btn-outline device-details-close-action"><i class="fa-solid fa-check" aria-hidden="true"></i>Close</button>
                 </footer>
             </div>`);
         }
