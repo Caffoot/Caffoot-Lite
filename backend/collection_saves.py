@@ -1,6 +1,6 @@
 """Transactional inventory collection changes for published IPAM and Racks workflows."""
 import json
-from .audit_events import attribute_event
+from .audit_events import attribute_event, safe_inventory_differences
 import time
 from datetime import datetime, timezone
 
@@ -89,7 +89,9 @@ def change_inventory_record(connection, account_id, collection, record_id, recor
             event = {"at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
                      "reason": "Inventory saved",
                      "changes": [{"action": action, "kind": kind,
-                                  "label": label, "fields": fields}], "omitted": 0}
+                                  "label": label, "fields": fields,
+                                  **safe_inventory_differences(existing, record, collection)}],
+                     "omitted": 0}
             connection.execute(
                 "INSERT INTO inventory_change_history(record_json) VALUES(?)",
                 (json.dumps(attribute_event(connection, account_id, event), ensure_ascii=False),),
@@ -221,7 +223,8 @@ def change_ipam_subnet_and_vlan_records(connection, account_id, changes):
             action = "Created" if existing is None else "Deleted" if record is None else "Updated"
             changed.append({"action": action, "kind": kind,
                             "label": str((record or existing).get("name") or identifier)[:100],
-                            "fields": []})
+                            "fields": [],
+                            **safe_inventory_differences(existing, record, collection)})
         if changed:
             event = {"at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
                      "reason": "Inventory saved", "changes": changed[:16],
