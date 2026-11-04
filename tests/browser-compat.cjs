@@ -436,6 +436,18 @@ async function run(){
   console.log('Managed location add passed');
 
   await modal(page,'openDeviceModal');
+  const approvedEditor=page.locator('#modal-content .device-modal.device-review-dialog');
+  await approvedEditor.waitFor();
+  assert.ok(await approvedEditor.getByRole('heading',{name:'Add New Device'}).isVisible(),
+    'Approved Batch 04 Add Device heading must render');
+  assert.ok(await approvedEditor.getByText('DEVICE MANAGEMENT',{exact:true}).isVisible(),
+    'Approved Device editor eyebrow must render');
+  assert.equal(await approvedEditor.locator('.device-form-tabs.device-review-tabs [role="tab"]').count(),5,
+    'All five original Device form tabs must remain available');
+  assert.ok(await approvedEditor.locator('#device-form-panel-general .form-section-card.device-review-panel').first().isVisible(),
+    'Approved information cards must contain the working legacy form fields');
+  assert.ok(await approvedEditor.locator('.form-actions button[type="submit"]').isVisible(),
+    'Save Device must remain available in the approved footer');
   const general=page.locator('#device-form-panel-general');
   await general.waitFor();
   assert.equal(await general.evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),2,
