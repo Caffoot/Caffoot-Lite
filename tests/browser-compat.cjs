@@ -230,6 +230,15 @@ async function run(){
   assert.ok(await page.locator('.approved-account .future-compact').count()===2,
     'My Devices and My Tickets remain plainly marked Planned');
   await page.locator('[data-action="select-account-section"][data-section="security"]').first().click();
+  console.log('ACCOUNT SECURITY DEBUG', JSON.stringify(await page.evaluate(()=>{
+    const form=document.querySelector('#next-account-password-form');
+    const panel=document.querySelector('.approved-account .account-panel[data-section="security"]');
+    const nav=document.querySelector('.approved-account .subnav [data-section="security"]');
+    return {className:panel?.className,hidden:panel?.hidden,
+      display:panel?getComputedStyle(panel).display:null,
+      formDisplay:form?getComputedStyle(form).display:null,
+      navSelected:nav?.getAttribute('aria-selected')};
+  })));
   await page.locator('#next-account-password-form').waitFor();
   assert.ok(await page.getByText('Security At A Glance',{exact:true}).isVisible());
   await page.locator('[data-action="select-account-section"][data-section="help"]').first().click();
