@@ -1515,11 +1515,19 @@ async function run(){
     'Approved Device Details must preserve the physical device summary');
   assert.equal(await deviceReview.locator('#device-details-panel-overview dt').filter({hasText:'Location Area'}).count(),1,
     'Approved Details overview must retain the Location Area source label');
+  for(const caption of ['Recorded identity and status','Existing inventory and mounting details','Saved device notes']){
+    assert.ok(await deviceReview.locator('#device-details-panel-overview').getByText(caption,{exact:true}).isVisible(),
+      'Approved Details overview must render original card description: '+caption);
+  }
   await deviceReview.getByRole('tab',{name:'Software'}).click();
   const detailsSoftware= deviceReview.locator('#device-details-panel-software');
   assert.ok(await detailsSoftware.locator(':scope > .device-review-panel').first()
     .getByRole('heading',{name:'Operating System / Platform'}).isVisible(),
     'Approved Details Software tab must lead with Operating System / Platform');
+  assert.ok(await detailsSoftware.getByText('Recorded software platform',{exact:true}).isVisible(),
+    'Approved OS card must preserve source description');
+  assert.ok(await detailsSoftware.getByText('Installed on this device',{exact:true}).isVisible(),
+    'Approved Installed Software card must preserve source description');
   assert.ok(await detailsSoftware.locator(':scope > .device-review-panel').nth(1)
     .getByRole('heading',{name:'Installed Software'}).isVisible(),
     'Approved Details Installed Software must follow Operating System / Platform');
