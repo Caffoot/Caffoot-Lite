@@ -32,10 +32,6 @@ def save_inventory_setting(connection, account_id, key, value):
                 "INSERT INTO inventory_change_history(record_json) VALUES(?)",
                 (json.dumps(event, ensure_ascii=False),),
             )
-            connection.execute(
-                "DELETE FROM inventory_change_history WHERE id NOT IN "
-                "(SELECT id FROM inventory_change_history ORDER BY id DESC LIMIT 200)"
-            )
         connection.commit()
     except BaseException:
         connection.rollback()
