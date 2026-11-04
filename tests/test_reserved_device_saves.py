@@ -205,7 +205,7 @@ class ReservedDeviceSaveTests(unittest.TestCase):
         self.assertEqual(event["changes"][0]["kind"], "Device")
         self.assertEqual(event["changes"][0]["fields"], ["rackUStart", "rackUEnd"])
 
-    def test_history_retains_published_two_hundred_event_limit(self):
+    def test_history_preserves_all_events_after_two_hundred(self):
         for index in range(200):
             self.db.execute(
                 "INSERT INTO inventory_change_history(record_json) VALUES(?)",
@@ -216,8 +216,8 @@ class ReservedDeviceSaveTests(unittest.TestCase):
         events = [json.loads(raw) for (raw,) in self.db.execute(
             "SELECT record_json FROM inventory_change_history ORDER BY id"
         )]
-        self.assertEqual(len(events), 200)
-        self.assertEqual(events[0]["at"], "1")
+        self.assertEqual(len(events), 201)
+        self.assertEqual(events[0]["at"], "0")
         self.assertEqual(events[-1]["changes"][0]["label"], "Renamed")
 
     def test_expired_reservation_rejects_save_without_history(self):
