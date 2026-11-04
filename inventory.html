@@ -1667,6 +1667,22 @@ html.dark .caffoot-dashboard .db-rack-row:hover{background:#354a60;border-color:
 #main-content .ipam-approved-manage .ipam-warning{margin-top:12px}
 @media(max-width:720px){#main-content .ipam-approved-manage .ipam-card{padding:16px}#main-content .ipam-approved-manage .ipam-subnet-row{align-items:flex-start;flex-direction:column}}
 </style>
+<style id="approved-racks-detail-header-draft04">
+/* Approved Racks Draft 04 Rack Detail bar, tabs and face toggle tokens. */
+#main-content .rack-workspace .rack-detail-bar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;margin-bottom:15px}#main-content .rack-workspace .rack-detail-title{display:flex;align-items:flex-start;gap:12px}#main-content .rack-workspace .rack-back{border:0;background:transparent;color:#bd6c30;font-size:12px;font-weight:760;padding:2px 0 7px;cursor:pointer}#main-content .rack-workspace .rack-detail-title h2{font-size:20px;color:#223e56;letter-spacing:-.5px;margin:0}#main-content .rack-workspace .rack-detail-title p{font-size:12px;color:#7b8ea1;margin-top:5px}#main-content .rack-workspace .rack-detail-controls{display:flex;gap:9px;flex-wrap:wrap;align-items:end}#main-content .rack-workspace .rack-detail-controls label{font-size:11px;font-weight:760;color:#6b8195;display:grid;gap:5px;min-width:160px}#main-content .rack-workspace .rack-detail-controls select{height:41px}
+#main-content .rack-workspace .rack-subtabs{display:flex;gap:7px;padding:5px;background:#ebf0f4;border:1px solid #dce6ed;border-radius:11px;width:max-content;max-width:100%;overflow-x:auto;scrollbar-width:thin;margin-bottom:16px}#main-content .rack-workspace .rack-subtabs button{min-height:37px;padding:8px 15px;border:1px solid transparent;background:transparent;border-radius:8px;color:#6c839a;font-size:12px;font-weight:760;white-space:nowrap}#main-content .rack-workspace .rack-subtabs button.active{background:#fff;border-color:#dfe7ed;color:#2e4c65;box-shadow:0 1px 6px #16344c0a}
+#main-content .rack-workspace .rack-face-control{display:flex;align-items:center;gap:4px;background:#ecf1f5;border:1px solid #e1e9ef;padding:4px;border-radius:10px}#main-content .rack-workspace .rack-face-control button{min-width:83px;min-height:35px;padding:8px 12px;border:1px solid transparent;border-radius:7px;background:transparent;font-weight:770;color:#788ea2;font-size:12px}#main-content .rack-workspace .rack-face-control button.front.active{background:#fff;color:#257251;border-color:#dae7e0;box-shadow:0 2px 5px #182f4610}#main-content .rack-workspace .rack-face-control button.rear.active{background:#fff;color:#ac632a;border-color:#e9ddce;box-shadow:0 2px 5px #182f4610}
+
+#main-content .rack-workspace .rack-detail-bar{padding:0 0 4px}
+#main-content .rack-workspace .rack-detail-controls .btn{min-height:41px;font-size:12px;padding:9px 14px;border-radius:9px;border:1px solid #d5e0e9;background:#fff;color:#33516b;font-weight:750}
+#main-content .rack-workspace .rack-detail-controls .btn:hover{border-color:#ed9e64}
+#main-content .rack-workspace .rack-detail-controls .rack-select{width:100%;border:1px solid #d7e2eb;border-radius:9px;background:#fff;padding:9px 12px;color:#304d66;font-size:13px;min-width:0}
+#main-content .rack-workspace .rack-detail-controls{min-width:220px}
+#main-content .rack-workspace .rack-detail-workspace-top{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+#main-content .rack-workspace .rack-face-control button{cursor:pointer}
+#main-content .rack-workspace .rack-face-control button:focus-visible{outline:2px solid #ed8532;outline-offset:2px}
+@media(max-width:720px){#main-content .rack-workspace .rack-detail-controls{width:100%}#main-content .rack-workspace .rack-detail-controls label{flex:1}#main-content .rack-workspace .rack-subtabs{width:100%}}
+</style>
 </head>
 <body class="h-full bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-200">
 
@@ -3618,7 +3634,7 @@ function hierarchyValidateTypes(subnets) {
             } else if(v13RackSection==='inventory') {
                 if(v13RackDetailOpen && racks.some(r=>r.id===selectedRackId)) {
                     const selected=racks.find(r=>r.id===selectedRackId);
-                    body=`<div class="space-y-4"><h2 class="text-xl font-bold text-slate-900 dark:text-white">${escapeHtml(selected.name)}</h2>${renderRacksHTML()}</div>`;
+                    body=renderRacksHTML();
                 } else {
                     const rackCards=racks.map(r=>{
                         const rackDevices=mounted.filter(d=>d.rackId===r.id);
@@ -3763,35 +3779,27 @@ function hierarchyValidateTypes(subnets) {
 
             return `
                 <div class="space-y-5 rack-workspace">
-                    <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 sm:p-5 space-y-3">
-                        <div><h2 class="text-lg font-bold text-slate-900 dark:text-white">Rack Workspace</h2><p class="text-sm text-slate-600 dark:text-slate-300">Visualise equipment, review placements, or manage rack properties in separate sections.</p></div>
-                        <nav class="rack-tabs" aria-label="Rack workspace sections">
-                            ${[['view','Rack view','fa-server'],['equipment','Equipment','fa-list'],['settings','Rack settings','fa-gear']].map(([tab,label,icon])=>`<button type="button" data-action="select-rack-tab" data-tab="${tab}" aria-current="${activeRackTab===tab?'page':'false'}" class="rack-workspace-tab ${activeRackTab===tab?'rack-tab-selected':''}"><i class="fa-solid ${icon} mr-2"></i>${label}</button>`).join('')}
-                        </nav>
-                    </div>
-                    <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
-                        <div class="flex flex-col sm:flex-row sm:items-center gap-2 min-w-0 w-full md:w-auto">
-                            <label for="v13-rack-detail-select" class="text-xs font-semibold text-slate-600 dark:text-slate-300 whitespace-nowrap">Viewing rack</label>
-                            <select id="v13-rack-detail-select" aria-label="Choose rack to view" class="w-full sm:w-72 max-w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white px-3 py-2 text-sm font-semibold">
-                                ${appState.racks.map(r=>`<option value="${escapeHtml(r.id)}" ${r.id===currentRack.id?'selected':''}>${escapeHtml(r.name)}</option>`).join('')}
-                            </select>
-                        </div>
-
-                        <div class="flex items-center space-x-2 w-full md:w-auto justify-end">
-                            <div class="${activeRackTab==='settings'?'hidden':'flex'} items-center bg-slate-100 dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-700">
-                                <button data-action="rack-face-front" aria-pressed="${activeRackFace === 'front'}" class="px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition flex items-center space-x-1.5 ${activeRackFace === 'front' ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}">
-                                    <i class="fa-solid fa-desktop"></i>
-                                    <span>Front</span>
-                                </button>
-                                <button data-action="rack-face-rear" aria-pressed="${activeRackFace === 'rear'}" class="px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition flex items-center space-x-1.5 ${activeRackFace === 'rear' ? 'bg-white dark:bg-slate-800 text-orange-700 dark:text-orange-400 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}">
-                                    <i class="fa-solid fa-server"></i>
-                                    <span>Rear</span>
-                                </button>
+                    <div class="rack-detail-bar">
+                        <div>
+                            <button type="button" class="rack-back" data-action="v13-back-rack-inventory">‹ Back to Rack Inventory</button>
+                            <div class="rack-detail-title">
+                                <div><h2>${escapeHtml(currentRack.name)}</h2>
+                                    <p>${escapeHtml(currentRack.location||'Not recorded')} · ${escapeHtml(currentRack.heightU)}U · ${escapeHtml(currentRack.type||'Not recorded')} · ${escapeHtml(currentRack.widthMm??'—')} × ${escapeHtml(currentRack.depthMm??'—')} mm</p>
+                                </div>
                             </div>
-
+                        </div>
+                        <div class="rack-detail-controls">
+                            <label for="v13-rack-detail-select">Viewing rack
+                                <select id="v13-rack-detail-select" class="rack-select" aria-label="Choose rack to view">
+                                    ${appState.racks.map(r=>`<option value="${escapeHtml(r.id)}" ${r.id===currentRack.id?'selected':''}>${escapeHtml(r.name)}</option>`).join('')}
+                                </select>
+                            </label>
+                            <button class="btn btn-outline" type="button" data-action="print-rack-capacity-details" data-id="${escapeHtml(currentRack.id)}">▤ Print / PDF</button>
                         </div>
                     </div>
-
+                    <nav class="rack-subtabs" role="tablist" aria-label="Selected rack sections">
+                        ${[['view','Rack View'],['equipment','Equipment'],['settings','Rack Settings']].map(([key,label])=>`<button type="button" role="tab" data-action="select-rack-tab" data-tab="${key}" aria-selected="${activeRackTab===key}" class="${activeRackTab===key?'active':''}">${label}</button>`).join('')}
+                    </nav>
                     <section class="${activeRackTab==='view'?'':'hidden'} space-y-4" aria-label="Visual rack view">
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start ${Number(currentRack.heightU)>12?'rack-tall-layout':''}">
                         <div class="lg:col-span-2 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden flex flex-col ${Number(currentRack.heightU)>12?'rack-tall-panel':''}">
@@ -3801,6 +3809,11 @@ function hierarchyValidateTypes(subnets) {
                                     <h3 class="font-bold text-base text-slate-900 dark:text-white">${escapeHtml(currentRack.name)} — <span class="uppercase text-sm ${activeRackFace === 'front' ? 'text-emerald-600 dark:text-emerald-400' : 'text-orange-700 dark:text-orange-400'}">${activeRackFace} View</span></h3>
                                 </div>
                                 <span class="text-xs text-slate-600 dark:text-slate-300 font-semibold">${faceDevices.length} devices · ${faceAccessories.length} accessories · ${totalCapacityPercent}% ${activeRackFace} face occupied</span>
+                                <div class="rack-face-control" role="group" aria-label="Rack side">
+                                    <button type="button" data-action="rack-face-front" aria-pressed="${activeRackFace==='front'}" class="front ${activeRackFace==='front'?'active':''}">Front</button>
+                                    <button type="button" data-action="rack-face-rear" aria-pressed="${activeRackFace==='rear'}" class="rear ${activeRackFace==='rear'?'active':''}">Rear</button>
+                                </div>
+
                             </div>
 
                             <div class="rack-scroll p-6 overflow-y-auto custom-scrollbar bg-slate-100 dark:bg-slate-900/80" data-rack-scroll="true" data-rack-scrollable="${Number(currentRack.heightU) > 12 ? 'true' : 'false'}" tabindex="0" aria-label="Scrollable rack elevation">
@@ -10059,6 +10072,7 @@ function hierarchyValidateTypes(subnets) {
                 case 'sidebar-racks-overview': v13RackSection='overview'; switchTab('racks'); break;
                 case 'sidebar-racks-inventory': v13RackSection='inventory'; v13RackDetailOpen=false; switchTab('racks'); break;
                 case 'sidebar-racks-accessories': v13RackSection='accessories'; switchTab('racks'); break;
+                case 'v13-back-rack-inventory': v13RackSection='inventory'; v13RackDetailOpen=false; switchTab('racks'); break;
                 case 'v13-open-rack': { const rack=appState.racks.find(r=>r.id===target.dataset.id); if(rack){selectedRackId=rack.id;v13RackSection='inventory';v13RackDetailOpen=true;activeRackTab='view';switchTab('racks');} break; }
                 case 'dashboard-racks-overview': v13RackSection='overview'; v13RackDetailOpen=false; switchTab('racks'); break;
                 case 'tab-racks': switchTab('racks'); break;
