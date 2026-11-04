@@ -7880,6 +7880,121 @@ function openIpModal(ip) {
                 legacySoftwareFieldKeys.includes(key) ||
                 legacyServerServiceFieldKeys.includes(key);
         }
+        function renderApprovedInlineDevicePicker(kind,type,values={}) {
+            const software=kind==='software', label=software?'Software':'Server Service';
+            const typeKeys=new Set(getSoftwareFieldsForDeviceType(type));
+            const entries=(software?getAvailableSoftwareCatalogueEntries().filter(item=>typeKeys.has(item.key)):
+              getAvailableServerServiceCatalogueEntries().filter(item=>!(type==='Server - Physical'&&item.key==='serverService_Hypervisor')));
+            const selected=entries.filter(item=>values[item.key]===true).length;
+            const deviceTypes=getUniqueDeviceTypes();
+            const choices=entries.map(item=>`<label class="device-review-check-item">
+              <input type="checkbox" data-device-detail-field="${escapeHtml(item.key)}" ${values[item.key]===true?'checked':''}>
+              <span>${escapeHtml(item.label)}</span></label>`).join('');
+            return `<div class="device-review-inline-pick" data-review-picker="${kind}">
+              <div class="device-review-inline-tools">
+                <div class="device-review-field"><label for="review-search-${kind}">Search ${software?'software':'server services'}</label>
+                  <input id="review-search-${kind}" type="search" data-review-search="${kind}" placeholder="Search available ${software?'software':'server services'}…" autocomplete="off"></div>
+                <button type="button" class="device-review-smallbtn" data-action="device-inline-quick-open" data-kind="${kind}">+ Add ${label}</button>
+              </div>
+              <div class="device-review-inline-count" id="review-count-${kind}" aria-live="polite">${selected} selected · ${entries.length} available</div>
+              <div class="device-review-checklist" role="group" aria-label="${software?'Installed Software':'Server Services'}" data-review-choice-list="${kind}">${choices}</div>
+              <div class="device-review-inline-create" data-review-create="${kind}" hidden>
+                <h4>Add ${label} without leaving the device form</h4>
+                <div class="device-review-inline-add-actions"><div class="device-review-field">
+                  <label for="review-new-${kind}">${label} name</label>
+                  <input id="review-new-${kind}" data-review-new-name="${kind}" type="text" maxlength="80" placeholder="Enter ${label.toLowerCase()} name">
+                </div></div>
+                ${software?`<p class="device-review-inline-explain">Available for device types (current type selected by default)</p>
+                  <div class="device-review-inline-types" data-review-associated-types="software">${deviceTypes.map(t=>`<label>
+                  <input type="checkbox" value="${escapeHtml(t)}" ${t===type?'checked':''}><span>${escapeHtml(t)}</span>
+                  </label>`).join('')}</div>`:''}
+                <p class="device-review-inline-explain" role="alert" data-review-create-error hidden></p>
+                <div class="device-review-catalogue-actions">
+                  <button type="button" class="device-review-smallbtn primary" data-action="device-inline-quick-save" data-kind="${kind}">Add &amp; Select</button>
+                  <button type="button" class="device-review-smallbtn" data-action="device-inline-quick-cancel" data-kind="${kind}">Cancel</button>
+                </div>
+              </div>
+              <p class="device-review-inline-explain">Tick the items recorded on this device. These catalogue suggestions are not automatically installed software.</p>
+            </div>`;
+        }
+                function updateApprovedInlinePickerCount(picker) {
+            if(!picker)return;
+            const inputs=[...picker.querySelectorAll('.device-review-checklist input[type="checkbox"]')];
+            const count=picker.querySelector('.device-review-inline-count');
+            if(count)count.textContent=inputs.filter(x=>x.checked).length+' selected · '+inputs.length+' available';
+        }
+                function openApprovedInlineDeviceQuickAdd(kind) {
+            if(!['software','services'].includes(kind))return;
+            const panel=document.querySelector('#modal-content form[data-device-form="true"] [data-review-create="'+kind+'"]');
+            if(!panel)return;
+            panel.hidden=false;
+            panel.querySelector('[data-review-create-error]')?.setAttribute('hidden','');
+            panel.querySelector('[data-review-new-name]')?.focus();
+        }
+                function cancelApprovedInlineDeviceQuickAdd(kind) {
+            if(!['software','services'].includes(kind))return;
+            const panel=document.querySelector('#modal-content form[data-device-form="true"] [data-review-create="'+kind+'"]');
+            if(!panel)return;
+            panel.hidden=true;
+            const input=panel.querySelector('[data-review-new-name]');
+            if(input)input.value='';
+            panel.closest('.device-review-inline-pick')?.querySelector('[data-action="device-inline-quick-open"]')?.focus();
+        }
+                async function saveApprovedInlineDeviceQuickAdd(kind) {
+            if(!['software','services'].includes(kind))return;
+            const panel=document.querySelector('#modal-content form[data-device-form="true"] [data-review-create="'+kind+'"]');
+            if(!panel||panel.hidden)return;
+            const input=panel.querySelector('[data-review-new-name]'),error=panel.querySelector('[data-review-create-error]');
+            const fail=message=>{if(error){error.textContent=message;error.hidden=false;}input?.focus();};
+            const label=String(input?.value||'').trim();
+            if(!label||label.length>80)return fail('Enter a name of 80 characters or fewer.');
+            const software=kind==='software';
+            const currentType=document.getElementById('dev-type')?.value||'';
+            const knownTypes=new Set(getUniqueDeviceTypes());
+            const types=software?[...panel.querySelectorAll('[data-review-associated-types="software"] input:checked')].map(x=>x.value).filter(t=>knownTypes.has(t)):[];
+            if(software&&!types.length)return fail('Select at least one device type.');
+            const duplicates=software?[
+              ...getConfiguredSoftwareCatalogueEntries().map(x=>x.label),
+              ...builtInSoftwareSuggestions.map(x=>x.name)
+            ]:[...getConfiguredServerServiceCatalogueEntries(),...builtInServerServiceSuggestions].map(x=>x.label);
+            if(duplicates.some(x=>String(x||'').trim().toLowerCase()===label.toLowerCase()))return fail('That catalogue item already exists. Select it from the list.');
+            const button=panel.querySelector('[data-action="device-inline-quick-save"]');
+            if(button?.disabled)return;
+            if(button)button.disabled=true;
+            captureDeviceDetailFieldValues();
+            const field=software?'installedSoftware':'serverFunctions';
+            const previous=appState[field];
+            const key=(software?'customSoftware_':'customServerFunction_')+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8);
+            const next=[...(Array.isArray(previous)?previous:[])];
+            next.push(software?{key,label,deviceTypes:types}:{key,label});
+            appState[field]=next;
+            try{
+              if(!await nextSettingsBridge.save(field)){
+                appState[field]=previous;
+                return fail('Could not save this catalogue item. The existing device form is unchanged.');
+              }
+              deviceDetailFormValues[key]=true;
+              refreshDeviceDetailFields();
+              showToast(label+' added and selected for this device.');
+            }catch(err){
+              appState[field]=previous;
+              return fail('Could not save this catalogue item. Please try again.');
+            }finally{
+              if(button?.isConnected)button.disabled=false;
+            }
+        }
+        document.addEventListener('input',event=>{
+          const search=event.target.closest('.device-review-inline-pick [data-review-search]');
+          if(!search)return;
+          const picker=search.closest('.device-review-inline-pick'),query=String(search.value||'').trim().toLowerCase();
+          picker.querySelectorAll('.device-review-check-item').forEach(row=>{row.hidden=!row.textContent.toLowerCase().includes(query)});
+        });
+        document.addEventListener('change',event=>{
+          const control=event.target.closest('.device-review-inline-pick input[data-device-detail-field]');
+          if(!control)return;
+          deviceDetailFormValues[control.dataset.deviceDetailField]=control.checked;
+          updateApprovedInlinePickerCount(control.closest('.device-review-inline-pick'));
+        });
         function renderDeviceDetailFields(type, values={}, section='all') {
             const keys=getDetailFieldsForDeviceType(type).filter(key =>
                 key !== 'os' && key !== 'windowsLicence' && !(type === 'Server - Physical' && key === 'serverService_Hypervisor' && section === 'services') && (section === 'all' || (section === 'hardware' && !isSoftwareDetailField(key)) || (section === 'services' && getAvailableServerServiceFieldKeys().includes(key)) || (section === 'installed' && getAvailableSoftwareCatalogueEntries().some(x=>x.key===key)) || (section === 'software' && isSoftwareDetailField(key))));
@@ -8039,12 +8154,12 @@ function openIpModal(ip) {
             const type=document.getElementById('dev-type')?.value;
             if(panel) panel.innerHTML=renderDeviceDetailFields(type,deviceDetailFormValues,'hardware');
             const serviceFields = document.getElementById('server-services-fields');
-            if(serviceFields) serviceFields.innerHTML=renderDeviceDetailFields(type,deviceDetailFormValues,'services');
+            if(serviceFields) serviceFields.innerHTML=renderApprovedInlineDevicePicker('services',type,deviceDetailFormValues);
             const hosting = document.getElementById('device-hosting-enabled');
             if (hosting && type === 'Server - Physical') hosting.checked = deviceDetailFormValues.serverService_Hypervisor === true;
             syncHostingFieldVisibility();
             const installedFields = document.getElementById('device-form-installed-software-fields');
-            if(installedFields) installedFields.innerHTML=renderDeviceDetailFields(type,deviceDetailFormValues,'installed');
+            if(installedFields) installedFields.innerHTML=renderApprovedInlineDevicePicker('software',type,deviceDetailFormValues);
             document.getElementById('details-section')?.classList.toggle('hidden',!getDetailFieldsForDeviceType(type).some(key=>!isSoftwareDetailField(key)));
             document.getElementById('server-services-section')?.classList.toggle('hidden',deviceTypeDetailGroups[String(type||'').toLowerCase().trim()]!=='server');
             document.getElementById('device-form-installed-software-section')?.classList.toggle('hidden',!['server','computer'].includes(deviceTypeDetailGroups[String(type||'').toLowerCase().trim()]));
@@ -8263,8 +8378,8 @@ function openIpModal(ip) {
                 }
                 panels.get('software').appendChild(servicesSection);
                 panels.get('software').appendChild(installedSection);
-                servicesSection.querySelector('#server-services-fields').innerHTML = renderDeviceDetailFields(type, deviceDetailFormValues, 'services');
-                installedSection.querySelector('#device-form-installed-software-fields').innerHTML = renderDeviceDetailFields(type, deviceDetailFormValues, 'installed');
+                servicesSection.querySelector('#server-services-fields').innerHTML = renderApprovedInlineDevicePicker('services', type, deviceDetailFormValues);
+                installedSection.querySelector('#device-form-installed-software-fields').innerHTML = renderApprovedInlineDevicePicker('software', type, deviceDetailFormValues);
                 servicesSection.classList.toggle('hidden', group !== 'server');
                 installedSection.classList.toggle('hidden', group !== 'server' && group !== 'computer');
                 hardwareDetails.classList.toggle('hidden', !getDetailFieldsForDeviceType(type).some(key => !isSoftwareDetailField(key)));
@@ -10348,6 +10463,9 @@ function openIpModal(ip) {
                 case 'hardware-catalog-add': updateHardwareCatalogue('add'); break;
                 case 'hardware-catalog-edit': updateHardwareCatalogue('edit',name); break;
                 case 'hardware-catalog-remove': updateHardwareCatalogue('remove',name); break;
+                case 'device-inline-quick-open': openApprovedInlineDeviceQuickAdd(target.dataset.kind); break;
+                case 'device-inline-quick-cancel': cancelApprovedInlineDeviceQuickAdd(target.dataset.kind); break;
+                case 'device-inline-quick-save': saveApprovedInlineDeviceQuickAdd(target.dataset.kind); break;
                 case 'manage-installed-software': openConfiguredSoftwareCatalogueManager(); break;
                 case 'add-software': updateConfiguredSoftwareCatalogue('add'); break;
                 case 'rename-software': updateConfiguredSoftwareCatalogue('rename',name); break;
