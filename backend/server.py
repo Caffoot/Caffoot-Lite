@@ -16,6 +16,8 @@ from .settings_saves import save_inventory_setting
 from .device_catalogue import change_device_catalogue
 from .reset_inventory import reset_inventory
 from .ipam_repair import apply_ipam_repairs
+from .profiles import (read_profile, save_profile, read_profile_photo,
+                       save_profile_photo, remove_profile_photo, MAX_PHOTO_BYTES)
 from .schema import initialise_database as migrate_database
 from .accounts import bootstrap_first_admin, confirm_admin_mfa, verify_password, hash_password
 from .mfa import new_secret, provisioning_uri, verify_code
@@ -147,6 +149,28 @@ class Handler(BaseHTTPRequestHandler):
                 configured = connection.execute("SELECT 1 FROM accounts LIMIT 1").fetchone() is not None
                 pending = configured and connection.execute("SELECT 1 FROM accounts WHERE is_admin=1 AND mfa_confirmed=1 LIMIT 1").fetchone() is None
             self.respond(200, {"setupRequired": not configured, "enrollmentPending": pending})
+        elif self.path in ("/api/account/profile", "/api/account/photo"):
+            with connect() as connection:
+                account_id = authenticated_account(connection, self.headers.get("Cookie"))
+                if account_id is None:
+                    self.respond(401, {"error": "unauthorised"})
+                    return
+                if self.path == "/api/account/profile":
+                    self.respond(200, read_profile(connection, account_id))
+                    return
+                photo = read_profile_photo(connection, account_id)
+                if not photo or photo[1] is None:
+                    self.respond(404, {"error": "photo not found"})
+                    return
+                mime, data = photo
+                self.send_response(200)
+                self.send_header("Content-Type", mime)
+                self.send_header("Content-Length", str(len(data)))
+                self.send_header("Cache-Control", "private, no-store")
+                self.send_header("X-Content-Type-Options", "nosniff")
+                self.end_headers()
+                self.wfile.write(data)
+                return
         elif self.path == "/api/users":
             with connect() as connection:
                 account_id = authenticated_account(connection, self.headers.get("Cookie"))
@@ -342,7 +366,11 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(404, {"error": "not found"})
 
     def do_POST(self):
-        if self.path in ("/api/users/create", "/api/users/permission", "/api/users/active",
+        if self.path == "/api/account/photo":
+            self.handle_profile_photo()
+            return
+        if self.path in ("/api/account/profile", "/api/account/photo/remove",
+                         "/api/users/create", "/api/users/permission", "/api/users/active",
                          "/api/users/admin", "/api/users/delete", "/api/account/password",
                          "/api/account/mfa/start", "/api/account/mfa/confirm",
                          "/api/devices/edit/start", "/api/devices/edit/cancel",
@@ -486,7 +514,14 @@ class Handler(BaseHTTPRequestHandler):
                 ).fetchone():
                     self.respond(403, {"error": "forbidden"})
                     return
-                if self.path == "/api/inventory/settings/save":
+                if self.path == "/api/account/profile":
+                    result = save_profile(connection, actor, payload)
+                elif self.path == "/api/account/photo/remove":
+                    if payload != {"remove": True}:
+                        raise ValueError("Invalid photo removal request")
+                    remove_profile_photo(connection, actor)
+                    result = {"status": "removed"}
+                elif self.path == "/api/inventory/settings/save":
                     if set(payload) != {"key", "value"}:
                         raise ValueError("Invalid inventory settings request")
                     save_inventory_setting(connection, actor, payload["key"], payload["value"])
@@ -713,6 +748,37 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(400, {"error": str(exc)})
             return
         self.respond(200, result)
+
+    def handle_profile_photo(self):
+        """Upload private user image bytes only after session and CSRF verification."""
+        origin = self.headers.get("Origin")
+        if not PUBLIC_ORIGIN or not require_same_origin(origin, PUBLIC_ORIGIN):
+            self.respond(403, {"error": "forbidden"})
+            return
+        raw_length = self.headers.get("Content-Length")
+        if (raw_length is None or not raw_length.isdecimal() or
+                not 0 < int(raw_length) <= MAX_PHOTO_BYTES):
+            self.respond(413, {"error": "Profile photo must be no larger than 5 MB"})
+            return
+        mime = self.headers.get("Content-Type", "").split(";")[0].strip().lower()
+        if mime not in ("image/png", "image/jpeg", "image/webp"):
+            self.respond(415, {"error": "JPG, PNG or WEBP required"})
+            return
+        with connect() as connection:
+            actor = authorised_mutation(
+                connection, self.headers.get("Cookie"), origin, PUBLIC_ORIGIN,
+                self.headers.get("X-CSRF-Token"),
+            )
+            if actor is None:
+                self.respond(403, {"error": "forbidden"})
+                return
+            payload = self.rfile.read(int(raw_length))
+            try:
+                save_profile_photo(connection, actor, mime, payload)
+            except ValueError as exc:
+                self.respond(400, {"error": str(exc)})
+                return
+        self.respond(200, {"status": "saved"})
 
     def handle_import(self):
         """Authenticated server-owned import stages; never accept a candidate."""
