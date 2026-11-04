@@ -114,8 +114,18 @@ async function run(){
     'Compiled inventory utilities must be present');
   assert.equal(await page.locator('#sidebar').evaluate(el=>getComputedStyle(el).display),'flex',
     'Tailwind utility layout must remain active');
+  // The shared navigation must come from the approved seven-item HTML menu.
+  assert.equal(await page.locator('#sidebar .nav-item[data-tab]').count(),7,
+    'Approved sidebar must have exactly seven primary sections, not nested actions');
+  assert.equal(await page.locator('#sidebar [id$="-sidebar-actions"]').count(),0,
+    'The old nested section menus must not be shipped');
+  assert.ok(await page.locator('#app .header-account').isVisible(),
+    'Approved My Account control must be in the top-right header');
+  assert.equal((await page.request.get(address+'/assets/caffoot-logo-256.png')).status(),200,
+    'Approved branding asset must be served by the Python app');
+
   assert.equal(await page.title(),'Caffoot Lite — Infrastructure, Simplified.','Inventory browser tab must use Caffoot branding');
-  await page.locator('#next-account-nav').waitFor();
+  await page.locator('#app .header-account').waitFor();
   // Verify the approved computed typeface with the locally served Tailwind preflight.
   assert.ok((await page.locator('html').evaluate(el=>getComputedStyle(el).fontFamily)).includes('Inter'),
     'Inventory, Users, Settings and My account must inherit Inter typography');
@@ -156,20 +166,20 @@ async function run(){
     'Manual safety check must still reload and validate central inventory');
   await page.locator('#sidebar [data-action="tab-audit"]').click();
   await page.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='Change History & Data Safety');
-  assert.ok(await page.locator('#main-content > div.w-full').isVisible(),
+  assert.ok(await page.locator('#main-content .approved-page-body > div.w-full').isVisible(),
     'Change History should fill the inventory workspace');
   await page.locator('#sidebar [data-action="tab-users"]').click();
   await page.getByRole('heading',{name:'User Management Overview'}).waitFor();
-  assert.ok(await page.locator('#main-content > div.w-full').isVisible(),
+  assert.ok(await page.locator('#main-content .approved-page-body > div.w-full').isVisible(),
     'Users overview should fill the inventory workspace');
   await page.getByText('Total users',{exact:true}).waitFor();
   await page.getByRole('heading',{name:'Administrators',exact:true}).waitFor();
   await page.getByText('Users by role',{exact:true}).waitFor();
   await page.getByText('MFA enrolment',{exact:true}).waitFor();
-  assert.ok(await page.locator('#users-sidebar-actions').isVisible());
+  assert.ok(await page.locator('#main-content .approved-page-header .tabs').isVisible());
   assert.equal(await page.locator('#next-account-password-form').count(),0,
     'User Management must not contain personal account settings');
-  await page.locator('#sidebar #next-account-nav').click();
+  await page.locator('#app .header-account').click();
   assert.equal(await page.locator('#page-title').textContent(),'My account');
   await page.locator('#next-account-password-form').waitFor();
   for(const [area,selector] of [['preferences','.theme-choice'],['help','.settings-help-topic'],['about','.settings-about']]){
@@ -327,7 +337,7 @@ async function run(){
   await page.locator('[data-action="save-rename"][data-kind="location"]').click();
   await persisted(page,s=>s.devices.some(d=>d.id===device.id&&d.location==='Workshop'),'Location rename');
   await page.reload();
-  await page.locator('#next-account-nav').waitFor();
+  await page.locator('#app .header-account').waitFor();
   assert.equal((await state(page)).devices.find(d=>d.id===device.id).location,'Workshop');
   await modal(page,'openManageLocationsModal');
   await page.locator('[data-action="delete-device-type-or-location"][data-kind="location"][data-name="Workshop"]').click();
@@ -389,7 +399,7 @@ async function run(){
   await persisted(page,s=>s.rackAccessories.some(a=>a.name==='Browser Vertical PDU' &&
     a.side==='left'&&a.type==='pdu_vertical'),'Rack vertical accessory');
   await page.reload();
-  await page.locator('#next-account-nav').waitFor();
+  await page.locator('#app .header-account').waitFor();
   const rackSaved=await state(page);
   assert.equal(rackSaved.devices.find(d=>d.id===rackSwitch.id).rackId,rackId);
   assert.equal(rackSaved.rackAccessories.length,2);
@@ -397,7 +407,7 @@ async function run(){
 
   // Preserve the front/rear rack view and its printable elevations.
   await page.locator('#sidebar [data-action="tab-racks"]').click();
-  await page.locator('#racks-sidebar-actions [data-action="sidebar-racks-inventory"]').click();
+  await page.locator('#main-content .approved-page-header [data-action="approved-rack-section"][data-section-tab="inventory"]').click();
   await page.locator('[data-action="v13-open-rack"][data-id="'+rackId+'"]').click();
   await page.locator('.rack-elevation [data-rack-device="'+rackSwitch.id+'"]').waitFor();
   await page.locator('[data-action="rack-face-rear"]').click();
@@ -483,18 +493,18 @@ async function run(){
 
   // Approved acceptance: new accounts initially lack inventory access.
   await page.evaluate(()=>switchTab('users'));
-  await page.locator('#users-sidebar-actions [data-action="sidebar-users-add"]').click();
+  await page.locator('#main-content .approved-page-header [data-action="approved-users-section"][data-tab="add"]').click();
   await page.locator('#next-user-create-form input[name="username"]').fill('editor');
   await page.locator('#next-user-create-form input[name="password"]').fill(password+'-Editor');
   await page.locator('#next-user-create-form button[type="submit"]').click();
   await page.waitForFunction(()=>[...document.querySelectorAll('#main-content h3')]
     .some(h=>h.textContent.trim()==='editor'));
-  assert.equal(await page.locator('#users-sidebar-actions [data-action="sidebar-users-list"]').getAttribute('aria-current'),'page');
-  await page.locator('#users-sidebar-actions [data-action="sidebar-users-overview"]').click();
+  assert.equal(await page.locator('#main-content .approved-page-header [data-action="approved-users-section"][data-tab="list"]').getAttribute('aria-selected'),'true');
+  await page.locator('#main-content .approved-page-header [data-action="approved-users-section"][data-tab="overview"]').click();
   await page.getByText('Users by role',{exact:true}).waitFor();
   assert.equal(await page.getByText('Total users',{exact:true}).locator('..').locator('..').locator('p').textContent(),'2');
   assert.equal(await page.getByRole('heading',{name:'Administrators',exact:true}).locator('..').locator('..').locator('p').textContent(),'1');
-  await page.locator('#users-sidebar-actions [data-action="sidebar-users-list"]').click();
+  await page.locator('#main-content .approved-page-header [data-action="approved-users-section"][data-tab="list"]').click();
   const editorId=await page.evaluate(async()=>{
     const r=await fetch('/api/users',{cache:'no-store'});
     if(!r.ok)throw Error('Unable to read users');
@@ -542,7 +552,7 @@ async function run(){
   await editor.locator('#code-field:not([hidden])').waitFor();
   await editor.locator('#code').fill(mfaCode(editorSecret));
   await editor.waitForURL('**/inventory');
-  await editor.locator('#next-account-nav').waitFor();
+  await editor.locator('#app .header-account').waitFor();
   await editor.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='Dashboard Overview');
   assert.equal(await editor.locator('#next-dashboard-mfa-notice').count(),0,
     'Enrolled editors must not see MFA setup guidance');
@@ -553,7 +563,7 @@ async function run(){
   assert.equal(await editor.getByText('Integrity issues',{exact:true}).count(),0,
     'Non-administrator editor must not see integrity health totals');
   await editor.evaluate(()=>{appState.devices.pop();renderContent();});
-  await editor.locator('#sidebar #next-account-nav').click();
+  await editor.locator('#app .header-account').click();
   await editor.locator('#next-account-password-form').waitFor();
   assert.equal(await editor.locator('#page-title').textContent(),'My account');
   await editor.locator('[data-action="tab-devices"]').click();
@@ -564,9 +574,9 @@ async function run(){
   assert.ok(await editor.locator('#next-settings-nav').evaluate(el=>el.classList.contains('hidden')),
     'Settings & Data must be administrator-only');
   await editor.locator('#sidebar [data-action="tab-ipam"]').click();
-  assert.ok(await editor.locator('#ipam-sidebar-actions [data-action="open-subnet-modal"]').isHidden());
+  assert.ok(await editor.locator('#main-content .approved-page-header [data-action="open-subnet-modal"]').isHidden());
   await editor.locator('#sidebar [data-action="tab-racks"]').click();
-  assert.ok(await editor.locator('#racks-sidebar-actions [data-action="open-rack-modal"]').isHidden());
+  assert.ok(await editor.locator('#main-content .approved-page-header [data-action="open-rack-modal"]').isHidden());
   await editor.locator('#sidebar [data-action="tab-devices"]').click();
   console.log('Mixed editing and read-only section visibility passed');
   console.log('User creation, initially no access, editor MFA, permissions and shared viewing passed');
@@ -579,7 +589,7 @@ async function run(){
                   'Remote IP note');
   await editor.locator('#sidebar [data-action="tab-ipam"]').click();
   await editor.waitForFunction(()=>appState.ipAllocations['10.64.20.15']?.notes==='Remote note after editor sign-in');
-  await editor.locator('#ipam-sidebar-actions [data-action="sidebar-ipam-addresses"]').click();
+  await editor.locator('#main-content .approved-page-header [data-action="approved-ipam-section"][data-view="addresses"]').click();
   await editor.locator('[data-action="open-ip"][data-ip="10.64.20.15"]').waitFor();
   await page.evaluate(()=>openIpModal('10.64.20.15'));
   await page.locator('#ip-notes').fill('Newer remote IP note');
@@ -620,7 +630,7 @@ async function run(){
   console.log('Two-user exclusive device edit reservations passed');
   // Read-only account must be able to sign in without MFA.
   await page.evaluate(()=>switchTab('users'));
-  await page.locator('#users-sidebar-actions [data-action="sidebar-users-add"]').click();
+  await page.locator('#main-content .approved-page-header [data-action="approved-users-section"][data-tab="add"]').click();
   await page.locator('#next-user-create-form input[name="username"]').fill('viewer');
   await page.locator('#next-user-create-form input[name="password"]').fill(password+'-Viewer');
   await page.locator('#next-user-create-form button[type="submit"]').click();
@@ -665,15 +675,15 @@ async function run(){
   assert.ok(await viewer.locator('#next-settings-nav').isHidden());
   assert.ok(await viewer.locator('#next-users-nav').isHidden());
   await viewer.locator('#sidebar [data-action="tab-devices"]').click();
-  assert.ok(await viewer.locator('#devices-sidebar-actions [data-action="open-device-modal"]').isHidden());
+  assert.ok(await viewer.locator('#main-content .approved-page-header [data-action="open-device-modal"]').isHidden());
   await viewer.evaluate(()=>openDeviceModal());
   assert.ok(await viewer.locator('#modal-container').evaluate(el=>el.classList.contains('hidden')),
     'Read-only users must not be able to open the Device editor');
   await viewer.locator('#sidebar [data-action="tab-ipam"]').click();
-  assert.ok(await viewer.locator('#ipam-sidebar-actions [data-action="open-subnet-modal"]').isHidden());
+  assert.ok(await viewer.locator('#main-content .approved-page-header [data-action="open-subnet-modal"]').isHidden());
   await viewer.locator('#sidebar [data-action="tab-racks"]').click();
-  assert.ok(await viewer.locator('#racks-sidebar-actions [data-action="open-rack-modal"]').isHidden());
-  await viewer.locator('#sidebar #next-account-nav').click();
+  assert.ok(await viewer.locator('#main-content .approved-page-header [data-action="open-rack-modal"]').isHidden());
+  await viewer.locator('#app .header-account').click();
   for(const tab of ['preferences','help','about']){
     await viewer.locator('[data-action="select-account-section"][data-section="'+tab+'"]').click();
     assert.ok(await viewer.locator('[data-action="select-account-section"][data-section="'+tab+'"]').isVisible());
