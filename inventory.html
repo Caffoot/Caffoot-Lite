@@ -4149,8 +4149,8 @@ function hierarchyValidateTypes(subnets) {
           const content=document.getElementById('modal-content');
           content.classList.add('approved-catalogue-modal');
           document.getElementById('modal-container').classList.add('catalog-modal-overlay');
-          const heading=content.querySelector('#catalog-modal-title');
-          if(heading)content.setAttribute('aria-labelledby',heading.id);
+          const heading=content.querySelector('.catalog-modal-head h2');
+          if(heading){heading.id='catalog-modal-title';content.setAttribute('aria-labelledby',heading.id);}
         }
                 function openHardwareManufacturerManager(id='',deleting=false) {
             const entry=getConfiguredHardwareCatalogueEntries().find(x=>x.id===id&&!x.model);
@@ -4857,51 +4857,48 @@ function hierarchyValidateTypes(subnets) {
         function isProtectedDeviceTypeOrLocation(kind,name) {
             return name.toLowerCase()==='unknown';
         }
-        function openDeviceCatalogueManager(kind) {
-            const isType=kind==='type', label=isType?'Device types':'Device locations';
+                function openDeviceCatalogueManager(kind) {
+            const isType=kind==='type',label=isType?'Device Types':'Locations';
             const search=deviceTypeLocationSearchFilters[kind].trim().toLowerCase();
-            const entries=getManagedDeviceTypeOrLocationNames(kind).filter(n=>n.toLowerCase().includes(search));
-            const total=getManagedDeviceTypeOrLocationNames(kind).length;
-            openModal(`
-                <div class="p-5 sm:p-7 space-y-4 device-catalogue-manager">
-                    <div class="flex justify-between items-start gap-4 border-b border-slate-200 dark:border-slate-700 pb-4">
-                        <div><h3 class="font-bold text-lg text-slate-900 dark:text-white">Manage ${label}</h3>
-                        <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">${total} configured · Changes update the device inventory.</p></div>
-                        <button type="button" data-action="close-modal" aria-label="Close manager" class="h-10 w-10 rounded-xl border border-slate-300 dark:border-slate-600"><i class="fa-solid fa-xmark"></i></button>
-                    </div>
-                    
-                    
-                    <div class="space-y-2">
-                        <label for="device-catalogue-new-entry-input" class="block text-sm font-semibold">Add ${isType?'type':'location'}</label>
-                        <div class="flex flex-wrap sm:flex-nowrap gap-2"><input id="device-catalogue-new-entry-input" type="text" maxlength="100" placeholder="New ${isType?'type':'location'} name" class="flex-1 min-w-0 h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-500 bg-white dark:bg-slate-800" />
-                        <button type="button" data-action="add-device-type-or-location" data-kind="${kind}" class="h-11 px-5 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold"><i class="fa-solid fa-plus mr-1"></i>Add</button></div>
-                    </div>
-                    <div class="space-y-2">
-                        <label for="device-catalogue-search-input" class="block text-sm font-semibold">Search ${label.toLowerCase()}</label>
-                        <div class="flex gap-2"><input id="device-catalogue-search-input" type="search" value="${escapeHtml(deviceTypeLocationSearchFilters[kind])}" placeholder="Search by name" class="flex-1 min-w-0 h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-500 bg-white dark:bg-slate-800" />
-                        <button type="button" data-action="search-device-catalogue" data-kind="${kind}" class="h-11 px-4 rounded-xl border border-slate-400 dark:border-slate-500">Search</button></div>
-                    </div>
-                    <div class="max-h-[min(48vh,390px)] overflow-y-auto custom-scrollbar space-y-2" aria-label="${label}">
-                        ${entries.length ? entries.map(name=>{
-                            const count=appState.devices.filter(d=>d[isType?'type':'location']===name).length;
-                            const protectedItem=isProtectedDeviceTypeOrLocation(kind,name);
-                            return `<div class="flex flex-wrap sm:flex-nowrap items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-700">
-                                <div class="flex-1 min-w-0"><div class="font-semibold break-words ${name.toLowerCase()==='unknown'?'text-rose-600 dark:text-rose-400':''}">${escapeHtml(name)}</div>
-                                <div class="text-xs text-slate-600 dark:text-slate-300 mt-1">${count} device${count===1?'':'s'}${protectedItem?' · Protected':''}</div></div>
-                                <div class="flex gap-2"><button type="button" data-action="rename-device-catalogue-entry" data-kind="${kind}" data-name="${escapeHtml(name)}" ${protectedItem?'disabled':''} aria-label="Rename ${escapeHtml(name)}" class="h-10 px-3 rounded-lg border border-slate-400 dark:border-slate-500 disabled:opacity-40"><i class="fa-solid fa-pen"></i></button>
-                                <button type="button" data-action="delete-device-type-or-location" data-kind="${kind}" data-name="${escapeHtml(name)}" ${protectedItem?'disabled':''} aria-label="Delete ${escapeHtml(name)}" class="h-10 px-3 rounded-lg border border-rose-300 text-rose-700 dark:text-rose-300 disabled:opacity-40"><i class="fa-solid fa-trash"></i></button></div>
-                            </div>`;
-                        }).join('') : `<p class="text-sm text-center py-8 text-slate-600 dark:text-slate-300">No matching ${label.toLowerCase()}.</p>`}
-                    </div>
-                    <p class="text-xs text-slate-600 dark:text-slate-300">${isType?'Deleting an in-use device type sets affected devices to Unknown. Unknown is a protected system type.':'Deleting an in-use location sets affected devices to Unknown. Unknown is a protected system location.'}</p>
-                    <div class="flex justify-end gap-2 border-t border-slate-200 dark:border-slate-700 pt-4"><button type="button" data-action="close-modal" class="h-11 px-5 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-slate-100 font-semibold caffoot-modal-cancel">Cancel</button><button type="button" data-action="close-modal" class="h-11 px-5 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold">Done</button></div>
-                </div>`);
+            const all=getManagedDeviceTypeOrLocationNames(kind);
+            const entries=all.filter(n=>n.toLowerCase().includes(search));
+            const fields=`<div class="device-catalogue-manager">
+              <label class="catalog-modal-field" for="device-catalogue-new-entry-input">Add ${isType?'Device Type':'Location'}
+                <input id="device-catalogue-new-entry-input" type="text" maxlength="100" placeholder="New ${isType?'device type':'location'} name">
+              </label>
+              <div class="catalog-modal-actions" style="margin-bottom:16px">
+                <button type="button" data-action="add-device-type-or-location" data-kind="${kind}" class="btn btn-primary">Add ${isType?'Type':'Location'}</button>
+              </div>
+              <label class="catalog-modal-field" for="device-catalogue-search-input">Search ${isType?'device types':'locations'}
+                <input id="device-catalogue-search-input" type="search" value="${escapeHtml(deviceTypeLocationSearchFilters[kind])}" placeholder="Search by name">
+              </label>
+              <div class="catalog-modal-actions" style="margin-bottom:12px">
+                <button type="button" data-action="search-device-catalogue" data-kind="${kind}" class="btn btn-outline mini-btn">Search</button>
+              </div>
+              <div class="catalog-manager-list" aria-label="${isType?'Device types':'Locations'}">
+                <strong>Existing ${isType?'device types':'locations'} (${entries.length} of ${all.length})</strong>
+                ${entries.length?entries.map(name=>{
+                  const count=appState.devices.filter(d=>d[isType?'type':'location']===name).length;
+                  const locked=isProtectedDeviceTypeOrLocation(kind,name);
+                  return `<div class="catalog-manager-row">
+                    <span><strong>${escapeHtml(name)}</strong><small class="catalog-type-hint"> · ${count} device${count===1?'':'s'}${locked?' · Protected':''}</small></span>
+                    <button type="button" data-action="rename-device-catalogue-entry" data-kind="${kind}" data-name="${escapeHtml(name)}" ${locked?'disabled':''} class="btn btn-outline mini-btn" aria-label="Rename ${escapeHtml(name)}">Rename</button>
+                    <button type="button" data-action="delete-device-type-or-location" data-kind="${kind}" data-name="${escapeHtml(name)}" ${locked?'disabled':''} class="btn btn-outline mini-btn" aria-label="Delete ${escapeHtml(name)}">Delete</button>
+                  </div>`;
+                }).join(''):`<p class="catalog-type-hint">No matching ${isType?'device types':'locations'}.</p>`}
+              </div>
+            </div>`;
+            const actions='<button type="button" data-action="close-modal" class="btn btn-outline caffoot-modal-cancel">Cancel</button><button type="button" data-action="close-modal" class="btn btn-primary">Done</button>';
+            openApprovedCatalogueModal(`Manage ${label}`,
+              `${all.length} configured · Changes update the existing saved device inventory.`,
+              fields,actions,
+              `Unknown is protected. Deleting an in-use ${isType?'device type':'location'} requires confirmation and changes affected devices to Unknown.`);
         }
         function openManageTypesModal(){openDeviceCatalogueManager('type');}
         function openManageLocationsModal(){openDeviceCatalogueManager('location');}
         let deviceTypeLocationDeletionApproved=false;
         let pendingDeviceTypeLocationDeletion=null;
-        function requestDeviceCatalogueEntryDeletion(kind,name){
+                function requestDeviceCatalogueEntryDeletion(kind,name) {
             if(document.getElementById('delete-dialog') || document.getElementById('discard-dialog'))return;
             const prop=kind==='type'?'type':'location';
             if(isProtectedDeviceTypeOrLocation(kind,name)||!getManagedDeviceTypeOrLocationNames(kind).includes(name))return;
@@ -4914,16 +4911,17 @@ function hierarchyValidateTypes(subnets) {
             overlay.setAttribute('aria-modal','true');
             overlay.setAttribute('aria-labelledby','device-catalogue-delete-title');
             overlay.setAttribute('aria-describedby','delete-description');
-            overlay.className='absolute inset-0 z-50 flex items-center justify-center bg-slate-950/65 p-4 rounded-2xl';
-            overlay.innerHTML=`<div class="w-full max-w-md rounded-2xl border border-rose-300 dark:border-rose-700 bg-white dark:bg-slate-800 p-6 shadow-2xl space-y-4">
-                <h3 id="device-catalogue-delete-title" class="text-lg font-bold text-slate-900 dark:text-white">Delete ${kind==='type'?'Device Type':'Location'}?</h3>
-                <p class="font-semibold break-words text-slate-900 dark:text-white">${escapeHtml(name)}</p>
-                <p id="delete-description" class="text-sm text-slate-700 dark:text-slate-200">This ${kind==='type'?'device type':'location'} is assigned to <strong>${affected} device${affected===1?'':'s'}</strong>. ${affected?'Affected devices will be changed to Unknown.':'No existing devices will be changed.'} Deletion cannot be undone.</p>
-                <div class="flex flex-wrap justify-end gap-3">
-                    <button type="button" data-action="cancel-delete" class="h-11 px-4 rounded-xl border border-slate-400 dark:border-slate-500 text-slate-900 dark:text-white caffoot-modal-cancel">Cancel</button>
-                    <button type="button" data-action="confirm-delete" class="h-11 px-4 rounded-xl bg-rose-700 hover:bg-rose-800 text-white font-bold">Delete</button>
-                </div>
-            </div>`;
+            overlay.className='absolute inset-0 z-50 flex items-center justify-center p-3';
+            overlay.style.background='#10283cca';
+            overlay.innerHTML=`<div class="catalog-modal">
+              <div class="catalog-modal-head"><div><div class="eyebrow">CATALOGUE MANAGEMENT</div>
+              <h2 id="device-catalogue-delete-title">Delete ${kind==='type'?'Device Type':'Location'}?</h2></div></div>
+              <p class="catalog-modal-sub">${escapeHtml(name)}</p>
+              <p id="delete-description" class="catalog-delete-warning">This ${kind==='type'?'device type':'location'} is assigned to <strong>${affected} device${affected===1?'':'s'}</strong>. ${affected?'Affected devices will be changed to Unknown.':'No existing devices will be changed.'} Deletion cannot be undone.</p>
+              <div class="catalog-modal-actions">
+                <button type="button" data-action="cancel-delete" class="btn btn-outline caffoot-modal-cancel">Cancel</button>
+                <button type="button" data-action="confirm-delete" class="btn btn-primary">Delete</button>
+              </div></div>`;
             if(getComputedStyle(content).position==='static')content.style.position='relative';
             overlay._returnFocus=document.activeElement;
             pendingDeviceTypeLocationDeletion={kind,name};
@@ -4967,46 +4965,45 @@ function hierarchyValidateTypes(subnets) {
         }
         function editDeviceTypePrompt(n){openDeviceTypeOrLocationRename('type',n);}
         function editDeviceLocationPrompt(n){openDeviceTypeOrLocationRename('location',n);}
-        function openDeviceTypeOrLocationRename(kind,n){
+                function openDeviceTypeOrLocationRename(kind,n) {
             const manager=document.querySelector('.device-catalogue-manager');
             if(!manager)return;
-            const label=kind==='type'?'Device Type':'Device Location';
-            const savedContent=manager.innerHTML;
+            const label=kind==='type'?'Device Type':'Location';
+            manager._deviceCatalogueSavedContent=manager.innerHTML;
             manager._deviceCatalogueReturnFocusName=n;
-            manager.innerHTML=`<div class="space-y-5">
-                <div class="flex items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-700 pb-4">
-                    <div><h3 class="text-lg font-bold text-slate-900 dark:text-white">Edit ${label}</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Update the name and return to the management list.</p></div>
-                    <button type="button" data-action="cancel-rename" class="h-10 w-10 rounded-xl border border-slate-300 dark:border-slate-600" aria-label="Back to management list"><i class="fa-solid fa-xmark"></i></button>
-                </div>
-                <div class="space-y-2"><label for="device-catalogue-rename-value" class="block text-sm font-semibold text-slate-900 dark:text-white">${label} Name</label>
-                    <input id="device-catalogue-rename-value" type="text" maxlength="100" class="w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-white" value="${escapeHtml(n)}">
-                    <p class="text-xs text-slate-600 dark:text-slate-300">Renaming updates devices currently using this ${kind}. Existing inventory is retained.</p>
-                </div>
-                <div class="flex flex-wrap justify-end gap-2 border-t border-slate-200 dark:border-slate-700 pt-4">
-                    <button type="button" data-action="cancel-rename" class="h-11 px-4 rounded-xl border border-slate-400 dark:border-slate-500 text-slate-800 dark:text-slate-100 caffoot-modal-cancel">Cancel</button>
-                    <button type="button" data-action="save-rename" data-kind="${kind}" data-name="${escapeHtml(n)}" class="h-11 px-5 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-bold">Save Changes</button>
-                </div>
-            </div>`;
+            manager._deviceCataloguePreviousHeading=document.getElementById('catalog-modal-title')?.textContent||'';
+            manager._deviceCataloguePreviousSubtitle=document.getElementById('catalog-modal-sub')?.textContent||'';
+            document.getElementById('catalog-modal-title').textContent=`Rename ${label}`;
+            document.getElementById('catalog-modal-sub').textContent='Update the name and return to the catalogue management list.';
+            manager.innerHTML=`<label class="catalog-modal-field" for="device-catalogue-rename-value">${label} Name
+              <input id="device-catalogue-rename-value" type="text" maxlength="100" value="${escapeHtml(n)}">
+              </label><p class="catalog-modal-info">Renaming updates devices currently using this ${label.toLowerCase()}. Existing saved inventory is retained.</p>
+              <div class="catalog-modal-actions">
+                <button type="button" data-action="cancel-rename" class="btn btn-outline caffoot-modal-cancel">Cancel</button>
+                <button type="button" data-action="save-rename" data-kind="${kind}" data-name="${escapeHtml(n)}" class="btn btn-primary">Save Changes</button>
+              </div>`;
             manager.dataset.deviceCatalogueEditing='true';
-            manager._deviceCatalogueSavedContent=savedContent;
             const input=manager.querySelector('#device-catalogue-rename-value');
             input?.focus();input?.select();
         }
-        function cancelDeviceCatalogueEntryRename(force=false){
-            const editor=document.querySelector('.device-catalogue-manager[data-device-catalogue-editing="true"]');
-            const input=editor?.querySelector('#device-catalogue-rename-value');
-            if(!force && input && input.value!==editor._deviceCatalogueReturnFocusName){
-                confirmDiscardDeviceFormChanges(()=>cancelDeviceCatalogueEntryRename(true));return;
+                function cancelDeviceCatalogueEntryRename(force=false) {
+            const manager=document.querySelector('.device-catalogue-manager[data-device-catalogue-editing="true"]');
+            const input=manager?.querySelector('#device-catalogue-rename-value');
+            if(!force && input && input.value!==manager._deviceCatalogueReturnFocusName){
+              confirmDiscardDeviceFormChanges(()=>cancelDeviceCatalogueEntryRename(true));return;
             }
-            const manager=document.querySelector('.device-catalogue-manager');
             if(!manager)return;
             if(manager._deviceCatalogueSavedContent){
-                manager.innerHTML=manager._deviceCatalogueSavedContent;
-                delete manager._deviceCatalogueSavedContent;
-                delete manager.dataset.deviceCatalogueEditing;
-                const button=[...manager.querySelectorAll('[data-action="rename-device-catalogue-entry"]')].find(b=>b.dataset.name===manager._deviceCatalogueReturnFocusName);
-                (button||manager.querySelector('button'))?.focus();
-                delete manager._deviceCatalogueReturnFocusName;
+              manager.innerHTML=manager._deviceCatalogueSavedContent;
+              document.getElementById('catalog-modal-title').textContent=manager._deviceCataloguePreviousHeading||'Manage Catalogue';
+              document.getElementById('catalog-modal-sub').textContent=manager._deviceCataloguePreviousSubtitle||'';
+              delete manager._deviceCatalogueSavedContent;
+              delete manager.dataset.deviceCatalogueEditing;
+              const button=[...manager.querySelectorAll('[data-action="rename-device-catalogue-entry"]')].find(b=>b.dataset.name===manager._deviceCatalogueReturnFocusName);
+              (button||manager.querySelector('button'))?.focus();
+              delete manager._deviceCatalogueReturnFocusName;
+              delete manager._deviceCataloguePreviousHeading;
+              delete manager._deviceCataloguePreviousSubtitle;
             }
         }
         function deleteDeviceType(n){applyDeviceCatalogueChange('type','delete',n);}
