@@ -1519,6 +1519,8 @@ async function run(){
     assert.ok(await deviceReview.locator('#device-details-panel-overview').getByText(caption,{exact:true}).isVisible(),
       'Approved Details overview must render original card description: '+caption);
   }
+  assert.ok(await deviceReview.locator('#device-details-panel-overview .device-review-note-preview')
+    .isVisible(),'Device Overview Notes must use the original approved notes preview component');
   await deviceReview.getByRole('tab',{name:'Software'}).click();
   const detailsSoftware= deviceReview.locator('#device-details-panel-software');
   assert.ok(await detailsSoftware.locator(':scope > .device-review-panel').first()
@@ -1586,6 +1588,10 @@ async function run(){
     .filter({hasText:'Physical Host'});
   assert.ok(await relatedHost.isVisible(),
     'VM details must use the approved full-width Physical Host source card');
+  assert.ok(await relatedHost.locator(':scope > .record-preview').isVisible(),
+    'VM Physical Host must use the original record preview structure');
+  assert.ok(await relatedHost.getByText('A virtual machine is hosted by a physical hypervisor.',{exact:true}).isVisible(),
+    'VM Physical Host must retain source guidance');
   assert.ok(await relatedHost.getByText('browser-hypervisor',{exact:true}).isVisible(),
     'The VM host card must render the saved physical host');
   await relatedHost.getByRole('button',{name:'View Host'}).click();
