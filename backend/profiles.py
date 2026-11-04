@@ -48,7 +48,7 @@ def read_profile(connection, actor_id, target_id=None):
     }
 
 
-def _validate_details(details):
+def validate_profile_details(details):
     if not isinstance(details, dict) or set(details) != set(FIELD_LIMITS):
         raise ValueError("Personal details must contain the four approved fields")
     validated = {}
@@ -65,7 +65,7 @@ def _validate_details(details):
 
 def save_profile(connection, actor_id, details, target_id=None):
     target_id = actor_id if target_id is None else target_id
-    values = _validate_details(details)
+    values = validate_profile_details(details)
     connection.execute("BEGIN IMMEDIATE")
     try:
         username = _authorise(connection, actor_id, target_id)
