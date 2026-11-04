@@ -5490,6 +5490,21 @@ function hierarchyValidateTypes(subnets) {
     `);
 }
 
+        function approvedBulkConfirm(plan,status,notes,sample){
+    openApprovedIpamModal(`
+      <div class="ipam-modal-head"><div><div class="eyebrow">IP ADDRESS MANAGEMENT</div><h2>Confirm bulk ${status==='Reserved'?'reservation':'release'}</h2></div><button type="button" class="ipam-modal-close" aria-label="Back to editing" data-action="return-from-bulk-ip-assignment">×</button></div>
+      <div class="ipam-modal-body">
+        <div class="ipam-modal-explain warn">Review changes before applying. Gateways, device-owned IPs and conflicting records remain protected.</div>
+        <p>${plan.changes.length} address(es) will change; ${plan.blocked.length} protected address(es) will be skipped.</p>
+        ${plan.blocked.length?`<p class="ipam-modal-note">Protected examples: ${escapeHtml(plan.blocked.slice(0,6).join(', '))}</p>`:''}
+        <p class="ipam-modal-note">Changes include: ${escapeHtml(sample||'none')}</p>
+        ${status==='Reserved'&&notes?'<p class="ipam-modal-note">Entered IPAM notes replace existing notes on eligible addresses.</p>':''}
+        <p class="ipam-modal-note">All changes are saved together to the central inventory.</p>
+      </div>
+      <footer class="ipam-modal-actions"><button type="button" class="btn btn-outline caffoot-modal-cancel" data-action="return-from-bulk-ip-assignment">Back to editing</button><button type="button" class="btn btn-primary" data-action="apply-bulk-ip-assignment" ${!plan.changes.length?'disabled':''}>Apply ${plan.changes.length} changes</button></footer>
+    `);
+}
+
         function handleBulkIpSubmit(e,subnetId) {
             e.preventDefault();
             const subnet=appState.subnets.find(s=>s.id===subnetId);
@@ -5505,13 +5520,7 @@ function hierarchyValidateTypes(subnets) {
             const plan=planBulkSubnetAddressAssignment(subnet,start,end,status,hostname,notes);
             if(plan.error) return showToast(plan.error,'error');
             const sample=plan.changes.slice(0,6).map(x=>x.ip).join(', ');
-            openModal(`<div class="p-6 space-y-4"><h3 class="font-bold text-lg text-slate-900 dark:text-white">Confirm bulk ${status==='Reserved'?'reservation':'release'}</h3>
-                <p class="text-sm text-slate-700 dark:text-slate-200">${plan.changes.length} address(es) will change. ${plan.blocked.length} protected address(es) will be skipped.</p>
-                ${plan.blocked.length?`<p class="text-sm text-amber-900 dark:text-amber-200">Protected examples: ${escapeHtml(plan.blocked.slice(0,6).join(', '))}</p>`:''}
-                <p class="text-sm text-slate-700 dark:text-slate-200">Changes include: ${escapeHtml(sample||'none')}${status==='Reserved'&&notes?'<br>Entered IPAM notes will replace existing notes on eligible addresses.':''}</p>
-                <p class="text-xs text-slate-600 dark:text-slate-300">Changes are saved together to the central inventory. Confirm only after reviewing the range.</p>
-                <div class="flex justify-end gap-3"><button type="button" data-action="return-from-bulk-ip-assignment" class="px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-700 caffoot-modal-cancel">Back to editing</button>
-                <button type="button" data-action="apply-bulk-ip-assignment" class="px-4 py-2 rounded-xl bg-blue-800 text-white font-semibold" ${!plan.changes.length?'disabled':''}>Apply ${plan.changes.length} changes</button></div></div>`);
+            approvedBulkConfirm(plan,status,notes,sample);
             pendingBulkIpAssignment={subnetId,start,end,status,hostname,notes};
         }
         let pendingBulkIpAssignment=null;
@@ -5912,6 +5921,40 @@ function openSubnetModal(subnetId = null) {
             }
             return issues;
         }
+        function approvedDeletionBlocked(subnet,block,rows,blockedIps){
+    openApprovedIpamModal(`
+      <div class="ipam-modal-head"><div><div class="eyebrow">IP ADDRESS MANAGEMENT</div><h2>Subnet Deletion Blocked</h2></div><button type="button" data-action="close-modal" class="ipam-modal-close" aria-label="Close dialog">×</button></div>
+      <div class="ipam-modal-body">
+        <div class="ipam-modal-explain warn">This subnet cannot be deleted while protected IPAM records remain. Nothing has been changed.</div>
+        <div class="ipam-form-grid">
+          <div class="ipam-field"><span>Subnet</span><strong>${escapeHtml(subnet.name)}</strong></div>
+          <div class="ipam-field"><span>CIDR</span><strong>${escapeHtml(subnet.cidr)}</strong></div>
+          <div class="ipam-field"><span>VLAN ID</span><strong>${escapeHtml(String(subnet.vlan??'None'))}</strong></div>
+          <div class="ipam-field"><span>IP Address Block</span><strong>${escapeHtml(block?.name||'Unassigned')}</strong></div>
+        </div>
+        <section class="ipam-modal-explain warn" style="margin-top:16px"><strong>Protected Addresses (${blockedIps.length})</strong><p>Resolve these records before attempting deletion again.</p><ul class="max-h-56 overflow-y-auto" aria-label="Protected IP addresses">${rows}</ul></section>
+      </div>
+      <footer class="ipam-modal-actions"><button type="button" class="btn btn-outline caffoot-modal-cancel" data-action="close-modal">Close</button></footer>
+    `);
+}
+
+        function approvedDeletionConfirm(subnet,isNetwork,block,deps,deviceRows,subId){
+    openApprovedIpamModal(`
+      <div class="ipam-modal-head"><div><div class="eyebrow">IP ADDRESS MANAGEMENT</div><h2>Confirm ${isNetwork?'Subnet & VLAN':'IP Address Block'} Deletion</h2></div><button type="button" class="ipam-modal-close" data-action="close-modal" aria-label="Close dialog">×</button></div>
+      <div class="ipam-modal-body">
+        <div class="ipam-modal-explain warn">This action cannot be undone. Review affected records before confirming.</div>
+        <div class="ipam-form-grid">
+          <div class="ipam-field"><span>Name</span><strong>${escapeHtml(subnet.name)}</strong></div>
+          <div class="ipam-field"><span>CIDR</span><strong>${escapeHtml(subnet.cidr)}</strong></div>
+          ${isNetwork?`<div class="ipam-field"><span>VLAN ID</span><strong>${escapeHtml(String(subnet.vlan))}</strong></div>`:''}
+          <div class="ipam-field"><span>IP Address Block</span><strong>${escapeHtml(block?.name||'Unassigned')}</strong></div>
+        </div>
+        ${deps.devices.length?`<section class="ipam-modal-explain warn" style="margin-top:16px"><strong>Move ${deps.devices.length} Device(s) to Unassigned</strong><p>Device inventory, rack and hardware details remain. Primary IP allocations shown below will be released.</p><ul class="max-h-44 overflow-y-auto">${deviceRows}</ul></section>`:'<p class="ipam-modal-note">No device assignments will be changed.</p>'}
+      </div>
+      <footer class="ipam-modal-actions"><button type="button" class="btn btn-outline caffoot-modal-cancel" data-action="close-modal">Cancel</button><button type="button" class="btn btn-outline danger-action" data-action="confirm-delete-subnet" data-id="${escapeHtml(subId)}">${deps.devices.length?'Move Devices & Delete Subnet':isNetwork?'Delete Subnet & VLAN':'Delete IP Address Block'}</button></footer>
+    `);
+}
+
         function showSubnetDeletionBlocked(subnet, blockedIps) {
             const block = appState.subnets.find(s => s.id === subnet.parentId);
             const rows = blockedIps.map(ip => {
@@ -5923,29 +5966,7 @@ function openSubnetModal(subnetId = null) {
                     <span class="text-sm text-slate-600 dark:text-slate-300">${escapeHtml(String(reason))}</span>
                 </li>`;
             }).join('');
-            openModal(`
-                <div class="p-6 sm:p-7 space-y-5 text-slate-900 dark:text-white">
-                    <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-3">
-                        <h3 class="font-bold text-lg">Subnet Deletion Blocked</h3>
-                        <button type="button" data-action="close-modal" aria-label="Close dialog" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700"><i class="fa-solid fa-xmark"></i></button>
-                    </div>
-                    <p class="text-sm">This subnet cannot be deleted while protected IPAM records remain. No records have been changed.</p>
-                    <dl class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                        <div><dt class="font-semibold">Subnet</dt><dd>${escapeHtml(subnet.name)}</dd></div>
-                        <div><dt class="font-semibold">CIDR</dt><dd class="font-mono">${escapeHtml(subnet.cidr)}</dd></div>
-                        <div><dt class="font-semibold">VLAN ID</dt><dd>${escapeHtml(String(subnet.vlan ?? 'None'))}</dd></div>
-                        <div><dt class="font-semibold">IP Address Block</dt><dd>${escapeHtml(block?.name || 'Unassigned')}</dd></div>
-                    </dl>
-                    <section class="rounded-xl border border-amber-300 dark:border-amber-700 p-4 space-y-2">
-                        <h4 class="font-bold">Protected Addresses (${blockedIps.length})</h4>
-                        <p class="text-sm">Review and resolve these IPAM records before attempting deletion again.</p>
-                        <ul class="max-h-56 overflow-y-auto" aria-label="Protected IP addresses">${rows}</ul>
-                    </section>
-                    <div class="flex justify-end">
-                        <button type="button" data-action="close-modal" class="px-5 py-2 rounded-xl bg-slate-700 hover:bg-slate-800 text-white font-semibold">Close</button>
-                    </div>
-                </div>
-            `);
+            approvedDeletionBlocked(subnet,block,rows,blockedIps);
         }
 
         function deleteSubnet(subId) {
@@ -6004,30 +6025,7 @@ function openSubnetModal(subnetId = null) {
                 linked: linked.map(v => [v.id, v.vlanId, v.parentId])
             });
             pendingSubnetDeletion = { subId, previewSignature };
-            openModal(`
-                <div class="p-6 sm:p-7 space-y-5 text-slate-900 dark:text-white">
-                    <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-3">
-                        <h3 class="font-bold text-lg">Confirm ${isNetwork ? 'Subnet & VLAN' : 'IP Address Block'} Deletion</h3>
-                        <button type="button" data-action="close-modal" aria-label="Close dialog" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700"><i class="fa-solid fa-xmark"></i></button>
-                    </div>
-                    <p class="text-sm text-rose-700 dark:text-rose-300 font-semibold">This action cannot be undone. Review the affected records before confirming.</p>
-                    <dl class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                        <div><dt class="font-semibold">Name</dt><dd>${escapeHtml(subnet.name)}</dd></div>
-                        <div><dt class="font-semibold">CIDR</dt><dd class="font-mono">${escapeHtml(subnet.cidr)}</dd></div>
-                        ${isNetwork ? `<div><dt class="font-semibold">VLAN ID</dt><dd>${escapeHtml(String(subnet.vlan))}</dd></div>` : ''}
-                        <div><dt class="font-semibold">IP Address Block</dt><dd>${escapeHtml(block?.name || 'Unassigned')}</dd></div>
-                    </dl>
-                    ${deps.devices.length ? `<section class="rounded-xl border border-amber-300 dark:border-amber-700 p-4 space-y-2">
-                        <h4 class="font-bold">Move ${deps.devices.length} Device(s) to Unassigned</h4>
-                        <p class="text-sm">Device inventory, rack and hardware details will remain. The primary IP allocations below will be released.</p>
-                        <ul class="max-h-44 overflow-y-auto">${deviceRows}</ul>
-                    </section>` : '<p class="text-sm">No device assignments will be changed.</p>'}
-                    <div class="form-actions">
-                        <button type="button" data-action="close-modal" class="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-white font-semibold caffoot-modal-cancel">Cancel</button>
-                        <button type="button" data-action="confirm-delete-subnet" data-id="${escapeHtml(subId)}" class="px-4 py-2 rounded-xl bg-rose-800 hover:bg-rose-900 text-white font-semibold">${deps.devices.length ? 'Move Devices & Delete Subnet' : isNetwork ? 'Delete Subnet & VLAN' : 'Delete IP Address Block'}</button>
-                    </div>
-                </div>
-            `);
+            approvedDeletionConfirm(subnet,isNetwork,block,deps,deviceRows,subId);
         }
 
         let pendingSubnetDeletion = null;
