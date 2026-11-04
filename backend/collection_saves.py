@@ -93,10 +93,6 @@ def change_inventory_record(connection, account_id, collection, record_id, recor
                 "INSERT INTO inventory_change_history(record_json) VALUES(?)",
                 (json.dumps(event, ensure_ascii=False),),
             )
-            connection.execute(
-                "DELETE FROM inventory_change_history WHERE id NOT IN "
-                "(SELECT id FROM inventory_change_history ORDER BY id DESC LIMIT 200)"
-            )
         connection.commit()
     except BaseException:
         connection.rollback()
@@ -233,10 +229,6 @@ def change_ipam_subnet_and_vlan_records(connection, account_id, changes):
                 "INSERT INTO inventory_change_history(record_json) VALUES(?)",
                 (json.dumps(event, ensure_ascii=False),),
             )
-            connection.execute(
-                "DELETE FROM inventory_change_history WHERE id NOT IN "
-                "(SELECT id FROM inventory_change_history ORDER BY id DESC LIMIT 200)"
-            )
         connection.commit()
     except BaseException:
         connection.rollback()
@@ -353,10 +345,6 @@ def delete_subnet_with_dependencies(connection, account_id, subnet_id,
         connection.execute(
             "INSERT INTO inventory_change_history(record_json) VALUES(?)",
             (json.dumps(event, ensure_ascii=False),)
-        )
-        connection.execute(
-            "DELETE FROM inventory_change_history WHERE id NOT IN "
-            "(SELECT id FROM inventory_change_history ORDER BY id DESC LIMIT 200)"
         )
         connection.commit()
     except BaseException:
