@@ -1706,6 +1706,11 @@ html.dark .caffoot-dashboard .db-rack-row:hover{background:#354a60;border-color:
 .db-callout{background:#fff9f1;border:1px solid #f4e2ce;border-radius:10px;padding:11px 15px;color:#7c684f;font-size:11px;line-height:1.55;margin:0 0 16px}
 .db-section{margin-top:18px}
 @media(max-width:700px){.db-insights-4,.db-grid{grid-template-columns:minmax(0,1fr)}}
+
+/* Exact Dashboard Draft 02 component layout for the Overview card heads/metrics. */
+.db-metric-head .iconwrap{width:35px;height:35px}
+.db-card .card-head{align-items:center}
+.caffoot-dashboard .db-slimrow .db-badge{margin-left:12px}
 </style>
 <style id="approved-catalogue-modal-batch02">
 .catalog-modal-overlay{position:fixed;inset:0;background:#10283cca;z-index:120;display:flex;align-items:center;justify-content:center;padding:18px}
@@ -3426,16 +3431,16 @@ function hierarchyValidateTypes(subnets) {
             const integrityHealthy = integrityErrors.length === 0;
             const integrityPreview = integrityErrors.slice(0, 5);
 
-            const networkSnapshot = `<section class="db-card">
-                <div class="db-card-head"><span class="db-iconwrap"><i class="fa-solid fa-network-wired" aria-hidden="true"></i></span><div><h3>Network Allocation Overview</h3><p>A summary of your stored addressing data.</p></div></div>
-                <div class="db-card-rule"></div>
-                <div class="db-legend">
-                    <div><span class="db-dot blue"></span><span>Assigned</span><strong>${subnetAssigned}</strong></div>
-                    <div><span class="db-dot"></span><span>Reserved</span><strong>${subnetReserved}</strong></div>
-                    <div><span class="db-dot green"></span><span>Available</span><strong>${Math.max(0,totalSubnetCapacity-subnetAssigned-subnetReserved)}</strong></div>
-                </div>
-                <button type="button" data-action="tab-ipam" class="db-outline-button">View IP Allocations</button>
-            </section>`;
+            const networkSnapshot = `<div class="card db-card">
+              <div class="card-head"><span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-network"></use></svg></span><div><h3>Network Allocation Overview</h3><p class="sub">A summary of your stored addressing data.</p></div></div>
+              <div class="divider"></div>
+              <div class="db-legend">
+                <div><span class="db-dot blue"></span><span>Assigned</span><strong>${subnetAssigned}</strong></div>
+                <div><span class="db-dot"></span><span>Reserved</span><strong>${subnetReserved}</strong></div>
+                <div><span class="db-dot green"></span><span>Available</span><strong>${Math.max(0,totalSubnetCapacity-subnetAssigned-subnetReserved)}</strong></div>
+              </div>
+              <button type="button" data-action="tab-ipam" class="btn btn-outline db-btn-outline">View IP Allocations</button>
+            </div>`;
             const statusPill = (label, count, classes) => `
                 <div class="flex items-center justify-between px-3 py-2 rounded-xl ${classes}">
                     <span class="text-xs font-semibold">${escapeHtml(label)}</span>
@@ -3443,18 +3448,9 @@ function hierarchyValidateTypes(subnets) {
                 </div>`;
 
             const quickActions = `
-                <div class="flex flex-wrap gap-2">
-                    <button data-action="open-device-modal" class="px-3 py-2 rounded-xl bg-blue-800 hover:bg-blue-900 text-white text-xs font-semibold transition-colors">
-                        <i class="fa-solid fa-plus mr-1"></i>Add Device
-                    </button>
-                    <button data-action="open-rack-modal" class="px-3 py-2 rounded-xl bg-blue-800 hover:bg-blue-900 text-white text-xs font-semibold transition-colors">
-                        <i class="fa-solid fa-server mr-1"></i>Add Rack
-                    </button>
-                    <button data-action="tab-ipam" class="px-3 py-2 rounded-xl bg-blue-800 hover:bg-blue-900 text-white text-xs font-semibold transition-colors">
-                        <i class="fa-solid fa-network-wired mr-1"></i>Open IPAM
-                    </button>
-
-                </div>`;
+              <button type="button" data-action="open-device-modal" class="btn btn-primary">Add Device</button>
+              <button type="button" data-action="open-rack-modal" class="btn btn-outline">Add Rack</button>
+              <button type="button" data-action="tab-ipam" class="btn btn-outline">Open IPAM</button>`;
 
             // The approved Rack Details panel keeps the existing rack-selection action.
             const rackCards = racks.length ? racks.map(rack =>
@@ -3464,6 +3460,11 @@ function hierarchyValidateTypes(subnets) {
                 </button>`).join('') : '<p class="db-muted">No racks configured yet.</p>';
 
             const recentDevices = devices.slice().reverse().slice(0, 6);
+            const approvedRecentDeviceRows = recentDevices.slice(0,3).map(d=>`
+                <div class="db-slimrow">
+                  <div><strong>${escapeHtml(d.name)}</strong><div class="db-muted">${escapeHtml(d.type||'Device')} · ${escapeHtml(d.primaryIp||'No primary IP')}</div></div>
+                  <span class="db-badge ${String(d.status||'Active').toLowerCase()==='active'?'db-good':''}">${escapeHtml(d.status||'Active')}</span>
+                </div>`).join('')||'<p class="db-muted">No devices configured yet.</p>';
             const deviceRows = recentDevices.length ? recentDevices.map(device => `
                 <div class="flex items-center gap-3 py-3 border-b border-slate-100 dark:border-slate-700/70 last:border-0">
                     <div class="w-9 h-9 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-300 shrink-0"><i class="fa-solid ${getCategoryIcon(device.type)}"></i></div>
@@ -3564,17 +3565,17 @@ function hierarchyValidateTypes(subnets) {
                         ${[['overview','Overview','fa-house'],['insights','Network Insights','fa-chart-pie'],['activity','Activity & Alerts','fa-bell']].map(([id,label,icon])=>`<button type="button" role="tab" id="dashboard-tab-${id}" aria-controls="dashboard-panel-${id}" aria-selected="${activeDashboardTab===id}" tabindex="${activeDashboardTab===id?'0':'-1'}" class="dashboard-tab-control ${activeDashboardTab===id?'is-active':''}" data-action="dashboard-tab" data-dashboard-tab="${id}"><i class="fa-solid ${icon}" aria-hidden="true"></i><span>${label}</span></button>`).join('')}
                     </nav>
                     <div id="dashboard-panel-overview" role="tabpanel" aria-labelledby="dashboard-tab-overview" class="dashboard-tab-panel" ${activeDashboardTab==='overview'?'':'hidden'}>
-                        <section class="dashboard-stats db-summary" aria-label="Network summary">
+                        <div class="db-summary" aria-label="Network summary">
                             ${[
-                                ['Devices', devices.length, `${activeDevices} active · ${inactiveDevices} other`, 'fa-server', 'tab-devices'],
-                                ['IP Addresses', totalTrackedIps, `${assignedIps} assigned · ${reservedIps} reserved`, 'fa-network-wired', 'tab-ipam'],
-                                ['Subnets', subnets.length, 'Managed networks', 'fa-diagram-project', 'tab-ipam'],
-                                ['Racks', racks.length, `${rackedDevices} mounted devices`, 'fa-server', 'dashboard-racks-overview']
-                            ].map(([label,value,detail,icon,action],index) => `<button type="button" data-action="${action}" class="dashboard-stat db-metric" aria-label="${label}: ${value}. Open section">
-                                <span class="db-metric-head">${label}<span class="db-iconwrap ${index===1?'green':index===3?'orange':''}"><i class="fa-solid ${icon}" aria-hidden="true"></i></span></span>
+                                ['Devices', devices.length, `${activeDevices} active · ${inactiveDevices} other`, 'i-box', 'tab-devices'],
+                                ['IP Addresses', totalTrackedIps, `${assignedIps} assigned · ${reservedIps} reserved`, 'i-network', 'tab-ipam'],
+                                ['Subnets', subnets.length, 'Managed networks', 'i-network', 'tab-ipam'],
+                                ['Racks', racks.length, `${rackedDevices} mounted devices`, 'i-rack', 'dashboard-racks-overview']
+                            ].map(([label,value,detail,icon,action],index) => `<button type="button" data-action="${action}" class="db-metric" aria-label="${label}: ${value}. Open section">
+                                <span class="db-metric-head">${label}<span class="iconwrap ${index===1?'green':index===3?'orange':''}"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#${icon}"></use></svg></span></span>
                                 <strong>${value}</strong><small>${detail}</small>
                             </button>`).join('')}
-                        </section>
+                        </div>
                         ${window.nextSessionIsAdmin === true && !integrityHealthy ? `<section id="next-dashboard-inventory-health" role="alert" class="db-card db-error-card">
                             <h3>Inventory Health — attention required</h3>
                             <p>Existing inventory consistency checks found issues in saved records.</p>
@@ -3582,30 +3583,30 @@ function hierarchyValidateTypes(subnets) {
                         </section>` : ''}
                         <div class="db-two">
                             <div class="db-stack">
-                                <section class="db-card">
-                                    <div class="db-card-head"><span class="db-iconwrap orange"><i class="fa-solid fa-table-cells-large" aria-hidden="true"></i></span><div><h3>Quick Access</h3><p>Existing actions, available according to your permissions.</p></div></div>
+                                <div class="card db-card">
+                                    <div class="card-head"><span class="iconwrap orange"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-grid"></use></svg></span><div><h3>Quick Access</h3><p class="sub">Existing actions, available according to the signed-in user’s permissions.</p></div></div>
                                     <div class="db-actionrow">${quickActions}</div>
-                                </section>
-                                <section class="db-card">
-                                    <div class="db-card-head"><span class="db-iconwrap"><i class="fa-solid fa-server" aria-hidden="true"></i></span><div><h3>Recent Devices</h3><p>The latest records in your saved inventory.</p></div></div>
-                                    <div class="db-card-rule"></div>
-                                    <div class="db-device-rows">${deviceRows}</div>
-                                    <button type="button" data-action="tab-devices" class="db-outline-button">View All Devices</button>
-                                </section>
-                                <section class="db-card">
-                                    <div class="db-card-head"><span class="db-iconwrap green"><i class="fa-solid fa-network-wired" aria-hidden="true"></i></span><div><h3>Subnet Utilisation</h3><p>Usable addresses across existing CIDR networks.</p></div></div>
-                                    <div class="db-card-rule"></div>
+                                </div>
+                                <div class="card db-card">
+                                    <div class="card-head"><span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-box"></use></svg></span><div><h3>Recent Devices</h3><p class="sub">The latest records in your saved inventory.</p></div></div>
+                                    <div class="divider"></div>
+                                    ${approvedRecentDeviceRows}
+                                    <button type="button" data-action="tab-devices" class="btn btn-outline db-btn-outline">View All Devices</button>
+                                </div>
+                                <div class="card db-card">
+                                    <div class="card-head"><span class="iconwrap green"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-network"></use></svg></span><div><h3>Subnet Utilisation</h3><p class="sub">Usable addresses across existing CIDR networks.</p></div></div>
+                                    <div class="divider"></div>
                                     ${subnetStats.length ? subnetStats.slice(0,3).map(subnet => `
                                         <div class="db-progress-title"><span>${escapeHtml(subnet.name)} · ${escapeHtml(subnet.cidr)}</span><strong>${subnet.percentage}%</strong></div>
                                         <div class="db-bar" role="progressbar" aria-label="${escapeHtml(subnet.name)} utilisation" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${subnet.percentage}"><span style="width:${subnet.percentage}%;background:#4a9c86"></span></div>
                                     `).join('') : '<p class="db-muted">No subnets configured yet.</p>'}
                                     <p class="db-muted">Details, reservations and allocations remain managed within IPAM.</p>
-                                </section>
+                                </div>
                             </div>
                             <div class="db-stack">
-                                <section class="db-card">
-                                    <div class="db-card-head"><span class="db-iconwrap orange"><i class="fa-solid fa-server" aria-hidden="true"></i></span><div><h3>Rack Capacity</h3><p>Used U-space across your cabinets.</p></div></div>
-                                    <div class="db-card-rule"></div>
+                                <div class="card db-card">
+                                    <div class="card-head"><span class="iconwrap orange"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-rack"></use></svg></span><div><h3>Rack Capacity</h3><p class="sub">Used U-space across your cabinets.</p></div></div>
+                                    <div class="divider"></div>
                                     ${rackInsights.length ? rackInsights.slice(0,3).map(({rack,faces}) => {
                                         const used = Math.max(...faces.map(face=>face.used));
                                         const capacity = Number(rack.heightU)||0;
@@ -3613,17 +3614,17 @@ function hierarchyValidateTypes(subnets) {
                                         return `<div class="db-progress-title"><span>${escapeHtml(rack.name)}</span><strong>${used} / ${capacity}U</strong></div>
                                         <div class="db-bar" role="progressbar" aria-label="${escapeHtml(rack.name)} occupied rack units" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><span style="width:${pct}%;background:${pct>=85?'#ed8532':'#7799b5'}"></span></div>`;
                                     }).join('') : '<p class="db-muted">No network racks configured yet.</p>'}
-                                    <button type="button" data-action="tab-racks" class="db-outline-button">Open Network Racks</button>
-                                </section>
+                                    <button type="button" data-action="tab-racks" class="btn btn-outline db-btn-outline">Open Network Racks</button>
+                                </div>
                                 ${networkSnapshot}
-                                <section class="db-card">
-                                    <div class="db-card-head"><span class="db-iconwrap"><i class="fa-solid fa-circle-info" aria-hidden="true"></i></span><div><h3>Inventory Status</h3><p>A concise snapshot of your saved inventory.</p></div></div>
-                                    <div class="db-card-rule"></div>
-                                    <div class="db-status-row"><strong>Devices</strong><span class="db-status-badge">${devices.length} tracked</span></div>
-                                    <div class="db-status-row"><strong>Subnets</strong><span class="db-status-badge">${subnets.length} configured</span></div>
-                                    <div class="db-status-row"><strong>Racks</strong><span class="db-status-badge">${racks.length} configured</span></div>
+                                <div class="card db-card">
+                                    <div class="card-head"><span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-info"></use></svg></span><div><h3>Inventory Status</h3><p class="sub">A concise snapshot of your saved inventory.</p></div></div>
+                                    <div class="divider"></div>
+                                    <div class="db-slimrow"><strong>Devices</strong><span class="db-badge">${devices.length} tracked</span></div>
+                                    <div class="db-slimrow"><strong>Subnets</strong><span class="db-badge">${subnets.length} configured</span></div>
+                                    <div class="db-slimrow"><strong>Racks</strong><span class="db-badge">${racks.length} configured</span></div>
                                     <p class="db-muted">Administrator-only Inventory Health warnings appear only when the real checks detect an issue.</p>
-                                </section>
+                                </div>
                             </div>
                         </div>
                     </div>
