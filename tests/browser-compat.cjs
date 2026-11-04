@@ -1252,6 +1252,14 @@ async function run(){
   await modal(page,'openDeviceModal');
   await approvedEditor.waitFor();
   assert.equal(await approvedEditor.locator('.device-review-head h2').textContent(),'Add New Device');
+  const identityVisibility=await approvedEditor.locator('#device-form-panel-general').evaluate(panel=>({
+    panelHidden:panel.hidden,
+    panelDisplay:getComputedStyle(panel).display,
+    activeTab:panel.closest('form')?.dataset.activeDeviceTab,
+    headings:[...panel.querySelectorAll('h3')].map(el=>({text:el.textContent.trim(),display:getComputedStyle(el).display,rect:el.getBoundingClientRect().toJSON()})),
+    modalDisplay:getComputedStyle(document.querySelector('#modal-container')).display
+  }));
+  console.log('Reopened Device form visibility:',JSON.stringify(identityVisibility));
   assert.ok(await approvedEditor.getByText('Device Identity',{exact:true}).isVisible(),
     'Approved Device Identity card must be visible');
   assert.deepEqual(await approvedEditor.locator('[role="tab"]').allTextContents(),
