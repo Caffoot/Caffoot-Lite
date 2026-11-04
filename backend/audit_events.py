@@ -17,6 +17,16 @@ _DEVICE_DIFFERENCE_FIELDS = frozenset((
     "rackUEnd", "rackUHeight", "face", "virtualHostId",
     "virtualPlatform", "primaryIp", "ipReserved",
 ))
+# Restrict new IPAM/Rack before-and-after snapshots to structural identifiers.
+# Exclude notes, descriptions, passwords, private data and arbitrary extensions.
+_INVENTORY_DIFFERENCE_FIELDS = {
+    "ipAllocations": frozenset(("status", "deviceId", "reservedForDeviceId")),
+    "subnets": frozenset(("name", "kind", "cidr", "parentId", "gateway", "vlan")),
+    "vlans": frozenset(("name", "vlanId", "parentId")),
+    "racks": frozenset(("name", "heightU", "location")),
+    "rackAccessories": frozenset(("type", "rackId", "face", "startU", "heightU")),
+}
+
 
 _UNSAFE = object()
 
@@ -47,6 +57,31 @@ def safe_device_differences(before, after):
         if safe_prior is _UNSAFE or safe_current is _UNSAFE:
             continue
         older[name], newer[name] = safe_prior, safe_current
+    return {"before": older, "after": newer} if older else {}
+
+
+
+def safe_inventory_differences(before, after, collection):
+    """Safe structural before/after details for approved IPAM and Rack changes.
+
+    Omit fields with unsafe, complex or excessively long values.  A record's
+    private notes and arbitrary extra properties are never captured, even for
+    full administrators.
+    """
+    allowed = _INVENTORY_DIFFERENCE_FIELDS.get(collection)
+    if allowed is None or not isinstance(before, dict) or not isinstance(after, dict):
+        return {}
+    older, newer = {}, {}
+    for key in sorted(allowed):
+        old_value, new_value = before.get(key), after.get(key)
+        if old_value == new_value:
+            continue
+        previous = _safe_audit_value(old_value)
+        current = _safe_audit_value(new_value)
+        if previous is _UNSAFE or current is _UNSAFE:
+            continue
+        older[key] = previous
+        newer[key] = current
     return {"before": older, "after": newer} if older else {}
 
 
