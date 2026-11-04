@@ -721,6 +721,47 @@ async function run(){
   assert.ok(!vm.rackId,'Physical rack placement must be owned by the hypervisor');
   console.log('Physical hypervisor selection and VM inheritance passed');
 
+  // Approved Batch 04 Device Details: real device information and actions.
+  await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
+  await page.evaluate(id=>openDeviceDetailView(id),hypervisor.id);
+  const deviceReview=page.locator('#modal-content .device-details-dialog.device-review-dialog');
+  await deviceReview.waitFor();
+  assert.ok(await deviceReview.locator('.device-review-head h2').getByText('browser-hypervisor',{exact:true}).isVisible(),
+    'Approved Device Details must show the selected live device name');
+  assert.ok(await deviceReview.getByRole('heading',{name:'Device Overview'}).isVisible(),
+    'Approved Device Overview card must be present');
+  assert.ok(await deviceReview.getByRole('heading',{name:'At a Glance'}).isVisible(),
+    'Approved Device Details must preserve the physical device summary');
+  assert.ok(await deviceReview.getByRole('tab',{name:'Virtual Machines'}).isVisible(),
+    'Physical hosts with virtual machines must retain their guest listing');
+  await deviceReview.getByRole('tab',{name:'Virtual Machines'}).click();
+  assert.ok(await deviceReview.getByText('browser-vm',{exact:true}).isVisible(),
+    'Hosted VM must remain discoverable from its physical host');
+  await deviceReview.getByRole('tab',{name:'Hardware'}).click();
+  assert.ok(await deviceReview.getByRole('heading',{name:'Hardware & lifecycle'}).isVisible(),
+    'Physical hardware details must remain accessible');
+  assert.ok(await deviceReview.locator('[data-action="edit-device-from-details"]').isVisible(),
+    'Approved footer must keep live editing controls');
+  await deviceReview.locator('[data-action="close-modal"]').first().click();
+  await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
+
+  await page.evaluate(id=>openDeviceDetailView(id),vm.id);
+  await deviceReview.waitFor();
+  assert.equal(await deviceReview.getByRole('tab',{name:'Hardware'}).count(),0,
+    'VM Device Details must not expose physical hardware');
+  assert.ok(await deviceReview.getByRole('heading',{name:'Allocated virtual hardware'}).isVisible(),
+    'Approved Device Details must show VM-owned virtual hardware');
+  assert.equal(await deviceReview.locator('[data-action="navigate-to-device-rack"]').count(),0,
+    'Virtual machines must not acquire independent rack placement');
+  await page.setViewportSize({width:420,height:900});
+  const columns=await deviceReview.locator('#device-details-panel-overview').evaluate(
+    node=>getComputedStyle(node).gridTemplateColumns.split(' ').length);
+  assert.equal(columns,1,'Approved Device Details cards must stack on narrow screens');
+  await page.setViewportSize({width:1440,height:950});
+  await deviceReview.locator('[data-action="close-modal"]').first().click();
+  await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
+  console.log('Approved Device Details for physical and virtual hardware passed');
+
   // Approved acceptance: new accounts initially lack inventory access.
   await page.evaluate(()=>switchTab('users'));
   await page.locator('#main-content .approved-page-header [data-action="approved-users-section"][data-tab="add"]').click();
