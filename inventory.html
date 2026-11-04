@@ -9984,7 +9984,7 @@ window.addEventListener('load', async () => {
         const blocked=isBlockedAction(button.dataset.action || '',button);
         const unsupportedSubmit=button.type==='submit' && button.form && !(
           button.closest('#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#personal-details-form') ||
-          (sessionIsAdmin && button.closest('#next-user-create-form')) ||
+          (sessionIsAdmin && button.closest('#next-user-create-form,#next-user-profile-form')) ||
           (editPermissions.Devices && button.closest('form[data-device-form="true"]')) ||
           (editPermissions.IPAM && button.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"]')) ||
           (editPermissions.Racks && button.closest('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form'))
