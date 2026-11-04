@@ -130,6 +130,18 @@ async function run(){
 
   // Approved catalogue content must be a real live Device page, not preview HTML.
   await page.locator('#sidebar [data-action="tab-devices"]').click();
+  await page.locator('#main-content [data-action="approved-device-section"][data-tab="overview"]').click();
+  const approvedDeviceOverview=page.locator('#main-content [data-device-panel="overview"] .intelligence-panel[data-insight-panel="overview"]');
+  await approvedDeviceOverview.waitFor();
+  assert.equal(await approvedDeviceOverview.locator('.intelligence-metric').count(),4,
+    'Approved Devices Overview must show four original-format saved-inventory totals');
+  assert.equal(await approvedDeviceOverview.locator('.intelligence-two > article.intelligence-card').count(),2,
+    'Device type and location must use approved Draft 03 intelligence cards, not legacy panels');
+  assert.deepEqual(await approvedDeviceOverview.locator('.intelligence-two > article.intelligence-card h3').allTextContents(),
+    ['Devices by Type','Devices by Location'],
+    'Approved Draft 03 intelligence card headings must appear in their original layout');
+  assert.equal(await approvedDeviceOverview.locator('.intelligence-two .intelligence-card-head .iconwrap').count(),2,
+    'Both approved intelligence cards must retain their original icon/header components');
   await page.locator('#main-content [data-action="approved-device-section"][data-tab="types"]').click();
   await page.locator('#main-content .catalog-card [data-catalog-list="type"]').waitFor();
   const deviceTypeRows=page.locator('#main-content [data-catalog-row="type"]');
@@ -481,6 +493,20 @@ async function run(){
   const device=saved.devices.find(d=>d.name==='browser-device');
   assert.equal(saved.ipAllocations['10.64.20.10'].deviceId,device.id);
   console.log('Device form and primary IPAM allocation passed');
+
+  // Approved intelligence chart rows open the *real*, permission-aware inventory.
+  await page.locator('#sidebar [data-action="tab-devices"]').click();
+  await page.locator('#main-content [data-action="approved-device-section"][data-tab="overview"]').click();
+  const desktopTypeBreakdown=page.locator('#main-content [data-insight-panel="overview"] .intelligence-chart-row[data-kind="type"][data-value="Desktop"]');
+  await desktopTypeBreakdown.waitFor();
+  assert.ok(await desktopTypeBreakdown.isVisible(),
+    'The approved Devices by Type chart must use saved inventory rather than preview data');
+  await desktopTypeBreakdown.click();
+  await page.waitForFunction(()=>activeDeviceDetailsTab==='inventory' && deviceTypeFilter==='Desktop');
+  assert.ok(await page.locator('#main-content [data-device-panel="inventory"] .device-table').getByText('browser-device').isVisible(),
+    'Clicking the approved chart row must open the filtered live Device Inventory');
+  await page.locator('#main-content [data-action="clear-device-filters"]').first().click();
+
   await page.locator('#sidebar [data-action="tab-audit"]').click();
   await page.locator('.approved-audit #activity-results tr[data-audit-index]').first().waitFor();
   assert.ok(Number(await page.locator('.approved-audit #stat-total').textContent())>=1,
