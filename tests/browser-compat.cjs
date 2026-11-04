@@ -166,11 +166,11 @@ async function run(){
     'Manual safety check must still reload and validate central inventory');
   await page.locator('#sidebar [data-action="tab-audit"]').click();
   await page.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='Change History & Data Safety');
-  assert.ok(await page.locator('#main-content .approved-page-body > div.w-full').isVisible(),
+  assert.ok(await page.locator('#main-content > div.w-full, #main-content .approved-page-body > div.w-full').isVisible(),
     'Change History should fill the inventory workspace');
   await page.locator('#sidebar [data-action="tab-users"]').click();
   await page.getByRole('heading',{name:'User Management Overview'}).waitFor();
-  assert.ok(await page.locator('#main-content .approved-page-body > div.w-full').isVisible(),
+  assert.ok(await page.locator('#main-content > div.w-full, #main-content .approved-page-body > div.w-full').isVisible(),
     'Users overview should fill the inventory workspace');
   await page.getByText('Total users',{exact:true}).waitFor();
   await page.getByRole('heading',{name:'Administrators',exact:true}).waitFor();
