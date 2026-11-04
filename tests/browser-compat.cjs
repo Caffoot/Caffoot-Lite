@@ -850,28 +850,49 @@ async function run(){
   const rackSwitch=switchState.devices.find(d=>d.name==='rack-switch');
   assert.equal(switchState.ipAllocations['10.64.20.11'].deviceId,rackSwitch.id);
   await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
-  await page.evaluate(({id,deviceId})=>openAssignDeviceModal(id,6,deviceId),{id:rackId,deviceId:rackSwitch.id});
-  await page.locator('#assign-face').selectOption('front');
-  await page.locator('#assign-u-start').selectOption('6');
-  await page.locator('form[data-form-action="assign"] button[type="submit"]').click();
+  // Save a real mounted-device move using the Draft 04 combined placement form.
+  await page.evaluate(id=>openRackSlotPlacementDialog(id,6,'device'),rackId);
+  const savedPlacement=page.locator('#rack-placement-form');
+  await savedPlacement.locator('#assign-device-id').selectOption(rackSwitch.id);
+  await savedPlacement.locator('#assign-face').selectOption('front');
+  await savedPlacement.locator('#assign-u-start').selectOption('6');
+  assert.equal(await savedPlacement.locator('#place-height').isDisabled(),true,
+    'Device height must be determined by the inventory record, not edited independently');
+  await savedPlacement.locator('button[type="submit"]').click();
   await persisted(page,s=>s.devices.some(d=>d.id===rackSwitch.id && d.rackId===rackId &&
-    Number(d.rackUStart)===6),'Rack device move');
+    Number(d.rackUStart)===6),'Draft 04 rack device move');
   await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
-  await page.evaluate(id=>openRackAccessoryEditor(id,3),rackId);
+
+  // The original combined form also saves horizontal accessories to SQLite.
+  await page.evaluate(id=>openRackSlotPlacementDialog(id,3,'accessory'),rackId);
+  const savedAccessoryPlacement=page.locator('#rack-placement-form');
+  assert.equal(await savedAccessoryPlacement.locator('#place-item-type').inputValue(),'accessory');
+  await savedAccessoryPlacement.locator('#place-accessory-type').selectOption('patch');
+  await savedAccessoryPlacement.locator('#place-accessory-name-input').fill('Browser Patch Panel');
+  await savedAccessoryPlacement.locator('#place-height').fill('1');
+  await savedAccessoryPlacement.locator('#place-height').blur();
+  await savedAccessoryPlacement.locator('#assign-u-start').selectOption('3');
+  await savedAccessoryPlacement.locator('#place-port-count').selectOption('24');
+  await savedAccessoryPlacement.locator('button[type="submit"]').click();
+  await persisted(page,s=>s.rackAccessories.some(a=>a.name==='Browser Patch Panel' &&
+    a.type==='patch' && Number(a.portCount)===24 &&
+    a.rackId===rackId && Number(a.startU)===3),'Draft 04 horizontal rack accessory');
+  await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
+
+  // Existing accessory editing must remain connected after the new placement flow.
+  const savedPatch=(await state(page)).rackAccessories.find(a=>a.name==='Browser Patch Panel');
+  await page.evaluate(({id,accessoryId})=>openRackAccessoryEditor(id,3,accessoryId),
+    {id:rackId,accessoryId:savedPatch.id});
   const rackAccessoryModal=page.locator('#modal-content .rack-modal.accessory-modal');
   assert.ok(await rackAccessoryModal.locator('.rack-modal-top h2')
-    .getByText('Place Horizontal Accessory',{exact:true}).isVisible(),
-    'Horizontal accessory editor must use the approved Rack Draft 04 modal header');
+    .getByText('Edit Horizontal Accessory Placement',{exact:true}).isVisible(),
+    'Editing a saved horizontal accessory must use the Draft 04 modal header');
   assert.ok(await rackAccessoryModal.locator('.rack-form-grid > .rack-field').count()>=6,
-    'Approved Rack editor fields must share the source form grid');
-  await page.locator('#rack-accessory-form [name="type"]').selectOption('patch');
-  await page.locator('#rack-accessory-form [name="name"]').fill('Browser Patch Panel');
-  await page.locator('#rack-accessory-form [name="portCount"]').selectOption('24');
-  await page.locator('#rack-accessory-form [name="startU"]').selectOption('3');
-  await page.locator('#rack-accessory-form button[type="submit"]').click();
-  await persisted(page,s=>s.rackAccessories.some(a=>a.name==='Browser Patch Panel' &&
-    a.rackId===rackId && Number(a.startU)===3),'Rack horizontal accessory');
-  await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
+    'The saved accessory editor must retain the approved form grid');
+  assert.equal(await rackAccessoryModal.locator('#rack-accessory-form [name="name"]').inputValue(),
+    'Browser Patch Panel','Accessory editing must load existing saved data');
+  await page.evaluate(()=>closeModal(true));
+
   await page.evaluate(id=>{
     selectedRackAccessoryType='pdu_vertical';
     openRackAccessoryEditor(id,1);

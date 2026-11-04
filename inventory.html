@@ -520,7 +520,7 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 .dark .rack-action,.dark .rack-actions .rack-icon{background:#1e293b;color:#e2e8f0}
 .accessory-modal{max-height:calc(100vh - 48px);overflow-y:auto}
 #modal-content:has(.accessory-modal){max-width:610px;max-height:calc(100vh - 32px);overflow:hidden}
-.accessory-modal label{display:flex;flex-direction:column;gap:7px;min-width:0;font-size:13px;font-weight:600;line-height:1.4}
+.accessory-modal label.rack-field{display:grid;gap:6px;min-width:0;font-size:12px;font-weight:720;line-height:normal}
 .accessory-modal label .rack-accessory-field{margin-top:0;min-height:44px;box-sizing:border-box;width:100%;font-size:14px}
 .accessory-modal fieldset{min-width:0}
 .accessory-modal .grid{align-items:start}
@@ -6568,9 +6568,18 @@ function hierarchyValidateTypes(subnets) {
                 portSelect.disabled = !patch;
                 const device = appState.devices.find(d => d.id === deviceSelect.value);
                 if (deviceMode) {
+                    heightInput.max = String(Number(rack.heightU));
                     heightInput.value = String(device ? Math.max(1,Number(device.rackUHeight) || (Number(device.rackUEnd)-Number(device.rackUStart)+1) || 1) : 1);
                     heightInput.disabled = true;
-                } else heightInput.disabled = false;
+                } else {
+                    const maximumAccessoryHeight = Math.min(12,Number(rack.heightU));
+                    heightInput.max = String(maximumAccessoryHeight);
+                    if (!Number.isInteger(Number(heightInput.value)) ||
+                        Number(heightInput.value) < 1 || Number(heightInput.value) > maximumAccessoryHeight) {
+                        heightInput.value = String(preferredHeight);
+                    }
+                    heightInput.disabled = false;
+                }
                 const height = Number(heightInput.value);
                 const available = [];
                 if ((deviceMode ? !!device : !!rackAccessoryTypeDefinitions[typeSelect.value]) &&
