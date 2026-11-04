@@ -74,8 +74,8 @@ async function run(){
     'Sign-in and first-run setup must declare the existing touch icon');
   const faviconResponse=await page.request.get(address+'/assets/favicon.ico');
   assert.equal(faviconResponse.status(),200,'Existing Caffoot favicon should be served to browsers');
-  await page.locator('.brand-header img[src="/assets/caffoot-icon-1024.png"]').waitFor();
-  assert.equal(await page.locator('.brand-tagline').textContent(),'Infrastructure, Simplified.');
+  await page.locator('.brand-side .brand-logo[src="/assets/caffoot-icon-1024.png"]').waitFor();
+  assert.equal(await page.locator('.brand-content h2').innerText(),'Infrastructure,\nSimplified.');
   assert.ok((await page.locator('main').evaluate(el=>getComputedStyle(el).fontFamily)).includes('Inter'),
     'First-run setup must use the approved Inter font stack');
   await page.setViewportSize({width:375,height:812});
@@ -84,6 +84,10 @@ async function run(){
     return rect.left>=0 && rect.right<=window.innerWidth;
   }),'Branded setup panel must fit a narrow screen');
   await page.setViewportSize({width:1440,height:950});
+  await page.locator('#welcome-flow:not([hidden])').waitFor();
+  assert.ok(await page.getByRole('heading',{name:'Create Your Administrator'}).isVisible(),
+    'Approved first-run welcome must explain the administrator step');
+  await page.locator('#get-started').click();
   await page.waitForFunction(()=>document.querySelector('#intro')?.textContent.includes('Create the first administrator'));
   await page.locator('#username').fill('owner');
   await page.locator('#password').fill(password);
