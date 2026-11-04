@@ -753,7 +753,7 @@ async function run(){
   const general=page.locator('#device-form-panel-general');
   await general.waitFor();
   const generalGrid=general.locator(':scope > .device-review-grid');
-  assert.equal(await generalGrid.locator(':scope > .device-review-panel.full').count(),2,
+  assert.equal(await generalGrid.locator(':scope > .device-review-panel.full:visible').count(),2,
     'Approved physical-device General tab must use Device Identity and Mounting cards');
   const identityCard=generalGrid.locator(':scope > .device-review-panel').first();
   assert.ok(await identityCard.getByRole('heading',{name:'Device Identity'}).isVisible());
