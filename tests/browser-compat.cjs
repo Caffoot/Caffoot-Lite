@@ -301,6 +301,48 @@ async function run(){
   assert.equal(narrowColumns,1,'Approved four insight cards must stack into one mobile column');
   await page.setViewportSize(draft02Viewport);
   await page.locator('#main-content [data-dashboard-tab="overview"]').click();
+
+  // Pinned Dashboard Draft 02 Activity & Alerts component fidelity and live actions.
+  await page.locator('#main-content [data-dashboard-tab="activity"]').click();
+  const draft02Activity=page.locator('#main-content #dashboard-panel-activity');
+  await draft02Activity.waitFor({state:'visible'});
+  assert.equal(await draft02Activity.locator('.db-summary > .card.db-card').count(),2,
+    'Activity summary must use the two original source cards');
+  assert.deepEqual(await draft02Activity.locator('.db-summary .card-head h3').allTextContents(),
+    ['Recent Save Events','Network Warnings']);
+  assert.deepEqual(await draft02Activity.locator('.db-two .card-head h3').allTextContents(),
+    ['Recent Activity','Warnings & Attention'],
+    'Activity and alert filters must be inside the original two card stacks');
+  assert.ok(await draft02Activity.locator('.db-filters select#activity-filter[data-dashboard-filter="activity"]').isVisible());
+  assert.ok(await draft02Activity.locator('.db-filters select#alert-filter[data-dashboard-filter="alerts"]').isVisible());
+  await draft02Activity.locator('#activity-filter').selectOption('devices');
+  assert.equal(await draft02Activity.locator('#activity-filter').inputValue(),'devices',
+    'Activity filter must retain its selected value after live redraw');
+  await draft02Activity.locator('#activity-filter').selectOption('all');
+  await draft02Activity.locator('#alert-filter').selectOption('critical');
+  assert.equal(await draft02Activity.locator('#alert-filter').inputValue(),'critical',
+    'Severity filter must retain its selected value after live redraw');
+  await draft02Activity.locator('#alert-filter').selectOption('all');
+  assert.ok(await draft02Activity.locator('#activity-empty').isVisible(),
+    'Fresh inventory must show source empty-state copy without fabricated history');
+  assert.ok(await draft02Activity.locator('#alert-empty').isVisible(),
+    'Fresh inventory must show source empty state without fabricated warnings');
+  assert.equal(await draft02Activity.locator('.db-section.card.db-card .db-report-buttons button[data-action="export-selected-inventory-csv"]').count(),3,
+    'Pinned report actions must map to all three existing CSV downloads');
+  assert.ok(await draft02Activity.locator('section[aria-label="Network reports"]').isVisible(),
+    'Existing detailed Network Reports must not be removed by the source conversion');
+  assert.equal(await draft02Activity.locator('[data-action="export-selected-inventory-csv"]').count(),3,
+    'There must not be duplicate report export buttons');
+  const csvDownload=page.waitForEvent('download');
+  await draft02Activity.locator('.db-report-buttons [data-report="devices"]').click();
+  assert.match((await csvDownload).suggestedFilename(),/^caffoot_lite_devices_/,
+    'Original source export button must execute the existing safe CSV downloader');
+  const activityViewport=page.viewportSize();
+  await page.setViewportSize({width:390,height:844});
+  assert.equal(await draft02Activity.locator('.db-two').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),1,
+    'Original Dashboard Activity columns must stack on narrow mobile');
+  await page.setViewportSize(activityViewport);
+  await page.locator('#main-content [data-dashboard-tab="overview"]').click();
   assert.equal(await page.getByText('Keep a separate JSON backup',{exact:false}).count(),0,
     'Docker Dashboard must not show browser-era JSON backup advice');
   assert.equal(await page.getByRole('button',{name:'Refresh inventory'}).count(),0);
