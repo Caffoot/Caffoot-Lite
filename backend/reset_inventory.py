@@ -1,6 +1,7 @@
 """Approved Clean Start: reset only central inventory, not user accounts."""
 import copy
 import json
+from .audit_events import attribute_event
 from datetime import datetime, timezone
 
 from .application_integrity import validate_detached_application_state
@@ -62,7 +63,7 @@ def reset_inventory(connection, account_id):
         }
         connection.execute(
             "INSERT INTO inventory_change_history(record_json) VALUES(?)",
-            (json.dumps(event, ensure_ascii=False),)
+            (json.dumps(attribute_event(connection, account_id, event), ensure_ascii=False),)
         )
         connection.commit()
     except BaseException:
