@@ -1418,7 +1418,7 @@ async function run(){
     'Batch 04 Notes must mount its one full-width card inside the approved grid');
   assert.equal(await approvedNotesGrid.evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),2,
     'Approved Notes outer grid must retain desktop columns');
-  assert.ok(await approvedNotes.getByText('Notes / Details',{exact:true}).isVisible(),
+  assert.ok(await approvedNotes.getByRole('heading',{name:'Notes / Details',level:3}).isVisible(),
     'Approved Notes card heading must match Batch 04');
   assert.ok(await approvedNotes.locator('.device-review-note-toolbar[role="toolbar"]').isVisible(),
     'Original Notes formatting toolbar must be present');
@@ -1445,6 +1445,8 @@ async function run(){
   console.log('Approved Device Notes structure, Markdown preview and mobile layout passed');
 
   await approvedEditor.getByRole('tab',{name:'General'}).click();
+  assert.equal(await approvedEditor.locator('#device-form-panel-general .device-physical-mounting.device-review-panel.full').count(),1,
+    'General tab must use the approved full-width physical mounting card');
   await page.locator('#dev-mount-type').selectOption('Tower / Floor Standing');
   await page.locator('#dev-location').selectOption('Unknown');
   await approvedEditor.getByRole('tab',{name:'Software & Firmware'}).click();
