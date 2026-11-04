@@ -378,7 +378,12 @@ async function run(){
   assert.ok(await health.getByText(/Duplicate or missing device ID/).isVisible());
   assert.ok(await health.evaluate(el=>el.classList.contains('db-error-card')),
     'Inventory Health must retain the accepted Dashboard warning component');
-  await page.evaluate(()=>{appState.devices.pop();renderContent();});
+  await page.evaluate(()=>{
+    const duplicates=appState.devices.map((device,i)=>device.name==='browser-device'?i:-1).filter(i=>i>=0);
+    if(duplicates.length>1)appState.devices.splice(duplicates[duplicates.length-1],1);
+    renderContent();
+  });
+  await page.waitForFunction(()=>!document.getElementById('next-dashboard-inventory-health'));
   assert.equal(await health.count(),0,'Corrected inventory must hide the warning');
 
   // Published IPAM paths: device-linked notes and independent reservations.
