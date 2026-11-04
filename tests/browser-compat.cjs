@@ -188,12 +188,38 @@ async function run(){
       'This inventory operation is not yet connected to SQLite.');
   }
   await page.locator('#sidebar [data-action="tab-settings"]').click();
-  assert.equal(await page.locator('.settings-tabs').count(),0,
-    'Single Settings subsection must not show a redundant full-width tab');
-  assert.ok(await page.getByRole('heading',{name:'Import Inventory',exact:true}).isVisible(),
-    'Import Inventory section heading must remain');
+  assert.ok(await page.getByRole('heading',{name:'Settings & Data',exact:true}).isVisible(),
+    'Settings & Data must use the owner-approved Draft 02 page');
+  assert.equal(await page.locator('.approved-settings .subnav [data-action="approved-settings-tab"]').count(),3,
+    'Approved Data & Backups, Email Settings and System Maintenance tabs must render');
+  assert.ok(await page.getByRole('heading',{name:'Import Existing Inventory',exact:true}).isVisible(),
+    'The approved Import Existing Inventory panel must remain');
   assert.ok(await page.locator('[data-action="next-import-pick"]').isEnabled(),
     'Administrator legacy migration picker must remain');
+
+  // Approved email configuration must persist without disclosing its password.
+  await page.locator('.approved-settings .subnav [data-tab="email"]').click();
+  await page.waitForFunction(()=>document.querySelector('#smtp-config-status')?.textContent==='Not Configured');
+  await page.locator('#approved-smtp-form [name="host"]').fill('mail.example.test');
+  await page.locator('#approved-smtp-form [name="port"]').fill('587');
+  await page.locator('#approved-smtp-form [name="username"]').fill('smtp-owner');
+  await page.locator('#approved-smtp-form [name="password"]').fill('test-smtp-browser-password');
+  await page.locator('#approved-smtp-form [name="fromName"]').fill('Caffoot Lite');
+  await page.locator('#approved-smtp-form [name="fromEmail"]').fill('caffoot@example.test');
+  await page.locator('#approved-smtp-form button[type="submit"]').click();
+  await page.waitForFunction(()=>document.querySelector('#smtp-config-status')?.textContent==='Configured');
+  const smtpDetails=await page.evaluate(async()=>{
+    const response=await fetch('/api/settings/email',{cache:'no-store'});
+    if(!response.ok)throw Error('SMTP configuration not readable');
+    return response.json();
+  });
+  assert.equal(smtpDetails.host,'mail.example.test');
+  assert.equal(smtpDetails.passwordConfigured,true);
+  assert.equal(smtpDetails.password,undefined,'SMTP credentials must never be returned to the browser');
+  assert.ok(await page.locator('#approved-smtp-form [name="password"]').inputValue()==='',
+    'Saved SMTP passwords must never be reinserted into form fields');
+
+  await page.locator('.approved-settings .subnav [data-tab="maintenance"]').click();
   assert.ok(await page.locator('[data-action="clear-inventory-data"]').isEnabled(),
     'Administrator Clear System safeguard must remain');
   const safetyResult=new Promise(resolve=>page.once('dialog',async dialog=>{
@@ -832,6 +858,7 @@ async function run(){
   console.log('Password-only read access, hidden editing controls and administrator-only maintenance passed');
 
   await page.evaluate(()=>switchTab('settings'));
+  await page.locator('.approved-settings .subnav [data-tab="maintenance"]').click();
   await page.locator('[data-action="clear-inventory-data"]').waitFor();
   page.once('dialog',d=>d.accept());
   await page.locator('[data-action="clear-inventory-data"]').click();
@@ -873,6 +900,7 @@ async function run(){
   const file={name:'caffoot_lite_backup_v1.3.3.json',
     mimeType:'application/json',buffer:Buffer.from(JSON.stringify(exported))};
   await page.evaluate(()=>switchTab('settings'));
+  await page.locator('.approved-settings .subnav [data-tab="data"]').click();
   async function chooseBackup(){
     assert.equal(await page.locator('[data-action="next-import-pick"]').isEnabled(),true,
       'Authorised import button must remain usable');
