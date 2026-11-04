@@ -16,6 +16,7 @@ from .settings_saves import save_inventory_setting
 from .device_catalogue import change_device_catalogue
 from .reset_inventory import reset_inventory
 from .ipam_repair import apply_ipam_repairs
+from .audit_events import record_actor_event
 from .profiles import (read_profile, save_profile, read_profile_photo,
                        save_profile_photo, remove_profile_photo, MAX_PHOTO_BYTES)
 from .schema import initialise_database as migrate_database
@@ -680,6 +681,16 @@ class Handler(BaseHTTPRequestHandler):
                     connection.execute("BEGIN IMMEDIATE")
                     try:
                         connection.execute("UPDATE accounts SET mfa_confirmed=1 WHERE id=?", (actor,))
+                        username = connection.execute(
+                            "SELECT username FROM accounts WHERE id=?", (actor,)
+                        ).fetchone()[0]
+                        record_actor_event(
+                            connection, actor, kind="Security", action="Updated",
+                            label=username, reason="MFA enrolment confirmed",
+                            fields=["Multi-factor authentication"],
+                            before={"MFA status": "Not enrolled"},
+                            after={"MFA status": "Enabled"},
+                        )
                         connection.execute("DELETE FROM account_sessions WHERE account_id=?", (actor,))
                         connection.commit()
                     except BaseException:
@@ -702,6 +713,14 @@ class Handler(BaseHTTPRequestHandler):
                         connection.execute(
                             "UPDATE accounts SET password_hash=? WHERE id=?",
                             (replacement_hash, actor),
+                        )
+                        username = connection.execute(
+                            "SELECT username FROM accounts WHERE id=?", (actor,)
+                        ).fetchone()[0]
+                        record_actor_event(
+                            connection, actor, kind="Security", action="Updated",
+                            label=username, reason="Account password changed",
+                            fields=["Password"],
                         )
                         connection.execute(
                             "DELETE FROM account_sessions WHERE account_id=?", (actor,)
