@@ -190,7 +190,7 @@ async function run(){
   await page.locator('#sidebar [data-action="tab-settings"]').click();
   console.log('SETTINGS DEBUG',JSON.stringify(await page.evaluate(()=>({
     currentTab,
-    admin:sessionIsAdmin,
+    admin:window.nextSessionIsAdmin,
     pageTitle:document.getElementById('page-title')?.textContent,
     mainLength:document.getElementById('main-content')?.innerHTML.length,
     settingsCount:document.querySelectorAll('#main-content .approved-settings').length,
