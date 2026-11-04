@@ -733,6 +733,13 @@ async function run(){
   await modal(page,'openDeviceModal');
   const approvedEditor=page.locator('#modal-content .device-modal.device-review-dialog');
   await approvedEditor.waitFor();
+  assert.ok(await page.locator('#modal-container.device-review-overlay #modal-content.approved-device-review-container').isVisible(),
+    'Approved Device Add/Edit must mount inside its original Batch 04 overlay');
+  assert.equal(await page.locator('#modal-container').evaluate(el=>getComputedStyle(el).position),'fixed',
+    'Approved Device dialog overlay must cover the viewport');
+  assert.ok(await page.locator('#modal-content').evaluate(el=>el.getAttribute('aria-modal')==='true'),
+    'Existing authenticated modal semantics must remain intact');
+
   assert.ok(await approvedEditor.getByRole('heading',{name:'Add New Device'}).isVisible(),
     'Approved Batch 04 Add Device heading must render');
   assert.ok(await approvedEditor.getByText('DEVICE MANAGEMENT',{exact:true}).isVisible(),
@@ -1220,6 +1227,12 @@ async function run(){
     'Approved Software & Firmware cards must be present');
   await approvedEditor.getByRole('tab',{name:'General'}).click();
   await page.setViewportSize({width:420,height:900});
+  assert.equal(await page.locator('#modal-container.device-review-overlay').evaluate(el=>getComputedStyle(el).paddingLeft),'0px',
+    'Pinned Batch 04 mobile overlay must have zero padding');
+  assert.equal(await approvedEditor.evaluate(el=>Math.round(el.getBoundingClientRect().width)),420,
+    'Approved Device editor must span the full 420px viewport on mobile');
+  assert.equal(await approvedEditor.evaluate(el=>getComputedStyle(el).borderTopLeftRadius),'0px',
+    'Approved mobile Device dialog must be edge-to-edge');
   assert.equal(await approvedEditor.locator('#device-form-panel-general').evaluate(
     node=>getComputedStyle(node).flexDirection),'column',
     'Device Editor cards must stack at mobile width');
@@ -1279,6 +1292,9 @@ async function run(){
   await page.evaluate(id=>openDeviceDetailView(id),hypervisor.id);
   const deviceReview=page.locator('#modal-content .device-details-dialog.device-review-dialog');
   await deviceReview.waitFor();
+  assert.ok(await page.locator('#modal-container.device-review-overlay #modal-content.approved-device-review-container').isVisible(),
+    'Device Details must reuse the exact approved Batch 04 overlay');
+
   assert.ok(await deviceReview.locator('.device-review-head h2').getByText('browser-hypervisor',{exact:true}).isVisible(),
     'Approved Device Details must show the selected live device name');
   assert.ok(await deviceReview.getByRole('heading',{name:'Device Overview'}).isVisible(),
@@ -1319,9 +1335,20 @@ async function run(){
   const columns=await deviceReview.locator('#device-details-panel-overview').evaluate(
     node=>getComputedStyle(node).gridTemplateColumns.split(' ').length);
   assert.equal(columns,1,'Approved Device Details cards must stack on narrow screens');
+  assert.equal(await page.locator('#modal-container.device-review-overlay').evaluate(el=>getComputedStyle(el).paddingLeft),'0px',
+    'Pinned Device Details overlay must also lose desktop padding on mobile');
+  assert.equal(await deviceReview.evaluate(el=>Math.round(el.getBoundingClientRect().width)),420,
+    'Approved VM Details dialog must span the mobile viewport');
+
   await page.setViewportSize({width:1440,height:950});
   await deviceReview.locator('[data-action="close-modal"]').first().click();
   await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
+  await modal(page,'openManageLocationsModal');
+  assert.equal(await page.locator('#modal-container.device-review-overlay').count(),0,
+    'Approved Device overlay classes must reset before opening other application dialogs');
+  assert.equal(await page.locator('#modal-content.approved-device-review-container').count(),0,
+    'Non-device dialogues must recover their own original container style');
+  await page.evaluate(()=>closeModal(true));
   console.log('Approved Device Details for physical and virtual hardware passed');
 
   // Approved acceptance: new accounts initially lack inventory access.
