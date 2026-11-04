@@ -162,6 +162,17 @@ This is a **working access/verification record**, not a change in the owner's ag
 - **Required next-session sequence:** Verify the PR's *actual head* and whether a current-commit run exists; inspect job outcomes and logs, then correct only demonstrated test or application defects. GitHub REST Actions run collections may be read with the connected GitHub `fetch` capability if a commit-scoped workflow-run helper returns nothing (that helper may exclude manually dispatched runs). New commits to files matched by workflow `pull_request.paths` may normally trigger checks, but **do not assume** automatic triggering succeeded: confirm an actual run ID and commit SHA. If no safe trigger is exposed and no run starts, report the blockage plainly; do not silently change workflow triggers or ask the owner to administer routine CI as the default process.
 - **Design/release boundaries:** This workflow investigation does not relax the requirement to compare all 12 pinned HTML originals, preserve saved SQLite data/permissions/MFA/IPAM/Racks/security, and complete functional, server security, desktop/mobile and visual verification before one private owner acceptance build. PR #281 stays **draft and unmerged**. No public image, tag, release or production change.
 
+### Investigation update — the PR warning and missing automatic checks (4 November 2026)
+
+The owner's observation that an on-screen PR warning appeared when automatic Actions ceased **must not be dismissed**. Verified evidence:
+
+- The most recent `pull_request` workflow runs found for PR #281 began at **10:25:19 UTC**, using head `54d388a`, and succeeded. Later browser/backend runs found were manually dispatched, not automatically triggered.
+- The GitHub reference `refs/pull/281/merge` was still `1b909104` when inspected after the latest development commits. Its recorded parents were `main` at `36515996` and PR head **`54d388a`**. It has **not refreshed to the latest PR head** in the observed records.
+- The live PR API returned `mergeable: null`, `mergeable_state: "unknown"`, so **an actual merge conflict is not yet confirmed**. GitHub's commit comparison showed the PR branch **ahead of `main` by 183 commits, behind by 0**, with `main` as merge base; that does not suggest an ordinary divergent-file conflict.
+- GitHub's published Actions documentation states that workflows using the `pull_request` event do not run when the pull request has a merge conflict. Thus a PR mergeability problem is a **plausible connection to missing checks, not yet a proved root cause**. Do not repeat the earlier unverified assurance that the warning is unrelated.
+
+**Next investigation:** Read the actual PR warning and up-to-date mergeability/check status, and check whether GitHub refreshes `refs/pull/281/merge` after changes. If the warning points to a real conflict, identify precisely which files and the safe resolution before acting. Do **not** silently change the PR base, force-push, switch to privileged `pull_request_target`, remove security restrictions, or merge the draft PR merely to get CI running.
+
 ## Development standards
 
 Follow [CONTRIBUTING.md](../../CONTRIBUTING.md), the [Coding and Naming Conventions](06-Coding-and-Naming-Conventions.md) and the [Function Index](Function-Index.md). Describe source and test changes in plain British English, and keep the Function Index accurate if live functions are added or renamed.
