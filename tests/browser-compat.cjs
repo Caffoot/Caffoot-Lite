@@ -1458,6 +1458,18 @@ async function run(){
     'Approved full-width VM allocation card must be visible in General');
   assert.ok(await vmCard.getByRole('heading',{name:'Virtual Machine Configuration'}).isVisible(),
     'VM card heading must use Batch 04 presentation');
+  assert.ok(await vmCard.getByRole('heading',{name:'Allocated Virtual Hardware'}).isVisible(),
+    'Approved VM allocation subsection must use the original heading');
+  assert.ok(await vmCard.locator('.device-review-hint').getByText(
+    'The virtualisation platform comes from the selected physical hypervisor.',{exact:false}).isVisible(),
+    'Approved VM host-inheritance guidance must be visible');
+  assert.equal(await vmCard.locator('.device-review-hint').count(),1,
+    'VM card must keep one source host-inheritance guidance panel');
+  await page.setViewportSize({width:420,height:900});
+  assert.equal(await vmCard.locator('.device-review-form-grid').first().evaluate(
+    el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),1,
+    'VM host-selection field grid must stack at mobile width');
+  await page.setViewportSize({width:1440,height:950});
   assert.equal(await vmCard.locator('.device-review-form-grid').count(),2,
     'Approved VM card must provide separate host and allocated hardware grids');
   for(const id of ['dev-virtual-host','dev-vmVcpu','dev-vmRamGb','dev-vmDiskGb','dev-vmNicCount']){
