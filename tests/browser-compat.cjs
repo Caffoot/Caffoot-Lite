@@ -1319,6 +1319,29 @@ async function run(){
   const dynamicDeviceFields=approvedEditor.locator('#device-detail-fields-panel .device-review-form-grid');
   assert.ok(await dynamicDeviceFields.locator('.device-review-field input,.device-review-field select').count()>0,
     'Type-specific hardware details must use the original source field wrappers and keep editable controls');
+  // Batch 04 Networking uses separate full-width Network Identity and
+  // Subnet Guidance cards around the original live IPAM fields.
+  await approvedEditor.getByRole('tab',{name:'Networking'}).click();
+  const approvedNetworking=approvedEditor.locator('#device-form-panel-networking');
+  const networkGrid=approvedNetworking.locator(':scope > .device-review-grid');
+  assert.equal(await networkGrid.locator(':scope > .device-review-panel.full').count(),2,
+    'Source Networking tab must contain its two full-width cards');
+  assert.ok(await networkGrid.getByRole('heading',{name:'Network Identity'}).isVisible());
+  assert.ok(await networkGrid.getByRole('heading',{name:'Subnet Guidance'}).isVisible());
+  assert.ok(await networkGrid.locator('.device-review-hint').getByText(/Create it in IPAM/).isVisible(),
+    'Original Subnet Guidance must be kept in the separate source card');
+  for(const id of ['dev-block','dev-vlan','dev-subnet','dev-ip','dev-ip-available','dev-ip-reserved']){
+    assert.equal(await networkGrid.locator('#'+id).count(),1,
+      'Network Identity must retain its existing IPAM control '+id);
+  }
+  assert.ok(await networkGrid.locator('[data-action="create-subnet-from-device"]').isVisible(),
+    'Source integration must keep the live Create subnet in IPAM action');
+  await page.setViewportSize({width:420,height:900});
+  assert.equal(await networkGrid.evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),1,
+    'Approved Networking cards must stack at mobile width');
+  await page.setViewportSize({width:1440,height:950});
+  console.log('Approved Network Identity/Subnet Guidance cards and live IPAM controls passed');
+
   // Pinned Batch 04 Notes card: original toolbar, field grid and preview,
   // while keeping the legacy Markdown editor and its saved field.
   await approvedEditor.getByRole('tab',{name:'Notes'}).click();
