@@ -3888,44 +3888,44 @@ function hierarchyValidateTypes(subnets) {
                         }).join('')}
                     </section>
                     <section class="${activeDeviceDetailsTab==='inventory'?'':'hidden'} space-y-4" data-device-panel="inventory">
-                    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 sm:p-5 flex flex-col gap-4">
-                        <h3 class="text-base font-bold text-slate-900 dark:text-white">Search & filter devices</h3>
+                    <div class="device-toolbar">
+                        <div class="device-toolbar-head"><div><h2>Search &amp; Filter Devices</h2><p>Find devices using your saved inventory fields.</p></div><button type="button" class="btn btn-outline" data-action="clear-device-filters">Clear Filters</button></div>
                         ${(deviceOsFilter || deviceServiceFilter || deviceMissingFilter || deviceTypeFilter || deviceLocationFilter || deviceHardwareFilter) ? `<div class="flex flex-wrap items-center gap-3 rounded-xl border border-indigo-300 dark:border-indigo-700 bg-indigo-50 dark:bg-indigo-950/40 p-3 text-sm"><span class="font-semibold text-indigo-900 dark:text-indigo-200">${escapeHtml(deviceOsFilter ? "Operating System: "+deviceOsFilter : deviceServiceFilter ? "Software / Service: "+deviceServiceFilter : deviceMissingFilter ? ({ip:"Primary IP: Not Recorded",type:"Device Type: Not Recorded",location:"Location: Not Recorded"}[deviceMissingFilter]||"Data: Not Recorded") : deviceTypeFilter ? "Device Type: "+(deviceTypeFilter==='Server - Physical' ? 'Server' : deviceTypeFilter==='Server - Virtual' ? 'Virtual Machine' : deviceTypeFilter) : deviceHardwareFilter ? ({manufacturer:"Manufacturer",model:"Model",mountType:"Mounting Method"}[deviceHardwareFilter.field]+": "+deviceHardwareFilter.value) : "Location: "+deviceLocationFilter)}</span><span class="text-slate-700 dark:text-slate-200">${getVisibleDevices().length} matching devices</span><button type="button" data-action="clear-device-filters" class="font-semibold text-indigo-700 dark:text-indigo-300 underline">Clear Filter</button></div>` : ''}
-                        <label class="search-label block w-full text-xs font-semibold text-slate-700 dark:text-slate-200">Search devices
-                            <input id="device-search" type="search" placeholder="Name, IP, model, serial or location" value="${escapeHtml(deviceSearchTerm)}" class="mt-1 w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500" />
+                        <label class="device-search-label" for="device-search">Search Devices
+                            <input id="device-search" class="device-search" type="search" placeholder="Search by name, IP, model, serial number or location" value="${escapeHtml(deviceSearchTerm)}" class="mt-1 w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-500" />
                         </label>
-                        <div class="filter-row flex flex-wrap gap-3 items-end">
-                            <label class="text-xs font-semibold text-slate-700 dark:text-slate-200">Network assignment
+                        <div class="device-filters">
+                            <label class="device-filter">Network assignment
                                 <select id="device-assignment-filter" class="mt-1 block min-w-36 rounded-xl bg-white dark:bg-slate-800 border border-slate-400 dark:border-slate-500 text-slate-900 dark:text-white">
                                     <option value="" ${deviceAssignmentFilter===''?'selected':''}>All Devices</option>
                                     <option value="assigned" ${deviceAssignmentFilter==='assigned'?'selected':''}>Assigned</option>
                                     <option value="unassigned" ${deviceAssignmentFilter==='unassigned'?'selected':''}>Unassigned</option>
                                 </select>
                             </label>
-                            <label class="text-xs font-semibold text-slate-700 dark:text-slate-200">Device type
+                            <label class="device-filter">Device type
                                 <select id="device-type-filter" class="mt-1 block min-w-36 rounded-xl bg-white dark:bg-slate-800 border border-slate-400 dark:border-slate-500 text-slate-900 dark:text-white">
                                     <option value="">All types</option>
                                     ${getUniqueDeviceTypes().sort((a,b)=>a.localeCompare(b)).map(t=>`<option value="${escapeHtml(t)}" ${deviceTypeFilter === t ? 'selected' : ''}>${escapeHtml(t==='Server - Physical' ? 'Server' : t==='Server - Virtual' ? 'Virtual Machine' : t)}</option>`).join('')}
                                 </select>
                             </label>
-                            <label class="text-xs font-semibold text-slate-700 dark:text-slate-200">Device status
+                            <label class="device-filter">Device status
                                 <select id="device-status-filter" class="mt-1 block min-w-36 rounded-xl bg-white dark:bg-slate-800 border border-slate-400 dark:border-slate-500 text-slate-900 dark:text-white">
                                     <option value="">All statuses</option>
                                     ${['Active','Maintenance','Retired'].map(v=>`<option value="${v}" ${deviceStatusFilter===v?'selected':''}>${v}</option>`).join('')}
                                 </select>
                             </label>
-                            <label class="text-xs font-semibold text-slate-700 dark:text-slate-200">Location
+                            <label class="device-filter">Location
                                 <select id="device-location-filter" class="mt-1 block min-w-36 rounded-xl bg-white dark:bg-slate-800 border border-slate-400 dark:border-slate-500 text-slate-900 dark:text-white">
                                     <option value="">All locations</option>
                                     ${[...new Set(appState.devices.map(d=>d.location||'Unknown'))].sort((a,b)=>a.localeCompare(b)).map(v=>`<option value="${escapeHtml(v)}" ${deviceLocationFilter===v?'selected':''}>${escapeHtml(v)}</option>`).join('')}
                                 </select>
                             </label>
-                            <label class="text-xs font-semibold text-slate-700 dark:text-slate-200">Mounting
+                            <label class="device-filter">Mounting
                                 <select id="device-mount-filter" class="mt-1 block min-w-36 rounded-xl bg-white dark:bg-slate-800 border border-slate-400 dark:border-slate-500 text-slate-900 dark:text-white">
                                     <option value="">All devices</option><option value="racked" ${deviceMountFilter==='racked'?'selected':''}>Rack mounted</option><option value="unracked" ${deviceMountFilter==='unracked'?'selected':''}>Not in rack</option>
                                 </select>
                             </label>
-                            <label class="text-xs font-semibold text-slate-700 dark:text-slate-200">Sort devices
+                            <label class="device-filter">Sort devices
                                 <select id="device-sort" class="mt-1 block min-w-40 rounded-xl bg-white dark:bg-slate-800 border border-slate-400 dark:border-slate-500 text-slate-900 dark:text-white">
                                     ${[['name-asc','Name A–Z'],['name-desc','Name Z–A'],['type-asc','Type A–Z'],['type-desc','Type Z–A'],['location-asc','Location A–Z'],['location-desc','Location Z–A'],['ip-asc','IP address ↑'],['ip-desc','IP address ↓']].map(([value,label])=>`<option value="${value}" ${deviceSort === value ? 'selected' : ''}>${label}</option>`).join('')}
                                 </select>
@@ -3943,11 +3943,11 @@ function hierarchyValidateTypes(subnets) {
                             </button>
                         </div>
                     </div>
-                    <div class="device-results" aria-live="polite"><span>Showing <strong>${getVisibleDevices().length}</strong> of ${appState.devices.length} devices</span>
+                    <div class="device-results-head" aria-live="polite"><div><h2>Device Inventory</h2><span>Showing <strong>${getVisibleDevices().length}</strong> of ${appState.devices.length} devices</span></div>
                         ${(deviceOsFilter || deviceServiceFilter || deviceMissingFilter || deviceSearchTerm || deviceTypeFilter || deviceStatusFilter || deviceLocationFilter || deviceMountFilter || deviceAssignmentFilter) ? `<button type="button" data-action="clear-device-filters" class="device-form-reset-button"><i class="fa-solid fa-xmark" aria-hidden="true"></i> Clear filters</button>` : ''}
                     </div>
-                    <div class="bg-white dark:bg-slate-800 rounded-2xl border shadow-sm device-table-wrapper">
-                        <table class="w-full min-w-[1050px] text-left border-collapse">
+                    <div class="device-table-card"><div class="device-table-scroll device-table-wrapper">
+                        <table class="device-table">
                             <thead>
                                 <tr class="border-b text-xs font-semibold text-slate-500 uppercase">
                                     <th class="py-3 px-4 min-w-[220px]">Name</th>
@@ -3972,25 +3972,16 @@ function hierarchyValidateTypes(subnets) {
                                     const locText = isUnknownLocation ? 'Unknown' : d.location;
                                     return `
                                         <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/20">
-                                            <td class="py-3 px-4 min-w-[220px] font-semibold text-slate-900 dark:text-white"><button type="button" data-action="view-device" data-id="${escapeHtml(d.id)}" class="device-details-name text-left whitespace-normal break-words hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-600" title="View device details">${escapeHtml(d.name)}</button>${d.serialNumber ? `<span class="block text-xs font-normal text-slate-500 dark:text-slate-400 sm:hidden">${escapeHtml(d.serialNumber)}</span>` : ''}</td>
-                                            <td class="py-3 px-4"><span class="px-2 py-0.5 rounded text-xs bg-slate-100 dark:bg-slate-700">${escapeHtml(d.type==='Server - Physical' ? 'Server' : d.type==='Server - Virtual' ? 'Virtual Machine' : d.type)}</span></td>
+                                            <td class="py-3 px-4 min-w-[220px] font-semibold text-slate-900 dark:text-white"><button type="button" data-action="view-device" data-id="${escapeHtml(d.id)}" class="device-name" title="View device details">${escapeHtml(d.name)}</button>${d.serialNumber ? `<span class="block text-xs font-normal text-slate-500 dark:text-slate-400 sm:hidden">${escapeHtml(d.serialNumber)}</span>` : ''}</td>
+                                            <td class="py-3 px-4"><span class="device-chip">${escapeHtml(d.type==='Server - Physical' ? 'Server' : d.type==='Server - Virtual' ? 'Virtual Machine' : d.type)}</span></td>
                                             <td class="py-3 px-4 text-xs font-medium ${locationNeedsAttention ? 'text-rose-600 font-bold' : ''}">${escapeHtml(locText)}${locationNeedsAttention ? ' <span class="text-[10px] font-semibold uppercase">(needs attention)</span>' : ''}</td>
                                             <td class="py-3 px-4 font-mono text-xs text-indigo-600">${escapeHtml(d.primaryIp || 'None')}</td>
                                             <td class="py-3 px-4"><span class="inline-flex px-2.5 py-1 rounded-lg text-xs font-semibold ${d.status === 'Retired' ? 'bg-slate-200 text-slate-800 dark:bg-slate-600 dark:text-white' : d.status === 'Maintenance' ? 'bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-200' : 'bg-emerald-100 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-200'}">${escapeHtml(d.status || 'Active')}</span></td>
                                             <td class="py-3 px-4 text-xs text-slate-700 dark:text-slate-200"><span class="font-semibold">${escapeHtml([d.manufacturer,d.model].filter(Boolean).join(' ') || '—')}</span>${d.serialNumber ? `<span class="block text-slate-600 dark:text-slate-300">S/N ${escapeHtml(d.serialNumber)}</span>` : ''}</td>
                                             <td class="py-3 px-4 text-right">
                                                 <div class="device-actions">
-                                                    <button type="button" data-action="view-device" data-id="${escapeHtml(d.id)}" class="device-detail-summary"><i class="fa-solid fa-eye mr-1" aria-hidden="true"></i>Details</button>
-                                                    <details class="device-menu">
-                                                        <summary aria-label="Actions for ${escapeHtml(d.name)}" title="More device actions"><i class="fa-solid fa-ellipsis-vertical" aria-hidden="true"></i><span class="sr-only">More actions for ${escapeHtml(d.name)}</span></summary>
-                                                        <div class="device-menu-items">
-                                                            ${rack ? `<button type="button" role="menuitem" data-action="navigate-to-device-rack" data-id="${escapeHtml(d.id)}"><i class="fa-solid fa-server" aria-hidden="true"></i>View in rack</button>` : ''}
-                                                            <button type="button" role="menuitem" data-action="edit-device" data-id="${escapeHtml(d.id)}"><i class="fa-solid fa-pen" aria-hidden="true"></i>Edit device</button>
-                                                            <button type="button" role="menuitem" data-action="duplicate-device" data-id="${escapeHtml(d.id)}"><i class="fa-solid fa-copy" aria-hidden="true"></i>Duplicate</button>
-                                                            <div class="device-menu-separator"></div>
-                                                            <button type="button" role="menuitem" data-action="delete-device" data-id="${escapeHtml(d.id)}" class="device-danger"><i class="fa-solid fa-trash" aria-hidden="true"></i>Delete device</button>
-                                                        </div>
-                                                    </details>
+                                                    <button type="button" data-action="view-device" data-id="${escapeHtml(d.id)}" class="device-action-details"><i class="fa-solid fa-eye mr-1" aria-hidden="true"></i>Details</button>
+                                                    
                                                 </div>
                                             </td>
                                         </tr>
@@ -3998,7 +3989,7 @@ function hierarchyValidateTypes(subnets) {
                                 }).join('')}
                                 ${getVisibleDevices().length === 0 ? `<tr><td colspan="7" class="px-4 py-12 text-center"><div class="device-filter-empty-state"><i class="fa-solid ${appState.devices.length?'fa-magnifying-glass':'fa-server'}" aria-hidden="true"></i><strong>${appState.devices.length?'No matching devices':'Your inventory is empty'}</strong><p>${appState.devices.length?'Try another search or remove your filters.':'Add your first device to get started.'}</p><button type="button" data-action="${appState.devices.length?'clear-device-filters':'open-device-modal'}">${appState.devices.length?'Clear search and filters':'Add Device'}</button></div></td></tr>` : ''}
                             </tbody>
-                        </table>
+                        </table></div>
                     </div>
                     </section>
                     <section class="${['types','locations'].includes(activeDeviceDetailsTab)?'':'hidden'} space-y-5" data-device-panel="manage">
