@@ -1,5 +1,6 @@
 """SQLite-backed independent IPAM allocation changes."""
 import json
+from .audit_events import attribute_event
 from datetime import datetime, timezone
 
 from .application_integrity import validate_detached_application_state
@@ -52,7 +53,7 @@ def change_independent_allocation(connection, account_id, ip, record):
                                   "label": ip, "fields": fields}], "omitted": 0}
             connection.execute(
                 "INSERT INTO inventory_change_history(record_json) VALUES(?)",
-                (json.dumps(event, ensure_ascii=False),),
+                (json.dumps(attribute_event(connection, account_id, event), ensure_ascii=False),),
             )
         connection.commit()
     except BaseException:
@@ -108,7 +109,7 @@ def change_bulk_allocations(connection, account_id, changes):
                      "omitted": max(0, len(updates) - len(events))}
             connection.execute(
                 "INSERT INTO inventory_change_history(record_json) VALUES(?)",
-                (json.dumps(entry, ensure_ascii=False),),
+                (json.dumps(attribute_event(connection, account_id, entry), ensure_ascii=False),),
             )
         connection.commit()
     except BaseException:
