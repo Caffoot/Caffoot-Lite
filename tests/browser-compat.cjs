@@ -404,6 +404,13 @@ async function run(){
   assert.ok(await rackDetail.locator('.rack-face-control [data-action="rack-face-front"]').isVisible(),
     'The approved front/rear control must be available in the rack elevation');
   await rackDetail.locator('[data-action="select-rack-tab"][data-tab="equipment"]').click();
+  console.log('RACK DETAIL DEBUG', JSON.stringify(await page.evaluate(()=>({
+    selectedTab:typeof activeRackTab!=='undefined'?activeRackTab:null,
+    chosenRack:typeof selectedRackId!=='undefined'?selectedRackId:null,
+    detailHtml:document.querySelector('.rack-workspace')?.innerHTML.slice(-300),
+    nav:[...document.querySelectorAll('.rack-workspace [data-action="select-rack-tab"]')].map(x=>({text:x.textContent,aria:x.getAttribute('aria-selected'),active:x.className})),
+    sections:[...document.querySelectorAll('.rack-workspace section[aria-label]')].map(x=>({label:x.getAttribute('aria-label'),class:x.className,visible:!!x.getClientRects().length}))
+  }))));
   assert.ok(await rackDetail.locator('section[aria-label="Mounted equipment"]').isVisible(),
     'Equipment remains available without changing the approved placement logic');
   await rackDetail.locator('[data-action="select-rack-tab"][data-tab="settings"]').click();
