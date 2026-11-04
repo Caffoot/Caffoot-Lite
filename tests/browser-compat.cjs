@@ -353,6 +353,24 @@ async function run(){
   await page.locator('#sidebar [data-action="tab-dashboard"]').click();
   console.log('Approved live IPAM Address Allocations search, filters and ranges passed');
 
+  const approvedSubnetId=sub.subnets.find(x=>x.name==='Browser Network').id;
+  // IPAM Draft 01 Manage Subnets uses the real grouped hierarchy and edit actions.
+  await page.locator('#sidebar [data-action="tab-ipam"]').click();
+  await page.locator('#main-content .approved-page-header [data-action="approved-ipam-section"][data-view="manage"]').click();
+  const approvedManage=page.locator('#main-content .ipam-approved-manage');
+  await approvedManage.waitFor();
+  assert.ok(await approvedManage.getByRole('heading',{name:'IP Address Blocks, Networks & VLANs'}).isVisible());
+  assert.ok(await approvedManage.getByRole('heading',{name:'VLAN Ownership Check'}).isVisible());
+  assert.ok(await approvedManage.locator('[data-ipam-hierarchy-block="__unassigned__"]').isVisible());
+  assert.ok(await approvedManage.getByText('Browser Network',{exact:true}).first().isVisible());
+  assert.ok(await approvedManage.locator('[data-action="open-subnet-modal"]').isEnabled());
+  assert.ok(await approvedManage.locator('[data-action="bulk-ip"]').isEnabled());
+  assert.ok(await approvedManage.locator('[data-action="edit-subnet"][data-id="'+approvedSubnetId+'"]').isVisible());
+  await approvedManage.locator('[data-action="ipam-open-network-addresses"][data-id="'+approvedSubnetId+'"]').click();
+  assert.ok(await page.locator('#main-content .ipam-approved-addresses #ipam-select-network').isVisible());
+  await page.locator('#sidebar [data-action="tab-dashboard"]').click();
+  console.log('Approved IPAM Manage Subnets grouping and navigation passed');
+
   await modal(page,'openRackModal');
   await page.locator('#rack-name').fill('Browser Rack');
   await page.locator('form[data-form-action="rack"] button[type="submit"]').click();
