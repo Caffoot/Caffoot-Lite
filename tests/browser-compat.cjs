@@ -692,7 +692,6 @@ async function run(){
   // The VM form must use an eligible physical hypervisor, not a separate rack position.
   await page.locator('#sidebar [data-action="tab-devices"]').click();
   await modal(page,'openDeviceModal');
-  const approvedEditor=page.locator('#modal-content .device-modal.device-review-dialog');
   await approvedEditor.waitFor();
   assert.equal(await approvedEditor.locator('.device-review-head h2').textContent(),'Add New Device');
   assert.ok(await approvedEditor.getByText('Device Identity',{exact:true}).isVisible(),
