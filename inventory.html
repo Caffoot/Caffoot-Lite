@@ -1711,6 +1711,18 @@ html.dark .caffoot-dashboard .db-rack-row:hover{background:#354a60;border-color:
 .db-metric-head .iconwrap{width:35px;height:35px}
 .db-card .card-head{align-items:center}
 .caffoot-dashboard .db-slimrow .db-badge{margin-left:12px}
+
+/* The exact Draft 02 row/filter/card classes above retain their pinned CSS.
+   This wrapper keeps real saved-data alert buttons and complete report details operable. */
+.caffoot-dashboard .db-alert-action{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;text-align:left;background:transparent;color:inherit;border:0;padding:0;cursor:pointer;font:inherit}
+.caffoot-dashboard .db-alert-action:focus-visible{outline:2px solid #ed8532;outline-offset:3px}
+.caffoot-dashboard .db-alert-action>span:first-child{min-width:0;overflow-wrap:anywhere}
+.caffoot-dashboard .db-alert-action:hover strong{text-decoration:underline}
+.caffoot-dashboard #activity-results .db-slimrow>div{min-width:0;overflow-wrap:anywhere}
+.caffoot-dashboard #activity-results .db-badge{max-width:42%;white-space:normal;text-align:right}
+.caffoot-dashboard .approved-dashboard-report-detail{margin-top:16px}
+.caffoot-dashboard .approved-dashboard-report-detail>section{box-shadow:none}
+@media(max-width:700px){.caffoot-dashboard #dashboard-panel-activity .db-summary{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 </style>
 <style id="approved-catalogue-modal-batch02">
 .catalog-modal-overlay{position:fixed;inset:0;background:#10283cca;z-index:120;display:flex;align-items:center;justify-content:center;padding:18px}
@@ -3281,7 +3293,7 @@ function hierarchyValidateTypes(subnets) {
             document.body.appendChild(a); a.click(); a.remove();
             setTimeout(()=>URL.revokeObjectURL(url),1000);
         }
-        function renderInventoryReportsHtml() {
+        function renderInventoryReportsHtml(includeCsvButtons=true) {
             const data=buildInventoryReportData();
             const maxLocation=Math.max(1,...data.locations.map(([,n])=>n));
             const warnSubnets=data.subnets.filter(x=>x.supported&&x.utilisation>=85);
@@ -3290,9 +3302,9 @@ function hierarchyValidateTypes(subnets) {
                 <div class="flex flex-wrap gap-3 justify-between items-start">
                     <div><h3 class="text-base font-bold text-slate-900 dark:text-white">Network Reports</h3>
                     <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Live summaries and CSV exports from the current inventory.</p></div>
-                    <div class="flex flex-wrap gap-2">
+                    ${includeCsvButtons?`                    <div class="flex flex-wrap gap-2">
                         ${[['devices','Devices CSV'],['subnets','Subnets CSV'],['racks','Racks CSV']].map(([id,label])=>`<button type="button" data-action="export-selected-inventory-csv" data-report="${id}" class="px-3 py-2.5 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold text-xs"><i class="fa-solid fa-download mr-1"></i>${label}</button>`).join('')}
-                    </div>
+                    </div>`:''}
                 </div>
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
                     <div class="rounded-xl border border-slate-200 dark:border-slate-600 p-4 space-y-3">
@@ -3413,20 +3425,55 @@ function hierarchyValidateTypes(subnets) {
                 const source = `${entry.reason || ''} ${changes.map(c => `${c.kind || ''} ${c.label || ''}`).join(' ')}`.toLowerCase();
                 return dashboardActivityFilter === 'devices' ? /device/.test(source) : dashboardActivityFilter === 'network' ? /ipam|subnet|ip address|allocation|vlan/.test(source) : /rack|accessory|mount/.test(source);
             }).slice(0, 8);
-            const dashboardActivityTimelineHtml = filteredDashboardAuditEntries.length ? filteredDashboardAuditEntries.map(entry => {
-                const when = new Date(entry.at);
-                const time = Number.isNaN(when.getTime()) ? 'Date unavailable' : when.toLocaleString();
-                const changes = Array.isArray(entry.changes) ? entry.changes : [];
-                const preview = changes.slice(0, 3).map(change => `<li><strong>${escapeHtml(change.action || 'Changed')} ${escapeHtml(change.kind || 'record')}:</strong> ${escapeHtml(change.label || '')}</li>`).join('');
-                return `<article class="dashboard-event"><span class="dashboard-event-dot" aria-hidden="true"></span><div class="min-w-0"><div class="flex flex-wrap justify-between gap-2"><strong class="text-sm text-slate-900 dark:text-white">${escapeHtml(entry.reason || 'Inventory saved')}</strong><time class="text-xs text-slate-600 dark:text-slate-300">${escapeHtml(time)}</time></div>${preview ? `<ul class="mt-1.5 text-xs text-slate-600 dark:text-slate-300 space-y-1">${preview}</ul>` : '<p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Inventory saved without item-level changes.</p>'}${changes.length>3?`<p class="mt-1 text-xs text-slate-500">+${changes.length-3} more changes</p>`:''}</div></article>`;
-            }).join('') : `<p class="dashboard-no-results">${dashboardActivityFilter === 'all' ? 'No recent saved changes in the central inventory.' : 'No saved changes match this filter.'}</p>`;
-            const dashboardWarningRowsHtml = filteredDashboardAlerts.length ? filteredDashboardAlerts.map(alert => {
-                const critical = alert.level === 'danger';
-                const label = critical ? 'Critical' : 'Warning';
-                return `<li><button type="button" class="dashboard-warning dashboard-warning-link ${critical?'is-critical':'is-warning'}" data-action="open-alert" data-destination="${escapeHtml(alert.destination || 'diagnostics')}" data-device-id="${escapeHtml(String(alert.deviceId || ''))}" data-rack-id="${escapeHtml(String(alert.rackId || ''))}" data-ip="${escapeHtml(String(alert.ip || ''))}" aria-label="${escapeHtml(label + ': ' + alert.text + '. Open related section')}"><i class="fa-solid ${alert.icon}" aria-hidden="true"></i><span><span class="dashboard-warning-tag">${label}</span><span class="block">${escapeHtml(alert.text)}</span></span><i class="fa-solid fa-arrow-right dashboard-arrow" aria-hidden="true"></i></button></li>`;
-            }).join('') : `<li class="dashboard-alert-clear-button"><i class="fa-solid fa-circle-check" aria-hidden="true"></i>${alerts.length ? 'No warnings match this severity filter.' : 'No IPAM linkage, duplicate IP, missing rack or rack-capacity warnings detected.'}</li>`;
-            const dashboardActivityFilterControlsHtml = `<div class="dashboard-filter-controls"><label for="activity-filter">Activity type<select id="activity-filter" data-dashboard-filter="activity"><option value="all" ${dashboardActivityFilter==='all'?'selected':''}>All changes</option><option value="devices" ${dashboardActivityFilter==='devices'?'selected':''}>Devices</option><option value="network" ${dashboardActivityFilter==='network'?'selected':''}>IPAM & networks</option><option value="racks" ${dashboardActivityFilter==='racks'?'selected':''}>Racks</option></select></label></div>`;
-            const dashboardAlertFilterControlsHtml = `<div class="dashboard-filter-controls"><label for="alert-filter">Severity<select id="alert-filter" data-dashboard-filter="alerts"><option value="all" ${dashboardAlertSeverityFilter==='all'?'selected':''}>All severities</option><option value="critical" ${dashboardAlertSeverityFilter==='critical'?'selected':''}>Critical only</option><option value="warning" ${dashboardAlertSeverityFilter==='warning'?'selected':''}>Warnings only</option></select></label></div>`;
+            // The pinned Dashboard Draft 02 Activity & Alerts lists use the original
+            // db-slimrow, db-badge, db-filters and db-empty-note component hierarchy.
+            // Entries remain permission-filtered by the existing history API.
+            const dashboardActivityTimelineHtml = filteredDashboardAuditEntries.length
+              ? filteredDashboardAuditEntries.map(entry=>{
+                  const when=new Date(entry.at);
+                  const time=Number.isNaN(when.getTime())?'Date unavailable':when.toLocaleString();
+                  const changes=Array.isArray(entry.changes)?entry.changes:[];
+                  const description=changes.slice(0,3).map(c=>[c.action||'Changed',c.kind||'record',c.label||''].join(' ')).join(' · ')||'Inventory saved without item-level changes.';
+                  const kindText=`${entry.reason||''} ${changes.map(c=>c.kind||'').join(' ')}`.toLowerCase();
+                  const kind=/device/.test(kindText)?'devices':/ipam|subnet|ip address|allocation|vlan/.test(kindText)?'network':/rack|accessory|mount/.test(kindText)?'racks':'other';
+                  return `<div class="db-slimrow" data-kind="${kind}">
+                    <div><strong>${escapeHtml(entry.reason||'Inventory saved')}</strong><div class="db-muted">${escapeHtml(description)}</div></div>
+                    <span class="db-badge">${escapeHtml(time)}</span>
+                  </div>`;
+                }).join('')
+              : '';
+            const dashboardWarningRowsHtml = filteredDashboardAlerts.map(alert=>{
+                const critical=alert.level==='danger';
+                const severity=critical?'Critical':'Warning';
+                return `<div class="db-slimrow" data-kind="${critical?'critical':'warning'}">
+                  <button type="button" class="db-alert-action" data-action="open-alert"
+                    data-destination="${escapeHtml(alert.destination||'diagnostics')}"
+                    data-device-id="${escapeHtml(String(alert.deviceId||''))}"
+                    data-rack-id="${escapeHtml(String(alert.rackId||''))}"
+                    data-ip="${escapeHtml(String(alert.ip||''))}"
+                    aria-label="${escapeHtml(severity+': '+alert.text+'. Open related section')}">
+                    <span><strong>${escapeHtml(alert.text)}</strong><span class="db-muted">Open related inventory section</span></span>
+                    <span class="db-badge db-warning">${severity}</span>
+                  </button>
+                </div>`;
+              }).join('');
+            const dashboardActivityFilterControlsHtml = `<div class="db-filters">
+              <label class="db-muted" for="activity-filter">Activity type</label>
+              <select id="activity-filter" data-dashboard-filter="activity">
+                <option value="all" ${dashboardActivityFilter==='all'?'selected':''}>All Changes</option>
+                <option value="devices" ${dashboardActivityFilter==='devices'?'selected':''}>Devices</option>
+                <option value="network" ${dashboardActivityFilter==='network'?'selected':''}>Network</option>
+                <option value="racks" ${dashboardActivityFilter==='racks'?'selected':''}>Racks</option>
+              </select>
+            </div>`;
+            const dashboardAlertFilterControlsHtml = `<div class="db-filters">
+              <label class="db-muted" for="alert-filter">Severity</label>
+              <select id="alert-filter" data-dashboard-filter="alerts">
+                <option value="all" ${dashboardAlertSeverityFilter==='all'?'selected':''}>All Severities</option>
+                <option value="warning" ${dashboardAlertSeverityFilter==='warning'?'selected':''}>Warning</option>
+                <option value="critical" ${dashboardAlertSeverityFilter==='critical'?'selected':''}>Critical</option>
+              </select>
+            </div>`;
             const integrityErrors = validateApplicationState();
             const integrityHealthy = integrityErrors.length === 0;
             const integrityPreview = integrityErrors.slice(0, 5);
@@ -3637,43 +3684,59 @@ function hierarchyValidateTypes(subnets) {
                         <div class="db-actionrow"><button type="button" data-action="tab-racks" class="btn btn-outline">Open Rack Details</button></div>
                     </section>
                     </div>
-                    <div id="dashboard-panel-activity" role="tabpanel" aria-labelledby="dashboard-tab-activity" class="dashboard-tab-panel space-y-5" ${activeDashboardTab==='activity'?'':'hidden'}>
-                    <section class="dashboard-summary ${window.nextSessionIsAdmin === true && integrityErrors.length ? 'has-integrity' : ''}" aria-label="Activity and alert summary">
-                        <div class="dashboard-summary-item"><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i><div><strong>${filteredDashboardAuditEntries.length}</strong><span>Recent save events</span></div></div>
-                        <div class="dashboard-summary-item"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i><div><strong>${alerts.length}</strong><span>Network warnings</span></div></div>
-                        ${window.nextSessionIsAdmin === true && integrityErrors.length ? `<div class="dashboard-summary-item"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i><div><strong>${integrityErrors.length}</strong><span>Integrity issues</span></div></div>` : ''}
-                    </section>
-                    <section class="dashboard-columns">
-                        <div class="dashboard-activity-card"><div class="dashboard-activity-heading"><div><h3>Recent Activity</h3><p>Saved changes in the central database</p></div><button type="button" data-action="tab-audit" class="dashboard-link">Full history <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div>${dashboardActivityFilterControlsHtml}<div class="dashboard-activity-timeline">${dashboardActivityTimelineHtml}</div></div>
-                        <div class="dashboard-activity-card"><div class="dashboard-activity-heading"><div><h3>Warnings & attention</h3><p>Network consistency and capacity</p></div><span class="dashboard-count">${alerts.length} total</span></div>${dashboardAlertFilterControlsHtml}<ul class="dashboard-warnings">${dashboardWarningRowsHtml}</ul>${alerts.filter(a => dashboardAlertSeverityFilter === 'all' || (dashboardAlertSeverityFilter === 'critical' ? a.level === 'danger' : a.level !== 'danger')).length>filteredDashboardAlerts.length?`<p class="dashboard-more">Showing ${filteredDashboardAlerts.length} of ${alerts.length} warnings</p>`:''}<div class="dashboard-links"><button type="button" data-action="tab-ipam">Open IPAM</button><button type="button" data-action="tab-racks">Open Racks</button></div></div>
-                    </section>
-                    <section class="dashboard-report-panel bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5"><h3 class="font-bold text-slate-900 dark:text-white mb-3">Reports & exports</h3>${renderInventoryReportsHtml()}</section>
-                    <section class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                        <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700">
-                            <div class="flex items-center justify-between mb-4"><div><h4 class="font-bold text-slate-900 dark:text-white">Devices By Type</h4><p class="text-xs text-slate-500 mt-1">Most common hardware categories</p></div><span class="text-xs text-slate-500">${Object.keys(typeCounts).length} types</span></div>
-                            <div class="space-y-3">${typeRows}</div>
+                    <div id="dashboard-panel-activity" role="tabpanel" aria-labelledby="dashboard-tab-activity" class="dashboard-tab-panel" ${activeDashboardTab==='activity'?'':'hidden'}>
+                      <div class="db-summary" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+                        <div class="card db-card">
+                          <div class="card-head"><span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-history"></use></svg></span>
+                            <div><h3>Recent Save Events</h3><p class="sub">Saved inventory changes.</p></div></div>
+                          <div class="db-stat-number" style="margin-top:12px">${filteredDashboardAuditEntries.length}</div>
                         </div>
-                        <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700">
-                            <div class="flex items-center justify-between mb-4"><div><h4 class="font-bold text-slate-900 dark:text-white">Recent Devices</h4><p class="text-xs text-slate-500 mt-1">Latest records in your inventory</p></div><button data-action="tab-devices" class="text-xs font-semibold text-blue-800 dark:text-sky-300">View All</button></div>
-                            <div>${deviceRows}</div>
+                        <div class="card db-card">
+                          <div class="card-head"><span class="iconwrap orange"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-alert"></use></svg></span>
+                            <div><h3>Network Warnings</h3><p class="sub">Existing consistency and capacity checks.</p></div></div>
+                          <div class="db-stat-number" style="margin-top:12px">${alerts.length}</div>
                         </div>
-                    </section>
-
-                    <section class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                        <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700">
-                            <div class="flex items-center justify-between mb-4"><div><h4 class="font-bold text-slate-900 dark:text-white">Subnet Utilisation</h4><p class="text-xs text-slate-500 mt-1">Usable addresses across your configured CIDR networks</p></div><button data-action="tab-ipam" class="text-xs font-semibold text-blue-800 dark:text-sky-300">Open IPAM</button></div>
-                            <div class="space-y-2">${subnetRows}</div>
+                      </div>
+                      ${window.nextSessionIsAdmin===true&&integrityErrors.length?`<section class="db-card db-error-card" role="alert">
+                        <h3>Integrity issues</h3><p>${integrityErrors.length} inventory consistency issue(s) detected. Review Inventory Health on Dashboard Overview.</p>
+                      </section>`:''}
+                      <div class="db-two">
+                        <div class="db-stack">
+                          <div class="card db-card">
+                            <div class="card-head"><span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-history"></use></svg></span>
+                              <div><h3>Recent Activity</h3><p class="sub">Existing saved-change timeline and filters.</p></div></div>
+                            <div class="divider"></div>
+                            ${dashboardActivityFilterControlsHtml}
+                            <div id="activity-results">${dashboardActivityTimelineHtml}</div>
+                            <p class="db-empty-note" id="activity-empty" ${filteredDashboardAuditEntries.length?'hidden':''}>No saved changes match this filter.</p>
+                            <div class="db-actionrow"><button type="button" class="btn btn-outline" data-action="tab-audit">Full Change History</button></div>
+                          </div>
                         </div>
-                        <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700">
-                            <div class="flex items-center justify-between mb-4"><div><h4 class="font-bold text-slate-900 dark:text-white">Inventory Status</h4><p class="text-xs text-slate-500 mt-1">Quick operational snapshot</p></div></div>
-                            <div class="space-y-2">
-                                ${statusPill('Active devices', activeDevices, 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-300')}
-                                ${statusPill('Other device states', inactiveDevices, 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-200')}
-                                ${statusPill('Assigned IPs', assignedIps, 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/30 dark:text-indigo-300')}
-                                ${statusPill('Reserved IPs', reservedIps, 'bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-300')}
-                            </div>
+                        <div class="db-stack">
+                          <div class="card db-card">
+                            <div class="card-head"><span class="iconwrap orange"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-alert"></use></svg></span>
+                              <div><h3>Warnings &amp; Attention</h3><p class="sub">IPAM linkage, duplicate IP and rack capacity warnings.</p></div></div>
+                            <div class="divider"></div>
+                            ${dashboardAlertFilterControlsHtml}
+                            <div id="alert-results">${dashboardWarningRowsHtml}</div>
+                            <p class="db-empty-note" id="alert-empty" ${filteredDashboardAlerts.length?'hidden':''}>${alerts.length?'No saved warnings match this filter.':'No saved warnings detected.'}</p>
+                            ${alerts.length>filteredDashboardAlerts.length?`<p class="db-empty-note">Showing ${filteredDashboardAlerts.length} of ${alerts.length} warnings</p>`:''}
+                          </div>
                         </div>
-                    </section>
+                      </div>
+                      <div class="db-section card db-card">
+                        <div class="card-head"><span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-download"></use></svg></span>
+                          <div><h3>Reports &amp; Exports</h3><p class="sub">Preserve all CSV and downloadable reports available in v2.0.1.</p></div></div>
+                        <div class="divider"></div>
+                        <p class="db-muted">Download live reports from the existing permission-aware inventory exporter.</p>
+                        <div class="db-report-buttons">
+                          <button type="button" class="btn btn-outline" data-action="export-selected-inventory-csv" data-report="devices">Device Inventory CSV</button>
+                          <button type="button" class="btn btn-outline" data-action="export-selected-inventory-csv" data-report="subnets" title="Exports subnet allocations and utilisation totals">IPAM CSV</button>
+                          <button type="button" class="btn btn-outline" data-action="export-selected-inventory-csv" data-report="racks">Rack Report</button>
+                        </div>
+                        <div class="approved-dashboard-report-detail">${renderInventoryReportsHtml(false)}</div>
+                      </div>
+                    </div>
                     </div>
                 </div>
             `;
