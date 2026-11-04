@@ -203,9 +203,13 @@ async function run(){
   assert.match(await safetyResult,/INVENTORY SAFETY CHECK PASSED/,
     'Manual safety check must still reload and validate central inventory');
   await page.locator('#sidebar [data-action="tab-audit"]').click();
-  await page.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='Change History & Data Safety');
-  assert.ok(await page.locator('#main-content > div.w-full, #main-content .approved-page-body > div.w-full').isVisible(),
-    'Change History should fill the inventory workspace');
+  await page.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='Audit Trail');
+  assert.ok(await page.locator('#main-content .approved-audit .audit-tabs').isVisible(),
+    'Owner-approved Audit Trail section navigation must render');
+  assert.equal(await page.locator('#main-content .approved-audit .audit-tab').count(),3,
+    'Approved All Activity, Asset History and Recording Coverage must be available');
+  assert.equal(await page.locator('#main-content .approved-audit #stat-total').textContent(),'0',
+    'A fresh installation must not display fictional audit events');
   await page.locator('#sidebar [data-action="tab-users"]').click();
   await page.getByRole('heading',{name:'User Management Overview'}).waitFor();
   assert.ok(await page.locator('#main-content > div.w-full, #main-content .approved-page-body > div.w-full').isVisible(),
