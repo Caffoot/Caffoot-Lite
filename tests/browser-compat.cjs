@@ -819,8 +819,15 @@ async function run(){
   await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
   const subnetId=sub.subnets.find(x=>x.name==='Browser Network').id;
   await page.evaluate(id=>openBulkIpModal(id),subnetId);
-  await page.locator('#bulk-start').fill('20');
-  await page.locator('#bulk-end').fill('22');
+  const ipamBulkDialog=page.locator('#modal-content.approved-ipam-modal');
+  assert.ok(await ipamBulkDialog.locator('.ipam-modal-head h2').getByText('Bulk Edit IP Range',{exact:true}).isVisible(),
+    'Bulk IPAM editor must use the approved Draft 01 dialog structure');
+  assert.equal(await ipamBulkDialog.locator('.ipam-form-grid > .ipam-field').count(),5,
+    'Bulk IPAM editor must show the approved From, To, Status, Hostname and Notes controls');
+  assert.equal(await page.locator('#bulk-start').inputValue(),'10.64.20.1',
+    'Bulk IPAM must default to a usable IP address rather than an internal host offset');
+  await page.locator('#bulk-start').fill('10.64.20.20');
+  await page.locator('#bulk-end').fill('10.64.20.22');
   await page.locator('#bulk-status').selectOption('Reserved');
   await page.locator('#bulk-hostname').fill('pool');
   await page.locator('#bulk-notes').fill('Bulk notes');
