@@ -509,7 +509,7 @@ async function run(){
     'Approved Rack Detail must keep the existing Print / PDF action');
   assert.equal(await rackDetail.locator('.rack-subtabs [data-action="select-rack-tab"]').count(),3,
     'Approved Rack Detail must retain Rack View, Equipment and Rack Settings tabs');
-  assert.ok(await rackDetail.locator('.rack-face-control [data-action="rack-face-front"]').isVisible(),
+  assert.ok(await approvedElevation.locator('.rack-elev-top .rack-face-control [data-action="rack-face-front"]').isVisible(),
     'The approved front/rear control must be available in the rack elevation');
   await rackDetail.locator('[data-action="select-rack-tab"][data-tab="equipment"]').click();
   await page.waitForFunction(()=>activeRackTab==='equipment' &&
