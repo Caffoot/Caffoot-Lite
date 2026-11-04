@@ -9581,7 +9581,6 @@ function hierarchyValidateTypes(subnets) {
                     break;
                 }
                 case 'approved-users-section': {
-                    activeUserEditorId=null;
                     if (['overview','list','add'].includes(target.dataset.tab)) {
                         activeUsersTab = target.dataset.tab;
                         switchTab('users');
@@ -10592,6 +10591,13 @@ window.addEventListener('load', async () => {
     }
     return html+'</div>';
   };
+  // Clear the account editor before the shared tab handler renders the next Users tab.
+  // This listener shares the real editor state rather than creating a stray global.
+  document.addEventListener('click', event=>{
+    if(event.target.closest('[data-action="approved-users-section"],[data-action^="sidebar-users-"]')) {
+      activeUserEditorId=null;
+    }
+  },true);
   function filterApprovedUserRows() {
     const list=document.getElementById('users-live-list');
     if(!list) return;
