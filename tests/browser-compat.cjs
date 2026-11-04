@@ -341,6 +341,30 @@ async function run(){
   const device=saved.devices.find(d=>d.name==='browser-device');
   assert.equal(saved.ipAllocations['10.64.20.10'].deviceId,device.id);
   console.log('Device form and primary IPAM allocation passed');
+  await page.locator('#sidebar [data-action="tab-audit"]').click();
+  await page.locator('.approved-audit #activity-results tr[data-audit-index]').first().waitFor();
+  assert.ok(Number(await page.locator('.approved-audit #stat-total').textContent())>=1,
+    'Audit Trail must show real saved events after a device change');
+  assert.equal(await page.locator('.approved-audit #stat-actors').textContent(),'1',
+    'Audit events must attribute a successful change to the authenticated owner');
+  assert.ok(await page.locator('.approved-audit #activity-results').getByText('owner').count()>=1);
+  await page.locator('.approved-audit #area').selectOption('Devices');
+  await page.locator('.approved-audit #q').fill('browser-device');
+  assert.ok(await page.locator('.approved-audit #activity-results tr[data-audit-index]:visible').count()>=1,
+    'Approved area and search filters must match the saved device event');
+  await page.locator('[data-action="audit-reset-filters"]').click();
+  await page.locator('.approved-audit [data-action="audit-view-detail"]').first().click();
+  await page.locator('#audit-detail-layer:not([hidden])').waitFor();
+  assert.ok(await page.locator('#audit-detail-body').getByText('owner').isVisible());
+  await page.locator('#audit-detail-layer [data-action="audit-close-detail"]').click();
+  await page.locator('.approved-audit [data-action="audit-section"][data-tab="assets"]').click();
+  await page.locator('#pane-assets:not([hidden])').waitFor();
+  assert.ok(await page.locator('#asset-list .asset-item').count()>=1,
+    'Approved Asset History must group real authorised records');
+  await page.locator('.approved-audit [data-action="audit-section"][data-tab="coverage"]').click();
+  await page.locator('#pane-coverage:not([hidden])').waitFor();
+  await page.locator('#sidebar [data-action="tab-dashboard"]').click();
+  console.log('Approved Audit Trail real events, filters and detail inspection passed');
 
   // A detected inconsistency appears only as an administrator warning; no data is saved.
   await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
