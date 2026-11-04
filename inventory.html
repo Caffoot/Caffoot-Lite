@@ -6389,33 +6389,26 @@ function hierarchyValidateTypes(subnets) {
             const types = Array.from(new Set([...rackTypes, details.type]));
             const heights = Array.from(new Set([...rackHeightPresets, details.height])).filter(h => Number.isInteger(h) && h > 0).sort((a,b) => a-b);
             openModal(`
-                <div class="p-6 sm:p-7 space-y-5">
-                    <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-4 mb-1">
-                        <h3 class="font-bold text-base">${rack ? (correction ? 'Correct Rack Specifications' : 'Edit Network Rack') : 'Add Network Rack Enclosure'}</h3>
-                        <button type="button" data-action="close-modal" aria-label="Close dialog"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
-                    </div>
-                    <form data-form-action="rack" data-rack-id="${escapeHtml(rack ? rack.id : '')}" data-correction="${correction}" class="form-shell space-y-5">
-                        <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-server"></i>Rack identity</div>
-                            <div><label for="rack-name" class="block text-xs font-semibold mb-1">Rack Name <span class="required-mark">*</span></label>
-                            <input type="text" id="rack-name" required value="${rack ? escapeHtml(rack.name) : ''}" placeholder="e.g. Rack C - Garage" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></div>
-                            <div><label for="rack-type" class="block text-xs font-semibold mb-1">Rack Type</label>
-                            <select id="rack-type" ${physicalEditable ? '' : 'disabled'} class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">${types.map(t => `<option value="${escapeHtml(t)}" ${t === details.type ? 'selected' : ''}>${escapeHtml(t)}</option>`).join('')}</select></div>
-                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                <div><label for="rack-height" class="block text-xs font-semibold mb-1">Height (U)</label>
-                                <select id="rack-height" ${physicalEditable ? '' : 'disabled'} class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">${heights.map(h => `<option value="${h}" ${h === details.height ? 'selected' : ''}>${h}U</option>`).join('')}<option value="custom">Custom…</option></select>
-                                <input type="number" id="rack-height-custom" min="1" max="100" step="1" placeholder="Custom U" hidden ${physicalEditable ? '' : 'disabled'} class="w-full mt-2 border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></div>
-                                <div><label for="rack-width" class="block text-xs font-semibold mb-1">Width (mm)</label><input type="number" id="rack-width" min="1" max="10000" step="1" value="${Number.isFinite(details.width) ? details.width : ''}" ${physicalEditable ? '' : 'disabled'} class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></div>
-                                <div><label for="rack-depth" class="block text-xs font-semibold mb-1">Depth (mm)</label><input type="number" id="rack-depth" min="1" max="10000" step="1" value="${Number.isFinite(details.depth) ? details.depth : ''}" ${physicalEditable ? '' : 'disabled'} class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></div>
-                            </div>
-                            ${rack && !correction ? '<p class="text-xs text-slate-500 dark:text-slate-400">Physical specifications are locked. Use Correct Rack Specifications in Rack Settings to correct a recording mistake.</p>' : ''}
+                <div class="rack-modal" role="dialog" aria-modal="true" aria-label="Rack enclosure">
+                    <div class="rack-modal-top"><div><h2>${rack ? (correction ? 'Correct Rack Specifications' : 'Edit Network Rack') : 'Add Network Rack Enclosure'}</h2></div>
+                        <button type="button" class="rack-modal-close" data-action="close-modal" aria-label="Close dialog">Close</button></div>
+                    <p>${!rack?'Create a new enclosure with its physical dimensions.':correction?'A protected correction workflow reviews physical specifications and mounted equipment.':'Edit rack identity and placement; physical specifications remain locked.'}</p>
+                    <form data-form-action="rack" data-rack-id="${escapeHtml(rack ? rack.id : '')}" data-correction="${correction}" class="rack-approved-form" novalidate="false">
+                        <div class="rack-form-grid">
+                            <label class="rack-field">Rack Name *<input type="text" id="rack-name" required maxlength="120" value="${rack ? escapeHtml(rack.name) : ''}" placeholder="e.g. Rack C - Garage"></label>
+                            <label class="rack-field">Location Room (optional)<input type="text" id="rack-location" value="${rack ? escapeHtml(rack.location || '') : ''}" placeholder="e.g. Garage Server Room"></label>
+                            <label class="rack-field">Rack Type<select id="rack-type" ${physicalEditable ? '' : 'disabled'}>${types.map(t => `<option value="${escapeHtml(t)}" ${t === details.type ? 'selected' : ''}>${escapeHtml(t)}</option>`).join('')}</select></label>
+                            <label class="rack-field">Height (U)<select id="rack-height" ${physicalEditable ? '' : 'disabled'}>${heights.map(h => `<option value="${h}" ${h === details.height ? 'selected' : ''}>${h}U</option>`).join('')}<option value="custom">Custom…</option></select>
+                                <input type="number" id="rack-height-custom" min="1" max="100" step="1" placeholder="Custom U" hidden ${physicalEditable ? '' : 'disabled'}></label>
+                            <label class="rack-field">Width (mm)<input type="number" id="rack-width" min="1" max="10000" step="1" value="${Number.isFinite(details.width) ? details.width : ''}" ${physicalEditable ? '' : 'disabled'}></label>
+                            <label class="rack-field">Depth (mm)<input type="number" id="rack-depth" min="1" max="10000" step="1" value="${Number.isFinite(details.depth) ? details.depth : ''}" ${physicalEditable ? '' : 'disabled'}></label>
                         </div>
-                        <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-location-dot"></i>Placement</div>
-                            <div><label for="rack-location" class="form-label">Location Room (optional)</label><input type="text" id="rack-location" value="${rack ? escapeHtml(rack.location || '') : ''}" placeholder="e.g. Garage Server Room" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></div>
-                        </div>
+                        ${rack && !correction ? '<div class="rack-modal-info">Physical dimensions are locked during a normal Edit Rack operation. Use Correct Rack Specifications to change them.</div>' : correction ? '<div class="rack-modal-info rack-warn">Changes to physical specifications must not invalidate any mounted devices or accessories.</div>' : ''}
+                        <div class="rack-modal-info">All changes are saved to your current Caffoot Lite inventory, subject to rack permissions and placement validation.</div>
                         <div class="form-error" data-form-error role="alert"></div>
-                        <div class="form-actions rack-form-actions">
-                            <button type="button" data-action="cancel-rack-from-device" class="rack-form-button bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white rounded-xl font-semibold caffoot-modal-cancel">Cancel</button>
-                            <button type="submit" class="rack-form-button bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold">${correction ? 'Review Correction' : 'Save Rack'}</button>
+                        <div class="rack-form-actions">
+                            <button type="button" class="btn btn-outline caffoot-modal-cancel" data-action="cancel-rack-from-device">Cancel</button>
+                            <button type="submit" class="btn btn-primary">${correction ? 'Review Correction' : 'Save Rack'}</button>
                         </div>
                     </form>
                 </div>
