@@ -127,5 +127,17 @@ class HistoryPermissionProjectionTests(unittest.TestCase):
         self.assertEqual(visible_change_history(self.db, 2), [])
 
 
+    def test_history_is_not_capped_at_two_hundred_events(self):
+        # The approved Audit Trail retains all new entries by default.
+        # The old browser history UI capped records at 200; SQLite must not.
+        for _ in range(205):
+            self.add("Device")
+        self.assertEqual(len(visible_change_history(self.db, 1)), 205)
+        self.assertEqual(len(visible_change_history(self.db, 2)), 205)
+        self.allowed = {"Devices": False, "IPAM": False, "Racks": False}
+        self.assertEqual(visible_change_history(self.db, 2), [])
+
+
+
 if __name__ == "__main__":
     unittest.main()
