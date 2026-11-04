@@ -1444,8 +1444,17 @@ async function run(){
   await modal(page,'openDeviceModal');
   await page.locator('#dev-name').fill('browser-vm');
   await page.locator('#dev-deployment').selectOption('virtual');
-  assert.ok(await approvedEditor.locator('#device-form-panel-general .device-review-vm-configuration').isVisible(),
-    'Approved VM allocation card must be visible in General');
+  const vmCard=approvedEditor.locator('#device-form-panel-general > .device-review-grid > .device-review-vm-configuration.device-review-panel.full');
+  assert.ok(await vmCard.isVisible(),
+    'Approved full-width VM allocation card must be visible in General');
+  assert.ok(await vmCard.getByRole('heading',{name:'Virtual Machine Configuration'}).isVisible(),
+    'VM card heading must use Batch 04 presentation');
+  assert.equal(await vmCard.locator('.device-review-form-grid').count(),2,
+    'Approved VM card must provide separate host and allocated hardware grids');
+  for(const id of ['dev-virtual-host','dev-vmVcpu','dev-vmRamGb','dev-vmDiskGb','dev-vmNicCount']){
+    assert.equal(await vmCard.locator('#'+id).count(),1,
+      'VM card must retain original saved field '+id);
+  }
   assert.ok(await approvedEditor.locator('#dev-virtual-host').isVisible(),
     'VMs must retain their physical-host selector');
   await page.locator('#dev-vm-purpose').selectOption('Server - Virtual');
