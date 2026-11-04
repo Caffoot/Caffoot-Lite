@@ -762,9 +762,12 @@ async function run(){
   await viewer.locator('#sidebar [data-action="tab-racks"]').click();
   assert.ok(await viewer.locator('#main-content .approved-page-header [data-action="open-rack-modal"]').isHidden());
   await viewer.locator('#app .header-account').click();
-  for(const tab of ['preferences','help','about']){
-    await viewer.locator('[data-action="select-account-section"][data-section="'+tab+'"]').click();
-    assert.ok(await viewer.locator('[data-action="select-account-section"][data-section="'+tab+'"]').isVisible());
+  await viewer.locator('#personal-details-form').waitFor();
+  assert.equal(await viewer.locator('.approved-account .appearance-buttons [data-theme]').count(),3,
+    'All signed-in users must retain the approved appearance controls on Account Overview');
+  for(const tab of ['help','about']){
+    await viewer.locator('[data-action="select-account-section"][data-section="'+tab+'"]').first().click();
+    assert.equal(await viewer.locator('.approved-account .subnav [data-section="'+tab+'"]').getAttribute('aria-selected'),'true');
   }
   const denied=await viewer.evaluate(async()=>{
     const session=await (await fetch('/api/session')).json();
