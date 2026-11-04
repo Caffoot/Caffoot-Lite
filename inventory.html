@@ -1495,6 +1495,21 @@ html.dark .caffoot-dashboard .db-rack-row:hover{background:#354a60;border-color:
 @media(max-width:1100px){#main-content .racks-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#main-content .rack-directory{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:680px){#main-content .racks-grid,#main-content .rack-directory{grid-template-columns:1fr}}
 </style>
+<style id="approved-html-users">
+/* Approved Users & Permissions Draft 02 list and manage components, scoped to this section. */
+#main-content .users-list-shell .badge{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;font-size:10px;font-weight:750;border-radius:100px;padding:6px 10px;background:#f1f5f8;color:#667e93}#main-content .users-list-shell .badge.green{background:#e8f6ee;color:#287c65}#main-content .users-list-shell .badge.amber{background:#fff3e4;color:#a6672b}#main-content .users-list-shell .badge.blue{background:#e9f1fa;color:#39709c}#main-content .users-list-shell .badge.dark{background:#e7edf3;color:#465f78}#main-content .users-list-shell .badge.red{background:#fcece9;color:#aa534b}#main-content .users-list-shell .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+#main-content .users-list-shell .btn{appearance:none;border:1px solid #dbe5ec;color:#4b6982;background:white;border-radius:9px;padding:10px 15px;font-size:11px;font-weight:780;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none}#main-content .users-list-shell .btn:hover{background:#f5f8fb}#main-content .users-list-shell .btn svg{width:15px;height:15px}#main-content .users-list-shell .btn.primary{background:var(--orange);border-color:#e78234;color:white}#main-content .users-list-shell .btn.primary:hover{background:#da782d}#main-content .users-list-shell .btn.danger{color:#ad4d46;border-color:#efc8c3}#main-content .users-list-shell .btn.danger:hover{background:#fff0ee}#main-content .users-list-shell .btn.soft{background:#f4f7fa}#main-content .users-list-shell .btn:disabled{opacity:.47}
+#main-content .users-list-shell .toolbar{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:18px 0 16px}#main-content .users-list-shell .filters{display:flex;gap:10px;flex-wrap:wrap;align-items:end;flex:1}#main-content .users-list-shell .field{display:grid;gap:6px;min-width:0}#main-content .users-list-shell .field label,#main-content .users-list-shell .field>label{font-size:11px;font-weight:750;color:#4e6981}#main-content .users-list-shell .input{width:100%;min-width:0;background:#fff;border:1px solid #d5e2eb;border-radius:9px;padding:11px 12px;color:#2e4b63;min-height:42px;font-size:12px}#main-content .users-list-shell .input:disabled{background:#f3f6f8;color:#7c91a3}#main-content .users-list-shell .field.search{flex:1;min-width:220px;max-width:450px}#main-content .users-list-shell .field.filter{min-width:150px}#main-content .users-list-shell .list-header{display:grid;grid-template-columns:minmax(190px,1.45fr) minmax(100px,.85fr) minmax(130px,.9fr) minmax(175px,1.3fr) 112px;gap:15px;padding:13px 18px;color:#8296a6;font-size:10px;font-weight:850;text-transform:uppercase;letter-spacing:.09em;border-bottom:1px solid #eaf0f5}#main-content .users-list-shell .userrow{display:grid;grid-template-columns:minmax(190px,1.45fr) minmax(100px,.85fr) minmax(130px,.9fr) minmax(175px,1.3fr) 112px;gap:15px;padding:16px 18px;align-items:center;border-top:1px solid #edf1f5}#main-content .users-list-shell .userrow:first-of-type{border-top:0}#main-content .users-list-shell .userrow:hover{background:#fbfcfe}#main-content .users-list-shell .who{display:flex;align-items:center;gap:12px;min-width:0}#main-content .users-list-shell .initial{width:37px;height:37px;flex:none;background:#e8f0f5;border-radius:50%;color:#54718a;font-weight:850;display:grid;place-items:center;font-size:12px}#main-content .users-list-shell .username{font-weight:780;color:#2a455d;font-size:12.5px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}#main-content .users-list-shell .userdesc{font-size:10.5px;color:#8a9aa8;margin-top:4px}#main-content .users-list-shell .grant-pills{display:flex;flex-wrap:wrap;gap:4px}#main-content .users-list-shell .mini{padding:4px 7px;background:#eef3f7;border-radius:6px;color:#627f97;font-size:9px;font-weight:760;white-space:nowrap}#main-content .users-list-shell .mini.edit{background:#e9f2fc;color:#386f9d}#main-content .users-list-shell .mini.no{background:#f4f6f8;color:#99a5ad}#main-content .users-list-shell .empty{padding:35px;text-align:center;color:#778fa0}#main-content .users-list-shell .list-footer{padding:13px 19px;border-top:1px solid #e8edf2;font-size:11px;color:#899cae}
+#main-content .users-management-modal{position:fixed;inset:0;z-index:50;background:#152b43aa;display:grid;place-items:center;padding:20px;overflow-y:auto}#main-content .users-management-modal .modal{background:white;border-radius:18px;box-shadow:0 24px 85px #0d203b5b;width:min(710px,100%);max-height:min(90dvh,890px);overflow-y:auto;position:relative}#main-content .users-management-modal .modal-head{padding:23px 26px 19px;border-bottom:1px solid #e6edf3;display:flex;justify-content:space-between;gap:16px;align-items:start}#main-content .users-management-modal .modal-head h2{font-size:19px;color:#243f56;margin:0 0 6px;letter-spacing:-.5px}#main-content .users-management-modal .modal-head p{font-size:11.5px;color:#71889a;line-height:1.55;margin:0}#main-content .users-management-modal .close{width:31px;height:31px;border:0;background:#f3f6f8;border-radius:8px;font-size:19px;color:#567188}#main-content .users-management-modal .modal-body{padding:23px 26px}#main-content .users-management-modal .modal-actions{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:20px;padding-top:18px;border-top:1px solid #e9eff3}#main-content .users-management-modal .section-label{color:#7d8e9e;font-size:10px;font-weight:850;letter-spacing:.12em;text-transform:uppercase;margin-bottom:13px}#main-content .users-management-modal .access-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}#main-content .users-management-modal .access-option{border:1px solid #dbe5eb;border-radius:11px;padding:13px;background:#fff}#main-content .users-management-modal .access-option label{font-size:12px;font-weight:790;color:#344f67;display:block;margin-bottom:11px}#main-content .users-management-modal .access-option select{width:100%}#main-content .users-management-modal .manage-meta{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:0 0 20px}#main-content .users-management-modal .manage-meta .badge{font-size:10px}#main-content .users-management-modal .switch-row{border:1px solid #e4ebf1;border-radius:11px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:13px;margin-top:12px}#main-content .users-management-modal .switch-row strong{color:#3b576f;font-size:12px}#main-content .users-management-modal .switch-row small{display:block;color:#8093a4;font-size:10.5px;line-height:1.5;margin-top:4px}#main-content .users-management-modal .switch-row button{flex:none}#main-content .users-management-modal .danger-zone{margin-top:17px;padding:15px 16px;background:#fff9f8;border:1px solid #f1dedc;border-radius:11px}#main-content .users-management-modal .danger-zone p{font-size:11px;line-height:1.5;color:#9b706d;margin:6px 0 10px}#main-content .users-management-modal .modal-warning{color:#9f6131;background:#fff5e7;border:1px solid #f6e1c2;padding:12px;border-radius:9px;margin-top:13px;font-size:11px;line-height:1.6}
+#main-content .users-list-shell .users-list-card{background:white;border:1px solid #e1e8ee;border-radius:15px;overflow:hidden;box-shadow:0 7px 26px rgba(31,51,73,.04)}
+#main-content .users-list-shell .list-header,#main-content .users-list-shell .userrow{min-width:850px}
+#main-content .users-list-shell .users-list-table-scroll{overflow-x:auto}
+#main-content .users-list-shell .users-list-card .userrow .username{margin:0}
+#main-content .users-management-modal .access-option .input{width:100%;border:1px solid #d5e2eb;border-radius:9px;padding:11px 12px;background:#fff;color:#2e4b63}
+#main-content .users-management-modal .modal-actions button{border:1px solid #dbe5ec;background:#fff;border-radius:9px;padding:9px 12px;font-size:12px;font-weight:700;color:#4b6982}
+#main-content .users-management-modal .modal-warning{margin-top:12px}
+@media(max-width:650px){#main-content .users-management-modal .access-grid{grid-template-columns:1fr}#main-content .users-management-modal .modal-head,#main-content .users-management-modal .modal-body{padding:18px}}
+</style>
 </head>
 <body class="h-full bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-200">
 
@@ -9566,6 +9581,7 @@ function hierarchyValidateTypes(subnets) {
                     break;
                 }
                 case 'approved-users-section': {
+                    activeUserEditorId=null;
                     if (['overview','list','add'].includes(target.dataset.tab)) {
                         activeUsersTab = target.dataset.tab;
                         switchTab('users');
@@ -10464,6 +10480,7 @@ window.addEventListener('load', async () => {
   };
   // Users: administrator-only section, following the published sidebar and panel style.
   let users = null;
+  let activeUserEditorId = null;
   nextRenderUsers = function() {
     if (!sessionIsAdmin) return '';
     const card='rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 sm:p-6 space-y-4';
@@ -10529,41 +10546,101 @@ window.addEventListener('load', async () => {
         '<button type="submit" class="h-11 px-5 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold">Create User</button>' +
         '</form></section></div>';
     }
-    for (const user of users) {
+    const rows=users.map(user=>{
       const own=user.username.toLowerCase()===signedInUsername.toLowerCase();
-      html+='<section class="'+card+'"><div class="flex flex-wrap items-center justify-between gap-3">' +
-        '<h3 class="text-lg font-bold"><i class="fa-solid fa-circle-user text-blue-800 dark:text-sky-300 mr-2" aria-hidden="true"></i>' +
-        escapeHtml(user.username)+(user.isAdmin?' (administrator)':'')+'</h3>' +
-        '<span class="text-sm text-slate-600 dark:text-slate-300">' +
-        (user.active?'Active':'Disabled')+' · MFA '+(user.mfaEnrolled?'enrolled':'not enrolled')+'</span></div>';
-      if (!user.mfaEnrolled && !user.isAdmin)
-        html+='<p class="text-sm text-slate-600 dark:text-slate-300">Editing or administrator access requires MFA. Ask this user to set up their authenticator under My account → Password &amp; MFA first.</p>';
-      if (user.isAdmin) html+='<p class="text-sm text-slate-600 dark:text-slate-300">Administrator: all inventory sections.</p>';
-      else {
-        html+='<div class="flex flex-wrap gap-4">';
-        for (const sectionName of ['Devices','IPAM','Racks']) {
-          html+='<label class="text-sm font-semibold flex-1 min-w-[140px]">'+sectionName+
-            '<select data-next-user-permission data-user-id="'+user.id+'" data-section="'+sectionName+
-            '" class="'+field+'">';
-          for (const [value,name] of [['','No access'],['read','Read'],['edit','Edit']])
-            html+='<option value="'+value+'"'+((user.permissions[sectionName]||'')===value?' selected':'')+'>'+name+'</option>';
-          html+='</select></label>';
-        }
-        html+='</div>';
-      }
-      html+='<div class="flex flex-wrap gap-2 pt-1">';
-      for (const [kind,title] of [['active',user.active?'Disable':'Enable'],
-                                   ['admin',user.isAdmin?'Remove admin':'Make admin'],
-                                   ['delete','Delete']]) {
-        html+='<button type="button" data-next-user-operation="'+kind+
-          '" data-user-id="'+user.id+
-          '" class="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 text-sm font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"'+
-          (own?' disabled':'')+'>'+title+'</button>';
-      }
-      html+='</div></section>';
+      const role=user.isAdmin?'Administrator':'Standard user';
+      const grantPills=['Devices','IPAM','Racks'].map(section=>{
+        const level=user.isAdmin?'edit':(user.permissions?.[section]||'');
+        return `<span class="mini ${level==='edit'?'edit':level===''?'no':''}" title="${section}: ${level||'No access'}">${section}: ${level==='edit'?'Edit':level==='read'?'Read':'—'}</span>`;
+      }).join('');
+      return `<div class="userrow" data-users-row data-id="${user.id}" data-search="${escapeHtml(user.username.toLowerCase())}" data-active="${user.active?'active':'disabled'}" data-mfa="${user.mfaEnrolled?'enrolled':'pending'}">
+        <div class="who"><span class="initial" aria-hidden="true">${escapeHtml(user.username.slice(0,1).toUpperCase())}</span><div style="min-width:0"><h3 class="username">${escapeHtml(user.username)}</h3><div class="userdesc">${own?'Your account · Protected':role}</div></div></div>
+        <div class="role-cell"><span class="badge ${user.isAdmin?'blue':'dark'}">${role}</span><div style="margin-top:5px"><span class="badge ${user.active?'green':'red'}">${user.active?'Active':'Disabled'}</span></div></div>
+        <div class="mfa-cell"><span class="badge ${user.mfaEnrolled?'green':'amber'}">${user.mfaEnrolled?'✓ MFA enrolled':'○ Not enrolled'}</span></div>
+        <div class="permissions-cell grant-pills">${grantPills}</div>
+        <div class="actions"><button type="button" class="btn" data-action="users-open-editor" data-user-id="${user.id}">${own?'View':'Manage'}</button></div>
+      </div>`;
+    }).join('');
+    html+=`<section class="users-list-shell section active" id="users-live-list" role="tabpanel" aria-label="User List">
+      <div class="section-heading"><div><h2>User List</h2><p>Review account state, change existing rights or manage an account.</p></div><button type="button" class="btn primary" data-action="users-add-nav">+ Add User</button></div>
+      <div class="toolbar"><div class="filters">
+        <div class="field search"><label for="live-users-search">Find a user</label><input class="input" id="live-users-search" type="search" autocomplete="off" placeholder="Search by username…"></div>
+        <div class="field filter"><label for="live-users-status">Account status</label><select class="input" id="live-users-status"><option value="all">All statuses</option><option value="active">Active</option><option value="disabled">Disabled</option></select></div>
+        <div class="field filter"><label for="live-users-mfa">Authenticator</label><select class="input" id="live-users-mfa"><option value="all">All MFA statuses</option><option value="enrolled">Enrolled</option><option value="pending">Not enrolled</option></select></div>
+      </div></div>
+      <div class="users-list-card"><div class="users-list-table-scroll"><div class="list-header"><span>User account</span><span>Role &amp; status</span><span>Authenticator</span><span>Section access</span><span>Manage</span></div><div id="user-rows">${rows}</div></div>
+      <div class="list-footer" id="live-users-count" role="status">Showing ${users.length} of ${users.length} accounts</div></div>
+    </section>`;
+    const editingUser=users.find(u=>u.id===activeUserEditorId);
+    if(editingUser){
+      const own=editingUser.username.toLowerCase()===signedInUsername.toLowerCase();
+      const permissionControls=['Devices','IPAM','Racks'].map(section=>`<div class="access-option"><label for="live-user-permission-${section}">${section}</label><select id="live-user-permission-${section}" class="input" data-next-user-permission data-user-id="${editingUser.id}" data-section="${section}" ${own||editingUser.isAdmin?'disabled':''}>
+        ${[['','No access'],['read','Read'],['edit','Edit']].map(([value,label])=>`<option value="${value}" ${(editingUser.permissions?.[section]||'')===value?'selected':''}>${label}</option>`).join('')}
+      </select></div>`).join('');
+      const operations=[['active',editingUser.active?'Disable':'Enable'],['admin',editingUser.isAdmin?'Remove admin':'Make admin'],['delete','Delete']].map(([operation,label])=>
+        `<button type="button" data-next-user-operation="${operation}" data-user-id="${editingUser.id}" ${own?'disabled':''}>${label}</button>`).join('');
+      html+=`<div class="modal-layer users-management-modal" data-users-modal><div class="modal" role="dialog" aria-modal="true" aria-labelledby="users-modal-title">
+        <div class="modal-head"><div><h2 id="users-modal-title">${own?'Your administrator account':'Manage '+escapeHtml(editingUser.username)}</h2><p>${own?'Self-protection prevents account changes here. Use My Account for your own security settings.':'Review access and account controls for this user.'}</p></div><button type="button" class="close" data-action="users-close-editor" aria-label="Close user management">×</button></div>
+        <div class="modal-body"><div class="manage-meta"><span class="badge ${editingUser.isAdmin?'blue':'dark'}">${editingUser.isAdmin?'Administrator · all sections':'Standard user'}</span><span class="badge ${editingUser.mfaEnrolled?'green':'amber'}">${editingUser.mfaEnrolled?'MFA enrolled':'MFA not enrolled'}</span></div>
+        <div class="section-label">Section access</div>
+        ${editingUser.isAdmin?'<p>Administrators have access to all sections.</p>':`<div class="access-grid">${permissionControls}</div>`}
+        ${!editingUser.mfaEnrolled&&!editingUser.isAdmin?'<p class="modal-warning">Editing or administrator access requires MFA. This user must enrol their authenticator under My Account first.</p>':''}
+        <div class="section-label" style="margin-top:23px">Account controls</div>
+        <div class="modal-actions">${operations}<button type="button" data-action="users-close-editor">Close</button></div>
+        </div>
+      </div></div>`;
     }
     return html+'</div>';
   };
+  function filterApprovedUserRows() {
+    const list=document.getElementById('users-live-list');
+    if(!list) return;
+    const search=(list.querySelector('#live-users-search')?.value||'').trim().toLowerCase();
+    const status=list.querySelector('#live-users-status')?.value||'all';
+    const mfa=list.querySelector('#live-users-mfa')?.value||'all';
+    let count=0;
+    const rows=[...list.querySelectorAll('[data-users-row]')];
+    rows.forEach(row=>{
+      const visible=(!search || row.dataset.search.includes(search)) &&
+        (status==='all'||row.dataset.active===status) &&
+        (mfa==='all'||row.dataset.mfa===mfa);
+      row.hidden=!visible;
+      if(visible)count++;
+    });
+    const caption=list.querySelector('#live-users-count');
+    if(caption)caption.textContent='Showing '+count+' of '+rows.length+' accounts';
+  }
+  document.addEventListener('input', event=>{
+    if(event.target?.id==='live-users-search')filterApprovedUserRows();
+  });
+  document.addEventListener('change', event=>{
+    if(['live-users-status','live-users-mfa'].includes(event.target?.id))filterApprovedUserRows();
+  });
+  document.addEventListener('click', event=>{
+    const target=event.target.closest('[data-action="users-open-editor"],[data-action="users-close-editor"],[data-action="users-add-nav"]');
+    if(!target||currentTab!=='users'||!sessionIsAdmin)return;
+    if(target.dataset.action==='users-open-editor'){
+      const id=Number(target.dataset.userId);
+      if(!users?.some(user=>user.id===id))return;
+      activeUserEditorId=id;
+      renderContent();
+      document.querySelector('#main-content .users-management-modal [data-action="users-close-editor"]')?.focus();
+    } else if(target.dataset.action==='users-close-editor'){
+      activeUserEditorId=null;
+      renderContent();
+      document.querySelector('#main-content [data-action="users-open-editor"][data-user-id="'+target.dataset.userId+'"]')?.focus();
+    } else {
+      activeUserEditorId=null;
+      activeUsersTab='add';
+      switchTab('users');
+    }
+  });
+  document.addEventListener('keydown',event=>{
+    if(event.key==='Escape'&&activeUserEditorId!==null&&currentTab==='users'){
+      activeUserEditorId=null;
+      renderContent();
+    }
+  });
   let signedInUsername = '';
   async function loadCentralUsers() {
     const response=await fetch('/api/users',{cache:'no-store'});
