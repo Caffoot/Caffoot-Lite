@@ -1275,7 +1275,7 @@ async function run(){
   assert.equal(await approvedHardwareFields.evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),1,
     'Pinned hardware field grid must stack to one column on mobile');
   await page.setViewportSize({width:1440,height:950});
-  assert.ok(await approvedEditor.getByText('Hardware & Lifecycle',{exact:true}).isVisible(),
+  assert.ok(await approvedEditor.locator('#device-form-panel-hardware').getByRole('heading',{name:'Hardware & Lifecycle'}).isVisible(),
     'Approved Hardware card must be present');
   assert.ok(await approvedEditor.locator('#dev-manufacturer-select').isVisible(),
     'The live manufacturer selector must remain available');
