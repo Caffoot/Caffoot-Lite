@@ -2242,6 +2242,7 @@ function hierarchyValidateTypes(subnets) {
         let nextRenderUsers = () => '';
         let activeUsersTab = 'overview';
         let nextRenderAccount = () => '';
+        let nextHydrateAccount = () => {};
         let activeAccountSection = 'overview';
         let nextImportAllowed = false;
         function saveState() { showToast('This inventory operation is not yet connected to SQLite.', 'error'); return false; }
@@ -2646,7 +2647,7 @@ function hierarchyValidateTypes(subnets) {
                 html = renderApprovedSectionHeader(currentTab) + '<div class="approved-page-body">' + html + '</div>';
             }
             container.innerHTML = html;
-            if (currentTab === 'account') hydrateApprovedAccount(container);
+            if (currentTab === 'account') nextHydrateAccount(container);
             const rackScroll = container.querySelector('[data-rack-scroll="true"]');
             if (rackScroll) {
                 const updateScrollHint = () => {
@@ -10500,7 +10501,7 @@ window.addEventListener('load', async () => {
       .replaceAll('{{C_MFA}}',sessionMfaEnrolled?'Enabled':'Not enrolled')
       .replace('<!--CAFFOOT_MFA_PANEL-->',renderApprovedAccountMfaPanel());
   };
-  function hydrateApprovedAccount(container){
+  nextHydrateAccount=function hydrateApprovedAccount(container){
     const root=container.querySelector('.approved-account');
     if(!root)return;
     root.querySelectorAll('.account-panel').forEach(panel=>{
@@ -10536,7 +10537,7 @@ window.addEventListener('load', async () => {
       button.classList.toggle('selected',on);
       button.setAttribute('aria-pressed',String(on));
     });
-  }
+  };
   function updateAccountHeaderPhoto(){
     const picture=document.getElementById('header-account-initial');
     if(!picture)return;
