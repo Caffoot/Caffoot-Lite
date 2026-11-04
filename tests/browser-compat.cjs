@@ -1513,14 +1513,36 @@ async function run(){
     'Approved Device Overview card must be present');
   assert.ok(await deviceReview.getByRole('heading',{name:'At a Glance'}).isVisible(),
     'Approved Device Details must preserve the physical device summary');
+  assert.equal(await deviceReview.locator('#device-details-panel-overview dt').filter({hasText:'Location Area'}).count(),1,
+    'Approved Details overview must retain the Location Area source label');
+  await deviceReview.getByRole('tab',{name:'Software'}).click();
+  const detailsSoftware= deviceReview.locator('#device-details-panel-software');
+  assert.deepEqual(await detailsSoftware.locator(':scope > .device-review-panel > h3').allTextContents(),
+    (await detailsSoftware.locator(':scope > .device-review-panel > h3').allTextContents()).map(text=>text.trim()),
+    'Software card titles must be stable in the original detail layout');
+  assert.ok(await detailsSoftware.locator(':scope > .device-review-panel').first()
+    .getByRole('heading',{name:'Operating System / Platform'}).isVisible(),
+    'Approved Details Software tab must lead with Operating System / Platform');
+  assert.ok(await detailsSoftware.locator(':scope > .device-review-panel').nth(1)
+    .getByRole('heading',{name:'Installed Software'}).isVisible(),
+    'Approved Details Installed Software must follow Operating System / Platform');
+  await deviceReview.getByRole('tab',{name:'Network'}).click();
+  assert.ok(await deviceReview.locator('#device-details-panel-network')
+    .getByRole('heading',{name:'Network Identity'}).isVisible(),
+    'Network tab must retain approved Network Identity heading');
+  await deviceReview.getByRole('tab',{name:'Location'}).click();
+  assert.ok(await deviceReview.locator('#device-details-panel-location')
+    .getByRole('heading',{name:'Mounting & Location'}).isVisible(),
+    'Location tab must use approved Mounting & Location title');
+  await deviceReview.getByRole('tab',{name:'Overview'}).click();
   assert.ok(await deviceReview.getByRole('tab',{name:'Virtual Machines'}).isVisible(),
     'Physical hosts with virtual machines must retain their guest listing');
   await deviceReview.getByRole('tab',{name:'Virtual Machines'}).click();
   assert.ok(await deviceReview.getByText('browser-vm',{exact:true}).isVisible(),
     'Hosted VM must remain discoverable from its physical host');
   await deviceReview.getByRole('tab',{name:'Hardware'}).click();
-  assert.ok(await deviceReview.getByRole('heading',{name:'Hardware & lifecycle'}).isVisible(),
-    'Physical hardware details must remain accessible');
+  assert.ok(await deviceReview.getByRole('heading',{name:'Hardware & Lifecycle'}).isVisible(),
+    'Physical hardware details must use the approved Batch 04 heading');
   assert.ok(await deviceReview.locator('[data-action="edit-device-from-details"]').isVisible(),
     'Approved footer must keep live editing controls');
   await deviceReview.locator('[data-action="edit-device-from-details"]').click();
@@ -1541,6 +1563,15 @@ async function run(){
     'VM Device Details must not expose physical hardware');
   assert.ok(await deviceReview.getByRole('heading',{name:'Allocated virtual hardware'}).isVisible(),
     'Approved Device Details must show VM-owned virtual hardware');
+  await deviceReview.getByRole('tab',{name:'Software'}).click();
+  const vmDetailsSoftware=deviceReview.locator('#device-details-panel-software');
+  assert.ok(await vmDetailsSoftware.locator(':scope > .device-review-panel').first()
+    .getByRole('heading',{name:'Operating System / Platform'}).isVisible(),
+    'VM software details must lead with approved Operating System / Platform');
+  assert.ok(await vmDetailsSoftware.locator(':scope > .device-review-panel').nth(1)
+    .getByRole('heading',{name:'Installed Software'}).isVisible(),
+    'VM software details must retain source Installed Software order');
+  await deviceReview.getByRole('tab',{name:'Overview'}).click();
   assert.equal(await deviceReview.locator('[data-action="navigate-to-device-rack"]').count(),0,
     'Virtual machines must not acquire independent rack placement');
   await page.setViewportSize({width:420,height:900});
