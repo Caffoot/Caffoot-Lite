@@ -1400,6 +1400,11 @@ async function run(){
   // while keeping the legacy Markdown editor and its saved field.
   await approvedEditor.getByRole('tab',{name:'Notes'}).click();
   const approvedNotes=approvedEditor.locator('#device-form-panel-notes');
+  const approvedNotesGrid=approvedNotes.locator(':scope > .device-review-grid');
+  assert.equal(await approvedNotesGrid.locator(':scope > .device-review-panel.full').count(),1,
+    'Batch 04 Notes must mount its one full-width card inside the approved grid');
+  assert.equal(await approvedNotesGrid.evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),2,
+    'Approved Notes outer grid must retain desktop columns');
   assert.ok(await approvedNotes.getByText('Notes / Details',{exact:true}).isVisible(),
     'Approved Notes card heading must match Batch 04');
   assert.ok(await approvedNotes.locator('.device-review-note-toolbar[role="toolbar"]').isVisible(),
@@ -1418,6 +1423,8 @@ async function run(){
   assert.equal(await approvedNotes.locator('#dev-notes').inputValue(),'**Browser note**',
     'Preview must not discard typed notes');
   await page.setViewportSize({width:420,height:900});
+  assert.equal(await approvedNotesGrid.evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),1,
+    'Approved Notes full-width card must use a single mobile column');
   assert.equal(await approvedNotes.locator('.device-review-form-grid').evaluate(el=>
     getComputedStyle(el).gridTemplateColumns.split(' ').length),1,
     'Approved Notes fields must stack in a single mobile column');
