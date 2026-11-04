@@ -1770,6 +1770,68 @@ html.dark .caffoot-dashboard .db-rack-row:hover{background:#354a60;border-color:
  #modal-content.approved-device-review-container>.device-review-dialog{height:100dvh;max-height:100dvh;border-radius:0}
 }
 </style>
+<style id="approved-device-form-controls-batch04">
+/* Verbatim pinned Batch 04 field, checkbox, responsive and inline picker component CSS. */
+.device-review-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.device-review-field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.device-review-field.wide{grid-column:1/-1}
+.device-review-field label{font-size:12px;font-weight:750;color:#34526c}
+.device-review-field input,.device-review-field select,.device-review-field textarea{height:42px;border:1px solid #d2dfeb;border-radius:9px;background:#fff;color:#223b53;padding:9px 11px;min-width:0;width:100%;font-size:13px}
+.device-review-field textarea{height:auto;min-height:125px;resize:vertical;line-height:1.6}
+.device-review-field input:focus,.device-review-field select:focus,.device-review-field textarea:focus{outline:2px solid #fac59e;outline-offset:1px}
+.device-review-field small{color:#7890a4;font-size:11px;line-height:1.45}
+.device-review-body .btn{display:inline-flex;align-items:center;gap:6px;justify-content:center}
+.device-review-hint{background:#eff5f9;border:1px solid #dbe6ef;border-radius:10px;padding:12px 14px;color:#4d6c85;font-size:12px;line-height:1.5}
+.device-review-warning{background:#fff4e8;border:1px solid #f6d5b6;border-radius:10px;padding:12px 14px;color:#995a23;font-size:12px;line-height:1.55}
+.device-review-danger{border:1px solid #e7bdbd!important;color:#a23e46!important;background:#fff!important}
+.device-review-checkbox{display:flex;align-items:flex-start;gap:10px;line-height:1.5;font-size:13px;font-weight:650;color:#31516d}
+.device-review-checkbox input{margin-top:3px;width:17px;height:17px;accent-color:#e88130;flex-shrink:0}
+.device-review-checkbox small{display:block;color:#738b9f;font-size:11px;font-weight:400;margin-top:4px}
+.device-review-pick{display:flex;flex-wrap:wrap;gap:8px}
+.device-review-pick button{border:1px solid #d8e4ed;border-radius:9px;padding:9px 13px;background:white;font-weight:700;color:#365571;font-size:12px}
+.device-review-pick button.active{border-color:#ee8432;background:#fff1e5;color:#bb5c1d}
+.device-review-quiet{font-size:11px;color:#6a839a;margin-top:8px}
+.device-review-note-toolbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:9px}
+.device-review-note-toolbar button{border:1px solid #d7e3ec;background:#f5f8fb;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:700;color:#395971}
+.device-review-loading{text-align:center;color:#718498;padding:30px}
+.device-review-panel .record-preview{padding:13px;border:1px solid #e5edf3;border-radius:10px;display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:9px;background:#fbfcfe}
+.device-review-panel .record-preview strong{display:block;font-size:13px}.device-review-panel .record-preview span{font-size:11px;color:#6b8297}
+.device-review-note-preview{padding:12px;border:1px dashed #d7e2ed;border-radius:9px;white-space:pre-wrap;line-height:1.6;font-size:13px;min-height:95px;color:#36516a}
+.device-review-overlay [hidden]{display:none!important}
+@media(max-width:700px){.device-review-overlay{padding:0}.device-review-dialog{height:100dvh;max-height:100dvh;border-radius:0;width:100%}.device-review-head{padding:16px 15px 12px}.device-review-head h2{font-size:20px}.device-review-body{padding:15px}.device-review-footer{padding:12px 15px;justify-content:stretch}.device-review-footer .btn{flex:1}.device-review-grid,.device-review-form-grid{grid-template-columns:1fr;gap:12px}.device-review-panel.full,.device-review-field.wide{grid-column:auto}.device-review-panel{padding:16px}.device-review-facts{grid-template-columns:1fr 1fr;gap:0 10px}.device-review-tabs{gap:15px}}
+@media(max-width:420px){.device-review-facts{grid-template-columns:1fr}.device-review-sub{font-size:11px}.device-review-footer .btn{min-width:90px}}
+
+
+/* Batch 03: inline catalog choices and non-persistent quick-add UI in the Add/Edit Device preview. */
+.device-review-inline-pick{margin-top:2px}
+.device-review-inline-tools{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:9px 0}
+.device-review-inline-tools .device-review-field{flex:1;min-width:170px}
+.device-review-inline-tools .device-review-field input{height:38px}
+.device-review-checklist{border:1px solid #dae5ed;border-radius:11px;background:#fbfdff;max-height:235px;overflow-y:auto;overscroll-behavior:contain;padding:6px;display:grid;grid-template-columns:minmax(0,1fr);gap:2px;scrollbar-width:thin}
+.device-review-check-item{display:flex;align-items:center;gap:10px;min-height:39px;padding:7px 10px;border-radius:8px;color:#31516b;font-size:12px;font-weight:650;cursor:pointer}
+.device-review-check-item:hover{background:#eef4fa}
+.device-review-check-item:has(input:checked){background:#fff2e8;color:#975217}
+.device-review-check-item input{width:17px;height:17px;flex:none;accent-color:#eb883a}
+.device-review-check-item span{min-width:0;overflow-wrap:anywhere}
+.device-review-inline-count{font-size:11px;color:#617e94;font-weight:700}
+.device-review-inline-create{margin-top:12px;padding:13px;background:#f6f9fc;border:1px solid #dde8ef;border-radius:11px}
+.device-review-inline-create[hidden],.device-review-check-item[hidden]{display:none!important}
+.device-review-inline-create h4{margin:0 0 11px;font-size:12px;color:#294960;font-weight:800}
+.device-review-inline-add-actions{display:flex;gap:9px;align-items:end;flex-wrap:wrap}
+.device-review-inline-add-actions .device-review-field{flex:1;min-width:155px}
+.device-review-inline-add-actions .device-review-field input{height:39px}
+.device-review-smallbtn{border:1px solid #d5e0e9;border-radius:9px;background:#fff;color:#34536b;font-size:12px;font-weight:750;padding:9px 11px;min-height:38px}
+.device-review-smallbtn.primary{background:#e77e2d;color:#fff;border-color:#e77e2d}
+.device-review-smallbtn:hover{filter:brightness(.975)}
+.device-review-inline-types{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 12px}
+.device-review-inline-types label{display:flex;gap:6px;align-items:center;background:#fff;border:1px solid #d8e3eb;padding:6px 9px;border-radius:8px;color:#355570;font-size:11px;font-weight:650}
+.device-review-inline-types input{accent-color:#e88234}
+.device-review-inline-explain{font-size:11px!important;color:#667f94!important;margin:9px 0!important}
+.device-review-catalogue-actions{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-top:13px}
+.device-review-inline-create input{font-size:12px}
+@media (max-width:570px){.device-review-checklist{max-height:195px}.device-review-inline-add-actions .device-review-field{min-width:100%;}.device-review-inline-tools{align-items:stretch}}
+
+</style>
 <style id="approved-device-details-batch04">
 /* Approved Batch 04 device details component styles (live data, existing actions). */
 .device-review-dialog{width:min(1030px,100%);height:min(870px,calc(100dvh - 40px));max-height:calc(100dvh - 40px);background:#f5f7fa;border:1px solid #dce5ec;border-radius:17px;box-shadow:0 28px 80px #0b1f32a8;overflow:hidden;display:flex;flex-direction:column;color:#223b53}
@@ -7823,16 +7885,16 @@ function openIpModal(ip) {
                 key !== 'os' && key !== 'windowsLicence' && !(type === 'Server - Physical' && key === 'serverService_Hypervisor' && section === 'services') && (section === 'all' || (section === 'hardware' && !isSoftwareDetailField(key)) || (section === 'services' && getAvailableServerServiceFieldKeys().includes(key)) || (section === 'installed' && getAvailableSoftwareCatalogueEntries().some(x=>x.key===key)) || (section === 'software' && isSoftwareDetailField(key))));
             if(section==='installed'||section==='services'||section==='software')keys.sort((a,b)=>String(getAvailableServerServiceCatalogueEntries().find(x=>x.key===a)?.label||getAvailableSoftwareCatalogueEntries().find(x=>x.key===a)?.label||deviceDetailFieldLabels[a]||a).localeCompare(String(getAvailableServerServiceCatalogueEntries().find(x=>x.key===b)?.label||getAvailableSoftwareCatalogueEntries().find(x=>x.key===b)?.label||deviceDetailFieldLabels[b]||b),undefined,{sensitivity:'base'}));
             if (!keys.length) return '<p class="text-sm text-slate-600 dark:text-slate-300">'+(type ? 'No additional fields are configured for this type yet.' : 'Select a device type above to display its additional fields.')+'</p>';
-            return '<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">'+keys.map(key=>{
+            return '<div class="device-review-form-grid">'+keys.map(key=>{
                 const label=(deviceTypeDetailGroups[String(type||'').toLowerCase().trim()]==='router'&&key==='networkConnection')?'WAN connection method':(getAvailableServerServiceCatalogueEntries().find(x=>x.key===key)?.label||getAvailableSoftwareCatalogueEntries().find(x=>x.key===key)?.label||deviceDetailFieldLabels[key]||key);
                 const value=values[key]??'';
                 if(booleanDeviceDetailFields.has(key)||getAvailableServerServiceFieldKeys().includes(key)||getAvailableSoftwareCatalogueEntries().some(x=>x.key===key)) {
                     const tile = section === 'services' || section === 'installed';
-                    return tile ? `<label class="option-tile text-sm"><input type="checkbox" data-device-detail-field="${escapeHtml(key)}" ${value===true?'checked':''}><span>${escapeHtml(label)}</span><span class="option-status" aria-hidden="true">Enabled</span></label>` : `<label class="flex items-center gap-3 rounded-xl border border-slate-300 dark:border-slate-600 p-3 text-sm"><input type="checkbox" data-device-detail-field="${escapeHtml(key)}" ${value===true?'checked':''}>${escapeHtml(label)}</label>`;
+                    return tile ? `<label class="option-tile text-sm"><input type="checkbox" data-device-detail-field="${escapeHtml(key)}" ${value===true?'checked':''}><span>${escapeHtml(label)}</span><span class="option-status" aria-hidden="true">Enabled</span></label>` : `<label class="device-review-checkbox"><input type="checkbox" data-device-detail-field="${escapeHtml(key)}" ${value===true?'checked':''}><span>${escapeHtml(label)}</span></label>`;
                 }
                 const choices=deviceDetailFieldChoices[key];
-                if(choices) return `<div><label class="form-label" for="device-detail-${escapeHtml(key)}">${escapeHtml(label)}</label><select id="device-detail-${escapeHtml(key)}" data-device-detail-field="${escapeHtml(key)}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="">Select...</option>${choices.map(opt=>`<option value="${escapeHtml(opt)}" ${value===opt?'selected':''}>${escapeHtml(opt)}</option>`).join('')}</select></div>`;
-                return `<div><label class="form-label" for="device-detail-${escapeHtml(key)}">${escapeHtml(label)}</label><input id="device-detail-${escapeHtml(key)}" data-device-detail-field="${escapeHtml(key)}" type="${numericDeviceDetailFields.has(key)?'number':'text'}" ${numericDeviceDetailFields.has(key)?'min="0" step="any"':''} maxlength="160" value="${escapeHtml(String(value))}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></div>`;
+                if(choices) return `<div class="device-review-field"><label class="form-label" for="device-detail-${escapeHtml(key)}">${escapeHtml(label)}</label><select id="device-detail-${escapeHtml(key)}" data-device-detail-field="${escapeHtml(key)}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="">Select...</option>${choices.map(opt=>`<option value="${escapeHtml(opt)}" ${value===opt?'selected':''}>${escapeHtml(opt)}</option>`).join('')}</select></div>`;
+                return `<div class="device-review-field"><label class="form-label" for="device-detail-${escapeHtml(key)}">${escapeHtml(label)}</label><input id="device-detail-${escapeHtml(key)}" data-device-detail-field="${escapeHtml(key)}" type="${numericDeviceDetailFields.has(key)?'number':'text'}" ${numericDeviceDetailFields.has(key)?'min="0" step="any"':''} maxlength="160" value="${escapeHtml(String(value))}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></div>`;
             }).join('')+'</div>';
         }
         // Offline, device-type-aware platform suggestions. Names are not version claims.
@@ -8333,12 +8395,12 @@ function openIpModal(ip) {
                                 <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Retiring a device does not release its IP address or rack position automatically.</p>
                             </div>
                             ` : '<input type="hidden" id="dev-status" value="Active">'}
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div id="physical-manufacturer"><label for="dev-manufacturer-select" class="form-label">Manufacturer (optional)</label><input id="dev-manufacturer" type="hidden" value="${escapeHtml(draft?.manufacturer ?? device?.manufacturer ?? '')}"><select id="dev-manufacturer-select" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></select><input id="dev-manufacturer-custom" type="text" maxlength="120" class="hidden mt-2 w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Enter Custom Manufacturer" aria-label="Custom Manufacturer"></div>
-                                <div id="physical-model"><label for="dev-model-select" class="form-label">Model (optional)</label><input id="dev-model" type="hidden" value="${escapeHtml(draft?.model ?? device?.model ?? '')}"><select id="dev-model-select" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></select><input id="dev-model-custom" type="text" maxlength="120" class="hidden mt-2 w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Enter Custom Model" aria-label="Custom Model"></div>
+                            <div class="device-review-form-grid">
+                                <div id="physical-manufacturer" class="device-review-field"><label for="dev-manufacturer-select" class="form-label">Manufacturer (optional)</label><input id="dev-manufacturer" type="hidden" value="${escapeHtml(draft?.manufacturer ?? device?.manufacturer ?? '')}"><select id="dev-manufacturer-select" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></select><input id="dev-manufacturer-custom" type="text" maxlength="120" class="hidden mt-2 w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Enter Custom Manufacturer" aria-label="Custom Manufacturer"></div>
+                                <div id="physical-model" class="device-review-field"><label for="dev-model-select" class="form-label">Model (optional)</label><input id="dev-model" type="hidden" value="${escapeHtml(draft?.model ?? device?.model ?? '')}"><select id="dev-model-select" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></select><input id="dev-model-custom" type="text" maxlength="120" class="hidden mt-2 w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Enter Custom Model" aria-label="Custom Model"></div>
+                            <div class="device-review-field"><label for="dev-serial" class="form-label">Serial number (optional)</label><input id="dev-serial" type="text" maxlength="120" value="${escapeHtml(draft?.serialNumber ?? device?.serialNumber ?? '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Manufacturer serial number"></div>
                             </div>
-                            <div><button type="button" data-action="hardware-catalog-manage" class="h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-500 text-sm font-semibold"><i class="fa-solid fa-list mr-1"></i>Manage Hardware Catalogue</button><p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Add reusable manufacturer and model suggestions for this device type.</p></div>
-                            <div><label for="dev-serial" class="form-label">Serial number (optional)</label><input id="dev-serial" type="text" maxlength="120" value="${escapeHtml(draft?.serialNumber ?? device?.serialNumber ?? '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Manufacturer serial number"></div>
+                            <div class="device-review-catalogue-actions"><button type="button" data-action="hardware-catalog-manage" class="device-review-smallbtn"><i class="fa-solid fa-list mr-1"></i>Manage Hardware Catalogue</button><p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Add reusable manufacturer and model suggestions for this device type.</p></div>
                         <div class="form-section-card space-y-4 ${getDetailFieldsForDeviceType(currentType).length===0?'hidden':''}" id="details-section" aria-live="polite"><div class="form-section-heading"><i class="fa-solid fa-list-check"></i>Additional details for this device type</div><div class="flex flex-wrap gap-2"><button type="button" id="manage-server-services-button" data-action="manage-server-services" class="h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-500 text-sm font-semibold ${deviceTypeDetailGroups[String(currentType||'').toLowerCase().trim()]==='server'?'':'hidden'}">Manage Server Options</button><button type="button" id="manage-installed-software-button" data-action="manage-installed-software" class="h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-500 text-sm font-semibold ${['server','computer'].includes(deviceTypeDetailGroups[String(currentType||'').toLowerCase().trim()])?'':'hidden'}">Manage Software Options</button></div><div id="device-detail-fields-panel">${renderDeviceDetailFields(currentType,deviceDetailFormValues,'hardware')}</div></div>
                         </div>
                         <div class="form-section-card space-y-4" id="device-form-mounting-options"><div class="form-section-heading"><i class="fa-solid fa-rack"></i>Mounting & location</div><div><label for="dev-mount-type" class="form-label">Device Mounting <span class="required-mark">*</span></label><select id="dev-mount-type" required data-action="device-mount-type-change" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" disabled>Select mounting type...</option>${renderDeviceMountOptions(currentType,mountType)}</select></div>
