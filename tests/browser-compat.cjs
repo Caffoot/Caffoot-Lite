@@ -244,6 +244,32 @@ async function run(){
   await page.locator('[data-action="select-account-section"][data-section="overview"]').first().click();
   await page.locator('#personal-details-form').waitFor();
   assert.equal(await page.locator('#personal-details-form input[name="firstName"]').count(),1);
+  await page.locator('#personal-details-form input[name="firstName"]').fill('Test');
+  await page.locator('#personal-details-form input[name="lastName"]').fill('Administrator');
+  await page.locator('#personal-details-form input[name="displayName"]').fill('Test Owner');
+  await page.locator('#personal-details-form input[name="email"]').fill('owner@example.test');
+  await page.locator('#personal-details-form button[type="submit"]').click();
+  await page.waitForFunction(async()=>{
+    const r=await fetch('/api/account/profile',{cache:'no-store'});
+    return r.ok && (await r.json()).displayName==='Test Owner';
+  });
+  assert.equal(await page.locator('#profile-username').inputValue(),'owner',
+    'Saving personal details must not alter the sign-in username');
+  assert.equal(await page.locator('#personal-details-form input[name="email"]').inputValue(),'owner@example.test');
+  const accountPhoto=Buffer.from(
+    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+j5l8AAAAASUVORK5CYII=',
+    'base64'
+  );
+  await page.locator('#account-photo-input').setInputFiles({
+    name:'profile.png',mimeType:'image/png',buffer:accountPhoto
+  });
+  await page.locator('#photo-preview-image:visible').waitFor();
+  assert.equal(await page.locator('#header-account-initial img').count(),1,
+    'Saved profile photo should also update the approved header avatar');
+  await page.locator('[data-action="account-photo-remove"]').click();
+  await page.waitForFunction(()=>!document.querySelector('#header-account-initial img'));
+  assert.ok(await page.locator('#photo-preview-image').isHidden(),
+    'Removing a profile photo must restore the default avatar');
   await page.locator('[data-action="select-account-section"][data-section="security"]').first().click();
   await page.locator('#sidebar [data-action="tab-users"]').click();
   assert.equal(await page.locator('#page-title').textContent(),'Users');
