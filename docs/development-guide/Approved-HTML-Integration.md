@@ -35,7 +35,7 @@ All 12 files have been checked as retrievable from that Git revision. The previo
 - The design files show demonstration data and illustrative interactions. They do **not** replace live queries, permission-aware actions or existing storage.
 - The shared navigation must be implemented **once** and remain identical while moving between application sections. Verify the sidebar, top-right account control, collapse and nested links against the approved HTML as well as their live actions.
 - Preserve the published v2.0.3 functional baseline: hardware tab only for physical devices; hypervisor-managed VMs; manufacturer and software multi-type selections; all IPAM and Rack functions including L/R rails, front/rear views, printing and drag-and-drop; all six Help topics and eight guide links; permissions, MFA, backups, exports and imports.
-- Do not silently add separately scoped SMTP, profile or audit-retention behaviour during the visual integration.
+- Under the product owner's explicit 4 November 2026 scope clarification in [#280](https://github.com/Caffoot/Caffoot-Lite/issues/280), approved optional personal details and images, SMTP/email and meaningful Audit Trail functionality **are included** in this same integration batch. Preserve the approved security and recovery boundaries in [#227](https://github.com/Caffoot/Caffoot-Lite/issues/227); do not invent further features.
 
 ## Acceptance before another owner Docker test
 
@@ -52,7 +52,16 @@ All 12 files have been checked as retrievable from that Git revision. The previo
 
 ## Current status
 
-**Source mapping only, not an implemented or verified redesign.** Development starts from the working `main` branch so that unapproved visual shortcuts from PR #279 are not silently carried forward. PR #277 and PR #279 remain separate and unmerged. No public image, release or production deployment is authorised.
+**In progress — not visually accepted.** Development in draft PR #281 began from working `main`; rejected UI shortcuts from PR #279 are not part of the approved source integration.
+
+As at the current branch development checkpoint:
+- Shared header/sidebar, Sign In/First Run, Dashboard, several Devices catalogues, IPAM and Racks overview, Users list and parts of My Account and Audit Trail have live HTML integrations. These still require the final side-by-side acceptance, including mobile and cross-section behaviour.
+- The approved Users & Permissions Draft 02 Overview and Add/Manage optional personal-detail forms now use live account data and administrator-only APIs. The Add User save is atomic with the existing username/password and preserves default no-access; changing a profile does not alter the sign-in identity, MFA, permissions or account role. Contact email remains unverified until an approved verification flow is implemented.
+- Profile image upload/removal for My Account and the initial retained/attributable Audit Trail event capture have been implemented with targeted permission tests.
+- SMTP, verified-email recovery and notifications, the complete detail-level Audit Trail, remaining Device/IPAM/Rack/Settings screens, final functional checks and visual comparison **remain outstanding**.
+- The Chromium regression must be evaluated on the **final branch head**; older checks that passed before these changes, or early failing tests corrected mid-development, are not final acceptance evidence.
+
+PR #281 remains **draft and unmerged**. PR #277 and PR #279 remain separate and unmerged. No private acceptance Docker package, public image, release or production deployment has been authorised.
 
 ## Development standards
 
