@@ -1420,6 +1420,8 @@ async function run(){
     'Approved Notes outer grid must retain desktop columns');
   assert.ok(await approvedNotes.getByRole('heading',{name:'Notes / Details',level:3}).isVisible(),
     'Approved Notes card heading must match Batch 04');
+  assert.ok(await approvedNotes.getByText('The real application retains the existing notes editor and formatting controls.',{exact:true}).isVisible(),
+    'The original Notes card description must accompany the saved editor');
   assert.ok(await approvedNotes.locator('.device-review-note-toolbar[role="toolbar"]').isVisible(),
     'Original Notes formatting toolbar must be present');
   assert.ok(await approvedNotes.locator('.device-review-form-grid .device-review-field.wide #dev-notes').isVisible(),
@@ -1445,8 +1447,14 @@ async function run(){
   console.log('Approved Device Notes structure, Markdown preview and mobile layout passed');
 
   await approvedEditor.getByRole('tab',{name:'General'}).click();
-  assert.equal(await approvedEditor.locator('#device-form-panel-general .device-physical-mounting.device-review-panel.full').count(),1,
+  const mountingCard=approvedEditor.locator('#device-form-panel-general .device-physical-mounting.device-review-panel.full');
+  assert.equal(await mountingCard.count(),1,
     'General tab must use the approved full-width physical mounting card');
+  assert.ok(await mountingCard.getByText('Rack placement uses the existing Front/Rear, U height and collision checks in v2.0.1.',{exact:true}).isVisible(),
+    'Approved mounting card must retain the pinned source explanation');
+  assert.ok(await mountingCard.locator('.device-review-hint')
+    .getByText('End U is calculated from Start U + U Height - 1. Conflicting or out-of-range positions must still be rejected in the live application.',{exact:true}).isVisible(),
+    'Approved rack card must retain the original calculated-height collision warning');
   await page.locator('#dev-mount-type').selectOption('Tower / Floor Standing');
   await page.locator('#dev-location').selectOption('Unknown');
   await approvedEditor.getByRole('tab',{name:'Software & Firmware'}).click();
