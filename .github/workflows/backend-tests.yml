@@ -2,7 +2,7 @@ name: Caffoot Lite backend tests
 
 on:
   push:
-    branches: [main]
+    branches: [main, feat/approved-html-full-interface]
     paths:
       - "backend/**"
       - "tests/**"

@@ -3,6 +3,8 @@ name: Release documentation consistency
 # Keep the required 'release-documentation' branch check unchanged.
 # A reusable check also protects manual releases, without version-specific edits.
 on:
+  push:
+    branches: [feat/approved-html-full-interface]
   pull_request:
   workflow_dispatch:
   workflow_call:
