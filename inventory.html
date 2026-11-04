@@ -1755,6 +1755,20 @@ html.dark .caffoot-dashboard .db-rack-row:hover{background:#354a60;border-color:
 #modal-content.approved-catalogue-modal{background:transparent;border:0;border-radius:0;box-shadow:none;width:min(100%,525px);max-width:none;overflow:visible}
 #modal-content.approved-catalogue-modal .catalog-modal{width:100%}
 </style>
+<style id="approved-device-review-overlay-batch04">
+/* Original pinned Batch 04 modal overlay; mounted in the existing authenticated host. */
+.device-review-overlay{position:fixed;inset:0;z-index:150;display:flex;align-items:center;justify-content:center;background:rgba(12,29,48,.76);padding:20px}
+.device-review-overlay[hidden]{display:none!important}
+
+#modal-container.device-review-overlay.hidden{display:none!important}
+#modal-container.device-review-overlay{backdrop-filter:none}
+#modal-content.approved-device-review-container{width:min(1030px,100%);max-width:none;background:transparent!important;border:0!important;border-radius:0;box-shadow:none!important;overflow:visible}
+#modal-content.approved-device-review-container>.device-review-dialog{width:100%;max-width:none}
+@media(max-width:700px){
+ #modal-content.approved-device-review-container{width:100%;height:100dvh}
+ #modal-content.approved-device-review-container>.device-review-dialog{height:100dvh;max-height:100dvh;border-radius:0}
+}
+</style>
 <style id="approved-device-details-batch04">
 /* Approved Batch 04 device details component styles (live data, existing actions). */
 .device-review-dialog{width:min(1030px,100%);height:min(870px,calc(100dvh - 40px));max-height:calc(100dvh - 40px);background:#f5f7fa;border:1px solid #dce5ec;border-radius:17px;box-shadow:0 28px 80px #0b1f32a8;overflow:hidden;display:flex;flex-direction:column;color:#223b53}
@@ -6569,8 +6583,8 @@ function openIpModal(ip) {
             const container = document.getElementById('modal-container');
             const content = document.getElementById('modal-content');
             if (container.classList.contains('hidden')) modalReturnFocus = document.activeElement;
-            content.classList.remove('rack-balanced-modal', 'settings-access-point-review', 'settings-legacy-review', 'approved-ipam-modal', 'approved-catalogue-modal');
-            container.classList.remove('catalog-modal-overlay');
+            content.classList.remove('rack-balanced-modal', 'settings-access-point-review', 'settings-legacy-review', 'approved-ipam-modal', 'approved-catalogue-modal', 'approved-device-review-container');
+            container.classList.remove('catalog-modal-overlay', 'device-review-overlay');
             content.innerHTML = htmlContent;
             container.classList.remove('hidden');
             container.classList.add('flex');
@@ -7215,6 +7229,13 @@ function openIpModal(ip) {
                 });
             return rows.join('');
         }
+        // Preserve the existing authenticated modal and focus/discard/permission controls.
+        // The source overlay and container are shared by Device Details and Add/Edit.
+        function openApprovedDeviceReviewModal(markup) {
+            openModal(markup);
+            document.getElementById('modal-container').classList.add('device-review-overlay');
+            document.getElementById('modal-content').classList.add('approved-device-review-container');
+        }
         function openDeviceDetailView(deviceId) {
             const d = appState.devices.find(device => String(device.id) === String(deviceId));
             if (!d) return showToast('Device not found.', 'error');
@@ -7264,7 +7285,7 @@ function openIpModal(ip) {
                 field('Virtual disk (GB)', d.vmDiskGb) + field('Virtual network adapters', d.vmNicCount)) : '';
             const hardware = field('Manufacturer', d.manufacturer) + field('Model', d.model) + field('Serial number', d.serialNumber);
             const rackRows = mounted ? field('Rack', rack.name) + field('Face', d.face || 'front') + field('U position', uText) + field('Height', (Number(d.rackUHeight) || (uEnd-uStart+1) || 1) + 'U') : '';
-            openModal(`<div class="device-details-dialog device-review-dialog">
+            openApprovedDeviceReviewModal(`<div class="device-details-dialog device-review-dialog">
                 <header class="device-review-head">
                   <div class="device-review-headline">
                     <div class="min-w-0"><p class="device-review-eyebrow">DEVICE DETAILS</p><h2 class="break-words">${safe(d.name)}</h2>
@@ -8250,7 +8271,7 @@ function openIpModal(ip) {
             const mountType = getRecognisedDeviceMountTypes(currentType).includes(requestedMountType) ? requestedMountType : getDefaultMountType(currentType);
             const currentSubnet = draft?.subnetId ? appState.subnets.find(s => s.id === draft.subnetId) : (device?.primaryIp ? getSubnetForIp(device.primaryIp) : null);
             const currentHeight = draft?.rackUHeight || (device?.rackUStart && device?.rackUEnd ? Math.max(1, Number(device.rackUEnd) - Number(device.rackUStart) + 1) : 1);
-            openModal(`
+            openApprovedDeviceReviewModal(`
                 <div class="device-modal device-review-dialog">
                     <header class="device-heading device-review-head">
                         <div class="device-review-headline"><div class="min-w-0">
