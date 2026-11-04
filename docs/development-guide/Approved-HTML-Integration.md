@@ -81,7 +81,7 @@ This is a **working register, not a pass certificate**. For each screen, verify 
 | Device Details / Add/Edit Batch 04 | Partly integrated; fidelity unverified | Verify original card structure, physical/VM editors and actions |
 | Device Management and six catalogues Batch 02 | Partly integrated; fidelity unverified | Confirm all six views, forms and multi-type selection |
 | IPAM Draft 01 | Partly integrated; fidelity unverified | New active pages exist, but inspect old dialogs and all live controls |
-| Network Racks Draft 04 | **Mismatch confirmed** | Old elevation, capacity, equipment and settings markup must be replaced |
+| Network Racks Draft 04 | Core approved Rack View, Equipment, Settings, Accessories and Add/Edit modal structures integrated; **not verified** | Complete placement/0U accessory modal source fidelity and live desktop/mobile, drag, permission, persistence and print checks |
 | Users & Permissions Draft 02 | Partly integrated; fidelity unverified | Check full User Workspace, Add/Manage and permission states |
 | Sign In & First Run Draft 03 | Partly integrated; fidelity unverified | Confirm original login, setup and conditional MFA screens |
 | Audit Trail Draft 01 | Partly integrated; fidelity unverified | Complete directory/detail/export and protected event coverage |
@@ -121,6 +121,18 @@ This is a **working register, not a pass certificate**. For each screen, verify 
 - Commit `082126f`: added Chromium checks for exact filter count and Sort placement, live search and sort interactions, saved device results and single-column mobile filter layout.
 - Follow-up commit `26130ae`: brought dynamic Device Inventory name/details, missing-location labelling, hardware cells and no-results styling closer to the original approved table presentation, while keeping saved values and existing actions.
 - **Verification:** the whole inline application JavaScript and browser test file parse. No live Chromium or side-by-side visual test has been confirmed on the current head. Dynamic table rows, conditional empty states and complete responsive presentation still require source-fidelity review; **do not call Device Inventory completed or accepted**.
+
+
+### Network Racks Draft 04 — batched approved-interface conversion (4 November 2026)
+
+The source of visual truth is the **pinned** `future-design/approved/racks-draft-04.html` at commit `c26db4a`. The live interface must replace old markup, not merely adopt its CSS.
+
+- Commit `16f2759` used the approved Rack Draft 04 CSS and replaced the old Rack View workspace with the original `rack-detail-workspace`, elevation frame/scroll, Front/Rear controls, side rail, capacity, available U and opposite-face card structures. Existing rack data and secure action dispatch were retained.
+- Commit `29acd00` converted rack device/accessory/empty-U rows to the approved Rack 04 element hierarchy, and converted Equipment and Rack Settings to the approved card/tables and specification grid. Existing placement, correction, deletion and per-face data handlers remain connected.
+- Commit `1a29fc6` replaced the old Rack Accessories list with the approved `rack-directory` cards and wired a dedicated action to open the selected rack's real Equipment tab, rather than the standalone preview.
+- Commits `a5c524b` and `6738e9e` replaced the Add/Edit/Correction Rack form presentation with the approved modal/header/field-grid structure while retaining field IDs, form handler, required-name validation, custom height, physical correction confirmation and original permissions.
+- Commits `cbec194` and `dd4ea8d` added real Chromium test cases covering the elevation and side panels, mobile grid, Front/Rear/0U structure, Equipment and Settings, Accessories directory and saved 0U records, and Rack Add/Edit/locked-dimensions presentation.
+- **Verification:** current application and browser-test JavaScript passed syntax checks. The new Chromium suite has **not run** on this code; real desktop/mobile visual fidelity, working drag-and-drop after markup conversion, role-specific access, printing and full persistence need testing. **Placement and vertical accessory editor modals remain separately pending exact approved source-fidelity checks.** No Rack screen is accepted or owner-approved yet.
 
 ## Development standards
 
