@@ -3,6 +3,8 @@ import json
 import os
 import sqlite3
 import time
+import smtplib
+import ssl
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -13,6 +15,8 @@ from .collection_saves import (change_inventory_record,
                                change_ipam_subnet_and_vlan_records,
                                delete_subnet_with_dependencies)
 from .settings_saves import save_inventory_setting
+from .smtp_settings import (config_path as smtp_config_path, public_settings as smtp_public_settings,
+                            save_settings as save_smtp_settings, send_test_email)
 from .device_catalogue import change_device_catalogue
 from .reset_inventory import reset_inventory
 from .ipam_repair import apply_ipam_repairs
@@ -172,6 +176,25 @@ class Handler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(data)
                 return
+        elif self.path == "/api/settings/email":
+            with connect() as connection:
+                account_id = authenticated_account(connection, self.headers.get("Cookie"))
+                if account_id is None:
+                    self.respond(401, {"error": "unauthorised"})
+                    return
+                admin = connection.execute(
+                    "SELECT active,is_admin,mfa_confirmed FROM accounts WHERE id=?",
+                    (account_id,),
+                ).fetchone()
+                if admin != (1, 1, 1):
+                    self.respond(403, {"error": "forbidden"})
+                    return
+                try:
+                    safe_settings = smtp_public_settings(smtp_config_path(DB_PATH))
+                except (OSError, ValueError, json.JSONDecodeError):
+                    self.respond(503, {"error": "Email settings cannot be read safely"})
+                    return
+                self.respond(200, safe_settings)
         elif self.path == "/api/users":
             with connect() as connection:
                 account_id = authenticated_account(connection, self.headers.get("Cookie"))
@@ -373,7 +396,8 @@ class Handler(BaseHTTPRequestHandler):
             return
         if self.path in ("/api/account/profile", "/api/account/photo/remove",
                          "/api/users/create", "/api/users/profile", "/api/users/permission", "/api/users/active",
-                         "/api/users/admin", "/api/users/delete", "/api/account/password",
+                         "/api/users/admin", "/api/users/delete", "/api/settings/email",
+                         "/api/settings/email/test", "/api/account/password",
                          "/api/account/mfa/start", "/api/account/mfa/confirm",
                          "/api/devices/edit/start", "/api/devices/edit/cancel",
                          "/api/devices/edit/save", "/api/devices/create",
@@ -731,6 +755,30 @@ class Handler(BaseHTTPRequestHandler):
                         connection.rollback()
                         raise
                     result = {"status": "password changed"}
+                elif self.path in ("/api/settings/email", "/api/settings/email/test"):
+                    administrator = connection.execute(
+                        "SELECT active,is_admin,mfa_confirmed FROM accounts WHERE id=?",
+                        (actor,),
+                    ).fetchone()
+                    if administrator != (1, 1, 1):
+                        raise PermissionError("Verified administrator required")
+                    if self.path == "/api/settings/email":
+                        saved = save_smtp_settings(smtp_config_path(DB_PATH), payload)
+                        record_actor_event(
+                            connection, actor, kind="Security", action="Updated",
+                            label="Outgoing email", reason="SMTP configuration updated",
+                            fields=["Outgoing email configuration"],
+                        )
+                        result = saved
+                    else:
+                        if set(payload) != {"recipient"}:
+                            raise ValueError("A test recipient is required")
+                        result = send_test_email(smtp_config_path(DB_PATH), payload["recipient"])
+                        record_actor_event(
+                            connection, actor, kind="Security", action="Created",
+                            label="SMTP test", reason="SMTP test message sent",
+                            fields=["Delivery tested"],
+                        )
                 elif self.path == "/api/users/create":
                     if set(payload) not in ({"username", "password"},
                                             {"username", "password", "profile"}):
@@ -777,11 +825,16 @@ class Handler(BaseHTTPRequestHandler):
                         result = {"status": "updated"}
                     else:
                         raise ValueError("Unknown account operation")
+
         except PermissionError:
             self.respond(403, {"error": "forbidden"})
             return
         except (ValueError, TypeError, sqlite3.IntegrityError) as exc:
             self.respond(400, {"error": str(exc)})
+            return
+        except (OSError, smtplib.SMTPException, ssl.SSLError):
+            # Do not reflect mail-server diagnostics or credential details to clients.
+            self.respond(502, {"error": "SMTP operation failed. Check server configuration and connectivity."})
             return
         self.respond(200, result)
 
