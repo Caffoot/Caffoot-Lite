@@ -1646,6 +1646,27 @@ html.dark .caffoot-dashboard .db-rack-row:hover{background:#354a60;border-color:
 @media(max-width:720px){#main-content .ipam-approved-addresses .ipam-address-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#main-content .ipam-approved-addresses .ipam-network-summary{grid-template-columns:1fr}#main-content .ipam-approved-addresses .ipam-alloc-controls{grid-template-columns:1fr}}
 @media(max-width:420px){#main-content .ipam-approved-addresses .ipam-card{padding:16px}#main-content .ipam-approved-addresses .ipam-address-card{padding:10px}#main-content .ipam-approved-addresses .ipam-address-card .address{font-size:11px}}
 </style>
+<style id="approved-ipam-manage-draft01">
+/* Original approved Draft 01 Manage Subnets component tokens, scoped to this section. */
+#main-content .ipam-approved-manage .ipam-manage-actions{display:flex;gap:8px;flex-wrap:wrap}#main-content .ipam-approved-manage .ipam-block-group{border:1px solid #e1e9f0;border-radius:12px;margin-top:13px;overflow:hidden;background:#fff}#main-content .ipam-approved-manage .ipam-block-group[hidden]{display:none}#main-content .ipam-approved-manage .ipam-block-head{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#f8fafc;padding:14px 16px}#main-content .ipam-approved-manage .ipam-block-head summary{cursor:pointer;font-weight:790;color:#314d66;font-size:13.5px;list-style:none;flex:1}#main-content .ipam-approved-manage .ipam-block-head summary::-webkit-details-marker{display:none}#main-content .ipam-approved-manage .ipam-block-head small{display:block;color:#7e94a7;font-size:11px;font-weight:500;margin-top:5px}#main-content .ipam-approved-manage .ipam-block-head button{flex-shrink:0}#main-content .ipam-approved-manage .ipam-block-body{padding:4px 16px 13px}#main-content .ipam-approved-manage .ipam-subnet-row{border-bottom:1px solid #eef2f5;display:flex;justify-content:space-between;align-items:center;gap:14px;padding:13px 0}#main-content .ipam-approved-manage .ipam-subnet-row:last-child{border:0}#main-content .ipam-approved-manage .ipam-subnet-row strong{font-size:13px;color:#2d4e69}#main-content .ipam-approved-manage .ipam-subnet-row p{font-size:11.5px;margin:5px 0 0}#main-content .ipam-approved-manage .ipam-subnet-row-actions{display:flex;gap:7px;flex-wrap:wrap}#main-content .ipam-approved-manage .ipam-mini-badge{font-size:10px;font-weight:750;padding:5px 8px;border-radius:8px;background:#eaf1f7;color:#5c7f98}
+#main-content .ipam-approved-manage .ipam-warning{border:1px solid #f0deca;background:#fff8ed;padding:13px 15px;border-radius:10px;color:#8a6335;font-size:12px;line-height:1.65}#main-content .ipam-approved-manage .ipam-notice{font-size:11.5px;color:#798ea2;line-height:1.6;margin:10px 0 0}
+
+#main-content .ipam-approved-manage{display:block;--shadow:0 7px 26px rgba(31,51,73,.04);color:#223b53}
+#main-content .ipam-approved-manage .ipam-card{background:#fff;border:1px solid #dfe8ef;border-radius:15px;padding:21px 23px;min-width:0;box-shadow:var(--shadow)}
+#main-content .ipam-approved-manage .ipam-card+.ipam-card{margin-top:16px}
+#main-content .ipam-approved-manage .ipam-card-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:13px;flex-wrap:wrap}
+#main-content .ipam-approved-manage .ipam-card h2{font-size:17px;font-weight:790;letter-spacing:-.35px;color:#27445e;margin:0}
+#main-content .ipam-approved-manage .ipam-card p{color:#748ca0;font-size:12px;line-height:1.6}
+#main-content .ipam-approved-manage .btn{border-radius:9px;padding:9px 12px;font-size:12px;font-weight:760;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:38px}
+#main-content .ipam-approved-manage .btn-outline{color:#36556e;background:#fff;border:1px solid #d0dfeb}
+#main-content .ipam-approved-manage .btn-primary{background:#ed8532;color:white;border:1px solid #ed8532}
+#main-content .ipam-approved-manage .btn:disabled{opacity:.45;cursor:not-allowed}
+#main-content .ipam-approved-manage .ipam-block-head{display:flex;font-weight:780;color:#314d66;cursor:pointer;list-style:none}
+#main-content .ipam-approved-manage .ipam-block-head::-webkit-details-marker{display:none}
+#main-content .ipam-approved-manage .ipam-block-head small{display:block}
+#main-content .ipam-approved-manage .ipam-warning{margin-top:12px}
+@media(max-width:720px){#main-content .ipam-approved-manage .ipam-card{padding:16px}#main-content .ipam-approved-manage .ipam-subnet-row{align-items:flex-start;flex-direction:column}}
+</style>
 </head>
 <body class="h-full bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-200">
 
@@ -4827,7 +4848,67 @@ function hierarchyValidateTypes(subnets) {
             return '<section class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-3" aria-label="Subnet Hierarchy"><h3 class="font-bold text-base text-slate-900 dark:text-white">Subnet Hierarchy</h3><p class="text-xs text-slate-500 dark:text-slate-400">Expand IP Address Blocks to view child networks. Use Edit to rename or update a subnet.</p>' + (roots || '<p class="text-sm text-slate-500">No Subnets Yet</p>') + (orphaned.length ? '<p class="text-xs text-rose-600">Some subnet relationships could not be displayed.</p>' : '') + '</section>';
         }
 
+                // Approved IPAM Draft 01 Manage Subnets: real SQLite-backed records.
+        function renderApprovedIpamManage(){
+            const blocks=appState.subnets.filter(s=>s.kind==='container');
+            const networks=appState.subnets.filter(s=>(s.kind||'network')==='network');
+            const vlans=appState.vlans||[];
+            const groups=blocks.map(block=>({
+                id:String(block.id),name:block.name||block.cidr||'IP Address Block',
+                cidr:block.cidr,list:networks.filter(n=>String(n.parentId||'')===String(block.id)),
+                vlans:vlans.filter(v=>String(v.parentId||'')===String(block.id))
+            }));
+            const loose=networks.filter(n=>!blocks.some(b=>String(b.id)===String(n.parentId||'')));
+            const looseVlans=vlans.filter(v=>!blocks.some(b=>String(b.id)===String(v.parentId||'')));
+            if(loose.length||looseVlans.length){
+                groups.push({id:'',name:'Unassigned Networks',cidr:'No IP Address Block',list:loose,vlans:looseVlans});
+            }
+            const displayed=ipamManageBlockFilter===null?groups:groups.filter(g=>g.id===ipamManageBlockFilter);
+            const scopedNetworks=displayed.flatMap(g=>g.list);
+            const activeNetwork=scopedNetworks.find(n=>n.id===selectedSubnetId)||scopedNetworks[0]||null;
+            const legacy=previewLegacyVlanOwnershipInApp();
+            const scoped=legacy.filter(v=>v.status==='unique'&&v.parentId).length;
+            const ambiguous=legacy.filter(v=>v.status==='ambiguous').length;
+            const orphaned=legacy.filter(v=>v.status==='orphaned').length;
+            const unassigned=legacy.filter(v=>v.status==='unique'&&!v.parentId).length;
+            const needsUpdate=scoped>0,hasIssues=ambiguous>0||orphaned>0;
+            const managedGroups=displayed.map(group=>{
+                const editBlock=group.id?'<div style="display:flex;justify-content:flex-end;margin-top:10px">'+
+                    '<button type="button" class="btn btn-outline" data-action="edit-ipam-block" data-id="'+escapeHtml(group.id)+'">Edit Block</button></div>':'';
+                const networkRows=group.list.map(n=>{
+                    return '<div class="ipam-subnet-row"><div><strong>'+escapeHtml(n.name||n.cidr)+'</strong> '+
+                        '<span class="ipam-mini-badge">VLAN '+escapeHtml(n.vlan??'—')+'</span>'+
+                        '<p>'+escapeHtml(n.cidr||'')+' · '+escapeHtml(n.description||'No description')+'</p></div>'+
+                        '<div class="ipam-subnet-row-actions">'+
+                        '<button class="btn btn-outline" type="button" data-action="ipam-open-network-addresses" data-id="'+escapeHtml(n.id)+'">Browse IP Addresses</button>'+
+                        '<button class="btn btn-outline" type="button" data-action="edit-subnet" data-id="'+escapeHtml(n.id)+'">Edit Subnet &amp; VLAN</button></div></div>';
+                }).join('');
+                // Keep legacy VLANs inspectable if they have no unambiguous
+                // linked network, as the existing page already allowed.
+                const unmatched=group.vlans.filter(v=>group.list.filter(n=>Number(n.vlan)===Number(v.vlanId)).length!==1)
+                    .map(v=>'<div class="ipam-subnet-row"><div><strong>'+escapeHtml(v.name||'VLAN')+'</strong> '+
+                        '<span class="ipam-mini-badge">VLAN '+escapeHtml(v.vlanId??'—')+'</span>'+
+                        '<p>Review linked subnet and VLAN ownership</p></div>'+
+                        '<div class="ipam-subnet-row-actions"><button class="btn btn-outline" type="button" data-action="open-subnet-by-vlan" data-id="'+escapeHtml(v.id)+'">Edit VLAN &amp; Subnet</button></div></div>').join('');
+                return '<details class="ipam-block-group" data-ipam-hierarchy-block="'+escapeHtml(group.id||'__unassigned__')+'" open>'+
+                    '<summary class="ipam-block-head"><span><strong>'+escapeHtml(group.name)+'</strong>'+
+                    '<small>'+escapeHtml(group.cidr||'')+' · '+group.list.length+' network'+(group.list.length===1?'':'s')+'</small></span>'+
+                    '<span class="ipam-mini-badge">Click to expand / collapse</span></summary>'+
+                    '<div class="ipam-block-body">'+editBlock+networkRows+unmatched+'</div></details>';
+            }).join('');
+            return `<section class="ipam-panel active ipam-approved-manage" data-panel="manage" data-ipam-panel="manage" role="tabpanel">
+    <div class="ipam-card">
+      <div class="ipam-card-title"><div><h2>IP Address Blocks, Networks &amp; VLANs</h2><p class="ipam-subtitle">Browse the existing grouped hierarchy and manage individual networks.</p></div><div class="ipam-manage-actions"><button class="btn btn-outline" data-action="bulk-ip" data-id="${escapeHtml(activeNetwork?.id||'')}" ${!activeNetwork?'disabled':''}>Bulk Edit Range</button><button class="btn btn-primary" data-action="open-subnet-modal">+ Add Subnet</button></div></div>
+      <div id="ipam-manage-filter-note" class="ipam-warning ${ipamManageBlockFilter===null?'ipam-hidden':''}" style="margin:0 0 10px">${ipamManageBlockFilter!==null?'Showing '+escapeHtml(displayed[0]?.name||'selected IP Address Block')+' only. <button type="button" class="btn btn-outline" data-action="ipam-show-all-blocks">Show All IP Address Blocks</button>':''}</div>
+      <div id="ipam-managed-blocks">${managedGroups||'<p class="ipam-empty">No matching IP Address Blocks or networks.</p>'}</div>
+      <p class="ipam-notice">The published application protects assigned device addresses, gateway addresses and referenced subnets. These protections remain unchanged.</p>
+    </div>
+    <div class="ipam-card"><div class="ipam-card-title"><h2>VLAN Ownership Check</h2><span class="ipam-chip">${needsUpdate||hasIssues?'Review required':'No action required'}</span></div><p class="ipam-subtitle">${needsUpdate?scoped+' VLAN record(s) can be linked to their identified IP Address Block.':'VLAN ownership is up to date. No action required.'} ${unassigned} VLAN(s) are in the Unassigned VLAN Domain, which is permitted.</p>${hasIssues?'<p class="ipam-warning">'+ambiguous+' VLAN(s) match multiple subnets; '+orphaned+' have no matching subnet. Review these records before updating ownership.</p>':''}${needsUpdate&&!hasIssues?'<button type="button" class="btn btn-primary" data-action="reconcile-legacy-vlans">Update VLAN Ownership ('+scoped+')</button>':''}</div>
+  </section>`;
+        }
+
         function renderIpamHTML() {
+            if(activeIpamTab==='manage')return renderApprovedIpamManage();
             // v1.1 IPAM Overview stage 1: inventory-wide, read-only totals.
             // Return before selected-network rendering so Overview never depends on its dropdown.
             if (activeIpamTab === 'overview') {
@@ -9845,6 +9926,11 @@ function hierarchyValidateTypes(subnets) {
                     });
                     const selectedBlock = blockId ? [...tree].find(item => item.getAttribute('data-ipam-hierarchy-block') === blockId) : null;
                     if (selectedBlock) selectedBlock.scrollIntoView({block:'center',behavior:'instant'});
+                    break;
+                }
+                case 'ipam-open-network-addresses': {
+                    const network=appState.subnets.find(n=>String(n.id)===String(id)&&(n.kind||'network')==='network');
+                    if(network){selectedSubnetId=network.id;ipamManageBlockFilter=null;activeIpamTab='addresses';ipAddressGridPage=0;switchTab('ipam');}
                     break;
                 }
                 case 'ipam-show-all-blocks': ipamManageBlockFilter = null; activeIpamTab = 'manage'; switchTab('ipam'); break;
