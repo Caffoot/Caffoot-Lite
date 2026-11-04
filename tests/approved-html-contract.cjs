@@ -119,6 +119,74 @@ for (const [area, html, pattern] of requiredMarkup) {
   }
 }
 
+// IPAM Draft 01 modal source contract.
+// This compares actual pinned CSS declarations and editor markup, rather than
+// accepting an arbitrary CSS-only approximation with matching class names.
+// Live dialogs reuse the authenticated #modal-content instead of the
+// standalone design's demonstration overlay; that wrapper is intentional.
+const approvedIpam = readApproved('ipam-draft-01.html');
+const modalSelectors = [
+  '.ipam-modal', '.ipam-modal-head', '.ipam-modal-head h2',
+  '.ipam-modal-body', '.ipam-modal-close', '.ipam-form-grid',
+  '.ipam-form-grid .wide', '.ipam-field', '.ipam-field small',
+  '.ipam-modal-actions', '.ipam-modal-actions .danger-action',
+  '.ipam-modal-explain', '.ipam-modal-explain.warn',
+  '.ipam-modal-note', '.ipam-hint', '.ipam-hidden'
+];
+function cssDeclaration(css, selector) {
+  const marker = selector + '{';
+  const start = css.indexOf(marker);
+  if (start < 0) return null;
+  const end = css.indexOf('}', start + marker.length);
+  return end < 0 ? null : css.slice(start + marker.length, end);
+}
+for (const selector of modalSelectors) {
+  const liveSelector = selector === '.ipam-modal'
+    ? '#modal-content.approved-ipam-modal'
+    : '#modal-content.approved-ipam-modal ' + selector;
+  const approvedRule = cssDeclaration(approvedIpam, selector);
+  const liveRule = cssDeclaration(liveInventory, liveSelector);
+  if (!approvedRule || approvedRule !== liveRule) {
+    missing.push('IPAM Draft 01: source CSS differs for ' + selector);
+  }
+}
+const ipamModalSegments = [
+  ['subnet', 'function openSubnetModal(', 'function openSubnetModalByVlanId(',
+    ['sub-kind', 'sub-cidr', 'sub-name', 'sub-vlan', 'sub-gw', 'sub-parent', 'sub-desc']],
+  ['bulk', 'function openBulkIpModal(', 'function approvedBulkConfirm(',
+    ['bulk-start', 'bulk-end', 'bulk-status', 'bulk-hostname', 'bulk-notes']],
+  ['address', 'function openIpModal(', 'async function handleIpSubmit(',
+    ['ip-status', 'ip-hostname', 'ip-notes']]
+];
+for (const [area, begin, end, fields] of ipamModalSegments) {
+  const start = liveInventory.indexOf(begin);
+  const stop = start < 0 ? -1 : liveInventory.indexOf(end, start + begin.length);
+  const html = stop > start ? liveInventory.slice(start, stop) : '';
+  for (const structure of ['ipam-modal-head', 'ipam-modal-body', 'ipam-form-grid', 'ipam-modal-actions']) {
+    if (!html.includes(structure)) missing.push('IPAM ' + area + ': missing approved ' + structure);
+  }
+  for (const field of fields) {
+    if (!html.includes('id="' + field + '"')) {
+      missing.push('IPAM ' + area + ': original field missing: ' + field);
+    }
+  }
+}
+if (!liveInventory.includes('function openApprovedIpamModal(markup)') ||
+    !liveInventory.includes("classList.add('approved-ipam-modal')")) {
+  missing.push('IPAM: the live modal must use the approved source shell');
+}
+if (!/@media\(max-width:720px\)\{#modal-content\.approved-ipam-modal[^}]*\}#modal-content\.approved-ipam-modal \.ipam-modal-body\{padding:17px\}/.test(liveInventory) ||
+    !liveInventory.includes('#modal-content.approved-ipam-modal .ipam-form-grid{grid-template-columns:1fr}')) {
+  missing.push('IPAM: approved mobile modal stacking is missing');
+}
+if (!liveInventory.includes('planBulkSubnetAddressAssignment(subnet,request.start,request.end,request.status,request.hostname,request.notes)') ||
+    !liveInventory.includes("parseIpv4AddressToNumber(document.getElementById('bulk-start')?.value.trim())")) {
+  missing.push('IPAM: the approved address-range UI must preserve validated bulk re-planning');
+}
+
+// This is a static source-fidelity check only. Run real-browser saves, role
+// restrictions and desktop/mobile visual comparisons before acceptance.
+
 if (missing.length) {
   console.error('\nApproved interface integration is NOT complete:');
   for (const item of missing) console.error(`- ${item}`);
