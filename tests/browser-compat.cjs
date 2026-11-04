@@ -234,8 +234,10 @@ async function run(){
     'Owner-approved Audit Trail section navigation must render');
   assert.equal(await page.locator('#main-content .approved-audit .audit-tab').count(),3,
     'Approved All Activity, Asset History and Recording Coverage must be available');
-  assert.equal(await page.locator('#main-content .approved-audit #stat-total').textContent(),'0',
-    'A fresh installation must not display fictional audit events');
+  assert.equal(await page.locator('#main-content .approved-audit #stat-total').textContent(),'1',
+    'Saving the approved SMTP settings must create exactly one genuine, attributable audit event');
+  assert.ok(await page.getByText('SMTP configuration updated',{exact:true}).first().isVisible(),
+    'The real administrator SMTP change must be visible in the authorised Audit Trail');
   await page.locator('#sidebar [data-action="tab-users"]').click();
   await page.getByRole('heading',{name:'Your people, at a glance'}).waitFor();
   assert.ok(await page.locator('#main-content .approved-page-body .users-live').isVisible(),
