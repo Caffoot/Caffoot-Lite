@@ -8405,7 +8405,16 @@ function openIpModal(ip) {
             // Relocate existing inputs, preserving saved values and event handlers.
             const virtualFields = sections[0].querySelector('#virtual-fields');
             if (virtualFields) {
-                virtualFields.classList.add('form-section-card', 'device-review-vm-configuration');
+                virtualFields.classList.add('form-section-card', 'device-review-panel', 'full', 'device-review-vm-configuration');
+                const vmTitle = virtualFields.querySelector(':scope > p');
+                if (vmTitle) {
+                    const heading = document.createElement('h3');
+                    heading.innerHTML = '<span class="mini-icon" aria-hidden="true">▣</span>Virtual Machine Configuration';
+                    vmTitle.replaceWith(heading);
+                }
+                virtualFields.querySelector(':scope > .grid')?.classList.add('device-review-form-grid');
+                const allocations = virtualFields.querySelector('[data-device-detail-field="vmVcpu"]')?.parentElement?.parentElement;
+                allocations?.classList.add('device-review-form-grid');
                 generalGrid.insertBefore(virtualFields, sections[2]);
             }
             // Keep hardware inputs mounted for legacy preservation, but hide the tab for VMs.
