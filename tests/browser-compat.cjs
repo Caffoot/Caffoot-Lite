@@ -1589,6 +1589,14 @@ async function run(){
     'Host guest preview must use the saved VM IP address');
   assert.ok(await hostedVmRecord.getByRole('button',{name:'View details for browser-vm'}).isVisible(),
     'Approved VM preview must retain the working View Details navigation action');
+  await hostedVmRecord.getByRole('button',{name:'View details for browser-vm'}).click();
+  await deviceReview.locator('.device-review-head h2').getByText('browser-vm',{exact:true})
+    .waitFor({state:'visible'});
+  assert.equal(await deviceReview.getByRole('tab',{name:'Hardware'}).count(),0,
+    'View Details must actually open the linked VM, with no physical hardware tab');
+  await page.evaluate(id=>openDeviceDetailView(id),hypervisor.id);
+  await deviceReview.locator('.device-review-head h2').getByText('browser-hypervisor',{exact:true})
+    .waitFor({state:'visible'});
   await deviceReview.getByRole('tab',{name:'Hardware'}).click();
   assert.ok(await deviceReview.getByRole('heading',{name:'Hardware & Lifecycle'}).isVisible(),
     'Physical hardware details must use the approved Batch 04 heading');
