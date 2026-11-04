@@ -155,21 +155,7 @@ async function run(){
     'Approved IPAM Overview must keep working subnet search');
   await page.locator('#sidebar [data-action="tab-racks"]').click();
   await page.locator('#main-content [data-action="approved-rack-section"][data-section-tab="overview"]').click();
-  const rackDebug=await page.evaluate(()=>{
-    const main=document.querySelector('#main-content');
-    const panel=main?.querySelector('.racks-panel');
-    return {
-      tab:typeof currentTab==='undefined'?'unavailable':currentTab,
-      section:typeof v13RackSection==='undefined'?'unavailable':v13RackSection,
-      pageTitle:document.querySelector('#page-title')?.textContent,
-      html:main?.innerHTML.slice(0,900),
-      rackRoot:!!main?.querySelector('#rack-overview-stats'),
-      panel:panel?.outerHTML.slice(0,250),
-      panelDisplay:panel?getComputedStyle(panel).display:'missing'
-    };
-  });
-  console.log('RACK OVERVIEW DIAGNOSTIC:',JSON.stringify(rackDebug));
-  await page.locator('#main-content .racks-grid #rack-overview-stats').waitFor();
+  await page.locator('#main-content .racks-grid#rack-overview-stats').waitFor();
   assert.equal(await page.locator('#main-content .rack-stat').count(),4,
     'Approved Network Racks Overview must show four live totals');
   await page.locator('#main-content [data-action="approved-rack-section"][data-section-tab="inventory"]').click();
