@@ -736,6 +736,7 @@ async function run(){
 
   await page.locator('#main-content [data-action="device-intelligence-tab"][data-tab="quality"]').click();
   const approvedQuality=page.locator('#main-content .intelligence-panel[data-insight-panel="quality"]');
+  await approvedQuality.waitFor({state:'visible'});
   assert.ok(await approvedQuality.isVisible(),'Approved Data Quality panel must be visible');
   assert.equal(await approvedQuality.locator('article.intelligence-card').count(),1);
   assert.equal(await approvedQuality.locator('#insight-quality .intelligence-quality-card').count(),3,
