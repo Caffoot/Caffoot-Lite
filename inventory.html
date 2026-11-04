@@ -2218,24 +2218,114 @@ function hierarchyValidateTypes(subnets) {
             document.body.appendChild(a); a.click(); a.remove();
             setTimeout(()=>URL.revokeObjectURL(url),1000);
         }
+        const approvedAuditMarkup="<div class=\"approved-audit\"><main class=\"main\">\n  <div class=\"eyebrow\">CHANGE HISTORY &amp; ACCOUNTABILITY</div>\n  <div class=\"header\"><div><h1>Audit Trail</h1><p>Know what happened to your infrastructure — what changed, who made it, and when.</p></div><div><button class=\"btn primary\" type=\"button\" data-action=\"export-audit\">Export History (JSON)</button></div></div>\n  <div class=\"audit-overview-note\"><span aria-hidden=\"true\">ⓘ</span><div><strong>Central audit history:</strong> Events are loaded from your authorised SQLite records. Older events may not contain actor identity or previous and new field values. Missing information is shown, never guessed.</div></div>\n  <section class=\"audit-stats\" aria-label=\"Recorded audit totals\">\n   <div class=\"card audit-stat\"><span class=\"label\">Recorded events</span><span class=\"value\" id=\"stat-total\">0</span><span class=\"hint\">Events visible to your account</span></div>\n   <div class=\"card audit-stat\"><span class=\"label\">Inventory activity</span><span class=\"value\" id=\"stat-inventory\">0</span><span class=\"hint\">Devices · IPAM · Racks</span></div>\n   <div class=\"card audit-stat\"><span class=\"label\">Accounts &amp; security</span><span class=\"value\" id=\"stat-security\">0</span><span class=\"hint\">Recorded security activity</span></div>\n   <div class=\"card audit-stat\"><span class=\"label\">People represented</span><span class=\"value\" id=\"stat-actors\">0</span><span class=\"hint\">Account names actually recorded</span></div>\n  </section>\n  <nav class=\"audit-tabs\" role=\"tablist\" aria-label=\"Audit Trail sections\">\n   <button class=\"audit-tab active\" id=\"tab-activity\" data-tab=\"activity\" role=\"tab\" aria-selected=\"true\" type=\"button\">All Activity</button>\n   <button class=\"audit-tab\" id=\"tab-assets\" data-tab=\"assets\" role=\"tab\" aria-selected=\"false\" type=\"button\">Asset History</button>\n   <button class=\"audit-tab\" id=\"tab-coverage\" data-tab=\"coverage\" role=\"tab\" aria-selected=\"false\" type=\"button\">Recording Coverage</button>\n  </nav>\n  <section id=\"pane-activity\" class=\"audit-pane\" role=\"tabpanel\" aria-labelledby=\"tab-activity\">\n    <div class=\"section-heading\"><div><h2>Recent activity</h2><p>A searchable, chronological record of meaningful system changes.</p></div><span class=\"preview-side\">Saved events</span></div>\n    <div class=\"card audit-toolbar\">\n      <div class=\"field search\"><label for=\"q\">Search actor, record or event</label><input class=\"input\" id=\"q\" type=\"search\" placeholder=\"Search actor, event or record\"></div>\n      <div class=\"field\"><label for=\"area\">Area</label><select class=\"input\" id=\"area\"><option value=\"\">All areas</option><option>Devices</option><option>IPAM</option><option>Racks</option><option>Users</option><option>Security</option><option>Settings</option></select></div>\n      <div class=\"field short\"><label for=\"action\">Action</label><select class=\"input\" id=\"action\"><option value=\"\">All actions</option><option>Created</option><option>Updated</option><option>Deleted</option><option value=\"Security\">Security event</option><option value=\"System\">System event</option></select></div>\n      <div class=\"field short\"><label for=\"actor\">Performed by</label><select class=\"input\" id=\"actor\"><option value=\"\">Anyone</option><!--AUDIT_ACTORS--><option value=\"unknown\">Unknown</option></select></div>\n      <button class=\"btn slim\" type=\"button\" id=\"reset-filters\">Clear filters</button>\n    </div>\n    <div class=\"card\"><div class=\"audit-table-wrap\"><table class=\"audit-table\"><thead><tr><th style=\"width:13%\">When (UTC)</th><th style=\"width:13%\">Performed by</th><th style=\"width:26%\">Event</th><th style=\"width:11%\">Action</th><th style=\"width:24%\">Affected record</th><th style=\"width:13%\">Details</th></tr></thead><tbody id=\"activity-results\"></tbody></table></div><div class=\"audit-footer\"><span id=\"result-count\">0 saved events</span><span>Showing newest first · UTC</span></div></div>\n  </section>\n  <section id=\"pane-assets\" class=\"audit-pane\" role=\"tabpanel\" aria-labelledby=\"tab-assets\" hidden>\n    <div class=\"section-heading\"><div><h2>History by record</h2><p>Follow an individual device, IP address, rack, user or catalogue entry through its changes.</p></div></div>\n    <div class=\"audit-asset-search\"><div class=\"field\"><label for=\"asset-search\">Find a record</label><input id=\"asset-search\" class=\"input\" type=\"search\" placeholder=\"Search saved records\"></div></div>\n    <div class=\"asset-layout\"><div class=\"card asset-list\" id=\"asset-list\"></div><div class=\"card timeline\" id=\"asset-timeline\"></div></div>\n  </section>\n  <section id=\"pane-coverage\" class=\"audit-pane\" role=\"tabpanel\" aria-labelledby=\"tab-coverage\" hidden>\n    <div class=\"section-heading\"><div><h2>Audit recording coverage</h2><p>Existing recording and approved additional coverage.</p></div></div>\n    <div class=\"coverage-top\">\n<div class=\"card coverage-card\"><div class=\"eyebrow\">CENTRALLY STORED</div><div class=\"big\">Existing inventory events</div><p>Device, IPAM, Rack and managed-settings history is held in SQLite. Older records are preserved without fabricating missing details.</p></div>\n<div class=\"card coverage-card\"><div class=\"eyebrow\">V2.1 · IN DEVELOPMENT</div><div class=\"big\">Accountable changes</div><p>New inventory events capture authenticated actor and outcome. Additional account and security event coverage is being integrated.</p></div>\n<div class=\"card coverage-card\"><div class=\"eyebrow\">APPROVED RETENTION</div><div class=\"big\">No automatic expiry</div><p>History is retained by default. Deletion and purging are not available, and server-side section permissions remain enforced.</p></div>\n</div>\n<div class=\"coverage-grid\">\n      <div class=\"card coverage-group\"><h3>Inventory &amp; physical changes</h3><p>Preserve the recorded change and explain its consequences.</p>\n        <div class=\"coverage-row\"><div><b>Devices</b><small>Create, update, delete, rename, type, OS, software, notes and physical relationships</small></div><span class=\"coverage-status current\">Recorded</span></div>\n        <div class=\"coverage-row\"><div><b>IPAM / Networks</b><small>Reservations, release, subnet/VLAN, gateway, primary IP and bulk changes</small></div><span class=\"coverage-status current\">Recorded</span></div>\n        <div class=\"coverage-row\"><div><b>Racks &amp; accessories</b><small>Rack, face, U range, vertical L/R rail, install/remove/move</small></div><span class=\"coverage-status current\">Recorded</span></div>\n        <div class=\"coverage-row\"><div><b>Catalogues</b><small>Type, location, manufacturer, model, software and server-service changes</small></div><span class=\"coverage-status current\">Recorded</span></div>\n      </div>\n      <div class=\"card coverage-group\"><h3>Accounts, security &amp; maintenance</h3><p>More useful records without collecting secrets.</p>\n        <div class=\"coverage-row\"><div><b>User and permission changes</b><small>Account creation, disabled/enabled, role and Devices/IPAM/Racks access changes</small></div><span class=\"coverage-status\">In development</span></div>\n        <div class=\"coverage-row\"><div><b>Sign-in &amp; MFA</b><small>Successful/failed attempts, enrolment and security-related changes, with careful privacy rules</small></div><span class=\"coverage-status\">In development</span></div>\n        <div class=\"coverage-row\"><div><b>System maintenance</b><small>Imports, clean starts, settings and integrity repairs with clear outcomes</small></div><span class=\"coverage-status current\">Recorded</span></div>\n        <div class=\"coverage-row\"><div><b>Export and access to logs</b><small>Who may view/download history, and whether to record exports</small></div><span class=\"coverage-status\">Permission protected</span></div>\n      </div>\n    </div>\n    <div class=\"audit-warn\"><strong>Important security boundary:</strong> never record passwords, password hashes, MFA seeds or codes, session tokens, API secrets or entire sensitive request bodies. Before/after values should be carefully limited to safe, useful fields. The audit record must remain read-only; this is not a data restore facility.</div>\n    <p class=\"coverage-footnote\">Audit records remain read-only. Historic records which lack actor or field-value detail retain that limitation; event retention has no automatic expiry.</p>\n  </section>\n  <div class=\"foot\">Caffoot Lite · Read-only, permission-filtered history · Stored centrally in SQLite</div>\n</main><div class=\"modal-layer\" id=\"audit-detail-layer\" hidden>\n<div class=\"modal audit-modal\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"audit-detail-title\">\n<div class=\"modal-head\"><div><p class=\"eyebrow\">ACTIVITY DETAILS</p><h2 id=\"audit-detail-title\">Change details</h2><p id=\"audit-detail-lead\">Recorded event</p></div><button class=\"close\" data-action=\"audit-close-detail\" type=\"button\" aria-label=\"Close event details\">×</button></div>\n<div class=\"modal-body\" id=\"audit-detail-body\"></div></div></div></div>";
+        let activeAuditTab='activity';
+        let selectedAuditAsset='';
+        let auditLastFocus=null;
+        function auditVisibleRows(){
+          const rows=[];
+          for(let i=auditHistory.length-1;i>=0;i--){
+            const ev=auditHistory[i];
+            if(!ev||typeof ev!=='object'||!Array.isArray(ev.changes))continue;
+            for(let j=ev.changes.length-1;j>=0;j--){
+              const change=ev.changes[j];
+              if(!change||typeof change!=='object'||Array.isArray(change))continue;
+              const kind=String(change.kind||'Unknown');
+              const area=['IPAM','Subnet','VLAN'].includes(kind)?'IPAM':kind==='Rack'?'Racks':
+                kind==='Settings'?'Settings':kind==='Account'?'Users':
+                ['Authentication','Security'].includes(kind)?'Security':
+                ['Device','Device types','Locations'].includes(kind)?'Devices':'Other';
+              rows.push({index:rows.length,at:ev.at||'',actor:typeof ev.actor==='string'&&ev.actor.trim()?ev.actor:'Not recorded',
+                area,kind,action:String(change.action||'Updated'),label:String(change.label||'Unspecified record'),
+                reason:String(ev.reason||'Recorded change'),outcome:String(ev.outcome||'Succeeded'),
+                fields:Array.isArray(change.fields)?change.fields.filter(x=>typeof x==='string'):[],
+                before:change.before,after:change.after});
+            }
+          }
+          return rows;
+        }
+        function auditDate(value){
+          const d=new Date(value);
+          return Number.isNaN(d.getTime())?'Not recorded':d.toISOString().replace('T',' ').slice(0,19);
+        }
         function renderAuditHTML() {
-            // Ignore malformed history records in the view without altering stored data.
-            const entries=auditHistory.filter(entry=>entry && typeof entry==='object' && !Array.isArray(entry) && Array.isArray(entry.changes)).slice().reverse();
-            return `<div class="w-full space-y-5">
-                <section class="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-2xl p-6 space-y-3">
-                    <div class="flex items-center justify-between flex-wrap gap-3">
-                        <div><h3 class="font-bold text-lg text-slate-900 dark:text-white">Change History</h3>
-                        <p class="text-sm text-slate-700 dark:text-slate-200 mt-1">History of successful inventory changes saved in the central database. Up to ${AUDIT_LIMIT} events are retained.</p></div>
-                        <button type="button" data-action="export-audit" class="px-4 py-2.5 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold"><i class="fa-solid fa-download mr-2"></i>Export history</button>
-                    </div>
-                    <p class="text-xs text-slate-600 dark:text-slate-300">Change History is stored centrally and shared across authorised users.</p>
-                </section>
-                ${entries.length ? entries.map(entry=>`<article class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-2xl p-4 space-y-3">
-                    <div class="flex flex-wrap justify-between gap-2"><strong class="text-slate-900 dark:text-white">${escapeHtml(entry.reason || 'Inventory saved')}</strong><time class="text-xs text-slate-600 dark:text-slate-300">${escapeHtml(new Date(entry.at).toLocaleString())}</time></div>
-                    ${entry.changes.length ? `<ul class="space-y-2">${entry.changes.filter(c=>c && typeof c==='object' && !Array.isArray(c)).map(c=>`<li class="text-sm text-slate-800 dark:text-slate-200 border-l-4 ${c.action==='Deleted'?'border-rose-600':c.action==='Created'?'border-emerald-600':'border-blue-600'} pl-3"><strong>${escapeHtml(c.action)} ${escapeHtml(c.kind)}:</strong> ${escapeHtml(c.label)} ${c.fields?.length?`<span class="text-slate-600 dark:text-slate-300">(${escapeHtml(c.fields.join(', '))})</span>`:''}</li>`).join('')}</ul>`:'<p class="text-sm text-slate-700 dark:text-slate-200">Validated inventory replacement or save; no item-level differences.</p>'}
-                    ${entry.omitted?`<p class="text-xs text-amber-800 dark:text-amber-200">Plus ${entry.omitted} additional changes not displayed in this event.</p>`:''}
-                </article>`).join(''):'<div class="bg-white dark:bg-slate-800 border rounded-2xl p-8 text-center text-slate-700 dark:text-slate-200">No saved changes recorded yet. Create or edit a device to start the history.</div>'}
-            </div>`;
+          const rows=auditVisibleRows();
+          const names=[...new Set(rows.map(r=>r.actor).filter(n=>n!=='Not recorded'))].sort();
+          const assets=[...new Map(rows.map(r=>[JSON.stringify([r.kind,r.label]),{kind:r.kind,label:r.label,area:r.area}])).entries()];
+          if(!assets.some(([key])=>key===selectedAuditAsset))selectedAuditAsset=assets[0]?.[0]||'';
+          const tr=rows.map(r=>'<tr data-audit-index="'+r.index+'" data-area="'+escapeHtml(r.area)+'" data-verb="'+escapeHtml(r.action)+'" data-actor="'+escapeHtml(r.actor)+'" data-search="'+escapeHtml([r.actor,r.area,r.action,r.kind,r.label,r.reason].join(' ').toLowerCase())+'">' +
+            '<td><div class="time">'+escapeHtml(auditDate(r.at))+'</div><div class="secondary">UTC</div></td>' +
+            '<td><strong>'+escapeHtml(r.actor)+'</strong></td>' +
+            '<td><div class="event-name">'+escapeHtml(r.kind+' '+r.action.toLowerCase())+'</div><div class="event-note">'+escapeHtml(r.reason)+'</div></td>' +
+            '<td><span class="act-badge '+escapeHtml(r.action.toLowerCase())+'">'+escapeHtml(r.action)+'</span></td>' +
+            '<td><div class="subject">'+escapeHtml(r.label)+'</div><div class="secondary">'+escapeHtml(r.area)+'</div></td>' +
+            '<td><button class="audit-row-button" type="button" data-action="audit-view-detail" data-index="'+r.index+'">View Details</button></td></tr>').join('')||
+            '<tr><td colspan="6" class="audit-empty">No authorised audit events are recorded yet.</td></tr>';
+          const list=assets.map(([key,asset])=>{
+            const count=rows.filter(r=>r.kind===asset.kind&&r.label===asset.label).length;
+            return '<button class="asset-item '+(key===selectedAuditAsset?'selected':'')+'" type="button" data-action="audit-select-asset" data-key="'+escapeHtml(key)+'"><span><b>'+escapeHtml(asset.label)+'</b><small>'+escapeHtml(asset.area)+' · Saved history</small></span><span class="num">'+count+'</span></button>';
+          }).join('')||'<p class="audit-empty">No authorised records to display.</p>';
+          const chosen=assets.find(([key])=>key===selectedAuditAsset)?.[1];
+          const timeline=chosen?rows.filter(r=>r.kind===chosen.kind&&r.label===chosen.label):[];
+          const timelineHtml=timeline.length?'<h3>'+escapeHtml(chosen.label)+'</h3><p class="subtitle">'+timeline.length+' saved changes</p>' +
+            '<div class="timeline-list">'+timeline.map(r=>'<div class="timeline-entry"><strong>'+escapeHtml(r.kind+' '+r.action.toLowerCase())+'</strong><p>'+escapeHtml(r.actor)+' · '+escapeHtml(auditDate(r.at))+' UTC</p><button type="button" data-action="audit-view-detail" data-index="'+r.index+'">View event details</button></div>').join('')+'</div>':
+            '<p class="audit-empty">Select a record to view its history.</p>';
+          return approvedAuditMarkup
+            .replace('<!--AUDIT_ACTORS-->',names.map(n=>'<option value="'+escapeHtml(n)+'">'+escapeHtml(n)+'</option>').join(''))
+            .replace('<tbody id="activity-results"></tbody>','<tbody id="activity-results">'+tr+'</tbody>')
+            .replace('<div class="card asset-list" id="asset-list"></div>','<div class="card asset-list" id="asset-list">'+list+'</div>')
+            .replace('<div class="card timeline" id="asset-timeline"></div>','<div class="card timeline" id="asset-timeline">'+timelineHtml+'</div>')
+            .replace('id="stat-total">0','id="stat-total">'+rows.length)
+            .replace('id="stat-inventory">0','id="stat-inventory">'+rows.filter(r=>['Devices','IPAM','Racks'].includes(r.area)).length)
+            .replace('id="stat-security">0','id="stat-security">'+rows.filter(r=>['Users','Security'].includes(r.area)).length)
+            .replace('id="stat-actors">0','id="stat-actors">'+names.length)
+            .replace('id="result-count">0 saved events','id="result-count">'+rows.length+' saved events');
+        }
+        function hydrateApprovedAudit(container){
+          const root=container.querySelector('.approved-audit');if(!root)return;
+          root.querySelectorAll('.audit-tab').forEach(b=>{
+            const on=b.dataset.tab===activeAuditTab;
+            b.classList.toggle('active',on);b.setAttribute('aria-selected',String(on));
+          });
+          root.querySelectorAll('.audit-pane').forEach(p=>p.hidden=p.id!=='pane-'+activeAuditTab);
+        }
+        function applyApprovedAuditFilters(){
+          const root=document.querySelector('#main-content .approved-audit');if(!root)return;
+          const q=(root.querySelector('#q')?.value||'').trim().toLowerCase();
+          const area=root.querySelector('#area')?.value||'';
+          const action=root.querySelector('#action')?.value||'';
+          const actor=root.querySelector('#actor')?.value||'';
+          let matching=0;
+          root.querySelectorAll('#activity-results tr[data-audit-index]').forEach(row=>{
+            const show=(!q||row.dataset.search.includes(q))&&(!area||row.dataset.area===area)&&
+              (!action||row.dataset.verb===action)&&
+              (!actor||(actor==='unknown'?row.dataset.actor==='Not recorded':row.dataset.actor===actor));
+            row.hidden=!show;if(show)matching++;
+          });
+          root.querySelector('#result-count').textContent=matching+' matching events';
+        }
+        function closeApprovedAuditDetail(){
+          const layer=document.getElementById('audit-detail-layer');
+          if(layer)layer.hidden=true;
+          if(auditLastFocus?.isConnected)auditLastFocus.focus();
+          auditLastFocus=null;
+        }
+        function showApprovedAuditDetail(index){
+          const row=auditVisibleRows()[index],layer=document.getElementById('audit-detail-layer');
+          if(!row||!layer)return;
+          auditLastFocus=document.activeElement;
+          document.getElementById('audit-detail-title').textContent=row.kind+' '+row.action.toLowerCase();
+          document.getElementById('audit-detail-lead').textContent=row.label+' · '+row.area;
+          let fields=row.fields.length?'<h3 class="detail-section">Recorded field names</h3><p class="detail-description">'+escapeHtml(row.fields.join(', '))+'</p>':
+            '<p class="detail-description">No field-level differences were captured for this event.</p>';
+          if(row.before&&row.after&&typeof row.before==='object'&&typeof row.after==='object'){
+            const keys=[...new Set([...Object.keys(row.before),...Object.keys(row.after)])].slice(0,30);
+            fields='<h3 class="detail-section">Recorded field changes</h3><div class="diff-head"><span>Field</span><span>Previous value</span><span>New value</span></div>'+
+              keys.map(k=>'<div class="diff-row"><b>'+escapeHtml(k)+'</b><span class="before">'+escapeHtml(String(row.before[k]??'Not recorded'))+'</span><span class="after">'+escapeHtml(String(row.after[k]??'Not recorded'))+'</span></div>').join('');
+          }
+          document.getElementById('audit-detail-body').innerHTML='<div class="detail-meta"><div><small>Performed by</small><b>'+escapeHtml(row.actor)+'</b></div><div><small>When (UTC)</small><b>'+escapeHtml(auditDate(row.at))+'</b></div><div><small>Result</small><b>'+escapeHtml(row.outcome)+'</b></div></div><p class="detail-description">'+escapeHtml(row.reason)+'</p>'+fields;
+          layer.hidden=false;
+          layer.querySelector('[data-action="audit-close-detail"]').focus();
         }
 
         let nextDeviceBridge = null;
@@ -2544,7 +2634,7 @@ function hierarchyValidateTypes(subnets) {
                 racks: 'Network Racks & Elevations',
 
 
-                audit: 'Change History & Data Safety',
+                audit: 'Audit Trail',
                 settings: 'Settings & Data Management',
                 users: 'Users',
                 account: 'My account'
@@ -2657,6 +2747,7 @@ function hierarchyValidateTypes(subnets) {
             }
             container.innerHTML = html;
             if (currentTab === 'account') nextHydrateAccount(container);
+            if (currentTab === 'audit') hydrateApprovedAudit(container);
             const rackScroll = container.querySelector('[data-rack-scroll="true"]');
             if (rackScroll) {
                 const updateScrollHint = () => {
