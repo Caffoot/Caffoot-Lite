@@ -222,7 +222,7 @@ async function run(){
   await page.locator('#personal-details-form').waitFor();
   assert.ok(await page.getByRole('heading',{name:'Personal Details'}).isVisible(),
     'Approved My Account Overview must contain personal details');
-  assert.equal(await page.locator('#profile-username').inputValue(),'admin',
+  assert.equal(await page.locator('#profile-username').inputValue(),'owner',
     'Sign-in username must remain visible and read-only');
   assert.equal(await page.locator('#profile-username').getAttribute('readonly'),'',
     'Username is never editable in personal details');
