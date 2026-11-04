@@ -182,7 +182,7 @@ class SMTPHttpTests(unittest.TestCase):
             dict(settings(), port=True),
             dict(settings(), fromEmail="not-an-email"),
             dict(settings(), host="https://example.test"),
-            dict(settings(), password="bad\\npassword"),
+            dict(settings(), password="bad\npassword"),
         ):
             with self.subTest(payload=payload):
                 self.assertEqual(self.save(payload)[0], 400)
