@@ -1585,6 +1585,8 @@ async function run(){
     'Hosted guests must use the approved related-record preview, not legacy fact rows');
   assert.ok(await hostedVmRecord.getByText('browser-vm',{exact:true}).isVisible(),
     'Hosted VM must remain discoverable from its physical host');
+  assert.ok(await hostedVmRecord.getByText('Virtual Machine · Active · 10.64.20.13',{exact:true}).isVisible(),
+    'Pinned hosted guest preview must use the approved VM label and saved state/IP');
   assert.ok(await hostedVmRecord.getByText('10.64.20.13',{exact:false}).isVisible(),
     'Host guest preview must use the saved VM IP address');
   assert.ok(await hostedVmRecord.getByRole('button',{name:'View details for browser-vm'}).isVisible(),
