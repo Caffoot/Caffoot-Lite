@@ -1552,6 +1552,18 @@ async function run(){
   assert.ok(await detailsSoftware.locator(':scope > .device-review-panel').nth(1)
     .getByRole('heading',{name:'Installed Software'}).isVisible(),
     'Approved Details Installed Software must follow Operating System / Platform');
+  const installedSoftwareCard=detailsSoftware.locator(':scope > .device-review-panel').nth(1);
+  assert.equal(await installedSoftwareCard.locator('.device-details-field').count(),0,
+    'Approved Installed Software must not render legacy key/value fact rows');
+  const installedCards=installedSoftwareCard.locator('.record-preview.device-details-installed-software');
+  if(await installedCards.count()){
+    assert.equal(await installedCards.locator(':scope > .chip').count(),await installedCards.count(),
+      'Every installed software preview must retain its approved Installed badge');
+  } else {
+    assert.ok(await installedSoftwareCard.getByText('No installed software recorded.',{exact:true}).isVisible(),
+      'Empty installed software card must retain the approved source empty state');
+  }
+
   const hypervisorDetailsCard=detailsSoftware.locator(':scope > .device-review-panel.full')
     .filter({hasText:'Hypervisor Service'});
   assert.ok(await hypervisorDetailsCard.isVisible(),
