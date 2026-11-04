@@ -802,6 +802,14 @@ async function run(){
   // Published IPAM paths: device-linked notes and independent reservations.
   await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
   await page.evaluate(()=>openIpModal('10.64.20.10'));
+  assert.ok(await page.locator('#modal-content.approved-ipam-modal .ipam-modal-explain.warn').isVisible(),
+    'Device-owned IP modal must explain that its assignment is protected');
+  assert.ok(await page.locator('#ip-status').isDisabled(),
+    'Device-owned IP status must not be changed from IPAM');
+  assert.ok(await page.locator('#ip-hostname').isDisabled(),
+    'Device-owned hostname must remain controlled by the Device form');
+  assert.ok(await page.locator('#ip-notes').isEnabled(),
+    'Device-owned IPAM notes must remain editable for authorised users');
   await page.locator('#ip-notes').fill('Device IPAM notes kept independently');
   await page.locator('form[data-form-action="ip"] button[type="submit"]').click();
   await persisted(page,s=>s.ipAllocations['10.64.20.10']?.notes==='Device IPAM notes kept independently',
@@ -842,12 +850,38 @@ async function run(){
   });
   assert.deepEqual(previewIps,['10.64.20.20','10.64.20.21','10.64.20.22'],
     'Published bulk confirmation must show the selected address range');
+  const bulkPreviewDialog=page.locator('#modal-content.approved-ipam-modal');
+  assert.ok(await bulkPreviewDialog.locator('.ipam-modal-head h2')
+    .getByText('Confirm bulk reservation',{exact:true}).isVisible(),
+    'The real bulk confirmation must use the approved Draft 01 modal');
+  assert.ok(await bulkPreviewDialog.locator('.ipam-modal-actions [data-action="apply-bulk-ip-assignment"]').isVisible(),
+    'The existing protected Apply action must remain in the approved footer');
+  await bulkPreviewDialog.locator('.ipam-modal-actions [data-action="return-from-bulk-ip-assignment"]').click();
+  assert.equal(await page.locator('#bulk-start').inputValue(),'10.64.20.20',
+    'Going back from preview must preserve the original starting IP address');
+  assert.equal(await page.locator('#bulk-end').inputValue(),'10.64.20.22',
+    'Going back from preview must preserve the original ending IP address');
+  assert.equal(await page.locator('#bulk-hostname').inputValue(),'pool',
+    'Going back from preview must not discard the hostname prefix');
+  await page.locator('form[data-form-action="bulk-ip"] button[type="submit"]').click();
+  await bulkPreviewDialog.locator('.ipam-modal-head h2').getByText('Confirm bulk reservation',{exact:true}).waitFor();
   const bulkResponse=page.waitForResponse(res=>res.url().endsWith('/api/ipam/allocation/bulk'));
   await page.locator('[data-action="apply-bulk-ip-assignment"]').click();
   assert.equal((await bulkResponse).status(),200,'Bulk IPAM save request rejected');
   await persisted(page,s=>[20,21,22].every(n=>
     s.ipAllocations['10.64.20.'+n]?.status==='Reserved'),'Bulk IPAM reservation');
   assert.equal((await state(page)).ipAllocations['10.64.20.20'].notes,'Bulk notes');
+  await page.evaluate(id=>deleteSubnet(id),subnetId);
+  const blockedIpamDelete=page.locator('#modal-content.approved-ipam-modal');
+  assert.ok(await blockedIpamDelete.locator('.ipam-modal-head h2')
+    .getByText('Subnet Deletion Blocked',{exact:true}).isVisible(),
+    'Protected subnet deletion must retain its safety warning in the approved modal');
+  assert.ok(await blockedIpamDelete.locator('[aria-label="Protected IP addresses"]').isVisible(),
+    'Blocked deletion must show the actual protected IP addresses');
+  assert.ok((await state(page)).subnets.some(s=>s.id===subnetId),
+    'Viewing a blocked deletion must never remove the selected subnet');
+  await blockedIpamDelete.locator('.ipam-modal-actions [data-action="close-modal"]').click();
+  await page.locator('#modal-container.hidden').waitFor();
   await page.reload();
   await page.locator('#main-content .caffoot-dashboard').waitFor();
   assert.equal((await state(page)).ipAllocations['10.64.20.15'].hostname,'spare-address');
