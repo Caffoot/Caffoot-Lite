@@ -211,12 +211,12 @@ async function run(){
   assert.equal(await page.locator('#main-content .approved-audit #stat-total').textContent(),'0',
     'A fresh installation must not display fictional audit events');
   await page.locator('#sidebar [data-action="tab-users"]').click();
-  await page.getByRole('heading',{name:'User Management Overview'}).waitFor();
-  assert.ok(await page.locator('#main-content > div.w-full, #main-content .approved-page-body > div.w-full').isVisible(),
-    'Users overview should fill the inventory workspace');
+  await page.getByRole('heading',{name:'Your people, at a glance'}).waitFor();
+  assert.ok(await page.locator('#main-content .approved-page-body .users-live').isVisible(),
+    'Approved Users overview should fill the inventory workspace');
   await page.getByText('Total users',{exact:true}).waitFor();
-  await page.getByRole('heading',{name:'Administrators',exact:true}).waitFor();
-  await page.getByText('Users by role',{exact:true}).waitFor();
+  await page.getByText('Administrators',{exact:true}).first().waitFor();
+  await page.getByText('Accounts by role',{exact:true}).waitFor();
   await page.getByText('MFA enrolment',{exact:true}).waitFor();
   assert.ok(await page.locator('#main-content .approved-page-header .tabs').isVisible());
   assert.equal(await page.locator('#next-account-password-form').count(),0,
@@ -598,14 +598,18 @@ async function run(){
   await page.locator('#main-content .approved-page-header [data-action="approved-users-section"][data-tab="add"]').click();
   await page.locator('#next-user-create-form input[name="username"]').fill('editor');
   await page.locator('#next-user-create-form input[name="password"]').fill(password+'-Editor');
+  await page.locator('#next-user-create-form input[name="firstName"]').fill('Taylor');
+  await page.locator('#next-user-create-form input[name="lastName"]').fill('Example');
+  await page.locator('#next-user-create-form input[name="displayName"]').fill('Taylor E');
+  await page.locator('#next-user-create-form input[name="email"]').fill('taylor@example.test');
   await page.locator('#next-user-create-form button[type="submit"]').click();
   await page.waitForFunction(()=>[...document.querySelectorAll('#main-content h3')]
     .some(h=>h.textContent.trim()==='editor'));
   assert.equal(await page.locator('#main-content .approved-page-header [data-action="approved-users-section"][data-tab="list"]').getAttribute('aria-selected'),'true');
   await page.locator('#main-content .approved-page-header [data-action="approved-users-section"][data-tab="overview"]').click();
-  await page.getByText('Users by role',{exact:true}).waitFor();
-  assert.equal(await page.getByText('Total users',{exact:true}).locator('..').locator('..').locator('p').textContent(),'2');
-  assert.equal(await page.getByRole('heading',{name:'Administrators',exact:true}).locator('..').locator('..').locator('p').textContent(),'1');
+  await page.getByText('Accounts by role',{exact:true}).waitFor();
+  assert.equal(await page.locator('#main-content .users-live .statnum').nth(0).textContent(),'2');
+  assert.equal(await page.locator('#main-content .users-live .statnum').nth(1).textContent(),'1');
   await page.locator('#main-content .approved-page-header [data-action="approved-users-section"][data-tab="list"]').click();
   const editorId=await page.evaluate(async()=>{
     const r=await fetch('/api/users',{cache:'no-store'});
@@ -613,6 +617,13 @@ async function run(){
     return (await r.json()).users.find(user=>user.username==='editor')?.id;
   });
   assert.ok(Number.isInteger(editorId),'User not saved to SQLite');
+  const editorProfile=await page.evaluate(async id=>{
+    const r=await fetch('/api/users',{cache:'no-store'});
+    return (await r.json()).users.find(u=>u.id===id)?.profile;
+  },editorId);
+  assert.equal(editorProfile.displayName,'Taylor E','Optional details must persist with a newly created user');
+  assert.equal(editorProfile.email,'taylor@example.test');
+  assert.equal(editorProfile.emailVerified,false,'Adding an email must not mark it as verified');
   const second=await browser.newContext({
     ignoreHTTPSErrors:true,viewport:{width:1440,height:950}
   });
@@ -642,6 +653,12 @@ async function run(){
 
   await page.locator('#main-content [data-action="users-open-editor"][data-user-id="'+editorId+'"]').click();
   await page.locator('#main-content .users-management-modal').waitFor();
+  await page.locator('#next-user-profile-form input[name="displayName"]').fill('Taylor Updated');
+  await page.locator('#next-user-profile-form button[type="submit"]').click();
+  await page.waitForFunction(async id=>{
+    const r=await fetch('/api/users',{cache:'no-store'});
+    return r.ok && (await r.json()).users.find(u=>u.id===id)?.profile.displayName==='Taylor Updated';
+  },editorId);
   await page.locator('[data-next-user-permission][data-user-id="'+editorId+'"][data-section="Devices"]').selectOption('edit');
   await page.locator('[data-next-user-permission][data-user-id="'+editorId+'"][data-section="IPAM"]').selectOption('read');
   await page.locator('[data-next-user-permission][data-user-id="'+editorId+'"][data-section="Racks"]').selectOption('read');
