@@ -507,6 +507,32 @@ async function run(){
     'Clicking the approved chart row must open the filtered live Device Inventory');
   await page.locator('#main-content [data-action="clear-device-filters"]').first().click();
 
+  // Draft 03's Hardware panel must render its original metric, card and chart structure.
+  await page.locator('#main-content [data-action="approved-device-section"][data-tab="overview"]').click();
+  await page.locator('#main-content [data-action="device-intelligence-tab"][data-tab="hardware"]').click();
+  const approvedHardware=page.locator('#main-content .intelligence-panel[data-insight-panel="hardware"]');
+  await approvedHardware.waitFor();
+  assert.ok(await approvedHardware.isVisible(),'Approved Hardware panel should be selected');
+  assert.equal(await approvedHardware.locator('#hardware-metrics .intelligence-metric').count(),3,
+    'Approved Hardware overview must show the three live recorded-field totals');
+  assert.equal(await approvedHardware.locator('article.intelligence-card').count(),3,
+    'Approved Hardware overview must retain the manufacturer, model and mounting cards');
+  assert.deepEqual(await approvedHardware.locator('article.intelligence-card h3').allTextContents(),
+    ['Manufacturers','Models','Mounting Methods']);
+  assert.equal(await approvedHardware.locator('.intelligence-chart').count(),3,
+    'Every Hardware card needs the original approved chart-row structure');
+  const mountingRow=approvedHardware.locator('.intelligence-chart-row[data-field="mountType"][data-value="Tabletop / Shelf Mounted"]');
+  assert.ok(await mountingRow.isVisible(),'Hardware chart must show real recorded mounting methods');
+  await mountingRow.click();
+  await page.waitForFunction(()=>activeDeviceDetailsTab==='inventory' &&
+    deviceHardwareFilter?.field==='mountType' &&
+    deviceHardwareFilter?.value==='Tabletop / Shelf Mounted');
+  assert.ok(await page.locator('#main-content [data-device-panel="inventory"] .device-table')
+    .getByText('browser-device').isVisible(),
+    'Approved Mounting Methods chart must open matching saved devices');
+  await page.locator('#main-content [data-action="clear-device-filters"]').first().click();
+
+
   await page.locator('#sidebar [data-action="tab-audit"]').click();
   await page.locator('.approved-audit #activity-results tr[data-audit-index]').first().waitFor();
   assert.ok(Number(await page.locator('.approved-audit #stat-total').textContent())>=1,
