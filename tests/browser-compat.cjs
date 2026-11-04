@@ -396,6 +396,7 @@ async function run(){
     s.ipAllocations['10.64.20.'+n]?.status==='Reserved'),'Bulk IPAM reservation');
   assert.equal((await state(page)).ipAllocations['10.64.20.20'].notes,'Bulk notes');
   await page.reload();
+  await page.locator('#main-content .caffoot-dashboard').waitFor();
   assert.equal((await state(page)).ipAllocations['10.64.20.15'].hostname,'spare-address');
   console.log('Published IPAM notes, independent reservation and bulk allocation saved and reloaded');
 
