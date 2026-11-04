@@ -752,11 +752,40 @@ async function run(){
     'Save Device must remain available in the approved footer');
   const general=page.locator('#device-form-panel-general');
   await general.waitFor();
-  assert.equal(await general.evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),2,
-    'Device General form must use desktop columns');
-  await page.setViewportSize({width:740,height:900});
-  assert.notEqual(await general.evaluate(el=>getComputedStyle(el).display),'grid',
-    'Device General form must remain stacked on narrow screens');
+  const generalGrid=general.locator(':scope > .device-review-grid');
+  assert.equal(await generalGrid.locator(':scope > .device-review-panel.full').count(),2,
+    'Approved physical-device General tab must use Device Identity and Mounting cards');
+  const identityCard=generalGrid.locator(':scope > .device-review-panel').first();
+  assert.ok(await identityCard.getByRole('heading',{name:'Device Identity'}).isVisible());
+  assert.equal(await identityCard.locator('#dev-name').count(),1,
+    'Original Device Name input must stay in Device Identity');
+  assert.equal(await identityCard.locator('#dev-location').count(),1,
+    'Approved Location Area must live inside Device Identity, not Mounting');
+  assert.equal(await generalGrid.locator('#device-form-mounting-options #dev-location').count(),0,
+    'Mounting must not contain a duplicate Location Area control');
+  assert.ok(await generalGrid.getByRole('heading',{name:'Mounting & Rack Configuration'}).isVisible());
+  for(const id of ['dev-mount-type','dev-rack-id','dev-rack-face','dev-rack-u','dev-rack-height']){
+    assert.equal(await generalGrid.locator('#device-form-mounting-options #'+id).count(),1,
+      'Mounting card must preserve live Rack control '+id);
+  }
+  assert.equal(await generalGrid.evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),2,
+    'Approved source General cards must use desktop columns');
+  assert.equal(await identityCard.locator('.device-review-form-grid').evaluate(
+    el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),2,
+    'Approved Device Identity fields must use the two-column source grid');
+  await identityCard.getByRole('button',{name:'+ Add Location'}).click();
+  assert.ok(await identityCard.locator('#dev-create-location-panel').isVisible(),
+    'Add Location must open the existing live location editor');
+  await identityCard.locator('[data-action="cancel-custom-location"]').click();
+  assert.ok(await identityCard.locator('#dev-create-location-panel').isHidden(),
+    'Cancelling inline Location must retain the existing field');
+  await page.setViewportSize({width:420,height:900});
+  assert.equal(await generalGrid.evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),1,
+    'Approved General cards must stack at mobile width');
+  assert.equal(await identityCard.locator('.device-review-form-grid').evaluate(
+    el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),1,
+    'Approved Device Identity fields must stack on mobile');
+  await page.setViewportSize({width:1440,height:950});
   await page.setViewportSize({width:1440,height:950});
   assert.ok(await page.locator('#dev-name').isVisible(),
     'Responsive layout must preserve Device Name field');
@@ -1226,7 +1255,10 @@ async function run(){
   assert.deepEqual(await approvedEditor.locator('[role="tab"]').allTextContents(),
     ['General','Hardware','Software & Firmware','Networking','Notes']);
   await approvedEditor.getByRole('tab',{name:'Hardware'}).click();
-  const approvedHardwareFields=approvedEditor.locator('#device-form-panel-hardware .device-review-form-grid').first();
+  const hardwareCardGrid=approvedEditor.locator('#device-form-panel-hardware > .device-review-grid');
+  assert.equal(await hardwareCardGrid.locator(':scope > .device-review-panel.full').count(),1,
+    'Approved Hardware tab must use one full-width source card');
+  const approvedHardwareFields=hardwareCardGrid.locator('.device-review-form-grid').first();
   assert.equal(await approvedHardwareFields.locator(':scope > .device-review-field').count(),3,
     'Approved Batch 04 Manufacturer, Model and Serial fields must share the original source grid');
   for(const id of ['physical-manufacturer','physical-model']){
@@ -1256,9 +1288,9 @@ async function run(){
     'Approved Device editor must span the full 420px viewport on mobile');
   assert.equal(await approvedEditor.evaluate(el=>getComputedStyle(el).borderTopLeftRadius),'0px',
     'Approved mobile Device dialog must be edge-to-edge');
-  assert.equal(await approvedEditor.locator('#device-form-panel-general').evaluate(
-    node=>getComputedStyle(node).flexDirection),'column',
-    'Device Editor cards must stack at mobile width');
+  assert.equal(await approvedEditor.locator('#device-form-panel-general > .device-review-grid').evaluate(
+    node=>getComputedStyle(node).gridTemplateColumns.split(' ').length),1,
+    'Device Editor source card grid must stack at mobile width');
   assert.ok(await approvedEditor.locator('.form-actions button[type="submit"]').isVisible(),
     'Save Device must remain accessible on mobile');
   await page.setViewportSize({width:1440,height:950});
