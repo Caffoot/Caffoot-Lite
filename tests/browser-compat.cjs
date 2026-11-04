@@ -219,28 +219,32 @@ async function run(){
     'User Management must not contain personal account settings');
   await page.locator('#app .header-account').click();
   assert.equal(await page.locator('#page-title').textContent(),'My account');
+  await page.locator('#personal-details-form').waitFor();
+  assert.ok(await page.getByRole('heading',{name:'Personal Details'}).isVisible(),
+    'Approved My Account Overview must contain personal details');
+  assert.equal(await page.locator('#profile-username').inputValue(),'admin',
+    'Sign-in username must remain visible and read-only');
+  assert.equal(await page.locator('#profile-username').getAttribute('readonly'),'',
+    'Username is never editable in personal details');
+  assert.equal(await page.locator('.approved-account .subnav [data-section="overview"]').getAttribute('aria-selected'),'true');
+  assert.ok(await page.locator('.approved-account .future-compact').count()===2,
+    'My Devices and My Tickets remain plainly marked Planned');
+  await page.locator('[data-action="select-account-section"][data-section="security"]').first().click();
   await page.locator('#next-account-password-form').waitFor();
-  for(const [area,selector] of [['preferences','.theme-choice'],['help','.settings-help-topic'],['about','.settings-about']]){
-    await page.locator('[data-action="select-account-section"][data-section="'+area+'"]').click();
-    await page.locator(selector).first().waitFor();
-    if(area==='help'){
-      const links=page.locator('.settings-help-topic a[href*="/docs/how-tos/features-and-instructions/"]');
-      assert.equal(await links.count(),8,'Existing help topics should link to the verified full guides');
-      for(const link of await links.all()){
-        assert.equal(await link.getAttribute('target'),'_blank');
-        assert.match(await link.getAttribute('rel'),/noopener/);
-      }
-      assert.equal(await page.locator('.settings-help-topic').count(),6,'Built-in help topics must remain');
-    }
-    if(area==='about'){
-      assert.ok(await page.getByText('Caffoot Lite v2.0.3',{exact:true}).isVisible(), 'About must show the version being prepared for release');
-      assert.equal(await page.getByRole('link',{name:/User Guide/}).getAttribute('href'),
-        'https://github.com/Caffoot/Caffoot-Lite/blob/main/docs/how-tos/features-and-instructions/README.md');
-      assert.equal(await page.getByRole('link',{name:/Installation Guide/}).getAttribute('href'),
-        'https://github.com/Caffoot/Caffoot-Lite/blob/main/INSTALLATION.md');
-    }
-  }
-  await page.locator('[data-action="select-account-section"][data-section="security"]').click();
+  assert.ok(await page.getByText('Security At A Glance',{exact:true}).isVisible());
+  await page.locator('[data-action="select-account-section"][data-section="help"]').first().click();
+  await page.locator('.approved-account .expander').first().waitFor();
+  assert.equal(await page.locator('.approved-account .expander').count(),5,
+    'Approved Help & Guides must keep its five expandable topics');
+  const fullGuides=page.locator('.approved-account a[href*="Features%20and%20Instructions"]');
+  assert.ok(await fullGuides.count()>0,'Approved full user documentation link must remain');
+  await page.locator('[data-action="select-account-section"][data-section="about"]').first().click();
+  assert.ok(await page.getByText('Published Release',{exact:true}).isVisible());
+  assert.ok(await page.getByText('v2.0.3',{exact:true}).isVisible());
+  await page.locator('[data-action="select-account-section"][data-section="overview"]').first().click();
+  await page.locator('#personal-details-form').waitFor();
+  assert.equal(await page.locator('#personal-details-form input[name="firstName"]').count(),1);
+  await page.locator('[data-action="select-account-section"][data-section="security"]').first().click();
   await page.locator('#sidebar [data-action="tab-users"]').click();
   assert.equal(await page.locator('#page-title').textContent(),'Users');
   await page.locator('#sidebar [data-action="tab-dashboard"]').click();
