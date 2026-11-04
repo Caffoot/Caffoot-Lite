@@ -99,6 +99,12 @@ This is a **working register, not a pass certificate**. For each screen, verify 
 - **Verification so far:** the large HTML inline script and the browser test JavaScript passed syntax parsing. **No GitHub Actions runs have been reported on this branch head; the new Chromium test has not been run, and desktop/mobile visual fidelity has not been signed off.** This is a **partial Devices Overview correction**, not a completed screen or an accepted design.
 - Other Devices Overview tabs (Hardware, Operating Systems, Software & Services, Data Quality) still use mismatched old panel structures. The screen-by-screen fidelity register therefore remains **Mismatch confirmed** until those are replaced and all screens tested.
 
+### Devices Hardware Draft 03 — source correction (4 November 2026)
+
+- Commit `aca2649`: replaced the old Hardware overview cards with the **actual approved Draft 03 Hardware panel markup** copied from the pinned source, including the three `intelligence-metric` cards and original Manufacturer, Model and Mounting Methods card/chart containers. The illustrative data was replaced by live inventory counts. The existing `device-hardware-drilldown` action still opens filtered inventory; no storage, permission or placement logic was changed.
+- Commit `5a8ca28`: added Chromium assertions for the original three-card structure and a saved mounting-method drill-down.
+- **Verification:** the updated HTML inline script and the browser test file passed JavaScript syntax parsing. No GitHub Actions workflow run is reported for this code. Real Chromium execution and desktop/mobile visual comparison remain outstanding. This is **not a completed or accepted Devices Overview**: Operating Systems, Software & Services and Data Quality panels still need their original source HTML integrated, and the complete screen needs acceptance checks.
+
 ## Development standards
 
 Follow [CONTRIBUTING.md](../../CONTRIBUTING.md), the [Coding and Naming Conventions](06-Coding-and-Naming-Conventions.md) and the [Function Index](Function-Index.md). Describe source and test changes in plain British English, and keep the Function Index accurate if live functions are added or renamed.
