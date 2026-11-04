@@ -198,6 +198,7 @@ class Handler(BaseHTTPRequestHandler):
                         "isAdmin": bool(is_admin), "active": bool(active),
                         "mfaEnrolled": bool(mfa_confirmed),
                         "permissions": permissions,
+                        "profile": read_profile(connection, account_id, user_id),
                     })
                 self.respond(200, {"users": users})
         elif self.path == "/api/inventory/sections":
@@ -371,7 +372,7 @@ class Handler(BaseHTTPRequestHandler):
             self.handle_profile_photo()
             return
         if self.path in ("/api/account/profile", "/api/account/photo/remove",
-                         "/api/users/create", "/api/users/permission", "/api/users/active",
+                         "/api/users/create", "/api/users/profile", "/api/users/permission", "/api/users/active",
                          "/api/users/admin", "/api/users/delete", "/api/account/password",
                          "/api/account/mfa/start", "/api/account/mfa/confirm",
                          "/api/devices/edit/start", "/api/devices/edit/cancel",
@@ -731,10 +732,26 @@ class Handler(BaseHTTPRequestHandler):
                         raise
                     result = {"status": "password changed"}
                 elif self.path == "/api/users/create":
-                    if set(payload) != {"username", "password"}:
+                    if set(payload) not in ({"username", "password"},
+                                            {"username", "password", "profile"}):
                         raise ValueError("Username and password required")
-                    user_id = create_user(connection, actor, payload["username"], payload["password"])
+                    user_id = create_user(
+                        connection, actor, payload["username"], payload["password"],
+                        profile=payload.get("profile"),
+                    )
                     result = {"id": user_id}
+                elif self.path == "/api/users/profile":
+                    if (set(payload) != {"userId", "profile"}
+                            or type(payload["userId"]) is not int):
+                        raise ValueError("Invalid user profile request")
+                    administrator = connection.execute(
+                        "SELECT active,is_admin,mfa_confirmed FROM accounts WHERE id=?",
+                        (actor,),
+                    ).fetchone()
+                    if administrator != (1, 1, 1):
+                        raise PermissionError("Verified administrator required")
+                    result = save_profile(connection, actor, payload["profile"],
+                                          target_id=payload["userId"])
                 elif self.path == "/api/users/permission":
                     if set(payload) != {"userId", "section", "level"} or type(payload["userId"]) is not int:
                         raise ValueError("Invalid permission request")
