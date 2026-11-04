@@ -1573,8 +1573,20 @@ async function run(){
   assert.ok(await deviceReview.getByRole('tab',{name:'Virtual Machines'}).isVisible(),
     'Physical hosts with virtual machines must retain their guest listing');
   await deviceReview.getByRole('tab',{name:'Virtual Machines'}).click();
-  assert.ok(await deviceReview.getByText('browser-vm',{exact:true}).isVisible(),
+  const hostedVmPanel=deviceReview.locator('#device-details-panel-virtual-machines .device-review-panel.full');
+  assert.ok(await hostedVmPanel.getByRole('heading',{name:'Hosted Virtual Machines'}).isVisible(),
+    'The physical host must use the original full-width Hosted Virtual Machines card');
+  assert.ok(await hostedVmPanel.getByText('Guests are linked to this physical server.',{exact:true}).isVisible(),
+    'The original related-devices explanation must be preserved');
+  const hostedVmRecord=hostedVmPanel.locator('.record-preview.device-details-related-record');
+  assert.equal(await hostedVmRecord.count(),1,
+    'Hosted guests must use the approved related-record preview, not legacy fact rows');
+  assert.ok(await hostedVmRecord.getByText('browser-vm',{exact:true}).isVisible(),
     'Hosted VM must remain discoverable from its physical host');
+  assert.ok(await hostedVmRecord.getByText('10.64.20.13',{exact:false}).isVisible(),
+    'Host guest preview must use the saved VM IP address');
+  assert.ok(await hostedVmRecord.getByRole('button',{name:'View details for browser-vm'}).isVisible(),
+    'Approved VM preview must retain the working View Details navigation action');
   await deviceReview.getByRole('tab',{name:'Hardware'}).click();
   assert.ok(await deviceReview.getByRole('heading',{name:'Hardware & Lifecycle'}).isVisible(),
     'Physical hardware details must use the approved Batch 04 heading');
