@@ -755,6 +755,8 @@ async function run(){
   const generalGrid=general.locator(':scope > .device-review-grid');
   assert.equal(await generalGrid.locator(':scope > .device-review-panel.full:visible').count(),2,
     'Approved physical-device General tab must use Device Identity and Mounting cards');
+  assert.ok(await generalGrid.locator('#virtual-fields').isHidden(),
+    'Virtual Machine Configuration must not be visible on the physical-device General tab');
   const identityCard=generalGrid.locator(':scope > .device-review-panel').first();
   assert.ok(await identityCard.getByRole('heading',{name:'Device Identity'}).isVisible());
   assert.equal(await identityCard.locator('#dev-name').count(),1,
