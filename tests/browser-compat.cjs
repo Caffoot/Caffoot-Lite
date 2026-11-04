@@ -1614,6 +1614,10 @@ async function run(){
   assert.ok(await relatedHost.getByText('browser-hypervisor',{exact:true}).isVisible(),
     'The VM host card must render the saved physical host');
   await relatedHost.getByRole('button',{name:'View Host'}).click();
+  // Live read/navigation actions refresh saved inventory before dispatching.
+  // Wait for the actual destination rather than racing that authorised refresh.
+  await deviceReview.locator('.device-review-head h2')
+    .getByText('browser-hypervisor',{exact:true}).waitFor({state:'visible'});
   assert.ok(await deviceReview.locator('.device-review-head h2')
     .getByText('browser-hypervisor',{exact:true}).isVisible(),
     'View Host must navigate to the real physical host record');
