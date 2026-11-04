@@ -384,6 +384,18 @@ async function run(){
   console.log('Approved IPAM Manage Subnets grouping and navigation passed');
 
   await modal(page,'openRackModal');
+  const approvedRackForm=page.locator('#modal-content .rack-modal');
+  await approvedRackForm.waitFor();
+  assert.ok(await approvedRackForm.locator('.rack-modal-top h2')
+    .getByText('Add Network Rack Enclosure',{exact:true}).isVisible(),
+    'Draft 04 Add Rack dialog must use the original approved modal header');
+  assert.equal(await approvedRackForm.locator('.rack-form-grid > .rack-field').count(),6,
+    'The approved form must contain six original Rack identity/dimension fields');
+  assert.equal(await approvedRackForm.locator('form[data-form-action="rack"] [required]#rack-name').count(),1,
+    'The approved Rack Name field must retain native required validation');
+  assert.equal(await approvedRackForm.locator('.rack-form-actions button').count(),2,
+    'The approved Rack modal must retain Cancel and Save actions');
+
   await page.locator('#rack-name').fill('Browser Rack');
   await page.locator('form[data-form-action="rack"] button[type="submit"]').click();
   await persisted(page,s=>s.racks.some(x=>x.name==='Browser Rack'),'Rack');
@@ -459,6 +471,15 @@ async function run(){
     'Draft 04 Rack Settings must show eight original rack specification tiles');
   assert.equal(await rackDetail.locator('section[aria-label="Rack settings"] .rack-editor-actions button').count(),3,
     'Edit, correct specifications and delete actions must remain protected and available');
+  await rackDetail.locator('section[aria-label="Rack settings"] [data-action="edit-rack"]').click();
+  await approvedRackForm.waitFor();
+  assert.ok(await approvedRackForm.locator('.rack-modal-top h2').getByText('Edit Network Rack',{exact:true}).isVisible(),
+    'Approved Draft 04 Edit Rack form must use the same modal structure');
+  assert.equal(await approvedRackForm.locator('#rack-height').isDisabled(),true,
+    'The normal Edit Rack form must keep physical dimensions locked');
+  await approvedRackForm.locator('[data-action="close-modal"]').click();
+  await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
+
 
   await rackDetail.locator('.rack-subtabs [data-action="select-rack-tab"][data-tab="view"]').click();
   await page.waitForFunction(()=>activeRackTab==='view' &&
