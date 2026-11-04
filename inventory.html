@@ -8378,7 +8378,7 @@ function hierarchyValidateTypes(subnets) {
         let smtpLoaded=false;
         let smtpLoading=false;
         async function loadApprovedSmtpSettings(){
-          if(smtpLoaded||smtpLoading||!sessionIsAdmin)return;
+          if(smtpLoaded||smtpLoading||window.nextSessionIsAdmin!==true)return;
           smtpLoading=true;
           try{
             const response=await fetch('/api/settings/email',{cache:'no-store'});
@@ -8393,7 +8393,7 @@ function hierarchyValidateTypes(subnets) {
           }
         }
         function renderApplicationSettings(){
-          if(!sessionIsAdmin)return '';
+          if(window.nextSessionIsAdmin!==true)return '';
           return approvedSettingsMarkup;
         }
         function syncSmtpForm(root){
