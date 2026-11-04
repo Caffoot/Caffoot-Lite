@@ -3622,7 +3622,7 @@ function hierarchyValidateTypes(subnets) {
                 } else {
                     const rackCards=racks.map(r=>{
                         const rackDevices=mounted.filter(d=>d.rackId===r.id);
-                        const acc=linkedAccessories.filter(a=>a.rackId===r.id).length;
+                        const rackAccessories=linkedAccessories.filter(a=>a.rackId===r.id);
                         const height=Math.max(0,Number(r.heightU)||0);
                         const occupied=new Set();
                         rackDevices.forEach(d=>{
@@ -3630,15 +3630,23 @@ function hierarchyValidateTypes(subnets) {
                             if(Number.isInteger(start)&&Number.isInteger(end)&&end>=start)
                                 for(let u=Math.max(1,start);u<=Math.min(height,end);u++) occupied.add(u);
                         });
+                        // Count each occupied U once, including horizontal accessories.
+                        // Vertical 0U rails do not consume a numbered rack unit.
+                        rackAccessories.filter(a=>!['pdu_vertical','cable_vertical'].includes(a.type)&&Number(a.heightU)>0)
+                            .forEach(a=>{
+                                const start=Number(a.startU),end=start+Number(a.heightU)-1;
+                                if(Number.isInteger(start)&&Number.isInteger(end)&&end>=start)
+                                    for(let u=Math.max(1,start);u<=Math.min(height,end);u++)occupied.add(u);
+                            });
                         const percent=height?Math.round(occupied.size/height*100):0;
-                        const name=escapeHtml(r.name||'Unnamed rack'),location=escapeHtml(r.location||'Not recorded');
+                        const name=escapeHtml(r.name||'Unnamed rack'),location=escapeHtml(r.location||'Not recorded'),type=escapeHtml(r.type||'Not recorded');
                         const search=escapeHtml((r.name||'')+' '+(r.location||''));
                         return `<button type="button" data-v13-rack-row data-search="${search}" data-action="v13-open-rack" data-id="${escapeHtml(r.id)}" class="rack-directory-item">
-  <strong>${name}</strong><span class="rack-small">${location}</span>
-  <span class="rack-small">${height}U height · ${occupied.size}U occupied · ${percent}% utilisation</span>
+  <span class="iconwrap orange" aria-hidden="true">▤</span><strong>${name}</strong>
+  <span class="rack-small">${location} · ${height}U · ${type}</span>
   <span class="rack-bar" role="img" aria-label="${percent}% occupied"><span style="width:${percent}%"></span></span>
-  <span class="rack-small">${rackDevices.length} devices · ${acc} accessories</span>
-  <span class="rack-card-action">View elevation <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+  <span class="rack-small">${occupied.size}U occupied · ${rackDevices.length} devices · ${rackAccessories.length} accessories</span>
+  <span class="rack-card-action">View Rack Elevation</span>
 </button>`
                     }).join('');
                     body=`<section class="racks-panel active" data-panel="inventory" role="tabpanel" aria-label="Rack inventory">
