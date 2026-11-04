@@ -94,6 +94,8 @@ def save_profile(connection, actor_id, details, target_id=None):
             (target_id, values["firstName"], values["lastName"],
              values["displayName"], values["email"]),
         )
+        if previous[3] != values["email"]:
+            connection.execute("DELETE FROM account_email_proofs WHERE account_id=?", (target_id,))
         if changed:
             record_actor_event(
                 connection, actor_id, kind="Account", action="Updated",

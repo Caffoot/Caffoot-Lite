@@ -1,0 +1,267 @@
+<!-- interface-template:devices/approved-recent-device-rows-1 -->
+                <div class="db-slimrow">
+                  <div><strong>{{slot:0}}</strong><div class="db-muted">{{slot:1}} · {{slot:2}}</div></div>
+                  <span class="db-badge {{slot:3}}">{{slot:4}}</span>
+                </div><!-- /interface-template -->
+
+<!-- interface-template:devices/device-rows-1 -->
+                <div class="flex items-center gap-3 py-3 border-b border-slate-100 dark:border-slate-700/70 last:border-0">
+                    <div class="w-9 h-9 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-300 shrink-0"><i class="fa-solid {{slot:0}}"></i></div>
+                    <div class="min-w-0 flex-1">
+                        <p class="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">{{slot:1}}</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 truncate">{{slot:2}} · {{slot:3}}</p>
+                    </div>
+                    <span class="text-[11px] font-semibold px-2 py-1 rounded-full {{slot:4}}">{{slot:5}}</span>
+                </div><!-- /interface-template -->
+
+<!-- interface-template:devices/device-rows-2 --><p class="text-sm text-slate-500 dark:text-slate-400 py-4">No devices configured yet.</p><!-- /interface-template -->
+
+<!-- interface-template:devices/approved-hardware-metric-1 --><div class="intelligence-metric"><div class="metric-top"><span class="metric-label">{{slot:0}} Recorded</span><span class="metric-ico {{slot:1}}"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><use href="#{{slot:2}}"></use></svg></span></div><div class="metric-number">{{slot:3}}</div><div class="metric-caption">{{slot:4}}% of inventory</div></div><!-- /interface-template -->
+
+<!-- interface-template:devices/approved-hardware-chart-1 --><button type="button" class="intelligence-chart-row" data-action="device-hardware-drilldown" data-field="{{slot:0}}" data-value="{{slot:1}}" aria-label="View {{slot:2}} devices for {{slot:3}}"><div class="intelligence-chart-label"><span>{{slot:4}}</span><strong>{{slot:5}}</strong></div><div class="intelligence-track"><div class="intelligence-fill {{slot:6}}" style="width:{{slot:7}}%"></div></div></button><!-- /interface-template -->
+
+<!-- interface-template:devices/approved-device-insight-chart-1 --><button type="button" class="intelligence-chart-row" {{slot:0}} aria-label="View {{slot:1}} devices for {{slot:2}}"><div class="intelligence-chart-label"><span>{{slot:3}}</span><strong>{{slot:4}}</strong></div><div class="intelligence-track"><div class="intelligence-fill orange" style="width:{{slot:5}}%"></div></div></button><!-- /interface-template -->
+
+<!-- interface-template:devices/approved-device-quality-cards-1 --><button class="intelligence-quality-card" data-action="device-intelligence-drilldown" data-kind="missing" data-value="{{slot:0}}" type="button"><span class="quality-title">{{slot:1}}</span><span class="quality-number">{{slot:2}}</span><span class="quality-caption">Open filtered inventory</span></button><!-- /interface-template -->
+
+<!-- interface-template:devices/render-devices-html-1 --><div class="intelligence-metric"><div class="metric-top"><span class="metric-label">{{slot:0}}</span><span class="metric-ico"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><use href="#{{slot:1}}"></use></svg></span></div><div class="metric-number">{{slot:2}}</div><div class="metric-caption">Recorded in your saved inventory</div></div><!-- /interface-template -->
+
+<!-- interface-template:devices/render-devices-html-2 --><button type="button" data-action="device-intelligence-drilldown" data-kind="{{slot:0}}" data-value="{{slot:1}}" class="intelligence-chart-row" aria-label="{{slot:2}}: {{slot:3}} devices"><div class="intelligence-chart-label"><span>{{slot:4}}</span><strong>{{slot:5}}</strong></div><div class="intelligence-track"><div class="intelligence-fill {{slot:6}}" style="width:{{slot:7}}%"></div></div></button><!-- /interface-template -->
+
+<!-- interface-template:devices/render-devices-html-3 --><article class="intelligence-card"><div class="intelligence-card-head"><span class="iconwrap {{slot:0}}"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><use href="{{slot:1}}"></use></svg></span><div><h3>{{slot:2}}</h3><p>{{slot:3}}</p></div></div><div class="divider"></div><div class="intelligence-chart">{{slot:4}}</div></article><!-- /interface-template -->
+
+<!-- interface-template:devices/render-devices-html-4 -->
+                                        <tr>
+                                            <td><button type="button" data-action="view-device" data-id="{{slot:0}}" class="device-name" title="View device details">{{slot:1}}</button><div class="device-detail">{{slot:2}}</div></td>
+                                            <td><span class="device-chip {{slot:3}}">{{slot:4}}</span></td>
+                                            <td>{{slot:5}}{{slot:6}}</td>
+                                            <td><span class="device-ip">{{slot:7}}</span></td>
+                                            <td><span class="device-status {{slot:8}}">{{slot:9}}</span></td>
+                                            <td>{{slot:10}}</td>
+                                            <td>
+                                                <div class="device-actions">
+                                                    <button type="button" data-action="view-device" data-id="{{slot:11}}" class="device-action-details"><i class="fa-solid fa-eye mr-1" aria-hidden="true"></i>Details</button>
+                                                    
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <!-- /interface-template -->
+
+<!-- interface-template:devices/render-devices-html-5 --><tr><td colspan="7" class="device-empty"><div ><strong>{{slot:0}}</strong><p>{{slot:1}}</p><button type="button" data-action="{{slot:2}}">{{slot:3}}</button></div></td></tr><!-- /interface-template -->
+
+<!-- interface-template:devices/render-devices-html-6 --><div class="intelligence-metric"><div class="metric-top"><span class="metric-label">{{slot:0}}</span><span class="metric-ico"><i class="fa-solid {{slot:1}}" aria-hidden="true"></i></span></div><div class="metric-number">{{slot:2}}</div><div class="metric-caption">{{slot:3}}</div></div><!-- /interface-template -->
+
+<!-- interface-template:devices/render-devices-html-7 --><div class="catalog-record" data-catalog-row="{{slot:0}}" data-filter-text="{{slot:1}}">
+      <div class="record-main"><strong>{{slot:2}}</strong>{{slot:3}}<p>{{slot:4}} device{{slot:5}} in inventory</p></div>
+      <div class="record-controls"><button type="button" data-action="open-catalogue-details" data-kind="{{slot:6}}" data-name="{{slot:7}}" class="btn btn-outline mini-btn">View Devices</button></div>
+    </div><!-- /interface-template -->
+
+<!-- interface-template:devices/render-devices-html-8 --><div class="catalog-header">
+  <div class="catalog-intro">
+    <span class="iconwrap orange" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24"><use href="#i-grid"></use></svg></span>
+    <div><h2>{{slot:0}}</h2><p>{{slot:1}}</p></div>
+  </div>
+  <button type="button" class="btn btn-primary" data-action="{{slot:2}}">Manage {{slot:3}}</button>
+</div>
+<div class="intelligence-grid catalog-kpis">
+  {{slot:4}}
+</div>
+<div class="catalog-card">
+  <div class="catalog-card-top"><div><h3>{{slot:5}}</h3><p>Select a category to open the matching devices in Inventory.</p></div></div>
+  <div class="catalog-toolbar">
+    <label class="catalog-search"><span>{{slot:6}}</span><input type="search" class="catalog-search-input" data-catalogue-search="{{slot:7}}" autocomplete="off" placeholder="{{slot:8}}"></label>
+    <button type="button" class="btn btn-outline catalog-clear" data-action="clear-catalogue-list-search" data-catalogue="{{slot:9}}">Clear Filters</button>
+  </div>
+  <div class="catalog-list" data-catalog-list="{{slot:10}}">
+    {{slot:11}}
+  </div>
+  <p class="catalog-count" data-catalogue-count="{{slot:12}}" aria-live="polite">Showing {{slot:13}} categories</p>
+</div>
+<p class="catalog-aside-note">The existing manager supports adding, renaming and deleting {{slot:14}}. Unknown entries are protected and any change to an in-use category requires confirmation.</p><!-- /interface-template -->
+
+<!-- interface-template:devices/render-devices-html-9 -->
+                <div class="device-devices">
+                    {{slot:0}}
+                    {{slot:1}}
+                    {{slot:2}}
+                    <section class="{{slot:3}}" data-device-panel="overview">
+                        <div class="intelligence-heading"><div><h2>Device Intelligence Overview</h2><p>Explore inventory insights, recorded equipment and data completeness.</p></div></div>
+                        <nav aria-label="Device Intelligence Sections" class="intelligence-pills" role="tablist">
+<button aria-selected="{{slot:4}}" class="{{slot:5}}" data-action="device-intelligence-tab" data-tab="overview" role="tab" type="button"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-grid"></use></svg>Overview</button>
+<button aria-selected="{{slot:6}}" class="{{slot:7}}" data-action="device-intelligence-tab" data-tab="hardware" role="tab" type="button"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-box"></use></svg>Hardware</button>
+<button aria-selected="{{slot:8}}" class="{{slot:9}}" data-action="device-intelligence-tab" data-tab="os" role="tab" type="button"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-settings"></use></svg>Operating Systems</button>
+<button aria-selected="{{slot:10}}" class="{{slot:11}}" data-action="device-intelligence-tab" data-tab="software" role="tab" type="button"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-tool"></use></svg>Software &amp; Services</button>
+<button aria-selected="{{slot:12}}" class="{{slot:13}}" data-action="device-intelligence-tab" data-tab="quality" role="tab" type="button"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-shield"></use></svg>Data Quality</button>
+</nav>
+                        <div class="intelligence-panel" data-insight-panel="overview" {{slot:14}}>
+                        <div class="intelligence-grid">
+                            {{slot:15}}
+                        </div>
+                        <div class="intelligence-two">
+                            {{slot:16}}
+                        </div>
+                        </div>
+                        <div class="intelligence-panel" data-insight-panel="hardware" {{slot:17}}>
+                        <div class="intelligence-breakdown" id="hardware-metrics">{{slot:18}}</div>
+                        <div class="intelligence-two">
+                        <article class="intelligence-card"><div class="intelligence-card-head"><span class="iconwrap orange"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-box"></use></svg></span><div><h3>Manufacturers</h3><p>Manufacturer values recorded on devices.</p></div></div><div class="divider"></div><div class="intelligence-chart" id="insight-manufacturers">{{slot:19}}</div></article>
+                        <article class="intelligence-card"><div class="intelligence-card-head"><span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-box"></use></svg></span><div><h3>Models</h3><p>Equipment models entered in inventory.</p></div></div><div class="divider"></div><div class="intelligence-chart" id="insight-models">{{slot:20}}</div></article>
+                        </div>
+                        <div class="intelligence-section"><article class="intelligence-card"><div class="intelligence-card-head"><span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-rack"></use></svg></span><div><h3>Mounting Methods</h3><p>Recorded device mounting arrangements. Virtual machines are not physically racked.</p></div></div><div class="divider"></div><div class="intelligence-chart" id="insight-mounting">{{slot:21}}</div></article></div>
+                        </div>
+                                                <div class="intelligence-panel" data-insight-panel="os" {{slot:22}}>
+                        <div class="intelligence-two">
+                        <article class="intelligence-card"><div class="intelligence-card-head"><span class="iconwrap orange"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-settings"></use></svg></span><div><h3>Operating Systems</h3><p>Recorded platforms across your inventory, including hypervisors.</p></div></div><div class="divider"></div><div class="intelligence-chart" id="insight-operating-systems">{{slot:23}}</div></article>
+                        <article class="intelligence-card"><div class="intelligence-card-head"><span class="iconwrap green"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-info"></use></svg></span><div><h3>Platform information</h3><p>Distinguishing physical hosts from virtual guests.</p></div></div><div class="divider"></div><p class="card-copy">Physical hypervisor hosts report their hypervisor platform, while hosted virtual machines retain their own guest operating system.</p><p class="card-copy">Selecting a platform shows the matching devices, without changing any saved configuration.</p><button class="btn btn-outline" data-action="sidebar-devices-inventory" type="button">View Device Inventory</button></article>
+                        </div>
+                        </div>
+                        <div class="intelligence-panel" data-insight-panel="software" {{slot:24}}>
+                        <div class="intelligence-two">
+                        <article class="intelligence-card"><div class="intelligence-card-head"><span class="iconwrap orange"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-tool"></use></svg></span><div><h3>Software &amp; Services</h3><p>Recorded enabled software and service flags.</p></div></div><div class="divider"></div><div class="intelligence-chart" id="insight-software">{{slot:25}}</div></article>
+                        <article class="intelligence-card"><div class="intelligence-card-head"><span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-info"></use></svg></span><div><h3>Installed software</h3><p>One device can have several applications or services.</p></div></div><div class="divider"></div><p class="card-copy">Counts represent recorded installation or enabled-service selections, not software discovery or live monitoring.</p><div class="intelligence-overview-box" style="margin-top:10px"><span>Software, Server Services and their catalogues remain separate areas in Devices.</span></div></article>
+                        </div>
+                        <article class="intelligence-card intelligence-section"><div class="intelligence-card-head"><span class="iconwrap orange"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-info"></use></svg></span><div><h3>Devices with Archived Software</h3><p>Preserved inventory references to software removed from the catalogue.</p></div></div><div class="divider"></div><div id="insight-archived">{{slot:26}}</div></article>
+                        </div>
+                        <div class="intelligence-panel" data-insight-panel="quality" {{slot:27}}>
+                        <article class="intelligence-card" style="margin-bottom:16px"><div class="intelligence-card-head"><span class="iconwrap orange"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-shield"></use></svg></span><div><h3>Inventory Completeness</h3><p>Missing fields across devices. A device may appear in more than one category.</p></div></div><div class="divider"></div><div class="intelligence-breakdown" id="insight-quality" style="margin-bottom:0">{{slot:28}}</div></article>
+                        <div class="intelligence-overview-box"><span>Select a category to identify the affected example devices.</span><button class="btn btn-outline" data-action="sidebar-devices-inventory" type="button">View Device Inventory</button></div>
+                        </div>
+                                            </section>
+                    <!-- interface-include:device-inventory/page -->
+                    <section class="{{slot:46}}" data-device-panel="manage">
+                        {{slot:47}}
+                    </section>
+                </div>
+            <!-- /interface-template -->
+
+<!-- interface-template:devices/open-device-type-or-location-rename-1 --><label class="catalog-modal-field" for="device-catalogue-rename-value">{{slot:0}} Name
+              <input id="device-catalogue-rename-value" type="text" maxlength="100" value="{{slot:1}}">
+              </label><p class="catalog-modal-info">Renaming updates devices currently using this {{slot:2}}. Existing saved inventory is retained.</p>
+              <div class="catalog-modal-actions">
+                <button type="button" data-action="cancel-rename" class="btn btn-outline caffoot-modal-cancel">Cancel</button>
+                <button type="button" data-action="save-rename" data-kind="{{slot:3}}" data-name="{{slot:4}}" class="btn btn-primary">Save Changes</button>
+              </div><!-- /interface-template -->
+
+<!-- interface-template:devices/device-rows-3 --><li class="py-2 border-b border-slate-200 dark:border-slate-700"><strong>{{slot:0}}</strong><span class="block text-sm font-mono text-slate-600 dark:text-slate-300">{{slot:1}}</span></li><!-- /interface-template -->
+
+<!-- interface-template:devices/field-1 --><div class="device-details-field"><dt>{{slot:0}}</dt><dd>{{slot:1}}</dd></div><!-- /interface-template -->
+
+<!-- interface-template:devices/section-1 --><p>{{slot:0}}</p><!-- /interface-template -->
+
+<!-- interface-template:devices/section-2 --><dl class="device-details-layout-grid device-review-facts">{{slot:0}}</dl><!-- /interface-template -->
+
+<!-- interface-template:devices/section-3 --><section class="device-details-section device-review-panel{{slot:0}}"><h3><span class="mini-icon"><i class="fa-solid {{slot:1}}" aria-hidden="true"></i></span>{{slot:2}}</h3>{{slot:3}}{{slot:4}}</section><!-- /interface-template -->
+
+<!-- interface-template:devices/history-rows-1 --><details class="rounded-xl border border-slate-300 dark:border-slate-600 p-3"><summary class="cursor-pointer font-semibold">{{slot:0}} — saved configuration {{slot:1}}</summary><dl class="device-details-layout-grid mt-3">{{slot:2}}</dl></details><!-- /interface-template -->
+
+<!-- interface-template:devices/hosting-section-1 --><div class="record-preview device-details-related-record"><div><strong>{{slot:0}}</strong><span>{{slot:1}} · {{slot:2}}{{slot:3}}</span></div><button type="button" data-action="view-hosted-virtual-machine" data-id="{{slot:4}}" class="btn btn-outline" aria-label="View details for {{slot:5}}">View Details</button></div><!-- /interface-template -->
+
+<!-- interface-template:devices/hosting-section-2 --><div class="record-preview device-details-related-record"><div><strong>{{slot:0}}</strong><span>Physical server</span></div>{{slot:1}}</div><!-- /interface-template -->
+
+<!-- interface-template:devices/open-device-detail-view-1 --><div id="device-details-panel-virtual-machines" role="tabpanel" aria-labelledby="device-details-tab-virtual-machines" class="device-details-panel device-review-grid" hidden>
+                        {{slot:0}}
+                        {{slot:1}}
+                    </div><!-- /interface-template -->
+
+<!-- interface-template:devices/open-device-detail-view-2 --><div class="device-details-detail-subheading">Additional {{slot:0}} details</div>{{slot:1}}<!-- /interface-template -->
+
+<!-- interface-template:devices/open-device-detail-view-3 --><div id="device-details-panel-hardware" role="tabpanel" aria-labelledby="device-details-tab-hardware" class="device-details-panel device-review-grid" hidden>
+                        {{slot:0}}
+                    </div><!-- /interface-template -->
+
+<!-- interface-template:devices/open-device-detail-view-4 --><section class="device-details-section device-review-panel full"><h3><span class="mini-icon"><i class="fa-solid fa-server" aria-hidden="true"></i></span>Rack Navigation</h3><p>Opens the existing rack view in the completed application.</p><button type="button" data-action="navigate-to-device-rack" data-id="{{slot:0}}" class="btn btn-outline">View in Rack</button></section><!-- /interface-template -->
+
+<!-- interface-template:devices/open-device-detail-view-5 --><div id="device-details-panel-history" role="tabpanel" aria-labelledby="device-details-tab-history" class="device-details-panel device-review-grid" hidden><section class="device-details-section"><h4>Previous Device Type Details</h4><p class="text-sm mb-3">Preserved for reference only; not part of the active configuration.</p>{{slot:0}}</section></div><!-- /interface-template -->
+
+<!-- interface-template:devices/open-device-detail-view-6 --><button type="button" data-action="navigate-to-device-rack" data-id="{{slot:0}}" class="btn btn-outline device-details-secondary-action"><i class="fa-solid fa-server" aria-hidden="true"></i>View in rack</button><!-- /interface-template -->
+
+<!-- interface-template:devices/open-device-detail-view-7 --><div class="device-details-dialog device-review-dialog">
+                <header class="device-review-head">
+                  <div class="device-review-headline">
+                    <div class="min-w-0"><p class="device-review-eyebrow">DEVICE DETAILS</p><h2 class="break-words">{{slot:0}}</h2>
+                    <p class="device-review-sub">{{slot:1}} · {{slot:2}} · {{slot:3}}</p></div>
+                    <button type="button" data-action="close-modal" aria-label="Close device details" class="device-review-close">×</button>
+                  </div>
+                <nav class="device-tabs device-review-tabs" role="tablist" aria-label="Device detail sections">
+                    {{slot:4}}
+                </nav>
+                </header>
+                <div class="device-panels device-review-body">
+                    <div id="device-details-panel-overview" role="tabpanel" aria-labelledby="device-details-tab-overview" class="device-details-panel device-review-grid">
+                        {{slot:5}}
+                        {{slot:6}}
+                        {{slot:7}}
+                        <section class="device-details-section device-review-panel full"><h3><span class="mini-icon"><i class="fa-solid fa-note-sticky" aria-hidden="true"></i></span>Notes</h3><p>Saved device notes</p><div class="device-review-note-preview device-details-notes">{{slot:8}}</div></section>
+                    </div>
+                    {{slot:9}}
+                    {{slot:10}}
+                    <div id="device-details-panel-network" role="tabpanel" aria-labelledby="device-details-tab-network" class="device-details-panel device-review-grid" hidden>
+                        {{slot:11}}
+                    </div>
+                    <div id="device-details-panel-software" role="tabpanel" aria-labelledby="device-details-tab-software" class="device-details-panel device-review-grid" hidden>
+                        {{slot:12}}
+                        {{slot:13}}
+                        {{slot:14}}
+                        {{slot:15}}
+                    </div>
+                    <div id="device-details-panel-location" role="tabpanel" aria-labelledby="device-details-tab-location" class="device-details-panel device-review-grid" hidden>
+                        {{slot:16}}
+                        {{slot:17}}
+                    </div>
+                    {{slot:18}}
+                </div>
+                <footer class="device-details-action-footer device-review-footer">
+                    <button type="button" data-action="duplicate-device-from-details" data-id="{{slot:19}}" class="btn btn-outline device-details-secondary-action"><i class="fa-solid fa-copy" aria-hidden="true"></i>Duplicate</button>
+                    {{slot:20}}
+                    <button type="button" data-action="edit-device-from-details" data-id="{{slot:21}}" class="btn btn-primary device-details-edit-action"><i class="fa-solid fa-pen" aria-hidden="true"></i>Edit device</button>
+                    <button type="button" data-action="delete-device-from-details" data-id="{{slot:22}}" class="btn device-review-danger"><i class="fa-solid fa-trash mr-1" aria-hidden="true"></i>Delete device</button>
+                    <button type="button" data-action="close-modal" class="btn btn-outline device-details-close-action"><i class="fa-solid fa-check" aria-hidden="true"></i>Close</button>
+                </footer>
+            </div><!-- /interface-template -->
+
+<!-- interface-template:devices/choices-1 --><label class="device-review-check-item">
+              <input type="checkbox" data-device-detail-field="{{slot:0}}" {{slot:1}}>
+              <span>{{slot:2}}</span></label><!-- /interface-template -->
+
+<!-- interface-template:devices/render-approved-inline-device-picker-1 --><label>
+                  <input type="checkbox" value="{{slot:0}}" {{slot:1}}><span>{{slot:2}}</span>
+                  </label><!-- /interface-template -->
+
+<!-- interface-template:devices/render-approved-inline-device-picker-2 --><p class="device-review-inline-explain">Available for device types (current type selected by default)</p>
+                  <div class="device-review-inline-types" data-review-associated-types="software">{{slot:0}}</div><!-- /interface-template -->
+
+<!-- interface-template:devices/render-approved-inline-device-picker-3 --><div class="device-review-inline-pick" data-review-picker="{{slot:0}}">
+              <div class="device-review-inline-tools">
+                <div class="device-review-field"><label for="review-search-{{slot:1}}">Search {{slot:2}}</label>
+                  <input id="review-search-{{slot:3}}" type="search" data-review-search="{{slot:4}}" placeholder="Search available {{slot:5}}…" autocomplete="off"></div>
+                <button type="button" class="device-review-smallbtn" data-action="device-inline-quick-open" data-kind="{{slot:6}}">+ Add {{slot:7}}</button>
+              </div>
+              <div class="device-review-inline-count" id="review-count-{{slot:8}}" aria-live="polite">{{slot:9}} selected · {{slot:10}} available</div>
+              <div class="device-review-checklist" role="group" aria-label="{{slot:11}}" data-review-choice-list="{{slot:12}}">{{slot:13}}</div>
+              <div class="device-review-inline-create" data-review-create="{{slot:14}}" hidden>
+                <h4>Add {{slot:15}} without leaving the device form</h4>
+                <div class="device-review-inline-add-actions"><div class="device-review-field">
+                  <label for="review-new-{{slot:16}}">{{slot:17}} name</label>
+                  <input id="review-new-{{slot:18}}" data-review-new-name="{{slot:19}}" type="text" maxlength="80" placeholder="Enter {{slot:20}} name">
+                </div></div>
+                {{slot:21}}
+                <p class="device-review-inline-explain" role="alert" data-review-create-error hidden></p>
+                <div class="device-review-catalogue-actions">
+                  <button type="button" class="device-review-smallbtn primary" data-action="device-inline-quick-save" data-kind="{{slot:22}}">Add &amp; Select</button>
+                  <button type="button" class="device-review-smallbtn" data-action="device-inline-quick-cancel" data-kind="{{slot:23}}">Cancel</button>
+                </div>
+              </div>
+              <p class="device-review-inline-explain">Tick the items recorded on this device. These catalogue suggestions are not automatically installed software.</p>
+            </div><!-- /interface-template -->
+
+<!-- interface-template:devices/render-device-detail-fields-1 --><label class="option-tile text-sm"><input type="checkbox" data-device-detail-field="{{slot:0}}" {{slot:1}}><span>{{slot:2}}</span><span class="option-status" aria-hidden="true">Enabled</span></label><!-- /interface-template -->
+
+<!-- interface-template:devices/render-device-detail-fields-2 --><label class="device-review-checkbox"><input type="checkbox" data-device-detail-field="{{slot:0}}" {{slot:1}}><span>{{slot:2}}</span></label><!-- /interface-template -->
+
+<!-- interface-template:devices/render-device-detail-fields-3 --><div class="device-review-field"><label class="form-label" for="device-detail-{{slot:0}}">{{slot:1}}</label><select id="device-detail-{{slot:2}}" data-device-detail-field="{{slot:3}}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="">Select...</option>{{slot:4}}</select></div><!-- /interface-template -->
+
+<!-- interface-template:devices/render-device-detail-fields-4 --><div class="device-review-field"><label class="form-label" for="device-detail-{{slot:0}}">{{slot:1}}</label><input id="device-detail-{{slot:2}}" data-device-detail-field="{{slot:3}}" type="{{slot:4}}" {{slot:5}} maxlength="160" value="{{slot:6}}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></div><!-- /interface-template -->
+
+<!-- interface-template:devices/initialise-device-tabs-1 --><h3><span class="mini-icon" aria-hidden="true">▣</span>Server Services</h3><p>Choose the functions recorded on this server, without leaving the form.</p><div id="server-services-fields"></div><!-- /interface-template -->
+
+<!-- interface-template:devices/initialise-device-tabs-2 --><h3><span class="mini-icon" aria-hidden="true">▣</span>Installed Software</h3><p>Choose any number of items applicable to this device type, without leaving this form.</p><div id="device-form-installed-software-fields"></div><!-- /interface-template -->

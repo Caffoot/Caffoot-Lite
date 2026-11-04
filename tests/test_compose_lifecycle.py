@@ -37,8 +37,11 @@ class ComposeLifecycleTests(unittest.TestCase):
             run("up", "--build", "-d", "--wait")
             self.assertEqual(run("port", "caffoot-lite", "8080").split(":")[-1], str(port))
             self.assertEqual(inside(
-                "import pathlib; p=pathlib.Path('/opt/caffoot/inventory.html'); "
-                "print(p.is_file() and p.stat().st_size > 800000)"), "True")
+                "import pathlib; p=pathlib.Path('/opt/caffoot'); "
+                "print((p/'inventory.html').is_file() and "
+                "(p/'interface/application.js').is_file() and "
+                "(p/'interface/screens/device-inventory.html').is_file() and "
+                "len(list((p/'interface/screens').glob('*.html'))) >= 12)"), "True")
             fingerprint = inside(
                 "import hashlib,pathlib; print(hashlib.sha256(pathlib.Path('/data/tls/server.crt').read_bytes()).hexdigest())")
             inside("import sqlite3; c=sqlite3.connect('/data/caffoot.sqlite3'); "

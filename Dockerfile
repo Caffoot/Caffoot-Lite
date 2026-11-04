@@ -1,5 +1,8 @@
 FROM python:3.12-alpine
 
+ARG CAFFOOT_SOURCE_REVISION=development
+LABEL org.opencontainers.image.revision=$CAFFOOT_SOURCE_REVISION
+
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     CAFFOOT_DB_PATH=/data/caffoot.sqlite3 \
@@ -12,6 +15,7 @@ COPY backend/ ./backend/
 COPY setup.html ./setup.html
 # Published inventory interface and its existing branding assets.
 COPY inventory.html ./inventory.html
+COPY interface/ ./interface/
 COPY assets/favicon.ico assets/apple-touch-icon.png assets/caffoot-icon-1024.png assets/caffoot-logo-256.png assets/qrcode.min.js assets/tailwind.css ./assets/
 RUN mkdir -p /data && chown -R 10001:10001 /data /opt/caffoot
 USER 10001:10001

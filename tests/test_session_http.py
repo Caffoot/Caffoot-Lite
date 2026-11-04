@@ -105,10 +105,33 @@ class SessionHttpTests(unittest.TestCase):
         )
         self.assertEqual(status, 200)
         self.assertEqual(cache, "no-store")
-        self.assertIn(b'data-action="tab-users"', body)
-        self.assertIn(b'data-action="next-import-pick"', body)
-        self.assertIn(b'data-next-import-action="confirm"', body)
+        self.assertIn(b'/interface/loader.js', body)
+        for filename, marker in (
+                ("navigation.html", b'data-action="tab-users"'),
+                ("settings.html", b'data-action="next-import-pick"'),
+                ("migration.html", b'data-next-import-action="cancel"')):
+            status, fragment, cache = self.request(
+                "/interface/screens/" + filename, COOKIE_NAME + "=" + self.token)
+            self.assertEqual(status, 200)
+            self.assertEqual(cache, "private, no-store")
+            self.assertIn(marker, fragment)
+            self.assertEqual(self.request("/interface/screens/" + filename)[0], 401)
         self.assertNotIn(b"Your inventory is NOT saved in this browser", body)
+
+    def test_modular_files_preserve_inventory_access_boundary(self):
+        with sqlite3.connect(self.path) as db:
+            user = create_user(db, 1, "no-inventory-access", "password")
+            token = login_session(db, "no-inventory-access", "password")
+        for path in ("/interface/application.js", "/interface/screens/dashboard.html",
+                     "/interface/styles/device-details.css"):
+            self.assertEqual(self.request(path)[0], 401)
+            self.assertEqual(self.request(path, COOKIE_NAME + "=" + token)[0], 403)
+            self.assertEqual(self.request(path, COOKIE_NAME + "=" + self.token)[0], 200)
+        for path in ("/interface/../backend/server.py", "/interface/design-sources.json",
+                     "/interface/screens/not-packaged.html"):
+            self.assertEqual(self.request(path)[0], 404)
+        for path in ("/interface/sign-in.js", "/interface/styles/sign-in.css"):
+            self.assertEqual(self.request(path)[0], 200)
 
     def test_inventory_requires_authenticated_inventory_access(self):
         status, body, cache = self.request("/inventory")

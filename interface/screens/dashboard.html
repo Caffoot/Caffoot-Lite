@@ -1,0 +1,257 @@
+<!-- interface-template:dashboard/dashboard-activity-timeline-html-1 --><div class="db-slimrow" data-kind="{{slot:0}}">
+                    <div><strong>{{slot:1}}</strong><div class="db-muted">{{slot:2}}</div></div>
+                    <span class="db-badge">{{slot:3}}</span>
+                  </div><!-- /interface-template -->
+
+<!-- interface-template:dashboard/dashboard-warning-rows-html-1 --><div class="db-slimrow" data-kind="{{slot:0}}">
+                  <button type="button" class="db-alert-action" data-action="open-alert"
+                    data-destination="{{slot:1}}"
+                    data-device-id="{{slot:2}}"
+                    data-rack-id="{{slot:3}}"
+                    data-ip="{{slot:4}}"
+                    aria-label="{{slot:5}}">
+                    <span><strong>{{slot:6}}</strong><span class="db-muted">Open related inventory section</span></span>
+                    <span class="db-badge db-warning">{{slot:7}}</span>
+                  </button>
+                </div><!-- /interface-template -->
+
+<!-- interface-template:dashboard/dashboard-activity-filter-controls-html-1 --><div class="db-filters">
+              <label class="db-muted" for="activity-filter">Activity type</label>
+              <select id="activity-filter" data-dashboard-filter="activity">
+                <option value="all" {{slot:0}}>All Changes</option>
+                <option value="devices" {{slot:1}}>Devices</option>
+                <option value="network" {{slot:2}}>Network</option>
+                <option value="racks" {{slot:3}}>Racks</option>
+              </select>
+            </div><!-- /interface-template -->
+
+<!-- interface-template:dashboard/dashboard-alert-filter-controls-html-1 --><div class="db-filters">
+              <label class="db-muted" for="alert-filter">Severity</label>
+              <select id="alert-filter" data-dashboard-filter="alerts">
+                <option value="all" {{slot:0}}>All Severities</option>
+                <option value="warning" {{slot:1}}>Warning</option>
+                <option value="critical" {{slot:2}}>Critical</option>
+              </select>
+            </div><!-- /interface-template -->
+
+<!-- interface-template:dashboard/network-snapshot-1 --><div class="card db-card">
+              <div class="card-head"><span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-network"></use></svg></span><div><h3>Network Allocation Overview</h3><p class="sub">A summary of your stored addressing data.</p></div></div>
+              <div class="divider"></div>
+              <div class="db-legend">
+                <div><span class="db-dot blue"></span><span>Assigned</span><strong>{{slot:0}}</strong></div>
+                <div><span class="db-dot"></span><span>Reserved</span><strong>{{slot:1}}</strong></div>
+                <div><span class="db-dot green"></span><span>Available</span><strong>{{slot:2}}</strong></div>
+              </div>
+              <button type="button" data-action="tab-ipam" class="btn btn-outline">View IP Allocations</button>
+            </div><!-- /interface-template -->
+
+<!-- interface-template:dashboard/status-pill-1 -->
+                <div class="flex items-center justify-between px-3 py-2 rounded-xl {{slot:0}}">
+                    <span class="text-xs font-semibold">{{slot:1}}</span>
+                    <span class="text-sm font-bold">{{slot:2}}</span>
+                </div><!-- /interface-template -->
+
+<!-- interface-template:dashboard/quick-actions-1 -->
+              <button type="button" data-action="open-device-modal" class="btn btn-primary">Add Device</button>
+              <button type="button" data-action="open-rack-modal" class="btn btn-outline">Add Rack</button>
+              <button type="button" data-action="tab-ipam" class="btn btn-outline">Open IPAM</button><!-- /interface-template -->
+
+<!-- interface-template:dashboard/type-rows-1 -->
+                <div class="flex items-center gap-3">
+                    <div class="w-24 text-xs text-slate-600 dark:text-slate-300 truncate" title="{{slot:0}}">{{slot:1}}</div>
+                    <div class="flex-1 h-2 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden"><div class="h-full rounded-full bg-sky-600 dark:bg-sky-400" style="width:{{slot:2}}%"></div></div>
+                    <span class="w-6 text-right text-xs font-bold text-slate-700 dark:text-slate-200">{{slot:3}}</span>
+                </div><!-- /interface-template -->
+
+<!-- interface-template:dashboard/type-rows-2 --><p class="text-sm text-slate-500 dark:text-slate-400">No device data yet.</p><!-- /interface-template -->
+
+<!-- interface-template:dashboard/insight-segment-1 --><div class="dashboard-legend-row"><span class="dashboard-dot {{slot:0}}"></span><span>{{slot:1}}</span><strong>{{slot:2}}</strong><span class="dashboard-muted">{{slot:3}}%</span></div><!-- /interface-template -->
+
+<!-- interface-template:dashboard/network-insights-1 --><div><span class="db-dot {{slot:0}}"></span><span>{{slot:1}}</span><strong>{{slot:2}}</strong></div><!-- /interface-template -->
+
+<!-- interface-template:dashboard/network-insights-2 --><div class="db-progress-title" style="{{slot:0}}"><span>{{slot:1}}</span><strong>{{slot:2}}</strong></div><div class="db-bar"><span style="width:{{slot:3}}%;background:#77a8a1"></span></div><!-- /interface-template -->
+
+<!-- interface-template:dashboard/network-insights-3 --><div class="db-progress-title"><span>{{slot:0}} — {{slot:1}}</span><strong>{{slot:2}} / {{slot:3}}U</strong></div><div class="db-bar"><span style="width:{{slot:4}}%;background:{{slot:5}}"></span></div><!-- /interface-template -->
+
+<!-- interface-template:dashboard/network-insights-4 --><div class="db-insights-4">
+              <div class="card db-card">
+                <div class="card-head"><span class="iconwrap orange"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-network"></use></svg></span><div><h3>IP Address Utilisation</h3><p class="sub">Allocated or reserved addresses across managed subnets.</p></div></div>
+                <div class="divider"></div>
+                <div class="db-stat-number">{{slot:0}}%</div>
+                <div class="db-bar" role="progressbar" aria-label="IP address utilisation" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{slot:1}}"><span style="width:{{slot:2}}%;background:#7197b9"></span></div>
+                <div class="db-legend"><div><span class="db-dot blue"></span><span>Assigned</span><strong>{{slot:3}}</strong></div><div><span class="db-dot"></span><span>Reserved</span><strong>{{slot:4}}</strong></div><div><span class="db-dot green"></span><span>Available</span><strong>{{slot:5}}</strong></div></div>
+              </div>
+              <div class="card db-card">
+                <div class="card-head"><span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-box"></use></svg></span><div><h3>Device Status</h3><p class="sub">Status distribution in the saved inventory.</p></div></div>
+                <div class="divider"></div>
+                <div class="db-stat-number">{{slot:6}} <span class="db-muted">devices</span></div>
+                <div class="db-legend">{{slot:7}}</div>
+              </div>
+              <div class="card db-card">
+                <div class="card-head"><span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-box"></use></svg></span><div><h3>Hardware Distribution</h3><p class="sub">Device categories by inventory count.</p></div></div>
+                <div class="divider"></div>
+                {{slot:8}}
+              </div>
+              <div class="card db-card">
+                <div class="card-head"><span class="iconwrap orange"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-rack"></use></svg></span><div><h3>Rack Capacity by Face</h3><p class="sub">Front and rear U occupancy, including accessories.</p></div></div>
+                <div class="divider"></div>
+                {{slot:9}}
+              </div>
+            </div><!-- /interface-template -->
+
+<!-- interface-template:dashboard/render-dashboard-html-1 --><section id="next-dashboard-mfa-notice" role="note" class="rounded-2xl border border-sky-200 bg-sky-50 dark:border-sky-800 dark:bg-sky-950/30 p-4 sm:p-5">
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+                            <i class="fa-solid fa-shield-halved text-blue-700 dark:text-sky-300 text-xl" aria-hidden="true"></i>
+                            <div class="flex-1 min-w-0"><h3 class="font-bold text-slate-900 dark:text-white">Authenticator setup</h3>
+                            <p class="text-sm text-slate-700 dark:text-slate-200 mt-1">Editing inventory requires two-factor authentication. Read-only access does not. Set up your authenticator in My account before an administrator can grant editing permissions.</p></div>
+                            <button type="button" data-action="select-account-section" data-section="security" class="self-start sm:self-auto shrink-0 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold px-4 py-2.5">Set up MFA</button>
+                        </div>
+                    </section><!-- /interface-template -->
+
+<!-- interface-template:dashboard/render-dashboard-html-2 --><button type="button" role="tab" id="dashboard-tab-{{slot:0}}" aria-controls="dashboard-panel-{{slot:1}}" aria-selected="{{slot:2}}" tabindex="{{slot:3}}" class="dashboard-tab-control {{slot:4}}" data-action="dashboard-tab" data-dashboard-tab="{{slot:5}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#{{slot:6}}"/></svg><span>{{slot:7}}</span></button><!-- /interface-template -->
+
+<!-- interface-template:dashboard/render-dashboard-html-3 --><button type="button" data-action="{{slot:0}}" class="db-metric" aria-label="{{slot:1}}: {{slot:2}}. Open section">
+                                <span class="db-metric-head">{{slot:3}}<span class="iconwrap {{slot:4}}"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#{{slot:5}}"></use></svg></span></span>
+                                <strong>{{slot:6}}</strong><small>{{slot:7}}</small>
+                            </button><!-- /interface-template -->
+
+<!-- interface-template:dashboard/render-dashboard-html-4 --><p>{{slot:0}}</p><!-- /interface-template -->
+
+<!-- interface-template:dashboard/render-dashboard-html-5 --><section id="next-dashboard-inventory-health" role="alert" class="card db-card db-callout db-error-card">
+                            <h3>Inventory Health — attention required</h3>
+                            <p>Existing inventory consistency checks found issues in saved records.</p>
+                            <div>{{slot:0}}</div>
+                        </section><!-- /interface-template -->
+
+<!-- interface-template:dashboard/render-dashboard-html-6 -->
+                                        <div class="db-progress-title"><span>{{slot:0}} · {{slot:1}}</span><strong>{{slot:2}}%</strong></div>
+                                        <div class="db-bar" role="progressbar" aria-label="{{slot:3}} utilisation" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{slot:4}}"><span style="width:{{slot:5}}%;background:#4a9c86"></span></div>
+                                    <!-- /interface-template -->
+
+<!-- interface-template:dashboard/render-dashboard-html-7 --><div class="db-progress-title"><span>{{slot:0}}</span><strong>{{slot:1}} / {{slot:2}}U</strong></div>
+                                        <div class="db-bar" role="progressbar" aria-label="{{slot:3}} occupied rack units" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{slot:4}}"><span style="width:{{slot:5}}%;background:{{slot:6}}"></span></div><!-- /interface-template -->
+
+<!-- interface-template:dashboard/render-dashboard-html-8 --><section class="card db-card db-callout db-error-card" role="alert">
+                        <h3>Integrity issues</h3><p>{{slot:0}} inventory consistency issue(s) detected. Review Inventory Health on Dashboard Overview.</p>
+                      </section><!-- /interface-template -->
+
+<!-- interface-template:dashboard/render-dashboard-html-9 --><p class="db-empty-note">Showing {{slot:0}} of {{slot:1}} warnings</p><!-- /interface-template -->
+
+<!-- interface-template:dashboard/render-dashboard-html-10 -->
+                <div class="caffoot-dashboard">
+                    <div class="eyebrow">YOUR INFRASTRUCTURE AT A GLANCE</div>
+                    <div class="header"><div>
+                        <h1>Dashboard</h1>
+                        <p>An organised view of your saved Devices, IPAM and Network Racks.</p>
+                    </div></div>
+
+                    {{slot:0}}
+
+                    <nav class="subnav dashboard-tabs" aria-label="Dashboard sections" role="tablist">
+                        {{slot:1}}
+                    </nav>
+                    <div data-section="overview" id="dashboard-panel-overview" role="tabpanel" aria-labelledby="dashboard-tab-overview" class="account-panel active dashboard-tab-panel" {{slot:2}}>
+                        <div class="db-summary" aria-label="Network summary">
+                            {{slot:3}}
+                        </div>
+                        {{slot:4}}
+                        <div class="db-two">
+                            <div class="db-stack">
+                                <div class="card db-card">
+                                    <div class="card-head"><span class="iconwrap orange"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-grid"></use></svg></span><div><h3>Quick Access</h3><p class="sub">Existing actions, available according to the signed-in user’s permissions.</p></div></div>
+                                    <div class="db-actionrow">{{slot:5}}</div>
+                                </div>
+                                <div class="card db-card">
+                                    <div class="card-head"><span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-box"></use></svg></span><div><h3>Recent Devices</h3><p class="sub">The latest records in your saved inventory.</p></div></div>
+                                    <div class="divider"></div>
+                                    {{slot:6}}
+                                    <button type="button" data-action="tab-devices" class="btn btn-outline">View All Devices</button>
+                                </div>
+                                <div class="card db-card">
+                                    <div class="card-head"><span class="iconwrap green"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-network"></use></svg></span><div><h3>Subnet Utilisation</h3><p class="sub">Usable addresses across existing CIDR networks.</p></div></div>
+                                    <div class="divider"></div>
+                                    {{slot:7}}
+                                    <p class="db-muted">Details, reservations and allocations remain managed within IPAM.</p>
+                                </div>
+                            </div>
+                            <div class="db-stack">
+                                <div class="card db-card">
+                                    <div class="card-head"><span class="iconwrap orange"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-rack"></use></svg></span><div><h3>Rack Capacity</h3><p class="sub">Used U-space across your cabinets.</p></div></div>
+                                    <div class="divider"></div>
+                                    {{slot:8}}
+                                    <button type="button" data-action="tab-racks" class="btn btn-outline">Open Network Racks</button>
+                                </div>
+                                {{slot:9}}
+                                <div class="card db-card">
+                                    <div class="card-head"><span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-info"></use></svg></span><div><h3>Inventory Status</h3><p class="sub">A concise snapshot of your saved inventory.</p></div></div>
+                                    <div class="divider"></div>
+                                    <div class="db-slimrow"><strong>Devices</strong><span class="db-badge">{{slot:10}} tracked</span></div>
+                                    <div class="db-slimrow"><strong>Subnets</strong><span class="db-badge">{{slot:11}} configured</span></div>
+                                    <div class="db-slimrow"><strong>Racks</strong><span class="db-badge">{{slot:12}} configured</span></div>
+                                    <p class="db-muted">Administrator-only Inventory Health warnings appear only when the real checks detect an issue.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div data-section="insights" id="dashboard-panel-insights" role="tabpanel" aria-labelledby="dashboard-tab-insights" class="account-panel active dashboard-tab-panel space-y-5" {{slot:13}}>
+                    {{slot:14}}
+                    <section class="db-section card db-card db-rack-details">
+                        <div class="card-head"><span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-rack"></use></svg></span><div><h3>Rack Details</h3><p class="sub">The existing rack list and per-rack links stay available in this section.</p></div></div>
+                        <div class="divider"></div>
+                        <div class="db-grid">{{slot:15}}</div>
+                        <div class="db-actionrow"><button type="button" data-action="tab-racks" class="btn btn-outline">Open Rack Details</button></div>
+                    </section>
+                    </div>
+                    <div data-section="activity" id="dashboard-panel-activity" role="tabpanel" aria-labelledby="dashboard-tab-activity" class="account-panel active dashboard-tab-panel" {{slot:16}}>
+                      <div class="db-summary" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+                        <div class="card db-card">
+                          <div class="card-head"><span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-history"></use></svg></span>
+                            <div><h3>Recent Save Events</h3><p class="sub">Saved inventory changes.</p></div></div>
+                          <div class="db-stat-number" style="margin-top:12px">{{slot:17}}</div>
+                        </div>
+                        <div class="card db-card">
+                          <div class="card-head"><span class="iconwrap orange"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-alert"></use></svg></span>
+                            <div><h3>Network Warnings</h3><p class="sub">Existing consistency and capacity checks.</p></div></div>
+                          <div class="db-stat-number" style="margin-top:12px">{{slot:18}}</div>
+                        </div>
+                      </div>
+                      {{slot:19}}
+                      <div class="db-two">
+                        <div class="db-stack">
+                          <div class="card db-card">
+                            <div class="card-head"><span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-history"></use></svg></span>
+                              <div><h3>Recent Activity</h3><p class="sub">Existing saved-change timeline and filters.</p></div></div>
+                            <div class="divider"></div>
+                            {{slot:20}}
+                            <div id="activity-results">{{slot:21}}</div>
+                            <p class="db-empty-note" id="activity-empty" {{slot:22}}>No saved changes match this filter.</p>
+                            <div class="db-actionrow"><button type="button" class="btn btn-outline" data-action="tab-audit">Full Change History</button></div>
+                          </div>
+                        </div>
+                        <div class="db-stack">
+                          <div class="card db-card">
+                            <div class="card-head"><span class="iconwrap orange"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-alert"></use></svg></span>
+                              <div><h3>Warnings &amp; Attention</h3><p class="sub">IPAM linkage, duplicate IP and rack capacity warnings.</p></div></div>
+                            <div class="divider"></div>
+                            {{slot:23}}
+                            <div id="alert-results">{{slot:24}}</div>
+                            <p class="db-empty-note" id="alert-empty" {{slot:25}}>{{slot:26}}</p>
+                            {{slot:27}}
+                          </div>
+                        </div>
+                      </div>
+                      <div class="db-section card db-card">
+                        <div class="card-head"><span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-download"></use></svg></span>
+                          <div><h3>Reports &amp; Exports</h3><p class="sub">Preserve all CSV and downloadable reports available in v2.0.1.</p></div></div>
+                        <div class="divider"></div>
+                        <p class="db-muted">Download live reports from the existing permission-aware inventory exporter.</p>
+                        <div class="db-report-buttons">
+                          <button type="button" class="btn btn-outline" data-action="export-selected-inventory-csv" data-report="devices">Device Inventory CSV</button>
+                          <button type="button" class="btn btn-outline" data-action="export-selected-inventory-csv" data-report="subnets" title="Exports subnet allocations and utilisation totals">IPAM CSV</button>
+                          <button type="button" class="btn btn-outline" data-action="export-selected-inventory-csv" data-report="racks">Rack Report</button>
+                        </div>
+                        <div class="approved-dashboard-report-detail">{{slot:28}}</div>
+                      </div>
+                    </div>
+                <footer class="footer"><span>Caffoot Lite · Infrastructure, Simplified.</span><span>Dashboard</span></footer></div>
+            <!-- /interface-template -->

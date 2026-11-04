@@ -41,6 +41,8 @@ def check_release_files(root, version):
     readme = _read_required(root, "README.md")
     installation = _read_required(root, "INSTALLATION.md")
     inventory = _read_required(root, "inventory.html")
+    modular_account = (_read_required(root, "interface/screens/my-account.html")
+                       if "/interface/loader.js" in inventory else "")
     stack_name = f"portainer-{version}.yaml"
     stack = _read_required(root, stack_name)
     notes_path = f"docs/historical/release-notes/Release-Notes-{version}.md"
@@ -53,7 +55,7 @@ def check_release_files(root, version):
         ),
         "inventory.html About page": (
             f"Installed Version</span><strong>Caffoot Lite {version}</strong>"
-            in inventory
+            in inventory or f"Published Release</label><b>{version}</b>" in modular_account
         ),
         stack_name: (
             f"image: ghcr.io/caffoot/caffoot-lite:{version}" in stack

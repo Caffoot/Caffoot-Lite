@@ -2,14 +2,16 @@ name: Caffoot Lite browser compatibility
 
 on:
   push:
-    branches: [main, feat/approved-html-full-interface]
+    branches: [main, feat/approved-html-full-interface, feat/approved-modular-html-282]
     paths:
+      - "interface/**"
       - "tests/browser-compat.cjs"
       - "inventory.html"
       - "setup.html"
       - ".github/workflows/browser-compat.yml"
   pull_request:
     paths:
+      - "interface/**"
       - "tests/browser-compat.cjs"
       - "inventory.html"
       - "setup.html"

@@ -1,0 +1,263 @@
+<!-- interface-template:device-management/open-approved-catalogue-modal-1 --><div class="catalog-modal">
+            <div class="catalog-modal-head">
+              <div><div class="eyebrow">CATALOGUE MANAGEMENT</div><h2 id="catalog-modal-title">{{slot:0}}</h2></div>
+              <button type="button" data-action="close-modal" aria-label="Close dialog" class="btn btn-outline mini-btn">Close ×</button>
+            </div>
+            <p class="catalog-modal-sub" id="catalog-modal-sub">{{slot:1}}</p>
+            <form {{slot:2}} onsubmit="return false">
+              <div id="catalog-modal-fields">{{slot:3}}</div>
+              <p class="catalog-modal-info" id="catalog-modal-info">{{slot:4}}</p>
+              <div class="catalog-modal-actions">{{slot:5}}</div>
+            </form>
+          </div><!-- /interface-template -->
+
+<!-- interface-template:device-management/checks-1 --><label class="catalog-type-option"><input type="checkbox" name="catalogue-manufacturer-device-type" value="{{slot:0}}" {{slot:1}} {{slot:2}}><span>{{slot:3}}</span></label><!-- /interface-template -->
+
+<!-- interface-template:device-management/fields-1 --><p class="catalog-delete-warning">Remove custom manufacturer-only suggestions for <strong>{{slot:0}}</strong> across {{slot:1}} device type(s)? {{slot:2}} existing device(s) use this manufacturer; their saved records remain unchanged.</p><!-- /interface-template -->
+
+<!-- interface-template:device-management/fields-2 --><label class="catalog-modal-field" for="manufacturer-name">Manufacturer Name
+                  <input id="manufacturer-name" required maxlength="120" value="{{slot:0}}" {{slot:1}} placeholder="Manufacturer name">
+                </label><p id="manufacturer-error" role="alert" class="hidden text-sm text-rose-700"></p>
+                {{slot:2}}
+                <fieldset class="catalog-type-field" data-multi-device-types="manufacturers">
+                  <legend>Associated Device Types</legend>
+                  <p class="catalog-type-hint">Select all device types that apply.</p>
+                  <div class="catalog-modal-actions" style="justify-content:flex-start;margin-bottom:10px">
+                    <button type="button" data-action="manufacturer-all" class="btn btn-outline mini-btn">Select All</button>
+                    <button type="button" data-action="manufacturer-none" class="btn btn-outline mini-btn">Clear All</button>
+                  </div>
+                  <div class="catalog-type-options">{{slot:3}}</div>
+                </fieldset><!-- /interface-template -->
+
+<!-- interface-template:device-management/actions-1 --><button type="button" data-action="close-modal" class="btn btn-outline caffoot-modal-cancel">Cancel</button>
+              <button type="button" data-action="{{slot:0}}" data-name="{{slot:1}}" class="btn {{slot:2}}">{{slot:3}}</button><!-- /interface-template -->
+
+<!-- interface-template:device-management/fields-3 --><p class="catalog-delete-warning">Cannot hide while assigned to: {{slot:0}}</p><!-- /interface-template -->
+
+<!-- interface-template:device-management/fields-4 --><label class="catalog-modal-field" for="built-in-manufacturer-name">Suggestion Name
+              <input id="built-in-manufacturer-name" maxlength="120" value="{{slot:0}}">
+              </label><label class="catalog-type-option"><input id="built-in-manufacturer-hidden" type="checkbox" {{slot:1}} {{slot:2}}><span>Hide from new suggestions</span></label>
+              {{slot:3}}
+              <p id="built-in-manufacturer-error" role="alert" class="text-sm text-rose-700"></p><!-- /interface-template -->
+
+<!-- interface-template:device-management/actions-2 --><button type="button" data-action="close-modal" class="btn btn-outline caffoot-modal-cancel">Cancel</button>
+              <button type="button" data-action="built-in-manufacturer-save" data-name="{{slot:0}}" class="btn btn-primary">Save</button><!-- /interface-template -->
+
+<!-- interface-template:device-management/cards-1 --><div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5"><p class="text-sm text-slate-600 dark:text-slate-300"><!-- /interface-template -->
+
+<!-- interface-template:device-management/rows-1 -->" class="rounded-xl border border-slate-200 dark:border-slate-700 p-4 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_9rem_auto] items-center gap-3"><div class="min-w-0"><h3 class="font-semibold text-slate-900 dark:text-white"><!-- /interface-template -->
+
+<!-- interface-template:device-management/hidden-section-1 --><div class="rounded-2xl border border-slate-200 dark:border-slate-700 p-5 space-y-3"><h3 class="font-semibold">Hidden Built-in Manufacturers</h3><!-- /interface-template -->
+
+<!-- interface-template:device-management/render-hardware-manufacturers-html-1 --><section class="space-y-5"><div class="flex flex-wrap items-start justify-between gap-3"><div><h2 class="text-xl font-bold text-slate-900 dark:text-white">Manufacturers</h2><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Built-in suggestions, custom catalogue entries and manufacturers recorded in your inventory.</p></div><button type="button" data-action="manufacturer-add" class="h-11 px-4 rounded-xl bg-blue-800 hover:bg-blue-700 text-white">Add Manufacturer</button></div><div class="grid grid-cols-1 sm:grid-cols-3 gap-4"><!-- /interface-template -->
+
+<!-- interface-template:device-management/render-hardware-manufacturers-html-2 --></div><div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-3"><label for="manufacturer-search" class="block text-sm font-semibold">Search Manufacturers</label><input id="manufacturer-search" type="search" placeholder="Filter manufacturers by name" class="w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-900"><div class="flex flex-wrap items-center justify-between gap-2"><p id="hardware-manufacturer-count" class="text-xs text-slate-600 dark:text-slate-300" aria-live="polite"><!-- /interface-template -->
+
+<!-- interface-template:device-management/render-hardware-manufacturers-html-3 --> manufacturers shown</p><button type="button" data-action="manufacturer-reset" class="min-h-10 px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm font-semibold text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-slate-700 active:bg-blue-100 dark:active:bg-slate-600 transition-colors">Reset Filters</button></div><div class="space-y-2 max-h-[65vh] overflow-y-auto"><!-- /interface-template -->
+
+<!-- interface-template:device-management/fields-5 --><p class="catalog-delete-warning">Remove <strong>{{slot:0}}</strong> ({{slot:1}} · {{slot:2}})? {{slot:3}} existing device(s) use this model. {{slot:4}}</p><!-- /interface-template -->
+
+<!-- interface-template:device-management/fields-6 --><label class="catalog-modal-field" for="model-name">Model Name
+                  <input id="model-name" maxlength="120" value="{{slot:0}}" placeholder="Model name">
+                </label><label class="catalog-modal-field" for="hardware-model-manufacturer-select">Manufacturer
+                  <select id="hardware-model-manufacturer-select"><option value="">Select Manufacturer</option>{{slot:1}}</select>
+                </label><label class="catalog-modal-field" for="model-device-type">Device Type
+                  <select id="model-device-type"><option value="">Select Device Type</option>{{slot:2}}</select>
+                </label><p id="hardware-model-device-type-note" class="catalog-type-hint"></p>
+                <p id="model-error" role="alert" class="hidden text-sm text-rose-700"></p><!-- /interface-template -->
+
+<!-- interface-template:device-management/actions-3 --><button type="button" data-action="close-modal" class="btn btn-outline caffoot-modal-cancel">Cancel</button>
+              <button type="button" data-action="{{slot:0}}" data-name="{{slot:1}}" class="btn {{slot:2}}">{{slot:3}}</button><!-- /interface-template -->
+
+<!-- interface-template:device-management/fields-7 --><p class="catalog-delete-warning">Hiding is blocked while used by: {{slot:0}}</p><!-- /interface-template -->
+
+<!-- interface-template:device-management/fields-8 --><label class="catalog-modal-field" for="built-in-model-name">Suggestion Name
+                <input id="built-in-model-name" maxlength="120" value="{{slot:0}}">
+              </label><label class="catalog-type-option"><input type="checkbox" id="built-in-model-hidden" {{slot:1}} {{slot:2}}><span>Hide from new suggestions</span></label>
+              {{slot:3}}
+              <p id="built-in-model-error" role="alert" class="text-sm text-rose-700"></p><!-- /interface-template -->
+
+<!-- interface-template:device-management/actions-4 --><button type="button" data-action="close-modal" class="btn btn-outline caffoot-modal-cancel">Cancel</button>
+              <button type="button" data-action="built-in-model-save" data-name="{{slot:0}}" class="btn btn-primary">Save</button><!-- /interface-template -->
+
+<!-- interface-template:device-management/cards-2 --><div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5"><p class="text-sm text-slate-600 dark:text-slate-300"><!-- /interface-template -->
+
+<!-- interface-template:device-management/rows-2 -->" class="rounded-xl border border-slate-200 dark:border-slate-700 p-4 grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_9rem_auto] items-center gap-3"><div class="min-w-0"><h3 class="font-semibold text-slate-900 dark:text-white"><!-- /interface-template -->
+
+<!-- interface-template:device-management/render-hardware-models-html-1 --><section class="space-y-5"><div class="flex flex-wrap items-start justify-between gap-3"><div><h2 class="text-xl font-bold text-slate-900 dark:text-white">Models</h2><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Hardware models grouped by manufacturer and device type. Built-in, custom and inventory-derived suggestions are shown together without modifying saved devices.</p></div><button type="button" data-action="model-add" class="h-11 px-4 rounded-xl bg-blue-800 hover:bg-blue-700 text-white">Add Model</button></div><div class="grid grid-cols-1 sm:grid-cols-3 gap-4"><!-- /interface-template -->
+
+<!-- interface-template:device-management/render-hardware-models-html-2 --></div><div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-3"><label for="model-search" class="block text-sm font-semibold">Search Models</label><input id="model-search" type="search" placeholder="Search model, manufacturer or device type" class="w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-white"><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"><div><label for="hardware-model-manufacturer-filter" class="block text-xs font-semibold mb-1">Manufacturer</label><select id="hardware-model-manufacturer-filter" class="w-full h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-900"><option value="">All Manufacturers</option><!-- /interface-template -->
+
+<!-- interface-template:device-management/render-hardware-models-html-3 --></select></div><div><label for="model-type" class="block text-xs font-semibold mb-1">Device Type</label><select id="model-type" class="w-full h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-900"><option value="">All Device Types</option><!-- /interface-template -->
+
+<!-- interface-template:device-management/render-hardware-models-html-4 --></select></div><div><label for="model-source" class="block text-xs font-semibold mb-1">Source</label><select id="model-source" class="w-full h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-900"><option value="">All Sources</option><option value="built-in">Built-in</option><option value="custom">Custom</option><option value="inventory">Inventory</option></select></div><label class="flex items-center gap-2 self-end h-10 text-sm"><input id="hardware-model-in-use" type="checkbox" class="h-5 w-5 accent-blue-700">In Use Only</label></div><div class="flex flex-wrap items-center justify-between gap-2"><p id="hardware-model-count" class="text-xs text-slate-600 dark:text-slate-300" aria-live="polite"><!-- /interface-template -->
+
+<!-- interface-template:device-management/render-hardware-models-html-5 --> models shown</p><button type="button" data-action="model-reset" class="min-h-10 px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm font-semibold text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-slate-700 active:bg-blue-100 dark:active:bg-slate-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-600 transition-colors">Reset Filters</button></div><div class="space-y-2 max-h-[65vh] overflow-y-auto"><!-- /interface-template -->
+
+<!-- interface-template:device-management/render-hardware-models-html-6 --><p id="model-empty" class="hidden text-sm text-slate-600 dark:text-slate-300">No models match these filters.</p><p class="text-xs text-slate-600 dark:text-slate-300">Manage built-in and custom suggestions here. Inventory-derived values are changed through the device editor.</p></div></section><!-- /interface-template -->
+
+<!-- interface-template:device-management/fields-9 --><label class="catalog-type-option"><input type="checkbox" name="software-custom-type" value="{{slot:0}}" {{slot:1}}><span>{{slot:2}}</span></label><!-- /interface-template -->
+
+<!-- interface-template:device-management/fields-10 --><label class="catalog-modal-field" for="software-custom-name">Software Name
+               <input id="software-custom-name" maxlength="80" value="{{slot:0}}" placeholder="Software name">
+              </label><fieldset class="catalog-type-field" data-multi-device-types="software">
+                <legend>Available for Device Types</legend>
+                <p class="catalog-type-hint">Select all device types that apply.</p>
+                <div class="catalog-type-options">{{slot:1}}</div>
+              </fieldset><p id="software-custom-error" role="alert" class="text-sm text-rose-700"></p><!-- /interface-template -->
+
+<!-- interface-template:device-management/actions-5 --><button type="button" data-action="close-modal" class="btn btn-outline caffoot-modal-cancel">Cancel</button>
+              <button type="button" data-action="software-custom-save" data-name="{{slot:0}}" class="btn btn-primary">Save Software</button><!-- /interface-template -->
+
+<!-- interface-template:device-management/confirm-software-catalogue-removal-1 --><div class="p-5 sm:p-7 space-y-5"><h3 class="text-lg font-bold">Remove Software?</h3><p class="text-sm text-slate-700 dark:text-slate-200">Remove <strong><!-- /interface-template -->
+
+<!-- interface-template:device-management/confirm-software-catalogue-removal-2 --></p><div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-4 rounded-xl border border-slate-300 dark:border-slate-600 caffoot-modal-cancel">Cancel</button><button type="button" data-action="software-custom-confirm-remove" data-name="<!-- /interface-template -->
+
+<!-- interface-template:device-management/card-1 --><div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5"><p class="text-sm text-slate-600 dark:text-slate-300"><!-- /interface-template -->
+
+<!-- interface-template:device-management/rows-3 -->" class="rounded-xl border border-slate-200 dark:border-slate-700 p-4 flex flex-wrap items-center justify-between gap-3"><div class="flex-1 min-w-0"><h3 class="font-semibold text-slate-900 dark:text-white"><!-- /interface-template -->
+
+<!-- interface-template:device-management/rows-4 --><span class="inline-block rounded-md bg-blue-50 dark:bg-blue-900/40 border border-blue-200 dark:border-blue-700 px-2 py-1 text-xs text-slate-700 dark:text-slate-200"><!-- /interface-template -->
+
+<!-- interface-template:device-management/archived-rows-1 --><div class="rounded-xl border border-slate-200 dark:border-slate-700 p-4 flex flex-wrap items-center justify-between gap-3"><div class="min-w-0 flex-1"><strong><!-- /interface-template -->
+
+<!-- interface-template:device-management/archived-rows-2 --></strong><p class="text-xs text-slate-600 dark:text-slate-300">Hidden from new assignments. Existing device records remain unchanged.</p></div><button type="button" data-action="software-custom-restore" data-name="<!-- /interface-template -->
+
+<!-- interface-template:device-management/render-software-catalogue-html-1 --><section class="space-y-5"><div class="flex items-start justify-between gap-4"><div><h2 class="text-xl font-bold">Software</h2><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Browse built-in software suggestions by device type. Suggestions do not mean software is installed. Existing configured software and device records are preserved.</p></div><button type="button" data-action="software-custom-add" class="shrink-0 h-11 px-4 rounded-xl bg-blue-800 hover:bg-blue-700 text-white font-semibold">Add Custom Software</button></div><div class="grid grid-cols-1 sm:grid-cols-3 gap-4"><!-- /interface-template -->
+
+<!-- interface-template:device-management/render-software-catalogue-html-2 --></div><div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-3"><label for="software-search" class="block text-sm font-semibold">Search Software</label><input id="software-search" type="search" placeholder="Filter software by name" class="w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-900"><div class="flex flex-wrap gap-3 items-end"><label class="text-sm">Device Type <select id="software-type" class="block mt-1 h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-900"><option value="">All Device Types</option><!-- /interface-template -->
+
+<!-- interface-template:device-management/render-software-catalogue-html-3 --></select></label><label class="text-sm">Source <select id="software-source" class="block mt-1 h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-900"><option value="">All Sources</option><option value="built-in">Built-in Suggestions</option><option value="configured">Configured Software</option></select></label><label class="flex items-center gap-2 text-sm pb-2"><input id="software-used" type="checkbox">In Use Only</label><button type="button" data-action="software-reset" class="ml-auto min-h-10 px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm font-semibold text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-slate-700 active:bg-blue-100 dark:active:bg-slate-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-600 transition-colors">Reset Filters</button></div><p id="software-catalogue-count" class="text-xs text-slate-600 dark:text-slate-300" aria-live="polite"><!-- /interface-template -->
+
+<!-- interface-template:device-management/render-software-catalogue-html-4 --></div><p id="software-empty" class="hidden text-sm text-slate-600 dark:text-slate-300">No software matches these filters.</p></div><section class="space-y-3"><h3 class="text-lg font-bold">Hidden Software (<!-- /interface-template -->
+
+<!-- interface-template:device-management/fields-11 --><label class="catalog-modal-field" for="server-service-name-input">Service Name
+              <input id="server-service-name-input" maxlength="80" value="{{slot:0}}" placeholder="Service name">
+              </label><!-- /interface-template -->
+
+<!-- interface-template:device-management/actions-6 --><button type="button" data-action="close-modal" class="btn btn-outline caffoot-modal-cancel">Cancel</button>
+              <button type="button" data-action="server-catalog-save" data-name="{{slot:0}}" class="btn btn-primary">Save Service</button><!-- /interface-template -->
+
+<!-- interface-template:device-management/archived-rows-3 --><div class="rounded-xl border border-slate-200 dark:border-slate-700 p-4 flex flex-wrap items-center justify-between gap-3"><div class="min-w-0 flex-1"><span class="font-semibold"><!-- /interface-template -->
+
+<!-- interface-template:device-management/archived-rows-4 --></span> <span class="text-xs font-semibold text-amber-700 dark:text-amber-300">Archived</span><p class="text-xs text-slate-600 dark:text-slate-300"><!-- /interface-template -->
+
+<!-- interface-template:device-management/rows-5 --><div class="rounded-xl border border-slate-200 dark:border-slate-700 p-4 flex flex-wrap items-center justify-between gap-3"><div class="flex-1 min-w-0"><h3 class="font-semibold text-slate-900 dark:text-white"><!-- /interface-template -->
+
+<!-- interface-template:device-management/render-server-services-catalogue-html-1 --><section class="space-y-5"><div class="flex items-start justify-between gap-4"><div><h2 class="text-xl font-bold text-slate-900 dark:text-white">Server Services</h2><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Manage available server services. Archiving preserves existing server records.</p></div><button type="button" data-action="server-catalog-add" class="shrink-0 h-11 px-4 rounded-xl bg-blue-800 hover:bg-blue-700 text-white font-semibold">Add Custom Service</button></div><div class="grid grid-cols-1 sm:grid-cols-3 gap-4"><!-- /interface-template -->
+
+<!-- interface-template:device-management/render-server-services-catalogue-html-2 --><div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5"><p class="text-sm text-slate-600 dark:text-slate-300"><!-- /interface-template -->
+
+<!-- interface-template:device-management/render-server-services-catalogue-html-3 --></div><div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-3"><label for="service-search" class="block text-sm font-semibold">Search Server Services</label><input id="service-search" type="search" placeholder="Filter services by name" class="w-full h-11 px-3 rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-900" oninput="document.querySelectorAll('[data-service-row]').forEach(r=>r.hidden=!r.dataset.serviceRow.includes(this.value.toLowerCase()))"></div><div class="space-y-3"><!-- /interface-template -->
+
+<!-- interface-template:device-management/render-server-services-catalogue-html-4 -->)</h3><p class="text-sm text-slate-600 dark:text-slate-300">Archived services remain on existing device records. Restore a service to make it available for new assignments again.</p><!-- /interface-template -->
+
+<!-- interface-template:device-management/approved-archived-software-html-1 -->
+                    <button type="button" class="intelligence-chart-row" data-action="view-device" data-id="{{slot:0}}">
+                        <span class="intelligence-chart-label"><span>{{slot:1}}</span><strong>Archived</strong></span>
+                        <span class="intelligence-subtle">{{slot:2}}</span>
+                    </button><!-- /interface-template -->
+
+<!-- interface-template:device-management/approved-archived-software-html-2 --><div class="intelligence-chart">{{slot:0}}</div><!-- /interface-template -->
+
+<!-- interface-template:device-management/fields-12 --><div class="catalog-manager-row">
+                    <span><strong>{{slot:0}}</strong><small class="catalog-type-hint"> · {{slot:1}} device{{slot:2}}{{slot:3}}</small></span>
+                    <button type="button" data-action="rename-device-catalogue-entry" data-kind="{{slot:4}}" data-name="{{slot:5}}" {{slot:6}} class="btn btn-outline mini-btn" aria-label="Rename {{slot:7}}">Rename</button>
+                    <button type="button" data-action="delete-device-type-or-location" data-kind="{{slot:8}}" data-name="{{slot:9}}" {{slot:10}} class="btn btn-outline mini-btn" aria-label="Delete {{slot:11}}">Delete</button>
+                  </div><!-- /interface-template -->
+
+<!-- interface-template:device-management/fields-13 --><p class="catalog-type-hint">No matching {{slot:0}}.</p><!-- /interface-template -->
+
+<!-- interface-template:device-management/fields-14 --><div class="device-catalogue-manager">
+              <label class="catalog-modal-field" for="device-catalogue-new-entry-input">Add {{slot:0}}
+                <input id="device-catalogue-new-entry-input" type="text" maxlength="100" placeholder="New {{slot:1}} name">
+              </label>
+              <div class="catalog-modal-actions" style="margin-bottom:16px">
+                <button type="button" data-action="add-device-type-or-location" data-kind="{{slot:2}}" class="btn btn-primary">Add {{slot:3}}</button>
+              </div>
+              <label class="catalog-modal-field" for="device-catalogue-search-input">Search {{slot:4}}
+                <input id="device-catalogue-search-input" type="search" value="{{slot:5}}" placeholder="Search by name">
+              </label>
+              <div class="catalog-modal-actions" style="margin-bottom:12px">
+                <button type="button" data-action="search-device-catalogue" data-kind="{{slot:6}}" class="btn btn-outline mini-btn">Search</button>
+              </div>
+              <div class="catalog-manager-list" aria-label="{{slot:7}}">
+                <strong>Existing {{slot:8}} ({{slot:9}} of {{slot:10}})</strong>
+                {{slot:11}}
+              </div>
+            </div><!-- /interface-template -->
+
+<!-- interface-template:device-management/actions-7 --><button type="button" data-action="close-modal" class="btn btn-outline caffoot-modal-cancel">Cancel</button><button type="button" data-action="close-modal" class="btn btn-primary">Done</button><!-- /interface-template -->
+
+<!-- interface-template:device-management/request-device-catalogue-entry-deletion-1 --><div class="catalog-modal">
+              <div class="catalog-modal-head"><div><div class="eyebrow">CATALOGUE MANAGEMENT</div>
+              <h2 id="device-catalogue-delete-title">Delete {{slot:0}}?</h2></div></div>
+              <p class="catalog-modal-sub">{{slot:1}}</p>
+              <p id="delete-description" class="catalog-delete-warning">This {{slot:2}} is assigned to <strong>{{slot:3}} device{{slot:4}}</strong>. {{slot:5}} Deletion cannot be undone.</p>
+              <div class="catalog-modal-actions">
+                <button type="button" data-action="cancel-delete" class="btn btn-outline caffoot-modal-cancel">Cancel</button>
+                <button type="button" data-action="confirm-delete" class="btn btn-primary">Delete</button>
+              </div></div><!-- /interface-template -->
+
+<!-- interface-template:device-management/installed-software-1 --><span class="inline-flex items-center gap-1 rounded-full border border-red-300 bg-red-50 px-2 py-0.5 text-xs font-bold text-red-700 dark:border-red-700 dark:bg-red-950/50 dark:text-red-300" title="Installed on this device; no longer available in the software catalogue"><i class="fa-solid fa-box-archive" aria-hidden="true"></i>Archived</span><button type="button" data-action="archived-software-remove" data-id="{{slot:0}}" data-name="{{slot:1}}" class="mt-2 block rounded-lg border border-red-300 px-2 py-1 text-xs font-semibold text-red-700 hover:bg-red-50 dark:border-red-700 dark:text-red-300 dark:hover:bg-red-950/40">Mark as Uninstalled</button><!-- /interface-template -->
+
+<!-- interface-template:device-management/installed-software-2 --><div class="record-preview device-details-installed-software"><strong>{{slot:0}}</strong><span class="chip">Installed</span>{{slot:1}}</div><!-- /interface-template -->
+
+<!-- interface-template:device-management/server-services-1 --> <span class="inline-flex items-center gap-1 rounded-full border border-red-300 bg-red-50 px-2 py-0.5 text-xs font-bold text-red-700 dark:border-red-700 dark:bg-red-950/50 dark:text-red-300"><i class="fa-solid fa-box-archive" aria-hidden="true"></i>Archived</span><!-- /interface-template -->
+
+<!-- interface-template:device-management/server-services-2 --><div class="device-details-field"><dt>{{slot:0}}</dt><dd>Enabled{{slot:1}}</dd></div><!-- /interface-template -->
+
+<!-- interface-template:device-management/confirm-uninstall-of-archived-software-1 --><div class="p-5 sm:p-7 space-y-5"><h3 class="text-lg font-bold text-slate-900 dark:text-white">Mark Software as Uninstalled?</h3><p class="text-sm text-slate-700 dark:text-slate-200">Mark <strong><!-- /interface-template -->
+
+<!-- interface-template:device-management/confirm-uninstall-of-archived-software-2 --></strong>? This only changes the Caffoot Lite inventory record. It does not uninstall software from the physical device.</p><div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-4 rounded-xl border border-slate-300 dark:border-slate-600 caffoot-modal-cancel">Cancel</button><button type="button" data-action="archived-software-confirm-uninstall" data-id="<!-- /interface-template -->
+
+<!-- interface-template:device-management/open-server-service-manager-1 --><label class="flex items-center gap-2"><input type="checkbox" data-server-service-select="{{slot:0}}" {{slot:1}}><span>{{slot:2}}</span></label><!-- /interface-template -->
+
+<!-- interface-template:device-management/open-server-service-manager-2 --><div class="flex items-center gap-3 p-3 border border-slate-300 dark:border-slate-600 rounded-xl"><span class="flex-1 break-words">{{slot:0}}</span><button type="button" data-action="rename-service" data-name="{{slot:1}}" class="h-10 px-3 border rounded-lg" aria-label="Rename {{slot:2}}"><i class="fa-solid fa-pen"></i></button><button type="button" data-action="delete-service" data-name="{{slot:3}}" class="h-10 px-3 border border-rose-400 rounded-lg text-rose-700 dark:text-rose-300" aria-label="Remove {{slot:4}}"><i class="fa-solid fa-trash"></i></button></div><!-- /interface-template -->
+
+<!-- interface-template:device-management/open-server-service-manager-3 --><div class="p-5 sm:p-7 space-y-4 device-catalogue-manager">
+                <div class="flex items-start justify-between gap-3"><div><h3 class="text-lg font-bold">Manage Server Services</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Add, rename or remove server feature checkboxes. Existing device values are preserved.</p></div><button type="button" data-action="close-modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button></div>
+                <div class="flex gap-2"><input id="server-service-manager-name-input" type="text" maxlength="80" placeholder="New server service" class="flex-1 min-w-0 h-11 px-3 rounded-xl border border-slate-400 dark:bg-slate-800"><button type="button" data-action="add-service" class="h-11 px-4 rounded-xl bg-blue-800 text-white">Add</button></div>
+                <div class="space-y-2 max-h-[48vh] overflow-y-auto">{{slot:0}}</div>
+                <div class="flex justify-between gap-2">{{slot:1}}<button type="button" data-action="close-modal" class="h-11 px-5 rounded-xl bg-blue-800 text-white">Done</button></div>
+            </div><!-- /interface-template -->
+
+<!-- interface-template:device-management/confirm-server-service-archive-1 --><div class="p-5 sm:p-7 space-y-5"><h3 class="text-lg font-bold text-slate-900 dark:text-white">Archive Server Service?</h3><p class="text-sm text-slate-700 dark:text-slate-200">Archive <strong><!-- /interface-template -->
+
+<!-- interface-template:device-management/confirm-server-service-archive-2 --></p><div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-4 rounded-xl border border-slate-300 dark:border-slate-600 caffoot-modal-cancel">Cancel</button><button type="button" data-action="server-service-confirm-archive" data-name="<!-- /interface-template -->
+
+<!-- interface-template:device-management/open-hardware-catalogue-manager-1 --><div class="flex items-center gap-2 p-3 border border-slate-300 dark:border-slate-600 rounded-xl"><span class="flex-1 break-words"><strong>{{slot:0}}</strong>{{slot:1}}</span><button type="button" data-action="hardware-catalog-edit" data-name="{{slot:2}}" class="h-10 px-3 border rounded-lg" aria-label="Edit catalogue entry"><i class="fa-solid fa-pen"></i></button><button type="button" data-action="hardware-catalog-remove" data-name="{{slot:3}}" class="h-10 px-3 border border-rose-400 rounded-lg text-rose-700 dark:text-rose-300" aria-label="Remove catalogue entry"><i class="fa-solid fa-trash"></i></button></div><!-- /interface-template -->
+
+<!-- interface-template:device-management/open-hardware-catalogue-manager-2 --><div class="p-5 sm:p-7 space-y-4 device-catalogue-manager">
+                <div class="flex items-start justify-between gap-3"><div><h3 class="text-lg font-bold">Manage Hardware Catalogue</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Custom manufacturer and model suggestions for {{slot:0}}. Built-in suggestions and existing device records are retained.</p></div><button type="button" data-action="close-modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button></div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2"><input id="hardware-catalog-maker" maxlength="120" placeholder="Manufacturer (e.g. Dell)" aria-label="Manufacturer" class="h-11 px-3 rounded-xl border border-slate-400 dark:bg-slate-800"><input id="hardware-catalog-model" maxlength="120" placeholder="Model (optional)" aria-label="Model" class="h-11 px-3 rounded-xl border border-slate-400 dark:bg-slate-800"></div>
+                <button type="button" data-action="hardware-catalog-add" class="h-11 px-4 rounded-xl bg-blue-800 text-white">Add Catalogue Entry</button>
+                <div class="space-y-2 max-h-[48vh] overflow-y-auto">{{slot:1}}</div>
+                <div class="flex justify-end"><button type="button" data-action="close-modal" class="h-11 px-5 rounded-xl bg-blue-800 text-white">Done</button></div>
+            </div><!-- /interface-template -->
+
+<!-- interface-template:device-management/open-configured-software-catalogue-manager-1 --><label class="flex items-center gap-2"><input type="checkbox" data-installed-software-select="{{slot:0}}" {{slot:1}}><span>{{slot:2}}</span></label><!-- /interface-template -->
+
+<!-- interface-template:device-management/open-configured-software-catalogue-manager-2 --><div class="flex items-center gap-3 p-3 border border-slate-300 dark:border-slate-600 rounded-xl"><span class="flex-1 break-words">{{slot:0}}</span><button type="button" data-action="rename-software" data-name="{{slot:1}}" class="h-10 px-3 border rounded-lg" aria-label="Rename {{slot:2}}"><i class="fa-solid fa-pen"></i></button><button type="button" data-action="delete-software" data-name="{{slot:3}}" class="h-10 px-3 border border-rose-400 rounded-lg text-rose-700 dark:text-rose-300" aria-label="Remove {{slot:4}}"><i class="fa-solid fa-trash"></i></button></div><!-- /interface-template -->
+
+<!-- interface-template:device-management/open-configured-software-catalogue-manager-3 --><div class="p-5 sm:p-7 space-y-4 device-catalogue-manager">
+                <div class="flex items-start justify-between gap-3"><div><h3 class="text-lg font-bold">Manage Installed Software</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Manage the software checkboxes shown for servers, desktops, laptops and tablets. Removing an option preserves existing device records.</p></div><button type="button" data-action="close-modal" aria-label="Close"><i class="fa-solid fa-xmark"></i></button></div>
+                <div class="flex gap-2"><input id="software-name" type="text" maxlength="80" placeholder="New software" class="flex-1 min-w-0 h-11 px-3 rounded-xl border border-slate-400 dark:bg-slate-800"><button type="button" data-action="add-software" class="h-11 px-4 rounded-xl bg-blue-800 text-white">Add</button></div>
+                <div class="space-y-2 max-h-[48vh] overflow-y-auto">{{slot:0}}</div>
+                <div class="flex justify-between gap-2">{{slot:1}}<button type="button" data-action="close-modal" class="h-11 px-5 rounded-xl bg-blue-800 text-white">Done</button></div>
+            </div><!-- /interface-template -->
+
+<!-- interface-template:device-management/render-software-platform-fields-1 --><div class="form-section-card device-review-panel space-y-4" id="software-platform">
+                <h3><span class="mini-icon" aria-hidden="true">▣</span>Operating System / Platform</h3>
+                <p>Use the existing device-type-specific software and firmware choices.</p>
+                <div class="device-review-form-grid">
+                <div><label for="platform-name" class="form-label">{{slot:0}} (optional)</label>
+                <select id="platform-select" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" {{slot:1}}>Select a platform...</option>{{slot:2}}<option value="__custom__">Custom / Other...</option></select>
+                <input id="platform-name" type="text" maxlength="160" autocomplete="off" value="{{slot:3}}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700 mt-2" placeholder="Enter custom platform" {{slot:4}}></div>
+                <div><label for="version-select" class="form-label">{{slot:5}} (optional)</label>
+                <select id="version-select" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="">Select a version...</option>{{slot:6}}<option value="__custom__" {{slot:7}}>Custom / Other...</option></select>
+                <input id="platform-version" type="text" maxlength="160" value="{{slot:8}}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700 mt-2" placeholder="Enter custom or detailed version" {{slot:9}}></div>
+                <div id="device-form-windows-licence-row" {{slot:10}}><label for="device-form-windows-licence" class="form-label">Windows Licence Information (optional)</label><input id="device-form-windows-licence" type="text" maxlength="160" value="{{slot:11}}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Edition, licence type or reference (avoid activation keys)"></div>
+                </div>
+                <p class="text-xs text-slate-600 dark:text-slate-300">Historical version suggestions are available offline. Custom versions are always supported; no support status is implied.</p>
+            </div><!-- /interface-template -->

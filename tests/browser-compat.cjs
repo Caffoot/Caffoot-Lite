@@ -10,7 +10,7 @@ const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'caffoot-next-ui-'));
 const address='https://127.0.0.1:8080';
 const password='Test-Administrator-Password-2026!';
 const logfile=path.join(tmp,'backend.log');
-let server,browser;
+let server,browser,publishedServer;
 const temporaryAssetLink=path.join(root,'assets');
 const linkCreated=!fs.existsSync(temporaryAssetLink);
 if(linkCreated)fs.symlinkSync(path.join(root,'..','assets'),temporaryAssetLink,'dir');
@@ -37,6 +37,7 @@ async function persisted(page,test,label){
   throw Error(label+' not saved centrally; toast: '+await page.locator('#toast-message').textContent());
 }
 async function modal(page,name){
+  await page.locator('#app[aria-busy="false"]').waitFor();
   await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
   await page.evaluate(name=>{
     if(typeof window[name]!=='function')throw Error('Missing published modal '+name);
@@ -88,9 +89,10 @@ async function run(){
   assert.ok(await page.getByRole('heading',{name:'Create Your Administrator'}).isVisible(),
     'Approved first-run welcome must explain the administrator step');
   await page.locator('#get-started').click();
-  await page.waitForFunction(()=>document.querySelector('#intro')?.textContent.includes('Create the first administrator'));
+  await page.waitForFunction(()=>document.querySelector('#auth-heading')?.textContent==='Create Your Administrator');
   await page.locator('#username').fill('owner');
   await page.locator('#password').fill(password);
+  await page.locator('#confirm-password').fill(password);
   await page.locator('#submit').click();
   await page.locator('#enrolment:not([hidden])').waitFor();
   const secret=(await page.locator('#secret').textContent()).trim();
@@ -101,6 +103,8 @@ async function run(){
   });
   await page.locator('#code').fill(mfaCode(secret));
   await page.locator('#submit').click();
+  await page.locator('#setup-complete:not([hidden])').waitFor();
+  await page.locator('#setup-continue-sign-in').click();
   await page.getByText('MFA enrolled. Sign in to continue.').waitFor();
   assert.ok(await page.locator('#code-field').evaluate(el=>el.hidden),'Authenticator code should be hidden before sign-in');
   await page.locator('#submit').click();
@@ -109,8 +113,8 @@ async function run(){
   await page.waitForURL('**/inventory');
   assert.equal(await page.locator('script[src*="cdn.tailwindcss.com"]').count(),0,
     'Inventory must not load remote Tailwind JavaScript');
-  assert.equal(await page.locator('link[href="/assets/tailwind.css"]').count(),1,
-    'Inventory must load the local Tailwind stylesheet');
+  assert.equal(await page.locator('link[href="/interface/styles/utilities.css"]').count(),1,
+    'Inventory must load local utilities without replacing the approved element defaults');
   const staticCSS=await page.request.get(address+'/assets/tailwind.css');
   assert.equal(staticCSS.status(),200,'Static stylesheet must be served by the backend');
   assert.match(staticCSS.headers()['content-type']||'',/text\/css/);
@@ -259,7 +263,7 @@ async function run(){
   // Verify the approved computed typeface with the locally served Tailwind preflight.
   assert.ok((await page.locator('html').evaluate(el=>getComputedStyle(el).fontFamily)).includes('Inter'),
     'Inventory, Users, Settings and My account must inherit Inter typography');
-  await page.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='Dashboard Overview');
+  await page.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='Dashboard');
   for(const selector of ['#sidebar','#page-title','#main-content']){
     assert.ok((await page.locator(selector).evaluate(el=>getComputedStyle(el).fontFamily)).includes('Inter'),
       'Branded inventory typography should apply to '+selector);
@@ -416,7 +420,7 @@ async function run(){
   assert.equal(await page.locator('#next-account-password-form').count(),0,
     'User Management must not contain personal account settings');
   await page.locator('#app .header-account').click();
-  assert.equal(await page.locator('#page-title').textContent(),'My account');
+  assert.equal(await page.locator('#page-title').textContent(),'My Account');
   await page.locator('#personal-details-form').waitFor();
   assert.ok(await page.getByRole('heading',{name:'Personal Details'}).isVisible(),
     'Approved My Account Overview must contain personal details');
@@ -432,13 +436,19 @@ async function run(){
   assert.ok(await page.getByText('Security At A Glance',{exact:true}).isVisible());
   await page.locator('[data-action="select-account-section"][data-section="help"]').first().click();
   await page.locator('.approved-account .expander').first().waitFor();
-  assert.equal(await page.locator('.approved-account .expander').count(),5,
-    'Approved Help & Guides must keep its five expandable topics');
+  assert.equal(await page.locator('.approved-account .expander').count(),6,
+    'Help & Guides must preserve all six published help topics');
+  assert.equal(await page.locator('.approved-account .expander a').count(),8,
+    'All eight published guide links must remain available');
   const fullGuides=page.locator('.approved-account a[href*="Features%20and%20Instructions"]');
   assert.ok(await fullGuides.count()>0,'Approved full user documentation link must remain');
   await page.locator('[data-action="select-account-section"][data-section="about"]').first().click();
   assert.ok(await page.getByText('Published Release',{exact:true}).isVisible());
   assert.ok(await page.getByText('v2.0.3',{exact:true}).isVisible());
+  await page.locator('.approved-account [data-action="caffoot-licences"]').click();
+  await page.locator('#modal-content').getByRole('heading',{name:'Software Licences'}).waitFor();
+  assert.ok((await page.locator('#modal-content').textContent()).includes('MIT License'));
+  await page.locator('#modal-content [data-action="close-modal"]').first().click();
   await page.locator('[data-action="select-account-section"][data-section="overview"]').first().click();
   await page.locator('#personal-details-form').waitFor();
   assert.equal(await page.locator('#personal-details-form input[name="firstName"]').count(),1);
@@ -454,6 +464,21 @@ async function run(){
   assert.equal(await page.locator('#profile-username').inputValue(),'owner',
     'Saving personal details must not alter the sign-in username');
   assert.equal(await page.locator('#personal-details-form input[name="email"]').inputValue(),'owner@example.test');
+  await page.locator('.email-verification summary').click();
+  await page.locator('#account-email-verification-form input[name="password"]').fill(password);
+  const verificationRequest=page.waitForResponse(response=>response.url().endsWith('/api/account/email/request'));
+  await page.locator('#request-email-verification').click();
+  assert.equal((await verificationRequest).status(),200);
+  assert.ok((await page.locator('#email-verification-message').textContent()).includes('contact your Caffoot Lite administrator'));
+  const lightCard=await page.locator('.personal-card').evaluate(el=>getComputedStyle(el).backgroundColor);
+  await page.locator('.appearance-buttons [data-theme="dark"]').click();
+  assert.ok(await page.locator('html').evaluate(el=>el.classList.contains('dark')));
+  assert.notEqual(await page.locator('.personal-card').evaluate(el=>getComputedStyle(el).backgroundColor),lightCard);
+  await page.emulateMedia({colorScheme:'dark'});
+  await page.locator('.appearance-buttons [data-theme="system"]').click();
+  assert.ok(await page.locator('html').evaluate(el=>el.classList.contains('dark')));
+  await page.locator('.appearance-buttons [data-theme="light"]').click();
+  await page.emulateMedia({colorScheme:'light'});
   const accountPhoto=Buffer.from(
     'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+j5l8AAAAASUVORK5CYII=',
     'base64'
@@ -809,7 +834,7 @@ async function run(){
   assert.ok(selected,'Subnet cascade failed to show published network');
   await page.locator('#dev-subnet').selectOption(selected.id);
   await page.locator('#dev-ip').fill('10.64.20.10');
-  await page.locator('form[data-device-form="true"] button[type="submit"]').click();
+  await page.locator('button[type="submit"][form="device-editor-form"]').click();
   const saved=await persisted(page,s=>s.devices.some(d=>d.name==='browser-device'),'Device');
   const device=saved.devices.find(d=>d.name==='browser-device');
   assert.equal(saved.ipAllocations['10.64.20.10'].deviceId,device.id);
@@ -1121,7 +1146,7 @@ async function run(){
   await page.locator('#dev-vlan').selectOption('17');
   await page.locator('#dev-subnet').selectOption(subnetId);
   await page.locator('#dev-ip').fill('10.64.20.11');
-  await page.locator('form[data-device-form="true"] button[type="submit"]').click();
+  await page.locator('button[type="submit"][form="device-editor-form"]').click();
   const switchState=await persisted(page,s=>s.devices.some(d=>d.name==='rack-switch' &&
     d.rackId===rackId && Number(d.rackUStart)===5),'Rack-mounted device creation');
   const rackSwitch=switchState.devices.find(d=>d.name==='rack-switch');
@@ -1223,6 +1248,41 @@ async function run(){
   assert.equal(await rackElevationFaces.locator('[data-action="rack-face-front"]').getAttribute('aria-pressed'),'true');
   await page.locator('.rack-elevation [data-rack-device="'+rackSwitch.id+'"]').waitFor();
   assert.ok(await page.locator('[aria-label="Side orientation as viewed from front face"]').isVisible());
+  // Dispatch real HTML5 drag events through the mounted DOM and verify central saves.
+  async function dragRackItem(sourceSelector,targetSelector,vertical=false){
+    await page.evaluate(({sourceSelector,targetSelector,vertical})=>{
+      const source=document.querySelector(sourceSelector),target=document.querySelector(targetSelector);
+      if(!source||!target||!source.draggable)throw Error('Rack drag surface is unavailable');
+      const transfer=new DataTransfer(),start=source.getBoundingClientRect(),end=target.getBoundingClientRect();
+      const point={clientX:end.x+end.width/2,clientY:vertical?end.bottom-end.height*2.5/42:end.y+end.height/2};
+      source.dispatchEvent(new DragEvent('dragstart',{bubbles:true,dataTransfer:transfer,clientX:start.x+start.width/2,clientY:start.y+start.height/2}));
+      target.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer:transfer,...point}));
+      target.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer:transfer,...point}));
+      source.dispatchEvent(new DragEvent('dragend',{bubbles:true,dataTransfer:transfer,...point}));
+    },{sourceSelector,targetSelector,vertical});
+  }
+  const draggedDevice='[data-rack-device="'+rackSwitch.id+'"]';
+  await dragRackItem(draggedDevice,'[data-rack-drop-u="10"]');
+  await persisted(page,s=>Number(s.devices.find(d=>d.id===rackSwitch.id).rackUStart)===10,'Device drag to U10');
+  await page.waitForSelector(draggedDevice+'[data-rack-drop-u="10"]');
+  await dragRackItem(draggedDevice,'[data-rack-drop-u="3"]');
+  assert.equal(Number((await state(page)).devices.find(d=>d.id===rackSwitch.id).rackUStart),10,
+    'A drag onto an occupied rack position must not change persisted placement');
+  await dragRackItem(draggedDevice,'[data-rack-drop-u="6"]');
+  await persisted(page,s=>Number(s.devices.find(d=>d.id===rackSwitch.id).rackUStart)===6,'Device drag back to U6');
+  const draggedPatch='[data-rack-accessory="'+savedPatch.id+'"]';
+  await dragRackItem(draggedPatch,'[data-rack-drop-u="4"]');
+  await persisted(page,s=>Number(s.rackAccessories.find(a=>a.id===savedPatch.id).startU)===4,'Horizontal accessory drag');
+  await page.waitForSelector(draggedPatch+'[data-rack-drop-u="4"]');
+  await dragRackItem(draggedPatch,'[data-rack-drop-u="3"]');
+  await persisted(page,s=>Number(s.rackAccessories.find(a=>a.id===savedPatch.id).startU)===3,'Horizontal accessory drag back');
+  const verticalAccessory=(await state(page)).rackAccessories.find(a=>a.name==='Browser Vertical PDU');
+  await dragRackItem('[data-vertical-accessory="'+verticalAccessory.id+'"]','.vertical-rack-accessory-rail[data-side="right"]',true);
+  await persisted(page,s=>s.rackAccessories.find(a=>a.id===verticalAccessory.id).side==='right','Vertical accessory drag to right rail');
+  await dragRackItem('[data-vertical-accessory="'+verticalAccessory.id+'"]','.vertical-rack-accessory-rail[data-side="left"]',true);
+  await persisted(page,s=>s.rackAccessories.find(a=>a.id===verticalAccessory.id).side==='left','Vertical accessory drag back to left rail');
+  console.log('Rack device, horizontal accessory and L/R 0U HTML5 drag handlers, collision rejection and SQLite saves passed');
+
   // Exercise the real print action, capturing its HTML without invoking the system print dialog.
   await page.evaluate(()=>{
     window.__rackPrintMarkup='';
@@ -1287,7 +1347,7 @@ async function run(){
     'Source Software & Firmware cards must use the approved order');
   assert.ok(await softwareGrid.getByRole('heading',{name:'Operating System / Platform'}).isVisible(),
     'Operating System source card heading must be visible');
-  assert.equal(await softwareGrid.getByRole('heading',{name:'Virtualisation / Hypervisor'}).count(),1,
+  assert.equal(await softwareGrid.getByRole('heading',{name:'Virtualisation / Hypervisor',includeHidden:true}).count(),1,
     'Physical hypervisor card must retain approved source heading');
   const platformGrid=softwareGrid.locator('#software-platform > .device-review-form-grid');
   for(const id of ['platform-select','platform-name','version-select','platform-version','device-form-windows-licence']){
@@ -1467,7 +1527,7 @@ async function run(){
   await page.locator('#dev-vlan').selectOption('17');
   await page.locator('#dev-subnet').selectOption(subnetId);
   await page.locator('#dev-ip').fill('10.64.20.12');
-  await page.locator('form[data-device-form="true"] button[type="submit"]').click();
+  await page.locator('button[type="submit"][form="device-editor-form"]').click();
   const hostState=await persisted(page,s=>s.devices.some(d=>d.name==='browser-hypervisor' &&
     d.typeDetails?.serverService_Hypervisor===true),'Physical hypervisor');
   const hypervisor=hostState.devices.find(d=>d.name==='browser-hypervisor');
@@ -1516,7 +1576,7 @@ async function run(){
   await page.locator('#dev-vlan').selectOption('17');
   await page.locator('#dev-subnet').selectOption(subnetId);
   await page.locator('#dev-ip').fill('10.64.20.13');
-  await page.locator('form[data-device-form="true"] button[type="submit"]').click();
+  await page.locator('button[type="submit"][form="device-editor-form"]').click();
   const vmState=await persisted(page,s=>s.devices.some(d=>d.name==='browser-vm' &&
     d.virtualHostId===hypervisor.id),'Hosted virtual machine');
   const vm=vmState.devices.find(d=>d.name==='browser-vm');
@@ -1819,7 +1879,7 @@ async function run(){
   await editor.locator('#code').fill(mfaCode(editorSecret));
   await editor.waitForURL('**/inventory');
   await editor.locator('#app .header-account').waitFor();
-  await editor.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='Dashboard Overview');
+  await editor.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='Dashboard');
   assert.equal(await editor.locator('#next-dashboard-mfa-notice').count(),0,
     'Enrolled editors must not see MFA setup guidance');
   await editor.evaluate(()=>{appState.devices.push({...appState.devices[0]});renderContent();});
@@ -1833,7 +1893,7 @@ async function run(){
   await editor.locator('#personal-details-form').waitFor();
   await editor.locator('[data-action="select-account-section"][data-section="security"]').first().click();
   await editor.locator('#next-account-password-form').waitFor();
-  assert.equal(await editor.locator('#page-title').textContent(),'My account');
+  assert.equal(await editor.locator('#page-title').textContent(),'My Account');
   await editor.locator('[data-action="tab-devices"]').click();
   assert.ok((await state(editor)).devices.some(d=>d.id===device.id),
     'Second authenticated browser must see the shared device');
@@ -1935,7 +1995,7 @@ async function run(){
   await viewer.waitForURL('**/inventory');
   await viewer.locator('#next-dashboard-mfa-notice').waitFor();
   await viewer.locator('#next-dashboard-mfa-notice [data-action="select-account-section"]').click();
-  assert.equal(await viewer.locator('#page-title').textContent(),'My account');
+  assert.equal(await viewer.locator('#page-title').textContent(),'My Account');
   await viewer.locator('#next-account-mfa-start').waitFor();
   await viewer.locator('#sidebar [data-action="tab-dashboard"]').click();
   await viewer.locator('#next-dashboard-mfa-notice').waitFor();
@@ -1992,7 +2052,12 @@ async function run(){
   const publishedFile=path.join(tmp,'caffoot-lite-v1.3.3.html');
   fs.writeFileSync(publishedFile,v133Source.stdout);
   const published=await context.newPage();
-  await published.goto('file://'+publishedFile);
+  publishedServer=require('node:http').createServer((request,response)=>{
+    response.writeHead(200,{'Content-Type':'text/html; charset=utf-8'});
+    response.end(v133Source.stdout);
+  });
+  await new Promise(resolve=>publishedServer.listen(0,'127.0.0.1',resolve));
+  await published.goto('http://127.0.0.1:'+publishedServer.address().port+'/');
   const v133={
     subnets:[{id:'legacy-subnet',name:'Office',cidr:'10.0.0.0/24',
               gateway:'10.0.0.1',vlan:20}],
@@ -2057,14 +2122,14 @@ async function run(){
 }
 run().then(async()=>{
   console.log('PASS: Caffoot Lite focused Chromium compatibility');
-  await browser?.close();server?.kill('SIGTERM');
+  await browser?.close();server?.kill('SIGTERM');publishedServer?.close();
   fs.rmSync(tmp,{recursive:true,force:true});
   if(linkCreated)fs.rmSync(temporaryAssetLink);
 }).catch(async e=>{
   console.error('FAIL: '+(e.stack||e));
   if(fs.existsSync(logfile))console.error('Server log:\n'+fs.readFileSync(logfile,'utf8').slice(-13000));
   await browser?.close().catch(()=>{});
-  server?.kill('SIGTERM');
+  server?.kill('SIGTERM');publishedServer?.close();
   if(linkCreated)fs.rmSync(temporaryAssetLink,{force:true});
   process.exitCode=1;
 });

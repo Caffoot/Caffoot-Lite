@@ -28,3 +28,8 @@ caffoot-test-*.json
 *.bak
 *.tmp
 
+
+# Python caches and local verification artifacts
+__pycache__/
+*.py[cod]
+work/

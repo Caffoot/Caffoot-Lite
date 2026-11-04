@@ -13,8 +13,10 @@ For the full source-pinned list of named functions, line locations and clearly q
 | [`backend/server.py`](../../backend/server.py) | `Handler.do_GET`, `Handler.do_POST`, `Handler.handle_import`, `main` | HTTPS entry point and request routing |
 | [`backend/schema.py`](../../backend/schema.py) | `SCHEMA_VERSION`, `initialise_database` | SQLite definitions and migrations |
 | [`backend/inventory.py`](../../backend/inventory.py) | `reconstruct_inventory`, `stage_inventory`, `inspect_export` | Source-shaped inventory, import storage, export format |
-| [`inventory.html`](../../inventory.html) | `renderDevicesHTML`, `renderRackHubV13`, `refreshCentralInventory`, `postInventory`, `applyAllowedControls` | Familiar inventory UI and server integration |
-| [`setup.html`](../../setup.html) | `/api/setup`, `/api/login` | Account setup and sign-in |
+| [`interface/application.js`](../../interface/application.js) | `renderDevicesHTML`, `renderRackHubV13`, `refreshCentralInventory`, `postInventory`, `applyAllowedControls` | Inventory calculations, actions and server integration; HTML lives in `interface/screens/` |
+| [`interface/sign-in.js`](../../interface/sign-in.js) and [`setup.html`](../../setup.html) | `/api/setup`, `/api/login` | Account setup and sign-in |
+
+See [Modular Interface](Modular-Interface.md) for the Issue #282 presentation modules, pinned sources and private acceptance boundaries.
 
 ## Inventory writers and validators
 
@@ -41,6 +43,8 @@ For the full source-pinned list of named functions, line locations and clearly q
 | [`request_auth.py`](../../backend/request_auth.py) | `authorised_mutation`, `authorised_inventory_import` |
 | [`permissions.py`](../../backend/permissions.py) | `can_access`, `set_permission`, `can_replace_inventory` |
 | [`account_security.py`](../../backend/account_security.py) | `change_own_password`, `begin_mfa_enrolment` |
+| [`account_email.py`](../../backend/account_email.py) | `issue_email_proof`, `confirm_email_proof`, `notify_security_change` |
+| [`recover_admin.py`](../../backend/recover_admin.py) | `recover_sole_administrator` (local host command only) |
 | [`http_security.py`](../../backend/http_security.py) | `session_cookie`, `require_same_origin` |
 | [`tls.py`](../../backend/tls.py) | `ensure_certificate` |
 

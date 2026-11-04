@@ -1,0 +1,35 @@
+<!-- interface-template:device-inventory/page --><section class="{{slot:29}} space-y-4" data-device-panel="inventory">
+<div class="device-toolbar">
+<div class="device-toolbar-head"><div><h2>Search &amp; Filter Devices</h2><p>Find devices using the same inventory fields as v2.0.1.</p></div><button class="btn btn-outline" data-action="clear-device-filters" type="button">Clear Filters</button></div>
+<div><label class="device-search-label" for="device-search">Search Devices</label><div class="device-search-wrap"><svg aria-hidden="true" fill="none" height="17" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24" width="17"><use href="#i-box"></use></svg><input autocomplete="off" class="device-search" id="device-search" value="{{slot:30}}" placeholder="Search by name, IP, model, serial number or location" type="search"/></div></div>
+<div class="device-filters">
+<label class="device-filter">Network Assignment<select id="device-assignment-filter">
+                                    <option value="" {{slot:31}}>All Devices</option>
+                                    <option value="assigned" {{slot:32}}>Assigned</option>
+                                    <option value="unassigned" {{slot:33}}>Unassigned</option>
+                                </select></label>
+<label class="device-filter">Device Type<select id="device-type-filter">
+                                    <option value="">All types</option>
+                                    {{slot:34}}
+                                </select></label>
+<label class="device-filter">Device Status<select id="device-status-filter">
+                                    <option value="">All statuses</option>
+                                    {{slot:35}}
+                                </select></label>
+<label class="device-filter">Location<select id="device-location-filter">
+                                    <option value="">All locations</option>
+                                    {{slot:36}}
+                                </select></label>
+<label class="device-filter">Mounting<select id="device-mount-filter">
+                                    <option value="">All devices</option><option value="racked" {{slot:37}}>Rack mounted</option><option value="unracked" {{slot:38}}>Not in rack</option>
+                                </select></label>
+</div></div>
+<div class="linked-filter-context" {{slot:39}} role="status"><div><strong>Filtered from Device Intelligence</strong><span>{{slot:40}}</span></div></div>
+<div class="device-results-head"><div><h2>Device Inventory</h2><p aria-live="polite" id="device-result-count">Showing {{slot:41}} of {{slot:42}} devices</p></div><div class="result-actions"><label class="device-filter" for="device-sort">Sort by <select id="device-sort" style="display:inline-block;width:auto;margin:0 0 0 9px;min-width:130px">
+                                    {{slot:43}}
+                                </select></label></div></div>
+<div class="device-table-card"><div class="device-table-scroll"><table class="device-table"><thead><tr><th>Name</th><th>Type</th><th>Location Area</th><th>Primary IP</th><th>Status</th><th>Hardware</th><th style="text-align:right">Actions</th></tr></thead><tbody>
+                                {{slot:44}}
+                                {{slot:45}}
+                            </tbody></table></div></div>
+</section><!-- /interface-template -->

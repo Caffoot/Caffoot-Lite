@@ -209,3 +209,32 @@ def send_test_email(path, recipient):
             smtp.login(config["username"], config["password"])
         smtp.send_message(mail)
     return {"status": "sent"}
+
+
+def send_account_email(path, recipient, subject, body):
+    """Deliver an approved account message without exposing SMTP errors to users."""
+    recipient = _validate_address(recipient, "recipient address")
+    with SMTP_LOCK:
+        config = _read_private(path)
+    if config is None:
+        return False
+    mail = EmailMessage()
+    mail["Subject"] = subject
+    mail["From"] = formataddr((config["fromName"], config["fromEmail"]))
+    mail["To"] = recipient
+    mail.set_content(body)
+    context = ssl.create_default_context()
+    if config["security"] == "ssl":
+        smtp = smtplib.SMTP_SSL(config["host"], config["port"],
+                               timeout=MAIL_TIMEOUT_SECONDS, context=context)
+    else:
+        smtp = smtplib.SMTP(config["host"], config["port"], timeout=MAIL_TIMEOUT_SECONDS)
+    with smtp:
+        smtp.ehlo()
+        if config["security"] == "starttls":
+            smtp.starttls(context=context)
+            smtp.ehlo()
+        if config["authenticate"]:
+            smtp.login(config["username"], config["password"])
+        smtp.send_message(mail)
+    return True
