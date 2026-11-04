@@ -8409,7 +8409,7 @@ function openIpModal(ip) {
             panels.get('general').appendChild(generalGrid);
             generalGrid.append(sections[0], sections[2]);
             sections[0].classList.add('full');
-            sections[2].classList.add('full');
+            sections[2].classList.add('full', 'device-physical-mounting');
             // The approved Batch 04 VM configuration is a separate General card.
             // Relocate existing inputs, preserving saved values and event handlers.
             const virtualFields = sections[0].querySelector('#virtual-fields');
@@ -8555,6 +8555,12 @@ function openIpModal(ip) {
             const hardwareSubtitle = document.createElement('p');
             hardwareSubtitle.textContent = 'Physical devices only. This entire tab is hidden for virtual machines.';
             hardwareHeading?.replaceWith(hardwareTitle, hardwareSubtitle);
+            const notesHeading = sections[4].querySelector(':scope > .form-section-heading');
+            if (notesHeading) {
+                const title = document.createElement('h3');
+                title.innerHTML = '<span class="mini-icon" aria-hidden="true">▣</span>Notes / Details';
+                notesHeading.replaceWith(title);
+            }
             panels.get('notes').dataset.notesPanel = 'true';
             initialiseNotesEditor(form);
             const softwareGrid = document.createElement('div');
