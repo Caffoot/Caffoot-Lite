@@ -5,6 +5,7 @@ Profile photographs are private user data, never static/public assets.
 """
 import re
 import struct
+from backend.audit_events import record_actor_event
 
 MAX_PHOTO_BYTES = 5 * 1024 * 1024
 FIELD_LIMITS = {"firstName": 100, "lastName": 100, "displayName": 120, "email": 254}
@@ -67,12 +68,21 @@ def save_profile(connection, actor_id, details, target_id=None):
     values = _validate_details(details)
     connection.execute("BEGIN IMMEDIATE")
     try:
-        _authorise(connection, actor_id, target_id)
+        username = _authorise(connection, actor_id, target_id)
         before = connection.execute(
-            "SELECT email FROM account_profiles WHERE account_id=?",
+            "SELECT first_name,last_name,display_name,email "
+            "FROM account_profiles WHERE account_id=?",
             (target_id,),
         ).fetchone()
-        changed_email = before is None or before[0] != values["email"]
+        previous = before or ("", "", "", "")
+        changed = [
+            label for label, prior, current in zip(
+                ("First Name", "Last Name", "Display Name", "Email Address"),
+                previous,
+                (values["firstName"], values["lastName"],
+                 values["displayName"], values["email"]),
+            ) if prior != current
+        ]
         connection.execute(
             "INSERT INTO account_profiles(account_id,first_name,last_name,"
             "display_name,email,email_verified) VALUES(?,?,?,?,?,0) "
@@ -84,6 +94,12 @@ def save_profile(connection, actor_id, details, target_id=None):
             (target_id, values["firstName"], values["lastName"],
              values["displayName"], values["email"]),
         )
+        if changed:
+            record_actor_event(
+                connection, actor_id, kind="Account", action="Updated",
+                label=username, reason="Personal details updated",
+                fields=changed,
+            )
         connection.commit()
     except BaseException:
         connection.rollback()
@@ -165,12 +181,17 @@ def save_profile_photo(connection, actor_id, mime, data, target_id=None):
         raise ValueError("Invalid profile image or image dimensions")
     connection.execute("BEGIN IMMEDIATE")
     try:
-        _authorise(connection, actor_id, target_id)
+        username = _authorise(connection, actor_id, target_id)
         connection.execute(
             "INSERT INTO account_profiles(account_id,photo_mime,photo_data) "
             "VALUES(?,?,?) ON CONFLICT(account_id) DO UPDATE SET "
             "photo_mime=excluded.photo_mime,photo_data=excluded.photo_data",
             (target_id, mime, data),
+        )
+        record_actor_event(
+            connection, actor_id, kind="Account", action="Updated",
+            label=username, reason="Profile image changed",
+            fields=["Profile Image"],
         )
         connection.commit()
     except BaseException:
@@ -191,12 +212,22 @@ def remove_profile_photo(connection, actor_id, target_id=None):
     target_id = actor_id if target_id is None else target_id
     connection.execute("BEGIN IMMEDIATE")
     try:
-        _authorise(connection, actor_id, target_id)
+        username = _authorise(connection, actor_id, target_id)
+        had_photo = connection.execute(
+            "SELECT photo_mime FROM account_profiles WHERE account_id=?",
+            (target_id,),
+        ).fetchone()
         connection.execute(
             "UPDATE account_profiles SET photo_mime=NULL,photo_data=NULL "
             "WHERE account_id=?",
             (target_id,),
         )
+        if had_photo and had_photo[0]:
+            record_actor_event(
+                connection, actor_id, kind="Account", action="Updated",
+                label=username, reason="Profile image removed",
+                fields=["Profile Image"],
+            )
         connection.commit()
     except BaseException:
         connection.rollback()
