@@ -1,5 +1,6 @@
 """Reserved device record saves against the authoritative SQLite inventory."""
 import json
+from .audit_events import attribute_event
 import time
 from datetime import datetime, timezone
 
@@ -215,7 +216,7 @@ def save_reserved_device(connection, account_id, device_id, revision, record, se
                      "omitted": max(0, len(changes) - 60)}
             connection.execute(
                 "INSERT INTO inventory_change_history(record_json) VALUES(?)",
-                (json.dumps(event, ensure_ascii=False),),
+                (json.dumps(attribute_event(connection, account_id, event), ensure_ascii=False),),
             )
 
         connection.execute("DELETE FROM device_edit_reservations WHERE device_id=?", (device_id,))
@@ -289,7 +290,7 @@ def create_device(connection, account_id, record):
                  "reason": "Inventory saved", "changes": changes, "omitted": 0}
         connection.execute(
             "INSERT INTO inventory_change_history(record_json) VALUES(?)",
-            (json.dumps(event, ensure_ascii=False),),
+            (json.dumps(attribute_event(connection, account_id, event), ensure_ascii=False),),
         )
 
         connection.commit()
@@ -370,7 +371,7 @@ def delete_reserved_device(connection, account_id, device_id, revision, related_
                  "reason": "Inventory saved", "changes": changes, "omitted": 0}
         connection.execute(
             "INSERT INTO inventory_change_history(record_json) VALUES(?)",
-            (json.dumps(event, ensure_ascii=False),),
+            (json.dumps(attribute_event(connection, account_id, event), ensure_ascii=False),),
         )
 
         connection.execute("DELETE FROM device_edit_reservations WHERE device_id=?", (device_id,))
