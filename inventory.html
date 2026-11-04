@@ -4644,12 +4644,12 @@ function hierarchyValidateTypes(subnets) {
                                     const locText = isUnknownLocation ? 'Unknown' : d.location;
                                     return `
                                         <tr>
-                                            <td><button type="button" data-action="view-device" data-id="${escapeHtml(d.id)}" class="device-name" title="View device details">${escapeHtml(d.name)}</button>${d.serialNumber ? `<span class="block text-xs font-normal text-slate-500 dark:text-slate-400 sm:hidden">${escapeHtml(d.serialNumber)}</span>` : ''}</td>
+                                            <td><button type="button" data-action="view-device" data-id="${escapeHtml(d.id)}" class="device-name" title="View device details">${escapeHtml(d.name)}</button><div class="device-detail">${escapeHtml(d.serialNumber ? 'S/N '+d.serialNumber : rack ? rack.name+' · '+(d.face||'front') : d.mountType || 'Not in rack')}</div></td>
                                             <td><span class="device-chip ${d.type==='Server - Virtual'?'vm':''}">${escapeHtml(d.type==='Server - Physical' ? 'Server' : d.type==='Server - Virtual' ? 'Virtual Machine' : d.type)}</span></td>
-                                            <td>${escapeHtml(locText)}${locationNeedsAttention ? ' <span class="text-[10px] font-semibold uppercase">(needs attention)</span>' : ''}</td>
+                                            <td>${escapeHtml(locText)}${locationNeedsAttention ? '<div class="device-detail" style="color:#b26449">Needs attention</div>' : ''}</td>
                                             <td><span class="device-ip">${escapeHtml(d.primaryIp || 'None')}</span></td>
                                             <td><span class="device-status ${d.status === 'Retired' ? 'retired' : d.status === 'Maintenance' ? 'maintenance' : ''}">${escapeHtml(d.status || 'Active')}</span></td>
-                                            <td><span class="font-semibold">${escapeHtml([d.manufacturer,d.model].filter(Boolean).join(' ') || '—')}</span>${d.serialNumber ? `<span class="block text-slate-600 dark:text-slate-300">S/N ${escapeHtml(d.serialNumber)}</span>` : ''}</td>
+                                            <td>${escapeHtml([d.manufacturer,d.model].filter(Boolean).join(' ') || '—')}</td>
                                             <td>
                                                 <div class="device-actions">
                                                     <button type="button" data-action="view-device" data-id="${escapeHtml(d.id)}" class="device-action-details"><i class="fa-solid fa-eye mr-1" aria-hidden="true"></i>Details</button>
@@ -4659,7 +4659,7 @@ function hierarchyValidateTypes(subnets) {
                                         </tr>
                                     `;
                                 }).join('')}
-                                ${getVisibleDevices().length === 0 ? `<tr><td colspan="7" class="px-4 py-12 text-center"><div class="device-filter-empty-state"><i class="fa-solid ${appState.devices.length?'fa-magnifying-glass':'fa-server'}" aria-hidden="true"></i><strong>${appState.devices.length?'No matching devices':'Your inventory is empty'}</strong><p>${appState.devices.length?'Try another search or remove your filters.':'Add your first device to get started.'}</p><button type="button" data-action="${appState.devices.length?'clear-device-filters':'open-device-modal'}">${appState.devices.length?'Clear search and filters':'Add Device'}</button></div></td></tr>` : ''}
+                                ${getVisibleDevices().length === 0 ? `<tr><td colspan="7" class="device-empty"><div ><strong>${appState.devices.length?'No matching devices':'Your inventory is empty'}</strong><p>${appState.devices.length?'Try another search or remove your filters.':'Add your first device to get started.'}</p><button type="button" data-action="${appState.devices.length?'clear-device-filters':'open-device-modal'}">${appState.devices.length?'Clear search and filters':'Add Device'}</button></div></td></tr>` : ''}
                             </tbody></table></div></div>
 </section>
                     <section class="${['types','locations'].includes(activeDeviceDetailsTab)?'':'hidden'} space-y-5" data-device-panel="manage">
