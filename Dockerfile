@@ -12,7 +12,7 @@ COPY backend/ ./backend/
 COPY setup.html ./setup.html
 # Published inventory interface and its existing branding assets.
 COPY inventory.html ./inventory.html
-COPY assets/favicon.ico assets/apple-touch-icon.png assets/caffoot-icon-1024.png assets/qrcode.min.js assets/tailwind.css ./assets/
+COPY assets/favicon.ico assets/apple-touch-icon.png assets/caffoot-icon-1024.png assets/caffoot-logo-256.png assets/qrcode.min.js assets/tailwind.css ./assets/
 RUN mkdir -p /data && chown -R 10001:10001 /data /opt/caffoot
 USER 10001:10001
 EXPOSE 8080
