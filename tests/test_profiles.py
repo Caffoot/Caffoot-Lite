@@ -83,7 +83,7 @@ class ProfileTests(unittest.TestCase):
             {"firstName": "A"},
             self.details(email="bad address"),
             self.details(display="A" * 121),
-            dict(self.details(), firstName="bad\\nname"),
+            dict(self.details(), firstName="bad\nname"),
         ):
             with self.assertRaises(ValueError):
                 save_profile(self.db, 2, invalid)
