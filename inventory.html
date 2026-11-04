@@ -1127,6 +1127,35 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 }
 .dark #modal-content button.caffoot-modal-cancel:hover { background:#6b2438 !important; }
 </style>
+<style id="approved-html-section-tabs">
+/* In-page hierarchy and tab styles from the accepted HTML Designs. */
+#main-content .approved-page-header{margin-bottom:22px}
+#main-content .approved-page-header .eyebrow{font-size:10px;letter-spacing:.15em;color:#d27931;font-weight:850;margin-bottom:7px}
+#main-content .approved-page-header .header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+#main-content .approved-page-header .header h1{font-size:30px;line-height:1.15;color:#1f3850;margin:0 0 8px;letter-spacing:-1.1px;font-weight:790}
+#main-content .approved-page-header .header p{margin:0;color:#697f94;font-size:13px;line-height:1.6}
+#main-content .approved-page-header .btn-primary{background:#ed8532;color:#fff;border:1px solid #ed8532;border-radius:9px;min-height:42px;padding:10px 16px;font-size:12px;font-weight:750}
+#main-content .approved-page-header .btn-primary:hover{background:#d87327}
+#main-content .approved-page-header .subnav{margin-top:24px;display:flex;gap:22px;border-bottom:1px solid #e1e8ee;overflow-x:auto}
+#main-content .approved-page-header .subnav button{color:#7189a0;background:transparent;border:0;border-bottom:3px solid transparent;font-size:12px;font-weight:700;padding:0 4px 14px;display:inline-flex;gap:8px;align-items:center;white-space:nowrap}
+#main-content .approved-page-header .subnav button.active{color:#27435a;border-bottom-color:#ed8532}
+#main-content .approved-page-header .device-tabs{gap:23px;scrollbar-width:thin}
+#main-content .approved-page-header .device-tabs button{flex:none}
+#main-content .approved-page-header .ipam-tabs{display:flex;gap:24px;overflow-x:auto;border-bottom:1px solid #dfe7ee;margin-top:24px;scrollbar-width:thin}
+#main-content .approved-page-header .ipam-tab{border:0;border-bottom:3px solid transparent;background:transparent;padding:0 5px 15px;color:#748aa0;font-weight:750;font-size:13px;white-space:nowrap}
+#main-content .approved-page-header .ipam-tab[aria-selected="true"]{color:#203e57;border-color:#ed8532}
+#main-content .approved-page-header .racks-tabs{display:flex;gap:26px;margin:25px 0 0;border-bottom:1px solid #e1e9ef;overflow-x:auto;scrollbar-width:thin}
+#main-content .approved-page-header .racks-tab{background:transparent;border:0;border-bottom:3px solid transparent;padding:0 4px 14px;color:#778ca0;font-size:13px;font-weight:750;white-space:nowrap}
+#main-content .approved-page-header .racks-tab[aria-selected="true"]{color:#27445c;border-bottom-color:#ed8532}
+#main-content .approved-page-header .tabs{display:flex;gap:25px;margin-top:27px;border-bottom:1px solid #dfe7ee;overflow-x:auto}
+#main-content .approved-page-header .tab{appearance:none;border:0;border-bottom:3px solid transparent;padding:0 4px 15px;white-space:nowrap;color:#7890a6;font-size:12px;font-weight:700;background:transparent;display:flex;align-items:center;gap:9px}
+#main-content .approved-page-header .tab.active{color:#1e3850;border-bottom-color:#ef8b3a}
+#main-content .approved-page-header button:focus-visible{outline:3px solid #ed8532;outline-offset:2px}
+.dark #main-content .approved-page-header .header h1{color:#f8fafc}
+.dark #main-content .approved-page-header .header p{color:#cbd5e1}
+.dark #main-content .approved-page-header :is(.subnav button.active,.ipam-tab[aria-selected="true"],.racks-tab[aria-selected="true"],.tab.active){color:#f8fafc}
+@media(max-width:640px){#main-content .approved-page-header .header{flex-wrap:wrap}#main-content .approved-page-header .header h1{font-size:25px}}
+</style>
 <style id="approved-html-shared-shell">
 /* Literal sidebar and top-right account styles from approved My Account Draft 06,
    scoped to the working app and wired to real, permission-aware actions. */
@@ -2246,6 +2275,58 @@ function hierarchyValidateTypes(subnets) {
             catch (error) { console.warn('Could not remember browser storage notice:', error); }
             renderContent();
         }
+        // Use the approved in-page tabs rather than resurrecting the old
+        // nested sidebar. All buttons call the existing section handlers.
+        function renderApprovedSectionHeader(section) {
+            const tab = (key, label, action, active, cssClass, extraAttribute = 'data-tab') =>
+                `<button type="button" role="tab" data-action="${action}" ${extraAttribute}="${key}" aria-selected="${active ? 'true' : 'false'}" class="${cssClass}${active ? ' active' : ''}">${label}</button>`;
+            if (section === 'devices') {
+                const options = [
+                    ['overview','Overview'],['inventory','Device Inventory'],
+                    ['types','Device Types'],['locations','Locations'],
+                    ['manufacturers','Manufacturers'],['models','Models'],
+                    ['software','Software'],['services','Server Services']
+                ];
+                return `<div class="approved-page-header">
+                    <div class="eyebrow">INFRASTRUCTURE INVENTORY</div>
+                    <div class="header"><div><h1>Devices</h1><p>Explore the devices, hardware and software recorded in your inventory.</p></div>
+                    <div class="device-header-actions"><button type="button" class="btn btn-primary" data-action="open-device-modal">Add Device</button></div></div>
+                    <nav aria-label="Device Sections" class="subnav device-tabs" role="tablist">
+                        ${options.map(([key,label])=>tab(key,label,'approved-device-section',activeDeviceDetailsTab===key,'')).join('')}
+                    </nav></div>`;
+            }
+            if (section === 'ipam') {
+                const options=[['overview','Overview'],['addresses','IP Addresses'],['manage','Manage Subnets']];
+                return `<div class="approved-page-header">
+                    <div class="eyebrow">NETWORK ADDRESS MANAGEMENT</div>
+                    <div class="header"><div><h1>IP Address Management</h1><p>Explore IP Address Blocks, networks, VLANs and address allocations.</p></div>
+                    <div class="ipam-header-actions"><button type="button" class="btn btn-primary" data-action="open-subnet-modal">+ Add Subnet</button></div></div>
+                    <nav class="ipam-tabs" role="tablist" aria-label="IPAM Sections">
+                    ${options.map(([key,label])=>tab(key,label,'approved-ipam-section',activeIpamTab===key,'ipam-tab','data-view')).join('')}
+                    </nav></div>`;
+            }
+            if (section === 'racks') {
+                const options=[['overview','Overview'],['inventory','Rack Inventory'],['accessories','Rack Accessories']];
+                return `<div class="approved-page-header">
+                    <div class="eyebrow">INFRASTRUCTURE INVENTORY</div>
+                    <div class="header"><div><h1>Network Racks</h1><p>Explore your racks, inspect equipment placement and manage cabinet details.</p></div>
+                    <div class="racks-header-actions"><button type="button" class="btn btn-primary" data-action="open-rack-modal">+ Add Rack</button></div></div>
+                    <nav class="racks-tabs" role="tablist" aria-label="Network Rack sections">
+                    ${options.map(([key,label])=>tab(key,label,'approved-rack-section',v13RackSection===key,'racks-tab','data-section-tab')).join('')}
+                    </nav></div>`;
+            }
+            if (section === 'users') {
+                const options=[['overview','Overview'],['list','User List'],['add','Add User']];
+                return `<div class="approved-page-header">
+                    <div class="eyebrow">ACCOUNT ADMINISTRATION</div>
+                    <div class="header"><div><h1>Users &amp; Permissions</h1><p>Keep every account secure and give colleagues exactly the access they need.</p></div></div>
+                    <nav class="tabs" aria-label="User management sections">
+                    ${options.map(([key,label])=>tab(key,label,'approved-users-section',activeUsersTab===key,'tab')).join('')}
+                    </nav></div>`;
+            }
+            return '';
+        }
+
         function renderContent() {
             const container = document.getElementById('main-content');
             // replace the view once, avoiding an extra DOM teardown.
@@ -2258,6 +2339,9 @@ function hierarchyValidateTypes(subnets) {
             else if (currentTab === 'users') html = nextRenderUsers();
             else if (currentTab === 'account') html = nextRenderAccount();
             else if (currentTab === 'settings') html = renderApplicationSettings();
+            if (['devices','ipam','racks','users'].includes(currentTab)) {
+                html = renderApprovedSectionHeader(currentTab) + '<div class="approved-page-body">' + html + '</div>';
+            }
             container.innerHTML = html;
             const rackScroll = container.querySelector('[data-rack-scroll="true"]');
             if (rackScroll) {
@@ -9157,6 +9241,35 @@ function hierarchyValidateTypes(subnets) {
                     break;
                 }
                 case 'toggle-approved-sidebar': toggleApprovedSidebar(); break;
+                case 'approved-device-section': {
+                    if (['overview','inventory','types','locations','manufacturers','models','software','services'].includes(target.dataset.tab)) {
+                        activeDeviceDetailsTab = target.dataset.tab;
+                        switchTab('devices');
+                    }
+                    break;
+                }
+                case 'approved-ipam-section': {
+                    if (['overview','addresses','manage'].includes(target.dataset.view)) {
+                        activeIpamTab = target.dataset.view;
+                        switchTab('ipam');
+                    }
+                    break;
+                }
+                case 'approved-rack-section': {
+                    if (['overview','inventory','accessories'].includes(target.dataset.sectionTab)) {
+                        v13RackSection = target.dataset.sectionTab;
+                        v13RackDetailOpen = false;
+                        switchTab('racks');
+                    }
+                    break;
+                }
+                case 'approved-users-section': {
+                    if (['overview','list','add'].includes(target.dataset.tab)) {
+                        activeUsersTab = target.dataset.tab;
+                        switchTab('users');
+                    }
+                    break;
+                }
                 case 'tab-dashboard': switchTab('dashboard'); break;
                 case 'tab-devices': switchTab('devices'); break;
 
