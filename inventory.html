@@ -1883,6 +1883,8 @@ html.dark .caffoot-dashboard .db-rack-row:hover{background:#354a60;border-color:
 #modal-content .device-details-dialog #device-details-panel-history>.device-review-panel,
 #modal-content .device-details-dialog #device-details-panel-virtual-machines>.device-review-panel{grid-column:1/-1}
 #modal-content .device-details-dialog .device-review-panel .device-details-notes{white-space:pre-wrap;color:#607b91;font-size:12px}
+#modal-content .device-details-dialog .device-details-related-record{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;padding:12px;border:1px solid #dce6ee;border-radius:10px}
+#modal-content .device-details-dialog .device-details-related-record strong{font-size:13px;color:#24415b;overflow-wrap:anywhere}
 #modal-content .device-details-dialog .device-review-footer.device-details-action-footer{flex-shrink:0;margin:0;display:flex;gap:9px;justify-content:flex-end;background:#fff;border-top:1px solid #e0e8ef;padding:15px 24px}
 #modal-content .device-details-dialog .device-review-footer .btn{min-height:38px;padding:9px 13px;border-radius:9px;font-weight:750;font-size:12px}
 #modal-content .device-details-dialog .device-review-footer .btn-outline{background:#fff;border:1px solid #d5e2eb;color:#38546c}
@@ -7326,7 +7328,7 @@ function openIpModal(ip) {
                 ? `U${uStart}${Number.isFinite(uEnd) && uEnd > uStart ? '–U' + uEnd : ''}` : 'Not assigned';
             const safe = value => escapeHtml(value === undefined || value === null || value === '' ? '—' : String(value));
             const field = (label, value) => `<div class="device-details-field"><dt>${escapeHtml(label)}</dt><dd>${safe(value)}</dd></div>`;
-            const section = (title, icon, body) => `<section class="device-details-section device-review-panel"><h3><span class="mini-icon"><i class="fa-solid ${icon}" aria-hidden="true"></i></span>${escapeHtml(title)}</h3><dl class="device-details-layout-grid device-review-facts">${body}</dl></section>`;
+            const section = (title, icon, body, full=false) => `<section class="device-details-section device-review-panel${full?' full':''}"><h3><span class="mini-icon"><i class="fa-solid ${icon}" aria-hidden="true"></i></span>${escapeHtml(title)}</h3><dl class="device-details-layout-grid device-review-facts">${body}</dl></section>`;
             const status = d.status || 'Active';
             const detailRows = buildDeviceDetailRows(d, field);
             const activeFields = new Set(getDetailFieldsForDeviceType(d.type));
@@ -7355,7 +7357,7 @@ function openIpModal(ip) {
                     ? hostedGuests.map(guest => `<div class="device-details-field"><dt>${safe(guest.name || guest.id)}</dt><dd><div class="flex flex-wrap items-center justify-between gap-2"><span>${safe(guest.type || 'Unknown type')} · ${safe(guest.status || 'Active')}</span><button type="button" data-action="view-hosted-virtual-machine" data-id="${safe(guest.id)}" class="device-primary shrink-0" aria-label="View details for ${safe(guest.name || guest.id)}">View details</button></div></dd></div>`).join('')
                     : '<p class="text-sm text-slate-600 dark:text-slate-300">No hosted virtual machines recorded.</p>')
                 : d.virtualHostId
-                    ? section('Physical host', 'fa-server', field('Host', appState.devices.find(host => host.id === d.virtualHostId)?.name || 'Missing or unavailable host (legacy reference preserved)'))
+                    ? section('Physical Host', 'fa-server', `<div class="device-details-related-record"><strong>${safe(appState.devices.find(host => host.id === d.virtualHostId)?.name || 'Missing or unavailable host (legacy reference preserved)')}</strong>${appState.devices.some(host => host.id === d.virtualHostId) ? `<button type="button" data-action="view-hosted-virtual-machine" data-id="${safe(d.virtualHostId)}" class="btn btn-outline">View Host</button>` : ''}</div>`,true)
                     : '';
             const isVirtualDevice = d.type === 'Server - Virtual';
             const virtualHardware = isVirtualDevice ? section('Allocated virtual hardware', 'fa-microchip',
@@ -7401,7 +7403,8 @@ function openIpModal(ip) {
                         ${serverServices?section('Server Services', 'fa-server',serverServices):''}
                     </div>
                     <div id="device-details-panel-location" role="tabpanel" aria-labelledby="device-details-tab-location" class="device-details-panel device-review-grid" hidden>
-                        ${section('Mounting & Location', 'fa-location-dot', isVirtualDevice ? field('Location Area', d.location) : field('Location Area', d.location) + field('Mounting', d.mountType || (mounted ? 'Rack Mounted' : 'Desktop')) + rackRows)}
+                        ${section('Mounting & Location', 'fa-location-dot', isVirtualDevice ? field('Location Area', d.location) : field('Location Area', d.location) + field('Mounting', d.mountType || (mounted ? 'Rack Mounted' : 'Desktop')) + rackRows, true)}
+                        ${mounted && !isVirtualDevice ? `<section class="device-details-section device-review-panel full"><h3><span class="mini-icon"><i class="fa-solid fa-server" aria-hidden="true"></i></span>Rack Navigation</h3><p>View this device in its existing rack.</p><button type="button" data-action="navigate-to-device-rack" data-id="${safe(d.id)}" class="btn btn-outline">View in Rack</button></section>` : ''}
                     </div>
                     ${historyRows?`<div id="device-details-panel-history" role="tabpanel" aria-labelledby="device-details-tab-history" class="device-details-panel device-review-grid" hidden><section class="device-details-section"><h4>Previous Device Type Details</h4><p class="text-sm mb-3">Preserved for reference only; not part of the active configuration.</p>${historyRows}</section></div>`:''}
                 </div>
