@@ -1278,8 +1278,28 @@ async function run(){
   assert.ok(await approvedEditor.locator('#dev-manufacturer-select').isVisible(),
     'The live manufacturer selector must remain available');
   await approvedEditor.getByRole('tab',{name:'Software & Firmware'}).click();
-  assert.ok(await approvedEditor.locator('#device-form-panel-software .form-section-card').count()>0,
-    'Approved Software & Firmware cards must be present');
+  const softwareGrid=approvedEditor.locator('#device-form-panel-software > .device-review-grid');
+  assert.deepEqual(await softwareGrid.locator(':scope > .device-review-panel').evaluateAll(
+    nodes=>nodes.map(el=>el.id)),
+    ['software-platform','device-form-installed-software-section','host-platform-fields','server-services-section'],
+    'Source Software & Firmware cards must use the approved order');
+  assert.ok(await softwareGrid.getByRole('heading',{name:'Operating System / Platform'}).isVisible(),
+    'Operating System source card heading must be visible');
+  assert.equal(await softwareGrid.getByRole('heading',{name:'Virtualisation / Hypervisor'}).count(),1,
+    'Physical hypervisor card must retain approved source heading');
+  const platformGrid=softwareGrid.locator('#software-platform > .device-review-form-grid');
+  for(const id of ['platform-select','platform-name','version-select','platform-version','device-form-windows-licence']){
+    assert.equal(await platformGrid.locator('#'+id).count(),1,
+      'Source platform card must retain its live field '+id);
+  }
+  assert.equal(await softwareGrid.evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),2,
+    'Approved Software card grid must use desktop columns');
+  await page.setViewportSize({width:420,height:900});
+  assert.equal(await softwareGrid.evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),1,
+    'Approved Software cards must stack on mobile');
+  assert.equal(await platformGrid.evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),1,
+    'Operating System fields must stack on mobile');
+  await page.setViewportSize({width:1440,height:950});
   await approvedEditor.getByRole('tab',{name:'General'}).click();
   await page.setViewportSize({width:420,height:900});
   assert.equal(await page.locator('#modal-container.device-review-overlay').evaluate(el=>getComputedStyle(el).paddingLeft),'0px',
