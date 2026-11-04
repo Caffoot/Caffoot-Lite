@@ -155,10 +155,50 @@ async function run(){
   await page.locator('#main-content [data-action="clear-catalogue-list-search"][data-catalogue="type"]').click();
   assert.equal(await page.locator('#main-content [data-catalog-row="type"]:visible').count(),deviceTypeTotal,
     'Clearing the catalogue search must restore all device types');
+
+  // The pinned Batch 02 Type/Location manager, rename and delete confirmation,
+  // while retaining protected Unknown and the original saved-data actions.
+  await page.locator('#main-content [data-action="open-manage-types"]').click();
+  const typeManager=page.locator('#modal-content .catalog-modal .device-catalogue-manager');
+  await typeManager.waitFor();
+  assert.equal(await page.locator('#catalog-modal-title').textContent(),'Manage Device Types');
+  assert.ok(await typeManager.locator('.catalog-modal-field #device-catalogue-new-entry-input').isVisible(),
+    'Device Type add input must use the original approved catalogue field');
+  assert.ok(await typeManager.locator('.catalog-modal-field #device-catalogue-search-input').isVisible());
+  assert.ok(await typeManager.locator('.catalog-manager-list .catalog-manager-row').count()>0,
+    'Device Type manager must render the original approved list and rows');
+  const protectedType=typeManager.locator('.catalog-manager-row [data-action="rename-device-catalogue-entry"][data-name="Unknown"]');
+  if(await protectedType.count())assert.equal(await protectedType.isDisabled(),true,
+    'Protected Unknown type must not become editable');
+  const renameType=typeManager.locator('.catalog-manager-row [data-action="rename-device-catalogue-entry"]:not([disabled])').first();
+  assert.ok(await renameType.count(),'At least one configured device type must be manageable');
+  const originalTypeName=await renameType.getAttribute('data-name');
+  await renameType.click();
+  assert.equal(await page.locator('#catalog-modal-title').textContent(),'Rename Device Type');
+  assert.equal(await page.locator('#device-catalogue-rename-value').inputValue(),originalTypeName);
+  await page.locator('#modal-content [data-action="cancel-rename"]').click();
+  assert.equal(await page.locator('#catalog-modal-title').textContent(),'Manage Device Types');
+  await typeManager.locator('.catalog-manager-row [data-action="delete-device-type-or-location"]:not([disabled])').first().click();
+  const confirmTypeDelete=page.locator('#delete-dialog[role="alertdialog"]');
+  await confirmTypeDelete.waitFor();
+  assert.ok(await confirmTypeDelete.locator('.catalog-modal .catalog-delete-warning').isVisible(),
+    'Confirmed deletions must retain the approved warning panel and preserve the confirmation step');
+  await confirmTypeDelete.locator('[data-action="cancel-delete"]').click();
+  assert.equal(await confirmTypeDelete.count(),0,'Cancel must close without deleting the type');
+  await page.locator('#modal-content .catalog-modal-head [data-action="close-modal"]').click();
+  assert.equal(await page.locator('#modal-container:not(.hidden)').count(),0);
   await page.locator('#main-content [data-action="approved-device-section"][data-tab="locations"]').click();
   await page.locator('#main-content .catalog-card [data-catalog-list="location"]').waitFor();
   assert.ok(await page.locator('#main-content .catalog-header [data-action="open-manage-locations"]').isVisible(),
     'The existing Manage Locations action must remain available');
+
+  await page.locator('#main-content [data-action="open-manage-locations"]').click();
+  const locationManager=page.locator('#modal-content .catalog-modal .device-catalogue-manager');
+  await locationManager.waitFor();
+  assert.equal(await page.locator('#catalog-modal-title').textContent(),'Manage Locations');
+  assert.ok(await locationManager.locator('.catalog-manager-list .catalog-manager-row').count()>0);
+  assert.ok(await locationManager.locator('#device-catalogue-new-entry-input').isVisible());
+  await page.locator('#modal-content .catalog-modal-head [data-action="close-modal"]').click();
 
   // Pinned Batch 02 catalogue dialogs: source structure, original input IDs and responsive multi-type fields.
   await page.locator('#main-content [data-action="approved-device-section"][data-tab="manufacturers"]').click();
