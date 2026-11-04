@@ -77,7 +77,7 @@ This is a **working register, not a pass certificate**. For each screen, verify 
 | My Account Draft 06 and shared navigation | Partly integrated; fidelity unverified | Profile workspace, common header/sidebar, every page |
 | Settings & Data Draft 02 | Partly integrated; fidelity unverified | Complete source structures and forms |
 | Devices Overview Draft 03 | All five original panel structures integrated; **not yet verified** | Execute latest Chromium, compare source and live desktop/mobile UI, and verify filtering/empty states |
-| Devices Inventory Draft 02 | Partly integrated; fidelity unverified | Check full toolbar, filters, table and responsiveness |
+| Devices Inventory Draft 02 | Approved toolbar/results/table skeleton integrated with live records; **fidelity unverified** | Run full Chromium, confirm original row details/empty states and desktop/mobile presentation |
 | Device Details / Add/Edit Batch 04 | Partly integrated; fidelity unverified | Verify original card structure, physical/VM editors and actions |
 | Device Management and six catalogues Batch 02 | Partly integrated; fidelity unverified | Confirm all six views, forms and multi-type selection |
 | IPAM Draft 01 | Partly integrated; fidelity unverified | New active pages exist, but inspect old dialogs and all live controls |
@@ -112,6 +112,14 @@ This is a **working register, not a pass certificate**. For each screen, verify 
 - The sample preview's figures were connected to live saved inventory: `getEffectiveDevicePlatform()` continues to distinguish hypervisor hosts from guests, recorded software/service selections retain their existing catalogue filtering, the archived-software card still links to preserved saved device records, and Data Quality remains calculated from the live inventory. The original View Device Inventory buttons are wired to the live navigation action. No backend, device assignment, security or storage logic changed.
 - Commit `b6f039`: added tests for all three original panels, real operating-system and optional software drill-downs, saved Data Quality counts and missing-IP filtering, and the narrow-screen quality-card grid.
 - **Verification status:** inline and browser-test JavaScript parse successfully; source-level checks find exactly one of each of the five approved intelligence panels and no remaining generic legacy chart block in that renderer. **No Chromium test run or visual sign-off on the current code has been reported**. Do not mark Devices Overview fully verified. This checkpoint supersedes the earlier open-panel statements in the two previous Devices Overview checkpoints above.
+
+
+### Batched Devices Inventory Draft 02 source correction (4 November 2026)
+
+- Commit `e0bde9a`: replaced the old live Inventory toolbar/results/table wrapper with the **approved `devices-inventory-draft-02.html` structural markup**. The original Search Devices layout, exactly five primary filters, result heading with integrated Sort control, and original card/table container now use the approved source, rather than restyled old layout.
+- Values and controls remain bound to existing inventory functions: search, dynamic device types/status/locations, network assignment, mounting, ordering, saved row data and device detail buttons. Existing collision-aware unknown-location labelling and the empty-state user actions were preserved. The existing Device Intelligence filter context now uses the approved linked context class.
+- Commit `082126f`: added Chromium checks for exact filter count and Sort placement, live search and sort interactions, saved device results and single-column mobile filter layout.
+- **Verification:** the whole inline application JavaScript and browser test file parse. No live Chromium or side-by-side visual test has been confirmed on the current head. The retained dynamic table rows and additional Inventory states still require source-fidelity review; **do not call Device Inventory completed or accepted**.
 
 ## Development standards
 
