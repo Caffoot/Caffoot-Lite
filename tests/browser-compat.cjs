@@ -378,6 +378,21 @@ async function run(){
   await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
   console.log('Rack form passed');
 
+  // Approved Rack Inventory Draft 04 cards must show saved rack metadata.
+  await page.locator('#sidebar [data-action="tab-racks"]').click();
+  await page.locator('#main-content .approved-page-header [data-action="approved-rack-section"][data-section-tab="inventory"]').click();
+  const newRackCard=page.locator('#main-content [data-v13-rack-row][data-action="v13-open-rack"]')
+    .filter({hasText:'Browser Rack'});
+  await newRackCard.waitFor();
+  assert.ok(await newRackCard.getByText('View Rack Elevation',{exact:true}).isVisible(),
+    'Approved Rack Inventory card action must be retained');
+  assert.ok(await newRackCard.locator('.iconwrap.orange').isVisible(),
+    'The approved Rack Inventory card icon must appear');
+  assert.ok((await newRackCard.locator('.rack-small').first().textContent()).includes('U'),
+    'Rack Inventory must show the actual rack height');
+  await page.locator('#sidebar [data-action="tab-dashboard"]').click();
+  console.log('Approved Rack Inventory card presentation passed');
+
   await modal(page,'openManageLocationsModal');
   await page.locator('#device-catalogue-new-entry-input').fill('Office');
   await page.locator('[data-action="add-device-type-or-location"][data-kind="location"]').click();
