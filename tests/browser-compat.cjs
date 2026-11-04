@@ -188,16 +188,6 @@ async function run(){
       'This inventory operation is not yet connected to SQLite.');
   }
   await page.locator('#sidebar [data-action="tab-settings"]').click();
-  console.log('SETTINGS DEBUG',JSON.stringify(await page.evaluate(()=>({
-    currentTab,
-    admin:window.nextSessionIsAdmin,
-    pageTitle:document.getElementById('page-title')?.textContent,
-    mainLength:document.getElementById('main-content')?.innerHTML.length,
-    settingsCount:document.querySelectorAll('#main-content .approved-settings').length,
-    settingsHeading:[...document.querySelectorAll('#main-content h1')].map(x=>({text:x.textContent,visible:!!x.getClientRects().length,html:x.outerHTML.slice(0,180)})),
-    settingsPreview:document.getElementById('main-content')?.innerHTML.slice(0,300),
-    bodyText:document.getElementById('main-content')?.innerText.slice(0,250)
-  }))));
   assert.ok(await page.getByRole('heading',{name:'Settings & Data',exact:true}).isVisible(),
     'Settings & Data must use the owner-approved Draft 02 page');
   assert.equal(await page.locator('.approved-settings .subnav [data-action="approved-settings-tab"]').count(),3,
