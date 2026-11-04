@@ -427,8 +427,7 @@ async function run(){
   assert.equal(await approvedElevation.locator('.rack-elevation .rack-side-rail').count(),2,
     'Both approved L/R 0U rails must be present');
   assert.equal(await approvedElevation.locator('.rack-elevation .rack-slot-group .rack-empty').count(),
-    Number(await page.locator('#main-content #v13-rack-detail-select option:checked').count()) ? 
-      await page.evaluate(()=>appState.racks.find(r=>r.name==='Browser Rack')?.heightU) : 0,
+    Number(await page.evaluate(()=>appState.racks.find(r=>r.name==='Browser Rack')?.heightU || 0)),
     'An empty rack must expose every U through approved Place Here buttons');
   assert.equal(await rackDetail.locator('.rack-aside > .rack-card.pad').count(),3,
     'Draft 04 must have capacity, available positions and opposite-face cards');
