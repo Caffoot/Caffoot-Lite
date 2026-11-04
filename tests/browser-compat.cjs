@@ -159,6 +159,46 @@ async function run(){
   await page.locator('#main-content .catalog-card [data-catalog-list="location"]').waitFor();
   assert.ok(await page.locator('#main-content .catalog-header [data-action="open-manage-locations"]').isVisible(),
     'The existing Manage Locations action must remain available');
+
+  // Pinned Batch 02 catalogue dialogs: source structure, original input IDs and responsive multi-type fields.
+  await page.locator('#main-content [data-action="approved-device-section"][data-tab="manufacturers"]').click();
+  await page.locator('#main-content [data-action="manufacturer-add"]').click();
+  const catalogDialog=page.locator('#modal-content .catalog-modal');
+  await catalogDialog.waitFor();
+  assert.ok(await catalogDialog.locator('.catalog-modal-head .eyebrow').isVisible());
+  assert.ok(await catalogDialog.locator('.catalog-modal-field #manufacturer-name').isVisible());
+  assert.ok(await catalogDialog.locator('.catalog-modal-actions [data-action="save-catalogue-manufacturer"]').isVisible());
+  assert.ok(await catalogDialog.locator('.catalog-type-field[data-multi-device-types="manufacturers"] .catalog-type-option input[name="catalogue-manufacturer-device-type"]').count()>1);
+  const beforeCatalogueViewport=page.viewportSize();
+  await page.setViewportSize({width:390,height:844});
+  assert.equal(await catalogDialog.locator('.catalog-type-options').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),1,
+    'Approved manufacturer type checkboxes must form a single column on narrow screens');
+  await page.setViewportSize(beforeCatalogueViewport);
+  await catalogDialog.locator('.catalog-modal-head [data-action="close-modal"]').click();
+  assert.ok(await page.locator('#modal-container').evaluate(el=>el.classList.contains('hidden')));
+  const originalManufacturer=page.locator('#main-content [data-action="built-in-manufacturer-edit"]').first();
+  if(await originalManufacturer.count()){
+    await originalManufacturer.click();
+    assert.ok(await catalogDialog.locator('.catalog-modal-field #built-in-manufacturer-name').isVisible());
+    await catalogDialog.locator('.catalog-modal-head [data-action="close-modal"]').click();
+  }
+  await page.locator('#main-content [data-action="approved-device-section"][data-tab="models"]').click();
+  await page.locator('#main-content [data-action="model-add"]').click();
+  assert.ok(await catalogDialog.locator('.catalog-modal-field #hardware-model-manufacturer-select').isVisible());
+  assert.ok(await catalogDialog.locator('.catalog-modal-field #model-device-type').isVisible());
+  await catalogDialog.locator('.catalog-modal-head [data-action="close-modal"]').click();
+  await page.locator('#main-content [data-action="approved-device-section"][data-tab="software"]').click();
+  await page.locator('#main-content [data-action="software-custom-add"]').click();
+  assert.ok(await catalogDialog.locator('.catalog-modal-field #software-custom-name').isVisible());
+  assert.ok(await catalogDialog.locator('.catalog-type-field[data-multi-device-types="software"] input[name="software-custom-type"]').count()>1);
+  assert.ok(await catalogDialog.locator('.catalog-modal-actions [data-action="software-custom-save"]').isVisible());
+  await catalogDialog.locator('.catalog-modal-head [data-action="close-modal"]').click();
+  await page.locator('#main-content [data-action="approved-device-section"][data-tab="services"]').click();
+  await page.locator('#main-content [data-action="server-catalog-add"]').click();
+  assert.ok(await catalogDialog.locator('.catalog-modal-field #server-service-name-input').isVisible());
+  assert.ok(await catalogDialog.locator('.catalog-modal-actions [data-action="server-catalog-save"]').isVisible());
+  await catalogDialog.locator('.catalog-modal-head [data-action="close-modal"]').click();
+  console.log('Approved catalogue modal structure and mobile multi-type field coverage passed');
   await page.locator('#sidebar [data-action="tab-ipam"]').click();
   await page.locator('#main-content .ipam-stats').waitFor();
   assert.equal(await page.locator('#main-content .ipam-stat').count(),4,
