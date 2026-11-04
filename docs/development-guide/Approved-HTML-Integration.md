@@ -173,6 +173,29 @@ The owner's observation that an on-screen PR warning appeared when automatic Act
 
 **Next investigation:** Read the actual PR warning and up-to-date mergeability/check status, and check whether GitHub refreshes `refs/pull/281/merge` after changes. If the warning points to a real conflict, identify precisely which files and the safe resolution before acting. Do **not** silently change the PR base, force-push, switch to privileged `pull_request_target`, remove security restrictions, or merge the draft PR merely to get CI running.
 
+### Pinned-source class-family audit — 4 November 2026 (NOT a visual pass)
+
+Compared **body markup class names** from all 12 original designs at pinned `c26db4a` against `inventory.html` (or `setup.html` for Sign In). This was a static text-presence scan of distinctive component class families, **not** a run of the application, source DOM-hierarchy equality, CSS computation, screenshot comparison, interaction check or responsive acceptance. Missing markers identify specific source-fidelity work; present markers do **not** establish that a screen is correct.
+
+| Approved source | Distinctive body class names missing in live source | Required follow-up |
+| --- | ---: | --- |
+| Dashboard Draft 02 | 11 | Check exact sections containing `db-slimrow`, `db-insights-4`, `db-section`, `db-grid`, `db-report-buttons` and source status/filter components. |
+| My Account Draft 06 | 0 | Full DOM/interaction/responsive comparison outstanding. |
+| Settings & Data Draft 02 | 0 | Full comparison outstanding. |
+| Devices Overview Draft 03 | 0 | Verify all five panels and live filters, not just class presence. |
+| Devices Inventory Draft 02 | 0 | Verify dynamic rows, filters, empty states and mobile layout. |
+| Device Details and Forms Batch 04 | 38 | Audit `catalog-modal-*` and `device-review-*` inline editors, physical/VM and service fields against original approved structures; preserve real field IDs and save/security paths. |
+| Devices Management Batch 02 | 12 | Original catalogue editor `catalog-modal-*`, `catalog-type-*` wrappers/fields/multi-type selection not present in live source; fix actual dialogs rather than restyling old ones. |
+| IPAM Draft 01 | 1 | `ipam-modal-overlay` absent; inspect the approved overlay vs the shared live authenticated modal container before deciding if this is a true structural mismatch. |
+| Network Racks Draft 04 | 0 | Full DOM/interaction/permissions/desktop/mobile comparison outstanding. |
+| Users & Permissions Draft 02 | 0 | Full comparison and role-specific tests outstanding. |
+| Sign In & First Run Draft 03 | 0, against `setup.html` | Verify the actual setup/MFA/sign-in flows and responsiveness. |
+| Audit Trail Draft 01 | 0 | Protected event detail/export/permission tests outstanding. |
+
+**Action boundary:** Do not implement unapproved layouts or assume one missing class requires new storage. Copy the specific original structure and styles where needed, keeping the live authenticated JavaScript/Python/SQLite actions. No final design-acceptance claims until real browser and desktop/mobile checks run on the same revision.
+
+**Actions investigation update:** In a current read, PR #277 and PR #279 each returned `mergeable:true`; PR #281 remained `mergeable_state:unknown` with the synthetic merge reference stuck at 10:25 UTC. Latest `main` is a direct ancestor of PR #281, so an ordinary divergent-file conflict is not established. Neither a GitHub-side incident nor a conflict is confirmed as the root cause. Do not change merge or workflow settings without identifying a specific supported corrective action.
+
 ## Development standards
 
 Follow [CONTRIBUTING.md](../../CONTRIBUTING.md), the [Coding and Naming Conventions](06-Coding-and-Naming-Conventions.md) and the [Function Index](Function-Index.md). Describe source and test changes in plain British English, and keep the Function Index accurate if live functions are added or renamed.
