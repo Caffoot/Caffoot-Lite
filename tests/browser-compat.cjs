@@ -390,8 +390,33 @@ async function run(){
     'The approved Rack Inventory card icon must appear');
   assert.ok((await newRackCard.locator('.rack-small').first().textContent()).includes('U'),
     'Rack Inventory must show the actual rack height');
+  await newRackCard.click();
+  const rackDetail=page.locator('#main-content .rack-workspace');
+  await rackDetail.waitFor();
+  assert.ok(await rackDetail.locator('.rack-detail-bar .rack-detail-title h2').getByText('Browser Rack',{exact:true}).isVisible(),
+    'Approved Draft 04 must display the selected rack name in the detail header');
+  assert.ok(await rackDetail.locator('.rack-detail-bar [data-action="v13-back-rack-inventory"]').isVisible(),
+    'Approved Rack Detail must have a working Back to Rack Inventory action');
+  assert.ok(await rackDetail.locator('.rack-detail-bar [data-action="print-rack-capacity-details"]').isVisible(),
+    'Approved Rack Detail must keep the existing Print / PDF action');
+  assert.equal(await rackDetail.locator('.rack-subtabs [data-action="select-rack-tab"]').count(),3,
+    'Approved Rack Detail must retain Rack View, Equipment and Rack Settings tabs');
+  assert.ok(await rackDetail.locator('.rack-face-control [data-action="rack-face-front"]').isVisible(),
+    'The approved front/rear control must be available in the rack elevation');
+  await rackDetail.locator('[data-action="select-rack-tab"][data-tab="equipment"]').click();
+  assert.ok(await rackDetail.locator('section[aria-label="Mounted equipment"]').isVisible(),
+    'Equipment remains available without changing the approved placement logic');
+  await rackDetail.locator('[data-action="select-rack-tab"][data-tab="settings"]').click();
+  assert.ok(await rackDetail.locator('section[aria-label="Rack settings"]').isVisible(),
+    'Rack Settings must remain accessible from the selected rack');
+  await rackDetail.locator('[data-action="select-rack-tab"][data-tab="view"]').click();
+  assert.ok(await rackDetail.locator('.rack-elevation').isVisible(),
+    'The existing rack elevation must be preserved under the approved tabs');
+  await rackDetail.locator('[data-action="v13-back-rack-inventory"]').click();
+  assert.ok(await page.locator('#main-content [data-v13-rack-row]').filter({hasText:'Browser Rack'}).isVisible(),
+    'Back to Rack Inventory must return to the saved rack directory');
   await page.locator('#sidebar [data-action="tab-dashboard"]').click();
-  console.log('Approved Rack Inventory card presentation passed');
+  console.log('Approved Rack Detail header, tabs and back-navigation passed');
 
   await modal(page,'openManageLocationsModal');
   await page.locator('#device-catalogue-new-entry-input').fill('Office');
