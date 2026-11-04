@@ -585,6 +585,9 @@ async function run(){
     const r=await fetch('/api/users',{cache:'no-store'});
     return r.ok && (await r.json()).users.find(user=>user.id===id)?.permissions.Devices==='edit';
   },editorId);
+  await page.locator('#main-content .users-management-modal [data-action="users-close-editor"]').first().click();
+  assert.equal(await page.locator('#main-content .users-management-modal').count(),0,
+    'Closing the approved Manage dialog must return to the User List');
   await editor.locator('#username').fill('editor');
   await editor.locator('#password').fill(password+'-Editor');
   assert.ok(await editor.locator('#code-field').evaluate(el=>el.hidden));
@@ -696,6 +699,7 @@ async function run(){
     const user=(await (await fetch('/api/users')).json()).users.find(u=>u.id===id);
     return ['Devices','IPAM','Racks'].every(key=>user?.permissions[key]==='read');
   },viewerId);
+  await page.locator('#main-content .users-management-modal [data-action="users-close-editor"]').first().click();
   const readContext=await browser.newContext({ignoreHTTPSErrors:true});
   const viewer=await readContext.newPage();
   await viewer.goto(address+'/setup');
