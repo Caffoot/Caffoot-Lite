@@ -134,6 +134,21 @@ The source of visual truth is the **pinned** `future-design/approved/racks-draft
 - Commits `cbec194` and `dd4ea8d` added real Chromium test cases covering the elevation and side panels, mobile grid, Front/Rear/0U structure, Equipment and Settings, Accessories directory and saved 0U records, and Rack Add/Edit/locked-dimensions presentation.
 - **Verification:** current application and browser-test JavaScript passed syntax checks. The new Chromium suite has **not run** on this code; real desktop/mobile visual fidelity, working drag-and-drop after markup conversion, role-specific access, printing and full persistence need testing. **Placement and vertical accessory editor modals remain separately pending exact approved source-fidelity checks.** No Rack screen is accepted or owner-approved yet.
 
+### IPAM Draft 01 — live editor and safety-dialog integration (4 November 2026)
+
+The visual authority remains the pinned `future-design/approved/ipam-draft-01.html` at `c26db4a`. The Overview, Address Allocations and Manage Subnets page structures were already integrated before this checkpoint and were **not reimplemented** here.
+
+The following *existing live IPAM modal workflows* were moved from legacy Tailwind layouts to the original Draft 01 `ipam-modal-head`, `ipam-modal-body`, `ipam-form-grid`, `ipam-field` and `ipam-modal-actions` presentation:
+
+- **Configure IP Address:** retains live status, hostname, IPAM notes and historical reservation handling. A device-owned IP leaves status and hostname locked while allowing authorised IPAM notes changes; gateway IPs remain protected.
+- **Add/Edit Subnet and IP Address Block:** retains saved CIDR, gateway, VLAN, parent block, description, type locking, contextual gateway suggestion, original permission checks and protected deletion action.
+- **Bulk Edit Range:** uses the approved Draft 01 From/To IP Address inputs instead of exposing implementation-specific host offsets. Those inputs convert into the *existing* bounded allocation planner, retaining the 512-address limit, reserve/release actions, protected gateway/device addresses and preview-before-apply central save.
+- **Bulk confirmation, blocked deletion and deletion confirmation:** use the same approved modal family while retaining existing data-dependent previews and server-side save, dependency checks and revalidation before deletion.
+
+Changes were committed on the draft branch at `83e8f4a`, `a15be83` and `65dcc2f`. Chromium regression assertions were extended at `f15fdb0`, `540d564` and `feb10c9` for the original modal structure, narrow-screen field grids, persistent IPAM notes, owner restrictions, bulk preview/edit return, protected deletion and live SQLite saves.
+
+**Verification boundary:** the full application inline JavaScript and updated browser-test JavaScript have passed syntax parsing during these edits. **The new Chromium tests have not been executed on this branch head; no new GitHub Actions success is claimed.** Live desktop/mobile source-by-source visual comparison, complete permission and workflow regression, private Docker acceptance and final owner review remain outstanding. These screens are **implemented, not verified or accepted**. PR #281 stays draft, unmerged and unpublished.
+
 ## Development standards
 
 Follow [CONTRIBUTING.md](../../CONTRIBUTING.md), the [Coding and Naming Conventions](06-Coding-and-Naming-Conventions.md) and the [Function Index](Function-Index.md). Describe source and test changes in plain British English, and keep the Function Index accurate if live functions are added or renamed.
