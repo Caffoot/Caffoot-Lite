@@ -1560,8 +1560,8 @@ async function run(){
     'VM Device Details must not expose physical hardware');
   assert.ok(await deviceReview.getByRole('heading',{name:'Allocated virtual hardware'}).isVisible(),
     'Approved Device Details must show VM-owned virtual hardware');
-  const relatedHost= deviceReview.locator('#device-details-panel-overview .device-review-panel.full')
-    .filter({has:deviceReview.getByRole('heading',{name:'Physical Host'})});
+  const relatedHost=deviceReview.locator('#device-details-panel-overview > .device-review-panel.full')
+    .filter({hasText:'Physical Host'});
   assert.ok(await relatedHost.isVisible(),
     'VM details must use the approved full-width Physical Host source card');
   assert.ok(await relatedHost.getByText('browser-hypervisor',{exact:true}).isVisible(),
@@ -1598,7 +1598,7 @@ async function run(){
   await page.evaluate(id=>openDeviceDetailView(id),rackSwitch.id);
   await deviceReview.getByRole('tab',{name:'Location'}).click();
   const rackNavigationCard=deviceReview.locator('#device-details-panel-location > .device-review-panel.full')
-    .filter({has:deviceReview.getByRole('heading',{name:'Rack Navigation'})});
+    .filter({hasText:'Rack Navigation'});
   assert.ok(await rackNavigationCard.isVisible(),
     'Approved Details Location tab must contain a distinct full-width Rack Navigation card for racked devices');
   assert.equal(await rackNavigationCard.locator('[data-action="navigate-to-device-rack"]').getAttribute('data-id'),
