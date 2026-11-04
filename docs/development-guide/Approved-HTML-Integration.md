@@ -92,6 +92,13 @@ This is a **working register, not a pass certificate**. For each screen, verify 
 
 **Next step for each row:** compare pinned approved source with actual live markup, correct any wrong structure, connect every approved control to existing handlers, run tests, compare desktop/mobile views, record evidence and commit SHA. Change the assessment to *verified* only when all checks pass. No acceptance Docker review, merge or release before the entire batch is complete and internally verified.
 
+### Devices Overview Draft 03 — source correction checkpoint (4 November 2026)
+
+- On `c88f166`, the **Devices by Type** and **Devices by Location** panels in `renderDevicesHTML()` were changed from legacy generic Tailwind cards to the original approved Draft 03 `intelligence-two > intelligence-card > intelligence-card-head / divider / intelligence-chart > intelligence-chart-row` structure, including the source's icons, captions and chart tracks. Card content still comes from actual saved device data; the existing `device-intelligence-drilldown` handler continues to open filtered Device Inventory. The four live overview metrics were preserved.
+- On `236f136`, browser test assertions were added for the original two-card structure, icons/headings, live Desktop type breakdown and its navigation to filtered Device Inventory.
+- **Verification so far:** the large HTML inline script and the browser test JavaScript passed syntax parsing. **No GitHub Actions runs have been reported on this branch head; the new Chromium test has not been run, and desktop/mobile visual fidelity has not been signed off.** This is a **partial Devices Overview correction**, not a completed screen or an accepted design.
+- Other Devices Overview tabs (Hardware, Operating Systems, Software & Services, Data Quality) still use mismatched old panel structures. The screen-by-screen fidelity register therefore remains **Mismatch confirmed** until those are replaced and all screens tested.
+
 ## Development standards
 
 Follow [CONTRIBUTING.md](../../CONTRIBUTING.md), the [Coding and Naming Conventions](06-Coding-and-Naming-Conventions.md) and the [Function Index](Function-Index.md). Describe source and test changes in plain British English, and keep the Function Index accurate if live functions are added or renamed.
