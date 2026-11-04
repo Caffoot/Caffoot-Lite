@@ -1923,6 +1923,10 @@ html.dark .caffoot-dashboard .db-rack-row:hover{background:#354a60;border-color:
    gap:12px;
  }
 }
+#modal-content .device-modal.device-review-dialog #device-form-panel-general{display:block}
+#modal-content .device-modal.device-review-dialog #device-form-panel-general>.device-review-grid{align-content:start}
+#modal-content .device-modal.device-review-dialog #device-form-panel-general #racked-options{grid-column:1/-1}
+#modal-content .device-modal.device-review-dialog #device-form-panel-general .device-review-panel.full{grid-column:1/-1}
 </style><style id="approved-racks-draft-04-live">
 .rack-stat{background:white;border:1px solid #e0e8ee;padding:20px;border-radius:14px;min-width:0;box-shadow:var(--shadow)}.rack-stat .metric-name{color:#637c91;font-size:12px;font-weight:750}.rack-stat strong{font-size:29px;display:block;color:#203b54;margin-top:10px;letter-spacing:-.8px}.rack-stat small{font-size:11px;color:#899bac}.rack-card{background:#fff;border:1px solid #dfe7ee;border-radius:15px;box-shadow:var(--shadow);min-width:0}.rack-card.pad{padding:21px}.rack-card-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;margin-bottom:16px}.rack-card h2,.rack-card h3{font-size:17px;letter-spacing:-.3px;color:#29445c;margin:0;font-weight:790}.rack-card p{font-size:12px;line-height:1.6;color:#788fa3;margin:5px 0 0}
 .racks-two{display:grid;grid-template-columns:1.45fr 1fr;gap:17px;align-items:start}.racks-hub-bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:13px;margin:0 0 17px}.racks-hub-bar h2{font-size:18px;margin:0 0 4px;color:#29445c}.racks-hub-bar p{font-size:12px;color:#778fa3;margin:0}.racks-search-label{display:grid;gap:8px;font-size:12px;font-weight:720;color:#46617a;min-width:min(100%,280px)}.rack-text-input,.rack-select,.rack-field input,.rack-field select{width:100%;border:1px solid #d7e2eb;border-radius:9px;min-height:41px;padding:9px 12px;background:#fff;color:#304d66;font-size:13px;min-width:0}.rack-field input:disabled,.rack-field select:disabled{background:#f1f4f7;color:#71869a}.rack-text-input:focus,.rack-select:focus,.rack-field input:focus,.rack-field select:focus{outline:2px solid #efa76f;outline-offset:1px}
@@ -8386,16 +8390,27 @@ function openIpModal(ip) {
             });
             form.insertBefore(nav, sections[0]);
             labels.forEach(([id]) => form.insertBefore(panels.get(id), sections[0]));
-            panels.get('general').append(sections[0], sections[2]);
+            // Batch 04 uses a two-column card grid within the General tab.
+            // Work with the original input elements so native saves and listeners survive.
+            const generalGrid = document.createElement('div');
+            generalGrid.className = 'device-review-grid';
+            panels.get('general').appendChild(generalGrid);
+            generalGrid.append(sections[0], sections[2]);
+            sections[0].classList.add('full');
+            sections[2].classList.add('full');
             // The approved Batch 04 VM configuration is a separate General card.
             // Relocate existing inputs, preserving saved values and event handlers.
             const virtualFields = sections[0].querySelector('#virtual-fields');
             if (virtualFields) {
                 virtualFields.classList.add('form-section-card', 'device-review-vm-configuration');
-                panels.get('general').insertBefore(virtualFields, sections[2]);
+                generalGrid.insertBefore(virtualFields, sections[2]);
             }
             // Keep hardware inputs mounted for legacy preservation, but hide the tab for VMs.
-            panels.get('hardware').append(sections[1]);
+            const hardwareGrid = document.createElement('div');
+            hardwareGrid.className = 'device-review-grid';
+            panels.get('hardware').appendChild(hardwareGrid);
+            sections[1].classList.add('full');
+            hardwareGrid.appendChild(sections[1]);
             // Exact Batch 04 Networking uses two full-width source cards.
             // Keep the original live IPAM inputs and their event handlers in place.
             const networkingGrid=document.createElement('div');
@@ -8437,17 +8452,63 @@ function openIpModal(ip) {
                 sections[0].appendChild(status);
             }
             const location = form.querySelector('#dev-location');
-            const locationRow = location?.closest('.grid');
+            const locationRow = location?.parentElement;
             if (locationRow && locationRow.contains(form.querySelector('#dev-custom-location'))) {
-                const locationSection = document.createElement('div');
-                locationSection.className = 'form-section-card space-y-4';
-                locationSection.id = 'device-form-location-area';
-                locationSection.innerHTML = '<div class="form-section-heading"><i class="fa-solid fa-location-dot" aria-hidden="true"></i>Location Area</div>';
-                locationSection.appendChild(locationRow);
-                panels.get('general').insertBefore(locationSection, sections[2]);
+                // The source puts Location Area inside Device Identity, not in
+                // Mounting or a separate card. Keep native location validation.
+                sections[0].appendChild(locationRow);
+                locationRow.classList.add('device-review-field');
+                const locationActions = document.createElement('div');
+                locationActions.className = 'device-review-catalogue-actions';
+                const addLocation = document.createElement('button');
+                addLocation.type = 'button';
+                addLocation.className = 'device-review-smallbtn';
+                addLocation.textContent = '+ Add Location';
+                addLocation.addEventListener('click', () => {
+                    const locationSelect = form.querySelector('#dev-location');
+                    if (!locationSelect) return;
+                    locationSelect.value = '__caffoot_create_location__';
+                    locationSelect.dispatchEvent(new Event('change', {bubbles:true}));
+                });
+                locationActions.appendChild(addLocation);
+                locationRow.appendChild(locationActions);
             }
-            const mountHeading = sections[2].querySelector('.form-section-heading');
-            if (mountHeading) mountHeading.textContent = 'Mounting & Rack Configuration';
+            // Preserve every original field, but use the approved card headings
+            // and field grids rather than the old free-form section layout.
+            const identityHeading = sections[0].querySelector(':scope > .form-section-heading');
+            const identityTitle = document.createElement('h3');
+            identityTitle.innerHTML = '<span class="mini-icon" aria-hidden="true">▣</span>Device Identity';
+            const identitySubtitle = document.createElement('p');
+            identitySubtitle.textContent = 'Name, classification and deployment';
+            identityHeading?.replaceWith(identityTitle, identitySubtitle);
+            const identityFields = document.createElement('div');
+            identityFields.className = 'device-review-form-grid';
+            Array.from(sections[0].children).forEach(child => {
+                if (child === identityTitle || child === identitySubtitle ||
+                    (child.id === 'dev-status' && child.type === 'hidden')) return;
+                if (child.tagName === 'DIV') child.classList.add('device-review-field');
+                identityFields.appendChild(child);
+            });
+            sections[0].appendChild(identityFields);
+            const mountingHeading = sections[2].querySelector(':scope > .form-section-heading');
+            const mountingTitle = document.createElement('h3');
+            mountingTitle.innerHTML = '<span class="mini-icon" aria-hidden="true">▣</span>Mounting & Rack Configuration';
+            const mountingSubtitle = document.createElement('p');
+            mountingSubtitle.textContent = 'Rack placement uses the existing Front/Rear, U height and collision checks.';
+            mountingHeading?.replaceWith(mountingTitle, mountingSubtitle);
+            const mountingFields = document.createElement('div');
+            mountingFields.className = 'device-review-form-grid';
+            Array.from(sections[2].children).forEach(child => {
+                if (child === mountingTitle || child === mountingSubtitle) return;
+                mountingFields.appendChild(child);
+            });
+            sections[2].appendChild(mountingFields);
+            const hardwareHeading = sections[1].querySelector(':scope > .form-section-heading');
+            const hardwareTitle = document.createElement('h3');
+            hardwareTitle.innerHTML = '<span class="mini-icon" aria-hidden="true">▣</span>Hardware & Lifecycle';
+            const hardwareSubtitle = document.createElement('p');
+            hardwareSubtitle.textContent = 'Physical devices only. This entire tab is hidden for virtual machines.';
+            hardwareHeading?.replaceWith(hardwareTitle, hardwareSubtitle);
             panels.get('notes').dataset.notesPanel = 'true';
             initialiseNotesEditor(form);
             const platformContainer = document.createElement('div');
