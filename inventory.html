@@ -10389,10 +10389,20 @@ window.addEventListener('load', async () => {
         document.querySelector('#modal-container:not(.hidden) form')) return;
     event.preventDefault();
     event.stopImmediatePropagation();
+    // A refresh can replace the live rack tab before the deferred click.
+    // Preserve the selected approved tab and dispatch to its new element.
+    const rackTab = action === 'select-rack-tab' &&
+      ['view','equipment','settings'].includes(element.dataset.tab)
+        ? element.dataset.tab : null;
     void refreshCentralInventory(false).then(() => {
-      if (!element.isConnected) return;
+      const current = element.isConnected ? element : (
+        rackTab ? document.querySelector(
+          '#main-content [data-action="select-rack-tab"][data-tab="'+rackTab+'"]'
+        ) : null
+      );
+      if (!current) return;
       resumingFreshNavigation = true;
-      try { element.click(); }
+      try { current.click(); }
       finally { resumingFreshNavigation = false; }
     }).catch(error => showToast(error.message, 'error'));
   }, true);
