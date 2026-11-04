@@ -54,7 +54,7 @@ def change_independent_allocation(connection, account_id, ip, record):
                 "INSERT INTO inventory_change_history(record_json) VALUES(?)",
                 (json.dumps(event, ensure_ascii=False),),
             )
-                    connection.commit()
+        connection.commit()
     except BaseException:
         connection.rollback()
         raise
@@ -110,7 +110,7 @@ def change_bulk_allocations(connection, account_id, changes):
                 "INSERT INTO inventory_change_history(record_json) VALUES(?)",
                 (json.dumps(entry, ensure_ascii=False),),
             )
-                    connection.commit()
+        connection.commit()
     except BaseException:
         connection.rollback()
         raise
