@@ -1,5 +1,6 @@
 """Transactional inventory collection changes for published IPAM and Racks workflows."""
 import json
+from .audit_events import attribute_event
 import time
 from datetime import datetime, timezone
 
@@ -91,7 +92,7 @@ def change_inventory_record(connection, account_id, collection, record_id, recor
                                   "label": label, "fields": fields}], "omitted": 0}
             connection.execute(
                 "INSERT INTO inventory_change_history(record_json) VALUES(?)",
-                (json.dumps(event, ensure_ascii=False),),
+                (json.dumps(attribute_event(connection, account_id, event), ensure_ascii=False),),
             )
         connection.commit()
     except BaseException:
@@ -227,7 +228,7 @@ def change_ipam_subnet_and_vlan_records(connection, account_id, changes):
                      "omitted": max(0, len(changed) - 16)}
             connection.execute(
                 "INSERT INTO inventory_change_history(record_json) VALUES(?)",
-                (json.dumps(event, ensure_ascii=False),),
+                (json.dumps(attribute_event(connection, account_id, event), ensure_ascii=False),),
             )
         connection.commit()
     except BaseException:
@@ -344,7 +345,7 @@ def delete_subnet_with_dependencies(connection, account_id, subnet_id,
                  "omitted": max(0, len(changes) - 60)}
         connection.execute(
             "INSERT INTO inventory_change_history(record_json) VALUES(?)",
-            (json.dumps(event, ensure_ascii=False),)
+            (json.dumps(attribute_event(connection, account_id, event), ensure_ascii=False),)
         )
         connection.commit()
     except BaseException:
