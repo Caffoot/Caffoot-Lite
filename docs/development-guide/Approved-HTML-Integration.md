@@ -67,6 +67,31 @@ As at the current branch development checkpoint:
 
 PR #281 remains **draft and unmerged**. PR #277 and PR #279 remain separate and unmerged. No private acceptance Docker package, public image, release or production deployment has been authorised.
 
+## Source-by-source status register — 4 November 2026
+
+This is a **working register, not a pass certificate**. For each screen, verify (1) the exact approved presentation, (2) connected functionality, (3) desktop/mobile behaviour and relevant security tests **on the same commit**. Do not mark any screen completed merely because approved CSS classes exist or the old functionality still works. No screen is currently confirmed to have passed all three checks.
+
+| Approved HTML source | Current assessment | What to check next |
+| --- | --- | --- |
+| Dashboard Draft 02 | Partly integrated; fidelity unverified | Complete original tabs, cards and responsive layout |
+| My Account Draft 06 and shared navigation | Partly integrated; fidelity unverified | Profile workspace, common header/sidebar, every page |
+| Settings & Data Draft 02 | Partly integrated; fidelity unverified | Complete source structures and forms |
+| Devices Overview Draft 03 | **Mismatch confirmed** | Old insight-card markup remains: replace with approved components |
+| Devices Inventory Draft 02 | Partly integrated; fidelity unverified | Check full toolbar, filters, table and responsiveness |
+| Device Details / Add/Edit Batch 04 | Partly integrated; fidelity unverified | Verify original card structure, physical/VM editors and actions |
+| Device Management and six catalogues Batch 02 | Partly integrated; fidelity unverified | Confirm all six views, forms and multi-type selection |
+| IPAM Draft 01 | Partly integrated; fidelity unverified | New active pages exist, but inspect old dialogs and all live controls |
+| Network Racks Draft 04 | **Mismatch confirmed** | Old elevation, capacity, equipment and settings markup must be replaced |
+| Users & Permissions Draft 02 | Partly integrated; fidelity unverified | Check full User Workspace, Add/Manage and permission states |
+| Sign In & First Run Draft 03 | Partly integrated; fidelity unverified | Confirm original login, setup and conditional MFA screens |
+| Audit Trail Draft 01 | Partly integrated; fidelity unverified | Complete directory/detail/export and protected event coverage |
+
+**Important separation:** existing Python/SQLite storage, permissions, MFA, rack and IPAM validation, data migration and save handlers are the functional baseline to preserve. That a handler works **does not prove** the interface is correct. Equally, the old screen's presence does not mean the backend must be rewritten.
+
+**Additional approved work still open:** verified email ownership, secure password recovery, important account/security notifications, host-only sole-administrator recovery and remaining Audit Trail events/exports. SMTP configuration alone is not recovery.
+
+**Next step for each row:** compare pinned approved source with actual live markup, correct any wrong structure, connect every approved control to existing handlers, run tests, compare desktop/mobile views, record evidence and commit SHA. Change the assessment to *verified* only when all checks pass. No acceptance Docker review, merge or release before the entire batch is complete and internally verified.
+
 ## Development standards
 
 Follow [CONTRIBUTING.md](../../CONTRIBUTING.md), the [Coding and Naming Conventions](06-Coding-and-Naming-Conventions.md) and the [Function Index](Function-Index.md). Describe source and test changes in plain British English, and keep the Function Index accurate if live functions are added or renamed.
