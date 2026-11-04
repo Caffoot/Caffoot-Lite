@@ -13,6 +13,11 @@ class IndependentIpamTests(unittest.TestCase):
     def setUp(self):
         self.db = sqlite3.connect(":memory:")
         initialise_database(self.db)
+        self.db.execute(
+            "INSERT INTO accounts(id,username,password_hash,is_admin,mfa_secret,mfa_confirmed) "
+            "VALUES(1,'audit-tester','test-hash',1,'secret',1)"
+        )
+        self.db.commit()
         stage_inventory(self.db, {
             "devices": [{"id": "d1", "name": "One", "mountType": "Desktop",
                          "primaryIp": "10.0.0.10"}],
