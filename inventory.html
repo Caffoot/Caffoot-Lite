@@ -1795,6 +1795,7 @@ html.dark .caffoot-dashboard .db-rack-row:hover{background:#354a60;border-color:
 .rack-aside{display:grid;gap:16px;align-content:start}.rack-util-row{padding:10px 0;border-bottom:1px solid #edf1f5}.rack-util-row:last-child{border:0}.rack-util-label{display:flex;justify-content:space-between;gap:7px;color:#416078;font-size:12px;font-weight:730}.rack-util-label small{font:650 11px ui-monospace,Consolas,monospace;color:#6c8399}.rack-util-bar{height:8px;overflow:hidden;background:#e9eef3;border-radius:30px;margin-top:8px}.rack-util-bar span{display:block;background:#32946d;height:100%;border-radius:30px}.rack-util-bar span.rear{background:#e58b45}.rack-kv{display:flex;justify-content:space-between;gap:10px;border-top:1px solid #ebf0f4;padding:12px 0;font-size:12px}.rack-kv span{color:#788fa2}.rack-kv b{color:#2d4b65;text-align:right}.rack-height-picker{display:flex;gap:7px;flex-wrap:wrap;margin:13px 0}.rack-height-picker button{height:36px;min-width:46px;border:1px solid #d8e3eb;border-radius:8px;background:#fff;font-weight:740;color:#4c6a83}.rack-height-picker button.active{background:#fff0e1;color:#a9652b;border-color:#e7a273}.rack-suggestion{padding:12px;background:#f6f9fc;border:1px solid #e1eaf1;border-radius:9px;font-size:12px;color:#57738b;line-height:1.65}.rack-suggestion b{color:#2d506a}.rack-other-device{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-top:1px solid #edf1f4}.rack-other-device strong{display:block;color:#33516a;font-size:12px}.rack-other-device small{display:block;color:#8298a9;font-size:11px;margin-top:5px}.rack-other-device button{font-size:11px}
 .rack-note{font-size:11.5px;color:#8296aa;line-height:1.6;margin:12px 2px}.rack-table-scroll{overflow-x:auto}.rack-table{border-collapse:collapse;width:100%;min-width:650px;text-align:left}.rack-table th{background:#f8fafc;color:#758b9e;padding:14px;font-size:11px;font-weight:800;border-bottom:1px solid #e1eaf1}.rack-table td{padding:15px 14px;border-bottom:1px solid #edf1f5;color:#48647c;font-size:12px}.rack-table td b{color:#2b4a63}.rack-table tr:last-child td{border:0}.rack-table .btn{min-height:33px;padding:7px 10px;font-size:11px}
 .rack-editor-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.rack-editor-field{padding:15px;border-radius:10px;background:#f7f9fb;border:1px solid #e8eef3}.rack-editor-field dt{color:#7890a5;font-size:11px;margin:0 0 5px}.rack-editor-field dd{color:#29465f;font-weight:760;font-size:13px;margin:0}.rack-editor-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:19px}.rack-divider{border:0;border-top:1px solid #e8edf3;margin:17px 0}
+#modal-content:has(> .rack-modal){max-width:580px}
 .rack-modal-shade{position:fixed;inset:0;background:rgba(14,33,52,.76);z-index:110;display:flex;align-items:center;justify-content:center;padding:18px}.rack-modal-shade[hidden]{display:none}.rack-modal{width:min(100%,580px);max-height:calc(100dvh - 36px);overflow:auto;border-radius:16px;background:#fff;padding:24px;box-shadow:0 27px 80px #0b22304a}.rack-modal-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:12px}.rack-modal-top h2{margin:3px 0 0;font-size:21px;letter-spacing:-.5px;color:#1e3952}.rack-modal-close{border:1px solid #dfe7ee;background:#fff;border-radius:8px;padding:7px 11px;font-size:13px;color:#49657d;cursor:pointer}.rack-modal p{font-size:12px;color:#6d8398;line-height:1.6}.rack-field[hidden]{display:none!important}.rack-field{display:grid;gap:6px;font-size:12px;font-weight:720;color:#436078;min-width:0}.rack-field small{color:#8297aa;font-size:11px;font-weight:500}.rack-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px}.rack-field.span2{grid-column:1/-1}.rack-form-actions{margin-top:20px;display:flex;align-items:center;gap:9px;justify-content:flex-end}.rack-modal-info{padding:12px 13px;margin-top:16px;border:1px solid #e4ebf1;border-radius:10px;background:#f5f8fa;color:#658097;font-size:11.5px;line-height:1.65}.rack-warn{border-color:#f0d3c5;background:#fff7f1;color:#9e663b}.rack-danger{color:#b34e45;border-color:#e8cac5;background:#fff}.rack-danger:hover{background:#fff6f4}
 .rack-printable{display:none}
 @media(max-width:1280px){.rack-detail-workspace{grid-template-columns:minmax(0,1.4fr) minmax(270px,.8fr)}.rack-directory{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -6509,31 +6510,118 @@ function hierarchyValidateTypes(subnets) {
             renderContent();
         }
 
-        // one placement workflow for a clicked empty rack U.
+        // Draft 04 placement: the approved single form, connected to the existing rack saves.
         function openRackSlotPlacementDialog(rackId, slotU, mode = 'device') {
-            const rack = appState.racks.find(r => r.id === rackId);
-            if (!rack) return;
-            const u = Number(slotU);
-            if (!Number.isInteger(u) || u < 1 || u > Number(rack.heightU)) return;
-            if (mode === 'accessory') {
-                openRackAccessoryEditor(rackId, u);
-            } else {
-                openAssignDeviceModal(rackId, u);
+            if (!nextRackBridge?.canEdit()) {
+                showToast('Racks edit permission required.', 'error'); return;
             }
-            const content = document.getElementById('modal-content');
-            const dialog = content?.firstElementChild;
-            if (!dialog) return;
-            const switcher = document.createElement('div');
-            switcher.className = 'rack-placement-switch';
-            switcher.setAttribute('role', 'group');
-            switcher.setAttribute('aria-label', 'Equipment to place');
-            switcher.innerHTML = `<button type="button" class="device-catalogue-choice ${mode === 'device' ? 'is-active' : ''}" data-action="placement-device" data-rack-id="${escapeHtml(rackId)}" data-u="${u}" aria-pressed="${mode === 'device'}"><i class="fa-solid fa-server" aria-hidden="true"></i> Mount device</button><button type="button" class="device-catalogue-choice ${mode === 'accessory' ? 'is-active' : ''}" data-action="placement-accessory" data-rack-id="${escapeHtml(rackId)}" data-u="${u}" aria-pressed="${mode === 'accessory'}"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> Add accessory</button>`;
-            // Keep both modes in the same visual shell, beneath their heading.
-            content.classList.add('rack-balanced-modal');
-            dialog.classList.add('rack-balanced-dialog');
-            const heading = dialog.firstElementChild;
-            if (heading) heading.insertAdjacentElement('afterend', switcher);
-            else dialog.prepend(switcher);
+            const rack = appState.racks.find(r => r.id === rackId);
+            const u = Number(slotU);
+            if (!rack || !Number.isInteger(u) || u < 1 || u > Number(rack.heightU)) return;
+            const devices = appState.devices.filter(d => d.mountType === 'Rack Mounted' &&
+                getRecognisedDeviceMountTypes(d.type).includes('Rack Mounted') && (!d.rackId || d.rackId === rackId));
+            const types = Object.entries(rackAccessoryTypeDefinitions).filter(([,definition]) => !definition.vertical);
+            const isAccessory = mode === 'accessory';
+            const preferredHeight = Math.max(1, Math.min(12, Number(rackAccessoryPlacementHeightU) || 1));
+            openModal(`
+                <div class="rack-modal" role="dialog" aria-modal="true" aria-label="Rack equipment placement">
+                    <div class="rack-modal-top"><div><div class="eyebrow">RACK MANAGEMENT</div><h2>Place Device / Horizontal Accessory at U${u}</h2></div>
+                        <button type="button" class="rack-modal-close" data-action="close-modal">Close ×</button></div>
+                    <p>Choose a physical device or a horizontal rack accessory. This form places equipment into rack U positions on the selected face.</p>
+                    <form id="rack-placement-form" data-form-action="assign" data-rack-id="${escapeHtml(rackId)}" data-default-slot="${u}" class="rack-approved-form">
+                        <div class="rack-form-grid">
+                            <label class="rack-field">Placement Type<select name="itemType" id="place-item-type"><option value="device" ${isAccessory?'':'selected'}>Device</option><option value="accessory" ${isAccessory?'selected':''}>Horizontal Accessory</option></select></label>
+                            <label class="rack-field">Rack Face<select name="face" id="assign-face"><option value="front" ${activeRackFace==='front'?'selected':''}>Front</option><option value="rear" ${activeRackFace==='rear'?'selected':''}>Rear</option></select></label>
+                            <label class="rack-field" id="place-device-field">Device<select id="assign-device-id" name="deviceId"><option value="">${devices.length?'Select a device...':'No eligible Rack Mounted devices available'}</option>${devices.map(d=>`<option value="${escapeHtml(d.id)}">${escapeHtml(d.name)} · ${escapeHtml(d.type)}</option>`).join('')}</select></label>
+                            <label class="rack-field" id="place-accessory-field">Horizontal Accessory Type<select id="place-accessory-type" name="accessoryType">${types.map(([key,definition])=>`<option value="${escapeHtml(key)}" ${key==='patch'?'selected':''}>${escapeHtml(definition.label)}</option>`).join('')}</select></label>
+                            <label class="rack-field" id="place-accessory-name">Accessory Name<input type="text" id="place-accessory-name-input" name="accessoryName" maxlength="80" placeholder="Patch panel"></label>
+                            <label class="rack-field">Start U<select name="startU" id="assign-u-start" required aria-label="Available start U position"></select></label>
+                            <label class="rack-field">Height (U)<input name="heightU" id="place-height" type="number" min="1" max="${Math.min(12,Number(rack.heightU))}" value="${preferredHeight}" required></label>
+                            <label class="rack-field" id="place-port-field">Patch Panel Ports<select name="portCount" id="place-port-count"><option value="12">12 ports</option><option value="24" selected>24 ports</option><option value="48">48 ports</option></select></label>
+                        </div>
+                        <div class="rack-modal-info">U positions cannot overlap other devices or horizontal accessories on the same face. The left and right vertical 0U rails are managed directly from the rails, not here.</div>
+                        <div class="rack-modal-info">Changes are saved to this Caffoot Lite inventory, subject to the existing permission and collision checks.</div>
+                        <div class="form-error" data-form-error role="alert" aria-live="polite"></div>
+                        <div class="rack-form-actions"><button type="button" data-action="close-modal" class="btn btn-outline caffoot-modal-cancel">Cancel</button><button type="submit" class="btn btn-primary">Place Equipment</button></div>
+                    </form>
+                </div>
+            `);
+            const form = document.getElementById('rack-placement-form');
+            const kind = form.querySelector('#place-item-type');
+            const deviceSelect = form.querySelector('#assign-device-id');
+            const typeSelect = form.querySelector('#place-accessory-type');
+            const faceSelect = form.querySelector('#assign-face');
+            const heightInput = form.querySelector('#place-height');
+            const startSelect = form.querySelector('#assign-u-start');
+            const portField = form.querySelector('#place-port-field');
+            const portSelect = form.querySelector('#place-port-count');
+            const errorField = form.querySelector('[data-form-error]');
+            function refresh() {
+                const deviceMode = kind.value === 'device';
+                for (const [id,show] of [['place-device-field',deviceMode],['place-accessory-field',!deviceMode],['place-accessory-name',!deviceMode]]) {
+                    const label = form.querySelector('#'+id);
+                    label.hidden = !show;
+                    label.querySelectorAll('input,select').forEach(control => { control.disabled = !show; });
+                }
+                const patch = !deviceMode && typeSelect.value === 'patch';
+                portField.hidden = !patch;
+                portSelect.disabled = !patch;
+                const device = appState.devices.find(d => d.id === deviceSelect.value);
+                if (deviceMode) {
+                    heightInput.value = String(device ? Math.max(1,Number(device.rackUHeight) || (Number(device.rackUEnd)-Number(device.rackUStart)+1) || 1) : 1);
+                    heightInput.disabled = true;
+                } else heightInput.disabled = false;
+                const height = Number(heightInput.value);
+                const available = [];
+                if ((deviceMode ? !!device : !!rackAccessoryTypeDefinitions[typeSelect.value]) &&
+                    Number.isInteger(height) && height >= 1 && height <= Number(rack.heightU)) {
+                    for (let start = 1; start + height - 1 <= Number(rack.heightU); start++) {
+                        const invalid = deviceMode
+                            ? validateRackPlacement(device.id,rackId,faceSelect.value,start,start+height-1)
+                            : validateRackAccessoryPlacement({rackId,type:typeSelect.value,face:faceSelect.value,side:null,startU:start,heightU:height});
+                        if (!invalid) available.push(start);
+                    }
+                }
+                const previous = Number(startSelect.value) || u;
+                startSelect.replaceChildren();
+                for (const position of available) startSelect.add(new Option(
+                    height === 1 ? 'U'+position : 'U'+position+'–U'+(position+height-1),String(position)));
+                startSelect.disabled = !available.length;
+                if (available.length) startSelect.value = String(available.includes(previous)?previous:available.includes(u)?u:available[0]);
+                errorField.textContent = available.length ? '' : (deviceMode && !device?'Select an eligible Rack Mounted device.':'No available positions for this type, height and face.');
+            }
+            kind.addEventListener('change',refresh);
+            deviceSelect.addEventListener('change',refresh);
+            typeSelect.addEventListener('change',refresh);
+            faceSelect.addEventListener('change',refresh);
+            heightInput.addEventListener('input',refresh);
+            refresh();
+            form.addEventListener('submit',async event => {
+                if (kind.value === 'device') return; // Existing delegated assign handler and save logic.
+                event.preventDefault(); event.stopPropagation();
+                const data = new FormData(form);
+                const candidate = {
+                    id:'acc-'+Date.now()+'-'+Math.random().toString(36).slice(2,8),
+                    rackId, type:String(data.get('accessoryType')),name:String(data.get('accessoryName')||'').trim(),
+                    face:String(data.get('face')),startU:Number(data.get('startU')),
+                    heightU:Number(data.get('heightU')),side:null,
+                    portCount:String(data.get('accessoryType'))==='patch'?Number(data.get('portCount')):null
+                };
+                const invalid = !nextRackBridge?.canEdit() ? 'Racks edit permission required.'
+                    : !startSelect.value ? 'No free U position is available.'
+                    : (candidate.type==='patch' && ![12,24,48].includes(candidate.portCount)) ? 'Choose a valid patch-panel port count.'
+                    : validateRackAccessoryPlacement(candidate);
+                if (invalid) { errorField.textContent = invalid; return; }
+                const before = JSON.stringify(appState);
+                if (!Array.isArray(appState.rackAccessories)) appState.rackAccessories=[];
+                appState.rackAccessories.push(candidate);
+                if (!await nextRackBridge.saveAccessory(candidate.id,candidate)) {
+                    appState=JSON.parse(before);
+                    errorField.textContent='Accessory could not be saved. Your previous inventory is unchanged.';
+                    return;
+                }
+                closeModal(true);activeRackFace=candidate.face;renderContent();
+            });
         }
 
         function openAssignDeviceModal(rackId, slotU, editDeviceId = null) {
@@ -6550,38 +6638,21 @@ function hierarchyValidateTypes(subnets) {
             if (occupant) unassignedDevices.sort((a, b) => (a.id === occupant.id ? -1 : b.id === occupant.id ? 1 : 0));
 
             openModal(`
-                <div class="p-6 sm:p-7 space-y-5">
-                    <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-4 mb-1">
-                        <div><h3 class="font-bold text-xl">Rack Placement</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">${escapeHtml(rack.name)} · U${slotU}</p></div>
-                        <button type="button" data-action="close-modal" aria-label="Close dialog"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
-                    </div>
-                    <form data-form-action="assign" data-rack-id="${escapeHtml(rackId)}" data-default-slot="${Number(slotU) || 1}" class="form-shell space-y-5">
-                        <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-link"></i>Device</div>
-                        <div>
-                            <label class="block text-xs font-semibold mb-1">Select Device from Inventory <span class="required-mark">*</span></label>
-                            <select id="assign-device-id" required ${editingDevice ? 'aria-label="Mounted device being edited"' : ''} class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
+                <div class="rack-modal" role="dialog" aria-modal="true" aria-label="Rack placement">
+                    <div class="rack-modal-top"><div><div class="eyebrow">RACK MANAGEMENT</div><h2>Edit Device Placement</h2></div><button type="button" class="rack-modal-close" data-action="close-modal">Close ×</button></div>
+                    <p>Choose a device and an unoccupied U position on the selected face.</p>
+                    <form data-form-action="assign" data-rack-id="${escapeHtml(rackId)}" data-default-slot="${Number(slotU)||1}" class="rack-approved-form">
+                        <div class="rack-form-grid">
+                            <label class="rack-field span2">Device<select id="assign-device-id" required ${editingDevice ? 'aria-label="Mounted device being edited"' : ''} class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
                                 ${editingDevice ? '' : (unassignedDevices.length ? '<option value="" selected disabled>Select a device...</option>' : '<option value="" selected disabled>No eligible Rack Mounted devices available</option>')}
                                 ${unassignedDevices.map(d => `<option value="${escapeHtml(d.id)}" ${editingDevice && d.id === editingDevice.id ? 'selected' : ''}>${escapeHtml(d.name)} (${escapeHtml(d.type)})</option>`).join('')}
-                            </select>
+                            </select></label>
+                            <label class="rack-field">Rack Face<select id="assign-face"><option value="front" ${activeRackFace==='front'?'selected':''}>Front</option><option value="rear" ${activeRackFace==='rear'?'selected':''}>Rear</option></select></label>
+                            <label class="rack-field">Start U<select id="assign-u-start" required aria-label="Available start U position"></select></label>
                         </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
-                            <div>
-                                <label class="block text-xs font-semibold mb-1">Rack Face <span class="required-mark">*</span></label>
-                                <select id="assign-face" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
-                                    <option value="front" ${activeRackFace === 'front' ? 'selected' : ''}>Front Mount</option>
-                                    <option value="rear" ${activeRackFace === 'rear' ? 'selected' : ''}>Rear Mount</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold mb-1">Start U Position <span class="required-mark">*</span></label>
-                                <select id="assign-u-start" required class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700 font-mono" aria-label="Available start U position"></select>
-                            </div>
-                        </div>
+                        <div class="rack-modal-info">Rack space and existing mounting rules are validated before saving.</div>
                         <div class="form-error" data-form-error role="alert"></div>
-                        <div class="form-actions">
-                            <button type="button" data-action="close-modal" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 rounded-xl text-xs caffoot-modal-cancel">Cancel</button>
-                            <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-semibold">Mount Device</button>
-                        </div>
+                        <div class="rack-form-actions"><button type="button" data-action="close-modal" class="btn btn-outline caffoot-modal-cancel">Cancel</button><button type="submit" class="btn btn-primary">Mount Device</button></div>
                     </form>
                 </div>
             `);
@@ -9429,25 +9500,22 @@ function hierarchyValidateTypes(subnets) {
             const modal=document.getElementById('modal-container');
             const modalContent = document.getElementById('modal-content');
             modalContent.classList.remove('rack-balanced-modal');
-            modalContent.innerHTML=`<div role="dialog" aria-modal="true" aria-label="Rack accessory" class="accessory-modal p-5 sm:p-7 text-slate-900 dark:text-white">
-                <div class="mb-5"><h2 class="font-bold text-xl">${existing?'Edit accessory':'Rack placement'}</h2><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">${escapeHtml(rack.name)} · U${start}</p></div>
-                <form id="rack-accessory-form" class="space-y-5">
-                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <label class="rack-fascia-label">Accessory type<select name="type" required class="rack-accessory-field">${Object.entries(rackAccessoryTypeDefinitions).filter(([key,item])=>!!item.vertical===verticalWorkflow).map(([key,item])=>`<option value="${key}" ${type===key?'selected':''}>${item.label}</option>`).join('')}</select></label>
-                    <label id="rack-port-field" class="rack-fascia-label" style="${type==='patch'?'':'display:none;'}">Patch panel ports<select name="portCount" class="rack-accessory-field" ${type==='patch'?'required':'disabled'}><option value="12" ${Number(existing?.portCount)===12?'selected':''}>12 ports</option><option value="24" ${![12,48].includes(Number(existing?.portCount))?'selected':''}>24 ports</option><option value="48" ${Number(existing?.portCount)===48?'selected':''}>48 ports</option></select></label>
-                  </div>
-                  <label class="rack-fascia-label">Description (optional)<input name="name" maxlength="80" class="rack-accessory-field" value="${escapeHtml(existing?.name||'')}" placeholder="e.g. Rack PDU or fibre patch panel"></label>
-                  <fieldset class="border border-slate-200 dark:border-slate-600 rounded-xl p-4"><legend class="px-2 font-semibold text-sm">Rack placement</legend>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <label class="rack-fascia-label">Face<select name="face" class="rack-accessory-field"><option value="front" ${face==='front'?'selected':''}>Front</option><option value="rear" ${face==='rear'?'selected':''}>Rear</option></select></label>
-                      <label id="rack-side-field" class="rack-fascia-label" style="${rackAccessoryTypeDefinitions[type]?.vertical?'':'display:none;'}">Side (as viewed from selected face)<select name="side" class="rack-accessory-field"><option value="left" ${existing?.side==='left'?'selected':''}>Left (L)</option><option value="right" ${existing?.side==='right'?'selected':''}>Right (R)</option></select></label>
-                      <label class="rack-fascia-label">Height (U)<input name="heightU" type="number" min="1" max="${rackAccessoryTypeDefinitions[type]?.vertical?rackLimit:12}" required class="rack-accessory-field" value="${height}"></label>
-                      <label class="rack-fascia-label">Start U<select name="startU" required class="rack-accessory-field" aria-describedby="rack-position-hint"></select></label>
+            modalContent.innerHTML=`<div role="dialog" aria-modal="true" aria-label="Rack accessory" class="rack-modal accessory-modal">
+                <div class="rack-modal-top"><div><div class="eyebrow">RACK MANAGEMENT</div><h2>${existing?(verticalWorkflow?'Edit Vertical 0U Accessory':'Edit Horizontal Accessory Placement'):verticalWorkflow?'Add Vertical 0U Accessory':'Place Horizontal Accessory'}</h2></div><button type="button" class="rack-modal-close" data-action="close-modal">Close ×</button></div><p>${verticalWorkflow?'Manage a vertical 0U accessory on the left or right rail. Rail accessories do not occupy central rack U slots.':'Place a horizontal rack accessory into free U positions on the selected face.'}</p>
+                <form id="rack-accessory-form" class="rack-approved-form">
+                  <div class="rack-form-grid">
+                    <label class="rack-field">${verticalWorkflow?'Vertical Accessory Type':'Horizontal Accessory Type'}<select name="type" required class="rack-accessory-field">${Object.entries(rackAccessoryTypeDefinitions).filter(([key,item])=>!!item.vertical===verticalWorkflow).map(([key,item])=>`<option value="${key}" ${type===key?'selected':''}>${item.label}</option>`).join('')}</select></label>
+                    <label id="rack-port-field" class="rack-field" style="${type==='patch'?'':'display:none;'}">Patch panel ports<select name="portCount" class="rack-accessory-field" ${type==='patch'?'required':'disabled'}><option value="12" ${Number(existing?.portCount)===12?'selected':''}>12 ports</option><option value="24" ${![12,48].includes(Number(existing?.portCount))?'selected':''}>24 ports</option><option value="48" ${Number(existing?.portCount)===48?'selected':''}>48 ports</option></select></label>
+                  <label class="rack-field">Name<input name="name" maxlength="80" class="rack-accessory-field" value="${escapeHtml(existing?.name||'')}" placeholder="e.g. Rack PDU or fibre patch panel"></label>
+                  
+                      <label class="rack-field">Face<select name="face" class="rack-accessory-field"><option value="front" ${face==='front'?'selected':''}>Front</option><option value="rear" ${face==='rear'?'selected':''}>Rear</option></select></label>
+                      <label id="rack-side-field" class="rack-field" style="${rackAccessoryTypeDefinitions[type]?.vertical?'':'display:none;'}">0U Rail Side<select name="side" class="rack-accessory-field"><option value="left" ${existing?.side==='left'?'selected':''}>Left (L)</option><option value="right" ${existing?.side==='right'?'selected':''}>Right (R)</option></select></label>
+                      <label class="rack-field">Start U<select name="startU" required class="rack-accessory-field" aria-describedby="rack-position-hint"></select></label>
+                      <label class="rack-field">${verticalWorkflow?'Vertical Span (U)':'Height (U)'}<input name="heightU" type="number" min="1" max="${rackAccessoryTypeDefinitions[type]?.vertical?rackLimit:12}" required class="rack-accessory-field" value="${height}"></label>
                     </div>
-                  </fieldset>
-                  <p id="rack-position-hint" class="text-xs text-slate-500 dark:text-slate-300" aria-live="polite"></p>
+                  <div class="rack-modal-info" id="rack-position-hint" aria-live="polite"></div>
                   <p id="rack-accessory-form-error" role="alert" aria-live="polite" class="text-sm text-rose-600 dark:text-rose-400 min-h-5"></p>
-                  <div class="flex flex-wrap justify-end gap-3 pt-2 border-t border-slate-200 dark:border-slate-600">${existing?`<button type="button" id="rack-accessory-remove-button" class="rack-danger mr-auto">Remove accessory</button>`:''}<button type="button" data-action="close-modal" class="rack-secondary caffoot-modal-cancel">Cancel</button><button type="submit" class="rack-primary">${existing?'Save changes':'Place accessory'}</button></div>
+                  <div class="rack-form-actions">${existing?`<button type="button" id="rack-accessory-remove-button" class="rack-danger mr-auto">Remove accessory</button>`:''}<button type="button" data-action="close-modal" class="btn btn-outline caffoot-modal-cancel">Cancel</button><button type="submit" class="btn btn-primary">${existing?'Save changes':'Place accessory'}</button></div>
                 </form>
             </div>`;
             modal.classList.remove('hidden');

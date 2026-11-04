@@ -429,6 +429,34 @@ async function run(){
   assert.equal(await approvedElevation.locator('.rack-elevation .rack-slot-group .rack-empty').count(),
     Number(await page.evaluate(()=>appState.racks.find(r=>r.name==='Browser Rack')?.heightU || 0)),
     'An empty rack must expose every U through approved Place Here buttons');
+  // Draft 04 uses one Placement Type form, not separate legacy action tabs.
+  await page.evaluate(() => openRackSlotPlacementDialog(
+    appState.racks.find(r=>r.name==='Browser Rack').id,1));
+  const approvedPlacement=page.locator('#modal-content .rack-modal');
+  await approvedPlacement.waitFor();
+  assert.ok(await approvedPlacement.locator('.rack-modal-top h2')
+    .getByText('Place Device / Horizontal Accessory at U1',{exact:true}).isVisible(),
+    'Clicked rack U must open the approved Draft 04 placement header');
+  assert.equal(await approvedPlacement.locator('#rack-placement-form .rack-form-grid #place-item-type').count(),1,
+    'Approved equipment placement must use its original Placement Type selector');
+  assert.equal(await approvedPlacement.locator('#rack-placement-form #assign-face').count(),1);
+  assert.equal(await approvedPlacement.locator('#rack-placement-form #assign-u-start').count(),1);
+  await approvedPlacement.locator('#place-item-type').selectOption('accessory');
+  assert.ok(await approvedPlacement.locator('#place-accessory-field').isVisible(),
+    'Horizontal accessory choice must appear within the same approved placement form');
+  assert.ok(await approvedPlacement.locator('#place-port-field').isVisible(),
+    'Saved patch-panel port options must remain available');
+  assert.ok(await approvedPlacement.locator('#place-device-field').isHidden(),
+    'Device selector must hide when placing a horizontal accessory');
+  await approvedPlacement.locator('#place-item-type').selectOption('device');
+  assert.ok(await approvedPlacement.locator('#place-device-field').isVisible(),
+    'Original placement selector must restore the device fields');
+  await page.setViewportSize({width:420,height:900});
+  assert.equal(await approvedPlacement.locator('.rack-form-grid').evaluate(
+    el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),1,
+    'Draft 04 placement form must stack on narrow screens');
+  await page.evaluate(()=>closeModal(true));
+  await page.setViewportSize({width:1440,height:950});
   assert.equal(await rackDetail.locator('.rack-aside > .rack-card.pad').count(),3,
     'Draft 04 must have capacity, available positions and opposite-face cards');
   assert.equal(await rackDetail.locator('.rack-height-picker button').count(),4,
@@ -830,6 +858,12 @@ async function run(){
     Number(d.rackUStart)===6),'Rack device move');
   await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
   await page.evaluate(id=>openRackAccessoryEditor(id,3),rackId);
+  const rackAccessoryModal=page.locator('#modal-content .rack-modal.accessory-modal');
+  assert.ok(await rackAccessoryModal.locator('.rack-modal-top h2')
+    .getByText('Place Horizontal Accessory',{exact:true}).isVisible(),
+    'Horizontal accessory editor must use the approved Rack Draft 04 modal header');
+  assert.ok(await rackAccessoryModal.locator('.rack-form-grid > .rack-field').count()>=6,
+    'Approved Rack editor fields must share the source form grid');
   await page.locator('#rack-accessory-form [name="type"]').selectOption('patch');
   await page.locator('#rack-accessory-form [name="name"]').fill('Browser Patch Panel');
   await page.locator('#rack-accessory-form [name="portCount"]').selectOption('24');
@@ -842,6 +876,11 @@ async function run(){
     selectedRackAccessoryType='pdu_vertical';
     openRackAccessoryEditor(id,1);
   },rackId);
+  assert.ok(await page.locator('#modal-content .rack-modal-top h2')
+    .getByText('Add Vertical 0U Accessory',{exact:true}).isVisible(),
+    '0U editor must use the approved dedicated vertical accessory modal');
+  assert.ok(await page.locator('#rack-accessory-form #rack-side-field').isVisible(),
+    'The original left/right 0U rail selector must remain visible');
   await page.locator('#rack-accessory-form [name="type"]').selectOption('pdu_vertical');
   await page.locator('#rack-accessory-form [name="name"]').fill('Browser Vertical PDU');
   await page.locator('#rack-accessory-form [name="side"]').selectOption('left');
