@@ -692,10 +692,36 @@ async function run(){
   // The VM form must use an eligible physical hypervisor, not a separate rack position.
   await page.locator('#sidebar [data-action="tab-devices"]').click();
   await modal(page,'openDeviceModal');
+  const approvedEditor=page.locator('#modal-content .device-modal.device-review-dialog');
+  await approvedEditor.waitFor();
+  assert.equal(await approvedEditor.locator('.device-review-head h2').textContent(),'Add New Device');
+  assert.ok(await approvedEditor.getByText('Device Identity',{exact:true}).isVisible(),
+    'Approved Device Identity card must be visible');
+  assert.deepEqual(await approvedEditor.locator('[role="tab"]').allTextContents(),
+    ['General','Hardware','Software & Firmware','Networking','Notes']);
+  await approvedEditor.getByRole('tab',{name:'Hardware'}).click();
+  assert.ok(await approvedEditor.getByText('Hardware & Lifecycle',{exact:true}).isVisible(),
+    'Approved Hardware card must be present');
+  assert.ok(await approvedEditor.locator('#dev-manufacturer-select').isVisible(),
+    'The live manufacturer selector must remain available');
+  await approvedEditor.getByRole('tab',{name:'Software & Firmware'}).click();
+  assert.ok(await approvedEditor.locator('#device-form-panel-software .form-section-card').count()>0,
+    'Approved Software & Firmware cards must be present');
+  await approvedEditor.getByRole('tab',{name:'General'}).click();
+  await page.setViewportSize({width:420,height:900});
+  assert.equal(await approvedEditor.locator('#device-form-panel-general').evaluate(
+    node=>getComputedStyle(node).flexDirection),'column',
+    'Device Editor cards must stack at mobile width');
+  assert.ok(await approvedEditor.locator('.form-actions button[type="submit"]').isVisible(),
+    'Save Device must remain accessible on mobile');
+  await page.setViewportSize({width:1440,height:950});
   await page.locator('#dev-name').fill('browser-hypervisor');
   await page.locator('#dev-type').selectOption('Server - Physical');
   await page.locator('#dev-mount-type').selectOption('Tower / Floor Standing');
   await page.locator('#dev-location').selectOption('Unknown');
+  await approvedEditor.getByRole('tab',{name:'Software & Firmware'}).click();
+  assert.ok(await approvedEditor.locator('#device-form-panel-software #host-platform-fields').isVisible(),
+    'Physical hypervisor options belong in Software & Firmware');
   await page.locator('#device-hosting-enabled').check();
   await page.locator('#host-platform-select').selectOption('Proxmox VE');
   await page.getByRole('tab',{name:'Networking'}).click();
@@ -712,6 +738,10 @@ async function run(){
   await modal(page,'openDeviceModal');
   await page.locator('#dev-name').fill('browser-vm');
   await page.locator('#dev-deployment').selectOption('virtual');
+  assert.ok(await approvedEditor.locator('#device-form-panel-general .device-review-vm-configuration').isVisible(),
+    'Approved VM allocation card must be visible in General');
+  assert.ok(await approvedEditor.locator('#dev-virtual-host').isVisible(),
+    'VMs must retain their physical-host selector');
   await page.locator('#dev-vm-purpose').selectOption('Server - Virtual');
   await page.locator('#dev-virtual-host').selectOption(hypervisor.id);
   assert.ok(await page.locator('#device-form-tab-hardware').isHidden(),
@@ -754,7 +784,16 @@ async function run(){
     'Physical hardware details must remain accessible');
   assert.ok(await deviceReview.locator('[data-action="edit-device-from-details"]').isVisible(),
     'Approved footer must keep live editing controls');
-  await deviceReview.locator('[data-action="close-modal"]').first().click();
+  await deviceReview.locator('[data-action="edit-device-from-details"]').click();
+  await approvedEditor.locator('.device-review-head h2').getByText('Edit Device',{exact:true}).waitFor();
+  assert.equal(await approvedEditor.locator('#dev-name').inputValue(),'browser-hypervisor',
+    'Edit Device must retain the saved physical device identity');
+  await approvedEditor.getByRole('tab',{name:'Software & Firmware'}).click();
+  assert.ok(await approvedEditor.locator('#device-form-panel-software #host-platform-fields').isVisible(),
+    'Edit Device must retain approved hypervisor layout');
+  assert.ok(await approvedEditor.locator('#device-hosting-enabled').isChecked(),
+    'Edit Device must preserve the saved physical hypervisor setting');
+  await approvedEditor.locator('[data-action="close-modal"]').first().click();
   await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
 
   await page.evaluate(id=>openDeviceDetailView(id),vm.id);
