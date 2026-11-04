@@ -1683,6 +1683,30 @@ html.dark .caffoot-dashboard .db-rack-row:hover{background:#354a60;border-color:
 #main-content .rack-workspace .rack-face-control button:focus-visible{outline:2px solid #ed8532;outline-offset:2px}
 @media(max-width:720px){#main-content .rack-workspace .rack-detail-controls{width:100%}#main-content .rack-workspace .rack-detail-controls label{flex:1}#main-content .rack-workspace .rack-subtabs{width:100%}}
 </style>
+<style id="approved-dashboard-draft02-insights">
+/* Pinned Dashboard Draft 02 visual components; live data supplied by renderDashboardHTML. */
+.db-slimrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 0;border-top:1px solid #e9edf2;min-width:0}
+.db-slimrow:first-of-type{border-top:0}.db-slimrow[hidden]{display:none!important}.db-slimrow strong{color:#324d66;font-size:12px}.db-muted{color:#7890a6;font-size:11.5px;line-height:1.6}
+.db-badge{border-radius:999px;background:#f0f5f9;color:#7790a5;font-size:10px;font-weight:750;padding:5px 9px;white-space:nowrap}
+.db-good{background:#e8f5f0;color:#398569}.db-warning{background:#fff2df;color:#a76528}
+.db-bar{width:100%;height:9px;border-radius:99px;overflow:hidden;background:#eaf0f4;margin:9px 0 5px}
+.db-bar>span{display:block;height:100%;border-radius:99px;background:#ed8532;max-width:100%}
+.db-progress-title{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:12px;font-weight:700;color:#455e76}
+.db-progress-title strong{font-size:11px;color:#6b8499}.db-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px;align-items:stretch}
+.db-legend{display:grid;gap:10px;margin-top:15px}.db-legend>div{display:grid;grid-template-columns:10px minmax(0,1fr) auto;gap:8px;align-items:center;font-size:12px;color:#617c91}
+.db-dot{width:8px;height:8px;border-radius:50%;background:#ed8532}.db-dot.green{background:#4a9c86}.db-dot.blue{background:#7396bb}.db-dot.gray{background:#a8b6c2}
+.db-hero-row{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap}
+.db-main-title{font-size:18px;margin:0;color:#273f56}.db-btn-outline{width:100%;margin-top:13px}
+.db-report-buttons{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.db-alertlist{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:10px}
+.db-alertlist li{display:flex;gap:11px;align-items:flex-start;padding:11px;border-radius:10px;background:#f7f9fb;color:#546e84;font-size:12px;line-height:1.5}
+.db-alertlist li strong{color:#28435c}.db-insights-4{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.db-insights-4 .db-card{min-height:235px}.db-stat-number{font-size:28px;font-weight:800;letter-spacing:-.7px;color:#29445c}
+.db-filters{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.db-filters select{min-width:135px;border:1px solid #dfe7ef;border-radius:8px;padding:9px;background:#fff;color:#38546d;font-size:12px}
+.db-callout{background:#fff9f1;border:1px solid #f4e2ce;border-radius:10px;padding:11px 15px;color:#7c684f;font-size:11px;line-height:1.55;margin:0 0 16px}
+.db-section{margin-top:18px}
+@media(max-width:700px){.db-insights-4,.db-grid{grid-template-columns:minmax(0,1fr)}}
+</style>
 <style id="approved-catalogue-modal-batch02">
 .catalog-modal-overlay{position:fixed;inset:0;background:#10283cca;z-index:120;display:flex;align-items:center;justify-content:center;padding:18px}
 .catalog-modal-overlay[hidden]{display:none!important}
@@ -3434,9 +3458,9 @@ function hierarchyValidateTypes(subnets) {
 
             // The approved Rack Details panel keeps the existing rack-selection action.
             const rackCards = racks.length ? racks.map(rack =>
-                `<button type="button" data-action="select-rack" data-id="${escapeHtml(rack.id)}" class="db-rack-row">
+                `<button type="button" data-action="select-rack" data-id="${escapeHtml(rack.id)}" class="db-slimrow db-rack-row">
                     <strong>${escapeHtml(rack.name)}</strong>
-                    <span class="db-status-badge">${Number(rack.heightU) || 0}U</span>
+                    <span class="db-badge">${Number(rack.heightU) || 0}U</span>
                 </button>`).join('') : '<p class="db-muted">No racks configured yet.</p>';
 
             const recentDevices = devices.slice().reverse().slice(0, 6);
@@ -3493,28 +3517,32 @@ function hierarchyValidateTypes(subnets) {
                 });
                 return {rack, faces};
             });
-            const networkInsights = `<section class="dashboard-insights" aria-label="Network insights">
-                <div class="dashboard-layout-grid">
-                    <article class="dashboard-summary-panel"><h4>IP address utilisation</h4><p class="dashboard-muted">${totalSubnetCapacity.toLocaleString()} usable addresses across ${subnets.length} subnets</p>
-                        <div class="dashboard-bar" role="progressbar" aria-label="IP utilisation" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${ipUtilisation}"><span style="width:${ipUtilisation}%;background:#2563eb"></span></div>
-                        <div class="dashboard-metric">${ipUtilisation}% <small>allocated or reserved</small></div>
-                        ${insightSegment('Assigned',subnetAssigned,totalSubnetCapacity,'dashboard-dot-blue')}
-                        ${insightSegment('Reserved',subnetReserved,totalSubnetCapacity,'dashboard-dot-amber')}
-                        ${insightSegment('Available',Math.max(0,totalSubnetCapacity-subnetAssigned-subnetReserved),totalSubnetCapacity,'dashboard-dot-green')}
-                    </article>
-                    <article class="dashboard-summary-panel"><h4>Device Status</h4><p class="dashboard-muted">${devices.length} devices in your inventory</p>
-                        <div class="dashboard-insight-status"><div class="dashboard-donut" style="background:${statusGradient}" role="img" aria-label="Device status distribution"><span>${devices.length}</span></div>
-                        <div class="dashboard-status-legend">${statusEntries.length ? statusEntries.map(([name,count],i)=>`<div class="dashboard-legend-row"><span class="dashboard-dot" style="background:${statusColours[i%statusColours.length]}"></span><span>${escapeHtml(name)}</span><strong>${count}</strong></div>`).join('') : '<p class="dashboard-muted">No devices configured</p>'}</div></div>
-                    </article>
-                    <article class="dashboard-summary-panel"><h4>Hardware Distribution</h4><p class="dashboard-muted">Device types by inventory count</p>
-                        <div class="dashboard-types">${topTypes.length ? topTypes.map(([name,count])=>`<div><div class="type-label"><span>${escapeHtml(name)}</span><strong>${count}</strong></div><div class="dashboard-bar"><span style="width:${Math.round(count/maxTypeCount*100)}%;background:#0d9488"></span></div></div>`).join('') : '<p class="dashboard-muted">No devices configured</p>'}</div>
-                    </article>
-                    <article class="dashboard-summary-panel"><h4>Rack Capacity By Face</h4><p class="dashboard-muted">Front and rear occupancy, including accessories</p>
-                        <div class="dashboard-racks">${rackInsights.length ? rackInsights.map(({rack,faces})=>`<div class="dashboard-rack-summary"><strong>${escapeHtml(rack.name)}</strong>${faces.map(f=>`<div class="dashboard-insight-face"><span>${f.face === 'front' ? 'Front' : 'Rear'}</span><div class="dashboard-bar"><span style="width:${f.percent}%;background:${f.percent>=85?'#d97706':'#15803d'}"></span></div><span>${f.used}/${f.capacity}U</span></div>`).join('')}</div>`).join('') : '<p class="dashboard-muted">No racks configured</p>'}</div>
-                    </article>
-                </div>
-            </section>`;
-
+            // Original approved Draft 02 four-card grid: all figures are from saved inventory.
+            const networkInsights = `<div class="db-insights-4">
+              <div class="card db-card">
+                <div class="card-head"><span class="iconwrap orange"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-network"></use></svg></span><div><h3>IP Address Utilisation</h3><p class="sub">Allocated or reserved addresses across managed subnets.</p></div></div>
+                <div class="divider"></div>
+                <div class="db-stat-number">${ipUtilisation}%</div>
+                <div class="db-bar" role="progressbar" aria-label="IP address utilisation" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${ipUtilisation}"><span style="width:${ipUtilisation}%;background:#7197b9"></span></div>
+                <div class="db-legend"><div><span class="db-dot blue"></span><span>Assigned</span><strong>${subnetAssigned}</strong></div><div><span class="db-dot"></span><span>Reserved</span><strong>${subnetReserved}</strong></div><div><span class="db-dot green"></span><span>Available</span><strong>${Math.max(0,totalSubnetCapacity-subnetAssigned-subnetReserved)}</strong></div></div>
+              </div>
+              <div class="card db-card">
+                <div class="card-head"><span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-box"></use></svg></span><div><h3>Device Status</h3><p class="sub">Status distribution in the saved inventory.</p></div></div>
+                <div class="divider"></div>
+                <div class="db-stat-number">${devices.length} <span class="db-muted">devices</span></div>
+                <div class="db-legend">${statusEntries.length?statusEntries.map(([name,count],i)=>`<div><span class="db-dot ${i%3===0?'green':i%3===1?'':'gray'}"></span><span>${escapeHtml(name)}</span><strong>${count}</strong></div>`).join(''):'<p class="db-muted">No devices configured yet.</p>'}</div>
+              </div>
+              <div class="card db-card">
+                <div class="card-head"><span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-box"></use></svg></span><div><h3>Hardware Distribution</h3><p class="sub">Device categories by inventory count.</p></div></div>
+                <div class="divider"></div>
+                ${topTypes.length?topTypes.map(([name,count],i)=>`<div class="db-progress-title" style="${i?'margin-top:18px':''}"><span>${escapeHtml(name)}</span><strong>${count}</strong></div><div class="db-bar"><span style="width:${Math.round(count/maxTypeCount*100)}%;background:#77a8a1"></span></div>`).join(''):'<p class="db-muted">No devices configured yet.</p>'}
+              </div>
+              <div class="card db-card">
+                <div class="card-head"><span class="iconwrap orange"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-rack"></use></svg></span><div><h3>Rack Capacity by Face</h3><p class="sub">Front and rear U occupancy, including accessories.</p></div></div>
+                <div class="divider"></div>
+                ${rackInsights.length?rackInsights.flatMap(({rack,faces})=>faces.map(({face,used,capacity,percent})=>`<div class="db-progress-title"><span>${escapeHtml(rack.name)} — ${face==='front'?'Front':'Rear'}</span><strong>${used} / ${capacity}U</strong></div><div class="db-bar"><span style="width:${percent}%;background:${face==='front'?'#7396bb':'#4a9c86'}"></span></div>`)).join(''):'<p class="db-muted">No racks configured yet.</p>'}
+              </div>
+            </div>`;
             return `
                 <div class="caffoot-dashboard">
                     <div class="caffoot-dashboard-eyebrow">YOUR INFRASTRUCTURE AT A GLANCE</div>
@@ -3601,11 +3629,11 @@ function hierarchyValidateTypes(subnets) {
                     </div>
                     <div id="dashboard-panel-insights" role="tabpanel" aria-labelledby="dashboard-tab-insights" class="dashboard-tab-panel space-y-5" ${activeDashboardTab==='insights'?'':'hidden'}>
                     ${networkInsights}
-                    <section class="db-card db-rack-details">
-                        <div class="db-card-head"><span class="db-iconwrap orange"><i class="fa-solid fa-server" aria-hidden="true"></i></span><div><h3>Rack Details</h3><p>The existing rack list and per-rack links stay available in this section.</p></div></div>
-                        <div class="db-card-rule"></div>
-                        <div class="db-rack-list">${rackCards}</div>
-                        <button type="button" data-action="tab-racks" class="db-outline-button">Open Rack Details</button>
+                    <section class="db-section card db-card db-rack-details">
+                        <div class="card-head"><span class="iconwrap"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" width="18"><use href="#i-rack"></use></svg></span><div><h3>Rack Details</h3><p class="sub">The existing rack list and per-rack links stay available in this section.</p></div></div>
+                        <div class="divider"></div>
+                        <div class="db-grid">${rackCards}</div>
+                        <div class="db-actionrow"><button type="button" data-action="tab-racks" class="btn btn-outline">Open Rack Details</button></div>
                     </section>
                     </div>
                     <div id="dashboard-panel-activity" role="tabpanel" aria-labelledby="dashboard-tab-activity" class="dashboard-tab-panel space-y-5" ${activeDashboardTab==='activity'?'':'hidden'}>
