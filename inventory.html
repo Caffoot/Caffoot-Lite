@@ -7364,7 +7364,7 @@ function openIpModal(ip) {
                 field('vCPUs', d.vmVcpu) + field('Allocated RAM (GB)', d.vmRamGb) +
                 field('Virtual disk (GB)', d.vmDiskGb) + field('Virtual network adapters', d.vmNicCount), false, 'These are the VM’s own allocated resources, not physical host hardware.') : '';
             const hardware = field('Manufacturer', d.manufacturer) + field('Model', d.model) + field('Serial number', d.serialNumber);
-            const rackRows = mounted ? field('Rack', rack.name) + field('Face', d.face || 'front') + field('U position', uText) + field('Height', (Number(d.rackUHeight) || (uEnd-uStart+1) || 1) + 'U') : '';
+            const rackRows = mounted ? field('Rack', rack.name) + field('Face', String(d.face || 'front').toLowerCase() === 'rear' ? 'Rear' : 'Front') + field('Start U', Number.isFinite(uStart) && uStart > 0 ? uStart : 'Not assigned') + field('U height', (Number(d.rackUHeight) || (uEnd-uStart+1) || 1) + 'U') : '';
             openApprovedDeviceReviewModal(`<div class="device-details-dialog device-review-dialog">
                 <header class="device-review-head">
                   <div class="device-review-headline">
@@ -7395,7 +7395,7 @@ function openIpModal(ip) {
                         ${section('Hardware & Lifecycle', 'fa-microchip', hardware + field('Device Type', d.type) + field('Status', status) + field('Mount Type', d.mountType || (mounted ? 'Rack Mounted' : 'Desktop')) + (detailRows ? `<div class="device-details-detail-subheading">Additional ${safe(d.type)} details</div>${detailRows}` : ''), true)}
                     </div>` : ''}
                     <div id="device-details-panel-network" role="tabpanel" aria-labelledby="device-details-tab-network" class="device-details-panel device-review-grid" hidden>
-                        ${section('Network Identity', 'fa-network-wired', field('Primary IP', d.primaryIp) + field('Subnet', subnet ? (subnet.cidr || subnet.name || subnet.network || subnet.id) : 'Not linked') + field('IP reserved', d.ipReserved ? 'Yes' : 'No'), true, 'Recorded IPAM information')}
+                        ${section('Network Identity', 'fa-network-wired', field('Primary IP', d.primaryIp) + field('Subnet', subnet ? (subnet.cidr || subnet.name || subnet.network || subnet.id) : 'Not linked') + field('IP reserved', d.ipReserved ? 'Yes' : 'No') + field('Status', status), true, 'Recorded IPAM information')}
                     </div>
                     <div id="device-details-panel-software" role="tabpanel" aria-labelledby="device-details-tab-software" class="device-details-panel device-review-grid" hidden>
                         ${section('Operating System / Platform', 'fa-desktop',platformDetails || field('Operating System','Not recorded'), false, 'Recorded software platform')}
@@ -7404,7 +7404,7 @@ function openIpModal(ip) {
                         ${serverServices?section('Server Services', 'fa-server',serverServices):''}
                     </div>
                     <div id="device-details-panel-location" role="tabpanel" aria-labelledby="device-details-tab-location" class="device-details-panel device-review-grid" hidden>
-                        ${section('Mounting & Location', 'fa-location-dot', isVirtualDevice ? field('Location Area', d.location) : field('Location Area', d.location) + field('Mounting', d.mountType || (mounted ? 'Rack Mounted' : 'Desktop')) + rackRows, true)}
+                        ${section('Mounting & Location', 'fa-location-dot', isVirtualDevice ? field('Location Area', d.location) + field('Physical Host', d.virtualHostId ? (appState.devices.find(host => host.id === d.virtualHostId)?.name || 'Missing or unavailable host (legacy reference preserved)') : 'Not assigned') : field('Location Area', d.location) + field('Mounting', d.mountType || (mounted ? 'Rack Mounted' : 'Desktop')) + rackRows, true)}
                         ${mounted && !isVirtualDevice ? `<section class="device-details-section device-review-panel full"><h3><span class="mini-icon"><i class="fa-solid fa-server" aria-hidden="true"></i></span>Rack Navigation</h3><p>View this device in its existing rack.</p><button type="button" data-action="navigate-to-device-rack" data-id="${safe(d.id)}" class="btn btn-outline">View in Rack</button></section>` : ''}
                     </div>
                     ${historyRows?`<div id="device-details-panel-history" role="tabpanel" aria-labelledby="device-details-tab-history" class="device-details-panel device-review-grid" hidden><section class="device-details-section"><h4>Previous Device Type Details</h4><p class="text-sm mb-3">Preserved for reference only; not part of the active configuration.</p>${historyRows}</section></div>`:''}
