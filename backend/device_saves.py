@@ -217,10 +217,7 @@ def save_reserved_device(connection, account_id, device_id, revision, record, se
                 "INSERT INTO inventory_change_history(record_json) VALUES(?)",
                 (json.dumps(event, ensure_ascii=False),),
             )
-            connection.execute(
-                "DELETE FROM inventory_change_history WHERE id NOT IN "
-                "(SELECT id FROM inventory_change_history ORDER BY id DESC LIMIT 200)"
-            )
+
         connection.execute("DELETE FROM device_edit_reservations WHERE device_id=?", (device_id,))
         connection.commit()
         return revision + 1
@@ -294,10 +291,7 @@ def create_device(connection, account_id, record):
             "INSERT INTO inventory_change_history(record_json) VALUES(?)",
             (json.dumps(event, ensure_ascii=False),),
         )
-        connection.execute(
-            "DELETE FROM inventory_change_history WHERE id NOT IN "
-            "(SELECT id FROM inventory_change_history ORDER BY id DESC LIMIT 200)"
-        )
+
         connection.commit()
         return 0
     except BaseException:
@@ -378,10 +372,7 @@ def delete_reserved_device(connection, account_id, device_id, revision, related_
             "INSERT INTO inventory_change_history(record_json) VALUES(?)",
             (json.dumps(event, ensure_ascii=False),),
         )
-        connection.execute(
-            "DELETE FROM inventory_change_history WHERE id NOT IN "
-            "(SELECT id FROM inventory_change_history ORDER BY id DESC LIMIT 200)"
-        )
+
         connection.execute("DELETE FROM device_edit_reservations WHERE device_id=?", (device_id,))
         connection.commit()
         return True
