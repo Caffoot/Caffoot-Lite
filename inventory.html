@@ -8540,7 +8540,7 @@ function openIpModal(ip) {
             const mountingTitle = document.createElement('h3');
             mountingTitle.innerHTML = '<span class="mini-icon" aria-hidden="true">▣</span>Mounting & Rack Configuration';
             const mountingSubtitle = document.createElement('p');
-            mountingSubtitle.textContent = 'Rack placement uses the existing Front/Rear, U height and collision checks.';
+            mountingSubtitle.textContent = 'Rack placement uses the existing Front/Rear, U height and collision checks in v2.0.1.';
             mountingHeading?.replaceWith(mountingTitle, mountingSubtitle);
             const mountingFields = document.createElement('div');
             mountingFields.className = 'device-review-form-grid';
@@ -8549,6 +8549,10 @@ function openIpModal(ip) {
                 mountingFields.appendChild(child);
             });
             sections[2].appendChild(mountingFields);
+            const mountingHint = document.createElement('div');
+            mountingHint.className = 'device-review-hint';
+            mountingHint.textContent = 'End U is calculated from Start U + U Height - 1. Conflicting or out-of-range positions must still be rejected in the live application.';
+            sections[2].appendChild(mountingHint);
             const hardwareHeading = sections[1].querySelector(':scope > .form-section-heading');
             const hardwareTitle = document.createElement('h3');
             hardwareTitle.innerHTML = '<span class="mini-icon" aria-hidden="true">▣</span>Hardware & Lifecycle';
@@ -8559,7 +8563,9 @@ function openIpModal(ip) {
             if (notesHeading) {
                 const title = document.createElement('h3');
                 title.innerHTML = '<span class="mini-icon" aria-hidden="true">▣</span>Notes / Details';
-                notesHeading.replaceWith(title);
+                const subtitle = document.createElement('p');
+                subtitle.textContent = 'The real application retains the existing notes editor and formatting controls.';
+                notesHeading.replaceWith(title, subtitle);
             }
             panels.get('notes').dataset.notesPanel = 'true';
             initialiseNotesEditor(form);
