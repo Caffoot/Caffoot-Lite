@@ -1347,6 +1347,95 @@ html.dark .caffoot-dashboard .db-rack-row:hover{background:#354a60;border-color:
 @media(max-width:1120px){.caffoot-dashboard .db-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.caffoot-dashboard .db-two{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:720px){.caffoot-dashboard .db-rack-list{grid-template-columns:minmax(0,1fr)}.caffoot-dashboard .dashboard-summary,.caffoot-dashboard .dashboard-summary.has-integrity{grid-template-columns:minmax(0,1fr)}.caffoot-dashboard-heading h1{font-size:25px}.caffoot-dashboard .db-summary{gap:10px}.caffoot-dashboard .db-metric{padding:15px}.caffoot-dashboard .db-metric strong{font-size:25px}.caffoot-dashboard .db-card{padding:18px}.caffoot-dashboard .dashboard-tabs{gap:13px}.caffoot-dashboard .db-actionrow button{flex:1 1 110px}}
 </style>
+<style id="approved-html-device-intelligence">
+/* Original approved Device Intelligence Draft 03 HTML components and CSS. */
+.intelligence-heading{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;margin:2px 0 17px}
+.intelligence-heading h2{font-size:18px;letter-spacing:-.45px;color:#253f58;margin:0 0 5px;font-weight:790}
+.intelligence-heading p{font-size:12.7px;color:#6f879b;margin:0;line-height:1.5}
+.intelligence-pills{display:flex;gap:7px;padding:6px;background:#eaf0f5;border:1px solid #dfe8ee;border-radius:12px;flex-wrap:wrap;margin-bottom:19px}
+.intelligence-pills button{background:transparent;border:1px solid transparent;border-radius:8px;min-height:41px;display:flex;align-items:center;gap:8px;padding:9px 14px;color:#617d93;font-size:12.5px;font-weight:760;white-space:nowrap}
+.intelligence-pills button:hover{background:#f6f9fb;color:#294d65}
+.intelligence-pills button.active{background:white;border-color:#dce5ed;color:#24435e;box-shadow:0 2px 7px #20344c0e}
+.intelligence-pills button.active svg{color:#e7802d}
+.intelligence-pills button svg{width:16px;height:16px;flex-shrink:0}
+.intelligence-panel[hidden]{display:none!important}
+.intelligence-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:17px}
+.intelligence-metric{padding:19px 20px 17px;border:1px solid var(--line);border-radius:14px;background:white;box-shadow:var(--shadow);min-width:0}
+.intelligence-metric .metric-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.intelligence-metric .metric-label{font-size:12px;font-weight:730;color:#5e7891}
+.intelligence-metric .metric-ico{width:36px;height:36px;background:#eff4f9;color:#658baa;border-radius:9px;display:grid;place-items:center}
+.intelligence-metric .metric-ico.orange{background:#fff1e7;color:#d78237}
+.intelligence-metric .metric-ico.green{background:#e8f6f0;color:#4b9c85}
+.intelligence-metric .metric-ico svg{width:17px;height:17px}
+.intelligence-metric .metric-number{color:#213d58;font-weight:820;font-size:30px;line-height:1.22;letter-spacing:-1.1px;margin-top:11px}
+.intelligence-metric .metric-caption{font-size:11px;color:#8aa0b1;margin-top:7px}
+.intelligence-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px}
+.intelligence-card{padding:21px 22px;border:1px solid var(--line);border-radius:15px;background:white;box-shadow:var(--shadow);min-width:0}
+.intelligence-card-head{display:flex;align-items:flex-start;gap:11px;margin-bottom:17px}
+.intelligence-card-head h3{color:#29445c;font-size:15.5px;letter-spacing:-.28px;margin:0 0 5px;font-weight:770}
+.intelligence-card-head p{margin:0;font-size:11.8px;color:#8295a8;line-height:1.45}
+.intelligence-card-head .iconwrap{height:37px;width:37px;border-radius:10px}
+.intelligence-card-head .iconwrap svg{height:19px;width:19px}
+.intelligence-card .divider{margin:12px 0 15px}
+.intelligence-chart{display:grid;gap:8px}
+.intelligence-chart-row{display:grid;gap:7px;width:100%;text-align:left;background:transparent;border:1px solid transparent;padding:9px 10px;margin-left:-10px;border-radius:9px;color:inherit;min-width:0;cursor:pointer}
+.intelligence-chart-row:hover{background:#f8fafc;border-color:#e5ebf1}
+.intelligence-chart-row:focus-visible{outline:3px solid #ed853244;outline-offset:1px}
+.intelligence-chart-label{display:flex;align-items:center;justify-content:space-between;gap:9px;font-size:12px;color:#48657c;min-width:0}
+.intelligence-chart-label span{overflow-wrap:anywhere}.intelligence-chart-label strong{font-size:12px;color:#28465e;flex-shrink:0}
+.intelligence-track{height:8px;background:#edf2f5;border-radius:20px;overflow:hidden}
+.intelligence-fill{height:100%;border-radius:20px;background:#8caec5}
+.intelligence-fill.orange{background:#ed8b43}.intelligence-fill.green{background:#75aa97}.intelligence-fill.blue{background:#7d9fbe}
+.intelligence-empty{font-size:12px;color:#8ca0b1;padding:12px 0}
+.intelligence-subtle{font-size:11.6px;color:#8194a6;line-height:1.55;margin-top:14px}
+.intelligence-section{margin-top:17px}
+.intelligence-section-heading{margin:0 0 15px;font-size:15.5px;color:#29455e}
+.intelligence-overview-box{margin-top:16px;border:1px solid #e2eaf0;background:#f8fbfd;border-radius:12px;padding:14px 17px;color:#648096;font-size:12px;line-height:1.5;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.intelligence-overview-box .btn{font-size:11.5px}
+.intelligence-breakdown{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;margin:0 0 17px}
+.intelligence-donut-row{display:flex;align-items:center;gap:28px;flex-wrap:wrap}
+.intelligence-donut{width:147px;height:147px;border-radius:50%;background:conic-gradient(#78ae9d 0 65%,#ed9b55 65% 85%,#a0adba 85% 100%);display:grid;place-items:center;flex-shrink:0}
+.intelligence-donut-core{width:104px;height:104px;border-radius:50%;background:white;display:grid;place-items:center;font-size:27px;font-weight:820;color:#253e58}
+.intelligence-donut-core small{display:block;font-size:10px;font-weight:650;color:#8ca1af;text-align:center;margin-top:-25px}
+.intelligence-legend{display:grid;gap:12px;flex:1;min-width:160px}
+.intelligence-legend .legend-row{font-size:12px;color:#5c7389;display:flex;align-items:center;gap:9px}
+.intelligence-legend .legend-row strong{margin-left:auto;color:#26435f;font-size:12px}
+.intelligence-legend .legend-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.intelligence-alert{display:flex;gap:12px;background:#fff9f3;border:1px solid #f2e1cf;border-radius:11px;padding:14px 16px;color:#815e39;line-height:1.65;font-size:12px;margin-bottom:14px}
+.intelligence-alert svg{width:18px;height:18px;flex:none;color:#db8b44;margin-top:2px}
+.intelligence-alert strong{color:#815331}
+.intelligence-quality-card{padding:18px 20px;border-radius:14px;background:#fff;border:1px solid var(--line);text-align:left;display:grid;gap:10px;min-width:0;color:inherit;cursor:pointer}
+.intelligence-quality-card:hover{border-color:#edb083;background:#fffdfa}
+.intelligence-quality-card .quality-title{font-size:12px;color:#58738b;font-weight:710}
+.intelligence-quality-card .quality-number{font-size:29px;color:#2a455f;font-weight:820;letter-spacing:-.8px}
+.intelligence-quality-card .quality-caption{font-size:11px;color:#8ca0b3}
+.intelligence-drilldown{background:#fff;border:1px solid #dce6ee;border-left:3px solid #ec8c41;border-radius:11px;padding:17px 20px;margin:18px 0 0;display:none}
+.intelligence-drilldown.open{display:block}
+.intelligence-drilldown-head{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.intelligence-drilldown h3{font-size:14px;margin:0;color:#29465f}
+.intelligence-drilldown .drill-close{background:transparent;border:0;color:#6b8195;font-weight:700;font-size:12px;padding:7px}
+.intelligence-drilldown-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}
+.intelligence-drilldown-list .drill-item{background:#f8fafc;border:1px solid #e8edf2;padding:10px 12px;border-radius:9px;font-size:12px;color:#3c5870}
+.intelligence-drilldown-list .drill-item small{color:#8ca0b2;display:block;font-size:11px;margin-top:4px}
+@media(max-width:1120px){.intelligence-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.intelligence-breakdown{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:920px){.intelligence-two{grid-template-columns:1fr}.intelligence-pills{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:thin}}
+@media(max-width:720px){.intelligence-grid,.intelligence-breakdown{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.intelligence-metric{padding:15px 13px}.intelligence-metric .metric-number{font-size:27px}.intelligence-card{padding:16px}.intelligence-pills button{font-size:12px;padding:9px 11px}.intelligence-drilldown-list{grid-template-columns:1fr}.intelligence-heading{margin-bottom:14px}}
+@media(max-width:440px){.intelligence-donut-row{gap:18px}}
+
+/* Draft 02: selected intelligence breakdown appears in approved inventory, not below the charts. */
+.linked-filter-context{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff8f1;border:1px solid #f2dbca;border-radius:11px;padding:13px 16px;margin:16px 0 12px;color:#765638;font-size:12.5px}
+.linked-filter-context[hidden]{display:none}
+.linked-filter-context strong{display:block;font-size:12px;margin-bottom:4px}
+.linked-filter-context span{font-weight:700;color:#294761}
+@media(max-width:550px){.linked-filter-context{flex-wrap:wrap}}
+
+.dark .device-devices .intelligence-metric,.dark .device-devices .intelligence-card{background:#1e293b;border-color:#475569;box-shadow:none}
+.dark .device-devices .intelligence-heading h2,.dark .device-devices .intelligence-metric .metric-number{color:#f8fafc}
+.dark .device-devices .intelligence-heading p,.dark .device-devices .intelligence-metric .metric-label,.dark .device-devices .intelligence-metric .metric-caption{color:#cbd5e1}
+.dark .device-devices .intelligence-pills{background:#334155;border-color:#475569}
+.dark .device-devices .intelligence-pills button{color:#e2e8f0}
+.dark .device-devices .intelligence-pills button.active{background:#1e293b;color:#f8fafc;border-color:#64748b}
+</style>
 </head>
 <body class="h-full bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-200">
 
@@ -3968,15 +4057,16 @@ function hierarchyValidateTypes(subnets) {
                     ${activeDeviceDetailsTab==='models'?renderHardwareModelsHtml():''}
                     ${activeDeviceDetailsTab==='software'?renderSoftwareCatalogueHtml():''}
                     <section class="${activeDeviceDetailsTab==='overview'?'':'hidden'} space-y-5" data-device-panel="overview">
-                        <div>
-                            <h2 class="text-lg font-bold text-slate-900 dark:text-white">Device Intelligence Overview</h2>
-                            <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Inventory insights calculated locally from your saved devices.</p>
-                        </div>
-                        <nav class="flex flex-wrap gap-2 rounded-2xl bg-slate-100 dark:bg-slate-800 p-2" aria-label="Device Intelligence Sections">
-                            ${[['overview','Overview','fa-house'],['hardware','Hardware','fa-microchip'],['os','Operating Systems','fa-desktop'],['software','Software & Services','fa-layer-group'],['quality','Data Quality','fa-list-check']].map(([key,label,icon])=>`<button type="button" data-action="device-intelligence-tab" data-tab="${key}" aria-current="${deviceIntelligenceTab===key?'page':'false'}" class="min-h-11 px-4 py-2 rounded-xl text-sm font-semibold ${deviceIntelligenceTab===key?'bg-white dark:bg-slate-700 text-blue-700 dark:text-blue-200 shadow-sm':'text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-700'}"><i class="fa-solid ${icon} mr-2" aria-hidden="true"></i>${label}</button>`).join('')}
-                        </nav>
-                        <div class="${deviceIntelligenceTab==='overview'?'':'hidden'} grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-                            ${[['Total Devices',appState.devices.length],['With Primary IP',appState.devices.filter(d=>String(d.primaryIp||'').trim()).length],['Locations Recorded',appState.devices.filter(d=>String(d.location||'').trim() && d.location!=='Unknown').length],['Device Types',new Set(appState.devices.map(d=>String(d.type||'').trim()).filter(Boolean)).size]].map(([label,value])=>`<div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5"><p class="text-sm text-slate-600 dark:text-slate-300">${label}</p><p class="text-3xl font-bold text-slate-900 dark:text-white mt-2">${value}</p></div>`).join('')}
+                        <div class="intelligence-heading"><div><h2>Device Intelligence Overview</h2><p>Explore inventory insights, recorded equipment and data completeness.</p></div></div>
+                        <nav aria-label="Device Intelligence Sections" class="intelligence-pills" role="tablist">
+<button aria-selected="${deviceIntelligenceTab==='overview'}" class="${deviceIntelligenceTab==='overview'?'active':''}" data-action="device-intelligence-tab" data-tab="overview" role="tab" type="button"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-grid"></use></svg>Overview</button>
+<button aria-selected="${deviceIntelligenceTab==='hardware'}" class="${deviceIntelligenceTab==='hardware'?'active':''}" data-action="device-intelligence-tab" data-tab="hardware" role="tab" type="button"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-box"></use></svg>Hardware</button>
+<button aria-selected="${deviceIntelligenceTab==='os'}" class="${deviceIntelligenceTab==='os'?'active':''}" data-action="device-intelligence-tab" data-tab="os" role="tab" type="button"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-settings"></use></svg>Operating Systems</button>
+<button aria-selected="${deviceIntelligenceTab==='software'}" class="${deviceIntelligenceTab==='software'?'active':''}" data-action="device-intelligence-tab" data-tab="software" role="tab" type="button"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-tool"></use></svg>Software &amp; Services</button>
+<button aria-selected="${deviceIntelligenceTab==='quality'}" class="${deviceIntelligenceTab==='quality'?'active':''}" data-action="device-intelligence-tab" data-tab="quality" role="tab" type="button"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="18"><use href="#i-shield"></use></svg>Data Quality</button>
+</nav>
+                        <div class="intelligence-grid ${deviceIntelligenceTab==='overview'?'':'hidden'}">
+                            ${[['Total Devices',appState.devices.length,'i-box'],['With Primary IP',appState.devices.filter(d=>String(d.primaryIp||'').trim()).length,'i-network'],['Locations Recorded',appState.devices.filter(d=>String(d.location||'').trim() && d.location!=='Unknown').length,'i-rack'],['Device Types',new Set(appState.devices.map(d=>String(d.type||'').trim()).filter(Boolean)).size,'i-grid']].map(([label,value,icon])=>`<div class="intelligence-metric"><div class="metric-top"><span class="metric-label">${label}</span><span class="metric-ico"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><use href="#${icon}"></use></svg></span></div><div class="metric-number">${value}</div><div class="metric-caption">Recorded in your saved inventory</div></div>`).join('')}
                         </div>
                         ${deviceIntelligenceTab==='overview' ? `<div class="grid grid-cols-1 xl:grid-cols-2 gap-5">
                             ${[['Devices by Type','type'],['Devices by Location','location']].map(([heading,field])=>{
