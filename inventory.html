@@ -11338,7 +11338,7 @@ window.addEventListener('load', async () => {
         .then(()=>showToast('Example command copied. Verify your actual storage volume.'))
         .catch(()=>showToast('Clipboard unavailable. Select and copy the command manually.','error'));
     }else if(action==='approved-settings-guidance'){
-      window.open('https://github.com/Caffoot/Caffoot-Lite/tree/main/docs/How%20To%27s/Features%20and%20Instructions','_blank','noopener,noreferrer');
+      window.open('https://github.com/Caffoot/Caffoot-Lite/blob/main/docs/How%20To%27s/Features%20and%20Instructions/Migration-Backup-and-Restore.md','_blank','noopener,noreferrer');
     }else if(action==='approved-smtp-reset'){
       renderContent();
       showToast('Unsaved email settings discarded.');
