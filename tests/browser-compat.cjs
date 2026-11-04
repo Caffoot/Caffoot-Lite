@@ -1370,6 +1370,19 @@ async function run(){
   await page.setViewportSize({width:1440,height:950});
   console.log('Approved inline hardware catalogue, SQLite persistence, duplicate protection and mobile layout passed');
 
+  // Batch 04 uses the original field wrapper for native Add/Edit inputs.
+  // Check DOM hierarchy, not merely that a CSS class exists elsewhere.
+  const sourceFieldControls=['dev-name','dev-deployment','dev-type','dev-mount-type',
+    'dev-rack-id','dev-rack-face','dev-rack-u','dev-rack-height',
+    'dev-block','dev-ip'];
+  for(const id of sourceFieldControls){
+    assert.equal(await approvedEditor.locator('.device-review-field > #'+id+', .device-review-field > label + #'+id).count(),1,
+      'Approved Add/Edit field wrapper must contain the existing '+id+' input');
+  }
+  assert.equal(await approvedEditor.locator('.device-review-field > #dev-status').count(),0,
+    'New devices retain their hidden status outside the approved visible field controls');
+  console.log('Approved Add/Edit identity, rack and IPAM source field wrappers passed');
+
   const dynamicDeviceFields=approvedEditor.locator('#device-detail-fields-panel .device-review-form-grid');
   assert.ok(await dynamicDeviceFields.locator('.device-review-field input,.device-review-field select').count()>0,
     'Type-specific hardware details must use the original source field wrappers and keep editable controls');
@@ -1475,6 +1488,10 @@ async function run(){
   for(const id of ['dev-virtual-host','dev-vmVcpu','dev-vmRamGb','dev-vmDiskGb','dev-vmNicCount']){
     assert.equal(await vmCard.locator('#'+id).count(),1,
       'VM card must retain original saved field '+id);
+  }
+  for(const id of ['dev-virtual-host','dev-vmVcpu','dev-vmRamGb','dev-vmDiskGb','dev-vmNicCount']){
+    assert.equal(await vmCard.locator('.device-review-field > #'+id+', .device-review-field > label + #'+id).count(),1,
+      'Approved VM host and allocation fields must keep their native saved control '+id);
   }
   assert.ok(await approvedEditor.locator('#dev-virtual-host').isVisible(),
     'VMs must retain their physical-host selector');
