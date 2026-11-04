@@ -6393,7 +6393,7 @@ function hierarchyValidateTypes(subnets) {
                     <div class="rack-modal-top"><div><h2>${rack ? (correction ? 'Correct Rack Specifications' : 'Edit Network Rack') : 'Add Network Rack Enclosure'}</h2></div>
                         <button type="button" class="rack-modal-close" data-action="close-modal" aria-label="Close dialog">Close</button></div>
                     <p>${!rack?'Create a new enclosure with its physical dimensions.':correction?'A protected correction workflow reviews physical specifications and mounted equipment.':'Edit rack identity and placement; physical specifications remain locked.'}</p>
-                    <form data-form-action="rack" data-rack-id="${escapeHtml(rack ? rack.id : '')}" data-correction="${correction}" class="rack-approved-form" novalidate="false">
+                    <form data-form-action="rack" data-rack-id="${escapeHtml(rack ? rack.id : '')}" data-correction="${correction}" class="rack-approved-form">
                         <div class="rack-form-grid">
                             <label class="rack-field">Rack Name *<input type="text" id="rack-name" required maxlength="120" value="${rack ? escapeHtml(rack.name) : ''}" placeholder="e.g. Rack C - Garage"></label>
                             <label class="rack-field">Location Room (optional)<input type="text" id="rack-location" value="${rack ? escapeHtml(rack.location || '') : ''}" placeholder="e.g. Garage Server Room"></label>
