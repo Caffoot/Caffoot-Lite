@@ -1218,6 +1218,21 @@ async function run(){
   assert.deepEqual(await approvedEditor.locator('[role="tab"]').allTextContents(),
     ['General','Hardware','Software & Firmware','Networking','Notes']);
   await approvedEditor.getByRole('tab',{name:'Hardware'}).click();
+  const approvedHardwareFields=approvedEditor.locator('#device-form-panel-hardware .device-review-form-grid').first();
+  assert.equal(await approvedHardwareFields.locator(':scope > .device-review-field').count(),3,
+    'Approved Batch 04 Manufacturer, Model and Serial fields must share the original source grid');
+  for(const id of ['physical-manufacturer','physical-model']){
+    assert.ok(await approvedHardwareFields.locator('#'+id+'.device-review-field').isVisible(),
+      'Pinned hardware field must retain its original id: '+id);
+  }
+  assert.ok(await approvedHardwareFields.locator('.device-review-field #dev-serial').isVisible(),
+    'The original serial input remains connected to the saved hardware form');
+  assert.equal(await approvedHardwareFields.evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),2,
+    'Approved hardware field grid must use two desktop columns');
+  await page.setViewportSize({width:420,height:900});
+  assert.equal(await approvedHardwareFields.evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),1,
+    'Pinned hardware field grid must stack to one column on mobile');
+  await page.setViewportSize({width:1440,height:950});
   assert.ok(await approvedEditor.getByText('Hardware & Lifecycle',{exact:true}).isVisible(),
     'Approved Hardware card must be present');
   assert.ok(await approvedEditor.locator('#dev-manufacturer-select').isVisible(),
@@ -1241,6 +1256,11 @@ async function run(){
   await page.setViewportSize({width:1440,height:950});
   await page.locator('#dev-name').fill('browser-hypervisor');
   await page.locator('#dev-type').selectOption('Server - Physical');
+  await approvedEditor.getByRole('tab',{name:'Hardware'}).click();
+  const dynamicDeviceFields=approvedEditor.locator('#device-detail-fields-panel .device-review-form-grid');
+  assert.ok(await dynamicDeviceFields.locator('.device-review-field input,.device-review-field select').count()>0,
+    'Type-specific hardware details must use the original source field wrappers and keep editable controls');
+  await approvedEditor.getByRole('tab',{name:'General'}).click();
   await page.locator('#dev-mount-type').selectOption('Tower / Floor Standing');
   await page.locator('#dev-location').selectOption('Unknown');
   await approvedEditor.getByRole('tab',{name:'Software & Firmware'}).click();
