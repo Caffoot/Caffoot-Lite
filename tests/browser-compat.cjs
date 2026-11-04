@@ -153,6 +153,13 @@ async function run(){
     'Approved IPAM Overview must show the four live saved-inventory totals');
   assert.ok(await page.locator('#main-content .ipam-card #ipam-overview-search').isVisible(),
     'Approved IPAM Overview must keep working subnet search');
+  await page.locator('#sidebar [data-action="tab-racks"]').click();
+  await page.locator('#main-content .racks-grid #rack-overview-stats').waitFor();
+  assert.equal(await page.locator('#main-content .rack-stat').count(),4,
+    'Approved Network Racks Overview must show four live totals');
+  await page.locator('#main-content [data-action="approved-rack-section"][data-section-tab="inventory"]').click();
+  await page.locator('#main-content .rack-directory').waitFor();
+  await page.locator('#main-content #v13-rack-search.rack-text-input').waitFor();
   await page.locator('#sidebar [data-action="tab-dashboard"]').click();
   assert.equal(await page.title(),'Caffoot Lite — Infrastructure, Simplified.','Inventory browser tab must use Caffoot branding');
   await page.locator('#app .header-account').waitFor();
