@@ -7924,23 +7924,29 @@ function openIpModal(ip) {
             if(count)count.textContent=inputs.filter(x=>x.checked).length+' selected · '+inputs.length+' available';
         }
                 function openApprovedInlineDeviceQuickAdd(kind) {
-            if(!['software','services'].includes(kind))return;
+            if(!['software','services','manufacturer','model'].includes(kind))return;
             const panel=document.querySelector('#modal-content form[data-device-form="true"] [data-review-create="'+kind+'"]');
             if(!panel)return;
             panel.hidden=false;
             panel.querySelector('[data-review-create-error]')?.setAttribute('hidden','');
+            if(kind==='manufacturer'){
+                const group=panel.querySelector('[data-review-associated-types="manufacturer"]');
+                const type=document.getElementById('dev-type')?.value||'';
+                if(group)group.innerHTML=getUniqueDeviceTypes().filter(t=>t&&t!=='Server - Virtual').map(t=>'<label><input type="checkbox" value="'+escapeHtml(t)+'" '+(t===type?'checked':'')+'><span>'+escapeHtml(t==='Server - Physical'?'Server (Physical)':t)+'</span></label>').join('');
+            }
             panel.querySelector('[data-review-new-name]')?.focus();
         }
                 function cancelApprovedInlineDeviceQuickAdd(kind) {
-            if(!['software','services'].includes(kind))return;
+            if(!['software','services','manufacturer','model'].includes(kind))return;
             const panel=document.querySelector('#modal-content form[data-device-form="true"] [data-review-create="'+kind+'"]');
             if(!panel)return;
             panel.hidden=true;
             const input=panel.querySelector('[data-review-new-name]');
             if(input)input.value='';
-            panel.closest('.device-review-inline-pick')?.querySelector('[data-action="device-inline-quick-open"]')?.focus();
+            document.querySelector('#modal-content form[data-device-form="true"] [data-action="device-inline-quick-open"][data-kind="'+kind+'"]')?.focus();
         }
                 async function saveApprovedInlineDeviceQuickAdd(kind) {
+            if(kind==='manufacturer'||kind==='model')return saveApprovedInlineHardwareQuickAdd(kind);
             if(!['software','services'].includes(kind))return;
             const panel=document.querySelector('#modal-content form[data-device-form="true"] [data-review-create="'+kind+'"]');
             if(!panel||panel.hidden)return;
@@ -7995,6 +8001,76 @@ function openIpModal(ip) {
           deviceDetailFormValues[control.dataset.deviceDetailField]=control.checked;
           updateApprovedInlinePickerCount(control.closest('.device-review-inline-pick'));
         });
+
+        // Approved Batch 04 inline hardware catalogue fields with real SQLite-backed settings.
+        function renderApprovedInlineHardwareQuickAdd(kind) {
+            if(!['manufacturer','model'].includes(kind))return '';
+            const label=kind==='manufacturer'?'Manufacturer':'Model';
+            const current=document.getElementById('dev-type')?.value||'';
+            const types=kind==='manufacturer'?getUniqueDeviceTypes().filter(t=>t&&t!=='Server - Virtual'):[];
+            const associations=kind==='manufacturer'
+                ? '<p class="device-review-inline-explain">Available for device types (current type selected by default)</p><div class="device-review-inline-types" data-review-associated-types="manufacturer">'+types.map(t=>'<label><input type="checkbox" value="'+escapeHtml(t)+'" '+(t===current?'checked':'')+'><span>'+escapeHtml(t==='Server - Physical'?'Server (Physical)':t)+'</span></label>').join('')+'</div>'
+                : '';
+            return '<div class="device-review-inline-create" data-review-create="'+kind+'" hidden>'
+                +'<h4>Add '+label+' without leaving the device form</h4>'
+                +'<div class="device-review-inline-add-actions"><div class="device-review-field">'
+                +'<label for="review-new-'+kind+'">'+label+' name</label><input id="review-new-'+kind+'" data-review-new-name="'+kind+'" type="text" maxlength="100" placeholder="Enter '+label.toLowerCase()+' name"></div></div>'
+                +associations+'<p class="device-review-inline-explain" role="alert" data-review-create-error hidden></p>'
+                +'<div class="device-review-catalogue-actions"><button type="button" class="device-review-smallbtn primary" data-action="device-inline-quick-save" data-kind="'+kind+'">Add &amp; Select</button>'
+                +'<button type="button" class="device-review-smallbtn" data-action="device-inline-quick-cancel" data-kind="'+kind+'">Cancel</button></div></div>';
+        }
+        async function saveApprovedInlineHardwareQuickAdd(kind) {
+            if(!['manufacturer','model'].includes(kind))return;
+            const panel=document.querySelector('#modal-content form[data-device-form="true"] [data-review-create="'+kind+'"]');
+            if(!panel||panel.hidden)return;
+            const input=panel.querySelector('[data-review-new-name]'),error=panel.querySelector('[data-review-create-error]');
+            const fail=msg=>{if(error){error.textContent=msg;error.hidden=false;}input?.focus();};
+            const label=String(input?.value||'').trim(),type=document.getElementById('dev-type')?.value||'';
+            if(!label||label.length>100)return fail('Enter a name of 100 characters or fewer.');
+            if(!type||isVirtualDeviceForm()||type==='Server - Virtual')return fail('Select a physical device type first.');
+            const items=getConfiguredHardwareCatalogueEntries();
+            let rows=[];
+            if(kind==='manufacturer'){
+                const knownTypes=new Set(getUniqueDeviceTypes());
+                const types=[...panel.querySelectorAll('[data-review-associated-types="manufacturer"] input:checked')].map(x=>x.value).filter(t=>knownTypes.has(t)&&t!=='Server - Virtual');
+                if(!types.length)return fail('Select at least one device type.');
+                const defaults=['Dell','HP','HPE','Lenovo','ASUS','Apple','Cisco','Samsung','Microsoft','Toshiba'];
+                const known=[...Object.values(getVisibleBuiltInHardwareSuggestions()).flatMap(x=>Object.keys(x)),...defaults.map(n=>getHardwareSeedPreferences()['maker:'+n.toLowerCase()]?.label||n),...items.map(x=>x.manufacturer),...appState.devices.map(x=>x.manufacturer)];
+                if(known.some(n=>String(n||'').trim().toLowerCase()===label.toLowerCase()))return fail('That manufacturer already exists. Select it from the list.');
+                rows=types.map(t=>({id:'hardware_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,9),type:t,manufacturer:label,model:''}));
+            }else{
+                const maker=String(document.getElementById('dev-manufacturer')?.value||'').trim();
+                if(!maker)return fail('Choose or add a manufacturer before adding a model.');
+                if(!getNonVirtualDeviceTypesAssociatedWithManufacturer(maker).includes(type))return fail('Associate this manufacturer with the selected device type first.');
+                const duplicate=items.some(x=>x.type===type&&x.manufacturer.toLowerCase()===maker.toLowerCase()&&String(x.model||'').toLowerCase()===label.toLowerCase());
+                const builtin=Object.entries(getVisibleBuiltInHardwareSuggestions()[type]||{}).some(([n,models])=>n.toLowerCase()===maker.toLowerCase()&&models.some(m=>m.toLowerCase()===label.toLowerCase()));
+                if(duplicate||builtin)return fail('That model already exists. Select it from the list.');
+                rows=[{id:'hardware_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,9),type,manufacturer:maker,model:label}];
+            }
+            const button=panel.querySelector('[data-action="device-inline-quick-save"]');
+            if(button?.disabled)return;
+            if(button)button.disabled=true;
+            const previous=appState.hardwareCatalogue;
+            appState.hardwareCatalogue=[...items,...rows];
+            try{
+                if(!await nextSettingsBridge.save('hardwareCatalogue')){
+                    appState.hardwareCatalogue=previous;
+                    return fail('Could not save this catalogue item. The device form is unchanged.');
+                }
+                if(kind==='manufacturer'){
+                    document.getElementById('dev-manufacturer').value=label;
+                    document.getElementById('dev-model').value='';
+                }else document.getElementById('dev-model').value=label;
+                refreshHardwareSuggestions();
+                panel.hidden=true;
+                if(input)input.value='';
+                showToast(label+' added and selected for this device.');
+            }catch(err){
+                appState.hardwareCatalogue=previous;
+                return fail('Could not save this catalogue item. Please try again.');
+            }finally{if(button?.isConnected)button.disabled=false;}
+        }
+
         function renderDeviceDetailFields(type, values={}, section='all') {
             const keys=getDetailFieldsForDeviceType(type).filter(key =>
                 key !== 'os' && key !== 'windowsLicence' && !(type === 'Server - Physical' && key === 'serverService_Hypervisor' && section === 'services') && (section === 'all' || (section === 'hardware' && !isSoftwareDetailField(key)) || (section === 'services' && getAvailableServerServiceFieldKeys().includes(key)) || (section === 'installed' && getAvailableSoftwareCatalogueEntries().some(x=>x.key===key)) || (section === 'software' && isSoftwareDetailField(key))));
@@ -8515,7 +8591,7 @@ function openIpModal(ip) {
                                 <div id="physical-model" class="device-review-field"><label for="dev-model-select" class="form-label">Model (optional)</label><input id="dev-model" type="hidden" value="${escapeHtml(draft?.model ?? device?.model ?? '')}"><select id="dev-model-select" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></select><input id="dev-model-custom" type="text" maxlength="120" class="hidden mt-2 w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Enter Custom Model" aria-label="Custom Model"></div>
                             <div class="device-review-field"><label for="dev-serial" class="form-label">Serial number (optional)</label><input id="dev-serial" type="text" maxlength="120" value="${escapeHtml(draft?.serialNumber ?? device?.serialNumber ?? '')}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Manufacturer serial number"></div>
                             </div>
-                            <div class="device-review-catalogue-actions"><button type="button" data-action="hardware-catalog-manage" class="device-review-smallbtn"><i class="fa-solid fa-list mr-1"></i>Manage Hardware Catalogue</button><p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Add reusable manufacturer and model suggestions for this device type.</p></div>
+                            <div class="device-review-catalogue-actions"><button type="button" data-action="device-inline-quick-open" data-kind="manufacturer" class="device-review-smallbtn">+ Add Manufacturer</button><button type="button" data-action="device-inline-quick-open" data-kind="model" class="device-review-smallbtn">+ Add Model</button></div>${renderApprovedInlineHardwareQuickAdd("manufacturer")}${renderApprovedInlineHardwareQuickAdd("model")}<div class="device-review-catalogue-actions"><button type="button" data-action="hardware-catalog-manage" class="device-review-smallbtn"><i class="fa-solid fa-list mr-1"></i>Manage Hardware Catalogue</button><p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Add reusable manufacturer and model suggestions for this device type.</p></div>
                         <div class="form-section-card space-y-4 ${getDetailFieldsForDeviceType(currentType).length===0?'hidden':''}" id="details-section" aria-live="polite"><div class="form-section-heading"><i class="fa-solid fa-list-check"></i>Additional details for this device type</div><div class="flex flex-wrap gap-2"><button type="button" id="manage-server-services-button" data-action="manage-server-services" class="h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-500 text-sm font-semibold ${deviceTypeDetailGroups[String(currentType||'').toLowerCase().trim()]==='server'?'':'hidden'}">Manage Server Options</button><button type="button" id="manage-installed-software-button" data-action="manage-installed-software" class="h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-500 text-sm font-semibold ${['server','computer'].includes(deviceTypeDetailGroups[String(currentType||'').toLowerCase().trim()])?'':'hidden'}">Manage Software Options</button></div><div id="device-detail-fields-panel">${renderDeviceDetailFields(currentType,deviceDetailFormValues,'hardware')}</div></div>
                         </div>
                         <div class="form-section-card space-y-4" id="device-form-mounting-options"><div class="form-section-heading"><i class="fa-solid fa-rack"></i>Mounting & location</div><div><label for="dev-mount-type" class="form-label">Device Mounting <span class="required-mark">*</span></label><select id="dev-mount-type" required data-action="device-mount-type-change" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" disabled>Select mounting type...</option>${renderDeviceMountOptions(currentType,mountType)}</select></div>
