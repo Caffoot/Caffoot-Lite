@@ -196,6 +196,26 @@ class ReservedDeviceSaveTests(unittest.TestCase):
         self.assertEqual(event["changes"][0]["fields"], ["name"])
         self.assertEqual(event["changes"][1]["fields"], ["hostname"])
 
+    def test_audit_details_keep_safe_changes_but_never_notes_or_credentials(self):
+        updated = dict(
+            self.original,
+            name="Renamed",
+            notes="private change details that must never appear in audit",
+            credentials={"token": "never-logged"},
+        )
+        self.assertEqual(self.save(updated), 1)
+        event = json.loads(self.db.execute(
+            "SELECT record_json FROM inventory_change_history"
+        ).fetchone()[0])
+        device_change = next(c for c in event["changes"] if c["kind"] == "Device")
+        self.assertEqual(device_change["before"], {"name": "One"})
+        self.assertEqual(device_change["after"], {"name": "Renamed"})
+        self.assertIn("notes", device_change["fields"])
+        self.assertNotIn("notes", device_change["before"])
+        self.assertNotIn("credentials", device_change["after"])
+        self.assertNotIn("never-logged", json.dumps(event))
+        self.assertNotIn("private change details", json.dumps(event))
+
     def test_rack_move_is_recorded_with_device_change(self):
         self.assertEqual(self.save(dict(self.original, rackUStart=2, rackUEnd=2)), 1)
         event = json.loads(self.db.execute(
