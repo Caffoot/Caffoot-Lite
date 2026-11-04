@@ -7328,7 +7328,7 @@ function openIpModal(ip) {
                 ? `U${uStart}${Number.isFinite(uEnd) && uEnd > uStart ? '–U' + uEnd : ''}` : 'Not assigned';
             const safe = value => escapeHtml(value === undefined || value === null || value === '' ? '—' : String(value));
             const field = (label, value) => `<div class="device-details-field"><dt>${escapeHtml(label)}</dt><dd>${safe(value)}</dd></div>`;
-            const section = (title, icon, body, full=false) => `<section class="device-details-section device-review-panel${full?' full':''}"><h3><span class="mini-icon"><i class="fa-solid ${icon}" aria-hidden="true"></i></span>${escapeHtml(title)}</h3><dl class="device-details-layout-grid device-review-facts">${body}</dl></section>`;
+            const section = (title, icon, body, full=false, subtitle='') => `<section class="device-details-section device-review-panel${full?' full':''}"><h3><span class="mini-icon"><i class="fa-solid ${icon}" aria-hidden="true"></i></span>${escapeHtml(title)}</h3>${subtitle?`<p>${escapeHtml(subtitle)}</p>`:''}<dl class="device-details-layout-grid device-review-facts">${body}</dl></section>`;
             const status = d.status || 'Active';
             const detailRows = buildDeviceDetailRows(d, field);
             const activeFields = new Set(getDetailFieldsForDeviceType(d.type));
@@ -7362,7 +7362,7 @@ function openIpModal(ip) {
             const isVirtualDevice = d.type === 'Server - Virtual';
             const virtualHardware = isVirtualDevice ? section('Allocated virtual hardware', 'fa-microchip',
                 field('vCPUs', d.vmVcpu) + field('Allocated RAM (GB)', d.vmRamGb) +
-                field('Virtual disk (GB)', d.vmDiskGb) + field('Virtual network adapters', d.vmNicCount)) : '';
+                field('Virtual disk (GB)', d.vmDiskGb) + field('Virtual network adapters', d.vmNicCount), false, 'These are the VM’s own allocated resources, not physical host hardware.') : '';
             const hardware = field('Manufacturer', d.manufacturer) + field('Model', d.model) + field('Serial number', d.serialNumber);
             const rackRows = mounted ? field('Rack', rack.name) + field('Face', d.face || 'front') + field('U position', uText) + field('Height', (Number(d.rackUHeight) || (uEnd-uStart+1) || 1) + 'U') : '';
             openApprovedDeviceReviewModal(`<div class="device-details-dialog device-review-dialog">
@@ -7379,13 +7379,13 @@ function openIpModal(ip) {
                 <div class="device-panels device-review-body">
                     <div id="device-details-panel-overview" role="tabpanel" aria-labelledby="device-details-tab-overview" class="device-details-panel device-review-grid">
                         ${section('Device Overview', 'fa-circle-info',
-                            field('Device name',d.name)+field('Type',d.type)+field('Status',status)+field('Primary IP',d.primaryIp)+field('Location Area',d.location)+field('Operating System',getEffectiveDevicePlatform(d)))}
+                            field('Device name',d.name)+field('Type',d.type)+field('Status',status)+field('Primary IP',d.primaryIp)+field('Location Area',d.location)+field('Operating System',getEffectiveDevicePlatform(d)), false, 'Recorded identity and status')}
                         ${isVirtualDevice ? virtualHardware :
                             section('At a Glance','fa-microchip',
                               field('Manufacturer',d.manufacturer)+field('Model',d.model)+field('Serial number',d.serialNumber)+
-                              field('Mounting',d.mountType||(mounted?'Rack Mounted':'Desktop'))+field('Rack',mounted?rack.name:'Not racked'))}
+                              field('Mounting',d.mountType||(mounted?'Rack Mounted':'Desktop'))+field('Rack',mounted?rack.name:'Not racked'), false, 'Existing inventory and mounting details')}
                         ${d.type==='Server - Physical'?'':hostingSection}
-                        <section class="device-details-section device-review-panel full"><h3><span class="mini-icon"><i class="fa-solid fa-note-sticky" aria-hidden="true"></i></span>Notes</h3><p class="device-details-notes">${d.notes?safe(d.notes):'No additional notes have been recorded.'}</p></section>
+                        <section class="device-details-section device-review-panel full"><h3><span class="mini-icon"><i class="fa-solid fa-note-sticky" aria-hidden="true"></i></span>Notes</h3><p>Saved device notes</p><p class="device-details-notes">${d.notes?safe(d.notes):'No additional notes have been recorded.'}</p></section>
                     </div>
                     ${showVirtualMachinesTab ? `<div id="device-details-panel-virtual-machines" role="tabpanel" aria-labelledby="device-details-tab-virtual-machines" class="device-details-panel device-review-grid" hidden>
                         ${hypervisorNotice}
@@ -7395,12 +7395,12 @@ function openIpModal(ip) {
                         ${section('Hardware & Lifecycle', 'fa-microchip', hardware + field('Device Type', d.type) + field('Status', status) + field('Mount Type', d.mountType || (mounted ? 'Rack Mounted' : 'Desktop')) + (detailRows ? `<div class="device-details-detail-subheading">Additional ${safe(d.type)} details</div>${detailRows}` : ''), true)}
                     </div>` : ''}
                     <div id="device-details-panel-network" role="tabpanel" aria-labelledby="device-details-tab-network" class="device-details-panel device-review-grid" hidden>
-                        ${section('Network Identity', 'fa-network-wired', field('Primary IP', d.primaryIp) + field('Subnet', subnet ? (subnet.cidr || subnet.name || subnet.network || subnet.id) : 'Not linked') + field('IP reserved', d.ipReserved ? 'Yes' : 'No'))}
+                        ${section('Network Identity', 'fa-network-wired', field('Primary IP', d.primaryIp) + field('Subnet', subnet ? (subnet.cidr || subnet.name || subnet.network || subnet.id) : 'Not linked') + field('IP reserved', d.ipReserved ? 'Yes' : 'No'), true, 'Recorded IPAM information')}
                     </div>
                     <div id="device-details-panel-software" role="tabpanel" aria-labelledby="device-details-tab-software" class="device-details-panel device-review-grid" hidden>
-                        ${section('Operating System / Platform', 'fa-desktop',platformDetails || field('Operating System','Not recorded'))}
-                        ${section('Installed Software', 'fa-laptop-code', installedSoftware || field('Installed Software','None recorded'))}
-                        ${isHypervisorHost ? section('Hypervisor Service', 'fa-server', field('Hosts virtual machines','Yes') + field('Hypervisor software',deviceDetails.hypervisorProduct || 'Not recorded') + field('Version', deviceDetails.hypervisorVersion || 'Not recorded'), true) : ''}
+                        ${section('Operating System / Platform', 'fa-desktop',platformDetails || field('Operating System','Not recorded'), false, 'Recorded software platform')}
+                        ${section('Installed Software', 'fa-laptop-code', installedSoftware || field('Installed Software','None recorded'), false, 'Installed on this device')}
+                        ${isHypervisorHost ? section('Hypervisor Service', 'fa-server', field('Hosts virtual machines','Yes') + field('Hypervisor software',deviceDetails.hypervisorProduct || 'Not recorded') + field('Version', deviceDetails.hypervisorVersion || 'Not recorded'), true, 'The virtualisation product is recorded on the physical host.') : ''}
                         ${serverServices?section('Server Services', 'fa-server',serverServices):''}
                     </div>
                     <div id="device-details-panel-location" role="tabpanel" aria-labelledby="device-details-tab-location" class="device-details-panel device-review-grid" hidden>
