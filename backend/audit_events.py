@@ -8,6 +8,48 @@ All writers still own their existing transaction and permission boundaries.
 from datetime import datetime, timezone
 import json
 
+# Only simple, approved inventory identifiers and placement properties may be
+# retained as before/after values. Notes, passwords, credentials, arbitrary
+# extension properties and nested objects are deliberately never copied.
+_DEVICE_DIFFERENCE_FIELDS = frozenset((
+    "name", "type", "status", "location", "manufacturer", "model",
+    "assetTag", "serialNumber", "mountType", "rackId", "rackUStart",
+    "rackUEnd", "rackUHeight", "face", "virtualHostId",
+    "virtualPlatform", "primaryIp", "ipReserved",
+))
+
+_UNSAFE = object()
+
+
+def _safe_audit_value(value):
+    if value is None or isinstance(value, bool):
+        return value
+    if type(value) is int and -1000000000 < value < 1000000000:
+        return value
+    if isinstance(value, str) and len(value) <= 160 and all(
+        ord(character) >= 32 and ord(character) != 127 for character in value
+    ):
+        return value
+    return _UNSAFE
+
+
+def safe_device_differences(before, after):
+    """Bounded, non-sensitive before/after data for updated device fields."""
+    if not isinstance(before, dict) or not isinstance(after, dict):
+        return {}
+    older, newer = {}, {}
+    for name in sorted(_DEVICE_DIFFERENCE_FIELDS):
+        prior = before.get(name)
+        current = after.get(name)
+        if prior == current:
+            continue
+        safe_prior, safe_current = _safe_audit_value(prior), _safe_audit_value(current)
+        if safe_prior is _UNSAFE or safe_current is _UNSAFE:
+            continue
+        older[name], newer[name] = safe_prior, safe_current
+    return {"before": older, "after": newer} if older else {}
+
+
 def attribute_event(connection, account_id, event):
     row = connection.execute(
         "SELECT username FROM accounts WHERE id=? AND active=1",
