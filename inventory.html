@@ -9674,7 +9674,7 @@ function hierarchyValidateTypes(subnets) {
                 case 'sidebar-users-overview': activeUsersTab='overview'; switchTab('users'); break;
                 case 'sidebar-users-list': activeUsersTab='list'; switchTab('users'); break;
                 case 'sidebar-users-add': activeUsersTab='add'; switchTab('users'); break;
-                case 'tab-account': switchTab('account'); break;
+                case 'tab-account': activeAccountSection='overview'; switchTab('account'); break;
                 case 'select-account-section': if (['overview','security','help','about'].includes(target.dataset.section)) { activeAccountSection=target.dataset.section; switchTab('account'); } break;
                 case 'choose-backup-import': document.getElementById('import-file')?.click(); break;
                 case 'toggle-settings-theme': toggleDarkMode(); renderContent(); break;
