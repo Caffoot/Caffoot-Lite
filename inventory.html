@@ -1234,6 +1234,119 @@ button[data-action="assign-device"]:hover { border-color: var(--qa-focus); }
 @media(max-width:1050px){#main-content .device-devices .device-filters{grid-template-columns:repeat(2,minmax(140px,1fr))}}
 @media(max-width:720px){#main-content .device-devices .device-toolbar{padding:17px}#main-content .device-devices .device-filters{grid-template-columns:1fr}#main-content .device-devices .device-search{font-size:14px}}
 </style>
+<style id="approved-owner-tested-dashboard-body">
+/* Reuse the real Dashboard implementation accepted in PR #277.
+   Do not import PR #277's obsolete sidebar, header or global layout CSS. */
+.caffoot-dashboard{width:100%;color:#223b53}
+.caffoot-dashboard-eyebrow{font-size:11px;font-weight:850;color:#d27931;letter-spacing:.15em;margin-bottom:7px}
+.caffoot-dashboard-heading{margin-bottom:0}
+.caffoot-dashboard-heading h1{font-size:31px;line-height:1.15;margin:0 0 8px;letter-spacing:-1.1px;font-weight:790;color:#1f3850}
+.caffoot-dashboard-heading p{font-size:14px;color:#697f94;line-height:1.6;margin:0}
+.caffoot-dashboard .dashboard-tabs{display:flex;flex-wrap:nowrap;gap:22px;align-items:center;margin:24px 0 0;padding:0;border:0;border-bottom:1px solid #e1e8ee;overflow-x:auto;background:transparent;border-radius:0}
+.caffoot-dashboard .dashboard-tab-control{border:0!important;border-bottom:3px solid transparent!important;border-radius:0!important;background:transparent!important;color:#7189a0!important;display:inline-flex;gap:8px;align-items:center;padding:0 4px 14px!important;margin:0;font-size:13.5px!important;font-weight:700!important;white-space:nowrap;min-height:0;box-shadow:none!important}
+.caffoot-dashboard .dashboard-tab-control.is-active{color:#27435a!important;border-bottom-color:#ed8532!important}
+.caffoot-dashboard .dashboard-tab-control i{font-size:15px}
+.caffoot-dashboard .dashboard-tab-panel:not([hidden]){padding-top:23px}
+.caffoot-dashboard .db-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin:0 0 17px}
+.caffoot-dashboard .db-metric{border:1px solid #e1e8ee!important;background:#fff!important;border-radius:15px;padding:20px 21px;text-align:left;color:#223b53;min-width:0;width:100%;display:flex;flex-direction:column;gap:7px;box-shadow:0 7px 26px rgba(31,51,73,.04);cursor:pointer}
+.caffoot-dashboard .db-metric:hover{border-color:#edb486!important;background:#fffdfb!important}
+.caffoot-dashboard .db-metric:focus-visible{outline:3px solid #ed8532;outline-offset:2px}
+.caffoot-dashboard .db-metric-head{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#5c768e;font-size:12px;font-weight:750}
+.caffoot-dashboard .db-iconwrap{display:grid;place-items:center;flex:0 0 40px;width:40px;height:40px;border-radius:11px;background:#eaf0f7;color:#6685a1;font-size:18px}
+.caffoot-dashboard .db-metric-head .db-iconwrap{flex-basis:35px;width:35px;height:35px}
+.caffoot-dashboard .db-iconwrap.orange{background:#fff2e5;color:#cc7d30}
+.caffoot-dashboard .db-iconwrap.green{background:#e8f6f0;color:#3c917b}
+.caffoot-dashboard .db-metric strong{font-size:31px;line-height:1.12;letter-spacing:-1px;font-weight:820;color:#203951}
+.caffoot-dashboard .db-metric small{font-size:11px;color:#7890a6;line-height:1.4}
+.caffoot-dashboard .db-two{display:grid;grid-template-columns:minmax(0,1.43fr) minmax(300px,1fr);gap:17px;align-items:start}
+.caffoot-dashboard .db-stack{display:grid;align-content:start;gap:16px;min-width:0}
+.caffoot-dashboard .db-card{min-width:0;background:#fff;border:1px solid #e1e8ee;border-radius:15px;box-shadow:0 7px 26px rgba(31,51,73,.04);padding:22px;overflow:hidden}
+.caffoot-dashboard .db-card-head{display:flex;align-items:center;gap:12px}
+.caffoot-dashboard .db-card h3{font-size:16px;line-height:1.3;font-weight:750;color:#263d55;letter-spacing:-.2px;margin:0 0 4px}
+.caffoot-dashboard .db-card-head p{font-size:13px;line-height:1.6;color:#70859a;margin:0}
+.caffoot-dashboard .db-card-rule{border-top:1px solid #e8edf2;margin:18px 0}
+.caffoot-dashboard .dashboard-insights{background:transparent!important;border:0!important;box-shadow:none!important}
+.caffoot-dashboard .db-rack-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.caffoot-dashboard .db-rack-row{display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;padding:13px 14px;border:1px solid #e1e8ee;border-radius:10px;background:#f9fbfd;color:#324d66;font-size:12px;min-width:0;cursor:pointer}
+.caffoot-dashboard .db-rack-row:hover{border-color:#edb486;background:#fffdfb}
+.caffoot-dashboard .db-rack-row strong{overflow-wrap:anywhere}
+.caffoot-dashboard .dashboard-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.caffoot-dashboard .dashboard-summary.has-integrity{grid-template-columns:repeat(3,minmax(0,1fr))}
+
+.caffoot-dashboard .db-status-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:13px 0;border-bottom:1px solid #e9edf2;font-size:12px}
+.caffoot-dashboard .db-status-row strong{color:#324d66;font-size:12px}
+.caffoot-dashboard .db-status-row:last-of-type{border-bottom:0}
+.caffoot-dashboard .db-status-badge{padding:5px 9px;border-radius:999px;background:#f0f5f9;color:#7790a5;font-size:10px;font-weight:750;white-space:nowrap}
+.caffoot-dashboard .db-actionrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.caffoot-dashboard .db-actionrow>div{display:contents}
+.caffoot-dashboard .db-actionrow button,.caffoot-dashboard .db-outline-button{border:1px solid #e0e8ee;border-radius:9px;background:#fff;color:#425e78;font-size:12.5px;font-weight:750;min-height:40px;padding:10px 15px;white-space:nowrap}
+.caffoot-dashboard .db-actionrow button:first-child{background:#ed8532!important;border-color:#ed8532!important;color:#fff!important}
+.caffoot-dashboard .db-actionrow button:first-child:hover{background:#d87327!important}
+.caffoot-dashboard .db-outline-button{width:100%;margin-top:14px}
+.caffoot-dashboard .db-outline-button:hover,.caffoot-dashboard .db-actionrow button:not(:first-child):hover{background:#f5f8fb}
+.caffoot-dashboard .db-device-rows>div{padding:13px 0;border-bottom:1px solid #e9edf2}
+.caffoot-dashboard .db-device-rows>div:last-child{border-bottom:0}
+.caffoot-dashboard .db-progress-title{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:12px;font-weight:700;color:#455e76;margin-top:16px}
+.caffoot-dashboard .db-progress-title:first-of-type{margin-top:0}
+.caffoot-dashboard .db-progress-title strong{font-size:11px;color:#6b8499}
+.caffoot-dashboard .db-bar{width:100%;height:9px;border-radius:99px;overflow:hidden;background:#eaf0f4;margin:9px 0 5px}
+.caffoot-dashboard .db-bar>span{display:block;height:100%;border-radius:99px;max-width:100%}
+.caffoot-dashboard .db-muted{margin:12px 0 0;color:#7890a6;font-size:11.5px;line-height:1.6}
+.caffoot-dashboard .db-legend{display:grid;gap:10px;margin-top:15px}
+.caffoot-dashboard .db-legend>div{display:grid;grid-template-columns:10px minmax(0,1fr) auto;gap:8px;align-items:center;font-size:12px;color:#617c91}
+.caffoot-dashboard .db-legend strong{color:#29445c}
+.caffoot-dashboard .db-dot{width:8px;height:8px;border-radius:50%;background:#ed8532}
+.caffoot-dashboard .db-dot.blue{background:#7396bb}
+.caffoot-dashboard .db-dot.green{background:#4a9c86}
+.caffoot-dashboard .db-error-card{border-color:#e9aaa2;background:#fff8f6}
+.caffoot-dashboard .db-error-card p{color:#944d43;font-size:12px}
+.caffoot-dashboard .dashboard-insights,.caffoot-dashboard .dashboard-activity-card,.caffoot-dashboard .dashboard-summary-panel,.caffoot-dashboard .dashboard-report-panel{border-color:#e1e8ee;background:#fff;box-shadow:0 7px 26px rgba(31,51,73,.04)}
+.caffoot-dashboard .dashboard-insights h3,.caffoot-dashboard .dashboard-activity-heading h3{color:#263d55}
+
+
+html.dark .caffoot-dashboard{color:#e2e8f0}
+html.dark .caffoot-dashboard-heading h1{color:#f1f5f9}
+html.dark .caffoot-dashboard-heading p{color:#acbfd2}
+html.dark .caffoot-dashboard .dashboard-tabs{border-bottom-color:#405366}
+html.dark .caffoot-dashboard .dashboard-tab-control{color:#adc2d6!important}
+html.dark .caffoot-dashboard .dashboard-tab-control.is-active{color:#ffbd85!important}
+html.dark .caffoot-dashboard .db-metric{background:var(--caffoot-card)!important;border-color:#405366!important;color:#e2e8f0}
+html.dark .caffoot-dashboard .db-metric:hover{background:#293a4b!important;border-color:#edb486!important}
+html.dark .caffoot-dashboard .db-metric strong{color:#f1f5f9}
+html.dark .caffoot-dashboard .db-metric-head,
+html.dark .caffoot-dashboard .db-metric small{color:#b3c5d5}
+html.dark .caffoot-dashboard .db-card{background:var(--caffoot-card);border-color:#405366;color:#e2e8f0}
+html.dark .caffoot-dashboard .db-card h3{color:#f1f5f9}
+html.dark .caffoot-dashboard .db-card-head p,
+html.dark .caffoot-dashboard .db-muted,
+html.dark .caffoot-dashboard .db-legend>div{color:#b3c5d5}
+html.dark .caffoot-dashboard .db-card-rule,
+html.dark .caffoot-dashboard .db-status-row,
+html.dark .caffoot-dashboard .db-device-rows>div{border-color:#405366}
+html.dark .caffoot-dashboard .db-status-row strong,
+html.dark .caffoot-dashboard .db-legend strong,
+html.dark .caffoot-dashboard .db-progress-title{color:#e2e8f0}
+html.dark .caffoot-dashboard .db-status-badge{background:#334a61;color:#e2e8f0}
+html.dark .caffoot-dashboard .db-bar{background:#3b4c5d}
+html.dark .caffoot-dashboard .db-actionrow button:not(:first-child),
+html.dark .caffoot-dashboard .db-outline-button{background:#293a4b;color:#e2e8f0;border-color:#53687c}
+html.dark .caffoot-dashboard .db-actionrow button:not(:first-child):hover,
+html.dark .caffoot-dashboard .db-outline-button:hover{background:#354a60}
+html.dark .caffoot-dashboard .dashboard-insights,
+html.dark .caffoot-dashboard .dashboard-activity-card,
+html.dark .caffoot-dashboard .dashboard-summary-panel,
+html.dark .caffoot-dashboard .dashboard-report-panel{background:var(--caffoot-card);border-color:#405366}
+html.dark .caffoot-dashboard .dashboard-insights h3,
+html.dark .caffoot-dashboard .dashboard-activity-heading h3{color:#f1f5f9}
+html.dark .caffoot-dashboard .db-error-card{background:#3e2b2b;border-color:#a65f5b}
+html.dark .caffoot-dashboard .db-error-card p{color:#ffd4ce}
+html.dark .caffoot-dashboard .db-rack-row{background:#293a4b;border-color:#405366;color:#e2e8f0}
+html.dark .caffoot-dashboard .db-rack-row:hover{background:#354a60;border-color:#edb486}
+
+
+@media(max-width:1120px){.caffoot-dashboard .db-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.caffoot-dashboard .db-two{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:720px){.caffoot-dashboard .db-rack-list{grid-template-columns:minmax(0,1fr)}.caffoot-dashboard .dashboard-summary,.caffoot-dashboard .dashboard-summary.has-integrity{grid-template-columns:minmax(0,1fr)}.caffoot-dashboard-heading h1{font-size:25px}.caffoot-dashboard .db-summary{gap:10px}.caffoot-dashboard .db-metric{padding:15px}.caffoot-dashboard .db-metric strong{font-size:25px}.caffoot-dashboard .db-card{padding:18px}.caffoot-dashboard .dashboard-tabs{gap:13px}.caffoot-dashboard .db-actionrow button{flex:1 1 110px}}
+</style>
 </head>
 <body class="h-full bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-200">
 
@@ -2605,13 +2718,6 @@ function hierarchyValidateTypes(subnets) {
             const rackIds = new Set(racks.map(r => r.id));
             const rackedDevices = devices.filter(d => d.rackId && rackIds.has(d.rackId)).length;
             const unmountedDevices = devices.length - rackedDevices;
-            const rackCapacity = racks.reduce((sum, r) => sum + (Number(r.heightU) || 0), 0);
-            // Use the same per-face device and ordinary-accessory occupancy as rack reports.
-            // Front and rear can share U positions; count the fuller face once per rack.
-            const occupiedUs = buildInventoryReportData().racks.reduce(
-                (sum, rack) => sum + Math.max(rack.front, rack.rear), 0);
-            const freeUs = Math.max(0, rackCapacity - occupiedUs);
-            const occupancyPct = rackCapacity ? Math.min(100, Math.round((occupiedUs / rackCapacity) * 100)) : 0;
 
             const typeCounts = devices.reduce((map, d) => {
                 const type = d.type || 'Other';
@@ -2689,18 +2795,19 @@ function hierarchyValidateTypes(subnets) {
             }).join('') : `<li class="dashboard-alert-clear-button"><i class="fa-solid fa-circle-check" aria-hidden="true"></i>${alerts.length ? 'No warnings match this severity filter.' : 'No IPAM linkage, duplicate IP, missing rack or rack-capacity warnings detected.'}</li>`;
             const dashboardActivityFilterControlsHtml = `<div class="dashboard-filter-controls"><label for="activity-filter">Activity type<select id="activity-filter" data-dashboard-filter="activity"><option value="all" ${dashboardActivityFilter==='all'?'selected':''}>All changes</option><option value="devices" ${dashboardActivityFilter==='devices'?'selected':''}>Devices</option><option value="network" ${dashboardActivityFilter==='network'?'selected':''}>IPAM & networks</option><option value="racks" ${dashboardActivityFilter==='racks'?'selected':''}>Racks</option></select></label></div>`;
             const dashboardAlertFilterControlsHtml = `<div class="dashboard-filter-controls"><label for="alert-filter">Severity<select id="alert-filter" data-dashboard-filter="alerts"><option value="all" ${dashboardAlertSeverityFilter==='all'?'selected':''}>All severities</option><option value="critical" ${dashboardAlertSeverityFilter==='critical'?'selected':''}>Critical only</option><option value="warning" ${dashboardAlertSeverityFilter==='warning'?'selected':''}>Warnings only</option></select></label></div>`;
-            const visibleAlerts = alerts.slice(0, 6);
             const integrityErrors = validateApplicationState();
             const integrityHealthy = integrityErrors.length === 0;
             const integrityPreview = integrityErrors.slice(0, 5);
 
-            const networkSnapshot = `<section class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 space-y-4">
-                <div class="flex items-center justify-between gap-3 flex-wrap"><h3 class="text-base font-bold text-slate-900 dark:text-white">Network Allocation Overview</h3><span class="text-sm text-slate-600 dark:text-slate-300">${subnets.length} subnets · ${reservedDeviceCount} device IP reservations</span></div>
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    ${[['Assigned',subnetAssigned,'text-blue-800 dark:text-sky-200'],['Reserved',subnetReserved,'text-amber-800 dark:text-amber-300'],['Available',Math.max(0,totalSubnetCapacity-subnetAssigned-subnetReserved),'text-emerald-700 dark:text-emerald-300'],['Utilisation',ipUtilisation+'%','text-slate-900 dark:text-white']].map(([label,value,cls])=>`<div class="rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700/40 p-4"><p class="text-xs font-semibold text-slate-600 dark:text-slate-300">${label}</p><p class="mt-1 text-2xl font-bold ${cls}">${value}</p></div>`).join('')}
+            const networkSnapshot = `<section class="db-card">
+                <div class="db-card-head"><span class="db-iconwrap"><i class="fa-solid fa-network-wired" aria-hidden="true"></i></span><div><h3>Network Allocation Overview</h3><p>A summary of your stored addressing data.</p></div></div>
+                <div class="db-card-rule"></div>
+                <div class="db-legend">
+                    <div><span class="db-dot blue"></span><span>Assigned</span><strong>${subnetAssigned}</strong></div>
+                    <div><span class="db-dot"></span><span>Reserved</span><strong>${subnetReserved}</strong></div>
+                    <div><span class="db-dot green"></span><span>Available</span><strong>${Math.max(0,totalSubnetCapacity-subnetAssigned-subnetReserved)}</strong></div>
                 </div>
-                <div class="h-3 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700" role="progressbar" aria-label="IP allocation utilisation" aria-valuenow="${ipUtilisation}" aria-valuemin="0" aria-valuemax="100"><div class="h-full bg-blue-700 dark:bg-sky-400 rounded-full" style="width:${ipUtilisation}%"></div></div>
-                <button type="button" data-action="tab-ipam" class="px-4 py-2.5 rounded-xl bg-blue-800 hover:bg-blue-900 text-white font-semibold text-sm">View IP allocations <i class="fa-solid fa-arrow-right ml-1"></i></button>
+                <button type="button" data-action="tab-ipam" class="db-outline-button">View IP Allocations</button>
             </section>`;
             const statusPill = (label, count, classes) => `
                 <div class="flex items-center justify-between px-3 py-2 rounded-xl ${classes}">
@@ -2722,27 +2829,12 @@ function hierarchyValidateTypes(subnets) {
 
                 </div>`;
 
-            const rackCards = racks.length ? racks.map(rack => {
-                const rackDevices = devices.filter(d => d.rackId === rack.id);
-                const used = rackDevices.reduce((sum, d) => {
-                    const start = Number(d.rackUStart);
-                    const end = Number(d.rackUEnd ?? d.rackUStart);
-                    return Number.isInteger(start) && Number.isInteger(end) && end >= start ? sum + (end - start + 1) : sum;
-                }, 0);
-                const height = Number(rack.heightU) || 0;
-                const pct = height ? Math.min(100, Math.round((used / height) * 100)) : 0;
-                return `
-                    <button type="button" data-action="select-rack" data-id="${escapeHtml(rack.id)}" class="text-left w-full p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-500/60 hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors">
-                        <div class="flex items-center justify-between gap-3">
-                            <div class="min-w-0">
-                                <p class="font-semibold text-sm text-slate-800 dark:text-slate-100 truncate">${escapeHtml(rack.name)}</p>
-                                <p class="text-xs text-slate-500 dark:text-slate-400">${rackDevices.length} device${rackDevices.length === 1 ? '' : 's'} · ${height}U</p>
-                            </div>
-                            <span class="text-xs font-bold text-slate-600 dark:text-slate-300">${pct}%</span>
-                        </div>
-                        <div class="mt-2 h-2 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden"><div class="h-full rounded-full ${pct >= 85 ? 'bg-amber-500' : 'bg-sky-600 dark:bg-sky-400'}" style="width:${pct}%"></div></div>
-                    </button>`;
-            }).join('') : `<p class="text-sm text-slate-500 dark:text-slate-400">No racks configured yet.</p>`;
+            // The approved Rack Details panel keeps the existing rack-selection action.
+            const rackCards = racks.length ? racks.map(rack =>
+                `<button type="button" data-action="select-rack" data-id="${escapeHtml(rack.id)}" class="db-rack-row">
+                    <strong>${escapeHtml(rack.name)}</strong>
+                    <span class="db-status-badge">${Number(rack.heightU) || 0}U</span>
+                </button>`).join('') : '<p class="db-muted">No racks configured yet.</p>';
 
             const recentDevices = devices.slice().reverse().slice(0, 6);
             const deviceRows = recentDevices.length ? recentDevices.map(device => `
@@ -2799,7 +2891,6 @@ function hierarchyValidateTypes(subnets) {
                 return {rack, faces};
             });
             const networkInsights = `<section class="dashboard-insights" aria-label="Network insights">
-                <div class="dashboard-chart-heading"><div><h3>Network Insights</h3><p>Live utilisation and inventory distribution</p></div></div>
                 <div class="dashboard-layout-grid">
                     <article class="dashboard-summary-panel"><h4>IP address utilisation</h4><p class="dashboard-muted">${totalSubnetCapacity.toLocaleString()} usable addresses across ${subnets.length} subnets</p>
                         <div class="dashboard-bar" role="progressbar" aria-label="IP utilisation" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${ipUtilisation}"><span style="width:${ipUtilisation}%;background:#2563eb"></span></div>
@@ -2821,25 +2912,13 @@ function hierarchyValidateTypes(subnets) {
                 </div>
             </section>`;
 
-            const alertRows = visibleAlerts.length ? visibleAlerts.map(alert => {
-                const classes = alert.level === 'danger'
-                    ? 'bg-rose-50 text-rose-700 dark:bg-rose-950/30 dark:text-rose-300'
-                    : 'bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-300';
-                return `<div class="flex items-start gap-3 p-3 rounded-xl ${classes}"><i class="fa-solid ${alert.icon} mt-0.5"></i><p class="text-xs font-medium leading-5">${escapeHtml(alert.text)}</p></div>`;
-            }).join('') : `<div class="flex items-center gap-3 p-3 rounded-xl bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-300"><i class="fa-solid fa-circle-check"></i><p class="text-xs font-medium">No integrity or capacity warnings detected.</p></div>`;
-
             return `
-                <div class="space-y-6">
-                    <section class="bg-gradient-to-br from-blue-800 to-sky-700 text-white rounded-2xl p-5 sm:p-6 shadow-sm">
-                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
-                            <div>
-                                <p class="text-xs font-semibold uppercase tracking-wider text-white">Network overview</p>
-                                <h3 class="text-2xl font-bold mt-1">Network Overview</h3>
-                                <p class="text-sm text-white mt-1">A live summary of devices, addressing and rack space. Select a summary card to open its workspace.</p>
-                            </div>
-                            ${quickActions}
-                        </div>
-                    </section>
+                <div class="caffoot-dashboard">
+                    <div class="caffoot-dashboard-eyebrow">YOUR INFRASTRUCTURE AT A GLANCE</div>
+                    <div class="caffoot-dashboard-heading">
+                        <h1>Dashboard</h1>
+                        <p>An organised view of your saved Devices, IPAM and Network Racks.</p>
+                    </div>
 
                     ${window.nextMfaEnrolled === false ? `<section id="next-dashboard-mfa-notice" role="note" class="rounded-2xl border border-sky-200 bg-sky-50 dark:border-sky-800 dark:bg-sky-950/30 p-4 sm:p-5">
                         <div class="flex flex-col sm:flex-row sm:items-center gap-4">
@@ -2853,59 +2932,84 @@ function hierarchyValidateTypes(subnets) {
                     <nav class="dashboard-tabs" aria-label="Dashboard sections" role="tablist">
                         ${[['overview','Overview','fa-house'],['insights','Network Insights','fa-chart-pie'],['activity','Activity & Alerts','fa-bell']].map(([id,label,icon])=>`<button type="button" role="tab" id="dashboard-tab-${id}" aria-controls="dashboard-panel-${id}" aria-selected="${activeDashboardTab===id}" tabindex="${activeDashboardTab===id?'0':'-1'}" class="dashboard-tab-control ${activeDashboardTab===id?'is-active':''}" data-action="dashboard-tab" data-dashboard-tab="${id}"><i class="fa-solid ${icon}" aria-hidden="true"></i><span>${label}</span></button>`).join('')}
                     </nav>
-                    <div id="dashboard-panel-overview" role="tabpanel" aria-labelledby="dashboard-tab-overview" class="dashboard-tab-panel space-y-5" ${activeDashboardTab==='overview'?'':'hidden'}>
-                    <section class="dashboard-stats grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4" aria-label="Network summary">
-                        ${[
-                            ['Devices', devices.length, `${activeDevices} active · ${inactiveDevices} other`, 'fa-server', 'blue', 'tab-devices'],
-                            ['IP addresses', totalTrackedIps, `${assignedIps} assigned · ${reservedIps} reserved`, 'fa-network-wired', 'emerald', 'tab-ipam'],
-                            ['Subnets', subnets.length, 'Managed networks', 'fa-diagram-project', 'indigo', 'tab-ipam'],
-                            ['Racks', racks.length, `${rackedDevices} mounted devices`, 'fa-hard-drive', 'slate', 'dashboard-racks-overview']
-                        ].map(([label,value,detail,icon,tone,action]) => `<button type="button" data-action="${action}" class="dashboard-stat dashboard-stat-${tone} text-left bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 sm:p-5 transition-colors hover:border-blue-400 dark:hover:border-sky-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500" aria-label="${label}: ${value}. Open section">
-                            <div class="flex items-center justify-between gap-2"><span class="text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">${label}</span><span class="dashboard-stat-icon"><i class="fa-solid ${icon}" aria-hidden="true"></i></span></div>
-                            <p class="text-3xl font-extrabold text-slate-900 dark:text-white mt-3">${value}</p>
-                            <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">${detail}</p>
-                        </button>`).join('')}
-                    </section>
-
-                    ${window.nextSessionIsAdmin === true && !integrityHealthy ? `<section id="next-dashboard-inventory-health" role="alert" class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-rose-200 dark:border-rose-800">
-                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                            <div class="flex items-start gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 dark:bg-rose-950/40 dark:text-rose-300 flex items-center justify-center">
-                                    <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-bold text-rose-700 dark:text-rose-300">Inventory Health — attention required</h4>
-                                    <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Existing inventory consistency checks found issues in saved records. Review the details below and the affected inventory before making changes.</p>
-                                </div>
+                    <div id="dashboard-panel-overview" role="tabpanel" aria-labelledby="dashboard-tab-overview" class="dashboard-tab-panel" ${activeDashboardTab==='overview'?'':'hidden'}>
+                        <section class="dashboard-stats db-summary" aria-label="Network summary">
+                            ${[
+                                ['Devices', devices.length, `${activeDevices} active · ${inactiveDevices} other`, 'fa-server', 'tab-devices'],
+                                ['IP Addresses', totalTrackedIps, `${assignedIps} assigned · ${reservedIps} reserved`, 'fa-network-wired', 'tab-ipam'],
+                                ['Subnets', subnets.length, 'Managed networks', 'fa-diagram-project', 'tab-ipam'],
+                                ['Racks', racks.length, `${rackedDevices} mounted devices`, 'fa-server', 'dashboard-racks-overview']
+                            ].map(([label,value,detail,icon,action],index) => `<button type="button" data-action="${action}" class="dashboard-stat db-metric" aria-label="${label}: ${value}. Open section">
+                                <span class="db-metric-head">${label}<span class="db-iconwrap ${index===1?'green':index===3?'orange':''}"><i class="fa-solid ${icon}" aria-hidden="true"></i></span></span>
+                                <strong>${value}</strong><small>${detail}</small>
+                            </button>`).join('')}
+                        </section>
+                        ${window.nextSessionIsAdmin === true && !integrityHealthy ? `<section id="next-dashboard-inventory-health" role="alert" class="db-card db-error-card">
+                            <h3>Inventory Health — attention required</h3>
+                            <p>Existing inventory consistency checks found issues in saved records.</p>
+                            <div>${integrityPreview.map(error => `<p>${escapeHtml(error)}</p>`).join('')}</div>
+                        </section>` : ''}
+                        <div class="db-two">
+                            <div class="db-stack">
+                                <section class="db-card">
+                                    <div class="db-card-head"><span class="db-iconwrap orange"><i class="fa-solid fa-table-cells-large" aria-hidden="true"></i></span><div><h3>Quick Access</h3><p>Existing actions, available according to your permissions.</p></div></div>
+                                    <div class="db-actionrow">${quickActions}</div>
+                                </section>
+                                <section class="db-card">
+                                    <div class="db-card-head"><span class="db-iconwrap"><i class="fa-solid fa-server" aria-hidden="true"></i></span><div><h3>Recent Devices</h3><p>The latest records in your saved inventory.</p></div></div>
+                                    <div class="db-card-rule"></div>
+                                    <div class="db-device-rows">${deviceRows}</div>
+                                    <button type="button" data-action="tab-devices" class="db-outline-button">View All Devices</button>
+                                </section>
+                                <section class="db-card">
+                                    <div class="db-card-head"><span class="db-iconwrap green"><i class="fa-solid fa-network-wired" aria-hidden="true"></i></span><div><h3>Subnet Utilisation</h3><p>Usable addresses across existing CIDR networks.</p></div></div>
+                                    <div class="db-card-rule"></div>
+                                    ${subnetStats.length ? subnetStats.slice(0,3).map(subnet => `
+                                        <div class="db-progress-title"><span>${escapeHtml(subnet.name)} · ${escapeHtml(subnet.cidr)}</span><strong>${subnet.percentage}%</strong></div>
+                                        <div class="db-bar" role="progressbar" aria-label="${escapeHtml(subnet.name)} utilisation" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${subnet.percentage}"><span style="width:${subnet.percentage}%;background:#4a9c86"></span></div>
+                                    `).join('') : '<p class="db-muted">No subnets configured yet.</p>'}
+                                    <p class="db-muted">Details, reservations and allocations remain managed within IPAM.</p>
+                                </section>
                             </div>
-                            <span class="px-3 py-1.5 rounded-full text-xs font-bold bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300">${integrityErrors.length} issue${integrityErrors.length === 1 ? '' : 's'}</span>
+                            <div class="db-stack">
+                                <section class="db-card">
+                                    <div class="db-card-head"><span class="db-iconwrap orange"><i class="fa-solid fa-server" aria-hidden="true"></i></span><div><h3>Rack Capacity</h3><p>Used U-space across your cabinets.</p></div></div>
+                                    <div class="db-card-rule"></div>
+                                    ${rackInsights.length ? rackInsights.slice(0,3).map(({rack,faces}) => {
+                                        const used = Math.max(...faces.map(face=>face.used));
+                                        const capacity = Number(rack.heightU)||0;
+                                        const pct = capacity ? Math.round(used/capacity*100) : 0;
+                                        return `<div class="db-progress-title"><span>${escapeHtml(rack.name)}</span><strong>${used} / ${capacity}U</strong></div>
+                                        <div class="db-bar" role="progressbar" aria-label="${escapeHtml(rack.name)} occupied rack units" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><span style="width:${pct}%;background:${pct>=85?'#ed8532':'#7799b5'}"></span></div>`;
+                                    }).join('') : '<p class="db-muted">No network racks configured yet.</p>'}
+                                    <button type="button" data-action="tab-racks" class="db-outline-button">Open Network Racks</button>
+                                </section>
+                                ${networkSnapshot}
+                                <section class="db-card">
+                                    <div class="db-card-head"><span class="db-iconwrap"><i class="fa-solid fa-circle-info" aria-hidden="true"></i></span><div><h3>Inventory Status</h3><p>A concise snapshot of your saved inventory.</p></div></div>
+                                    <div class="db-card-rule"></div>
+                                    <div class="db-status-row"><strong>Devices</strong><span class="db-status-badge">${devices.length} tracked</span></div>
+                                    <div class="db-status-row"><strong>Subnets</strong><span class="db-status-badge">${subnets.length} configured</span></div>
+                                    <div class="db-status-row"><strong>Racks</strong><span class="db-status-badge">${racks.length} configured</span></div>
+                                    <p class="db-muted">Administrator-only Inventory Health warnings appear only when the real checks detect an issue.</p>
+                                </section>
+                            </div>
                         </div>
-                        <div class="mt-4 space-y-2">${integrityPreview.map(error => `<div class="flex items-start gap-2 p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/20 text-xs text-rose-700 dark:text-rose-300"><i class="fa-solid fa-circle-exclamation mt-0.5" aria-hidden="true"></i><span>${escapeHtml(error)}</span></div>`).join('')}${integrityErrors.length > integrityPreview.length ? `<p class="text-[11px] text-slate-500 pt-1">Showing the first ${integrityPreview.length} of ${integrityErrors.length} issues.</p>` : ''}</div>
-                    </section>` : ''}
-                    ${networkSnapshot}
                     </div>
                     <div id="dashboard-panel-insights" role="tabpanel" aria-labelledby="dashboard-tab-insights" class="dashboard-tab-panel space-y-5" ${activeDashboardTab==='insights'?'':'hidden'}>
                     ${networkInsights}
-
-                    <section class="grid grid-cols-1 xl:grid-cols-3 gap-5 mt-8">
-                        <div class="xl:col-span-2 bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700">
-                            <div class="flex items-center justify-between mb-4"><div><h4 class="font-bold text-slate-900 dark:text-white">Rack Capacity</h4><p class="text-xs text-slate-500 mt-1">Used U-space across your cabinets</p></div><span class="text-sm font-bold text-slate-700 dark:text-slate-200">${occupiedUs}/${rackCapacity}U</span></div>
-                            <div class="h-3 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden"><div class="h-full rounded-full ${occupancyPct >= 85 ? 'bg-amber-500' : 'bg-sky-600 dark:bg-sky-400'}" style="width:${occupancyPct}%"></div></div>
-                            <div class="flex justify-between mt-2 text-[11px] text-slate-500"><span>0U</span><span>${occupancyPct}% occupied</span><span>${rackCapacity}U</span></div>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-5">${rackCards}</div>
-                        </div>
-                        <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700">
-                            <div class="flex items-center justify-between mb-4"><div><h4 class="font-bold text-slate-900 dark:text-white">Health & alerts</h4><p class="text-xs text-slate-500 mt-1">Integrity and capacity checks</p></div><span class="text-xs font-bold ${visibleAlerts.length ? 'text-amber-600' : 'text-emerald-600'}">${alerts.length} alert${alerts.length === 1 ? '' : 's'}</span></div>
-                            <div class="space-y-2">${alertRows}</div>
-                        </div>
+                    <section class="db-card db-rack-details">
+                        <div class="db-card-head"><span class="db-iconwrap orange"><i class="fa-solid fa-server" aria-hidden="true"></i></span><div><h3>Rack Details</h3><p>The existing rack list and per-rack links stay available in this section.</p></div></div>
+                        <div class="db-card-rule"></div>
+                        <div class="db-rack-list">${rackCards}</div>
+                        <button type="button" data-action="tab-racks" class="db-outline-button">Open Rack Details</button>
                     </section>
-
                     </div>
                     <div id="dashboard-panel-activity" role="tabpanel" aria-labelledby="dashboard-tab-activity" class="dashboard-tab-panel space-y-5" ${activeDashboardTab==='activity'?'':'hidden'}>
-                    <section class="dashboard-summary" aria-label="Activity and alert summary">
+                    <section class="dashboard-summary ${window.nextSessionIsAdmin === true && integrityErrors.length ? 'has-integrity' : ''}" aria-label="Activity and alert summary">
                         <div class="dashboard-summary-item"><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i><div><strong>${filteredDashboardAuditEntries.length}</strong><span>Recent save events</span></div></div>
                         <div class="dashboard-summary-item"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i><div><strong>${alerts.length}</strong><span>Network warnings</span></div></div>
-                        ${window.nextSessionIsAdmin === true ? `<div class="dashboard-summary-item"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i><div><strong>${integrityErrors.length}</strong><span>Integrity issues</span></div></div>` : ''}
+                        ${window.nextSessionIsAdmin === true && integrityErrors.length ? `<div class="dashboard-summary-item"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i><div><strong>${integrityErrors.length}</strong><span>Integrity issues</span></div></div>` : ''}
                     </section>
                     <section class="dashboard-columns">
                         <div class="dashboard-activity-card"><div class="dashboard-activity-heading"><div><h3>Recent Activity</h3><p>Saved changes in the central database</p></div><button type="button" data-action="tab-audit" class="dashboard-link">Full history <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></div>${dashboardActivityFilterControlsHtml}<div class="dashboard-activity-timeline">${dashboardActivityTimelineHtml}</div></div>
