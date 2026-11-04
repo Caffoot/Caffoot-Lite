@@ -322,6 +322,13 @@ async function run(){
   console.log('Authenticated central inventory rendered');
 
   await modal(page,'openSubnetModal');
+  const ipamAddDialog=page.locator('#modal-content.approved-ipam-modal');
+  assert.ok(await ipamAddDialog.locator('.ipam-modal-head h2').getByText('Add Subnet',{exact:true}).isVisible(),
+    'IPAM Add Subnet must use approved Draft 01 modal heading');
+  assert.equal(await ipamAddDialog.locator('.ipam-modal-body > .ipam-form-grid > .ipam-field').count(),7,
+    'IPAM Add Subnet must use the original Draft 01 field-grid structure');
+  assert.ok(await ipamAddDialog.locator('.ipam-modal-actions button[type="submit"]').isVisible(),
+    'Approved IPAM form footer must retain the working save action');
   await page.locator('#sub-cidr').fill('10.64.20.0/24');
   await page.locator('#sub-name').fill('Browser Network');
   await page.locator('#sub-vlan').fill('17');
@@ -378,10 +385,37 @@ async function run(){
   assert.ok(await approvedManage.locator('[data-action="open-subnet-modal"]').isEnabled());
   assert.ok(await approvedManage.locator('[data-action="bulk-ip"]').isEnabled());
   assert.ok(await approvedManage.locator('[data-action="edit-subnet"][data-id="'+approvedSubnetId+'"]').isVisible());
+  await approvedManage.locator('[data-action="edit-subnet"][data-id="'+approvedSubnetId+'"]').click();
+  const ipamEditDialog=page.locator('#modal-content.approved-ipam-modal');
+  await ipamEditDialog.waitFor();
+  assert.ok(await ipamEditDialog.locator('.ipam-modal-head h2').getByText('Edit Subnet',{exact:true}).isVisible(),
+    'Edit Subnet must use the same approved Draft 01 form');
+  assert.equal(await ipamEditDialog.locator('#sub-name').inputValue(),'Browser Network');
+  assert.ok(await ipamEditDialog.locator('#sub-kind').isDisabled(),
+    'Editing a saved subnet must not allow its type to change');
+  assert.ok(await ipamEditDialog.locator('.ipam-modal-actions [data-action="delete-subnet"]').isVisible(),
+    'The existing protected subnet delete action must stay available in the approved footer');
+  await page.setViewportSize({width:390,height:844});
+  assert.equal((await ipamEditDialog.locator('.ipam-form-grid').evaluate(el=>getComputedStyle(el).gridTemplateColumns)).trim().split(/\s+/).length,1,
+    'Approved IPAM modal field grid must stack at mobile width');
+  await page.setViewportSize({width:1440,height:950});
+  await ipamEditDialog.locator('[data-action="cancel-subnet-modal"]').last().click();
+  await page.locator('#modal-container.hidden').waitFor();
   await approvedManage.locator('[data-action="ipam-open-network-addresses"][data-id="'+approvedSubnetId+'"]').click();
   assert.ok(await page.locator('#main-content .ipam-approved-addresses #ipam-select-network').isVisible());
+  await page.locator('#main-content .ipam-approved-addresses [data-action="open-ip"][data-ip="10.64.20.2"]').click();
+  const ipamAddressDialog=page.locator('#modal-content.approved-ipam-modal');
+  await ipamAddressDialog.waitFor();
+  assert.ok(await ipamAddressDialog.locator('.ipam-modal-head h2').getByText('Configure IP:',{exact:false}).isVisible(),
+    'IP address editing must use the original approved Draft 01 modal header');
+  assert.equal(await ipamAddressDialog.locator('.ipam-form-grid > .ipam-field').count(),3,
+    'Approved address editor must retain Status, Hostname and IPAM Notes');
+  await ipamAddressDialog.locator('#ip-notes').fill('Interface integration regression');
+  await ipamAddressDialog.locator('button[type="submit"]').click();
+  await persisted(page,s=>s.ipAllocations['10.64.20.2']?.notes==='Interface integration regression','Approved IPAM notes');
+  await page.locator('#modal-container.hidden').waitFor();
   await page.locator('#sidebar [data-action="tab-dashboard"]').click();
-  console.log('Approved IPAM Manage Subnets grouping and navigation passed');
+  console.log('Approved IPAM Draft 01 add/edit and address form save paths passed');
 
   await modal(page,'openRackModal');
   const approvedRackForm=page.locator('#modal-content .rack-modal');
