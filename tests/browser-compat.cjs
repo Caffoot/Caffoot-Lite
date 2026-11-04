@@ -942,25 +942,33 @@ async function run(){
   await page.locator('#sidebar [data-action="tab-dashboard"]').click();
   console.log('Approved Audit Trail real events, filters and detail inspection passed');
 
-  // A detected inconsistency appears only as an administrator warning; no data is saved.
+  // A detected inconsistency appears only as an administrator warning; no data
+  // is saved. Check the transient in-memory duplicate synchronously: a legitimate
+  // asynchronous state refresh can otherwise erase the temporary test input.
   await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
-  await page.evaluate(()=>{
+  const inventoryHealth=await page.evaluate(()=>{
     switchTab('dashboard');
-    appState.devices.push({...appState.devices.find(d=>d.name==='browser-device')});
+    const existing=appState.devices.find(d=>d.name==='browser-device');
+    if(!existing)throw Error('Browser test device missing');
+    appState.devices.push({...existing});
     renderContent();
-  });
-  const health=page.locator('#next-dashboard-inventory-health');
-  assert.equal(await health.count(),1,'Admin must see actual inventory inconsistencies');
-  assert.ok(await health.getByText(/Duplicate or missing device ID/).isVisible());
-  assert.ok(await health.evaluate(el=>el.classList.contains('db-error-card')),
-    'Inventory Health must retain the accepted Dashboard warning component');
-  await page.evaluate(()=>{
-    const duplicates=appState.devices.map((device,i)=>device.name==='browser-device'?i:-1).filter(i=>i>=0);
+    const health=document.getElementById('next-dashboard-inventory-health');
+    const result={
+      present:!!health,
+      duplicate:!!health&&/Duplicate or missing device ID/.test(health.textContent),
+      approvedComponent:!!health&&health.classList.contains('db-error-card')
+    };
+    const duplicates=appState.devices.map((d,i)=>d.name==='browser-device'?i:-1).filter(i=>i>=0);
     if(duplicates.length>1)appState.devices.splice(duplicates[duplicates.length-1],1);
     renderContent();
+    result.cleared=!document.getElementById('next-dashboard-inventory-health');
+    return result;
   });
-  await page.waitForFunction(()=>!document.getElementById('next-dashboard-inventory-health'));
-  assert.equal(await health.count(),0,'Corrected inventory must hide the warning');
+  assert.equal(inventoryHealth.present,true,'Admin must see actual inventory inconsistencies');
+  assert.equal(inventoryHealth.duplicate,true,'Admin warning must identify duplicate or missing device IDs');
+  assert.equal(inventoryHealth.approvedComponent,true,
+    'Inventory Health must retain the accepted Dashboard warning component');
+  assert.equal(inventoryHealth.cleared,true,'Corrected inventory must hide the warning');
 
   // Published IPAM paths: device-linked notes and independent reservations.
   await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
