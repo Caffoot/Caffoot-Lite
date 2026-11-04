@@ -8390,7 +8390,36 @@ function openIpModal(ip) {
             }
             // Keep hardware inputs mounted for legacy preservation, but hide the tab for VMs.
             panels.get('hardware').append(sections[1]);
-            panels.get('networking').append(sections[3]);
+            // Exact Batch 04 Networking uses two full-width source cards.
+            // Keep the original live IPAM inputs and their event handlers in place.
+            const networkingGrid=document.createElement('div');
+            networkingGrid.className='device-review-grid';
+            const networkIdentity=sections[3];
+            networkIdentity.classList.add('full');
+            const oldNetworkHeading=networkIdentity.querySelector('.form-section-heading');
+            if(oldNetworkHeading){
+                const heading=document.createElement('h3');
+                heading.innerHTML='<span class="mini-icon" aria-hidden="true">▣</span>Network Identity';
+                const subtitle=document.createElement('p');
+                subtitle.textContent='IPAM assignments use existing subnets and allocation protections.';
+                oldNetworkHeading.replaceWith(heading,subtitle);
+            }
+            const originalGuidance=[...networkIdentity.querySelectorAll('.device-help')].find(
+                el=>el.textContent.includes("Don't see the required network?"));
+            const guidanceText=originalGuidance?.textContent.trim()||
+                'Create the network in IPAM first, then return to this device.';
+            originalGuidance?.remove();
+            networkingGrid.appendChild(networkIdentity);
+            const guidance=document.createElement('section');
+            guidance.className='device-review-panel full';
+            guidance.innerHTML='<h3><span class="mini-icon" aria-hidden="true">▣</span>Subnet Guidance</h3>'
+                +'<p>Missing the required subnet?</p>';
+            const hint=document.createElement('div');
+            hint.className='device-review-hint';
+            hint.textContent=guidanceText;
+            guidance.appendChild(hint);
+            networkingGrid.appendChild(guidance);
+            panels.get('networking').appendChild(networkingGrid);
             panels.get('notes').append(sections[4]);
             // Move existing field nodes rather than cloning controls, preserving IDs and handlers.
             const status = form.querySelector('#dev-status');
