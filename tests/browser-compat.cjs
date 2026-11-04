@@ -1311,6 +1311,34 @@ async function run(){
   const dynamicDeviceFields=approvedEditor.locator('#device-detail-fields-panel .device-review-form-grid');
   assert.ok(await dynamicDeviceFields.locator('.device-review-field input,.device-review-field select').count()>0,
     'Type-specific hardware details must use the original source field wrappers and keep editable controls');
+  // Pinned Batch 04 Notes card: original toolbar, field grid and preview,
+  // while keeping the legacy Markdown editor and its saved field.
+  await approvedEditor.getByRole('tab',{name:'Notes'}).click();
+  const approvedNotes=approvedEditor.locator('#device-form-panel-notes');
+  assert.ok(await approvedNotes.getByText('Notes / Details',{exact:true}).isVisible(),
+    'Approved Notes card heading must match Batch 04');
+  assert.ok(await approvedNotes.locator('.device-review-note-toolbar[role="toolbar"]').isVisible(),
+    'Original Notes formatting toolbar must be present');
+  assert.ok(await approvedNotes.locator('.device-review-form-grid .device-review-field.wide #dev-notes').isVisible(),
+    'The working saved Notes field must use the source form grid');
+  await approvedNotes.locator('#dev-notes').fill('**Browser note**');
+  await approvedNotes.locator('#notes-toggle').click();
+  assert.ok(await approvedNotes.locator('#notes-preview.device-review-note-preview').isVisible(),
+    'Approved Notes preview component must open');
+  assert.ok((await approvedNotes.locator('#notes-preview').textContent()).includes('Browser note'),
+    'Existing Markdown preview must render the note');
+  await approvedNotes.locator('#notes-toggle').click();
+  assert.ok(await approvedNotes.locator('#dev-notes').isVisible(),
+    'Preview must return to the working editor');
+  assert.equal(await approvedNotes.locator('#dev-notes').inputValue(),'**Browser note**',
+    'Preview must not discard typed notes');
+  await page.setViewportSize({width:420,height:900});
+  assert.equal(await approvedNotes.locator('.device-review-form-grid').evaluate(el=>
+    getComputedStyle(el).gridTemplateColumns.split(' ').length),1,
+    'Approved Notes fields must stack in a single mobile column');
+  await page.setViewportSize({width:1440,height:950});
+  console.log('Approved Device Notes structure, Markdown preview and mobile layout passed');
+
   await approvedEditor.getByRole('tab',{name:'General'}).click();
   await page.locator('#dev-mount-type').selectOption('Tower / Floor Standing');
   await page.locator('#dev-location').selectOption('Unknown');
