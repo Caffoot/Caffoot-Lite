@@ -1581,6 +1581,9 @@ async function run(){
   assert.ok(await deviceReview.locator('#device-details-panel-location')
     .getByRole('heading',{name:'Mounting & Location'}).isVisible(),
     'Location tab must use approved Mounting & Location title');
+  assert.ok(await deviceReview.locator('#device-details-panel-location')
+    .getByText('Virtual machines are not physically mounted in racks.',{exact:true}).isVisible(),
+    'Location source guidance must remain visible alongside saved mounting information');
   await deviceReview.getByRole('tab',{name:'Overview'}).click();
   assert.ok(await deviceReview.getByRole('tab',{name:'Virtual Machines'}).isVisible(),
     'Physical hosts with virtual machines must retain their guest listing');
@@ -1615,6 +1618,8 @@ async function run(){
   assert.ok(await deviceReview.getByRole('heading',{name:'Hardware & Lifecycle'}).isVisible(),
     'Physical hardware details must use the approved Batch 04 heading');
   const hardwareCard=deviceReview.locator('#device-details-panel-hardware > .device-review-panel.full');
+  assert.ok(await hardwareCard.getByText('Physical hardware and device identity',{exact:true}).isVisible(),
+    'Hardware & Lifecycle must retain the pinned Batch 04 source subtitle');
   for (const label of ['Device Type','Status','Mount Type']) {
     assert.equal(await hardwareCard.locator('dt').filter({hasText:label}).count(),1,
       'Approved Hardware & Lifecycle must display saved '+label);
@@ -1694,6 +1699,8 @@ async function run(){
     .filter({hasText:'Rack Navigation'});
   assert.ok(await rackNavigationCard.isVisible(),
     'Approved Details Location tab must contain a distinct full-width Rack Navigation card for racked devices');
+  assert.ok(await rackNavigationCard.getByText('Opens the existing rack view in the completed application.',{exact:true}).isVisible(),
+    'Rack Navigation guidance must match the pinned HTML without changing navigation');
   const savedRackLocation=deviceReview.locator('#device-details-panel-location > .device-review-panel.full').first();
   for(const label of ['Rack','Face','Start U','U height']){
     assert.equal(await savedRackLocation.locator('dt').filter({hasText:label}).count(),1,
