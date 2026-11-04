@@ -76,7 +76,7 @@ This is a **working register, not a pass certificate**. For each screen, verify 
 | Dashboard Draft 02 | Partly integrated; fidelity unverified | Complete original tabs, cards and responsive layout |
 | My Account Draft 06 and shared navigation | Partly integrated; fidelity unverified | Profile workspace, common header/sidebar, every page |
 | Settings & Data Draft 02 | Partly integrated; fidelity unverified | Complete source structures and forms |
-| Devices Overview Draft 03 | **Mismatch confirmed** | Old insight-card markup remains: replace with approved components |
+| Devices Overview Draft 03 | All five original panel structures integrated; **not yet verified** | Execute latest Chromium, compare source and live desktop/mobile UI, and verify filtering/empty states |
 | Devices Inventory Draft 02 | Partly integrated; fidelity unverified | Check full toolbar, filters, table and responsiveness |
 | Device Details / Add/Edit Batch 04 | Partly integrated; fidelity unverified | Verify original card structure, physical/VM editors and actions |
 | Device Management and six catalogues Batch 02 | Partly integrated; fidelity unverified | Confirm all six views, forms and multi-type selection |
@@ -104,6 +104,14 @@ This is a **working register, not a pass certificate**. For each screen, verify 
 - Commit `aca2649`: replaced the old Hardware overview cards with the **actual approved Draft 03 Hardware panel markup** copied from the pinned source, including the three `intelligence-metric` cards and original Manufacturer, Model and Mounting Methods card/chart containers. The illustrative data was replaced by live inventory counts. The existing `device-hardware-drilldown` action still opens filtered inventory; no storage, permission or placement logic was changed.
 - Commit `5a8ca28`: added Chromium assertions for the original three-card structure and a saved mounting-method drill-down.
 - **Verification:** the updated HTML inline script and the browser test file passed JavaScript syntax parsing. No GitHub Actions workflow run is reported for this code. Real Chromium execution and desktop/mobile visual comparison remain outstanding. This is **not a completed or accepted Devices Overview**: Operating Systems, Software & Services and Data Quality panels still need their original source HTML integrated, and the complete screen needs acceptance checks.
+
+
+### Devices Overview Draft 03 — batched OS, Software and Data Quality source integration (4 November 2026)
+
+- Commit `59fe237`: replaced the remaining legacy Operating Systems, Software & Services and Data Quality cards with the **actual panel markup from the pinned approved `devices-overview-draft-03.html`**, not CSS approximations. These use the approved `intelligence-panel`, `intelligence-card`, `intelligence-chart-row`, `intelligence-quality-card` and original source headings/captions.
+- The sample preview's figures were connected to live saved inventory: `getEffectiveDevicePlatform()` continues to distinguish hypervisor hosts from guests, recorded software/service selections retain their existing catalogue filtering, the archived-software card still links to preserved saved device records, and Data Quality remains calculated from the live inventory. The original View Device Inventory buttons are wired to the live navigation action. No backend, device assignment, security or storage logic changed.
+- Commit `b6f039`: added tests for all three original panels, real operating-system and optional software drill-downs, saved Data Quality counts and missing-IP filtering, and the narrow-screen quality-card grid.
+- **Verification status:** inline and browser-test JavaScript parse successfully; source-level checks find exactly one of each of the five approved intelligence panels and no remaining generic legacy chart block in that renderer. **No Chromium test run or visual sign-off on the current code has been reported**. Do not mark Devices Overview fully verified. This checkpoint supersedes the earlier open-panel statements in the two previous Devices Overview checkpoints above.
 
 ## Development standards
 
