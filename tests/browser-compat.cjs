@@ -1547,6 +1547,12 @@ async function run(){
     'Approved Details Software tab must lead with Operating System / Platform');
   assert.ok(await detailsSoftware.getByText('Recorded software platform',{exact:true}).isVisible(),
     'Approved OS card must preserve source description');
+  assert.equal(await detailsSoftware.locator(':scope > .device-review-panel').first()
+    .locator('dt').filter({hasText:'Operating System'}).count(),1,
+    'Software Details must use the pinned Operating System fact label');
+  assert.equal(await detailsSoftware.locator(':scope > .device-review-panel').first()
+    .locator('dt').filter({hasText:'OS Version'}).count(),0,
+    'Unknown OS version must not be fabricated for a device without a recorded version');
   assert.ok(await detailsSoftware.getByText('Installed on this device',{exact:true}).isVisible(),
     'Approved Installed Software card must preserve source description');
   assert.ok(await detailsSoftware.locator(':scope > .device-review-panel').nth(1)
