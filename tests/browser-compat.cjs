@@ -502,9 +502,39 @@ async function run(){
   assert.ok(await desktopTypeBreakdown.isVisible(),
     'The approved Devices by Type chart must use saved inventory rather than preview data');
   await desktopTypeBreakdown.click();
+  // Pinned Device Inventory Draft 02, not the old toolbar/table arrangement.
+  const approvedInventory=page.locator('#main-content [data-device-panel="inventory"]');
+  await approvedInventory.waitFor();
+  assert.equal(await approvedInventory.locator('.device-toolbar .device-filters select').count(),5,
+    'The approved Device Inventory has exactly five primary search filters');
+  assert.ok(await approvedInventory.locator('.device-results-head #device-sort').isVisible(),
+    'Sort must be inside the approved results header, not an extra toolbar filter');
+  assert.ok(await approvedInventory.locator('.device-toolbar .device-search-wrap #device-search').isVisible(),
+    'Approved Search Devices input must remain connected to live inventory');
+  assert.ok(await approvedInventory.locator('.device-table-card .device-table-scroll .device-table').isVisible(),
+    'Device table must use the original Draft 02 table/card structure');
+  assert.ok(await approvedInventory.locator('.device-results-head #device-result-count').isVisible(),
+    'The approved device results header must show actual saved-record counts');
+  await page.setViewportSize({width:420,height:900});
+  assert.equal(await approvedInventory.locator('.device-filters').evaluate(el=>
+    getComputedStyle(el).gridTemplateColumns.split(' ').length),1,
+    'The five approved Device Inventory filters must stack on mobile');
+  await page.setViewportSize({width:1440,height:950});
+
   await page.waitForFunction(()=>activeDeviceDetailsTab==='inventory' && deviceTypeFilter==='Desktop');
   assert.ok(await page.locator('#main-content [data-device-panel="inventory"] .device-table').getByText('browser-device').isVisible(),
     'Clicking the approved chart row must open the filtered live Device Inventory');
+
+  await approvedInventory.locator('#device-search').fill('no-device-with-this-name-2026');
+  assert.equal(await approvedInventory.locator('.device-table tbody .device-name').count(),0,
+    'Approved search input must filter live records without preview script handlers');
+  await approvedInventory.locator('#device-search').fill('');
+  assert.ok(await approvedInventory.locator('.device-table tbody .device-name').filter({hasText:'browser-device'}).isVisible(),
+    'Clearing approved inventory search must restore saved records');
+  await approvedInventory.locator('#device-sort').selectOption('name-desc');
+  assert.equal(await approvedInventory.locator('#device-sort').inputValue(),'name-desc',
+    'Moving the approved Sort control must retain the existing sort interaction');
+
   await page.locator('#main-content [data-action="clear-device-filters"]').first().click();
 
   // Draft 03's Hardware panel must render its original metric, card and chart structure.
