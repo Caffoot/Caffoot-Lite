@@ -11028,9 +11028,8 @@ window.addEventListener('load', async () => {
     sessionIsAdmin=!!session.is_admin;
     window.nextSessionIsAdmin=sessionIsAdmin;
     signedInUsername=session.username;
-    await loadApprovedAccountProfile();
-    document.getElementById('header-account-initial').textContent = signedInUsername.charAt(0).toUpperCase() || 'A';
     sessionMfaEnrolled=!!session.mfa_enrolled;
+    await loadApprovedAccountProfile();
     window.nextMfaEnrolled=sessionMfaEnrolled;
     document.getElementById('next-users-nav').classList.toggle('hidden', !sessionIsAdmin);
     document.getElementById('next-settings-nav').classList.toggle('hidden', !sessionIsAdmin);
