@@ -405,6 +405,29 @@ async function run(){
   await newRackCard.click();
   const rackDetail=page.locator('#main-content .rack-workspace');
   await rackDetail.waitFor();
+
+  // Draft 04 rack detail is the approved markup, with live elevation/actions.
+  const approvedElevation=rackDetail.locator('.rack-detail-workspace .rack-elev-panel');
+  assert.ok(await approvedElevation.isVisible(),
+    'Rack View must render the original approved elevation panel');
+  assert.ok(await approvedElevation.locator('#rack-elev-scroll.rack-elev-scroll').isVisible(),
+    'The approved elevation must have its own scroll container');
+  assert.equal(await approvedElevation.locator('.rack-elevation .rack-side-rail').count(),2,
+    'Both approved L/R 0U rails must be present');
+  assert.equal(await approvedElevation.locator('.rack-elevation .rack-slot-group .rack-empty').count(),
+    Number(await page.locator('#main-content #v13-rack-detail-select option:checked').count()) ? 
+      await page.evaluate(()=>appState.racks.find(r=>r.name==='Browser Rack')?.heightU) : 0,
+    'An empty rack must expose every U through approved Place Here buttons');
+  assert.equal(await rackDetail.locator('.rack-aside > .rack-card.pad').count(),3,
+    'Draft 04 must have capacity, available positions and opposite-face cards');
+  assert.equal(await rackDetail.locator('.rack-height-picker button').count(),4,
+    'Approved Rack View has 1–4U height-selection controls');
+  await page.setViewportSize({width:420,height:900});
+  assert.equal(await rackDetail.locator('.rack-detail-workspace').evaluate(el=>
+    getComputedStyle(el).gridTemplateColumns.split(' ').length),1,
+    'The approved rack detail must stack on mobile');
+  await page.setViewportSize({width:1440,height:950});
+
   assert.ok(await rackDetail.locator('.rack-detail-bar .rack-detail-title h2').getByText('Browser Rack',{exact:true}).isVisible(),
     'Approved Draft 04 must display the selected rack name in the detail header');
   assert.ok(await rackDetail.locator('.rack-detail-bar [data-action="v13-back-rack-inventory"]').isVisible(),
@@ -421,12 +444,22 @@ async function run(){
     null,{timeout:10000});
   assert.ok(await rackDetail.locator('section[aria-label="Mounted equipment"]').isVisible(),
     'Equipment remains available without changing the approved placement logic');
+  assert.ok(await rackDetail.locator('section[aria-label="Mounted equipment"] > .rack-card.pad').isVisible(),
+    'Equipment must use the original approved card frame');
+  assert.equal(await rackDetail.locator('section[aria-label="Mounted equipment"] .rack-table').count(),2,
+    'Draft 04 has separate accessories and mounted-device tables');
+
   await rackDetail.locator('[data-action="select-rack-tab"][data-tab="settings"]').click();
   await page.waitForFunction(()=>activeRackTab==='settings' &&
     !!document.querySelector('.rack-workspace section[aria-label="Rack settings"]:not(.hidden)'),
     null,{timeout:10000});
   assert.ok(await rackDetail.locator('section[aria-label="Rack settings"]').isVisible(),
     'Rack Settings must remain accessible from the selected rack');
+  assert.equal(await rackDetail.locator('section[aria-label="Rack settings"] .rack-editor-grid .rack-editor-field').count(),8,
+    'Draft 04 Rack Settings must show eight original rack specification tiles');
+  assert.equal(await rackDetail.locator('section[aria-label="Rack settings"] .rack-editor-actions button').count(),3,
+    'Edit, correct specifications and delete actions must remain protected and available');
+
   await rackDetail.locator('.rack-subtabs [data-action="select-rack-tab"][data-tab="view"]').click();
   await page.waitForFunction(()=>activeRackTab==='view' &&
     !!document.querySelector('.rack-workspace section[aria-label="Visual rack view"]:not(.hidden)'),
@@ -436,6 +469,20 @@ async function run(){
   await rackDetail.locator('[data-action="v13-back-rack-inventory"]').click();
   assert.ok(await page.locator('#main-content [data-v13-rack-row]').filter({hasText:'Browser Rack'}).isVisible(),
     'Back to Rack Inventory must return to the saved rack directory');
+  // The approved Accessories directory opens the protected Equipment tab.
+  await page.locator('#main-content .approved-page-header [data-action="approved-rack-section"][data-section-tab="accessories"]').click();
+  const accessoryDirectory=page.locator('#main-content #rack-accessory-root .rack-directory');
+  await accessoryDirectory.waitFor();
+  const accessoryCard=accessoryDirectory.locator('.rack-directory-item[data-action="v13-open-rack-accessories"]')
+    .filter({hasText:'Browser Rack'});
+  assert.ok(await accessoryCard.isVisible(),'Rack Accessories must use approved directory cards');
+  assert.ok(await accessoryCard.getByText('Manage Accessories in Rack',{exact:true}).isVisible(),
+    'The approved accessory card action must be retained');
+  await accessoryCard.click();
+  await page.waitForFunction(()=>v13RackSection==='inventory' && v13RackDetailOpen && activeRackTab==='equipment');
+  assert.ok(await page.locator('.rack-workspace section[aria-label="Mounted equipment"]').isVisible(),
+    'Selecting approved accessory card must open real rack equipment management');
+
   await page.locator('#sidebar [data-action="tab-dashboard"]').click();
   console.log('Approved Rack Detail header, tabs and back-navigation passed');
 
@@ -789,6 +836,13 @@ async function run(){
   const rackSaved=await state(page);
   assert.equal(rackSaved.devices.find(d=>d.id===rackSwitch.id).rackId,rackId);
   assert.equal(rackSaved.rackAccessories.length,2);
+  await page.locator('#sidebar [data-action="tab-racks"]').click();
+  await page.locator('#main-content .approved-page-header [data-action="approved-rack-section"][data-section-tab="accessories"]').click();
+  const savedAccessoryCard=page.locator('#rack-accessory-root .rack-directory-item')
+    .filter({hasText:'Browser Rack'});
+  assert.ok(await savedAccessoryCard.getByText('2 accessories · 1 vertical 0U rails',{exact:true}).isVisible(),
+    'Approved Rack Accessories directory must reflect saved accessories and 0U rails');
+
   console.log('Rack device placement, patch panel and vertical PDU persisted after reload');
 
   // Preserve the front/rear rack view and its printable elevations.
