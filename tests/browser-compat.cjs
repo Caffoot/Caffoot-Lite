@@ -400,7 +400,7 @@ async function run(){
     'Approved IPAM modal field grid must stack at mobile width');
   await page.setViewportSize({width:1440,height:950});
   await ipamEditDialog.locator('[data-action="cancel-subnet-modal"]').last().click();
-  await page.locator('#modal-container.hidden').waitFor();
+  await page.locator('#modal-container').waitFor({state:'hidden'});
   await approvedManage.locator('[data-action="ipam-open-network-addresses"][data-id="'+approvedSubnetId+'"]').click();
   assert.ok(await page.locator('#main-content .ipam-approved-addresses #ipam-select-network').isVisible());
   await page.locator('#main-content .ipam-approved-addresses [data-action="open-ip"][data-ip="10.64.20.2"]').click();
@@ -413,7 +413,7 @@ async function run(){
   await ipamAddressDialog.locator('#ip-notes').fill('Interface integration regression');
   await ipamAddressDialog.locator('button[type="submit"]').click();
   await persisted(page,s=>s.ipAllocations['10.64.20.2']?.notes==='Interface integration regression','Approved IPAM notes');
-  await page.locator('#modal-container.hidden').waitFor();
+  await page.locator('#modal-container').waitFor({state:'hidden'});
   await page.locator('#sidebar [data-action="tab-dashboard"]').click();
   console.log('Approved IPAM Draft 01 add/edit and address form save paths passed');
 
@@ -881,7 +881,7 @@ async function run(){
   assert.ok((await state(page)).subnets.some(s=>s.id===subnetId),
     'Viewing a blocked deletion must never remove the selected subnet');
   await blockedIpamDelete.locator('.ipam-modal-actions [data-action="close-modal"]').click();
-  await page.locator('#modal-container.hidden').waitFor();
+  await page.locator('#modal-container').waitFor({state:'hidden'});
   await page.reload();
   await page.locator('#main-content .caffoot-dashboard').waitFor();
   assert.equal((await state(page)).ipAllocations['10.64.20.15'].hostname,'spare-address');
