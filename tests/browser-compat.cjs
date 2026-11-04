@@ -533,6 +533,68 @@ async function run(){
   await page.locator('#main-content [data-action="clear-device-filters"]').first().click();
 
 
+
+  // Remaining approved Draft 03 tabs use their source cards and real inventory.
+  await page.locator('#main-content [data-action="approved-device-section"][data-tab="overview"]').click();
+  await page.locator('#main-content [data-action="device-intelligence-tab"][data-tab="os"]').click();
+  const approvedOs=page.locator('#main-content .intelligence-panel[data-insight-panel="os"]');
+  await approvedOs.waitFor();
+  assert.ok(await approvedOs.isVisible(),'Approved Operating Systems panel must be visible');
+  assert.deepEqual(await approvedOs.locator('article.intelligence-card h3').allTextContents(),
+    ['Operating Systems','Platform information'],
+    'Operating Systems must use both original Draft 03 cards');
+  const osRow=approvedOs.locator('#insight-operating-systems .intelligence-chart-row').first();
+  assert.ok(await osRow.isVisible(),'Operating Systems must use actual recorded platforms');
+  const osValue=await osRow.getAttribute('data-os');
+  await osRow.click();
+  await page.waitForFunction(value=>activeDeviceDetailsTab==='inventory' && deviceOsFilter===value,osValue);
+  assert.ok((await page.evaluate(()=>getVisibleDevices().map(d=>getEffectiveDevicePlatform(d))))
+    .every(value=>value===osValue),'Operating Systems chart must filter the actual saved device platforms');
+  await page.locator('#main-content [data-action="clear-device-filters"]').first().click();
+
+  await page.locator('#main-content [data-action="approved-device-section"][data-tab="overview"]').click();
+  await page.locator('#main-content [data-action="device-intelligence-tab"][data-tab="software"]').click();
+  const approvedSoftware=page.locator('#main-content .intelligence-panel[data-insight-panel="software"]');
+  assert.ok(await approvedSoftware.isVisible(),'Approved Software & Services panel must be visible');
+  assert.deepEqual(await approvedSoftware.locator('article.intelligence-card h3').allTextContents(),
+    ['Software & Services','Installed software','Devices with Archived Software'],
+    'Software & Services must use the original three-card structure');
+  assert.ok(await approvedSoftware.locator('#insight-software.intelligence-chart').isVisible());
+  assert.ok(await approvedSoftware.locator('#insight-archived').isVisible(),
+    'Archived-software references must remain in the approved card');
+  const serviceRows=approvedSoftware.locator('#insight-software .intelligence-chart-row');
+  if(await serviceRows.count()){
+    const firstService=serviceRows.first(),serviceValue=await firstService.getAttribute('data-value');
+    await firstService.click();
+    await page.waitForFunction(value=>activeDeviceDetailsTab==='inventory' && deviceServiceFilter===value,serviceValue);
+    await page.locator('#main-content [data-action="clear-device-filters"]').first().click();
+    await page.locator('#main-content [data-action="approved-device-section"][data-tab="overview"]').click();
+  }else{
+    assert.ok(await approvedSoftware.locator('#insight-software .intelligence-empty').isVisible(),
+      'Without recorded software, the approved empty-state must appear');
+  }
+
+  await page.locator('#main-content [data-action="device-intelligence-tab"][data-tab="quality"]').click();
+  const approvedQuality=page.locator('#main-content .intelligence-panel[data-insight-panel="quality"]');
+  assert.ok(await approvedQuality.isVisible(),'Approved Data Quality panel must be visible');
+  assert.equal(await approvedQuality.locator('article.intelligence-card').count(),1);
+  assert.equal(await approvedQuality.locator('#insight-quality .intelligence-quality-card').count(),3,
+    'Data Quality must use three original approved quality cards');
+  const qualityIp=approvedQuality.locator('.intelligence-quality-card[data-value="ip"]');
+  assert.equal(Number(await qualityIp.locator('.quality-number').textContent()),
+    await page.evaluate(()=>appState.devices.filter(d=>!String(d.primaryIp||'').trim()).length),
+    'Approved Data Quality count must reflect actual saved inventory');
+  await page.setViewportSize({width:420,height:900});
+  assert.equal(await approvedQuality.locator('.intelligence-breakdown').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),2,
+    'Draft 03 mobile quality cards must use two-column responsive grid');
+  await page.setViewportSize({width:1440,height:950});
+  await qualityIp.click();
+  await page.waitForFunction(()=>activeDeviceDetailsTab==='inventory' && deviceMissingFilter==='ip');
+  assert.ok((await page.evaluate(()=>getVisibleDevices().map(d=>d.primaryIp)))
+    .every(value=>!String(value||'').trim()),
+    'Data Quality action must open actual devices with missing IP addresses');
+  await page.locator('#main-content [data-action="clear-device-filters"]').first().click();
+
   await page.locator('#sidebar [data-action="tab-audit"]').click();
   await page.locator('.approved-audit #activity-results tr[data-audit-index]').first().waitFor();
   assert.ok(Number(await page.locator('.approved-audit #stat-total').textContent())>=1,
