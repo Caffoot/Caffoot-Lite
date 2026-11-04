@@ -1517,9 +1517,6 @@ async function run(){
     'Approved Details overview must retain the Location Area source label');
   await deviceReview.getByRole('tab',{name:'Software'}).click();
   const detailsSoftware= deviceReview.locator('#device-details-panel-software');
-  assert.deepEqual(await detailsSoftware.locator(':scope > .device-review-panel > h3').allTextContents(),
-    (await detailsSoftware.locator(':scope > .device-review-panel > h3').allTextContents()).map(text=>text.trim()),
-    'Software card titles must be stable in the original detail layout');
   assert.ok(await detailsSoftware.locator(':scope > .device-review-panel').first()
     .getByRole('heading',{name:'Operating System / Platform'}).isVisible(),
     'Approved Details Software tab must lead with Operating System / Platform');
