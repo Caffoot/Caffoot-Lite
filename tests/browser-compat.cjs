@@ -320,6 +320,39 @@ async function run(){
   await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
   console.log('Subnet and linked VLAN form passed');
 
+  // IPAM Draft 01: approved live Address Allocations page, not the old cards.
+  await page.locator('#sidebar [data-action="tab-ipam"]').click();
+  await page.locator('#main-content .approved-page-header [data-action="approved-ipam-section"][data-view="addresses"]').click();
+  const approvedAddresses=page.locator('#main-content .ipam-approved-addresses');
+  await approvedAddresses.waitFor();
+  assert.ok(await approvedAddresses.locator('.ipam-subnet-bar #ipam-select-network').isVisible(),
+    'Approved IPAM Active Network / VLAN selector must render');
+  assert.ok(await approvedAddresses.locator('.ipam-network-summary .ipam-util-numbers').isVisible(),
+    'Approved IPAM network identity and live capacity must render');
+  assert.equal(await approvedAddresses.locator('.ipam-address-card').count(),32,
+    'The published /24 initial host range must remain .1 through .32');
+  assert.ok(await approvedAddresses.locator('[data-action="open-ip"][data-ip="10.64.20.2"]').isVisible(),
+    'Address cards must retain the existing IP allocation action');
+  await approvedAddresses.locator('#ipam-status-filter').selectOption('Reserved');
+  assert.equal(await approvedAddresses.locator('.ipam-address-card').count(),1,
+    'IPAM status filter must keep displaying the reserved gateway');
+  await approvedAddresses.locator('#ipam-status-filter').selectOption('All');
+  await approvedAddresses.locator('#ipam-address-search').fill('10.64.20.17');
+  assert.equal(await approvedAddresses.locator('.ipam-address-card').count(),1,
+    'Approved IPAM address search must filter the live inventory');
+  await approvedAddresses.locator('#ipam-address-search').fill('');
+  await approvedAddresses.locator('[data-action="ip-range-33-64"]').click();
+  assert.ok(await approvedAddresses.locator('[data-action="open-ip"][data-ip="10.64.20.33"]').isVisible(),
+    'Host range buttons must still browse the selected /24 network');
+  assert.equal(await approvedAddresses.locator('[data-action="open-ip"][data-ip="10.64.20.1"]').count(),0,
+    'Changing the selected host range must not display earlier addresses');
+  await approvedAddresses.locator('[data-action="ip-range-1-32"]').click();
+  await approvedAddresses.locator('#ipam-select-network').selectOption(sub.subnets.find(n=>n.name==='Browser Network').id);
+  assert.ok(await approvedAddresses.locator('#ipam-next-free').isEnabled(),
+    'Existing next-available IP workflow must be accessible in the approved design');
+  await page.locator('#sidebar [data-action="tab-dashboard"]').click();
+  console.log('Approved live IPAM Address Allocations search, filters and ranges passed');
+
   await modal(page,'openRackModal');
   await page.locator('#rack-name').fill('Browser Rack');
   await page.locator('form[data-form-action="rack"] button[type="submit"]').click();
