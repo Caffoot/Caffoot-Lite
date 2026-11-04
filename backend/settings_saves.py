@@ -1,5 +1,6 @@
 """Persist existing v1.3.3 managed inventory settings in SQLite."""
 import json
+from .audit_events import attribute_event
 from datetime import datetime, timezone
 
 from .inventory import SETTINGS
@@ -30,7 +31,7 @@ def save_inventory_setting(connection, account_id, key, value):
                                   "label": key, "fields": []}], "omitted": 0}
             connection.execute(
                 "INSERT INTO inventory_change_history(record_json) VALUES(?)",
-                (json.dumps(event, ensure_ascii=False),),
+                (json.dumps(attribute_event(connection, account_id, event), ensure_ascii=False),),
             )
         connection.commit()
     except BaseException:
