@@ -415,7 +415,7 @@ async function run(){
     null,{timeout:10000});
   assert.ok(await rackDetail.locator('section[aria-label="Rack settings"]').isVisible(),
     'Rack Settings must remain accessible from the selected rack');
-  await rackDetail.locator('[data-action="select-rack-tab"][data-tab="view"]').click();
+  await rackDetail.locator('.rack-subtabs [data-action="select-rack-tab"][data-tab="view"]').click();
   await page.waitForFunction(()=>activeRackTab==='view' &&
     !!document.querySelector('.rack-workspace section[aria-label="Visual rack view"]:not(.hidden)'),
     null,{timeout:10000});
