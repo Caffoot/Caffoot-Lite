@@ -2243,6 +2243,7 @@ function hierarchyValidateTypes(subnets) {
         let activeUsersTab = 'overview';
         let nextRenderAccount = () => '';
         let nextHydrateAccount = () => {};
+        let nextRemoveAccountPhoto = () => Promise.resolve();
         let activeAccountSection = 'overview';
         let nextImportAllowed = false;
         function saveState() { showToast('This inventory operation is not yet connected to SQLite.', 'error'); return false; }
@@ -9539,7 +9540,7 @@ function hierarchyValidateTypes(subnets) {
                 case 'toggle-settings-theme': toggleDarkMode(); renderContent(); break;
                 case 'change-appearance-theme': caffootSetTheme(target.dataset.theme); break;
                 case 'toggle-account-help': target.closest('.expander')?.classList.toggle('open'); break;
-                case 'account-photo-remove': void removeApprovedAccountPhoto().catch(error=>showToast(error.message,'error')); break;
+                case 'account-photo-remove': void nextRemoveAccountPhoto().catch(error=>showToast(error.message,'error')); break;
                 case 'preview-inventory-integrity-repairs': previewInventoryIntegrityRepairs(); break;
                 case 'apply-inventory-integrity-repairs': applyPreviewedInventoryIntegrityRepairs(); break;
                 case 'open-alert': {
@@ -10567,12 +10568,12 @@ window.addEventListener('load', async () => {
     updateAccountHeaderPhoto();
     if(oldPhotoUrl)URL.revokeObjectURL(oldPhotoUrl);
   }
-  async function removeApprovedAccountPhoto(){
+  nextRemoveAccountPhoto=async function removeApprovedAccountPhoto(){
     await postInventory('/api/account/photo/remove',{remove:true});
     await loadApprovedAccountProfile();
     if(currentTab==='account')renderContent();
     showToast('Profile photo removed.');
-  }
+  };
   // Users: administrator-only section, following the published sidebar and panel style.
   let users = null;
   let activeUserEditorId = null;
