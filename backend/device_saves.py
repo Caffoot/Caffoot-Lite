@@ -1,6 +1,6 @@
 """Reserved device record saves against the authoritative SQLite inventory."""
 import json
-from .audit_events import attribute_event
+from .audit_events import attribute_event, safe_device_differences
 import time
 from datetime import datetime, timezone
 
@@ -92,7 +92,8 @@ def _persist_related_guests(connection, updates):
             (record["name"], json.dumps(record, ensure_ascii=False, allow_nan=False), record["id"]),
         )
         changes.append({"action": "Updated", "kind": "Device",
-                        "label": str(record["name"])[:100], "fields": sorted(changed)[:16]})
+                        "label": str(record["name"])[:100], "fields": sorted(changed)[:16],
+                        **safe_device_differences(previous, record)})
     return changes
 
 
@@ -194,7 +195,8 @@ def save_reserved_device(connection, account_id, device_id, revision, record, se
             fields = [key for key in dict.fromkeys((*previous, *record))
                       if key != "id" and previous.get(key) != record.get(key)]
             changes.append({"action": "Updated", "kind": "Device",
-                            "label": str(record["name"])[:100], "fields": fields[:16]})
+                            "label": str(record["name"])[:100], "fields": fields[:16],
+                            **safe_device_differences(previous, record)})
         for ip in dict.fromkeys((old_ip, new_ip)):
             if not ip:
                 continue
