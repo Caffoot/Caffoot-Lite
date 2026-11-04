@@ -284,8 +284,8 @@ async function run(){
   const health=page.locator('#next-dashboard-inventory-health');
   assert.equal(await health.count(),1,'Admin must see actual inventory inconsistencies');
   assert.ok(await health.getByText(/Duplicate or missing device ID/).isVisible());
-  assert.ok(await health.evaluate(el=>el.classList.contains('border-rose-200')),
-    'Inventory warning must use established rose warning palette');
+  assert.ok(await health.evaluate(el=>el.classList.contains('db-error-card')),
+    'Inventory Health must retain the accepted Dashboard warning component');
   await page.evaluate(()=>{appState.devices.pop();renderContent();});
   assert.equal(await health.count(),0,'Corrected inventory must hide the warning');
 
