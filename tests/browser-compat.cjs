@@ -272,8 +272,8 @@ async function run(){
     'The original Dashboard Overview has four clickable source metric cards');
   assert.ok(await draft02Overview.locator('.db-summary .db-metric-head .iconwrap svg use').count()===4,
     'Approved metrics must retain the pinned inline SVG symbols');
-  assert.equal(await draft02Overview.locator('.db-two > .db-stack > .card.db-card').count(),5,
-    'The pinned Overview has three cards in the left stack and two in the right, plus the network card');
+  assert.equal(await draft02Overview.locator('.db-two > .db-stack > .card.db-card').count(),6,
+    'The pinned Overview has three cards in each stack, including live network allocation');
   assert.ok(await draft02Overview.locator('.db-actionrow [data-action="open-device-modal"].btn').isVisible());
   assert.ok(await draft02Overview.locator('.db-actionrow [data-action="open-rack-modal"].btn').isVisible());
   assert.ok(await draft02Overview.locator('.db-actionrow [data-action="tab-ipam"].btn').isVisible());
