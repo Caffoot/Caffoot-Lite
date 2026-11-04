@@ -1683,6 +1683,37 @@ html.dark .caffoot-dashboard .db-rack-row:hover{background:#354a60;border-color:
 #main-content .rack-workspace .rack-face-control button:focus-visible{outline:2px solid #ed8532;outline-offset:2px}
 @media(max-width:720px){#main-content .rack-workspace .rack-detail-controls{width:100%}#main-content .rack-workspace .rack-detail-controls label{flex:1}#main-content .rack-workspace .rack-subtabs{width:100%}}
 </style>
+<style id="approved-catalogue-modal-batch02">
+.catalog-modal-overlay{position:fixed;inset:0;background:#10283cca;z-index:120;display:flex;align-items:center;justify-content:center;padding:18px}
+.catalog-modal-overlay[hidden]{display:none!important}
+.catalog-modal{background:white;border-radius:15px;padding:24px;width:min(100%,525px);max-height:calc(100dvh - 36px);overflow:auto;box-shadow:0 28px 80px #07172966}
+.catalog-modal-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.catalog-modal-head h2{font-size:20px;color:#263f58;margin:3px 0 8px}
+.catalog-modal-sub{font-size:12.6px;color:#6a8296;line-height:1.55;margin:7px 0 20px}
+.catalog-modal-field{display:grid;gap:6px;font-size:12px;font-weight:720;color:#4f6b84;margin-bottom:14px}
+.catalog-modal-field input,.catalog-modal-field select{height:41px;width:100%;padding:10px 12px;font-size:13px;border:1px solid #d7e3ed;border-radius:9px;color:#2c4b64;background:#fff}
+.catalog-modal-field select[multiple]{height:110px}
+/* Multi-device-type associations: only Manufacturer and Custom Software editor fields. */
+.catalog-type-field{border:0;margin:0 0 14px;padding:0;min-width:0}
+.catalog-type-field legend{font-size:12px;font-weight:720;color:#4f6b84;padding:0;margin-bottom:5px}
+.catalog-type-hint{color:#8094a5;font-size:12px;line-height:1.5;margin:0 0 10px}
+.catalog-type-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.catalog-type-option{display:flex;align-items:center;gap:9px;min-height:41px;border:1px solid #d7e3ed;border-radius:9px;background:#fff;padding:9px 10px;color:#39576d;font-size:12.5px;cursor:pointer}
+.catalog-type-option:has(input:checked){border-color:#efa16b;background:#fff3e9;color:#89451d;font-weight:650}
+.catalog-type-option input{width:17px;height:17px;accent-color:#ed8532;flex:none;margin:0;cursor:pointer}
+.catalog-type-option:focus-within{outline:2px solid #efa16b;outline-offset:1px}
+@media(max-width:430px){.catalog-type-options{grid-template-columns:1fr}}
+
+.catalog-modal-info{border-radius:9px;background:#f5f8fa;border:1px solid #e7edf2;color:#6c8294;font-size:12px;padding:12px;line-height:1.65;margin:16px 0}
+.catalog-modal-actions{display:flex;justify-content:flex-end;gap:9px;flex-wrap:wrap}
+.catalog-archived{margin-top:17px}.catalog-archived h3{font-size:16px;color:#2c4963;margin:0 0 6px}.catalog-archived>p{font-size:12px;color:#8296a9;margin:0 0 15px;line-height:1.5}.catalog-manager-list{margin-top:18px;border-top:1px solid #e6edf2;padding-top:14px;display:grid;gap:8px}.catalog-manager-list>strong{font-size:12.5px;color:#415d76}.catalog-manager-row{display:flex;align-items:center;gap:6px;border-bottom:1px solid #edf2f4;padding:7px 0}.catalog-manager-row span{margin-right:auto;font-size:12.5px;color:#39576e}.catalog-manager-row .btn:disabled{opacity:.35;cursor:not-allowed}.catalog-delete-warning{line-height:1.8;color:#975c43;background:#fff6f1;border:1px solid #f1dacf;padding:14px;border-radius:9px;font-size:13px}
+
+/* The approved catalogue modal is mounted in the existing authenticated dialog host. */
+#modal-container.catalog-modal-overlay.hidden{display:none!important}
+#modal-container.catalog-modal-overlay{backdrop-filter:none;z-index:120}
+#modal-content.approved-catalogue-modal{background:transparent;border:0;border-radius:0;box-shadow:none;width:min(100%,525px);max-width:none;overflow:visible}
+#modal-content.approved-catalogue-modal .catalog-modal{width:100%}
+</style>
 <style id="approved-device-details-batch04">
 /* Approved Batch 04 device details component styles (live data, existing actions). */
 .device-review-dialog{width:min(1030px,100%);height:min(870px,calc(100dvh - 40px));max-height:calc(100dvh - 40px);background:#f5f7fa;border:1px solid #dce5ec;border-radius:17px;box-shadow:0 28px 80px #0b1f32a8;overflow:hidden;display:flex;flex-direction:column;color:#223b53}
@@ -4101,7 +4132,27 @@ function hierarchyValidateTypes(subnets) {
 
         // One manufacturer identity can have many device-type associations.
         // Persist each association as a legacy-compatible manufacturer-only catalogue row.
-        function openHardwareManufacturerManager(id='',deleting=false){
+        function openApprovedCatalogueModal(title, subtitle, fields, actions, note, formAttrs='') {
+          // The structure and classes are from pinned Devices Management Batch 02.
+          openModal(`<div class="catalog-modal">
+            <div class="catalog-modal-head">
+              <div><div class="eyebrow">CATALOGUE MANAGEMENT</div><h2 id="catalog-modal-title">${escapeHtml(title)}</h2></div>
+              <button type="button" data-action="close-modal" aria-label="Close dialog" class="btn btn-outline mini-btn">Close ×</button>
+            </div>
+            <p class="catalog-modal-sub" id="catalog-modal-sub">${escapeHtml(subtitle)}</p>
+            <form ${formAttrs} onsubmit="return false">
+              <div id="catalog-modal-fields">${fields}</div>
+              <p class="catalog-modal-info" id="catalog-modal-info">${escapeHtml(note)}</p>
+              <div class="catalog-modal-actions">${actions}</div>
+            </form>
+          </div>`);
+          const content=document.getElementById('modal-content');
+          content.classList.add('approved-catalogue-modal');
+          document.getElementById('modal-container').classList.add('catalog-modal-overlay');
+          const heading=content.querySelector('#catalog-modal-title');
+          if(heading)content.setAttribute('aria-labelledby',heading.id);
+        }
+                function openHardwareManufacturerManager(id='',deleting=false) {
             const entry=getConfiguredHardwareCatalogueEntries().find(x=>x.id===id&&!x.model);
             const builtInName=typeof id==='string'&&id.startsWith('builtin:')?id.slice(8):'';
             const makerName=entry?.manufacturer||builtInName;
@@ -4109,18 +4160,33 @@ function hierarchyValidateTypes(subnets) {
             const seedTypes=Object.entries(builtInHardwareSuggestions).filter(([type,m])=>Object.keys(m).some(n=>n.toLowerCase()===String(originalMaker||'').toLowerCase())).map(([type])=>type);
             const globalDefaults=['Dell','HP','HPE','Lenovo','ASUS','Apple','Cisco','Samsung','Microsoft','Toshiba'];
             const isBuiltIn=seedTypes.length>0||globalDefaults.some(n=>n.toLowerCase()===String(originalMaker||'').toLowerCase());
-            const builtinTypes=new Set(seedTypes);
-            const editableName=!isBuiltIn;
             if(id&&!entry&&!builtInName)return;
             const matches=makerName?getConfiguredHardwareCatalogueEntries().filter(x=>!x.model&&x.manufacturer.toLowerCase()===makerName.toLowerCase()):[];
-            const selected=new Set([...matches.map(x=>x.type),...builtinTypes]);
+            const selected=new Set([...matches.map(x=>x.type),...seedTypes]);
             const types=[...new Set([...(appState.deviceTypes||[]),...Object.keys(builtInHardwareSuggestions),...selected])].filter(t=>t&&t!=='Server - Virtual').sort();
             const affected=makerName?appState.devices.filter(d=>String(d.manufacturer||'').toLowerCase()===makerName.toLowerCase()).length:0;
-            const checks=types.map(t=>'<label class="manufacturer-choice flex items-center gap-3 rounded-xl border border-slate-200 dark:border-slate-600 p-3 text-sm cursor-pointer transition-colors"><input type="checkbox" name="catalogue-manufacturer-device-type" value="'+escapeHtml(t)+'" '+(selected.has(t)?'checked':'')+(builtinTypes.has(t)?' disabled':'')+' class="h-5 w-5 accent-blue-700"><span>'+escapeHtml(t)+'</span></label>').join('');
-            openModal('<div class="p-5 sm:p-7 space-y-5"><div><h3 class="text-lg font-bold text-slate-900 dark:text-white">'+(deleting?'Remove Manufacturer Suggestions':makerName?'Manage Manufacturer':'Add Manufacturer')+'</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Associate a manufacturer with multiple device types. Built-in suggestions, model entries and existing device records are retained.</p></div>'+
-                (deleting?'<p class="text-sm text-slate-800 dark:text-slate-200">Remove custom manufacturer-only suggestions for <strong>'+escapeHtml(entry.manufacturer)+'</strong> across '+matches.length+' device type(s)? '+affected+' existing device(s) use this manufacturer; their records will remain unchanged.</p>':
-                '<form data-form-action="manufacturer" id="manufacturer-form" class="space-y-4" onsubmit="return false"><div><label class="block text-sm font-semibold mb-2" for="manufacturer-name">Manufacturer Name</label><input id="manufacturer-name" required maxlength="120" value="'+escapeHtml(makerName||'')+'" '+(isBuiltIn?'readonly':'')+' class="w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-800"><p id="manufacturer-error" role="alert" class="hidden text-sm text-rose-700 dark:text-rose-300 mt-2"></p></div>'+(isBuiltIn?'<p class="text-xs text-blue-700 dark:text-blue-300">Built-in manufacturer names and their default associations are protected. You can add custom device-type associations.</p>':'')+'<fieldset><legend class="font-semibold text-sm mb-2">Associated Device Types</legend><div class="flex gap-2 mb-3"><button type="button" data-action="manufacturer-all" class="h-9 px-3 rounded-lg border border-slate-300 dark:border-slate-600 text-sm">Select All</button><button type="button" data-action="manufacturer-none" class="h-9 px-3 rounded-lg border border-slate-300 dark:border-slate-600 text-sm">Clear All</button></div><div class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[38vh] overflow-y-auto">'+checks+'</div></fieldset></form>')+
-                '<div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-5 rounded-xl border border-slate-300 dark:border-slate-600 caffoot-modal-cancel">Cancel</button><button type="button" data-action="'+(deleting?'confirm-remove-catalogue-manufacturer':'save-catalogue-manufacturer')+'" data-name="'+escapeHtml(id)+'" class="h-11 px-5 rounded-xl text-white '+(deleting?'bg-rose-700':'bg-blue-800')+'">'+(deleting?'Remove Suggestions':'Save Manufacturer')+'</button></div></div>');
+            const checks=types.map(t=>`<label class="catalog-type-option"><input type="checkbox" name="catalogue-manufacturer-device-type" value="${escapeHtml(t)}" ${selected.has(t)?'checked':''} ${seedTypes.includes(t)?'disabled':''}><span>${escapeHtml(t)}</span></label>`).join('');
+            const fields=deleting
+              ? `<p class="catalog-delete-warning">Remove custom manufacturer-only suggestions for <strong>${escapeHtml(entry.manufacturer)}</strong> across ${matches.length} device type(s)? ${affected} existing device(s) use this manufacturer; their saved records remain unchanged.</p>`
+              : `<label class="catalog-modal-field" for="manufacturer-name">Manufacturer Name
+                  <input id="manufacturer-name" required maxlength="120" value="${escapeHtml(makerName||'')}" ${isBuiltIn?'readonly':''} placeholder="Manufacturer name">
+                </label><p id="manufacturer-error" role="alert" class="hidden text-sm text-rose-700"></p>
+                ${isBuiltIn?'<p class="catalog-modal-info">Built-in manufacturer names and default associations are protected. You may add custom associations.</p>':''}
+                <fieldset class="catalog-type-field" data-multi-device-types="manufacturers">
+                  <legend>Associated Device Types</legend>
+                  <p class="catalog-type-hint">Select all device types that apply.</p>
+                  <div class="catalog-modal-actions" style="justify-content:flex-start;margin-bottom:10px">
+                    <button type="button" data-action="manufacturer-all" class="btn btn-outline mini-btn">Select All</button>
+                    <button type="button" data-action="manufacturer-none" class="btn btn-outline mini-btn">Clear All</button>
+                  </div>
+                  <div class="catalog-type-options">${checks}</div>
+                </fieldset>`;
+            const actions=`<button type="button" data-action="close-modal" class="btn btn-outline caffoot-modal-cancel">Cancel</button>
+              <button type="button" data-action="${deleting?'confirm-remove-catalogue-manufacturer':'save-catalogue-manufacturer'}" data-name="${escapeHtml(id)}" class="btn ${deleting?'btn-outline':'btn-primary'}">${deleting?'Remove Suggestions':'Save Manufacturer'}</button>`;
+            openApprovedCatalogueModal(deleting?'Remove Manufacturer Suggestions':makerName?'Manage Manufacturer':'Add Manufacturer',
+              'Associate a manufacturer with multiple device types. Built-in suggestions, model entries and existing device records are retained.',
+              fields,actions,deleting?'Custom suggestions can be removed without deleting saved devices.':'Changes to manufacturer associations do not change recorded devices.',
+              deleting?'':'id="manufacturer-form" data-form-action="manufacturer"');
             if(!deleting)rememberModalForm();
         }
         async function saveHardwareManufacturer(id='',remove=false){
@@ -4161,13 +4227,22 @@ function hierarchyValidateTypes(subnets) {
             renderContent();
             showToast(remove?'Manufacturer suggestions removed.':'Manufacturer saved.');
         }
-        function openBuiltInManufacturerEditor(original){
+        function openBuiltInManufacturerEditor(original) {
             const defaults=['Dell','HP','HPE','Lenovo','ASUS','Apple','Cisco','Samsung','Microsoft','Toshiba'];
             const known=defaults.includes(original)||Object.values(builtInHardwareSuggestions).some(m=>Object.keys(m).includes(original));
             if(!known)return;
             const pref=getHardwareSeedPreferences()['maker:'+original.toLowerCase()]||{};
             const assigned=appState.devices.filter(d=>[original,String(pref.label||original)].some(name=>String(d.manufacturer||'').trim().toLowerCase()===name.trim().toLowerCase()));
-            openModal('<div class="p-5 sm:p-7 space-y-4"><h3 class="text-lg font-bold">Manage Built-in Manufacturer</h3><p class="text-sm">Original: '+escapeHtml(original)+'. Existing devices and historical backups remain unchanged.</p><label class="block font-semibold text-sm" for="built-in-manufacturer-name">Suggestion Name</label><input id="built-in-manufacturer-name" maxlength="120" value="'+escapeHtml(pref.label||original)+'" class="w-full h-11 px-3 rounded-xl border dark:bg-slate-800"><label class="flex gap-2 items-center"><input id="built-in-manufacturer-hidden" type="checkbox" '+(pref.hidden?'checked':'')+(assigned.length?' disabled':'')+'> Hide from new suggestions</label>'+(assigned.length?'<p class="text-sm text-amber-700">Cannot hide while assigned to: '+assigned.slice(0,5).map(d=>escapeHtml(d.name||d.hostname||d.id||'Unnamed device')).join(', ')+'</p>':'')+'<p id="built-in-manufacturer-error" role="alert" class="text-sm text-rose-700"></p><div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-4 border rounded-xl caffoot-modal-cancel">Cancel</button><button type="button" data-action="built-in-manufacturer-save" data-name="'+escapeHtml(original)+'" class="h-11 px-4 rounded-xl bg-blue-800 text-white">Save</button></div></div>');
+            const fields=`<label class="catalog-modal-field" for="built-in-manufacturer-name">Suggestion Name
+              <input id="built-in-manufacturer-name" maxlength="120" value="${escapeHtml(pref.label||original)}">
+              </label><label class="catalog-type-option"><input id="built-in-manufacturer-hidden" type="checkbox" ${pref.hidden?'checked':''} ${assigned.length?'disabled':''}><span>Hide from new suggestions</span></label>
+              ${assigned.length?`<p class="catalog-delete-warning">Cannot hide while assigned to: ${assigned.slice(0,5).map(d=>escapeHtml(d.name||d.hostname||d.id||'Unnamed device')).join(', ')}</p>`:''}
+              <p id="built-in-manufacturer-error" role="alert" class="text-sm text-rose-700"></p>`;
+            const actions=`<button type="button" data-action="close-modal" class="btn btn-outline caffoot-modal-cancel">Cancel</button>
+              <button type="button" data-action="built-in-manufacturer-save" data-name="${escapeHtml(original)}" class="btn btn-primary">Save</button>`;
+            openApprovedCatalogueModal('Manage Built-in Manufacturer',
+              `Original: ${original}. Existing devices and historical backups remain unchanged.`,
+              fields,actions,'Built-in manufacturer suggestions have editable display and visibility preferences. Original identities and saved devices are retained.');
         }
         async function saveBuiltInManufacturerOverride(original){
             const defaults=['Dell','HP','HPE','Lenovo','ASUS','Apple','Cisco','Samsung','Microsoft','Toshiba'];
@@ -4243,18 +4318,36 @@ function hierarchyValidateTypes(subnets) {
             if(note)note.textContent=!maker.value?'Select a manufacturer first.':allowed.length?'Only device types associated with '+maker.value+' are offered.':'No associations yet. Add one in Manufacturers first.';
         }
         document.addEventListener('change',e=>{if(e.target?.id==='hardware-model-manufacturer-select')refreshModelDeviceTypeChoices();});
-        function openHardwareModelManager(id='',remove=false){
+        function openHardwareModelManager(id='',remove=false) {
             const item=getConfiguredHardwareCatalogueEntries().find(x=>x.id===id&&x.model);
             if(id&&!item)return;
             const makers=new Set([...Object.values(getVisibleBuiltInHardwareSuggestions()).flatMap(x=>Object.keys(x)),...getConfiguredHardwareCatalogueEntries().map(x=>x.manufacturer),...appState.devices.map(x=>x.manufacturer)].filter(Boolean));
             const types=item?getNonVirtualDeviceTypesAssociatedWithManufacturer(item.manufacturer):[];
-            const opts=(values,current)=>[...values].sort((a,b)=>a.localeCompare(b)).map(v=>'<option value="'+escapeHtml(v)+'"'+(v===current?' selected':'')+'>'+escapeHtml(v)+'</option>').join('');
+            const opts=(values,current)=>[...values].sort((a,b)=>a.localeCompare(b)).map(v=>`<option value="${escapeHtml(v)}" ${v===current?'selected':''}>${escapeHtml(v)}</option>`).join('');
             const used=item?appState.devices.filter(d=>d.model?.toLowerCase()===item.model.toLowerCase()&&d.manufacturer?.toLowerCase()===item.manufacturer.toLowerCase()&&d.type===item.type).length:0;
-            openModal('<div class="p-5 sm:p-7 space-y-5"><div><h3 class="text-lg font-bold">'+(remove?'Remove Model Suggestion':item?'Edit Model Suggestion':'Add Model Suggestion')+'</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Custom suggestions only. Built-in models and saved devices are never changed.</p></div>'+
-                (remove?'<p class="text-sm">Remove <strong>'+escapeHtml(item.model)+'</strong> ('+escapeHtml(item.manufacturer)+' · '+escapeHtml(item.type)+')? '+used+' existing device(s) use this model. '+(used?'Removal is blocked until those devices are updated.':'This unused custom suggestion can be removed.')+'</p>':
-                '<form id="model-form" data-form-action="model" onsubmit="return false" class="space-y-3"><div><label class="block text-sm font-semibold mb-1" for="model-name">Model Name</label><input id="model-name" maxlength="120" value="'+escapeHtml(item?.model||'')+'" class="w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-800"></div><div><label class="block text-sm font-semibold mb-1" for="hardware-model-manufacturer-select">Manufacturer</label><select id="hardware-model-manufacturer-select" class="w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-800"><option value="">Select Manufacturer</option>'+opts(makers,item?.manufacturer||'')+'</select></div><div><label class="block text-sm font-semibold mb-1" for="model-device-type">Device Type</label><select id="model-device-type" class="w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-800"><option value="">Select Device Type</option>'+opts(types,item?.type||'')+'</select><p id="hardware-model-device-type-note" class="text-xs text-slate-600 dark:text-slate-300 mt-1"></p></div><p id="model-error" role="alert" class="hidden text-sm text-rose-700 dark:text-rose-300"></p></form>')+
-                '<div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-4 rounded-xl border border-slate-300 dark:border-slate-600 caffoot-modal-cancel">Cancel</button><button type="button" data-action="'+(remove?'confirm-remove-catalogue-model':'save-catalogue-model')+'" data-name="'+escapeHtml(id)+'" class="h-11 px-4 rounded-xl text-white '+(remove?'bg-rose-700':'bg-blue-800')+'">'+(remove?'Remove Model':'Save Model')+'</button></div></div>');
-            if(!remove){const field=document.getElementById('model-device-type');field.dataset.originalType=item?.type||'';field.dataset.originalMaker=item?.manufacturer||'';refreshModelDeviceTypeChoices();rememberModalForm();}
+            const fields=remove
+              ? `<p class="catalog-delete-warning">Remove <strong>${escapeHtml(item.model)}</strong> (${escapeHtml(item.manufacturer)} · ${escapeHtml(item.type)})? ${used} existing device(s) use this model. ${used?'Removal is blocked until those devices are updated.':'This unused custom suggestion can be removed.'}</p>`
+              : `<label class="catalog-modal-field" for="model-name">Model Name
+                  <input id="model-name" maxlength="120" value="${escapeHtml(item?.model||'')}" placeholder="Model name">
+                </label><label class="catalog-modal-field" for="hardware-model-manufacturer-select">Manufacturer
+                  <select id="hardware-model-manufacturer-select"><option value="">Select Manufacturer</option>${opts(makers,item?.manufacturer||'')}</select>
+                </label><label class="catalog-modal-field" for="model-device-type">Device Type
+                  <select id="model-device-type"><option value="">Select Device Type</option>${opts(types,item?.type||'')}</select>
+                </label><p id="hardware-model-device-type-note" class="catalog-type-hint"></p>
+                <p id="model-error" role="alert" class="hidden text-sm text-rose-700"></p>`;
+            const actions=`<button type="button" data-action="close-modal" class="btn btn-outline caffoot-modal-cancel">Cancel</button>
+              <button type="button" data-action="${remove?'confirm-remove-catalogue-model':'save-catalogue-model'}" data-name="${escapeHtml(id)}" class="btn ${remove?'btn-outline':'btn-primary'}">${remove?'Remove Model':'Save Model'}</button>`;
+            openApprovedCatalogueModal(remove?'Remove Model Suggestion':item?'Edit Model Suggestion':'Add Model Suggestion',
+              'Custom suggestions only. Built-in models and saved devices are never changed.',
+              fields,actions,'Manufacturer and associated non-virtual device type are required for custom models.',
+              remove?'':'id="model-form" data-form-action="model"');
+            if(!remove){
+              const field=document.getElementById('model-device-type');
+              field.dataset.originalType=item?.type||'';
+              field.dataset.originalMaker=item?.manufacturer||'';
+              refreshModelDeviceTypeChoices();
+              rememberModalForm();
+            }
         }
         async function saveHardwareModel(id='',remove=false){
             const items=getConfiguredHardwareCatalogueEntries().map(x=>({...x}));
@@ -4285,7 +4378,7 @@ function hierarchyValidateTypes(subnets) {
             if(!await nextSettingsBridge.save('hardwareCatalogue')){if(previous===undefined)delete appState.hardwareCatalogue;else appState.hardwareCatalogue=previous;showToast('Could not save the model.','error');return;}
             closeModal(true);renderContent();showToast(remove?'Model suggestion removed.':'Model suggestion saved.');
         }
-        function openBuiltInHardwareModelEditor(key){
+        function openBuiltInHardwareModelEditor(key) {
             let identity;
             try{identity=JSON.parse(key);}catch{return;}
             if(!Array.isArray(identity)||identity.length!==3)return;
@@ -4293,7 +4386,16 @@ function hierarchyValidateTypes(subnets) {
             if(!(builtInHardwareSuggestions[type]?.[maker]||[]).includes(model))return;
             const prefKey='model:'+key,pref=getHardwareSeedPreferences()[prefKey]||{};
             const users=appState.devices.filter(d=>d.type===type&&[maker,String(getHardwareSeedPreferences()['maker:'+maker.toLowerCase()]?.label||maker)].some(name=>String(d.manufacturer||'').trim().toLowerCase()===name.trim().toLowerCase())&&[model,String(getHardwareSeedPreferences()['model:'+key]?.label||model)].some(name=>String(d.model||'').trim().toLowerCase()===name.trim().toLowerCase()));
-            openModal('<div class="p-5 sm:p-7 space-y-4"><h3 class="text-lg font-bold">Manage Built-in Model</h3><p class="text-sm">Original: '+escapeHtml(maker)+' · '+escapeHtml(model)+' · '+escapeHtml(type)+'. Existing device records will not be renamed.</p><label class="block text-sm font-semibold" for="built-in-model-name">Suggestion Name</label><input id="built-in-model-name" maxlength="120" value="'+escapeHtml(pref.label||model)+'" class="w-full h-11 px-3 rounded-xl border dark:bg-slate-800"><label class="flex items-center gap-2"><input type="checkbox" id="built-in-model-hidden" '+(pref.hidden?'checked':'')+(users.length?' disabled':'')+'> Hide from new suggestions</label>'+(users.length?'<p class="text-sm text-amber-700">Hiding is blocked while used by: '+users.slice(0,5).map(d=>escapeHtml(d.name||d.hostname||d.id||'Unnamed device')).join(', ')+'</p>':'')+'<p id="built-in-model-error" role="alert" class="text-sm text-rose-700"></p><div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-4 border rounded-xl caffoot-modal-cancel">Cancel</button><button type="button" data-action="built-in-model-save" data-name="'+escapeHtml(key)+'" class="h-11 px-4 bg-blue-800 text-white rounded-xl">Save</button></div></div>');
+            const fields=`<label class="catalog-modal-field" for="built-in-model-name">Suggestion Name
+                <input id="built-in-model-name" maxlength="120" value="${escapeHtml(pref.label||model)}">
+              </label><label class="catalog-type-option"><input type="checkbox" id="built-in-model-hidden" ${pref.hidden?'checked':''} ${users.length?'disabled':''}><span>Hide from new suggestions</span></label>
+              ${users.length?`<p class="catalog-delete-warning">Hiding is blocked while used by: ${users.slice(0,5).map(d=>escapeHtml(d.name||d.hostname||d.id||'Unnamed device')).join(', ')}</p>`:''}
+              <p id="built-in-model-error" role="alert" class="text-sm text-rose-700"></p>`;
+            const actions=`<button type="button" data-action="close-modal" class="btn btn-outline caffoot-modal-cancel">Cancel</button>
+              <button type="button" data-action="built-in-model-save" data-name="${escapeHtml(key)}" class="btn btn-primary">Save</button>`;
+            openApprovedCatalogueModal('Manage Built-in Model',
+              `Original: ${maker} · ${model} · ${type}. Existing device records will not be renamed.`,
+              fields,actions,'Built-in models may be renamed or hidden as suggestions. Existing devices and backups are retained.');
         }
         async function saveBuiltInHardwareModelOverride(key){
             let identity;
@@ -4362,12 +4464,24 @@ function hierarchyValidateTypes(subnets) {
             return '<section class="space-y-5"><div class="flex flex-wrap items-start justify-between gap-3"><div><h2 class="text-xl font-bold text-slate-900 dark:text-white">Models</h2><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Hardware models grouped by manufacturer and device type. Built-in, custom and inventory-derived suggestions are shown together without modifying saved devices.</p></div><button type="button" data-action="model-add" class="h-11 px-4 rounded-xl bg-blue-800 hover:bg-blue-700 text-white">Add Model</button></div><div class="grid grid-cols-1 sm:grid-cols-3 gap-4">'+cards+'</div><div class="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-3"><label for="model-search" class="block text-sm font-semibold">Search Models</label><input id="model-search" type="search" placeholder="Search model, manufacturer or device type" class="w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-white"><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"><div><label for="hardware-model-manufacturer-filter" class="block text-xs font-semibold mb-1">Manufacturer</label><select id="hardware-model-manufacturer-filter" class="w-full h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-900"><option value="">All Manufacturers</option>'+optionList(makers)+'</select></div><div><label for="model-type" class="block text-xs font-semibold mb-1">Device Type</label><select id="model-type" class="w-full h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-900"><option value="">All Device Types</option>'+optionList(types)+'</select></div><div><label for="model-source" class="block text-xs font-semibold mb-1">Source</label><select id="model-source" class="w-full h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-900"><option value="">All Sources</option><option value="built-in">Built-in</option><option value="custom">Custom</option><option value="inventory">Inventory</option></select></div><label class="flex items-center gap-2 self-end h-10 text-sm"><input id="hardware-model-in-use" type="checkbox" class="h-5 w-5 accent-blue-700">In Use Only</label></div><div class="flex flex-wrap items-center justify-between gap-2"><p id="hardware-model-count" class="text-xs text-slate-600 dark:text-slate-300" aria-live="polite">'+items.length+' models shown</p><button type="button" data-action="model-reset" class="min-h-10 px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm font-semibold text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-slate-700 active:bg-blue-100 dark:active:bg-slate-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-600 transition-colors">Reset Filters</button></div><div class="space-y-2 max-h-[65vh] overflow-y-auto">'+rows+'</div>'+hiddenSection+'<p id="model-empty" class="hidden text-sm text-slate-600 dark:text-slate-300">No models match these filters.</p><p class="text-xs text-slate-600 dark:text-slate-300">Manage built-in and custom suggestions here. Inventory-derived values are changed through the device editor.</p></div></section>';
         }
         const builtInSoftwareSuggestions = [{"name":"Microsoft 365 Apps","types":["Desktop","Laptop","Tablet"]},{"name":"LibreOffice","types":["Desktop","Laptop","Tablet"]},{"name":"Google Chrome","types":["Desktop","Laptop","Tablet"]},{"name":"Mozilla Firefox","types":["Desktop","Laptop","Tablet"]},{"name":"Microsoft Edge","types":["Desktop","Laptop","Tablet"]},{"name":"Adobe Acrobat Reader","types":["Desktop","Laptop","Tablet"]},{"name":"Microsoft Teams","types":["Desktop","Laptop","Tablet"]},{"name":"Zoom Workplace","types":["Desktop","Laptop","Tablet"]},{"name":"7-Zip","types":["Desktop","Laptop","Tablet"]},{"name":"VLC media player","types":["Desktop","Laptop","Tablet"]},{"name":"Bitwarden","types":["Desktop","Laptop","Tablet"]},{"name":"KeePassXC","types":["Desktop","Laptop","Tablet"]},{"name":"Microsoft Defender for Endpoint","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual"]},{"name":"CrowdStrike Falcon Sensor","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual"]},{"name":"SentinelOne Agent","types":["Desktop","Laptop","Tablet"]},{"name":"Tailscale","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual"]},{"name":"OpenVPN Connect","types":["Desktop","Laptop","Tablet"]},{"name":"WireGuard","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual","Firewall","Router","Layer 3 Switch"]},{"name":"AnyDesk","types":["Desktop","Laptop","Tablet"]},{"name":"RustDesk","types":["Desktop","Laptop","Tablet"]},{"name":"TeamViewer","types":["Desktop","Laptop","Tablet"]},{"name":"Microsoft Remote Desktop","types":["Desktop","Laptop","Tablet"]},{"name":"Zabbix Agent","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual","Firewall","Router","Layer 3 Switch","Switch"]},{"name":"NinjaOne Agent","types":["Desktop","Laptop","Tablet"]},{"name":"PDQ Connect","types":["Desktop","Laptop","Tablet"]},{"name":"Visual Studio Code","types":["Desktop","Laptop"]},{"name":"Git","types":["Desktop","Laptop","Server - Physical","Server - Virtual"]},{"name":"PowerShell 7","types":["Desktop","Laptop","Server - Physical","Server - Virtual"]},{"name":"PuTTY","types":["Desktop","Laptop"]},{"name":"WinSCP","types":["Desktop","Laptop"]},{"name":"Wireshark","types":["Desktop","Laptop"]},{"name":"Docker Desktop","types":["Desktop","Laptop"]},{"name":"VMware Workstation","types":["Desktop","Laptop"]},{"name":"VirtualBox","types":["Desktop","Laptop"]},{"name":"Notepad++","types":["Desktop","Laptop"]},{"name":"Python","types":["Desktop","Laptop","Server - Physical","Server - Virtual"]},{"name":"Java Runtime","types":["Desktop","Laptop"]},{"name":"Node.js","types":["Desktop","Laptop"]},{"name":"Microsoft Power BI Desktop","types":["Desktop","Laptop"]},{"name":"AutoCAD","types":["Desktop","Laptop"]},{"name":"Docker Engine","types":["Server - Physical","Server - Virtual"]},{"name":"Podman","types":["Server - Physical","Server - Virtual"]},{"name":"Kubernetes","types":["Server - Physical","Server - Virtual"]},{"name":"containerd","types":["Server - Physical","Server - Virtual"]},{"name":"Nginx","types":["Server - Physical","Server - Virtual"]},{"name":"Apache HTTP Server","types":["Server - Physical","Server - Virtual"]},{"name":"IIS","types":["Server - Physical","Server - Virtual"]},{"name":"PostgreSQL","types":["Server - Physical","Server - Virtual"]},{"name":"MariaDB","types":["Server - Physical","Server - Virtual"]},{"name":"MySQL Server","types":["Server - Physical","Server - Virtual"]},{"name":"Microsoft SQL Server","types":["Server - Physical","Server - Virtual"]},{"name":"Redis","types":["Server - Physical","Server - Virtual"]},{"name":"RabbitMQ","types":["Server - Physical","Server - Virtual"]},{"name":"Prometheus","types":["Server - Physical","Server - Virtual"]},{"name":"Grafana","types":["Server - Physical","Server - Virtual"]},{"name":"Zabbix Server","types":["Server - Physical","Server - Virtual"]},{"name":"Wazuh Agent","types":["Server - Physical","Server - Virtual"]},{"name":"Veeam Agent","types":["Server - Physical","Server - Virtual","NAS"]},{"name":"Restic","types":["Server - Physical","Server - Virtual","NAS"]},{"name":"BorgBackup","types":["Server - Physical","Server - Virtual","NAS"]},{"name":"OpenSSH Server","types":["Server - Physical","Server - Virtual"]},{"name":"Ansible","types":["Server - Physical","Server - Virtual"]},{"name":"Terraform","types":["Server - Physical","Server - Virtual"]},{"name":"HashiCorp Vault","types":["Server - Physical","Server - Virtual"]},{"name":"VMware ESXi","types":["Server - Physical"]},{"name":"Proxmox VE","types":["Server - Physical"]},{"name":"Microsoft Hyper-V","types":["Server - Physical"]},{"name":"Dell OpenManage","types":["Server - Physical"]},{"name":"HPE iLO Management","types":["Server - Physical"]},{"name":"IPMItool","types":["Server - Physical"]},{"name":"TrueNAS SCALE","types":["Server - Physical","NAS"]},{"name":"Ubuntu Server","types":["Server - Physical","Server - Virtual"]},{"name":"Windows Server","types":["Server - Physical","Server - Virtual"]},{"name":"VMware Tools","types":["Server - Virtual"]},{"name":"QEMU Guest Agent","types":["Server - Virtual"]},{"name":"Hyper-V Integration Services","types":["Server - Virtual"]},{"name":"cloud-init","types":["Server - Virtual"]},{"name":"Synology DSM","types":["NAS"]},{"name":"QNAP QTS","types":["NAS"]},{"name":"OpenMediaVault","types":["NAS"]},{"name":"rsync","types":["NAS"]},{"name":"Syncthing","types":["NAS"]},{"name":"pfSense","types":["Firewall","Router","Layer 3 Switch"]},{"name":"OPNsense","types":["Firewall","Router","Layer 3 Switch"]},{"name":"FortiOS","types":["Firewall","Router","Layer 3 Switch"]},{"name":"Cisco IOS XE","types":["Firewall","Router","Layer 3 Switch"]},{"name":"MikroTik RouterOS","types":["Firewall","Router","Layer 3 Switch","Switch"]},{"name":"VyOS","types":["Firewall","Router","Layer 3 Switch"]},{"name":"OpenWrt","types":["Firewall","Router","Layer 3 Switch","Wireless Access Point","Access Point","Wireless LAN Controller"]},{"name":"OpenVPN","types":["Firewall","Router","Layer 3 Switch"]},{"name":"Cisco IOS","types":["Switch"]},{"name":"Cisco NX-OS","types":["Switch"]},{"name":"Aruba AOS-CX","types":["Switch"]},{"name":"UniFi Network","types":["Switch","Wireless Access Point","Access Point","Wireless LAN Controller"]},{"name":"Aruba Instant On","types":["Wireless Access Point","Access Point","Wireless LAN Controller"]},{"name":"ArubaOS","types":["Wireless Access Point","Access Point","Wireless LAN Controller"]},{"name":"Cisco Catalyst Center","types":["Wireless Access Point","Access Point","Wireless LAN Controller"]},{"name":"TP-Link Omada Controller","types":["Wireless Access Point","Access Point","Wireless LAN Controller"]},{"name":"HP Universal Print Driver","types":["Printer"]},{"name":"Brother Printer Driver","types":["Printer"]},{"name":"Canon Printer Driver","types":["Printer"]},{"name":"Epson Printer Driver","types":["Printer"]},{"name":"PaperCut MF","types":["Printer"]},{"name":"Microsoft Intune Company Portal","types":["Tablet"]},{"name":"Jamf Self Service","types":["Tablet"]},{"name":"Microsoft Authenticator","types":["Tablet"]},{"name":"Google Authenticator","types":["Tablet"]}];
-        function openSoftwareCatalogueEditor(key=''){
+        function openSoftwareCatalogueEditor(key='') {
             const entry=getConfiguredSoftwareCatalogueEntries().find(x=>x.key===key)||builtInSoftwareSuggestions.filter(x=>createBuiltInSoftwareCatalogueKey(x.name)===key).map(x=>({key,label:x.name,deviceTypes:x.types}))[0];
             if(key&&!entry)return;
             const types=[...new Set([...(appState.deviceTypes||[]),...builtInSoftwareSuggestions.flatMap(x=>x.types),...getConfiguredSoftwareCatalogueEntries().flatMap(x=>x.deviceTypes||[])])].sort();
             const selected=new Set(entry?.deviceTypes||[]);
-            openModal('<div class="p-5 sm:p-7 space-y-4"><h3 class="text-lg font-bold">'+(entry?'Edit Custom Software':'Add Custom Software')+'</h3><p class="text-sm text-slate-600 dark:text-slate-300">Availability does not change recorded installations.</p><form data-form-action="software" onsubmit="return false"><label class="block text-sm font-semibold mb-2" for="software-custom-name">Software Name</label><input id="software-custom-name" maxlength="80" value="'+escapeHtml(entry?.label||'')+'" class="w-full h-11 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-800"><fieldset class="mt-4"><legend class="font-semibold text-sm mb-2">Device Types</legend><div class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[40vh] overflow-y-auto">'+types.map(t=>'<label class="flex gap-2 items-center rounded-xl border border-slate-300 dark:border-slate-600 p-3 text-sm"><input type="checkbox" name="software-custom-type" value="'+escapeHtml(t)+'" '+(selected.has(t)?'checked':'')+'>'+escapeHtml(t)+'</label>').join('')+'</div></fieldset><p id="software-custom-error" role="alert" class="text-sm text-rose-700 dark:text-rose-300 mt-2"></p></form><div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-4 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors font-medium">Cancel</button><button type="button" data-action="software-custom-save" data-name="'+escapeHtml(key)+'" class="h-11 px-4 rounded-xl bg-blue-800 text-white">Save Software</button></div></div>');
+            const fields=`<label class="catalog-modal-field" for="software-custom-name">Software Name
+               <input id="software-custom-name" maxlength="80" value="${escapeHtml(entry?.label||'')}" placeholder="Software name">
+              </label><fieldset class="catalog-type-field" data-multi-device-types="software">
+                <legend>Available for Device Types</legend>
+                <p class="catalog-type-hint">Select all device types that apply.</p>
+                <div class="catalog-type-options">${types.map(t=>`<label class="catalog-type-option"><input type="checkbox" name="software-custom-type" value="${escapeHtml(t)}" ${selected.has(t)?'checked':''}><span>${escapeHtml(t)}</span></label>`).join('')}</div>
+              </fieldset><p id="software-custom-error" role="alert" class="text-sm text-rose-700"></p>`;
+            const actions=`<button type="button" data-action="close-modal" class="btn btn-outline caffoot-modal-cancel">Cancel</button>
+              <button type="button" data-action="software-custom-save" data-name="${escapeHtml(key)}" class="btn btn-primary">Save Software</button>`;
+            openApprovedCatalogueModal(entry?'Edit Custom Software':'Add Custom Software',
+              'Availability does not mean installed. Existing device software assignments remain unchanged.',
+              fields,actions,'Software may be available for multiple device types. Archiving preserves recorded installations.',
+              'data-form-action="software"');
             rememberModalForm();
         }
         async function saveCustomSoftwareEntry(key=''){
@@ -4457,10 +4571,17 @@ function hierarchyValidateTypes(subnets) {
         }
         document.addEventListener('input',event=>{if(['software-search','software-source','software-type','software-used'].includes(event.target?.id))filterSoftwareCatalogue();});
         document.addEventListener('change',event=>{if(['software-source','software-type','software-used'].includes(event.target?.id))filterSoftwareCatalogue();});
-        function openServerServiceEditor(key=''){
+        function openServerServiceEditor(key='') {
             const item=getAvailableServerServiceCatalogueEntries().find(x=>x.key===key);
             if(key&&!item)return;
-            openModal('<form data-form-action="server-service" onsubmit="return false" class="p-5 sm:p-7 space-y-5"><h3 class="text-lg font-bold text-slate-900 dark:text-white">'+(item?'Edit Server Service':'Add Custom Server Service')+'</h3><label for="server-service-name-input" class="block text-sm font-semibold">Service Name</label><input id="server-service-name-input" maxlength="80" class="w-full h-11 px-3 rounded-xl border border-slate-300 dark:border-slate-600 dark:bg-slate-800" value="'+escapeHtml(item?.label||'')+'"><div class="flex justify-end gap-2"><button type="button" data-action="close-modal" class="h-11 px-4 rounded-xl border border-slate-300 dark:border-slate-600 caffoot-modal-cancel">Cancel</button><button type="button" data-action="server-catalog-save" data-name="'+escapeHtml(key)+'" class="h-11 px-4 rounded-xl bg-blue-800 hover:bg-blue-700 text-white font-semibold">Save Service</button></div></form>');
+            const fields=`<label class="catalog-modal-field" for="server-service-name-input">Service Name
+              <input id="server-service-name-input" maxlength="80" value="${escapeHtml(item?.label||'')}" placeholder="Service name">
+              </label>`;
+            const actions=`<button type="button" data-action="close-modal" class="btn btn-outline caffoot-modal-cancel">Cancel</button>
+              <button type="button" data-action="server-catalog-save" data-name="${escapeHtml(key)}" class="btn btn-primary">Save Service</button>`;
+            openApprovedCatalogueModal(item?'Edit Server Service':'Add Custom Server Service',
+              'Manage the server services available to recorded devices.',
+              fields,actions,'Archive and restore preserve existing server service assignments.','data-form-action="server-service"');
         }
         async function saveServerServiceEntry(key){
             const label=String(document.getElementById('server-service-name-input')?.value||'').trim();
@@ -6360,7 +6481,8 @@ function openIpModal(ip) {
             const container = document.getElementById('modal-container');
             const content = document.getElementById('modal-content');
             if (container.classList.contains('hidden')) modalReturnFocus = document.activeElement;
-            content.classList.remove('rack-balanced-modal', 'settings-access-point-review', 'settings-legacy-review', 'approved-ipam-modal');
+            content.classList.remove('rack-balanced-modal', 'settings-access-point-review', 'settings-legacy-review', 'approved-ipam-modal', 'approved-catalogue-modal');
+            container.classList.remove('catalog-modal-overlay');
             content.innerHTML = htmlContent;
             container.classList.remove('hidden');
             container.classList.add('flex');
