@@ -8150,8 +8150,10 @@ function openIpModal(ip) {
             const version = values.softwareVersion ?? '';
             const choices = getPlatformOptionsForDeviceType(type);
             const options = [...new Set([...choices, ...(name && !choices.includes(name) ? [name] : [])])];
-            return `<div class="form-section-card space-y-4" id="software-platform">
-                <div class="form-section-heading"><i class="fa-solid fa-microchip" aria-hidden="true"></i>${isComputer ? 'Operating System' : 'Software & Firmware'}</div>
+            return `<div class="form-section-card device-review-panel space-y-4" id="software-platform">
+                <h3><span class="mini-icon" aria-hidden="true">▣</span>Operating System / Platform</h3>
+                <p>Use the existing device-type-specific software and firmware choices.</p>
+                <div class="device-review-form-grid">
                 <div><label for="platform-name" class="form-label">${isComputer ? 'Operating System / Platform' : 'Software / Firmware Platform'} (optional)</label>
                 <select id="platform-select" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" ${!name?'selected':''}>Select a platform...</option>${options.map(x => `<option value="${escapeHtml(x)}" ${name===x?'selected':''}>${escapeHtml(x)}</option>`).join('')}<option value="__custom__">Custom / Other...</option></select>
                 <input id="platform-name" type="text" maxlength="160" autocomplete="off" value="${escapeHtml(String(name))}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700 mt-2" placeholder="Enter custom platform" ${name && !choices.includes(name) ? '' : 'hidden'}></div>
@@ -8159,6 +8161,7 @@ function openIpModal(ip) {
                 <select id="version-select" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="">Select a version...</option>${getPlatformVersionOptions(name).map(v=>`<option value="${escapeHtml(v)}" ${version===v?'selected':''}>${escapeHtml(v)}</option>`).join('')}<option value="__custom__" ${version && !getPlatformVersionOptions(name).includes(version)?'selected':''}>Custom / Other...</option></select>
                 <input id="platform-version" type="text" maxlength="160" value="${escapeHtml(String(version))}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700 mt-2" placeholder="Enter custom or detailed version" ${version && !getPlatformVersionOptions(name).includes(version)?'':'hidden'}></div>
                 <div id="device-form-windows-licence-row" ${isWindowsPlatform(name)?'':'hidden'}><label for="device-form-windows-licence" class="form-label">Windows Licence Information (optional)</label><input id="device-form-windows-licence" type="text" maxlength="160" value="${escapeHtml(String(values.windowsLicence ?? ''))}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Edition, licence type or reference (avoid activation keys)"></div>
+                </div>
                 <p class="text-xs text-slate-600 dark:text-slate-300">Historical version suggestions are available offline. Custom versions are always supported; no support status is implied.</p>
             </div>`;
         }
@@ -8511,14 +8514,17 @@ function openIpModal(ip) {
             hardwareHeading?.replaceWith(hardwareTitle, hardwareSubtitle);
             panels.get('notes').dataset.notesPanel = 'true';
             initialiseNotesEditor(form);
+            const softwareGrid = document.createElement('div');
+            softwareGrid.className = 'device-review-grid';
+            panels.get('software').appendChild(softwareGrid);
             const platformContainer = document.createElement('div');
             platformContainer.innerHTML = renderSoftwarePlatformFields(form.querySelector('#dev-type')?.value || '', deviceDetailFormValues);
-            panels.get('software').appendChild(platformContainer.firstElementChild);
+            softwareGrid.appendChild(platformContainer.firstElementChild);
             // The approved design presents hypervisor settings alongside Software & Firmware.
             const hostingFields = sections[0].querySelector('#host-platform-fields');
             if (hostingFields) {
-                hostingFields.classList.add('form-section-card', 'device-review-hypervisor-configuration');
-                panels.get('software').appendChild(hostingFields);
+                hostingFields.classList.add('form-section-card', 'device-review-panel', 'device-review-hypervisor-configuration');
+                softwareGrid.appendChild(hostingFields);
             }
             bindSoftwarePlatformFields();
             syncHostingFieldVisibility();
@@ -8530,12 +8536,12 @@ function openIpModal(ip) {
                 const group = deviceTypeDetailGroups[String(type||'').toLowerCase().trim()];
                 const servicesSection = document.createElement('div');
                 servicesSection.id = 'server-services-section';
-                servicesSection.className = 'form-section-card space-y-4';
-                servicesSection.innerHTML = '<div class="form-section-heading"><i class="fa-solid fa-server" aria-hidden="true"></i>Server Services</div><div id="server-services-fields"></div>';
+                servicesSection.className = 'form-section-card device-review-panel space-y-4';
+                servicesSection.innerHTML = '<h3><span class="mini-icon" aria-hidden="true">▣</span>Server Services</h3><p>Choose the functions recorded on this server, without leaving the form.</p><div id="server-services-fields"></div>';
                 const installedSection = document.createElement('div');
                 installedSection.id = 'device-form-installed-software-section';
-                installedSection.className = 'form-section-card space-y-4';
-                installedSection.innerHTML = '<div class="form-section-heading"><i class="fa-solid fa-box-open" aria-hidden="true"></i>Installed Software</div><div id="device-form-installed-software-fields"></div>';
+                installedSection.className = 'form-section-card device-review-panel space-y-4';
+                installedSection.innerHTML = '<h3><span class="mini-icon" aria-hidden="true">▣</span>Installed Software</h3><p>Choose any number of items applicable to this device type, without leaving this form.</p><div id="device-form-installed-software-fields"></div>';
                 if (managers) {
                     const servicesManager = managers.querySelector('#manage-server-services-button');
                     const softwareManager = managers.querySelector('#manage-installed-software-button');
@@ -8548,8 +8554,8 @@ function openIpModal(ip) {
                         installedSection.insertBefore(softwareManager, installedSection.querySelector('#device-form-installed-software-fields'));
                     }
                 }
-                panels.get('software').appendChild(servicesSection);
-                panels.get('software').appendChild(installedSection);
+                softwareGrid.appendChild(servicesSection);
+                softwareGrid.insertBefore(installedSection, hostingFields || servicesSection);
                 servicesSection.querySelector('#server-services-fields').innerHTML = renderApprovedInlineDevicePicker('services', type, deviceDetailFormValues);
                 installedSection.querySelector('#device-form-installed-software-fields').innerHTML = renderApprovedInlineDevicePicker('software', type, deviceDetailFormValues);
                 servicesSection.classList.toggle('hidden', group !== 'server');
