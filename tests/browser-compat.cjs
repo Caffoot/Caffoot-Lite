@@ -1523,6 +1523,12 @@ async function run(){
   assert.ok(await detailsSoftware.locator(':scope > .device-review-panel').nth(1)
     .getByRole('heading',{name:'Installed Software'}).isVisible(),
     'Approved Details Installed Software must follow Operating System / Platform');
+  const hypervisorDetailsCard=detailsSoftware.locator(':scope > .device-review-panel.full')
+    .filter({hasText:'Hypervisor Service'});
+  assert.ok(await hypervisorDetailsCard.isVisible(),
+    'Recorded physical hypervisors must have the separate approved full-width service card');
+  assert.ok(await hypervisorDetailsCard.getByText('Proxmox VE',{exact:true}).isVisible(),
+    'The Hypervisor Service card must show the real saved product, not preview sample data');
   await deviceReview.getByRole('tab',{name:'Network'}).click();
   assert.ok(await deviceReview.locator('#device-details-panel-network')
     .getByRole('heading',{name:'Network Identity'}).isVisible(),
@@ -1540,6 +1546,11 @@ async function run(){
   await deviceReview.getByRole('tab',{name:'Hardware'}).click();
   assert.ok(await deviceReview.getByRole('heading',{name:'Hardware & Lifecycle'}).isVisible(),
     'Physical hardware details must use the approved Batch 04 heading');
+  const hardwareCard=deviceReview.locator('#device-details-panel-hardware > .device-review-panel.full');
+  for (const label of ['Device Type','Status','Mount Type']) {
+    assert.equal(await hardwareCard.locator('dt').filter({hasText:label}).count(),1,
+      'Approved Hardware & Lifecycle must display saved '+label);
+  }
   assert.ok(await deviceReview.locator('[data-action="edit-device-from-details"]').isVisible(),
     'Approved footer must keep live editing controls');
   await deviceReview.locator('[data-action="edit-device-from-details"]').click();
