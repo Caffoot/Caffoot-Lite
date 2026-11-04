@@ -128,6 +128,26 @@ async function run(){
   assert.equal((await page.request.get(address+'/assets/caffoot-logo-256.png')).status(),200,
     'Approved branding asset must be served by the Python app');
 
+  // Approved catalogue content must be a real live Device page, not preview HTML.
+  await page.locator('#sidebar [data-action="tab-devices"]').click();
+  await page.locator('#main-content [data-action="approved-device-section"][data-tab="types"]').click();
+  await page.locator('#main-content .catalog-card [data-catalog-list="type"]').waitFor();
+  const deviceTypeRows=page.locator('#main-content [data-catalog-row="type"]');
+  const deviceTypeTotal=await deviceTypeRows.count();
+  assert.ok(deviceTypeTotal>0,'Configured device types must appear in the approved catalogue layout');
+  assert.ok(await page.locator('#main-content [data-action="open-manage-types"]').isVisible(),
+    'The existing Manage Device Types action must remain available');
+  await page.locator('#main-content input[data-catalogue-search="type"]').fill('no-existing-device-type-match-2026');
+  assert.equal(await page.locator('#main-content [data-catalog-row="type"]:visible').count(),0,
+    'Approved catalogue search should hide non-matching device types');
+  await page.locator('#main-content [data-action="clear-catalogue-list-search"][data-catalogue="type"]').click();
+  assert.equal(await page.locator('#main-content [data-catalog-row="type"]:visible').count(),deviceTypeTotal,
+    'Clearing the catalogue search must restore all device types');
+  await page.locator('#main-content [data-action="approved-device-section"][data-tab="locations"]').click();
+  await page.locator('#main-content .catalog-card [data-catalog-list="location"]').waitFor();
+  assert.ok(await page.locator('#main-content [data-action="open-manage-locations"]').isVisible(),
+    'The existing Manage Locations action must remain available');
+  await page.locator('#sidebar [data-action="tab-dashboard"]').click();
   assert.equal(await page.title(),'Caffoot Lite — Infrastructure, Simplified.','Inventory browser tab must use Caffoot branding');
   await page.locator('#app .header-account').waitFor();
   // Verify the approved computed typeface with the locally served Tailwind preflight.
