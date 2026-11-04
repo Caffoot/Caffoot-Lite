@@ -662,7 +662,7 @@ async function run(){
   });
   let rackPrintMarkup='';
   try{
-    await page.locator('[data-action="print-rack-capacity-details"]').click();
+    await page.locator('#main-content .rack-detail-bar [data-action="print-rack-capacity-details"]').click();
     rackPrintMarkup=await page.evaluate(()=>window.__rackPrintMarkup);
   }finally{
     await page.evaluate(()=>{
