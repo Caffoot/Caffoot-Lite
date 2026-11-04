@@ -217,7 +217,7 @@ async function run(){
   await page.getByText('Total users',{exact:true}).waitFor();
   await page.getByText('Administrators',{exact:true}).first().waitFor();
   await page.getByText('Accounts by role',{exact:true}).waitFor();
-  await page.getByText('MFA enrolment',{exact:true}).waitFor();
+  await page.getByText('Authenticator enrolment',{exact:true}).waitFor();
   assert.ok(await page.locator('#main-content .approved-page-header .tabs').isVisible());
   assert.equal(await page.locator('#next-account-password-form').count(),0,
     'User Management must not contain personal account settings');
