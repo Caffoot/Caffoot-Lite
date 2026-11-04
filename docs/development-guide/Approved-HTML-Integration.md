@@ -119,7 +119,8 @@ This is a **working register, not a pass certificate**. For each screen, verify 
 - Commit `e0bde9a`: replaced the old live Inventory toolbar/results/table wrapper with the **approved `devices-inventory-draft-02.html` structural markup**. The original Search Devices layout, exactly five primary filters, result heading with integrated Sort control, and original card/table container now use the approved source, rather than restyled old layout.
 - Values and controls remain bound to existing inventory functions: search, dynamic device types/status/locations, network assignment, mounting, ordering, saved row data and device detail buttons. Existing collision-aware unknown-location labelling and the empty-state user actions were preserved. The existing Device Intelligence filter context now uses the approved linked context class.
 - Commit `082126f`: added Chromium checks for exact filter count and Sort placement, live search and sort interactions, saved device results and single-column mobile filter layout.
-- **Verification:** the whole inline application JavaScript and browser test file parse. No live Chromium or side-by-side visual test has been confirmed on the current head. The retained dynamic table rows and additional Inventory states still require source-fidelity review; **do not call Device Inventory completed or accepted**.
+- Follow-up commit `26130ae`: brought dynamic Device Inventory name/details, missing-location labelling, hardware cells and no-results styling closer to the original approved table presentation, while keeping saved values and existing actions.
+- **Verification:** the whole inline application JavaScript and browser test file parse. No live Chromium or side-by-side visual test has been confirmed on the current head. Dynamic table rows, conditional empty states and complete responsive presentation still require source-fidelity review; **do not call Device Inventory completed or accepted**.
 
 ## Development standards
 
