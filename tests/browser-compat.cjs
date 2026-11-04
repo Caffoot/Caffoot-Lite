@@ -1541,6 +1541,9 @@ async function run(){
   assert.ok(await deviceReview.locator('#device-details-panel-network')
     .getByRole('heading',{name:'Network Identity'}).isVisible(),
     'Network tab must retain approved Network Identity heading');
+  assert.equal(await deviceReview.locator('#device-details-panel-network dt')
+    .filter({hasText:'Status'}).count(),1,
+    'Approved Network Identity must display the live device status');
   await deviceReview.getByRole('tab',{name:'Location'}).click();
   assert.ok(await deviceReview.locator('#device-details-panel-location')
     .getByRole('heading',{name:'Mounting & Location'}).isVisible(),
@@ -1599,6 +1602,12 @@ async function run(){
   assert.ok(await vmDetailsSoftware.locator(':scope > .device-review-panel').nth(1)
     .getByRole('heading',{name:'Installed Software'}).isVisible(),
     'VM software details must retain source Installed Software order');
+  await deviceReview.getByRole('tab',{name:'Location'}).click();
+  const vmLocation=deviceReview.locator('#device-details-panel-location');
+  assert.ok(await vmLocation.getByText('browser-hypervisor',{exact:true}).isVisible(),
+    'VM Location must retain the approved Physical Host fact with the saved host name');
+  assert.equal(await vmLocation.locator('dt').filter({hasText:'Physical Host'}).count(),1,
+    'Approved VM Location must label its inherited physical host');
   await deviceReview.getByRole('tab',{name:'Overview'}).click();
   assert.equal(await deviceReview.locator('[data-action="navigate-to-device-rack"]').count(),0,
     'Virtual machines must not acquire independent rack placement');
@@ -1620,6 +1629,13 @@ async function run(){
     .filter({hasText:'Rack Navigation'});
   assert.ok(await rackNavigationCard.isVisible(),
     'Approved Details Location tab must contain a distinct full-width Rack Navigation card for racked devices');
+  const savedRackLocation=deviceReview.locator('#device-details-panel-location > .device-review-panel.full').first();
+  for(const label of ['Rack','Face','Start U','U height']){
+    assert.equal(await savedRackLocation.locator('dt').filter({hasText:label}).count(),1,
+      'Approved rack-mounted Location card must include '+label);
+  }
+  assert.ok(await savedRackLocation.getByText('6',{exact:true}).isVisible(),
+    'Approved rack-mounted Location card must show the persisted Start U of the moved device');
   assert.equal(await rackNavigationCard.locator('[data-action="navigate-to-device-rack"]').getAttribute('data-id'),
     rackSwitch.id,'Approved Rack Navigation must use the saved device ID');
   await deviceReview.locator('[data-action="close-modal"]').first().click();
