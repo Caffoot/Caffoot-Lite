@@ -173,6 +173,7 @@ main.auth-shell{max-width:1096px;margin:0;padding:0}
 'use strict';
 const $=id=>document.getElementById(id);
 let mode='login';
+let setupWelcomeAcknowledged=false;
 let csrfToken='';
 let signedInUser='';
 function showMfaQr(id,uri){
@@ -205,7 +206,19 @@ async function request(path,data){
  const payload=await r.json();if(!r.ok)throw Error(payload.error||'Request failed');return payload;
 }
 function display(){
- $('form').hidden=false;$('message').textContent='';
+ const welcomeIsVisible=mode==='setup'&&!setupWelcomeAcknowledged;
+ $('welcome-flow').hidden=!welcomeIsVisible;
+ $('form').hidden=welcomeIsVisible;
+ $('credentials').hidden=mode==='enrol'||mode==='login-mfa';
+ $('back-to-login').hidden=mode!=='login-mfa';
+ $('auth-heading').textContent=welcomeIsVisible?'Welcome to Caffoot Lite':
+   mode==='setup'?'Create Your Administrator':
+   mode==='enrol'?'Secure Your Account':
+   mode==='resume'?'Finish Administrator Setup':
+   mode==='login-mfa'?'Verify Your Identity':'Welcome Back';
+ $('auth-eyebrow').textContent=mode==='setup'?'First-Time Setup':
+   mode==='enrol'||mode==='login-mfa'?'Account security':'Welcome to Caffoot Lite';
+ $('message').textContent='';
  $('enrolment').hidden=mode!=='enrol';
  $('code-field').hidden=mode!=='enrol' && mode!=='login-mfa';
  $('intro').textContent=mode==='setup'?'Create the first administrator account. MFA is required.':mode==='enrol'?'Complete administrator MFA enrolment.':mode==='resume'?'Sign in with your administrator credentials to resume MFA enrolment.':mode==='login-mfa'?'Enter your authenticator code to complete sign-in.':'Sign in to Caffoot Lite.';
@@ -218,6 +231,19 @@ function display(){
  const r=await fetch('/api/setup/status');if(!r.ok)throw Error('Unable to check setup');
  const status=await r.json();mode=status.setupRequired?'setup':status.enrollmentPending?'resume':'login';display();
 }catch(e){$('intro').textContent=e.message}})();
+$('get-started').addEventListener('click',()=>{
+ setupWelcomeAcknowledged=true;display();$('username').focus();
+});
+$('back-to-login').addEventListener('click',()=>{
+ mode='login';$('code').value='';display();$('username').focus();
+});
+document.querySelectorAll('[data-reveal]').forEach(button=>{
+ button.addEventListener('click',()=>{
+  const input=$(button.dataset.reveal);
+  input.type=input.type==='password'?'text':'password';
+  button.textContent=input.type==='password'?'Show':'Hide';
+ });
+});
 $('username').addEventListener('input',()=>{if(mode==='login-mfa'){mode='login';$('code').value='';display();}});
 $('password').addEventListener('input',()=>{if(mode==='login-mfa'){mode='login';$('code').value='';display();}});
 $('code').addEventListener('input',()=>{
