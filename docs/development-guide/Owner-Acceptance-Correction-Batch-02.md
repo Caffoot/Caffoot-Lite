@@ -6,7 +6,7 @@
 **Baseline for this plan:** `0d54ef0e466a79720681a62ee828d44f7c0dc4e7` (completed Batch 01).  
 **Twelve approved HTML sources:** revision `c26db4a56bbc30f95b56201e81a7a76d13c6037b`, as identified by `docs/development-guide/Approved-HTML-Integration.md`.  
 **Origin:** Product owner's second private Docker/Safari review, 5 November 2026. Screenshots were shared in the review conversation but **are not attached to this document**.  
-**Scope:** The **four findings below only**. This document records a proposed correction plan, not completed implementation or test results.
+**Scope:** Findings **01–04 approved**. A fifth sidebar-spacing finding was added from the owner's subsequent Safari review and **awaits explicit approval of this document amendment before implementation**. This plan is not evidence of completed changes or tests.
 
 ## Scope and constraints
 
@@ -54,11 +54,21 @@ The product owner explicitly approved this exact four-finding plan on 5 November
 
 **Verification:** Review the shared header with a portrait or non-square photograph and with no photograph. Check both light/dark themes, desktop/mobile widths and browser resizing. Confirm the account button remains clickable and photo changes/removal still appear in the header without incorrect cropping or distortion.
 
+## Finding 05 — Shared sidebar navigation spacing is inconsistent across pages (amendment awaiting approval)
+
+**Observed:** During the same private Safari review, the owner noticed that the vertical spacing/height of the left-hand navigation items appears different on Audit Trail and Users & Permissions compared with Dashboard, Devices, IPAM and Settings & Data. The sidebar is intended to be shared and visually consistent throughout the application.
+
+**Requested result:** Make sidebar menu item heights, vertical gaps, icon/text alignment, selected/hover states and section spacing visually identical as the user navigates between all twelve screen areas. Use the current Dashboard/Devices/IPAM/Settings sidebar as the **owner-provided visual reference**. Preserve existing sidebar width, logo, header, footer, collapse/expand behaviour, navigation, permissions and responsiveness. Do not introduce new menu items or redesign the shared sidebar.
+
+**Verify:** Compare computed menu item rectangles and vertical gaps before/after navigation through Dashboard, Devices, IPAM, Network Racks, Audit Trail, Users & Permissions, My Account and Settings & Data, in both themes and desktop/mobile layouts. Confirm no screen-specific CSS overrides alter the shared sidebar's metrics and that menu interactions still work. If measurements are identical and the difference is an optical effect, report the exact evidence and obtain an owner decision before changing approved styling.
+
+**Approval boundary:** This is an **additional owner-requested finding** recorded after the initial four-item plan was approved. It is **not authorised for Codex implementation until the owner explicitly approves this amendment**.
+
 ## Acceptance procedure — approved scope, to begin after Codex credits reset
 
-1. Confirm the exact baseline branch/commit, approved sources, Batch 01 acceptance evidence and `AGENTS.md`. Implement **only findings 01–04** in one coordinated batch.
+1. Confirm the exact baseline branch/commit, approved sources, Batch 01 acceptance evidence and `AGENTS.md`. Implement **only findings 01–04**, and finding 05 **only if this amendment receives explicit owner approval**, in one coordinated batch.
 2. Establish accurate before/after live comparisons, particularly Devices-to-Racks spacing and the dark/light contrast audit; preserve original reference and evidence separately.
-3. Protect the light theme as a regression baseline and check all twelve screen areas in dark mode, desktop and mobile, with representative opened controls and dialogs. Check all four functional behaviours described above; use existing test infrastructure and proportionate security/functional checks.
+3. Protect the light theme as a regression baseline and check all twelve screen areas in dark mode, desktop and mobile, with representative opened controls and dialogs. Check the four approved functional behaviours and, if approved, the fifth shared-sidebar consistency behaviour; use existing test infrastructure and proportionate security/functional checks.
 4. Save meaningful checkpoints and the final verified results to the development branch, with exact SHAs, a clear test matrix, limitations and a handover entry. **Do not claim owner visual approval** based on CI or screenshots alone.
 5. **Do not modify `main`, PR #281, approved HTML source files or unrelated functionality. Do not merge, push Docker images to registries or publish/release anything.**
 6. After completion and evidence review, the owner will separately build a new **private local Docker image** on their Pi/Portainer host and review it in Safari. Preserve the existing private test volume, administrator, MFA and SMTP configuration.
@@ -66,6 +76,7 @@ The product owner explicitly approved this exact four-finding plan on 5 November
 ## Owner decision
 
 - [x] Approved by product owner on 5 November 2026 for Codex implementation **after credits reset**.
-- [ ] Request amendments to this plan.
+- [ ] Owner approves the proposed Finding 05 amendment as an addition to Batch 02.
+- [ ] Request further amendments to this plan.
 
-**This approval authorises implementation of these four items only; it does not authorise merge, publication, release or final visual acceptance.** None of the four corrections is claimed as fixed or tested by this approval record.
+**Current approval authorises findings 01–04 only; finding 05 is awaiting owner approval.** No merge, publication, release or final visual acceptance is authorised. No finding is claimed fixed or tested by this approval record.
