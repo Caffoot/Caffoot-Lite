@@ -11,3 +11,18 @@ main.auth-shell{max-width:1096px;margin:0;padding:0}
 #auth-live-screen .panel label{display:block;font-size:12px;font-weight:700}
 #auth-live-screen #signed-in>p{margin:8px 0}
 #auth-live-screen #signed-in>button{width:100%;min-height:42px}
+
+/* The public authentication flow shares the established slate dark palette.
+   Keep the brand panel and the QR's white scan surface unchanged. */
+html.dark {color-scheme:dark;--canvas:#0f172a;--ink:#f1f5f9;--muted:#cbd5e1;--line:#475569;}
+html.dark body,html.dark .canvas {background:var(--canvas);color:var(--ink);}
+html.dark .auth-shell {background:#1e293b;border-color:var(--line);}
+html.dark :is(.screen h1,.field,.welcome-item h3,.qr-copy b,.key summary,.inline-note strong,#auth-live-screen .panel h2) {color:var(--ink);}
+html.dark :is(.form-upper,.secure,.app-version,.subtitle,.inline-note,.form-foot,.form-foot a,.steps-head,.welcome-item p,.qr-copy p,.small,.resume-hint,.key,.show-password,.success-list li) {color:var(--muted);}
+html.dark :is(.field input,.secondary,#auth-live-screen .panel input,.welcome-item,.preview-note,.resume-hint,.key) {background:#0f172a;color:var(--ink);border-color:#64748b;}
+html.dark :is(.field input)::placeholder {color:var(--muted);}
+html.dark :is(.form-foot,.divider,#auth-live-screen .panel) {border-color:var(--line);}
+html.dark :is(.welcome-number,.steps-track span:not(.complete)) {background:#334155;color:var(--muted);}
+html.dark .secondary:hover {background:#334155;}
+html.dark .status {background:#451a03;color:#fde68a;border-color:#92400e;}
+html.dark .status.good {background:#022c22;color:#a7f3d0;border-color:#065f46;}

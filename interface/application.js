@@ -7817,6 +7817,11 @@ void (async () => {
       trigger.type='button';
       trigger.className='caffoot-search-trigger';
       Object.assign(trigger.style,presentation);
+      // Resolve theme changes while a dialog remains open, rather than freezing
+      // the native control's computed light colours into the searchable button.
+      trigger.style.color=`var(--theme-text,${presentation.color})`;
+      trigger.style.backgroundColor=`var(--theme-control,${presentation.backgroundColor})`;
+      trigger.style.borderColor=`var(--theme-control-border,${selectStyle.borderColor})`;
       const caption=document.createElement('span');
       caption.style.cssText='min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
       const arrow=document.createElementNS('http://www.w3.org/2000/svg','svg');

@@ -1,5 +1,18 @@
 'use strict';
 const $=id=>document.getElementById(id);
+// Use the same stored Light/Dark/System preference on the public security flow.
+function applySignInTheme(){
+ let preference='light';
+ try {
+  preference=localStorage.getItem('caffoot_theme_preference');
+  if(!['light','dark','system'].includes(preference))
+   preference=localStorage.getItem('caffoot_dark')==='true'?'dark':'light';
+ } catch (_) {}
+ document.documentElement.classList.toggle('dark',preference==='dark'||
+   (preference==='system'&&matchMedia('(prefers-color-scheme: dark)').matches));
+}
+applySignInTheme();
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',applySignInTheme);
 let mode='login';
 let setupWelcomeAcknowledged=false;
 let csrfToken='';

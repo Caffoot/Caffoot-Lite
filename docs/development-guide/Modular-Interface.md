@@ -48,3 +48,6 @@ python scripts/build_private_acceptance.py --save /path/to/private-acceptance.ta
 ```
 
 The script builds a local image from `git archive`, labels it with the exact commit and verifies that label. When a build proxy requires a private CA, add `--build-ca /path/to/trusted-ca-bundle.pem`. Docker mounts this optional bundle only while installing packages; it is not stored in the image. For the opt-in Compose lifecycle test, set `CAFFOOT_BUILD_CA` to the same bundle path. It has no image push, merge or release action. It must not be used as evidence of a successful build when dependency access fails. See the [Issue #282 handover](../development-handovers/v2.1-issue-282.md) for current results and limitations.
+
+
+Batch 02 presentation corrections use `styles/themes.css` for the existing slate dark palette across page and external modal mounts; high-specificity shared controls consume theme tokens with unchanged light fallbacks. `sign-in-controls.css` applies that palette to the public authentication flow without changing protected asset access. The existing preference is also applied by `applySignInTheme` in `sign-in.js`. See the development handover for checkpoint status and remaining verification.

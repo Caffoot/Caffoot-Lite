@@ -4,7 +4,7 @@ This is the current function map for the modular Issue #282 source tree in the s
 
 The map lists named JavaScript declarations and named function/arrow assignments in the three application scripts, plus Python functions and methods in `backend/`. Tests, anonymous callbacks, third-party QR code code and generated HTML fragments are excluded. Nested Python functions include their enclosing names. It is a declaration map, not a call graph or permission to remove a function. Read event dispatch, aliases and API callers before changing code.
 
-**Recorded definitions: 602.** The links refer to the current branch files and line positions. Regenerate after moving or renaming functions. See [Modular Interface](Modular-Interface.md) and the [Function And Code Reference](07-Function-and-Code-Reference.md).
+**Recorded definitions: 603.** The links refer to the current branch files and line positions. Regenerate after moving or renaming functions. See [Modular Interface](Modular-Interface.md) and the [Function And Code Reference](07-Function-and-Code-Reference.md).
 
 ## interface/loader.js
 
@@ -393,59 +393,60 @@ The map lists named JavaScript declarations and named function/arrow assignments
 | [`isBlockedAction`](../../interface/application.js#L7744) | 7744 |
 | [`applyAllowedControls`](../../interface/application.js#L7772) | 7772 |
 | [`enhanceLongSelects`](../../interface/application.js#L7797) | 7797 |
-| [`sync`](../../interface/application.js#L7848) | 7848 |
-| [`close`](../../interface/application.js#L7854) | 7854 |
-| [`choose`](../../interface/application.js#L7858) | 7858 |
-| [`draw`](../../interface/application.js#L7863) | 7863 |
-| [`open`](../../interface/application.js#L7881) | 7881 |
-| [`enhanceSelects`](../../interface/application.js#L7937) | 7937 |
-| [`switchTab`](../../interface/application.js#L7983) | 7983 |
-| [`updateDeviceEditorNotice`](../../interface/application.js#L7994) | 7994 |
-| [`openDeviceDetailView`](../../interface/application.js#L8020) | 8020 |
-| [`applyDeviceFormSectionPermissions`](../../interface/application.js#L8028) | 8028 |
-| [`forbidRackMount`](../../interface/application.js#L8056) | 8056 |
-| [`openDeviceModal`](../../interface/application.js#L8066) | 8066 |
-| [`nextDeviceModalClosed`](../../interface/application.js#L8108) | 8108 |
-| [`relatedChanges`](../../interface/application.js#L8114) | 8114 |
-| [`saveDevice`](../../interface/application.js#L8125) | 8125 |
-| [`reserveForDelete`](../../interface/application.js#L8431) | 8431 |
-| [`removeDevice`](../../interface/application.js#L8439) | 8439 |
-| [`cancelDelete`](../../interface/application.js#L8465) | 8465 |
-| [`saveArchivedInstallation`](../../interface/application.js#L8471) | 8471 |
-| [`renderAccountSections`](../../interface/application.js#L8506) | 8506 |
-| [`renderApprovedAccountMfaPanel`](../../interface/application.js#L8534) | 8534 |
-| [`nextRenderAccount`](../../interface/application.js#L8544) | 8544 |
-| [`hydrateApprovedAccount`](../../interface/application.js#L8552) | 8552 |
-| [`updateAccountHeaderPhoto`](../../interface/application.js#L8606) | 8606 |
-| [`loadApprovedAccountProfile`](../../interface/application.js#L8619) | 8619 |
-| [`removeApprovedAccountPhoto`](../../interface/application.js#L8635) | 8635 |
-| [`nextRenderUsers`](../../interface/application.js#L8644) | 8644 |
-| [`profileFields`](../../interface/application.js#L8646) | 8646 |
-| [`stat`](../../interface/application.js#L8667) | 8667 |
-| [`bars`](../../interface/application.js#L8670) | 8670 |
-| [`operation`](../../interface/application.js#L8722) | 8722 |
-| [`filterApprovedUserRows`](../../interface/application.js#L8742) | 8742 |
-| [`closeUserWorkspace`](../../interface/application.js#L8766) | 8766 |
-| [`loadCentralUsers`](../../interface/application.js#L8795) | 8795 |
-| [`changeCentralUser`](../../interface/application.js#L8801) | 8801 |
-| [`importPanel`](../../interface/application.js#L8812) | 8812 |
-| [`cancelImport`](../../interface/application.js#L8816) | 8816 |
-| [`nextImportModalClosed`](../../interface/application.js#L8822) | 8822 |
-| [`showImportReview`](../../interface/application.js#L8823) | 8823 |
-| [`chooseImportFile`](../../interface/application.js#L8863) | 8863 |
-| [`actOnImport`](../../interface/application.js#L8880) | 8880 |
+| [`sync`](../../interface/application.js#L7853) | 7853 |
+| [`close`](../../interface/application.js#L7859) | 7859 |
+| [`choose`](../../interface/application.js#L7863) | 7863 |
+| [`draw`](../../interface/application.js#L7868) | 7868 |
+| [`open`](../../interface/application.js#L7886) | 7886 |
+| [`enhanceSelects`](../../interface/application.js#L7942) | 7942 |
+| [`switchTab`](../../interface/application.js#L7988) | 7988 |
+| [`updateDeviceEditorNotice`](../../interface/application.js#L7999) | 7999 |
+| [`openDeviceDetailView`](../../interface/application.js#L8025) | 8025 |
+| [`applyDeviceFormSectionPermissions`](../../interface/application.js#L8033) | 8033 |
+| [`forbidRackMount`](../../interface/application.js#L8061) | 8061 |
+| [`openDeviceModal`](../../interface/application.js#L8071) | 8071 |
+| [`nextDeviceModalClosed`](../../interface/application.js#L8113) | 8113 |
+| [`relatedChanges`](../../interface/application.js#L8119) | 8119 |
+| [`saveDevice`](../../interface/application.js#L8130) | 8130 |
+| [`reserveForDelete`](../../interface/application.js#L8436) | 8436 |
+| [`removeDevice`](../../interface/application.js#L8444) | 8444 |
+| [`cancelDelete`](../../interface/application.js#L8470) | 8470 |
+| [`saveArchivedInstallation`](../../interface/application.js#L8476) | 8476 |
+| [`renderAccountSections`](../../interface/application.js#L8511) | 8511 |
+| [`renderApprovedAccountMfaPanel`](../../interface/application.js#L8539) | 8539 |
+| [`nextRenderAccount`](../../interface/application.js#L8549) | 8549 |
+| [`hydrateApprovedAccount`](../../interface/application.js#L8557) | 8557 |
+| [`updateAccountHeaderPhoto`](../../interface/application.js#L8611) | 8611 |
+| [`loadApprovedAccountProfile`](../../interface/application.js#L8624) | 8624 |
+| [`removeApprovedAccountPhoto`](../../interface/application.js#L8640) | 8640 |
+| [`nextRenderUsers`](../../interface/application.js#L8649) | 8649 |
+| [`profileFields`](../../interface/application.js#L8651) | 8651 |
+| [`stat`](../../interface/application.js#L8672) | 8672 |
+| [`bars`](../../interface/application.js#L8675) | 8675 |
+| [`operation`](../../interface/application.js#L8727) | 8727 |
+| [`filterApprovedUserRows`](../../interface/application.js#L8747) | 8747 |
+| [`closeUserWorkspace`](../../interface/application.js#L8771) | 8771 |
+| [`loadCentralUsers`](../../interface/application.js#L8800) | 8800 |
+| [`changeCentralUser`](../../interface/application.js#L8806) | 8806 |
+| [`importPanel`](../../interface/application.js#L8817) | 8817 |
+| [`cancelImport`](../../interface/application.js#L8821) | 8821 |
+| [`nextImportModalClosed`](../../interface/application.js#L8827) | 8827 |
+| [`showImportReview`](../../interface/application.js#L8828) | 8828 |
+| [`chooseImportFile`](../../interface/application.js#L8868) | 8868 |
+| [`actOnImport`](../../interface/application.js#L8885) | 8885 |
 
 ## interface/sign-in.js
 
 | Function | Line |
 | --- | ---: |
+| [`applySignInTheme`](../../interface/sign-in.js#L4) | 4 |
 | [`$`](../../interface/sign-in.js#L2) | 2 |
-| [`showMfaQr`](../../interface/sign-in.js#L7) | 7 |
-| [`showSession`](../../interface/sign-in.js#L15) | 15 |
-| [`request`](../../interface/sign-in.js#L32) | 32 |
-| [`display`](../../interface/sign-in.js#L36) | 36 |
-| [`loadUsers`](../../interface/sign-in.js#L134) | 134 |
-| [`adminAction`](../../interface/sign-in.js#L159) | 159 |
+| [`showMfaQr`](../../interface/sign-in.js#L20) | 20 |
+| [`showSession`](../../interface/sign-in.js#L28) | 28 |
+| [`request`](../../interface/sign-in.js#L45) | 45 |
+| [`display`](../../interface/sign-in.js#L49) | 49 |
+| [`loadUsers`](../../interface/sign-in.js#L147) | 147 |
+| [`adminAction`](../../interface/sign-in.js#L172) | 172 |
 
 ## backend/access_point_review.py
 
