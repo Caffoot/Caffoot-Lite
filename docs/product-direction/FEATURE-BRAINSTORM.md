@@ -23,12 +23,12 @@ The current [public roadmap](../../ROADMAP.md) remains authoritative for publish
 
 | Idea | Current record | Possible milestone | What it could help someone do |
 | --- | --- | --- | --- |
-| Equipment purchase, warranty, lifecycle and retirement | **New suggestion** | 1 — Everyday assets | Know what needs replacing, repairing or retiring |
-| QR codes and printable asset labels | **New suggestion** | 1 — Everyday assets | Scan equipment to open its authorised record |
-| CSV import/export and practical bulk updates | **New suggestion** | 1 — Everyday assets | Move away from spreadsheets and reduce repeated typing |
-| Reusable device templates | **New suggestion** | 1 — Everyday assets | Add similar equipment more quickly |
-| Printable inventory and audit reports | **New suggestion** | 1 — Everyday assets | Share a clear inventory with managers or auditors |
-| Inventory completeness checks | **New suggestion** | 1 — Everyday assets | Find missing locations, owners or key details without forcing every optional field |
+| Equipment purchase, warranty, lifecycle and retirement | [Existing #286](https://github.com/Caffoot/Caffoot-Lite/issues/286) | 1 — Everyday assets | Know what needs replacing, repairing or retiring |
+| QR codes and printable asset labels | [Existing #287](https://github.com/Caffoot/Caffoot-Lite/issues/287) | 1 — Everyday assets | Scan equipment to open its authorised record |
+| CSV import/export and practical bulk updates | [Existing #288](https://github.com/Caffoot/Caffoot-Lite/issues/288) | 1 — Everyday assets | Move away from spreadsheets and reduce repeated typing |
+| Reusable device templates | [Existing #289](https://github.com/Caffoot/Caffoot-Lite/issues/289) | 1 — Everyday assets | Add similar equipment more quickly |
+| Printable inventory and audit reports | [Existing #290](https://github.com/Caffoot/Caffoot-Lite/issues/290) | 1 — Everyday assets | Share a clear inventory with managers or auditors |
+| Inventory completeness checks | [Existing #291](https://github.com/Caffoot/Caffoot-Lite/issues/291) | 1 — Everyday assets | Find missing locations, owners or key details without forcing every optional field |
 | A few organisation-specific asset fields | **New suggestion** | 1 — Everyday assets | Record useful local details without changing the standard interface for everyone |
 | Remembered inventory filters and saved views | [Existing #241](https://github.com/Caffoot/Caffoot-Lite/issues/241) | 1 — Everyday assets | Revisit frequently used lists without rebuilding the search |
 | Multiple network interfaces, IP addresses and IPv6 | [Existing #231](https://github.com/Caffoot/Caffoot-Lite/issues/231) | 2 — Connected infrastructure | Document real-world network interfaces and addresses |
