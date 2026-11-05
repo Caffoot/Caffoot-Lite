@@ -25,7 +25,7 @@ async function main(){
  const results=[];
  async function capture(name,screen){
   await reference.evaluate(screen=>show(screen),screen);
-  for(const [width,height]of [[1440,950],[390,844]]){
+  for(const [width,height]of [[1440,950],[390,844]].filter(([width])=>!process.env.CAFFOOT_AUTH_WIDTH||width===Number(process.env.CAFFOOT_AUTH_WIDTH))){
    await page.setViewportSize({width,height});await reference.setViewportSize({width,height});
    await page.screenshot({path:path.join(out,name+'-'+width+'-live.png'),fullPage:true,mask:[page.locator('#setup-qr'),page.locator('#secret'),page.locator('#code')]});
    await reference.screenshot({path:path.join(out,name+'-'+width+'-approved.png'),fullPage:true,mask:[reference.locator('.qr-placeholder')]});
@@ -42,10 +42,20 @@ async function main(){
  await capture('first-run-enrolment','enrol');
  await page.reload();await page.getByRole('heading',{name:'Finish Administrator Setup'}).waitFor();await capture('first-run-resume','resume');
  await page.locator('#username').fill('visual-owner');await page.locator('#password').fill(password);await page.locator('#submit').click();
- await page.locator('#enrolment:not([hidden])').waitFor();assert.equal(await page.locator('#secret').textContent(),secret);
+ await page.locator('#enrolment:not([hidden])').waitFor();assert.ok((await page.locator('#secret').textContent())===secret,'Resumed enrolment must keep the existing setup identity');
  const code=spawnSync('python3',['-c','from backend.mfa import code_at;import sys,time;print(code_at(sys.argv[1],time.time()))',secret],{cwd:root,encoding:'utf8'}).stdout.trim();
  await page.locator('#code').fill(code);await page.locator('#submit').click();await page.locator('#setup-complete:not([hidden])').waitFor();await capture('first-run-complete','complete');
- await page.locator('#setup-continue-sign-in').click();await page.locator('#submit').click();await page.locator('#code-field:not([hidden])').waitFor();await capture('sign-in-mfa','mfa');
+ assert.equal(await page.locator('#code').inputValue(),'','Completion must clear the enrolment code');
+ assert.equal(await page.locator('#secret').textContent(),'','Completion must clear the setup seed');
+ assert.equal(await page.locator('#setup-qr *').count(),0,'Completion must remove the setup QR');
+ assert.equal(await page.locator('#confirm-password').inputValue(),'','Completion must clear enrolment-only confirmation');
+ await page.locator('#setup-continue-sign-in').click();
+ assert.equal(await page.locator('#code').inputValue(),'','Returned login must have an empty authenticator field');
+ await page.locator('#submit').click();await page.locator('#code-field:not([hidden])').waitFor();await capture('sign-in-mfa','mfa');
+ assert.equal(await page.locator('#code').inputValue(),'','Login must not prefill the previous enrolment code');
+ const loginCode=spawnSync('python3',['-c','from backend.mfa import code_at;import sys,time;print(code_at(sys.argv[1],time.time()))',secret],{cwd:root,encoding:'utf8'}).stdout.trim();
+ await page.locator('#code').fill(loginCode);await page.waitForURL('**/inventory');
+ console.log('PASS: cleared enrolment inputs and fresh MFA sign-in at width',process.env.CAFFOOT_AUTH_WIDTH||'capture widths');
  fs.writeFileSync(path.join(out,'authentication-visual-results.json'),JSON.stringify(results,null,2));
 }
 main().catch(error=>{console.error(error);process.exitCode=1;}).finally(async()=>{await browser?.close();server.kill('SIGTERM');refServer.close();fs.rmSync(tmp,{recursive:true,force:true});});

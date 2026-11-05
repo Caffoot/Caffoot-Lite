@@ -123,6 +123,15 @@ async function run(){
   await page.locator('#setup-complete:not([hidden])').waitFor();
   await page.locator('#setup-continue-sign-in').click();
   await page.getByText('MFA enrolled. Sign in to continue.').waitFor();
+  assert.equal(await page.locator('#code').inputValue(),'',
+    'Returned sign-in must not retain the enrolment verification code');
+  assert.equal(await page.locator('#confirm-password').inputValue(),'',
+    'Enrolment-only password confirmation must be cleared');
+  assert.equal(await page.locator('#secret').textContent(),'',
+    'The completed enrolment must remove the setup seed from the page');
+  assert.equal(await page.locator('#setup-qr').locator('*').count(),0,
+    'The completed enrolment must remove the setup QR code');
+
   assert.ok(await page.locator('#code-field').evaluate(el=>el.hidden),'Authenticator code should be hidden before sign-in');
   await page.locator('#submit').click();
   await page.locator('#code-field:not([hidden])').waitFor();
@@ -1600,8 +1609,8 @@ async function run(){
     'Approved Notes outer grid must retain desktop columns');
   assert.ok(await approvedNotes.getByRole('heading',{name:'Notes / Details',level:3}).isVisible(),
     'Approved Notes card heading must match Batch 04');
-  assert.ok(await approvedNotes.getByText('The real application retains the existing notes editor and formatting controls.',{exact:true}).isVisible(),
-    'The original Notes card description must accompany the saved editor');
+  assert.ok(await approvedNotes.getByText('Add notes and use Preview to check formatting.',{exact:true}).isVisible(),
+    'Owner-approved Notes guidance must accompany the saved editor');
   assert.ok(await approvedNotes.locator('.device-review-note-toolbar[role="toolbar"]').isVisible(),
     'Original Notes formatting toolbar must be present');
   assert.ok(await approvedNotes.locator('.device-review-form-grid .device-review-field.wide #dev-notes').isVisible(),

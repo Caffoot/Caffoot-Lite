@@ -230,7 +230,7 @@
 <!-- interface-template:racks/open-rack-modal-2 -->
                 <div class="rack-modal" role="dialog" aria-modal="true" aria-label="Rack enclosure">
                     <div class="rack-modal-top"><div><h2>{{slot:0}}</h2></div>
-                        <button type="button" class="rack-modal-close" data-action="close-modal" aria-label="Close dialog">Close</button></div>
+                        <button type="button" class="rack-modal-close app-modal-close" data-action="close-modal" aria-label="Close dialog">Close ×</button></div>
                     <p>{{slot:1}}</p>
                     <form data-form-action="rack" data-rack-id="{{slot:2}}" data-correction="{{slot:3}}" class="rack-approved-form">
                         <div class="rack-form-grid">
@@ -256,7 +256,7 @@
 <!-- interface-template:racks/open-rack-slot-placement-dialog-1 -->
                 <div class="rack-modal" role="dialog" aria-modal="true" aria-label="Rack equipment placement">
                     <div class="rack-modal-top"><div><div class="eyebrow">RACK MANAGEMENT</div><h2>Place Device / Horizontal Accessory at U{{slot:0}}</h2></div>
-                        <button type="button" class="rack-modal-close" data-action="close-modal">Close ×</button></div>
+                        <button type="button" class="rack-modal-close app-modal-close" data-action="close-modal">Close ×</button></div>
                     <p>Choose a physical device or a horizontal rack accessory. This form places equipment into rack U positions on the selected face.</p>
                     <form id="rack-placement-form" data-form-action="assign" data-rack-id="{{slot:1}}" data-default-slot="{{slot:2}}" class="rack-approved-form">
                         <div class="rack-form-grid">
@@ -282,7 +282,7 @@
 <!-- interface-template:racks/open-rack-accessory-editor-1 --><button type="button" id="rack-accessory-remove-button" class="rack-danger mr-auto">Remove accessory</button><!-- /interface-template -->
 
 <!-- interface-template:racks/open-rack-accessory-editor-2 --><div role="dialog" aria-modal="true" aria-label="Rack accessory" class="rack-modal accessory-modal">
-                <div class="rack-modal-top"><div><div class="eyebrow">RACK MANAGEMENT</div><h2>{{slot:0}}</h2></div><button type="button" class="rack-modal-close" data-action="close-modal">Close ×</button></div><p>{{slot:1}}</p>
+                <div class="rack-modal-top"><div><div class="eyebrow">RACK MANAGEMENT</div><h2>{{slot:0}}</h2></div><button type="button" class="rack-modal-close app-modal-close" data-action="close-modal">Close ×</button></div><p>{{slot:1}}</p>
                 <form id="rack-accessory-form" class="rack-approved-form">
                   <div class="rack-form-grid">
                     <label class="rack-field">{{slot:2}}<select name="type" required class="rack-accessory-field">{{slot:3}}</select></label>

@@ -123,7 +123,7 @@
             </section><!-- /interface-template -->
 
 <!-- interface-template:shared/approved-deletion-blocked-1 -->
-      <div class="ipam-modal-head"><div><div class="eyebrow">IP ADDRESS MANAGEMENT</div><h2>Subnet Deletion Blocked</h2></div><button type="button" data-action="close-modal" class="ipam-modal-close" aria-label="Close dialog">×</button></div>
+      <div class="ipam-modal-head"><div><div class="eyebrow">IP ADDRESS MANAGEMENT</div><h2>Subnet Deletion Blocked</h2></div><button type="button" data-action="close-modal" class="ipam-modal-close app-modal-close" aria-label="Close dialog">Close ×</button></div>
       <div class="ipam-modal-body">
         <div class="ipam-modal-explain warn">This subnet cannot be deleted while protected IPAM records remain. Nothing has been changed.</div>
         <div class="ipam-form-grid">
@@ -142,7 +142,7 @@
 <!-- interface-template:shared/approved-deletion-confirm-2 --><section class="ipam-modal-explain warn" style="margin-top:16px"><strong>Move {{slot:0}} Device(s) to Unassigned</strong><p>Device inventory, rack and hardware details remain. Primary IP allocations shown below will be released.</p><ul class="max-h-44 overflow-y-auto">{{slot:1}}</ul></section><!-- /interface-template -->
 
 <!-- interface-template:shared/approved-deletion-confirm-3 -->
-      <div class="ipam-modal-head"><div><div class="eyebrow">IP ADDRESS MANAGEMENT</div><h2>Confirm {{slot:0}} Deletion</h2></div><button type="button" class="ipam-modal-close" data-action="close-modal" aria-label="Close dialog">×</button></div>
+      <div class="ipam-modal-head"><div><div class="eyebrow">IP ADDRESS MANAGEMENT</div><h2>Confirm {{slot:0}} Deletion</h2></div><button type="button" class="ipam-modal-close app-modal-close" data-action="close-modal" aria-label="Close dialog">Close ×</button></div>
       <div class="ipam-modal-body">
         <div class="ipam-modal-explain warn">This action cannot be undone. Review affected records before confirming.</div>
         <div class="ipam-form-grid">
@@ -162,7 +162,7 @@
 
 <!-- interface-template:shared/caffoot-show-licences-1 --><div class="p-6 space-y-4"><div class="flex items-start justify-between gap-4"><h3 class="text-lg font-bold">Software Licences</h3><button type="button" data-action="close-modal" aria-label="Close software licences" class="settings-action">✕</button></div><div class="text-sm whitespace-pre-wrap break-words">{{slot:0}}</div><div class="flex justify-end"><button type="button" data-action="close-modal" class="settings-action">Close</button></div></div><!-- /interface-template -->
 
-<!-- interface-template:shared/caffoot-update-guide-1 --><div class="p-6 space-y-4"><div class="flex items-start justify-between gap-4"><h3 class="text-lg font-bold text-slate-900 dark:text-white">Safely Update Caffoot Lite</h3><button type="button" data-action="close-modal" aria-label="Close safe update guide" class="settings-action">✕</button></div>
+<!-- interface-template:shared/caffoot-update-guide-1 --><div class="p-6 space-y-4"><div class="flex items-start justify-between gap-4"><h3 class="text-lg font-bold text-slate-900 dark:text-white">Safely Update Caffoot Lite</h3><button type="button" data-action="close-modal" aria-label="Close safe update guide" class="settings-action app-modal-close">Close ×</button></div>
                 <ol class="list-decimal pl-6 space-y-3 text-slate-700 dark:text-slate-200">
                     <li>Download a JSON backup from the current version and keep it outside your browser.</li>
                     <li>Keep your current HTML file. Download the new <strong>Caffoot-Lite.html</strong> from the official release page into a separate folder.</li>

@@ -47,7 +47,7 @@
                                         </tr>
                                     <!-- /interface-template -->
 
-<!-- interface-template:devices/render-devices-html-5 --><tr><td colspan="7" class="device-empty"><div ><strong>{{slot:0}}</strong><p>{{slot:1}}</p><button type="button" data-action="{{slot:2}}">{{slot:3}}</button></div></td></tr><!-- /interface-template -->
+<!-- interface-template:devices/render-devices-html-5 --><tr><td colspan="7" class="device-empty"><div ><strong>{{slot:0}}</strong><p>{{slot:1}}</p><button type="button" class="{{slot:4}}" data-action="{{slot:2}}">{{slot:3}}</button></div></td></tr><!-- /interface-template -->
 
 <!-- interface-template:devices/render-devices-html-6 --><div class="intelligence-metric"><div class="metric-top"><span class="metric-label">{{slot:0}}</span><span class="metric-ico"><i class="fa-solid {{slot:1}}" aria-hidden="true"></i></span></div><div class="metric-number">{{slot:2}}</div><div class="metric-caption">{{slot:3}}</div></div><!-- /interface-template -->
 
@@ -61,7 +61,7 @@
     <span class="iconwrap orange" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24"><use href="#i-grid"></use></svg></span>
     <div><h2>{{slot:0}}</h2><p>{{slot:1}}</p></div>
   </div>
-  <button type="button" class="btn btn-primary" data-action="{{slot:2}}">Manage {{slot:3}}</button>
+  <button type="button" class="{{slot:4}}" data-action="{{slot:2}}">Manage {{slot:3}}</button>
 </div>
 <div class="intelligence-grid catalog-kpis">
   {{slot:4}}
@@ -180,7 +180,7 @@
                   <div class="device-review-headline">
                     <div class="min-w-0"><p class="device-review-eyebrow">DEVICE DETAILS</p><h2 class="break-words">{{slot:0}}</h2>
                     <p class="device-review-sub">{{slot:1}} · {{slot:2}} · {{slot:3}}</p></div>
-                    <button type="button" data-action="close-modal" aria-label="Close device details" class="device-review-close">×</button>
+                    <button type="button" data-action="close-modal" aria-label="Close device details" class="device-review-close app-modal-close">Close ×</button>
                   </div>
                 <nav class="device-tabs device-review-tabs" role="tablist" aria-label="Device detail sections">
                     {{slot:4}}

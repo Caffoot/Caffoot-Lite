@@ -199,5 +199,43 @@ html{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sa
 
 /* The shared Settings fields must not override the approved Users form controls. */
 #main-content .approved-users-sections .field label {font-size:11px;font-weight:750;color:#4e6981;margin:0;}
-#main-content .approved-users-sections .field .input {width:100%;min-width:0;background:#fff;border:1px solid #d5e2eb;border-radius:9px;padding:11px 12px;color:#2e4b63;min-height:42px;font-size:12px;}
 #main-content .approved-users-sections .field .input:disabled {background:#f3f6f8;color:#7c91a3;}
+
+/* Owner Acceptance Batch 01: preserve the pinned Rack Overview's single 21px inset. */
+#main-content .rack-overview-section {padding-top:0;}
+
+/* Labelled header dismissal follows the existing Manage Device Types button. */
+#modal-content button.app-modal-close,
+#main-content button.app-modal-close {
+ display:inline-flex;align-items:center;justify-content:center;gap:8px;
+ width:auto;height:auto;min-height:35px;flex:none;white-space:nowrap;
+ padding:7px 10px;border:1px solid #e0e8ee;border-radius:9px;
+ background:#fff;color:#425e78;font:750 11.6px/normal Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+}
+#modal-content button.app-modal-close:hover,#main-content button.app-modal-close:hover {background:#f5f8fb;}
+#modal-content .device-review-head > div:first-child,
+#main-content .modal-head > div:first-child {min-width:0;}
+
+/* 42px comes from the pinned Device, IPAM and Users controls, not a new global size.
+   Limit it to ordinary form controls; textareas, checkboxes and specialised widgets keep their sizes. */
+#modal-content :is(.device-review-dialog,.ipam-modal,.catalog-modal,.rack-modal) :is(input:not([type]),input[type="text"],input[type="email"],input[type="password"],input[type="number"],input[type="search"],select),
+#main-content :is(.users-management-modal,.approved-users-sections,.approved-account,.approved-settings) :is(input:not([type]),input[type="text"],input[type="email"],input[type="password"],input[type="number"],input[type="search"],select) {
+ box-sizing:border-box;min-width:0;width:100%;height:42px;min-height:42px;
+ padding:10px 11px;border:1px solid #d2dfeb;border-radius:9px;
+ background:#fff;color:#223b53;font-family:inherit;font-size:13px;line-height:20px;
+}
+#modal-content :is(input,select,textarea,.caffoot-search-trigger,.app-modal-close):focus-visible,
+#main-content :is(.users-management-modal,.approved-users-sections,.approved-account,.approved-settings) :is(input,select,.app-modal-close):focus-visible,
+.caffoot-search-input:focus-visible,.caffoot-search-trigger:focus-visible {
+ outline:2px solid #fac59e;outline-offset:1px;
+}
+#modal-content :is(input,select):disabled,
+#main-content .users-management-modal .input:disabled {background:#f3f6f8;color:#7c91a3;}
+
+/* The searchable popup takes its border and unboxed rows from the pinned device menu. */
+.caffoot-search-popup {box-sizing:border-box;background:#fff;border:1px solid #d8e2eb;border-radius:10px;padding:6px;color:#345169;box-shadow:0 12px 30px rgba(27,49,71,.13);font:13px Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;}
+.caffoot-search-input {height:42px;min-height:42px;padding:10px 11px;border:1px solid #d2dfeb;border-radius:9px;background:#fff;color:#223b53;font:inherit;line-height:20px;}
+.caffoot-search-options button {width:100%;min-height:35px;padding:10px 11px;border:0;border-radius:6px;text-align:left;background:transparent;color:#345169;font:inherit;line-height:1.4;white-space:normal;}
+.caffoot-search-options button:hover,.caffoot-search-options button:focus-visible,.caffoot-search-options button[aria-selected="true"] {background:#f3f7fa;color:#223b53;outline:0;}
+#racked-options > .device-review-catalogue-actions {display:flex;flex-wrap:wrap;gap:9px;}
+.settings-maintenance-grid {align-items:stretch;}

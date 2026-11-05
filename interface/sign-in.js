@@ -100,7 +100,9 @@ $('form').addEventListener('submit',async e=>{
  }else if(mode==='resume'){
    const r=await request('/api/setup/mfa-secret',data);$('secret').textContent=r.mfaSecret;mode='enrol';display();showMfaQr('setup-qr',r.mfaUri);
  }else if(mode==='enrol'){
-   await request('/api/setup/mfa',{...data,mfa_code:$('code').value});mode='complete';display();
+   await request('/api/setup/mfa',{...data,mfa_code:$('code').value});
+   $('code').value='';$('confirm-password').value='';$('secret').replaceChildren();$('setup-qr').replaceChildren();
+   mode='complete';display();
  }else{
    try{
      await request('/api/login',{...data,...(mode==='login-mfa'?{mfa_code:$('code').value}:{})});
@@ -192,5 +194,5 @@ for(const id of ['recovery-request-form','recovery-confirm-form']){
 
 $('back-to-welcome').addEventListener('click',()=>{setupWelcomeAcknowledged=false;display();});
 $('setup-continue-sign-in').addEventListener('click',()=>{
- mode='login';display();$('message').style.color='#166534';$('message').textContent='MFA enrolled. Sign in to continue.';
+ mode='login';$('code').value='';display();$('message').style.color='#166534';$('message').textContent='MFA enrolled. Sign in to continue.';
 });

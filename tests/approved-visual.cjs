@@ -36,6 +36,7 @@ const items=[
  ['sign-in','sign-in-first-run-draft-03',null,null],
  ['audit-trail','audit-trail-draft-01','audit',null]
 ];
+items.push(['rack-overview','racks-draft-04','racks',null,{kind:'rack-overview'}]);
 for(const value of ['insights','activity'])items.push(['dashboard-'+value,'dashboard-draft-02','dashboard',null,{kind:'page-tab',live:'[data-action="dashboard-tab"][data-dashboard-tab="'+value+'"]',reference:'.subnav [data-tab="'+value+'"]'}]);
 for(const value of ['security','help','about'])items.push(['account-'+value,'my-account-draft-06','account',null,{kind:'page-tab',live:'.approved-account .subnav [data-tab="'+value+'"]',reference:'.subnav [data-tab="'+value+'"]'}]);
 for(const value of ['email','maintenance'])items.push(['settings-'+value,'settings-data-draft-02','settings',null,{kind:'page-tab',live:'.approved-settings .subnav [data-tab="'+value+'"]',reference:'.subnav [data-tab="'+value+'"]'}]);
@@ -81,6 +82,10 @@ async function main(){
     }
     if(file==='devices-management-batch-02')await ref.evaluate(section=>switchDeviceTab(section),section);
     if(tab==='racks')await page.evaluate(()=>{selectedRackId=appState.racks[0].id;v13RackSection='inventory';v13RackDetailOpen=true;renderContent();});
+    if(extra?.kind==='rack-overview'){
+     await page.evaluate(()=>{v13RackSection='overview';renderContent();});
+     await ref.locator('.racks-tabs [data-section-tab="overview"]').click();
+    }
     if(extra?.kind==='page-tab'){
      await page.locator(extra.live).click();await ref.locator(extra.reference).click();
     }
@@ -155,7 +160,7 @@ async function main(){
    }
    await page.waitForTimeout(180);await ref.waitForTimeout(100);
    const measure=async p=>p.evaluate(()=>{
-    const selectors=['.sidebar','.topbar','.header h1','.main','.device-review-dialog','.db-summary','.account-grid','.device-filters','.intelligence-metrics','.ipam-stats','.racks-grid','.cards4','.catalog-header','.catalog-kpis','.catalog-card','.catalog-card-top','.catalog-toolbar','.catalog-record','.modal-layer .modal','.modal-head','.modal-body','.profile-modal-grid','.profile-modal-grid .field','.profile-modal-grid label','.profile-modal-grid .input','.access-grid','.device-review-overlay','.device-review-head','.device-review-body','.device-review-footer','.device-review-panel','.device-review-form-grid','.device-review-field select','.device-review-field textarea'];
+    const selectors=['.racks-tabs','.racks-hub-bar','.racks-grid','.sidebar','.topbar','.header h1','.main','.device-review-dialog','.db-summary','.account-grid','.device-filters','.intelligence-metrics','.ipam-stats','.racks-grid','.cards4','.catalog-header','.catalog-kpis','.catalog-card','.catalog-card-top','.catalog-toolbar','.catalog-record','.modal-layer .modal','.modal-head','.modal-body','.profile-modal-grid','.profile-modal-grid .field','.profile-modal-grid label','.profile-modal-grid .input','.access-grid','.device-review-overlay','.device-review-head','.device-review-body','.device-review-footer','.device-review-panel','.device-review-form-grid','.device-review-field select','.device-review-field textarea'];
     const result={overflow:document.documentElement.scrollWidth>innerWidth};
     const renderedControl=element=>element?.classList.contains('caffoot-search-native')
       ? element.nextElementSibling?.querySelector('.caffoot-search-trigger') : element;

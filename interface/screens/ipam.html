@@ -312,7 +312,7 @@
 <!-- interface-template:ipam/open-bulk-ip-modal-1 -->
         <div class="ipam-modal-head">
             <div><div class="eyebrow">IP ADDRESS MANAGEMENT</div><h2>Bulk Edit IP Range</h2></div>
-            <button type="button" data-action="close-modal" class="ipam-modal-close" aria-label="Close dialog">×</button>
+            <button type="button" data-action="close-modal" class="ipam-modal-close app-modal-close" aria-label="Close dialog">Close ×</button>
         </div>
         <form data-form-action="bulk-ip" data-subnet-id="{{slot:0}}">
             <div class="ipam-modal-body">
@@ -353,7 +353,7 @@
 <!-- interface-template:ipam/approved-bulk-confirm-1 --><p class="ipam-modal-note">Protected examples: {{slot:0}}</p><!-- /interface-template -->
 
 <!-- interface-template:ipam/approved-bulk-confirm-2 -->
-      <div class="ipam-modal-head"><div><div class="eyebrow">IP ADDRESS MANAGEMENT</div><h2>Confirm bulk {{slot:0}}</h2></div><button type="button" class="ipam-modal-close" aria-label="Back to editing" data-action="return-from-bulk-ip-assignment">×</button></div>
+      <div class="ipam-modal-head"><div><div class="eyebrow">IP ADDRESS MANAGEMENT</div><h2>Confirm bulk {{slot:0}}</h2></div><button type="button" class="ipam-modal-close app-modal-close" aria-label="Back to editing" data-action="return-from-bulk-ip-assignment">Close ×</button></div>
       <div class="ipam-modal-body">
         <div class="ipam-modal-explain warn">Review changes before applying. Gateways, device-owned IPs and conflicting records remain protected.</div>
         <p>{{slot:1}} address(es) will change; {{slot:2}} protected address(es) will be skipped.</p>
@@ -369,7 +369,7 @@
         <div class="ipam-modal-head">
             <div><div class="eyebrow">IP ADDRESS MANAGEMENT</div>
                 <h2>{{slot:0}}</h2></div>
-            <button type="button" data-action="cancel-subnet-modal" class="ipam-modal-close" aria-label="Close dialog">×</button>
+            <button type="button" data-action="cancel-subnet-modal" class="ipam-modal-close app-modal-close" aria-label="Close dialog">Close ×</button>
         </div>
         <form data-form-action="subnet" data-subnet-id="{{slot:1}}">
             <div class="ipam-modal-body">
@@ -430,7 +430,7 @@
         <div class="ipam-modal-head">
             <div><div class="eyebrow">IP ADDRESS MANAGEMENT</div>
                 <h2>Configure IP: <span class="font-mono">{{slot:0}}</span></h2></div>
-            <button type="button" data-action="close-modal" class="ipam-modal-close" aria-label="Close dialog">×</button>
+            <button type="button" data-action="close-modal" class="ipam-modal-close app-modal-close" aria-label="Close dialog">Close ×</button>
         </div>
         <form data-form-action="ip" data-ip="{{slot:1}}">
             <div class="ipam-modal-body">

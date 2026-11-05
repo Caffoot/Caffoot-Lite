@@ -1,7 +1,7 @@
 <!-- interface-template:audit-trail/approved-audit-markup-1 --><div class="approved-audit"><main class="main">
   <div class="eyebrow">CHANGE HISTORY &amp; ACCOUNTABILITY</div>
   <div class="header"><div><h1>Audit Trail</h1><p>Know what happened to your infrastructure — what changed, who made it, and when.</p></div><div><button class="btn primary" type="button" data-action="export-audit">Export History (JSON)</button></div></div>
-  <div class="audit-overview-note"><span aria-hidden="true">ⓘ</span><div><strong>Central audit history:</strong> Events are loaded from your authorised SQLite records. Older events may not contain actor identity or previous and new field values. Missing information is shown, never guessed.</div></div>
+  <div class="audit-overview-note"><span aria-hidden="true">ⓘ</span><div><strong>Your audit history:</strong> View changes you have permission to see. Older events may not include who made the change or before-and-after values. Missing information is shown, never guessed.</div></div>
   <section class="audit-stats" aria-label="Recorded audit totals">
    <div class="card audit-stat"><span class="label">Recorded events</span><span class="value" id="stat-total">0</span><span class="hint">Events visible to your account</span></div>
    <div class="card audit-stat"><span class="label">Inventory activity</span><span class="value" id="stat-inventory">0</span><span class="hint">Devices · IPAM · Racks</span></div>
@@ -32,8 +32,8 @@
   <section id="pane-coverage" class="audit-pane" role="tabpanel" aria-labelledby="tab-coverage" hidden>
     <div class="section-heading"><div><h2>Audit recording coverage</h2><p>Existing recording and approved additional coverage.</p></div></div>
     <div class="coverage-top">
-<div class="card coverage-card"><div class="eyebrow">CENTRALLY STORED</div><div class="big">Existing inventory events</div><p>Device, IPAM, Rack and managed-settings history is held in SQLite. Older records are preserved without fabricating missing details.</p></div>
-<div class="card coverage-card"><div class="eyebrow">V2.1 · IN DEVELOPMENT</div><div class="big">Accountable changes</div><p>New inventory events capture authenticated actor and outcome. Additional account and security event coverage is being integrated.</p></div>
+<div class="card coverage-card"><div class="eyebrow">SAVED HISTORY</div><div class="big">Existing inventory events</div><p>Saved device, IPAM, rack and settings changes. Older records keep the information originally recorded.</p></div>
+<div class="card coverage-card"><div class="eyebrow">V2.1 · PRIVATE ACCEPTANCE</div><div class="big">Accountable changes</div><p>New inventory events capture authenticated actor and outcome. Additional account and security event coverage is being integrated.</p></div>
 <div class="card coverage-card"><div class="eyebrow">APPROVED RETENTION</div><div class="big">No automatic expiry</div><p>History is retained by default. Deletion and purging are not available, and server-side section permissions remain enforced.</p></div>
 </div>
 <div class="coverage-grid">
@@ -51,12 +51,12 @@
       </div>
     </div>
     <div class="audit-warn"><strong>Important security boundary:</strong> never record passwords, password hashes, MFA seeds or codes, session tokens, API secrets or entire sensitive request bodies. Before/after values should be carefully limited to safe, useful fields. The audit record must remain read-only; this is not a data restore facility.</div>
-    <p class="coverage-footnote">Audit records remain read-only. Historic records which lack actor or field-value detail retain that limitation; event retention has no automatic expiry.</p>
+
   </section>
-  <div class="foot">Caffoot Lite · Read-only, permission-filtered history · Stored centrally in SQLite</div>
+
 </main><div class="modal-layer" id="audit-detail-layer" hidden>
 <div class="modal audit-modal" role="dialog" aria-modal="true" aria-labelledby="audit-detail-title">
-<div class="modal-head"><div><p class="eyebrow">ACTIVITY DETAILS</p><h2 id="audit-detail-title">Change details</h2><p id="audit-detail-lead">Recorded event</p></div><button class="close" data-action="audit-close-detail" type="button" aria-label="Close event details">×</button></div>
+<div class="modal-head"><div><p class="eyebrow">ACTIVITY DETAILS</p><h2 id="audit-detail-title">Change details</h2><p id="audit-detail-lead">Recorded event</p></div><button class="close app-modal-close" data-action="audit-close-detail" type="button" aria-label="Close event details">Close ×</button></div>
 <div class="modal-body" id="audit-detail-body"></div></div></div></div><!-- /interface-template -->
 
 <!-- interface-template:audit-trail/fields-1 --><h3 class="detail-section">Recorded field changes</h3><div class="diff-head"><span>Field</span><span>Previous value</span><span>New value</span></div><!-- /interface-template -->
