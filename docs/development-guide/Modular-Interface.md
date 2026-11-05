@@ -51,3 +51,6 @@ The script builds a local image from `git archive`, labels it with the exact com
 
 
 Batch 02 presentation corrections use `styles/themes.css` for the existing slate dark palette across page and external modal mounts; high-specificity shared controls consume theme tokens with unchanged light fallbacks. `sign-in-controls.css` applies that palette to the public authentication flow without changing protected asset access. The existing preference is also applied by `applySignInTheme` in `sign-in.js`. See the [Batch 02 verification record](../development-handovers/evidence/owner-acceptance-batch-02.md) for measured results and remaining owner acceptance.
+
+
+Issue #305 explicitly amends Rack Overview to place its existing secondary tabs before the four shared metrics on every subtab, with vertical rhythm measured from live Device Intelligence. It removes only the three Audit Coverage card eyebrows. Scoped integration rules preserve the historical pinned sources. See the [Issue #305 verification record](../development-handovers/evidence/issue-305/Report.md).

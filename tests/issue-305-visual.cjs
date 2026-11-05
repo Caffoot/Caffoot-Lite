@@ -24,6 +24,29 @@ module.exports=async({page,out})=>{
   for(const width of [1440,390])for(const theme of ['light','dark']){
    await page.setViewportSize({width,height:width===1440?950:844});
    await page.evaluate(theme=>{closeModal(true);caffootSetTheme(theme);switchTab('devices');activeDeviceDetailsTab='overview';deviceIntelligenceTab='overview';renderContent();},theme);
+   if(process.env.CAFFOOT_ISSUE305_ACTIONS_ONLY==='1'){
+    await page.evaluate(()=>{switchTab('racks');v13RackSection='overview';v13RackOverviewTab='locations';renderContent();});
+    const strip=page.locator('.racks-panel[data-panel="overview"] > .rack-subtabs');
+    await strip.evaluate(e=>e.scrollLeft=e.scrollWidth);
+    const reachable=await strip.evaluate(e=>{const a=e.querySelector('.active').getBoundingClientRect(),b=e.getBoundingClientRect();return a.left>=b.left&&a.right<=b.right+1;});
+    assert.ok(reachable,'Locations & Types remains reachable by horizontal scrolling');
+    await page.screenshot({path:path.join(out,'rack-scroll-'+theme+'-'+width+'.png'),fullPage:true});
+    await page.locator('[data-action="v13-overview-tab"][data-tab="capacity"]').focus();await page.keyboard.press('Enter');
+    await page.waitForFunction(()=>v13RackOverviewTab==='capacity');assert.equal(await page.locator('#rack-overview-stats > .rack-stat').count(),4);
+    const backup=await page.evaluate(()=>JSON.stringify({racks:appState.racks,devices:appState.devices,rackAccessories:appState.rackAccessories}));
+    for(const tab of ['capacity','equipment','locations']){
+     await page.evaluate(tab=>{appState.racks=[];appState.devices=[];appState.rackAccessories=[];v13RackOverviewTab=tab;renderContent();},tab);
+     const values=await page.locator('#rack-overview-stats strong').allTextContents();assert.deepEqual(values,['0','0U','0','0']);
+     const empty=await measure('racks');assert.equal(empty.metricsVisible,true);assert.equal(empty.overflow,false);
+     results.push({screen:'empty-'+tab,width,theme,...empty});
+    }
+    await page.evaluate(backup=>{Object.assign(appState,JSON.parse(backup));switchTab('audit');activeAuditTab='coverage';renderContent();},backup);
+    const history=await page.evaluate(()=>JSON.parse(JSON.stringify(auditHistory)));
+    const waiting=page.waitForEvent('download');await page.locator('[data-action="export-audit"]').click();const download=await waiting;
+    const exported=JSON.parse(fs.readFileSync(await download.path(),'utf8'));assert.deepEqual(exported.events,history);assert.ok(Number.isFinite(Date.parse(exported.exportedAt)));
+    results.push({screen:'actions',width,theme,keyboard:true,horizontalScroll:true,auditExportEvents:exported.events.length});
+    console.log('Checked Issue #305 actions',width,theme);continue;
+   }
    await page.waitForTimeout(220);
    const reference=await measure('devices');results.push({screen:'devices',width,theme,...reference});
    await page.screenshot({path:path.join(out,'devices-'+theme+'-'+width+'.png'),fullPage:true});
@@ -42,7 +65,7 @@ module.exports=async({page,out})=>{
      const groups=await page.locator('#rack-overview-insights,#rack-overview-insights .rack-overview-stack,#rack-overview-insights .rack-overview-grid').evaluateAll(es=>es.map(e=>parseFloat(getComputedStyle(e).gap)));
      assert.ok(groups.every(g=>g===reference.referenceInsightGap),'Insight group gaps match Devices');
      assert.ok(actual.tabs.bottom<=actual.metrics.y&&actual.metrics.bottom<=actual.insights.y,'Approved secondary tabs → metrics → insights order');
-     const old=JSON.parse(fs.readFileSync(path.join(__dirname,'../work/issue-305/baseline/measurements.json'))).results.find(r=>r.screen==='racks-'+tab&&r.width===width&&r.theme===theme);
+     const old=JSON.parse(fs.readFileSync(path.join(__dirname,'../docs/development-handovers/evidence/issue-305/baseline.json'))).results.find(r=>r.screen==='racks-'+tab&&r.width===width&&r.theme===theme);
      for(const key of ['metricsText','content','chartValues'])assert.deepEqual(actual[key],old[key],tab+' preserves '+key);
     }
     await page.screenshot({path:path.join(out,'racks-'+tab+'-'+theme+'-'+width+'.png'),fullPage:true});
@@ -62,7 +85,7 @@ module.exports=async({page,out})=>{
    results.push({screen:'audit',width,theme,...audit});assert.equal(audit.overflow,false);
    if(!baseline){
     assert.equal(audit.cards.length,3);assert.ok(audit.cards.every(c=>c.label===null),'Only redundant card labels removed');
-    const old=JSON.parse(fs.readFileSync(path.join(__dirname,'../work/issue-305/baseline/measurements.json'))).results.find(r=>r.screen==='audit'&&r.width===width&&r.theme===theme);
+    const old=JSON.parse(fs.readFileSync(path.join(__dirname,'../docs/development-handovers/evidence/issue-305/baseline.json'))).results.find(r=>r.screen==='audit'&&r.width===width&&r.theme===theme);
     assert.deepEqual(audit.cards.map(({heading,description})=>({heading,description})),old.cards.map(({heading,description})=>({heading,description})));
     for(const key of ['statuses','notice'])assert.deepEqual(audit[key],old[key]);
    }

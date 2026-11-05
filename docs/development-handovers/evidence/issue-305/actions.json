@@ -1,0 +1,1314 @@
+{
+  "baseline": false,
+  "errors": [],
+  "results": [
+    {
+      "screen": "empty-capacity",
+      "width": 1440,
+      "theme": "light",
+      "heading": {
+        "x": 258.1875,
+        "y": 261.03125,
+        "width": 1138.625,
+        "height": 45,
+        "bottom": 306.03125
+      },
+      "tabs": {
+        "x": 258.1875,
+        "y": 323.03125,
+        "width": 346.25,
+        "height": 55,
+        "bottom": 378.03125
+      },
+      "metrics": {
+        "x": 258.1875,
+        "y": 397.03125,
+        "width": 1138.625,
+        "height": 129,
+        "bottom": 526.03125
+      },
+      "insights": {
+        "x": 258.1875,
+        "y": 543.03125,
+        "width": 1138.625,
+        "height": 864.25,
+        "bottom": 1407.28125
+      },
+      "mainGap": 18,
+      "headingToTabs": 17,
+      "tabsToMetrics": 19,
+      "metricsToInsights": 17,
+      "metricRowGap": 14,
+      "metricColumnGap": 14,
+      "referenceInsightGap": null,
+      "metricsVisible": true,
+      "metricsText": [
+        "Total racks0Saved inventory",
+        "Physical rack capacity0USaved inventory",
+        "Mounted devices0Saved inventory",
+        "Rack accessories0Saved inventory"
+      ],
+      "content": "Combined face utilisationFront and rear rack-unit capacity are counted separately.0U occupied0U free0% usedFront vs rear occupancyOccupied units on each face, compared with physical estate height.Front occupied0URear occupied0ULargest contiguous free spaceLongest uninterrupted empty U block on either the front or rear face of each rack. A rack can have more free U in total than this value.No data recorded yet.Understanding available rack spaceIllustrative 12U rack — not a live reading or an actual inventory rack.121110987654321Total free space9UAll empty units added together.Largest contiguous free block6USix uninterrupted empty units at the top. Actual device fit also depends on depth and mounting constraints.FreeOccupied",
+      "chartValues": [
+        "0 of 0 rack units occupied",
+        "12U example rack: units 12 through 7 free, units 6 through 4 occupied, units 3 through 1 free"
+      ],
+      "overflow": false,
+      "insightGroups": [
+        {
+          "x": 258.1875,
+          "y": 543.03125,
+          "width": 1138.625,
+          "height": 864.25,
+          "bottom": 1407.28125,
+          "class": "space-y-4 rack-overview-stack",
+          "marginTop": "0px",
+          "gap": "17px"
+        },
+        {
+          "x": 258.1875,
+          "y": 543.03125,
+          "width": 1138.625,
+          "height": 176.75,
+          "bottom": 719.78125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 258.1875,
+          "y": 736.78125,
+          "width": 1138.625,
+          "height": 220.75,
+          "bottom": 957.53125,
+          "class": "grid grid-cols-1 xl:grid-cols-2 gap-4 rack-overview-grid",
+          "marginTop": "0px",
+          "gap": "17px"
+        },
+        {
+          "x": 258.1875,
+          "y": 736.78125,
+          "width": 560.8125,
+          "height": 220.75,
+          "bottom": 957.53125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 836,
+          "y": 736.78125,
+          "width": 560.8125,
+          "height": 220.75,
+          "bottom": 957.53125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 258.1875,
+          "y": 974.53125,
+          "width": 1138.625,
+          "height": 432.75,
+          "bottom": 1407.28125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        }
+      ]
+    },
+    {
+      "screen": "empty-equipment",
+      "width": 1440,
+      "theme": "light",
+      "heading": {
+        "x": 258.1875,
+        "y": 261.03125,
+        "width": 1138.625,
+        "height": 45,
+        "bottom": 306.03125
+      },
+      "tabs": {
+        "x": 258.1875,
+        "y": 323.03125,
+        "width": 346.25,
+        "height": 55,
+        "bottom": 378.03125
+      },
+      "metrics": {
+        "x": 258.1875,
+        "y": 397.03125,
+        "width": 1138.625,
+        "height": 129,
+        "bottom": 526.03125
+      },
+      "insights": {
+        "x": 258.1875,
+        "y": 543.03125,
+        "width": 1138.625,
+        "height": 438.5,
+        "bottom": 981.53125
+      },
+      "mainGap": 18,
+      "headingToTabs": 17,
+      "tabsToMetrics": 19,
+      "metricsToInsights": 17,
+      "metricRowGap": 14,
+      "metricColumnGap": 14,
+      "referenceInsightGap": null,
+      "metricsVisible": true,
+      "metricsText": [
+        "Total racks0Saved inventory",
+        "Physical rack capacity0USaved inventory",
+        "Mounted devices0Saved inventory",
+        "Rack accessories0Saved inventory"
+      ],
+      "content": "Mounted equipment by typeEach bar counts devices assigned to a rack, grouped by their recorded device type. A device is counted once.No data recorded yet.Devices and accessories by rackCompare how many devices and rack accessories are recorded in each rack. These are item counts, not rack-unit usage.No racks recorded.How to read these chartsEquipment figures describe saved inventory records, not live device status.DevicesA mounted server, switch or other device contributes one to its type and rack totals, regardless of its height in U.AccessoriesPDUs, cable managers and other recorded accessories are counted separately. A 0U accessory still counts as an item.",
+      "chartValues": [],
+      "overflow": false,
+      "insightGroups": [
+        {
+          "x": 258.1875,
+          "y": 543.03125,
+          "width": 1138.625,
+          "height": 178.75,
+          "bottom": 721.78125,
+          "class": "grid grid-cols-1 xl:grid-cols-2 gap-4 rack-overview-grid",
+          "marginTop": "0px",
+          "gap": "17px"
+        },
+        {
+          "x": 258.1875,
+          "y": 738.78125,
+          "width": 1138.625,
+          "height": 242.75,
+          "bottom": 981.53125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 279.1875,
+          "y": 776.15625,
+          "width": 1096.625,
+          "height": 54.375,
+          "bottom": 830.53125,
+          "class": "",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 279.1875,
+          "y": 846.53125,
+          "width": 1096.625,
+          "height": 114,
+          "bottom": 960.53125,
+          "class": "grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm",
+          "marginTop": "16px",
+          "gap": "16px"
+        },
+        {
+          "x": 279.1875,
+          "y": 846.53125,
+          "width": 540.3125,
+          "height": 114,
+          "bottom": 960.53125,
+          "class": "rounded-xl bg-indigo-50 dark:bg-indigo-900/20 p-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 835.5,
+          "y": 846.53125,
+          "width": 540.3125,
+          "height": 114,
+          "bottom": 960.53125,
+          "class": "rounded-xl bg-slate-100 dark:bg-slate-700/60 p-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        }
+      ]
+    },
+    {
+      "screen": "empty-locations",
+      "width": 1440,
+      "theme": "light",
+      "heading": {
+        "x": 258.1875,
+        "y": 261.03125,
+        "width": 1138.625,
+        "height": 45,
+        "bottom": 306.03125
+      },
+      "tabs": {
+        "x": 258.1875,
+        "y": 323.03125,
+        "width": 346.25,
+        "height": 55,
+        "bottom": 378.03125
+      },
+      "metrics": {
+        "x": 258.1875,
+        "y": 397.03125,
+        "width": 1138.625,
+        "height": 129,
+        "bottom": 526.03125
+      },
+      "insights": {
+        "x": 258.1875,
+        "y": 543.03125,
+        "width": 1138.625,
+        "height": 420.5,
+        "bottom": 963.53125
+      },
+      "mainGap": 18,
+      "headingToTabs": 17,
+      "tabsToMetrics": 19,
+      "metricsToInsights": 17,
+      "metricRowGap": 14,
+      "metricColumnGap": 14,
+      "referenceInsightGap": null,
+      "metricsVisible": true,
+      "metricsText": [
+        "Total racks0Saved inventory",
+        "Physical rack capacity0USaved inventory",
+        "Mounted devices0Saved inventory",
+        "Rack accessories0Saved inventory"
+      ],
+      "content": "Racks by locationEach bar counts racks assigned to that location, regardless of rack height.No data recorded yet.Mounted devices by locationEach bar counts devices mounted in racks at that location; unmounted devices are excluded.No data recorded yet.Rack-type charts will follow the Phase 1C rack-type schema update.How to read location chartsLocations come from the rack records in your inventory.Racks by location: a 12U cabinet and a 42U rack each count as one rack.Mounted devices by location: devices inherit their location from the rack they are mounted in. This is not a count of all devices at that site.Locations not recorded are grouped under “Not recorded”.",
+      "chartValues": [],
+      "overflow": false,
+      "insightGroups": [
+        {
+          "x": 258.1875,
+          "y": 543.03125,
+          "width": 1138.625,
+          "height": 196.75,
+          "bottom": 739.78125,
+          "class": "grid grid-cols-1 xl:grid-cols-2 gap-4 rack-overview-grid",
+          "marginTop": "0px",
+          "gap": "17px"
+        },
+        {
+          "x": 258.1875,
+          "y": 756.78125,
+          "width": 1138.625,
+          "height": 206.75,
+          "bottom": 963.53125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 279.1875,
+          "y": 794.15625,
+          "width": 1096.625,
+          "height": 54.375,
+          "bottom": 848.53125,
+          "class": "",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 279.1875,
+          "y": 864.53125,
+          "width": 1096.625,
+          "height": 78,
+          "bottom": 942.53125,
+          "class": "text-sm text-slate-700 dark:text-slate-200 space-y-2",
+          "marginTop": "16px",
+          "gap": "normal"
+        }
+      ]
+    },
+    {
+      "screen": "actions",
+      "width": 1440,
+      "theme": "light",
+      "keyboard": true,
+      "horizontalScroll": true,
+      "auditExportEvents": 0
+    },
+    {
+      "screen": "empty-capacity",
+      "width": 1440,
+      "theme": "dark",
+      "heading": {
+        "x": 258.1875,
+        "y": 261.03125,
+        "width": 1138.625,
+        "height": 45,
+        "bottom": 306.03125
+      },
+      "tabs": {
+        "x": 258.1875,
+        "y": 323.03125,
+        "width": 346.25,
+        "height": 55,
+        "bottom": 378.03125
+      },
+      "metrics": {
+        "x": 258.1875,
+        "y": 397.03125,
+        "width": 1138.625,
+        "height": 129,
+        "bottom": 526.03125
+      },
+      "insights": {
+        "x": 258.1875,
+        "y": 543.03125,
+        "width": 1138.625,
+        "height": 864.25,
+        "bottom": 1407.28125
+      },
+      "mainGap": 18,
+      "headingToTabs": 17,
+      "tabsToMetrics": 19,
+      "metricsToInsights": 17,
+      "metricRowGap": 14,
+      "metricColumnGap": 14,
+      "referenceInsightGap": null,
+      "metricsVisible": true,
+      "metricsText": [
+        "Total racks0Saved inventory",
+        "Physical rack capacity0USaved inventory",
+        "Mounted devices0Saved inventory",
+        "Rack accessories0Saved inventory"
+      ],
+      "content": "Combined face utilisationFront and rear rack-unit capacity are counted separately.0U occupied0U free0% usedFront vs rear occupancyOccupied units on each face, compared with physical estate height.Front occupied0URear occupied0ULargest contiguous free spaceLongest uninterrupted empty U block on either the front or rear face of each rack. A rack can have more free U in total than this value.No data recorded yet.Understanding available rack spaceIllustrative 12U rack — not a live reading or an actual inventory rack.121110987654321Total free space9UAll empty units added together.Largest contiguous free block6USix uninterrupted empty units at the top. Actual device fit also depends on depth and mounting constraints.FreeOccupied",
+      "chartValues": [
+        "0 of 0 rack units occupied",
+        "12U example rack: units 12 through 7 free, units 6 through 4 occupied, units 3 through 1 free"
+      ],
+      "overflow": false,
+      "insightGroups": [
+        {
+          "x": 258.1875,
+          "y": 543.03125,
+          "width": 1138.625,
+          "height": 864.25,
+          "bottom": 1407.28125,
+          "class": "space-y-4 rack-overview-stack",
+          "marginTop": "0px",
+          "gap": "17px"
+        },
+        {
+          "x": 258.1875,
+          "y": 543.03125,
+          "width": 1138.625,
+          "height": 176.75,
+          "bottom": 719.78125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 258.1875,
+          "y": 736.78125,
+          "width": 1138.625,
+          "height": 220.75,
+          "bottom": 957.53125,
+          "class": "grid grid-cols-1 xl:grid-cols-2 gap-4 rack-overview-grid",
+          "marginTop": "0px",
+          "gap": "17px"
+        },
+        {
+          "x": 258.1875,
+          "y": 736.78125,
+          "width": 560.8125,
+          "height": 220.75,
+          "bottom": 957.53125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 836,
+          "y": 736.78125,
+          "width": 560.8125,
+          "height": 220.75,
+          "bottom": 957.53125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 258.1875,
+          "y": 974.53125,
+          "width": 1138.625,
+          "height": 432.75,
+          "bottom": 1407.28125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        }
+      ]
+    },
+    {
+      "screen": "empty-equipment",
+      "width": 1440,
+      "theme": "dark",
+      "heading": {
+        "x": 258.1875,
+        "y": 261.03125,
+        "width": 1138.625,
+        "height": 45,
+        "bottom": 306.03125
+      },
+      "tabs": {
+        "x": 258.1875,
+        "y": 323.03125,
+        "width": 346.25,
+        "height": 55,
+        "bottom": 378.03125
+      },
+      "metrics": {
+        "x": 258.1875,
+        "y": 397.03125,
+        "width": 1138.625,
+        "height": 129,
+        "bottom": 526.03125
+      },
+      "insights": {
+        "x": 258.1875,
+        "y": 543.03125,
+        "width": 1138.625,
+        "height": 438.5,
+        "bottom": 981.53125
+      },
+      "mainGap": 18,
+      "headingToTabs": 17,
+      "tabsToMetrics": 19,
+      "metricsToInsights": 17,
+      "metricRowGap": 14,
+      "metricColumnGap": 14,
+      "referenceInsightGap": null,
+      "metricsVisible": true,
+      "metricsText": [
+        "Total racks0Saved inventory",
+        "Physical rack capacity0USaved inventory",
+        "Mounted devices0Saved inventory",
+        "Rack accessories0Saved inventory"
+      ],
+      "content": "Mounted equipment by typeEach bar counts devices assigned to a rack, grouped by their recorded device type. A device is counted once.No data recorded yet.Devices and accessories by rackCompare how many devices and rack accessories are recorded in each rack. These are item counts, not rack-unit usage.No racks recorded.How to read these chartsEquipment figures describe saved inventory records, not live device status.DevicesA mounted server, switch or other device contributes one to its type and rack totals, regardless of its height in U.AccessoriesPDUs, cable managers and other recorded accessories are counted separately. A 0U accessory still counts as an item.",
+      "chartValues": [],
+      "overflow": false,
+      "insightGroups": [
+        {
+          "x": 258.1875,
+          "y": 543.03125,
+          "width": 1138.625,
+          "height": 178.75,
+          "bottom": 721.78125,
+          "class": "grid grid-cols-1 xl:grid-cols-2 gap-4 rack-overview-grid",
+          "marginTop": "0px",
+          "gap": "17px"
+        },
+        {
+          "x": 258.1875,
+          "y": 738.78125,
+          "width": 1138.625,
+          "height": 242.75,
+          "bottom": 981.53125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 279.1875,
+          "y": 776.15625,
+          "width": 1096.625,
+          "height": 54.375,
+          "bottom": 830.53125,
+          "class": "",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 279.1875,
+          "y": 846.53125,
+          "width": 1096.625,
+          "height": 114,
+          "bottom": 960.53125,
+          "class": "grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm",
+          "marginTop": "16px",
+          "gap": "16px"
+        },
+        {
+          "x": 279.1875,
+          "y": 846.53125,
+          "width": 540.3125,
+          "height": 114,
+          "bottom": 960.53125,
+          "class": "rounded-xl bg-indigo-50 dark:bg-indigo-900/20 p-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 835.5,
+          "y": 846.53125,
+          "width": 540.3125,
+          "height": 114,
+          "bottom": 960.53125,
+          "class": "rounded-xl bg-slate-100 dark:bg-slate-700/60 p-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        }
+      ]
+    },
+    {
+      "screen": "empty-locations",
+      "width": 1440,
+      "theme": "dark",
+      "heading": {
+        "x": 258.1875,
+        "y": 261.03125,
+        "width": 1138.625,
+        "height": 45,
+        "bottom": 306.03125
+      },
+      "tabs": {
+        "x": 258.1875,
+        "y": 323.03125,
+        "width": 346.25,
+        "height": 55,
+        "bottom": 378.03125
+      },
+      "metrics": {
+        "x": 258.1875,
+        "y": 397.03125,
+        "width": 1138.625,
+        "height": 129,
+        "bottom": 526.03125
+      },
+      "insights": {
+        "x": 258.1875,
+        "y": 543.03125,
+        "width": 1138.625,
+        "height": 420.5,
+        "bottom": 963.53125
+      },
+      "mainGap": 18,
+      "headingToTabs": 17,
+      "tabsToMetrics": 19,
+      "metricsToInsights": 17,
+      "metricRowGap": 14,
+      "metricColumnGap": 14,
+      "referenceInsightGap": null,
+      "metricsVisible": true,
+      "metricsText": [
+        "Total racks0Saved inventory",
+        "Physical rack capacity0USaved inventory",
+        "Mounted devices0Saved inventory",
+        "Rack accessories0Saved inventory"
+      ],
+      "content": "Racks by locationEach bar counts racks assigned to that location, regardless of rack height.No data recorded yet.Mounted devices by locationEach bar counts devices mounted in racks at that location; unmounted devices are excluded.No data recorded yet.Rack-type charts will follow the Phase 1C rack-type schema update.How to read location chartsLocations come from the rack records in your inventory.Racks by location: a 12U cabinet and a 42U rack each count as one rack.Mounted devices by location: devices inherit their location from the rack they are mounted in. This is not a count of all devices at that site.Locations not recorded are grouped under “Not recorded”.",
+      "chartValues": [],
+      "overflow": false,
+      "insightGroups": [
+        {
+          "x": 258.1875,
+          "y": 543.03125,
+          "width": 1138.625,
+          "height": 196.75,
+          "bottom": 739.78125,
+          "class": "grid grid-cols-1 xl:grid-cols-2 gap-4 rack-overview-grid",
+          "marginTop": "0px",
+          "gap": "17px"
+        },
+        {
+          "x": 258.1875,
+          "y": 756.78125,
+          "width": 1138.625,
+          "height": 206.75,
+          "bottom": 963.53125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 279.1875,
+          "y": 794.15625,
+          "width": 1096.625,
+          "height": 54.375,
+          "bottom": 848.53125,
+          "class": "",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 279.1875,
+          "y": 864.53125,
+          "width": 1096.625,
+          "height": 78,
+          "bottom": 942.53125,
+          "class": "text-sm text-slate-700 dark:text-slate-200 space-y-2",
+          "marginTop": "16px",
+          "gap": "normal"
+        }
+      ]
+    },
+    {
+      "screen": "actions",
+      "width": 1440,
+      "theme": "dark",
+      "keyboard": true,
+      "horizontalScroll": true,
+      "auditExportEvents": 0
+    },
+    {
+      "screen": "empty-capacity",
+      "width": 390,
+      "theme": "light",
+      "heading": {
+        "x": 79,
+        "y": 325.453125,
+        "width": 297,
+        "height": 62,
+        "bottom": 387.453125
+      },
+      "tabs": {
+        "x": 79,
+        "y": 401.453125,
+        "width": 297,
+        "height": 55,
+        "bottom": 456.453125
+      },
+      "metrics": {
+        "x": 79,
+        "y": 475.453125,
+        "width": 297,
+        "height": 306,
+        "bottom": 781.453125
+      },
+      "insights": {
+        "x": 79,
+        "y": 798.453125,
+        "width": 297,
+        "height": 1434,
+        "bottom": 2232.453125
+      },
+      "mainGap": 18,
+      "headingToTabs": 14,
+      "tabsToMetrics": 19,
+      "metricsToInsights": 17,
+      "metricRowGap": 10,
+      "metricColumnGap": 10,
+      "referenceInsightGap": null,
+      "metricsVisible": true,
+      "metricsText": [
+        "Total racks0Saved inventory",
+        "Physical rack capacity0USaved inventory",
+        "Mounted devices0Saved inventory",
+        "Rack accessories0Saved inventory"
+      ],
+      "content": "Combined face utilisationFront and rear rack-unit capacity are counted separately.0U occupied0U free0% usedFront vs rear occupancyOccupied units on each face, compared with physical estate height.Front occupied0URear occupied0ULargest contiguous free spaceLongest uninterrupted empty U block on either the front or rear face of each rack. A rack can have more free U in total than this value.No data recorded yet.Understanding available rack spaceIllustrative 12U rack — not a live reading or an actual inventory rack.121110987654321Total free space9UAll empty units added together.Largest contiguous free block6USix uninterrupted empty units at the top. Actual device fit also depends on depth and mounting constraints.FreeOccupied",
+      "chartValues": [
+        "0 of 0 rack units occupied",
+        "12U example rack: units 12 through 7 free, units 6 through 4 occupied, units 3 through 1 free"
+      ],
+      "overflow": false,
+      "insightGroups": [
+        {
+          "x": 79,
+          "y": 798.453125,
+          "width": 297,
+          "height": 1434,
+          "bottom": 2232.453125,
+          "class": "space-y-4 rack-overview-stack",
+          "marginTop": "0px",
+          "gap": "17px"
+        },
+        {
+          "x": 79,
+          "y": 798.453125,
+          "width": 297,
+          "height": 192.75,
+          "bottom": 991.203125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 79,
+          "y": 1008.203125,
+          "width": 297,
+          "height": 464.5,
+          "bottom": 1472.703125,
+          "class": "grid grid-cols-1 xl:grid-cols-2 gap-4 rack-overview-grid",
+          "marginTop": "0px",
+          "gap": "17px"
+        },
+        {
+          "x": 79,
+          "y": 1008.203125,
+          "width": 297,
+          "height": 236.75,
+          "bottom": 1244.953125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 79,
+          "y": 1261.953125,
+          "width": 297,
+          "height": 210.75,
+          "bottom": 1472.703125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 79,
+          "y": 1489.703125,
+          "width": 297,
+          "height": 742.75,
+          "bottom": 2232.453125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        }
+      ]
+    },
+    {
+      "screen": "empty-equipment",
+      "width": 390,
+      "theme": "light",
+      "heading": {
+        "x": 79,
+        "y": 325.453125,
+        "width": 297,
+        "height": 62,
+        "bottom": 387.453125
+      },
+      "tabs": {
+        "x": 79,
+        "y": 401.453125,
+        "width": 297,
+        "height": 55,
+        "bottom": 456.453125
+      },
+      "metrics": {
+        "x": 79,
+        "y": 475.453125,
+        "width": 297,
+        "height": 306,
+        "bottom": 781.453125
+      },
+      "insights": {
+        "x": 79,
+        "y": 798.453125,
+        "width": 297,
+        "height": 914.25,
+        "bottom": 1712.703125
+      },
+      "mainGap": 18,
+      "headingToTabs": 14,
+      "tabsToMetrics": 19,
+      "metricsToInsights": 17,
+      "metricRowGap": 10,
+      "metricColumnGap": 10,
+      "referenceInsightGap": null,
+      "metricsVisible": true,
+      "metricsText": [
+        "Total racks0Saved inventory",
+        "Physical rack capacity0USaved inventory",
+        "Mounted devices0Saved inventory",
+        "Rack accessories0Saved inventory"
+      ],
+      "content": "Mounted equipment by typeEach bar counts devices assigned to a rack, grouped by their recorded device type. A device is counted once.No data recorded yet.Devices and accessories by rackCompare how many devices and rack accessories are recorded in each rack. These are item counts, not rack-unit usage.No racks recorded.How to read these chartsEquipment figures describe saved inventory records, not live device status.DevicesA mounted server, switch or other device contributes one to its type and rack totals, regardless of its height in U.AccessoriesPDUs, cable managers and other recorded accessories are counted separately. A 0U accessory still counts as an item.",
+      "chartValues": [],
+      "overflow": false,
+      "insightGroups": [
+        {
+          "x": 79,
+          "y": 798.453125,
+          "width": 297,
+          "height": 428.5,
+          "bottom": 1226.953125,
+          "class": "grid grid-cols-1 xl:grid-cols-2 gap-4 rack-overview-grid",
+          "marginTop": "0px",
+          "gap": "17px"
+        },
+        {
+          "x": 79,
+          "y": 1243.953125,
+          "width": 297,
+          "height": 468.75,
+          "bottom": 1712.703125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 100,
+          "y": 1281.328125,
+          "width": 255,
+          "height": 70.375,
+          "bottom": 1351.703125,
+          "class": "",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 100,
+          "y": 1367.703125,
+          "width": 255,
+          "height": 324,
+          "bottom": 1691.703125,
+          "class": "grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm",
+          "marginTop": "16px",
+          "gap": "16px"
+        },
+        {
+          "x": 100,
+          "y": 1367.703125,
+          "width": 255,
+          "height": 154,
+          "bottom": 1521.703125,
+          "class": "rounded-xl bg-indigo-50 dark:bg-indigo-900/20 p-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 100,
+          "y": 1537.703125,
+          "width": 255,
+          "height": 154,
+          "bottom": 1691.703125,
+          "class": "rounded-xl bg-slate-100 dark:bg-slate-700/60 p-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        }
+      ]
+    },
+    {
+      "screen": "empty-locations",
+      "width": 390,
+      "theme": "light",
+      "heading": {
+        "x": 79,
+        "y": 325.453125,
+        "width": 297,
+        "height": 62,
+        "bottom": 387.453125
+      },
+      "tabs": {
+        "x": 79,
+        "y": 401.453125,
+        "width": 297,
+        "height": 55,
+        "bottom": 456.453125
+      },
+      "metrics": {
+        "x": 79,
+        "y": 475.453125,
+        "width": 297,
+        "height": 306,
+        "bottom": 781.453125
+      },
+      "insights": {
+        "x": 79,
+        "y": 798.453125,
+        "width": 297,
+        "height": 760.25,
+        "bottom": 1558.703125
+      },
+      "mainGap": 18,
+      "headingToTabs": 14,
+      "tabsToMetrics": 19,
+      "metricsToInsights": 17,
+      "metricRowGap": 10,
+      "metricColumnGap": 10,
+      "referenceInsightGap": null,
+      "metricsVisible": true,
+      "metricsText": [
+        "Total racks0Saved inventory",
+        "Physical rack capacity0USaved inventory",
+        "Mounted devices0Saved inventory",
+        "Rack accessories0Saved inventory"
+      ],
+      "content": "Racks by locationEach bar counts racks assigned to that location, regardless of rack height.No data recorded yet.Mounted devices by locationEach bar counts devices mounted in racks at that location; unmounted devices are excluded.No data recorded yet.Rack-type charts will follow the Phase 1C rack-type schema update.How to read location chartsLocations come from the rack records in your inventory.Racks by location: a 12U cabinet and a 42U rack each count as one rack.Mounted devices by location: devices inherit their location from the rack they are mounted in. This is not a count of all devices at that site.Locations not recorded are grouped under “Not recorded”.",
+      "chartValues": [],
+      "overflow": false,
+      "insightGroups": [
+        {
+          "x": 79,
+          "y": 798.453125,
+          "width": 297,
+          "height": 424.5,
+          "bottom": 1222.953125,
+          "class": "grid grid-cols-1 xl:grid-cols-2 gap-4 rack-overview-grid",
+          "marginTop": "0px",
+          "gap": "17px"
+        },
+        {
+          "x": 79,
+          "y": 1239.953125,
+          "width": 297,
+          "height": 318.75,
+          "bottom": 1558.703125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 100,
+          "y": 1277.328125,
+          "width": 255,
+          "height": 70.375,
+          "bottom": 1347.703125,
+          "class": "",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 100,
+          "y": 1363.703125,
+          "width": 255,
+          "height": 174,
+          "bottom": 1537.703125,
+          "class": "text-sm text-slate-700 dark:text-slate-200 space-y-2",
+          "marginTop": "16px",
+          "gap": "normal"
+        }
+      ]
+    },
+    {
+      "screen": "actions",
+      "width": 390,
+      "theme": "light",
+      "keyboard": true,
+      "horizontalScroll": true,
+      "auditExportEvents": 0
+    },
+    {
+      "screen": "empty-capacity",
+      "width": 390,
+      "theme": "dark",
+      "heading": {
+        "x": 79,
+        "y": 325.453125,
+        "width": 297,
+        "height": 62,
+        "bottom": 387.453125
+      },
+      "tabs": {
+        "x": 79,
+        "y": 401.453125,
+        "width": 297,
+        "height": 55,
+        "bottom": 456.453125
+      },
+      "metrics": {
+        "x": 79,
+        "y": 475.453125,
+        "width": 297,
+        "height": 306,
+        "bottom": 781.453125
+      },
+      "insights": {
+        "x": 79,
+        "y": 798.453125,
+        "width": 297,
+        "height": 1434,
+        "bottom": 2232.453125
+      },
+      "mainGap": 18,
+      "headingToTabs": 14,
+      "tabsToMetrics": 19,
+      "metricsToInsights": 17,
+      "metricRowGap": 10,
+      "metricColumnGap": 10,
+      "referenceInsightGap": null,
+      "metricsVisible": true,
+      "metricsText": [
+        "Total racks0Saved inventory",
+        "Physical rack capacity0USaved inventory",
+        "Mounted devices0Saved inventory",
+        "Rack accessories0Saved inventory"
+      ],
+      "content": "Combined face utilisationFront and rear rack-unit capacity are counted separately.0U occupied0U free0% usedFront vs rear occupancyOccupied units on each face, compared with physical estate height.Front occupied0URear occupied0ULargest contiguous free spaceLongest uninterrupted empty U block on either the front or rear face of each rack. A rack can have more free U in total than this value.No data recorded yet.Understanding available rack spaceIllustrative 12U rack — not a live reading or an actual inventory rack.121110987654321Total free space9UAll empty units added together.Largest contiguous free block6USix uninterrupted empty units at the top. Actual device fit also depends on depth and mounting constraints.FreeOccupied",
+      "chartValues": [
+        "0 of 0 rack units occupied",
+        "12U example rack: units 12 through 7 free, units 6 through 4 occupied, units 3 through 1 free"
+      ],
+      "overflow": false,
+      "insightGroups": [
+        {
+          "x": 79,
+          "y": 798.453125,
+          "width": 297,
+          "height": 1434,
+          "bottom": 2232.453125,
+          "class": "space-y-4 rack-overview-stack",
+          "marginTop": "0px",
+          "gap": "17px"
+        },
+        {
+          "x": 79,
+          "y": 798.453125,
+          "width": 297,
+          "height": 192.75,
+          "bottom": 991.203125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 79,
+          "y": 1008.203125,
+          "width": 297,
+          "height": 464.5,
+          "bottom": 1472.703125,
+          "class": "grid grid-cols-1 xl:grid-cols-2 gap-4 rack-overview-grid",
+          "marginTop": "0px",
+          "gap": "17px"
+        },
+        {
+          "x": 79,
+          "y": 1008.203125,
+          "width": 297,
+          "height": 236.75,
+          "bottom": 1244.953125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 79,
+          "y": 1261.953125,
+          "width": 297,
+          "height": 210.75,
+          "bottom": 1472.703125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 79,
+          "y": 1489.703125,
+          "width": 297,
+          "height": 742.75,
+          "bottom": 2232.453125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        }
+      ]
+    },
+    {
+      "screen": "empty-equipment",
+      "width": 390,
+      "theme": "dark",
+      "heading": {
+        "x": 79,
+        "y": 325.453125,
+        "width": 297,
+        "height": 62,
+        "bottom": 387.453125
+      },
+      "tabs": {
+        "x": 79,
+        "y": 401.453125,
+        "width": 297,
+        "height": 55,
+        "bottom": 456.453125
+      },
+      "metrics": {
+        "x": 79,
+        "y": 475.453125,
+        "width": 297,
+        "height": 306,
+        "bottom": 781.453125
+      },
+      "insights": {
+        "x": 79,
+        "y": 798.453125,
+        "width": 297,
+        "height": 914.25,
+        "bottom": 1712.703125
+      },
+      "mainGap": 18,
+      "headingToTabs": 14,
+      "tabsToMetrics": 19,
+      "metricsToInsights": 17,
+      "metricRowGap": 10,
+      "metricColumnGap": 10,
+      "referenceInsightGap": null,
+      "metricsVisible": true,
+      "metricsText": [
+        "Total racks0Saved inventory",
+        "Physical rack capacity0USaved inventory",
+        "Mounted devices0Saved inventory",
+        "Rack accessories0Saved inventory"
+      ],
+      "content": "Mounted equipment by typeEach bar counts devices assigned to a rack, grouped by their recorded device type. A device is counted once.No data recorded yet.Devices and accessories by rackCompare how many devices and rack accessories are recorded in each rack. These are item counts, not rack-unit usage.No racks recorded.How to read these chartsEquipment figures describe saved inventory records, not live device status.DevicesA mounted server, switch or other device contributes one to its type and rack totals, regardless of its height in U.AccessoriesPDUs, cable managers and other recorded accessories are counted separately. A 0U accessory still counts as an item.",
+      "chartValues": [],
+      "overflow": false,
+      "insightGroups": [
+        {
+          "x": 79,
+          "y": 798.453125,
+          "width": 297,
+          "height": 428.5,
+          "bottom": 1226.953125,
+          "class": "grid grid-cols-1 xl:grid-cols-2 gap-4 rack-overview-grid",
+          "marginTop": "0px",
+          "gap": "17px"
+        },
+        {
+          "x": 79,
+          "y": 1243.953125,
+          "width": 297,
+          "height": 468.75,
+          "bottom": 1712.703125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 100,
+          "y": 1281.328125,
+          "width": 255,
+          "height": 70.375,
+          "bottom": 1351.703125,
+          "class": "",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 100,
+          "y": 1367.703125,
+          "width": 255,
+          "height": 324,
+          "bottom": 1691.703125,
+          "class": "grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm",
+          "marginTop": "16px",
+          "gap": "16px"
+        },
+        {
+          "x": 100,
+          "y": 1367.703125,
+          "width": 255,
+          "height": 154,
+          "bottom": 1521.703125,
+          "class": "rounded-xl bg-indigo-50 dark:bg-indigo-900/20 p-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 100,
+          "y": 1537.703125,
+          "width": 255,
+          "height": 154,
+          "bottom": 1691.703125,
+          "class": "rounded-xl bg-slate-100 dark:bg-slate-700/60 p-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        }
+      ]
+    },
+    {
+      "screen": "empty-locations",
+      "width": 390,
+      "theme": "dark",
+      "heading": {
+        "x": 79,
+        "y": 325.453125,
+        "width": 297,
+        "height": 62,
+        "bottom": 387.453125
+      },
+      "tabs": {
+        "x": 79,
+        "y": 401.453125,
+        "width": 297,
+        "height": 55,
+        "bottom": 456.453125
+      },
+      "metrics": {
+        "x": 79,
+        "y": 475.453125,
+        "width": 297,
+        "height": 306,
+        "bottom": 781.453125
+      },
+      "insights": {
+        "x": 79,
+        "y": 798.453125,
+        "width": 297,
+        "height": 760.25,
+        "bottom": 1558.703125
+      },
+      "mainGap": 18,
+      "headingToTabs": 14,
+      "tabsToMetrics": 19,
+      "metricsToInsights": 17,
+      "metricRowGap": 10,
+      "metricColumnGap": 10,
+      "referenceInsightGap": null,
+      "metricsVisible": true,
+      "metricsText": [
+        "Total racks0Saved inventory",
+        "Physical rack capacity0USaved inventory",
+        "Mounted devices0Saved inventory",
+        "Rack accessories0Saved inventory"
+      ],
+      "content": "Racks by locationEach bar counts racks assigned to that location, regardless of rack height.No data recorded yet.Mounted devices by locationEach bar counts devices mounted in racks at that location; unmounted devices are excluded.No data recorded yet.Rack-type charts will follow the Phase 1C rack-type schema update.How to read location chartsLocations come from the rack records in your inventory.Racks by location: a 12U cabinet and a 42U rack each count as one rack.Mounted devices by location: devices inherit their location from the rack they are mounted in. This is not a count of all devices at that site.Locations not recorded are grouped under “Not recorded”.",
+      "chartValues": [],
+      "overflow": false,
+      "insightGroups": [
+        {
+          "x": 79,
+          "y": 798.453125,
+          "width": 297,
+          "height": 424.5,
+          "bottom": 1222.953125,
+          "class": "grid grid-cols-1 xl:grid-cols-2 gap-4 rack-overview-grid",
+          "marginTop": "0px",
+          "gap": "17px"
+        },
+        {
+          "x": 79,
+          "y": 1239.953125,
+          "width": 297,
+          "height": 318.75,
+          "bottom": 1558.703125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 100,
+          "y": 1277.328125,
+          "width": 255,
+          "height": 70.375,
+          "bottom": 1347.703125,
+          "class": "",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 100,
+          "y": 1363.703125,
+          "width": 255,
+          "height": 174,
+          "bottom": 1537.703125,
+          "class": "text-sm text-slate-700 dark:text-slate-200 space-y-2",
+          "marginTop": "16px",
+          "gap": "normal"
+        }
+      ]
+    },
+    {
+      "screen": "actions",
+      "width": 390,
+      "theme": "dark",
+      "keyboard": true,
+      "horizontalScroll": true,
+      "auditExportEvents": 0
+    }
+  ]
+}
