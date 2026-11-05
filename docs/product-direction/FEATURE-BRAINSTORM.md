@@ -1,6 +1,6 @@
 # Caffoot Lite — Feature Brainstorm and Milestone Mapping
 
-> **Working discussion draft — 5 November 2026.** This is a **list of possibilities**, not a feature specification, approved scope, delivery commitment or release schedule. Use it alongside the [long-term vision](VISION.md) and [proposed milestones](PROPOSED-MILESTONES.md). Caffoot Lite v2.1 remains governed by [issue #282](https://github.com/Caffoot/Caffoot-Lite/issues/282).
+> **Agreed planning register — 5 November 2026.** The long-term vision and six milestone groupings are agreed, and 27 future-request issues have been organised. The individual ideas remain **proposals**, not approved implementation scope, delivery commitments or a release schedule. Use it alongside the [long-term vision](VISION.md) and [proposed milestones](PROPOSED-MILESTONES.md). Caffoot Lite v2.1 remains governed by [issue #282](https://github.com/Caffoot/Caffoot-Lite/issues/282).
 
 ## Our starting point
 
@@ -13,15 +13,15 @@ We began with Devices, IPAM and Racks. They are the foundation of the wider ambi
 ## How to read this list
 
 - **Existing #number:** an open GitHub issue already holds the idea. Discuss scope there instead of creating a duplicate.
-- **New suggestion:** raised during our brainstorming, with **no individual GitHub issue yet**. New future-request issues #292–#301 have been added for some earlier suggestions. If prioritised, create a specific future-request issue after discussing its boundaries.
+- **New suggestion:** raised during brainstorming without a dedicated GitHub issue; create one only after discussing its boundaries, if prioritised. Existing ideas with issues are linked in the register.
 - **Long-term ambition:** a product direction that needs discovery, security review and smaller agreed proposals before implementation.
-- **Possible milestone:** where an idea might fit, **not** when it will ship. Milestones can overlap, move or be broken into smaller releases.
+- **Planning milestone:** a GitHub grouping (#20–#25) for related requests, **not** a release commitment. Boundaries and priority can be reviewed.
 
-The current [public roadmap](../../ROADMAP.md) remains authoritative for published and actively approved work. The proposed groupings below are *planning aids*, not a replacement.
+The current [public roadmap](../../ROADMAP.md) remains authoritative for published and actively approved work. These established planning groupings are *planning aids*, not a replacement.
 
 ## Brainstorm register
 
-| Idea | Current record | Possible milestone | What it could help someone do |
+| Idea | Current record | Planning milestone | What it could help someone do |
 | --- | --- | --- | --- |
 | Equipment purchase, warranty, lifecycle and retirement | [Existing #286](https://github.com/Caffoot/Caffoot-Lite/issues/286) | 1 — Everyday assets | Know what needs replacing, repairing or retiring |
 | QR codes and printable asset labels | [Existing #287](https://github.com/Caffoot/Caffoot-Lite/issues/287) | 1 — Everyday assets | Scan equipment to open its authorised record |
@@ -57,7 +57,7 @@ The current [public roadmap](../../ROADMAP.md) remains authoritative for publish
 
 ## Suggested milestone boundaries
 
-These six groups mirror [the proposed milestone document](PROPOSED-MILESTONES.md). **The numbers describe a possible discussion sequence, not six promised releases.**
+These six groups correspond to [GitHub Milestones #20–#25](PROPOSED-MILESTONES.md). **Their numbers are organisational labels, not six promised releases.**
 
 ### Milestone 1 — Everyday asset management
 
@@ -130,8 +130,8 @@ Before converting ideas into scoped feature requests or version targets, discuss
 
 ## Decisions and next steps
 
-- **Agreed vision for discussion:** a self-hosted IT management and identity platform, with *Lite* meaning simplicity and data sovereignty at its core.
-- **Current proposal:** group ideas into six possible milestone areas.
-- **Not yet decided:** feature priorities, definitive milestone order, release versions, dates, implementations or whether to build each idea.
-- **Next sensible step:** review and rank the ideas with the product owner. Afterwards, record genuinely new ideas in individual **future request** issues and define the first small milestone. Avoid duplicates with existing issues.
+- **Agreed vision:** a self-hosted IT management and identity platform, with *Lite* meaning simplicity and data sovereignty at its core.
+- **Planning completed:** six GitHub Milestones #20–#25 created; 27 future-request issues organised by milestone or kept cross-cutting as appropriate.
+- **Not yet decided:** implementation approval for individual proposals, feature priorities, release versions, dates or whether to build each idea.
+- **Next sensible step:** after v2.1 acceptance, review and prioritise requests within the existing milestone and issue records. Check for duplicates before adding further ideas.
 - **Not affected:** v2.1 [issue #282](https://github.com/Caffoot/Caffoot-Lite/issues/282), its approved designs, the existing public roadmap and current released functionality.
