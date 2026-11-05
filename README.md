@@ -1,6 +1,12 @@
-# Caffoot Lite v2.0.3
+# Caffoot Lite
 
-**Infrastructure, Simplified.** Free, open-source IPAM, device inventory, network rack documentation and Change History for home labs and small IT teams.
+**Infrastructure, Simplified.** Free, open-source IP address management (IPAM), device inventory and network rack documentation for **small businesses, IT teams and home labs**.
+
+Keep track of your devices, IP addresses and network racks in one place. Caffoot Lite combines a shared infrastructure inventory with user permissions and Change History, without requiring a complicated setup.
+
+**[Get started with Docker or Portainer](INSTALLATION.md)** · **[Explore the features](docs/how-tos/features-and-instructions/README.md)** · **[See the roadmap](ROADMAP.md)** · **[Latest release: v2.0.3](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.3)**
+
+![Caffoot Lite dashboard showing example network inventory](docs/screenshots/dashboard.png)
 
 Caffoot Lite v2.0.3 is a maintenance update to the established Docker/SQLite, multi-user application, bringing refreshed user guides and focused compatibility checks on top of the v2.0.2 security release. It uses a **central SQLite database**, first-run administrator setup, mandatory MFA for administrators and editors, administrator-managed permissions, and simultaneous authenticated inventory access. Familiar v1.3.3 Devices, IPAM, Racks and Change History workflows are preserved.
 
@@ -24,9 +30,11 @@ For Portainer, use the current-release [`portainer-v2.0.3.yaml`](portainer-v2.0.
 - **Shared inventory:** multiple users, section-based read/edit permissions, authenticated changes and temporary device editing reservations.
 - **Management:** administrator-controlled user accounts, MFA and familiar Change History.
 
-![Caffoot Lite dashboard showing example network inventory](docs/screenshots/dashboard.png)
-
 See the [complete Features and Instructions user guides](docs/how-tos/features-and-instructions/README.md) for detailed examples, controls and screenshots.
+
+## What's next?
+
+We're developing a more polished, professional interface for Caffoot Lite v2.1, with improved navigation and streamlined workflows. Read the [public roadmap](ROADMAP.md) for the current release, approved development and future ideas. v2.1 is not yet released and has no promised release date.
 
 ## Help Build Caffoot Lite
 
