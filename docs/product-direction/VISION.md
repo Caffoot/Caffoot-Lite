@@ -1,6 +1,6 @@
 # Caffoot Lite — Long-Term Product Vision
 
-> **Discussion draft — 5 November 2026.** This describes the direction we are exploring, not features available today or development work approved to begin. The [public roadmap](../../ROADMAP.md) remains the source for released and currently approved work.
+> **Agreed long-term product direction — 5 November 2026.** The vision and motto are established; individual future capabilities remain proposals and are not approved development work. The [public roadmap](../../ROADMAP.md) remains the source for released and currently approved work.
 
 > **Simplicity in everything. Your infrastructure. Your users. Your data.**
 
@@ -96,6 +96,6 @@ The **v2.1 interface** is under approved development in [issue #282](https://git
 
 ## From vision to work
 
-The accompanying [proposed milestones](PROPOSED-MILESTONES.md) groups possible future work into understandable outcomes. It does not authorise development, assign release numbers or promise dates.
+The six [long-term planning milestones](PROPOSED-MILESTONES.md) are now recorded as GitHub Milestones #20–#25 and group possible future work into understandable outcomes. It does not authorise development, assign release numbers or promise dates.
 
 Individual feature discussions and decisions belong in [GitHub Issues labelled `future request`](https://github.com/Caffoot/Caffoot-Lite/labels/future%20request). The product owner approves scope before implementation.
