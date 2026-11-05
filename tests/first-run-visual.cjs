@@ -14,6 +14,9 @@ async function main(){
  await new Promise(resolve=>refServer.listen(0,'127.0.0.1',resolve));
  browser=await chromium.launch({headless:true,executablePath:process.env.CAFFOOT_CHROMIUM_PATH||undefined,args:['--no-sandbox']});
  const context=await browser.newContext({ignoreHTTPSErrors:true});
+ const theme=process.env.CAFFOOT_AUTH_THEME||'light';
+ await context.addInitScript(theme=>localStorage.setItem('caffoot_theme_preference',theme),theme);
+ await context.route(/https:\/\/(fonts\.googleapis|fonts\.gstatic|cdnjs\.cloudflare)\.com\//,r=>r.abort());
  await context.route('https://raw.githubusercontent.com/**',r=>r.fulfill({contentType:'image/png',body:fs.readFileSync(path.join(root,'assets/caffoot-icon-1024.png'))}));
  const page=await context.newPage(),reference=await context.newPage();
  for(let i=0;i<40;i++){
@@ -27,9 +30,11 @@ async function main(){
   await reference.evaluate(screen=>show(screen),screen);
   for(const [width,height]of [[1440,950],[390,844]].filter(([width])=>!process.env.CAFFOOT_AUTH_WIDTH||width===Number(process.env.CAFFOOT_AUTH_WIDTH))){
    await page.setViewportSize({width,height});await reference.setViewportSize({width,height});
+   assert.equal(await page.locator('html').evaluate(e=>e.classList.contains('dark')),theme==='dark','Authentication theme preference');
+   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Authentication has no page overflow');
    await page.screenshot({path:path.join(out,name+'-'+width+'-live.png'),fullPage:true,mask:[page.locator('#setup-qr'),page.locator('#secret'),page.locator('#code')]});
    await reference.screenshot({path:path.join(out,name+'-'+width+'-approved.png'),fullPage:true,mask:[reference.locator('.qr-placeholder')]});
-   results.push({screen:name,width,status:'captured; live test authenticator material masked'});
+   results.push({screen:name,width,theme,status:'captured; live test authenticator material masked'});
   }
   console.log('Captured',name);
  }

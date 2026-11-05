@@ -1,5 +1,6 @@
 'use strict';
 const $=id=>document.getElementById(id);
+const signInThemeMedia=typeof matchMedia==='function'?matchMedia('(prefers-color-scheme: dark)'):null;
 // Use the same stored Light/Dark/System preference on the public security flow.
 function applySignInTheme(){
  let preference='light';
@@ -9,10 +10,11 @@ function applySignInTheme(){
    preference=localStorage.getItem('caffoot_dark')==='true'?'dark':'light';
  } catch (_) {}
  document.documentElement.classList.toggle('dark',preference==='dark'||
-   (preference==='system'&&matchMedia('(prefers-color-scheme: dark)').matches));
+   (preference==='system'&&!!signInThemeMedia?.matches));
 }
 applySignInTheme();
-matchMedia('(prefers-color-scheme: dark)').addEventListener('change',applySignInTheme);
+if(signInThemeMedia?.addEventListener)signInThemeMedia.addEventListener('change',applySignInTheme);
+else if(signInThemeMedia?.addListener)signInThemeMedia.addListener(applySignInTheme);
 let mode='login';
 let setupWelcomeAcknowledged=false;
 let csrfToken='';

@@ -26,3 +26,5 @@ html.dark :is(.welcome-number,.steps-track span:not(.complete)) {background:#334
 html.dark .secondary:hover {background:#334155;}
 html.dark .status {background:#451a03;color:#fde68a;border-color:#92400e;}
 html.dark .status.good {background:#022c22;color:#a7f3d0;border-color:#065f46;}
+html.dark :is(.primary,#auth-live-screen .panel button) {color:#0f172a;}
+html.dark .eyebrow {color:#fb923c;}

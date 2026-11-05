@@ -537,6 +537,14 @@ function hierarchyValidateTypes(subnets) {
             const preference = caffootThemePreference();
             const isDark = preference === 'dark' || (preference === 'system' && !!caffootThemeMedia?.matches);
             document.documentElement.classList.toggle('dark', isDark);
+            // A System preference can change while a searchable modal is open.
+            // Read the native control again so neither theme freezes inline colours.
+            for (const select of document.querySelectorAll('select.caffoot-search-native')) {
+                const trigger=select.nextElementSibling?.querySelector('.caffoot-search-trigger');
+                if (!trigger) continue;
+                const style=getComputedStyle(select);
+                Object.assign(trigger.style,{color:style.color,backgroundColor:style.backgroundColor,borderColor:style.borderColor});
+            }
             document.getElementById('theme-icon')?.setAttribute('class', isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon');
         }
         function caffootSetTheme(preference) {
@@ -2366,7 +2374,7 @@ function hierarchyValidateTypes(subnets) {
                                         Number(d.rackUEnd) <= Number(rack.heightU);
                                     const locationNeedsAttention = isUnknownLocation && !hasValidRackPlacement;
                                     const locText = isUnknownLocation ? 'Unknown' : d.location;
-                                    return renderInterfaceTemplate("devices/render-devices-html-4",[escapeHtml(d.id),escapeHtml(d.name),escapeHtml(d.serialNumber ? 'S/N '+d.serialNumber : rack ? rack.name+' · '+(d.face||'front') : d.mountType || 'Not in rack'),d.type==='Server - Virtual'?'vm':'',escapeHtml(d.type==='Server - Physical' ? 'Server' : d.type==='Server - Virtual' ? 'Virtual Machine' : d.type),escapeHtml(locText),locationNeedsAttention ? '<div class="device-detail" style="color:#b26449">Needs attention</div>' : '',escapeHtml(d.primaryIp || 'None'),d.status === 'Retired' ? 'retired' : d.status === 'Maintenance' ? 'maintenance' : '',escapeHtml(d.status || 'Active'),escapeHtml([d.manufacturer,d.model].filter(Boolean).join(' ') || '—'),escapeHtml(d.id)]);
+                                    return renderInterfaceTemplate("devices/render-devices-html-4",[escapeHtml(d.id),escapeHtml(d.name),escapeHtml(d.serialNumber ? 'S/N '+d.serialNumber : rack ? rack.name+' · '+(d.face||'front') : d.mountType || 'Not in rack'),d.type==='Server - Virtual'?'vm':'',escapeHtml(d.type==='Server - Physical' ? 'Server' : d.type==='Server - Virtual' ? 'Virtual Machine' : d.type),escapeHtml(locText),locationNeedsAttention ? '<div class="device-detail" style="color:var(--theme-warning-text,#b26449)">Needs attention</div>' : '',escapeHtml(d.primaryIp || 'None'),d.status === 'Retired' ? 'retired' : d.status === 'Maintenance' ? 'maintenance' : '',escapeHtml(d.status || 'Active'),escapeHtml([d.manufacturer,d.model].filter(Boolean).join(' ') || '—'),escapeHtml(d.id)]);
                                 }).join(''),getVisibleDevices().length === 0 ? renderInterfaceTemplate("devices/render-devices-html-5",[appState.devices.length?'No matching devices':'Your inventory is empty',appState.devices.length?'Try another search or remove your filters.':'Add your first device to get started.',appState.devices.length?'clear-device-filters':'open-device-modal',appState.devices.length?'Clear search and filters':'Add Device',appState.devices.length?'':'btn btn-primary']) : '','hidden','']);
         }
 
@@ -7817,11 +7825,6 @@ void (async () => {
       trigger.type='button';
       trigger.className='caffoot-search-trigger';
       Object.assign(trigger.style,presentation);
-      // Resolve theme changes while a dialog remains open, rather than freezing
-      // the native control's computed light colours into the searchable button.
-      trigger.style.color=`var(--theme-text,${presentation.color})`;
-      trigger.style.backgroundColor=`var(--theme-control,${presentation.backgroundColor})`;
-      trigger.style.borderColor=`var(--theme-control-border,${selectStyle.borderColor})`;
       const caption=document.createElement('span');
       caption.style.cssText='min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
       const arrow=document.createElementNS('http://www.w3.org/2000/svg','svg');
