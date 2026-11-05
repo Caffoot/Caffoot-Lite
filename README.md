@@ -40,7 +40,7 @@ We're developing a more polished, professional interface for Caffoot Lite v2.1, 
 
 You can contribute by reporting a bug, testing the application, improving a help guide, suggesting a useful feature, answering a question or sharing a clear example. Even pointing out something confusing is valuable.
 
-- **[Suggest A Feature Or Future Improvement](https://github.com/Caffoot/Caffoot-Lite/issues/new/choose)** — open one issue per idea. Check the [Future Ideas Index #222](https://github.com/Caffoot/Caffoot-Lite/issues/222) first to see whether it is already being discussed.
+- **[Suggest A Feature Or Future Improvement](https://github.com/Caffoot/Caffoot-Lite/issues/new/choose)** — open one issue per idea. Check the [existing future requests](https://github.com/Caffoot/Caffoot-Lite/labels/future%20request) first to see whether the idea has already been suggested.
 - **[Report A Bug Or Ask A Question](https://github.com/Caffoot/Caffoot-Lite/issues/new/choose)** — choose the relevant issue form and explain it in your own words.
 - **[Improve The Documentation](https://github.com/Caffoot/Caffoot-Lite/issues/new/choose)** — suggest clearer wording, screenshots or missing instructions, with no programming required.
 - **[Explore Good First Issues](https://github.com/Caffoot/Caffoot-Lite/labels/good%20first%20issue)** and **[Help Wanted](https://github.com/Caffoot/Caffoot-Lite/labels/help%20wanted)** — find appropriately scoped tasks where community help would be useful.
@@ -75,5 +75,5 @@ For direct HTTPS, verify and trust the application certificate before entering c
 - [Contributing To Caffoot Lite — mandatory naming, UI and documentation standards](CONTRIBUTING.md)
 - [Development Guide](docs/development-guide/README.md)
 - [Public roadmap](ROADMAP.md)
-- [Future Ideas Index](https://github.com/Caffoot/Caffoot-Lite/issues/222)
+- [Ideas under consideration](https://github.com/Caffoot/Caffoot-Lite/labels/future%20request)
 - [Standalone v1.3.3 release for inventory migration](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3)
