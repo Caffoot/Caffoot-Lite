@@ -1,18 +1,18 @@
-# Caffoot Lite — Proposed Long-Term Milestones
+# Caffoot Lite — Long-Term Planning Milestones
 
-> **Discussion draft — 5 November 2026.** These are potential stages towards the [product vision](VISION.md), not an approved development schedule. No future version number, date, feature scope or technical architecture is agreed by this document.
+> **Agreed planning structure — 5 November 2026.** Six GitHub Milestones #20–#25 group future requests under the agreed [product vision](VISION.md); they do not constitute an approved development schedule. No future version number, date, feature scope or technical architecture is agreed by this document.
 
 ## Where we are today
 
 **Published:** v2.0.3 provides Devices, IPAM, Racks, shared SQLite inventory, account permissions and multi-factor authentication.
 
-**Approved work in progress:** v2.1's interface and agreed changes are governed by [issue #282](https://github.com/Caffoot/Caffoot-Lite/issues/282). Completing and accepting that work comes first. This draft adds nothing to its scope.
+**Approved work in progress:** v2.1's interface and agreed changes are governed by [issue #282](https://github.com/Caffoot/Caffoot-Lite/issues/282). Completing and accepting that work comes first. These planning milestones add nothing to its scope.
 
-## Possible milestones to explore
+## Established planning milestones
 
-Milestones are grouped by the **benefit to users**, not by the technology we might choose. Their order and boundaries may change after discussion.
+GitHub Milestones #20–#25 group future requests by the **benefit to users**, not by a chosen technology. Their existence does not approve any individual implementation, and priorities or boundaries may change after discussion.
 
-### 1. Easier everyday asset management
+### Milestone 01 (#20) — Easier everyday asset management
 
 **Outcome:** An administrator can find, record and maintain useful information about equipment without repeating work.
 
@@ -25,7 +25,7 @@ Potential ideas:
 
 **To decide:** Which tasks are genuinely time-consuming today? What is the simplest useful first release? Which information must remain optional?
 
-### 2. Understand how infrastructure fits together
+### Milestone 02 (#21) — Understand how infrastructure fits together
 
 **Outcome:** Users can see not only what equipment exists but also how it is connected and addressed.
 
@@ -35,7 +35,7 @@ Existing proposals:
 
 **To decide:** How connections should be recorded, what diagrams can accurately show from entered data, and how existing inventory is preserved.
 
-### 3. Connect assets to people and support
+### Milestone 03 (#22) — Connect assets to people and support
 
 **Outcome:** An IT team can understand who uses an asset, what needs attention and where to find related help.
 
@@ -46,7 +46,7 @@ Existing proposals:
 
 **To decide:** Whether employee records require login accounts, access/privacy rules, and which links between people, assets and tickets are actually useful.
 
-### 4. Add optional IT operations capabilities
+### Milestone 04 (#23) — Add optional IT operations capabilities
 
 **Outcome:** Teams can spot and respond to real infrastructure problems without making inventory complicated for everyone.
 
@@ -57,7 +57,7 @@ Existing proposals and possible extensions:
 
 **To decide:** The operational cost, lightweight deployment options, permissions and what happens when a managed device is offline. No device agent or monitoring architecture has been chosen.
 
-### 5. Offer genuine identity and access choice
+### Milestone 05 (#24) — Offer genuine identity and access choice
 
 **Outcome:** Organisations can manage access through a self-hosted platform, with a long-term route towards domainless computer sign-in and application SSO.
 
@@ -71,7 +71,7 @@ Potential stages to explore:
 
 Identity work may require multiple substantial releases. It must not be bundled casually with an unrelated feature.
 
-### 6. Support larger and more varied organisations
+### Milestone 06 (#25) — Support larger and more varied organisations
 
 **Outcome:** Growing businesses and service providers can manage more complex environments without compromising the experience of existing users.
 
@@ -100,7 +100,7 @@ Potential directions:
 4. Record the product owner's explicit approval in a specific GitHub issue.
 5. Only then assign a release target or begin development.
 
-The [public roadmap](../../ROADMAP.md) should list only released work, genuinely active approved work and clearly labelled ideas. This proposal must not be presented as a delivery promise.
+The [public roadmap](../../ROADMAP.md) should list only released work, genuinely active approved work and clearly labelled ideas. These milestones must not be presented as a delivery promise.
 
 ## Deliberately left for later
 
