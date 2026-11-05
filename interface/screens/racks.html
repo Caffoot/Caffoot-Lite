@@ -29,7 +29,7 @@
 
 <!-- interface-template:racks/panel-3 --><div class="space-y-4">{{slot:0}}</div><!-- /interface-template -->
 
-<!-- interface-template:racks/panel-4 --><div class="space-y-4">{{slot:0}}<div class="grid grid-cols-1 xl:grid-cols-2 gap-4">{{slot:1}}{{slot:2}}</div>{{slot:3}}</div><!-- /interface-template -->
+<!-- interface-template:racks/panel-4 --><div class="space-y-4 rack-overview-stack">{{slot:0}}<div class="grid grid-cols-1 xl:grid-cols-2 gap-4 rack-overview-grid">{{slot:1}}{{slot:2}}</div>{{slot:3}}</div><!-- /interface-template -->
 
 <!-- interface-template:racks/panel-5 --><div class="space-y-4">{{slot:0}}</div><!-- /interface-template -->
 
@@ -37,7 +37,7 @@
 
 <!-- interface-template:racks/panel-7 --><div class="space-y-5">{{slot:0}}</div><!-- /interface-template -->
 
-<!-- interface-template:racks/panel-8 --><div class="grid grid-cols-1 xl:grid-cols-2 gap-4">{{slot:0}}{{slot:1}}</div><!-- /interface-template -->
+<!-- interface-template:racks/panel-8 --><div class="grid grid-cols-1 xl:grid-cols-2 gap-4 rack-overview-grid">{{slot:0}}{{slot:1}}</div><!-- /interface-template -->
 
 <!-- interface-template:racks/panel-9 --><div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm"><div class="rounded-xl bg-indigo-50 dark:bg-indigo-900/20 p-4"><i class="fa-solid fa-server text-indigo-600 dark:text-indigo-300 mr-2" aria-hidden="true"></i><strong class="text-slate-900 dark:text-white">Devices</strong><p class="mt-2 text-slate-600 dark:text-slate-300">A mounted server, switch or other device contributes one to its type and rack totals, regardless of its height in U.</p></div><div class="rounded-xl bg-slate-100 dark:bg-slate-700/60 p-4"><i class="fa-solid fa-layer-group text-slate-600 dark:text-slate-300 mr-2" aria-hidden="true"></i><strong class="text-slate-900 dark:text-white">Accessories</strong><p class="mt-2 text-slate-600 dark:text-slate-300">PDUs, cable managers and other recorded accessories are counted separately. A 0U accessory still counts as an item.</p></div></div><!-- /interface-template -->
 
@@ -45,14 +45,14 @@
 
 <!-- interface-template:racks/panel-11 --><div class="space-y-4">{{slot:0}}</div><p class="text-xs text-slate-500 dark:text-slate-400">Rack-type charts will follow the Phase 1C rack-type schema update.</p><!-- /interface-template -->
 
-<!-- interface-template:racks/panel-12 --><div class="grid grid-cols-1 xl:grid-cols-2 gap-4">{{slot:0}}{{slot:1}}</div><!-- /interface-template -->
+<!-- interface-template:racks/panel-12 --><div class="grid grid-cols-1 xl:grid-cols-2 gap-4 rack-overview-grid">{{slot:0}}{{slot:1}}</div><!-- /interface-template -->
 
 <!-- interface-template:racks/panel-13 --><div class="text-sm text-slate-700 dark:text-slate-200 space-y-2"><p><strong>Racks by location:</strong> a 12U cabinet and a 42U rack each count as one rack.</p><p><strong>Mounted devices by location:</strong> devices inherit their location from the rack they are mounted in. This is not a count of all devices at that site.</p><p class="text-xs text-slate-500 dark:text-slate-400">Locations not recorded are grouped under “Not recorded”.</p></div><!-- /interface-template -->
 
 <!-- interface-template:racks/body-1 --><section class="racks-panel active" data-panel="overview" role="tabpanel" aria-label="Estate-wide rack overview">
   <div class="racks-hub-bar"><div><h2>Rack Overview</h2><p>Capacity and equipment insights across all recorded racks.</p></div></div>
-  <div class="racks-grid" id="rack-overview-stats">{{slot:0}}{{slot:1}}{{slot:2}}{{slot:3}}</div>
   <div class="rack-subtabs" role="group" aria-label="Overview insights">{{slot:4}}</div>
+  <div class="racks-grid" id="rack-overview-stats">{{slot:0}}{{slot:1}}{{slot:2}}{{slot:3}}</div>
   <div id="rack-overview-insights">{{slot:5}}</div>
   <p class="rack-note">Each rack's physical height is counted once. Front and rear mounting positions are analysed separately; these are inventory-based figures, not live monitoring.</p>
 </section><!-- /interface-template -->

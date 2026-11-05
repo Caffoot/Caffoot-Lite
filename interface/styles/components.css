@@ -251,3 +251,19 @@ html{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sa
 #app .header-account-photo img {width:32px;height:32px;object-fit:cover;object-position:center;display:block;}
 /* Match the existing Dashboard action-row separation without changing the stats. */
 .db-allocation-action {margin-top:18px;}
+
+/* Issue #305 owner amendment: steady-state Device Intelligence vertical rhythm.
+   Main inset 18; heading gap 17/14; secondary strip 55; tabs-to-metrics 19;
+   metrics-to-insights and insight groups 17; metric grid gaps 14/10. */
+#main-content .rack-overview-section .racks-panel[data-panel="overview"] {padding-top:18px;}
+#main-content .rack-overview-section .racks-hub-bar {margin-bottom:17px;}
+#main-content .rack-overview-section .rack-subtabs {padding-top:6px;padding-bottom:6px;margin-bottom:19px;}
+#main-content .rack-overview-section .rack-subtabs button {min-height:41px;}
+#rack-overview-stats {gap:14px;margin-bottom:17px;}
+#rack-overview-insights,#rack-overview-insights .rack-overview-stack {display:grid;gap:17px;}
+#rack-overview-insights .rack-overview-stack > * {margin-top:0;margin-bottom:0;}
+#rack-overview-insights .rack-overview-grid {gap:17px;}
+@media(max-width:720px){
+ #main-content .rack-overview-section .racks-hub-bar {margin-bottom:14px;}
+ #rack-overview-stats {gap:10px;}
+}
