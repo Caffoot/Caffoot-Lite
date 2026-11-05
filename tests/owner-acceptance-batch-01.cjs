@@ -1,7 +1,7 @@
 // Owner-approved exceptions and live actions, using the existing isolated visual runner.
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 module.exports=async function verifyOwnerAcceptanceBatch({page,reference,sourceBase,context,out}){
- const results=[],errors=[];page.on('pageerror',error=>errors.push(error.message));
+ const results=[],measurements=[],errors=[];page.on('pageerror',error=>errors.push(error.message));
  const address=new URL(page.url()==='about:blank'?'https://127.0.0.1:8080':page.url()).origin;
  await page.goto(address+'/inventory');await page.locator('#app[aria-busy="false"]').waitFor();
  const go=async tab=>page.evaluate(tab=>switchTab(tab),tab);
@@ -13,15 +13,21 @@ module.exports=async function verifyOwnerAcceptanceBatch({page,reference,sourceB
  async function height(selector){
   const el=page.locator(selector).first();await el.waitFor();
   const value=await el.evaluate(e=>{if(e.classList.contains('caffoot-search-native'))e=e.nextElementSibling.querySelector('.caffoot-search-trigger');return {height:e.getBoundingClientRect().height,font:getComputedStyle(e).fontFamily,padding:getComputedStyle(e).padding,border:getComputedStyle(e).borderColor};});
-  assert.equal(Math.round(value.height),42,'Approved-derived single-line height: '+selector);return value;
+  assert.equal(Math.round(value.height),42,'Approved-derived single-line height: '+selector);measurements.push({selector,width:page.viewportSize().width,...value});return value;
  }
  async function capture(name,file,prepare){
   await reference.goto(sourceBase+'/'+file+'.html');
   if(prepare)await prepare(reference);
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'No document overflow: '+name);
-  await page.screenshot({path:path.join(out,name+'-live.png'),fullPage:!name.includes('-search-')});
-  await reference.screenshot({path:path.join(out,name+'-approved.png'),fullPage:true});
-  results.push({scenario:name,status:'functional/layout assertions passed; owner-approved exceptions apply'});
+  const modal=page.locator('#modal-content:visible,.users-management-modal .modal').first();
+  let modalBounds=null;
+  if(await modal.count()){
+   modalBounds=await modal.evaluate(e=>{const r=e.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height,viewportHeight:innerHeight};});
+   assert.ok(modalBounds.y>=-1&&modalBounds.y+modalBounds.height<=modalBounds.viewportHeight+1,'Modal must stay within the actual viewport: '+name);
+  }
+  await page.screenshot({path:path.join(out,name+'-live.png'),fullPage:!modalBounds});
+  await reference.screenshot({path:path.join(out,name+'-approved.png'),fullPage:!modalBounds});
+  results.push({scenario:name,modalBounds,status:'functional/layout assertions passed; owner-approved exceptions apply'});
   console.log('Checked',name);
  }
  const editorReference=ref=>ref.evaluate(()=>openDeviceEditor('add'));
@@ -50,6 +56,10 @@ module.exports=async function verifyOwnerAcceptanceBatch({page,reference,sourceB
    await page.locator('#dev-location').selectOption('Server Room');await page.locator('#dev-mount-type').selectOption('Rack Mounted');
    const create=page.locator('[data-action="create-rack-from-device"]');await create.scrollIntoViewIfNeeded();
    assert.ok(await create.evaluate(button=>{const help=button.parentElement.previousElementSibling;return help.classList.contains('device-review-hint')&&help.getBoundingClientRect().bottom<=button.getBoundingClientRect().top;}),'Rack guidance must occupy its own row');
+   assert.ok(await create.evaluate(button=>{
+    const hint=button.closest('#device-form-mounting-options').querySelector(':scope > .device-review-hint');
+    return hint.getBoundingClientRect().top-button.getBoundingClientRect().bottom>=14;
+   }),'Rack action and final placement hint must keep the pinned 15px separation');
    await capture('04-rack-action-'+(empty?'empty-':'populated-')+width,'devices-details-forms-batch-04',editorReference);
    await create.focus();assert.ok(await create.evaluate(e=>document.activeElement===e));
    if(empty){
@@ -96,7 +106,11 @@ module.exports=async function verifyOwnerAcceptanceBatch({page,reference,sourceB
   console.log('Checked custom platform/version and available-IP persistence at',width);
 
   await go('ipam');await page.evaluate(()=>openSubnetModal());
-  for(const selector of ['#sub-kind','#sub-parent','#sub-cidr','#sub-gw','#sub-name'])await height(selector);
+  for(const selector of ['#sub-kind','#sub-parent','#sub-cidr','#sub-gw','#sub-name','#sub-vlan','#sub-desc'])await height(selector);
+  if(width===1440){
+   const alignment=await page.evaluate(()=>['sub-name','sub-vlan'].map(id=>document.getElementById(id).getBoundingClientRect().top));
+   assert.equal(alignment[0],alignment[1],'Network Name and VLAN inputs must align in their shared row');
+  }
   await capture('07-subnet-controls-'+width,'ipam-draft-01',ref=>ref.evaluate(()=>openSubnet()));await dismiss();
   for(const [kind,method,args] of [
    ['types','openDeviceCatalogueManager',['type']],['locations','openDeviceCatalogueManager',['location']],
@@ -116,7 +130,11 @@ module.exports=async function verifyOwnerAcceptanceBatch({page,reference,sourceB
   await go('users');await page.locator('.approved-page-header [data-tab="list"]').click();const own=page.locator('[data-action="users-open-editor"]').first();await own.click();
   const workspace=page.locator('.users-management-modal .modal');assert.equal(await workspace.evaluate(e=>Math.round(e.getBoundingClientRect().width)),Math.min(710,width-20));
   assert.equal(await workspace.locator('[data-next-user-operation]:disabled').count(),3);assert.equal(await workspace.locator('.profile-modal-grid input:disabled').count(),4);
-  for(const selector of ['#user-firstName','[data-next-user-permission][data-section="Devices"]'])await height(selector);
+  for(const selector of ['#user-firstName','[data-next-user-permission][data-section="Devices"]','[data-next-user-permission][data-section="IPAM"]','[data-next-user-permission][data-section="Racks"]'])await height(selector);
+  if(width===1440){
+   const rows=await workspace.locator('[data-next-user-permission]').evaluateAll(nodes=>nodes.map(e=>e.getBoundingClientRect().top));
+   assert.ok(rows.every(y=>y===rows[0]),'Workspace permission selectors must align in their shared row');
+  }
   await capture('09-protected-workspace-'+width,'users-permissions-draft-02',ref=>ref.evaluate(()=>{setTab('list');openModal(initialUsers[0]);}));
   await workspace.locator('.app-modal-close').click();assert.ok(await own.evaluate(e=>document.activeElement===e),'Header Close must return focus to Manage');
   await page.locator('.approved-page-header [data-tab="add"]').click();const username='acceptance-viewer-'+width,password='Isolated-Acceptance-Viewer-2026!';
@@ -155,5 +173,5 @@ module.exports=async function verifyOwnerAcceptanceBatch({page,reference,sourceB
   console.log('PASS: Owner Acceptance Batch 01 layout/actions at',width);
  }
  assert.deepEqual(errors,[],'Owner-batch browser errors');
- fs.writeFileSync(path.join(out,'owner-batch-results.json'),JSON.stringify(results,null,2));
+ fs.writeFileSync(path.join(out,'owner-batch-results.json'),JSON.stringify({screens:results,controlMeasurements:measurements,viewports:[1440,390],approvedRevision:'c26db4a56bbc30f95b56201e81a7a76d13c6037b',approvalCommit:'5053c687102f45ea4960ee7c3c08f2cb7728bf82'},null,2));
 };

@@ -5409,6 +5409,7 @@ function openIpModal(ip) {
             sections[2].appendChild(mountingFields);
             const mountingHint = document.createElement('div');
             mountingHint.className = 'device-review-hint';
+            mountingHint.style.marginTop='15px';
             mountingHint.textContent = 'End U is calculated from Start U + U Height - 1. Positions must fit the rack without overlapping existing equipment.';
             sections[2].appendChild(mountingHint);
             const hardwareHeading = sections[1].querySelector(':scope > .form-section-heading');
