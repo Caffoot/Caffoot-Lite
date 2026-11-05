@@ -5,17 +5,88 @@ module.exports=async({page,measure,results,out,width,theme})=>{
  async function capture(name,modal=false){
   await page.waitForTimeout(50);
   const values=await measure(page);assert.equal(values.overflow,false,name+' page overflow');assert.equal(values.dark,theme==='dark',name+' theme');
-  if(modal){const r=await page.locator('#modal-content').evaluate(e=>{if(getComputedStyle(e).display==='contents')e=e.firstElementChild;const r=e.getBoundingClientRect();return {y:r.y,bottom:r.bottom};});assert.ok(r.y>=-1&&r.bottom<=page.viewportSize().height+1,name+' dialog within viewport');}
+  const inline=page.locator('#main-content .modal[role="dialog"]:visible').first();
+  const inlineVisible=await inline.count();modal=modal||!!inlineVisible;
+  if(modal){const r=await (inlineVisible?inline:page.locator('#modal-content')).evaluate(e=>{if(getComputedStyle(e).display==='contents')e=e.firstElementChild;const r=e.getBoundingClientRect();return {y:r.y,bottom:r.bottom};});assert.ok(r.y>=-1&&r.bottom<=page.viewportSize().height+1,name+' dialog within viewport');}
   results.push({screen:name,width,theme,...values});await page.screenshot({path:path.join(out,name+'-'+theme+'-'+width+'.png'),fullPage:!modal});
  }
 
+ async function navigation(){
+  await go('dashboard');
+  for(const collapsed of [false,true]){
+   if(await page.locator('#sidebar').evaluate(e=>e.classList.contains('collapsed'))!==collapsed)
+    await page.locator('[data-action="toggle-approved-sidebar"]').click();
+   let reference,hoverReference,selectedReference;
+   for(const tab of ['dashboard','devices','ipam','racks','audit','users','account','settings']){
+    await go(tab);
+    const other=page.locator('#sidebar .nav-item:not(.current)').first();await other.hover();
+    const colours=async locator=>locator.evaluate(e=>({background:getComputedStyle(e).backgroundColor,color:getComputedStyle(e).color,icon:getComputedStyle(e.querySelector('svg')).color}));
+    const hover=await colours(other);
+    if(!hoverReference)hoverReference=hover;
+    assert.deepEqual(hover,hoverReference,tab+' shared hover treatment');
+    const selected=page.locator('#sidebar .nav-item.current');
+    let selectedColours=null;
+    if(tab==='account')assert.equal(await selected.count(),0,'Account remains a header destination');
+    else{
+     assert.equal(await selected.getAttribute('data-tab'),tab,'Selected menu follows destination');
+     selectedColours=await colours(selected);
+     if(!selectedReference)selectedReference=selectedColours;
+     assert.deepEqual(selectedColours,selectedReference,tab+' shared selected treatment');
+    }
+    const values=await measure(page);
+    const geometry=values.nav.map(({label,x,y,width,height,padding,icon})=>({label,x,y,width,height,padding,icon}));
+    if(!reference)reference=geometry;
+    assert.deepEqual(geometry,reference,tab+' shared '+(collapsed?'collapsed':'expanded')+' geometry');
+    results.push({screen:'sidebar-'+(collapsed?'collapsed':'expanded')+'-'+tab,width,theme,hover,selectedColours,...values});
+   }
+  }
+  await page.locator('[data-action="toggle-approved-sidebar"]').click();
+  await page.locator('#sidebar [data-tab="dashboard"]').click();await page.waitForFunction(()=>currentTab==='dashboard');
+ }
+ async function supplementary(){
+  await go('devices');await page.evaluate(()=>openDeviceDetailView(appState.devices[0].id));
+  for(const tab of ['hardware','network','software','location','virtual-machines']){
+   await page.locator('#device-details-tab-'+tab).click();await capture('device-details-'+tab,true);
+  }
+  await page.evaluate(()=>closeModal(true));
+  await go('audit');await page.evaluate(()=>{auditHistory=[{at:'2026-11-05T12:00:00Z',actor:'owner',outcome:'Succeeded',reason:'Visual fixture: device renamed',changes:[{kind:'Device',action:'Updated',label:'Hypervisor-01',fields:['name'],before:{name:'Previous Hypervisor'},after:{name:'Hypervisor-01'}}],omitted:0}];activeAuditTab='activity';renderContent();});
+  await page.locator('[data-action="audit-view-detail"]').first().click();await capture('audit-event-detail');
+  await page.locator('[data-action="audit-close-detail"]').click();
+  await go('users');await page.locator('.approved-page-header .tabs [data-tab="list"]').click();
+  await page.locator('[data-action="users-open-editor"]').first().click();await capture('user-workspace');
+  await page.locator('[data-action="users-close-editor"]').first().click();
+  await go('settings');await page.locator('.approved-settings .subnav [data-tab="maintenance"]').click();
+  const before=await page.evaluate(()=>JSON.stringify({devices:appState.devices,racks:appState.racks,subnets:appState.subnets}));
+  page.once('dialog',dialog=>dialog.dismiss());await page.locator('[data-action="clear-inventory-data"]').click();
+  assert.equal(await page.evaluate(()=>JSON.stringify({devices:appState.devices,racks:appState.racks,subnets:appState.subnets})),before,'Dismissing the protected reset prompt preserves data');
+  return;
+ }
+ if(['supplementary','theme-states'].includes(process.env.CAFFOOT_BATCH02_ACTION_FOCUS)){
+  if(process.env.CAFFOOT_BATCH02_ACTION_FOCUS==='theme-states'){
+   await go('devices');
+   for(const section of ['types','locations','manufacturers','models','software','services']){
+    await page.evaluate(section=>{activeDeviceDetailsTab=section;renderContent();
+     if(section==='types'||section==='locations')openDeviceCatalogueManager(section==='types'?'type':'location');
+     if(section==='manufacturers')openHardwareManufacturerManager();
+     if(section==='models')openHardwareModelManager();
+     if(section==='software')openSoftwareCatalogueEditor();
+     if(section==='services')openServerServiceEditor();
+    },section);await capture('catalogue-dialog-'+section,true);await page.evaluate(()=>closeModal(true));
+   }
+   await go('settings');await page.locator('.approved-settings .subnav [data-tab="maintenance"]').click();await capture('settings-maintenance');
+  }
+  await supplementary();return;
+ }
+ if(process.env.CAFFOOT_BATCH02_ACTION_FOCUS==='navigation'){
+  await navigation();return;
+ }
  if(process.env.CAFFOOT_BATCH02_ACTION_FOCUS==='presentation'){
   await go('racks');
   for(const section of ['overview','inventory','accessories']){
    await page.locator('[data-action="approved-rack-section"][data-section-tab="'+section+'"]').click();await capture('racks-'+section);
   }
   await go('settings');await page.locator('.approved-settings .subnav [data-tab="maintenance"]').click();await capture('settings-maintenance');
-  return;
+  await navigation();return;
  }
  if(process.env.CAFFOOT_BATCH02_ACTION_FOCUS!=='theme-photo'){
  const reference=results.find(r=>r.screen==='dashboard'&&r.theme===theme&&r.width===width);
@@ -113,16 +184,5 @@ module.exports=async({page,measure,results,out,width,theme})=>{
  await page.locator('[data-action="account-photo-remove"]').click();await page.waitForFunction(()=>!document.querySelector('#header-account-initial img'));
  await page.reload();await page.locator('#app[aria-busy="false"]').waitFor();assert.equal(await page.locator('#header-account-initial img').count(),0,'Removal survives reload');
  await page.locator('.topbar').screenshot({path:path.join(out,'placeholder-header-'+theme+'-'+width+'.png')});
- await page.locator('[data-action="toggle-approved-sidebar"]').click();
- assert.ok(await page.locator('#sidebar').evaluate(e=>e.classList.contains('collapsed')),'Collapse works');
- let collapsedReference;
- for(const tab of ['dashboard','devices','ipam','racks','audit','users','account','settings']){
-  await go(tab);const values=await measure(page);
-  const geometry=values.nav.map(({label,x,y,width,height,padding,icon})=>({label,x,y,width,height,padding,icon}));
-  if(!collapsedReference)collapsedReference=geometry;
-  assert.deepEqual(geometry,collapsedReference,tab+' collapsed shared geometry');
- }
-
- await page.locator('[data-action="toggle-approved-sidebar"]').click();
- await page.locator('#sidebar [data-tab="dashboard"]').click();await page.waitForFunction(()=>currentTab==='dashboard');
+ await navigation();
 };

@@ -41,6 +41,7 @@ module.exports=async function verifyOwnerBatch02({page,context,out}){
  for(const width of [1440,390].filter(w=>!process.env.CAFFOOT_BATCH02_WIDTH||w===Number(process.env.CAFFOOT_BATCH02_WIDTH)))for(const theme of ['light','dark'].filter(t=>!process.env.CAFFOOT_BATCH02_THEME||t===process.env.CAFFOOT_BATCH02_THEME)){
   await page.setViewportSize({width,height:width===1440?950:844});
   await page.evaluate(theme=>caffootSetTheme(theme),theme);
+  if(process.env.CAFFOOT_BATCH02_ACTION_FOCUS==='supplementary'){await require('./owner-batch-02-actions.cjs')({page,measure,results,out,width,theme});continue;}
   for(const [name,tab,section,modal] of screens){
    await page.evaluate(({tab,section,modal})=>{
     closeModal(true);switchTab(tab);
@@ -50,6 +51,7 @@ module.exports=async function verifyOwnerBatch02({page,context,out}){
    },{tab,section,modal});
    if(modal)await page.locator('#device-editor-form').waitFor();
    const values=await measure(page);if(!baseline){assert.equal(values.dark,theme==='dark',name+' theme');assert.equal(values.overflow,false,name+' page overflow');}
+   if(!baseline&&name==='my-account')assert.ok(await page.locator('.appearance-buttons').evaluate(e=>getComputedStyle(e.querySelector('[aria-pressed="true"]')).backgroundColor!==getComputedStyle(e.querySelector('[aria-pressed="false"]')).backgroundColor),'Selected appearance preference remains visibly distinct');
    results.push({screen:name,width,theme,...values});
    await page.screenshot({path:path.join(out,name+'-'+theme+'-'+width+'.png'),fullPage:!modal});
   }
