@@ -123,11 +123,11 @@ async function run(){
   await page.locator('#setup-complete:not([hidden])').waitFor();
   await page.locator('#setup-continue-sign-in').click();
   await page.getByText('MFA enrolled. Sign in to continue.').waitFor();
-  assert.equal(await page.locator('#code').inputValue(),'',
+  assert.ok((await page.locator('#code').inputValue())==='',
     'Returned sign-in must not retain the enrolment verification code');
-  assert.equal(await page.locator('#confirm-password').inputValue(),'',
+  assert.ok((await page.locator('#confirm-password').inputValue())==='',
     'Enrolment-only password confirmation must be cleared');
-  assert.equal(await page.locator('#secret').textContent(),'',
+  assert.ok((await page.locator('#secret').textContent())==='',
     'The completed enrolment must remove the setup seed from the page');
   assert.equal(await page.locator('#setup-qr').locator('*').count(),0,
     'The completed enrolment must remove the setup QR code');
@@ -1641,10 +1641,10 @@ async function run(){
   const mountingCard=approvedEditor.locator('#device-form-panel-general .device-physical-mounting.device-review-panel.full');
   assert.equal(await mountingCard.count(),1,
     'General tab must use the approved full-width physical mounting card');
-  assert.ok(await mountingCard.getByText('Rack placement uses the existing Front/Rear, U height and collision checks in v2.0.1.',{exact:true}).isVisible(),
+  assert.ok(await mountingCard.getByText('Choose a rack face, starting position and equipment height.',{exact:true}).isVisible(),
     'Approved mounting card must retain the pinned source explanation');
   assert.ok(await mountingCard.locator('.device-review-hint')
-    .getByText('End U is calculated from Start U + U Height - 1. Conflicting or out-of-range positions must still be rejected in the live application.',{exact:true}).isVisible(),
+    .getByText('End U is calculated from Start U + U Height - 1. Positions must fit the rack without overlapping existing equipment.',{exact:true}).isVisible(),
     'Approved rack card must retain the original calculated-height collision warning');
   await page.locator('#dev-mount-type').selectOption('Tower / Floor Standing');
   await page.locator('#dev-location').selectOption('Unknown');

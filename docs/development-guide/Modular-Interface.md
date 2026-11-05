@@ -17,6 +17,8 @@ Devices Overview, Inventory and catalogue sections select their own pinned style
 
 Dashboard Activity keeps the three existing CSV exports in the approved report card. The additional Network Reports button opens the existing detailed reports in an approved catalogue dialog. Section tab strips retain their scroll position and reveal the selected section after navigation or resizing.
 
+The owner-approved [Correction Batch 01](Owner-Acceptance-Correction-Batch-01.md) adds explicit presentation exceptions: labelled header Close actions, consistent 42px ordinary form controls derived from the original Device/IPAM/Users controls, unboxed searchable options derived from the original device menu, an orange empty-inventory shortcut, and paired maintenance rows. The twelve extracted source stylesheets remain immutable. Existing selection, keyboard, discard confirmation and permission handlers remain authoritative; User Workspace closure restores focus to Manage.
+
 The approved source designs remain in Git history. `future-design` is not restored. The original integration specification is unchanged.
 
 ## Access And Persistence

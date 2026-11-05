@@ -4929,7 +4929,8 @@ function openIpModal(ip) {
             const custom = document.getElementById('platform-name');
             if (!select || !custom) return;
             select.addEventListener('change', () => {
-                if (select.value === '__custom__') {
+                const customSelected=select.value==='__custom__';
+                if (customSelected) {
                     custom.hidden = false;
                     custom.value = '';
                     custom.focus();
@@ -4939,6 +4940,12 @@ function openIpModal(ip) {
                 }
                 captureSoftwarePlatformFields();
                 refreshSoftwarePlatformFields();
+                if(customSelected){
+                    // Rebuilding version choices must not hide the custom choice the user just made.
+                    document.getElementById('platform-select').value='__custom__';
+                    const field=document.getElementById('platform-name');
+                    field.hidden=false;field.focus();
+                }
             });
             const versionSelect = document.getElementById('version-select');
             const versionInput = document.getElementById('platform-version');
@@ -5216,7 +5223,7 @@ function openIpModal(ip) {
                 const heading=document.createElement('h3');
                 heading.innerHTML='<span class="mini-icon" aria-hidden="true">▣</span>Network Identity';
                 const subtitle=document.createElement('p');
-                subtitle.textContent='IPAM assignments use existing subnets and allocation protections.';
+                subtitle.textContent='Choose a subnet and an available IP address.';
                 oldNetworkHeading.replaceWith(heading,subtitle);
             }
             const originalGuidance=[...networkIdentity.querySelectorAll('.device-help')].find(
@@ -5379,7 +5386,7 @@ function openIpModal(ip) {
             const mountingTitle = document.createElement('h3');
             mountingTitle.innerHTML = '<span class="mini-icon" aria-hidden="true">▣</span>Mounting & Rack Configuration';
             const mountingSubtitle = document.createElement('p');
-            mountingSubtitle.textContent = 'Rack placement uses the existing Front/Rear, U height and collision checks in v2.0.1.';
+            mountingSubtitle.textContent = 'Choose a rack face, starting position and equipment height.';
             mountingHeading?.replaceWith(mountingTitle, mountingSubtitle);
             const mountingFields = document.createElement('div');
             mountingFields.className = 'device-review-form-grid';
@@ -5402,13 +5409,13 @@ function openIpModal(ip) {
             sections[2].appendChild(mountingFields);
             const mountingHint = document.createElement('div');
             mountingHint.className = 'device-review-hint';
-            mountingHint.textContent = 'End U is calculated from Start U + U Height - 1. Conflicting or out-of-range positions must still be rejected in the live application.';
+            mountingHint.textContent = 'End U is calculated from Start U + U Height - 1. Positions must fit the rack without overlapping existing equipment.';
             sections[2].appendChild(mountingHint);
             const hardwareHeading = sections[1].querySelector(':scope > .form-section-heading');
             const hardwareTitle = document.createElement('h3');
             hardwareTitle.innerHTML = '<span class="mini-icon" aria-hidden="true">▣</span>Hardware & Lifecycle';
             const hardwareSubtitle = document.createElement('p');
-            hardwareSubtitle.textContent = 'Physical devices only. This entire tab is hidden for virtual machines.';
+            hardwareSubtitle.textContent = 'Record physical hardware and lifecycle details.';
             hardwareHeading?.replaceWith(hardwareTitle, hardwareSubtitle);
             const notesHeading = sections[4].querySelector(':scope > .form-section-heading');
             if (notesHeading) {
