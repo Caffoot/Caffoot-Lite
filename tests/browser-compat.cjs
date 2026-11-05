@@ -482,7 +482,7 @@ async function run(){
   const verificationRequest=page.waitForResponse(response=>response.url().endsWith('/api/account/email/request'));
   await page.locator('#request-email-verification').click();
   assert.equal((await verificationRequest).status(),200);
-  assert.ok((await page.locator('#email-verification-message').textContent()).includes('contact your Caffoot Lite administrator'));
+  await page.waitForFunction(()=>document.querySelector('#email-verification-message')?.textContent.includes('contact your Caffoot Lite administrator'));
   const lightCard=await page.locator('.personal-card').evaluate(el=>getComputedStyle(el).backgroundColor);
   await page.locator('.appearance-buttons [data-theme="dark"]').click();
   assert.ok(await page.locator('html').evaluate(el=>el.classList.contains('dark')));
