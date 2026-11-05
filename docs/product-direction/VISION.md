@@ -2,6 +2,10 @@
 
 > **Discussion draft — 5 November 2026.** This describes the direction we are exploring, not features available today or development work approved to begin. The [public roadmap](../../ROADMAP.md) remains the source for released and currently approved work.
 
+> **Simplicity in everything. Your infrastructure. Your users. Your data.**
+
+This is our long-term product motto: simplicity in how Caffoot Lite works, and control over the infrastructure, identities and information an organisation manages. It expresses the direction we're working towards, not a claim that every planned capability is available today.
+
 ## Why Caffoot Lite exists
 
 **A self-hosted IT management and identity platform that puts businesses back in control of their infrastructure, their users and their data.**
