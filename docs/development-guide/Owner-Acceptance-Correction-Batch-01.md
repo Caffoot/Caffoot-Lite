@@ -1,6 +1,6 @@
 # Caffoot Lite v2.1 — Owner Acceptance Correction Batch 01
 
-**Status:** Written for product-owner review; **not yet approved for implementation**.  
+**Status:** **Approved by the product owner on 5 November 2026 for Codex implementation of findings 01–10 only.**  
 **Parent plan:** [Issue #282](https://github.com/Caffoot/Caffoot-Lite/issues/282).  
 **Development branch:** `feat/approved-modular-html-282`.  
 **Baseline application commit:** `d85c72c07f1c61bd87105ff9b8d3d6cb217372ce`.  
@@ -12,7 +12,7 @@
 
 Follow Issue #282, `AGENTS.md`, existing functionality/security specifications and the twelve pinned HTML designs. Only the explicit owner-requested presentation refinements described below may differ from the pinned designs. Do not infer permission to replace or approximate other design elements.
 
-The owner has agreed to focus exclusively on these ten items, to document the plan first and approve it **before** Codex starts implementation. Do not implement this document until the owner confirms the written acceptance criteria. Where an exact presentation decision remains uncertain, compare with the pinned source and ask before departing from it.
+The owner has approved this written ten-item correction plan for Codex implementation on 5 November 2026. No other changes are authorised. Where an exact presentation decision remains uncertain, compare with the pinned source and ask before departing from it. Where an exact presentation decision remains uncertain, compare with the pinned source and ask before departing from it.
 
 ## Findings and acceptance criteria
 
@@ -98,7 +98,7 @@ The owner has agreed to focus exclusively on these ten items, to document the pl
 
 **Verify:** Desktop row alignment and mobile stacking; varying message lengths; all controls, safeguards and warning text remain visible.
 
-## Coordinated implementation and verification — after owner approval only
+## Coordinated implementation and verification — owner-approved scope
 
 1. Review the baseline commit, exact approved sources and this document; identify affected shared components, avoiding ten overlapping cosmetic patches.
 2. Implement only findings 01–10 as one coordinated correction batch; use focused, meaningful Git commits/checkpoints on the existing branch and preserve the baseline history.
@@ -110,7 +110,7 @@ The owner has agreed to focus exclusively on these ten items, to document the pl
 
 ## Owner review decision
 
-- [ ] Owner approves this exact written correction plan and authorises Codex implementation.
+- [x] Owner approves this exact written correction plan and authorises Codex implementation (5 November 2026).
 - [ ] Owner requests amendments before implementation.
 
-**Document creation is not implementation approval.** No application changes, automated verification of the proposed fixes, or owner acceptance of the final result are claimed here.
+**Owner approval authorises the specified implementation only, not a merge, publication, release or final visual acceptance.** No application changes, automated verification of the proposed fixes, or owner acceptance of the final result are claimed by this document.
