@@ -27,7 +27,7 @@ The Docker application's first-run and sign-in page uses the existing Caffoot he
 
 The Docker edition ships [`assets/tailwind.css`](../../assets/tailwind.css), a **static Tailwind CSS v3.4.17** build generated from the utility classes in `inventory.html`, preserving the existing `darkMode: 'class'` behaviour and established `brand` colour values. The HTTPS backend serves this file from `/assets/tailwind.css` and the Dockerfile bundles it. **There is no externally loaded Tailwind JavaScript, Node.js requirement or CSS compilation during installation or at runtime.**
 
-If an approved future UI change needs new Tailwind utility classes, regenerate the stylesheet using that pinned Tailwind v3 version, the same dark-mode and brand settings, and the entire `inventory.html` source as the content input; commit the resulting CSS alongside the HTML change. Then rerun the relevant Chromium compatibility checks and compare affected screens to the published v1.3.3/approved Next appearance. Do not introduce an unapproved inventory redesign or a permanent runtime build dependency.
+If an approved future UI change needs new Tailwind utility classes, regenerate the stylesheet using that pinned Tailwind v3 version, the same dark-mode and brand settings, and the entire `inventory.html` source as the content input; commit the resulting CSS alongside the HTML change. Then rerun the relevant Chromium compatibility checks and compare affected screens with the relevant approved appearance references for that change. Do not introduce an unapproved inventory redesign or a permanent runtime build dependency.
 
 ## HTTP endpoints
 
