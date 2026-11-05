@@ -1,4 +1,4 @@
-# Caffoot Lite
+# Caffoot Lite v2.0.3
 
 **Infrastructure, Simplified.** Free, open-source IP address management (IPAM), device inventory and network rack documentation for **small businesses, IT teams and home labs**.
 
