@@ -64,6 +64,51 @@ class HistoryPermissionProjectionTests(unittest.TestCase):
         result = visible_change_history(self.db, 2)
         self.assertNotIn("reason", result[0])
 
+    def test_account_events_and_sensitive_details_are_hidden_from_section_viewers(self):
+        """Section permissions cannot reveal account activity or before/after data."""
+        self.db.execute(
+            "INSERT INTO inventory_change_history(record_json) VALUES(?)",
+            (json.dumps({
+                "at": "2026-11-04T08:00:00Z",
+                "reason": "Personal details updated",
+                "actor": "other-admin",
+                "outcome": "Succeeded",
+                "changes": [{
+                    "kind": "Account", "action": "Updated",
+                    "label": "private-user", "fields": ["Email Address"],
+                    "before": {"email": "private-old@example.test"},
+                    "after": {"email": "private-new@example.test"},
+                }],
+            }),),
+        )
+        self.db.execute(
+            "INSERT INTO inventory_change_history(record_json) VALUES(?)",
+            (json.dumps({
+                "at": "2026-11-04T08:01:00Z",
+                "reason": "Inventory saved",
+                "actor": "editor",
+                "outcome": "Succeeded",
+                "changes": [{
+                    "kind": "Device", "action": "Updated",
+                    "label": "Lab Server", "fields": ["name"],
+                    "before": {"name": "old-server"},
+                    "after": {"name": "new-server"},
+                }],
+            }),),
+        )
+        viewer = visible_change_history(self.db, 2)
+        self.assertEqual(len(viewer), 1)
+        self.assertEqual(viewer[0]["actor"], "editor")
+        self.assertEqual(viewer[0]["outcome"], "Succeeded")
+        self.assertNotIn("before", viewer[0]["changes"][0])
+        self.assertNotIn("after", viewer[0]["changes"][0])
+        self.assertNotIn("private-user", json.dumps(viewer))
+        self.assertNotIn("private-old@example.test", json.dumps(viewer))
+        self.allowed = {"Devices": True, "IPAM": True, "Racks": True}
+        admin = visible_change_history(self.db, 1)
+        self.assertEqual(len(admin), 2)
+        self.assertEqual(admin[0]["changes"][0]["kind"], "Account")
+
     def test_admin_retains_unchanged_history(self):
         event = self.add("Device", "IPAM", "Unknown legacy", omitted=21)
         self.allowed = {"Devices": True, "IPAM": True, "Racks": True}
@@ -80,6 +125,18 @@ class HistoryPermissionProjectionTests(unittest.TestCase):
         self.db.execute("INSERT INTO inventory_change_history(record_json) VALUES(?)",
                         (json.dumps({"changes": [{"kind": ["Device"]}, "invalid"]}),))
         self.assertEqual(visible_change_history(self.db, 2), [])
+
+
+    def test_history_is_not_capped_at_two_hundred_events(self):
+        # The approved Audit Trail retains all new entries by default.
+        # The old browser history UI capped records at 200; SQLite must not.
+        for _ in range(205):
+            self.add("Device")
+        self.assertEqual(len(visible_change_history(self.db, 1)), 205)
+        self.assertEqual(len(visible_change_history(self.db, 2)), 205)
+        self.allowed = {"Devices": False, "IPAM": False, "Racks": False}
+        self.assertEqual(visible_change_history(self.db, 2), [])
+
 
 
 if __name__ == "__main__":

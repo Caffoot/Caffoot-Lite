@@ -1,6 +1,13 @@
 name: Caffoot Lite Docker Compose lifecycle
 
 on:
+  push:
+    branches: [feat/approved-html-full-interface]
+    paths:
+      - "Dockerfile"
+      - "compose.yaml"
+      - "tests/test_compose_lifecycle.py"
+      - ".github/workflows/compose-lifecycle.yml"
   pull_request:
     paths:
       - "Dockerfile"

@@ -13,6 +13,11 @@ class IndependentIpamTests(unittest.TestCase):
     def setUp(self):
         self.db = sqlite3.connect(":memory:")
         initialise_database(self.db)
+        self.db.execute(
+            "INSERT INTO accounts(id,username,password_hash,is_admin,mfa_secret,mfa_confirmed) "
+            "VALUES(1,'audit-tester','test-hash',1,'secret',1)"
+        )
+        self.db.commit()
         stage_inventory(self.db, {
             "devices": [{"id": "d1", "name": "One", "mountType": "Desktop",
                          "primaryIp": "10.0.0.10"}],
@@ -133,3 +138,36 @@ class IndependentIpamTests(unittest.TestCase):
                     self.db, 1, [{"ip": "10.0.0.20",
                                   "record": {"status": "Reserved", "deviceId": ""}}]
                 )
+
+    def test_audit_records_safe_status_changes_without_private_ipam_notes(self):
+        ip = "10.0.0.24"
+        first = {"deviceId": "", "status": "Reserved", "hostname": "private-host",
+                 "notes": "PRIVATE-IPAM-NOTE-NOT-FOR-AUDIT"}
+        self.change(ip, first)
+        later = dict(first, status="Available", notes="PRIVATE-CHANGED-IPAM-NOTE")
+        self.change(ip, later)
+        stored = [json.loads(row[0]) for row in self.db.execute(
+            "SELECT record_json FROM inventory_change_history ORDER BY id"
+        )]
+        updated = stored[-1]["changes"][0]
+        self.assertEqual(updated["before"], {"status": "Reserved"})
+        self.assertEqual(updated["after"], {"status": "Available"})
+        self.assertNotIn("PRIVATE-", json.dumps(stored))
+        self.assertNotIn("private-host", json.dumps(stored))
+        self.assertEqual(stored[-1]["actor"], "audit-tester")
+        self.assertEqual(stored[-1]["outcome"], "Succeeded")
+
+    def test_bulk_audit_status_change_is_bounded_and_sanitised(self):
+        ip = "10.0.0.25"
+        initial = {"deviceId": "", "status": "Reserved",
+                   "notes": "PRIVATE-BULK-NOTE"}
+        self.bulk([{"ip": ip, "record": initial}])
+        self.bulk([{"ip": ip, "record": dict(initial, status="Available",
+                                           notes="PRIVATE-BULK-CHANGED")}])
+        final = json.loads(self.db.execute(
+            "SELECT record_json FROM inventory_change_history ORDER BY id DESC LIMIT 1"
+        ).fetchone()[0])
+        update = final["changes"][0]
+        self.assertEqual(update["before"], {"status": "Reserved"})
+        self.assertEqual(update["after"], {"status": "Available"})
+        self.assertNotIn("PRIVATE-BULK", json.dumps(final))

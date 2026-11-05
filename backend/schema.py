@@ -6,7 +6,7 @@ later source-compatible projection work.
 """
 import sqlite3
 
-SCHEMA_VERSION = 7
+SCHEMA_VERSION = 8
 
 DDL = """
 CREATE TABLE IF NOT EXISTS inventory_devices (
@@ -137,6 +137,26 @@ def initialise_database(connection: sqlite3.Connection) -> None:
                 "ALTER TABLE device_edit_reservations ADD COLUMN base_revision INTEGER NOT NULL DEFAULT 0"
             )
             connection.execute("INSERT INTO schema_migrations (version) VALUES (7)")
+        if 8 not in versions:
+            connection.execute("""
+                CREATE TABLE account_profiles (
+                    account_id INTEGER PRIMARY KEY
+                        REFERENCES accounts(id) ON DELETE CASCADE,
+                    first_name TEXT NOT NULL DEFAULT '',
+                    last_name TEXT NOT NULL DEFAULT '',
+                    display_name TEXT NOT NULL DEFAULT '',
+                    email TEXT NOT NULL DEFAULT '',
+                    email_verified INTEGER NOT NULL DEFAULT 0
+                        CHECK(email_verified IN (0,1)),
+                    photo_mime TEXT,
+                    photo_data BLOB,
+                    CHECK((photo_mime IS NULL AND photo_data IS NULL) OR
+                          (photo_mime IN ('image/png','image/jpeg','image/webp')
+                           AND photo_data IS NOT NULL
+                           AND length(photo_data) <= 5242880))
+                )
+            """)
+            connection.execute("INSERT INTO schema_migrations (version) VALUES (8)")
         connection.commit()
     except BaseException:
         connection.rollback()

@@ -74,6 +74,12 @@ def visible_change_history(connection, account_id):
         if not changes:
             continue
         visible_event = {"changes": changes, "omitted": 0}
+        actor = event.get("actor")
+        if isinstance(actor, str) and len(actor) <= 256:
+            visible_event["actor"] = actor
+        outcome = event.get("outcome")
+        if outcome == "Succeeded":
+            visible_event["outcome"] = outcome
         if isinstance(event.get("at"), str):
             visible_event["at"] = event["at"]
         reason = event.get("reason")

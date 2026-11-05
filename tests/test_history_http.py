@@ -80,8 +80,13 @@ class HistoryHttpPermissionTests(unittest.TestCase):
                 self.assertEqual(entries[0]["omitted"], 0)
                 status, admin_result = self.get(path, self.admin_token)
                 self.assertEqual(status, 200)
-                self.assertEqual(len(admin_result["changeHistory"][0]["changes"]), 5)
-                self.assertEqual(admin_result["changeHistory"][0]["omitted"], 7)
+                inventory_events = [
+                    event for event in admin_result["changeHistory"]
+                    if event.get("reason") == "Inventory saved"
+                ]
+                self.assertEqual(len(inventory_events), 1)
+                self.assertEqual(len(inventory_events[0]["changes"]), 5)
+                self.assertEqual(inventory_events[0]["omitted"], 7)
 
     def test_revoked_permissions_invalidate_access_to_both_routes(self):
         with sqlite3.connect(self.path) as db:

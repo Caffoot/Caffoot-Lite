@@ -107,22 +107,73 @@ select { padding: 7px; max-width: 100%; font: inherit; }
   h1 { font-size: 23px; }
   .brand-tagline { font-size: 12px; }
 }
-</style></head><body><main>
-<header class="brand-header">
-  <img class="brand-logo" src="/assets/caffoot-icon-1024.png" alt="Caffoot hedgehog logo" width="64" height="64">
-  <div class="brand-name"><h1>Caffoot Lite</h1><p class="brand-tagline">Infrastructure, Simplified.</p></div>
-</header>
-<p id="intro">Loading…</p>
+</style><style id="approved-html-authentication">
+/* Exact approved Sign In / First Run Draft 03 styles; demonstration controls
+   are replaced with the server-connected login, setup and MFA form. */
+
+:root{--navy:#142b43;--navy2:#203b55;--ink:#223b53;--muted:#668198;--orange:#ed8532;--orange-dark:#d36e23;--line:#dce6ef;--canvas:#f5f7fa;--green:#2f9072;--blue:#466981;--soft:#edf3f8}
+*{box-sizing:border-box}html{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:var(--ink)}body{margin:0;min-height:100vh;background:var(--canvas);font-size:13px;-webkit-font-smoothing:antialiased}button,input,select{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid rgba(237,133,50,.35);outline-offset:2px}[hidden]{display:none!important}
+.preview{padding:12px max(20px,calc((100vw - 1096px)/2));display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;background:white;border-bottom:1px solid var(--line)}.preview-id{font-size:11px;color:#557087;display:flex;align-items:center;gap:9px;white-space:nowrap}.preview-id b{color:#1a3851}.dot{width:8px;height:8px;border-radius:50%;background:var(--orange)}.preview-switches{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.preview-switches button,.scenario-select{background:white;color:#526f88;border:1px solid #d9e3ed;border-radius:8px;padding:9px 12px;font-size:11px;font-weight:750;min-height:36px}.preview-switches button[aria-pressed=true]{background:#203d56;color:#fff;border-color:#203d56}.preview-switches label{color:#667e91;font-size:11px;font-weight:700;display:flex;gap:8px;align-items:center;margin-left:6px}.scenario-select{font-weight:600;max-width:210px;padding-right:24px}
+.canvas{min-height:calc(100vh - 62px);display:grid;place-items:center;padding:34px 24px 44px;background:radial-gradient(ellipse at 13% 18%,#e5edf4 0%,transparent 36%),radial-gradient(ellipse at 87% 92%,#e8f0f6 0%,transparent 42%),var(--canvas)}.auth-shell{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1fr);width:min(1096px,100%);min-height:681px;border:1px solid #d9e4ed;border-radius:20px;overflow:hidden;background:#fff;box-shadow:0 22px 75px rgba(25,50,72,.075)}
+.brand-side{position:relative;isolation:isolate;overflow:hidden;background:linear-gradient(154deg,#24435e 0%,#142b43 65%,#11263c 100%);padding:41px 43px 37px;display:flex;flex-direction:column;color:#fff}.brand-side:before{content:"";position:absolute;z-index:-1;width:430px;height:430px;right:-235px;bottom:-84px;border-radius:50%;border:1px solid #ffffff13;box-shadow:0 0 0 65px #ffffff06,0 0 0 138px #ffffff04}.brand-side:after{content:"";position:absolute;z-index:-1;inset:0;background:radial-gradient(ellipse at 4% 0%,#ffffff0a,transparent 40%)}.brand{display:flex;gap:13px;align-items:center}.brand-logo{height:55px;width:55px;object-fit:contain;border-radius:12px;background:#19344d;flex-shrink:0}.brand-fallback{height:55px;width:55px;border:1px solid #698098;border-radius:12px;display:none;place-items:center;font-weight:900;font-size:30px;color:#ffa86a}.brand .wordmark{font-size:20px;font-weight:850;letter-spacing:-.75px;line-height:1.25}.wordmark span{color:#ffb078}.brand small{display:block;font-size:9px;letter-spacing:.14em;font-weight:650;color:#a7bbcb;margin-top:5px}.brand-content{margin:auto 0}.kicker{display:flex;align-items:center;gap:9px;text-transform:uppercase;letter-spacing:.16em;color:#f7b17c;font-weight:800;font-size:10px}.kicker::before{content:"";height:2px;width:18px;background:var(--orange)}.brand-content h2{font-size:47px;line-height:1.1;letter-spacing:-2px;font-weight:800;margin:22px 0 18px}.brand-content h2 span{display:block;color:#ffad70}.brand-content p{color:#c5d3df;font-size:14px;line-height:1.8;max-width:370px;margin:0}.brand-foot{display:flex;gap:8px;flex-wrap:wrap}.brand-foot span{border:1px solid #65809855;border-radius:30px;color:#b8cada;font-weight:650;font-size:10px;padding:9px 12px;background:#ffffff06}
+.form-side{min-width:0;display:flex;flex-direction:column;padding:39px clamp(30px,4.8vw,70px) 31px}.form-upper{display:flex;justify-content:space-between;gap:9px;align-items:center;color:#7e93a4;font-size:11px}.secure{display:flex;align-items:center;gap:7px;color:#4b7d6c;font-weight:700}.secure svg{height:15px;width:15px}.app-version{font-size:11px;font-weight:700;color:#7c92a5}.form-main{width:100%;max-width:424px;margin:auto;padding:27px 0 29px;min-height:450px;display:flex;flex-direction:column;justify-content:center}.screen{display:none;animation:appear .2s ease}.screen.active{display:block}@keyframes appear{from{opacity:.4;transform:translateY(4px)}to{opacity:1;transform:none}}.eyebrow{color:#c97532;letter-spacing:.13em;text-transform:uppercase;font-weight:850;font-size:10px;margin:0 0 11px}.screen h1{font-size:30px;line-height:1.15;letter-spacing:-1px;font-weight:820;color:#1e3a53;margin:0 0 13px}.subtitle{color:#6a8297;line-height:1.7;font-size:13px;margin:0 0 24px}.form-fields{display:grid;gap:16px}.field{display:grid;gap:8px;font-weight:750;color:#2c485f;font-size:11px}.field input{border:1px solid #d2dee8;border-radius:10px;background:#fdfefe;min-height:46px;padding:11px 13px;font-size:13px;color:#243d52;outline:none;width:100%;font-weight:550}.field input::placeholder{color:#95aabb;font-weight:450}.field input:focus{border-color:#e5a16d;box-shadow:0 0 0 3px #f3c59e28}.password-field{display:flex;align-items:center;position:relative}.password-field input{padding-right:65px}.show-password{position:absolute;right:10px;border:0;color:#4d718a;background:transparent;font-size:11px;font-weight:750;padding:7px;cursor:pointer}.primary{display:flex;align-items:center;justify-content:center;gap:10px;border:1px solid #e77d2e;background:var(--orange);color:white;font-size:12px;font-weight:800;min-height:46px;border-radius:10px;padding:11px 16px;width:100%;margin-top:22px;transition:background .15s}.primary:hover{background:var(--orange-dark)}.primary svg{width:16px;height:16px}.secondary{width:100%;border:1px solid #dce5ed;background:white;color:#45667f;min-height:42px;border-radius:10px;padding:11px 12px;font-weight:750;font-size:12px;margin-top:10px}.secondary:hover{background:#f5f8fb}.status{display:none;margin-top:14px;border-radius:9px;border:1px solid #f1c9a1;padding:11px 12px;color:#a45020;font-size:12px;line-height:1.55;background:#fff8f0}.status.visible{display:block}.status.good{border-color:#c4e3d6;background:#eef8f3;color:#266c52}.inline-note{margin:16px 0 0;font-size:11px;line-height:1.65;color:#8194a4}.inline-note strong{color:#657e92}.preview-note{margin-top:18px;background:#f3f7fa;border:1px solid #e5edf3;border-radius:9px;padding:12px 13px;font-size:11px;line-height:1.6;color:#657d90}.preview-note strong{color:#344f67}.form-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;color:#95a6b5;border-top:1px solid #e8eef3;font-size:10px;padding-top:19px}.form-foot a{text-decoration:none;color:#64839e;font-weight:650}.steps{margin-bottom:23px}.steps-head{display:flex;justify-content:space-between;gap:8px;color:#738a9d;text-transform:uppercase;letter-spacing:.12em;font-weight:750;font-size:10px;margin-bottom:11px}.steps-track{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.steps-track span{height:4px;background:#e7edf1;border-radius:6px}.steps-track span.complete{background:#eb8a3c}.welcome-list{display:grid;gap:11px;margin:22px 0 24px}.welcome-item{display:flex;gap:13px;align-items:center;border:1px solid #e2e9f0;border-radius:11px;background:#fbfcfd;padding:14px}.welcome-number{display:grid;place-items:center;flex-shrink:0;border-radius:9px;background:#e9f0f6;color:#3c6079;font-size:12px;font-weight:850;width:34px;height:34px}.welcome-item h3{font-size:12px;color:#254158;margin:0 0 3px}.welcome-item p{font-size:11px;color:#7890a1;line-height:1.5;margin:0}.qr-layout{display:grid;grid-template-columns:148px 1fr;gap:17px;align-items:center;margin-bottom:18px}.qr-placeholder{height:148px;width:148px;display:flex;align-items:center;justify-content:center;border:1px dashed #a8bbcb;border-radius:13px;background:#f6f9fb;color:#71899c;text-align:center;padding:12px}.qr-placeholder svg{height:37px;width:37px;color:#8099ae}.qr-copy b{display:block;font-size:12px;color:#2c4a62;margin-bottom:5px}.qr-copy p{font-size:11px;color:#71889b;line-height:1.6;margin:0}.key{background:#f6f9fb;border:1px solid #e2ebf1;border-radius:9px;padding:11px 13px;margin:8px 0 15px;font-size:11px;color:#607a90}.key summary{cursor:pointer;font-weight:800;color:#3b5a72}.key p{line-height:1.55;margin:9px 0 0}.success-mark{height:66px;width:66px;border-radius:18px;background:#e3f6ed;color:#32916e;display:grid;place-items:center;margin:5px 0 20px}.success-mark svg{height:35px;width:35px}.success-list{display:grid;gap:11px;list-style:none;padding:0;margin:19px 0 24px}.success-list li{display:flex;gap:10px;align-items:center;color:#466279;font-size:12px;font-weight:650}.success-list svg{color:#32916e;height:17px;width:17px;flex-shrink:0}.code-input{letter-spacing:6px;font-size:18px!important;font-weight:750!important;font-variant-numeric:tabular-nums;text-align:center}.small{font-size:11px;color:#7890a1;line-height:1.6;margin-top:10px}.divider{height:1px;background:#e5ecf2;margin:20px 0}.resume-hint{background:#f2f7fa;border:1px solid #dce8f0;border-radius:10px;padding:13px 14px;line-height:1.6;color:#5d7890;font-size:12px;margin-bottom:19px}
+@media(max-width:900px){.auth-shell{grid-template-columns:.83fr 1fr}.brand-side{padding:32px}.brand-content h2{font-size:38px}.form-side{padding:32px 35px 28px}}
+@media(max-width:730px){.preview{padding:10px 15px}.canvas{padding:16px 12px 30px}.auth-shell{grid-template-columns:1fr;max-width:560px;min-height:0}.brand-side{padding:21px 26px 20px}.brand-content{margin:18px 0 15px}.brand-content h2{font-size:24px;letter-spacing:-.8px;margin:9px 0}.brand-content h2 span{display:inline;margin-left:7px}.brand-content p{font-size:11px;line-height:1.5}.brand-foot{display:none}.brand-logo,.brand-fallback{height:41px;width:41px}.brand .wordmark{font-size:17px}.form-side{padding:24px 27px 25px}.form-main{min-height:0;padding:35px 0 25px}.screen h1{font-size:27px}}
+@media(max-width:420px){.canvas{padding:0}.auth-shell{border-radius:0;border-left:0;border-right:0}.form-side{padding:23px 21px 24px}.brand-side{padding:19px 21px}.preview-id{width:100%}.preview-switches{width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}.preview-switches button{padding:8px 4px;font-size:10px}.preview-switches label{grid-column:1/-1;margin:2px 0 0;justify-content:space-between}.preview-switches label select{flex:1;max-width:none}.qr-layout{grid-template-columns:126px 1fr;gap:11px}.qr-placeholder{width:126px;height:126px}.brand-content p{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.screen{animation:none}}@media print{.preview{display:none}}
+
+body{display:block}
+main.auth-shell{max-width:1096px;margin:0;padding:0}
+#auth-live-screen{display:block}
+#auth-live-screen form{width:100%}
+#auth-live-screen .status:not(:empty){display:block}
+#auth-live-screen .qr-placeholder img{max-width:100%;max-height:100%;object-fit:contain}
+#auth-live-screen .panel{border:1px solid #dce6ef;border-radius:12px;padding:16px;margin:15px 0}
+#auth-live-screen .panel h2{font-size:17px;font-weight:750;margin-bottom:12px}
+#auth-live-screen .panel input{width:100%;border:1px solid #d2dee8;border-radius:10px;padding:11px;margin:8px 0}
+#auth-live-screen .panel button{border-radius:10px;min-height:42px;background:#ed8532;color:#fff;padding:9px 14px;margin-top:8px}
+#auth-live-screen .panel label{display:block;font-size:12px;font-weight:700}
+#auth-live-screen #signed-in>p{margin:8px 0}
+#auth-live-screen #signed-in>button{width:100%;min-height:42px}
+</style></head><body><div class="canvas"><main class="auth-shell" aria-label="Caffoot Lite account access">
+<aside class="brand-side" aria-label="Caffoot Lite branding">
+ <div class="brand"><img class="brand-logo" src="/assets/caffoot-icon-1024.png" alt="Original Caffoot mascot, upright"><div><div class="wordmark">Caffoot <span>Lite</span></div><small>INFRASTRUCTURE, SIMPLIFIED.</small></div></div>
+ <div class="brand-content"><div class="kicker">Your Infrastructure. Your Control.</div><h2>Infrastructure,<span>Simplified.</span></h2><p>A beautifully straightforward home for the devices, networks and racks that matter — self-hosted, secure and entirely yours.</p></div>
+ <div class="brand-foot"><span>Self-Hosted</span><span>Open Source</span><span>Your Data</span></div>
+</aside>
+<div class="form-side"><div class="form-upper"><span class="secure"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg> Secure account access</span><span class="app-version">Caffoot Lite</span></div>
+<div class="form-main">
+<section class="screen active" id="auth-live-screen">
+<p class="eyebrow" id="auth-eyebrow">Welcome to Caffoot Lite</p>
+<h1 id="auth-heading">Welcome Back</h1><p class="subtitle" id="intro">Loading…</p>
+<div id="welcome-flow" hidden>
+<div class="steps"><div class="steps-head"><span>First-Time Setup</span><span>01 / 04</span></div><div class="steps-track"><span class="complete"></span><span></span><span></span><span></span></div></div>
+<div class="welcome-list"><div class="welcome-item"><span class="welcome-number">01</span><div><h3>Create Your Administrator</h3><p>Set the credentials for your first administrator.</p></div></div><div class="welcome-item"><span class="welcome-number">02</span><div><h3>Set Up Your Authenticator</h3><p>Confirm your six-digit code to complete enrolment.</p></div></div></div>
+<button class="primary" id="get-started" type="button">Get Started <span aria-hidden="true">→</span></button>
+<p class="inline-note">First-run setup is available only before the initial administrator is fully configured.</p>
+</div>
 <form id="form" hidden>
-<div id="credentials"><label for="username">Username</label><input id="username" autocomplete="username" required maxlength="256">
-<label for="password">Password</label><input id="password" type="password" autocomplete="current-password" required></div>
-<div id="enrolment" hidden><p>Scan this QR code in your authenticator app, then enter its six-digit code to finish setup.</p><div id="setup-qr" role="img" aria-label="Authenticator setup QR code"></div><details><summary>Can’t scan? Show setup key</summary><p id="secret"></p></details></div>
-<div id="code-field" hidden><label for="code">Authenticator code</label><input id="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6"></div>
-<p id="message" role="alert"></p><button id="submit" type="submit">Continue</button></form><section id="signed-in" hidden><p id="signed-in-message"></p><p><a href="/inventory" id="open-inventory">Open inventory</a></p><section id="mfa-panel" class="panel" hidden><h2>Authenticator setup</h2><p>Enrol an authenticator before receiving editing or administrator access.</p><form id="start-mfa"><label for="mfa-password">Your password</label><input id="mfa-password" type="password" autocomplete="current-password" required><button type="submit">Start MFA enrolment</button></form><form id="confirm-mfa" hidden><p>Scan this QR code in your authenticator app:</p><div id="user-mfa-qr" role="img" aria-label="Authenticator setup QR code"></div><details><summary>Can’t scan? Show setup key</summary><p id="user-mfa-secret"></p></details><label for="user-mfa-code">Six-digit authenticator code</label><input id="user-mfa-code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required><button type="submit">Confirm MFA</button></form></section><section class="panel"><h2>Change password</h2><form id="change-password"><label for="current-password">Current password</label><input id="current-password" type="password" autocomplete="current-password" required><label for="new-password">New password</label><input id="new-password" type="password" autocomplete="new-password" required><button type="submit">Change password</button></form></section><section id="account-panel" class="panel" hidden><h2>Users</h2><form id="create-user"><label for="new-username">Username</label><input id="new-username" required maxlength="256"><label for="initial-password">Initial password</label><input id="initial-password" type="password" required><button type="submit">Create user</button></form><div id="users-table"></div></section><p id="account-message" role="status"></p><button id="sign-out" class="secondary" type="button">Sign out</button></section>
-</main><script src="/assets/qrcode.min.js"></script><script>
+ <div id="credentials" class="form-fields">
+  <label class="field" for="username">Username<input id="username" autocomplete="username" placeholder="Enter your username" required maxlength="256"></label>
+  <label class="field" for="password">Password<span class="password-field"><input id="password" type="password" autocomplete="current-password" placeholder="Enter your password" required><button type="button" class="show-password" data-reveal="password">Show</button></span></label>
+ </div>
+ <div id="enrolment" hidden>
+  <div class="steps"><div class="steps-head"><span>First-Time Setup</span><span>03 / 04</span></div><div class="steps-track"><span class="complete"></span><span class="complete"></span><span class="complete"></span><span></span></div></div>
+  <div class="qr-layout"><div id="setup-qr" class="qr-placeholder" role="img" aria-label="Authenticator setup QR code"></div><div class="qr-copy"><b>Scan with your authenticator</b><p>Scan your private setup code using your authenticator app, then confirm the six-digit code it generates.</p></div></div>
+  <details class="key"><summary>Can't scan? Show setup key</summary><p id="secret"></p></details>
+ </div>
+ <div id="code-field" hidden><label class="field" for="code">Authenticator Code<input class="code-input" id="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" placeholder="••••••"></label></div>
+ <p id="message" class="status" role="alert"></p><button class="primary" id="submit" type="submit">Continue</button>
+ <button class="secondary" id="back-to-login" type="button" hidden>← Back to Sign In</button>
+</form>
+<section id="signed-in" hidden><p id="signed-in-message"></p><p><a href="/inventory" id="open-inventory">Open inventory</a></p><section id="mfa-panel" class="panel" hidden><h2>Authenticator setup</h2><p>Enrol an authenticator before receiving editing or administrator access.</p><form id="start-mfa"><label for="mfa-password">Your password</label><input id="mfa-password" type="password" autocomplete="current-password" required><button type="submit">Start MFA enrolment</button></form><form id="confirm-mfa" hidden><p>Scan this QR code in your authenticator app:</p><div id="user-mfa-qr" role="img" aria-label="Authenticator setup QR code"></div><details><summary>Can’t scan? Show setup key</summary><p id="user-mfa-secret"></p></details><label for="user-mfa-code">Six-digit authenticator code</label><input id="user-mfa-code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required><button type="submit">Confirm MFA</button></form></section><section class="panel"><h2>Change password</h2><form id="change-password"><label for="current-password">Current password</label><input id="current-password" type="password" autocomplete="current-password" required><label for="new-password">New password</label><input id="new-password" type="password" autocomplete="new-password" required><button type="submit">Change password</button></form></section><section id="account-panel" class="panel" hidden><h2>Users</h2><form id="create-user"><label for="new-username">Username</label><input id="new-username" required maxlength="256"><label for="initial-password">Initial password</label><input id="initial-password" type="password" required><button type="submit">Create user</button></form><div id="users-table"></div></section><p id="account-message" role="status"></p><button id="sign-out" class="secondary" type="button">Sign out</button></section>
+
+</section></div><footer class="form-foot"><span>Self-hosted. Your data stays yours.</span><span>Caffoot Lite</span></footer>
+</div></main></div><script src="/assets/qrcode.min.js"></script><script>
 'use strict';
 const $=id=>document.getElementById(id);
 let mode='login';
+let setupWelcomeAcknowledged=false;
 let csrfToken='';
 let signedInUser='';
 function showMfaQr(id,uri){
@@ -155,7 +206,19 @@ async function request(path,data){
  const payload=await r.json();if(!r.ok)throw Error(payload.error||'Request failed');return payload;
 }
 function display(){
- $('form').hidden=false;$('message').textContent='';
+ const welcomeIsVisible=mode==='setup'&&!setupWelcomeAcknowledged;
+ $('welcome-flow').hidden=!welcomeIsVisible;
+ $('form').hidden=welcomeIsVisible;
+ $('credentials').hidden=mode==='enrol'||mode==='login-mfa';
+ $('back-to-login').hidden=mode!=='login-mfa';
+ $('auth-heading').textContent=welcomeIsVisible?'Welcome to Caffoot Lite':
+   mode==='setup'?'Create Your Administrator':
+   mode==='enrol'?'Secure Your Account':
+   mode==='resume'?'Finish Administrator Setup':
+   mode==='login-mfa'?'Verify Your Identity':'Welcome Back';
+ $('auth-eyebrow').textContent=mode==='setup'?'First-Time Setup':
+   mode==='enrol'||mode==='login-mfa'?'Account security':'Welcome to Caffoot Lite';
+ $('message').textContent='';
  $('enrolment').hidden=mode!=='enrol';
  $('code-field').hidden=mode!=='enrol' && mode!=='login-mfa';
  $('intro').textContent=mode==='setup'?'Create the first administrator account. MFA is required.':mode==='enrol'?'Complete administrator MFA enrolment.':mode==='resume'?'Sign in with your administrator credentials to resume MFA enrolment.':mode==='login-mfa'?'Enter your authenticator code to complete sign-in.':'Sign in to Caffoot Lite.';
@@ -168,6 +231,19 @@ function display(){
  const r=await fetch('/api/setup/status');if(!r.ok)throw Error('Unable to check setup');
  const status=await r.json();mode=status.setupRequired?'setup':status.enrollmentPending?'resume':'login';display();
 }catch(e){$('intro').textContent=e.message}})();
+$('get-started').addEventListener('click',()=>{
+ setupWelcomeAcknowledged=true;display();$('username').focus();
+});
+$('back-to-login').addEventListener('click',()=>{
+ mode='login';$('code').value='';display();$('username').focus();
+});
+document.querySelectorAll('[data-reveal]').forEach(button=>{
+ button.addEventListener('click',()=>{
+  const input=$(button.dataset.reveal);
+  input.type=input.type==='password'?'text':'password';
+  button.textContent=input.type==='password'?'Show':'Hide';
+ });
+});
 $('username').addEventListener('input',()=>{if(mode==='login-mfa'){mode='login';$('code').value='';display();}});
 $('password').addEventListener('input',()=>{if(mode==='login-mfa'){mode='login';$('code').value='';display();}});
 $('code').addEventListener('input',()=>{

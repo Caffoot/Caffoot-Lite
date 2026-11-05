@@ -16,6 +16,16 @@ This is a **searchable map of named functions in the current v2.0.3 preparation 
 
 See [07 — Function and Code Reference](07-Function-and-Code-Reference.md) for a curated starting map, [Coding and Naming Conventions](06-Coding-and-Naming-Conventions.md) for established patterns, and [issue #215](https://github.com/Caffoot/Caffoot-Lite/issues/215) for the authoritative approved specification. Earlier naming/audit investigations remain in [historical Git evidence](https://github.com/Caffoot/Caffoot-Lite/tree/049262f196be494074f698a72f377153f202171b/docs/required-only), rather than the active documentation.
 
+## Draft v2.1 branch-only additions (not part of the frozen index above)
+
+The function-count table below is explicitly pinned to the earlier v2.0.2 source checkpoint and **must not be mistaken for a regenerated v2.1 inventory**. New named browser integration function in PR #281:
+
+| Function | Current source | Role |
+| --- | --- | --- |
+| `openApprovedCatalogueModal` | [draft v2.1 `inventory.html`](https://github.com/Caffoot/Caffoot-Lite/blob/feat/approved-html-full-interface/inventory.html) | Mount the pinned Devices Management Batch 02 catalogue modal markup into the existing authenticated dialog, retaining the live fields and action handlers. |
+
+The source-integration commits also replace the presentation in existing named manager/editor functions without renaming their entry points. Regenerate the full current-version function inventory before v2.1 release; the historical counts and line links are **not** release verification evidence.
+
 ## Frontend JavaScript
 
 Named `function` / `async function` declarations and same-line named `const`/`let`/`var` function or direct arrow assignments are indexed. Anonymous callbacks and arbitrary object-method syntax are not counted as declarations.

@@ -196,6 +196,26 @@ class ReservedDeviceSaveTests(unittest.TestCase):
         self.assertEqual(event["changes"][0]["fields"], ["name"])
         self.assertEqual(event["changes"][1]["fields"], ["hostname"])
 
+    def test_audit_details_keep_safe_changes_but_never_notes_or_credentials(self):
+        updated = dict(
+            self.original,
+            name="Renamed",
+            notes="private change details that must never appear in audit",
+            credentials={"token": "never-logged"},
+        )
+        self.assertEqual(self.save(updated), 1)
+        event = json.loads(self.db.execute(
+            "SELECT record_json FROM inventory_change_history"
+        ).fetchone()[0])
+        device_change = next(c for c in event["changes"] if c["kind"] == "Device")
+        self.assertEqual(device_change["before"], {"name": "One"})
+        self.assertEqual(device_change["after"], {"name": "Renamed"})
+        self.assertIn("notes", device_change["fields"])
+        self.assertNotIn("notes", device_change["before"])
+        self.assertNotIn("credentials", device_change["after"])
+        self.assertNotIn("never-logged", json.dumps(event))
+        self.assertNotIn("private change details", json.dumps(event))
+
     def test_rack_move_is_recorded_with_device_change(self):
         self.assertEqual(self.save(dict(self.original, rackUStart=2, rackUEnd=2)), 1)
         event = json.loads(self.db.execute(
@@ -205,7 +225,7 @@ class ReservedDeviceSaveTests(unittest.TestCase):
         self.assertEqual(event["changes"][0]["kind"], "Device")
         self.assertEqual(event["changes"][0]["fields"], ["rackUStart", "rackUEnd"])
 
-    def test_history_retains_published_two_hundred_event_limit(self):
+    def test_history_preserves_all_events_after_two_hundred(self):
         for index in range(200):
             self.db.execute(
                 "INSERT INTO inventory_change_history(record_json) VALUES(?)",
@@ -216,8 +236,8 @@ class ReservedDeviceSaveTests(unittest.TestCase):
         events = [json.loads(raw) for (raw,) in self.db.execute(
             "SELECT record_json FROM inventory_change_history ORDER BY id"
         )]
-        self.assertEqual(len(events), 200)
-        self.assertEqual(events[0]["at"], "1")
+        self.assertEqual(len(events), 201)
+        self.assertEqual(events[0]["at"], "0")
         self.assertEqual(events[-1]["changes"][0]["label"], "Renamed")
 
     def test_expired_reservation_rejects_save_without_history(self):
@@ -312,6 +332,11 @@ class CreateDeviceTests(unittest.TestCase):
     def setUp(self):
         self.db = sqlite3.connect(":memory:")
         initialise_database(self.db)
+        self.db.execute(
+            "INSERT INTO accounts(id,username,password_hash,is_admin,mfa_secret,mfa_confirmed) "
+            "VALUES(1,'audit-tester','test-hash',1,'secret',1)"
+        )
+        self.db.commit()
         stage_inventory(self.db, {
             "devices": [],
             "subnets": [{"id": "s1", "name": "Network", "cidr": "10.0.0.0/24",

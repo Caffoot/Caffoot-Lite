@@ -3,6 +3,8 @@ import json
 import os
 import sqlite3
 import time
+import smtplib
+import ssl
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -13,9 +15,14 @@ from .collection_saves import (change_inventory_record,
                                change_ipam_subnet_and_vlan_records,
                                delete_subnet_with_dependencies)
 from .settings_saves import save_inventory_setting
+from .smtp_settings import (config_path as smtp_config_path, public_settings as smtp_public_settings,
+                            save_settings as save_smtp_settings, send_test_email)
 from .device_catalogue import change_device_catalogue
 from .reset_inventory import reset_inventory
 from .ipam_repair import apply_ipam_repairs
+from .audit_events import record_actor_event
+from .profiles import (read_profile, save_profile, read_profile_photo,
+                       save_profile_photo, remove_profile_photo, MAX_PHOTO_BYTES)
 from .schema import initialise_database as migrate_database
 from .accounts import bootstrap_first_admin, confirm_admin_mfa, verify_password, hash_password
 from .mfa import new_secret, provisioning_uri, verify_code
@@ -41,6 +48,7 @@ ASSET_ROOT = Path(__file__).resolve().parent.parent / "assets"
 PUBLIC_ASSETS = {"favicon.ico": "image/x-icon",
                  "apple-touch-icon.png": "image/png",
                  "caffoot-icon-1024.png": "image/png",
+                 "caffoot-logo-256.png": "image/png",
                  "qrcode.min.js": "application/javascript; charset=utf-8",
                      "tailwind.css": "text/css; charset=utf-8"}
 IMPORT_DRAFTS = ImportDrafts()
@@ -146,6 +154,47 @@ class Handler(BaseHTTPRequestHandler):
                 configured = connection.execute("SELECT 1 FROM accounts LIMIT 1").fetchone() is not None
                 pending = configured and connection.execute("SELECT 1 FROM accounts WHERE is_admin=1 AND mfa_confirmed=1 LIMIT 1").fetchone() is None
             self.respond(200, {"setupRequired": not configured, "enrollmentPending": pending})
+        elif self.path in ("/api/account/profile", "/api/account/photo"):
+            with connect() as connection:
+                account_id = authenticated_account(connection, self.headers.get("Cookie"))
+                if account_id is None:
+                    self.respond(401, {"error": "unauthorised"})
+                    return
+                if self.path == "/api/account/profile":
+                    self.respond(200, read_profile(connection, account_id))
+                    return
+                photo = read_profile_photo(connection, account_id)
+                if not photo or photo[1] is None:
+                    self.respond(404, {"error": "photo not found"})
+                    return
+                mime, data = photo
+                self.send_response(200)
+                self.send_header("Content-Type", mime)
+                self.send_header("Content-Length", str(len(data)))
+                self.send_header("Cache-Control", "private, no-store")
+                self.send_header("X-Content-Type-Options", "nosniff")
+                self.end_headers()
+                self.wfile.write(data)
+                return
+        elif self.path == "/api/settings/email":
+            with connect() as connection:
+                account_id = authenticated_account(connection, self.headers.get("Cookie"))
+                if account_id is None:
+                    self.respond(401, {"error": "unauthorised"})
+                    return
+                admin = connection.execute(
+                    "SELECT active,is_admin,mfa_confirmed FROM accounts WHERE id=?",
+                    (account_id,),
+                ).fetchone()
+                if admin != (1, 1, 1):
+                    self.respond(403, {"error": "forbidden"})
+                    return
+                try:
+                    safe_settings = smtp_public_settings(smtp_config_path(DB_PATH))
+                except (OSError, ValueError, json.JSONDecodeError):
+                    self.respond(503, {"error": "Email settings cannot be read safely"})
+                    return
+                self.respond(200, safe_settings)
         elif self.path == "/api/users":
             with connect() as connection:
                 account_id = authenticated_account(connection, self.headers.get("Cookie"))
@@ -172,6 +221,7 @@ class Handler(BaseHTTPRequestHandler):
                         "isAdmin": bool(is_admin), "active": bool(active),
                         "mfaEnrolled": bool(mfa_confirmed),
                         "permissions": permissions,
+                        "profile": read_profile(connection, account_id, user_id),
                     })
                 self.respond(200, {"users": users})
         elif self.path == "/api/inventory/sections":
@@ -341,8 +391,13 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(404, {"error": "not found"})
 
     def do_POST(self):
-        if self.path in ("/api/users/create", "/api/users/permission", "/api/users/active",
-                         "/api/users/admin", "/api/users/delete", "/api/account/password",
+        if self.path == "/api/account/photo":
+            self.handle_profile_photo()
+            return
+        if self.path in ("/api/account/profile", "/api/account/photo/remove",
+                         "/api/users/create", "/api/users/profile", "/api/users/permission", "/api/users/active",
+                         "/api/users/admin", "/api/users/delete", "/api/settings/email",
+                         "/api/settings/email/test", "/api/account/password",
                          "/api/account/mfa/start", "/api/account/mfa/confirm",
                          "/api/devices/edit/start", "/api/devices/edit/cancel",
                          "/api/devices/edit/save", "/api/devices/create",
@@ -485,7 +540,14 @@ class Handler(BaseHTTPRequestHandler):
                 ).fetchone():
                     self.respond(403, {"error": "forbidden"})
                     return
-                if self.path == "/api/inventory/settings/save":
+                if self.path == "/api/account/profile":
+                    result = save_profile(connection, actor, payload)
+                elif self.path == "/api/account/photo/remove":
+                    if payload != {"remove": True}:
+                        raise ValueError("Invalid photo removal request")
+                    remove_profile_photo(connection, actor)
+                    result = {"status": "removed"}
+                elif self.path == "/api/inventory/settings/save":
                     if set(payload) != {"key", "value"}:
                         raise ValueError("Invalid inventory settings request")
                     save_inventory_setting(connection, actor, payload["key"], payload["value"])
@@ -644,6 +706,16 @@ class Handler(BaseHTTPRequestHandler):
                     connection.execute("BEGIN IMMEDIATE")
                     try:
                         connection.execute("UPDATE accounts SET mfa_confirmed=1 WHERE id=?", (actor,))
+                        username = connection.execute(
+                            "SELECT username FROM accounts WHERE id=?", (actor,)
+                        ).fetchone()[0]
+                        record_actor_event(
+                            connection, actor, kind="Security", action="Updated",
+                            label=username, reason="MFA enrolment confirmed",
+                            fields=["Multi-factor authentication"],
+                            before={"MFA status": "Not enrolled"},
+                            after={"MFA status": "Enabled"},
+                        )
                         connection.execute("DELETE FROM account_sessions WHERE account_id=?", (actor,))
                         connection.commit()
                     except BaseException:
@@ -667,6 +739,14 @@ class Handler(BaseHTTPRequestHandler):
                             "UPDATE accounts SET password_hash=? WHERE id=?",
                             (replacement_hash, actor),
                         )
+                        username = connection.execute(
+                            "SELECT username FROM accounts WHERE id=?", (actor,)
+                        ).fetchone()[0]
+                        record_actor_event(
+                            connection, actor, kind="Security", action="Updated",
+                            label=username, reason="Account password changed",
+                            fields=["Password"],
+                        )
                         connection.execute(
                             "DELETE FROM account_sessions WHERE account_id=?", (actor,)
                         )
@@ -675,11 +755,51 @@ class Handler(BaseHTTPRequestHandler):
                         connection.rollback()
                         raise
                     result = {"status": "password changed"}
+                elif self.path in ("/api/settings/email", "/api/settings/email/test"):
+                    administrator = connection.execute(
+                        "SELECT active,is_admin,mfa_confirmed FROM accounts WHERE id=?",
+                        (actor,),
+                    ).fetchone()
+                    if administrator != (1, 1, 1):
+                        raise PermissionError("Verified administrator required")
+                    if self.path == "/api/settings/email":
+                        saved = save_smtp_settings(smtp_config_path(DB_PATH), payload)
+                        record_actor_event(
+                            connection, actor, kind="Security", action="Updated",
+                            label="Outgoing email", reason="SMTP configuration updated",
+                            fields=["Outgoing email configuration"],
+                        )
+                        result = saved
+                    else:
+                        if set(payload) != {"recipient"}:
+                            raise ValueError("A test recipient is required")
+                        result = send_test_email(smtp_config_path(DB_PATH), payload["recipient"])
+                        record_actor_event(
+                            connection, actor, kind="Security", action="Created",
+                            label="SMTP test", reason="SMTP test message sent",
+                            fields=["Delivery tested"],
+                        )
                 elif self.path == "/api/users/create":
-                    if set(payload) != {"username", "password"}:
+                    if set(payload) not in ({"username", "password"},
+                                            {"username", "password", "profile"}):
                         raise ValueError("Username and password required")
-                    user_id = create_user(connection, actor, payload["username"], payload["password"])
+                    user_id = create_user(
+                        connection, actor, payload["username"], payload["password"],
+                        profile=payload.get("profile"),
+                    )
                     result = {"id": user_id}
+                elif self.path == "/api/users/profile":
+                    if (set(payload) != {"userId", "profile"}
+                            or type(payload["userId"]) is not int):
+                        raise ValueError("Invalid user profile request")
+                    administrator = connection.execute(
+                        "SELECT active,is_admin,mfa_confirmed FROM accounts WHERE id=?",
+                        (actor,),
+                    ).fetchone()
+                    if administrator != (1, 1, 1):
+                        raise PermissionError("Verified administrator required")
+                    result = save_profile(connection, actor, payload["profile"],
+                                          target_id=payload["userId"])
                 elif self.path == "/api/users/permission":
                     if set(payload) != {"userId", "section", "level"} or type(payload["userId"]) is not int:
                         raise ValueError("Invalid permission request")
@@ -705,13 +825,49 @@ class Handler(BaseHTTPRequestHandler):
                         result = {"status": "updated"}
                     else:
                         raise ValueError("Unknown account operation")
+
         except PermissionError:
             self.respond(403, {"error": "forbidden"})
             return
         except (ValueError, TypeError, sqlite3.IntegrityError) as exc:
             self.respond(400, {"error": str(exc)})
             return
+        except (OSError, smtplib.SMTPException, ssl.SSLError):
+            # Do not reflect mail-server diagnostics or credential details to clients.
+            self.respond(502, {"error": "SMTP operation failed. Check server configuration and connectivity."})
+            return
         self.respond(200, result)
+
+    def handle_profile_photo(self):
+        """Upload private user image bytes only after session and CSRF verification."""
+        origin = self.headers.get("Origin")
+        if not PUBLIC_ORIGIN or not require_same_origin(origin, PUBLIC_ORIGIN):
+            self.respond(403, {"error": "forbidden"})
+            return
+        raw_length = self.headers.get("Content-Length")
+        if (raw_length is None or not raw_length.isdecimal() or
+                not 0 < int(raw_length) <= MAX_PHOTO_BYTES):
+            self.respond(413, {"error": "Profile photo must be no larger than 5 MB"})
+            return
+        mime = self.headers.get("Content-Type", "").split(";")[0].strip().lower()
+        if mime not in ("image/png", "image/jpeg", "image/webp"):
+            self.respond(415, {"error": "JPG, PNG or WEBP required"})
+            return
+        with connect() as connection:
+            actor = authorised_mutation(
+                connection, self.headers.get("Cookie"), origin, PUBLIC_ORIGIN,
+                self.headers.get("X-CSRF-Token"),
+            )
+            if actor is None:
+                self.respond(403, {"error": "forbidden"})
+                return
+            payload = self.rfile.read(int(raw_length))
+            try:
+                save_profile_photo(connection, actor, mime, payload)
+            except ValueError as exc:
+                self.respond(400, {"error": str(exc)})
+                return
+        self.respond(200, {"status": "saved"})
 
     def handle_import(self):
         """Authenticated server-owned import stages; never accept a candidate."""

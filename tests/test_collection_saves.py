@@ -15,6 +15,11 @@ class CollectionSaveTests(unittest.TestCase):
     def setUp(self):
         self.db = sqlite3.connect(":memory:")
         initialise_database(self.db)
+        self.db.execute(
+            "INSERT INTO accounts(id,username,password_hash,is_admin,mfa_secret,mfa_confirmed) "
+            "VALUES(1,'audit-tester','test-hash',1,'secret',1)"
+        )
+        self.db.commit()
         stage_inventory(self.db, {
             "devices": [], "subnets": [], "vlans": [],
             "racks": [], "rackAccessories": [], "ipAllocations": {},
@@ -230,3 +235,39 @@ class CollectionSaveTests(unittest.TestCase):
         self.assertIsNotNone(self.db.execute(
             "SELECT 1 FROM inventory_ip_allocations WHERE ip='10.0.0.20'"
         ).fetchone())
+
+    def test_rack_audit_details_redact_private_notes(self):
+        first = {"id": "audit-rack", "name": "Comms Rack",
+                 "heightU": 12, "notes": "PRIVATE-RACK-NOTE"}
+        self.change("racks", "audit-rack", first)
+        renamed = dict(first, name="Main Rack", heightU=18,
+                       notes="PRIVATE-NEW-RACK-NOTE")
+        self.change("racks", "audit-rack", renamed)
+        updated = json.loads(self.db.execute(
+            "SELECT record_json FROM inventory_change_history ORDER BY id DESC LIMIT 1"
+        ).fetchone()[0])
+        change = updated["changes"][0]
+        self.assertEqual(change["kind"], "Rack")
+        self.assertEqual(change["before"], {"heightU": 12, "name": "Comms Rack"})
+        self.assertEqual(change["after"], {"heightU": 18, "name": "Main Rack"})
+        self.assertEqual(updated["actor"], "audit-tester")
+        self.assertNotIn("PRIVATE-RACK-NOTE", json.dumps(updated))
+        self.assertNotIn("PRIVATE-NEW-RACK-NOTE", json.dumps(updated))
+
+    def test_ipam_batch_audit_shows_changed_safe_subnet_fields_only(self):
+        initial = {"id": "block", "kind": "container",
+                   "name": "Network Block", "cidr": "172.16.0.0/16",
+                   "notes": "PRIVATE-NETWORK-DESCRIPTION"}
+        self.change_ipam([{"collection": "subnets", "id": "block",
+                           "record": initial}])
+        changed = dict(initial, name="Site Network Block",
+                       notes="PRIVATE-CHANGED-NETWORK-DESCRIPTION")
+        self.change_ipam([{"collection": "subnets", "id": "block",
+                           "record": changed}])
+        event = json.loads(self.db.execute(
+            "SELECT record_json FROM inventory_change_history ORDER BY id DESC LIMIT 1"
+        ).fetchone()[0])
+        change = event["changes"][0]
+        self.assertEqual(change["before"], {"name": "Network Block"})
+        self.assertEqual(change["after"], {"name": "Site Network Block"})
+        self.assertNotIn("PRIVATE-", json.dumps(event))

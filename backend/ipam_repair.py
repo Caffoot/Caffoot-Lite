@@ -1,5 +1,6 @@
 """Published safe IPAM integrity repair, applied to central SQLite."""
 import json
+from .audit_events import attribute_event
 import time
 from datetime import datetime, timezone
 
@@ -111,11 +112,7 @@ def apply_ipam_repairs(connection, account_id, expected_fixes):
         }
         connection.execute(
             "INSERT INTO inventory_change_history(record_json) VALUES(?)",
-            (json.dumps(event, ensure_ascii=False),)
-        )
-        connection.execute(
-            "DELETE FROM inventory_change_history WHERE id NOT IN "
-            "(SELECT id FROM inventory_change_history ORDER BY id DESC LIMIT 200)"
+            (json.dumps(attribute_event(connection, account_id, event), ensure_ascii=False),)
         )
         connection.commit()
         return len(fixes)
