@@ -1,7 +1,7 @@
 name: "💡 Suggest A Feature / Future Request"
 description: "Share an idea for making Caffoot Lite more useful."
 title: "[Feature Request]: "
-labels: ["enhancement"]
+labels: ["future request"]
 body:
   - type: markdown
     attributes:
@@ -10,7 +10,7 @@ body:
 
         Tell us about the problem you would like to solve. You do not need a complete technical design.
 
-        Check the [Future Ideas Index #222](https://github.com/Caffoot/Caffoot-Lite/issues/222) and existing issues first. Add your thoughts to an existing issue when appropriate; otherwise, open **one issue per idea** here.
+        Check [existing future requests](https://github.com/Caffoot/Caffoot-Lite/labels/future%20request) first. Add your thoughts to an existing issue when appropriate; otherwise, open **one issue per idea** here.
 
         We'll discuss the idea in its issue before deciding what to build. There is no need to prepare a technical design or start coding before we've agreed the scope.
   - type: textarea
@@ -32,7 +32,7 @@ body:
     id: benefits
     attributes:
       label: "Who Would This Help?"
-      description: "Optional. For example, home-lab users, small IT teams, administrators or read-only users."
+      description: "Optional. For example, small businesses, IT teams, home-lab users, administrators or read-only users."
     validations:
       required: false
   - type: textarea
