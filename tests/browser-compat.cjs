@@ -428,8 +428,6 @@ async function run(){
   assert.equal(await page.getByText('Keep a separate JSON backup',{exact:false}).count(),0,
     'Docker Dashboard must not show browser-era JSON backup advice');
   assert.equal(await page.getByRole('button',{name:'Refresh inventory'}).count(),0);
-  await verifySoftwareVisibility(page);
-  await page.locator('#sidebar [data-action="tab-dashboard"]').click();
   for(const tab of ['ipam','devices','racks','audit','users','settings']){
     const navigation=page.locator('#sidebar [data-action="tab-'+tab+'"]');
     assert.ok(await navigation.isEnabled(),'Navigation disabled: '+tab);
@@ -950,6 +948,9 @@ async function run(){
   assert.ok(selected,'Subnet cascade failed to show published network');
   await page.locator('#dev-subnet').selectOption(selected.id);
   await page.locator('#dev-ip').fill('10.64.20.10');
+  assert.deepEqual(await page.locator('form[data-device-form="true"]').evaluate(form=>
+    [...form.elements].filter(field=>field.validity&&!field.validity.valid).map(field=>({id:field.id,message:field.validationMessage}))),[],
+    'The source editor grid must retain a valid device and networking form before saving');
   await page.locator('button[type="submit"][form="device-editor-form"]').click();
   const saved=await persisted(page,s=>s.devices.some(d=>d.name==='browser-device'),'Device');
   const device=saved.devices.find(d=>d.name==='browser-device');

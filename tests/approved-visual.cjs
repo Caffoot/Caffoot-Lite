@@ -101,6 +101,12 @@ async function main(){
     if(extra?.kind==='editor-existing'){
      await page.evaluate(name=>openDeviceModal(appState.devices.find(device=>device.name===name).id),extra.device);
      await ref.evaluate(name=>openDeviceEditor('edit',name),extra.device);
+     await page.locator('#device-editor-form').waitFor();
+     for(const selector of ['#dev-deployment','#dev-type',...(extra.device==='App-VM-01'?['#dev-vm-purpose']:[])]){
+      const field=page.locator(selector);
+      if(!await field.isVisible()||!await field.isDisabled())throw Error('Existing classification must be visible and locked: '+selector);
+     }
+
     }
     if(extra?.kind==='rack-tab'){
      await page.locator('[data-action="select-rack-tab"][data-tab="'+extra.value+'"]').click();
@@ -152,11 +158,27 @@ async function main(){
     const selectors=['.sidebar','.topbar','.header h1','.main','.device-review-dialog','.db-summary','.account-grid','.device-filters','.intelligence-metrics','.ipam-stats','.racks-grid','.cards4','.catalog-header','.catalog-kpis','.catalog-card','.catalog-card-top','.catalog-toolbar','.catalog-record','.modal-layer .modal','.modal-head','.modal-body','.profile-modal-grid','.profile-modal-grid .field','.profile-modal-grid label','.profile-modal-grid .input','.access-grid','.device-review-overlay','.device-review-head','.device-review-body','.device-review-footer','.device-review-panel','.device-review-form-grid','.device-review-field select','.device-review-field textarea'];
     const result={overflow:document.documentElement.scrollWidth>innerWidth};
     for(const selector of selectors){const e=[...document.querySelectorAll(selector)].find(element=>element.getBoundingClientRect().height>0);if(e){const s=getComputedStyle(e),r=e.getBoundingClientRect();result[selector]={x:Math.round(r.x),y:Math.round(r.y),width:Math.round(r.width),height:Math.round(r.height),fontSize:s.fontSize,columns:s.gridTemplateColumns,padding:s.padding,margin:s.margin,gap:s.gap,borderRadius:s.borderRadius,borderColor:s.borderColor,fontWeight:s.fontWeight,lineHeight:s.lineHeight,boxSizing:s.boxSizing};}}
+    const identity={};
+    for(const key of ['name','deployment','type','vm-purpose','location','status']){
+     const element=document.getElementById('dev-'+key)||document.getElementById('review-'+key)||
+      (key==='deployment'?document.getElementById('review-fixed-deployment'):null);
+     if(element&&element.getBoundingClientRect().height>0){const r=element.getBoundingClientRect();identity[key]={x:Math.round(r.x),y:Math.round(r.y),width:Math.round(r.width),height:Math.round(r.height)};}
+    }
+    if(Object.keys(identity).length)result.identity=identity;
     return result;
    });
    if(tab)await page.screenshot({path:out+'/'+name+'-'+width+'-live.png',fullPage:true});
    await ref.screenshot({path:out+'/'+name+'-'+width+'-approved.png',fullPage:true});
    results.push({screen:name,width,live:tab?await measure(page):null,approved:await measure(ref),status:'captured; visual review pending'});
+   if(extra?.kind==='editor-existing'){
+    await page.getByRole('button',{name:'Back to Details',exact:true}).click();
+    await page.locator('.device-details-dialog .device-review-head h2').filter({hasText:extra.device}).waitFor();
+    await page.waitForFunction(async()=>{
+     const state=await (await fetch('/api/inventory/state',{cache:'no-store'})).json();
+     return Object.keys(state.deviceEditors||{}).length===0;
+    });
+   }
+
   }
   console.log('Captured',name);
  }

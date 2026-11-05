@@ -5164,7 +5164,9 @@ function openIpModal(ip) {
             // Relocate existing inputs, preserving saved values and event handlers.
             const virtualFields = sections[0].querySelector('#virtual-fields');
             if (virtualFields) {
-                virtualFields.classList.add('form-section-card', 'device-review-panel', 'full', 'device-review-vm-configuration');
+                const vmHidden=virtualFields.classList.contains('hidden');
+                virtualFields.className='form-section-card device-review-panel full device-review-vm-configuration';
+                virtualFields.classList.toggle('hidden',vmHidden);
                 const vmTitle = virtualFields.querySelector(':scope > p');
                 if (vmTitle) {
                     const heading = document.createElement('h3');
@@ -5177,21 +5179,23 @@ function openIpModal(ip) {
                 if (vmDescription) vmDescription.textContent =
                     'Virtual machines are attached to a physical hypervisor. Physical manufacturer and model do not apply.';
                 const hostGrid = virtualFields.querySelector(':scope > .grid');
-                hostGrid?.classList.add('device-review-form-grid');
+                if(hostGrid)hostGrid.className='device-review-form-grid';
                 if (hostGrid) {
                     const hint = document.createElement('div');
                     hint.className = 'device-review-hint';
+                    hint.style.margin='15px 0';
                     hint.textContent = 'The virtualisation platform comes from the selected physical hypervisor. It is not configured separately on this VM.';
                     hostGrid.insertAdjacentElement('afterend', hint);
                 }
                 const allocations = virtualFields.querySelector('[data-device-detail-field="vmVcpu"]')?.parentElement?.parentElement;
-                allocations?.classList.add('device-review-form-grid');
+                if(allocations)allocations.className='device-review-form-grid';
                 const allocationSection = allocations?.parentElement;
                 const allocationLabel = allocationSection?.querySelector(':scope > p');
                 if (allocationLabel) {
                     const heading = document.createElement('h3');
                     heading.textContent = 'Allocated Virtual Hardware';
-                    allocationLabel.replaceWith(heading);
+                    heading.style.marginTop='20px';
+                    allocationSection.replaceWith(heading,allocations);
                 }
                 generalGrid.insertBefore(virtualFields, sections[2]);
             }
@@ -5333,6 +5337,10 @@ function openIpModal(ip) {
                 deployment.classList.remove('hidden');
                 deployment.querySelector('select').disabled=true;
                 identityFields.querySelectorAll('#dev-type,#dev-vm-purpose').forEach(select=>{select.disabled=true;});
+                deployment.querySelector('label').textContent='Deployment';
+                identityFields.querySelector('#device-form-physical-purpose')?.classList.remove('hidden');
+                identityFields.querySelector('#device-form-vm-purpose-wrapper')?.classList.toggle('hidden',!isVirtualDevice);
+
                 identityFields.querySelector('p.text-sm.font-semibold')?.remove();
             }
             if(deployment&&!deployment.querySelector(':scope > small')){
@@ -5359,6 +5367,12 @@ function openIpModal(ip) {
                 buttons.forEach(button=>{button.className='device-review-smallbtn';actions.append(button);});
                 locationPanel.replaceChildren(title,row,actions);
                 identityFields.appendChild(locationPanel);
+            }
+            const statusField=identityFields.querySelector('#dev-status')?.parentElement;
+            if(statusField&&statusField!==identityFields){
+                const previousHelp=statusField.querySelector('p');
+                if(previousHelp){const help=document.createElement('small');help.textContent='Retiring a device does not automatically release its IP or rack position.';previousHelp.replaceWith(help);}
+                identityFields.appendChild(statusField);
             }
             sections[0].appendChild(identityFields);
             const mountingHeading = sections[2].querySelector(':scope > .form-section-heading');
@@ -5500,6 +5514,9 @@ function openIpModal(ip) {
                     if (id) activate(id);
                 }
             }, true);
+            // Field labels use the pinned form's typography rather than legacy utility classes.
+            form.querySelectorAll('.device-review-field label').forEach(label=>{label.className='';});
+            form.querySelector('label[for="dev-mount-type"] .required-mark')?.remove();
             activate(active);
             // Use the approved dialog's fixed header/footer and scrolling body.
             const dialog = form.closest('.device-review-dialog');
@@ -5513,6 +5530,11 @@ function openIpModal(ip) {
                 const footer = form.querySelector('.form-actions');
                 if (footer) {
                     footer.className = 'device-review-footer';
+                    if(form.dataset.deviceId){
+                        const back=footer.querySelector('[data-action="close-modal"]');
+                        back.textContent='Back to Details';back.dataset.action='device-editor-back';back.dataset.id=form.dataset.deviceId;
+                    }
+
                     footer.querySelector('button[type="submit"]').setAttribute('form', form.id);
                     dialog.append(footer);
                 }
@@ -7353,6 +7375,7 @@ function openIpModal(ip) {
                 case 'open-device-modal': openDeviceModal(); break;
                 case 'edit-device': openDeviceModal(id); break;
                 case 'view-device': openDeviceDetailView(id); break;
+                case 'device-editor-back': closeModal(false,()=>openDeviceDetailView(id)); break;
                 case 'select-device-details-tab': selectDeviceDetailsTab(name); break;
                 case 'archived-software-remove': confirmUninstallOfArchivedSoftware(id,name); break;
                 case 'archived-software-confirm-uninstall': recordUninstallOfArchivedSoftware(id,name); break;
@@ -7787,9 +7810,12 @@ void (async () => {
       Object.assign(trigger.style,presentation);
       const caption=document.createElement('span');
       caption.style.cssText='min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
-      const arrow=document.createElement('i');
-      arrow.className='fa-solid fa-chevron-down';
-      arrow.setAttribute('aria-hidden','true');
+      const arrow=document.createElementNS('http://www.w3.org/2000/svg','svg');
+      arrow.setAttribute('viewBox','0 0 24 24');arrow.setAttribute('width','12');arrow.setAttribute('height','12');
+      arrow.setAttribute('fill','none');arrow.setAttribute('stroke','currentColor');arrow.setAttribute('stroke-width','1.8');
+      arrow.setAttribute('aria-hidden','true');arrow.style.transform='rotate(90deg)';
+      const chevron=document.createElementNS('http://www.w3.org/2000/svg','use');
+      chevron.setAttribute('href','#i-chevron');arrow.append(chevron);
       trigger.append(caption,arrow);
       const label=document.querySelector('label[for="'+select.id+'"]');
       trigger.setAttribute('aria-label',label?.textContent?.trim()||select.getAttribute('aria-label')||'Select option');
