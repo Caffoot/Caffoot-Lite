@@ -157,11 +157,14 @@ async function main(){
    const measure=async p=>p.evaluate(()=>{
     const selectors=['.sidebar','.topbar','.header h1','.main','.device-review-dialog','.db-summary','.account-grid','.device-filters','.intelligence-metrics','.ipam-stats','.racks-grid','.cards4','.catalog-header','.catalog-kpis','.catalog-card','.catalog-card-top','.catalog-toolbar','.catalog-record','.modal-layer .modal','.modal-head','.modal-body','.profile-modal-grid','.profile-modal-grid .field','.profile-modal-grid label','.profile-modal-grid .input','.access-grid','.device-review-overlay','.device-review-head','.device-review-body','.device-review-footer','.device-review-panel','.device-review-form-grid','.device-review-field select','.device-review-field textarea'];
     const result={overflow:document.documentElement.scrollWidth>innerWidth};
-    for(const selector of selectors){const e=[...document.querySelectorAll(selector)].find(element=>element.getBoundingClientRect().height>0);if(e){const s=getComputedStyle(e),r=e.getBoundingClientRect();result[selector]={x:Math.round(r.x),y:Math.round(r.y),width:Math.round(r.width),height:Math.round(r.height),fontSize:s.fontSize,columns:s.gridTemplateColumns,padding:s.padding,margin:s.margin,gap:s.gap,borderRadius:s.borderRadius,borderColor:s.borderColor,fontWeight:s.fontWeight,lineHeight:s.lineHeight,boxSizing:s.boxSizing};}}
+    const renderedControl=element=>element?.classList.contains('caffoot-search-native')
+      ? element.nextElementSibling?.querySelector('.caffoot-search-trigger') : element;
+
+    for(const selector of selectors){const e=[...document.querySelectorAll(selector)].map(renderedControl).find(element=>element&&element.getBoundingClientRect().height>0&&getComputedStyle(element).opacity!=='0');if(e){const s=getComputedStyle(e),r=e.getBoundingClientRect();result[selector]={x:Math.round(r.x),y:Math.round(r.y),width:Math.round(r.width),height:Math.round(r.height),fontSize:s.fontSize,columns:s.gridTemplateColumns,padding:s.padding,margin:s.margin,gap:s.gap,borderRadius:s.borderRadius,borderColor:s.borderColor,fontWeight:s.fontWeight,lineHeight:s.lineHeight,boxSizing:s.boxSizing};}}
     const identity={};
     for(const key of ['name','deployment','type','vm-purpose','location','status']){
-     const element=document.getElementById('dev-'+key)||document.getElementById('review-'+key)||
-      (key==='deployment'?document.getElementById('review-fixed-deployment'):null);
+     const element=renderedControl(document.getElementById('dev-'+key)||document.getElementById('review-'+key)||
+      (key==='deployment'?document.getElementById('review-fixed-deployment'):null));
      if(element&&element.getBoundingClientRect().height>0){const r=element.getBoundingClientRect();identity[key]={x:Math.round(r.x),y:Math.round(r.y),width:Math.round(r.width),height:Math.round(r.height)};}
     }
     if(Object.keys(identity).length)result.identity=identity;
