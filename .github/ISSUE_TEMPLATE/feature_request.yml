@@ -32,7 +32,7 @@ body:
     id: benefits
     attributes:
       label: "Who Would This Help?"
-      description: "Optional. For example, home-lab users, small IT teams, administrators or read-only users."
+      description: "Optional. For example, small businesses, IT teams, home-lab users, administrators or read-only users."
     validations:
       required: false
   - type: textarea
