@@ -1,6 +1,6 @@
 # Caffoot Lite — Public Roadmap
 
-**Infrastructure, Simplified.** Caffoot Lite is free, open-source IP address management, device inventory and network rack documentation for home labs and small IT teams.
+**Infrastructure, Simplified.** Caffoot Lite is free, open-source IP address management, device inventory and network rack documentation for small businesses, IT teams and home labs.
 
 This page helps visitors see what is available, what is being developed and which ideas are being considered. **An idea is not a promised feature or release date.** The product owner decides priorities and approves changes before development.
 
@@ -18,7 +18,7 @@ The current published version includes:
 
 ## In development — v2.1
 
-The next version focuses on an updated, consistent interface based on twelve owner-approved HTML designs, with approved account, email and audit-related functionality. Existing installation data, backend behaviour and security must be preserved.
+Caffoot Lite v2.1 will introduce a more polished, professional user interface, with improved navigation and streamlined workflows designed to make managing your infrastructure easier and more intuitive.
 
 The implementation is **not yet released or accepted**. Follow the [approved v2.1 development plan in issue #282](https://github.com/Caffoot/Caffoot-Lite/issues/282). No release date has been promised.
 
