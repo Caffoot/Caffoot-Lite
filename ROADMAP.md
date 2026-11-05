@@ -37,7 +37,7 @@ The community is welcome to suggest and discuss improvements. Current individual
 - [LDAP/LLDAP/Active Directory sign-in (#240)](https://github.com/Caffoot/Caffoot-Lite/issues/240)
 - [Saved filters and inventory views (#241)](https://github.com/Caffoot/Caffoot-Lite/issues/241)
 
-See the [Future Ideas Index (#222)](https://github.com/Caffoot/Caffoot-Lite/issues/222) for the full list. These are proposals, not commitments to implement them.
+Explore [all future requests](https://github.com/Caffoot/Caffoot-Lite/labels/future%20request) for more ideas and their discussions. These are proposals, not commitments to implement them.
 
 ## Help shape Caffoot Lite
 
