@@ -16,6 +16,8 @@ For the full source-pinned list of named functions, line locations and clearly q
 | [`interface/application.js`](../../interface/application.js) | `renderDevicesHTML`, `renderRackHubV13`, `refreshCentralInventory`, `postInventory`, `applyAllowedControls` | Inventory calculations, actions and server integration; HTML lives in `interface/screens/` |
 | [`interface/sign-in.js`](../../interface/sign-in.js) and [`setup.html`](../../setup.html) | `/api/setup`, `/api/login` | Account setup and sign-in |
 
+Presentation corrections use `renderDeviceCategoryCatalogue`, `renderCatalogueRecord` and `renderCatalogueButton` for approved catalogue fragments, and `revealActiveSectionTabs` for narrow section navigation. Existing catalogue saves and permissions remain in their original handlers.
+
 See [Modular Interface](Modular-Interface.md) for the Issue #282 presentation modules, pinned sources and private acceptance boundaries.
 
 ## Inventory writers and validators

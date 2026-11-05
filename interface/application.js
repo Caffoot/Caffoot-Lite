@@ -1018,7 +1018,7 @@ function hierarchyValidateTypes(subnets) {
 
                 audit: 'Audit Trail',
                 settings: 'Settings & Data',
-                users: 'Users',
+                users: 'Users & Permissions',
                 account: 'My Account'
             };
             document.getElementById('page-title').textContent = titles[tabId];
@@ -1081,10 +1081,26 @@ function hierarchyValidateTypes(subnets) {
             return '';
         }
 
+        // Keep the selected section in view without moving the document vertically.
+        function revealActiveSectionTabs(container=document.getElementById('main-content')) {
+            container?.querySelectorAll('.subnav,.tabs,.audit-tabs,.intelligence-tabs').forEach(strip=>{
+                const selected=strip.querySelector(':scope > .active,:scope > [aria-selected="true"]');
+                if(!selected)return;
+                const bounds=strip.getBoundingClientRect(),active=selected.getBoundingClientRect();
+                if(active.left<bounds.left)strip.scrollLeft-=bounds.left-active.left;
+                else if(active.right>bounds.right)strip.scrollLeft+=active.right-bounds.right;
+            });
+        }
+        window.addEventListener('resize',()=>revealActiveSectionTabs());
+
         function renderContent() {
             const container = document.getElementById('main-content');
+            document.body.style.overflow='';
             container.className = ['account','audit','settings'].includes(currentTab) ? '' : 'main';
-            const design = {devices:'device-details', audit:'audit-trail', account:'my-account'}[currentTab] || currentTab;
+            const previousStrips=container.dataset.renderedTab===currentTab
+                ? [...container.querySelectorAll('.subnav,.tabs,.audit-tabs,.intelligence-tabs')].map(strip=>strip.scrollLeft) : [];
+            const deviceDesign=activeDeviceDetailsTab==='overview'?'devices':activeDeviceDetailsTab==='inventory'?'device-inventory':'device-management';
+            const design = {devices:deviceDesign, audit:'audit-trail', account:'my-account'}[currentTab] || currentTab;
             document.getElementById('interface-page-style').textContent = interfaceStyles.get(design);
             // replace the view once, avoiding an extra DOM teardown.
             let html = '';
@@ -1097,13 +1113,18 @@ function hierarchyValidateTypes(subnets) {
             else if (currentTab === 'account') html = nextRenderAccount();
             else if (currentTab === 'settings') html = renderApplicationSettings();
             if (['devices','ipam','racks','users'].includes(currentTab)) {
-                const panelClass = {devices:'account-panel',ipam:'ipam-panel',racks:'racks-panel',users:'section'}[currentTab];
+                const panelClass = {devices:['overview','inventory'].includes(activeDeviceDetailsTab)?'account-panel':'account-panel catalog-section',ipam:'ipam-panel',racks:'racks-panel',users:'approved-users-sections'}[currentTab];
                 html = renderApprovedSectionHeader(currentTab) + '<section class="' + panelClass + ' active approved-page-body"' + (currentTab==='devices'?' data-section="'+activeDeviceDetailsTab+'"':'') + '>' + html + '</section>';
             }
             container.innerHTML = html;
             if (currentTab === 'account') nextHydrateAccount(container);
             if (currentTab === 'audit') hydrateApprovedAudit(container);
             if (currentTab === 'settings') hydrateApprovedSettings(container);
+            container.dataset.renderedTab=currentTab;
+            container.querySelectorAll('.subnav,.tabs,.audit-tabs,.intelligence-tabs').forEach((strip,index)=>{
+                strip.scrollLeft=previousStrips[index]||0;
+            });
+            revealActiveSectionTabs(container);
             const rackScroll = container.querySelector('[data-rack-scroll="true"]');
             if (rackScroll) {
                 const updateScrollHint = () => {
@@ -1414,7 +1435,7 @@ function hierarchyValidateTypes(subnets) {
                                         const capacity = Number(rack.heightU)||0;
                                         const pct = capacity ? Math.round(used/capacity*100) : 0;
                                         return renderInterfaceTemplate("dashboard/render-dashboard-html-7",[escapeHtml(rack.name),used,capacity,escapeHtml(rack.name),pct,pct,pct>=85?'#ed8532':'#7799b5']);
-                                    }).join('') : '<p class="db-muted">No network racks configured yet.</p>',networkSnapshot,devices.length,subnets.length,racks.length,activeDashboardTab==='insights'?'':'hidden',networkInsights,rackCards,activeDashboardTab==='activity'?'':'hidden',filteredDashboardAuditEntries.length,alerts.length,window.nextSessionIsAdmin===true&&integrityErrors.length?renderInterfaceTemplate("dashboard/render-dashboard-html-8",[integrityErrors.length]):'',dashboardActivityFilterControlsHtml,dashboardActivityTimelineHtml,filteredDashboardAuditEntries.length?'hidden':'',dashboardAlertFilterControlsHtml,dashboardWarningRowsHtml,filteredDashboardAlerts.length?'hidden':'',alerts.length?'No saved warnings match this filter.':'No saved warnings detected.',alerts.length>filteredDashboardAlerts.length?renderInterfaceTemplate("dashboard/render-dashboard-html-9",[filteredDashboardAlerts.length,alerts.length]):'',renderInventoryReportsHtml(false)]);
+                                    }).join('') : '<p class="db-muted">No network racks configured yet.</p>',networkSnapshot,devices.length,subnets.length,racks.length,activeDashboardTab==='insights'?'':'hidden',networkInsights,rackCards,activeDashboardTab==='activity'?'':'hidden',filteredDashboardAuditEntries.length,alerts.length,window.nextSessionIsAdmin===true&&integrityErrors.length?renderInterfaceTemplate("dashboard/render-dashboard-html-8",[integrityErrors.length]):'',dashboardActivityFilterControlsHtml,dashboardActivityTimelineHtml,filteredDashboardAuditEntries.length?'hidden':'',dashboardAlertFilterControlsHtml,dashboardWarningRowsHtml,filteredDashboardAlerts.length?'hidden':'',alerts.length?'No saved warnings match this filter.':'No saved warnings detected.',alerts.length>filteredDashboardAlerts.length?renderInterfaceTemplate("dashboard/render-dashboard-html-9",[filteredDashboardAlerts.length,alerts.length]):'','']);
         }
 
         function getCategoryIcon(type) {
@@ -1751,7 +1772,7 @@ function hierarchyValidateTypes(subnets) {
             let shown=0;
             document.querySelectorAll('[data-model-row]').forEach(row=>{
                 const visible=row.dataset.modelRow.includes(query)&&(!maker||row.dataset.modelMaker===maker)&&(!type||row.dataset.modelType===type)&&(!source||row.dataset.modelSources.split('|').includes(source))&&(!inUse||Number(row.dataset.modelDevices)>0);
-                row.classList.toggle('hidden',!visible);
+                row.hidden=!visible;row.classList.toggle('hidden',!visible);
                 if(visible)shown++;
             });
             const count=document.getElementById('hardware-model-count');
@@ -1759,9 +1780,18 @@ function hierarchyValidateTypes(subnets) {
             document.getElementById('model-empty')?.classList.toggle('hidden',shown!==0);
         }
         document.addEventListener('input',function(event){
-            if(event.target?.id==='manufacturer-search'){
+            if(event.target?.id==='service-search'){
+                const query=event.target.value.trim().toLowerCase();
+                const rows=[...document.querySelectorAll('[data-service-row]')];
+                rows.forEach(row=>{row.hidden=!row.dataset.serviceRow.includes(query);row.classList.toggle('hidden',row.hidden);});
+                const count=document.getElementById('service-count');
+                if(count)count.textContent=rows.filter(row=>!row.classList.contains('hidden')).length+' services shown';
+            } else if(event.target?.id==='manufacturer-search'){
                 const query=event.target.value.trim().toLocaleLowerCase();
-                document.querySelectorAll('[data-manufacturer-row]').forEach(row=>row.classList.toggle('hidden',!row.dataset.manufacturerRow.includes(query)));
+                const rows=[...document.querySelectorAll('[data-manufacturer-row]')];
+                rows.forEach(row=>{row.hidden=!row.dataset.manufacturerRow.includes(query);row.classList.toggle('hidden',row.hidden);});
+                const count=document.getElementById('hardware-manufacturer-count');
+                if(count)count.textContent=rows.filter(row=>!row.hidden).length+' manufacturers shown';
             } else if(['model-search','hardware-model-manufacturer-filter','model-type','model-source','hardware-model-in-use'].includes(event.target?.id))filterHardwareModels();
         });
         document.addEventListener('change',function(event){
@@ -1871,6 +1901,35 @@ function hierarchyValidateTypes(subnets) {
             if(!await nextSettingsBridge.save('hardwareSeedPreferences')){if(previous===undefined)delete appState.hardwareSeedPreferences;else appState.hardwareSeedPreferences=previous;showToast('Could not save manufacturer preference.','error');return;}
             closeModal(true);renderContent();showToast('Built-in manufacturer preference saved.');
         }
+        // Approved catalogue markup with existing protected actions and saved data.
+        function renderCatalogueButton(label, action, attributes='') {
+            return renderInterfaceTemplate("device-management/source-button",[
+                `data-action="${action}" ${attributes}`,escapeHtml(label)]);
+        }
+        function renderCatalogueRecord(attributes, name, source, description, controls) {
+            const tone=source==='Custom'?' pill-custom':source==='Archived'?' pill-archived':'';
+            const badge=source?`<span class="catalog-pill${tone}">${escapeHtml(source)}</span>`:'';
+            return renderInterfaceTemplate("device-management/source-record",[attributes,escapeHtml(name),badge,escapeHtml(description),controls]);
+        }
+        function renderDeviceCategoryCatalogue(kind) {
+            const isType=kind==='type',field=isType?'type':'location';
+            const values=isType?getUniqueDeviceTypes():getUniqueDeviceLocations();
+            const counts=new Map();
+            appState.devices.forEach(device=>{
+                const value=String(device[field]||'').trim();
+                const key=!value||value==='Unknown'?'Not Recorded':value;
+                counts.set(key,(counts.get(key)||0)+1);
+            });
+            const rows=[...new Set([...values.filter(value=>value&&value!=='Unknown'),'Not Recorded'])]
+                .map(name=>({name,label:isType?(name==='Server - Physical'?'Server':name==='Server - Virtual'?'Virtual Machine':name):name,count:counts.get(name)||0}))
+                .filter(row=>row.count||row.name!=='Not Recorded').sort((a,b)=>b.count-a.count||a.label.localeCompare(b.label));
+            const markup=rows.map(({name,label,count})=>renderCatalogueRecord(
+                `data-catalog-row="${field}" data-filter-text="${escapeHtml(label.toLowerCase())}"`,label,
+                name==='Not Recorded'?'Protected':'',`${count} device${count===1?'':'s'} in inventory`,
+                renderCatalogueButton('View Devices','open-catalogue-details',`data-kind="${field}" data-name="${escapeHtml(name)}"`))).join('');
+            return renderInterfaceTemplate(isType?"device-management/source-types":"device-management/source-locations",[
+                values.length,appState.devices.length,counts.get('Not Recorded')||0,markup||'<p class="catalog-aside-note">No devices recorded yet. Add a device to populate this overview.</p>',`Showing ${rows.length} categories`]);
+        }
         function renderHardwareManufacturersHtml() {
             const map=new Map();
             function add(name,source,type,model) {
@@ -1903,10 +1962,18 @@ function hierarchyValidateTypes(subnets) {
             });
             const items=[...map.values()].sort((a,b)=>a.name.localeCompare(b.name));
             const summary=[['Manufacturers',items.length],['Used in Inventory',items.filter(x=>x.devices>0).length],['Custom Suggestions',items.filter(x=>x.sources.has('Custom')).length]];
-            const cards=summary.map(([label,value])=>renderInterfaceTemplate("device-management/cards-1",[])+label+'</p><p class="text-3xl font-bold text-slate-900 dark:text-white mt-2">'+value+'</p></div>').join('');
-            const rows=items.map(x=>'<div data-manufacturer-row="'+escapeHtml(x.name.toLocaleLowerCase())+renderInterfaceTemplate("device-management/rows-1",[])+escapeHtml(x.name)+'</h3><p class="text-xs text-slate-600 dark:text-slate-300 mt-1">'+[...x.sources].join(' · ')+' · '+x.types.size+' device types · '+x.models.size+' known models</p><p class="text-xs text-slate-700 dark:text-slate-200 mt-2">'+[...x.types].sort((a,b)=>a.localeCompare(b)).map(t=>'<span class="inline-block mr-1 mb-1 rounded-md bg-blue-50 dark:bg-blue-900/40 border border-blue-200 dark:border-blue-700 px-2 py-1">'+escapeHtml(t)+'</span>').join('')+'</p></div><span class="text-sm font-semibold text-blue-700 dark:text-blue-300 lg:text-right whitespace-nowrap">'+x.devices+' device'+(x.devices===1?'':'s')+'</span>'+([getConfiguredHardwareCatalogueEntries().find(e=>e.manufacturer.toLowerCase()===x.name.toLowerCase()&&!e.model)||{id:'builtin:'+x.name}].map(e=>'<span class="flex flex-wrap gap-2 lg:justify-end">'+(makerOrigins.has(x.name.toLowerCase())?'<button type="button" data-action="built-in-manufacturer-edit" data-name="'+escapeHtml(makerOrigins.get(x.name.toLowerCase()))+'" class="h-9 px-3 rounded-lg border border-slate-300 dark:border-slate-600">Manage Built-in</button>':'')+'<button type="button" data-action="manufacturer-edit" data-name="'+escapeHtml(e.id)+'" class="h-9 px-3 rounded-lg border border-slate-300 dark:border-slate-600">Edit Manufacturer</button>'+(x.sources.has('Built-in')||String(e.id).startsWith('builtin:')?'': '<button type="button" data-action="manufacturer-remove" data-name="'+escapeHtml(e.id)+'" class="h-9 px-3 rounded-lg border border-rose-400 text-rose-700 dark:text-rose-300">Remove</button>')+'</span>').join(''))+'</div>').join('');
-            const hiddenSection=hiddenMakers.length?renderInterfaceTemplate("device-management/hidden-section-1",[])+hiddenMakers.map(name=>'<div class="flex justify-between items-center gap-3"><span>'+escapeHtml(name)+'</span><button type="button" data-action="built-in-manufacturer-edit" data-name="'+escapeHtml(name)+'" class="h-9 px-3 rounded-lg border border-slate-300 dark:border-slate-600">Manage / Restore</button></div>').join('')+'</div>':'';
-            return renderInterfaceTemplate("device-management/render-hardware-manufacturers-html-1",[])+cards+renderInterfaceTemplate("device-management/render-hardware-manufacturers-html-2",[])+items.length+renderInterfaceTemplate("device-management/render-hardware-manufacturers-html-3",[])+rows+'</div>'+hiddenSection+'<p id="manufacturer-empty" class="hidden text-sm text-slate-600 dark:text-slate-300">No manufacturers match this search.</p></div></section>';
+            const rows=items.map(item=>{
+                const key=getConfiguredHardwareCatalogueEntries().find(entry=>entry.manufacturer.toLowerCase()===item.name.toLowerCase()&&!entry.model)?.id||'builtin:'+item.name;
+                let controls=renderCatalogueButton('View Devices','device-hardware-drilldown',`data-field="manufacturer" data-value="${escapeHtml(item.name)}"`);
+                if(makerOrigins.has(item.name.toLowerCase()))controls+=renderCatalogueButton('Manage Suggestion','built-in-manufacturer-edit',`data-name="${escapeHtml(makerOrigins.get(item.name.toLowerCase()))}"`);
+                controls+=renderCatalogueButton(item.sources.has('Built-in')?'Device Types':'Edit','manufacturer-edit',`data-name="${escapeHtml(key)}"`);
+                if(!item.sources.has('Built-in')&&!key.startsWith('builtin:'))controls+=renderCatalogueButton('Remove','manufacturer-remove',`data-name="${escapeHtml(key)}"`);
+                return renderCatalogueRecord(`data-manufacturer-row="${escapeHtml(item.name.toLowerCase())}"`,item.name,item.sources.has('Built-in')?'Built-in':item.sources.has('Custom')?'Custom':'Recorded',
+                    `${[...item.types].join(', ')} · ${item.devices} device${item.devices===1?'':'s'} in inventory`,controls);
+            }).join('');
+            const hiddenRows=hiddenMakers.map(name=>renderCatalogueRecord('',name,'Archived','Hidden from new suggestions',renderCatalogueButton('Manage / Restore','built-in-manufacturer-edit',`data-name="${escapeHtml(name)}"`))).join('');
+            const hidden=hiddenRows?renderInterfaceTemplate("device-management/source-hidden",['Hidden Built-in Manufacturers',hiddenRows]):'';
+            return renderInterfaceTemplate("device-management/source-manufacturers",[...summary.map(([,count])=>count),rows,`${items.length} manufacturers shown`,'','','',0,hidden]);
         }
 
 
@@ -2053,13 +2120,20 @@ function hierarchyValidateTypes(subnets) {
                 }catch{return [];}
             });
             const items=[...map.values()].sort((a,b)=>a.manufacturer.localeCompare(b.manufacturer)||a.model.localeCompare(b.model)||a.type.localeCompare(b.type));
-            const cards=[['Known Models',items.length],['Used in Inventory',items.filter(x=>x.devices>0).length],['Custom Suggestions',items.filter(x=>x.sources.has('Custom')).length]].map(([label,value])=>renderInterfaceTemplate("device-management/cards-2",[])+label+'</p><p class="text-3xl font-bold text-slate-900 dark:text-white mt-2">'+value+'</p></div>').join('');
-            const makers=[...new Set(items.map(x=>x.manufacturer))].sort((a,b)=>a.localeCompare(b));
-            const types=[...new Set(items.map(x=>x.type).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
-            const optionList=values=>values.map(x=>'<option value="'+escapeHtml(x)+'">'+escapeHtml(x)+'</option>').join('');
-            const rows=items.map(x=>'<div data-model-maker="'+escapeHtml(x.manufacturer.toLocaleLowerCase())+'" data-model-type="'+escapeHtml(x.type.toLocaleLowerCase())+'" data-model-sources="'+escapeHtml([...x.sources].join('|').toLocaleLowerCase())+'" data-model-devices="'+x.devices+'" data-model-row="'+escapeHtml([x.model,x.manufacturer,x.type].join(' ').toLocaleLowerCase())+renderInterfaceTemplate("device-management/rows-2",[])+escapeHtml(x.model)+'</h3><p class="text-xs text-slate-600 dark:text-slate-300 mt-1">'+escapeHtml(x.manufacturer)+' · '+escapeHtml(x.type||'Unspecified Type')+' · '+[...x.sources].join(' · ')+'</p></div><span class="text-sm font-semibold text-blue-700 dark:text-blue-300 sm:text-right whitespace-nowrap">'+x.devices+' device'+(x.devices===1?'':'s')+'</span>'+(x.sources.has('Built-in')?'<button type="button" data-action="built-in-model-edit" data-name="'+escapeHtml(builtinModelOrigins.get([x.model,x.manufacturer,x.type].map(v=>v.toLocaleLowerCase()).join('|'))||'')+'" class="h-9 px-3 rounded-lg border border-slate-300 dark:border-slate-600">Manage Built-in</button>':'')+(x.sources.has('Custom')&&!x.sources.has('Built-in')?getConfiguredHardwareCatalogueEntries().filter(e=>e.model&&e.model.toLowerCase()===x.model.toLowerCase()&&e.manufacturer.toLowerCase()===x.manufacturer.toLowerCase()&&e.type.toLowerCase()===x.type.toLowerCase()).map(e=>'<div class="flex gap-2"><button type="button" data-action="model-edit" data-name="'+escapeHtml(e.id)+'" class="h-9 px-3 rounded-lg border border-slate-300 dark:border-slate-600">Edit</button><button type="button" data-action="model-remove" data-name="'+escapeHtml(e.id)+'" class="h-9 px-3 rounded-lg border border-rose-400 text-rose-700 dark:text-rose-300">Remove</button></div>').join(''):'')+'</div>').join('');
-            const hiddenSection=hiddenBuiltins.length?'<div class="rounded-2xl border border-slate-200 dark:border-slate-700 p-5 space-y-3"><h3 class="font-semibold">Hidden Built-in Models</h3>'+hiddenBuiltins.map(x=>'<div class="flex flex-wrap justify-between items-center gap-3"><span class="text-sm">'+escapeHtml(x.maker)+' · '+escapeHtml(x.model)+' · '+escapeHtml(x.type)+'</span><button type="button" data-action="built-in-model-edit" data-name="'+escapeHtml(x.key)+'" class="h-9 px-3 rounded-lg border border-slate-300 dark:border-slate-600">Manage / Restore</button></div>').join('')+'</div>':'';
-            return renderInterfaceTemplate("device-management/render-hardware-models-html-1",[])+cards+renderInterfaceTemplate("device-management/render-hardware-models-html-2",[])+optionList(makers)+renderInterfaceTemplate("device-management/render-hardware-models-html-3",[])+optionList(types)+renderInterfaceTemplate("device-management/render-hardware-models-html-4",[])+items.length+renderInterfaceTemplate("device-management/render-hardware-models-html-5",[])+rows+'</div>'+hiddenSection+renderInterfaceTemplate("device-management/render-hardware-models-html-6",[]);
+            const makers=[...new Set(items.map(item=>item.manufacturer))].sort((a,b)=>a.localeCompare(b));
+            const types=[...new Set(items.map(item=>item.type).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+            const options=values=>values.map(value=>`<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join('');
+            const rows=items.map(item=>{
+                let controls=renderCatalogueButton('View Devices','device-hardware-drilldown',`data-field="model" data-value="${escapeHtml(item.model)}"`);
+                if(item.sources.has('Built-in'))controls+=renderCatalogueButton('Manage Suggestion','built-in-model-edit',`data-name="${escapeHtml(builtinModelOrigins.get([item.model,item.manufacturer,item.type].map(value=>value.toLowerCase()).join('|'))||'')}"`);
+                else for(const entry of getConfiguredHardwareCatalogueEntries().filter(entry=>entry.model&&entry.model.toLowerCase()===item.model.toLowerCase()&&entry.manufacturer.toLowerCase()===item.manufacturer.toLowerCase()&&entry.type.toLowerCase()===item.type.toLowerCase())){
+                    controls+=renderCatalogueButton('Edit','model-edit',`data-name="${escapeHtml(entry.id)}"`)+renderCatalogueButton('Remove','model-remove',`data-name="${escapeHtml(entry.id)}"`);
+                }
+                return renderCatalogueRecord(`data-model-maker="${escapeHtml(item.manufacturer.toLowerCase())}" data-model-type="${escapeHtml(item.type.toLowerCase())}" data-model-sources="${escapeHtml([...item.sources].join('|').toLowerCase())}" data-model-devices="${item.devices}" data-model-row="${escapeHtml([item.model,item.manufacturer,item.type].join(' ').toLowerCase())}"`,item.model,item.sources.has('Built-in')?'Built-in':item.sources.has('Custom')?'Custom':'Recorded',`${item.manufacturer} · ${item.type} · ${item.devices} device${item.devices===1?'':'s'} in inventory`,controls);
+            }).join('');
+            const hiddenRows=hiddenBuiltins.map(item=>renderCatalogueRecord('',item.model,'Archived',`${item.maker} · ${item.type}`,renderCatalogueButton('Manage / Restore','built-in-model-edit',`data-name="${escapeHtml(item.key)}"`))).join('');
+            const hidden=hiddenRows?renderInterfaceTemplate("device-management/source-hidden",['Hidden Built-in Models',hiddenRows]):'';
+            return renderInterfaceTemplate("device-management/source-models",[items.length,items.filter(item=>item.devices>0).length,items.filter(item=>item.sources.has('Custom')).length,rows,`${items.length} models shown`,options(makers),options(types),'',0,hidden]);
         }
         const builtInSoftwareSuggestions = [{"name":"Microsoft 365 Apps","types":["Desktop","Laptop","Tablet"]},{"name":"LibreOffice","types":["Desktop","Laptop","Tablet"]},{"name":"Google Chrome","types":["Desktop","Laptop","Tablet"]},{"name":"Mozilla Firefox","types":["Desktop","Laptop","Tablet"]},{"name":"Microsoft Edge","types":["Desktop","Laptop","Tablet"]},{"name":"Adobe Acrobat Reader","types":["Desktop","Laptop","Tablet"]},{"name":"Microsoft Teams","types":["Desktop","Laptop","Tablet"]},{"name":"Zoom Workplace","types":["Desktop","Laptop","Tablet"]},{"name":"7-Zip","types":["Desktop","Laptop","Tablet"]},{"name":"VLC media player","types":["Desktop","Laptop","Tablet"]},{"name":"Bitwarden","types":["Desktop","Laptop","Tablet"]},{"name":"KeePassXC","types":["Desktop","Laptop","Tablet"]},{"name":"Microsoft Defender for Endpoint","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual"]},{"name":"CrowdStrike Falcon Sensor","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual"]},{"name":"SentinelOne Agent","types":["Desktop","Laptop","Tablet"]},{"name":"Tailscale","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual"]},{"name":"OpenVPN Connect","types":["Desktop","Laptop","Tablet"]},{"name":"WireGuard","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual","Firewall","Router","Layer 3 Switch"]},{"name":"AnyDesk","types":["Desktop","Laptop","Tablet"]},{"name":"RustDesk","types":["Desktop","Laptop","Tablet"]},{"name":"TeamViewer","types":["Desktop","Laptop","Tablet"]},{"name":"Microsoft Remote Desktop","types":["Desktop","Laptop","Tablet"]},{"name":"Zabbix Agent","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual","Firewall","Router","Layer 3 Switch","Switch"]},{"name":"NinjaOne Agent","types":["Desktop","Laptop","Tablet"]},{"name":"PDQ Connect","types":["Desktop","Laptop","Tablet"]},{"name":"Visual Studio Code","types":["Desktop","Laptop"]},{"name":"Git","types":["Desktop","Laptop","Server - Physical","Server - Virtual"]},{"name":"PowerShell 7","types":["Desktop","Laptop","Server - Physical","Server - Virtual"]},{"name":"PuTTY","types":["Desktop","Laptop"]},{"name":"WinSCP","types":["Desktop","Laptop"]},{"name":"Wireshark","types":["Desktop","Laptop"]},{"name":"Docker Desktop","types":["Desktop","Laptop"]},{"name":"VMware Workstation","types":["Desktop","Laptop"]},{"name":"VirtualBox","types":["Desktop","Laptop"]},{"name":"Notepad++","types":["Desktop","Laptop"]},{"name":"Python","types":["Desktop","Laptop","Server - Physical","Server - Virtual"]},{"name":"Java Runtime","types":["Desktop","Laptop"]},{"name":"Node.js","types":["Desktop","Laptop"]},{"name":"Microsoft Power BI Desktop","types":["Desktop","Laptop"]},{"name":"AutoCAD","types":["Desktop","Laptop"]},{"name":"Docker Engine","types":["Server - Physical","Server - Virtual"]},{"name":"Podman","types":["Server - Physical","Server - Virtual"]},{"name":"Kubernetes","types":["Server - Physical","Server - Virtual"]},{"name":"containerd","types":["Server - Physical","Server - Virtual"]},{"name":"Nginx","types":["Server - Physical","Server - Virtual"]},{"name":"Apache HTTP Server","types":["Server - Physical","Server - Virtual"]},{"name":"IIS","types":["Server - Physical","Server - Virtual"]},{"name":"PostgreSQL","types":["Server - Physical","Server - Virtual"]},{"name":"MariaDB","types":["Server - Physical","Server - Virtual"]},{"name":"MySQL Server","types":["Server - Physical","Server - Virtual"]},{"name":"Microsoft SQL Server","types":["Server - Physical","Server - Virtual"]},{"name":"Redis","types":["Server - Physical","Server - Virtual"]},{"name":"RabbitMQ","types":["Server - Physical","Server - Virtual"]},{"name":"Prometheus","types":["Server - Physical","Server - Virtual"]},{"name":"Grafana","types":["Server - Physical","Server - Virtual"]},{"name":"Zabbix Server","types":["Server - Physical","Server - Virtual"]},{"name":"Wazuh Agent","types":["Server - Physical","Server - Virtual"]},{"name":"Veeam Agent","types":["Server - Physical","Server - Virtual","NAS"]},{"name":"Restic","types":["Server - Physical","Server - Virtual","NAS"]},{"name":"BorgBackup","types":["Server - Physical","Server - Virtual","NAS"]},{"name":"OpenSSH Server","types":["Server - Physical","Server - Virtual"]},{"name":"Ansible","types":["Server - Physical","Server - Virtual"]},{"name":"Terraform","types":["Server - Physical","Server - Virtual"]},{"name":"HashiCorp Vault","types":["Server - Physical","Server - Virtual"]},{"name":"VMware ESXi","types":["Server - Physical"]},{"name":"Proxmox VE","types":["Server - Physical"]},{"name":"Microsoft Hyper-V","types":["Server - Physical"]},{"name":"Dell OpenManage","types":["Server - Physical"]},{"name":"HPE iLO Management","types":["Server - Physical"]},{"name":"IPMItool","types":["Server - Physical"]},{"name":"TrueNAS SCALE","types":["Server - Physical","NAS"]},{"name":"Ubuntu Server","types":["Server - Physical","Server - Virtual"]},{"name":"Windows Server","types":["Server - Physical","Server - Virtual"]},{"name":"VMware Tools","types":["Server - Virtual"]},{"name":"QEMU Guest Agent","types":["Server - Virtual"]},{"name":"Hyper-V Integration Services","types":["Server - Virtual"]},{"name":"cloud-init","types":["Server - Virtual"]},{"name":"Synology DSM","types":["NAS"]},{"name":"QNAP QTS","types":["NAS"]},{"name":"OpenMediaVault","types":["NAS"]},{"name":"rsync","types":["NAS"]},{"name":"Syncthing","types":["NAS"]},{"name":"pfSense","types":["Firewall","Router","Layer 3 Switch"]},{"name":"OPNsense","types":["Firewall","Router","Layer 3 Switch"]},{"name":"FortiOS","types":["Firewall","Router","Layer 3 Switch"]},{"name":"Cisco IOS XE","types":["Firewall","Router","Layer 3 Switch"]},{"name":"MikroTik RouterOS","types":["Firewall","Router","Layer 3 Switch","Switch"]},{"name":"VyOS","types":["Firewall","Router","Layer 3 Switch"]},{"name":"OpenWrt","types":["Firewall","Router","Layer 3 Switch","Wireless Access Point","Access Point","Wireless LAN Controller"]},{"name":"OpenVPN","types":["Firewall","Router","Layer 3 Switch"]},{"name":"Cisco IOS","types":["Switch"]},{"name":"Cisco NX-OS","types":["Switch"]},{"name":"Aruba AOS-CX","types":["Switch"]},{"name":"UniFi Network","types":["Switch","Wireless Access Point","Access Point","Wireless LAN Controller"]},{"name":"Aruba Instant On","types":["Wireless Access Point","Access Point","Wireless LAN Controller"]},{"name":"ArubaOS","types":["Wireless Access Point","Access Point","Wireless LAN Controller"]},{"name":"Cisco Catalyst Center","types":["Wireless Access Point","Access Point","Wireless LAN Controller"]},{"name":"TP-Link Omada Controller","types":["Wireless Access Point","Access Point","Wireless LAN Controller"]},{"name":"HP Universal Print Driver","types":["Printer"]},{"name":"Brother Printer Driver","types":["Printer"]},{"name":"Canon Printer Driver","types":["Printer"]},{"name":"Epson Printer Driver","types":["Printer"]},{"name":"PaperCut MF","types":["Printer"]},{"name":"Microsoft Intune Company Portal","types":["Tablet"]},{"name":"Jamf Self Service","types":["Tablet"]},{"name":"Microsoft Authenticator","types":["Tablet"]},{"name":"Google Authenticator","types":["Tablet"]}];
         function openSoftwareCatalogueEditor(key='') {
@@ -2067,7 +2141,9 @@ function hierarchyValidateTypes(subnets) {
             if(key&&!entry)return;
             const types=[...new Set([...(appState.deviceTypes||[]),...builtInSoftwareSuggestions.flatMap(x=>x.types),...getConfiguredSoftwareCatalogueEntries().flatMap(x=>x.deviceTypes||[])])].sort();
             const selected=new Set(entry?.deviceTypes||[]);
-            const fields=renderInterfaceTemplate("device-management/fields-10",[escapeHtml(entry?.label||''),types.map(t=>renderInterfaceTemplate("device-management/fields-9",[escapeHtml(t),selected.has(t)?'checked':'',escapeHtml(t)])).join('')]);
+            let fields=renderInterfaceTemplate("device-management/fields-10",[escapeHtml(entry?.label||''),types.map(t=>renderInterfaceTemplate("device-management/fields-9",[escapeHtml(t),selected.has(t)?'checked':'',escapeHtml(t)])).join('')]);
+            const builtIn=builtInSoftwareSuggestions.find(item=>createBuiltInSoftwareCatalogueKey(item.name)===key);
+            if(builtIn)fields+=renderInterfaceTemplate("device-management/source-availability",[renderSoftwareDeviceTypeControls(builtIn.name)]);
             const actions=renderInterfaceTemplate("device-management/actions-5",[escapeHtml(key)]);
             openApprovedCatalogueModal(entry?'Edit Custom Software':'Add Custom Software',
               'Availability does not mean installed. Existing device software assignments remain unchanged.',
@@ -2129,10 +2205,16 @@ function hierarchyValidateTypes(subnets) {
                 return {...x,configured:!!option,count:option?appState.devices.filter(d=>d.typeDetails?.[option.key]===true||d[option.key]===true).length:0};
             }).sort((a,b)=>a.name.localeCompare(b.name));
             const types=[...new Set([...items.flatMap(x=>x.types),...(appState.deviceTypes||[])])].sort((a,b)=>a.localeCompare(b));
-            const card=(label,value)=>renderInterfaceTemplate("device-management/card-1",[])+label+'</p><p class="text-3xl font-bold mt-2">'+value+'</p></div>';
-            const rows=items.map(x=>'<div data-software-row="'+escapeHtml(x.name.toLowerCase())+'" data-software-types="'+escapeHtml('|'+x.types.join('|')+'|')+'" data-software-used="'+x.count+'" data-software-source="'+x.source+renderInterfaceTemplate("device-management/rows-3",[])+escapeHtml(x.name)+'</h3><p class="text-xs text-slate-600 dark:text-slate-300 mt-1">'+(x.source==='built-in'?'Built-in suggestion':'Configured software')+(x.types.length?' · '+x.types.length+' device type'+(x.types.length===1?'':'s'):' · No device-type association')+'</p>'+(x.source==='built-in'?'<div class="flex flex-wrap gap-1 mt-2">'+renderSoftwareDeviceTypeControls(builtInSoftwareSuggestions.find(y=>createBuiltInSoftwareCatalogueKey(y.name)===x.key)?.name||x.name)+'</div>':'<div class="flex flex-wrap gap-1 mt-2">'+x.types.map(t=>renderInterfaceTemplate("device-management/rows-4",[])+escapeHtml(t)+'</span>').join('')+'</div>')+'</div><span class="text-sm font-semibold text-blue-700 dark:text-blue-300 whitespace-nowrap">'+x.count+' device'+(x.count===1?'':'s')+'</span>'+'<span class="flex flex-wrap gap-2"><button type="button" data-action="software-custom-edit" data-name="'+escapeHtml(x.key)+'" class="h-9 px-3 rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700">Edit Software</button><button type="button" data-action="software-custom-remove" data-name="'+escapeHtml(x.key)+'" class="h-9 px-3 rounded-lg border border-rose-400 text-rose-700 dark:text-rose-300 hover:bg-rose-50 dark:hover:bg-slate-700">Remove</button></span>'+'</div>').join('');
-            const archivedRows=archived.map(x=>renderInterfaceTemplate("device-management/archived-rows-1",[])+escapeHtml(x.label)+renderInterfaceTemplate("device-management/archived-rows-2",[])+escapeHtml(x.key)+'" class="h-9 px-3 rounded-lg border border-blue-400 text-blue-800 dark:text-blue-300">Restore Software</button></div>').join('');
-            return renderInterfaceTemplate("device-management/render-software-catalogue-html-1",[])+card('Software Suggestions',items.length)+card('Used in Inventory',items.filter(x=>x.count>0).length)+card('Configured Software',configured.length)+renderInterfaceTemplate("device-management/render-software-catalogue-html-2",[])+types.map(t=>'<option value="'+escapeHtml(t)+'">'+escapeHtml(t)+'</option>').join('')+renderInterfaceTemplate("device-management/render-software-catalogue-html-3",[])+items.length+' software options shown</p><div class="space-y-2 max-h-[65vh] overflow-y-auto">'+rows+renderInterfaceTemplate("device-management/render-software-catalogue-html-4",[])+archived.length+')</h3>'+(archivedRows||'<p class="text-sm text-slate-600 dark:text-slate-300">No hidden software.</p>')+'</section></section>';
+            const rows=items.map(item=>renderCatalogueRecord(
+                `data-software-row="${escapeHtml(item.name.toLowerCase())}" data-software-types="${escapeHtml('|'+item.types.join('|')+'|')}" data-software-used="${item.count}" data-software-source="${item.source}"`,item.name,item.source==='built-in'?'Built-in':'Custom',
+                `${item.types.join(', ')} · ${item.count} installed record${item.count===1?'':'s'}`,
+                renderCatalogueButton('View Devices','device-intelligence-drilldown',`data-kind="service" data-value="${escapeHtml(item.key)}"`)+
+                renderCatalogueButton(item.source==='built-in'?'Manage':'Edit','software-custom-edit',`data-name="${escapeHtml(item.key)}"`)+
+                renderCatalogueButton('Remove','software-custom-remove',`data-name="${escapeHtml(item.key)}"`))).join('');
+            const archivedRows=archived.map(item=>renderCatalogueRecord('',item.label,'Archived','Preserved historical installations',
+                renderCatalogueButton('View Devices','device-intelligence-drilldown',`data-kind="service" data-value="${escapeHtml(item.key)}"`)+renderCatalogueButton('Restore','software-custom-restore',`data-name="${escapeHtml(item.key)}"`))).join('');
+            const typeOptions=types.map(type=>`<option value="${escapeHtml(type)}">${escapeHtml(type)}</option>`).join('');
+            return renderInterfaceTemplate("device-management/source-software",[items.length,items.filter(item=>item.count>0).length,archived.length,rows,`${items.length} software options shown`,'',typeOptions,archivedRows,archived.length]);
         }
         async function enableSuggestedSoftware(name){
             const suggestion=builtInSoftwareSuggestions.find(x=>x.name===name);
@@ -2153,7 +2235,7 @@ function hierarchyValidateTypes(subnets) {
             let count=0;
             document.querySelectorAll('[data-software-row]').forEach(row=>{
                 const visible=row.dataset.softwareRow.includes(query)&&(!source||row.dataset.softwareSource===source)&&(!type||row.dataset.softwareTypes.includes('|'+type+'|'))&&(!used||Number(row.dataset.softwareUsed)>0);
-                row.classList.toggle('hidden',!visible);
+                row.hidden=!visible;row.classList.toggle('hidden',!visible);
                 if(visible)count++;
             });
             const output=document.getElementById('software-catalogue-count');
@@ -2197,19 +2279,20 @@ function hierarchyValidateTypes(subnets) {
             const saved=getConfiguredServerServiceCatalogueEntries();
             const active=getAvailableServerServiceCatalogueEntries();
             const archived=saved.filter(x=>x.archived).sort((a,b)=>String(a.label||'').localeCompare(String(b.label||''),undefined,{sensitivity:'base'}));
-            const archivedRows=archived.map(x=>{const count=appState.devices.filter(d=>d.typeDetails?.[x.key]===true||d[x.key]===true).length;return renderInterfaceTemplate("device-management/archived-rows-3",[])+escapeHtml(x.label)+renderInterfaceTemplate("device-management/archived-rows-4",[])+count+' device'+(count===1?'':'s')+' retain this service. Not available for new assignments.</p></div><button type="button" data-action="server-catalog-restore" data-name="'+escapeHtml(x.key)+'" class="h-9 px-3 rounded-lg border border-blue-400 text-blue-800 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-slate-700">Restore Service</button></div>';}).join('');
-            const rows=active.map(x=>{
-                const count=appState.devices.filter(d=>d.typeDetails?.[x.key]===true||d[x.key]===true).length;
-                const custom=saved.some(y=>y.key===x.key&&!y.archived);
-                return renderInterfaceTemplate("device-management/rows-5",[])+escapeHtml(x.label)+'</h3><p class="text-xs text-slate-600 dark:text-slate-300 mt-1">'+(custom?'Configured service':'Built-in suggestion')+'</p></div><span class="text-sm font-semibold text-blue-700 dark:text-blue-300">'+count+' device'+(count===1?'':'s')+'</span>'+'<span class="flex gap-2"><button type="button" data-action="server-catalog-edit" data-name="'+escapeHtml(x.key)+'" class="h-9 px-3 rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700">Edit Service</button><button type="button" data-action="server-catalog-remove" data-name="'+escapeHtml(x.key)+'" class="h-9 px-3 rounded-lg border border-rose-400 text-rose-700 dark:text-rose-300 hover:bg-rose-50 dark:hover:bg-slate-700">Remove</button></span>'+'</div>';
-            });
-            return renderInterfaceTemplate("device-management/render-server-services-catalogue-html-1",[])+[['Available Services',active.length],['Used in Inventory',active.filter(x=>appState.devices.some(d=>d.typeDetails?.[x.key]===true||d[x.key]===true)).length],['Archived Services',saved.filter(x=>x.archived).length]].map(([label,n])=>renderInterfaceTemplate("device-management/render-server-services-catalogue-html-2",[])+label+'</p><p class="text-3xl font-bold mt-2">'+n+'</p></div>').join('')+renderInterfaceTemplate("device-management/render-server-services-catalogue-html-3",[])+active.map((x,i)=>'<div data-service-row="'+escapeHtml(x.label.toLowerCase())+'">'+rows[i]+'</div>').join('')+'</div><section class="space-y-3"><h3 class="text-lg font-bold">Archived Services ('+archived.length+renderInterfaceTemplate("device-management/render-server-services-catalogue-html-4",[])+(archivedRows||'<p class="text-sm text-slate-600 dark:text-slate-300">No archived services.</p>')+'</section></section>';
+            const rows=active.map(item=>{
+                const count=appState.devices.filter(device=>device.typeDetails?.[item.key]===true||device[item.key]===true).length;
+                return renderCatalogueRecord(`data-service-row="${escapeHtml(item.label.toLowerCase())}"`,item.label,saved.some(entry=>entry.key===item.key)?'Custom':'Built-in',`${count} devices with service enabled`,
+                    renderCatalogueButton('View Devices','device-intelligence-drilldown',`data-kind="service" data-value="${escapeHtml(item.key)}"`)+renderCatalogueButton('Manage','server-catalog-edit',`data-name="${escapeHtml(item.key)}"`)+renderCatalogueButton('Remove','server-catalog-remove',`data-name="${escapeHtml(item.key)}"`));
+            }).join('');
+            const archivedRows=archived.map(item=>renderCatalogueRecord('',item.label,'Archived','Preserved on existing device records',renderCatalogueButton('Restore','server-catalog-restore',`data-name="${escapeHtml(item.key)}"`))).join('');
+            return renderInterfaceTemplate("device-management/source-services",[active.length,active.filter(item=>appState.devices.some(device=>device.typeDetails?.[item.key]===true||device[item.key]===true)).length,archived.length,rows,`${active.length} services shown`,'','',archivedRows,archived.length]);
         }
         function renderDevicesHTML() {
-            if(activeDeviceDetailsTab==='manufacturers')return '<div class="space-y-5 device-devices">'+renderHardwareManufacturersHtml()+'</div>';
-            if(activeDeviceDetailsTab==='models')return '<div class="space-y-5 device-devices">'+renderHardwareModelsHtml()+'</div>';
-            if(activeDeviceDetailsTab==='software')return '<div class="space-y-5 device-devices">'+renderSoftwareCatalogueHtml()+'</div>';
-            if(activeDeviceDetailsTab==='services')return '<div class="space-y-5 device-devices">'+renderServerServicesCatalogueHtml()+'</div>';
+            if(['types','locations'].includes(activeDeviceDetailsTab))return renderDeviceCategoryCatalogue(activeDeviceDetailsTab==='types'?'type':'location');
+            if(activeDeviceDetailsTab==='manufacturers')return renderHardwareManufacturersHtml();
+            if(activeDeviceDetailsTab==='models')return renderHardwareModelsHtml();
+            if(activeDeviceDetailsTab==='software')return renderSoftwareCatalogueHtml();
+            if(activeDeviceDetailsTab==='services')return renderServerServicesCatalogueHtml();
 
             // Live saved-inventory values in the approved Draft 03 Hardware cards.
             const approvedHardwareMetric=(label,field,icon,tone='')=>{
@@ -2263,7 +2346,7 @@ function hierarchyValidateTypes(subnets) {
                 if(!affected.length)return '<div class="intelligence-overview-box" style="margin-top:0"><span>No devices have archived software recorded.</span></div>';
                 return renderInterfaceTemplate("device-management/approved-archived-software-html-2",[affected.sort((a,b)=>String(a.device.name||'').localeCompare(String(b.device.name||''))).map(x=>renderInterfaceTemplate("device-management/approved-archived-software-html-1",[escapeHtml(String(x.device.id)),escapeHtml(String(x.device.name||'Unnamed Device')),x.software.map(entry=>escapeHtml(String(entry.label||entry.key))).join(', ')])).join('')]);
             };
-            return renderInterfaceTemplate("devices/render-devices-html-9",[activeDeviceDetailsTab==='manufacturers'?renderHardwareManufacturersHtml():'',activeDeviceDetailsTab==='models'?renderHardwareModelsHtml():'',activeDeviceDetailsTab==='software'?renderSoftwareCatalogueHtml():'',activeDeviceDetailsTab==='overview'?'':'hidden',deviceIntelligenceTab==='overview',deviceIntelligenceTab==='overview'?'active':'',deviceIntelligenceTab==='hardware',deviceIntelligenceTab==='hardware'?'active':'',deviceIntelligenceTab==='os',deviceIntelligenceTab==='os'?'active':'',deviceIntelligenceTab==='software',deviceIntelligenceTab==='software'?'active':'',deviceIntelligenceTab==='quality',deviceIntelligenceTab==='quality'?'active':'',deviceIntelligenceTab==='overview'?'':'hidden',[['Total Devices',appState.devices.length,'i-box'],['With Primary IP',appState.devices.filter(d=>String(d.primaryIp||'').trim()).length,'i-network'],['Locations Recorded',appState.devices.filter(d=>String(d.location||'').trim() && d.location!=='Unknown').length,'i-rack'],['Device Types',new Set(appState.devices.map(d=>String(d.type||'').trim()).filter(Boolean)).size,'i-grid']].map(([label,value,icon])=>renderInterfaceTemplate("devices/render-devices-html-1",[label,icon,value])).join(''),[['Devices by Type','type'],['Devices by Location','location']].map(([heading,field])=>{
+            return renderInterfaceTemplate("devices/render-devices-html-9",[activeDeviceDetailsTab==='manufacturers'?renderHardwareManufacturersHtml():'',activeDeviceDetailsTab==='models'?renderHardwareModelsHtml():'',activeDeviceDetailsTab==='software'?renderSoftwareCatalogueHtml():'',activeDeviceDetailsTab==='overview'?'':'hidden',deviceIntelligenceTab==='overview',deviceIntelligenceTab==='overview'?'active':'',deviceIntelligenceTab==='hardware',deviceIntelligenceTab==='hardware'?'active':'',deviceIntelligenceTab==='os',deviceIntelligenceTab==='os'?'active':'',deviceIntelligenceTab==='software',deviceIntelligenceTab==='software'?'active':'',deviceIntelligenceTab==='quality',deviceIntelligenceTab==='quality'?'active':'',deviceIntelligenceTab==='overview'?'':'hidden',[['Total Devices',appState.devices.length,'i-box','orange','Recorded in inventory'],['With Primary IP',appState.devices.filter(d=>String(d.primaryIp||'').trim()).length,'i-network','green','Devices with a primary IP'],['Locations Recorded',appState.devices.filter(d=>String(d.location||'').trim() && d.location!=='Unknown').length,'i-rack','','Known location assigned'],['Device Types',new Set(appState.devices.map(d=>String(d.type||'').trim()).filter(Boolean)).size,'i-grid','','Different classifications']].map(([label,value,icon,tone,caption])=>renderInterfaceTemplate("devices/render-devices-html-1",[label,icon,value,tone,caption])).join(''),[['Devices by Type','type'],['Devices by Location','location']].map(([heading,field])=>{
                                 const counts=new Map();
                                 appState.devices.forEach(d=>{
                                     const raw=String(d[field]||'').trim();
@@ -2284,21 +2367,7 @@ function hierarchyValidateTypes(subnets) {
                                     const locationNeedsAttention = isUnknownLocation && !hasValidRackPlacement;
                                     const locText = isUnknownLocation ? 'Unknown' : d.location;
                                     return renderInterfaceTemplate("devices/render-devices-html-4",[escapeHtml(d.id),escapeHtml(d.name),escapeHtml(d.serialNumber ? 'S/N '+d.serialNumber : rack ? rack.name+' · '+(d.face||'front') : d.mountType || 'Not in rack'),d.type==='Server - Virtual'?'vm':'',escapeHtml(d.type==='Server - Physical' ? 'Server' : d.type==='Server - Virtual' ? 'Virtual Machine' : d.type),escapeHtml(locText),locationNeedsAttention ? '<div class="device-detail" style="color:#b26449">Needs attention</div>' : '',escapeHtml(d.primaryIp || 'None'),d.status === 'Retired' ? 'retired' : d.status === 'Maintenance' ? 'maintenance' : '',escapeHtml(d.status || 'Active'),escapeHtml([d.manufacturer,d.model].filter(Boolean).join(' ') || '—'),escapeHtml(d.id)]);
-                                }).join(''),getVisibleDevices().length === 0 ? renderInterfaceTemplate("devices/render-devices-html-5",[appState.devices.length?'No matching devices':'Your inventory is empty',appState.devices.length?'Try another search or remove your filters.':'Add your first device to get started.',appState.devices.length?'clear-device-filters':'open-device-modal',appState.devices.length?'Clear search and filters':'Add Device']) : '',['types','locations'].includes(activeDeviceDetailsTab)?'':'hidden',(()=>{
-                            const isType=activeDeviceDetailsTab==='types';
-                            const field=isType?'type':'location';
-                            const values=isType?getUniqueDeviceTypes():getUniqueDeviceLocations();
-                            const counts=new Map();
-                            appState.devices.forEach(d=>{
-                                const value=String(d[field]||'').trim();
-                                const key=(!value||value==='Unknown')?'Not Recorded':value;
-                                counts.set(key,(counts.get(key)||0)+1);
-                            });
-                            const missing=counts.get('Not Recorded')||0;
-                            const rows=[...new Set([...values.filter(v=>v&&v!=='Unknown'),'Not Recorded'])].map(name=>({name,label:isType?(name==='Server - Physical'?'Server':name==='Server - Virtual'?'Virtual Machine':name):name,count:counts.get(name)||0})).filter(x=>x.count||x.name!=='Not Recorded').sort((a,b)=>b.count-a.count||a.label.localeCompare(b.label));
-                            const max=Math.max(1,...rows.map(x=>x.count));
-                            return renderInterfaceTemplate("devices/render-devices-html-8",[isType?'Device Types':'Locations',isType?'Explore equipment classifications, their inventory counts and existing type-management actions.':'Explore recorded physical areas and manage the locations used by inventory.',isType?'open-manage-types':'open-manage-locations',isType?'Device Types':'Locations',[[isType?'Configured Types':'Configured Locations',values.length,'fa-list','Available in your inventory'],['Devices',appState.devices.length,'fa-server','Saved device records'],[isType?'Unclassified':'Location Not Recorded',missing,'fa-circle-exclamation','Not recorded / Unknown']].map(([label,value,icon,description])=>renderInterfaceTemplate("devices/render-devices-html-6",[label,icon,value,description])).join(''),isType?'Devices by Type':'Devices by Location',isType?'Search types':'Search locations',field,isType?'Search types…':'Search locations…',field,field,rows.length?rows.map(({name,label,count})=>renderInterfaceTemplate("devices/render-devices-html-7",[field,escapeHtml(label.toLocaleLowerCase()),escapeHtml(label),name==='Not Recorded'?'<span class="catalog-pill">Not Recorded</span>':'',count,count===1?'':'s',field,escapeHtml(name)])).join(''):'<p class="catalog-aside-note">No devices recorded yet. Add a device to populate this overview.</p>',field,rows.length,isType?'device types':'locations'])
-                        })()]);
+                                }).join(''),getVisibleDevices().length === 0 ? renderInterfaceTemplate("devices/render-devices-html-5",[appState.devices.length?'No matching devices':'Your inventory is empty',appState.devices.length?'Try another search or remove your filters.':'Add your first device to get started.',appState.devices.length?'clear-device-filters':'open-device-modal',appState.devices.length?'Clear search and filters':'Add Device']) : '','hidden','']);
         }
 
         // --- MANAGED TYPES & LOCATIONS ---
@@ -3504,7 +3573,7 @@ function openIpModal(ip) {
                 content.classList.add('ipam-modal');container.classList.add('ipam-modal-overlay');
             }
             if(content.querySelector('.catalog-modal-head')){
-                content.classList.add('catalog-modal');container.classList.add('catalog-modal-overlay');
+                content.classList.add('catalog-modal','approved-catalogue-modal');container.classList.add('catalog-modal-overlay');
             }
             if(content.querySelector(':scope > .rack-modal'))container.classList.add('rack-modal-shade');
             container.classList.remove('hidden');
@@ -3523,6 +3592,9 @@ function openIpModal(ip) {
         }
 
         document.addEventListener('keydown', function(event) {
+            if(['Enter',' '].includes(event.key)&&event.target?.matches('.db-rack-row[role="button"]')){
+                event.preventDefault();event.target.click();return;
+            }
             if (event.key === 'Enter' && event.target?.id === 'dev-custom-location') {
                 event.preventDefault();
                 addCustomLocationOption();
@@ -4591,10 +4663,14 @@ function openIpModal(ip) {
             appState.softwareTypeExclusions=next;
             if(!await nextSettingsBridge.save('softwareTypeExclusions')){appState.softwareTypeExclusions=previous;showToast('Unable to save software preference.','error');return;}
             renderContent();
+            document.querySelectorAll('#modal-container [data-action="software-toggle"]').forEach(button=>{
+                if(button.dataset.name===name&&button.dataset.type===type)
+                    button.textContent=type+(isSoftwareHiddenForDeviceType(name,type)?' · Hidden':' · Available');
+            });
         }
         function renderSoftwareDeviceTypeControls(name){
             const entry=builtInSoftwareSuggestions.find(x=>x.name===name);
-            return entry?entry.types.map(t=>'<button type="button" data-action="software-toggle" data-name="'+escapeHtml(name)+'" data-type="'+escapeHtml(t)+'" class="rounded-lg px-2 py-1 border text-xs '+(isSoftwareHiddenForDeviceType(name,t)?'border-rose-400 text-rose-700 dark:text-rose-300':'border-blue-400 text-blue-700 dark:text-blue-300')+'">'+escapeHtml(t)+(isSoftwareHiddenForDeviceType(name,t)?' · Hidden':' · Available')+'</button>').join(' '):'';
+            return entry?entry.types.map(t=>'<button type="button" data-action="software-toggle" data-name="'+escapeHtml(name)+'" data-type="'+escapeHtml(t)+'" class="btn btn-outline mini-btn">'+escapeHtml(t)+(isSoftwareHiddenForDeviceType(name,t)?' · Hidden':' · Available')+'</button>').join(' '):'';
         }
         function getSoftwareFieldsForDeviceType(type){
             return getAvailableSoftwareCatalogueEntries().filter(x=>(!Array.isArray(x.deviceTypes)||!x.deviceTypes.length||x.deviceTypes.some(t=>t.toLowerCase()===String(type||'').toLowerCase()))&&(!x.builtin||!isSoftwareHiddenForDeviceType(x.label,type))).map(x=>x.key);
@@ -5040,7 +5116,7 @@ function openIpModal(ip) {
             if (!form || form.querySelector('[data-device-tabs]')) return;
             const sections = Array.from(form.children).filter(el => el.classList.contains('form-section-card'));
             if (sections.length !== 5) return;
-            sections.forEach(section => section.classList.add('device-review-panel'));
+            sections.forEach(section => {section.classList.add('device-review-panel');section.classList.remove('space-y-4');});
             const isVirtualDevice = isVirtualDeviceForm();
             const labels = [
                 ['general', 'General'],
@@ -5144,6 +5220,36 @@ function openIpModal(ip) {
             const guidanceText=originalGuidance?.textContent.trim()||
                 'Create the network in IPAM first, then return to this device.';
             originalGuidance?.remove();
+            const oldNetworkGrid=networkIdentity.querySelector('.network-grid');
+            if(oldNetworkGrid){
+                const fields=document.createElement('div');
+                fields.className='device-review-form-grid';
+                for(const id of ['dev-block','dev-subnet','dev-ip','dev-vlan']){
+                    const control=networkIdentity.querySelector('#'+id);
+                    const label=networkIdentity.querySelector('label[for="'+id+'"]');
+                    if(!control||!label)continue;
+                    const field=document.createElement('div');field.className='device-review-field';
+                    label.className='';field.append(label,control);
+                    if(id==='dev-ip'){
+                        const available=networkIdentity.querySelector('#dev-ip-available');
+                        const availableLabel=networkIdentity.querySelector('label[for="dev-ip-available"]');
+                        if(available&&availableLabel){availableLabel.className='';field.append(availableLabel,available);}
+                        const addressHint=networkIdentity.querySelector('#dev-ip-hint');
+                        if(addressHint)field.append(addressHint);
+                    }
+                    fields.append(field);
+                }
+                oldNetworkGrid.before(fields);
+                const createSubnet=oldNetworkGrid.querySelector('[data-action="create-subnet-from-device"]');
+                if(createSubnet)createSubnet.className='device-review-smallbtn';
+                networkIdentity.querySelector('.form-label')?.remove();
+                oldNetworkGrid.querySelectorAll(':scope > .device-review-field').forEach(node=>{if(!node.querySelector('input,select,button'))node.remove();});
+                oldNetworkGrid.replaceWith(...oldNetworkGrid.childNodes);
+                networkIdentity.querySelectorAll('.network-grid').forEach(node=>node.remove());
+            }
+            const reservation=networkIdentity.querySelector('#dev-ip-reserved');
+            const reservationLabel=reservation?.parentElement;
+            if(reservationLabel){reservationLabel.className='device-review-checkbox';reservation.className='';}
             networkingGrid.appendChild(networkIdentity);
             const guidance=document.createElement('section');
             guidance.className='device-review-panel full';
@@ -5153,6 +5259,8 @@ function openIpModal(ip) {
             hint.className='device-review-hint';
             hint.textContent=guidanceText;
             guidance.appendChild(hint);
+            const createSubnet=networkIdentity.querySelector('[data-action="create-subnet-from-device"]');
+            if(createSubnet)guidance.appendChild(createSubnet);
             networkingGrid.appendChild(guidance);
             panels.get('networking').appendChild(networkingGrid);
             // Batch 04 Notes is a full-width card in the same source grid as the other tabs.
@@ -5209,6 +5317,49 @@ function openIpModal(ip) {
                 if (child.tagName === 'DIV') child.classList.add('device-review-field');
                 identityFields.appendChild(child);
             });
+            const deployment=identityFields.querySelector('#dev-deployment')?.parentElement;
+            let previousClassification=deployment;
+            for(const [id,kind] of [['device-form-physical-purpose','physical'],['device-form-vm-purpose-wrapper','virtual']]){
+                const classification=identityFields.querySelector('#'+id);
+                if(!classification||!previousClassification)continue;
+                classification.classList.remove('mt-2','device-review-field');
+                classification.classList.add('device-'+kind+'-type');
+                const field=document.createElement('div');field.className='device-review-field';
+                field.append(...classification.childNodes);classification.append(field);
+                previousClassification.after(classification);previousClassification=classification;
+            }
+            if(form.dataset.deviceId&&deployment){
+                // Show the source grid while retaining the existing classification lock.
+                deployment.classList.remove('hidden');
+                deployment.querySelector('select').disabled=true;
+                identityFields.querySelectorAll('#dev-type,#dev-vm-purpose').forEach(select=>{select.disabled=true;});
+                identityFields.querySelector('p.text-sm.font-semibold')?.remove();
+            }
+            if(deployment&&!deployment.querySelector(':scope > small')){
+                const help=document.createElement('small');
+                help.textContent=form.dataset.deviceId?'Existing deployment is not changed by editing.':'VMs can only be created when an eligible physical hypervisor exists.';
+                deployment.appendChild(help);
+            }
+            const locationActions=locationRow?.querySelector('.device-review-catalogue-actions');
+            if(locationActions){
+                locationActions.style.margin='0 0 2px';
+                identityFields.appendChild(locationActions);
+            }
+            const locationPanel=locationRow?.querySelector('#dev-create-location-panel');
+            if(locationPanel){
+                locationPanel.className='device-review-inline-create';
+                const title=document.createElement('h4');title.textContent='Add Location without leaving the device form';
+                const label=locationPanel.querySelector('label');
+                const input=locationPanel.querySelector('input');
+                const buttons=[...locationPanel.querySelectorAll('button')];
+                const field=document.createElement('div');field.className='device-review-field';
+                const row=document.createElement('div');row.className='device-review-inline-add-actions';
+                const actions=document.createElement('div');actions.className='device-review-catalogue-actions';
+                if(label&&input){label.className='';input.className='';field.append(label,input);row.append(field);}
+                buttons.forEach(button=>{button.className='device-review-smallbtn';actions.append(button);});
+                locationPanel.replaceChildren(title,row,actions);
+                identityFields.appendChild(locationPanel);
+            }
             sections[0].appendChild(identityFields);
             const mountingHeading = sections[2].querySelector(':scope > .form-section-heading');
             const mountingTitle = document.createElement('h3');
@@ -5222,6 +5373,17 @@ function openIpModal(ip) {
                 if (child === mountingTitle || child === mountingSubtitle) return;
                 mountingFields.appendChild(child);
             });
+            const rackFields=mountingFields.querySelector('#racked-options');
+            rackFields?.querySelector(':scope > .block')?.remove();
+            const createRack=rackFields?.querySelector('[data-action="create-rack-from-device"]');
+            if(createRack){
+                createRack.className='device-review-smallbtn';
+                const actions=document.createElement('div');actions.className='device-review-catalogue-actions';
+                actions.style.gridColumn='1 / -1';
+                const help=createRack.parentElement.querySelector('.device-help');
+                if(help)actions.append(help);
+                actions.append(createRack);rackFields.append(actions);
+            }
             sections[2].appendChild(mountingFields);
             const mountingHint = document.createElement('div');
             mountingHint.className = 'device-review-hint';
@@ -5239,6 +5401,7 @@ function openIpModal(ip) {
                 title.innerHTML = '<span class="mini-icon" aria-hidden="true">▣</span>Notes / Details';
                 const subtitle = document.createElement('p');
                 subtitle.textContent = 'The real application retains the existing notes editor and formatting controls.';
+                sections[4].querySelector(':scope > .device-review-sub')?.remove();
                 notesHeading.replaceWith(title, subtitle);
             }
             panels.get('notes').dataset.notesPanel = 'true';
@@ -5380,7 +5543,7 @@ function openIpModal(ip) {
             const mountType = getRecognisedDeviceMountTypes(currentType).includes(requestedMountType) ? requestedMountType : getDefaultMountType(currentType);
             const currentSubnet = draft?.subnetId ? appState.subnets.find(s => s.id === draft.subnetId) : (device?.primaryIp ? getSubnetForIp(device.primaryIp) : null);
             const currentHeight = draft?.rackUHeight || (device?.rackUStart && device?.rackUEnd ? Math.max(1, Number(device.rackUEnd) - Number(device.rackUStart) + 1) : 1);
-            openApprovedDeviceReviewModal(renderInterfaceTemplate("device-details/open-device-modal-5",[device ? 'Edit Device' : isDuplicate ? 'Duplicate Device' : 'Add New Device',device ? escapeHtml(device.name)+' · Existing device details' : isDuplicate ? 'Enter a unique name and IP. The original device remains unchanged.' : 'Configure a physical device or VM using your existing Caffoot fields.',isDuplicate ? renderInterfaceTemplate("device-details/open-device-modal-1",[]) : '',escapeHtml(device?.id || draft?.deviceId || ''),escapeHtml(draft?.name ?? device?.name ?? ''),device ? 'hidden' : '',!isExistingVirtual?'selected':'',hasEligiblePhysicalHost||isExistingVirtual?`<option value="virtual" ${isExistingVirtual?'selected':''}>Virtual Machine (VM)</option>`:'',isExistingVirtual || device ? 'hidden' : '',currentType === '' ? 'selected' : '',availableFormTypes.map(t => `<option value="${escapeHtml(t)}" ${currentType === t ? 'selected' : ''}>${escapeHtml(t === 'Server - Physical' ? 'Server' : t)}</option>`).join(''),currentType==='Server - Virtual'?'selected':'',isExistingVirtual && !device ? '' : 'hidden',vmPurposes.map(([label,value])=>`<option value="${escapeHtml(value)}" ${currentType===value?'selected':''}>${escapeHtml(label)}</option>`).join(''),device ? renderInterfaceTemplate("device-details/open-device-modal-2",[escapeHtml(isExistingVirtual ? 'Virtual ' : 'Physical '),escapeHtml(currentType === 'Server - Virtual' || currentType === 'Server - Physical' ? 'Server' : currentType)]) : '',['','VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng','Other'].map(x=>'<option value="'+escapeHtml(x)+'" '+((draft?.virtualPlatform ?? device?.virtualPlatform ?? '')===x?'selected':'')+'>'+escapeHtml(x||'Select Platform...')+'</option>').join(''),device?.type === 'Server - Virtual' ? '(legacy assignments preserved)' : '(required)',appState.devices.filter(x=>x.id!==(device?.id||'')&&x.type==='Server - Physical'&&((x.status!=='Retired'&&(x.typeDetails?.serverService_Hypervisor===true||x.serverService_Hypervisor===true))||x.id===(draft?.virtualHostId??device?.virtualHostId??''))).map(x=>'<option value="'+escapeHtml(x.id)+'" '+((draft?.virtualHostId ?? device?.virtualHostId ?? '')===x.id?'selected':'')+'>'+escapeHtml(x.name)+(x.status==='Retired'||!(x.typeDetails?.serverService_Hypervisor===true||x.serverService_Hypervisor===true)?' (existing legacy assignment)':'')+'</option>').join(''),[['vmVcpu','vCPU count'],['vmRamGb','Allocated RAM (GB)'],['vmDiskGb','Virtual disk (GB)'],['vmNicCount','Virtual network adapters']].map(([key,label])=>renderInterfaceTemplate("device-details/open-device-modal-3",[key,label,key,key,escapeHtml(deviceDetailFormValues[key] ?? '')])).join(''),deviceDetailFormValues.serverService_Hypervisor === true ? 'checked' : '',deviceDetailFormValues.serverService_Hypervisor === true ? '' : 'hidden',['VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng'].map(p=>`<option value="${escapeHtml(p)}" ${deviceDetailFormValues.hypervisorProduct===p?'selected':''}>${escapeHtml(p)}</option>`).join(''),deviceDetailFormValues.hypervisorProduct && !['VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng'].includes(deviceDetailFormValues.hypervisorProduct)?'selected':'',escapeHtml(deviceDetailFormValues.hypervisorProduct || ''),deviceDetailFormValues.hypervisorProduct && !['VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng'].includes(deviceDetailFormValues.hypervisorProduct)?'':'hidden',escapeHtml(deviceDetailFormValues.hypervisorVersion || ''),device ? renderInterfaceTemplate("device-details/open-device-modal-4",[['Active','Maintenance','Retired'].map(v=>`<option value="${v}" ${(draft?.status ?? device?.status ?? 'Active')===v?'selected':''}>${v}</option>`).join('')]) : '<input type="hidden" id="dev-status" value="Active">',escapeHtml(draft?.manufacturer ?? device?.manufacturer ?? ''),escapeHtml(draft?.model ?? device?.model ?? ''),escapeHtml(draft?.serialNumber ?? device?.serialNumber ?? ''),renderApprovedInlineHardwareQuickAdd("manufacturer"),renderApprovedInlineHardwareQuickAdd("model"),getDetailFieldsForDeviceType(currentType).length===0?'hidden':'',deviceTypeDetailGroups[String(currentType||'').toLowerCase().trim()]==='server'?'':'hidden',['server','computer'].includes(deviceTypeDetailGroups[String(currentType||'').toLowerCase().trim()])?'':'hidden',renderDeviceDetailFields(currentType,deviceDetailFormValues,'hardware'),renderDeviceMountOptions(currentType,mountType),escapeHtml(currentLoc),currentLoc === '' ? 'selected' : '',locations.map(l => `<option value="${escapeHtml(l)}" ${currentLoc === l ? 'selected' : ''}>${escapeHtml(l)}</option>`).join(''),mountType === 'Rack Mounted' ? '' : 'hidden',mountType === 'Rack Mounted' ? '' : 'hidden',!appState.racks.length ? 'selected' : '',appState.racks.length ? 'Select a network rack...' : 'No network racks created yet',appState.racks.map(r => `<option value="${escapeHtml(r.id)}" ${(draft?.rackId ?? device?.rackId) === r.id ? 'selected' : ''}>${escapeHtml(r.name)}</option>`).join(''),(draft?.face ?? device?.face) !== 'rear' ? 'selected' : '',(draft?.face ?? device?.face) === 'rear' ? 'selected' : '',escapeHtml(String(draft?.rackUStart ?? device?.rackUStart ?? 1)),currentHeight,appState.subnets.filter(s => s.kind === 'container' && !s.parentId).map(b => `<option value="${escapeHtml(b.id)}" ${currentSubnet && getDeviceSubnetTopLevelBlock(currentSubnet)?.id === b.id ? 'selected' : ''}>${escapeHtml(b.name || b.cidr)}</option>`).join(''),currentSubnet && !getDeviceSubnetTopLevelBlock(currentSubnet) ? 'selected' : '',escapeHtml(currentSubnet?.id || ''),escapeHtml(draft?.primaryIp ?? device?.primaryIp ?? ''),(draft?.ipReserved ?? device?.ipReserved ?? (device?.primaryIp && appState.ipAllocations[device.primaryIp]?.status === 'Reserved')) ? 'checked' : '',escapeHtml(draft?.notes ?? device?.notes ?? '')]));
+            openApprovedDeviceReviewModal(renderInterfaceTemplate("device-details/open-device-modal-5",[device ? 'Edit Device' : isDuplicate ? 'Duplicate Device' : 'Add New Device',device ? escapeHtml(device.name)+' · Existing device details' : isDuplicate ? 'Enter a unique name and IP. The original device remains unchanged.' : 'Configure a physical device or VM with the existing Caffoot fields.',isDuplicate ? renderInterfaceTemplate("device-details/open-device-modal-1",[]) : '',escapeHtml(device?.id || draft?.deviceId || ''),escapeHtml(draft?.name ?? device?.name ?? ''),device ? 'hidden' : '',!isExistingVirtual?'selected':'',hasEligiblePhysicalHost||isExistingVirtual?`<option value="virtual" ${isExistingVirtual?'selected':''}>Virtual Machine (VM)</option>`:'',isExistingVirtual || device ? 'hidden' : '',currentType === '' ? 'selected' : '',availableFormTypes.map(t => `<option value="${escapeHtml(t)}" ${currentType === t ? 'selected' : ''}>${escapeHtml(t === 'Server - Physical' ? 'Server' : t)}</option>`).join(''),currentType==='Server - Virtual'?'selected':'',isExistingVirtual && !device ? '' : 'hidden',vmPurposes.map(([label,value])=>`<option value="${escapeHtml(value)}" ${currentType===value?'selected':''}>${escapeHtml(label)}</option>`).join(''),device ? renderInterfaceTemplate("device-details/open-device-modal-2",[escapeHtml(isExistingVirtual ? 'Virtual ' : 'Physical '),escapeHtml(currentType === 'Server - Virtual' || currentType === 'Server - Physical' ? 'Server' : currentType)]) : '',['','VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng','Other'].map(x=>'<option value="'+escapeHtml(x)+'" '+((draft?.virtualPlatform ?? device?.virtualPlatform ?? '')===x?'selected':'')+'>'+escapeHtml(x||'Select Platform...')+'</option>').join(''),device?.type === 'Server - Virtual' ? '(legacy assignments preserved)' : '(required)',appState.devices.filter(x=>x.id!==(device?.id||'')&&x.type==='Server - Physical'&&((x.status!=='Retired'&&(x.typeDetails?.serverService_Hypervisor===true||x.serverService_Hypervisor===true))||x.id===(draft?.virtualHostId??device?.virtualHostId??''))).map(x=>'<option value="'+escapeHtml(x.id)+'" '+((draft?.virtualHostId ?? device?.virtualHostId ?? '')===x.id?'selected':'')+'>'+escapeHtml(x.name)+(x.status==='Retired'||!(x.typeDetails?.serverService_Hypervisor===true||x.serverService_Hypervisor===true)?' (existing legacy assignment)':'')+'</option>').join(''),[['vmVcpu','vCPU count'],['vmRamGb','Allocated RAM (GB)'],['vmDiskGb','Virtual disk (GB)'],['vmNicCount','Virtual network adapters']].map(([key,label])=>renderInterfaceTemplate("device-details/open-device-modal-3",[key,label,key,key,escapeHtml(deviceDetailFormValues[key] ?? '')])).join(''),deviceDetailFormValues.serverService_Hypervisor === true ? 'checked' : '',deviceDetailFormValues.serverService_Hypervisor === true ? '' : 'hidden',['VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng'].map(p=>`<option value="${escapeHtml(p)}" ${deviceDetailFormValues.hypervisorProduct===p?'selected':''}>${escapeHtml(p)}</option>`).join(''),deviceDetailFormValues.hypervisorProduct && !['VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng'].includes(deviceDetailFormValues.hypervisorProduct)?'selected':'',escapeHtml(deviceDetailFormValues.hypervisorProduct || ''),deviceDetailFormValues.hypervisorProduct && !['VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng'].includes(deviceDetailFormValues.hypervisorProduct)?'':'hidden',escapeHtml(deviceDetailFormValues.hypervisorVersion || ''),device ? renderInterfaceTemplate("device-details/open-device-modal-4",[['Active','Maintenance','Retired'].map(v=>`<option value="${v}" ${(draft?.status ?? device?.status ?? 'Active')===v?'selected':''}>${v}</option>`).join('')]) : '<input type="hidden" id="dev-status" value="Active">',escapeHtml(draft?.manufacturer ?? device?.manufacturer ?? ''),escapeHtml(draft?.model ?? device?.model ?? ''),escapeHtml(draft?.serialNumber ?? device?.serialNumber ?? ''),renderApprovedInlineHardwareQuickAdd("manufacturer"),renderApprovedInlineHardwareQuickAdd("model"),getDetailFieldsForDeviceType(currentType).length===0?'hidden':'',deviceTypeDetailGroups[String(currentType||'').toLowerCase().trim()]==='server'?'':'hidden',['server','computer'].includes(deviceTypeDetailGroups[String(currentType||'').toLowerCase().trim()])?'':'hidden',renderDeviceDetailFields(currentType,deviceDetailFormValues,'hardware'),renderDeviceMountOptions(currentType,mountType),escapeHtml(currentLoc),currentLoc === '' ? 'selected' : '',locations.map(l => `<option value="${escapeHtml(l)}" ${currentLoc === l ? 'selected' : ''}>${escapeHtml(l)}</option>`).join(''),mountType === 'Rack Mounted' ? '' : 'hidden',mountType === 'Rack Mounted' ? '' : 'hidden',!appState.racks.length ? 'selected' : '',appState.racks.length ? 'Select a network rack...' : 'No network racks created yet',appState.racks.map(r => `<option value="${escapeHtml(r.id)}" ${(draft?.rackId ?? device?.rackId) === r.id ? 'selected' : ''}>${escapeHtml(r.name)}</option>`).join(''),(draft?.face ?? device?.face) !== 'rear' ? 'selected' : '',(draft?.face ?? device?.face) === 'rear' ? 'selected' : '',escapeHtml(String(draft?.rackUStart ?? device?.rackUStart ?? 1)),currentHeight,appState.subnets.filter(s => s.kind === 'container' && !s.parentId).map(b => `<option value="${escapeHtml(b.id)}" ${currentSubnet && getDeviceSubnetTopLevelBlock(currentSubnet)?.id === b.id ? 'selected' : ''}>${escapeHtml(b.name || b.cidr)}</option>`).join(''),currentSubnet && !getDeviceSubnetTopLevelBlock(currentSubnet) ? 'selected' : '',escapeHtml(currentSubnet?.id || ''),escapeHtml(draft?.primaryIp ?? device?.primaryIp ?? ''),(draft?.ipReserved ?? device?.ipReserved ?? (device?.primaryIp && appState.ipAllocations[device.primaryIp]?.status === 'Reserved')) ? 'checked' : '',escapeHtml(draft?.notes ?? device?.notes ?? '')]));
             const tabbedDeviceForm = document.querySelector('[data-device-form="true"]');
             if (tabbedDeviceForm && draft?.activeDeviceTab) tabbedDeviceForm.dataset.initialDeviceTab = draft.activeDeviceTab;
             initialiseDeviceTabs(tabbedDeviceForm);
@@ -7175,6 +7338,7 @@ function openIpModal(ip) {
                 case 'model-remove': openHardwareModelManager(name,true); break;
                 case 'save-catalogue-model': saveHardwareModel(name); break;
                 case 'confirm-remove-catalogue-model': saveHardwareModel(name,true); break;
+                case 'service-reset': {const field=document.getElementById('service-search');if(field){field.value='';field.dispatchEvent(new Event('input',{bubbles:true}));}break;}
                 case 'manufacturer-reset': {const el=document.getElementById('manufacturer-search');if(el){el.value='';el.dispatchEvent(new Event('input',{bubbles:true}));}break;}
                 case 'model-reset': ['model-search','hardware-model-manufacturer-filter','model-type','model-source'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';}); if(document.getElementById('hardware-model-in-use'))document.getElementById('hardware-model-in-use').checked=false; filterHardwareModels(); break;
                 case 'manufacturer-add': openHardwareManufacturerManager(); break;
@@ -7346,6 +7510,7 @@ function openIpModal(ip) {
                 case 'download-snapshot': downloadPreRestoreSafetySnapshot(); break;
                 case 'backup-help': openBackupExplanationDialog(); break;
                 case 'backup-help-close': closeModal(true); break;
+                case 'open-network-reports': openModal(renderInterfaceTemplate("dashboard/source-network-reports",[renderInventoryReportsHtml(false)])); break;
                 case 'export-selected-inventory-csv': downloadInventoryReportCsv(target.dataset.report); break;
                 
                 case 'tab-settings': switchTab('settings'); break;
@@ -7606,6 +7771,11 @@ void (async () => {
     for(const select of document.querySelectorAll('#main-content select,#modal-content select')){
       if(select.dataset.caffootSearch || select.multiple || select.disabled ||
          [...select.options].filter(o=>!o.hidden).length<9)continue;
+      // Keep the approved select's appearance when adding the existing search popup.
+      const selectStyle=getComputedStyle(select);
+      const presentation=Object.fromEntries(['fontFamily','fontSize','fontWeight','lineHeight','letterSpacing',
+        'color','backgroundColor','border','borderRadius','padding','margin','height','minHeight']
+        .map(property=>[property,selectStyle[property]]));
       select.dataset.caffootSearch='true';
       select.classList.add('caffoot-search-native');
       select.tabIndex=-1;
@@ -7614,6 +7784,7 @@ void (async () => {
       const trigger=document.createElement('button');
       trigger.type='button';
       trigger.className='caffoot-search-trigger';
+      Object.assign(trigger.style,presentation);
       const caption=document.createElement('span');
       caption.style.cssText='min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
       const arrow=document.createElement('i');
@@ -8435,7 +8606,7 @@ void (async () => {
     ].map(([key,label,type,max])=>
       '<div class="field"><label for="user-'+key+'">'+label+'</label>'+
       '<input class="input" id="user-'+key+'" name="'+key+'" type="'+type+
-      '" autocomplete="off" maxlength="'+max+'" value="'+escapeHtml(profile[key]||'')+'"></div>'
+      '" autocomplete="off" placeholder="'+({firstName:'First name',lastName:'Last name',displayName:'Name shown across Caffoot Lite',email:'name@example.com'}[key])+'" maxlength="'+max+'" value="'+escapeHtml(profile[key]||'')+'"></div>'
     ).join('');
     let html='<div class="users-live">';
     if (!users) return html + '<p role="status">Loading users...</p></div>';
@@ -8492,7 +8663,7 @@ void (async () => {
     const rows=users.map(user=>{
       const own=user.username.toLowerCase()===signedInUsername.toLowerCase();
       const role=user.isAdmin?'Administrator':'Standard user';
-      const grantPills=['Devices','IPAM','Racks'].map(section=>{
+      const grantPills=user.isAdmin?'<span class="badge dark">All sections</span>':['Devices','IPAM','Racks'].map(section=>{
         const level=user.isAdmin?'edit':(user.permissions?.[section]||'');
         return `<span class="mini ${level==='edit'?'edit':level===''?'no':''}" title="${section}: ${level||'No access'}">${section}: ${level==='edit'?'Edit':level==='read'?'Read':'—'}</span>`;
       }).join('');
@@ -8502,11 +8673,17 @@ void (async () => {
     const editingUser=users.find(u=>u.id===activeUserEditorId);
     if(editingUser){
       const own=editingUser.username.toLowerCase()===signedInUsername.toLowerCase();
-      const permissionControls=['Devices','IPAM','Racks'].map(section=>renderInterfaceTemplate("users/permission-controls-1",[section,section,section,editingUser.id,section,own||editingUser.isAdmin?'disabled':'',[['','No access'],['read','Read'],['edit','Edit']].map(([value,label])=>`<option value="${value}" ${(editingUser.permissions?.[section]||'')===value?'selected':''}>${label}</option>`).join('')])).join('');
-      const operations=[['active',editingUser.active?'Disable':'Enable'],['admin',editingUser.isAdmin?'Remove admin':'Make admin'],['delete','Delete']].map(([operation,label])=>
-        `<button type="button" data-next-user-operation="${operation}" data-user-id="${editingUser.id}" ${own?'disabled':''}>${label}</button>`).join('');
-      const profileHTML=own?'':renderInterfaceTemplate("my-account/profile-html-1",[editingUser.id,profileFields(editingUser.profile||{})]);
-      html+=renderInterfaceTemplate("users/html-7",[own?'Your administrator account':'Manage '+escapeHtml(editingUser.username),own?'Self-protection prevents account changes here. Use My Account for your own security settings.':'Review access and account controls for this user.',editingUser.isAdmin?'blue':'dark',editingUser.isAdmin?'Administrator · all sections':'Standard user',editingUser.mfaEnrolled?'green':'amber',editingUser.mfaEnrolled?'MFA enrolled':'MFA not enrolled',editingUser.isAdmin?'<p>Administrators have access to all sections.</p>':renderInterfaceTemplate("users/html-6",[permissionControls]),!editingUser.mfaEnrolled&&!editingUser.isAdmin?'<p class="modal-warning">Editing or administrator access requires MFA. This user must enrol their authenticator under My Account first.</p>':'',profileHTML,operations]);
+      const permissionControls=['Devices','IPAM','Racks'].map(section=>renderInterfaceTemplate("users/permission-controls-1",[section,section,section,editingUser.id,section,own||editingUser.isAdmin?'disabled':'',[['','No access'],['read','Read'],['edit','Edit']].map(([value,label])=>`<option value="${value}" ${(editingUser.isAdmin?'edit':editingUser.permissions?.[section]||'')===value?'selected':''}>${label}</option>`).join('')])).join('');
+      const operation=(kind,label)=>`<button type="button" class="btn ${kind==='delete'?'danger':''}" data-next-user-operation="${kind}" data-user-id="${editingUser.id}" ${own?'disabled':''}>${label}</button>`;
+      const profile=editingUser.profile||{};
+      const profileHTML=renderInterfaceTemplate("users/source-profile",[editingUser.id,...['firstName','lastName','displayName','email'].map(key=>escapeHtml(profile[key]||'')),own?'Edit your own personal details through My Account.':'Contact details do not change the sign-in username or account permissions. Saving an email address does not verify it.',own?'disabled':'']);
+      const meta=renderInterfaceTemplate("users/source-user-meta",[editingUser.active?'green':'red',editingUser.active?'Active':'Disabled',editingUser.isAdmin?'blue':'dark',editingUser.isAdmin?'Administrator · all sections':'Standard user',editingUser.mfaEnrolled?'green':'amber',editingUser.mfaEnrolled?'MFA enrolled':'MFA not enrolled']);
+      const administratorNote=editingUser.isAdmin?'<div class="note-row" style="margin-bottom:13px">Administrators have access to all inventory sections. Their per-section permissions are not individually configured.</div>':'';
+      const warnings=own?'<div class="modal-warning">You cannot disable, demote or delete your own signed-in administrator account. These controls are intentionally unavailable.</div>':!editingUser.mfaEnrolled&&!editingUser.isAdmin?'<div class="modal-warning">Editing and administrator access require the user to enrol an authenticator in My Account first. Read access is allowed without enrolment.</div>':'';
+      const activeControl=renderInterfaceTemplate("users/source-account-control",[editingUser.active?'Disable account':'Enable account',editingUser.active?'Prevent this person signing in until the account is enabled again.':'Allow this person to sign in again.',operation('active',editingUser.active?'Disable':'Enable')]);
+      const administratorControl=renderInterfaceTemplate("users/source-account-control",[editingUser.isAdmin?'Remove administrator':'Make administrator',editingUser.isAdmin?'Return this account to standard-user status.':'Grant existing administrator privileges to an MFA-enrolled account.',operation('admin',editingUser.isAdmin?'Remove admin':'Make admin')]);
+      html+=renderInterfaceTemplate("users/html-7",[own?'Your administrator account':'Manage '+escapeHtml(editingUser.username),own?'Self-protection prevents account changes here. Use My Account for your own security settings.':'Review access and account controls for this user.',meta,profileHTML,administratorNote,renderInterfaceTemplate("users/html-6",[permissionControls]),warnings,activeControl,administratorControl,renderInterfaceTemplate("users/source-delete-control",[operation('delete','Delete User')])]);
+      document.body.style.overflow='hidden';
     }
     return html+'</div>';
   };

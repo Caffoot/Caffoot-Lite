@@ -44,6 +44,23 @@ async function modal(page,name){
     window[name]();
   },name);
 }
+async function verifySoftwareVisibility(page){
+  await page.locator('#sidebar [data-action="tab-devices"]').click();
+  await page.locator('#main-content [data-action="approved-device-section"][data-tab="software"]').click();
+  const catalogDialog=page.locator('#modal-content .catalog-modal');
+  await page.locator('#main-content [data-action="software-custom-edit"]').first().click();
+  const availabilityToggle=catalogDialog.locator('[data-action="software-toggle"]').first();
+  const availabilityName=await availabilityToggle.getAttribute('data-name');
+  const availabilityType=await availabilityToggle.getAttribute('data-type');
+  await availabilityToggle.click();
+  await persisted(page,s=>s.settings?.softwareTypeExclusions?.[availabilityName]?.includes(availabilityType),'Built-in software visibility');
+  await page.waitForFunction(()=>document.querySelector('#modal-container [data-action="software-toggle"]')?.textContent.endsWith(' · Hidden'));
+  await availabilityToggle.click();
+  await persisted(page,s=>!s.settings?.softwareTypeExclusions?.[availabilityName]?.includes(availabilityType),'Restored built-in software visibility');
+  await page.waitForFunction(()=>document.querySelector('#modal-container [data-action="software-toggle"]')?.textContent.endsWith(' · Available'));
+  await catalogDialog.locator('.catalog-modal-head [data-action="close-modal"]').click();
+  console.log('Software visibility hide/restore persisted in SQLite and modal labels refreshed');
+}
 async function run(){
   const log=fs.openSync(logfile,'w');
   server=spawn('python3',['-m','backend.server'],{
@@ -211,6 +228,53 @@ async function run(){
   assert.ok(await locationManager.locator('#device-catalogue-new-entry-input').isVisible());
   await page.locator('#modal-content .catalog-modal-head [data-action="close-modal"]').click();
 
+  // The copied Batch 02 page components must also render and filter live records.
+  for(const section of ['types','locations','manufacturers','models','software','services']){
+    await page.locator('#main-content [data-action="approved-device-section"][data-tab="'+section+'"]').click();
+    const panel=page.locator('#main-content .catalog-section');
+    assert.equal(await panel.locator(':scope > .intelligence-grid.catalog-kpis > .intelligence-metric').count(),3,
+      'The source catalogue KPI hierarchy must render for '+section);
+    assert.equal(await panel.locator(':scope > .catalog-card').first().locator(':scope > .catalog-card-top + .catalog-toolbar + .catalog-list + .catalog-count').count(),1,
+      'The source catalogue header, filters, records and count must stay in order for '+section);
+    await page.setViewportSize({width:390,height:844});
+    assert.equal(await panel.locator('.catalog-kpis').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),1,
+      'Pinned catalogue KPIs must stack on a 390px screen for '+section);
+    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,
+      'Catalogue controls must not overflow the mobile document for '+section);
+    const selected=page.locator('.device-tabs [data-tab="'+section+'"]');
+    await page.waitForFunction(section=>{
+      const el=document.querySelector('.device-tabs [data-tab="'+section+'"]');
+      if(!el)return false;
+      const a=el.getBoundingClientRect(),b=el.parentElement.getBoundingClientRect();
+      return a.left>=b.left-1&&a.right<=b.right+1;
+    },section);
+    assert.equal(await selected.evaluate(el=>{const a=el.getBoundingClientRect(),b=el.parentElement.getBoundingClientRect();return a.left>=b.left-1&&a.right<=b.right+1;}),true,
+      'The active mobile catalogue tab must remain visible after rendering '+section);
+    await page.setViewportSize({width:1440,height:950});
+  }
+  await page.locator('#main-content [data-action="approved-device-section"][data-tab="inventory"]').click();
+  const inventoryTypeTrigger=page.locator('.device-filter:has(#device-type-filter) .caffoot-search-trigger');
+  await inventoryTypeTrigger.waitFor();
+  assert.ok(await inventoryTypeTrigger.evaluate(trigger=>{
+    const original=getComputedStyle(document.getElementById('device-type-filter')),live=getComputedStyle(trigger);
+    return ['border','borderRadius','padding','fontFamily','fontSize','fontWeight','color'].every(property=>original[property]===live[property]);
+  }),'Searchable Device Type must retain the approved native control presentation');
+  await inventoryTypeTrigger.click();
+  const typeSearch=page.locator('.caffoot-search-popup:visible .caffoot-search-input');
+  await typeSearch.fill('no-matching-device-type');
+  assert.equal(await page.locator('.caffoot-search-popup:visible [role="option"]').count(),0);
+  await typeSearch.fill('Server');
+  await page.locator('.caffoot-search-popup:visible [role="option"]').first().click();
+  assert.notEqual(await page.locator('#device-type-filter').inputValue(),'');
+  await page.locator('[data-action="clear-device-filters"]').first().click();
+  await page.locator('#main-content [data-action="approved-device-section"][data-tab="manufacturers"]').click();
+  await page.locator('#manufacturer-search').fill('no-matching-catalogue-record');
+  assert.equal(await page.locator('[data-manufacturer-row]:visible').count(),0,
+    'Search must hide source catalogue rows, including their flex layout');
+  await page.locator('[data-action="manufacturer-reset"]').click();
+  assert.ok(await page.locator('[data-manufacturer-row]:visible').count()>0,
+    'Clear Filters must restore live catalogue rows');
+
   // Pinned Batch 02 catalogue dialogs: source structure, original input IDs and responsive multi-type fields.
   await page.locator('#main-content [data-action="approved-device-section"][data-tab="manufacturers"]').click();
   await page.locator('#main-content [data-action="manufacturer-add"]').click();
@@ -244,6 +308,11 @@ async function run(){
   assert.ok(await catalogDialog.locator('.catalog-type-field[data-multi-device-types="software"] input[name="software-custom-type"]').count()>1);
   assert.ok(await catalogDialog.locator('.catalog-modal-actions [data-action="software-custom-save"]').isVisible());
   await catalogDialog.locator('.catalog-modal-head [data-action="close-modal"]').click();
+  if(process.env.CAFFOOT_BROWSER_FOCUS==='software-visibility'){
+    await verifySoftwareVisibility(page);
+    assert.deepEqual(errors,[],'Browser JavaScript errors');
+    return;
+  }
   await page.locator('#main-content [data-action="approved-device-section"][data-tab="services"]').click();
   await page.locator('#main-content [data-action="server-catalog-add"]').click();
   assert.ok(await catalogDialog.locator('.catalog-modal-field #server-service-name-input').isVisible());
@@ -340,8 +409,10 @@ async function run(){
     'Fresh inventory must show source empty state without fabricated warnings');
   assert.equal(await draft02Activity.locator('.db-section.card.db-card .db-report-buttons button[data-action="export-selected-inventory-csv"]').count(),3,
     'Pinned report actions must map to all three existing CSV downloads');
-  assert.ok(await draft02Activity.locator('section[aria-label="Network reports"]').isVisible(),
-    'Existing detailed Network Reports must not be removed by the source conversion');
+  await draft02Activity.locator('[data-action="open-network-reports"]').click();
+  assert.ok(await page.locator('#modal-content section[aria-label="Network reports"]').isVisible(),
+    'Existing detailed Network Reports must remain available from the approved report controls');
+  await page.locator('#modal-content [data-action="close-modal"]').click();
   assert.equal(await draft02Activity.locator('[data-action="export-selected-inventory-csv"]').count(),3,
     'There must not be duplicate report export buttons');
   const csvDownload=page.waitForEvent('download');
@@ -357,6 +428,8 @@ async function run(){
   assert.equal(await page.getByText('Keep a separate JSON backup',{exact:false}).count(),0,
     'Docker Dashboard must not show browser-era JSON backup advice');
   assert.equal(await page.getByRole('button',{name:'Refresh inventory'}).count(),0);
+  await verifySoftwareVisibility(page);
+  await page.locator('#sidebar [data-action="tab-dashboard"]').click();
   for(const tab of ['ipam','devices','racks','audit','users','settings']){
     const navigation=page.locator('#sidebar [data-action="tab-'+tab+'"]');
     assert.ok(await navigation.isEnabled(),'Navigation disabled: '+tab);
@@ -508,7 +581,21 @@ async function run(){
     'Removing a profile photo must restore the default avatar');
   await page.locator('[data-action="select-account-section"][data-section="security"]').first().click();
   await page.locator('#sidebar [data-action="tab-users"]').click();
-  assert.equal(await page.locator('#page-title').textContent(),'Users');
+  assert.equal(await page.locator('#page-title').textContent(),'Users & Permissions');
+  await page.locator('.approved-page-header [data-tab="list"]').click();
+  await page.locator('[data-action="users-open-editor"]').first().click();
+  const ownerWorkspace=page.locator('.users-management-modal .modal');
+  assert.equal(await ownerWorkspace.evaluate(el=>Math.round(el.getBoundingClientRect().width)),710,
+    'Owner workspace must use the approved full-width layout');
+  assert.equal(await ownerWorkspace.locator('.profile-modal-grid .input:disabled').count(),4,
+    'Owner personal details must remain protected in the approved workspace');
+  assert.equal(await ownerWorkspace.locator('[data-next-user-operation]:disabled').count(),3,
+    'Owner disable, demote and delete safeguards must remain');
+  await page.setViewportSize({width:390,height:844});
+  assert.equal(await ownerWorkspace.locator('.profile-modal-grid').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),1,
+    'Approved user profile fields must stack on mobile');
+  await ownerWorkspace.locator('[data-action="users-close-editor"]').first().click();
+  await page.setViewportSize({width:1440,height:950});
   await page.locator('#sidebar [data-action="tab-dashboard"]').click();
   assert.equal((await state(page)).sections.Devices,true);
   console.log('Authenticated central inventory rendered');
@@ -590,6 +677,14 @@ async function run(){
   await page.setViewportSize({width:390,height:844});
   assert.equal((await ipamEditDialog.locator('.ipam-form-grid').evaluate(el=>getComputedStyle(el).gridTemplateColumns)).trim().split(/\s+/).length,1,
     'Approved IPAM modal field grid must stack at mobile width');
+  const mobileIpamCancel=ipamEditDialog.locator('[data-action="cancel-subnet-modal"]').last();
+  await mobileIpamCancel.scrollIntoViewIfNeeded();
+  const mobileIpamBounds=await mobileIpamCancel.boundingBox();
+  assert.ok(mobileIpamBounds.y>=0&&mobileIpamBounds.y+mobileIpamBounds.height<=844,
+    'Tall mobile IPAM editors must allow the footer actions to scroll into view');
+  await mobileIpamCancel.focus();
+  assert.ok(await mobileIpamCancel.evaluate(el=>document.activeElement===el),
+    'Mobile IPAM footer must remain keyboard accessible');
   await page.setViewportSize({width:1440,height:950});
   await ipamEditDialog.locator('[data-action="cancel-subnet-modal"]').last().click();
   await page.locator('#modal-container').waitFor({state:'hidden'});
@@ -798,6 +893,12 @@ async function run(){
   assert.ok(await generalGrid.locator('#virtual-fields').isHidden(),
     'Virtual Machine Configuration must not be visible on the physical-device General tab');
   const identityCard=generalGrid.locator(':scope > .device-review-panel').first();
+  const identityPositions=await identityCard.evaluate(card=>Object.fromEntries(['dev-name','dev-deployment','dev-type','dev-location'].map(id=>{const r=card.querySelector('#'+id).getBoundingClientRect();return [id,{x:r.x,y:r.y}]})));
+  assert.equal(identityPositions['dev-type'].x,identityPositions['dev-name'].x,
+    'Physical Device Type must occupy the separate left-column field in the source grid');
+  assert.equal(identityPositions['dev-location'].x,identityPositions['dev-deployment'].x,
+    'Location Area must occupy the right column of the source identity grid');
+
   assert.ok(await identityCard.getByRole('heading',{name:'Device Identity'}).isVisible());
   assert.equal(await identityCard.locator('#dev-name').count(),1,
     'Original Device Name input must stay in Device Identity');
@@ -1504,6 +1605,8 @@ async function run(){
     'Original Notes formatting toolbar must be present');
   assert.ok(await approvedNotes.locator('.device-review-form-grid .device-review-field.wide #dev-notes').isVisible(),
     'The working saved Notes field must use the source form grid');
+  assert.equal(await approvedNotes.locator('#dev-notes').evaluate(el=>Math.round(el.getBoundingClientRect().height)),125,
+    'Notes must use the pinned 125px minimum editor instead of the old 18-row layout');
   await approvedNotes.locator('#dev-notes').fill('**Browser note**');
   await approvedNotes.locator('#notes-toggle').click();
   assert.ok(await approvedNotes.locator('#notes-preview.device-review-note-preview').isVisible(),
@@ -2140,7 +2243,7 @@ async function run(){
   assert.deepEqual(errors,[],'Browser JavaScript errors');
 }
 run().then(async()=>{
-  console.log('PASS: Caffoot Lite focused Chromium compatibility');
+  console.log('PASS: Caffoot Lite '+(process.env.CAFFOOT_BROWSER_FOCUS||'focused Chromium compatibility'));
   await browser?.close();server?.kill('SIGTERM');publishedServer?.close();
   fs.rmSync(tmp,{recursive:true,force:true});
   if(linkCreated)fs.rmSync(temporaryAssetLink);

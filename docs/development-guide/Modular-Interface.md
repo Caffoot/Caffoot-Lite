@@ -13,6 +13,10 @@ This branch replaces the single presentation document with HTML screen modules, 
 
 `interface/design-sources.json` maps all twelve immutable sources to their extracted CSS and SHA-256 digests. The CSS in those twelve files is copied directly from `c26db4a56bbc30f95b56201e81a7a76d13c6037b`. The source-provenance test checks exact equality, not merely class names. Shared dialog mounting, functional controls, utility declarations and the existing theme preference are separate integration styles. Tailwind's element reset is excluded so it cannot change the approved HTML's native heading and element defaults.
 
+Devices Overview, Inventory and catalogue sections select their own pinned stylesheet. Catalogue records use the approved header, KPI, toolbar and row fragments; existing management and drill-down actions still use the same handlers. The User Workspace uses the approved profile and permission grid, including disabled self-management controls. Device forms move existing controls into the source grids without replacing their listeners or API fields. Shared dialog rules target the overlay itself as well as its contents.
+
+Dashboard Activity keeps the three existing CSV exports in the approved report card. The additional Network Reports button opens the existing detailed reports in an approved catalogue dialog. Section tab strips retain their scroll position and reveal the selected section after navigation or resizing.
+
 The approved source designs remain in Git history. `future-design` is not restored. The original integration specification is unchanged.
 
 ## Access And Persistence

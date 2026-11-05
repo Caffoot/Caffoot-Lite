@@ -184,3 +184,20 @@ html{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sa
   background:transparent;
   box-shadow:none;
 }
+
+/* Remove inherited generic-dialog framing around the pinned Users workspace. */
+#main-content .users-management-modal .modal {
+  max-width:none;
+  padding:0;
+  border:0;
+}
+
+/* Keep the mounting condition wrappers from adding columns to the source grid. */
+.device-review-dialog #racked-options:not([hidden]):not(.hidden),
+.device-review-dialog #racked-options > .rack-grid { display:contents; }
+.device-review-dialog #dev-rack-range-hint { grid-column:1 / -1; }
+
+/* The shared Settings fields must not override the approved Users form controls. */
+#main-content .approved-users-sections .field label {font-size:11px;font-weight:750;color:#4e6981;margin:0;}
+#main-content .approved-users-sections .field .input {width:100%;min-width:0;background:#fff;border:1px solid #d5e2eb;border-radius:9px;padding:11px 12px;color:#2e4b63;min-height:42px;font-size:12px;}
+#main-content .approved-users-sections .field .input:disabled {background:#f3f6f8;color:#7c91a3;}

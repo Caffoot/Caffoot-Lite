@@ -24,7 +24,7 @@ async function initialiseInterface() {
             interfaceTemplates.set(match[1], match[2]);
         }
     }
-    const designs = ['dashboard','my-account','settings','device-details','ipam','racks','users','audit-trail'];
+    const designs = ['dashboard','my-account','settings','device-details','devices','device-inventory','device-management','ipam','racks','users','audit-trail'];
     await Promise.all(designs.map(async name => {
         interfaceStyles.set(name, await loadInterfaceText('styles/' + name + '.css'));
     }));

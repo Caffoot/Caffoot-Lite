@@ -42,6 +42,7 @@ for(const value of ['email','maintenance'])items.push(['settings-'+value,'settin
 for(const value of ['hardware','os','software','quality'])items.push(['devices-insight-'+value,'devices-overview-draft-03','devices','overview',{kind:'insight',value}]);
 for(const value of ['types','locations','models','software','services'])items.push(['catalogue-'+value,'devices-management-batch-02','devices',value]);
 for(const value of ['General','Hardware','Software & Firmware','Networking','Notes'])items.push(['device-editor-'+value.toLowerCase().replace(/[^a-z]+/g,'-'),'devices-details-forms-batch-04','devices','overview',{kind:'editor',value}]);
+for(const [name,device] of [['device-editor-edit-general','Hypervisor-01'],['device-editor-virtual-general','App-VM-01']])items.push([name,'devices-details-forms-batch-04','devices','overview',{kind:'editor-existing',device}]);
 for(const value of ['addresses','manage'])items.push(['ipam-'+value,'ipam-draft-01','ipam',null,{kind:'page-tab',live:'.ipam-tab[data-view="'+value+'"]',reference:'.ipam-tab[data-view="'+value+'"]'}]);
 for(const value of ['equipment','settings'])items.push(['rack-'+value,'racks-draft-04','racks',null,{kind:'rack-tab',value}]);
 for(const value of ['list','add'])items.push(['users-'+value,'users-permissions-draft-02','users',null,{kind:'page-tab',live:'.approved-page-header .tabs [data-tab="'+value+'"]',reference:'.tabs [data-tab="'+value+'"]'}]);
@@ -89,9 +90,17 @@ async function main(){
     }
     if(extra?.kind==='editor'){
      await page.evaluate(()=>openDeviceModal());
+     await page.locator('#dev-type').selectOption('Server - Physical');
+     await page.locator('#dev-location').selectOption('Server Room');
+     await page.locator('#dev-mount-type').selectOption('Rack Mounted');
+     await page.locator('#dev-rack-id').selectOption('rack-0');
      await ref.evaluate(()=>openDeviceEditor('add'));
      await page.locator('#modal-content [role="tab"]').filter({hasText:extra.value}).first().click();
      await ref.locator('#device-review-tabs [role="tab"]').filter({hasText:extra.value}).first().click();
+    }
+    if(extra?.kind==='editor-existing'){
+     await page.evaluate(name=>openDeviceModal(appState.devices.find(device=>device.name===name).id),extra.device);
+     await ref.evaluate(name=>openDeviceEditor('edit',name),extra.device);
     }
     if(extra?.kind==='rack-tab'){
      await page.locator('[data-action="select-rack-tab"][data-tab="'+extra.value+'"]').click();
@@ -140,9 +149,9 @@ async function main(){
    }
    await page.waitForTimeout(180);await ref.waitForTimeout(100);
    const measure=async p=>p.evaluate(()=>{
-    const selectors=['.sidebar','.topbar','.header h1','.main','.device-review-dialog','.db-summary','.account-grid','.device-filters','.intelligence-metrics','.ipam-stats','.racks-grid','.cards4'];
+    const selectors=['.sidebar','.topbar','.header h1','.main','.device-review-dialog','.db-summary','.account-grid','.device-filters','.intelligence-metrics','.ipam-stats','.racks-grid','.cards4','.catalog-header','.catalog-kpis','.catalog-card','.catalog-card-top','.catalog-toolbar','.catalog-record','.modal-layer .modal','.modal-head','.modal-body','.profile-modal-grid','.profile-modal-grid .field','.profile-modal-grid label','.profile-modal-grid .input','.access-grid','.device-review-overlay','.device-review-head','.device-review-body','.device-review-footer','.device-review-panel','.device-review-form-grid','.device-review-field select','.device-review-field textarea'];
     const result={overflow:document.documentElement.scrollWidth>innerWidth};
-    for(const selector of selectors){const e=document.querySelector(selector);if(e){const s=getComputedStyle(e),r=e.getBoundingClientRect();result[selector]={x:Math.round(r.x),y:Math.round(r.y),width:Math.round(r.width),fontSize:s.fontSize,columns:s.gridTemplateColumns};}}
+    for(const selector of selectors){const e=[...document.querySelectorAll(selector)].find(element=>element.getBoundingClientRect().height>0);if(e){const s=getComputedStyle(e),r=e.getBoundingClientRect();result[selector]={x:Math.round(r.x),y:Math.round(r.y),width:Math.round(r.width),height:Math.round(r.height),fontSize:s.fontSize,columns:s.gridTemplateColumns,padding:s.padding,margin:s.margin,gap:s.gap,borderRadius:s.borderRadius,borderColor:s.borderColor,fontWeight:s.fontWeight,lineHeight:s.lineHeight,boxSizing:s.boxSizing};}}
     return result;
    });
    if(tab)await page.screenshot({path:out+'/'+name+'-'+width+'-live.png',fullPage:true});
