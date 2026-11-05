@@ -27,7 +27,7 @@ async function main(){
   await reference.evaluate(screen=>show(screen),screen);
   for(const [width,height]of [[1440,950],[390,844]]){
    await page.setViewportSize({width,height});await reference.setViewportSize({width,height});
-   await page.screenshot({path:path.join(out,name+'-'+width+'-live.png'),fullPage:true,mask:[page.locator('#setup-qr'),page.locator('#secret')]});
+   await page.screenshot({path:path.join(out,name+'-'+width+'-live.png'),fullPage:true,mask:[page.locator('#setup-qr'),page.locator('#secret'),page.locator('#code')]});
    await reference.screenshot({path:path.join(out,name+'-'+width+'-approved.png'),fullPage:true,mask:[reference.locator('.qr-placeholder')]});
    results.push({screen:name,width,status:'captured; live test authenticator material masked'});
   }

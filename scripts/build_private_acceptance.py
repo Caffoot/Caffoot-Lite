@@ -9,7 +9,7 @@ import tarfile
 import tempfile
 
 
-def build_private_acceptance(root, *, save=None):
+def build_private_acceptance(root, *, save=None, build_ca=None):
     def git(*args):
         return subprocess.check_output(["git", *args], cwd=root, text=True).strip()
     if git("branch", "--show-current") != "feat/approved-modular-html-282":
@@ -22,7 +22,8 @@ def build_private_acceptance(root, *, save=None):
     with tempfile.TemporaryDirectory(prefix="caffoot-private-build-") as directory:
         with tarfile.open(fileobj=io.BytesIO(archive)) as source:
             source.extractall(directory, filter="data")
-        subprocess.run(["docker", "build", "--build-arg", "CAFFOOT_SOURCE_REVISION=" + revision,
+        trust = ["--secret", "id=proxy_ca,src=" + str(build_ca.resolve(strict=True))] if build_ca else []
+        subprocess.run(["docker", "build", *trust, "--build-arg", "CAFFOOT_SOURCE_REVISION=" + revision,
                         "--tag", tag, directory], check=True)
     result = json.loads(subprocess.check_output(["docker", "image", "inspect", tag], text=True))[0]
     if result["Config"]["Labels"].get("org.opencontainers.image.revision") != revision:
@@ -36,5 +37,6 @@ def build_private_acceptance(root, *, save=None):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--save", type=Path, help="Optional private Docker archive destination")
+    parser.add_argument("--build-ca", type=Path, help="Optional trusted CA bundle for a private build proxy")
     arguments = parser.parse_args()
-    build_private_acceptance(Path(__file__).resolve().parents[1], save=arguments.save)
+    build_private_acceptance(Path(__file__).resolve().parents[1], save=arguments.save, build_ca=arguments.build_ca)

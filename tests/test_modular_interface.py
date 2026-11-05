@@ -16,6 +16,10 @@ class ModularInterfaceTests(unittest.TestCase):
         for source in sources:
             with self.subTest(screen=source['screen']):
                 original=subprocess.check_output(['git','show',source['revision']+':'+source['source']],cwd=ROOT,text=True)
+                self.assertEqual(source['revision'],'c26db4a56bbc30f95b56201e81a7a76d13c6037b')
+                self.assertEqual(hashlib.sha256(original.encode()).hexdigest(),source['htmlSha256'])
+                for template in source['templates']:
+                    self.assertTrue((ROOT/template).is_file(), template)
                 expected='\n'.join(re.findall(r'<style\b[^>]*>([\s\S]*?)</style>',original))
                 actual=(ROOT/'interface/styles'/ (source['screen']+'.css')).read_text()
                 self.assertEqual(actual,expected)

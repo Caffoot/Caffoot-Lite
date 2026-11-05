@@ -49,6 +49,8 @@ for(const value of ['hardware','network','software','location','virtual-machines
 for(const value of ['ip','subnet','bulk'])items.push(['dialog-ipam-'+value,'ipam-draft-01','ipam',null,{kind:'ipam-dialog',value}]);
 for(const value of ['add','edit','correct','device','accessory','vertical'])items.push(['dialog-rack-'+value,'racks-draft-04','racks',null,{kind:'rack-dialog',value}]);
 items.push(['user-workspace','users-permissions-draft-02','users',null,{kind:'user-workspace'}]);
+for(const value of ['types','locations','manufacturers','models','software','services'])items.push(['dialog-catalogue-'+value,'devices-management-batch-02','devices',value,{kind:'catalogue-dialog',value}]);
+for(const value of ['assets','coverage'])items.push(['audit-'+value,'audit-trail-draft-01','audit',null,{kind:'page-tab',live:'.audit-tab[data-tab="'+value+'"]',reference:'.audit-tab[data-tab="'+value+'"]'}]);
 const selectedItems=process.env.CAFFOOT_VISUAL_FILTER?items.filter(item=>new RegExp(process.env.CAFFOOT_VISUAL_FILTER).test(item[0])):items;
 async function main(){
  await new Promise(resolve=>reference.listen(0,'127.0.0.1',resolve));
@@ -115,6 +117,16 @@ async function main(){
       await page.evaluate(value=>openRackSlotPlacementDialog(appState.racks[0].id,20,value),extra.value);
       await ref.evaluate(value=>openRackItemForm(20,'',value),extra.value);
      }
+    }
+    if(extra?.kind==='catalogue-dialog'){
+     await page.evaluate(value=>{
+      if(value==='types'||value==='locations')openDeviceCatalogueManager(value==='types'?'type':'location');
+      if(value==='manufacturers')openHardwareManufacturerManager();
+      if(value==='models')openHardwareModelManager();
+      if(value==='software')openSoftwareCatalogueEditor();
+      if(value==='services')openServerServiceEditor();
+     },extra.value);
+     await ref.evaluate(value=>showCatalogModal(value),extra.value);
     }
     if(extra?.kind==='user-workspace'){
      await page.locator('.approved-page-header .tabs [data-tab="list"]').click();

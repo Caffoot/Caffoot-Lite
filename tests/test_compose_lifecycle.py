@@ -5,6 +5,7 @@ Requires Docker Compose and permission to access the Docker daemon.
 Uses a uniquely named temporary Compose project and removes its volume afterward.
 """
 import os
+import json
 import shutil
 import socket
 import subprocess
@@ -28,6 +29,14 @@ class ComposeLifecycleTests(unittest.TestCase):
         env = dict(os.environ, CAFFOOT_WEB_ADDRESS=f"https://127.0.0.1:{port}",
                    CAFFOOT_SERVER_ADDRESS="127.0.0.1", CAFFOOT_PORT=str(port))
         command = ["docker", "compose", "-p", project, "-f", str(root / "compose.yaml")]
+        build_settings = tempfile.TemporaryDirectory(prefix="caffoot-compose-build-")
+        if os.environ.get("CAFFOOT_BUILD_CA"):
+            override = Path(build_settings.name) / "build-ca.json"
+            override.write_text(json.dumps({
+                "services": {"caffoot-lite": {"build": {"secrets": ["proxy_ca"]}}},
+                "secrets": {"proxy_ca": {"file": str(Path(os.environ["CAFFOOT_BUILD_CA"]).resolve(strict=True))}},
+            }))
+            command.extend(["-f", str(override)])
         def run(*args):
             return subprocess.run([*command, *args], cwd=root, env=env,
                                   check=True, capture_output=True, text=True).stdout.strip()
@@ -61,6 +70,7 @@ class ComposeLifecycleTests(unittest.TestCase):
                 "print(c.execute('SELECT value FROM smoke_marker').fetchone()[0])"), "persisted")
         finally:
             run("down", "-v", "--remove-orphans")
+            build_settings.cleanup()
 
 
 if __name__ == "__main__":

@@ -5349,7 +5349,7 @@ function openIpModal(ip) {
                 body.append(form);
                 const footer = form.querySelector('.form-actions');
                 if (footer) {
-                    footer.classList.add('device-review-footer');
+                    footer.className = 'device-review-footer';
                     footer.querySelector('button[type="submit"]').setAttribute('form', form.id);
                     dialog.append(footer);
                 }

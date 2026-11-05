@@ -38,8 +38,14 @@ const readApproved = filename => execFileSync(
   { cwd: root, encoding: 'utf8', maxBuffer: 1024 * 1024 * 4 }
 );
 
-const liveInventory = fs.readFileSync(path.join(root, 'inventory.html'), 'utf8');
-const liveSetup = fs.readFileSync(path.join(root, 'setup.html'), 'utf8');
+const read = name => fs.readFileSync(path.join(root, name), 'utf8');
+const screenFiles = fs.readdirSync(path.join(root, 'interface/screens')).filter(name => name.endsWith('.html'));
+const screenMarkup = screenFiles.map(name => read('interface/screens/' + name)).join('\n');
+const templates = new Map([...screenMarkup.matchAll(/<!-- interface-template:([^ ]+) -->([\s\S]*?)<!-- \/interface-template -->/g)].map(match => [match[1], match[2]]));
+const application = read('interface/application.js');
+const liveStyles = fs.readdirSync(path.join(root, 'interface/styles')).filter(name => name.endsWith('.css')).map(name => read('interface/styles/' + name)).join('\n');
+const liveInventory = read('inventory.html') + application + screenMarkup + liveStyles;
+const liveSetup = read('setup.html') + read('interface/sign-in.js');
 
 const missing = [];
 for (const filename of sourceFiles) {
@@ -49,7 +55,7 @@ for (const filename of sourceFiles) {
   console.log(`Found approved design: ${filename}`);
 }
 
-// Both HTML screens must retain their working Caffoot Lite integration,
+// Both entry screens and their modules must retain the working integration,
 // rather than replacing the app with the standalone sample-data previews.
 for (const [name, html, checks] of [
   ['inventory.html', liveInventory, [
@@ -96,9 +102,8 @@ if (!/class="subnav device-tabs"/.test(liveInventory)) {
 }
 
 // Each approved standalone design includes a recognisable page component.
-// Require its *markup* in the live HTML, not just a style rule. These checks
-// deliberately remain red during integration; they cannot replace human
-// comparison of the actual rendered screens.
+// Check its markup in the screen modules as well as the styles.
+// These markers do not replace comparison of the rendered screens.
 const requiredMarkup = [
   ['Dashboard', liveInventory, /class="[^"]*db-grid[^"]*"/],
   ['My Account', liveInventory, /class="[^"]*account-grid[^"]*"/],
@@ -120,10 +125,8 @@ for (const [area, html, pattern] of requiredMarkup) {
 }
 
 // IPAM Draft 01 modal source contract.
-// This compares actual pinned CSS declarations and editor markup, rather than
-// accepting an arbitrary CSS-only approximation with matching class names.
-// Live dialogs reuse the authenticated #modal-content instead of the
-// standalone design's demonstration overlay; that wrapper is intentional.
+// Compare pinned CSS declarations and the templates called by each live editor.
+// Dialogs retain the authenticated modal container around the approved markup.
 const approvedIpam = readApproved('ipam-draft-01.html');
 const modalSelectors = [
   '.ipam-modal', '.ipam-modal-head', '.ipam-modal-head h2',
@@ -141,9 +144,7 @@ function cssDeclaration(css, selector) {
   return end < 0 ? null : css.slice(start + marker.length, end);
 }
 for (const selector of modalSelectors) {
-  const liveSelector = selector === '.ipam-modal'
-    ? '#modal-content.approved-ipam-modal'
-    : '#modal-content.approved-ipam-modal ' + selector;
+  const liveSelector = selector;
   const approvedRule = cssDeclaration(approvedIpam, selector);
   const liveRule = cssDeclaration(liveInventory, liveSelector);
   if (!approvedRule || approvedRule !== liveRule) {
@@ -161,7 +162,8 @@ const ipamModalSegments = [
 for (const [area, begin, end, fields] of ipamModalSegments) {
   const start = liveInventory.indexOf(begin);
   const stop = start < 0 ? -1 : liveInventory.indexOf(end, start + begin.length);
-  const html = stop > start ? liveInventory.slice(start, stop) : '';
+  const segment = stop > start ? liveInventory.slice(start, stop) : '';
+  const html = segment + [...segment.matchAll(/renderInterfaceTemplate\("([^"\n]+)"/g)].map(match => templates.get(match[1]) || '').join('\n');
   for (const structure of ['ipam-modal-head', 'ipam-modal-body', 'ipam-form-grid', 'ipam-modal-actions']) {
     if (!html.includes(structure)) missing.push('IPAM ' + area + ': missing approved ' + structure);
   }
@@ -175,8 +177,8 @@ if (!liveInventory.includes('function openApprovedIpamModal(markup)') ||
     !liveInventory.includes("classList.add('approved-ipam-modal')")) {
   missing.push('IPAM: the live modal must use the approved source shell');
 }
-if (!/@media\(max-width:720px\)\{#modal-content\.approved-ipam-modal[^}]*\}#modal-content\.approved-ipam-modal \.ipam-modal-body\{padding:17px\}/.test(liveInventory) ||
-    !liveInventory.includes('#modal-content.approved-ipam-modal .ipam-form-grid{grid-template-columns:1fr}')) {
+if (!/@media\(max-width:720px\)\{(?:[^{}]*\{[^{}]*\})*\.ipam-modal-body\{padding:17px\}/.test(liveStyles) ||
+    !/@media\(max-width:720px\)\{(?:[^{}]*\{[^{}]*\})*\.ipam-form-grid\{grid-template-columns:1fr\}/.test(liveStyles)) {
   missing.push('IPAM: approved mobile modal stacking is missing');
 }
 if (!liveInventory.includes('planBulkSubnetAddressAssignment(subnet,request.start,request.end,request.status,request.hostname,request.notes)') ||

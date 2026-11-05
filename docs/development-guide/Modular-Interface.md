@@ -41,4 +41,4 @@ Build only from the clean implementation commit:
 python scripts/build_private_acceptance.py --save /path/to/private-acceptance.tar
 ```
 
-The script builds a local image from `git archive`, labels it with the exact commit and verifies that label. It has no image push, merge or release action. It must not be used as evidence of a successful build when dependency access fails. See the [Issue #282 handover](../development-handovers/v2.1-issue-282.md) for current results and limitations.
+The script builds a local image from `git archive`, labels it with the exact commit and verifies that label. When a build proxy requires a private CA, add `--build-ca /path/to/trusted-ca-bundle.pem`. Docker mounts this optional bundle only while installing packages; it is not stored in the image. For the opt-in Compose lifecycle test, set `CAFFOOT_BUILD_CA` to the same bundle path. It has no image push, merge or release action. It must not be used as evidence of a successful build when dependency access fails. See the [Issue #282 handover](../development-handovers/v2.1-issue-282.md) for current results and limitations.

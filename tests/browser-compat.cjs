@@ -122,6 +122,13 @@ async function run(){
     'Compiled inventory utilities must be present');
   assert.equal(await page.locator('#sidebar').evaluate(el=>getComputedStyle(el).display),'flex',
     'Tailwind utility layout must remain active');
+  const sharedSidebar=await page.locator('#sidebar').elementHandle();
+  await page.locator('[data-action="toggle-approved-sidebar"]').click();
+  assert.equal(await page.locator('#app').evaluate(el=>el.classList.contains('collapsed')),true,
+    'The approved menu collapse control must work');
+  await page.locator('[data-action="toggle-approved-sidebar"]').click();
+  assert.equal(await page.locator('#app').evaluate(el=>el.classList.contains('collapsed')),false,
+    'The approved menu must expand again');
   // The shared navigation must come from the approved seven-item HTML menu.
   assert.equal(await page.locator('#sidebar .nav-item[data-tab]').count(),7,
     'Approved sidebar must have exactly seven primary sections, not nested actions');
@@ -354,6 +361,10 @@ async function run(){
     const navigation=page.locator('#sidebar [data-action="tab-'+tab+'"]');
     assert.ok(await navigation.isEnabled(),'Navigation disabled: '+tab);
     await navigation.click();
+    assert.equal(await sharedSidebar.evaluate(el=>el.isConnected),true,
+      'Section navigation must retain the single shared sidebar: '+tab);
+    assert.equal(await page.locator('#app .header-account').count(),1,
+      'Each section must retain one shared account control: '+tab);
     assert.notEqual(await page.locator('#toast-message').textContent(),
       'This inventory operation is not yet connected to SQLite.');
   }
@@ -402,6 +413,8 @@ async function run(){
   await page.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='Audit Trail');
   assert.ok(await page.locator('#main-content .approved-audit .audit-tabs').isVisible(),
     'Owner-approved Audit Trail section navigation must render');
+  assert.equal(await page.locator('.audit-stat .hint').first().evaluate(el=>getComputedStyle(el).backgroundColor),'rgba(0, 0, 0, 0)',
+    'Settings help styling must not turn Audit Trail captions into warning panels');
   assert.equal(await page.locator('#main-content .approved-audit .audit-tab').count(),3,
     'Approved All Activity, Asset History and Recording Coverage must be available');
   assert.equal(await page.locator('#main-content .approved-audit #stat-total').textContent(),'1',
@@ -773,8 +786,10 @@ async function run(){
     'All five original Device form tabs must remain available');
   assert.ok(await approvedEditor.locator('#device-form-panel-general .form-section-card.device-review-panel').first().isVisible(),
     'Approved information cards must contain the working legacy form fields');
-  assert.ok(await approvedEditor.locator('.form-actions button[type="submit"]').isVisible(),
+  assert.ok(await approvedEditor.locator('.device-review-footer button[type="submit"]').isVisible(),
     'Save Device must remain available in the approved footer');
+  assert.equal(await approvedEditor.locator('.device-review-footer button[type="submit"]').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(237, 133, 50)',
+    'The approved Save Device button must retain the source orange');
   const general=page.locator('#device-form-panel-general');
   await general.waitFor();
   const generalGrid=general.locator(':scope > .device-review-grid');
@@ -1373,8 +1388,11 @@ async function run(){
   assert.equal(await approvedEditor.locator('#device-form-panel-general > .device-review-grid').evaluate(
     node=>getComputedStyle(node).gridTemplateColumns.split(' ').length),1,
     'Device Editor source card grid must stack at mobile width');
-  assert.ok(await approvedEditor.locator('.form-actions button[type="submit"]').isVisible(),
+  assert.ok(await approvedEditor.locator('.device-review-footer button[type="submit"]').isVisible(),
     'Save Device must remain accessible on mobile');
+  const editorFooterButtons=await approvedEditor.locator('.device-review-footer button').evaluateAll(nodes=>nodes.map(el=>el.getBoundingClientRect().y));
+  assert.equal(editorFooterButtons[0],editorFooterButtons[1],
+    'Approved mobile Cancel and Save Device controls must share one row');
   await page.setViewportSize({width:1440,height:950});
   await page.locator('#dev-name').fill('browser-hypervisor');
   await page.locator('#dev-type').selectOption('Server - Physical');
@@ -1878,6 +1896,7 @@ async function run(){
   await editor.locator('#code-field:not([hidden])').waitFor();
   await editor.locator('#code').fill(mfaCode(editorSecret));
   await editor.waitForURL('**/inventory');
+  await editor.locator('#app[aria-busy="false"]').waitFor();
   await editor.locator('#app .header-account').waitFor();
   await editor.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='Dashboard');
   assert.equal(await editor.locator('#next-dashboard-mfa-notice').count(),0,

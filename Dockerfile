@@ -8,7 +8,8 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     CAFFOOT_DB_PATH=/data/caffoot.sqlite3 \
     CAFFOOT_PORT=8080
 
-RUN apk add --no-cache openssl
+# A private build may supply its proxy CA without storing it in the image.
+RUN --mount=type=secret,id=proxy_ca,target=/etc/ssl/cert.pem apk add --no-cache openssl
 
 WORKDIR /opt/caffoot
 COPY backend/ ./backend/

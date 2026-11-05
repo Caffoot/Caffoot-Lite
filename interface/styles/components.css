@@ -176,3 +176,11 @@ html{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sa
 #modal-content:has(> .device-review-dialog,> .rack-modal){display:contents}
 /* Keep long licence, migration and safety dialogs reachable inside the viewport. */
 #modal-content:not(:has(> .device-review-dialog,> .rack-modal)){max-height:calc(100dvh - 36px);overflow:auto}
+
+/* The approved catalogue already supplies its own border, padding and shadow. */
+#modal-content.approved-catalogue-modal {
+  padding:0;
+  border:0;
+  background:transparent;
+  box-shadow:none;
+}
