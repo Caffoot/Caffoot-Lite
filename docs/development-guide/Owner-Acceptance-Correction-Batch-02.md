@@ -1,18 +1,18 @@
 # Caffoot Lite v2.1 — Owner Acceptance Correction Batch 02
 
-**Status:** **Approved by the product owner on 5 November 2026 for implementation of findings 01–04 only, after Codex credits reset.**  
+**Status:** **All six findings (01–06) approved by the product owner on 5 November 2026 for Codex implementation after credits reset.**  
 **Parent plan:** [Issue #282](https://github.com/Caffoot/Caffoot-Lite/issues/282).  
 **Development branch:** `feat/approved-modular-html-282`.  
 **Baseline for this plan:** `0d54ef0e466a79720681a62ee828d44f7c0dc4e7` (completed Batch 01).  
 **Twelve approved HTML sources:** revision `c26db4a56bbc30f95b56201e81a7a76d13c6037b`, as identified by `docs/development-guide/Approved-HTML-Integration.md`.  
 **Origin:** Product owner's second private Docker/Safari review, 5 November 2026. Screenshots were shared in the review conversation but **are not attached to this document**.  
-**Scope:** Findings **01–04 approved**. Two additional findings (05 sidebar spacing and 06 Audit Trail security-notice wording) were added from the owner's subsequent Safari review and **await explicit approval of this document amendment before implementation**. This plan is not evidence of completed changes or tests.
+**Scope:** **All six findings 01–06 approved.** Findings 05 (sidebar spacing) and 06 (Audit Trail security-notice wording) were subsequently added and explicitly approved by the owner as amendments on 5 November 2026. This plan is not evidence of completed changes or tests.
 
 ## Scope and constraints
 
 Use Issue #282, `AGENTS.md`, approved designs and existing v2.1 functional/security requirements. Preserve the light theme that the product owner likes. Preserve shared navigation, screen structure, all interactions, account controls, devices/IPAM/racks, existing records, Docker upgrade compatibility, Python/SQLite/APIs/security, and the ten Batch 01 corrections. Do not revise original pinned HTML/CSS, substitute a redesign, change frameworks, add features, or make unrelated visual changes.
 
-The product owner explicitly approved this exact four-finding plan on 5 November 2026. **Codex implementation is authorised after credits reset**, not before. No additional work is authorised by this approval.
+The product owner approved findings 01–04 and subsequently explicitly approved the amendments for findings 05–06 on 5 November 2026. **Codex implementation of exactly findings 01–06 is authorised after credits reset**, not before. No additional work is authorised by this approval.
 
 ## Finding 01 — Network Racks Overview spacing does not match Devices
 
@@ -54,7 +54,7 @@ The product owner explicitly approved this exact four-finding plan on 5 November
 
 **Verification:** Review the shared header with a portrait or non-square photograph and with no photograph. Check both light/dark themes, desktop/mobile widths and browser resizing. Confirm the account button remains clickable and photo changes/removal still appear in the header without incorrect cropping or distortion.
 
-## Finding 05 — Shared sidebar navigation spacing is inconsistent across pages (amendment awaiting approval)
+## Finding 05 — Shared sidebar navigation spacing is inconsistent across pages (owner-approved amendment)
 
 **Observed:** During the same private Safari review, the owner noticed that the vertical spacing/height of the left-hand navigation items appears different on Audit Trail and Users & Permissions compared with Dashboard, Devices, IPAM and Settings & Data. The sidebar is intended to be shared and visually consistent throughout the application.
 
@@ -62,9 +62,9 @@ The product owner explicitly approved this exact four-finding plan on 5 November
 
 **Verify:** Compare computed menu item rectangles and vertical gaps before/after navigation through Dashboard, Devices, IPAM, Network Racks, Audit Trail, Users & Permissions, My Account and Settings & Data, in both themes and desktop/mobile layouts. Confirm no screen-specific CSS overrides alter the shared sidebar's metrics and that menu interactions still work. If measurements are identical and the difference is an optical effect, report the exact evidence and obtain an owner decision before changing approved styling.
 
-**Approval boundary:** This is an **additional owner-requested finding** recorded after the initial four-item plan was approved. It is **not authorised for Codex implementation until the owner explicitly approves this amendment**.
+**Approval:** The owner explicitly approved this additional finding on 5 November 2026 as part of the six-finding Batch 02; implementation remains deferred until Codex credits reset.
 
-## Finding 06 — Simplify the Audit Trail security notice (amendment awaiting approval)
+## Finding 06 — Simplify the Audit Trail security notice (owner-approved amendment)
 
 **Observed:** On Audit Trail > Recording Coverage, an orange banner at the bottom headed `Important security boundary` displays implementation-oriented text explaining which passwords, password hashes, MFA seeds/codes, session tokens, API secrets and sensitive request bodies must not be recorded, how before/after values should be restricted, and that the audit trail is not a data restore facility. The owner finds this too technical for the normal user-facing page.
 
@@ -76,13 +76,13 @@ The product owner explicitly approved this exact four-finding plan on 5 November
 
 **Verify:** The exact replacement appears on Audit Trail at desktop/mobile widths in both themes and remains readable. Existing audit/security regression tests continue passing; no API, database, filtering, export, retention or permission behaviour changes. Do not claim that no secret could ever be logged based solely on a wording change; verify that existing exclusion safeguards remain enforced.
 
-**Approval boundary:** This is an **additional owner-requested finding** recorded after initial approval of findings 01–04. **No Codex implementation until the owner explicitly approves this amendment.**
+**Approval:** The owner explicitly approved this additional finding on 5 November 2026 as part of the six-finding Batch 02; implementation remains deferred until Codex credits reset.
 
 ## Acceptance procedure — approved scope, to begin after Codex credits reset
 
-1. Confirm the exact baseline branch/commit, approved sources, Batch 01 acceptance evidence and `AGENTS.md`. Implement **only findings 01–04**, and findings 05–06 **only if this amendment receives explicit owner approval**, in one coordinated batch.
+1. Confirm the exact baseline branch/commit, approved sources, Batch 01 acceptance evidence and `AGENTS.md`. Implement **only findings 01–06**, all now owner-approved, in one coordinated batch after the agreed credits reset.
 2. Establish accurate before/after live comparisons, particularly Devices-to-Racks spacing and the dark/light contrast audit; preserve original reference and evidence separately.
-3. Protect the light theme as a regression baseline and check all twelve screen areas in dark mode, desktop and mobile, with representative opened controls and dialogs. Check the four approved functional behaviours and, if approved, the fifth shared-sidebar consistency and sixth Audit notice behaviours; use existing test infrastructure and proportionate security/functional checks.
+3. Protect the light theme as a regression baseline and check all twelve screen areas in dark mode, desktop and mobile, with representative opened controls and dialogs. Check all six approved behaviours, including shared-sidebar consistency and the Audit notice; use existing test infrastructure and proportionate security/functional checks.
 4. Save meaningful checkpoints and the final verified results to the development branch, with exact SHAs, a clear test matrix, limitations and a handover entry. **Do not claim owner visual approval** based on CI or screenshots alone.
 5. **Do not modify `main`, PR #281, approved HTML source files or unrelated functionality. Do not merge, push Docker images to registries or publish/release anything.**
 6. After completion and evidence review, the owner will separately build a new **private local Docker image** on their Pi/Portainer host and review it in Safari. Preserve the existing private test volume, administrator, MFA and SMTP configuration.
@@ -90,7 +90,7 @@ The product owner explicitly approved this exact four-finding plan on 5 November
 ## Owner decision
 
 - [x] Approved by product owner on 5 November 2026 for Codex implementation **after credits reset**.
-- [ ] Owner approves the proposed Findings 05 and 06 amendments as additions to Batch 02.
+- [x] Owner approved Findings 05 and 06 amendments on 5 November 2026 as additions to Batch 02.
 - [ ] Request further amendments to this plan.
 
-**Current approval authorises findings 01–04 only; findings 05 and 06 are awaiting owner approval.** No merge, publication, release or final visual acceptance is authorised. No finding is claimed fixed or tested by this approval record.
+**Owner approval authorises implementation of findings 01–06 only after Codex credits reset.** No merge, publication, release or final visual acceptance is authorised. No finding is claimed fixed or tested by this approval record.
