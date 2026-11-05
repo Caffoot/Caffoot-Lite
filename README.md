@@ -8,9 +8,7 @@ Keep track of your devices, IP addresses and network racks in one place. Caffoot
 
 ![Caffoot Lite dashboard showing example network inventory](docs/screenshots/dashboard.png)
 
-Caffoot Lite v2.0.3 is a maintenance update to the established Docker/SQLite, multi-user application, bringing refreshed user guides and focused compatibility checks on top of the v2.0.2 security release. It uses a **central SQLite database**, first-run administrator setup, mandatory MFA for administrators and editors, administrator-managed permissions, and simultaneous authenticated inventory access. Familiar v1.3.3 Devices, IPAM, Racks and Change History workflows are preserved.
-
-The repository root contains the Docker application's source: `backend/`, `inventory.html`, `setup.html`, `assets/`, `Dockerfile`, `compose.yaml`, `tests/` and documentation. The old `next/` development folder and standalone HTML build copy remain excluded, as established in v2.0.1. The original standalone version remains separately available in the [published v1.3.3 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3).
+Caffoot Lite runs in Docker with a central SQLite database, shared inventory access and administrator-managed permissions. Administrators and editors use multi-factor authentication (MFA).
 
 ## Install Caffoot Lite
 
@@ -72,15 +70,10 @@ For direct HTTPS, verify and trust the application certificate before entering c
 ## Documentation
 
 - [Installation, HTTPS, Portainer and backup instructions](INSTALLATION.md)
-- [v2.0.3 release notes](docs/historical/release-notes/Release-Notes-v2.0.3.md)
-- [Previous v2.0.2 release notes](docs/historical/release-notes/Release-Notes-v2.0.2.md)
-- [Previous v2.0.1 release notes](docs/historical/release-notes/Release-Notes-v2.0.1.md)
+- [Releases and version history](https://github.com/Caffoot/Caffoot-Lite/releases)
 - [Detailed user guides and screenshots](docs/how-tos/features-and-instructions/README.md)
 - [Contributing To Caffoot Lite — mandatory naming, UI and documentation standards](CONTRIBUTING.md)
 - [Development Guide](docs/development-guide/README.md)
-- [v2.0.3 development handover (historical)](docs/historical/development-handovers/v2.0.3.md)
-- [Security-fix and release checklist, including the owner-controlled one-click publishing process](docs/development-guide/Security-Fixes-and-Releases.md)
-- [Standalone v1.3.3 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3)
-- [Historical v2.0/v2.0.1 implementation specification #215](https://github.com/Caffoot/Caffoot-Lite/issues/215) and [release tracker #218](https://github.com/Caffoot/Caffoot-Lite/issues/218); [Future Ideas Index #222](https://github.com/Caffoot/Caffoot-Lite/issues/222) and [Feature Request form](https://github.com/Caffoot/Caffoot-Lite/issues/new/choose)
-
-**Version history:** [v2.0](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0) introduced the Docker/SQLite multi-user edition. [v2.0.1](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.1) moved the Docker source to the repository root. v2.0.2 delivered a focused security correction. v2.0.3 updates the documentation, code-reference baseline and existing browser regression coverage without changing the supported inventory data format.
+- [Public roadmap](ROADMAP.md)
+- [Future Ideas Index](https://github.com/Caffoot/Caffoot-Lite/issues/222)
+- [Standalone v1.3.3 release for inventory migration](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3)
