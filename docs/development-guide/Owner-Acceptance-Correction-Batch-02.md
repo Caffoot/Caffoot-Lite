@@ -6,7 +6,7 @@
 **Baseline for this plan:** `0d54ef0e466a79720681a62ee828d44f7c0dc4e7` (completed Batch 01).  
 **Twelve approved HTML sources:** revision `c26db4a56bbc30f95b56201e81a7a76d13c6037b`, as identified by `docs/development-guide/Approved-HTML-Integration.md`.  
 **Origin:** Product owner's second private Docker/Safari review, 5 November 2026. Screenshots were shared in the review conversation but **are not attached to this document**.  
-**Scope:** Findings **01–04 approved**. A fifth sidebar-spacing finding was added from the owner's subsequent Safari review and **awaits explicit approval of this document amendment before implementation**. This plan is not evidence of completed changes or tests.
+**Scope:** Findings **01–04 approved**. Two additional findings (05 sidebar spacing and 06 Audit Trail security-notice wording) were added from the owner's subsequent Safari review and **await explicit approval of this document amendment before implementation**. This plan is not evidence of completed changes or tests.
 
 ## Scope and constraints
 
@@ -64,11 +64,25 @@ The product owner explicitly approved this exact four-finding plan on 5 November
 
 **Approval boundary:** This is an **additional owner-requested finding** recorded after the initial four-item plan was approved. It is **not authorised for Codex implementation until the owner explicitly approves this amendment**.
 
+## Finding 06 — Simplify the Audit Trail security notice (amendment awaiting approval)
+
+**Observed:** On Audit Trail > Recording Coverage, an orange banner at the bottom headed `Important security boundary` displays implementation-oriented text explaining which passwords, password hashes, MFA seeds/codes, session tokens, API secrets and sensitive request bodies must not be recorded, how before/after values should be restricted, and that the audit trail is not a data restore facility. The owner finds this too technical for the normal user-facing page.
+
+**Proposed exact replacement copy:**
+
+> **Your security matters.** Audit records track changes without storing passwords, authentication codes or other sensitive credentials.
+
+**Required:** Replace **only** the bottom Audit Trail banner's heading/body with the above concise user-facing wording while retaining the warning's clear visual treatment. Remove neither the actual server-side protections nor any necessary audit/access policy. Preserve accurate audit recording, access permissions, privacy controls, exclusion of secrets, safe handling of before/after values and read-only history. Keep any other important, actionable security/capability warnings elsewhere on the page.
+
+**Verify:** The exact replacement appears on Audit Trail at desktop/mobile widths in both themes and remains readable. Existing audit/security regression tests continue passing; no API, database, filtering, export, retention or permission behaviour changes. Do not claim that no secret could ever be logged based solely on a wording change; verify that existing exclusion safeguards remain enforced.
+
+**Approval boundary:** This is an **additional owner-requested finding** recorded after initial approval of findings 01–04. **No Codex implementation until the owner explicitly approves this amendment.**
+
 ## Acceptance procedure — approved scope, to begin after Codex credits reset
 
-1. Confirm the exact baseline branch/commit, approved sources, Batch 01 acceptance evidence and `AGENTS.md`. Implement **only findings 01–04**, and finding 05 **only if this amendment receives explicit owner approval**, in one coordinated batch.
+1. Confirm the exact baseline branch/commit, approved sources, Batch 01 acceptance evidence and `AGENTS.md`. Implement **only findings 01–04**, and findings 05–06 **only if this amendment receives explicit owner approval**, in one coordinated batch.
 2. Establish accurate before/after live comparisons, particularly Devices-to-Racks spacing and the dark/light contrast audit; preserve original reference and evidence separately.
-3. Protect the light theme as a regression baseline and check all twelve screen areas in dark mode, desktop and mobile, with representative opened controls and dialogs. Check the four approved functional behaviours and, if approved, the fifth shared-sidebar consistency behaviour; use existing test infrastructure and proportionate security/functional checks.
+3. Protect the light theme as a regression baseline and check all twelve screen areas in dark mode, desktop and mobile, with representative opened controls and dialogs. Check the four approved functional behaviours and, if approved, the fifth shared-sidebar consistency and sixth Audit notice behaviours; use existing test infrastructure and proportionate security/functional checks.
 4. Save meaningful checkpoints and the final verified results to the development branch, with exact SHAs, a clear test matrix, limitations and a handover entry. **Do not claim owner visual approval** based on CI or screenshots alone.
 5. **Do not modify `main`, PR #281, approved HTML source files or unrelated functionality. Do not merge, push Docker images to registries or publish/release anything.**
 6. After completion and evidence review, the owner will separately build a new **private local Docker image** on their Pi/Portainer host and review it in Safari. Preserve the existing private test volume, administrator, MFA and SMTP configuration.
@@ -76,7 +90,7 @@ The product owner explicitly approved this exact four-finding plan on 5 November
 ## Owner decision
 
 - [x] Approved by product owner on 5 November 2026 for Codex implementation **after credits reset**.
-- [ ] Owner approves the proposed Finding 05 amendment as an addition to Batch 02.
+- [ ] Owner approves the proposed Findings 05 and 06 amendments as additions to Batch 02.
 - [ ] Request further amendments to this plan.
 
-**Current approval authorises findings 01–04 only; finding 05 is awaiting owner approval.** No merge, publication, release or final visual acceptance is authorised. No finding is claimed fixed or tested by this approval record.
+**Current approval authorises findings 01–04 only; findings 05 and 06 are awaiting owner approval.** No merge, publication, release or final visual acceptance is authorised. No finding is claimed fixed or tested by this approval record.
