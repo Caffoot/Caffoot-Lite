@@ -13,7 +13,7 @@ We began with Devices, IPAM and Racks. They are the foundation of the wider ambi
 ## How to read this list
 
 - **Existing #number:** an open GitHub issue already holds the idea. Discuss scope there instead of creating a duplicate.
-- **New suggestion:** raised during our brainstorming, with **no individual GitHub issue yet**. If prioritised, create a specific future-request issue after discussing its boundaries.
+- **New suggestion:** raised during our brainstorming, with **no individual GitHub issue yet**. New future-request issues #292–#301 have been added for some earlier suggestions. If prioritised, create a specific future-request issue after discussing its boundaries.
 - **Long-term ambition:** a product direction that needs discovery, security review and smaller agreed proposals before implementation.
 - **Possible milestone:** where an idea might fit, **not** when it will ship. Milestones can overlap, move or be broken into smaller releases.
 
@@ -34,24 +34,24 @@ The current [public roadmap](../../ROADMAP.md) remains authoritative for publish
 | Multiple network interfaces, IP addresses and IPv6 | [Existing #231](https://github.com/Caffoot/Caffoot-Lite/issues/231) | 2 — Connected infrastructure | Document real-world network interfaces and addresses |
 | Port-to-port connectivity and topology diagrams | [Existing #235](https://github.com/Caffoot/Caffoot-Lite/issues/235) | 2 — Connected infrastructure | Understand what connects to what |
 | People, departments and assigned devices | [Existing #232](https://github.com/Caffoot/Caffoot-Lite/issues/232) | 3 — People and support | See who uses equipment and which team owns it |
-| Equipment handover and reassignment history | **New suggestion; related to #232** | 3 — People and support | Understand when an asset changed hands |
+| Equipment handover and reassignment history | [Existing #292](https://github.com/Caffoot/Caffoot-Lite/issues/292); related to #232 | 3 — People and support | Understand when an asset changed hands |
 | Device-linked support tickets and service desk | [Existing #233](https://github.com/Caffoot/Caffoot-Lite/issues/233) | 3 — People and support | Report and resolve problems with the right context |
 | IT documentation with version history | [Existing #237](https://github.com/Caffoot/Caffoot-Lite/issues/237) | 3 — People and support | Keep procedures and records tied to relevant systems |
 | Infrastructure monitoring, alerts and live status | [Existing #236](https://github.com/Caffoot/Caffoot-Lite/issues/236) | 4 — Optional IT operations | Notice and investigate meaningful problems |
-| Endpoint inventory and device management | **New suggestion** | 4 — Optional IT operations | Manage supported computers as well as document them |
-| Patch management and deployment | **New suggestion** | 4 — Optional IT operations | Understand and apply supported updates safely |
-| Authorised remote assistance | **New suggestion** | 4 — Optional IT operations | Help a person or troubleshoot a managed computer remotely |
-| Simple operational automation | **New suggestion** | 4 — Optional IT operations | Reduce repetitive approved IT tasks |
+| Endpoint inventory and device management | [Existing #293](https://github.com/Caffoot/Caffoot-Lite/issues/293) | 4 — Optional IT operations | Manage supported computers as well as document them |
+| Patch management and deployment | [Existing #294](https://github.com/Caffoot/Caffoot-Lite/issues/294) | 4 — Optional IT operations | Understand and apply supported updates safely |
+| Authorised remote assistance | [Existing #295](https://github.com/Caffoot/Caffoot-Lite/issues/295) | 4 — Optional IT operations | Help a person or troubleshoot a managed computer remotely |
+| Simple operational automation | [Existing #296](https://github.com/Caffoot/Caffoot-Lite/issues/296) | 4 — Optional IT operations | Reduce repetitive approved IT tasks |
 | Optional application sections or capabilities | [Existing #238](https://github.com/Caffoot/Caffoot-Lite/issues/238) | Cross-cutting | Keep the core simple when advanced functions are not needed |
 | LDAP, LLDAP and Active Directory integration | [Existing #240](https://github.com/Caffoot/Caffoot-Lite/issues/240) | 5 — Identity and access | Work alongside a business's existing directory |
-| Standards-based self-hosted application SSO | **New suggestion** | 5 — Identity and access | Give authorised users a consistent sign-in for supported applications |
-| Domainless login for supported PCs | **Long-term ambition; new topic** | 5 — Identity and access | Use a managed identity on computers without requiring a traditional domain |
-| Computer enrolment and identity/device policies | **New suggestion** | 5 — Identity and access | Manage which users and devices may access company systems |
+| Standards-based self-hosted application SSO | [Existing #297](https://github.com/Caffoot/Caffoot-Lite/issues/297) | 5 — Identity and access | Give authorised users a consistent sign-in for supported applications |
+| Domainless login for supported PCs | [Existing #298](https://github.com/Caffoot/Caffoot-Lite/issues/298); long-term ambition | 5 — Identity and access | Use a managed identity on computers without requiring a traditional domain |
+| Computer enrolment and identity/device policies | [Existing #299](https://github.com/Caffoot/Caffoot-Lite/issues/299) | 5 — Identity and access | Manage which users and devices may access company systems |
 | Offline sign-in and emergency identity recovery | **Required discovery topic, not a feature design** | 5 — Identity and access | Avoid unnecessary lockouts if the server or internet is unavailable |
 | MSP customers and overlapping networks | [Existing #234](https://github.com/Caffoot/Caffoot-Lite/issues/234) | 6 — Larger organisations | Safely document separate customers using similar private addresses |
 | Practical tutorials, community feedback and adoption | [Existing #239](https://github.com/Caffoot/Caffoot-Lite/issues/239) | Cross-cutting | Help people discover, install and learn the application |
-| Secure remote access deployment guidance | **New suggestion; cross-cutting** | Across milestones | Reach a self-hosted service safely when away from the office |
-| Backup, restore and migration experience | **New improvement topic; review current behaviour before scoping** | Across milestones | Keep control of business data and recover when things go wrong |
+| Secure remote access deployment guidance | [Existing #300](https://github.com/Caffoot/Caffoot-Lite/issues/300); cross-cutting | Across milestones | Reach a self-hosted service safely when away from the office |
+| Backup, restore and migration experience | [Existing #301](https://github.com/Caffoot/Caffoot-Lite/issues/301); review current behaviour before scoping | Across milestones | Keep control of business data and recover when things go wrong |
 
 **Important:** A proposed name here does **not** imply that the current application lacks every part of the behaviour. Before opening a new feature issue, compare the suggestion with the released functions and approved v2.1 work to avoid duplicates.
 
