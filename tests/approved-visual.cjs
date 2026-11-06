@@ -69,6 +69,7 @@ async function main(){
  if(!login.ok())throw Error('Visual test login failed');
  const page=await context.newPage(),ref=await context.newPage(),results=[];
  if(process.env.CAFFOOT_ACCEPTANCE_CORRECTIONS==='1')await require('./acceptance-corrections.cjs')({page,context,out});
+ if(process.env.CAFFOOT_DEVICE_EDITOR_PRESERVATION==='1')await require('./device-editor-preservation.cjs')({page,reference:ref,sourceBase:'http://127.0.0.1:'+reference.address().port,context,out});
  if(process.env.CAFFOOT_DEVICE_EDITOR_FIDELITY==='1')await require('./device-editor-fidelity.cjs')({page,reference:ref,sourceBase:'http://127.0.0.1:'+reference.address().port,context,out,fixtureDirectory:tmp});
  if(process.env.CAFFOOT_APPROVED_OWNER_BATCH==='1')await require('./approved-owner-batch.cjs')({page,context,out});
  if(process.env.CAFFOOT_INTERFACE_CONSISTENCY==='1')await require('./interface-consistency.cjs')({page,context,out});

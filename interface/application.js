@@ -14,6 +14,7 @@ const defaultData = {
         };
 
         const STATE_VERSION = 3;
+        const SOFTWARE_SERVICE_NAME_MAX_LENGTH = 100;
 
         function cloneDefaultData() {
             return JSON.parse(JSON.stringify(defaultData));
@@ -2220,7 +2221,7 @@ function hierarchyValidateTypes(subnets) {
             const entries=getConfiguredSoftwareCatalogueEntries().map(x=>({...x}));
             const current=entries.find(x=>x.key===key);
             const duplicate=entries.some(x=>x.key!==key&&String(x.label||'').trim().toLowerCase()===name.toLowerCase())||builtInSoftwareSuggestions.some(x=>x.name.toLowerCase()===name.toLowerCase()&&createBuiltInSoftwareCatalogueKey(x.name)!==key);
-            const error=!name?'Enter a software name.':name.length>80?'Name must be 80 characters or fewer.':duplicate?'That software name already exists.':!types.length?'Select at least one device type.':'';
+            const error=!name?'Enter a software name.':name.length>SOFTWARE_SERVICE_NAME_MAX_LENGTH?`Name must be ${SOFTWARE_SERVICE_NAME_MAX_LENGTH} characters or fewer.`:duplicate?'That software name already exists.':!types.length?'Select at least one device type.':'';
             if(error){document.getElementById('software-custom-error').textContent=error;return;}
             if(current)Object.assign(current,{label:name,deviceTypes:types});
             else if(key){const builtin=builtInSoftwareSuggestions.find(x=>createBuiltInSoftwareCatalogueKey(x.name)===key);if(!builtin)return;entries.push({key,label:name,deviceTypes:types});}
@@ -2318,7 +2319,7 @@ function hierarchyValidateTypes(subnets) {
         }
         async function saveServerServiceEntry(key){
             const label=String(document.getElementById('server-service-name-input')?.value||'').trim();
-            if(!label||label.length>80)return showToast('Enter a service name (up to 80 characters).','error');
+            if(!label||label.length>SOFTWARE_SERVICE_NAME_MAX_LENGTH)return showToast(`Enter a service name (up to ${SOFTWARE_SERVICE_NAME_MAX_LENGTH} characters).`,'error');
             if([...getConfiguredServerServiceCatalogueEntries(),...builtInServerServiceSuggestions].some(x=>x.label.toLowerCase()===label.toLowerCase()&&x.key!==key))return showToast('That service name already exists.','error');
             const old=appState.serverFunctions;
             const items=getConfiguredServerServiceCatalogueEntries().map(x=>({...x}));
@@ -4459,7 +4460,7 @@ function openIpModal(ip) {
             const entered=action==='add'?document.getElementById('server-service-manager-name-input')?.value:action==='rename'?prompt('Rename server function:',old.label):'';
             if(action!=='delete' && entered===null)return;
             const label=String(entered||'').trim();
-            if(action!=='delete' && (!label||label.length>80)){showToast('Enter a server function name (up to 80 characters).','error');return;}
+            if(action!=='delete' && (!label||label.length>SOFTWARE_SERVICE_NAME_MAX_LENGTH)){showToast(`Enter a server function name (up to ${SOFTWARE_SERVICE_NAME_MAX_LENGTH} characters).`,'error');return;}
             if(action!=='delete' && items.some(x=>x.label.toLowerCase()===label.toLowerCase() && x.key!==key)){showToast('That server function already exists.','error');return;}
             if(action==='delete'){confirmServerServiceArchive(key);return;}
             const snapshot=JSON.stringify(appState);
@@ -4686,7 +4687,7 @@ function openIpModal(ip) {
             const entered=action==='add'?document.getElementById('software-name')?.value:action==='rename'?prompt('Rename software:',old.label):'';
             if(action!=='delete'&&entered===null)return;
             const label=String(entered||'').trim();
-            if(action!=='delete'&&(!label||label.length>80)){showToast('Enter a software name (up to 80 characters).','error');return;}
+            if(action!=='delete'&&(!label||label.length>SOFTWARE_SERVICE_NAME_MAX_LENGTH)){showToast(`Enter a software name (up to ${SOFTWARE_SERVICE_NAME_MAX_LENGTH} characters).`,'error');return;}
             if(action!=='delete'&&items.some(x=>x.label.toLowerCase()===label.toLowerCase()&&x.key!==key)){showToast('That software already exists.','error');return;}
             if(action==='delete'&&!confirm(`Remove "${old.label}" from software options? Existing device details will be retained.`))return;
             const snapshot=JSON.stringify(appState);
@@ -4805,7 +4806,7 @@ function openIpModal(ip) {
             const input=panel.querySelector('[data-review-new-name]'),error=panel.querySelector('[data-review-create-error]');
             const fail=message=>{if(error){error.textContent=message;error.hidden=false;}input?.focus();};
             const label=String(input?.value||'').trim();
-            if(!label||label.length>80)return fail('Enter a name of 80 characters or fewer.');
+            if(!label||label.length>SOFTWARE_SERVICE_NAME_MAX_LENGTH)return fail(`Enter a name of ${SOFTWARE_SERVICE_NAME_MAX_LENGTH} characters or fewer.`);
             const software=kind==='software';
             const currentType=document.getElementById('dev-type')?.value||'';
             const knownTypes=new Set(getUniqueDeviceTypes());
@@ -5559,6 +5560,9 @@ function openIpModal(ip) {
             // Existing manager buttons and checkbox data stay on their original DOM nodes.
             const hardwareDetails = form.querySelector('#details-section');
             if (hardwareDetails) {
+                // Keep type-specific fields inside Hardware & Lifecycle, without a second card.
+                hardwareDetails.classList.remove('form-section-card','space-y-4');
+                hardwareDetails.querySelector(':scope > .form-section-heading')?.remove();
                 const managers = hardwareDetails.querySelector('.flex.flex-wrap.gap-2');
                 const type = form.querySelector('#dev-type')?.value || '';
                 const group = deviceTypeDetailGroups[String(type||'').toLowerCase().trim()];
@@ -5574,10 +5578,12 @@ function openIpModal(ip) {
                     const servicesManager = managers.querySelector('#manage-server-services-button');
                     const softwareManager = managers.querySelector('#manage-installed-software-button');
                     if (servicesManager) {
+                        servicesManager.className = 'device-review-smallbtn';
                         servicesManager.textContent = 'Manage Server Services';
                         servicesSection.insertBefore(servicesManager, servicesSection.querySelector('#server-services-fields'));
                     }
                     if (softwareManager) {
+                        softwareManager.className = 'device-review-smallbtn';
                         softwareManager.textContent = 'Manage Installed Software';
                         installedSection.insertBefore(softwareManager, installedSection.querySelector('#device-form-installed-software-fields'));
                     }

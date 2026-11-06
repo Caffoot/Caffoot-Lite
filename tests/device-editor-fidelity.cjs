@@ -30,15 +30,11 @@ module.exports=async({page,reference,sourceBase,context,out,fixtureDirectory})=>
    const measure=el=>({title:el.querySelector('h4').textContent,inputs:[...el.querySelectorAll('input[type="text"]')].map(input=>({label:input.labels[0].textContent,height:input.getBoundingClientRect().height,maxLength:input.maxLength})),buttons:[...el.querySelectorAll('button')].map(button=>button.textContent.trim())});
    const live=await page.locator(kind==='location'?'#dev-create-location-panel':'[data-review-create="'+kind+'"]').evaluate(measure);
    const source=await reference.locator('[data-review-create="'+kind+'"]').evaluate(measure);
-   const validationConflict=['software','services'].includes(kind);
-   if(validationConflict){
-    assert.equal(live.inputs[0].maxLength,80);assert.equal(source.inputs[0].maxLength,100);
-    assert.deepEqual({...live,inputs:live.inputs.map(input=>({...input,maxLength:100}))},source,kind+' source layout/labels while retaining existing validation');
-   }else assert.deepEqual(live,source,kind+' inline source controls at '+width);
-   inline.push({kind,tab,width,dark,live,source,status:validationConflict?'80/100-character policy decision pending':'matched'});await page.evaluate(()=>closeModal(true));
+   assert.deepEqual(live,source,kind+' inline source controls at '+width);
+   inline.push({kind,tab,width,dark,live,source,status:'matched'});await page.evaluate(()=>closeModal(true));
   }
   assert.deepEqual(await state(),snapshot,'Inline visual checks do not save inventory');
-  fs.writeFileSync(path.join(out,'inline-editor-results.json'),JSON.stringify(inline,null,2));console.log('Inline Device editor: 20 expanded comparisons completed; software/service 80/100-character policy remains pending.');return;
+  fs.writeFileSync(path.join(out,'inline-editor-results.json'),JSON.stringify(inline,null,2));console.log('Inline Device editor: 20 expanded comparisons matched, including the approved 100-character software/service limit.');return;
  }
  const cases=[['add-physical','add','Server - Physical','Hypervisor-01'],['edit-physical','edit',null,'Hypervisor-01'],['duplicate-physical','duplicate',null,'Hypervisor-01'],['add-vm','add','virtual','App-VM-01'],['edit-vm','edit',null,'App-VM-01'],['duplicate-vm','duplicate',null,'App-VM-01'],['desktop','add','Desktop',''],['switch','add','Switch',''],['router','add','Router',''],['firewall','add','Firewall',''],['nas','add','NAS','']];
  for(const [width,height] of (process.env.CAFFOOT_DEVICE_EDITOR_FUNCTIONS_ONLY==='1'?[]:[[1440,950],[390,844]]))for(const dark of [false,true]){

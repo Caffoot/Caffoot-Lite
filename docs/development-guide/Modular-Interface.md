@@ -79,3 +79,10 @@ Issues [#310](https://github.com/Caffoot/Caffoot-Lite/issues/310), [#311](https:
 My Account now presents saved email verification status and an inline password/request/code flow. Sign In offers guided username-only recovery, immediate live feedback and progressive reset fields. The existing backend eligibility, MFA, proof and privacy rules are unchanged. Sign In and About use the exact primary tagline. The Sign In typography is scoped in `sign-in-controls.css`; About changes only its existing tagline paragraph. These explicit visual amendments do not alter the twelve pinned sources or extracted stylesheets. README and website work are excluded.
 
 Run `CAFFOOT_APPROVED_OWNER_BATCH=1 CAFFOOT_VISUAL_FILTER='^$' node tests/approved-visual.cjs` for the focused isolated browser checks. Set `CAFFOOT_CHROMIUM_PATH` if using a system Chromium. Mocked mail/proof responses in UI checks do not establish real external delivery. Native-browser, screen-reader and private owner acceptance remain separate from automated checks.
+
+
+## Device Editor Compatibility Controls
+
+The approved Batch 04 cards retain working controls authorised in Issue #326: type-specific hardware and catalogue management within Hardware & Lifecycle; custom OS/platform and version controls within Operating System / Platform; VLAN and available-IP selection within Network Identity with Create Subnet in Subnet Guidance; rack creation and software/service management in their respective cards; and Numbers, Code and Link alongside the existing Notes toolbar controls. These additions do not introduce cards or tabs.
+
+Software and server-service names allow up to 100 characters across inline creation, catalogue Add/Edit, retained managers and the settings-save API. Browser and server use the same browser-field length counting. Existing stored names and unknown metadata are not truncated or migrated; unchanged legacy names survive other catalogue updates. A new or renamed oversize name is rejected atomically. Other field limits and permissions remain unchanged.

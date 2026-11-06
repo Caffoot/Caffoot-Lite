@@ -99,7 +99,7 @@
 <!-- interface-template:device-management/fields-9 --><label class="catalog-type-option"><input type="checkbox" name="software-custom-type" value="{{slot:0}}" {{slot:1}}><span>{{slot:2}}</span></label><!-- /interface-template -->
 
 <!-- interface-template:device-management/fields-10 --><label class="catalog-modal-field" for="software-custom-name">Software Name
-               <input id="software-custom-name" maxlength="80" value="{{slot:0}}" placeholder="Software name">
+               <input id="software-custom-name" maxlength="100" value="{{slot:0}}" placeholder="Software name">
               </label><fieldset class="catalog-type-field" data-multi-device-types="software">
                 <legend>Available for Device Types</legend>
                 <p class="catalog-type-hint">Select all device types that apply.</p>
@@ -132,7 +132,7 @@
 <!-- interface-template:device-management/render-software-catalogue-html-4 --></div><p id="software-empty" class="hidden text-sm text-slate-600 dark:text-slate-300">No software matches these filters.</p></div><section class="space-y-3"><h3 class="text-lg font-bold">Hidden Software (<!-- /interface-template -->
 
 <!-- interface-template:device-management/fields-11 --><label class="catalog-modal-field" for="server-service-name-input">Service Name
-              <input id="server-service-name-input" maxlength="80" value="{{slot:0}}" placeholder="Service name">
+              <input id="server-service-name-input" maxlength="100" value="{{slot:0}}" placeholder="Service name">
               </label><!-- /interface-template -->
 
 <!-- interface-template:device-management/actions-6 --><button type="button" data-action="close-modal" class="btn btn-outline">Cancel</button>
@@ -217,7 +217,7 @@
 
 <!-- interface-template:device-management/open-server-service-manager-3 --><div class="p-5 sm:p-7 space-y-4 device-catalogue-manager">
                 <div class="flex items-start justify-between gap-3"><div><h3 class="text-lg font-bold">Manage Server Services</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Add, rename or remove server feature checkboxes. Existing device values are preserved.</p></div><button type="button" data-action="close-modal" aria-label="Close" class="app-modal-close">Close ×</button></div>
-                <div class="flex gap-2"><input id="server-service-manager-name-input" type="text" maxlength="80" placeholder="New server service" class="flex-1 min-w-0 h-11 px-3 rounded-xl border border-slate-400 dark:bg-slate-800"><button type="button" data-action="add-service" class="h-11 px-4 rounded-xl bg-blue-800 text-white">Add</button></div>
+                <div class="flex gap-2"><input id="server-service-manager-name-input" type="text" maxlength="100" placeholder="New server service" class="flex-1 min-w-0 h-11 px-3 rounded-xl border border-slate-400 dark:bg-slate-800"><button type="button" data-action="add-service" class="h-11 px-4 rounded-xl bg-blue-800 text-white">Add</button></div>
                 <div class="space-y-2 max-h-[48vh] overflow-y-auto">{{slot:0}}</div>
                 <div class="flex justify-between gap-2">{{slot:1}}<button type="button" data-action="close-modal" class="h-11 px-5 rounded-xl bg-blue-800 text-white">Done</button></div>
             </div><!-- /interface-template -->
@@ -242,7 +242,7 @@
 
 <!-- interface-template:device-management/open-configured-software-catalogue-manager-3 --><div class="p-5 sm:p-7 space-y-4 device-catalogue-manager">
                 <div class="flex items-start justify-between gap-3"><div><h3 class="text-lg font-bold">Manage Installed Software</h3><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">Manage the software checkboxes shown for servers, desktops, laptops and tablets. Removing an option preserves existing device records.</p></div><button type="button" data-action="close-modal" aria-label="Close" class="app-modal-close">Close ×</button></div>
-                <div class="flex gap-2"><input id="software-name" type="text" maxlength="80" placeholder="New software" class="flex-1 min-w-0 h-11 px-3 rounded-xl border border-slate-400 dark:bg-slate-800"><button type="button" data-action="add-software" class="h-11 px-4 rounded-xl bg-blue-800 text-white">Add</button></div>
+                <div class="flex gap-2"><input id="software-name" type="text" maxlength="100" placeholder="New software" class="flex-1 min-w-0 h-11 px-3 rounded-xl border border-slate-400 dark:bg-slate-800"><button type="button" data-action="add-software" class="h-11 px-4 rounded-xl bg-blue-800 text-white">Add</button></div>
                 <div class="space-y-2 max-h-[48vh] overflow-y-auto">{{slot:0}}</div>
                 <div class="flex justify-between gap-2">{{slot:1}}<button type="button" data-action="close-modal" class="h-11 px-5 rounded-xl bg-blue-800 text-white">Done</button></div>
             </div><!-- /interface-template -->

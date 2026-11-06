@@ -462,6 +462,19 @@ class SessionHttpTests(unittest.TestCase):
             response.read()
             connection.close()
 
+    def test_software_service_name_boundary_through_settings_api(self):
+        with patch("backend.server.PUBLIC_ORIGIN", "https://caffoot.example"):
+            for key in ("installedSoftware", "serverFunctions"):
+                for length in (81, 100, 101):
+                    payload = {"key": key, "value": [{"key": "fictional", "label": "N" * length}]}
+                    status, result = self.post("/api/inventory/settings/save", payload,
+                                               self.token, csrf_for_session(self.token))
+                    self.assertEqual(status, 400 if length == 101 else 200, result)
+                with sqlite3.connect(self.path) as db:
+                    saved = json.loads(db.execute("SELECT value_json FROM inventory_settings WHERE key=?",
+                                                   (key,)).fetchone()[0])
+                self.assertEqual(saved[0]["label"], "N" * 100)
+
 
 if __name__ == "__main__":
     unittest.main()

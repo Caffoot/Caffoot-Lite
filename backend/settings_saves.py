@@ -6,6 +6,8 @@ from datetime import datetime, timezone
 from .inventory import SETTINGS
 from .permissions import can_access
 
+SOFTWARE_SERVICE_NAME_MAX_LENGTH = 100
+
 # Managed hardware, software and device options belong to Devices.
 def save_inventory_setting(connection, account_id, key, value):
     if key not in SETTINGS:
@@ -18,6 +20,19 @@ def save_inventory_setting(connection, account_id, key, value):
         row = connection.execute(
             "SELECT value_json FROM inventory_settings WHERE key=?", (key,)
         ).fetchone()
+        if key in ("installedSoftware", "serverFunctions") and isinstance(value, list):
+            previous = json.loads(row[0]) if row else []
+            # Leave existing names untouched when saving other catalogue changes.
+            # New or renamed entries must use the same limit as the browser forms.
+            previous = previous if isinstance(previous, list) else []
+            for item in value:
+                if not isinstance(item, dict) or not isinstance(item.get("label"), str):
+                    continue
+                if (len(item["label"].encode("utf-16-le", errors="surrogatepass")) // 2 >
+                        SOFTWARE_SERVICE_NAME_MAX_LENGTH and not any(
+                            isinstance(old, dict) and old.get("key") == item.get("key") and
+                            old.get("label") == item["label"] for old in previous)):
+                    raise ValueError("Software and service names must be 100 characters or fewer.")
         if row is None or json.loads(row[0]) != value:
             connection.execute(
                 "INSERT INTO inventory_settings(key,value_json) VALUES(?,?) "
