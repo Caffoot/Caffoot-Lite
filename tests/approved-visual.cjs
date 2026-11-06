@@ -10,6 +10,7 @@ for(const source of JSON.parse(fs.readFileSync(path.join(root,'interface/design-
 }
 const seed=spawnSync('python3',[path.join(root,'tests/visual_fixtures.py'),tmp],{cwd:root,encoding:'utf8'});
 if(seed.status!==0)throw Error(seed.stderr);
+if(process.env.CAFFOOT_DEVICE_EDITOR_APPROVED==='1')require('./device-editor-approved.cjs').seed(tmp);
 fs.mkdirSync(out,{recursive:true});
 const creds=JSON.parse(fs.readFileSync(path.join(tmp,'test-credentials.json')));
 const address='https://127.0.0.1:8080';
@@ -68,6 +69,7 @@ async function main(){
  const login=await context.request.post(address+'/api/login',{headers:{Origin:address},data:{username:creds.username,password:creds.password,mfa_code:code}});
  if(!login.ok())throw Error('Visual test login failed');
  const page=await context.newPage(),ref=await context.newPage(),results=[];
+ if(process.env.CAFFOOT_DEVICE_EDITOR_APPROVED==='1')await require('./device-editor-approved.cjs')({page,reference:ref,sourceBase:'http://127.0.0.1:'+reference.address().port,context,out,fixtureDirectory:tmp});
  if(process.env.CAFFOOT_ACCEPTANCE_CORRECTIONS==='1')await require('./acceptance-corrections.cjs')({page,context,out});
  if(process.env.CAFFOOT_DEVICE_EDITOR_PRESERVATION==='1')await require('./device-editor-preservation.cjs')({page,reference:ref,sourceBase:'http://127.0.0.1:'+reference.address().port,context,out});
  if(process.env.CAFFOOT_DEVICE_EDITOR_FIDELITY==='1')await require('./device-editor-fidelity.cjs')({page,reference:ref,sourceBase:'http://127.0.0.1:'+reference.address().port,context,out,fixtureDirectory:tmp});

@@ -1490,14 +1490,14 @@ async function run(){
     'The live manufacturer selector must remain available');
   await approvedEditor.getByRole('tab',{name:'Software & Firmware'}).click();
   const softwareGrid=approvedEditor.locator('#device-form-panel-software > .device-review-grid');
-  assert.deepEqual(await softwareGrid.locator(':scope > .device-review-panel').evaluateAll(
+  assert.deepEqual(await softwareGrid.locator('.device-review-panel').evaluateAll(
     nodes=>nodes.map(el=>el.id)),
-    ['software-platform','device-form-installed-software-section','host-platform-fields','server-services-section'],
+    ['software-platform','device-form-installed-software-section','server-services-section'],
     'Source Software & Firmware cards must use the approved order');
   assert.ok(await softwareGrid.getByRole('heading',{name:'Operating System / Platform'}).isVisible(),
     'Operating System source card heading must be visible');
-  assert.equal(await softwareGrid.getByRole('heading',{name:'Virtualisation / Hypervisor',includeHidden:true}).count(),1,
-    'Physical hypervisor card must retain approved source heading');
+  assert.equal(await softwareGrid.locator('#host-platform-fields').count(),0,
+    'Hosting must use the owner-approved General controls');
   const platformGrid=softwareGrid.locator('#software-platform > .device-review-form-grid');
   for(const id of ['platform-select','platform-name','version-select','platform-version','device-form-windows-licence']){
     assert.equal(await platformGrid.locator('#'+id).count(),1,
@@ -1638,8 +1638,8 @@ async function run(){
     'Original Notes formatting toolbar must be present');
   assert.ok(await approvedNotes.locator('.device-review-form-grid .device-review-field.wide #dev-notes').isVisible(),
     'The working saved Notes field must use the source form grid');
-  assert.equal(await approvedNotes.locator('#dev-notes').evaluate(el=>Math.round(el.getBoundingClientRect().height)),125,
-    'Notes must use the pinned 125px minimum editor instead of the old 18-row layout');
+  assert.ok(await approvedNotes.locator('#dev-notes').evaluate(el=>el.getBoundingClientRect().height>125),
+    'Notes must fill the available desktop body height under the owner amendment');
   await approvedNotes.locator('#dev-notes').fill('**Browser note**');
   await approvedNotes.locator('#notes-toggle').click();
   assert.ok(await approvedNotes.locator('#notes-preview.device-review-note-preview').isVisible(),
@@ -1671,9 +1671,9 @@ async function run(){
     'Approved rack card must retain the original calculated-height collision warning');
   await page.locator('#dev-mount-type').selectOption('Tower / Floor Standing');
   await page.locator('#dev-location').selectOption('Unknown');
-  await approvedEditor.getByRole('tab',{name:'Software & Firmware'}).click();
-  assert.ok(await approvedEditor.locator('#device-form-panel-software #host-platform-fields').isVisible(),
-    'Physical hypervisor options belong in Software & Firmware');
+  await approvedEditor.getByRole('tab',{name:'General'}).click();
+  assert.ok(await approvedEditor.locator('#device-form-panel-general #host-platform-fields').isVisible(),
+    'Hosting belongs beneath Device Type on General');
   await page.locator('#device-hosting-enabled').check();
   await page.locator('#host-platform-select').selectOption('Proxmox VE');
   await page.getByRole('tab',{name:'Networking'}).click();
@@ -1859,9 +1859,9 @@ async function run(){
   await approvedEditor.locator('.device-review-head h2').getByText('Edit Device',{exact:true}).waitFor();
   assert.equal(await approvedEditor.locator('#dev-name').inputValue(),'browser-hypervisor',
     'Edit Device must retain the saved physical device identity');
-  await approvedEditor.getByRole('tab',{name:'Software & Firmware'}).click();
-  assert.ok(await approvedEditor.locator('#device-form-panel-software #host-platform-fields').isVisible(),
-    'Edit Device must retain approved hypervisor layout');
+  await approvedEditor.getByRole('tab',{name:'General'}).click();
+  assert.ok(await approvedEditor.locator('#device-form-panel-general #host-platform-fields').isVisible(),
+    'Edit Device retains the owner-approved General hosting controls');
   assert.ok(await approvedEditor.locator('#device-hosting-enabled').isChecked(),
     'Edit Device must preserve the saved physical hypervisor setting');
   await approvedEditor.locator('[data-action="close-modal"]').first().click();

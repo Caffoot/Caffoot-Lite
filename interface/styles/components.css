@@ -296,3 +296,21 @@ html{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sa
 #modal-content .device-review-head button.device-review-close{width:36px;height:36px;min-height:36px;min-width:36px;padding:0;font-size:20px}
 
 #modal-content .device-review-dialog .device-review-inline-add-actions .device-review-field input{height:39px;min-height:39px;padding:9px 11px;line-height:normal}
+
+/* Device form amendments are isolated from the read-only Details window. */
+.device-editor-dialog .device-editor-hosting{grid-column:1/-1;min-width:0}
+.device-editor-dialog .device-editor-hosting>.device-review-form-grid{margin-top:13px}
+.device-editor-dialog [hidden]{display:none!important}
+.device-editor-dialog>.device-editor-feedback{flex:none;margin:0 24px 12px;max-height:25dvh;overflow:auto}
+.device-editor-feedback{overflow-wrap:anywhere}
+.device-editor-notes .device-review-body{display:flex;min-height:0}
+.device-editor-notes #device-editor-form{display:flex;flex-direction:column;flex:1;min-height:0;min-width:0}
+.device-editor-notes #device-form-panel-notes{display:flex;flex:1;min-height:0}
+.device-editor-notes #device-form-panel-notes>.device-review-grid{display:flex;flex:1;min-height:0}
+.device-editor-notes #device-form-panel-notes .device-review-panel{display:flex;flex-direction:column;flex:1;min-height:0;min-width:0}
+.device-editor-notes .notes-workspace{display:flex;flex-direction:column;flex:1;min-height:0;gap:9px}
+.device-editor-notes .notes-workspace>.device-review-form-grid,
+.device-editor-notes .notes-workspace .device-review-field{display:flex;flex-direction:column;flex:1;min-height:0}
+.device-editor-notes #dev-notes,.device-editor-notes #notes-preview{flex:1;min-height:0!important;height:auto!important;max-height:100%;width:100%;resize:none;overflow:auto;box-sizing:border-box}
+@media(max-width:700px){.device-editor-dialog>.device-editor-feedback{margin:0 15px 12px}}
+@media(max-height:560px){.device-editor-notes .device-review-body{display:block}.device-editor-notes #dev-notes,.device-editor-notes #notes-preview{min-height:120px!important}}

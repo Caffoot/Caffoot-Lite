@@ -905,6 +905,7 @@ function hierarchyValidateTypes(subnets) {
         }
 
         function showToast(message, type = 'success') {
+            if(type==='error' && showDeviceEditorFeedback(message))return;
             const toast = document.getElementById('toast');
             const msg = document.getElementById('toast-message');
             const icon = document.getElementById('toast-icon');
@@ -955,7 +956,7 @@ function hierarchyValidateTypes(subnets) {
         document.addEventListener('invalid', function(event) {
             const field = event.target;
             const form = field.closest && field.closest('#modal-container form');
-            if (!form) return;
+            if (!form || form.id==='device-editor-form') return;
             field.setAttribute('aria-invalid', 'true');
             const error = form.querySelector('[data-form-error]');
             if (!error) return;
@@ -4397,7 +4398,7 @@ function openIpModal(ip) {
                     draft.rackUStart = 1;
                     draft.mountType = 'Desktop';
                     draft.location = source.location === 'Racked' ? '' : (source.location || '');
-                    showToast('No free rack slot was found. Select a mounting location before saving the copy.', 'error');
+                    draft.editorWarning='No free rack slot was found. Select a mounting location before saving the copy.';
                 }
             }
             deviceFormDraft = draft;
@@ -4443,7 +4444,7 @@ function openIpModal(ip) {
         function getAvailableServerServiceFieldKeys() { return getAvailableServerServiceCatalogueEntries().map(x=>x.key); }
         function openServerServiceManager() {
             preserveDeviceFormDuringOptionsDialog();
-            const items=getConfiguredServerServiceCatalogueEntries();
+            const items=getConfiguredServerServiceCatalogueEntries().filter(item=>!deviceOptionsReturnContent||deviceOptionsReturnContent.querySelector('#dev-type')?.value!=='Server - Physical'||item.key!=='serverService_Hypervisor');
             openModal(renderInterfaceTemplate("device-management/open-server-service-manager-3",[items.map(x=>renderInterfaceTemplate("device-management/open-server-service-manager-2",[deviceOptionsReturnContent ? renderInterfaceTemplate("device-management/open-server-service-manager-1",[escapeHtml(x.key),deviceDetailFormValues[x.key]===true?'checked':'',escapeHtml(x.label)]) : escapeHtml(x.label),escapeHtml(x.key),escapeHtml(x.label),escapeHtml(x.key),escapeHtml(x.label)])).join(''),deviceOptionsReturnContent ? '' : '<button type="button" data-action="open-manage-types" class="h-11 px-4 rounded-xl border border-slate-400">Back To Types</button>']));
         }
         function captureServerServiceSelections() {
@@ -4589,6 +4590,8 @@ function openIpModal(ip) {
             // A hidden required select otherwise prevents the submit handler running.
             const locationSelect=document.getElementById('dev-location');
             if(locationSelect) locationSelect.required=!virtual;
+            document.querySelectorAll('#device-editor-form [data-device-editor-location]').forEach(el=>el.hidden=virtual);
+            document.getElementById('device-form-physical-purpose')?.classList.toggle('hidden',virtual);
             // Keep Add Device tabs in sync with deployment selection.
             const locationArea=document.getElementById('device-form-location-area');
             if(locationArea){
@@ -4670,7 +4673,7 @@ function openIpModal(ip) {
         function getConfiguredSoftwareCatalogueFieldKeys(){return getConfiguredSoftwareCatalogueEntries().map(x=>x.key);}
         function openConfiguredSoftwareCatalogueManager(){
             preserveDeviceFormDuringOptionsDialog();
-            const items=getConfiguredSoftwareCatalogueEntries();
+            const items=getConfiguredSoftwareCatalogueEntries().filter(item=>!deviceOptionsReturnContent||!isDeviceEditorHypervisorProduct(item));
             openModal(renderInterfaceTemplate("device-management/open-configured-software-catalogue-manager-3",[items.map(x=>renderInterfaceTemplate("device-management/open-configured-software-catalogue-manager-2",[deviceOptionsReturnContent ? renderInterfaceTemplate("device-management/open-configured-software-catalogue-manager-1",[escapeHtml(x.key),deviceDetailFormValues[x.key]===true?'checked':'',escapeHtml(x.label)]) : escapeHtml(x.label),escapeHtml(x.key),escapeHtml(x.label),escapeHtml(x.key),escapeHtml(x.label)])).join(''),deviceOptionsReturnContent ? '' : '<button type="button" data-action="open-manage-types" class="h-11 px-4 rounded-xl border border-slate-400">Back To Types</button>']));
         }
         function captureInstalledSoftwareSelections(){
@@ -4687,6 +4690,7 @@ function openIpModal(ip) {
             const entered=action==='add'?document.getElementById('software-name')?.value:action==='rename'?prompt('Rename software:',old.label):'';
             if(action!=='delete'&&entered===null)return;
             const label=String(entered||'').trim();
+            if(deviceOptionsReturnContent&&action!=='delete'&&isDeviceEditorHypervisorProduct(label)){showToast('Configure hypervisor products using the hosting controls on General.','error');return;}
             if(action!=='delete'&&(!label||label.length>SOFTWARE_SERVICE_NAME_MAX_LENGTH)){showToast(`Enter a software name (up to ${SOFTWARE_SERVICE_NAME_MAX_LENGTH} characters).`,'error');return;}
             if(action!=='delete'&&items.some(x=>x.label.toLowerCase()===label.toLowerCase()&&x.key!==key)){showToast('That software already exists.','error');return;}
             if(action==='delete'&&!confirm(`Remove "${old.label}" from software options? Existing device details will be retained.`))return;
@@ -4760,15 +4764,103 @@ function openIpModal(ip) {
                 legacySoftwareFieldKeys.includes(key) ||
                 legacyServerServiceFieldKeys.includes(key);
         }
+        const DEVICE_EDITOR_HYPERVISOR_PRODUCTS = ['VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng'];
+        function isDeviceEditorHypervisorProduct(value) {
+            const name = String(value?.label ?? value?.name ?? value ?? '').trim().toLowerCase();
+            const products = [...DEVICE_EDITOR_HYPERVISOR_PRODUCTS, ...appState.devices
+                .filter(device => device.type === 'Server - Physical')
+                .map(device => device.typeDetails?.hypervisorProduct).filter(Boolean)];
+            return products.some(product => String(product).trim().toLowerCase() === name);
+        }
+        function renderDeviceEditorRetainedSoftware(type, values) {
+            const retained = getAvailableSoftwareCatalogueEntries().filter(item =>
+                getSoftwareFieldsForDeviceType(type).includes(item.key) && values[item.key] === true && isDeviceEditorHypervisorProduct(item));
+            return retained.length ? '<p class="device-review-quiet" data-retained-hypervisor-software>Previously recorded software retained: '
+                + retained.map(item => escapeHtml(item.label)).join(', ') + '. Configure hosting on General.</p>' : '';
+        }
+        function refreshDeviceEditorHostVersionChoices() {
+            const select = document.getElementById('host-version-select');
+            const version = document.getElementById('host-version');
+            if (!select || !version) return;
+            const choices = getPlatformVersionOptions(document.getElementById('host-platform')?.value || '');
+            select.replaceChildren(new Option('Select a version...',''), ...choices.map(value => new Option(value,value)), new Option('Custom / Other...','__custom__'));
+            const custom = !!version.value && !choices.includes(version.value);
+            select.value = custom ? '__custom__' : version.value;
+            version.hidden = !custom;
+        }
+        function showDeviceEditorFeedback(message, fieldId = '') {
+            const form = document.querySelector('#modal-container:not(.hidden) #device-editor-form');
+            if (!form) return false;
+            const dialog = form.closest('.device-editor-dialog');
+            let feedback = dialog?.querySelector('[data-device-editor-feedback]');
+            if (!feedback) return false;
+            const nested = document.querySelector('#hypervisor-selection-dialog,#platform-dialog,#discard-dialog');
+            if (nested) {
+                feedback = nested.querySelector('[data-device-editor-feedback]');
+                if (!feedback) {
+                    feedback = document.createElement('p');feedback.className = 'form-error device-editor-feedback';
+                    feedback.dataset.deviceEditorFeedback = '';feedback.setAttribute('role','alert');
+                    nested.firstElementChild.appendChild(feedback);
+                }
+            }
+            feedback.textContent = String(message);feedback.hidden = false;feedback.classList.add('is-visible');
+            const rules = [
+                [/hypervisor product|hosting.*product|host product/i,'host-platform-select'],
+                [/physical.*host|host.*eligible|eligible.*host/i,'dev-virtual-host'],
+                [/vCPU/i,'dev-vmVcpu'],[/allocated ram/i,'dev-vmRamGb'],[/virtual disk/i,'dev-vmDiskGb'],[/network adapters/i,'dev-vmNicCount'],
+                [/device name|hostname|this name|unique.*name/i,'dev-name'],[/device type|identity/i,'dev-type'],
+                [/mounting|free rack slot/i,'dev-mount-type'],[/location/i,'dev-location'],[/subnet/i,'dev-subnet'],
+                [/primary ip|ip address|device\/ipam/i,'dev-ip'],[/rack.*height|U height/i,'dev-rack-height'],[/rack|starting U|start U/i,'dev-rack-u']
+            ];
+            const field = form.querySelector('#' + (fieldId || rules.find(([pattern]) => pattern.test(message))?.[1] || 'device-editor-no-field'));
+            if (field && !nested) {
+                const panel = field.closest('[role="tabpanel"]');
+                if (panel) dialog.querySelector('[aria-controls="' + panel.id + '"]')?.click();
+                field.setAttribute('aria-invalid','true');
+                requestAnimationFrame(() => {
+                    const target = field.classList.contains('caffoot-search-native') ? field.nextElementSibling?.querySelector('.caffoot-search-trigger') : field;
+                    if (target?.getClientRects().length) {target.scrollIntoView({block:'nearest',inline:'nearest'});target.focus({preventScroll:true});}
+                });
+            } else if (!nested) {feedback.tabIndex = -1;feedback.focus({preventScroll:true});}
+            return true;
+        }
+        function bindDeviceEditorValidation(form) {
+            form.addEventListener('invalid', event => {
+                event.preventDefault();event.target.setAttribute('aria-invalid','true');
+                if (form.dataset.pendingInvalid) return;
+                form.dataset.pendingInvalid = 'true';
+                queueMicrotask(() => {
+                    delete form.dataset.pendingInvalid;
+                    const first = [...form.elements].find(field => field.willValidate && !field.validity.valid);
+                    if (first) {
+                        const label = first.labels?.[0]?.textContent.replace('*','').trim() || first.getAttribute('aria-label') || 'This field';
+                        showDeviceEditorFeedback(label + ': ' + first.validationMessage,first.id);
+                    }
+                });
+            },true);
+            form.addEventListener('submit', event => {
+                const ordinary = document.getElementById('platform-name')?.value || '';
+                if (!isHypervisorHostingEnabledInDeviceForm() && isDeviceEditorHypervisorProduct(ordinary) && ordinary !== form.dataset.originalPlatform) {
+                    event.preventDefault();event.stopImmediatePropagation();
+                    showDeviceEditorFeedback('Configure hypervisor products using the hosting controls on General.','device-hosting-enabled');
+                }
+            },true);
+            form.addEventListener('input', event => {
+                if (!event.target.matches('input,select,textarea')) return;
+                const feedback = form.closest('.device-editor-dialog').querySelector('[data-device-editor-feedback]');
+                feedback.hidden = true;feedback.classList.remove('is-visible');
+            });
+        }
+
         function renderInlineDevicePicker(kind,type,values={}) {
             const software=kind==='software', label=software?'Software':'Server Service';
             const typeKeys=new Set(getSoftwareFieldsForDeviceType(type));
-            const entries=(software?getAvailableSoftwareCatalogueEntries().filter(item=>typeKeys.has(item.key)):
-              getAvailableServerServiceCatalogueEntries());
+            const entries=(software?getAvailableSoftwareCatalogueEntries().filter(item=>typeKeys.has(item.key) && !isDeviceEditorHypervisorProduct(item)):
+              getAvailableServerServiceCatalogueEntries().filter(item=>type!=='Server - Physical'||item.key!=='serverService_Hypervisor'));
             const selected=entries.filter(item=>values[item.key]===true).length;
             const deviceTypes=getUniqueDeviceTypes();
             const choices=entries.map(item=>renderInterfaceTemplate("devices/choices-1",[escapeHtml(item.key),values[item.key]===true?'checked':'',escapeHtml(item.label)])).join('');
-            return renderInterfaceTemplate("devices/render-inline-device-picker-3",[kind,kind,software?'software':'server services',kind,kind,software?'software':'server services',kind,label,kind,selected,entries.length,software?'Installed Software':'Server Services',kind,choices,kind,label,kind,label,kind,kind,label.toLowerCase(),software?renderInterfaceTemplate("devices/render-inline-device-picker-2",[deviceTypes.map(t=>renderInterfaceTemplate("devices/render-inline-device-picker-1",[escapeHtml(t),t===type?'checked':'',escapeHtml(t)])).join('')]):'',kind,kind]);
+            return (software ? renderDeviceEditorRetainedSoftware(type,values) : '') + renderInterfaceTemplate("devices/render-inline-device-picker-3",[kind,kind,software?'software':'server services',kind,kind,software?'software':'server services',kind,label,kind,selected,entries.length,software?'Installed Software':'Server Services',kind,choices,kind,label,kind,label,kind,kind,label.toLowerCase(),software?renderInterfaceTemplate("devices/render-inline-device-picker-2",[deviceTypes.map(t=>renderInterfaceTemplate("devices/render-inline-device-picker-1",[escapeHtml(t),t===type?'checked':'',escapeHtml(t)])).join('')]):'',kind,kind]);
         }
                 function updateInlinePickerCount(picker) {
             if(!picker)return;
@@ -4808,6 +4900,7 @@ function openIpModal(ip) {
             const label=String(input?.value||'').trim();
             if(!label||label.length>SOFTWARE_SERVICE_NAME_MAX_LENGTH)return fail(`Enter a name of ${SOFTWARE_SERVICE_NAME_MAX_LENGTH} characters or fewer.`);
             const software=kind==='software';
+            if(software && isDeviceEditorHypervisorProduct(label))return showDeviceEditorFeedback('Configure hypervisor products using the hosting controls on General.','device-hosting-enabled');
             const currentType=document.getElementById('dev-type')?.value||'';
             const knownTypes=new Set(getUniqueDeviceTypes());
             const types=software?[...panel.querySelectorAll('[data-review-associated-types="software"] input:checked')].map(x=>x.value).filter(t=>knownTypes.has(t)):[];
@@ -4992,9 +5085,20 @@ function openIpModal(ip) {
             const isComputer = group === 'server' || group === 'computer';
             const name = values.softwarePlatform ?? '';
             const version = values.softwareVersion ?? '';
-            const choices = getPlatformOptionsForDeviceType(type);
-            const options = [...new Set([...choices, ...(name && !choices.includes(name) ? [name] : [])])];
-            return renderInterfaceTemplate("device-management/render-software-platform-fields-1",['Operating System',!name?'selected':'',options.map(x => `<option value="${escapeHtml(x)}" ${name===x?'selected':''}>${escapeHtml(x)}</option>`).join(''),escapeHtml(String(name)),name && !choices.includes(name) ? '' : 'hidden','OS / Platform version',getPlatformVersionOptions(name).map(v=>`<option value="${escapeHtml(v)}" ${version===v?'selected':''}>${escapeHtml(v)}</option>`).join(''),version && !getPlatformVersionOptions(name).includes(version)?'selected':'',escapeHtml(String(version)),version && !getPlatformVersionOptions(name).includes(version)?'':'hidden',isWindowsPlatform(name)?'':'hidden',escapeHtml(String(values.windowsLicence ?? ''))]);
+            const retained = isDeviceEditorHypervisorProduct(name);
+            const choices = getPlatformOptionsForDeviceType(type).filter(value=>!isDeviceEditorHypervisorProduct(value));
+            const options = [...new Set([...choices, ...(name && !retained && !choices.includes(name) ? [name] : [])])];
+            let markup = renderInterfaceTemplate("device-management/render-software-platform-fields-1",['Operating System',!name?'selected':'',options.map(x => `<option value="${escapeHtml(x)}" ${name===x?'selected':''}>${escapeHtml(x)}</option>`).join(''),escapeHtml(String(name)),name && !choices.includes(name) ? '' : 'hidden','OS / Platform version',getPlatformVersionOptions(name).map(v=>`<option value="${escapeHtml(v)}" ${version===v?'selected':''}>${escapeHtml(v)}</option>`).join(''),version && !getPlatformVersionOptions(name).includes(version)?'selected':'',escapeHtml(String(version)),version && !getPlatformVersionOptions(name).includes(version)?'':'hidden',isWindowsPlatform(name)?'':'hidden',escapeHtml(String(values.windowsLicence ?? ''))]);
+            if(retained){
+                const container=document.createElement('div');container.innerHTML=markup;
+                container.querySelector('#platform-select').value='';
+                container.querySelector('#platform-name').hidden=true;
+                const notice=document.createElement('small');notice.dataset.retainedHypervisorOs='';
+                notice.textContent='Previously recorded OS retained: '+name+'. Configure hosting on General.';
+                container.querySelector('#platform-select').parentElement.append(notice);
+                markup=container.innerHTML;
+            }
+            return markup;
         }
         function bindSoftwarePlatformFields() {
             const select = document.getElementById('platform-select');
@@ -5060,7 +5164,7 @@ function openIpModal(ip) {
             const fields = document.getElementById('device-hosting-details');
             if (fields) fields.hidden = !enabled;
             const platform = document.getElementById('software-platform');
-            if (platform) platform.hidden = false;
+            if (platform) platform.hidden = document.getElementById('dev-type')?.value === 'Server - Physical' && enabled;
             if(document.getElementById('dev-type')?.value==='Server - Physical'){
                 const service=document.querySelector('.device-review-inline-pick input[data-device-detail-field="serverService_Hypervisor"]');
                 if(service){service.checked=enabled;updateInlinePickerCount(service.closest('.device-review-inline-pick'));}
@@ -5093,6 +5197,8 @@ function openIpModal(ip) {
             if(installedFields) installedFields.innerHTML=renderInlineDevicePicker('software',type,deviceDetailFormValues);
             document.getElementById('details-section')?.classList.toggle('hidden',!getDetailFieldsForDeviceType(type).some(key=>!isSoftwareDetailField(key)));
             document.getElementById('server-services-section')?.classList.toggle('hidden',deviceTypeDetailGroups[String(type||'').toLowerCase().trim()]!=='server');
+            const serviceWrapper=document.querySelector('#device-editor-form .device-server-services');
+            if(serviceWrapper)serviceWrapper.hidden=deviceTypeDetailGroups[String(type||'').toLowerCase().trim()]!=='server';
             document.getElementById('device-form-installed-software-section')?.classList.remove('hidden');
             const group=deviceTypeDetailGroups[String(type||'').toLowerCase().trim()];
             document.getElementById('manage-server-services-button')?.classList.toggle('hidden',group!=='server');
@@ -5426,7 +5532,7 @@ function openIpModal(ip) {
                 deployment.querySelector('select').disabled=true;
                 identityFields.querySelectorAll('#dev-type,#dev-vm-purpose').forEach(select=>{select.disabled=true;});
                 deployment.querySelector('label').textContent='Deployment';
-                identityFields.querySelector('#device-form-physical-purpose')?.classList.remove('hidden');
+                identityFields.querySelector('#device-form-physical-purpose')?.classList.toggle('hidden',isVirtualDevice);
                 identityFields.querySelector('#device-form-vm-purpose-wrapper')?.classList.toggle('hidden',!isVirtualDevice);
 
                 identityFields.querySelector('p.text-sm.font-semibold')?.remove();
@@ -5436,13 +5542,16 @@ function openIpModal(ip) {
                 help.textContent=form.dataset.deviceId?'Existing deployment is not changed by editing.':'VMs can only be created when an eligible physical hypervisor exists.';
                 deployment.appendChild(help);
             }
+            if(locationRow)locationRow.dataset.deviceEditorLocation='';
             const locationActions=locationRow?.querySelector('.device-review-catalogue-actions');
             if(locationActions){
+                locationActions.dataset.deviceEditorLocation='';
                 locationActions.style.margin='0 0 2px';
                 identityFields.appendChild(locationActions);
             }
             const locationPanel=locationRow?.querySelector('#dev-create-location-panel');
             if(locationPanel){
+                locationPanel.dataset.deviceEditorLocation='';
                 locationPanel.className='device-review-inline-create';
                 const title=document.createElement('h4');title.textContent='Add Location without leaving the device form';
                 const label=locationPanel.querySelector('label');
@@ -5517,43 +5626,33 @@ function openIpModal(ip) {
             const platformContainer = document.createElement('div');
             platformContainer.innerHTML = renderSoftwarePlatformFields(form.querySelector('#dev-type')?.value || '', deviceDetailFormValues);
             softwareGrid.appendChild(platformContainer.firstElementChild);
-            // The approved design presents hypervisor settings alongside Software & Firmware.
+            // The owner places the one physical-host setup immediately beneath Device Type.
             const hostingFields = sections[0].querySelector('#host-platform-fields');
-            if (hostingFields) {
-                hostingFields.classList.remove('device-review-field','rounded-xl','border','border-blue-200','dark:border-blue-800','bg-blue-50','dark:bg-slate-800','p-4','space-y-3');
-                hostingFields.classList.add('form-section-card', 'device-review-panel', 'device-review-hypervisor-configuration');
-                const hostingCheckbox=hostingFields.querySelector('#device-hosting-enabled');
-                const hostingLabel=hostingCheckbox?.closest('label');
-                if(hostingLabel){
-                    hostingLabel.className='device-review-checkbox';hostingCheckbox.className='';
-                    const copy=hostingLabel.querySelector('span');
-                    copy.replaceChildren(document.createTextNode('This physical server hosts virtual machines'));
-                    const help=document.createElement('small');help.textContent='Hosted VMs remain linked to their physical host.';copy.append(help);
-                }
-                const configuration=hostingFields.querySelector('#device-hosting-details');
-                if(configuration){
-                    configuration.className='device-review-form-grid';configuration.style.marginTop='13px';
-                    configuration.querySelector(':scope >p')?.remove();
-                    for(const [id,labelText] of [['host-platform-select','Hypervisor software'],['host-version','Hypervisor version']]){
-                        const control=configuration.querySelector('#'+id);
-                        const label=configuration.querySelector('label[for="'+(id==='host-platform-select'?'host-platform':id)+'"]');
-                        if(!control||!label)continue;
-                        const field=document.createElement('div');field.className='device-review-field';
-                        label.htmlFor=id;label.textContent=labelText;label.className='';
-                        field.append(label,control);
-                        if(id==='host-platform-select')field.append(configuration.querySelector('#host-platform'));
-                        configuration.append(field);
+            if(hostingFields){
+                hostingFields.className='device-editor-hosting wide';
+                hostingFields.querySelector(':scope > p')?.remove();
+                const typeField=identityFields.querySelector('#device-form-physical-purpose');
+                typeField.after(hostingFields);
+                const checkbox=hostingFields.querySelector('#device-hosting-enabled');
+                const label=checkbox.closest('label');label.className='device-review-checkbox';checkbox.className='';
+                const text=label.querySelector('span');text.replaceChildren(document.createTextNode('This physical server hosts virtual machines'));
+                const help=document.createElement('small');help.textContent='Hosted VMs remain linked to their physical host.';text.append(help);
+                const config=hostingFields.querySelector('#device-hosting-details');
+                config.className='device-review-form-grid';
+                config.querySelector(':scope > p')?.remove();
+                for(const [id,title] of [['host-platform-select','Hypervisor Software/OS'],['host-version','Version']]){
+                    const control=config.querySelector('#'+id),oldLabel=config.querySelector('label[for="'+(id==='host-platform-select'?'host-platform':id)+'"]');
+                    const field=document.createElement('div');field.className='device-review-field';oldLabel.htmlFor=id;oldLabel.textContent=title;oldLabel.className='';field.append(oldLabel);
+                    if(id==='host-platform-select')field.append(control,config.querySelector('#host-platform'));
+                    else{
+                        const select=document.createElement('select');select.id='host-version-select';select.setAttribute('aria-label','Hypervisor Version');
+                        control.setAttribute('aria-label','Custom Hypervisor Version');field.append(select,control);
+                        select.addEventListener('change',()=>{control.hidden=select.value!=='__custom__';control.value=control.hidden?select.value:'';if(!control.hidden)control.focus();});
                     }
+                    config.append(field);
                 }
-                const previousTitle = hostingFields.querySelector(':scope > p');
-                if (previousTitle) {
-                    const heading = document.createElement('h3');
-                    heading.innerHTML = '<span class="mini-icon" aria-hidden="true">▣</span>Virtualisation / Hypervisor';
-                    const subtitle = document.createElement('p');
-                    subtitle.textContent = 'Physical servers that host VMs retain their hypervisor configuration.';
-                    previousTitle.replaceWith(heading, subtitle);
-                }
-                softwareGrid.appendChild(hostingFields);
+                refreshDeviceEditorHostVersionChoices();
+                hostingFields.querySelector('#host-platform-select').addEventListener('change',()=>queueMicrotask(refreshDeviceEditorHostVersionChoices));
             }
             bindSoftwarePlatformFields();
             syncHostingFieldVisibility();
@@ -5568,11 +5667,11 @@ function openIpModal(ip) {
                 const group = deviceTypeDetailGroups[String(type||'').toLowerCase().trim()];
                 const servicesSection = document.createElement('div');
                 servicesSection.id = 'server-services-section';
-                servicesSection.className = 'form-section-card device-review-panel space-y-4';
+                servicesSection.className = 'device-review-panel';
                 servicesSection.innerHTML = renderInterfaceTemplate("devices/initialise-device-tabs-1",[]);
                 const installedSection = document.createElement('div');
                 installedSection.id = 'device-form-installed-software-section';
-                installedSection.className = 'form-section-card device-review-panel space-y-4';
+                installedSection.className = 'device-review-panel';
                 installedSection.innerHTML = renderInterfaceTemplate("devices/initialise-device-tabs-2",[]);
                 if (managers) {
                     const servicesManager = managers.querySelector('#manage-server-services-button');
@@ -5588,11 +5687,11 @@ function openIpModal(ip) {
                         installedSection.insertBefore(softwareManager, installedSection.querySelector('#device-form-installed-software-fields'));
                     }
                 }
-                softwareGrid.appendChild(servicesSection);
-                softwareGrid.insertBefore(installedSection, hostingFields || servicesSection);
+                const serviceWrapper=document.createElement('div');serviceWrapper.className='device-server-services';serviceWrapper.append(servicesSection);
+                softwareGrid.append(installedSection,serviceWrapper);
                 servicesSection.querySelector('#server-services-fields').innerHTML = renderInlineDevicePicker('services', type, deviceDetailFormValues);
                 installedSection.querySelector('#device-form-installed-software-fields').innerHTML = renderInlineDevicePicker('software', type, deviceDetailFormValues);
-                servicesSection.classList.toggle('hidden', group !== 'server');
+                servicesSection.classList.toggle('hidden', group !== 'server');serviceWrapper.hidden=group!=='server';
                 installedSection.classList.remove('hidden');
                 hardwareDetails.classList.toggle('hidden', !getDetailFieldsForDeviceType(type).some(key => !isSoftwareDetailField(key)));
             }
@@ -5603,6 +5702,7 @@ function openIpModal(ip) {
                 const body=form.closest('.device-review-body');
                 if(body)body.scrollTop=0;
                 form.dataset.activeDeviceTab = id;
+                form.closest('.device-editor-dialog')?.classList.toggle('device-editor-notes',id==='notes');
                 labels.forEach(([key]) => {
                     const selected = key === id;
                     buttons.get(key).setAttribute('aria-selected', String(selected));
@@ -5630,6 +5730,7 @@ function openIpModal(ip) {
             });
             // Native constraint validation needs the invalid control's panel visible.
             form.addEventListener('invalid', event => {
+                if(form.id==='device-editor-form')return;
                 const panel = event.target.closest('.device-form-panel');
                 if (panel && panel.hidden) {
                     const id = labels.find(([key]) => panels.get(key) === panel)?.[0];
@@ -5650,6 +5751,8 @@ function openIpModal(ip) {
                     if(id==='dev-virtual-host'){const help=document.createElement('small');help.textContent='Required for new virtual machines; existing legacy assignments are preserved.';label.parentElement.append(help);}
                 }
                 form.id = 'device-editor-form';
+                form.dataset.originalPlatform=String(deviceDetailFormValues.softwarePlatform??'');
+                dialog.classList.add('device-editor-dialog');
                 dialog.querySelector('.device-review-head').append(nav);
                 const body = document.createElement('div');
                 body.className = 'device-review-body';
@@ -5658,6 +5761,8 @@ function openIpModal(ip) {
                 const footer = form.querySelector('.form-actions');
                 if (footer) {
                     footer.className = 'device-review-footer';
+                    const feedback=form.querySelector('[data-form-error]');
+                    if(feedback){feedback.dataset.deviceEditorFeedback='';feedback.classList.add('device-editor-feedback');feedback.hidden=true;dialog.append(feedback);}
                     if(form.dataset.deviceId||form.dataset.duplicateSourceId){
                         const back=footer.querySelector('[data-action="close-modal"]');
                         back.textContent='Back to Details';back.dataset.action='device-editor-back';back.dataset.id=form.dataset.deviceId||form.dataset.duplicateSourceId;
@@ -5666,6 +5771,8 @@ function openIpModal(ip) {
                     footer.querySelector('button[type="submit"]').setAttribute('form', form.id);
                     dialog.append(footer);
                 }
+                bindDeviceEditorValidation(form);
+                dialog.classList.toggle('device-editor-notes',active==='notes');
             }
         }
 
@@ -5703,7 +5810,7 @@ function openIpModal(ip) {
             const retainedHostId = draft?.virtualHostId ?? device?.virtualHostId ?? '';
             const missingLegacyHost = device && isExistingVirtual && retainedHostId && retainedHostId===device.virtualHostId &&
                 !appState.devices.some(host=>host.id===retainedHostId&&host.type==='Server - Physical');
-            openDeviceReviewModal(renderInterfaceTemplate("device-details/open-device-modal-5",[device ? 'Edit Device' : isDuplicate ? 'Duplicate Device' : 'Add New Device',device ? escapeHtml(device.name)+' · Existing device details' : isDuplicate ? 'Enter a unique name and IP. The original device remains unchanged.' : 'Configure a physical device or virtual machine.',isDuplicate ? renderInterfaceTemplate("device-details/open-device-modal-1",[]) : '',escapeHtml(device?.id || draft?.deviceId || ''),escapeHtml(draft?.name ?? device?.name ?? ''),device ? 'hidden' : '',!isExistingVirtual?'selected':'',hasEligiblePhysicalHost||isExistingVirtual?`<option value="virtual" ${isExistingVirtual?'selected':''}>Virtual Machine (VM)</option>`:'',isExistingVirtual || device ? 'hidden' : '',currentType === '' ? 'selected' : '',availableFormTypes.map(t => `<option value="${escapeHtml(t)}" ${currentType === t ? 'selected' : ''}>${escapeHtml(t === 'Server - Physical' ? 'Server' : t)}</option>`).join(''),currentType==='Server - Virtual'?'selected':'',isExistingVirtual && !device ? '' : 'hidden',vmPurposes.map(([label,value])=>`<option value="${escapeHtml(value)}" ${currentType===value?'selected':''}>${escapeHtml(label)}</option>`).join(''),device ? renderInterfaceTemplate("device-details/open-device-modal-2",[escapeHtml(isExistingVirtual ? 'Virtual ' : 'Physical '),escapeHtml(currentType === 'Server - Virtual' || currentType === 'Server - Physical' ? 'Server' : currentType)]) : '',['','VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng','Other'].map(x=>'<option value="'+escapeHtml(x)+'" '+((draft?.virtualPlatform ?? device?.virtualPlatform ?? '')===x?'selected':'')+'>'+escapeHtml(x||'Select Platform...')+'</option>').join(''),device?.type === 'Server - Virtual' ? '(legacy assignments preserved)' : '(required)',appState.devices.filter(x=>x.id!==(device?.id||'')&&x.type==='Server - Physical'&&((x.status!=='Retired'&&(x.typeDetails?.serverService_Hypervisor===true||x.serverService_Hypervisor===true))||x.id===(draft?.virtualHostId??device?.virtualHostId??''))).map(x=>'<option value="'+escapeHtml(x.id)+'" '+((draft?.virtualHostId ?? device?.virtualHostId ?? '')===x.id?'selected':'')+'>'+escapeHtml(x.name)+(x.status==='Retired'||!(x.typeDetails?.serverService_Hypervisor===true||x.serverService_Hypervisor===true)?' (existing legacy assignment)':'')+'</option>').join('')+(missingLegacyHost?'<option value="'+escapeHtml(retainedHostId)+'" selected>Missing or legacy host (retained)</option>':''),[['vmVcpu','vCPU count'],['vmRamGb','Allocated RAM (GB)'],['vmDiskGb','Virtual disk (GB)'],['vmNicCount','Virtual network adapters']].map(([key,label])=>renderInterfaceTemplate("device-details/open-device-modal-3",[key,label,key,key,escapeHtml(deviceDetailFormValues[key] ?? '')])).join(''),deviceDetailFormValues.serverService_Hypervisor === true ? 'checked' : '',deviceDetailFormValues.serverService_Hypervisor === true ? '' : 'hidden',['VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng'].map(p=>`<option value="${escapeHtml(p)}" ${deviceDetailFormValues.hypervisorProduct===p?'selected':''}>${escapeHtml(p)}</option>`).join(''),deviceDetailFormValues.hypervisorProduct && !['VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng'].includes(deviceDetailFormValues.hypervisorProduct)?'selected':'',escapeHtml(deviceDetailFormValues.hypervisorProduct || ''),deviceDetailFormValues.hypervisorProduct && !['VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng'].includes(deviceDetailFormValues.hypervisorProduct)?'':'hidden',escapeHtml(deviceDetailFormValues.hypervisorVersion || ''),device ? renderInterfaceTemplate("device-details/open-device-modal-4",[['Active','Maintenance','Retired'].map(v=>`<option value="${v}" ${(draft?.status ?? device?.status ?? 'Active')===v?'selected':''}>${v}</option>`).join('')]) : '<input type="hidden" id="dev-status" value="Active">',escapeHtml(draft?.manufacturer ?? device?.manufacturer ?? ''),escapeHtml(draft?.model ?? device?.model ?? ''),escapeHtml(draft?.serialNumber ?? device?.serialNumber ?? ''),renderInlineHardwareQuickAdd("manufacturer"),renderInlineHardwareQuickAdd("model"),getDetailFieldsForDeviceType(currentType).length===0?'hidden':'',deviceTypeDetailGroups[String(currentType||'').toLowerCase().trim()]==='server'?'':'hidden',['server','computer'].includes(deviceTypeDetailGroups[String(currentType||'').toLowerCase().trim()])?'':'hidden',renderDeviceDetailFields(currentType,deviceDetailFormValues,'hardware'),renderDeviceMountOptions(currentType,mountType),escapeHtml(currentLoc),currentLoc === '' ? 'selected' : '',locations.map(l => `<option value="${escapeHtml(l)}" ${currentLoc === l ? 'selected' : ''}>${escapeHtml(l)}</option>`).join(''),mountType === 'Rack Mounted' ? '' : 'hidden',mountType === 'Rack Mounted' ? '' : 'hidden',!appState.racks.length ? 'selected' : '',appState.racks.length ? 'Select a network rack...' : 'No network racks created yet',appState.racks.map(r => `<option value="${escapeHtml(r.id)}" ${(draft?.rackId ?? device?.rackId) === r.id ? 'selected' : ''}>${escapeHtml(r.name)}</option>`).join(''),(draft?.face ?? device?.face) !== 'rear' ? 'selected' : '',(draft?.face ?? device?.face) === 'rear' ? 'selected' : '',escapeHtml(String(draft?.rackUStart ?? device?.rackUStart ?? 1)),currentHeight,appState.subnets.filter(s => s.kind === 'container' && !s.parentId).map(b => `<option value="${escapeHtml(b.id)}" ${currentSubnet && getDeviceSubnetTopLevelBlock(currentSubnet)?.id === b.id ? 'selected' : ''}>${escapeHtml(b.name || b.cidr)}</option>`).join(''),currentSubnet && !getDeviceSubnetTopLevelBlock(currentSubnet) ? 'selected' : '',escapeHtml(currentSubnet?.id || ''),escapeHtml(draft?.primaryIp ?? device?.primaryIp ?? ''),(draft?.ipReserved ?? device?.ipReserved ?? (device?.primaryIp && appState.ipAllocations[device.primaryIp]?.status === 'Reserved')) ? 'checked' : '',escapeHtml(draft?.notes ?? device?.notes ?? '')]));
+            openDeviceReviewModal(renderInterfaceTemplate("device-details/open-device-modal-5",[device ? 'Edit Device' : isDuplicate ? 'Duplicate Device' : 'Add New Device',device ? escapeHtml(device.name)+' · Existing device details' : isDuplicate ? 'Enter a unique name and IP. The original device is unchanged.' : 'Configure a physical device or VM with the existing Caffoot fields.','',escapeHtml(device?.id || draft?.deviceId || ''),escapeHtml(draft?.name ?? device?.name ?? ''),device ? 'hidden' : '',!isExistingVirtual?'selected':'',hasEligiblePhysicalHost||isExistingVirtual?`<option value="virtual" ${isExistingVirtual?'selected':''}>Virtual Machine (VM)</option>`:'',isExistingVirtual || device ? 'hidden' : '',currentType === '' ? 'selected' : '',availableFormTypes.map(t => `<option value="${escapeHtml(t)}" ${currentType === t ? 'selected' : ''}>${escapeHtml(t === 'Server - Physical' ? 'Server' : t)}</option>`).join(''),currentType==='Server - Virtual'?'selected':'',isExistingVirtual && !device ? '' : 'hidden',vmPurposes.map(([label,value])=>`<option value="${escapeHtml(value)}" ${currentType===value?'selected':''}>${escapeHtml(label)}</option>`).join(''),device ? renderInterfaceTemplate("device-details/open-device-modal-2",[escapeHtml(isExistingVirtual ? 'Virtual ' : 'Physical '),escapeHtml(currentType === 'Server - Virtual' || currentType === 'Server - Physical' ? 'Server' : currentType)]) : '',['','VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng','Other'].map(x=>'<option value="'+escapeHtml(x)+'" '+((draft?.virtualPlatform ?? device?.virtualPlatform ?? '')===x?'selected':'')+'>'+escapeHtml(x||'Select Platform...')+'</option>').join(''),device?.type === 'Server - Virtual' ? '(legacy assignments preserved)' : '(required)',appState.devices.filter(x=>x.id!==(device?.id||'')&&x.type==='Server - Physical'&&((x.status!=='Retired'&&(x.typeDetails?.serverService_Hypervisor===true||x.serverService_Hypervisor===true))||x.id===(draft?.virtualHostId??device?.virtualHostId??''))).map(x=>'<option value="'+escapeHtml(x.id)+'" '+((draft?.virtualHostId ?? device?.virtualHostId ?? '')===x.id?'selected':'')+'>'+escapeHtml(x.name)+(x.status==='Retired'||!(x.typeDetails?.serverService_Hypervisor===true||x.serverService_Hypervisor===true)?' (existing legacy assignment)':'')+'</option>').join('')+(missingLegacyHost?'<option value="'+escapeHtml(retainedHostId)+'" selected>Missing or legacy host (retained)</option>':''),[['vmVcpu','vCPU count'],['vmRamGb','Allocated RAM (GB)'],['vmDiskGb','Virtual disk (GB)'],['vmNicCount','Virtual network adapters']].map(([key,label])=>renderInterfaceTemplate("device-details/open-device-modal-3",[key,label,key,key,escapeHtml(deviceDetailFormValues[key] ?? '')])).join(''),deviceDetailFormValues.serverService_Hypervisor === true ? 'checked' : '',deviceDetailFormValues.serverService_Hypervisor === true ? '' : 'hidden',['VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng'].map(p=>`<option value="${escapeHtml(p)}" ${deviceDetailFormValues.hypervisorProduct===p?'selected':''}>${escapeHtml(p)}</option>`).join(''),deviceDetailFormValues.hypervisorProduct && !['VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng'].includes(deviceDetailFormValues.hypervisorProduct)?'selected':'',escapeHtml(deviceDetailFormValues.hypervisorProduct || ''),deviceDetailFormValues.hypervisorProduct && !['VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng'].includes(deviceDetailFormValues.hypervisorProduct)?'':'hidden',escapeHtml(deviceDetailFormValues.hypervisorVersion || ''),device ? renderInterfaceTemplate("device-details/open-device-modal-4",[['Active','Maintenance','Retired'].map(v=>`<option value="${v}" ${(draft?.status ?? device?.status ?? 'Active')===v?'selected':''}>${v}</option>`).join('')]) : '<input type="hidden" id="dev-status" value="Active">',escapeHtml(draft?.manufacturer ?? device?.manufacturer ?? ''),escapeHtml(draft?.model ?? device?.model ?? ''),escapeHtml(draft?.serialNumber ?? device?.serialNumber ?? ''),renderInlineHardwareQuickAdd("manufacturer"),renderInlineHardwareQuickAdd("model"),getDetailFieldsForDeviceType(currentType).length===0?'hidden':'',deviceTypeDetailGroups[String(currentType||'').toLowerCase().trim()]==='server'?'':'hidden',['server','computer'].includes(deviceTypeDetailGroups[String(currentType||'').toLowerCase().trim()])?'':'hidden',renderDeviceDetailFields(currentType,deviceDetailFormValues,'hardware'),renderDeviceMountOptions(currentType,mountType),escapeHtml(currentLoc),currentLoc === '' ? 'selected' : '',locations.map(l => `<option value="${escapeHtml(l)}" ${currentLoc === l ? 'selected' : ''}>${escapeHtml(l)}</option>`).join(''),mountType === 'Rack Mounted' ? '' : 'hidden',mountType === 'Rack Mounted' ? '' : 'hidden',!appState.racks.length ? 'selected' : '',appState.racks.length ? 'Select a network rack...' : 'No network racks created yet',appState.racks.map(r => `<option value="${escapeHtml(r.id)}" ${(draft?.rackId ?? device?.rackId) === r.id ? 'selected' : ''}>${escapeHtml(r.name)}</option>`).join(''),(draft?.face ?? device?.face) !== 'rear' ? 'selected' : '',(draft?.face ?? device?.face) === 'rear' ? 'selected' : '',escapeHtml(String(draft?.rackUStart ?? device?.rackUStart ?? 1)),currentHeight,appState.subnets.filter(s => s.kind === 'container' && !s.parentId).map(b => `<option value="${escapeHtml(b.id)}" ${currentSubnet && getDeviceSubnetTopLevelBlock(currentSubnet)?.id === b.id ? 'selected' : ''}>${escapeHtml(b.name || b.cidr)}</option>`).join(''),currentSubnet && !getDeviceSubnetTopLevelBlock(currentSubnet) ? 'selected' : '',escapeHtml(currentSubnet?.id || ''),escapeHtml(draft?.primaryIp ?? device?.primaryIp ?? ''),(draft?.ipReserved ?? device?.ipReserved ?? (device?.primaryIp && appState.ipAllocations[device.primaryIp]?.status === 'Reserved')) ? 'checked' : '',escapeHtml(draft?.notes ?? device?.notes ?? '')]));
             const tabbedDeviceForm = document.querySelector('[data-device-form="true"]');
             if(tabbedDeviceForm&&isDuplicate)tabbedDeviceForm.dataset.duplicateSourceId=draft.duplicatedFrom;
             if (tabbedDeviceForm && draft?.activeDeviceTab) tabbedDeviceForm.dataset.initialDeviceTab = draft.activeDeviceTab;
@@ -5749,6 +5856,7 @@ function openIpModal(ip) {
             syncHostingFieldVisibility();
             refreshDeviceSubnetSelectionCascade('initial');
             refreshDeviceIpOptions();
+            if(draft?.editorWarning)showDeviceEditorFeedback(draft.editorWarning,'dev-mount-type');
             ['dev-rack-id', 'dev-rack-height', 'dev-rack-face'].forEach(id => {
                 const field = document.getElementById(id);
                 field?.addEventListener('change', updateDeviceRackLimits);
