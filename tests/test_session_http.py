@@ -439,9 +439,6 @@ class SessionHttpTests(unittest.TestCase):
         self.assertEqual(self.request("/health")[0], 200)
 
 
-if __name__ == "__main__":
-    unittest.main()
-
     def test_same_tab_print_direct_entry_and_reload_keep_inventory_security(self):
         cookie = COOKIE_NAME + "=" + self.token
         baseline = self.request("/inventory", cookie)
@@ -464,3 +461,7 @@ if __name__ == "__main__":
             self.assertEqual(response.getheader("Content-Type"), "text/html; charset=utf-8")
             response.read()
             connection.close()
+
+
+if __name__ == "__main__":
+    unittest.main()

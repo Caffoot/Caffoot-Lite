@@ -113,3 +113,24 @@ class AccountEmailHttpTests(unittest.TestCase):
     def test_recovery_does_not_accept_an_email_payload(self):
         self.assertEqual(self.post('/api/recovery/request', {'email': 'owner@example.org'})[0], 400)
         self.assertFalse(self.mocks[2].called)
+
+    def test_eight_digit_http_verification_and_complete_mfa_recovery(self):
+        with patch('backend.server.smtp_public_settings', return_value={'configured': True}):
+            self.assertEqual(self.post('/api/account/email/request', {'password':'password'}, authenticated=True)[0], 200)
+            verify_code_value = self.mocks[2].call_args.args[3].split('\n\n')[1]
+            verify_challenge = self.challenge_id
+            self.assertRegex(verify_code_value, r'^[0-9]{8}$')
+            self.assertEqual(self.post('/api/account/email/confirm', {'password':'password','token':verify_code_value,'challengeId':verify_challenge}, authenticated=True)[0], 200)
+            self.assertEqual(self.post('/api/recovery/request', {'username':'email-owner'})[0], 200)
+            recover_code = self.mocks[2].call_args.args[3].split('\n\n')[1]
+            challenge = self.challenge_id
+        payload = {'token':recover_code,'challengeId':challenge,'password':'Fictional-New-Password','mfa_code':''}
+        self.assertEqual(self.post('/api/recovery/confirm',payload)[0],400)
+        payload['mfa_code'] = code_at(self.secret,time.time())
+        self.assertEqual(self.post('/api/recovery/confirm',payload)[0],200)
+        self.assertEqual(self.post('/api/recovery/confirm',payload)[0],400)
+        with sqlite3.connect(self.path) as db:
+            self.assertEqual(db.execute('SELECT count(*) FROM account_sessions').fetchone()[0],0)
+            self.assertEqual(db.execute('SELECT mfa_secret,mfa_confirmed FROM accounts WHERE id=?',(self.admin,)).fetchone(),(self.secret,1))
+            self.assertIsNone(login_session(db,'email-owner','Fictional-New-Password'))
+            self.assertIsNotNone(login_session(db,'email-owner','Fictional-New-Password',mfa_code=code_at(self.secret,time.time())))

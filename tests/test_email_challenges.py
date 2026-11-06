@@ -197,3 +197,32 @@ class EmailChallengeTests(unittest.TestCase):
             proof = self.issue()
         self.assertEqual(confirm_email_proof(self.db, ' 00001234\n', 'verify', challenge_id=proof[2],
                                             account_id=self.account, now=self.now), self.account)
+
+    def test_concurrent_failures_cannot_exceed_the_account_budget(self):
+        proof = self.issue()
+        def attempt(_):
+            with sqlite3.connect(self.path,timeout=10) as db:
+                try:
+                    confirm_email_proof(db,'invalid!','verify',challenge_id=proof[2],account_id=self.account,now=self.now)
+                except ValueError:
+                    return False
+                return True
+        with ThreadPoolExecutor(max_workers=4) as executor:
+            self.assertEqual(list(executor.map(attempt,range(8))),[False]*8)
+        self.assertEqual(self.db.execute('SELECT count(*) FROM account_email_attempts').fetchone()[0],5)
+        self.assertEqual(self.db.execute('SELECT count(*) FROM account_email_proofs').fetchone()[0],0)
+        self.assertIsNone(self.issue())
+
+    def test_failure_budget_isolated_by_account_and_purpose_and_not_normal_login(self):
+        from backend.sessions import login_session
+        proof = self.issue()
+        for _ in range(5):
+            self.fail(proof)
+        self.assertIsNone(self.issue())
+        reader = create_user(self.db,self.account,'independent-reader','password')
+        save_profile(self.db,reader,{'firstName':'','lastName':'','displayName':'','email':'independent@example.test'})
+        self.assertIsNotNone(self.issue(account=reader))
+        self.db.execute('UPDATE account_profiles SET email_verified=1 WHERE account_id=?',(self.account,))
+        self.db.commit()
+        self.assertIsNotNone(self.issue('recover'))
+        self.assertIsNotNone(login_session(self.db,'fictional-owner','password',mfa_code=code_at(self.mfa,self.now),now=self.now))

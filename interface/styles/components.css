@@ -288,6 +288,9 @@ html{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sa
 .email-verification .form-grid>*,.email-verification input{min-width:0}
 .email-verification .btn{max-width:100%;white-space:normal}
 
-.device-review-dialog .device-review-inline-tools .device-review-field input{height:38px}
+#modal-content .device-review-dialog .device-review-inline-tools .device-review-field input{height:38px;min-height:38px}
 
 #open-inventory-section[hidden]{display:none!important}
+
+#modal-container.device-review-overlay{backdrop-filter:none}
+#modal-content .device-review-head button.device-review-close{width:36px;height:36px;min-height:36px;min-width:36px;padding:0;font-size:20px}

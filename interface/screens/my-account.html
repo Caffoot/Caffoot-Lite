@@ -99,7 +99,7 @@
 <!-- interface-template:my-account/email-verification-1 -->
 <section class="email-verification" id="account-email-verification" hidden aria-labelledby="email-verification-heading">
 <h4 id="email-verification-heading" tabindex="-1">Verify Email Address</h4>
-<p class="sub" id="email-verification-guidance">Confirm your password to request a single-use eight-digit email code. Codes expire after 15 minutes. Email delivery must be configured by an administrator.</p>
+<p class="sub" id="email-verification-guidance">Confirm your password to request a single-use eight-digit email code. Codes expire after 15 minutes. Too many failed confirmations require a wait of up to 15 minutes; a new request does not reset the limit. Email delivery must be configured by an administrator.</p>
 <form id="account-email-verification-form" class="form-grid" aria-describedby="email-verification-guidance email-verification-message">
 <label class="personal-field full">Current Password<input name="password" type="password" autocomplete="current-password" required></label>
 <div class="personal-actions full"><button class="btn btn-outline" type="button" id="request-email-verification">Send Confirmation Code</button><button class="btn btn-outline" type="button" id="cancel-email-verification">Cancel</button></div>
