@@ -1,6 +1,9 @@
 # Caffoot Lite v2.0.3
 
-**Infrastructure, Simplified.** Free, open-source IP address management (IPAM), device inventory and network rack documentation for **small businesses, IT teams and home labs**.
+**Simplicity in everything.**  
+Your infrastructure. Your users. Your data.
+
+Free, open-source IP address management (IPAM), device inventory and network rack documentation for **small businesses, IT teams and home labs**.
 
 Keep track of your devices, IP addresses and network racks in one place. Caffoot Lite combines a shared infrastructure inventory with user permissions and Change History, without requiring a complicated setup.
 
