@@ -31,9 +31,14 @@ Potential ideas:
 
 Existing proposals:
 - [Multiple interfaces, IP addresses and IPv6 — #231](https://github.com/Caffoot/Caffoot-Lite/issues/231).
-- [Switch ports, connections and topology diagrams — #235](https://github.com/Caffoot/Caffoot-Lite/issues/235).
+- [Switch ports, patch panels, cabling, topology diagrams and connection tracing — #235](https://github.com/Caffoot/Caffoot-Lite/issues/235).
+- [IP Address Block organisation after import — #312](https://github.com/Caffoot/Caffoot-Lite/issues/312).
+- [Documented UPS/PDU power dependencies and impact view — #313](https://github.com/Caffoot/Caffoot-Lite/issues/313).
+- [Equipment relationships and dependency impact view — #314](https://github.com/Caffoot/Caffoot-Lite/issues/314).
+- [VLAN membership across devices and ports — #315](https://github.com/Caffoot/Caffoot-Lite/issues/315).
+- [Optional DNS/DHCP service documentation for each network — #319](https://github.com/Caffoot/Caffoot-Lite/issues/319).
 
-**To decide:** How connections should be recorded, what diagrams can accurately show from entered data, and how existing inventory is preserved.
+**To decide:** How connections and dependencies should be recorded, what diagrams and tracing can accurately show from entered data, which IPAM/DNS/DHCP fields already exist, and how existing inventory is preserved. No active scanning or network discovery is part of this milestone.
 
 ### Milestone 03 (#22) — Connect assets to people and support
 
@@ -54,6 +59,7 @@ Existing proposals and possible extensions:
 - [Monitoring, alerts and status history — #236](https://github.com/Caffoot/Caffoot-Lite/issues/236).
 - Explore endpoint management, patching, automation and authorised remote support **only after separate discussion**.
 - [Optional application sections — #238](https://github.com/Caffoot/Caffoot-Lite/issues/238).
+- [Optional network discovery and SNMP-assisted inventory feasibility — #320](https://github.com/Caffoot/Caffoot-Lite/issues/320), separately investigated and off by default.
 
 **To decide:** The operational cost, lightweight deployment options, permissions and what happens when a managed device is offline. No device agent or monitoring architecture has been chosen.
 
