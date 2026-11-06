@@ -4,6 +4,17 @@
 
 > **Simplicity in everything. Your infrastructure. Your users. Your data.**
 
+### Brand wording — product-owner decision, 6 November 2026
+
+**Primary brand tagline:** **Simplicity in everything. Your infrastructure. Your users. Your data.**
+
+The first sentence describes how Caffoot Lite should work: easy to install, understand and use. The second expresses the control people should have over their infrastructure, users and information. It reflects the longer-term direction, not a claim that every future capability is available today.
+
+**Short description:** Keep **Infrastructure, Simplified.** wherever shorter wording is more appropriate, rather than removing it from every existing location.
+
+**Possible future placements to review:** the website, repository README, sign-in screen and About page. Placement, wording layout and any changes to the approved v2.1 screens require separate review and approval before implementation. This is a **brand direction decision only**, not approval to alter the current application or published assets.
+
+
 This is our long-term product motto: simplicity in how Caffoot Lite works, and control over the infrastructure, identities and information an organisation manages. It expresses the direction we're working towards, not a claim that every planned capability is available today.
 
 ## Why Caffoot Lite exists
