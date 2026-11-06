@@ -16,7 +16,7 @@ module.exports=async({page,context,out})=>{
   }
   function assertResponse(response){if(!response.ok)throw Error('Unable to seed fictional rack accessory');}
  });
- await page.reload();await page.locator('#app[aria-busy="false"]').waitFor();
+ await page.reload();await page.locator('#app[aria-busy="false"]').waitFor();await page.addStyleTag({content:'*,*::before,*::after{animation:none!important;transition:none!important}'});
  for(const [width,height] of [[1440,950],[1280,800],[390,844]])for(const dark of [false,true])for(const face of ['front','rear']){
   await page.setViewportSize({width,height});
   await page.evaluate(({dark,face})=>{caffootSetTheme(dark?'dark':'light');switchTab('racks');selectedRackId='rack-0';activeRackFace=face;v13RackSection='inventory';v13RackDetailOpen=true;renderContent();}, {dark,face});
@@ -91,7 +91,7 @@ module.exports=async({page,context,out})=>{
   if(confirmFails)return route.fulfill({status:400,json:{error:'Invalid or expired confirmation'}});
   verified=true;return route.fulfill({json:{status:'Email verified'}});
  });
- await page.reload();await page.locator('#app[aria-busy="false"]').waitFor();await page.evaluate(()=>switchTab('account'));
+ await page.reload();await page.locator('#app[aria-busy="false"]').waitFor();await page.addStyleTag({content:'*,*::before,*::after{animation:none!important;transition:none!important}'});await page.evaluate(()=>switchTab('account'));
  assert.equal(await page.locator('#account-email-status').textContent(),'Not Verified');
  await page.locator('#account-email').fill('changed@example.test');assert.ok(await page.locator('#open-email-verification').isDisabled());
  await page.locator('#account-email').fill('fictional@example.test');await page.locator('#open-email-verification').click();
@@ -103,6 +103,31 @@ module.exports=async({page,context,out})=>{
  confirmFails=false;await page.locator('#account-email-verification-form button[type="submit"]').click();
  await page.waitForFunction(()=>document.querySelector('#account-email-status').textContent==='Verified');assert.ok(await page.locator('#open-email-verification').isHidden());
  assert.equal(await page.locator('#account-email-verification-form input[name="password"]').inputValue(),'');results.push({kind:'verification',dirty:true,failure:true,success:true});
+ verified=false;
+ await page.reload();await page.locator('#app[aria-busy="false"]').waitFor();await page.addStyleTag({content:'*,*::before,*::after{animation:none!important;transition:none!important}'});
+ for(const width of [1440,1280,390,320])for(const dark of [false,true]){
+  await page.setViewportSize({width,height:844});await page.evaluate(dark=>{caffootSetTheme(dark?'dark':'light');switchTab('account');},dark);
+  await page.locator('#open-email-verification').focus();await page.keyboard.press('Enter');
+  await page.locator('#account-email-verification-form input[name="password"]').fill('Fictional password');await page.locator('#request-email-verification').click();await page.locator('#email-verification-code-fields').waitFor();
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Verification form must fit '+width);
+  if(width===1440||width===390)await page.screenshot({path:path.join(out,`verification-${width}-${dark?'dark':'light'}.png`),fullPage:true,mask:[page.locator('#account-email-verification-form input')]});
+
+  const enlarged=await page.evaluate(()=>{
+   const panel=document.querySelector('#account-email-verification');
+   const sizes=[...panel.querySelectorAll('*')].map(el=>[el,getComputedStyle(el).fontSize]);
+   sizes.forEach(([el,size])=>{el.style.fontSize=(parseFloat(size)*2)+'px';});
+   return {overflow:document.documentElement.scrollWidth>innerWidth,wide:[...panel.querySelectorAll('*')].filter(el=>el.getBoundingClientRect().right>innerWidth).map(el=>({tag:el.tagName,class:el.className,text:el.textContent.slice(0,40)}))};
+  });
+  assert.ok(!enlarged.overflow,'Enlarged verification text: '+width+' '+JSON.stringify(enlarged));
+  await page.locator('#cancel-email-verification').click();
+  assert.equal(await page.locator('#account-email-verification-form input[name="password"]').inputValue(),'');
+  assert.equal(await page.locator('#account-email-verification-form input[name="token"]').inputValue(),'');
+  assert.ok(await page.locator('#open-email-verification').evaluate(el=>el===document.activeElement));
+  results.push({kind:'verification-layout',width,dark,cancelClearsSecrets:true});
+ }
+ await page.locator('#open-email-verification').click();await page.locator('#account-email-verification-form input[name="password"]').fill('Fictional password');
+ assert.ok(await page.evaluate(()=>{const previous=document.querySelector('#account-email-verification-form');switchTab('dashboard');return previous.elements.password.value==='';}),'Account navigation clears the previous form');
+
  // An unauthenticated page must show the same next step for every neutral result.
  const publicContext=await context.browser().newContext({ignoreHTTPSErrors:true});
  const signIn=await publicContext.newPage();signIn.on('pageerror',error=>errors.push(error.message));
@@ -147,6 +172,12 @@ module.exports=async({page,context,out})=>{
   assert.equal(await signIn.locator('#recovery-confirm-form input[name="password"]').inputValue(),'');
   if(width===1440||width===390)await signIn.screenshot({path:path.join(out,`sign-in-approved-${width}-${dark?'dark':'light'}.png`),fullPage:true});
   await signIn.evaluate(()=>document.documentElement.style.fontSize='200%');assert.ok(await signIn.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+  await signIn.evaluate(()=>{
+   document.documentElement.style.fontSize='';
+   const sizes=[...document.querySelectorAll('.auth-shell *')].map(el=>[el,getComputedStyle(el).fontSize]);
+   sizes.forEach(([el,size])=>{el.style.fontSize=(parseFloat(size)*2)+'px';});
+  });
+  assert.ok(await signIn.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Doubled Sign In text must fit '+width);
   results.push({kind:'sign-in',width,dark,normalAndEnlarged:true});
  }
  requestFails=true;await signIn.getByText('Forgot Password?',{exact:true}).click();await signIn.locator('#recovery-request-form input').fill('fictional-user');await signIn.locator('#recovery-request-form button').click();await signIn.locator('#recovery-message').filter({hasText:'Service unavailable'}).waitFor();assert.ok(await signIn.locator('#recovery-confirm-form').isHidden());
@@ -161,7 +192,12 @@ module.exports=async({page,context,out})=>{
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   assert.equal(await page.locator('.account-panel[data-section="about"] .info-row').count(),3);
   if(width===1440||width===390)await page.screenshot({path:path.join(out,`about-approved-${width}-${dark?'dark':'light'}.png`),fullPage:true});
-  results.push({kind:'about',width,dark});
+  await page.locator('.account-panel[data-section="about"] .card-head .sub').evaluate(el=>{
+   const sizes=[el,...el.querySelectorAll('*')].map(node=>[node,getComputedStyle(node).fontSize]);
+   sizes.forEach(([node,size])=>{node.style.fontSize=(parseFloat(size)*2)+'px';});
+  });
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Doubled About tagline must fit '+width);
+  results.push({kind:'about',width,dark,enlargedTagline:true});
  }
  assert.deepEqual(errors,[]);fs.writeFileSync(path.join(out,'approved-owner-batch.json'),JSON.stringify(results,null,2));
  console.log('Approved owner batch passed: rack previews/persistence/scroll, guided verification/recovery, branding and responsive layouts.');
