@@ -1,6 +1,6 @@
 {
   "baseline": "de502337377d318b345c1608ce99c389c566abce",
-  "testedRuntime": "4380bad8781efc7686939382c567ab44b244fc76",
+  "testedRuntime": "37de2141324e101ec77ee37b68f591ece398e164",
   "result": "All nine DOM and visible computed-style/bounds snapshots are identical.",
   "screens": [
     {

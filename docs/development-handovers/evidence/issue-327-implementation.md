@@ -1,37 +1,11 @@
-# Issue #327 — Approved Device Editor Implementation
+# Issue #327 — Device Forms Ready For Private Acceptance
 
-The owner authorised the revised [Device Forms Plan](../../development-guide/Issue-327-Device-Forms-Plan.md) in [comment 6692843829](https://github.com/Caffoot/Caffoot-Lite/issues/327#issuecomment-6692843829). Implementation starts from `de502337377d318b345c1608ce99c389c566abce` on `feat/approved-modular-html-282`.
+Only Device Add/Edit/Duplicate has been corrected under the [approved plan](../../development-guide/Issue-327-Device-Forms-Plan.md) and [owner approval 6692843829](https://github.com/Caffoot/Caffoot-Lite/issues/327#issuecomment-6692843829). Implementation and verification are complete; the owner's private visual acceptance is still outstanding.
 
-## First Committed Checkpoint
+The verified runtime is **`37de2141324e101ec77ee37b68f591ece398e164`** on `feat/approved-modular-html-282`. The final delivery commit adds this evidence and documentation, with identical application/backend/test files. Its exact SHA and matching private build tag are recorded in #327.
 
-The editor now has one physical-server hosting path beneath Physical Device Type on General, with dedicated product/version controls and ordinary-OS hiding. Ordinary form choices omit recognised hypervisor products while preserving saved selections and catalogue records. VM-only visibility, source Software card wrappers, the Duplicate subtitle, editor-local feedback/focus and available-height Notes are implemented. No backend, pinned source, read-only Details or surrounding page changes are included.
+## What Changed
 
-Fresh fictional-data checks passed for hosting toggles and filtering; hidden OS/software/custom-data retention through save/reload; product-change confirmation and guest propagation; hosting-disable Cancel; native and business error focus; VM allocation save/reload; Duplicate safeguards; eight Notes actions, safe preview and persistence; and 16 physical types/six VM purposes. [Detailed checkpoint](issue-327-implementation/functional-checkpoint.json).
-
-This is a partially tested checkpoint, not visual acceptance. The visual runner initially needed corrections to fixture keys, the unchanged Link action expectation and source-page selectors; these test failures are not counted as passes. Full rendered comparisons, final browser/backend regressions, unchanged-screen comparison, provenance, documentation and GitHub checks remain outstanding. No Docker image has been built or published.
-
-## Resume Checklist
-
-- [x] Approved editor implementation and first focused functional checks.
-- [ ] Complete full rendered comparisons and any confirmed editor-only corrections.
-- [ ] Complete failure/permission/legacy and browser/backend regression coverage.
-- [ ] Check unchanged screens, pinned sources, documentation and secret history.
-- [ ] Commit final evidence, push and record exact SHA in #327.
-- [ ] Owner's private native Raspberry Pi and Safari/touch acceptance.
-
-Reproduce focused checks with `CAFFOOT_DEVICE_EDITOR_APPROVED=1 CAFFOOT_VISUAL_FILTER='^$' CAFFOOT_CHROMIUM_PATH=/usr/bin/chromium CAFFOOT_VISUAL_OUTPUT=work/device-editor-checks node tests/approved-visual.cjs`. `CAFFOOT_EDITOR_VISUAL_ONLY=1` omits already completed functional checks during a visual-only iteration; it does not constitute a full test pass.
-
-## Final Code Verification Checkpoint
-
-The final focused functional run passed all twelve groups, now including custom host product/version creation, new VM creation, simulated 500/403/409 feedback and keyboard tabs. [Results](issue-327-implementation/functional-final.json). Full backend tests passed: **448 run, 445 passed, three skipped**. The local full Chromium regression passed. The latest editor-only visibility correction is included in the final GitHub browser rerun.
-
-The visual iteration measured **239 states** (216 Add/Edit/Duplicate states across four sizes/two themes, 20 expanded inline forms, three enlarged-text states). Dialog bounds matched the pinned source, footers remained in view and no dialog horizontal overflow was measured. Manual screenshot review then caught an Add Location panel opening during physical visibility refresh; the final code keeps it closed until requested. The new focused assertions verify this. Source screenshots remain unmodified; the prototype has no dark palette, so dark captures compare geometry against its light source while retaining the accepted application theme.
-
-The same review restored the source's **125px Notes minimum** when there is too little remaining height. The body scrolls in those cases and Save/Cancel stays fixed; larger windows still use all remaining Notes height. Retained rack controls now use the field grid's spacing without an extra inherited margin. Stable catalogue product keys remain recognised even when their labels have been renamed.
-
-The GitHub browser workflow now runs the focused editor checks and retains complete top/middle/bottom live/source captures for all 216 main states, inline controls and enlarged text. Only fictional data and screenshots/results are uploaded; the database, credentials and private installation material are excluded. The final issue update records the workflow result and artifact link. No owner visual approval is implied.
-
-## Changes Ready For Private Review
 
 | Area | What changed | What stays working |
 | --- | --- | --- |
@@ -44,7 +18,51 @@ The GitHub browser workflow now runs the focused editor checks and retains compl
 
 The only application files changed are `interface/application.js` and editor-scoped additions to `interface/styles/components.css`. All HTML templates, twelve pinned source/style records, backend/API/schema, catalogues and accepted surrounding screens remain unchanged. [Nine identical before/after snapshots](issue-327-implementation/scope-comparison.json) include compressed DOM/style evidence for Overview, Inventory, Types, Locations, Manufacturers, Models, Software, Services and read-only Details. The separate Close × defect #328 remains untouched.
 
+## Checks And Results
+
+| Check | Actual result |
+| --- | --- |
+| Focused Device editor checks | Twelve functional groups passed: hosting/filtering, retained legacy data, guest safety, native/business feedback, VM allocation save/reload, Duplicate, eight Notes actions/safe preview/persistence, 16 physical types/six VM purposes, custom host/new guest creation, simulated 500/403/409 feedback, stable product identities and keyboard tabs. [Results](issue-327-implementation/functional.json). |
+| Existing full backend suite | **448 run: 445 passed, three skipped.** Covers authentication/MFA, security, permissions, validation, persistence, migrations and concurrency. [Local summary](issue-327-implementation/backend-results.txt); [final GitHub run](https://github.com/Caffoot/Caffoot-Lite/actions/runs/42281178624). |
+| Existing full Chromium regression | Passed locally and on the final code in [GitHub](https://github.com/Caffoot/Caffoot-Lite/actions/runs/42281178532), including multi-user permissions, exclusive edit reservations, catalogues, IPAM/Racks and published-export migration. [Local results](issue-327-implementation/browser-results.txt). |
+| Rendered forms | **239 states passed**: 216 main form/tab/mode/viewport/theme states, 20 expanded inline forms, three enlarged-text stress states. No dialog horizontal overflow; source dialog bounds and fixed footer checks passed. Enlarged footer labels also fit their buttons. [Measurements](issue-327-implementation/measurements.json). |
+| Scroll / keyboard / discard | Wheel scrolling in General and the nested software list, fixed header/footer/background, Tab/Shift+Tab wrapping, Escape/Keep Editing, discard focus return and unchanged saved records passed. [Results](issue-327-implementation/interactions-final.json). |
+| Zoom-equivalent layout | Ten further tab/theme checks passed at 720×475 CSS pixels with DPR 2, producing 1440×950 screenshots. This models the desktop 200% zoom layout; it is not native-browser zoom certification. [Method/results](issue-327-implementation/zoom-equivalent.json). |
+| Surrounding accepted screens | Nine complete DOM and visible computed-style/bounds snapshots are identical, rechecked after the footer correction. [Evidence](issue-327-implementation/scope-comparison.json). |
+| Source / documentation / syntax | Twelve exact source/style hashes and template dependencies passed; HTML contract, JavaScript syntax, Function Index regeneration and v2.0.3 release consistency passed. [Results](issue-327-implementation/provenance-results.txt). |
+| Secret history | Final runtime [Git history scan passed](https://github.com/Caffoot/Caffoot-Lite/actions/runs/42281178602). The final evidence commit's check is linked in #327. |
+| Docker lifecycle | [GitHub's AMD64 build/restart/persistent-volume/port test passed](https://github.com/Caffoot/Caffoot-Lite/actions/runs/42281178468). No worker ARM64 build, public image, owner deployment or release was attempted. |
+
+The three backend skips are the separately exercised Docker lifecycle test and two tests requiring an unavailable genuine private v1.3.3 export. Synthetic and published-export migration checks passed. No current automated failure remains.
+
+## Visual Review And Evidence
+
+The final [browser artifact](https://github.com/Caffoot/Caffoot-Lite/actions/runs/42281178532/artifacts/13536240218) contains **1,348 PNGs**, including top/middle/bottom live/source captures of every main state. GitHub retains that artifact for 14 days. The [permanent gallery](issue-327-implementation/images/README.md) keeps 39 selected PNGs, four scroll contact sheets and links to four further zoom-equivalent captures. The [complete screenshot hashes](issue-327-implementation/screenshots.json) identify the full artifact.
+
+| Viewport | Duplicate Notes body, live / source | Notes textarea | Behaviour |
+| --- | --- | --- | --- |
+| 1440×950 | 641.41px / 641.41px | 413.81px | Fills the remaining body height. |
+| 1366×600 | 331.41px / 331.41px | 125px | Source minimum retained; footer stays fixed. |
+| 390×844 | 622px / 622px | 363.81px | Single-column mobile card fills the body. |
+| 320×568 | 346px / 346px | 125px | Necessary body scrolling; fixed actions remain reachable. |
+
+These final GitHub measurements use matching offline font fallbacks for live/source. Earlier local investigation measurements used a different runner; they remain historical observations, not fixed height targets. The standalone Batch 04 file has no dark palette, so dark captures compare its original geometry while retaining the accepted application's dark theme.
+
+Manual review covered the retained desktop/mobile scroll sequences, General hosting, VM-only controls, source card treatment, the Notes minimum/fill and enlarged footer text. The recorded owner amendments explain the General hosting placement, hidden physical VM controls, ordinary-product filtering and larger Notes area. Real catalogue values, authorised compatibility controls and existing filters account for legitimate differences from mock content. This is not a claim of blanket pixel equivalence or owner visual approval.
+
+The first working checkpoint was `86314f4`; `4380bad` completed the main verification. Intermediate fixture/selector expectations were corrected. Screenshot review caught an inline Location panel opening unnecessarily and, later, enlarged labels escaping their buttons despite passing the original geometry check. Both are corrected. The final footer change leaves all **216 normal states and 20 expanded-inline states geometrically identical** to the preceding run; a new text-bounds assertion verifies the enlarged labels.
+
+## Completion Checklist
+
+- [x] Authorised editor corrections and saved-data preservation.
+- [x] Full rendered comparisons and confirmed fidelity corrections.
+- [x] Functional, backend, browser, permission/security and migration checks.
+- [x] Pinned sources, unchanged-screen comparison, documentation/index and GitHub checks.
+- [x] Committed/pushed checkpoints and final evidence recorded in #327.
+- [ ] Owner's private native Raspberry Pi, Safari, touch/mobile-keyboard and visual acceptance.
+
 ## Private Raspberry Pi Acceptance
+
 
 No public image or worker-built ARM64 image is supplied. Build natively on the owner's Pi using the existing private workflow:
 
@@ -55,7 +73,3 @@ No public image or worker-built ARM64 image is supplied. Build natively on the o
 5. Check Add/Edit/Duplicate across the owner's real desktop, small laptop and phone: hosting on/off, known/custom products and versions, no-host/eligible-host VM entry, every relevant purpose, saved legacy records, Notes/Preview, validation, scrolling and fixed actions. Check guest confirmation Cancel/Confirm using fictional or privately copied records. Confirm surrounding accepted screens and the intentionally unchanged #328 defect.
 
 Owner acceptance is still required on native Safari, physical touch/keyboard and real mobile address-bar/on-screen-keyboard states. Chromium emulation and the enlarged-text stress captures do not certify those environments. A genuine private v1.3.3 backup was unavailable for two established tests. Docker lifecycle is checked separately in GitHub; its AMD64 result is not a Pi build or private visual acceptance. No implementation decision remains blocked on further design approval.
-
-### Enlarged Text Review
-
-The first full GitHub run passed its automated geometry checks, but manual review found enlarged footer labels extending outside their buttons. The editor's existing footer buttons now allow label wrapping. A new assertion checks the actual text rectangles inside each button; all three local enlarged-text states passed after the correction. The normal source button layout is retained. The final GitHub rerun records the complete resulting evidence; the earlier passing geometry result is not presented as proof that clipped text was acceptable.

@@ -1,6 +1,6 @@
 # Issue #327 — Approved Device Forms Correction Plan
 
-**Status: complete implementation authorised in [owner approval 6692843829](https://github.com/Caffoot/Caffoot-Lite/issues/327#issuecomment-6692843829). Implementation and acceptance evidence are maintained [separately](../development-handovers/evidence/issue-327-implementation.md). Private owner visual acceptance remains outstanding.**
+**Status: implementation complete and tested; private owner visual acceptance remains outstanding. Authority: [owner approval 6692843829](https://github.com/Caffoot/Caffoot-Lite/issues/327#issuecomment-6692843829). Implementation and acceptance evidence are maintained [separately](../development-handovers/evidence/issue-327-implementation.md).**
 
 The owner has explicitly authorised the hypervisor and Notes requirements below. Those decisions replace the earlier plan’s contrary recommendations; they are not questions being reopened. The owner subsequently approved this complete revised plan; the requirements below are the implementation authority.
 

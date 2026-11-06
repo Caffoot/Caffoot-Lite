@@ -1,0 +1,40 @@
+{
+  "mainStates": 216,
+  "expandedInlineStates": 20,
+  "enlargedTextStates": 3,
+  "artifactPngCount": 1348,
+  "measurements": [
+    {
+      "width": 1440,
+      "height": 950,
+      "liveBodyHeight": 641.40625,
+      "sourceBodyHeight": 641.40625,
+      "notesHeight": 413.8125,
+      "bodyScrollHeight": 641
+    },
+    {
+      "width": 1366,
+      "height": 600,
+      "liveBodyHeight": 331.40625,
+      "sourceBodyHeight": 331.40625,
+      "notesHeight": 125,
+      "bodyScrollHeight": 331
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "liveBodyHeight": 622,
+      "sourceBodyHeight": 622,
+      "notesHeight": 363.8125,
+      "bodyScrollHeight": 622
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "liveBodyHeight": 346,
+      "sourceBodyHeight": 346,
+      "notesHeight": 125,
+      "bodyScrollHeight": 402
+    }
+  ]
+}

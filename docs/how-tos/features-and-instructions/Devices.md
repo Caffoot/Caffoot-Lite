@@ -63,6 +63,16 @@ Use **Device Status** to record a supported lifecycle state such as Active, Main
 
 When an eligible physical hypervisor host exists and is configured accordingly, **Device deployment** offers **Virtual Machine (VM)**. Select a suitable virtual purpose and the physical host, then record resource information such as vCPU, RAM, disk and network adapters where requested. Existing historical VM relationships are preserved.
 
+## v2.1 Device Form Preview
+
+The development branch's Add/Edit/Duplicate layout is ready for private owner review; this does not announce a release.
+
+For an eligible physical server, **General** shows **This physical server hosts virtual machines** immediately beneath its type. Tick it to use the dedicated **Hypervisor Software/OS** and **Version** controls. The ordinary OS card is hidden while hosting is enabled; unticking restores its values. Known host products are offered through this dedicated path. Previously recorded OS/software assignments are retained with an explanation rather than silently removed. Existing guest-change confirmations still apply.
+
+For a VM, choose its purpose, physical host and virtual allocations on **General**. Physical mounting and Hardware controls are hidden. Type-specific choices and saved host relationships remain protected.
+
+**Notes** fills the available form space automatically and keeps all existing formatting/Preview actions. Short windows scroll within the editor while the footer stays accessible. Validation messages appear above the footer and reveal the relevant tab or field. Duplicate uses its subtitle to explain the new record; it still requires a unique name/IP and preserves the original.
+
 ## Troubleshooting
 
 | Problem | Check |

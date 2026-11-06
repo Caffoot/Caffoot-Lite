@@ -1,0 +1,106 @@
+{
+  "runtime": "37de2141324e101ec77ee37b68f591ece398e164",
+  "method": "720x475 CSS viewport at device scale factor 2, producing 1440x950 screenshots: desktop 200% browser-zoom layout equivalent; not a native browser zoom certification.",
+  "cases": [
+    {
+      "theme": "light",
+      "tab": "general",
+      "width": 720,
+      "height": 475,
+      "dpr": 2,
+      "dialogOverflow": 0,
+      "footerBottom": 454,
+      "notesHeight": 0
+    },
+    {
+      "theme": "light",
+      "tab": "hardware",
+      "width": 720,
+      "height": 475,
+      "dpr": 2,
+      "dialogOverflow": 0,
+      "footerBottom": 454,
+      "notesHeight": 0
+    },
+    {
+      "theme": "light",
+      "tab": "software",
+      "width": 720,
+      "height": 475,
+      "dpr": 2,
+      "dialogOverflow": 0,
+      "footerBottom": 454,
+      "notesHeight": 0
+    },
+    {
+      "theme": "light",
+      "tab": "networking",
+      "width": 720,
+      "height": 475,
+      "dpr": 2,
+      "dialogOverflow": 0,
+      "footerBottom": 454,
+      "notesHeight": 0
+    },
+    {
+      "theme": "light",
+      "tab": "notes",
+      "width": 720,
+      "height": 475,
+      "dpr": 2,
+      "dialogOverflow": 0,
+      "footerBottom": 454,
+      "notesHeight": 125
+    },
+    {
+      "theme": "dark",
+      "tab": "general",
+      "width": 720,
+      "height": 475,
+      "dpr": 2,
+      "dialogOverflow": 0,
+      "footerBottom": 454,
+      "notesHeight": 0
+    },
+    {
+      "theme": "dark",
+      "tab": "hardware",
+      "width": 720,
+      "height": 475,
+      "dpr": 2,
+      "dialogOverflow": 0,
+      "footerBottom": 454,
+      "notesHeight": 0
+    },
+    {
+      "theme": "dark",
+      "tab": "software",
+      "width": 720,
+      "height": 475,
+      "dpr": 2,
+      "dialogOverflow": 0,
+      "footerBottom": 454,
+      "notesHeight": 0
+    },
+    {
+      "theme": "dark",
+      "tab": "networking",
+      "width": 720,
+      "height": 475,
+      "dpr": 2,
+      "dialogOverflow": 0,
+      "footerBottom": 454,
+      "notesHeight": 0
+    },
+    {
+      "theme": "dark",
+      "tab": "notes",
+      "width": 720,
+      "height": 475,
+      "dpr": 2,
+      "dialogOverflow": 0,
+      "footerBottom": 454,
+      "notesHeight": 125
+    }
+  ]
+}
