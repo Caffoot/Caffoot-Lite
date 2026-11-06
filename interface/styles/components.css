@@ -307,10 +307,14 @@ html{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sa
 .device-editor-notes #device-editor-form{display:flex;flex-direction:column;flex:1;min-height:0;min-width:0}
 .device-editor-notes #device-form-panel-notes{display:flex;flex:1;min-height:0}
 .device-editor-notes #device-form-panel-notes>.device-review-grid{display:flex;flex:1;min-height:0}
-.device-editor-notes #device-form-panel-notes .device-review-panel{display:flex;flex-direction:column;flex:1;min-height:0;min-width:0}
-.device-editor-notes .notes-workspace{display:flex;flex-direction:column;flex:1;min-height:0;gap:9px}
+.device-editor-notes #device-form-panel-notes .device-review-panel{display:flex;flex-direction:column;flex:1;min-height:min-content;min-width:0}
+.device-editor-notes .notes-workspace{display:flex;flex-direction:column;flex:1;min-height:min-content;gap:9px}
 .device-editor-notes .notes-workspace>.device-review-form-grid,
-.device-editor-notes .notes-workspace .device-review-field{display:flex;flex-direction:column;flex:1;min-height:0}
-.device-editor-notes #dev-notes,.device-editor-notes #notes-preview{flex:1;min-height:0!important;height:auto!important;max-height:100%;width:100%;resize:none;overflow:auto;box-sizing:border-box}
+.device-editor-notes .notes-workspace .device-review-field{display:flex;flex-direction:column;flex:1;min-height:min-content}
+.device-editor-notes #dev-notes,.device-editor-notes #notes-preview{flex:1;min-height:125px!important;height:auto!important;max-height:100%;width:100%;resize:none;overflow:auto;box-sizing:border-box}
 @media(max-width:700px){.device-editor-dialog>.device-editor-feedback{margin:0 15px 12px}}
-@media(max-height:560px){.device-editor-notes .device-review-body{display:block}.device-editor-notes #dev-notes,.device-editor-notes #notes-preview{min-height:120px!important}}
+
+/* The source field grid supplies the spacing around retained rack controls. */
+.device-editor-dialog #racked-options>.device-review-catalogue-actions,
+.device-editor-dialog #racked-options>.device-review-hint,
+.device-editor-dialog #dev-rack-range-hint{margin:0}

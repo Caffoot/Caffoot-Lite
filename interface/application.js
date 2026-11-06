@@ -4591,6 +4591,8 @@ function openIpModal(ip) {
             const locationSelect=document.getElementById('dev-location');
             if(locationSelect) locationSelect.required=!virtual;
             document.querySelectorAll('#device-editor-form [data-device-editor-location]').forEach(el=>el.hidden=virtual);
+            const locationPanel=document.querySelector('#device-editor-form #dev-create-location-panel');
+            if(locationPanel)locationPanel.hidden=virtual||locationSelect?.value!=='__caffoot_create_location__';
             document.getElementById('device-form-physical-purpose')?.classList.toggle('hidden',virtual);
             // Keep Add Device tabs in sync with deployment selection.
             const locationArea=document.getElementById('device-form-location-area');
@@ -4770,7 +4772,9 @@ function openIpModal(ip) {
             const products = [...DEVICE_EDITOR_HYPERVISOR_PRODUCTS, ...appState.devices
                 .filter(device => device.type === 'Server - Physical')
                 .map(device => device.typeDetails?.hypervisorProduct).filter(Boolean)];
-            return products.some(product => String(product).trim().toLowerCase() === name);
+            // Catalogue overrides may rename a product while retaining its original key.
+            return products.some(product => String(product).trim().toLowerCase() === name ||
+                (value?.key && createBuiltInSoftwareCatalogueKey(product) === value.key));
         }
         function renderDeviceEditorRetainedSoftware(type, values) {
             const retained = getAvailableSoftwareCatalogueEntries().filter(item =>
@@ -4820,6 +4824,7 @@ function openIpModal(ip) {
                 requestAnimationFrame(() => {
                     const target = field.classList.contains('caffoot-search-native') ? field.nextElementSibling?.querySelector('.caffoot-search-trigger') : field;
                     if (target?.getClientRects().length) {target.scrollIntoView({block:'nearest',inline:'nearest'});target.focus({preventScroll:true});}
+                    else {feedback.tabIndex=-1;feedback.focus({preventScroll:true});}
                 });
             } else if (!nested) {feedback.tabIndex = -1;feedback.focus({preventScroll:true});}
             return true;
@@ -5551,7 +5556,6 @@ function openIpModal(ip) {
             }
             const locationPanel=locationRow?.querySelector('#dev-create-location-panel');
             if(locationPanel){
-                locationPanel.dataset.deviceEditorLocation='';
                 locationPanel.className='device-review-inline-create';
                 const title=document.createElement('h4');title.textContent='Add Location without leaving the device form';
                 const label=locationPanel.querySelector('label');

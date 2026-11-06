@@ -1,16 +1,16 @@
-# Issue #327 — Device Forms Investigation And Proposed Correction Plan
+# Issue #327 — Approved Device Forms Correction Plan
 
-**Status: revised proposal, awaiting approval of the complete implementation plan. This update is documentation only.**
+**Status: complete implementation authorised in [owner approval 6692843829](https://github.com/Caffoot/Caffoot-Lite/issues/327#issuecomment-6692843829). Implementation and acceptance evidence are maintained [separately](../development-handovers/evidence/issue-327-implementation.md). Private owner visual acceptance remains outstanding.**
 
-The owner has explicitly authorised the hypervisor and Notes requirements below. Those decisions replace the earlier plan’s contrary recommendations; they are not questions being reopened. Application implementation still requires approval of this complete revised plan.
+The owner has explicitly authorised the hypervisor and Notes requirements below. Those decisions replace the earlier plan’s contrary recommendations; they are not questions being reopened. The owner subsequently approved this complete revised plan; the requirements below are the implementation authority.
 
 This is the sole Add/Edit/Duplicate investigation under [#327](https://github.com/Caffoot/Caffoot-Lite/issues/327). #326 is closed following failed owner acceptance; its test results are not evidence of form correctness. #325's accepted buttons and all other accepted work remain outside scope. The [current #282 acceptance register](https://github.com/Caffoot/Caffoot-Lite/issues/282) takes precedence over historical handover statements.
 
-The clean local and remote application checkpoint was **`b7b917e0bf5b1d4aa462c8b4e5f5415faa84922e`** on `feat/approved-modular-html-282`. The original investigation was committed as `18dc90d51ebe43453f14c4e03d50a8a8e1c03cdb`. The clean local/remote head matched that commit before this revision. The exact revised documentation SHA is recorded in #327; application code remains at the same checkpoint.
+The clean local and remote application checkpoint was **`b7b917e0bf5b1d4aa462c8b4e5f5415faa84922e`** on `feat/approved-modular-html-282`. The original investigation was committed as `18dc90d51ebe43453f14c4e03d50a8a8e1c03cdb`. The clean local/remote head matched that commit before this revision. The revised plan was committed as `de502337377d318b345c1608ce99c389c566abce`; application code was unchanged at that plan-only checkpoint.
 
 ## What Is Authoritative Now
 
-Use [Batch 04](https://github.com/Caffoot/Caffoot-Lite/blob/c26db4a56bbc30f95b56201e81a7a76d13c6037b/future-design/approved/devices-details-forms-batch-04.html) at `c26db4a56bbc30f95b56201e81a7a76d13c6037b` for the form’s appearance. Use the working v2.0 forms for functionality, with the owner’s explicit amendments in [hypervisor clarification 6692411135](https://github.com/Caffoot/Caffoot-Lite/issues/327#issuecomment-6692411135), [Notes requirement 6692453167](https://github.com/Caffoot/Caffoot-Lite/issues/327#issuecomment-6692453167) and the current plan-only instruction.
+Use [Batch 04](https://github.com/Caffoot/Caffoot-Lite/blob/c26db4a56bbc30f95b56201e81a7a76d13c6037b/future-design/approved/devices-details-forms-batch-04.html) at `c26db4a56bbc30f95b56201e81a7a76d13c6037b` for the form’s appearance. Use the working v2.0 forms for functionality, with the owner’s explicit amendments in [hypervisor clarification 6692411135](https://github.com/Caffoot/Caffoot-Lite/issues/327#issuecomment-6692411135), [Notes requirement 6692453167](https://github.com/Caffoot/Caffoot-Lite/issues/327#issuecomment-6692453167) and the complete-plan approval linked above.
 
 The owner has demonstrated the running v2.0 Safari workflow and supplied comparative screenshots. Those recorded decisions settle the intended workflow. The original investigation’s source findings remain useful history, but its instruction to keep physical hosting on Software & Firmware and its objection to form-only filtering are superseded.
 
@@ -78,7 +78,7 @@ The completed investigation remains intact: 216 mode/tab/viewport/theme states, 
 
 [Complete original records](../development-handovers/evidence/issue-327/observations.json), [interaction observations](../development-handovers/evidence/issue-327/interactions.json) and [hashes](../development-handovers/evidence/issue-327/checks.json) are unchanged. The corrected canonical NIC observation establishes that Edit and Duplicate both retain 2; an early incomplete fixture is not a data-loss finding. Searchable selects’ small native accessibility rectangles are not their visible trigger dimensions.
 
-This revision performs targeted source reading and documentation checks only. It does not rerun the investigation, browser/backend suites or Docker builds, and does not claim a new screenshot comparison or owner acceptance. The owner’s v2.0/v2.1 Safari comparisons must be included in later private visual acceptance.
+The plan-only revision performed targeted source reading and documentation checks. It did not rerun the investigation, browser/backend suites or Docker builds, or claim a new screenshot comparison or owner acceptance. The owner’s v2.0/v2.1 Safari comparisons must be included in later private visual acceptance.
 
 ## Discrepancy Matrix
 
@@ -145,7 +145,7 @@ The detailed records include labels, values, required/disabled states, bounds, o
 
 Validation coverage includes native required fields; uniqueness/identity/purpose/status; unfinished location creation; missing/ineligible VM host; allocation format; missing new-host product; recognised mounting/location; subnet/primary-IP match, ownership and reservations; rack bounds/collisions; stale records/reservations, permission loss and server-save failures; and guest reassignment/product-change confirmation. **The correction changes visibility/routing of feedback, not these rules or message meanings.**
 
-## One Revised Implementation Batch — After Approval Only
+## Authorised Implementation Batch
 
 1. **Restore the editor’s approved structure.** Reconnect the existing form handlers to Batch 04’s header, tabs, scrolling body, card wrappers and fixed footer. Correct grouping/spacing, use the approved Duplicate subtitle in place of the extra banner, and preserve the accepted themes/alignment and real retained controls. Do not change other Devices screens.
 2. **Apply the single hypervisor path.** Put eligible physical-server hosting and dedicated product/version selectors on General; restore ordinary-OS hiding; apply form-only product filtering and the preservation rules above. Keep existing type/purpose filters and host/guest safety. Do not infer hosting from ordinary OS/software selection.
@@ -153,7 +153,7 @@ Validation coverage includes native required fields; uniqueness/identity/purpose
 4. **Restore the spacious Notes workspace.** Make the active Notes panel/card/workspace pass available height down to the textarea/Preview, retaining the wrapping toolbar and internal text scrolling. This applies only to Add/Edit/Duplicate, with no Notes data/formatting change.
 5. **Verify and deliver the one scoped batch.** Preserve backend/API/schema/security/data contracts, reconnect the existing submit/reservation/catalogue-return/guest handlers, and run the acceptance matrix below. Push reviewable checkpoints and evidence. The owner builds/reviews the native private Pi image through the established workflow. No merge, publication, production deployment or release.
 
-### Files And Functions Expected To Change Later
+### Approved Implementation Locations
 
 | Location | Planned editor-only correction / isolation |
 | --- | --- |
@@ -168,7 +168,7 @@ Validation coverage includes native required fields; uniqueness/identity/purpose
 | Integration CSS, normally `interface/styles/components.css` / editor-only additions in `dialogs.css` | Qualify every change by an Add/Edit/Duplicate marker. No broad `.device-review-dialog`, `.device-review-close` or textarea rule affecting read-only Details/other screens. Keep pinned source styles intact. |
 | Focused tests, this plan, handover and Function Index | Verify changes and update declaration links if declarations move. No #304 restructuring or new dependency/framework. |
 
-Existing backend validators, database schema, field names, account/security rules, catalogue definitions and ordinary manager screens are not proposed for change. The form-only filter is applied to offered choices, not to the shared catalogue or the stored record.
+The implementation uses narrower changes in `interface/application.js` and editor-scoped `interface/styles/components.css`; all HTML templates remain unchanged. Existing backend validators, database schema, field names, account/security rules, catalogue definitions and ordinary manager screens remain outside scope. The form-only filter is applied to offered choices, not to the shared catalogue or the stored record.
 
 ## Exact Acceptance Checks After Implementation
 
@@ -194,7 +194,7 @@ Use fictional isolated records and compare complete rendered forms against Batch
 
 The hypervisor placement/hiding/filtering, VM restrictions and Notes height are settled owner requirements. The previous three investigation decision groups are superseded by the latest comments and current instruction. No additional product decision is needed merely to include them in this plan.
 
-The complete revised plan still requires **explicit product-owner approval before application implementation**. No unresolved ambiguity in the intended workflow prevents this documentation update. The plan’s proposed retained-value treatment and guarded implementation locations are concrete items for that approval. A genuinely incompatible data association or unavoidable effect on another screen discovered later must be reported before deviating.
+The complete revised plan, including retained-value treatment and guarded implementation locations, was explicitly approved in comment 6692843829. No further product decision is outstanding for these changes. A genuinely incompatible data association or unavoidable effect on another screen must still be reported before deviating.
 
 The malformed **Close ×** button in read-only Device Details is recorded separately as [#328](https://github.com/Caffoot/Caffoot-Lite/issues/328), awaiting its own later approval. It is not part of this batch; do not fix it through a shared style change.
 

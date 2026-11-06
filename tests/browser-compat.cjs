@@ -941,7 +941,7 @@ async function run(){
   }
   assert.equal(await generalGrid.evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),2,
     'Approved source General cards must use desktop columns');
-  assert.equal(await identityCard.locator('.device-review-form-grid').evaluate(
+  assert.equal(await identityCard.locator(':scope > .device-review-form-grid').evaluate(
     el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),2,
     'Approved Device Identity fields must use the two-column source grid');
   await identityCard.getByRole('button',{name:'+ Add Location'}).click();
@@ -953,7 +953,7 @@ async function run(){
   await page.setViewportSize({width:420,height:900});
   assert.equal(await generalGrid.evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),1,
     'Approved General cards must stack at mobile width');
-  assert.equal(await identityCard.locator('.device-review-form-grid').evaluate(
+  assert.equal(await identityCard.locator(':scope > .device-review-form-grid').evaluate(
     el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),1,
     'Approved Device Identity fields must stack on mobile');
   await page.setViewportSize({width:1440,height:950});

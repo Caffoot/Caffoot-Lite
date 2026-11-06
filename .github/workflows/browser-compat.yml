@@ -6,6 +6,9 @@ on:
     paths:
       - "interface/**"
       - "tests/browser-compat.cjs"
+      - "tests/device-editor-approved.cjs"
+      - "tests/approved-visual.cjs"
+      - "tests/visual_fixtures.py"
       - "inventory.html"
       - "setup.html"
       - ".github/workflows/browser-compat.yml"
@@ -13,6 +16,9 @@ on:
     paths:
       - "interface/**"
       - "tests/browser-compat.cjs"
+      - "tests/device-editor-approved.cjs"
+      - "tests/approved-visual.cjs"
+      - "tests/visual_fixtures.py"
       - "inventory.html"
       - "setup.html"
       - ".github/workflows/browser-compat.yml"
@@ -45,3 +51,19 @@ jobs:
         env:
           NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
         run: node tests/browser-compat.cjs
+      - name: Check approved Device editor forms and capture full scroll comparisons
+        env:
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
+          CAFFOOT_DEVICE_EDITOR_APPROVED: "1"
+          CAFFOOT_EDITOR_FULL_CAPTURES: "1"
+          CAFFOOT_VISUAL_FILTER: "^$"
+          CAFFOOT_VISUAL_OUTPUT: ${{ runner.temp }}/device-editor-evidence
+        run: node tests/approved-visual.cjs
+      - name: Save fictional Device editor evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: device-editor-evidence-${{ github.sha }}
+          path: ${{ runner.temp }}/device-editor-evidence/device-editor
+          if-no-files-found: ignore
+          retention-days: 14
