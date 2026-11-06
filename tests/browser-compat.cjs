@@ -69,7 +69,7 @@ async function run(){
       CAFFOOT_TLS_DIR:path.join(tmp,'tls'),CAFFOOT_WEB_ADDRESS:address,
       CAFFOOT_SERVER_ADDRESS:'127.0.0.1',CAFFOOT_PORT:'8080',CAFFOOT_HOST:'127.0.0.1'}
   });
-  browser=await chromium.launch({headless:true});
+  browser=await chromium.launch({headless:true,executablePath:process.env.CAFFOOT_CHROMIUM_PATH||undefined});
   const context=await browser.newContext({ignoreHTTPSErrors:true,viewport:{width:1440,height:950}});
   const page=await context.newPage();
   page.setDefaultTimeout(12000);
@@ -93,7 +93,8 @@ async function run(){
   const faviconResponse=await page.request.get(address+'/assets/favicon.ico');
   assert.equal(faviconResponse.status(),200,'Existing Caffoot favicon should be served to browsers');
   await page.locator('.brand-side .brand-logo[src="/assets/caffoot-icon-1024.png"]').waitFor();
-  assert.equal(await page.locator('.brand-content h2').innerText(),'Infrastructure,\nSimplified.');
+  assert.equal(await page.locator('.brand-content h2').innerText(),'Simplicity in everything.');
+  assert.equal(await page.locator('.brand-tagline-detail').innerText(),'Your infrastructure. Your users. Your data.');
   assert.ok((await page.locator('main').evaluate(el=>getComputedStyle(el).fontFamily)).includes('Inter'),
     'First-run setup must use the approved Inter font stack');
   await page.setViewportSize({width:375,height:812});
@@ -577,7 +578,7 @@ async function run(){
   assert.equal(await page.locator('#profile-username').inputValue(),'owner',
     'Saving personal details must not alter the sign-in username');
   assert.equal(await page.locator('#personal-details-form input[name="email"]').inputValue(),'owner@example.test');
-  await page.locator('.email-verification summary').click();
+  await page.locator('#open-email-verification').click();
   await page.locator('#account-email-verification-form input[name="password"]').fill(password);
   const verificationRequest=page.waitForResponse(response=>response.url().endsWith('/api/account/email/request'));
   await page.locator('#request-email-verification').click();

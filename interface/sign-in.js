@@ -50,6 +50,7 @@ async function request(path,data){
 }
 function display(){
  $('password-recovery').hidden=!['login','login-mfa'].includes(mode);
+ if($('password-recovery').hidden){resetRecoveryFlow();$('password-recovery').open=false;}
  const welcomeIsVisible=mode==='setup'&&!setupWelcomeAcknowledged;
  const complete=mode==='complete';
  $('setup-complete').hidden=!complete;
@@ -192,18 +193,59 @@ $('sign-out').addEventListener('click',async()=>{
  }catch(e){$('signed-in-message').textContent=e.message}
 });
 
+let recoveryRequestVersion=0;
+function showRecoveryFeedback(message,focusNext){
+ const status=$('recovery-message');status.textContent=message;
+ if(focusNext){
+  status.scrollIntoView({block:'center',behavior:'auto'});
+  focusNext.focus({preventScroll:true});
+ }
+}
+function resetRecoveryFlow(){
+ recoveryRequestVersion++;
+ for(const id of ['recovery-request-form','recovery-confirm-form']){
+  $(id).reset();$(id).removeAttribute('aria-busy');$(id).querySelector('button[type="submit"]').disabled=false;
+ }
+ $('recovery-confirm-form').hidden=true;$('recovery-reset-fields').disabled=true;
+ $('recovery-request-form').hidden=false;$('recovery-resend').hidden=true;
+ $('recovery-message').textContent='';
+}
+$('password-recovery').addEventListener('toggle',()=>{if(!$('password-recovery').open)resetRecoveryFlow();});
+$('recovery-back').addEventListener('click',()=>{
+ resetRecoveryFlow();$('password-recovery').open=false;$('username').focus();
+});
+$('recovery-resend').addEventListener('click',()=>{
+ const username=$('recovery-request-form').elements.username.value;
+ resetRecoveryFlow();$('recovery-request-form').elements.username.value=username;
+ showRecoveryFeedback('Requesting another code replaces the previous code.',$('recovery-request-form').elements.username);
+});
 for(const id of ['recovery-request-form','recovery-confirm-form']){
- document.getElementById(id).addEventListener('submit',async event=>{
+ $(id).addEventListener('submit',async event=>{
   event.preventDefault();
   const form=event.target,button=form.querySelector('button[type="submit"]');
-  button.disabled=true;
+  if(button.disabled)return;
+  const version=++recoveryRequestVersion,requesting=id==='recovery-request-form';
+  button.disabled=true;form.setAttribute('aria-busy','true');$('recovery-resend').disabled=true;
+  showRecoveryFeedback(requesting?'Requesting recovery instructions…':'Checking your recovery code…');
   try{
    const payload=Object.fromEntries(new FormData(form));
-   const result=await request(id==='recovery-request-form'?'/api/recovery/request':'/api/recovery/confirm',payload);
-   document.getElementById('recovery-message').textContent=result.message||result.status;
-   if(id==='recovery-confirm-form')form.reset();
-  }catch(error){document.getElementById('recovery-message').textContent=error.message;}
-  finally{button.disabled=false;}
+   const result=await request(requesting?'/api/recovery/request':'/api/recovery/confirm',payload);
+   if(version!==recoveryRequestVersion)return;
+   if(requesting){
+    // Every neutral response opens the same next step, regardless of account eligibility.
+    $('recovery-request-form').hidden=true;
+    $('recovery-confirm-form').hidden=false;$('recovery-reset-fields').disabled=false;
+    $('recovery-resend').hidden=false;
+    showRecoveryFeedback(result.message,$('recovery-confirm-form').elements.token);
+   }else{
+    form.reset();form.hidden=true;$('recovery-reset-fields').disabled=true;$('recovery-resend').hidden=true;
+    showRecoveryFeedback(result.status||result.message,$('recovery-back'));
+   }
+  }catch(error){
+   if(version===recoveryRequestVersion)showRecoveryFeedback(error.message,$('recovery-message'));
+  }finally{
+   if(version===recoveryRequestVersion){button.disabled=false;form.removeAttribute('aria-busy');$('recovery-resend').disabled=false;}
+  }
  });
 }
 

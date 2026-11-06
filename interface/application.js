@@ -7121,7 +7121,25 @@ function openIpModal(ip) {
             renderRackViewPreservingScrollPosition();
             return true;
         }
+        function updateRackDragPointerLabel(event, label, invalid = false) {
+            let pointerLabel = document.querySelector('.rack-drag-hud');
+            if (!pointerLabel) {
+                pointerLabel = document.createElement('div');
+                pointerLabel.setAttribute('aria-hidden', 'true');
+                document.body.appendChild(pointerLabel);
+            }
+            pointerLabel.className = 'rack-drag-hud' + (invalid ? ' invalid' : '');
+            pointerLabel.textContent = label;
+            // Keep the candidate's position visible even when a tall accessory's ends are off-screen.
+            const bounds = pointerLabel.getBoundingClientRect();
+            pointerLabel.style.left = Math.max(0, Math.min(event.clientX + 16, window.innerWidth - bounds.width - 8)) + 'px';
+            pointerLabel.style.top = Math.max(0, Math.min(event.clientY + 16, window.innerHeight - bounds.height - 8)) + 'px';
+        }
+        function clearRackDragPointerLabel() {
+            document.querySelectorAll('.rack-drag-hud').forEach(element => element.remove());
+        }
         function clearRackDropPreview() {
+            clearRackDragPointerLabel();
             document.querySelectorAll('.rack-drag-preview').forEach(el => el.remove());
             document.querySelectorAll('.rack-drag-target').forEach(el => el.classList.remove('rack-drag-target'));
         }
@@ -7194,6 +7212,7 @@ function openIpModal(ip) {
             return {candidate,error:validateRackAccessoryPlacement(candidate,accessory.id),total};
         }
         function clearVerticalRackAccessoryDragPreview(){
+            clearRackDragPointerLabel();
             document.querySelectorAll('.rack-vertical-drop-preview').forEach(el=>el.remove());
             document.querySelectorAll('.vertical-rack-accessory-rail').forEach(el=>el.classList.remove('rack-vertical-drop-valid','rack-vertical-drop-invalid'));
         }
@@ -7209,7 +7228,7 @@ function openIpModal(ip) {
         document.addEventListener('dragover',event=>{
             if(!draggedVerticalRackAccessoryId)return;
             const rail=event.target.closest('.vertical-rack-accessory-rail');
-            if(!rail)return;
+            if(!rail){clearVerticalRackAccessoryDragPreview();return;}
             event.preventDefault();event.stopImmediatePropagation();
             const a=(appState.rackAccessories||[]).find(a=>a.id===draggedVerticalRackAccessoryId);
             if(!a)return;
@@ -7219,10 +7238,18 @@ function openIpModal(ip) {
             const invalid=!!placement.error;
             rail.classList.add(invalid?'rack-vertical-drop-invalid':'rack-vertical-drop-valid');
             const preview=document.createElement('div');
-            preview.className='rack-vertical-drop-preview'+(invalid?' rack-vertical-drop-invalid':'');
+            preview.className='rack-vertical-drop-preview rack-drop-preview'+(invalid?' rack-vertical-drop-invalid invalid':'');
             preview.style.bottom=((placement.candidate.startU-1)/placement.total*100)+'%';
             preview.style.height=(Number(a.heightU)/placement.total*100)+'%';
+            const range = 'U' + placement.candidate.startU + '–U' + (placement.candidate.startU + Number(a.heightU) - 1);
+            const label = (invalid ? 'Occupied / invalid · ' : 'Move to ') + range;
+            const previewLabel = document.createElement('span');
+            previewLabel.className = 'rack-drop-preview-label';
+            previewLabel.textContent = label;
+            preview.appendChild(previewLabel);
+            preview.setAttribute('aria-hidden', 'true');
             rail.appendChild(preview);
+            updateRackDragPointerLabel(event, label, invalid);
             event.dataTransfer.dropEffect=invalid?'none':'move';
         });
         document.addEventListener('drop',async event=>{
@@ -7241,7 +7268,7 @@ function openIpModal(ip) {
                 showToast('Accessory move could not be saved. Original placement restored.','error');
                 return;
             }
-            renderContent();
+            renderRackViewPreservingScrollPosition();
         });
         document.addEventListener('dragend',()=>{
             draggedVerticalRackAccessoryId=null;clearVerticalRackAccessoryDragPreview();
@@ -7312,13 +7339,20 @@ function openIpModal(ip) {
             clearRackDropPreview();
             target.classList.add('rack-drag-target');
             const preview = document.createElement('div');
-            preview.className = 'rack-drag-preview' + (error ? ' rack-drop-invalid' : '');
+            preview.className = 'rack-drag-preview rack-drop-preview' + (error ? ' rack-drop-invalid invalid' : '');
             preview.style.pointerEvents = 'none';
             preview.style.height = `${height * 40}px`;
             // Rack grid runs from U1 at its bottom. Use that common origin
             // regardless of the height of the element receiving dragover.
             preview.style.bottom = `${(startU-1)*40}px`;
-            preview.textContent = error ? `${height}U · Unavailable` : `${height}U · Drop here`;
+            const range = height === 1 ? 'U' + startU : 'U' + startU + '–U' + (startU + Number(height) - 1);
+            const label = (error ? 'Occupied / invalid · ' : 'Move to ') + range;
+            const previewLabel = document.createElement('span');
+            previewLabel.className = 'rack-drop-preview-label';
+            previewLabel.textContent = label;
+            preview.appendChild(previewLabel);
+            updateRackDragPointerLabel(event, label, !!error);
+            event.dataTransfer.dropEffect = error ? 'none' : 'move';
             preview.setAttribute('aria-hidden', 'true');
             grid.appendChild(preview);
         });
@@ -8617,6 +8651,91 @@ void (async () => {
       .replaceAll('{{C_MFA}}',sessionMfaEnrolled?'Enabled':'Not enrolled')
       .replace('<!--CAFFOOT_MFA_PANEL-->',renderApprovedAccountMfaPanel());
   };
+  function initialiseAccountEmailVerification(root){
+    const personalForm=root.querySelector('#personal-details-form');
+    const email=personalForm?.elements.email;
+    if(!email)return;
+    const action=root.querySelector('#open-email-verification');
+    const badge=root.querySelector('#account-email-status');
+    const hint=root.querySelector('#account-email-hint');
+    personalForm.insertAdjacentHTML('afterend',renderInterfaceTemplate('my-account/email-verification-1',[]));
+    const panel=root.querySelector('#account-email-verification');
+    const form=root.querySelector('#account-email-verification-form');
+    const send=root.querySelector('#request-email-verification');
+    const cancel=root.querySelector('#cancel-email-verification');
+    const fields=root.querySelector('#email-verification-code-fields');
+    const status=root.querySelector('#email-verification-message');
+    let requestVersion=0;
+    function closeEmailVerification(){
+      requestVersion++;form.reset();form.removeAttribute('aria-busy');
+      form.querySelectorAll('button').forEach(button=>{button.disabled=false;});
+      fields.hidden=true;fields.disabled=true;panel.hidden=true;
+      send.textContent='Send Confirmation Code';status.textContent='';
+      action.setAttribute('aria-expanded','false');
+    }
+    function updateEmailVerificationStatus(){
+      const savedEmail=accountProfile?.email||'';
+      const dirty=email.value.trim()!==savedEmail;
+      const verified=!!savedEmail&&!dirty&&!!accountProfile?.emailVerified;
+      badge.textContent=verified?'Verified':'Not Verified';
+      action.hidden=verified;action.disabled=!savedEmail||dirty;
+      hint.textContent=dirty?'Save Personal Details before verifying this address.':!savedEmail?
+        'Save an email address before verifying it.':verified?
+        'Your email address is verified for optional password recovery.':'Verify this address before using optional password recovery.';
+      if(dirty||!savedEmail||verified)closeEmailVerification();
+    }
+    function showEmailVerificationFeedback(message,focusNext){
+      status.textContent=message;
+      if(focusNext){status.scrollIntoView({block:'center',behavior:'auto'});focusNext.focus({preventScroll:true});}
+    }
+    action.addEventListener('click',()=>{
+      closeEmailVerification();panel.hidden=false;action.setAttribute('aria-expanded','true');
+      form.elements.password.focus();
+    });
+    cancel.addEventListener('click',()=>{closeEmailVerification();action.focus();});
+    email.addEventListener('input',updateEmailVerificationStatus);
+    updateEmailVerificationStatus();
+    send.addEventListener('click',async()=>{
+      if(send.disabled||!form.elements.password.reportValidity())return;
+      const version=++requestVersion;
+      send.disabled=true;form.querySelector('[type="submit"]').disabled=true;
+      form.setAttribute('aria-busy','true');
+      showEmailVerificationFeedback('Requesting a confirmation code…');
+      try{
+        const result=await postInventory('/api/account/email/request',{password:form.elements.password.value});
+        if(version!==requestVersion||!root.isConnected)return;
+        form.elements.token.value='';fields.hidden=false;fields.disabled=false;
+        send.textContent='Resend Confirmation Code';
+        showEmailVerificationFeedback(result.message+' Check your email and enter the confirmation code.',form.elements.token);
+      }catch(error){
+        if(version===requestVersion&&root.isConnected)showEmailVerificationFeedback(error.message,status);
+      }finally{
+        if(version===requestVersion&&root.isConnected){send.disabled=false;form.querySelector('[type="submit"]').disabled=false;form.removeAttribute('aria-busy');}
+      }
+    });
+    form.addEventListener('submit',async event=>{
+      event.preventDefault();event.stopPropagation();
+      const button=form.querySelector('[type="submit"]');
+      if(fields.disabled||button.disabled)return;
+      const version=++requestVersion;
+      button.disabled=true;send.disabled=true;form.setAttribute('aria-busy','true');
+      showEmailVerificationFeedback('Checking your confirmation code…');
+      try{
+        await postInventory('/api/account/email/confirm',{password:form.elements.password.value,token:form.elements.token.value.trim()});
+        if(version!==requestVersion||!root.isConnected)return;
+        form.reset();await loadApprovedAccountProfile();
+        if(version!==requestVersion||!root.isConnected)return;
+        renderContent();
+        const confirmation=document.getElementById('account-email-hint');
+        if(confirmation){confirmation.textContent='Email address verified. You can use optional password recovery.';confirmation.focus();}
+        showToast('Email address verified.');
+      }catch(error){
+        if(version===requestVersion&&root.isConnected)showEmailVerificationFeedback(error.message,status);
+      }finally{
+        if(version===requestVersion&&root.isConnected){button.disabled=false;send.disabled=false;form.removeAttribute('aria-busy');}
+      }
+    });
+  }
   nextHydrateAccount=function hydrateApprovedAccount(container){
     const root=container.querySelector('.approved-account');
     if(!root)return;
@@ -8645,23 +8764,7 @@ void (async () => {
       }
       root.querySelector('#photo-remove').hidden=!accountPhotoUrl;
     }
-    if(accountProfile?.email && !accountProfile.emailVerified){
-      const card=root.querySelector('.personal-card');
-      if(card)card.insertAdjacentHTML('beforeend',renderInterfaceTemplate('my-account/email-verification-1',[]));
-      const verification=root.querySelector('#account-email-verification-form');
-      if(verification){
-        const send=root.querySelector('#request-email-verification');
-        send.addEventListener('click',async()=>{
-          if(!verification.elements.password.reportValidity())return;
-          send.disabled=true;
-          try{
-            const result=await postInventory('/api/account/email/request',{password:verification.elements.password.value});
-            root.querySelector('#email-verification-message').textContent=result.message;
-          }catch(error){root.querySelector('#email-verification-message').textContent=error.message;}
-          finally{send.disabled=false;}
-        });
-      }
-    }
+    initialiseAccountEmailVerification(root);
     const preference=caffootThemePreference();
     const label=root.querySelector('#home-theme-name');
     if(label)label.textContent=preference==='system'?'Use System Setting':preference==='dark'?'Dark Mode':'Light Mode';
@@ -9204,16 +9307,6 @@ void (async () => {
       showToast(error.message,'error');
       if(button)button.disabled=false;
     });
-  },true);
-  document.addEventListener('submit',event=>{
-    if(event.target.id!=='account-email-verification-form')return;
-    event.preventDefault();event.stopImmediatePropagation();
-    const form=event.target;
-    void postInventory('/api/account/email/confirm',{
-      password:form.elements.password.value,token:form.elements.token.value.trim()
-    }).then(async()=>{
-      await loadApprovedAccountProfile();renderContent();showToast('Email address verified.');
-    }).catch(error=>{document.getElementById('email-verification-message').textContent=error.message;});
   },true);
   document.addEventListener('click', event => {
     const element = event.target.closest('button,[data-action]');

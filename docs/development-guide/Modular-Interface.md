@@ -71,3 +71,11 @@ CAFFOOT_INTERFACE_CONSISTENCY=1 CAFFOOT_INTERFACE_CONSISTENCY_EXTRAS=1 CAFFOOT_V
 ```
 
 The first command checks all affected layouts, the exact icon mapping, keyboard activation and focused labels. The second adds 18px tab-label and empty-inventory checks. These commands use temporary demonstration data, not an existing installation. Follow the existing browser-workflow Playwright setup; `CAFFOOT_CHROMIUM_PATH` can select an already-installed Chromium. [Results and private review instructions](../development-handovers/evidence/issue-309/Report.md) distinguish automated checks from owner appearance acceptance.
+
+## Approved Rack, Recovery And Brand Follow-up
+
+Issues [#310](https://github.com/Caffoot/Caffoot-Lite/issues/310), [#311](https://github.com/Caffoot/Caffoot-Lite/issues/311) and [#317](https://github.com/Caffoot/Caffoot-Lite/issues/317) were approved on 6 November 2026. Runtime templates restore the shared Remove Accessory button and approved blue/red placement overlays. Vertical accessory drops reuse the existing scroll-preserving helper; no horizontal placement or validation rules change.
+
+My Account now presents saved email verification status and an inline password/request/code flow. Sign In offers guided username-only recovery, immediate live feedback and progressive reset fields. The existing backend eligibility, MFA, proof and privacy rules are unchanged. Sign In and About use the exact primary tagline. The Sign In typography is scoped in `sign-in-controls.css`; About changes only its existing tagline paragraph. These explicit visual amendments do not alter the twelve pinned sources or extracted stylesheets. README and website work are excluded.
+
+Run `CAFFOOT_APPROVED_OWNER_BATCH=1 CAFFOOT_VISUAL_FILTER='^$' node tests/approved-visual.cjs` for the focused isolated browser checks. Set `CAFFOOT_CHROMIUM_PATH` if using a system Chromium. Mocked mail/proof responses in UI checks do not establish real external delivery. Native-browser, screen-reader and private owner acceptance remain separate from automated checks.

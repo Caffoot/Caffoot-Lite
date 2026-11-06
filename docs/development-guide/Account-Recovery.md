@@ -4,9 +4,11 @@ These controls belong to the Issue #282 development branch. They are not a claim
 
 ## Normal Recovery
 
-Email remains optional. With outgoing mail configured, save an email address in My Account and use **Verify Email Address**. Supply your current password, request the confirmation code and enter the emailed code. Codes expire after fifteen minutes and work once. Changing the address removes verification.
+Email remains optional. In **My Account → Personal Details**, save an email address and check the **Verified / Not Verified** status beside it. An edited address must be saved before verification. Choose **Verify Email**, confirm your current password and request a confirmation code. The code field appears after the request response. Enter the emailed code to verify ownership; a new request replaces the previous code. Codes expire after fifteen minutes and work once. Changing the saved address removes verification. Cancel clears the password and code fields.
 
-On Sign In, expand **Need Help Signing In?** to request a recovery code. Enter that code, a new password and your authenticator code if your account uses MFA. Recovery invalidates existing sessions and retains authenticator protection. A generic response protects account privacy. Without configured delivery or a verified address, contact an administrator. Losing both an administrator password and authenticator cannot be solved by email recovery.
+On Sign In, choose **Forgot Password?** and enter your **username**. Recovery does not look up email addresses. The page shows progress immediately, then the same neutral response for every completed request. It reveals the recovery-code, new-password and authenticator fields together. Enter your authenticator code if your account requires it. **Request Another Code** returns to the username step; **Back To Sign In** clears the recovery fields. A successful reset revokes existing sessions and retains normal sign-in and authenticator protection.
+
+Mail requires an active account, a saved verified email and configured outgoing delivery. A neutral response does not confirm eligibility or delivery. A full queue or SMTP failure can prevent a message from arriving. Successful SMTP test mail does not establish recovery eligibility. Check private account verification and provider delivery records without sharing addresses, credentials or codes in public issues. Without configured delivery or a verified address, contact an administrator. Losing both an administrator password and authenticator cannot be solved by email recovery.
 
 ## Last-Resort Sole-Administrator Recovery
 

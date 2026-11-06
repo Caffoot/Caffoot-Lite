@@ -280,3 +280,7 @@ html{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sa
 /* Reuse the existing tab icons without changing button labels or keyboard stops. */
 #main-content .section-tab-control {display:inline-flex;align-items:center;gap:8px;}
 #main-content .section-tab-control > .section-tab-icon {width:18px;height:18px;flex:none;}
+
+.account-email-status{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px}
+.email-verification{margin-top:16px;border-top:1px solid var(--line);padding-top:16px}
+#email-verification-code-fields{border:0;margin:0;padding:0;min-width:0}
