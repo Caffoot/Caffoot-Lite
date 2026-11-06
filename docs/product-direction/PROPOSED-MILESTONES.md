@@ -16,14 +16,20 @@ GitHub Milestones #20–#25 group future requests by the **benefit to users**, n
 
 **Outcome:** An administrator can find, record and maintain useful information about equipment without repeating work.
 
-Potential ideas:
-- Asset lifecycle: purchase dates, warranties, status, replacements and retirement.
-- Simple device templates and more useful bulk import/export.
-- QR labels linking to authorised device records.
-- Clear reports and documentation-completeness checks.
+Existing proposals:
+- [Equipment lifecycle, warranties, optional purchase documents and location/movement history — #286](https://github.com/Caffoot/Caffoot-Lite/issues/286).
+- [QR labels linking to authorised asset records — #287](https://github.com/Caffoot/Caffoot-Lite/issues/287).
+- [CSV import/export, bulk updates and safe duplicate review — #288](https://github.com/Caffoot/Caffoot-Lite/issues/288).
+- [Reusable device templates — #289](https://github.com/Caffoot/Caffoot-Lite/issues/289).
+- [Printable inventory and audit reports — #290](https://github.com/Caffoot/Caffoot-Lite/issues/290).
+- [Inventory documentation-completeness checks — #291](https://github.com/Caffoot/Caffoot-Lite/issues/291).
 - [Remembered filters and saved views — #241](https://github.com/Caffoot/Caffoot-Lite/issues/241).
+- [Optional stocktakes and physical asset verification — #322](https://github.com/Caffoot/Caffoot-Lite/issues/322).
+- [Organisation-specific asset information: check current custom fields before proposing more — #323](https://github.com/Caffoot/Caffoot-Lite/issues/323).
 
-**To decide:** Which tasks are genuinely time-consuming today? What is the simplest useful first release? Which information must remain optional?
+**To decide:** Which tasks are genuinely time-consuming today? What is the smallest useful first improvement? What already exists? Which information must stay optional? Asset-to-person assignment remains in Milestone 03; no separate document-management or duplicate audit system is implied.
+
+**Suggested order for later discussion, not an approved schedule:** Investigate CSV onboarding first, then lifecycle, QR labels/stocktakes, templates/bulk editing, and reporting/completeness/saved views. Each idea needs its own scope approval and can be delivered independently; Milestone 01 is not automatically a single release.
 
 ### Milestone 02 (#21) — Understand how infrastructure fits together
 
