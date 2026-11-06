@@ -80,8 +80,8 @@ module.exports=async({page,context,out})=>{
    }
    for(const navigation of result.navigation)for(const button of navigation.buttons){
     if(!button.icon)continue;
-    assert.equal(button.symbolExists,true);assert.equal(button.width,'18px');assert.equal(button.height,'18px');
-    if(expected){assert.equal(button.decorative,true);assert.equal(button.gap,'8px');}
+    assert.equal(button.symbolExists,true);
+    if(expected){assert.equal(button.width,'18px');assert.equal(button.height,'18px');assert.equal(button.decorative,true);assert.equal(button.gap,'8px');}
    }
    if(result.audit){
     assert.ok(result.audit.order.indexOf('audit-tabs')<result.audit.order.indexOf('audit-stats'));

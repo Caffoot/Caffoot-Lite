@@ -241,6 +241,7 @@ async function run(){
   for(const section of ['types','locations','manufacturers','models','software','services']){
     await page.locator('#main-content [data-action="approved-device-section"][data-tab="'+section+'"]').click();
     const panel=page.locator('#main-content .catalog-section');
+    await panel.evaluate(el=>Promise.all(el.getAnimations({subtree:true}).map(animation=>animation.finished)));
     assert.equal(await page.locator('.device-tabs .section-tab-icon[aria-hidden="true"][focusable="false"]').count(),8,
       'All eight main Device tabs retain labels and decorative shared icons');
     assert.equal(await panel.evaluate(el=>el.firstElementChild.getBoundingClientRect().top-document.querySelector('.device-tabs').getBoundingClientRect().bottom),16,
