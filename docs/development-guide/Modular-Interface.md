@@ -1,5 +1,7 @@
 # Modular Interface — Issue #282
 
+The [Issue #309 presentation amendment](https://github.com/Caffoot/Caffoot-Lite/issues/309) uses one 16px gap between main tabs and the first content block. Headings and secondary navigation keep their own internal spacing. Audit Trail places its tabs before the four shared totals, which remain visible on every Audit tab. Twenty-six previously text-only tabs use the existing shared SVG icons; their labels and actions are unchanged. Focusing a tab reveals its complete label by scrolling only that navigation row. The pinned source files and backend permissions remain unchanged.
+
 This branch replaces the single presentation document with HTML screen modules, separate JavaScript and the twelve pinned approved stylesheets. It is development work for private acceptance, not a published release. The existing `/`, `/setup`, `/inventory` and inventory fragment entry points remain available.
 
 ## Source And Rendering

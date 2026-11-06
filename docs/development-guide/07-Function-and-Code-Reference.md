@@ -20,6 +20,8 @@ Presentation corrections use `renderDeviceCategoryCatalogue`, `renderCatalogueRe
 
 See [Modular Interface](Modular-Interface.md) for the Issue #282 presentation modules, pinned sources and private acceptance boundaries.
 
+The Issue #309 tab icons use `renderSectionTabIcon`. `revealSectionTab` scrolls a navigation row horizontally to show a focused or selected tab, and `revealActiveSectionTabs` retains the existing selected-tab behaviour after rendering or resizing. The shared 16px content entrance and icon styling live in `interface/styles/components.css`; Audit Trail's single totals block follows its tabs in `interface/screens/audit-trail.html`.
+
 ## Inventory writers and validators
 
 | File | Search terms |

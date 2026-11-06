@@ -201,9 +201,6 @@ html{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sa
 #main-content .approved-users-sections .field label {font-size:11px;font-weight:750;color:var(--theme-secondary,#4e6981);margin:0;}
 #main-content .approved-users-sections .field .input:disabled {background:var(--theme-disabled,#f3f6f8);color:var(--theme-secondary,#7c91a3);}
 
-/* Owner Acceptance Batch 01: preserve the pinned Rack Overview's single 21px inset. */
-#main-content .rack-overview-section {padding-top:0;}
-
 /* Labelled header dismissal follows the existing Manage Device Types button. */
 #modal-content button.app-modal-close,
 #main-content button.app-modal-close {
@@ -252,10 +249,9 @@ html{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sa
 /* Match the existing Dashboard action-row separation without changing the stats. */
 .db-allocation-action {margin-top:18px;}
 
-/* Issue #305 owner amendment: steady-state Device Intelligence vertical rhythm.
-   Main inset 18; heading gap 17/14; secondary strip 55; tabs-to-metrics 19;
+/* Keep the agreed spacing inside Rack Overview, matching Device Intelligence.
+   Heading gap 17/14; secondary strip 55; tabs-to-metrics 19;
    metrics-to-insights and insight groups 17; metric grid gaps 14/10. */
-#main-content .rack-overview-section .racks-panel[data-panel="overview"] {padding-top:18px;}
 #main-content .rack-overview-section .racks-hub-bar {margin-bottom:17px;}
 #main-content .rack-overview-section .rack-subtabs {padding-top:6px;padding-bottom:6px;margin-bottom:19px;}
 #main-content .rack-overview-section .rack-subtabs button {min-height:41px;}
@@ -267,3 +263,20 @@ html{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sa
  #main-content .rack-overview-section .racks-hub-bar {margin-bottom:14px;}
  #rack-overview-stats {gap:10px;}
 }
+
+/* One outer content area supplies the gap below main tabs. Inner screens do not add it again. */
+#main-content {--section-content-gap:16px;}
+#main-content :is(.dashboard-tab-panel,.approved-page-body),
+#main-content .approved-settings .account-panel,
+#main-content .approved-account .account-panel {padding-top:var(--section-content-gap);}
+#main-content .device-devices .intelligence-heading {margin-top:0;}
+#main-content .approved-page-body .device-toolbar {margin-top:0;}
+#main-content .approved-page-body > .ipam-panel,
+#main-content .approved-page-body .racks-panel[data-panel],
+#main-content .approved-page-body [data-device-panel="inventory"],
+#main-content .users-live > .section {padding-top:0;}
+#main-content .approved-audit .audit-stats {margin:var(--section-content-gap) 0 0;}
+
+/* Reuse the existing tab icons without changing button labels or keyboard stops. */
+#main-content .section-tab-control {display:inline-flex;align-items:center;gap:8px;}
+#main-content .section-tab-control > .section-tab-icon {width:18px;height:18px;flex:none;}

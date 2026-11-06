@@ -241,6 +241,10 @@ async function run(){
   for(const section of ['types','locations','manufacturers','models','software','services']){
     await page.locator('#main-content [data-action="approved-device-section"][data-tab="'+section+'"]').click();
     const panel=page.locator('#main-content .catalog-section');
+    assert.equal(await page.locator('.device-tabs .section-tab-icon[aria-hidden="true"][focusable="false"]').count(),8,
+      'All eight main Device tabs retain labels and decorative shared icons');
+    assert.equal(await panel.evaluate(el=>el.firstElementChild.getBoundingClientRect().top-document.querySelector('.device-tabs').getBoundingClientRect().bottom),16,
+      'Catalogue content uses the shared 16px entrance gap');
     assert.equal(await panel.locator(':scope > .intelligence-grid.catalog-kpis > .intelligence-metric').count(),3,
       'The source catalogue KPI hierarchy must render for '+section);
     assert.equal(await panel.locator(':scope > .catalog-card').first().locator(':scope > .catalog-card-top + .catalog-toolbar + .catalog-list + .catalog-count').count(),1,
@@ -493,6 +497,12 @@ async function run(){
   await page.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='Audit Trail');
   assert.ok(await page.locator('#main-content .approved-audit .audit-tabs').isVisible(),
     'Owner-approved Audit Trail section navigation must render');
+  assert.equal(await page.locator('.audit-tabs + .audit-stats').count(),1,
+    'The four shared totals follow Audit navigation once');
+  assert.equal(await page.locator('.audit-stats').evaluate(el=>el.getBoundingClientRect().top-document.querySelector('.audit-tabs').getBoundingClientRect().bottom),16,
+    'Audit totals begin 16px below the tabs');
+  assert.equal(await page.locator('.audit-tab .section-tab-icon[aria-hidden="true"][focusable="false"]').count(),3,
+    'Audit tab icons remain decorative');
   assert.equal(await page.locator('.audit-stat .hint').first().evaluate(el=>getComputedStyle(el).backgroundColor),'rgba(0, 0, 0, 0)',
     'Settings help styling must not turn Audit Trail captions into warning panels');
   assert.equal(await page.locator('#main-content .approved-audit .audit-tab').count(),3,

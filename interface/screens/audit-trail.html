@@ -2,17 +2,17 @@
   <div class="eyebrow">CHANGE HISTORY &amp; ACCOUNTABILITY</div>
   <div class="header"><div><h1>Audit Trail</h1><p>Know what happened to your infrastructure — what changed, who made it, and when.</p></div><div><button class="btn primary" type="button" data-action="export-audit">Export History (JSON)</button></div></div>
   <div class="audit-overview-note"><span aria-hidden="true">ⓘ</span><div><strong>Your audit history:</strong> View changes you have permission to see. Older events may not include who made the change or before-and-after values. Missing information is shown, never guessed.</div></div>
+  <nav class="audit-tabs" role="tablist" aria-label="Audit Trail sections">
+   <button data-action="audit-section" class="audit-tab section-tab-control active" id="tab-activity" data-tab="activity" role="tab" aria-selected="true" type="button"><svg class="section-tab-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false"><use href="#i-history"/></svg>All Activity</button>
+   <button data-action="audit-section" class="audit-tab section-tab-control" id="tab-assets" data-tab="assets" role="tab" aria-selected="false" type="button"><svg class="section-tab-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false"><use href="#i-box"/></svg>Asset History</button>
+   <button data-action="audit-section" class="audit-tab section-tab-control" id="tab-coverage" data-tab="coverage" role="tab" aria-selected="false" type="button"><svg class="section-tab-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false"><use href="#i-shield"/></svg>Recording Coverage</button>
+  </nav>
   <section class="audit-stats" aria-label="Recorded audit totals">
    <div class="card audit-stat"><span class="label">Recorded events</span><span class="value" id="stat-total">0</span><span class="hint">Events visible to your account</span></div>
    <div class="card audit-stat"><span class="label">Inventory activity</span><span class="value" id="stat-inventory">0</span><span class="hint">Devices · IPAM · Racks</span></div>
    <div class="card audit-stat"><span class="label">Accounts &amp; security</span><span class="value" id="stat-security">0</span><span class="hint">Recorded security activity</span></div>
    <div class="card audit-stat"><span class="label">People represented</span><span class="value" id="stat-actors">0</span><span class="hint">Account names actually recorded</span></div>
   </section>
-  <nav class="audit-tabs" role="tablist" aria-label="Audit Trail sections">
-   <button data-action="audit-section" class="audit-tab active" id="tab-activity" data-tab="activity" role="tab" aria-selected="true" type="button">All Activity</button>
-   <button data-action="audit-section" class="audit-tab" id="tab-assets" data-tab="assets" role="tab" aria-selected="false" type="button">Asset History</button>
-   <button data-action="audit-section" class="audit-tab" id="tab-coverage" data-tab="coverage" role="tab" aria-selected="false" type="button">Recording Coverage</button>
-  </nav>
   <section id="pane-activity" class="audit-pane" role="tabpanel" aria-labelledby="tab-activity">
     <div class="section-heading"><div><h2>Recent activity</h2><p>A searchable, chronological record of meaningful system changes.</p></div><span class="preview-side">Saved events</span></div>
     <div class="card audit-toolbar">
