@@ -253,10 +253,10 @@
                 <div class="device-review-form-grid">
                 <div class="device-review-field"><label for="platform-select" class="form-label">{{slot:0}}</label>
                 <div class="device-platform-controls"><select id="platform-select" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" {{slot:1}}>Select a platform...</option>{{slot:2}}<option value="__custom__">Custom / Other...</option></select>
-                <input id="platform-name" type="text" maxlength="160" autocomplete="off" value="{{slot:3}}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700 mt-2" placeholder="Enter custom platform" {{slot:4}}></div></div>
+                <input id="platform-name" aria-label="Custom Operating System / Platform" type="text" maxlength="160" autocomplete="off" value="{{slot:3}}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700 mt-2" placeholder="Enter custom platform" {{slot:4}}></div></div>
                 <div class="device-review-field"><label for="version-select" class="form-label">{{slot:5}}</label>
                 <div class="device-platform-controls"><select id="version-select" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="">Select a version...</option>{{slot:6}}<option value="__custom__" {{slot:7}}>Custom / Other...</option></select>
-                <input id="platform-version" type="text" maxlength="160" value="{{slot:8}}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700 mt-2" placeholder="Enter custom or detailed version" {{slot:9}}></div></div>
+                <input id="platform-version" aria-label="Custom OS / Platform Version" type="text" maxlength="160" value="{{slot:8}}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700 mt-2" placeholder="Enter custom or detailed version" {{slot:9}}></div></div>
                 <div id="device-form-windows-licence-row" {{slot:10}}><label for="device-form-windows-licence" class="form-label">Windows Licence Information (optional)</label><input id="device-form-windows-licence" type="text" maxlength="160" value="{{slot:11}}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Edition, licence type or reference (avoid activation keys)"></div>
                 </div>
                 <p class="text-xs text-slate-600 dark:text-slate-300">Historical version suggestions are available offline. Custom versions are always supported; no support status is implied.</p>

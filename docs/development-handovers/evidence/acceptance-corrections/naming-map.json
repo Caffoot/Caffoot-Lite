@@ -34,11 +34,7 @@
     "removeApprovedAccountPhoto": "removeAccountPhoto",
     "filterApprovedUserRows": "filterUserRows",
     "nextHydrateAccount": "hydrateAccount",
-    "nextRemoveAccountPhoto": "removeAccountPhoto",
-    "approvedSidebarPreferenceKey": "sidebarPreferenceKey",
-    "approvedAuditMarkup": "auditMarkup",
-    "approvedAccountMarkup": "accountMarkup",
-    "approvedSettingsMarkup": "settingsMarkup"
+    "nextRemoveAccountPhoto": "removeAccountPhoto"
   },
   "hooks": {
     "approved-account": "account-screen",
@@ -140,5 +136,15 @@
     "next-hydrate-account": "hydrate-account",
     "next-remove-account-photo": "remove-account-photo",
     "approved-sidebar-preference-key": "sidebar-preference-key"
+  },
+  "variables": {
+    "approvedSidebarPreferenceKey": "sidebarPreferenceKey",
+    "approvedAuditMarkup": "auditMarkup",
+    "approvedAccountMarkup": "accountMarkup",
+    "approvedSettingsMarkup": "settingsMarkup",
+    "approvedRecentDeviceRows": "recentDeviceRows",
+    "ipamApprovedCards": "ipamAddressCards",
+    "ipamApprovedCount": "ipamAddressCount",
+    "approvedOwner": "allocationOwner"
   }
 }

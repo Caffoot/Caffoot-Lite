@@ -5450,8 +5450,8 @@ function openIpModal(ip) {
                 const field=document.createElement('div');field.className='device-review-field';
                 const row=document.createElement('div');row.className='device-review-inline-add-actions';
                 const actions=document.createElement('div');actions.className='device-review-catalogue-actions';
-                if(label&&input){label.className='';input.className='';field.append(label,input);row.append(field);}
-                buttons.forEach(button=>{button.className='device-review-smallbtn';actions.append(button);});
+                if(label&&input){label.className='';label.textContent='Location name';input.className='';input.placeholder='Enter location name';input.maxLength=100;field.append(label,input);row.append(field);}
+                buttons.forEach((button,index)=>{button.className='device-review-smallbtn'+(index===0?' primary':'');if(index===0)button.textContent='Add & Select';actions.append(button);});
                 locationPanel.replaceChildren(title,row,actions);
                 identityFields.appendChild(locationPanel);
             }
@@ -5677,10 +5677,17 @@ function openIpModal(ip) {
             const isExistingVirtual = (draft?.isVirtual ?? device?.isVirtual) === true || currentType === 'Server - Virtual';
             const vmPurposes = [['Server','Server - Virtual'],['Desktop','Desktop'],['Firewall','Firewall'],['Router','Router'],['NAS','NAS'],['Wireless LAN Controller','Wireless LAN Controller']];
             deviceDetailFormValues = {...(draft?.typeDetails ?? device?.typeDetails ?? {})};
-            if (currentType === 'Server - Physical' &&
-                deviceDetailFormValues.serverService_Hypervisor !== true &&
-                (draft ? draft.typeDetails?.serverService_Hypervisor === undefined : device?.serverService_Hypervisor === true)) {
-                deviceDetailFormValues.serverService_Hypervisor = true;
+            const sourceRecord=device||(isDuplicate?getDeviceById(draft.duplicatedFrom):null);
+            // Show known legacy OS data without inferring a hypervisor or changing an explicit blank.
+            if(deviceDetailFormValues.softwarePlatform===undefined){
+                const recordedPlatform=deviceDetailFormValues.os??sourceRecord?.os;
+                if(typeof recordedPlatform==='string')deviceDetailFormValues.softwarePlatform=recordedPlatform;
+            }
+            // Copies inherit an explicit hosting flag, never eligibility merely because a draft exists.
+            const sourceHostsVirtualMachines=sourceRecord?.typeDetails?.serverService_Hypervisor===true||sourceRecord?.serverService_Hypervisor===true;
+            if(currentType==='Server - Physical'&&sourceHostsVirtualMachines&&
+                (!draft||draft.typeDetails?.serverService_Hypervisor===undefined)){
+                deviceDetailFormValues.serverService_Hypervisor=true;
             }
             const currentLoc = draft?.location ?? device?.location ?? '';
             const requestedMountType = isExistingVirtual ? 'Not Applicable' : (draft?.mountType ?? device?.mountType ?? (device?.rackId ? 'Rack Mounted' : getDefaultMountType(currentType)));

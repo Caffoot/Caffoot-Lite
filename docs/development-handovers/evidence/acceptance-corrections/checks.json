@@ -1,0 +1,382 @@
+{
+  "baseline": "f528396dc57d25d304b67290d6507d02dce0eb09",
+  "checkpoints": [
+    "5d4a8bf46fff835d9b97031c938095a31294035a",
+    "3fcc03dd649b86204e77233b4a95290a4e6f2341"
+  ],
+  "backend": {
+    "run": 443,
+    "passed": 440,
+    "skipped": 3,
+    "skips": [
+      "Docker opt-in: separately passed",
+      "two unavailable private genuine v1.3.3 fixture checks"
+    ]
+  },
+  "editorComparisons": 208,
+  "inlineComparisons": 20,
+  "inlineExactMatches": 12,
+  "inlineMaxLengthConflicts": 8,
+  "auditCases": 8,
+  "auditSavedEvents": 12,
+  "newestTargetedFlows": {
+    "comparisons": 0,
+    "host": "Fictional Proxmox Host",
+    "vmCreateEditDuplicateReload": true,
+    "unflaggedDuplicateRemainsIneligible": true,
+    "legacyPlatformShown": true,
+    "legacyIncompleteGuestPreserved": true,
+    "explicitHostEligibility": true,
+    "scriptErrors": []
+  },
+  "preservationDecision": "Pending #326 comment 6684664810; no implicit approval",
+  "lengthDecision": "Pending #326 comment 6688818756; existing 80-character limit retained",
+  "arm64": "Build attempted on exact checkpoint 3fcc03d; failed with exec format error. Worker supports AMD64 only.",
+  "runtimeSha256": [
+    {
+      "sha256": "c50ce6b7b2f755d89c69511fc30696cabc363a941bd3d2a4da5fa6881f0365fa",
+      "path": "backend/access_point_review.py"
+    },
+    {
+      "sha256": "d862f813ba1f8a2c16989932d9909527290c8f7b8445a8eaf94d7c8d1d3c064b",
+      "path": "backend/account_email.py"
+    },
+    {
+      "sha256": "3b65d4c40231c503222eee35fbfd42d465e547f38e8795cbe733e067fb924aef",
+      "path": "backend/account_security.py"
+    },
+    {
+      "sha256": "4e061b2fdadf4c9afe9fdb8d0467a900873a16f01be7b77b8638976ad3871d75",
+      "path": "backend/accounts.py"
+    },
+    {
+      "sha256": "386ba777b3b92ec0ec64967ba790fc50c8f722b88d34321094e7a9f8bca833db",
+      "path": "backend/application_integrity.py"
+    },
+    {
+      "sha256": "4a809e4f47d2545dade97908bf87dceb56bf217cbe0aeb6561aa350da2d26324",
+      "path": "backend/audit_events.py"
+    },
+    {
+      "sha256": "2db155a138c40d4975c0a8be330839e5d5b93308e0cb151647085f9f713a8829",
+      "path": "backend/authentication.py"
+    },
+    {
+      "sha256": "c2a353cdbccd4eca65230462839db6535dd1d0e21e17794ea7bc4ad0ccf79f15",
+      "path": "backend/collection_saves.py"
+    },
+    {
+      "sha256": "01112dc6769189fb00deee9ca8b6ce6573dcbd66adade266d9b01dd4e900dcbf",
+      "path": "backend/deployment_settings.py"
+    },
+    {
+      "sha256": "1fc691310b714cc37b65233594e9465e9eb5ebe88845191ad961635bca1d2b7e",
+      "path": "backend/device_catalogue.py"
+    },
+    {
+      "sha256": "8595432a284443cf6df3ebeead242987fac6a810daaed076e659c359889c4206",
+      "path": "backend/device_saves.py"
+    },
+    {
+      "sha256": "66a869179e0757f7eb12dd4c537287c7f0eeffad748664017af2035424ce4c3c",
+      "path": "backend/history_permissions.py"
+    },
+    {
+      "sha256": "1cc6bed22f3c021f764196025d3cc52641fa4bf561cdae980c24caac0accc789",
+      "path": "backend/http_security.py"
+    },
+    {
+      "sha256": "69e6dc55bf65b80113fd6925f93447e3a11792f6431c920028f5000a0c6021f7",
+      "path": "backend/import_commit.py"
+    },
+    {
+      "sha256": "519347babcc747cb1f33823e75b38504dcf93dce15ab218fa85acad3b6dd0636",
+      "path": "backend/import_diagnostics.py"
+    },
+    {
+      "sha256": "801346f5aec3f05fefbc3c513f69084ca874bea48bda0bdd90d6d81acc695795",
+      "path": "backend/import_drafts.py"
+    },
+    {
+      "sha256": "89ffda8d1619e943b95906283b80fa7ec318c85d0d53b5ce488bebc44c81f6fe",
+      "path": "backend/import_review.py"
+    },
+    {
+      "sha256": "12f832a9a42f338ece9fa81d499861b476fab5a40261ce892bfd288c385fbccf",
+      "path": "backend/import_service.py"
+    },
+    {
+      "sha256": "28d896eeb3ec435acaa5e29c57b0bcf89b1138a0c185ddecf351cbca866e236b",
+      "path": "backend/inventory.py"
+    },
+    {
+      "sha256": "18e93105c6a36a0eaaf48d0d2d887ee2444040505ff2ae8d5af63dff31387e0b",
+      "path": "backend/ipam_reconciliation.py"
+    },
+    {
+      "sha256": "50752a06baf120d2332829d1ce4b401203ab9a8d3e61f940ff23ce198c4130f0",
+      "path": "backend/ipam_repair.py"
+    },
+    {
+      "sha256": "c82e6eb1a3ad5f238ddb15a1d161d69d13f59979d3a1492218915162ecfc4231",
+      "path": "backend/ipam_saves.py"
+    },
+    {
+      "sha256": "064766526c54b9017c922db9d9059c40cf1bf847d34293de4da28084388d4704",
+      "path": "backend/ipam_validation.py"
+    },
+    {
+      "sha256": "561c1d4c85c4fbfa72d93985599e063fd3a0d904e5d5366b5b90c1c26d93d025",
+      "path": "backend/legacy_mounting.py"
+    },
+    {
+      "sha256": "3c4fceaa8bf2fef5506888425faa80b1dfdd90eae2fdd8e329d896fc8e54b210",
+      "path": "backend/login_throttle.py"
+    },
+    {
+      "sha256": "7779d0631c2b1bfc4e2333c0d82feb1cd985f5c2ff067cb4efb6d45ada4f2256",
+      "path": "backend/mfa.py"
+    },
+    {
+      "sha256": "cfe35689756df002b88e139e9ea1c626791d3bedd08dd64db9061a1fc4baf2b3",
+      "path": "backend/normalisation.py"
+    },
+    {
+      "sha256": "12d10bbc5cd9cd74bf37ef205517894f2b5d259c2ff710c5f78d51e8d08053c3",
+      "path": "backend/normalisation_addresses.py"
+    },
+    {
+      "sha256": "dc0f3aa2017b48ce5d506b0d3f1b1816831b0e8b6a691cf00b2edf079d735bb3",
+      "path": "backend/normalisation_pipeline.py"
+    },
+    {
+      "sha256": "e75bcc76eb37b4c08d1dafe9cd061884001631352539446d0a2e46e236b38faa",
+      "path": "backend/normalisation_validation.py"
+    },
+    {
+      "sha256": "c553ae413344adc9b2878d4b01d6a217826dc1aa3e5c081c201a4ea578fdcbdd",
+      "path": "backend/permissions.py"
+    },
+    {
+      "sha256": "ef2baf86defbc69f4dd3409a5fa2570577f59e8b271eed78d6f1e2a43d31524f",
+      "path": "backend/profiles.py"
+    },
+    {
+      "sha256": "b00a45c89236473fa0576606006b2fec25849118818c728757d3de65468fd271",
+      "path": "backend/rack_validation.py"
+    },
+    {
+      "sha256": "85ad36d1ccdb9ac1d8e7b28b07fb396e78ed62b01444801bb63901a36098f4d0",
+      "path": "backend/recover_admin.py"
+    },
+    {
+      "sha256": "3188dbc87c64f3b4aa3eec1a7bc15fb0a1940166028f5e6eb092cfe2cdf2d2ab",
+      "path": "backend/request_auth.py"
+    },
+    {
+      "sha256": "e168108dcffcbea5ceee742dd86c8f68fb91db578a8819827ae2f3a483f50889",
+      "path": "backend/reset_inventory.py"
+    },
+    {
+      "sha256": "a8e997f1e5b30282ec88615b4a1cbcdfd19dccd43a213292b48eec106794df6e",
+      "path": "backend/schema.py"
+    },
+    {
+      "sha256": "d5cc74b7fd5c298a4dbaf7a89f790a82d0e09b3aa193a22ca11b0b5e49f111df",
+      "path": "backend/server.py"
+    },
+    {
+      "sha256": "634d6558b834a029214d20f9dfd04ad7006715fb0d44083354f1764654164dcb",
+      "path": "backend/sessions.py"
+    },
+    {
+      "sha256": "7d0fb468ed9ff10aacdd080972b17d47b9819be3b2fb1f4cadf2835edec82192",
+      "path": "backend/settings_saves.py"
+    },
+    {
+      "sha256": "89409a97de9ff91eb0763f8cdb2c5085a8839e09c0d5a0bb0079a954181acc8c",
+      "path": "backend/smtp_settings.py"
+    },
+    {
+      "sha256": "e2bd590be81b6acfeae29c64262b30f85db9f30baec1c27c2ab1c87a5a77d4e4",
+      "path": "backend/subnet_validation.py"
+    },
+    {
+      "sha256": "8f128ba86542604d4bc9b8cd3751b4b9d97c121aa5b9c6f1e4e83e3ca032eea9",
+      "path": "backend/tls.py"
+    },
+    {
+      "sha256": "4f0c0b175b421afc0d334b15c92ed28473e0f7dca55b1338bdc0a2b5cae13443",
+      "path": "interface/application.js"
+    },
+    {
+      "sha256": "592f9e2357101d2bc4a82b34c4d9a502bf286f4e0305a671143ce1e4cef03812",
+      "path": "interface/design-sources.json"
+    },
+    {
+      "sha256": "28ee3bdbcb6450548c860fea98b54a03ab7c168679e9c415a39efcb22042abf2",
+      "path": "interface/loader.js"
+    },
+    {
+      "sha256": "2108befa60e2cebcf020c72d41eb19be9a74149db87ae6ecc75824b21eee8fcc",
+      "path": "interface/screens/audit-trail.html"
+    },
+    {
+      "sha256": "fcd2d0644331b39ca7df9f50b3db71136d8e450e5bbb32a51e84e525eac7abaa",
+      "path": "interface/screens/dashboard.html"
+    },
+    {
+      "sha256": "b369ffae1102452b16178e865c7a3e97e987e4f8a7932a0ff1100fc7986b71be",
+      "path": "interface/screens/device-details.html"
+    },
+    {
+      "sha256": "182d822c8af01832fe43722aa304962f5f0cba8ec39c425063df0ba1df528eff",
+      "path": "interface/screens/device-inventory.html"
+    },
+    {
+      "sha256": "25779641625e545100d7b6cb3ff5f2f22c89591a134fdd09e8865b906d28b86b",
+      "path": "interface/screens/device-management.html"
+    },
+    {
+      "sha256": "1a588b2b7a69ba5fa574de21647e6f62ee7f806816f7aca5af3439eb490fd7c2",
+      "path": "interface/screens/devices.html"
+    },
+    {
+      "sha256": "12a47474fc0da5a12d2035d470b203cc73c8664231266e6bd6c4eb715a164b1d",
+      "path": "interface/screens/ipam.html"
+    },
+    {
+      "sha256": "f88231983c03b919ecd41272900143e84f64bd38a5977f1eed2cf5107fc3e3a1",
+      "path": "interface/screens/migration.html"
+    },
+    {
+      "sha256": "736caabf008690a75bc4afeaba70b413b819b34901eed853b107d82ce40b226d",
+      "path": "interface/screens/my-account.html"
+    },
+    {
+      "sha256": "2a92dfbca4a044bad0709ed50c61358accbe222f17596758bcb2b73c760a1542",
+      "path": "interface/screens/navigation.html"
+    },
+    {
+      "sha256": "97dc03367a05e49475f53adc76af54acc2e1e1508814c35b8b71323555e037b8",
+      "path": "interface/screens/racks.html"
+    },
+    {
+      "sha256": "8803838c7e26e8fc637d8c1b21a8603eb36c2ca8032616e3d53ee54fa36780c8",
+      "path": "interface/screens/settings.html"
+    },
+    {
+      "sha256": "402cbeb453ce2ac5bc6a0ac538f6078be69aeb01643163c894e8fcad15d6cd0c",
+      "path": "interface/screens/shared.html"
+    },
+    {
+      "sha256": "47c5317e09cb70db8b71aa4ab5861ad64ced3156fc675f8dd6c0505c3beacad8",
+      "path": "interface/screens/users.html"
+    },
+    {
+      "sha256": "75a8d85c7a2c2448a81969ffbf6c22aa7c3d8ee9d4d57d9bd94a8e56fd9c7d7f",
+      "path": "interface/sign-in.js"
+    },
+    {
+      "sha256": "bdd6cfc0e68d898b15f1abfbd7cbb07b635dba8e775de38785630fa068cce99f",
+      "path": "interface/styles/audit-trail.css"
+    },
+    {
+      "sha256": "7fee8c5374299b2575b39e0397869cb716d184ba20cb744f9347f754d633761e",
+      "path": "interface/styles/components.css"
+    },
+    {
+      "sha256": "fc42f5c138e1b7a5819ac63d3f054a7921dbe3d9ee768f1396b5ea5d9a67ef95",
+      "path": "interface/styles/dashboard.css"
+    },
+    {
+      "sha256": "e99fe7b8b0b12c8c308de665e1d79ce378be671088eadcdcc1d0cf9ca7df844d",
+      "path": "interface/styles/device-details.css"
+    },
+    {
+      "sha256": "9ae230a0de45e9cd28a9f70b536092dddd42b222684360b8588886a127f059b3",
+      "path": "interface/styles/device-inventory.css"
+    },
+    {
+      "sha256": "50be4d3c46e1e98bc56ebe813899e98169fee8aee937d81749d6237b1e00ca24",
+      "path": "interface/styles/device-management.css"
+    },
+    {
+      "sha256": "8384ba370fc7485c6f9f0e1beb5b312effd5fadd63fd2d7fbd4e514960e86879",
+      "path": "interface/styles/devices.css"
+    },
+    {
+      "sha256": "4ef80e806dd591e2cbea7b13bbd7312e1b1e7681cf1d15a2fc1255bc4059e9af",
+      "path": "interface/styles/dialogs.css"
+    },
+    {
+      "sha256": "5e8f5a81611653284aec7ed0bf6a5c479f71e4da9ddde5841a28a119d7613f92",
+      "path": "interface/styles/ipam.css"
+    },
+    {
+      "sha256": "228a5557bfa66e517942bc534ee464318ef36d7edf63015449f512669b43f518",
+      "path": "interface/styles/my-account.css"
+    },
+    {
+      "sha256": "6bbda8ec3e6f0b04ea578b2404f80cba8d93c90b8f62d2fdf15be8fb216a4c7b",
+      "path": "interface/styles/racks.css"
+    },
+    {
+      "sha256": "9efef942d7f113d55ee5bcd17905724fcb477c62150c003aff2a2a679d9e618b",
+      "path": "interface/styles/settings.css"
+    },
+    {
+      "sha256": "7e09d6e586e003a37c891f9393b83483e568ea404c792f9d15fdc8e8be3ef00f",
+      "path": "interface/styles/shared.css"
+    },
+    {
+      "sha256": "d21a3faade27bcd5b6ba2f5a10bf2cbb853e515c40014d780c1429adaee8a5b3",
+      "path": "interface/styles/sign-in-controls.css"
+    },
+    {
+      "sha256": "8b9759c4d6c3740126eb657e27490a32aabe734dd38bc69c2448f5c6ecd16ca0",
+      "path": "interface/styles/sign-in.css"
+    },
+    {
+      "sha256": "966ee8b8739a492ca832e0054046d65b1510d7969416effc86eaadbb26aaa02f",
+      "path": "interface/styles/themes.css"
+    },
+    {
+      "sha256": "de3ffc23f5d14efeffee5415a79aefd5f4dd7f2fe9d0a8863cf84ff3bd72f6e5",
+      "path": "interface/styles/users.css"
+    },
+    {
+      "sha256": "0d64b175b22813315e118f392a411552a8058e3f8a66d55aa925688e327e2467",
+      "path": "interface/styles/utilities.css"
+    },
+    {
+      "sha256": "efab9a89ef94e6d378b81b5f7dabcc04701ace507695644ed2ae32da50635955",
+      "path": "inventory.html"
+    },
+    {
+      "sha256": "e2b2d0898f22c45fca4058e0a029a8376444882f7cb914ffa71c1b60eb20e773",
+      "path": "setup.html"
+    }
+  ],
+  "captureSha256": {
+    "hosting-compact-live.png": "76814fc2ef2613ead6136a2170b60a3f59ea3277e77daaf3c3dd05600ceb095d",
+    "verification-mobile-dark.png": "13e8a9db53760bcaeeee636d4e76d40bab80a1a0003b4d5f03779592c9820481",
+    "vm-general-mobile-dark.png": "355596fbb812c8c97b47414888b60ee48204d5ecee19c6faef03d59514826dd2",
+    "hosting-compact-source.png": "98c96133d1a981f88710a058ae5e2eb0cd4ad1ff2c7365bc4555937a41b73586",
+    "vm-general-mobile-source.png": "b5823e6532468e5c8f9e27b9a1a2550324a8ba06f3878b64652ec404a1077430",
+    "audit-history-desktop-light.png": "d228b4a351129dbde4a0365757341dfe5c9e445cc96c297f4423e9c5e5f34aaf",
+    "physical-software-live.png": "e9ccb5f247b4c1b99b4799d892f6447021a804da36c9d51d7e6e43fbddbc18dd",
+    "audit-history-mobile-dark.png": "1e4b0cbc17dba7e3f48922876926a1f6ae6eaf80b04db18ef145aee1ab2638f0",
+    "physical-software-source.png": "cc421570be1e235612ab56c96d624946433ea876c86153c360d798d2a55b3ebf",
+    "sign-in-mobile-dark.png": "e378b8284c87a50ed0bf7e96376e6142dddc35552885e13a714ca0336f572aa0"
+  },
+  "finalLocalChromiumRegression": "Passed after all runtime changes, tests/browser-compat.cjs",
+  "sourceAndDocumentationChecks": {
+    "modularTests": 2,
+    "approvedContract": "passed",
+    "indexDefinitionLinks": 637,
+    "runtimeAndCaptureHashes": "verified",
+    "scopedDocumentationLinks": "resolved",
+    "releaseConsistency": "v2.0.3; nothing published"
+  }
+}

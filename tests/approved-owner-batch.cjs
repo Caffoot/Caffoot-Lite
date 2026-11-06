@@ -97,7 +97,11 @@ module.exports=async({page,context,out})=>{
  await page.locator('#account-email').fill('fictional@example.test');await page.locator('#open-email-verification').click();
  assert.ok(await page.locator('#email-verification-code-fields').isHidden());
  await page.locator('#account-email-verification-form input[name="password"]').fill('Fictional password');await page.locator('#request-email-verification').click();
- await page.locator('#email-verification-code-fields').waitFor();await page.locator('#account-email-verification-form input[name="token"]').fill('00001234');
+ await page.locator('#email-verification-code-fields').waitFor();
+ const verificationCode=page.locator('#account-email-verification-form input[name="token"]');
+ assert.equal(await verificationCode.getAttribute('maxlength'),'8');assert.equal(await verificationCode.getAttribute('inputmode'),'numeric');
+ await verificationCode.evaluate(el=>{const clipboard=new DataTransfer();clipboard.setData('text',' 00001234\n');el.dispatchEvent(new ClipboardEvent('paste',{clipboardData:clipboard,bubbles:true,cancelable:true}));});
+ assert.equal(await verificationCode.inputValue(),'00001234');
  await page.locator('#account-email-verification-form button[type="submit"]').click();await page.locator('#email-verification-message').filter({hasText:'Invalid or expired'}).waitFor();
  assert.equal(await page.locator('#account-email-status').textContent(),'Not Verified');
  confirmFails=false;await page.locator('#account-email-verification-form button[type="submit"]').click();
@@ -166,7 +170,10 @@ module.exports=async({page,context,out})=>{
   await signIn.locator('#recovery-confirm-form').waitFor();assert.equal(await signIn.locator('#recovery-message').getAttribute('role'),'status');
   assert.ok(await signIn.locator('#recovery-message').evaluate(el=>{const r=el.getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight;}));
   assert.equal(await signIn.locator('#recovery-confirm-form input[name="token"]').evaluate(el=>el===document.activeElement),true);
-  await signIn.locator('#recovery-confirm-form input[name="token"]').fill('00001234');await signIn.locator('#recovery-confirm-form input[name="password"]').fill('Fictional reset password');
+  const recoveryCode=signIn.locator('#recovery-confirm-form input[name="token"]');
+  assert.equal(await recoveryCode.getAttribute('maxlength'),'8');assert.equal(await recoveryCode.getAttribute('inputmode'),'numeric');
+  await recoveryCode.evaluate(el=>{const clipboard=new DataTransfer();clipboard.setData('text',' 00001234\n');el.dispatchEvent(new ClipboardEvent('paste',{clipboardData:clipboard,bubbles:true,cancelable:true}));});
+  assert.equal(await recoveryCode.inputValue(),'00001234');await signIn.locator('#recovery-confirm-form input[name="password"]').fill('Fictional reset password');
   await signIn.locator('#recovery-confirm-form button').click();await signIn.locator('#recovery-message').filter({hasText:'Invalid or expired'}).waitFor();
   await signIn.locator('#recovery-back').click();assert.ok(await signIn.locator('#recovery-confirm-form').isHidden());
   assert.equal(await signIn.locator('#recovery-confirm-form input[name="password"]').inputValue(),'');

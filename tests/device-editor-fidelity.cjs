@@ -18,6 +18,28 @@ module.exports=async({page,reference,sourceBase,context,out,fixtureDirectory})=>
   });
   return {footerActions:[...document.querySelectorAll('.device-review-footer button')].map(el=>el.textContent.trim()),closeText:document.querySelector('.device-review-close').textContent.trim(),dialogWidth:document.querySelector('.device-review-dialog').getBoundingClientRect().width,dialogHeight:document.querySelector('.device-review-dialog').getBoundingClientRect().height,cards:[...panel.querySelectorAll('.device-review-panel')].filter(visible).map(el=>({title:el.querySelector('h3')?.textContent.trim(),subtitle:el.querySelector(':scope>p')?.textContent.trim(),padding:getComputedStyle(el).padding})),fields,buttons:[...panel.querySelectorAll('button')].filter(visible).map(el=>el.textContent.replace(/\s+/g,' ').trim()),bodyScroll:form.closest('.device-review-body').scrollTop,overflow:document.documentElement.scrollWidth>innerWidth};
  };
+ if(process.env.CAFFOOT_DEVICE_EDITOR_INLINE_ONLY==='1'){
+  const inline=[];
+  for(const width of [1440,390])for(const dark of [false,true])for(const [kind,tab]of [['location','general'],['manufacturer','hardware'],['model','hardware'],['software','software'],['services','software']]){
+   await page.setViewportSize({width,height:844});await reference.setViewportSize({width,height:844});
+   await page.bringToFront();await page.evaluate(dark=>{caffootSetTheme(dark?'dark':'light');openDeviceModal();},dark);await page.locator('#dev-type').selectOption('Server - Physical');
+   await page.locator('#device-form-tab-'+tab).click();
+   if(kind==='location')await page.getByRole('button',{name:'+ Add Location',exact:true}).click();
+   else await page.locator('[data-action="device-inline-quick-open"][data-kind="'+kind+'"]').click();
+   await reference.bringToFront();await reference.evaluate(()=>openDeviceEditor('add'));await reference.locator('[data-review-tab="'+tab+'"]').click();await reference.locator('[data-review-quick-open="'+kind+'"]').click();
+   const measure=el=>({title:el.querySelector('h4').textContent,inputs:[...el.querySelectorAll('input[type="text"]')].map(input=>({label:input.labels[0].textContent,height:input.getBoundingClientRect().height,maxLength:input.maxLength})),buttons:[...el.querySelectorAll('button')].map(button=>button.textContent.trim())});
+   const live=await page.locator(kind==='location'?'#dev-create-location-panel':'[data-review-create="'+kind+'"]').evaluate(measure);
+   const source=await reference.locator('[data-review-create="'+kind+'"]').evaluate(measure);
+   const validationConflict=['software','services'].includes(kind);
+   if(validationConflict){
+    assert.equal(live.inputs[0].maxLength,80);assert.equal(source.inputs[0].maxLength,100);
+    assert.deepEqual({...live,inputs:live.inputs.map(input=>({...input,maxLength:100}))},source,kind+' source layout/labels while retaining existing validation');
+   }else assert.deepEqual(live,source,kind+' inline source controls at '+width);
+   inline.push({kind,tab,width,dark,live,source,status:validationConflict?'80/100-character policy decision pending':'matched'});await page.evaluate(()=>closeModal(true));
+  }
+  assert.deepEqual(await state(),snapshot,'Inline visual checks do not save inventory');
+  fs.writeFileSync(path.join(out,'inline-editor-results.json'),JSON.stringify(inline,null,2));console.log('Inline Device editor: 20 expanded comparisons completed; software/service 80/100-character policy remains pending.');return;
+ }
  const cases=[['add-physical','add','Server - Physical','Hypervisor-01'],['edit-physical','edit',null,'Hypervisor-01'],['duplicate-physical','duplicate',null,'Hypervisor-01'],['add-vm','add','virtual','App-VM-01'],['edit-vm','edit',null,'App-VM-01'],['duplicate-vm','duplicate',null,'App-VM-01'],['desktop','add','Desktop',''],['switch','add','Switch',''],['router','add','Router',''],['firewall','add','Firewall',''],['nas','add','NAS','']];
  for(const [width,height] of (process.env.CAFFOOT_DEVICE_EDITOR_FUNCTIONS_ONLY==='1'?[]:[[1440,950],[390,844]]))for(const dark of [false,true]){
   await page.setViewportSize({width,height});await reference.setViewportSize({width,height});
@@ -68,6 +90,16 @@ module.exports=async({page,reference,sourceBase,context,out,fixtureDirectory})=>
  await page.goto(address+'/inventory?rack-print=same-tab');await page.locator('#app[aria-busy="false"]').waitFor();await page.reload();await page.locator('#app[aria-busy="false"]').waitFor();
  assert.equal(new URL(page.url()).search,'?rack-print=same-tab');
  await page.goto(address+'/inventory');await page.locator('#app[aria-busy="false"]').waitFor();await page.setViewportSize({width:1440,height:950});
+ // A copied physical record with known OS data but no hosting flag stays ineligible.
+ await page.evaluate(()=>{
+  const original=appState.devices.find(d=>d.name==='Hypervisor-01');
+  appState.devices.push({...original,id:'fictional-unflagged-copy-source',name:'Fictional unflagged source',os:'Proxmox VE',serverService_Hypervisor:false,typeDetails:{}});
+  duplicateDevice('fictional-unflagged-copy-source');
+ });
+ await page.locator('#device-editor-form').waitFor();await page.locator('#device-form-tab-software').click();
+ assert.equal(await page.locator('#device-hosting-enabled').isChecked(),false,'A duplicate does not invent hosting eligibility');
+ assert.equal(await page.locator('#platform-name').inputValue(),'Proxmox VE','Known legacy OS data remains visible in the editor');
+ await page.evaluate(()=>{closeModal(true);appState.devices=appState.devices.filter(d=>d.id!=='fictional-unflagged-copy-source');});
  // Record Proxmox as OS/software first: neither selection grants host eligibility.
  await page.evaluate(()=>openDeviceModal());await page.locator('#dev-type').selectOption('Server - Physical');await page.locator('#dev-name').fill('Fictional Proxmox Host');await page.locator('#dev-location').selectOption('Server Room');await page.locator('#dev-mount-type').selectOption('Tower / Floor Standing');
  await page.locator('#device-form-tab-software').click();await page.locator('#platform-select').selectOption('Proxmox VE');
@@ -99,6 +131,6 @@ module.exports=async({page,reference,sourceBase,context,out,fixtureDirectory})=>
  await page.locator('#device-form-tab-notes').click();await page.locator('#dev-notes').fill('Fictional incomplete guest edit');await page.locator('#modal-content button[type="submit"]').click();
  await page.waitForFunction(async id=>{const s=await(await fetch('/api/inventory/state')).json();return s.devices.find(d=>d.id===id)?.notes==='Fictional incomplete guest edit';},legacy.id);await page.locator('#device-editor-form').waitFor({state:'hidden'});
  const retained=(await state()).devices.find(d=>d.id===legacy.id);assert.equal(retained.virtualHostId,'fictional-missing-hypervisor');assert.equal(retained.virtualPlatform,'Legacy platform');assert.equal(retained.typeDetails.historicalFixtureValue,'retained');
- assert.deepEqual(errors,[]);fs.writeFileSync(path.join(out,'device-editor-matrix.json'),JSON.stringify(matrix,null,2));fs.writeFileSync(path.join(out,'device-workflows.json'),JSON.stringify({comparisons:matrix.length,host:host.name,vmCreateEditDuplicateReload:true,legacyIncompleteGuestPreserved:true,explicitHostEligibility:true,scriptErrors:errors},null,2));
+ assert.deepEqual(errors,[]);fs.writeFileSync(path.join(out,'device-editor-matrix.json'),JSON.stringify(matrix,null,2));fs.writeFileSync(path.join(out,'device-workflows.json'),JSON.stringify({comparisons:matrix.length,host:host.name,vmCreateEditDuplicateReload:true,unflaggedDuplicateRemainsIneligible:true,legacyPlatformShown:true,legacyIncompleteGuestPreserved:true,explicitHostEligibility:true,scriptErrors:errors},null,2));
  console.log('Device editor fidelity:',matrix.length,'comparisons; physical Proxmox host and VM create/edit/duplicate/reload passed.');
 };
