@@ -2,10 +2,12 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 
 module.exports=async({page,context,out})=>{
+ const extrasOnly=process.env.CAFFOOT_INTERFACE_CONSISTENCY_EXTRAS==='1';
  const results=[],errors=[];
  page.on('pageerror',error=>errors.push(error.message));
  await page.goto('https://127.0.0.1:8080/inventory');
  await page.locator('#app[aria-busy="false"]').waitFor();
+ await page.bringToFront();
  await page.addStyleTag({content:'*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}'});
  const initial=await page.evaluate(async()=>await(await fetch('/api/inventory/state')).json());
  const icons={
@@ -38,7 +40,7 @@ module.exports=async({page,context,out})=>{
    if(screen==='racks'){
     v13RackSection=group==='details'?'inventory':group==='overview'?'overview':value;
     v13RackDetailOpen=group==='details';v13RackOverviewTab=group==='overview'?value:'capacity';
-    activeRackTab=group==='details'?value:'view';selectedRackId=appState.racks[0].id;
+    activeRackTab=group==='details'?value:'view';selectedRackId=appState.racks[0]?.id||'';
    }
    renderContent();window.scrollTo(0,0);
   },{...item,theme});
@@ -65,7 +67,7 @@ module.exports=async({page,context,out})=>{
    audit:audit?{order:[...audit.querySelector('main').children].filter(visible).map(e=>e.className),totals:[...audit.querySelectorAll('.audit-stat .value')].map(e=>e.textContent),paneGap:first('.audit-pane:not([hidden]) > *').getBoundingClientRect().top-audit.querySelector('.audit-stats').getBoundingClientRect().bottom,notice:audit.querySelector('.audit-overview-note').textContent,security:audit.querySelector('.audit-warn').textContent}:null,
    rack:secondary?{headingGap:secondary.getBoundingClientRect().top-heading.getBoundingClientRect().bottom,stripHeight:secondary.getBoundingClientRect().height,metricsGap:metrics.getBoundingClientRect().top-secondary.getBoundingClientRect().bottom}:null};
  },item);}
- for(const width of [2560,1440,1024,390])for(const theme of ['light','dark']){
+ for(const width of extrasOnly?[]:[2560,1440,1024,390])for(const theme of ['light','dark']){
   await page.setViewportSize({width,height:width===2560?1440:width===1440?950:width===1024?768:844});
   let auditTotals;
   for(const item of scenarios){
@@ -98,7 +100,7 @@ module.exports=async({page,context,out})=>{
  }
  const keyboard=[];
  const controls=Object.entries(icons).flatMap(([name,values])=>Object.keys(values).map(value=>({screen:name.startsWith('rack-')?'racks':name,group:name==='rack-overview'?'overview':name==='rack-details'?'details':undefined,value})));
- for(const width of [1440,390])for(const theme of ['light','dark']){
+ for(const width of extrasOnly?[]:[1440,390])for(const theme of ['light','dark']){
   await page.setViewportSize({width,height:width===390?844:950});
   for(const item of controls)for(const key of ['Enter','Space']){
    await selectScreen({...item,value:item.group==='details'?'view':item.group==='overview'?'capacity':item.screen==='audit'?'activity':'overview'},theme);
@@ -126,7 +128,33 @@ module.exports=async({page,context,out})=>{
  const history=await page.evaluate(()=>JSON.parse(JSON.stringify(auditHistory)));
  const downloadPromise=page.waitForEvent('download');await page.locator('[data-action="export-audit"]').click();
  const download=await downloadPromise;assert.deepEqual(JSON.parse(fs.readFileSync(await download.path(),'utf8')).events,history);
+ const enlarged=[],empty=[];
+ if(extrasOnly){
+  const textStyle=await page.addStyleTag({content:'#main-content :is(.subnav,.tabs,.ipam-tabs,.racks-tabs,.rack-subtabs,.audit-tabs) > button {font-size:18px;}'});
+  for(const width of [1024,390])for(const theme of ['light','dark']){
+   await page.setViewportSize({width,height:width===390?844:768});
+   for(const item of [{screen:'dashboard',value:'overview'},{screen:'devices',value:'overview'},{screen:'ipam',value:'manage'},{screen:'racks',group:'overview',value:'locations'},{screen:'racks',group:'details',value:'settings'},{screen:'users',value:'list'},{screen:'audit',value:'coverage'},{screen:'settings',value:'email'},{screen:'account',value:'security'}]){
+    await selectScreen(item,theme);const layout=await measure(item);assert.equal(layout.entrance,16);assert.equal(layout.overflow,false);
+    const labels=await page.locator('#main-content .section-tab-control').evaluateAll(buttons=>{
+     const visible=buttons.filter(b=>b.getBoundingClientRect().height>0),selected=visible.map(b=>[b.getAttribute('aria-selected'),b.getAttribute('aria-pressed')]);
+     const positions=visible.map(b=>{b.focus({preventScroll:true});const r=b.getBoundingClientRect(),s=b.parentElement.getBoundingClientRect();return {label:b.textContent.trim(),visible:r.left>=s.left-1&&r.right<=s.right+1,nowrap:getComputedStyle(b).whiteSpace==='nowrap'};});
+     return {positions,selectionUnchanged:JSON.stringify(selected)===JSON.stringify(visible.map(b=>[b.getAttribute('aria-selected'),b.getAttribute('aria-pressed')]))};
+    });
+    assert.equal(labels.selectionUnchanged,true);assert.ok(labels.positions.every(p=>p.visible&&p.nowrap));enlarged.push({width,theme,...item,labels});
+   }
+  }
+  await textStyle.evaluate(el=>el.remove());
+  const saved=await page.evaluate(()=>JSON.stringify({state:appState,history:auditHistory}));
+  await page.evaluate(()=>{appState.devices=[];appState.racks=[];appState.rackAccessories=[];appState.subnets=[];appState.vlans=[];appState.ipAllocations={};auditHistory=[];});
+  for(const width of [1440,390])for(const theme of ['light','dark']){
+   await page.setViewportSize({width,height:width===390?844:950});
+   for(const item of [{screen:'dashboard',value:'overview'},{screen:'devices',value:'inventory'},{screen:'ipam',value:'overview'},{screen:'racks',value:'overview'},{screen:'audit',value:'activity'}]){
+    await selectScreen(item,theme);const layout=await measure(item);assert.equal(layout.entrance,16);assert.equal(layout.overflow,false);empty.push({width,theme,...layout});
+   }
+  }
+  await page.evaluate(saved=>{const data=JSON.parse(saved);appState=data.state;auditHistory=data.history;renderContent();},saved);
+ }
  const final=await page.evaluate(async()=>await(await fetch('/api/inventory/state')).json());assert.deepEqual(final,initial);assert.deepEqual(errors,[]);
- fs.writeFileSync(path.join(out,'navigation-checks.json'),JSON.stringify({results,keyboard,inventoryUnchanged:true,errors},null,2));
- console.log('Interface consistency passed:',results.length,'layouts and',keyboard.length,'keyboard activations');
+ fs.writeFileSync(path.join(out,extrasOnly?'navigation-extras.json':'navigation-checks.json'),JSON.stringify({results,keyboard,enlarged,empty,inventoryUnchanged:true,errors},null,2));
+ console.log('Interface consistency passed:',results.length,'layouts,',keyboard.length,'keyboard activations,',enlarged.length,'enlarged-label states and',empty.length,'empty-inventory states');
 };

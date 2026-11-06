@@ -264,6 +264,15 @@ async function run(){
     },section);
     assert.equal(await selected.evaluate(el=>{const a=el.getBoundingClientRect(),b=el.parentElement.getBoundingClientRect();return a.left>=b.left-1&&a.right<=b.right+1;}),true,
       'The active mobile catalogue tab must remain visible after rendering '+section);
+    const focusedTab=await page.locator('.device-tabs [data-tab="inventory"]').evaluate(el=>{
+      const position={x:scrollX,y:scrollY},selection=activeDeviceDetailsTab;
+      el.focus({preventScroll:true});
+      const tab=el.getBoundingClientRect(),strip=el.parentElement.getBoundingClientRect();
+      return {visible:tab.left>=strip.left-1&&tab.right<=strip.right+1,
+        unchanged:selection===activeDeviceDetailsTab&&position.x===scrollX&&position.y===scrollY};
+    });
+    assert.ok(focusedTab.visible&&focusedTab.unchanged,
+      'Focusing another mobile tab reveals its label without changing selection or document scroll');
     await page.setViewportSize({width:1440,height:950});
   }
   await page.locator('#main-content [data-action="approved-device-section"][data-tab="inventory"]').click();
