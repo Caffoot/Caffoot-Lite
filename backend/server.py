@@ -1,5 +1,6 @@
-"""Caffoot Lite Next HTTPS backend and inventory integration groundwork."""
+"""Caffoot Lite HTTPS routes for accounts, shared inventory and protected resources."""
 import json
+import secrets
 import os
 import sqlite3
 import time
@@ -169,7 +170,7 @@ class Handler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(body)
             return
-        if self.path == "/inventory":
+        if self.path in ("/inventory", "/inventory?rack-print=same-tab"):
             with connect() as connection:
                 account_id = authenticated_account(connection, self.headers.get("Cookie"))
                 if account_id is None:
@@ -932,8 +933,8 @@ class Handler(BaseHTTPRequestHandler):
         requesting = self.path.endswith("/request")
         try:
             payload = json.loads(self.rfile.read(int(length)))
-            expected = ({"password"} if requesting else {"password", "token"}) if private else (
-                {"username"} if requesting else {"token", "password", "mfa_code"})
+            expected = ({"password"} if requesting else {"password", "token", "challengeId"}) if private else (
+                {"username"} if requesting else {"token", "password", "mfa_code", "challengeId"})
             if not isinstance(payload, dict) or set(payload) != expected or any(
                     not isinstance(value, str) for value in payload.values()):
                 raise ValueError("Invalid email confirmation request")
@@ -952,7 +953,7 @@ class Handler(BaseHTTPRequestHandler):
                 throttle_key = ("verification:" if private else "recovery:") + key
                 if not MAIL_REQUESTS.allowed(peer, throttle_key):
                     if requesting and not private:
-                        self.respond(200, {"message": REQUEST_MESSAGE})
+                        self.respond(200, {"message": REQUEST_MESSAGE, "challengeId": secrets.token_hex(32)})
                     else:
                         self.respond(429, {"error": "Please wait before trying again"})
                     return
@@ -970,17 +971,17 @@ class Handler(BaseHTTPRequestHandler):
                     proof = issue_email_proof(connection, actor, "verify" if private else "recover") if configured and actor else None
                     connection.commit()
                     if proof:
-                        token, recipient = proof
+                        token, recipient, challenge_id = proof
                         queue_email(smtp_config_path(DB_PATH), recipient,
                                     "Caffoot Lite email verification" if private else "Caffoot Lite password recovery",
                                     ("Confirm email ownership" if private else "Recover your password") +
                                     " by entering this single-use code in your Caffoot Lite installation:\n\n" + token +
                                     "\n\nIt expires in 15 minutes. Required authenticator protection still applies. "
                                     "If you did not request this, ignore this message.")
-                    self.respond(200, {"message": REQUEST_MESSAGE})
+                    self.respond(200, {"message": REQUEST_MESSAGE, "challengeId": proof[2] if proof else secrets.token_hex(32)})
                     return
                 target = confirm_email_proof(connection, payload["token"], "verify" if private else "recover",
-                                             account_id=actor if private else None,
+                                             challenge_id=payload["challengeId"], account_id=actor if private else None,
                                              password=payload["password"], mfa_code=payload.get("mfa_code"))
                 recipients = security_recipients(connection, target)
                 recipients.update(security_recipients(connection, administrators=True))
@@ -989,7 +990,10 @@ class Handler(BaseHTTPRequestHandler):
         except (ValueError, TypeError):
             self.respond(400, {"error": "Invalid or expired confirmation"})
         except (OSError, smtplib.SMTPException):
-            self.respond(200, {"message": REQUEST_MESSAGE})
+            if requesting:
+                self.respond(200, {"message": REQUEST_MESSAGE, "challengeId": secrets.token_hex(32)})
+            else:
+                self.respond(503, {"error": "Email confirmation is temporarily unavailable"})
         except sqlite3.Error:
             self.respond(503, {"error": "database unavailable"})
 

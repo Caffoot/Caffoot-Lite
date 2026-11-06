@@ -72,7 +72,7 @@ module.exports=async({page,out})=>{
    }
    // The selected overview insight survives leaving and returning to the main section.
    for(const section of ['inventory','accessories','overview']){
-    await page.locator('[data-action="approved-rack-section"][data-section-tab="'+section+'"]').click();
+    await page.locator('[data-action="select-rack-section"][data-section-tab="'+section+'"]').click();
     if(section==='overview')assert.equal(await page.locator('[data-action="v13-overview-tab"][aria-pressed="true"]').getAttribute('data-tab'),'locations');
     else{
      const value=await page.locator('#main-content').evaluate(e=>({text:e.textContent.trim(),overflow:document.documentElement.scrollWidth>innerWidth}));

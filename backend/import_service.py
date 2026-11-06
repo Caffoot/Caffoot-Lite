@@ -1,9 +1,7 @@
-"""Offline orchestration for the published v1.3.3 inventory import.
+"""Published v1.3.3 import orchestration used by the authenticated HTTP service.
 
-No HTTP route calls this module. The caller must pass the original export,
-not a client-supplied candidate. Authentication, review and final confirmation
-are independently checked before the atomic SQLite replacement.
-"""
+The caller supplies the original export. Authentication, source-compatible
+review and final confirmation precede atomic inventory replacement."""
 from backend.import_review import (
     prepare_published_export_review, confirm_detached_import_review,
 )

@@ -193,14 +193,23 @@ $('sign-out').addEventListener('click',async()=>{
  }catch(e){$('signed-in-message').textContent=e.message}
 });
 
+// Trim pasted padding before the browser applies the eight-character limit.
+$('recovery-confirm-form').elements.token.addEventListener('paste',event=>{
+ const code=event.clipboardData?.getData('text').trim();
+ if(/^[0-9]{8}$/.test(code||'')){
+  event.preventDefault();event.target.value=code;
+  event.target.dispatchEvent(new Event('input',{bubbles:true}));
+ }
+});
 let recoveryRequestVersion=0;
+let recoveryChallengeId='';
 function showRecoveryFeedback(message,focusNext){
  const status=$('recovery-message');status.textContent=message;
  status.scrollIntoView({block:'center',behavior:'auto'});
  if(focusNext)focusNext.focus({preventScroll:true});
 }
 function resetRecoveryFlow(){
- recoveryRequestVersion++;
+ recoveryRequestVersion++;recoveryChallengeId='';
  for(const id of ['recovery-request-form','recovery-confirm-form']){
   $(id).reset();$(id).removeAttribute('aria-busy');$(id).querySelector('button[type="submit"]').disabled=false;
  }
@@ -228,16 +237,18 @@ for(const id of ['recovery-request-form','recovery-confirm-form']){
   showRecoveryFeedback(requesting?'Requesting recovery instructions…':'Checking your recovery code…');
   try{
    const payload=Object.fromEntries(new FormData(form));
+   if(!requesting){payload.challengeId=recoveryChallengeId;payload.token=payload.token.trim();}
    const result=await request(requesting?'/api/recovery/request':'/api/recovery/confirm',payload);
    if(version!==recoveryRequestVersion)return;
    if(requesting){
+    recoveryChallengeId=result.challengeId;
     // Every neutral response opens the same next step, regardless of account eligibility.
     $('recovery-request-form').hidden=true;
     $('recovery-confirm-form').hidden=false;$('recovery-reset-fields').disabled=false;
     $('recovery-resend').hidden=false;
     showRecoveryFeedback(result.message,$('recovery-confirm-form').elements.token);
    }else{
-    form.reset();form.hidden=true;$('recovery-reset-fields').disabled=true;$('recovery-resend').hidden=true;
+    form.reset();recoveryChallengeId='';form.hidden=true;$('recovery-reset-fields').disabled=true;$('recovery-resend').hidden=true;
     showRecoveryFeedback(result.status||result.message,$('recovery-back'));
    }
   }catch(error){

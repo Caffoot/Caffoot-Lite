@@ -2,7 +2,7 @@
 
 Welcome. This guide explains **how Caffoot Lite actually works**, from the everyday user experience through to the Python backend, SQLite database and tests. It is written for the product owner, new contributors and maintainers.
 
-**Status:** This guide describes the released v2.0.3 Docker/SQLite baseline, with backend, tests and deployment sources at the repository root. [Issue #215](https://github.com/Caffoot/Caffoot-Lite/issues/215) documents completed historical work; it does not control future development. [CONTRIBUTING.md](../../CONTRIBUTING.md) describes the mandatory standards for every future contribution. The original [v2.0](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0) and standalone [v1.3.3](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3) tags are preserved.
+**Status:** v2.0.3 is the published Docker/SQLite baseline. This checkout also contains unreleased v2.1 modular-interface, profile, email/recovery and Audit Trail work. See [Modular Interface](Modular-Interface.md), [Account Recovery](Account-Recovery.md) and the [active v2.1 handover](../development-handovers/v2.1-issue-282.md) for current development and acceptance limits. [Issue #215](https://github.com/Caffoot/Caffoot-Lite/issues/215) documents completed historical work; it does not control future development. [CONTRIBUTING.md](../../CONTRIBUTING.md) describes the mandatory standards for every future contribution. The original [v2.0](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0) and standalone [v1.3.3](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3) tags are preserved.
 
 ## In simple terms
 
@@ -29,7 +29,7 @@ For example, when somebody edits a device, the browser requests an exclusive, te
 | [05 — Inventory and migration](05-Inventory-and-Migration.md) | Data relationships, v1.3.3 compatibility and importing |
 | [06 — Coding and naming conventions](06-Coding-and-Naming-Conventions.md) | Mandatory standards for naming, UI labels, refactoring and documentation |
 | [07 — Function and code reference](07-Function-and-Code-Reference.md) | Where to find an implementation before changing it |
-| [Full Function Index](Function-Index.md) | Source-pinned declaration locations, static call-like reference counts and example reference sites |
+| [Full Function Index](Function-Index.md) | Named runtime definitions, bridge methods and selected maintenance helpers, with current declaration locations; not a call graph or reference-count report |
 | [08 — Testing and maintenance](08-Testing-and-Maintenance.md) | How to check a change and protect the published baseline |
 | [Security fixes and releases — owner checklist](Security-Fixes-and-Releases.md) | The short, safe path from private report or approved change to a verified release |
 | [v2.0.3 development handover (historical)](../historical/development-handovers/v2.0.3.md) | Completed v2.0.3 decisions and work, kept as a dated record |
@@ -38,7 +38,8 @@ All contributors should first read [CONTRIBUTING.md](../../CONTRIBUTING.md) and 
 
 ## Quick source map
 
-- [`inventory.html`](../../inventory.html): the established inventory interface and its central SQLite integration.
+- [`inventory.html`](../../inventory.html): the shared application shell; screen fragments and runtime logic are under [`interface/`](../../interface/).
+- [`interface/loader.js`](../../interface/loader.js), [`interface/application.js`](../../interface/application.js), [`interface/screens/`](../../interface/screens/) and [`interface/styles/`](../../interface/styles/): authenticated modular presentation and shared navigation.
 - [`setup.html`](../../setup.html): first-run administrator and sign-in interface.
 - [`backend/server.py`](../../backend/server.py): HTTPS entry point, routes and request handling.
 - [`backend/schema.py`](../../backend/schema.py): SQLite tables and schema upgrades.

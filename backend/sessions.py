@@ -1,9 +1,8 @@
-"""Opaque, expiring SQLite-backed session primitives; no HTTP routes yet.
+"""Opaque, expiring SQLite sessions for the authenticated HTTPS service.
 
-Raw bearer tokens are returned once, never stored in the database. The future
-HTTP layer must use secure HttpOnly SameSite cookies, CSRF defences, TLS at the
-reverse proxy, request throttling, and logout/session invalidation.
-"""
+Raw bearer tokens are returned once and only their digests are stored. The
+HTTP layer supplies secure cookies, origin/request-proof checks, throttling
+and logout; account security changes revoke affected sessions."""
 import hashlib
 import secrets
 import time

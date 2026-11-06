@@ -48,7 +48,7 @@ module.exports=async({page,context,out})=>{
  await page.reload();await page.locator('#app[aria-busy="false"]').waitFor();saved=(await state()).racks.find(r=>r.id===rack.id);assert.equal(saved.widthMm,750);assert.equal(saved.depthMm,1000);
  // Review and cancel a published-format import: the notice is truthful and no values change.
  const source={devices:[],racks:[{id:'missing',name:'Missing Dimensions',heightU:12},{id:'legacy',name:'Legacy Dimensions',heightU:12,width:700,depth:'900mm'}],subnets:[],vlans:[],ipAllocations:{},caffootBackup:{format:'caffoot-inventory',schemaVersion:1,app:'Caffoot Lite',appVersion:'1.3.3',exportedAt:'2026-11-06T00:00:00Z'}};
- const beforeImport=await state();await page.evaluate(()=>switchTab('settings'));await page.locator('.approved-settings .subnav [data-tab="data"]').click();
+ const beforeImport=await state();await page.evaluate(()=>switchTab('settings'));await page.locator('.settings-screen .subnav [data-tab="data"]').click();
  const chooser=page.waitForEvent('filechooser');await page.locator('[data-action="next-import-pick"]').click();await(await chooser).setFiles({name:'fictional-v133.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(source))});
  await page.getByText('Missing rack dimensions remain unrecorded.',{exact:false}).waitFor();await page.locator('[data-next-import-action="cancel"]').click();
  const afterImport=await state();for(const key of ['devices','subnets','racks','rackAccessories','ipAllocations','changeHistory'])assert.deepEqual(afterImport[key],beforeImport[key]);

@@ -8,7 +8,7 @@ The code keeps Devices, IPAM and Racks records in separate tables, along with ac
 
 ## Source and schema version
 
-The exact definitions are in [`backend/schema.py`](../../backend/schema.py). At the 30 October 2026 checkpoint, `SCHEMA_VERSION = 7`. The function `initialise_database(connection)` applies missing numbered migrations in a transaction and rejects databases marked newer than this application.
+The exact definitions are in [`backend/schema.py`](../../backend/schema.py). The 30 October 2026 checkpoint had schema 7. The later modular v2.1 baseline used schema 9: migration 8 added profiles/photos and migration 9 added email proofs. The current approved eight-digit development change uses schema 10, adding challenge identifiers, attempt counters and durable failed-attempt timestamps; it explicitly invalidates outstanding old-format email proofs at upgrade. The function `initialise_database(connection)` applies missing numbered migrations in a transaction and rejects databases marked newer than this application.
 
 | Table | Primary key and relevant columns | What it contains |
 | --- | --- | --- |
@@ -42,6 +42,12 @@ The `record_json`/`value_json` columns have SQLite JSON-validity checks. The sch
 [`inventory.py`](../../backend/inventory.py) reconstructs the established inventory-shaped representation from the tables for validation/UI compatibility. Its `stage_inventory` replaces the **inventory** tables transactionally for an approved import; account and security tables are outside that replacement. Read [migration details](05-Inventory-and-Migration.md) before touching this path.
 
 The database also holds Change History separately. Record-specific event behaviour is implemented by the related save operations; it is not an invitation to invent a new audit platform.
+
+## Profile, Mail And Audit Storage
+
+`account_profiles` holds optional personal details, saved verification status and bounded photo bytes. `account_email_proofs` binds a keyed code digest to an opaque challenge, account, purpose, saved email and expiry. `account_email_attempts` retains failed confirmation timestamps for the rolling budget. No plain code is stored. See [Account Recovery](Account-Recovery.md) for limits, resend and upgrade behaviour.
+
+Protected account/security events are stored with the shared audit history and filtered by server-side visibility rules. The private SMTP configuration is a separate file beside SQLite; the installation email-proof secret is `account-email-secret.key` in that private directory. Back up the whole persistent directory, including those files and TLS, rather than SQLite alone.
 
 ## Operational limits
 

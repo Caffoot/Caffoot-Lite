@@ -51,6 +51,11 @@ class AccountEmailHttpTests(unittest.TestCase):
         conn=http.client.HTTPConnection('127.0.0.1',self.server.server_port)
         conn.request('POST',path,json.dumps(payload),headers)
         response=conn.getresponse();status=response.status;data=json.loads(response.read());conn.close()
+        if isinstance(data, dict) and "challengeId" in data:
+            self.assertRegex(data["challengeId"], r"^[0-9a-f]{64}$")
+            self.challenge_id = data["challengeId"]
+            # Compare neutral public shape/content, not independently random identifiers.
+            data["challengeId"] = "opaque-challenge"
         return status,data
 
     def test_recovery_no_smtp_and_unknown_account_return_identical_generic_response(self):
@@ -68,9 +73,10 @@ class AccountEmailHttpTests(unittest.TestCase):
             self.assertEqual(self.post(path,{'password':'password'},authenticated=True)[0],200)
         body=self.mocks[2].call_args.args[3]
         token=body.split('\n\n')[1]
-        self.assertEqual(len(token),64)
-        self.assertEqual(self.post('/api/account/email/confirm',{'token':token,'password':'password'},authenticated=True)[0],200)
-        self.assertEqual(self.post('/api/account/email/confirm',{'token':token,'password':'password'},authenticated=True)[0],400)
+        challenge_id=self.challenge_id
+        self.assertRegex(token,r"^[0-9]{8}$")
+        self.assertEqual(self.post('/api/account/email/confirm',{'token':token,'password':'password','challengeId':challenge_id},authenticated=True)[0],200)
+        self.assertEqual(self.post('/api/account/email/confirm',{'token':token,'password':'password','challengeId':challenge_id},authenticated=True)[0],400)
         with sqlite3.connect(self.path) as db:
             self.assertEqual(db.execute('SELECT email_verified FROM account_profiles').fetchone()[0],1)
 
@@ -92,16 +98,16 @@ class AccountEmailHttpTests(unittest.TestCase):
                 self.mocks[2].reset_mock()
                 with patch('backend.server.smtp_public_settings', return_value={'configured': configured}):
                     response = self.post('/api/recovery/request', {'username': username})
-                self.assertEqual(response, (200, {'message': REQUEST_MESSAGE}))
+                self.assertEqual(response, (200, {'message': REQUEST_MESSAGE, 'challengeId': 'opaque-challenge'}))
                 self.assertEqual(self.mocks[2].called, queued)
         self.mocks[2].return_value = False
         with patch('backend.server.smtp_public_settings', return_value={'configured': True}):
             self.assertEqual(self.post('/api/recovery/request', {'username': 'email-owner'}),
-                             (200, {'message': REQUEST_MESSAGE}))
+                             (200, {'message': REQUEST_MESSAGE, 'challengeId': 'opaque-challenge'}))
         self.mocks[2].reset_mock()
         with patch.object(MAIL_REQUESTS, 'allowed', return_value=False):
             self.assertEqual(self.post('/api/recovery/request', {'username': 'email-owner'}),
-                             (200, {'message': REQUEST_MESSAGE}))
+                             (200, {'message': REQUEST_MESSAGE, 'challengeId': 'opaque-challenge'}))
         self.assertFalse(self.mocks[2].called)
 
     def test_recovery_does_not_accept_an_email_payload(self):

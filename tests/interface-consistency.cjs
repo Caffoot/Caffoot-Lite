@@ -50,9 +50,9 @@ module.exports=async({page,context,out})=>{
  async function measure(item){return page.evaluate(({screen,value,group})=>{
   const root=document.getElementById('main-content'),visible=e=>e&&e.getBoundingClientRect().height>0;
   const first=selector=>[...root.querySelectorAll(selector)].find(visible);
-  const tabs=first({dashboard:'.dashboard-tabs',devices:'.approved-page-header .device-tabs',ipam:'.ipam-tabs',racks:'.racks-tabs',users:'.approved-page-header .tabs',settings:'.subnav',account:'.subnav',audit:'.audit-tabs'}[screen]);
-  const entry=screen==='racks'&&group==='details'?first('.approved-page-body > *'):first({dashboard:'.dashboard-tab-panel.active > *',devices:'.approved-page-body > *',ipam:'.approved-page-body > .ipam-panel.active > *',racks:'.approved-page-body .racks-panel.active > *',users:'.users-live > .section.active > *',settings:'.account-panel.active > *',account:'.account-panel.active > *',audit:'.audit-stats'}[screen]);
-  const audit=root.querySelector('.approved-audit');
+  const tabs=first({dashboard:'.dashboard-tabs',devices:'.section-page-header .device-tabs',ipam:'.ipam-tabs',racks:'.racks-tabs',users:'.section-page-header .tabs',settings:'.subnav',account:'.subnav',audit:'.audit-tabs'}[screen]);
+  const entry=screen==='racks'&&group==='details'?first('.section-page-body > *'):first({dashboard:'.dashboard-tab-panel.active > *',devices:'.section-page-body > *',ipam:'.section-page-body > .ipam-panel.active > *',racks:'.section-page-body .racks-panel.active > *',users:'.users-live > .section.active > *',settings:'.account-panel.active > *',account:'.account-panel.active > *',audit:'.audit-stats'}[screen]);
+  const audit=root.querySelector('.audit-screen');
   const navigation=[tabs,...root.querySelectorAll('.rack-subtabs')].map(strip=>({
    class:strip.className,
    buttons:[...strip.querySelectorAll(':scope > button')].map(button=>{
@@ -104,7 +104,7 @@ module.exports=async({page,context,out})=>{
   await page.setViewportSize({width,height:width===390?844:950});
   for(const item of controls)for(const key of ['Enter','Space']){
    await selectScreen({...item,value:item.group==='details'?'view':item.group==='overview'?'capacity':item.screen==='audit'?'activity':'overview'},theme);
-   const selector=item.group==='overview'?'[data-action="v13-overview-tab"][data-tab="'+item.value+'"]':item.group==='details'?'[data-action="select-rack-tab"][data-tab="'+item.value+'"]':{devices:'[data-action="approved-device-section"][data-tab="',ipam:'[data-action="approved-ipam-section"][data-view="',racks:'[data-action="approved-rack-section"][data-section-tab="',users:'[data-action="approved-users-section"][data-tab="',audit:'[data-action="audit-section"][data-tab="'}[item.screen]+item.value+'"]';
+   const selector=item.group==='overview'?'[data-action="v13-overview-tab"][data-tab="'+item.value+'"]':item.group==='details'?'[data-action="select-rack-tab"][data-tab="'+item.value+'"]':{devices:'[data-action="select-device-section"][data-tab="',ipam:'[data-action="select-ipam-section"][data-view="',racks:'[data-action="select-rack-section"][data-section-tab="',users:'[data-action="select-users-section"][data-tab="',audit:'[data-action="audit-section"][data-tab="'}[item.screen]+item.value+'"]';
    const button=page.locator(selector).first();
    const scroll=await page.evaluate(()=>({x:scrollX,y:scrollY}));await button.focus();
    const focused=await button.evaluate(button=>{const b=button.getBoundingClientRect(),s=button.parentElement.getBoundingClientRect();return {label:button.textContent.trim(),focused:document.activeElement===button,visible:b.left>=s.left-1&&b.right<=s.right+1,x:scrollX,y:scrollY};});

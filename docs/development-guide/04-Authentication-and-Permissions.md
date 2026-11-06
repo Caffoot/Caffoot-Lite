@@ -35,11 +35,13 @@ Only administrators can manage other users. The code prevents administrators fro
 
 ## My account, Users and Settings
 
-The agreed interface presents **Users** only to administrators and keeps system **Settings & Data** administrator-only. Every signed-in user can reach **My account** for their personal password and MFA controls, appearance preference and the moved Help/About content. Users without MFA see unobtrusive Dashboard enrolment guidance; admins see guidance when attempting to grant editing rights prematurely. These are approved presentation decisions from #215, not new permissions or account services.
+The agreed interface presents **Users** only to administrators and keeps system **Settings & Data** administrator-only. Every signed-in user can reach **My account** for their personal password and MFA controls, appearance preference and the moved Help/About content. Users without MFA see unobtrusive Dashboard enrolment guidance; admins see guidance when attempting to grant editing rights prematurely. These controls and the profile/email services are implemented in unreleased v2.1 development. The published v2.0.3 baseline and its historical acceptance remain distinct.
 
 ## Boundaries for future maintenance
 
 Never take an account ID, role or permission from a request body as proof of authority. Do not depend on hiding a button for security. Route modifications must require the existing session, trusted origin and CSRF proof before writing. Do not add public registration, extra roles, alternate authentication or recovery mechanisms unless explicitly approved.
+
+Profiles/photos are protected by session ownership checks. Verification requires the current password; recovery requires a saved verified email, retained MFA and a single-use expiring challenge. SMTP administration remains administrator-only and public responses remain neutral. Security events remain protected Audit Trail data. See [Account Recovery](Account-Recovery.md) for the current guided flow, short-code limits and private backup/upgrade requirements.
 
 ### Related reading
 

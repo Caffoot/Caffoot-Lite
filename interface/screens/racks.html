@@ -7,9 +7,9 @@
 
 <!-- interface-template:racks/rails-1 --><li>{{slot:0}} · {{slot:1}} side · U{{slot:2}}–U{{slot:3}}</li><!-- /interface-template -->
 
-<!-- interface-template:racks/pages-1 --><ul>{{slot:0}}</ul><!-- /interface-template -->
+<!-- interface-template:racks/print-equipment-list --><ul>{{slot:0}}</ul><!-- /interface-template -->
 
-<!-- interface-template:racks/pages-2 --><section><h2>{{slot:0}} elevation</h2><p>{{slot:1}}U occupied · {{slot:2}}U available · {{slot:3}}% utilised</p><table>{{slot:4}}</table><h3>Vertical rail accessories (0U)</h3>{{slot:5}}</section><!-- /interface-template -->
+<!-- interface-template:racks/print-capacity-page --><section><h2>{{slot:0}} elevation</h2><p>{{slot:1}}U occupied · {{slot:2}}U available · {{slot:3}}% utilised</p><table>{{slot:4}}</table><h3>Vertical rail accessories (0U)</h3>{{slot:5}}</section><!-- /interface-template -->
 
 <!-- interface-template:racks/print-rack-elevation-1 --><!doctype html><html><head><meta charset="utf-8"><title>{{slot:0}} — Rack elevations</title><style>body{font:13px system-ui,sans-serif;color:#0f172a;margin:20px}h1{margin:0 0 4px}section{break-before:page;page-break-before:always}section:first-of-type{break-before:auto;page-break-before:auto}.print-actions{display:flex;gap:12px;margin:0 0 14px}.print-actions button{padding:8px 14px;cursor:pointer}h3{font-size:13px;margin:14px 0 4px}ul{margin:4px 0 0;padding-left:20px}table{width:100%;border-collapse:collapse;table-layout:fixed}tr{height:19px}th{width:55px;background:#1e293b;color:#fff;font-size:10px}td{padding:1px 12px;text-align:center;font-weight:600;border:1px solid #94a3b8}.device td{background:#14532d;color:white}.accessory td{background:#334155;color:white}.empty td{background:#f1f5f9}p{color:#475569}@media print{.print-actions{display:none}body{margin:8mm}section{break-inside:avoid}thead{display:table-header-group}}</style></head><body><div class="print-actions"><button type="button" onclick="window.print()">Print / PDF</button><button type="button" onclick="window.close()">Close print view</button></div><h1>{{slot:1}}</h1><p>{{slot:2}} · {{slot:3}}U · Printed {{slot:4}}</p>{{slot:5}}</body></html><!-- /interface-template -->
 
@@ -49,7 +49,7 @@
 
 <!-- interface-template:racks/panel-13 --><div class="text-sm text-slate-700 dark:text-slate-200 space-y-2"><p><strong>Racks by location:</strong> a 12U cabinet and a 42U rack each count as one rack.</p><p><strong>Mounted devices by location:</strong> devices inherit their location from the rack they are mounted in. This is not a count of all devices at that site.</p><p class="text-xs text-slate-500 dark:text-slate-400">Locations not recorded are grouped under “Not recorded”.</p></div><!-- /interface-template -->
 
-<!-- interface-template:racks/body-1 --><section class="racks-panel active" data-panel="overview" role="tabpanel" aria-label="Estate-wide rack overview">
+<!-- interface-template:racks/estate-overview-panel --><section class="racks-panel active" data-panel="overview" role="tabpanel" aria-label="Estate-wide rack overview">
   <div class="racks-hub-bar"><div><h2>Rack Overview</h2><p>Capacity and equipment insights across all recorded racks.</p></div></div>
   <div class="rack-subtabs" role="group" aria-label="Overview insights">{{slot:4}}</div>
   <div class="racks-grid" id="rack-overview-stats">{{slot:0}}{{slot:1}}{{slot:2}}{{slot:3}}</div>
@@ -65,7 +65,7 @@
   <span class="rack-card-action">View Rack Elevation</span>
 </button><!-- /interface-template -->
 
-<!-- interface-template:racks/body-2 --><section class="racks-panel active" data-panel="inventory" role="tabpanel" aria-label="Rack inventory">
+<!-- interface-template:racks/inventory-panel --><section class="racks-panel active" data-panel="inventory" role="tabpanel" aria-label="Rack inventory">
  <div class="racks-hub-bar"><div><h2>Rack Inventory</h2><p>Select a rack card to view its equipment and settings.</p></div></div>
  <label class="racks-search-label" for="v13-rack-search">Search racks
   <input id="v13-rack-search" class="rack-text-input" type="search" placeholder="Search by rack name or location" autocomplete="off">
@@ -75,9 +75,9 @@
  <p id="v13-rack-no-results" class="hidden rack-note">No racks match your search.</p>
 </section><!-- /interface-template -->
 
-<!-- interface-template:racks/body-3 --><button class="rack-directory-item" type="button" data-action="v13-open-rack-accessories" data-id="{{slot:0}}"><span class="iconwrap orange">▥</span><strong>{{slot:1}}</strong><span class="rack-small">{{slot:2}} accessories · {{slot:3}} vertical 0U rails</span><span class="rack-small">{{slot:4}} · {{slot:5}}U</span><span class="rack-card-action">Manage Accessories in Rack</span></button><!-- /interface-template -->
+<!-- interface-template:racks/accessory-directory-entry --><button class="rack-directory-item" type="button" data-action="v13-open-rack-accessories" data-id="{{slot:0}}"><span class="iconwrap orange">▥</span><strong>{{slot:1}}</strong><span class="rack-small">{{slot:2}} accessories · {{slot:3}} vertical 0U rails</span><span class="rack-small">{{slot:4}} · {{slot:5}}U</span><span class="rack-card-action">Manage Accessories in Rack</span></button><!-- /interface-template -->
 
-<!-- interface-template:racks/body-4 --><section class="racks-panel active" data-panel="accessories" role="tabpanel"><div class="racks-hub-bar"><div><h2>Rack Accessories</h2><p>Manage accessories within the rack they belong to, including 0U side-rail equipment.</p></div></div><div id="rack-accessory-root"><div class="rack-directory">{{slot:0}}</div></div></section><!-- /interface-template -->
+<!-- interface-template:racks/accessories-panel --><section class="racks-panel active" data-panel="accessories" role="tabpanel"><div class="racks-hub-bar"><div><h2>Rack Accessories</h2><p>Manage accessories within the rack they belong to, including 0U side-rail equipment.</p></div></div><div id="rack-accessory-root"><div class="rack-directory">{{slot:0}}</div></div></section><!-- /interface-template -->
 
 <!-- interface-template:racks/render-rack-hub-v13-1 --><div class="min-w-0">{{slot:0}}</div><!-- /interface-template -->
 
@@ -232,7 +232,7 @@
                     <div class="rack-modal-top"><div><h2>{{slot:0}}</h2></div>
                         <button type="button" class="rack-modal-close app-modal-close" data-action="close-modal" aria-label="Close dialog">Close ×</button></div>
                     <p>{{slot:1}}</p>
-                    <form data-form-action="rack" data-rack-id="{{slot:2}}" data-correction="{{slot:3}}" class="rack-approved-form">
+                    <form data-form-action="rack" data-rack-id="{{slot:2}}" data-correction="{{slot:3}}" class="rack-editor-form">
                         <div class="rack-form-grid">
                             <label class="rack-field">Rack Name *<input type="text" id="rack-name" required maxlength="120" value="{{slot:4}}" placeholder="e.g. Rack C - Garage"></label>
                             <label class="rack-field">Location Room (optional)<input type="text" id="rack-location" value="{{slot:5}}" placeholder="e.g. Garage Server Room"></label>
@@ -258,7 +258,7 @@
                     <div class="rack-modal-top"><div><div class="eyebrow">RACK MANAGEMENT</div><h2>Place Device / Horizontal Accessory at U{{slot:0}}</h2></div>
                         <button type="button" class="rack-modal-close app-modal-close" data-action="close-modal">Close ×</button></div>
                     <p>Choose a physical device or a horizontal rack accessory. This form places equipment into rack U positions on the selected face.</p>
-                    <form id="rack-placement-form" data-form-action="assign" data-rack-id="{{slot:1}}" data-default-slot="{{slot:2}}" class="rack-approved-form">
+                    <form id="rack-placement-form" data-form-action="assign" data-rack-id="{{slot:1}}" data-default-slot="{{slot:2}}" class="rack-editor-form">
                         <div class="rack-form-grid">
                             <label class="rack-field">Placement Type<select name="itemType" id="place-item-type"><option value="device" {{slot:3}}>Device</option><option value="accessory" {{slot:4}}>Horizontal Accessory</option></select></label>
                             <label class="rack-field">Rack Face<select name="face" id="assign-face"><option value="front" {{slot:5}}>Front</option><option value="rear" {{slot:6}}>Rear</option></select></label>
@@ -283,7 +283,7 @@
 
 <!-- interface-template:racks/open-rack-accessory-editor-2 --><div role="dialog" aria-modal="true" aria-label="Rack accessory" class="rack-modal accessory-modal">
                 <div class="rack-modal-top"><div><div class="eyebrow">RACK MANAGEMENT</div><h2>{{slot:0}}</h2></div><button type="button" class="rack-modal-close app-modal-close" data-action="close-modal">Close ×</button></div><p>{{slot:1}}</p>
-                <form id="rack-accessory-form" class="rack-approved-form">
+                <form id="rack-accessory-form" class="rack-editor-form">
                   <div class="rack-form-grid">
                     <label class="rack-field">{{slot:2}}<select name="type" required class="rack-accessory-field">{{slot:3}}</select></label>
                     <label id="rack-port-field" class="rack-field" style="{{slot:4}}">Patch panel ports<select name="portCount" class="rack-accessory-field" {{slot:5}}><option value="12" {{slot:6}}>12 ports</option><option value="24" {{slot:7}}>24 ports</option><option value="48" {{slot:8}}>48 ports</option></select></label>

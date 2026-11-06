@@ -441,3 +441,26 @@ class SessionHttpTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+    def test_same_tab_print_direct_entry_and_reload_keep_inventory_security(self):
+        cookie = COOKIE_NAME + "=" + self.token
+        baseline = self.request("/inventory", cookie)
+        for _ in range(2):
+            self.assertEqual(self.request("/inventory?rack-print=same-tab", cookie), baseline)
+        self.assertEqual(self.request("/inventory?rack-print=same-tab")[0], 401)
+        with sqlite3.connect(self.path) as db:
+            create_user(db, 1, "print-no-access", "password")
+            token = login_session(db, "print-no-access", "password")
+        self.assertEqual(self.request("/inventory?rack-print=same-tab", COOKIE_NAME + "=" + token)[0], 403)
+        for target in ("/inventory/", "/inventory?rack-print=other", "/inventory?other=same-tab",
+                       "/inventory?rack-print=same-tab&extra=1", "/interface/application.js?rack-print=same-tab"):
+            self.assertEqual(self.request(target, cookie)[0], 404)
+        for target in ("/inventory", "/inventory?rack-print=same-tab"):
+            connection = http.client.HTTPConnection("127.0.0.1", self.server.server_port)
+            connection.request("GET", target, headers={"Cookie": cookie})
+            response = connection.getresponse()
+            self.assertEqual(response.getheader("X-Content-Type-Options"), "nosniff")
+            self.assertEqual(response.getheader("Cache-Control"), "no-store")
+            self.assertEqual(response.getheader("Content-Type"), "text/html; charset=utf-8")
+            response.read()
+            connection.close()

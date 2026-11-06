@@ -84,10 +84,10 @@ module.exports=async({page,context,out})=>{
   if(route.request().method()!=='GET')return route.continue();
   await route.fulfill({json:{firstName:'Fictional',lastName:'Person',displayName:'Fictional Person',email:'fictional@example.test',emailVerified:verified,hasPhoto:false}});
  });
- await page.route('**/api/account/email/request',route=>route.fulfill({json:{message:'If recovery is available, instructions will be emailed. Otherwise, contact your Caffoot Lite administrator.'}}));
+ await page.route('**/api/account/email/request',route=>route.fulfill({json:{message:'If recovery is available, instructions will be emailed. Otherwise, contact your Caffoot Lite administrator.',challengeId:'f'.repeat(64)}}));
  let confirmFails=true;
  await page.route('**/api/account/email/confirm',route=>{
-  assert.deepEqual(Object.keys(route.request().postDataJSON()).sort(),['password','token']);
+  assert.deepEqual(Object.keys(route.request().postDataJSON()).sort(),['challengeId','password','token']);
   if(confirmFails)return route.fulfill({status:400,json:{error:'Invalid or expired confirmation'}});
   verified=true;return route.fulfill({json:{status:'Email verified'}});
  });
@@ -97,7 +97,7 @@ module.exports=async({page,context,out})=>{
  await page.locator('#account-email').fill('fictional@example.test');await page.locator('#open-email-verification').click();
  assert.ok(await page.locator('#email-verification-code-fields').isHidden());
  await page.locator('#account-email-verification-form input[name="password"]').fill('Fictional password');await page.locator('#request-email-verification').click();
- await page.locator('#email-verification-code-fields').waitFor();await page.locator('#account-email-verification-form input[name="token"]').fill('x'.repeat(64));
+ await page.locator('#email-verification-code-fields').waitFor();await page.locator('#account-email-verification-form input[name="token"]').fill('00001234');
  await page.locator('#account-email-verification-form button[type="submit"]').click();await page.locator('#email-verification-message').filter({hasText:'Invalid or expired'}).waitFor();
  assert.equal(await page.locator('#account-email-status').textContent(),'Not Verified');
  confirmFails=false;await page.locator('#account-email-verification-form button[type="submit"]').click();
@@ -136,10 +136,10 @@ module.exports=async({page,context,out})=>{
  await signIn.route('**/api/recovery/request',async route=>{
   requests.push(route.request().postDataJSON());
   if(requestGate)await requestGate;
-  return route.fulfill(requestFails?{status:503,json:{error:'Service unavailable'}}:{json:{message:'If recovery is available, instructions will be emailed. Otherwise, contact your Caffoot Lite administrator.'}});
+  return route.fulfill(requestFails?{status:503,json:{error:'Service unavailable'}}:{json:{message:'If recovery is available, instructions will be emailed. Otherwise, contact your Caffoot Lite administrator.',challengeId:'f'.repeat(64)}});
  });
  await signIn.route('**/api/recovery/confirm',route=>{
-  assert.deepEqual(Object.keys(route.request().postDataJSON()).sort(),['mfa_code','password','token']);
+  assert.deepEqual(Object.keys(route.request().postDataJSON()).sort(),['challengeId','mfa_code','password','token']);
   return route.fulfill(resetFails?{status:400,json:{error:'Invalid or expired confirmation'}}:{json:{status:'Password updated; sign in with your authenticator if required'}});
  });
  await signIn.goto(address+'/');await signIn.locator('#auth-heading').filter({hasText:'Welcome Back'}).waitFor();
@@ -166,7 +166,7 @@ module.exports=async({page,context,out})=>{
   await signIn.locator('#recovery-confirm-form').waitFor();assert.equal(await signIn.locator('#recovery-message').getAttribute('role'),'status');
   assert.ok(await signIn.locator('#recovery-message').evaluate(el=>{const r=el.getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight;}));
   assert.equal(await signIn.locator('#recovery-confirm-form input[name="token"]').evaluate(el=>el===document.activeElement),true);
-  await signIn.locator('#recovery-confirm-form input[name="token"]').fill('x'.repeat(64));await signIn.locator('#recovery-confirm-form input[name="password"]').fill('Fictional reset password');
+  await signIn.locator('#recovery-confirm-form input[name="token"]').fill('00001234');await signIn.locator('#recovery-confirm-form input[name="password"]').fill('Fictional reset password');
   await signIn.locator('#recovery-confirm-form button').click();await signIn.locator('#recovery-message').filter({hasText:'Invalid or expired'}).waitFor();
   await signIn.locator('#recovery-back').click();assert.ok(await signIn.locator('#recovery-confirm-form').isHidden());
   assert.equal(await signIn.locator('#recovery-confirm-form input[name="password"]').inputValue(),'');
@@ -183,7 +183,7 @@ module.exports=async({page,context,out})=>{
  requestFails=true;await signIn.getByText('Forgot Password?',{exact:true}).click();await signIn.locator('#recovery-request-form input').fill('fictional-user');await signIn.locator('#recovery-request-form button').click();await signIn.locator('#recovery-message').filter({hasText:'Service unavailable'}).waitFor();assert.ok(await signIn.locator('#recovery-confirm-form').isHidden());
  requestFails=false;await signIn.locator('#recovery-request-form button').click();await signIn.locator('#recovery-confirm-form').waitFor();
  await signIn.locator('#recovery-resend').click();assert.ok(await signIn.locator('#recovery-confirm-form').isHidden());await signIn.locator('#recovery-request-form button').click();await signIn.locator('#recovery-confirm-form').waitFor();
- resetFails=false;await signIn.locator('#recovery-confirm-form input[name="token"]').fill('x'.repeat(64));await signIn.locator('#recovery-confirm-form input[name="password"]').fill('Fictional reset password');await signIn.locator('#recovery-confirm-form button').click();await signIn.locator('#recovery-message').filter({hasText:'Password updated'}).waitFor();assert.ok(await signIn.locator('#recovery-confirm-form').isHidden());assert.equal(await signIn.locator('#recovery-confirm-form input[name="password"]').inputValue(),'');
+ resetFails=false;await signIn.locator('#recovery-confirm-form input[name="token"]').fill('00001234');await signIn.locator('#recovery-confirm-form input[name="password"]').fill('Fictional reset password');await signIn.locator('#recovery-confirm-form button').click();await signIn.locator('#recovery-message').filter({hasText:'Password updated'}).waitFor();assert.ok(await signIn.locator('#recovery-confirm-form').isHidden());assert.equal(await signIn.locator('#recovery-confirm-form input[name="password"]').inputValue(),'');
  assert.ok(requests.every(payload=>Object.keys(payload).length===1&&'username' in payload));await publicContext.close();
  await page.bringToFront();
  for(const width of [1440,1280,390,320])for(const dark of [false,true]){

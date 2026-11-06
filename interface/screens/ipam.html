@@ -15,7 +15,7 @@
 
 <!-- interface-template:ipam/render-subnet-hierarchy-preview-1 --><section class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-3" aria-label="Subnet Hierarchy"><h3 class="font-bold text-base text-slate-900 dark:text-white">Subnet Hierarchy</h3><p class="text-xs text-slate-500 dark:text-slate-400">Expand IP Address Blocks to view child networks. Use Edit to rename or update a subnet.</p><!-- /interface-template -->
 
-<!-- interface-template:ipam/render-approved-ipam-manage-1 --><section class="ipam-panel active ipam-approved-manage" data-panel="manage" data-ipam-panel="manage" role="tabpanel">
+<!-- interface-template:ipam/render-ipam-manage-1 --><section class="ipam-panel active ipam-manage" data-panel="manage" data-ipam-panel="manage" role="tabpanel">
     <div class="ipam-card">
       <div class="ipam-card-title"><div><h2>IP Address Blocks, Networks &amp; VLANs</h2><p class="ipam-subtitle">Browse the existing grouped hierarchy and manage individual networks.</p></div><div class="ipam-manage-actions"><button class="btn btn-outline" data-action="bulk-ip" data-id="{{slot:0}}" {{slot:1}}>Bulk Edit Range</button><button class="btn btn-primary" data-action="open-subnet-modal">+ Add Subnet</button></div></div>
       <div id="ipam-manage-filter-note" class="ipam-warning {{slot:2}}" style="margin:0 0 10px">{{slot:3}}</div>
@@ -93,7 +93,7 @@
                 <span class="px-3 py-2 rounded-lg bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-200">Reserved (including device IPs)</span>
             </div><!-- /interface-template -->
 
-<!-- interface-template:ipam/ipam-approved-cards-1 --><button type="button" class="ipam-address-card {{slot:0}}"
+<!-- interface-template:ipam/ipam-overview-cards-1 --><button type="button" class="ipam-address-card {{slot:0}}"
                         data-action="open-ip" data-ip="{{slot:1}}" aria-label="View {{slot:2}}, {{slot:3}}">
                         <span class="ipam-card-top"><span class="address">{{slot:4}}</span><span class="status">{{slot:5}}</span></span>
                         <span class="ipam-owner" title="{{slot:6}}">{{slot:7}}</span></button><!-- /interface-template -->
@@ -110,7 +110,7 @@
                         </button>
                     <!-- /interface-template -->
 
-<!-- interface-template:ipam/render-ipam-html-6 --><section class="ipam-panel active ipam-approved-addresses" data-panel="addresses" data-ipam-panel="addresses" role="tabpanel">
+<!-- interface-template:ipam/render-ipam-html-6 --><section class="ipam-panel active ipam-addresses" data-panel="addresses" data-ipam-panel="addresses" role="tabpanel">
     <div class="ipam-card">
       <div class="ipam-subnet-bar">
         <label>Active Network / VLAN<select class="ipam-select" id="ipam-select-network">{{slot:0}}</select></label>
@@ -350,9 +350,9 @@
         </form>
     <!-- /interface-template -->
 
-<!-- interface-template:ipam/approved-bulk-confirm-1 --><p class="ipam-modal-note">Protected examples: {{slot:0}}</p><!-- /interface-template -->
+<!-- interface-template:ipam/confirm-ipam-bulk-assignment-1 --><p class="ipam-modal-note">Protected examples: {{slot:0}}</p><!-- /interface-template -->
 
-<!-- interface-template:ipam/approved-bulk-confirm-2 -->
+<!-- interface-template:ipam/confirm-ipam-bulk-assignment-2 -->
       <div class="ipam-modal-head"><div><div class="eyebrow">IP ADDRESS MANAGEMENT</div><h2>Confirm bulk {{slot:0}}</h2></div><button type="button" class="ipam-modal-close app-modal-close" aria-label="Back to editing" data-action="return-from-bulk-ip-assignment">Close ×</button></div>
       <div class="ipam-modal-body">
         <div class="ipam-modal-explain warn">Review changes before applying. Gateways, device-owned IPs and conflicting records remain protected.</div>

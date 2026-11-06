@@ -15,7 +15,7 @@ module.exports=async({page,measure,results,out,width,theme})=>{
   await go('dashboard');
   for(const collapsed of [false,true]){
    if(await page.locator('#sidebar').evaluate(e=>e.classList.contains('collapsed'))!==collapsed)
-    await page.locator('[data-action="toggle-approved-sidebar"]').click();
+    await page.locator('[data-action="toggle-sidebar"]').click();
    let reference,hoverReference,selectedReference;
    for(const tab of ['dashboard','devices','ipam','racks','audit','users','account','settings']){
     await go(tab);
@@ -40,7 +40,7 @@ module.exports=async({page,measure,results,out,width,theme})=>{
     results.push({screen:'sidebar-'+(collapsed?'collapsed':'expanded')+'-'+tab,width,theme,hover,selectedColours,...values});
    }
   }
-  await page.locator('[data-action="toggle-approved-sidebar"]').click();
+  await page.locator('[data-action="toggle-sidebar"]').click();
   await page.locator('#sidebar [data-tab="dashboard"]').click();await page.waitForFunction(()=>currentTab==='dashboard');
  }
  async function supplementary(){
@@ -52,10 +52,10 @@ module.exports=async({page,measure,results,out,width,theme})=>{
   await go('audit');await page.evaluate(()=>{auditHistory=[{at:'2026-11-05T12:00:00Z',actor:'owner',outcome:'Succeeded',reason:'Visual fixture: device renamed',changes:[{kind:'Device',action:'Updated',label:'Hypervisor-01',fields:['name'],before:{name:'Previous Hypervisor'},after:{name:'Hypervisor-01'}}],omitted:0}];activeAuditTab='activity';renderContent();});
   await page.locator('[data-action="audit-view-detail"]').first().click();await capture('audit-event-detail');
   await page.locator('[data-action="audit-close-detail"]').click();
-  await go('users');await page.locator('.approved-page-header .tabs [data-tab="list"]').click();
+  await go('users');await page.locator('.section-page-header .tabs [data-tab="list"]').click();
   await page.locator('[data-action="users-open-editor"]').first().click();await capture('user-workspace');
   await page.locator('[data-action="users-close-editor"]').first().click();
-  await go('settings');await page.locator('.approved-settings .subnav [data-tab="maintenance"]').click();
+  await go('settings');await page.locator('.settings-screen .subnav [data-tab="maintenance"]').click();
   const before=await page.evaluate(()=>JSON.stringify({devices:appState.devices,racks:appState.racks,subnets:appState.subnets}));
   page.once('dialog',dialog=>dialog.dismiss());await page.locator('[data-action="clear-inventory-data"]').click();
   assert.equal(await page.evaluate(()=>JSON.stringify({devices:appState.devices,racks:appState.racks,subnets:appState.subnets})),before,'Dismissing the protected reset prompt preserves data');
@@ -73,7 +73,7 @@ module.exports=async({page,measure,results,out,width,theme})=>{
      if(section==='services')openServerServiceEditor();
     },section);await capture('catalogue-dialog-'+section,true);await page.evaluate(()=>closeModal(true));
    }
-   await go('settings');await page.locator('.approved-settings .subnav [data-tab="maintenance"]').click();await capture('settings-maintenance');
+   await go('settings');await page.locator('.settings-screen .subnav [data-tab="maintenance"]').click();await capture('settings-maintenance');
   }
   await supplementary();return;
  }
@@ -83,9 +83,9 @@ module.exports=async({page,measure,results,out,width,theme})=>{
  if(process.env.CAFFOOT_BATCH02_ACTION_FOCUS==='presentation'){
   await go('racks');
   for(const section of ['overview','inventory','accessories']){
-   await page.locator('[data-action="approved-rack-section"][data-section-tab="'+section+'"]').click();await capture('racks-'+section);
+   await page.locator('[data-action="select-rack-section"][data-section-tab="'+section+'"]').click();await capture('racks-'+section);
   }
-  await go('settings');await page.locator('.approved-settings .subnav [data-tab="maintenance"]').click();await capture('settings-maintenance');
+  await go('settings');await page.locator('.settings-screen .subnav [data-tab="maintenance"]').click();await capture('settings-maintenance');
   await navigation();return;
  }
  if(process.env.CAFFOOT_BATCH02_ACTION_FOCUS!=='theme-photo'){
@@ -108,11 +108,11 @@ module.exports=async({page,measure,results,out,width,theme})=>{
   await page.evaluate(backup=>{Object.assign(appState,JSON.parse(backup));switchTab('dashboard');},backup);
  }
  for(const [tab,selector,values] of [
-  ['account','.approved-account .subnav [data-tab="VALUE"]',['security','help','about']],
-  ['settings','.approved-settings .subnav [data-tab="VALUE"]',['email','maintenance']],
+  ['account','.account-screen .subnav [data-tab="VALUE"]',['security','help','about']],
+  ['settings','.settings-screen .subnav [data-tab="VALUE"]',['email','maintenance']],
   ['ipam','.ipam-tab[data-view="VALUE"]',['addresses','manage']],
   ['audit','.audit-tab[data-tab="VALUE"]',['assets','coverage']],
-  ['users','.approved-page-header .tabs [data-tab="VALUE"]',['list','add']]
+  ['users','.section-page-header .tabs [data-tab="VALUE"]',['list','add']]
  ]){
   await go(tab);
   for(const value of values){await page.locator(selector.replace('VALUE',value)).click();await capture(tab+'-'+value);}
@@ -159,10 +159,10 @@ module.exports=async({page,measure,results,out,width,theme})=>{
   await page.evaluate(({fn,args})=>window[fn](...args),{fn,args});await capture('ipam-dialog-'+name,true);await page.evaluate(()=>closeModal(true));
  }
  await go('racks');
- for(const section of ['inventory','accessories']){await page.locator('[data-action="approved-rack-section"][data-section-tab="'+section+'"]').click();await capture('racks-'+section);}
+ for(const section of ['inventory','accessories']){await page.locator('[data-action="select-rack-section"][data-section-tab="'+section+'"]').click();await capture('racks-'+section);}
  await page.evaluate(()=>{v13RackSection='inventory';selectedRackId=appState.racks[0].id;v13RackDetailOpen=true;renderContent();});await capture('rack-elevation');
  await page.evaluate(()=>openRackModal());await capture('rack-dialog',true);await page.evaluate(()=>closeModal(true));
- await go('users');await page.locator('.approved-page-header .tabs [data-tab="list"]').click();await page.locator('[data-action="users-open-editor"]').first().click();await capture('user-workspace');
+ await go('users');await page.locator('.section-page-header .tabs [data-tab="list"]').click();await page.locator('[data-action="users-open-editor"]').first().click();await capture('user-workspace');
  assert.ok(await page.locator('.users-management-modal input:disabled').count()>0,'Own account protections remain disabled');
  await page.locator('[data-action="users-close-editor"]').first().click();
  // A portrait fixture is generated in memory, uploaded only to the isolated account.

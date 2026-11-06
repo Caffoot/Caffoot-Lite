@@ -1,8 +1,7 @@
-"""Offline account permissions and administrative safeguards.
+"""Account permissions and administrative safeguards used by the HTTP server.
 
-This module is not connected to HTTP. All callers must authenticate an active
-MFA-verified administrator before passing their account ID.
-"""
+Callers must establish an active administrator and the required authenticator
+protection before passing the actor identity to administrative operations."""
 from backend.accounts import hash_password
 from backend.audit_events import record_actor_event
 from backend.profiles import validate_profile_details
@@ -156,6 +155,8 @@ def set_account_active(connection, actor_id, target_id, active):
         connection.execute(
             "DELETE FROM account_sessions WHERE account_id=?", (target_id,)
         )
+        if not active:
+            connection.execute("DELETE FROM account_email_proofs WHERE account_id=?", (target_id,))
         if bool(target_active) != active:
             record_actor_event(
                 connection, actor_id, kind="Account", action="Updated",

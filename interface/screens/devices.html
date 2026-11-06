@@ -1,4 +1,4 @@
-<!-- interface-template:devices/approved-recent-device-rows-1 -->
+<!-- interface-template:devices/recent-device-rows-1 -->
                 <div class="db-slimrow">
                   <div><strong>{{slot:0}}</strong><div class="db-muted">{{slot:1}} · {{slot:2}}</div></div>
                   <span class="db-badge {{slot:3}}">{{slot:4}}</span>
@@ -16,13 +16,13 @@
 
 <!-- interface-template:devices/device-rows-2 --><p class="text-sm text-slate-500 dark:text-slate-400 py-4">No devices configured yet.</p><!-- /interface-template -->
 
-<!-- interface-template:devices/approved-hardware-metric-1 --><div class="intelligence-metric"><div class="metric-top"><span class="metric-label">{{slot:0}} Recorded</span><span class="metric-ico {{slot:1}}"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><use href="#{{slot:2}}"></use></svg></span></div><div class="metric-number">{{slot:3}}</div><div class="metric-caption">{{slot:4}}% of inventory</div></div><!-- /interface-template -->
+<!-- interface-template:devices/render-hardware-metric-1 --><div class="intelligence-metric"><div class="metric-top"><span class="metric-label">{{slot:0}} Recorded</span><span class="metric-ico {{slot:1}}"><svg aria-hidden="true" fill="none" height="18" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><use href="#{{slot:2}}"></use></svg></span></div><div class="metric-number">{{slot:3}}</div><div class="metric-caption">{{slot:4}}% of inventory</div></div><!-- /interface-template -->
 
-<!-- interface-template:devices/approved-hardware-chart-1 --><button type="button" class="intelligence-chart-row" data-action="device-hardware-drilldown" data-field="{{slot:0}}" data-value="{{slot:1}}" aria-label="View {{slot:2}} devices for {{slot:3}}"><div class="intelligence-chart-label"><span>{{slot:4}}</span><strong>{{slot:5}}</strong></div><div class="intelligence-track"><div class="intelligence-fill {{slot:6}}" style="width:{{slot:7}}%"></div></div></button><!-- /interface-template -->
+<!-- interface-template:devices/render-hardware-chart-1 --><button type="button" class="intelligence-chart-row" data-action="device-hardware-drilldown" data-field="{{slot:0}}" data-value="{{slot:1}}" aria-label="View {{slot:2}} devices for {{slot:3}}"><div class="intelligence-chart-label"><span>{{slot:4}}</span><strong>{{slot:5}}</strong></div><div class="intelligence-track"><div class="intelligence-fill {{slot:6}}" style="width:{{slot:7}}%"></div></div></button><!-- /interface-template -->
 
-<!-- interface-template:devices/approved-device-insight-chart-1 --><button type="button" class="intelligence-chart-row" {{slot:0}} aria-label="View {{slot:1}} devices for {{slot:2}}"><div class="intelligence-chart-label"><span>{{slot:3}}</span><strong>{{slot:4}}</strong></div><div class="intelligence-track"><div class="intelligence-fill orange" style="width:{{slot:5}}%"></div></div></button><!-- /interface-template -->
+<!-- interface-template:devices/render-device-insight-chart-1 --><button type="button" class="intelligence-chart-row" {{slot:0}} aria-label="View {{slot:1}} devices for {{slot:2}}"><div class="intelligence-chart-label"><span>{{slot:3}}</span><strong>{{slot:4}}</strong></div><div class="intelligence-track"><div class="intelligence-fill orange" style="width:{{slot:5}}%"></div></div></button><!-- /interface-template -->
 
-<!-- interface-template:devices/approved-device-quality-cards-1 --><button class="intelligence-quality-card" data-action="device-intelligence-drilldown" data-kind="missing" data-value="{{slot:0}}" type="button"><span class="quality-title">{{slot:1}}</span><span class="quality-number">{{slot:2}}</span><span class="quality-caption">Open filtered inventory</span></button><!-- /interface-template -->
+<!-- interface-template:devices/render-device-quality-cards-1 --><button class="intelligence-quality-card" data-action="device-intelligence-drilldown" data-kind="missing" data-value="{{slot:0}}" type="button"><span class="quality-title">{{slot:1}}</span><span class="quality-number">{{slot:2}}</span><span class="quality-caption">Open filtered inventory</span></button><!-- /interface-template -->
 
 <!-- interface-template:devices/render-devices-html-1 --><div class="intelligence-metric"><div class="metric-top"><span class="metric-label">{{slot:0}}</span><span class="metric-ico {{slot:3}}"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><use href="#{{slot:1}}"></use></svg></span></div><div class="metric-number">{{slot:2}}</div><div class="metric-caption">{{slot:4}}</div></div><!-- /interface-template -->
 
@@ -223,14 +223,14 @@
               <input type="checkbox" data-device-detail-field="{{slot:0}}" {{slot:1}}>
               <span>{{slot:2}}</span></label><!-- /interface-template -->
 
-<!-- interface-template:devices/render-approved-inline-device-picker-1 --><label>
+<!-- interface-template:devices/render-inline-device-picker-1 --><label>
                   <input type="checkbox" value="{{slot:0}}" {{slot:1}}><span>{{slot:2}}</span>
                   </label><!-- /interface-template -->
 
-<!-- interface-template:devices/render-approved-inline-device-picker-2 --><p class="device-review-inline-explain">Available for device types (current type selected by default)</p>
+<!-- interface-template:devices/render-inline-device-picker-2 --><p class="device-review-inline-explain">Available for device types (current type selected by default)</p>
                   <div class="device-review-inline-types" data-review-associated-types="software">{{slot:0}}</div><!-- /interface-template -->
 
-<!-- interface-template:devices/render-approved-inline-device-picker-3 --><div class="device-review-inline-pick" data-review-picker="{{slot:0}}">
+<!-- interface-template:devices/render-inline-device-picker-3 --><div class="device-review-inline-pick" data-review-picker="{{slot:0}}">
               <div class="device-review-inline-tools">
                 <div class="device-review-field"><label for="review-search-{{slot:1}}">Search {{slot:2}}</label>
                   <input id="review-search-{{slot:3}}" type="search" data-review-search="{{slot:4}}" placeholder="Search available {{slot:5}}…" autocomplete="off"></div>

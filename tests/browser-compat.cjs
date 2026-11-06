@@ -46,7 +46,7 @@ async function modal(page,name){
 }
 async function verifySoftwareVisibility(page){
   await page.locator('#sidebar [data-action="tab-devices"]').click();
-  await page.locator('#main-content [data-action="approved-device-section"][data-tab="software"]').click();
+  await page.locator('#main-content [data-action="select-device-section"][data-tab="software"]').click();
   const catalogDialog=page.locator('#modal-content .catalog-modal');
   await page.locator('#main-content [data-action="software-custom-edit"]').first().click();
   const availabilityToggle=catalogDialog.locator('[data-action="software-toggle"]').first();
@@ -150,10 +150,10 @@ async function run(){
   assert.equal(await page.locator('#sidebar').evaluate(el=>getComputedStyle(el).display),'flex',
     'Tailwind utility layout must remain active');
   const sharedSidebar=await page.locator('#sidebar').elementHandle();
-  await page.locator('[data-action="toggle-approved-sidebar"]').click();
+  await page.locator('[data-action="toggle-sidebar"]').click();
   assert.equal(await page.locator('#app').evaluate(el=>el.classList.contains('collapsed')),true,
     'The approved menu collapse control must work');
-  await page.locator('[data-action="toggle-approved-sidebar"]').click();
+  await page.locator('[data-action="toggle-sidebar"]').click();
   assert.equal(await page.locator('#app').evaluate(el=>el.classList.contains('collapsed')),false,
     'The approved menu must expand again');
   // The shared navigation must come from the approved seven-item HTML menu.
@@ -168,7 +168,7 @@ async function run(){
 
   // Approved catalogue content must be a real live Device page, not preview HTML.
   await page.locator('#sidebar [data-action="tab-devices"]').click();
-  await page.locator('#main-content [data-action="approved-device-section"][data-tab="overview"]').click();
+  await page.locator('#main-content [data-action="select-device-section"][data-tab="overview"]').click();
   const approvedDeviceOverview=page.locator('#main-content [data-device-panel="overview"] .intelligence-panel[data-insight-panel="overview"]');
   await approvedDeviceOverview.waitFor();
   assert.equal(await approvedDeviceOverview.locator('.intelligence-metric').count(),4,
@@ -180,7 +180,7 @@ async function run(){
     'Approved Draft 03 intelligence card headings must appear in their original layout');
   assert.equal(await approvedDeviceOverview.locator('.intelligence-two .intelligence-card-head .iconwrap').count(),2,
     'Both approved intelligence cards must retain their original icon/header components');
-  await page.locator('#main-content [data-action="approved-device-section"][data-tab="types"]').click();
+  await page.locator('#main-content [data-action="select-device-section"][data-tab="types"]').click();
   await page.locator('#main-content .catalog-card [data-catalog-list="type"]').waitFor();
   const deviceTypeRows=page.locator('#main-content [data-catalog-row="type"]');
   const deviceTypeTotal=await deviceTypeRows.count();
@@ -225,7 +225,7 @@ async function run(){
   assert.equal(await confirmTypeDelete.count(),0,'Cancel must close without deleting the type');
   await page.locator('#modal-content .catalog-modal-head [data-action="close-modal"]').click();
   assert.equal(await page.locator('#modal-container:not(.hidden)').count(),0);
-  await page.locator('#main-content [data-action="approved-device-section"][data-tab="locations"]').click();
+  await page.locator('#main-content [data-action="select-device-section"][data-tab="locations"]').click();
   await page.locator('#main-content .catalog-card [data-catalog-list="location"]').waitFor();
   assert.ok(await page.locator('#main-content .catalog-header [data-action="open-manage-locations"]').isVisible(),
     'The existing Manage Locations action must remain available');
@@ -240,7 +240,7 @@ async function run(){
 
   // The copied Batch 02 page components must also render and filter live records.
   for(const section of ['types','locations','manufacturers','models','software','services']){
-    await page.locator('#main-content [data-action="approved-device-section"][data-tab="'+section+'"]').click();
+    await page.locator('#main-content [data-action="select-device-section"][data-tab="'+section+'"]').click();
     const panel=page.locator('#main-content .catalog-section');
     await panel.evaluate(el=>Promise.all(el.getAnimations({subtree:true}).map(animation=>animation.finished)));
     assert.equal(await page.locator('.device-tabs .section-tab-icon[aria-hidden="true"][focusable="false"]').count(),8,
@@ -276,7 +276,7 @@ async function run(){
       'Focusing another mobile tab reveals its label without changing selection or document scroll');
     await page.setViewportSize({width:1440,height:950});
   }
-  await page.locator('#main-content [data-action="approved-device-section"][data-tab="inventory"]').click();
+  await page.locator('#main-content [data-action="select-device-section"][data-tab="inventory"]').click();
   const inventoryTypeTrigger=page.locator('.device-filter:has(#device-type-filter) .caffoot-search-trigger');
   await inventoryTypeTrigger.waitFor();
   assert.ok(await inventoryTypeTrigger.evaluate(trigger=>{
@@ -291,7 +291,7 @@ async function run(){
   await page.locator('.caffoot-search-popup:visible [role="option"]').first().click();
   assert.notEqual(await page.locator('#device-type-filter').inputValue(),'');
   await page.locator('[data-action="clear-device-filters"]').first().click();
-  await page.locator('#main-content [data-action="approved-device-section"][data-tab="manufacturers"]').click();
+  await page.locator('#main-content [data-action="select-device-section"][data-tab="manufacturers"]').click();
   await page.locator('#manufacturer-search').fill('no-matching-catalogue-record');
   assert.equal(await page.locator('[data-manufacturer-row]:visible').count(),0,
     'Search must hide source catalogue rows, including their flex layout');
@@ -300,7 +300,7 @@ async function run(){
     'Clear Filters must restore live catalogue rows');
 
   // Pinned Batch 02 catalogue dialogs: source structure, original input IDs and responsive multi-type fields.
-  await page.locator('#main-content [data-action="approved-device-section"][data-tab="manufacturers"]').click();
+  await page.locator('#main-content [data-action="select-device-section"][data-tab="manufacturers"]').click();
   await page.locator('#main-content [data-action="manufacturer-add"]').click();
   const catalogDialog=page.locator('#modal-content .catalog-modal');
   await catalogDialog.waitFor();
@@ -321,12 +321,12 @@ async function run(){
     assert.ok(await catalogDialog.locator('.catalog-modal-field #built-in-manufacturer-name').isVisible());
     await catalogDialog.locator('.catalog-modal-head [data-action="close-modal"]').click();
   }
-  await page.locator('#main-content [data-action="approved-device-section"][data-tab="models"]').click();
+  await page.locator('#main-content [data-action="select-device-section"][data-tab="models"]').click();
   await page.locator('#main-content [data-action="model-add"]').click();
   assert.ok(await catalogDialog.locator('.catalog-modal-field #hardware-model-manufacturer-select').isVisible());
   assert.ok(await catalogDialog.locator('.catalog-modal-field #model-device-type').isVisible());
   await catalogDialog.locator('.catalog-modal-head [data-action="close-modal"]').click();
-  await page.locator('#main-content [data-action="approved-device-section"][data-tab="software"]').click();
+  await page.locator('#main-content [data-action="select-device-section"][data-tab="software"]').click();
   await page.locator('#main-content [data-action="software-custom-add"]').click();
   assert.ok(await catalogDialog.locator('.catalog-modal-field #software-custom-name').isVisible());
   assert.ok(await catalogDialog.locator('.catalog-type-field[data-multi-device-types="software"] input[name="software-custom-type"]').count()>1);
@@ -337,7 +337,7 @@ async function run(){
     assert.deepEqual(errors,[],'Browser JavaScript errors');
     return;
   }
-  await page.locator('#main-content [data-action="approved-device-section"][data-tab="services"]').click();
+  await page.locator('#main-content [data-action="select-device-section"][data-tab="services"]').click();
   await page.locator('#main-content [data-action="server-catalog-add"]').click();
   assert.ok(await catalogDialog.locator('.catalog-modal-field #server-service-name-input').isVisible());
   assert.ok(await catalogDialog.locator('.catalog-modal-actions [data-action="server-catalog-save"]').isVisible());
@@ -350,11 +350,11 @@ async function run(){
   assert.ok(await page.locator('#main-content .ipam-card #ipam-overview-search').isVisible(),
     'Approved IPAM Overview must keep working subnet search');
   await page.locator('#sidebar [data-action="tab-racks"]').click();
-  await page.locator('#main-content [data-action="approved-rack-section"][data-section-tab="overview"]').click();
+  await page.locator('#main-content [data-action="select-rack-section"][data-section-tab="overview"]').click();
   await page.locator('#main-content .racks-grid#rack-overview-stats').waitFor();
   assert.equal(await page.locator('#main-content .rack-stat').count(),4,
     'Approved Network Racks Overview must show four live totals');
-  await page.locator('#main-content [data-action="approved-rack-section"][data-section-tab="inventory"]').click();
+  await page.locator('#main-content [data-action="select-rack-section"][data-section-tab="inventory"]').click();
   await page.locator('#main-content .rack-directory').waitFor();
   await page.locator('#main-content #v13-rack-search.rack-text-input').waitFor();
   await page.locator('#sidebar [data-action="tab-dashboard"]').click();
@@ -466,7 +466,7 @@ async function run(){
   await page.locator('#sidebar [data-action="tab-settings"]').click();
   assert.ok(await page.getByRole('heading',{name:'Settings & Data',exact:true}).isVisible(),
     'Settings & Data must use the owner-approved Draft 02 page');
-  assert.equal(await page.locator('.approved-settings .subnav [data-action="approved-settings-tab"]').count(),3,
+  assert.equal(await page.locator('.settings-screen .subnav [data-action="select-settings-tab"]').count(),3,
     'Approved Data & Backups, Email Settings and System Maintenance tabs must render');
   assert.ok(await page.getByRole('heading',{name:'Import Existing Inventory',exact:true}).isVisible(),
     'The approved Import Existing Inventory panel must remain');
@@ -474,15 +474,15 @@ async function run(){
     'Administrator legacy migration picker must remain');
 
   // Approved email configuration must persist without disclosing its password.
-  await page.locator('.approved-settings .subnav [data-tab="email"]').click();
+  await page.locator('.settings-screen .subnav [data-tab="email"]').click();
   await page.waitForFunction(()=>document.querySelector('#smtp-config-status')?.textContent==='Not Configured');
-  await page.locator('#approved-smtp-form [name="host"]').fill('mail.example.test');
-  await page.locator('#approved-smtp-form [name="port"]').fill('587');
-  await page.locator('#approved-smtp-form [name="username"]').fill('smtp-owner');
-  await page.locator('#approved-smtp-form [name="password"]').fill('test-smtp-browser-password');
-  await page.locator('#approved-smtp-form [name="fromName"]').fill('Caffoot Lite');
-  await page.locator('#approved-smtp-form [name="fromEmail"]').fill('caffoot@example.test');
-  await page.locator('#approved-smtp-form button[type="submit"]').click();
+  await page.locator('#smtp-settings-form [name="host"]').fill('mail.example.test');
+  await page.locator('#smtp-settings-form [name="port"]').fill('587');
+  await page.locator('#smtp-settings-form [name="username"]').fill('smtp-owner');
+  await page.locator('#smtp-settings-form [name="password"]').fill('test-smtp-browser-password');
+  await page.locator('#smtp-settings-form [name="fromName"]').fill('Caffoot Lite');
+  await page.locator('#smtp-settings-form [name="fromEmail"]').fill('caffoot@example.test');
+  await page.locator('#smtp-settings-form button[type="submit"]').click();
   await page.waitForFunction(()=>document.querySelector('#smtp-config-status')?.textContent==='Configured');
   const smtpDetails=await page.evaluate(async()=>{
     const response=await fetch('/api/settings/email',{cache:'no-store'});
@@ -492,10 +492,10 @@ async function run(){
   assert.equal(smtpDetails.host,'mail.example.test');
   assert.equal(smtpDetails.passwordConfigured,true);
   assert.equal(smtpDetails.password,undefined,'SMTP credentials must never be returned to the browser');
-  assert.ok(await page.locator('#approved-smtp-form [name="password"]').inputValue()==='',
+  assert.ok(await page.locator('#smtp-settings-form [name="password"]').inputValue()==='',
     'Saved SMTP passwords must never be reinserted into form fields');
 
-  await page.locator('.approved-settings .subnav [data-tab="maintenance"]').click();
+  await page.locator('.settings-screen .subnav [data-tab="maintenance"]').click();
   assert.ok(await page.locator('[data-action="clear-inventory-data"]').isEnabled(),
     'Administrator Clear System safeguard must remain');
   const safetyResult=new Promise(resolve=>page.once('dialog',async dialog=>{
@@ -506,7 +506,7 @@ async function run(){
     'Manual safety check must still reload and validate central inventory');
   await page.locator('#sidebar [data-action="tab-audit"]').click();
   await page.waitForFunction(()=>document.querySelector('#page-title')?.textContent==='Audit Trail');
-  assert.ok(await page.locator('#main-content .approved-audit .audit-tabs').isVisible(),
+  assert.ok(await page.locator('#main-content .audit-screen .audit-tabs').isVisible(),
     'Owner-approved Audit Trail section navigation must render');
   assert.equal(await page.locator('.audit-tabs + .audit-stats').count(),1,
     'The four shared totals follow Audit navigation once');
@@ -516,21 +516,21 @@ async function run(){
     'Audit tab icons remain decorative');
   assert.equal(await page.locator('.audit-stat .hint').first().evaluate(el=>getComputedStyle(el).backgroundColor),'rgba(0, 0, 0, 0)',
     'Settings help styling must not turn Audit Trail captions into warning panels');
-  assert.equal(await page.locator('#main-content .approved-audit .audit-tab').count(),3,
+  assert.equal(await page.locator('#main-content .audit-screen .audit-tab').count(),3,
     'Approved All Activity, Asset History and Recording Coverage must be available');
-  assert.equal(await page.locator('#main-content .approved-audit #stat-total').textContent(),'1',
+  assert.equal(await page.locator('#main-content .audit-screen #stat-total').textContent(),'1',
     'Saving the approved SMTP settings must create exactly one genuine, attributable audit event');
   assert.ok(await page.getByText('SMTP configuration updated',{exact:true}).first().isVisible(),
     'The real administrator SMTP change must be visible in the authorised Audit Trail');
   await page.locator('#sidebar [data-action="tab-users"]').click();
   await page.getByRole('heading',{name:'Your people, at a glance'}).waitFor();
-  assert.ok(await page.locator('#main-content .approved-page-body .users-live').isVisible(),
+  assert.ok(await page.locator('#main-content .section-page-body .users-live').isVisible(),
     'Approved Users overview should fill the inventory workspace');
   await page.getByText('Total users',{exact:true}).waitFor();
   await page.getByText('Administrators',{exact:true}).first().waitFor();
   await page.getByText('Accounts by role',{exact:true}).waitFor();
   await page.getByText('Authenticator enrolment',{exact:true}).waitFor();
-  assert.ok(await page.locator('#main-content .approved-page-header .tabs').isVisible());
+  assert.ok(await page.locator('#main-content .section-page-header .tabs').isVisible());
   assert.equal(await page.locator('#next-account-password-form').count(),0,
     'User Management must not contain personal account settings');
   await page.locator('#app .header-account').click();
@@ -542,24 +542,24 @@ async function run(){
     'Sign-in username must remain visible and read-only');
   assert.equal(await page.locator('#profile-username').getAttribute('readonly'),'',
     'Username is never editable in personal details');
-  assert.equal(await page.locator('.approved-account .subnav [data-section="overview"]').getAttribute('aria-selected'),'true');
-  assert.ok(await page.locator('.approved-account .future-compact').count()===2,
+  assert.equal(await page.locator('.account-screen .subnav [data-section="overview"]').getAttribute('aria-selected'),'true');
+  assert.ok(await page.locator('.account-screen .future-compact').count()===2,
     'My Devices and My Tickets remain plainly marked Planned');
   await page.locator('[data-action="select-account-section"][data-section="security"]').first().click();
   await page.locator('#next-account-password-form').waitFor();
   assert.ok(await page.getByText('Security At A Glance',{exact:true}).isVisible());
   await page.locator('[data-action="select-account-section"][data-section="help"]').first().click();
-  await page.locator('.approved-account .expander').first().waitFor();
-  assert.equal(await page.locator('.approved-account .expander').count(),6,
+  await page.locator('.account-screen .expander').first().waitFor();
+  assert.equal(await page.locator('.account-screen .expander').count(),6,
     'Help & Guides must preserve all six published help topics');
-  assert.equal(await page.locator('.approved-account .expander a').count(),8,
+  assert.equal(await page.locator('.account-screen .expander a').count(),8,
     'All eight published guide links must remain available');
-  const fullGuides=page.locator('.approved-account a[href*="Features%20and%20Instructions"]');
+  const fullGuides=page.locator('.account-screen a[href*="Features%20and%20Instructions"]');
   assert.ok(await fullGuides.count()>0,'Approved full user documentation link must remain');
   await page.locator('[data-action="select-account-section"][data-section="about"]').first().click();
   assert.ok(await page.getByText('Published Release',{exact:true}).isVisible());
   assert.ok(await page.getByText('v2.0.3',{exact:true}).isVisible());
-  await page.locator('.approved-account [data-action="caffoot-licences"]').click();
+  await page.locator('.account-screen [data-action="caffoot-licences"]').click();
   await page.locator('#modal-content').getByRole('heading',{name:'Software Licences'}).waitFor();
   assert.ok((await page.locator('#modal-content').textContent()).includes('MIT License'));
   await page.locator('#modal-content [data-action="close-modal"]').first().click();
@@ -610,7 +610,7 @@ async function run(){
   await page.locator('[data-action="select-account-section"][data-section="security"]').first().click();
   await page.locator('#sidebar [data-action="tab-users"]').click();
   assert.equal(await page.locator('#page-title').textContent(),'Users & Permissions');
-  await page.locator('.approved-page-header [data-tab="list"]').click();
+  await page.locator('.section-page-header [data-tab="list"]').click();
   await page.locator('[data-action="users-open-editor"]').first().click();
   const ownerWorkspace=page.locator('.users-management-modal .modal');
   assert.equal(await ownerWorkspace.evaluate(el=>Math.round(el.getBoundingClientRect().width)),710,
@@ -629,7 +629,7 @@ async function run(){
   console.log('Authenticated central inventory rendered');
 
   await modal(page,'openSubnetModal');
-  const ipamAddDialog=page.locator('#modal-content.approved-ipam-modal');
+  const ipamAddDialog=page.locator('#modal-content.ipam-record-modal');
   assert.ok(await ipamAddDialog.locator('.ipam-modal-head h2').getByText('Add Subnet',{exact:true}).isVisible(),
     'IPAM Add Subnet must use approved Draft 01 modal heading');
   assert.equal(await ipamAddDialog.locator('.ipam-modal-body > .ipam-form-grid > .ipam-field').count(),7,
@@ -648,8 +648,8 @@ async function run(){
 
   // IPAM Draft 01: approved live Address Allocations page, not the old cards.
   await page.locator('#sidebar [data-action="tab-ipam"]').click();
-  await page.locator('#main-content .approved-page-header [data-action="approved-ipam-section"][data-view="addresses"]').click();
-  const approvedAddresses=page.locator('#main-content .ipam-approved-addresses');
+  await page.locator('#main-content .section-page-header [data-action="select-ipam-section"][data-view="addresses"]').click();
+  const approvedAddresses=page.locator('#main-content .ipam-addresses');
   await approvedAddresses.waitFor();
   assert.ok(await approvedAddresses.locator('.ipam-subnet-bar #ipam-select-network').isVisible(),
     'Approved IPAM Active Network / VLAN selector must render');
@@ -682,8 +682,8 @@ async function run(){
   const approvedSubnetId=sub.subnets.find(x=>x.name==='Browser Network').id;
   // IPAM Draft 01 Manage Subnets uses the real grouped hierarchy and edit actions.
   await page.locator('#sidebar [data-action="tab-ipam"]').click();
-  await page.locator('#main-content .approved-page-header [data-action="approved-ipam-section"][data-view="manage"]').click();
-  const approvedManage=page.locator('#main-content .ipam-approved-manage');
+  await page.locator('#main-content .section-page-header [data-action="select-ipam-section"][data-view="manage"]').click();
+  const approvedManage=page.locator('#main-content .ipam-manage');
   await approvedManage.waitFor();
   assert.ok(await approvedManage.getByRole('heading',{name:'IP Address Blocks, Networks & VLANs'}).isVisible());
   assert.ok(await approvedManage.getByRole('heading',{name:'VLAN Ownership Check'}).isVisible());
@@ -693,7 +693,7 @@ async function run(){
   assert.ok(await approvedManage.locator('[data-action="bulk-ip"]').isEnabled());
   assert.ok(await approvedManage.locator('[data-action="edit-subnet"][data-id="'+approvedSubnetId+'"]').isVisible());
   await approvedManage.locator('[data-action="edit-subnet"][data-id="'+approvedSubnetId+'"]').click();
-  const ipamEditDialog=page.locator('#modal-content.approved-ipam-modal');
+  const ipamEditDialog=page.locator('#modal-content.ipam-record-modal');
   await ipamEditDialog.waitFor();
   assert.ok(await ipamEditDialog.locator('.ipam-modal-head h2').getByText('Edit Subnet',{exact:true}).isVisible(),
     'Edit Subnet must use the same approved Draft 01 form');
@@ -717,9 +717,9 @@ async function run(){
   await ipamEditDialog.locator('[data-action="cancel-subnet-modal"]').last().click();
   await page.locator('#modal-container').waitFor({state:'hidden'});
   await approvedManage.locator('[data-action="ipam-open-network-addresses"][data-id="'+approvedSubnetId+'"]').click();
-  assert.ok(await page.locator('#main-content .ipam-approved-addresses #ipam-select-network').isVisible());
-  await page.locator('#main-content .ipam-approved-addresses [data-action="open-ip"][data-ip="10.64.20.2"]').click();
-  const ipamAddressDialog=page.locator('#modal-content.approved-ipam-modal');
+  assert.ok(await page.locator('#main-content .ipam-addresses #ipam-select-network').isVisible());
+  await page.locator('#main-content .ipam-addresses [data-action="open-ip"][data-ip="10.64.20.2"]').click();
+  const ipamAddressDialog=page.locator('#modal-content.ipam-record-modal');
   await ipamAddressDialog.waitFor();
   assert.ok(await ipamAddressDialog.locator('.ipam-modal-head h2').getByText('Configure IP:',{exact:false}).isVisible(),
     'IP address editing must use the original approved Draft 01 modal header');
@@ -753,7 +753,7 @@ async function run(){
 
   // Approved Rack Inventory Draft 04 cards must show saved rack metadata.
   await page.locator('#sidebar [data-action="tab-racks"]').click();
-  await page.locator('#main-content .approved-page-header [data-action="approved-rack-section"][data-section-tab="inventory"]').click();
+  await page.locator('#main-content .section-page-header [data-action="select-rack-section"][data-section-tab="inventory"]').click();
   const newRackCard=page.locator('#main-content [data-v13-rack-row][data-action="v13-open-rack"]')
     .filter({hasText:'Browser Rack'});
   await newRackCard.waitFor();
@@ -867,7 +867,7 @@ async function run(){
   assert.ok(await page.locator('#main-content [data-v13-rack-row]').filter({hasText:'Browser Rack'}).isVisible(),
     'Back to Rack Inventory must return to the saved rack directory');
   // The approved Accessories directory opens the protected Equipment tab.
-  await page.locator('#main-content .approved-page-header [data-action="approved-rack-section"][data-section-tab="accessories"]').click();
+  await page.locator('#main-content .section-page-header [data-action="select-rack-section"][data-section-tab="accessories"]').click();
   const accessoryDirectory=page.locator('#main-content #rack-accessory-root .rack-directory');
   await accessoryDirectory.waitFor();
   const accessoryCard=accessoryDirectory.locator('.rack-directory-item[data-action="v13-open-rack-accessories"]')
@@ -894,7 +894,7 @@ async function run(){
   await modal(page,'openDeviceModal');
   const approvedEditor=page.locator('#modal-content .device-modal.device-review-dialog');
   await approvedEditor.waitFor();
-  assert.ok(await page.locator('#modal-container.device-review-overlay #modal-content.approved-device-review-container').isVisible(),
+  assert.ok(await page.locator('#modal-container.device-review-overlay #modal-content.device-review-container').isVisible(),
     'Approved Device Add/Edit must mount inside its original Batch 04 overlay');
   assert.equal(await page.locator('#modal-container').evaluate(el=>getComputedStyle(el).position),'fixed',
     'Approved Device dialog overlay must cover the viewport');
@@ -989,7 +989,7 @@ async function run(){
 
   // Approved intelligence chart rows open the *real*, permission-aware inventory.
   await page.locator('#sidebar [data-action="tab-devices"]').click();
-  await page.locator('#main-content [data-action="approved-device-section"][data-tab="overview"]').click();
+  await page.locator('#main-content [data-action="select-device-section"][data-tab="overview"]').click();
   const desktopTypeBreakdown=page.locator('#main-content [data-insight-panel="overview"] .intelligence-chart-row[data-kind="type"][data-value="Desktop"]');
   await desktopTypeBreakdown.waitFor();
   assert.ok(await desktopTypeBreakdown.isVisible(),
@@ -1031,7 +1031,7 @@ async function run(){
   await page.locator('#main-content [data-action="clear-device-filters"]').first().click();
 
   // Draft 03's Hardware panel must render its original metric, card and chart structure.
-  await page.locator('#main-content [data-action="approved-device-section"][data-tab="overview"]').click();
+  await page.locator('#main-content [data-action="select-device-section"][data-tab="overview"]').click();
   await page.locator('#main-content [data-action="device-intelligence-tab"][data-tab="hardware"]').click();
   const approvedHardware=page.locator('#main-content .intelligence-panel[data-insight-panel="hardware"]');
   await approvedHardware.waitFor();
@@ -1058,7 +1058,7 @@ async function run(){
 
 
   // Remaining approved Draft 03 tabs use their source cards and real inventory.
-  await page.locator('#main-content [data-action="approved-device-section"][data-tab="overview"]').click();
+  await page.locator('#main-content [data-action="select-device-section"][data-tab="overview"]').click();
   await page.locator('#main-content [data-action="device-intelligence-tab"][data-tab="os"]').click();
   const approvedOs=page.locator('#main-content .intelligence-panel[data-insight-panel="os"]');
   await approvedOs.waitFor();
@@ -1075,7 +1075,7 @@ async function run(){
     .every(value=>value===osValue),'Operating Systems chart must filter the actual saved device platforms');
   await page.locator('#main-content [data-action="clear-device-filters"]').first().click();
 
-  await page.locator('#main-content [data-action="approved-device-section"][data-tab="overview"]').click();
+  await page.locator('#main-content [data-action="select-device-section"][data-tab="overview"]').click();
   await page.locator('#main-content [data-action="device-intelligence-tab"][data-tab="software"]').click();
   const approvedSoftware=page.locator('#main-content .intelligence-panel[data-insight-panel="software"]');
   await approvedSoftware.waitFor({state:'visible'});
@@ -1092,7 +1092,7 @@ async function run(){
     await firstService.click();
     await page.waitForFunction(value=>activeDeviceDetailsTab==='inventory' && deviceServiceFilter===value,serviceValue);
     await page.locator('#main-content [data-action="clear-device-filters"]').first().click();
-    await page.locator('#main-content [data-action="approved-device-section"][data-tab="overview"]').click();
+    await page.locator('#main-content [data-action="select-device-section"][data-tab="overview"]').click();
   }else{
     assert.ok(await approvedSoftware.locator('#insight-software .intelligence-empty').isVisible(),
       'Without recorded software, the approved empty-state must appear');
@@ -1121,26 +1121,26 @@ async function run(){
   await page.locator('#main-content [data-action="clear-device-filters"]').first().click();
 
   await page.locator('#sidebar [data-action="tab-audit"]').click();
-  await page.locator('.approved-audit #activity-results tr[data-audit-index]').first().waitFor();
-  assert.ok(Number(await page.locator('.approved-audit #stat-total').textContent())>=1,
+  await page.locator('.audit-screen #activity-results tr[data-audit-index]').first().waitFor();
+  assert.ok(Number(await page.locator('.audit-screen #stat-total').textContent())>=1,
     'Audit Trail must show real saved events after a device change');
-  assert.equal(await page.locator('.approved-audit #stat-actors').textContent(),'1',
+  assert.equal(await page.locator('.audit-screen #stat-actors').textContent(),'1',
     'Audit events must attribute a successful change to the authenticated owner');
-  assert.ok(await page.locator('.approved-audit #activity-results').getByText('owner').count()>=1);
-  await page.locator('.approved-audit #area').selectOption('Devices');
-  await page.locator('.approved-audit #q').fill('browser-device');
-  assert.ok(await page.locator('.approved-audit #activity-results tr[data-audit-index]:visible').count()>=1,
+  assert.ok(await page.locator('.audit-screen #activity-results').getByText('owner').count()>=1);
+  await page.locator('.audit-screen #area').selectOption('Devices');
+  await page.locator('.audit-screen #q').fill('browser-device');
+  assert.ok(await page.locator('.audit-screen #activity-results tr[data-audit-index]:visible').count()>=1,
     'Approved area and search filters must match the saved device event');
   await page.locator('[data-action="audit-reset-filters"]').click();
-  await page.locator('.approved-audit [data-action="audit-view-detail"]').first().click();
+  await page.locator('.audit-screen [data-action="audit-view-detail"]').first().click();
   await page.locator('#audit-detail-layer:not([hidden])').waitFor();
   assert.ok(await page.locator('#audit-detail-body').getByText('owner').isVisible());
   await page.locator('#audit-detail-layer [data-action="audit-close-detail"]').click();
-  await page.locator('.approved-audit [data-action="audit-section"][data-tab="assets"]').click();
+  await page.locator('.audit-screen [data-action="audit-section"][data-tab="assets"]').click();
   await page.locator('#pane-assets:not([hidden])').waitFor();
   assert.ok(await page.locator('#asset-list .asset-item').count()>=1,
     'Approved Asset History must group real authorised records');
-  await page.locator('.approved-audit [data-action="audit-section"][data-tab="coverage"]').click();
+  await page.locator('.audit-screen [data-action="audit-section"][data-tab="coverage"]').click();
   await page.locator('#pane-coverage:not([hidden])').waitFor();
   await page.locator('#sidebar [data-action="tab-dashboard"]').click();
   console.log('Approved Audit Trail real events, filters and detail inspection passed');
@@ -1176,7 +1176,7 @@ async function run(){
   // Published IPAM paths: device-linked notes and independent reservations.
   await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
   await page.evaluate(()=>openIpModal('10.64.20.10'));
-  assert.ok(await page.locator('#modal-content.approved-ipam-modal .ipam-modal-explain.warn').isVisible(),
+  assert.ok(await page.locator('#modal-content.ipam-record-modal .ipam-modal-explain.warn').isVisible(),
     'Device-owned IP modal must explain that its assignment is protected');
   assert.ok(await page.locator('#ip-status').isDisabled(),
     'Device-owned IP status must not be changed from IPAM');
@@ -1201,7 +1201,7 @@ async function run(){
   await page.waitForFunction(()=>document.querySelector('#modal-container')?.classList.contains('hidden'));
   const subnetId=sub.subnets.find(x=>x.name==='Browser Network').id;
   await page.evaluate(id=>openBulkIpModal(id),subnetId);
-  const ipamBulkDialog=page.locator('#modal-content.approved-ipam-modal');
+  const ipamBulkDialog=page.locator('#modal-content.ipam-record-modal');
   assert.ok(await ipamBulkDialog.locator('.ipam-modal-head h2').getByText('Bulk Edit IP Range',{exact:true}).isVisible(),
     'Bulk IPAM editor must use the approved Draft 01 dialog structure');
   assert.equal(await ipamBulkDialog.locator('.ipam-form-grid > .ipam-field').count(),5,
@@ -1224,7 +1224,7 @@ async function run(){
   });
   assert.deepEqual(previewIps,['10.64.20.20','10.64.20.21','10.64.20.22'],
     'Published bulk confirmation must show the selected address range');
-  const bulkPreviewDialog=page.locator('#modal-content.approved-ipam-modal');
+  const bulkPreviewDialog=page.locator('#modal-content.ipam-record-modal');
   assert.ok(await bulkPreviewDialog.locator('.ipam-modal-head h2')
     .getByText('Confirm bulk reservation',{exact:true}).isVisible(),
     'The real bulk confirmation must use the approved Draft 01 modal');
@@ -1246,7 +1246,7 @@ async function run(){
     s.ipAllocations['10.64.20.'+n]?.status==='Reserved'),'Bulk IPAM reservation');
   assert.equal((await state(page)).ipAllocations['10.64.20.20'].notes,'Bulk notes');
   await page.evaluate(id=>deleteSubnet(id),subnetId);
-  const blockedIpamDelete=page.locator('#modal-content.approved-ipam-modal');
+  const blockedIpamDelete=page.locator('#modal-content.ipam-record-modal');
   assert.ok(await blockedIpamDelete.locator('.ipam-modal-head h2')
     .getByText('Subnet Deletion Blocked',{exact:true}).isVisible(),
     'Protected subnet deletion must retain its safety warning in the approved modal');
@@ -1366,7 +1366,7 @@ async function run(){
   assert.equal(rackSaved.devices.find(d=>d.id===rackSwitch.id).rackId,rackId);
   assert.equal(rackSaved.rackAccessories.length,2);
   await page.locator('#sidebar [data-action="tab-racks"]').click();
-  await page.locator('#main-content .approved-page-header [data-action="approved-rack-section"][data-section-tab="accessories"]').click();
+  await page.locator('#main-content .section-page-header [data-action="select-rack-section"][data-section-tab="accessories"]').click();
   const savedAccessoryCard=page.locator('#rack-accessory-root .rack-directory-item')
     .filter({hasText:'Browser Rack'});
   assert.ok(await savedAccessoryCard.getByText('2 accessories · 1 vertical 0U rails',{exact:true}).isVisible(),
@@ -1376,7 +1376,7 @@ async function run(){
 
   // Preserve the front/rear rack view and its printable elevations.
   await page.locator('#sidebar [data-action="tab-racks"]').click();
-  await page.locator('#main-content .approved-page-header [data-action="approved-rack-section"][data-section-tab="inventory"]').click();
+  await page.locator('#main-content .section-page-header [data-action="select-rack-section"][data-section-tab="inventory"]').click();
   await page.locator('[data-action="v13-open-rack"][data-id="'+rackId+'"]').click();
   await page.locator('.rack-elevation [data-rack-device="'+rackSwitch.id+'"]').waitFor();
   // The Rack View and Equipment tabs each retain their own face control.
@@ -1632,7 +1632,7 @@ async function run(){
     'Approved Notes outer grid must retain desktop columns');
   assert.ok(await approvedNotes.getByRole('heading',{name:'Notes / Details',level:3}).isVisible(),
     'Approved Notes card heading must match Batch 04');
-  assert.ok(await approvedNotes.getByText('Add notes and use Preview to check formatting.',{exact:true}).isVisible(),
+  assert.ok(await approvedNotes.getByText('The real application retains the existing notes editor and formatting controls.',{exact:true}).isVisible(),
     'Owner-approved Notes guidance must accompany the saved editor');
   assert.ok(await approvedNotes.locator('.device-review-note-toolbar[role="toolbar"]').isVisible(),
     'Original Notes formatting toolbar must be present');
@@ -1745,7 +1745,7 @@ async function run(){
   await page.evaluate(id=>openDeviceDetailView(id),hypervisor.id);
   const deviceReview=page.locator('#modal-content .device-details-dialog.device-review-dialog');
   await deviceReview.waitFor();
-  assert.ok(await page.locator('#modal-container.device-review-overlay #modal-content.approved-device-review-container').isVisible(),
+  assert.ok(await page.locator('#modal-container.device-review-overlay #modal-content.device-review-container').isVisible(),
     'Device Details must reuse the exact approved Batch 04 overlay');
 
   assert.ok(await deviceReview.locator('.device-review-head h2').getByText('browser-hypervisor',{exact:true}).isVisible(),
@@ -1944,14 +1944,14 @@ async function run(){
   await modal(page,'openManageLocationsModal');
   assert.equal(await page.locator('#modal-container.device-review-overlay').count(),0,
     'Approved Device overlay classes must reset before opening other application dialogs');
-  assert.equal(await page.locator('#modal-content.approved-device-review-container').count(),0,
+  assert.equal(await page.locator('#modal-content.device-review-container').count(),0,
     'Non-device dialogues must recover their own original container style');
   await page.evaluate(()=>closeModal(true));
   console.log('Approved Device Details for physical and virtual hardware passed');
 
   // Approved acceptance: new accounts initially lack inventory access.
   await page.evaluate(()=>switchTab('users'));
-  await page.locator('#main-content .approved-page-header [data-action="approved-users-section"][data-tab="add"]').click();
+  await page.locator('#main-content .section-page-header [data-action="select-users-section"][data-tab="add"]').click();
   await page.locator('#next-user-create-form input[name="username"]').fill('editor');
   await page.locator('#next-user-create-form input[name="password"]').fill(password+'-Editor');
   await page.locator('#next-user-create-form input[name="firstName"]').fill('Taylor');
@@ -1961,12 +1961,12 @@ async function run(){
   await page.locator('#next-user-create-form button[type="submit"]').click();
   await page.waitForFunction(()=>[...document.querySelectorAll('#main-content h3')]
     .some(h=>h.textContent.trim()==='editor'));
-  assert.equal(await page.locator('#main-content .approved-page-header [data-action="approved-users-section"][data-tab="list"]').getAttribute('aria-selected'),'true');
-  await page.locator('#main-content .approved-page-header [data-action="approved-users-section"][data-tab="overview"]').click();
+  assert.equal(await page.locator('#main-content .section-page-header [data-action="select-users-section"][data-tab="list"]').getAttribute('aria-selected'),'true');
+  await page.locator('#main-content .section-page-header [data-action="select-users-section"][data-tab="overview"]').click();
   await page.getByText('Accounts by role',{exact:true}).waitFor();
   assert.equal(await page.locator('#main-content .users-live .statnum').nth(0).textContent(),'2');
   assert.equal(await page.locator('#main-content .users-live .statnum').nth(1).textContent(),'1');
-  await page.locator('#main-content .approved-page-header [data-action="approved-users-section"][data-tab="list"]').click();
+  await page.locator('#main-content .section-page-header [data-action="select-users-section"][data-tab="list"]').click();
   const editorId=await page.evaluate(async()=>{
     const r=await fetch('/api/users',{cache:'no-store'});
     if(!r.ok)throw Error('Unable to read users');
@@ -2057,9 +2057,9 @@ async function run(){
   assert.ok(await editor.locator('#next-settings-nav').evaluate(el=>el.classList.contains('hidden')),
     'Settings & Data must be administrator-only');
   await editor.locator('#sidebar [data-action="tab-ipam"]').click();
-  assert.ok(await editor.locator('#main-content .approved-page-header [data-action="open-subnet-modal"]').isHidden());
+  assert.ok(await editor.locator('#main-content .section-page-header [data-action="open-subnet-modal"]').isHidden());
   await editor.locator('#sidebar [data-action="tab-racks"]').click();
-  assert.ok(await editor.locator('#main-content .approved-page-header [data-action="open-rack-modal"]').isHidden());
+  assert.ok(await editor.locator('#main-content .section-page-header [data-action="open-rack-modal"]').isHidden());
   await editor.locator('#sidebar [data-action="tab-devices"]').click();
   console.log('Mixed editing and read-only section visibility passed');
   console.log('User creation, initially no access, editor MFA, permissions and shared viewing passed');
@@ -2072,7 +2072,7 @@ async function run(){
                   'Remote IP note');
   await editor.locator('#sidebar [data-action="tab-ipam"]').click();
   await editor.waitForFunction(()=>appState.ipAllocations['10.64.20.15']?.notes==='Remote note after editor sign-in');
-  await editor.locator('#main-content .approved-page-header [data-action="approved-ipam-section"][data-view="addresses"]').click();
+  await editor.locator('#main-content .section-page-header [data-action="select-ipam-section"][data-view="addresses"]').click();
   await editor.locator('[data-action="open-ip"][data-ip="10.64.20.15"]').waitFor();
   await page.evaluate(()=>openIpModal('10.64.20.15'));
   await page.locator('#ip-notes').fill('Newer remote IP note');
@@ -2113,7 +2113,7 @@ async function run(){
   console.log('Two-user exclusive device edit reservations passed');
   // Read-only account must be able to sign in without MFA.
   await page.evaluate(()=>switchTab('users'));
-  await page.locator('#main-content .approved-page-header [data-action="approved-users-section"][data-tab="add"]').click();
+  await page.locator('#main-content .section-page-header [data-action="select-users-section"][data-tab="add"]').click();
   await page.locator('#next-user-create-form input[name="username"]').fill('viewer');
   await page.locator('#next-user-create-form input[name="password"]').fill(password+'-Viewer');
   await page.locator('#next-user-create-form button[type="submit"]').click();
@@ -2161,21 +2161,21 @@ async function run(){
   assert.ok(await viewer.locator('#next-settings-nav').isHidden());
   assert.ok(await viewer.locator('#next-users-nav').isHidden());
   await viewer.locator('#sidebar [data-action="tab-devices"]').click();
-  assert.ok(await viewer.locator('#main-content .approved-page-header [data-action="open-device-modal"]').isHidden());
+  assert.ok(await viewer.locator('#main-content .section-page-header [data-action="open-device-modal"]').isHidden());
   await viewer.evaluate(()=>openDeviceModal());
   assert.ok(await viewer.locator('#modal-container').evaluate(el=>el.classList.contains('hidden')),
     'Read-only users must not be able to open the Device editor');
   await viewer.locator('#sidebar [data-action="tab-ipam"]').click();
-  assert.ok(await viewer.locator('#main-content .approved-page-header [data-action="open-subnet-modal"]').isHidden());
+  assert.ok(await viewer.locator('#main-content .section-page-header [data-action="open-subnet-modal"]').isHidden());
   await viewer.locator('#sidebar [data-action="tab-racks"]').click();
-  assert.ok(await viewer.locator('#main-content .approved-page-header [data-action="open-rack-modal"]').isHidden());
+  assert.ok(await viewer.locator('#main-content .section-page-header [data-action="open-rack-modal"]').isHidden());
   await viewer.locator('#app .header-account').click();
   await viewer.locator('#personal-details-form').waitFor();
-  assert.equal(await viewer.locator('.approved-account .appearance-buttons [data-theme]').count(),3,
+  assert.equal(await viewer.locator('.account-screen .appearance-buttons [data-theme]').count(),3,
     'All signed-in users must retain the approved appearance controls on Account Overview');
   for(const tab of ['help','about']){
     await viewer.locator('[data-action="select-account-section"][data-section="'+tab+'"]').first().click();
-    assert.equal(await viewer.locator('.approved-account .subnav [data-section="'+tab+'"]').getAttribute('aria-selected'),'true');
+    assert.equal(await viewer.locator('.account-screen .subnav [data-section="'+tab+'"]').getAttribute('aria-selected'),'true');
   }
   const denied=await viewer.evaluate(async()=>{
     const session=await (await fetch('/api/session')).json();
@@ -2189,7 +2189,7 @@ async function run(){
   console.log('Password-only read access, hidden editing controls and administrator-only maintenance passed');
 
   await page.evaluate(()=>switchTab('settings'));
-  await page.locator('.approved-settings .subnav [data-tab="maintenance"]').click();
+  await page.locator('.settings-screen .subnav [data-tab="maintenance"]').click();
   await page.locator('[data-action="clear-inventory-data"]').waitFor();
   page.once('dialog',d=>d.accept());
   await page.locator('[data-action="clear-inventory-data"]').click();
@@ -2236,7 +2236,7 @@ async function run(){
   const file={name:'caffoot_lite_backup_v1.3.3.json',
     mimeType:'application/json',buffer:Buffer.from(JSON.stringify(exported))};
   await page.evaluate(()=>switchTab('settings'));
-  await page.locator('.approved-settings .subnav [data-tab="data"]').click();
+  await page.locator('.settings-screen .subnav [data-tab="data"]').click();
   async function chooseBackup(){
     assert.equal(await page.locator('[data-action="next-import-pick"]').isEnabled(),true,
       'Authorised import button must remain usable');

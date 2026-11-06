@@ -28,7 +28,7 @@ async function measure(page){return page.evaluate(()=>{
   if(ratio<(large?3:4.5))lowContrast.push({text:e.textContent.trim().slice(0,70),class:e.className,color:s.color,background,ratio:Number(ratio.toFixed(2)),large});
  }
  const nav=[...document.querySelectorAll('#sidebar .nav-item')].map(e=>{const s=getComputedStyle(e);return {label:e.dataset.tab,...rect(e),gap:s.gap,padding:s.padding,font:s.fontSize,lineHeight:s.lineHeight,icon:rect(e.querySelector('svg')),background:s.backgroundColor,color:s.color};});
- const tabs=document.querySelector('.approved-page-header .device-tabs,.approved-page-header .racks-tabs');
+ const tabs=document.querySelector('.section-page-header .device-tabs,.section-page-header .racks-tabs');
  const heading=[...document.querySelectorAll('#main-content h2')].find(visible),metrics=document.querySelector('.intelligence-grid,.racks-grid');
  const spacing=tabs&&heading?{tabs:rect(tabs),heading:rect(heading),metrics:visible(metrics)?rect(metrics):null,gap:heading.getBoundingClientRect().top-tabs.getBoundingClientRect().bottom}:null;
  const allocation=[...document.querySelectorAll('[data-action="tab-ipam"].btn')].find(e=>e.textContent==='View IP Allocations');

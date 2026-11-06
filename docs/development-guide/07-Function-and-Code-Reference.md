@@ -4,7 +4,7 @@
 
 This page tells you where to look. Search for a function's exact name, then read the source and its callers before changing anything. Line numbers change, so this guide uses file paths and searchable identifiers.
 
-For the full source-pinned list of named functions, line locations and clearly qualified reference counts, see the [Function Index](Function-Index.md). It complements this short maintainer reference; static counts are not a verified runtime call graph.
+For the full source-pinned list of named declarations, owning bridge methods and selected maintenance helpers with current line locations, see the [Function Index](Function-Index.md). It complements this short maintainer reference; the index contains no reference counts or example-call-site report and is not a runtime call graph.
 
 ## Entry points
 
@@ -56,10 +56,12 @@ The Issue #309 tab icons use `renderSectionTabIcon`. `revealSectionTab` scrolls 
 
 Start in [`import_drafts.py`](../../backend/import_drafts.py) (`ImportDrafts.begin` and `confirm`), follow [`import_review.py`](../../backend/import_review.py) (`prepare_published_export_review`) and [`import_service.py`](../../backend/import_service.py) (`preview_published_export` and `replace_from_published_export`). Existing conditional corrections are in [`access_point_review.py`](../../backend/access_point_review.py) and [`legacy_mounting.py`](../../backend/legacy_mounting.py).
 
-Published inventory behaviour comes from [tagged v1.3.3 source](https://github.com/Caffoot/Caffoot-Lite/blob/v1.3.3/app/caffoot-lite.html), including `createInventoryBackup`, `validateBackupVersion` and `normaliseImportedBackupAndPlanLegacyMountRepairs`. For current Next declarations and search locations use the [Function Index](Function-Index.md). Older source investigations remain in the [historical Git snapshot](https://github.com/Caffoot/Caffoot-Lite/tree/049262f196be494074f698a72f377153f202171b/docs/required-only), not as new specifications.
+Published inventory behaviour comes from [tagged v1.3.3 source](https://github.com/Caffoot/Caffoot-Lite/blob/v1.3.3/app/caffoot-lite.html), including `createInventoryBackup`, `validateBackupVersion` and `normaliseImportedBackupAndPlanLegacyMountRepairs`. For current modular declarations and search locations use the [Function Index](Function-Index.md). Older source investigations remain in the [historical Git snapshot](https://github.com/Caffoot/Caffoot-Lite/tree/049262f196be494074f698a72f377153f202171b/docs/required-only), not as new specifications.
 
 See [coding conventions](06-Coding-and-Naming-Conventions.md) and [tests](08-Testing-and-Maintenance.md).
 
 Rack printing uses `printRackElevation` for the existing document and default separate print view. `printRackElevationInFrame` is the explicitly selected same-tab trial. `readRackDimension` and `formatRackDimension` read saved modern/legacy dimensions without inventing values; `rackPhysicalDetails` supplies defaults only for a new rack. See the Issue #306 section of [Modular Interface](Modular-Interface.md) for the trial and acceptance gate.
 
 The approved owner follow-up uses `updateRackDragPointerLabel` and `clearRackDragPointerLabel` with the pinned preview styles. Vertical drops reuse `renderRackViewPreservingScrollPosition`; placement validation and persistence are unchanged. `initialiseAccountEmailVerification` connects the saved verification badge and guided inline form to the existing proof endpoints. On Sign In, `resetRecoveryFlow` clears secret fields and `showRecoveryFeedback` keeps neutral results visible. The recovery backend remains username-only. See [Account Recovery](Account-Recovery.md).
+
+Email proof helpers now use `email_proof_secret`, `email_attempts_remaining`, `issue_email_proof` and `confirm_email_proof` for account-bound eight-digit challenges. Schema 10 and the approved transition are documented in [Account Recovery](Account-Recovery.md). The exact inventory trial route preserves the default print action and its security boundary.

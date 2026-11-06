@@ -33,7 +33,7 @@ module.exports=async function verifyOwnerAcceptanceBatch({page,reference,sourceB
  const editorReference=ref=>ref.evaluate(()=>openDeviceEditor('add'));
  for(const width of [1440,390].filter(width=>!process.env.CAFFOOT_OWNER_WIDTH||width===Number(process.env.CAFFOOT_OWNER_WIDTH))){
   await page.setViewportSize({width,height:width===1440?950:844});await reference.setViewportSize({width,height:width===1440?950:844});
-  await go('racks');await page.locator('[data-action="approved-rack-section"][data-section-tab="overview"]').click();
+  await go('racks');await page.locator('[data-action="select-rack-section"][data-section-tab="overview"]').click();
   const rackGap=await page.evaluate(()=>Math.round(document.querySelector('.racks-hub-bar').getBoundingClientRect().top-document.querySelector('.racks-tabs').getBoundingClientRect().bottom));
   assert.equal(rackGap,21,'Rack Overview must use the single pinned 21px inset');
   await capture('02-rack-overview-'+width,'racks-draft-04',ref=>ref.locator('.racks-tabs [data-section-tab="overview"]').click());
@@ -127,22 +127,22 @@ module.exports=async function verifyOwnerAcceptanceBatch({page,reference,sourceB
   console.log('Checked modal header coverage at',width);
 
 
-  await go('users');await page.locator('.approved-page-header [data-tab="list"]').click();const own=page.locator('[data-action="users-open-editor"]').first();await own.click();
+  await go('users');await page.locator('.section-page-header [data-tab="list"]').click();const own=page.locator('[data-action="users-open-editor"]').first();await own.click();
   const workspace=page.locator('.users-management-modal .modal');assert.equal(await workspace.evaluate(e=>Math.round(e.getBoundingClientRect().width)),Math.min(710,width-20));
   assert.equal(await workspace.locator('[data-next-user-operation]:disabled').count(),3);assert.equal(await workspace.locator('.profile-modal-grid input:disabled').count(),4);
-  for(const selector of ['#user-firstName','[data-next-user-permission][data-section="Devices"]','[data-next-user-permission][data-section="IPAM"]','[data-next-user-permission][data-section="Racks"]'])await height(selector);
+  for(const selector of ['#user-first-name','[data-next-user-permission][data-section="Devices"]','[data-next-user-permission][data-section="IPAM"]','[data-next-user-permission][data-section="Racks"]'])await height(selector);
   if(width===1440){
    const rows=await workspace.locator('[data-next-user-permission]').evaluateAll(nodes=>nodes.map(e=>e.getBoundingClientRect().top));
    assert.ok(rows.every(y=>y===rows[0]),'Workspace permission selectors must align in their shared row');
   }
   await capture('09-protected-workspace-'+width,'users-permissions-draft-02',ref=>ref.evaluate(()=>{setTab('list');openModal(initialUsers[0]);}));
   await workspace.locator('.app-modal-close').click();assert.ok(await own.evaluate(e=>document.activeElement===e),'Header Close must return focus to Manage');
-  await page.locator('.approved-page-header [data-tab="add"]').click();const username='acceptance-viewer-'+width,password='Isolated-Acceptance-Viewer-2026!';
+  await page.locator('.section-page-header [data-tab="add"]').click();const username='acceptance-viewer-'+width,password='Isolated-Acceptance-Viewer-2026!';
   await page.locator('#next-user-create-form [name="username"]').fill(username);await page.locator('#next-user-create-form [name="password"]').fill(password);await page.locator('#next-user-create-form button[type="submit"]').click();
   await page.waitForFunction(name=>[...document.querySelectorAll('#main-content h3')].some(e=>e.textContent===name),username);
   const userId=await page.evaluate(async name=>(await (await fetch('/api/users')).json()).users.find(u=>u.username===name).id,username);
   await page.locator('[data-action="users-open-editor"][data-user-id="'+userId+'"]').click();assert.equal(await workspace.locator('.profile-modal-grid input:disabled').count(),0);
-  await page.locator('#user-displayName').fill('Acceptance Viewer');await page.locator('#next-user-profile-form button[type="submit"]').click();
+  await page.locator('#user-display-name').fill('Acceptance Viewer');await page.locator('#next-user-profile-form button[type="submit"]').click();
   await page.waitForFunction(async id=>(await (await fetch('/api/users')).json()).users.find(u=>u.id===id).profile.displayName==='Acceptance Viewer',userId);
   await page.locator('[data-next-user-permission][data-section="Devices"]').selectOption('read');
   await page.waitForFunction(async id=>(await (await fetch('/api/users')).json()).users.find(u=>u.id===id).permissions.Devices==='read',userId);
@@ -155,7 +155,7 @@ module.exports=async function verifyOwnerAcceptanceBatch({page,reference,sourceB
   await viewerPage.evaluate(()=>openDeviceModal());assert.equal(await viewerPage.locator('#device-editor-form').count(),0,'Read-only users must not open the editor');
   const session=await (await viewer.request.get(address+'/api/session')).json();const denied=await viewer.request.post(address+'/api/devices/create',{headers:{Origin:address,'X-CSRF-Token':session.csrf_token},data:{record:{name:'must-not-save'}}});assert.equal(denied.status(),403,'Server must reject read-only device creation');await viewer.close();
 
-  await go('settings');await page.locator('.approved-settings [data-tab="maintenance"]').click();
+  await go('settings');await page.locator('.settings-screen [data-tab="maintenance"]').click();
   await page.locator('.settings-maintenance-grid > .card').first().locator('.card-copy').evaluate(e=>{e.textContent+=' '+e.textContent.repeat(5);});
   const cards=await page.locator('.settings-maintenance-grid > .card').evaluateAll(nodes=>nodes.map(e=>{const r=e.getBoundingClientRect();return {x:r.x,y:r.y,height:r.height};}));
   if(width===1440){assert.equal(cards[0].y,cards[1].y);assert.equal(cards[0].height,cards[1].height);assert.equal(cards[2].y,cards[3].y);assert.equal(cards[2].height,cards[3].height);}else for(let i=1;i<cards.length;i++)assert.ok(cards[i].y>=cards[i-1].y+cards[i-1].height);
@@ -163,7 +163,7 @@ module.exports=async function verifyOwnerAcceptanceBatch({page,reference,sourceB
   await capture('10-maintenance-rows-'+width,'settings-data-draft-02',ref=>ref.locator('.subnav [data-tab="maintenance"]').click());results.at(-1).cards=cards;
   await go('audit');await page.locator('.audit-tab[data-tab="coverage"]').click();
   // Audit names the Recording Coverage tab "coverage" in the live layout.
-  assert.equal(await page.locator('.coverage-footnote,.approved-audit > .foot').count(),0);
+  assert.equal(await page.locator('.coverage-footnote,.audit-screen > .foot').count(),0);
   assert.ok(await page.getByText('V2.1 · PRIVATE ACCEPTANCE',{exact:true}).count());assert.ok(await page.locator('.audit-warn').count());
   await page.locator('.audit-tab[data-tab="activity"]').click();
   await page.locator('[data-action="audit-view-detail"]').first().click();

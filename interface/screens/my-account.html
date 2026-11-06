@@ -1,14 +1,14 @@
-<!-- interface-template:my-account/html-1 --><label class="block text-sm font-semibold">Current password<input name="currentPassword" type="password" autocomplete="current-password" required class="<!-- /interface-template -->
+<!-- interface-template:my-account/current-password-field --><label class="block text-sm font-semibold">Current password<input name="currentPassword" type="password" autocomplete="current-password" required class="<!-- /interface-template -->
 
-<!-- interface-template:my-account/html-2 --><label class="block text-sm font-semibold">New password<input name="newPassword" type="password" autocomplete="new-password" required class="<!-- /interface-template -->
+<!-- interface-template:my-account/new-password-field --><label class="block text-sm font-semibold">New password<input name="newPassword" type="password" autocomplete="new-password" required class="<!-- /interface-template -->
 
-<!-- interface-template:my-account/html-3 --><form id="next-account-mfa-start" class="space-y-3"><label class="block text-sm font-semibold">Your password<input name="password" type="password" autocomplete="current-password" required class="<!-- /interface-template -->
+<!-- interface-template:my-account/mfa-enrolment-request --><form id="next-account-mfa-start" class="space-y-3"><label class="block text-sm font-semibold">Your password<input name="password" type="password" autocomplete="current-password" required class="<!-- /interface-template -->
 
-<!-- interface-template:my-account/html-4 --><details><summary class="cursor-pointer text-sm">Can’t scan? Show setup key</summary><p id="next-account-mfa-secret" class="break-all font-semibold"></p></details><!-- /interface-template -->
+<!-- interface-template:my-account/mfa-setup-key --><details><summary class="cursor-pointer text-sm">Can’t scan? Show setup key</summary><p id="next-account-mfa-secret" class="break-all font-semibold"></p></details><!-- /interface-template -->
 
-<!-- interface-template:my-account/html-5 --><form id="next-account-mfa-confirm" class="space-y-3"><label class="block text-sm font-semibold">Six-digit authenticator code<input name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required class="<!-- /interface-template -->
+<!-- interface-template:my-account/mfa-enrolment-confirmation --><form id="next-account-mfa-confirm" class="space-y-3"><label class="block text-sm font-semibold">Six-digit authenticator code<input name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required class="<!-- /interface-template -->
 
-<!-- interface-template:my-account/approved-account-markup-1 --><div class="approved-account"><main class="main">
+<!-- interface-template:my-account/account-markup-1 --><div class="account-screen"><main class="main">
     <div class="eyebrow">YOUR PERSONAL WORKSPACE</div><div class="header"><div><h1>My Account</h1><p>Everything about your account, in one place. Simple today, ready for tomorrow.</p></div><button class="btn btn-outline header-signout" type="button" id="next-account-signout" aria-label="Sign Out"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg> Sign Out</button></div>
     <nav class="subnav" role="tablist" aria-label="My Account Sections">
       <button class="active" role="tab" aria-selected="true" data-tab="overview" data-action="select-account-section" data-section="overview"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-grid"/></svg> Overview</button>
@@ -79,15 +79,15 @@
     <footer class="footer"><span>Caffoot Lite · Infrastructure, Simplified.</span><span>My Account · Caffoot Lite</span></footer>
   </main></div><!-- /interface-template -->
 
-<!-- interface-template:my-account/render-approved-account-mfa-panel-1 --><div class="security-band"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i><div><b>MFA Enabled</b><p>Your verified authenticator remains active.</p></div></div><!-- /interface-template -->
+<!-- interface-template:my-account/render-account-mfa-panel-1 --><div class="security-band"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i><div><b>MFA Enabled</b><p>Your verified authenticator remains active.</p></div></div><!-- /interface-template -->
 
-<!-- interface-template:my-account/render-approved-account-mfa-panel-2 --><div class="security-band"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i><div><b>MFA not yet enrolled</b><p>Enrol your authenticator to enable editing or administration.</p></div></div><!-- /interface-template -->
+<!-- interface-template:my-account/render-account-mfa-panel-2 --><div class="security-band"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i><div><b>MFA not yet enrolled</b><p>Enrol your authenticator to enable editing or administration.</p></div></div><!-- /interface-template -->
 
-<!-- interface-template:my-account/render-approved-account-mfa-panel-3 --><form id="next-account-mfa-start" class="security-actions" style="margin-top:15px"><label class="field"><span>Your password</span><input name="password" type="password" autocomplete="current-password" required></label><button class="btn btn-primary" type="submit">Start MFA enrolment</button></form><!-- /interface-template -->
+<!-- interface-template:my-account/render-account-mfa-panel-3 --><form id="next-account-mfa-start" class="security-actions" style="margin-top:15px"><label class="field"><span>Your password</span><input name="password" type="password" autocomplete="current-password" required></label><button class="btn btn-primary" type="submit">Start MFA enrolment</button></form><!-- /interface-template -->
 
-<!-- interface-template:my-account/render-approved-account-mfa-panel-4 --><div id="next-account-mfa-details" hidden class="security-actions" style="margin-top:15px"><p class="sub">Scan this QR code with your authenticator, or use the setup key.</p><div id="next-account-mfa-qr" class="w-fit bg-white p-3" role="img" aria-label="Authenticator setup QR code"></div><!-- /interface-template -->
+<!-- interface-template:my-account/render-account-mfa-panel-4 --><div id="next-account-mfa-details" hidden class="security-actions" style="margin-top:15px"><p class="sub">Scan this QR code with your authenticator, or use the setup key.</p><div id="next-account-mfa-qr" class="w-fit bg-white p-3" role="img" aria-label="Authenticator setup QR code"></div><!-- /interface-template -->
 
-<!-- interface-template:my-account/render-approved-account-mfa-panel-5 --><form id="next-account-mfa-confirm" class="security-actions"><label class="field"><span>Six-digit authenticator code</span><input name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required></label><button class="btn btn-primary" type="submit">Confirm MFA</button></form></div><!-- /interface-template -->
+<!-- interface-template:my-account/render-account-mfa-panel-5 --><form id="next-account-mfa-confirm" class="security-actions"><label class="field"><span>Six-digit authenticator code</span><input name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required></label><button class="btn btn-primary" type="submit">Confirm MFA</button></form></div><!-- /interface-template -->
 
 <!-- interface-template:my-account/profile-html-1 --><form id="next-user-profile-form" class="user-profile-form" data-user-id="{{slot:0}}">
         <div class="section-label">Personal details · Optional</div>
@@ -99,13 +99,13 @@
 <!-- interface-template:my-account/email-verification-1 -->
 <section class="email-verification" id="account-email-verification" hidden aria-labelledby="email-verification-heading">
 <h4 id="email-verification-heading" tabindex="-1">Verify Email Address</h4>
-<p class="sub" id="email-verification-guidance">Confirm your password to request a single-use email code. Codes expire after 15 minutes. Email delivery must be configured by an administrator.</p>
+<p class="sub" id="email-verification-guidance">Confirm your password to request a single-use eight-digit email code. Codes expire after 15 minutes. Email delivery must be configured by an administrator.</p>
 <form id="account-email-verification-form" class="form-grid" aria-describedby="email-verification-guidance email-verification-message">
 <label class="personal-field full">Current Password<input name="password" type="password" autocomplete="current-password" required></label>
 <div class="personal-actions full"><button class="btn btn-outline" type="button" id="request-email-verification">Send Confirmation Code</button><button class="btn btn-outline" type="button" id="cancel-email-verification">Cancel</button></div>
 <p class="sub full" role="status" aria-live="polite" aria-atomic="true" tabindex="-1" id="email-verification-message"></p>
 <fieldset class="full" id="email-verification-code-fields" hidden disabled><legend class="visually-hidden">Confirm Email Ownership</legend>
-<label class="personal-field">Email Confirmation Code<input name="token" type="text" autocomplete="off" maxlength="64" spellcheck="false" required></label>
+<label class="personal-field">Email Confirmation Code (8 Digits)<input name="token" type="text" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]{8}" maxlength="8" spellcheck="false" required></label>
 <p class="sub">Check your email and enter the code. Requesting another code replaces the previous code.</p>
 <button class="btn btn-primary" type="submit">Verify Email Address</button></fieldset>
 </form></section>

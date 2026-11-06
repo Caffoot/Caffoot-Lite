@@ -96,7 +96,7 @@
 .rack-elevation .rack-actions button:hover{background:#fff!important}
 .rack-elevation .rack-empty-state{background:#1e293b!important;color:#cbd5e1!important;border-color:#475569!important}
 .rack-elevation .rack-empty-state:hover{background:#334155!important}
-/* RC1 accessibility: rack elevation is navy in BOTH application themes.
+/* Accessibility: rack elevation is navy in BOTH application themes.
    Its child labels must contrast against navy, not against the page theme. */
 .rack-elevation .rack-empty-state > span{color:#f1f5f9!important;opacity:1!important}
 .rack-elevation .rack-empty-state:hover > span,
@@ -178,7 +178,7 @@ html{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sa
 #modal-content:not(:has(> .device-review-dialog,> .rack-modal)){max-height:calc(100dvh - 36px);overflow:auto}
 
 /* The approved catalogue already supplies its own border, padding and shadow. */
-#modal-content.approved-catalogue-modal {
+#modal-content.catalogue-modal {
   padding:0;
   border:0;
   background:transparent;
@@ -198,8 +198,8 @@ html{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sa
 .device-review-dialog #dev-rack-range-hint { grid-column:1 / -1; }
 
 /* The shared Settings fields must not override the approved Users form controls. */
-#main-content .approved-users-sections .field label {font-size:11px;font-weight:750;color:var(--theme-secondary,#4e6981);margin:0;}
-#main-content .approved-users-sections .field .input:disabled {background:var(--theme-disabled,#f3f6f8);color:var(--theme-secondary,#7c91a3);}
+#main-content .users-sections .field label {font-size:11px;font-weight:750;color:var(--theme-secondary,#4e6981);margin:0;}
+#main-content .users-sections .field .input:disabled {background:var(--theme-disabled,#f3f6f8);color:var(--theme-secondary,#7c91a3);}
 
 /* Labelled header dismissal follows the existing Manage Device Types button. */
 #modal-content button.app-modal-close,
@@ -216,13 +216,13 @@ html{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sa
 /* 42px comes from the pinned Device, IPAM and Users controls, not a new global size.
    Limit it to ordinary form controls; textareas, checkboxes and specialised widgets keep their sizes. */
 #modal-content :is(.device-review-dialog,.ipam-modal,.catalog-modal,.rack-modal) :is(input:not([type]),input[type="text"],input[type="email"],input[type="password"],input[type="number"],input[type="search"],select),
-#main-content :is(.users-management-modal,.approved-users-sections,.approved-account,.approved-settings) :is(input:not([type]),input[type="text"],input[type="email"],input[type="password"],input[type="number"],input[type="search"],select) {
+#main-content :is(.users-management-modal,.users-sections,.account-screen,.settings-screen) :is(input:not([type]),input[type="text"],input[type="email"],input[type="password"],input[type="number"],input[type="search"],select) {
  box-sizing:border-box;min-width:0;width:100%;height:42px;min-height:42px;
  padding:10px 11px;border:1px solid var(--theme-control-border,#d2dfeb);border-radius:9px;
  background:var(--theme-control,#fff);color:var(--theme-text,#223b53);font-family:inherit;font-size:13px;line-height:20px;
 }
 #modal-content :is(input,select,textarea,.caffoot-search-trigger,.app-modal-close):focus-visible,
-#main-content :is(.users-management-modal,.approved-users-sections,.approved-account,.approved-settings) :is(input,select,.app-modal-close):focus-visible,
+#main-content :is(.users-management-modal,.users-sections,.account-screen,.settings-screen) :is(input,select,.app-modal-close):focus-visible,
 .caffoot-search-input:focus-visible,.caffoot-search-trigger:focus-visible {
  outline:2px solid #fac59e;outline-offset:1px;
 }
@@ -237,7 +237,7 @@ html{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sa
 #racked-options > .device-review-catalogue-actions {display:flex;flex-wrap:wrap;gap:9px;}
 .settings-maintenance-grid {align-items:stretch;}
 
-/* Batch 02: use the measured Dashboard shared navigation, independent of page CSS. */
+/* Use the measured Dashboard shared navigation, independent of page CSS. */
 #sidebar {gap:12px;}
 #sidebar .nav-item {font-size:13px;}
 #sidebar.collapsed .nav-item {justify-content:center;padding:12px;}
@@ -266,16 +266,16 @@ html{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sa
 
 /* One outer content area supplies the gap below main tabs. Inner screens do not add it again. */
 #main-content {--section-content-gap:16px;}
-#main-content :is(.dashboard-tab-panel,.approved-page-body),
-#main-content .approved-settings .account-panel,
-#main-content .approved-account .account-panel {padding-top:var(--section-content-gap);}
+#main-content :is(.dashboard-tab-panel,.section-page-body),
+#main-content .settings-screen .account-panel,
+#main-content .account-screen .account-panel {padding-top:var(--section-content-gap);}
 #main-content .device-devices .intelligence-heading {margin-top:0;}
-#main-content .approved-page-body .device-toolbar {margin-top:0;}
-#main-content .approved-page-body > .ipam-panel,
-#main-content .approved-page-body .racks-panel[data-panel],
-#main-content .approved-page-body [data-device-panel="inventory"],
+#main-content .section-page-body .device-toolbar {margin-top:0;}
+#main-content .section-page-body > .ipam-panel,
+#main-content .section-page-body .racks-panel[data-panel],
+#main-content .section-page-body [data-device-panel="inventory"],
 #main-content .users-live > .section {padding-top:0;}
-#main-content .approved-audit .audit-stats {margin:var(--section-content-gap) 0 0;}
+#main-content .audit-screen .audit-stats {margin:var(--section-content-gap) 0 0;}
 
 /* Reuse the existing tab icons without changing button labels or keyboard stops. */
 #main-content .section-tab-control {display:inline-flex;align-items:center;gap:8px;}
@@ -287,3 +287,7 @@ html{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sa
 .email-verification .personal-actions{flex-wrap:wrap;gap:8px}
 .email-verification .form-grid>*,.email-verification input{min-width:0}
 .email-verification .btn{max-width:100%;white-space:normal}
+
+.device-review-dialog .device-review-inline-tools .device-review-field input{height:38px}
+
+#open-inventory-section[hidden]{display:none!important}

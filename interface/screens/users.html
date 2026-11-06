@@ -1,8 +1,8 @@
-<!-- interface-template:users/html-2 --><div class="section-heading"><div><h2>Your people, at a glance</h2><p>A clear picture of accounts, access and authenticator enrolment.</p></div><!-- /interface-template -->
+<!-- interface-template:users/overview-summary --><div class="section-heading"><div><h2>Your people, at a glance</h2><p>A clear picture of accounts, access and authenticator enrolment.</p></div><!-- /interface-template -->
 
-<!-- interface-template:users/html-3 --><div class="guidegrid"><div class="guide-item"><strong>No access</strong><p>The section is not available to that user. Every new standard account starts here.</p></div><!-- /interface-template -->
+<!-- interface-template:users/read-access-guide --><div class="guidegrid"><div class="guide-item"><strong>No access</strong><p>The section is not available to that user. Every new standard account starts here.</p></div><!-- /interface-template -->
 
-<!-- interface-template:users/html-4 --><div class="guide-item"><strong>Edit</strong><p>Users can change permitted records after enrolling MFA, subject to their section rights.</p></div></div></div></section><!-- /interface-template -->
+<!-- interface-template:users/edit-access-guide --><div class="guide-item"><strong>Edit</strong><p>Users can change permitted records after enrolling MFA, subject to their section rights.</p></div></div></div></section><!-- /interface-template -->
 
 <!-- interface-template:users/next-render-users-1 --><div class="section-heading"><div><h2>Add User</h2><p>Create an account first, then grant the right section access when they are ready.</p></div></div><!-- /interface-template -->
 
@@ -28,7 +28,7 @@
         <div class="actions"><button type="button" class="btn" data-action="users-open-editor" data-user-id="{{slot:14}}">{{slot:15}}</button></div>
       </div><!-- /interface-template -->
 
-<!-- interface-template:users/html-5 --><section class="users-list-shell section active" id="users-live-list" role="tabpanel" aria-label="User List">
+<!-- interface-template:users/account-list-panel --><section class="users-list-shell section active" id="users-live-list" role="tabpanel" aria-label="User List">
       <div class="section-heading"><div><h2>User List</h2><p>Review account state, change existing rights or manage an account.</p></div><button type="button" class="btn primary" data-action="users-add-nav">+ Add User</button></div>
       <div class="toolbar"><div class="filters">
         <div class="field search"><label for="live-users-search">Find a user</label><input class="input" id="live-users-search" type="search" autocomplete="off" placeholder="Search by username…"></div>
@@ -43,9 +43,9 @@
         {{slot:6}}
       </select></div><!-- /interface-template -->
 
-<!-- interface-template:users/html-6 --><div class="access-grid">{{slot:0}}</div><!-- /interface-template -->
+<!-- interface-template:users/access-summary --><div class="access-grid">{{slot:0}}</div><!-- /interface-template -->
 
-<!-- interface-template:users/html-7 --><div class="modal-layer users-management-modal" data-users-modal=""><div class="modal" role="dialog" aria-modal="true" aria-labelledby="users-modal-title"><div class="modal-head"><div><h2 id="users-modal-title">{{slot:0}}</h2><p>{{slot:1}}</p></div><button type="button" class="close app-modal-close" aria-label="Close user management" data-action="users-close-editor">Close ×</button></div><div class="modal-body"><div class="manage-meta">{{slot:2}}</div>{{slot:3}}<div class="section-label" style="margin-top:24px">Section permissions</div>{{slot:4}}{{slot:5}}<p class="formhint" style="margin-top:10px">Permissions remain independent: Devices Edit cannot bypass IPAM or Racks restrictions. Related fields still require their own section access.</p>{{slot:6}}<div class="section-label" style="margin-top:22px">Account controls</div>{{slot:7}}{{slot:8}}{{slot:9}}<div class="modal-actions"><span class="tiny">Changes are saved</span><button type="button" class="btn primary" data-action="users-close-editor">Done</button></div></div></div></div><!-- /interface-template -->
+<!-- interface-template:users/account-management-dialog --><div class="modal-layer users-management-modal" data-users-modal=""><div class="modal" role="dialog" aria-modal="true" aria-labelledby="users-modal-title"><div class="modal-head"><div><h2 id="users-modal-title">{{slot:0}}</h2><p>{{slot:1}}</p></div><button type="button" class="close app-modal-close" aria-label="Close user management" data-action="users-close-editor">Close ×</button></div><div class="modal-body"><div class="manage-meta">{{slot:2}}</div>{{slot:3}}<div class="section-label" style="margin-top:24px">Section permissions</div>{{slot:4}}{{slot:5}}<p class="formhint" style="margin-top:10px">Permissions remain independent: Devices Edit cannot bypass IPAM or Racks restrictions. Related fields still require their own section access.</p>{{slot:6}}<div class="section-label" style="margin-top:22px">Account controls</div>{{slot:7}}{{slot:8}}{{slot:9}}<div class="modal-actions"><span class="tiny">Changes are saved</span><button type="button" class="btn primary" data-action="users-close-editor">Done</button></div></div></div></div><!-- /interface-template -->
 
 <!-- interface-template:users/icon-users --><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="8" cy="7" r="3"/><path d="M2 21v-3a6 6 0 0 1 12 0v3M17 5a3 3 0 0 1 0 6M18 14a5 5 0 0 1 4 5v2"/></svg><!-- /interface-template -->
 
@@ -56,7 +56,7 @@
 <!-- interface-template:users/icon-key --><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><!-- /interface-template -->
 
 
-<!-- interface-template:users/source-profile --><form id="next-user-profile-form" data-user-id="{{slot:0}}"><div class="section-label">Personal details <span class="optional">Optional</span></div><div class="profile-modal-grid"><div class="field"><label for="user-firstName">First Name</label><input class="input" id="user-firstName" maxlength="100" value="{{slot:1}}" name="firstName" {{slot:6}}></div><div class="field"><label for="user-lastName">Last Name</label><input class="input" id="user-lastName" maxlength="100" value="{{slot:2}}" name="lastName" {{slot:6}}></div><div class="field"><label for="user-displayName">Display Name</label><input class="input" id="user-displayName" maxlength="120" value="{{slot:3}}" name="displayName" {{slot:6}}></div><div class="field"><label for="user-email">E-Mail Address</label><input class="input" id="user-email" type="email" maxlength="254" value="{{slot:4}}" name="email" {{slot:6}}></div></div><div class="profile-preview-note">{{slot:5}}</div><div style="display:flex;justify-content:flex-end;margin-top:12px"><button type="submit" class="btn" {{slot:6}}>Save Personal Details</button></div></form><!-- /interface-template -->
+<!-- interface-template:users/source-profile --><form id="next-user-profile-form" data-user-id="{{slot:0}}"><div class="section-label">Personal details <span class="optional">Optional</span></div><div class="profile-modal-grid"><div class="field"><label for="user-first-name">First Name</label><input class="input" id="user-first-name" maxlength="100" value="{{slot:1}}" name="firstName" {{slot:6}}></div><div class="field"><label for="user-last-name">Last Name</label><input class="input" id="user-last-name" maxlength="100" value="{{slot:2}}" name="lastName" {{slot:6}}></div><div class="field"><label for="user-display-name">Display Name</label><input class="input" id="user-display-name" maxlength="120" value="{{slot:3}}" name="displayName" {{slot:6}}></div><div class="field"><label for="user-email">E-Mail Address</label><input class="input" id="user-email" type="email" maxlength="254" value="{{slot:4}}" name="email" {{slot:6}}></div></div><div class="profile-preview-note">{{slot:5}}</div><div style="display:flex;justify-content:flex-end;margin-top:12px"><button type="submit" class="btn" {{slot:6}}>Save Personal Details</button></div></form><!-- /interface-template -->
 
 <!-- interface-template:users/source-account-control --><div class="switch-row"><div><strong>{{slot:0}}</strong><small>{{slot:1}}</small></div>{{slot:2}}</div><!-- /interface-template -->
 

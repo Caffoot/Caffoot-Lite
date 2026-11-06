@@ -154,7 +154,7 @@ for (const selector of modalSelectors) {
 const ipamModalSegments = [
   ['subnet', 'function openSubnetModal(', 'function openSubnetModalByVlanId(',
     ['sub-kind', 'sub-cidr', 'sub-name', 'sub-vlan', 'sub-gw', 'sub-parent', 'sub-desc']],
-  ['bulk', 'function openBulkIpModal(', 'function approvedBulkConfirm(',
+  ['bulk', 'function openBulkIpModal(', 'function confirmIpamBulkAssignment(',
     ['bulk-start', 'bulk-end', 'bulk-status', 'bulk-hostname', 'bulk-notes']],
   ['address', 'function openIpModal(', 'async function handleIpSubmit(',
     ['ip-status', 'ip-hostname', 'ip-notes']]
@@ -173,8 +173,8 @@ for (const [area, begin, end, fields] of ipamModalSegments) {
     }
   }
 }
-if (!liveInventory.includes('function openApprovedIpamModal(markup)') ||
-    !liveInventory.includes("classList.add('approved-ipam-modal')")) {
+if (!liveInventory.includes('function openIpamModal(markup)') ||
+    !liveInventory.includes("classList.add('ipam-record-modal')")) {
   missing.push('IPAM: the live modal must use the approved source shell');
 }
 if (!/@media\(max-width:720px\)\{(?:[^{}]*\{[^{}]*\})*\.ipam-modal-body\{padding:17px\}/.test(liveStyles) ||

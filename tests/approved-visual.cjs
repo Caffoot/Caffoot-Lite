@@ -38,15 +38,15 @@ const items=[
 ];
 items.push(['rack-overview','racks-draft-04','racks',null,{kind:'rack-overview'}]);
 for(const value of ['insights','activity'])items.push(['dashboard-'+value,'dashboard-draft-02','dashboard',null,{kind:'page-tab',live:'[data-action="dashboard-tab"][data-dashboard-tab="'+value+'"]',reference:'.subnav [data-tab="'+value+'"]'}]);
-for(const value of ['security','help','about'])items.push(['account-'+value,'my-account-draft-06','account',null,{kind:'page-tab',live:'.approved-account .subnav [data-tab="'+value+'"]',reference:'.subnav [data-tab="'+value+'"]'}]);
-for(const value of ['email','maintenance'])items.push(['settings-'+value,'settings-data-draft-02','settings',null,{kind:'page-tab',live:'.approved-settings .subnav [data-tab="'+value+'"]',reference:'.subnav [data-tab="'+value+'"]'}]);
+for(const value of ['security','help','about'])items.push(['account-'+value,'my-account-draft-06','account',null,{kind:'page-tab',live:'.account-screen .subnav [data-tab="'+value+'"]',reference:'.subnav [data-tab="'+value+'"]'}]);
+for(const value of ['email','maintenance'])items.push(['settings-'+value,'settings-data-draft-02','settings',null,{kind:'page-tab',live:'.settings-screen .subnav [data-tab="'+value+'"]',reference:'.subnav [data-tab="'+value+'"]'}]);
 for(const value of ['hardware','os','software','quality'])items.push(['devices-insight-'+value,'devices-overview-draft-03','devices','overview',{kind:'insight',value}]);
 for(const value of ['types','locations','models','software','services'])items.push(['catalogue-'+value,'devices-management-batch-02','devices',value]);
 for(const value of ['General','Hardware','Software & Firmware','Networking','Notes'])items.push(['device-editor-'+value.toLowerCase().replace(/[^a-z]+/g,'-'),'devices-details-forms-batch-04','devices','overview',{kind:'editor',value}]);
 for(const [name,device] of [['device-editor-edit-general','Hypervisor-01'],['device-editor-virtual-general','App-VM-01']])items.push([name,'devices-details-forms-batch-04','devices','overview',{kind:'editor-existing',device}]);
 for(const value of ['addresses','manage'])items.push(['ipam-'+value,'ipam-draft-01','ipam',null,{kind:'page-tab',live:'.ipam-tab[data-view="'+value+'"]',reference:'.ipam-tab[data-view="'+value+'"]'}]);
 for(const value of ['equipment','settings'])items.push(['rack-'+value,'racks-draft-04','racks',null,{kind:'rack-tab',value}]);
-for(const value of ['list','add'])items.push(['users-'+value,'users-permissions-draft-02','users',null,{kind:'page-tab',live:'.approved-page-header .tabs [data-tab="'+value+'"]',reference:'.tabs [data-tab="'+value+'"]'}]);
+for(const value of ['list','add'])items.push(['users-'+value,'users-permissions-draft-02','users',null,{kind:'page-tab',live:'.section-page-header .tabs [data-tab="'+value+'"]',reference:'.tabs [data-tab="'+value+'"]'}]);
 for(const value of ['hardware','network','software','location','virtual-machines'])items.push(['details-'+value,'devices-details-forms-batch-04','devices','details',{kind:'details-tab',value}]);
 for(const value of ['ip','subnet','bulk'])items.push(['dialog-ipam-'+value,'ipam-draft-01','ipam',null,{kind:'ipam-dialog',value}]);
 for(const value of ['add','edit','correct','device','accessory','vertical'])items.push(['dialog-rack-'+value,'racks-draft-04','racks',null,{kind:'rack-dialog',value}]);
@@ -82,7 +82,7 @@ async function main(){
    if(tab){
     await page.goto(address+'/inventory');await page.locator('#app[aria-busy="false"]').waitFor();
     await page.evaluate(tab=>switchTab(tab),tab);
-    if(tab==='devices'&&section!=='details')await page.locator('[data-action="approved-device-section"][data-tab="'+section+'"]').click();
+    if(tab==='devices'&&section!=='details')await page.locator('[data-action="select-device-section"][data-tab="'+section+'"]').click();
     if(section==='details'){
      await page.evaluate(()=>openDeviceDetailView(appState.devices[0].id));
      await ref.evaluate(()=>openDeviceDetails('Hypervisor-01'));
@@ -156,7 +156,7 @@ async function main(){
      await ref.evaluate(value=>showCatalogModal(value),extra.value);
     }
     if(extra?.kind==='user-workspace'){
-     await page.locator('.approved-page-header .tabs [data-tab="list"]').click();
+     await page.locator('.section-page-header .tabs [data-tab="list"]').click();
      await page.locator('[data-action="users-open-editor"]').first().click();
      await ref.evaluate(()=>{setTab('list');openModal(initialUsers[0]);});
     }

@@ -1,12 +1,11 @@
-"""SQLite schema foundation for Caffoot Lite Next.
+"""SQLite tables and numbered upgrades for the shared Caffoot Lite application.
 
-These tables are internal only. No v1.3.3 inventory is imported or served yet.
-Record JSON is retained to preserve optional and historical fields during the
-later source-compatible projection work.
-"""
+Inventory JSON retains optional and historical fields. Account, profile and
+email-challenge tables support the authenticated server without changing
+the published inventory import format."""
 import sqlite3
 
-SCHEMA_VERSION = 9
+SCHEMA_VERSION = 10
 
 DDL = """
 CREATE TABLE IF NOT EXISTS inventory_devices (
@@ -169,6 +168,21 @@ def initialise_database(connection: sqlite3.Connection) -> None:
                 )
             """)
             connection.execute("INSERT INTO schema_migrations(version) VALUES(9)")
+        if 10 not in versions:
+            # Old long-format proofs cannot be used with the new short-code challenge flow.
+            connection.execute("DELETE FROM account_email_proofs")
+            connection.execute("ALTER TABLE account_email_proofs ADD COLUMN challenge_id TEXT")
+            connection.execute("ALTER TABLE account_email_proofs ADD COLUMN attempts INTEGER NOT NULL DEFAULT 0 CHECK(attempts>=0)")
+            connection.execute("CREATE UNIQUE INDEX account_email_challenge ON account_email_proofs(challenge_id)")
+            connection.execute("""
+                CREATE TABLE account_email_attempts (
+                    account_id INTEGER NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
+                    purpose TEXT NOT NULL CHECK(purpose IN ('verify','recover')),
+                    attempted_at INTEGER NOT NULL
+                )
+            """)
+            connection.execute("CREATE INDEX account_email_attempt_window ON account_email_attempts(account_id,purpose,attempted_at)")
+            connection.execute("INSERT INTO schema_migrations(version) VALUES(10)")
         connection.commit()
     except BaseException:
         connection.rollback()

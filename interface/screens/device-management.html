@@ -1,4 +1,4 @@
-<!-- interface-template:device-management/open-approved-catalogue-modal-1 --><div class="catalog-modal">
+<!-- interface-template:device-management/open-catalogue-modal-1 --><div class="catalog-modal">
             <div class="catalog-modal-head">
               <div><div class="eyebrow">CATALOGUE MANAGEMENT</div><h2 id="catalog-modal-title">{{slot:0}}</h2></div>
               <button type="button" data-action="close-modal" aria-label="Close dialog" class="btn btn-outline mini-btn app-modal-close">Close ×</button>
@@ -152,13 +152,13 @@
 
 <!-- interface-template:device-management/render-server-services-catalogue-html-4 -->)</h3><p class="text-sm text-slate-600 dark:text-slate-300">Archived services remain on existing device records. Restore a service to make it available for new assignments again.</p><!-- /interface-template -->
 
-<!-- interface-template:device-management/approved-archived-software-html-1 -->
+<!-- interface-template:device-management/render-archived-software-1 -->
                     <button type="button" class="intelligence-chart-row" data-action="view-device" data-id="{{slot:0}}">
                         <span class="intelligence-chart-label"><span>{{slot:1}}</span><strong>Archived</strong></span>
                         <span class="intelligence-subtle">{{slot:2}}</span>
                     </button><!-- /interface-template -->
 
-<!-- interface-template:device-management/approved-archived-software-html-2 --><div class="intelligence-chart">{{slot:0}}</div><!-- /interface-template -->
+<!-- interface-template:device-management/render-archived-software-2 --><div class="intelligence-chart">{{slot:0}}</div><!-- /interface-template -->
 
 <!-- interface-template:device-management/fields-12 --><div class="catalog-manager-row">
                     <span><strong>{{slot:0}}</strong><small class="catalog-type-hint"> · {{slot:1}} device{{slot:2}}{{slot:3}}</small></span>
@@ -249,9 +249,9 @@
 
 <!-- interface-template:device-management/render-software-platform-fields-1 --><div class="form-section-card device-review-panel" id="software-platform">
                 <h3><span class="mini-icon" aria-hidden="true">▣</span>Operating System / Platform</h3>
-                <p>Choose the software or firmware installed on this device.</p>
+                <p>Use the existing device-type-specific software and firmware choices.</p>
                 <div class="device-review-form-grid">
-                <div class="device-review-field"><label for="platform-name" class="form-label">{{slot:0}} (optional)</label>
+                <div class="device-review-field"><label for="platform-select" class="form-label">{{slot:0}} (optional)</label>
                 <div class="device-platform-controls"><select id="platform-select" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" {{slot:1}}>Select a platform...</option>{{slot:2}}<option value="__custom__">Custom / Other...</option></select>
                 <input id="platform-name" type="text" maxlength="160" autocomplete="off" value="{{slot:3}}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700 mt-2" placeholder="Enter custom platform" {{slot:4}}></div></div>
                 <div class="device-review-field"><label for="version-select" class="form-label">{{slot:5}} (optional)</label>

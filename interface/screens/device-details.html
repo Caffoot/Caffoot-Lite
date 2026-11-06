@@ -11,7 +11,7 @@
                 <div class="rack-modal" role="dialog" aria-modal="true" aria-label="Rack placement">
                     <div class="rack-modal-top"><div><div class="eyebrow">RACK MANAGEMENT</div><h2>Edit Device Placement</h2></div><button type="button" class="rack-modal-close app-modal-close" data-action="close-modal">Close ×</button></div>
                     <p>Choose a device and an unoccupied U position on the selected face.</p>
-                    <form data-form-action="assign" data-rack-id="{{slot:0}}" data-default-slot="{{slot:1}}" class="rack-approved-form">
+                    <form data-form-action="assign" data-rack-id="{{slot:0}}" data-default-slot="{{slot:1}}" class="rack-editor-form">
                         <div class="rack-form-grid">
                             <label class="rack-field span2">Device<select id="assign-device-id" required {{slot:2}} class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
                                 {{slot:3}}
@@ -51,7 +51,7 @@
                             <p class="device-review-eyebrow">DEVICE MANAGEMENT</p>
                             <h2>{{slot:0}}</h2>
                             <p class="device-review-sub">{{slot:1}}</p>
-                        </div><button type="button" data-action="close-modal" aria-label="Close dialog" class="device-review-close app-modal-close">Close ×</button></div>
+                        </div><button type="button" data-action="close-modal" aria-label="Close dialog" class="device-review-close app-modal-close">×</button></div>
                     </header>
                     {{slot:2}}
                     <form data-device-form="true" data-device-id="{{slot:3}}" class="form-shell device-review-edit-form">

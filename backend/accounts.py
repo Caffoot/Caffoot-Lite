@@ -1,8 +1,7 @@
-"""Offline first-administrator bootstrap and authenticator enrolment.
+"""First-administrator creation and confirmed authenticator enrolment.
 
-No HTTP endpoints, sessions, or public registration. Authentication and RBAC
-must be completed before this is connected to the application.
-"""
+The setup HTTP routes call these helpers. Existing-account authentication,
+sessions and permissions remain separate; there is no public registration."""
 import hashlib
 import hmac
 import secrets
