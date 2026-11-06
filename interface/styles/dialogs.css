@@ -1035,3 +1035,7 @@ body{font-size:14px}
 @media print{.shell,:scope.rack-modal-shade,#toast{display:none!important}.rack-printable{display:block!important;margin:0;color:#17263a;font:12px Arial,sans-serif}.rack-printable h1{font-size:22px}.rack-printable section{break-before:page;page-break-before:always}.rack-printable section:first-of-type{break-before:auto;page-break-before:auto}.rack-printable table{border-collapse:collapse;width:100%;table-layout:fixed}.rack-printable th{background:#1e293b!important;color:white!important;width:55px}.rack-printable td,.rack-printable th{border:1px solid #94a3b8;height:17px;font-size:10px}.rack-printable td{padding:1px 9px;text-align:center}.rack-printable tr.device td{background:#14532d!important;color:white!important}.rack-printable tr.rear td{background:#fdba74!important;color:#431407!important}.rack-printable tr.accessory td{background:#516276!important;color:#fff!important}.rack-printable tr.empty td{background:#eef2f6!important}.rack-printable .print-rail-list{font-size:10px}.rack-printable *{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 
 }
+
+/* Reserve two label lines only while the platform fields share a row. */
+@media(min-width:701px){#software-platform .device-review-field > label{min-height:3em;min-height:2lh}}
+#device-editor-form [data-action="create-subnet-from-device"]{margin-top:15px}

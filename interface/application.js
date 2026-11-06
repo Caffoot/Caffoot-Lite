@@ -1009,6 +1009,7 @@ function hierarchyValidateTypes(subnets) {
         } catch (_) { /* Local preferences may be unavailable in private browsing. */ }
 
         function switchTab(tabId) {
+            document.getElementById('rack-print-frame')?.remove();
             currentTab = tabId;
             document.querySelectorAll('#sidebar .nav-item[data-tab]').forEach(button => {
                 const selected = button.dataset.tab === tabId;
@@ -1518,8 +1519,6 @@ function hierarchyValidateTypes(subnets) {
         function printRackElevation(rackId) {
             const rack = appState.racks.find(r=>r.id===rackId);
             if (!rack) { showToast('Rack not found.', 'error'); return; }
-            const w=window.open('','_blank');
-            if (!w) { showToast('Allow pop-ups to print the rack elevation.', 'error'); return; }
             const safe = value => escapeHtml(String(value ?? ''));
             const pages=['front','rear'].map(face=>{
                 const usage=getOccupiedRackUnits(rack,face);
@@ -1535,12 +1534,50 @@ function hierarchyValidateTypes(subnets) {
                 const rails=(appState.rackAccessories||[]).filter(a=>a.rackId===rack.id&&a.face===face&&['pdu_vertical','cable_vertical'].includes(a.type)).sort((a,b)=>Number(b.startU)-Number(a.startU)).map(a=>renderInterfaceTemplate("racks/rails-1",[safe(a.name||rackAccessoryTypeDefinitions[a.type]?.label||'Vertical accessory'),safe(a.side==='right'?'Right':'Left'),safe(a.startU),safe(Number(a.startU)+Number(a.heightU)-1)])).join('');
                 return renderInterfaceTemplate("racks/pages-2",[face==='front'?'Front':'Rear',usage.occupied,usage.available,usage.percent,slots,rails?renderInterfaceTemplate("racks/pages-1",[rails]):'<p>None fitted</p>']);
             }).join('');
+            const html = renderInterfaceTemplate("racks/print-rack-elevation-1",[safe(rack.name),safe(rack.name),safe(rack.location||''),safe(rack.heightU),safe(new Date().toLocaleString()),pages]);
+            // Keep normal printing until the same-tab trial passes browser acceptance.
+            if (new URLSearchParams(window.location.search).get('rack-print') === 'same-tab') {
+                printRackElevationInFrame(html);
+                return;
+            }
+            const w=window.open('','_blank');
+            if (!w) { showToast('Allow pop-ups to print the rack elevation.', 'error'); return; }
             w.document.open();
-            w.document.write(renderInterfaceTemplate("racks/print-rack-elevation-1",[safe(rack.name),safe(rack.name),safe(rack.location||''),safe(rack.heightU),safe(new Date().toLocaleString()),pages]));
+            w.document.write(html);
             w.document.close();
             w.focus();
             // User initiates the browser print/PDF flow explicitly via the toolbar.
             w.print();
+        }
+
+        function printRackElevationInFrame(html) {
+            document.getElementById('rack-print-frame')?.remove();
+            const frame = document.createElement('iframe');
+            const previousFocus = document.activeElement;
+            const position = {left: window.scrollX, top: window.scrollY};
+            frame.id = 'rack-print-frame';
+            frame.title = 'Rack Elevation Print Trial';
+            frame.tabIndex = -1;
+            frame.setAttribute('aria-hidden', 'true');
+            frame.style.cssText = 'position:fixed;left:-20000px;top:0;width:800px;height:1100px;border:0;pointer-events:none';
+            frame.onload = async () => {
+                try {
+                    await frame.contentDocument.fonts.ready;
+                    frame.contentWindow.addEventListener('afterprint', () => {
+                        previousFocus?.focus({preventScroll: true});
+                        window.scrollTo(position);
+                    }, {once: true});
+                    frame.contentWindow.focus();
+                    frame.contentWindow.print();
+                } catch (error) {
+                    showToast('Print trial unavailable. Remove ?rack-print=same-tab from the address and use Print / PDF again.', 'error');
+                }
+            };
+            frame.srcdoc = html;
+            // Keep the document after printing: browsers differ in when afterprint fires.
+            // The next trial or navigation removes it without interrupting PDF saving.
+            // The application shell is hidden in print media; keep this document outside it.
+            document.body.append(frame);
         }
 
         // estate-wide, read-only rack overview. Existing rack editor/elevations are unchanged.
@@ -1711,7 +1748,7 @@ function hierarchyValidateTypes(subnets) {
                 }
             }
 
-            return renderInterfaceTemplate("racks/render-racks-html-11",[escapeHtml(currentRack.name),escapeHtml(currentRack.location||'Not recorded'),escapeHtml(currentRack.heightU),escapeHtml(currentRack.type||'Not recorded'),escapeHtml(currentRack.widthMm??'—'),escapeHtml(currentRack.depthMm??'—'),appState.racks.map(r=>`<option value="${escapeHtml(r.id)}" ${r.id===currentRack.id?'selected':''}>${escapeHtml(r.name)}</option>`).join(''),escapeHtml(currentRack.id),[['view','Rack View'],['equipment','Equipment'],['settings','Rack Settings']].map(([key,label])=>`<button type="button" role="tab" data-action="select-rack-tab" data-tab="${key}" aria-selected="${activeRackTab===key}" class="${activeRackTab===key?'active':''}">${label}</button>`).join(''),activeRackTab==='view'?'':'hidden',activeRackFace==='rear'?'rear':'',escapeHtml(currentRack.name),activeRackFace==='front'?'Front':'Rear',faceDevices.length,faceAccessories.length,getOccupiedRackUnits(currentRack,activeRackFace).percent,activeRackFace==='front',activeRackFace==='front'?'active':'',activeRackFace==='rear',activeRackFace==='rear'?'active':'',Number(currentRack.heightU) > 12 ? 'true' : 'false',activeRackFace.toUpperCase(),renderRackVerticalAccessoryRail(currentRack,verticalAccessories,"left"),rackSlotsHtml,renderRackVerticalAccessoryRail(currentRack,verticalAccessories,"right"),activeRackFace,activeRackFace,escapeHtml(currentRack.location || 'Server Room'),currentRack.heightU,['front','rear'].map(face=>{const used=getOccupiedRackUnits(currentRack,face);return renderInterfaceTemplate("racks/render-racks-html-2",[face==='front'?'Front':'Rear',used.occupied,used.available,face==='rear'?'rear':'',used.percent]);}).join(''),[['Location',currentRack.location||'Not recorded'],['Physical rack height',currentRack.heightU+'U'],['Front mounted devices',rackDevices.filter(d=>(d.face||'front')==='front').length],['Rear mounted devices',rackDevices.filter(d=>(d.face||'front')==='rear').length],['Selected face occupancy',getOccupiedRackUnits(currentRack,activeRackFace).occupied+'U / '+currentRack.heightU+'U']].map(([k,v])=>renderInterfaceTemplate("racks/render-racks-html-3",[escapeHtml(k),escapeHtml(String(v))])).join(''),escapeHtml(currentRack.id),activeRackFace,[1,2,3,4].map(n=>`<button type="button" class="${rackAccessoryPlacementHeightU===n?'active':''}" data-action="select-rack-accessory-height" data-height="${n}">${n}U</button>`).join(''),(()=>{const positions=findAvailableRackUnitRanges(currentRack,activeRackFace,rackAccessoryPlacementHeightU);return renderInterfaceTemplate("racks/render-racks-html-5",[positions.length?renderInterfaceTemplate("racks/render-racks-html-4",[positions.length,positions[0],rackAccessoryPlacementHeightU>1?'–U'+(positions[0]+rackAccessoryPlacementHeightU-1):'']):'No contiguous space for this height on the selected face.',positions[0]??'',positions.length?'':'disabled']);})(),activeRackFace==='front'?'Rear':'Front',rackDevices.filter(d=>(d.face||'front')!==activeRackFace).map(d=>renderInterfaceTemplate("racks/render-racks-html-6",[escapeHtml(d.name),escapeHtml(String(d.rackUStart)),escapeHtml(d.primaryIp||'No IP'),escapeHtml(d.face||'front'),escapeHtml(String(d.rackUStart))])).join('')||'<p class="rack-note">No devices mounted on the opposite face.</p>',activeRackTab==='equipment'?'':'hidden',(()=>{const ds=[...faceDevices].sort((a,b)=>Number(b.rackUStart)-Number(a.rackUStart));const acc=[...faceAccessories,...verticalAccessories];return renderInterfaceTemplate("racks/render-racks-html-9",[activeRackFace==='front'?'Front':'Rear',ds.length,rackDevices.length,activeRackFace==='front',activeRackFace==='front'?'active':'',activeRackFace==='rear',activeRackFace==='rear'?'active':'',acc.length,acc.map(a=>renderInterfaceTemplate("racks/render-racks-html-7",[escapeHtml(a.name||rackAccessoryTypeDefinitions[a.type]?.label||'Accessory'),rackAccessoryTypeDefinitions[a.type]?.vertical?(activeRackFace==='front'?'Front':'Rear')+' '+(a.side==='right'?'Right':'Left')+' 0U rail':(activeRackFace==='front'?'Front':'Rear')+' · U'+a.startU+'–'+(Number(a.startU)+Number(a.heightU)-1),escapeHtml(rackAccessoryTypeDefinitions[a.type]?.label||a.type),escapeHtml(a.id)])).join('')||'<tr><td colspan="4">No accessories on this face.</td></tr>',ds.map(d=>renderInterfaceTemplate("racks/render-racks-html-8",[escapeHtml(d.name),activeRackFace==='front'?'Front':'Rear',escapeHtml(String(d.rackUStart)),Number(d.rackUEnd)>Number(d.rackUStart)?'–U'+escapeHtml(String(d.rackUEnd)):'',escapeHtml(d.primaryIp||'—'),activeRackFace,escapeHtml(String(d.rackUStart))])).join('')||'<tr><td colspan="5">No devices mounted on this face.</td></tr>']);})(),activeRackTab==='settings'?'':'hidden',[['Rack name',currentRack.name],['Location',currentRack.location||'Not set'],['Rack type',currentRack.type||'Not recorded'],['Height',currentRack.heightU+'U'],['Width',(currentRack.widthMm??'—')+' mm'],['Depth',(currentRack.depthMm??'—')+' mm'],['Mounted devices',rackDevices.length],['Accessories',rackAccessories.length]].map(([name,value])=>renderInterfaceTemplate("racks/render-racks-html-10",[escapeHtml(name),escapeHtml(String(value))])).join(''),escapeHtml(currentRack.id),escapeHtml(currentRack.id),escapeHtml(currentRack.id)]);
+            return renderInterfaceTemplate("racks/render-racks-html-11",[escapeHtml(currentRack.name),escapeHtml(currentRack.location||'Not recorded'),escapeHtml(currentRack.heightU),escapeHtml(currentRack.type||'Not recorded'),escapeHtml(formatRackDimension(currentRack.widthMm ?? currentRack.width)),escapeHtml(formatRackDimension(currentRack.depthMm ?? currentRack.depth)),appState.racks.map(r=>`<option value="${escapeHtml(r.id)}" ${r.id===currentRack.id?'selected':''}>${escapeHtml(r.name)}</option>`).join(''),escapeHtml(currentRack.id),[['view','Rack View'],['equipment','Equipment'],['settings','Rack Settings']].map(([key,label])=>`<button type="button" role="tab" data-action="select-rack-tab" data-tab="${key}" aria-selected="${activeRackTab===key}" class="${activeRackTab===key?'active':''}">${label}</button>`).join(''),activeRackTab==='view'?'':'hidden',activeRackFace==='rear'?'rear':'',escapeHtml(currentRack.name),activeRackFace==='front'?'Front':'Rear',faceDevices.length,faceAccessories.length,getOccupiedRackUnits(currentRack,activeRackFace).percent,activeRackFace==='front',activeRackFace==='front'?'active':'',activeRackFace==='rear',activeRackFace==='rear'?'active':'',Number(currentRack.heightU) > 12 ? 'true' : 'false',activeRackFace.toUpperCase(),renderRackVerticalAccessoryRail(currentRack,verticalAccessories,"left"),rackSlotsHtml,renderRackVerticalAccessoryRail(currentRack,verticalAccessories,"right"),activeRackFace,activeRackFace,escapeHtml(currentRack.location || 'Server Room'),currentRack.heightU,['front','rear'].map(face=>{const used=getOccupiedRackUnits(currentRack,face);return renderInterfaceTemplate("racks/render-racks-html-2",[face==='front'?'Front':'Rear',used.occupied,used.available,face==='rear'?'rear':'',used.percent]);}).join(''),[['Location',currentRack.location||'Not recorded'],['Physical rack height',currentRack.heightU+'U'],['Front mounted devices',rackDevices.filter(d=>(d.face||'front')==='front').length],['Rear mounted devices',rackDevices.filter(d=>(d.face||'front')==='rear').length],['Selected face occupancy',getOccupiedRackUnits(currentRack,activeRackFace).occupied+'U / '+currentRack.heightU+'U']].map(([k,v])=>renderInterfaceTemplate("racks/render-racks-html-3",[escapeHtml(k),escapeHtml(String(v))])).join(''),escapeHtml(currentRack.id),activeRackFace,[1,2,3,4].map(n=>`<button type="button" class="${rackAccessoryPlacementHeightU===n?'active':''}" data-action="select-rack-accessory-height" data-height="${n}">${n}U</button>`).join(''),(()=>{const positions=findAvailableRackUnitRanges(currentRack,activeRackFace,rackAccessoryPlacementHeightU);return renderInterfaceTemplate("racks/render-racks-html-5",[positions.length?renderInterfaceTemplate("racks/render-racks-html-4",[positions.length,positions[0],rackAccessoryPlacementHeightU>1?'–U'+(positions[0]+rackAccessoryPlacementHeightU-1):'']):'No contiguous space for this height on the selected face.',positions[0]??'',positions.length?'':'disabled']);})(),activeRackFace==='front'?'Rear':'Front',rackDevices.filter(d=>(d.face||'front')!==activeRackFace).map(d=>renderInterfaceTemplate("racks/render-racks-html-6",[escapeHtml(d.name),escapeHtml(String(d.rackUStart)),escapeHtml(d.primaryIp||'No IP'),escapeHtml(d.face||'front'),escapeHtml(String(d.rackUStart))])).join('')||'<p class="rack-note">No devices mounted on the opposite face.</p>',activeRackTab==='equipment'?'':'hidden',(()=>{const ds=[...faceDevices].sort((a,b)=>Number(b.rackUStart)-Number(a.rackUStart));const acc=[...faceAccessories,...verticalAccessories];return renderInterfaceTemplate("racks/render-racks-html-9",[activeRackFace==='front'?'Front':'Rear',ds.length,rackDevices.length,activeRackFace==='front',activeRackFace==='front'?'active':'',activeRackFace==='rear',activeRackFace==='rear'?'active':'',acc.length,acc.map(a=>renderInterfaceTemplate("racks/render-racks-html-7",[escapeHtml(a.name||rackAccessoryTypeDefinitions[a.type]?.label||'Accessory'),rackAccessoryTypeDefinitions[a.type]?.vertical?(activeRackFace==='front'?'Front':'Rear')+' '+(a.side==='right'?'Right':'Left')+' 0U rail':(activeRackFace==='front'?'Front':'Rear')+' · U'+a.startU+'–'+(Number(a.startU)+Number(a.heightU)-1),escapeHtml(rackAccessoryTypeDefinitions[a.type]?.label||a.type),escapeHtml(a.id)])).join('')||'<tr><td colspan="4">No accessories on this face.</td></tr>',ds.map(d=>renderInterfaceTemplate("racks/render-racks-html-8",[escapeHtml(d.name),activeRackFace==='front'?'Front':'Rear',escapeHtml(String(d.rackUStart)),Number(d.rackUEnd)>Number(d.rackUStart)?'–U'+escapeHtml(String(d.rackUEnd)):'',escapeHtml(d.primaryIp||'—'),activeRackFace,escapeHtml(String(d.rackUStart))])).join('')||'<tr><td colspan="5">No devices mounted on this face.</td></tr>']);})(),activeRackTab==='settings'?'':'hidden',[['Rack name',currentRack.name],['Location',currentRack.location||'Not set'],['Rack type',currentRack.type||'Not recorded'],['Height',currentRack.heightU+'U'],['Width',formatRackDimension(currentRack.widthMm ?? currentRack.width)],['Depth',formatRackDimension(currentRack.depthMm ?? currentRack.depth)],['Mounted devices',rackDevices.length],['Accessories',rackAccessories.length]].map(([name,value])=>renderInterfaceTemplate("racks/render-racks-html-10",[escapeHtml(name),escapeHtml(String(value))])).join(''),escapeHtml(currentRack.id),escapeHtml(currentRack.id),escapeHtml(currentRack.id)]);
         }
 
         function changeRack(id) {
@@ -3643,17 +3680,24 @@ function openIpModal(ip) {
 
         const rackTypes = ['Floor-standing cabinet', 'Wall-mounted cabinet', 'Open-frame 2-post', 'Open-frame 4-post', 'Wall-mounted network enclosure'];
         const rackHeightPresets = [6, 9, 12, 18, 24, 42, 48];
+        function readRackDimension(value) {
+            if (value == null || String(value).trim() === '') return NaN;
+            const match = String(value).trim().match(/^(\d+)\s*(?:mm)?$/i);
+            const dimension = match ? Number(match[1]) : NaN;
+            return Number.isInteger(dimension) && dimension >= 1 && dimension <= 10000 ? dimension : NaN;
+        }
+
+        function formatRackDimension(value) {
+            const dimension = readRackDimension(value);
+            return Number.isFinite(dimension) ? dimension + ' mm' : 'Not Recorded';
+        }
+
         function rackPhysicalDetails(rack) {
-            const dimension = (value, fallback) => {
-                if (value == null || value === '') return fallback;
-                const match = String(value).trim().match(/^(\d+)\s*(?:mm)?$/i);
-                return match ? Number(match[1]) : NaN;
-            };
             return {
                 type: rack ? (rack.type || 'Free Standing') : rackTypes[0],
                 height: rack ? Number(rack.heightU) : 42,
-                width: dimension(rack && (rack.widthMm ?? rack.width), 600),
-                depth: dimension(rack && (rack.depthMm ?? rack.depth), 600)
+                width: rack ? readRackDimension(rack.widthMm ?? rack.width) : 600,
+                depth: rack ? readRackDimension(rack.depthMm ?? rack.depth) : 600
             };
         }
 
@@ -8853,7 +8897,7 @@ void (async () => {
       body+='<tr class="border-t dark:border-slate-600"><th class="text-left p-2">' + label + '</th><td class="text-right p-2">' +
         (current[key]===undefined?'—':Number(current[key])) + '</td><td class="text-right p-2">' +
         Number(incoming[key]||0) + '</td></tr>';
-    body+='</tbody></table></div>';
+    body+='</tbody></table></div><p class="text-sm">Missing rack dimensions remain unrecorded. Use Correct Rack Specifications to enter and confirm measured dimensions after import.</p>';
     if (review.requiresLegacyMountReview) {
       const fixes=review.legacyMountRepairs||[];
       body+='<div class="border border-amber-500 rounded-xl p-3 space-y-2"><h3 class="font-bold">Review legacy computer mounting corrections</h3>';

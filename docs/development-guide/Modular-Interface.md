@@ -54,3 +54,8 @@ Batch 02 presentation corrections use `styles/themes.css` for the existing slate
 
 
 Issue #305 explicitly amends Rack Overview to place its existing secondary tabs before the four shared metrics on every subtab, with vertical rhythm measured from live Device Intelligence. It removes only the three Audit Coverage card eyebrows. Scoped integration rules preserve the historical pinned sources. See the [Issue #305 verification record](../development-handovers/evidence/issue-305/Report.md).
+
+
+Issue #306 reserves two label lines for the OS/version fields in the existing two-column editor and restores a 15px gap above Create Subnet. Rack details now read valid saved legacy dimensions as well as modern fields. Missing/invalid dimensions display as **Not Recorded**; existing-rack inputs remain blank rather than suggesting unsaved defaults. New racks retain their 600mm defaults. Import review explains that missing dimensions need explicit entry through Correct Rack Specifications; import data and confirmation are unchanged.
+
+**Same-tab printing is an opt-in trial, not the default.** Open `/inventory?rack-print=same-tab`, select a rack and use its existing Print / PDF button. The unchanged generated elevation document prints from a local frame outside the application shell. It remains available after the print call; the next trial or main-section navigation removes it. Remove `?rack-print=same-tab` to use the existing separate print-view tab as the fallback. Native Chromium and owner Safari print/cancel/save acceptance are required before any default change. No authenticated URL is framed and security headers remain unchanged.

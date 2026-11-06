@@ -1,0 +1,1826 @@
+{
+  "results": [
+    {
+      "width": 1440,
+      "theme": "light",
+      "mode": "add",
+      "software": {
+        "columns": "211.5px 211.5px",
+        "fields": [
+          {
+            "id": "platform-select",
+            "label": "Operating System / Platform (optional)",
+            "top": 328.1875,
+            "left": 252,
+            "width": 211.5,
+            "height": 34,
+            "bottom": 362.1875,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 368.1875,
+              "left": 252,
+              "width": 211.5,
+              "height": 42,
+              "bottom": 410.1875
+            },
+            "options": [
+              "",
+              "Windows",
+              "macOS",
+              "Ubuntu",
+              "Debian",
+              "Fedora",
+              "Linux Mint",
+              "__custom__"
+            ]
+          },
+          {
+            "id": "version-select",
+            "label": "OS / Platform Version (optional)",
+            "top": 328.1875,
+            "left": 479.5,
+            "width": 211.5,
+            "height": 34,
+            "bottom": 362.1875,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 368.1875,
+              "left": 479.5,
+              "width": 211.5,
+              "height": 42,
+              "bottom": 410.1875
+            },
+            "options": [
+              "",
+              "__custom__"
+            ]
+          }
+        ]
+      },
+      "networking": {
+        "gap": 15,
+        "hintClass": "device-review-hint",
+        "buttonClass": "device-review-smallbtn",
+        "buttonMargin": "15px"
+      }
+    },
+    {
+      "width": 1440,
+      "theme": "light",
+      "mode": "edit",
+      "software": {
+        "columns": "211.5px 211.5px",
+        "fields": [
+          {
+            "id": "platform-select",
+            "label": "Operating System / Platform (optional)",
+            "top": 328.1875,
+            "left": 252,
+            "width": 211.5,
+            "height": 34,
+            "bottom": 362.1875,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 368.1875,
+              "left": 252,
+              "width": 211.5,
+              "height": 42,
+              "bottom": 410.1875
+            },
+            "options": [
+              "",
+              "Windows",
+              "macOS",
+              "Ubuntu",
+              "Debian",
+              "Fedora",
+              "Linux Mint",
+              "__custom__"
+            ]
+          },
+          {
+            "id": "version-select",
+            "label": "OS / Platform Version (optional)",
+            "top": 328.1875,
+            "left": 479.5,
+            "width": 211.5,
+            "height": 34,
+            "bottom": 362.1875,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 368.1875,
+              "left": 479.5,
+              "width": 211.5,
+              "height": 42,
+              "bottom": 410.1875
+            },
+            "options": [
+              "",
+              "__custom__"
+            ]
+          }
+        ]
+      },
+      "networking": {
+        "gap": 15,
+        "hintClass": "device-review-hint",
+        "buttonClass": "device-review-smallbtn",
+        "buttonMargin": "15px"
+      }
+    },
+    {
+      "width": 1440,
+      "theme": "light",
+      "mode": "duplicate",
+      "software": {
+        "columns": "211.5px 211.5px",
+        "fields": [
+          {
+            "id": "platform-select",
+            "label": "Operating System / Platform (optional)",
+            "top": 422.1875,
+            "left": 252,
+            "width": 211.5,
+            "height": 34,
+            "bottom": 456.1875,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 462.1875,
+              "left": 252,
+              "width": 211.5,
+              "height": 42,
+              "bottom": 504.1875
+            },
+            "options": [
+              "",
+              "Windows",
+              "macOS",
+              "Ubuntu",
+              "Debian",
+              "Fedora",
+              "Linux Mint",
+              "__custom__"
+            ]
+          },
+          {
+            "id": "version-select",
+            "label": "OS / Platform Version (optional)",
+            "top": 422.1875,
+            "left": 479.5,
+            "width": 211.5,
+            "height": 34,
+            "bottom": 456.1875,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 462.1875,
+              "left": 479.5,
+              "width": 211.5,
+              "height": 42,
+              "bottom": 504.1875
+            },
+            "options": [
+              "",
+              "__custom__"
+            ]
+          }
+        ]
+      },
+      "networking": {
+        "gap": 15,
+        "hintClass": "device-review-hint",
+        "buttonClass": "device-review-smallbtn",
+        "buttonMargin": "15px"
+      }
+    },
+    {
+      "width": 1440,
+      "theme": "dark",
+      "mode": "add",
+      "software": {
+        "columns": "211.5px 211.5px",
+        "fields": [
+          {
+            "id": "platform-select",
+            "label": "Operating System / Platform (optional)",
+            "top": 328.1875,
+            "left": 252,
+            "width": 211.5,
+            "height": 34,
+            "bottom": 362.1875,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 368.1875,
+              "left": 252,
+              "width": 211.5,
+              "height": 42,
+              "bottom": 410.1875
+            },
+            "options": [
+              "",
+              "Windows",
+              "macOS",
+              "Ubuntu",
+              "Debian",
+              "Fedora",
+              "Linux Mint",
+              "__custom__"
+            ]
+          },
+          {
+            "id": "version-select",
+            "label": "OS / Platform Version (optional)",
+            "top": 328.1875,
+            "left": 479.5,
+            "width": 211.5,
+            "height": 34,
+            "bottom": 362.1875,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 368.1875,
+              "left": 479.5,
+              "width": 211.5,
+              "height": 42,
+              "bottom": 410.1875
+            },
+            "options": [
+              "",
+              "__custom__"
+            ]
+          }
+        ]
+      },
+      "networking": {
+        "gap": 15,
+        "hintClass": "device-review-hint",
+        "buttonClass": "device-review-smallbtn",
+        "buttonMargin": "15px"
+      }
+    },
+    {
+      "width": 1440,
+      "theme": "dark",
+      "mode": "edit",
+      "software": {
+        "columns": "211.5px 211.5px",
+        "fields": [
+          {
+            "id": "platform-select",
+            "label": "Operating System / Platform (optional)",
+            "top": 328.1875,
+            "left": 252,
+            "width": 211.5,
+            "height": 34,
+            "bottom": 362.1875,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 368.1875,
+              "left": 252,
+              "width": 211.5,
+              "height": 42,
+              "bottom": 410.1875
+            },
+            "options": [
+              "",
+              "Windows",
+              "macOS",
+              "Ubuntu",
+              "Debian",
+              "Fedora",
+              "Linux Mint",
+              "__custom__"
+            ]
+          },
+          {
+            "id": "version-select",
+            "label": "OS / Platform Version (optional)",
+            "top": 328.1875,
+            "left": 479.5,
+            "width": 211.5,
+            "height": 34,
+            "bottom": 362.1875,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 368.1875,
+              "left": 479.5,
+              "width": 211.5,
+              "height": 42,
+              "bottom": 410.1875
+            },
+            "options": [
+              "",
+              "__custom__"
+            ]
+          }
+        ]
+      },
+      "networking": {
+        "gap": 15,
+        "hintClass": "device-review-hint",
+        "buttonClass": "device-review-smallbtn",
+        "buttonMargin": "15px"
+      }
+    },
+    {
+      "width": 1440,
+      "theme": "dark",
+      "mode": "duplicate",
+      "software": {
+        "columns": "211.5px 211.5px",
+        "fields": [
+          {
+            "id": "platform-select",
+            "label": "Operating System / Platform (optional)",
+            "top": 422.1875,
+            "left": 252,
+            "width": 211.5,
+            "height": 34,
+            "bottom": 456.1875,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 462.1875,
+              "left": 252,
+              "width": 211.5,
+              "height": 42,
+              "bottom": 504.1875
+            },
+            "options": [
+              "",
+              "Windows",
+              "macOS",
+              "Ubuntu",
+              "Debian",
+              "Fedora",
+              "Linux Mint",
+              "__custom__"
+            ]
+          },
+          {
+            "id": "version-select",
+            "label": "OS / Platform Version (optional)",
+            "top": 422.1875,
+            "left": 479.5,
+            "width": 211.5,
+            "height": 34,
+            "bottom": 456.1875,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 462.1875,
+              "left": 479.5,
+              "width": 211.5,
+              "height": 42,
+              "bottom": 504.1875
+            },
+            "options": [
+              "",
+              "__custom__"
+            ]
+          }
+        ]
+      },
+      "networking": {
+        "gap": 15,
+        "hintClass": "device-review-hint",
+        "buttonClass": "device-review-smallbtn",
+        "buttonMargin": "15px"
+      }
+    },
+    {
+      "width": 1024,
+      "theme": "light",
+      "mode": "add",
+      "software": {
+        "columns": "200px 200px",
+        "fields": [
+          {
+            "id": "platform-select",
+            "label": "Operating System / Platform (optional)",
+            "top": 328.1875,
+            "left": 67,
+            "width": 200,
+            "height": 34,
+            "bottom": 362.1875,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 368.1875,
+              "left": 67,
+              "width": 200,
+              "height": 42,
+              "bottom": 410.1875
+            },
+            "options": [
+              "",
+              "Windows",
+              "macOS",
+              "Ubuntu",
+              "Debian",
+              "Fedora",
+              "Linux Mint",
+              "__custom__"
+            ]
+          },
+          {
+            "id": "version-select",
+            "label": "OS / Platform Version (optional)",
+            "top": 328.1875,
+            "left": 283,
+            "width": 200,
+            "height": 34,
+            "bottom": 362.1875,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 368.1875,
+              "left": 283,
+              "width": 200,
+              "height": 42,
+              "bottom": 410.1875
+            },
+            "options": [
+              "",
+              "__custom__"
+            ]
+          }
+        ]
+      },
+      "networking": {
+        "gap": 15,
+        "hintClass": "device-review-hint",
+        "buttonClass": "device-review-smallbtn",
+        "buttonMargin": "15px"
+      }
+    },
+    {
+      "width": 1024,
+      "theme": "light",
+      "mode": "edit",
+      "software": {
+        "columns": "200px 200px",
+        "fields": [
+          {
+            "id": "platform-select",
+            "label": "Operating System / Platform (optional)",
+            "top": 328.1875,
+            "left": 67,
+            "width": 200,
+            "height": 34,
+            "bottom": 362.1875,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 368.1875,
+              "left": 67,
+              "width": 200,
+              "height": 42,
+              "bottom": 410.1875
+            },
+            "options": [
+              "",
+              "Windows",
+              "macOS",
+              "Ubuntu",
+              "Debian",
+              "Fedora",
+              "Linux Mint",
+              "__custom__"
+            ]
+          },
+          {
+            "id": "version-select",
+            "label": "OS / Platform Version (optional)",
+            "top": 328.1875,
+            "left": 283,
+            "width": 200,
+            "height": 34,
+            "bottom": 362.1875,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 368.1875,
+              "left": 283,
+              "width": 200,
+              "height": 42,
+              "bottom": 410.1875
+            },
+            "options": [
+              "",
+              "__custom__"
+            ]
+          }
+        ]
+      },
+      "networking": {
+        "gap": 15,
+        "hintClass": "device-review-hint",
+        "buttonClass": "device-review-smallbtn",
+        "buttonMargin": "15px"
+      }
+    },
+    {
+      "width": 1024,
+      "theme": "light",
+      "mode": "duplicate",
+      "software": {
+        "columns": "200px 200px",
+        "fields": [
+          {
+            "id": "platform-select",
+            "label": "Operating System / Platform (optional)",
+            "top": 422.1875,
+            "left": 67,
+            "width": 200,
+            "height": 34,
+            "bottom": 456.1875,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 462.1875,
+              "left": 67,
+              "width": 200,
+              "height": 42,
+              "bottom": 504.1875
+            },
+            "options": [
+              "",
+              "Windows",
+              "macOS",
+              "Ubuntu",
+              "Debian",
+              "Fedora",
+              "Linux Mint",
+              "__custom__"
+            ]
+          },
+          {
+            "id": "version-select",
+            "label": "OS / Platform Version (optional)",
+            "top": 422.1875,
+            "left": 283,
+            "width": 200,
+            "height": 34,
+            "bottom": 456.1875,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 462.1875,
+              "left": 283,
+              "width": 200,
+              "height": 42,
+              "bottom": 504.1875
+            },
+            "options": [
+              "",
+              "__custom__"
+            ]
+          }
+        ]
+      },
+      "networking": {
+        "gap": 15,
+        "hintClass": "device-review-hint",
+        "buttonClass": "device-review-smallbtn",
+        "buttonMargin": "15px"
+      }
+    },
+    {
+      "width": 1024,
+      "theme": "dark",
+      "mode": "add",
+      "software": {
+        "columns": "200px 200px",
+        "fields": [
+          {
+            "id": "platform-select",
+            "label": "Operating System / Platform (optional)",
+            "top": 328.1875,
+            "left": 67,
+            "width": 200,
+            "height": 34,
+            "bottom": 362.1875,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 368.1875,
+              "left": 67,
+              "width": 200,
+              "height": 42,
+              "bottom": 410.1875
+            },
+            "options": [
+              "",
+              "Windows",
+              "macOS",
+              "Ubuntu",
+              "Debian",
+              "Fedora",
+              "Linux Mint",
+              "__custom__"
+            ]
+          },
+          {
+            "id": "version-select",
+            "label": "OS / Platform Version (optional)",
+            "top": 328.1875,
+            "left": 283,
+            "width": 200,
+            "height": 34,
+            "bottom": 362.1875,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 368.1875,
+              "left": 283,
+              "width": 200,
+              "height": 42,
+              "bottom": 410.1875
+            },
+            "options": [
+              "",
+              "__custom__"
+            ]
+          }
+        ]
+      },
+      "networking": {
+        "gap": 15,
+        "hintClass": "device-review-hint",
+        "buttonClass": "device-review-smallbtn",
+        "buttonMargin": "15px"
+      }
+    },
+    {
+      "width": 1024,
+      "theme": "dark",
+      "mode": "edit",
+      "software": {
+        "columns": "200px 200px",
+        "fields": [
+          {
+            "id": "platform-select",
+            "label": "Operating System / Platform (optional)",
+            "top": 328.1875,
+            "left": 67,
+            "width": 200,
+            "height": 34,
+            "bottom": 362.1875,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 368.1875,
+              "left": 67,
+              "width": 200,
+              "height": 42,
+              "bottom": 410.1875
+            },
+            "options": [
+              "",
+              "Windows",
+              "macOS",
+              "Ubuntu",
+              "Debian",
+              "Fedora",
+              "Linux Mint",
+              "__custom__"
+            ]
+          },
+          {
+            "id": "version-select",
+            "label": "OS / Platform Version (optional)",
+            "top": 328.1875,
+            "left": 283,
+            "width": 200,
+            "height": 34,
+            "bottom": 362.1875,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 368.1875,
+              "left": 283,
+              "width": 200,
+              "height": 42,
+              "bottom": 410.1875
+            },
+            "options": [
+              "",
+              "__custom__"
+            ]
+          }
+        ]
+      },
+      "networking": {
+        "gap": 15,
+        "hintClass": "device-review-hint",
+        "buttonClass": "device-review-smallbtn",
+        "buttonMargin": "15px"
+      }
+    },
+    {
+      "width": 1024,
+      "theme": "dark",
+      "mode": "duplicate",
+      "software": {
+        "columns": "200px 200px",
+        "fields": [
+          {
+            "id": "platform-select",
+            "label": "Operating System / Platform (optional)",
+            "top": 422.1875,
+            "left": 67,
+            "width": 200,
+            "height": 34,
+            "bottom": 456.1875,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 462.1875,
+              "left": 67,
+              "width": 200,
+              "height": 42,
+              "bottom": 504.1875
+            },
+            "options": [
+              "",
+              "Windows",
+              "macOS",
+              "Ubuntu",
+              "Debian",
+              "Fedora",
+              "Linux Mint",
+              "__custom__"
+            ]
+          },
+          {
+            "id": "version-select",
+            "label": "OS / Platform Version (optional)",
+            "top": 422.1875,
+            "left": 283,
+            "width": 200,
+            "height": 34,
+            "bottom": 456.1875,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 462.1875,
+              "left": 283,
+              "width": 200,
+              "height": 42,
+              "bottom": 504.1875
+            },
+            "options": [
+              "",
+              "__custom__"
+            ]
+          }
+        ]
+      },
+      "networking": {
+        "gap": 15,
+        "hintClass": "device-review-hint",
+        "buttonClass": "device-review-smallbtn",
+        "buttonMargin": "15px"
+      }
+    },
+    {
+      "width": 768,
+      "theme": "light",
+      "mode": "add",
+      "software": {
+        "columns": "136px 136px",
+        "fields": [
+          {
+            "id": "platform-select",
+            "label": "Operating System / Platform (optional)",
+            "top": 346.78125,
+            "left": 67,
+            "width": 136,
+            "height": 34,
+            "bottom": 380.78125,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 386.78125,
+              "left": 67,
+              "width": 136,
+              "height": 42,
+              "bottom": 428.78125
+            },
+            "options": [
+              "",
+              "Windows",
+              "macOS",
+              "Ubuntu",
+              "Debian",
+              "Fedora",
+              "Linux Mint",
+              "__custom__"
+            ]
+          },
+          {
+            "id": "version-select",
+            "label": "OS / Platform Version (optional)",
+            "top": 346.78125,
+            "left": 219,
+            "width": 136,
+            "height": 34,
+            "bottom": 380.78125,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 386.78125,
+              "left": 219,
+              "width": 136,
+              "height": 42,
+              "bottom": 428.78125
+            },
+            "options": [
+              "",
+              "__custom__"
+            ]
+          }
+        ]
+      },
+      "networking": {
+        "gap": 15,
+        "hintClass": "device-review-hint",
+        "buttonClass": "device-review-smallbtn",
+        "buttonMargin": "15px"
+      }
+    },
+    {
+      "width": 768,
+      "theme": "light",
+      "mode": "edit",
+      "software": {
+        "columns": "136px 136px",
+        "fields": [
+          {
+            "id": "platform-select",
+            "label": "Operating System / Platform (optional)",
+            "top": 346.78125,
+            "left": 67,
+            "width": 136,
+            "height": 34,
+            "bottom": 380.78125,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 386.78125,
+              "left": 67,
+              "width": 136,
+              "height": 42,
+              "bottom": 428.78125
+            },
+            "options": [
+              "",
+              "Windows",
+              "macOS",
+              "Ubuntu",
+              "Debian",
+              "Fedora",
+              "Linux Mint",
+              "__custom__"
+            ]
+          },
+          {
+            "id": "version-select",
+            "label": "OS / Platform Version (optional)",
+            "top": 346.78125,
+            "left": 219,
+            "width": 136,
+            "height": 34,
+            "bottom": 380.78125,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 386.78125,
+              "left": 219,
+              "width": 136,
+              "height": 42,
+              "bottom": 428.78125
+            },
+            "options": [
+              "",
+              "__custom__"
+            ]
+          }
+        ]
+      },
+      "networking": {
+        "gap": 15,
+        "hintClass": "device-review-hint",
+        "buttonClass": "device-review-smallbtn",
+        "buttonMargin": "15px"
+      }
+    },
+    {
+      "width": 768,
+      "theme": "light",
+      "mode": "duplicate",
+      "software": {
+        "columns": "136px 136px",
+        "fields": [
+          {
+            "id": "platform-select",
+            "label": "Operating System / Platform (optional)",
+            "top": 440.78125,
+            "left": 67,
+            "width": 136,
+            "height": 34,
+            "bottom": 474.78125,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 480.78125,
+              "left": 67,
+              "width": 136,
+              "height": 42,
+              "bottom": 522.78125
+            },
+            "options": [
+              "",
+              "Windows",
+              "macOS",
+              "Ubuntu",
+              "Debian",
+              "Fedora",
+              "Linux Mint",
+              "__custom__"
+            ]
+          },
+          {
+            "id": "version-select",
+            "label": "OS / Platform Version (optional)",
+            "top": 440.78125,
+            "left": 219,
+            "width": 136,
+            "height": 34,
+            "bottom": 474.78125,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 480.78125,
+              "left": 219,
+              "width": 136,
+              "height": 42,
+              "bottom": 522.78125
+            },
+            "options": [
+              "",
+              "__custom__"
+            ]
+          }
+        ]
+      },
+      "networking": {
+        "gap": 15,
+        "hintClass": "device-review-hint",
+        "buttonClass": "device-review-smallbtn",
+        "buttonMargin": "15px"
+      }
+    },
+    {
+      "width": 768,
+      "theme": "dark",
+      "mode": "add",
+      "software": {
+        "columns": "136px 136px",
+        "fields": [
+          {
+            "id": "platform-select",
+            "label": "Operating System / Platform (optional)",
+            "top": 346.78125,
+            "left": 67,
+            "width": 136,
+            "height": 34,
+            "bottom": 380.78125,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 386.78125,
+              "left": 67,
+              "width": 136,
+              "height": 42,
+              "bottom": 428.78125
+            },
+            "options": [
+              "",
+              "Windows",
+              "macOS",
+              "Ubuntu",
+              "Debian",
+              "Fedora",
+              "Linux Mint",
+              "__custom__"
+            ]
+          },
+          {
+            "id": "version-select",
+            "label": "OS / Platform Version (optional)",
+            "top": 346.78125,
+            "left": 219,
+            "width": 136,
+            "height": 34,
+            "bottom": 380.78125,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 386.78125,
+              "left": 219,
+              "width": 136,
+              "height": 42,
+              "bottom": 428.78125
+            },
+            "options": [
+              "",
+              "__custom__"
+            ]
+          }
+        ]
+      },
+      "networking": {
+        "gap": 15,
+        "hintClass": "device-review-hint",
+        "buttonClass": "device-review-smallbtn",
+        "buttonMargin": "15px"
+      }
+    },
+    {
+      "width": 768,
+      "theme": "dark",
+      "mode": "edit",
+      "software": {
+        "columns": "136px 136px",
+        "fields": [
+          {
+            "id": "platform-select",
+            "label": "Operating System / Platform (optional)",
+            "top": 346.78125,
+            "left": 67,
+            "width": 136,
+            "height": 34,
+            "bottom": 380.78125,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 386.78125,
+              "left": 67,
+              "width": 136,
+              "height": 42,
+              "bottom": 428.78125
+            },
+            "options": [
+              "",
+              "Windows",
+              "macOS",
+              "Ubuntu",
+              "Debian",
+              "Fedora",
+              "Linux Mint",
+              "__custom__"
+            ]
+          },
+          {
+            "id": "version-select",
+            "label": "OS / Platform Version (optional)",
+            "top": 346.78125,
+            "left": 219,
+            "width": 136,
+            "height": 34,
+            "bottom": 380.78125,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 386.78125,
+              "left": 219,
+              "width": 136,
+              "height": 42,
+              "bottom": 428.78125
+            },
+            "options": [
+              "",
+              "__custom__"
+            ]
+          }
+        ]
+      },
+      "networking": {
+        "gap": 15,
+        "hintClass": "device-review-hint",
+        "buttonClass": "device-review-smallbtn",
+        "buttonMargin": "15px"
+      }
+    },
+    {
+      "width": 768,
+      "theme": "dark",
+      "mode": "duplicate",
+      "software": {
+        "columns": "136px 136px",
+        "fields": [
+          {
+            "id": "platform-select",
+            "label": "Operating System / Platform (optional)",
+            "top": 440.78125,
+            "left": 67,
+            "width": 136,
+            "height": 34,
+            "bottom": 474.78125,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 480.78125,
+              "left": 67,
+              "width": 136,
+              "height": 42,
+              "bottom": 522.78125
+            },
+            "options": [
+              "",
+              "Windows",
+              "macOS",
+              "Ubuntu",
+              "Debian",
+              "Fedora",
+              "Linux Mint",
+              "__custom__"
+            ]
+          },
+          {
+            "id": "version-select",
+            "label": "OS / Platform Version (optional)",
+            "top": 440.78125,
+            "left": 219,
+            "width": 136,
+            "height": 34,
+            "bottom": 474.78125,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 480.78125,
+              "left": 219,
+              "width": 136,
+              "height": 42,
+              "bottom": 522.78125
+            },
+            "options": [
+              "",
+              "__custom__"
+            ]
+          }
+        ]
+      },
+      "networking": {
+        "gap": 15,
+        "hintClass": "device-review-hint",
+        "buttonClass": "device-review-smallbtn",
+        "buttonMargin": "15px"
+      }
+    },
+    {
+      "width": 390,
+      "theme": "light",
+      "mode": "add",
+      "software": {
+        "columns": "324px",
+        "fields": [
+          {
+            "id": "platform-select",
+            "label": "Operating System / Platform (optional)",
+            "top": 262.59375,
+            "left": 33,
+            "width": 324,
+            "height": 17,
+            "bottom": 279.59375,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 285.59375,
+              "left": 33,
+              "width": 324,
+              "height": 42,
+              "bottom": 327.59375
+            },
+            "options": [
+              "",
+              "Windows",
+              "macOS",
+              "Ubuntu",
+              "Debian",
+              "Fedora",
+              "Linux Mint",
+              "__custom__"
+            ]
+          },
+          {
+            "id": "version-select",
+            "label": "OS / Platform Version (optional)",
+            "top": 339.59375,
+            "left": 33,
+            "width": 324,
+            "height": 17,
+            "bottom": 356.59375,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 362.59375,
+              "left": 33,
+              "width": 324,
+              "height": 42,
+              "bottom": 404.59375
+            },
+            "options": [
+              "",
+              "__custom__"
+            ]
+          }
+        ]
+      },
+      "networking": {
+        "gap": 15,
+        "hintClass": "device-review-hint",
+        "buttonClass": "device-review-smallbtn",
+        "buttonMargin": "15px"
+      }
+    },
+    {
+      "width": 390,
+      "theme": "light",
+      "mode": "edit",
+      "software": {
+        "columns": "324px",
+        "fields": [
+          {
+            "id": "platform-select",
+            "label": "Operating System / Platform (optional)",
+            "top": 262.59375,
+            "left": 33,
+            "width": 324,
+            "height": 17,
+            "bottom": 279.59375,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 285.59375,
+              "left": 33,
+              "width": 324,
+              "height": 42,
+              "bottom": 327.59375
+            },
+            "options": [
+              "",
+              "Windows",
+              "macOS",
+              "Ubuntu",
+              "Debian",
+              "Fedora",
+              "Linux Mint",
+              "__custom__"
+            ]
+          },
+          {
+            "id": "version-select",
+            "label": "OS / Platform Version (optional)",
+            "top": 339.59375,
+            "left": 33,
+            "width": 324,
+            "height": 17,
+            "bottom": 356.59375,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 362.59375,
+              "left": 33,
+              "width": 324,
+              "height": 42,
+              "bottom": 404.59375
+            },
+            "options": [
+              "",
+              "__custom__"
+            ]
+          }
+        ]
+      },
+      "networking": {
+        "gap": 15,
+        "hintClass": "device-review-hint",
+        "buttonClass": "device-review-smallbtn",
+        "buttonMargin": "15px"
+      }
+    },
+    {
+      "width": 390,
+      "theme": "light",
+      "mode": "duplicate",
+      "software": {
+        "columns": "324px",
+        "fields": [
+          {
+            "id": "platform-select",
+            "label": "Operating System / Platform (optional)",
+            "top": 411.59375,
+            "left": 33,
+            "width": 324,
+            "height": 17,
+            "bottom": 428.59375,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 434.59375,
+              "left": 33,
+              "width": 324,
+              "height": 42,
+              "bottom": 476.59375
+            },
+            "options": [
+              "",
+              "Windows",
+              "macOS",
+              "Ubuntu",
+              "Debian",
+              "Fedora",
+              "Linux Mint",
+              "__custom__"
+            ]
+          },
+          {
+            "id": "version-select",
+            "label": "OS / Platform Version (optional)",
+            "top": 488.59375,
+            "left": 33,
+            "width": 324,
+            "height": 17,
+            "bottom": 505.59375,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 511.59375,
+              "left": 33,
+              "width": 324,
+              "height": 42,
+              "bottom": 553.59375
+            },
+            "options": [
+              "",
+              "__custom__"
+            ]
+          }
+        ]
+      },
+      "networking": {
+        "gap": 15,
+        "hintClass": "device-review-hint",
+        "buttonClass": "device-review-smallbtn",
+        "buttonMargin": "15px"
+      }
+    },
+    {
+      "width": 390,
+      "theme": "dark",
+      "mode": "add",
+      "software": {
+        "columns": "324px",
+        "fields": [
+          {
+            "id": "platform-select",
+            "label": "Operating System / Platform (optional)",
+            "top": 262.59375,
+            "left": 33,
+            "width": 324,
+            "height": 17,
+            "bottom": 279.59375,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 285.59375,
+              "left": 33,
+              "width": 324,
+              "height": 42,
+              "bottom": 327.59375
+            },
+            "options": [
+              "",
+              "Windows",
+              "macOS",
+              "Ubuntu",
+              "Debian",
+              "Fedora",
+              "Linux Mint",
+              "__custom__"
+            ]
+          },
+          {
+            "id": "version-select",
+            "label": "OS / Platform Version (optional)",
+            "top": 339.59375,
+            "left": 33,
+            "width": 324,
+            "height": 17,
+            "bottom": 356.59375,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 362.59375,
+              "left": 33,
+              "width": 324,
+              "height": 42,
+              "bottom": 404.59375
+            },
+            "options": [
+              "",
+              "__custom__"
+            ]
+          }
+        ]
+      },
+      "networking": {
+        "gap": 15,
+        "hintClass": "device-review-hint",
+        "buttonClass": "device-review-smallbtn",
+        "buttonMargin": "15px"
+      }
+    },
+    {
+      "width": 390,
+      "theme": "dark",
+      "mode": "edit",
+      "software": {
+        "columns": "324px",
+        "fields": [
+          {
+            "id": "platform-select",
+            "label": "Operating System / Platform (optional)",
+            "top": 262.59375,
+            "left": 33,
+            "width": 324,
+            "height": 17,
+            "bottom": 279.59375,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 285.59375,
+              "left": 33,
+              "width": 324,
+              "height": 42,
+              "bottom": 327.59375
+            },
+            "options": [
+              "",
+              "Windows",
+              "macOS",
+              "Ubuntu",
+              "Debian",
+              "Fedora",
+              "Linux Mint",
+              "__custom__"
+            ]
+          },
+          {
+            "id": "version-select",
+            "label": "OS / Platform Version (optional)",
+            "top": 339.59375,
+            "left": 33,
+            "width": 324,
+            "height": 17,
+            "bottom": 356.59375,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 362.59375,
+              "left": 33,
+              "width": 324,
+              "height": 42,
+              "bottom": 404.59375
+            },
+            "options": [
+              "",
+              "__custom__"
+            ]
+          }
+        ]
+      },
+      "networking": {
+        "gap": 15,
+        "hintClass": "device-review-hint",
+        "buttonClass": "device-review-smallbtn",
+        "buttonMargin": "15px"
+      }
+    },
+    {
+      "width": 390,
+      "theme": "dark",
+      "mode": "duplicate",
+      "software": {
+        "columns": "324px",
+        "fields": [
+          {
+            "id": "platform-select",
+            "label": "Operating System / Platform (optional)",
+            "top": 411.59375,
+            "left": 33,
+            "width": 324,
+            "height": 17,
+            "bottom": 428.59375,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 434.59375,
+              "left": 33,
+              "width": 324,
+              "height": 42,
+              "bottom": 476.59375
+            },
+            "options": [
+              "",
+              "Windows",
+              "macOS",
+              "Ubuntu",
+              "Debian",
+              "Fedora",
+              "Linux Mint",
+              "__custom__"
+            ]
+          },
+          {
+            "id": "version-select",
+            "label": "OS / Platform Version (optional)",
+            "top": 488.59375,
+            "left": 33,
+            "width": 324,
+            "height": 17,
+            "bottom": 505.59375,
+            "lineHeight": "normal",
+            "fontSize": "12px",
+            "control": {
+              "top": 511.59375,
+              "left": 33,
+              "width": 324,
+              "height": 42,
+              "bottom": 553.59375
+            },
+            "options": [
+              "",
+              "__custom__"
+            ]
+          }
+        ]
+      },
+      "networking": {
+        "gap": 15,
+        "hintClass": "device-review-hint",
+        "buttonClass": "device-review-smallbtn",
+        "buttonMargin": "15px"
+      }
+    }
+  ],
+  "dimensionCases": {
+    "rows": [
+      {
+        "values": {},
+        "details": [
+          "Rack nameRack A",
+          "LocationServer Room",
+          "Rack typeFloor Standing",
+          "Height42U",
+          "WidthNot Recorded",
+          "DepthNot Recorded",
+          "Mounted devices3",
+          "Accessories0"
+        ],
+        "inputs": [
+          {
+            "value": "",
+            "disabled": true
+          },
+          {
+            "value": "",
+            "disabled": true
+          }
+        ],
+        "correction": [
+          {
+            "value": "",
+            "disabled": false
+          },
+          {
+            "value": "",
+            "disabled": false
+          }
+        ],
+        "unchanged": true
+      },
+      {
+        "values": {
+          "widthMm": 750,
+          "depthMm": 1000
+        },
+        "details": [
+          "Rack nameRack A",
+          "LocationServer Room",
+          "Rack typeFloor Standing",
+          "Height42U",
+          "Width750 mm",
+          "Depth1000 mm",
+          "Mounted devices3",
+          "Accessories0"
+        ],
+        "inputs": [
+          {
+            "value": "750",
+            "disabled": true
+          },
+          {
+            "value": "1000",
+            "disabled": true
+          }
+        ],
+        "correction": [
+          {
+            "value": "750",
+            "disabled": false
+          },
+          {
+            "value": "1000",
+            "disabled": false
+          }
+        ],
+        "unchanged": true
+      },
+      {
+        "values": {
+          "width": 700,
+          "depth": "900mm"
+        },
+        "details": [
+          "Rack nameRack A",
+          "LocationServer Room",
+          "Rack typeFloor Standing",
+          "Height42U",
+          "Width700 mm",
+          "Depth900 mm",
+          "Mounted devices3",
+          "Accessories0"
+        ],
+        "inputs": [
+          {
+            "value": "700",
+            "disabled": true
+          },
+          {
+            "value": "900",
+            "disabled": true
+          }
+        ],
+        "correction": [
+          {
+            "value": "700",
+            "disabled": false
+          },
+          {
+            "value": "900",
+            "disabled": false
+          }
+        ],
+        "unchanged": true
+      },
+      {
+        "values": {
+          "widthMm": null,
+          "width": "800 mm",
+          "depth": " 900mm "
+        },
+        "details": [
+          "Rack nameRack A",
+          "LocationServer Room",
+          "Rack typeFloor Standing",
+          "Height42U",
+          "Width800 mm",
+          "Depth900 mm",
+          "Mounted devices3",
+          "Accessories0"
+        ],
+        "inputs": [
+          {
+            "value": "800",
+            "disabled": true
+          },
+          {
+            "value": "900",
+            "disabled": true
+          }
+        ],
+        "correction": [
+          {
+            "value": "800",
+            "disabled": false
+          },
+          {
+            "value": "900",
+            "disabled": false
+          }
+        ],
+        "unchanged": true
+      },
+      {
+        "values": {
+          "widthMm": "",
+          "width": 700,
+          "depthMm": "invalid",
+          "depth": 900
+        },
+        "details": [
+          "Rack nameRack A",
+          "LocationServer Room",
+          "Rack typeFloor Standing",
+          "Height42U",
+          "WidthNot Recorded",
+          "DepthNot Recorded",
+          "Mounted devices3",
+          "Accessories0"
+        ],
+        "inputs": [
+          {
+            "value": "",
+            "disabled": true
+          },
+          {
+            "value": "",
+            "disabled": true
+          }
+        ],
+        "correction": [
+          {
+            "value": "",
+            "disabled": false
+          },
+          {
+            "value": "",
+            "disabled": false
+          }
+        ],
+        "unchanged": true
+      }
+    ],
+    "defaults": [
+      "600",
+      "600"
+    ]
+  },
+  "print": {
+    "defaultCalls": 1,
+    "identicalHtml": true,
+    "baseline": {
+      "font": "13px system-ui, sans-serif",
+      "margin": "30.2362px",
+      "sections": [
+        {
+          "heading": "Front elevation",
+          "height": 942.171875,
+          "rows": 42,
+          "tableWidth": 739.53125
+        },
+        {
+          "heading": "Rear elevation",
+          "height": 936.171875,
+          "rows": 42,
+          "tableWidth": 739.53125
+        }
+      ],
+      "toolbar": "none"
+    },
+    "trial": {
+      "font": "13px system-ui, sans-serif",
+      "margin": "30.2362px",
+      "sections": [
+        {
+          "heading": "Front elevation",
+          "height": 942.171875,
+          "rows": 42,
+          "tableWidth": 739.53125
+        },
+        {
+          "heading": "Rear elevation",
+          "height": 936.171875,
+          "rows": 42,
+          "tableWidth": 739.53125
+        }
+      ],
+      "toolbar": "none"
+    },
+    "nativeDialogTested": false,
+    "SafariTested": false
+  },
+  "errors": []
+}
