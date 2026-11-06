@@ -1,0 +1,23 @@
+test_every_design_stylesheet_is_the_exact_pinned_source (tests.test_modular_interface.ModularInterfaceTests.test_every_design_stylesheet_is_the_exact_pinned_source) ... ok
+test_templates_and_includes_are_unique_and_resolvable (tests.test_modular_interface.ModularInterfaceTests.test_templates_and_includes_are_unique_and_resolvable) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.065s
+
+OK
+
+Release preparation files agree for v2.0.3; nothing published.
+
+Found approved design: dashboard-draft-02.html
+Found approved design: my-account-draft-06.html
+Found approved design: settings-data-draft-02.html
+Found approved design: devices-overview-draft-03.html
+Found approved design: devices-inventory-draft-02.html
+Found approved design: devices-details-forms-batch-04.html
+Found approved design: devices-management-batch-02.html
+Found approved design: ipam-draft-01.html
+Found approved design: racks-draft-04.html
+Found approved design: users-permissions-draft-02.html
+Found approved design: sign-in-first-run-draft-03.html
+Found approved design: audit-trail-draft-01.html
+Approved HTML sources and core integration contract checked.

@@ -318,3 +318,6 @@ html{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sa
 .device-editor-dialog #racked-options>.device-review-catalogue-actions,
 .device-editor-dialog #racked-options>.device-review-hint,
 .device-editor-dialog #dev-rack-range-hint{margin:0}
+
+/* Keep the existing footer labels readable when text is enlarged. */
+.device-editor-dialog .device-review-footer .btn{min-width:0;white-space:normal;overflow-wrap:anywhere}

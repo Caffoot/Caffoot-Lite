@@ -30,3 +30,32 @@ The visual iteration measured **239 states** (216 Add/Edit/Duplicate states acro
 The same review restored the source's **125px Notes minimum** when there is too little remaining height. The body scrolls in those cases and Save/Cancel stays fixed; larger windows still use all remaining Notes height. Retained rack controls now use the field grid's spacing without an extra inherited margin. Stable catalogue product keys remain recognised even when their labels have been renamed.
 
 The GitHub browser workflow now runs the focused editor checks and retains complete top/middle/bottom live/source captures for all 216 main states, inline controls and enlarged text. Only fictional data and screenshots/results are uploaded; the database, credentials and private installation material are excluded. The final issue update records the workflow result and artifact link. No owner visual approval is implied.
+
+## Changes Ready For Private Review
+
+| Area | What changed | What stays working |
+| --- | --- | --- |
+| General / hosting | One checkbox beneath Physical Device Type, with dedicated product/version selectors. Ordinary OS is hidden while hosting is enabled. | Eligible physical servers only, saved OS/version/licence values, recognised/custom products and guest confirmations. |
+| Ordinary selections | Known products are omitted from editor OS/software choices and pending assignment mode. Retained values get a short explanation. | Catalogue records, renamed stable keys, guest tools, unknown metadata and existing assignments. |
+| VM forms | Purpose, host and allocations remain on General; physical type/location/mount/rack/Hardware are hidden. | Existing type/purpose filters, immutable Edit identity, eligible hosts, inherited values and copied allocations. |
+| Cards / scrolling | Source card wrappers, retained-control spacing and closed-by-default inline Location. Duplicate uses the source subtitle. | All existing controls, body scrolling, fixed header/footer and copy safeguards. |
+| Feedback | The existing validation messages appear above the footer, with the appropriate tab/field revealed. | Server validation, reservations, permissions, failed-save drafts and guest/discard confirmations. |
+| Notes | Uses the available content height, retaining the source's 125px minimum and body scrolling in short windows. | Eight original actions, wrapping toolbar, internal text scrolling, safe Preview, notes and saving. |
+
+The only application files changed are `interface/application.js` and editor-scoped additions to `interface/styles/components.css`. All HTML templates, twelve pinned source/style records, backend/API/schema, catalogues and accepted surrounding screens remain unchanged. [Nine identical before/after snapshots](issue-327-implementation/scope-comparison.json) include compressed DOM/style evidence for Overview, Inventory, Types, Locations, Manufacturers, Models, Software, Services and read-only Details. The separate Close × defect #328 remains untouched.
+
+## Private Raspberry Pi Acceptance
+
+No public image or worker-built ARM64 image is supplied. Build natively on the owner's Pi using the existing private workflow:
+
+1. Use a separate clean clone of `feat/approved-modular-html-282`. Compare `git rev-parse HEAD` with the final delivery SHA in #327 before building; `git status --short` must be empty.
+2. Run `python3 scripts/build_private_acceptance.py`. It builds the exact commit locally and prints `caffoot-lite:private-<first 12 characters of SHA>`; it does not publish.
+3. Inspect that image's architecture and `org.opencontainers.image.revision` label. Expect `arm64` and the exact reviewed SHA.
+4. Start a separate acceptance container on an unused port with a fresh named volume. Use the established `CAFFOOT_WEB_ADDRESS` and `CAFFOOT_SERVER_ADDRESS` settings for that private address. Keep production's container, port and data volume separate.
+5. Check Add/Edit/Duplicate across the owner's real desktop, small laptop and phone: hosting on/off, known/custom products and versions, no-host/eligible-host VM entry, every relevant purpose, saved legacy records, Notes/Preview, validation, scrolling and fixed actions. Check guest confirmation Cancel/Confirm using fictional or privately copied records. Confirm surrounding accepted screens and the intentionally unchanged #328 defect.
+
+Owner acceptance is still required on native Safari, physical touch/keyboard and real mobile address-bar/on-screen-keyboard states. Chromium emulation and the enlarged-text stress captures do not certify those environments. A genuine private v1.3.3 backup was unavailable for two established tests. Docker lifecycle is checked separately in GitHub; its AMD64 result is not a Pi build or private visual acceptance. No implementation decision remains blocked on further design approval.
+
+### Enlarged Text Review
+
+The first full GitHub run passed its automated geometry checks, but manual review found enlarged footer labels extending outside their buttons. The editor's existing footer buttons now allow label wrapping. A new assertion checks the actual text rectangles inside each button; all three local enlarged-text states passed after the correction. The normal source button layout is retained. The final GitHub rerun records the complete resulting evidence; the earlier passing geometry result is not presented as proof that clipped text was acceptable.
