@@ -1,0 +1,15 @@
+{
+  "builtinAndCustomPlatformSaveReload": true,
+  "subnetDraftReturn": true,
+  "enlargedLabels": [
+    1440,
+    768,
+    390
+  ],
+  "ordinaryEditDoesNotInventDimensions": true,
+  "invalidDimensionRejected": true,
+  "correctionCancelPreservedData": true,
+  "explicitDimensionsPersist": true,
+  "importNoticeAndCancel": true,
+  "errors": []
+}

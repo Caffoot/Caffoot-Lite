@@ -68,6 +68,7 @@ async function main(){
  const login=await context.request.post(address+'/api/login',{headers:{Origin:address},data:{username:creds.username,password:creds.password,mfa_code:code}});
  if(!login.ok())throw Error('Visual test login failed');
  const page=await context.newPage(),ref=await context.newPage(),results=[];
+ if(process.env.CAFFOOT_ISSUE306_ACTIONS==='1')await require('./rack-dimension-and-editor-actions.cjs')({page,context,out});
  if(process.env.CAFFOOT_ISSUE306==='1')await require('./rack-print-and-form-regression.cjs')({page,context,out});
  if(process.env.CAFFOOT_ISSUE305==='1')await require('./issue-305-visual.cjs')({page,out});
  if(process.env.CAFFOOT_OWNER_BATCH02==='1')await require('./owner-acceptance-batch-02.cjs')({page,context,out});

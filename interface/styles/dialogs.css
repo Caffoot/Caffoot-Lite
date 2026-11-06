@@ -1039,3 +1039,13 @@ body{font-size:14px}
 /* Reserve two label lines only while the platform fields share a row. */
 @media(min-width:701px){#software-platform .device-review-field > label{min-height:3em;min-height:2lh}}
 #device-editor-form [data-action="create-subnet-from-device"]{margin-top:15px}
+
+.device-platform-controls{display:flex;flex-direction:column;gap:6px;min-width:0}
+/* Share the label row when enlarged text needs more than two lines. */
+@supports(grid-template-rows:subgrid){
+ @media(min-width:701px){
+  #software-platform .device-review-form-grid{row-gap:6px}
+  #software-platform .device-review-field{display:grid;grid-template-rows:subgrid;grid-row:span 2;gap:6px}
+  #software-platform #device-form-windows-licence-row{margin-top:10px}
+ }
+}

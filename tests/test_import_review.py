@@ -1,10 +1,12 @@
 """Read-only import review orchestration regression tests."""
 import copy
 import json
+import sqlite3
 import unittest
 
 from backend.import_review import prepare_detached_import_review, prepare_published_export_review, confirm_detached_import_review
-from backend.inventory import preview_inventory_counts
+from backend.inventory import preview_inventory_counts, stage_inventory, reconstruct_inventory
+from backend.schema import initialise_database
 
 
 def fixture():
@@ -22,6 +24,29 @@ def fixture():
 
 
 class ImportReviewTests(unittest.TestCase):
+
+    def test_published_rack_dimensions_remain_exactly_as_supplied(self):
+        for dimensions in ({}, {"widthMm": 750, "depthMm": 1000},
+                           {"width": 700, "depth": "900mm"},
+                           {"widthMm": None, "width": 800, "depth": "900mm"},
+                           {"widthMm": "", "depthMm": "legacy-unknown"}):
+            with self.subTest(dimensions=dimensions):
+                source = {"devices": [], "racks": [{"id": "rack", "name": "Fictional Rack",
+                          "heightU": 12, **dimensions}], "subnets": [], "vlans": [],
+                          "ipAllocations": {}, "caffootBackup": {
+                              "format": "caffoot-inventory", "schemaVersion": 1,
+                              "app": "Caffoot Lite", "appVersion": "1.3.3",
+                              "exportedAt": "2026-11-06T00:00:00Z"}}
+                original = copy.deepcopy(source)
+                review = prepare_published_export_review(json.dumps(source).encode())
+                self.assertEqual(source, original)
+                self.assertEqual(review["candidate"]["racks"], source["racks"])
+                self.assertFalse(review["approved"])
+                self.assertFalse(review["persistenceAllowed"])
+                with sqlite3.connect(":memory:") as connection:
+                    initialise_database(connection)
+                    stage_inventory(connection, review["candidate"])
+                    self.assertEqual(reconstruct_inventory(connection)["racks"], source["racks"])
 
     def test_explicit_confirmation_required_for_normal_import(self):
         review = prepare_detached_import_review(fixture())

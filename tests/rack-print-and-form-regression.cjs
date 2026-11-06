@@ -18,10 +18,10 @@ module.exports=async({page,context,out})=>{
   });
   if(width>700)assert.ok(Math.abs(software.fields[0].control.top-software.fields[1].control.top)<1,'Platform dropdowns must align');
   for(const field of software.fields)assert.ok(field.height>=17,'Full labels must remain readable');
-  if(mode==='add'&&theme==='light'&&[1024,390].includes(width))await page.screenshot({path:path.join(out,'software-'+width+'.png')});
+  if(mode==='add'&&[1024,390].includes(width))await page.screenshot({path:path.join(out,'software-'+theme+'-'+width+'.png')});
   await page.locator('#modal-content [role="tab"]').filter({hasText:'Networking',exact:true}).click();
   const networking=await page.locator('[data-action="create-subnet-from-device"]').evaluate(button=>{const hint=button.previousElementSibling,a=hint.getBoundingClientRect(),b=button.getBoundingClientRect();return {gap:b.top-a.bottom,hintClass:hint.className,buttonClass:button.className,buttonMargin:getComputedStyle(button).marginTop};});
-  if(mode==='add'&&theme==='light'&&width===1024)await page.screenshot({path:path.join(out,'networking-1024.png')});
+  if(mode==='add'&&[1024,390].includes(width))await page.screenshot({path:path.join(out,'networking-'+theme+'-'+width+'.png')});
   assert.equal(networking.gap,15);
   results.push({width,theme,mode,software,networking});await close();
   console.log('Measured',width,theme,mode);
@@ -38,7 +38,7 @@ module.exports=async({page,context,out})=>{
    const inputs=['rack-width','rack-depth'].map(id=>({value:document.getElementById(id).value,disabled:document.getElementById(id).disabled}));
    closeModal(true);openRackModal(rack.id,true);
    const correction=['rack-width','rack-depth'].map(id=>({value:document.getElementById(id).value,disabled:document.getElementById(id).disabled}));closeModal(true);
-   rows.push({values,details,inputs,correction,unchanged:JSON.stringify(rack)===JSON.stringify({...JSON.parse(original),...values})});
+   rows.push({values,details,inputs,correction});
   }
   appState.racks[0]=JSON.parse(original);openRackModal();
   const defaults=['rack-width','rack-depth'].map(id=>document.getElementById(id).value);closeModal(true);renderContent();
@@ -50,6 +50,8 @@ module.exports=async({page,context,out})=>{
   assert.deepEqual(row.correction.map(x=>x.value),expected);assert.ok(row.correction.every(x=>!x.disabled));
   for(const text of expected.map(x=>x?x+' mm':'Not Recorded'))assert.ok(row.details.some(d=>d.includes(text)),text);
  }
+ await page.evaluate(()=>{activeRackTab='view';activeRackFace='rear';renderContent();document.querySelector('.rack-elev-scroll').scrollTop=120;document.querySelector('[data-action="print-rack-capacity-details"]').focus({preventScroll:true});});
+ const selection=await page.evaluate(()=>({rack:selectedRackId,tab:activeRackTab,face:activeRackFace,windowY:scrollY,rackY:document.querySelector('.rack-elev-scroll').scrollTop}));
  await context.addInitScript(()=>{window.print=()=>{window.printCalls=(window.printCalls||0)+1;};});
  const originalPrint=await page.evaluate(()=>{
   const original=window.open;let html='',calls=0;
@@ -65,7 +67,11 @@ module.exports=async({page,context,out})=>{
   await page.waitForFunction(()=>document.getElementById('rack-print-frame')?.contentWindow.printCalls===1);
   assert.equal(await page.locator('#rack-print-frame').count(),1);
   assert.equal(context.pages().length,tabs);
+  await page.evaluate(()=>document.getElementById('rack-print-frame').contentWindow.dispatchEvent(new Event('afterprint')));
  }
+ await page.evaluate(()=>document.getElementById('rack-print-frame').contentWindow.dispatchEvent(new Event('afterprint')));
+ assert.deepEqual(await page.evaluate(()=>({rack:selectedRackId,tab:activeRackTab,face:activeRackFace,windowY:scrollY,rackY:document.querySelector('.rack-elev-scroll').scrollTop})),selection);
+ assert.equal(await page.evaluate(()=>document.activeElement.dataset.action),'print-rack-capacity-details');
  const frame=page.frames().find(f=>f.url()==='about:srcdoc');
  const frameHtml=await page.locator('#rack-print-frame').getAttribute('srcdoc');
  const withoutDate=html=>html.replace(/Printed [^<]+/,'Printed DATE');assert.equal(withoutDate(frameHtml),withoutDate(originalPrint.html));
@@ -75,11 +81,28 @@ module.exports=async({page,context,out})=>{
  const baseline=await standalone.evaluate(measure),trial=await frame.evaluate(measure);assert.deepEqual(trial,baseline);
  for(const format of ['A4','Letter'])await standalone.pdf({path:path.join(out,'rack-print-'+format+'.pdf'),format,printBackground:true});
  await standalone.close();await page.emulateMedia({media:'screen'});
+ const printCases=[];
+ for(const height of [6,48]){
+  const html=await page.evaluate(height=>{
+   const rack={id:'trial-rack',name:'Fictional <Rack & Trial>',heightU:height,location:'Test Room'},saved={racks:appState.racks,devices:appState.devices,accessories:appState.rackAccessories};
+   appState.racks=[rack];appState.devices=[{id:'trial-device',name:'Multi-U Device',rackId:rack.id,face:'front',rackUStart:2,rackUEnd:3}];
+   appState.rackAccessories=[{id:'horizontal',name:'Horizontal Panel',type:'patch_panel',rackId:rack.id,face:'rear',startU:1,heightU:2},{id:'vertical',name:'Vertical PDU',type:'pdu_vertical',rackId:rack.id,face:'rear',startU:1,heightU:height,side:'right'}];
+   try{printRackElevation(rack.id);return document.getElementById('rack-print-frame').srcdoc;}finally{appState.racks=saved.racks;appState.devices=saved.devices;appState.rackAccessories=saved.accessories;}
+  },height);
+  await page.waitForFunction(()=>document.getElementById('rack-print-frame')?.contentWindow.printCalls===1);
+  const trialFrame=page.frames().find(f=>f.url()==='about:srcdoc');const printPage=await context.newPage();await printPage.setViewportSize({width:800,height:1100});await printPage.setContent(html);
+  await printPage.emulateMedia({media:'print'});await page.emulateMedia({media:'print'});assert.deepEqual(await trialFrame.evaluate(measure),await printPage.evaluate(measure));
+  const text=await trialFrame.locator('body').textContent();for(const name of ['Multi-U Device','Horizontal Panel','Vertical PDU'])assert.ok(text.includes(name));
+  assert.equal(await trialFrame.locator('tr').count(),height*2);assert.equal(await trialFrame.locator('h1').textContent(),'Fictional <Rack & Trial>');
+  for(const format of ['A4','Letter'])await printPage.pdf({path:path.join(out,'rack-print-'+height+'U-'+format+'.pdf'),format,printBackground:true});
+  printCases.push({height,rows:height*2,identicalGeometry:true,frontRearAndAccessories:true,formats:['A4','Letter']});await printPage.close();await page.emulateMedia({media:'screen'});
+ }
+
  await page.evaluate(()=>{document.getElementById('rack-print-frame').contentWindow.dispatchEvent(new Event('afterprint'));switchTab('devices');history.replaceState(null,'','/inventory');});
  assert.equal(await page.locator('#rack-print-frame').count(),0);
  const final=await page.evaluate(async()=>await(await fetch('/api/inventory/state')).json());
  for(const key of ['devices','subnets','racks','rackAccessories','ipAllocations','changeHistory'])assert.deepEqual(final[key],initial[key]);
  assert.deepEqual(errors,[]);
- fs.writeFileSync(path.join(out,'regression.json'),JSON.stringify({results,dimensionCases,print:{defaultCalls:originalPrint.calls,identicalHtml:true,baseline,trial,nativeDialogTested:false,SafariTested:false},errors},null,2));
+ fs.writeFileSync(path.join(out,'regression.json'),JSON.stringify({results,dimensionCases,print:{defaultCalls:originalPrint.calls,identicalHtml:true,baseline,trial,printCases,simulatedAfterprintPreservesSelectionScrollFocus:true,nativeDialogTested:false,SafariTested:false},errors},null,2));
  console.log('Issue #306: 24 form cases, dimensions, unchanged print document and isolated trial passed');
 };

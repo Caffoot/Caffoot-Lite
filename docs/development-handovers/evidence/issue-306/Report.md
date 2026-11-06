@@ -19,3 +19,12 @@ Finding 04 remains deferred. Pinned approved sources, backend/API/schema, permis
 - A trial failure found that framing within the shell yielded zero-sized print geometry. Moving it outside the shell fixed the measured discrepancy; the passing evidence is the corrected run.
 
 [Measurements](checkpoint.json) and [desktop form capture](images/software-1024.png) preserve this checkpoint. Rendered desktop review confirms the full wrapped label and aligned controls. Functional save/reload, subnet return and final regression checks are still pending at this checkpoint. Native print-dialogue, Cancel and Save PDF remain unverified: this environment has headless Chromium, no graphical display/desktop automation or Safari. These limitations must remain explicit in the final handover.
+
+
+## Functional and enlarged-text checks
+
+The focused action run passed built-in Windows/11 and custom platform/version saving and reload, Create Subnet navigation/Cancel with the unsaved device name intact, ordinary rack identity editing without inventing dimensions, invalid dimension rejection, protected correction cancellation and confirmed 750/1000mm persistence after reload. Import preview showed the notice; Cancel left inventory/history unchanged. No browser errors were recorded.
+
+Enlarging labels to 18px exposed a third wrapped line beyond the two-line minimum. The two fields now share a label row where CSS subgrid is supported, with controls grouped underneath; the original control gaps and stacked mobile layout remain. The agreed two-line minimum remains the fallback. Enlarged-label alignment/readability checks pass at 1440/768/390px. This is a text-size test, not a claim of physical browser zoom or Safari testing.
+
+All four GitHub checks passed at implementation checkpoint `ef1a77e59a94b6c5801f527d2c0859bcec23baf5`: [backend](https://github.com/Caffoot/Caffoot-Lite/actions/runs/42167540412), [Chromium](https://github.com/Caffoot/Caffoot-Lite/actions/runs/42167540251), [Docker lifecycle](https://github.com/Caffoot/Caffoot-Lite/actions/runs/42167540226), [history secrets](https://github.com/Caffoot/Caffoot-Lite/actions/runs/42167540233). The enlarged-text HTML/CSS refinement is newer and its final checks must be recorded separately.
