@@ -1,0 +1,2957 @@
+{
+  "cases": [
+    {
+      "width": 1440,
+      "dark": false,
+      "source": {
+        "padding": "20px",
+        "inputHeight": 42
+      },
+      "live": {
+        "tab": "general",
+        "cards": [
+          {
+            "title": "\u25a3Device Identity",
+            "padding": "20px"
+          },
+          {
+            "title": "\u25a3Virtual Machine Configuration",
+            "padding": "20px"
+          },
+          {
+            "title": "\u25a3Mounting & Rack Configuration",
+            "padding": "20px"
+          }
+        ],
+        "fields": [
+          {
+            "id": "dev-name",
+            "height": 42,
+            "label": "Device Name *"
+          },
+          {
+            "id": "dev-deployment",
+            "height": 42,
+            "label": "Deployment"
+          },
+          {
+            "id": "dev-type",
+            "height": 42,
+            "label": "Physical device type"
+          },
+          {
+            "id": "dev-location",
+            "height": 42,
+            "label": "Location Area *"
+          },
+          {
+            "id": "dev-status",
+            "height": 42,
+            "label": "Device Status"
+          },
+          {
+            "id": "dev-mount-type",
+            "height": 42,
+            "label": "Device Mounting"
+          },
+          {
+            "id": "dev-rack-id",
+            "height": 42,
+            "label": "Rack"
+          },
+          {
+            "id": "dev-rack-face",
+            "height": 42,
+            "label": "Face"
+          },
+          {
+            "id": "dev-rack-u",
+            "height": 42,
+            "label": "Start U"
+          },
+          {
+            "id": "dev-rack-height",
+            "height": 42,
+            "label": "U Height"
+          }
+        ],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 970.421875,
+            "y": 855,
+            "width": 125.25,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 1104.671875,
+            "y": 855,
+            "width": 105.328125,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 1440,
+      "dark": false,
+      "source": {
+        "padding": "20px",
+        "inputHeight": 42
+      },
+      "live": {
+        "tab": "hardware",
+        "cards": [
+          {
+            "title": "\u25a3Hardware & Lifecycle",
+            "padding": "20px"
+          }
+        ],
+        "fields": [
+          {
+            "id": "dev-manufacturer-select",
+            "height": 42,
+            "label": "Manufacturer"
+          },
+          {
+            "id": "dev-model-select",
+            "height": 42,
+            "label": "Model"
+          },
+          {
+            "id": "dev-serial",
+            "height": 42,
+            "label": "Serial number"
+          },
+          {
+            "id": "device-detail-networkCard",
+            "height": 42,
+            "label": "Network card"
+          },
+          {
+            "id": "device-detail-networkConnection",
+            "height": 42,
+            "label": "Network connection method"
+          },
+          {
+            "id": "device-detail-processor",
+            "height": 42,
+            "label": "Processor"
+          },
+          {
+            "id": "device-detail-graphics",
+            "height": 42,
+            "label": "Graphics card"
+          },
+          {
+            "id": "device-detail-memory",
+            "height": 42,
+            "label": "Memory size"
+          },
+          {
+            "id": "device-detail-memoryUnit",
+            "height": 42,
+            "label": "Memory unit"
+          },
+          {
+            "id": "device-detail-storage",
+            "height": 42,
+            "label": "Storage size"
+          },
+          {
+            "id": "device-detail-storageUnit",
+            "height": 42,
+            "label": "Storage unit"
+          },
+          {
+            "id": "device-detail-raid",
+            "height": 42,
+            "label": "RAID type"
+          },
+          {
+            "id": "device-detail-driveCount",
+            "height": 42,
+            "label": "Number of hard drives"
+          }
+        ],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 970.421875,
+            "y": 855,
+            "width": 125.25,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 1104.671875,
+            "y": 855,
+            "width": 105.328125,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 1440,
+      "dark": false,
+      "source": {
+        "padding": "20px",
+        "inputHeight": 42
+      },
+      "live": {
+        "tab": "software",
+        "cards": [
+          {
+            "title": "\u25a3Operating System / Platform",
+            "padding": "20px"
+          },
+          {
+            "title": "\u25a3Installed Software",
+            "padding": "20px"
+          },
+          {
+            "title": "\u25a3Virtualisation / Hypervisor",
+            "padding": "20px"
+          },
+          {
+            "title": "\u25a3Server Services",
+            "padding": "20px"
+          }
+        ],
+        "fields": [
+          {
+            "id": "platform-select",
+            "height": 42,
+            "label": "Operating System"
+          },
+          {
+            "id": "version-select",
+            "height": 42,
+            "label": "OS / Platform version"
+          },
+          {
+            "id": "host-platform-select",
+            "height": 42,
+            "label": "Hypervisor software"
+          },
+          {
+            "id": "host-version",
+            "height": 42,
+            "label": "Hypervisor version"
+          }
+        ],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 970.421875,
+            "y": 855,
+            "width": 125.25,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 1104.671875,
+            "y": 855,
+            "width": 105.328125,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 1440,
+      "dark": false,
+      "source": {
+        "padding": "20px",
+        "inputHeight": 42
+      },
+      "live": {
+        "tab": "networking",
+        "cards": [
+          {
+            "title": "\u25a3Network Identity",
+            "padding": "20px"
+          },
+          {
+            "title": "\u25a3Subnet Guidance",
+            "padding": "20px"
+          }
+        ],
+        "fields": [
+          {
+            "id": "dev-block",
+            "height": 42,
+            "label": "IP Address Block"
+          },
+          {
+            "id": "dev-subnet",
+            "height": 42,
+            "label": "Subnet *"
+          },
+          {
+            "id": "dev-ip",
+            "height": 42,
+            "label": "Primary IP Address *"
+          },
+          {
+            "id": "dev-ip-available",
+            "height": 42,
+            "label": "Or choose an available IP"
+          },
+          {
+            "id": "dev-vlan",
+            "height": 42,
+            "label": "VLAN"
+          }
+        ],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 970.421875,
+            "y": 855,
+            "width": 125.25,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 1104.671875,
+            "y": 855,
+            "width": 105.328125,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 1440,
+      "dark": false,
+      "source": {
+        "padding": "20px",
+        "inputHeight": null
+      },
+      "live": {
+        "tab": "notes",
+        "cards": [
+          {
+            "title": "\u25a3Notes / Details",
+            "padding": "20px"
+          }
+        ],
+        "fields": [],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 970.421875,
+            "y": 855,
+            "width": 125.25,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 1104.671875,
+            "y": 855,
+            "width": 105.328125,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 1440,
+      "dark": true,
+      "source": {
+        "padding": "20px",
+        "inputHeight": 42
+      },
+      "live": {
+        "tab": "general",
+        "cards": [
+          {
+            "title": "\u25a3Device Identity",
+            "padding": "20px"
+          },
+          {
+            "title": "\u25a3Virtual Machine Configuration",
+            "padding": "20px"
+          },
+          {
+            "title": "\u25a3Mounting & Rack Configuration",
+            "padding": "20px"
+          }
+        ],
+        "fields": [
+          {
+            "id": "dev-name",
+            "height": 42,
+            "label": "Device Name *"
+          },
+          {
+            "id": "dev-deployment",
+            "height": 42,
+            "label": "Deployment"
+          },
+          {
+            "id": "dev-type",
+            "height": 42,
+            "label": "Physical device type"
+          },
+          {
+            "id": "dev-location",
+            "height": 42,
+            "label": "Location Area *"
+          },
+          {
+            "id": "dev-status",
+            "height": 42,
+            "label": "Device Status"
+          },
+          {
+            "id": "dev-mount-type",
+            "height": 42,
+            "label": "Device Mounting"
+          },
+          {
+            "id": "dev-rack-id",
+            "height": 42,
+            "label": "Rack"
+          },
+          {
+            "id": "dev-rack-face",
+            "height": 42,
+            "label": "Face"
+          },
+          {
+            "id": "dev-rack-u",
+            "height": 42,
+            "label": "Start U"
+          },
+          {
+            "id": "dev-rack-height",
+            "height": 42,
+            "label": "U Height"
+          }
+        ],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 970.421875,
+            "y": 855,
+            "width": 125.25,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 1104.671875,
+            "y": 855,
+            "width": 105.328125,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 1440,
+      "dark": true,
+      "source": {
+        "padding": "20px",
+        "inputHeight": 42
+      },
+      "live": {
+        "tab": "hardware",
+        "cards": [
+          {
+            "title": "\u25a3Hardware & Lifecycle",
+            "padding": "20px"
+          }
+        ],
+        "fields": [
+          {
+            "id": "dev-manufacturer-select",
+            "height": 42,
+            "label": "Manufacturer"
+          },
+          {
+            "id": "dev-model-select",
+            "height": 42,
+            "label": "Model"
+          },
+          {
+            "id": "dev-serial",
+            "height": 42,
+            "label": "Serial number"
+          },
+          {
+            "id": "device-detail-networkCard",
+            "height": 42,
+            "label": "Network card"
+          },
+          {
+            "id": "device-detail-networkConnection",
+            "height": 42,
+            "label": "Network connection method"
+          },
+          {
+            "id": "device-detail-processor",
+            "height": 42,
+            "label": "Processor"
+          },
+          {
+            "id": "device-detail-graphics",
+            "height": 42,
+            "label": "Graphics card"
+          },
+          {
+            "id": "device-detail-memory",
+            "height": 42,
+            "label": "Memory size"
+          },
+          {
+            "id": "device-detail-memoryUnit",
+            "height": 42,
+            "label": "Memory unit"
+          },
+          {
+            "id": "device-detail-storage",
+            "height": 42,
+            "label": "Storage size"
+          },
+          {
+            "id": "device-detail-storageUnit",
+            "height": 42,
+            "label": "Storage unit"
+          },
+          {
+            "id": "device-detail-raid",
+            "height": 42,
+            "label": "RAID type"
+          },
+          {
+            "id": "device-detail-driveCount",
+            "height": 42,
+            "label": "Number of hard drives"
+          }
+        ],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 970.421875,
+            "y": 855,
+            "width": 125.25,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 1104.671875,
+            "y": 855,
+            "width": 105.328125,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 1440,
+      "dark": true,
+      "source": {
+        "padding": "20px",
+        "inputHeight": 42
+      },
+      "live": {
+        "tab": "software",
+        "cards": [
+          {
+            "title": "\u25a3Operating System / Platform",
+            "padding": "20px"
+          },
+          {
+            "title": "\u25a3Installed Software",
+            "padding": "20px"
+          },
+          {
+            "title": "\u25a3Virtualisation / Hypervisor",
+            "padding": "20px"
+          },
+          {
+            "title": "\u25a3Server Services",
+            "padding": "20px"
+          }
+        ],
+        "fields": [
+          {
+            "id": "platform-select",
+            "height": 42,
+            "label": "Operating System"
+          },
+          {
+            "id": "version-select",
+            "height": 42,
+            "label": "OS / Platform version"
+          },
+          {
+            "id": "host-platform-select",
+            "height": 42,
+            "label": "Hypervisor software"
+          },
+          {
+            "id": "host-version",
+            "height": 42,
+            "label": "Hypervisor version"
+          }
+        ],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 970.421875,
+            "y": 855,
+            "width": 125.25,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 1104.671875,
+            "y": 855,
+            "width": 105.328125,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 1440,
+      "dark": true,
+      "source": {
+        "padding": "20px",
+        "inputHeight": 42
+      },
+      "live": {
+        "tab": "networking",
+        "cards": [
+          {
+            "title": "\u25a3Network Identity",
+            "padding": "20px"
+          },
+          {
+            "title": "\u25a3Subnet Guidance",
+            "padding": "20px"
+          }
+        ],
+        "fields": [
+          {
+            "id": "dev-block",
+            "height": 42,
+            "label": "IP Address Block"
+          },
+          {
+            "id": "dev-subnet",
+            "height": 42,
+            "label": "Subnet *"
+          },
+          {
+            "id": "dev-ip",
+            "height": 42,
+            "label": "Primary IP Address *"
+          },
+          {
+            "id": "dev-ip-available",
+            "height": 42,
+            "label": "Or choose an available IP"
+          },
+          {
+            "id": "dev-vlan",
+            "height": 42,
+            "label": "VLAN"
+          }
+        ],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 970.421875,
+            "y": 855,
+            "width": 125.25,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 1104.671875,
+            "y": 855,
+            "width": 105.328125,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 1440,
+      "dark": true,
+      "source": {
+        "padding": "20px",
+        "inputHeight": null
+      },
+      "live": {
+        "tab": "notes",
+        "cards": [
+          {
+            "title": "\u25a3Notes / Details",
+            "padding": "20px"
+          }
+        ],
+        "fields": [],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 970.421875,
+            "y": 855,
+            "width": 125.25,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 1104.671875,
+            "y": 855,
+            "width": 105.328125,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 1280,
+      "dark": false,
+      "source": {
+        "padding": "20px",
+        "inputHeight": 42
+      },
+      "live": {
+        "tab": "general",
+        "cards": [
+          {
+            "title": "\u25a3Device Identity",
+            "padding": "20px"
+          },
+          {
+            "title": "\u25a3Virtual Machine Configuration",
+            "padding": "20px"
+          },
+          {
+            "title": "\u25a3Mounting & Rack Configuration",
+            "padding": "20px"
+          }
+        ],
+        "fields": [
+          {
+            "id": "dev-name",
+            "height": 42,
+            "label": "Device Name *"
+          },
+          {
+            "id": "dev-deployment",
+            "height": 42,
+            "label": "Deployment"
+          },
+          {
+            "id": "dev-type",
+            "height": 42,
+            "label": "Physical device type"
+          },
+          {
+            "id": "dev-location",
+            "height": 42,
+            "label": "Location Area *"
+          },
+          {
+            "id": "dev-status",
+            "height": 42,
+            "label": "Device Status"
+          },
+          {
+            "id": "dev-mount-type",
+            "height": 42,
+            "label": "Device Mounting"
+          },
+          {
+            "id": "dev-rack-id",
+            "height": 42,
+            "label": "Rack"
+          },
+          {
+            "id": "dev-rack-face",
+            "height": 42,
+            "label": "Face"
+          },
+          {
+            "id": "dev-rack-u",
+            "height": 42,
+            "label": "Start U"
+          },
+          {
+            "id": "dev-rack-height",
+            "height": 42,
+            "label": "U Height"
+          }
+        ],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 890.421875,
+            "y": 855,
+            "width": 125.25,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 1024.671875,
+            "y": 855,
+            "width": 105.328125,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 1280,
+      "dark": false,
+      "source": {
+        "padding": "20px",
+        "inputHeight": 42
+      },
+      "live": {
+        "tab": "hardware",
+        "cards": [
+          {
+            "title": "\u25a3Hardware & Lifecycle",
+            "padding": "20px"
+          }
+        ],
+        "fields": [
+          {
+            "id": "dev-manufacturer-select",
+            "height": 42,
+            "label": "Manufacturer"
+          },
+          {
+            "id": "dev-model-select",
+            "height": 42,
+            "label": "Model"
+          },
+          {
+            "id": "dev-serial",
+            "height": 42,
+            "label": "Serial number"
+          },
+          {
+            "id": "device-detail-networkCard",
+            "height": 42,
+            "label": "Network card"
+          },
+          {
+            "id": "device-detail-networkConnection",
+            "height": 42,
+            "label": "Network connection method"
+          },
+          {
+            "id": "device-detail-processor",
+            "height": 42,
+            "label": "Processor"
+          },
+          {
+            "id": "device-detail-graphics",
+            "height": 42,
+            "label": "Graphics card"
+          },
+          {
+            "id": "device-detail-memory",
+            "height": 42,
+            "label": "Memory size"
+          },
+          {
+            "id": "device-detail-memoryUnit",
+            "height": 42,
+            "label": "Memory unit"
+          },
+          {
+            "id": "device-detail-storage",
+            "height": 42,
+            "label": "Storage size"
+          },
+          {
+            "id": "device-detail-storageUnit",
+            "height": 42,
+            "label": "Storage unit"
+          },
+          {
+            "id": "device-detail-raid",
+            "height": 42,
+            "label": "RAID type"
+          },
+          {
+            "id": "device-detail-driveCount",
+            "height": 42,
+            "label": "Number of hard drives"
+          }
+        ],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 890.421875,
+            "y": 855,
+            "width": 125.25,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 1024.671875,
+            "y": 855,
+            "width": 105.328125,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 1280,
+      "dark": false,
+      "source": {
+        "padding": "20px",
+        "inputHeight": 42
+      },
+      "live": {
+        "tab": "software",
+        "cards": [
+          {
+            "title": "\u25a3Operating System / Platform",
+            "padding": "20px"
+          },
+          {
+            "title": "\u25a3Installed Software",
+            "padding": "20px"
+          },
+          {
+            "title": "\u25a3Virtualisation / Hypervisor",
+            "padding": "20px"
+          },
+          {
+            "title": "\u25a3Server Services",
+            "padding": "20px"
+          }
+        ],
+        "fields": [
+          {
+            "id": "platform-select",
+            "height": 42,
+            "label": "Operating System"
+          },
+          {
+            "id": "version-select",
+            "height": 42,
+            "label": "OS / Platform version"
+          },
+          {
+            "id": "host-platform-select",
+            "height": 42,
+            "label": "Hypervisor software"
+          },
+          {
+            "id": "host-version",
+            "height": 42,
+            "label": "Hypervisor version"
+          }
+        ],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 890.421875,
+            "y": 855,
+            "width": 125.25,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 1024.671875,
+            "y": 855,
+            "width": 105.328125,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 1280,
+      "dark": false,
+      "source": {
+        "padding": "20px",
+        "inputHeight": 42
+      },
+      "live": {
+        "tab": "networking",
+        "cards": [
+          {
+            "title": "\u25a3Network Identity",
+            "padding": "20px"
+          },
+          {
+            "title": "\u25a3Subnet Guidance",
+            "padding": "20px"
+          }
+        ],
+        "fields": [
+          {
+            "id": "dev-block",
+            "height": 42,
+            "label": "IP Address Block"
+          },
+          {
+            "id": "dev-subnet",
+            "height": 42,
+            "label": "Subnet *"
+          },
+          {
+            "id": "dev-ip",
+            "height": 42,
+            "label": "Primary IP Address *"
+          },
+          {
+            "id": "dev-ip-available",
+            "height": 42,
+            "label": "Or choose an available IP"
+          },
+          {
+            "id": "dev-vlan",
+            "height": 42,
+            "label": "VLAN"
+          }
+        ],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 890.421875,
+            "y": 855,
+            "width": 125.25,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 1024.671875,
+            "y": 855,
+            "width": 105.328125,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 1280,
+      "dark": false,
+      "source": {
+        "padding": "20px",
+        "inputHeight": null
+      },
+      "live": {
+        "tab": "notes",
+        "cards": [
+          {
+            "title": "\u25a3Notes / Details",
+            "padding": "20px"
+          }
+        ],
+        "fields": [],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 890.421875,
+            "y": 855,
+            "width": 125.25,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 1024.671875,
+            "y": 855,
+            "width": 105.328125,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 1280,
+      "dark": true,
+      "source": {
+        "padding": "20px",
+        "inputHeight": 42
+      },
+      "live": {
+        "tab": "general",
+        "cards": [
+          {
+            "title": "\u25a3Device Identity",
+            "padding": "20px"
+          },
+          {
+            "title": "\u25a3Virtual Machine Configuration",
+            "padding": "20px"
+          },
+          {
+            "title": "\u25a3Mounting & Rack Configuration",
+            "padding": "20px"
+          }
+        ],
+        "fields": [
+          {
+            "id": "dev-name",
+            "height": 42,
+            "label": "Device Name *"
+          },
+          {
+            "id": "dev-deployment",
+            "height": 42,
+            "label": "Deployment"
+          },
+          {
+            "id": "dev-type",
+            "height": 42,
+            "label": "Physical device type"
+          },
+          {
+            "id": "dev-location",
+            "height": 42,
+            "label": "Location Area *"
+          },
+          {
+            "id": "dev-status",
+            "height": 42,
+            "label": "Device Status"
+          },
+          {
+            "id": "dev-mount-type",
+            "height": 42,
+            "label": "Device Mounting"
+          },
+          {
+            "id": "dev-rack-id",
+            "height": 42,
+            "label": "Rack"
+          },
+          {
+            "id": "dev-rack-face",
+            "height": 42,
+            "label": "Face"
+          },
+          {
+            "id": "dev-rack-u",
+            "height": 42,
+            "label": "Start U"
+          },
+          {
+            "id": "dev-rack-height",
+            "height": 42,
+            "label": "U Height"
+          }
+        ],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 890.421875,
+            "y": 855,
+            "width": 125.25,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 1024.671875,
+            "y": 855,
+            "width": 105.328125,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 1280,
+      "dark": true,
+      "source": {
+        "padding": "20px",
+        "inputHeight": 42
+      },
+      "live": {
+        "tab": "hardware",
+        "cards": [
+          {
+            "title": "\u25a3Hardware & Lifecycle",
+            "padding": "20px"
+          }
+        ],
+        "fields": [
+          {
+            "id": "dev-manufacturer-select",
+            "height": 42,
+            "label": "Manufacturer"
+          },
+          {
+            "id": "dev-model-select",
+            "height": 42,
+            "label": "Model"
+          },
+          {
+            "id": "dev-serial",
+            "height": 42,
+            "label": "Serial number"
+          },
+          {
+            "id": "device-detail-networkCard",
+            "height": 42,
+            "label": "Network card"
+          },
+          {
+            "id": "device-detail-networkConnection",
+            "height": 42,
+            "label": "Network connection method"
+          },
+          {
+            "id": "device-detail-processor",
+            "height": 42,
+            "label": "Processor"
+          },
+          {
+            "id": "device-detail-graphics",
+            "height": 42,
+            "label": "Graphics card"
+          },
+          {
+            "id": "device-detail-memory",
+            "height": 42,
+            "label": "Memory size"
+          },
+          {
+            "id": "device-detail-memoryUnit",
+            "height": 42,
+            "label": "Memory unit"
+          },
+          {
+            "id": "device-detail-storage",
+            "height": 42,
+            "label": "Storage size"
+          },
+          {
+            "id": "device-detail-storageUnit",
+            "height": 42,
+            "label": "Storage unit"
+          },
+          {
+            "id": "device-detail-raid",
+            "height": 42,
+            "label": "RAID type"
+          },
+          {
+            "id": "device-detail-driveCount",
+            "height": 42,
+            "label": "Number of hard drives"
+          }
+        ],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 890.421875,
+            "y": 855,
+            "width": 125.25,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 1024.671875,
+            "y": 855,
+            "width": 105.328125,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 1280,
+      "dark": true,
+      "source": {
+        "padding": "20px",
+        "inputHeight": 42
+      },
+      "live": {
+        "tab": "software",
+        "cards": [
+          {
+            "title": "\u25a3Operating System / Platform",
+            "padding": "20px"
+          },
+          {
+            "title": "\u25a3Installed Software",
+            "padding": "20px"
+          },
+          {
+            "title": "\u25a3Virtualisation / Hypervisor",
+            "padding": "20px"
+          },
+          {
+            "title": "\u25a3Server Services",
+            "padding": "20px"
+          }
+        ],
+        "fields": [
+          {
+            "id": "platform-select",
+            "height": 42,
+            "label": "Operating System"
+          },
+          {
+            "id": "version-select",
+            "height": 42,
+            "label": "OS / Platform version"
+          },
+          {
+            "id": "host-platform-select",
+            "height": 42,
+            "label": "Hypervisor software"
+          },
+          {
+            "id": "host-version",
+            "height": 42,
+            "label": "Hypervisor version"
+          }
+        ],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 890.421875,
+            "y": 855,
+            "width": 125.25,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 1024.671875,
+            "y": 855,
+            "width": 105.328125,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 1280,
+      "dark": true,
+      "source": {
+        "padding": "20px",
+        "inputHeight": 42
+      },
+      "live": {
+        "tab": "networking",
+        "cards": [
+          {
+            "title": "\u25a3Network Identity",
+            "padding": "20px"
+          },
+          {
+            "title": "\u25a3Subnet Guidance",
+            "padding": "20px"
+          }
+        ],
+        "fields": [
+          {
+            "id": "dev-block",
+            "height": 42,
+            "label": "IP Address Block"
+          },
+          {
+            "id": "dev-subnet",
+            "height": 42,
+            "label": "Subnet *"
+          },
+          {
+            "id": "dev-ip",
+            "height": 42,
+            "label": "Primary IP Address *"
+          },
+          {
+            "id": "dev-ip-available",
+            "height": 42,
+            "label": "Or choose an available IP"
+          },
+          {
+            "id": "dev-vlan",
+            "height": 42,
+            "label": "VLAN"
+          }
+        ],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 890.421875,
+            "y": 855,
+            "width": 125.25,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 1024.671875,
+            "y": 855,
+            "width": 105.328125,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 1280,
+      "dark": true,
+      "source": {
+        "padding": "20px",
+        "inputHeight": null
+      },
+      "live": {
+        "tab": "notes",
+        "cards": [
+          {
+            "title": "\u25a3Notes / Details",
+            "padding": "20px"
+          }
+        ],
+        "fields": [],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 890.421875,
+            "y": 855,
+            "width": 125.25,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 1024.671875,
+            "y": 855,
+            "width": 105.328125,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 390,
+      "dark": false,
+      "source": {
+        "padding": "16px",
+        "inputHeight": 42
+      },
+      "live": {
+        "tab": "general",
+        "cards": [
+          {
+            "title": "\u25a3Device Identity",
+            "padding": "16px"
+          },
+          {
+            "title": "\u25a3Virtual Machine Configuration",
+            "padding": "16px"
+          },
+          {
+            "title": "\u25a3Mounting & Rack Configuration",
+            "padding": "16px"
+          }
+        ],
+        "fields": [
+          {
+            "id": "dev-name",
+            "height": 42,
+            "label": "Device Name *"
+          },
+          {
+            "id": "dev-deployment",
+            "height": 42,
+            "label": "Deployment"
+          },
+          {
+            "id": "dev-type",
+            "height": 42,
+            "label": "Physical device type"
+          },
+          {
+            "id": "dev-location",
+            "height": 42,
+            "label": "Location Area *"
+          },
+          {
+            "id": "dev-status",
+            "height": 42,
+            "label": "Device Status"
+          },
+          {
+            "id": "dev-mount-type",
+            "height": 42,
+            "label": "Device Mounting"
+          },
+          {
+            "id": "dev-rack-id",
+            "height": 42,
+            "label": "Rack"
+          },
+          {
+            "id": "dev-rack-face",
+            "height": 42,
+            "label": "Face"
+          },
+          {
+            "id": "dev-rack-u",
+            "height": 42,
+            "label": "Start U"
+          },
+          {
+            "id": "dev-rack-height",
+            "height": 42,
+            "label": "U Height"
+          }
+        ],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 16,
+            "y": 898,
+            "width": 174.5,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 199.5,
+            "y": 898,
+            "width": 174.5,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 390,
+      "dark": false,
+      "source": {
+        "padding": "16px",
+        "inputHeight": 42
+      },
+      "live": {
+        "tab": "hardware",
+        "cards": [
+          {
+            "title": "\u25a3Hardware & Lifecycle",
+            "padding": "16px"
+          }
+        ],
+        "fields": [
+          {
+            "id": "dev-manufacturer-select",
+            "height": 42,
+            "label": "Manufacturer"
+          },
+          {
+            "id": "dev-model-select",
+            "height": 42,
+            "label": "Model"
+          },
+          {
+            "id": "dev-serial",
+            "height": 42,
+            "label": "Serial number"
+          },
+          {
+            "id": "device-detail-networkCard",
+            "height": 42,
+            "label": "Network card"
+          },
+          {
+            "id": "device-detail-networkConnection",
+            "height": 42,
+            "label": "Network connection method"
+          },
+          {
+            "id": "device-detail-processor",
+            "height": 42,
+            "label": "Processor"
+          },
+          {
+            "id": "device-detail-graphics",
+            "height": 42,
+            "label": "Graphics card"
+          },
+          {
+            "id": "device-detail-memory",
+            "height": 42,
+            "label": "Memory size"
+          },
+          {
+            "id": "device-detail-memoryUnit",
+            "height": 42,
+            "label": "Memory unit"
+          },
+          {
+            "id": "device-detail-storage",
+            "height": 42,
+            "label": "Storage size"
+          },
+          {
+            "id": "device-detail-storageUnit",
+            "height": 42,
+            "label": "Storage unit"
+          },
+          {
+            "id": "device-detail-raid",
+            "height": 42,
+            "label": "RAID type"
+          },
+          {
+            "id": "device-detail-driveCount",
+            "height": 42,
+            "label": "Number of hard drives"
+          }
+        ],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 16,
+            "y": 898,
+            "width": 174.5,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 199.5,
+            "y": 898,
+            "width": 174.5,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 390,
+      "dark": false,
+      "source": {
+        "padding": "16px",
+        "inputHeight": 42
+      },
+      "live": {
+        "tab": "software",
+        "cards": [
+          {
+            "title": "\u25a3Operating System / Platform",
+            "padding": "16px"
+          },
+          {
+            "title": "\u25a3Installed Software",
+            "padding": "16px"
+          },
+          {
+            "title": "\u25a3Virtualisation / Hypervisor",
+            "padding": "16px"
+          },
+          {
+            "title": "\u25a3Server Services",
+            "padding": "16px"
+          }
+        ],
+        "fields": [
+          {
+            "id": "platform-select",
+            "height": 42,
+            "label": "Operating System"
+          },
+          {
+            "id": "version-select",
+            "height": 42,
+            "label": "OS / Platform version"
+          },
+          {
+            "id": "host-platform-select",
+            "height": 42,
+            "label": "Hypervisor software"
+          },
+          {
+            "id": "host-version",
+            "height": 42,
+            "label": "Hypervisor version"
+          }
+        ],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 16,
+            "y": 898,
+            "width": 174.5,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 199.5,
+            "y": 898,
+            "width": 174.5,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 390,
+      "dark": false,
+      "source": {
+        "padding": "16px",
+        "inputHeight": 42
+      },
+      "live": {
+        "tab": "networking",
+        "cards": [
+          {
+            "title": "\u25a3Network Identity",
+            "padding": "16px"
+          },
+          {
+            "title": "\u25a3Subnet Guidance",
+            "padding": "16px"
+          }
+        ],
+        "fields": [
+          {
+            "id": "dev-block",
+            "height": 42,
+            "label": "IP Address Block"
+          },
+          {
+            "id": "dev-subnet",
+            "height": 42,
+            "label": "Subnet *"
+          },
+          {
+            "id": "dev-ip",
+            "height": 42,
+            "label": "Primary IP Address *"
+          },
+          {
+            "id": "dev-ip-available",
+            "height": 42,
+            "label": "Or choose an available IP"
+          },
+          {
+            "id": "dev-vlan",
+            "height": 42,
+            "label": "VLAN"
+          }
+        ],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 16,
+            "y": 898,
+            "width": 174.5,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 199.5,
+            "y": 898,
+            "width": 174.5,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 390,
+      "dark": false,
+      "source": {
+        "padding": "16px",
+        "inputHeight": null
+      },
+      "live": {
+        "tab": "notes",
+        "cards": [
+          {
+            "title": "\u25a3Notes / Details",
+            "padding": "16px"
+          }
+        ],
+        "fields": [],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 16,
+            "y": 898,
+            "width": 174.5,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 199.5,
+            "y": 898,
+            "width": 174.5,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 390,
+      "dark": true,
+      "source": {
+        "padding": "16px",
+        "inputHeight": 42
+      },
+      "live": {
+        "tab": "general",
+        "cards": [
+          {
+            "title": "\u25a3Device Identity",
+            "padding": "16px"
+          },
+          {
+            "title": "\u25a3Virtual Machine Configuration",
+            "padding": "16px"
+          },
+          {
+            "title": "\u25a3Mounting & Rack Configuration",
+            "padding": "16px"
+          }
+        ],
+        "fields": [
+          {
+            "id": "dev-name",
+            "height": 42,
+            "label": "Device Name *"
+          },
+          {
+            "id": "dev-deployment",
+            "height": 42,
+            "label": "Deployment"
+          },
+          {
+            "id": "dev-type",
+            "height": 42,
+            "label": "Physical device type"
+          },
+          {
+            "id": "dev-location",
+            "height": 42,
+            "label": "Location Area *"
+          },
+          {
+            "id": "dev-status",
+            "height": 42,
+            "label": "Device Status"
+          },
+          {
+            "id": "dev-mount-type",
+            "height": 42,
+            "label": "Device Mounting"
+          },
+          {
+            "id": "dev-rack-id",
+            "height": 42,
+            "label": "Rack"
+          },
+          {
+            "id": "dev-rack-face",
+            "height": 42,
+            "label": "Face"
+          },
+          {
+            "id": "dev-rack-u",
+            "height": 42,
+            "label": "Start U"
+          },
+          {
+            "id": "dev-rack-height",
+            "height": 42,
+            "label": "U Height"
+          }
+        ],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 16,
+            "y": 898,
+            "width": 174.5,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 199.5,
+            "y": 898,
+            "width": 174.5,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 390,
+      "dark": true,
+      "source": {
+        "padding": "16px",
+        "inputHeight": 42
+      },
+      "live": {
+        "tab": "hardware",
+        "cards": [
+          {
+            "title": "\u25a3Hardware & Lifecycle",
+            "padding": "16px"
+          }
+        ],
+        "fields": [
+          {
+            "id": "dev-manufacturer-select",
+            "height": 42,
+            "label": "Manufacturer"
+          },
+          {
+            "id": "dev-model-select",
+            "height": 42,
+            "label": "Model"
+          },
+          {
+            "id": "dev-serial",
+            "height": 42,
+            "label": "Serial number"
+          },
+          {
+            "id": "device-detail-networkCard",
+            "height": 42,
+            "label": "Network card"
+          },
+          {
+            "id": "device-detail-networkConnection",
+            "height": 42,
+            "label": "Network connection method"
+          },
+          {
+            "id": "device-detail-processor",
+            "height": 42,
+            "label": "Processor"
+          },
+          {
+            "id": "device-detail-graphics",
+            "height": 42,
+            "label": "Graphics card"
+          },
+          {
+            "id": "device-detail-memory",
+            "height": 42,
+            "label": "Memory size"
+          },
+          {
+            "id": "device-detail-memoryUnit",
+            "height": 42,
+            "label": "Memory unit"
+          },
+          {
+            "id": "device-detail-storage",
+            "height": 42,
+            "label": "Storage size"
+          },
+          {
+            "id": "device-detail-storageUnit",
+            "height": 42,
+            "label": "Storage unit"
+          },
+          {
+            "id": "device-detail-raid",
+            "height": 42,
+            "label": "RAID type"
+          },
+          {
+            "id": "device-detail-driveCount",
+            "height": 42,
+            "label": "Number of hard drives"
+          }
+        ],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 16,
+            "y": 898,
+            "width": 174.5,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 199.5,
+            "y": 898,
+            "width": 174.5,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 390,
+      "dark": true,
+      "source": {
+        "padding": "16px",
+        "inputHeight": 42
+      },
+      "live": {
+        "tab": "software",
+        "cards": [
+          {
+            "title": "\u25a3Operating System / Platform",
+            "padding": "16px"
+          },
+          {
+            "title": "\u25a3Installed Software",
+            "padding": "16px"
+          },
+          {
+            "title": "\u25a3Virtualisation / Hypervisor",
+            "padding": "16px"
+          },
+          {
+            "title": "\u25a3Server Services",
+            "padding": "16px"
+          }
+        ],
+        "fields": [
+          {
+            "id": "platform-select",
+            "height": 42,
+            "label": "Operating System"
+          },
+          {
+            "id": "version-select",
+            "height": 42,
+            "label": "OS / Platform version"
+          },
+          {
+            "id": "host-platform-select",
+            "height": 42,
+            "label": "Hypervisor software"
+          },
+          {
+            "id": "host-version",
+            "height": 42,
+            "label": "Hypervisor version"
+          }
+        ],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 16,
+            "y": 898,
+            "width": 174.5,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 199.5,
+            "y": 898,
+            "width": 174.5,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 390,
+      "dark": true,
+      "source": {
+        "padding": "16px",
+        "inputHeight": 42
+      },
+      "live": {
+        "tab": "networking",
+        "cards": [
+          {
+            "title": "\u25a3Network Identity",
+            "padding": "16px"
+          },
+          {
+            "title": "\u25a3Subnet Guidance",
+            "padding": "16px"
+          }
+        ],
+        "fields": [
+          {
+            "id": "dev-block",
+            "height": 42,
+            "label": "IP Address Block"
+          },
+          {
+            "id": "dev-subnet",
+            "height": 42,
+            "label": "Subnet *"
+          },
+          {
+            "id": "dev-ip",
+            "height": 42,
+            "label": "Primary IP Address *"
+          },
+          {
+            "id": "dev-ip-available",
+            "height": 42,
+            "label": "Or choose an available IP"
+          },
+          {
+            "id": "dev-vlan",
+            "height": 42,
+            "label": "VLAN"
+          }
+        ],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 16,
+            "y": 898,
+            "width": 174.5,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 199.5,
+            "y": 898,
+            "width": 174.5,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 390,
+      "dark": true,
+      "source": {
+        "padding": "16px",
+        "inputHeight": null
+      },
+      "live": {
+        "tab": "notes",
+        "cards": [
+          {
+            "title": "\u25a3Notes / Details",
+            "padding": "16px"
+          }
+        ],
+        "fields": [],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 16,
+            "y": 898,
+            "width": 174.5,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 199.5,
+            "y": 898,
+            "width": 174.5,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 320,
+      "dark": false,
+      "source": {
+        "padding": "16px",
+        "inputHeight": 42
+      },
+      "live": {
+        "tab": "general",
+        "cards": [
+          {
+            "title": "\u25a3Device Identity",
+            "padding": "16px"
+          },
+          {
+            "title": "\u25a3Virtual Machine Configuration",
+            "padding": "16px"
+          },
+          {
+            "title": "\u25a3Mounting & Rack Configuration",
+            "padding": "16px"
+          }
+        ],
+        "fields": [
+          {
+            "id": "dev-name",
+            "height": 42,
+            "label": "Device Name *"
+          },
+          {
+            "id": "dev-deployment",
+            "height": 42,
+            "label": "Deployment"
+          },
+          {
+            "id": "dev-type",
+            "height": 42,
+            "label": "Physical device type"
+          },
+          {
+            "id": "dev-location",
+            "height": 42,
+            "label": "Location Area *"
+          },
+          {
+            "id": "dev-status",
+            "height": 42,
+            "label": "Device Status"
+          },
+          {
+            "id": "dev-mount-type",
+            "height": 42,
+            "label": "Device Mounting"
+          },
+          {
+            "id": "dev-rack-id",
+            "height": 42,
+            "label": "Rack"
+          },
+          {
+            "id": "dev-rack-face",
+            "height": 42,
+            "label": "Face"
+          },
+          {
+            "id": "dev-rack-u",
+            "height": 42,
+            "label": "Start U"
+          },
+          {
+            "id": "dev-rack-height",
+            "height": 42,
+            "label": "U Height"
+          }
+        ],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 16,
+            "y": 898,
+            "width": 139.5,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 164.5,
+            "y": 898,
+            "width": 139.5,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 320,
+      "dark": false,
+      "source": {
+        "padding": "16px",
+        "inputHeight": 42
+      },
+      "live": {
+        "tab": "hardware",
+        "cards": [
+          {
+            "title": "\u25a3Hardware & Lifecycle",
+            "padding": "16px"
+          }
+        ],
+        "fields": [
+          {
+            "id": "dev-manufacturer-select",
+            "height": 42,
+            "label": "Manufacturer"
+          },
+          {
+            "id": "dev-model-select",
+            "height": 42,
+            "label": "Model"
+          },
+          {
+            "id": "dev-serial",
+            "height": 42,
+            "label": "Serial number"
+          },
+          {
+            "id": "device-detail-networkCard",
+            "height": 42,
+            "label": "Network card"
+          },
+          {
+            "id": "device-detail-networkConnection",
+            "height": 42,
+            "label": "Network connection method"
+          },
+          {
+            "id": "device-detail-processor",
+            "height": 42,
+            "label": "Processor"
+          },
+          {
+            "id": "device-detail-graphics",
+            "height": 42,
+            "label": "Graphics card"
+          },
+          {
+            "id": "device-detail-memory",
+            "height": 42,
+            "label": "Memory size"
+          },
+          {
+            "id": "device-detail-memoryUnit",
+            "height": 42,
+            "label": "Memory unit"
+          },
+          {
+            "id": "device-detail-storage",
+            "height": 42,
+            "label": "Storage size"
+          },
+          {
+            "id": "device-detail-storageUnit",
+            "height": 42,
+            "label": "Storage unit"
+          },
+          {
+            "id": "device-detail-raid",
+            "height": 42,
+            "label": "RAID type"
+          },
+          {
+            "id": "device-detail-driveCount",
+            "height": 42,
+            "label": "Number of hard drives"
+          }
+        ],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 16,
+            "y": 898,
+            "width": 139.5,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 164.5,
+            "y": 898,
+            "width": 139.5,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 320,
+      "dark": false,
+      "source": {
+        "padding": "16px",
+        "inputHeight": 42
+      },
+      "live": {
+        "tab": "software",
+        "cards": [
+          {
+            "title": "\u25a3Operating System / Platform",
+            "padding": "16px"
+          },
+          {
+            "title": "\u25a3Installed Software",
+            "padding": "16px"
+          },
+          {
+            "title": "\u25a3Virtualisation / Hypervisor",
+            "padding": "16px"
+          },
+          {
+            "title": "\u25a3Server Services",
+            "padding": "16px"
+          }
+        ],
+        "fields": [
+          {
+            "id": "platform-select",
+            "height": 42,
+            "label": "Operating System"
+          },
+          {
+            "id": "version-select",
+            "height": 42,
+            "label": "OS / Platform version"
+          },
+          {
+            "id": "host-platform-select",
+            "height": 42,
+            "label": "Hypervisor software"
+          },
+          {
+            "id": "host-version",
+            "height": 42,
+            "label": "Hypervisor version"
+          }
+        ],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 16,
+            "y": 898,
+            "width": 139.5,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 164.5,
+            "y": 898,
+            "width": 139.5,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 320,
+      "dark": false,
+      "source": {
+        "padding": "16px",
+        "inputHeight": 42
+      },
+      "live": {
+        "tab": "networking",
+        "cards": [
+          {
+            "title": "\u25a3Network Identity",
+            "padding": "16px"
+          },
+          {
+            "title": "\u25a3Subnet Guidance",
+            "padding": "16px"
+          }
+        ],
+        "fields": [
+          {
+            "id": "dev-block",
+            "height": 42,
+            "label": "IP Address Block"
+          },
+          {
+            "id": "dev-subnet",
+            "height": 42,
+            "label": "Subnet *"
+          },
+          {
+            "id": "dev-ip",
+            "height": 42,
+            "label": "Primary IP Address *"
+          },
+          {
+            "id": "dev-ip-available",
+            "height": 42,
+            "label": "Or choose an available IP"
+          },
+          {
+            "id": "dev-vlan",
+            "height": 42,
+            "label": "VLAN"
+          }
+        ],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 16,
+            "y": 898,
+            "width": 139.5,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 164.5,
+            "y": 898,
+            "width": 139.5,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 320,
+      "dark": false,
+      "source": {
+        "padding": "16px",
+        "inputHeight": null
+      },
+      "live": {
+        "tab": "notes",
+        "cards": [
+          {
+            "title": "\u25a3Notes / Details",
+            "padding": "16px"
+          }
+        ],
+        "fields": [],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 16,
+            "y": 898,
+            "width": 139.5,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 164.5,
+            "y": 898,
+            "width": 139.5,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 320,
+      "dark": true,
+      "source": {
+        "padding": "16px",
+        "inputHeight": 42
+      },
+      "live": {
+        "tab": "general",
+        "cards": [
+          {
+            "title": "\u25a3Device Identity",
+            "padding": "16px"
+          },
+          {
+            "title": "\u25a3Virtual Machine Configuration",
+            "padding": "16px"
+          },
+          {
+            "title": "\u25a3Mounting & Rack Configuration",
+            "padding": "16px"
+          }
+        ],
+        "fields": [
+          {
+            "id": "dev-name",
+            "height": 42,
+            "label": "Device Name *"
+          },
+          {
+            "id": "dev-deployment",
+            "height": 42,
+            "label": "Deployment"
+          },
+          {
+            "id": "dev-type",
+            "height": 42,
+            "label": "Physical device type"
+          },
+          {
+            "id": "dev-location",
+            "height": 42,
+            "label": "Location Area *"
+          },
+          {
+            "id": "dev-status",
+            "height": 42,
+            "label": "Device Status"
+          },
+          {
+            "id": "dev-mount-type",
+            "height": 42,
+            "label": "Device Mounting"
+          },
+          {
+            "id": "dev-rack-id",
+            "height": 42,
+            "label": "Rack"
+          },
+          {
+            "id": "dev-rack-face",
+            "height": 42,
+            "label": "Face"
+          },
+          {
+            "id": "dev-rack-u",
+            "height": 42,
+            "label": "Start U"
+          },
+          {
+            "id": "dev-rack-height",
+            "height": 42,
+            "label": "U Height"
+          }
+        ],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 16,
+            "y": 898,
+            "width": 139.5,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 164.5,
+            "y": 898,
+            "width": 139.5,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 320,
+      "dark": true,
+      "source": {
+        "padding": "16px",
+        "inputHeight": 42
+      },
+      "live": {
+        "tab": "hardware",
+        "cards": [
+          {
+            "title": "\u25a3Hardware & Lifecycle",
+            "padding": "16px"
+          }
+        ],
+        "fields": [
+          {
+            "id": "dev-manufacturer-select",
+            "height": 42,
+            "label": "Manufacturer"
+          },
+          {
+            "id": "dev-model-select",
+            "height": 42,
+            "label": "Model"
+          },
+          {
+            "id": "dev-serial",
+            "height": 42,
+            "label": "Serial number"
+          },
+          {
+            "id": "device-detail-networkCard",
+            "height": 42,
+            "label": "Network card"
+          },
+          {
+            "id": "device-detail-networkConnection",
+            "height": 42,
+            "label": "Network connection method"
+          },
+          {
+            "id": "device-detail-processor",
+            "height": 42,
+            "label": "Processor"
+          },
+          {
+            "id": "device-detail-graphics",
+            "height": 42,
+            "label": "Graphics card"
+          },
+          {
+            "id": "device-detail-memory",
+            "height": 42,
+            "label": "Memory size"
+          },
+          {
+            "id": "device-detail-memoryUnit",
+            "height": 42,
+            "label": "Memory unit"
+          },
+          {
+            "id": "device-detail-storage",
+            "height": 42,
+            "label": "Storage size"
+          },
+          {
+            "id": "device-detail-storageUnit",
+            "height": 42,
+            "label": "Storage unit"
+          },
+          {
+            "id": "device-detail-raid",
+            "height": 42,
+            "label": "RAID type"
+          },
+          {
+            "id": "device-detail-driveCount",
+            "height": 42,
+            "label": "Number of hard drives"
+          }
+        ],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 16,
+            "y": 898,
+            "width": 139.5,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 164.5,
+            "y": 898,
+            "width": 139.5,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 320,
+      "dark": true,
+      "source": {
+        "padding": "16px",
+        "inputHeight": 42
+      },
+      "live": {
+        "tab": "software",
+        "cards": [
+          {
+            "title": "\u25a3Operating System / Platform",
+            "padding": "16px"
+          },
+          {
+            "title": "\u25a3Installed Software",
+            "padding": "16px"
+          },
+          {
+            "title": "\u25a3Virtualisation / Hypervisor",
+            "padding": "16px"
+          },
+          {
+            "title": "\u25a3Server Services",
+            "padding": "16px"
+          }
+        ],
+        "fields": [
+          {
+            "id": "platform-select",
+            "height": 42,
+            "label": "Operating System"
+          },
+          {
+            "id": "version-select",
+            "height": 42,
+            "label": "OS / Platform version"
+          },
+          {
+            "id": "host-platform-select",
+            "height": 42,
+            "label": "Hypervisor software"
+          },
+          {
+            "id": "host-version",
+            "height": 42,
+            "label": "Hypervisor version"
+          }
+        ],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 16,
+            "y": 898,
+            "width": 139.5,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 164.5,
+            "y": 898,
+            "width": 139.5,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 320,
+      "dark": true,
+      "source": {
+        "padding": "16px",
+        "inputHeight": 42
+      },
+      "live": {
+        "tab": "networking",
+        "cards": [
+          {
+            "title": "\u25a3Network Identity",
+            "padding": "16px"
+          },
+          {
+            "title": "\u25a3Subnet Guidance",
+            "padding": "16px"
+          }
+        ],
+        "fields": [
+          {
+            "id": "dev-block",
+            "height": 42,
+            "label": "IP Address Block"
+          },
+          {
+            "id": "dev-subnet",
+            "height": 42,
+            "label": "Subnet *"
+          },
+          {
+            "id": "dev-ip",
+            "height": 42,
+            "label": "Primary IP Address *"
+          },
+          {
+            "id": "dev-ip-available",
+            "height": 42,
+            "label": "Or choose an available IP"
+          },
+          {
+            "id": "dev-vlan",
+            "height": 42,
+            "label": "VLAN"
+          }
+        ],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 16,
+            "y": 898,
+            "width": 139.5,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 164.5,
+            "y": 898,
+            "width": 139.5,
+            "height": 39
+          }
+        ]
+      }
+    },
+    {
+      "width": 320,
+      "dark": true,
+      "source": {
+        "padding": "16px",
+        "inputHeight": null
+      },
+      "live": {
+        "tab": "notes",
+        "cards": [
+          {
+            "title": "\u25a3Notes / Details",
+            "padding": "16px"
+          }
+        ],
+        "fields": [],
+        "overflow": 0,
+        "extraHardwareCard": false,
+        "footer": [
+          {
+            "text": "Back to Details",
+            "x": 16,
+            "y": 898,
+            "width": 139.5,
+            "height": 39
+          },
+          {
+            "text": "Save Device",
+            "x": 164.5,
+            "y": 898,
+            "width": 139.5,
+            "height": 39
+          }
+        ]
+      }
+    }
+  ],
+  "inlineCreateCatalogueEditSaveReload": true,
+  "standaloneAddAndManagerAddRename": true,
+  "duplicatePreservesFields": true,
+  "typeSpecificManagerVisibility": true,
+  "notesKeyboardTools": true,
+  "limit100": true,
+  "invalid101Rejected": true,
+  "hardwareCustomPlatformNotesAndAssignmentsRetained": true,
+  "scriptErrors": []
+}

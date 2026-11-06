@@ -5578,12 +5578,12 @@ function openIpModal(ip) {
                     const servicesManager = managers.querySelector('#manage-server-services-button');
                     const softwareManager = managers.querySelector('#manage-installed-software-button');
                     if (servicesManager) {
-                        servicesManager.className = 'device-review-smallbtn';
+                        servicesManager.className = 'device-review-smallbtn' + (servicesManager.classList.contains('hidden') ? ' hidden' : '');
                         servicesManager.textContent = 'Manage Server Services';
                         servicesSection.insertBefore(servicesManager, servicesSection.querySelector('#server-services-fields'));
                     }
                     if (softwareManager) {
-                        softwareManager.className = 'device-review-smallbtn';
+                        softwareManager.className = 'device-review-smallbtn' + (softwareManager.classList.contains('hidden') ? ' hidden' : '');
                         softwareManager.textContent = 'Manage Installed Software';
                         installedSection.insertBefore(softwareManager, installedSection.querySelector('#device-form-installed-software-fields'));
                     }

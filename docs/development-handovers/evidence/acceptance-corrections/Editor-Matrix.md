@@ -4,26 +4,11 @@ Reference: pinned `devices-details-forms-batch-04.html` at `c26db4a56bbc30f95b56
 
 ## Current Result
 
-The uncontested restorations are implemented. [208 main-tab comparisons](editor-comparisons.json) cover eleven Add/Edit/Duplicate/type scenarios at 1440×950 and 390×844 in both themes. Complete fields/cards/actions are deduplicated into named sets; each case retains its exact live/source set references and geometry. The 33-state baseline below remains historical evidence.
+Both outstanding provisions are now explicitly authorised and implemented. See the [final #326 placement matrix, checks and evidence](../issue-326-final/Report.md). The completed batch's [208 main-tab comparisons](editor-comparisons.json) remain valid bounded historical measurements. The final follow-up adds [40 placement comparisons and real saved workflows](../issue-326-final/preservation-results.json) and [20/20 matched expanded forms](../issue-326-final/inline-editor-results.json), including the consistent 100-character limit. The earlier eight held cases are superseded by those new measurements, not silently relabelled in the old JSON.
 
-[Twenty expanded inline comparisons](inline-editor-results.json) cover Location, Manufacturer, Model, Software and Server Service creation at both widths/themes. Twelve match the source measurements/labels/actions; eight software/service cases retain the existing 80-character limit where the preview says 100. That policy decision remains open. All creation fields use the source's 39px size; search fields use 38px.
+All five retained-control groups remain in their explicitly authorised cards/toolbars. Hardware has no extra nested card treatment; software/service managers use the approved small buttons while retaining type-based visibility. Custom platform/version, VLAN/available-IP/subnet creation, rack creation and Numbers/Code/Link remain functional. No new card/tab/feature or remaining design-decision blocker is introduced. Owner private visual/native-browser/accessibility acceptance remains separate.
 
-[Real saved workflows](device-workflows.json) verify Proxmox OS/software does not grant hosting, copied unflagged physical records remain ineligible, an explicitly enabled physical host can create VMs, guest edit/duplicate/reload retains relationships, known legacy OS values are shown, and an incomplete guest retains its missing-host identity and unknown fields. Later value-preservation refinements were checked with targeted workflows and current captures; the unchanged layout matrix was reused rather than rerun needlessly.
-
-| Area | Result | Preservation / remaining decision |
-| --- | --- | --- |
-| Dialog, tabs and footer | Source bounds, card order, 20/16px card padding, tab entry at top, × close control and Add/Edit/Duplicate footer actions checked | Existing focus/discard/permission handlers retained. Duplicate Back to Details returns to the original record. |
-| General physical | Identity, deployment, classification, location, edit-only status and mounting/rack fields retained | Existing bounded rack selectors, create actions and validation are not removed. |
-| General VM | Host/resources remain on General; Hardware tab and physical mounting are omitted as applicable | Legacy/incomplete assignment metadata is preserved; new/copy VMs still require an eligible host. |
-| Hardware | Source Manufacturer/Model/Serial labels and approved field/card treatment restored | Existing type-specific hardware/catalogue controls remain at baseline positions pending placement approval. |
-| Software & Firmware | OS card stays visible independently; source four-card order, 17×17px host checkbox, host grid, software/service checklists and compact searches checked | The source's two explicit hosting presentations share one canonical value. No OS/software inference enables hosting. Existing version/custom/catalogue controls remain pending the preservation decision. |
-| Networking | Source card hierarchy, Primary IP label and reservation checkbox/help retained | VLAN, available-IP and creation controls, required fields and permission restrictions remain; the preview does not contain every working control. |
-| Notes | Source card, text field and common formatting controls retained | Existing Numbers/Code/Link tools are preserved; their precise presentation is within the open placement decision. |
-| Expanded creation | Source labels, actions, 39px inputs and current catalogue associations checked | Existing 80-character software/service validation is not silently expanded to the preview's 100. |
-
-**Open decisions:** [working-control preservation placements](https://github.com/Caffoot/Caffoot-Lite/issues/326#issuecomment-6684664810) and [80/100-character validation conflict](https://github.com/Caffoot/Caffoot-Lite/issues/326#issuecomment-6688818756). Neither is approved. Existing controls have not been deleted or moved under those proposals. Full literal-design fidelity and owner visual acceptance are therefore not claimed.
-
-The source is a standalone preview with illustrative inventory, no real persistence and preview-only descriptions. Real data, explicit validation/permission locks, custom catalogue choices and the existing shared dark palette remain functional. Matching geometry does not mean those deliberate data/permission differences are hidden or treated as identical.
+The original 33-state baseline and subsequent corrections below are historical evidence. Their references to the then-pending placements/validation decision are superseded by the linked final report and approval record, not current blockers.
 
 ## Initial Baseline Record
 

@@ -121,7 +121,6 @@ class InventorySettingsTests(unittest.TestCase):
         html = (root / "interface/screens/device-management.html").read_text()
         for field in ("software-custom-name", "server-service-name-input",
                       "server-service-manager-name-input", "software-name"):
-            import re
             self.assertRegex(html, r'id="' + field + r'"[^>]*maxlength="100"')
         self.assertIn('maxlength="80"', (root / "interface/screens/racks.html").read_text())
         self.save("hardwareCatalogue", [{"model": "M" * 120}])

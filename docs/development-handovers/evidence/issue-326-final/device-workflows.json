@@ -1,0 +1,10 @@
+{
+  "comparisons": 0,
+  "host": "Fictional Proxmox Host",
+  "vmCreateEditDuplicateReload": true,
+  "unflaggedDuplicateRemainsIneligible": true,
+  "legacyPlatformShown": true,
+  "legacyIncompleteGuestPreserved": true,
+  "explicitHostEligibility": true,
+  "scriptErrors": []
+}

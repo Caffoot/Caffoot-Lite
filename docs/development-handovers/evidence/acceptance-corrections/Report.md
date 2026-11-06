@@ -1,5 +1,7 @@
 # Acceptance Corrections — Verification And Private Review
 
+**Subsequent #326 delivery:** Both previously outstanding decisions are authorised and implemented. Follow the [final #326 report](../issue-326-final/Report.md) for the completed placements and 100-character rule. This earlier coordinated-batch report remains historical evidence; its pending #326 decisions are superseded.
+
 The authorised corrections for #308, #311 and #325 are implemented. The uncontested #326 restorations and saved host/guest workflows are implemented and checked; two precise design/compatibility decisions remain open. This is a continuation of the interrupted batch, retaining valid local work and evidence rather than restarting it.
 
 Starting checkpoint: `f528396dc57d25d304b67290d6507d02dce0eb09`. Pushed implementation checkpoints: `5d4a8bf46fff835d9b97031c938095a31294035a` and `3fcc03dd649b86204e77233b4a95290a4e6f2341`. The final delivery SHA, exact private image identity and final GitHub check links are recorded in all four issues; this report and its runtime hashes are committed in that delivery.
