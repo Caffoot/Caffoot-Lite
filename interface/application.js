@@ -1120,6 +1120,8 @@ function hierarchyValidateTypes(subnets) {
 
         function renderContent() {
             const container = document.getElementById('main-content');
+            // Clear confirmation secrets before replacing an account view, including while a request is pending.
+            container.querySelector('#account-email-verification-form')?.reset();
             document.body.style.overflow='';
             container.className = ['account','audit','settings'].includes(currentTab) ? '' : 'main';
             const previousStrips=container.dataset.renderedTab===currentTab
@@ -8686,7 +8688,8 @@ void (async () => {
     }
     function showEmailVerificationFeedback(message,focusNext){
       status.textContent=message;
-      if(focusNext){status.scrollIntoView({block:'center',behavior:'auto'});focusNext.focus({preventScroll:true});}
+      status.scrollIntoView({block:'center',behavior:'auto'});
+      if(focusNext)focusNext.focus({preventScroll:true});
     }
     action.addEventListener('click',()=>{
       closeEmailVerification();panel.hidden=false;action.setAttribute('aria-expanded','true');

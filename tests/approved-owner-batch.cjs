@@ -48,6 +48,18 @@ module.exports=async({page,context,out})=>{
   assert.equal(preview.horizontal.colour,'rgb(59, 130, 246)');assert.equal(preview.vertical.colour,'rgb(59, 130, 246)');
   assert.ok(preview.horizontalScrollUnchanged&&preview.verticalScrollUnchanged&&preview.invalid&&preview.verticalInvalid&&preview.clean,JSON.stringify(preview));
   assert.match(preview.label,/Move to U/);
+  if((width===1440||width===390)&&face==='front'){
+   await page.locator('[data-rack-scroll]').scrollIntoViewIfNeeded();
+   await page.evaluate(face=>{
+    const pane=document.querySelector('[data-rack-scroll]');pane.scrollTop=500;
+    const source=document.querySelector('[data-rack-accessory="horizontal-'+face+'"]'),row=document.querySelector('[data-rack-drop-u="26"]'),dt=new DataTransfer();
+    source.dispatchEvent(new DragEvent('dragstart',{bubbles:true,dataTransfer:dt,clientY:source.getBoundingClientRect().y+5}));
+    row.dispatchEvent(new DragEvent('dragover',{bubbles:true,cancelable:true,dataTransfer:dt,clientX:row.getBoundingClientRect().x+50,clientY:row.getBoundingClientRect().y+5}));
+   },face);
+   await page.locator('[data-rack-scroll]').screenshot({path:path.join(out,`rack-preview-${width}-${dark?'dark':'light'}.png`)});
+   await page.evaluate(()=>{document.dispatchEvent(new DragEvent('dragend',{bubbles:true}));document.querySelector('[data-rack-scroll]').scrollTop=700;});
+  }
+
   const horizontal=await page.evaluate(async face=>{const ok=await moveRackAccessoryToPosition('horizontal-'+face,'rack-0',30);return {ok,scroll:document.querySelector('[data-rack-scroll]').scrollTop};},face);
   assert.ok(horizontal.ok);assert.equal(horizontal.scroll,700);
   const response=page.waitForResponse(r=>r.url().endsWith('/api/inventory/state'));
@@ -63,6 +75,9 @@ module.exports=async({page,context,out})=>{
   assert.equal(await page.locator('#rack-accessory-remove-button').evaluate(el=>el===document.activeElement),true);
   await page.evaluate(()=>closeModal(true));results.push({kind:'rack',width,dark,face,scroll:700,preview});
  }
+ await page.evaluate(()=>switchTab('account'));
+ assert.equal(await page.locator('#account-email-status').textContent(),'Not Verified');
+ assert.ok(await page.locator('#open-email-verification').isDisabled());
  // The backend's proof/security tests exercise real tokens; these browser routes only test UI states.
  let verified=false;
  await page.route('**/api/account/profile',async route=>{
@@ -92,15 +107,27 @@ module.exports=async({page,context,out})=>{
  const publicContext=await context.browser().newContext({ignoreHTTPSErrors:true});
  const signIn=await publicContext.newPage();signIn.on('pageerror',error=>errors.push(error.message));
  await signIn.route(/https:\/\/(fonts\.googleapis|fonts\.gstatic|cdnjs\.cloudflare)\.com\//,route=>route.abort());
- let requestFails=false,resetFails=true,requests=[];
- await signIn.route('**/api/recovery/request',route=>{
+ let requestFails=false,resetFails=true,requests=[],requestGate=null,releaseRequest;
+ await signIn.route('**/api/recovery/request',async route=>{
   requests.push(route.request().postDataJSON());
+  if(requestGate)await requestGate;
   return route.fulfill(requestFails?{status:503,json:{error:'Service unavailable'}}:{json:{message:'If recovery is available, instructions will be emailed. Otherwise, contact your Caffoot Lite administrator.'}});
  });
  await signIn.route('**/api/recovery/confirm',route=>{
   assert.deepEqual(Object.keys(route.request().postDataJSON()).sort(),['mfa_code','password','token']);
   return route.fulfill(resetFails?{status:400,json:{error:'Invalid or expired confirmation'}}:{json:{status:'Password updated; sign in with your authenticator if required'}});
  });
+ await signIn.goto(address+'/');await signIn.locator('#auth-heading').filter({hasText:'Welcome Back'}).waitFor();
+ await signIn.getByText('Forgot Password?',{exact:true}).click();await signIn.locator('#recovery-request-form input').fill('fictional-user');
+ requestGate=new Promise(resolve=>{releaseRequest=resolve;});
+ const pendingResponse=signIn.waitForResponse(response=>response.url().endsWith('/api/recovery/request'));
+ await signIn.locator('#recovery-request-form button').click();
+ assert.match(await signIn.locator('#recovery-message').textContent(),/Requesting recovery/);
+ assert.ok(await signIn.locator('#recovery-request-form button').isDisabled());
+ assert.equal(await signIn.locator('#recovery-request-form').getAttribute('aria-busy'),'true');
+ assert.ok(await signIn.locator('#recovery-message').evaluate(el=>{const r=el.getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight;}));
+ await signIn.locator('#recovery-back').click();releaseRequest();await pendingResponse;requestGate=null;
+ assert.ok(await signIn.locator('#recovery-confirm-form').isHidden());
  for(const [width,height] of [[1440,950],[1280,800],[900,800],[768,800],[730,800],[390,844],[320,700]])for(const dark of [false,true]){
   await signIn.setViewportSize({width,height});await signIn.goto(address+'/');await signIn.bringToFront();await signIn.locator('#auth-heading').filter({hasText:'Welcome Back'}).waitFor();
   await signIn.evaluate(dark=>{localStorage.setItem('caffoot_theme_preference',dark?'dark':'light');applySignInTheme();},dark);

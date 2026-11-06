@@ -11,7 +11,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from backend.accounts import bootstrap_first_admin, confirm_admin_mfa
-from backend.account_email import MAIL_REQUESTS
+from backend.account_email import MAIL_REQUESTS, REQUEST_MESSAGE
 from backend.http_security import COOKIE_NAME
 from backend.mfa import code_at
 from backend.profiles import save_profile
@@ -73,3 +73,37 @@ class AccountEmailHttpTests(unittest.TestCase):
         self.assertEqual(self.post('/api/account/email/confirm',{'token':token,'password':'password'},authenticated=True)[0],400)
         with sqlite3.connect(self.path) as db:
             self.assertEqual(db.execute('SELECT email_verified FROM account_profiles').fetchone()[0],1)
+
+    def test_recovery_eligibility_and_queue_failures_keep_the_same_public_response(self):
+        cases = [
+            ("verified", 1, 1, True, "email-owner", True),
+            ("unverified", 1, 0, True, "email-owner", False),
+            ("disabled", 0, 1, True, "email-owner", False),
+            ("unknown", 1, 1, True, "fictional-unknown", False),
+            ("no SMTP", 1, 1, False, "email-owner", False),
+            ("email is not a username lookup", 1, 1, True, "owner@example.org", False),
+        ]
+        for label, active, verified, configured, username, queued in cases:
+            with self.subTest(label=label):
+                MAIL_REQUESTS._failures.clear()
+                with sqlite3.connect(self.path) as db:
+                    db.execute("UPDATE accounts SET active=? WHERE id=?", (active, self.admin))
+                    db.execute("UPDATE account_profiles SET email_verified=? WHERE account_id=?", (verified, self.admin))
+                self.mocks[2].reset_mock()
+                with patch('backend.server.smtp_public_settings', return_value={'configured': configured}):
+                    response = self.post('/api/recovery/request', {'username': username})
+                self.assertEqual(response, (200, {'message': REQUEST_MESSAGE}))
+                self.assertEqual(self.mocks[2].called, queued)
+        self.mocks[2].return_value = False
+        with patch('backend.server.smtp_public_settings', return_value={'configured': True}):
+            self.assertEqual(self.post('/api/recovery/request', {'username': 'email-owner'}),
+                             (200, {'message': REQUEST_MESSAGE}))
+        self.mocks[2].reset_mock()
+        with patch.object(MAIL_REQUESTS, 'allowed', return_value=False):
+            self.assertEqual(self.post('/api/recovery/request', {'username': 'email-owner'}),
+                             (200, {'message': REQUEST_MESSAGE}))
+        self.assertFalse(self.mocks[2].called)
+
+    def test_recovery_does_not_accept_an_email_payload(self):
+        self.assertEqual(self.post('/api/recovery/request', {'email': 'owner@example.org'})[0], 400)
+        self.assertFalse(self.mocks[2].called)

@@ -1426,8 +1426,10 @@ async function run(){
   const verticalAccessory=(await state(page)).rackAccessories.find(a=>a.name==='Browser Vertical PDU');
   await dragRackItem('[data-vertical-accessory="'+verticalAccessory.id+'"]','.vertical-rack-accessory-rail[data-side="right"]',true);
   await persisted(page,s=>s.rackAccessories.find(a=>a.id===verticalAccessory.id).side==='right','Vertical accessory drag to right rail');
+  await page.locator('.vertical-rack-accessory-rail[data-side="right"] [data-vertical-accessory="'+verticalAccessory.id+'"]').waitFor();
   await dragRackItem('[data-vertical-accessory="'+verticalAccessory.id+'"]','.vertical-rack-accessory-rail[data-side="left"]',true);
   await persisted(page,s=>s.rackAccessories.find(a=>a.id===verticalAccessory.id).side==='left','Vertical accessory drag back to left rail');
+  await page.locator('.vertical-rack-accessory-rail[data-side="left"] [data-vertical-accessory="'+verticalAccessory.id+'"]').waitFor();
   console.log('Rack device, horizontal accessory and L/R 0U HTML5 drag handlers, collision rejection and SQLite saves passed');
 
   // Exercise the real print action, capturing its HTML without invoking the system print dialog.

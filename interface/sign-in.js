@@ -196,10 +196,8 @@ $('sign-out').addEventListener('click',async()=>{
 let recoveryRequestVersion=0;
 function showRecoveryFeedback(message,focusNext){
  const status=$('recovery-message');status.textContent=message;
- if(focusNext){
-  status.scrollIntoView({block:'center',behavior:'auto'});
-  focusNext.focus({preventScroll:true});
- }
+ status.scrollIntoView({block:'center',behavior:'auto'});
+ if(focusNext)focusNext.focus({preventScroll:true});
 }
 function resetRecoveryFlow(){
  recoveryRequestVersion++;
@@ -210,6 +208,7 @@ function resetRecoveryFlow(){
  $('recovery-request-form').hidden=false;$('recovery-resend').hidden=true;
  $('recovery-message').textContent='';
 }
+window.addEventListener('pagehide',resetRecoveryFlow);
 $('password-recovery').addEventListener('toggle',()=>{if(!$('password-recovery').open)resetRecoveryFlow();});
 $('recovery-back').addEventListener('click',()=>{
  resetRecoveryFlow();$('password-recovery').open=false;$('username').focus();
