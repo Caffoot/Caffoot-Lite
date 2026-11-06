@@ -69,3 +69,7 @@ Email proof helpers now use `email_proof_secret`, `email_attempts_remaining`, `i
 ## Device Editor Amendments
 
 `initialiseDeviceTabs` moves existing controls into the approved form cards, with General hosting, VM visibility and the flexible Notes workspace. `isDeviceEditorHypervisorProduct` filters offered form choices; `renderDeviceEditorRetainedSoftware` explains preserved assignments without removing stored keys. `refreshDeviceEditorHostVersionChoices` retains custom versions alongside existing suggestions. `showDeviceEditorFeedback` and `bindDeviceEditorValidation` reveal editor-local errors and the first relevant field. Other screens retain their existing feedback. The [Issue #327 plan](Issue-327-Device-Forms-Plan.md) records the owner amendments and preservation rules.
+
+## Rack Shelf Associations
+
+`backend/shelf_associations.py::validate_device_shelf_association` checks the optional stable shelf reference without allocating device U. `backend/collection_saves.py::remove_linked_rack_shelf` checks the reviewed shelf/device revisions and existing reservations, then commits explicit reassignment/retirement, shelf deletion and history together. Existing device save permissions include the new placement field. See the [Issue #331 contract](Issue-331-Implementation.md).

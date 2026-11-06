@@ -4,6 +4,7 @@ Returns diagnostics in the exact source stage order. This is not an import
 approval or persistence API.
 """
 from backend.inventory import RECOGNISED_MOUNTS
+from backend.shelf_associations import validate_device_shelf_association
 from backend.ipam_validation import ip_belongs_to_subnet
 from backend.normalisation_pipeline import _valid_supported_cidr
 from backend.normalisation_validation import _number, _valid_ipv4
@@ -72,6 +73,11 @@ def validate_detached_application_state(candidate):
                     allocation.get("deviceId") != identifier or
                     allocation.get("status") != expected):
                 errors.append(f"IPAM is out of sync for {name} ({ip}).")
+        try:
+            if validate_device_shelf_association(device, candidate):
+                continue
+        except ValueError as error:
+            errors.append(str(error))
         if device.get("rackId"):
             rack = next((r for r in racks if r.get("id") == device["rackId"]), None)
             if rack is None:

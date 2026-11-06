@@ -6,7 +6,7 @@ Scope: named JavaScript declarations/assignments in the three application script
 
 The account hydration/photo functions now have purpose-based callable bindings matching their function names: `hydrateAccount` and `removeAccountPhoto`. The immutable design manifest retains its historical integration-entry names; those metadata names are not the runtime's current function map. Pinned source paths, revisions and hashes are unchanged.
 
-**Recorded definitions: 642.** Regenerate after changing declarations or their lines. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
+**Recorded definitions: 644.** Regenerate after changing declarations or their lines. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
 
 ## interface/loader.js
 
@@ -528,7 +528,7 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 | Function | Line |
 | --- | ---: |
-| [`validate_detached_application_state`](../../backend/application_integrity.py#L13) | 13 |
+| [`validate_detached_application_state`](../../backend/application_integrity.py#L14) | 14 |
 
 ## backend/audit_events.py
 
@@ -551,8 +551,9 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | Function | Line |
 | --- | ---: |
 | [`change_inventory_record`](../../backend/collection_saves.py#L19) | 19 |
-| [`change_ipam_subnet_and_vlan_records`](../../backend/collection_saves.py#L105) | 105 |
-| [`delete_subnet_with_dependencies`](../../backend/collection_saves.py#L242) | 242 |
+| [`change_ipam_subnet_and_vlan_records`](../../backend/collection_saves.py#L109) | 109 |
+| [`delete_subnet_with_dependencies`](../../backend/collection_saves.py#L246) | 246 |
+| [`remove_linked_rack_shelf`](../../backend/collection_saves.py#L363) | 363 |
 
 ## backend/deployment_settings.py
 
@@ -570,12 +571,12 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 | Function | Line |
 | --- | ---: |
-| [`_check_primary_ip_claim`](../../backend/device_saves.py#L24) | 24 |
-| [`_prepare_related_guests`](../../backend/device_saves.py#L43) | 43 |
-| [`_persist_related_guests`](../../backend/device_saves.py#L87) | 87 |
-| [`save_reserved_device`](../../backend/device_saves.py#L100) | 100 |
-| [`create_device`](../../backend/device_saves.py#L232) | 232 |
-| [`delete_reserved_device`](../../backend/device_saves.py#L305) | 305 |
+| [`_check_primary_ip_claim`](../../backend/device_saves.py#L25) | 25 |
+| [`_prepare_related_guests`](../../backend/device_saves.py#L44) | 44 |
+| [`_persist_related_guests`](../../backend/device_saves.py#L88) | 88 |
+| [`save_reserved_device`](../../backend/device_saves.py#L101) | 101 |
+| [`create_device`](../../backend/device_saves.py#L233) | 233 |
+| [`delete_reserved_device`](../../backend/device_saves.py#L306) | 306 |
 
 ## backend/history_permissions.py
 
@@ -735,11 +736,11 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 | Function | Line |
 | --- | ---: |
-| [`_number`](../../backend/normalisation_validation.py#L11) | 11 |
-| [`_integer`](../../backend/normalisation_validation.py#L22) | 22 |
-| [`_valid_ipv4`](../../backend/normalisation_validation.py#L26) | 26 |
-| [`validate_normalisation_vlans`](../../backend/normalisation_validation.py#L36) | 36 |
-| [`validate_normalisation_devices`](../../backend/normalisation_validation.py#L58) | 58 |
+| [`_number`](../../backend/normalisation_validation.py#L12) | 12 |
+| [`_integer`](../../backend/normalisation_validation.py#L23) | 23 |
+| [`_valid_ipv4`](../../backend/normalisation_validation.py#L27) | 27 |
+| [`validate_normalisation_vlans`](../../backend/normalisation_validation.py#L37) | 37 |
+| [`validate_normalisation_devices`](../../backend/normalisation_validation.py#L59) | 59 |
 
 ## backend/permissions.py
 
@@ -774,11 +775,11 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 | Function | Line |
 | --- | ---: |
-| [`_number`](../../backend/rack_validation.py#L16) | 16 |
-| [`_integer`](../../backend/rack_validation.py#L34) | 34 |
-| [`_label`](../../backend/rack_validation.py#L39) | 39 |
-| [`find_rack_import_conflicts`](../../backend/rack_validation.py#L43) | 43 |
-| [`find_rack_import_conflicts.place`](../../backend/rack_validation.py#L50) | 50 |
+| [`_number`](../../backend/rack_validation.py#L17) | 17 |
+| [`_integer`](../../backend/rack_validation.py#L35) | 35 |
+| [`_label`](../../backend/rack_validation.py#L40) | 40 |
+| [`find_rack_import_conflicts`](../../backend/rack_validation.py#L44) | 44 |
+| [`find_rack_import_conflicts.place`](../../backend/rack_validation.py#L51) | 51 |
 
 ## backend/recover_admin.py
 
@@ -821,11 +822,11 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | [`Handler.do_GET`](../../backend/server.py#L112) | 112 |
 | [`Handler.do_POST`](../../backend/server.py#L440) | 440 |
 | [`Handler.handle_user_mutation`](../../backend/server.py#L568) | 568 |
-| [`Handler.handle_account_email`](../../backend/server.py#L920) | 920 |
-| [`Handler.handle_profile_photo`](../../backend/server.py#L1000) | 1000 |
-| [`Handler.handle_import`](../../backend/server.py#L1031) | 1031 |
-| [`Handler.respond`](../../backend/server.py#L1107) | 1107 |
-| [`main`](../../backend/server.py#L1120) | 1120 |
+| [`Handler.handle_account_email`](../../backend/server.py#L926) | 926 |
+| [`Handler.handle_profile_photo`](../../backend/server.py#L1006) | 1006 |
+| [`Handler.handle_import`](../../backend/server.py#L1037) | 1037 |
+| [`Handler.respond`](../../backend/server.py#L1113) | 1113 |
+| [`main`](../../backend/server.py#L1126) | 1126 |
 
 ## backend/sessions.py
 
@@ -842,6 +843,12 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | Function | Line |
 | --- | ---: |
 | [`save_inventory_setting`](../../backend/settings_saves.py#L12) | 12 |
+
+## backend/shelf_associations.py
+
+| Function | Line |
+| --- | ---: |
+| [`validate_device_shelf_association`](../../backend/shelf_associations.py#L8) | 8 |
 
 ## backend/smtp_settings.py
 

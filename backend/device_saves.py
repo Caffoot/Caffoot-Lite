@@ -13,6 +13,7 @@ from .rack_validation import find_rack_import_conflicts
 
 _RACK_PLACEMENT_FIELDS = frozenset((
     "rackId", "face", "rackUStart", "rackUEnd", "rackUHeight", "mountType",
+    "rackShelfAccessoryId",
 ))
 
 _GUEST_FIELDS = frozenset((

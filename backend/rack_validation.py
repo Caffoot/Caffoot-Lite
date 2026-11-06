@@ -4,6 +4,7 @@ Mirrors findRackImportConflicts. Does not approve or persist imports.
 Run only after published normalisation and integrity validation are complete.
 """
 import math
+from .shelf_associations import validate_device_shelf_association
 
 ACCESSORY_TYPES = frozenset((
     "blank", "patch", "brush", "cable", "shelf", "pdu_horizontal",
@@ -73,6 +74,12 @@ def find_rack_import_conflicts(candidate):
         positions.append((start_number, end, label))
 
     for device in candidate["devices"]:
+        try:
+            if validate_device_shelf_association(device, candidate):
+                continue
+        except ValueError as error:
+            issues.append(str(error))
+            continue
         if not device.get("rackId"):
             continue
         place(_label(device, "Device"), device["rackId"],

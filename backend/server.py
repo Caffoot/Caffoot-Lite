@@ -12,7 +12,7 @@ from urllib.parse import urlsplit
 
 from .device_saves import create_device, delete_reserved_device, save_reserved_device
 from .ipam_saves import change_independent_allocation, change_bulk_allocations
-from .collection_saves import (change_inventory_record,
+from .collection_saves import (change_inventory_record, remove_linked_rack_shelf,
                                change_ipam_subnet_and_vlan_records,
                                delete_subnet_with_dependencies)
 from .settings_saves import save_inventory_setting
@@ -455,7 +455,7 @@ class Handler(BaseHTTPRequestHandler):
                          "/api/devices/delete", "/api/ipam/allocation/save",
                          "/api/ipam/allocation/delete", "/api/ipam/allocation/bulk",
                          "/api/ipam/subnets/save", "/api/ipam/subnets/delete",
-                         "/api/inventory/record/save",
+                         "/api/inventory/rack-shelves/remove", "/api/inventory/record/save",
                          "/api/inventory/record/delete", "/api/inventory/settings/save",
                          "/api/inventory/device-catalogue/change", "/api/inventory/reset",
                          "/api/inventory/ipam/repair"):
@@ -645,6 +645,12 @@ class Handler(BaseHTTPRequestHandler):
                         payload["oldName"], payload["newName"], payload["expectedDevices"]
                     )
                     result = {"status": "saved", "affectedDevices": affected}
+                elif self.path == "/api/inventory/rack-shelves/remove":
+                    if set(payload) != {"shelfId", "expectedShelf", "devices"}:
+                        raise ValueError("Invalid rack shelf removal request")
+                    count = remove_linked_rack_shelf(connection, actor, payload["shelfId"],
+                                                    payload["expectedShelf"], payload["devices"])
+                    result = {"status": "deleted", "affectedDevices": count}
                 elif self.path in ("/api/inventory/record/save", "/api/inventory/record/delete"):
                     expected = ({"collection", "id", "record"}
                                 if self.path.endswith("/save") else {"collection", "id"})

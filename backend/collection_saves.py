@@ -30,6 +30,10 @@ def change_inventory_record(connection, account_id, collection, record_id, recor
         state = reconstruct_inventory(connection)
         records = state[collection]
         existing = next((item for item in records if item["id"] == record_id), None)
+        if (collection == "rackAccessories" and record is None and existing and
+                existing.get("type") == "shelf" and
+                any(d.get("rackShelfAccessoryId") == record_id for d in state["devices"])):
+            raise ValueError("This shelf has linked devices. Review their reassignment or retirement with Devices and Racks edit permissions.")
         if record is None:
             if existing is None:
                 raise ValueError("Inventory record not found")
@@ -351,6 +355,108 @@ def delete_subnet_with_dependencies(connection, account_id, subnet_id,
             (json.dumps(attribute_event(connection, account_id, event), ensure_ascii=False),)
         )
         connection.commit()
+    except BaseException:
+        connection.rollback()
+        raise
+
+
+def remove_linked_rack_shelf(connection, account_id, shelf_id, expected_shelf, devices):
+    """Apply every reviewed device choice and shelf removal together, or none.
+
+    Reuse device revisions and the existing five-minute reservations. The shelf
+    preview is compared with its saved record; no extra locking table is needed.
+    """
+    from .audit_events import safe_device_differences
+    if (not isinstance(shelf_id, str) or not shelf_id or
+            not isinstance(expected_shelf, dict) or expected_shelf.get("id") != shelf_id or
+            not isinstance(devices, list)):
+        raise ValueError("Invalid rack shelf removal request")
+    connection.execute("BEGIN IMMEDIATE")
+    try:
+        if not all(can_access(connection, account_id, section, edit=True)
+                   for section in ("Devices", "Racks")):
+            raise PermissionError("Devices and Racks edit permissions are required to remove a linked shelf")
+        state = reconstruct_inventory(connection)
+        shelf = next((item for item in state["rackAccessories"] if item["id"] == shelf_id), None)
+        if shelf is None or shelf.get("type") != "shelf" or shelf != expected_shelf:
+            raise ValueError("The rack shelf changed after review. Refresh and review it again.")
+        linked = {d["id"]: d for d in state["devices"] if d.get("rackShelfAccessoryId") == shelf_id}
+        choices = {}
+        for item in devices:
+            if not isinstance(item, dict):
+                raise ValueError("Choose an action for every shelf-mounted device")
+            action = item.get("action")
+            keys = ({"deviceId", "revision", "action", "rackId", "shelfId"}
+                    if action == "reassign" else {"deviceId", "revision", "action"})
+            identifier = item.get("deviceId")
+            if (set(item) != keys or action not in ("retire", "reassign") or
+                    not isinstance(identifier, str) or identifier in choices or
+                    type(item.get("revision")) is not int or item["revision"] < 0):
+                raise ValueError("Invalid shelf-mounted device choice")
+            choices[identifier] = item
+        if set(choices) != set(linked):
+            raise ValueError("Shelf contents changed after review. Review every linked device again.")
+        updates, changes = {}, []
+        now = int(time.time())
+        for identifier, previous in linked.items():
+            item = choices[identifier]
+            revision = connection.execute(
+                "SELECT revision FROM inventory_devices WHERE id=?", (identifier,)
+            ).fetchone()
+            if revision is None or revision[0] != item["revision"]:
+                raise ValueError("A shelf-mounted device changed after review. Refresh and review again.")
+            reservation = connection.execute(
+                "SELECT account_id,expires_at,base_revision FROM device_edit_reservations WHERE device_id=?",
+                (identifier,),
+            ).fetchone()
+            if reservation:
+                if reservation[0] != account_id and reservation[1] > now:
+                    raise ValueError("A shelf-mounted device is being edited by another user")
+                if reservation[0] == account_id and (reservation[1] <= now or reservation[2] != revision[0]):
+                    raise ValueError("Device edit reservation expired or changed. Reopen the shelf review.")
+            record = dict(previous)
+            if item["action"] == "retire":
+                record.update(status="Retired", rackId="", rackShelfAccessoryId="")
+            else:
+                if (not isinstance(item["rackId"], str) or not isinstance(item["shelfId"], str)
+                        or not item["rackId"] or not item["shelfId"] or item["shelfId"] == shelf_id):
+                    raise ValueError("Choose another existing rack shelf for reassignment")
+                record.update(rackId=item["rackId"], rackShelfAccessoryId=item["shelfId"])
+            # Shelf placement is always derived, including when retiring a linked device.
+            record.update(face=None, rackUStart=None, rackUEnd=None, rackUHeight=None)
+            updates[identifier] = record
+            fields = [key for key in dict.fromkeys((*previous, *record))
+                      if previous.get(key) != record.get(key)]
+            changes.append({"action": "Updated", "kind": "Device", "label": str(record["name"])[:100],
+                            "fields": fields, **safe_device_differences(previous, record)})
+        state["devices"] = [updates.get(d["id"], d) for d in state["devices"]]
+        state["rackAccessories"] = [a for a in state["rackAccessories"] if a["id"] != shelf_id]
+        validate_normalisation_devices(state)
+        errors = validate_detached_application_state(state)
+        conflicts = find_rack_import_conflicts(state)
+        if errors or conflicts:
+            raise ValueError((errors or conflicts)[0])
+        for identifier, record in updates.items():
+            connection.execute(
+                "UPDATE inventory_devices SET record_json=?,revision=revision+1 WHERE id=?",
+                (json.dumps(record, ensure_ascii=False, allow_nan=False), identifier),
+            )
+            connection.execute("DELETE FROM device_edit_reservations WHERE device_id=? AND account_id=?",
+                               (identifier, account_id))
+        connection.execute("DELETE FROM inventory_rack_accessories WHERE id=?", (shelf_id,))
+        rack = next((r for r in state["racks"] if r["id"] == shelf.get("rackId")), {})
+        former_location = f"{rack.get('name') or shelf.get('rackId')} · Shelf U{shelf.get('startU')} ({str(shelf.get('face')).title()})"
+        changes.append({"action": "Deleted", "kind": "Rack", "label": former_location[:100],
+                        "fields": ["rackShelfAccessoryId", "rackId", "startU", "face"],
+                        **safe_inventory_differences(shelf, {}, "rackAccessories")})
+        # Keep every affected device in the existing bounded history representation.
+        for start in range(0, len(changes), 60):
+            event = {"at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+                     "reason": "Inventory saved", "changes": changes[start:start + 60], "omitted": 0}
+            connection.execute("INSERT INTO inventory_change_history(record_json) VALUES(?)",
+                               (json.dumps(attribute_event(connection, account_id, event), ensure_ascii=False),))
+        connection.commit()
+        return len(updates)
     except BaseException:
         connection.rollback()
         raise

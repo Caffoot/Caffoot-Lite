@@ -14,7 +14,7 @@ import json
 _DEVICE_DIFFERENCE_FIELDS = frozenset((
     "name", "type", "status", "location", "manufacturer", "model",
     "assetTag", "serialNumber", "mountType", "rackId", "rackUStart",
-    "rackUEnd", "rackUHeight", "face", "virtualHostId",
+    "rackUEnd", "rackUHeight", "face", "rackShelfAccessoryId", "virtualHostId",
     "virtualPlatform", "primaryIp", "ipReserved",
 ))
 # Restrict new IPAM/Rack before-and-after snapshots to structural identifiers.

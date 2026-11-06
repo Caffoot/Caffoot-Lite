@@ -152,6 +152,35 @@ class SessionHttpTests(unittest.TestCase):
         conn.close()
         return status, body
 
+    def test_linked_shelf_removal_http_auth_permissions_and_atomic_result(self):
+        from backend.inventory import stage_inventory, reconstruct_inventory
+        shelf = {"id":"shelf", "type":"shelf", "rackId":"rack", "face":"front", "startU":10, "heightU":1}
+        device = {"id":"device", "name":"Fictional shelf printer", "type":"Printer", "mountType":"Tabletop / Shelf Mounted", "rackId":"rack", "rackShelfAccessoryId":"shelf", "location":"Room"}
+        with sqlite3.connect(self.path) as db:
+            stage_inventory(db,{"devices":[device],"rackAccessories":[shelf],"racks":[{"id":"rack","heightU":42}],"subnets":[],"vlans":[],"ipAllocations":{}})
+            user = create_user(db,1,"shelf-editor","password")
+            user_token = login_session(db,"shelf-editor","password")
+        payload = {"shelfId":"shelf", "expectedShelf":shelf,
+                   "devices":[{"deviceId":"device","revision":0,"action":"retire"}]}
+        route = "/api/inventory/rack-shelves/remove"
+        with patch("backend.server.PUBLIC_ORIGIN","https://caffoot.example"):
+            self.assertEqual(self.post(route,payload)[0],403)
+            self.assertEqual(self.post(route,payload,self.token)[0],403)
+            self.assertEqual(self.post(route,payload,user_token,csrf_for_session(user_token))[0],403)
+            self.assertEqual(self.post(route,dict(payload,unexpected=True),self.token,csrf_for_session(self.token))[0],400)
+            stale = dict(payload,expectedShelf=dict(shelf,startU=12))
+            self.assertEqual(self.post(route,stale,self.token,csrf_for_session(self.token))[0],400)
+            with sqlite3.connect(self.path) as db:
+                self.assertEqual(reconstruct_inventory(db)['devices'],[device])
+            self.assertEqual(self.post(route,payload,self.token,csrf_for_session(self.token))[0],200)
+            with sqlite3.connect(self.path) as db:
+                state = reconstruct_inventory(db)
+                self.assertEqual(state['rackAccessories'],[])
+                self.assertEqual(state['devices'][0]['status'],'Retired')
+                self.assertEqual(state['devices'][0]['rackShelfAccessoryId'],'')
+        with patch("backend.server.PUBLIC_ORIGIN","https://another.example"):
+            self.assertEqual(self.post(route,payload,self.token,csrf_for_session(self.token))[0],403)
+
     def test_user_mfa_start_supplies_authenticator_qr_uri(self):
         with patch("backend.server.PUBLIC_ORIGIN", "https://caffoot.example"):
             status, user = self.post(
