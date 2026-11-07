@@ -7,6 +7,8 @@ on:
       - "interface/**"
       - "tests/browser-compat.cjs"
       - "tests/device-editor-approved.cjs"
+      - "tests/rack-shelf-associations.cjs"
+      - "tests/contextual-device-catalogue.cjs"
       - "tests/approved-visual.cjs"
       - "tests/visual_fixtures.py"
       - "inventory.html"
@@ -17,6 +19,8 @@ on:
       - "interface/**"
       - "tests/browser-compat.cjs"
       - "tests/device-editor-approved.cjs"
+      - "tests/rack-shelf-associations.cjs"
+      - "tests/contextual-device-catalogue.cjs"
       - "tests/approved-visual.cjs"
       - "tests/visual_fixtures.py"
       - "inventory.html"
@@ -31,7 +35,7 @@ permissions:
 jobs:
   browser-compat:
     runs-on: ubuntu-24.04
-    timeout-minutes: 18
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
         with:
@@ -65,5 +69,21 @@ jobs:
         with:
           name: device-editor-evidence-${{ github.sha }}
           path: ${{ runner.temp }}/device-editor-evidence/device-editor
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Exercise approved shelf and contextual catalogue workflows
+        env:
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
+          CAFFOOT_CONTEXTUAL_CATALOGUE: "1"
+          CAFFOOT_RACK_SHELF_APPROVED: "1"
+          CAFFOOT_VISUAL_FILTER: "^$"
+          CAFFOOT_VISUAL_OUTPUT: ${{ runner.temp }}/issue-331-evidence
+        run: node tests/approved-visual.cjs
+      - name: Save fictional Issue 331 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: issue-331-evidence-${{ github.sha }}
+          path: ${{ runner.temp }}/issue-331-evidence
           if-no-files-found: ignore
           retention-days: 14

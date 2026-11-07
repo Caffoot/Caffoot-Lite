@@ -73,3 +73,10 @@ Email proof helpers now use `email_proof_secret`, `email_attempts_remaining`, `i
 ## Rack Shelf Associations
 
 `backend/shelf_associations.py::validate_device_shelf_association` checks the optional stable shelf reference without allocating device U. `backend/collection_saves.py::remove_linked_rack_shelf` checks the reviewed shelf/device revisions and existing reservations, then commits explicit reassignment/retirement, shelf deletion and history together. Existing device save permissions include the new placement field. See the [Issue #331 contract](Issue-331-Implementation.md).
+
+
+The editor shelf helpers are `initialiseDeviceShelfFields`, `refreshDeviceShelfFields`, `openRackShelfCreation`/`returnFromRackShelfCreation` and `openRackShelfRemovalReview`. The existing Rack bridge exposes `reviewShelf` and `removeShelf` for the reviewed atomic operation. `getRackShelfLocation` derives the current location without copying U into device records.
+
+## Contextual Device Software
+
+`getDeviceSoftwareContext` uses the device/guest OS or the physical host's dedicated hosting product. `getDeviceSoftwareSuggestions` intersects static platform metadata, type scope and existing hide preferences. `getDeviceSoftwareCatalogueEntries` and `isDeviceSoftwareSelected` supply the separate historical retention path; `renderDeviceEditorRetainedSoftware` renders removable checked exceptions. `refreshDeviceSoftwareSuggestions` captures selections before refreshing choices. `preserveLegacyDeviceSoftwareFlags` retains original top-level storage locations using an unchanged source snapshot. The version map remains an offline suggestion list, with sources/exclusions in [Issue #331 catalogue record](Issue-331-Catalogue-Sources.md). No backend OS/software whitelist is introduced.

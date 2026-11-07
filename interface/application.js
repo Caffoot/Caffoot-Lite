@@ -2318,7 +2318,7 @@ function hierarchyValidateTypes(subnets) {
             const hidden=hiddenRows?renderInterfaceTemplate("device-management/source-hidden",['Hidden Built-in Models',hiddenRows]):'';
             return renderInterfaceTemplate("device-management/source-models",[items.length,items.filter(item=>item.devices>0).length,items.filter(item=>item.sources.has('Custom')).length,rows,`${items.length} models shown`,options(makers),options(types),'',0,hidden]);
         }
-        const builtInSoftwareSuggestions = [{"name":"Microsoft 365 Apps","types":["Desktop","Laptop","Tablet"]},{"name":"LibreOffice","types":["Desktop","Laptop","Tablet"]},{"name":"Google Chrome","types":["Desktop","Laptop","Tablet"]},{"name":"Mozilla Firefox","types":["Desktop","Laptop","Tablet"]},{"name":"Microsoft Edge","types":["Desktop","Laptop","Tablet"]},{"name":"Adobe Acrobat Reader","types":["Desktop","Laptop","Tablet"]},{"name":"Microsoft Teams","types":["Desktop","Laptop","Tablet"]},{"name":"Zoom Workplace","types":["Desktop","Laptop","Tablet"]},{"name":"7-Zip","types":["Desktop","Laptop","Tablet"]},{"name":"VLC media player","types":["Desktop","Laptop","Tablet"]},{"name":"Bitwarden","types":["Desktop","Laptop","Tablet"]},{"name":"KeePassXC","types":["Desktop","Laptop","Tablet"]},{"name":"Microsoft Defender for Endpoint","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual"]},{"name":"CrowdStrike Falcon Sensor","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual"]},{"name":"SentinelOne Agent","types":["Desktop","Laptop","Tablet"]},{"name":"Tailscale","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual"]},{"name":"OpenVPN Connect","types":["Desktop","Laptop","Tablet"]},{"name":"WireGuard","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual","Firewall","Router","Layer 3 Switch"]},{"name":"AnyDesk","types":["Desktop","Laptop","Tablet"]},{"name":"RustDesk","types":["Desktop","Laptop","Tablet"]},{"name":"TeamViewer","types":["Desktop","Laptop","Tablet"]},{"name":"Microsoft Remote Desktop","types":["Desktop","Laptop","Tablet"]},{"name":"Zabbix Agent","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual","Firewall","Router","Layer 3 Switch","Switch"]},{"name":"NinjaOne Agent","types":["Desktop","Laptop","Tablet"]},{"name":"PDQ Connect","types":["Desktop","Laptop","Tablet"]},{"name":"Visual Studio Code","types":["Desktop","Laptop"]},{"name":"Git","types":["Desktop","Laptop","Server - Physical","Server - Virtual"]},{"name":"PowerShell 7","types":["Desktop","Laptop","Server - Physical","Server - Virtual"]},{"name":"PuTTY","types":["Desktop","Laptop"]},{"name":"WinSCP","types":["Desktop","Laptop"]},{"name":"Wireshark","types":["Desktop","Laptop"]},{"name":"Docker Desktop","types":["Desktop","Laptop"]},{"name":"VMware Workstation","types":["Desktop","Laptop"]},{"name":"VirtualBox","types":["Desktop","Laptop"]},{"name":"Notepad++","types":["Desktop","Laptop"]},{"name":"Python","types":["Desktop","Laptop","Server - Physical","Server - Virtual"]},{"name":"Java Runtime","types":["Desktop","Laptop"]},{"name":"Node.js","types":["Desktop","Laptop"]},{"name":"Microsoft Power BI Desktop","types":["Desktop","Laptop"]},{"name":"AutoCAD","types":["Desktop","Laptop"]},{"name":"Docker Engine","types":["Server - Physical","Server - Virtual"]},{"name":"Podman","types":["Server - Physical","Server - Virtual"]},{"name":"Kubernetes","types":["Server - Physical","Server - Virtual"]},{"name":"containerd","types":["Server - Physical","Server - Virtual"]},{"name":"Nginx","types":["Server - Physical","Server - Virtual"]},{"name":"Apache HTTP Server","types":["Server - Physical","Server - Virtual"]},{"name":"IIS","types":["Server - Physical","Server - Virtual"]},{"name":"PostgreSQL","types":["Server - Physical","Server - Virtual"]},{"name":"MariaDB","types":["Server - Physical","Server - Virtual"]},{"name":"MySQL Server","types":["Server - Physical","Server - Virtual"]},{"name":"Microsoft SQL Server","types":["Server - Physical","Server - Virtual"]},{"name":"Redis","types":["Server - Physical","Server - Virtual"]},{"name":"RabbitMQ","types":["Server - Physical","Server - Virtual"]},{"name":"Prometheus","types":["Server - Physical","Server - Virtual"]},{"name":"Grafana","types":["Server - Physical","Server - Virtual"]},{"name":"Zabbix Server","types":["Server - Physical","Server - Virtual"]},{"name":"Wazuh Agent","types":["Server - Physical","Server - Virtual"]},{"name":"Veeam Agent","types":["Server - Physical","Server - Virtual","NAS"]},{"name":"Restic","types":["Server - Physical","Server - Virtual","NAS"]},{"name":"BorgBackup","types":["Server - Physical","Server - Virtual","NAS"]},{"name":"OpenSSH Server","types":["Server - Physical","Server - Virtual"]},{"name":"Ansible","types":["Server - Physical","Server - Virtual"]},{"name":"Terraform","types":["Server - Physical","Server - Virtual"]},{"name":"HashiCorp Vault","types":["Server - Physical","Server - Virtual"]},{"name":"VMware ESXi","types":["Server - Physical"]},{"name":"Proxmox VE","types":["Server - Physical"]},{"name":"Microsoft Hyper-V","types":["Server - Physical"]},{"name":"Dell OpenManage","types":["Server - Physical"]},{"name":"HPE iLO Management","types":["Server - Physical"]},{"name":"IPMItool","types":["Server - Physical"]},{"name":"TrueNAS SCALE","types":["Server - Physical","NAS"]},{"name":"Ubuntu Server","types":["Server - Physical","Server - Virtual"]},{"name":"Windows Server","types":["Server - Physical","Server - Virtual"]},{"name":"VMware Tools","types":["Server - Virtual"]},{"name":"QEMU Guest Agent","types":["Server - Virtual"]},{"name":"Hyper-V Integration Services","types":["Server - Virtual"]},{"name":"cloud-init","types":["Server - Virtual"]},{"name":"Synology DSM","types":["NAS"]},{"name":"QNAP QTS","types":["NAS"]},{"name":"OpenMediaVault","types":["NAS"]},{"name":"rsync","types":["NAS"]},{"name":"Syncthing","types":["NAS"]},{"name":"pfSense","types":["Firewall","Router","Layer 3 Switch"]},{"name":"OPNsense","types":["Firewall","Router","Layer 3 Switch"]},{"name":"FortiOS","types":["Firewall","Router","Layer 3 Switch"]},{"name":"Cisco IOS XE","types":["Firewall","Router","Layer 3 Switch"]},{"name":"MikroTik RouterOS","types":["Firewall","Router","Layer 3 Switch","Switch"]},{"name":"VyOS","types":["Firewall","Router","Layer 3 Switch"]},{"name":"OpenWrt","types":["Firewall","Router","Layer 3 Switch","Wireless Access Point","Access Point","Wireless LAN Controller"]},{"name":"OpenVPN","types":["Firewall","Router","Layer 3 Switch"]},{"name":"Cisco IOS","types":["Switch"]},{"name":"Cisco NX-OS","types":["Switch"]},{"name":"Aruba AOS-CX","types":["Switch"]},{"name":"UniFi Network","types":["Switch","Wireless Access Point","Access Point","Wireless LAN Controller"]},{"name":"Aruba Instant On","types":["Wireless Access Point","Access Point","Wireless LAN Controller"]},{"name":"ArubaOS","types":["Wireless Access Point","Access Point","Wireless LAN Controller"]},{"name":"Cisco Catalyst Center","types":["Wireless Access Point","Access Point","Wireless LAN Controller"]},{"name":"TP-Link Omada Controller","types":["Wireless Access Point","Access Point","Wireless LAN Controller"]},{"name":"HP Universal Print Driver","types":["Printer"]},{"name":"Brother Printer Driver","types":["Printer"]},{"name":"Canon Printer Driver","types":["Printer"]},{"name":"Epson Printer Driver","types":["Printer"]},{"name":"PaperCut MF","types":["Printer"]},{"name":"Microsoft Intune Company Portal","types":["Tablet"]},{"name":"Jamf Self Service","types":["Tablet"]},{"name":"Microsoft Authenticator","types":["Tablet"]},{"name":"Google Authenticator","types":["Tablet"]}];
+        const builtInSoftwareSuggestions = [{"name":"Microsoft 365 Apps","types":["Desktop","Laptop","Tablet"],"platformContexts":["mac-desktop","windows-desktop"]},{"name":"LibreOffice","types":["Desktop","Laptop","Tablet"],"platformContexts":["linux-desktop","mac-desktop","windows-desktop"]},{"name":"Google Chrome","types":["Desktop","Laptop","Tablet"],"platformContexts":["linux-desktop","mac-desktop","windows-desktop"]},{"name":"Mozilla Firefox","types":["Desktop","Laptop","Tablet"],"platformContexts":["linux-desktop","mac-desktop","windows-desktop"]},{"name":"Microsoft Edge","types":["Desktop","Laptop","Tablet"],"platformContexts":["windows-desktop"]},{"name":"Adobe Acrobat Reader","types":["Desktop","Laptop","Tablet"],"platformContexts":[]},{"name":"Microsoft Teams","types":["Desktop","Laptop","Tablet"],"platformContexts":["mac-desktop","windows-desktop"]},{"name":"Zoom Workplace","types":["Desktop","Laptop","Tablet"],"platformContexts":["mac-desktop","windows-desktop"]},{"name":"7-Zip","types":["Desktop","Laptop","Tablet"],"platformContexts":["windows-desktop"]},{"name":"VLC media player","types":["Desktop","Laptop","Tablet"],"platformContexts":["linux-desktop","mac-desktop","windows-desktop"]},{"name":"Bitwarden","types":["Desktop","Laptop","Tablet"],"platformContexts":["linux-desktop","mac-desktop","windows-desktop"]},{"name":"KeePassXC","types":["Desktop","Laptop","Tablet"],"platformContexts":["linux-desktop","mac-desktop","windows-desktop"]},{"name":"Microsoft Defender for Endpoint","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual"],"platformContexts":["linux-desktop","linux-server","mac-desktop","windows-desktop","windows-server"]},{"name":"CrowdStrike Falcon Sensor","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual"],"platformContexts":["linux-desktop","linux-server","mac-desktop","windows-desktop","windows-server"]},{"name":"SentinelOne Agent","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual"],"platformContexts":["linux-desktop","linux-server","mac-desktop","windows-desktop","windows-server"]},{"name":"Tailscale","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual","Firewall","Router","Layer 3 Switch","Wireless Access Point","Access Point","Wireless LAN Controller","NAS"],"platformContexts":["linux-desktop","linux-server","mac-desktop","nas-apps","openwrt","windows-desktop","windows-server"]},{"name":"OpenVPN Connect","types":["Desktop","Laptop","Tablet"],"platformContexts":[]},{"name":"WireGuard","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual","Firewall","Router","Layer 3 Switch","Wireless Access Point","Access Point","Wireless LAN Controller"],"platformContexts":["linux-desktop","linux-server","openwrt"]},{"name":"AnyDesk","types":["Desktop","Laptop","Tablet"],"platformContexts":[]},{"name":"RustDesk","types":["Desktop","Laptop","Tablet"],"platformContexts":[]},{"name":"TeamViewer","types":["Desktop","Laptop","Tablet"],"platformContexts":[]},{"name":"Microsoft Remote Desktop","types":["Desktop","Laptop","Tablet"],"platformContexts":[]},{"name":"Zabbix Agent","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual","Firewall","Router","Layer 3 Switch","Switch"],"platformContexts":["linux-desktop","linux-server","mac-desktop","windows-desktop","windows-server"]},{"name":"NinjaOne Agent","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual"],"platformContexts":["mac-desktop","windows-desktop","windows-server"]},{"name":"PDQ Connect","types":["Desktop","Laptop","Tablet","Server - Physical","Server - Virtual"],"platformContexts":["windows-desktop","windows-server"]},{"name":"Visual Studio Code","types":["Desktop","Laptop","Tablet"],"platformContexts":["linux-desktop","mac-desktop","windows-desktop"]},{"name":"Git","types":["Desktop","Laptop","Server - Physical","Server - Virtual","Tablet"],"platformContexts":["linux-desktop","linux-server","mac-desktop","windows-desktop","windows-server"]},{"name":"PowerShell 7","types":["Desktop","Laptop","Server - Physical","Server - Virtual","Tablet"],"platformContexts":["windows-desktop","windows-server"]},{"name":"PuTTY","types":["Desktop","Laptop"],"platformContexts":[]},{"name":"WinSCP","types":["Desktop","Laptop","Tablet"],"platformContexts":["windows-desktop"]},{"name":"Wireshark","types":["Desktop","Laptop"],"platformContexts":[]},{"name":"Docker Desktop","types":["Desktop","Laptop"],"platformContexts":[]},{"name":"VMware Workstation","types":["Desktop","Laptop"],"platformContexts":[]},{"name":"VirtualBox","types":["Desktop","Laptop"],"platformContexts":[]},{"name":"Notepad++","types":["Desktop","Laptop","Tablet"],"platformContexts":["windows-desktop"]},{"name":"Python","types":["Desktop","Laptop","Server - Physical","Server - Virtual"],"platformContexts":[]},{"name":"Java Runtime","types":["Desktop","Laptop"],"platformContexts":[]},{"name":"Node.js","types":["Desktop","Laptop"],"platformContexts":[]},{"name":"Microsoft Power BI Desktop","types":["Desktop","Laptop","Tablet"],"platformContexts":["windows-desktop"]},{"name":"AutoCAD","types":["Desktop","Laptop"],"platformContexts":[]},{"name":"Docker Engine","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"Podman","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"Kubernetes","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"containerd","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"Nginx","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"Apache HTTP Server","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"IIS","types":["Server - Physical","Server - Virtual"],"platformContexts":["windows-server"]},{"name":"PostgreSQL","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server","windows-server"]},{"name":"MariaDB","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server","windows-server"]},{"name":"MySQL Server","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server","windows-server"]},{"name":"Microsoft SQL Server","types":["Server - Physical","Server - Virtual"],"platformContexts":["windows-server"]},{"name":"Redis","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"RabbitMQ","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"Prometheus","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"Grafana","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"Zabbix Server","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"Wazuh Agent","types":["Server - Physical","Server - Virtual","Firewall","Router","Layer 3 Switch"],"platformContexts":["linux-server","opnsense","windows-server"]},{"name":"Veeam Agent","types":["Server - Physical","Server - Virtual","NAS"],"platformContexts":["windows-server"]},{"name":"Restic","types":["Server - Physical","Server - Virtual","NAS"],"platformContexts":["linux-server"]},{"name":"BorgBackup","types":["Server - Physical","Server - Virtual","NAS"],"platformContexts":["linux-server"]},{"name":"OpenSSH Server","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"Ansible","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"Terraform","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"HashiCorp Vault","types":["Server - Physical","Server - Virtual"],"platformContexts":["linux-server"]},{"name":"VMware ESXi","types":["Server - Physical"],"platformContexts":[]},{"name":"Proxmox VE","types":["Server - Physical"],"platformContexts":[]},{"name":"Microsoft Hyper-V","types":["Server - Physical"],"platformContexts":[]},{"name":"Dell OpenManage","types":["Server - Physical"],"platformContexts":[]},{"name":"HPE iLO Management","types":["Server - Physical"],"platformContexts":[]},{"name":"IPMItool","types":["Server - Physical"],"platformContexts":[]},{"name":"TrueNAS SCALE","types":["Server - Physical","NAS"],"platformContexts":[]},{"name":"Ubuntu Server","types":["Server - Physical","Server - Virtual"],"platformContexts":[]},{"name":"Windows Server","types":["Server - Physical","Server - Virtual"],"platformContexts":[]},{"name":"VMware Tools","types":["Server - Virtual"],"platformContexts":[]},{"name":"QEMU Guest Agent","types":["Server - Virtual"],"platformContexts":[]},{"name":"Hyper-V Integration Services","types":["Server - Virtual"],"platformContexts":[]},{"name":"cloud-init","types":["Server - Virtual"],"platformContexts":[]},{"name":"Synology DSM","types":["NAS"],"platformContexts":[]},{"name":"QNAP QTS","types":["NAS"],"platformContexts":[]},{"name":"OpenMediaVault","types":["NAS"],"platformContexts":[]},{"name":"rsync","types":["NAS"],"platformContexts":[]},{"name":"Syncthing","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["nas-apps"]},{"name":"pfSense","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":[]},{"name":"OPNsense","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":[]},{"name":"FortiOS","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":[]},{"name":"Cisco IOS XE","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":[]},{"name":"MikroTik RouterOS","types":["Firewall","Router","Layer 3 Switch","Switch"],"platformContexts":[]},{"name":"VyOS","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":[]},{"name":"OpenWrt","types":["Firewall","Router","Layer 3 Switch","Wireless Access Point","Access Point","Wireless LAN Controller"],"platformContexts":[]},{"name":"OpenVPN","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":[]},{"name":"Cisco IOS","types":["Switch"],"platformContexts":[]},{"name":"Cisco NX-OS","types":["Switch"],"platformContexts":[]},{"name":"Aruba AOS-CX","types":["Switch"],"platformContexts":[]},{"name":"UniFi Network","types":["Switch","Wireless Access Point","Access Point","Wireless LAN Controller","Server - Physical","Server - Virtual","Firewall","Router"],"platformContexts":["linux-server","unifi-console","windows-server"]},{"name":"Aruba Instant On","types":["Wireless Access Point","Access Point","Wireless LAN Controller"],"platformContexts":[]},{"name":"ArubaOS","types":["Wireless Access Point","Access Point","Wireless LAN Controller"],"platformContexts":[]},{"name":"Cisco Catalyst Center","types":["Wireless Access Point","Access Point","Wireless LAN Controller"],"platformContexts":[]},{"name":"TP-Link Omada Controller","types":["Wireless Access Point","Access Point","Wireless LAN Controller","Server - Physical","Server - Virtual"],"platformContexts":["linux-server","windows-server"]},{"name":"HP Universal Print Driver","types":["Printer"],"platformContexts":[]},{"name":"Brother Printer Driver","types":["Printer"],"platformContexts":[]},{"name":"Canon Printer Driver","types":["Printer"],"platformContexts":[]},{"name":"Epson Printer Driver","types":["Printer"],"platformContexts":[]},{"name":"PaperCut MF","types":["Printer"],"platformContexts":[]},{"name":"Microsoft Intune Company Portal","types":["Tablet"],"platformContexts":[]},{"name":"Jamf Self Service","types":["Tablet"],"platformContexts":[]},{"name":"Microsoft Authenticator","types":["Tablet"],"platformContexts":[]},{"name":"Google Authenticator","types":["Tablet"],"platformContexts":[]},{"name":"Snort","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":["pfsense"]},{"name":"Suricata","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":["pfsense"]},{"name":"pfBlockerNG","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":["pfsense"]},{"name":"HAProxy","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":["opnsense","pfsense"]},{"name":"ACME","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":["pfsense"]},{"name":"FRR","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":["opnsense","pfsense"]},{"name":"FreeRADIUS","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":["opnsense","pfsense"]},{"name":"NUT","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":["pfsense"]},{"name":"ACME Client","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":["opnsense"]},{"name":"Caddy","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":["opnsense"]},{"name":"CrowdSec","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":["opnsense"]},{"name":"Nginx plugin","types":["Firewall","Router","Layer 3 Switch"],"platformContexts":["opnsense"]},{"name":"SQM / LuCI SQM","types":["Firewall","Router","Layer 3 Switch","Wireless Access Point","Access Point","Wireless LAN Controller"],"platformContexts":["openwrt"]},{"name":"adblock","types":["Firewall","Router","Layer 3 Switch","Wireless Access Point","Access Point","Wireless LAN Controller"],"platformContexts":["openwrt"]},{"name":"mwan3","types":["Firewall","Router","Layer 3 Switch","Wireless Access Point","Access Point","Wireless LAN Controller"],"platformContexts":["openwrt"]},{"name":"UniFi Protect","types":["Firewall","Router","Wireless LAN Controller"],"platformContexts":["unifi-console"]},{"name":"UniFi Access","types":["Firewall","Router","Wireless LAN Controller"],"platformContexts":["unifi-console"]},{"name":"UniFi Talk","types":["Firewall","Router","Wireless LAN Controller"],"platformContexts":["unifi-console"]},{"name":"UniFi Connect","types":["Firewall","Router","Wireless LAN Controller"],"platformContexts":["unifi-console"]},{"name":"UniFi InnerSpace","types":["Firewall","Router","Wireless LAN Controller"],"platformContexts":["unifi-console"]},{"name":"Synology Drive Server","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["synology"]},{"name":"Active Backup for Business","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["synology"]},{"name":"Hyper Backup","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["synology"]},{"name":"Surveillance Station","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["synology"]},{"name":"Container Manager","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["synology"]},{"name":"HBS 3","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["qnap"]},{"name":"Container Station","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["qnap"]},{"name":"Virtualization Station","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["qnap"]},{"name":"Qsync Central","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["qnap"]},{"name":"Plex","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["nas-apps"]},{"name":"Jellyfin","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["nas-apps"]},{"name":"Nextcloud","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["nas-apps"]},{"name":"Immich","types":["NAS","Server - Physical","Server - Virtual"],"platformContexts":["nas-apps"]},{"name":"PaperCut embedded","types":["Printer"],"platformContexts":["printer"]}];
         function openSoftwareCatalogueEditor(key='') {
             const entry=getConfiguredSoftwareCatalogueEntries().find(x=>x.key===key)||builtInSoftwareSuggestions.filter(x=>createBuiltInSoftwareCatalogueKey(x.name)===key).map(x=>({key,label:x.name,deviceTypes:x.types}))[0];
             if(key&&!entry)return;
@@ -4373,8 +4373,10 @@ function openIpModal(ip) {
             const status = d.status || 'Active';
             const detailRows = buildDeviceDetailRows(d, field);
             const activeFields = new Set(getDetailFieldsForDeviceType(d.type));
-            const softwareEntries=[...getAvailableSoftwareCatalogueEntries(),...getConfiguredSoftwareCatalogueEntries().filter(x=>x.archived)].filter((x,i,all)=>all.findIndex(y=>y.key===x.key)===i).filter(x=>(activeFields.has(x.key)||x.archived) && (d.typeDetails?.[x.key]===true||d[x.key]===true));
-            const installedSoftware=softwareEntries.sort((a,b)=>String(a.label||'').localeCompare(String(b.label||''),undefined,{sensitivity:'base'})).map(x=>renderInterfaceTemplate("device-management/installed-software-2",[safe(x.label),x.archived?renderInterfaceTemplate("device-management/installed-software-1",[safe(d.id),safe(x.key)]):''])).join('');
+            const suggestedSoftware=new Set(getDeviceSoftwareSuggestions(d.type,d.typeDetails||{}).map(item=>item.key));
+            const softwareEntries=getDeviceSoftwareCatalogueEntries(d,d.typeDetails||{}).filter(item=>isDeviceSoftwareSelected(item.key,d.typeDetails||{},d));
+            const installedSoftware=softwareEntries.sort((a,b)=>String(a.label||'').localeCompare(String(b.label||''),undefined,{sensitivity:'base'})).map(x=>renderInterfaceTemplate("device-management/installed-software-2",[safe(x.label)+(!suggestedSoftware.has(x.key)?' <small>Previously recorded — review</small>':''),x.archived?renderInterfaceTemplate("device-management/installed-software-1",[safe(d.id),safe(x.key)]):''])).join('');
+
             const deviceDetails=d.typeDetails||{};
             const serverServiceEntries=[...getAvailableServerServiceCatalogueEntries(),...getConfiguredServerServiceCatalogueEntries().filter(x=>x.archived)].filter((x,i,all)=>all.findIndex(y=>y.key===x.key)===i).filter(x=>(activeFields.has(x.key)||x.archived) && (deviceDetails[x.key]===true||d[x.key]===true)).sort((a,b)=>String(a.label||'').localeCompare(String(b.label||''),undefined,{sensitivity:'base'}));
             const serverServices=serverServiceEntries.map(x=>renderInterfaceTemplate("device-management/server-services-2",[safe(x.label),x.archived?renderInterfaceTemplate("device-management/server-services-1",[]):''])).join('');
@@ -4869,6 +4871,79 @@ function openIpModal(ip) {
             const entry=builtInSoftwareSuggestions.find(x=>x.name===name);
             return entry?entry.types.map(t=>'<button type="button" data-action="software-toggle" data-name="'+escapeHtml(name)+'" data-type="'+escapeHtml(t)+'" class="btn btn-outline mini-btn">'+escapeHtml(t)+(isSoftwareHiddenForDeviceType(name,t)?' · Hidden':' · Available')+'</button>').join(' '):'';
         }
+        // Offline catalogue suggestions are not compatibility guarantees or validators.
+        // Use the guest's own platform. A dedicated physical host uses its hosting product.
+        function getDeviceSoftwareContext(type,values={}) {
+            const hosting=type==='Server - Physical'&&values.serverService_Hypervisor===true;
+            const platform=String(hosting ? values.hypervisorProduct||document.getElementById('host-platform')?.value||'' : values.softwarePlatform||'').trim();
+            const group=getPlatformGroupForDeviceType(type);
+            if(group==='computer'){
+                if(platform==='Windows')return 'windows-desktop';
+                if(platform==='macOS')return 'mac-desktop';
+                if(['Ubuntu','Debian','Fedora','Linux Mint','openSUSE Leap','openSUSE Tumbleweed'].includes(platform))return 'linux-desktop';
+            }
+            if(group==='server'){
+                if(platform==='Windows Server'||hosting&&platform==='Microsoft Hyper-V')return 'windows-server';
+                if(['Ubuntu Server','Debian','Red Hat Enterprise Linux','Rocky Linux','AlmaLinux OS','CentOS Linux','CentOS Stream','SUSE Linux Enterprise Server','openSUSE Leap','openSUSE Tumbleweed'].includes(platform))return 'linux-server';
+            }
+            if(['pfSense CE','pfSense Plus'].includes(platform))return 'pfsense';
+            if(['OPNsense Community','OPNsense Business'].includes(platform))return 'opnsense';
+            if(platform==='OpenWrt')return 'openwrt';
+            if(platform==='UniFi OS'&&['Router','Firewall','Wireless LAN Controller'].includes(type))return 'unifi-console';
+            if(platform==='Synology DSM')return 'synology';
+            if(['QNAP QTS','QNAP QuTS hero'].includes(platform))return 'qnap';
+            if(['TrueNAS SCALE','Unraid'].includes(platform))return 'nas-apps';
+            if(String(type).toLowerCase()==='printer')return 'printer';
+            return '';
+        }
+        function getDeviceSoftwareSuggestions(type,values={}) {
+            const context=getDeviceSoftwareContext(type,values),typeKeys=new Set(getSoftwareFieldsForDeviceType(type));
+            return getAvailableSoftwareCatalogueEntries().filter(item=>{
+                if(!typeKeys.has(item.key)||isDeviceEditorHypervisorProduct(item))return false;
+                const seed=builtInSoftwareSuggestions.find(entry=>createBuiltInSoftwareCatalogueKey(entry.name)===item.key);
+                // User-defined catalogue items retain their declared device-type scope.
+                if(!seed){
+                    const name=String(item.label||'').trim().toLowerCase();
+                    const platformNames=[...Object.values(platformOptionsByDeviceGroup).flat(),...Object.keys(platformVersionOptionsByName),'pfSense','OPNsense','CentOS'];
+                    if(platformNames.some(platform=>platform.toLowerCase()===name))return false;
+                    const recognised=builtInSoftwareSuggestions.find(entry=>entry.name.toLowerCase()===name);
+                    return !recognised||recognised.platformContexts.includes(context);
+                }
+                return !isSoftwareHiddenForDeviceType(seed.name,type)&&seed.platformContexts.includes(context);
+            });
+        }
+        function isDeviceSoftwareSelected(key,values={},device=null) {
+            return Object.hasOwn(values,key) ? values[key]===true : device?.[key]===true;
+        }
+        function getDeviceSoftwareCatalogueEntries(device=null,values={}) {
+            const entries=getConfiguredSoftwareCatalogueEntries().map(item=>({...item}));
+            for(const seed of builtInSoftwareSuggestions){const key=createBuiltInSoftwareCatalogueKey(seed.name);if(!entries.some(item=>item.key===key))entries.push({key,label:seed.name,deviceTypes:seed.types,builtin:true});}
+            for(const key of legacySoftwareFieldKeys)if(!entries.some(item=>item.key===key))entries.push({key,label:deviceDetailFieldLabels[key]||key});
+            for(const key of new Set([...Object.keys(device||{}),...Object.keys(values)])){
+                if(/^(catalogSoftware_|customSoftware_)/.test(key)&&!entries.some(item=>item.key===key))entries.push({key,label:key.replace(/^(catalogSoftware_|customSoftware_)/,'').replace(/_/g,' ')});
+            }
+            return entries;
+        }
+        function refreshDeviceSoftwareSuggestions() {
+            const fields=document.getElementById('device-form-installed-software-fields');
+            if(!fields)return;
+            fields.querySelectorAll('[data-device-detail-field]').forEach(control=>{deviceDetailFormValues[control.dataset.deviceDetailField]=control.checked;});
+            const hosting=document.getElementById('device-hosting-enabled');
+            if(document.getElementById('dev-type')?.value==='Server - Physical'&&hosting){
+                deviceDetailFormValues.serverService_Hypervisor=hosting.checked;
+                deviceDetailFormValues.hypervisorProduct=document.getElementById('host-platform')?.value||deviceDetailFormValues.hypervisorProduct||'';
+            }
+            fields.innerHTML=renderInlineDevicePicker('software',document.getElementById('dev-type')?.value||'',deviceDetailFormValues);
+        }
+        function preserveLegacyDeviceSoftwareFlags(target,values) {
+            // Retain the original storage location, including explicit removals.
+            // Unknown metadata and simultaneous pre-existing typeDetails keys are untouched.
+            for(const entry of getDeviceSoftwareCatalogueEntries(deviceEditorSoftwareSource,values)){
+                if(!Object.hasOwn(deviceEditorSoftwareSource||{},entry.key)||Object.hasOwn(deviceEditorSoftwareSource?.typeDetails||{},entry.key))continue;
+                target[entry.key]=isDeviceSoftwareSelected(entry.key,values,deviceEditorSoftwareSource);
+                delete values[entry.key];
+            }
+        }
         function getSoftwareFieldsForDeviceType(type){
             return getAvailableSoftwareCatalogueEntries().filter(x=>(!Array.isArray(x.deviceTypes)||!x.deviceTypes.length||x.deviceTypes.some(t=>t.toLowerCase()===String(type||'').toLowerCase()))&&(!x.builtin||!isSoftwareHiddenForDeviceType(x.label,type))).map(x=>x.key);
         }
@@ -4897,10 +4972,10 @@ function openIpModal(ip) {
                 (value?.key && createBuiltInSoftwareCatalogueKey(product) === value.key));
         }
         function renderDeviceEditorRetainedSoftware(type, values) {
-            const retained = getAvailableSoftwareCatalogueEntries().filter(item =>
-                getSoftwareFieldsForDeviceType(type).includes(item.key) && values[item.key] === true && isDeviceEditorHypervisorProduct(item));
-            return retained.length ? '<p class="device-review-quiet" data-retained-hypervisor-software>Previously recorded software retained: '
-                + retained.map(item => escapeHtml(item.label)).join(', ') + '. Configure hosting on General.</p>' : '';
+            const suggestions=new Set(getDeviceSoftwareSuggestions(type,values).map(item=>item.key));
+            const retained=getDeviceSoftwareCatalogueEntries(deviceEditorSoftwareSource,values).filter(item=>isDeviceSoftwareSelected(item.key,values,deviceEditorSoftwareSource)&&!suggestions.has(item.key));
+            return retained.length ? '<div class="device-review-quiet" data-retained-software '+(retained.some(isDeviceEditorHypervisorProduct)?'data-retained-hypervisor-software':'')+'><p><strong>Previously recorded — review</strong></p><p>These selections are outside the current suggestions. They stay recorded until you untick them.</p><div class="device-review-checklist">'+retained.map(item=>renderInterfaceTemplate("devices/choices-1",[escapeHtml(item.key),'checked',escapeHtml(item.label)])).join('')+'</div></div>' : '';
+
         }
         function refreshDeviceEditorHostVersionChoices() {
             const select = document.getElementById('host-version-select');
@@ -4980,13 +5055,12 @@ function openIpModal(ip) {
 
         function renderInlineDevicePicker(kind,type,values={}) {
             const software=kind==='software', label=software?'Software':'Server Service';
-            const typeKeys=new Set(getSoftwareFieldsForDeviceType(type));
-            const entries=(software?getAvailableSoftwareCatalogueEntries().filter(item=>typeKeys.has(item.key) && !isDeviceEditorHypervisorProduct(item)):
+            const entries=(software?getDeviceSoftwareSuggestions(type,values):
               getAvailableServerServiceCatalogueEntries().filter(item=>type!=='Server - Physical'||item.key!=='serverService_Hypervisor'));
-            const selected=entries.filter(item=>values[item.key]===true).length;
+            const selected=entries.filter(item=>isDeviceSoftwareSelected(item.key,values,deviceEditorSoftwareSource)).length;
             const deviceTypes=getUniqueDeviceTypes();
-            const choices=entries.map(item=>renderInterfaceTemplate("devices/choices-1",[escapeHtml(item.key),values[item.key]===true?'checked':'',escapeHtml(item.label)])).join('');
-            return (software ? renderDeviceEditorRetainedSoftware(type,values) : '') + renderInterfaceTemplate("devices/render-inline-device-picker-3",[kind,kind,software?'software':'server services',kind,kind,software?'software':'server services',kind,label,kind,selected,entries.length,software?'Installed Software':'Server Services',kind,choices,kind,label,kind,label,kind,kind,label.toLowerCase(),software?renderInterfaceTemplate("devices/render-inline-device-picker-2",[deviceTypes.map(t=>renderInterfaceTemplate("devices/render-inline-device-picker-1",[escapeHtml(t),t===type?'checked':'',escapeHtml(t)])).join('')]):'',kind,kind]);
+            const choices=entries.map(item=>renderInterfaceTemplate("devices/choices-1",[escapeHtml(item.key),isDeviceSoftwareSelected(item.key,values,deviceEditorSoftwareSource)?'checked':'',escapeHtml(item.label)])).join('');
+            return (software ? '<p class="device-review-quiet">Suggestions depend on this device and its OS. Check package availability for the recorded edition, release and model. Custom software remains available.</p>'+renderDeviceEditorRetainedSoftware(type,values) : '') + renderInterfaceTemplate("devices/render-inline-device-picker-3",[kind,kind,software?'software':'server services',kind,kind,software?'software':'server services',kind,label,kind,selected,entries.length,software?'Installed Software':'Server Services',kind,choices,kind,label,kind,label,kind,kind,label.toLowerCase(),software?renderInterfaceTemplate("devices/render-inline-device-picker-2",[deviceTypes.map(t=>renderInterfaceTemplate("devices/render-inline-device-picker-1",[escapeHtml(t),t===type?'checked':'',escapeHtml(t)])).join('')]):'',kind,kind]);
         }
                 function updateInlinePickerCount(picker) {
             if(!picker)return;
@@ -5163,14 +5237,14 @@ function openIpModal(ip) {
         }
         // Offline, device-type-aware platform suggestions. Names are not version claims.
         const platformOptionsByDeviceGroup = Object.freeze({
-            network: ['FortiOS','PAN-OS','pfSense','OPNsense','Sophos Firewall OS','Cisco ASA Software','Cisco Secure Firewall Threat Defense'],
-            router: ['Cisco IOS','Cisco IOS XE','MikroTik RouterOS','Junos OS','OpenWrt','UniFi OS','VyOS'],
-            switch: ['Cisco IOS','Cisco IOS XE','Cisco NX-OS','ArubaOS-Switch','Aruba AOS-CX','Junos OS','UniFi Switch Firmware','MikroTik RouterOS'],
+            network: ['FortiOS','PAN-OS','pfSense CE','pfSense Plus','OPNsense Community','OPNsense Business','UniFi OS','Sophos Firewall OS','Cisco ASA Software','Cisco Secure Firewall Threat Defense'],
+            router: ['pfSense CE','pfSense Plus','OPNsense Community','OPNsense Business','Cisco IOS','Cisco IOS XE','MikroTik RouterOS','Junos OS','OpenWrt','UniFi OS','VyOS'],
+            switch: ['Cisco IOS','Cisco IOS XE','Cisco NX-OS','ArubaOS-Switch','Aruba AOS-CX','Junos OS','Junos OS Evolved','UniFi Switch Firmware','MikroTik RouterOS'],
             nas: ['Synology DSM','QNAP QTS','QNAP QuTS hero','TrueNAS SCALE','TrueNAS CORE','Unraid'],
             ap: ['UniFi AP Firmware','Aruba Instant','Cisco IOS','TP-Link Omada Firmware','OpenWrt'],
-            controller: ['UniFi Network','ArubaOS','Cisco Catalyst 9800 IOS XE','TP-Link Omada Controller'],
-            server: ['Windows Server','Ubuntu Server','Debian','Red Hat Enterprise Linux','Rocky Linux','Proxmox VE','VMware ESXi'],
-            computer: ['Windows','macOS','Ubuntu','Debian','Fedora','Linux Mint'],
+            controller: ['UniFi OS','ArubaOS','Cisco Catalyst 9800 IOS XE','TP-Link Omada Firmware'],
+            server: ['Windows Server','Ubuntu Server','Debian','Red Hat Enterprise Linux','Rocky Linux','AlmaLinux OS','CentOS Linux','CentOS Stream','SUSE Linux Enterprise Server','openSUSE Leap','openSUSE Tumbleweed','Proxmox VE','VMware ESXi'],
+            computer: ['Windows','macOS','Ubuntu','Debian','Fedora','Linux Mint','openSUSE Leap','openSUSE Tumbleweed'],
             ups: ['UPS Firmware','PDU Firmware'],
             generic: ['Firmware','Embedded Software']
         });
@@ -5191,15 +5265,361 @@ function openIpModal(ip) {
         }
         // Historical major releases are offline suggestions, not support-status claims.
         const platformVersionOptionsByName = Object.freeze({
-            'Windows Server':['2025','2022','2019','2016','2012 R2','2012','2008 R2','2008','2003','2000'],
-            'Windows':['11','10','8.1','8','7','Vista','XP','2000','ME','98'],
-            'Ubuntu Server':['26.04 LTS','24.04 LTS','22.04 LTS','20.04 LTS','18.04 LTS','16.04 LTS','14.04 LTS','12.04 LTS','10.04 LTS','8.04 LTS'],
-            'Debian':['13','12','11','10','9','8','7','6','5','4'],
-            'Proxmox VE':['9','8','7','6','5','4','3','2','1'],
-            'VMware ESXi':['8','7','6.7','6.5','6.0','5.5','5.1','5.0','4.1','4.0'],
-            'Synology DSM':['7.3','7.2','7.1','7.0','6.2','6.1','6.0','5.2','5.1','5.0'],
-            'FortiOS':['7.6','7.4','7.2','7.0','6.4','6.2','6.0','5.6','5.4','5.2']
-        });
+    "Windows Server": [
+        "2025",
+        "2022",
+        "2019",
+        "2016",
+        "2012 R2",
+        "2012",
+        "2008 R2",
+        "2008",
+        "2003",
+        "2000"
+    ],
+    "Windows": [
+        "11",
+        "10",
+        "8.1",
+        "8",
+        "7",
+        "Vista",
+        "XP",
+        "2000",
+        "ME",
+        "98"
+    ],
+    "macOS": [
+        "26 Tahoe",
+        "15 Sequoia",
+        "14 Sonoma",
+        "13 Ventura",
+        "12 Monterey",
+        "11 Big Sur",
+        "10.15 Catalina",
+        "10.14 Mojave",
+        "10.13 High Sierra",
+        "10.12 Sierra",
+        "10.11 El Capitan",
+        "10.10 Yosemite",
+        "10.9 Mavericks"
+    ],
+    "Ubuntu Server": [
+        "26.04 LTS",
+        "24.04 LTS",
+        "22.04 LTS",
+        "20.04 LTS",
+        "18.04 LTS",
+        "16.04 LTS",
+        "14.04 LTS",
+        "12.04 LTS",
+        "10.04 LTS",
+        "8.04 LTS"
+    ],
+    "Ubuntu": [
+        "26.10",
+        "26.04 LTS",
+        "25.10",
+        "25.04",
+        "24.10",
+        "24.04 LTS",
+        "23.10",
+        "23.04",
+        "22.10",
+        "22.04 LTS",
+        "21.10",
+        "21.04",
+        "20.10",
+        "20.04 LTS",
+        "19.10",
+        "19.04",
+        "18.10",
+        "18.04 LTS",
+        "17.10",
+        "17.04",
+        "16.10",
+        "16.04 LTS"
+    ],
+    "Debian": [
+        "13",
+        "12",
+        "11",
+        "10",
+        "9",
+        "8",
+        "7",
+        "6",
+        "5",
+        "4"
+    ],
+    "Fedora": [
+        "45",
+        "44",
+        "43",
+        "42",
+        "41",
+        "40",
+        "39",
+        "38",
+        "37",
+        "36",
+        "35",
+        "34",
+        "33",
+        "32"
+    ],
+    "Linux Mint": [
+        "22.3",
+        "22.2",
+        "22.1",
+        "22",
+        "21.3",
+        "21.2",
+        "21.1",
+        "21",
+        "20.3",
+        "20.2",
+        "20.1",
+        "20",
+        "19.3",
+        "19.2",
+        "19.1",
+        "19"
+    ],
+    "CentOS Linux": [
+        "8",
+        "7",
+        "6",
+        "5"
+    ],
+    "CentOS Stream": [
+        "10",
+        "9",
+        "8"
+    ],
+    "Rocky Linux": [
+        "10",
+        "9",
+        "8"
+    ],
+    "AlmaLinux OS": [
+        "10",
+        "9",
+        "8"
+    ],
+    "Red Hat Enterprise Linux": [
+        "10",
+        "9",
+        "8",
+        "7",
+        "6",
+        "5"
+    ],
+    "SUSE Linux Enterprise Server": [
+        "16",
+        "15",
+        "12",
+        "11"
+    ],
+    "openSUSE Leap": [
+        "16.0",
+        "15.6",
+        "15.5",
+        "15.4",
+        "15.3"
+    ],
+    "Proxmox VE": [
+        "9.2",
+        "9.1",
+        "9.0",
+        "8.4",
+        "8.3",
+        "8.2",
+        "8.1",
+        "8.0",
+        "7",
+        "6",
+        "5",
+        "4",
+        "3",
+        "2",
+        "1"
+    ],
+    "VMware ESXi": [
+        "8",
+        "7",
+        "6.7",
+        "6.5",
+        "6.0",
+        "5.5",
+        "5.1",
+        "5.0",
+        "4.1",
+        "4.0"
+    ],
+    "Microsoft Hyper-V": [
+        "2025",
+        "2022",
+        "2019",
+        "2016",
+        "2012 R2",
+        "2012",
+        "2008 R2"
+    ],
+    "XCP-ng": [
+        "8.3",
+        "8.2",
+        "8.1"
+    ],
+    "pfSense CE": [
+        "2.9.0",
+        "2.8.1",
+        "2.8.0",
+        "2.7.2",
+        "2.7.1",
+        "2.7.0",
+        "2.6.0"
+    ],
+    "pfSense Plus": [
+        "26.07",
+        "26.03.1",
+        "26.03",
+        "25.11",
+        "25.07",
+        "24.11",
+        "24.03"
+    ],
+    "OPNsense Community": [
+        "26.7",
+        "26.1",
+        "25.7",
+        "25.1",
+        "24.7",
+        "24.1",
+        "23.7",
+        "23.1",
+        "22.7",
+        "22.1"
+    ],
+    "OPNsense Business": [
+        "26.10",
+        "26.4",
+        "25.10",
+        "25.4",
+        "24.10",
+        "24.4",
+        "23.10",
+        "23.4",
+        "22.10",
+        "22.4"
+    ],
+    "FortiOS": [
+        "7.6",
+        "7.4",
+        "7.2",
+        "7.0",
+        "6.4",
+        "6.2",
+        "6.0",
+        "5.6",
+        "5.4",
+        "5.2"
+    ],
+    "PAN-OS": [
+        "11.2",
+        "11.1",
+        "11.0",
+        "10.2",
+        "10.1",
+        "10.0",
+        "9.1",
+        "9.0",
+        "8.1"
+    ],
+    "Sophos Firewall OS": [
+        "21.5",
+        "21",
+        "20",
+        "19.5",
+        "19",
+        "18.5",
+        "18"
+    ],
+    "Synology DSM": [
+        "7.3",
+        "7.2",
+        "7.1",
+        "7.0",
+        "6.2",
+        "6.1",
+        "6.0",
+        "5.2",
+        "5.1",
+        "5.0"
+    ],
+    "QNAP QTS": [
+        "5.2",
+        "5.1",
+        "5.0",
+        "4.5",
+        "4.4",
+        "4.3",
+        "4.2"
+    ],
+    "QNAP QuTS hero": [
+        "h6.0",
+        "h5.3",
+        "h5.2",
+        "h5.1",
+        "h5.0",
+        "h4.5"
+    ],
+    "TrueNAS SCALE": [
+        "25.10",
+        "25.04",
+        "24.10",
+        "24.04",
+        "23.10",
+        "22.12",
+        "22.02"
+    ],
+    "TrueNAS CORE": [
+        "13.3",
+        "13.0",
+        "12.0",
+        "11.3",
+        "11.2",
+        "11"
+    ],
+    "Unraid": [
+        "7.2",
+        "7.1",
+        "7.0",
+        "6.12",
+        "6.11",
+        "6.10",
+        "6.9"
+    ],
+    "OpenWrt": [
+        "25.12",
+        "24.10",
+        "23.05",
+        "22.03",
+        "21.02",
+        "19.07",
+        "18.06",
+        "17.01"
+    ],
+    "MikroTik RouterOS": [
+        "7",
+        "6"
+    ],
+    "VyOS": [
+        "1.4",
+        "1.3",
+        "1.2"
+    ]
+});
         function getPlatformVersionOptions(platform) {
             return platformVersionOptionsByName[platform] || [];
         }
@@ -5242,6 +5662,7 @@ function openIpModal(ip) {
                 }
                 captureSoftwarePlatformFields();
                 refreshSoftwarePlatformFields();
+                refreshDeviceSoftwareSuggestions();
                 if(customSelected){
                     // Rebuilding version choices must not hide the custom choice the user just made.
                     document.getElementById('platform-select').value='__custom__';
@@ -5249,6 +5670,7 @@ function openIpModal(ip) {
                     field.hidden=false;field.focus();
                 }
             });
+            custom.addEventListener('input',()=>{captureSoftwarePlatformFields();refreshDeviceSoftwareSuggestions();});
             const versionSelect = document.getElementById('version-select');
             const versionInput = document.getElementById('platform-version');
             versionSelect?.addEventListener('change', () => {
@@ -5281,11 +5703,13 @@ function openIpModal(ip) {
             syncHostingFieldVisibility();
         }
         let deviceDetailFormValues = {};
+        let deviceEditorSoftwareSource = null;
         function isHypervisorHostingEnabledInDeviceForm() {
             const control = document.getElementById('device-hosting-enabled');
             return control ? control.checked : deviceDetailFormValues.serverService_Hypervisor === true;
         }
         function syncHostingFieldVisibility() {
+            refreshDeviceSoftwareSuggestions();
             const enabled = isHypervisorHostingEnabledInDeviceForm();
             const fields = document.getElementById('device-hosting-details');
             if (fields) fields.hidden = !enabled;
@@ -5917,6 +6341,7 @@ function openIpModal(ip) {
             const vmPurposes = [['Server','Server - Virtual'],['Desktop','Desktop'],['Firewall','Firewall'],['Router','Router'],['NAS','NAS'],['Wireless LAN Controller','Wireless LAN Controller']];
             deviceDetailFormValues = {...(draft?.typeDetails ?? device?.typeDetails ?? {})};
             const sourceRecord=device||(isDuplicate?getDeviceById(draft.duplicatedFrom):null);
+            deviceEditorSoftwareSource=sourceRecord?JSON.parse(JSON.stringify(sourceRecord)):null;
             // Show known legacy OS data without inferring a hypervisor or changing an explicit blank.
             if(deviceDetailFormValues.softwarePlatform===undefined){
                 const recordedPlatform=deviceDetailFormValues.os??sourceRecord?.os;
@@ -5979,7 +6404,9 @@ function openIpModal(ip) {
                 input.classList.toggle('hidden', !custom);
                 input.value = custom ? (['VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng'].includes(input.value) ? '' : input.value) : event.target.value;
                 if (custom) input.focus();
+                refreshDeviceSoftwareSuggestions();
             });
+            document.getElementById('host-platform')?.addEventListener('input',refreshDeviceSoftwareSuggestions);
             syncHostingFieldVisibility();
             refreshDeviceSubnetSelectionCascade('initial');
             refreshDeviceIpOptions();
@@ -6369,6 +6796,7 @@ function openIpModal(ip) {
             const beforeDeviceSave = JSON.stringify(appState);
             if (existingDevice) {
                 Object.assign(existingDevice, {status, manufacturer, model, serialNumber, typeDetails, virtualPlatform, virtualHostId, isVirtual:isVirtualServer});
+                preserveLegacyDeviceSoftwareFlags(existingDevice,typeDetails);
                 existingDevice.ipReserved = ipReserved;
                 existingDevice.name = name; existingDevice.type = type; existingDevice.mountType = mountType; existingDevice.location = location; existingDevice.notes = notes;
                 existingDevice.rackId = rackId; existingDevice.face = face; existingDevice.rackUStart = rackUStart; existingDevice.rackUEnd = rackUEnd; existingDevice.rackUHeight = rackUHeight;
@@ -6377,6 +6805,7 @@ function openIpModal(ip) {
             } else {
                 const newDevice = { id: 'dev_' + Date.now(), name, type, mountType, location, notes, status, manufacturer, model, serialNumber, typeDetails, virtualPlatform, virtualHostId, isVirtual:isVirtualServer, ipReserved, primaryIp: '', rackId, face, rackUStart, rackUEnd, rackUHeight };
                 if(rackShelfAccessoryId)newDevice.rackShelfAccessoryId=rackShelfAccessoryId;
+                preserveLegacyDeviceSoftwareFlags(newDevice,typeDetails);
                 appState.devices.push(newDevice);
                 try { setDevicePrimaryIp(newDevice, primaryIp); syncDeviceIpamRecord(newDevice); } catch (error) { appState = JSON.parse(beforeDeviceSave); return showToast('Device/IPAM creation cancelled: ' + error.message, 'error'); }
             }

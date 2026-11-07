@@ -20,7 +20,7 @@ Checks: **466 backend tests run, 463 passed, three established skips**, includin
 
 - [x] A: optional shelf reference, shared invariants, permission checks, atomic removal and backend/HTTP tests.
 - [x] B: narrow Batch 04 conditional Rack/Shelf controls, draft-safe existing accessory creation, linked-shelf review, correct Duplicate/Details and browser tests.
-- [ ] C: vendor-confirmed approved version arrays, contextual local software and explicit retained selections; no backend whitelist or destructive catalogue migration.
+- [x] C: vendor-confirmed approved version arrays, contextual local software and explicit retained selections; no backend whitelist or destructive catalogue migration.
 - [ ] D: complete integration, browser/security/permission/backup/visual regression evidence, documentation and private owner acceptance instructions.
 
 ## Package B — Implemented And Tested
@@ -29,4 +29,14 @@ Conditional Rack/Shelf controls stay inside the existing Mounting & Rack Configu
 
 Focused Chromium checks passed six functional groups, plus eight width/theme combinations (1440/1366/390/320px, light/dark). Captures include General, accessory creation, moved-shelf Details and failure recovery. Manual inspection confirms the approved card/header/footer treatment and source accessory form. Full existing Chromium compatibility passed. A further 21 focused backend tests passed, including current shelf-mounted Access Point import preservation; malformed references still fail validation. Pinned-source/template checks passed (two tests). These results do not claim owner Pi/Safari acceptance.
 
-Next step: package C, implementing the approved vendor-confirmed version arrays and contextual local software, with visible, removable retained selections. Then complete package D regression, CI, evidence and private acceptance instructions continuously. No package A/B reimplementation is needed.
+## Package C — Implemented And Focused Checks Passed
+
+The [catalogue source record](Issue-331-Catalogue-Sources.md) lists primary-vendor checks and conservative exclusions. The version map now covers the approved historical families and editions. Server Ubuntu stays LTS-only; desktop includes interim releases. pfSense/OPNsense editions have independent arrays; generic saved labels are not guessed into editions. Unverified future/beta/RC versions remain Custom. No backend whitelist or catalogue migration is introduced.
+
+Built-in metadata intersects device type, actual platform and existing hide settings. Guest suggestions use the guest OS. Console/NAS/firewall applications remain local to the appropriate platform. OS records, AP remote controllers and printer drivers are not new local-app recommendations. Stable keys, custom catalogue scope and archived records survive. Checked exceptions are visibly labelled **Previously recorded — review**, removable only by explicit unticking. Old top-level flags retain their original storage location. Details includes historical assignments.
+
+Six focused catalogue browser groups passed, including real Save/Cancel/reload and explicit removal. Seven shelf browser groups passed, including replacement creation and deliberate cross-rack reassignment. Both modules captured eight width/theme combinations. The final backend run passed **464 of 467 tests, with three established skips**. An isolated native AMD64 Docker lifecycle test passed build, restart/recreate, persistent TLS/database and configured port; this is not ARM64/Pi acceptance. Pinned-source/template checks passed again. Permanent evidence is in `docs/development-handovers/evidence/issue-331/`.
+
+The regular GitHub browser workflow now runs the new focused shelf/catalogue modules and saves their fictional artifacts. Final full browser/editor regression, source-comparison inspection, GitHub security/build checks and acceptance report are outstanding. The latest test additions also record actual Hyper-V/Proxmox selector observations and renamed-key hide preferences in that final run; they are not yet claimed passed here.
+
+Next step: complete D on this checkpoint. Run the final browser/editor regressions and inspect source/live comparisons; record actual selector observations without silently fixing independent issues; verify GitHub backend/browser/full-history secret/Docker lifecycle results, then push final evidence/private Pi instructions. No A–C reimplementation is needed.

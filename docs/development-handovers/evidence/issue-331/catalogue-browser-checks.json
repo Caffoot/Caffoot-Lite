@@ -1,0 +1,367 @@
+{
+  "checks": [
+    "Independent edition/release boundaries: LTS, interim, Hyper-V/Proxmox and verified GA-only families",
+    "Windows/macOS/Linux recommendations refresh without silently clearing the checked Windows-only selection",
+    "pfSense and OPNsense editions keep distinct release trains and local package suggestions",
+    "Actual console apps include InnerSpace; APs omit remote controllers; printers omit remote drivers",
+    "NAS model/platform groups and VM guest OS govern software; the host platform is not used",
+    "Archived/hidden/out-of-context/missing-key/top-level records survive Cancel, Save and reload; only explicit unticks remove selections"
+  ],
+  "errors": [],
+  "versions": {
+    "Windows Server": [
+      "2025",
+      "2022",
+      "2019",
+      "2016",
+      "2012 R2",
+      "2012",
+      "2008 R2",
+      "2008",
+      "2003",
+      "2000"
+    ],
+    "Windows": [
+      "11",
+      "10",
+      "8.1",
+      "8",
+      "7",
+      "Vista",
+      "XP",
+      "2000",
+      "ME",
+      "98"
+    ],
+    "macOS": [
+      "26 Tahoe",
+      "15 Sequoia",
+      "14 Sonoma",
+      "13 Ventura",
+      "12 Monterey",
+      "11 Big Sur",
+      "10.15 Catalina",
+      "10.14 Mojave",
+      "10.13 High Sierra",
+      "10.12 Sierra",
+      "10.11 El Capitan",
+      "10.10 Yosemite",
+      "10.9 Mavericks"
+    ],
+    "Ubuntu Server": [
+      "26.04 LTS",
+      "24.04 LTS",
+      "22.04 LTS",
+      "20.04 LTS",
+      "18.04 LTS",
+      "16.04 LTS",
+      "14.04 LTS",
+      "12.04 LTS",
+      "10.04 LTS",
+      "8.04 LTS"
+    ],
+    "Ubuntu": [
+      "26.10",
+      "26.04 LTS",
+      "25.10",
+      "25.04",
+      "24.10",
+      "24.04 LTS",
+      "23.10",
+      "23.04",
+      "22.10",
+      "22.04 LTS",
+      "21.10",
+      "21.04",
+      "20.10",
+      "20.04 LTS",
+      "19.10",
+      "19.04",
+      "18.10",
+      "18.04 LTS",
+      "17.10",
+      "17.04",
+      "16.10",
+      "16.04 LTS"
+    ],
+    "Debian": [
+      "13",
+      "12",
+      "11",
+      "10",
+      "9",
+      "8",
+      "7",
+      "6",
+      "5",
+      "4"
+    ],
+    "Fedora": [
+      "45",
+      "44",
+      "43",
+      "42",
+      "41",
+      "40",
+      "39",
+      "38",
+      "37",
+      "36",
+      "35",
+      "34",
+      "33",
+      "32"
+    ],
+    "Linux Mint": [
+      "22.3",
+      "22.2",
+      "22.1",
+      "22",
+      "21.3",
+      "21.2",
+      "21.1",
+      "21",
+      "20.3",
+      "20.2",
+      "20.1",
+      "20",
+      "19.3",
+      "19.2",
+      "19.1",
+      "19"
+    ],
+    "CentOS Linux": [
+      "8",
+      "7",
+      "6",
+      "5"
+    ],
+    "CentOS Stream": [
+      "10",
+      "9",
+      "8"
+    ],
+    "Rocky Linux": [
+      "10",
+      "9",
+      "8"
+    ],
+    "AlmaLinux OS": [
+      "10",
+      "9",
+      "8"
+    ],
+    "Red Hat Enterprise Linux": [
+      "10",
+      "9",
+      "8",
+      "7",
+      "6",
+      "5"
+    ],
+    "SUSE Linux Enterprise Server": [
+      "16",
+      "15",
+      "12",
+      "11"
+    ],
+    "openSUSE Leap": [
+      "16.0",
+      "15.6",
+      "15.5",
+      "15.4",
+      "15.3"
+    ],
+    "Proxmox VE": [
+      "9.2",
+      "9.1",
+      "9.0",
+      "8.4",
+      "8.3",
+      "8.2",
+      "8.1",
+      "8.0",
+      "7",
+      "6",
+      "5",
+      "4",
+      "3",
+      "2",
+      "1"
+    ],
+    "VMware ESXi": [
+      "8",
+      "7",
+      "6.7",
+      "6.5",
+      "6.0",
+      "5.5",
+      "5.1",
+      "5.0",
+      "4.1",
+      "4.0"
+    ],
+    "Microsoft Hyper-V": [
+      "2025",
+      "2022",
+      "2019",
+      "2016",
+      "2012 R2",
+      "2012",
+      "2008 R2"
+    ],
+    "XCP-ng": [
+      "8.3",
+      "8.2",
+      "8.1"
+    ],
+    "pfSense CE": [
+      "2.9.0",
+      "2.8.1",
+      "2.8.0",
+      "2.7.2",
+      "2.7.1",
+      "2.7.0",
+      "2.6.0"
+    ],
+    "pfSense Plus": [
+      "26.07",
+      "26.03.1",
+      "26.03",
+      "25.11",
+      "25.07",
+      "24.11",
+      "24.03"
+    ],
+    "OPNsense Community": [
+      "26.7",
+      "26.1",
+      "25.7",
+      "25.1",
+      "24.7",
+      "24.1",
+      "23.7",
+      "23.1",
+      "22.7",
+      "22.1"
+    ],
+    "OPNsense Business": [
+      "26.10",
+      "26.4",
+      "25.10",
+      "25.4",
+      "24.10",
+      "24.4",
+      "23.10",
+      "23.4",
+      "22.10",
+      "22.4"
+    ],
+    "FortiOS": [
+      "7.6",
+      "7.4",
+      "7.2",
+      "7.0",
+      "6.4",
+      "6.2",
+      "6.0",
+      "5.6",
+      "5.4",
+      "5.2"
+    ],
+    "PAN-OS": [
+      "11.2",
+      "11.1",
+      "11.0",
+      "10.2",
+      "10.1",
+      "10.0",
+      "9.1",
+      "9.0",
+      "8.1"
+    ],
+    "Sophos Firewall OS": [
+      "21.5",
+      "21",
+      "20",
+      "19.5",
+      "19",
+      "18.5",
+      "18"
+    ],
+    "Synology DSM": [
+      "7.3",
+      "7.2",
+      "7.1",
+      "7.0",
+      "6.2",
+      "6.1",
+      "6.0",
+      "5.2",
+      "5.1",
+      "5.0"
+    ],
+    "QNAP QTS": [
+      "5.2",
+      "5.1",
+      "5.0",
+      "4.5",
+      "4.4",
+      "4.3",
+      "4.2"
+    ],
+    "QNAP QuTS hero": [
+      "h6.0",
+      "h5.3",
+      "h5.2",
+      "h5.1",
+      "h5.0",
+      "h4.5"
+    ],
+    "TrueNAS SCALE": [
+      "25.10",
+      "25.04",
+      "24.10",
+      "24.04",
+      "23.10",
+      "22.12",
+      "22.02"
+    ],
+    "TrueNAS CORE": [
+      "13.3",
+      "13.0",
+      "12.0",
+      "11.3",
+      "11.2",
+      "11"
+    ],
+    "Unraid": [
+      "7.2",
+      "7.1",
+      "7.0",
+      "6.12",
+      "6.11",
+      "6.10",
+      "6.9"
+    ],
+    "OpenWrt": [
+      "25.12",
+      "24.10",
+      "23.05",
+      "22.03",
+      "21.02",
+      "19.07",
+      "18.06",
+      "17.01"
+    ],
+    "MikroTik RouterOS": [
+      "7",
+      "6"
+    ],
+    "VyOS": [
+      "1.4",
+      "1.3",
+      "1.2"
+    ]
+  }
+}
