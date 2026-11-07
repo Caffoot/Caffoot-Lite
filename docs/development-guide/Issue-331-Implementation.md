@@ -19,8 +19,14 @@ Checks: **466 backend tests run, 463 passed, three established skips**, includin
 ## Resume Checklist
 
 - [x] A: optional shelf reference, shared invariants, permission checks, atomic removal and backend/HTTP tests.
-- [ ] B: narrow Batch 04 conditional Rack/Shelf controls, draft-safe existing accessory creation, linked-shelf review, correct Duplicate/Details and browser tests.
+- [x] B: narrow Batch 04 conditional Rack/Shelf controls, draft-safe existing accessory creation, linked-shelf review, correct Duplicate/Details and browser tests.
 - [ ] C: vendor-confirmed approved version arrays, contextual local software and explicit retained selections; no backend whitelist or destructive catalogue migration.
 - [ ] D: complete integration, browser/security/permission/backup/visual regression evidence, documentation and private owner acceptance instructions.
 
-Next step: package B in `interface/application.js` and minimal approved form fragments/styles. Keep the existing Horizontal Accessory editor and its placement validator; preserve the mounted Device form and edit reservation while creating a shelf. Then complete C and D continuously. Do not redo package A or earlier accepted issues.
+## Package B — Implemented And Tested
+
+Conditional Rack/Shelf controls stay inside the existing Mounting & Rack Configuration card. The original Horizontal Accessory editor creates the shelf, preserving the mounted Device form, draft, active tab/focus and original five-minute reservation. Saving a shelf is independent of cancelling the Device draft. Duplicate retains shelf mounting without allocating a device U slot. Details derives the current accessory U, rather than storing a stale location. Linked removal requires an explicit destination or Retired choice for every device; Cancel and failure preserve all records and choices. Existing parent-rack deletion is unchanged.
+
+Focused Chromium checks passed six functional groups, plus eight width/theme combinations (1440/1366/390/320px, light/dark). Captures include General, accessory creation, moved-shelf Details and failure recovery. Manual inspection confirms the approved card/header/footer treatment and source accessory form. Full existing Chromium compatibility passed. A further 21 focused backend tests passed, including current shelf-mounted Access Point import preservation; malformed references still fail validation. Pinned-source/template checks passed (two tests). These results do not claim owner Pi/Safari acceptance.
+
+Next step: package C, implementing the approved vendor-confirmed version arrays and contextual local software, with visible, removable retained selections. Then complete package D regression, CI, evidence and private acceptance instructions continuously. No package A/B reimplementation is needed.

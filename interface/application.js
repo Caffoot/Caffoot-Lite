@@ -319,6 +319,9 @@ function hierarchyValidateTypes(subnets) {
                 deviceIds.add(device.id);
                 if (!getRecognisedDeviceMountTypes(device.type).includes(device.mountType || (device.rackId ? 'Rack Mounted' : 'Desktop'))) throw new Error(`Device ${device.name} has an incompatible mounting type for ${device.type}.`);
                 if (device.primaryIp && !isValidIpv4(device.primaryIp)) throw new Error(`Invalid primary IP on device ${device.name}.`);
+                const shelfError=getDeviceShelfAssociationError(device,state);
+                if(shelfError)throw new Error(shelfError);
+                if(device.rackShelfAccessoryId)continue;
                 if (device.mountType === 'Rack Mounted' || device.rackId) {
                     if (device.mountType !== 'Rack Mounted') throw new Error(`Device ${device.name} has a rack assignment but is not Rack Mounted.`);
                     if (!device.location || device.location === 'Racked') throw new Error(`Rack Mounted device ${device.name} needs a physical location or Unknown.`);
@@ -437,6 +440,9 @@ function hierarchyValidateTypes(subnets) {
                     const allocation = appState.ipAllocations[device.primaryIp];
                     if (!allocation || allocation.deviceId !== device.id || allocation.status !== (device.ipReserved ? 'Reserved' : 'Assigned')) errors.push(`IPAM is out of sync for ${device.name} (${device.primaryIp}).`);
                 }
+                const shelfError=getDeviceShelfAssociationError(device);
+                if(shelfError)errors.push(shelfError);
+                if(device.rackShelfAccessoryId)return;
                 if (device.rackId) {
                     const rack = appState.racks.find(r => r.id === device.rackId);
                     if (!rack) errors.push(`Device ${device.name} references a missing rack.`);
@@ -869,6 +875,118 @@ function hierarchyValidateTypes(subnets) {
             };
         }
 
+        function isRackMountedDevice(device) {
+            return device?.mountType === 'Rack Mounted' || (!!device?.rackId && !device?.mountType);
+        }
+        function getDeviceShelfAssociationError(device, state = appState) {
+            const id=device.rackShelfAccessoryId, hasId=id!==undefined&&id!==null&&id!=='';
+            if(!hasId && !(device.mountType==='Tabletop / Shelf Mounted'&&device.rackId))return '';
+            if(typeof id!=='string'||!id)return 'Select an existing Rack Shelf, or clear the optional rack.';
+            if(device.mountType!=='Tabletop / Shelf Mounted'||device.isVirtual===true||device.type==='Server - Virtual')return 'Only physical Tabletop / Shelf Mounted devices can use a Rack Shelf.';
+            const shelf=(state.rackAccessories||[]).find(a=>a.id===id);
+            if(!shelf||shelf.type!=='shelf')return 'The selected Rack Shelf is missing or no longer a shelf. Review the selection.';
+            if(!device.rackId||shelf.rackId!==device.rackId)return 'The selected Rack Shelf must belong to the selected rack.';
+            if(!state.racks.some(r=>r.id===device.rackId))return 'The selected rack no longer exists.';
+            if(['face','rackUStart','rackUEnd','rackUHeight'].some(k=>device[k]!==undefined&&device[k]!==null&&device[k]!==''))return 'A shelf-mounted device must not have its own rack U or face.';
+            return '';
+        }
+        function getRackShelfLocation(device) {
+            const shelf=(appState.rackAccessories||[]).find(a=>a.id===device.rackShelfAccessoryId&&a.type==='shelf'&&a.rackId===device.rackId);
+            const rack=appState.racks.find(r=>r.id===device.rackId);
+            return shelf&&rack?`${rack.name} · Shelf U${shelf.startU} (${shelf.face==='rear'?'Rear':'Front'})`:'Recorded shelf unavailable — review access or selection';
+        }
+        function initialiseDeviceShelfFields(form) {
+            const card=form.querySelector('#device-form-mounting-options');
+            const group=document.createElement('div');group.className='device-review-form-grid device-editor-shelf-placement';group.hidden=true;
+            group.innerHTML='<div class="device-review-field"><label for="dev-shelf-rack">Rack (Optional)</label><select id="dev-shelf-rack"><option value="">No Rack Association</option></select></div>'
+                +'<div class="device-review-field" data-device-shelf-field><label for="dev-rack-shelf">Rack Shelf <span class="required-mark">*</span></label><select id="dev-rack-shelf"></select><small>The shelf owns its rack U position; this device uses no additional U.</small><div class="device-review-catalogue-actions"><button type="button" class="device-review-smallbtn" data-action="create-rack-shelf-from-device">+ Add Rack Shelf</button></div></div>';
+            card.querySelector(':scope > .device-review-hint').before(group);
+            const rack=group.querySelector('#dev-shelf-rack');
+            for(const r of appState.racks)rack.add(new Option(r.name,r.id));
+            const recorded=form.querySelector('#dev-rack-id')?.value||'';
+            if(recorded&&![...rack.options].some(o=>o.value===recorded))rack.add(new Option('Recorded rack unavailable — retained',recorded));
+            rack.value=recorded;
+            const shelf=group.querySelector('#dev-rack-shelf');shelf.dataset.recordedShelf=form.dataset.rackShelfAccessoryId||'';
+            rack.addEventListener('change',()=>{shelf.dataset.recordedShelf='';refreshDeviceShelfFields();});
+            shelf.addEventListener('change',()=>shelf.dataset.recordedShelf=shelf.value);
+            refreshDeviceShelfFields();
+        }
+        function refreshDeviceShelfFields(selectedId) {
+            const form=document.getElementById('device-editor-form');
+            const group=form?.querySelector('.device-editor-shelf-placement');if(!group)return;
+            const active=!isVirtualDeviceForm()&&document.getElementById('dev-mount-type')?.value==='Tabletop / Shelf Mounted';
+            group.hidden=!active;
+            const rack=group.querySelector('#dev-shelf-rack'),shelf=group.querySelector('#dev-rack-shelf');
+            const chosen=selectedId??shelf.dataset.recordedShelf??'';
+            shelf.replaceChildren(new Option('Select a Rack Shelf...',''));
+            for(const a of appState.rackAccessories||[])if(a.type==='shelf'&&a.rackId===rack.value)shelf.add(new Option(`${a.name||'Rack Shelf'} · U${a.startU} (${a.face==='rear'?'Rear':'Front'})`,a.id));
+            if(chosen&&![...shelf.options].some(o=>o.value===chosen))shelf.add(new Option('Recorded shelf unavailable — review',chosen));
+            shelf.value=chosen;shelf.dataset.recordedShelf=chosen;
+            group.querySelector('[data-device-shelf-field]').hidden=!rack.value;
+            const permitted=!!nextRackBridge?.canEdit();
+            rack.disabled=!active||!permitted;shelf.disabled=!active||!rack.value||!permitted;
+            shelf.required=active&&!!rack.value;
+            const add=group.querySelector('[data-action="create-rack-shelf-from-device"]');add.disabled=!permitted;add.hidden=!permitted;
+        }
+        let rackShelfReturnContext = null;
+        function openRackShelfCreation(rackId, onReturn) {
+            if(rackShelfReturnContext||!nextRackBridge?.canEdit())return showToast('Racks edit permission required.','error');
+            if(!appState.racks.some(r=>r.id===rackId))return showToast('The selected rack is no longer available.','error');
+            const content=document.getElementById('modal-content'),container=document.getElementById('modal-container');
+            const context={fragment:document.createDocumentFragment(),contentClass:content.className,containerClass:container.className,
+                heading:content.getAttribute('aria-labelledby'),focus:document.activeElement,previousType:selectedRackAccessoryType,previousFace:activeRackFace,onReturn};
+            // Retain the actual editor nodes and its existing reservation, not a reconstructed partial form.
+            while(content.firstChild)context.fragment.append(content.firstChild);
+            rackShelfReturnContext=context;
+            content.classList.remove('device-review-container');container.classList.remove('device-review-overlay');container.classList.add('rack-modal-shade');
+            selectedRackAccessoryType='shelf';openRackAccessoryEditor(rackId,1);
+            const type=content.querySelector('#rack-accessory-form [name="type"]');if(type)type.disabled=true;
+            content.querySelector('[name="name"]')?.focus();
+        }
+        function returnFromRackShelfCreation(savedShelf=null) {
+            const context=rackShelfReturnContext;if(!context)return;
+            rackShelfReturnContext=null;
+            const content=document.getElementById('modal-content'),container=document.getElementById('modal-container');
+            content.replaceChildren(context.fragment);content.className=context.contentClass;container.className=context.containerClass;
+            if(context.heading)content.setAttribute('aria-labelledby',context.heading);else content.removeAttribute('aria-labelledby');
+            selectedRackAccessoryType=context.previousType;activeRackFace=context.previousFace;
+            context.onReturn(savedShelf);
+            if(context.focus?.isConnected)context.focus.focus({preventScroll:true});
+        }
+        function createRackShelfFromDevice() {
+            const rackId=document.getElementById('dev-shelf-rack')?.value;
+            if(!rackId)return showDeviceEditorFeedback('Choose an optional rack before adding a shelf.','dev-shelf-rack');
+            const draft=captureDeviceFormDraft();
+            if(!draft)return showDeviceEditorFeedback('Unable to preserve the device form.');
+            openRackShelfCreation(rackId,shelf=>refreshDeviceShelfFields(shelf?.id));
+        }
+        async function openRackShelfRemovalReview(id) {
+            let review;
+            try{review=await nextRackBridge.reviewShelf(id);}catch(error){return showToast(error.message,'error');}
+            if(!review.devices.length)return requestRackAccessoryDeletion(id);
+            openModal(renderInterfaceTemplate("racks/shelf-removal-review-1",[escapeHtml(review.shelf.name||'Rack Shelf')]));
+            const form=document.getElementById('rack-shelf-removal-form'),rows=form.querySelector('[data-shelf-removal-devices]'),feedback=form.querySelector('[role="alert"]');
+            const options=()=>'<option value="">Choose An Action...</option><option value="retire">Retired — Clear Active Rack And Shelf</option>'+(appState.rackAccessories||[]).filter(a=>a.type==='shelf'&&a.id!==id).map(a=>`<option value="shelf:${escapeHtml(a.id)}">Reassign: ${escapeHtml(getRackShelfLocation({rackId:a.rackId,rackShelfAccessoryId:a.id}))}</option>`).join('');
+            for(const d of review.devices){
+                const row=document.createElement('div');row.className='rack-form-grid';
+                row.innerHTML=`<label class="rack-field">${escapeHtml(d.name)}<select required data-shelf-device-choice="${escapeHtml(d.id)}">${options()}</select></label><label class="rack-field">Rack For Replacement Shelf<select data-shelf-target-rack>${appState.racks.map(r=>`<option value="${escapeHtml(r.id)}" ${r.id===review.shelf.rackId?'selected':''}>${escapeHtml(r.name)}</option>`).join('')}</select></label><div class="rack-form-actions"><button type="button" class="btn btn-outline" data-add-replacement-shelf>+ Add Rack Shelf</button></div>`;
+                row.querySelector('[data-add-replacement-shelf]').addEventListener('click',()=>openRackShelfCreation(row.querySelector('[data-shelf-target-rack]').value,saved=>{
+                    for(const select of rows.querySelectorAll('[data-shelf-device-choice]')){const previous=select.value;select.innerHTML=options();select.value=previous;}
+                    if(saved)row.querySelector('[data-shelf-device-choice]').value='shelf:'+saved.id;
+                }));rows.append(row);
+            }
+            form.addEventListener('invalid',event=>{event.preventDefault();feedback.textContent='Choose an action for every linked device.';event.target.focus();},true);
+            form.addEventListener('submit',async event=>{
+                event.preventDefault();feedback.textContent='';
+                const choices=review.devices.map(d=>{const value=[...rows.querySelectorAll('[data-shelf-device-choice]')].find(s=>s.dataset.shelfDeviceChoice===d.id).value;
+                    if(value==='retire')return {deviceId:d.id,revision:d.revision,action:'retire'};
+                    const shelf=(appState.rackAccessories||[]).find(a=>'shelf:'+a.id===value);
+                    return {deviceId:d.id,revision:d.revision,action:'reassign',rackId:shelf?.rackId||'',shelfId:shelf?.id||''};});
+                try{await nextRackBridge.removeShelf(review.shelf,choices);closeModal(true);renderContent();}
+                catch(error){feedback.textContent=error.message;feedback.tabIndex=-1;feedback.focus();}
+            });
+        }
+
         function validateRackPlacement(deviceId, rackId, face, startU, endU = startU) {
             const rack = appState.racks.find(r => r.id === rackId);
             if (!rack) return 'Selected rack no longer exists.';
@@ -888,7 +1006,7 @@ function hierarchyValidateTypes(subnets) {
             }
 
             const overlaps = appState.devices.some(d => {
-                if (d.id === deviceId || d.rackId !== rackId || (d.face || 'front') !== (face || 'front')) return false;
+                if (!isRackMountedDevice(d) || d.id === deviceId || d.rackId !== rackId || (d.face || 'front') !== (face || 'front')) return false;
                 const otherStart = Number(d.rackUStart);
                 const otherEnd = Number(d.rackUEnd || d.rackUStart);
                 if (!Number.isInteger(otherStart) || !Number.isInteger(otherEnd)) return false;
@@ -1227,7 +1345,7 @@ function hierarchyValidateTypes(subnets) {
             }
             const rackRows=racks.map(r=>{
                 const height=Number(r.heightU)||0;
-                const installed=devices.filter(d=>d.rackId===r.id);
+                const installed=devices.filter(d=>isRackMountedDevice(d)&&d.rackId===r.id);
                 const accessories=(Array.isArray(appState.rackAccessories)?appState.rackAccessories:[])
                     .filter(a=>a.rackId===r.id && a.type!=='pdu_vertical' && a.type!=='cable_vertical');
                 // Front and rear occupancy are separately reported to avoid combining
@@ -1318,7 +1436,7 @@ function hierarchyValidateTypes(subnets) {
             const reservedIps = Object.values(allocations).filter(a => a?.status === 'Reserved').length;
             const totalTrackedIps = Object.keys(allocations).length;
             const rackIds = new Set(racks.map(r => r.id));
-            const rackedDevices = devices.filter(d => d.rackId && rackIds.has(d.rackId)).length;
+            const rackedDevices = devices.filter(d => isRackMountedDevice(d)&&d.rackId&&rackIds.has(d.rackId)).length;
             const unmountedDevices = devices.length - rackedDevices;
 
             const typeCounts = devices.reduce((map, d) => {
@@ -1366,7 +1484,7 @@ function hierarchyValidateTypes(subnets) {
                 }
             });
             racks.forEach(rack => {
-                const rackDevices = devices.filter(d => d.rackId === rack.id);
+                const rackDevices = devices.filter(d => isRackMountedDevice(d)&&d.rackId === rack.id);
                 const used = rackDevices.reduce((sum, d) => {
                     const start = Number(d.rackUStart);
                     const end = Number(d.rackUEnd ?? d.rackUStart);
@@ -1436,7 +1554,7 @@ function hierarchyValidateTypes(subnets) {
             }).join(',')})` : 'conic-gradient(#cbd5e1 0% 100%)';
             const rackInsights = racks.map(rack => {
                 const height = Number(rack.heightU) || 0;
-                const rackDevices = devices.filter(d => d.rackId === rack.id);
+                const rackDevices = devices.filter(d => isRackMountedDevice(d)&&d.rackId === rack.id);
                 const accessories = (appState.rackAccessories || []).filter(a => a.rackId === rack.id);
                 const faces = ['front','rear'].map(face => {
                     const occupied = new Set();
@@ -1514,7 +1632,7 @@ function hierarchyValidateTypes(subnets) {
         function getOccupiedRackUnits(rack, face) {
             const used = new Set();
             const height = Number(rack.heightU) || 0;
-            appState.devices.filter(d => d.rackId === rack.id && (d.face || 'front') === face).forEach(d => {
+            appState.devices.filter(d => isRackMountedDevice(d)&&d.rackId === rack.id && (d.face || 'front') === face).forEach(d => {
                 for (let u = Number(d.rackUStart); u <= Number(d.rackUEnd || d.rackUStart); u++) {
                     if (Number.isInteger(u) && u >= 1 && u <= height) used.add(u);
                 }
@@ -1543,7 +1661,7 @@ function hierarchyValidateTypes(subnets) {
             const pages=['front','rear'].map(face=>{
                 const usage=getOccupiedRackUnits(rack,face);
                 const slots=Array.from({length:Number(rack.heightU)},(_,i)=>Number(rack.heightU)-i).map(u=>{
-                    const d=appState.devices.find(d=>d.rackId===rack.id&&(d.face||'front')===face&&Number(d.rackUStart)<=u&&Number(d.rackUEnd||d.rackUStart)>=u);
+                    const d=appState.devices.find(d=>isRackMountedDevice(d)&&d.rackId===rack.id&&(d.face||'front')===face&&Number(d.rackUStart)<=u&&Number(d.rackUEnd||d.rackUStart)>=u);
                     const a=(appState.rackAccessories||[]).find(a=>a.rackId===rack.id&&a.face===face&&!['pdu_vertical','cable_vertical'].includes(a.type)&&Number(a.startU)<=u&&Number(a.startU)+Number(a.heightU)-1>=u);
                     const item=d||a;
                     const name=d?.name||a?.name||'';
@@ -1604,7 +1722,7 @@ function hierarchyValidateTypes(subnets) {
         function renderRackHubV13() {
             const racks=appState.racks||[], devices=appState.devices||[], accessories=appState.rackAccessories||[];
             const totalU=racks.reduce((sum,r)=>sum+(Number(r.heightU)||0),0);
-            const mounted=devices.filter(d=>racks.some(r=>r.id===d.rackId));
+            const mounted=devices.filter(d=>isRackMountedDevice(d)&&racks.some(r=>r.id===d.rackId));
             const linkedAccessories=accessories.filter(a=>racks.some(r=>r.id===a.rackId));
             const card=(label,value,icon)=>renderInterfaceTemplate("racks/card-1",[icon,label,value]);
             let body='';
@@ -1711,7 +1829,7 @@ function hierarchyValidateTypes(subnets) {
                 return renderInterfaceTemplate("racks/render-racks-html-1",[]);
             }
 
-            const rackDevices = appState.devices.filter(d => d.rackId === currentRack.id);
+            const rackDevices = appState.devices.filter(d => isRackMountedDevice(d)&&d.rackId === currentRack.id);
             const faceDevices = rackDevices.filter(d => (d.face || 'front') === activeRackFace);
             const rackAccessories=(appState.rackAccessories||[]).filter(a=>a.rackId===currentRack.id);
             const faceAccessories=rackAccessories.filter(a=>a.face===activeRackFace && !rackAccessoryTypeDefinitions[a.type]?.vertical);
@@ -3603,6 +3721,7 @@ function openIpModal(ip) {
             });
         }
         function closeModal(force = false, onClosed = null) {
+            if(rackShelfReturnContext){returnFromRackShelfCreation();return;}
             if (deviceOptionsReturnContent) {
                 captureInstalledSoftwareSelections();
                 captureServerServiceSelections();
@@ -4189,6 +4308,7 @@ function openIpModal(ip) {
             start.required = true;
         }
         function toggleDeviceMountType() {
+            refreshDeviceShelfFields();
             const mount = document.getElementById('dev-mount-type')?.value;
             const location = document.getElementById('dev-location');
             const rackOptions = document.getElementById('racked-options');
@@ -4242,7 +4362,7 @@ function openIpModal(ip) {
             if (!d) return showToast('Device not found.', 'error');
             const rack = appState.racks.find(r => String(r.id) === String(d.rackId));
             const subnet = d.primaryIp ? getSubnetForIp(d.primaryIp) : null;
-            const mounted = !!d.rackId && !!rack;
+            const mounted = isRackMountedDevice(d) && !!rack;
             const uStart = Number(d.rackUStart);
             const uEnd = Number(d.rackUEnd || d.rackUStart);
             const uText = mounted && Number.isFinite(uStart) && uStart > 0
@@ -4285,12 +4405,12 @@ function openIpModal(ip) {
                 field('vCPUs', d.vmVcpu) + field('Allocated RAM (GB)', d.vmRamGb) +
                 field('Virtual disk (GB)', d.vmDiskGb) + field('Virtual network adapters', d.vmNicCount), false, 'These are the VM’s own allocated resources, not physical host hardware.') : '';
             const hardware = field('Manufacturer', d.manufacturer) + field('Model', d.model) + field('Serial number', d.serialNumber);
-            const rackRows = mounted ? field('Rack', rack.name) + field('Face', String(d.face || 'front').toLowerCase() === 'rear' ? 'Rear' : 'Front') + field('Start U', Number.isFinite(uStart) && uStart > 0 ? uStart : 'Not assigned') + field('U height', (Number(d.rackUHeight) || (uEnd-uStart+1) || 1) + 'U') : '';
+            const rackRows = d.rackShelfAccessoryId ? field('Rack Shelf',getRackShelfLocation(d)) : mounted ? field('Rack', rack.name) + field('Face', String(d.face || 'front').toLowerCase() === 'rear' ? 'Rear' : 'Front') + field('Start U', Number.isFinite(uStart) && uStart > 0 ? uStart : 'Not assigned') + field('U height', (Number(d.rackUHeight) || (uEnd-uStart+1) || 1) + 'U') : '';
             openDeviceReviewModal(renderInterfaceTemplate("devices/open-device-detail-view-7",[safe(d.name),safe(d.type),safe(d.location),safe(status),[['overview','Overview'],...(showVirtualMachinesTab ? [['virtual-machines','Virtual Machines']] : []),...(!isVirtualDevice ? [['hardware','Hardware']] : []),['network','Network'],['software','Software'],['location','Location'],...(historyRows?[['history','History']]:[])].map(([key,label],i)=>`<button type="button" role="tab" id="device-details-tab-${key}" aria-controls="device-details-panel-${key}" aria-selected="${i===0?'true':'false'}" tabindex="${i===0?'0':'-1'}" data-action="select-device-details-tab" data-name="${key}" class="device-details-tab device-review-tab ${i===0?'device-details-tab-active':''}">${label}</button>`).join(''),section('Device Overview', 'fa-circle-info',
                             field('Device name',d.name)+field('Type',d.type)+field('Status',status)+field('Primary IP',d.primaryIp)+field('Location Area',d.location)+field('Operating System',getEffectiveDevicePlatform(d)), false, 'Recorded identity and status'),isVirtualDevice ? virtualHardware :
                             section('At a Glance','fa-microchip',
                               field('Manufacturer',d.manufacturer)+field('Model',d.model)+field('Serial number',d.serialNumber)+
-                              field('Mounting',d.mountType||(mounted?'Rack Mounted':'Desktop'))+field('Rack',mounted?rack.name:'Not racked'), false, 'Existing inventory and mounting details'),d.type==='Server - Physical'?'':hostingSection,d.notes?safe(d.notes):'No additional notes have been recorded.',showVirtualMachinesTab ? renderInterfaceTemplate("devices/open-device-detail-view-1",[hypervisorNotice,hostingSection]) : '',!isVirtualDevice ? renderInterfaceTemplate("devices/open-device-detail-view-3",[section('Hardware & Lifecycle', 'fa-microchip', hardware + field('Device Type', d.type) + field('Status', status) + field('Mount Type', d.mountType || (mounted ? 'Rack Mounted' : 'Desktop')) + (detailRows ? renderInterfaceTemplate("devices/open-device-detail-view-2",[safe(d.type),detailRows]) : ''), true, 'Physical hardware and device identity')]) : '',section('Network Identity', 'fa-network-wired', field('Primary IP', d.primaryIp) + field('Subnet', subnet ? (subnet.cidr || subnet.name || subnet.network || subnet.id) : 'Not linked') + field('IP reserved', d.ipReserved ? 'Yes' : 'No') + field('Status', status), true, 'Recorded IPAM information'),section('Operating System / Platform', 'fa-desktop',platformDetails || field('Operating System','Not recorded'), false, 'Recorded software platform'),section('Installed Software', 'fa-laptop-code', installedSoftware || '<p class="device-review-quiet">No installed software recorded.</p>', false, 'Installed on this device', true),isHypervisorHost ? section('Hypervisor Service', 'fa-server', field('Hosts virtual machines','Yes') + field('Hypervisor software',deviceDetails.hypervisorProduct || 'Not recorded') + field('Version', deviceDetails.hypervisorVersion || 'Not recorded'), true, 'The virtualisation product is recorded on the physical host.') : '',serverServices?section('Server Services', 'fa-server',serverServices):'',section('Mounting & Location', 'fa-location-dot', isVirtualDevice ? field('Location Area', d.location) + field('Physical Host', d.virtualHostId ? (appState.devices.find(host => host.id === d.virtualHostId)?.name || 'Missing or unavailable host (legacy reference preserved)') : 'Not assigned') : field('Location Area', d.location) + field('Mounting', d.mountType || (mounted ? 'Rack Mounted' : 'Desktop')) + rackRows, true, 'Virtual machines are not physically mounted in racks.'),mounted && !isVirtualDevice ? renderInterfaceTemplate("devices/open-device-detail-view-4",[safe(d.id)]) : '',historyRows?renderInterfaceTemplate("devices/open-device-detail-view-5",[historyRows]):'',safe(d.id),mounted ? renderInterfaceTemplate("devices/open-device-detail-view-6",[safe(d.id)]) : '',safe(d.id),safe(d.id)]));
+                              field('Mounting',d.mountType||(mounted?'Rack Mounted':'Desktop'))+field('Rack',d.rackShelfAccessoryId?getRackShelfLocation(d):mounted?rack.name:'Not racked'), false, 'Existing inventory and mounting details'),d.type==='Server - Physical'?'':hostingSection,d.notes?safe(d.notes):'No additional notes have been recorded.',showVirtualMachinesTab ? renderInterfaceTemplate("devices/open-device-detail-view-1",[hypervisorNotice,hostingSection]) : '',!isVirtualDevice ? renderInterfaceTemplate("devices/open-device-detail-view-3",[section('Hardware & Lifecycle', 'fa-microchip', hardware + field('Device Type', d.type) + field('Status', status) + field('Mount Type', d.mountType || (mounted ? 'Rack Mounted' : 'Desktop')) + (detailRows ? renderInterfaceTemplate("devices/open-device-detail-view-2",[safe(d.type),detailRows]) : ''), true, 'Physical hardware and device identity')]) : '',section('Network Identity', 'fa-network-wired', field('Primary IP', d.primaryIp) + field('Subnet', subnet ? (subnet.cidr || subnet.name || subnet.network || subnet.id) : 'Not linked') + field('IP reserved', d.ipReserved ? 'Yes' : 'No') + field('Status', status), true, 'Recorded IPAM information'),section('Operating System / Platform', 'fa-desktop',platformDetails || field('Operating System','Not recorded'), false, 'Recorded software platform'),section('Installed Software', 'fa-laptop-code', installedSoftware || '<p class="device-review-quiet">No installed software recorded.</p>', false, 'Installed on this device', true),isHypervisorHost ? section('Hypervisor Service', 'fa-server', field('Hosts virtual machines','Yes') + field('Hypervisor software',deviceDetails.hypervisorProduct || 'Not recorded') + field('Version', deviceDetails.hypervisorVersion || 'Not recorded'), true, 'The virtualisation product is recorded on the physical host.') : '',serverServices?section('Server Services', 'fa-server',serverServices):'',section('Mounting & Location', 'fa-location-dot', isVirtualDevice ? field('Location Area', d.location) + field('Physical Host', d.virtualHostId ? (appState.devices.find(host => host.id === d.virtualHostId)?.name || 'Missing or unavailable host (legacy reference preserved)') : 'Not assigned') : field('Location Area', d.location) + field('Mounting', d.mountType || (mounted ? 'Rack Mounted' : 'Desktop')) + rackRows, true, 'Virtual machines are not physically mounted in racks.'),mounted && !isVirtualDevice ? renderInterfaceTemplate("devices/open-device-detail-view-4",[safe(d.id)]) : '',historyRows?renderInterfaceTemplate("devices/open-device-detail-view-5",[historyRows]):'',safe(d.id),mounted ? renderInterfaceTemplate("devices/open-device-detail-view-6",[safe(d.id)]) : '',safe(d.id),safe(d.id)]));
         }
         function confirmUninstallOfArchivedSoftware(deviceId,key){
             const device=appState.devices.find(d=>String(d.id)===String(deviceId));
@@ -4366,13 +4486,13 @@ function openIpModal(ip) {
             if (!source) return showToast('Device not found.', 'error');
             const subnet = source.primaryIp ? getSubnetForIp(source.primaryIp) : null;
             // Virtual devices are hosted by a hypervisor, never mounted in a rack themselves.
-            const mounted = !(source.isVirtual === true || source.type === 'Server - Virtual') && (source.mountType === 'Rack Mounted' || !!source.rackId);
+            const mounted = !(source.isVirtual === true || source.type === 'Server - Virtual') && isRackMountedDevice(source);
             const height = Math.max(1, Number(source.rackUHeight) || (Number(source.rackUEnd) - Number(source.rackUStart) + 1) || 1);
             const draft = {
                 deviceId:null, duplicatedFrom:source.id, name:'', primaryIp:'',
                 subnetId:subnet?.id || '', type:source.type || '', isVirtual:source.isVirtual === true || source.type === 'Server - Virtual',
                 location:source.location || '', mountType:(source.isVirtual === true || source.type === 'Server - Virtual') ? 'Not Applicable' : (mounted ? 'Rack Mounted' : (source.mountType || 'Desktop')),
-                rackId:mounted ? source.rackId || '' : '', face:source.face || 'front',
+                rackId:mounted||source.rackShelfAccessoryId ? source.rackId || '' : '', rackShelfAccessoryId:source.rackShelfAccessoryId||'', face:source.face || 'front',
                 rackUHeight:height, rackUStart:1, ipReserved:!!source.ipReserved,
                 status:source.status || 'Active', manufacturer:source.manufacturer || '',
                 model:source.model || '', serialNumber:'', notes:source.notes || '',
@@ -4809,6 +4929,7 @@ function openIpModal(ip) {
             }
             feedback.textContent = String(message);feedback.hidden = false;feedback.classList.add('is-visible');
             const rules = [
+                [/rack shelf|shelf-mounted|selected shelf/i,'dev-rack-shelf'],
                 [/hypervisor product|hosting.*product|host product/i,'host-platform-select'],
                 [/physical.*host|host.*eligible|eligible.*host/i,'dev-virtual-host'],
                 [/vCPU/i,'dev-vmVcpu'],[/allocated ram/i,'dev-vmRamGb'],[/virtual disk/i,'dev-vmDiskGb'],[/network adapters/i,'dev-vmNicCount'],
@@ -5775,6 +5896,7 @@ function openIpModal(ip) {
                     footer.querySelector('button[type="submit"]').setAttribute('form', form.id);
                     dialog.append(footer);
                 }
+                initialiseDeviceShelfFields(form);
                 bindDeviceEditorValidation(form);
                 dialog.classList.toggle('device-editor-notes',active==='notes');
             }
@@ -5818,6 +5940,7 @@ function openIpModal(ip) {
             const tabbedDeviceForm = document.querySelector('[data-device-form="true"]');
             if(tabbedDeviceForm&&isDuplicate)tabbedDeviceForm.dataset.duplicateSourceId=draft.duplicatedFrom;
             if (tabbedDeviceForm && draft?.activeDeviceTab) tabbedDeviceForm.dataset.initialDeviceTab = draft.activeDeviceTab;
+            tabbedDeviceForm.dataset.rackShelfAccessoryId=String(draft?.rackShelfAccessoryId??device?.rackShelfAccessoryId??'');
             initialiseDeviceTabs(tabbedDeviceForm);
             const deviceTypeSelectElement=document.getElementById('dev-type');
             const deploymentSelect=document.getElementById('dev-deployment');
@@ -5903,7 +6026,8 @@ function openIpModal(ip) {
                 isVirtual: isVirtualDeviceForm(),
                 mountType: document.getElementById('dev-mount-type')?.value || '',
                 location: document.getElementById('dev-location')?.value || '',
-                rackId: document.getElementById('dev-rack-id')?.value || '',
+                rackId: document.getElementById('dev-mount-type')?.value==='Tabletop / Shelf Mounted' ? document.getElementById('dev-shelf-rack')?.value||'' : document.getElementById('dev-rack-id')?.value||'',
+                rackShelfAccessoryId: document.getElementById('dev-mount-type')?.value==='Tabletop / Shelf Mounted' ? document.getElementById('dev-rack-shelf')?.value||'' : '',
                 face: document.getElementById('dev-rack-face')?.value || 'front',
                 rackUStart: parseInt(document.getElementById('dev-rack-u')?.value || '', 10) || null,
                 rackUHeight: parseInt(document.getElementById('dev-rack-height')?.value || '', 10) || null,
@@ -6181,6 +6305,7 @@ function openIpModal(ip) {
             const matchingSubnet = getSubnetForIp(primaryIp);
             if (!subnet || !matchingSubnet || matchingSubnet.id !== subnet.id) return showToast('The primary IP must belong to the selected existing subnet.', 'error');
             if (findDeviceUsingIp(primaryIp, deviceId)) return showToast(`IP address ${primaryIp} is already assigned to another device.`, 'error');
+            let rackShelfAccessoryId = '';
             let rackId = '', face = 'front', rackUStart = null, rackUEnd = null, rackUHeight = null;
             if (mountType === 'Rack Mounted' && !racksReadOnly) {
                 if (!location || location === 'Racked') return showToast('Select a physical Location Area or Unknown.', 'error');
@@ -6191,7 +6316,15 @@ function openIpModal(ip) {
                 const validationError = validateRackPlacement(deviceId, rackId, face, rackUStart, rackUEnd);
                 if (validationError) return showToast(validationError, 'error');
             }
+            if(mountType==='Tabletop / Shelf Mounted'&&!racksReadOnly){
+                rackId=document.getElementById('dev-shelf-rack')?.value||'';
+                rackShelfAccessoryId=rackId?document.getElementById('dev-rack-shelf')?.value||'':'';
+                if(rackId)face=null;
+                const error=getDeviceShelfAssociationError({name,type,mountType,rackId,rackShelfAccessoryId,face,rackUStart,rackUEnd,rackUHeight});
+                if(error)return showDeviceEditorFeedback(error,'dev-rack-shelf');
+            }
             if (racksReadOnly) {
+                rackShelfAccessoryId=originalDevice.rackShelfAccessoryId??'';
                 rackId = originalDevice.rackId ?? '';
                 face = originalDevice.face ?? null;
                 rackUStart = originalDevice.rackUStart ?? null;
@@ -6239,9 +6372,11 @@ function openIpModal(ip) {
                 existingDevice.ipReserved = ipReserved;
                 existingDevice.name = name; existingDevice.type = type; existingDevice.mountType = mountType; existingDevice.location = location; existingDevice.notes = notes;
                 existingDevice.rackId = rackId; existingDevice.face = face; existingDevice.rackUStart = rackUStart; existingDevice.rackUEnd = rackUEnd; existingDevice.rackUHeight = rackUHeight;
+                if(rackShelfAccessoryId||Object.hasOwn(existingDevice,'rackShelfAccessoryId'))existingDevice.rackShelfAccessoryId=rackShelfAccessoryId;
                 try { setDevicePrimaryIp(existingDevice, primaryIp); syncDeviceIpamRecord(existingDevice); } catch (error) { appState = JSON.parse(beforeDeviceSave); return showToast('Device/IPAM update cancelled: ' + error.message, 'error'); }
             } else {
                 const newDevice = { id: 'dev_' + Date.now(), name, type, mountType, location, notes, status, manufacturer, model, serialNumber, typeDetails, virtualPlatform, virtualHostId, isVirtual:isVirtualServer, ipReserved, primaryIp: '', rackId, face, rackUStart, rackUEnd, rackUHeight };
+                if(rackShelfAccessoryId)newDevice.rackShelfAccessoryId=rackShelfAccessoryId;
                 appState.devices.push(newDevice);
                 try { setDevicePrimaryIp(newDevice, primaryIp); syncDeviceIpamRecord(newDevice); } catch (error) { appState = JSON.parse(beforeDeviceSave); return showToast('Device/IPAM creation cancelled: ' + error.message, 'error'); }
             }
@@ -6687,6 +6822,7 @@ function openIpModal(ip) {
         function planLegacyComputerMountingCorrections(candidate) {
             const changes = [];
             for (const device of candidate.devices) {
+                if(device.rackShelfAccessoryId!==undefined&&device.rackShelfAccessoryId!==null&&device.rackShelfAccessoryId!=='')continue;
                 const allowed = getRecognisedDeviceMountTypes(device.type);
                 const mount = device.mountType || (device.rackId ? 'Rack Mounted' : 'Desktop');
                 const legacyComputer = ['desktop', 'laptop', 'tablet'].includes(String(device.type || '').trim().toLowerCase());
@@ -6750,6 +6886,9 @@ function openIpModal(ip) {
                 occupied.set(key, positions);
             };
             for (const device of candidate.devices) {
+                const shelfError=getDeviceShelfAssociationError(device,candidate);
+                if(shelfError){issues.push(shelfError);continue;}
+                if(device.rackShelfAccessoryId)continue;
                 if (!device.rackId) continue;
                 const start = Number(device.rackUStart), height = Number(device.rackUHeight);
                 place(device, 'Device ' + String(device.name || device.id || '(unnamed)'),
@@ -6837,7 +6976,7 @@ function openIpModal(ip) {
         function findAccessPointMountConflictsInBackup(raw) {
             // Inspect the validated raw backup before migration: normaliseState
             // rejects incompatible AP mounts, so migration cannot run first.
-            return raw.devices.filter(device => isWirelessAccessPointDeviceType(device.type) &&
+            return raw.devices.filter(device => isWirelessAccessPointDeviceType(device.type) && !device.rackShelfAccessoryId &&
                 (!getRecognisedDeviceMountTypes(device.type).includes(device.mountType || (device.rackId ? 'Rack Mounted' : 'Desktop')) ||
                 Boolean(device.rackId))).map(device => ({
                     id: device.id, name: device.name, type: device.type,
@@ -7120,7 +7259,7 @@ function openIpModal(ip) {
                 if((appState.rackAccessories||[]).some(a=>a.id!==excludeId && a.rackId===candidate.rackId && (a.type==='pdu_vertical'||a.type==='cable_vertical') && a.face===candidate.face && a.side===candidate.side && start<=Number(a.startU)+Number(a.heightU)-1 && end>=Number(a.startU)))return 'This side rail is occupied at the selected height.';
                 return null;
             }
-            if (appState.devices.some(d=>d.rackId===candidate.rackId && (d.face||'front')===candidate.face && start<=Number(d.rackUEnd||d.rackUStart) && end>=Number(d.rackUStart))) return 'This position overlaps a mounted device.';
+            if (appState.devices.some(d=>isRackMountedDevice(d)&&d.rackId===candidate.rackId && (d.face||'front')===candidate.face && start<=Number(d.rackUEnd||d.rackUStart) && end>=Number(d.rackUStart))) return 'This position overlaps a mounted device.';
             if ((appState.rackAccessories||[]).some(a=>a.id!==excludeId && a.rackId===candidate.rackId && a.type!=='pdu_vertical' && a.type!=='cable_vertical' && a.face===candidate.face && start<=a.startU+a.heightU-1 && end>=a.startU)) return 'This position overlaps another accessory.';
             return null;
         }
@@ -7211,7 +7350,7 @@ function openIpModal(ip) {
                 event.preventDefault();
                 if(startSelect.disabled){modal.querySelector('#rack-accessory-form-error').textContent='No available rack position for this accessory.';return;}
                 const data=new FormData(event.currentTarget);
-                const candidate={id:existing?.id||('acc-'+Date.now()+'-'+Math.random().toString(36).slice(2,8)),rackId,type:String(data.get('type')),name:String(data.get('name')).trim(),face:String(data.get('face')),startU:Number(data.get('startU')),heightU:Number(data.get('heightU')),side:rackAccessoryTypeDefinitions[String(data.get('type'))]?.vertical?String(data.get('side')):null,portCount:String(data.get('type'))==='patch'?Number(data.get('portCount')):null};
+                const candidate={id:existing?.id||('acc-'+Date.now()+'-'+Math.random().toString(36).slice(2,8)),rackId,type:rackShelfReturnContext?'shelf':String(data.get('type')),name:String(data.get('name')).trim(),face:String(data.get('face')),startU:Number(data.get('startU')),heightU:Number(data.get('heightU')),side:rackAccessoryTypeDefinitions[String(data.get('type'))]?.vertical?String(data.get('side')):null,portCount:String(data.get('type'))==='patch'?Number(data.get('portCount')):null};
                 const error=(!!rackAccessoryTypeDefinitions[candidate.type]?.vertical!==verticalWorkflow)?'Choose an accessory type for this placement.':(candidate.type==='patch' && ![12,24,48].includes(candidate.portCount))?'Choose a valid patch panel port count.':validateRackAccessoryPlacement(candidate,existing?.id);
                 if(error){modal.querySelector('#rack-accessory-form-error').textContent=error;return;}
                 const before=JSON.stringify(appState);
@@ -7223,12 +7362,14 @@ function openIpModal(ip) {
                     if(feedback)feedback.textContent='Accessory could not be saved. Your previous inventory is unchanged. Your entries are still here so you can try again.';
                     return;
                 }
+                if(rackShelfReturnContext){returnFromRackShelfCreation(candidate);return;}
                 closeModal();activeRackFace=candidate.face;renderContent();
             });
         }
         function requestRackAccessoryDeletion(id){
             const accessory=(appState.rackAccessories||[]).find(a=>a.id===id);
             if(!accessory||document.getElementById('remove-confirm'))return;
+            if(accessory.type==='shelf'&&appState.devices.some(d=>d.rackShelfAccessoryId===id)){void openRackShelfRemovalReview(id);return;}
             const overlay=document.createElement('div');
             overlay.id='remove-confirm';
             overlay.className='fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/70 p-4';
@@ -7706,6 +7847,7 @@ function openIpModal(ip) {
                 case 'cancel-custom-location': cancelCustomDeviceLocation(); break;
                 case 'create-subnet-from-device': createSubnetFromDevice(); break;
                 case 'create-rack-from-device': createRackFromDevice(); break;
+                case 'create-rack-shelf-from-device': createRackShelfFromDevice(); break;
                 case 'cancel-rack-from-device': cancelRackFromDevice(); break;
                 case 'delete-device-type': deleteDeviceType(name); break;
                 case 'edit-device-type': editDeviceTypePrompt(name); break;
@@ -8006,7 +8148,7 @@ void (async () => {
     'add-vertical-rack-accessory','edit-rack-accessory','delete-rack-accessory',
     'place-rack-item','placement-device','placement-accessory',
     'assign-device','unassign-device','mount-rack-accessory',
-    'create-rack-from-device']);
+    'create-rack-from-device','create-rack-shelf-from-device']);
   const actionCanEditDevice = new Set([
     'open-device-modal','edit-device','edit-device-from-details',
     'delete-device','delete-device-from-details',
@@ -8056,6 +8198,7 @@ void (async () => {
           (sessionIsAdmin && button.closest('#next-user-create-form,#next-user-profile-form,#smtp-settings-form,#smtp-test-form')) ||
           (editPermissions.Devices && button.form?.matches('form[data-device-form="true"]')) ||
           (editPermissions.IPAM && button.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"]')) ||
+          (editPermissions.Devices && editPermissions.Racks && button.closest('#rack-shelf-removal-form')) ||
           (editPermissions.Racks && button.closest('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form'))
         );
         if(blocked || unsupportedSubmit){
@@ -8318,7 +8461,7 @@ void (async () => {
     }
     if (!editPermissions.Racks) {
       if (deviceId) form.dataset.racksReadOnly = 'true';
-      for (const id of ['dev-rack-id','dev-rack-face','dev-rack-u','dev-rack-height']) {
+      for (const id of ['dev-rack-id','dev-rack-face','dev-rack-u','dev-rack-height','dev-shelf-rack','dev-rack-shelf']) {
         const field = document.getElementById(id);
         if (field) field.disabled = true;
       }
@@ -8641,6 +8784,23 @@ void (async () => {
     }
   };
   nextRackBridge = {
+    async reviewShelf(id) {
+      if(!editPermissions.Devices||!editPermissions.Racks)throw Error('Devices and Racks edit permissions are required to review a linked shelf.');
+      await refreshCentralInventory(false);
+      if(!editPermissions.Devices||!editPermissions.Racks)throw Error('Devices and Racks edit permissions are required to review a linked shelf.');
+      const shelf=appState.rackAccessories.find(a=>a.id===id&&a.type==='shelf');
+      if(!shelf)throw Error('The rack shelf is no longer available.');
+      return {shelf:JSON.parse(JSON.stringify(shelf)),devices:appState.devices.filter(d=>d.rackShelfAccessoryId===id).map(d=>({id:d.id,name:d.name,revision:deviceRevisions[d.id]}))};
+    },
+    async removeShelf(shelf,devices) {
+      if(!editPermissions.Devices||!editPermissions.Racks||pendingSave)throw Error('Devices and Racks edit permissions are required, with no other save in progress.');
+      pendingSave=true;
+      try{
+        await postInventory('/api/inventory/rack-shelves/remove',{shelfId:shelf.id,expectedShelf:shelf,devices});
+        try{await refreshCentralInventory(false);}catch(error){showToast('Shelf removal saved. Refresh to see the latest inventory.','error');}
+        return true;
+      }finally{pendingSave=false;}
+    },
     canEdit: () => !!editPermissions.Racks,
     async savePlacement(deviceId) {
       if (!editPermissions.Racks || pendingSave) {
@@ -9501,6 +9661,7 @@ void (async () => {
     if (isBlockedAction(action, element) || (element.matches('button') && element.type==='submit' && element.form &&
         !element.form.matches('form[data-device-form="true"],#next-user-create-form,#next-user-profile-form,#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#personal-details-form,#smtp-settings-form,#smtp-test-form,#account-email-verification-form') &&
         !(editPermissions.IPAM && element.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"]')) &&
+        !(editPermissions.Devices && editPermissions.Racks && element.closest('#rack-shelf-removal-form')) &&
         !(editPermissions.Racks && element.closest('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form')))) {
       event.preventDefault();
       event.stopImmediatePropagation();
@@ -9512,6 +9673,7 @@ void (async () => {
         (editPermissions.Devices && event.target.matches('form[data-device-form="true"]')) ||
         (editPermissions.IPAM && event.target.matches('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"]')) ||
         (editPermissions.Racks && event.target.matches('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form')) ||
+        (editPermissions.Devices && editPermissions.Racks && event.target.matches('#rack-shelf-removal-form')) ||
         (sessionIsAdmin && event.target.matches('#next-user-create-form'))) return;
     event.preventDefault();event.stopImmediatePropagation();
   },true);

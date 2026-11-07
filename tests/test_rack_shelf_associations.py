@@ -51,6 +51,14 @@ class RackShelfAssociationTests(unittest.TestCase):
     def reserve(self, owner=1, expiry=None, base=0):
         self.db.execute("INSERT INTO device_edit_reservations(device_id,account_id,expires_at,base_revision) VALUES('printer',?,?,?)",(owner,int(time.time())+300 if expiry is None else expiry,base));self.db.commit()
 
+    def test_current_access_point_shelf_is_not_a_legacy_mount_correction(self):
+        from backend.access_point_review import find_access_point_mount_conflicts
+        state=copy.deepcopy(self.state)
+        state['devices'][0]['type']='Wireless Access Point'
+        self.assertEqual(find_access_point_mount_conflicts(state),[])
+        state['devices'][0]['rackShelfAccessoryId']='missing'
+        with self.assertRaises(ValueError):find_access_point_mount_conflicts(state)
+
     def test_valid_shelves_do_not_occupy_device_u(self):
         validate_normalisation_devices(self.state)
         self.assertEqual(validate_detached_application_state(self.state),[])

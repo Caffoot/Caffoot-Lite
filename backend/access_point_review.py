@@ -7,6 +7,7 @@ represented by not applying choices; no database writes occur here.
 import copy
 
 from backend.inventory import RECOGNISED_MOUNTS
+from backend.shelf_associations import validate_device_shelf_association
 
 AP_TYPES = frozenset(("access point", "ap", "wireless access point"))
 AP_CHOICES = (
@@ -20,6 +21,11 @@ def find_access_point_mount_conflicts(raw):
     conflicts = []
     for device in raw["devices"]:
         if str(device.get("type") or "").strip().lower() not in AP_TYPES:
+            continue
+        if device.get("rackShelfAccessoryId"):
+            # Current shelf records are validated as current inventory, never
+            # presented as a legacy correction that would erase their link.
+            validate_device_shelf_association(device, raw)
             continue
         mount = device.get("mountType") or (
             "Rack Mounted" if device.get("rackId") else "Desktop"
