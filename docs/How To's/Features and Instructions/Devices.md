@@ -63,6 +63,28 @@ Use **Device Status** to record a supported lifecycle state such as Active, Main
 
 When an eligible physical hypervisor host exists and is configured accordingly, **Device deployment** offers **Virtual Machine (VM)**. Select a suitable virtual purpose and the physical host, then record resource information such as vCPU, RAM, disk and network adapters where requested. Existing historical VM relationships are preserved.
 
+## v2.1 Device Form Preview
+
+The development branch's Add/Edit/Duplicate layout is ready for private owner review; this does not announce a release.
+
+For an eligible physical server, **General** shows **This physical server hosts virtual machines** immediately beneath its type. Tick it to use the dedicated **Hypervisor Software/OS** and **Version** controls. The ordinary OS card is hidden while hosting is enabled; unticking restores its values. Known host products are offered through this dedicated path. Previously recorded OS/software assignments are retained with an explanation rather than silently removed. Existing guest-change confirmations still apply.
+
+For a VM, choose its purpose, physical host and virtual allocations on **General**. Physical mounting and Hardware controls are hidden. Type-specific choices and saved host relationships remain protected.
+
+**Notes** fills the available form space automatically and keeps all existing formatting/Preview actions. Short windows scroll within the editor while the footer stays accessible. Validation messages appear above the footer and reveal the relevant tab or field. Duplicate uses its subtitle to explain the new record; it still requires a unique name/IP and preserves the original.
+
+## v2.1 Shelf And Software Preview
+
+These changes are on the development branch for private acceptance, not a published release.
+
+For physical **Tabletop / Shelf Mounted** equipment, open **General → Mounting & Rack Configuration**. Leaving **Rack (Optional)** empty records no rack association. Selecting a rack requires an actual **Rack Shelf** in that rack. **+ Add Rack Shelf** opens the existing Horizontal Accessory editor and returns to your Device draft. A successfully saved shelf remains in inventory even if you cancel the Device draft. The device uses the shelf's current location without occupying another U. Details shows the rack, current shelf U and face. Duplicate retains the association while requiring a new identity/address.
+
+Removing a shelf that holds devices requires an explicit choice for each device: another shelf, a newly created replacement, or **Retired**. Retirement keeps the record and clears its active rack/shelf association; history retains the former location. All reviewed changes save together or none do. Another editor's active five-minute reservation prevents the operation. Devices and Racks edit access are required.
+
+OS/version lists are offline suggestions, with **Custom / Other** for saved or unlisted values. Ubuntu Server offers LTS releases; desktop Ubuntu also offers interim releases. pfSense and OPNsense editions have separate release lists. Installed Software suggestions depend on this device's type and OS, including a VM's own guest OS. Check actual package availability for its edition, release and model; a suggestion does not mean it is installed or supported everywhere.
+
+Old, archived, hidden or out-of-context assignments remain checked under **Previously recorded — review**. They remain saved until you deliberately untick them. Changing the OS refreshes suggestions without clearing those selections. Custom catalogue entries, saved versions and historical hardware details remain available. Cancel keeps the original device unchanged.
+
 ## Troubleshooting
 
 | Problem | Check |

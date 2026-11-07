@@ -1,0 +1,17 @@
+{
+  "functionalGroups": 12,
+  "errors": [],
+  "visualStates": 239,
+  "localScreenshots": 184,
+  "widths": [
+    320,
+    390,
+    1366,
+    1440
+  ],
+  "maximumHorizontalOverflowPx": 0,
+  "maximumSourceDialogWidthDifferencePx": 0,
+  "maximumSourceDialogHeightDifferencePx": 0,
+  "sourceDarkVariant": false,
+  "note": "Pinned preview has the light treatment; live dark inherits existing theme tokens. Geometry comparisons do not prove pixel/content equivalence."
+}

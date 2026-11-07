@@ -5,6 +5,7 @@ on:
     branches: [feat/approved-html-full-interface, feat/approved-modular-html-282]
     paths:
       - "interface/**"
+      - "backend/**"
       - "Dockerfile"
       - "compose.yaml"
       - "tests/test_compose_lifecycle.py"
@@ -12,6 +13,7 @@ on:
   pull_request:
     paths:
       - "interface/**"
+      - "backend/**"
       - "Dockerfile"
       - "compose.yaml"
       - "tests/test_compose_lifecycle.py"

@@ -6,7 +6,8 @@
     "Edit keeps the original five-minute reservation through quick-add; cancelling Device preserves the independent saved shelf",
     "Shelf movement preserves both device records/revisions; Details derives current U; real 2U server collisions remain",
     "Linked-shelf Cancel/failure preserves records and choices; explicit reassign/Retired saves together",
-    "Review creates and explicitly selects a replacement in another rack using the original accessory editor"
+    "Review creates and explicitly selects a replacement in another rack using the original accessory editor",
+    "Existing JSON backup export and complete import review preserve shelf links, retired records and contextual software selections"
   ],
   "errors": []
 }

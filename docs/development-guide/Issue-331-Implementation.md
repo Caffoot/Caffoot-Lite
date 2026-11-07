@@ -21,7 +21,7 @@ Checks: **466 backend tests run, 463 passed, three established skips**, includin
 - [x] A: optional shelf reference, shared invariants, permission checks, atomic removal and backend/HTTP tests.
 - [x] B: narrow Batch 04 conditional Rack/Shelf controls, draft-safe existing accessory creation, linked-shelf review, correct Duplicate/Details and browser tests.
 - [x] C: vendor-confirmed approved version arrays, contextual local software and explicit retained selections; no backend whitelist or destructive catalogue migration.
-- [ ] D: complete integration, browser/security/permission/backup/visual regression evidence, documentation and private owner acceptance instructions.
+- [x] D: complete integration, browser/security/permission/backup/visual regression evidence, documentation and private owner acceptance instructions.
 
 ## Package B — Implemented And Tested
 
@@ -39,4 +39,12 @@ Six focused catalogue browser groups passed, including real Save/Cancel/reload a
 
 The regular GitHub browser workflow now runs the new focused shelf/catalogue modules and saves their fictional artifacts. Final full browser/editor regression, source-comparison inspection, GitHub security/build checks and acceptance report are outstanding. The latest test additions also record actual Hyper-V/Proxmox selector observations and renamed-key hide preferences in that final run; they are not yet claimed passed here.
 
-Next step: complete D on this checkpoint. Run the final browser/editor regressions and inspect source/live comparisons; record actual selector observations without silently fixing independent issues; verify GitHub backend/browser/full-history secret/Docker lifecycle results, then push final evidence/private Pi instructions. No A–C reimplementation is needed.
+## Package D — Delivery Evidence And Sign-off
+
+[Consolidated report, limitations, visual measurements and private native Pi instructions](../development-handovers/evidence/issue-331/Report.md). Local final checks passed: 12 existing editor functional groups/239 rendered states, seven contextual catalogue groups, eight shelf groups, pinned-source/template checks, documentation compatibility, syntax and whitespace. New Duplicate and existing export/import-review checks retain the software/shelf data exactly. The contextual software dark-label contrast check passed using the existing text token; no other screen/theme treatment changed.
+
+The full backend run was 467/464 passed/three established skips; isolated AMD64 Docker lifecycle passed separately. Package C's GitHub backend/browser/full-history secret/Docker runs all passed. The final delivery commit reruns these checks because it adds final integration coverage, scoped software contrast styling and backend-triggered Docker CI. Its exact SHA/check links and completed sign-off are recorded in #331 after push; a pending run is not a pass.
+
+Both actual Chromium Hyper-V/Proxmox selectors matched their own approved arrays. This does not close independent #327 acceptance or #330 Safari defects. #328 and #329 remain unchanged. All twelve pinned sources/provenance are unchanged. No further design decision was required.
+
+Resume only if #331's final delivery checks identify a failure: preserve this checkpoint, inspect that exact run and correct only an ordinary #331 implementation/test issue. Once checks are green, the remaining work is private owner Pi/Safari/touch/visual acceptance and the two unavailable genuine-backup fixture tests. Do not reimplement A–D, merge, publish, deploy or release.
