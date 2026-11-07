@@ -11,6 +11,7 @@ on:
       - "tests/contextual-device-catalogue.cjs"
       - "tests/device-form-followups.cjs"
       - "tests/rack-location-defaults.cjs"
+      - "tests/host-select-review.cjs"
       - "tests/approved-visual.cjs"
       - "tests/visual_fixtures.py"
       - "inventory.html"
@@ -25,6 +26,7 @@ on:
       - "tests/contextual-device-catalogue.cjs"
       - "tests/device-form-followups.cjs"
       - "tests/rack-location-defaults.cjs"
+      - "tests/host-select-review.cjs"
       - "tests/approved-visual.cjs"
       - "tests/visual_fixtures.py"
       - "inventory.html"
@@ -105,5 +107,57 @@ jobs:
         with:
           name: issue-332-evidence-${{ github.sha }}
           path: ${{ runner.temp }}/issue-332-evidence
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Check native hypervisor selection and modal rack feedback
+        env:
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
+          CAFFOOT_HOST_SELECT_REVIEW: "1"
+          CAFFOOT_VISUAL_FILTER: "^$"
+          CAFFOOT_VISUAL_OUTPUT: ${{ runner.temp }}/issue-333-evidence
+        run: node tests/approved-visual.cjs
+      - name: Save fictional Issue 333 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: issue-333-chromium-${{ github.sha }}
+          path: ${{ runner.temp }}/issue-333-evidence
+          if-no-files-found: ignore
+          retention-days: 14
+  native-select-engines:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        engine: [firefox, webkit]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Install isolated browser test tools
+        run: |
+          npm install --prefix "$RUNNER_TEMP/caffoot-browser-tests" --no-save --no-package-lock --no-audit --no-fund playwright@1.56.1
+          "$RUNNER_TEMP/caffoot-browser-tests/node_modules/.bin/playwright" install --with-deps "${{ matrix.engine }}"
+      - name: Check native selection, rack feedback and pinned select appearance
+        env:
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
+          CAFFOOT_VISUAL_ENGINE: ${{ matrix.engine }}
+          CAFFOOT_HOST_SELECT_REVIEW: "1"
+          CAFFOOT_VISUAL_FILTER: "^$"
+          CAFFOOT_VISUAL_OUTPUT: ${{ runner.temp }}/issue-333-evidence
+        run: node tests/approved-visual.cjs
+      - name: Save fictional engine comparisons
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: issue-333-${{ matrix.engine }}-${{ github.sha }}
+          path: ${{ runner.temp }}/issue-333-evidence
           if-no-files-found: ignore
           retention-days: 14

@@ -1,6 +1,6 @@
 // Capture the pinned originals and live screens using only isolated demonstration data.
 const fs=require('fs'),path=require('path'),http=require('http'),{spawn,spawnSync}=require('child_process');
-const {chromium}=require('playwright');
+const {chromium,firefox,webkit}=require('playwright');
 const root=path.resolve(__dirname,'..'),out=process.env.CAFFOOT_VISUAL_OUTPUT||path.join(root,'work','acceptance');
 const tmp=fs.mkdtempSync(path.join(require('os').tmpdir(),'caffoot-visual-'));
 const approved=path.join(tmp,'approved');fs.mkdirSync(approved);
@@ -57,7 +57,9 @@ for(const value of ['assets','coverage'])items.push(['audit-'+value,'audit-trail
 const selectedItems=process.env.CAFFOOT_VISUAL_FILTER?items.filter(item=>new RegExp(process.env.CAFFOOT_VISUAL_FILTER).test(item[0])):items;
 async function main(){
  await new Promise(resolve=>reference.listen(0,'127.0.0.1',resolve));
- browser=await chromium.launch({headless:true,executablePath:process.env.CAFFOOT_CHROMIUM_PATH||undefined,args:['--no-sandbox']});
+ const engine=process.env.CAFFOOT_VISUAL_ENGINE||'chromium';
+ if(!['chromium','firefox','webkit'].includes(engine))throw Error('Unknown visual browser engine');
+ browser=await ({chromium,firefox,webkit})[engine].launch({headless:true,...(engine==='chromium'?{executablePath:process.env.CAFFOOT_CHROMIUM_PATH||undefined,args:['--no-sandbox']}:{})});
  const context=await browser.newContext({ignoreHTTPSErrors:true});
  await context.route('https://raw.githubusercontent.com/**',r=>r.fulfill({contentType:'image/png',body:fs.readFileSync(root+'/assets/caffoot-logo-256.png')}));
  await context.route(/https:\/\/(fonts\.googleapis|fonts\.gstatic|cdnjs\.cloudflare)\.com\//,r=>r.abort());
@@ -69,6 +71,7 @@ async function main(){
  const login=await context.request.post(address+'/api/login',{headers:{Origin:address},data:{username:creds.username,password:creds.password,mfa_code:code}});
  if(!login.ok())throw Error('Visual test login failed');
  const page=await context.newPage(),ref=await context.newPage(),results=[];
+ if(process.env.CAFFOOT_HOST_SELECT_REVIEW==='1')await require('./host-select-review.cjs')({page,reference:ref,sourceBase:'http://127.0.0.1:'+reference.address().port,context,out,fixtureDirectory:tmp});
  if(process.env.CAFFOOT_RACK_LOCATION_DEFAULTS==='1')await require('./rack-location-defaults.cjs')({page,context,out});
  if(process.env.CAFFOOT_DEVICE_FORM_FOLLOWUPS==='1')await require('./device-form-followups.cjs')({page,reference:ref,sourceBase:'http://127.0.0.1:'+reference.address().port,context,out});
  if(process.env.CAFFOOT_CONTEXTUAL_CATALOGUE==='1')await require('./contextual-device-catalogue.cjs')({page,reference:ref,sourceBase:'http://127.0.0.1:'+reference.address().port,context,out,fixtureDirectory:tmp});

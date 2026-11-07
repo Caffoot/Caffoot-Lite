@@ -4313,6 +4313,8 @@ function openIpModal(ip) {
             const location = document.getElementById('dev-location');
             const rackOptions = document.getElementById('racked-options');
             const height = document.getElementById('dev-rack-height');
+            const rack = document.getElementById('dev-rack-id');
+            if(rack)rack.required=mount==='Rack Mounted'&&!isVirtualDeviceForm();
             if (!location || !rackOptions) return;
             if (mount === 'Rack Mounted') {
                 // Location Area stays editable independently of mounting.
@@ -5013,6 +5015,7 @@ function openIpModal(ip) {
                 [/vCPU/i,'dev-vmVcpu'],[/allocated ram/i,'dev-vmRamGb'],[/virtual disk/i,'dev-vmDiskGb'],[/network adapters/i,'dev-vmNicCount'],
                 [/device name|hostname|this name|unique.*name/i,'dev-name'],[/device type|identity/i,'dev-type'],
                 [/mounting|free rack slot/i,'dev-mount-type'],[/location/i,'dev-location'],[/subnet/i,'dev-subnet'],
+                [/select.*rack|rack.*(?:missing|no longer|not found|not available)|references a missing rack/i,'dev-rack-id'],
                 [/primary ip|ip address|device\/ipam/i,'dev-ip'],[/rack.*height|U height/i,'dev-rack-height'],[/rack|starting U|start U/i,'dev-rack-u']
             ];
             const field = form.querySelector('#' + (fieldId || rules.find(([pattern]) => pattern.test(message))?.[1] || 'device-editor-no-field'));
@@ -6271,7 +6274,6 @@ function openIpModal(ip) {
                     config.append(field);
                 }
                 refreshDeviceEditorHostVersionChoices();
-                hostingFields.querySelector('#host-platform-select').addEventListener('change',()=>queueMicrotask(refreshDeviceEditorHostVersionChoices));
             }
             bindSoftwarePlatformFields();
             syncHostingFieldVisibility();
@@ -6479,6 +6481,8 @@ function openIpModal(ip) {
                 if(previousProduct!==input.value){document.getElementById('host-version').value='';deviceDetailFormValues.hypervisorVersion='';}
                 if (custom) input.focus();
                 refreshDeviceSoftwareSuggestions();
+                // Update the chosen product before building its versions, including native keyboard changes.
+                refreshDeviceEditorHostVersionChoices();
             });
             document.getElementById('host-platform')?.addEventListener('input',event=>{
                 if(event.target.value!==deviceDetailFormValues.hypervisorProduct){
@@ -6822,6 +6826,8 @@ function openIpModal(ip) {
             if (mountType === 'Rack Mounted' && !racksReadOnly) {
                 if (!location || location === 'Racked') return showToast('Select a physical Location Area or Unknown.', 'error');
                 rackId = document.getElementById('dev-rack-id').value; face = document.getElementById('dev-rack-face').value;
+                if(!rackId)return showDeviceEditorFeedback('Select a rack for Rack Mounted equipment.','dev-rack-id');
+                if(!appState.racks.some(rack=>rack.id===rackId))return showDeviceEditorFeedback('Selected rack no longer exists. Choose an existing rack.','dev-rack-id');
                 rackUStart = parseInt(document.getElementById('dev-rack-u').value, 10); rackUHeight = parseInt(document.getElementById('dev-rack-height').value, 10);
                 if (!Number.isInteger(rackUStart) || !Number.isInteger(rackUHeight) || rackUStart < 1 || rackUHeight < 1) return showToast('Please enter a valid rack start U and U height.', 'error');
                 rackUEnd = rackUStart + rackUHeight - 1;
