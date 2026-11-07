@@ -21,7 +21,7 @@ _DEVICE_DIFFERENCE_FIELDS = frozenset((
 # Exclude notes, descriptions, passwords, private data and arbitrary extensions.
 _INVENTORY_DIFFERENCE_FIELDS = {
     "ipAllocations": frozenset(("status", "deviceId", "reservedForDeviceId")),
-    "subnets": frozenset(("name", "kind", "cidr", "parentId", "gateway", "vlan")),
+    "subnets": frozenset(("name", "kind", "cidr", "parentId", "gateway", "vlan", "purpose")),
     "vlans": frozenset(("name", "vlanId", "parentId")),
     "racks": frozenset(("name", "heightU", "location")),
     "rackAccessories": frozenset(("type", "rackId", "face", "startU", "heightU")),

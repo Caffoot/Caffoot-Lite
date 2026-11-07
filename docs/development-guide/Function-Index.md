@@ -6,7 +6,7 @@ Scope: named JavaScript declarations/assignments in the three application script
 
 The account hydration/photo functions now have purpose-based callable bindings matching their function names: `hydrateAccount` and `removeAccountPhoto`. The immutable design manifest retains its historical integration-entry names; those metadata names are not the runtime's current function map. Pinned source paths, revisions and hashes are unchanged.
 
-**Recorded definitions: 667.** Regenerate after changing declarations or their lines. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
+**Recorded definitions: 668.** Regenerate after changing declarations or their lines. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
 
 ## interface/loader.js
 
@@ -443,25 +443,25 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | [`nextDeviceModalClosed`](../../interface/application.js#L9043) | 9043 |
 | [`relatedChanges`](../../interface/application.js#L9049) | 9049 |
 | [`saveDevice`](../../interface/application.js#L9060) | 9060 |
-| [`nextIpamBridge.canEdit`](../../interface/application.js#L9093) | 9093 |
-| [`nextIpamBridge.saveBulk`](../../interface/application.js#L9094) | 9094 |
-| [`nextIpamBridge.save`](../../interface/application.js#L9116) | 9116 |
-| [`nextIpamBridge.deleteSubnet`](../../interface/application.js#L9138) | 9138 |
-| [`nextIpamBridge.saveSubnet`](../../interface/application.js#L9160) | 9160 |
-| [`nextSettingsBridge.save`](../../interface/application.js#L9190) | 9190 |
-| [`nextIntegrityRepairBridge.reload`](../../interface/application.js#L9207) | 9207 |
-| [`nextIntegrityRepairBridge.canViewSection`](../../interface/application.js#L9208) | 9208 |
-| [`nextIntegrityRepairBridge.preview`](../../interface/application.js#L9209) | 9209 |
-| [`nextIntegrityRepairBridge.apply`](../../interface/application.js#L9223) | 9223 |
-| [`nextResetBridge.reset`](../../interface/application.js#L9254) | 9254 |
-| [`nextDeviceCatalogueBridge.change`](../../interface/application.js#L9281) | 9281 |
-| [`nextRackBridge.reviewShelf`](../../interface/application.js#L9308) | 9308 |
-| [`nextRackBridge.removeShelf`](../../interface/application.js#L9316) | 9316 |
-| [`nextRackBridge.canEdit`](../../interface/application.js#L9325) | 9325 |
-| [`nextRackBridge.savePlacement`](../../interface/application.js#L9326) | 9326 |
-| [`nextRackBridge.save`](../../interface/application.js#L9361) | 9361 |
-| [`nextRackBridge.saveAccessory`](../../interface/application.js#L9364) | 9364 |
-| [`nextRackBridge.persist`](../../interface/application.js#L9367) | 9367 |
+| [`nextIpamBridge.canEdit`](../../interface/application.js#L9096) | 9096 |
+| [`nextIpamBridge.saveBulk`](../../interface/application.js#L9097) | 9097 |
+| [`nextIpamBridge.save`](../../interface/application.js#L9119) | 9119 |
+| [`nextIpamBridge.deleteSubnet`](../../interface/application.js#L9141) | 9141 |
+| [`nextIpamBridge.saveSubnet`](../../interface/application.js#L9163) | 9163 |
+| [`nextSettingsBridge.save`](../../interface/application.js#L9193) | 9193 |
+| [`nextIntegrityRepairBridge.reload`](../../interface/application.js#L9210) | 9210 |
+| [`nextIntegrityRepairBridge.canViewSection`](../../interface/application.js#L9211) | 9211 |
+| [`nextIntegrityRepairBridge.preview`](../../interface/application.js#L9212) | 9212 |
+| [`nextIntegrityRepairBridge.apply`](../../interface/application.js#L9226) | 9226 |
+| [`nextResetBridge.reset`](../../interface/application.js#L9257) | 9257 |
+| [`nextDeviceCatalogueBridge.change`](../../interface/application.js#L9284) | 9284 |
+| [`nextRackBridge.reviewShelf`](../../interface/application.js#L9311) | 9311 |
+| [`nextRackBridge.removeShelf`](../../interface/application.js#L9319) | 9319 |
+| [`nextRackBridge.canEdit`](../../interface/application.js#L9328) | 9328 |
+| [`nextRackBridge.savePlacement`](../../interface/application.js#L9329) | 9329 |
+| [`nextRackBridge.save`](../../interface/application.js#L9364) | 9364 |
+| [`nextRackBridge.saveAccessory`](../../interface/application.js#L9367) | 9367 |
+| [`nextRackBridge.persist`](../../interface/application.js#L9370) | 9370 |
 | [`reserveForDelete`](../../interface/application.js#L9383) | 9383 |
 | [`removeDevice`](../../interface/application.js#L9391) | 9391 |
 | [`cancelDelete`](../../interface/application.js#L9417) | 9417 |
@@ -573,10 +573,10 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 | Function | Line |
 | --- | ---: |
-| [`change_inventory_record`](../../backend/collection_saves.py#L19) | 19 |
-| [`change_ipam_subnet_and_vlan_records`](../../backend/collection_saves.py#L109) | 109 |
-| [`delete_subnet_with_dependencies`](../../backend/collection_saves.py#L246) | 246 |
-| [`remove_linked_rack_shelf`](../../backend/collection_saves.py#L363) | 363 |
+| [`change_inventory_record`](../../backend/collection_saves.py#L20) | 20 |
+| [`change_ipam_subnet_and_vlan_records`](../../backend/collection_saves.py#L112) | 112 |
+| [`delete_subnet_with_dependencies`](../../backend/collection_saves.py#L251) | 251 |
+| [`remove_linked_rack_shelf`](../../backend/collection_saves.py#L368) | 368 |
 
 ## backend/deployment_settings.py
 
@@ -753,7 +753,7 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | --- | ---: |
 | [`_valid_supported_cidr`](../../backend/normalisation_pipeline.py#L36) | 36 |
 | [`validate_normalisation_subnets`](../../backend/normalisation_pipeline.py#L50) | 50 |
-| [`normalise_detached_v133_state`](../../backend/normalisation_pipeline.py#L75) | 75 |
+| [`normalise_detached_v133_state`](../../backend/normalisation_pipeline.py#L77) | 77 |
 
 ## backend/normalisation_validation.py
 
@@ -900,6 +900,7 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | [`_js_string`](../../backend/subnet_validation.py#L153) | 153 |
 | [`_ip_number`](../../backend/subnet_validation.py#L163) | 163 |
 | [`validate_subnet_types`](../../backend/subnet_validation.py#L178) | 178 |
+| [`validate_subnet_mutation`](../../backend/subnet_validation.py#L224) | 224 |
 
 ## backend/tls.py
 

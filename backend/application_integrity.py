@@ -30,11 +30,14 @@ def validate_detached_application_state(candidate):
             continue
         if not _valid_supported_cidr(subnet.get("cidr")):
             errors.append(f"Invalid subnet CIDR: {subnet.get('cidr')}")
-        if (not _valid_ipv4(subnet.get("gateway")) or
-                not ip_belongs_to_subnet(subnet.get("gateway"), subnet.get("cidr"))):
+        if (not (subnet.get("purpose") == "VPN" and subnet.get("gateway") in (None, "")) and
+                (not _valid_ipv4(subnet.get("gateway")) or
+                 not ip_belongs_to_subnet(subnet.get("gateway"), subnet.get("cidr")))):
             errors.append(
                 f"Invalid gateway for subnet {subnet.get('name') or subnet.get('cidr')}."
             )
+        if subnet.get("vlan") in (None, ""):
+            continue
         number = _number(subnet.get("vlan"))
         domain = subnet.get("parentId") or "__unassigned__"
         key = (domain, number)

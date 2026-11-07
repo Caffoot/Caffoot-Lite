@@ -85,7 +85,7 @@ class CollectionSaveTests(unittest.TestCase):
     def test_network_and_linked_vlan_saved_in_one_transaction(self):
         block = {"id": "block", "kind": "container",
                  "cidr": "10.0.0.0/16", "name": "Main block", "parentId": None}
-        network = {"id": "net", "cidr": "10.0.0.0/24", "name": "Admin",
+        network = {"purpose": "LAN", "id": "net", "cidr": "10.0.0.0/24", "name": "Admin",
                    "vlan": 10, "gateway": "10.0.0.1", "parentId": "block"}
         vlan = {"id": "v1", "name": "Admin", "vlanId": 10,
                 "color": "indigo", "parentId": "block"}
@@ -106,7 +106,7 @@ class CollectionSaveTests(unittest.TestCase):
         self.assertEqual(self.records("vlans"), [new_vlan])
 
     def test_failed_linked_vlan_save_preserves_original_subnet(self):
-        network = {"id": "net", "cidr": "10.0.0.0/24", "name": "Valid",
+        network = {"purpose": "LAN", "id": "net", "cidr": "10.0.0.0/24", "name": "Valid",
                    "vlan": 10, "gateway": "10.0.0.1"}
         with self.assertRaises(ValueError):
             self.change_ipam([
@@ -126,7 +126,7 @@ class CollectionSaveTests(unittest.TestCase):
                 )
 
     def test_vlan_delete_refuses_its_linked_network(self):
-        network = {"id": "net", "cidr": "10.0.0.0/24", "name": "Network",
+        network = {"purpose": "LAN", "id": "net", "cidr": "10.0.0.0/24", "name": "Network",
                    "vlan": 10, "gateway": "10.0.0.1"}
         vlan = {"id": "v1", "name": "Network", "vlanId": 10}
         self.change_ipam([
@@ -147,7 +147,7 @@ class CollectionSaveTests(unittest.TestCase):
     def test_legacy_vlan_ownership_can_be_updated(self):
         block = {"id": "block", "kind": "container",
                  "cidr": "10.0.0.0/16", "name": "Block"}
-        network = {"id": "net", "cidr": "10.0.0.0/24",
+        network = {"purpose": "LAN", "id": "net", "cidr": "10.0.0.0/24",
                    "name": "Network", "vlan": 10, "gateway": "10.0.0.1",
                    "parentId": "block"}
         vlan = {"id": "v1", "name": "Network", "vlanId": 10}
@@ -179,7 +179,7 @@ class CollectionSaveTests(unittest.TestCase):
         self.assertEqual(self.records("rack_accessories"), [])
 
     def test_reviewed_subnet_delete_detaches_primary_ip_and_linked_vlan_atomically(self):
-        network = {"id": "network", "name": "Network", "cidr": "10.0.0.0/24",
+        network = {"purpose": "LAN", "id": "network", "name": "Network", "cidr": "10.0.0.0/24",
                    "gateway": "10.0.0.1", "vlan": 10}
         vlan = {"id": "vlan", "name": "Network", "vlanId": 10}
         self.change_ipam([
@@ -217,7 +217,7 @@ class CollectionSaveTests(unittest.TestCase):
         self.assertEqual(revision, 1)
 
     def test_subnet_delete_rejects_independent_reservations_and_preserves_all(self):
-        network = {"id": "network", "name": "Network", "cidr": "10.0.0.0/24",
+        network = {"purpose": "LAN", "id": "network", "name": "Network", "cidr": "10.0.0.0/24",
                    "gateway": "10.0.0.1", "vlan": 10}
         self.change_ipam([
             {"collection": "subnets", "id": "network", "record": network}

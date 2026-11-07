@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 from .application_integrity import validate_detached_application_state
 from .inventory import COLLECTIONS, reconstruct_inventory
 from .ipam_validation import ip_belongs_to_subnet
+from .subnet_validation import validate_subnet_mutation
 from .normalisation_validation import (_number, validate_normalisation_devices,
                                         validate_normalisation_vlans)
 from .permissions import can_access
@@ -43,6 +44,8 @@ def change_inventory_record(connection, account_id, collection, record_id, recor
         else:
             state[collection] = [record if item["id"] == record_id else item
                                  for item in records]
+        if collection == "subnets":
+            validate_subnet_mutation(record, existing, state)
         validate_normalisation_vlans(state)
         validate_normalisation_devices(state)
         errors = validate_detached_application_state(state)
@@ -142,6 +145,12 @@ def change_ipam_subnet_and_vlan_records(connection, account_id, changes):
                                      for item in records]
             operations.append((collection, identifier, record, existing))
 
+        created_networks = [record for collection, _, record, existing in operations
+                            if collection == "subnets" and record is not None and
+                            record.get("kind", "network") == "network" and existing is None]
+        if len(created_networks) > 50:
+            raise ValueError("Create between 1 and 50 subnets per operation.")
+
         # The published VLAN removal workflow refuses to remove a linked VLAN.
         for collection, identifier, record, existing in operations:
             if collection != "vlans" or record is not None or existing is None:
@@ -178,21 +187,7 @@ def change_ipam_subnet_and_vlan_records(connection, account_id, changes):
                     )
             if record.get("kind") == "container":
                 continue
-            gateway = record.get("gateway")
-            owners = [d for d in state["devices"] if d.get("primaryIp") == gateway]
-            allocation = state["ipAllocations"].get(gateway)
-            permitted = (original is not None and original.get("gateway") == gateway and
-                         len(owners) == 1 and
-                         owners[0].get("type") in ("Firewall", "Router", "Layer 3 Switch") and
-                         allocation is not None and
-                         allocation.get("deviceId") == owners[0]["id"] and
-                         (not allocation.get("reservedForDeviceId") or
-                          allocation["reservedForDeviceId"] == owners[0]["id"]))
-            if (owners or allocation) and not permitted:
-                raise ValueError(
-                    "Gateway IP is already assigned or reserved. "
-                    "Release that address before using it as a gateway."
-                )
+            validate_subnet_mutation(record, original, state)
 
         validate_normalisation_vlans(state)
         validate_normalisation_devices(state)
@@ -230,8 +225,18 @@ def change_ipam_subnet_and_vlan_records(connection, account_id, changes):
                             "fields": [],
                             **safe_inventory_differences(existing, record, collection)})
         if changed:
+            reason = "Inventory saved"
+            if created_networks:
+                ordered = sorted(created_networks, key=lambda item: tuple(
+                    int(part) for part in item["cidr"].split("/")[0].split(".")))
+                parents = {item.get("parentId") for item in created_networks}
+                parent = next((s for s in state["subnets"] if len(parents) == 1 and
+                               s["id"] in parents), None)
+                context = str(parent.get("name") or parent["cidr"])[:100] if parent else "No single Address Block"
+                reason = (f"Created {len(created_networks)} subnet(s): "
+                          f"{ordered[0]['cidr']} – {ordered[-1]['cidr']} · {context}")
             event = {"at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
-                     "reason": "Inventory saved", "changes": changed[:16],
+                     "reason": reason, "changes": changed[:16],
                      "omitted": max(0, len(changed) - 16)}
             connection.execute(
                 "INSERT INTO inventory_change_history(record_json) VALUES(?)",
@@ -284,16 +289,16 @@ def delete_subnet_with_dependencies(connection, account_id, subnet_id,
         linked = ([v for v in state["vlans"]
                    if _number(v.get("vlanId")) == _number(subnet.get("vlan")) and
                    (v.get("parentId") or "__unassigned__") == domain]
-                  if network else [])
+                  if network and subnet.get("vlan") not in (None, "") else [])
         if (len(linked) > 1 or
                 (network and not linked and any(
                     _number(v.get("vlanId")) == _number(subnet.get("vlan")) and
                     not v.get("parentId") for v in state["vlans"])) or
-                any(s["id"] != subnet_id and
+                (subnet.get("vlan") not in (None, "") and any(s["id"] != subnet_id and
                     (not s.get("kind") or s.get("kind") == "network") and
                     _number(s.get("vlan")) == _number(subnet.get("vlan")) and
                     (s.get("parentId") or "__unassigned__") == domain
-                    for s in state["subnets"])):
+                    for s in state["subnets"]))):
             raise ValueError("VLAN ownership changed; deletion cancelled.")
 
         now = int(time.time())

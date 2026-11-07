@@ -146,11 +146,12 @@ function hierarchyValidateTypes(subnets) {
     if(kind==='network') {
       if(range.prefix>30||range.prefix<1) errors.push('Network requires a /1–/30 CIDR: '+s.cidr);
       const vlan=Number(s.vlan);
-      if(s.vlan===null||s.vlan===undefined||s.vlan===''||!Number.isInteger(vlan)||vlan<1||vlan>4094)
+      if(s.vlan!==null&&s.vlan!==undefined&&s.vlan!==''&&(!Number.isInteger(vlan)||vlan<1||vlan>4094))
         errors.push('Network requires VLAN 1–4094: '+String(s.id));
       const gateway=hierarchyIpNumber(s.gateway);
-      if(gateway===null||gateway<=range.start||gateway>=range.end)
+      if(!(s.purpose==='VPN'&&(s.gateway===undefined||s.gateway===null||s.gateway===''))&&(gateway===null||gateway<=range.start||gateway>=range.end))
         errors.push('Network requires a usable gateway: '+String(s.id));
+      if('purpose' in s&&!['LAN','Management','VPN'].includes(s.purpose))errors.push('Select LAN, Management or VPN purpose: '+String(s.id));
     } else {
       if(kind==='loopback'&&range.prefix!==32) errors.push('Loopback requires /32: '+String(s.id));
       if(s.gateway!==undefined&&s.gateway!==null&&s.gateway!=='')
@@ -281,9 +282,10 @@ function hierarchyValidateTypes(subnets) {
                 if (!isPlainObject(subnet) || !subnet.id || !subnet.name || !isValidCidr24(subnet.cidr)) {
                     throw new Error('Every subnet must have an id, name and valid /23–/30 CIDR.');
                 }
-                if (!Number.isInteger(Number(subnet.vlan)) || Number(subnet.vlan) < 1 || Number(subnet.vlan) > 4094) {
+                if (subnet.vlan!=null&&subnet.vlan!==''&&(!Number.isInteger(Number(subnet.vlan)) || Number(subnet.vlan) < 1 || Number(subnet.vlan) > 4094)) {
                     throw new Error(`Invalid VLAN ID on subnet ${subnet.name}.`);
                 }
+                if(subnet.purpose==='VPN'&&!subnet.gateway)continue;
                 if (!isValidIpv4(subnet.gateway)) {
                     throw new Error(`Invalid gateway on subnet ${subnet.name}.`);
                 }
@@ -419,7 +421,8 @@ function hierarchyValidateTypes(subnets) {
                 // Their CIDR and type rules are checked by hierarchyValidateTypes above.
                 if (subnet.kind && subnet.kind !== 'network') return;
                 if (!isValidCidr24(subnet.cidr)) errors.push(`Invalid subnet CIDR: ${subnet.cidr}`);
-                if (!isValidIpv4(subnet.gateway) || !ipBelongsToSubnet(subnet.gateway, subnet.cidr)) errors.push(`Invalid gateway for subnet ${subnet.name || subnet.cidr}.`);
+                if (!(subnet.purpose==='VPN'&&!subnet.gateway)&&(!isValidIpv4(subnet.gateway) || !ipBelongsToSubnet(subnet.gateway, subnet.cidr))) errors.push(`Invalid gateway for subnet ${subnet.name || subnet.cidr}.`);
+                if(subnet.vlan==null||subnet.vlan==='')return;
                 const vlan = Number(subnet.vlan);
                 const domain = subnet.parentId || '__unassigned__';
                 const vlanKey = JSON.stringify([domain, vlan]);
