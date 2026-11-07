@@ -1,0 +1,130 @@
+{
+  "engine": "chromium",
+  "trace": [
+    {
+      "phase": "refresh",
+      "selected": "",
+      "stored": ""
+    },
+    {
+      "phase": "refresh",
+      "selected": "Proxmox VE",
+      "stored": "Proxmox VE"
+    },
+    {
+      "phase": "refresh",
+      "selected": "",
+      "stored": ""
+    },
+    {
+      "phase": "event",
+      "trusted": true,
+      "selected": "VMware ESXi"
+    },
+    {
+      "phase": "refresh",
+      "selected": "VMware ESXi",
+      "stored": "VMware ESXi"
+    },
+    {
+      "phase": "event",
+      "trusted": true,
+      "selected": "Proxmox VE"
+    },
+    {
+      "phase": "refresh",
+      "selected": "Proxmox VE",
+      "stored": "Proxmox VE"
+    },
+    {
+      "phase": "event",
+      "trusted": true,
+      "selected": ""
+    },
+    {
+      "phase": "refresh",
+      "selected": "",
+      "stored": ""
+    },
+    {
+      "phase": "event",
+      "trusted": true,
+      "selected": "VMware ESXi"
+    },
+    {
+      "phase": "refresh",
+      "selected": "VMware ESXi",
+      "stored": "VMware ESXi"
+    },
+    {
+      "phase": "event",
+      "trusted": true,
+      "selected": "Proxmox VE"
+    },
+    {
+      "phase": "refresh",
+      "selected": "Proxmox VE",
+      "stored": "Proxmox VE"
+    },
+    {
+      "phase": "event",
+      "trusted": true,
+      "selected": "Microsoft Hyper-V"
+    },
+    {
+      "phase": "refresh",
+      "selected": "Microsoft Hyper-V",
+      "stored": "Microsoft Hyper-V"
+    },
+    {
+      "phase": "event",
+      "trusted": true,
+      "selected": ""
+    },
+    {
+      "phase": "refresh",
+      "selected": "",
+      "stored": ""
+    },
+    {
+      "phase": "event",
+      "trusted": true,
+      "selected": "VMware ESXi"
+    },
+    {
+      "phase": "refresh",
+      "selected": "VMware ESXi",
+      "stored": "VMware ESXi"
+    },
+    {
+      "phase": "event",
+      "trusted": true,
+      "selected": ""
+    },
+    {
+      "phase": "refresh",
+      "selected": "",
+      "stored": ""
+    },
+    {
+      "phase": "event",
+      "trusted": true,
+      "selected": "VMware ESXi"
+    },
+    {
+      "phase": "refresh",
+      "selected": "VMware ESXi",
+      "stored": "VMware ESXi"
+    },
+    {
+      "phase": "event",
+      "trusted": true,
+      "selected": "Proxmox VE"
+    },
+    {
+      "phase": "refresh",
+      "selected": "Proxmox VE",
+      "stored": "Proxmox VE"
+    }
+  ]
+}
