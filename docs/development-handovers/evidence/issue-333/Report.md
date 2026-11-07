@@ -26,7 +26,7 @@ Earlier failed jobs are not counted as passes. The first appearance test incorre
 - [Documentation compatibility](documentation.txt): passed. Function Index regenerated. The twelve approved sources, provenance, backend, styles, screen HTML and templates are unchanged from the starting checkpoint.
 - [Full existing Chromium/editor and #331/#332 regression](chromium-ci.txt) passed on application checkpoint `10408df32761964956624611895a93b1548e35bb`: 239 rendered editor states; seven contextual catalogue, eight shelf, four rack-location and seven form-follow-up groups. Includes permissions, concurrent edit reservations, archive/history retention and imported backups.
 - [Docker Compose lifecycle](docker-ci.txt) passed on that same application checkpoint: one real test covering configurable port and database/TLS persistence after restart/recreation. No application changes follow that commit.
-- Git history secret scan passed the pushed code/test checkpoints. Final repeat-job links and exact delivery SHA are recorded in #333 after verification.
+- [Final repeat Chromium results](final-chromium-ci.txt) passed all existing groups and 239 editor states at `e802dab034dcb04f3173f3e7248c5564386ee912`. [Final CI receipt](final-ci-summary.json) records successful Chromium, Firefox, WebKit, backend and secret checks. Final delivery is documentation/evidence only after this verified code/test checkpoint; its SHA and final secret-scan result are recorded in #333.
 
 ## Private Native Pi/Safari Acceptance
 
@@ -44,3 +44,7 @@ Follow the existing private 8445 Portainer workflow and change **only the image 
 6. Open IPAM Add Subnet at the usual Safari zoom/display scale. Check Subnet Type text, spacing, chevron, focus, keyboard selection and Tab at desktop/mobile widths in both themes. If it still looks compact, record Safari version, OS, zoom/display scale and a screenshot of both the live control and pinned preview at matching width. No speculative CSS adjustment has been made.
 
 Owner confirmation of #327 and #330 remains outstanding. #329 is untouched. No merge, image publication, release or deployment has been performed.
+
+## Remaining Work
+
+No demonstrated in-scope application failure remains in the available automated checks. Native Pi/Safari review remains open for both parent issues. The two genuine private backup fixture tests remain unavailable; the general backend Docker opt-in skip is covered by the passing dedicated lifecycle job. No new design or security-policy decision is required. Resume only an actual failure or the owner's findings, preserving all accepted behaviour and leaving #329 untouched.

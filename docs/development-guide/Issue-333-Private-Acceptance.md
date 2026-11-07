@@ -26,8 +26,8 @@ Local Linux WebKit could not launch because required system libraries are unavai
 - [x] Focused Chromium: six groups passed, including native-keyboard, Save/Edit/Duplicate/Cancel, responsive/theme and select comparisons.
 - [x] Current Firefox 153: six groups passed, including matching live/source select widths.
 - [x] Current Linux WebKit 26.5: six groups passed through actual IPAM entry paths after waiting for modal transitions.
-- [ ] Complete Firefox/WebKit CI and existing Chromium/#331/#332/full backend/security/documentation checks.
-- [ ] Record final evidence, exact delivery SHA and owner private recheck instructions in #333/#327/#330/#282.
+- [x] Final Firefox/WebKit/Chromium jobs and existing #331/#332/full backend/security/documentation checks passed.
+- [x] Consolidated evidence and private acceptance instructions committed; exact final delivery SHA/sign-off is recorded in #333/#327/#330/#282 after push.
 - [ ] Owner native Raspberry Pi/Safari acceptance; do not close either parent on automation alone.
 
-[Consolidated evidence and private acceptance instructions](../development-handovers/evidence/issue-333/Report.md). The next step is to inspect the remaining final Chromium job for `e802dab034dcb04f3173f3e7248c5564386ee912`, then record exact delivery-commit sign-off in #333. There is no image publication, merge, release or installation change.
+[Consolidated evidence and private acceptance instructions](../development-handovers/evidence/issue-333/Report.md). All three browser jobs, backend and secret scan passed for code/test checkpoint `e802dab034dcb04f3173f3e7248c5564386ee912`. Subsequent commits contain documentation/evidence only. The only remaining acceptance step is the owner's native Pi/Safari recheck; inspect the exact delivery SHA and final secret scan linked in #333 before building. Do not repeat completed work or begin #329. There is no image publication, merge, release or installation change.
