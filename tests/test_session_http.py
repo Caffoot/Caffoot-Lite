@@ -56,6 +56,61 @@ class SessionHttpTests(unittest.TestCase):
         conn.close()
         return status, body, cache
 
+    def test_subnet_first_batch_permissions_atomicity_and_visible_count_http(self):
+        from backend.inventory import stage_inventory
+        from backend.permissions import set_permission
+        with sqlite3.connect(self.path) as db:
+            stage_inventory(db, {"devices":[],"subnets":[],"vlans":[],"racks":[],"rackAccessories":[],"ipAllocations":{}})
+            admin = db.execute("SELECT id FROM accounts WHERE is_admin=1").fetchone()[0]
+            editor = create_user(db, admin, "subnet-editor", "initial")
+            secret = new_secret()
+            db.execute("UPDATE accounts SET mfa_secret=?,mfa_confirmed=1 WHERE id=?",(secret,editor));db.commit()
+            set_permission(db,admin,editor,"IPAM","edit")
+            editor_token=login_session(db,"subnet-editor","initial",mfa_code=code_at(secret,time.time()))
+            reader=create_user(db,admin,"subnet-reader","initial");set_permission(db,admin,reader,"IPAM","read")
+            reader_token=login_session(db,"subnet-reader","initial")
+            create_user(db,admin,"subnet-no-access","initial")
+            none_token=login_session(db,"subnet-no-access","initial")
+        parent={"id":"http-office","kind":"container","name":"Fictional office","cidr":"10.85.0.0/16"}
+        records=[parent]+[{"id":f"http-net-{i}","kind":"network","name":f"Fictional {i}","purpose":"LAN","cidr":f"10.85.{i}.0/24","gateway":f"10.85.{i}.1","parentId":parent["id"]}for i in range(50)]
+        payload={"changes":[{"collection":"subnets","id":r["id"],"record":r}for r in records]}
+        with patch("backend.server.PUBLIC_ORIGIN","https://caffoot.example"):
+            for token in [reader_token,none_token,None]:
+                status,_=self.post("/api/ipam/subnets/save",payload,token,csrf_for_session(token))
+                self.assertEqual(status,403)
+            self.assertEqual(self.post("/api/ipam/subnets/save",payload,editor_token)[0],403)
+            broken=json.loads(json.dumps(payload));broken["changes"][26]["record"]["gateway"]="10.85.25.255"
+            self.assertEqual(self.post("/api/ipam/subnets/save",broken,editor_token,csrf_for_session(editor_token))[0],400)
+            with sqlite3.connect(self.path) as db:self.assertEqual(db.execute("SELECT COUNT(*) FROM inventory_subnets").fetchone()[0],0)
+            status,result=self.post("/api/ipam/subnets/save",payload,editor_token,csrf_for_session(editor_token))
+            self.assertEqual(status,200,result)
+        for token in [editor_token,reader_token]:
+            status,raw,_=self.request("/api/inventory/state",COOKIE_NAME+"="+token)
+            self.assertEqual(status,200);visible=json.loads(raw)
+            self.assertNotIn("devices",visible)
+            self.assertEqual(len(visible["subnets"]),51)
+            summaries=[e for e in visible["changeHistory"] if "Created 50 subnet(s)" in e.get("reason","")]
+            self.assertEqual(len(summaries),1)
+            self.assertEqual(summaries[0]["actor"],"subnet-editor")
+        with sqlite3.connect(self.path) as db:
+            events=[json.loads(r[0]) for r in db.execute("SELECT record_json FROM inventory_change_history")]
+            batches=[e for e in events if e.get("subnetBatch")]
+            self.assertEqual(len(batches),1);self.assertEqual(batches[0]["omitted"],35)
+
+    def test_legacy_device_vlan_metadata_survives_reserved_save_http(self):
+        record={"id":"legacy-vlan-device","name":"Fictional legacy","mountType":"Desktop","primaryIp":"","vlan":"Historical value to retain"}
+        with patch("backend.server.PUBLIC_ORIGIN","https://caffoot.example"):
+            csrf=csrf_for_session(self.token)
+            self.assertEqual(self.post("/api/devices/create",{"record":record},self.token,csrf)[0],200)
+            status,reservation=self.post("/api/devices/edit/start",{"deviceId":record["id"]},self.token,csrf)
+            self.assertEqual(status,200)
+            changed=dict(record,name="Fictional renamed")
+            status,result=self.post("/api/devices/edit/save",{"deviceId":record["id"],"revision":reservation["revision"],"record":changed},self.token,csrf)
+            self.assertEqual(status,200,result)
+        with sqlite3.connect(self.path) as db:
+            saved=json.loads(db.execute("SELECT record_json FROM inventory_devices WHERE id=?",(record["id"],)).fetchone()[0])
+        self.assertEqual(saved["vlan"],record["vlan"])
+
     def test_inventory_assets_are_served_from_existing_published_files(self):
         asset_root = Path(__file__).resolve().parents[1] / "assets"
         with patch("backend.server.ASSET_ROOT", asset_root):

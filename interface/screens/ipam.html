@@ -48,7 +48,7 @@
   </div>
 </section><!-- /interface-template -->
 
-<!-- interface-template:ipam/render-ipam-html-3 --><div class="ipam-card"><h2>IP Address Allocations</h2><p class="ipam-empty">No Network / VLAN subnets are available yet. Add a network to browse addresses.</p><!-- /interface-template -->
+<!-- interface-template:ipam/render-ipam-html-3 --><div class="ipam-card"><h2>IP Address Allocations</h2><p class="ipam-empty">No addressable subnets are available yet. Add a subnet to browse addresses.</p><!-- /interface-template -->
 
 <!-- interface-template:ipam/render-ipam-html-4 -->
                     <div class="space-y-6 text-center py-12">
@@ -70,8 +70,8 @@
 <!-- interface-template:ipam/render-ipam-html-5 --><section class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3">
                     <h3 class="font-bold text-slate-900 dark:text-white">{{slot:0}}</h3>
                     {{slot:1}}
-                    <p class="text-sm text-slate-600 dark:text-slate-300">No assignable Network / VLAN subnets are available yet. IP Address Blocks organise address space but do not contain individual host allocations.</p>
-                    <p class="text-sm text-slate-600 dark:text-slate-300">Use Add Subnet in the sidebar to create a Network / VLAN. The existing subnet summary and IP address grid will appear once a network is available.</p>
+                    <p class="text-sm text-slate-600 dark:text-slate-300">No addressable subnets are available yet. IP Address Blocks organise address space but do not contain individual host allocations.</p>
+                    <p class="text-sm text-slate-600 dark:text-slate-300">Use Add Single Subnet to create an addressable subnet. The existing subnet summary and IP address grid will appear once a network is available.</p>
                 </section><!-- /interface-template -->
 
 <!-- interface-template:ipam/network-information-panel-1 --><div class="rounded-xl bg-slate-50 dark:bg-slate-700/40 border border-slate-200 dark:border-slate-600 p-3 min-w-0">
@@ -389,13 +389,13 @@
                     <label class="ipam-field" for="sub-name"><span><span id="sub-name-label">Subnet Name</span> *</span>
                         <input type="text" id="sub-name" required value="{{slot:6}}" placeholder="Guest Network">
                     </label>
-                    <label class="ipam-field" for="sub-purpose" data-network-only>Subnet Purpose *
-                        <select id="sub-purpose">{{slot:12}}</select>
-                    </label>
                     <label class="ipam-field" for="sub-vlan" data-network-only>VLAN ID (Optional)
                         <input type="number" id="sub-vlan" min="1" max="4094" step="1" value="{{slot:7}}">
                     </label>
-                    <label class="ipam-field wide" for="sub-gw" data-network-only>Gateway IP <span id="sub-gw-required">*</span>
+                    <label class="ipam-field wide" for="sub-purpose" data-network-only>Subnet Purpose *
+                        <select id="sub-purpose">{{slot:12}}</select>
+                    </label>
+                    <label class="ipam-field wide" for="sub-gw" data-network-only><span>Gateway IP <span id="sub-gw-required">*</span></span>
                         <input type="text" id="sub-gw" required value="{{slot:8}}" placeholder="192.168.10.1">
                         <small id="sub-gw-hint" aria-live="polite">Enter a network CIDR to suggest a gateway.</small>
                     </label>
@@ -485,5 +485,5 @@
 
 <!-- interface-template:ipam/multiple-subnets-preview -->
 <div class="ipam-modal-head"><div><div class="eyebrow">IP ADDRESS MANAGEMENT</div><h2>3. Review Subnets</h2><p class="ipam-modal-note">{{slot:0}}</p></div><button type="button" class="ipam-modal-close app-modal-close" data-action="close-modal" aria-label="Close dialog">Close ×</button></div>
-<form id="subnet-batch-preview" data-ipam-subnet-creation novalidate><div class="ipam-modal-body" tabindex="0" aria-label="Subnet preview rows"><table class="ipam-subnet-preview-table"><caption class="sr-only">Review every subnet. All rows must be valid before saving.</caption><thead><tr><th scope="col">Subnet CIDR</th><th scope="col">Name / Description</th><th scope="col">Purpose</th><th scope="col">VLAN (Optional)</th><th scope="col">Gateway</th></tr></thead><tbody>{{slot:1}}</tbody></table></div><div class="form-error ipam-preview-feedback" data-form-error role="alert"></div><footer class="ipam-modal-actions"><button type="button" class="btn btn-outline" id="subnet-batch-back">Back</button><button type="button" class="btn btn-outline" data-action="close-modal">Cancel</button><button type="submit" class="btn btn-primary">Save {{slot:2}} Subnets</button></footer></form>
+<form id="subnet-batch-preview" data-ipam-subnet-creation novalidate><div class="ipam-modal-body" tabindex="0" aria-label="Subnet preview rows"><table class="ipam-subnet-preview-table"><caption class="sr-only">Review every subnet. All rows must be valid before saving.</caption><thead><tr><th scope="col">Subnet CIDR</th><th scope="col">Name / Description</th><th scope="col">Purpose</th><th scope="col">VLAN (Optional)</th><th scope="col">Gateway</th></tr></thead><tbody>{{slot:1}}</tbody></table></div><div class="form-error ipam-preview-feedback" data-form-error role="alert"></div><footer class="ipam-modal-actions"><button type="button" class="btn btn-outline" id="subnet-batch-back">Back</button><button type="button" class="btn btn-outline" data-action="close-modal">Cancel</button><button type="submit" class="btn btn-primary">Save {{slot:2}}</button></footer></form>
 <!-- /interface-template -->

@@ -185,8 +185,6 @@ def change_ipam_subnet_and_vlan_records(connection, account_id, changes):
                         f"CIDR cannot be changed while {len(dependent_devices)} device(s) "
                         f"and {len(dependent_ips)} IPAM allocation(s) depend on the subnet."
                     )
-            if record.get("kind") == "container":
-                continue
             validate_subnet_mutation(record, original, state)
 
         validate_normalisation_vlans(state)

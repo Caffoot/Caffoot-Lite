@@ -20,7 +20,7 @@ Device Networking alone changes to optional block → named subnet → read-only
 - [x] Model/backend and matching browser validation implemented; focused model/transaction tests prove omission, legacy edits, gateway protections, counts, 150 subnets, rollback, concurrency and audit.
 - [x] Single IPAM form, approved generation/review, visible purpose and row errors.
 - [x] Device Networking subnet-first integration and derived VLAN.
-- [ ] Focused browser and source/desktop/mobile/theme/accessibility comparison.
+- [x] Focused browser and source/desktop/mobile/theme/accessibility comparison.
 - [ ] Full backend/browser/security/backup/import/compatibility/documentation/Docker checks and exact final GitHub sign-off.
 - [ ] Private owner Safari/Pi acceptance, separately recorded.
 
@@ -35,3 +35,7 @@ Single/Bulk IPAM and Device Networking are implemented. Five new Chromium groups
 Full backend before the final audit-projection addition: 482 run, 479 passed, three established skips. The new bounded batch summary projection is tested for non-admin IPAM readers; unrelated sections and free text remain redacted. The latest focused interface/backend/history regression is recorded in the evidence folder. The generic form permission and unsaved-change guards now recognise the new IPAM forms. A confirmed save is no longer reported as rolled back if only its subsequent inventory refresh fails.
 
 Existing active browser tests have been updated only where the approved contract changes: new Purpose/Single Subnet label and removal of the VLAN-first prerequisite. Their full regressions and Firefox/WebKit jobs remain to be evaluated. Next: inspect CI, finish targeted history/security/data-preservation tests, compare live Single/Device controls against pinned HTML plus the approved amendments, update user/developer documentation and complete final acceptance evidence.
+
+## Acceptance Candidate
+
+The remaining compatibility, permission, failure/retry, source comparison and documentation checks are complete locally. [Consolidated evidence and private acceptance checklist](../development-handovers/evidence/issue-329/Report.md) distinguish actual local results, the successful integration-checkpoint CI and the final candidate checks. The final exact SHA and GitHub results are recorded in #329. Resume only a failed final check or an owner acceptance finding; do not repeat the implementation above.

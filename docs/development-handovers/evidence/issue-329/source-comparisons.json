@@ -1,0 +1,918 @@
+{
+  "measurements": [
+    {
+      "view": "single-subnet",
+      "width": 1440,
+      "height": 950,
+      "theme": "light",
+      "liveModal": {
+        "width": 575,
+        "height": 822.5625,
+        "right": 1007.5,
+        "bottom": 886.28125,
+        "padding": "0px",
+        "borderRadius": "16px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "sourceModal": {
+        "width": 575,
+        "height": 746.78125,
+        "right": 1007.5,
+        "bottom": 848.390625,
+        "padding": "0px",
+        "borderRadius": "16px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "liveField": {
+        "width": 527,
+        "height": 42,
+        "right": 983.5,
+        "bottom": 357.5,
+        "padding": "10px 11px",
+        "borderRadius": "9px",
+        "fontSize": "13px",
+        "overflow": 0
+      },
+      "sourceField": {
+        "width": 527,
+        "height": 42,
+        "right": 983.5,
+        "bottom": 380,
+        "padding": "10px 11px",
+        "borderRadius": "9px",
+        "fontSize": "13px",
+        "overflow": 0
+      },
+      "amendments": [
+        "required initially blank Purpose",
+        "optional VLAN",
+        "conditional gateway",
+        "Single Subnet labels"
+      ]
+    },
+    {
+      "view": "device-networking",
+      "width": 1440,
+      "height": 950,
+      "theme": "light",
+      "liveDevice": {
+        "width": 1030,
+        "height": 870,
+        "right": 1235,
+        "bottom": 910,
+        "padding": "0px",
+        "borderRadius": "17px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "sourceDevice": {
+        "width": 1030,
+        "height": 870,
+        "right": 1235,
+        "bottom": 910,
+        "padding": "0px",
+        "borderRadius": "17px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "order": [
+        "dev-block",
+        "dev-subnet",
+        "dev-vlan",
+        "dev-ip",
+        "dev-ip-available"
+      ],
+      "amendments": [
+        "optional block",
+        "named subnet first",
+        "read-only derived VLAN",
+        "existing IP/reservation controls retained"
+      ]
+    },
+    {
+      "view": "bulk-preview",
+      "width": 1440,
+      "height": 950,
+      "theme": "light",
+      "preview": {
+        "width": 1024,
+        "height": 914,
+        "right": 1232,
+        "bottom": 932,
+        "padding": "0px",
+        "borderRadius": "16px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "pinnedCounterpart": null,
+      "amendments": [
+        "approved desktop table/mobile stacked rows",
+        "fixed actions",
+        "independent scrolling",
+        "labelled keyboard controls"
+      ]
+    },
+    {
+      "view": "single-subnet",
+      "width": 1440,
+      "height": 950,
+      "theme": "dark",
+      "liveModal": {
+        "width": 575,
+        "height": 822.5625,
+        "right": 1007.5,
+        "bottom": 886.28125,
+        "padding": "0px",
+        "borderRadius": "16px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "sourceModal": {
+        "width": 575,
+        "height": 746.78125,
+        "right": 1007.5,
+        "bottom": 848.390625,
+        "padding": "0px",
+        "borderRadius": "16px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "liveField": {
+        "width": 527,
+        "height": 42,
+        "right": 983.5,
+        "bottom": 357.5,
+        "padding": "10px 11px",
+        "borderRadius": "9px",
+        "fontSize": "13px",
+        "overflow": 0
+      },
+      "sourceField": {
+        "width": 527,
+        "height": 42,
+        "right": 983.5,
+        "bottom": 380,
+        "padding": "10px 11px",
+        "borderRadius": "9px",
+        "fontSize": "13px",
+        "overflow": 0
+      },
+      "amendments": [
+        "required initially blank Purpose",
+        "optional VLAN",
+        "conditional gateway",
+        "Single Subnet labels"
+      ]
+    },
+    {
+      "view": "device-networking",
+      "width": 1440,
+      "height": 950,
+      "theme": "dark",
+      "liveDevice": {
+        "width": 1030,
+        "height": 870,
+        "right": 1235,
+        "bottom": 910,
+        "padding": "0px",
+        "borderRadius": "17px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "sourceDevice": {
+        "width": 1030,
+        "height": 870,
+        "right": 1235,
+        "bottom": 910,
+        "padding": "0px",
+        "borderRadius": "17px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "order": [
+        "dev-block",
+        "dev-subnet",
+        "dev-vlan",
+        "dev-ip",
+        "dev-ip-available"
+      ],
+      "amendments": [
+        "optional block",
+        "named subnet first",
+        "read-only derived VLAN",
+        "existing IP/reservation controls retained"
+      ]
+    },
+    {
+      "view": "bulk-preview",
+      "width": 1440,
+      "height": 950,
+      "theme": "dark",
+      "preview": {
+        "width": 1024,
+        "height": 914,
+        "right": 1232,
+        "bottom": 932,
+        "padding": "0px",
+        "borderRadius": "16px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "pinnedCounterpart": null,
+      "amendments": [
+        "approved desktop table/mobile stacked rows",
+        "fixed actions",
+        "independent scrolling",
+        "labelled keyboard controls"
+      ]
+    },
+    {
+      "view": "single-subnet",
+      "width": 1366,
+      "height": 600,
+      "theme": "light",
+      "liveModal": {
+        "width": 575,
+        "height": 564,
+        "right": 970.5,
+        "bottom": 582,
+        "padding": "0px",
+        "borderRadius": "16px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "sourceModal": {
+        "width": 575,
+        "height": 564,
+        "right": 970.5,
+        "bottom": 582,
+        "padding": "0px",
+        "borderRadius": "16px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "liveField": {
+        "width": 527,
+        "height": 42,
+        "right": 946.5,
+        "bottom": 311.78125,
+        "padding": "10px 11px",
+        "borderRadius": "9px",
+        "fontSize": "13px",
+        "overflow": 0
+      },
+      "sourceField": {
+        "width": 527,
+        "height": 42,
+        "right": 946.5,
+        "bottom": 296.390625,
+        "padding": "10px 11px",
+        "borderRadius": "9px",
+        "fontSize": "13px",
+        "overflow": 0
+      },
+      "amendments": [
+        "required initially blank Purpose",
+        "optional VLAN",
+        "conditional gateway",
+        "Single Subnet labels"
+      ]
+    },
+    {
+      "view": "device-networking",
+      "width": 1366,
+      "height": 600,
+      "theme": "light",
+      "liveDevice": {
+        "width": 1030,
+        "height": 560,
+        "right": 1198,
+        "bottom": 580,
+        "padding": "0px",
+        "borderRadius": "17px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "sourceDevice": {
+        "width": 1030,
+        "height": 560,
+        "right": 1198,
+        "bottom": 580,
+        "padding": "0px",
+        "borderRadius": "17px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "order": [
+        "dev-block",
+        "dev-subnet",
+        "dev-vlan",
+        "dev-ip",
+        "dev-ip-available"
+      ],
+      "amendments": [
+        "optional block",
+        "named subnet first",
+        "read-only derived VLAN",
+        "existing IP/reservation controls retained"
+      ]
+    },
+    {
+      "view": "bulk-preview",
+      "width": 1366,
+      "height": 600,
+      "theme": "light",
+      "preview": {
+        "width": 1024,
+        "height": 564,
+        "right": 1195,
+        "bottom": 582,
+        "padding": "0px",
+        "borderRadius": "16px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "pinnedCounterpart": null,
+      "amendments": [
+        "approved desktop table/mobile stacked rows",
+        "fixed actions",
+        "independent scrolling",
+        "labelled keyboard controls"
+      ]
+    },
+    {
+      "view": "single-subnet",
+      "width": 1366,
+      "height": 600,
+      "theme": "dark",
+      "liveModal": {
+        "width": 575,
+        "height": 564,
+        "right": 970.5,
+        "bottom": 582,
+        "padding": "0px",
+        "borderRadius": "16px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "sourceModal": {
+        "width": 575,
+        "height": 564,
+        "right": 970.5,
+        "bottom": 582,
+        "padding": "0px",
+        "borderRadius": "16px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "liveField": {
+        "width": 527,
+        "height": 42,
+        "right": 946.5,
+        "bottom": 311.78125,
+        "padding": "10px 11px",
+        "borderRadius": "9px",
+        "fontSize": "13px",
+        "overflow": 0
+      },
+      "sourceField": {
+        "width": 527,
+        "height": 42,
+        "right": 946.5,
+        "bottom": 296.390625,
+        "padding": "10px 11px",
+        "borderRadius": "9px",
+        "fontSize": "13px",
+        "overflow": 0
+      },
+      "amendments": [
+        "required initially blank Purpose",
+        "optional VLAN",
+        "conditional gateway",
+        "Single Subnet labels"
+      ]
+    },
+    {
+      "view": "device-networking",
+      "width": 1366,
+      "height": 600,
+      "theme": "dark",
+      "liveDevice": {
+        "width": 1030,
+        "height": 560,
+        "right": 1198,
+        "bottom": 580,
+        "padding": "0px",
+        "borderRadius": "17px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "sourceDevice": {
+        "width": 1030,
+        "height": 560,
+        "right": 1198,
+        "bottom": 580,
+        "padding": "0px",
+        "borderRadius": "17px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "order": [
+        "dev-block",
+        "dev-subnet",
+        "dev-vlan",
+        "dev-ip",
+        "dev-ip-available"
+      ],
+      "amendments": [
+        "optional block",
+        "named subnet first",
+        "read-only derived VLAN",
+        "existing IP/reservation controls retained"
+      ]
+    },
+    {
+      "view": "bulk-preview",
+      "width": 1366,
+      "height": 600,
+      "theme": "dark",
+      "preview": {
+        "width": 1024,
+        "height": 564,
+        "right": 1195,
+        "bottom": 582,
+        "padding": "0px",
+        "borderRadius": "16px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "pinnedCounterpart": null,
+      "amendments": [
+        "approved desktop table/mobile stacked rows",
+        "fixed actions",
+        "independent scrolling",
+        "labelled keyboard controls"
+      ]
+    },
+    {
+      "view": "single-subnet",
+      "width": 390,
+      "height": 844,
+      "theme": "light",
+      "liveModal": {
+        "width": 354,
+        "height": 808,
+        "right": 372,
+        "bottom": 826,
+        "padding": "0px",
+        "borderRadius": "13px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "sourceModal": {
+        "width": 354,
+        "height": 808,
+        "right": 372,
+        "bottom": 826,
+        "padding": "0px",
+        "borderRadius": "13px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "liveField": {
+        "width": 318,
+        "height": 42,
+        "right": 354,
+        "bottom": 315.171875,
+        "padding": "10px 11px",
+        "borderRadius": "9px",
+        "fontSize": "13px",
+        "overflow": 0
+      },
+      "sourceField": {
+        "width": 318,
+        "height": 42,
+        "right": 354,
+        "bottom": 299.78125,
+        "padding": "10px 11px",
+        "borderRadius": "9px",
+        "fontSize": "13px",
+        "overflow": 0
+      },
+      "amendments": [
+        "required initially blank Purpose",
+        "optional VLAN",
+        "conditional gateway",
+        "Single Subnet labels"
+      ]
+    },
+    {
+      "view": "device-networking",
+      "width": 390,
+      "height": 844,
+      "theme": "light",
+      "liveDevice": {
+        "width": 390,
+        "height": 844,
+        "right": 390,
+        "bottom": 844,
+        "padding": "0px",
+        "borderRadius": "0px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "sourceDevice": {
+        "width": 390,
+        "height": 844,
+        "right": 390,
+        "bottom": 844,
+        "padding": "0px",
+        "borderRadius": "0px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "order": [
+        "dev-block",
+        "dev-subnet",
+        "dev-vlan",
+        "dev-ip",
+        "dev-ip-available"
+      ],
+      "amendments": [
+        "optional block",
+        "named subnet first",
+        "read-only derived VLAN",
+        "existing IP/reservation controls retained"
+      ]
+    },
+    {
+      "view": "bulk-preview",
+      "width": 390,
+      "height": 844,
+      "theme": "light",
+      "preview": {
+        "width": 354,
+        "height": 808,
+        "right": 372,
+        "bottom": 826,
+        "padding": "0px",
+        "borderRadius": "13px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "pinnedCounterpart": null,
+      "amendments": [
+        "approved desktop table/mobile stacked rows",
+        "fixed actions",
+        "independent scrolling",
+        "labelled keyboard controls"
+      ]
+    },
+    {
+      "view": "single-subnet",
+      "width": 390,
+      "height": 844,
+      "theme": "dark",
+      "liveModal": {
+        "width": 354,
+        "height": 808,
+        "right": 372,
+        "bottom": 826,
+        "padding": "0px",
+        "borderRadius": "13px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "sourceModal": {
+        "width": 354,
+        "height": 808,
+        "right": 372,
+        "bottom": 826,
+        "padding": "0px",
+        "borderRadius": "13px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "liveField": {
+        "width": 318,
+        "height": 42,
+        "right": 354,
+        "bottom": 315.171875,
+        "padding": "10px 11px",
+        "borderRadius": "9px",
+        "fontSize": "13px",
+        "overflow": 0
+      },
+      "sourceField": {
+        "width": 318,
+        "height": 42,
+        "right": 354,
+        "bottom": 299.78125,
+        "padding": "10px 11px",
+        "borderRadius": "9px",
+        "fontSize": "13px",
+        "overflow": 0
+      },
+      "amendments": [
+        "required initially blank Purpose",
+        "optional VLAN",
+        "conditional gateway",
+        "Single Subnet labels"
+      ]
+    },
+    {
+      "view": "device-networking",
+      "width": 390,
+      "height": 844,
+      "theme": "dark",
+      "liveDevice": {
+        "width": 390,
+        "height": 844,
+        "right": 390,
+        "bottom": 844,
+        "padding": "0px",
+        "borderRadius": "0px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "sourceDevice": {
+        "width": 390,
+        "height": 844,
+        "right": 390,
+        "bottom": 844,
+        "padding": "0px",
+        "borderRadius": "0px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "order": [
+        "dev-block",
+        "dev-subnet",
+        "dev-vlan",
+        "dev-ip",
+        "dev-ip-available"
+      ],
+      "amendments": [
+        "optional block",
+        "named subnet first",
+        "read-only derived VLAN",
+        "existing IP/reservation controls retained"
+      ]
+    },
+    {
+      "view": "bulk-preview",
+      "width": 390,
+      "height": 844,
+      "theme": "dark",
+      "preview": {
+        "width": 354,
+        "height": 808,
+        "right": 372,
+        "bottom": 826,
+        "padding": "0px",
+        "borderRadius": "13px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "pinnedCounterpart": null,
+      "amendments": [
+        "approved desktop table/mobile stacked rows",
+        "fixed actions",
+        "independent scrolling",
+        "labelled keyboard controls"
+      ]
+    },
+    {
+      "view": "single-subnet",
+      "width": 320,
+      "height": 568,
+      "theme": "light",
+      "liveModal": {
+        "width": 284,
+        "height": 532,
+        "right": 302,
+        "bottom": 550,
+        "padding": "0px",
+        "borderRadius": "13px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "sourceModal": {
+        "width": 284,
+        "height": 532,
+        "right": 302,
+        "bottom": 550,
+        "padding": "0px",
+        "borderRadius": "13px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "liveField": {
+        "width": 248,
+        "height": 42,
+        "right": 284,
+        "bottom": 372.5625,
+        "padding": "10px 11px",
+        "borderRadius": "9px",
+        "fontSize": "13px",
+        "overflow": 0
+      },
+      "sourceField": {
+        "width": 248,
+        "height": 42,
+        "right": 284,
+        "bottom": 299.78125,
+        "padding": "10px 11px",
+        "borderRadius": "9px",
+        "fontSize": "13px",
+        "overflow": 0
+      },
+      "amendments": [
+        "required initially blank Purpose",
+        "optional VLAN",
+        "conditional gateway",
+        "Single Subnet labels"
+      ]
+    },
+    {
+      "view": "device-networking",
+      "width": 320,
+      "height": 568,
+      "theme": "light",
+      "liveDevice": {
+        "width": 320,
+        "height": 568,
+        "right": 320,
+        "bottom": 568,
+        "padding": "0px",
+        "borderRadius": "0px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "sourceDevice": {
+        "width": 320,
+        "height": 568,
+        "right": 320,
+        "bottom": 568,
+        "padding": "0px",
+        "borderRadius": "0px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "order": [
+        "dev-block",
+        "dev-subnet",
+        "dev-vlan",
+        "dev-ip",
+        "dev-ip-available"
+      ],
+      "amendments": [
+        "optional block",
+        "named subnet first",
+        "read-only derived VLAN",
+        "existing IP/reservation controls retained"
+      ]
+    },
+    {
+      "view": "bulk-preview",
+      "width": 320,
+      "height": 568,
+      "theme": "light",
+      "preview": {
+        "width": 284,
+        "height": 532,
+        "right": 302,
+        "bottom": 550,
+        "padding": "0px",
+        "borderRadius": "13px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "pinnedCounterpart": null,
+      "amendments": [
+        "approved desktop table/mobile stacked rows",
+        "fixed actions",
+        "independent scrolling",
+        "labelled keyboard controls"
+      ]
+    },
+    {
+      "view": "single-subnet",
+      "width": 320,
+      "height": 568,
+      "theme": "dark",
+      "liveModal": {
+        "width": 284,
+        "height": 532,
+        "right": 302,
+        "bottom": 550,
+        "padding": "0px",
+        "borderRadius": "13px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "sourceModal": {
+        "width": 284,
+        "height": 532,
+        "right": 302,
+        "bottom": 550,
+        "padding": "0px",
+        "borderRadius": "13px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "liveField": {
+        "width": 248,
+        "height": 42,
+        "right": 284,
+        "bottom": 372.5625,
+        "padding": "10px 11px",
+        "borderRadius": "9px",
+        "fontSize": "13px",
+        "overflow": 0
+      },
+      "sourceField": {
+        "width": 248,
+        "height": 42,
+        "right": 284,
+        "bottom": 299.78125,
+        "padding": "10px 11px",
+        "borderRadius": "9px",
+        "fontSize": "13px",
+        "overflow": 0
+      },
+      "amendments": [
+        "required initially blank Purpose",
+        "optional VLAN",
+        "conditional gateway",
+        "Single Subnet labels"
+      ]
+    },
+    {
+      "view": "device-networking",
+      "width": 320,
+      "height": 568,
+      "theme": "dark",
+      "liveDevice": {
+        "width": 320,
+        "height": 568,
+        "right": 320,
+        "bottom": 568,
+        "padding": "0px",
+        "borderRadius": "0px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "sourceDevice": {
+        "width": 320,
+        "height": 568,
+        "right": 320,
+        "bottom": 568,
+        "padding": "0px",
+        "borderRadius": "0px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "order": [
+        "dev-block",
+        "dev-subnet",
+        "dev-vlan",
+        "dev-ip",
+        "dev-ip-available"
+      ],
+      "amendments": [
+        "optional block",
+        "named subnet first",
+        "read-only derived VLAN",
+        "existing IP/reservation controls retained"
+      ]
+    },
+    {
+      "view": "bulk-preview",
+      "width": 320,
+      "height": 568,
+      "theme": "dark",
+      "preview": {
+        "width": 284,
+        "height": 532,
+        "right": 302,
+        "bottom": 550,
+        "padding": "0px",
+        "borderRadius": "13px",
+        "fontSize": "14px",
+        "overflow": 0
+      },
+      "pinnedCounterpart": null,
+      "amendments": [
+        "approved desktop table/mobile stacked rows",
+        "fixed actions",
+        "independent scrolling",
+        "labelled keyboard controls"
+      ]
+    }
+  ],
+  "pinnedRevision": "c26db4a56bbc30f95b56201e81a7a76d13c6037b",
+  "nativeSafariTested": false
+}

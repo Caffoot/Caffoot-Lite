@@ -12,7 +12,7 @@ The **Device Inventory** view shows saved equipment and its primary addresses. A
 
 ## Prepare before you add a device
 
-- Use [IPAM](IPAM.md) to add its assignable **Network / VLAN** subnet first.
+- Use [IPAM](IPAM.md) to add its addressable subnet (VLAN optional) first.
 - Make sure the required device type and location are available in the managed selections.
 - Create the rack beforehand if the device is to be mounted in one.
 - For a new physical device, an ordinary editor needs **Devices Edit and IPAM Edit**. A rack-mounted new device additionally needs **Racks Edit**. An administrator has the approved administrative access.
@@ -26,7 +26,7 @@ Imagine recording *lab-switch-01*, a fictional switch on subnet 192.168.50.0/24.
 3. Under **Hardware & lifecycle**, choose a suitable **Device Status** (such as Active). Supply manufacturer, model and serial number if known. **Manage Hardware Catalogue** maintains reusable manufacturer/model suggestions.
 4. Complete any relevant **Additional details for this device type**, such as hardware properties, installed software or supported service flags. These vary by device type.
 5. Under **Mounting & location**, choose **Device Mounting** and **Location Area**. For rack-mounted equipment, select the rack, **Face**, **Start U** and **U Height**. Use a free position for the entire height.
-6. Under **Network identity**, choose the network/address block as offered and the available **Primary IP**. If the network is missing, create it in IPAM and return to the form.
+6. Under **Networking → Network Identity**, optionally filter by **IP Address Block**, choose **Subnet Name — CIDR** and select an available **Primary IP**. The read-only VLAN is taken from the subnet or displays **Not assigned**; change a VLAN on the subnet in IPAM, not on the device. If the network is missing, create it in IPAM and return to the form.
 7. Optionally fill **Notes / Details**, then select **Save Device**.
 8. Reopen the saved record and check the name, hardware, network details and location. In IPAM and Racks, verify the related records where applicable.
 

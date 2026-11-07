@@ -1,0 +1,1 @@
+PASS: Restricted IPAM browser roles

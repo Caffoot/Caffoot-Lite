@@ -227,11 +227,13 @@ def validate_subnet_mutation(record, existing, state):
     The same rules protect both inventory save routes. Imports can still load
     historical networks which predate purposes; opening them never assigns one.
     """
-    if record is None or record.get("kind", "network") != "network":
+    if record is None or record.get("kind", "network") not in ("network", "container"):
         return
     if existing is None or record.get("name") != existing.get("name"):
         if not isinstance(record.get("name"), str) or not record["name"].strip():
-            raise ValueError("A subnet name is required.")
+            raise ValueError("A subnet or IP Address Block name is required.")
+    if record.get("kind") == "container":
+        return
     if existing is None:
         if record.get("purpose") not in ("LAN", "Management", "VPN"):
             raise ValueError("Select LAN, Management or VPN for each new subnet.")

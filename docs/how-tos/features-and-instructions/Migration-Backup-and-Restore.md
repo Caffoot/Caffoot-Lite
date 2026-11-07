@@ -68,3 +68,8 @@ The product owner verified a local stopped-container copy/restore on a disposabl
 - **Change History:** explains saved changes but is not a copy of the application database.
 
 For exact deployment examples, environment names and certificate verification, follow [Docker and Portainer installation](../../../INSTALLATION.md).
+## Private v2.1 subnet-first compatibility
+
+The v2.1 development importer preserves older tagged/unclassified records and the new optional-VLAN/VPN-gateway records. Opening an old subnet does not assign a purpose or migrate it. The SQLite schema and existing account/security data remain unchanged. New untagged/VPN records must not be made compatible by inventing VLAN 0 or a gateway.
+
+Keep a consistent pre-upgrade private data backup. Earlier releases do not implement the new subnet rules; successful v2.1 round trips do not certify downgrading a new inventory to an older application. Continue using the established private acceptance volume/stack procedure, with no production replacement as part of development.

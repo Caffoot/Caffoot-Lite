@@ -1,6 +1,6 @@
 // Exercise the approved subnet-first workflow with isolated fictional inventory.
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
-module.exports=async function verifySubnetFirstIpam({page,reference,sourceBase,context,out}){
+module.exports=async function verifySubnetFirstIpam({page,reference,sourceBase,context,out,fixtureDirectory}){
  const folder=path.join(out,'subnet-first-ipam');fs.mkdirSync(folder,{recursive:true});page.setDefaultTimeout(15000);
  const checks=[],errors=[],measurements=[];page.on('pageerror',e=>errors.push(e.message));
  const state=async()=> (await context.request.get('https://127.0.0.1:8080/api/inventory/state')).json();
@@ -10,8 +10,10 @@ module.exports=async function verifySubnetFirstIpam({page,reference,sourceBase,c
  const csrfSession=await (await context.request.get('https://127.0.0.1:8080/api/session')).json();const requestHeaders={Origin:'https://127.0.0.1:8080','X-CSRF-Token':csrfSession.csrf_token};
  const check=label=>{checks.push(label);console.log('PASS: '+label);};
  await page.goto('https://127.0.0.1:8080/inventory');await page.locator('#app[aria-busy=false]').waitFor();await page.setViewportSize({width:1440,height:950});
+ if(process.env.CAFFOOT_SUBNET_FIRST_ROLES_ONLY==='1'){await require('./subnet-first-permissions.cjs')({context,fixtureDirectory,errors,state});console.log('PASS: Restricted IPAM browser roles');return;}
+ if(process.env.CAFFOOT_SUBNET_FIRST_VISUAL_ONLY==='1'){await require('./subnet-first-visual.cjs')({page,reference,sourceBase,folder});return;}
  await single();assert.equal(await page.locator('#sub-purpose').inputValue(),'');assert(await page.locator('#sub-purpose').evaluate(e=>e.required));assert.equal(await page.locator('#sub-vlan').evaluate(e=>e.required),false);
- await page.locator('#sub-cidr').fill('10.60.0.0/24');await page.locator('#sub-name').fill('Fictional VPN pool');await page.locator('#sub-purpose').selectOption('VPN');await page.locator('#sub-gw').fill('');assert.equal(await page.locator('#sub-gw').evaluate(e=>e.required),false);await page.locator('#modal-content [type=submit]').click();await saved();
+ await page.locator('#sub-cidr').fill('10.60.0.0/24');await page.locator('#sub-name').fill('Fictional VPN pool');await page.locator('#sub-vlan').fill('123');await page.locator('#sub-purpose').selectOption('VPN');assert.equal(await page.locator('#sub-vlan').inputValue(),'123');await page.locator('#sub-vlan').fill('');await page.locator('#sub-gw').fill('');assert.equal(await page.locator('#sub-gw').evaluate(e=>e.required),false);await page.locator('#modal-content [type=submit]').click();await saved();
  let snapshot=await state(),vpn=snapshot.subnets.find(s=>s.name==='Fictional VPN pool');assert(vpn);assert(!('vlan'in vpn));assert(!('gateway'in vpn));assert.equal(vpn.purpose,'VPN');assert(!snapshot.vlans.some(v=>!v.vlanId));
  await page.reload();await page.locator('#app[aria-busy=false]').waitFor();await page.evaluate(id=>openSubnetModal(id),vpn.id);assert.equal(await page.locator('#sub-purpose').inputValue(),'VPN');assert.equal(await page.locator('#sub-gw').inputValue(),'');await close();
  const old={...(await state()).subnets.find(s=>s.id==='net-0'),vlan:'10',parentId:''};const legacySaved=await context.request.post('https://127.0.0.1:8080/api/ipam/subnets/save',{headers:requestHeaders,data:{changes:[{collection:'subnets',id:old.id,record:old}]}});assert.equal(legacySaved.status(),200);await page.reload();await page.locator('#app[aria-busy=false]').waitFor();await page.evaluate(()=>openSubnetModal('net-0'));assert.equal(await page.locator('#sub-purpose').inputValue(),'');assert.equal(await page.locator('#sub-purpose').evaluate(e=>e.required),false);await page.locator('#sub-desc').fill('Fictional unchanged legacy classification');await page.locator('#modal-content [type=submit]').click();await saved();const edited=(await state()).subnets.find(s=>s.id==='net-0');assert(!('purpose'in edited));assert.equal(edited.gateway,old.gateway);assert.equal(edited.vlan,old.vlan);assert.equal(edited.parentId,'');
@@ -30,7 +32,9 @@ module.exports=async function verifySubnetFirstIpam({page,reference,sourceBase,c
  await fillRows(10);await page.locator('#subnet-row-5-purpose').selectOption('VPN');await page.locator('#subnet-row-5-gateway').fill('');await page.locator('#subnet-row-0-vlan').fill('11');await page.locator('[data-subnet-row="0"] summary').click();await page.locator('#subnet-row-0-description').fill('Fictional private description excluded from audit');
  await page.locator('#subnet-row-9-gateway').fill('10.81.9.255');await page.locator('#subnet-batch-preview [type=submit]').click();assert(await page.locator('[data-subnet-row="9"] [data-subnet-error]').isVisible());assert.deepEqual((await state()).subnets,beforeBulk.subnets);
  await page.locator('#subnet-batch-back').click();await page.locator('#subnet-batch-convention').selectOption('Last usable IP');await preview();assert.equal(await page.locator('#subnet-row-9-gateway').inputValue(),'10.81.9.255');assert.equal(await page.locator('#subnet-row-5-gateway').inputValue(),'');assert.equal(await page.locator('#subnet-row-0-gateway').inputValue(),'10.81.0.254');await page.locator('#subnet-row-9-gateway').fill('10.81.9.254');
- await page.locator('#subnet-batch-preview [type=submit]').click();await saved();snapshot=await state();const parent=snapshot.subnets.find(s=>s.name==='Fictional office');assert(parent);const children=snapshot.subnets.filter(s=>s.parentId===parent.id);assert.equal(children.length,10);assert(!('gateway'in children.find(s=>s.purpose==='VPN')));assert.equal(snapshot.vlans.find(v=>v.parentId===parent.id).vlanId,11);
+ await context.route('**/api/ipam/subnets/save',route=>route.fulfill({status:500,contentType:'application/json',body:JSON.stringify({error:'Fictional failed batch'})}));await page.locator('#subnet-batch-preview [type=submit]').click();await page.waitForFunction(()=>!document.getElementById('subnet-batch-preview').dataset.saving);assert.deepEqual((await state()).subnets,beforeBulk.subnets);assert.equal(await page.locator('#subnet-row-9-gateway').inputValue(),'10.81.9.254');assert.equal(await page.locator('#subnet-batch-preview [type=submit]').isEnabled(),true);await context.unroute('**/api/ipam/subnets/save');
+ let failedReadback=false;await context.route('**/api/inventory/state',route=>{if(!failedReadback){failedReadback=true;return route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:'Fictional unavailable readback'})});}return route.continue();});
+ await page.locator('#subnet-batch-preview [type=submit]').click();await saved();await context.unroute('**/api/inventory/state');assert(failedReadback);snapshot=await state();const parent=snapshot.subnets.find(s=>s.name==='Fictional office');assert(parent);const children=snapshot.subnets.filter(s=>s.parentId===parent.id);assert.equal(children.length,10);assert(!('gateway'in children.find(s=>s.purpose==='VPN')));assert.equal(snapshot.vlans.find(v=>v.parentId===parent.id).vlanId,11);
  check('New parent and ten individually reviewed networks save atomically; row errors block all writes and Back/recalculation preserves manual gateways');
  await generator({mode:'existing',parent:parent.id,start:'10.81.10.0',count:'50',convention:'Last usable IP'});await preview();assert.equal(await page.locator('[data-subnet-row]').count(),50);assert.equal(await page.locator('#subnet-row-49-gateway').inputValue(),'10.81.59.254');
  for(const [width,height]of [[1440,950],[1366,600],[390,844],[320,568]])for(const theme of ['light','dark']){
@@ -49,5 +53,30 @@ module.exports=async function verifySubnetFirstIpam({page,reference,sourceBase,c
  for(const changes of [[],payload]){const response=await context.request.post('https://127.0.0.1:8080/api/ipam/subnets/save',{headers:requestHeaders,data:{changes}});assert.equal(response.status(),400);}
  const csrf=await context.request.post('https://127.0.0.1:8080/api/ipam/subnets/save',{headers:{...requestHeaders,Origin:'https://foreign.invalid'},data:{changes:payload.slice(0,1)}});assert.equal(csrf.status(),403);assert.deepEqual((await state()).subnets,unchanged.subnets);
  check('Direct API cannot create 51 or empty batches or bypass same-origin protection; rejected attempts leave stored inventory unchanged');
+ await require('./subnet-first-permissions.cjs')({context,fixtureDirectory,errors,state});
+ check('An IPAM-only editor can create through the real preview without Devices rights; read-only users have no creation actions');
+ await require('./subnet-first-visual.cjs')({page,reference,sourceBase,folder});check('Pinned Single/Device structure comparison covers four widths and both themes, with approved amendments recorded');
  assert.deepEqual(errors,[]);fs.writeFileSync(path.join(folder,'checks.json'),JSON.stringify({checks,errors,measurements,nativeSafariTested:false},null,2));console.log('Subnet-first IPAM checks completed: '+checks.length+' groups.');
+};
+
+module.exports.seed=function seedSubnetRoles(folder){
+ const {spawnSync}=require('node:child_process');
+ const script=`import json,sqlite3,sys,time,os
+from pathlib import Path
+from backend.permissions import create_user,set_permission
+from backend.mfa import new_secret,code_at
+from backend.sessions import login_session
+folder=Path(sys.argv[1]);sessions={}
+with sqlite3.connect(folder/'inventory.sqlite3') as db:
+ owner=db.execute('SELECT id FROM accounts WHERE is_admin=1').fetchone()[0]
+ for name,level in [('subnet-editor','edit'),('subnet-reader','read')]:
+  user=create_user(db,owner,name,'Fictional-Role-Password');secret=new_secret()
+  if level=='edit':
+   db.execute('UPDATE accounts SET mfa_secret=?,mfa_confirmed=1 WHERE id=?',(secret,user));db.commit()
+  set_permission(db,owner,user,'IPAM',level)
+  sessions[name]=login_session(db,name,'Fictional-Role-Password',mfa_code=code_at(secret,time.time()) if level=='edit' else None)
+  assert sessions[name]
+with os.fdopen(os.open(folder/'subnet-role-sessions.json',os.O_WRONLY|os.O_CREAT|os.O_EXCL,0o600),'w') as output:json.dump(sessions,output)
+`;
+ const result=spawnSync('python3',['-c',script,folder],{encoding:'utf8'});if(result.status!==0)throw Error('Could not seed isolated IPAM role fixtures: '+result.stderr);
 };

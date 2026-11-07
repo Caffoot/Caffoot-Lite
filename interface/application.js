@@ -3473,13 +3473,15 @@ function openSubnetModal(subnetId = null) {
         function renderSubnetBatchPreview() {
             const draft=subnetBatchDraft,rows=draft.rows;
             const controls=rows.map((row,index)=>{
-                const field=(key,label,type='text')=>'<label class="ipam-field" for="subnet-row-'+index+'-'+key+'"><span class="ipam-preview-label">'+label+'</span><input id="subnet-row-'+index+'-'+key+'" data-subnet-field="'+key+'" type="'+type+'" value="'+escapeHtml(row[key])+'" '+(key==='name'||key==='gateway'&&row.purpose!=='VPN'?'required':key==='vlan'?'min="1" max="4094" step="1"':'')+' aria-describedby="subnet-row-'+index+'-error"></label>';
-                return '<tr data-subnet-row="'+index+'"><th scope="row">'+escapeHtml(row.cidr)+'<p class="form-error" id="subnet-row-'+index+'-error" data-subnet-error role="alert" hidden></p></th><td>'+field('name','Name *')+'<details><summary>Description (Optional)</summary>'+field('description','Description')+'</details></td><td><label class="ipam-field" for="subnet-row-'+index+'-purpose"><span class="ipam-preview-label">Purpose *</span><select id="subnet-row-'+index+'-purpose" data-subnet-field="purpose" required aria-describedby="subnet-row-'+index+'-error"><option value="">Select a purpose...</option>'+['LAN','Management','VPN'].map(value=>'<option '+(row.purpose===value?'selected':'')+'>'+value+'</option>').join('')+'</select></label></td><td>'+field('vlan','VLAN (Optional)','number')+'</td><td>'+field('gateway',row.purpose==='VPN'?'Gateway (Optional)':'Gateway *')+'</td></tr>';
+                const field=(key,label,type='text')=>'<label class="ipam-field" for="subnet-row-'+index+'-'+key+'"><span class="ipam-preview-label">'+label+'</span><input id="subnet-row-'+index+'-'+key+'" data-subnet-field="'+key+'" type="'+type+'" value="'+escapeHtml(row[key])+'" '+(key==='name'||key==='gateway'&&row.purpose!=='VPN'?'required':key==='vlan'?'min="1" max="4094" step="1"':key==='description'?'disabled':'')+' aria-describedby="subnet-row-'+index+'-error"></label>';
+                return '<tr data-subnet-row="'+index+'"><th scope="row">'+escapeHtml(row.cidr)+'<p class="form-error" id="subnet-row-'+index+'-error" data-subnet-error role="alert" hidden></p></th><td>'+field('name','Name *')+'<details><summary tabindex="0">Description (Optional)</summary>'+field('description','Description')+'</details></td><td><label class="ipam-field" for="subnet-row-'+index+'-purpose"><span class="ipam-preview-label">Purpose *</span><select id="subnet-row-'+index+'-purpose" data-subnet-field="purpose" required aria-describedby="subnet-row-'+index+'-error"><option value="">Select a purpose...</option>'+['LAN','Management','VPN'].map(value=>'<option '+(row.purpose===value?'selected':'')+'>'+value+'</option>').join('')+'</select></label></td><td>'+field('vlan','VLAN (Optional)','number')+'</td><td>'+field('gateway',row.purpose==='VPN'?'Gateway (Optional)':'Gateway *')+'</td></tr>';
             }).join('');
             const context=draft.parent?draft.parent.name+' — '+draft.parent.cidr:'No Address Block';
-            openIpamModal(renderInterfaceTemplate("ipam/multiple-subnets-preview",[escapeHtml(rows.length+' subnet(s) · '+context+' · '+rows[0].cidr+' – '+rows.at(-1).cidr),controls,rows.length]));
+            openIpamModal(renderInterfaceTemplate("ipam/multiple-subnets-preview",[escapeHtml(rows.length+' subnet'+(rows.length===1?'':'s')+' · '+context+' · '+rows[0].cidr+' – '+rows.at(-1).cidr),controls,rows.length+' '+(rows.length===1?'Subnet':'Subnets')]));
             document.getElementById('modal-content').classList.add('ipam-subnet-preview');
             const form=document.getElementById('subnet-batch-preview');
+            // Closed descriptions keep their values but stay outside the dialog's keyboard order.
+            form.querySelectorAll('details').forEach(details=>details.addEventListener('toggle',()=>{details.querySelector('[data-subnet-field=description]').disabled=!details.open||form.dataset.saving==='true';}));
             document.getElementById('subnet-batch-back').addEventListener('click',()=>openMultipleSubnets(true));
             const capture=event=>{
                 const key=event.target.dataset.subnetField,index=Number(event.target.closest('[data-subnet-row]')?.dataset.subnetRow);
@@ -3500,9 +3502,13 @@ function openSubnetModal(subnetId = null) {
                     const existing=appState.vlans.find(v=>Number(v.vlanId)===record.vlan&&(v.parentId||'')===(record.parentId||''));
                     if(!existing)appState.vlans.push({id:'vlan_'+crypto.randomUUID(),name:record.name,vlanId:record.vlan,color:'indigo',...(record.parentId?{parentId:record.parentId}:{})});
                 }
-                form.querySelector('[type=submit]').disabled=true;
-                if(!nextIpamBridge||!await nextIpamBridge.saveSubnet(before,'Created '+records.length+' subnets.')){
-                    appState=JSON.parse(before);form.querySelector('[type=submit]').disabled=false;
+                form.dataset.saving='true';
+                const controls=[...document.getElementById('modal-content').querySelectorAll('button,input,select,textarea')],disabled=controls.map(control=>control.disabled);
+                controls.forEach(control=>control.disabled=true);
+                const saved=nextIpamBridge&&await nextIpamBridge.saveSubnet(before,'Created '+records.length+' subnets.');
+                delete form.dataset.saving;
+                if(!saved){
+                    appState=JSON.parse(before);controls.forEach((control,index)=>control.disabled=disabled[index]);
                     const error=form.querySelector('[data-form-error]');error.classList.add('is-visible');if(!error.textContent)error.textContent='The batch was not saved. Please review and try again.';
                     return;
                 }
@@ -3875,6 +3881,7 @@ function openIpModal(ip) {
             });
         }
         function closeModal(force = false, onClosed = null) {
+            if(document.getElementById('subnet-batch-preview')?.dataset.saving==='true')return;
             if(rackShelfReturnContext){returnFromRackShelfCreation();return;}
             if (deviceOptionsReturnContent) {
                 captureInstalledSoftwareSelections();

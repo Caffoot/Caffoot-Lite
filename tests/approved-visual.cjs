@@ -11,6 +11,7 @@ for(const source of JSON.parse(fs.readFileSync(path.join(root,'interface/design-
 const seed=spawnSync('python3',[path.join(root,'tests/visual_fixtures.py'),tmp],{cwd:root,encoding:'utf8'});
 if(seed.status!==0)throw Error(seed.stderr);
 if(process.env.CAFFOOT_DEVICE_EDITOR_APPROVED==='1')require('./device-editor-approved.cjs').seed(tmp);
+if(process.env.CAFFOOT_SUBNET_FIRST==='1')require('./subnet-first-ipam.cjs').seed(tmp);
 fs.mkdirSync(out,{recursive:true});
 const creds=JSON.parse(fs.readFileSync(path.join(tmp,'test-credentials.json')));
 const address='https://127.0.0.1:8080';

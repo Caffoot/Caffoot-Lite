@@ -85,9 +85,17 @@ class SubnetFirstTests(unittest.TestCase):
                 self.assertEqual(self.state()['subnets'],[])
                 self.assertEqual(self.audit(),[])
 
+    def test_invalid_new_parent_name_rolls_back_every_child(self):
+        parent=dict(id='office',kind='container',name='  ',cidr='10.80.0.0/16')
+        with self.assertRaisesRegex(ValueError,'name is required'):
+            self.save([parent]+[network(i,parentId='office') for i in range(10)])
+        self.assertEqual(self.state()['subnets'],[])
+        self.assertEqual(self.audit(),[])
+
     def test_optional_vlan_and_vpn_gateway_round_trip_without_phantom_fields(self):
-        rows=[network(0),network(1)]
+        rows=[network(0),network(1),network(2,vlan=20)]
         rows[1]['purpose']='VPN';del rows[1]['gateway']
+        rows[2]['purpose']='VPN';del rows[2]['gateway']
         self.save(rows)
         result=self.state()
         self.assertNotIn('vlan',result['subnets'][0]);self.assertNotIn('gateway',result['subnets'][1])
