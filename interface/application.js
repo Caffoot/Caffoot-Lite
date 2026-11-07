@@ -907,7 +907,7 @@ function hierarchyValidateTypes(subnets) {
             if(recorded&&![...rack.options].some(o=>o.value===recorded))rack.add(new Option('Recorded rack unavailable — retained',recorded));
             rack.value=recorded;
             const shelf=group.querySelector('#dev-rack-shelf');shelf.dataset.recordedShelf=form.dataset.rackShelfAccessoryId||'';
-            rack.addEventListener('change',()=>{shelf.dataset.recordedShelf='';refreshDeviceShelfFields();});
+            rack.addEventListener('change',()=>{shelf.dataset.recordedShelf='';refreshDeviceShelfFields();defaultDeviceLocationFromRack(rack.value);});
             shelf.addEventListener('change',()=>shelf.dataset.recordedShelf=shelf.value);
             refreshDeviceShelfFields();
         }
@@ -4773,6 +4773,7 @@ function openIpModal(ip) {
             modelSelect.value=currentModel?(matchingModel||'__custom__'):(modelSelect.value==='__custom__'?'__custom__':'');
             modelCustom.classList.toggle('hidden',modelSelect.value!=='__custom__');
             modelCustom.value=modelSelect.value==='__custom__'?currentModel:'';
+            refreshDeviceEditorDropdowns();
         }
         function handleHardwareSelectionChange(kind) {
             const select=document.getElementById('dev-'+kind+'-select');
@@ -4986,7 +4987,9 @@ function openIpModal(ip) {
             const custom = !!version.value && !choices.includes(version.value);
             select.value = custom ? '__custom__' : version.value;
             version.hidden = !custom;
+            refreshDeviceEditorDropdowns();
         }
+
         function showDeviceEditorFeedback(message, fieldId = '') {
             const form = document.querySelector('#modal-container:not(.hidden) #device-editor-form');
             if (!form) return false;
@@ -5626,6 +5629,47 @@ function openIpModal(ip) {
         function isWindowsPlatform(platform) {
             return /^Windows(?: Server)?$/i.test(String(platform || '').trim());
         }
+        // Refresh displayed choices without treating an automatic update as a user's choice.
+        function refreshDeviceEditorDropdowns() {
+            document.querySelectorAll('#device-editor-form select').forEach(select=>select.dispatchEvent(new Event('device-dropdown-refresh')));
+        }
+        function getRecordedDevicePlatform() {
+            const details=deviceEditorSoftwareSource?.typeDetails||{};
+            return {name:details.softwarePlatform??details.os??deviceEditorSoftwareSource?.os??'',version:details.softwareVersion??''};
+        }
+        function refreshDeviceEditorContext() {
+            captureDeviceDetailFieldValues();
+            const type=document.getElementById('dev-type')?.value||'';
+            const name=deviceDetailFormValues.softwarePlatform||'';
+            const choices=getPlatformOptionsForDeviceType(type).filter(value=>!isDeviceEditorHypervisorProduct(value));
+            const known=Object.values(platformOptionsByDeviceGroup).flat().includes(name)||isDeviceEditorHypervisorProduct(name);
+            // Saved values and unknown Custom entries remain available. Only an incompatible
+            // new standard choice is cleared; the original saved record is never changed here.
+            if(name&&known&&!choices.includes(name)&&name!==getRecordedDevicePlatform().name){
+                deviceDetailFormValues.softwarePlatform='';deviceDetailFormValues.softwareVersion='';
+                document.getElementById('platform-name').value='';
+                document.getElementById('platform-version').value='';
+            }
+            refreshDeviceDetailFields();
+            refreshHardwareSuggestions();
+            refreshDeviceEditorDropdowns();
+        }
+        function clearDeviceDraftPlatformVersion() {
+            deviceDetailFormValues.softwareVersion='';
+            const version=document.getElementById('platform-version');if(version)version.value='';
+        }
+        function defaultDeviceLocationFromRack(rackId) {
+            const form=document.getElementById('device-editor-form');
+            if(!form||isVirtualDeviceForm())return;
+            const previous=form.dataset.locationRackId||'';
+            form.dataset.locationRackId=rackId||'';
+            if(previous===rackId||form.dataset.deviceId||form.dataset.locationManuallyOverridden==='true')return;
+            const rack=appState.racks.find(item=>item.id===rackId),location=document.getElementById('dev-location');
+            const option=[...(location?.options||[])].find(item=>item.value&&item.value!=='__caffoot_create_location__'&&item.value===rack?.location);
+            if(!option||location.disabled)return;
+            location.value=option.value;location.dataset.previousLocation=option.value;
+            refreshDeviceEditorDropdowns();
+        }
         function renderSoftwarePlatformFields(type, values = {}) {
             const group = getPlatformGroupForDeviceType(type);
             const isComputer = group === 'server' || group === 'computer';
@@ -5634,7 +5678,14 @@ function openIpModal(ip) {
             const retained = isDeviceEditorHypervisorProduct(name);
             const choices = getPlatformOptionsForDeviceType(type).filter(value=>!isDeviceEditorHypervisorProduct(value));
             const options = [...new Set([...choices, ...(name && !retained && !choices.includes(name) ? [name] : [])])];
-            let markup = renderInterfaceTemplate("device-management/render-software-platform-fields-1",['Operating System',!name?'selected':'',options.map(x => `<option value="${escapeHtml(x)}" ${name===x?'selected':''}>${escapeHtml(x)}</option>`).join(''),escapeHtml(String(name)),name && !choices.includes(name) ? '' : 'hidden','OS / Platform version',getPlatformVersionOptions(name).map(v=>`<option value="${escapeHtml(v)}" ${version===v?'selected':''}>${escapeHtml(v)}</option>`).join(''),version && !getPlatformVersionOptions(name).includes(version)?'selected':'',escapeHtml(String(version)),version && !getPlatformVersionOptions(name).includes(version)?'':'hidden',isWindowsPlatform(name)?'':'hidden',escapeHtml(String(values.windowsLicence ?? ''))]);
+            let markup = renderInterfaceTemplate("device-management/render-software-platform-fields-1",['Operating System',!name?'selected':'',options.map(x => `<option value="${escapeHtml(x)}" ${name===x?'selected':''}>${escapeHtml(x)}${x===name&&!choices.includes(x)&&name===getRecordedDevicePlatform().name?' — Previously Recorded':''}</option>`).join(''),escapeHtml(String(name)),name && !choices.includes(name) ? '' : 'hidden','OS / Platform version',getPlatformVersionOptions(name).map(v=>`<option value="${escapeHtml(v)}" ${version===v?'selected':''}>${escapeHtml(v)}</option>`).join(''),version && !getPlatformVersionOptions(name).includes(version)?'selected':'',escapeHtml(String(version)),version && !getPlatformVersionOptions(name).includes(version)?'':'hidden',isWindowsPlatform(name)?'':'hidden',escapeHtml(String(values.windowsLicence ?? ''))]);
+            const recorded=getRecordedDevicePlatform();
+            if(!retained&&name&&name===recorded.name&&(!choices.includes(name)||(version&&version===recorded.version&&!getPlatformVersionOptions(name).includes(version)))){
+                const container=document.createElement('div');container.innerHTML=markup;
+                const notice=document.createElement('small');notice.dataset.retainedPlatform='';
+                notice.textContent='Previously recorded OS or version retained. Choose another value to replace it.';
+                container.querySelector('#platform-select').parentElement.append(notice);markup=container.innerHTML;
+            }
             if(retained){
                 const container=document.createElement('div');container.innerHTML=markup;
                 container.querySelector('#platform-select').value='';
@@ -5651,6 +5702,7 @@ function openIpModal(ip) {
             const custom = document.getElementById('platform-name');
             if (!select || !custom) return;
             select.addEventListener('change', () => {
+                const previousPlatform=deviceDetailFormValues.softwarePlatform||'';
                 const customSelected=select.value==='__custom__';
                 if (customSelected) {
                     custom.hidden = false;
@@ -5660,6 +5712,7 @@ function openIpModal(ip) {
                     custom.hidden = true;
                     custom.value = select.value;
                 }
+                if(previousPlatform!==custom.value)clearDeviceDraftPlatformVersion();
                 captureSoftwarePlatformFields();
                 refreshSoftwarePlatformFields();
                 refreshDeviceSoftwareSuggestions();
@@ -5670,7 +5723,15 @@ function openIpModal(ip) {
                     field.hidden=false;field.focus();
                 }
             });
-            custom.addEventListener('input',()=>{captureSoftwarePlatformFields();refreshDeviceSoftwareSuggestions();});
+            custom.addEventListener('input',()=>{
+                if(custom.value!==deviceDetailFormValues.softwarePlatform){
+                    clearDeviceDraftPlatformVersion();
+                    const version=document.getElementById('version-select');
+                    version.replaceChildren(new Option('Select a version...',''),...getPlatformVersionOptions(custom.value).map(value=>new Option(value,value)),new Option('Custom / Other...','__custom__'));
+                    document.getElementById('platform-version').hidden=true;
+                }
+                captureSoftwarePlatformFields();refreshDeviceSoftwareSuggestions();refreshDeviceEditorDropdowns();
+            });
             const versionSelect = document.getElementById('version-select');
             const versionInput = document.getElementById('platform-version');
             versionSelect?.addEventListener('change', () => {
@@ -5755,6 +5816,7 @@ function openIpModal(ip) {
             document.getElementById('manage-installed-software-button')?.classList.toggle('hidden',group!=='server'&&group!=='computer');
             updateDeviceMountChoices();
             updateVirtualHardwareFieldVisibility();
+            refreshDeviceEditorDropdowns();
         }
 
         function isWirelessAccessPointDeviceType(type){return ['access point','ap','wireless access point'].includes(String(type||'').toLowerCase().trim());}
@@ -6366,7 +6428,11 @@ function openIpModal(ip) {
             if(tabbedDeviceForm&&isDuplicate)tabbedDeviceForm.dataset.duplicateSourceId=draft.duplicatedFrom;
             if (tabbedDeviceForm && draft?.activeDeviceTab) tabbedDeviceForm.dataset.initialDeviceTab = draft.activeDeviceTab;
             tabbedDeviceForm.dataset.rackShelfAccessoryId=String(draft?.rackShelfAccessoryId??device?.rackShelfAccessoryId??'');
+            tabbedDeviceForm.dataset.locationManuallyOverridden=String(!!draft?.locationManuallyOverridden);
+            tabbedDeviceForm.dataset.locationRackId=draft?.locationRackId??draft?.rackId??device?.rackId??'';
             initialiseDeviceTabs(tabbedDeviceForm);
+            document.getElementById('dev-location')?.addEventListener('change',()=>{tabbedDeviceForm.dataset.locationManuallyOverridden='true';});
+            if(draft?.rackId&&draft.rackId!==tabbedDeviceForm.dataset.locationRackId)defaultDeviceLocationFromRack(draft.rackId);
             const deviceTypeSelectElement=document.getElementById('dev-type');
             const deploymentSelect=document.getElementById('dev-deployment');
             const purposeSelect=document.getElementById('dev-vm-purpose');
@@ -6378,15 +6444,13 @@ function openIpModal(ip) {
                 else if(deviceTypeSelectElement.value==='Server - Virtual') deviceTypeSelectElement.value='Server - Physical';
                 // A hidden purpose must never leave the physical type unselected.
                 if(!virtual && !deviceTypeSelectElement.value) deviceTypeSelectElement.value='Server - Physical';
-                refreshDeviceDetailFields();
-                refreshHardwareSuggestions();
+                refreshDeviceEditorContext();
             };
             deploymentSelect?.addEventListener('change',syncVmPurpose);
             purposeSelect?.addEventListener('change',syncVmPurpose);
             if(deviceTypeSelectElement) {
-                deviceTypeSelectElement.addEventListener('change',refreshDeviceDetailFields);
-                deviceTypeSelectElement.addEventListener('change',refreshHardwareSuggestions);
-                deviceTypeSelectElement.addEventListener('input',refreshDeviceDetailFields);
+                deviceTypeSelectElement.addEventListener('change',refreshDeviceEditorContext);
+                deviceTypeSelectElement.addEventListener('input',refreshDeviceEditorContext);
             }
             ['manufacturer','model'].forEach(kind=>{
                 document.getElementById('dev-'+kind+'-select')?.addEventListener('change',()=>handleHardwareSelectionChange(kind));
@@ -6400,9 +6464,11 @@ function openIpModal(ip) {
             document.getElementById('host-platform-select')?.addEventListener('change', event => {
                 const input = document.getElementById('host-platform');
                 if (!input) return;
+                const previousProduct=input.value;
                 const custom = event.target.value === '__custom__';
                 input.classList.toggle('hidden', !custom);
                 input.value = custom ? (['VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng'].includes(input.value) ? '' : input.value) : event.target.value;
+                if(previousProduct!==input.value){document.getElementById('host-version').value='';deviceDetailFormValues.hypervisorVersion='';}
                 if (custom) input.focus();
                 refreshDeviceSoftwareSuggestions();
             });
@@ -6415,6 +6481,7 @@ function openIpModal(ip) {
                 const field = document.getElementById(id);
                 field?.addEventListener('change', updateDeviceRackLimits);
                 field?.addEventListener('input', updateDeviceRackLimits);
+                if(id==='dev-rack-id')field?.addEventListener('change',()=>defaultDeviceLocationFromRack(field.value));
             });
             updateDeviceRackLimits();
             updateDeviceMountChoices();
@@ -6453,6 +6520,8 @@ function openIpModal(ip) {
                 isVirtual: isVirtualDeviceForm(),
                 mountType: document.getElementById('dev-mount-type')?.value || '',
                 location: document.getElementById('dev-location')?.value || '',
+                locationManuallyOverridden: form.dataset.locationManuallyOverridden==='true',
+                locationRackId: form.dataset.locationRackId||'',
                 rackId: document.getElementById('dev-mount-type')?.value==='Tabletop / Shelf Mounted' ? document.getElementById('dev-shelf-rack')?.value||'' : document.getElementById('dev-rack-id')?.value||'',
                 rackShelfAccessoryId: document.getElementById('dev-mount-type')?.value==='Tabletop / Shelf Mounted' ? document.getElementById('dev-rack-shelf')?.value||'' : '',
                 face: document.getElementById('dev-rack-face')?.value || 'front',
@@ -6527,6 +6596,7 @@ function openIpModal(ip) {
             panel.hidden = true;
             const input = document.getElementById('dev-custom-location');
             if (input) input.value = '';
+            refreshDeviceEditorDropdowns();
             // Rack mounting is controlled independently by the device mounting type.
         }
         async function addCustomLocationOption() {
@@ -6558,6 +6628,8 @@ function openIpModal(ip) {
             }
             previousDeviceLocationSelection = select.value;
             select.dataset.previousLocation = select.value;
+            document.getElementById('device-editor-form').dataset.locationManuallyOverridden='true';
+            refreshDeviceEditorDropdowns();
             document.getElementById('dev-create-location-panel').hidden = true;
             input.value = '';
             // Rack mounting is controlled independently by the device mounting type.
@@ -8763,6 +8835,7 @@ void (async () => {
         }
       });
       select.addEventListener('change',sync);
+      select.addEventListener('device-dropdown-refresh',()=>{sync();if(!popup.hidden)draw();});
       // Detached fields are disposed with their modal or page on the next render.
       sync();
     }

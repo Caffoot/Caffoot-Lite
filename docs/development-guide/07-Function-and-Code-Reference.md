@@ -80,3 +80,8 @@ The editor shelf helpers are `initialiseDeviceShelfFields`, `refreshDeviceShelfF
 ## Contextual Device Software
 
 `getDeviceSoftwareContext` uses the device/guest OS or the physical host's dedicated hosting product. `getDeviceSoftwareSuggestions` intersects static platform metadata, type scope and existing hide preferences. `getDeviceSoftwareCatalogueEntries` and `isDeviceSoftwareSelected` supply the separate historical retention path; `renderDeviceEditorRetainedSoftware` renders removable checked exceptions. `refreshDeviceSoftwareSuggestions` captures selections before refreshing choices. `preserveLegacyDeviceSoftwareFlags` retains original top-level storage locations using an unchanged source snapshot. The version map remains an offline suggestion list, with sources/exclusions in [Issue #331 catalogue record](Issue-331-Catalogue-Sources.md). No backend OS/software whitelist is introduced.
+
+
+## Device Choice And Location Corrections
+
+`refreshDeviceEditorContext` refreshes type/deployment/purpose-dependent fields; `getRecordedDevicePlatform` distinguishes saved historical values from new choices. `clearDeviceDraftPlatformVersion` clears a replaced product's draft version. `refreshDeviceEditorDropdowns` updates existing searchable captions without sending business-change events. `defaultDeviceLocationFromRack` applies a matching rack area only to an eligible new draft, respecting its manual-override state. These flags belong to the draft, not inventory or SQLite. The existing `safe_device_differences` helper records only the two named OS fields as bounded before/after values. See [Issue #332](Issue-332-Device-Corrections.md).

@@ -85,6 +85,14 @@ OS/version lists are offline suggestions, with **Custom / Other** for saved or u
 
 Old, archived, hidden or out-of-context assignments remain checked under **Previously recorded — review**. They remain saved until you deliberately untick them. Changing the OS refreshes suggestions without clearing those selections. Custom catalogue entries, saved versions and historical hardware details remain available. Cancel keeps the original device unchanged.
 
+## v2.1 Device Choice And Location Corrections
+
+Changing device type or virtual purpose refreshes the related OS, version, software and hardware choices straight away. Incompatible new standard OS/version choices are cleared; saved historical values and Custom entries remain available. Previously recorded values are marked for review and remain until you deliberately replace or remove them. Changing an OS edition or hosting product starts its version choice afresh. Cancel leaves the saved device unchanged.
+
+When adding a physical device, selecting a rack defaults **Location Area** to that rack's matching recorded area. You can override it freely; later rack changes will then leave your choice alone. Existing devices retain their saved location, and Duplicate initially keeps its copied location. If a rack has no matching area, choose the location normally.
+
+The read-only Details header uses one labelled × control, while the footer keeps its separate **Close** action. Keyboard/Escape and focus return remain available. These development-branch corrections still require the owner's private Pi/Safari acceptance; they are not a published release.
+
 ## Troubleshooting
 
 | Problem | Check |

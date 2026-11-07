@@ -1,0 +1,8 @@
+PASS: Desktop Windows draft clears immediately on NAS change, including hidden version/caption; checked software and no-audit-on-Cancel are preserved
+PASS: Edition/version lists refresh together; Server LTS and deliberate Custom OS/version survive without a whitelist
+PASS: Virtual purpose and dedicated host-product changes synchronise hidden fields and version captions
+PASS: Both mounting paths default from an existing rack area, honour manual overrides across draft reopening, and preserve cleared/unmatched rack choices
+PASS: Edit retains historical/custom/archived values and saved location; Cancel changes neither inventory nor audit; actual Save uses safe existing before/after history
+PASS: Duplicate retains persisted OS/software/location, defaults only after a deliberate new rack choice, and saves a separate record
+PASS: One approved 36px × header control matches source geometry at four widths/two themes; click, Escape, keyboard footer and focus return work
+Device form follow-up checks completed.

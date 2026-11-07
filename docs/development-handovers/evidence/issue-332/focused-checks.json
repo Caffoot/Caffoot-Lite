@@ -1,0 +1,246 @@
+{
+  "checks": [
+    "Desktop Windows draft clears immediately on NAS change, including hidden version/caption; checked software and no-audit-on-Cancel are preserved",
+    "Edition/version lists refresh together; Server LTS and deliberate Custom OS/version survive without a whitelist",
+    "Virtual purpose and dedicated host-product changes synchronise hidden fields and version captions",
+    "Both mounting paths default from an existing rack area, honour manual overrides across draft reopening, and preserve cleared/unmatched rack choices",
+    "Edit retains historical/custom/archived values and saved location; Cancel changes neither inventory nor audit; actual Save uses safe existing before/after history",
+    "Duplicate retains persisted OS/software/location, defaults only after a deliberate new rack choice, and saves a separate record",
+    "One approved 36px × header control matches source geometry at four widths/two themes; click, Escape, keyboard footer and focus return work"
+  ],
+  "errors": [],
+  "closeMeasurements": [
+    {
+      "width": 1440,
+      "height": 950,
+      "theme": "light",
+      "live": {
+        "width": 36,
+        "height": 36,
+        "rightInset": 25,
+        "topInset": 20,
+        "fontSize": "20px",
+        "borderRadius": "9px",
+        "background": "rgb(255, 255, 255)",
+        "colour": "rgb(80, 105, 126)",
+        "text": "×",
+        "label": "Close device details"
+      },
+      "source": {
+        "width": 36,
+        "height": 36,
+        "rightInset": 25,
+        "topInset": 20,
+        "fontSize": "20px",
+        "borderRadius": "9px",
+        "background": "rgb(255, 255, 255)",
+        "colour": "rgb(80, 105, 126)",
+        "text": "×",
+        "label": "Close device window"
+      }
+    },
+    {
+      "width": 1440,
+      "height": 950,
+      "theme": "dark",
+      "live": {
+        "width": 36,
+        "height": 36,
+        "rightInset": 25,
+        "topInset": 20,
+        "fontSize": "20px",
+        "borderRadius": "9px",
+        "background": "rgb(15, 23, 42)",
+        "colour": "rgb(241, 245, 249)",
+        "text": "×",
+        "label": "Close device details"
+      },
+      "source": {
+        "width": 36,
+        "height": 36,
+        "rightInset": 25,
+        "topInset": 20,
+        "fontSize": "20px",
+        "borderRadius": "9px",
+        "background": "rgb(255, 255, 255)",
+        "colour": "rgb(80, 105, 126)",
+        "text": "×",
+        "label": "Close device window"
+      }
+    },
+    {
+      "width": 1366,
+      "height": 600,
+      "theme": "light",
+      "live": {
+        "width": 36,
+        "height": 36,
+        "rightInset": 25,
+        "topInset": 20,
+        "fontSize": "20px",
+        "borderRadius": "9px",
+        "background": "rgb(255, 255, 255)",
+        "colour": "rgb(80, 105, 126)",
+        "text": "×",
+        "label": "Close device details"
+      },
+      "source": {
+        "width": 36,
+        "height": 36,
+        "rightInset": 25,
+        "topInset": 20,
+        "fontSize": "20px",
+        "borderRadius": "9px",
+        "background": "rgb(255, 255, 255)",
+        "colour": "rgb(80, 105, 126)",
+        "text": "×",
+        "label": "Close device window"
+      }
+    },
+    {
+      "width": 1366,
+      "height": 600,
+      "theme": "dark",
+      "live": {
+        "width": 36,
+        "height": 36,
+        "rightInset": 25,
+        "topInset": 20,
+        "fontSize": "20px",
+        "borderRadius": "9px",
+        "background": "rgb(15, 23, 42)",
+        "colour": "rgb(241, 245, 249)",
+        "text": "×",
+        "label": "Close device details"
+      },
+      "source": {
+        "width": 36,
+        "height": 36,
+        "rightInset": 25,
+        "topInset": 20,
+        "fontSize": "20px",
+        "borderRadius": "9px",
+        "background": "rgb(255, 255, 255)",
+        "colour": "rgb(80, 105, 126)",
+        "text": "×",
+        "label": "Close device window"
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "theme": "light",
+      "live": {
+        "width": 36,
+        "height": 36,
+        "rightInset": 15,
+        "topInset": 16,
+        "fontSize": "20px",
+        "borderRadius": "9px",
+        "background": "rgb(255, 255, 255)",
+        "colour": "rgb(80, 105, 126)",
+        "text": "×",
+        "label": "Close device details"
+      },
+      "source": {
+        "width": 36,
+        "height": 36,
+        "rightInset": 15,
+        "topInset": 16,
+        "fontSize": "20px",
+        "borderRadius": "9px",
+        "background": "rgb(255, 255, 255)",
+        "colour": "rgb(80, 105, 126)",
+        "text": "×",
+        "label": "Close device window"
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "theme": "dark",
+      "live": {
+        "width": 36,
+        "height": 36,
+        "rightInset": 15,
+        "topInset": 16,
+        "fontSize": "20px",
+        "borderRadius": "9px",
+        "background": "rgb(15, 23, 42)",
+        "colour": "rgb(241, 245, 249)",
+        "text": "×",
+        "label": "Close device details"
+      },
+      "source": {
+        "width": 36,
+        "height": 36,
+        "rightInset": 15,
+        "topInset": 16,
+        "fontSize": "20px",
+        "borderRadius": "9px",
+        "background": "rgb(255, 255, 255)",
+        "colour": "rgb(80, 105, 126)",
+        "text": "×",
+        "label": "Close device window"
+      }
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "theme": "light",
+      "live": {
+        "width": 36,
+        "height": 36,
+        "rightInset": 15,
+        "topInset": 16,
+        "fontSize": "20px",
+        "borderRadius": "9px",
+        "background": "rgb(255, 255, 255)",
+        "colour": "rgb(80, 105, 126)",
+        "text": "×",
+        "label": "Close device details"
+      },
+      "source": {
+        "width": 36,
+        "height": 36,
+        "rightInset": 15,
+        "topInset": 16,
+        "fontSize": "20px",
+        "borderRadius": "9px",
+        "background": "rgb(255, 255, 255)",
+        "colour": "rgb(80, 105, 126)",
+        "text": "×",
+        "label": "Close device window"
+      }
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "theme": "dark",
+      "live": {
+        "width": 36,
+        "height": 36,
+        "rightInset": 15,
+        "topInset": 16,
+        "fontSize": "20px",
+        "borderRadius": "9px",
+        "background": "rgb(15, 23, 42)",
+        "colour": "rgb(241, 245, 249)",
+        "text": "×",
+        "label": "Close device details"
+      },
+      "source": {
+        "width": 36,
+        "height": 36,
+        "rightInset": 15,
+        "topInset": 16,
+        "fontSize": "20px",
+        "borderRadius": "9px",
+        "background": "rgb(255, 255, 255)",
+        "colour": "rgb(80, 105, 126)",
+        "text": "×",
+        "label": "Close device window"
+      }
+    }
+  ]
+}

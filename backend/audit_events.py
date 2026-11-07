@@ -57,6 +57,17 @@ def safe_device_differences(before, after):
         if safe_prior is _UNSAFE or safe_current is _UNSAFE:
             continue
         older[name], newer[name] = safe_prior, safe_current
+    # Record only the named OS fields, never the surrounding details or licence data.
+    previous_details = before.get("typeDetails") if isinstance(before.get("typeDetails"), dict) else {}
+    current_details = after.get("typeDetails") if isinstance(after.get("typeDetails"), dict) else {}
+    for key, label in (("softwarePlatform", "Operating System"),
+                       ("softwareVersion", "OS / Platform Version")):
+        prior, current = previous_details.get(key), current_details.get(key)
+        if prior == current:
+            continue
+        safe_prior, safe_current = _safe_audit_value(prior), _safe_audit_value(current)
+        if safe_prior is not _UNSAFE and safe_current is not _UNSAFE:
+            older[label], newer[label] = safe_prior, safe_current
     return {"before": older, "after": newer} if older else {}
 
 

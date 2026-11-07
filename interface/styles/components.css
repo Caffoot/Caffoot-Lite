@@ -222,6 +222,7 @@ html{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sa
  background:var(--theme-control,#fff);color:var(--theme-text,#223b53);font-family:inherit;font-size:13px;line-height:20px;
 }
 #modal-content :is(input,select,textarea,.caffoot-search-trigger,.app-modal-close):focus-visible,
+#modal-content .device-details-dialog .device-review-close:focus-visible,
 #main-content :is(.users-management-modal,.users-sections,.account-screen,.settings-screen) :is(input,select,.app-modal-close):focus-visible,
 .caffoot-search-input:focus-visible,.caffoot-search-trigger:focus-visible {
  outline:2px solid #fac59e;outline-offset:1px;
@@ -328,3 +329,6 @@ html{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sa
 
 /* Contextual software choices retain readable text in the existing dark palette. */
 html.dark #modal-container .device-editor-dialog #device-form-installed-software-fields .device-review-check-item:not(:has(input:checked)):not(:hover){color:var(--theme-text)}
+
+/* Keep the approved Details close icon within the existing light/dark palette. */
+#modal-content .device-details-dialog .device-review-close{background:var(--theme-control,#fff);color:var(--theme-text,#50697e);border-color:var(--theme-border,#dce4eb)}

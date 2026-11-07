@@ -69,6 +69,7 @@ async function main(){
  const login=await context.request.post(address+'/api/login',{headers:{Origin:address},data:{username:creds.username,password:creds.password,mfa_code:code}});
  if(!login.ok())throw Error('Visual test login failed');
  const page=await context.newPage(),ref=await context.newPage(),results=[];
+ if(process.env.CAFFOOT_DEVICE_FORM_FOLLOWUPS==='1')await require('./device-form-followups.cjs')({page,reference:ref,sourceBase:'http://127.0.0.1:'+reference.address().port,context,out});
  if(process.env.CAFFOOT_CONTEXTUAL_CATALOGUE==='1')await require('./contextual-device-catalogue.cjs')({page,reference:ref,sourceBase:'http://127.0.0.1:'+reference.address().port,context,out,fixtureDirectory:tmp});
  if(process.env.CAFFOOT_RACK_SHELF_APPROVED==='1')await require('./rack-shelf-associations.cjs')({page,context,out,fixtureDirectory:tmp});
  if(process.env.CAFFOOT_DEVICE_EDITOR_APPROVED==='1')await require('./device-editor-approved.cjs')({page,reference:ref,sourceBase:'http://127.0.0.1:'+reference.address().port,context,out,fixtureDirectory:tmp});
