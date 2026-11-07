@@ -1,0 +1,3 @@
+# False positive: ordinary test-result prose, not a credential.
+# The historical report sentence "foreign/absent CSRF" triggered generic-api-key.
+079b542c34d69a58c065b9a631ae8ec36ff10b1b:docs/development-handovers/evidence/issue-329/Report.md:generic-api-key:20
