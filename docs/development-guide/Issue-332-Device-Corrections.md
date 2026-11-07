@@ -35,3 +35,12 @@ Latest focused run passed all seven groups, including real Tab/Shift+Tab focus, 
 The final combined run passed seven #332 groups, seven catalogue groups and eight shelf groups. It also checks editing a custom hypervisor product name and a searchable Location Area control. The existing full Chromium regression passed locally, and all four GitHub checks passed the first checkpoint. [Final report, before/after evidence and private native Pi/8445 instructions](../development-handovers/evidence/issue-332/Report.md).
 
 Next: inspect all four GitHub checks for the final delivery SHA recorded in #332. Correct only an actual #332 regression; once green, only private owner acceptance and the two genuine-backup fixture tests remain. Do not repeat completed #331/#332 work, start #329, merge, publish, deploy or release.
+
+
+## Latest Owner Acceptance — Remaining Rack Default Correction
+
+The owner confirmed the Close button and dependent OS/software fixes working on native Pi/Safari in [6704196904](https://github.com/Caffoot/Caffoot-Lite/issues/332#issuecomment-6704196904). Only rack defaulting failed. Starting from clean local/GitHub `7c95be2`, the real Rack editor reproduced a room (`Main Office`) absent from Device options; the change handler ran correctly but the exact-option lookup returned without selecting it.
+
+The correction offers that already-recorded room within the current form without creating a managed location or writing before Save. A blank new Add draft also defaults when restored with its rack selected. Manual overrides, non-empty drafts, saved Edit and initial Duplicate locations remain protected. The accepted dropdown/Close implementations and pinned sources are unchanged. [Narrow scope, before/after trace, verification and native private recheck](../development-handovers/evidence/issue-332/rack-location-correction/Report.md).
+
+The focused browser checks and 92 backend checks passed. All #332 and essential shelf regressions/final GitHub checks are recorded against the correction SHA in #332. Resume only an actual failing check; the remaining acceptance is the rack default on the owner's Pi/Safari. Do not reopen the two accepted fixes or start #329.

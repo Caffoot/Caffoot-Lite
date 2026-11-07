@@ -1,0 +1,45 @@
+{
+  "rack": {
+    "id": "rack_1794039033077",
+    "name": "Fictional Testd Rack 1",
+    "heightU": 42,
+    "widthMm": 600,
+    "depthMm": 1000,
+    "depth": "1000mm",
+    "type": "Floor-standing cabinet",
+    "location": "Main Office"
+  },
+  "trace": [
+    {
+      "rackId": "rack_1794039033077",
+      "rackLocation": "Main Office",
+      "options": [
+        {
+          "value": "",
+          "label": "Select a location..."
+        },
+        {
+          "value": "Office",
+          "label": "Office"
+        },
+        {
+          "value": "Server Room",
+          "label": "Server Room"
+        },
+        {
+          "value": "Unknown",
+          "label": "Unknown"
+        },
+        {
+          "value": "__caffoot_create_location__",
+          "label": "+ Create new location…"
+        }
+      ],
+      "before": "",
+      "disabled": false,
+      "manual": "false",
+      "previousRack": "",
+      "after": "Main Office"
+    }
+  ]
+}

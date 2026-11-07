@@ -1,0 +1,23 @@
+Rack location trace: [{"rackId":"rack_1794039033077","rackLocation":"Main Office","options":[{"value":"","label":"Select a location..."},{"value":"Office","label":"Office"},{"value":"Server Room","label":"Server Room"},{"value":"Unknown","label":"Unknown"},{"value":"__caffoot_create_location__","label":"+ Create new location…"}],"before":"","disabled":false,"manual":"false","previousRack":"","after":"Main Office"}]
+PASS: Real rack-only Main Office defaults, survives shelf creation and Save/reload; no managed location is created and no audit occurs before Save
+PASS: Real searchable Rack/Location controls update captions immediately; manual override survives rack switches, clearing and draft restoration
+PASS: Blank restored Add drafts default on first render; manual restored values, both mounting paths and required validation remain protected
+PASS: Edit preserves saved location; Duplicate preserves the copied area until an explicit new rack choice; Cancel leaves original inventory/history untouched
+Rack location default checks completed.
+PASS: Desktop Windows draft clears immediately on NAS change, including hidden version/caption; checked software and no-audit-on-Cancel are preserved
+PASS: Edition/version lists refresh together; Server LTS and deliberate Custom OS/version survive without a whitelist
+PASS: Virtual purpose and dedicated host-product changes synchronise hidden fields and version captions
+PASS: Both mounting paths default from an existing rack area, honour manual overrides across draft reopening, and preserve cleared/absent rack choices
+PASS: Edit retains historical/custom/archived values and saved location; Cancel changes neither inventory nor audit; actual Save uses safe existing before/after history
+PASS: Duplicate retains persisted OS/software/location, defaults only after a deliberate new rack choice, and saves a separate record
+PASS: One approved 36px × header control matches source geometry at four widths/two themes; click, Escape, keyboard footer and focus return work
+Device form follow-up checks completed.
+PASS: Selecting a rack requires a real shelf and reveals/focuses General validation
+PASS: Existing Horizontal Accessory Cancel/Save preserves Device fields; shelf saves once without device U
+PASS: Duplicate preserves the shelf classification/link and clears unique fields without finding a U slot
+PASS: Edit keeps the original five-minute reservation through quick-add; cancelling Device preserves the independent saved shelf
+PASS: Shelf movement preserves both device records/revisions; Details derives current U; real 2U server collisions remain
+PASS: Linked-shelf Cancel/failure preserves records and choices; explicit reassign/Retired saves together
+PASS: Review creates and explicitly selects a replacement in another rack using the original accessory editor
+PASS: Existing JSON backup export and complete import review preserve shelf links, retired records and contextual software selections
+Rack shelf browser checks completed.

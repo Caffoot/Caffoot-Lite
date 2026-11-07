@@ -5663,10 +5663,18 @@ function openIpModal(ip) {
             if(!form||isVirtualDeviceForm())return;
             const previous=form.dataset.locationRackId||'';
             form.dataset.locationRackId=rackId||'';
-            if(previous===rackId||form.dataset.deviceId||form.dataset.locationManuallyOverridden==='true')return;
             const rack=appState.racks.find(item=>item.id===rackId),location=document.getElementById('dev-location');
-            const option=[...(location?.options||[])].find(item=>item.value&&item.value!=='__caffoot_create_location__'&&item.value===rack?.location);
-            if(!option||location.disabled)return;
+            if(!location||location.disabled||form.dataset.deviceId||form.dataset.locationManuallyOverridden==='true')return;
+            if(previous===rackId&&(location.value||form.dataset.duplicateSourceId))return;
+            const recordedLocation=rack?.location;
+            if(typeof recordedLocation!=='string'||!recordedLocation.trim()||['Racked','__caffoot_create_location__'].includes(recordedLocation))return;
+            let option=[...location.options].find(item=>item.value===recordedLocation);
+            // A rack's recorded room may not yet appear in the Device location list.
+            // Offer that existing value in this draft without creating a catalogue entry.
+            if(!option){
+                option=new Option(recordedLocation,recordedLocation);
+                location.insertBefore(option,location.querySelector('option[value="__caffoot_create_location__"]'));
+            }
             location.value=option.value;location.dataset.previousLocation=option.value;
             refreshDeviceEditorDropdowns();
         }
@@ -6432,7 +6440,7 @@ function openIpModal(ip) {
             tabbedDeviceForm.dataset.locationRackId=draft?.locationRackId??draft?.rackId??device?.rackId??'';
             initialiseDeviceTabs(tabbedDeviceForm);
             document.getElementById('dev-location')?.addEventListener('change',()=>{tabbedDeviceForm.dataset.locationManuallyOverridden='true';});
-            if(draft?.rackId&&draft.rackId!==tabbedDeviceForm.dataset.locationRackId)defaultDeviceLocationFromRack(draft.rackId);
+            if(draft?.rackId)defaultDeviceLocationFromRack(draft.rackId);
             const deviceTypeSelectElement=document.getElementById('dev-type');
             const deploymentSelect=document.getElementById('dev-deployment');
             const purposeSelect=document.getElementById('dev-vm-purpose');

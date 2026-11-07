@@ -1,0 +1,13 @@
+{
+  "checks": [
+    "Selecting a rack requires a real shelf and reveals/focuses General validation",
+    "Existing Horizontal Accessory Cancel/Save preserves Device fields; shelf saves once without device U",
+    "Duplicate preserves the shelf classification/link and clears unique fields without finding a U slot",
+    "Edit keeps the original five-minute reservation through quick-add; cancelling Device preserves the independent saved shelf",
+    "Shelf movement preserves both device records/revisions; Details derives current U; real 2U server collisions remain",
+    "Linked-shelf Cancel/failure preserves records and choices; explicit reassign/Retired saves together",
+    "Review creates and explicitly selects a replacement in another rack using the original accessory editor",
+    "Existing JSON backup export and complete import review preserve shelf links, retired records and contextual software selections"
+  ],
+  "errors": []
+}

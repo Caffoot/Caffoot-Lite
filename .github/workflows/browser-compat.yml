@@ -10,6 +10,7 @@ on:
       - "tests/rack-shelf-associations.cjs"
       - "tests/contextual-device-catalogue.cjs"
       - "tests/device-form-followups.cjs"
+      - "tests/rack-location-defaults.cjs"
       - "tests/approved-visual.cjs"
       - "tests/visual_fixtures.py"
       - "inventory.html"
@@ -23,6 +24,7 @@ on:
       - "tests/rack-shelf-associations.cjs"
       - "tests/contextual-device-catalogue.cjs"
       - "tests/device-form-followups.cjs"
+      - "tests/rack-location-defaults.cjs"
       - "tests/approved-visual.cjs"
       - "tests/visual_fixtures.py"
       - "inventory.html"
@@ -93,6 +95,7 @@ jobs:
         env:
           NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
           CAFFOOT_DEVICE_FORM_FOLLOWUPS: "1"
+          CAFFOOT_RACK_LOCATION_DEFAULTS: "1"
           CAFFOOT_VISUAL_FILTER: "^$"
           CAFFOOT_VISUAL_OUTPUT: ${{ runner.temp }}/issue-332-evidence
         run: node tests/approved-visual.cjs
@@ -101,6 +104,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: issue-332-evidence-${{ github.sha }}
-          path: ${{ runner.temp }}/issue-332-evidence/device-form-followups
+          path: ${{ runner.temp }}/issue-332-evidence
           if-no-files-found: ignore
           retention-days: 14
