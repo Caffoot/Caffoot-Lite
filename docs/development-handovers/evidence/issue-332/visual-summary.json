@@ -1,0 +1,19 @@
+{
+  "cases": 8,
+  "viewportWidths": [
+    320,
+    390,
+    1366,
+    1440
+  ],
+  "themes": [
+    "dark",
+    "light"
+  ],
+  "maximumWidthDifferencePx": 0,
+  "maximumHeightDifferencePx": 0,
+  "maximumTopInsetDifferencePx": 0,
+  "maximumRightInsetDifferencePx": 0,
+  "sourceDarkVariant": false,
+  "note": "Pinned source has the light treatment; live dark palette is checked independently."
+}

@@ -6472,7 +6472,12 @@ function openIpModal(ip) {
                 if (custom) input.focus();
                 refreshDeviceSoftwareSuggestions();
             });
-            document.getElementById('host-platform')?.addEventListener('input',refreshDeviceSoftwareSuggestions);
+            document.getElementById('host-platform')?.addEventListener('input',event=>{
+                if(event.target.value!==deviceDetailFormValues.hypervisorProduct){
+                    document.getElementById('host-version').value='';deviceDetailFormValues.hypervisorVersion='';
+                }
+                refreshDeviceSoftwareSuggestions();refreshDeviceEditorHostVersionChoices();
+            });
             syncHostingFieldVisibility();
             refreshDeviceSubnetSelectionCascade('initial');
             refreshDeviceIpOptions();

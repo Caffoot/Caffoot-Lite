@@ -1,0 +1,26 @@
+PASS: Desktop Windows draft clears immediately on NAS change, including hidden version/caption; checked software and no-audit-on-Cancel are preserved
+PASS: Edition/version lists refresh together; Server LTS and deliberate Custom OS/version survive without a whitelist
+PASS: Virtual purpose and dedicated host-product changes synchronise hidden fields and version captions
+PASS: Both mounting paths default from an existing rack area, honour manual overrides across draft reopening, and preserve cleared/unmatched rack choices
+PASS: Edit retains historical/custom/archived values and saved location; Cancel changes neither inventory nor audit; actual Save uses safe existing before/after history
+PASS: Duplicate retains persisted OS/software/location, defaults only after a deliberate new rack choice, and saves a separate record
+PASS: One approved 36px × header control matches source geometry at four widths/two themes; click, Escape, keyboard footer and focus return work
+Device form follow-up checks completed.
+PASS: Independent edition/release boundaries: LTS, interim, Hyper-V/Proxmox and verified GA-only families
+Separately tracked host selector observations: [{"product":"Microsoft Hyper-V","actual":["2025","2022","2019","2016","2012 R2","2012","2008 R2"],"expected":["2025","2022","2019","2016","2012 R2","2012","2008 R2"],"matches":true},{"product":"Proxmox VE","actual":["9.2","9.1","9.0","8.4","8.3","8.2","8.1","8.0","7","6","5","4","3","2","1"],"expected":["9.2","9.1","9.0","8.4","8.3","8.2","8.1","8.0","7","6","5","4","3","2","1"],"matches":true}]
+PASS: Windows/macOS/Linux recommendations refresh without silently clearing the checked Windows-only selection
+PASS: pfSense and OPNsense editions keep distinct release trains and local package suggestions
+PASS: Actual console apps include InnerSpace; APs omit remote controllers; printers omit remote drivers
+PASS: NAS model/platform groups and VM guest OS govern software; the host platform is not used
+PASS: Duplicate retains archived/out-of-context selections, original legacy storage and unknown metadata while assigning a unique IP
+PASS: Archived/hidden/out-of-context/missing-key/top-level records survive Cancel, Save and reload; only explicit unticks remove selections
+Contextual catalogue checks completed.
+PASS: Selecting a rack requires a real shelf and reveals/focuses General validation
+PASS: Existing Horizontal Accessory Cancel/Save preserves Device fields; shelf saves once without device U
+PASS: Duplicate preserves the shelf classification/link and clears unique fields without finding a U slot
+PASS: Edit keeps the original five-minute reservation through quick-add; cancelling Device preserves the independent saved shelf
+PASS: Shelf movement preserves both device records/revisions; Details derives current U; real 2U server collisions remain
+PASS: Linked-shelf Cancel/failure preserves records and choices; explicit reassign/Retired saves together
+PASS: Review creates and explicitly selects a replacement in another rack using the original accessory editor
+PASS: Existing JSON backup export and complete import review preserve shelf links, retired records and contextual software selections
+Rack shelf browser checks completed.

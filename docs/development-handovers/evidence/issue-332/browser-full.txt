@@ -1,0 +1,31 @@
+HTTPS and SQLite startup passed
+Approved catalogue modal structure and mobile multi-type field coverage passed
+First administrator, MFA, sign-in and direct Dashboard arrival passed
+Authenticated central inventory rendered
+Subnet and linked VLAN form passed
+Approved live IPAM Address Allocations search, filters and ranges passed
+Approved IPAM Draft 01 add/edit and address form save paths passed
+Rack form passed
+Approved Rack Detail header, tabs and back-navigation passed
+Managed location add passed
+Device form and primary IPAM allocation passed
+Approved Audit Trail real events, filters and detail inspection passed
+Published IPAM notes, independent reservation and bulk allocation saved and reloaded
+Dependent location rename/delete and reload passed
+Rack device placement, patch panel and vertical PDU persisted after reload
+Rack device, horizontal accessory and L/R 0U HTML5 drag handlers, collision rejection and SQLite saves passed
+Rack front/rear view, L/R markers and printable elevations passed
+Approved inline hardware catalogue, SQLite persistence, duplicate protection and mobile layout passed
+Approved Add/Edit identity, rack and IPAM source field wrappers passed
+Approved Network Identity/Subnet Guidance cards and live IPAM controls passed
+Approved Device Notes structure, Markdown preview and mobile layout passed
+Physical hypervisor selection and VM inheritance passed
+Approved Device Details for physical and virtual hardware passed
+Mixed editing and read-only section visibility passed
+User creation, initially no access, editor MFA, permissions and shared viewing passed
+Multi-user IPAM navigation and record-opening freshness passed
+Two-user exclusive device edit reservations passed
+Password-only read access, hidden editing controls and administrator-only maintenance passed
+Confirmed Clean Start persisted with central Change History
+Published v1.3.3 export, cancelled review, confirmed one-way import, history fields and account retention passed
+PASS: Caffoot Lite focused Chromium compatibility

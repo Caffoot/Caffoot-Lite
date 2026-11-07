@@ -24,12 +24,14 @@ Changing controls updates only the Device draft. Save still uses existing backen
 - [x] Full backend: 469 run, 466 passed, three established skips.
 - [x] Twelve-source/template provenance checks passed; Function Index regenerated.
 - [x] Latest focused browser confirmation, including manufacturer/model captions, Details header keyboard focus and dark colours.
-- [ ] Existing full browser/editor and #331 shelf/catalogue regressions on the delivery candidate.
-- [ ] Final documentation/evidence and exact GitHub check results.
+- [x] Existing full browser/editor and #331 shelf/catalogue regressions on the delivery candidate.
+- [x] Final documentation/evidence; exact delivery-commit GitHub sign-off is recorded in #332 after push.
 - [ ] Owner's native Raspberry Pi/Safari acceptance in the separate private 8445 stack.
 
 The three backend skips are the opt-in Docker lifecycle test (covered separately by CI) and two unavailable genuine private v1.3.3 backup fixtures. Chromium results do not certify Safari. The pinned preview supplies the light design; live dark colours are checked separately using existing tokens.
 
 Latest focused run passed all seven groups, including real Tab/Shift+Tab focus, keyboard header/footer dismissal, exact close geometry and existing dark colours. Before/after images, raw results and measurements are committed under `docs/development-handovers/evidence/issue-332/`.
 
-Next: continue directly with existing browser/editor/#331 regressions and final evidence; inspect the GitHub checks for the implementation checkpoint linked in #332. Do not repeat #331 implementation or start #329, merge, publish, deploy or release.
+The final combined run passed seven #332 groups, seven catalogue groups and eight shelf groups. It also checks editing a custom hypervisor product name and a searchable Location Area control. The existing full Chromium regression passed locally, and all four GitHub checks passed the first checkpoint. [Final report, before/after evidence and private native Pi/8445 instructions](../development-handovers/evidence/issue-332/Report.md).
+
+Next: inspect all four GitHub checks for the final delivery SHA recorded in #332. Correct only an actual #332 regression; once green, only private owner acceptance and the two genuine-backup fixture tests remain. Do not repeat completed #331/#332 work, start #329, merge, publish, deploy or release.
