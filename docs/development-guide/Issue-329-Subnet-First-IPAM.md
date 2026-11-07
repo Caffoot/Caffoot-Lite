@@ -18,8 +18,8 @@ Device Networking alone changes to optional block → named subnet → read-only
 
 - [x] Read complete approval/specifications and current #282 register; clean local/remote branch verified.
 - [x] Model/backend and matching browser validation implemented; focused model/transaction tests prove omission, legacy edits, gateway protections, counts, 150 subnets, rollback, concurrency and audit.
-- [ ] Single IPAM form, approved generation/review, visible purpose and row errors.
-- [ ] Device Networking subnet-first integration and derived VLAN.
+- [x] Single IPAM form, approved generation/review, visible purpose and row errors.
+- [x] Device Networking subnet-first integration and derived VLAN.
 - [ ] Focused browser and source/desktop/mobile/theme/accessibility comparison.
 - [ ] Full backend/browser/security/backup/import/compatibility/documentation/Docker checks and exact final GitHub sign-off.
 - [ ] Private owner Safari/Pi acceptance, separately recorded.
@@ -27,3 +27,11 @@ Device Networking alone changes to optional block → named subnet → read-only
 [Model regression results](../development-handovers/evidence/issue-329/model-regression.txt). The initial full backend run found five old creation fixtures missing the now-required purpose and one obsolete missing-VLAN expectation; these fixtures/expectations were corrected. They are not counted as a passing full suite. The next step is the Single/Bulk IPAM interface batch, followed by Device Networking and full regression. This is an intermediate implementation checkpoint, not a private acceptance build.
 
 No public-IP/WAN/MSP/website changes, merge, image publication, Portainer stack change, deployment or release are authorised.
+
+## Interface Integration Checkpoint
+
+Single/Bulk IPAM and Device Networking are implemented. Five new Chromium groups passed, covering omitted VPN fields, historical numeric-string VLAN/empty parent representation, real row validation, 10 and 50 subnet saves, both gateway conventions/manual edits, four widths and themes, existing-block reuse, new backup/import normalisation, Device Add/Edit/Duplicate and direct API/CSRF rejections. The initial geometry failure sampled a resizing transition; settled capture/measurement passes without changing the approved layout.
+
+Full backend before the final audit-projection addition: 482 run, 479 passed, three established skips. The new bounded batch summary projection is tested for non-admin IPAM readers; unrelated sections and free text remain redacted. The latest focused interface/backend/history regression is recorded in the evidence folder. The generic form permission and unsaved-change guards now recognise the new IPAM forms. A confirmed save is no longer reported as rolled back if only its subsequent inventory refresh fails.
+
+Existing active browser tests have been updated only where the approved contract changes: new Purpose/Single Subnet label and removal of the VLAN-first prerequisite. Their full regressions and Firefox/WebKit jobs remain to be evaluated. Next: inspect CI, finish targeted history/security/data-preservation tests, compare live Single/Device controls against pinned HTML plus the approved amendments, update user/developer documentation and complete final acceptance evidence.

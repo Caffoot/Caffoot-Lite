@@ -1053,7 +1053,7 @@ function hierarchyValidateTypes(subnets) {
                     [/existing subnet|selected subnet/i, 'dev-subnet'],
                     [/primary ip|ip address/i, 'dev-ip'],
                     [/network cidr|valid network cidr/i, 'sub-cidr'],
-                    [/subnet name/i, 'sub-name'],
+                    [/subnet name/i, 'sub-name'],[/subnet purpose/i,'sub-purpose'],
                     [/vlan id/i, 'sub-vlan'],
                     [/gateway/i, 'sub-gw']
                 ];
@@ -2787,11 +2787,12 @@ function hierarchyValidateTypes(subnets) {
                     '<button type="button" class="btn btn-outline" data-action="edit-ipam-block" data-id="'+escapeHtml(group.id)+'">Edit Block</button></div>':'';
                 const networkRows=group.list.map(n=>{
                     return '<div class="ipam-subnet-row"><div><strong>'+escapeHtml(n.name||n.cidr)+'</strong> '+
-                        '<span class="ipam-mini-badge">VLAN '+escapeHtml(n.vlan??'—')+'</span>'+
+                        '<span class="ipam-mini-badge">'+escapeHtml(n.purpose||'Not assigned')+'</span> '+
+                        '<span class="ipam-mini-badge">VLAN '+escapeHtml(n.vlan??'Not assigned')+'</span>'+
                         '<p>'+escapeHtml(n.cidr||'')+' · '+escapeHtml(n.description||'No description')+'</p></div>'+
                         '<div class="ipam-subnet-row-actions">'+
                         '<button class="btn btn-outline" type="button" data-action="ipam-open-network-addresses" data-id="'+escapeHtml(n.id)+'">Browse IP Addresses</button>'+
-                        '<button class="btn btn-outline" type="button" data-action="edit-subnet" data-id="'+escapeHtml(n.id)+'">Edit Subnet &amp; VLAN</button></div></div>';
+                        '<button class="btn btn-outline" type="button" data-action="edit-subnet" data-id="'+escapeHtml(n.id)+'">Edit Subnet</button></div></div>';
                 }).join('');
                 // Keep legacy VLANs inspectable if they have no unambiguous
                 // linked network, as the existing page already allowed.
@@ -2851,7 +2852,7 @@ function hierarchyValidateTypes(subnets) {
             if(activeIpamTab==='addresses'&&!subnet){
                 return '<section class="ipam-panel active ipam-addresses" data-panel="addresses" data-ipam-panel="addresses" role="tabpanel">'+
                     renderInterfaceTemplate("ipam/render-ipam-html-3",[])+
-                    '<button class="btn btn-primary" type="button" data-action="open-subnet-modal">+ Add Subnet</button></div></section>';
+                    '<button class="btn btn-primary" type="button" data-action="open-subnet-modal">Add Single Subnet</button><button class="btn btn-outline" type="button" data-action="open-multiple-subnets">Add Multiple Subnets</button></div></section>';
             }
             if (!subnet && appState.subnets.length === 0) {
                 return renderInterfaceTemplate("ipam/render-ipam-html-4",[]);
@@ -2889,10 +2890,11 @@ function hierarchyValidateTypes(subnets) {
             const networkInfoItems = [
                 ['Network Name', subnet.name || '—'],
                 ['Network CIDR', subnet.cidr || '—'],
+                ['Purpose',subnet.purpose||'Not assigned'],
                 ['Subnet Mask', networkMask],
                 ['Usable Address Range', ipAddressGridSubnetRange ? formatIpv4Address(ipAddressGridSubnetRange.first) + ' – ' + formatIpv4Address(ipAddressGridSubnetRange.lastHost) : '—'],
                 ['Gateway', subnet.gateway || 'Not configured'],
-                ['VLAN ID', subnet.vlan ?? 'Not configured'],
+                ['VLAN ID', subnet.vlan ?? 'Not assigned'],
                 ['Parent IP Address Block', networkParent ? networkParent.name + ' (' + networkParent.cidr + ')' : 'None'],
                 ['Usable Addresses', activeSubnetUtilisationSummary.capacity],
                 ['Assigned', activeSubnetUtilisationSummary.assigned],
@@ -2934,7 +2936,7 @@ function hierarchyValidateTypes(subnets) {
             }
 
             if(activeIpamTab==='addresses'){
-                return renderInterfaceTemplate("ipam/render-ipam-html-6",[availableNetworks.map(n=>'<option value="'+escapeHtml(n.id)+'" '+(n.id===subnet.id?'selected':'')+'>'+escapeHtml(n.cidr)+' — '+escapeHtml(n.name||'Network')+' (VLAN '+escapeHtml(n.vlan??'—')+')</option>').join(''),escapeHtml(activeSubnetUtilisationSummary.next||''),!activeSubnetUtilisationSummary.next?'disabled':'',activeSubnetUtilisationSummary.next?'Next Available: '+escapeHtml(activeSubnetUtilisationSummary.next):'No Available Addresses',escapeHtml(subnet.cidr),escapeHtml(subnet.vlan??'—'),escapeHtml(subnet.name||'Network'),escapeHtml(subnet.description||'No description'),escapeHtml(subnet.gateway||'Not configured'),escapeHtml(formatIpv4Address(ipAddressGridSubnetRange.first)),escapeHtml(formatIpv4Address(ipAddressGridSubnetRange.lastHost)),escapeHtml(networkParent?.name||'Unassigned'),escapeHtml(networkMask),activeSubnetUtilisationSummary.assigned,activeSubnetUtilisationSummary.reserved,activeSubnetUtilisationSummary.available,activeSubnetUtilisationSummary.utilisation,activeSubnetUtilisationSummary.utilisation,activeSubnetUtilisationSummary.utilisation,activeSubnetUtilisationSummary.capacity,activeSubnetUtilisationSummary.duplicates.length?'<p class="ipam-result-text">Duplicate device IP warning: '+activeSubnetUtilisationSummary.duplicates.map(d=>escapeHtml(d.ip)+' ('+d.owners.map(escapeHtml).join(', ')+')').join('; ')+'</p>':'',isIpAddressGridPaginated?formatIpv4Address(ipAddressGridStartAddressNumber)+' – '+formatIpv4Address(ipAddressGridEndAddressNumber):'.'+startHost+' – .'+endHost,escapeHtml(subnet.cidr),isIpAddressGridPaginated?'<span class="ipam-result-text">Page '+(ipAddressGridPage+1)+' of '+ipAddressGridPageCount+'</span><button type="button" data-action="show-previous-ip-address-grid-page" '+(ipAddressGridPage===0?'disabled':'')+'>Previous</button><button type="button" data-action="show-next-ip-address-grid-page" '+(ipAddressGridPage===ipAddressGridPageCount-1?'disabled':'')+'>Next</button>':[['1-32','.1–.32'],['33-64','.33–.64'],['65-128','.65–.128'],['129-192','.129–.192'],['193-254','.193–.254'],['all','Show All']].map(([id,label])=>'<button type="button" data-action="ip-range-'+id+'" class="'+(ipViewRange===id?'active':'')+'" aria-pressed="'+(ipViewRange===id)+'">'+label+'</button>').join(''),escapeHtml(ipamAddressSearch),['All','Available','Assigned','Reserved'].map(s=>'<option value="'+s+'" '+(ipamStatusFilter===s?'selected':'')+'>'+(s==='All'?'All statuses':s)+'</option>').join(''),ipamAddressCards||'<p class="ipam-empty">No addresses to display for this range or filter.</p>',ipamAddressCount,isIpAddressGridPaginated?'page':'host range']);
+                return renderInterfaceTemplate("ipam/render-ipam-html-6",[availableNetworks.map(n=>'<option value="'+escapeHtml(n.id)+'" '+(n.id===subnet.id?'selected':'')+'>'+escapeHtml(n.cidr)+' — '+escapeHtml(n.name||'Network')+' (VLAN '+escapeHtml(n.vlan??'Not assigned')+')</option>').join(''),escapeHtml(activeSubnetUtilisationSummary.next||''),!activeSubnetUtilisationSummary.next?'disabled':'',activeSubnetUtilisationSummary.next?'Next Available: '+escapeHtml(activeSubnetUtilisationSummary.next):'No Available Addresses',escapeHtml(subnet.cidr),escapeHtml(subnet.vlan??'Not assigned'),escapeHtml(subnet.name||'Network'),escapeHtml(subnet.description||'No description'),escapeHtml(subnet.gateway||'Not configured'),escapeHtml(formatIpv4Address(ipAddressGridSubnetRange.first)),escapeHtml(formatIpv4Address(ipAddressGridSubnetRange.lastHost)),escapeHtml(networkParent?.name||'Unassigned'),escapeHtml(networkMask),activeSubnetUtilisationSummary.assigned,activeSubnetUtilisationSummary.reserved,activeSubnetUtilisationSummary.available,activeSubnetUtilisationSummary.utilisation,activeSubnetUtilisationSummary.utilisation,activeSubnetUtilisationSummary.utilisation,activeSubnetUtilisationSummary.capacity,activeSubnetUtilisationSummary.duplicates.length?'<p class="ipam-result-text">Duplicate device IP warning: '+activeSubnetUtilisationSummary.duplicates.map(d=>escapeHtml(d.ip)+' ('+d.owners.map(escapeHtml).join(', ')+')').join('; ')+'</p>':'',isIpAddressGridPaginated?formatIpv4Address(ipAddressGridStartAddressNumber)+' – '+formatIpv4Address(ipAddressGridEndAddressNumber):'.'+startHost+' – .'+endHost,escapeHtml(subnet.cidr),isIpAddressGridPaginated?'<span class="ipam-result-text">Page '+(ipAddressGridPage+1)+' of '+ipAddressGridPageCount+'</span><button type="button" data-action="show-previous-ip-address-grid-page" '+(ipAddressGridPage===0?'disabled':'')+'>Previous</button><button type="button" data-action="show-next-ip-address-grid-page" '+(ipAddressGridPage===ipAddressGridPageCount-1?'disabled':'')+'>Next</button>':[['1-32','.1–.32'],['33-64','.33–.64'],['65-128','.65–.128'],['129-192','.129–.192'],['193-254','.193–.254'],['all','Show All']].map(([id,label])=>'<button type="button" data-action="ip-range-'+id+'" class="'+(ipViewRange===id?'active':'')+'" aria-pressed="'+(ipViewRange===id)+'">'+label+'</button>').join(''),escapeHtml(ipamAddressSearch),['All','Available','Assigned','Reserved'].map(s=>'<option value="'+s+'" '+(ipamStatusFilter===s?'selected':'')+'>'+(s==='All'?'All statuses':s)+'</option>').join(''),ipamAddressCards||'<p class="ipam-empty">No addresses to display for this range or filter.</p>',ipamAddressCount,isIpAddressGridPaginated?'page':'host range',escapeHtml(subnet.purpose||'Not assigned')]);
             }
 
             return renderInterfaceTemplate("ipam/render-ipam-html-24",[activeIpamTab==='manage'?'':'hidden',ipamManageBlockFilter !== null ? renderInterfaceTemplate("ipam/render-ipam-html-7",[escapeHtml(ipamManageBlockFilter === '' ? 'Unassigned Networks' : (appState.subnets.find(s => String(s.id) === String(ipamManageBlockFilter))?.name || 'Selected IP Address Block'))]) : '',(() => {
@@ -3016,7 +3018,7 @@ function hierarchyValidateTypes(subnets) {
     const subnet = appState.subnets.find(s => s.id === subnetId);
     const range = parseSupportedIpv4Subnet(subnet?.cidr);
     if (!range) return showToast('Invalid subnet for bulk editing.', 'error');
-    openIpamModal(renderInterfaceTemplate("ipam/open-bulk-ip-modal-1",[escapeHtml(subnet.id),formatIpv4Address(range.first),formatIpv4Address(Math.min(range.first + 31, range.lastHost)),escapeHtml(appState.subnets.find(b => b.id === subnet.parentId)?.name || 'Unassigned'),escapeHtml(subnet.name),escapeHtml(String(subnet.vlan))]));
+    openIpamModal(renderInterfaceTemplate("ipam/open-bulk-ip-modal-1",[escapeHtml(subnet.id),formatIpv4Address(range.first),formatIpv4Address(Math.min(range.first + 31, range.lastHost)),escapeHtml(appState.subnets.find(b => b.id === subnet.parentId)?.name || 'Unassigned'),escapeHtml(subnet.name),escapeHtml(String(subnet.vlan??'Not assigned'))]));
 }
 
         function confirmIpamBulkAssignment(plan,status,notes,sample){
@@ -3093,7 +3095,7 @@ function hierarchyValidateTypes(subnets) {
         function suggestSubnetGateway() {
             const cidrInput = document.getElementById('sub-cidr');
             const gatewayInput = document.getElementById('sub-gw');
-            if (!cidrInput || !gatewayInput) return;
+            if (!cidrInput || !gatewayInput || gatewayInput.dataset.manualGateway==='true') return;
             const form = cidrInput.closest('form[data-form-action="subnet"]');
             if (!form || form.dataset.subnetId) return; // Never overwrite an existing subnet gateway.
             if (document.getElementById('sub-kind')?.value === 'container') { cidrInput.removeAttribute('aria-invalid'); cidrInput.removeAttribute('aria-describedby'); return; }
@@ -3120,29 +3122,31 @@ function hierarchyValidateTypes(subnets) {
 
 function openSubnetModal(subnetId = null) {
     const subnet = subnetId ? appState.subnets.find(s => s.id === subnetId) : null;
-    openIpamModal(renderInterfaceTemplate("ipam/open-subnet-modal-1",[subnet ? (subnet.kind === 'container' ? 'Edit IP Address Block' : 'Edit Subnet') : 'Add Subnet',escapeHtml(subnet ? subnet.id : ''),subnet ? 'disabled' : '',subnet?.kind !== 'container' ? 'selected' : '',subnet?.kind === 'container' ? 'selected' : '',escapeHtml(subnet ? subnet.cidr : ''),escapeHtml(subnet ? subnet.name : ''),escapeHtml(subnet ? subnet.vlan : ''),escapeHtml(subnet ? subnet.gateway : ''),appState.subnets.filter(s => s.kind === 'container' && s.id !== subnetId).map(s => `<option value="${escapeHtml(s.id)}" ${subnet?.parentId === s.id ? 'selected' : ''}>${escapeHtml(s.cidr)} — ${escapeHtml(s.name)}</option>`).join(''),escapeHtml(subnet ? (subnet.description || '') : ''),subnet ? `<button type="button" data-action="delete-subnet" data-id="${escapeHtml(subnet.id)}" class="btn btn-outline danger-action">Delete ${subnet.kind === 'container' ? 'IP Address Block' : 'Subnet & VLAN'}</button>` : '']));
+    openIpamModal(renderInterfaceTemplate("ipam/open-subnet-modal-1",[subnet ? (subnet.kind === 'container' ? 'Edit IP Address Block' : 'Edit Subnet') : 'Add Single Subnet',escapeHtml(subnet ? subnet.id : ''),subnet ? 'disabled' : '',subnet?.kind !== 'container' ? 'selected' : '',subnet?.kind === 'container' ? 'selected' : '',escapeHtml(subnet ? subnet.cidr : ''),escapeHtml(subnet ? subnet.name : ''),escapeHtml(subnet ? subnet.vlan : ''),escapeHtml(subnet ? subnet.gateway : ''),appState.subnets.filter(s => s.kind === 'container' && s.id !== subnetId).map(s => `<option value="${escapeHtml(s.id)}" ${subnet?.parentId === s.id ? 'selected' : ''}>${escapeHtml(s.cidr)} — ${escapeHtml(s.name)}</option>`).join(''),escapeHtml(subnet ? (subnet.description || '') : ''),subnet ? `<button type="button" data-action="delete-subnet" data-id="${escapeHtml(subnet.id)}" class="btn btn-outline danger-action">Delete ${subnet.kind === 'container' ? 'IP Address Block' : 'Subnet'}</button>` : '', '<option value="">'+(subnet&&!subnet.purpose?'Not assigned (previously recorded)':'Select a purpose...')+'</option>'+['LAN','Management','VPN'].map(value=>'<option value="'+value+'" '+(subnet?.purpose===value?'selected':'')+'>'+value+'</option>').join('')]));
     const subnetTypeSelect = document.getElementById('sub-kind');
     const updateSubnetTypePreview = () => {
         const isContainer = subnetTypeSelect.value === 'container';
-        document.getElementById('sub-name-label').textContent = isContainer ? 'IP Address Block Name' : 'Network / VLAN Name';
+        document.getElementById('sub-name-label').textContent = isContainer ? 'IP Address Block Name' : 'Subnet Name';
         document.querySelectorAll('#modal-content [data-network-only]').forEach(element => {
             element.hidden = isContainer;
             element.style.display = isContainer ? 'none' : '';
         });
-        for (const id of ['sub-vlan', 'sub-gw']) {
+        for (const id of ['sub-vlan', 'sub-gw','sub-purpose']) {
             const input = document.getElementById(id);
-            if (input) { input.required = !isContainer; input.disabled = isContainer; }
+            if(input){input.disabled=isContainer;input.required=!isContainer&&(id==='sub-purpose'?(!subnet||!!subnet.purpose):id==='sub-gw'?document.getElementById('sub-purpose').value!=='VPN':false);}
         }
         const submit = document.querySelector('#modal-content form[data-form-action="subnet"] button[type="submit"]');
         if (submit) {
             submit.disabled = false;
             submit.title = '';
-            submit.textContent = isContainer ? 'Save IP Address Block' : 'Save Subnet & VLAN';
+            submit.textContent = isContainer ? 'Save IP Address Block' : 'Save Subnet';
         }
     };
     subnetTypeSelect.addEventListener('change', updateSubnetTypePreview);
+    document.getElementById('sub-purpose').addEventListener('change',()=>{updateSubnetTypePreview();validateSubnetGatewayField();document.getElementById('sub-gw-required').textContent=document.getElementById('sub-purpose').value==='VPN'?'(Optional)':'*';});
     updateSubnetTypePreview();
     if (!subnet && subnetTypeSelect.value === 'network') suggestSubnetGateway();
+    document.getElementById('sub-gw-required').textContent=subnet?.purpose==='VPN'?'(Optional)':'*';
 }
 
                 // Resolve VLAN card editing by stable record ID and scoped VLAN identity.
@@ -3186,7 +3190,8 @@ function openSubnetModal(subnetId = null) {
                     showToast('Changing an existing network into a container is not supported.', 'error');
                     return;
                 }
-                const record = { id: existing ? existing.id : 'sub_' + Date.now(), kind: 'container', cidr, name, description, parentId };
+                const record = { ...(existing||{}), id: existing ? existing.id : 'sub_' + crypto.randomUUID(), kind: 'container', cidr, name, description };
+                if(parentId)record.parentId=parentId;else if(existing?.parentId)delete record.parentId;
                 const candidate = appState.subnets.map(s => s.id === record.id ? record : s);
                 if (!existing) candidate.push(record);
                 const issues = [...hierarchyValidate(candidate), ...hierarchyValidateTypes(candidate)];
@@ -3211,7 +3216,11 @@ function openSubnetModal(subnetId = null) {
             }
             const cidr = document.getElementById('sub-cidr').value.trim();
             const name = document.getElementById('sub-name').value.trim();
-            const vlanIdVal = parseInt(document.getElementById('sub-vlan').value, 10);
+            const vlanText=document.getElementById('sub-vlan').value.trim();
+            const vlanIdVal=vlanText===''?null:Number(vlanText);
+            const purpose=document.getElementById('sub-purpose').value;
+            const originalSubnet=appState.subnets.find(s=>s.id===subnetId);
+            if((!originalSubnet||originalSubnet.purpose)&&!purpose){showToast('Select a subnet purpose.','error');return;}
             const gateway = document.getElementById('sub-gw').value.trim();
             const description = document.getElementById('sub-desc').value.trim();
             const parentId = document.getElementById('sub-parent')?.value || null;
@@ -3224,15 +3233,15 @@ function openSubnetModal(subnetId = null) {
                 showToast('Subnet name is required.', 'error');
                 return;
             }
-            if (!Number.isInteger(vlanIdVal) || vlanIdVal < 1 || vlanIdVal > 4094) {
+            if (vlanIdVal!==null&&(!Number.isInteger(vlanIdVal) || vlanIdVal < 1 || vlanIdVal > 4094)) {
                 showToast('VLAN ID must be between 1 and 4094.', 'error');
                 return;
             }
-            if (!isValidIpv4(gateway)) {
+            if (!(purpose==='VPN'&&!gateway)&&!isValidIpv4(gateway)) {
                 showToast('Gateway must be a valid IPv4 address.', 'error');
                 return;
             }
-            if (!isUsableHostAddressInSubnet(gateway, cidr)) {
+            if (!(purpose==='VPN'&&!gateway)&&!isUsableHostAddressInSubnet(gateway, cidr)) {
                 showToast('Gateway must be a usable host address within the subnet.', 'error');
                 return;
             }
@@ -3249,23 +3258,25 @@ function openSubnetModal(subnetId = null) {
             const proposedSubnet = {
                 ...(existingSubnet || {}),
                 id: existingSubnet?.id || 'sub_' + Date.now(),
-                cidr, name, vlan: vlanIdVal, gateway, description
+                cidr, name, description, ...(purpose?{purpose}:{}), ...(vlanIdVal!==null?{vlan:existingSubnet&&Number(existingSubnet.vlan)===vlanIdVal?existingSubnet.vlan:vlanIdVal}:{}), ...(gateway?{gateway}:{})
             };
+            if(vlanIdVal===null&&existingSubnet?.vlan!=null&&existingSubnet.vlan!=='')delete proposedSubnet.vlan;
+            if(!gateway&&existingSubnet?.gateway!=null&&existingSubnet.gateway!=='')delete proposedSubnet.gateway;
             if (parentId) proposedSubnet.parentId = parentId;
-            else delete proposedSubnet.parentId;
+            else if(existingSubnet?.parentId)delete proposedSubnet.parentId;
             const proposedSubnets = appState.subnets.filter(s => s.id !== proposedSubnet.id).concat(proposedSubnet);
             const hierarchyIssues = [...hierarchyValidate(proposedSubnets), ...hierarchyValidateTypes(proposedSubnets)];
             if (hierarchyIssues.length) {
                 showToast(hierarchyIssues[0], 'error');
                 return;
             }
-            const otherSubnetWithVlan = appState.subnets.find(s => (!s.kind || s.kind === 'network') && Number(s.vlan) === vlanIdVal && (s.parentId || '__unassigned__') === (parentId || '__unassigned__') && s.id !== subnetId);
+            const otherSubnetWithVlan = vlanIdVal===null?null:appState.subnets.find(s => (!s.kind || s.kind === 'network') && Number(s.vlan) === vlanIdVal && (s.parentId || '__unassigned__') === (parentId || '__unassigned__') && s.id !== subnetId);
             if (otherSubnetWithVlan) {
                 showToast(`VLAN ${vlanIdVal} is already used by ${otherSubnetWithVlan.name}.`, 'error');
                 return;
             }
 
-            const otherVlan = appState.vlans.find(v => Number(v.vlanId) === vlanIdVal && (v.parentId || '__unassigned__') === (parentId || '__unassigned__'));
+            const otherVlan = vlanIdVal===null?null:appState.vlans.find(v => Number(v.vlanId) === vlanIdVal && (v.parentId || '__unassigned__') === (parentId || '__unassigned__'));
             if (otherVlan && otherVlan.name !== name && !appState.subnets.some(s => Number(s.vlan) === vlanIdVal && (s.parentId || '__unassigned__') === (parentId || '__unassigned__') && s.id === subnetId)) {
                 showToast(`VLAN ${vlanIdVal} already exists with the name ${otherVlan.name}.`, 'error');
                 return;
@@ -3274,8 +3285,8 @@ function openSubnetModal(subnetId = null) {
             // preserve an unchanged gateway owned by one eligible network device.
             // Do not release or reassign an existing IPAM record during subnet edits.
             const existingGatewaySubnet = subnetId ? appState.subnets.find(s => s.id === subnetId) : null;
-            const gatewayOwners = appState.devices.filter(d => d.primaryIp === gateway);
-            const gatewayAllocation = appState.ipAllocations[gateway];
+            const gatewayOwners = gateway?appState.devices.filter(d => d.primaryIp === gateway):[];
+            const gatewayAllocation = gateway?appState.ipAllocations[gateway]:null;
             const eligibleExistingGatewayOwner = existingGatewaySubnet?.gateway === gateway &&
                 gatewayOwners.length === 1 &&
                 ['Firewall', 'Router', 'Layer 3 Switch'].includes(gatewayOwners[0].type) &&
@@ -3308,12 +3319,13 @@ function openSubnetModal(subnetId = null) {
                 }
                 sub.cidr = cidr;
                 sub.name = name;
-                sub.vlan = vlanIdVal;
-                sub.gateway = gateway;
+                if(vlanIdVal!==null)sub.vlan=proposedSubnet.vlan;else if(sub.vlan!=null&&sub.vlan!=='')delete sub.vlan;
+                if(gateway)sub.gateway=gateway;else if(sub.gateway!=null&&sub.gateway!=='')delete sub.gateway;
+                if(purpose)sub.purpose=purpose;
                 sub.description = description;
                 if (parentId) sub.parentId = parentId;
-                else delete sub.parentId;
-                if ((previousVlanId !== vlanIdVal || previousParentId !== (parentId || '__unassigned__')) &&
+                else if(sub.parentId)delete sub.parentId;
+                if (Number.isInteger(previousVlanId)&&previousVlanId>=1&&(previousVlanId !== vlanIdVal || previousParentId !== (parentId || '__unassigned__')) &&
                     !appState.subnets.some(item => item.id !== sub.id && Number(item.vlan) === previousVlanId && (item.parentId || '__unassigned__') === previousParentId)) {
                     appState.vlans = appState.vlans.filter(v => !(Number(v.vlanId) === previousVlanId && (v.parentId || '__unassigned__') === previousParentId));
                 }
@@ -3324,6 +3336,7 @@ function openSubnetModal(subnetId = null) {
                 if (deviceFormDraft) deviceFormDraft.subnetId = newSub.id;
             }
 
+            if(vlanIdVal!==null){
             let existingVlan = appState.vlans.find(v => Number(v.vlanId) === vlanIdVal && (v.parentId || '__unassigned__') === (parentId || '__unassigned__'));
             if (existingVlan) {
                 existingVlan.name = name;
@@ -3341,6 +3354,7 @@ function openSubnetModal(subnetId = null) {
                 });
             }
 
+            }
             if (!nextIpamBridge || !await nextIpamBridge.saveSubnet(beforeSubnetSave)) {
                 appState = JSON.parse(beforeSubnetSave);
                 selectedSubnetId = previousSubnetSelection;
@@ -3357,6 +3371,143 @@ function openSubnetModal(subnetId = null) {
             } else {
                 renderContent();
             }
+        }
+
+        let subnetBatchDraft = null;
+        function subnetHasVlan(subnet) {
+            return subnet?.vlan!==undefined&&subnet?.vlan!==null&&subnet?.vlan!=='';
+        }
+        function validateSubnetGatewayField() {
+            const gateway=document.getElementById('sub-gw'),cidr=document.getElementById('sub-cidr')?.value.trim();
+            if(!gateway||gateway.disabled)return;
+            const value=gateway.value.trim(),optional=document.getElementById('sub-purpose')?.value==='VPN';
+            gateway.setCustomValidity(value&&!isUsableHostAddressInSubnet(value,cidr)?'Gateway must be a usable host address within this subnet.':!value&&!optional?'A gateway is required for this subnet purpose.':'');
+            const hint=document.getElementById('sub-gw-hint');
+            if(hint&&gateway.dataset.manualGateway==='true')hint.textContent=gateway.validationMessage||(optional&&!value?'No gateway assigned to this VPN range.':'Gateway is within the selected subnet.');
+        }
+        function openMultipleSubnets(resume=false) {
+            if(!resume||!subnetBatchDraft)subnetBatchDraft={organisation:'none',pool:'',parentName:'',parentCidr:'',existing:'',start:'',prefix:'24',count:'',convention:'',parentId:'sub_'+crypto.randomUUID(),rows:[]};
+            const draft=subnetBatchDraft,option=(value,label,current)=>'<option value="'+escapeHtml(value)+'" '+(value===current?'selected':'')+'>'+escapeHtml(label)+'</option>';
+            openIpamModal(renderInterfaceTemplate("ipam/multiple-subnets-generator",[...['none','existing','new'].map(v=>draft.organisation===v?'selected':''),appState.subnets.filter(s=>s.kind==='container').map(s=>option(s.id,s.name+' — '+s.cidr,draft.existing)).join(''),['10.0.0.0/8','172.16.0.0/12','192.168.0.0/16'].map(v=>option(v,v,draft.pool)).join(''),escapeHtml(draft.parentName),escapeHtml(draft.parentCidr),escapeHtml(draft.start),[23,24,25,26,27,28,29,30].map(v=>option(String(v),'/'+v,draft.prefix)).join(''),escapeHtml(draft.count),['First usable IP','Last usable IP'].map(v=>option(v,v,draft.convention)).join('')]));
+            const form=document.getElementById('subnet-batch-generator');
+            const organisation=document.getElementById('subnet-batch-organisation');
+            const visibility=()=>{
+                for(const [selector,visible]of [['[data-new-parent]',organisation.value==='new'],['[data-existing-parent]',organisation.value==='existing']])form.querySelectorAll(selector).forEach(label=>{label.hidden=!visible;label.style.display=visible?'':'none';const field=label.querySelector('input,select');field.disabled=!visible;field.required=visible;});
+            };
+            organisation.addEventListener('change',visibility);visibility();
+            document.getElementById('subnet-batch-pool').addEventListener('change',event=>{
+                if(!event.target.value)return;
+                const pool=hierarchyParseCidr(event.target.value);
+                document.getElementById('subnet-batch-start').value=formatIpv4Address(pool.start);
+                if(organisation.value==='new')document.getElementById('subnet-batch-parent-cidr').value=event.target.value;
+            });
+            form.addEventListener('submit',event=>{
+                event.preventDefault();
+                for(const [key,id]of Object.entries({organisation:'organisation',pool:'pool',parentName:'parent-name',parentCidr:'parent-cidr',existing:'existing',start:'start',prefix:'prefix',count:'count',convention:'convention'}))draft[key]=document.getElementById('subnet-batch-'+id).value.trim();
+                try{generateSubnetBatchPreview();}catch(error){showToast(error.message,'error');}
+            });
+        }
+        function generateSubnetBatchPreview() {
+            const draft=subnetBatchDraft,count=Number(draft.count),prefix=Number(draft.prefix);
+            if(!Number.isInteger(count)||count<1||count>50)throw Error('Create between 1 and 50 subnets per operation.');
+            if(!['First usable IP','Last usable IP'].includes(draft.convention))throw Error('Select a gateway convention.');
+            const first=parseSupportedIpv4Subnet(draft.start+'/'+prefix);
+            if(!first)throw Error('Enter an aligned starting address with a /23–/30 prefix.');
+            if(first.network+first.size*count>2**32)throw Error('The generated range exceeds IPv4 address space.');
+            let parent=null;
+            if(draft.organisation==='existing'){
+                parent=appState.subnets.find(s=>s.id===draft.existing&&s.kind==='container');
+                if(!parent)throw Error('Select an existing IP Address Block.');
+            }else if(draft.organisation==='new'){
+                const range=hierarchyParseCidr(draft.parentCidr);
+                if(!draft.parentName||!range?.aligned)throw Error('Enter a name and aligned CIDR for the new IP Address Block.');
+                parent={id:draft.parentId,kind:'container',cidr:draft.parentCidr,name:draft.parentName};
+            }
+            const pool=draft.pool?hierarchyParseCidr(draft.pool):null;
+            if(pool&&(first.network<pool.start||first.network+first.size*count-1>pool.end))throw Error('Generated subnets must stay within the selected quick-fill range.');
+            const prior=draft.rows;
+            draft.rows=Array.from({length:count},(_,index)=>{
+                const start=first.network+first.size*index,old=prior[index];
+                return {id:old?.id||'sub_'+crypto.randomUUID(),cidr:formatIpv4Address(start)+'/'+prefix,name:old?.name||'',purpose:old?.purpose||'',vlan:old?.vlan||'',gateway:old?.gatewayEdited?old.gateway:formatIpv4Address(draft.convention==='First usable IP'?start+1:start+first.size-2),gatewayEdited:old?.gatewayEdited||false,description:old?.description||''};
+            });
+            draft.parent=parent;
+            const records=draft.rows.map(row=>({id:row.id,kind:'network',cidr:row.cidr,...(parent?{parentId:parent.id}:{})}));
+            const issues=hierarchyValidate([...appState.subnets,...(draft.organisation==='new'?[parent]:[]),...records]);
+            if(issues.length)throw Error(issues[0]);
+            renderSubnetBatchPreview();
+        }
+        function getSubnetBatchRecords() {
+            const draft=subnetBatchDraft;
+            return draft.rows.map(row=>({id:row.id,kind:'network',cidr:row.cidr,name:row.name.trim(),purpose:row.purpose,description:row.description,...(draft.parent?{parentId:draft.parent.id}:{}),...(row.vlan.trim()?{vlan:Number(row.vlan)}:{}),...(row.gateway.trim()?{gateway:row.gateway.trim()}:{})}));
+        }
+        function getSubnetBatchIssues(records) {
+            const issues=[],draft=subnetBatchDraft,vlans=new Set(appState.subnets.filter(subnetHasVlan).map(s=>JSON.stringify([s.parentId||'',Number(s.vlan)])));
+            records.forEach((record,index)=>{
+                const add=(field,message)=>issues.push({index,field,message});
+                if(!record.name)add('name','Enter a subnet name.');
+                if(!['LAN','Management','VPN'].includes(record.purpose))add('purpose','Select LAN, Management or VPN.');
+                if(subnetHasVlan(record)){
+                    const key=JSON.stringify([record.parentId||'',record.vlan]);
+                    if(!Number.isInteger(record.vlan)||record.vlan<1||record.vlan>4094)add('vlan','VLAN must be an integer from 1 to 4094.');
+                    else if(vlans.has(key))add('vlan','This VLAN is already used in this Address Block.');
+                    vlans.add(key);
+                    const catalogue=appState.vlans.find(v=>Number(v.vlanId)===record.vlan&&(v.parentId||'')===(record.parentId||''));
+                    if(catalogue&&catalogue.name!==record.name)add('vlan','This VLAN already has another catalogue name.');
+                }
+                if(record.gateway||record.purpose!=='VPN'){
+                    if(!isUsableHostAddressInSubnet(record.gateway,record.cidr))add('gateway','Enter a usable gateway within '+record.cidr+'.');
+                    else if(appState.ipAllocations[record.gateway]||appState.devices.some(d=>d.primaryIp===record.gateway))add('gateway','Gateway IP is already assigned or reserved.');
+                }
+            });
+            const hierarchy=hierarchyValidate([...appState.subnets,...(draft.organisation==='new'?[draft.parent]:[]),...records]);
+            hierarchy.forEach(message=>{const index=Math.max(0,records.findIndex(r=>message.includes(r.cidr)||message.includes(r.id)));issues.push({index,field:'name',message});});
+            return issues;
+        }
+        function showSubnetBatchIssues(issues) {
+            const form=document.getElementById('subnet-batch-preview');
+            form.querySelectorAll('[data-subnet-error]').forEach(el=>{el.textContent='';el.hidden=true;el.classList.remove('is-visible');});
+            form.querySelectorAll('[aria-invalid]').forEach(el=>el.removeAttribute('aria-invalid'));
+            for(const issue of issues){const row=form.querySelector('[data-subnet-row="'+issue.index+'"]'),error=row.querySelector('[data-subnet-error]');error.hidden=false;error.classList.add('is-visible');error.textContent+=(error.textContent?' ':'')+issue.message;row.querySelector('[data-subnet-field="'+issue.field+'"]').setAttribute('aria-invalid','true');}
+            const summary=form.querySelector('[data-form-error]');summary.textContent=issues.length?'Please correct the highlighted subnet rows. Nothing has been saved.':'';summary.classList.toggle('is-visible',!!issues.length);
+        }
+        function renderSubnetBatchPreview() {
+            const draft=subnetBatchDraft,rows=draft.rows;
+            const controls=rows.map((row,index)=>{
+                const field=(key,label,type='text')=>'<label class="ipam-field" for="subnet-row-'+index+'-'+key+'"><span class="ipam-preview-label">'+label+'</span><input id="subnet-row-'+index+'-'+key+'" data-subnet-field="'+key+'" type="'+type+'" value="'+escapeHtml(row[key])+'" '+(key==='name'||key==='gateway'&&row.purpose!=='VPN'?'required':key==='vlan'?'min="1" max="4094" step="1"':'')+' aria-describedby="subnet-row-'+index+'-error"></label>';
+                return '<tr data-subnet-row="'+index+'"><th scope="row">'+escapeHtml(row.cidr)+'<p class="form-error" id="subnet-row-'+index+'-error" data-subnet-error role="alert" hidden></p></th><td>'+field('name','Name *')+'<details><summary>Description (Optional)</summary>'+field('description','Description')+'</details></td><td><label class="ipam-field" for="subnet-row-'+index+'-purpose"><span class="ipam-preview-label">Purpose *</span><select id="subnet-row-'+index+'-purpose" data-subnet-field="purpose" required aria-describedby="subnet-row-'+index+'-error"><option value="">Select a purpose...</option>'+['LAN','Management','VPN'].map(value=>'<option '+(row.purpose===value?'selected':'')+'>'+value+'</option>').join('')+'</select></label></td><td>'+field('vlan','VLAN (Optional)','number')+'</td><td>'+field('gateway',row.purpose==='VPN'?'Gateway (Optional)':'Gateway *')+'</td></tr>';
+            }).join('');
+            const context=draft.parent?draft.parent.name+' — '+draft.parent.cidr:'No Address Block';
+            openIpamModal(renderInterfaceTemplate("ipam/multiple-subnets-preview",[escapeHtml(rows.length+' subnet(s) · '+context+' · '+rows[0].cidr+' – '+rows.at(-1).cidr),controls,rows.length]));
+            document.getElementById('modal-content').classList.add('ipam-subnet-preview');
+            const form=document.getElementById('subnet-batch-preview');
+            document.getElementById('subnet-batch-back').addEventListener('click',()=>openMultipleSubnets(true));
+            const capture=event=>{
+                const key=event.target.dataset.subnetField,index=Number(event.target.closest('[data-subnet-row]')?.dataset.subnetRow);
+                if(!key||!rows[index])return;
+                rows[index][key]=event.target.value;if(key==='gateway')rows[index].gatewayEdited=true;
+                const gateway=event.target.closest('[data-subnet-row]').querySelector('[data-subnet-field=gateway]');gateway.required=rows[index].purpose!=='VPN';gateway.closest('label').querySelector('span').textContent=rows[index].purpose==='VPN'?'Gateway (Optional)':'Gateway *';
+                showSubnetBatchIssues(getSubnetBatchIssues(getSubnetBatchRecords()));
+            };
+            form.addEventListener('input',capture);form.addEventListener('change',capture);
+            form.addEventListener('submit',async event=>{
+                event.preventDefault();const records=getSubnetBatchRecords(),issues=getSubnetBatchIssues(records);
+                showSubnetBatchIssues(issues);
+                if(issues.length){form.querySelector('[aria-invalid=true]').focus();return;}
+                const before=JSON.stringify(appState);
+                if(draft.organisation==='new')appState.subnets.push(draft.parent);
+                appState.subnets.push(...records);
+                for(const record of records.filter(subnetHasVlan)){
+                    const existing=appState.vlans.find(v=>Number(v.vlanId)===record.vlan&&(v.parentId||'')===(record.parentId||''));
+                    if(!existing)appState.vlans.push({id:'vlan_'+crypto.randomUUID(),name:record.name,vlanId:record.vlan,color:'indigo',...(record.parentId?{parentId:record.parentId}:{})});
+                }
+                form.querySelector('[type=submit]').disabled=true;
+                if(!nextIpamBridge||!await nextIpamBridge.saveSubnet(before,'Created '+records.length+' subnets.')){
+                    appState=JSON.parse(before);form.querySelector('[type=submit]').disabled=false;
+                    const error=form.querySelector('[data-form-error]');error.classList.add('is-visible');if(!error.textContent)error.textContent='The batch was not saved. Please review and try again.';
+                    return;
+                }
+                subnetBatchDraft=null;closeModal(true);renderContent();
+            });
         }
 
         function ipBelongsToSubnet(ip,cidr) { return isUsableHostAddressInSubnet(ip,cidr); }
@@ -3394,7 +3545,7 @@ function openSubnetModal(subnetId = null) {
 }
 
         function confirmInventoryDeletion(subnet,isNetwork,block,deps,deviceRows,subId){
-    openIpamModal(renderInterfaceTemplate("shared/confirm-inventory-deletion-3",[isNetwork?'Subnet & VLAN':'IP Address Block',escapeHtml(subnet.name),escapeHtml(subnet.cidr),isNetwork?renderInterfaceTemplate("shared/confirm-inventory-deletion-1",[escapeHtml(String(subnet.vlan))]):'',escapeHtml(block?.name||'Unassigned'),deps.devices.length?renderInterfaceTemplate("shared/confirm-inventory-deletion-2",[deps.devices.length,deviceRows]):'<p class="ipam-modal-note">No device assignments will be changed.</p>',escapeHtml(subId),deps.devices.length?'Move Devices & Delete Subnet':isNetwork?'Delete Subnet & VLAN':'Delete IP Address Block']));
+    openIpamModal(renderInterfaceTemplate("shared/confirm-inventory-deletion-3",[isNetwork?'Subnet':'IP Address Block',escapeHtml(subnet.name),escapeHtml(subnet.cidr),isNetwork?renderInterfaceTemplate("shared/confirm-inventory-deletion-1",[escapeHtml(String(subnet.vlan??'Not assigned'))]):'',escapeHtml(block?.name||'Unassigned'),deps.devices.length?renderInterfaceTemplate("shared/confirm-inventory-deletion-2",[deps.devices.length,deviceRows]):'<p class="ipam-modal-note">No device assignments will be changed.</p>',escapeHtml(subId),deps.devices.length?'Move Devices & Delete Subnet':isNetwork?'Delete Subnet':'Delete IP Address Block']));
 }
 
         function showSubnetDeletionBlocked(subnet, blockedIps) {
@@ -3432,7 +3583,7 @@ function openSubnetModal(subnetId = null) {
             }
             const isNetwork = !subnet.kind || subnet.kind === 'network';
             const domain = subnet.parentId || '__unassigned__';
-            const linked = isNetwork ? appState.vlans.filter(v =>
+            const linked = isNetwork&&subnetHasVlan(subnet) ? appState.vlans.filter(v =>
                 Number(v.vlanId) === Number(subnet.vlan) &&
                 (v.parentId || '__unassigned__') === domain
             ) : [];
@@ -3511,9 +3662,9 @@ function openSubnetModal(subnetId = null) {
             }
             const isNetwork = !subnet.kind || subnet.kind === 'network';
             const domain = subnet.parentId || '__unassigned__';
-            const linked = isNetwork ? appState.vlans.filter(v => Number(v.vlanId) === Number(subnet.vlan) && (v.parentId || '__unassigned__') === domain) : [];
+            const linked = isNetwork&&subnetHasVlan(subnet) ? appState.vlans.filter(v => Number(v.vlanId) === Number(subnet.vlan) && (v.parentId || '__unassigned__') === domain) : [];
             if (linked.length > 1 || (isNetwork && linked.length === 0 && appState.vlans.some(v => Number(v.vlanId) === Number(subnet.vlan) && !v.parentId)) ||
-                appState.subnets.some(s => s.id !== subId && (!s.kind || s.kind === 'network') && Number(s.vlan) === Number(subnet.vlan) && (s.parentId || '__unassigned__') === domain)) {
+                appState.subnets.some(s => subnetHasVlan(subnet)&&s.id !== subId && (!s.kind || s.kind === 'network') && Number(s.vlan) === Number(subnet.vlan) && (s.parentId || '__unassigned__') === domain)) {
                 showToast('VLAN ownership changed; deletion cancelled.', 'error');
                 return;
             }
@@ -3651,7 +3802,7 @@ function openIpModal(ip) {
                 .map(field => [field.id || field.name || '', field.type, field.type === 'checkbox' || field.type === 'radio' ? field.checked : field.value]));
         }
         function rememberModalForm() {
-            const form = document.querySelector('#modal-content form[data-device-form="true"], #modal-content form[data-form-action="subnet"], #modal-content form[data-form-action="rack"], #modal-content form[data-form-action="ip"], #modal-content form[data-form-action="assign"], #modal-content form[data-form-action="bulk-ip"], #modal-content form[data-form-action="manufacturer"], #modal-content form[data-form-action="model"], #modal-content form[data-form-action="software"], #modal-content form[data-form-action="server-service"]');
+            const form = document.querySelector('#modal-content form[data-device-form="true"], #modal-content form[data-ipam-subnet-creation], #modal-content form[data-form-action="subnet"], #modal-content form[data-form-action="rack"], #modal-content form[data-form-action="ip"], #modal-content form[data-form-action="assign"], #modal-content form[data-form-action="bulk-ip"], #modal-content form[data-form-action="manufacturer"], #modal-content form[data-form-action="model"], #modal-content form[data-form-action="software"], #modal-content form[data-form-action="server-service"]');
             if (form) modalFormSnapshots.set(form, modalFormSnapshot(form));
         }
         let pendingDeviceFormDiscardCallback=null;
@@ -3735,7 +3886,7 @@ function openIpModal(ip) {
                 content.querySelector('form[data-device-form="true"]')?.querySelector('input,select,textarea')?.focus();
                 return;
             }
-            const editableForm = document.querySelector('#modal-content form[data-device-form="true"], #modal-content form[data-form-action="subnet"], #modal-content form[data-form-action="rack"], #modal-content form[data-form-action="ip"], #modal-content form[data-form-action="assign"], #modal-content form[data-form-action="bulk-ip"], #modal-content form[data-form-action="manufacturer"], #modal-content form[data-form-action="model"], #modal-content form[data-form-action="software"], #modal-content form[data-form-action="server-service"]');
+            const editableForm = document.querySelector('#modal-content form[data-device-form="true"], #modal-content form[data-ipam-subnet-creation], #modal-content form[data-form-action="subnet"], #modal-content form[data-form-action="rack"], #modal-content form[data-form-action="ip"], #modal-content form[data-form-action="assign"], #modal-content form[data-form-action="bulk-ip"], #modal-content form[data-form-action="manufacturer"], #modal-content form[data-form-action="model"], #modal-content form[data-form-action="software"], #modal-content form[data-form-action="server-service"]');
             if (!force && editableForm && modalFormSnapshots.has(editableForm) &&
                 modalFormSnapshot(editableForm) !== modalFormSnapshots.get(editableForm) &&
                 !confirmDiscardDeviceFormChanges(() => closeModal(true, onClosed))) return;
@@ -3753,7 +3904,7 @@ function openIpModal(ip) {
             const container = document.getElementById('modal-container');
             const content = document.getElementById('modal-content');
             if (container.classList.contains('hidden')) modalReturnFocus = document.activeElement;
-            content.classList.remove('rack-balanced-modal', 'settings-access-point-review', 'settings-legacy-review', 'ipam-record-modal', 'catalogue-modal', 'device-review-container', 'ipam-modal', 'catalog-modal');
+            content.classList.remove('rack-balanced-modal', 'settings-access-point-review', 'settings-legacy-review', 'ipam-record-modal','ipam-subnet-preview', 'catalogue-modal', 'device-review-container', 'ipam-modal', 'catalog-modal');
             container.classList.remove('catalog-modal-overlay', 'device-review-overlay', 'ipam-modal-overlay', 'rack-modal-shade');
             content.innerHTML = htmlContent;
             if(content.querySelector('.ipam-modal-head')){
@@ -4170,7 +4321,7 @@ function openIpModal(ip) {
 
         function getSubnetForIp(ip) {
             if(!isValidIpv4(ip)) return null;
-            return appState.subnets.find(subnet=>isUsableHostAddressInSubnet(ip,subnet.cidr))||null;
+            return appState.subnets.find(subnet=>(!subnet.kind||subnet.kind==='network')&&isUsableHostAddressInSubnet(ip,subnet.cidr))||null;
         }
         function refreshDeviceIpOptions() {
             const subnetSelect = document.getElementById('dev-subnet');
@@ -4235,35 +4386,37 @@ function openIpModal(ip) {
             return current?.kind === 'container' && !current.parentId ? current : null;
         }
         function refreshDeviceSubnetSelectionCascade(level = 'initial') {
-            const block = document.getElementById('dev-block');
-            const vlan = document.getElementById('dev-vlan');
-            const subnet = document.getElementById('dev-subnet');
-            if (!block || !vlan || !subnet) return;
-            const initial = level === 'initial' ? subnet.dataset.initialSubnet : '';
-            const selected = appState.subnets.find(s => s.id === initial);
-            if (level === 'initial' && selected && !block.value) block.value = getDeviceSubnetTopLevelBlock(selected)?.id || '__unassigned__';
-            const networks = appState.subnets.filter(s => (!s.kind || s.kind === 'network') &&
-                (getDeviceSubnetTopLevelBlock(s)?.id || '__unassigned__') === block.value);
-            const vlanIds = [...new Set(networks.map(s => String(s.vlan)))].sort((a,b) => Number(a)-Number(b));
-            const previousVlan = level === 'subnet' ? vlan.value : level === 'initial' ? String(selected?.vlan ?? '') : '';
-            vlan.innerHTML = '<option value="">Select a VLAN...</option>' + vlanIds.map(id =>
-                `<option value="${escapeHtml(id)}">${escapeHtml('VLAN ' + id)}</option>`).join('');
-            if (vlanIds.includes(previousVlan)) vlan.value = previousVlan;
-            const matches = networks.filter(s => String(s.vlan) === vlan.value);
-            subnet.innerHTML = '<option value="">Select a subnet...</option>' + matches.map(s =>
-                `<option value="${escapeHtml(s.id)}">${escapeHtml(s.name || s.cidr)} — ${escapeHtml(s.cidr)}</option>`).join('');
-            if (level === 'initial' && matches.some(s => s.id === initial)) subnet.value = initial;
-            else if (matches.length === 1 && vlan.value) subnet.value = matches[0].id;
-            if (level !== 'initial') handleDeviceSubnetChange();
+            const block=document.getElementById('dev-block'),vlan=document.getElementById('dev-vlan'),subnet=document.getElementById('dev-subnet');
+            if(!block||!vlan||!subnet)return;
+            const selectedId=level==='initial'?subnet.dataset.initialSubnet:subnet.value;
+            const selected=appState.subnets.find(s=>s.id===selectedId);
+            if(level==='initial'&&block.dataset.restoredFilter!==undefined)block.value=block.dataset.restoredFilter;
+            else if(level==='initial'&&selected&&!block.value)block.value=getDeviceSubnetTopLevelBlock(selected)?.id||'__unassigned__';
+            const inside=s=>{
+                if(!block.value)return true;
+                if(block.value==='__unassigned__')return !s.parentId;
+                const seen=new Set();let parent=s.parentId;
+                while(parent&&!seen.has(parent)){if(parent===block.value)return true;seen.add(parent);parent=appState.subnets.find(p=>p.id===parent)?.parentId;}
+                return false;
+            };
+            const networks=appState.subnets.filter(s=>(!s.kind||s.kind==='network')&&inside(s));
+            subnet.innerHTML='<option value="">Select a subnet...</option>'+networks.map(s=>'<option value="'+escapeHtml(s.id)+'">'+escapeHtml((s.name||s.cidr)+' — '+s.cidr)+'</option>').join('');
+            if(networks.some(s=>s.id===selectedId))subnet.value=selectedId;
+            const current=appState.subnets.find(s=>s.id===subnet.value);
+            vlan.value=subnetHasVlan(current)?String(current.vlan):'Not assigned';
+            if(level!=='initial')handleDeviceSubnetChange();
+            if(!networks.length&&block.value&&block.value!=='__unassigned__'){
+                const hint=document.getElementById('dev-ip-hint');if(hint)hint.textContent='This IP Address Block has no usable child subnets. Create an addressable subnet in IPAM first.';
+            }
+            refreshDeviceEditorDropdowns();
         }
         function handleDeviceSubnetChange() {
-            const select = document.getElementById('dev-subnet');
-            const ip = document.getElementById('dev-ip');
-            if (!select || !ip) return;
-            const subnet = appState.subnets.find(s => s.id === select.value);
-            const current = getSubnetForIp(ip.value.trim());
-            if (!subnet || !current || current.id !== subnet.id) ip.value = '';
-            refreshDeviceIpOptions();
+            const select=document.getElementById('dev-subnet'),ip=document.getElementById('dev-ip'),vlan=document.getElementById('dev-vlan');
+            if(!select||!ip)return;
+            const subnet=appState.subnets.find(s=>s.id===select.value),current=getSubnetForIp(ip.value.trim());
+            if(vlan)vlan.value=subnetHasVlan(subnet)?String(subnet.vlan):'Not assigned';
+            if(!subnet||!current||current.id!==subnet.id)ip.value='';
+            refreshDeviceIpOptions();refreshDeviceEditorDropdowns();
         }
 
         function updateDeviceRackLimits() {
@@ -6043,12 +6196,13 @@ function openIpModal(ip) {
             if(oldNetworkGrid){
                 const fields=document.createElement('div');
                 fields.className='device-review-form-grid';
-                for(const id of ['dev-block','dev-subnet','dev-ip','dev-vlan']){
+                for(const id of ['dev-block','dev-subnet','dev-vlan','dev-ip']){
                     const control=networkIdentity.querySelector('#'+id);
                     const label=networkIdentity.querySelector('label[for="'+id+'"]');
                     if(!control||!label)continue;
                     const field=document.createElement('div');field.className='device-review-field';
                     label.className='';field.append(label,control);
+                    if(id==='dev-vlan'){const hint=document.createElement('small');hint.id='dev-vlan-hint';hint.textContent='Read-only. VLAN is managed on the selected subnet in IPAM.';control.setAttribute('aria-describedby',hint.id);field.append(hint);}
                     if(id==='dev-ip'){
                         const available=networkIdentity.querySelector('#dev-ip-available');
                         const availableLabel=networkIdentity.querySelector('label[for="dev-ip-available"]');
@@ -6436,7 +6590,7 @@ function openIpModal(ip) {
             const retainedHostId = draft?.virtualHostId ?? device?.virtualHostId ?? '';
             const missingLegacyHost = device && isExistingVirtual && retainedHostId && retainedHostId===device.virtualHostId &&
                 !appState.devices.some(host=>host.id===retainedHostId&&host.type==='Server - Physical');
-            openDeviceReviewModal(renderInterfaceTemplate("device-details/open-device-modal-5",[device ? 'Edit Device' : isDuplicate ? 'Duplicate Device' : 'Add New Device',device ? escapeHtml(device.name)+' · Existing device details' : isDuplicate ? 'Enter a unique name and IP. The original device is unchanged.' : 'Configure a physical device or VM with the existing Caffoot fields.','',escapeHtml(device?.id || draft?.deviceId || ''),escapeHtml(draft?.name ?? device?.name ?? ''),device ? 'hidden' : '',!isExistingVirtual?'selected':'',hasEligiblePhysicalHost||isExistingVirtual?`<option value="virtual" ${isExistingVirtual?'selected':''}>Virtual Machine (VM)</option>`:'',isExistingVirtual || device ? 'hidden' : '',currentType === '' ? 'selected' : '',availableFormTypes.map(t => `<option value="${escapeHtml(t)}" ${currentType === t ? 'selected' : ''}>${escapeHtml(t === 'Server - Physical' ? 'Server' : t)}</option>`).join(''),currentType==='Server - Virtual'?'selected':'',isExistingVirtual && !device ? '' : 'hidden',vmPurposes.map(([label,value])=>`<option value="${escapeHtml(value)}" ${currentType===value?'selected':''}>${escapeHtml(label)}</option>`).join(''),device ? renderInterfaceTemplate("device-details/open-device-modal-2",[escapeHtml(isExistingVirtual ? 'Virtual ' : 'Physical '),escapeHtml(currentType === 'Server - Virtual' || currentType === 'Server - Physical' ? 'Server' : currentType)]) : '',['','VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng','Other'].map(x=>'<option value="'+escapeHtml(x)+'" '+((draft?.virtualPlatform ?? device?.virtualPlatform ?? '')===x?'selected':'')+'>'+escapeHtml(x||'Select Platform...')+'</option>').join(''),device?.type === 'Server - Virtual' ? '(legacy assignments preserved)' : '(required)',appState.devices.filter(x=>x.id!==(device?.id||'')&&x.type==='Server - Physical'&&((x.status!=='Retired'&&(x.typeDetails?.serverService_Hypervisor===true||x.serverService_Hypervisor===true))||x.id===(draft?.virtualHostId??device?.virtualHostId??''))).map(x=>'<option value="'+escapeHtml(x.id)+'" '+((draft?.virtualHostId ?? device?.virtualHostId ?? '')===x.id?'selected':'')+'>'+escapeHtml(x.name)+(x.status==='Retired'||!(x.typeDetails?.serverService_Hypervisor===true||x.serverService_Hypervisor===true)?' (existing legacy assignment)':'')+'</option>').join('')+(missingLegacyHost?'<option value="'+escapeHtml(retainedHostId)+'" selected>Missing or legacy host (retained)</option>':''),[['vmVcpu','vCPU count'],['vmRamGb','Allocated RAM (GB)'],['vmDiskGb','Virtual disk (GB)'],['vmNicCount','Virtual network adapters']].map(([key,label])=>renderInterfaceTemplate("device-details/open-device-modal-3",[key,label,key,key,escapeHtml(deviceDetailFormValues[key] ?? '')])).join(''),deviceDetailFormValues.serverService_Hypervisor === true ? 'checked' : '',deviceDetailFormValues.serverService_Hypervisor === true ? '' : 'hidden',['VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng'].map(p=>`<option value="${escapeHtml(p)}" ${deviceDetailFormValues.hypervisorProduct===p?'selected':''}>${escapeHtml(p)}</option>`).join(''),deviceDetailFormValues.hypervisorProduct && !['VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng'].includes(deviceDetailFormValues.hypervisorProduct)?'selected':'',escapeHtml(deviceDetailFormValues.hypervisorProduct || ''),deviceDetailFormValues.hypervisorProduct && !['VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng'].includes(deviceDetailFormValues.hypervisorProduct)?'':'hidden',escapeHtml(deviceDetailFormValues.hypervisorVersion || ''),device ? renderInterfaceTemplate("device-details/open-device-modal-4",[['Active','Maintenance','Retired'].map(v=>`<option value="${v}" ${(draft?.status ?? device?.status ?? 'Active')===v?'selected':''}>${v}</option>`).join('')]) : '<input type="hidden" id="dev-status" value="Active">',escapeHtml(draft?.manufacturer ?? device?.manufacturer ?? ''),escapeHtml(draft?.model ?? device?.model ?? ''),escapeHtml(draft?.serialNumber ?? device?.serialNumber ?? ''),renderInlineHardwareQuickAdd("manufacturer"),renderInlineHardwareQuickAdd("model"),getDetailFieldsForDeviceType(currentType).length===0?'hidden':'',deviceTypeDetailGroups[String(currentType||'').toLowerCase().trim()]==='server'?'':'hidden',['server','computer'].includes(deviceTypeDetailGroups[String(currentType||'').toLowerCase().trim()])?'':'hidden',renderDeviceDetailFields(currentType,deviceDetailFormValues,'hardware'),renderDeviceMountOptions(currentType,mountType),escapeHtml(currentLoc),currentLoc === '' ? 'selected' : '',locations.map(l => `<option value="${escapeHtml(l)}" ${currentLoc === l ? 'selected' : ''}>${escapeHtml(l)}</option>`).join(''),mountType === 'Rack Mounted' ? '' : 'hidden',mountType === 'Rack Mounted' ? '' : 'hidden',!appState.racks.length ? 'selected' : '',appState.racks.length ? 'Select a network rack...' : 'No network racks created yet',appState.racks.map(r => `<option value="${escapeHtml(r.id)}" ${(draft?.rackId ?? device?.rackId) === r.id ? 'selected' : ''}>${escapeHtml(r.name)}</option>`).join(''),(draft?.face ?? device?.face) !== 'rear' ? 'selected' : '',(draft?.face ?? device?.face) === 'rear' ? 'selected' : '',escapeHtml(String(draft?.rackUStart ?? device?.rackUStart ?? 1)),currentHeight,appState.subnets.filter(s => s.kind === 'container' && !s.parentId).map(b => `<option value="${escapeHtml(b.id)}" ${currentSubnet && getDeviceSubnetTopLevelBlock(currentSubnet)?.id === b.id ? 'selected' : ''}>${escapeHtml(b.name || b.cidr)}</option>`).join(''),currentSubnet && !getDeviceSubnetTopLevelBlock(currentSubnet) ? 'selected' : '',escapeHtml(currentSubnet?.id || ''),escapeHtml(draft?.primaryIp ?? device?.primaryIp ?? ''),(draft?.ipReserved ?? device?.ipReserved ?? (device?.primaryIp && appState.ipAllocations[device.primaryIp]?.status === 'Reserved')) ? 'checked' : '',escapeHtml(draft?.notes ?? device?.notes ?? '')]));
+            openDeviceReviewModal(renderInterfaceTemplate("device-details/open-device-modal-5",[device ? 'Edit Device' : isDuplicate ? 'Duplicate Device' : 'Add New Device',device ? escapeHtml(device.name)+' · Existing device details' : isDuplicate ? 'Enter a unique name and IP. The original device is unchanged.' : 'Configure a physical device or VM with the existing Caffoot fields.','',escapeHtml(device?.id || draft?.deviceId || ''),escapeHtml(draft?.name ?? device?.name ?? ''),device ? 'hidden' : '',!isExistingVirtual?'selected':'',hasEligiblePhysicalHost||isExistingVirtual?`<option value="virtual" ${isExistingVirtual?'selected':''}>Virtual Machine (VM)</option>`:'',isExistingVirtual || device ? 'hidden' : '',currentType === '' ? 'selected' : '',availableFormTypes.map(t => `<option value="${escapeHtml(t)}" ${currentType === t ? 'selected' : ''}>${escapeHtml(t === 'Server - Physical' ? 'Server' : t)}</option>`).join(''),currentType==='Server - Virtual'?'selected':'',isExistingVirtual && !device ? '' : 'hidden',vmPurposes.map(([label,value])=>`<option value="${escapeHtml(value)}" ${currentType===value?'selected':''}>${escapeHtml(label)}</option>`).join(''),device ? renderInterfaceTemplate("device-details/open-device-modal-2",[escapeHtml(isExistingVirtual ? 'Virtual ' : 'Physical '),escapeHtml(currentType === 'Server - Virtual' || currentType === 'Server - Physical' ? 'Server' : currentType)]) : '',['','VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng','Other'].map(x=>'<option value="'+escapeHtml(x)+'" '+((draft?.virtualPlatform ?? device?.virtualPlatform ?? '')===x?'selected':'')+'>'+escapeHtml(x||'Select Platform...')+'</option>').join(''),device?.type === 'Server - Virtual' ? '(legacy assignments preserved)' : '(required)',appState.devices.filter(x=>x.id!==(device?.id||'')&&x.type==='Server - Physical'&&((x.status!=='Retired'&&(x.typeDetails?.serverService_Hypervisor===true||x.serverService_Hypervisor===true))||x.id===(draft?.virtualHostId??device?.virtualHostId??''))).map(x=>'<option value="'+escapeHtml(x.id)+'" '+((draft?.virtualHostId ?? device?.virtualHostId ?? '')===x.id?'selected':'')+'>'+escapeHtml(x.name)+(x.status==='Retired'||!(x.typeDetails?.serverService_Hypervisor===true||x.serverService_Hypervisor===true)?' (existing legacy assignment)':'')+'</option>').join('')+(missingLegacyHost?'<option value="'+escapeHtml(retainedHostId)+'" selected>Missing or legacy host (retained)</option>':''),[['vmVcpu','vCPU count'],['vmRamGb','Allocated RAM (GB)'],['vmDiskGb','Virtual disk (GB)'],['vmNicCount','Virtual network adapters']].map(([key,label])=>renderInterfaceTemplate("device-details/open-device-modal-3",[key,label,key,key,escapeHtml(deviceDetailFormValues[key] ?? '')])).join(''),deviceDetailFormValues.serverService_Hypervisor === true ? 'checked' : '',deviceDetailFormValues.serverService_Hypervisor === true ? '' : 'hidden',['VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng'].map(p=>`<option value="${escapeHtml(p)}" ${deviceDetailFormValues.hypervisorProduct===p?'selected':''}>${escapeHtml(p)}</option>`).join(''),deviceDetailFormValues.hypervisorProduct && !['VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng'].includes(deviceDetailFormValues.hypervisorProduct)?'selected':'',escapeHtml(deviceDetailFormValues.hypervisorProduct || ''),deviceDetailFormValues.hypervisorProduct && !['VMware ESXi','Proxmox VE','Microsoft Hyper-V','KVM','XCP-ng'].includes(deviceDetailFormValues.hypervisorProduct)?'':'hidden',escapeHtml(deviceDetailFormValues.hypervisorVersion || ''),device ? renderInterfaceTemplate("device-details/open-device-modal-4",[['Active','Maintenance','Retired'].map(v=>`<option value="${v}" ${(draft?.status ?? device?.status ?? 'Active')===v?'selected':''}>${v}</option>`).join('')]) : '<input type="hidden" id="dev-status" value="Active">',escapeHtml(draft?.manufacturer ?? device?.manufacturer ?? ''),escapeHtml(draft?.model ?? device?.model ?? ''),escapeHtml(draft?.serialNumber ?? device?.serialNumber ?? ''),renderInlineHardwareQuickAdd("manufacturer"),renderInlineHardwareQuickAdd("model"),getDetailFieldsForDeviceType(currentType).length===0?'hidden':'',deviceTypeDetailGroups[String(currentType||'').toLowerCase().trim()]==='server'?'':'hidden',['server','computer'].includes(deviceTypeDetailGroups[String(currentType||'').toLowerCase().trim()])?'':'hidden',renderDeviceDetailFields(currentType,deviceDetailFormValues,'hardware'),renderDeviceMountOptions(currentType,mountType),escapeHtml(currentLoc),currentLoc === '' ? 'selected' : '',locations.map(l => `<option value="${escapeHtml(l)}" ${currentLoc === l ? 'selected' : ''}>${escapeHtml(l)}</option>`).join(''),mountType === 'Rack Mounted' ? '' : 'hidden',mountType === 'Rack Mounted' ? '' : 'hidden',!appState.racks.length ? 'selected' : '',appState.racks.length ? 'Select a network rack...' : 'No network racks created yet',appState.racks.map(r => `<option value="${escapeHtml(r.id)}" ${(draft?.rackId ?? device?.rackId) === r.id ? 'selected' : ''}>${escapeHtml(r.name)}</option>`).join(''),(draft?.face ?? device?.face) !== 'rear' ? 'selected' : '',(draft?.face ?? device?.face) === 'rear' ? 'selected' : '',escapeHtml(String(draft?.rackUStart ?? device?.rackUStart ?? 1)),currentHeight,appState.subnets.filter(s => s.kind === 'container').map(b => `<option value="${escapeHtml(b.id)}" ${currentSubnet && getDeviceSubnetTopLevelBlock(currentSubnet)?.id === b.id ? 'selected' : ''}>${escapeHtml(b.name || b.cidr)}</option>`).join(''),currentSubnet && !getDeviceSubnetTopLevelBlock(currentSubnet) ? 'selected' : '',escapeHtml(currentSubnet?.id || ''),escapeHtml(draft?.primaryIp ?? device?.primaryIp ?? ''),(draft?.ipReserved ?? device?.ipReserved ?? (device?.primaryIp && appState.ipAllocations[device.primaryIp]?.status === 'Reserved')) ? 'checked' : '',escapeHtml(draft?.notes ?? device?.notes ?? '')]));
             const tabbedDeviceForm = document.querySelector('[data-device-form="true"]');
             if(tabbedDeviceForm&&isDuplicate)tabbedDeviceForm.dataset.duplicateSourceId=draft.duplicatedFrom;
             if (tabbedDeviceForm && draft?.activeDeviceTab) tabbedDeviceForm.dataset.initialDeviceTab = draft.activeDeviceTab;
@@ -6494,6 +6648,7 @@ function openIpModal(ip) {
                 refreshDeviceSoftwareSuggestions();refreshDeviceEditorHostVersionChoices();
             });
             syncHostingFieldVisibility();
+            if(draft?.subnetBlock!==undefined)document.getElementById('dev-block').dataset.restoredFilter=draft.subnetBlock;
             refreshDeviceSubnetSelectionCascade('initial');
             refreshDeviceIpOptions();
             if(draft?.editorWarning)showDeviceEditorFeedback(draft.editorWarning,'dev-mount-type');
@@ -6548,6 +6703,7 @@ function openIpModal(ip) {
                 rackUStart: parseInt(document.getElementById('dev-rack-u')?.value || '', 10) || null,
                 rackUHeight: parseInt(document.getElementById('dev-rack-height')?.value || '', 10) || null,
                 subnetId: document.getElementById('dev-subnet')?.value || '',
+                subnetBlock:document.getElementById('dev-block')?.value||'',
                 primaryIp: document.getElementById('dev-ip')?.value || '',
                 ipReserved: !!document.getElementById('dev-ip-reserved')?.checked,
                 status: document.getElementById('dev-status')?.value || 'Active',
@@ -7675,11 +7831,11 @@ function openIpModal(ip) {
         });
         document.addEventListener('input', function(event) {
             if (event.target.id === 'sub-cidr') {
-                suggestSubnetGateway();
+                suggestSubnetGateway();validateSubnetGatewayField();
                 return;
             }
             if (event.target.id === 'sub-gw') {
-                event.target.dataset.autoGateway = '';
+                event.target.dataset.autoGateway = '';event.target.dataset.manualGateway='true';validateSubnetGatewayField();
                 return;
             }
             if (event.target.id === 'ipam-address-search') {
@@ -7745,7 +7901,6 @@ function openIpModal(ip) {
                     handleDeviceIpSelection();
                     break;
                 case 'device-block-change': refreshDeviceSubnetSelectionCascade('block'); break;
-                case 'device-vlan-change': refreshDeviceSubnetSelectionCascade('subnet'); break;
                 case 'device-subnet-change':
                     handleDeviceSubnetChange();
                     break;
@@ -8407,6 +8562,7 @@ function openIpModal(ip) {
                 case 'assign-device': openAssignDeviceModal(target.dataset.rackId, Number(target.dataset.u), target.dataset.deviceId || null); break;
                 case 'unassign-device': unassignDevice(id); break;
                 case 'open-subnet-modal': openSubnetModal(); break;
+                case 'open-multiple-subnets': openMultipleSubnets(); break;
                 case 'edit-subnet': openSubnetModal(id); break;
                 case 'delete-subnet': deleteSubnet(id); break;
                 case 'confirm-delete-subnet': confirmDeleteSubnet(id); break;
@@ -8641,7 +8797,7 @@ void (async () => {
     if (!response.ok) throw new Error(result.error || 'Unable to save inventory.');
     return result;
   }
-  const actionCanEditIpam = new Set(['open-subnet-modal','bulk-ip','apply-bulk-ip-assignment',
+  const actionCanEditIpam = new Set(['open-subnet-modal','open-multiple-subnets','bulk-ip','apply-bulk-ip-assignment',
     'edit-subnet','edit-ipam-block','delete-vlan','reconcile-legacy-vlans',
     'delete-subnet','confirm-delete-subnet','apply-inventory-integrity-repairs',
     'create-subnet-from-device']);
@@ -8691,7 +8847,7 @@ void (async () => {
     if (readOnlyActions.has(action)) return false;
     if (['open-device-modal','duplicate-device','duplicate-device-from-details'].includes(action))
       return !(editPermissions.Devices && editPermissions.IPAM);
-    if (action === 'open-subnet-modal') return !editPermissions.IPAM;
+    if (action === 'open-subnet-modal'||action==='open-multiple-subnets') return !editPermissions.IPAM;
     if (action === 'check-inventory-safety')
       return !['Devices','IPAM','Racks'].every(section => permissions[section]);
     if (action === 'apply-inventory-integrity-repairs')
@@ -8720,7 +8876,7 @@ void (async () => {
           button.form?.matches('#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#personal-details-form,#account-email-verification-form') ||
           (sessionIsAdmin && button.closest('#next-user-create-form,#next-user-profile-form,#smtp-settings-form,#smtp-test-form')) ||
           (editPermissions.Devices && button.form?.matches('form[data-device-form="true"]')) ||
-          (editPermissions.IPAM && button.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"]')) ||
+          (editPermissions.IPAM && button.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"],form[data-ipam-subnet-creation]')) ||
           (editPermissions.Devices && editPermissions.Racks && button.closest('#rack-shelf-removal-form')) ||
           (editPermissions.Racks && button.closest('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form'))
         );
@@ -8892,7 +9048,7 @@ void (async () => {
     'view-device','view-hosted-virtual-machine','edit-device','edit-device-from-details',
     'open-device-modal','open-ip','select-next-available-ip-address',
     'open-rack-modal','edit-rack','correct-rack-specifications','edit-rack-accessory',
-    'open-subnet-modal','edit-subnet','edit-ipam-block','open-subnet-by-vlan','bulk-ip'
+    'open-subnet-modal','open-multiple-subnets','edit-subnet','edit-ipam-block','open-subnet-by-vlan','bulk-ip'
   ]);
   let resumingFreshNavigation = false;
   document.addEventListener('click', event => {
@@ -9180,7 +9336,7 @@ void (async () => {
       pendingSave=true;
       try {
         await postInventory('/api/ipam/subnets/save',{changes});
-        await refreshCentralInventory(false);
+        try{await refreshCentralInventory(false);}catch(error){showToast('Subnets saved. Unable to refresh the latest inventory.','error');return true;}
         showToast(successMessage);
         return true;
       } catch(error) {
@@ -10184,7 +10340,7 @@ void (async () => {
     const action = element.dataset.action || '';
     if (isBlockedAction(action, element) || (element.matches('button') && element.type==='submit' && element.form &&
         !element.form.matches('form[data-device-form="true"],#next-user-create-form,#next-user-profile-form,#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#personal-details-form,#smtp-settings-form,#smtp-test-form,#account-email-verification-form') &&
-        !(editPermissions.IPAM && element.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"]')) &&
+        !(editPermissions.IPAM && element.closest('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"],form[data-ipam-subnet-creation]')) &&
         !(editPermissions.Devices && editPermissions.Racks && element.closest('#rack-shelf-removal-form')) &&
         !(editPermissions.Racks && element.closest('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form')))) {
       event.preventDefault();
@@ -10195,7 +10351,7 @@ void (async () => {
   document.addEventListener('submit',event => {
     if (event.target.matches('#next-account-password-form,#next-account-mfa-start,#next-account-mfa-confirm,#personal-details-form,#next-user-profile-form,#smtp-settings-form,#smtp-test-form,#account-email-verification-form') ||
         (editPermissions.Devices && event.target.matches('form[data-device-form="true"]')) ||
-        (editPermissions.IPAM && event.target.matches('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"]')) ||
+        (editPermissions.IPAM && event.target.matches('form[data-form-action="ip"],form[data-form-action="bulk-ip"],form[data-form-action="subnet"],form[data-ipam-subnet-creation]')) ||
         (editPermissions.Racks && event.target.matches('form[data-form-action="rack"],form[data-form-action="assign"],#rack-accessory-form')) ||
         (editPermissions.Devices && editPermissions.Racks && event.target.matches('#rack-shelf-removal-form')) ||
         (sessionIsAdmin && event.target.matches('#next-user-create-form'))) return;

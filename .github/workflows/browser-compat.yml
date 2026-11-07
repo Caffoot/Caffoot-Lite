@@ -12,6 +12,7 @@ on:
       - "tests/device-form-followups.cjs"
       - "tests/rack-location-defaults.cjs"
       - "tests/host-select-review.cjs"
+      - "tests/subnet-first-ipam.cjs"
       - "tests/approved-visual.cjs"
       - "tests/visual_fixtures.py"
       - "inventory.html"
@@ -27,6 +28,7 @@ on:
       - "tests/device-form-followups.cjs"
       - "tests/rack-location-defaults.cjs"
       - "tests/host-select-review.cjs"
+      - "tests/subnet-first-ipam.cjs"
       - "tests/approved-visual.cjs"
       - "tests/visual_fixtures.py"
       - "inventory.html"
@@ -124,6 +126,21 @@ jobs:
           path: ${{ runner.temp }}/issue-333-evidence
           if-no-files-found: ignore
           retention-days: 14
+      - name: Check subnet-first single, bulk and Device Networking workflows
+        env:
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
+          CAFFOOT_SUBNET_FIRST: "1"
+          CAFFOOT_VISUAL_FILTER: "^$"
+          CAFFOOT_VISUAL_OUTPUT: ${{ runner.temp }}/issue-329-evidence
+        run: node tests/approved-visual.cjs
+      - name: Save fictional Issue 329 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: issue-329-chromium-${{ github.sha }}
+          path: ${{ runner.temp }}/issue-329-evidence
+          if-no-files-found: ignore
+          retention-days: 14
   native-select-engines:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
@@ -150,6 +167,7 @@ jobs:
           NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
           CAFFOOT_VISUAL_ENGINE: ${{ matrix.engine }}
           CAFFOOT_HOST_SELECT_REVIEW: "1"
+          CAFFOOT_SUBNET_FIRST: "1"
           CAFFOOT_VISUAL_FILTER: "^$"
           CAFFOOT_VISUAL_OUTPUT: ${{ runner.temp }}/issue-333-evidence
         run: node tests/approved-visual.cjs

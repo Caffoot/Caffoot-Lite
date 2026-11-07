@@ -630,14 +630,15 @@ async function run(){
 
   await modal(page,'openSubnetModal');
   const ipamAddDialog=page.locator('#modal-content.ipam-record-modal');
-  assert.ok(await ipamAddDialog.locator('.ipam-modal-head h2').getByText('Add Subnet',{exact:true}).isVisible(),
+  assert.ok(await ipamAddDialog.locator('.ipam-modal-head h2').getByText('Add Single Subnet',{exact:true}).isVisible(),
     'IPAM Add Subnet must use approved Draft 01 modal heading');
-  assert.equal(await ipamAddDialog.locator('.ipam-modal-body > .ipam-form-grid > .ipam-field').count(),7,
+  assert.equal(await ipamAddDialog.locator('.ipam-modal-body > .ipam-form-grid > .ipam-field').count(),8,
     'IPAM Add Subnet must use the original Draft 01 field-grid structure');
   assert.ok(await ipamAddDialog.locator('.ipam-modal-actions button[type="submit"]').isVisible(),
     'Approved IPAM form footer must retain the working save action');
   await page.locator('#sub-cidr').fill('10.64.20.0/24');
   await page.locator('#sub-name').fill('Browser Network');
+  await page.locator('#sub-purpose').selectOption('LAN');
   await page.locator('#sub-vlan').fill('17');
   await page.locator('#sub-gw').fill('10.64.20.1');
   await page.locator('form[data-form-action="subnet"] button[type="submit"]').click();
@@ -972,7 +973,7 @@ async function run(){
   await page.locator('#dev-location').selectOption('Office');
   await page.getByRole('tab',{name:'Networking'}).click();
   await page.locator('#dev-block').selectOption('__unassigned__');
-  await page.locator('#dev-vlan').selectOption('17');
+
   const options=await page.locator('#dev-subnet option').evaluateAll(nodes=>nodes.map(x=>({id:x.value,label:x.textContent})));
   const selected=options.find(x=>x.label.includes('10.64.20.0/24'));
   assert.ok(selected,'Subnet cascade failed to show published network');
@@ -1290,7 +1291,7 @@ async function run(){
   await page.locator('#dev-rack-u').selectOption('5');
   await page.getByRole('tab',{name:'Networking'}).click();
   await page.locator('#dev-block').selectOption('__unassigned__');
-  await page.locator('#dev-vlan').selectOption('17');
+
   await page.locator('#dev-subnet').selectOption(subnetId);
   await page.locator('#dev-ip').fill('10.64.20.11');
   await page.locator('button[type="submit"][form="device-editor-form"]').click();
@@ -1678,7 +1679,7 @@ async function run(){
   await page.locator('#host-platform-select').selectOption('Proxmox VE');
   await page.getByRole('tab',{name:'Networking'}).click();
   await page.locator('#dev-block').selectOption('__unassigned__');
-  await page.locator('#dev-vlan').selectOption('17');
+
   await page.locator('#dev-subnet').selectOption(subnetId);
   await page.locator('#dev-ip').fill('10.64.20.12');
   await page.locator('button[type="submit"][form="device-editor-form"]').click();
@@ -1727,7 +1728,7 @@ async function run(){
     'VMs must not offer independent rack placement');
   await page.getByRole('tab',{name:'Networking'}).click();
   await page.locator('#dev-block').selectOption('__unassigned__');
-  await page.locator('#dev-vlan').selectOption('17');
+
   await page.locator('#dev-subnet').selectOption(subnetId);
   await page.locator('#dev-ip').fill('10.64.20.13');
   await page.locator('button[type="submit"][form="device-editor-form"]').click();

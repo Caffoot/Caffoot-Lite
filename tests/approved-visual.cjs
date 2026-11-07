@@ -71,6 +71,7 @@ async function main(){
  const login=await context.request.post(address+'/api/login',{headers:{Origin:address},data:{username:creds.username,password:creds.password,mfa_code:code}});
  if(!login.ok())throw Error('Visual test login failed');
  const page=await context.newPage(),ref=await context.newPage(),results=[];
+ if(process.env.CAFFOOT_SUBNET_FIRST==='1')await require('./subnet-first-ipam.cjs')({page,reference:ref,sourceBase:'http://127.0.0.1:'+reference.address().port,context,out,fixtureDirectory:tmp});
  if(process.env.CAFFOOT_HOST_SELECT_REVIEW==='1')await require('./host-select-review.cjs')({page,reference:ref,sourceBase:'http://127.0.0.1:'+reference.address().port,context,out,fixtureDirectory:tmp});
  if(process.env.CAFFOOT_RACK_LOCATION_DEFAULTS==='1')await require('./rack-location-defaults.cjs')({page,context,out});
  if(process.env.CAFFOOT_DEVICE_FORM_FOLLOWUPS==='1')await require('./device-form-followups.cjs')({page,reference:ref,sourceBase:'http://127.0.0.1:'+reference.address().port,context,out});

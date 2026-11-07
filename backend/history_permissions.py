@@ -6,6 +6,7 @@ changes apply immediately without a schema migration or history rewrite.
 import json
 
 from .permissions import SECTIONS, can_access
+from .subnet_validation import parse_hierarchy_cidr
 
 # Categories emitted by the established inventory writers, including the
 # historical Clean Start categories. Unknown kinds are deliberately omitted.
@@ -25,6 +26,34 @@ _KIND_SECTIONS = {
 _SAFE_REASONS = frozenset((
     "Inventory saved", "Bulk IPAM saved", "Clean inventory reset",
 ))
+
+
+def visible_subnet_batch_reason(event):
+    """Show authorised IPAM readers the complete count without forwarding free text.
+
+    Rebuild this new summary only from bounded counts and valid network ranges.
+    Existing mixed-event redaction and omitted-detail rules remain unchanged.
+    """
+    summary = event.get("subnetBatch")
+    if (not isinstance(summary, dict) or set(summary) !=
+            {"createdCount", "firstCidr", "lastCidr", "parentCidr"} or
+            type(summary["createdCount"]) is not int or
+            not 1 <= summary["createdCount"] <= 50 or
+            not all(isinstance(change, dict) and change.get("kind") == "IPAM"
+                    for change in event.get("changes", []))):
+        return None
+    first = parse_hierarchy_cidr(summary["firstCidr"], 23, 30)
+    last = parse_hierarchy_cidr(summary["lastCidr"], 23, 30)
+    if not first or not last or not first["aligned"] or not last["aligned"] or first["start"] > last["start"]:
+        return None
+    context = "No single Address Block"
+    if summary["parentCidr"] is not None:
+        parent = parse_hierarchy_cidr(summary["parentCidr"])
+        if not parent or not parent["aligned"] or parent["start"] > first["start"] or parent["end"] < last["end"]:
+            return None
+        context = "IP Address Block " + summary["parentCidr"]
+    return (f"Created {summary['createdCount']} subnet(s): "
+            f"{summary['firstCidr']} – {summary['lastCidr']} · {context}")
 
 
 def visible_change_history(connection, account_id):
@@ -85,5 +114,9 @@ def visible_change_history(connection, account_id):
         reason = event.get("reason")
         if isinstance(reason, str) and reason in _SAFE_REASONS:
             visible_event["reason"] = reason
+        if sections["IPAM"]:
+            batch_reason = visible_subnet_batch_reason(event)
+            if batch_reason:
+                visible_event["reason"] = batch_reason
         history.append(visible_event)
     return history

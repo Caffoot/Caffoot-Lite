@@ -17,7 +17,7 @@
 
 <!-- interface-template:ipam/render-ipam-manage-1 --><section class="ipam-panel active ipam-manage" data-panel="manage" data-ipam-panel="manage" role="tabpanel">
     <div class="ipam-card">
-      <div class="ipam-card-title"><div><h2>IP Address Blocks, Networks &amp; VLANs</h2><p class="ipam-subtitle">Browse the existing grouped hierarchy and manage individual networks.</p></div><div class="ipam-manage-actions"><button class="btn btn-outline" data-action="bulk-ip" data-id="{{slot:0}}" {{slot:1}}>Bulk Edit Range</button><button class="btn btn-primary" data-action="open-subnet-modal">+ Add Subnet</button></div></div>
+      <div class="ipam-card-title"><div><h2>IP Address Blocks, Networks &amp; VLANs</h2><p class="ipam-subtitle">Browse the existing grouped hierarchy and manage individual networks.</p></div><div class="ipam-manage-actions"><button class="btn btn-outline" data-action="bulk-ip" data-id="{{slot:0}}" {{slot:1}}>Bulk Edit Range</button><button class="btn btn-primary" data-action="open-subnet-modal">Add Single Subnet</button><button class="btn btn-outline" type="button" data-action="open-multiple-subnets">Add Multiple Subnets</button></div></div>
       <div id="ipam-manage-filter-note" class="ipam-warning {{slot:2}}" style="margin:0 0 10px">{{slot:3}}</div>
       <div id="ipam-managed-blocks">{{slot:4}}</div>
       <p class="ipam-notice">The published application protects assigned device addresses, gateway addresses and referenced subnets. These protections remain unchanged.</p>
@@ -113,10 +113,10 @@
 <!-- interface-template:ipam/render-ipam-html-6 --><section class="ipam-panel active ipam-addresses" data-panel="addresses" data-ipam-panel="addresses" role="tabpanel">
     <div class="ipam-card">
       <div class="ipam-subnet-bar">
-        <label>Active Network / VLAN<select class="ipam-select" id="ipam-select-network">{{slot:0}}</select></label>
+        <label>Active Subnet<select class="ipam-select" id="ipam-select-network">{{slot:0}}</select></label>
         <div class="ipam-toolset"><button class="btn btn-outline" data-action="select-ipam-tab" data-tab="manage">Subnet Tools</button><button class="btn btn-primary" id="ipam-next-free" data-action="select-next-available-ip-address" data-ip="{{slot:1}}" {{slot:2}}>{{slot:3}}</button></div>
       </div>
-      <div class="ipam-network-summary"><div id="ipam-network-identity"><div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap"><h2>{{slot:4}}</h2><span class="ipam-chip">VLAN {{slot:5}}</span></div><p class="ipam-network-meta" style="margin:4px 0">{{slot:6}} — {{slot:7}}</p><div class="ipam-network-meta"><b>Gateway:</b> {{slot:8}} &nbsp;·&nbsp; <b>Usable range:</b> {{slot:9}} – {{slot:10}}<div><b>IP Address Block:</b> {{slot:11}} &nbsp;·&nbsp; <b>Subnet mask:</b> {{slot:12}}</div></div></div><div class="ipam-util" id="ipam-util"><h3>Subnet capacity &amp; availability</h3><div class="ipam-util-numbers"><div><strong>{{slot:13}}</strong><small>Assigned</small></div><div><strong>{{slot:14}}</strong><small>Reserved</small></div><div><strong>{{slot:15}}</strong><small>Available</small></div></div><div class="ipam-progress" role="progressbar" aria-label="Subnet utilisation" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{slot:16}}"><span style="width:{{slot:17}}%"></span></div><p style="font-size:11px;margin:8px 0 0">{{slot:18}}% used · {{slot:19}} usable addresses</p>{{slot:20}}</div></div>
+      <div class="ipam-network-summary"><div id="ipam-network-identity"><div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap"><h2>{{slot:4}}</h2><span class="ipam-chip">VLAN {{slot:5}}</span></div><p class="ipam-network-meta" style="margin:4px 0">{{slot:6}} — {{slot:7}}</p><div class="ipam-network-meta"><b>Purpose:</b> {{slot:29}} &nbsp;·&nbsp; <b>Gateway:</b> {{slot:8}} &nbsp;·&nbsp; <b>Usable range:</b> {{slot:9}} – {{slot:10}}<div><b>IP Address Block:</b> {{slot:11}} &nbsp;·&nbsp; <b>Subnet mask:</b> {{slot:12}}</div></div></div><div class="ipam-util" id="ipam-util"><h3>Subnet capacity &amp; availability</h3><div class="ipam-util-numbers"><div><strong>{{slot:13}}</strong><small>Assigned</small></div><div><strong>{{slot:14}}</strong><small>Reserved</small></div><div><strong>{{slot:15}}</strong><small>Available</small></div></div><div class="ipam-progress" role="progressbar" aria-label="Subnet utilisation" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{slot:16}}"><span style="width:{{slot:17}}%"></span></div><p style="font-size:11px;margin:8px 0 0">{{slot:18}}% used · {{slot:19}} usable addresses</p>{{slot:20}}</div></div>
     </div>
     <div class="ipam-card">
       <div class="ipam-address-header"><div><h2>IP Address Allocations</h2><p class="ipam-subtitle" id="ipam-range-caption">Showing {{slot:21}} in {{slot:22}}</p></div><div class="ipam-range" id="ipam-ranges">{{slot:23}}</div></div>
@@ -376,7 +376,7 @@
                 <div class="ipam-form-grid">
                     <label class="ipam-field wide" for="sub-kind">Subnet Type
                         <select id="sub-kind" {{slot:2}}>
-                            <option value="network" {{slot:3}}>Network / VLAN</option>
+                            <option value="network" {{slot:3}}>Subnet / Network</option>
                             <option value="container" {{slot:4}}>IP Address Block</option>
                             <option value="reserved" disabled>Reserved range (coming next)</option>
                             <option value="loopback" disabled>Loopback /32 (coming next)</option>
@@ -386,13 +386,16 @@
                     <label class="ipam-field wide" for="sub-cidr">Subnet CIDR *
                         <input type="text" id="sub-cidr" required value="{{slot:5}}" placeholder="192.168.10.0/24">
                     </label>
-                    <label class="ipam-field" for="sub-name"><span><span id="sub-name-label">Network / VLAN Name</span> *</span>
+                    <label class="ipam-field" for="sub-name"><span><span id="sub-name-label">Subnet Name</span> *</span>
                         <input type="text" id="sub-name" required value="{{slot:6}}" placeholder="Guest Network">
                     </label>
-                    <label class="ipam-field" for="sub-vlan" data-network-only>VLAN ID *
-                        <input type="number" id="sub-vlan" min="1" max="4094" required value="{{slot:7}}">
+                    <label class="ipam-field" for="sub-purpose" data-network-only>Subnet Purpose *
+                        <select id="sub-purpose">{{slot:12}}</select>
                     </label>
-                    <label class="ipam-field wide" for="sub-gw" data-network-only>Gateway IP *
+                    <label class="ipam-field" for="sub-vlan" data-network-only>VLAN ID (Optional)
+                        <input type="number" id="sub-vlan" min="1" max="4094" step="1" value="{{slot:7}}">
+                    </label>
+                    <label class="ipam-field wide" for="sub-gw" data-network-only>Gateway IP <span id="sub-gw-required">*</span>
                         <input type="text" id="sub-gw" required value="{{slot:8}}" placeholder="192.168.10.1">
                         <small id="sub-gw-hint" aria-live="polite">Enter a network CIDR to suggest a gateway.</small>
                     </label>
@@ -412,7 +415,7 @@
             <footer class="ipam-modal-actions">
                 {{slot:11}}
                 <button type="button" data-action="cancel-subnet-modal" class="btn btn-outline">Cancel</button>
-                <button type="submit" class="btn btn-primary">Save Subnet &amp; VLAN</button>
+                <button type="submit" class="btn btn-primary">Save Subnet</button>
             </footer>
         </form>
     <!-- /interface-template -->
@@ -460,3 +463,27 @@
             </footer>
         </form>
     <!-- /interface-template -->
+
+<!-- interface-template:ipam/multiple-subnets-generator -->
+<div class="ipam-modal-head"><div><div class="eyebrow">IP ADDRESS MANAGEMENT</div><h2>Add Multiple Subnets</h2></div><button type="button" class="ipam-modal-close app-modal-close" data-action="close-modal" aria-label="Close dialog">Close ×</button></div>
+<form id="subnet-batch-generator" data-ipam-subnet-creation>
+ <div class="ipam-modal-body"><h3>1. Organisation</h3><div class="ipam-form-grid">
+  <label class="ipam-field wide" for="subnet-batch-organisation">IP Address Block<select id="subnet-batch-organisation"><option value="none" {{slot:0}}>No Address Block</option><option value="existing" {{slot:1}}>Use an Existing IP Address Block</option><option value="new" {{slot:2}}>Create a New IP Address Block</option></select></label>
+  <label class="ipam-field wide" for="subnet-batch-existing" data-existing-parent>Existing IP Address Block<select id="subnet-batch-existing"><option value="">Select an IP Address Block...</option>{{slot:3}}</select></label>
+  <label class="ipam-field wide" for="subnet-batch-pool">Private Range Quick-fill (Optional)<select id="subnet-batch-pool"><option value="">No Quick-fill Range</option>{{slot:4}}</select><small>Fills planning inputs only. No block or subnet is created until Save.</small></label>
+  <label class="ipam-field" for="subnet-batch-parent-name" data-new-parent>IP Address Block Name *<input id="subnet-batch-parent-name" value="{{slot:5}}"></label>
+  <label class="ipam-field" for="subnet-batch-parent-cidr" data-new-parent>IP Address Block CIDR *<input id="subnet-batch-parent-cidr" value="{{slot:6}}" placeholder="10.20.0.0/16"></label>
+ </div><h3>2. Generation</h3><div class="ipam-form-grid">
+  <label class="ipam-field" for="subnet-batch-start">Starting Subnet Address *<input id="subnet-batch-start" required value="{{slot:7}}" placeholder="10.20.0.0"></label>
+  <label class="ipam-field" for="subnet-batch-prefix">Subnet Prefix *<select id="subnet-batch-prefix" required>{{slot:8}}</select></label>
+  <label class="ipam-field" for="subnet-batch-count">Number of Subnets *<input id="subnet-batch-count" type="number" min="1" max="50" step="1" required value="{{slot:9}}"><small>1–50 per operation. You can create further batches.</small></label>
+  <label class="ipam-field" for="subnet-batch-convention">Gateway Convention *<select id="subnet-batch-convention" required><option value="">Select a convention...</option>{{slot:10}}</select></label>
+ </div><p class="ipam-modal-note">Preview every subnet before saving. Names and purposes are chosen individually. Changing generation settings recalculates CIDRs; manual gateway entries are kept and must be rechecked.</p><div class="form-error" data-form-error role="alert"></div></div>
+ <footer class="ipam-modal-actions"><button type="button" class="btn btn-outline" data-action="close-modal">Cancel</button><button type="submit" class="btn btn-primary">Preview Subnets</button></footer>
+</form>
+<!-- /interface-template -->
+
+<!-- interface-template:ipam/multiple-subnets-preview -->
+<div class="ipam-modal-head"><div><div class="eyebrow">IP ADDRESS MANAGEMENT</div><h2>3. Review Subnets</h2><p class="ipam-modal-note">{{slot:0}}</p></div><button type="button" class="ipam-modal-close app-modal-close" data-action="close-modal" aria-label="Close dialog">Close ×</button></div>
+<form id="subnet-batch-preview" data-ipam-subnet-creation novalidate><div class="ipam-modal-body" tabindex="0" aria-label="Subnet preview rows"><table class="ipam-subnet-preview-table"><caption class="sr-only">Review every subnet. All rows must be valid before saving.</caption><thead><tr><th scope="col">Subnet CIDR</th><th scope="col">Name / Description</th><th scope="col">Purpose</th><th scope="col">VLAN (Optional)</th><th scope="col">Gateway</th></tr></thead><tbody>{{slot:1}}</tbody></table></div><div class="form-error ipam-preview-feedback" data-form-error role="alert"></div><footer class="ipam-modal-actions"><button type="button" class="btn btn-outline" id="subnet-batch-back">Back</button><button type="button" class="btn btn-outline" data-action="close-modal">Cancel</button><button type="submit" class="btn btn-primary">Save {{slot:2}} Subnets</button></footer></form>
+<!-- /interface-template -->

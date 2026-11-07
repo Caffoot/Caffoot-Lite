@@ -226,6 +226,7 @@ def change_ipam_subnet_and_vlan_records(connection, account_id, changes):
                             **safe_inventory_differences(existing, record, collection)})
         if changed:
             reason = "Inventory saved"
+            subnet_batch = None
             if created_networks:
                 ordered = sorted(created_networks, key=lambda item: tuple(
                     int(part) for part in item["cidr"].split("/")[0].split(".")))
@@ -233,10 +234,14 @@ def change_ipam_subnet_and_vlan_records(connection, account_id, changes):
                 parent = next((s for s in state["subnets"] if len(parents) == 1 and
                                s["id"] in parents), None)
                 context = str(parent.get("name") or parent["cidr"])[:100] if parent else "No single Address Block"
+                subnet_batch = {"createdCount": len(created_networks),
+                                "firstCidr": ordered[0]["cidr"], "lastCidr": ordered[-1]["cidr"],
+                                "parentCidr": parent["cidr"] if parent else None}
                 reason = (f"Created {len(created_networks)} subnet(s): "
                           f"{ordered[0]['cidr']} – {ordered[-1]['cidr']} · {context}")
             event = {"at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
-                     "reason": reason, "changes": changed[:16],
+                     "reason": reason, **({"subnetBatch": subnet_batch} if subnet_batch else {}),
+                     "changes": changed[:16],
                      "omitted": max(0, len(changed) - 16)}
             connection.execute(
                 "INSERT INTO inventory_change_history(record_json) VALUES(?)",

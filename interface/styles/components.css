@@ -332,3 +332,20 @@ html.dark #modal-container .device-editor-dialog #device-form-installed-software
 
 /* Keep the approved Details close icon within the existing light/dark palette. */
 #modal-content .device-details-dialog .device-review-close{background:var(--theme-control,#fff);color:var(--theme-text,#50697e);border-color:var(--theme-border,#dce4eb)}
+
+/* The approved subnet review keeps its actions visible and stacks rows on mobile. */
+#modal-content.ipam-subnet-preview{width:min(1030px,100%);display:flex;flex-direction:column;max-height:calc(100dvh - 36px);overflow:hidden}
+.ipam-subnet-preview #subnet-batch-preview{display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.ipam-subnet-preview .ipam-modal-body{overflow:auto;min-height:0}
+.ipam-subnet-preview .ipam-modal-head,.ipam-subnet-preview .ipam-modal-actions{flex:none}
+.ipam-subnet-preview-table{width:100%;border-collapse:collapse;text-align:left;font-size:12px}
+.ipam-subnet-preview-table td,.ipam-subnet-preview-table th{padding:10px 11px;vertical-align:top;border-bottom:1px solid var(--theme-border,#d3e0e9);min-width:0}
+.ipam-subnet-preview-table thead th{position:sticky;top:0;background:var(--theme-control,#fff);z-index:1}
+.ipam-subnet-preview-table th[scope=row]{font-weight:600;white-space:nowrap}
+.ipam-subnet-preview-table .form-error{white-space:normal;max-width:20em}
+.ipam-subnet-preview-table details{margin-top:6px}
+.ipam-subnet-preview-table summary{cursor:pointer;font-size:11px}
+.ipam-preview-feedback{flex:none;margin:0 23px;max-height:20dvh;overflow:auto}
+.ipam-preview-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.ipam-subnet-preview-table [aria-invalid=true]{outline:2px solid var(--theme-danger,#b45309);outline-offset:1px}
+@media(max-width:720px){.ipam-subnet-preview-table,.ipam-subnet-preview-table tbody,.ipam-subnet-preview-table tr,.ipam-subnet-preview-table td,.ipam-subnet-preview-table th[scope=row]{display:block}.ipam-subnet-preview-table thead{display:none}.ipam-subnet-preview-table tr{border:1px solid var(--theme-border,#d3e0e9);border-radius:9px;margin-bottom:13px;padding:10px}.ipam-subnet-preview-table td,.ipam-subnet-preview-table th{border:0;padding:6px 0}.ipam-preview-label{position:static;width:auto;height:auto;overflow:visible;clip-path:none}}
