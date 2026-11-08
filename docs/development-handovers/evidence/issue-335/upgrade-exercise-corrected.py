@@ -1,4 +1,5 @@
-"""Proposed restore-layout correction, NOT executed. A further run needs owner approval.
+"""Corrected disposable exercise, executed once with separate owner approval.
+See Report.md and corrected-upgrade-result.json; do not repeat without authority.
 
 Uses only uniquely created disposable volumes, never an existing installation.
 """

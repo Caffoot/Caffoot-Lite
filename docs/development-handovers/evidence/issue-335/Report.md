@@ -12,13 +12,13 @@ The only application changes are two version string values, plus the matching br
 - Existing release-documentation/guide compatibility checks: passed.
 - Release preflight unit tests: seven passed.
 - Relative links affected by handover move: no unrepaired relative references found.
-- Candidate CI passed backend, full Chromium/editor, Firefox, Linux WebKit, Docker lifecycle, release-documentation and history scanning. The single upgrade exercise has a failed final restore step, detailed below; it is not an overall pass.
+- Candidate CI passed backend, full Chromium/editor, Firefox, Linux WebKit, Docker lifecycle, release-documentation and history scanning. The original exercise failed its final restore step. The one separately approved corrected exercise passed all eight checks, including full restore; both results are preserved below.
 
 ## Verified Published Starting Image
 
 [Image/source check](old-image-check.json): published `ghcr.io/caffoot/caffoot-lite:v2.0.3`, immutable digest `sha256:e3606870dfafd9178fd622727dd753f3cf2439574ab45f18807330ccaee5c116`, AMD64. The image has no revision label. All 45 packaged application files match published tag commit `986e73636e3dac198c7af11954fd11885eb60150`; no mismatches. This is stronger source evidence than assuming a missing label exists.
 
-## Single Disposable Upgrade — Partial Verification, Overall FAILED
+## Original Disposable Upgrade — Historical FAILED Result
 
 Exact tested candidate: **82fcbc33b9bbbf525d86bb9929d0527766573d17**, local image `caffoot-lite:private-82fcbc33b9bb`, image ID `sha256:ed28aec299dd90685bcf1abcb4d87c113e2903f9028dbaac8db25f3eb7ce5832`, AMD64. It was built from a clean exact Git archive by the existing private helper; no image was pushed.
 
@@ -40,7 +40,17 @@ Seven recorded assertions passed:
 
 All uniquely created test containers/volumes were removed, as recorded in the result. No live/Pi data, stack, existing volume or website was used. Because cleanup removed the disposable backup, completing the whole exercise now requires another explicitly approved disposable run. The original authority permits one; it is already consumed.
 
-[Proposed corrected harness — NOT RUN](upgrade-exercise-corrected-not-run.py) changes the archive root to `.` so extraction restores files at the correct volume root. It preserves the same uniquely created resources and checks. A further execution requires owner approval; no second candidate upgrade has been attempted.
+[Corrected harness](upgrade-exercise-corrected.py) changes the archive root to `.` so extraction restores files at the correct volume root. It retains the same uniquely created resources and checks. The owner separately approved one additional execution, documented below; no further run is implied.
+
+## Separately Approved Corrected Exercise — PASSED
+
+The owner explicitly approved **one corrected disposable run** after reviewing the recorded failure and correction; authority is recorded in [#335 comment 6728103728](https://github.com/Caffoot/Caffoot-Lite/issues/335#issuecomment-6728103728). This supersedes the earlier pending-decision/restore-blocker wording for that one additional run only.
+
+The exact same verified old image and exact candidate image/revision above were reused, with new fictional data and uniquely created disposable resources. [Corrected raw result](corrected-upgrade-result.json) and [completion log](corrected-upgrade.txt) record **one additional schema-7 → schema-10 upgrade and eight passed assertions**. There were two actual candidate upgrades in total: the earlier exercise with failed final restore, and this explicitly approved corrected exercise. The two preparation failures ran no candidate upgrade.
+
+All seven earlier preservation/restart/refusal checks passed again. The eighth check restored the **complete stopped pre-upgrade `/data` archive at the correct volume root**, preserving the old logical snapshot, non-database file hashes and file ownership/modes. The restored published v2.0.3 application reached HTTPS health and passed existing role/session and fresh MFA login checks. This verifies rollback by restoring the complete matching old data and image; it does not validate running an old binary directly on an upgraded database.
+
+All test containers and volumes were removed. The private fixture key remained operator-supplied synthetic test material; no real email or owner data was used. No Pi, actual installation, existing volume or website was touched. The corrected full restore closes this specific verification gap; it is not merge/publication authority or proof of the unavailable private fixture scenarios.
 
 ## Existing Automated Checks
 
@@ -48,4 +58,4 @@ Candidate `82fcbc3` passed all existing workflows: backend (494 run, 491 passed,
 
 ## Remaining Gates
 
-Two genuine private v1.3.3 automated fixtures remain unavailable; the owner's successful manual import is separate evidence. Native owner acceptance is scenario-specific, not exhaustive screen-reader/touch or byte-for-byte private-import verification. Public AMD64/ARM64 image/accessibility verification belongs to a separately authorised publication. Website design/content and deployment remain separate. The incomplete restore verification remains a release-readiness blocker for owner review; an additional corrected disposable run requires explicit approval. Final tested candidate/delivery SHAs, results and limitations are recorded in #335; no merge, tag, image push, release or installation change is authorised.
+Two genuine private v1.3.3 automated fixtures remain unavailable; the owner's successful manual import is separate evidence. Native owner acceptance is scenario-specific, not exhaustive screen-reader/touch or byte-for-byte private-import verification. Public AMD64/ARM64 image/accessibility verification belongs to a separately authorised publication. Website design/content and deployment remain separate. The corrected restore verification passed and its prior blocker is resolved. Merge/publication, final prepared-copy/status-banner review and website decisions still require their separate owner approvals. Final tested candidate/delivery SHAs, results and limitations are recorded in #335; no merge, tag, image push, release or installation change is authorised.
