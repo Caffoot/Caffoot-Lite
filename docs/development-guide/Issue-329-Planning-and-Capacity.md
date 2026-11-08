@@ -26,3 +26,7 @@ No schema, dependency, route, security policy, pinned-source or unrelated screen
 - [ ] Native private Pi/Safari owner acceptance and two genuine private backup fixtures.
 
 Exact pushed SHAs, final workflow results and resumption instructions are recorded in #329. Do not treat a pending run as a pass or repeat accepted earlier batches.
+
+## Evidence And Final Checks
+
+[Permanent report, logs, source measurements and reviewed images](../development-handovers/evidence/issue-329-capacity/Report.md). The implementation checkpoint passed backend, Firefox, Linux WebKit, Docker lifecycle and history scanning; full Chromium and the final delivery-SHA receipt are recorded in #329. Pending runs are not accepted results. This evidence update changes documentation only; native owner acceptance remains outstanding.

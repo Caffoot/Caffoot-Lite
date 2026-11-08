@@ -1,0 +1,245 @@
+{
+  "checks": [
+    "Planning is first and optional; capacity and spacing-aware prefix suggestions never change the selected prefix",
+    "A new block and six children save around an independent network without adoption; explicit filters and backup/import preserve it",
+    "Real network overlaps and linked-child deletion stay blocked; deleting an empty organisational block leaves independent inventory untouched",
+    "Reordered planning and guidance retain fixed actions and accepted select treatment before/after Back across four widths and both themes"
+  ],
+  "calculations": [
+    {
+      "capacity": 4096,
+      "spacedCapacity": 4096,
+      "suggestedPrefix": 23,
+      "parentPrefix": 12,
+      "fits": true
+    },
+    {
+      "capacity": 256,
+      "spacedCapacity": 26,
+      "suggestedPrefix": 25,
+      "parentPrefix": 16,
+      "fits": false
+    },
+    {
+      "capacity": 1,
+      "spacedCapacity": 1,
+      "suggestedPrefix": 26,
+      "parentPrefix": 24,
+      "fits": false
+    },
+    {
+      "capacity": 1,
+      "spacedCapacity": 1,
+      "parentPrefix": 30,
+      "fits": false
+    },
+    null,
+    {
+      "capacity": 8388608,
+      "spacedCapacity": 8388608,
+      "suggestedPrefix": 23,
+      "parentPrefix": 0,
+      "fits": true
+    },
+    {
+      "capacity": 1,
+      "spacedCapacity": 1,
+      "suggestedPrefix": 25,
+      "parentPrefix": 24,
+      "fits": false
+    },
+    {
+      "capacity": 256,
+      "spacedCapacity": 256,
+      "parentPrefix": 16,
+      "fits": false
+    }
+  ],
+  "measurements": [
+    {
+      "width": 1440,
+      "height": 950,
+      "theme": "light",
+      "before": {
+        "right": 1007.5,
+        "bottom": 932,
+        "overflow": 0,
+        "footerBottom": 931,
+        "selectHeight": 42,
+        "inputHeight": 42,
+        "appearance": "none"
+      },
+      "after": {
+        "right": 1232,
+        "bottom": 932,
+        "overflow": 0,
+        "footerBottom": 931,
+        "selectHeight": 42,
+        "inputHeight": 42,
+        "appearance": "none"
+      }
+    },
+    {
+      "width": 1440,
+      "height": 950,
+      "theme": "dark",
+      "before": {
+        "right": 1007.5,
+        "bottom": 932,
+        "overflow": 0,
+        "footerBottom": 931,
+        "selectHeight": 42,
+        "inputHeight": 42,
+        "appearance": "none"
+      },
+      "after": {
+        "right": 1232,
+        "bottom": 932,
+        "overflow": 0,
+        "footerBottom": 931,
+        "selectHeight": 42,
+        "inputHeight": 42,
+        "appearance": "none"
+      }
+    },
+    {
+      "width": 1366,
+      "height": 600,
+      "theme": "light",
+      "before": {
+        "right": 970.5,
+        "bottom": 582,
+        "overflow": 0,
+        "footerBottom": 581,
+        "selectHeight": 42,
+        "inputHeight": 42,
+        "appearance": "none"
+      },
+      "after": {
+        "right": 1195,
+        "bottom": 582,
+        "overflow": 0,
+        "footerBottom": 581,
+        "selectHeight": 42,
+        "inputHeight": 42,
+        "appearance": "none"
+      }
+    },
+    {
+      "width": 1366,
+      "height": 600,
+      "theme": "dark",
+      "before": {
+        "right": 970.5,
+        "bottom": 582,
+        "overflow": 0,
+        "footerBottom": 581,
+        "selectHeight": 42,
+        "inputHeight": 42,
+        "appearance": "none"
+      },
+      "after": {
+        "right": 1195,
+        "bottom": 582,
+        "overflow": 0,
+        "footerBottom": 581,
+        "selectHeight": 42,
+        "inputHeight": 42,
+        "appearance": "none"
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "theme": "light",
+      "before": {
+        "right": 372,
+        "bottom": 826,
+        "overflow": 0,
+        "footerBottom": 825,
+        "selectHeight": 42,
+        "inputHeight": 42,
+        "appearance": "none"
+      },
+      "after": {
+        "right": 372,
+        "bottom": 826,
+        "overflow": 0,
+        "footerBottom": 825,
+        "selectHeight": 42,
+        "inputHeight": 42,
+        "appearance": "none"
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "theme": "dark",
+      "before": {
+        "right": 372,
+        "bottom": 826,
+        "overflow": 0,
+        "footerBottom": 825,
+        "selectHeight": 42,
+        "inputHeight": 42,
+        "appearance": "none"
+      },
+      "after": {
+        "right": 372,
+        "bottom": 826,
+        "overflow": 0,
+        "footerBottom": 825,
+        "selectHeight": 42,
+        "inputHeight": 42,
+        "appearance": "none"
+      }
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "theme": "light",
+      "before": {
+        "right": 302,
+        "bottom": 550,
+        "overflow": 0,
+        "footerBottom": 549,
+        "selectHeight": 42,
+        "inputHeight": 42,
+        "appearance": "none"
+      },
+      "after": {
+        "right": 302,
+        "bottom": 550,
+        "overflow": 0,
+        "footerBottom": 549,
+        "selectHeight": 42,
+        "inputHeight": 42,
+        "appearance": "none"
+      }
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "theme": "dark",
+      "before": {
+        "right": 302,
+        "bottom": 550,
+        "overflow": 0,
+        "footerBottom": 549,
+        "selectHeight": 42,
+        "inputHeight": 42,
+        "appearance": "none"
+      },
+      "after": {
+        "right": 302,
+        "bottom": 550,
+        "overflow": 0,
+        "footerBottom": 549,
+        "selectHeight": 42,
+        "inputHeight": 42,
+        "appearance": "none"
+      }
+    }
+  ],
+  "nativeSafariTested": false
+}
