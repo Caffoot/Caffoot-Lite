@@ -63,6 +63,48 @@ class SubnetFirstTests(unittest.TestCase):
             self.assertEqual(len(event['changes']),16)
         self.assertEqual([e['omitted'] for e in self.audit()],[35,34,34])
 
+    def test_names_are_unique_on_both_save_boundaries_and_bulk_is_atomic(self):
+        self.save([network(0)])
+        for name in ['Fictional network 0', '  FICTIONAL NETWORK 0  ']:
+            row = network(1); row['name'] = name
+            for save in [lambda: self.save([row]),
+                         lambda: change_inventory_record(self.db, 1, 'subnets', row['id'], row)]:
+                with self.assertRaisesRegex(ValueError, 'unique subnet name'):
+                    save()
+                self.assertEqual(len(self.state()['subnets']), 1)
+        parent = dict(id='parent', kind='container', name='A block', cidr='10.81.0.0/16')
+        first = network(1); first.update(cidr='10.81.1.0/24', gateway='10.81.1.1', parentId='parent')
+        second = network(2); second.update(cidr='10.81.2.0/24', gateway='10.81.2.1', parentId='parent', name=first['name'].upper())
+        with self.assertRaisesRegex(ValueError, 'unique subnet name'):
+            self.save([parent, first, second])
+        self.assertEqual(len(self.state()['subnets']), 1)
+        self.assertEqual(len(self.audit()), 1)
+
+    def test_historical_duplicate_names_survive_edits_and_import_but_renames_are_checked(self):
+        first, second = network(0), network(1)
+        second['name'] = first['name']
+        state = self.state(); state['subnets'] = [first, second]
+        stage_inventory(self.db, state)
+        first['description'] = 'Unrelated historical edit'
+        self.save([first])
+        self.assertEqual([s['name'] for s in self.state()['subnets']], [first['name']]*2)
+        first['name'] = first['name'].upper()
+        with self.assertRaisesRegex(ValueError, 'unique subnet name'):
+            self.save([first])
+        first['name'] = 'A unique new name'; self.save([first])
+        parent = dict(id='separate-block',kind='container',name=first['name'],cidr='10.82.0.0/16')
+        self.save([parent])
+        restored = normalise_detached_v133_state(self.state())
+        self.assertEqual(restored['subnets'], self.state()['subnets'])
+
+    def test_address_block_independent_network_restriction_is_unchanged(self):
+        row = network(10); row.update(cidr='10.128.10.0/24',gateway='10.128.10.1')
+        self.save([row])
+        parent = dict(id='proposed',kind='container',name='Proposed block',cidr='10.128.0.0/16')
+        with self.assertRaisesRegex(ValueError, 'Overlapping unrelated'):
+            self.save([parent])
+        self.assertEqual(self.state()['subnets'], [row])
+
     def test_one_and_ten_subnets(self):
         self.save([network(0)])
         self.save([network(i) for i in range(1,11)])

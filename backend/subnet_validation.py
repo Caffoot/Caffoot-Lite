@@ -234,6 +234,15 @@ def validate_subnet_mutation(record, existing, state):
             raise ValueError("A subnet or IP Address Block name is required.")
     if record.get("kind") == "container":
         return
+    # Older duplicate names stay usable until someone deliberately renames a subnet.
+    if existing is None or record.get("name") != existing.get("name"):
+        name = record["name"].strip().lower()
+        if any(other.get("id") != record.get("id") and
+               other.get("kind", "network") == "network" and
+               isinstance(other.get("name"), str) and
+               other["name"].strip().lower() == name
+               for other in state["subnets"]):
+            raise ValueError("A subnet with this name already exists. Choose a unique subnet name.")
     if existing is None:
         if record.get("purpose") not in ("LAN", "Management", "VPN"):
             raise ValueError("Select LAN, Management or VPN for each new subnet.")
