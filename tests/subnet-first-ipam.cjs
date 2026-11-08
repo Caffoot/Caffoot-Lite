@@ -10,6 +10,7 @@ module.exports=async function verifySubnetFirstIpam({page,reference,sourceBase,c
  const csrfSession=await (await context.request.get('https://127.0.0.1:8080/api/session')).json();const requestHeaders={Origin:'https://127.0.0.1:8080','X-CSRF-Token':csrfSession.csrf_token};
  const check=label=>{checks.push(label);console.log('PASS: '+label);};
  await page.goto('https://127.0.0.1:8080/inventory');await page.locator('#app[aria-busy=false]').waitFor();await page.setViewportSize({width:1440,height:950});
+ if(process.env.CAFFOOT_SUBNET_CAPACITY_ONLY==='1'){await require('./subnet-capacity-planning.cjs')({page,context,folder});return;}
  if(process.env.CAFFOOT_SUBNET_CORRECTIONS_ONLY==='1'){await require('./subnet-private-corrections.cjs')({page,context,folder});return;}
  if(process.env.CAFFOOT_SUBNET_FIRST_ROLES_ONLY==='1'){await require('./subnet-first-permissions.cjs')({context,fixtureDirectory,errors,state});console.log('PASS: Restricted IPAM browser roles');return;}
  if(process.env.CAFFOOT_SUBNET_FIRST_VISUAL_ONLY==='1'){await require('./subnet-first-visual.cjs')({page,reference,sourceBase,folder});return;}
@@ -58,6 +59,7 @@ module.exports=async function verifySubnetFirstIpam({page,reference,sourceBase,c
  check('An IPAM-only editor can create through the real preview without Devices rights; read-only users have no creation actions');
  await require('./subnet-first-visual.cjs')({page,reference,sourceBase,folder});check('Pinned Single/Device structure comparison covers four widths and both themes, with approved amendments recorded');
  await require('./subnet-private-corrections.cjs')({page,context,folder});
+ await require('./subnet-capacity-planning.cjs')({page,context,folder});
  assert.deepEqual(errors,[]);fs.writeFileSync(path.join(folder,'checks.json'),JSON.stringify({checks,errors,measurements,nativeSafariTested:false},null,2));console.log('Subnet-first IPAM checks completed: '+checks.length+' groups.');
 };
 

@@ -269,9 +269,11 @@ def delete_subnet_with_dependencies(connection, account_id, subnet_id,
         if any(s.get("parentId") == subnet_id for s in state["subnets"]):
             raise ValueError("Dependencies changed; deletion cancelled. Review the subnet again.")
         cidr = subnet.get("cidr")
-        devices = [d for d in state["devices"] if d.get("primaryIp") and
+        # Organisational blocks never own independent devices or allocations.
+        network = subnet.get("kind", "network") == "network"
+        devices = [d for d in state["devices"] if network and d.get("primaryIp") and
                    ip_belongs_to_subnet(d["primaryIp"], cidr)]
-        ips = [ip for ip in state["ipAllocations"] if ip_belongs_to_subnet(ip, cidr)]
+        ips = [ip for ip in state["ipAllocations"] if network and ip_belongs_to_subnet(ip, cidr)]
         owners = {d["primaryIp"]: d for d in devices}
         for ip in ips:
             a = state["ipAllocations"][ip]

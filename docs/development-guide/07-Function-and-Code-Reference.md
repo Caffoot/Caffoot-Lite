@@ -92,3 +92,5 @@ The [Issue #329 implementation](Issue-329-Subnet-First-IPAM.md) extends the exis
 
 
 The [private #329 corrections](Issue-329-Private-Corrections.md) add `subnetNameConflicts` for historical-safe browser checks, `formatSubnetValidationMessage` for user-readable hierarchy feedback and `showSubnetFormError` for visible field-linked messages. Generation supports subnet-sized strides and validated editable CIDRs; server mutation checks enforce new/renamed name uniqueness within the existing transaction. Approved optional planning and select presentation do not change stored relationships or native control semantics.
+
+The [planning/capacity follow-up](Issue-329-Planning-and-Capacity.md) adds `calculateSubnetCapacity` and `updateSubnetCapacityGuidance`, with no stored or automatic prefix change. Browser/server hierarchy helpers allow only strict containment of an independent network by a block. Parent filters still use explicit links. Reviewed block deletion skips independent device/allocation ownership, while all network deletion checks and explicit-child guards remain.

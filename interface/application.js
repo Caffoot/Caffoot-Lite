@@ -111,7 +111,7 @@ function hierarchyValidate(subnets) {
       cursor=cursor.parentId?ids.get(cursor.parentId):null;
     }
   }
-  // Every intersecting pair must have an explicit ancestor relationship.
+  // Overlaps require explicit ancestry, except an independent network inside a block.
   function ancestor(ancestorId,childId) {
     const seen=new Set();
     let s=ids.get(childId);
@@ -122,11 +122,16 @@ function hierarchyValidate(subnets) {
     }
     return false;
   }
+  function independentNetworkInsideBlock(block,network,blockRange,networkRange) {
+    return block.kind==='container'&&(network.kind===undefined||network.kind==='network')&&!network.parentId&&
+      blockRange.start<=networkRange.start&&networkRange.end<=blockRange.end&&networkRange.size<blockRange.size;
+  }
   for(let i=0;i<subnets.length;i++) for(let j=i+1;j<subnets.length;j++) {
     const a=subnets[i],b=subnets[j];
     if(!a||!b||typeof a!=='object'||typeof b!=='object'||a.id===b.id) continue;
     const x=ranges.get(a.id),y=ranges.get(b.id);
-    if(x&&y&&x.start<=y.end&&y.start<=x.end&&!ancestor(a.id,b.id)&&!ancestor(b.id,a.id))
+    if(x&&y&&x.start<=y.end&&y.start<=x.end&&!ancestor(a.id,b.id)&&!ancestor(b.id,a.id)&&
+       !independentNetworkInsideBlock(a,b,x,y)&&!independentNetworkInsideBlock(b,a,y,x))
       errors.push('Overlapping unrelated subnets: '+a.cidr+' and '+b.cidr);
   }
   return errors;
@@ -3402,7 +3407,7 @@ function openSubnetModal(subnetId = null) {
             }
             if(text.startsWith('Overlapping unrelated subnets:')){
                 const ranges=text.slice(text.indexOf(':')+1).trim();
-                return 'The ranges '+ranges+' overlap without a parent relationship. An existing independent subnet inside a proposed block is also rejected by the current rule. Choose a non-overlapping range or no block.';
+                return 'The ranges '+ranges+' overlap without a parent relationship. Independent subnets may sit inside a block without joining it; overlapping networks or unrelated blocks are not allowed. Choose a non-overlapping range.';
             }
             for(const record of all)if(record.id)text=text.split(record.id).join(record.cidr||record.name||'selected subnet');
             return text.replace(/sub_[A-Za-z0-9_-]+/g,'selected subnet');
@@ -3428,7 +3433,7 @@ function openSubnetModal(subnetId = null) {
         function openMultipleSubnets(resume=false) {
             if(!resume||!subnetBatchDraft)subnetBatchDraft={organisation:'none',pool:'',parentName:'',parentCidr:'',existing:'',start:'',prefix:'24',count:'',convention:'',spacing:'consecutive',parentId:'sub_'+crypto.randomUUID(),rows:[]};
             const draft=subnetBatchDraft,option=(value,label,current)=>'<option value="'+escapeHtml(value)+'" '+(value===current?'selected':'')+'>'+escapeHtml(label)+'</option>';
-            openIpamModal(renderInterfaceTemplate("ipam/multiple-subnets-generator",[...['none','existing','new'].map(v=>draft.organisation===v?'selected':''),appState.subnets.filter(s=>s.kind==='container').map(s=>option(s.id,s.name+' — '+s.cidr,draft.existing)).join(''),['10.0.0.0/8','172.16.0.0/12','192.168.0.0/16'].map(v=>option(v,v,draft.pool)).join(''),escapeHtml(draft.parentName),escapeHtml(draft.parentCidr),escapeHtml(draft.start),[23,24,25,26,27,28,29,30].map(v=>option(String(v),'/'+v,draft.prefix)).join(''),escapeHtml(draft.count),['First usable IP','Last usable IP'].map(v=>option(v,v,draft.convention)).join(''),[['consecutive','Consecutive'],['tenth','Every 10th Subnet'],['custom','Custom CIDRs']].map(([value,label])=>option(value,label,draft.spacing||'consecutive')).join(''),draft.organisation!=='none'||draft.pool?'open':'']));
+            openIpamModal(renderInterfaceTemplate("ipam/multiple-subnets-generator",[...['none','existing','new'].map(v=>draft.organisation===v?'selected':''),appState.subnets.filter(s=>s.kind==='container').map(s=>option(s.id,s.name+' — '+s.cidr,draft.existing)).join(''),['10.0.0.0/8','172.16.0.0/12','192.168.0.0/16'].map(v=>option(v,v,draft.pool)).join(''),escapeHtml(draft.parentName),escapeHtml(draft.parentCidr),escapeHtml(draft.start),[23,24,25,26,27,28,29,30].map(v=>option(String(v),'/'+v,draft.prefix)).join(''),escapeHtml(draft.count),['First usable IP','Last usable IP'].map(v=>option(v,v,draft.convention)).join(''),[['consecutive','Consecutive'],['tenth','Every 10th Subnet'],['custom','Custom CIDRs']].map(([value,label])=>option(value,label,draft.spacing||'consecutive')).join(''),draft.planningOpen?'open':'']));
             document.getElementById('modal-content').classList.add('ipam-subnet-generator');
             const form=document.getElementById('subnet-batch-generator');
             const organisation=document.getElementById('subnet-batch-organisation');
@@ -3443,12 +3448,48 @@ function openSubnetModal(subnetId = null) {
                 const pool=hierarchyParseCidr(event.target.value);
                 document.getElementById('subnet-batch-start').value=formatIpv4Address(pool.start);
                 if(organisation.value==='new')document.getElementById('subnet-batch-parent-cidr').value=event.target.value;
+                updateSubnetCapacityGuidance();
             });
+            form.addEventListener('input',updateSubnetCapacityGuidance);
+            form.addEventListener('change',updateSubnetCapacityGuidance);
+            updateSubnetCapacityGuidance();
             form.addEventListener('submit',event=>{
-                event.preventDefault();
+                event.preventDefault();draft.planningOpen=planning.open;
                 for(const [key,id]of Object.entries({organisation:'organisation',pool:'pool',parentName:'parent-name',parentCidr:'parent-cidr',existing:'existing',start:'start',prefix:'prefix',count:'count',convention:'convention',spacing:'spacing'}))draft[key]=document.getElementById('subnet-batch-'+id).value.trim();
                 try{generateSubnetBatchPreview();}catch(error){showSubnetFormError(error.message,error.fieldId||'subnet-batch-start');}
             });
+        }
+        function calculateSubnetCapacity(cidr, prefix, count, spacing='consecutive') {
+            const parent=hierarchyParseCidr(cidr);
+            if(!parent?.aligned||!Number.isInteger(prefix)||prefix<23||prefix>30)return null;
+            const stride=spacing==='tenth'?10:1,childSize=2**(32-prefix);
+            const capacity=Math.floor(parent.size/childSize);
+            const spacedCapacity=capacity?Math.floor((capacity-1)/stride)+1:0;
+            const validCount=Number.isInteger(count)&&count>=1&&count<=50;
+            const suggestedPrefix=validCount?[23,24,25,26,27,28,29,30].find(candidate=>candidate>parent.prefix&&
+                ((count-1)*stride+1)*2**(32-candidate)<=parent.size):undefined;
+            return {capacity,spacedCapacity,suggestedPrefix,parentPrefix:parent.prefix,
+                fits:validCount&&prefix>parent.prefix&&count<=spacedCapacity};
+        }
+        function updateSubnetCapacityGuidance() {
+            const form=document.getElementById('subnet-batch-generator');if(!form)return;
+            const read=id=>document.getElementById('subnet-batch-'+id).value.trim();
+            const mode=read('organisation'),prefix=Number(read('prefix')),count=Number(read('count')),spacing=read('spacing');
+            const cidr=mode==='new'?read('parent-cidr'):mode==='existing'?appState.subnets.find(s=>s.id===read('existing'))?.cidr:read('pool');
+            const hint=document.getElementById('subnet-batch-capacity');
+            if(!cidr){hint.textContent='No parent range selected. You can create standalone subnets. Preview checks all proposed ranges and existing allocations.';return;}
+            const result=calculateSubnetCapacity(cidr,prefix,count,spacing);
+            if(!result){hint.textContent='Enter an aligned planning CIDR, for example 172.16.0.0/12. Child subnet prefixes remain /23–/30.';return;}
+            let text=cidr+' has theoretical capacity for '+result.capacity.toLocaleString('en-GB')+' /'+prefix+' subnet ranges.';
+            if(spacing==='tenth')text+=' Every 10th permits up to '+result.spacedCapacity.toLocaleString('en-GB')+' from the start of that range.';
+            if(spacing==='custom')text+=' Custom CIDRs are checked individually; this calculation assumes equal-sized subnets.';
+            if(Number.isInteger(count)&&count>=1&&count<=50){
+                text+=result.suggestedPrefix!==undefined?' For '+count+' subnets with this spacing, /'+result.suggestedPrefix+' or a longer prefix can fit in principle.':' This count and spacing cannot fit using /23–/30 children; use a broader range or fewer subnets.';
+                if(!result.fits)text+=' The selected /'+prefix+' does not fit this count/spacing as strictly smaller children.';
+                const start=hierarchyParseCidr(read('start')+'/'+prefix),parent=hierarchyParseCidr(cidr),stride=spacing==='tenth'?10:1;
+                if(spacing!=='custom'&&start?.aligned&&(start.start<parent.start||start.start+start.size*((count-1)*stride+1)-1>parent.end))text+=' The actual starting address and spacing extend outside this range; change the start, count or prefix.';
+            }
+            hint.textContent=text+' This is capacity, not free space. Preview checks existing networks and allocations. Your selected prefix has not been changed.';
         }
         function generateSubnetBatchPreview() {
             const draft=subnetBatchDraft,count=Number(draft.count),prefix=Number(draft.prefix);
@@ -3582,6 +3623,7 @@ function openSubnetModal(subnetId = null) {
         // refuse destructive operations with dependent records.
         // Users can deliberately detach/reassign dependencies first.
         function getDevicesAndIpAllocationsInSubnet(subnet, state=appState) {
+            if(subnet.kind==='container')return {devices:[],allocations:[]};
             const devices=state.devices.filter(d=>d.primaryIp && ipBelongsToSubnet(d.primaryIp,subnet.cidr));
             const allocations=Object.keys(state.ipAllocations).filter(ip=>ipBelongsToSubnet(ip,subnet.cidr));
             return {devices,allocations};

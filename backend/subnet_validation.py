@@ -116,6 +116,15 @@ def validate_subnet_hierarchy(subnets):
             subnet = ids.get(subnet["parentId"])
         return False
 
+    def independent_network_inside_block(block, network, block_range, network_range):
+        # Containment organises address space without adopting standalone inventory.
+        return (block.get("kind") == "container" and
+                network.get("kind", "network") == "network" and
+                not network.get("parentId") and
+                block_range["start"] <= network_range["start"] and
+                network_range["end"] <= block_range["end"] and
+                network_range["size"] < block_range["size"])
+
     for i, left in enumerate(subnets):
         for right in subnets[i + 1:]:
             if not isinstance(left, dict) or not isinstance(right, dict):
@@ -125,7 +134,9 @@ def validate_subnet_hierarchy(subnets):
             x, y = ranges.get(left.get("id")), ranges.get(right.get("id"))
             if (x and y and x["start"] <= y["end"] and y["start"] <= x["end"] and
                     not ancestor(left["id"], right["id"]) and
-                    not ancestor(right["id"], left["id"])):
+                    not ancestor(right["id"], left["id"]) and
+                    not independent_network_inside_block(left, right, x, y) and
+                    not independent_network_inside_block(right, left, y, x)):
                 errors.append("Overlapping unrelated subnets: " + str(left.get("cidr")) +
                               " and " + str(right.get("cidr")))
     return errors

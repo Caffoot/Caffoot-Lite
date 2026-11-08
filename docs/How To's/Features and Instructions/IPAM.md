@@ -31,12 +31,14 @@ To create an organisational parent instead, select **IP Address Block** in the s
 
 ## Add multiple subnets
 
-1. Select **Add Multiple Subnets**. Enter **Starting Subnet Address**, **Subnet Prefix** (/23–/30), **Number of Subnets** (1–50) and **Gateway Convention** (First/Last usable IP).
-2. Leave **Consecutive** for adjacent ranges, choose **Every 10th Subnet** for ten subnet-sized steps (for /24: .10, .20, .30), or **Custom CIDRs** to edit each range in the preview.
-3. If needed, expand **Address Block & Private Range Planning (Optional)**. Keep no block, choose an existing block or enter a new block name and aligned CIDR. A broader /16 block is different from an addressable subnet prefix. Optional RFC1918 quick-fill fills planning inputs only and creates nothing.
+1. Select **Add Multiple Subnets**. The first section, **Address Block & Private Range Planning (Optional)**, starts collapsed. Leave it alone for standalone subnets, or open it to select/create a block or deliberately use a private-range quick-fill. It creates nothing until Save.
+2. Under **Create Your Subnets**, enter **Starting Subnet Address**, **Subnet Prefix** (/23–/30), **Number of Subnets** (1–50) and **Gateway Convention** (First/Last usable IP). Capacity guidance explains how many equal-sized ranges fit a chosen parent and suggests a suitable prefix. It never changes your prefix: address/device capacity remains your choice. Theoretical capacity does not mean those ranges are free.
+3. Leave **Consecutive** for adjacent ranges, choose **Every 10th Subnet** for ten subnet-sized steps (for /24: .10, .20, .30), or **Custom CIDRs** to edit each range in the preview. Guidance accounts for the Every 10th span; Custom ranges are checked individually. A broader /16 block is different from an addressable child prefix. Check the actual starting address, containment and existing inventory before saving.
 4. Select **Preview Subnets**. Give every row a unique name and explicitly selected purpose. VLAN and Description are optional; edit gateways individually where needed. VPN gateways may be cleared. Custom CIDRs must be aligned /23–/30 ranges without overlaps.
 5. Correct the visible field/row errors. Back lets you revise generation settings; manual gateways remain and are rechecked. Custom CIDRs survive Back with the same start/prefix/mode; changing those generation settings explicitly recalculates ranges.
 6. Review the entire set and select **Save**. The optional new parent and all subnets save together, or none save. A failed row is never skipped silently.
+
+An Address Block can strictly contain an independent subnet without adopting it. The independent subnet keeps its saved parent absence, name, VLAN, allocations and devices, and appears under All / Standalone rather than that block's child filter. New children must avoid every existing network. Equal/partial overlaps, unrelated block overlaps and conflicting ownership remain rejected. Deleting or editing a block never adopts or deletes independent networks; explicitly linked children still protect a block from deletion.
 
 The preview scrolls independently with Back/Cancel/Save visible, and rows stack on mobile. Fifty is the limit for **one operation**, not your installation: further batches into the same block are permitted when ranges and other rules are valid. Audit Trail reports the actual count while retaining the existing bounded detailed history.
 

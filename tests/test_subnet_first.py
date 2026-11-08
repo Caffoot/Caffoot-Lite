@@ -98,13 +98,39 @@ class SubnetFirstTests(unittest.TestCase):
         restored = normalise_detached_v133_state(self.state())
         self.assertEqual(restored['subnets'], self.state()['subnets'])
 
-    def test_address_block_independent_network_restriction_is_unchanged(self):
-        row = network(10); row.update(cidr='10.128.10.0/24',gateway='10.128.10.1')
+    def test_approved_block_contains_independent_network_without_adoption(self):
+        row = network(10); row.update(cidr='10.128.10.0/24',gateway='10.128.10.1',custom={'history':'preserved'})
         self.save([row])
         parent = dict(id='proposed',kind='container',name='Proposed block',cidr='10.128.0.0/16')
-        with self.assertRaisesRegex(ValueError, 'Overlapping unrelated'):
-            self.save([parent])
-        self.assertEqual(self.state()['subnets'], [row])
+        children = []
+        for index in range(60,66):
+            child = network(index); child.update(cidr=f'10.128.{index}.0/24',gateway=f'10.128.{index}.1',parentId=parent['id'])
+            children.append(child)
+        self.save([parent]+children)
+        actual = next(s for s in self.state()['subnets'] if s['id']==row['id'])
+        self.assertEqual(actual,row)
+        self.assertNotIn('parentId',actual)
+        self.assertEqual(len([s for s in self.state()['subnets'] if s.get('parentId')==parent['id']]),6)
+        self.assertEqual(normalise_detached_v133_state(self.state())['subnets'],self.state()['subnets'])
+        before=copy.deepcopy(self.state());bad=network(70);bad.update(cidr=row['cidr'],gateway=row['gateway'],parentId=parent['id'])
+        with self.assertRaises(ValueError):self.save([bad])
+        self.assertEqual(self.state(),before)
+
+    def test_block_edit_and_delete_never_touch_independent_devices_or_reservations(self):
+        row=network(0);self.save([row])
+        state=self.state();state['devices']=[dict(id='fictional-router',name='Fictional router',mountType='Desktop',primaryIp='10.80.0.10')]
+        state['ipAllocations']={'10.80.0.10':dict(deviceId='fictional-router',status='Assigned',notes='Retain metadata'),
+                                '10.80.0.11':dict(status='Reserved',notes='Independent reservation')}
+        stage_inventory(self.db,state)
+        parent=dict(id='small-block',kind='container',name='Small block',cidr='10.80.0.0/23')
+        change_inventory_record(self.db,1,'subnets',parent['id'],parent)
+        parent['name']='Renamed block';self.save([parent])
+        self.assertEqual(next(s for s in self.state()['subnets'] if s['id']==row['id']),row)
+        self.assertEqual(self.state()['devices'],state['devices']);self.assertEqual(self.state()['ipAllocations'],state['ipAllocations'])
+        with self.assertRaises(ValueError):
+            delete_subnet_with_dependencies(self.db,1,parent['id'],[{'id':'fictional-router','ip':'10.80.0.10'}],['10.80.0.10'])
+        delete_subnet_with_dependencies(self.db,1,parent['id'],[],[])
+        self.assertEqual(self.state(),state)
 
     def test_one_and_ten_subnets(self):
         self.save([network(0)])
