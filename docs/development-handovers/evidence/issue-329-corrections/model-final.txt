@@ -1,0 +1,24 @@
+test_address_block_independent_network_restriction_is_unchanged (tests.test_subnet_first.SubnetFirstTests.test_address_block_independent_network_restriction_is_unchanged) ... ok
+test_concurrent_conflicting_batches_only_one_commits (tests.test_subnet_first.SubnetFirstTests.test_concurrent_conflicting_batches_only_one_commits) ... ok
+test_concurrent_duplicate_names_with_distinct_ranges_only_one_commits (tests.test_subnet_first.SubnetFirstTests.test_concurrent_duplicate_names_with_distinct_ranges_only_one_commits) ... ok
+test_fifty_one_and_empty_requests_leave_no_parent_or_audit (tests.test_subnet_first.SubnetFirstTests.test_fifty_one_and_empty_requests_leave_no_parent_or_audit) ... ok
+test_historical_duplicate_names_survive_edits_and_import_but_renames_are_checked (tests.test_subnet_first.SubnetFirstTests.test_historical_duplicate_names_survive_edits_and_import_but_renames_are_checked) ... ok
+test_invalid_first_middle_last_row_rolls_back_parent_and_every_row (tests.test_subnet_first.SubnetFirstTests.test_invalid_first_middle_last_row_rolls_back_parent_and_every_row) ... ok
+test_invalid_new_parent_name_rolls_back_every_child (tests.test_subnet_first.SubnetFirstTests.test_invalid_new_parent_name_rolls_back_every_child) ... ok
+test_names_are_unique_on_both_save_boundaries_and_bulk_is_atomic (tests.test_subnet_first.SubnetFirstTests.test_names_are_unique_on_both_save_boundaries_and_bulk_is_atomic) ... ok
+test_new_optional_fields_use_omission_not_blank_or_zero (tests.test_subnet_first.SubnetFirstTests.test_new_optional_fields_use_omission_not_blank_or_zero) ... ok
+test_one_and_ten_subnets (tests.test_subnet_first.SubnetFirstTests.test_one_and_ten_subnets) ... ok
+test_optional_vlan_and_vpn_gateway_round_trip_without_phantom_fields (tests.test_subnet_first.SubnetFirstTests.test_optional_vlan_and_vpn_gateway_round_trip_without_phantom_fields) ... ok
+test_purpose_required_at_both_save_boundaries_but_legacy_edit_is_preserved (tests.test_subnet_first.SubnetFirstTests.test_purpose_required_at_both_save_boundaries_but_legacy_edit_is_preserved) ... ok
+test_read_only_and_no_access_cannot_write (tests.test_subnet_first.SubnetFirstTests.test_read_only_and_no_access_cannot_write) ... ok
+test_required_gateway_and_explicit_vpn_gateway_validation (tests.test_subnet_first.SubnetFirstTests.test_required_gateway_and_explicit_vpn_gateway_validation) ... ok
+test_reserved_gateway_rejected_by_both_boundaries_without_history_changes (tests.test_subnet_first.SubnetFirstTests.test_reserved_gateway_rejected_by_both_boundaries_without_history_changes) ... ok
+test_resolved_spaced_and_custom_cidrs_use_the_same_server_integrity_rules (tests.test_subnet_first.SubnetFirstTests.test_resolved_spaced_and_custom_cidrs_use_the_same_server_integrity_rules) ... ok
+test_single_and_three_batches_of_fifty_without_installation_limit (tests.test_subnet_first.SubnetFirstTests.test_single_and_three_batches_of_fifty_without_installation_limit) ... ok
+test_tagged_vlan_scope_and_multiple_untagged (tests.test_subnet_first.SubnetFirstTests.test_tagged_vlan_scope_and_multiple_untagged) ... ok
+test_untagged_deletion_does_not_claim_or_remove_a_vlan (tests.test_subnet_first.SubnetFirstTests.test_untagged_deletion_does_not_claim_or_remove_a_vlan) ... ok
+
+----------------------------------------------------------------------
+Ran 19 tests in 0.082s
+
+OK

@@ -1,0 +1,4 @@
+PASS: Single duplicate names are rejected beside Name without changing historical inventory
+PASS: Every 10th uses subnet-sized strides; Custom validates CIDRs/names and saves retained manual gateways atomically
+PASS: Containing-block errors stay visible beside the input and explain the range without internal IDs
+PASS: Whole-app selects keep native semantics with consistent chrome; Gateway Convention matches adjacent fields before/after Back at four widths and both themes

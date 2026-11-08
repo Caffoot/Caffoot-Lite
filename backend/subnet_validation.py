@@ -242,7 +242,7 @@ def validate_subnet_mutation(record, existing, state):
                isinstance(other.get("name"), str) and
                other["name"].strip().lower() == name
                for other in state["subnets"]):
-            raise ValueError("A subnet with this name already exists. Choose a unique subnet name.")
+            raise ValueError("A subnet with this name already exists: " + record["name"].strip() + ". Choose a unique subnet name.")
     if existing is None:
         if record.get("purpose") not in ("LAN", "Management", "VPN"):
             raise ValueError("Select LAN, Management or VPN for each new subnet.")

@@ -349,3 +349,28 @@ html.dark #modal-container .device-editor-dialog #device-form-installed-software
 .ipam-preview-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
 .ipam-subnet-preview-table [aria-invalid=true]{outline:2px solid var(--theme-danger,#b45309);outline-offset:1px}
 @media(max-width:720px){.ipam-subnet-preview-table,.ipam-subnet-preview-table tbody,.ipam-subnet-preview-table tr,.ipam-subnet-preview-table td,.ipam-subnet-preview-table th[scope=row]{display:block}.ipam-subnet-preview-table thead{display:none}.ipam-subnet-preview-table tr{border:1px solid var(--theme-border,#d3e0e9);border-radius:9px;margin-bottom:13px;padding:10px}.ipam-subnet-preview-table td,.ipam-subnet-preview-table th{border:0;padding:6px 0}.ipam-preview-label{position:static;width:auto;height:auto;overflow:visible;clip-path:none}}
+
+/* Native Safari menu chrome ignores parts of the approved field treatment.
+   Keep real selects and their existing sizes, using one predictable chevron. */
+#app #main-content select:not(.caffoot-search-native):not([multiple]):not([size]),
+#modal-container #modal-content select:not(.caffoot-search-native):not([multiple]):not([size]) {
+ -webkit-appearance:none;appearance:none;
+ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E");
+ background-repeat:no-repeat;background-position:right 11px center;background-size:12px 8px;
+ padding-inline-end:32px;
+}
+@media (forced-colors:active) {
+ #app #main-content select:not(.caffoot-search-native):not([multiple]):not([size]),#modal-container #modal-content select:not(.caffoot-search-native):not([multiple]):not([size]) {appearance:auto;background-image:none;}
+}
+#modal-content .ipam-field-error {display:block;color:#a52626;font-size:12px;line-height:1.5;font-weight:650;white-space:normal;}
+.dark #modal-content .ipam-field-error {color:#ffb4b4;}
+#modal-content .ipam-modal-body > .form-error.is-visible,
+#modal-content .ipam-preview-feedback.is-visible {display:block;border:1px solid #d79393;background:#fff2f2;color:#892020;padding:12px;border-radius:9px;font-size:13px;line-height:1.5;}
+.dark #modal-content .ipam-modal-body > .form-error.is-visible,
+.dark #modal-content .ipam-preview-feedback.is-visible {background:#3e2026;color:#ffd2d2;border-color:#9e6069;}
+.ipam-optional-planning {margin-top:18px;border-top:1px solid var(--theme-border,#d8e2eb);padding-top:14px;}
+.ipam-optional-planning > summary {cursor:pointer;font-weight:700;}
+.ipam-optional-planning .ipam-form-grid {margin-top:14px;}
+.ipam-subnet-preview-table th .ipam-field {font-weight:400;min-width:130px;}
+
+#subnet-batch-generator .ipam-form-grid {align-items:start;}

@@ -1,0 +1,669 @@
+[
+  {
+    "file": "interface/screens/device-details.html",
+    "line": 16,
+    "attributes": {
+      "id": "assign-device-id",
+      "required": null,
+      "{{slot:2}}": null,
+      "class": "w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"
+    }
+  },
+  {
+    "file": "interface/screens/device-details.html",
+    "line": 20,
+    "attributes": {
+      "id": "assign-face"
+    }
+  },
+  {
+    "file": "interface/screens/device-details.html",
+    "line": 21,
+    "attributes": {
+      "id": "assign-u-start",
+      "required": null,
+      "aria-label": "Available start U position"
+    }
+  },
+  {
+    "file": "interface/screens/device-details.html",
+    "line": 40,
+    "attributes": {
+      "id": "dev-status",
+      "class": "w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"
+    }
+  },
+  {
+    "file": "interface/screens/device-details.html",
+    "line": 60,
+    "attributes": {
+      "id": "dev-deployment",
+      "class": "w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"
+    }
+  },
+  {
+    "file": "interface/screens/device-details.html",
+    "line": 60,
+    "attributes": {
+      "id": "dev-type",
+      "required": null,
+      "class": "w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"
+    }
+  },
+  {
+    "file": "interface/screens/device-details.html",
+    "line": 60,
+    "attributes": {
+      "id": "dev-vm-purpose",
+      "class": "w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"
+    }
+  },
+  {
+    "file": "interface/screens/device-details.html",
+    "line": 66,
+    "attributes": {
+      "id": "dev-virtual-platform",
+      "class": "w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"
+    }
+  },
+  {
+    "file": "interface/screens/device-details.html",
+    "line": 69,
+    "attributes": {
+      "id": "dev-virtual-host",
+      "class": "w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"
+    }
+  },
+  {
+    "file": "interface/screens/device-details.html",
+    "line": 87,
+    "attributes": {
+      "id": "host-platform-select",
+      "class": "w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700",
+      "aria-label": "Hypervisor software"
+    }
+  },
+  {
+    "file": "interface/screens/device-details.html",
+    "line": 102,
+    "attributes": {
+      "id": "dev-manufacturer-select",
+      "class": "w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"
+    }
+  },
+  {
+    "file": "interface/screens/device-details.html",
+    "line": 103,
+    "attributes": {
+      "id": "dev-model-select",
+      "class": "w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"
+    }
+  },
+  {
+    "file": "interface/screens/device-details.html",
+    "line": 109,
+    "attributes": {
+      "id": "dev-mount-type",
+      "required": null,
+      "data-action": "device-mount-type-change",
+      "class": "w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"
+    }
+  },
+  {
+    "file": "interface/screens/device-details.html",
+    "line": 112,
+    "attributes": {
+      "id": "dev-location",
+      "required": null,
+      "data-previous-location": "{{slot:37}}",
+      "data-action": "device-location-change",
+      "class": "w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"
+    }
+  },
+  {
+    "file": "interface/screens/device-details.html",
+    "line": 118,
+    "attributes": {
+      "id": "dev-rack-id",
+      "class": "w-full border rounded-lg p-1.5 text-xs dark:bg-slate-700"
+    }
+  },
+  {
+    "file": "interface/screens/device-details.html",
+    "line": 119,
+    "attributes": {
+      "id": "dev-rack-face",
+      "class": "w-full border rounded-lg p-1.5 text-xs dark:bg-slate-700"
+    }
+  },
+  {
+    "file": "interface/screens/device-details.html",
+    "line": 120,
+    "attributes": {
+      "id": "dev-rack-u",
+      "data-initial-u": "{{slot:47}}",
+      "class": "w-full border rounded-lg p-1.5 text-xs dark:bg-slate-700 text-center font-mono"
+    }
+  },
+  {
+    "file": "interface/screens/device-details.html",
+    "line": 125,
+    "attributes": {
+      "id": "dev-block",
+      "data-action": "device-block-change",
+      "class": "w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"
+    }
+  },
+  {
+    "file": "interface/screens/device-details.html",
+    "line": 125,
+    "attributes": {
+      "id": "dev-subnet",
+      "required": null,
+      "data-action": "device-subnet-change",
+      "data-initial-subnet": "{{slot:51}}",
+      "class": "w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"
+    }
+  },
+  {
+    "file": "interface/screens/device-details.html",
+    "line": 125,
+    "attributes": {
+      "id": "dev-ip-available",
+      "data-action": "device-ip-select",
+      "class": "w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700 font-mono"
+    }
+  },
+  {
+    "file": "interface/screens/device-details.html",
+    "line": 139,
+    "attributes": {
+      "id": "virtual-machine-guest-{{slot:2}}",
+      "data-m005-guest": "{{slot:3}}",
+      "class": "w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"
+    }
+  },
+  {
+    "file": "interface/screens/device-details.html",
+    "line": 205,
+    "attributes": {
+      "id": "legacy-ap-{{slot:4}}",
+      "data-ap-choice": "{{slot:5}}",
+      "class": "w-full rounded-xl border border-slate-300 bg-white dark:bg-slate-700 dark:border-slate-500 px-3 py-2.5 text-slate-900 dark:text-white"
+    }
+  },
+  {
+    "file": "interface/screens/device-inventory.html",
+    "line": 6,
+    "attributes": {
+      "id": "device-assignment-filter"
+    }
+  },
+  {
+    "file": "interface/screens/device-inventory.html",
+    "line": 11,
+    "attributes": {
+      "id": "device-type-filter"
+    }
+  },
+  {
+    "file": "interface/screens/device-inventory.html",
+    "line": 15,
+    "attributes": {
+      "id": "device-status-filter"
+    }
+  },
+  {
+    "file": "interface/screens/device-inventory.html",
+    "line": 19,
+    "attributes": {
+      "id": "device-location-filter"
+    }
+  },
+  {
+    "file": "interface/screens/device-inventory.html",
+    "line": 23,
+    "attributes": {
+      "id": "device-mount-filter"
+    }
+  },
+  {
+    "file": "interface/screens/device-inventory.html",
+    "line": 28,
+    "attributes": {
+      "id": "device-sort",
+      "style": "display:inline-block;width:auto;margin:0 0 0 9px;min-width:130px"
+    }
+  },
+  {
+    "file": "interface/screens/dashboard.html",
+    "line": 20,
+    "attributes": {
+      "id": "activity-filter",
+      "data-dashboard-filter": "activity"
+    }
+  },
+  {
+    "file": "interface/screens/dashboard.html",
+    "line": 30,
+    "attributes": {
+      "id": "alert-filter",
+      "data-dashboard-filter": "alerts"
+    }
+  },
+  {
+    "file": "interface/screens/device-management.html",
+    "line": 63,
+    "attributes": {
+      "id": "hardware-model-manufacturer-select"
+    }
+  },
+  {
+    "file": "interface/screens/device-management.html",
+    "line": 65,
+    "attributes": {
+      "id": "model-device-type"
+    }
+  },
+  {
+    "file": "interface/screens/device-management.html",
+    "line": 89,
+    "attributes": {
+      "id": "hardware-model-manufacturer-filter",
+      "class": "w-full h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-900"
+    }
+  },
+  {
+    "file": "interface/screens/device-management.html",
+    "line": 91,
+    "attributes": {
+      "id": "model-type",
+      "class": "w-full h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-900"
+    }
+  },
+  {
+    "file": "interface/screens/device-management.html",
+    "line": 93,
+    "attributes": {
+      "id": "model-source",
+      "class": "w-full h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-900"
+    }
+  },
+  {
+    "file": "interface/screens/device-management.html",
+    "line": 128,
+    "attributes": {
+      "id": "software-type",
+      "class": "block mt-1 h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-900"
+    }
+  },
+  {
+    "file": "interface/screens/device-management.html",
+    "line": 130,
+    "attributes": {
+      "id": "software-source",
+      "class": "block mt-1 h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-600 bg-white dark:bg-slate-900"
+    }
+  },
+  {
+    "file": "interface/screens/device-management.html",
+    "line": 255,
+    "attributes": {
+      "id": "platform-select",
+      "class": "w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"
+    }
+  },
+  {
+    "file": "interface/screens/device-management.html",
+    "line": 258,
+    "attributes": {
+      "id": "version-select",
+      "class": "w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"
+    }
+  },
+  {
+    "file": "interface/screens/device-management.html",
+    "line": 272,
+    "attributes": {
+      "id": "hardware-model-manufacturer-filter"
+    }
+  },
+  {
+    "file": "interface/screens/device-management.html",
+    "line": 272,
+    "attributes": {
+      "id": "model-type"
+    }
+  },
+  {
+    "file": "interface/screens/device-management.html",
+    "line": 272,
+    "attributes": {
+      "id": "model-source"
+    }
+  },
+  {
+    "file": "interface/screens/device-management.html",
+    "line": 274,
+    "attributes": {
+      "id": "software-type"
+    }
+  },
+  {
+    "file": "interface/screens/device-management.html",
+    "line": 274,
+    "attributes": {
+      "id": "software-source"
+    }
+  },
+  {
+    "file": "interface/screens/ipam.html",
+    "line": 116,
+    "attributes": {
+      "class": "ipam-select",
+      "id": "ipam-select-network"
+    }
+  },
+  {
+    "file": "interface/screens/ipam.html",
+    "line": 125,
+    "attributes": {
+      "id": "ipam-status-filter"
+    }
+  },
+  {
+    "file": "interface/screens/ipam.html",
+    "line": 266,
+    "attributes": {
+      "id": "ipam-status-filter",
+      "class": "block w-full mt-1 rounded-xl border border-slate-400 dark:border-slate-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
+    }
+  },
+  {
+    "file": "interface/screens/ipam.html",
+    "line": 299,
+    "attributes": {
+      "id": "subnet-selector",
+      "onchange": "changeSubnet(this.value)",
+      "class": "bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl px-3 py-2 text-sm font-semibold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    }
+  },
+  {
+    "file": "interface/screens/ipam.html",
+    "line": 328,
+    "attributes": {
+      "id": "bulk-status"
+    }
+  },
+  {
+    "file": "interface/screens/ipam.html",
+    "line": 378,
+    "attributes": {
+      "id": "sub-kind",
+      "{{slot:2}}": null
+    }
+  },
+  {
+    "file": "interface/screens/ipam.html",
+    "line": 396,
+    "attributes": {
+      "id": "sub-purpose"
+    }
+  },
+  {
+    "file": "interface/screens/ipam.html",
+    "line": 403,
+    "attributes": {
+      "id": "sub-parent"
+    }
+  },
+  {
+    "file": "interface/screens/ipam.html",
+    "line": 444,
+    "attributes": {
+      "id": "ip-status",
+      "data-action": "ip-status-change",
+      "{{slot:4}}": null
+    }
+  },
+  {
+    "file": "interface/screens/ipam.html",
+    "line": 472,
+    "attributes": {
+      "id": "subnet-batch-prefix",
+      "required": null
+    }
+  },
+  {
+    "file": "interface/screens/ipam.html",
+    "line": 474,
+    "attributes": {
+      "id": "subnet-batch-convention",
+      "required": null
+    }
+  },
+  {
+    "file": "interface/screens/ipam.html",
+    "line": 475,
+    "attributes": {
+      "id": "subnet-batch-spacing"
+    }
+  },
+  {
+    "file": "interface/screens/ipam.html",
+    "line": 477,
+    "attributes": {
+      "id": "subnet-batch-organisation"
+    }
+  },
+  {
+    "file": "interface/screens/ipam.html",
+    "line": 478,
+    "attributes": {
+      "id": "subnet-batch-existing"
+    }
+  },
+  {
+    "file": "interface/screens/ipam.html",
+    "line": 481,
+    "attributes": {
+      "id": "subnet-batch-pool"
+    }
+  },
+  {
+    "file": "interface/screens/users.html",
+    "line": 35,
+    "attributes": {
+      "class": "input",
+      "id": "live-users-status"
+    }
+  },
+  {
+    "file": "interface/screens/users.html",
+    "line": 36,
+    "attributes": {
+      "class": "input",
+      "id": "live-users-mfa"
+    }
+  },
+  {
+    "file": "interface/screens/users.html",
+    "line": 42,
+    "attributes": {
+      "id": "live-user-permission-{{slot:2}}",
+      "class": "input",
+      "data-next-user-permission": null,
+      "data-user-id": "{{slot:3}}",
+      "data-section": "{{slot:4}}",
+      "{{slot:5}}": null
+    }
+  },
+  {
+    "file": "interface/screens/devices.html",
+    "line": 261,
+    "attributes": {
+      "id": "device-detail-{{slot:2}}",
+      "data-device-detail-field": "{{slot:3}}",
+      "class": "w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"
+    }
+  },
+  {
+    "file": "interface/screens/audit-trail.html",
+    "line": 20,
+    "attributes": {
+      "class": "input",
+      "id": "area"
+    }
+  },
+  {
+    "file": "interface/screens/audit-trail.html",
+    "line": 21,
+    "attributes": {
+      "class": "input",
+      "id": "action"
+    }
+  },
+  {
+    "file": "interface/screens/audit-trail.html",
+    "line": 22,
+    "attributes": {
+      "class": "input",
+      "id": "actor"
+    }
+  },
+  {
+    "file": "interface/screens/racks.html",
+    "line": 152,
+    "attributes": {
+      "id": "v13-rack-detail-select",
+      "class": "rack-select",
+      "aria-label": "Choose rack to view"
+    }
+  },
+  {
+    "file": "interface/screens/racks.html",
+    "line": 239,
+    "attributes": {
+      "id": "rack-type",
+      "{{slot:6}}": null
+    }
+  },
+  {
+    "file": "interface/screens/racks.html",
+    "line": 240,
+    "attributes": {
+      "id": "rack-height",
+      "{{slot:8}}": null
+    }
+  },
+  {
+    "file": "interface/screens/racks.html",
+    "line": 263,
+    "attributes": {
+      "name": "itemType",
+      "id": "place-item-type"
+    }
+  },
+  {
+    "file": "interface/screens/racks.html",
+    "line": 264,
+    "attributes": {
+      "name": "face",
+      "id": "assign-face"
+    }
+  },
+  {
+    "file": "interface/screens/racks.html",
+    "line": 265,
+    "attributes": {
+      "id": "assign-device-id",
+      "name": "deviceId"
+    }
+  },
+  {
+    "file": "interface/screens/racks.html",
+    "line": 266,
+    "attributes": {
+      "id": "place-accessory-type",
+      "name": "accessoryType"
+    }
+  },
+  {
+    "file": "interface/screens/racks.html",
+    "line": 268,
+    "attributes": {
+      "name": "startU",
+      "id": "assign-u-start",
+      "required": null,
+      "aria-label": "Available start U position"
+    }
+  },
+  {
+    "file": "interface/screens/racks.html",
+    "line": 270,
+    "attributes": {
+      "name": "portCount",
+      "id": "place-port-count"
+    }
+  },
+  {
+    "file": "interface/screens/racks.html",
+    "line": 288,
+    "attributes": {
+      "name": "type",
+      "required": null,
+      "class": "rack-accessory-field"
+    }
+  },
+  {
+    "file": "interface/screens/racks.html",
+    "line": 289,
+    "attributes": {
+      "name": "portCount",
+      "class": "rack-accessory-field",
+      "{{slot:5}}": null
+    }
+  },
+  {
+    "file": "interface/screens/racks.html",
+    "line": 292,
+    "attributes": {
+      "name": "face",
+      "class": "rack-accessory-field"
+    }
+  },
+  {
+    "file": "interface/screens/racks.html",
+    "line": 293,
+    "attributes": {
+      "name": "side",
+      "class": "rack-accessory-field"
+    }
+  },
+  {
+    "file": "interface/screens/racks.html",
+    "line": 294,
+    "attributes": {
+      "name": "startU",
+      "required": null,
+      "class": "rack-accessory-field",
+      "aria-describedby": "rack-position-hint"
+    }
+  },
+  {
+    "file": "interface/screens/settings.html",
+    "line": 1,
+    "attributes": {
+      "id": "rack-style",
+      "class": "rack-accessory-field"
+    }
+  },
+  {
+    "file": "interface/screens/settings.html",
+    "line": 79,
+    "attributes": {
+      "aria-label": "SMTP connection security",
+      "name": "security"
+    }
+  }
+]

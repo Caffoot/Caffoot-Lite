@@ -10,6 +10,7 @@ module.exports=async function verifySubnetFirstIpam({page,reference,sourceBase,c
  const csrfSession=await (await context.request.get('https://127.0.0.1:8080/api/session')).json();const requestHeaders={Origin:'https://127.0.0.1:8080','X-CSRF-Token':csrfSession.csrf_token};
  const check=label=>{checks.push(label);console.log('PASS: '+label);};
  await page.goto('https://127.0.0.1:8080/inventory');await page.locator('#app[aria-busy=false]').waitFor();await page.setViewportSize({width:1440,height:950});
+ if(process.env.CAFFOOT_SUBNET_CORRECTIONS_ONLY==='1'){await require('./subnet-private-corrections.cjs')({page,context,folder});return;}
  if(process.env.CAFFOOT_SUBNET_FIRST_ROLES_ONLY==='1'){await require('./subnet-first-permissions.cjs')({context,fixtureDirectory,errors,state});console.log('PASS: Restricted IPAM browser roles');return;}
  if(process.env.CAFFOOT_SUBNET_FIRST_VISUAL_ONLY==='1'){await require('./subnet-first-visual.cjs')({page,reference,sourceBase,folder});return;}
  await single();assert.equal(await page.locator('#sub-purpose').inputValue(),'');assert(await page.locator('#sub-purpose').evaluate(e=>e.required));assert.equal(await page.locator('#sub-vlan').evaluate(e=>e.required),false);
@@ -20,13 +21,13 @@ module.exports=async function verifySubnetFirstIpam({page,reference,sourceBase,c
  await single();await page.locator('#sub-cidr').fill('10.61.0.0/24');await page.locator('#sub-name').fill('Invalid gateway check');await page.locator('#sub-purpose').selectOption('LAN');await page.locator('#sub-gw').fill('10.61.0.255');await page.locator('#modal-content [type=submit]').click();assert.equal(await page.locator('#sub-gw').getAttribute('aria-invalid'),'true');assert(await page.locator('#modal-content [data-form-error]').isVisible());assert(!(await state()).subnets.some(s=>s.cidr==='10.61.0.0/24'));await close();
  check('Single VPN omits unassigned fields, reload preserves them, legacy edits retain classification and invalid manual gateways cannot save');
  const generator=async({mode='none',parent='',start='10.81.0.0',count='10',convention='First usable IP'}={})=>{
-  await page.locator('#sidebar [data-action=tab-ipam]').click();await page.locator('#main-content [data-action=open-multiple-subnets]:visible').first().click();await page.locator('#subnet-batch-organisation').selectOption(mode);
+  await page.locator('#sidebar [data-action=tab-ipam]').click();await page.locator('#main-content [data-action=open-multiple-subnets]:visible').first().click();await page.locator('.ipam-optional-planning summary').click();await page.locator('#subnet-batch-organisation').selectOption(mode);
   if(mode==='new'){await page.locator('#subnet-batch-parent-name').fill('Fictional office');await page.locator('#subnet-batch-parent-cidr').fill('10.81.0.0/16');}
   if(mode==='existing')await page.locator('#subnet-batch-existing').selectOption(parent);
   await page.locator('#subnet-batch-start').fill(start);await page.locator('#subnet-batch-count').fill(count);await page.locator('#subnet-batch-convention').selectOption(convention);
  };
  const preview=async()=>{await page.locator('#subnet-batch-generator [type=submit]').click();await page.locator('#subnet-batch-preview').waitFor();};
- const fillRows=async(count)=>{for(let i=0;i<count;i++){await page.locator('#subnet-row-'+i+'-name').fill('Fictional generated '+i);await page.locator('#subnet-row-'+i+'-purpose').selectOption('LAN');}};
+ const fillRows=async(count)=>{for(let i=0;i<count;i++){await page.locator('#subnet-row-'+i+'-name').fill('Fictional generated '+count+' '+i);await page.locator('#subnet-row-'+i+'-purpose').selectOption('LAN');}};
  const beforeBulk=await state();await generator({mode:'new'});for(const badCount of ['0','51','1.5','-1']){await page.locator('#subnet-batch-count').fill(badCount);await page.locator('#subnet-batch-generator [type=submit]').click();assert.equal(await page.locator('#subnet-batch-preview').count(),0);assert.deepEqual((await state()).subnets,beforeBulk.subnets);}await page.locator('#subnet-batch-count').fill('10');await page.locator('#subnet-batch-pool').selectOption('10.0.0.0/8');assert.equal(await page.locator('#subnet-batch-parent-cidr').inputValue(),'10.0.0.0/8');assert.deepEqual((await state()).subnets,beforeBulk.subnets);await page.locator('#subnet-batch-parent-cidr').fill('10.81.0.0/16');await page.locator('#subnet-batch-start').fill('10.81.0.0');await preview();assert.equal(await page.locator('[data-subnet-row]').count(),10);assert.equal(await page.locator('#subnet-row-0-name').inputValue(),'');assert.equal(await page.locator('#subnet-row-0-purpose').inputValue(),'');assert.equal(await page.locator('#subnet-row-0-gateway').inputValue(),'10.81.0.1');
  await page.locator('#subnet-batch-preview [type=submit]').click();assert(await page.locator('[data-subnet-row="0"] [data-subnet-error]').isVisible());assert.deepEqual((await state()).subnets,beforeBulk.subnets);
  await fillRows(10);await page.locator('#subnet-row-5-purpose').selectOption('VPN');await page.locator('#subnet-row-5-gateway').fill('');await page.locator('#subnet-row-0-vlan').fill('11');await page.locator('[data-subnet-row="0"] summary').click();await page.locator('#subnet-row-0-description').fill('Fictional private description excluded from audit');
@@ -56,6 +57,7 @@ module.exports=async function verifySubnetFirstIpam({page,reference,sourceBase,c
  await require('./subnet-first-permissions.cjs')({context,fixtureDirectory,errors,state});
  check('An IPAM-only editor can create through the real preview without Devices rights; read-only users have no creation actions');
  await require('./subnet-first-visual.cjs')({page,reference,sourceBase,folder});check('Pinned Single/Device structure comparison covers four widths and both themes, with approved amendments recorded');
+ await require('./subnet-private-corrections.cjs')({page,context,folder});
  assert.deepEqual(errors,[]);fs.writeFileSync(path.join(folder,'checks.json'),JSON.stringify({checks,errors,measurements,nativeSafariTested:false},null,2));console.log('Subnet-first IPAM checks completed: '+checks.length+' groups.');
 };
 

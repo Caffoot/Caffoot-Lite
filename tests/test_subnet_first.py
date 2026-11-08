@@ -206,6 +206,33 @@ class SubnetFirstTests(unittest.TestCase):
             with patch('backend.collection_saves.can_access',return_value=allowed),self.assertRaises(PermissionError):self.save([network(0)])
         self.assertEqual(self.state()['subnets'],[]);self.assertEqual(self.audit(),[])
 
+    def test_resolved_spaced_and_custom_cidrs_use_the_same_server_integrity_rules(self):
+        self.save([network(i) for i in [10,20,30]])
+        for cidr in ['10.80.40.1/24','10.80.0.0/16','10.80.20.0/24']:
+            first, second = network(40), network(41)
+            second['cidr'] = cidr
+            with self.assertRaises(ValueError):
+                self.save([first, second])
+            self.assertEqual(len(self.state()['subnets']), 3)
+        self.save([network(i) for i in [61,63,65]])
+        self.assertEqual(len(self.state()['subnets']), 6)
+
+    def test_concurrent_duplicate_names_with_distinct_ranges_only_one_commits(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            filename=Path(tmp)/'fictional.sqlite3';db=sqlite3.connect(filename);self.prepare(db);db.close()
+            def attempt(index):
+                connection=sqlite3.connect(filename,timeout=15)
+                record=network(index);record['name']=' Same Name ' if index else 'same name'
+                try:
+                    change_ipam_subnet_and_vlan_records(connection,1,changes([record]));return True
+                except ValueError:return False
+                finally:connection.close()
+            with ThreadPoolExecutor(max_workers=2) as pool:results=list(pool.map(attempt,[0,1]))
+            self.assertEqual(sorted(results),[False,True])
+            with sqlite3.connect(filename) as db:
+                self.assertEqual(len(reconstruct_inventory(db)['subnets']),1)
+                self.assertEqual(db.execute('SELECT COUNT(*) FROM inventory_change_history').fetchone()[0],1)
+
     def test_concurrent_conflicting_batches_only_one_commits(self):
         with tempfile.TemporaryDirectory() as tmp:
             filename=Path(tmp)/'fictional.sqlite3';db=sqlite3.connect(filename);self.prepare(db);db.close()
