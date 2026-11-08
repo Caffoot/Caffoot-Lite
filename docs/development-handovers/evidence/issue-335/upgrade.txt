@@ -1,0 +1,15 @@
+{"status": "failed", "upgradeCount": 1, "checks": {"oldAuthenticatedRolesAndMfa": true, "schema7To10AndEveryOldTableColumnRowPreserved": true, "allNonDatabaseFilesHashesOwnersModesPreserved": true, "existingSessionsRolesAndNewMfaLogin": true, "restartPreservesFullStateAndPrivateKey": true, "recreationPreservesFullStateAndPrivateKey": true, "oldBinaryRejectsNewerSchemaOnThrowawayCopy": true}, "cleanup": {"containersAbsent": true, "volumesAbsent": true}}
+Traceback (most recent call last):
+  File "/workspace/work/implementation/work/issue-335/disposable_upgrade.py", line 123, in <module>
+    restored=start(OLD,restore,'restored');restored_state=snapshot(restored);assert restored_state==before;requests(restored,tokens,trust)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/work/implementation/work/issue-335/disposable_upgrade.py", line 29, in start
+    inside(name,"import ssl,urllib.request;urllib.request.urlopen('https://127.0.0.1:8080/health',context=ssl.create_default_context(cafile='/data/tls/server.crt'),timeout=2).read()")
+  File "/workspace/work/implementation/work/issue-335/disposable_upgrade.py", line 14, in inside
+    def inside(name,code):return run('exec','-i',name,'python','-',input=code)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/work/implementation/work/issue-335/disposable_upgrade.py", line 12, in run
+    if check and p.returncode:raise RuntimeError('Disposable Docker operation failed: '+p.stderr[-1500:])
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Disposable Docker operation failed: Error response from daemon: container f2f4b88beb9f9190755f9bc092f2ea44cc439eff8c4d02a06c887c1f44804934 is not running
+
