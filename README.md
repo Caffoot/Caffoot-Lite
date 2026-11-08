@@ -5,7 +5,7 @@ Your infrastructure. Your users. Your data.
 
 Free, open-source IP address management (IPAM), device inventory and network rack documentation for **small businesses, IT teams and home labs**.
 
-**Release preparation — not published.** These files prepare v2.1 for owner review. The latest published release remains [v2.0.3](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.3). Do not assume a v2.1 tag or image exists until publication is separately approved and verified.
+**Release and download status:** Check the [official GitHub Releases page](https://github.com/Caffoot/Caffoot-Lite/releases) for the latest published version and verified images. Source code on `main` is not, by itself, proof of a published Docker image.
 
 Caffoot Lite brings IPAM, device inventory, rack documentation and Audit Trail together for small businesses, IT teams and home labs. v2.1 introduces the approved modular interface, clearer physical-server/VM forms, subnet-first networking, optional VLANs, guided bulk subnet creation and improved account/email workflows. It retains central SQLite storage, HTTPS, administrator-managed access, MFA and five-minute device editing reservations.
 
@@ -13,7 +13,7 @@ The repository root contains the Docker application's source: `backend/`, `inven
 
 Keep track of your devices, IP addresses and network racks in one place. Caffoot Lite combines a shared infrastructure inventory with user permissions and Change History, without requiring a complicated setup.
 
-**[Get started with Docker or Portainer](INSTALLATION.md)** · **[Explore the features](docs/how-tos/features-and-instructions/README.md)** · **[See the roadmap](ROADMAP.md)** · **[Latest release: v2.0.3](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.3)**
+**[Get started with Docker or Portainer](INSTALLATION.md)** · **[Explore the features](docs/how-tos/features-and-instructions/README.md)** · **[See the roadmap](ROADMAP.md)** · **[Latest published release](https://github.com/Caffoot/Caffoot-Lite/releases/latest)**
 
 ![Caffoot Lite dashboard showing example network inventory](docs/screenshots/dashboard.png)
 
@@ -21,7 +21,7 @@ Keep track of your devices, IP addresses and network racks in one place. Caffoot
 
 ## Install Caffoot Lite
 
-**Prepared v2.1 image reference:** `ghcr.io/caffoot/caffoot-lite:v2.1` (AMD64 and ARM64 publication must be verified after release approval). For the current published image, use the [v2.0.3 release record](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.3).
+**v2.1 image reference:** `ghcr.io/caffoot/caffoot-lite:v2.1`. Before pulling, verify the v2.1 GitHub Release, its AMD64/ARM64 image manifest and anonymous registry access. Older releases remain in [version history](https://github.com/Caffoot/Caffoot-Lite/releases).
 
 The root [`portainer-v2.1.yaml`](portainer-v2.1.yaml) is the prepared example. Before using it, verify the release/image exists, then edit the server address and port. **Existing installations must keep their exact `/data` mapping, environment and secrets; never replace a working stack with an empty-volume example.** Historical [v2.0.3 Portainer instructions](docs/historical/portainer/portainer-v2.0.3.yaml) remain available. For source builds use [`compose.yaml`](compose.yaml) and [`Dockerfile`](Dockerfile). GitHub source ZIPs are not Docker installation packages.
 
@@ -41,7 +41,7 @@ See the [complete Features and Instructions user guides](docs/how-tos/features-a
 
 ## What's next?
 
-v2.1 is prepared for product-owner review, not released, and has no promised release date. Read the [public roadmap](ROADMAP.md) for the current published release, approved development and future ideas. Merge, publication and website work remain separate owner decisions.
+Read the [public roadmap](ROADMAP.md) for released functionality, future proposals and longer-term product direction. Published versions are listed in [GitHub Releases](https://github.com/Caffoot/Caffoot-Lite/releases); website work follows its own approval and deployment process.
 
 ## Help Build Caffoot Lite
 
@@ -79,8 +79,8 @@ For direct HTTPS, verify and trust the application certificate before entering c
 ## Documentation
 
 - [Installation, HTTPS, Portainer and backup instructions](INSTALLATION.md)
-- [Prepared v2.1 release notes](docs/historical/release-notes/Release-Notes-v2.1.md)
-- [v2.1 development handover — archived for release preparation](docs/historical/development-handovers/v2.1.md)
+- [v2.1 release notes](docs/historical/release-notes/Release-Notes-v2.1.md)
+- [v2.1 development handover — historical evidence](docs/historical/development-handovers/v2.1.md)
 - [v2.0.3 release notes](docs/historical/release-notes/Release-Notes-v2.0.3.md)
 - [Releases and version history](https://github.com/Caffoot/Caffoot-Lite/releases)
 - [Detailed user guides and screenshots](docs/how-tos/features-and-instructions/README.md)
