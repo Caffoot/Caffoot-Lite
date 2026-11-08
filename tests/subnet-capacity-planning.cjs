@@ -10,7 +10,7 @@ module.exports=async function verifySubnetCapacityPlanning({page,context,folder}
  const session=await(await context.request.get('https://127.0.0.1:8080/api/session')).json();
  const headers={Origin:'https://127.0.0.1:8080','X-CSRF-Token':session.csrf_token};
  const api=changes=>context.request.post('https://127.0.0.1:8080/api/ipam/subnets/save',{headers,data:{changes}});
- const open=async()=>{await page.evaluate(()=>{activeIpamTab='overview';switchTab('ipam');});await page.locator('#main-content [data-action=open-multiple-subnets]:visible').first().click();};
+ const open=async()=>{await page.evaluate(()=>{activeIpamTab='overview';switchTab('ipam');});await page.locator('#main-content [data-action=open-multiple-subnets]:visible').first().click();await page.locator('#subnet-batch-generator').waitFor({state:'visible'});await settle();};
  const planning=()=>page.locator('.ipam-optional-planning summary').click();
  await page.setViewportSize({width:1440,height:950});await open();
  assert.equal(await page.locator('.ipam-optional-planning').getAttribute('open'),null);

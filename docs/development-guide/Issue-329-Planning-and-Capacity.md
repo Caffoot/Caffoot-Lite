@@ -30,3 +30,5 @@ Exact pushed SHAs, final workflow results and resumption instructions are record
 ## Evidence And Final Checks
 
 [Permanent report, logs, source measurements and reviewed images](../development-handovers/evidence/issue-329-capacity/Report.md). The implementation checkpoint passed backend, Firefox, Linux WebKit, Docker lifecycle and history scanning; full Chromium and the final delivery-SHA receipt are recorded in #329. Pending runs are not accepted results. This evidence update changes documentation only; native owner acceptance remains outstanding.
+
+All four application-checkpoint workflows passed. The final test/evidence-only follow-up corrects capture timing by explicitly waiting for the displayed, settled generator; its focused four groups passed again. The final delivery SHA and its exact workflow results are recorded in #329. Application files remain identical to `8cd2b53`.

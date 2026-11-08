@@ -21,7 +21,7 @@ The Single form's existing explanatory text reflects the approved rule. No other
 
 The initial focused model run correctly failed the old blanket-rejection assertion; that historical-policy test is replaced with the explicitly approved exception and preservation cases. No failed run is labelled passed.
 
-The final integrated browser/engine, source, security and Docker workflow receipt must be consulted in #329. A candidate-stage pending check is not a pass. Native Safari/Pi is not available on this Linux AMD64 worker; Linux WebKit is not a native Safari test.
+All four workflows passed on application checkpoint `8cd2b5378286e1fcd860309ef89abb3ed5b6d675`, including full Chromium/editor, Firefox, Linux WebKit, backend, history and Docker. The local integrated run also passed the original subnet, private correction, new capacity/containment and accepted host/select groups. The collapsed-first capture was corrected to wait for the visible settled modal; the four focused groups then passed again. No application change followed the verified application checkpoint. The final delivery-SHA workflow receipt must be consulted in #329. A candidate-stage pending check is not a pass. Native Safari/Pi is not available on this Linux AMD64 worker; Linux WebKit is not a native Safari test.
 
 ## Visual Evidence
 
