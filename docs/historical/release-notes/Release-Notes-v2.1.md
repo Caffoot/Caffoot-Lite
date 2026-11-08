@@ -1,8 +1,8 @@
-# Caffoot Lite v2.1 — prepared release notes
+# Caffoot Lite v2.1 — Release Notes
 
 **Simplicity in everything.** Your infrastructure. Your users. Your data.
 
-**Prepared for owner review; not a published release.** The current published version remains v2.0.3. A merge, tag, public AMD64/ARM64 image, GitHub Release and website publication each remain subject to their separate approval gates. These notes are the factual source for future release communication, not authority to publish it.
+These are the v2.1 release notes. For the confirmed publication status and downloads, consult the [official GitHub Releases page](https://github.com/Caffoot/Caffoot-Lite/releases). Public AMD64 and ARM64 images must be verified through the release workflow; website publication and deployment are separate decisions.
 
 ## A Familiar Application With The Approved Interface
 
@@ -62,7 +62,7 @@ Published standalone v1.3.3 JSON import remains one-way inventory migration with
 
 Accepted application checkpoint `e39e58d1a270afd9f4cdae114668f5e2bb1fe771` passed backend (494 run, 491 passed, three established skips), full Chromium/editor, Firefox, Linux WebKit, real AMD64 Docker lifecycle and full-history secret checks. Owner native Pi/ARM64/macOS Safari acceptance covers the scenarios recorded in #329; it is not exhaustive touch/screen-reader, device or import-field coverage. Linux WebKit is not native Safari.
 
-The separate release-preparation evidence records the one disposable published-v2.0.3 → exact v2.1 candidate full-`/data` check and any limitations in [the v2.1 handover](../development-handovers/v2.1.md) and [Issue #335](https://github.com/Caffoot/Caffoot-Lite/issues/335). The initial exercise preserved the tested old data/security and restart/recreation state but failed its final restore from a harness archive-layout error. After separate owner approval, one corrected exercise passed all eight preservation/restart/restore checks, including authenticated access to the complete restored v2.0.3 installation. Both results remain recorded; the specific restore-verification gap is resolved. This uses fictional AMD64 data, not private owner fixtures or an ARM64 upgrade test. Do not treat a pending or failed test as passed. Public AMD64/ARM64 manifest/accessibility checks occur only after separately authorised publication; private native builds do not prove a public image exists.
+The separate release-preparation evidence records the one disposable published-v2.0.3 → exact v2.1 candidate full-`/data` check and any limitations in [the v2.1 handover](../development-handovers/v2.1.md) and [Issue #335](https://github.com/Caffoot/Caffoot-Lite/issues/335). The initial exercise preserved the tested old data/security and restart/recreation state but failed its final restore from a harness archive-layout error. After separate owner approval, one corrected exercise passed all eight preservation/restart/restore checks, including authenticated access to the complete restored v2.0.3 installation. Both results remain recorded; the specific restore-verification gap is resolved. This uses fictional AMD64 data, not private owner fixtures or an ARM64 upgrade test. Do not treat a pending or failed test as passed. Publication-time AMD64/ARM64 manifest and anonymous registry-access checks are recorded in the actual release workflow; private native builds alone do not prove a public image exists.
 
 Existing guide screenshots are labelled as earlier-edition orientation, not new v2.1 captures. No website image, article or redesign has been implemented in this batch.
 
@@ -72,4 +72,4 @@ Public IP/WAN (#231), MSP customer isolation (#234), JavaScript restructuring (#
 
 ## Community And Source Records
 
-Thank you to the product owner and community contributors who reported problems, tested private builds and improved the guides. Approved work is tracked through [#282](https://github.com/Caffoot/Caffoot-Lite/issues/282), including #305/#306, #308/#309, #310/#311, #317, #327/#328, #329/#330, #331/#332 and #333. [#335](https://github.com/Caffoot/Caffoot-Lite/issues/335) controls this bounded preparation; merge and publication remain separate decisions.
+Thank you to the product owner and community contributors who reported problems, tested private builds and improved the guides. Approved work is tracked through [#282](https://github.com/Caffoot/Caffoot-Lite/issues/282), including #305/#306, #308/#309, #310/#311, #317, #327/#328, #329/#330, #331/#332 and #333. [#335](https://github.com/Caffoot/Caffoot-Lite/issues/335) records the separately authorised preparation and evidence; [PR #336](https://github.com/Caffoot/Caffoot-Lite/pull/336) records the approved source merge. Website publication and deployment remain separate decisions.
