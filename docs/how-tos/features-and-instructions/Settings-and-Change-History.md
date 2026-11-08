@@ -1,6 +1,8 @@
-# Settings, Change History and Personal Preferences
+# Settings, Audit Trail and Personal Preferences
 
 [← All feature guides](README.md)
+
+*Existing screenshots show the earlier Docker edition for orientation; the v2.1 steps describe the prepared interface. They are not new v2.1 or native Safari screenshots.*
 
 ## Two different settings areas
 
@@ -29,16 +31,16 @@ Open **Settings & Data** in the sidebar with an administrator account. The exist
 
 Managed device types, manufacturers/models and locations are available through the relevant existing device catalogue controls. They remain governed by their actual permissions; these are not new system-wide settings for every viewer.
 
-## Review Change History
+## Review Audit Trail
 
-1. Choose **Change History** in the sidebar if your access allows it.
+1. Choose **Audit Trail** in the sidebar if your access allows it.
 2. Inspect recent entries for successful device changes, IPAM saves or rack movements.
 3. Use the existing filtering/review controls shown in that section when available; do not assume history itself is an editor or a data restore facility.
 4. To investigate an unexpected entry, reopen the underlying device, address or rack to check the authoritative saved values.
 
 ### Example — a change made by a colleague
 
-Suppose *lab-switch-01* receives an updated device note. The editor saves the device. Another authorised user can reopen that device and see its updated note, and review the corresponding entry in **Change History**. The page does not continually poll while a record is already open, but navigating or reopening fetches the latest saved inventory.
+Suppose *lab-switch-01* receives an updated device note. The editor saves the device. Another authorised user can reopen that device and see its updated note, and review the corresponding entry in **Audit Trail**. The page does not continually poll while a record is already open, but navigating or reopening fetches the latest saved inventory.
 
 ## Important cautions
 
@@ -48,3 +50,9 @@ Suppose *lab-switch-01* receives an updated device note. The editor saves the de
 - Clear System and one-way v1.3.3 import have different consequences. Review their confirmation carefully.
 
 See [Users, Permissions and MFA](Users-Permissions-and-MFA.md) and [Migration, Backup and Restore](Migration-Backup-and-Restore.md).
+
+## Email And Audit Trail
+
+Administrators configure optional outgoing delivery under Settings & Data → Email and can send a test message. Working test delivery does not verify an account address or prove recovery eligibility. Keep mail credentials private. Normal inventory work does not require SMTP.
+
+Audit Trail includes the approved secondary navigation before relevant cards, filters and recorded detail. Visibility and private detail are permission-filtered; limited users must not receive unrelated sections. Inventory history remains attributed and bounded, including complete bulk subnet counts with omitted-detail notices. It is not a restoration mechanism.

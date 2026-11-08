@@ -2,6 +2,8 @@
 
 [← All feature guides](README.md)
 
+*Existing screenshots show the earlier Docker edition for orientation; the v2.1 steps describe the prepared interface. They are not new v2.1 or native Safari screenshots.*
+
 ## What is recorded
 
 Caffoot Lite documents the rack enclosure's name, physical type and dimensions, location, **front/rear faces**, U positions and mounted devices. Existing accessories and supported vertical side-rail items are managed with their separate rack-placement controls. Rack records are linked to Devices; a physical device occupies a defined face and U span.
@@ -63,3 +65,7 @@ The existing delete action only allows an appropriately empty rack to be removed
 | Rack cannot be deleted | Remove/relocate devices and accessories first |
 
 Related: [Devices](Devices.md), [Users and Permissions](Users-Permissions-and-MFA.md).
+
+## Shelves And Existing Placement
+
+Supported tabletop/shelf equipment can retain an optional shelf association through its Device form. The read-only location includes the recorded shelf/rack. Shelf removal uses the existing explicit review: linked equipment must be reassigned or deliberately retired together, atomically, with required permissions. Do not delete shelves to bypass that review. Horizontal/vertical drag previews, collision checks, saved positions and successful vertical-drop scroll preservation remain. Optional same-tab printing remains optional; this release does not change its default.

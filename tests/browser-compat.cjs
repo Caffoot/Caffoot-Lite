@@ -558,7 +558,7 @@ async function run(){
   assert.ok(await fullGuides.count()>0,'Approved full user documentation link must remain');
   await page.locator('[data-action="select-account-section"][data-section="about"]').first().click();
   assert.ok(await page.getByText('Published Release',{exact:true}).isVisible());
-  assert.ok(await page.getByText('v2.0.3',{exact:true}).isVisible());
+  assert.ok(await page.getByText('v2.1',{exact:true}).isVisible());
   await page.locator('.account-screen [data-action="caffoot-licences"]').click();
   await page.locator('#modal-content').getByRole('heading',{name:'Software Licences'}).waitFor();
   assert.ok((await page.locator('#modal-content').textContent()).includes('MIT License'));

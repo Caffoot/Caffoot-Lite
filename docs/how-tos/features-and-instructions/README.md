@@ -1,6 +1,6 @@
 # Caffoot Lite — Features and Instructions
 
-Welcome to the Caffoot Lite user guides. These step-by-step instructions cover the v2.0.3 Docker/SQLite edition. Its established inventory screens and safeguards follow the published v1.3.3 application, while its accounts and shared database are new.
+Welcome to the Caffoot Lite user guides. These instructions cover the prepared v2.1 Docker/SQLite edition. The latest published release is still v2.0.3 until separate publication approval. Established inventory and security safeguards remain, with the approved modular interface and subnet-first workflows.
 
 The guides describe the **real application**, use fictional examples and distinguish viewer and editor permissions. They are maintained here as the shared source for GitHub and website help references. The separate [Development Guide](../../development-guide/README.md) explains the implementation for developers.
 
@@ -10,7 +10,7 @@ The guides describe the **real application**, use fictional examples and disting
 | --- | --- |
 | [Getting Started](Getting-Started.md) | First sign-in, navigation, a useful order for entering inventory, and common first questions |
 | [Devices](Devices.md) | Create, duplicate, view, edit and retire equipment; record network, hardware, location and mounting |
-| [IPAM](IPAM.md) | Create address blocks and Network/VLAN subnets, manage individual IPs, notes and reservations |
+| [IPAM](IPAM.md) | Create optional address blocks and named subnets, manage individual IPs, notes and reservations |
 | [Racks](Racks.md) | Set up enclosures, mount devices, use front/rear faces and handle accessories |
 | [Settings and Change History](Settings-and-Change-History.md) | Find personal versus administrator settings, and understand recorded changes |
 | [Users, Permissions and MFA](Users-Permissions-and-MFA.md) | Create accounts, assign read/edit rights and enrol authentication |
@@ -19,10 +19,10 @@ The guides describe the **real application**, use fictional examples and disting
 ## A sensible order for building your inventory
 
 1. Complete first-administrator setup and MFA.
-2. Add your **Network / VLAN** subnets in **IPAM**. Devices select primary addresses from recorded networks.
+2. Add your named **Subnets** (VLAN optional) in **IPAM**. Devices select primary addresses from recorded networks.
 3. Add **Network Racks** if you have rack-mounted equipment, and establish any needed device types and locations.
 4. Add **Devices**, their primary IPs, and optional rack positions.
-5. Review the result across Devices, IPAM, Racks and **Change History**.
+5. Review the result across Devices, IPAM, Racks and **Audit Trail**.
 6. If colleagues will use the system, create their accounts and explicitly grant section access.
 
 The detailed [Docker/Portainer installation instructions](../../../INSTALLATION.md) are separate from everyday feature guidance.

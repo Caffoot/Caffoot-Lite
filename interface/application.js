@@ -7305,7 +7305,7 @@ function openIpModal(ip) {
                 body = '<section class="settings-panel settings-about"><div class="settings-about-brand">' +
                     '<img src="../assets/caffoot-icon-1024.png" alt="Caffoot hedgehog logo" width="76" height="76">' +
                     renderInterfaceTemplate("settings/about-summary",[]) +
-                    '<div class="settings-about-version"><span>Installed Version</span><strong>Caffoot Lite v2.0.3</strong></div>' +
+                    '<div class="settings-about-version"><span>Installed Version</span><strong>Caffoot Lite v2.1</strong></div>' +
                     '<p>Manage devices, IP addresses, subnets and network racks using a shared central SQLite database with authorised multi-user access.</p>' +
                     '<h4>Project & Documentation</h4><div class="settings-about-links">' +
                     renderInterfaceTemplate("settings/repository-link",[]) +

@@ -2,7 +2,7 @@
 
 Welcome. This guide explains **how Caffoot Lite actually works**, from the everyday user experience through to the Python backend, SQLite database and tests. It is written for the product owner, new contributors and maintainers.
 
-**Status:** v2.0.3 is the published Docker/SQLite baseline. This checkout also contains unreleased v2.1 modular-interface, profile, email/recovery and Audit Trail work. See [Modular Interface](Modular-Interface.md), [Account Recovery](Account-Recovery.md) and the [active v2.1 handover](../development-handovers/v2.1-issue-282.md) for current development and acceptance limits. [Issue #215](https://github.com/Caffoot/Caffoot-Lite/issues/215) documents completed historical work; it does not control future development. [CONTRIBUTING.md](../../CONTRIBUTING.md) describes the mandatory standards for every future contribution. The original [v2.0](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0) and standalone [v1.3.3](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3) tags are preserved.
+**Status:** v2.0.3 is the published Docker/SQLite baseline. This checkout also contains unreleased v2.1 modular-interface, profile, email/recovery and Audit Trail work. See [Modular Interface](Modular-Interface.md), [Account Recovery](Account-Recovery.md) and the [v2.1 handover archived for release preparation](../historical/development-handovers/v2.1.md) for release-preparation evidence and acceptance limits. [Issue #215](https://github.com/Caffoot/Caffoot-Lite/issues/215) documents completed historical work; it does not control future development. [CONTRIBUTING.md](../../CONTRIBUTING.md) describes the mandatory standards for every future contribution. The original [v2.0](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0) and standalone [v1.3.3](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3) tags are preserved.
 
 ## In simple terms
 
@@ -45,7 +45,7 @@ All contributors should first read [CONTRIBUTING.md](../../CONTRIBUTING.md) and 
 - [`backend/schema.py`](../../backend/schema.py): SQLite tables and schema upgrades.
 - [`backend/`](../../backend/): permissions, saves, import and validation modules.
 - [`tests/`](../../tests/): backend and browser compatibility checks.
-- [`compose.yaml`](../../compose.yaml), [`portainer-v2.0.3.yaml`](../../portainer-v2.0.3.yaml) and [`Dockerfile`](../../Dockerfile): deployment configuration.
+- [`compose.yaml`](../../compose.yaml), [`portainer-v2.1.yaml`](../../portainer-v2.1.yaml) and [`Dockerfile`](../../Dockerfile): deployment configuration.
 - [`app/caffoot-lite.html` at v1.3.3](https://github.com/Caffoot/Caffoot-Lite/blob/v1.3.3/app/caffoot-lite.html): **published** inventory behaviour to preserve.
 
 For current installation instructions see [`INSTALLATION.md`](../../INSTALLATION.md). The [root README](../../README.md) describes the published v2.0.3 Docker/SQLite edition.

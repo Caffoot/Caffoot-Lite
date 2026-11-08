@@ -2,7 +2,9 @@
 
 [← All feature guides](README.md)
 
-The subnet-first instructions below describe the **private v2.1 development branch** and its approved #329 workflow. They do not announce a public release.
+*Existing screenshots show the earlier Docker edition for orientation; the v2.1 steps describe the prepared interface. They are not new v2.1 or native Safari screenshots.*
+
+These instructions describe the prepared v2.1 workflow. Publication remains pending; check the root release-status notice before installing a versioned image.
 
 ## Understand the records
 

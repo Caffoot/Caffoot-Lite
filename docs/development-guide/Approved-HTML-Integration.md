@@ -1,6 +1,6 @@
 # Approved HTML interface integration — source and acceptance record
 
-**Current status:** This is the preserved integration/source record. For the current modular implementation and owner acceptance, read [Modular Interface](Modular-Interface.md) and the [active v2.1 handover](../development-handovers/v2.1-issue-282.md). The twelve source revisions and hashes remain authoritative.
+**Current status:** This is the preserved integration/source record. For the current modular implementation and owner acceptance, read [Modular Interface](Modular-Interface.md) and the [v2.1 handover archived for release preparation](../historical/development-handovers/v2.1.md). The twelve source revisions and hashes remain authoritative.
 
 This record accompanies [issue #280](https://github.com/Caffoot/Caffoot-Lite/issues/280).
 

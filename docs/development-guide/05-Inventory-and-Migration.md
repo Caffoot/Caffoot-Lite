@@ -56,7 +56,7 @@ There is **no application-managed ongoing backup/export and restore scheme** for
 
 Automated tests exercise the published exporter, import review, cancellation and confirmation, preserved fields and account retention. The product owner has completed the agreed **Stage 2 v1.3.3 inventory compatibility acceptance** on the Raspberry Pi, supported by the existing browser/backend evidence and recorded in [#218](https://github.com/Caffoot/Caffoot-Lite/issues/218). This is not an exhaustive retest of every historical workflow and does **not** authorise a release. Final release preparation and approval remain outstanding.
 
-The dated acceptance checkpoints above remain historical evidence, not a claim of final v2.1 owner acceptance. Follow the [active handover](../development-handovers/v2.1-issue-282.md) and [Issue #306 dimension policy](https://github.com/Caffoot/Caffoot-Lite/issues/306) for current modern/legacy/missing rack-dimension handling and pending native printing.
+The dated acceptance checkpoints above remain historical evidence, not a claim of final v2.1 owner acceptance. Follow the [historical v2.1 handover](../historical/development-handovers/v2.1.md) and [Issue #306 dimension policy](https://github.com/Caffoot/Caffoot-Lite/issues/306) for current modern/legacy/missing rack-dimension handling and pending native printing.
 
 ### Related reading
 

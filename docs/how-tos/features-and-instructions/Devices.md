@@ -2,6 +2,8 @@
 
 [← All feature guides](README.md)
 
+*Existing screenshots show the earlier Docker edition for orientation; the v2.1 steps describe the prepared interface. They are not new v2.1 or native Safari screenshots.*
+
 ## What a device record represents
 
 A device can describe a physical server, switch, workstation, printer or another supported type, with its network address, status, location, optional rack position and type-specific hardware/software information. Supported virtual machines have their own host-related details. Caffoot keeps the established v1.3.3 fields and validations; **not every device type presents the same additional fields**.
@@ -63,9 +65,9 @@ Use **Device Status** to record a supported lifecycle state such as Active, Main
 
 When an eligible physical hypervisor host exists and is configured accordingly, **Device deployment** offers **Virtual Machine (VM)**. Select a suitable virtual purpose and the physical host, then record resource information such as vCPU, RAM, disk and network adapters where requested. Existing historical VM relationships are preserved.
 
-## v2.1 Device Form Preview
+## v2.1 Device Forms
 
-The development branch's Add/Edit/Duplicate layout is ready for private owner review; this does not announce a release.
+These prepared v2.1 Add/Edit/Duplicate instructions follow the approved interface; publication remains a separate decision.
 
 For an eligible physical server, **General** shows **This physical server hosts virtual machines** immediately beneath its type. Tick it to use the dedicated **Hypervisor Software/OS** and **Version** controls. The ordinary OS card is hidden while hosting is enabled; unticking restores its values. Known host products are offered through this dedicated path. Previously recorded OS/software assignments are retained with an explanation rather than silently removed. Existing guest-change confirmations still apply.
 
@@ -73,9 +75,9 @@ For a VM, choose its purpose, physical host and virtual allocations on **General
 
 **Notes** fills the available form space automatically and keeps all existing formatting/Preview actions. Short windows scroll within the editor while the footer stays accessible. Validation messages appear above the footer and reveal the relevant tab or field. Duplicate uses its subtitle to explain the new record; it still requires a unique name/IP and preserves the original.
 
-## v2.1 Shelf And Software Preview
+## v2.1 Shelves And Software
 
-These changes are on the development branch for private acceptance, not a published release.
+These are prepared v2.1 instructions; check the release status before installing.
 
 For physical **Tabletop / Shelf Mounted** equipment, open **General → Mounting & Rack Configuration**. Leaving **Rack (Optional)** empty records no rack association. Selecting a rack requires an actual **Rack Shelf** in that rack. **+ Add Rack Shelf** opens the existing Horizontal Accessory editor and returns to your Device draft. A successfully saved shelf remains in inventory even if you cancel the Device draft. The device uses the shelf's current location without occupying another U. Details shows the rack, current shelf U and face. Duplicate retains the association while requiring a new identity/address.
 
@@ -91,7 +93,7 @@ Changing device type or virtual purpose refreshes the related OS, version, softw
 
 When adding a physical device, selecting a rack defaults **Location Area** to that rack's matching recorded area. A room already recorded on the rack is offered even if it is not yet in the Device location list; this does not create a managed location or save the draft automatically. You can override it freely; later rack changes will then leave your choice alone. Existing devices retain their saved location, and Duplicate initially keeps its copied location. If a rack has no matching area, choose the location normally.
 
-The read-only Details header uses one labelled × control, while the footer keeps its separate **Close** action. Keyboard/Escape and focus return remain available. These development-branch corrections still require the owner's private Pi/Safari acceptance; they are not a published release.
+The read-only Details header uses one labelled × control, while the footer keeps its separate **Close** action. Keyboard/Escape and focus return remain available. Owner-tested scenarios are recorded in #329; this documentation does not announce public availability.
 
 ## Troubleshooting
 

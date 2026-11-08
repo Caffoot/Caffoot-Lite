@@ -32,7 +32,7 @@ Workflows have path filters to conserve CI minutes. A documentation-only PR may 
 
 ## Maintenance procedure
 
-**Across chat sessions:** Check current GitHub state and the product owner's approved issues before resuming work. The [active v2.1 handover](../development-handovers/v2.1-issue-282.md) records current development, decisions, evidence and remaining owner acceptance. The [modular guide](Modular-Interface.md) describes provenance/template checks and focused visual runners. The [v2.0.3 handover](../historical/development-handovers/v2.0.3.md) is completed history, not work to restart. See the [release owner checklist](Security-Fixes-and-Releases.md).
+**Across chat sessions:** Check current GitHub state and the product owner's approved issues before resuming work. The [v2.1 handover archived for release preparation](../historical/development-handovers/v2.1.md) records current development, decisions, evidence and remaining owner acceptance. The [modular guide](Modular-Interface.md) describes provenance/template checks and focused visual runners. The [v2.0.3 handover](../historical/development-handovers/v2.0.3.md) is completed history, not work to restart. See the [release owner checklist](Security-Fixes-and-Releases.md).
 
 1. Review the product-owner-approved scope, current decisions and the [contribution guide](../../CONTRIBUTING.md). [#215](https://github.com/Caffoot/Caffoot-Lite/issues/215) and [#218](https://github.com/Caffoot/Caffoot-Lite/issues/218) are completed historical release records, not live development restrictions.
 2. Verify the protected `main` branch, relevant CI and [published v1.3.3 compatibility baseline](https://github.com/Caffoot/Caffoot-Lite/tree/v1.3.3).
