@@ -1,0 +1,8 @@
+{
+  "image": "ghcr.io/caffoot/caffoot-lite@sha256:e3606870dfafd9178fd622727dd753f3cf2439574ab45f18807330ccaee5c116",
+  "release_commit": "986e73636e3dac198c7af11954fd11885eb60150",
+  "files_checked": 45,
+  "mismatches": [],
+  "architecture": "amd64",
+  "revision_label_present": false
+}

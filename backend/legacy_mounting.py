@@ -13,6 +13,9 @@ def plan_legacy_computer_mounting_corrections(raw):
     candidate = copy.deepcopy(raw)
     changes = []
     for device in candidate["devices"]:
+        # New shelf references are validated separately, never erased as old computer mounting.
+        if device.get("rackShelfAccessoryId") not in (None, ""):
+            continue
         mount = device.get("mountType") or (
             "Rack Mounted" if device.get("rackId") else "Desktop"
         )

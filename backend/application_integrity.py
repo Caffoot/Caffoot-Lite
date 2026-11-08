@@ -4,6 +4,7 @@ Returns diagnostics in the exact source stage order. This is not an import
 approval or persistence API.
 """
 from backend.inventory import RECOGNISED_MOUNTS
+from backend.shelf_associations import validate_device_shelf_association
 from backend.ipam_validation import ip_belongs_to_subnet
 from backend.normalisation_pipeline import _valid_supported_cidr
 from backend.normalisation_validation import _number, _valid_ipv4
@@ -29,11 +30,14 @@ def validate_detached_application_state(candidate):
             continue
         if not _valid_supported_cidr(subnet.get("cidr")):
             errors.append(f"Invalid subnet CIDR: {subnet.get('cidr')}")
-        if (not _valid_ipv4(subnet.get("gateway")) or
-                not ip_belongs_to_subnet(subnet.get("gateway"), subnet.get("cidr"))):
+        if (not (subnet.get("purpose") == "VPN" and subnet.get("gateway") in (None, "")) and
+                (not _valid_ipv4(subnet.get("gateway")) or
+                 not ip_belongs_to_subnet(subnet.get("gateway"), subnet.get("cidr")))):
             errors.append(
                 f"Invalid gateway for subnet {subnet.get('name') or subnet.get('cidr')}."
             )
+        if subnet.get("vlan") in (None, ""):
+            continue
         number = _number(subnet.get("vlan"))
         domain = subnet.get("parentId") or "__unassigned__"
         key = (domain, number)
@@ -72,6 +76,11 @@ def validate_detached_application_state(candidate):
                     allocation.get("deviceId") != identifier or
                     allocation.get("status") != expected):
                 errors.append(f"IPAM is out of sync for {name} ({ip}).")
+        try:
+            if validate_device_shelf_association(device, candidate):
+                continue
+        except ValueError as error:
+            errors.append(str(error))
         if device.get("rackId"):
             rack = next((r for r in racks if r.get("id") == device["rackId"]), None)
             if rack is None:

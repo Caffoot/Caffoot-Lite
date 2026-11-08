@@ -1,0 +1,50 @@
+# Issue #331 — Coordinated A–D Delivery
+
+Authorised specification: [6698734229](https://github.com/Caffoot/Caffoot-Lite/issues/331#issuecomment-6698734229), with explicit continuous-development authorisation [6698780416](https://github.com/Caffoot/Caffoot-Lite/issues/331#issuecomment-6698780416). Branch: `feat/approved-modular-html-282`. Exact delivery SHA and final GitHub check links are recorded in the delivery comment on [#331](https://github.com/Caffoot/Caffoot-Lite/issues/331), after this evidence checkpoint is pushed. No merge, publication, deployment or release is included.
+
+## Completed Scope
+
+- **A:** one optional `rackShelfAccessoryId` in existing device JSON; shared validation, permissions, import/integrity/occupancy distinction and atomic reviewed removal. No schema migration or parallel shelf object. Current five-minute edit reservations/revisions remain authoritative. Reassignment/Retired, shelf deletion and permission-filtered history commit together or roll back.
+- **B:** conditional Rack/Shelf fields in the existing Mounting card; existing Horizontal Accessory creation preserves the Device draft, focus/tab and reservation. Independently saved shelves survive Device Cancel. Duplicate retains shelf classification without allocating U. Details derives current rack/shelf/U/face. Linked removal requires an explicit action for every device, including deliberately selected cross-rack replacement. Parent rack deletion is unchanged.
+- **C:** approved offline OS/version families and separate editions, with conservative release exclusions; contextual local software intersects actual type/platform and hide preferences. Saved custom/archived/hidden/out-of-context/missing-catalogue assignments remain visibly checked until explicitly removed. Original top-level software storage and unknown metadata survive Edit/Duplicate. No backend whitelist or destructive migration. [Vendor checks and exact exclusions](../../../development-guide/Issue-331-Catalogue-Sources.md).
+- **D:** focused integration and existing regressions, source comparisons, permanent evidence, user/developer documentation and CI coverage. Docker lifecycle also triggers for backend changes. The Devices guide's compatibility path now contains the same preserved preview guidance and new #331 instructions as its canonical path.
+
+## Actual Verification
+
+| Check | Result and evidence |
+| --- | --- |
+| Full backend | **467 run, 464 passed, three established skips**, 51.745 seconds. [Raw results](backend-results.txt). Includes authentication/MFA/email-proof security, permissions, reservations/concurrency, migrations/imports, source provenance and new shelf HTTP/transaction cases. |
+| Focused shelf/AP backend | **21 passed**; includes 18 shelf tests and three AP review tests. Stale references/revisions, denied permissions, other-editor locks and injected mid-operation audit failure preserve the original transaction. |
+| Existing full Chromium compatibility | Passed on GitHub for the package C runtime. [Run 42318233239](https://github.com/Caffoot/Caffoot-Lite/actions/runs/42318233239). Includes ordinary rack/IPAM, host/VM, user/MFA/permissions, two-user locks and published legacy export paths. Final delivery runs repeat against its exact commit. |
+| Existing focused editor | **12 functional groups and 239 rendered states passed**, no page errors. Four widths (1440/1366/390/320), both live themes, Add/Edit/Duplicate, physical/VM, full internal scroll sequences, fixed footer, keyboard tabs, Notes and enlarged text. [Results](editor-results.txt), [functional record](editor-functional.json). |
+| Geometry and source inspection | **0px maximum horizontal overflow; 0px outer-dialog width/height difference** against pinned Batch 04. 184 local representative screenshots; CI saves the full capture set. [Summary](visual-summary.json), [compressed complete measurements](editor-measurements.json.gz). These are measured geometry results, not pixel/content equivalence claims. |
+| Contextual catalogue | Seven functional groups: platform/edition boundaries, actual local packages, guest OS, preserved records and explicit removal, Duplicate and original storage. Eight width/theme combinations, keyboard access and dark-label contrast checked. [Checks/version arrays/actual host observations](catalogue-browser-checks.json). |
+| Shelf browser integration | Eight functional groups: required-field focus, draft/lease preservation, Duplicate, collisions and moved location, Cancel/failure/atomic save, replacement creation across racks and existing JSON export/import review. Eight width/theme combinations include accessory footer reachability. [Checks](shelf-browser-checks.json), [browser results](focused-browser-results.txt). |
+| Docker | Separate isolated native **AMD64** build/lifecycle passed, 99.166 seconds: configured port, persistent TLS/database, restart/recreate. [Result](docker-lifecycle.txt). GitHub [42318233103](https://github.com/Caffoot/Caffoot-Lite/actions/runs/42318233103) also passed the package C runtime. No ARM64 emulation or Pi image was built. |
+| Provenance/docs/syntax | All twelve pinned HTML source hashes, exact extracted CSS and template dependency checks passed. [Provenance](provenance-results.txt). Release documentation compatibility check passed after synchronising the Devices guide copies; [results](documentation-results.txt). JavaScript syntax and whitespace checks passed. |
+| Git history | Full reachable-history Gitleaks passed for package C: [42318233095](https://github.com/Caffoot/Caffoot-Lite/actions/runs/42318233095). The delivery commit must also pass; its run is linked in #331. |
+
+The three backend skips are the separately exercised opt-in Docker lifecycle test and two tests requiring an unavailable genuine private v1.3.3 export. Synthetic/published-export migration tests passed. Initial test-development failures were corrected and rerun; they are not counted as passes. The final GitHub sign-off belongs to the exact delivery SHA recorded in #331; do not infer success from a pending run.
+
+## Visual Inspection And Approved Differences
+
+Representative images are in [images](images/). The original pinned preview supplies its light treatment; files labelled `dark-source` remain that original light source with a theme class and are used for geometry only. Live dark screenshots use the existing slate palette. They are not claimed to be an approved dark-source variant.
+
+Inspection covers desktop/short laptop/mobile General and Software cards, retained checked records, dynamic shelf Details and the original accessory editor with a reachable footer. The editor preserves approved typography, field grids, cards, header/tabs/internal scrolling and fixed actions. Owner-amended hosting/VM/Notes controls remain as previously accepted. The #331 differences are the narrow conditional shelf fields, explicit removal review, contextual catalogue contents and retained-selection explanation. The unchecked contextual software labels use the existing dark text token; checked/hover treatments and other screens are unchanged.
+
+Both actual Chromium host selectors returned their matching approved arrays: Hyper-V Windows host families and Proxmox 9.2/9.1/9.0/8.x. This observation does **not** close the independent #327 host acceptance or #330 native Safari dropdown work. No #328 Close × or #329 subnet-first change is included. The twelve pinned sources/provenance records are unchanged. Existing parent-rack deletion still blocks nonempty racks.
+
+## Private Raspberry Pi Acceptance
+
+A native Pi image is intentionally not supplied by this AMD64 worker. The owner should use the established private workflow:
+
+1. Use a separate clean clone of `feat/approved-modular-html-282`; check `git rev-parse HEAD` against the exact final SHA in #331 and confirm `git status --short` is empty.
+2. On the Pi, run `python3 scripts/build_private_acceptance.py`. It builds that exact commit locally without publication and prints `caffoot-lite:private-<first 12 SHA characters>`.
+3. Inspect the image architecture and `org.opencontainers.image.revision` label. Expect `arm64` and the exact final reviewed SHA.
+4. Use a separate acceptance container, unused port and fresh named data volume, following the existing `CAFFOOT_WEB_ADDRESS`/`CAFFOOT_SERVER_ADDRESS` private setup. Do not reuse production's container, port, data path or volume. Use fictional inventory or an appropriately isolated private copy; retain backups and the installation's existing private-secret requirements.
+5. Create a Front U10 shelf and two linked Tabletop/Shelf devices; confirm U10 counts once and a real 2U server at U15–16 still collides correctly. Move the shelf to U12 and reopen Details. Exercise required shelf validation, quick-add Save/Cancel/failure, Device Cancel, Duplicate and original edit-reservation behaviour.
+6. Review linked removal: Cancel, explicit reassignment/replacement (including another rack), Retired, other-editor blocking and history. Confirm a failure changes neither shelf nor devices; parent-rack removal remains blocked.
+7. Exercise OS/edition/version and Installed Software on physical/virtual records: Ubuntu Server LTS vs desktop interim, pfSense/OPNsense editions, UniFi console InnerSpace vs AP, NAS apps and printer embedded software. Change platform, Save/Cancel/reload/Duplicate, retain archived/hidden/custom selections and deliberately untick an exception. Test a private backup export/review/import in the isolated installation.
+8. Check desktop, small laptop and real mobile, both themes, enlarged text, keyboard/touch, internal scrolling/fixed actions and native Safari controls. Review #327–330 separately; do not treat Chromium emulation as those issues' acceptance.
+
+No new design/security approval blocker was encountered. Final private Pi/Safari/touch/visual acceptance and the two genuine-backup fixture tests remain owner-side requirements. Automated results establish a candidate for that private acceptance, not owner approval or release readiness.

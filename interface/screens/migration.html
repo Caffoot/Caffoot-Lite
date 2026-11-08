@@ -1,0 +1,27 @@
+<!-- interface-template:migration/open-backup-explanation-dialog-1 --><section><h3 class="font-bold">Your backup</h3><p>Download a copy of your inventory to keep somewhere safe. You can restore it later.</p></section><!-- /interface-template -->
+
+<!-- interface-template:migration/open-backup-explanation-dialog-2 --><section><h3 class="font-bold">Automatic safety backup</h3><p>Before restoring a backup or clearing your inventory, Caffoot Lite keeps a copy of your previous inventory in this browser. You can download it from Settings if it is available.</p></section><!-- /interface-template -->
+
+<!-- interface-template:migration/open-backup-explanation-dialog-3 --><section><h3 class="font-bold">Example</h3><p>If you have 60 devices and restore an older backup with 50, the automatic safety backup protects the previous 60-device inventory.</p></section><!-- /interface-template -->
+
+<!-- interface-template:migration/open-backup-explanation-dialog-4 --><p class="font-semibold">Important: Browser storage can be cleared or lost, and a later operation may replace the automatic safety backup. Download your own backups and keep them somewhere safe.</p><!-- /interface-template -->
+
+<!-- interface-template:migration/show-backup-import-error-1 --><div class="space-y-4" role="alert">
+                <h2 class="text-xl font-bold text-slate-900 dark:text-white">Backup Import Could Not Continue</h2>
+                <p class="text-sm text-slate-700 dark:text-slate-200">Your existing inventory has not been replaced.</p>
+                <div class="max-h-64 overflow-y-auto whitespace-pre-wrap break-words rounded-xl border border-amber-400 bg-amber-50 p-4 text-sm text-amber-950 dark:bg-slate-900 dark:text-amber-200">{{slot:0}}</div>
+                <p class="text-sm text-slate-700 dark:text-slate-200">Check that this is a supported Caffoot Lite JSON backup. If the problem continues, keep the original backup unchanged and report the error details. Do not manually bypass inventory validation.</p>
+                <button type="button" onclick="closeModal()" class="rounded-xl bg-blue-800 px-5 py-2.5 font-semibold text-white">Close</button>
+            </div><!-- /interface-template -->
+
+<!-- interface-template:migration/rows-1 --><p class="text-sm">Review each Access Point mounting choice before continuing. Existing rack assignments will be cleared for these Access Points.</p><!-- /interface-template -->
+
+<!-- interface-template:migration/show-import-review-1 --><div class="flex justify-end gap-3"><button type="button" data-next-import-action="cancel" class="caffoot-modal-cancel px-4 py-2">Cancel</button><!-- /interface-template -->
+
+<!-- interface-template:migration/inventory-preview-table --><div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr><th class="text-left p-2">Inventory</th><th class="text-right p-2">Current</th><th class="text-right p-2">Import</th></tr></thead><tbody><!-- /interface-template -->
+
+<!-- interface-template:migration/legacy-mounting-approval --><label class="flex gap-2 text-sm"><input type="checkbox" id="next-import-legacy-approval"> I approve these mounting corrections.</label></div><!-- /interface-template -->
+
+<!-- interface-template:migration/inventory-replacement-approval --><label class="flex gap-2 text-sm font-semibold"><input type="checkbox" id="next-import-replace-approval"> I understand that this replaces all existing central inventory (not user accounts or permissions).</label><!-- /interface-template -->
+
+<!-- interface-template:migration/review-actions --><div class="flex justify-end gap-3"><button type="button" data-next-import-action="cancel" class="caffoot-modal-cancel px-4 py-2">Cancel</button><!-- /interface-template -->

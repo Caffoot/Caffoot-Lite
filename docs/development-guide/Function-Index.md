@@ -1,803 +1,942 @@
 # Caffoot Lite — Function Index
 
-## In simple terms
-
-This is a **searchable map of named functions in the current v2.0.3 preparation baseline**. v2.0.3 has not yet been published. Follow a function name or line link to see its actual code. It helps locate work and estimate how widely a function name is referenced; it does **not** decide that a function is safe to remove or change.
-
-**Indexed source checkpoint:** [`10cecba4`](https://github.com/Caffoot/Caffoot-Lite/commit/10cecba42668cc383aaa0a79af66602a8d3b7e3f) (3 November 2026, published v2.0.2 source). **Coverage:** 2 frontend HTML files and 38 Python backend modules. **Recorded definitions:** 357 JavaScript and 137 Python, **494 altogether**. Original 493 descriptions and call-like reference counts were retained where code is unchanged; links affected by later server/device-save edits were remapped to the current files, and the v2.0.2 history-permissions function was added. Counts remain textual hints, not runtime evidence. Unit tests are excluded.
-
-### Reading the columns
-
-- **Function** links to its exact declaration at the indexed commit, with file and line also shown.
-- **Call-like references** is a **textual source count** of that identifier immediately followed by an opening parenthesis, across the two HTML files or all 37 Python backend modules as appropriate. Definition lines for that identifier are excluded. Counts can include matches in comments/strings, same-named functions in different scopes and other non-executing text, and can miss callbacks, function values, event attributes, aliases and dynamically looked-up calls. **They are not executions, confirmed callers or proof of use/non-use.**
-- **Example matches** point to the first two textual call-like reference locations, not a verified call graph. An em dash means none were found by this narrow scan.
-- **Purpose** uses an existing nearby comment or docstring only when suitable; otherwise **Name cue** is a search hint inferred from the identifier, not a confirmed behavioural description. Read the actual source, call path and tests before changing code.
-- **†** means multiple declarations share the same unqualified identifier within that language; its count is not attributable to one declaration.
-
-See [07 — Function and Code Reference](07-Function-and-Code-Reference.md) for a curated starting map, [Coding and Naming Conventions](06-Coding-and-Naming-Conventions.md) for established patterns, and [issue #215](https://github.com/Caffoot/Caffoot-Lite/issues/215) for the authoritative approved specification. Earlier naming/audit investigations remain in [historical Git evidence](https://github.com/Caffoot/Caffoot-Lite/tree/049262f196be494074f698a72f377153f202171b/docs/required-only), rather than the active documentation.
-
-## Frontend JavaScript
-
-Named `function` / `async function` declarations and same-line named `const`/`let`/`var` function or direct arrow assignments are indexed. Anonymous callbacks and arbitrary object-method syntax are not counted as declarations.
-
-### [`inventory.html`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html)
-
-**350 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`cloneDefaultData`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1273) | 1273 | 7 | [`inventory.html:1506`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1506), [`inventory.html:1514`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1514) | Name cue: Clone Default Data. |
-| [`isPlainObject`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1277) | 1277 | 16 | [`inventory.html:1474`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1474), [`inventory.html:1493`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1493) | Name cue: Is Plain Object. |
-| [`isValidIpv4`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1281) | 1281 | 7 | [`inventory.html:1292`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1292), [`inventory.html:1541`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1541) | Name cue: Is Valid Ipv4. |
-| [`parseIpv4AddressToNumber`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1291) | 1291 | 3 | [`inventory.html:1301`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1301), [`inventory.html:1308`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1308) | Source comment/docstring: unsigned IPv4 math; supported host ranges /23 through /30. |
-| [`formatIpv4Address`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1295) | 1295 | 14 | [`inventory.html:4164`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4164), [`inventory.html:4330`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4330) | Name cue: Format Ipv4 Address. |
-| [`parseSupportedIpv4Subnet`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1298) | 1298 | 8 | [`inventory.html:1308`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1308), [`inventory.html:1311`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1311) | Name cue: Parse Supported Ipv4 Subnet. |
-| [`isUsableHostAddressInSubnet`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1307) | 1307 | 6 | [`inventory.html:1544`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1544), [`inventory.html:4150`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4150) | Name cue: Is Usable Host Address In Subnet. |
-| [`isValidCidr24`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1311) | 1311 | 3 | [`inventory.html:1535`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1535), [`inventory.html:1672`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1672) | Name cue: Is Valid Cidr24. |
-| [`hierarchyIpNumber`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1315) | 1315 | 2 | [`inventory.html:1324`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1324), [`inventory.html:1405`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1405) | Name cue: Hierarchy Ip Number. |
-| [`hierarchyIpString`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1320) | 1320 | 1 | [`inventory.html:1327`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1327) | Name cue: Hierarchy Ip String. |
-| [`hierarchyParseCidr`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1321) | 1321 | 3 | [`inventory.html:1340`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1340), [`inventory.html:1398`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1398) | Name cue: Hierarchy Parse Cidr. |
-| [`hierarchyValidate`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1329) | 1329 | 4 | [`inventory.html:1550`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1550), [`inventory.html:1659`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1659) | Name cue: Hierarchy Validate. |
-| [`ancestor`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1369) | 1369 | 2 | [`inventory.html:1383`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1383) | Source comment/docstring: Every intersecting pair must have an explicit ancestor relationship. |
-| [`hierarchyValidateTypes`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1389) | 1389 | 4 | [`inventory.html:1552`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1552), [`inventory.html:1660`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1660) | Name cue: Hierarchy Validate Types. |
-| [`previewLegacyVlanOwnershipInApp`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1419) | 1419 | 2 | [`inventory.html:1434`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1434), [`inventory.html:4399`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4399) | Source comment/docstring: Read-only ownership assessment: never migrate records during rendering. |
-| [`reconcileLegacyVlanOwnership`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1433) | 1433 | 1 | [`inventory.html:9079`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9079) | Name cue: Reconcile Legacy Vlan Ownership. |
-| [`migrateLegacyRackLocation`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1471) | 1471 | 1 | [`inventory.html:1512`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1512) | Source comment/docstring: Called by state normalisation before rack-placement validation. |
-| [`normaliseLegacyRackAccessoryTypes`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1485) | 1485 | 1 | [`inventory.html:1513`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1513) | Source comment/docstring: Shared by startup loading and backup import; unknown types remain invalid. |
-| [`normaliseState`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1492) | 1492 | 2 | [`inventory.html:7962`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7962), [`inventory.html:8337`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8337) | Name cue: Normalise State. |
-| [`validateApplicationState`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1656) | 1656 | 3 | [`inventory.html:2577`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2577), [`inventory.html:7887`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7887) | Name cue: Validate Application State. |
-| [`loadStoredState`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1719) | 1719 | 1 | [`inventory.html:1721`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1721) | Name cue: Load Stored State. |
-| [`showStorageRecoveryBanner`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1725) | 1725 | 1 | [`inventory.html:8352`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8352) | Source comment/docstring: Do not write on startup: it could overwrite unreadable data or mask an integrity problem. |
-| [`caffootThemePreference`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1784) | 1784 | 3 | [`inventory.html:1792`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1792), [`inventory.html:1809`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1809) | Name cue: Caffoot Theme Preference. |
-| [`caffootApplyTheme`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1791) | 1791 | 3 | [`inventory.html:1803`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1803), [`inventory.html:1806`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1806) | Name cue: Caffoot Apply Theme. |
-| [`caffootSetTheme`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1797) | 1797 | 2 | [`inventory.html:1818`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1818), [`inventory.html:9135`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9135) | Name cue: Caffoot Set Theme. |
-| [`onSystemThemeChange`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1808) | 1808 | 0 | — | Name cue: On System Theme Change. |
-| [`toggleDarkMode`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1817) | 1817 | 2 | [`inventory.html:9134`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9134), [`inventory.html:9177`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9177) | Name cue: Toggle Dark Mode. |
-| [`readAuditHistory`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1825) | 1825 | 1 | [`inventory.html:1826`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1826) | Name cue: Read Audit History. |
-| [`auditChanges`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1829) | 1829 | 1 | [`inventory.html:1867`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1867) | Name cue: Audit Changes. |
-| [`recordAudit`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1866) | 1866 | 0 | — | Name cue: Record Audit. |
-| [`restoreAuditAfterRolledBackOperation`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1876) | 1876 | 1 | [`inventory.html:8355`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8355) | Name cue: Restore Audit After Rolled Back Operation. |
-| [`exportAuditHistory`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1888) | 1888 | 1 | [`inventory.html:9112`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9112) | Name cue: Export Audit History. |
-| [`renderAuditHTML`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1896) | 1896 | 1 | [`inventory.html:2273`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2273) | Name cue: Render Audit HTML. |
-| [`nextRenderUsers`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1925) | 1925 | 1 | [`inventory.html:2274`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2274) | Name cue: Next Render Users. |
-| [`nextRenderAccount`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1927) | 1927 | 1 | [`inventory.html:2275`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2275) | Name cue: Next Render Account. |
-| [`saveState`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1930) | 1930 | 1 | [`inventory.html:8335`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8335) | Name cue: Save State. |
-| [`getDeviceById`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1933) | 1933 | 24 | [`inventory.html:1705`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1705), [`inventory.html:4370`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4370) | Source comment/docstring: Inventory data-integrity helpers |
-| [`findDeviceUsingIp`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1937) | 1937 | 4 | [`inventory.html:1946`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1946), [`inventory.html:5266`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5266) | Name cue: Find Device Using Ip. |
-| [`setDevicePrimaryIp`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1942) | 1942 | 2 | [`inventory.html:7625`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7625), [`inventory.html:7629`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7629) | Name cue: Set Device Primary Ip. |
-| [`syncDeviceIpamRecord`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1995) | 1995 | 2 | [`inventory.html:7625`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7625), [`inventory.html:7629`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7629) | Source comment/docstring: The device remains the source of truth for its primary IP allocation. |
-| [`validateRackPlacement`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2008) | 2008 | 9 | [`inventory.html:2898`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2898), [`inventory.html:5817`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5817) | Name cue: Validate Rack Placement. |
-| [`showToast`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2043) | 2043 | 240 | [`inventory.html:1437`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1437), [`inventory.html:1441`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1441) | Name cue: Show Toast. |
-| [`switchTab`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2156) | 2156 | 49 | [`inventory.html:3684`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3684), [`inventory.html:5023`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5023) | Name cue: Switch Tab. |
-| [`escapeHtml`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2231) | 2231 | 454 | [`inventory.html:1909`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1909), [`inventory.html:1910`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1910) | Source comment/docstring: safely render user-controlled values into HTML and inline event attributes. |
-| [`inlineJsArg`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2240) | 2240 | 0 | — | Name cue: Inline Js Arg. |
-| [`browserStorageWarning`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2248) | 2248 | 0 | — | Name cue: Browser Storage Warning. |
-| [`acknowledgeBrowserStorageNotice`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2259) | 2259 | 1 | [`inventory.html:9118`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9118) | Name cue: Acknowledge Browser Storage Notice. |
-| [`renderContent`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2265) | 2265 | 79 | [`inventory.html:1466`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1466), [`inventory.html:1804`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1804) | Name cue: Render Content. |
-| [`updateScrollHint`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2280) | 2280 | 1 | [`inventory.html:2284`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2284) | Name cue: Update Scroll Hint. |
-| [`planDeviceIpAllocationIntegrityRepairs`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2291) | 2291 | 1 | [`inventory.html:9671`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9671) | Name cue: Plan Device Ip Allocation Integrity Repairs. |
-| [`previewInventoryIntegrityRepairs`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2326) | 2326 | 1 | [`inventory.html:9136`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9136) | Name cue: Preview Inventory Integrity Repairs. |
-| [`applyPreviewedInventoryIntegrityRepairs`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2330) | 2330 | 1 | [`inventory.html:9137`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9137) | Name cue: Apply Previewed Inventory Integrity Repairs. |
-| [`renderIntegrityRepairPreviewHtml`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2334) | 2334 | 0 | — | Name cue: Render Integrity Repair Preview Html. |
-| [`buildInventoryReportData`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2352) | 2352 | 3 | [`inventory.html:2398`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2398), [`inventory.html:2424`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2424) | Source comment/docstring: read-only, generated from the current inventory. |
-| [`occupancy`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2368) | 2368 | 2 | [`inventory.html:2378`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2378) | Source comment/docstring: distinct faces as if they were one physical space. |
-| [`escapeCsvCellAndNeutraliseSpreadsheetFormula`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2391) | 2391 | 0 | — | Name cue: Escape Csv Cell And Neutralise Spreadsheet Formula. |
-| [`downloadInventoryReportCsv`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2397) | 2397 | 1 | [`inventory.html:9123`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9123) | Name cue: Download Inventory Report Csv. |
-| [`renderInventoryReportsHtml`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2423) | 2423 | 1 | [`inventory.html:2801`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2801) | Name cue: Render Inventory Reports Html. |
-| [`renderDashboardHTML`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2478) | 2478 | 1 | [`inventory.html:2269`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2269) | Name cue: Render Dashboard HTML. |
-| [`statusPill`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2589) | 2589 | 4 | [`inventory.html:2821`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2821), [`inventory.html:2822`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2822) | Name cue: Status Pill. |
-| [`insightSegment`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2659) | 2659 | 3 | [`inventory.html:2691`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2691), [`inventory.html:2692`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2692) | Source comment/docstring: Visual insights are computed from current application state. |
-| [`getCategoryIcon`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2833) | 2833 | 1 | [`inventory.html:2634`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2634) | Name cue: Get Category Icon. |
-| [`getDefaultDeviceFasciaGraphic`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2848) | 2848 | 0 | — | Name cue: Get Default Device Fascia Graphic. |
-| [`openDeviceTypeRackFasciaSettings`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2857) | 2857 | 1 | [`inventory.html:9039`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9039) | Name cue: Open Device Type Rack Fascia Settings. |
-| [`saveDeviceTypeRackFasciaSettings`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2862) | 2862 | 1 | [`inventory.html:9040`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9040) | Name cue: Save Device Type Rack Fascia Settings. |
-| [`getOccupiedRackUnits`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2877) | 2877 | 2 | [`inventory.html:2909`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2909), [`inventory.html:3192`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3192) | Name cue: Get Occupied Rack Units. |
-| [`findAvailableRackUnitRanges`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2892) | 2892 | 1 | [`inventory.html:3220`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3220) | Name cue: Find Available Rack Unit Ranges. |
-| [`printRackElevation`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2902) | 2902 | 1 | [`inventory.html:9056`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9056) | Name cue: Print Rack Elevation. |
-| [`safe`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2907) † | 2907 | 31 | [`inventory.html:2917`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2917), [`inventory.html:2919`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2919) | Name cue: Safe. |
-| [`renderRackHubV13`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2931) | 2931 | 1 | [`inventory.html:2272`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2272) | Source comment/docstring: estate-wide, read-only rack overview. Existing rack editor/elevations are unchanged. |
-| [`card`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2936) † | 2936 | 7 | [`inventory.html:2988`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2988) | Name cue: Card. |
-| [`mark`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2945) | 2945 | 2 | [`inventory.html:2946`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2946), [`inventory.html:2947`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2947) | Name cue: Mark. |
-| [`bar`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2961) | 2961 | 1 | [`inventory.html:2977`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2977) | Name cue: Bar. |
-| [`chartBox`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2962) | 2962 | 10 | [`inventory.html:2970`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2970), [`inventory.html:2977`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2977) | Name cue: Chart Box. |
-| [`chartRows`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2963) | 2963 | 6 | [`inventory.html:2975`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2975), [`inventory.html:2976`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2976) | Name cue: Chart Rows. |
-| [`rackSpaceGuide`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2965) | 2965 | 1 | [`inventory.html:2977`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2977) | Source comment/docstring: An illustrative rack diagram makes the distinction between total free U and contiguous fre |
-| [`renderRacksHTML`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3034) | 3034 | 1 | [`inventory.html:2992`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2992) | Name cue: Render Racks HTML. |
-| [`changeRack`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3261) | 3261 | 0 | — | Name cue: Change Rack. |
-| [`getEffectiveDevicePlatform`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3280) | 3280 | 3 | [`inventory.html:3298`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3298), [`inventory.html:3817`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3817) | Name cue: Get Effective Device Platform. |
-| [`getEffectiveDevicePlatformVersion`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3287) | 3287 | 1 | [`inventory.html:6103`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6103) | Name cue: Get Effective Device Platform Version. |
-| [`getVisibleDevices`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3293) | 3293 | 4 | [`inventory.html:3828`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3828), [`inventory.html:3881`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3881) | Name cue: Get Visible Devices. |
-| [`filterHardwareModels`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3318) | 3318 | 3 | [`inventory.html:3338`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3338), [`inventory.html:3341`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3341) | Name cue: Filter Hardware Models. |
-| [`openHardwareManufacturerManager`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3348) | 3348 | 3 | [`inventory.html:8983`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8983), [`inventory.html:8986`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8986) | Source comment/docstring: Persist each association as a legacy-compatible manufacturer-only catalogue row. |
-| [`saveHardwareManufacturer`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3370) | 3370 | 2 | [`inventory.html:8990`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8990), [`inventory.html:8991`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8991) | Name cue: Save Hardware Manufacturer. |
-| [`openBuiltInManufacturerEditor`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3408) | 3408 | 1 | [`inventory.html:8984`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8984) | Name cue: Open Built In Manufacturer Editor. |
-| [`saveBuiltInManufacturerOverride`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3416) | 3416 | 1 | [`inventory.html:8985`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8985) | Name cue: Save Built In Manufacturer Override. |
-| [`renderHardwareManufacturersHtml`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3432) | 3432 | 2 | [`inventory.html:3744`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3744), [`inventory.html:3750`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3750) | Name cue: Render Hardware Manufacturers Html. |
-| [`add`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3434) † | 3434 | 64 | [`inventory.html:1346`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1346), [`inventory.html:1364`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1364) | Name cue: Add. |
-| [`getNonVirtualDeviceTypesAssociatedWithManufacturer`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3471) | 3471 | 3 | [`inventory.html:3481`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3481), [`inventory.html:3494`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3494) | Name cue: Get Non Virtual Device Types Associated With Manufacturer. |
-| [`refreshModelDeviceTypeChoices`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3478) | 3478 | 2 | [`inventory.html:3489`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3489), [`inventory.html:3501`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3501) | Name cue: Refresh Model Device Type Choices. |
-| [`openHardwareModelManager`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3490) | 3490 | 3 | [`inventory.html:8974`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8974), [`inventory.html:8977`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8977) | Name cue: Open Hardware Model Manager. |
-| [`opts`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3495) | 3495 | 2 | [`inventory.html:3499`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3499) | Name cue: Opts. |
-| [`saveHardwareModel`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3503) | 3503 | 2 | [`inventory.html:8979`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8979), [`inventory.html:8980`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8980) | Name cue: Save Hardware Model. |
-| [`openBuiltInHardwareModelEditor`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3532) | 3532 | 1 | [`inventory.html:8975`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8975) | Name cue: Open Built In Hardware Model Editor. |
-| [`saveBuiltInHardwareModelOverride`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3542) | 3542 | 1 | [`inventory.html:8976`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8976) | Name cue: Save Built In Hardware Model Override. |
-| [`renderHardwareModelsHtml`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3564) | 3564 | 2 | [`inventory.html:3745`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3745), [`inventory.html:3751`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3751) | Name cue: Render Hardware Models Html. |
-| [`add`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3566) † | 3566 | 64 | [`inventory.html:1346`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1346), [`inventory.html:1364`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1364) | Name cue: Add. |
-| [`optionList`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3603) | 3603 | 2 | [`inventory.html:3606`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3606) | Name cue: Option List. |
-| [`openSoftwareCatalogueEditor`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3609) | 3609 | 2 | [`inventory.html:8967`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8967), [`inventory.html:8968`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8968) | Name cue: Open Software Catalogue Editor. |
-| [`saveCustomSoftwareEntry`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3617) | 3617 | 1 | [`inventory.html:8971`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8971) | Name cue: Save Custom Software Entry. |
-| [`confirmSoftwareCatalogueRemoval`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3632) | 3632 | 1 | [`inventory.html:8969`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8969) | Name cue: Confirm Software Catalogue Removal. |
-| [`archiveSoftwareCatalogueEntry`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3640) | 3640 | 1 | [`inventory.html:8970`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8970) | Name cue: Archive Software Catalogue Entry. |
-| [`restoreArchivedSoftwareEntry`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3651) | 3651 | 1 | [`inventory.html:8972`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8972) | Name cue: Restore Archived Software Entry. |
-| [`renderSoftwareCatalogueHtml`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3660) | 3660 | 2 | [`inventory.html:3746`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3746), [`inventory.html:3752`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3752) | Name cue: Render Software Catalogue Html. |
-| [`card`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3671) † | 3671 | 7 | [`inventory.html:2988`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2988) | Name cue: Card. |
-| [`enableSuggestedSoftware`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3676) | 3676 | 1 | [`inventory.html:8965`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8965) | Name cue: Enable Suggested Software. |
-| [`filterSoftwareCatalogue`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3687) | 3687 | 3 | [`inventory.html:3702`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3702), [`inventory.html:3703`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3703) | Name cue: Filter Software Catalogue. |
-| [`openServerServiceEditor`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3704) | 3704 | 2 | [`inventory.html:8960`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8960), [`inventory.html:8961`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8961) | Name cue: Open Server Service Editor. |
-| [`saveServerServiceEntry`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3709) | 3709 | 1 | [`inventory.html:8962`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8962) | Name cue: Save Server Service Entry. |
-| [`restoreArchivedServerService`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3722) | 3722 | 1 | [`inventory.html:8964`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8964) | Name cue: Restore Archived Server Service. |
-| [`renderServerServicesCatalogueHtml`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3731) | 3731 | 1 | [`inventory.html:3747`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3747) | Name cue: Render Server Services Catalogue Html. |
-| [`renderDevicesHTML`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3743) | 3743 | 1 | [`inventory.html:2271`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2271) | Name cue: Render Devices HTML. |
-| [`getManagedDeviceTypeOrLocationNames`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3976) | 3976 | 6 | [`inventory.html:3983`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3983), [`inventory.html:3984`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3984) | Name cue: Get Managed Device Type Or Location Names. |
-| [`getUniqueDeviceTypes`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3983) | 3983 | 5 | [`inventory.html:2858`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2858), [`inventory.html:2864`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2864) | Name cue: Get Unique Device Types. |
-| [`getUniqueDeviceLocations`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3984) | 3984 | 3 | [`inventory.html:3900`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3900), [`inventory.html:3943`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3943) | Name cue: Get Unique Device Locations. |
-| [`isProtectedDeviceTypeOrLocation`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3985) | 3985 | 3 | [`inventory.html:4015`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4015), [`inventory.html:4035`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4035) | Name cue: Is Protected Device Type Or Location. |
-| [`openDeviceCatalogueManager`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3988) | 3988 | 4 | [`inventory.html:4028`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4028), [`inventory.html:4029`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4029) | Name cue: Open Device Catalogue Manager. |
-| [`openManageTypesModal`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4028) | 4028 | 2 | [`inventory.html:2873`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2873), [`inventory.html:9030`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9030) | Name cue: Open Manage Types Modal. |
-| [`openManageLocationsModal`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4029) | 4029 | 1 | [`inventory.html:9031`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9031) | Name cue: Open Manage Locations Modal. |
-| [`requestDeviceCatalogueEntryDeletion`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4032) | 4032 | 2 | [`inventory.html:4091`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4091), [`inventory.html:9027`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9027) | Name cue: Request Device Catalogue Entry Deletion. |
-| [`cancelDeviceCatalogueEntryDeletion`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4061) | 4061 | 3 | [`inventory.html:4071`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4071), [`inventory.html:5535`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5535) | Name cue: Cancel Device Catalogue Entry Deletion. |
-| [`applyConfirmedDeviceCatalogueEntryDeletion`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4068) | 4068 | 1 | [`inventory.html:9029`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9029) | Name cue: Apply Confirmed Device Catalogue Entry Deletion. |
-| [`applyDeviceCatalogueChange`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4076) | 4076 | 5 | [`inventory.html:4073`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4073), [`inventory.html:4140`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4140) | Name cue: Apply Device Catalogue Change. |
-| [`editDeviceTypePrompt`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4096) | 4096 | 1 | [`inventory.html:9038`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9038) | Name cue: Edit Device Type Prompt. |
-| [`editDeviceLocationPrompt`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4097) | 4097 | 1 | [`inventory.html:9042`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9042) | Name cue: Edit Device Location Prompt. |
-| [`openDeviceTypeOrLocationRename`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4098) | 4098 | 3 | [`inventory.html:4096`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4096), [`inventory.html:4097`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4097) | Name cue: Open Device Type Or Location Rename. |
-| [`cancelDeviceCatalogueEntryRename`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4123) | 4123 | 3 | [`inventory.html:4127`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4127), [`inventory.html:5540`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5540) | Name cue: Cancel Device Catalogue Entry Rename. |
-| [`deleteDeviceType`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4140) | 4140 | 1 | [`inventory.html:9037`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9037) | Name cue: Delete Device Type. |
-| [`deleteDeviceLocation`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4141) | 4141 | 1 | [`inventory.html:9041`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9041) | Name cue: Delete Device Location. |
-| [`findSubnetUsingGatewayAddress`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4149) | 4149 | 3 | [`inventory.html:1952`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1952), [`inventory.html:5264`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5264) | Source comment/docstring: assuming that every stored subnet is a /24. |
-| [`calculateSubnetUtilisationSummary`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4153) | 4153 | 4 | [`inventory.html:2383`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2383), [`inventory.html:2510`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2510) | Name cue: Calculate Subnet Utilisation Summary. |
-| [`renderSubnetHierarchyPreview`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4179) | 4179 | 2 | [`inventory.html:4280`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4280), [`inventory.html:4297`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4297) | Source comment/docstring: v1.1: read-only subnet hierarchy, with native keyboard-accessible disclosure. |
-| [`nodes`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4189) | 4189 | 2 | [`inventory.html:4196`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4196), [`inventory.html:4209`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4209) | Name cue: Nodes. |
-| [`renderIpamHTML`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4214) | 4214 | 1 | [`inventory.html:2270`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2270) | Name cue: Render Ipam HTML. |
-| [`changeSubnet`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4568) | 4568 | 1 | [`inventory.html:4470`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4470) | Name cue: Change Subnet. |
-| [`planBulkSubnetAddressAssignment`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4581) | 4581 | 2 | [`inventory.html:4644`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4644), [`inventory.html:4675`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4675) | Source comment/docstring: CIDR-aware, bounded bulk edits. Offset 1 is the first usable IP. |
-| [`openBulkIpModal`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4607) | 4607 | 2 | [`inventory.html:4661`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4661), [`inventory.html:9075`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9075) | Name cue: Open Bulk Ip Modal. |
-| [`handleBulkIpSubmit`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4637) | 4637 | 1 | [`inventory.html:8379`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8379) | Name cue: Handle Bulk Ip Submit. |
-| [`returnToBulkIpAddressEditor`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4657) | 4657 | 1 | [`inventory.html:9180`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9180) | Name cue: Return To Bulk Ip Address Editor. |
-| [`applyBulkIpChanges`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4671) | 4671 | 1 | [`inventory.html:9077`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9077) | Name cue: Apply Bulk Ip Changes. |
-| [`subnetCidrFeedback`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4685) | 4685 | 1 | [`inventory.html:4718`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4718) | Source comment/docstring: Suggest the first usable address when creating a subnet. Manual edits are respected. |
-| [`suggestSubnetGateway`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4703) | 4703 | 2 | [`inventory.html:4813`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4813), [`inventory.html:8403`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8403) | Name cue: Suggest Subnet Gateway. |
-| [`openSubnetModal`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4731) | 4731 | 5 | [`inventory.html:4831`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4831), [`inventory.html:7321`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7321) | Name cue: Open Subnet Modal. |
-| [`updateSubnetTypePreview`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4793) | 4793 | 1 | [`inventory.html:4812`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4812) | Name cue: Update Subnet Type Preview. |
-| [`openSubnetModalByVlanId`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4817) | 4817 | 1 | [`inventory.html:9078`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9078) | Source comment/docstring: Resolve VLAN card editing by stable record ID and scoped VLAN identity. |
-| [`handleSubnetSubmit`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4837) | 4837 | 1 | [`inventory.html:8380`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8380) | Name cue: Handle Subnet Submit. |
-| [`ipBelongsToSubnet`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5030) | 5030 | 13 | [`inventory.html:1596`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1596), [`inventory.html:1605`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1605) | Name cue: Ip Belongs To Subnet. |
-| [`getDevicesAndIpAllocationsInSubnet`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5034) | 5034 | 3 | [`inventory.html:5104`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5104), [`inventory.html:5185`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5185) | Source comment/docstring: Users can deliberately detach/reassign dependencies first. |
-| [`findInventoryIntegrityIssues`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5039) | 5039 | 0 | — | Name cue: Find Inventory Integrity Issues. |
-| [`showSubnetDeletionBlocked`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5060) | 5060 | 1 | [`inventory.html:5115`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5115) | Name cue: Show Subnet Deletion Blocked. |
-| [`deleteSubnet`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5096) | 5096 | 3 | [`inventory.html:5229`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5229), [`inventory.html:9073`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9073) | Name cue: Delete Subnet. |
-| [`confirmDeleteSubnet`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5179) | 5179 | 1 | [`inventory.html:9074`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9074) | Name cue: Confirm Delete Subnet. |
-| [`deleteSubnetCommit`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5207) | 5207 | 1 | [`inventory.html:5204`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5204) | Name cue: Delete Subnet Commit. |
-| [`deleteVlan`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5237) | 5237 | 1 | [`inventory.html:9081`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9081) | Name cue: Delete Vlan. |
-| [`openIpModal`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5263) | 5263 | 3 | [`inventory.html:9082`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9082), [`inventory.html:9083`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9083) | Name cue: Open Ip Modal. |
-| [`handleIpSubmit`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5311) | 5311 | 1 | [`inventory.html:8381`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8381) | Name cue: Handle Ip Submit. |
-| [`preserveDeviceFormDuringOptionsDialog`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5377) | 5377 | 3 | [`inventory.html:6327`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6327), [`inventory.html:6426`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6426) | Name cue: Preserve Device Form During Options Dialog. |
-| [`modalFormSnapshot`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5387) | 5387 | 2 | [`inventory.html:5394`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5394), [`inventory.html:5492`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5492) | Name cue: Modal Form Snapshot. |
-| [`rememberModalForm`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5392) | 5392 | 6 | [`inventory.html:3368`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3368), [`inventory.html:3501`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3501) | Name cue: Remember Modal Form. |
-| [`confirmDiscardDeviceFormChanges`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5397) | 5397 | 2 | [`inventory.html:4127`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L4127), [`inventory.html:5493`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5493) | Name cue: Confirm Discard Device Form Changes. |
-| [`confirmRackPlacementCorrection`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5423) | 5423 | 1 | [`inventory.html:5654`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5654) | Name cue: Confirm Rack Placement Correction. |
-| [`resolveRackPlacementCorrection`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5449) | 5449 | 3 | [`inventory.html:5537`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5537), [`inventory.html:9020`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9020) | Name cue: Resolve Rack Placement Correction. |
-| [`keepEditingDeviceForm`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5458) | 5458 | 2 | [`inventory.html:5538`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5538), [`inventory.html:9022`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9022) | Name cue: Keep Editing Device Form. |
-| [`discardDeviceFormChanges`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5464) | 5464 | 1 | [`inventory.html:9023`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9023) | Name cue: Discard Device Form Changes. |
-| [`returnToDeviceFormFromSubnet`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5470) | 5470 | 2 | [`inventory.html:5544`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5544), [`inventory.html:9179`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9179) | Name cue: Return To Device Form From Subnet. |
-| [`closeModal`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5479) | 5479 | 42 | [`inventory.html:3404`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3404), [`inventory.html:3430`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3430) | Name cue: Close Modal. |
-| [`openModal`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5504) | 5504 | 31 | [`inventory.html:2860`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2860), [`inventory.html:3364`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3364) | Name cue: Open Modal. |
-| [`rackPhysicalDetails`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5566) | 5566 | 1 | [`inventory.html:5583`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5583) | Name cue: Rack Physical Details. |
-| [`dimension`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5567) | 5567 | 2 | [`inventory.html:5575`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5575), [`inventory.html:5576`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5576) | Name cue: Dimension. |
-| [`openRackModal`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5580) | 5580 | 4 | [`inventory.html:7300`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7300), [`inventory.html:9043`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9043) | Name cue: Open Rack Modal. |
-| [`handleRackSubmit`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5627) | 5627 | 1 | [`inventory.html:8382`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8382) | Name cue: Handle Rack Submit. |
-| [`deleteRack`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5694) | 5694 | 1 | [`inventory.html:9046`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9046) | Name cue: Delete Rack. |
-| [`openRackSlotPlacementDialog`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5716) | 5716 | 3 | [`inventory.html:9066`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9066), [`inventory.html:9067`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9067) | Source comment/docstring: one placement workflow for a clicked empty rack U. |
-| [`openAssignDeviceModal`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5742) | 5742 | 4 | [`inventory.html:5724`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5724), [`inventory.html:9058`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9058) | Name cue: Open Assign Device Modal. |
-| [`refresh`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5794) | 5794 | 0 | — | Name cue: Refresh. |
-| [`refreshAssignStartPositions`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5801) | 5801 | 2 | [`inventory.html:5794`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5794), [`inventory.html:5797`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5797) | Source comment/docstring: Only offer positions that fit the inventory device on the selected face. |
-| [`handleAssignSubmit`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5835) | 5835 | 1 | [`inventory.html:8383`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8383) | Name cue: Handle Assign Submit. |
-| [`unassignDevice`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5880) | 5880 | 1 | [`inventory.html:9070`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9070) | Name cue: Unassign Device. |
-| [`getSubnetForIp`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5897) | 5897 | 5 | [`inventory.html:5990`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5990), [`inventory.html:6085`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6085) | Name cue: Get Subnet For Ip. |
-| [`refreshDeviceIpOptions`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5901) | 5901 | 2 | [`inventory.html:5992`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5992), [`inventory.html:7233`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7233) | Name cue: Refresh Device Ip Options. |
-| [`handleDeviceIpSelection`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5945) | 5945 | 1 | [`inventory.html:8466`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8466) | Name cue: Handle Device Ip Selection. |
-| [`getDeviceSubnetTopLevelBlock`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5954) | 5954 | 4 | [`inventory.html:5970`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5970), [`inventory.html:5972`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5972) | Name cue: Get Device Subnet Top Level Block. |
-| [`refreshDeviceSubnetSelectionCascade`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5963) | 5963 | 3 | [`inventory.html:7232`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7232), [`inventory.html:8468`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8468) | Name cue: Refresh Device Subnet Selection Cascade. |
-| [`handleDeviceSubnetChange`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5985) | 5985 | 2 | [`inventory.html:5983`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5983), [`inventory.html:8471`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8471) | Name cue: Handle Device Subnet Change. |
-| [`updateDeviceRackLimits`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5995) | 5995 | 1 | [`inventory.html:7239`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7239) | Name cue: Update Device Rack Limits. |
-| [`toggleDeviceMountType`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6039) | 6039 | 2 | [`inventory.html:6870`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6870), [`inventory.html:8463`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8463) | Name cue: Toggle Device Mount Type. |
-| [`getDeviceDetailFieldLabel`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6060) | 6060 | 2 | [`inventory.html:6077`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6077), [`inventory.html:6105`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6105) | Source comment/docstring: Use the current managed labels, including renamed software and server functions. |
-| [`buildDeviceDetailRows`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6065) | 6065 | 1 | [`inventory.html:6095`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6095) | Name cue: Build Device Detail Rows. |
-| [`openDeviceDetailView`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6081) | 6081 | 4 | [`inventory.html:6197`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6197), [`inventory.html:8994`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8994) | Name cue: Open Device Detail View. |
-| [`safe`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6091) † | 6091 | 31 | [`inventory.html:2917`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2917), [`inventory.html:2919`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2919) | Name cue: Safe. |
-| [`field`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6092) | 6092 | 29 | [`inventory.html:6077`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6077), [`inventory.html:6098`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6098) | Name cue: Field. |
-| [`section`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6093) | 6093 | 10 | [`inventory.html:6118`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6118), [`inventory.html:6122`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6122) | Name cue: Section. |
-| [`confirmUninstallOfArchivedSoftware`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6176) | 6176 | 1 | [`inventory.html:8996`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8996) | Name cue: Confirm Uninstall Of Archived Software. |
-| [`recordUninstallOfArchivedSoftware`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6182) | 6182 | 1 | [`inventory.html:8997`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8997) | Name cue: Record Uninstall Of Archived Software. |
-| [`selectDeviceDetailsTab`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6201) | 6201 | 2 | [`inventory.html:6198`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6198), [`inventory.html:8995`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8995) | Name cue: Select Device Details Tab. |
-| [`navigateToDeviceRack`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6217) | 6217 | 1 | [`inventory.html:9002`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9002) | Name cue: Navigate To Device Rack. |
-| [`duplicateDevice`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6245) | 6245 | 2 | [`inventory.html:9000`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9000), [`inventory.html:9003`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9003) | Name cue: Duplicate Device. |
-| [`getConfiguredServerServiceCatalogueEntries`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6315) | 6315 | 11 | [`inventory.html:3712`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3712), [`inventory.html:3714`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3714) | Name cue: Get Configured Server Service Catalogue Entries. |
-| [`getAvailableServerServiceCatalogueEntries`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6320) | 6320 | 10 | [`inventory.html:3705`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3705), [`inventory.html:3725`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3725) | Source comment/docstring: Clean Start and legacy backups therefore retain their existing semantics. |
-| [`getAvailableServerServiceFieldKeys`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6325) | 6325 | 6 | [`inventory.html:6071`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6071), [`inventory.html:6646`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6646) | Name cue: Get Available Server Service Field Keys. |
-| [`openServerServiceManager`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6326) | 6326 | 2 | [`inventory.html:6361`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6361), [`inventory.html:9013`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9013) | Name cue: Open Server Service Manager. |
-| [`captureServerServiceSelections`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6336) | 6336 | 2 | [`inventory.html:5482`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5482), [`inventory.html:6343`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6343) | Name cue: Capture Server Service Selections. |
-| [`updateServerServiceCatalogue`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6342) | 6342 | 3 | [`inventory.html:9014`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9014), [`inventory.html:9015`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9015) | Name cue: Update Server Service Catalogue. |
-| [`confirmServerServiceArchive`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6363) | 6363 | 2 | [`inventory.html:6352`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6352), [`inventory.html:8963`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8963) | Name cue: Confirm Server Service Archive. |
-| [`archiveServerService`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6371) | 6371 | 1 | [`inventory.html:9017`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9017) | Name cue: Archive Server Service. |
-| [`getHardwareSeedPreferences`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6395) | 6395 | 19 | [`inventory.html:3352`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3352), [`inventory.html:3375`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3375) | Source comment/docstring: stable so inventory records and older backups are never rewritten. |
-| [`getVisibleBuiltInHardwareSuggestions`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6399) | 6399 | 6 | [`inventory.html:3444`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3444), [`inventory.html:3474`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3474) | Name cue: Get Visible Built In Hardware Suggestions. |
-| [`getConfiguredHardwareCatalogueEntries`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6417) | 6417 | 16 | [`inventory.html:3349`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3349), [`inventory.html:3359`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3359) | Name cue: Get Configured Hardware Catalogue Entries. |
-| [`getSelectedHardwareCatalogueDeviceType`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6421) | 6421 | 3 | [`inventory.html:6425`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6425), [`inventory.html:6427`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6427) | Name cue: Get Selected Hardware Catalogue Device Type. |
-| [`openHardwareCatalogueManager`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6424) | 6424 | 2 | [`inventory.html:6463`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6463), [`inventory.html:9005`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9005) | Name cue: Open Hardware Catalogue Manager. |
-| [`updateHardwareCatalogue`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6437) | 6437 | 3 | [`inventory.html:9006`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9006), [`inventory.html:9007`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9007) | Name cue: Update Hardware Catalogue. |
-| [`isVirtualDeviceForm`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6465) | 6465 | 7 | [`inventory.html:6471`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6471), [`inventory.html:6866`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6866) | Name cue: Is Virtual Device Form. |
-| [`updateVirtualHardwareFieldVisibility`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6469) | 6469 | 3 | [`inventory.html:6512`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6512), [`inventory.html:6829`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6829) | Name cue: Update Virtual Hardware Field Visibility. |
-| [`refreshHardwareSuggestions`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6510) | 6510 | 4 | [`inventory.html:6554`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6554), [`inventory.html:7205`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7205) | Name cue: Refresh Hardware Suggestions. |
-| [`handleHardwareSelectionChange`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6543) | 6543 | 1 | [`inventory.html:7215`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7215) | Name cue: Handle Hardware Selection Change. |
-| [`getConfiguredSoftwareCatalogueEntries`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6560) | 6560 | 20 | [`inventory.html:3610`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3610), [`inventory.html:3612`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3612) | Name cue: Get Configured Software Catalogue Entries. |
-| [`getConfiguredSoftwareCatalogueFieldKeys`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6563) | 6563 | 1 | [`inventory.html:7391`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7391) | Name cue: Get Configured Software Catalogue Field Keys. |
-| [`openConfiguredSoftwareCatalogueManager`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6564) | 6564 | 2 | [`inventory.html:6597`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6597), [`inventory.html:9009`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9009) | Name cue: Open Configured Software Catalogue Manager. |
-| [`captureInstalledSoftwareSelections`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6574) | 6574 | 2 | [`inventory.html:5481`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5481), [`inventory.html:6581`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6581) | Name cue: Capture Installed Software Selections. |
-| [`updateConfiguredSoftwareCatalogue`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6580) | 6580 | 3 | [`inventory.html:9010`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9010), [`inventory.html:9011`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9011) | Name cue: Update Configured Software Catalogue. |
-| [`createBuiltInSoftwareCatalogueKey`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6616) | 6616 | 10 | [`inventory.html:3610`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3610), [`inventory.html:3622`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3622) | Name cue: Create Built In Software Catalogue Key. |
-| [`getAvailableSoftwareCatalogueEntries`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6617) | 6617 | 14 | [`inventory.html:3655`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3655), [`inventory.html:3667`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3667) | Name cue: Get Available Software Catalogue Entries. |
-| [`isSoftwareHiddenForDeviceType`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6624) | 6624 | 3 | [`inventory.html:6638`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6638), [`inventory.html:6641`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6641) | Name cue: Is Software Hidden For Device Type. |
-| [`toggleSoftwareForDeviceType`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6625) | 6625 | 1 | [`inventory.html:8966`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8966) | Name cue: Toggle Software For Device Type. |
-| [`renderSoftwareDeviceTypeControls`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6636) | 6636 | 1 | [`inventory.html:3672`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3672) | Name cue: Render Software Device Type Controls. |
-| [`getSoftwareFieldsForDeviceType`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6640) | 6640 | 3 | [`inventory.html:6645`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6645), [`inventory.html:6646`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6646) | Name cue: Get Software Fields For Device Type. |
-| [`getDetailFieldsForDeviceType`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6643) | 6643 | 7 | [`inventory.html:6067`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6067), [`inventory.html:6096`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6096) | Name cue: Get Detail Fields For Device Type. |
-| [`isSoftwareDetailField`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6650) | 6650 | 4 | [`inventory.html:6659`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6659), [`inventory.html:6822`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6822) | Source comment/docstring: Keep persisted typeDetails keys unchanged while separating physical and software controls. |
-| [`renderDeviceDetailFields`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6657) | 6657 | 6 | [`inventory.html:6814`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6814), [`inventory.html:6816`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6816) | Name cue: Render Device Detail Fields. |
-| [`getPlatformGroupForDeviceType`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6687) | 6687 | 2 | [`inventory.html:6694`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6694), [`inventory.html:6720`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6720) | Name cue: Get Platform Group For Device Type. |
-| [`getPlatformOptionsForDeviceType`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6693) | 6693 | 1 | [`inventory.html:6724`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6724) | Name cue: Get Platform Options For Device Type. |
-| [`getPlatformVersionOptions`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6713) | 6713 | 3 | [`inventory.html:6732`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6732), [`inventory.html:6733`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6733) | Name cue: Get Platform Version Options. |
-| [`isWindowsPlatform`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6716) | 6716 | 1 | [`inventory.html:6734`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6734) | Name cue: Is Windows Platform. |
-| [`renderSoftwarePlatformFields`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6719) | 6719 | 2 | [`inventory.html:6781`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6781), [`inventory.html:6994`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6994) | Name cue: Render Software Platform Fields. |
-| [`bindSoftwarePlatformFields`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6738) | 6738 | 2 | [`inventory.html:6782`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6782), [`inventory.html:6996`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6996) | Name cue: Bind Software Platform Fields. |
-| [`captureSoftwarePlatformFields`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6768) | 6768 | 5 | [`inventory.html:6751`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6751), [`inventory.html:6765`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6765) | Name cue: Capture Software Platform Fields. |
-| [`refreshSoftwarePlatformFields`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6776) | 6776 | 2 | [`inventory.html:6752`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6752), [`inventory.html:6811`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6811) | Name cue: Refresh Software Platform Fields. |
-| [`isHypervisorHostingEnabledInDeviceForm`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6786) | 6786 | 2 | [`inventory.html:6791`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6791), [`inventory.html:6804`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6804) | Name cue: Is Hypervisor Hosting Enabled In Device Form. |
-| [`syncHostingFieldVisibility`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6790) | 6790 | 5 | [`inventory.html:6508`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6508), [`inventory.html:6783`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6783) | Name cue: Sync Hosting Field Visibility. |
-| [`captureDeviceDetailFieldValues`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6797) | 6797 | 5 | [`inventory.html:5381`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5381), [`inventory.html:6810`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6810) | Name cue: Capture Device Detail Field Values. |
-| [`refreshDeviceDetailFields`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6808) | 6808 | 2 | [`inventory.html:5486`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5486), [`inventory.html:7204`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7204) | Name cue: Refresh Device Detail Fields. |
-| [`isWirelessAccessPointDeviceType`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6832) | 6832 | 3 | [`inventory.html:6844`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6844), [`inventory.html:8208`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8208) | Name cue: Is Wireless Access Point Device Type. |
-| [`getRecognisedDeviceMountTypes`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6836) | 6836 | 12 | [`inventory.html:1574`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1574), [`inventory.html:1684`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1684) | Source comment/docstring: Broad compatibility whitelist: historical selections remain valid in saved inventories. |
-| [`getSuggestedMountTypes`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6840) | 6840 | 3 | [`inventory.html:6854`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6854), [`inventory.html:6857`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6857) | Source comment/docstring: Narrower, device-appropriate suggestions shown when adding or changing a device. |
-| [`getDefaultMountType`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6853) | 6853 | 3 | [`inventory.html:6867`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6867), [`inventory.html:7093`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7093) | Name cue: Get Default Mount Type. |
-| [`renderDeviceMountOptions`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6856) | 6856 | 2 | [`inventory.html:6868`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6868), [`inventory.html:7163`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7163) | Name cue: Render Device Mount Options. |
-| [`updateDeviceMountChoices`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6861) | 6861 | 2 | [`inventory.html:6828`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6828), [`inventory.html:7240`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7240) | Name cue: Update Device Mount Choices. |
-| [`initialiseNotesEditor`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6874) | 6874 | 1 | [`inventory.html:6992`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6992) | Source comment/docstring: Markdown is stored as plain text. Preview creates DOM nodes, never evaluates note HTML. |
-| [`inlineMarkdown`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6879) | 6879 | 1 | [`inventory.html:6899`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6899) | Name cue: Inline Markdown. |
-| [`render`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6892) | 6892 | 2 | [`inventory.html:6916`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6916), [`inventory.html:6923`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6923) | Name cue: Render. |
-| [`initialiseDeviceTabs`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6926) | 6926 | 1 | [`inventory.html:7192`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7192) | Name cue: Initialise Device Tabs. |
-| [`activate`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7033) | 7033 | 4 | [`inventory.html:7047`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7047), [`inventory.html:7059`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7059) | Name cue: Activate. |
-| [`openDeviceModal`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7073) | 7073 | 8 | [`inventory.html:5024`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5024), [`inventory.html:5475`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5475) | Name cue: Open Device Modal. |
-| [`syncVmPurpose`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7196) | 7196 | 0 | — | Name cue: Sync Vm Purpose. |
-| [`clearFieldError`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7245) | 7245 | 0 | — | Name cue: Clear Field Error. |
-| [`captureDeviceFormDraft`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7264) | 7264 | 2 | [`inventory.html:7295`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7295), [`inventory.html:7313`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7313) | Name cue: Capture Device Form Draft. |
-| [`createRackFromDevice`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7294) | 7294 | 1 | [`inventory.html:9035`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9035) | Name cue: Create Rack From Device. |
-| [`cancelRackFromDevice`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7302) | 7302 | 3 | [`inventory.html:5546`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5546), [`inventory.html:9036`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9036) | Name cue: Cancel Rack From Device. |
-| [`createSubnetFromDevice`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7312) | 7312 | 1 | [`inventory.html:9034`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9034) | Name cue: Create Subnet From Device. |
-| [`handleDeviceLocationSelectionChange`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7325) | 7325 | 1 | [`inventory.html:8460`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8460) | Name cue: Handle Device Location Selection Change. |
-| [`cancelCustomDeviceLocation`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7339) | 7339 | 1 | [`inventory.html:9033`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9033) | Name cue: Cancel Custom Device Location. |
-| [`addCustomLocationOption`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7350) | 7350 | 2 | [`inventory.html:5528`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5528), [`inventory.html:9032`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9032) | Name cue: Add Custom Location Option. |
-| [`findObsoleteDeviceFieldsForTypeChange`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7388) | 7388 | 0 | — | Source comment/docstring: are archived. Unknown legacy fields remain untouched for backup compatibility. |
-| [`requestHypervisorGuestReassignment`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7400) | 7400 | 2 | [`inventory.html:7596`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7596), [`inventory.html:7676`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7676) | Name cue: Request Hypervisor Guest Reassignment. |
-| [`finish`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7437) † | 7437 | 11 | [`inventory.html:7440`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7440), [`inventory.html:7446`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7446) | Name cue: Finish. |
-| [`confirmHypervisorPlatformChangeForGuests`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7462) | 7462 | 1 | [`inventory.html:7614`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7614) | Name cue: Confirm Hypervisor Platform Change For Guests. |
-| [`finish`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7485) † | 7485 | 11 | [`inventory.html:7440`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7440), [`inventory.html:7446`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7446) | Name cue: Finish. |
-| [`handleDeviceSubmit`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7505) | 7505 | 1 | [`inventory.html:8377`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8377) | Name cue: Handle Device Submit. |
-| [`existingDeviceHostIsUnchanged`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7539) | 7539 | 1 | [`inventory.html:7542`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7542) | Name cue: Existing Device Host Is Unchanged. |
-| [`deleteDevice`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7664) | 7664 | 2 | [`inventory.html:9001`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9001), [`inventory.html:9004`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9004) | Name cue: Delete Device. |
-| [`personalSafeStorageGet`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7722) | 7722 | 0 | — | Source comment/docstring: Reading optional recovery indicators must not prevent Settings from rendering. |
-| [`openBackupExplanationDialog`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7727) | 7727 | 1 | [`inventory.html:9121`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9121) | Name cue: Open Backup Explanation Dialog. |
-| [`renderPersonalSettingsBody`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7737) | 7737 | 1 | [`inventory.html:9932`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9932) | Name cue: Render Personal Settings Body. |
-| [`button`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7738) † | 7738 | 3 | [`inventory.html:7772`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7772), [`inventory.html:7795`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7795) | Name cue: Button. |
-| [`themeChoice`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7742) | 7742 | 3 | [`inventory.html:7744`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7744), [`inventory.html:7745`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7745) | Name cue: Theme Choice. |
-| [`renderApplicationSettings`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7778) | 7778 | 1 | [`inventory.html:2276`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2276) | Name cue: Render Application Settings. |
-| [`button`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7780) † | 7780 | 3 | [`inventory.html:7772`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7772), [`inventory.html:7795`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7795) | Name cue: Button. |
-| [`panel`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7781) | 7781 | 4 | [`inventory.html:7786`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7786), [`inventory.html:7789`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7789) | Name cue: Panel. |
-| [`caffootCompareVersions`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7808) | 7808 | 1 | [`inventory.html:7871`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7871) | Source comment/docstring: Manual release checks never read or send inventory, or change browser storage. |
-| [`parse`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7809) | 7809 | 40 | [`inventory.html:1274`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1274), [`inventory.html:1462`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L1462) | Name cue: Parse. |
-| [`caffootShowLicences`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7831) | 7831 | 1 | [`inventory.html:9114`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9114) | Name cue: Caffoot Show Licences. |
-| [`caffootUpdateGuide`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7836) | 7836 | 1 | [`inventory.html:9116`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9116) | Name cue: Caffoot Update Guide. |
-| [`caffootCheckUpdates`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7850) | 7850 | 1 | [`inventory.html:9115`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9115) | Name cue: Caffoot Check Updates. |
-| [`checkInventorySafety`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7881) | 7881 | 1 | [`inventory.html:9113`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9113) | Name cue: Check Inventory Safety. |
-| [`requestInventoryReset`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7904) | 7904 | 1 | [`inventory.html:9119`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9119) | Name cue: Request Inventory Reset. |
-| [`createInventoryBackup`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7931) | 7931 | 1 | [`inventory.html:7967`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7967) | Name cue: Create Inventory Backup. |
-| [`validateBackupVersion`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7943) | 7943 | 3 | [`inventory.html:7959`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7959), [`inventory.html:8119`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8119) | Name cue: Validate Backup Version. |
-| [`normaliseImportedBackupAndPlanLegacyMountRepairs`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7958) | 7958 | 1 | [`inventory.html:8120`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8120) | Source comment/docstring: Work on a detached copy: legacy normalisation must never mutate the input backup. |
-| [`exportData`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7966) | 7966 | 2 | [`inventory.html:9117`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9117), [`inventory.html:9178`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9178) | Name cue: Export Data. |
-| [`rejectUnsafeBackupKeys`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7979) | 7979 | 2 | [`inventory.html:8115`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8115), [`inventory.html:8299`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8299) | Source comment/docstring: Reject dangerous object keys before migration, merging or rendering imported JSON. |
-| [`validateBackupStructure`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7994) | 7994 | 2 | [`inventory.html:8116`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8116), [`inventory.html:8300`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8300) | Name cue: Validate Backup Structure. |
-| [`downloadPreRestoreSafetySnapshot`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8011) | 8011 | 1 | [`inventory.html:9120`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9120) | Name cue: Download Pre Restore Safety Snapshot. |
-| [`planLegacyComputerMountingCorrections`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8023) | 8023 | 1 | [`inventory.html:7961`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7961) | Source comment/docstring: Never mutate the original backup; all other integrity failures still block restore. |
-| [`findInvalidDeviceMounts`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8061) | 8061 | 1 | [`inventory.html:8121`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8121) | Name cue: Find Invalid Device Mounts. |
-| [`findRackImportConflicts`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8065) | 8065 | 1 | [`inventory.html:8131`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8131) | Source comment/docstring: Validate rack occupancy only on the detached import candidate. Never alter positions. |
-| [`place`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8071) | 8071 | 2 | [`inventory.html:8091`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8091), [`inventory.html:8108`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8108) | Name cue: Place. |
-| [`validateAndNormaliseBackupForImport`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8114) | 8114 | 1 | [`inventory.html:8309`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8309) | Name cue: Validate And Normalise Backup For Import. |
-| [`parseBackupJsonWithHelpfulError`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8135) | 8135 | 1 | [`inventory.html:8298`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8298) | Name cue: Parse Backup Json With Helpful Error. |
-| [`showBackupImportError`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8140) | 8140 | 3 | [`inventory.html:8291`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8291), [`inventory.html:8365`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8365) | Source comment/docstring: Import failures must remain visible until explicitly dismissed. |
-| [`reviewLegacyDeviceMountingRepairs`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8150) | 8150 | 1 | [`inventory.html:8311`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8311) | Source comment/docstring: Review detached legacy corrections before restore. Closing the dialog always cancels. |
-| [`finish`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8186) † | 8186 | 11 | [`inventory.html:7440`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7440), [`inventory.html:7446`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7446) | Name cue: Finish. |
-| [`onClick`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8195) † | 8195 | 0 | — | Name cue: On Click. |
-| [`findAccessPointMountConflictsInBackup`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8205) | 8205 | 1 | [`inventory.html:8302`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8302) | Source comment/docstring: AP conflicts require an explicit choice, never an inferred mounting position. |
-| [`chooseAccessPointMountingCorrections`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8216) | 8216 | 1 | [`inventory.html:8305`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8305) | Name cue: Choose Access Point Mounting Corrections. |
-| [`finish`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8246) † | 8246 | 11 | [`inventory.html:7440`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7440), [`inventory.html:7446`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7446) | Name cue: Finish. |
-| [`onClick`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8255) † | 8255 | 0 | — | Name cue: On Click. |
-| [`applyAccessPointMountingCorrectionsToBackup`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8270) | 8270 | 1 | [`inventory.html:8307`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8307) | Name cue: Apply Access Point Mounting Corrections To Backup. |
-| [`importData`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8286) | 8286 | 1 | [`inventory.html:8457`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8457) | Name cue: Import Data. |
-| [`validateRackAccessoryPlacement`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8494) | 8494 | 5 | [`inventory.html:8589`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8589), [`inventory.html:8618`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8618) | Source comment/docstring: CSS-only rack fascia art; no external images or data changes. |
-| [`renderRackVerticalAccessoryRail`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8510) | 8510 | 2 | [`inventory.html:3171`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3171), [`inventory.html:3175`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L3175) | Name cue: Render Rack Vertical Accessory Rail. |
-| [`openRackAccessoryEditor`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8521) | 8521 | 4 | [`inventory.html:5722`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L5722), [`inventory.html:9047`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9047) | Name cue: Open Rack Accessory Editor. |
-| [`refreshAccessoryOptions`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8575) | 8575 | 1 | [`inventory.html:8612`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8612) | Name cue: Refresh Accessory Options. |
-| [`requestRackAccessoryDeletion`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8632) | 8632 | 2 | [`inventory.html:8565`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8565), [`inventory.html:9050`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9050) | Name cue: Request Rack Accessory Deletion. |
-| [`cancel`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8644) | 8644 | 1 | [`inventory.html:8646`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8646) | Name cue: Cancel. |
-| [`moveRackAccessoryToPosition`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8660) | 8660 | 1 | [`inventory.html:8914`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8914) | Name cue: Move Rack Accessory To Position. |
-| [`moveDeviceToRackPosition`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8677) | 8677 | 1 | [`inventory.html:8915`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8915) | Source comment/docstring: single validated pathway for drag/drop and accessible click-to-move. |
-| [`clearRackDropPreview`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8702) | 8702 | 5 | [`inventory.html:8884`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8884), [`inventory.html:8899`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8899) | Name cue: Clear Rack Drop Preview. |
-| [`renderRackViewPreservingScrollPosition`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8706) | 8706 | 2 | [`inventory.html:8673`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8673), [`inventory.html:8699`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8699) | Name cue: Render Rack View Preserving Scroll Position. |
-| [`stopRackDragAutoScroll`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8718) | 8718 | 8 | [`inventory.html:8725`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8725), [`inventory.html:8727`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8727) | Name cue: Stop Rack Drag Auto Scroll. |
-| [`tickRackDragAutoScroll`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8724) | 8724 | 0 | — | Name cue: Tick Rack Drag Auto Scroll. |
-| [`trackRackDrag`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8733) | 8733 | 0 | — | Name cue: Track Rack Drag. |
-| [`getVerticalRackAccessoryDropTarget`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8764) | 8764 | 2 | [`inventory.html:8794`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8794), [`inventory.html:8811`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8811) | Name cue: Get Vertical Rack Accessory Drop Target. |
-| [`clearVerticalRackAccessoryDragPreview`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8774) | 8774 | 3 | [`inventory.html:8795`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8795), [`inventory.html:8813`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8813) | Name cue: Clear Vertical Rack Accessory Drag Preview. |
-| [`getRackDropPosition`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8859) | 8859 | 2 | [`inventory.html:8879`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8879), [`inventory.html:8910`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L8910) | Source comment/docstring: surface, independently of the size of the element beneath the pointer. |
-| [`refreshCentralInventory`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9214) | 9214 | 20 | [`inventory.html:9489`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9489), [`inventory.html:9536`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9536) | Name cue: Refresh Central Inventory. |
-| [`postInventory`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9234) | 9234 | 30 | [`inventory.html:9484`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9484), [`inventory.html:9486`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9486) | Name cue: Post Inventory. |
-| [`isBlockedAction`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9286) | 9286 | 2 | [`inventory.html:9316`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9316), [`inventory.html:10261`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L10261) | Name cue: Is Blocked Action. |
-| [`applyAllowedControls`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9312) | 9312 | 1 | [`inventory.html:9469`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9469) | Name cue: Apply Allowed Controls. |
-| [`enhanceLongSelects`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9337) | 9337 | 1 | [`inventory.html:9458`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9458) | Name cue: Enhance Long Selects. |
-| [`sync`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9379) | 9379 | 3 | [`inventory.html:9392`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9392), [`inventory.html:9414`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9414) | Name cue: Sync. |
-| [`close`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9385) | 9385 | 6 | [`inventory.html:2923`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2923), [`inventory.html:2924`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2924) | Name cue: Close. |
-| [`choose`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9389) | 9389 | 1 | [`inventory.html:9402`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9402) | Name cue: Choose. |
-| [`draw`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9394) | 9394 | 1 | [`inventory.html:9414`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9414) | Name cue: Draw. |
-| [`open`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9412) | 9412 | 4 | [`inventory.html:2905`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2905), [`inventory.html:2922`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L2922) | Name cue: Open. |
-| [`enhanceSelects`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9458) | 9458 | 0 | — | Name cue: Enhance Selects. |
-| [`relatedChanges`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9508) | 9508 | 2 | [`inventory.html:9528`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9528), [`inventory.html:9842`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9842) | Name cue: Related Changes. |
-| [`saveDevice`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9519) | 9519 | 0 | — | Name cue: Save Device. |
-| [`reserveForDelete`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9825) | 9825 | 1 | [`inventory.html:7666`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7666) | Name cue: Reserve For Delete. |
-| [`removeDevice`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9833) | 9833 | 0 | — | Name cue: Remove Device. |
-| [`cancelDelete`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9859) | 9859 | 1 | [`inventory.html:7715`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L7715) | Name cue: Cancel Delete. |
-| [`saveArchivedInstallation`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9865) | 9865 | 1 | [`inventory.html:6190`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L6190) | Name cue: Save Archived Installation. |
-| [`renderAccountSections`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9900) | 9900 | 1 | [`inventory.html:9932`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9932) | Name cue: Render Account Sections. |
-| [`chart`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9970) | 9970 | 2 | [`inventory.html:9982`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9982), [`inventory.html:9986`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L9986) | Name cue: Chart. |
-| [`loadCentralUsers`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L10037) | 10037 | 3 | [`inventory.html:10045`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L10045), [`inventory.html:10226`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L10226) | Name cue: Load Central Users. |
-| [`changeCentralUser`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L10043) | 10043 | 3 | [`inventory.html:10208`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L10208), [`inventory.html:10218`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L10218) | Name cue: Change Central User. |
-| [`importPanel`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L10054) | 10054 | 2 | [`inventory.html:10078`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L10078), [`inventory.html:10103`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L10103) | Name cue: Import Panel. |
-| [`cancelImport`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L10058) | 10058 | 3 | [`inventory.html:10064`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L10064), [`inventory.html:10108`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L10108) | Name cue: Cancel Import. |
-| [`showImportReview`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L10065) | 10065 | 2 | [`inventory.html:10118`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L10118), [`inventory.html:10149`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L10149) | Name cue: Show Import Review. |
-| [`chooseImportFile`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L10105) | 10105 | 1 | [`inventory.html:10166`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L10166) | Name cue: Choose Import File. |
-| [`actOnImport`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L10122) | 10122 | 1 | [`inventory.html:10238`](https://github.com/Caffoot/Caffoot-Lite/blob/main/inventory.html#L10238) | Name cue: Act On Import. |
-
-### [`setup.html`](https://github.com/Caffoot/Caffoot-Lite/blob/main/setup.html)
-
-**7 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`$`](https://github.com/Caffoot/Caffoot-Lite/blob/main/setup.html#L24) | 24 | 0 | — | Name cue: $. |
-| [`showMfaQr`](https://github.com/Caffoot/Caffoot-Lite/blob/main/setup.html#L28) | 28 | 3 | [`setup.html:82`](https://github.com/Caffoot/Caffoot-Lite/blob/main/setup.html#L82), [`setup.html:84`](https://github.com/Caffoot/Caffoot-Lite/blob/main/setup.html#L84) | Name cue: Show Mfa Qr. |
-| [`showSession`](https://github.com/Caffoot/Caffoot-Lite/blob/main/setup.html#L36) | 36 | 2 | [`setup.html:67`](https://github.com/Caffoot/Caffoot-Lite/blob/main/setup.html#L67), [`setup.html:90`](https://github.com/Caffoot/Caffoot-Lite/blob/main/setup.html#L90) | Name cue: Show Session. |
-| [`request`](https://github.com/Caffoot/Caffoot-Lite/blob/main/setup.html#L53) | 53 | 8 | [`setup.html:82`](https://github.com/Caffoot/Caffoot-Lite/blob/main/setup.html#L82), [`setup.html:84`](https://github.com/Caffoot/Caffoot-Lite/blob/main/setup.html#L84) | Name cue: Request. |
-| [`display`](https://github.com/Caffoot/Caffoot-Lite/blob/main/setup.html#L57) | 57 | 10 | [`setup.html:69`](https://github.com/Caffoot/Caffoot-Lite/blob/main/setup.html#L69), [`setup.html:71`](https://github.com/Caffoot/Caffoot-Lite/blob/main/setup.html#L71) | Name cue: Display. |
-| [`loadUsers`](https://github.com/Caffoot/Caffoot-Lite/blob/main/setup.html#L115) | 115 | 3 | [`setup.html:50`](https://github.com/Caffoot/Caffoot-Lite/blob/main/setup.html#L50), [`setup.html:141`](https://github.com/Caffoot/Caffoot-Lite/blob/main/setup.html#L141) | Name cue: Load Users. |
-| [`adminAction`](https://github.com/Caffoot/Caffoot-Lite/blob/main/setup.html#L140) | 140 | 3 | [`setup.html:129`](https://github.com/Caffoot/Caffoot-Lite/blob/main/setup.html#L129), [`setup.html:135`](https://github.com/Caffoot/Caffoot-Lite/blob/main/setup.html#L135) | Name cue: Admin Action. |
-
-## Python backend
-
-Named Python `def` / `async def` declarations, including methods, are indexed. For methods the enclosing class is shown when directly identifiable from indentation.
-
-### [`backend/access_point_review.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/access_point_review.py)
-
-**2 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`find_access_point_mount_conflicts`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/access_point_review.py#L18) | 18 | 2 | [`import_review.py:54`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_review.py#L54), [`import_review.py:63`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_review.py#L63) | Name cue: Find access point mount conflicts. |
-| [`apply_access_point_mount_choices`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/access_point_review.py#L39) | 39 | 1 | [`import_review.py:72`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_review.py#L72) | Source comment/docstring: Apply all explicitly selected published choices, or reject entirely. |
-
-### [`backend/account_security.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/account_security.py)
-
-**3 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`change_own_password`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/account_security.py#L9) | 9 | 0 | — | Source comment/docstring: Require the current password; update the hash in one transaction. |
-| [`begin_mfa_enrolment`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/account_security.py#L31) | 31 | 0 | — | Source comment/docstring: Generate a pending secret, never mark MFA confirmed before proof. |
-| [`complete_mfa_enrolment`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/account_security.py#L55) | 55 | 0 | — | Source comment/docstring: Confirm a pending authenticator secret only after valid TOTP proof. |
-
-### [`backend/accounts.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/accounts.py)
-
-**4 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`hash_password`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/accounts.py#L15) | 15 | 4 | [`account_security.py:18`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/account_security.py#L18), [`accounts.py:56`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/accounts.py#L56) | Name cue: Hash password. |
-| [`verify_password`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/accounts.py#L23) | 23 | 6 | [`account_security.py:16`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/account_security.py#L16), [`account_security.py:39`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/account_security.py#L39) | Name cue: Verify password. |
-| [`bootstrap_first_admin`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/accounts.py#L42) | 42 | 1 | [`server.py:412`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L412) | Source comment/docstring: Create only the first administrator; enrolment remains mandatory. |
-| [`confirm_admin_mfa`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/accounts.py#L65) | 65 | 1 | [`server.py:434`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L434) | Source comment/docstring: Activate first-admin MFA only after an authenticator code verifies. |
-
-### [`backend/application_integrity.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/application_integrity.py)
-
-**1 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`validate_detached_application_state`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/application_integrity.py#L13) | 13 | 13 | [`collection_saves.py:43`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/collection_saves.py#L43), [`collection_saves.py:196`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/collection_saves.py#L196) | Source comment/docstring: Mirror published validateApplicationState diagnostics and ordering. |
-
-### [`backend/authentication.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/authentication.py)
-
-**1 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`authenticate`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/authentication.py#L15) | 15 | 1 | [`sessions.py:30`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/sessions.py#L30) | Source comment/docstring: Return an active account ID only after required credential proofs. |
-
-### [`backend/collection_saves.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/collection_saves.py)
-
-**3 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`change_inventory_record`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/collection_saves.py#L18) | 18 | 1 | [`server.py:516`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L516) | Source comment/docstring: Create, update or delete one source-shaped record without replacing other inventory. |
-| [`change_ipam_subnet_and_vlan_records`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/collection_saves.py#L106) | 106 | 1 | [`server.py:541`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L541) | Source comment/docstring: Save the published subnet form's linked subnet/VLAN edits as one transaction. |
-| [`delete_subnet_with_dependencies`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/collection_saves.py#L246) | 246 | 1 | [`server.py:533`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L533) | Name cue: Delete subnet with dependencies. |
-
-### [`backend/deployment_settings.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/deployment_settings.py)
-
-**1 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`validate_published_port`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/deployment_settings.py#L5) | 5 | 1 | [`server.py:807`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L807) | Name cue: Validate published port. |
-
-### [`backend/device_catalogue.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_catalogue.py)
-
-**1 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`change_device_catalogue`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_catalogue.py#L14) | 14 | 1 | [`server.py:506`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L506) | Name cue: Change device catalogue. |
-
-### [`backend/device_saves.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py)
-
-**6 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`_check_primary_ip_claim`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py#L23) | 23 | 2 | [`device_saves.py:158`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py#L158), [`device_saves.py:254`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py#L254) | Source comment/docstring: Apply the published primary-IP ownership and reservation checks. |
-| [`_prepare_related_guests`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py#L42) | 42 | 2 | [`device_saves.py:148`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py#L148), [`device_saves.py:332`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py#L332) | Source comment/docstring: Validate the published host/guest choices within the host transaction. |
-| [`_persist_related_guests`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py#L86) | 86 | 2 | [`device_saves.py:191`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py#L191), [`device_saves.py:358`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py#L358) | Name cue: Persist related guests. |
-| [`save_reserved_device`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py#L98) | 98 | 1 | [`server.py:567`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L567) | Source comment/docstring: Commit one reserved device change only if its original revision still matches. |
-| [`create_device`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py#L232) | 232 | 1 | [`server.py:560`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L560) | Source comment/docstring: Create a published-shape device with its IPAM allocation atomically. |
-| [`delete_reserved_device`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/device_saves.py#L308) | 308 | 1 | [`server.py:554`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L554) | Source comment/docstring: Delete an exclusively reserved device and release its IPAM assignment. |
-
-### [`backend/history_permissions.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/history_permissions.py)
-
-**1 indexed definition.** Added in v2.0.2 to filter Change History responses by the reader's current permissions.
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`visible_change_history`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/history_permissions.py#L30) | 30 | 2 | [`server.py:288`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L288), [`server.py:314`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L314) | Filter stored Change History at read time without changing the underlying events. |
-
-### [`backend/http_security.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/http_security.py)
-
-**6 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`session_cookie`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/http_security.py#L14) | 14 | 1 | [`server.py:454`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L454) | Source comment/docstring: Issue a host-only, HttpOnly, SameSite=Strict cookie. |
-| [`clear_session_cookie`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/http_security.py#L29) | 29 | 1 | [`server.py:378`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L378) | Name cue: Clear session cookie. |
-| [`read_session_cookie`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/http_security.py#L42) | 42 | 5 | [`import_drafts.py:25`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L25), [`request_auth.py:52`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L52) | Source comment/docstring: Never accept a duplicate cookie name or malformed token. |
-| [`new_csrf_token`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/http_security.py#L63) | 63 | 0 | — | Name cue: New csrf token. |
-| [`check_csrf`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/http_security.py#L67) | 67 | 1 | [`request_auth.py:64`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L64) | Source comment/docstring: Double-submit requests require a secret tied to the current session. |
-| [`require_same_origin`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/http_security.py#L78) | 78 | 4 | [`request_auth.py:62`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L62), [`server.py:365`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L365) | Source comment/docstring: Reject absent, malformed and cross-origin state-changing requests. |
-
-### [`backend/import_commit.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_commit.py)
-
-**2 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`prepare_restore_confirmation`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_commit.py#L16) | 16 | 1 | [`import_commit.py:29`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_commit.py#L29) | Name cue: Prepare restore confirmation. |
-| [`restore_reviewed_export_offline`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_commit.py#L22) | 22 | 0 | — | Name cue: Restore reviewed export offline. |
-
-### [`backend/import_diagnostics.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_diagnostics.py)
-
-**1 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`inspect_detached_candidate`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_diagnostics.py#L13) | 13 | 1 | [`import_review.py:36`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_review.py#L36) | Source comment/docstring: Report component findings separately, without pretending they form a gate. |
-
-### [`backend/import_drafts.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py)
-
-**8 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`ImportDrafts.__init__`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L18) † | 18 | 0 | — | Check source for this historical/special-purpose identifier. |
-| [`ImportDrafts._identity`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L24) | 24 | 2 | [`import_drafts.py:36`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L36), [`import_drafts.py:59`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L59) | Name cue: Identity. |
-| [`ImportDrafts._get`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L30) | 30 | 3 | [`import_drafts.py:70`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L70), [`import_drafts.py:94`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L94) | Name cue: Get. |
-| [`ImportDrafts.begin`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L41) | 41 | 1 | [`server.py:756`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L756) | Name cue: Begin. |
-| [`ImportDrafts.choose_access_point_mounts`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L65) | 65 | 1 | [`server.py:761`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L761) | Name cue: Choose access point mounts. |
-| [`ImportDrafts.confirm`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L82) | 82 | 1 | [`server.py:774`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L774) | Name cue: Confirm. |
-| [`ImportDrafts.cancel`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L111) | 111 | 1 | [`import_drafts.py:126`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L126) | Name cue: Cancel. |
-| [`ImportDrafts.cancel_authenticated`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L116) | 116 | 1 | [`server.py:766`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L766) | Name cue: Cancel authenticated. |
-
-### [`backend/import_review.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_review.py)
-
-**4 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`prepare_detached_import_review`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_review.py#L17) | 17 | 1 | [`import_review.py:75`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_review.py#L75) | Source comment/docstring: Prepare a source-ordered candidate and report; never write to storage. |
-| [`inspect_published_export_mounting`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_review.py#L47) | 47 | 0 | — | Source comment/docstring: Read-only first stage of the published import sequence. |
-| [`prepare_published_export_review`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_review.py#L57) | 57 | 3 | [`import_commit.py:19`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_commit.py#L19), [`import_service.py:29`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_service.py#L29) | Source comment/docstring: Apply the existing v1.3.3 export gate before detached review. |
-| [`confirm_detached_import_review`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_review.py#L81) | 81 | 1 | [`import_service.py:30`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_service.py#L30) | Name cue: Confirm detached import review. |
-
-### [`backend/import_service.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_service.py)
-
-**3 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`replace_from_published_export`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_service.py#L14) | 14 | 1 | [`import_drafts.py:102`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L102) | Name cue: Replace from published export. |
-| [`require_current_permission`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_service.py#L38) | 38 | 0 | — | Name cue: Require current permission. |
-| [`preview_published_export`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_service.py#L49) | 49 | 2 | [`import_drafts.py:45`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L45), [`import_drafts.py:71`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L71) | Name cue: Preview published export. |
-
-### [`backend/inventory.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/inventory.py)
-
-**13 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`_json`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/inventory.py#L31) | 31 | 5 | [`inventory.py:233`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/inventory.py#L233), [`inventory.py:238`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/inventory.py#L238) | Name cue: Json. |
-| [`_check_keys`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/inventory.py#L35) | 35 | 3 | [`inventory.py:40`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/inventory.py#L40), [`inventory.py:43`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/inventory.py#L43) | Name cue: Check keys. |
-| [`_unique_object`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/inventory.py#L46) | 46 | 0 | — | Name cue: Unique object. |
-| [`_reject_nonfinite`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/inventory.py#L55) | 55 | 0 | — | Name cue: Reject nonfinite. |
-| [`validate_published_structure`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/inventory.py#L59) | 59 | 1 | [`inventory.py:99`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/inventory.py#L99) | Source comment/docstring: Published v1.3.3 validateBackupStructure's structural requirements. |
-| [`inspect_export`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/inventory.py#L83) | 83 | 2 | [`import_review.py:53`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_review.py#L53), [`import_review.py:62`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_review.py#L62) | Source comment/docstring: Reject obviously incompatible inputs before detached validation. |
-| [`inspect_device_mounts`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/inventory.py#L134) | 134 | 3 | [`import_diagnostics.py:25`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_diagnostics.py#L25), [`import_review.py:25`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_review.py#L25) | Source comment/docstring: Published getRecognisedDeviceMountTypes / findInvalidDeviceMounts subset. |
-| [`inspect_import_relationships`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/inventory.py#L148) | 148 | 0 | — | Source comment/docstring: Read-only diagnostics for a subset of published integrity rules. |
-| [`preview_inventory_counts`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/inventory.py#L192) | 192 | 2 | [`import_commit.py:41`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_commit.py#L41), [`import_service.py:75`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_service.py#L75) | Source comment/docstring: Detached counts for the published v1.3.3 replacement review. |
-| [`counts`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/inventory.py#L198) | 198 | 2 | [`inventory.py:206`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/inventory.py#L206), [`inventory.py:207`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/inventory.py#L207) | Name cue: Counts. |
-| [`_write_detached`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/inventory.py#L214) | 214 | 3 | [`import_commit.py:42`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_commit.py#L42), [`inventory.py:269`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/inventory.py#L269) | Source comment/docstring: Low-level staging writer. Caller MUST complete full source validation. |
-| [`stage_inventory`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/inventory.py#L260) | 260 | 1 | [`import_service.py:45`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_service.py#L45) | Source comment/docstring: Atomically stage already-reviewed data in an isolated test database. |
-| [`reconstruct_inventory`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/inventory.py#L276) | 276 | 14 | [`collection_saves.py:29`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/collection_saves.py#L29), [`collection_saves.py:114`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/collection_saves.py#L114) | Source comment/docstring: Rebuild source-shaped collections; retain optional top-level settings. |
-
-### [`backend/ipam_reconciliation.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/ipam_reconciliation.py)
-
-**1 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`reconcile_published_ipam`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/ipam_reconciliation.py#L9) | 9 | 1 | [`normalisation_pipeline.py:97`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/normalisation_pipeline.py#L97) | Source comment/docstring: Return a detached candidate with published primary-IP repairs applied. |
-
-### [`backend/ipam_repair.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/ipam_repair.py)
-
-**2 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`plan_ipam_repairs`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/ipam_repair.py#L14) | 14 | 1 | [`ipam_repair.py:63`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/ipam_repair.py#L63) | Source comment/docstring: Derive only the safe device-owned IPAM synchronisations in v1.3.3. |
-| [`apply_ipam_repairs`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/ipam_repair.py#L45) | 45 | 1 | [`server.py:496`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L496) | Source comment/docstring: Replan from locked SQLite state; never accept client-proposed allocation values. |
-
-### [`backend/ipam_saves.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/ipam_saves.py)
-
-**2 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`change_independent_allocation`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/ipam_saves.py#L10) | 10 | 1 | [`server.py:525`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L525) | Source comment/docstring: Save or delete an unassigned IP allocation without altering device-owned links. |
-| [`change_bulk_allocations`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/ipam_saves.py#L67) | 67 | 1 | [`server.py:548`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L548) | Source comment/docstring: Commit the published bulk IP reservation/release preview atomically. |
-
-### [`backend/ipam_validation.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/ipam_validation.py)
-
-**3 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`_ip_number`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/ipam_validation.py#L10) † | 10 | 5 | [`ipam_validation.py:32`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/ipam_validation.py#L32), [`ipam_validation.py:33`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/ipam_validation.py#L33) | Name cue: Ip number. |
-| [`ip_belongs_to_subnet`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/ipam_validation.py#L24) | 24 | 13 | [`application_integrity.py:33`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/application_integrity.py#L33), [`application_integrity.py:67`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/application_integrity.py#L67) | Source comment/docstring: Published isUsableHostAddressInSubnet and /23–/30 restriction. |
-| [`inspect_ipam_integrity`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/ipam_validation.py#L41) | 41 | 1 | [`import_diagnostics.py:27`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_diagnostics.py#L27) | Source comment/docstring: Return source-worded IPAM findings in published device/allocation order. |
-
-### [`backend/legacy_mounting.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/legacy_mounting.py)
-
-**1 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`plan_legacy_computer_mounting_corrections`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/legacy_mounting.py#L12) | 12 | 1 | [`import_review.py:23`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_review.py#L23) | Name cue: Plan legacy computer mounting corrections. |
-
-### [`backend/login_throttle.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/login_throttle.py)
-
-**6 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`LoginThrottle.__init__`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/login_throttle.py#L16) † | 16 | 0 | — | Check source for this historical/special-purpose identifier. |
-| [`LoginThrottle._prune`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/login_throttle.py#L20) | 20 | 1 | [`login_throttle.py:42`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/login_throttle.py#L42) | Name cue: Prune. |
-| [`LoginThrottle.allowed`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/login_throttle.py#L29) | 29 | 1 | [`request_auth.py:24`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L24) | Name cue: Allowed. |
-| [`LoginThrottle.failed`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/login_throttle.py#L37) | 37 | 1 | [`request_auth.py:30`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L30) | Name cue: Failed. |
-| [`LoginThrottle.succeeded`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/login_throttle.py#L48) | 48 | 1 | [`request_auth.py:32`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L32) | Name cue: Succeeded. |
-| [`LoginThrottle._key`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/login_throttle.py#L54) | 54 | 3 | [`login_throttle.py:32`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/login_throttle.py#L32), [`login_throttle.py:40`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/login_throttle.py#L40) | Name cue: Key. |
-
-### [`backend/mfa.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/mfa.py)
-
-**5 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`new_secret`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/mfa.py#L19) | 19 | 3 | [`account_security.py:43`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/account_security.py#L43), [`accounts.py:52`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/accounts.py#L52) | Source comment/docstring: Generate a unique 160-bit authenticator secret. |
-| [`_secret_bytes`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/mfa.py#L24) | 24 | 2 | [`mfa.py:41`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/mfa.py#L41), [`mfa.py:57`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/mfa.py#L57) | Name cue: Secret bytes. |
-| [`provisioning_uri`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/mfa.py#L37) | 37 | 3 | [`server.py:416`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L416), [`server.py:432`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L432) | Source comment/docstring: Standard otpauth URI; a QR renderer will encode this exact value. |
-| [`code_at`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/mfa.py#L51) | 51 | 1 | [`mfa.py:74`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/mfa.py#L74) | Source comment/docstring: RFC 6238 SHA1 TOTP with six digits and a 30-second period. |
-| [`verify_code`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/mfa.py#L64) | 64 | 4 | [`account_security.py:65`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/account_security.py#L65), [`accounts.py:77`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/accounts.py#L77) | Source comment/docstring: Accept adjacent time steps for clock drift; reject malformed input. |
-
-### [`backend/normalisation_addresses.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/normalisation_addresses.py)
-
-**1 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`validate_normalisation_addresses`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/normalisation_addresses.py#L9) | 9 | 1 | [`normalisation_pipeline.py:96`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/normalisation_pipeline.py#L96) | Name cue: Validate normalisation addresses. |
-
-### [`backend/normalisation_pipeline.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/normalisation_pipeline.py)
-
-**3 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`_valid_supported_cidr`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/normalisation_pipeline.py#L36) | 36 | 2 | [`application_integrity.py:30`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/application_integrity.py#L30), [`normalisation_pipeline.py:56`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/normalisation_pipeline.py#L56) | Source comment/docstring: Published isValidCidr24: aligned IPv4 /23 through /30. |
-| [`validate_normalisation_subnets`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/normalisation_pipeline.py#L50) | 50 | 1 | [`normalisation_pipeline.py:93`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/normalisation_pipeline.py#L93) | Source comment/docstring: Published normaliseState subnet checks, then hierarchy and type checks. |
-| [`normalise_detached_v133_state`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/normalisation_pipeline.py#L75) | 75 | 1 | [`import_review.py:24`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_review.py#L24) | Source comment/docstring: Mirror published normaliseState ordering without touching source or DB. |
-
-### [`backend/normalisation_validation.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/normalisation_validation.py)
-
-**5 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`_number`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/normalisation_validation.py#L11) † | 11 | 28 | [`application_integrity.py:37`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/application_integrity.py#L37), [`application_integrity.py:81`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/application_integrity.py#L81) | Name cue: Number. |
-| [`_integer`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/normalisation_validation.py#L22) † | 22 | 7 | [`normalisation_pipeline.py:59`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/normalisation_pipeline.py#L59), [`normalisation_validation.py:44`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/normalisation_validation.py#L44) | Name cue: Integer. |
-| [`_valid_ipv4`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/normalisation_validation.py#L26) | 26 | 3 | [`application_integrity.py:32`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/application_integrity.py#L32), [`normalisation_pipeline.py:61`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/normalisation_pipeline.py#L61) | Name cue: Valid ipv4. |
-| [`validate_normalisation_vlans`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/normalisation_validation.py#L36) | 36 | 4 | [`collection_saves.py:41`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/collection_saves.py#L41), [`collection_saves.py:194`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/collection_saves.py#L194) | Source comment/docstring: Raise the published normaliseState VLAN error for the first failure. |
-| [`validate_normalisation_devices`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/normalisation_validation.py#L58) | 58 | 8 | [`collection_saves.py:42`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/collection_saves.py#L42), [`collection_saves.py:195`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/collection_saves.py#L195) | Source comment/docstring: Mirror published device identity, mounting and rack-position checks. |
-
-### [`backend/normalisation.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/normalisation.py)
-
-**2 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`_unique`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/normalisation.py#L14) | 14 | 2 | [`normalisation.py:61`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/normalisation.py#L61), [`normalisation.py:66`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/normalisation.py#L66) | Name cue: Unique. |
-| [`normalise_published_fields`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/normalisation.py#L22) | 22 | 1 | [`normalisation_pipeline.py:90`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/normalisation_pipeline.py#L90) | Source comment/docstring: Reproduce the field transformations in published normaliseState. |
-
-### [`backend/permissions.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/permissions.py)
-
-**9 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`_admin`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/permissions.py#L12) | 12 | 5 | [`permissions.py:35`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/permissions.py#L35), [`permissions.py:52`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/permissions.py#L52) | Name cue: Admin. |
-| [`_target`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/permissions.py#L21) | 21 | 6 | [`permissions.py:53`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/permissions.py#L53), [`permissions.py:109`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/permissions.py#L109) | Name cue: Target. |
-| [`create_user`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/permissions.py#L30) | 30 | 1 | [`server.py:681`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L681) | Name cue: Create user. |
-| [`set_permission`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/permissions.py#L47) | 47 | 1 | [`server.py:686`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L686) | Name cue: Set permission. |
-| [`can_access`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/permissions.py#L81) | 81 | 28 | [`collection_saves.py:21`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/collection_saves.py#L21), [`collection_saves.py:108`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/collection_saves.py#L108) | Name cue: Can access. |
-| [`set_account_active`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/permissions.py#L103) | 103 | 1 | [`server.py:699`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L699) | Name cue: Set account active. |
-| [`delete_user`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/permissions.py#L129) | 129 | 1 | [`server.py:694`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L694) | Name cue: Delete user. |
-| [`set_administrator`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/permissions.py#L149) | 149 | 1 | [`server.py:704`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L704) | Source comment/docstring: Manage administrator status without self-demotion or last-admin removal. |
-| [`can_replace_inventory`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/permissions.py#L179) | 179 | 1 | [`request_auth.py:93`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L93) | Source comment/docstring: Full v1.3.3 import replaces Devices, IPAM and Racks together. |
-
-### [`backend/rack_validation.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/rack_validation.py)
-
-**5 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`_number`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/rack_validation.py#L16) † | 16 | 28 | [`application_integrity.py:37`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/application_integrity.py#L37), [`application_integrity.py:81`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/application_integrity.py#L81) | Source comment/docstring: Approximate JavaScript Number() for rack-position fields. |
-| [`_integer`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/rack_validation.py#L34) † | 34 | 7 | [`normalisation_pipeline.py:59`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/normalisation_pipeline.py#L59), [`normalisation_validation.py:44`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/normalisation_validation.py#L44) | Name cue: Integer. |
-| [`_label`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/rack_validation.py#L39) | 39 | 2 | [`rack_validation.py:78`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/rack_validation.py#L78), [`rack_validation.py:87`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/rack_validation.py#L87) | Name cue: Label. |
-| [`find_rack_import_conflicts`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/rack_validation.py#L43) | 43 | 10 | [`collection_saves.py:46`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/collection_saves.py#L46), [`collection_saves.py:199`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/collection_saves.py#L199) | Source comment/docstring: Return source-compatible conflict messages without mutating candidate. |
-| [`place`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/rack_validation.py#L50) | 50 | 2 | [`rack_validation.py:78`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/rack_validation.py#L78), [`rack_validation.py:100`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/rack_validation.py#L100) | Name cue: Place. |
-
-### [`backend/request_auth.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py)
-
-**6 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`login`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L20) | 20 | 1 | [`server.py:447`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L447) | Source comment/docstring: Throttle invalid credentials; return a session token or None. |
-| [`csrf_for_session`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L36) | 36 | 2 | [`request_auth.py:64`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L64), [`server.py:338`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L338) | Source comment/docstring: Derive a per-session request proof without persisting another secret. |
-| [`authenticated_account`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L51) | 51 | 9 | [`server.py:120`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L120), [`server.py:151`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L151) | Name cue: Authenticated account. |
-| [`authorised_mutation`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L58) | 58 | 3 | [`request_auth.py:72`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L72), [`request_auth.py:90`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L90) | Name cue: Authorised mutation. |
-| [`logout`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L69) | 69 | 1 | [`server.py:370`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L370) | Name cue: Logout. |
-| [`authorised_inventory_import`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L81) | 81 | 5 | [`import_drafts.py:89`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L89), [`import_drafts.py:121`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_drafts.py#L121) | Name cue: Authorised inventory import. |
-
-### [`backend/reset_inventory.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/reset_inventory.py)
-
-**1 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`reset_inventory`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/reset_inventory.py#L12) | 12 | 1 | [`server.py:501`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L501) | Source comment/docstring: Published Clean Start inventory defaults and Change History, atomically. |
-
-### [`backend/schema.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/schema.py)
-
-**1 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`initialise_database`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/schema.py#L56) † | 56 | 1 | [`server.py:806`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L806) | Source comment/docstring: Apply schema changes in one transaction; fail closed on newer versions. |
-
-### [`backend/server.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py)
-
-**9 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`validate_public_origin`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L53) | 53 | 1 | [`server.py:808`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L808) | Source comment/docstring: Accept only an explicit canonical HTTPS browser origin. |
-| [`connect`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L71) | 71 | 17 | [`server.py:73`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L73), [`server.py:80`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L80) | Name cue: Connect. |
-| [`initialise_database`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L79) † | 77 | 1 | [`server.py:806`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L806) | Name cue: Initialise database. |
-| [`Handler.do_GET`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L92) | 92 | 0 | — | Name cue: Do GET. |
-| [`Handler.do_POST`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L343) | 343 | 0 | — | Name cue: Do POST. |
-| [`Handler.handle_user_mutation`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L456) | 456 | 1 | [`server.py:356`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L356) | Source comment/docstring: Administrator-only account creation and section permission changes. |
-| [`Handler.handle_import`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L716) | 716 | 1 | [`server.py:359`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L359) | Source comment/docstring: Authenticated server-owned import stages; never accept a candidate. |
-| [`Handler.respond`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L792) | 792 | 60 | [`server.py:98`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L98), [`server.py:122`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L122) | Name cue: Respond. |
-| [`main`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L805) | 805 | 1 | [`server.py:818`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L818) | Name cue: Main. |
-
-### [`backend/sessions.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/sessions.py)
-
-**5 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`_digest`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/sessions.py#L16) | 16 | 3 | [`sessions.py:41`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/sessions.py#L41), [`sessions.py:52`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/sessions.py#L52) | Name cue: Digest. |
-| [`login_session`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/sessions.py#L26) | 26 | 1 | [`request_auth.py:26`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L26) | Source comment/docstring: Issue a fresh session only after credential and MFA verification. |
-| [`session_account`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/sessions.py#L50) | 50 | 2 | [`request_auth.py:55`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L55), [`request_auth.py:66`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L66) | Source comment/docstring: Resolve a live session; re-check account and current MFA requirements. |
-| [`logout_session`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/sessions.py#L73) | 73 | 1 | [`request_auth.py:77`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/request_auth.py#L77) | Source comment/docstring: Revoke exactly one session; invalid or unknown tokens are harmless. |
-| [`revoke_account_sessions`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/sessions.py#L82) | 82 | 0 | — | Source comment/docstring: Invalidate all sessions after security-sensitive account changes. |
-
-### [`backend/settings_saves.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/settings_saves.py)
-
-**1 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`save_inventory_setting`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/settings_saves.py#L9) | 9 | 1 | [`server.py:491`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L491) | Name cue: Save inventory setting. |
-
-### [`backend/subnet_validation.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/subnet_validation.py)
-
-**7 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`parse_hierarchy_cidr`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/subnet_validation.py#L9) | 9 | 2 | [`subnet_validation.py:64`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/subnet_validation.py#L64), [`subnet_validation.py:194`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/subnet_validation.py#L194) | Name cue: Parse hierarchy cidr. |
-| [`validate_subnet_hierarchy`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/subnet_validation.py#L36) | 36 | 3 | [`application_integrity.py:19`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/application_integrity.py#L19), [`import_diagnostics.py:20`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_diagnostics.py#L20) | Source comment/docstring: Published hierarchyValidate diagnostics, preserving source order. |
-| [`ancestor`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/subnet_validation.py#L109) | 109 | 2 | [`subnet_validation.py:127`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/subnet_validation.py#L127), [`subnet_validation.py:128`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/subnet_validation.py#L128) | Name cue: Ancestor. |
-| [`_js_number`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/subnet_validation.py#L134) | 134 | 1 | [`subnet_validation.py:201`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/subnet_validation.py#L201) | Source comment/docstring: Number() coercion for published VLAN validation. |
-| [`_js_string`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/subnet_validation.py#L153) | 153 | 3 | [`subnet_validation.py:189`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/subnet_validation.py#L189), [`subnet_validation.py:196`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/subnet_validation.py#L196) | Name cue: Js string. |
-| [`_ip_number`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/subnet_validation.py#L163) † | 163 | 5 | [`ipam_validation.py:32`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/ipam_validation.py#L32), [`ipam_validation.py:33`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/ipam_validation.py#L33) | Name cue: Ip number. |
-| [`validate_subnet_types`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/subnet_validation.py#L178) | 178 | 3 | [`application_integrity.py:20`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/application_integrity.py#L20), [`import_diagnostics.py:21`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/import_diagnostics.py#L21) | Source comment/docstring: Mirror published hierarchyValidateTypes diagnostics and ordering. |
-
-### [`backend/tls.py`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/tls.py)
-
-**2 indexed definitions.**
-
-| Function | Line | Call-like references | Example matches | Purpose / description |
-| --- | ---: | ---: | --- | --- |
-| [`subject_alternative_names`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/tls.py#L12) | 12 | 1 | [`tls.py:41`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/tls.py#L41) | Name cue: Subject alternative names. |
-| [`ensure_certificate`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/tls.py#L33) | 33 | 1 | [`server.py:811`](https://github.com/Caffoot/Caffoot-Lite/blob/main/backend/server.py#L811) | Source comment/docstring: Generate once; never silently replace an existing certificate or key. |
-
-## Maintenance notes
-
-This is a **source snapshot**, not a live call graph. Its indexed code predates the proposed v2.0.3 About/test edits in this PR, which do not add named functions. The record stays useful for navigation; the next source-changing batch must check it again. When source changes, repeat the same declared-source scan for the new commit and update the pinned reference rather than retaining stale counts or line numbers. Do not add a new production dependency or runtime instrumentation solely to generate documentation. Never remove or rename a function based on a zero or low textual count alone; inspect event bindings, aliases, compatibility requirements and the published v1.3.3 behaviour first.
+This map describes the modular runtime in the same commit as this index. Links use the current checkout's declaration locations. The [starting checkpoint index](https://github.com/Caffoot/Caffoot-Lite/blob/59a2eba19f7c2389da35be3af9606f471cba6ef3/docs/development-guide/Function-Index.md) remains historical evidence.
+
+Scope: named JavaScript declarations/assignments in the three application scripts, the identified IPAM/Settings/integrity/reset/catalogue/Rack bridge methods with their owning binding names, every Python function/method in `backend/`, and `build_private_acceptance` with its nested helper in the selected maintenance script. Tests, anonymous callbacks, third-party code, generated HTML and other maintenance scripts (including the release verifier) are excluded. This is a definition map, not a repository-wide call graph, reference-count report or removal authority.
+
+The account hydration/photo functions now have purpose-based callable bindings matching their function names: `hydrateAccount` and `removeAccountPhoto`. The immutable design manifest retains its historical integration-entry names; those metadata names are not the runtime's current function map. Pinned source paths, revisions and hashes are unchanged.
+
+**Recorded definitions: 693.** Regenerate after changing declarations or their lines. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
+
+## interface/loader.js
+
+| Function | Line |
+| --- | ---: |
+| [`renderInterfaceTemplate`](../../interface/loader.js#L5) | 5 |
+| [`loadInterfaceText`](../../interface/loader.js#L13) | 13 |
+| [`initialiseInterface`](../../interface/loader.js#L18) | 18 |
+| [`script.onerror`](../../interface/loader.js#L40) | 40 |
+| [`showInterfaceLoadError`](../../interface/loader.js#L43) | 43 |
+
+## interface/application.js
+
+| Function | Line |
+| --- | ---: |
+| [`cloneDefaultData`](../../interface/application.js#L19) | 19 |
+| [`isPlainObject`](../../interface/application.js#L23) | 23 |
+| [`isValidIpv4`](../../interface/application.js#L27) | 27 |
+| [`parseIpv4AddressToNumber`](../../interface/application.js#L37) | 37 |
+| [`formatIpv4Address`](../../interface/application.js#L41) | 41 |
+| [`parseSupportedIpv4Subnet`](../../interface/application.js#L44) | 44 |
+| [`isUsableHostAddressInSubnet`](../../interface/application.js#L53) | 53 |
+| [`isValidCidr24`](../../interface/application.js#L57) | 57 |
+| [`hierarchyIpNumber`](../../interface/application.js#L61) | 61 |
+| [`hierarchyIpString`](../../interface/application.js#L66) | 66 |
+| [`hierarchyParseCidr`](../../interface/application.js#L67) | 67 |
+| [`hierarchyValidate`](../../interface/application.js#L75) | 75 |
+| [`ancestor`](../../interface/application.js#L115) | 115 |
+| [`independentNetworkInsideBlock`](../../interface/application.js#L125) | 125 |
+| [`hierarchyValidateTypes`](../../interface/application.js#L140) | 140 |
+| [`previewLegacyVlanOwnershipInApp`](../../interface/application.js#L171) | 171 |
+| [`reconcileLegacyVlanOwnership`](../../interface/application.js#L185) | 185 |
+| [`migrateLegacyRackLocation`](../../interface/application.js#L223) | 223 |
+| [`normaliseLegacyRackAccessoryTypes`](../../interface/application.js#L237) | 237 |
+| [`normaliseState`](../../interface/application.js#L244) | 244 |
+| [`validateApplicationState`](../../interface/application.js#L412) | 412 |
+| [`loadStoredState`](../../interface/application.js#L479) | 479 |
+| [`showStorageRecoveryBanner`](../../interface/application.js#L485) | 485 |
+| [`download.onclick`](../../interface/application.js#L500) | 500 |
+| [`reset.onclick`](../../interface/application.js#L509) | 509 |
+| [`caffootThemePreference`](../../interface/application.js#L544) | 544 |
+| [`caffootApplyTheme`](../../interface/application.js#L551) | 551 |
+| [`caffootSetTheme`](../../interface/application.js#L565) | 565 |
+| [`onSystemThemeChange`](../../interface/application.js#L576) | 576 |
+| [`toggleDarkMode`](../../interface/application.js#L585) | 585 |
+| [`readAuditHistory`](../../interface/application.js#L592) | 592 |
+| [`auditChanges`](../../interface/application.js#L596) | 596 |
+| [`recordAudit`](../../interface/application.js#L633) | 633 |
+| [`restoreAuditAfterRolledBackOperation`](../../interface/application.js#L642) | 642 |
+| [`exportAuditHistory`](../../interface/application.js#L654) | 654 |
+| [`auditVisibleRows`](../../interface/application.js#L666) | 666 |
+| [`auditDate`](../../interface/application.js#L688) | 688 |
+| [`renderAuditHTML`](../../interface/application.js#L692) | 692 |
+| [`hydrateAudit`](../../interface/application.js#L725) | 725 |
+| [`applyAuditFilters`](../../interface/application.js#L733) | 733 |
+| [`closeAuditDetail`](../../interface/application.js#L768) | 768 |
+| [`showAuditDetail`](../../interface/application.js#L774) | 774 |
+| [`nextRenderUsers`](../../interface/application.js#L801) | 801 |
+| [`nextRenderAccount`](../../interface/application.js#L803) | 803 |
+| [`hydrateAccount`](../../interface/application.js#L804) | 804 |
+| [`removeAccountPhoto`](../../interface/application.js#L805) | 805 |
+| [`saveState`](../../interface/application.js#L808) | 808 |
+| [`getDeviceById`](../../interface/application.js#L811) | 811 |
+| [`findDeviceUsingIp`](../../interface/application.js#L815) | 815 |
+| [`setDevicePrimaryIp`](../../interface/application.js#L820) | 820 |
+| [`syncDeviceIpamRecord`](../../interface/application.js#L873) | 873 |
+| [`isRackMountedDevice`](../../interface/application.js#L886) | 886 |
+| [`getDeviceShelfAssociationError`](../../interface/application.js#L889) | 889 |
+| [`getRackShelfLocation`](../../interface/application.js#L901) | 901 |
+| [`initialiseDeviceShelfFields`](../../interface/application.js#L906) | 906 |
+| [`refreshDeviceShelfFields`](../../interface/application.js#L922) | 922 |
+| [`openRackShelfCreation`](../../interface/application.js#L940) | 940 |
+| [`returnFromRackShelfCreation`](../../interface/application.js#L954) | 954 |
+| [`createRackShelfFromDevice`](../../interface/application.js#L964) | 964 |
+| [`openRackShelfRemovalReview`](../../interface/application.js#L971) | 971 |
+| [`options`](../../interface/application.js#L977) | 977 |
+| [`validateRackPlacement`](../../interface/application.js#L998) | 998 |
+| [`showToast`](../../interface/application.js#L1033) | 1033 |
+| [`toggleSidebar`](../../interface/application.js#L1121) | 1121 |
+| [`switchTab`](../../interface/application.js#L1140) | 1140 |
+| [`escapeHtml`](../../interface/application.js#L1167) | 1167 |
+| [`inlineJsArg`](../../interface/application.js#L1176) | 1176 |
+| [`browserStorageWarning`](../../interface/application.js#L1184) | 1184 |
+| [`acknowledgeBrowserStorageNotice`](../../interface/application.js#L1187) | 1187 |
+| [`renderSectionTabIcon`](../../interface/application.js#L1193) | 1193 |
+| [`renderSectionHeader`](../../interface/application.js#L1199) | 1199 |
+| [`tab`](../../interface/application.js#L1200) | 1200 |
+| [`revealSectionTab`](../../interface/application.js#L1227) | 1227 |
+| [`revealActiveSectionTabs`](../../interface/application.js#L1234) | 1234 |
+| [`renderContent`](../../interface/application.js#L1250) | 1250 |
+| [`updateScrollHint`](../../interface/application.js#L1286) | 1286 |
+| [`planDeviceIpAllocationIntegrityRepairs`](../../interface/application.js#L1297) | 1297 |
+| [`previewInventoryIntegrityRepairs`](../../interface/application.js#L1332) | 1332 |
+| [`applyPreviewedInventoryIntegrityRepairs`](../../interface/application.js#L1336) | 1336 |
+| [`renderIntegrityRepairPreviewHtml`](../../interface/application.js#L1340) | 1340 |
+| [`buildInventoryReportData`](../../interface/application.js#L1346) | 1346 |
+| [`occupancy`](../../interface/application.js#L1362) | 1362 |
+| [`escapeCsvCellAndNeutraliseSpreadsheetFormula`](../../interface/application.js#L1385) | 1385 |
+| [`downloadInventoryReportCsv`](../../interface/application.js#L1391) | 1391 |
+| [`renderInventoryReportsHtml`](../../interface/application.js#L1417) | 1417 |
+| [`renderDashboardHTML`](../../interface/application.js#L1436) | 1436 |
+| [`statusPill`](../../interface/application.js#L1539) | 1539 |
+| [`insightSegment`](../../interface/application.js#L1556) | 1556 |
+| [`getCategoryIcon`](../../interface/application.js#L1597) | 1597 |
+| [`getDefaultDeviceFasciaGraphic`](../../interface/application.js#L1612) | 1612 |
+| [`openDeviceTypeRackFasciaSettings`](../../interface/application.js#L1621) | 1621 |
+| [`saveDeviceTypeRackFasciaSettings`](../../interface/application.js#L1626) | 1626 |
+| [`getOccupiedRackUnits`](../../interface/application.js#L1641) | 1641 |
+| [`findAvailableRackUnitRanges`](../../interface/application.js#L1656) | 1656 |
+| [`printRackElevation`](../../interface/application.js#L1666) | 1666 |
+| [`safe`](../../interface/application.js#L1669) | 1669 |
+| [`printRackElevationInFrame`](../../interface/application.js#L1700) | 1700 |
+| [`frame.onload`](../../interface/application.js#L1710) | 1710 |
+| [`renderRackHubV13`](../../interface/application.js#L1731) | 1731 |
+| [`card`](../../interface/application.js#L1736) | 1736 |
+| [`mark`](../../interface/application.js#L1745) | 1745 |
+| [`bar`](../../interface/application.js#L1761) | 1761 |
+| [`chartBox`](../../interface/application.js#L1762) | 1762 |
+| [`chartRows`](../../interface/application.js#L1763) | 1763 |
+| [`rackSpaceGuide`](../../interface/application.js#L1765) | 1765 |
+| [`renderRacksHTML`](../../interface/application.js#L1834) | 1834 |
+| [`changeRack`](../../interface/application.js#L1901) | 1901 |
+| [`getEffectiveDevicePlatform`](../../interface/application.js#L1920) | 1920 |
+| [`getEffectiveDevicePlatformVersion`](../../interface/application.js#L1927) | 1927 |
+| [`getVisibleDevices`](../../interface/application.js#L1933) | 1933 |
+| [`filterHardwareModels`](../../interface/application.js#L1958) | 1958 |
+| [`openCatalogueModal`](../../interface/application.js#L1997) | 1997 |
+| [`openHardwareManufacturerManager`](../../interface/application.js#L2006) | 2006 |
+| [`saveHardwareManufacturer`](../../interface/application.js#L2030) | 2030 |
+| [`openBuiltInManufacturerEditor`](../../interface/application.js#L2068) | 2068 |
+| [`saveBuiltInManufacturerOverride`](../../interface/application.js#L2080) | 2080 |
+| [`renderCatalogueButton`](../../interface/application.js#L2097) | 2097 |
+| [`renderCatalogueRecord`](../../interface/application.js#L2101) | 2101 |
+| [`renderDeviceCategoryCatalogue`](../../interface/application.js#L2106) | 2106 |
+| [`renderHardwareManufacturersHtml`](../../interface/application.js#L2125) | 2125 |
+| [`add`](../../interface/application.js#L2127) | 2127 |
+| [`getNonVirtualDeviceTypesAssociatedWithManufacturer`](../../interface/application.js#L2172) | 2172 |
+| [`refreshModelDeviceTypeChoices`](../../interface/application.js#L2179) | 2179 |
+| [`openHardwareModelManager`](../../interface/application.js#L2191) | 2191 |
+| [`opts`](../../interface/application.js#L2196) | 2196 |
+| [`saveHardwareModel`](../../interface/application.js#L2214) | 2214 |
+| [`openBuiltInHardwareModelEditor`](../../interface/application.js#L2243) | 2243 |
+| [`saveBuiltInHardwareModelOverride`](../../interface/application.js#L2257) | 2257 |
+| [`renderHardwareModelsHtml`](../../interface/application.js#L2279) | 2279 |
+| [`add`](../../interface/application.js#L2281) | 2281 |
+| [`options`](../../interface/application.js#L2317) | 2317 |
+| [`openSoftwareCatalogueEditor`](../../interface/application.js#L2331) | 2331 |
+| [`saveCustomSoftwareEntry`](../../interface/application.js#L2346) | 2346 |
+| [`confirmSoftwareCatalogueRemoval`](../../interface/application.js#L2361) | 2361 |
+| [`archiveSoftwareCatalogueEntry`](../../interface/application.js#L2369) | 2369 |
+| [`restoreArchivedSoftwareEntry`](../../interface/application.js#L2380) | 2380 |
+| [`renderSoftwareCatalogueHtml`](../../interface/application.js#L2389) | 2389 |
+| [`enableSuggestedSoftware`](../../interface/application.js#L2411) | 2411 |
+| [`filterSoftwareCatalogue`](../../interface/application.js#L2422) | 2422 |
+| [`openServerServiceEditor`](../../interface/application.js#L2439) | 2439 |
+| [`saveServerServiceEntry`](../../interface/application.js#L2448) | 2448 |
+| [`restoreArchivedServerService`](../../interface/application.js#L2461) | 2461 |
+| [`renderServerServicesCatalogueHtml`](../../interface/application.js#L2470) | 2470 |
+| [`renderDevicesHTML`](../../interface/application.js#L2482) | 2482 |
+| [`renderHardwareMetric`](../../interface/application.js#L2490) | 2490 |
+| [`renderHardwareChart`](../../interface/application.js#L2495) | 2495 |
+| [`renderDeviceInsightChart`](../../interface/application.js#L2505) | 2505 |
+| [`renderDeviceQualityCards`](../../interface/application.js#L2524) | 2524 |
+| [`renderArchivedSoftware`](../../interface/application.js#L2532) | 2532 |
+| [`getManagedDeviceTypeOrLocationNames`](../../interface/application.js#L2567) | 2567 |
+| [`getUniqueDeviceTypes`](../../interface/application.js#L2574) | 2574 |
+| [`getUniqueDeviceLocations`](../../interface/application.js#L2575) | 2575 |
+| [`isProtectedDeviceTypeOrLocation`](../../interface/application.js#L2576) | 2576 |
+| [`openDeviceCatalogueManager`](../../interface/application.js#L2579) | 2579 |
+| [`openManageTypesModal`](../../interface/application.js#L2595) | 2595 |
+| [`openManageLocationsModal`](../../interface/application.js#L2596) | 2596 |
+| [`requestDeviceCatalogueEntryDeletion`](../../interface/application.js#L2599) | 2599 |
+| [`cancelDeviceCatalogueEntryDeletion`](../../interface/application.js#L2621) | 2621 |
+| [`applyConfirmedDeviceCatalogueEntryDeletion`](../../interface/application.js#L2628) | 2628 |
+| [`applyDeviceCatalogueChange`](../../interface/application.js#L2636) | 2636 |
+| [`editDeviceTypePrompt`](../../interface/application.js#L2656) | 2656 |
+| [`editDeviceLocationPrompt`](../../interface/application.js#L2657) | 2657 |
+| [`openDeviceTypeOrLocationRename`](../../interface/application.js#L2658) | 2658 |
+| [`cancelDeviceCatalogueEntryRename`](../../interface/application.js#L2673) | 2673 |
+| [`deleteDeviceType`](../../interface/application.js#L2693) | 2693 |
+| [`deleteDeviceLocation`](../../interface/application.js#L2694) | 2694 |
+| [`findSubnetUsingGatewayAddress`](../../interface/application.js#L2702) | 2702 |
+| [`calculateSubnetUtilisationSummary`](../../interface/application.js#L2706) | 2706 |
+| [`renderSubnetHierarchyPreview`](../../interface/application.js#L2732) | 2732 |
+| [`nodes`](../../interface/application.js#L2742) | 2742 |
+| [`renderIpamManage`](../../interface/application.js#L2768) | 2768 |
+| [`renderIpamHTML`](../../interface/application.js#L2819) | 2819 |
+| [`changeSubnet`](../../interface/application.js#L2979) | 2979 |
+| [`planBulkSubnetAddressAssignment`](../../interface/application.js#L2992) | 2992 |
+| [`openIpamModal`](../../interface/application.js#L3018) | 3018 |
+| [`openBulkIpModal`](../../interface/application.js#L3023) | 3023 |
+| [`confirmIpamBulkAssignment`](../../interface/application.js#L3030) | 3030 |
+| [`handleBulkIpSubmit`](../../interface/application.js#L3034) | 3034 |
+| [`returnToBulkIpAddressEditor`](../../interface/application.js#L3053) | 3053 |
+| [`applyBulkIpChanges`](../../interface/application.js#L3069) | 3069 |
+| [`subnetCidrFeedback`](../../interface/application.js#L3083) | 3083 |
+| [`suggestSubnetGateway`](../../interface/application.js#L3101) | 3101 |
+| [`openSubnetModal`](../../interface/application.js#L3129) | 3129 |
+| [`updateSubnetTypePreview`](../../interface/application.js#L3133) | 3133 |
+| [`openSubnetModalByVlanId`](../../interface/application.js#L3159) | 3159 |
+| [`handleSubnetSubmit`](../../interface/application.js#L3179) | 3179 |
+| [`showSubnetFormError`](../../interface/application.js#L3386) | 3386 |
+| [`formatSubnetValidationMessage`](../../interface/application.js#L3401) | 3401 |
+| [`subnetNameConflicts`](../../interface/application.js#L3415) | 3415 |
+| [`subnetHasVlan`](../../interface/application.js#L3422) | 3422 |
+| [`validateSubnetGatewayField`](../../interface/application.js#L3425) | 3425 |
+| [`openMultipleSubnets`](../../interface/application.js#L3433) | 3433 |
+| [`option`](../../interface/application.js#L3435) | 3435 |
+| [`visibility`](../../interface/application.js#L3440) | 3440 |
+| [`planningVisibility`](../../interface/application.js#L3444) | 3444 |
+| [`calculateSubnetCapacity`](../../interface/application.js#L3462) | 3462 |
+| [`updateSubnetCapacityGuidance`](../../interface/application.js#L3474) | 3474 |
+| [`read`](../../interface/application.js#L3476) | 3476 |
+| [`generateSubnetBatchPreview`](../../interface/application.js#L3494) | 3494 |
+| [`reject`](../../interface/application.js#L3496) | 3496 |
+| [`getSubnetBatchRecords`](../../interface/application.js#L3533) | 3533 |
+| [`getSubnetBatchIssues`](../../interface/application.js#L3537) | 3537 |
+| [`add`](../../interface/application.js#L3540) | 3540 |
+| [`showSubnetBatchIssues`](../../interface/application.js#L3567) | 3567 |
+| [`renderSubnetBatchPreview`](../../interface/application.js#L3574) | 3574 |
+| [`field`](../../interface/application.js#L3577) | 3577 |
+| [`capture`](../../interface/application.js#L3587) | 3587 |
+| [`ipBelongsToSubnet`](../../interface/application.js#L3621) | 3621 |
+| [`getDevicesAndIpAllocationsInSubnet`](../../interface/application.js#L3625) | 3625 |
+| [`findInventoryIntegrityIssues`](../../interface/application.js#L3631) | 3631 |
+| [`showDeletionBlockedNotice`](../../interface/application.js#L3652) | 3652 |
+| [`confirmInventoryDeletion`](../../interface/application.js#L3656) | 3656 |
+| [`showSubnetDeletionBlocked`](../../interface/application.js#L3660) | 3660 |
+| [`deleteSubnet`](../../interface/application.js#L3671) | 3671 |
+| [`confirmDeleteSubnet`](../../interface/application.js#L3731) | 3731 |
+| [`deleteSubnetCommit`](../../interface/application.js#L3759) | 3759 |
+| [`deleteVlan`](../../interface/application.js#L3789) | 3789 |
+| [`openIpModal`](../../interface/application.js#L3815) | 3815 |
+| [`handleIpSubmit`](../../interface/application.js#L3832) | 3832 |
+| [`preserveDeviceFormDuringOptionsDialog`](../../interface/application.js#L3898) | 3898 |
+| [`modalFormSnapshot`](../../interface/application.js#L3908) | 3908 |
+| [`rememberModalForm`](../../interface/application.js#L3913) | 3913 |
+| [`confirmDiscardDeviceFormChanges`](../../interface/application.js#L3918) | 3918 |
+| [`confirmRackPlacementCorrection`](../../interface/application.js#L3937) | 3937 |
+| [`resolveRackPlacementCorrection`](../../interface/application.js#L3956) | 3956 |
+| [`keepEditingDeviceForm`](../../interface/application.js#L3965) | 3965 |
+| [`discardDeviceFormChanges`](../../interface/application.js#L3971) | 3971 |
+| [`returnToDeviceFormFromSubnet`](../../interface/application.js#L3977) | 3977 |
+| [`closeModal`](../../interface/application.js#L3986) | 3986 |
+| [`openModal`](../../interface/application.js#L4013) | 4013 |
+| [`readRackDimension`](../../interface/application.js#L4086) | 4086 |
+| [`formatRackDimension`](../../interface/application.js#L4093) | 4093 |
+| [`rackPhysicalDetails`](../../interface/application.js#L4098) | 4098 |
+| [`openRackModal`](../../interface/application.js#L4107) | 4107 |
+| [`handleRackSubmit`](../../interface/application.js#L4123) | 4123 |
+| [`deleteRack`](../../interface/application.js#L4190) | 4190 |
+| [`openRackSlotPlacementDialog`](../../interface/application.js#L4212) | 4212 |
+| [`refresh`](../../interface/application.js#L4235) | 4235 |
+| [`openAssignDeviceModal`](../../interface/application.js#L4312) | 4312 |
+| [`refresh`](../../interface/application.js#L4329) | 4329 |
+| [`refreshAssignStartPositions`](../../interface/application.js#L4336) | 4336 |
+| [`handleAssignSubmit`](../../interface/application.js#L4370) | 4370 |
+| [`unassignDevice`](../../interface/application.js#L4415) | 4415 |
+| [`getSubnetForIp`](../../interface/application.js#L4432) | 4432 |
+| [`refreshDeviceIpOptions`](../../interface/application.js#L4436) | 4436 |
+| [`handleDeviceIpSelection`](../../interface/application.js#L4480) | 4480 |
+| [`getDeviceSubnetTopLevelBlock`](../../interface/application.js#L4489) | 4489 |
+| [`refreshDeviceSubnetSelectionCascade`](../../interface/application.js#L4498) | 4498 |
+| [`inside`](../../interface/application.js#L4505) | 4505 |
+| [`handleDeviceSubnetChange`](../../interface/application.js#L4523) | 4523 |
+| [`updateDeviceRackLimits`](../../interface/application.js#L4532) | 4532 |
+| [`toggleDeviceMountType`](../../interface/application.js#L4576) | 4576 |
+| [`getDeviceDetailFieldLabel`](../../interface/application.js#L4600) | 4600 |
+| [`buildDeviceDetailRows`](../../interface/application.js#L4605) | 4605 |
+| [`openDeviceReviewModal`](../../interface/application.js#L4623) | 4623 |
+| [`openDeviceDetailView`](../../interface/application.js#L4628) | 4628 |
+| [`safe`](../../interface/application.js#L4638) | 4638 |
+| [`field`](../../interface/application.js#L4639) | 4639 |
+| [`section`](../../interface/application.js#L4640) | 4640 |
+| [`confirmUninstallOfArchivedSoftware`](../../interface/application.js#L4685) | 4685 |
+| [`recordUninstallOfArchivedSoftware`](../../interface/application.js#L4691) | 4691 |
+| [`selectDeviceDetailsTab`](../../interface/application.js#L4710) | 4710 |
+| [`navigateToDeviceRack`](../../interface/application.js#L4726) | 4726 |
+| [`duplicateDevice`](../../interface/application.js#L4754) | 4754 |
+| [`getConfiguredServerServiceCatalogueEntries`](../../interface/application.js#L4824) | 4824 |
+| [`getAvailableServerServiceCatalogueEntries`](../../interface/application.js#L4829) | 4829 |
+| [`getAvailableServerServiceFieldKeys`](../../interface/application.js#L4834) | 4834 |
+| [`openServerServiceManager`](../../interface/application.js#L4835) | 4835 |
+| [`captureServerServiceSelections`](../../interface/application.js#L4840) | 4840 |
+| [`updateServerServiceCatalogue`](../../interface/application.js#L4846) | 4846 |
+| [`confirmServerServiceArchive`](../../interface/application.js#L4867) | 4867 |
+| [`archiveServerService`](../../interface/application.js#L4875) | 4875 |
+| [`getHardwareSeedPreferences`](../../interface/application.js#L4899) | 4899 |
+| [`getVisibleBuiltInHardwareSuggestions`](../../interface/application.js#L4903) | 4903 |
+| [`getConfiguredHardwareCatalogueEntries`](../../interface/application.js#L4921) | 4921 |
+| [`getSelectedHardwareCatalogueDeviceType`](../../interface/application.js#L4925) | 4925 |
+| [`openHardwareCatalogueManager`](../../interface/application.js#L4928) | 4928 |
+| [`updateHardwareCatalogue`](../../interface/application.js#L4935) | 4935 |
+| [`isVirtualDeviceForm`](../../interface/application.js#L4963) | 4963 |
+| [`updateVirtualHardwareFieldVisibility`](../../interface/application.js#L4967) | 4967 |
+| [`refreshHardwareSuggestions`](../../interface/application.js#L5012) | 5012 |
+| [`handleHardwareSelectionChange`](../../interface/application.js#L5046) | 5046 |
+| [`getConfiguredSoftwareCatalogueEntries`](../../interface/application.js#L5063) | 5063 |
+| [`getConfiguredSoftwareCatalogueFieldKeys`](../../interface/application.js#L5066) | 5066 |
+| [`openConfiguredSoftwareCatalogueManager`](../../interface/application.js#L5067) | 5067 |
+| [`captureInstalledSoftwareSelections`](../../interface/application.js#L5072) | 5072 |
+| [`updateConfiguredSoftwareCatalogue`](../../interface/application.js#L5078) | 5078 |
+| [`createBuiltInSoftwareCatalogueKey`](../../interface/application.js#L5115) | 5115 |
+| [`getAvailableSoftwareCatalogueEntries`](../../interface/application.js#L5116) | 5116 |
+| [`isSoftwareHiddenForDeviceType`](../../interface/application.js#L5123) | 5123 |
+| [`toggleSoftwareForDeviceType`](../../interface/application.js#L5124) | 5124 |
+| [`renderSoftwareDeviceTypeControls`](../../interface/application.js#L5139) | 5139 |
+| [`getDeviceSoftwareContext`](../../interface/application.js#L5145) | 5145 |
+| [`getDeviceSoftwareSuggestions`](../../interface/application.js#L5168) | 5168 |
+| [`isDeviceSoftwareSelected`](../../interface/application.js#L5184) | 5184 |
+| [`getDeviceSoftwareCatalogueEntries`](../../interface/application.js#L5187) | 5187 |
+| [`refreshDeviceSoftwareSuggestions`](../../interface/application.js#L5196) | 5196 |
+| [`preserveLegacyDeviceSoftwareFlags`](../../interface/application.js#L5207) | 5207 |
+| [`getSoftwareFieldsForDeviceType`](../../interface/application.js#L5216) | 5216 |
+| [`getDetailFieldsForDeviceType`](../../interface/application.js#L5219) | 5219 |
+| [`isSoftwareDetailField`](../../interface/application.js#L5226) | 5226 |
+| [`isDeviceEditorHypervisorProduct`](../../interface/application.js#L5234) | 5234 |
+| [`renderDeviceEditorRetainedSoftware`](../../interface/application.js#L5243) | 5243 |
+| [`refreshDeviceEditorHostVersionChoices`](../../interface/application.js#L5249) | 5249 |
+| [`showDeviceEditorFeedback`](../../interface/application.js#L5261) | 5261 |
+| [`bindDeviceEditorValidation`](../../interface/application.js#L5300) | 5300 |
+| [`renderInlineDevicePicker`](../../interface/application.js#L5328) | 5328 |
+| [`updateInlinePickerCount`](../../interface/application.js#L5337) | 5337 |
+| [`openInlineDeviceQuickAdd`](../../interface/application.js#L5343) | 5343 |
+| [`cancelInlineDeviceQuickAdd`](../../interface/application.js#L5356) | 5356 |
+| [`saveInlineDeviceQuickAdd`](../../interface/application.js#L5365) | 5365 |
+| [`fail`](../../interface/application.js#L5371) | 5371 |
+| [`renderInlineHardwareQuickAdd`](../../interface/application.js#L5425) | 5425 |
+| [`saveInlineHardwareQuickAdd`](../../interface/application.js#L5441) | 5441 |
+| [`fail`](../../interface/application.js#L5446) | 5446 |
+| [`renderDeviceDetailFields`](../../interface/application.js#L5493) | 5493 |
+| [`getPlatformGroupForDeviceType`](../../interface/application.js#L5523) | 5523 |
+| [`getPlatformOptionsForDeviceType`](../../interface/application.js#L5529) | 5529 |
+| [`getPlatformVersionOptions`](../../interface/application.js#L5895) | 5895 |
+| [`isWindowsPlatform`](../../interface/application.js#L5898) | 5898 |
+| [`refreshDeviceEditorDropdowns`](../../interface/application.js#L5902) | 5902 |
+| [`getRecordedDevicePlatform`](../../interface/application.js#L5905) | 5905 |
+| [`refreshDeviceEditorContext`](../../interface/application.js#L5909) | 5909 |
+| [`clearDeviceDraftPlatformVersion`](../../interface/application.js#L5926) | 5926 |
+| [`defaultDeviceLocationFromRack`](../../interface/application.js#L5930) | 5930 |
+| [`renderSoftwarePlatformFields`](../../interface/application.js#L5950) | 5950 |
+| [`bindSoftwarePlatformFields`](../../interface/application.js#L5977) | 5977 |
+| [`captureSoftwarePlatformFields`](../../interface/application.js#L6026) | 6026 |
+| [`refreshSoftwarePlatformFields`](../../interface/application.js#L6034) | 6034 |
+| [`isHypervisorHostingEnabledInDeviceForm`](../../interface/application.js#L6045) | 6045 |
+| [`syncHostingFieldVisibility`](../../interface/application.js#L6049) | 6049 |
+| [`captureDeviceDetailFieldValues`](../../interface/application.js#L6061) | 6061 |
+| [`refreshDeviceDetailFields`](../../interface/application.js#L6072) | 6072 |
+| [`isWirelessAccessPointDeviceType`](../../interface/application.js#L6099) | 6099 |
+| [`getRecognisedDeviceMountTypes`](../../interface/application.js#L6103) | 6103 |
+| [`getSuggestedMountTypes`](../../interface/application.js#L6107) | 6107 |
+| [`getDefaultMountType`](../../interface/application.js#L6120) | 6120 |
+| [`renderDeviceMountOptions`](../../interface/application.js#L6123) | 6123 |
+| [`updateDeviceMountChoices`](../../interface/application.js#L6128) | 6128 |
+| [`initialiseNotesEditor`](../../interface/application.js#L6141) | 6141 |
+| [`inlineMarkdown`](../../interface/application.js#L6146) | 6146 |
+| [`render`](../../interface/application.js#L6159) | 6159 |
+| [`initialiseDeviceTabs`](../../interface/application.js#L6193) | 6193 |
+| [`activate`](../../interface/application.js#L6587) | 6587 |
+| [`openDeviceModal`](../../interface/application.js#L6668) | 6668 |
+| [`syncVmPurpose`](../../interface/application.js#L6716) | 6716 |
+| [`clearFieldError`](../../interface/application.js#L6777) | 6777 |
+| [`captureDeviceFormDraft`](../../interface/application.js#L6796) | 6796 |
+| [`createRackFromDevice`](../../interface/application.js#L6831) | 6831 |
+| [`cancelRackFromDevice`](../../interface/application.js#L6839) | 6839 |
+| [`createSubnetFromDevice`](../../interface/application.js#L6849) | 6849 |
+| [`handleDeviceLocationSelectionChange`](../../interface/application.js#L6862) | 6862 |
+| [`cancelCustomDeviceLocation`](../../interface/application.js#L6876) | 6876 |
+| [`addCustomLocationOption`](../../interface/application.js#L6888) | 6888 |
+| [`findObsoleteDeviceFieldsForTypeChange`](../../interface/application.js#L6928) | 6928 |
+| [`requestHypervisorGuestReassignment`](../../interface/application.js#L6940) | 6940 |
+| [`finish`](../../interface/application.js#L6960) | 6960 |
+| [`confirmHypervisorPlatformChangeForGuests`](../../interface/application.js#L6985) | 6985 |
+| [`finish`](../../interface/application.js#L6999) | 6999 |
+| [`handleDeviceSubmit`](../../interface/application.js#L7019) | 7019 |
+| [`existingDeviceHostIsUnchanged`](../../interface/application.js#L7058) | 7058 |
+| [`deleteDevice`](../../interface/application.js#L7205) | 7205 |
+| [`personalSafeStorageGet`](../../interface/application.js#L7262) | 7262 |
+| [`openBackupExplanationDialog`](../../interface/application.js#L7267) | 7267 |
+| [`renderPersonalSettingsBody`](../../interface/application.js#L7277) | 7277 |
+| [`button`](../../interface/application.js#L7278) | 7278 |
+| [`themeChoice`](../../interface/application.js#L7282) | 7282 |
+| [`guideLinks`](../../interface/application.js#L7299) | 7299 |
+| [`loadSmtpSettings`](../../interface/application.js#L7330) | 7330 |
+| [`renderApplicationSettings`](../../interface/application.js#L7345) | 7345 |
+| [`syncSmtpForm`](../../interface/application.js#L7349) | 7349 |
+| [`updateSmtpFields`](../../interface/application.js#L7371) | 7371 |
+| [`hydrateSettings`](../../interface/application.js#L7384) | 7384 |
+| [`caffootCompareVersions`](../../interface/application.js#L7405) | 7405 |
+| [`parse`](../../interface/application.js#L7406) | 7406 |
+| [`caffootShowLicences`](../../interface/application.js#L7428) | 7428 |
+| [`caffootUpdateGuide`](../../interface/application.js#L7433) | 7433 |
+| [`caffootCheckUpdates`](../../interface/application.js#L7438) | 7438 |
+| [`checkInventorySafety`](../../interface/application.js#L7469) | 7469 |
+| [`requestInventoryReset`](../../interface/application.js#L7492) | 7492 |
+| [`createInventoryBackup`](../../interface/application.js#L7519) | 7519 |
+| [`validateBackupVersion`](../../interface/application.js#L7531) | 7531 |
+| [`normaliseImportedBackupAndPlanLegacyMountRepairs`](../../interface/application.js#L7546) | 7546 |
+| [`exportData`](../../interface/application.js#L7554) | 7554 |
+| [`rejectUnsafeBackupKeys`](../../interface/application.js#L7567) | 7567 |
+| [`validateBackupStructure`](../../interface/application.js#L7582) | 7582 |
+| [`downloadPreRestoreSafetySnapshot`](../../interface/application.js#L7599) | 7599 |
+| [`planLegacyComputerMountingCorrections`](../../interface/application.js#L7611) | 7611 |
+| [`findInvalidDeviceMounts`](../../interface/application.js#L7650) | 7650 |
+| [`findRackImportConflicts`](../../interface/application.js#L7654) | 7654 |
+| [`place`](../../interface/application.js#L7660) | 7660 |
+| [`validateAndNormaliseBackupForImport`](../../interface/application.js#L7706) | 7706 |
+| [`parseBackupJsonWithHelpfulError`](../../interface/application.js#L7727) | 7727 |
+| [`showBackupImportError`](../../interface/application.js#L7732) | 7732 |
+| [`reviewLegacyDeviceMountingRepairs`](../../interface/application.js#L7736) | 7736 |
+| [`finish`](../../interface/application.js#L7746) | 7746 |
+| [`onClick`](../../interface/application.js#L7755) | 7755 |
+| [`findAccessPointMountConflictsInBackup`](../../interface/application.js#L7765) | 7765 |
+| [`chooseAccessPointMountingCorrections`](../../interface/application.js#L7776) | 7776 |
+| [`finish`](../../interface/application.js#L7787) | 7787 |
+| [`onClick`](../../interface/application.js#L7796) | 7796 |
+| [`applyAccessPointMountingCorrectionsToBackup`](../../interface/application.js#L7811) | 7811 |
+| [`importData`](../../interface/application.js#L7827) | 7827 |
+| [`reader.onload`](../../interface/application.js#L7837) | 7837 |
+| [`reader.onerror`](../../interface/application.js#L7911) | 7911 |
+| [`validateRackAccessoryPlacement`](../../interface/application.js#L8038) | 8038 |
+| [`renderRackVerticalAccessoryRail`](../../interface/application.js#L8054) | 8054 |
+| [`openRackAccessoryEditor`](../../interface/application.js#L8065) | 8065 |
+| [`refreshAccessoryOptions`](../../interface/application.js#L8099) | 8099 |
+| [`requestRackAccessoryDeletion`](../../interface/application.js#L8157) | 8157 |
+| [`cancel`](../../interface/application.js#L8170) | 8170 |
+| [`moveRackAccessoryToPosition`](../../interface/application.js#L8186) | 8186 |
+| [`moveDeviceToRackPosition`](../../interface/application.js#L8203) | 8203 |
+| [`updateRackDragPointerLabel`](../../interface/application.js#L8228) | 8228 |
+| [`clearRackDragPointerLabel`](../../interface/application.js#L8242) | 8242 |
+| [`clearRackDropPreview`](../../interface/application.js#L8245) | 8245 |
+| [`renderRackViewPreservingScrollPosition`](../../interface/application.js#L8250) | 8250 |
+| [`stopRackDragAutoScroll`](../../interface/application.js#L8262) | 8262 |
+| [`tickRackDragAutoScroll`](../../interface/application.js#L8268) | 8268 |
+| [`trackRackDrag`](../../interface/application.js#L8277) | 8277 |
+| [`getVerticalRackAccessoryDropTarget`](../../interface/application.js#L8308) | 8308 |
+| [`clearVerticalRackAccessoryDragPreview`](../../interface/application.js#L8318) | 8318 |
+| [`getRackDropPosition`](../../interface/application.js#L8411) | 8411 |
+| [`window.onload`](../../interface/application.js#L8864) | 8864 |
+| [`refreshCentralInventory`](../../interface/application.js#L8879) | 8879 |
+| [`postInventory`](../../interface/application.js#L8900) | 8900 |
+| [`isBlockedAction`](../../interface/application.js#L8952) | 8952 |
+| [`applyAllowedControls`](../../interface/application.js#L8980) | 8980 |
+| [`enhanceLongSelects`](../../interface/application.js#L9006) | 9006 |
+| [`sync`](../../interface/application.js#L9057) | 9057 |
+| [`close`](../../interface/application.js#L9063) | 9063 |
+| [`choose`](../../interface/application.js#L9067) | 9067 |
+| [`draw`](../../interface/application.js#L9072) | 9072 |
+| [`open`](../../interface/application.js#L9090) | 9090 |
+| [`enhanceSelects`](../../interface/application.js#L9147) | 9147 |
+| [`switchTab`](../../interface/application.js#L9193) | 9193 |
+| [`updateDeviceEditorNotice`](../../interface/application.js#L9204) | 9204 |
+| [`openDeviceDetailView`](../../interface/application.js#L9230) | 9230 |
+| [`applyDeviceFormSectionPermissions`](../../interface/application.js#L9238) | 9238 |
+| [`forbidRackMount`](../../interface/application.js#L9266) | 9266 |
+| [`openDeviceModal`](../../interface/application.js#L9276) | 9276 |
+| [`nextDeviceModalClosed`](../../interface/application.js#L9318) | 9318 |
+| [`relatedChanges`](../../interface/application.js#L9324) | 9324 |
+| [`saveDevice`](../../interface/application.js#L9335) | 9335 |
+| [`nextIpamBridge.canEdit`](../../interface/application.js#L9362) | 9362 |
+| [`nextIpamBridge.saveBulk`](../../interface/application.js#L9363) | 9363 |
+| [`nextIpamBridge.save`](../../interface/application.js#L9385) | 9385 |
+| [`nextIpamBridge.deleteSubnet`](../../interface/application.js#L9407) | 9407 |
+| [`nextIpamBridge.saveSubnet`](../../interface/application.js#L9429) | 9429 |
+| [`nextSettingsBridge.save`](../../interface/application.js#L9464) | 9464 |
+| [`nextIntegrityRepairBridge.reload`](../../interface/application.js#L9481) | 9481 |
+| [`nextIntegrityRepairBridge.canViewSection`](../../interface/application.js#L9482) | 9482 |
+| [`nextIntegrityRepairBridge.preview`](../../interface/application.js#L9483) | 9483 |
+| [`nextIntegrityRepairBridge.apply`](../../interface/application.js#L9497) | 9497 |
+| [`nextResetBridge.reset`](../../interface/application.js#L9528) | 9528 |
+| [`nextDeviceCatalogueBridge.change`](../../interface/application.js#L9555) | 9555 |
+| [`nextRackBridge.reviewShelf`](../../interface/application.js#L9582) | 9582 |
+| [`nextRackBridge.removeShelf`](../../interface/application.js#L9590) | 9590 |
+| [`nextRackBridge.canEdit`](../../interface/application.js#L9599) | 9599 |
+| [`nextRackBridge.savePlacement`](../../interface/application.js#L9600) | 9600 |
+| [`nextRackBridge.save`](../../interface/application.js#L9635) | 9635 |
+| [`nextRackBridge.saveAccessory`](../../interface/application.js#L9638) | 9638 |
+| [`nextRackBridge.persist`](../../interface/application.js#L9641) | 9641 |
+| [`reserveForDelete`](../../interface/application.js#L9663) | 9663 |
+| [`removeDevice`](../../interface/application.js#L9671) | 9671 |
+| [`cancelDelete`](../../interface/application.js#L9697) | 9697 |
+| [`saveArchivedInstallation`](../../interface/application.js#L9703) | 9703 |
+| [`renderAccountSections`](../../interface/application.js#L9738) | 9738 |
+| [`renderAccountMfaPanel`](../../interface/application.js#L9766) | 9766 |
+| [`nextRenderAccount`](../../interface/application.js#L9776) | 9776 |
+| [`initialiseAccountEmailVerification`](../../interface/application.js#L9784) | 9784 |
+| [`closeEmailVerification`](../../interface/application.js#L9808) | 9808 |
+| [`updateEmailVerificationStatus`](../../interface/application.js#L9815) | 9815 |
+| [`showEmailVerificationFeedback`](../../interface/application.js#L9826) | 9826 |
+| [`hydrateAccount`](../../interface/application.js#L9880) | 9880 |
+| [`updateAccountHeaderPhoto`](../../interface/application.js#L9918) | 9918 |
+| [`loadAccountProfile`](../../interface/application.js#L9931) | 9931 |
+| [`removeAccountPhoto`](../../interface/application.js#L9947) | 9947 |
+| [`nextRenderUsers`](../../interface/application.js#L9956) | 9956 |
+| [`profileFields`](../../interface/application.js#L9958) | 9958 |
+| [`stat`](../../interface/application.js#L9979) | 9979 |
+| [`bars`](../../interface/application.js#L9982) | 9982 |
+| [`operation`](../../interface/application.js#L10034) | 10034 |
+| [`filterUserRows`](../../interface/application.js#L10054) | 10054 |
+| [`closeUserWorkspace`](../../interface/application.js#L10078) | 10078 |
+| [`loadCentralUsers`](../../interface/application.js#L10107) | 10107 |
+| [`changeCentralUser`](../../interface/application.js#L10113) | 10113 |
+| [`importPanel`](../../interface/application.js#L10124) | 10124 |
+| [`cancelImport`](../../interface/application.js#L10128) | 10128 |
+| [`nextImportModalClosed`](../../interface/application.js#L10134) | 10134 |
+| [`showImportReview`](../../interface/application.js#L10135) | 10135 |
+| [`chooseImportFile`](../../interface/application.js#L10175) | 10175 |
+| [`actOnImport`](../../interface/application.js#L10192) | 10192 |
+
+## interface/sign-in.js
+
+| Function | Line |
+| --- | ---: |
+| [`$`](../../interface/sign-in.js#L2) | 2 |
+| [`applySignInTheme`](../../interface/sign-in.js#L5) | 5 |
+| [`showMfaQr`](../../interface/sign-in.js#L22) | 22 |
+| [`showSession`](../../interface/sign-in.js#L30) | 30 |
+| [`request`](../../interface/sign-in.js#L47) | 47 |
+| [`display`](../../interface/sign-in.js#L51) | 51 |
+| [`loadUsers`](../../interface/sign-in.js#L150) | 150 |
+| [`adminAction`](../../interface/sign-in.js#L175) | 175 |
+| [`showRecoveryFeedback`](../../interface/sign-in.js#L206) | 206 |
+| [`resetRecoveryFlow`](../../interface/sign-in.js#L211) | 211 |
+
+## backend/access_point_review.py
+
+| Function | Line |
+| --- | ---: |
+| [`find_access_point_mount_conflicts`](../../backend/access_point_review.py#L19) | 19 |
+| [`apply_access_point_mount_choices`](../../backend/access_point_review.py#L45) | 45 |
+
+## backend/account_email.py
+
+| Function | Line |
+| --- | ---: |
+| [`queue_email`](../../backend/account_email.py#L32) | 32 |
+| [`queue_email.deliver`](../../backend/account_email.py#L37) | 37 |
+| [`email_proof_secret`](../../backend/account_email.py#L54) | 54 |
+| [`_digest`](../../backend/account_email.py#L91) | 91 |
+| [`email_attempts_remaining`](../../backend/account_email.py#L100) | 100 |
+| [`issue_email_proof`](../../backend/account_email.py#L109) | 109 |
+| [`confirm_email_proof`](../../backend/account_email.py#L140) | 140 |
+| [`security_recipients`](../../backend/account_email.py#L199) | 199 |
+| [`notify_security_change`](../../backend/account_email.py#L214) | 214 |
+| [`record_blocked_sign_in`](../../backend/account_email.py#L235) | 235 |
+
+## backend/account_security.py
+
+| Function | Line |
+| --- | ---: |
+| [`change_own_password`](../../backend/account_security.py#L9) | 9 |
+| [`begin_mfa_enrolment`](../../backend/account_security.py#L31) | 31 |
+| [`complete_mfa_enrolment`](../../backend/account_security.py#L55) | 55 |
+
+## backend/accounts.py
+
+| Function | Line |
+| --- | ---: |
+| [`hash_password`](../../backend/accounts.py#L14) | 14 |
+| [`verify_password`](../../backend/accounts.py#L22) | 22 |
+| [`bootstrap_first_admin`](../../backend/accounts.py#L41) | 41 |
+| [`confirm_admin_mfa`](../../backend/accounts.py#L64) | 64 |
+
+## backend/application_integrity.py
+
+| Function | Line |
+| --- | ---: |
+| [`validate_detached_application_state`](../../backend/application_integrity.py#L14) | 14 |
+
+## backend/audit_events.py
+
+| Function | Line |
+| --- | ---: |
+| [`_safe_audit_value`](../../backend/audit_events.py#L34) | 34 |
+| [`safe_device_differences`](../../backend/audit_events.py#L46) | 46 |
+| [`safe_inventory_differences`](../../backend/audit_events.py#L75) | 75 |
+| [`attribute_event`](../../backend/audit_events.py#L99) | 99 |
+| [`record_actor_event`](../../backend/audit_events.py#L114) | 114 |
+
+## backend/authentication.py
+
+| Function | Line |
+| --- | ---: |
+| [`authenticate`](../../backend/authentication.py#L14) | 14 |
+
+## backend/collection_saves.py
+
+| Function | Line |
+| --- | ---: |
+| [`change_inventory_record`](../../backend/collection_saves.py#L20) | 20 |
+| [`change_ipam_subnet_and_vlan_records`](../../backend/collection_saves.py#L112) | 112 |
+| [`delete_subnet_with_dependencies`](../../backend/collection_saves.py#L254) | 254 |
+| [`remove_linked_rack_shelf`](../../backend/collection_saves.py#L373) | 373 |
+
+## backend/deployment_settings.py
+
+| Function | Line |
+| --- | ---: |
+| [`validate_published_port`](../../backend/deployment_settings.py#L5) | 5 |
+
+## backend/device_catalogue.py
+
+| Function | Line |
+| --- | ---: |
+| [`change_device_catalogue`](../../backend/device_catalogue.py#L15) | 15 |
+
+## backend/device_saves.py
+
+| Function | Line |
+| --- | ---: |
+| [`_check_primary_ip_claim`](../../backend/device_saves.py#L25) | 25 |
+| [`_prepare_related_guests`](../../backend/device_saves.py#L44) | 44 |
+| [`_persist_related_guests`](../../backend/device_saves.py#L88) | 88 |
+| [`save_reserved_device`](../../backend/device_saves.py#L101) | 101 |
+| [`create_device`](../../backend/device_saves.py#L233) | 233 |
+| [`delete_reserved_device`](../../backend/device_saves.py#L306) | 306 |
+
+## backend/history_permissions.py
+
+| Function | Line |
+| --- | ---: |
+| [`visible_subnet_batch_reason`](../../backend/history_permissions.py#L31) | 31 |
+| [`visible_change_history`](../../backend/history_permissions.py#L59) | 59 |
+
+## backend/http_security.py
+
+| Function | Line |
+| --- | ---: |
+| [`session_cookie`](../../backend/http_security.py#L13) | 13 |
+| [`clear_session_cookie`](../../backend/http_security.py#L28) | 28 |
+| [`read_session_cookie`](../../backend/http_security.py#L41) | 41 |
+| [`new_csrf_token`](../../backend/http_security.py#L62) | 62 |
+| [`check_csrf`](../../backend/http_security.py#L66) | 66 |
+| [`require_same_origin`](../../backend/http_security.py#L77) | 77 |
+
+## backend/import_commit.py
+
+| Function | Line |
+| --- | ---: |
+| [`prepare_restore_confirmation`](../../backend/import_commit.py#L15) | 15 |
+| [`restore_reviewed_export_offline`](../../backend/import_commit.py#L21) | 21 |
+
+## backend/import_diagnostics.py
+
+| Function | Line |
+| --- | ---: |
+| [`inspect_detached_candidate`](../../backend/import_diagnostics.py#L13) | 13 |
+
+## backend/import_drafts.py
+
+| Function | Line |
+| --- | ---: |
+| [`ImportDrafts.__init__`](../../backend/import_drafts.py#L17) | 17 |
+| [`ImportDrafts._identity`](../../backend/import_drafts.py#L23) | 23 |
+| [`ImportDrafts._get`](../../backend/import_drafts.py#L29) | 29 |
+| [`ImportDrafts.begin`](../../backend/import_drafts.py#L40) | 40 |
+| [`ImportDrafts.choose_access_point_mounts`](../../backend/import_drafts.py#L64) | 64 |
+| [`ImportDrafts.confirm`](../../backend/import_drafts.py#L81) | 81 |
+| [`ImportDrafts.cancel`](../../backend/import_drafts.py#L110) | 110 |
+| [`ImportDrafts.cancel_authenticated`](../../backend/import_drafts.py#L115) | 115 |
+
+## backend/import_review.py
+
+| Function | Line |
+| --- | ---: |
+| [`prepare_detached_import_review`](../../backend/import_review.py#L17) | 17 |
+| [`inspect_published_export_mounting`](../../backend/import_review.py#L47) | 47 |
+| [`prepare_published_export_review`](../../backend/import_review.py#L57) | 57 |
+| [`confirm_detached_import_review`](../../backend/import_review.py#L81) | 81 |
+
+## backend/import_service.py
+
+| Function | Line |
+| --- | ---: |
+| [`replace_from_published_export`](../../backend/import_service.py#L12) | 12 |
+| [`replace_from_published_export.require_current_permission`](../../backend/import_service.py#L36) | 36 |
+| [`preview_published_export`](../../backend/import_service.py#L47) | 47 |
+
+## backend/inventory.py
+
+| Function | Line |
+| --- | ---: |
+| [`_json`](../../backend/inventory.py#L30) | 30 |
+| [`_check_keys`](../../backend/inventory.py#L34) | 34 |
+| [`_unique_object`](../../backend/inventory.py#L45) | 45 |
+| [`_reject_nonfinite`](../../backend/inventory.py#L54) | 54 |
+| [`validate_published_structure`](../../backend/inventory.py#L58) | 58 |
+| [`inspect_export`](../../backend/inventory.py#L82) | 82 |
+| [`inspect_device_mounts`](../../backend/inventory.py#L133) | 133 |
+| [`inspect_import_relationships`](../../backend/inventory.py#L147) | 147 |
+| [`preview_inventory_counts`](../../backend/inventory.py#L191) | 191 |
+| [`preview_inventory_counts.counts`](../../backend/inventory.py#L197) | 197 |
+| [`_write_detached`](../../backend/inventory.py#L213) | 213 |
+| [`stage_inventory`](../../backend/inventory.py#L259) | 259 |
+| [`reconstruct_inventory`](../../backend/inventory.py#L275) | 275 |
+
+## backend/ipam_reconciliation.py
+
+| Function | Line |
+| --- | ---: |
+| [`reconcile_published_ipam`](../../backend/ipam_reconciliation.py#L9) | 9 |
+
+## backend/ipam_repair.py
+
+| Function | Line |
+| --- | ---: |
+| [`plan_ipam_repairs`](../../backend/ipam_repair.py#L15) | 15 |
+| [`apply_ipam_repairs`](../../backend/ipam_repair.py#L46) | 46 |
+
+## backend/ipam_saves.py
+
+| Function | Line |
+| --- | ---: |
+| [`change_independent_allocation`](../../backend/ipam_saves.py#L11) | 11 |
+| [`change_bulk_allocations`](../../backend/ipam_saves.py#L66) | 66 |
+
+## backend/ipam_validation.py
+
+| Function | Line |
+| --- | ---: |
+| [`_ip_number`](../../backend/ipam_validation.py#L10) | 10 |
+| [`ip_belongs_to_subnet`](../../backend/ipam_validation.py#L24) | 24 |
+| [`inspect_ipam_integrity`](../../backend/ipam_validation.py#L41) | 41 |
+
+## backend/legacy_mounting.py
+
+| Function | Line |
+| --- | ---: |
+| [`plan_legacy_computer_mounting_corrections`](../../backend/legacy_mounting.py#L12) | 12 |
+
+## backend/login_throttle.py
+
+| Function | Line |
+| --- | ---: |
+| [`LoginThrottle.__init__`](../../backend/login_throttle.py#L15) | 15 |
+| [`LoginThrottle._prune`](../../backend/login_throttle.py#L19) | 19 |
+| [`LoginThrottle.allowed`](../../backend/login_throttle.py#L28) | 28 |
+| [`LoginThrottle.failed`](../../backend/login_throttle.py#L36) | 36 |
+| [`LoginThrottle.succeeded`](../../backend/login_throttle.py#L47) | 47 |
+| [`LoginThrottle._key`](../../backend/login_throttle.py#L53) | 53 |
+
+## backend/mfa.py
+
+| Function | Line |
+| --- | ---: |
+| [`new_secret`](../../backend/mfa.py#L18) | 18 |
+| [`_secret_bytes`](../../backend/mfa.py#L23) | 23 |
+| [`provisioning_uri`](../../backend/mfa.py#L36) | 36 |
+| [`code_at`](../../backend/mfa.py#L50) | 50 |
+| [`verify_code`](../../backend/mfa.py#L63) | 63 |
+
+## backend/normalisation.py
+
+| Function | Line |
+| --- | ---: |
+| [`_unique`](../../backend/normalisation.py#L14) | 14 |
+| [`normalise_published_fields`](../../backend/normalisation.py#L22) | 22 |
+
+## backend/normalisation_addresses.py
+
+| Function | Line |
+| --- | ---: |
+| [`validate_normalisation_addresses`](../../backend/normalisation_addresses.py#L9) | 9 |
+
+## backend/normalisation_pipeline.py
+
+| Function | Line |
+| --- | ---: |
+| [`_valid_supported_cidr`](../../backend/normalisation_pipeline.py#L36) | 36 |
+| [`validate_normalisation_subnets`](../../backend/normalisation_pipeline.py#L50) | 50 |
+| [`normalise_detached_v133_state`](../../backend/normalisation_pipeline.py#L77) | 77 |
+
+## backend/normalisation_validation.py
+
+| Function | Line |
+| --- | ---: |
+| [`_number`](../../backend/normalisation_validation.py#L12) | 12 |
+| [`_integer`](../../backend/normalisation_validation.py#L23) | 23 |
+| [`_valid_ipv4`](../../backend/normalisation_validation.py#L27) | 27 |
+| [`validate_normalisation_vlans`](../../backend/normalisation_validation.py#L37) | 37 |
+| [`validate_normalisation_devices`](../../backend/normalisation_validation.py#L59) | 59 |
+
+## backend/permissions.py
+
+| Function | Line |
+| --- | ---: |
+| [`_admin`](../../backend/permissions.py#L13) | 13 |
+| [`_target`](../../backend/permissions.py#L22) | 22 |
+| [`create_user`](../../backend/permissions.py#L31) | 31 |
+| [`set_permission`](../../backend/permissions.py#L63) | 63 |
+| [`can_access`](../../backend/permissions.py#L113) | 113 |
+| [`set_account_active`](../../backend/permissions.py#L135) | 135 |
+| [`delete_user`](../../backend/permissions.py#L174) | 174 |
+| [`set_administrator`](../../backend/permissions.py#L201) | 201 |
+| [`can_replace_inventory`](../../backend/permissions.py#L242) | 242 |
+
+## backend/profiles.py
+
+| Function | Line |
+| --- | ---: |
+| [`_authorise`](../../backend/profiles.py#L16) | 16 |
+| [`read_profile`](../../backend/profiles.py#L35) | 35 |
+| [`validate_profile_details`](../../backend/profiles.py#L51) | 51 |
+| [`save_profile`](../../backend/profiles.py#L66) | 66 |
+| [`_check_dimensions`](../../backend/profiles.py#L112) | 112 |
+| [`_jpeg_dimensions`](../../backend/profiles.py#L116) | 116 |
+| [`_image_dimensions`](../../backend/profiles.py#L148) | 148 |
+| [`save_profile_photo`](../../backend/profiles.py#L176) | 176 |
+| [`read_profile_photo`](../../backend/profiles.py#L204) | 204 |
+| [`remove_profile_photo`](../../backend/profiles.py#L213) | 213 |
+
+## backend/rack_validation.py
+
+| Function | Line |
+| --- | ---: |
+| [`_number`](../../backend/rack_validation.py#L17) | 17 |
+| [`_integer`](../../backend/rack_validation.py#L35) | 35 |
+| [`_label`](../../backend/rack_validation.py#L40) | 40 |
+| [`find_rack_import_conflicts`](../../backend/rack_validation.py#L44) | 44 |
+| [`find_rack_import_conflicts.place`](../../backend/rack_validation.py#L51) | 51 |
+
+## backend/recover_admin.py
+
+| Function | Line |
+| --- | ---: |
+| [`recover_sole_administrator`](../../backend/recover_admin.py#L17) | 17 |
+| [`main`](../../backend/recover_admin.py#L46) | 46 |
+
+## backend/request_auth.py
+
+| Function | Line |
+| --- | ---: |
+| [`login`](../../backend/request_auth.py#L19) | 19 |
+| [`csrf_for_session`](../../backend/request_auth.py#L35) | 35 |
+| [`authenticated_account`](../../backend/request_auth.py#L50) | 50 |
+| [`authorised_mutation`](../../backend/request_auth.py#L57) | 57 |
+| [`logout`](../../backend/request_auth.py#L68) | 68 |
+| [`authorised_inventory_import`](../../backend/request_auth.py#L80) | 80 |
+
+## backend/reset_inventory.py
+
+| Function | Line |
+| --- | ---: |
+| [`reset_inventory`](../../backend/reset_inventory.py#L13) | 13 |
+
+## backend/schema.py
+
+| Function | Line |
+| --- | ---: |
+| [`initialise_database`](../../backend/schema.py#L55) | 55 |
+
+## backend/server.py
+
+| Function | Line |
+| --- | ---: |
+| [`validate_public_origin`](../../backend/server.py#L73) | 73 |
+| [`connect`](../../backend/server.py#L91) | 91 |
+| [`initialise_database`](../../backend/server.py#L99) | 99 |
+| [`Handler.end_headers`](../../backend/server.py#L105) | 105 |
+| [`Handler.do_GET`](../../backend/server.py#L112) | 112 |
+| [`Handler.do_POST`](../../backend/server.py#L440) | 440 |
+| [`Handler.handle_user_mutation`](../../backend/server.py#L568) | 568 |
+| [`Handler.handle_account_email`](../../backend/server.py#L926) | 926 |
+| [`Handler.handle_profile_photo`](../../backend/server.py#L1006) | 1006 |
+| [`Handler.handle_import`](../../backend/server.py#L1037) | 1037 |
+| [`Handler.respond`](../../backend/server.py#L1113) | 1113 |
+| [`main`](../../backend/server.py#L1126) | 1126 |
+
+## backend/sessions.py
+
+| Function | Line |
+| --- | ---: |
+| [`_digest`](../../backend/sessions.py#L15) | 15 |
+| [`login_session`](../../backend/sessions.py#L25) | 25 |
+| [`session_account`](../../backend/sessions.py#L49) | 49 |
+| [`logout_session`](../../backend/sessions.py#L72) | 72 |
+| [`revoke_account_sessions`](../../backend/sessions.py#L81) | 81 |
+
+## backend/settings_saves.py
+
+| Function | Line |
+| --- | ---: |
+| [`save_inventory_setting`](../../backend/settings_saves.py#L12) | 12 |
+
+## backend/shelf_associations.py
+
+| Function | Line |
+| --- | ---: |
+| [`validate_device_shelf_association`](../../backend/shelf_associations.py#L8) | 8 |
+
+## backend/smtp_settings.py
+
+| Function | Line |
+| --- | ---: |
+| [`config_path`](../../backend/smtp_settings.py#L39) | 39 |
+| [`_read_private`](../../backend/smtp_settings.py#L43) | 43 |
+| [`public_settings`](../../backend/smtp_settings.py#L60) | 60 |
+| [`_check_text`](../../backend/smtp_settings.py#L71) | 71 |
+| [`_validate_address`](../../backend/smtp_settings.py#L81) | 81 |
+| [`_validate_host`](../../backend/smtp_settings.py#L88) | 88 |
+| [`_validate`](../../backend/smtp_settings.py#L103) | 103 |
+| [`save_settings`](../../backend/smtp_settings.py#L147) | 147 |
+| [`_rate_limit_test`](../../backend/smtp_settings.py#L174) | 174 |
+| [`send_test_email`](../../backend/smtp_settings.py#L183) | 183 |
+| [`send_account_email`](../../backend/smtp_settings.py#L214) | 214 |
+
+## backend/subnet_validation.py
+
+| Function | Line |
+| --- | ---: |
+| [`parse_hierarchy_cidr`](../../backend/subnet_validation.py#L9) | 9 |
+| [`validate_subnet_hierarchy`](../../backend/subnet_validation.py#L36) | 36 |
+| [`validate_subnet_hierarchy.ancestor`](../../backend/subnet_validation.py#L109) | 109 |
+| [`validate_subnet_hierarchy.independent_network_inside_block`](../../backend/subnet_validation.py#L119) | 119 |
+| [`_js_number`](../../backend/subnet_validation.py#L145) | 145 |
+| [`_js_string`](../../backend/subnet_validation.py#L164) | 164 |
+| [`_ip_number`](../../backend/subnet_validation.py#L174) | 174 |
+| [`validate_subnet_types`](../../backend/subnet_validation.py#L189) | 189 |
+| [`validate_subnet_mutation`](../../backend/subnet_validation.py#L235) | 235 |
+
+## backend/tls.py
+
+| Function | Line |
+| --- | ---: |
+| [`subject_alternative_names`](../../backend/tls.py#L12) | 12 |
+| [`ensure_certificate`](../../backend/tls.py#L33) | 33 |
+
+## scripts/build_private_acceptance.py
+
+| Function | Line |
+| --- | ---: |
+| [`build_private_acceptance`](../../scripts/build_private_acceptance.py#L12) | 12 |
+| [`build_private_acceptance.git`](../../scripts/build_private_acceptance.py#L13) | 13 |

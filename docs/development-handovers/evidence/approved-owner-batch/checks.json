@@ -1,0 +1,71 @@
+{
+  "baseline": "4495db3743c8c0ffc3598cf47d9eb015ca094c60",
+  "approvals": {
+    "310": "https://github.com/Caffoot/Caffoot-Lite/issues/310#issuecomment-6682810358",
+    "311": "https://github.com/Caffoot/Caffoot-Lite/issues/311#issuecomment-6682811002",
+    "317": "https://github.com/Caffoot/Caffoot-Lite/issues/317#issuecomment-6682811686"
+  },
+  "backend": {
+    "total": 425,
+    "passed": 422,
+    "skipped": 3,
+    "skips": [
+      "Docker opt-in (separately passed)",
+      "two private genuine v1.3.3 fixture checks"
+    ]
+  },
+  "browser": "focused matrix and full existing Chromium regression passed",
+  "authenticationVisual": "six setup/sign-in/MFA states at 1440 and 390 in Light and Dark passed",
+  "inter": "14 Sign In and 8 About scenarios passed; Inter files supplied only to isolated tests",
+  "dockerLifecycle": "real Compose build/restart/recreation passed; final delivery image recorded in GitHub",
+  "sourceSha256": {
+    "interface/application.js": "c65e1410ce6eefa7cc250d451445708d2389932a72cc8f8b6a5b829b3ed174e5",
+    "interface/design-sources.json": "592f9e2357101d2bc4a82b34c4d9a502bf286f4e0305a671143ce1e4cef03812",
+    "interface/loader.js": "28ee3bdbcb6450548c860fea98b54a03ab7c168679e9c415a39efcb22042abf2",
+    "interface/screens/audit-trail.html": "876460d20d242ef06c3dea54790e7f7489f4ee2cbf856ad063efcfffb749bc0e",
+    "interface/screens/dashboard.html": "fcd2d0644331b39ca7df9f50b3db71136d8e450e5bbb32a51e84e525eac7abaa",
+    "interface/screens/device-details.html": "1224c054ccfe548f56c9c0ca39f40041cc78551b1d35cba72ee28ca65fee07f7",
+    "interface/screens/device-inventory.html": "182d822c8af01832fe43722aa304962f5f0cba8ec39c425063df0ba1df528eff",
+    "interface/screens/device-management.html": "15954d3dcc855af5f33fe8cabd691433ef524aa2f7ff92ca90632b9c800bed3e",
+    "interface/screens/devices.html": "f3105a16a8e8eee0c3a8b8f86826f0620726a970e29f57b658aa96bfc70981e6",
+    "interface/screens/ipam.html": "0969778e55cd0c2f3969bf7139c07376d8c9dbcd98f2888d5f8d9934b9717ac2",
+    "interface/screens/migration.html": "6988e33baf07de07e8edc23dca0d2d24733e7229d4c7087a2de148a520da3506",
+    "interface/screens/my-account.html": "2b08bf5b338bd9d524e02651c16c4f06fa9ffe39521980e45447bd3a4c47f810",
+    "interface/screens/navigation.html": "1ab7a1e8685cdaf6e29c9164a7b74f9419ab9338c5dae770e0db75c5d5214107",
+    "interface/screens/racks.html": "fc7056963de9efdf07c56c9d31e0bbd4f9346c5ec6893f9969af3c28ca1f9a68",
+    "interface/screens/settings.html": "292edd8e886d5cb8787e1896ddc9f4589e51f846412c9a74ee494a21613c8267",
+    "interface/screens/shared.html": "f0eaf3480234d3e7a0d2697d300b354ecc365aeff44b4d942b6edc170d63cc5b",
+    "interface/screens/users.html": "603d33c2b00f7dad9d3921e7aac028bc01469485dbeaf142ad96138f721dfd55",
+    "interface/sign-in.js": "d74a5279339efe4757ea2247b7e429d845a21420b93c2814a3c43ca919ccc2c3",
+    "interface/styles/audit-trail.css": "bdd6cfc0e68d898b15f1abfbd7cbb07b635dba8e775de38785630fa068cce99f",
+    "interface/styles/components.css": "957dd0a133fafd12fd83b9d8461166800e6e59b952e882dd0feeeaa899ca3de8",
+    "interface/styles/dashboard.css": "fc42f5c138e1b7a5819ac63d3f054a7921dbe3d9ee768f1396b5ea5d9a67ef95",
+    "interface/styles/device-details.css": "e99fe7b8b0b12c8c308de665e1d79ce378be671088eadcdcc1d0cf9ca7df844d",
+    "interface/styles/device-inventory.css": "9ae230a0de45e9cd28a9f70b536092dddd42b222684360b8588886a127f059b3",
+    "interface/styles/device-management.css": "50be4d3c46e1e98bc56ebe813899e98169fee8aee937d81749d6237b1e00ca24",
+    "interface/styles/devices.css": "8384ba370fc7485c6f9f0e1beb5b312effd5fadd63fd2d7fbd4e514960e86879",
+    "interface/styles/dialogs.css": "c9cad13f843b16ee0dab18938b781433c7ffce61492c3df7009464ca81ea8bf4",
+    "interface/styles/ipam.css": "5e8f5a81611653284aec7ed0bf6a5c479f71e4da9ddde5841a28a119d7613f92",
+    "interface/styles/my-account.css": "228a5557bfa66e517942bc534ee464318ef36d7edf63015449f512669b43f518",
+    "interface/styles/racks.css": "6bbda8ec3e6f0b04ea578b2404f80cba8d93c90b8f62d2fdf15be8fb216a4c7b",
+    "interface/styles/settings.css": "9efef942d7f113d55ee5bcd17905724fcb477c62150c003aff2a2a679d9e618b",
+    "interface/styles/shared.css": "23642a8f61c0c7cb63986e4db794224cccc919ebbd2d0ce263d03cd5cd0e98e9",
+    "interface/styles/sign-in-controls.css": "d21a3faade27bcd5b6ba2f5a10bf2cbb853e515c40014d780c1429adaee8a5b3",
+    "interface/styles/sign-in.css": "8b9759c4d6c3740126eb657e27490a32aabe734dd38bc69c2448f5c6ecd16ca0",
+    "interface/styles/themes.css": "481ef750a58256fb3ea2561e09a3225cf1e4306d65e85746d43b99bdb76fe35e",
+    "interface/styles/users.css": "de3ffc23f5d14efeffee5415a79aefd5f4dd7f2fe9d0a8863cf84ff3bd72f6e5",
+    "interface/styles/utilities.css": "0d64b175b22813315e118f392a411552a8058e3f8a66d55aa925688e327e2467",
+    "inventory.html": "efab9a89ef94e6d378b81b5f7dabcc04701ace507695644ed2ae32da50635955",
+    "setup.html": "4fdb81d94d161146c0c9f727b8bdb610b124d8d30b22664d287db323e1bc694c"
+  },
+  "imagesSha256": {
+    "sign-in-approved-390-dark.png": "e378b8284c87a50ed0bf7e96376e6142dddc35552885e13a714ca0336f572aa0",
+    "about-approved-1440-light.png": "894819d56d97cead23e5da90289714db4ad01f13c0df8bbb71d6fbb400dac132",
+    "about-approved-390-dark.png": "a3fbad076429fe1e25bab6e7b22af2874c5d17884b3bd6d54b1672062b15f03e",
+    "rack-preview-390-dark.png": "c21e7e6d05058384a84231f7a4259831341e2501601ffda6eb1479ee6448f880",
+    "verification-390-dark.png": "d28afa0ac5773ac51ac5c8e7593c58609de867dd34cf795556805c73f12f6d61",
+    "verification-1440-light.png": "6c8929c03eb8786f274caaf62236a22fcee6fd1a432cacaec6d31dc0d126c6aa",
+    "rack-preview-1440-light.png": "5a8282a4dc31cdc73900798ff24d93566f60635ff882076b6aedf25c06d42249",
+    "sign-in-approved-1440-light.png": "6edbff8b4d5be59b5879e5789f67936ccdac9bae4ab7ea2c370dd20c269b9ba6"
+  }
+}

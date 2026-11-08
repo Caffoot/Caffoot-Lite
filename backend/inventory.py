@@ -1,9 +1,8 @@
-"""Offline inventory import/projection groundwork for Caffoot Lite Next.
+"""Inventory storage, reconstruction and published-export format checks.
 
-This is NOT the user-facing importer: the published v1.3.3 normalisation,
-integrity, review and confirmation workflow must run before any live import.
-No HTTP endpoint calls this module. Account/security tables are never touched.
-"""
+The server and import service call these helpers. Published normalisation,
+review and explicit confirmation must precede live inventory replacement.
+Account and security tables are not part of an inventory import."""
 import json
 import sqlite3
 

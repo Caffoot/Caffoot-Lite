@@ -1,0 +1,11 @@
+{
+  "runtime": "37de2141324e101ec77ee37b68f591ece398e164",
+  "checks": [
+    "Mouse wheel scrolls General body while header/footer and background stay fixed",
+    "Mouse wheel scrolls the existing nested software checklist",
+    "Tab and Shift+Tab wrap between fixed actions and header dismissal",
+    "Escape opens the existing discard confirmation; Escape keeps the draft",
+    "Discard restores opener focus and leaves all device records unchanged"
+  ],
+  "errors": []
+}

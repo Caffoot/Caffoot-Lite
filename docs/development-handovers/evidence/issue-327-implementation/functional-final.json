@@ -1,0 +1,17 @@
+{
+  "checks": [
+    "One General hosting path, ordinary product filtering and toggle preservation",
+    "Save/reload retains hidden legacy OS, software assignments, custom data and host metadata",
+    "Guest product-change confirmation, atomic propagation and hosting-disable Cancel safety",
+    "Native and business errors reveal the first correct tab/field above the footer",
+    "VM General controls hide physical fields and preserve host/resources through save/reload",
+    "Duplicate clears identity/IP while preserving VM allocations and host",
+    "All eight Notes actions, safe preview, long text and save/reload",
+    "16 physical types and 6 VM purposes retain applicable software and field restrictions",
+    "New host/custom version and VM creation, missing product/host and invalid allocation feedback",
+    "Simulated server/permission/reservation failures remain visible and preserve the draft without changing SQLite",
+    "Stable product keys remain filtered while valid guest tools remain available",
+    "Keyboard tab navigation skips the hidden VM Hardware tab and selects/focuses the destination"
+  ],
+  "errors": []
+}

@@ -1,0 +1,120 @@
+<!-- interface-template:settings/open-device-type-rack-fascia-settings-1 --><div class="p-6 space-y-4"><div class="flex items-center justify-between"><h3 class="font-bold text-lg text-slate-900 dark:text-white">Rack graphic: {{slot:0}}</h3><button data-action="close-modal" aria-label="Close" class="app-modal-close">Close ×</button></div><p class="text-sm text-slate-600 dark:text-slate-300">Choose a front-panel design for every rack-mounted device of this type. This does not affect inventory or rack placement.</p><label class="block text-sm font-semibold text-slate-900 dark:text-white">Graphic style<select id="rack-style" class="rack-accessory-field">{{slot:1}}</select></label><div class="flex justify-end gap-2"><button type="button" data-action="open-manage-types" class="rack-secondary caffoot-modal-cancel">Cancel</button><button type="button" data-action="save-rack-fascia-graphic" data-name="{{slot:2}}" class="rack-primary">Save Graphic</button></div></div><!-- /interface-template -->
+
+<!-- interface-template:settings/appearance-panel --><section class="settings-panel settings-appearance"><h3>Appearance</h3><p>Choose how Caffoot Lite looks on this device. Your selection is remembered in this browser.</p><div class="theme-options"><!-- /interface-template -->
+
+<!-- interface-template:settings/help-guides-panel --><section class="settings-panel backup-import-help"><h3>Help & Guides</h3><p>These short topics remain available without the internet. Choose Read full guide to open the detailed instructions in a new tab when online.</p><!-- /interface-template -->
+
+<!-- interface-template:settings/about-summary --><div><h3>Caffoot Lite</h3><strong>Infrastructure, Simplified.</strong><p>For HomeLabs and Small Teams</p><p>Network documentation for home labs and small teams.</p></div></div><!-- /interface-template -->
+
+<!-- interface-template:settings/repository-link --><a href="https://github.com/Caffoot/Caffoot-Lite" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-github" aria-hidden="true"></i> Official GitHub Repository <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a><!-- /interface-template -->
+
+<!-- interface-template:settings/user-guides-link --><a href="https://github.com/Caffoot/Caffoot-Lite/blob/main/docs/how-tos/features-and-instructions/README.md" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-book-open" aria-hidden="true"></i> User Guide <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a><!-- /interface-template -->
+
+<!-- interface-template:settings/installation-link --><a href="https://github.com/Caffoot/Caffoot-Lite/blob/main/INSTALLATION.md" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Installation Guide <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a><!-- /interface-template -->
+
+<!-- interface-template:settings/releases-link --><a href="https://github.com/Caffoot/Caffoot-Lite/releases" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-tag" aria-hidden="true"></i> Release Notes <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a><!-- /interface-template -->
+
+<!-- interface-template:settings/about-offline-note --></div><p class="settings-about-offline">External links require an internet connection. Caffoot Lite uses its central server and SQLite database.</p><!-- /interface-template -->
+
+<!-- interface-template:settings/settings-markup-1 --><div class="settings-screen"><main class="main">
+<div class="eyebrow">SYSTEM ADMINISTRATION</div>
+<div class="header">
+<div><h1>Settings &amp; Data</h1><p>Manage your installation, protect your data and configure optional email.</p></div>
+</div>
+<nav aria-label="Settings and Data Sections" class="subnav" role="tablist">
+<button aria-selected="true" class="active" data-tab="data" data-action="select-settings-tab" role="tab" type="button"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><use href="#i-database"></use></svg> Data &amp; Backups</button>
+<button aria-selected="false" data-tab="email" data-action="select-settings-tab" role="tab" type="button"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><use href="#i-mail"></use></svg> Email Settings</button>
+<button aria-selected="false" data-tab="maintenance" data-action="select-settings-tab" role="tab" type="button"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><use href="#i-tool"></use></svg> System Maintenance</button>
+</nav>
+<section class="account-panel active" data-section="data" role="tabpanel">
+<div class="settings-grid">
+<div class="settings-stack">
+<div class="card card-padded">
+<div class="card-head"><span class="iconwrap orange"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><use href="#i-database"></use></svg></span><div class="heading-fill"><h3>Database Backup Guide</h3><p class="sub">Protect your saved Docker / SQLite data with a consistent backup.</p></div><span class="mini-tag">Storage-Based</span></div>
+<div class="divider"></div>
+<ol class="steps">
+<li><span class="step-index">01</span><div><strong>Locate Your Data Volume</strong><p>In Portainer, open the Caffoot Lite stack and check what is mounted at <code>/data</code>. A Compose volume may have a stack-name prefix. Do not assume the volume's name.</p></div></li>
+<li><span class="step-index">02</span><div><strong>Stop Caffoot Lite Safely</strong><p>Stop the application before copying SQLite database files so your backup is consistent.</p></div></li>
+<li><span class="step-index">03</span><div><strong>Archive the Verified Volume</strong><p>On your Docker host, find the volume name, then replace the example placeholder below with the name you actually found.</p>
+<div class="command"><code id="cmd-list">docker volume ls --format '{{.Name}}' | grep caffoot</code><button aria-label="Copy volume discovery command" data-action="settings-screen-copy" data-copy-id="cmd-list" type="button"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><use href="#i-copy"></use></svg> Copy</button></div>
+<div class="command"><code id="cmd-backup">docker run --rm \
+  -v ACTUAL_VOLUME_NAME:/source:ro \
+  -v "$PWD":/backup \
+  alpine sh -c 'cd /source &amp;&amp; tar -czf /backup/caffoot-data-backup.tar.gz .'</code><button aria-label="Copy example backup command" data-action="settings-screen-copy" data-copy-id="cmd-backup" type="button"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><use href="#i-copy"></use></svg> Copy</button></div></div></li>
+<li><span class="step-index">04</span><div><strong>Secure, Verify &amp; Restart</strong><p>Keep the archive somewhere safe, verify it exists, restart your stack and practise restoring to a separate test installation.</p></div></li>
+</ol>
+<div class="help-strip"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><use href="#i-info"></use></svg><span><strong>Important:</strong> Use your verified volume name. If you use a bind mount, back up that directory instead. Never treat the example as a live database backup command.</span></div>
+</div>
+</div>
+<div class="settings-stack">
+<div class="card card-padded">
+<div class="card-head"><span class="iconwrap green"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><use href="#i-upload"></use></svg></span><div><h3>Import Existing Inventory</h3><p class="sub">Migration from the standalone HTML v1.3.3 release.</p></div></div>
+<div class="divider"></div>
+<p class="card-copy">Select a supported <strong>v1.3.3 JSON</strong> export. The existing validation, review, correction and explicit confirmation process runs before making any changes.</p>
+<div class="flowline"><span>Select File</span><span>›</span><span>Review</span><span>›</span><span>Confirm</span></div>
+<button class="btn btn-outline full-button" data-action="next-import-pick" type="button"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><use href="#i-upload"></use></svg> Import v1.3.3 Inventory</button>
+<p class="muted-note">Migration is <strong>not</strong> a replacement for backing up and restoring your SQLite data.</p>
+</div>
+<div class="card card-padded">
+<div class="card-head"><span class="iconwrap"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><use href="#i-shield"></use></svg></span><div><h3>Storage &amp; Recovery</h3><p class="sub">Keep existing installation data safe.</p></div></div>
+<div class="divider"></div>
+<p class="card-copy">Docker's standard named volume is a sensible default for a fresh installation. If you already use a bind mount or another volume, <strong>do not change its mapping</strong> without safely migrating the data.</p>
+<button class="btn btn-outline full-button" data-action="settings-screen-guidance" type="button">Read Installation &amp; Backup Guidance ↗</button>
+</div>
+<div class="card card-padded concise-card"><div class="card-head"><span class="iconwrap orange"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><use href="#i-info"></use></svg></span><div><h3>Your Data Stays Yours</h3><p class="sub">Your Caffoot Lite inventory remains in your own persistent Docker storage.</p></div></div></div>
+</div>
+</div>
+</section>
+<section class="account-panel" data-section="email" role="tabpanel">
+<div class="settings-grid">
+<div class="settings-stack">
+<div class="card card-padded">
+<div class="card-head"><span class="iconwrap orange"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><use href="#i-mail"></use></svg></span><div class="heading-fill"><h3>Outgoing Email Settings</h3><p class="sub">Configure an optional SMTP server for sending email.</p></div><span class="mini-tag" id="smtp-config-status">Not Configured</span></div>
+<div class="divider"></div>
+<form id="smtp-settings-form">
+<div class="mini-section">SMTP Server</div>
+<div class="form-grid smtp-fields">
+<label class="setting-field full">Server Address <input aria-label="SMTP server address" name="host" required maxlength="253" autocomplete="off" placeholder="mail.example.com" type="text"/></label>
+<label class="setting-field">Port <input aria-label="SMTP port" name="port" required max="65535" min="1" placeholder="587" type="number"/></label>
+<label class="setting-field">Connection Security <select aria-label="SMTP connection security" name="security"><option value="starttls">STARTTLS</option><option value="ssl">SSL / TLS</option><option value="none">Unencrypted (Requires Review)</option></select></label>
+</div>
+<label class="smtp-insecure-warning" id="smtp-insecure-warning" hidden><input name="insecureConfirmed" type="checkbox"> I understand that unencrypted SMTP may expose email contents. Authentication cannot be used without TLS.</label>
+<div class="toggle-settings"><div><strong>SMTP Authentication</strong><span>Use a username and password when your mail server requires it.</span></div><label class="toggle"><input aria-label="Enable SMTP authentication" checked="" id="smtp-auth" name="authenticate"  type="checkbox"/><span class="toggle-slider"></span></label></div>
+<div class="form-grid smtp-fields auth-fields" id="smtp-auth-fields">
+<label class="setting-field">Username <input autocomplete="off" name="username" maxlength="254" placeholder="SMTP username" type="text"/></label>
+<label class="setting-field">Password <input autocomplete="new-password" name="password" maxlength="1024" placeholder="Enter SMTP password" type="password"/></label>
+</div>
+<p class="muted-note secret-note">Saved SMTP passwords remain private on the Docker data volume and are never returned to the browser. Leave the password blank to keep an existing one.</p>
+<div class="divider"></div>
+<div class="mini-section">Sender Identity</div>
+<div class="form-grid smtp-fields">
+<label class="setting-field">From Name <input placeholder="Caffoot Lite" name="fromName" maxlength="120" type="text"/></label>
+<label class="setting-field">From Email Address <input placeholder="caffoot@example.com" name="fromEmail" maxlength="254" required type="email"/></label>
+</div>
+<div class="form-actions"><button class="btn btn-outline" data-action="reset-smtp-settings" type="button">Discard Changes</button><button class="btn btn-primary" type="submit">Save Email Settings</button></div>
+<p class="muted-note preview-note">SMTP is optional. It does not enable notifications or account recovery on its own.</p>
+</form>
+</div>
+</div>
+<div class="settings-stack">
+<div class="card card-padded">
+<div class="card-head"><span class="iconwrap green"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><use href="#i-send"></use></svg></span><div><h3>Send A Test Email</h3><p class="sub">Check delivery after configuring your SMTP settings.</p></div></div>
+<div class="divider"></div>
+<form id="smtp-test-form"><label class="setting-field">Recipient Email Address <input aria-label="Test email recipient address" name="recipient" required maxlength="254" placeholder="you@example.com" type="email"/></label><button class="btn btn-outline full-button" type="submit">Send Test Email</button></form>
+<p class="muted-note">Send a test only after saving your settings. This action contacts the configured mail server; tests are rate-limited.</p>
+</div>
+<div class="card card-padded"><div class="card-head"><span class="iconwrap orange"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><use href="#i-info"></use></svg></span><div><h3>Email Is Optional</h3><p class="sub">The application works without SMTP.</p></div></div><div class="divider"></div><p class="card-copy">Caffoot Lite must still install, sign in and manage infrastructure without an email server. Configuring SMTP does not, by itself, turn on notifications or password recovery.</p></div>
+<div class="card card-padded"><div class="card-head"><span class="iconwrap"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><use href="#i-info"></use></svg></span><div><h3>Email Capabilities</h3><p class="sub">Account recovery and security notices require verified email addresses.</p></div></div><div class="divider"></div><div class="future-item">Password Recovery <span>Verified Email Required</span></div><div class="future-item">Administrator Notifications <span>Verified Administrators</span></div><div class="future-item">Audit &amp; Report Delivery <span>Future</span></div><div class="future-item">Service Desk &amp; Tickets <span>Future</span></div><p class="muted-note">Recovery and account-security notices are available when email is configured. Audit delivery and tickets remain planned.</p></div>
+</div>
+</div>
+</section>
+<section class="account-panel" data-section="maintenance" role="tabpanel">
+<div class="settings-grid settings-maintenance-grid">
+<div class="card card-padded"><div class="card-head"><span class="iconwrap green"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><use href="#i-shield"></use></svg></span><div class="heading-fill"><h3>Inventory Safety Check</h3><p class="sub">Check the saved inventory using Caffoot Lite's existing consistency rules.</p></div><span class="mini-tag" id="safety-status">Not Run</span></div><div class="divider"></div><p class="card-copy">The on-demand inventory check reports actionable warnings without editing saved data.</p><button class="btn btn-outline" data-action="check-inventory-safety" type="button">Check Inventory Safety</button></div>
+<div class="card card-padded"><div class="card-head"><span class="iconwrap"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><use href="#i-info"></use></svg></span><div><h3>Maintenance Safeguards</h3><p class="sub">Administrator access and confirmations protect maintenance actions.</p></div></div><div class="divider"></div><p class="card-copy">Administrator permissions, confirmation steps and safety checks protect saved data.</p></div>
+<div class="card card-padded"><div class="card-head"><span class="iconwrap red"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><use href="#i-alert"></use></svg></span><div><h3>Danger Zone</h3><p class="sub">Protected, destructive operations — use with care.</p></div></div><div class="divider"></div><div class="danger-panel"><div><strong>Clear System / Clean Start</strong><p>Review the protected confirmation steps before clearing inventory and managed options.</p></div><button class="btn danger-button" data-action="clear-inventory-data" type="button">Review Clear System</button></div><p class="muted-note">Before considering this operation, make and verify a database backup. Clearing inventory cannot be treated as a reversible test.</p></div>
+<div class="card card-padded"><div class="card-head"><span class="iconwrap orange"><svg fill="none" stroke="currentColor" viewbox="0 0 24 24"><use href="#i-database"></use></svg></span><div><h3>Backups First</h3><p class="sub">Good backups make maintenance safer.</p></div></div><div class="divider"></div><button class="btn btn-outline full-button" data-action="select-settings-tab" data-tab="data" type="button">Review Backup Guidance</button></div>
+</div>
+</section>
+<footer class="footer"><span>Caffoot Lite · Infrastructure, Simplified.</span><span>Settings &amp; Data · Caffoot Lite</span></footer>
+</main></div><!-- /interface-template -->

@@ -56,8 +56,10 @@ def validate_normalisation_subnets(candidate):
                 not subnet.get("name") or not _valid_supported_cidr(subnet.get("cidr"))):
             raise ValueError("Every subnet must have an id, name and valid /23–/30 CIDR.")
         vlan = subnet.get("vlan")
-        if not _integer(vlan) or not 1 <= _number(vlan) <= 4094:
+        if vlan not in (None, "") and (not _integer(vlan) or not 1 <= _number(vlan) <= 4094):
             raise ValueError(f"Invalid VLAN ID on subnet {subnet['name']}.")
+        if subnet.get("purpose") == "VPN" and subnet.get("gateway") in (None, ""):
+            continue
         if not _valid_ipv4(subnet.get("gateway")):
             raise ValueError(f"Invalid gateway on subnet {subnet['name']}.")
         if not ip_belongs_to_subnet(subnet["gateway"], subnet["cidr"]):

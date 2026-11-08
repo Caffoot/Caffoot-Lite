@@ -1,0 +1,172 @@
+{
+  "implementationCommit": "b1959014fdf65c9b4c3c9e20d4fff3fd75f9889d",
+  "approvedSourceRevision": "c26db4a56bbc30f95b56201e81a7a76d13c6037b",
+  "runtime": [
+    {
+      "path": "interface/application.js",
+      "sha256": "989d4778344a8943ce75c5b14888abdb70fb72a423283f1621ce742c186e736b"
+    },
+    {
+      "path": "interface/screens/device-management.html",
+      "sha256": "15954d3dcc855af5f33fe8cabd691433ef524aa2f7ff92ca90632b9c800bed3e"
+    },
+    {
+      "path": "interface/screens/racks.html",
+      "sha256": "f2e5c703d15624fd08e7cd669606761dd474ab3bc2fe2d86f1785c45d3070ff8"
+    },
+    {
+      "path": "interface/styles/dialogs.css",
+      "sha256": "c9cad13f843b16ee0dab18938b781433c7ffce61492c3df7009464ca81ea8bf4"
+    }
+  ],
+  "pdfs": [
+    {
+      "file": "print/rack-print-48U-A4.pdf",
+      "pages": 3,
+      "frontRear": true,
+      "toolbarAbsent": true,
+      "source": "standalone baseline document; not native trial output"
+    },
+    {
+      "file": "print/rack-print-48U-Letter.pdf",
+      "pages": 4,
+      "frontRear": true,
+      "toolbarAbsent": true,
+      "source": "standalone baseline document; not native trial output"
+    },
+    {
+      "file": "print/rack-print-6U-A4.pdf",
+      "pages": 2,
+      "frontRear": true,
+      "toolbarAbsent": true,
+      "source": "standalone baseline document; not native trial output"
+    },
+    {
+      "file": "print/rack-print-6U-Letter.pdf",
+      "pages": 2,
+      "frontRear": true,
+      "toolbarAbsent": true,
+      "source": "standalone baseline document; not native trial output"
+    },
+    {
+      "file": "print/rack-print-A4.pdf",
+      "pages": 2,
+      "frontRear": true,
+      "toolbarAbsent": true,
+      "source": "standalone baseline document; not native trial output"
+    },
+    {
+      "file": "print/rack-print-Letter.pdf",
+      "pages": 2,
+      "frontRear": true,
+      "toolbarAbsent": true,
+      "source": "standalone baseline document; not native trial output"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "actions.json",
+      "sha256": "50ecfaa4877d10081f20b3f3d6a9cc4a028fadf648a54ee0b652a4a4d8103067"
+    },
+    {
+      "path": "checkpoint.json",
+      "sha256": "8cbc43ee0946e969dbf1d5a3ca6fcc2d2731283636839a31c3cc0fd605cc7fe4"
+    },
+    {
+      "path": "final.json",
+      "sha256": "44dd41bf4acb290dab7edef33e66dbaa2d2ea26ebd61b54514ad822e75accfb0"
+    },
+    {
+      "path": "images/networking-1024.png",
+      "sha256": "8c1bf6140198f40351850af1d98e68e627d56a882aacf2c681307475ddfc4985"
+    },
+    {
+      "path": "images/networking-dark-1024.png",
+      "sha256": "fb62de3627fd06f1d530d88af65946cb2e5b78606a255152f871738bf672da3c"
+    },
+    {
+      "path": "images/networking-dark-390.png",
+      "sha256": "de4f2f195df205bb8400ef5ee167f99bb2584a491393e39c7481119efa423c40"
+    },
+    {
+      "path": "images/networking-light-1024.png",
+      "sha256": "8c1bf6140198f40351850af1d98e68e627d56a882aacf2c681307475ddfc4985"
+    },
+    {
+      "path": "images/networking-light-390.png",
+      "sha256": "0d69dab8ff7c481723d1ed0d101e5e9a4547be4d019eb058eb1db69f9f525314"
+    },
+    {
+      "path": "images/rack-missing-dark-1440.png",
+      "sha256": "162e5a504b5196c9b071fbbbc339142d5cb3d089ce19c6f9fcbf55a1416d4cee"
+    },
+    {
+      "path": "images/rack-missing-dark-390.png",
+      "sha256": "99b23ff8a3322be9cfc3afafbe219bb458ee65b14733d7daaaadd78b345d9be1"
+    },
+    {
+      "path": "images/rack-missing-light-1440.png",
+      "sha256": "4ff810dfc55099d217967359b519f41973544293498c62ddf484a3c1dfaa9805"
+    },
+    {
+      "path": "images/rack-missing-light-390.png",
+      "sha256": "a106e5d2f5736bcbd254be55bc110979b01f543bfb682eaffe157d26c6c2d308"
+    },
+    {
+      "path": "images/software-1024.png",
+      "sha256": "d922939a31e7dd96f7b05cca8a35b65dc8f7bc39320547c513453177545198bf"
+    },
+    {
+      "path": "images/software-390.png",
+      "sha256": "27efd810cdc0a993b841b62a6e3bc21232bc02f1e116568a2b299aeb321f086a"
+    },
+    {
+      "path": "images/software-dark-1024.png",
+      "sha256": "e33f637f77a0dc52f7035c97bbb6c19f2f1b80aea8b60aec6a47c0f464c65e91"
+    },
+    {
+      "path": "images/software-dark-390.png",
+      "sha256": "9c49a944ccd3c1327d199749b6301c503be411a64ab46bc1837a719ef0c4c083"
+    },
+    {
+      "path": "images/software-light-1024.png",
+      "sha256": "d922939a31e7dd96f7b05cca8a35b65dc8f7bc39320547c513453177545198bf"
+    },
+    {
+      "path": "images/software-light-390.png",
+      "sha256": "27efd810cdc0a993b841b62a6e3bc21232bc02f1e116568a2b299aeb321f086a"
+    },
+    {
+      "path": "images/subnet-guidance-dark-390.png",
+      "sha256": "1015e52da197b66ba6893085a1b63423d0860149a64dbe90f3fe0629ec37e1d9"
+    },
+    {
+      "path": "images/subnet-guidance-light-390.png",
+      "sha256": "8778e9d1c8a0f13231caa5a12cbcf607648f7f39bdd24b44f6a0864e98b03df4"
+    },
+    {
+      "path": "print/rack-print-48U-A4.pdf",
+      "sha256": "17a98a957d7ea8b9654edefcba9aa42af92e4eb9350a88460ea6cc38c65ce16b"
+    },
+    {
+      "path": "print/rack-print-48U-Letter.pdf",
+      "sha256": "ba2d8cf7a0b1deec78772df3e33cf0c7cc108831ec21bec76db8811b9aeeb254"
+    },
+    {
+      "path": "print/rack-print-6U-A4.pdf",
+      "sha256": "e194fc37e3247dd56e658b7922ef780638ef9a4472cc0fb4b3440a0bcf7796be"
+    },
+    {
+      "path": "print/rack-print-6U-Letter.pdf",
+      "sha256": "e95142d264ce2186c0a9ce2825186c84f37b0ffa74dcbbc6502d9b019a3af5c3"
+    },
+    {
+      "path": "print/rack-print-A4.pdf",
+      "sha256": "18555659f42ca9fdae79498254a979513f5d8df426f973ada57e8826ccd39d3c"
+    },
+    {
+      "path": "print/rack-print-Letter.pdf",
+      "sha256": "10b9e50aaa21a8c77f0d9aba387a5ccae1eb53316af8486fe7474542d866a941"
+    }
+  ]
+}

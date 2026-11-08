@@ -1,0 +1,61 @@
+PASS: One General hosting path, ordinary product filtering and toggle preservation
+PASS: Save/reload retains hidden legacy OS, software assignments, custom data and host metadata
+PASS: Guest product-change confirmation, atomic propagation and hosting-disable Cancel safety
+PASS: Native and business errors reveal the first correct tab/field above the footer
+PASS: VM General controls hide physical fields and preserve host/resources through save/reload
+PASS: Duplicate clears identity/IP while preserving VM allocations and host
+PASS: All eight Notes actions, safe preview, long text and save/reload
+PASS: 16 physical types and 6 VM purposes retain applicable software and field restrictions
+PASS: New host/custom version and VM creation, missing product/host and invalid allocation feedback
+PASS: Simulated server/permission/reservation failures remain visible and preserve the draft without changing SQLite
+PASS: Stable product keys remain filtered while valid guest tools remain available
+PASS: Keyboard tab navigation skips the hidden VM Hardware tab and selects/focuses the destination
+Compare 1440 light add physical
+Compare 1440 light add virtual
+Compare 1440 light edit physical
+Compare 1440 light edit virtual
+Compare 1440 light duplicate physical
+Compare 1440 light duplicate virtual
+Compare 1440 dark add physical
+Compare 1440 dark add virtual
+Compare 1440 dark edit physical
+Compare 1440 dark edit virtual
+Compare 1440 dark duplicate physical
+Compare 1440 dark duplicate virtual
+Compare 1366 light add physical
+Compare 1366 light add virtual
+Compare 1366 light edit physical
+Compare 1366 light edit virtual
+Compare 1366 light duplicate physical
+Compare 1366 light duplicate virtual
+Compare 1366 dark add physical
+Compare 1366 dark add virtual
+Compare 1366 dark edit physical
+Compare 1366 dark edit virtual
+Compare 1366 dark duplicate physical
+Compare 1366 dark duplicate virtual
+Compare 390 light add physical
+Compare 390 light add virtual
+Compare 390 light edit physical
+Compare 390 light edit virtual
+Compare 390 light duplicate physical
+Compare 390 light duplicate virtual
+Compare 390 dark add physical
+Compare 390 dark add virtual
+Compare 390 dark edit physical
+Compare 390 dark edit virtual
+Compare 390 dark duplicate physical
+Compare 390 dark duplicate virtual
+Compare 320 light add physical
+Compare 320 light add virtual
+Compare 320 light edit physical
+Compare 320 light edit virtual
+Compare 320 light duplicate physical
+Compare 320 light duplicate virtual
+Compare 320 dark add physical
+Compare 320 dark add virtual
+Compare 320 dark edit physical
+Compare 320 dark edit virtual
+Compare 320 dark duplicate physical
+Compare 320 dark duplicate virtual
+Device editor checks complete: 239 rendered states; source comparisons and scroll sequences recorded.

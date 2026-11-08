@@ -1,0 +1,78 @@
+{
+  "startingCheckpoint": "d39f13e0d29372ab3dec5dbedf55c3d12c2db766",
+  "implementationCheckpoint": "2f6dc5ea6d153cc3ee96ada432f59d16213899de",
+  "approvalRecord": "https://github.com/Caffoot/Caffoot-Lite/issues/326#issuecomment-6689415340",
+  "sourceRevision": "c26db4a56bbc30f95b56201e81a7a76d13c6037b",
+  "backend": {
+    "run": 448,
+    "passed": 445,
+    "skipped": 3,
+    "seconds": 50.138,
+    "skips": [
+      "Docker opt-in; implementation-checkpoint Compose CI passed separately",
+      "two unavailable private genuine v1.3.3 fixtures"
+    ]
+  },
+  "focusedBackendAndApi": 10,
+  "expandedInlineMatches": 20,
+  "placementComparisons": 40,
+  "preservationDecisions": "Both authorised; no outstanding design decision within these provisions",
+  "architectureBuild": "Not attempted; owner will build privately on the Pi",
+  "prior208Comparisons": "Reused, not rerun; recorded under acceptance-corrections/editor-comparisons.json",
+  "runtimeFiles": [
+    {
+      "sha256": "e624a8a139129b6648e13cb4b9d38ea1d6396805a09d68f34c9b24db8631a3ae",
+      "path": "interface/application.js"
+    },
+    {
+      "sha256": "56903eb4c2eeede346ddd97532d5b561260fba24f027a2349ca76f36d7ccb87a",
+      "path": "interface/screens/devices.html"
+    },
+    {
+      "sha256": "f7234a16a9310656c558472fac0f77958b7da4f5150d72e23dc429c1c6ab52e3",
+      "path": "interface/screens/device-management.html"
+    },
+    {
+      "sha256": "2ea4ea5e7fb31d0873623223633854bbd8a8b5c700918561f78205297fdc5751",
+      "path": "backend/settings_saves.py"
+    },
+    {
+      "sha256": "592f9e2357101d2bc4a82b34c4d9a502bf286f4e0305a671143ce1e4cef03812",
+      "path": "interface/design-sources.json"
+    }
+  ],
+  "captures": [
+    {
+      "sha256": "da8f676e646dc3c14ed0adbcbd8380b18b0ec3c017a67104950fd8df1985ea57",
+      "path": "preserved-hardware-1440-light.png"
+    },
+    {
+      "sha256": "5a97000dbdb5b0f65973b7a5441c56b71ee5fb580da46d8bc54712b5f00cde07",
+      "path": "preserved-hardware-390-dark.png"
+    },
+    {
+      "sha256": "d1099c07ced6e2c8781e5abdcd4e321ab33e0e50d986703f34477becf6bdd96a",
+      "path": "preserved-networking-1440-light.png"
+    },
+    {
+      "sha256": "11b449e4584ebf74cabbcc550cbb2314809e7174dd7ecfa6782dc3b7c28ccfa2",
+      "path": "preserved-networking-390-dark.png"
+    },
+    {
+      "sha256": "bac0b8d12dceedd548a7a1b6254433d88437a1bb13a4446c6f8ceca937b8ba07",
+      "path": "preserved-notes-1440-light.png"
+    },
+    {
+      "sha256": "2a689731e9291dec8ebdd4a6c439fcdba3f0701152aaae96e3a8a144e5f72c25",
+      "path": "preserved-notes-390-dark.png"
+    },
+    {
+      "sha256": "3c697e44b45d9756395c482e9284fccee3e1e15dd8f288e330ae4868e23c74a3",
+      "path": "preserved-software-1440-light.png"
+    },
+    {
+      "sha256": "54a8f33a5d307f6305ec279ff5dd369f125b834834c35988d3c697421b38ed08",
+      "path": "preserved-software-390-dark.png"
+    }
+  ]
+}

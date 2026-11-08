@@ -1,7 +1,7 @@
-"""Offline password changes and MFA enrolment for existing Next accounts.
+"""Password changes and authenticator enrolment for existing accounts.
 
-HTTP authentication/session checks must precede any use of these primitives.
-"""
+The HTTP server checks authentication, request origin and session-bound
+request proof before calling these operations."""
 from backend.accounts import hash_password, verify_password
 from backend.mfa import new_secret, verify_code
 

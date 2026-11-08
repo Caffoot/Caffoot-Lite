@@ -1,0 +1,47 @@
+{
+  "baseline": "de502337377d318b345c1608ce99c389c566abce",
+  "testedRuntime": "37de2141324e101ec77ee37b68f591ece398e164",
+  "result": "All nine DOM and visible computed-style/bounds snapshots are identical.",
+  "screens": [
+    {
+      "screen": "overview",
+      "identical": true
+    },
+    {
+      "screen": "inventory",
+      "identical": true
+    },
+    {
+      "screen": "types",
+      "identical": true
+    },
+    {
+      "screen": "locations",
+      "identical": true
+    },
+    {
+      "screen": "manufacturers",
+      "identical": true
+    },
+    {
+      "screen": "models",
+      "identical": true
+    },
+    {
+      "screen": "software",
+      "identical": true
+    },
+    {
+      "screen": "services",
+      "identical": true
+    },
+    {
+      "screen": "readonly-details",
+      "identical": true
+    }
+  ],
+  "sha256": {
+    "scope-before.json": "855e13f242ffe0fae5e617f6d5981b4b3a64dc79dc357372a84948c7121e9f41",
+    "scope-after.json": "855e13f242ffe0fae5e617f6d5981b4b3a64dc79dc357372a84948c7121e9f41"
+  }
+}

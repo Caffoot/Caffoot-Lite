@@ -1,8 +1,7 @@
-"""Server-owned, short-lived offline import drafts for the v1.3.3 workflow.
+"""Server-owned, short-lived import reviews for the v1.3.3 HTTP workflow.
 
-Not an HTTP route. No browser-supplied candidate, counts, revision or approval
-state is trusted. Drafts are in-memory and intentionally lost on restart.
-"""
+No browser-supplied candidate, count, revision or approval is trusted. Reviews
+are held in memory and deliberately discarded on server restart."""
 import hashlib
 import secrets
 import threading

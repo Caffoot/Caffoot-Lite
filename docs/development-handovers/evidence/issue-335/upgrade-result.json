@@ -1,0 +1,24 @@
+{
+  "oldImage": "ghcr.io/caffoot/caffoot-lite@sha256:e3606870dfafd9178fd622727dd753f3cf2439574ab45f18807330ccaee5c116",
+  "candidateImage": "caffoot-lite:private-82fcbc33b9bb",
+  "candidateRevision": "82fcbc33b9bbbf525d86bb9929d0527766573d17",
+  "architecture": "amd64",
+  "syntheticData": true,
+  "upgradeCount": 1,
+  "checks": {
+    "oldAuthenticatedRolesAndMfa": true,
+    "schema7To10AndEveryOldTableColumnRowPreserved": true,
+    "allNonDatabaseFilesHashesOwnersModesPreserved": true,
+    "existingSessionsRolesAndNewMfaLogin": true,
+    "restartPreservesFullStateAndPrivateKey": true,
+    "recreationPreservesFullStateAndPrivateKey": true,
+    "oldBinaryRejectsNewerSchemaOnThrowawayCopy": true
+  },
+  "status": "failed",
+  "failureType": "RuntimeError",
+  "failure": "Disposable Docker operation failed: Error response from daemon: container f2f4b88beb9f9190755f9bc092f2ea44cc439eff8c4d02a06c887c1f44804934 is not running\n",
+  "cleanup": {
+    "containersAbsent": true,
+    "volumesAbsent": true
+  }
+}

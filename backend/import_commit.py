@@ -1,8 +1,7 @@
-"""Offline-only v1.3.3 inventory migration transaction.
+"""Atomic inventory replacement for the confirmed v1.3.3 import workflow.
 
-Issue #215: import is inventory-only and atomic.
-This is not a live endpoint or a substitute for source parity and RBAC.
-"""
+The authenticated import service checks source compatibility, review and
+permissions before using this transaction. Account data is preserved."""
 from backend.import_review import prepare_published_export_review
 from backend.inventory import (
     _write_detached, reconstruct_inventory, preview_inventory_counts,

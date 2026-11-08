@@ -1,0 +1,44 @@
+{
+  "checks": [
+    "Real rack-only Main Office defaults, survives shelf creation and Save/reload; no managed location is created and no audit occurs before Save",
+    "Real searchable Rack/Location controls update captions immediately; manual override survives rack switches, clearing and draft restoration",
+    "Blank restored Add drafts default on first render; manual restored values, both mounting paths and required validation remain protected",
+    "Edit preserves saved location; Duplicate preserves the copied area until an explicit new rack choice; Cancel leaves original inventory/history untouched"
+  ],
+  "errors": [],
+  "initialTrace": [
+    {
+      "rackId": "rack_1794039033077",
+      "rackLocation": "Main Office",
+      "options": [
+        {
+          "value": "",
+          "label": "Select a location..."
+        },
+        {
+          "value": "Office",
+          "label": "Office"
+        },
+        {
+          "value": "Server Room",
+          "label": "Server Room"
+        },
+        {
+          "value": "Unknown",
+          "label": "Unknown"
+        },
+        {
+          "value": "__caffoot_create_location__",
+          "label": "+ Create new location…"
+        }
+      ],
+      "before": "",
+      "disabled": false,
+      "manual": "false",
+      "previousRack": "",
+      "after": "Main Office"
+    }
+  ],
+  "recordedLocation": "Main Office",
+  "managedLocationsUnchanged": true
+}

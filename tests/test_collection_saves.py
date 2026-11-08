@@ -15,6 +15,11 @@ class CollectionSaveTests(unittest.TestCase):
     def setUp(self):
         self.db = sqlite3.connect(":memory:")
         initialise_database(self.db)
+        self.db.execute(
+            "INSERT INTO accounts(id,username,password_hash,is_admin,mfa_secret,mfa_confirmed) "
+            "VALUES(1,'audit-tester','test-hash',1,'secret',1)"
+        )
+        self.db.commit()
         stage_inventory(self.db, {
             "devices": [], "subnets": [], "vlans": [],
             "racks": [], "rackAccessories": [], "ipAllocations": {},
@@ -80,7 +85,7 @@ class CollectionSaveTests(unittest.TestCase):
     def test_network_and_linked_vlan_saved_in_one_transaction(self):
         block = {"id": "block", "kind": "container",
                  "cidr": "10.0.0.0/16", "name": "Main block", "parentId": None}
-        network = {"id": "net", "cidr": "10.0.0.0/24", "name": "Admin",
+        network = {"purpose": "LAN", "id": "net", "cidr": "10.0.0.0/24", "name": "Admin",
                    "vlan": 10, "gateway": "10.0.0.1", "parentId": "block"}
         vlan = {"id": "v1", "name": "Admin", "vlanId": 10,
                 "color": "indigo", "parentId": "block"}
@@ -101,7 +106,7 @@ class CollectionSaveTests(unittest.TestCase):
         self.assertEqual(self.records("vlans"), [new_vlan])
 
     def test_failed_linked_vlan_save_preserves_original_subnet(self):
-        network = {"id": "net", "cidr": "10.0.0.0/24", "name": "Valid",
+        network = {"purpose": "LAN", "id": "net", "cidr": "10.0.0.0/24", "name": "Valid",
                    "vlan": 10, "gateway": "10.0.0.1"}
         with self.assertRaises(ValueError):
             self.change_ipam([
@@ -121,7 +126,7 @@ class CollectionSaveTests(unittest.TestCase):
                 )
 
     def test_vlan_delete_refuses_its_linked_network(self):
-        network = {"id": "net", "cidr": "10.0.0.0/24", "name": "Network",
+        network = {"purpose": "LAN", "id": "net", "cidr": "10.0.0.0/24", "name": "Network",
                    "vlan": 10, "gateway": "10.0.0.1"}
         vlan = {"id": "v1", "name": "Network", "vlanId": 10}
         self.change_ipam([
@@ -142,7 +147,7 @@ class CollectionSaveTests(unittest.TestCase):
     def test_legacy_vlan_ownership_can_be_updated(self):
         block = {"id": "block", "kind": "container",
                  "cidr": "10.0.0.0/16", "name": "Block"}
-        network = {"id": "net", "cidr": "10.0.0.0/24",
+        network = {"purpose": "LAN", "id": "net", "cidr": "10.0.0.0/24",
                    "name": "Network", "vlan": 10, "gateway": "10.0.0.1",
                    "parentId": "block"}
         vlan = {"id": "v1", "name": "Network", "vlanId": 10}
@@ -174,7 +179,7 @@ class CollectionSaveTests(unittest.TestCase):
         self.assertEqual(self.records("rack_accessories"), [])
 
     def test_reviewed_subnet_delete_detaches_primary_ip_and_linked_vlan_atomically(self):
-        network = {"id": "network", "name": "Network", "cidr": "10.0.0.0/24",
+        network = {"purpose": "LAN", "id": "network", "name": "Network", "cidr": "10.0.0.0/24",
                    "gateway": "10.0.0.1", "vlan": 10}
         vlan = {"id": "vlan", "name": "Network", "vlanId": 10}
         self.change_ipam([
@@ -212,7 +217,7 @@ class CollectionSaveTests(unittest.TestCase):
         self.assertEqual(revision, 1)
 
     def test_subnet_delete_rejects_independent_reservations_and_preserves_all(self):
-        network = {"id": "network", "name": "Network", "cidr": "10.0.0.0/24",
+        network = {"purpose": "LAN", "id": "network", "name": "Network", "cidr": "10.0.0.0/24",
                    "gateway": "10.0.0.1", "vlan": 10}
         self.change_ipam([
             {"collection": "subnets", "id": "network", "record": network}
@@ -230,3 +235,39 @@ class CollectionSaveTests(unittest.TestCase):
         self.assertIsNotNone(self.db.execute(
             "SELECT 1 FROM inventory_ip_allocations WHERE ip='10.0.0.20'"
         ).fetchone())
+
+    def test_rack_audit_details_redact_private_notes(self):
+        first = {"id": "audit-rack", "name": "Comms Rack",
+                 "heightU": 12, "notes": "PRIVATE-RACK-NOTE"}
+        self.change("racks", "audit-rack", first)
+        renamed = dict(first, name="Main Rack", heightU=18,
+                       notes="PRIVATE-NEW-RACK-NOTE")
+        self.change("racks", "audit-rack", renamed)
+        updated = json.loads(self.db.execute(
+            "SELECT record_json FROM inventory_change_history ORDER BY id DESC LIMIT 1"
+        ).fetchone()[0])
+        change = updated["changes"][0]
+        self.assertEqual(change["kind"], "Rack")
+        self.assertEqual(change["before"], {"heightU": 12, "name": "Comms Rack"})
+        self.assertEqual(change["after"], {"heightU": 18, "name": "Main Rack"})
+        self.assertEqual(updated["actor"], "audit-tester")
+        self.assertNotIn("PRIVATE-RACK-NOTE", json.dumps(updated))
+        self.assertNotIn("PRIVATE-NEW-RACK-NOTE", json.dumps(updated))
+
+    def test_ipam_batch_audit_shows_changed_safe_subnet_fields_only(self):
+        initial = {"id": "block", "kind": "container",
+                   "name": "Network Block", "cidr": "172.16.0.0/16",
+                   "notes": "PRIVATE-NETWORK-DESCRIPTION"}
+        self.change_ipam([{"collection": "subnets", "id": "block",
+                           "record": initial}])
+        changed = dict(initial, name="Site Network Block",
+                       notes="PRIVATE-CHANGED-NETWORK-DESCRIPTION")
+        self.change_ipam([{"collection": "subnets", "id": "block",
+                           "record": changed}])
+        event = json.loads(self.db.execute(
+            "SELECT record_json FROM inventory_change_history ORDER BY id DESC LIMIT 1"
+        ).fetchone()[0])
+        change = event["changes"][0]
+        self.assertEqual(change["before"], {"name": "Network Block"})
+        self.assertEqual(change["after"], {"name": "Site Network Block"})
+        self.assertNotIn("PRIVATE-", json.dumps(event))

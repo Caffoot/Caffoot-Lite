@@ -1,0 +1,26 @@
+{
+  "live": {
+    "width": 527,
+    "height": 42,
+    "fontSize": "13px",
+    "fontFamily": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+    "padding": "10px 11px",
+    "border": "1px solid rgb(211, 224, 233)",
+    "borderRadius": "9px",
+    "lineHeight": "normal",
+    "appearance": "auto",
+    "boxSizing": "border-box"
+  },
+  "source": {
+    "width": 527,
+    "height": 42,
+    "fontSize": "13px",
+    "fontFamily": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+    "padding": "10px 11px",
+    "border": "1px solid rgb(211, 224, 233)",
+    "borderRadius": "9px",
+    "lineHeight": "normal",
+    "appearance": "auto",
+    "boxSizing": "border-box"
+  }
+}

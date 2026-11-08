@@ -1,0 +1,67 @@
+{
+  "oldImage": "ghcr.io/caffoot/caffoot-lite@sha256:e3606870dfafd9178fd622727dd753f3cf2439574ab45f18807330ccaee5c116",
+  "candidateImage": "caffoot-lite:private-82fcbc33b9bb",
+  "candidateRevision": "82fcbc33b9bbbf525d86bb9929d0527766573d17",
+  "architecture": "amd64",
+  "syntheticData": true,
+  "upgradeCount": 1,
+  "checks": {
+    "oldAuthenticatedRolesAndMfa": true,
+    "schema7To10AndEveryOldTableColumnRowPreserved": true,
+    "allNonDatabaseFilesHashesOwnersModesPreserved": true,
+    "existingSessionsRolesAndNewMfaLogin": true,
+    "restartPreservesFullStateAndPrivateKey": true,
+    "recreationPreservesFullStateAndPrivateKey": true,
+    "oldBinaryRejectsNewerSchemaOnThrowawayCopy": true,
+    "completePreUpgradeBackupRestoresOldApplication": true
+  },
+  "schemaBefore": 7,
+  "schemaAfter": 10,
+  "oldTableCounts": {
+    "schema_migrations": 7,
+    "inventory_devices": 1,
+    "inventory_subnets": 1,
+    "inventory_vlans": 1,
+    "inventory_racks": 1,
+    "inventory_rack_accessories": 1,
+    "inventory_ip_allocations": 2,
+    "inventory_settings": 2,
+    "inventory_change_history": 1,
+    "accounts": 3,
+    "account_permissions": 6,
+    "account_sessions": 4,
+    "device_edit_reservations": 0
+  },
+  "persistentFiles": {
+    "fixture-marker.txt": {
+      "sha256": "f48692018476db0a5dd10b835ac8c3e0948b0712583ed3da3f27714234f05f04",
+      "mode": 438,
+      "uid": 10001,
+      "gid": 10001
+    },
+    "account-email-secret.key": {
+      "sha256": "6107b5fbf5871ad05d9b6ad323b04b4b15494a49fa4d0f782b693091a2f8f4ba",
+      "mode": 384,
+      "uid": 10001,
+      "gid": 10001
+    },
+    "tls/server.key": {
+      "sha256": "e9c8946d619289bac954cfbb73c5d9b6e5cc774f33f859519ced65733e03a0dc",
+      "mode": 384,
+      "uid": 10001,
+      "gid": 10001
+    },
+    "tls/server.crt": {
+      "sha256": "2d4b8549d24a12e2e8a6325205a82117b98adb09b6ee4c04d2f8106654f8552e",
+      "mode": 420,
+      "uid": 10001,
+      "gid": 10001
+    }
+  },
+  "operatorSuppliedFixtureKey": true,
+  "status": "passed",
+  "cleanup": {
+    "containersAbsent": true,
+    "volumesAbsent": true
+  }
+}

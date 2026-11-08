@@ -1,0 +1,16 @@
+OK: README.md
+OK: INSTALLATION.md
+OK: portainer-v2.0.3.yaml
+OK: docs/historical/release-notes/Release-Notes-v2.0.3.md
+OK: docs/historical/development-handovers/v2.0.3.md
+OK: docs/How To's/Features and Instructions/README.md
+OK: docs/how-tos/features-and-instructions/README.md
+OK: docs/development-guide/README.md
+Guide paths agree: Devices.md
+Guide paths agree: Getting-Started.md
+Guide paths agree: IPAM.md
+Guide paths agree: Migration-Backup-and-Restore.md
+Guide paths agree: README.md
+Guide paths agree: Racks.md
+Guide paths agree: Settings-and-Change-History.md
+Guide paths agree: Users-Permissions-and-MFA.md

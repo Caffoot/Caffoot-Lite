@@ -1,0 +1,62 @@
+<!-- interface-template:audit-trail/audit-markup-1 --><div class="audit-screen"><main class="main">
+  <div class="eyebrow">CHANGE HISTORY &amp; ACCOUNTABILITY</div>
+  <div class="header"><div><h1>Audit Trail</h1><p>Know what happened to your infrastructure — what changed, who made it, and when.</p></div><div><button class="btn primary" type="button" data-action="export-audit">Export History (JSON)</button></div></div>
+  <div class="audit-overview-note"><span aria-hidden="true">ⓘ</span><div><strong>Your audit history:</strong> View changes you have permission to see. Older events may not include who made the change or before-and-after values. Missing information is shown, never guessed.</div></div>
+  <nav class="audit-tabs" role="tablist" aria-label="Audit Trail sections">
+   <button data-action="audit-section" class="audit-tab section-tab-control active" id="tab-activity" data-tab="activity" role="tab" aria-selected="true" type="button"><svg class="section-tab-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false"><use href="#i-history"/></svg>All Activity</button>
+   <button data-action="audit-section" class="audit-tab section-tab-control" id="tab-assets" data-tab="assets" role="tab" aria-selected="false" type="button"><svg class="section-tab-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false"><use href="#i-box"/></svg>Asset History</button>
+   <button data-action="audit-section" class="audit-tab section-tab-control" id="tab-coverage" data-tab="coverage" role="tab" aria-selected="false" type="button"><svg class="section-tab-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false"><use href="#i-shield"/></svg>Recording Coverage</button>
+  </nav>
+  <section class="audit-stats" aria-label="Recorded audit totals">
+   <div class="card audit-stat"><span class="label">Recorded events</span><span class="value" id="stat-total">0</span><span class="hint">Events visible to your account</span></div>
+   <div class="card audit-stat"><span class="label">Inventory activity</span><span class="value" id="stat-inventory">0</span><span class="hint">Devices · IPAM · Racks</span></div>
+   <div class="card audit-stat"><span class="label">Accounts &amp; security</span><span class="value" id="stat-security">0</span><span class="hint">Recorded security activity</span></div>
+   <div class="card audit-stat"><span class="label">People represented</span><span class="value" id="stat-actors">0</span><span class="hint">Account names actually recorded</span></div>
+  </section>
+  <section id="pane-activity" class="audit-pane" role="tabpanel" aria-labelledby="tab-activity">
+    <div class="section-heading"><div><h2>Recent activity</h2><p>A searchable, chronological record of meaningful system changes.</p></div><span class="preview-side">Saved events</span></div>
+    <div class="card audit-toolbar">
+      <div class="field search"><label for="q">Search actor, record or event</label><input class="input" id="q" type="search" placeholder="Search actor, event or record"></div>
+      <div class="field"><label for="area">Area</label><select class="input" id="area"><option value="">All areas</option><option>Devices</option><option>IPAM</option><option>Racks</option><option>Users</option><option>Security</option><option>Settings</option></select></div>
+      <div class="field short"><label for="action">Action</label><select class="input" id="action"><option value="">All actions</option><option>Created</option><option>Updated</option><option>Deleted</option><option value="Security">Security event</option><option value="System">System event</option></select></div>
+      <div class="field short"><label for="actor">Performed by</label><select class="input" id="actor"><option value="">Anyone</option><!--AUDIT_ACTORS--><option value="unknown">Unknown</option></select></div>
+      <button class="btn slim" type="button" id="reset-filters" data-action="audit-reset-filters">Clear filters</button>
+    </div>
+    <div class="card"><div class="audit-table-wrap"><table class="audit-table"><thead><tr><th style="width:13%">When (UTC)</th><th style="width:13%">Performed by</th><th style="width:26%">Event</th><th style="width:11%">Action</th><th style="width:24%">Affected record</th><th style="width:13%">Details</th></tr></thead><tbody id="activity-results"></tbody></table></div><div class="audit-footer"><span id="result-count">0 saved events</span><span>Showing newest first · UTC</span></div></div>
+  </section>
+  <section id="pane-assets" class="audit-pane" role="tabpanel" aria-labelledby="tab-assets" hidden>
+    <div class="section-heading"><div><h2>History by record</h2><p>Follow an individual device, IP address, rack, user or catalogue entry through its changes.</p></div></div>
+    <div class="audit-asset-search"><div class="field"><label for="asset-search">Find a record</label><input id="asset-search" class="input" type="search" placeholder="Search saved records"></div></div>
+    <div class="asset-layout"><div class="card asset-list" id="asset-list"></div><div class="card timeline" id="asset-timeline"></div></div>
+  </section>
+  <section id="pane-coverage" class="audit-pane" role="tabpanel" aria-labelledby="tab-coverage" hidden>
+    <div class="section-heading"><div><h2>Audit recording coverage</h2><p>Existing recording and approved additional coverage.</p></div></div>
+    <div class="coverage-top">
+<div class="card coverage-card"><div class="big">Existing inventory events</div><p>Saved device, IPAM, rack and settings changes. Older records keep the information originally recorded.</p></div>
+<div class="card coverage-card"><div class="big">Accountable changes</div><p>New inventory events capture authenticated actor and outcome. Additional account and security event coverage is being integrated.</p></div>
+<div class="card coverage-card"><div class="big">No automatic expiry</div><p>History is retained by default. Deletion and purging are not available, and server-side section permissions remain enforced.</p></div>
+</div>
+<div class="coverage-grid">
+      <div class="card coverage-group"><h3>Inventory &amp; physical changes</h3><p>Preserve the recorded change and explain its consequences.</p>
+        <div class="coverage-row"><div><b>Devices</b><small>Create, update, delete, rename, type, OS, software, notes and physical relationships</small></div><span class="coverage-status current">Recorded</span></div>
+        <div class="coverage-row"><div><b>IPAM / Networks</b><small>Reservations, release, subnet/VLAN, gateway, primary IP and bulk changes</small></div><span class="coverage-status current">Recorded</span></div>
+        <div class="coverage-row"><div><b>Racks &amp; accessories</b><small>Rack, face, U range, vertical L/R rail, install/remove/move</small></div><span class="coverage-status current">Recorded</span></div>
+        <div class="coverage-row"><div><b>Catalogues</b><small>Type, location, manufacturer, model, software and server-service changes</small></div><span class="coverage-status current">Recorded</span></div>
+      </div>
+      <div class="card coverage-group"><h3>Accounts, security &amp; maintenance</h3><p>More useful records without collecting secrets.</p>
+        <div class="coverage-row"><div><b>User and permission changes</b><small>Account creation, disabled/enabled, role and Devices/IPAM/Racks access changes</small></div><span class="coverage-status">In development</span></div>
+        <div class="coverage-row"><div><b>Sign-in &amp; MFA</b><small>Successful/failed attempts, enrolment and security-related changes, with careful privacy rules</small></div><span class="coverage-status">In development</span></div>
+        <div class="coverage-row"><div><b>System maintenance</b><small>Imports, clean starts, settings and integrity repairs with clear outcomes</small></div><span class="coverage-status current">Recorded</span></div>
+        <div class="coverage-row"><div><b>Export and access to logs</b><small>Who may view/download history, and whether to record exports</small></div><span class="coverage-status">Permission protected</span></div>
+      </div>
+    </div>
+    <div class="audit-warn"><strong>Your security matters.</strong> Audit records track changes without storing passwords, authentication codes or other sensitive credentials.</div>
+
+  </section>
+
+</main><div class="modal-layer" id="audit-detail-layer" hidden>
+<div class="modal audit-modal" role="dialog" aria-modal="true" aria-labelledby="audit-detail-title">
+<div class="modal-head"><div><p class="eyebrow">ACTIVITY DETAILS</p><h2 id="audit-detail-title">Change details</h2><p id="audit-detail-lead">Recorded event</p></div><button class="close app-modal-close" data-action="audit-close-detail" type="button" aria-label="Close event details">Close ×</button></div>
+<div class="modal-body" id="audit-detail-body"></div></div></div></div><!-- /interface-template -->
+
+<!-- interface-template:audit-trail/fields-1 --><h3 class="detail-section">Recorded field changes</h3><div class="diff-head"><span>Field</span><span>Previous value</span><span>New value</span></div><!-- /interface-template -->

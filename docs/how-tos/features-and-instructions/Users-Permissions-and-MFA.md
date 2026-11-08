@@ -2,6 +2,8 @@
 
 [← All feature guides](README.md)
 
+*Existing screenshots show the earlier Docker edition for orientation; the v2.1 steps describe the prepared interface. They are not new v2.1 or native Safari screenshots.*
+
 ## Account basics
 
 Caffoot Lite has **no public registration**. The first account on a new database becomes its administrator after mandatory MFA setup. Administrators create additional users under **Users**. New users have **no inventory access until permission is granted**. This protects the inventory from accidental over-sharing.
@@ -85,3 +87,9 @@ Administrators can review an account in **User List**, adjust allowed section gr
 **Device can be edited, but IP/rack fields are locked:** Grant the appropriate IPAM/Racks editing right *only if* the user's responsibilities justify it.
 
 See [Devices](Devices.md), [IPAM](IPAM.md), [Racks](Racks.md) and [Getting Started](Getting-Started.md).
+
+## Verified Email And Password Recovery
+
+In My Account → Personal Details, save an optional email address and review its Verified/Not Verified status. Verify Email requires your current password, followed by the eight-digit emailed code; preserve leading zeroes. Codes expire after 15 minutes and are single-use. Editing the saved address removes verification.
+
+Forgot Password? uses **username only**, not email lookup. The neutral response does not confirm account eligibility or delivery. Recovery needs an active account, verified saved address and configured administrator SMTP delivery. Enter the recovery code, new password and authenticator when required. Recovery never bypasses MFA and a successful reset revokes existing sessions. Five failed confirmations exhaust a challenge and the durable account/purpose budget persists across resends/restarts. Delivery failures still need private provider/account investigation. See [Account Recovery](../../development-guide/Account-Recovery.md).

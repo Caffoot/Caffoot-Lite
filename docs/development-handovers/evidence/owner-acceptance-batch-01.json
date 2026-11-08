@@ -1,0 +1,626 @@
+{
+  "screens": [
+    {
+      "scenario": "02-rack-overview-1440",
+      "modalBounds": null,
+      "status": "functional/layout assertions passed; owner-approved exceptions apply",
+      "tabToHeading": 21
+    },
+    {
+      "scenario": "03-empty-inventory-1440",
+      "modalBounds": null,
+      "status": "functional/layout assertions passed; owner-approved exceptions apply"
+    },
+    {
+      "scenario": "04-rack-action-empty-1440",
+      "modalBounds": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "viewportHeight": 950
+      },
+      "status": "functional/layout assertions passed; owner-approved exceptions apply"
+    },
+    {
+      "scenario": "04-rack-action-populated-1440",
+      "modalBounds": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "viewportHeight": 950
+      },
+      "status": "functional/layout assertions passed; owner-approved exceptions apply"
+    },
+    {
+      "scenario": "05-type-search-1440",
+      "modalBounds": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "viewportHeight": 950
+      },
+      "status": "functional/layout assertions passed; owner-approved exceptions apply"
+    },
+    {
+      "scenario": "05-manufacturer-search-1440",
+      "modalBounds": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "viewportHeight": 950
+      },
+      "status": "functional/layout assertions passed; owner-approved exceptions apply"
+    },
+    {
+      "scenario": "05-platform-controls-1440",
+      "modalBounds": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "viewportHeight": 950
+      },
+      "status": "functional/layout assertions passed; owner-approved exceptions apply"
+    },
+    {
+      "scenario": "05-network-controls-1440",
+      "modalBounds": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "viewportHeight": 950
+      },
+      "status": "functional/layout assertions passed; owner-approved exceptions apply"
+    },
+    {
+      "scenario": "07-subnet-controls-1440",
+      "modalBounds": {
+        "x": 432.5,
+        "y": 102.71875,
+        "width": 575,
+        "height": 744.5625,
+        "viewportHeight": 950
+      },
+      "status": "functional/layout assertions passed; owner-approved exceptions apply"
+    },
+    {
+      "scenario": "09-protected-workspace-1440",
+      "modalBounds": {
+        "x": 365,
+        "y": 47.5,
+        "width": 710,
+        "height": 855,
+        "viewportHeight": 950
+      },
+      "status": "functional/layout assertions passed; owner-approved exceptions apply"
+    },
+    {
+      "scenario": "09-manageable-workspace-1440",
+      "modalBounds": {
+        "x": 365,
+        "y": 47.5,
+        "width": 710,
+        "height": 855,
+        "viewportHeight": 950
+      },
+      "status": "functional/layout assertions passed; owner-approved exceptions apply"
+    },
+    {
+      "scenario": "10-maintenance-rows-1440",
+      "modalBounds": null,
+      "status": "functional/layout assertions passed; owner-approved exceptions apply",
+      "cards": [
+        {
+          "x": 258.1875,
+          "y": 266.03125,
+          "height": 300.546875
+        },
+        {
+          "x": 979.03125,
+          "y": 266.03125,
+          "height": 300.546875
+        },
+        {
+          "x": 258.1875,
+          "y": 583.578125,
+          "height": 284.984375
+        },
+        {
+          "x": 979.03125,
+          "y": 583.578125,
+          "height": 284.984375
+        }
+      ]
+    },
+    {
+      "scenario": "02-rack-overview-390",
+      "modalBounds": null,
+      "status": "functional/layout assertions passed; owner-approved exceptions apply",
+      "tabToHeading": 21
+    },
+    {
+      "scenario": "03-empty-inventory-390",
+      "modalBounds": null,
+      "status": "functional/layout assertions passed; owner-approved exceptions apply"
+    },
+    {
+      "scenario": "04-rack-action-empty-390",
+      "modalBounds": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "viewportHeight": 844
+      },
+      "status": "functional/layout assertions passed; owner-approved exceptions apply"
+    },
+    {
+      "scenario": "04-rack-action-populated-390",
+      "modalBounds": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "viewportHeight": 844
+      },
+      "status": "functional/layout assertions passed; owner-approved exceptions apply"
+    },
+    {
+      "scenario": "05-type-search-390",
+      "modalBounds": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "viewportHeight": 844
+      },
+      "status": "functional/layout assertions passed; owner-approved exceptions apply"
+    },
+    {
+      "scenario": "05-manufacturer-search-390",
+      "modalBounds": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "viewportHeight": 844
+      },
+      "status": "functional/layout assertions passed; owner-approved exceptions apply"
+    },
+    {
+      "scenario": "05-platform-controls-390",
+      "modalBounds": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "viewportHeight": 844
+      },
+      "status": "functional/layout assertions passed; owner-approved exceptions apply"
+    },
+    {
+      "scenario": "05-network-controls-390",
+      "modalBounds": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "viewportHeight": 844
+      },
+      "status": "functional/layout assertions passed; owner-approved exceptions apply"
+    },
+    {
+      "scenario": "07-subnet-controls-390",
+      "modalBounds": {
+        "x": 18,
+        "y": 18,
+        "width": 354,
+        "height": 808,
+        "viewportHeight": 844
+      },
+      "status": "functional/layout assertions passed; owner-approved exceptions apply"
+    },
+    {
+      "scenario": "09-protected-workspace-390",
+      "modalBounds": {
+        "x": 10,
+        "y": 21.09375,
+        "width": 370,
+        "height": 801.796875,
+        "viewportHeight": 844
+      },
+      "status": "functional/layout assertions passed; owner-approved exceptions apply"
+    },
+    {
+      "scenario": "09-manageable-workspace-390",
+      "modalBounds": {
+        "x": 10,
+        "y": 21.09375,
+        "width": 370,
+        "height": 801.796875,
+        "viewportHeight": 844
+      },
+      "status": "functional/layout assertions passed; owner-approved exceptions apply"
+    },
+    {
+      "scenario": "10-maintenance-rows-390",
+      "modalBounds": null,
+      "status": "functional/layout assertions passed; owner-approved exceptions apply",
+      "cards": [
+        {
+          "x": 81,
+          "y": 272.421875,
+          "height": 728.421875
+        },
+        {
+          "x": 81,
+          "y": 1013.84375,
+          "height": 277.84375
+        },
+        {
+          "x": 81,
+          "y": 1304.6875,
+          "height": 443.375
+        },
+        {
+          "x": 81,
+          "y": 1761.0625,
+          "height": 216.796875
+        }
+      ]
+    }
+  ],
+  "controlMeasurements": [
+    {
+      "selector": "#dev-name",
+      "width": 1440,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(210, 223, 235)"
+    },
+    {
+      "selector": "#dev-deployment",
+      "width": 1440,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(210, 223, 235)"
+    },
+    {
+      "selector": "#dev-type + .caffoot-select-host button",
+      "width": 1440,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(210, 223, 235)"
+    },
+    {
+      "selector": "#platform-select",
+      "width": 1440,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(210, 223, 235)"
+    },
+    {
+      "selector": "#version-select",
+      "width": 1440,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(210, 223, 235)"
+    },
+    {
+      "selector": "#platform-name",
+      "width": 1440,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(210, 223, 235)"
+    },
+    {
+      "selector": "#platform-version",
+      "width": 1440,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(210, 223, 235)"
+    },
+    {
+      "selector": "#dev-ip",
+      "width": 1440,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(210, 223, 235)"
+    },
+    {
+      "selector": "#dev-ip-available",
+      "width": 1440,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(210, 223, 235)"
+    },
+    {
+      "selector": "#sub-kind",
+      "width": 1440,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(211, 224, 233)"
+    },
+    {
+      "selector": "#sub-parent",
+      "width": 1440,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(211, 224, 233)"
+    },
+    {
+      "selector": "#sub-cidr",
+      "width": 1440,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(211, 224, 233)"
+    },
+    {
+      "selector": "#sub-gw",
+      "width": 1440,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(211, 224, 233)"
+    },
+    {
+      "selector": "#sub-name",
+      "width": 1440,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(211, 224, 233)"
+    },
+    {
+      "selector": "#sub-vlan",
+      "width": 1440,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(211, 224, 233)"
+    },
+    {
+      "selector": "#sub-desc",
+      "width": 1440,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(211, 224, 233)"
+    },
+    {
+      "selector": "#user-firstName",
+      "width": 1440,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(210, 223, 235)"
+    },
+    {
+      "selector": "[data-next-user-permission][data-section=\"Devices\"]",
+      "width": 1440,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(210, 223, 235)"
+    },
+    {
+      "selector": "[data-next-user-permission][data-section=\"IPAM\"]",
+      "width": 1440,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(210, 223, 235)"
+    },
+    {
+      "selector": "[data-next-user-permission][data-section=\"Racks\"]",
+      "width": 1440,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(210, 223, 235)"
+    },
+    {
+      "selector": "#dev-name",
+      "width": 390,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(210, 223, 235)"
+    },
+    {
+      "selector": "#dev-deployment",
+      "width": 390,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(210, 223, 235)"
+    },
+    {
+      "selector": "#dev-type + .caffoot-select-host button",
+      "width": 390,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(210, 223, 235)"
+    },
+    {
+      "selector": "#platform-select",
+      "width": 390,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(210, 223, 235)"
+    },
+    {
+      "selector": "#version-select",
+      "width": 390,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(210, 223, 235)"
+    },
+    {
+      "selector": "#platform-name",
+      "width": 390,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(210, 223, 235)"
+    },
+    {
+      "selector": "#platform-version",
+      "width": 390,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(210, 223, 235)"
+    },
+    {
+      "selector": "#dev-ip",
+      "width": 390,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(210, 223, 235)"
+    },
+    {
+      "selector": "#dev-ip-available",
+      "width": 390,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(210, 223, 235)"
+    },
+    {
+      "selector": "#sub-kind",
+      "width": 390,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(211, 224, 233)"
+    },
+    {
+      "selector": "#sub-parent",
+      "width": 390,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(211, 224, 233)"
+    },
+    {
+      "selector": "#sub-cidr",
+      "width": 390,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(211, 224, 233)"
+    },
+    {
+      "selector": "#sub-gw",
+      "width": 390,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(211, 224, 233)"
+    },
+    {
+      "selector": "#sub-name",
+      "width": 390,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(211, 224, 233)"
+    },
+    {
+      "selector": "#sub-vlan",
+      "width": 390,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(211, 224, 233)"
+    },
+    {
+      "selector": "#sub-desc",
+      "width": 390,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(211, 224, 233)"
+    },
+    {
+      "selector": "#user-firstName",
+      "width": 390,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(210, 223, 235)"
+    },
+    {
+      "selector": "[data-next-user-permission][data-section=\"Devices\"]",
+      "width": 390,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(210, 223, 235)"
+    },
+    {
+      "selector": "[data-next-user-permission][data-section=\"IPAM\"]",
+      "width": 390,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(210, 223, 235)"
+    },
+    {
+      "selector": "[data-next-user-permission][data-section=\"Racks\"]",
+      "width": 390,
+      "height": 42,
+      "font": "Inter, ui-sans-serif, system-ui, -apple-system, \"Segoe UI\", Arial, sans-serif",
+      "padding": "10px 11px",
+      "border": "rgb(210, 223, 235)"
+    }
+  ],
+  "viewports": [
+    1440,
+    390
+  ],
+  "approvedRevision": "c26db4a56bbc30f95b56201e81a7a76d13c6037b",
+  "approvalCommit": "5053c687102f45ea4960ee7c3c08f2cb7728bf82",
+  "scope": "Owner Acceptance Correction Batch 01, findings 01\u201310 only",
+  "browser": "Chromium; desktop/mobile viewport emulation",
+  "ownerAcceptance": false,
+  "ownerImageBuilt": false,
+  "testedRuntimeSha256": {
+    "interface/application.js": "d525ea214e363ff153f027440e4e976e933be0e127ee11229914fffa58baf453",
+    "interface/screens/audit-trail.html": "d54fa031d220cf320faafb38d85cce96ee9e0bebbd9c747993774caad3e2401e",
+    "interface/screens/dashboard.html": "700884131056bf2da2c01d20b0054b1dd354267a5b50e544a4cae3ea185eba2c",
+    "interface/screens/device-details.html": "1224c054ccfe548f56c9c0ca39f40041cc78551b1d35cba72ee28ca65fee07f7",
+    "interface/screens/device-inventory.html": "182d822c8af01832fe43722aa304962f5f0cba8ec39c425063df0ba1df528eff",
+    "interface/screens/device-management.html": "5f56ab76a337ad64bd0184f60ebbf5f73e152f9f931350c7003d09ed298454e1",
+    "interface/screens/devices.html": "f3105a16a8e8eee0c3a8b8f86826f0620726a970e29f57b658aa96bfc70981e6",
+    "interface/screens/ipam.html": "0969778e55cd0c2f3969bf7139c07376d8c9dbcd98f2888d5f8d9934b9717ac2",
+    "interface/screens/racks.html": "c11d0f2057529c534e07d4c182740c25a4d00111f0b692b2e1f0278a3dc63fad",
+    "interface/screens/settings.html": "292edd8e886d5cb8787e1896ddc9f4589e51f846412c9a74ee494a21613c8267",
+    "interface/screens/shared.html": "f0eaf3480234d3e7a0d2697d300b354ecc365aeff44b4d942b6edc170d63cc5b",
+    "interface/screens/users.html": "6173478b8e0bb0507f5673a7ecd66113b0188920c2fdbfbc366049af263bbe3c",
+    "interface/sign-in.js": "9e2cdc419b794c748f1199e994b0a4908be261df20d7d6b03407ef87c1334a24",
+    "interface/styles/components.css": "7d74fb742d1d962ab97f369363bafae48de44b59a70d11220751bfa827c293ed"
+  }
+}

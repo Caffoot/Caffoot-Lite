@@ -1,0 +1,12 @@
+test_accepts_dotted_stable_versions_with_optional_prefix (tests.test_release_preflight.ReleasePreflightTests.test_accepts_dotted_stable_versions_with_optional_prefix) ... ok
+test_complete_release_preparation_passes (tests.test_release_preflight.ReleasePreflightTests.test_complete_release_preparation_passes) ... ok
+test_extra_root_portainer_file_is_caught (tests.test_release_preflight.ReleasePreflightTests.test_extra_root_portainer_file_is_caught) ... ok
+test_incorrect_about_version_is_caught (tests.test_release_preflight.ReleasePreflightTests.test_incorrect_about_version_is_caught) ... ok
+test_previous_image_publisher_is_caught (tests.test_release_preflight.ReleasePreflightTests.test_previous_image_publisher_is_caught) ... ok
+test_rejects_unexpected_or_prerelease_version (tests.test_release_preflight.ReleasePreflightTests.test_rejects_unexpected_or_prerelease_version) ... ok
+test_unarchived_handover_is_caught (tests.test_release_preflight.ReleasePreflightTests.test_unarchived_handover_is_caught) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.007s
+
+OK

@@ -1,0 +1,72 @@
+{
+  "baselineCommit": "815b17cd475eda734ac4e3a35c71be053121f33b",
+  "implementationCheckpoint": "af6cc6327c5984f65399cd20275aa867868d6ec5",
+  "approval": "https://github.com/Caffoot/Caffoot-Lite/issues/305#issuecomment-6665190890",
+  "runtimeSha256": {
+    "interface/screens/racks.html": "a165b9c238b350e3dbdf13f3ab9acb4b823fa65f8807ebf12c5b3008b95e4ae9",
+    "interface/screens/audit-trail.html": "7b1e6fb5855610beb9652aed87c69da9b5fc2a940cc45b570cb3b87613df82ee",
+    "interface/styles/components.css": "ad3a779057c44b555bd75a339117a84cf9ffcd4c4de93ba7a3007f9e613ed292"
+  },
+  "imagesSha256": {
+    "images/audit-dark-1440.png": "3cedbc90a286cf762e0e3965c986d63c6cb1189f0239e6a539b9d6c1ce1df0ce",
+    "images/audit-dark-390.png": "6d4b3c8220ca56b55102985ff080307c64492e80d3a1f0511bc70785bb29c115",
+    "images/audit-light-1440.png": "53749d9f0917288e05ac02ef99d3d153b43c2930926d6fad2bf68242a02128b1",
+    "images/audit-light-390.png": "b83a80c6fa1b349534a90ba14de46d78f1398d615560a9b840feefbc044ce8ff",
+    "images/before-audit-dark-1440.png": "9873f58a0b068f964a53846a5780248e1616ef2b04b236283c82473ffca64389",
+    "images/before-audit-dark-390.png": "9e55354238d8e60cc85ccb827f4edad30c36fd7937e26920755e178abf52e59c",
+    "images/before-audit-light-1440.png": "d993727a03917609dab2367be3c5e1f43c92fdd9be0ab1479c0dc0bab907bab7",
+    "images/before-audit-light-390.png": "114141935fd8483d61480439ce216311b25d98ad8f99612047679d83b7a5d0ba",
+    "images/before-racks-capacity-dark-1440.png": "71a7a2b5d39a349180962bd3b41f0eee3ad212da3b2605240b974811fbf9a676",
+    "images/before-racks-capacity-dark-390.png": "b70fc715d369e3103e5c0be3f00e72ae319062cd117e0f8c6b51e537ba65a561",
+    "images/before-racks-capacity-light-1440.png": "526e044d2d1d08423e6d1904d543cbde23fde82ae4fb0778c15590b82a4aa238",
+    "images/before-racks-capacity-light-390.png": "c77127cbaf8e4ea764f16a5e361c73cac92292a9c625664f153158facab9f7fc",
+    "images/devices-dark-1440.png": "b5e2b2ee12f3ddd2c696d33efaf40a276bb474a48ef8a57de05c9bb2efd462da",
+    "images/devices-dark-390.png": "089e493559b7bea9d8070c388b7fbdb7f93aa816f5f043f952ece80166b9fe5f",
+    "images/devices-light-1440.png": "482a3f33e3a8bbd098bf563b161ef5502752b38c2516bf9f798560b8ca40ae1d",
+    "images/devices-light-390.png": "6664d21b32563c66301511f9fdc025e42f3a5368a0762c63e857061778aa4ec0",
+    "images/rack-scroll-dark-390.png": "cdd99413d8e34b198c88d861a490802b9821de966fddcdb4d780442633baefd0",
+    "images/rack-scroll-light-390.png": "72a5e78b469a0bbc87f27e9ed7707f9b2de527a7a9a84055178f312fc02cddc6",
+    "images/racks-capacity-dark-1440.png": "a3a568b9d3196ce77a87598d50523601099d6279d5ddd83c444e7488594ca272",
+    "images/racks-capacity-dark-390.png": "684aea82edde46e92a1afff29382c81da843187f755b06a4c5122f51fb029252",
+    "images/racks-capacity-light-1440.png": "18ac508fb0efc49ad6564e9220be40bfda81eb7bf691fbe0cbba82d0d463096a",
+    "images/racks-capacity-light-390.png": "12e5ad0273bc7e570f0cb26d4d72a8c7254fc2a4c01309c8f4baa6452a4e9b33",
+    "images/racks-equipment-dark-1440.png": "6ec69a305e828db33a24cf022efcc3bdc502817f00058e71fd8949d86dc1bd49",
+    "images/racks-equipment-dark-390.png": "ec77b0235d675f037b06b66534b469dac21305c19c578a6560676f503be703b9",
+    "images/racks-equipment-light-1440.png": "e6e895765b3d3d8c413fd9cf9521129c59601d19368d1673767327ed6f773a32",
+    "images/racks-equipment-light-390.png": "93797a7914c86605996665464c1bf664854a724e1eea0994255fc14cab9d23f7",
+    "images/racks-locations-dark-1440.png": "2a9d123961e3e08d31eff2070413a1fc4d0bcbc36267d4413e26e9498e6b8f31",
+    "images/racks-locations-dark-390.png": "3562c235e10ca9a6a61d5a884455d8506ebe0821ec69e3a19ad7ae06286a4ddb",
+    "images/racks-locations-light-1440.png": "b7eae338f376357fc4a206efc26995563f240526d1a5342749817c1fb4ba923a",
+    "images/racks-locations-light-390.png": "95deb99a2dd843578fe59b28515832741dd83f3910079fa3f0ece91315bde2c9"
+  },
+  "checkpointCI": [
+    {
+      "conclusion": "success",
+      "headSha": "af6cc6327c5984f65399cd20275aa867868d6ec5",
+      "name": "Caffoot Lite backend tests",
+      "status": "completed",
+      "url": "https://github.com/Caffoot/Caffoot-Lite/actions/runs/42080591122"
+    },
+    {
+      "conclusion": "success",
+      "headSha": "af6cc6327c5984f65399cd20275aa867868d6ec5",
+      "name": "Caffoot Lite browser compatibility",
+      "status": "completed",
+      "url": "https://github.com/Caffoot/Caffoot-Lite/actions/runs/42080591069"
+    },
+    {
+      "conclusion": "success",
+      "headSha": "af6cc6327c5984f65399cd20275aa867868d6ec5",
+      "name": "Git history secret scan",
+      "status": "completed",
+      "url": "https://github.com/Caffoot/Caffoot-Lite/actions/runs/42080591395"
+    },
+    {
+      "conclusion": "success",
+      "headSha": "af6cc6327c5984f65399cd20275aa867868d6ec5",
+      "name": "Caffoot Lite Docker Compose lifecycle",
+      "status": "completed",
+      "url": "https://github.com/Caffoot/Caffoot-Lite/actions/runs/42080591016"
+    }
+  ]
+}

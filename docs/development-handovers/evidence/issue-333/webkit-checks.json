@@ -1,0 +1,255 @@
+{
+  "engine": "webkit",
+  "checks": [
+    "Trusted keyboard product changes immediately show the exact Proxmox, Hyper-V and ESXi lists and save the selected pair",
+    "Edit/Save/reopen, Cancel and Duplicate retain custom/history fields and the original five-minute reservation",
+    "A virtual guest keeps its own OS/version and software context, distinct from its physical hosting product",
+    "Missing, stale and server-rejected racks reveal/focus the Rack field inside the modal, retain drafts/leases and preserve optional shelf mounting",
+    "Accepted OS/Installed Software separation remains correct for Router, controller and Printer; no catalogue change is needed",
+    "Native selects retain approved size, spacing and appearance across desktop/laptop/mobile and themes, with keyboard access and no layout overflow"
+  ],
+  "errors": [],
+  "measurements": [
+    {
+      "engine": "webkit",
+      "width": 1440,
+      "height": 950,
+      "theme": "light",
+      "subnet": {
+        "live": {
+          "width": 527,
+          "height": 47,
+          "fontSize": "13px",
+          "fontFamily": "Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Arial, sans-serif",
+          "padding": "10px 11px",
+          "borderRadius": "9px",
+          "lineHeight": "normal",
+          "appearance": "auto",
+          "boxSizing": "border-box"
+        },
+        "source": {
+          "width": 527,
+          "height": 47,
+          "fontSize": "13px",
+          "fontFamily": "Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Arial, sans-serif",
+          "padding": "10px 11px",
+          "borderRadius": "9px",
+          "lineHeight": "normal",
+          "appearance": "auto",
+          "boxSizing": "border-box"
+        }
+      }
+    },
+    {
+      "engine": "webkit",
+      "width": 1440,
+      "height": 950,
+      "theme": "dark",
+      "subnet": {
+        "live": {
+          "width": 527,
+          "height": 47,
+          "fontSize": "13px",
+          "fontFamily": "Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Arial, sans-serif",
+          "padding": "10px 11px",
+          "borderRadius": "9px",
+          "lineHeight": "normal",
+          "appearance": "auto",
+          "boxSizing": "border-box"
+        },
+        "source": {
+          "width": 527,
+          "height": 47,
+          "fontSize": "13px",
+          "fontFamily": "Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Arial, sans-serif",
+          "padding": "10px 11px",
+          "borderRadius": "9px",
+          "lineHeight": "normal",
+          "appearance": "auto",
+          "boxSizing": "border-box"
+        }
+      }
+    },
+    {
+      "engine": "webkit",
+      "width": 1366,
+      "height": 600,
+      "theme": "light",
+      "subnet": {
+        "live": {
+          "width": 527,
+          "height": 47,
+          "fontSize": "13px",
+          "fontFamily": "Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Arial, sans-serif",
+          "padding": "10px 11px",
+          "borderRadius": "9px",
+          "lineHeight": "normal",
+          "appearance": "auto",
+          "boxSizing": "border-box"
+        },
+        "source": {
+          "width": 527,
+          "height": 47,
+          "fontSize": "13px",
+          "fontFamily": "Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Arial, sans-serif",
+          "padding": "10px 11px",
+          "borderRadius": "9px",
+          "lineHeight": "normal",
+          "appearance": "auto",
+          "boxSizing": "border-box"
+        }
+      }
+    },
+    {
+      "engine": "webkit",
+      "width": 1366,
+      "height": 600,
+      "theme": "dark",
+      "subnet": {
+        "live": {
+          "width": 527,
+          "height": 47,
+          "fontSize": "13px",
+          "fontFamily": "Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Arial, sans-serif",
+          "padding": "10px 11px",
+          "borderRadius": "9px",
+          "lineHeight": "normal",
+          "appearance": "auto",
+          "boxSizing": "border-box"
+        },
+        "source": {
+          "width": 527,
+          "height": 47,
+          "fontSize": "13px",
+          "fontFamily": "Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Arial, sans-serif",
+          "padding": "10px 11px",
+          "borderRadius": "9px",
+          "lineHeight": "normal",
+          "appearance": "auto",
+          "boxSizing": "border-box"
+        }
+      }
+    },
+    {
+      "engine": "webkit",
+      "width": 390,
+      "height": 844,
+      "theme": "light",
+      "subnet": {
+        "live": {
+          "width": 318,
+          "height": 47,
+          "fontSize": "13px",
+          "fontFamily": "Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Arial, sans-serif",
+          "padding": "10px 11px",
+          "borderRadius": "9px",
+          "lineHeight": "normal",
+          "appearance": "auto",
+          "boxSizing": "border-box"
+        },
+        "source": {
+          "width": 318,
+          "height": 47,
+          "fontSize": "13px",
+          "fontFamily": "Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Arial, sans-serif",
+          "padding": "10px 11px",
+          "borderRadius": "9px",
+          "lineHeight": "normal",
+          "appearance": "auto",
+          "boxSizing": "border-box"
+        }
+      }
+    },
+    {
+      "engine": "webkit",
+      "width": 390,
+      "height": 844,
+      "theme": "dark",
+      "subnet": {
+        "live": {
+          "width": 318,
+          "height": 47,
+          "fontSize": "13px",
+          "fontFamily": "Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Arial, sans-serif",
+          "padding": "10px 11px",
+          "borderRadius": "9px",
+          "lineHeight": "normal",
+          "appearance": "auto",
+          "boxSizing": "border-box"
+        },
+        "source": {
+          "width": 318,
+          "height": 47,
+          "fontSize": "13px",
+          "fontFamily": "Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Arial, sans-serif",
+          "padding": "10px 11px",
+          "borderRadius": "9px",
+          "lineHeight": "normal",
+          "appearance": "auto",
+          "boxSizing": "border-box"
+        }
+      }
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "height": 568,
+      "theme": "light",
+      "subnet": {
+        "live": {
+          "width": 248,
+          "height": 47,
+          "fontSize": "13px",
+          "fontFamily": "Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Arial, sans-serif",
+          "padding": "10px 11px",
+          "borderRadius": "9px",
+          "lineHeight": "normal",
+          "appearance": "auto",
+          "boxSizing": "border-box"
+        },
+        "source": {
+          "width": 248,
+          "height": 47,
+          "fontSize": "13px",
+          "fontFamily": "Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Arial, sans-serif",
+          "padding": "10px 11px",
+          "borderRadius": "9px",
+          "lineHeight": "normal",
+          "appearance": "auto",
+          "boxSizing": "border-box"
+        }
+      }
+    },
+    {
+      "engine": "webkit",
+      "width": 320,
+      "height": 568,
+      "theme": "dark",
+      "subnet": {
+        "live": {
+          "width": 248,
+          "height": 47,
+          "fontSize": "13px",
+          "fontFamily": "Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Arial, sans-serif",
+          "padding": "10px 11px",
+          "borderRadius": "9px",
+          "lineHeight": "normal",
+          "appearance": "auto",
+          "boxSizing": "border-box"
+        },
+        "source": {
+          "width": 248,
+          "height": 47,
+          "fontSize": "13px",
+          "fontFamily": "Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Arial, sans-serif",
+          "padding": "10px 11px",
+          "borderRadius": "9px",
+          "lineHeight": "normal",
+          "appearance": "auto",
+          "boxSizing": "border-box"
+        }
+      }
+    }
+  ],
+  "nativeSafariTested": false
+}

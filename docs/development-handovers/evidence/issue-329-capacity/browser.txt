@@ -1,0 +1,4 @@
+PASS: Planning is first and optional; capacity and spacing-aware prefix suggestions never change the selected prefix
+PASS: A new block and six children save around an independent network without adoption; explicit filters and backup/import preserve it
+PASS: Real network overlaps and linked-child deletion stay blocked; deleting an empty organisational block leaves independent inventory untouched
+PASS: Reordered planning and guidance retain fixed actions and accepted select treatment before/after Back across four widths and both themes

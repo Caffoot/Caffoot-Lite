@@ -2,9 +2,13 @@
 
 [← All feature guides](README.md)
 
+*Existing screenshots show the earlier Docker edition for orientation; the v2.1 steps describe the prepared interface. They are not new v2.1 or native Safari screenshots.*
+
+These instructions describe the prepared v2.1 workflow. Publication remains pending; check the root release-status notice before installing a versioned image.
+
 ## Understand the records
 
-An **IP Address Block** groups address space; a **Network / VLAN** is an assignable network with a CIDR, name, VLAN and gateway. The individual IP address grid records **Available**, **Assigned** and **Reserved** states along with an optional hostname and **IPAM Notes**. IPAM notes are about the *address*, not about one particular device.
+An **IP Address Block** optionally groups address space. An addressable **subnet** has a CIDR and name; new subnets also require an explicitly selected purpose: **LAN**, **Management** or **VPN**. A VLAN is optional. LAN and Management need a usable gateway; VPN may omit one. Existing subnets without a purpose display **Not assigned** and remain editable without reclassification. The individual IP address grid records **Available**, **Assigned** and **Reserved** states along with an optional hostname and **IPAM Notes**. IPAM notes are about the *address*, not about one particular device.
 
 You need **IPAM Edit** to create/update networks or change independent address allocations. A Devices editor with only IPAM Read cannot alter a primary IP through the device form.
 
@@ -14,19 +18,33 @@ The following genuine views show the fictional **Lab Network** in Manage Subnets
 
 ![Caffoot Lite IPAM address grid with assigned, reserved and available fictional lab addresses](../../screenshots/ipam-addresses.png)
 
-## Worked example — add a Network / VLAN
+## Worked example — add one subnet
 
-Use the following fictional test plan only if it does not conflict with your network: CIDR **192.168.50.0/24**, name **Lab Network**, VLAN **50**, gateway **192.168.50.1**.
+Use the following fictional test plan only if it does not conflict with your network: CIDR **192.168.50.0/24**, name **Lab Network**, purpose **LAN**, optional VLAN **50**, gateway **192.168.50.1**.
 
-1. Open **IPAM** from the sidebar and choose **Add Subnet**.
-2. In **Subnet Type**, select **Network / VLAN** (the assignable network type).
-3. Enter **Subnet CIDR**, **Network / VLAN Name** and a valid **VLAN ID** from 1–4094.
-4. Enter **Gateway IP**, which must be valid for that network. If you have a parent IP Address Block, select it when appropriate.
-5. Optionally add a **Description** of the subnet (not an individual device).
-6. Select **Save Subnet & VLAN**, and correct any CIDR, overlap, gateway or VLAN validation message.
-7. Open the network card and review its network details and individual IP address grid.
+1. Open **IPAM** and select **Add Single Subnet**.
+2. Keep **Subnet / Network** as the type. Enter an aligned **Subnet CIDR** from /23 to /30 and a unique **Subnet Name**. Names ignore case and outer spaces; historical duplicate names remain usable until deliberately renamed.
+3. Explicitly select **LAN**, **Management** or **VPN**. New records have no preselected purpose.
+4. Leave **VLAN ID** empty if unassigned, or enter 1–4094. Do not enter 0 to mean unassigned.
+5. Supply a usable **Gateway IP** within the subnet for LAN/Management. VPN can leave this empty; an entered VPN gateway must meet the same address checks.
+6. Optionally choose an **IP Address Block** and write a **Description**. Save and review the resulting subnet.
 
-To group address space instead, select **IP Address Block** in the same creation form. A parent block alone does not allocate IPs to devices; create a suitable Network / VLAN beneath it. **Reserved range** and **Loopback /32** options shown as disabled are not available workflows.
+To create an organisational parent instead, select **IP Address Block** in the same form. A block has no gateway/VLAN and does not allocate addresses to devices; create addressable child subnets as needed. Blocks remain optional. Disabled Reserved Range and Loopback options are not available workflows.
+
+## Add multiple subnets
+
+1. Select **Add Multiple Subnets**. The first section, **Address Block & Private Range Planning (Optional)**, starts collapsed. Leave it alone for standalone subnets, or open it to select/create a block or deliberately use a private-range quick-fill. It creates nothing until Save.
+2. Under **Create Your Subnets**, enter **Starting Subnet Address**, **Subnet Prefix** (/23–/30), **Number of Subnets** (1–50) and **Gateway Convention** (First/Last usable IP). Capacity guidance explains how many equal-sized ranges fit a chosen parent and suggests a suitable prefix. It never changes your prefix: address/device capacity remains your choice. Theoretical capacity does not mean those ranges are free.
+3. Leave **Consecutive** for adjacent ranges, choose **Every 10th Subnet** for ten subnet-sized steps (for /24: .10, .20, .30), or **Custom CIDRs** to edit each range in the preview. Guidance accounts for the Every 10th span; Custom ranges are checked individually. A broader /16 block is different from an addressable child prefix. Check the actual starting address, containment and existing inventory before saving.
+4. Select **Preview Subnets**. Give every row a unique name and explicitly selected purpose. VLAN and Description are optional; edit gateways individually where needed. VPN gateways may be cleared. Custom CIDRs must be aligned /23–/30 ranges without overlaps.
+5. Correct the visible field/row errors. Back lets you revise generation settings; manual gateways remain and are rechecked. Custom CIDRs survive Back with the same start/prefix/mode; changing those generation settings explicitly recalculates ranges.
+6. Review the entire set and select **Save**. The optional new parent and all subnets save together, or none save. A failed row is never skipped silently.
+
+An Address Block can strictly contain an independent subnet without adopting it. The independent subnet keeps its saved parent absence, name, VLAN, allocations and devices, and appears under All / Standalone rather than that block's child filter. New children must avoid every existing network. Equal/partial overlaps, unrelated block overlaps and conflicting ownership remain rejected. Deleting or editing a block never adopts or deletes independent networks; explicitly linked children still protect a block from deletion.
+
+The preview scrolls independently with Back/Cancel/Save visible, and rows stack on mobile. Fifty is the limit for **one operation**, not your installation: further batches into the same block are permitted when ranges and other rules are valid. Audit Trail reports the actual count while retaining the existing bounded detailed history.
+
+Names/descriptions can explain a real VPN range, for example *London ↔ Bristol VPN*. A tunnel which only routes existing LANs does not need a fictional extra subnet. Tunnel relationships, public-IP/WAN and customer-isolated overlapping ranges are outside this workflow.
 
 ## Edit an individual IP
 
@@ -43,21 +61,21 @@ On an independent, unassigned address, select **Reserved**, write why it is rese
 
 ## Give an address to a device
 
-The usual primary-IP workflow is **Devices → Add Device / Edit Device**. Select an address from an existing Network / VLAN, subject to the allocation and permission checks. Creating a device requires both Devices Edit and IPAM Edit; changing a device's primary IP requires IPAM Edit even when started from Devices.
+The usual primary-IP workflow is **Devices → Add Device / Edit Device**. Optionally filter by Address Block, then choose **Subnet Name — CIDR**. The read-only **VLAN** follows that subnet, or displays **Not assigned**. It cannot be overridden here. Use **Choose an Available IP Address** first, or **Or Enter a Primary IP Address** below it. Both controls set the same saved address, subject to the existing allocation and permission checks. Creating a device requires both Devices Edit and IPAM Edit; changing a device's primary IP requires IPAM Edit even when started from Devices.
 
 An IPAM-only editor may maintain independent IPAM records and the authorised IP-owned fields. They do not acquire rights to change unrelated device properties.
 
 ## Edit, delete or bulk-manage networks
 
-Open a subnet and use **Edit Subnet** for its supported changes. The existing **Delete Subnet & VLAN** operation checks devices and related allocations before removing anything, and presents its confirmation. Never assume a populated network can be deleted safely.
+Open a subnet and use **Edit Subnet** for its supported changes. The **Delete Subnet** operation checks devices and related allocations before removing anything, and presents its confirmation. Never assume a populated network can be deleted safely.
 
-The IPAM interface also provides existing bulk allocation actions. Check the selected subnet, range and desired statuses before confirming. Avoid using bulk changes on production addresses merely to test the controls.
+The separate existing **Bulk Edit Range** allocation action is unchanged; it edits addresses inside one subnet and does not create subnets. Check the selected subnet, range and desired statuses before confirming. Avoid using bulk changes on production addresses merely to test the controls.
 
 ## Common questions
 
-**Why can't I select an IP for a device?** Check that its Network/VLAN exists, that the address belongs to it, and that the address isn't reserved or assigned incompatibly.
+**Why can't I select an IP for a device?** Check that an addressable subnet exists, that the address belongs to it, and that the address isn't reserved or assigned incompatibly.
 
-**Why won't a subnet save?** Check valid CIDR/network address, gateway, VLAN range and overlap/duplicate rules.
+**Why won't a subnet save?** Check valid CIDR/network address, required name/purpose, gateway requiredness and usable address, optional VLAN range and overlap/duplicate rules. A selected block must contain the generated subnets.
 
 **Why can't I edit from Devices?** Read rights in IPAM do not permit changing IP-related device fields.
 

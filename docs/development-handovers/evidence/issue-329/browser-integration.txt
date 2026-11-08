@@ -1,0 +1,6 @@
+PASS: Single VPN omits unassigned fields, reload preserves them, legacy edits retain classification and invalid manual gateways cannot save
+PASS: New parent and ten individually reviewed networks save atomically; row errors block all writes and Back/recalculation preserves manual gateways
+PASS: Fifty-row preview remains scrollable with visible actions at four widths in both themes, then saves another batch into the existing block
+PASS: Device Add/Edit/Duplicate uses subnet-first named choices and read-only VLAN, preserves saved IPs and clears stale dependent values safely
+PASS: Direct API cannot create 51 or empty batches or bypass same-origin protection; rejected attempts leave stored inventory unchanged
+Subnet-first IPAM checks completed: 5 groups.

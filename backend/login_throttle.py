@@ -1,9 +1,8 @@
-"""Bounded, in-process login throttling for the small Next HTTP server.
+"""Bounded in-process peer/identity throttling for authentication and mail requests.
 
-This is a single-process safeguard, not a distributed rate limiter. Keys must
-be derived from a trusted network peer and normalised username, never from
-client-controlled forwarding headers. Avoid logging passwords or MFA codes.
-"""
+Use trusted peer addresses and normalised identities, never client forwarding
+headers. Short email-code failures also have a separate durable account and
+challenge budget. Never log passwords or codes."""
 import threading
 import time
 

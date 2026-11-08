@@ -1,0 +1,702 @@
+[
+  {
+    "kind": "location",
+    "tab": "general",
+    "width": 1440,
+    "dark": false,
+    "live": {
+      "title": "Add Location without leaving the device form",
+      "inputs": [
+        {
+          "label": "Location name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "source": {
+      "title": "Add Location without leaving the device form",
+      "inputs": [
+        {
+          "label": "Location name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "status": "matched"
+  },
+  {
+    "kind": "manufacturer",
+    "tab": "hardware",
+    "width": 1440,
+    "dark": false,
+    "live": {
+      "title": "Add Manufacturer without leaving the device form",
+      "inputs": [
+        {
+          "label": "Manufacturer name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "source": {
+      "title": "Add Manufacturer without leaving the device form",
+      "inputs": [
+        {
+          "label": "Manufacturer name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "status": "matched"
+  },
+  {
+    "kind": "model",
+    "tab": "hardware",
+    "width": 1440,
+    "dark": false,
+    "live": {
+      "title": "Add Model without leaving the device form",
+      "inputs": [
+        {
+          "label": "Model name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "source": {
+      "title": "Add Model without leaving the device form",
+      "inputs": [
+        {
+          "label": "Model name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "status": "matched"
+  },
+  {
+    "kind": "software",
+    "tab": "software",
+    "width": 1440,
+    "dark": false,
+    "live": {
+      "title": "Add Software without leaving the device form",
+      "inputs": [
+        {
+          "label": "Software name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "source": {
+      "title": "Add Software without leaving the device form",
+      "inputs": [
+        {
+          "label": "Software name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "status": "matched"
+  },
+  {
+    "kind": "services",
+    "tab": "software",
+    "width": 1440,
+    "dark": false,
+    "live": {
+      "title": "Add Server Service without leaving the device form",
+      "inputs": [
+        {
+          "label": "Server Service name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "source": {
+      "title": "Add Server Service without leaving the device form",
+      "inputs": [
+        {
+          "label": "Server Service name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "status": "matched"
+  },
+  {
+    "kind": "location",
+    "tab": "general",
+    "width": 1440,
+    "dark": true,
+    "live": {
+      "title": "Add Location without leaving the device form",
+      "inputs": [
+        {
+          "label": "Location name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "source": {
+      "title": "Add Location without leaving the device form",
+      "inputs": [
+        {
+          "label": "Location name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "status": "matched"
+  },
+  {
+    "kind": "manufacturer",
+    "tab": "hardware",
+    "width": 1440,
+    "dark": true,
+    "live": {
+      "title": "Add Manufacturer without leaving the device form",
+      "inputs": [
+        {
+          "label": "Manufacturer name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "source": {
+      "title": "Add Manufacturer without leaving the device form",
+      "inputs": [
+        {
+          "label": "Manufacturer name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "status": "matched"
+  },
+  {
+    "kind": "model",
+    "tab": "hardware",
+    "width": 1440,
+    "dark": true,
+    "live": {
+      "title": "Add Model without leaving the device form",
+      "inputs": [
+        {
+          "label": "Model name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "source": {
+      "title": "Add Model without leaving the device form",
+      "inputs": [
+        {
+          "label": "Model name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "status": "matched"
+  },
+  {
+    "kind": "software",
+    "tab": "software",
+    "width": 1440,
+    "dark": true,
+    "live": {
+      "title": "Add Software without leaving the device form",
+      "inputs": [
+        {
+          "label": "Software name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "source": {
+      "title": "Add Software without leaving the device form",
+      "inputs": [
+        {
+          "label": "Software name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "status": "matched"
+  },
+  {
+    "kind": "services",
+    "tab": "software",
+    "width": 1440,
+    "dark": true,
+    "live": {
+      "title": "Add Server Service without leaving the device form",
+      "inputs": [
+        {
+          "label": "Server Service name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "source": {
+      "title": "Add Server Service without leaving the device form",
+      "inputs": [
+        {
+          "label": "Server Service name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "status": "matched"
+  },
+  {
+    "kind": "location",
+    "tab": "general",
+    "width": 390,
+    "dark": false,
+    "live": {
+      "title": "Add Location without leaving the device form",
+      "inputs": [
+        {
+          "label": "Location name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "source": {
+      "title": "Add Location without leaving the device form",
+      "inputs": [
+        {
+          "label": "Location name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "status": "matched"
+  },
+  {
+    "kind": "manufacturer",
+    "tab": "hardware",
+    "width": 390,
+    "dark": false,
+    "live": {
+      "title": "Add Manufacturer without leaving the device form",
+      "inputs": [
+        {
+          "label": "Manufacturer name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "source": {
+      "title": "Add Manufacturer without leaving the device form",
+      "inputs": [
+        {
+          "label": "Manufacturer name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "status": "matched"
+  },
+  {
+    "kind": "model",
+    "tab": "hardware",
+    "width": 390,
+    "dark": false,
+    "live": {
+      "title": "Add Model without leaving the device form",
+      "inputs": [
+        {
+          "label": "Model name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "source": {
+      "title": "Add Model without leaving the device form",
+      "inputs": [
+        {
+          "label": "Model name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "status": "matched"
+  },
+  {
+    "kind": "software",
+    "tab": "software",
+    "width": 390,
+    "dark": false,
+    "live": {
+      "title": "Add Software without leaving the device form",
+      "inputs": [
+        {
+          "label": "Software name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "source": {
+      "title": "Add Software without leaving the device form",
+      "inputs": [
+        {
+          "label": "Software name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "status": "matched"
+  },
+  {
+    "kind": "services",
+    "tab": "software",
+    "width": 390,
+    "dark": false,
+    "live": {
+      "title": "Add Server Service without leaving the device form",
+      "inputs": [
+        {
+          "label": "Server Service name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "source": {
+      "title": "Add Server Service without leaving the device form",
+      "inputs": [
+        {
+          "label": "Server Service name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "status": "matched"
+  },
+  {
+    "kind": "location",
+    "tab": "general",
+    "width": 390,
+    "dark": true,
+    "live": {
+      "title": "Add Location without leaving the device form",
+      "inputs": [
+        {
+          "label": "Location name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "source": {
+      "title": "Add Location without leaving the device form",
+      "inputs": [
+        {
+          "label": "Location name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "status": "matched"
+  },
+  {
+    "kind": "manufacturer",
+    "tab": "hardware",
+    "width": 390,
+    "dark": true,
+    "live": {
+      "title": "Add Manufacturer without leaving the device form",
+      "inputs": [
+        {
+          "label": "Manufacturer name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "source": {
+      "title": "Add Manufacturer without leaving the device form",
+      "inputs": [
+        {
+          "label": "Manufacturer name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "status": "matched"
+  },
+  {
+    "kind": "model",
+    "tab": "hardware",
+    "width": 390,
+    "dark": true,
+    "live": {
+      "title": "Add Model without leaving the device form",
+      "inputs": [
+        {
+          "label": "Model name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "source": {
+      "title": "Add Model without leaving the device form",
+      "inputs": [
+        {
+          "label": "Model name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "status": "matched"
+  },
+  {
+    "kind": "software",
+    "tab": "software",
+    "width": 390,
+    "dark": true,
+    "live": {
+      "title": "Add Software without leaving the device form",
+      "inputs": [
+        {
+          "label": "Software name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "source": {
+      "title": "Add Software without leaving the device form",
+      "inputs": [
+        {
+          "label": "Software name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "status": "matched"
+  },
+  {
+    "kind": "services",
+    "tab": "software",
+    "width": 390,
+    "dark": true,
+    "live": {
+      "title": "Add Server Service without leaving the device form",
+      "inputs": [
+        {
+          "label": "Server Service name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "source": {
+      "title": "Add Server Service without leaving the device form",
+      "inputs": [
+        {
+          "label": "Server Service name",
+          "height": 39,
+          "maxLength": 100
+        }
+      ],
+      "buttons": [
+        "Add & Select",
+        "Cancel"
+      ]
+    },
+    "status": "matched"
+  }
+]

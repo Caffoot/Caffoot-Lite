@@ -1,5 +1,6 @@
 """SQLite-backed independent IPAM allocation changes."""
 import json
+from .audit_events import attribute_event, safe_inventory_differences
 from datetime import datetime, timezone
 
 from .application_integrity import validate_detached_application_state
@@ -49,14 +50,12 @@ def change_independent_allocation(connection, account_id, ip, record):
             event = {"at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
                      "reason": "Inventory saved",
                      "changes": [{"action": action, "kind": "IPAM",
-                                  "label": ip, "fields": fields}], "omitted": 0}
+                                  "label": ip, "fields": fields,
+                                  **safe_inventory_differences(before, record, "ipAllocations")}],
+                     "omitted": 0}
             connection.execute(
                 "INSERT INTO inventory_change_history(record_json) VALUES(?)",
-                (json.dumps(event, ensure_ascii=False),),
-            )
-            connection.execute(
-                "DELETE FROM inventory_change_history WHERE id NOT IN "
-                "(SELECT id FROM inventory_change_history ORDER BY id DESC LIMIT 200)"
+                (json.dumps(attribute_event(connection, account_id, event), ensure_ascii=False),),
             )
         connection.commit()
     except BaseException:
@@ -105,18 +104,15 @@ def change_bulk_allocations(connection, account_id, changes):
             )
         if updates:
             events = [{"action": "Created" if previous is None else "Updated",
-                       "kind": "IPAM", "label": ip, "fields": []}
-                      for ip, _, previous in updates[:16]]
+                       "kind": "IPAM", "label": ip, "fields": [],
+                       **safe_inventory_differences(previous, record, "ipAllocations")}
+                      for ip, record, previous in updates[:16]]
             entry = {"at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
                      "reason": "Bulk IPAM saved", "changes": events,
                      "omitted": max(0, len(updates) - len(events))}
             connection.execute(
                 "INSERT INTO inventory_change_history(record_json) VALUES(?)",
-                (json.dumps(entry, ensure_ascii=False),),
-            )
-            connection.execute(
-                "DELETE FROM inventory_change_history WHERE id NOT IN "
-                "(SELECT id FROM inventory_change_history ORDER BY id DESC LIMIT 200)"
+                (json.dumps(attribute_event(connection, account_id, entry), ensure_ascii=False),),
             )
         connection.commit()
     except BaseException:

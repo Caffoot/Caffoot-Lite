@@ -1,0 +1,54 @@
+{
+  "codeAndTestsCommit": "e802dab034dcb04f3173f3e7248c5564386ee912",
+  "runs": [
+    {
+      "id": 42357732549,
+      "name": "Git history secret scan",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Caffoot/Caffoot-Lite/actions/runs/42357732549"
+    },
+    {
+      "id": 42357732534,
+      "name": "Caffoot Lite backend tests",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Caffoot/Caffoot-Lite/actions/runs/42357732534"
+    },
+    {
+      "id": 42357732562,
+      "name": "Caffoot Lite browser compatibility",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/Caffoot/Caffoot-Lite/actions/runs/42357732562"
+    }
+  ],
+  "browserJobs": [
+    {
+      "id": 128359416895,
+      "name": "browser-compat",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 128359417130,
+      "name": "native-select-engines (firefox)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 128359417144,
+      "name": "native-select-engines (webkit)",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "docker": {
+    "applicationCommit": "10408df32761964956624611895a93b1548e35bb",
+    "runId": 42356848717,
+    "status": "completed",
+    "conclusion": "success"
+  },
+  "nativeSafariTested": false,
+  "arm64ImageBuiltHere": false
+}

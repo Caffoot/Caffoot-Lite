@@ -1,0 +1,1762 @@
+{
+  "baseline": false,
+  "errors": [],
+  "results": [
+    {
+      "screen": "devices",
+      "width": 1440,
+      "theme": "light",
+      "heading": {
+        "x": 258.1875,
+        "y": 258.03125,
+        "width": 1138.625,
+        "height": 48.046875,
+        "bottom": 306.078125
+      },
+      "tabs": {
+        "x": 258.1875,
+        "y": 323.078125,
+        "width": 1138.625,
+        "height": 55,
+        "bottom": 378.078125
+      },
+      "metrics": {
+        "x": 258.1875,
+        "y": 397.078125,
+        "width": 1138.625,
+        "height": 143.59375,
+        "bottom": 540.671875
+      },
+      "insights": {
+        "x": 258.1875,
+        "y": 557.671875,
+        "width": 1138.625,
+        "height": 413.09375,
+        "bottom": 970.765625
+      },
+      "mainGap": 18,
+      "headingToTabs": 17,
+      "tabsToMetrics": 19,
+      "metricsToInsights": 17,
+      "metricRowGap": 14,
+      "metricColumnGap": 14,
+      "referenceInsightGap": 17,
+      "metricsVisible": true,
+      "metricsText": [
+        "Total Devices6Recorded in inventory",
+        "With Primary IP5Devices with a primary IP",
+        "Locations Recorded5Known location assigned",
+        "Device Types5Different classifications"
+      ],
+      "content": "Devices by TypeEquipment classification across your inventory.Server2Desktop1NAS1Switch1Virtual Machine1Devices by LocationPhysical areas associated with your devices.Server Room4Not Recorded1Office1",
+      "chartValues": [],
+      "overflow": false,
+      "insightGroups": [
+        {
+          "x": 258.1875,
+          "y": 557.671875,
+          "width": 560.8125,
+          "height": 413.09375,
+          "bottom": 970.765625,
+          "class": "intelligence-card",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 836,
+          "y": 557.671875,
+          "width": 560.8125,
+          "height": 413.09375,
+          "bottom": 970.765625,
+          "class": "intelligence-card",
+          "marginTop": "0px",
+          "gap": "normal"
+        }
+      ]
+    },
+    {
+      "screen": "racks-capacity",
+      "width": 1440,
+      "theme": "light",
+      "heading": {
+        "x": 258.1875,
+        "y": 261.03125,
+        "width": 1138.625,
+        "height": 45,
+        "bottom": 306.03125
+      },
+      "tabs": {
+        "x": 258.1875,
+        "y": 323.03125,
+        "width": 346.25,
+        "height": 55,
+        "bottom": 378.03125
+      },
+      "metrics": {
+        "x": 258.1875,
+        "y": 397.03125,
+        "width": 1138.625,
+        "height": 129,
+        "bottom": 526.03125
+      },
+      "insights": {
+        "x": 258.1875,
+        "y": 543.03125,
+        "width": 1138.625,
+        "height": 934.25,
+        "bottom": 1477.28125
+      },
+      "mainGap": 18,
+      "headingToTabs": 17,
+      "tabsToMetrics": 19,
+      "metricsToInsights": 17,
+      "metricRowGap": 14,
+      "metricColumnGap": 14,
+      "referenceInsightGap": null,
+      "metricsVisible": true,
+      "metricsText": [
+        "Total racks3Saved inventory",
+        "Physical rack capacity126USaved inventory",
+        "Mounted devices3Saved inventory",
+        "Rack accessories0Saved inventory"
+      ],
+      "content": "Combined face utilisationFront and rear rack-unit capacity are counted separately.3U occupied249U free1% usedFront vs rear occupancyOccupied units on each face, compared with physical estate height.Front occupied3URear occupied0ULargest contiguous free spaceLongest uninterrupted empty U block on either the front or rear face of each rack. A rack can have more free U in total than this value.Rack A42URack B42URack C42UUnderstanding available rack spaceIllustrative 12U rack — not a live reading or an actual inventory rack.121110987654321Total free space9UAll empty units added together.Largest contiguous free block6USix uninterrupted empty units at the top. Actual device fit also depends on depth and mounting constraints.FreeOccupied",
+      "chartValues": [
+        "3 of 252 rack units occupied",
+        "12U example rack: units 12 through 7 free, units 6 through 4 occupied, units 3 through 1 free"
+      ],
+      "overflow": false,
+      "insightGroups": [
+        {
+          "x": 258.1875,
+          "y": 543.03125,
+          "width": 1138.625,
+          "height": 934.25,
+          "bottom": 1477.28125,
+          "class": "space-y-4 rack-overview-stack",
+          "marginTop": "0px",
+          "gap": "17px"
+        },
+        {
+          "x": 258.1875,
+          "y": 543.03125,
+          "width": 1138.625,
+          "height": 176.75,
+          "bottom": 719.78125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 258.1875,
+          "y": 736.78125,
+          "width": 1138.625,
+          "height": 290.75,
+          "bottom": 1027.53125,
+          "class": "grid grid-cols-1 xl:grid-cols-2 gap-4 rack-overview-grid",
+          "marginTop": "0px",
+          "gap": "17px"
+        },
+        {
+          "x": 258.1875,
+          "y": 736.78125,
+          "width": 560.8125,
+          "height": 290.75,
+          "bottom": 1027.53125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 836,
+          "y": 736.78125,
+          "width": 560.8125,
+          "height": 290.75,
+          "bottom": 1027.53125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 258.1875,
+          "y": 1044.53125,
+          "width": 1138.625,
+          "height": 432.75,
+          "bottom": 1477.28125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        }
+      ]
+    },
+    {
+      "screen": "racks-equipment",
+      "width": 1440,
+      "theme": "light",
+      "heading": {
+        "x": 258.1875,
+        "y": 261.03125,
+        "width": 1138.625,
+        "height": 45,
+        "bottom": 306.03125
+      },
+      "tabs": {
+        "x": 258.1875,
+        "y": 323.03125,
+        "width": 346.25,
+        "height": 55,
+        "bottom": 378.03125
+      },
+      "metrics": {
+        "x": 258.1875,
+        "y": 397.03125,
+        "width": 1138.625,
+        "height": 129,
+        "bottom": 526.03125
+      },
+      "insights": {
+        "x": 258.1875,
+        "y": 543.03125,
+        "width": 1138.625,
+        "height": 780.5,
+        "bottom": 1323.53125
+      },
+      "mainGap": 18,
+      "headingToTabs": 17,
+      "tabsToMetrics": 19,
+      "metricsToInsights": 17,
+      "metricRowGap": 14,
+      "metricColumnGap": 14,
+      "referenceInsightGap": null,
+      "metricsVisible": true,
+      "metricsText": [
+        "Total racks3Saved inventory",
+        "Physical rack capacity126USaved inventory",
+        "Mounted devices3Saved inventory",
+        "Rack accessories0Saved inventory"
+      ],
+      "content": "Mounted equipment by typeEach bar counts devices assigned to a rack, grouped by their recorded device type. A device is counted once.Server - Physical1Switch1NAS1Devices and accessories by rackCompare how many devices and rack accessories are recorded in each rack. These are item counts, not rack-unit usage.Rack ADevices3Accessories0Rack BDevices0Accessories0Rack CDevices0Accessories0How to read these chartsEquipment figures describe saved inventory records, not live device status.DevicesA mounted server, switch or other device contributes one to its type and rack totals, regardless of its height in U.AccessoriesPDUs, cable managers and other recorded accessories are counted separately. A 0U accessory still counts as an item.",
+      "chartValues": [],
+      "overflow": false,
+      "insightGroups": [
+        {
+          "x": 258.1875,
+          "y": 543.03125,
+          "width": 1138.625,
+          "height": 520.75,
+          "bottom": 1063.78125,
+          "class": "grid grid-cols-1 xl:grid-cols-2 gap-4 rack-overview-grid",
+          "marginTop": "0px",
+          "gap": "17px"
+        },
+        {
+          "x": 258.1875,
+          "y": 1080.78125,
+          "width": 1138.625,
+          "height": 242.75,
+          "bottom": 1323.53125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 279.1875,
+          "y": 1118.15625,
+          "width": 1096.625,
+          "height": 54.375,
+          "bottom": 1172.53125,
+          "class": "",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 279.1875,
+          "y": 1188.53125,
+          "width": 1096.625,
+          "height": 114,
+          "bottom": 1302.53125,
+          "class": "grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm",
+          "marginTop": "16px",
+          "gap": "16px"
+        },
+        {
+          "x": 279.1875,
+          "y": 1188.53125,
+          "width": 540.3125,
+          "height": 114,
+          "bottom": 1302.53125,
+          "class": "rounded-xl bg-indigo-50 dark:bg-indigo-900/20 p-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 835.5,
+          "y": 1188.53125,
+          "width": 540.3125,
+          "height": 114,
+          "bottom": 1302.53125,
+          "class": "rounded-xl bg-slate-100 dark:bg-slate-700/60 p-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        }
+      ]
+    },
+    {
+      "screen": "racks-locations",
+      "width": 1440,
+      "theme": "light",
+      "heading": {
+        "x": 258.1875,
+        "y": 261.03125,
+        "width": 1138.625,
+        "height": 45,
+        "bottom": 306.03125
+      },
+      "tabs": {
+        "x": 258.1875,
+        "y": 323.03125,
+        "width": 346.25,
+        "height": 55,
+        "bottom": 378.03125
+      },
+      "metrics": {
+        "x": 258.1875,
+        "y": 397.03125,
+        "width": 1138.625,
+        "height": 129,
+        "bottom": 526.03125
+      },
+      "insights": {
+        "x": 258.1875,
+        "y": 543.03125,
+        "width": 1138.625,
+        "height": 438.5,
+        "bottom": 981.53125
+      },
+      "mainGap": 18,
+      "headingToTabs": 17,
+      "tabsToMetrics": 19,
+      "metricsToInsights": 17,
+      "metricRowGap": 14,
+      "metricColumnGap": 14,
+      "referenceInsightGap": null,
+      "metricsVisible": true,
+      "metricsText": [
+        "Total racks3Saved inventory",
+        "Physical rack capacity126USaved inventory",
+        "Mounted devices3Saved inventory",
+        "Rack accessories0Saved inventory"
+      ],
+      "content": "Racks by locationEach bar counts racks assigned to that location, regardless of rack height.Server Room3Mounted devices by locationEach bar counts devices mounted in racks at that location; unmounted devices are excluded.Server Room3Rack-type charts will follow the Phase 1C rack-type schema update.How to read location chartsLocations come from the rack records in your inventory.Racks by location: a 12U cabinet and a 42U rack each count as one rack.Mounted devices by location: devices inherit their location from the rack they are mounted in. This is not a count of all devices at that site.Locations not recorded are grouped under “Not recorded”.",
+      "chartValues": [],
+      "overflow": false,
+      "insightGroups": [
+        {
+          "x": 258.1875,
+          "y": 543.03125,
+          "width": 1138.625,
+          "height": 214.75,
+          "bottom": 757.78125,
+          "class": "grid grid-cols-1 xl:grid-cols-2 gap-4 rack-overview-grid",
+          "marginTop": "0px",
+          "gap": "17px"
+        },
+        {
+          "x": 258.1875,
+          "y": 774.78125,
+          "width": 1138.625,
+          "height": 206.75,
+          "bottom": 981.53125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 279.1875,
+          "y": 812.15625,
+          "width": 1096.625,
+          "height": 54.375,
+          "bottom": 866.53125,
+          "class": "",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 279.1875,
+          "y": 882.53125,
+          "width": 1096.625,
+          "height": 78,
+          "bottom": 960.53125,
+          "class": "text-sm text-slate-700 dark:text-slate-200 space-y-2",
+          "marginTop": "16px",
+          "gap": "normal"
+        }
+      ]
+    },
+    {
+      "screen": "rack-inventory",
+      "width": 1440,
+      "theme": "light",
+      "text": "INFRASTRUCTURE INVENTORY\n                    Network RacksExplore your racks, inspect equipment placement and manage cabinet details.\n                    + Add Rack\n                    \n                    OverviewRack InventoryRack Accessories\n                    \n Rack InventorySelect a rack card to view its equipment and settings.\n Search racks\n  \n \n \n  ▤Rack A\n  Server Room · 42U · Floor Standing\n  \n  3U occupied · 3 devices · 0 accessories\n  View Rack Elevation\n\n  ▤Rack B\n  Server Room · 42U · Floor Standing\n  \n  0U occupied · 0 devices · 0 accessories\n  View Rack Elevation\n\n  ▤Rack C\n  Server Room · 42U · Floor Standing\n  \n  0U occupied · 0 devices · 0 accessories\n  View Rack Elevation\n\n Utilisation shows unique occupied rack units across both faces, not combined face capacity. Inventory-based estimates, not live monitoring.\n No racks match your search.",
+      "overflow": false
+    },
+    {
+      "screen": "rack-accessories",
+      "width": 1440,
+      "theme": "light",
+      "text": "INFRASTRUCTURE INVENTORY\n                    Network RacksExplore your racks, inspect equipment placement and manage cabinet details.\n                    + Add Rack\n                    \n                    OverviewRack InventoryRack Accessories\n                    Rack AccessoriesManage accessories within the rack they belong to, including 0U side-rail equipment.▥Rack A0 accessories · 0 vertical 0U railsServer Room · 42UManage Accessories in Rack▥Rack B0 accessories · 0 vertical 0U railsServer Room · 42UManage Accessories in Rack▥Rack C0 accessories · 0 vertical 0U railsServer Room · 42UManage Accessories in Rack",
+      "overflow": false
+    },
+    {
+      "screen": "audit",
+      "width": 1440,
+      "theme": "light",
+      "cards": [
+        {
+          "heading": "Existing inventory events",
+          "description": "Saved device, IPAM, rack and settings changes. Older records keep the information originally recorded.",
+          "label": null
+        },
+        {
+          "heading": "Accountable changes",
+          "description": "New inventory events capture authenticated actor and outcome. Additional account and security event coverage is being integrated.",
+          "label": null
+        },
+        {
+          "heading": "No automatic expiry",
+          "description": "History is retained by default. Deletion and purging are not available, and server-side section permissions remain enforced.",
+          "label": null
+        }
+      ],
+      "statuses": [
+        "Recorded",
+        "Recorded",
+        "Recorded",
+        "Recorded",
+        "In development",
+        "In development",
+        "Recorded",
+        "Permission protected"
+      ],
+      "notice": "Your security matters. Audit records track changes without storing passwords, authentication codes or other sensitive credentials.",
+      "overflow": false
+    },
+    {
+      "screen": "devices",
+      "width": 1440,
+      "theme": "dark",
+      "heading": {
+        "x": 258.1875,
+        "y": 258.03125,
+        "width": 1138.625,
+        "height": 48.046875,
+        "bottom": 306.078125
+      },
+      "tabs": {
+        "x": 258.1875,
+        "y": 323.078125,
+        "width": 1138.625,
+        "height": 55,
+        "bottom": 378.078125
+      },
+      "metrics": {
+        "x": 258.1875,
+        "y": 397.078125,
+        "width": 1138.625,
+        "height": 143.59375,
+        "bottom": 540.671875
+      },
+      "insights": {
+        "x": 258.1875,
+        "y": 557.671875,
+        "width": 1138.625,
+        "height": 413.09375,
+        "bottom": 970.765625
+      },
+      "mainGap": 18,
+      "headingToTabs": 17,
+      "tabsToMetrics": 19,
+      "metricsToInsights": 17,
+      "metricRowGap": 14,
+      "metricColumnGap": 14,
+      "referenceInsightGap": 17,
+      "metricsVisible": true,
+      "metricsText": [
+        "Total Devices6Recorded in inventory",
+        "With Primary IP5Devices with a primary IP",
+        "Locations Recorded5Known location assigned",
+        "Device Types5Different classifications"
+      ],
+      "content": "Devices by TypeEquipment classification across your inventory.Server2Desktop1NAS1Switch1Virtual Machine1Devices by LocationPhysical areas associated with your devices.Server Room4Not Recorded1Office1",
+      "chartValues": [],
+      "overflow": false,
+      "insightGroups": [
+        {
+          "x": 258.1875,
+          "y": 557.671875,
+          "width": 560.8125,
+          "height": 413.09375,
+          "bottom": 970.765625,
+          "class": "intelligence-card",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 836,
+          "y": 557.671875,
+          "width": 560.8125,
+          "height": 413.09375,
+          "bottom": 970.765625,
+          "class": "intelligence-card",
+          "marginTop": "0px",
+          "gap": "normal"
+        }
+      ]
+    },
+    {
+      "screen": "racks-capacity",
+      "width": 1440,
+      "theme": "dark",
+      "heading": {
+        "x": 258.1875,
+        "y": 261.03125,
+        "width": 1138.625,
+        "height": 45,
+        "bottom": 306.03125
+      },
+      "tabs": {
+        "x": 258.1875,
+        "y": 323.03125,
+        "width": 346.25,
+        "height": 55,
+        "bottom": 378.03125
+      },
+      "metrics": {
+        "x": 258.1875,
+        "y": 397.03125,
+        "width": 1138.625,
+        "height": 129,
+        "bottom": 526.03125
+      },
+      "insights": {
+        "x": 258.1875,
+        "y": 543.03125,
+        "width": 1138.625,
+        "height": 934.25,
+        "bottom": 1477.28125
+      },
+      "mainGap": 18,
+      "headingToTabs": 17,
+      "tabsToMetrics": 19,
+      "metricsToInsights": 17,
+      "metricRowGap": 14,
+      "metricColumnGap": 14,
+      "referenceInsightGap": null,
+      "metricsVisible": true,
+      "metricsText": [
+        "Total racks3Saved inventory",
+        "Physical rack capacity126USaved inventory",
+        "Mounted devices3Saved inventory",
+        "Rack accessories0Saved inventory"
+      ],
+      "content": "Combined face utilisationFront and rear rack-unit capacity are counted separately.3U occupied249U free1% usedFront vs rear occupancyOccupied units on each face, compared with physical estate height.Front occupied3URear occupied0ULargest contiguous free spaceLongest uninterrupted empty U block on either the front or rear face of each rack. A rack can have more free U in total than this value.Rack A42URack B42URack C42UUnderstanding available rack spaceIllustrative 12U rack — not a live reading or an actual inventory rack.121110987654321Total free space9UAll empty units added together.Largest contiguous free block6USix uninterrupted empty units at the top. Actual device fit also depends on depth and mounting constraints.FreeOccupied",
+      "chartValues": [
+        "3 of 252 rack units occupied",
+        "12U example rack: units 12 through 7 free, units 6 through 4 occupied, units 3 through 1 free"
+      ],
+      "overflow": false,
+      "insightGroups": [
+        {
+          "x": 258.1875,
+          "y": 543.03125,
+          "width": 1138.625,
+          "height": 934.25,
+          "bottom": 1477.28125,
+          "class": "space-y-4 rack-overview-stack",
+          "marginTop": "0px",
+          "gap": "17px"
+        },
+        {
+          "x": 258.1875,
+          "y": 543.03125,
+          "width": 1138.625,
+          "height": 176.75,
+          "bottom": 719.78125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 258.1875,
+          "y": 736.78125,
+          "width": 1138.625,
+          "height": 290.75,
+          "bottom": 1027.53125,
+          "class": "grid grid-cols-1 xl:grid-cols-2 gap-4 rack-overview-grid",
+          "marginTop": "0px",
+          "gap": "17px"
+        },
+        {
+          "x": 258.1875,
+          "y": 736.78125,
+          "width": 560.8125,
+          "height": 290.75,
+          "bottom": 1027.53125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 836,
+          "y": 736.78125,
+          "width": 560.8125,
+          "height": 290.75,
+          "bottom": 1027.53125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 258.1875,
+          "y": 1044.53125,
+          "width": 1138.625,
+          "height": 432.75,
+          "bottom": 1477.28125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        }
+      ]
+    },
+    {
+      "screen": "racks-equipment",
+      "width": 1440,
+      "theme": "dark",
+      "heading": {
+        "x": 258.1875,
+        "y": 261.03125,
+        "width": 1138.625,
+        "height": 45,
+        "bottom": 306.03125
+      },
+      "tabs": {
+        "x": 258.1875,
+        "y": 323.03125,
+        "width": 346.25,
+        "height": 55,
+        "bottom": 378.03125
+      },
+      "metrics": {
+        "x": 258.1875,
+        "y": 397.03125,
+        "width": 1138.625,
+        "height": 129,
+        "bottom": 526.03125
+      },
+      "insights": {
+        "x": 258.1875,
+        "y": 543.03125,
+        "width": 1138.625,
+        "height": 780.5,
+        "bottom": 1323.53125
+      },
+      "mainGap": 18,
+      "headingToTabs": 17,
+      "tabsToMetrics": 19,
+      "metricsToInsights": 17,
+      "metricRowGap": 14,
+      "metricColumnGap": 14,
+      "referenceInsightGap": null,
+      "metricsVisible": true,
+      "metricsText": [
+        "Total racks3Saved inventory",
+        "Physical rack capacity126USaved inventory",
+        "Mounted devices3Saved inventory",
+        "Rack accessories0Saved inventory"
+      ],
+      "content": "Mounted equipment by typeEach bar counts devices assigned to a rack, grouped by their recorded device type. A device is counted once.Server - Physical1Switch1NAS1Devices and accessories by rackCompare how many devices and rack accessories are recorded in each rack. These are item counts, not rack-unit usage.Rack ADevices3Accessories0Rack BDevices0Accessories0Rack CDevices0Accessories0How to read these chartsEquipment figures describe saved inventory records, not live device status.DevicesA mounted server, switch or other device contributes one to its type and rack totals, regardless of its height in U.AccessoriesPDUs, cable managers and other recorded accessories are counted separately. A 0U accessory still counts as an item.",
+      "chartValues": [],
+      "overflow": false,
+      "insightGroups": [
+        {
+          "x": 258.1875,
+          "y": 543.03125,
+          "width": 1138.625,
+          "height": 520.75,
+          "bottom": 1063.78125,
+          "class": "grid grid-cols-1 xl:grid-cols-2 gap-4 rack-overview-grid",
+          "marginTop": "0px",
+          "gap": "17px"
+        },
+        {
+          "x": 258.1875,
+          "y": 1080.78125,
+          "width": 1138.625,
+          "height": 242.75,
+          "bottom": 1323.53125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 279.1875,
+          "y": 1118.15625,
+          "width": 1096.625,
+          "height": 54.375,
+          "bottom": 1172.53125,
+          "class": "",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 279.1875,
+          "y": 1188.53125,
+          "width": 1096.625,
+          "height": 114,
+          "bottom": 1302.53125,
+          "class": "grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm",
+          "marginTop": "16px",
+          "gap": "16px"
+        },
+        {
+          "x": 279.1875,
+          "y": 1188.53125,
+          "width": 540.3125,
+          "height": 114,
+          "bottom": 1302.53125,
+          "class": "rounded-xl bg-indigo-50 dark:bg-indigo-900/20 p-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 835.5,
+          "y": 1188.53125,
+          "width": 540.3125,
+          "height": 114,
+          "bottom": 1302.53125,
+          "class": "rounded-xl bg-slate-100 dark:bg-slate-700/60 p-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        }
+      ]
+    },
+    {
+      "screen": "racks-locations",
+      "width": 1440,
+      "theme": "dark",
+      "heading": {
+        "x": 258.1875,
+        "y": 261.03125,
+        "width": 1138.625,
+        "height": 45,
+        "bottom": 306.03125
+      },
+      "tabs": {
+        "x": 258.1875,
+        "y": 323.03125,
+        "width": 346.25,
+        "height": 55,
+        "bottom": 378.03125
+      },
+      "metrics": {
+        "x": 258.1875,
+        "y": 397.03125,
+        "width": 1138.625,
+        "height": 129,
+        "bottom": 526.03125
+      },
+      "insights": {
+        "x": 258.1875,
+        "y": 543.03125,
+        "width": 1138.625,
+        "height": 438.5,
+        "bottom": 981.53125
+      },
+      "mainGap": 18,
+      "headingToTabs": 17,
+      "tabsToMetrics": 19,
+      "metricsToInsights": 17,
+      "metricRowGap": 14,
+      "metricColumnGap": 14,
+      "referenceInsightGap": null,
+      "metricsVisible": true,
+      "metricsText": [
+        "Total racks3Saved inventory",
+        "Physical rack capacity126USaved inventory",
+        "Mounted devices3Saved inventory",
+        "Rack accessories0Saved inventory"
+      ],
+      "content": "Racks by locationEach bar counts racks assigned to that location, regardless of rack height.Server Room3Mounted devices by locationEach bar counts devices mounted in racks at that location; unmounted devices are excluded.Server Room3Rack-type charts will follow the Phase 1C rack-type schema update.How to read location chartsLocations come from the rack records in your inventory.Racks by location: a 12U cabinet and a 42U rack each count as one rack.Mounted devices by location: devices inherit their location from the rack they are mounted in. This is not a count of all devices at that site.Locations not recorded are grouped under “Not recorded”.",
+      "chartValues": [],
+      "overflow": false,
+      "insightGroups": [
+        {
+          "x": 258.1875,
+          "y": 543.03125,
+          "width": 1138.625,
+          "height": 214.75,
+          "bottom": 757.78125,
+          "class": "grid grid-cols-1 xl:grid-cols-2 gap-4 rack-overview-grid",
+          "marginTop": "0px",
+          "gap": "17px"
+        },
+        {
+          "x": 258.1875,
+          "y": 774.78125,
+          "width": 1138.625,
+          "height": 206.75,
+          "bottom": 981.53125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 279.1875,
+          "y": 812.15625,
+          "width": 1096.625,
+          "height": 54.375,
+          "bottom": 866.53125,
+          "class": "",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 279.1875,
+          "y": 882.53125,
+          "width": 1096.625,
+          "height": 78,
+          "bottom": 960.53125,
+          "class": "text-sm text-slate-700 dark:text-slate-200 space-y-2",
+          "marginTop": "16px",
+          "gap": "normal"
+        }
+      ]
+    },
+    {
+      "screen": "rack-inventory",
+      "width": 1440,
+      "theme": "dark",
+      "text": "INFRASTRUCTURE INVENTORY\n                    Network RacksExplore your racks, inspect equipment placement and manage cabinet details.\n                    + Add Rack\n                    \n                    OverviewRack InventoryRack Accessories\n                    \n Rack InventorySelect a rack card to view its equipment and settings.\n Search racks\n  \n \n \n  ▤Rack A\n  Server Room · 42U · Floor Standing\n  \n  3U occupied · 3 devices · 0 accessories\n  View Rack Elevation\n\n  ▤Rack B\n  Server Room · 42U · Floor Standing\n  \n  0U occupied · 0 devices · 0 accessories\n  View Rack Elevation\n\n  ▤Rack C\n  Server Room · 42U · Floor Standing\n  \n  0U occupied · 0 devices · 0 accessories\n  View Rack Elevation\n\n Utilisation shows unique occupied rack units across both faces, not combined face capacity. Inventory-based estimates, not live monitoring.\n No racks match your search.",
+      "overflow": false
+    },
+    {
+      "screen": "rack-accessories",
+      "width": 1440,
+      "theme": "dark",
+      "text": "INFRASTRUCTURE INVENTORY\n                    Network RacksExplore your racks, inspect equipment placement and manage cabinet details.\n                    + Add Rack\n                    \n                    OverviewRack InventoryRack Accessories\n                    Rack AccessoriesManage accessories within the rack they belong to, including 0U side-rail equipment.▥Rack A0 accessories · 0 vertical 0U railsServer Room · 42UManage Accessories in Rack▥Rack B0 accessories · 0 vertical 0U railsServer Room · 42UManage Accessories in Rack▥Rack C0 accessories · 0 vertical 0U railsServer Room · 42UManage Accessories in Rack",
+      "overflow": false
+    },
+    {
+      "screen": "audit",
+      "width": 1440,
+      "theme": "dark",
+      "cards": [
+        {
+          "heading": "Existing inventory events",
+          "description": "Saved device, IPAM, rack and settings changes. Older records keep the information originally recorded.",
+          "label": null
+        },
+        {
+          "heading": "Accountable changes",
+          "description": "New inventory events capture authenticated actor and outcome. Additional account and security event coverage is being integrated.",
+          "label": null
+        },
+        {
+          "heading": "No automatic expiry",
+          "description": "History is retained by default. Deletion and purging are not available, and server-side section permissions remain enforced.",
+          "label": null
+        }
+      ],
+      "statuses": [
+        "Recorded",
+        "Recorded",
+        "Recorded",
+        "Recorded",
+        "In development",
+        "In development",
+        "Recorded",
+        "Permission protected"
+      ],
+      "notice": "Your security matters. Audit records track changes without storing passwords, authentication codes or other sensitive credentials.",
+      "overflow": false
+    },
+    {
+      "screen": "devices",
+      "width": 390,
+      "theme": "light",
+      "heading": {
+        "x": 81,
+        "y": 325.421875,
+        "width": 293,
+        "height": 67.09375,
+        "bottom": 392.515625
+      },
+      "tabs": {
+        "x": 81,
+        "y": 406.515625,
+        "width": 293,
+        "height": 55,
+        "bottom": 461.515625
+      },
+      "metrics": {
+        "x": 81,
+        "y": 480.515625,
+        "width": 293,
+        "height": 307.875,
+        "bottom": 788.390625
+      },
+      "insights": {
+        "x": 81,
+        "y": 805.390625,
+        "width": 293,
+        "height": 737.375,
+        "bottom": 1542.765625
+      },
+      "mainGap": 18,
+      "headingToTabs": 14,
+      "tabsToMetrics": 19,
+      "metricsToInsights": 17,
+      "metricRowGap": 10,
+      "metricColumnGap": 10,
+      "referenceInsightGap": 17,
+      "metricsVisible": true,
+      "metricsText": [
+        "Total Devices6Recorded in inventory",
+        "With Primary IP5Devices with a primary IP",
+        "Locations Recorded5Known location assigned",
+        "Device Types5Different classifications"
+      ],
+      "content": "Devices by TypeEquipment classification across your inventory.Server2Desktop1NAS1Switch1Virtual Machine1Devices by LocationPhysical areas associated with your devices.Server Room4Not Recorded1Office1",
+      "chartValues": [],
+      "overflow": false,
+      "insightGroups": [
+        {
+          "x": 81,
+          "y": 805.390625,
+          "width": 293,
+          "height": 420.1875,
+          "bottom": 1225.578125,
+          "class": "intelligence-card",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 81,
+          "y": 1242.578125,
+          "width": 293,
+          "height": 300.1875,
+          "bottom": 1542.765625,
+          "class": "intelligence-card",
+          "marginTop": "0px",
+          "gap": "normal"
+        }
+      ]
+    },
+    {
+      "screen": "racks-capacity",
+      "width": 390,
+      "theme": "light",
+      "heading": {
+        "x": 79,
+        "y": 325.453125,
+        "width": 297,
+        "height": 62,
+        "bottom": 387.453125
+      },
+      "tabs": {
+        "x": 79,
+        "y": 401.453125,
+        "width": 297,
+        "height": 55,
+        "bottom": 456.453125
+      },
+      "metrics": {
+        "x": 79,
+        "y": 475.453125,
+        "width": 297,
+        "height": 306,
+        "bottom": 781.453125
+      },
+      "insights": {
+        "x": 79,
+        "y": 798.453125,
+        "width": 297,
+        "height": 1546,
+        "bottom": 2344.453125
+      },
+      "mainGap": 18,
+      "headingToTabs": 14,
+      "tabsToMetrics": 19,
+      "metricsToInsights": 17,
+      "metricRowGap": 10,
+      "metricColumnGap": 10,
+      "referenceInsightGap": null,
+      "metricsVisible": true,
+      "metricsText": [
+        "Total racks3Saved inventory",
+        "Physical rack capacity126USaved inventory",
+        "Mounted devices3Saved inventory",
+        "Rack accessories0Saved inventory"
+      ],
+      "content": "Combined face utilisationFront and rear rack-unit capacity are counted separately.3U occupied249U free1% usedFront vs rear occupancyOccupied units on each face, compared with physical estate height.Front occupied3URear occupied0ULargest contiguous free spaceLongest uninterrupted empty U block on either the front or rear face of each rack. A rack can have more free U in total than this value.Rack A42URack B42URack C42UUnderstanding available rack spaceIllustrative 12U rack — not a live reading or an actual inventory rack.121110987654321Total free space9UAll empty units added together.Largest contiguous free block6USix uninterrupted empty units at the top. Actual device fit also depends on depth and mounting constraints.FreeOccupied",
+      "chartValues": [
+        "3 of 252 rack units occupied",
+        "12U example rack: units 12 through 7 free, units 6 through 4 occupied, units 3 through 1 free"
+      ],
+      "overflow": false,
+      "insightGroups": [
+        {
+          "x": 79,
+          "y": 798.453125,
+          "width": 297,
+          "height": 1546,
+          "bottom": 2344.453125,
+          "class": "space-y-4 rack-overview-stack",
+          "marginTop": "0px",
+          "gap": "17px"
+        },
+        {
+          "x": 79,
+          "y": 798.453125,
+          "width": 297,
+          "height": 192.75,
+          "bottom": 991.203125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 79,
+          "y": 1008.203125,
+          "width": 297,
+          "height": 576.5,
+          "bottom": 1584.703125,
+          "class": "grid grid-cols-1 xl:grid-cols-2 gap-4 rack-overview-grid",
+          "marginTop": "0px",
+          "gap": "17px"
+        },
+        {
+          "x": 79,
+          "y": 1008.203125,
+          "width": 297,
+          "height": 236.75,
+          "bottom": 1244.953125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 79,
+          "y": 1261.953125,
+          "width": 297,
+          "height": 322.75,
+          "bottom": 1584.703125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 79,
+          "y": 1601.703125,
+          "width": 297,
+          "height": 742.75,
+          "bottom": 2344.453125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        }
+      ]
+    },
+    {
+      "screen": "racks-equipment",
+      "width": 390,
+      "theme": "light",
+      "heading": {
+        "x": 79,
+        "y": 325.453125,
+        "width": 297,
+        "height": 62,
+        "bottom": 387.453125
+      },
+      "tabs": {
+        "x": 79,
+        "y": 401.453125,
+        "width": 297,
+        "height": 55,
+        "bottom": 456.453125
+      },
+      "metrics": {
+        "x": 79,
+        "y": 475.453125,
+        "width": 297,
+        "height": 306,
+        "bottom": 781.453125
+      },
+      "insights": {
+        "x": 79,
+        "y": 798.453125,
+        "width": 297,
+        "height": 1368.25,
+        "bottom": 2166.703125
+      },
+      "mainGap": 18,
+      "headingToTabs": 14,
+      "tabsToMetrics": 19,
+      "metricsToInsights": 17,
+      "metricRowGap": 10,
+      "metricColumnGap": 10,
+      "referenceInsightGap": null,
+      "metricsVisible": true,
+      "metricsText": [
+        "Total racks3Saved inventory",
+        "Physical rack capacity126USaved inventory",
+        "Mounted devices3Saved inventory",
+        "Rack accessories0Saved inventory"
+      ],
+      "content": "Mounted equipment by typeEach bar counts devices assigned to a rack, grouped by their recorded device type. A device is counted once.Server - Physical1Switch1NAS1Devices and accessories by rackCompare how many devices and rack accessories are recorded in each rack. These are item counts, not rack-unit usage.Rack ADevices3Accessories0Rack BDevices0Accessories0Rack CDevices0Accessories0How to read these chartsEquipment figures describe saved inventory records, not live device status.DevicesA mounted server, switch or other device contributes one to its type and rack totals, regardless of its height in U.AccessoriesPDUs, cable managers and other recorded accessories are counted separately. A 0U accessory still counts as an item.",
+      "chartValues": [],
+      "overflow": false,
+      "insightGroups": [
+        {
+          "x": 79,
+          "y": 798.453125,
+          "width": 297,
+          "height": 882.5,
+          "bottom": 1680.953125,
+          "class": "grid grid-cols-1 xl:grid-cols-2 gap-4 rack-overview-grid",
+          "marginTop": "0px",
+          "gap": "17px"
+        },
+        {
+          "x": 79,
+          "y": 1697.953125,
+          "width": 297,
+          "height": 468.75,
+          "bottom": 2166.703125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 100,
+          "y": 1735.328125,
+          "width": 255,
+          "height": 70.375,
+          "bottom": 1805.703125,
+          "class": "",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 100,
+          "y": 1821.703125,
+          "width": 255,
+          "height": 324,
+          "bottom": 2145.703125,
+          "class": "grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm",
+          "marginTop": "16px",
+          "gap": "16px"
+        },
+        {
+          "x": 100,
+          "y": 1821.703125,
+          "width": 255,
+          "height": 154,
+          "bottom": 1975.703125,
+          "class": "rounded-xl bg-indigo-50 dark:bg-indigo-900/20 p-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 100,
+          "y": 1991.703125,
+          "width": 255,
+          "height": 154,
+          "bottom": 2145.703125,
+          "class": "rounded-xl bg-slate-100 dark:bg-slate-700/60 p-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        }
+      ]
+    },
+    {
+      "screen": "racks-locations",
+      "width": 390,
+      "theme": "light",
+      "heading": {
+        "x": 79,
+        "y": 325.453125,
+        "width": 297,
+        "height": 62,
+        "bottom": 387.453125
+      },
+      "tabs": {
+        "x": 79,
+        "y": 401.453125,
+        "width": 297,
+        "height": 55,
+        "bottom": 456.453125
+      },
+      "metrics": {
+        "x": 79,
+        "y": 475.453125,
+        "width": 297,
+        "height": 306,
+        "bottom": 781.453125
+      },
+      "insights": {
+        "x": 79,
+        "y": 798.453125,
+        "width": 297,
+        "height": 782.25,
+        "bottom": 1580.703125
+      },
+      "mainGap": 18,
+      "headingToTabs": 14,
+      "tabsToMetrics": 19,
+      "metricsToInsights": 17,
+      "metricRowGap": 10,
+      "metricColumnGap": 10,
+      "referenceInsightGap": null,
+      "metricsVisible": true,
+      "metricsText": [
+        "Total racks3Saved inventory",
+        "Physical rack capacity126USaved inventory",
+        "Mounted devices3Saved inventory",
+        "Rack accessories0Saved inventory"
+      ],
+      "content": "Racks by locationEach bar counts racks assigned to that location, regardless of rack height.Server Room3Mounted devices by locationEach bar counts devices mounted in racks at that location; unmounted devices are excluded.Server Room3Rack-type charts will follow the Phase 1C rack-type schema update.How to read location chartsLocations come from the rack records in your inventory.Racks by location: a 12U cabinet and a 42U rack each count as one rack.Mounted devices by location: devices inherit their location from the rack they are mounted in. This is not a count of all devices at that site.Locations not recorded are grouped under “Not recorded”.",
+      "chartValues": [],
+      "overflow": false,
+      "insightGroups": [
+        {
+          "x": 79,
+          "y": 798.453125,
+          "width": 297,
+          "height": 446.5,
+          "bottom": 1244.953125,
+          "class": "grid grid-cols-1 xl:grid-cols-2 gap-4 rack-overview-grid",
+          "marginTop": "0px",
+          "gap": "17px"
+        },
+        {
+          "x": 79,
+          "y": 1261.953125,
+          "width": 297,
+          "height": 318.75,
+          "bottom": 1580.703125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 100,
+          "y": 1299.328125,
+          "width": 255,
+          "height": 70.375,
+          "bottom": 1369.703125,
+          "class": "",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 100,
+          "y": 1385.703125,
+          "width": 255,
+          "height": 174,
+          "bottom": 1559.703125,
+          "class": "text-sm text-slate-700 dark:text-slate-200 space-y-2",
+          "marginTop": "16px",
+          "gap": "normal"
+        }
+      ]
+    },
+    {
+      "screen": "rack-inventory",
+      "width": 390,
+      "theme": "light",
+      "text": "INFRASTRUCTURE INVENTORY\n                    Network RacksExplore your racks, inspect equipment placement and manage cabinet details.\n                    + Add Rack\n                    \n                    OverviewRack InventoryRack Accessories\n                    \n Rack InventorySelect a rack card to view its equipment and settings.\n Search racks\n  \n \n \n  ▤Rack A\n  Server Room · 42U · Floor Standing\n  \n  3U occupied · 3 devices · 0 accessories\n  View Rack Elevation\n\n  ▤Rack B\n  Server Room · 42U · Floor Standing\n  \n  0U occupied · 0 devices · 0 accessories\n  View Rack Elevation\n\n  ▤Rack C\n  Server Room · 42U · Floor Standing\n  \n  0U occupied · 0 devices · 0 accessories\n  View Rack Elevation\n\n Utilisation shows unique occupied rack units across both faces, not combined face capacity. Inventory-based estimates, not live monitoring.\n No racks match your search.",
+      "overflow": false
+    },
+    {
+      "screen": "rack-accessories",
+      "width": 390,
+      "theme": "light",
+      "text": "INFRASTRUCTURE INVENTORY\n                    Network RacksExplore your racks, inspect equipment placement and manage cabinet details.\n                    + Add Rack\n                    \n                    OverviewRack InventoryRack Accessories\n                    Rack AccessoriesManage accessories within the rack they belong to, including 0U side-rail equipment.▥Rack A0 accessories · 0 vertical 0U railsServer Room · 42UManage Accessories in Rack▥Rack B0 accessories · 0 vertical 0U railsServer Room · 42UManage Accessories in Rack▥Rack C0 accessories · 0 vertical 0U railsServer Room · 42UManage Accessories in Rack",
+      "overflow": false
+    },
+    {
+      "screen": "audit",
+      "width": 390,
+      "theme": "light",
+      "cards": [
+        {
+          "heading": "Existing inventory events",
+          "description": "Saved device, IPAM, rack and settings changes. Older records keep the information originally recorded.",
+          "label": null
+        },
+        {
+          "heading": "Accountable changes",
+          "description": "New inventory events capture authenticated actor and outcome. Additional account and security event coverage is being integrated.",
+          "label": null
+        },
+        {
+          "heading": "No automatic expiry",
+          "description": "History is retained by default. Deletion and purging are not available, and server-side section permissions remain enforced.",
+          "label": null
+        }
+      ],
+      "statuses": [
+        "Recorded",
+        "Recorded",
+        "Recorded",
+        "Recorded",
+        "In development",
+        "In development",
+        "Recorded",
+        "Permission protected"
+      ],
+      "notice": "Your security matters. Audit records track changes without storing passwords, authentication codes or other sensitive credentials.",
+      "overflow": false
+    },
+    {
+      "screen": "devices",
+      "width": 390,
+      "theme": "dark",
+      "heading": {
+        "x": 81,
+        "y": 325.421875,
+        "width": 293,
+        "height": 67.09375,
+        "bottom": 392.515625
+      },
+      "tabs": {
+        "x": 81,
+        "y": 406.515625,
+        "width": 293,
+        "height": 55,
+        "bottom": 461.515625
+      },
+      "metrics": {
+        "x": 81,
+        "y": 480.515625,
+        "width": 293,
+        "height": 307.875,
+        "bottom": 788.390625
+      },
+      "insights": {
+        "x": 81,
+        "y": 805.390625,
+        "width": 293,
+        "height": 737.375,
+        "bottom": 1542.765625
+      },
+      "mainGap": 18,
+      "headingToTabs": 14,
+      "tabsToMetrics": 19,
+      "metricsToInsights": 17,
+      "metricRowGap": 10,
+      "metricColumnGap": 10,
+      "referenceInsightGap": 17,
+      "metricsVisible": true,
+      "metricsText": [
+        "Total Devices6Recorded in inventory",
+        "With Primary IP5Devices with a primary IP",
+        "Locations Recorded5Known location assigned",
+        "Device Types5Different classifications"
+      ],
+      "content": "Devices by TypeEquipment classification across your inventory.Server2Desktop1NAS1Switch1Virtual Machine1Devices by LocationPhysical areas associated with your devices.Server Room4Not Recorded1Office1",
+      "chartValues": [],
+      "overflow": false,
+      "insightGroups": [
+        {
+          "x": 81,
+          "y": 805.390625,
+          "width": 293,
+          "height": 420.1875,
+          "bottom": 1225.578125,
+          "class": "intelligence-card",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 81,
+          "y": 1242.578125,
+          "width": 293,
+          "height": 300.1875,
+          "bottom": 1542.765625,
+          "class": "intelligence-card",
+          "marginTop": "0px",
+          "gap": "normal"
+        }
+      ]
+    },
+    {
+      "screen": "racks-capacity",
+      "width": 390,
+      "theme": "dark",
+      "heading": {
+        "x": 79,
+        "y": 325.453125,
+        "width": 297,
+        "height": 62,
+        "bottom": 387.453125
+      },
+      "tabs": {
+        "x": 79,
+        "y": 401.453125,
+        "width": 297,
+        "height": 55,
+        "bottom": 456.453125
+      },
+      "metrics": {
+        "x": 79,
+        "y": 475.453125,
+        "width": 297,
+        "height": 306,
+        "bottom": 781.453125
+      },
+      "insights": {
+        "x": 79,
+        "y": 798.453125,
+        "width": 297,
+        "height": 1546,
+        "bottom": 2344.453125
+      },
+      "mainGap": 18,
+      "headingToTabs": 14,
+      "tabsToMetrics": 19,
+      "metricsToInsights": 17,
+      "metricRowGap": 10,
+      "metricColumnGap": 10,
+      "referenceInsightGap": null,
+      "metricsVisible": true,
+      "metricsText": [
+        "Total racks3Saved inventory",
+        "Physical rack capacity126USaved inventory",
+        "Mounted devices3Saved inventory",
+        "Rack accessories0Saved inventory"
+      ],
+      "content": "Combined face utilisationFront and rear rack-unit capacity are counted separately.3U occupied249U free1% usedFront vs rear occupancyOccupied units on each face, compared with physical estate height.Front occupied3URear occupied0ULargest contiguous free spaceLongest uninterrupted empty U block on either the front or rear face of each rack. A rack can have more free U in total than this value.Rack A42URack B42URack C42UUnderstanding available rack spaceIllustrative 12U rack — not a live reading or an actual inventory rack.121110987654321Total free space9UAll empty units added together.Largest contiguous free block6USix uninterrupted empty units at the top. Actual device fit also depends on depth and mounting constraints.FreeOccupied",
+      "chartValues": [
+        "3 of 252 rack units occupied",
+        "12U example rack: units 12 through 7 free, units 6 through 4 occupied, units 3 through 1 free"
+      ],
+      "overflow": false,
+      "insightGroups": [
+        {
+          "x": 79,
+          "y": 798.453125,
+          "width": 297,
+          "height": 1546,
+          "bottom": 2344.453125,
+          "class": "space-y-4 rack-overview-stack",
+          "marginTop": "0px",
+          "gap": "17px"
+        },
+        {
+          "x": 79,
+          "y": 798.453125,
+          "width": 297,
+          "height": 192.75,
+          "bottom": 991.203125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 79,
+          "y": 1008.203125,
+          "width": 297,
+          "height": 576.5,
+          "bottom": 1584.703125,
+          "class": "grid grid-cols-1 xl:grid-cols-2 gap-4 rack-overview-grid",
+          "marginTop": "0px",
+          "gap": "17px"
+        },
+        {
+          "x": 79,
+          "y": 1008.203125,
+          "width": 297,
+          "height": 236.75,
+          "bottom": 1244.953125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 79,
+          "y": 1261.953125,
+          "width": 297,
+          "height": 322.75,
+          "bottom": 1584.703125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 79,
+          "y": 1601.703125,
+          "width": 297,
+          "height": 742.75,
+          "bottom": 2344.453125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        }
+      ]
+    },
+    {
+      "screen": "racks-equipment",
+      "width": 390,
+      "theme": "dark",
+      "heading": {
+        "x": 79,
+        "y": 325.453125,
+        "width": 297,
+        "height": 62,
+        "bottom": 387.453125
+      },
+      "tabs": {
+        "x": 79,
+        "y": 401.453125,
+        "width": 297,
+        "height": 55,
+        "bottom": 456.453125
+      },
+      "metrics": {
+        "x": 79,
+        "y": 475.453125,
+        "width": 297,
+        "height": 306,
+        "bottom": 781.453125
+      },
+      "insights": {
+        "x": 79,
+        "y": 798.453125,
+        "width": 297,
+        "height": 1368.25,
+        "bottom": 2166.703125
+      },
+      "mainGap": 18,
+      "headingToTabs": 14,
+      "tabsToMetrics": 19,
+      "metricsToInsights": 17,
+      "metricRowGap": 10,
+      "metricColumnGap": 10,
+      "referenceInsightGap": null,
+      "metricsVisible": true,
+      "metricsText": [
+        "Total racks3Saved inventory",
+        "Physical rack capacity126USaved inventory",
+        "Mounted devices3Saved inventory",
+        "Rack accessories0Saved inventory"
+      ],
+      "content": "Mounted equipment by typeEach bar counts devices assigned to a rack, grouped by their recorded device type. A device is counted once.Server - Physical1Switch1NAS1Devices and accessories by rackCompare how many devices and rack accessories are recorded in each rack. These are item counts, not rack-unit usage.Rack ADevices3Accessories0Rack BDevices0Accessories0Rack CDevices0Accessories0How to read these chartsEquipment figures describe saved inventory records, not live device status.DevicesA mounted server, switch or other device contributes one to its type and rack totals, regardless of its height in U.AccessoriesPDUs, cable managers and other recorded accessories are counted separately. A 0U accessory still counts as an item.",
+      "chartValues": [],
+      "overflow": false,
+      "insightGroups": [
+        {
+          "x": 79,
+          "y": 798.453125,
+          "width": 297,
+          "height": 882.5,
+          "bottom": 1680.953125,
+          "class": "grid grid-cols-1 xl:grid-cols-2 gap-4 rack-overview-grid",
+          "marginTop": "0px",
+          "gap": "17px"
+        },
+        {
+          "x": 79,
+          "y": 1697.953125,
+          "width": 297,
+          "height": 468.75,
+          "bottom": 2166.703125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 100,
+          "y": 1735.328125,
+          "width": 255,
+          "height": 70.375,
+          "bottom": 1805.703125,
+          "class": "",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 100,
+          "y": 1821.703125,
+          "width": 255,
+          "height": 324,
+          "bottom": 2145.703125,
+          "class": "grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm",
+          "marginTop": "16px",
+          "gap": "16px"
+        },
+        {
+          "x": 100,
+          "y": 1821.703125,
+          "width": 255,
+          "height": 154,
+          "bottom": 1975.703125,
+          "class": "rounded-xl bg-indigo-50 dark:bg-indigo-900/20 p-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 100,
+          "y": 1991.703125,
+          "width": 255,
+          "height": 154,
+          "bottom": 2145.703125,
+          "class": "rounded-xl bg-slate-100 dark:bg-slate-700/60 p-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        }
+      ]
+    },
+    {
+      "screen": "racks-locations",
+      "width": 390,
+      "theme": "dark",
+      "heading": {
+        "x": 79,
+        "y": 325.453125,
+        "width": 297,
+        "height": 62,
+        "bottom": 387.453125
+      },
+      "tabs": {
+        "x": 79,
+        "y": 401.453125,
+        "width": 297,
+        "height": 55,
+        "bottom": 456.453125
+      },
+      "metrics": {
+        "x": 79,
+        "y": 475.453125,
+        "width": 297,
+        "height": 306,
+        "bottom": 781.453125
+      },
+      "insights": {
+        "x": 79,
+        "y": 798.453125,
+        "width": 297,
+        "height": 782.25,
+        "bottom": 1580.703125
+      },
+      "mainGap": 18,
+      "headingToTabs": 14,
+      "tabsToMetrics": 19,
+      "metricsToInsights": 17,
+      "metricRowGap": 10,
+      "metricColumnGap": 10,
+      "referenceInsightGap": null,
+      "metricsVisible": true,
+      "metricsText": [
+        "Total racks3Saved inventory",
+        "Physical rack capacity126USaved inventory",
+        "Mounted devices3Saved inventory",
+        "Rack accessories0Saved inventory"
+      ],
+      "content": "Racks by locationEach bar counts racks assigned to that location, regardless of rack height.Server Room3Mounted devices by locationEach bar counts devices mounted in racks at that location; unmounted devices are excluded.Server Room3Rack-type charts will follow the Phase 1C rack-type schema update.How to read location chartsLocations come from the rack records in your inventory.Racks by location: a 12U cabinet and a 42U rack each count as one rack.Mounted devices by location: devices inherit their location from the rack they are mounted in. This is not a count of all devices at that site.Locations not recorded are grouped under “Not recorded”.",
+      "chartValues": [],
+      "overflow": false,
+      "insightGroups": [
+        {
+          "x": 79,
+          "y": 798.453125,
+          "width": 297,
+          "height": 446.5,
+          "bottom": 1244.953125,
+          "class": "grid grid-cols-1 xl:grid-cols-2 gap-4 rack-overview-grid",
+          "marginTop": "0px",
+          "gap": "17px"
+        },
+        {
+          "x": 79,
+          "y": 1261.953125,
+          "width": 297,
+          "height": 318.75,
+          "bottom": 1580.703125,
+          "class": "rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-5 space-y-4",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 100,
+          "y": 1299.328125,
+          "width": 255,
+          "height": 70.375,
+          "bottom": 1369.703125,
+          "class": "",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 100,
+          "y": 1385.703125,
+          "width": 255,
+          "height": 174,
+          "bottom": 1559.703125,
+          "class": "text-sm text-slate-700 dark:text-slate-200 space-y-2",
+          "marginTop": "16px",
+          "gap": "normal"
+        }
+      ]
+    },
+    {
+      "screen": "rack-inventory",
+      "width": 390,
+      "theme": "dark",
+      "text": "INFRASTRUCTURE INVENTORY\n                    Network RacksExplore your racks, inspect equipment placement and manage cabinet details.\n                    + Add Rack\n                    \n                    OverviewRack InventoryRack Accessories\n                    \n Rack InventorySelect a rack card to view its equipment and settings.\n Search racks\n  \n \n \n  ▤Rack A\n  Server Room · 42U · Floor Standing\n  \n  3U occupied · 3 devices · 0 accessories\n  View Rack Elevation\n\n  ▤Rack B\n  Server Room · 42U · Floor Standing\n  \n  0U occupied · 0 devices · 0 accessories\n  View Rack Elevation\n\n  ▤Rack C\n  Server Room · 42U · Floor Standing\n  \n  0U occupied · 0 devices · 0 accessories\n  View Rack Elevation\n\n Utilisation shows unique occupied rack units across both faces, not combined face capacity. Inventory-based estimates, not live monitoring.\n No racks match your search.",
+      "overflow": false
+    },
+    {
+      "screen": "rack-accessories",
+      "width": 390,
+      "theme": "dark",
+      "text": "INFRASTRUCTURE INVENTORY\n                    Network RacksExplore your racks, inspect equipment placement and manage cabinet details.\n                    + Add Rack\n                    \n                    OverviewRack InventoryRack Accessories\n                    Rack AccessoriesManage accessories within the rack they belong to, including 0U side-rail equipment.▥Rack A0 accessories · 0 vertical 0U railsServer Room · 42UManage Accessories in Rack▥Rack B0 accessories · 0 vertical 0U railsServer Room · 42UManage Accessories in Rack▥Rack C0 accessories · 0 vertical 0U railsServer Room · 42UManage Accessories in Rack",
+      "overflow": false
+    },
+    {
+      "screen": "audit",
+      "width": 390,
+      "theme": "dark",
+      "cards": [
+        {
+          "heading": "Existing inventory events",
+          "description": "Saved device, IPAM, rack and settings changes. Older records keep the information originally recorded.",
+          "label": null
+        },
+        {
+          "heading": "Accountable changes",
+          "description": "New inventory events capture authenticated actor and outcome. Additional account and security event coverage is being integrated.",
+          "label": null
+        },
+        {
+          "heading": "No automatic expiry",
+          "description": "History is retained by default. Deletion and purging are not available, and server-side section permissions remain enforced.",
+          "label": null
+        }
+      ],
+      "statuses": [
+        "Recorded",
+        "Recorded",
+        "Recorded",
+        "Recorded",
+        "In development",
+        "In development",
+        "Recorded",
+        "Permission protected"
+      ],
+      "notice": "Your security matters. Audit records track changes without storing passwords, authentication codes or other sensitive credentials.",
+      "overflow": false
+    }
+  ]
+}

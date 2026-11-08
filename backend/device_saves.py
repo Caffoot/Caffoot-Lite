@@ -1,5 +1,6 @@
 """Reserved device record saves against the authoritative SQLite inventory."""
 import json
+from .audit_events import attribute_event, safe_device_differences
 import time
 from datetime import datetime, timezone
 
@@ -12,6 +13,7 @@ from .rack_validation import find_rack_import_conflicts
 
 _RACK_PLACEMENT_FIELDS = frozenset((
     "rackId", "face", "rackUStart", "rackUEnd", "rackUHeight", "mountType",
+    "rackShelfAccessoryId",
 ))
 
 _GUEST_FIELDS = frozenset((
@@ -91,7 +93,8 @@ def _persist_related_guests(connection, updates):
             (record["name"], json.dumps(record, ensure_ascii=False, allow_nan=False), record["id"]),
         )
         changes.append({"action": "Updated", "kind": "Device",
-                        "label": str(record["name"])[:100], "fields": sorted(changed)[:16]})
+                        "label": str(record["name"])[:100], "fields": sorted(changed)[:16],
+                        **safe_device_differences(previous, record)})
     return changes
 
 
@@ -193,7 +196,8 @@ def save_reserved_device(connection, account_id, device_id, revision, record, se
             fields = [key for key in dict.fromkeys((*previous, *record))
                       if key != "id" and previous.get(key) != record.get(key)]
             changes.append({"action": "Updated", "kind": "Device",
-                            "label": str(record["name"])[:100], "fields": fields[:16]})
+                            "label": str(record["name"])[:100], "fields": fields[:16],
+                            **safe_device_differences(previous, record)})
         for ip in dict.fromkeys((old_ip, new_ip)):
             if not ip:
                 continue
@@ -215,12 +219,9 @@ def save_reserved_device(connection, account_id, device_id, revision, record, se
                      "omitted": max(0, len(changes) - 60)}
             connection.execute(
                 "INSERT INTO inventory_change_history(record_json) VALUES(?)",
-                (json.dumps(event, ensure_ascii=False),),
+                (json.dumps(attribute_event(connection, account_id, event), ensure_ascii=False),),
             )
-            connection.execute(
-                "DELETE FROM inventory_change_history WHERE id NOT IN "
-                "(SELECT id FROM inventory_change_history ORDER BY id DESC LIMIT 200)"
-            )
+
         connection.execute("DELETE FROM device_edit_reservations WHERE device_id=?", (device_id,))
         connection.commit()
         return revision + 1
@@ -292,12 +293,9 @@ def create_device(connection, account_id, record):
                  "reason": "Inventory saved", "changes": changes, "omitted": 0}
         connection.execute(
             "INSERT INTO inventory_change_history(record_json) VALUES(?)",
-            (json.dumps(event, ensure_ascii=False),),
+            (json.dumps(attribute_event(connection, account_id, event), ensure_ascii=False),),
         )
-        connection.execute(
-            "DELETE FROM inventory_change_history WHERE id NOT IN "
-            "(SELECT id FROM inventory_change_history ORDER BY id DESC LIMIT 200)"
-        )
+
         connection.commit()
         return 0
     except BaseException:
@@ -376,12 +374,9 @@ def delete_reserved_device(connection, account_id, device_id, revision, related_
                  "reason": "Inventory saved", "changes": changes, "omitted": 0}
         connection.execute(
             "INSERT INTO inventory_change_history(record_json) VALUES(?)",
-            (json.dumps(event, ensure_ascii=False),),
+            (json.dumps(attribute_event(connection, account_id, event), ensure_ascii=False),),
         )
-        connection.execute(
-            "DELETE FROM inventory_change_history WHERE id NOT IN "
-            "(SELECT id FROM inventory_change_history ORDER BY id DESC LIMIT 200)"
-        )
+
         connection.execute("DELETE FROM device_edit_reservations WHERE device_id=?", (device_id,))
         connection.commit()
         return True

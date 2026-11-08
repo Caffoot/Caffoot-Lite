@@ -1,9 +1,10 @@
-"""Offline account permissions and administrative safeguards.
+"""Account permissions and administrative safeguards used by the HTTP server.
 
-This module is not connected to HTTP. All callers must authenticate an active
-MFA-verified administrator before passing their account ID.
-"""
+Callers must establish an active administrator and the required authenticator
+protection before passing the actor identity to administrative operations."""
 from backend.accounts import hash_password
+from backend.audit_events import record_actor_event
+from backend.profiles import validate_profile_details
 
 SECTIONS = ("Devices", "IPAM", "Racks")
 LEVELS = ("read", "edit")
@@ -27,15 +28,30 @@ def _target(connection, target_id):
     return row
 
 
-def create_user(connection, actor_id, username, password):
+def create_user(connection, actor_id, username, password, profile=None):
     if not isinstance(username, str) or not username.strip():
         raise ValueError("Username is required")
+    # Validate before beginning a transaction, so an invalid optional field
+    # never creates part of an account or accidentally verifies an email.
+    details = validate_profile_details(profile) if profile is not None else None
     connection.execute("BEGIN IMMEDIATE")
     try:
         _admin(connection, actor_id)
         cursor = connection.execute(
             "INSERT INTO accounts(username,password_hash) VALUES(?,?)",
             (username.strip(), hash_password(password)),
+        )
+        if details is not None:
+            connection.execute(
+                "INSERT INTO account_profiles(account_id,first_name,last_name,"
+                "display_name,email,email_verified) VALUES(?,?,?,?,?,0)",
+                (cursor.lastrowid, details["firstName"], details["lastName"],
+                 details["displayName"], details["email"]),
+            )
+        record_actor_event(
+            connection, actor_id, kind="Account", action="Created",
+            label=username.strip(), reason="Account created",
+            fields=["Account"] + (["Personal details"] if details is not None else []),
         )
         connection.commit()
         return cursor.lastrowid
@@ -51,6 +67,14 @@ def set_permission(connection, actor_id, target_id, section, level):
     try:
         _admin(connection, actor_id)
         _target(connection, target_id)
+        target_name = connection.execute(
+            "SELECT username FROM accounts WHERE id=?", (target_id,)
+        ).fetchone()[0]
+        previous_row = connection.execute(
+            "SELECT level FROM account_permissions WHERE account_id=? AND section=?",
+            (target_id, section),
+        ).fetchone()
+        previous_level = previous_row[0] if previous_row else None
         if level == "edit":
             enrolled = connection.execute(
                 "SELECT mfa_confirmed FROM accounts WHERE id=?", (target_id,)
@@ -72,6 +96,14 @@ def set_permission(connection, actor_id, target_id, section, level):
         connection.execute(
             "DELETE FROM account_sessions WHERE account_id=?", (target_id,)
         )
+        if previous_level != level:
+            record_actor_event(
+                connection, actor_id, kind="Account", action="Updated",
+                label=target_name, reason="User permission changed",
+                fields=[section+" access"],
+                before={section+" access": previous_level or "No Access"},
+                after={section+" access": level or "No Access"},
+            )
         connection.commit()
     except BaseException:
         connection.rollback()
@@ -109,7 +141,10 @@ def set_account_active(connection, actor_id, target_id, active):
         _target(connection, target_id)
         if actor_id == target_id:
             raise ValueError("Administrators cannot disable themselves")
-        target_admin, _ = _target(connection, target_id)
+        target_admin, target_active = _target(connection, target_id)
+        target_name = connection.execute(
+            "SELECT username FROM accounts WHERE id=?", (target_id,)
+        ).fetchone()[0]
         if not active and target_admin and connection.execute(
             "SELECT count(*) FROM accounts WHERE is_admin=1 AND active=1"
         ).fetchone()[0] <= 1:
@@ -120,6 +155,16 @@ def set_account_active(connection, actor_id, target_id, active):
         connection.execute(
             "DELETE FROM account_sessions WHERE account_id=?", (target_id,)
         )
+        if not active:
+            connection.execute("DELETE FROM account_email_proofs WHERE account_id=?", (target_id,))
+        if bool(target_active) != active:
+            record_actor_event(
+                connection, actor_id, kind="Account", action="Updated",
+                label=target_name, reason="Account status changed",
+                fields=["Account status"],
+                before={"Account status": "Active" if target_active else "Disabled"},
+                after={"Account status": "Active" if active else "Disabled"},
+            )
         connection.commit()
     except BaseException:
         connection.rollback()
@@ -131,6 +176,9 @@ def delete_user(connection, actor_id, target_id):
     try:
         _admin(connection, actor_id)
         _target(connection, target_id)
+        target_name = connection.execute(
+            "SELECT username FROM accounts WHERE id=?", (target_id,)
+        ).fetchone()[0]
         if actor_id == target_id:
             raise ValueError("Administrators cannot delete themselves")
         target_admin, target_active = _target(connection, target_id)
@@ -140,6 +188,10 @@ def delete_user(connection, actor_id, target_id):
             raise ValueError("Cannot delete the last active administrator")
         connection.execute("DELETE FROM account_permissions WHERE account_id=?", (target_id,))
         connection.execute("DELETE FROM accounts WHERE id=?", (target_id,))
+        record_actor_event(
+            connection, actor_id, kind="Account", action="Deleted",
+            label=target_name, reason="Account deleted", fields=["Account"],
+        )
         connection.commit()
     except BaseException:
         connection.rollback()
@@ -154,6 +206,9 @@ def set_administrator(connection, actor_id, target_id, is_admin):
     try:
         _admin(connection, actor_id)
         target_admin, target_active = _target(connection, target_id)
+        target_name = connection.execute(
+            "SELECT username FROM accounts WHERE id=?", (target_id,)
+        ).fetchone()[0]
         if not is_admin and actor_id == target_id:
             raise ValueError("Administrators cannot demote themselves")
         if is_admin and not connection.execute(
@@ -170,6 +225,14 @@ def set_administrator(connection, actor_id, target_id, is_admin):
         connection.execute(
             "DELETE FROM account_sessions WHERE account_id=?", (target_id,)
         )
+        if bool(target_admin) != is_admin:
+            record_actor_event(
+                connection, actor_id, kind="Account", action="Updated",
+                label=target_name, reason="Administrator role changed",
+                fields=["Administrator role"],
+                before={"Administrator role": "Administrator" if target_admin else "User"},
+                after={"Administrator role": "Administrator" if is_admin else "User"},
+            )
         connection.commit()
     except BaseException:
         connection.rollback()

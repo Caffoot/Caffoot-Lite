@@ -2,6 +2,8 @@
 
 [← All feature guides](README.md)
 
+*Existing screenshots show the earlier Docker edition for orientation; the v2.1 steps describe the prepared interface. They are not new v2.1 or native Safari screenshots.*
+
 ## What a device record represents
 
 A device can describe a physical server, switch, workstation, printer or another supported type, with its network address, status, location, optional rack position and type-specific hardware/software information. Supported virtual machines have their own host-related details. Caffoot keeps the established v1.3.3 fields and validations; **not every device type presents the same additional fields**.
@@ -12,7 +14,7 @@ The **Device Inventory** view shows saved equipment and its primary addresses. A
 
 ## Prepare before you add a device
 
-- Use [IPAM](IPAM.md) to add its assignable **Network / VLAN** subnet first.
+- Use [IPAM](IPAM.md) to add its addressable subnet (VLAN optional) first.
 - Make sure the required device type and location are available in the managed selections.
 - Create the rack beforehand if the device is to be mounted in one.
 - For a new physical device, an ordinary editor needs **Devices Edit and IPAM Edit**. A rack-mounted new device additionally needs **Racks Edit**. An administrator has the approved administrative access.
@@ -26,7 +28,7 @@ Imagine recording *lab-switch-01*, a fictional switch on subnet 192.168.50.0/24.
 3. Under **Hardware & lifecycle**, choose a suitable **Device Status** (such as Active). Supply manufacturer, model and serial number if known. **Manage Hardware Catalogue** maintains reusable manufacturer/model suggestions.
 4. Complete any relevant **Additional details for this device type**, such as hardware properties, installed software or supported service flags. These vary by device type.
 5. Under **Mounting & location**, choose **Device Mounting** and **Location Area**. For rack-mounted equipment, select the rack, **Face**, **Start U** and **U Height**. Use a free position for the entire height.
-6. Under **Network identity**, choose the network/address block as offered and the available **Primary IP**. If the network is missing, create it in IPAM and return to the form.
+6. Under **Networking → Network Identity**, optionally filter by **IP Address Block**, choose **Subnet Name — CIDR** then use **Choose an Available IP Address** or enter a **Primary IP Address** in the field below it. Both choices update the same address. The read-only VLAN is taken from the subnet or displays **Not assigned**; change a VLAN on the subnet in IPAM, not on the device. If the network is missing, create it in IPAM and return to the form.
 7. Optionally fill **Notes / Details**, then select **Save Device**.
 8. Reopen the saved record and check the name, hardware, network details and location. In IPAM and Racks, verify the related records where applicable.
 
@@ -62,6 +64,36 @@ Use **Device Status** to record a supported lifecycle state such as Active, Main
 ## Virtual machines
 
 When an eligible physical hypervisor host exists and is configured accordingly, **Device deployment** offers **Virtual Machine (VM)**. Select a suitable virtual purpose and the physical host, then record resource information such as vCPU, RAM, disk and network adapters where requested. Existing historical VM relationships are preserved.
+
+## v2.1 Device Forms
+
+These prepared v2.1 Add/Edit/Duplicate instructions follow the approved interface; publication remains a separate decision.
+
+For an eligible physical server, **General** shows **This physical server hosts virtual machines** immediately beneath its type. Tick it to use the dedicated **Hypervisor Software/OS** and **Version** controls. The ordinary OS card is hidden while hosting is enabled; unticking restores its values. Known host products are offered through this dedicated path. Previously recorded OS/software assignments are retained with an explanation rather than silently removed. Existing guest-change confirmations still apply.
+
+For a VM, choose its purpose, physical host and virtual allocations on **General**. Physical mounting and Hardware controls are hidden. Type-specific choices and saved host relationships remain protected.
+
+**Notes** fills the available form space automatically and keeps all existing formatting/Preview actions. Short windows scroll within the editor while the footer stays accessible. Validation messages appear above the footer and reveal the relevant tab or field. Duplicate uses its subtitle to explain the new record; it still requires a unique name/IP and preserves the original.
+
+## v2.1 Shelves And Software
+
+These are prepared v2.1 instructions; check the release status before installing.
+
+For physical **Tabletop / Shelf Mounted** equipment, open **General → Mounting & Rack Configuration**. Leaving **Rack (Optional)** empty records no rack association. Selecting a rack requires an actual **Rack Shelf** in that rack. **+ Add Rack Shelf** opens the existing Horizontal Accessory editor and returns to your Device draft. A successfully saved shelf remains in inventory even if you cancel the Device draft. The device uses the shelf's current location without occupying another U. Details shows the rack, current shelf U and face. Duplicate retains the association while requiring a new identity/address.
+
+Removing a shelf that holds devices requires an explicit choice for each device: another shelf, a newly created replacement, or **Retired**. Retirement keeps the record and clears its active rack/shelf association; history retains the former location. All reviewed changes save together or none do. Another editor's active five-minute reservation prevents the operation. Devices and Racks edit access are required.
+
+OS/version lists are offline suggestions, with **Custom / Other** for saved or unlisted values. Ubuntu Server offers LTS releases; desktop Ubuntu also offers interim releases. pfSense and OPNsense editions have separate release lists. Installed Software suggestions depend on this device's type and OS, including a VM's own guest OS. Check actual package availability for its edition, release and model; a suggestion does not mean it is installed or supported everywhere.
+
+Old, archived, hidden or out-of-context assignments remain checked under **Previously recorded — review**. They remain saved until you deliberately untick them. Changing the OS refreshes suggestions without clearing those selections. Custom catalogue entries, saved versions and historical hardware details remain available. Cancel keeps the original device unchanged.
+
+## v2.1 Device Choice And Location Corrections
+
+Changing device type or virtual purpose refreshes the related OS, version, software and hardware choices straight away. Incompatible new standard OS/version choices are cleared; saved historical values and Custom entries remain available. Previously recorded values are marked for review and remain until you deliberately replace or remove them. Changing an OS edition or hosting product starts its version choice afresh. Cancel leaves the saved device unchanged.
+
+When adding a physical device, selecting a rack defaults **Location Area** to that rack's matching recorded area. A room already recorded on the rack is offered even if it is not yet in the Device location list; this does not create a managed location or save the draft automatically. You can override it freely; later rack changes will then leave your choice alone. Existing devices retain their saved location, and Duplicate initially keeps its copied location. If a rack has no matching area, choose the location normally.
+
+The read-only Details header uses one labelled × control, while the footer keeps its separate **Close** action. Keyboard/Escape and focus return remain available. Owner-tested scenarios are recorded in #329; this documentation does not announce public availability.
 
 ## Troubleshooting
 

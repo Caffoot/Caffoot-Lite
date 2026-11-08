@@ -2,6 +2,8 @@
 
 [← All feature guides](README.md)
 
+*Existing screenshots show the earlier Docker edition for orientation; the v2.1 steps describe the prepared interface. They are not new v2.1 or native Safari screenshots.*
+
 ## Your first visit
 
 The sign-in screen below is from the actual Docker/SQLite application, shown without any entered credentials.
@@ -26,7 +28,7 @@ The Dashboard's **Network Insights** tab summarises a fictional lab inventory in
 
 - **Dashboard:** inventory overview and convenient shortcuts.
 - **Devices:** physical/virtual equipment, network identity, hardware/software details and location.
-- **IPAM:** IP Address Blocks, assignable Network/VLAN subnets, individual IP addresses and reservations.
+- **IPAM:** Optional IP Address Blocks, assignable named subnets, individual IP addresses and reservations.
 - **Racks:** enclosures, front/rear views, mounted devices, accessories and U positions.
 - **Change History:** recent inventory actions and changes.
 - **Users:** administrator-managed accounts, MFA state and section permissions.
@@ -41,12 +43,12 @@ The values below are fictional. Use your own network plan and genuine spare addr
 
 **Example:** *Lab Network* is 192.168.50.0/24, its gateway is 192.168.50.1 and its VLAN is 50. The device is *lab-switch-01* and the enclosure is *Lab Rack*.
 
-1. In **IPAM**, choose **Add Subnet**. Create a **Network / VLAN** with the CIDR, name, VLAN and gateway. Choose **Save Subnet & VLAN**.
+1. In **IPAM**, choose **Add Single Subnet**. Enter CIDR, unique name and explicit LAN purpose, optionally VLAN, and the required usable gateway. Choose **Save Subnet**.
 2. In **Racks**, choose **Add Network Rack** if the switch will be mounted. Enter the type and measured height/width/depth, then **Save Rack**.
 3. In **Devices**, choose **Add Device**. Enter the device name, physical type, status and location.
 4. Select an existing subnet and a valid **Primary IP**, for example 192.168.50.10 if it is actually available. If rack-mounted, select the rack, front/rear face, free U position and height.
 5. Select **Save Device**. Reopen it to check the details, look at its IP in **IPAM**, and confirm rack occupancy in **Racks**.
-6. Open **Change History** to review the saved actions.
+6. Open **Audit Trail** to review the saved actions.
 
 See [Devices](Devices.md), [IPAM](IPAM.md) and [Racks](Racks.md) for every step and the safeguards.
 

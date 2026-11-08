@@ -1,0 +1,1 @@
+PASS: Single Subnet fields/modal and Device Networking frame match pinned structures at four widths; approved field amendments are recorded separately

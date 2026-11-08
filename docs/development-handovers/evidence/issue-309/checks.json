@@ -1,0 +1,6421 @@
+{
+  "applicationCheckpoint": "81bc38a2ca381ca8143cb6c61a165b580755a8b7",
+  "runtimeSha256": {
+    "interface/application.js": "4010cd8ae66157f2312b8b2fdd57d4a2e4ba60c769601b8d306ae52ded6ba31e",
+    "interface/screens/audit-trail.html": "876460d20d242ef06c3dea54790e7f7489f4ee2cbf856ad063efcfffb749bc0e",
+    "interface/styles/components.css": "f837ec3ca5555f6d474f2727b3260a7696e293c71c37b91f158080190e626b99"
+  },
+  "fontPolicy": "System fallback; external font and icon stylesheets blocked, matching the established visual runner",
+  "counts": {
+    "layouts": 288,
+    "keyboardActivations": 208,
+    "enlargedLabelStates": 36,
+    "emptyInventoryStates": 20
+  },
+  "inventoryUnchanged": true,
+  "browserErrors": [],
+  "layouts": [
+    {
+      "screen": "dashboard",
+      "value": "overview",
+      "width": 2560,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "dashboard",
+      "value": "insights",
+      "width": 2560,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "dashboard",
+      "value": "activity",
+      "width": 2560,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "overview",
+      "width": 2560,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "inventory",
+      "width": 2560,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "types",
+      "width": 2560,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "locations",
+      "width": 2560,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "manufacturers",
+      "width": 2560,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "models",
+      "width": 2560,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "software",
+      "width": 2560,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "services",
+      "width": 2560,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "ipam",
+      "value": "overview",
+      "width": 2560,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "ipam",
+      "value": "addresses",
+      "width": 2560,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "ipam",
+      "value": "manage",
+      "width": 2560,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "overview",
+      "width": 2560,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": {
+        "headingGap": 17,
+        "stripHeight": 55,
+        "metricsGap": 19
+      }
+    },
+    {
+      "screen": "racks",
+      "value": "inventory",
+      "width": 2560,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "accessories",
+      "width": 2560,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "users",
+      "value": "overview",
+      "width": 2560,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "users",
+      "value": "list",
+      "width": 2560,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "users",
+      "value": "add",
+      "width": 2560,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "audit",
+      "value": "activity",
+      "width": 2560,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "audit",
+      "value": "assets",
+      "width": 2560,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "audit",
+      "value": "coverage",
+      "width": 2560,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "settings",
+      "value": "data",
+      "width": 2560,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "settings",
+      "value": "email",
+      "width": 2560,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "settings",
+      "value": "maintenance",
+      "width": 2560,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "account",
+      "value": "overview",
+      "width": 2560,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "account",
+      "value": "security",
+      "width": 2560,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "account",
+      "value": "help",
+      "width": 2560,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "account",
+      "value": "about",
+      "width": 2560,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "capacity",
+      "width": 2560,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": {
+        "headingGap": 17,
+        "stripHeight": 55,
+        "metricsGap": 19
+      }
+    },
+    {
+      "screen": "racks",
+      "value": "equipment",
+      "width": 2560,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": {
+        "headingGap": 17,
+        "stripHeight": 55,
+        "metricsGap": 19
+      }
+    },
+    {
+      "screen": "racks",
+      "value": "locations",
+      "width": 2560,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": {
+        "headingGap": 17,
+        "stripHeight": 55,
+        "metricsGap": 19
+      }
+    },
+    {
+      "screen": "racks",
+      "value": "view",
+      "width": 2560,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "equipment",
+      "width": 2560,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "settings",
+      "width": 2560,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "dashboard",
+      "value": "overview",
+      "width": 2560,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "dashboard",
+      "value": "insights",
+      "width": 2560,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "dashboard",
+      "value": "activity",
+      "width": 2560,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "overview",
+      "width": 2560,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "inventory",
+      "width": 2560,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "types",
+      "width": 2560,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "locations",
+      "width": 2560,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "manufacturers",
+      "width": 2560,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "models",
+      "width": 2560,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "software",
+      "width": 2560,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "services",
+      "width": 2560,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "ipam",
+      "value": "overview",
+      "width": 2560,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "ipam",
+      "value": "addresses",
+      "width": 2560,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "ipam",
+      "value": "manage",
+      "width": 2560,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "overview",
+      "width": 2560,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": {
+        "headingGap": 17,
+        "stripHeight": 55,
+        "metricsGap": 19
+      }
+    },
+    {
+      "screen": "racks",
+      "value": "inventory",
+      "width": 2560,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "accessories",
+      "width": 2560,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "users",
+      "value": "overview",
+      "width": 2560,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "users",
+      "value": "list",
+      "width": 2560,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "users",
+      "value": "add",
+      "width": 2560,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "audit",
+      "value": "activity",
+      "width": 2560,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "audit",
+      "value": "assets",
+      "width": 2560,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "audit",
+      "value": "coverage",
+      "width": 2560,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "settings",
+      "value": "data",
+      "width": 2560,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "settings",
+      "value": "email",
+      "width": 2560,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "settings",
+      "value": "maintenance",
+      "width": 2560,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "account",
+      "value": "overview",
+      "width": 2560,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "account",
+      "value": "security",
+      "width": 2560,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "account",
+      "value": "help",
+      "width": 2560,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "account",
+      "value": "about",
+      "width": 2560,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "capacity",
+      "width": 2560,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": {
+        "headingGap": 17,
+        "stripHeight": 55,
+        "metricsGap": 19
+      }
+    },
+    {
+      "screen": "racks",
+      "value": "equipment",
+      "width": 2560,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": {
+        "headingGap": 17,
+        "stripHeight": 55,
+        "metricsGap": 19
+      }
+    },
+    {
+      "screen": "racks",
+      "value": "locations",
+      "width": 2560,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": {
+        "headingGap": 17,
+        "stripHeight": 55,
+        "metricsGap": 19
+      }
+    },
+    {
+      "screen": "racks",
+      "value": "view",
+      "width": 2560,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "equipment",
+      "width": 2560,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "settings",
+      "width": 2560,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "dashboard",
+      "value": "overview",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "dashboard",
+      "value": "insights",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "dashboard",
+      "value": "activity",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "overview",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "inventory",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "types",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "locations",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "manufacturers",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "models",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "software",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "services",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "ipam",
+      "value": "overview",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "ipam",
+      "value": "addresses",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "ipam",
+      "value": "manage",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "overview",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": {
+        "headingGap": 17,
+        "stripHeight": 55,
+        "metricsGap": 19
+      }
+    },
+    {
+      "screen": "racks",
+      "value": "inventory",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "accessories",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "users",
+      "value": "overview",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "users",
+      "value": "list",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "users",
+      "value": "add",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "audit",
+      "value": "activity",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "audit",
+      "value": "assets",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "audit",
+      "value": "coverage",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "settings",
+      "value": "data",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "settings",
+      "value": "email",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "settings",
+      "value": "maintenance",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "account",
+      "value": "overview",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "account",
+      "value": "security",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "account",
+      "value": "help",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "account",
+      "value": "about",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "capacity",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": {
+        "headingGap": 17,
+        "stripHeight": 55,
+        "metricsGap": 19
+      }
+    },
+    {
+      "screen": "racks",
+      "value": "equipment",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": {
+        "headingGap": 17,
+        "stripHeight": 55,
+        "metricsGap": 19
+      }
+    },
+    {
+      "screen": "racks",
+      "value": "locations",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": {
+        "headingGap": 17,
+        "stripHeight": 55,
+        "metricsGap": 19
+      }
+    },
+    {
+      "screen": "racks",
+      "value": "view",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "equipment",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "settings",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "dashboard",
+      "value": "overview",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "dashboard",
+      "value": "insights",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "dashboard",
+      "value": "activity",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "overview",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "inventory",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "types",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "locations",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "manufacturers",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "models",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "software",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "services",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "ipam",
+      "value": "overview",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "ipam",
+      "value": "addresses",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "ipam",
+      "value": "manage",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "overview",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": {
+        "headingGap": 17,
+        "stripHeight": 55,
+        "metricsGap": 19
+      }
+    },
+    {
+      "screen": "racks",
+      "value": "inventory",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "accessories",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "users",
+      "value": "overview",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "users",
+      "value": "list",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "users",
+      "value": "add",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "audit",
+      "value": "activity",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "audit",
+      "value": "assets",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "audit",
+      "value": "coverage",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "settings",
+      "value": "data",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "settings",
+      "value": "email",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "settings",
+      "value": "maintenance",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "account",
+      "value": "overview",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "account",
+      "value": "security",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "account",
+      "value": "help",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "account",
+      "value": "about",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "capacity",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": {
+        "headingGap": 17,
+        "stripHeight": 55,
+        "metricsGap": 19
+      }
+    },
+    {
+      "screen": "racks",
+      "value": "equipment",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": {
+        "headingGap": 17,
+        "stripHeight": 55,
+        "metricsGap": 19
+      }
+    },
+    {
+      "screen": "racks",
+      "value": "locations",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": {
+        "headingGap": 17,
+        "stripHeight": 55,
+        "metricsGap": 19
+      }
+    },
+    {
+      "screen": "racks",
+      "value": "view",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "equipment",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "settings",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "dashboard",
+      "value": "overview",
+      "width": 1024,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "dashboard",
+      "value": "insights",
+      "width": 1024,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "dashboard",
+      "value": "activity",
+      "width": 1024,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "overview",
+      "width": 1024,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "inventory",
+      "width": 1024,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "types",
+      "width": 1024,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "locations",
+      "width": 1024,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "manufacturers",
+      "width": 1024,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "models",
+      "width": 1024,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "software",
+      "width": 1024,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "services",
+      "width": 1024,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "ipam",
+      "value": "overview",
+      "width": 1024,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "ipam",
+      "value": "addresses",
+      "width": 1024,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "ipam",
+      "value": "manage",
+      "width": 1024,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "overview",
+      "width": 1024,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": {
+        "headingGap": 17,
+        "stripHeight": 55,
+        "metricsGap": 19
+      }
+    },
+    {
+      "screen": "racks",
+      "value": "inventory",
+      "width": 1024,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "accessories",
+      "width": 1024,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "users",
+      "value": "overview",
+      "width": 1024,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "users",
+      "value": "list",
+      "width": 1024,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "users",
+      "value": "add",
+      "width": 1024,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "audit",
+      "value": "activity",
+      "width": 1024,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "audit",
+      "value": "assets",
+      "width": 1024,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "audit",
+      "value": "coverage",
+      "width": 1024,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "settings",
+      "value": "data",
+      "width": 1024,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "settings",
+      "value": "email",
+      "width": 1024,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "settings",
+      "value": "maintenance",
+      "width": 1024,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "account",
+      "value": "overview",
+      "width": 1024,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "account",
+      "value": "security",
+      "width": 1024,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "account",
+      "value": "help",
+      "width": 1024,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "account",
+      "value": "about",
+      "width": 1024,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "capacity",
+      "width": 1024,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": {
+        "headingGap": 17,
+        "stripHeight": 55,
+        "metricsGap": 19
+      }
+    },
+    {
+      "screen": "racks",
+      "value": "equipment",
+      "width": 1024,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": {
+        "headingGap": 17,
+        "stripHeight": 55,
+        "metricsGap": 19
+      }
+    },
+    {
+      "screen": "racks",
+      "value": "locations",
+      "width": 1024,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": {
+        "headingGap": 17,
+        "stripHeight": 55,
+        "metricsGap": 19
+      }
+    },
+    {
+      "screen": "racks",
+      "value": "view",
+      "width": 1024,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "equipment",
+      "width": 1024,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "settings",
+      "width": 1024,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "dashboard",
+      "value": "overview",
+      "width": 1024,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "dashboard",
+      "value": "insights",
+      "width": 1024,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "dashboard",
+      "value": "activity",
+      "width": 1024,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "overview",
+      "width": 1024,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "inventory",
+      "width": 1024,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "types",
+      "width": 1024,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "locations",
+      "width": 1024,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "manufacturers",
+      "width": 1024,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "models",
+      "width": 1024,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "software",
+      "width": 1024,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "services",
+      "width": 1024,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "ipam",
+      "value": "overview",
+      "width": 1024,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "ipam",
+      "value": "addresses",
+      "width": 1024,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "ipam",
+      "value": "manage",
+      "width": 1024,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "overview",
+      "width": 1024,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": {
+        "headingGap": 17,
+        "stripHeight": 55,
+        "metricsGap": 19
+      }
+    },
+    {
+      "screen": "racks",
+      "value": "inventory",
+      "width": 1024,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "accessories",
+      "width": 1024,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "users",
+      "value": "overview",
+      "width": 1024,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "users",
+      "value": "list",
+      "width": 1024,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "users",
+      "value": "add",
+      "width": 1024,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "audit",
+      "value": "activity",
+      "width": 1024,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "audit",
+      "value": "assets",
+      "width": 1024,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "audit",
+      "value": "coverage",
+      "width": 1024,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "settings",
+      "value": "data",
+      "width": 1024,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "settings",
+      "value": "email",
+      "width": 1024,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "settings",
+      "value": "maintenance",
+      "width": 1024,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "account",
+      "value": "overview",
+      "width": 1024,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "account",
+      "value": "security",
+      "width": 1024,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "account",
+      "value": "help",
+      "width": 1024,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "account",
+      "value": "about",
+      "width": 1024,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "capacity",
+      "width": 1024,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": {
+        "headingGap": 17,
+        "stripHeight": 55,
+        "metricsGap": 19
+      }
+    },
+    {
+      "screen": "racks",
+      "value": "equipment",
+      "width": 1024,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": {
+        "headingGap": 17,
+        "stripHeight": 55,
+        "metricsGap": 19
+      }
+    },
+    {
+      "screen": "racks",
+      "value": "locations",
+      "width": 1024,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": {
+        "headingGap": 17,
+        "stripHeight": 55,
+        "metricsGap": 19
+      }
+    },
+    {
+      "screen": "racks",
+      "value": "view",
+      "width": 1024,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "equipment",
+      "width": 1024,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "settings",
+      "width": 1024,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "dashboard",
+      "value": "overview",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "dashboard",
+      "value": "insights",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "dashboard",
+      "value": "activity",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "overview",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "inventory",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "types",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "locations",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "manufacturers",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "models",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "software",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "services",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "ipam",
+      "value": "overview",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "ipam",
+      "value": "addresses",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "ipam",
+      "value": "manage",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "overview",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": {
+        "headingGap": 14,
+        "stripHeight": 55,
+        "metricsGap": 19
+      }
+    },
+    {
+      "screen": "racks",
+      "value": "inventory",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "accessories",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "users",
+      "value": "overview",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "users",
+      "value": "list",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "users",
+      "value": "add",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "audit",
+      "value": "activity",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "audit",
+      "value": "assets",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "audit",
+      "value": "coverage",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "settings",
+      "value": "data",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "settings",
+      "value": "email",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "settings",
+      "value": "maintenance",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "account",
+      "value": "overview",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "account",
+      "value": "security",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "account",
+      "value": "help",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "account",
+      "value": "about",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "capacity",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": {
+        "headingGap": 14,
+        "stripHeight": 55,
+        "metricsGap": 19
+      }
+    },
+    {
+      "screen": "racks",
+      "value": "equipment",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": {
+        "headingGap": 14,
+        "stripHeight": 55,
+        "metricsGap": 19
+      }
+    },
+    {
+      "screen": "racks",
+      "value": "locations",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": {
+        "headingGap": 14,
+        "stripHeight": 55,
+        "metricsGap": 19
+      }
+    },
+    {
+      "screen": "racks",
+      "value": "view",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "equipment",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "settings",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "dashboard",
+      "value": "overview",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "dashboard",
+      "value": "insights",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "dashboard",
+      "value": "activity",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "overview",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "inventory",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "types",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "locations",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "manufacturers",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "models",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "software",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "devices",
+      "value": "services",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "ipam",
+      "value": "overview",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "ipam",
+      "value": "addresses",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "ipam",
+      "value": "manage",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "overview",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": {
+        "headingGap": 14,
+        "stripHeight": 55,
+        "metricsGap": 19
+      }
+    },
+    {
+      "screen": "racks",
+      "value": "inventory",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "accessories",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "users",
+      "value": "overview",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "users",
+      "value": "list",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "users",
+      "value": "add",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "audit",
+      "value": "activity",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "audit",
+      "value": "assets",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "audit",
+      "value": "coverage",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "settings",
+      "value": "data",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "settings",
+      "value": "email",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "settings",
+      "value": "maintenance",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "account",
+      "value": "overview",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "account",
+      "value": "security",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "account",
+      "value": "help",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "account",
+      "value": "about",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "capacity",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": {
+        "headingGap": 14,
+        "stripHeight": 55,
+        "metricsGap": 19
+      }
+    },
+    {
+      "screen": "racks",
+      "value": "equipment",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": {
+        "headingGap": 14,
+        "stripHeight": 55,
+        "metricsGap": 19
+      }
+    },
+    {
+      "screen": "racks",
+      "value": "locations",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": {
+        "headingGap": 14,
+        "stripHeight": 55,
+        "metricsGap": 19
+      }
+    },
+    {
+      "screen": "racks",
+      "value": "view",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "equipment",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    },
+    {
+      "screen": "racks",
+      "value": "settings",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false,
+      "rack": null
+    }
+  ],
+  "keyboard": [
+    {
+      "screen": "devices",
+      "value": "overview",
+      "width": 1440,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Overview",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "overview",
+      "width": 1440,
+      "theme": "light",
+      "key": "Space",
+      "label": "Overview",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "inventory",
+      "width": 1440,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Device Inventory",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "inventory",
+      "width": 1440,
+      "theme": "light",
+      "key": "Space",
+      "label": "Device Inventory",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "types",
+      "width": 1440,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Device Types",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "types",
+      "width": 1440,
+      "theme": "light",
+      "key": "Space",
+      "label": "Device Types",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "locations",
+      "width": 1440,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Locations",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "locations",
+      "width": 1440,
+      "theme": "light",
+      "key": "Space",
+      "label": "Locations",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "manufacturers",
+      "width": 1440,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Manufacturers",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "manufacturers",
+      "width": 1440,
+      "theme": "light",
+      "key": "Space",
+      "label": "Manufacturers",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "models",
+      "width": 1440,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Models",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "models",
+      "width": 1440,
+      "theme": "light",
+      "key": "Space",
+      "label": "Models",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "software",
+      "width": 1440,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Software",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "software",
+      "width": 1440,
+      "theme": "light",
+      "key": "Space",
+      "label": "Software",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "services",
+      "width": 1440,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Server Services",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "services",
+      "width": 1440,
+      "theme": "light",
+      "key": "Space",
+      "label": "Server Services",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "ipam",
+      "value": "overview",
+      "width": 1440,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Overview",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "ipam",
+      "value": "overview",
+      "width": 1440,
+      "theme": "light",
+      "key": "Space",
+      "label": "Overview",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "ipam",
+      "value": "addresses",
+      "width": 1440,
+      "theme": "light",
+      "key": "Enter",
+      "label": "IP Addresses",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "ipam",
+      "value": "addresses",
+      "width": 1440,
+      "theme": "light",
+      "key": "Space",
+      "label": "IP Addresses",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "ipam",
+      "value": "manage",
+      "width": 1440,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Manage Subnets",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "ipam",
+      "value": "manage",
+      "width": 1440,
+      "theme": "light",
+      "key": "Space",
+      "label": "Manage Subnets",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "value": "overview",
+      "width": 1440,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Overview",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "value": "overview",
+      "width": 1440,
+      "theme": "light",
+      "key": "Space",
+      "label": "Overview",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "value": "inventory",
+      "width": 1440,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Rack Inventory",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "value": "inventory",
+      "width": 1440,
+      "theme": "light",
+      "key": "Space",
+      "label": "Rack Inventory",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "value": "accessories",
+      "width": 1440,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Rack Accessories",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "value": "accessories",
+      "width": 1440,
+      "theme": "light",
+      "key": "Space",
+      "label": "Rack Accessories",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "users",
+      "value": "overview",
+      "width": 1440,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Overview",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "users",
+      "value": "overview",
+      "width": 1440,
+      "theme": "light",
+      "key": "Space",
+      "label": "Overview",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "users",
+      "value": "list",
+      "width": 1440,
+      "theme": "light",
+      "key": "Enter",
+      "label": "User List",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "users",
+      "value": "list",
+      "width": 1440,
+      "theme": "light",
+      "key": "Space",
+      "label": "User List",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "users",
+      "value": "add",
+      "width": 1440,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Add User",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "users",
+      "value": "add",
+      "width": 1440,
+      "theme": "light",
+      "key": "Space",
+      "label": "Add User",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "audit",
+      "value": "activity",
+      "width": 1440,
+      "theme": "light",
+      "key": "Enter",
+      "label": "All Activity",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "audit",
+      "value": "activity",
+      "width": 1440,
+      "theme": "light",
+      "key": "Space",
+      "label": "All Activity",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "audit",
+      "value": "assets",
+      "width": 1440,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Asset History",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "audit",
+      "value": "assets",
+      "width": 1440,
+      "theme": "light",
+      "key": "Space",
+      "label": "Asset History",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "audit",
+      "value": "coverage",
+      "width": 1440,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Recording Coverage",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "audit",
+      "value": "coverage",
+      "width": 1440,
+      "theme": "light",
+      "key": "Space",
+      "label": "Recording Coverage",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "overview",
+      "value": "capacity",
+      "width": 1440,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Capacity",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "overview",
+      "value": "capacity",
+      "width": 1440,
+      "theme": "light",
+      "key": "Space",
+      "label": "Capacity",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "overview",
+      "value": "equipment",
+      "width": 1440,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Equipment",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "overview",
+      "value": "equipment",
+      "width": 1440,
+      "theme": "light",
+      "key": "Space",
+      "label": "Equipment",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "overview",
+      "value": "locations",
+      "width": 1440,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Locations & Types",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "overview",
+      "value": "locations",
+      "width": 1440,
+      "theme": "light",
+      "key": "Space",
+      "label": "Locations & Types",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "details",
+      "value": "view",
+      "width": 1440,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Rack View",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "details",
+      "value": "view",
+      "width": 1440,
+      "theme": "light",
+      "key": "Space",
+      "label": "Rack View",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "details",
+      "value": "equipment",
+      "width": 1440,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Equipment",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "details",
+      "value": "equipment",
+      "width": 1440,
+      "theme": "light",
+      "key": "Space",
+      "label": "Equipment",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "details",
+      "value": "settings",
+      "width": 1440,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Rack Settings",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "details",
+      "value": "settings",
+      "width": 1440,
+      "theme": "light",
+      "key": "Space",
+      "label": "Rack Settings",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "overview",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Overview",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "overview",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Overview",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "inventory",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Device Inventory",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "inventory",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Device Inventory",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "types",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Device Types",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "types",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Device Types",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "locations",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Locations",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "locations",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Locations",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "manufacturers",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Manufacturers",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "manufacturers",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Manufacturers",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "models",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Models",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "models",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Models",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "software",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Software",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "software",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Software",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "services",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Server Services",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "services",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Server Services",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "ipam",
+      "value": "overview",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Overview",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "ipam",
+      "value": "overview",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Overview",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "ipam",
+      "value": "addresses",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "IP Addresses",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "ipam",
+      "value": "addresses",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Space",
+      "label": "IP Addresses",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "ipam",
+      "value": "manage",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Manage Subnets",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "ipam",
+      "value": "manage",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Manage Subnets",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "value": "overview",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Overview",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "value": "overview",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Overview",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "value": "inventory",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Rack Inventory",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "value": "inventory",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Rack Inventory",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "value": "accessories",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Rack Accessories",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "value": "accessories",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Rack Accessories",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "users",
+      "value": "overview",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Overview",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "users",
+      "value": "overview",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Overview",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "users",
+      "value": "list",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "User List",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "users",
+      "value": "list",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Space",
+      "label": "User List",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "users",
+      "value": "add",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Add User",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "users",
+      "value": "add",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Add User",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "audit",
+      "value": "activity",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "All Activity",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "audit",
+      "value": "activity",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Space",
+      "label": "All Activity",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "audit",
+      "value": "assets",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Asset History",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "audit",
+      "value": "assets",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Asset History",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "audit",
+      "value": "coverage",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Recording Coverage",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "audit",
+      "value": "coverage",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Recording Coverage",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "overview",
+      "value": "capacity",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Capacity",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "overview",
+      "value": "capacity",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Capacity",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "overview",
+      "value": "equipment",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Equipment",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "overview",
+      "value": "equipment",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Equipment",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "overview",
+      "value": "locations",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Locations & Types",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "overview",
+      "value": "locations",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Locations & Types",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "details",
+      "value": "view",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Rack View",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "details",
+      "value": "view",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Rack View",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "details",
+      "value": "equipment",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Equipment",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "details",
+      "value": "equipment",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Equipment",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "details",
+      "value": "settings",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Rack Settings",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "details",
+      "value": "settings",
+      "width": 1440,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Rack Settings",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "overview",
+      "width": 390,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Overview",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "overview",
+      "width": 390,
+      "theme": "light",
+      "key": "Space",
+      "label": "Overview",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "inventory",
+      "width": 390,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Device Inventory",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "inventory",
+      "width": 390,
+      "theme": "light",
+      "key": "Space",
+      "label": "Device Inventory",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "types",
+      "width": 390,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Device Types",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "types",
+      "width": 390,
+      "theme": "light",
+      "key": "Space",
+      "label": "Device Types",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "locations",
+      "width": 390,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Locations",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "locations",
+      "width": 390,
+      "theme": "light",
+      "key": "Space",
+      "label": "Locations",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "manufacturers",
+      "width": 390,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Manufacturers",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "manufacturers",
+      "width": 390,
+      "theme": "light",
+      "key": "Space",
+      "label": "Manufacturers",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "models",
+      "width": 390,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Models",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "models",
+      "width": 390,
+      "theme": "light",
+      "key": "Space",
+      "label": "Models",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "software",
+      "width": 390,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Software",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "software",
+      "width": 390,
+      "theme": "light",
+      "key": "Space",
+      "label": "Software",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "services",
+      "width": 390,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Server Services",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "services",
+      "width": 390,
+      "theme": "light",
+      "key": "Space",
+      "label": "Server Services",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "ipam",
+      "value": "overview",
+      "width": 390,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Overview",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "ipam",
+      "value": "overview",
+      "width": 390,
+      "theme": "light",
+      "key": "Space",
+      "label": "Overview",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "ipam",
+      "value": "addresses",
+      "width": 390,
+      "theme": "light",
+      "key": "Enter",
+      "label": "IP Addresses",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "ipam",
+      "value": "addresses",
+      "width": 390,
+      "theme": "light",
+      "key": "Space",
+      "label": "IP Addresses",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "ipam",
+      "value": "manage",
+      "width": 390,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Manage Subnets",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "ipam",
+      "value": "manage",
+      "width": 390,
+      "theme": "light",
+      "key": "Space",
+      "label": "Manage Subnets",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "value": "overview",
+      "width": 390,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Overview",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "value": "overview",
+      "width": 390,
+      "theme": "light",
+      "key": "Space",
+      "label": "Overview",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "value": "inventory",
+      "width": 390,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Rack Inventory",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "value": "inventory",
+      "width": 390,
+      "theme": "light",
+      "key": "Space",
+      "label": "Rack Inventory",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "value": "accessories",
+      "width": 390,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Rack Accessories",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "value": "accessories",
+      "width": 390,
+      "theme": "light",
+      "key": "Space",
+      "label": "Rack Accessories",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "users",
+      "value": "overview",
+      "width": 390,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Overview",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "users",
+      "value": "overview",
+      "width": 390,
+      "theme": "light",
+      "key": "Space",
+      "label": "Overview",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "users",
+      "value": "list",
+      "width": 390,
+      "theme": "light",
+      "key": "Enter",
+      "label": "User List",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "users",
+      "value": "list",
+      "width": 390,
+      "theme": "light",
+      "key": "Space",
+      "label": "User List",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "users",
+      "value": "add",
+      "width": 390,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Add User",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "users",
+      "value": "add",
+      "width": 390,
+      "theme": "light",
+      "key": "Space",
+      "label": "Add User",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "audit",
+      "value": "activity",
+      "width": 390,
+      "theme": "light",
+      "key": "Enter",
+      "label": "All Activity",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "audit",
+      "value": "activity",
+      "width": 390,
+      "theme": "light",
+      "key": "Space",
+      "label": "All Activity",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "audit",
+      "value": "assets",
+      "width": 390,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Asset History",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "audit",
+      "value": "assets",
+      "width": 390,
+      "theme": "light",
+      "key": "Space",
+      "label": "Asset History",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "audit",
+      "value": "coverage",
+      "width": 390,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Recording Coverage",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "audit",
+      "value": "coverage",
+      "width": 390,
+      "theme": "light",
+      "key": "Space",
+      "label": "Recording Coverage",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "overview",
+      "value": "capacity",
+      "width": 390,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Capacity",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "overview",
+      "value": "capacity",
+      "width": 390,
+      "theme": "light",
+      "key": "Space",
+      "label": "Capacity",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "overview",
+      "value": "equipment",
+      "width": 390,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Equipment",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "overview",
+      "value": "equipment",
+      "width": 390,
+      "theme": "light",
+      "key": "Space",
+      "label": "Equipment",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "overview",
+      "value": "locations",
+      "width": 390,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Locations & Types",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "overview",
+      "value": "locations",
+      "width": 390,
+      "theme": "light",
+      "key": "Space",
+      "label": "Locations & Types",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "details",
+      "value": "view",
+      "width": 390,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Rack View",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "details",
+      "value": "view",
+      "width": 390,
+      "theme": "light",
+      "key": "Space",
+      "label": "Rack View",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "details",
+      "value": "equipment",
+      "width": 390,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Equipment",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "details",
+      "value": "equipment",
+      "width": 390,
+      "theme": "light",
+      "key": "Space",
+      "label": "Equipment",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "details",
+      "value": "settings",
+      "width": 390,
+      "theme": "light",
+      "key": "Enter",
+      "label": "Rack Settings",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "details",
+      "value": "settings",
+      "width": 390,
+      "theme": "light",
+      "key": "Space",
+      "label": "Rack Settings",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "overview",
+      "width": 390,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Overview",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "overview",
+      "width": 390,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Overview",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "inventory",
+      "width": 390,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Device Inventory",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "inventory",
+      "width": 390,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Device Inventory",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "types",
+      "width": 390,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Device Types",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "types",
+      "width": 390,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Device Types",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "locations",
+      "width": 390,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Locations",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "locations",
+      "width": 390,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Locations",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "manufacturers",
+      "width": 390,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Manufacturers",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "manufacturers",
+      "width": 390,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Manufacturers",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "models",
+      "width": 390,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Models",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "models",
+      "width": 390,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Models",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "software",
+      "width": 390,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Software",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "software",
+      "width": 390,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Software",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "services",
+      "width": 390,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Server Services",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "devices",
+      "value": "services",
+      "width": 390,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Server Services",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "ipam",
+      "value": "overview",
+      "width": 390,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Overview",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "ipam",
+      "value": "overview",
+      "width": 390,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Overview",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "ipam",
+      "value": "addresses",
+      "width": 390,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "IP Addresses",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "ipam",
+      "value": "addresses",
+      "width": 390,
+      "theme": "dark",
+      "key": "Space",
+      "label": "IP Addresses",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "ipam",
+      "value": "manage",
+      "width": 390,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Manage Subnets",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "ipam",
+      "value": "manage",
+      "width": 390,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Manage Subnets",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "value": "overview",
+      "width": 390,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Overview",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "value": "overview",
+      "width": 390,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Overview",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "value": "inventory",
+      "width": 390,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Rack Inventory",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "value": "inventory",
+      "width": 390,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Rack Inventory",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "value": "accessories",
+      "width": 390,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Rack Accessories",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "value": "accessories",
+      "width": 390,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Rack Accessories",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "users",
+      "value": "overview",
+      "width": 390,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Overview",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "users",
+      "value": "overview",
+      "width": 390,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Overview",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "users",
+      "value": "list",
+      "width": 390,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "User List",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "users",
+      "value": "list",
+      "width": 390,
+      "theme": "dark",
+      "key": "Space",
+      "label": "User List",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "users",
+      "value": "add",
+      "width": 390,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Add User",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "users",
+      "value": "add",
+      "width": 390,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Add User",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "audit",
+      "value": "activity",
+      "width": 390,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "All Activity",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "audit",
+      "value": "activity",
+      "width": 390,
+      "theme": "dark",
+      "key": "Space",
+      "label": "All Activity",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "audit",
+      "value": "assets",
+      "width": 390,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Asset History",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "audit",
+      "value": "assets",
+      "width": 390,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Asset History",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "audit",
+      "value": "coverage",
+      "width": 390,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Recording Coverage",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "audit",
+      "value": "coverage",
+      "width": 390,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Recording Coverage",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "overview",
+      "value": "capacity",
+      "width": 390,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Capacity",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "overview",
+      "value": "capacity",
+      "width": 390,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Capacity",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "overview",
+      "value": "equipment",
+      "width": 390,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Equipment",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "overview",
+      "value": "equipment",
+      "width": 390,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Equipment",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "overview",
+      "value": "locations",
+      "width": 390,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Locations & Types",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "overview",
+      "value": "locations",
+      "width": 390,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Locations & Types",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "details",
+      "value": "view",
+      "width": 390,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Rack View",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "details",
+      "value": "view",
+      "width": 390,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Rack View",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "details",
+      "value": "equipment",
+      "width": 390,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Equipment",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "details",
+      "value": "equipment",
+      "width": 390,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Equipment",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "details",
+      "value": "settings",
+      "width": 390,
+      "theme": "dark",
+      "key": "Enter",
+      "label": "Rack Settings",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "screen": "racks",
+      "group": "details",
+      "value": "settings",
+      "width": 390,
+      "theme": "dark",
+      "key": "Space",
+      "label": "Rack Settings",
+      "focused": true,
+      "visible": true,
+      "x": 0,
+      "y": 0
+    }
+  ],
+  "enlarged": [
+    {
+      "width": 1024,
+      "theme": "light",
+      "screen": "dashboard",
+      "value": "overview",
+      "labels": {
+        "positions": [],
+        "selectionUnchanged": true
+      }
+    },
+    {
+      "width": 1024,
+      "theme": "light",
+      "screen": "devices",
+      "value": "overview",
+      "labels": {
+        "positions": [
+          {
+            "label": "Overview",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Device Inventory",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Device Types",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Locations",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Manufacturers",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Models",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Software",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Server Services",
+            "visible": true,
+            "nowrap": true
+          }
+        ],
+        "selectionUnchanged": true
+      }
+    },
+    {
+      "width": 1024,
+      "theme": "light",
+      "screen": "ipam",
+      "value": "manage",
+      "labels": {
+        "positions": [
+          {
+            "label": "Overview",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "IP Addresses",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Manage Subnets",
+            "visible": true,
+            "nowrap": true
+          }
+        ],
+        "selectionUnchanged": true
+      }
+    },
+    {
+      "width": 1024,
+      "theme": "light",
+      "screen": "racks",
+      "group": "overview",
+      "value": "locations",
+      "labels": {
+        "positions": [
+          {
+            "label": "Overview",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Rack Inventory",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Rack Accessories",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Capacity",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Equipment",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Locations & Types",
+            "visible": true,
+            "nowrap": true
+          }
+        ],
+        "selectionUnchanged": true
+      }
+    },
+    {
+      "width": 1024,
+      "theme": "light",
+      "screen": "racks",
+      "group": "details",
+      "value": "settings",
+      "labels": {
+        "positions": [
+          {
+            "label": "Overview",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Rack Inventory",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Rack Accessories",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Rack View",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Equipment",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Rack Settings",
+            "visible": true,
+            "nowrap": true
+          }
+        ],
+        "selectionUnchanged": true
+      }
+    },
+    {
+      "width": 1024,
+      "theme": "light",
+      "screen": "users",
+      "value": "list",
+      "labels": {
+        "positions": [
+          {
+            "label": "Overview",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "User List",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Add User",
+            "visible": true,
+            "nowrap": true
+          }
+        ],
+        "selectionUnchanged": true
+      }
+    },
+    {
+      "width": 1024,
+      "theme": "light",
+      "screen": "audit",
+      "value": "coverage",
+      "labels": {
+        "positions": [
+          {
+            "label": "All Activity",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Asset History",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Recording Coverage",
+            "visible": true,
+            "nowrap": true
+          }
+        ],
+        "selectionUnchanged": true
+      }
+    },
+    {
+      "width": 1024,
+      "theme": "light",
+      "screen": "settings",
+      "value": "email",
+      "labels": {
+        "positions": [],
+        "selectionUnchanged": true
+      }
+    },
+    {
+      "width": 1024,
+      "theme": "light",
+      "screen": "account",
+      "value": "security",
+      "labels": {
+        "positions": [],
+        "selectionUnchanged": true
+      }
+    },
+    {
+      "width": 1024,
+      "theme": "dark",
+      "screen": "dashboard",
+      "value": "overview",
+      "labels": {
+        "positions": [],
+        "selectionUnchanged": true
+      }
+    },
+    {
+      "width": 1024,
+      "theme": "dark",
+      "screen": "devices",
+      "value": "overview",
+      "labels": {
+        "positions": [
+          {
+            "label": "Overview",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Device Inventory",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Device Types",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Locations",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Manufacturers",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Models",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Software",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Server Services",
+            "visible": true,
+            "nowrap": true
+          }
+        ],
+        "selectionUnchanged": true
+      }
+    },
+    {
+      "width": 1024,
+      "theme": "dark",
+      "screen": "ipam",
+      "value": "manage",
+      "labels": {
+        "positions": [
+          {
+            "label": "Overview",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "IP Addresses",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Manage Subnets",
+            "visible": true,
+            "nowrap": true
+          }
+        ],
+        "selectionUnchanged": true
+      }
+    },
+    {
+      "width": 1024,
+      "theme": "dark",
+      "screen": "racks",
+      "group": "overview",
+      "value": "locations",
+      "labels": {
+        "positions": [
+          {
+            "label": "Overview",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Rack Inventory",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Rack Accessories",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Capacity",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Equipment",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Locations & Types",
+            "visible": true,
+            "nowrap": true
+          }
+        ],
+        "selectionUnchanged": true
+      }
+    },
+    {
+      "width": 1024,
+      "theme": "dark",
+      "screen": "racks",
+      "group": "details",
+      "value": "settings",
+      "labels": {
+        "positions": [
+          {
+            "label": "Overview",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Rack Inventory",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Rack Accessories",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Rack View",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Equipment",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Rack Settings",
+            "visible": true,
+            "nowrap": true
+          }
+        ],
+        "selectionUnchanged": true
+      }
+    },
+    {
+      "width": 1024,
+      "theme": "dark",
+      "screen": "users",
+      "value": "list",
+      "labels": {
+        "positions": [
+          {
+            "label": "Overview",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "User List",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Add User",
+            "visible": true,
+            "nowrap": true
+          }
+        ],
+        "selectionUnchanged": true
+      }
+    },
+    {
+      "width": 1024,
+      "theme": "dark",
+      "screen": "audit",
+      "value": "coverage",
+      "labels": {
+        "positions": [
+          {
+            "label": "All Activity",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Asset History",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Recording Coverage",
+            "visible": true,
+            "nowrap": true
+          }
+        ],
+        "selectionUnchanged": true
+      }
+    },
+    {
+      "width": 1024,
+      "theme": "dark",
+      "screen": "settings",
+      "value": "email",
+      "labels": {
+        "positions": [],
+        "selectionUnchanged": true
+      }
+    },
+    {
+      "width": 1024,
+      "theme": "dark",
+      "screen": "account",
+      "value": "security",
+      "labels": {
+        "positions": [],
+        "selectionUnchanged": true
+      }
+    },
+    {
+      "width": 390,
+      "theme": "light",
+      "screen": "dashboard",
+      "value": "overview",
+      "labels": {
+        "positions": [],
+        "selectionUnchanged": true
+      }
+    },
+    {
+      "width": 390,
+      "theme": "light",
+      "screen": "devices",
+      "value": "overview",
+      "labels": {
+        "positions": [
+          {
+            "label": "Overview",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Device Inventory",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Device Types",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Locations",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Manufacturers",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Models",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Software",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Server Services",
+            "visible": true,
+            "nowrap": true
+          }
+        ],
+        "selectionUnchanged": true
+      }
+    },
+    {
+      "width": 390,
+      "theme": "light",
+      "screen": "ipam",
+      "value": "manage",
+      "labels": {
+        "positions": [
+          {
+            "label": "Overview",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "IP Addresses",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Manage Subnets",
+            "visible": true,
+            "nowrap": true
+          }
+        ],
+        "selectionUnchanged": true
+      }
+    },
+    {
+      "width": 390,
+      "theme": "light",
+      "screen": "racks",
+      "group": "overview",
+      "value": "locations",
+      "labels": {
+        "positions": [
+          {
+            "label": "Overview",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Rack Inventory",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Rack Accessories",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Capacity",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Equipment",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Locations & Types",
+            "visible": true,
+            "nowrap": true
+          }
+        ],
+        "selectionUnchanged": true
+      }
+    },
+    {
+      "width": 390,
+      "theme": "light",
+      "screen": "racks",
+      "group": "details",
+      "value": "settings",
+      "labels": {
+        "positions": [
+          {
+            "label": "Overview",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Rack Inventory",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Rack Accessories",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Rack View",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Equipment",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Rack Settings",
+            "visible": true,
+            "nowrap": true
+          }
+        ],
+        "selectionUnchanged": true
+      }
+    },
+    {
+      "width": 390,
+      "theme": "light",
+      "screen": "users",
+      "value": "list",
+      "labels": {
+        "positions": [
+          {
+            "label": "Overview",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "User List",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Add User",
+            "visible": true,
+            "nowrap": true
+          }
+        ],
+        "selectionUnchanged": true
+      }
+    },
+    {
+      "width": 390,
+      "theme": "light",
+      "screen": "audit",
+      "value": "coverage",
+      "labels": {
+        "positions": [
+          {
+            "label": "All Activity",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Asset History",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Recording Coverage",
+            "visible": true,
+            "nowrap": true
+          }
+        ],
+        "selectionUnchanged": true
+      }
+    },
+    {
+      "width": 390,
+      "theme": "light",
+      "screen": "settings",
+      "value": "email",
+      "labels": {
+        "positions": [],
+        "selectionUnchanged": true
+      }
+    },
+    {
+      "width": 390,
+      "theme": "light",
+      "screen": "account",
+      "value": "security",
+      "labels": {
+        "positions": [],
+        "selectionUnchanged": true
+      }
+    },
+    {
+      "width": 390,
+      "theme": "dark",
+      "screen": "dashboard",
+      "value": "overview",
+      "labels": {
+        "positions": [],
+        "selectionUnchanged": true
+      }
+    },
+    {
+      "width": 390,
+      "theme": "dark",
+      "screen": "devices",
+      "value": "overview",
+      "labels": {
+        "positions": [
+          {
+            "label": "Overview",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Device Inventory",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Device Types",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Locations",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Manufacturers",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Models",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Software",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Server Services",
+            "visible": true,
+            "nowrap": true
+          }
+        ],
+        "selectionUnchanged": true
+      }
+    },
+    {
+      "width": 390,
+      "theme": "dark",
+      "screen": "ipam",
+      "value": "manage",
+      "labels": {
+        "positions": [
+          {
+            "label": "Overview",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "IP Addresses",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Manage Subnets",
+            "visible": true,
+            "nowrap": true
+          }
+        ],
+        "selectionUnchanged": true
+      }
+    },
+    {
+      "width": 390,
+      "theme": "dark",
+      "screen": "racks",
+      "group": "overview",
+      "value": "locations",
+      "labels": {
+        "positions": [
+          {
+            "label": "Overview",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Rack Inventory",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Rack Accessories",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Capacity",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Equipment",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Locations & Types",
+            "visible": true,
+            "nowrap": true
+          }
+        ],
+        "selectionUnchanged": true
+      }
+    },
+    {
+      "width": 390,
+      "theme": "dark",
+      "screen": "racks",
+      "group": "details",
+      "value": "settings",
+      "labels": {
+        "positions": [
+          {
+            "label": "Overview",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Rack Inventory",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Rack Accessories",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Rack View",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Equipment",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Rack Settings",
+            "visible": true,
+            "nowrap": true
+          }
+        ],
+        "selectionUnchanged": true
+      }
+    },
+    {
+      "width": 390,
+      "theme": "dark",
+      "screen": "users",
+      "value": "list",
+      "labels": {
+        "positions": [
+          {
+            "label": "Overview",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "User List",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Add User",
+            "visible": true,
+            "nowrap": true
+          }
+        ],
+        "selectionUnchanged": true
+      }
+    },
+    {
+      "width": 390,
+      "theme": "dark",
+      "screen": "audit",
+      "value": "coverage",
+      "labels": {
+        "positions": [
+          {
+            "label": "All Activity",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Asset History",
+            "visible": true,
+            "nowrap": true
+          },
+          {
+            "label": "Recording Coverage",
+            "visible": true,
+            "nowrap": true
+          }
+        ],
+        "selectionUnchanged": true
+      }
+    },
+    {
+      "width": 390,
+      "theme": "dark",
+      "screen": "settings",
+      "value": "email",
+      "labels": {
+        "positions": [],
+        "selectionUnchanged": true
+      }
+    },
+    {
+      "width": 390,
+      "theme": "dark",
+      "screen": "account",
+      "value": "security",
+      "labels": {
+        "positions": [],
+        "selectionUnchanged": true
+      }
+    }
+  ],
+  "empty": [
+    {
+      "screen": "dashboard",
+      "value": "overview",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false
+    },
+    {
+      "screen": "devices",
+      "value": "inventory",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false
+    },
+    {
+      "screen": "ipam",
+      "value": "overview",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false
+    },
+    {
+      "screen": "racks",
+      "value": "overview",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false
+    },
+    {
+      "screen": "audit",
+      "value": "activity",
+      "width": 1440,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false
+    },
+    {
+      "screen": "dashboard",
+      "value": "overview",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false
+    },
+    {
+      "screen": "devices",
+      "value": "inventory",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false
+    },
+    {
+      "screen": "ipam",
+      "value": "overview",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false
+    },
+    {
+      "screen": "racks",
+      "value": "overview",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false
+    },
+    {
+      "screen": "audit",
+      "value": "activity",
+      "width": 1440,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false
+    },
+    {
+      "screen": "dashboard",
+      "value": "overview",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false
+    },
+    {
+      "screen": "devices",
+      "value": "inventory",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false
+    },
+    {
+      "screen": "ipam",
+      "value": "overview",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false
+    },
+    {
+      "screen": "racks",
+      "value": "overview",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false
+    },
+    {
+      "screen": "audit",
+      "value": "activity",
+      "width": 390,
+      "theme": "light",
+      "entrance": 16,
+      "overflow": false
+    },
+    {
+      "screen": "dashboard",
+      "value": "overview",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false
+    },
+    {
+      "screen": "devices",
+      "value": "inventory",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false
+    },
+    {
+      "screen": "ipam",
+      "value": "overview",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false
+    },
+    {
+      "screen": "racks",
+      "value": "overview",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false
+    },
+    {
+      "screen": "audit",
+      "value": "activity",
+      "width": 390,
+      "theme": "dark",
+      "entrance": 16,
+      "overflow": false
+    }
+  ]
+}

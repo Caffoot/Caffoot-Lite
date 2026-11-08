@@ -1,0 +1,220 @@
+<!-- interface-template:device-details/confirm-discard-device-form-changes-1 --><div class="w-full max-w-md rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 p-6 shadow-2xl space-y-4">
+                <h3 id="device-form-discard-title" class="text-lg font-bold text-slate-900 dark:text-white">Discard Unsaved Changes?</h3>
+                <p id="discard-description" class="text-sm text-slate-700 dark:text-slate-200">Your changes have not been saved. Would you like to keep editing or discard them?</p>
+                <div class="flex flex-wrap justify-end gap-3">
+                    <button type="button" data-action="keep-editing" class="h-11 px-4 rounded-xl border border-slate-400 dark:border-slate-500 text-slate-900 dark:text-white">Keep Editing</button>
+                    <button type="button" data-action="discard-device-form-changes" class="h-11 px-4 rounded-xl bg-rose-700 hover:bg-rose-800 text-white font-bold">Discard Changes</button>
+                </div>
+            </div><!-- /interface-template -->
+
+<!-- interface-template:device-details/open-assign-device-modal-1 -->
+                <div class="rack-modal" role="dialog" aria-modal="true" aria-label="Rack placement">
+                    <div class="rack-modal-top"><div><div class="eyebrow">RACK MANAGEMENT</div><h2>Edit Device Placement</h2></div><button type="button" class="rack-modal-close app-modal-close" data-action="close-modal">Close ×</button></div>
+                    <p>Choose a device and an unoccupied U position on the selected face.</p>
+                    <form data-form-action="assign" data-rack-id="{{slot:0}}" data-default-slot="{{slot:1}}" class="rack-editor-form">
+                        <div class="rack-form-grid">
+                            <label class="rack-field span2">Device<select id="assign-device-id" required {{slot:2}} class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
+                                {{slot:3}}
+                                {{slot:4}}
+                            </select></label>
+                            <label class="rack-field">Rack Face<select id="assign-face"><option value="front" {{slot:5}}>Front</option><option value="rear" {{slot:6}}>Rear</option></select></label>
+                            <label class="rack-field">Start U<select id="assign-u-start" required aria-label="Available start U position"></select></label>
+                        </div>
+                        <div class="rack-modal-info">Rack space and existing mounting rules are validated before saving.</div>
+                        <div class="form-error" data-form-error role="alert"></div>
+                        <div class="rack-form-actions"><button type="button" data-action="close-modal" class="btn btn-outline">Cancel</button><button type="submit" class="btn btn-primary">Mount Device</button></div>
+                    </form>
+                </div>
+            <!-- /interface-template -->
+
+<!-- interface-template:device-details/hypervisor-notice-1 --><p role="status" class="text-sm text-amber-800 dark:text-amber-200 mb-3">Hosted virtual machines are recorded, but this server has no Hypervisor service selected. Existing relationships are preserved.</p><!-- /interface-template -->
+
+<!-- interface-template:device-details/open-device-modal-1 --><p class="rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-300 dark:border-blue-700 p-3 text-sm text-blue-900 dark:text-sky-100" role="status"><strong>Creating a new device from a copy.</strong> Enter a unique hostname and IP address. Serial number and IP are cleared; check the mounting position before saving. The original device is unchanged.</p><!-- /interface-template -->
+
+<!-- interface-template:device-details/open-device-modal-2 --><p class="text-sm font-semibold text-slate-700 dark:text-slate-200">Edit {{slot:0}}{{slot:1}}</p><!-- /interface-template -->
+
+<!-- interface-template:device-details/open-device-modal-3 --><div class="device-review-field"><label class="form-label" for="dev-{{slot:0}}">{{slot:1}}</label><input id="dev-{{slot:2}}" data-device-detail-field="{{slot:3}}" type="number" min="0" step="1" inputmode="numeric" value="{{slot:4}}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></div><!-- /interface-template -->
+
+<!-- interface-template:device-details/open-device-modal-4 -->
+                            <div class="device-review-field"><label for="dev-status" class="form-label">Device Status</label>
+                                <select id="dev-status" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
+                                    {{slot:0}}
+                                </select>
+                                <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Retiring a device does not release its IP address or rack position automatically.</p>
+                            </div>
+                            <!-- /interface-template -->
+
+<!-- interface-template:device-details/open-device-modal-5 -->
+                <div class="device-modal device-review-dialog">
+                    <header class="device-heading device-review-head">
+                        <div class="device-review-headline"><div class="min-w-0">
+                            <p class="device-review-eyebrow">DEVICE MANAGEMENT</p>
+                            <h2>{{slot:0}}</h2>
+                            <p class="device-review-sub">{{slot:1}}</p>
+                        </div><button type="button" data-action="close-modal" aria-label="Close dialog" class="device-review-close app-modal-close">×</button></div>
+                    </header>
+                    {{slot:2}}
+                    <form data-device-form="true" data-device-id="{{slot:3}}" class="form-shell device-review-edit-form">
+                        <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-circle-info"></i>Device Identity</div>
+                        <div class="device-review-field"><label for="dev-name" class="block text-xs font-semibold mb-1">Device Name <span class="required-mark">*</span></label><input type="text" id="dev-name" required value="{{slot:4}}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="e.g. core-switch"></div>
+                            <div class="device-review-field {{slot:5}}"><label for="dev-deployment" class="block text-xs font-semibold mb-1">Device deployment</label><select id="dev-deployment" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="physical" {{slot:6}}>Physical Device</option>{{slot:7}}</select><div id="device-form-physical-purpose" class="device-review-field {{slot:8}} mt-2"><label class="form-label" for="dev-type">Physical device type</label><select id="dev-type" required class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" disabled {{slot:9}}>Select a device type...</option>{{slot:10}}<option value="Server - Virtual" {{slot:11}} hidden>Server</option></select></div><div id="device-form-vm-purpose-wrapper" class="device-review-field {{slot:12}} mt-2"><label class="form-label" for="dev-vm-purpose">Virtual Machine purpose</label><select id="dev-vm-purpose" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">{{slot:13}}</select></div></div>
+                            {{slot:14}}
+                            <div id="virtual-fields" class="hidden rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-slate-800 p-4 space-y-3">
+                                <p class="text-sm font-semibold text-blue-900 dark:text-blue-200">Virtual Machine Configuration</p>
+                                <p class="text-xs text-slate-600 dark:text-slate-300">Physical manufacturer and model do not apply to virtual servers. Existing saved values are retained.</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <div hidden><label class="form-label" for="dev-virtual-platform">Virtualisation Platform (inherited from host)</label><select id="dev-virtual-platform" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
+                                        {{slot:15}}
+                                    </select></div>
+                                    <div class="device-review-field"><label class="form-label" for="dev-virtual-host">Physical Hypervisor Host {{slot:16}}</label><select id="dev-virtual-host" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="">Not Specified</option>
+                                        {{slot:17}}
+                                    </select></div>
+                                </div>
+                                <div class="border-t border-blue-200 dark:border-blue-800 pt-3 space-y-2">
+                                    <p class="text-sm font-semibold text-blue-900 dark:text-blue-200">Allocated Virtual Hardware</p>
+                                    <p class="text-xs text-slate-600 dark:text-slate-300">These allocations belong to the VM, not its physical host. Leave unknown values blank.</p>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        {{slot:18}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="host-platform-fields" class="hidden rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-slate-800 p-4 space-y-3">
+                                <p class="text-sm font-semibold text-blue-900 dark:text-blue-200">Virtualisation / Hypervisor</p>
+                                <label class="flex items-start gap-3 text-sm"><input id="device-hosting-enabled" type="checkbox" {{slot:19}} class="mt-1"><span><strong>This physical server hosts virtual machines</strong><span class="block text-xs text-slate-600 dark:text-slate-300">Enable this option if the physical server will host virtual machines.</span></span></label>
+                                <div id="device-hosting-details" {{slot:20}} class="space-y-3">
+                                    <p class="text-xs text-slate-600 dark:text-slate-300">Select a hypervisor or choose Custom / Other. Existing values are retained. Changes affecting hosted virtual machines require confirmation.</p>
+                                    <label for="host-platform" class="form-label">Hypervisor software</label>
+                                    <select id="host-platform-select" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" aria-label="Hypervisor software">
+                                        <option value="">Select hypervisor software...</option>
+                                        {{slot:21}}
+                                        <option value="__custom__" {{slot:22}}>Custom / Other...</option>
+                                    </select>
+                                    <input id="host-platform" aria-label="Custom Hypervisor Software" data-device-detail-field="hypervisorProduct" type="text" maxlength="120" value="{{slot:23}}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700 {{slot:24}}" placeholder="Enter custom hypervisor software">
+                                    <label for="host-version" class="form-label">Hypervisor version (optional)</label>
+                                    <input id="host-version" data-device-detail-field="hypervisorVersion" type="text" maxlength="120" value="{{slot:25}}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="e.g. 8.0">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-section-card space-y-4">
+                            <div class="form-section-heading"><i class="fa-solid fa-server"></i>Hardware &amp; Lifecycle</div>
+                            {{slot:26}}
+                            <div class="device-review-form-grid">
+                                <div id="physical-manufacturer" class="device-review-field"><label for="dev-manufacturer-select" class="form-label">Manufacturer (optional)</label><input id="dev-manufacturer" type="hidden" value="{{slot:27}}"><select id="dev-manufacturer-select" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></select><input id="dev-manufacturer-custom" type="text" maxlength="120" class="hidden mt-2 w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Enter Custom Manufacturer" aria-label="Custom Manufacturer"></div>
+                                <div id="physical-model" class="device-review-field"><label for="dev-model-select" class="form-label">Model (optional)</label><input id="dev-model" type="hidden" value="{{slot:28}}"><select id="dev-model-select" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"></select><input id="dev-model-custom" type="text" maxlength="120" class="hidden mt-2 w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Enter Custom Model" aria-label="Custom Model"></div>
+                            <div class="device-review-field"><label for="dev-serial" class="form-label">Serial number (optional)</label><input id="dev-serial" type="text" maxlength="120" value="{{slot:29}}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Manufacturer serial number"></div>
+                            </div>
+                            <div class="device-review-catalogue-actions"><button type="button" data-action="device-inline-quick-open" data-kind="manufacturer" class="device-review-smallbtn">+ Add Manufacturer</button><button type="button" data-action="device-inline-quick-open" data-kind="model" class="device-review-smallbtn">+ Add Model</button></div>{{slot:30}}{{slot:31}}<div class="device-review-catalogue-actions"><button type="button" data-action="hardware-catalog-manage" class="device-review-smallbtn"><i class="fa-solid fa-list mr-1"></i>Manage Hardware Catalogue</button><p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Add reusable manufacturer and model suggestions for this device type.</p></div>
+                        <div class="form-section-card space-y-4 {{slot:32}}" id="details-section" aria-live="polite"><div class="form-section-heading"><i class="fa-solid fa-list-check"></i>Additional details for this device type</div><div class="flex flex-wrap gap-2"><button type="button" id="manage-server-services-button" data-action="manage-server-services" class="h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-500 text-sm font-semibold {{slot:33}}">Manage Server Options</button><button type="button" id="manage-installed-software-button" data-action="manage-installed-software" class="h-10 px-3 rounded-xl border border-slate-400 dark:border-slate-500 text-sm font-semibold {{slot:34}}">Manage Software Options</button></div><div id="device-detail-fields-panel">{{slot:35}}</div></div>
+                        </div>
+                        <div class="form-section-card space-y-4" id="device-form-mounting-options"><div class="form-section-heading"><i class="fa-solid fa-rack"></i>Mounting & location</div><div class="device-review-field"><label for="dev-mount-type" class="form-label">Device Mounting <span class="required-mark">*</span></label><select id="dev-mount-type" required data-action="device-mount-type-change" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" disabled>Select mounting type...</option>{{slot:36}}</select></div>
+                        <div>
+                            <label for="dev-location" class="block text-xs font-semibold mb-1">Location Area <span class="required-mark">*</span></label>
+                            <select id="dev-location" required data-previous-location="{{slot:37}}" data-action="device-location-change" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="" disabled {{slot:38}}>Select a location...</option>{{slot:39}}<option value="__caffoot_create_location__">+ Create new location…</option></select>
+                            <div id="dev-create-location-panel" hidden class="mt-2"><label for="dev-custom-location" class="block text-xs font-semibold mb-1">New location name</label><div class="device-add-inline location-create-row"><input type="text" id="dev-custom-location" placeholder="Enter a new location" class="flex-1 min-w-48 border rounded-xl px-2.5 py-2 text-sm dark:bg-slate-700"><button type="button" data-action="add-custom-location" class="px-3 py-2 bg-indigo-600 text-white rounded-xl text-xs font-semibold">Add</button><button type="button" data-action="cancel-custom-location" class="px-3 py-2 bg-slate-200 dark:bg-slate-600 rounded-xl text-xs font-semibold">Cancel</button></div></div>
+                        </div>
+                        <div id="racked-options" {{slot:40}} class="{{slot:41}} device-form-rack-configuration bg-slate-100 dark:bg-slate-900">
+                            <div class="block text-xs font-bold text-indigo-600">Rack Mounting Configuration</div>
+                            <div class="rack-grid">
+                                <div class="device-review-field"><label for="dev-rack-id" class="block text-[10px] font-semibold text-slate-500 uppercase mb-1">Rack</label><select id="dev-rack-id" class="w-full border rounded-lg p-1.5 text-xs dark:bg-slate-700"><option value="" {{slot:42}}>{{slot:43}}</option>{{slot:44}}</select><p class="device-help">A network rack is a physical enclosure, separate from the device location.</p><button type="button" data-action="create-rack-from-device" class="mt-2 w-full px-3 py-2 bg-slate-200 dark:bg-slate-700 rounded-lg text-xs font-semibold"><i class="fa-solid fa-plus mr-1"></i>Create Network Rack</button></div>
+                                <div class="device-review-field"><label for="dev-rack-face" class="block text-[10px] font-semibold text-slate-500 uppercase mb-1">Face</label><select id="dev-rack-face" class="w-full border rounded-lg p-1.5 text-xs dark:bg-slate-700"><option value="front" {{slot:45}}>Front</option><option value="rear" {{slot:46}}>Rear</option></select></div>
+                                <div class="device-review-field"><label for="dev-rack-u" class="block text-[10px] font-semibold text-slate-500 uppercase mb-1">Start U</label><select id="dev-rack-u" data-initial-u="{{slot:47}}" class="w-full border rounded-lg p-1.5 text-xs dark:bg-slate-700 text-center font-mono"><option value="">Select Start U...</option></select></div>
+                                <div class="device-review-field"><label for="dev-rack-height" class="block text-[10px] font-semibold text-slate-500 uppercase mb-1">U Height</label><input type="number" id="dev-rack-height" min="1" max="48" value="{{slot:48}}" required class="w-full border rounded-lg p-1.5 text-xs dark:bg-slate-700 text-center font-mono"></div>
+                            </div><p id="dev-rack-range-hint" class="device-help" role="status">End U is calculated automatically from Start U + U Height - 1.</p>
+                        </div>
+                        </div>
+                        <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-network-wired"></i>Network Identity</div><div><div class="form-label">Primary IP <span class="text-slate-400 font-normal">(must belong to an existing subnet)</span></div><div class="network-grid"><div class="device-review-field"><label for="dev-block" class="device-ip-label">IP Address Block (Optional)</label><select id="dev-block" data-action="device-block-change" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="">All Address Blocks / Standalone Subnets</option>{{slot:49}}<option value="__unassigned__" {{slot:50}}>Networks Without an IP Address Block</option></select><label for="dev-vlan" class="device-ip-label block mt-3">VLAN</label><input id="dev-vlan" type="text" readonly value="Not assigned" aria-readonly="true" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><label for="dev-subnet" class="device-ip-label block mt-3">Subnet <span class="required-mark">*</span></label><select id="dev-subnet" required data-action="device-subnet-change" data-initial-subnet="{{slot:51}}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700"><option value="">Select a subnet...</option></select><button type="button" data-action="create-subnet-from-device" class="mt-2 w-full px-3 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold transition border border-slate-200 dark:border-slate-600"><i class="fa-solid fa-diagram-project mr-1.5"></i>Create subnet in IPAM</button></div><div class="device-review-field"><label for="dev-ip" class="device-ip-label">Device IP address <span class="required-mark">*</span></label><input type="text" id="dev-ip" required inputmode="decimal" autocomplete="off" value="{{slot:52}}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700 font-mono" placeholder="Select a subnet first"><label for="dev-ip-available" class="device-ip-label block mt-3">Or choose an available IP</label><select id="dev-ip-available" data-action="device-ip-select" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700 font-mono"><option value="">Select next available IP...</option></select><p id="dev-ip-hint" class="device-help"></p></div></div><label class="flex items-start gap-3 mt-4 p-3 rounded-xl border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/30 cursor-pointer">
+<input id="dev-ip-reserved" type="checkbox" {{slot:53}} class="mt-1 h-5 w-5 shrink-0">
+<span class="text-sm text-slate-800 dark:text-slate-100"><strong>Reserve this IP address for this device</strong><span class="block text-xs mt-1 text-slate-600 dark:text-slate-300">Keeps this same IP linked to the device, but displays it as Reserved in IPAM. No second address is needed.</span></span>
+</label><p class="device-help">Don't see the required network? Create it in IPAM, then return here to select it.</p></div>
+                        </div>
+                        <div class="form-section-card space-y-4"><div class="form-section-heading"><i class="fa-solid fa-note-sticky"></i>Notes / Details</div><p class="device-review-sub">The existing notes editor and formatting controls remain available.</p><div class="notes-workspace"><div class="notes-toolbar device-review-note-toolbar" role="toolbar" aria-label="Notes formatting"><button type="button" data-notes-format="bold" title="Bold">Bold</button><button type="button" data-notes-format="italic" title="Italic">Italic</button><button type="button" data-notes-format="bullet" title="Bullet list">Bullets</button><button type="button" data-notes-format="heading" title="Heading">Heading</button><button type="button" data-notes-format="number" title="Numbered list">Numbers</button><button type="button" data-notes-format="code" title="Code">Code</button><button type="button" data-notes-format="link" title="Link">Link</button><button type="button" id="notes-toggle" aria-pressed="false">Preview</button></div><div class="device-review-form-grid"><div class="device-review-field wide"><label for="dev-notes">Notes</label><textarea id="dev-notes" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700" placeholder="Add any device notes">{{slot:54}}</textarea></div></div><div id="notes-preview" class="device-review-note-preview" role="region" aria-label="Notes Markdown preview" hidden></div></div>
+                        </div>
+                        <div class="form-error" data-form-error role="alert"></div>
+                        <div class="form-actions"><button type="button" data-action="close-modal" class="btn btn-outline">Cancel</button><button type="submit" class="btn btn-primary">Save Device</button></div>
+                    </form>
+                </div><!-- /interface-template -->
+
+<!-- interface-template:device-details/request-hypervisor-guest-reassignment-1 --><div class="rounded-xl border border-slate-300 dark:border-slate-600 p-3">
+                        <label class="form-label" for="virtual-machine-guest-{{slot:0}}">{{slot:1}}</label>
+                        <select id="virtual-machine-guest-{{slot:2}}" data-m005-guest="{{slot:3}}" class="w-full border rounded-xl px-3 py-2 text-sm dark:bg-slate-700">
+                            <option value="">Choose an action...</option>
+                            <option value="unassign">Unassign, keep virtual machine and previous host history</option>
+                            <option value="retire">Retire virtual machine, keep history</option>
+                            {{slot:4}}
+                        </select>
+                    </div><!-- /interface-template -->
+
+<!-- interface-template:device-details/request-hypervisor-guest-reassignment-2 --><div class="w-full max-w-2xl max-h-full overflow-y-auto rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 p-6 shadow-2xl space-y-4">
+                    <h3 id="hypervisor-selection-title" class="text-lg font-bold">Resolve hosted virtual machines</h3>
+                    <p class="text-sm">Before disabling virtual machine hosting on {{slot:0}}, choose what happens to each assigned virtual machine. Nothing changes until you confirm and save.</p>
+                    <div class="space-y-3">{{slot:1}}</div>
+                    <p class="text-sm">Reassignment changes the inventory host reference only. It does not move a real virtual machine. Retiring does not delete its record.</p>
+                    <div class="flex flex-wrap justify-end gap-3">
+                        <button type="button" data-action="cancel" class="h-11 px-4 rounded-xl border border-slate-400 caffoot-modal-cancel">Keep Editing</button>
+                        <button type="button" data-action="confirm" class="h-11 px-4 rounded-xl bg-rose-700 text-white font-bold">Confirm Guest Decisions</button>
+                    </div>
+                </div><!-- /interface-template -->
+
+<!-- interface-template:device-details/confirm-hypervisor-platform-change-for-guests-1 --><div class="w-full max-w-lg rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 p-6 shadow-2xl space-y-4">
+                    <h3 id="device-platform-selection-title" class="text-lg font-bold">Update hosted virtual machines?</h3>
+                    <p class="text-sm">Changing the recorded Hypervisor on {{slot:0}} from {{slot:1}} to {{slot:2}} will update the virtualisation platform of these assigned virtual machines:</p>
+                    <ul class="list-disc pl-5 max-h-48 overflow-y-auto text-sm">{{slot:3}}</ul>
+                    <p class="text-sm">Guest operating systems and host assignments will not change. This updates inventory records only and does not migrate any virtual machines.</p>
+                    <div class="flex flex-wrap justify-end gap-3">
+                        <button type="button" data-action="cancel" class="h-11 px-4 rounded-xl border border-slate-400 caffoot-modal-cancel">Keep Editing</button>
+                        <button type="button" data-action="confirm" class="h-11 px-4 rounded-xl bg-blue-700 text-white font-bold">Update Records</button>
+                    </div>
+                </div><!-- /interface-template -->
+
+<!-- interface-template:device-details/rows-1 -->
+                    <li class="rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900/40 p-4 space-y-3 break-words">
+                        <div>
+                            <p class="font-semibold text-slate-900 dark:text-white">{{slot:0}}</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-300">{{slot:1}}</p>
+                        </div>
+                        <div class="text-sm text-slate-600 dark:text-slate-300">
+                            <span class="font-semibold">Current mounting:</span> {{slot:2}} · <span class="font-semibold">Location:</span> {{slot:3}} · <span class="font-semibold">Rack:</span> {{slot:4}}{{slot:5}}
+                        </div>
+                        <div class="rounded-lg border border-blue-200 bg-blue-50 dark:border-blue-700 dark:bg-blue-950/40 p-3">
+                            <p class="text-xs font-bold uppercase tracking-wide text-blue-900 dark:text-blue-200">Proposed Correction</p>
+                            <p class="mt-1 text-sm font-semibold text-blue-900 dark:text-blue-100">{{slot:6}} · Unknown Location · No Rack Assignment</p>
+                        </div>
+                    </li><!-- /interface-template -->
+
+<!-- interface-template:device-details/review-legacy-device-mounting-repairs-1 --><section class="p-5 sm:p-6 flex flex-col gap-4 max-h-[85vh]" role="group" aria-label="Legacy Mounting Compatibility Review">
+                    <header class="flex-shrink-0 border-b border-slate-200 dark:border-slate-600 pb-4">
+                        <h2 class="text-lg font-bold text-slate-900 dark:text-white">Legacy Mounting Compatibility Review</h2>
+                        <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">{{slot:0}} device{{slot:1}} require compatibility corrections</p>
+                    </header>
+                    <p class="flex-shrink-0 text-sm text-slate-700 dark:text-slate-200">These devices contain legacy mounting or location information that conflicts with current inventory rules. Review each proposed correction before proceeding.</p>
+                    <p class="flex-shrink-0 text-xs font-semibold text-slate-600 dark:text-slate-300">Affected Devices ({{slot:2}}) — scroll to review all</p>
+                    <ul class="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain pr-2 border-y border-slate-200 dark:border-slate-600 py-2" tabindex="0" aria-label="Proposed mounting corrections">{{slot:3}}</ul>
+                    <p class="flex-shrink-0 text-xs text-slate-600 dark:text-slate-300">Only mounting and location fields will change. Names, IP addresses and other inventory data are preserved. Your backup file stays unchanged. A final restore confirmation follows.</p>
+                    <footer class="flex-shrink-0 flex flex-wrap items-center justify-end gap-3 border-t border-slate-200 dark:border-slate-600 pt-4">
+                        <button type="button" data-legacy-review="cancel" class="rack-secondary">Cancel Restore</button>
+                        <button type="button" data-legacy-review="approve" class="rack-primary">Approve Corrections</button>
+                    </footer>
+                </section><!-- /interface-template -->
+
+<!-- interface-template:device-details/rows-2 -->
+                    <li class="rounded-xl border border-slate-200 bg-slate-50 dark:bg-slate-900/40 dark:border-slate-600 p-4 space-y-3">
+                        <p class="font-semibold text-slate-900 dark:text-white break-words">{{slot:0}}</p>
+                        <p class="text-sm text-slate-600 dark:text-slate-300">Current Mounting: <strong>{{slot:1}}</strong></p>
+                        <p class="text-sm text-slate-600 dark:text-slate-300">Current Rack: <strong>{{slot:2}}</strong></p>
+                        <label class="block text-sm font-semibold dark:text-white" for="legacy-ap-{{slot:3}}">Choose Mounting Type</label>
+                        <select id="legacy-ap-{{slot:4}}" data-ap-choice="{{slot:5}}" class="w-full rounded-xl border border-slate-300 bg-white dark:bg-slate-700 dark:border-slate-500 px-3 py-2.5 text-slate-900 dark:text-white">
+                            <option value="">Select a mounting type…</option>
+                            {{slot:6}}
+                        </select>
+                    </li><!-- /interface-template -->
+
+<!-- interface-template:device-details/choose-access-point-mounting-corrections-1 --><section class="p-5 sm:p-6 space-y-5">
+                    <div class="border-b border-slate-200 dark:border-slate-600 pb-4"><h2 class="text-lg font-bold text-slate-900 dark:text-white">Access Point Mounting Review</h2><p class="text-sm text-slate-600 dark:text-slate-300 mt-1">{{slot:0}} Access Point{{slot:1}} require mounting confirmation</p></div>
+                    <p class="text-sm dark:text-slate-200">Select the correct mounting type for each Access Point. Previous rack assignments will be cleared. Nothing is imported until you confirm the restore.</p>
+                    <ul class="space-y-3 max-h-[42vh] overflow-y-auto pr-1" tabindex="0">{{slot:2}}</ul>
+                    <p data-ap-error role="alert" class="text-sm text-red-700 dark:text-red-300"></p>
+                    <div class="flex flex-wrap justify-end items-center gap-3 border-t border-slate-200 dark:border-slate-600 pt-4">
+                        <button type="button" data-ap-action="cancel" class="rack-secondary">Cancel Restore</button>
+                        <button type="button" data-ap-action="approve" class="rack-primary">Apply Mounting Choices</button>
+                    </div>
+                </section><!-- /interface-template -->

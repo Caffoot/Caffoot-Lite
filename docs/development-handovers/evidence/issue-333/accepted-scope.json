@@ -1,0 +1,62 @@
+{
+  "base": "42cb8168375c0507b57206113d21a6efafce61b9",
+  "changedNamedFunctions": [
+    "toggleDeviceMountType",
+    "showDeviceEditorFeedback",
+    "initialiseDeviceTabs",
+    "openDeviceModal",
+    "handleDeviceSubmit"
+  ],
+  "acceptedFunctions": [
+    {
+      "name": "refreshDeviceEditorContext",
+      "unchanged": true,
+      "sha256": "27eb602ce810e2a0f5e8675f0b1adc823585023cba60091655a337456a2e5f0a"
+    },
+    {
+      "name": "getRecordedDevicePlatform",
+      "unchanged": true,
+      "sha256": "77620779f9407fbf00710e7f96d7f45adf69ef517dd194cf7fb223a18cec3c6a"
+    },
+    {
+      "name": "clearDeviceDraftPlatformVersion",
+      "unchanged": true,
+      "sha256": "337e16021658a411e62086b2fa0cacb1a70f8f179bafdeb2a9b4b6bc8b68e4d4"
+    },
+    {
+      "name": "renderSoftwarePlatformFields",
+      "unchanged": true,
+      "sha256": "b2145eb11e43ef35b632bab594f295a594bf51f5e04e362de4a4289750399266"
+    },
+    {
+      "name": "bindSoftwarePlatformFields",
+      "unchanged": true,
+      "sha256": "d75a4ac329413641bc9e1fd4e6ddbaf73053299bb67efea160bcaa9898c48023"
+    },
+    {
+      "name": "refreshDeviceEditorDropdowns",
+      "unchanged": true,
+      "sha256": "9c4a924c72a42ea651bd13493ceb390a9f7a0a614158f1b7fdae7cee621099ca"
+    },
+    {
+      "name": "openDeviceDetailView",
+      "unchanged": true,
+      "sha256": "e57410f2a92c4722595e8bf74cc320e0d7f331ec01927e60f7b3e9ac09df59db"
+    },
+    {
+      "name": "defaultDeviceLocationFromRack",
+      "unchanged": true,
+      "sha256": "69426f32f883fc5c8c7d162d930a8a61a0d4d05ec80184155f1369f6a3529f5d"
+    }
+  ],
+  "acceptedPresentationUnchanged": [
+    {
+      "path": "interface/screens/devices.html",
+      "unchanged": true
+    },
+    {
+      "path": "interface/styles/components.css",
+      "unchanged": true
+    }
+  ]
+}

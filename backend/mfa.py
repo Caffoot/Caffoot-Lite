@@ -1,8 +1,7 @@
-"""TOTP enrolment primitives for the approved Next account/MFA workflow.
+"""Time-based authenticator enrolment and verification primitives.
 
-No account state or HTTP endpoints are exposed here. An enrolment is not
-active until a code is verified by the eventual authenticated account service.
-"""
+The account and setup services activate enrolment only after a code has been
+verified. These helpers do not expose an HTTP route or create a session."""
 import base64
 import hashlib
 import hmac

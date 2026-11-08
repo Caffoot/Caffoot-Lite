@@ -56,10 +56,65 @@ class SessionHttpTests(unittest.TestCase):
         conn.close()
         return status, body, cache
 
+    def test_subnet_first_batch_permissions_atomicity_and_visible_count_http(self):
+        from backend.inventory import stage_inventory
+        from backend.permissions import set_permission
+        with sqlite3.connect(self.path) as db:
+            stage_inventory(db, {"devices":[],"subnets":[],"vlans":[],"racks":[],"rackAccessories":[],"ipAllocations":{}})
+            admin = db.execute("SELECT id FROM accounts WHERE is_admin=1").fetchone()[0]
+            editor = create_user(db, admin, "subnet-editor", "initial")
+            secret = new_secret()
+            db.execute("UPDATE accounts SET mfa_secret=?,mfa_confirmed=1 WHERE id=?",(secret,editor));db.commit()
+            set_permission(db,admin,editor,"IPAM","edit")
+            editor_token=login_session(db,"subnet-editor","initial",mfa_code=code_at(secret,time.time()))
+            reader=create_user(db,admin,"subnet-reader","initial");set_permission(db,admin,reader,"IPAM","read")
+            reader_token=login_session(db,"subnet-reader","initial")
+            create_user(db,admin,"subnet-no-access","initial")
+            none_token=login_session(db,"subnet-no-access","initial")
+        parent={"id":"http-office","kind":"container","name":"Fictional office","cidr":"10.85.0.0/16"}
+        records=[parent]+[{"id":f"http-net-{i}","kind":"network","name":f"Fictional {i}","purpose":"LAN","cidr":f"10.85.{i}.0/24","gateway":f"10.85.{i}.1","parentId":parent["id"]}for i in range(50)]
+        payload={"changes":[{"collection":"subnets","id":r["id"],"record":r}for r in records]}
+        with patch("backend.server.PUBLIC_ORIGIN","https://caffoot.example"):
+            for token in [reader_token,none_token,None]:
+                status,_=self.post("/api/ipam/subnets/save",payload,token,csrf_for_session(token))
+                self.assertEqual(status,403)
+            self.assertEqual(self.post("/api/ipam/subnets/save",payload,editor_token)[0],403)
+            broken=json.loads(json.dumps(payload));broken["changes"][26]["record"]["gateway"]="10.85.25.255"
+            self.assertEqual(self.post("/api/ipam/subnets/save",broken,editor_token,csrf_for_session(editor_token))[0],400)
+            with sqlite3.connect(self.path) as db:self.assertEqual(db.execute("SELECT COUNT(*) FROM inventory_subnets").fetchone()[0],0)
+            status,result=self.post("/api/ipam/subnets/save",payload,editor_token,csrf_for_session(editor_token))
+            self.assertEqual(status,200,result)
+        for token in [editor_token,reader_token]:
+            status,raw,_=self.request("/api/inventory/state",COOKIE_NAME+"="+token)
+            self.assertEqual(status,200);visible=json.loads(raw)
+            self.assertNotIn("devices",visible)
+            self.assertEqual(len(visible["subnets"]),51)
+            summaries=[e for e in visible["changeHistory"] if "Created 50 subnet(s)" in e.get("reason","")]
+            self.assertEqual(len(summaries),1)
+            self.assertEqual(summaries[0]["actor"],"subnet-editor")
+        with sqlite3.connect(self.path) as db:
+            events=[json.loads(r[0]) for r in db.execute("SELECT record_json FROM inventory_change_history")]
+            batches=[e for e in events if e.get("subnetBatch")]
+            self.assertEqual(len(batches),1);self.assertEqual(batches[0]["omitted"],35)
+
+    def test_legacy_device_vlan_metadata_survives_reserved_save_http(self):
+        record={"id":"legacy-vlan-device","name":"Fictional legacy","mountType":"Desktop","primaryIp":"","vlan":"Historical value to retain"}
+        with patch("backend.server.PUBLIC_ORIGIN","https://caffoot.example"):
+            csrf=csrf_for_session(self.token)
+            self.assertEqual(self.post("/api/devices/create",{"record":record},self.token,csrf)[0],200)
+            status,reservation=self.post("/api/devices/edit/start",{"deviceId":record["id"]},self.token,csrf)
+            self.assertEqual(status,200)
+            changed=dict(record,name="Fictional renamed")
+            status,result=self.post("/api/devices/edit/save",{"deviceId":record["id"],"revision":reservation["revision"],"record":changed},self.token,csrf)
+            self.assertEqual(status,200,result)
+        with sqlite3.connect(self.path) as db:
+            saved=json.loads(db.execute("SELECT record_json FROM inventory_devices WHERE id=?",(record["id"],)).fetchone()[0])
+        self.assertEqual(saved["vlan"],record["vlan"])
+
     def test_inventory_assets_are_served_from_existing_published_files(self):
         asset_root = Path(__file__).resolve().parents[1] / "assets"
         with patch("backend.server.ASSET_ROOT", asset_root):
-            for asset in ("favicon.ico","apple-touch-icon.png","caffoot-icon-1024.png","qrcode.min.js","tailwind.css"):
+            for asset in ("favicon.ico","apple-touch-icon.png","caffoot-icon-1024.png","caffoot-logo-256.png","qrcode.min.js","tailwind.css"):
                 status, raw, _ = self.request("/assets/" + asset)
                 self.assertEqual(status, 200)
                 self.assertEqual(raw, (asset_root / asset).read_bytes())
@@ -105,10 +160,33 @@ class SessionHttpTests(unittest.TestCase):
         )
         self.assertEqual(status, 200)
         self.assertEqual(cache, "no-store")
-        self.assertIn(b'data-action="tab-users"', body)
-        self.assertIn(b'data-action="next-import-pick"', body)
-        self.assertIn(b'data-next-import-action="confirm"', body)
+        self.assertIn(b'/interface/loader.js', body)
+        for filename, marker in (
+                ("navigation.html", b'data-action="tab-users"'),
+                ("settings.html", b'data-action="next-import-pick"'),
+                ("migration.html", b'data-next-import-action="cancel"')):
+            status, fragment, cache = self.request(
+                "/interface/screens/" + filename, COOKIE_NAME + "=" + self.token)
+            self.assertEqual(status, 200)
+            self.assertEqual(cache, "private, no-store")
+            self.assertIn(marker, fragment)
+            self.assertEqual(self.request("/interface/screens/" + filename)[0], 401)
         self.assertNotIn(b"Your inventory is NOT saved in this browser", body)
+
+    def test_modular_files_preserve_inventory_access_boundary(self):
+        with sqlite3.connect(self.path) as db:
+            user = create_user(db, 1, "no-inventory-access", "password")
+            token = login_session(db, "no-inventory-access", "password")
+        for path in ("/interface/application.js", "/interface/screens/dashboard.html",
+                     "/interface/styles/device-details.css"):
+            self.assertEqual(self.request(path)[0], 401)
+            self.assertEqual(self.request(path, COOKIE_NAME + "=" + token)[0], 403)
+            self.assertEqual(self.request(path, COOKIE_NAME + "=" + self.token)[0], 200)
+        for path in ("/interface/../backend/server.py", "/interface/design-sources.json",
+                     "/interface/screens/not-packaged.html"):
+            self.assertEqual(self.request(path)[0], 404)
+        for path in ("/interface/sign-in.js", "/interface/styles/sign-in.css"):
+            self.assertEqual(self.request(path)[0], 200)
 
     def test_inventory_requires_authenticated_inventory_access(self):
         status, body, cache = self.request("/inventory")
@@ -128,6 +206,35 @@ class SessionHttpTests(unittest.TestCase):
         status, body = response.status, json.loads(response.read())
         conn.close()
         return status, body
+
+    def test_linked_shelf_removal_http_auth_permissions_and_atomic_result(self):
+        from backend.inventory import stage_inventory, reconstruct_inventory
+        shelf = {"id":"shelf", "type":"shelf", "rackId":"rack", "face":"front", "startU":10, "heightU":1}
+        device = {"id":"device", "name":"Fictional shelf printer", "type":"Printer", "mountType":"Tabletop / Shelf Mounted", "rackId":"rack", "rackShelfAccessoryId":"shelf", "location":"Room"}
+        with sqlite3.connect(self.path) as db:
+            stage_inventory(db,{"devices":[device],"rackAccessories":[shelf],"racks":[{"id":"rack","heightU":42}],"subnets":[],"vlans":[],"ipAllocations":{}})
+            user = create_user(db,1,"shelf-editor","password")
+            user_token = login_session(db,"shelf-editor","password")
+        payload = {"shelfId":"shelf", "expectedShelf":shelf,
+                   "devices":[{"deviceId":"device","revision":0,"action":"retire"}]}
+        route = "/api/inventory/rack-shelves/remove"
+        with patch("backend.server.PUBLIC_ORIGIN","https://caffoot.example"):
+            self.assertEqual(self.post(route,payload)[0],403)
+            self.assertEqual(self.post(route,payload,self.token)[0],403)
+            self.assertEqual(self.post(route,payload,user_token,csrf_for_session(user_token))[0],403)
+            self.assertEqual(self.post(route,dict(payload,unexpected=True),self.token,csrf_for_session(self.token))[0],400)
+            stale = dict(payload,expectedShelf=dict(shelf,startU=12))
+            self.assertEqual(self.post(route,stale,self.token,csrf_for_session(self.token))[0],400)
+            with sqlite3.connect(self.path) as db:
+                self.assertEqual(reconstruct_inventory(db)['devices'],[device])
+            self.assertEqual(self.post(route,payload,self.token,csrf_for_session(self.token))[0],200)
+            with sqlite3.connect(self.path) as db:
+                state = reconstruct_inventory(db)
+                self.assertEqual(state['rackAccessories'],[])
+                self.assertEqual(state['devices'][0]['status'],'Retired')
+                self.assertEqual(state['devices'][0]['rackShelfAccessoryId'],'')
+        with patch("backend.server.PUBLIC_ORIGIN","https://another.example"):
+            self.assertEqual(self.post(route,payload,self.token,csrf_for_session(self.token))[0],403)
 
     def test_user_mfa_start_supplies_authenticator_qr_uri(self):
         with patch("backend.server.PUBLIC_ORIGIN", "https://caffoot.example"):
@@ -414,6 +521,43 @@ class SessionHttpTests(unittest.TestCase):
         self.assertEqual(len(payload["csrf_token"]), 64)
         self.assertEqual(self.request("/api/inventory")[0], 404)
         self.assertEqual(self.request("/health")[0], 200)
+
+
+    def test_same_tab_print_direct_entry_and_reload_keep_inventory_security(self):
+        cookie = COOKIE_NAME + "=" + self.token
+        baseline = self.request("/inventory", cookie)
+        for _ in range(2):
+            self.assertEqual(self.request("/inventory?rack-print=same-tab", cookie), baseline)
+        self.assertEqual(self.request("/inventory?rack-print=same-tab")[0], 401)
+        with sqlite3.connect(self.path) as db:
+            create_user(db, 1, "print-no-access", "password")
+            token = login_session(db, "print-no-access", "password")
+        self.assertEqual(self.request("/inventory?rack-print=same-tab", COOKIE_NAME + "=" + token)[0], 403)
+        for target in ("/inventory/", "/inventory?rack-print=other", "/inventory?other=same-tab",
+                       "/inventory?rack-print=same-tab&extra=1", "/interface/application.js?rack-print=same-tab"):
+            self.assertEqual(self.request(target, cookie)[0], 404)
+        for target in ("/inventory", "/inventory?rack-print=same-tab"):
+            connection = http.client.HTTPConnection("127.0.0.1", self.server.server_port)
+            connection.request("GET", target, headers={"Cookie": cookie})
+            response = connection.getresponse()
+            self.assertEqual(response.getheader("X-Content-Type-Options"), "nosniff")
+            self.assertEqual(response.getheader("Cache-Control"), "no-store")
+            self.assertEqual(response.getheader("Content-Type"), "text/html; charset=utf-8")
+            response.read()
+            connection.close()
+
+    def test_software_service_name_boundary_through_settings_api(self):
+        with patch("backend.server.PUBLIC_ORIGIN", "https://caffoot.example"):
+            for key in ("installedSoftware", "serverFunctions"):
+                for length in (81, 100, 101):
+                    payload = {"key": key, "value": [{"key": "fictional", "label": "N" * length}]}
+                    status, result = self.post("/api/inventory/settings/save", payload,
+                                               self.token, csrf_for_session(self.token))
+                    self.assertEqual(status, 400 if length == 101 else 200, result)
+                with sqlite3.connect(self.path) as db:
+                    saved = json.loads(db.execute("SELECT value_json FROM inventory_settings WHERE key=?",
+                                                   (key,)).fetchone()[0])
+                self.assertEqual(saved[0]["label"], "N" * 100)
 
 
 if __name__ == "__main__":

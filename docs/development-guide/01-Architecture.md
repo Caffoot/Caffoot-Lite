@@ -10,7 +10,7 @@ The Docker version of Caffoot Lite is a small web application, not a collection 
 | --- | --- | --- |
 | Container image | [`Dockerfile`](../../Dockerfile) | Python 3.12 Alpine image, copies the backend, browser pages and selected assets; runs as UID/GID 10001 |
 | Local build/Compose | [`compose.yaml`](../../compose.yaml) | Builds the application, maps a configurable host port and mounts persistent `/data` |
-| Portainer deployment example | [`portainer-v2.0.3.yaml`](../../portainer-v2.0.3.yaml) | Uses the published versioned ARM64/AMD64 application image with persistent `/data` storage |
+| Portainer deployment example | [`portainer-v2.1.yaml`](../../portainer-v2.1.yaml) | Uses the published versioned ARM64/AMD64 application image with persistent `/data` storage |
 | HTTP/HTTPS server | [`backend/server.py`](../../backend/server.py) | Python standard-library `ThreadingHTTPServer`, route dispatch, SQLite connections |
 | Pages | [`setup.html`](../../setup.html) and [`inventory.html`](../../inventory.html) | Account setup/sign-in and familiar inventory screens |
 | Backend domain modules | [`backend/`](../../backend/) | Authentication, authorisation, inventory operations, validation and import |
@@ -41,7 +41,7 @@ See [installation and certificate instructions](../../INSTALLATION.md). That doc
 
 ## Boundaries worth preserving
 
-The architecture is deliberately modest. There is one central SQLite inventory, not a browser authoritative copy or an extra recovery database. Existing Devices/IPAM/Racks outcomes come from the published v1.3.3 baseline. The only approved new feature area is accounts, permissions and shared edit reservations. The v1.3.3 backup import is a migration workflow, not an ongoing app backup service.
+The architecture is deliberately modest. There is one central SQLite inventory, not a browser authoritative copy or an extra recovery database. Existing Devices/IPAM/Racks outcomes come from the published v1.3.3 baseline. The unreleased v2.1 implementation also includes modular HTML/CSS/JavaScript presentation, personal profiles/photos, administrator SMTP configuration, verified-email recovery and protected Audit Trail views. These use the same server and SQLite data, not a second application. The v1.3.3 backup import is a migration workflow, not an ongoing app backup service.
 
 ### Related reading
 

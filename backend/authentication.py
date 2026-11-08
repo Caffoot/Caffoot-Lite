@@ -1,8 +1,7 @@
-"""Offline credential verification for Next accounts.
+"""Credential verification called by the session and authenticated request code.
 
-This module does not issue sessions, tokens or HTTP responses. The future
-authenticated service must add throttling, secure cookies and CSRF protection.
-"""
+This module does not issue sessions or HTTP responses. The surrounding request
+service supplies throttling, secure cookies and request-forgery protection."""
 import hmac
 from backend.accounts import verify_password
 from backend.mfa import verify_code

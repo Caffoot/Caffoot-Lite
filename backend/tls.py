@@ -1,4 +1,4 @@
-"""Persistent self-signed TLS identity for standalone Next installations."""
+"""Persistent self-signed TLS identity for standalone Caffoot Lite installations."""
 import ipaddress
 import os
 import ssl

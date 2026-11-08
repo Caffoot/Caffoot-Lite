@@ -1,0 +1,16 @@
+{
+  "oldImage": "ghcr.io/caffoot/caffoot-lite@sha256:e3606870dfafd9178fd622727dd753f3cf2439574ab45f18807330ccaee5c116",
+  "candidateImage": "caffoot-lite:private-82fcbc33b9bb",
+  "candidateRevision": "82fcbc33b9bbbf525d86bb9929d0527766573d17",
+  "architecture": "amd64",
+  "syntheticData": true,
+  "upgradeCount": 0,
+  "checks": {},
+  "status": "failed",
+  "failureType": "RuntimeError",
+  "failure": "Disposable Docker operation failed: Traceback (most recent call last):\n  File \"<stdin>\", line 16, in <module>\nAssertionError\n",
+  "cleanup": {
+    "containersAbsent": true,
+    "volumesAbsent": true
+  }
+}

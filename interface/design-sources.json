@@ -1,0 +1,189 @@
+[
+  {
+    "screen": "dashboard",
+    "source": "future-design/approved/dashboard-draft-02.html",
+    "revision": "c26db4a56bbc30f95b56201e81a7a76d13c6037b",
+    "cssSha256": "fc42f5c138e1b7a5819ac63d3f054a7921dbe3d9ee768f1396b5ea5d9a67ef95",
+    "htmlSha256": "3823bdcecc625e6e4e10b91235300a99535e62fba054798d2282948f6d2110e7",
+    "templates": [
+      "interface/screens/dashboard.html"
+    ],
+    "entryFunctions": [
+      "renderDashboardHTML"
+    ],
+    "entryUrl": "/inventory#dashboard"
+  },
+  {
+    "screen": "my-account",
+    "source": "future-design/approved/my-account-draft-06.html",
+    "revision": "c26db4a56bbc30f95b56201e81a7a76d13c6037b",
+    "cssSha256": "228a5557bfa66e517942bc534ee464318ef36d7edf63015449f512669b43f518",
+    "htmlSha256": "93be9dbb74bff9af039736c103f8964e0dd2657fc0ee287644ede9b74a5bd814",
+    "templates": [
+      "interface/screens/my-account.html",
+      "interface/screens/navigation.html"
+    ],
+    "entryFunctions": [
+      "nextRenderAccount",
+      "nextHydrateAccount"
+    ],
+    "entryUrl": "/inventory#account"
+  },
+  {
+    "screen": "settings",
+    "source": "future-design/approved/settings-data-draft-02.html",
+    "revision": "c26db4a56bbc30f95b56201e81a7a76d13c6037b",
+    "cssSha256": "9efef942d7f113d55ee5bcd17905724fcb477c62150c003aff2a2a679d9e618b",
+    "htmlSha256": "3c604a57d0a98cb09aad1c090a342bc43df09c92cf741cd44ab6a5cc04ea298a",
+    "templates": [
+      "interface/screens/settings.html"
+    ],
+    "entryFunctions": [
+      "renderApplicationSettings",
+      "hydrateApprovedSettings"
+    ],
+    "entryUrl": "/inventory#settings"
+  },
+  {
+    "screen": "devices",
+    "source": "future-design/approved/devices-overview-draft-03.html",
+    "revision": "c26db4a56bbc30f95b56201e81a7a76d13c6037b",
+    "cssSha256": "8384ba370fc7485c6f9f0e1beb5b312effd5fadd63fd2d7fbd4e514960e86879",
+    "htmlSha256": "712ee1807910130514953ce3f6660ad579d07a1e532a7d347a29a43339407283",
+    "templates": [
+      "interface/screens/devices.html"
+    ],
+    "entryFunctions": [
+      "renderDevicesHTML"
+    ],
+    "entryUrl": "/inventory#devices"
+  },
+  {
+    "screen": "device-inventory",
+    "source": "future-design/approved/devices-inventory-draft-02.html",
+    "revision": "c26db4a56bbc30f95b56201e81a7a76d13c6037b",
+    "cssSha256": "9ae230a0de45e9cd28a9f70b536092dddd42b222684360b8588886a127f059b3",
+    "htmlSha256": "0feb9cedd6f76dfaba4d5b0e8e08234860d9c9c264f6119421495c3c39e32b14",
+    "templates": [
+      "interface/screens/device-inventory.html"
+    ],
+    "entryFunctions": [
+      "renderDevicesHTML",
+      "getVisibleDevices"
+    ],
+    "entryUrl": "/inventory#devices"
+  },
+  {
+    "screen": "device-details",
+    "source": "future-design/approved/devices-details-forms-batch-04.html",
+    "revision": "c26db4a56bbc30f95b56201e81a7a76d13c6037b",
+    "cssSha256": "e99fe7b8b0b12c8c308de665e1d79ce378be671088eadcdcc1d0cf9ca7df844d",
+    "htmlSha256": "e1ec9b620de0cd2fdf84d4f31527a5e2dc1748842614ca44fcddc46d5ed78650",
+    "templates": [
+      "interface/screens/device-details.html",
+      "interface/screens/devices.html"
+    ],
+    "entryFunctions": [
+      "openDeviceDetailView",
+      "openDeviceModal",
+      "initialiseDeviceTabs"
+    ],
+    "entryUrl": "/inventory#devices"
+  },
+  {
+    "screen": "device-management",
+    "source": "future-design/approved/devices-management-batch-02.html",
+    "revision": "c26db4a56bbc30f95b56201e81a7a76d13c6037b",
+    "cssSha256": "50be4d3c46e1e98bc56ebe813899e98169fee8aee937d81749d6237b1e00ca24",
+    "htmlSha256": "91022325d3ade189f36f030e85ff324ee56551e276aa1eeda90737b76d6c2a38",
+    "templates": [
+      "interface/screens/device-management.html",
+      "interface/screens/devices.html"
+    ],
+    "entryFunctions": [
+      "renderHardwareManufacturersHtml",
+      "renderHardwareModelsHtml",
+      "renderSoftwareCatalogueHtml",
+      "renderServerServicesCatalogueHtml",
+      "openApprovedCatalogueModal"
+    ],
+    "entryUrl": "/inventory#devices"
+  },
+  {
+    "screen": "ipam",
+    "source": "future-design/approved/ipam-draft-01.html",
+    "revision": "c26db4a56bbc30f95b56201e81a7a76d13c6037b",
+    "cssSha256": "5e8f5a81611653284aec7ed0bf6a5c479f71e4da9ddde5841a28a119d7613f92",
+    "htmlSha256": "5d791ce4140234c2277d7ed757aca245ee0a102e459e56b24f69993c02c6359f",
+    "templates": [
+      "interface/screens/ipam.html"
+    ],
+    "entryFunctions": [
+      "renderIpamHTML",
+      "openApprovedIpamModal"
+    ],
+    "entryUrl": "/inventory#ipam"
+  },
+  {
+    "screen": "racks",
+    "source": "future-design/approved/racks-draft-04.html",
+    "revision": "c26db4a56bbc30f95b56201e81a7a76d13c6037b",
+    "cssSha256": "6bbda8ec3e6f0b04ea578b2404f80cba8d93c90b8f62d2fdf15be8fb216a4c7b",
+    "htmlSha256": "6bf3f3d1350f590c4b4f390889def88882f6ea496c08762bede8dc457cb8a82a",
+    "templates": [
+      "interface/screens/racks.html"
+    ],
+    "entryFunctions": [
+      "renderRackHubV13",
+      "renderRacksHTML",
+      "openRackSlotPlacementDialog",
+      "openRackAccessoryEditor"
+    ],
+    "entryUrl": "/inventory#racks"
+  },
+  {
+    "screen": "users",
+    "source": "future-design/approved/users-permissions-draft-02.html",
+    "revision": "c26db4a56bbc30f95b56201e81a7a76d13c6037b",
+    "cssSha256": "de3ffc23f5d14efeffee5415a79aefd5f4dd7f2fe9d0a8863cf84ff3bd72f6e5",
+    "htmlSha256": "795ca460865fdae3dd907e9d48af316e8df2fb09cdd966c0dd1919a1327a0eaf",
+    "templates": [
+      "interface/screens/users.html"
+    ],
+    "entryFunctions": [
+      "nextRenderUsers"
+    ],
+    "entryUrl": "/inventory#users"
+  },
+  {
+    "screen": "audit-trail",
+    "source": "future-design/approved/audit-trail-draft-01.html",
+    "revision": "c26db4a56bbc30f95b56201e81a7a76d13c6037b",
+    "cssSha256": "bdd6cfc0e68d898b15f1abfbd7cbb07b635dba8e775de38785630fa068cce99f",
+    "htmlSha256": "c3edbe5123014d7848235770645ade711684780c10756b2d0afc8c606c8d83d0",
+    "templates": [
+      "interface/screens/audit-trail.html"
+    ],
+    "entryFunctions": [
+      "renderAuditHTML",
+      "hydrateApprovedAudit",
+      "exportAuditHistory"
+    ],
+    "entryUrl": "/inventory#audit"
+  },
+  {
+    "screen": "sign-in",
+    "source": "future-design/approved/sign-in-first-run-draft-03.html",
+    "revision": "c26db4a56bbc30f95b56201e81a7a76d13c6037b",
+    "cssSha256": "8b9759c4d6c3740126eb657e27490a32aabe734dd38bc69c2448f5c6ecd16ca0",
+    "htmlSha256": "e2855d1a6d00a38fd79401f7beba5f3d63115e5851fcb2394c1a3ecaf3f831df",
+    "templates": [
+      "setup.html"
+    ],
+    "entryFunctions": [
+      "display",
+      "showSession"
+    ],
+    "entryUrl": "/setup"
+  }
+]

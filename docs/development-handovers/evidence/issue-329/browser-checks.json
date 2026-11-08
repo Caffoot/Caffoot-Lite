@@ -1,0 +1,101 @@
+{
+  "checks": [
+    "Single VPN omits unassigned fields, reload preserves them, legacy edits retain classification and invalid manual gateways cannot save",
+    "New parent and ten individually reviewed networks save atomically; row errors block all writes and Back/recalculation preserves manual gateways",
+    "Fifty-row preview remains scrollable with visible actions at four widths in both themes, then saves another batch into the existing block",
+    "Device Add/Edit/Duplicate uses subnet-first named choices and read-only VLAN, preserves saved IPs and clears stale dependent values safely",
+    "Direct API cannot create 51 or empty batches or bypass same-origin protection; rejected attempts leave stored inventory unchanged"
+  ],
+  "errors": [],
+  "measurements": [
+    {
+      "width": 1440,
+      "height": 950,
+      "theme": "light",
+      "right": 1232,
+      "bottom": 932,
+      "overflow": 0,
+      "scrolls": true,
+      "bodyBottom": 857,
+      "footerY": 857
+    },
+    {
+      "width": 1440,
+      "height": 950,
+      "theme": "dark",
+      "right": 1232,
+      "bottom": 932,
+      "overflow": 0,
+      "scrolls": true,
+      "bodyBottom": 857,
+      "footerY": 857
+    },
+    {
+      "width": 1366,
+      "height": 600,
+      "theme": "light",
+      "right": 1195,
+      "bottom": 582,
+      "overflow": 0,
+      "scrolls": true,
+      "bodyBottom": 507,
+      "footerY": 507
+    },
+    {
+      "width": 1366,
+      "height": 600,
+      "theme": "dark",
+      "right": 1195,
+      "bottom": 582,
+      "overflow": 0,
+      "scrolls": true,
+      "bodyBottom": 507,
+      "footerY": 507
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "theme": "light",
+      "right": 372,
+      "bottom": 826,
+      "overflow": 0,
+      "scrolls": true,
+      "bodyBottom": 751,
+      "footerY": 751
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "theme": "dark",
+      "right": 372,
+      "bottom": 826,
+      "overflow": 0,
+      "scrolls": true,
+      "bodyBottom": 751,
+      "footerY": 751
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "theme": "light",
+      "right": 302,
+      "bottom": 550,
+      "overflow": 0,
+      "scrolls": true,
+      "bodyBottom": 426,
+      "footerY": 426
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "theme": "dark",
+      "right": 302,
+      "bottom": 550,
+      "overflow": 0,
+      "scrolls": true,
+      "bodyBottom": 426,
+      "footerY": 426
+    }
+  ],
+  "nativeSafariTested": false
+}

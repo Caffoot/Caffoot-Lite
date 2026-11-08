@@ -1,0 +1,14 @@
+{
+  "isolatedSyntheticTarOnly": true,
+  "noApplicationOrUpgradeRun": true,
+  "members": {
+    "executed": [
+      "data",
+      "data/caffoot.sqlite3"
+    ],
+    "proposed": [
+      ".",
+      "./caffoot.sqlite3"
+    ]
+  }
+}

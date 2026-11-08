@@ -1,8 +1,7 @@
-"""Authenticated request boundary for the future Next HTTP endpoints.
+"""Authenticated request checks shared by the live HTTP handlers.
 
-Keeps the HTTP handler thin: identity always comes from a verified cookie,
-not caller-supplied account IDs. No inventory or account routes are exposed yet.
-"""
+Identity comes from a verified session cookie, not a caller-supplied account
+identifier. Modifying requests also require the expected origin and proof."""
 import hashlib
 import hmac
 

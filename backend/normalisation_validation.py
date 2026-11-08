@@ -2,6 +2,7 @@
 
 These are pre-reconciliation checks, not an import approval or persistence API.
 """
+from .shelf_associations import validate_device_shelf_association
 import ipaddress
 import math
 
@@ -75,6 +76,8 @@ def validate_normalisation_devices(candidate):
             )
         if device.get("primaryIp") and not _valid_ipv4(device["primaryIp"]):
             raise ValueError(f"Invalid primary IP on device {name}.")
+        if validate_device_shelf_association(device, candidate):
+            continue
         if device.get("mountType") == "Rack Mounted" or device.get("rackId"):
             if device.get("mountType") != "Rack Mounted":
                 raise ValueError(

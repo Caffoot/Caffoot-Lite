@@ -1,0 +1,745 @@
+{
+  "checks": [
+    "Single duplicate names are rejected beside Name without changing historical inventory",
+    "Every 10th uses subnet-sized strides; Custom validates CIDRs/names and saves retained manual gateways atomically",
+    "Containing-block errors stay visible beside the input and explain the range without internal IDs",
+    "Whole-app selects keep native semantics with consistent chrome; Gateway Convention matches adjacent fields before/after Back at four widths and both themes"
+  ],
+  "measurements": [
+    {
+      "label": "dashboard",
+      "rows": []
+    },
+    {
+      "label": "devices",
+      "rows": []
+    },
+    {
+      "label": "ipam",
+      "rows": []
+    },
+    {
+      "label": "racks",
+      "rows": []
+    },
+    {
+      "label": "users",
+      "rows": []
+    },
+    {
+      "label": "settings",
+      "rows": []
+    },
+    {
+      "label": "account",
+      "rows": []
+    },
+    {
+      "label": "audit",
+      "rows": [
+        {
+          "id": "area",
+          "label": "Area",
+          "height": 41,
+          "width": 237.515625,
+          "appearance": "none",
+          "padding": "10px 32px 10px 11px",
+          "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+          "fontSize": "13px",
+          "paddingTop": "10px",
+          "paddingBottom": "10px",
+          "disabled": false,
+          "multiple": false,
+          "size": 0
+        },
+        {
+          "id": "action",
+          "label": "Action",
+          "height": 41,
+          "width": 145,
+          "appearance": "none",
+          "padding": "10px 32px 10px 11px",
+          "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+          "fontSize": "13px",
+          "paddingTop": "10px",
+          "paddingBottom": "10px",
+          "disabled": false,
+          "multiple": false,
+          "size": 0
+        },
+        {
+          "id": "actor",
+          "label": "Performed by",
+          "height": 41,
+          "width": 145,
+          "appearance": "none",
+          "padding": "10px 32px 10px 11px",
+          "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+          "fontSize": "13px",
+          "paddingTop": "10px",
+          "paddingBottom": "10px",
+          "disabled": false,
+          "multiple": false,
+          "size": 0
+        }
+      ]
+    },
+    {
+      "label": "Rack modal",
+      "rows": [
+        {
+          "id": "rack-type",
+          "label": "Rack TypeFloor-standing cabinetWall-mounted cabinetOpen-frame 2-postOp",
+          "height": 42,
+          "width": 259,
+          "appearance": "none",
+          "padding": "10px 32px 10px 11px",
+          "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+          "fontSize": "13px",
+          "paddingTop": "10px",
+          "paddingBottom": "10px",
+          "disabled": false,
+          "multiple": false,
+          "size": 0
+        },
+        {
+          "id": "rack-height",
+          "label": "Height (U)6U9U12U18U24U42U48UCustom…",
+          "height": 42,
+          "width": 259,
+          "appearance": "none",
+          "padding": "10px 32px 10px 11px",
+          "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+          "fontSize": "13px",
+          "paddingTop": "10px",
+          "paddingBottom": "10px",
+          "disabled": false,
+          "multiple": false,
+          "size": 0
+        }
+      ]
+    },
+    {
+      "label": "User editor",
+      "rows": []
+    },
+    {
+      "label": "Email settings",
+      "rows": [
+        {
+          "id": "",
+          "label": "Connection Security STARTTLSSSL / TLSUnencrypted (Requires Review)",
+          "height": 42,
+          "width": 321.421875,
+          "appearance": "none",
+          "padding": "10px 32px 10px 11px",
+          "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+          "fontSize": "13px",
+          "paddingTop": "10px",
+          "paddingBottom": "10px",
+          "disabled": false,
+          "multiple": false,
+          "size": 0
+        }
+      ]
+    },
+    {
+      "label": "Active Subnet and address filters",
+      "rows": [
+        {
+          "id": "ipam-select-network",
+          "label": "Active Subnet10.0.10.0/24 —  Historical Duplicate Name  (VLAN 10)10.0.",
+          "height": 43,
+          "width": 769.28125,
+          "appearance": "none",
+          "padding": "9px 32px 9px 11px",
+          "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+          "fontSize": "13px",
+          "paddingTop": "9px",
+          "paddingBottom": "9px",
+          "disabled": false,
+          "multiple": false,
+          "size": 0
+        },
+        {
+          "id": "ipam-status-filter",
+          "label": "Allocation statusAll statusesAvailableAssignedReserved",
+          "height": 43,
+          "width": 521.3125,
+          "appearance": "none",
+          "padding": "9px 32px 9px 11px",
+          "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+          "fontSize": "13px",
+          "paddingTop": "9px",
+          "paddingBottom": "9px",
+          "disabled": false,
+          "multiple": false,
+          "size": 0
+        }
+      ]
+    },
+    {
+      "label": "Device Networking",
+      "rows": [
+        {
+          "id": "dev-block",
+          "label": "IP Address Block (Optional)",
+          "height": 42,
+          "width": 460,
+          "appearance": "none",
+          "padding": "10px 32px 10px 11px",
+          "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+          "fontSize": "13px",
+          "paddingTop": "10px",
+          "paddingBottom": "10px",
+          "disabled": false,
+          "multiple": false,
+          "size": 0
+        },
+        {
+          "id": "dev-subnet",
+          "label": "Subnet *",
+          "height": 42,
+          "width": 460,
+          "appearance": "none",
+          "padding": "10px 32px 10px 11px",
+          "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+          "fontSize": "13px",
+          "paddingTop": "10px",
+          "paddingBottom": "10px",
+          "disabled": false,
+          "multiple": false,
+          "size": 0
+        },
+        {
+          "id": "dev-ip-available",
+          "label": "Choose an Available IP Address",
+          "height": 42,
+          "width": 460,
+          "appearance": "none",
+          "padding": "10px 32px 10px 11px",
+          "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+          "fontSize": "13px",
+          "paddingTop": "10px",
+          "paddingBottom": "10px",
+          "disabled": true,
+          "multiple": false,
+          "size": 0
+        }
+      ]
+    },
+    {
+      "label": "Gateway Convention 1440 light",
+      "rows": [
+        {
+          "id": "subnet-batch-prefix",
+          "label": "Subnet Prefix */23/24/25/26/27/28/29/30",
+          "height": 42,
+          "width": 257,
+          "appearance": "none",
+          "padding": "10px 32px 10px 11px",
+          "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+          "fontSize": "13px",
+          "paddingTop": "10px",
+          "paddingBottom": "10px",
+          "disabled": false,
+          "multiple": false,
+          "size": 0
+        },
+        {
+          "id": "subnet-batch-convention",
+          "label": "Gateway Convention *Select a convention...First usable IPLast usable I",
+          "height": 42,
+          "width": 257,
+          "appearance": "none",
+          "padding": "10px 32px 10px 11px",
+          "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+          "fontSize": "13px",
+          "paddingTop": "10px",
+          "paddingBottom": "10px",
+          "disabled": false,
+          "multiple": false,
+          "size": 0
+        },
+        {
+          "id": "subnet-batch-spacing",
+          "label": "Subnet SpacingConsecutiveEvery 10th SubnetCustom CIDRsConsecutive uses",
+          "height": 42,
+          "width": 527,
+          "appearance": "none",
+          "padding": "10px 32px 10px 11px",
+          "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+          "fontSize": "13px",
+          "paddingTop": "10px",
+          "paddingBottom": "10px",
+          "disabled": false,
+          "multiple": false,
+          "size": 0
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "height": 950,
+      "theme": "light",
+      "geometry": {
+        "height": 42,
+        "inputHeight": 42,
+        "top": 384.71875,
+        "left": 726.5,
+        "countTop": 384.71875,
+        "countLeft": 456.5,
+        "overflow": 0
+      }
+    },
+    {
+      "label": "Gateway Convention 1440 dark",
+      "rows": [
+        {
+          "id": "subnet-batch-prefix",
+          "label": "Subnet Prefix */23/24/25/26/27/28/29/30",
+          "height": 42,
+          "width": 257,
+          "appearance": "none",
+          "padding": "10px 32px 10px 11px",
+          "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+          "fontSize": "13px",
+          "paddingTop": "10px",
+          "paddingBottom": "10px",
+          "disabled": false,
+          "multiple": false,
+          "size": 0
+        },
+        {
+          "id": "subnet-batch-convention",
+          "label": "Gateway Convention *Select a convention...First usable IPLast usable I",
+          "height": 42,
+          "width": 257,
+          "appearance": "none",
+          "padding": "10px 32px 10px 11px",
+          "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+          "fontSize": "13px",
+          "paddingTop": "10px",
+          "paddingBottom": "10px",
+          "disabled": false,
+          "multiple": false,
+          "size": 0
+        },
+        {
+          "id": "subnet-batch-spacing",
+          "label": "Subnet SpacingConsecutiveEvery 10th SubnetCustom CIDRsConsecutive uses",
+          "height": 42,
+          "width": 527,
+          "appearance": "none",
+          "padding": "10px 32px 10px 11px",
+          "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+          "fontSize": "13px",
+          "paddingTop": "10px",
+          "paddingBottom": "10px",
+          "disabled": false,
+          "multiple": false,
+          "size": 0
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "height": 950,
+      "theme": "dark",
+      "geometry": {
+        "height": 42,
+        "inputHeight": 42,
+        "top": 384.71875,
+        "left": 726.5,
+        "countTop": 384.71875,
+        "countLeft": 456.5,
+        "overflow": 0
+      }
+    },
+    {
+      "label": "Gateway Convention 1366 light",
+      "rows": [
+        {
+          "id": "subnet-batch-prefix",
+          "label": "Subnet Prefix */23/24/25/26/27/28/29/30",
+          "height": 42,
+          "width": 257,
+          "appearance": "none",
+          "padding": "10px 32px 10px 11px",
+          "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+          "fontSize": "13px",
+          "paddingTop": "10px",
+          "paddingBottom": "10px",
+          "disabled": false,
+          "multiple": false,
+          "size": 0
+        },
+        {
+          "id": "subnet-batch-convention",
+          "label": "Gateway Convention *Select a convention...First usable IPLast usable I",
+          "height": 42,
+          "width": 257,
+          "appearance": "none",
+          "padding": "10px 32px 10px 11px",
+          "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+          "fontSize": "13px",
+          "paddingTop": "10px",
+          "paddingBottom": "10px",
+          "disabled": false,
+          "multiple": false,
+          "size": 0
+        },
+        {
+          "id": "subnet-batch-spacing",
+          "label": "Subnet SpacingConsecutiveEvery 10th SubnetCustom CIDRsConsecutive uses",
+          "height": 42,
+          "width": 527,
+          "appearance": "none",
+          "padding": "10px 32px 10px 11px",
+          "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+          "fontSize": "13px",
+          "paddingTop": "10px",
+          "paddingBottom": "10px",
+          "disabled": false,
+          "multiple": false,
+          "size": 0
+        }
+      ]
+    },
+    {
+      "width": 1366,
+      "height": 600,
+      "theme": "light",
+      "geometry": {
+        "height": 42,
+        "inputHeight": 42,
+        "top": 233,
+        "left": 689.5,
+        "countTop": 233,
+        "countLeft": 419.5,
+        "overflow": 0
+      }
+    },
+    {
+      "label": "Gateway Convention 1366 dark",
+      "rows": [
+        {
+          "id": "subnet-batch-prefix",
+          "label": "Subnet Prefix */23/24/25/26/27/28/29/30",
+          "height": 42,
+          "width": 257,
+          "appearance": "none",
+          "padding": "10px 32px 10px 11px",
+          "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+          "fontSize": "13px",
+          "paddingTop": "10px",
+          "paddingBottom": "10px",
+          "disabled": false,
+          "multiple": false,
+          "size": 0
+        },
+        {
+          "id": "subnet-batch-convention",
+          "label": "Gateway Convention *Select a convention...First usable IPLast usable I",
+          "height": 42,
+          "width": 257,
+          "appearance": "none",
+          "padding": "10px 32px 10px 11px",
+          "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+          "fontSize": "13px",
+          "paddingTop": "10px",
+          "paddingBottom": "10px",
+          "disabled": false,
+          "multiple": false,
+          "size": 0
+        },
+        {
+          "id": "subnet-batch-spacing",
+          "label": "Subnet SpacingConsecutiveEvery 10th SubnetCustom CIDRsConsecutive uses",
+          "height": 42,
+          "width": 527,
+          "appearance": "none",
+          "padding": "10px 32px 10px 11px",
+          "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+          "fontSize": "13px",
+          "paddingTop": "10px",
+          "paddingBottom": "10px",
+          "disabled": false,
+          "multiple": false,
+          "size": 0
+        }
+      ]
+    },
+    {
+      "width": 1366,
+      "height": 600,
+      "theme": "dark",
+      "geometry": {
+        "height": 42,
+        "inputHeight": 42,
+        "top": 233,
+        "left": 689.5,
+        "countTop": 233,
+        "countLeft": 419.5,
+        "overflow": 0
+      }
+    },
+    {
+      "label": "Gateway Convention 390 light",
+      "rows": [
+        {
+          "id": "subnet-batch-prefix",
+          "label": "Subnet Prefix */23/24/25/26/27/28/29/30",
+          "height": 42,
+          "width": 318,
+          "appearance": "none",
+          "padding": "10px 32px 10px 11px",
+          "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+          "fontSize": "13px",
+          "paddingTop": "10px",
+          "paddingBottom": "10px",
+          "disabled": false,
+          "multiple": false,
+          "size": 0
+        },
+        {
+          "id": "subnet-batch-convention",
+          "label": "Gateway Convention *Select a convention...First usable IPLast usable I",
+          "height": 42,
+          "width": 318,
+          "appearance": "none",
+          "padding": "10px 32px 10px 11px",
+          "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+          "fontSize": "13px",
+          "paddingTop": "10px",
+          "paddingBottom": "10px",
+          "disabled": false,
+          "multiple": false,
+          "size": 0
+        },
+        {
+          "id": "subnet-batch-spacing",
+          "label": "Subnet SpacingConsecutiveEvery 10th SubnetCustom CIDRsConsecutive uses",
+          "height": 42,
+          "width": 318,
+          "appearance": "none",
+          "padding": "10px 32px 10px 11px",
+          "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+          "fontSize": "13px",
+          "paddingTop": "10px",
+          "paddingBottom": "10px",
+          "disabled": false,
+          "multiple": false,
+          "size": 0
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "theme": "light",
+      "geometry": {
+        "height": 42,
+        "inputHeight": 42,
+        "top": 410.109375,
+        "left": 36,
+        "countTop": 310.71875,
+        "countLeft": 36,
+        "overflow": 0
+      }
+    },
+    {
+      "label": "Gateway Convention 390 dark",
+      "rows": [
+        {
+          "id": "subnet-batch-prefix",
+          "label": "Subnet Prefix */23/24/25/26/27/28/29/30",
+          "height": 42,
+          "width": 318,
+          "appearance": "none",
+          "padding": "10px 32px 10px 11px",
+          "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+          "fontSize": "13px",
+          "paddingTop": "10px",
+          "paddingBottom": "10px",
+          "disabled": false,
+          "multiple": false,
+          "size": 0
+        },
+        {
+          "id": "subnet-batch-convention",
+          "label": "Gateway Convention *Select a convention...First usable IPLast usable I",
+          "height": 42,
+          "width": 318,
+          "appearance": "none",
+          "padding": "10px 32px 10px 11px",
+          "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+          "fontSize": "13px",
+          "paddingTop": "10px",
+          "paddingBottom": "10px",
+          "disabled": false,
+          "multiple": false,
+          "size": 0
+        },
+        {
+          "id": "subnet-batch-spacing",
+          "label": "Subnet SpacingConsecutiveEvery 10th SubnetCustom CIDRsConsecutive uses",
+          "height": 42,
+          "width": 318,
+          "appearance": "none",
+          "padding": "10px 32px 10px 11px",
+          "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+          "fontSize": "13px",
+          "paddingTop": "10px",
+          "paddingBottom": "10px",
+          "disabled": false,
+          "multiple": false,
+          "size": 0
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "theme": "dark",
+      "geometry": {
+        "height": 42,
+        "inputHeight": 42,
+        "top": 410.109375,
+        "left": 36,
+        "countTop": 310.71875,
+        "countLeft": 36,
+        "overflow": 0
+      }
+    },
+    {
+      "label": "Gateway Convention 320 light",
+      "rows": [
+        {
+          "id": "subnet-batch-prefix",
+          "label": "Subnet Prefix */23/24/25/26/27/28/29/30",
+          "height": 42,
+          "width": 248,
+          "appearance": "none",
+          "padding": "10px 32px 10px 11px",
+          "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+          "fontSize": "13px",
+          "paddingTop": "10px",
+          "paddingBottom": "10px",
+          "disabled": false,
+          "multiple": false,
+          "size": 0
+        },
+        {
+          "id": "subnet-batch-convention",
+          "label": "Gateway Convention *Select a convention...First usable IPLast usable I",
+          "height": 42,
+          "width": 248,
+          "appearance": "none",
+          "padding": "10px 32px 10px 11px",
+          "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+          "fontSize": "13px",
+          "paddingTop": "10px",
+          "paddingBottom": "10px",
+          "disabled": false,
+          "multiple": false,
+          "size": 0
+        },
+        {
+          "id": "subnet-batch-spacing",
+          "label": "Subnet SpacingConsecutiveEvery 10th SubnetCustom CIDRsConsecutive uses",
+          "height": 42,
+          "width": 248,
+          "appearance": "none",
+          "padding": "10px 32px 10px 11px",
+          "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+          "fontSize": "13px",
+          "paddingTop": "10px",
+          "paddingBottom": "10px",
+          "disabled": false,
+          "multiple": false,
+          "size": 0
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "theme": "light",
+      "geometry": {
+        "height": 42,
+        "inputHeight": 42,
+        "top": 455.78125,
+        "left": 36,
+        "countTop": 341,
+        "countLeft": 36,
+        "overflow": 0
+      }
+    },
+    {
+      "label": "Gateway Convention 320 dark",
+      "rows": [
+        {
+          "id": "subnet-batch-prefix",
+          "label": "Subnet Prefix */23/24/25/26/27/28/29/30",
+          "height": 42,
+          "width": 248,
+          "appearance": "none",
+          "padding": "10px 32px 10px 11px",
+          "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+          "fontSize": "13px",
+          "paddingTop": "10px",
+          "paddingBottom": "10px",
+          "disabled": false,
+          "multiple": false,
+          "size": 0
+        },
+        {
+          "id": "subnet-batch-convention",
+          "label": "Gateway Convention *Select a convention...First usable IPLast usable I",
+          "height": 42,
+          "width": 248,
+          "appearance": "none",
+          "padding": "10px 32px 10px 11px",
+          "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+          "fontSize": "13px",
+          "paddingTop": "10px",
+          "paddingBottom": "10px",
+          "disabled": false,
+          "multiple": false,
+          "size": 0
+        },
+        {
+          "id": "subnet-batch-spacing",
+          "label": "Subnet SpacingConsecutiveEvery 10th SubnetCustom CIDRsConsecutive uses",
+          "height": 42,
+          "width": 248,
+          "appearance": "none",
+          "padding": "10px 32px 10px 11px",
+          "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+          "fontSize": "13px",
+          "paddingTop": "10px",
+          "paddingBottom": "10px",
+          "disabled": false,
+          "multiple": false,
+          "size": 0
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "theme": "dark",
+      "geometry": {
+        "height": 42,
+        "inputHeight": 42,
+        "top": 455.78125,
+        "left": 36,
+        "countTop": 341,
+        "countLeft": 36,
+        "overflow": 0
+      }
+    }
+  ],
+  "nativeSafariTested": false
+}

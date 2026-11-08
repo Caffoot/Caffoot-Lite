@@ -1,8 +1,7 @@
-"""Small HTTP security boundary for Next's eventual authenticated routes.
+"""HTTP cookie, origin and request-proof checks for the HTTPS application.
 
-No routes are enabled by this module. A reverse proxy must provide HTTPS;
-the application must not trust client-supplied forwarded-proto headers.
-"""
+The application serves HTTPS directly. A reverse proxy must also use a trusted
+HTTPS connection to it. Never trust a client-supplied forwarding header."""
 import hmac
 import secrets
 from http.cookies import SimpleCookie

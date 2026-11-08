@@ -1,0 +1,6 @@
+test_configurable_port_and_persistent_data_after_restart (tests.test_compose_lifecycle.ComposeLifecycleTests.test_configurable_port_and_persistent_data_after_restart) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 99.166s
+
+OK

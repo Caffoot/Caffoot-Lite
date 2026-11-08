@@ -1,0 +1,294 @@
+{
+  "baseline": true,
+  "errors": [],
+  "results": [
+    {
+      "screen": "devices",
+      "width": 1440,
+      "theme": "light",
+      "heading": {
+        "x": 258.1875,
+        "y": 258.03125,
+        "width": 1138.625,
+        "height": 48.046875,
+        "bottom": 306.078125
+      },
+      "tabs": {
+        "x": 258.1875,
+        "y": 323.078125,
+        "width": 1138.625,
+        "height": 55,
+        "bottom": 378.078125
+      },
+      "metrics": {
+        "x": 258.1875,
+        "y": 397.078125,
+        "width": 1138.625,
+        "height": 143.59375,
+        "bottom": 540.671875
+      },
+      "insights": {
+        "x": 258.1875,
+        "y": 557.671875,
+        "width": 1138.625,
+        "height": 413.09375,
+        "bottom": 970.765625
+      },
+      "mainGap": 18,
+      "headingToTabs": 17,
+      "tabsToMetrics": 19,
+      "metricsToInsights": 17,
+      "metricRowGap": 14,
+      "metricColumnGap": 14,
+      "referenceInsightGap": 17,
+      "metricsVisible": true,
+      "metricsText": [
+        "Total Devices6Recorded in inventory",
+        "With Primary IP5Devices with a primary IP",
+        "Locations Recorded5Known location assigned",
+        "Device Types5Different classifications"
+      ],
+      "content": "Devices by TypeEquipment classification across your inventory.Server2Desktop1NAS1Switch1Virtual Machine1Devices by LocationPhysical areas associated with your devices.Server Room4Not Recorded1Office1",
+      "chartValues": [],
+      "overflow": false,
+      "insightGroups": [
+        {
+          "x": 258.1875,
+          "y": 557.671875,
+          "width": 560.8125,
+          "height": 413.09375,
+          "bottom": 970.765625,
+          "class": "intelligence-card",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 836,
+          "y": 557.671875,
+          "width": 560.8125,
+          "height": 413.09375,
+          "bottom": 970.765625,
+          "class": "intelligence-card",
+          "marginTop": "0px",
+          "gap": "normal"
+        }
+      ]
+    },
+    {
+      "screen": "devices",
+      "width": 1440,
+      "theme": "dark",
+      "heading": {
+        "x": 258.1875,
+        "y": 258.03125,
+        "width": 1138.625,
+        "height": 48.046875,
+        "bottom": 306.078125
+      },
+      "tabs": {
+        "x": 258.1875,
+        "y": 323.078125,
+        "width": 1138.625,
+        "height": 55,
+        "bottom": 378.078125
+      },
+      "metrics": {
+        "x": 258.1875,
+        "y": 397.078125,
+        "width": 1138.625,
+        "height": 143.59375,
+        "bottom": 540.671875
+      },
+      "insights": {
+        "x": 258.1875,
+        "y": 557.671875,
+        "width": 1138.625,
+        "height": 413.09375,
+        "bottom": 970.765625
+      },
+      "mainGap": 18,
+      "headingToTabs": 17,
+      "tabsToMetrics": 19,
+      "metricsToInsights": 17,
+      "metricRowGap": 14,
+      "metricColumnGap": 14,
+      "referenceInsightGap": 17,
+      "metricsVisible": true,
+      "metricsText": [
+        "Total Devices6Recorded in inventory",
+        "With Primary IP5Devices with a primary IP",
+        "Locations Recorded5Known location assigned",
+        "Device Types5Different classifications"
+      ],
+      "content": "Devices by TypeEquipment classification across your inventory.Server2Desktop1NAS1Switch1Virtual Machine1Devices by LocationPhysical areas associated with your devices.Server Room4Not Recorded1Office1",
+      "chartValues": [],
+      "overflow": false,
+      "insightGroups": [
+        {
+          "x": 258.1875,
+          "y": 557.671875,
+          "width": 560.8125,
+          "height": 413.09375,
+          "bottom": 970.765625,
+          "class": "intelligence-card",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 836,
+          "y": 557.671875,
+          "width": 560.8125,
+          "height": 413.09375,
+          "bottom": 970.765625,
+          "class": "intelligence-card",
+          "marginTop": "0px",
+          "gap": "normal"
+        }
+      ]
+    },
+    {
+      "screen": "devices",
+      "width": 390,
+      "theme": "light",
+      "heading": {
+        "x": 81,
+        "y": 325.421875,
+        "width": 293,
+        "height": 67.09375,
+        "bottom": 392.515625
+      },
+      "tabs": {
+        "x": 81,
+        "y": 406.515625,
+        "width": 293,
+        "height": 55,
+        "bottom": 461.515625
+      },
+      "metrics": {
+        "x": 81,
+        "y": 480.515625,
+        "width": 293,
+        "height": 307.875,
+        "bottom": 788.390625
+      },
+      "insights": {
+        "x": 81,
+        "y": 805.390625,
+        "width": 293,
+        "height": 737.375,
+        "bottom": 1542.765625
+      },
+      "mainGap": 18,
+      "headingToTabs": 14,
+      "tabsToMetrics": 19,
+      "metricsToInsights": 17,
+      "metricRowGap": 10,
+      "metricColumnGap": 10,
+      "referenceInsightGap": 17,
+      "metricsVisible": true,
+      "metricsText": [
+        "Total Devices6Recorded in inventory",
+        "With Primary IP5Devices with a primary IP",
+        "Locations Recorded5Known location assigned",
+        "Device Types5Different classifications"
+      ],
+      "content": "Devices by TypeEquipment classification across your inventory.Server2Desktop1NAS1Switch1Virtual Machine1Devices by LocationPhysical areas associated with your devices.Server Room4Not Recorded1Office1",
+      "chartValues": [],
+      "overflow": false,
+      "insightGroups": [
+        {
+          "x": 81,
+          "y": 805.390625,
+          "width": 293,
+          "height": 420.1875,
+          "bottom": 1225.578125,
+          "class": "intelligence-card",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 81,
+          "y": 1242.578125,
+          "width": 293,
+          "height": 300.1875,
+          "bottom": 1542.765625,
+          "class": "intelligence-card",
+          "marginTop": "0px",
+          "gap": "normal"
+        }
+      ]
+    },
+    {
+      "screen": "devices",
+      "width": 390,
+      "theme": "dark",
+      "heading": {
+        "x": 81,
+        "y": 325.421875,
+        "width": 293,
+        "height": 67.09375,
+        "bottom": 392.515625
+      },
+      "tabs": {
+        "x": 81,
+        "y": 406.515625,
+        "width": 293,
+        "height": 55,
+        "bottom": 461.515625
+      },
+      "metrics": {
+        "x": 81,
+        "y": 480.515625,
+        "width": 293,
+        "height": 307.875,
+        "bottom": 788.390625
+      },
+      "insights": {
+        "x": 81,
+        "y": 805.390625,
+        "width": 293,
+        "height": 737.375,
+        "bottom": 1542.765625
+      },
+      "mainGap": 18,
+      "headingToTabs": 14,
+      "tabsToMetrics": 19,
+      "metricsToInsights": 17,
+      "metricRowGap": 10,
+      "metricColumnGap": 10,
+      "referenceInsightGap": 17,
+      "metricsVisible": true,
+      "metricsText": [
+        "Total Devices6Recorded in inventory",
+        "With Primary IP5Devices with a primary IP",
+        "Locations Recorded5Known location assigned",
+        "Device Types5Different classifications"
+      ],
+      "content": "Devices by TypeEquipment classification across your inventory.Server2Desktop1NAS1Switch1Virtual Machine1Devices by LocationPhysical areas associated with your devices.Server Room4Not Recorded1Office1",
+      "chartValues": [],
+      "overflow": false,
+      "insightGroups": [
+        {
+          "x": 81,
+          "y": 805.390625,
+          "width": 293,
+          "height": 420.1875,
+          "bottom": 1225.578125,
+          "class": "intelligence-card",
+          "marginTop": "0px",
+          "gap": "normal"
+        },
+        {
+          "x": 81,
+          "y": 1242.578125,
+          "width": 293,
+          "height": 300.1875,
+          "bottom": 1542.765625,
+          "class": "intelligence-card",
+          "marginTop": "0px",
+          "gap": "normal"
+        }
+      ]
+    }
+  ]
+}

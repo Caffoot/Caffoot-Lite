@@ -22,7 +22,7 @@ The source of truth is the published v1.3.3 tag and the current Docker source/te
 - **Devices:** names, types, locations, hardware/software details, host/guest relationships, optional and historical fields, and device identity.
 - **IPAM:** blocks/subnets, VLANs, primary device IPs, independent allocations/reservations, gateway restrictions, notes, dependent and bulk operations.
 - **Racks:** rack definitions, placement, faces, capacity, rack accessories and vertical side-rail items, with collision/dependency rules.
-- **Change History:** retains existing event information and limits while moving event storage to SQLite.
+- **Change History:** retains event information in SQLite without the browser-era 200-event cap. Server-side permission rules protect the visible history.
 
 ### Preserved data contracts — carried forward from source review
 
@@ -55,6 +55,8 @@ There is **no application-managed ongoing backup/export and restore scheme** for
 ## Acceptance status
 
 Automated tests exercise the published exporter, import review, cancellation and confirmation, preserved fields and account retention. The product owner has completed the agreed **Stage 2 v1.3.3 inventory compatibility acceptance** on the Raspberry Pi, supported by the existing browser/backend evidence and recorded in [#218](https://github.com/Caffoot/Caffoot-Lite/issues/218). This is not an exhaustive retest of every historical workflow and does **not** authorise a release. Final release preparation and approval remain outstanding.
+
+The dated acceptance checkpoints above remain historical evidence, not a claim of final v2.1 owner acceptance. Follow the [historical v2.1 handover](../historical/development-handovers/v2.1.md) and [Issue #306 dimension policy](https://github.com/Caffoot/Caffoot-Lite/issues/306) for current modern/legacy/missing rack-dimension handling and pending native printing.
 
 ### Related reading
 

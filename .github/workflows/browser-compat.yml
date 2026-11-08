@@ -2,13 +2,43 @@ name: Caffoot Lite browser compatibility
 
 on:
   push:
-    branches: [main]
+    branches: [main, feat/approved-html-full-interface, feat/approved-modular-html-282]
     paths:
+      - "interface/**"
       - "tests/browser-compat.cjs"
+      - "tests/device-editor-approved.cjs"
+      - "tests/rack-shelf-associations.cjs"
+      - "tests/contextual-device-catalogue.cjs"
+      - "tests/device-form-followups.cjs"
+      - "tests/rack-location-defaults.cjs"
+      - "tests/host-select-review.cjs"
+      - "tests/subnet-first-ipam.cjs"
+      - "tests/subnet-private-corrections.cjs"
+      - "tests/subnet-capacity-planning.cjs"
+      - "tests/subnet-first-visual.cjs"
+      - "tests/subnet-first-permissions.cjs"
+      - "tests/approved-visual.cjs"
+      - "tests/visual_fixtures.py"
+      - "inventory.html"
+      - "setup.html"
       - ".github/workflows/browser-compat.yml"
   pull_request:
     paths:
+      - "interface/**"
       - "tests/browser-compat.cjs"
+      - "tests/device-editor-approved.cjs"
+      - "tests/rack-shelf-associations.cjs"
+      - "tests/contextual-device-catalogue.cjs"
+      - "tests/device-form-followups.cjs"
+      - "tests/rack-location-defaults.cjs"
+      - "tests/host-select-review.cjs"
+      - "tests/subnet-first-ipam.cjs"
+      - "tests/subnet-private-corrections.cjs"
+      - "tests/subnet-capacity-planning.cjs"
+      - "tests/subnet-first-visual.cjs"
+      - "tests/subnet-first-permissions.cjs"
+      - "tests/approved-visual.cjs"
+      - "tests/visual_fixtures.py"
       - "inventory.html"
       - "setup.html"
       - ".github/workflows/browser-compat.yml"
@@ -21,7 +51,7 @@ permissions:
 jobs:
   browser-compat:
     runs-on: ubuntu-24.04
-    timeout-minutes: 18
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
         with:
@@ -41,3 +71,119 @@ jobs:
         env:
           NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
         run: node tests/browser-compat.cjs
+      - name: Check approved Device editor forms and capture full scroll comparisons
+        env:
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
+          CAFFOOT_DEVICE_EDITOR_APPROVED: "1"
+          CAFFOOT_EDITOR_FULL_CAPTURES: "1"
+          CAFFOOT_VISUAL_FILTER: "^$"
+          CAFFOOT_VISUAL_OUTPUT: ${{ runner.temp }}/device-editor-evidence
+        run: node tests/approved-visual.cjs
+      - name: Save fictional Device editor evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: device-editor-evidence-${{ github.sha }}
+          path: ${{ runner.temp }}/device-editor-evidence/device-editor
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Exercise approved shelf and contextual catalogue workflows
+        env:
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
+          CAFFOOT_CONTEXTUAL_CATALOGUE: "1"
+          CAFFOOT_RACK_SHELF_APPROVED: "1"
+          CAFFOOT_VISUAL_FILTER: "^$"
+          CAFFOOT_VISUAL_OUTPUT: ${{ runner.temp }}/issue-331-evidence
+        run: node tests/approved-visual.cjs
+      - name: Save fictional Issue 331 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: issue-331-evidence-${{ github.sha }}
+          path: ${{ runner.temp }}/issue-331-evidence
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Check dependent Device choices, rack locations and Details dismissal
+        env:
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
+          CAFFOOT_DEVICE_FORM_FOLLOWUPS: "1"
+          CAFFOOT_RACK_LOCATION_DEFAULTS: "1"
+          CAFFOOT_VISUAL_FILTER: "^$"
+          CAFFOOT_VISUAL_OUTPUT: ${{ runner.temp }}/issue-332-evidence
+        run: node tests/approved-visual.cjs
+      - name: Save fictional Issue 332 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: issue-332-evidence-${{ github.sha }}
+          path: ${{ runner.temp }}/issue-332-evidence
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Check native hypervisor selection and modal rack feedback
+        env:
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
+          CAFFOOT_HOST_SELECT_REVIEW: "1"
+          CAFFOOT_VISUAL_FILTER: "^$"
+          CAFFOOT_VISUAL_OUTPUT: ${{ runner.temp }}/issue-333-evidence
+        run: node tests/approved-visual.cjs
+      - name: Save fictional Issue 333 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: issue-333-chromium-${{ github.sha }}
+          path: ${{ runner.temp }}/issue-333-evidence
+          if-no-files-found: ignore
+          retention-days: 14
+      - name: Check subnet-first single, bulk and Device Networking workflows
+        env:
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
+          CAFFOOT_SUBNET_FIRST: "1"
+          CAFFOOT_VISUAL_FILTER: "^$"
+          CAFFOOT_VISUAL_OUTPUT: ${{ runner.temp }}/issue-329-evidence
+        run: node tests/approved-visual.cjs
+      - name: Save fictional Issue 329 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: issue-329-chromium-${{ github.sha }}
+          path: ${{ runner.temp }}/issue-329-evidence
+          if-no-files-found: ignore
+          retention-days: 14
+  native-select-engines:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        engine: [firefox, webkit]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Install isolated browser test tools
+        run: |
+          npm install --prefix "$RUNNER_TEMP/caffoot-browser-tests" --no-save --no-package-lock --no-audit --no-fund playwright@1.62.1
+          "$RUNNER_TEMP/caffoot-browser-tests/node_modules/.bin/playwright" install --with-deps "${{ matrix.engine }}"
+      - name: Check native selection, rack feedback and pinned select appearance
+        env:
+          NODE_PATH: ${{ runner.temp }}/caffoot-browser-tests/node_modules
+          CAFFOOT_VISUAL_ENGINE: ${{ matrix.engine }}
+          CAFFOOT_HOST_SELECT_REVIEW: "1"
+          CAFFOOT_SUBNET_FIRST: "1"
+          CAFFOOT_VISUAL_FILTER: "^$"
+          CAFFOOT_VISUAL_OUTPUT: ${{ runner.temp }}/issue-333-evidence
+        run: node tests/approved-visual.cjs
+      - name: Save fictional engine comparisons
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: issue-333-${{ matrix.engine }}-${{ github.sha }}
+          path: ${{ runner.temp }}/issue-333-evidence
+          if-no-files-found: ignore
+          retention-days: 14

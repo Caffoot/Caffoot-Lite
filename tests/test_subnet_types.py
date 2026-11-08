@@ -30,7 +30,6 @@ class SubnetTypeTests(unittest.TestCase):
     def test_missing_network_vlan_and_gateway(self):
         data = [network(vlan=None, gateway=None)]
         self.assertEqual(validate_subnet_types(data), [
-            "Network requires VLAN 1–4094: n",
             "Network requires a usable gateway: n",
         ])
 

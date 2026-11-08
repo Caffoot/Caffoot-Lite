@@ -26,6 +26,24 @@ class SubnetHierarchyTests(unittest.TestCase):
         self.assertTrue(any("Overlapping unrelated" in issue
                             for issue in validate_subnet_hierarchy(data)))
 
+    def test_containment_exception_is_only_for_strictly_contained_unparented_networks(self):
+        block=subnet('block','10.128.0.0/16','container')
+        independent=subnet('independent','10.128.10.0/24')
+        for parent in [None,'']:
+            independent.pop('parentId',None)
+            if parent is not None:independent['parentId']=parent
+            for rows in [[block,independent],[independent,block]]:
+                self.assertEqual(validate_subnet_hierarchy(rows),[])
+        for other in [subnet('other','10.128.0.0/16'),subnet('other','10.128.0.0/15'),
+                      subnet('other','10.128.10.0/24','container'),subnet('other','10.128.10.0/24','reserved')]:
+            self.assertTrue(validate_subnet_hierarchy([block,other]))
+        owner=subnet('owner','10.128.0.0/20','container')
+        owned=subnet('owned','10.128.10.0/24',parent='owner')
+        self.assertTrue(validate_subnet_hierarchy([block,owner,owned]))
+        parent=subnet('parent','10.128.0.0/12','container')
+        nested=dict(block,parentId='parent')
+        self.assertEqual(validate_subnet_hierarchy([parent,nested,owned|{'parentId':'block'}]),[])
+
     def test_duplicate_ids_and_cidrs(self):
         data = [subnet("a", "10.0.0.0/24"), subnet("a", "10.0.1.0/24"),
                 subnet("b", "10.0.0.0/24")]

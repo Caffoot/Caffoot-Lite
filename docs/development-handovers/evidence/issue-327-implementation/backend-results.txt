@@ -1,0 +1,4 @@
+Command: PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v
+448 tests in 50.262s: 445 passed, 3 skipped.
+Skips: Docker lifecycle requires CAFFOOT_DOCKER_SMOKE=1 (covered separately by GitHub Compose lifecycle); two genuine v1.3.3 backup tests require the unavailable private CAFFOOT_V133_FIXTURE.
+Backend code unchanged in this batch. Final GitHub backend run confirms the pushed code.
