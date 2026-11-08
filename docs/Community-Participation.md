@@ -4,7 +4,7 @@ Caffoot Lite is for people who use it, document it, test it and build it. **You 
 
 ## Where To Start
 
-- [Suggest A Future Feature](https://github.com/Caffoot/Caffoot-Lite/issues/new/choose) with **one idea per issue**. Check the [Future Ideas Index #222](https://github.com/Caffoot/Caffoot-Lite/issues/222) first; if your idea already has an issue, add your thoughts there.
+- [Suggest A Future Feature](https://github.com/Caffoot/Caffoot-Lite/issues/new/choose) with **one idea per issue**. Check [existing future requests](https://github.com/Caffoot/Caffoot-Lite/labels/future%20request) first; if your idea already has an issue, add your thoughts there.
 - [Open An Issue](https://github.com/Caffoot/Caffoot-Lite/issues/new/choose) to report a bug, improve a guide or ask a question.
 - [Read The Feature Guides](how-tos/features-and-instructions/README.md) and tell us what could be clearer.
 - [Explore Good First Issues](https://github.com/Caffoot/Caffoot-Lite/labels/good%20first%20issue) for approachable tasks identified by maintainers.
@@ -34,7 +34,7 @@ These initial categories use GitHub's standard label names, where available. Rep
 1. Thank the contributor and check whether the report is clear.
 2. Use the appropriate label and ask for details politely when needed.
 3. Confirm a bug before promising a fix. If the report may reveal a security weakness, stop public technical discussion and follow [Security Reporting](../SECURITY.md).
-4. Keep **one idea per issue**. [Future Ideas Index #222](https://github.com/Caffoot/Caffoot-Lite/issues/222) is a directory, not a place for new requests. Record decisions, changes and acceptance feedback in the individual issue. A feature request starts a discussion, not an automatic implementation.
+4. Keep **one idea per issue**. Use the [`future request` label](https://github.com/Caffoot/Caffoot-Lite/labels/future%20request) to find existing suggestions. Record decisions, changes and acceptance feedback in the individual issue. A feature request starts a discussion, not an automatic implementation.
 5. Only mark an issue `good first issue` or `help wanted` once its scope and expected outcome are agreed and an external contributor could act on it.
 6. If somebody wants to contribute, help them find the [Development Guide](development-guide/README.md), source-code naming rules, clear British English comment standards and required documentation.
 7. Before merging a pull request, apply proportionate tests, readability and documentation checks to maintainers and community contributors. Avoid unrelated audits and unrequested public preview images.

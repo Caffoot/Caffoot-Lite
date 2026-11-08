@@ -48,8 +48,8 @@ All contributors should first read [CONTRIBUTING.md](../../CONTRIBUTING.md) and 
 - [`compose.yaml`](../../compose.yaml), [`portainer-v2.1.yaml`](../../portainer-v2.1.yaml) and [`Dockerfile`](../../Dockerfile): deployment configuration.
 - [`app/caffoot-lite.html` at v1.3.3](https://github.com/Caffoot/Caffoot-Lite/blob/v1.3.3/app/caffoot-lite.html): **published** inventory behaviour to preserve.
 
-For current installation instructions see [`INSTALLATION.md`](../../INSTALLATION.md). The [root README](../../README.md) describes the published v2.0.3 Docker/SQLite edition.
+For current installation instructions see [`INSTALLATION.md`](../../INSTALLATION.md). The [root README](../../README.md) distinguishes the prepared v2.1 edition from the published v2.0.3 baseline.
 
 ## Before making a change
 
-Read the approved scope for the proposed change, inspect the current main-branch source, review the Function Index and relevant tests, and compare established inventory behaviour with the **published v2.0.3 baseline**, using earlier releases when a compatibility question arises rather than assumptions. Historical audit findings may already have been fixed. Source renaming for clarity is a welcome, separately approved maintenance activity: update every dependent reference, test and guide. [Future Ideas Register #222](https://github.com/Caffoot/Caffoot-Lite/issues/222) alone does not authorise implementation.
+Read the approved scope for the proposed change, inspect the current main-branch source, review the Function Index and relevant tests, and compare established inventory behaviour with the **published v2.0.3 baseline**, using earlier releases when a compatibility question arises rather than assumptions. Historical audit findings may already have been fixed. Source renaming for clarity is a welcome, separately approved maintenance activity: update every dependent reference, test and guide. [Future requests](https://github.com/Caffoot/Caffoot-Lite/labels/future%20request) are suggestions, not permission to start implementation.

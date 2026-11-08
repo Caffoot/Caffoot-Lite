@@ -1,0 +1,58 @@
+{
+  "start": "d49f148f954561d64772f4ae8f0dd79e26db7e60",
+  "incomingMain": "ed44ae445e51aaa3768113ed27efdead8f9521bd",
+  "exactFiles": [
+    {
+      "file": "AGENTS.md",
+      "exactMain": true,
+      "sha256": "3abe12e0bbfe63a15a8ca860c71c2451eebf6259570164ab62406ef370e36982"
+    },
+    {
+      "file": "ROADMAP.md",
+      "exactMain": true,
+      "sha256": "f2733f2c86d4cf250d096b946fdf35e593e6683a733b2d21c895fe4c355acc00"
+    },
+    {
+      "file": "docs/product-direction/VISION.md",
+      "exactMain": true,
+      "sha256": "65ea6081a084938cd7dd389fa21dae118403fe819b1de8f9d68caf171d4d980c"
+    },
+    {
+      "file": "docs/product-direction/FEATURE-BRAINSTORM.md",
+      "exactMain": true,
+      "sha256": "e8fd2a1ba06c902fa5bc688623b29f74d1301bcb124dd5973d2f1b8a75d6342e"
+    },
+    {
+      "file": "docs/product-direction/PROPOSED-MILESTONES.md",
+      "exactMain": true,
+      "sha256": "05b4a5866a8a3095cb4285c23ff79b291b8b4ca3ca5aa4dd51abf3d68f973a92"
+    },
+    {
+      "file": ".github/ISSUE_TEMPLATE/feature_request.yml",
+      "exactMain": true,
+      "sha256": "b06f7621844a3c7d0d1d37429b3d743a40652a01a5db85ff879d8e807cc9244a"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "exactMain": true,
+      "sha256": "45ffe28bc122d5fdea65315ea1d9765f31985682f4f816f691b3b5a8aa01e642"
+    },
+    {
+      "file": "docs/Community-Participation.md",
+      "exactMain": true,
+      "sha256": "1ec2ba6501b4a0d6c0819226782d62f20942e814319ab5aeb82e4fedd8bc5f67"
+    },
+    {
+      "file": "docs/development-guide/06-Coding-and-Naming-Conventions.md",
+      "exactMain": true,
+      "sha256": "50f4dadac82bd01789351205e1b19b8cc70bf2ac4c3a481652429cf71b97e0a3"
+    },
+    {
+      "file": "docs/development-handovers/README.md",
+      "exactMain": true,
+      "sha256": "9a4e056959135c450719239f3fa6f7364319f898db848545f0e5945dd63e8cb8"
+    }
+  ],
+  "protectedChanges": [],
+  "unresolvedConflicts": []
+}

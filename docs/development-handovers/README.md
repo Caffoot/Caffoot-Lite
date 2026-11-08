@@ -6,7 +6,7 @@ Use the handover to pick up where the last session finished. The relevant GitHub
 
 ## Current work
 
-No active development handover is currently recorded. The abandoned interface redesign has been closed. The published v2.0.3 release remains the working baseline; completed release work is recorded in [historical handovers](../historical/development-handovers/).
+Caffoot Lite v2.1 is actively being developed under [approved issue #282](https://github.com/Caffoot/Caffoot-Lite/issues/282) on branch `feat/approved-modular-html-282`. The work is not yet accepted or published. No separate active handover file is currently recorded in this folder; check issue #282 and the development branch for verified checkpoints. The released baseline remains v2.0.3, and completed release work is kept in [historical handovers](../historical/development-handovers/).
 
 ## Keeping this useful
 

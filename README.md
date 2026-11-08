@@ -1,12 +1,23 @@
 # Caffoot Lite v2.1
 
-**Simplicity in everything.** Your infrastructure. Your users. Your data.
+**Simplicity in everything.**<br>
+Your infrastructure. Your users. Your data.
+
+Free, open-source IP address management (IPAM), device inventory and network rack documentation for **small businesses, IT teams and home labs**.
 
 **Release preparation — not published.** These files prepare v2.1 for owner review. The latest published release remains [v2.0.3](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.3). Do not assume a v2.1 tag or image exists until publication is separately approved and verified.
 
-Caffoot Lite brings IPAM, device inventory, rack documentation and Audit Trail together for home labs and small IT teams. v2.1 introduces the approved modular interface, clearer physical-server/VM forms, subnet-first networking, optional VLANs, guided bulk subnet creation and improved account/email workflows. It retains central SQLite storage, HTTPS, administrator-managed access, MFA and five-minute device editing reservations.
+Caffoot Lite brings IPAM, device inventory, rack documentation and Audit Trail together for small businesses, IT teams and home labs. v2.1 introduces the approved modular interface, clearer physical-server/VM forms, subnet-first networking, optional VLANs, guided bulk subnet creation and improved account/email workflows. It retains central SQLite storage, HTTPS, administrator-managed access, MFA and five-minute device editing reservations.
 
 The repository root contains the Docker application's source: `backend/`, `inventory.html`, `setup.html`, `assets/`, `Dockerfile`, `compose.yaml`, `tests/` and documentation. The old `next/` development folder and standalone HTML build copy remain excluded, as established in v2.0.1. The original standalone version remains separately available in the [published v1.3.3 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3).
+
+Keep track of your devices, IP addresses and network racks in one place. Caffoot Lite combines a shared infrastructure inventory with user permissions and Change History, without requiring a complicated setup.
+
+**[Get started with Docker or Portainer](INSTALLATION.md)** · **[Explore the features](docs/how-tos/features-and-instructions/README.md)** · **[See the roadmap](ROADMAP.md)** · **[Latest release: v2.0.3](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.3)**
+
+![Caffoot Lite dashboard showing example network inventory](docs/screenshots/dashboard.png)
+
+*Earlier Docker edition shown for orientation; this is not a new v2.1 screenshot.*
 
 ## Install Caffoot Lite
 
@@ -28,13 +39,17 @@ The root [`portainer-v2.1.yaml`](portainer-v2.1.yaml) is the prepared example. B
 
 See the [complete Features and Instructions user guides](docs/how-tos/features-and-instructions/README.md) for detailed examples, controls and screenshots.
 
+## What's next?
+
+v2.1 is prepared for product-owner review, not released, and has no promised release date. Read the [public roadmap](ROADMAP.md) for the current published release, approved development and future ideas. Merge, publication and website work remain separate owner decisions.
+
 ## Help Build Caffoot Lite
 
 **Caffoot Lite is an open-source community project, and everyone is welcome to help.** You don't need to be a developer or have written code before.
 
 You can contribute by reporting a bug, testing the application, improving a help guide, suggesting a useful feature, answering a question or sharing a clear example. Even pointing out something confusing is valuable.
 
-- **[Suggest A Feature Or Future Improvement](https://github.com/Caffoot/Caffoot-Lite/issues/new/choose)** — open one issue per idea. Check the [Future Ideas Index #222](https://github.com/Caffoot/Caffoot-Lite/issues/222) first to see whether it is already being discussed.
+- **[Suggest A Feature Or Future Improvement](https://github.com/Caffoot/Caffoot-Lite/issues/new/choose)** — open one issue per idea. Check the [existing future requests](https://github.com/Caffoot/Caffoot-Lite/labels/future%20request) first to see whether the idea has already been suggested.
 - **[Report A Bug Or Ask A Question](https://github.com/Caffoot/Caffoot-Lite/issues/new/choose)** — choose the relevant issue form and explain it in your own words.
 - **[Improve The Documentation](https://github.com/Caffoot/Caffoot-Lite/issues/new/choose)** — suggest clearer wording, screenshots or missing instructions, with no programming required.
 - **[Explore Good First Issues](https://github.com/Caffoot/Caffoot-Lite/labels/good%20first%20issue)** and **[Help Wanted](https://github.com/Caffoot/Caffoot-Lite/labels/help%20wanted)** — find appropriately scoped tasks where community help would be useful.
@@ -67,15 +82,16 @@ For direct HTTPS, verify and trust the application certificate before entering c
 - [Prepared v2.1 release notes](docs/historical/release-notes/Release-Notes-v2.1.md)
 - [v2.1 development handover — archived for release preparation](docs/historical/development-handovers/v2.1.md)
 - [v2.0.3 release notes](docs/historical/release-notes/Release-Notes-v2.0.3.md)
-- [Previous v2.0.2 release notes](docs/historical/release-notes/Release-Notes-v2.0.2.md)
-- [Previous v2.0.1 release notes](docs/historical/release-notes/Release-Notes-v2.0.1.md)
+- [Releases and version history](https://github.com/Caffoot/Caffoot-Lite/releases)
 - [Detailed user guides and screenshots](docs/how-tos/features-and-instructions/README.md)
 - [Contributing To Caffoot Lite — mandatory naming, UI and documentation standards](CONTRIBUTING.md)
 - [Development Guide](docs/development-guide/README.md)
+- [Public roadmap](ROADMAP.md)
+- [Ideas under consideration](https://github.com/Caffoot/Caffoot-Lite/labels/future%20request)
 - [v2.0.3 development handover (historical)](docs/historical/development-handovers/v2.0.3.md)
 - [Security-fix and release checklist, including the owner-controlled one-click publishing process](docs/development-guide/Security-Fixes-and-Releases.md)
 - [Standalone v1.3.3 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v1.3.3)
-- [Historical v2.0/v2.0.1 implementation specification #215](https://github.com/Caffoot/Caffoot-Lite/issues/215) and [release tracker #218](https://github.com/Caffoot/Caffoot-Lite/issues/218); [Future Ideas Index #222](https://github.com/Caffoot/Caffoot-Lite/issues/222) and [Feature Request form](https://github.com/Caffoot/Caffoot-Lite/issues/new/choose)
+- [Historical v2.0/v2.0.1 implementation specification #215](https://github.com/Caffoot/Caffoot-Lite/issues/215) and [release tracker #218](https://github.com/Caffoot/Caffoot-Lite/issues/218); [Feature Request form](https://github.com/Caffoot/Caffoot-Lite/issues/new/choose)
 
 **Version history:** [v2.0](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0) introduced the Docker/SQLite multi-user edition. [v2.0.1](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.1) moved the Docker source to the repository root. v2.0.2 delivered a focused security correction. v2.0.3 updates the documentation, code-reference baseline and existing browser regression coverage without changing the supported inventory data format.
 
