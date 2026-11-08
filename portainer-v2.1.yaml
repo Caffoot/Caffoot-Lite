@@ -1,5 +1,5 @@
 # Caffoot Lite v2.1 — Portainer / Docker Compose installation example.
-# Prepared release example: confirm v2.1 image publication before deploying.
+# Verify the public v2.1 release and AMD64/ARM64 image before deploying.
 # Change the example server IP address and port to suit your installation.
 # New installations use a Docker-managed named volume for persistent data.
 # IMPORTANT: Existing installations must keep their current /data mount.
