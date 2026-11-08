@@ -45,7 +45,7 @@ module.exports = async function verifySubnetPrivateCorrections({page, context, f
  assert.equal(await page.locator('#subnet-row-0-gateway').inputValue(), '10.128.61.1');
  await page.locator('#subnet-row-0-gateway').fill('10.128.61.200');
  await page.locator('#subnet-row-1-cidr').fill('10.128.61.0/24');
- assert(await page.locator('[data-subnet-row="1"] [data-subnet-error]').isVisible());
+ assert.equal(await page.locator('#subnet-row-1-cidr').getAttribute('aria-invalid'),'true');
  await page.locator('#subnet-row-1-cidr').fill('10.128.63.0/24');
  await page.locator('#subnet-row-2-cidr').fill('10.128.65.0/24');
  for(let i=0;i<3;i++){
@@ -53,14 +53,18 @@ module.exports = async function verifySubnetPrivateCorrections({page, context, f
   await page.locator('#subnet-row-'+i+'-purpose').selectOption('LAN');
  }
  await page.locator('#subnet-row-1-name').fill(' FICTIONAL CUSTOM CORRECTION 0 ');
- assert.match(await page.locator('[data-subnet-row="1"] [data-subnet-error]').innerText(), /unique subnet name/);
+ assert.match(await page.locator('[data-subnet-row="1"] [data-subnet-error]').innerText(), /unique subnet name/);assert.equal(await page.locator('#subnet-row-1-name').getAttribute('aria-invalid'),'true');
  await page.locator('#subnet-row-1-name').fill('Fictional custom correction 1');
+ await page.locator('#subnet-row-2-cidr').fill('10.128.65.1/24');
  await page.locator('#subnet-batch-back').click();
  await page.locator('#subnet-batch-convention').selectOption('Last usable IP');
  await page.locator('#subnet-batch-generator [type=submit]').click();
  assert.equal(await page.locator('#subnet-row-0-cidr').inputValue(),'10.128.61.0/24');
  assert.equal(await page.locator('#subnet-row-0-gateway').inputValue(),'10.128.61.200');
  assert.equal(await page.locator('#subnet-row-1-gateway').inputValue(),'10.128.63.254');
+ assert.equal(await page.locator('#subnet-row-2-cidr').inputValue(),'10.128.65.1/24');
+ assert.equal(await page.locator('#subnet-row-2-cidr').getAttribute('aria-invalid'),'true');
+ await page.locator('#subnet-row-2-cidr').fill('10.128.65.0/24');
  await page.locator('#subnet-batch-preview [type=submit]').click();
  await saved();
  const state = await (await context.request.get('https://127.0.0.1:8080/api/inventory/state')).json();
@@ -97,7 +101,7 @@ module.exports = async function verifySubnetPrivateCorrections({page, context, f
  }
  await page.evaluate(()=>{switchTab('racks');openRackModal();});await audit('Rack modal');await close();
  await page.evaluate(()=>switchTab('users'));await page.locator('[data-action=users-add-nav]').click();await audit('User editor');
- await page.evaluate(()=>{activeSettingsTab='email';switchTab('settings');});await audit('Email settings');
+ await page.evaluate(()=>{activeSettingsTab='email';switchTab('settings');});await page.waitForFunction(()=>!smtpLoading);await audit('Email settings');
  await page.evaluate(()=>{activeIpamTab='addresses';switchTab('ipam');});await audit('Active Subnet and address filters');
  await page.evaluate(()=>{switchTab('devices');openDeviceModal();});
  await page.locator('#dev-type').selectOption('Router');await page.locator('#device-form-tab-networking').click();
@@ -107,6 +111,7 @@ module.exports = async function verifySubnetPrivateCorrections({page, context, f
   await page.setViewportSize({width,height});await page.evaluate(theme=>document.documentElement.classList.toggle('dark',theme==='dark'),theme);
   await open();await fill('10.130.0.0',1);await audit('Gateway Convention '+width+' '+theme);
   const geometry=await page.locator('#subnet-batch-convention').evaluate(el=>{const a=el.getBoundingClientRect(),b=document.getElementById('subnet-batch-start').getBoundingClientRect();return {height:a.height,inputHeight:b.height,top:a.top,left:a.left,countTop:document.getElementById('subnet-batch-count').getBoundingClientRect().top,countLeft:document.getElementById('subnet-batch-count').getBoundingClientRect().left,overflow:document.getElementById('modal-content').scrollWidth-document.getElementById('modal-content').clientWidth};});
+  const footer=await page.locator('#subnet-batch-generator .ipam-modal-actions').boundingBox();assert(footer.y+footer.height<=height+1);
   assert.equal(geometry.height,geometry.inputHeight);if(geometry.left!==geometry.countLeft)assert(Math.abs(geometry.top-geometry.countTop)<1);assert(geometry.overflow<=1);measurements.push({width,height,theme,geometry});
   await page.screenshot({path:path.join(folder,`generator-${width}-${theme}.png`),animations:'disabled'});
   await page.locator('#subnet-batch-generator [type=submit]').click();await page.locator('#subnet-batch-back').click();assert.equal(await page.locator('#subnet-batch-convention').inputValue(),'First usable IP');await close();

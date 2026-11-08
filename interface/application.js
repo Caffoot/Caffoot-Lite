@@ -1108,7 +1108,7 @@ function hierarchyValidateTypes(subnets) {
             const field = event.target;
             const form = field.closest && field.closest('#modal-container form');
             if (!form || !field.matches('input,select,textarea')) return;
-            if (field.validity && field.validity.valid) field.removeAttribute('aria-invalid');
+            if (!field.closest('#subnet-batch-preview') && field.validity && field.validity.valid) field.removeAttribute('aria-invalid');
         });
 
         // Use the single approved sidebar across every section.
@@ -3216,7 +3216,9 @@ function openSubnetModal(subnetId = null) {
                 return;
             }
             const cidr = document.getElementById('sub-cidr').value.trim();
-            const name = document.getElementById('sub-name').value.trim();
+            const nameValue = document.getElementById('sub-name').value;
+            const savedName = appState.subnets.find(subnet=>subnet.id===subnetId)?.name;
+            const name = savedName&&nameValue===savedName?savedName:nameValue.trim();
             const vlanText=document.getElementById('sub-vlan').value.trim();
             const vlanIdVal=vlanText===''?null:Number(vlanText);
             const purpose=document.getElementById('sub-purpose').value;
@@ -3387,7 +3389,7 @@ function openSubnetModal(subnetId = null) {
                 field.setAttribute('aria-invalid','true');
                 let hint=document.getElementById(field.id+'-error');
                 if(!hint){hint=document.createElement('small');hint.id=field.id+'-error';hint.className='ipam-field-error';field.after(hint);}
-                hint.textContent=text;field.setAttribute('aria-describedby',[field.getAttribute('aria-describedby'),hint.id].filter(Boolean).join(' '));field.focus();
+                hint.textContent=text;field.setAttribute('aria-describedby',[...new Set([...(field.getAttribute('aria-describedby')||'').split(/\s+/),hint.id].filter(Boolean))].join(' '));field.focus();
             }
             if(summary)summary.scrollIntoView({block:'nearest'});
         }
@@ -3427,6 +3429,7 @@ function openSubnetModal(subnetId = null) {
             if(!resume||!subnetBatchDraft)subnetBatchDraft={organisation:'none',pool:'',parentName:'',parentCidr:'',existing:'',start:'',prefix:'24',count:'',convention:'',spacing:'consecutive',parentId:'sub_'+crypto.randomUUID(),rows:[]};
             const draft=subnetBatchDraft,option=(value,label,current)=>'<option value="'+escapeHtml(value)+'" '+(value===current?'selected':'')+'>'+escapeHtml(label)+'</option>';
             openIpamModal(renderInterfaceTemplate("ipam/multiple-subnets-generator",[...['none','existing','new'].map(v=>draft.organisation===v?'selected':''),appState.subnets.filter(s=>s.kind==='container').map(s=>option(s.id,s.name+' — '+s.cidr,draft.existing)).join(''),['10.0.0.0/8','172.16.0.0/12','192.168.0.0/16'].map(v=>option(v,v,draft.pool)).join(''),escapeHtml(draft.parentName),escapeHtml(draft.parentCidr),escapeHtml(draft.start),[23,24,25,26,27,28,29,30].map(v=>option(String(v),'/'+v,draft.prefix)).join(''),escapeHtml(draft.count),['First usable IP','Last usable IP'].map(v=>option(v,v,draft.convention)).join(''),[['consecutive','Consecutive'],['tenth','Every 10th Subnet'],['custom','Custom CIDRs']].map(([value,label])=>option(value,label,draft.spacing||'consecutive')).join(''),draft.organisation!=='none'||draft.pool?'open':'']));
+            document.getElementById('modal-content').classList.add('ipam-subnet-generator');
             const form=document.getElementById('subnet-batch-generator');
             const organisation=document.getElementById('subnet-batch-organisation');
             const visibility=()=>{
@@ -3478,12 +3481,13 @@ function openSubnetModal(subnetId = null) {
             const records=draft.rows.map(row=>({id:row.id,kind:'network',cidr:row.cidr,...(parent?{parentId:parent.id}:{})}));
             const parentRange=parent?hierarchyParseCidr(parent.cidr):null,pool=draft.pool?hierarchyParseCidr(draft.pool):null;
             for(const record of records){const range=hierarchyParseCidr(record.cidr);
-                if(parentRange&&(!range||range.start<parentRange.start||range.end>parentRange.end||range.size>=parentRange.size))reject('Subnet '+record.cidr+' must be strictly inside Address Block '+parent.cidr+'. Choose a broader block such as /16 or no block.','parent-cidr');
-                if(pool&&(!range||range.start<pool.start||range.end>pool.end))reject('Generated subnets must stay within the selected quick-fill range.','pool');
+                if(spacing!=='custom'&&parentRange&&(!range||range.start<parentRange.start||range.end>parentRange.end||range.size>=parentRange.size))reject('Subnet '+record.cidr+' must be strictly inside Address Block '+parent.cidr+'. Choose a broader block such as /16 or no block.','parent-cidr');
+                if(spacing!=='custom'&&pool&&(!range||range.start<pool.start||range.end>pool.end))reject('Generated subnets must stay within the selected quick-fill range.','pool');
             }
             const issues=hierarchyValidate([...appState.subnets,...(draft.organisation==='new'?[parent]:[]),...records]);
-            if(issues.length)reject(formatSubnetValidationMessage(issues[0],records),draft.organisation==='new'?'parent-cidr':'start');
+            if(issues.length&&spacing!=='custom')reject(formatSubnetValidationMessage(issues[0],records),draft.organisation==='new'?'parent-cidr':'start');
             renderSubnetBatchPreview();
+            if(spacing==='custom')showSubnetBatchIssues(getSubnetBatchIssues(getSubnetBatchRecords()).filter(issue=>['cidr','gateway'].includes(issue.field)));
         }
         function getSubnetBatchRecords() {
             const draft=subnetBatchDraft;
@@ -3513,7 +3517,10 @@ function openSubnetModal(subnetId = null) {
                 }
             });
             const hierarchy=hierarchyValidate([...appState.subnets,...(draft.organisation==='new'?[draft.parent]:[]),...records]);
-            hierarchy.forEach(message=>{const index=Math.max(0,records.findIndex(r=>message.includes(r.cidr)||message.includes(r.id)));issues.push({index,field:draft.spacing==='custom'?'cidr':'name',message:formatSubnetValidationMessage(message,records)});});
+            hierarchy.forEach(message=>{
+                const affected=records.map((record,index)=>message.includes(record.cidr)||message.includes(record.id)?index:-1).filter(index=>index>=0);
+                for(const index of affected.length?affected:[0])issues.push({index,field:draft.spacing==='custom'?'cidr':'name',message:formatSubnetValidationMessage(message,records)});
+            });
             return issues;
         }
         function showSubnetBatchIssues(issues) {
@@ -3965,7 +3972,7 @@ function openIpModal(ip) {
             const container = document.getElementById('modal-container');
             const content = document.getElementById('modal-content');
             if (container.classList.contains('hidden')) modalReturnFocus = document.activeElement;
-            content.classList.remove('rack-balanced-modal', 'settings-access-point-review', 'settings-legacy-review', 'ipam-record-modal','ipam-subnet-preview', 'catalogue-modal', 'device-review-container', 'ipam-modal', 'catalog-modal');
+            content.classList.remove('rack-balanced-modal', 'settings-access-point-review', 'settings-legacy-review', 'ipam-record-modal','ipam-subnet-preview','ipam-subnet-generator', 'catalogue-modal', 'device-review-container', 'ipam-modal', 'catalog-modal');
             container.classList.remove('catalog-modal-overlay', 'device-review-overlay', 'ipam-modal-overlay', 'rack-modal-shade');
             content.innerHTML = htmlContent;
             if(content.querySelector('.ipam-modal-head')){

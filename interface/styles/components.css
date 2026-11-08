@@ -334,10 +334,11 @@ html.dark #modal-container .device-editor-dialog #device-form-installed-software
 #modal-content .device-details-dialog .device-review-close{background:var(--theme-control,#fff);color:var(--theme-text,#50697e);border-color:var(--theme-border,#dce4eb)}
 
 /* The approved subnet review keeps its actions visible and stacks rows on mobile. */
-#modal-content.ipam-subnet-preview{width:min(1030px,100%);display:flex;flex-direction:column;max-height:calc(100dvh - 36px);overflow:hidden}
-.ipam-subnet-preview #subnet-batch-preview{display:flex;flex-direction:column;min-height:0;overflow:hidden}
-.ipam-subnet-preview .ipam-modal-body{overflow:auto;min-height:0}
-.ipam-subnet-preview .ipam-modal-head,.ipam-subnet-preview .ipam-modal-actions{flex:none}
+#modal-content.ipam-subnet-preview{width:min(1030px,100%)}
+#modal-content:is(.ipam-subnet-preview,.ipam-subnet-generator){display:flex;flex-direction:column;max-height:calc(100dvh - 36px);overflow:hidden}
+:is(.ipam-subnet-preview,.ipam-subnet-generator) :is(#subnet-batch-preview,#subnet-batch-generator){display:flex;flex-direction:column;min-height:0;overflow:hidden}
+:is(.ipam-subnet-preview,.ipam-subnet-generator) .ipam-modal-body{overflow:auto;min-height:0}
+:is(.ipam-subnet-preview,.ipam-subnet-generator) :is(.ipam-modal-head,.ipam-modal-actions){flex:none}
 .ipam-subnet-preview-table{width:100%;border-collapse:collapse;text-align:left;font-size:12px}
 .ipam-subnet-preview-table td,.ipam-subnet-preview-table th{padding:10px 11px;vertical-align:top;border-bottom:1px solid var(--theme-border,#d3e0e9);min-width:0}
 .ipam-subnet-preview-table thead th{position:sticky;top:0;background:var(--theme-control,#fff);z-index:1}
@@ -352,15 +353,15 @@ html.dark #modal-container .device-editor-dialog #device-form-installed-software
 
 /* Native Safari menu chrome ignores parts of the approved field treatment.
    Keep real selects and their existing sizes, using one predictable chevron. */
-#app #main-content select:not(.caffoot-search-native):not([multiple]):not([size]),
-#modal-container #modal-content select:not(.caffoot-search-native):not([multiple]):not([size]) {
+#app #main-content select:not([multiple]):not([size]),
+#modal-container #modal-content select:not([multiple]):not([size]) {
  -webkit-appearance:none;appearance:none;
  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E");
  background-repeat:no-repeat;background-position:right 11px center;background-size:12px 8px;
  padding-inline-end:32px;
 }
 @media (forced-colors:active) {
- #app #main-content select:not(.caffoot-search-native):not([multiple]):not([size]),#modal-container #modal-content select:not(.caffoot-search-native):not([multiple]):not([size]) {appearance:auto;background-image:none;}
+ #app #main-content select:not([multiple]):not([size]),#modal-container #modal-content select:not([multiple]):not([size]) {appearance:auto;background-image:none;}
 }
 #modal-content .ipam-field-error {display:block;color:#a52626;font-size:12px;line-height:1.5;font-weight:650;white-space:normal;}
 .dark #modal-content .ipam-field-error {color:#ffb4b4;}

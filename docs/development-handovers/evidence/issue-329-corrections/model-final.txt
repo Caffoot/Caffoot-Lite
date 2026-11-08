@@ -19,6 +19,6 @@ test_tagged_vlan_scope_and_multiple_untagged (tests.test_subnet_first.SubnetFirs
 test_untagged_deletion_does_not_claim_or_remove_a_vlan (tests.test_subnet_first.SubnetFirstTests.test_untagged_deletion_does_not_claim_or_remove_a_vlan) ... ok
 
 ----------------------------------------------------------------------
-Ran 19 tests in 0.082s
+Ran 19 tests in 0.115s
 
 OK

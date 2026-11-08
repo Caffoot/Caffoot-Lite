@@ -82,6 +82,7 @@ class SubnetFirstTests(unittest.TestCase):
 
     def test_historical_duplicate_names_survive_edits_and_import_but_renames_are_checked(self):
         first, second = network(0), network(1)
+        first['name'] = ' Historical Duplicate '
         second['name'] = first['name']
         state = self.state(); state['subnets'] = [first, second]
         stage_inventory(self.db, state)
