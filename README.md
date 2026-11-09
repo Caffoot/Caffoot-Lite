@@ -39,7 +39,7 @@ The root [`portainer-v2.1.yaml`](portainer-v2.1.yaml) is the prepared example. B
 
 ## Features
 
-- **Approved modular interface:** consistent navigation, light/dark themes, responsive forms and local help, based on twelve pinned approved HTML sources.
+- **Modern, easy-to-use interface:** clear navigation, light and dark themes, layouts that work across desktop and mobile, and built-in help.
 - **Devices:** physical hardware, dedicated hypervisor/version selection, eligible hosts/VM resources, historical/custom values, rack-shelf associations and notes that fill the editor.
 - **Subnet-first IPAM:** named subnets with explicit LAN/Management/VPN purpose, optional VLAN, optional VPN gateway, derived read-only Device VLAN and available/manual IP entry.
 - **Guided subnet planning:** optional organisational blocks, theoretical CIDR capacity and prefix guidance without automatic changes, Consecutive/Every 10th/Custom preview and atomic batches of up to 50 per operation.
