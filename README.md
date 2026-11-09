@@ -17,15 +17,17 @@ Keep track of your devices, IP addresses and network racks in one place. Caffoot
 
 ![Caffoot Lite v2.1 Dashboard in light theme, showing devices, IP addresses, subnets and network racks](caffoot-v2.1-dashboard-light-cropped.png)
 
-*Dashboard shown in the v2.1 light theme.*
+*Dashboard from the running Caffoot Lite v2.1 light-theme application.*
 
 ### A look at the v2.1 interface
 
-| Device Inventory | Network Rack preview |
+| Device Inventory | IP Address Management |
 | --- | --- |
-| ![Caffoot Lite v2.1 Device Inventory in light theme with search, filters and device list](caffoot-v2.1-devices-light-cropped.png) | ![Caffoot Lite v2.1 rack placement preview in light theme](docs/development-handovers/evidence/approved-owner-batch/images/rack-preview-1440-light.png) |
+| ![Caffoot Lite v2.1 Device Inventory in light theme, with search, filters and device list](caffoot-v2.1-devices-light-cropped.png) | ![Caffoot Lite v2.1 IP Address Management in light theme, with subnet details and address allocations](caffoot-v2.1-ipam-light-cropped.png) |
 
-*Dashboard and Device Inventory are cropped screenshots of the running v2.1 light-theme application. The Rack preview is an existing v2.1 interface-review capture.*
+![Caffoot Lite v2.1 Network Racks in light theme, showing rack units and capacity details](caffoot-v2.1-racks-light-cropped.png)
+
+*All four screenshots are cropped from the running v2.1 light-theme application, with macOS and browser controls removed.*
 
 ## Install Caffoot Lite
 
