@@ -4,9 +4,9 @@
 
 ## Where we are today
 
-**Published:** v2.0.3 provides Devices, IPAM, Racks, shared SQLite inventory, account permissions and multi-factor authentication.
+**Published:** v2.1 provides Devices, subnet-first IPAM, Network Racks, Audit Trail, shared SQLite inventory, account permissions, multi-factor authentication and the refreshed interface. [Release details](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.1).
 
-**Approved work in progress:** v2.1's interface and agreed changes are governed by [issue #282](https://github.com/Caffoot/Caffoot-Lite/issues/282). Completing and accepting that work comes first. These planning milestones add nothing to its scope.
+**Completed v2.1 work:** the published interface and accepted changes are recorded in [issue #282](https://github.com/Caffoot/Caffoot-Lite/issues/282) and the v2.1 release. These planning milestones concern future work, not the completed v2.1 scope.
 
 ## Established planning milestones
 
@@ -22,6 +22,8 @@ Existing proposals:
 - [CSV import/export, bulk updates and safe duplicate review — #288](https://github.com/Caffoot/Caffoot-Lite/issues/288).
 - [Reusable device templates — #289](https://github.com/Caffoot/Caffoot-Lite/issues/289).
 - [Printable inventory and audit reports — #290](https://github.com/Caffoot/Caffoot-Lite/issues/290).
+- [Audit & Report Delivery — #340](https://github.com/Caffoot/Caffoot-Lite/issues/340), for separate scope review.
+- [Rack Inventory search-to-card spacing — #341](https://github.com/Caffoot/Caffoot-Lite/issues/341), a small visual enhancement.
 - [Inventory documentation-completeness checks — #291](https://github.com/Caffoot/Caffoot-Lite/issues/291).
 - [Remembered filters and saved views — #241](https://github.com/Caffoot/Caffoot-Lite/issues/241).
 - [Optional stocktakes and physical asset verification — #322](https://github.com/Caffoot/Caffoot-Lite/issues/322).
@@ -78,6 +80,7 @@ Potential stages to explore:
 - Investigate standards-based self-hosted identity services for supported applications.
 - Investigate domainless sign-in for supported computers, alongside optional traditional directory integration.
 - Work out device enrolment, access removal, offline sign-in, emergency recovery and auditability.
+- [Complete account, permission and sign-in audit event coverage — #339](https://github.com/Caffoot/Caffoot-Lite/issues/339), subject to separate approval.
 
 **To decide:** Identity models, supported operating systems, security architecture and recovery design. **Do not build a new authentication protocol or promise an Active Directory replacement before those decisions and independent security validation.**
 
@@ -120,6 +123,6 @@ The [public roadmap](../../ROADMAP.md) should list only released work, genuinely
 - Delivery dates or estimates.
 - A decision to implement all of these possibilities.
 - Authentication, device-agent or modular-architecture choices.
-- Redesigning the current application or changing [issue #282](https://github.com/Caffoot/Caffoot-Lite/issues/282).
+- Reopening the completed v2.1 integration recorded in [issue #282](https://github.com/Caffoot/Caffoot-Lite/issues/282) without new evidence and approval.
 
 Those require future discussion and explicit approval.
