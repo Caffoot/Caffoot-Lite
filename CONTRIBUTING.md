@@ -4,7 +4,7 @@ Thank you for helping improve Caffoot Lite. We want contributors to find underst
 
 ## Start With An Agreed Scope
 
-Caffoot Lite v2.0.3 is the current Docker/SQLite release; v2.0.2 remains its published security-maintenance predecessor. Before writing code, read the [Development Guide](docs/development-guide/README.md), the [Coding And Naming Conventions](docs/development-guide/06-Coding-and-Naming-Conventions.md), and the [Function Index](docs/development-guide/Function-Index.md). Check existing source, tests and relevant approved GitHub decisions.
+Caffoot Lite v2.1 is the current published Docker/SQLite release; v2.0.3 and v2.0.2 remain available as earlier published versions. Before writing code, read the [Development Guide](docs/development-guide/README.md), the [Coding And Naming Conventions](docs/development-guide/06-Coding-and-Naming-Conventions.md), and the [Function Index](docs/development-guide/Function-Index.md). Check existing source, tests and relevant approved GitHub decisions.
 
 **One feature or improvement per GitHub issue.** Anyone is welcome to [suggest a feature](https://github.com/Caffoot/Caffoot-Lite/issues/new/choose) or join an existing discussion. Check [existing future requests](https://github.com/Caffoot/Caffoot-Lite/labels/future%20request) before opening a new issue. Every new idea should have its own issue. Record discussions, product-owner decisions, changes of scope and acceptance feedback in the relevant issue. The product owner decides what gets built and when; contributors should not start unrelated work or publish anything on their own initiative. Historical issues #215 and #218 are completed release history, not restrictions on future development.
 
@@ -111,4 +111,4 @@ For a short, practical security-fix and release sequence, use the [owner checkli
 
 Automated checks can catch syntax, documentation omissions and some naming problems; **human review remains essential** to establish whether names are genuinely clear. Do not claim CI guarantees semantic naming quality.
 
-The [v2.0.3 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.0.3) is the current published baseline. The project maintainer agrees the scope and timing of changes and makes the final merge and release decisions. Please work within the agreed scope, test and document what you change, and don't publish preview images or releases unless we've agreed to do so.
+The [v2.1 release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.1) is the current published baseline. The project maintainer agrees the scope and timing of changes and makes the final merge and release decisions. Please work within the agreed scope, test and document what you change, and don't publish preview images or releases unless we've agreed to do so.
