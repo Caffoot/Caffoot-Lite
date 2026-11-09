@@ -15,17 +15,17 @@ Keep track of your devices, IP addresses and network racks in one place. Caffoot
 
 **[Get started with Docker or Portainer](INSTALLATION.md)** · **[Explore the features](docs/how-tos/features-and-instructions/README.md)** · **[See the roadmap](ROADMAP.md)** · **[Latest published release](https://github.com/Caffoot/Caffoot-Lite/releases/latest)**
 
-![Caffoot Lite v2.1 Dashboard, dark theme, showing example infrastructure data](docs/development-handovers/evidence/owner-acceptance-batch-02-visuals/dashboard-after-dark-1440.png)
+![Caffoot Lite v2.1 Dashboard in light theme, showing devices, IP addresses, subnets and network racks](caffoot-v2.1-dashboard-light-cropped.png)
 
-*Representative v2.1 interface review capture with fictional example data.*
+*Dashboard shown in the v2.1 light theme.*
 
 ### A look at the v2.1 interface
 
 | Device Inventory | Network Rack preview |
 | --- | --- |
-| ![Caffoot Lite v2.1 Device Inventory in dark theme](docs/development-handovers/evidence/owner-acceptance-batch-02-visuals/inventory-after-dark-1440.png) | ![Caffoot Lite v2.1 rack placement preview in light theme](docs/development-handovers/evidence/approved-owner-batch/images/rack-preview-1440-light.png) |
+| ![Caffoot Lite v2.1 Device Inventory in light theme with search, filters and device list](caffoot-v2.1-devices-light-cropped.png) | ![Caffoot Lite v2.1 rack placement preview in light theme](docs/development-handovers/evidence/approved-owner-batch/images/rack-preview-1440-light.png) |
 
-*These are existing v2.1 visual-review captures, not screenshots of a live customer installation.*
+*Dashboard and Device Inventory are cropped screenshots of the running v2.1 light-theme application. The Rack preview is an existing v2.1 interface-review capture.*
 
 ## Install Caffoot Lite
 
