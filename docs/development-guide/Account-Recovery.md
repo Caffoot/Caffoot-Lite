@@ -18,7 +18,7 @@ Codes expire after 15 minutes and work once. Five failed code/MFA confirmations 
 
 SQLite contains only a keyed digest and challenge metadata, never a plain code. The private 32-byte `account-email-secret.key` beside SQLite must be backed up with the **entire** private data directory, including SMTP configuration and TLS. Keep it a private regular file with mode 0600. Do not copy it into the application image, publish it, or replace it while live challenges remain. If it is lost, restore the matching private backup; do not delete data or edit SQLite to bypass confirmation. The application refuses unusable or publicly readable secret files.
 
-The owner has verified real email-address confirmation successfully on the earlier private build. Full Forgot Password delivery, confirmation, reset, required MFA and subsequent sign-in remain outstanding private acceptance; verification delivery alone does not establish those results.
+The owner verified real email-address confirmation on an earlier private build. That individual check did not establish full Forgot Password delivery, confirmation, reset, required MFA and subsequent sign-in. Consult the v2.1 release and recorded checks for later evidence; do not interpret this earlier result as comprehensive acceptance.
 
 ## Last-Resort Sole-Administrator Recovery
 
@@ -26,12 +26,12 @@ This procedure requires authorised access to the Docker host. It preserves the e
 
 1. Identify the actual existing data volume or bind mount attached at `/data`. Do not change that mapping.
 2. Stop Caffoot Lite. Back up and verify the **entire** persistent data directory, including SQLite, SMTP settings, the email-proof secret and TLS files. Protect the backup as credential-bearing data. Do not run the recovery command alongside a running application.
-3. Use the same acceptance image and already-upgraded database. For a named volume, replace both placeholders with the actual existing values:
+3. Use the same application image version as the installation and its existing database. For a named volume, replace both placeholders with the actual existing values:
 
 ```sh
 docker run --rm -it --network none \
   --mount type=volume,src=ACTUAL_VOLUME_NAME,dst=/data \
-  --entrypoint python ACCEPTANCE_IMAGE -m backend.recover_admin
+  --entrypoint python IMAGE_IN_USE -m backend.recover_admin
 ```
 
 For an existing bind mount, replace the mount argument with:
