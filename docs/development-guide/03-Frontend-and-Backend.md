@@ -23,7 +23,7 @@ The UI hides edit controls from read-only users, but that is presentation only. 
 
 ## Approved appearance and font loading
 
-The unreleased v2.1 pages follow the twelve pinned HTML sources and explicit approved amendments, including the full tagline on Sign In/About. Shared navigation, screen fragments and extracted source styles remain modular. Inter has a system-font fallback; authentication and SQLite operations do not depend on external font delivery. The original published v1.3.3 single-file application remains historical compatibility input, not the current presentation structure.
+The released v2.1 pages follow the twelve pinned HTML sources and explicit approved amendments, including the full tagline on Sign In/About. Shared navigation, screen fragments and extracted source styles remain modular. Inter has a system-font fallback; authentication and SQLite operations do not depend on external font delivery. The original published v1.3.3 single-file application remains historical compatibility input, not the current presentation structure.
 
 ## Local Tailwind stylesheet
 
