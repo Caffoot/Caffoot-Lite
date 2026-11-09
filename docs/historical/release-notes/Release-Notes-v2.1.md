@@ -4,7 +4,7 @@
 
 These are the v2.1 release notes. For the confirmed publication status and downloads, consult the [official GitHub Releases page](https://github.com/Caffoot/Caffoot-Lite/releases). Public AMD64 and ARM64 images must be verified through the release workflow; website publication and deployment are separate decisions.
 
-## A Familiar Application With The Approved Interface
+## A Fresh, Modern Interface Built Around Simplicity
 
 v2.1 replaces the previous presentation with the twelve pinned, owner-approved modular HTML designs. Shared navigation, responsive cards/forms, icons, light/dark themes and local Help & Guides use plain HTML, CSS and JavaScript with the existing Python/SQLite application. No replacement framework or new authoritative browser database is introduced. Sign In and About carry the approved tagline. The public source provenance remains pinned at `c26db4a56bbc30f95b56201e81a7a76d13c6037b`.
 
