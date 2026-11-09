@@ -67,7 +67,7 @@ When an eligible physical hypervisor host exists and is configured accordingly, 
 
 ## v2.1 Device Forms
 
-These prepared v2.1 Add/Edit/Duplicate instructions follow the approved interface; publication remains a separate decision.
+These v2.1 Add/Edit/Duplicate instructions describe the published interface.
 
 For an eligible physical server, **General** shows **This physical server hosts virtual machines** immediately beneath its type. Tick it to use the dedicated **Hypervisor Software/OS** and **Version** controls. The ordinary OS card is hidden while hosting is enabled; unticking restores its values. Known host products are offered through this dedicated path. Previously recorded OS/software assignments are retained with an explanation rather than silently removed. Existing guest-change confirmations still apply.
 
@@ -77,7 +77,7 @@ For a VM, choose its purpose, physical host and virtual allocations on **General
 
 ## v2.1 Shelves And Software
 
-These are prepared v2.1 instructions; check the release status before installing.
+These instructions describe the published v2.1 application; use the [installation guide](../../../INSTALLATION.md) for setup.
 
 For physical **Tabletop / Shelf Mounted** equipment, open **General → Mounting & Rack Configuration**. Leaving **Rack (Optional)** empty records no rack association. Selecting a rack requires an actual **Rack Shelf** in that rack. **+ Add Rack Shelf** opens the existing Horizontal Accessory editor and returns to your Device draft. A successfully saved shelf remains in inventory even if you cancel the Device draft. The device uses the shelf's current location without occupying another U. Details shows the rack, current shelf U and face. Duplicate retains the association while requiring a new identity/address.
 
