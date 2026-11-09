@@ -1,6 +1,6 @@
-# Account Recovery — Private v2.1 Acceptance
+# Account Recovery — Caffoot Lite v2.1
 
-These controls belong to the Issue #282 development branch. They are not a claim that v2.0.3 has email recovery.
+These controls are included in the published v2.1 application. The implementation and acceptance history is recorded in [issue #282](https://github.com/Caffoot/Caffoot-Lite/issues/282); they were not part of v2.0.3.
 
 ## Normal Recovery
 
