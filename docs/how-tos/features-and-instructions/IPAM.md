@@ -4,7 +4,7 @@
 
 *Existing screenshots show the earlier Docker edition for orientation; the v2.1 steps describe the prepared interface. They are not new v2.1 or native Safari screenshots.*
 
-These instructions describe the prepared v2.1 workflow. Publication remains pending; check the root release-status notice before installing a versioned image.
+These instructions describe the published v2.1 workflow. Check the [installation guide](../../../INSTALLATION.md) for the versioned image and deployment safeguards.
 
 ## Understand the records
 
