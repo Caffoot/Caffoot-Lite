@@ -41,7 +41,7 @@ See [installation and certificate instructions](../../INSTALLATION.md). That doc
 
 ## Boundaries worth preserving
 
-The architecture is deliberately modest. There is one central SQLite inventory, not a browser authoritative copy or an extra recovery database. Existing Devices/IPAM/Racks outcomes come from the published v1.3.3 baseline. The unreleased v2.1 implementation also includes modular HTML/CSS/JavaScript presentation, personal profiles/photos, administrator SMTP configuration, verified-email recovery and protected Audit Trail views. These use the same server and SQLite data, not a second application. The v1.3.3 backup import is a migration workflow, not an ongoing app backup service.
+The architecture is deliberately modest. There is one central SQLite inventory, not a browser authoritative copy or an extra recovery database. Existing Devices/IPAM/Racks outcomes come from the published v1.3.3 baseline. The released v2.1 application also includes modular HTML/CSS/JavaScript presentation, personal profiles/photos, administrator SMTP configuration, verified-email recovery and protected Audit Trail views. These use the same server and SQLite data, not a second application. The v1.3.3 backup import is a migration workflow, not an ongoing app backup service.
 
 ### Related reading
 

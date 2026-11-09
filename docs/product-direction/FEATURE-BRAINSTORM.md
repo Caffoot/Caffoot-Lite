@@ -1,6 +1,6 @@
 # Caffoot Lite — Feature Brainstorm and Milestone Mapping
 
-> **Agreed planning register — 5 November 2026.** The long-term vision and six milestone groupings are agreed, and 27 future-request issues have been organised. The individual ideas remain **proposals**, not approved implementation scope, delivery commitments or a release schedule. Use it alongside the [long-term vision](VISION.md) and [proposed milestones](PROPOSED-MILESTONES.md). Caffoot Lite v2.1 remains governed by [issue #282](https://github.com/Caffoot/Caffoot-Lite/issues/282).
+> **Agreed planning register — 5 November 2026.** The long-term vision and six milestone groupings are agreed, and 27 future-request issues have been organised. The individual ideas remain **proposals**, not approved implementation scope, delivery commitments or a release schedule. Use it alongside the [long-term vision](VISION.md) and [proposed milestones](PROPOSED-MILESTONES.md). Caffoot Lite v2.1 has since been published; [issue #282](https://github.com/Caffoot/Caffoot-Lite/issues/282) preserves the implementation history.
 
 ## Our starting point
 
@@ -68,7 +68,7 @@ These six groups correspond to [GitHub Milestones #20–#25](PROPOSED-MILESTONES
 
 ### Milestone 1 — Everyday asset management
 
-**First opportunity to explore after the v2.1 foundation is accepted.** Focus on practical improvements people notice immediately. Lifecycle data, reporting, bulk actions and QR codes could each be separate deliverables.
+**The next planning group to review after the published v2.1 foundation.** Focus on practical improvements people notice immediately. Lifecycle data, reporting, bulk actions and QR codes could each be separate deliverables.
 
 **Dependencies:** understand existing device fields, import/export behaviour, permissions and how labels refer to devices.
 
@@ -140,5 +140,5 @@ Before converting ideas into scoped feature requests or version targets, discuss
 - **Agreed vision:** a self-hosted IT management and identity platform, with *Lite* meaning simplicity and data sovereignty at its core.
 - **Planning completed:** six GitHub Milestones #20–#25 created; 27 future-request issues organised by milestone or kept cross-cutting as appropriate.
 - **Not yet decided:** implementation approval for individual proposals, feature priorities, release versions, dates or whether to build each idea.
-- **Next sensible step:** after v2.1 acceptance, review and prioritise requests within the existing milestone and issue records. Check for duplicates before adding further ideas.
-- **Not affected:** v2.1 [issue #282](https://github.com/Caffoot/Caffoot-Lite/issues/282), its approved designs, the existing public roadmap and current released functionality.
+- **Next sensible step:** review and prioritise requests within the existing milestone and issue records following the v2.1 release. Check for duplicates before adding further ideas.
+- **Not affected:** the published v2.1 release, its approved designs, or existing functionality; future work still needs separate approval.

@@ -12,7 +12,7 @@ The first sentence describes how Caffoot Lite should work: easy to install, unde
 
 **Short description:** Keep **Infrastructure, Simplified.** wherever shorter wording is more appropriate, rather than removing it from every existing location.
 
-**Possible future placements to review:** the website, repository README, sign-in screen and About page. Placement, wording layout and any changes to the approved v2.1 screens require separate review and approval before implementation. This is a **brand direction decision only**, not approval to alter the current application or published assets.
+**Current placements:** the repository README and the released v2.1 Sign In/About screens carry the approved wording. Any website use or further design changes need separate review and approval. This brand decision is not permission to change the released application or website without approval.
 
 
 This is our long-term product motto: simplicity in how Caffoot Lite works, and control over the infrastructure, identities and information an organisation manages. It expresses the direction we're working towards, not a claim that every planned capability is available today.
@@ -99,9 +99,9 @@ Features should earn their place by making the product more useful, not by makin
 
 ## What is available now
 
-The published **v2.0.3** release provides self-hosted device inventory, IPv4 IPAM, rack documentation, a central SQLite database, permissions, multi-user access and multi-factor authentication for relevant accounts.
+The published **v2.1** release provides self-hosted device inventory, subnet-first IPv4 IPAM, rack documentation, Audit Trail, a refreshed interface, a central SQLite database, permissions, multi-user access and multi-factor authentication. [View the release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.1).
 
-The **v2.1 interface** is under approved development in [issue #282](https://github.com/Caffoot/Caffoot-Lite/issues/282). It is not yet released.
+The **v2.1 interface** has been released. [Issue #282](https://github.com/Caffoot/Caffoot-Lite/issues/282) preserves the original integration requirements and development history.
 
 **Domainless computer sign-in, SSO, remote management, service desk and monitoring are not features of the current release.** They belong to the long-term discussion until their requirements, risks and implementation are individually approved.
 

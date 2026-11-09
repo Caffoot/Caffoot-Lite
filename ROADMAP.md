@@ -4,23 +4,21 @@
 
 This page helps visitors see what is available, what is being developed and which ideas are being considered. **An idea is not a promised feature or release date.** The product owner decides priorities and approves changes before development.
 
-## Available now — v2.0.3
+## Available now — v2.1
 
-The current published version includes:
+Caffoot Lite v2.1 was published on **8 November 2026**. The current release includes:
 
-- Device and IT asset inventory.
-- IP address management (IPAM), subnets, VLANs and address allocations.
-- Network rack documentation and front/rear rack views.
-- Multi-user access, administrator-managed permissions, MFA and Change History.
-- A Docker/SQLite deployment with persistent data.
+- Device and IT asset inventory with improved physical-server and virtual-machine forms.
+- Subnet-first IP address management (IPAM), optional VLANs and guided bulk subnet planning.
+- Network rack documentation, front/rear views and equipment placement.
+- Multi-user access, administrator-managed permissions, MFA, account/email workflows and Audit Trail.
+- A modern, responsive light/dark interface and Docker/SQLite deployment with persistent data.
 
 **[Install Caffoot Lite](INSTALLATION.md)** · **[See the latest release](https://github.com/Caffoot/Caffoot-Lite/releases/latest)** · **[Explore the features](docs/how-tos/features-and-instructions/README.md)**
 
-## In development — v2.1
+## Next development work — planning
 
-Caffoot Lite v2.1 will introduce a more polished, professional user interface, with improved navigation and streamlined workflows designed to make managing your infrastructure easier and more intuitive.
-
-The implementation is **not yet released or accepted**. Follow the [approved v2.1 development plan in issue #282](https://github.com/Caffoot/Caffoot-Lite/issues/282). No release date has been promised.
+The [six long-term planning milestones](docs/product-direction/PROPOSED-MILESTONES.md) organise future proposals. **Milestone 01 — Everyday Asset Management** is next for review, but no individual feature, release date or implementation scope has yet been approved. The completed v2.1 integration and its historical decisions are recorded in [issue #282](https://github.com/Caffoot/Caffoot-Lite/issues/282).
 
 ## Ideas under consideration — not yet scheduled
 
@@ -51,4 +49,4 @@ Please [report security vulnerabilities privately](SECURITY.md), not in public i
 
 ---
 
-*Updated: 5 November 2026. This page reflects public development status, not a guaranteed delivery schedule.*
+*Updated: 9 November 2026. This page reflects the published release and proposed future work, not a guaranteed delivery schedule.*

@@ -15,15 +15,14 @@ These rules apply to all AI-assisted development in this repository. Read them b
 9. **Stop at a genuine blocker.** If the approved approach cannot work, explain exactly what prevents it and the minimum proposed change; obtain explicit owner approval *before* deviating. Do not disguise a workaround as equivalent.
 10. **Respect the delivery boundary.** Do not modify `main`, merge PRs, publish images or releases, or change unrelated branches/issues unless explicitly authorised. A finished task is the agreed outcome, not a large diff, high test count or long-running investigation.
 
-## Current Caffoot Lite v2.1 work
+## Current release and next work
 
-- Authoritative interface replacement plan: [Issue #282](https://github.com/Caffoot/Caffoot-Lite/issues/282).
-- Approved visual source revision: `c26db4a56bbc30f95b56201e81a7a76d13c6037b`. The exact twelve source paths are listed in `docs/development-guide/Approved-HTML-Integration.md`.
-- Development branch: `feat/approved-modular-html-282`. Preserve original draft PR #281 without modification.
-- Use the approved HTML/CSS directly, retain the existing Python/SQLite functionality, and keep the application modular using HTML, CSS and JavaScript; no Svelte or substitute framework.
-- The existing implementation and verification checkpoint must be inspected before new changes. Do not redo completed integration. Address only the explicitly authorised remaining defects and acceptance checks.
-- Record visual matches and mismatches against the approved desktop/mobile designs; do not treat stylesheet inclusion or screenshot capture as visual acceptance.
-- A private Docker acceptance build is for owner review only. Do not merge, publish or release without explicit approval.
+- **Published baseline:** [Caffoot Lite v2.1](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.1), released on 8 November 2026. The accepted modular interface is already on `main`.
+- **Historical v2.1 requirements:** [Issue #282](https://github.com/Caffoot/Caffoot-Lite/issues/282) and the approved visual source revision `c26db4a56bbc30f95b56201e81a7a76d13c6037b`. The twelve source paths are recorded in `docs/development-guide/Approved-HTML-Integration.md`. These are historical references, not a task to repeat.
+- **Next application work:** planning is organised under the [six future milestones](docs/product-direction/PROPOSED-MILESTONES.md). No new implementation scope or release number has been approved just by grouping issues.
+- **Website:** tracked independently in `Caffoot/Caffoot-Website`; review and seek explicit owner approval before any website implementation or deployment.
+- Preserve the working v2.1 HTML/CSS/JavaScript, Python/SQLite data, permissions and security. New changes require their own approved issue or explicit scoped owner instruction; no framework substitution or speculative redesign.
+- Test proportionately, record actual evidence and use separate owner approval for PR merges and public releases.
 
 ## Communication
 
