@@ -1,6 +1,6 @@
 # Caffoot Lite — Features and Instructions
 
-Welcome to the Caffoot Lite user guides. These instructions cover the prepared v2.1 Docker/SQLite edition. The latest published release is still v2.0.3 until separate publication approval. Established inventory and security safeguards remain, with the approved modular interface and subnet-first workflows.
+Welcome to the Caffoot Lite user guides. These instructions cover the published v2.1 Docker/SQLite edition ([release](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.1)). Established inventory and security safeguards remain, with the approved modular interface and subnet-first workflows.
 
 The guides describe the **real application**, use fictional examples and distinguish viewer and editor permissions. They are maintained here as the shared source for GitHub and website help references. The separate [Development Guide](../../development-guide/README.md) explains the implementation for developers.
 
