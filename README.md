@@ -15,9 +15,19 @@ Keep track of your devices, IP addresses and network racks in one place. Caffoot
 
 **[Get started with Docker or Portainer](INSTALLATION.md)** · **[Explore the features](docs/how-tos/features-and-instructions/README.md)** · **[See the roadmap](ROADMAP.md)** · **[Latest published release](https://github.com/Caffoot/Caffoot-Lite/releases/latest)**
 
-![Caffoot Lite dashboard showing example network inventory](docs/screenshots/dashboard.png)
+![Caffoot Lite v2.1 Dashboard in light theme, showing devices, IP addresses, subnets and network racks](caffoot-v2.1-dashboard-light-cropped.png)
 
-*Earlier Docker edition shown for orientation; this is not a new v2.1 screenshot.*
+*Dashboard from the running Caffoot Lite v2.1 light-theme application.*
+
+### A look at the v2.1 interface
+
+| Device Inventory | IP Address Management |
+| --- | --- |
+| ![Caffoot Lite v2.1 Device Inventory in light theme, with search, filters and device list](caffoot-v2.1-devices-light-cropped.png) | ![Caffoot Lite v2.1 IP Address Management in light theme, with subnet details and address allocations](caffoot-v2.1-ipam-light-cropped.png) |
+
+![Caffoot Lite v2.1 Network Racks in light theme, showing rack units and capacity details](caffoot-v2.1-racks-light-cropped.png)
+
+*All four screenshots are cropped from the running v2.1 light-theme application, with macOS and browser controls removed.*
 
 ## Install Caffoot Lite
 
