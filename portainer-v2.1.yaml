@@ -1,3 +1,9 @@
+# IMPORTANT — CHANGE THE EXAMPLE IP ADDRESSES BEFORE DEPLOYING.
+# Replace 192.168.1.100 in CAFFOOT_WEB_ADDRESS and
+# CAFFOOT_SERVER_ADDRESS with your own Docker server's IP address.
+# These addresses are examples only, not installation defaults.
+# If you change port 8443, update all three port settings consistently.
+
 # Caffoot Lite v2.1 — Portainer / Docker Compose installation example.
 # Verify the public v2.1 release and AMD64/ARM64 image before deploying.
 # Change the example server IP address and port to suit your installation.
