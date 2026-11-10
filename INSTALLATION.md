@@ -1,10 +1,108 @@
 # Caffoot Lite v2.1 — Docker / SQLite installation
 
-**Published release:** Caffoot Lite [v2.1](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.1) was published on 8 November 2026. Verify the public Docker image and your AMD64/ARM64 architecture before pulling or deploying it. A source checkout or private candidate build does not establish that a public image is available.
+**New installation?** Start with the two quick-start methods below. **Existing installation?** Read the [v2.0.3 → v2.1 upgrade instructions](#upgrading-v203-to-v21) first to protect your existing data.
 
-v2.1 retains the central SQLite database, HTTPS identity, accounts, MFA and permissions while adding the approved modular interface and accepted inventory/account workflows. Use the [user guides](docs/how-tos/features-and-instructions/README.md) for everyday work. Published standalone v1.3.3 JSON import remains one-way migration, not a Docker upgrade or ongoing backup.
+**Published release:** [Caffoot Lite v2.1](https://github.com/Caffoot/Caffoot-Lite/releases/tag/v2.1) (8 November 2026). Before deploying, verify the public `ghcr.io/caffoot/caffoot-lite:v2.1` image is available for your AMD64 or ARM64 host. The release and a source checkout alone do not prove registry availability.
 
-## HTTPS Docker Compose / Portainer setup
+Caffoot Lite retains its SQLite database, HTTPS identity, accounts, MFA and permissions. For everyday use, see the [user guides](docs/how-tos/features-and-instructions/README.md). Importing a published v1.3.3 JSON inventory is a separate one-way migration, not a Docker upgrade or a full installation backup.
+
+## Quick start — new installations
+
+Choose **Portainer** or **Docker Compose** below. Both use the same published v2.1 image and persistent Docker-managed volume. You need a Docker host (for example, a Raspberry Pi or PC), and either Portainer or Docker Engine with the Compose plugin.
+
+> **Already running Caffoot Lite?** Do **not** create a new stack or replace your existing volume. Follow [Upgrading v2.0.3 to v2.1](#upgrading-v203-to-v21) instead. Keep the current `/data` mount, HTTPS identity, environment and secrets.
+
+### Shared v2.1 installation configuration
+
+Copy this configuration into Portainer's Web editor **or** save it as `compose.yaml` for Docker Compose. It matches the repository's [v2.1 stack](portainer-v2.1.yaml).
+
+```yaml
+services:
+  caffoot-lite:
+    image: ghcr.io/caffoot/caffoot-lite:v2.1
+    container_name: caffoot-lite
+    restart: unless-stopped
+    environment:
+      CAFFOOT_WEB_ADDRESS: "https://192.168.1.100:8443"
+      CAFFOOT_SERVER_ADDRESS: "192.168.1.100"
+      CAFFOOT_PORT: "8443"
+    ports:
+      - "8443:8080"
+    volumes:
+      - caffoot_data:/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import ssl,urllib.request; urllib.request.urlopen('https://127.0.0.1:8080/health',context=ssl._create_unverified_context(),timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  caffoot_data:
+```
+
+Before deploying, change **both** occurrences of the example IP address `192.168.1.100` to your Docker host's IP address. For example, if it is `192.168.1.50`, use `https://192.168.1.50:8443` for `CAFFOOT_WEB_ADDRESS` and `192.168.1.50` for `CAFFOOT_SERVER_ADDRESS`.
+
+Port `8443` may stay as shown. If it is already in use, change `CAFFOOT_PORT`, the port in `CAFFOOT_WEB_ADDRESS`, and the **host-side** port in `ports` together (for example, `8444:8080`). Keep the container-side port `8080` unchanged.
+
+### Method 1 — Portainer
+
+1. Sign in to **Portainer** and open **Stacks → Add stack**.
+2. Name the stack `caffoot-lite`, then select **Web editor**.
+3. Paste the **shared installation configuration** above, with your server IP (and port if needed).
+4. Click **Deploy the stack**.
+5. Check that the Caffoot Lite container starts. Portainer will pull `ghcr.io/caffoot/caffoot-lite:v2.1`; the published image must be publicly accessible for the pull to succeed.
+
+Docker creates the `caffoot_data` named volume automatically. You do **not** need to create a host folder for a normal new installation.
+
+### Method 2 — Docker Compose
+
+1. Install **Docker Engine** and the **Docker Compose plugin** on your computer or Raspberry Pi.
+2. Open a terminal and create an installation folder:
+
+   ```sh
+   mkdir -p ~/caffoot-lite
+   cd ~/caffoot-lite
+   ```
+
+3. Create `compose.yaml` with `nano compose.yaml` (or a text editor). Paste the **same shared installation configuration** above, update the server IP, then save it. In `nano`, press **Ctrl+O**, **Enter**, then **Ctrl+X**.
+4. From that folder, start Caffoot Lite:
+
+   ```sh
+   docker compose up -d
+   ```
+
+5. Check that it is running:
+
+   ```sh
+   docker compose ps
+   ```
+
+This method pulls the **published v2.1 image**; it does not build the application from source. Docker creates the persistent named volume automatically.
+
+Useful commands (run from the folder containing `compose.yaml`):
+
+| Task | Command |
+| --- | --- |
+| View logs | `docker compose logs -f` |
+| Stop | `docker compose stop` |
+| Start again | `docker compose start` |
+| Restart | `docker compose restart` |
+
+Press **Ctrl+C** to stop following logs; this does not stop the application. **Do not run `docker compose down -v`**: `-v` can remove the persistent data volume.
+
+### Finish setup — either method
+
+1. Open `https://YOUR-SERVER-IP:8443` in your browser (substitute your IP and chosen port).
+2. The app generates a **self-signed HTTPS certificate** on first start. Your browser will not automatically trust it. **Before entering credentials**, verify the certificate identity and SHA-256 fingerprint against a separately trusted copy, using [the certificate instructions below](#advanced-https-docker-compose-and-portainer-configuration). Do not simply bypass an unverified certificate warning.
+3. Once the connection is trusted, follow the on-screen administrator setup and MFA instructions.
+
+**Protect your data:** keep the complete `/data` volume (including SQLite, TLS and any private account-email key), and back it up to a protected location **outside the Docker host**. A JSON inventory import/export is **not** a substitute for a complete Docker backup. See [External backup and recovery](#external-backup-and-recovery-of-your-docker-installation).
+
+For reverse proxies, custom host storage, certificate management or source builds, see the advanced sections below.
+
+---
+
+## Advanced: HTTPS Docker Compose and Portainer configuration
 
 Set **your own** browser address and certificate identities before running Compose. Nothing is hard-coded for a particular installer. For example, in a local `.env` file alongside `compose.yaml`:
 
@@ -44,9 +142,9 @@ The existing backend checks and focused HTTPS/Chromium tests run in GitHub Actio
 
 The optional Docker Compose lifecycle test checks the published port configuration and whether SQLite data and HTTPS certificates remain available after the container restarts or is recreated. These checks passed during the original release review. The Raspberry Pi 5/Portainer acceptance, including container recreation and a manual stopped-container backup and restore, is recorded in [issue #218](https://github.com/Caffoot/Caffoot-Lite/issues/218). This did **not** verify automated or off-host backups, and it did not replace the subsequent security review.
 
-## v2.1 Portainer installation
+## Advanced: Portainer storage and deployment options
 
-For a simple **new** v2.1 installation, use **Portainer → Stacks → Add stack → Web editor** after checking the published release and your target image. Copy the entire root [v2.1 stack](portainer-v2.1.yaml) and change the example server address and port. The default storage is a Docker-managed **named volume**; there is no host folder to create. Its image reference is `ghcr.io/caffoot/caffoot-lite:v2.1` for ARM64 Raspberry Pi 5 and AMD64 PC. Confirm that the actual **v2.1** [release](https://github.com/Caffoot/Caffoot-Lite/releases), image workflow and public multi-platform image exist before pulling it. The GHCR package must be **Public** to permit anonymous pulls; never embed an access token in a public stack. The separate [historical v2.0.3 stack](docs/historical/portainer/portainer-v2.0.3.yaml) remains available for that published version. Existing installations must follow the in-place upgrade instructions below and keep their actual `/data` mapping, environment and secrets.
+The [quick-start configuration above](#shared-v21-installation-configuration) is the same as the repository's [v2.1 stack](portainer-v2.1.yaml). The GHCR package must be **Public** to permit anonymous pulls; never embed an access token in a public stack. The separate [historical v2.0.3 stack](docs/historical/portainer/portainer-v2.0.3.yaml) remains available. Existing installations must retain their actual `/data` mapping, environment and secrets.
 
 The supplied example uses **192.168.1.100:8443 as a placeholder**. Replace it with the address of your server before deploying. Its standard storage mapping is:
 
