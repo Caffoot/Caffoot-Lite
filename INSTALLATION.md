@@ -17,6 +17,11 @@ Choose **Portainer** or **Docker Compose** below. Both use the same published v2
 Copy this configuration into Portainer's Web editor **or** save it as `compose.yaml` for Docker Compose. It matches the repository's [v2.1 stack](portainer-v2.1.yaml).
 
 ```yaml
+# IMPORTANT — CHANGE THE EXAMPLE IP ADDRESSES BEFORE DEPLOYING.
+# Replace 192.168.1.100 in CAFFOOT_WEB_ADDRESS and
+# CAFFOOT_SERVER_ADDRESS with your own Docker server's IP address.
+# These addresses are examples only, not installation defaults.
+# If you change port 8443, update all three port settings consistently.
 services:
   caffoot-lite:
     image: ghcr.io/caffoot/caffoot-lite:v2.1
