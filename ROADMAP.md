@@ -18,14 +18,17 @@ Caffoot Lite v2.1 was published on **8 November 2026**. The current release incl
 
 ## Next development work — planning
 
-The [six long-term planning milestones](docs/product-direction/PROPOSED-MILESTONES.md) organise future proposals. **Milestone 01 — Everyday Asset Management** is next for review, but no individual feature, release date or implementation scope has yet been approved. The completed v2.1 integration and its historical decisions are recorded in [issue #282](https://github.com/Caffoot/Caffoot-Lite/issues/282).
+The [six long-term planning milestones](docs/product-direction/PROPOSED-MILESTONES.md) organise future proposals. **Milestone 01 — Everyday IT Management** is the next planning priority. Its connected foundations cover Suppliers, a core Assets and stock section, People and Departments, equipment assignments and handovers, permissions, and the full Service Desk. **Milestone 02 — Connected Infrastructure** remains focused on network relationships. **Milestone 03 — Inventory Tools, Reporting & Verification** groups later inventory improvements such as CSV/JSON, saved views, QR labels, stocktakes, reporting and IT documentation. See the [live GitHub milestones](https://github.com/Caffoot/Caffoot-Lite/milestones). These are planning groupings: detailed feature scope and implementation still require separate approval; no release date is set. The completed v2.1 integration and its historical decisions are recorded in [issue #282](https://github.com/Caffoot/Caffoot-Lite/issues/282).
 
 ## Ideas under consideration — not yet scheduled
 
 The community is welcome to suggest and discuss improvements. Current individual proposals include:
 
 - [Multiple network interfaces, addresses per device and IPv6 (#231)](https://github.com/Caffoot/Caffoot-Lite/issues/231)
+- [Core Assets and stock movements (#352)](https://github.com/Caffoot/Caffoot-Lite/issues/352)
+- [Suppliers, locations and contacts (#349)](https://github.com/Caffoot/Caffoot-Lite/issues/349)
 - [People, departments and asset assignment (#232)](https://github.com/Caffoot/Caffoot-Lite/issues/232)
+- [Equipment handovers and reassignment history (#292)](https://github.com/Caffoot/Caffoot-Lite/issues/292)
 - [Support tickets linked to devices and people (#233)](https://github.com/Caffoot/Caffoot-Lite/issues/233)
 - [MSP customers and overlapping private IP ranges (#234)](https://github.com/Caffoot/Caffoot-Lite/issues/234)
 - [Switch ports, connections and topology (#235)](https://github.com/Caffoot/Caffoot-Lite/issues/235)
@@ -34,6 +37,7 @@ The community is welcome to suggest and discuss improvements. Current individual
 - [Optional sections or modules (#238)](https://github.com/Caffoot/Caffoot-Lite/issues/238)
 - [LDAP/LLDAP/Active Directory sign-in (#240)](https://github.com/Caffoot/Caffoot-Lite/issues/240)
 - [Saved filters and inventory views (#241)](https://github.com/Caffoot/Caffoot-Lite/issues/241)
+- [Long-term departmental asset management (#353)](https://github.com/Caffoot/Caffoot-Lite/issues/353) — future direction only, outside the immediate IT scope.
 
 Explore [all future requests](https://github.com/Caffoot/Caffoot-Lite/labels/future%20request) for more ideas and their discussions. These are proposals, not commitments to implement them.
 
@@ -49,4 +53,4 @@ Please [report security vulnerabilities privately](SECURITY.md), not in public i
 
 ---
 
-*Updated: 9 November 2026. This page reflects the published release and proposed future work, not a guaranteed delivery schedule.*
+*Updated: 10 November 2026. This page reflects the published release and proposed future work, not a guaranteed delivery schedule.*
