@@ -1,6 +1,6 @@
 # Caffoot Lite — Long-Term Planning Milestones
 
-> **Agreed planning structure — 5 November 2026.** Six GitHub Milestones #20–#25 group future requests under the agreed [product vision](VISION.md); they do not constitute an approved development schedule. No future version number, date, feature scope or technical architecture is agreed by this document.
+> **Original planning structure agreed 5 November 2026; Milestones 01–03 regrouped 10 November 2026.** Six GitHub Milestones #20–#25 group future requests under the agreed [product vision](VISION.md); they do not constitute an approved development schedule. No future version number, date, feature scope or technical architecture is agreed by this document.
 
 ## Where we are today
 
@@ -12,32 +12,31 @@
 
 GitHub Milestones #20–#25 group future requests by the **benefit to users**, not by a chosen technology. Their existence does not approve any individual implementation, and priorities or boundaries may change after discussion.
 
-### Milestone 01 (#20) — Easier everyday asset management
+### Milestone 01 (#20) — Everyday IT Management
 
-**Outcome:** An administrator can find, record and maintain useful information about equipment without repeating work.
+**Outcome:** An IT team can record equipment and stock, manage suppliers and staff, assign equipment, handle returns and support users through a connected, straightforward experience.
 
-Existing proposals:
-- [Equipment lifecycle, warranties, optional purchase documents and location/movement history — #286](https://github.com/Caffoot/Caffoot-Lite/issues/286).
-- [QR labels linking to authorised asset records — #287](https://github.com/Caffoot/Caffoot-Lite/issues/287).
-- [CSV import/export, bulk updates and safe duplicate review — #288](https://github.com/Caffoot/Caffoot-Lite/issues/288).
-- [Reusable device templates — #289](https://github.com/Caffoot/Caffoot-Lite/issues/289).
-- [Printable inventory and audit reports — #290](https://github.com/Caffoot/Caffoot-Lite/issues/290).
-- [Audit & Report Delivery — #340](https://github.com/Caffoot/Caffoot-Lite/issues/340), for separate scope review.
-- [Rack Inventory search-to-card spacing — #341](https://github.com/Caffoot/Caffoot-Lite/issues/341), a small visual enhancement.
-- [Inventory documentation-completeness checks — #291](https://github.com/Caffoot/Caffoot-Lite/issues/291).
-- [Remembered filters and saved views — #241](https://github.com/Caffoot/Caffoot-Lite/issues/241).
-- [Optional stocktakes and physical asset verification — #322](https://github.com/Caffoot/Caffoot-Lite/issues/322).
-- [Organisation-specific asset information: check current custom fields before proposing more — #323](https://github.com/Caffoot/Caffoot-Lite/issues/323).
+Current planning issues:
+- [Role-based permissions and per-user overrides — #350](https://github.com/Caffoot/Caffoot-Lite/issues/350).
+- [Optional sections for agreed non-core capabilities — #238](https://github.com/Caffoot/Caffoot-Lite/issues/238). **Core Assets is not optional.**
+- [Suppliers, branches, contacts and supplier notes/issues — #349](https://github.com/Caffoot/Caffoot-Lite/issues/349).
+- [Core Assets: individually tracked equipment, quantity stock and stock movement history — #352](https://github.com/Caffoot/Caffoot-Lite/issues/352).
+- [People, departments and device/asset assignments — #232](https://github.com/Caffoot/Caffoot-Lite/issues/232).
+- [Equipment handovers and reassignment history — #292](https://github.com/Caffoot/Caffoot-Lite/issues/292).
+- [Full device/asset-linked Service Desk and support tickets — #233](https://github.com/Caffoot/Caffoot-Lite/issues/233).
+- [Equipment lifecycle, warranties and replacement planning — #286](https://github.com/Caffoot/Caffoot-Lite/issues/286).
+- [Rack Inventory search-to-card spacing — #341](https://github.com/Caffoot/Caffoot-Lite/issues/341).
+- [Confirm initial password when creating a user — #347](https://github.com/Caffoot/Caffoot-Lite/issues/347).
+- [Milestone planning checkpoint — #351](https://github.com/Caffoot/Caffoot-Lite/issues/351).
+- [#323 — organisation-specific asset information](https://github.com/Caffoot/Caffoot-Lite/issues/323) is **closed, Not Planned**, and must not be treated as delivery scope.
 
-**To decide:** Which tasks are genuinely time-consuming today? What is the smallest useful first improvement? What already exists? Which information must stay optional? Asset-to-person assignment remains in Milestone 03; no separate document-management or duplicate audit system is implied.
+**To decide:** Exact record relationships, permissions and privacy, asset quantity versus individual tracking, staff assignment and return workflows, support ticket behaviour, safe migration and the approved HTML interfaces. Plan these connected capabilities together to avoid later retrofits; that does **not** authorise one monolithic implementation or prescribe an unapproved technical architecture. The [latest #351 checkpoint](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6764257679) supersedes the earlier milestone-wide development sequence. Feature-level decisions in their issues remain in force.
 
-**Suggested order for later discussion, not an approved schedule:** Investigate CSV onboarding first, then lifecycle, QR labels/stocktakes, templates/bulk editing, and reporting/completeness/saved views. Each idea needs its own scope approval and can be delivered independently; Milestone 01 is not automatically a single release.
-
-### Milestone 02 (#21) — Understand how infrastructure fits together
+### Milestone 02 (#21) — Connected Infrastructure
 
 **Outcome:** Users can see not only what equipment exists but also how it is connected and addressed.
 
-Existing proposals:
+Existing proposals (unchanged):
 - [Multiple interfaces, IP addresses and IPv6 — #231](https://github.com/Caffoot/Caffoot-Lite/issues/231).
 - [Switch ports, patch panels, cabling, topology diagrams and connection tracing — #235](https://github.com/Caffoot/Caffoot-Lite/issues/235).
 - [IP Address Block organisation after import — #312](https://github.com/Caffoot/Caffoot-Lite/issues/312).
@@ -48,16 +47,23 @@ Existing proposals:
 
 **To decide:** How connections and dependencies should be recorded, what diagrams and tracing can accurately show from entered data, which IPAM/DNS/DHCP fields already exist, and how existing inventory is preserved. No active scanning or network discovery is part of this milestone.
 
-### Milestone 03 (#22) — Connect assets to people and support
+### Milestone 03 (#22) — Inventory Tools, Reporting & Verification
 
-**Outcome:** An IT team can understand who uses an asset, what needs attention and where to find related help.
+**Outcome:** Build on the connected everyday IT management foundations with faster inventory operations, clear documentation, accurate verification and practical reporting.
 
-Existing proposals:
-- [People, departments and assigned assets — #232](https://github.com/Caffoot/Caffoot-Lite/issues/232).
-- [Device-linked support tickets — #233](https://github.com/Caffoot/Caffoot-Lite/issues/233).
+Current planning issues:
+- [Saved views and remembered inventory filters — #241](https://github.com/Caffoot/Caffoot-Lite/issues/241).
+- [QR labels linking to authorised asset records — #287](https://github.com/Caffoot/Caffoot-Lite/issues/287).
+- [CSV import/export and safe bulk updates — #288](https://github.com/Caffoot/Caffoot-Lite/issues/288).
+- [Safe multiple-device duplication — #289](https://github.com/Caffoot/Caffoot-Lite/issues/289). The older issue title refers to reusable templates, but the owner rejected templates during later planning; follow the issue's latest approved decisions.
+- [Inventory reports — #290](https://github.com/Caffoot/Caffoot-Lite/issues/290).
+- [Data Quality and inventory completeness — #291](https://github.com/Caffoot/Caffoot-Lite/issues/291).
+- [Optional stocktakes and asset verification — #322](https://github.com/Caffoot/Caffoot-Lite/issues/322).
+- [Audit & Report Delivery — #340](https://github.com/Caffoot/Caffoot-Lite/issues/340).
+- [Portable JSON inventory export — #346](https://github.com/Caffoot/Caffoot-Lite/issues/346).
 - [In-app IT documentation and revision history — #237](https://github.com/Caffoot/Caffoot-Lite/issues/237).
 
-**To decide:** Whether employee records require login accounts, access/privacy rules, and which links between people, assets and tickets are actually useful.
+**To decide:** How tools operate on both Devices and Assets where relevant, safe imports/exports and bulk changes, QR and stocktake identity, report scope, permission checks and lightweight documentation. Although #291 is grouped here, any existing missing-IP behaviour conflicting with Milestone 01's non-networked asset requirements must be handled explicitly during earlier design, not postponed blindly.
 
 ### Milestone 04 (#23) — Add optional IT operations capabilities
 
@@ -97,6 +103,10 @@ Potential directions:
 - [Adoption, tutorials and community feedback — #239](https://github.com/Caffoot/Caffoot-Lite/issues/239).
 
 **To decide:** Whether customer separation is needed in the core experience, and how existing single-organisation installations would migrate safely.
+
+## Future departmental asset direction — not scheduled
+
+[Issue #353](https://github.com/Caffoot/Caffoot-Lite/issues/353) records possible future Maintenance, Facilities and Production asset management, such as manufacturing machinery and service schedules. It has **no assigned milestone or implementation approval**. The current core Assets proposal [#352](https://github.com/Caffoot/Caffoot-Lite/issues/352) remains **IT-focused**, without unnecessary assumptions that would prevent later, separately approved departmental uses. Department membership does not replace [#350](https://github.com/Caffoot/Caffoot-Lite/issues/350) permissions.
 
 ## What must remain true at every stage
 
