@@ -1,0 +1,15 @@
+Found approved design: dashboard-draft-02.html
+Found approved design: my-account-draft-06.html
+Found approved design: settings-data-draft-02.html
+Found approved design: devices-overview-draft-03.html
+Found approved design: devices-inventory-draft-02.html
+Found approved design: devices-details-forms-batch-04.html
+Found approved design: devices-management-batch-02.html
+Found approved design: ipam-draft-01.html
+Found approved design: racks-draft-04.html
+Found approved design: users-permissions-draft-02.html
+Found approved design: sign-in-first-run-draft-03.html
+Found approved design: audit-trail-draft-01.html
+
+Approved interface integration is NOT complete:
+- IPAM Draft 01: source CSS differs for .ipam-modal-body

@@ -101,6 +101,13 @@ The [planning/capacity follow-up](Issue-329-Planning-and-Capacity.md) adds `calc
 
 ## Role And MFA Interface Integration
 
+For independent schema-upgrade and complete-directory restoration checks, see
+[`test_upgrade_restore.py`](../../tests/test_upgrade_restore.py) and its
+[fictional fixture](../../tests/fixtures/upgrade_restore.py). These test helpers
+are outside the Function Index's documented runtime scope; no runtime function
+or declaration location changes in this verification batch. The
+[rehearsal guide](Upgrade-And-Restore-Rehearsal.md) explains the comparison method.
+
 `renderRoleCatalogue`, `renderRoleMemberships` and `accountMfaLabel` display the `/api/users` catalogue and account details without calculating authoritative grants. `previewRoleAction`, `requestRoleChange` and `renderRoleImpact` connect the server's preview/confirmation responses, including stale proofs. `openRoleEditor`, `openRoleLayer` and `closeRoleLayer` keep the new dialogs within existing Users conventions and contain keyboard focus. `roleNotificationMessage` describes queue state rather than delivery. Existing `nextRenderUsers`, `loadCentralUsers` and account-management handlers retain profile/lifecycle functionality.
 
 `renderAccountMfaPanel` adds the eligible removal form to the existing My Account Security tab. The startup path uses the session's `mfa_removal_eligible` and `can_enter_inventory` flags; Staff-only `/account` skips inventory-state loading. `interface/sign-in.js:clearRequiredMfaDisplay` clears displayed required-enrolment material on completion, cancellation and page exit. Ordinary pre-login enrolment uses `/api/login/mfa/*`, never first-admin setup routes. See the [role guide](Role-Permissions.md#users-and-my-account-interface) for the approved entry route and boundaries.

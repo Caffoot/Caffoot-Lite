@@ -1,5 +1,22 @@
 # Milestone 01 Development Handover
 
+## Current Checkpoint — Batch 05 Verification
+
+The owner's 11 November 2026 resumption instruction authorises only the existing
+[Batch 05 specification](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6790171609),
+using the [efficient testing procedure](https://github.com/Caffoot/Caffoot-Lite/issues/363#issuecomment-6800582534).
+This supersedes earlier pauses below for this batch only. The starting remote
+head is `689afd827ef3192379b6baf7ef6d289d8f73da04`, including merged rack-spacing
+PR #359. Batches 01–04 are not repeated. PR #358 remains draft and unmerged.
+
+Batch 05 adds only isolated verification and documentation. See the
+[evidence report](evidence/milestone-01-batch-05/Report.md) and
+[complete-volume rehearsal/owner preflight](../development-guide/Upgrade-And-Restore-Rehearsal.md).
+Application code, approved designs and workflow definitions remain unchanged.
+Batch 04's final Chromium, Firefox and WebKit requirement remains outstanding;
+earlier/local evidence cannot replace it. No Stage 1 final acceptance, protected
+`main` change, real Pi/private-data modification, merge or publication is authorised.
+
 The published baseline remains v2.1. Work is on `milestone-1` in [draft PR #358](https://github.com/Caffoot/Caffoot-Lite/pull/358), starting at `b13e5ce919d825280a6fa5450f04ff26c356eb11`. [Issue #351](https://github.com/Caffoot/Caffoot-Lite/issues/351) holds the Batch 01/02 scopes, approvals and checkpoint evidence. No merge, deployment or publication is authorised.
 
 ## Batch 01

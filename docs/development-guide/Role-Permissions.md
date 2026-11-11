@@ -46,6 +46,10 @@ Use only disposable, fictional databases for development checks. Before a future
 
 Rolling back requires restoring that entire matching v2.1 directory and application image together. Never run the v2.1 application against a schema-11 database. See [Database](02-Database.md) and [Account Recovery](Account-Recovery.md).
 
+The [isolated upgrade and restore rehearsal](Upgrade-And-Restore-Rehearsal.md)
+describes the two-image check, exact comparison method and owner preflight.
+Its fictional data cannot establish that another installation has a usable backup.
+
 ## Administrator Role Operations
 
 [Batch 03](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6790155451) adds administrator-only `POST /api/users/roles/preview` and `POST /api/users/roles/confirm`. Both require the configured Origin, JSON (at most 4 KiB), a live MFA-confirmed administrator session and its CSRF header. `GET /api/users` retains existing fields and adds the role catalogue and per-account `accessDetails` for the later approved interface integration.

@@ -206,6 +206,11 @@ The service is named `caffoot-lite`, and the image build copies `backend/`, `inv
 
 ## External backup and recovery of your Docker installation
 
+For the unreleased Stage 1/schema-11 work, see the [owner upgrade preflight and
+isolated restore rehearsal](docs/development-guide/Upgrade-And-Restore-Rehearsal.md#before-any-future-real-upgrade).
+A disposable test does not prove that your installation has a fresh complete
+private backup or a tested restore. No Stage 1 deployment is authorised here.
+
 The Docker edition does **not** offer an ongoing in-app JSON export/restore service. The fresh **v1.3.3** JSON import described below is only for one-way migration.
 
 The application stores its SQLite database at `/data/caffoot.sqlite3`, with persistent HTTPS certificate material under `/data/tls` and the private `account-email-secret.key` when created. Include every installation file, not just SQLite. Keep the **entire** `/data` mount when recreating or updating the container. For new installations, the default is a **Docker-managed named volume**, not an ordinary host directory. Docker may prefix the name with the stack or Compose project name. Existing installations may instead use a custom host directory, which must be preserved.

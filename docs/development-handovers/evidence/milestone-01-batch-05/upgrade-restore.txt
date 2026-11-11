@@ -1,0 +1,7 @@
+test_complete_volume_upgrade_and_matching_image_restore (test_upgrade_restore.UpgradeRestoreTests.test_complete_volume_upgrade_and_matching_image_restore) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 65.398s
+
+OK
+Isolated restore passed: caffoot-restore-76d3195ff3f8; v2.1=c3237114108cad9f7d4e57657b6aed5e0091a5ef; v11=689afd827ef3192379b6baf7ef6d289d8f73da04; 8 accounts, 5 invalidated sessions, 4 new tables, exact restored rows/files/modes/owners
