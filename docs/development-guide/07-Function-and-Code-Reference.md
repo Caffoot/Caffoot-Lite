@@ -43,12 +43,12 @@ On `milestone-1`, `schema.py:migrate_role_permissions` and `verify_role_migratio
 | File | Search terms |
 | --- | --- |
 | [`accounts.py`](../../backend/accounts.py) | `bootstrap_first_admin`, `confirm_admin_mfa` |
-| [`authentication.py`](../../backend/authentication.py) | `authenticate` |
+| [`authentication.py`](../../backend/authentication.py) | `verify_active_password`, `authenticate`, `MFAEnrolmentRequired` |
 | [`mfa.py`](../../backend/mfa.py) | `new_secret`, `provisioning_uri`, `verify_code` |
 | [`sessions.py`](../../backend/sessions.py) | `login_session`, `session_account`, `revoke_account_sessions` |
 | [`request_auth.py`](../../backend/request_auth.py) | `authorised_mutation`, `authorised_inventory_import` |
 | [`permissions.py`](../../backend/permissions.py) | `can_access`, `set_permission`, `can_replace_inventory` |
-| [`account_security.py`](../../backend/account_security.py) | `change_own_password`, `begin_mfa_enrolment` |
+| [`account_security.py`](../../backend/account_security.py) | `change_own_password`, `begin_mfa_enrolment`, `start_required_mfa_enrolment`, `confirm_required_mfa_enrolment`, `remove_own_mfa` |
 | [`account_email.py`](../../backend/account_email.py) | `issue_email_proof`, `confirm_email_proof`, `notify_security_change` |
 | [`recover_admin.py`](../../backend/recover_admin.py) | `recover_sole_administrator` (local host command only) |
 | [`http_security.py`](../../backend/http_security.py) | `session_cookie`, `require_same_origin` |

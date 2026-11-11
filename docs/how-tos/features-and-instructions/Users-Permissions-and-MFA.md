@@ -1,6 +1,6 @@
 # Users, Permissions and Multi-factor Authentication
 
-**Development branch notice:** The following controls describe published v2.1. On `milestone-1`, Staff Member is the default for all accounts and grants no inventory access. Any wider Read or Edit access, any enabled additional role, or Administrator status requires MFA; existing voluntary enrolment remains required. Existing grants are preserved, but unenrolled legacy readers cannot sign in until the separately authorised pre-login enrolment work is complete. The interface is unchanged and this intermediate batch must not be deployed. See [Shared Roles And Account Permissions](../../development-guide/Role-Permissions.md).
+**Development branch notice:** The following controls describe published v2.1. On `milestone-1`, Staff Member is the default for all accounts and grants no inventory access. Any wider Read or Edit access, any enabled additional role, or Administrator status requires MFA; existing voluntary enrolment remains required. Existing grants are preserved. Batch 02 adds server-side password-verified mandatory enrolment and eligible voluntary MFA removal. These operations require a fresh sign-in after completion. The existing interface does not yet offer these new flows; its integration belongs to a later batch. This intermediate build must not be deployed. See [Shared Roles And Account Permissions](../../development-guide/Role-Permissions.md).
 
 [← All feature guides](README.md)
 

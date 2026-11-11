@@ -6,7 +6,7 @@ Scope: named JavaScript declarations/assignments in the three application script
 
 The account hydration/photo functions now have purpose-based callable bindings matching their function names: `hydrateAccount` and `removeAccountPhoto`. The immutable design manifest retains its historical integration-entry names; those metadata names are not the runtime's current function map. Pinned source paths, revisions and hashes are unchanged.
 
-**Recorded definitions: 698.** Regenerate after changing declarations or their lines. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
+**Recorded definitions: 704.** Regenerate after changing declarations or their lines. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
 
 ## interface/loader.js
 
@@ -557,9 +557,14 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 | Function | Line |
 | --- | ---: |
-| [`change_own_password`](../../backend/account_security.py#L9) | 9 |
-| [`begin_mfa_enrolment`](../../backend/account_security.py#L31) | 31 |
-| [`complete_mfa_enrolment`](../../backend/account_security.py#L55) | 55 |
+| [`change_own_password`](../../backend/account_security.py#L13) | 13 |
+| [`begin_mfa_enrolment`](../../backend/account_security.py#L35) | 35 |
+| [`complete_mfa_enrolment`](../../backend/account_security.py#L59) | 59 |
+| [`_pending_mandatory_mfa_account`](../../backend/account_security.py#L80) | 80 |
+| [`start_required_mfa_enrolment`](../../backend/account_security.py#L93) | 93 |
+| [`_record_mfa_change`](../../backend/account_security.py#L112) | 112 |
+| [`confirm_required_mfa_enrolment`](../../backend/account_security.py#L128) | 128 |
+| [`remove_own_mfa`](../../backend/account_security.py#L144) | 144 |
 
 ## backend/accounts.py
 
@@ -590,7 +595,8 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 | Function | Line |
 | --- | ---: |
-| [`authenticate`](../../backend/authentication.py#L15) | 15 |
+| [`verify_active_password`](../../backend/authentication.py#L18) | 18 |
+| [`authenticate`](../../backend/authentication.py#L32) | 32 |
 
 ## backend/collection_saves.py
 
@@ -840,11 +846,11 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | Function | Line |
 | --- | ---: |
 | [`login`](../../backend/request_auth.py#L19) | 19 |
-| [`csrf_for_session`](../../backend/request_auth.py#L35) | 35 |
-| [`authenticated_account`](../../backend/request_auth.py#L50) | 50 |
-| [`authorised_mutation`](../../backend/request_auth.py#L57) | 57 |
-| [`logout`](../../backend/request_auth.py#L68) | 68 |
-| [`authorised_inventory_import`](../../backend/request_auth.py#L80) | 80 |
+| [`csrf_for_session`](../../backend/request_auth.py#L36) | 36 |
+| [`authenticated_account`](../../backend/request_auth.py#L51) | 51 |
+| [`authorised_mutation`](../../backend/request_auth.py#L58) | 58 |
+| [`logout`](../../backend/request_auth.py#L69) | 69 |
+| [`authorised_inventory_import`](../../backend/request_auth.py#L81) | 81 |
 
 ## backend/reset_inventory.py
 
@@ -856,9 +862,9 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 | Function | Line |
 | --- | ---: |
-| [`AccountRolePolicy.allows`](../../backend/role_policy.py#L19) | 19 |
-| [`evaluate_role_policy`](../../backend/role_policy.py#L31) | 31 |
-| [`assign_staff_member`](../../backend/role_policy.py#L72) | 72 |
+| [`AccountRolePolicy.allows`](../../backend/role_policy.py#L20) | 20 |
+| [`evaluate_role_policy`](../../backend/role_policy.py#L32) | 32 |
+| [`assign_staff_member`](../../backend/role_policy.py#L74) | 74 |
 
 ## backend/schema.py
 
@@ -872,18 +878,18 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 | Function | Line |
 | --- | ---: |
-| [`validate_public_origin`](../../backend/server.py#L74) | 74 |
-| [`connect`](../../backend/server.py#L92) | 92 |
-| [`initialise_database`](../../backend/server.py#L100) | 100 |
-| [`Handler.end_headers`](../../backend/server.py#L106) | 106 |
-| [`Handler.do_GET`](../../backend/server.py#L113) | 113 |
-| [`Handler.do_POST`](../../backend/server.py#L438) | 438 |
-| [`Handler.handle_user_mutation`](../../backend/server.py#L566) | 566 |
-| [`Handler.handle_account_email`](../../backend/server.py#L926) | 926 |
-| [`Handler.handle_profile_photo`](../../backend/server.py#L1006) | 1006 |
-| [`Handler.handle_import`](../../backend/server.py#L1037) | 1037 |
-| [`Handler.respond`](../../backend/server.py#L1113) | 1113 |
-| [`main`](../../backend/server.py#L1126) | 1126 |
+| [`validate_public_origin`](../../backend/server.py#L77) | 77 |
+| [`connect`](../../backend/server.py#L95) | 95 |
+| [`initialise_database`](../../backend/server.py#L103) | 103 |
+| [`Handler.end_headers`](../../backend/server.py#L109) | 109 |
+| [`Handler.do_GET`](../../backend/server.py#L116) | 116 |
+| [`Handler.do_POST`](../../backend/server.py#L441) | 441 |
+| [`Handler.handle_user_mutation`](../../backend/server.py#L608) | 608 |
+| [`Handler.handle_account_email`](../../backend/server.py#L988) | 988 |
+| [`Handler.handle_profile_photo`](../../backend/server.py#L1068) | 1068 |
+| [`Handler.handle_import`](../../backend/server.py#L1099) | 1099 |
+| [`Handler.respond`](../../backend/server.py#L1175) | 1175 |
+| [`main`](../../backend/server.py#L1188) | 1188 |
 
 ## backend/sessions.py
 
@@ -891,9 +897,9 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | --- | ---: |
 | [`_digest`](../../backend/sessions.py#L16) | 16 |
 | [`login_session`](../../backend/sessions.py#L26) | 26 |
-| [`session_account`](../../backend/sessions.py#L50) | 50 |
-| [`logout_session`](../../backend/sessions.py#L70) | 70 |
-| [`revoke_account_sessions`](../../backend/sessions.py#L79) | 79 |
+| [`session_account`](../../backend/sessions.py#L55) | 55 |
+| [`logout_session`](../../backend/sessions.py#L75) | 75 |
+| [`revoke_account_sessions`](../../backend/sessions.py#L84) | 84 |
 
 ## backend/settings_saves.py
 

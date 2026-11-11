@@ -29,6 +29,9 @@ from .profiles import (read_profile, save_profile, read_profile_photo,
                        save_profile_photo, remove_profile_photo, MAX_PHOTO_BYTES)
 from .schema import initialise_database as migrate_database
 from .accounts import bootstrap_first_admin, confirm_admin_mfa, verify_password, hash_password
+from .authentication import MFAEnrolmentRequired
+from .account_security import (start_required_mfa_enrolment,
+                               confirm_required_mfa_enrolment, remove_own_mfa)
 from .mfa import new_secret, provisioning_uri, verify_code
 from .import_drafts import ImportDrafts
 from .request_auth import authenticated_account, csrf_for_session
@@ -447,7 +450,7 @@ class Handler(BaseHTTPRequestHandler):
                          "/api/users/create", "/api/users/profile", "/api/users/permission", "/api/users/active",
                          "/api/users/admin", "/api/users/delete", "/api/settings/email",
                          "/api/settings/email/test", "/api/account/password",
-                         "/api/account/mfa/start", "/api/account/mfa/confirm",
+                         "/api/account/mfa/start", "/api/account/mfa/confirm", "/api/account/mfa/remove",
                          "/api/devices/edit/start", "/api/devices/edit/cancel",
                          "/api/devices/edit/save", "/api/devices/create",
                          "/api/devices/delete", "/api/ipam/allocation/save",
@@ -462,7 +465,8 @@ class Handler(BaseHTTPRequestHandler):
         if self.path in IMPORT_ROUTES:
             self.handle_import()
             return
-        if self.path not in ("/api/login", "/api/logout", "/api/setup", "/api/setup/mfa", "/api/setup/mfa-secret"):
+        if self.path not in ("/api/login", "/api/login/mfa/start", "/api/login/mfa/confirm",
+                             "/api/logout", "/api/setup", "/api/setup/mfa", "/api/setup/mfa-secret"):
             self.respond(404, {"error": "not found"})
             return
         origin = self.headers.get("Origin")
@@ -498,6 +502,40 @@ class Handler(BaseHTTPRequestHandler):
             return
         if len(payload["username"]) > 256 or len(payload["password"]) > 4096 or not isinstance(payload.get("mfa_code"), (str, type(None))):
             self.respond(400, {"error": "invalid credentials"})
+            return
+        if self.path in ("/api/login/mfa/start", "/api/login/mfa/confirm"):
+            expected = {"username", "password"}
+            if self.path.endswith("/confirm"):
+                expected.add("mfa_code")
+            if set(payload) != expected:
+                self.respond(400, {"error": "invalid request"})
+                return
+            peer, username = self.client_address[0], payload["username"]
+            if not THROTTLE.allowed(peer, username):
+                self.respond(401, {"error": "invalid credentials or MFA request"})
+                return
+            with connect() as connection:
+                try:
+                    if self.path.endswith("/start"):
+                        account_name, secret = start_required_mfa_enrolment(
+                            connection, username, payload["password"],
+                        )
+                        # Showing a pending key must not reset failed code attempts.
+                        self.respond(200, {"mfaSecret": secret,
+                                           "mfaUri": provisioning_uri(account_name, secret)})
+                        return
+                    account_id = confirm_required_mfa_enrolment(
+                        connection, username, payload["password"], payload["mfa_code"],
+                    )
+                    recipients = security_recipients(connection, account_id)
+                    recipients.update(security_recipients(connection, administrators=True))
+                except (PermissionError, ValueError):
+                    THROTTLE.failed(peer, username)
+                    self.respond(401, {"error": "invalid credentials or MFA request"})
+                    return
+            THROTTLE.succeeded(peer, username)
+            notify_security_change(smtp_config_path(DB_PATH), recipients)
+            self.respond(200, {"status": "mfa enrolled"})
             return
         if self.path in ("/api/setup", "/api/setup/mfa", "/api/setup/mfa-secret"):
             if set(payload) - ({"username", "password"} if self.path == "/api/setup" else {"username", "password", "mfa_code"} if self.path == "/api/setup/mfa" else {"username", "password"}):
@@ -547,11 +585,15 @@ class Handler(BaseHTTPRequestHandler):
                 except sqlite3.IntegrityError:
                     self.respond(400, {"error": "administrator already exists"})
             return
-        with connect() as connection:
-            token = login(
-                connection, self.client_address[0], payload["username"],
-                payload["password"], mfa_code=payload.get("mfa_code"),
-            )
+        try:
+            with connect() as connection:
+                token = login(
+                    connection, self.client_address[0], payload["username"],
+                    payload["password"], mfa_code=payload.get("mfa_code"),
+                )
+        except MFAEnrolmentRequired:
+            self.respond(200, {"status": "mfa enrolment required"})
+            return
         if token is None:
             if not THROTTLE.allowed(self.client_address[0], payload["username"]):
                 with connect() as connection:
@@ -580,7 +622,7 @@ class Handler(BaseHTTPRequestHandler):
             return
         notice_recipients = set()
         security_change = self.path in (
-            "/api/account/profile", "/api/account/password", "/api/account/mfa/confirm",
+            "/api/account/profile", "/api/account/password", "/api/account/mfa/confirm", "/api/account/mfa/remove",
             "/api/users/profile", "/api/users/permission", "/api/users/active",
             "/api/users/admin", "/api/users/create", "/api/users/delete")
         try:
@@ -758,6 +800,25 @@ class Handler(BaseHTTPRequestHandler):
                     except BaseException:
                         connection.rollback()
                         raise
+                elif self.path == "/api/account/mfa/remove":
+                    if set(payload) != {"password", "code"}:
+                        raise ValueError("Current password and authenticator code required")
+                    username = connection.execute(
+                        "SELECT username FROM accounts WHERE id=?", (actor,),
+                    ).fetchone()[0]
+                    peer = self.client_address[0]
+                    if not THROTTLE.allowed(peer, username):
+                        raise PermissionError("Invalid credentials or MFA request")
+                    try:
+                        remove_own_mfa(
+                            connection, actor, payload["password"], payload["code"],
+                            session_token=read_session_cookie(self.headers.get("Cookie")),
+                        )
+                    except (PermissionError, ValueError):
+                        THROTTLE.failed(peer, username)
+                        raise PermissionError("Invalid credentials or MFA request") from None
+                    THROTTLE.succeeded(peer, username)
+                    result = {"status": "mfa removed"}
                 elif self.path == "/api/account/mfa/start":
                     if set(payload) != {"password"}:
                         raise ValueError("Password required")
@@ -921,7 +982,8 @@ class Handler(BaseHTTPRequestHandler):
             with connect() as connection:
                 connection.execute("DELETE FROM account_email_proofs WHERE account_id=?", (payload.get("userId", actor),))
             notify_security_change(smtp_config_path(DB_PATH), notice_recipients)
-        self.respond(200, result)
+        self.respond(200, result, cookie=clear_session_cookie()
+                     if self.path == "/api/account/mfa/remove" else None)
 
     def handle_account_email(self):
         """Keep email proofs separate from sessions, with same-origin and abuse checks."""

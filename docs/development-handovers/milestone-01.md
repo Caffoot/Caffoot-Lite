@@ -26,4 +26,14 @@ No real installation database, private export, production email delivery or depl
 
 ## Review Boundary
 
-Stop after Batch 01 for review. This is an intermediate development state and must not be deployed. Unenrolled legacy readers keep their grants but cannot obtain an ordinary session until the separately authorised Batch 02 pre-login MFA enrolment flow exists. The approved role-management interface/API belongs to later work. No later batch has been started here.
+Batch 01 was accepted and Batch 02 authorised in [issue #351](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6791990063). Stop after Batch 02 for review. This remains an intermediate development state and must not be deployed. The approved role-management API and sign-in/My Account/Users interface integration belong to later batches. No Batch 03 work, merge, main-branch change or publication is authorised.
+
+## Batch 02
+
+Starting SHA: `0131801e4886eb4ac9c5a5af50bdce768d11b3eb`. Scope: [existing-account mandatory enrolment and eligible voluntary removal](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6790154888), with no presentation changes.
+
+- Valid-password mandatory enrolment returns a setup-required response without a session. Pending setup does not count as failed login or reset earlier code failures.
+- Separate pre-login start/confirm operations independently verify credentials and current policy under a write transaction, reuse pending secrets, enforce existing Origin/JSON/size/throttle controls, and require fresh normal sign-in after audited confirmation and revocation.
+- Session creation now holds the write transaction throughout credential/policy verification and insertion. Existing live-session, section and recovery checks retain the shared policy.
+- Optional removal verifies session, password, code and current access under one transaction, then clears MFA, audits and revokes sessions/email proofs. Roles/grants are unchanged. First-admin setup and confirmed-MFA promotion remain protected.
+- Focused checks and final automatic evidence are recorded in issue #351. A first HTTP test run exposed an overly strict assertion about cookie attribute ordering; it is corrected without changing cookie behaviour. The corrected focused run passed all 18 new tests (`python -m unittest discover -s tests -p 'test_required_mfa*.py' -v`), as did Python compilation, release-document consistency and whitespace checks. Full backend checks and final CI are pending at this checkpoint.

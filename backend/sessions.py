@@ -23,18 +23,23 @@ def _digest(token):
     return hashlib.sha256(token.encode("ascii")).hexdigest()
 
 
-def login_session(connection, username, password, *, mfa_code=None, now=None):
+def login_session(connection, username, password, *, mfa_code=None, now=None,
+                  report_enrolment=False):
     """Issue a fresh session only after credential and MFA verification."""
     if now is None:
         now = time.time()
-    account_id = authenticate(
-        connection, username, password, mfa_code=mfa_code, timestamp=now
-    )
-    if account_id is None:
-        return None
-    token = secrets.token_hex(32)
     connection.execute("BEGIN IMMEDIATE")
     try:
+        # Check credentials and current access together, so account changes cannot
+        # slip between verification and creation of the session.
+        account_id = authenticate(
+            connection, username, password, mfa_code=mfa_code, timestamp=now,
+            report_enrolment=report_enrolment,
+        )
+        if account_id is None:
+            connection.rollback()
+            return None
+        token = secrets.token_hex(32)
         connection.execute(
             "INSERT INTO account_sessions(token_hash,account_id,expires_at,created_at) "
             "VALUES(?,?,?,?)",

@@ -20,7 +20,7 @@ The server listens on **HTTPS on internal port 8080**. `CAFFOOT_PORT` controls t
 
 ## A request through the application
 
-The `milestone-1` branch shares account access and MFA decisions through `backend/role_policy.py`. The server, permissions, authentication, sessions and recovery call that policy over the four schema-11 role tables. The old permission table is historical only. See [Shared Roles And Account Permissions](Role-Permissions.md); the branch remains an intermediate development build, pending separate enrolment and interface batches.
+The `milestone-1` branch shares account access and MFA decisions through `backend/role_policy.py`. The server, permissions, authentication, sessions and recovery call that policy over the four schema-11 role tables. The old permission table is historical only. See [Shared Roles And Account Permissions](Role-Permissions.md); the branch remains an intermediate development build, pending later interface batches. Existing-account pre-login enrolment and voluntary MFA removal reuse the account services, shared policy, TOTP verifier and SQLite write transactions; they create no restricted session or separate authentication system.
 
 1. The browser loads `/setup` for initial account setup or sign-in, then `/inventory` for inventory.
 2. `server.py` serves the browser files and checks the session on API requests.

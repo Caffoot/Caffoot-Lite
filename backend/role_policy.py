@@ -15,6 +15,7 @@ class AccountRolePolicy:
     mfa_enrolled: bool
     requires_mfa: bool
     permissions: dict
+    mfa_mandatory: bool = False
 
     def allows(self, section, *, edit=False):
         """Check the account's section access, including its sign-in safeguards."""
@@ -63,9 +64,10 @@ def evaluate_role_policy(connection, account_id):
         else:
             permissions[section] = level
     enrolled = bool(account[2] and account[3])
+    mandatory = bool(account[1] or additional_role or permissions)
     return AccountRolePolicy(
         bool(account[0]), bool(account[1]), enrolled,
-        bool(account[1] or account[2] or additional_role or permissions), permissions,
+        bool(mandatory or account[2]), permissions, mandatory,
     )
 
 
