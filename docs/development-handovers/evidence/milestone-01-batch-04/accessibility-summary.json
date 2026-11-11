@@ -1,0 +1,220 @@
+[
+  {
+    "capture": "accessibility-optional-removal-dark.json",
+    "tool": "axe-core",
+    "version": "4.14.0",
+    "url": "https://127.0.0.1:8080/account",
+    "rules": {
+      "type": "tag",
+      "values": [
+        "wcag2a",
+        "wcag2aa",
+        "wcag21aa"
+      ]
+    },
+    "violations": [],
+    "passedRuleCount": 11,
+    "automatedIncompleteRules": [],
+    "manualContrastChecks": []
+  },
+  {
+    "capture": "accessibility-optional-removal.json",
+    "tool": "axe-core",
+    "version": "4.14.0",
+    "url": "https://127.0.0.1:8080/account",
+    "rules": {
+      "type": "tag",
+      "values": [
+        "wcag2a",
+        "wcag2aa",
+        "wcag21aa"
+      ]
+    },
+    "violations": [],
+    "passedRuleCount": 11,
+    "automatedIncompleteRules": [],
+    "manualContrastChecks": []
+  },
+  {
+    "capture": "accessibility-required-enrolment.json",
+    "tool": "axe-core",
+    "version": "4.14.0",
+    "url": "https://127.0.0.1:8080/setup",
+    "rules": {
+      "type": "tag",
+      "values": [
+        "wcag2a",
+        "wcag2aa",
+        "wcag21aa"
+      ]
+    },
+    "violations": [],
+    "passedRuleCount": 13,
+    "automatedIncompleteRules": [],
+    "manualContrastChecks": []
+  },
+  {
+    "capture": "accessibility-role-editor-dark.json",
+    "tool": "axe-core",
+    "version": "4.14.0",
+    "url": "https://127.0.0.1:8080/inventory#users",
+    "rules": {
+      "type": "tag",
+      "values": [
+        "wcag2a",
+        "wcag2aa",
+        "wcag21aa"
+      ]
+    },
+    "violations": [],
+    "passedRuleCount": 15,
+    "automatedIncompleteRules": [
+      {
+        "id": "color-contrast",
+        "nodeCount": 5
+      }
+    ],
+    "manualContrastChecks": [
+      {
+        "selector": ".modal-head > div > p",
+        "foreground": "rgb(203, 213, 225)",
+        "background": "rgb(30, 41, 59)",
+        "backgroundImage": "none",
+        "ratio": 9.852964414874926,
+        "reviewReason": [
+          "Element's background color could not be determined because it partially overlaps other elements"
+        ]
+      },
+      {
+        "selector": "#role-definition-form > .formhint",
+        "foreground": "rgb(203, 213, 225)",
+        "background": "rgb(30, 41, 59)",
+        "backgroundImage": "none",
+        "ratio": 9.852964414874926,
+        "reviewReason": [
+          "Element's background color could not be determined because it partially overlaps other elements"
+        ]
+      },
+      {
+        "selector": "#role-grant-Devices",
+        "foreground": "rgb(241, 245, 249)",
+        "background": "rgb(15, 23, 42)",
+        "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+        "ratio": 16.295987899750777,
+        "reviewReason": [
+          "Element's background color could not be determined due to a background image"
+        ]
+      },
+      {
+        "selector": "#role-grant-IPAM",
+        "foreground": "rgb(241, 245, 249)",
+        "background": "rgb(15, 23, 42)",
+        "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+        "ratio": 16.295987899750777,
+        "reviewReason": [
+          "Element's background color could not be determined due to a background image"
+        ]
+      },
+      {
+        "selector": "#role-grant-Racks",
+        "foreground": "rgb(241, 245, 249)",
+        "background": "rgb(15, 23, 42)",
+        "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+        "ratio": 16.295987899750777,
+        "reviewReason": [
+          "Element's background color could not be determined due to a background image"
+        ]
+      }
+    ]
+  },
+  {
+    "capture": "accessibility-role-editor.json",
+    "tool": "axe-core",
+    "version": "4.14.0",
+    "url": "https://127.0.0.1:8080/inventory#users",
+    "rules": {
+      "type": "tag",
+      "values": [
+        "wcag2a",
+        "wcag2aa",
+        "wcag21aa"
+      ]
+    },
+    "violations": [],
+    "passedRuleCount": 15,
+    "automatedIncompleteRules": [
+      {
+        "id": "color-contrast",
+        "nodeCount": 3
+      }
+    ],
+    "manualContrastChecks": [
+      {
+        "selector": "#role-grant-Devices",
+        "foreground": "rgb(34, 59, 83)",
+        "background": "rgb(255, 255, 255)",
+        "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+        "ratio": 11.547923443347415,
+        "reviewReason": [
+          "Element's background color could not be determined due to a background image"
+        ]
+      },
+      {
+        "selector": "#role-grant-IPAM",
+        "foreground": "rgb(34, 59, 83)",
+        "background": "rgb(255, 255, 255)",
+        "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+        "ratio": 11.547923443347415,
+        "reviewReason": [
+          "Element's background color could not be determined due to a background image"
+        ]
+      },
+      {
+        "selector": "#role-grant-Racks",
+        "foreground": "rgb(34, 59, 83)",
+        "background": "rgb(255, 255, 255)",
+        "backgroundImage": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23647b91' stroke-width='1.5'/%3E%3C/svg%3E\")",
+        "ratio": 11.547923443347415,
+        "reviewReason": [
+          "Element's background color could not be determined due to a background image"
+        ]
+      }
+    ]
+  },
+  {
+    "capture": "accessibility-role-preview.json",
+    "tool": "axe-core",
+    "version": "4.14.0",
+    "url": "https://127.0.0.1:8080/inventory#users",
+    "rules": {
+      "type": "tag",
+      "values": [
+        "wcag2a",
+        "wcag2aa",
+        "wcag21aa"
+      ]
+    },
+    "violations": [],
+    "passedRuleCount": 12,
+    "automatedIncompleteRules": [],
+    "manualContrastChecks": []
+  },
+  {
+    "capture": "accessibility-user-additions.json",
+    "tool": "axe-core",
+    "version": "4.14.0",
+    "url": "https://127.0.0.1:8080/inventory#users",
+    "rules": {
+      "type": "tag",
+      "values": [
+        "wcag2a",
+        "wcag2aa",
+        "wcag21aa"
+      ]
+    },
+    "violations": [],
+    "passedRuleCount": 4,
+    "automatedIncompleteRules": [],
+    "manualContrastChecks": []
+  }
+]

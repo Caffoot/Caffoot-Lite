@@ -10131,7 +10131,7 @@ void (async () => {
       html+='<div class="card cardpad"><h3 class="cardtitle">Authenticator enrolment</h3>'+
         '<p class="sub">Enabled additional roles and wider Read/Edit access require MFA.</p>'+
         bars([['Enrolled',enrolled,''],['Not enrolled',total-enrolled,'orange']])+
-        '<div class="card-end"><span class="tiny">Mandatory enrolment is guided before sign-in; Staff-only enrolment is optional.</span>'+
+        '<div class="card-end"><span class="tiny">Required enrolment starts at sign-in.</span>'+
         '<button class="action-link" type="button" data-action="users-filter-pending">Review not enrolled →</button></div></div></div>';
       html+='<div class="card cardpad" style="margin-top:17px"><div class="section-heading"><div><h2>Access, made simple</h2>'+
         '<p>Enabled roles supply inherited access; individual overrides take precedence.</p></div></div>'+
@@ -10162,7 +10162,7 @@ void (async () => {
         const level=user.isAdmin?'edit':(user.permissions?.[section]||'');
         return `<span class="mini ${level==='edit'?'edit':level===''?'no':''}" title="${section}: ${level||'No access'}">${section}: ${level==='edit'?'Edit':level==='read'?'Read':'—'}</span>`;
       }).join('');
-      return renderInterfaceTemplate("users/rows-1",[user.id,escapeHtml([user.username,user.profile?.firstName,user.profile?.lastName,user.profile?.displayName,user.profile?.email].filter(Boolean).join(' ').toLowerCase()),user.active?'active':'disabled',user.mfaEnrolled?'enrolled':'pending',escapeHtml(user.username.slice(0,1).toUpperCase()),escapeHtml(user.username),own?'Your account · Protected':(user.profile?.displayName||[user.profile?.firstName,user.profile?.lastName].filter(Boolean).join(' ')||role),user.isAdmin?'blue':'dark',role,user.active?'green':'red',user.active?'Active':'Disabled',user.mfaEnrolled?'green':'amber',accountMfaLabel(user),grantPills,user.id,own?'View':'Manage',user.accessDetails.roles.filter(role=>role.roleKey!=='staff_member').map(role=>'<span class="badge '+(role.enabled?'blue':'amber')+'">'+escapeHtml(role.name)+(role.enabled?'':' · Disabled')+'</span>').join('')]);
+      return renderInterfaceTemplate("users/rows-1",[user.id,escapeHtml([user.username,user.profile?.firstName,user.profile?.lastName,user.profile?.displayName,user.profile?.email].filter(Boolean).join(' ').toLowerCase()),user.active?'active':'disabled',user.mfaEnrolled?'enrolled':'pending',escapeHtml(user.username.slice(0,1).toUpperCase()),escapeHtml(user.username),own?'Your account · Protected':(user.profile?.displayName||[user.profile?.firstName,user.profile?.lastName].filter(Boolean).join(' ')||role),user.isAdmin?'blue':'dark',role,user.active?'green':'red',user.active?'Active':'Disabled',user.mfaEnrolled?'green':'amber',accountMfaLabel(user),grantPills,user.id,own?'View':'Manage',user.accessDetails.roles.filter(role=>role.roleKey!=='staff_member').map(role=>'<span class="badge role-membership-badge '+(role.enabled?'blue':'amber')+'">'+escapeHtml(role.name)+(role.enabled?'':' · Disabled')+'</span>').join('')]);
     }).join('');
     html+=renderInterfaceTemplate("users/account-list-panel",[rows,users.length,users.length]);
     const editingUser=users.find(u=>u.id===activeUserEditorId);

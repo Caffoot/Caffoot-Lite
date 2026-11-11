@@ -1,0 +1,42 @@
+[
+  {
+    "screen": "users",
+    "width": 1440,
+    "changedStructuralMeasurements": []
+  },
+  {
+    "screen": "users",
+    "width": 390,
+    "changedStructuralMeasurements": []
+  },
+  {
+    "screen": "users-list",
+    "width": 1440,
+    "changedStructuralMeasurements": []
+  },
+  {
+    "screen": "users-list",
+    "width": 390,
+    "changedStructuralMeasurements": []
+  },
+  {
+    "screen": "users-add",
+    "width": 1440,
+    "changedStructuralMeasurements": []
+  },
+  {
+    "screen": "users-add",
+    "width": 390,
+    "changedStructuralMeasurements": []
+  },
+  {
+    "screen": "user-workspace",
+    "width": 1440,
+    "changedStructuralMeasurements": []
+  },
+  {
+    "screen": "user-workspace",
+    "width": 390,
+    "changedStructuralMeasurements": []
+  }
+]

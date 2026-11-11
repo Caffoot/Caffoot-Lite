@@ -1,0 +1,14 @@
+{
+  ".github/workflows/browser-compat.yml": "873f5c6fbb9876914a3068dba81e5c4faab70372a7743ce247eda2ec258feaa9",
+  "backend/server.py": "868088a7f86c27cdc55a56ac60eb424f7cf8dc1a4f511a5edbe05ff608d61196",
+  "interface/application.js": "ba12740f65874fc110993148a058b8cba9814d9e790749cdfde70e4472c49bf5",
+  "interface/screens/my-account.html": "512a5dcf1c275f276a3efbc706c7789486132742cf0ba49ce471f20f79dfccde",
+  "interface/screens/shared.html": "d3a499beb4faeaab6513a54ce5483bb50f9c30479be948e4c441559d0d815b26",
+  "interface/screens/users.html": "84023d9d89f7761a8f0688a797b331ceef8de8d1c299d4761f0c3aca6847af0f",
+  "interface/sign-in.js": "edd5d2362030537531165b8afa8aa12b2a87f23b53b10bbf5e5034024b7943f4",
+  "interface/styles/components.css": "eb254292a7af642184295940f1ad99b72e14d3577040eb75f8fce071f4d90baa",
+  "interface/styles/sign-in-controls.css": "78637480eac5e3bdf7050fb45a08dad16a2e06b1ef06719ee08ed3c468c152f4",
+  "tests/browser-compat.cjs": "480bcfc75dba855b7ac18a02f316bdaefdd7a51c14ba83f9663a39d70b5cf544",
+  "tests/test_session_http.py": "1091672a0a209428a943bab6c5007b2fcfcb8c74b2deda94bddc066065cc580a",
+  "tests/users-roles-interface.cjs": "9670b374a0288f8f9097d87edf031097c8175a07719ce390cac7392eb02c6b54"
+}

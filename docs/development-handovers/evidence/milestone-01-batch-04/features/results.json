@@ -1,0 +1,18 @@
+{
+  "checks": [
+    "Add User confirms passwords and creates only protected Staff Member with the existing profile",
+    "Role create uses preview then confirmation and leaves the new role unassigned",
+    "Membership cancellation saves nothing; confirmation uses live inheritance and pending MFA",
+    "Multiple role assignments display the server-provided highest inherited grant and retain the other role when one is removed",
+    "Stale real-backend confirmation saves nothing and requires explicit renewed confirmation; Inherit removes an override",
+    "Retained editable profile and account controls work; desktop/mobile fit and modal keyboard containment checked",
+    "Role rename, disable and re-enable retain assignments and show server-computed impact for two assigned accounts",
+    "Mandatory pre-login enrolment uses ordinary-account routes, grants no session, clears secrets and requires fresh MFA sign-in",
+    "Retained independent Administrator promotion and demotion work after confirmed MFA without replacing role controls",
+    "Role deletion uses reviewed impact and leaves accounts intact",
+    "Retained Delete User confirmation removes only the selected test account",
+    "Approved /account shell permits only own-account functionality; unauthenticated access and Staff inventory/admin/other-user access are denied; optional removal verifies proofs and ends all sessions",
+    "New role editor, preview, permission additions, required enrolment and optional removal pass targeted axe WCAG 2 A/AA and 2.1 AA checks, including dark-theme additions"
+  ],
+  "errors": []
+}
