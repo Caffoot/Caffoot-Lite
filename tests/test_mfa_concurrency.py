@@ -1,4 +1,5 @@
 """Real SQLite writers check the latest account state after waiting for a lock."""
+from confirmed_permissions import set_permission
 import sqlite3
 import tempfile
 import threading
@@ -11,7 +12,7 @@ from backend.account_security import (
 from backend.accounts import bootstrap_first_admin, confirm_admin_mfa
 from backend.authentication import MFAEnrolmentRequired
 from backend.mfa import code_at
-from backend.permissions import create_user, set_permission
+from backend.permissions import create_user
 from backend.schema import initialise_database
 from backend.sessions import login_session
 

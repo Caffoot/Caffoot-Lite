@@ -177,6 +177,12 @@ class RoleAdministrationTests(unittest.TestCase):
             self.assertEqual(self.confirm(action, preview)["status"], "confirmation required")
         self.assertFalse(self.db.execute("SELECT 1 FROM account_permission_overrides").fetchone())
 
+    def test_historical_non_account_history_does_not_block_role_administration(self):
+        for event in (None, "Old entry", {"changes": None}, {"changes": [None, "Old change"]}):
+            self.db.execute("INSERT INTO inventory_change_history(record_json) VALUES(?)", (json.dumps(event),))
+        self.db.commit()
+        self.assertIsInstance(self.create_role(), int)
+
     def test_reversing_an_intervening_change_does_not_renew_old_preview(self):
         role = self.create_role()
         action = {"type": "override.set", "userId": self.user, "section": "Devices", "level": "read"}
@@ -217,6 +223,10 @@ class RoleAdministrationTests(unittest.TestCase):
         self.assertEqual(session_account(self.db, self.user_token, now=61), self.user)
 
     def test_staff_admin_and_validation_safeguards(self):
+        from backend.permissions import set_permission
+
+        with self.assertRaisesRegex(PermissionError, "confirmation"):
+            set_permission(self.db, self.admin, self.user, "Devices", "read")
         staff = self.db.execute("SELECT id FROM roles WHERE role_key='staff_member'").fetchone()[0]
         for action in (self.update(staff), {"type": "role.delete", "roleId": staff},
                        {"type": "membership.remove", "roleId": staff, "userId": self.user}):

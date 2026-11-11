@@ -1,9 +1,10 @@
 import sqlite3
 import unittest
+from confirmed_permissions import set_permission
 from backend.accounts import bootstrap_first_admin, confirm_admin_mfa
 from backend.account_security import change_own_password
 from backend.mfa import code_at
-from backend.permissions import create_user, set_permission, set_account_active, set_administrator
+from backend.permissions import create_user, set_account_active, set_administrator
 from backend.schema import initialise_database
 from backend.sessions import login_session, session_account
 

@@ -183,6 +183,8 @@ def _security_snapshot(connection, account_ids, action):
     history = []
     for event_id, raw in connection.execute("SELECT id,record_json FROM inventory_change_history ORDER BY id"):
         event = json.loads(raw)
+        if not isinstance(event, dict) or not isinstance(event.get("changes"), list):
+            continue
         if any(change.get("kind") in ("Role", "Account", "Security")
                and (change.get("kind") == "Role" or change.get("label") in names)
                for change in event.get("changes", []) if isinstance(change, dict)):

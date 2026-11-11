@@ -1,6 +1,6 @@
 # Shared Roles And Account Permissions
 
-This is work on `milestone-1` under [Batch 01](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6790154284) , [Batch 02](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6790154888) and [Batch 03](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6790155451). The published release remains v2.1. This development branch is **not ready to deploy**: the approved sign-in, My Account and Users interface integration remains later work. Batches 02 and 03 add backend operations only.
+This is work on `milestone-1` under [Batch 01](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6790154284), [Batch 02](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6790154888) and [Batch 03](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6790155451). The published release remains v2.1. This development branch is **not ready to deploy**: the approved sign-in, My Account and Users interface integration remains later work. Batches 02 and 03 add backend operations only.
 
 ## Database Upgrade
 
@@ -20,7 +20,7 @@ Protected Administrator remains a separate account flag. It retains its existing
 
 MFA is required by any enabled additional role (even one with no grants), any effective wider Read **or** Edit grant, or independent Administrator status. Once enrolled voluntarily, an account must continue supplying authenticator codes even if its permissions are removed. Configured permissions are available to administrator account inspection while access remains blocked pending enrolment. Sign-in, live sessions, recovery and section access all use the same policy.
 
-The existing interface files remain unchanged. The former direct `POST /api/users/permission` is retired with HTTP 410: permission changes now require the preview and confirmation protocol below. The intermediate branch must not be deployed before Batch 04 connects the approved controls. Independent administrator promotion still requires confirmed MFA; role grants and individual Read/Edit may be configured before enrolment, with access blocked by the shared policy until enrolment completes.
+The existing interface files remain unchanged. The former direct `POST /api/users/permission` is retired with HTTP 410. The retained Python `set_permission` adapter also requires a live session and the matching preview proof: permission changes now require the preview and confirmation protocol below. The intermediate branch must not be deployed before Batch 04 connects the approved controls. Independent administrator promotion still requires confirmed MFA; role grants and individual Read/Edit may be configured before enrolment, with access blocked by the shared policy until enrolment completes.
 
 ## Existing-Account MFA Operations
 

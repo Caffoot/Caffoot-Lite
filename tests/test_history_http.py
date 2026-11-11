@@ -1,4 +1,5 @@
 """HTTP regression for both inventory history response paths (isolated DB)."""
+from confirmed_permissions import set_permission
 import http.client
 import json
 import sqlite3
@@ -13,7 +14,7 @@ from unittest.mock import patch
 from backend.accounts import bootstrap_first_admin, confirm_admin_mfa
 from backend.http_security import COOKIE_NAME
 from backend.mfa import code_at
-from backend.permissions import create_user, set_permission
+from backend.permissions import create_user
 from backend.schema import initialise_database
 from backend.server import Handler
 from backend.sessions import login_session

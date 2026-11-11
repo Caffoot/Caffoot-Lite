@@ -1,8 +1,9 @@
 import sqlite3
 import unittest
+from confirmed_permissions import set_permission
 from backend.accounts import bootstrap_first_admin, confirm_admin_mfa
 from backend.mfa import code_at
-from backend.permissions import create_user, set_permission
+from backend.permissions import create_user
 from backend.schema import initialise_database
 from backend.sessions import (
     login_session, session_account, logout_session, revoke_account_sessions,

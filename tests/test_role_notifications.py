@@ -78,8 +78,13 @@ class RoleNotificationTests(unittest.TestCase):
             def submit(self, deliver):
                 deliver()
         capacity.release()
-        with patch.object(account_email, "MAIL_CAPACITY", capacity), patch.object(account_email, "MAIL_EXECUTOR", ImmediateExecutor()), patch.object(account_email, "send_account_email", side_effect=OSError("SMTP unavailable")):
-            self.assertTrue(account_email.queue_email("/unused", "a@example.test", "Notice", "Generic"))
+        action = {"type": "override.set", "userId": self.users[0], "section": "Devices", "level": "read"}
+        preview = preview_role_change(self.db, self.admin, self.token, action, now=60)
+        self.assertEqual(confirm_role_change(self.db, self.admin, self.token, action, preview["proof"], now=61)["status"], "updated")
+        with patch.object(account_email, "MAIL_CAPACITY", capacity), patch.object(account_email, "MAIL_EXECUTOR", ImmediateExecutor()), patch.object(account_email, "send_account_email", side_effect=OSError("SMTP unavailable")), patch("backend.smtp_settings.public_settings", return_value={"configured": True}):
+            result = account_email.role_change_notifications(self.db, "/unused", [self.users[0]])
+            self.assertEqual(result["queued"], 1)
+            self.assertEqual(self.db.execute("SELECT level FROM account_permission_overrides WHERE account_id=?", (self.users[0],)).fetchone()[0], "read")
             self.assertTrue(capacity.acquire(blocking=False))
             capacity.release()
         with patch.object(account_email.MAIL_EXECUTOR, "submit", side_effect=RuntimeError("executor stopped")):

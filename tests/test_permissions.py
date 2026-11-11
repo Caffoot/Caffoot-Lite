@@ -1,10 +1,11 @@
 import sqlite3
 import unittest
 
+from confirmed_permissions import set_permission
 from backend.accounts import bootstrap_first_admin, confirm_admin_mfa
 from backend.mfa import code_at
 from backend.permissions import (
-    create_user, set_permission, can_access, can_replace_inventory, set_account_active, delete_user,
+    create_user, can_access, can_replace_inventory, set_account_active, delete_user,
 )
 from backend.schema import initialise_database
 
@@ -66,10 +67,10 @@ class PermissionsTests(unittest.TestCase):
         self.assertFalse(can_access(self.db, user, "IPAM"))
         self.assertFalse(can_access(self.db, user, "Devices", edit=True))
 
-    def test_edit_requires_mfa_and_removal(self):
+    def test_edit_requires_mfa_before_access_and_removal(self):
         user = create_user(self.db, self.admin, "editor", "secret")
-        with self.assertRaisesRegex(ValueError, "MFA"):
-            set_permission(self.db, self.admin, user, "Racks", "edit")
+        set_permission(self.db, self.admin, user, "Racks", "edit")
+        self.assertFalse(can_access(self.db, user, "Racks", edit=True))
         self.db.execute(
             "UPDATE accounts SET mfa_secret=?,mfa_confirmed=1 WHERE id=?",
             ("TEST-ONLY-SECRET", user),

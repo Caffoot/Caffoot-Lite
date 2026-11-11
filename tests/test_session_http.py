@@ -58,7 +58,7 @@ class SessionHttpTests(unittest.TestCase):
 
     def test_subnet_first_batch_permissions_atomicity_and_visible_count_http(self):
         from backend.inventory import stage_inventory
-        from backend.permissions import set_permission
+        from confirmed_permissions import set_permission
         with sqlite3.connect(self.path) as db:
             stage_inventory(db, {"devices":[],"subnets":[],"vlans":[],"racks":[],"rackAccessories":[],"ipAllocations":{}})
             admin = db.execute("SELECT id FROM accounts WHERE is_admin=1").fetchone()[0]

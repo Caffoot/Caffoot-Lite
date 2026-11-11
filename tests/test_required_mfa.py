@@ -1,4 +1,5 @@
 """Existing-account enrolment and voluntary removal use fictional accounts."""
+from confirmed_permissions import set_permission
 import json
 import sqlite3
 import unittest
@@ -11,7 +12,7 @@ from backend.accounts import bootstrap_first_admin, confirm_admin_mfa
 from backend.authentication import MFAEnrolmentRequired
 from backend.login_throttle import LoginThrottle
 from backend.mfa import code_at
-from backend.permissions import create_user, set_permission, set_administrator
+from backend.permissions import create_user, set_administrator
 from backend.request_auth import login
 from backend.role_policy import evaluate_role_policy
 from backend.schema import initialise_database

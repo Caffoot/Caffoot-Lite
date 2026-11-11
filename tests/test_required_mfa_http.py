@@ -1,4 +1,5 @@
 """Password-verified MFA routes never grant application access before sign-in."""
+from confirmed_permissions import set_permission
 import http.client
 import json
 import sqlite3
@@ -13,7 +14,7 @@ from unittest.mock import patch
 from backend.accounts import bootstrap_first_admin, confirm_admin_mfa, hash_password
 from backend.login_throttle import LoginThrottle
 from backend.mfa import code_at, new_secret, provisioning_uri
-from backend.permissions import create_user, set_permission, delete_user
+from backend.permissions import create_user, delete_user
 from backend.request_auth import csrf_for_session, authorised_mutation
 from backend.schema import initialise_database
 from backend.server import Handler

@@ -804,11 +804,11 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | [`_target`](../../backend/permissions.py#L20) | 20 |
 | [`create_user`](../../backend/permissions.py#L29) | 29 |
 | [`set_permission`](../../backend/permissions.py#L62) | 62 |
-| [`can_access`](../../backend/permissions.py#L113) | 113 |
-| [`set_account_active`](../../backend/permissions.py#L117) | 117 |
-| [`delete_user`](../../backend/permissions.py#L156) | 156 |
-| [`set_administrator`](../../backend/permissions.py#L184) | 184 |
-| [`can_replace_inventory`](../../backend/permissions.py#L225) | 225 |
+| [`can_access`](../../backend/permissions.py#L73) | 73 |
+| [`set_account_active`](../../backend/permissions.py#L77) | 77 |
+| [`delete_user`](../../backend/permissions.py#L116) | 116 |
+| [`set_administrator`](../../backend/permissions.py#L144) | 144 |
+| [`can_replace_inventory`](../../backend/permissions.py#L185) | 185 |
 
 ## backend/profiles.py
 
@@ -879,12 +879,12 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | [`_action_targets`](../../backend/roles.py#L113) | 113 |
 | [`_apply_values`](../../backend/roles.py#L132) | 132 |
 | [`_security_snapshot`](../../backend/roles.py#L164) | 164 |
-| [`_preview_impact`](../../backend/roles.py#L193) | 193 |
-| [`_confirmation_signature`](../../backend/roles.py#L231) | 231 |
-| [`_issue_preview`](../../backend/roles.py#L238) | 238 |
-| [`preview_role_change`](../../backend/roles.py#L246) | 246 |
-| [`confirm_role_change`](../../backend/roles.py#L258) | 258 |
-| [`_audit_role_value`](../../backend/roles.py#L310) | 310 |
+| [`_preview_impact`](../../backend/roles.py#L195) | 195 |
+| [`_confirmation_signature`](../../backend/roles.py#L233) | 233 |
+| [`_issue_preview`](../../backend/roles.py#L240) | 240 |
+| [`preview_role_change`](../../backend/roles.py#L248) | 248 |
+| [`confirm_role_change`](../../backend/roles.py#L260) | 260 |
+| [`_audit_role_value`](../../backend/roles.py#L312) | 312 |
 
 ## backend/schema.py
 

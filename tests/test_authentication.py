@@ -1,10 +1,11 @@
 import sqlite3
 import unittest
+from confirmed_permissions import set_permission
 from backend.accounts import bootstrap_first_admin, confirm_admin_mfa
 from backend.account_security import begin_mfa_enrolment, complete_mfa_enrolment
 from backend.authentication import authenticate
 from backend.mfa import code_at
-from backend.permissions import create_user, set_permission
+from backend.permissions import create_user
 from backend.schema import initialise_database
 
 class AuthenticationTests(unittest.TestCase):

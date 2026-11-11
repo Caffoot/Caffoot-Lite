@@ -1,4 +1,5 @@
 """Shared access, sign-in and recovery rules for roles and individual choices."""
+from confirmed_permissions import set_permission
 import sqlite3
 import tempfile
 import unittest
@@ -9,7 +10,7 @@ from backend.account_email import confirm_email_proof, issue_email_proof
 from backend.accounts import bootstrap_first_admin, confirm_admin_mfa, verify_password
 from backend.authentication import authenticate
 from backend.mfa import code_at
-from backend.permissions import can_access, create_user, set_permission
+from backend.permissions import can_access, create_user
 from backend.role_policy import evaluate_role_policy
 from backend.schema import initialise_database
 from backend.sessions import login_session, session_account

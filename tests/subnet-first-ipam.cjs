@@ -67,7 +67,9 @@ module.exports.seed=function seedSubnetRoles(folder){
  const {spawnSync}=require('node:child_process');
  const script=`import json,sqlite3,sys,time,os
 from pathlib import Path
-from backend.permissions import create_user,set_permission
+from backend.permissions import create_user
+sys.path.insert(0,str(Path.cwd()/'tests'))
+from confirmed_permissions import set_permission
 from backend.mfa import new_secret,code_at
 from backend.sessions import login_session
 from backend.inventory import reconstruct_inventory,stage_inventory

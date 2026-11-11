@@ -59,55 +59,15 @@ def create_user(connection, actor_id, username, password, profile=None):
         raise
 
 
-def set_permission(connection, actor_id, target_id, section, level):
-    """Set an individual choice; None restores inheritance from enabled roles."""
-    if section not in SECTIONS or level not in (*LEVELS, "deny", None):
-        raise ValueError("Invalid section or permission")
-    connection.execute("BEGIN IMMEDIATE")
-    try:
-        _admin(connection, actor_id)
-        _target(connection, target_id)
-        target_name = connection.execute(
-            "SELECT username FROM accounts WHERE id=?", (target_id,)
-        ).fetchone()[0]
-        previous_row = connection.execute(
-            "SELECT level FROM account_permission_overrides WHERE account_id=? AND section=?",
-            (target_id, section),
-        ).fetchone()
-        previous_level = previous_row[0] if previous_row else None
-        if level == "edit":
-            enrolled = connection.execute(
-                "SELECT mfa_confirmed FROM accounts WHERE id=?", (target_id,)
-            ).fetchone()[0]
-            if not enrolled:
-                raise ValueError("MFA enrolment required for editing")
-        if level is None:
-            connection.execute(
-                "DELETE FROM account_permission_overrides WHERE account_id=? AND section=?",
-                (target_id, section),
-            )
-        else:
-            connection.execute(
-                "INSERT INTO account_permission_overrides(account_id,section,level) "
-                "VALUES(?,?,?) ON CONFLICT(account_id,section) "
-                "DO UPDATE SET level=excluded.level",
-                (target_id, section, level),
-            )
-        connection.execute(
-            "DELETE FROM account_sessions WHERE account_id=?", (target_id,)
-        )
-        if previous_level != level:
-            record_actor_event(
-                connection, actor_id, kind="Account", action="Updated",
-                label=target_name, reason="User permission changed",
-                fields=[section+" access"],
-                before={section+" access": previous_level or "Inherit"},
-                after={section+" access": level or "Inherit"},
-            )
-        connection.commit()
-    except BaseException:
-        connection.rollback()
-        raise
+def set_permission(connection, actor_id, target_id, section, level, *, session_token=None, proof=None):
+    """Require the same reviewed confirmation for older internal callers too."""
+    if session_token is None or proof is None:
+        raise PermissionError("Role preview and confirmation required")
+    from backend.roles import confirm_role_change
+
+    return confirm_role_change(connection, actor_id, session_token,
+                               {"type": "override.set", "userId": target_id,
+                                "section": section, "level": level}, proof)
 
 
 def can_access(connection, account_id, section, *, edit=False):
