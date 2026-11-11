@@ -375,3 +375,21 @@ html.dark #modal-container .device-editor-dialog #device-form-installed-software
 .ipam-subnet-preview-table th .ipam-field {font-weight:400;min-width:130px;}
 
 #subnet-batch-generator .ipam-form-grid {align-items:start;}
+
+/* Add role information inside the existing Users cards and dialogs. */
+.users-live .role-memberships{display:grid;gap:8px;margin-top:12px}
+.users-live .role-membership{display:flex;align-items:center;gap:10px;padding:9px 0;font-size:12px;overflow-wrap:anywhere}
+.users-live .role-membership input{flex:none;accent-color:var(--orange)}
+.users-live .role-catalogue-row{margin-bottom:12px;flex-wrap:wrap}
+.users-live .role-cell .badge{margin:2px;max-width:100%;white-space:normal;overflow-wrap:anywhere}
+.users-live .role-impact-account{border-top:1px solid var(--line);padding:15px 0;font-size:12px;line-height:1.6;overflow-wrap:anywhere}
+.users-live .role-impact-account ul{padding-left:20px}
+.users-live [data-role-feedback]{white-space:normal;overflow-wrap:anywhere}
+
+/* New role dialogs use darker text and orange controls for readable contrast. */
+[data-role-layer] .modal-head p,[data-role-layer] .formhint{color:var(--theme-text,#344f67)}
+[data-role-layer] button.btn.primary,.users-live button.btn.primary[data-role-command="create"]{background:#ad5010;border-color:#ad5010;color:#fff}
+
+.users-live .role-permission-summary,.optional-mfa-removal .sub{color:var(--theme-text,#344f67)}
+#account-mfa-removal-form .btn-primary{background:#ad5010;border-color:#ad5010;color:#fff}
+[data-role-layer] p,[data-role-layer] .note-row{color:var(--theme-text,#344f67)}

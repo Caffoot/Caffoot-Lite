@@ -136,10 +136,9 @@ class Handler(BaseHTTPRequestHandler):
                 if account_id is None:
                     self.respond(401, {"error": "unauthorised"})
                     return
-                if not any(can_access(connection, account_id, section)
-                           for section in ("Devices", "IPAM", "Racks")):
-                    self.respond(403, {"error": "forbidden"})
-                    return
+                # These packaged files contain interface code and templates only.
+                # Staff accounts need them for their own approved My Account screen;
+                # inventory and administrator data retain their separate API checks.
             path = INTERFACE_FILES[self.path]
             body = path.read_bytes()
             content_type = {".html": "text/html", ".css": "text/css",
@@ -177,13 +176,13 @@ class Handler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(body)
             return
-        if self.path in ("/inventory", "/inventory?rack-print=same-tab"):
+        if self.path in ("/inventory", "/inventory?rack-print=same-tab", "/account"):
             with connect() as connection:
                 account_id = authenticated_account(connection, self.headers.get("Cookie"))
                 if account_id is None:
                     self.respond(401, {"error": "unauthorised"})
                     return
-                if not any(can_access(connection, account_id, section)
+                if self.path != "/account" and not any(can_access(connection, account_id, section)
                            for section in ("Devices", "IPAM", "Racks")):
                     self.respond(403, {"error": "forbidden"})
                     return
@@ -433,6 +432,8 @@ class Handler(BaseHTTPRequestHandler):
                     "username": account[0],
                     "is_admin": bool(account[1]),
                     "mfa_enrolled": bool(account[2]),
+                    "mfa_removal_eligible": bool(account[2]) and not evaluate_role_policy(
+                        connection, account_id).mfa_mandatory,
                     "can_enter_inventory": any(
                         can_access(connection, account_id, section)
                         for section in ("Devices", "IPAM", "Racks")

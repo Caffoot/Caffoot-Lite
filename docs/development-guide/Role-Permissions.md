@@ -1,6 +1,6 @@
 # Shared Roles And Account Permissions
 
-This is work on `milestone-1` under [Batch 01](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6790154284), [Batch 02](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6790154888) and [Batch 03](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6790155451). The published release remains v2.1. This development branch is **not ready to deploy**: the approved sign-in, My Account and Users interface integration remains later work. Batches 02 and 03 add backend operations only.
+This is work on `milestone-1` under [Batch 01](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6790154284), [Batch 02](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6790154888) and [Batch 03](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6790155451). The published release remains v2.1. [Corrected Batch 04](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6790324888) integrates these operations into the existing approved Users, sign-in and My Account interfaces. This development branch is **not ready to deploy**: Batch 04 owner review and separately authorised later verification remain required.
 
 ## Database Upgrade
 
@@ -69,3 +69,22 @@ Confirmation repeats authorisation under `BEGIN IMMEDIATE`, recomputes consequen
 Successful confirmation atomically saves the change, attributable history and affected session/email-proof revocation. Membership assignment/removal always revokes the target's sessions. Other role/override changes revoke sessions only where effective rights or MFA requirements change. A rename or a grant hidden by an override does not force a sign-out. Unrelated accounts retain sessions. Existing enrolled MFA is never erased by role changes. Role deletion preserves its definition in history.
 
 After commit, `notifications` reports SMTP configuration, active verified-account eligibility, distinct recipient count, queue admissions, coalesced notices and unsuccessful queue admissions. It includes existing Settings → Email/SMTP/address-verification guidance for Batch 04. Eligible administrator recipients share the existing generic notice. Missing SMTP, ineligible recipients, queue failure and mail exceptions cannot undo access changes. Queue admission never establishes delivery; no delivery log or retry service is added.
+
+
+## Users And My Account Interface
+
+The existing Overview retains its four account totals, two charts and access guide. User List retains five columns, search/status/MFA filters and its mobile Manage controls. The Add User form adds Confirm Initial Password alongside the existing optional personal details. The backend assigns Staff Member without inventory grants.
+
+Manage Roles is the fourth tab, after Overview, User List and Add User. Create and Manage forms use the real catalogue, stable generated custom keys and current grants. Staff Member is protected. Role rename, grants, enable/disable and delete all require preview and explicit confirmation. New roles start enabled and unassigned; the status control is available after creation.
+
+Manage User keeps editable personal details, account enable/disable, independent Administrator status and deletion. Additional-role checkboxes each review one membership change. The existing section cards show server-provided inherited and effective levels, with Inherit/No Access/Read/Edit override choices. An ordinary change opens a preview instead of immediately writing. Cancelling preserves the saved value. The preview shows before/after roles, each section's inheritance/override/effective access, retained permissions, MFA states and affected sessions. A stale or expired confirmation saves nothing, replaces the displayed consequences and requires another explicit confirmation. Unavailable targets cannot be confirmed. Notification feedback distinguishes SMTP configuration, eligible verified recipients, queue admission, coalescing and unsuccessful queue admission; it never establishes delivery.
+
+Mandatory existing-account enrolment reuses the sign-in QR/manual-key and six-digit-code presentation, with the ordinary `/api/login/mfa/start` and `/confirm` endpoints. It creates no application session and clears the displayed key/code after completion. A fresh password and authenticator sign-in is required. First-administrator setup remains separate.
+
+### Staff-Only My Account Entry
+
+The [specific owner approval](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6794069354) permits authenticated `/account` to serve the same approved My Account interface. Sign-in sends accounts without inventory access there; inventory-eligible users retain their existing destination and navigation. Staff-only startup fetches the signed-in account's profile/session and static packaged interface resources, not inventory state. The client hides unavailable inventory navigation and refuses other workspaces, while the server independently retains all inventory, administrator and other-user API checks. `/inventory` still requires inventory access. Static templates/code contain no saved inventory or other accounts' information and require authentication, except existing public sign-in resources.
+
+The session's `mfa_removal_eligible` flag is computed by the shared server policy. Only eligible enrolled users see Remove MFA inside the existing My Account Security tab. Its form requires the current password and six-digit code. The backend independently rechecks current eligibility under the existing transaction, revokes all sessions on success and requires a fresh sign-in. Removing or disabling a role does not automatically remove MFA. Own profile, photo, appearance, password and voluntary MFA controls remain available.
+
+Browser evidence and current verification status belong in the active handover and issue #351. Interface captures are review evidence, not product-owner visual acceptance or permission to deploy.

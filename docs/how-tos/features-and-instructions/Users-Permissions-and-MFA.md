@@ -1,10 +1,22 @@
 # Users, Permissions and Multi-factor Authentication
 
-**Development branch notice:** The following controls describe published v2.1. On `milestone-1`, Staff Member is the default for all accounts and grants no inventory access. Any wider Read or Edit access, any enabled additional role, or Administrator status requires MFA; existing voluntary enrolment remains required. Existing grants are preserved. Batch 02 adds server-side password-verified mandatory enrolment and eligible voluntary MFA removal. These operations require a fresh sign-in after completion. Batch 03 adds server-side role management with a reviewed preview and confirmation for each change; the old direct-permission request is retired. Membership changes end that account’s sessions; other role/override changes end sessions where effective access or MFA requirements change. Renaming a role alone preserves sessions. Optional notices go only to active verified email recipients and eligible administrators, and cannot guarantee delivery. The existing interface does not yet offer these new flows; its integration belongs to a later batch. This intermediate build must not be deployed. See [Shared Roles And Account Permissions](../../development-guide/Role-Permissions.md).
+**Development branch notice:** The following controls describe published v2.1. On `milestone-1`, Staff Member is the default for all accounts and grants no inventory access. Any wider Read or Edit access, any enabled additional role, or Administrator status requires MFA; existing voluntary enrolment remains required. Existing grants are preserved. Batch 02 adds server-side password-verified mandatory enrolment and eligible voluntary MFA removal. These operations require a fresh sign-in after completion. Batch 03 adds server-side role management with a reviewed preview and confirmation for each change; the old direct-permission request is retired. Membership changes end that account’s sessions; other role/override changes end sessions where effective access or MFA requirements change. Renaming a role alone preserves sessions. Optional notices go only to active verified email recipients and eligible administrators, and cannot guarantee delivery. Batch 04 now connects these flows to the existing Users, sign-in and My Account screens for owner review. This intermediate build must not be deployed. See [Shared Roles And Account Permissions](../../development-guide/Role-Permissions.md).
 
 [← All feature guides](README.md)
 
 *Some screenshots show an earlier Docker edition for orientation. The instructions describe the published v2.1 interface; older images should not be mistaken for new v2.1 captures.*
+
+## On The Milestone Development Branch
+
+These additions are for review, not a published release. Existing Overview, User List and Add User tabs remain, with Manage Roles fourth. Administrators can create/manage custom roles, then assign multiple roles in Manage User. Staff Member is automatic and protected; Administrator remains a separate account control.
+
+Each section card shows inherited and effective access. Choose **Inherit** to use role grants, **No Access** to block them deliberately, or **Read/Edit** for an individual override. Each membership or permission change opens **Review Access Change**. Read the before/after access, MFA and session effects, then choose **Confirm Change**. Cancel saves nothing. If the preview becomes outdated, review the refreshed consequences and confirm again. Role creation, edits, disabling and deletion follow the same review process. Personal details, account activation, Administrator controls and deletion remain in Manage User.
+
+An account assigned wider access or an enabled additional role must enrol MFA before normal sign-in. The existing sign-in form shows a QR code/manual key and requests the authenticator's six-digit code. Completion clears the setup details and requires a fresh sign-in with password and authenticator code.
+
+Staff-only users sign in to their existing **My Account** interface at `/account`. This provides their own profile, password, appearance and MFA settings without inventory or administrator access. In **My Account → Security**, eligible enrolled users can open **Remove MFA** and confirm with their current password and code. Successful removal ends all their sessions and requires a fresh sign-in. Administrator status, enabled additional roles or effective wider Read/Edit access prevent removal. Role changes never remove MFA automatically.
+
+Security notices need configured SMTP and eligible verified addresses. A queued notice is not proof that email was delivered.
 
 ## Account basics
 

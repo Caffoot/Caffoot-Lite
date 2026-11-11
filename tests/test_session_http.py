@@ -176,20 +176,54 @@ class SessionHttpTests(unittest.TestCase):
             self.assertEqual(self.request("/interface/screens/" + filename)[0], 401)
         self.assertNotIn(b"Your inventory is NOT saved in this browser", body)
 
-    def test_modular_files_preserve_inventory_access_boundary(self):
+    def test_packaged_account_resources_require_authentication_without_inventory_data(self):
         with sqlite3.connect(self.path) as db:
             user = create_user(db, 1, "no-inventory-access", "password")
             token = login_session(db, "no-inventory-access", "password")
         for path in ("/interface/application.js", "/interface/screens/dashboard.html",
                      "/interface/styles/device-details.css"):
             self.assertEqual(self.request(path)[0], 401)
-            self.assertEqual(self.request(path, COOKIE_NAME + "=" + token)[0], 403)
+            self.assertEqual(self.request(path, COOKIE_NAME + "=" + token)[0], 200)
             self.assertEqual(self.request(path, COOKIE_NAME + "=" + self.token)[0], 200)
         for path in ("/interface/../backend/server.py", "/interface/design-sources.json",
                      "/interface/screens/not-packaged.html"):
             self.assertEqual(self.request(path)[0], 404)
         for path in ("/interface/sign-in.js", "/interface/styles/sign-in.css"):
             self.assertEqual(self.request(path)[0], 200)
+
+    def test_staff_account_route_and_mfa_eligibility_preserve_data_boundaries(self):
+        from backend.roles import preview_role_change, confirm_role_change
+        with sqlite3.connect(self.path) as db:
+            user = create_user(db, 1, "staff-account", "password")
+            secret = new_secret()
+            db.execute("UPDATE accounts SET mfa_secret=?,mfa_confirmed=1 WHERE id=?", (secret, user))
+            db.commit()
+            token = login_session(db, "staff-account", "password", mfa_code=code_at(secret, time.time()))
+        cookie = COOKIE_NAME + "=" + token
+        self.assertEqual(self.request("/account")[0], 401)
+        self.assertEqual(self.request("/account", cookie)[0], 200)
+        self.assertTrue(json.loads(self.request("/api/session", cookie)[1])["mfa_removal_eligible"])
+        self.assertFalse(json.loads(self.request("/api/session", COOKIE_NAME + "=" + self.token)[1])["mfa_removal_eligible"])
+        for path in ("/inventory", "/inventory?rack-print=same-tab", "/api/inventory/state",
+                     "/api/users", "/api/settings/email", "/api/inventory/devices", "/api/inventory/ipam", "/api/inventory/racks"):
+            self.assertEqual(self.request(path, cookie)[0], 403, path)
+        sections = json.loads(self.request("/api/inventory/sections", cookie)[1])["sections"]
+        self.assertTrue(all(not rights["read"] and not rights["edit"] for rights in sections.values()))
+        profile = json.loads(self.request("/api/account/profile", cookie)[1])
+        self.assertNotIn("owner", json.dumps(profile))
+        with sqlite3.connect(self.path) as db:
+            action = {"type": "role.create", "roleKey": "zero_grant", "name": "Zero Grant", "grants": {}}
+            proof = preview_role_change(db, 1, self.token, action)["proof"]
+            confirm_role_change(db, 1, self.token, action, proof)
+            role = db.execute("SELECT id FROM roles WHERE role_key='zero_grant'").fetchone()[0]
+            action = {"type": "membership.assign", "roleId": role, "userId": user}
+            proof = preview_role_change(db, 1, self.token, action)["proof"]
+            confirm_role_change(db, 1, self.token, action, proof)
+            token = login_session(db, "staff-account", "password", mfa_code=code_at(secret, time.time()))
+        cookie = COOKIE_NAME + "=" + token
+        self.assertFalse(json.loads(self.request("/api/session", cookie)[1])["mfa_removal_eligible"])
+        self.assertEqual(self.request("/account", cookie)[0], 200)
+        self.assertEqual(self.request("/inventory", cookie)[0], 403)
 
     def test_inventory_requires_authenticated_inventory_access(self):
         status, body, cache = self.request("/inventory")

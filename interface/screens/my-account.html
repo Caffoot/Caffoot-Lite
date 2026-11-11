@@ -110,3 +110,6 @@
 <button class="btn btn-primary" type="submit">Verify Email Address</button></fieldset>
 </form></section>
 <!-- /interface-template -->
+
+
+<!-- interface-template:my-account/optional-mfa-removal --><details class="optional-mfa-removal" style="margin-top:15px"><summary class="btn">Remove MFA</summary><p class="sub" style="margin-top:12px">MFA is optional for your current access. Removing it ends all your sessions and requires a fresh sign-in. Your roles and grants remain unchanged.</p><form id="account-mfa-removal-form" class="security-actions" style="margin-top:15px"><label class="field"><span>Current Password</span><input name="password" type="password" autocomplete="current-password" required></label><label class="field"><span>Current Authenticator Code</span><input name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required></label><button class="btn btn-primary" type="submit">Confirm MFA Removal</button><p role="status" data-mfa-removal-feedback></p></form></details><!-- /interface-template -->
