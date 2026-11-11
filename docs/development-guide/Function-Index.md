@@ -6,7 +6,7 @@ Scope: named JavaScript declarations/assignments in the three application script
 
 The account hydration/photo functions now have purpose-based callable bindings matching their function names: `hydrateAccount` and `removeAccountPhoto`. The immutable design manifest retains its historical integration-entry names; those metadata names are not the runtime's current function map. Pinned source paths, revisions and hashes are unchanged.
 
-**Recorded definitions: 696.** Regenerate after changing declarations or their lines. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
+**Recorded definitions: 698.** Regenerate after changing declarations or their lines. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
 
 ## interface/loader.js
 
@@ -542,16 +542,16 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 | Function | Line |
 | --- | ---: |
-| [`queue_email`](../../backend/account_email.py#L32) | 32 |
-| [`queue_email.deliver`](../../backend/account_email.py#L37) | 37 |
-| [`email_proof_secret`](../../backend/account_email.py#L54) | 54 |
-| [`_digest`](../../backend/account_email.py#L91) | 91 |
-| [`email_attempts_remaining`](../../backend/account_email.py#L100) | 100 |
-| [`issue_email_proof`](../../backend/account_email.py#L109) | 109 |
-| [`confirm_email_proof`](../../backend/account_email.py#L140) | 140 |
-| [`security_recipients`](../../backend/account_email.py#L199) | 199 |
-| [`notify_security_change`](../../backend/account_email.py#L214) | 214 |
-| [`record_blocked_sign_in`](../../backend/account_email.py#L235) | 235 |
+| [`queue_email`](../../backend/account_email.py#L33) | 33 |
+| [`queue_email.deliver`](../../backend/account_email.py#L38) | 38 |
+| [`email_proof_secret`](../../backend/account_email.py#L55) | 55 |
+| [`_digest`](../../backend/account_email.py#L92) | 92 |
+| [`email_attempts_remaining`](../../backend/account_email.py#L101) | 101 |
+| [`issue_email_proof`](../../backend/account_email.py#L110) | 110 |
+| [`confirm_email_proof`](../../backend/account_email.py#L141) | 141 |
+| [`security_recipients`](../../backend/account_email.py#L200) | 200 |
+| [`notify_security_change`](../../backend/account_email.py#L215) | 215 |
+| [`record_blocked_sign_in`](../../backend/account_email.py#L236) | 236 |
 
 ## backend/account_security.py
 
@@ -590,7 +590,7 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 | Function | Line |
 | --- | ---: |
-| [`authenticate`](../../backend/authentication.py#L14) | 14 |
+| [`authenticate`](../../backend/authentication.py#L15) | 15 |
 
 ## backend/collection_saves.py
 
@@ -793,15 +793,15 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 | Function | Line |
 | --- | ---: |
-| [`_admin`](../../backend/permissions.py#L14) | 14 |
-| [`_target`](../../backend/permissions.py#L23) | 23 |
-| [`create_user`](../../backend/permissions.py#L32) | 32 |
-| [`set_permission`](../../backend/permissions.py#L65) | 65 |
-| [`can_access`](../../backend/permissions.py#L115) | 115 |
-| [`set_account_active`](../../backend/permissions.py#L137) | 137 |
-| [`delete_user`](../../backend/permissions.py#L176) | 176 |
-| [`set_administrator`](../../backend/permissions.py#L203) | 203 |
-| [`can_replace_inventory`](../../backend/permissions.py#L244) | 244 |
+| [`_admin`](../../backend/permissions.py#L11) | 11 |
+| [`_target`](../../backend/permissions.py#L20) | 20 |
+| [`create_user`](../../backend/permissions.py#L29) | 29 |
+| [`set_permission`](../../backend/permissions.py#L62) | 62 |
+| [`can_access`](../../backend/permissions.py#L113) | 113 |
+| [`set_account_active`](../../backend/permissions.py#L117) | 117 |
+| [`delete_user`](../../backend/permissions.py#L156) | 156 |
+| [`set_administrator`](../../backend/permissions.py#L184) | 184 |
+| [`can_replace_inventory`](../../backend/permissions.py#L225) | 225 |
 
 ## backend/profiles.py
 
@@ -856,27 +856,29 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 | Function | Line |
 | --- | ---: |
-| [`assign_staff_member`](../../backend/role_policy.py#L8) | 8 |
+| [`AccountRolePolicy.allows`](../../backend/role_policy.py#L19) | 19 |
+| [`evaluate_role_policy`](../../backend/role_policy.py#L31) | 31 |
+| [`assign_staff_member`](../../backend/role_policy.py#L72) | 72 |
 
 ## backend/schema.py
 
 | Function | Line |
 | --- | ---: |
-| [`initialise_database`](../../backend/schema.py#L55) | 55 |
-| [`migrate_role_permissions`](../../backend/schema.py#L195) | 195 |
-| [`verify_role_migration`](../../backend/schema.py#L280) | 280 |
+| [`initialise_database`](../../backend/schema.py#L56) | 56 |
+| [`migrate_role_permissions`](../../backend/schema.py#L196) | 196 |
+| [`verify_role_migration`](../../backend/schema.py#L281) | 281 |
 
 ## backend/server.py
 
 | Function | Line |
 | --- | ---: |
-| [`validate_public_origin`](../../backend/server.py#L73) | 73 |
-| [`connect`](../../backend/server.py#L91) | 91 |
-| [`initialise_database`](../../backend/server.py#L99) | 99 |
-| [`Handler.end_headers`](../../backend/server.py#L105) | 105 |
-| [`Handler.do_GET`](../../backend/server.py#L112) | 112 |
-| [`Handler.do_POST`](../../backend/server.py#L440) | 440 |
-| [`Handler.handle_user_mutation`](../../backend/server.py#L568) | 568 |
+| [`validate_public_origin`](../../backend/server.py#L74) | 74 |
+| [`connect`](../../backend/server.py#L92) | 92 |
+| [`initialise_database`](../../backend/server.py#L100) | 100 |
+| [`Handler.end_headers`](../../backend/server.py#L106) | 106 |
+| [`Handler.do_GET`](../../backend/server.py#L113) | 113 |
+| [`Handler.do_POST`](../../backend/server.py#L438) | 438 |
+| [`Handler.handle_user_mutation`](../../backend/server.py#L566) | 566 |
 | [`Handler.handle_account_email`](../../backend/server.py#L926) | 926 |
 | [`Handler.handle_profile_photo`](../../backend/server.py#L1006) | 1006 |
 | [`Handler.handle_import`](../../backend/server.py#L1037) | 1037 |
@@ -887,11 +889,11 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 | Function | Line |
 | --- | ---: |
-| [`_digest`](../../backend/sessions.py#L15) | 15 |
-| [`login_session`](../../backend/sessions.py#L25) | 25 |
-| [`session_account`](../../backend/sessions.py#L49) | 49 |
-| [`logout_session`](../../backend/sessions.py#L72) | 72 |
-| [`revoke_account_sessions`](../../backend/sessions.py#L81) | 81 |
+| [`_digest`](../../backend/sessions.py#L16) | 16 |
+| [`login_session`](../../backend/sessions.py#L26) | 26 |
+| [`session_account`](../../backend/sessions.py#L50) | 50 |
+| [`logout_session`](../../backend/sessions.py#L70) | 70 |
+| [`revoke_account_sessions`](../../backend/sessions.py#L79) | 79 |
 
 ## backend/settings_saves.py
 

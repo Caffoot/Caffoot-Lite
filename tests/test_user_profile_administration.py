@@ -103,13 +103,44 @@ class UserProfileAdministrationTests(unittest.TestCase):
             ).fetchone()
             self.assertEqual(account, ("new.person", 0, 0))
             self.assertEqual(db.execute(
-                "SELECT COUNT(*) FROM account_permissions WHERE account_id=?",
+                "SELECT COUNT(*) FROM account_permission_overrides WHERE account_id=?",
                 (result["id"],),
             ).fetchone()[0], 0)
         status, result = self.request("GET", "/api/users", self.admin_token)
         self.assertEqual(status, 200)
         new_user = next(u for u in result["users"] if u["username"] == "new.person")
         self.assertEqual(new_user["profile"]["firstName"], "Alex")
+
+    def test_users_use_role_policy_and_no_access_blocks_inherited_grants(self):
+        from backend.server import connect
+
+        with sqlite3.connect(self.path) as db:
+            role_id = db.execute("INSERT INTO roles(role_key,name) VALUES('readers','Readers')").lastrowid
+            db.execute("INSERT INTO account_roles VALUES(?,?)", (self.viewer, role_id))
+            db.execute("INSERT INTO role_grants VALUES(?, 'Devices', 'read')", (role_id,))
+
+        def without_legacy_authority():
+            db = connect()
+            db.set_authorizer(lambda action, table, *unused: sqlite3.SQLITE_DENY if table == "account_permissions" else sqlite3.SQLITE_OK)
+            return db
+
+        with patch("backend.server.connect", side_effect=without_legacy_authority):
+            status, result = self.request("GET", "/api/users", self.admin_token)
+            self.assertEqual(status, 200)
+            viewer = next(user for user in result["users"] if user["id"] == self.viewer)
+            self.assertEqual(viewer["permissions"], {"Devices": "read"})
+            status, result = self.request(
+                "POST", "/api/users/permission", self.admin_token,
+                {"userId": self.viewer, "section": "Devices", "level": None},
+                csrf_for_session(self.admin_token),
+            )
+            self.assertEqual(status, 200, result)
+            status, result = self.request("GET", "/api/users", self.admin_token)
+            self.assertEqual(status, 200)
+            viewer = next(user for user in result["users"] if user["id"] == self.viewer)
+            self.assertEqual(viewer["permissions"], {})
+        with sqlite3.connect(self.path) as db:
+            self.assertEqual(db.execute("SELECT level FROM account_permission_overrides WHERE account_id=? AND section='Devices'", (self.viewer,)).fetchone(), ("deny",))
 
     def test_rejects_bad_details_without_creating_a_partial_account(self):
         payload = {

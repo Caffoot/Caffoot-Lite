@@ -10,7 +10,19 @@ Existing Read and Edit rows become matching individual overrides. A previously m
 
 The upgrade runs within the existing single `BEGIN IMMEDIATE` transaction. Before recording version 11, it checks identities and account security fields, exact grant mapping, complete Staff Member membership, absence of additional grants, foreign keys and removal of **all** old sessions. Failure rolls back the complete upgrade, including session removal. Repeated startup does not repeat migration or revoke newly issued sessions. Unsupported newer schemas fail closed.
 
-The old `account_permissions` table is retained for historical inspection. Moving all runtime consumers to the new policy is required before Batch 01 is complete; it must not become a second writable authority.
+The old `account_permissions` table is retained for historical inspection. Runtime access checks, sign-in, session resolution, email recovery and the Users response now use `role_policy.py:evaluate_role_policy`. Permission changes write only `account_permission_overrides`. Deleting an account still allows its historical rows to be removed by the existing foreign-key relationship; they never supply access.
+
+## Access And MFA
+
+The shared policy takes the highest Read/Edit grant across enabled additional roles, then applies any individual override. A deliberate No Access (`deny`) blocks inherited access; Read or Edit sets that exact level. Disabled roles contribute neither grants nor an MFA requirement. Unknown sections are ignored until registered by the server, and newly registered sections start without ordinary-user access. Staff Member cannot hold inventory grants or be renamed, disabled or deleted; role keys cannot change.
+
+Protected Administrator remains a separate account flag. It retains its existing inventory access after MFA, including where an individual section override would restrict an ordinary user. Disabled accounts and unknown sections are denied. Existing checks for related Devices, IPAM and Racks actions, edit reservations, imports and last-administrator protection remain in force.
+
+MFA is required by any enabled additional role (even one with no grants), any effective wider Read **or** Edit grant, or independent Administrator status. Once enrolled voluntarily, an account must continue supplying authenticator codes even if its permissions are removed. Configured permissions are available to administrator account inspection while access remains blocked pending enrolment. Sign-in, live sessions, recovery and section access all use the same policy.
+
+The existing Users interface and request shape are preserved. Its No Access control still sends `null`; the server adapter stores that deliberate choice as `deny`. The internal `set_permission(..., None)` restores Inherit by deleting the override. The existing Users response keeps its positive `permissions` map, now resolved from roles and overrides; the later approved role-management interface will distinguish inherited, configured and exercisable access explicitly. No role-management API is introduced here.
+
+Existing Edit grants still require completed MFA before they can be assigned through the current account controls. A Read grant may be configured while enrolment is pending, but it cannot give an unenrolled account an application session or inventory access. Previously unenrolled legacy readers therefore cannot complete ordinary sign-in in this intermediate build. The restricted pre-login enrolment routes are the separately authorised Batch 02 dependency; do not bypass the requirement or deploy this batch alone.
 
 ## Backup And Rollback
 

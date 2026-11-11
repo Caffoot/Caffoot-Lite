@@ -35,8 +35,11 @@ class SessionTests(unittest.TestCase):
 
     def test_revocation_and_deactivation(self):
         user = create_user(self.db, self.admin, "reader", "password")
+        secret = "JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP"
+        self.db.execute("UPDATE accounts SET mfa_secret=?,mfa_confirmed=1 WHERE id=?", (secret, user))
+        self.db.commit()
         set_permission(self.db, self.admin, user, "Devices", "read")
-        token = login_session(self.db, "reader", "password", now=59)
+        token = login_session(self.db, "reader", "password", mfa_code=code_at(secret, 59), now=59)
         self.assertEqual(session_account(self.db, token, now=60), user)
         self.db.execute("UPDATE accounts SET active=0 WHERE id=?", (user,))
         self.db.commit()
@@ -52,12 +55,17 @@ class SessionTests(unittest.TestCase):
         self.assertIsNone(session_account(self.db, "invalid", now=60))
         set_permission(self.db, self.admin, user, "Devices", "read")
         self.assertIsNone(session_account(self.db, token, now=60))
-        fresh_token = login_session(self.db, "reader", "password", now=59)
+        self.assertIsNone(login_session(self.db, "reader", "password", now=59))
+        secret = "JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP"
+        self.db.execute("UPDATE accounts SET mfa_secret=?,mfa_confirmed=1 WHERE id=?", (secret, user))
+        self.db.commit()
+        fresh_token = login_session(self.db, "reader", "password", mfa_code=code_at(secret, 59), now=59)
         self.assertEqual(session_account(self.db, fresh_token, now=60), user)
         self.db.execute(
-            "INSERT INTO account_permissions(account_id,section,level) VALUES(?,?,?)",
+            "INSERT INTO account_permission_overrides(account_id,section,level) VALUES(?,?,?)",
             (user, "IPAM", "edit"),
         )
+        self.db.execute("UPDATE accounts SET mfa_confirmed=0 WHERE id=?", (user,))
         self.db.commit()
         self.assertIsNone(session_account(self.db, fresh_token, now=60))
 

@@ -36,6 +36,7 @@ from .http_security import read_session_cookie, session_cookie, clear_session_co
 from .request_auth import login, logout, THROTTLE
 from .permissions import (can_access, create_user, set_permission,
                           set_account_active, set_administrator, delete_user)
+from .role_policy import evaluate_role_policy
 from .history_permissions import visible_change_history
 from .request_auth import authorised_mutation
 from .http_security import require_same_origin
@@ -259,10 +260,7 @@ class Handler(BaseHTTPRequestHandler):
                 for user_id, username, is_admin, active, mfa_confirmed in connection.execute(
                     "SELECT id,username,is_admin,active,mfa_confirmed FROM accounts ORDER BY id"
                 ):
-                    permissions = {section: level for section, level in connection.execute(
-                        "SELECT section,level FROM account_permissions WHERE account_id=?",
-                        (user_id,),
-                    )}
+                    permissions = evaluate_role_policy(connection, user_id).permissions
                     users.append({
                         "id": user_id, "username": username,
                         "isAdmin": bool(is_admin), "active": bool(active),
@@ -884,7 +882,9 @@ class Handler(BaseHTTPRequestHandler):
                 elif self.path == "/api/users/permission":
                     if set(payload) != {"userId", "section", "level"} or type(payload["userId"]) is not int:
                         raise ValueError("Invalid permission request")
-                    set_permission(connection, actor, payload["userId"], payload["section"], payload["level"])
+                    # The existing No Access control must block inherited grants too.
+                    level = "deny" if payload["level"] is None else payload["level"]
+                    set_permission(connection, actor, payload["userId"], payload["section"], level)
                     result = {"status": "updated"}
                 else:
                     if type(payload.get("userId")) is not int:

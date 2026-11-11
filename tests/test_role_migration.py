@@ -9,6 +9,8 @@ from backend import schema
 from backend.accounts import bootstrap_first_admin, confirm_admin_mfa
 from backend.mfa import code_at
 from backend.permissions import create_user
+from backend.permissions import can_access
+from backend.role_policy import evaluate_role_policy
 
 
 class RoleMigrationTests(unittest.TestCase):
@@ -27,7 +29,7 @@ class RoleMigrationTests(unittest.TestCase):
                 "INSERT INTO accounts(id,username,password_hash,is_admin,active,mfa_secret,mfa_confirmed) "
                 "VALUES(?,?,?,?,?,?,?)",
                 (number, f"account-{number}", f"preserved-hash-{number}", admin, active,
-                 "JBSWY3DPEHPK3PXP", enrolled),
+                 "JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP", enrolled),
             )
             self.db.execute(
                 "INSERT INTO account_profiles(account_id,first_name,email,email_verified) VALUES(?,?,?,1)",
@@ -97,6 +99,36 @@ class RoleMigrationTests(unittest.TestCase):
         with patch.object(schema, "verify_role_migration", side_effect=corrupt_mapping):
             with self.assertRaisesRegex(RuntimeError, "preserve"):
                 schema.initialise_database(self.db)
+        self.assertEqual(list(self.db.iterdump()), before)
+
+    def test_missing_legacy_grant_can_later_inherit_without_losing_read_override(self):
+        self.db.execute(
+            "INSERT INTO accounts(username,password_hash,mfa_secret,mfa_confirmed) "
+            "VALUES('reader','preserved-hash','JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP',1)"
+        )
+        self.db.execute("INSERT INTO account_permissions VALUES(1,'Devices','read')")
+        self.db.commit()
+        schema.initialise_database(self.db)
+        self.assertFalse(can_access(self.db, 1, "IPAM"))
+        self.db.execute("INSERT INTO roles(role_key,name) VALUES('support','Support')")
+        self.db.execute("INSERT INTO account_roles VALUES(1,2)")
+        self.db.executemany("INSERT INTO role_grants VALUES(2,?, 'edit')", [("Devices",), ("IPAM",)])
+        self.db.commit()
+        self.assertTrue(can_access(self.db, 1, "IPAM", edit=True))
+        self.assertTrue(can_access(self.db, 1, "Devices"))
+        self.assertFalse(can_access(self.db, 1, "Devices", edit=True))
+        self.assertEqual(evaluate_role_policy(self.db, 1).permissions, {"Devices": "read", "IPAM": "edit"})
+
+    def test_sqlite_failure_rolls_back_created_tables_and_old_sessions(self):
+        self.populate_accounts()
+        before = list(self.db.iterdump())
+        self.db.set_authorizer(lambda action, table, *unused:
+                               sqlite3.SQLITE_DENY if action == sqlite3.SQLITE_INSERT and table == "account_permission_overrides" else sqlite3.SQLITE_OK)
+        try:
+            with self.assertRaises(sqlite3.DatabaseError):
+                schema.initialise_database(self.db)
+        finally:
+            self.db.set_authorizer(None)
         self.assertEqual(list(self.db.iterdump()), before)
 
     def test_role_constraints_and_foreign_keys(self):

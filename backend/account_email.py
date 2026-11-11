@@ -19,6 +19,7 @@ from .accounts import hash_password, verify_password
 from .audit_events import record_actor_event
 from .login_throttle import LoginThrottle
 from .mfa import verify_code
+from .role_policy import evaluate_role_policy
 from .smtp_settings import send_account_email
 
 TOKEN_SECONDS = 15 * 60
@@ -166,8 +167,8 @@ def confirm_email_proof(connection, token, purpose, *, challenge_id, account_id=
             valid = False
         if purpose == "recover":
             profile = connection.execute("SELECT email_verified FROM account_profiles WHERE account_id=?", (target,)).fetchone()
-            editing = connection.execute("SELECT 1 FROM account_permissions WHERE account_id=? AND level='edit'", (target,)).fetchone()
-            valid = valid and bool(profile[0]) and (not (admin or editing or confirmed) or bool(confirmed and secret and verify_code(secret, mfa_code, timestamp=now)))
+            policy = evaluate_role_policy(connection, target)
+            valid = valid and bool(profile[0]) and (not policy.requires_mfa or bool(confirmed and secret and verify_code(secret, mfa_code, timestamp=now)))
         elif purpose == "verify":
             valid = valid and account_id == target
         else:

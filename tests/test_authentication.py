@@ -24,11 +24,12 @@ class AuthenticationTests(unittest.TestCase):
         self.assertIsNone(authenticate(self.db, "Owner", "wrong", mfa_code=code_at(self.admin_secret, 59), timestamp=59))
         self.assertEqual(authenticate(self.db, "owner", "admin-pass", mfa_code=code_at(self.admin_secret, 59), timestamp=59), self.admin)
 
-    def test_read_only_optional_mfa_and_editor_required(self):
+    def test_staff_optional_mfa_and_wider_read_or_edit_require_mfa(self):
         confirm_admin_mfa(self.db, self.admin, code_at(self.admin_secret, 59), timestamp=59)
         viewer = create_user(self.db, self.admin, "Viewer", "view-pass")
-        set_permission(self.db, self.admin, viewer, "Devices", "read")
         self.assertEqual(authenticate(self.db, "viewer", "view-pass"), viewer)
+        set_permission(self.db, self.admin, viewer, "Devices", "read")
+        self.assertIsNone(authenticate(self.db, "viewer", "view-pass"))
         secret = begin_mfa_enrolment(self.db, viewer, "view-pass")
         complete_mfa_enrolment(self.db, viewer, code_at(secret, 59), timestamp=59)
         set_permission(self.db, self.admin, viewer, "Devices", "edit")

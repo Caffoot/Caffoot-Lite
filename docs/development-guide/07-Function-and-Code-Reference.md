@@ -38,7 +38,7 @@ The Issue #309 tab icons use `renderSectionTabIcon`. `revealSectionTab` scrolls 
 
 ## Accounts and editing
 
-On `milestone-1`, `schema.py:migrate_role_permissions` and `verify_role_migration` introduce and check schema 11 within the existing upgrade transaction. `role_policy.py:assign_staff_member` is shared by first-administrator setup and ordinary account creation. See [Shared Roles And Account Permissions](Role-Permissions.md) for development boundaries and rollback requirements.
+On `milestone-1`, `schema.py:migrate_role_permissions` and `verify_role_migration` introduce and check schema 11 within the existing upgrade transaction. `role_policy.py:assign_staff_member` is shared by first-administrator setup and ordinary account creation. `evaluate_role_policy` combines enabled role grants and individual overrides, and `AccountRolePolicy.allows` applies account, section and MFA safeguards. Authentication, sessions, recovery and the Users response use the same evaluator. See [Shared Roles And Account Permissions](Role-Permissions.md) for development boundaries and rollback requirements.
 
 | File | Search terms |
 | --- | --- |

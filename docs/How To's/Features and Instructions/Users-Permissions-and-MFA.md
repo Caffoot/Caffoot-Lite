@@ -1,5 +1,7 @@
 # Users, Permissions and Multi-factor Authentication
 
+**Development branch notice:** The following controls describe published v2.1. On `milestone-1`, Staff Member is the default for all accounts and grants no inventory access. Any wider Read or Edit access, any enabled additional role, or Administrator status requires MFA; existing voluntary enrolment remains required. Existing grants are preserved, but unenrolled legacy readers cannot sign in until the separately authorised pre-login enrolment work is complete. The interface is unchanged and this intermediate batch must not be deployed. See [Shared Roles And Account Permissions](../../development-guide/Role-Permissions.md).
+
 [← All feature guides](README.md)
 
 *Some screenshots show an earlier Docker edition for orientation. The instructions describe the published v2.1 interface; older images should not be mistaken for new v2.1 captures.*

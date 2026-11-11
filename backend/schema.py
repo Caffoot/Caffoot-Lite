@@ -4,6 +4,7 @@ Inventory JSON retains optional and historical fields. Account, profile and
 email-challenge tables support the authenticated server without changing
 the published inventory import format."""
 import sqlite3
+from backend.role_policy import evaluate_role_policy
 
 SCHEMA_VERSION = 11
 
@@ -295,3 +296,9 @@ def verify_role_migration(connection, accounts_before, grants_before):
             or connection.execute("SELECT 1 FROM account_sessions").fetchone()
             or connection.execute("PRAGMA foreign_key_check").fetchone()):
         raise RuntimeError("Role migration did not preserve accounts and permissions")
+    expected_permissions = {}
+    for account_id, section, level in grants_before:
+        expected_permissions.setdefault(account_id, {})[section] = level
+    for account in accounts_before:
+        if evaluate_role_policy(connection, account[0]).permissions != expected_permissions.get(account[0], {}):
+            raise RuntimeError("Role migration changed configured section access")

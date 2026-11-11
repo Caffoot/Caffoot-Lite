@@ -148,7 +148,7 @@ class StagingTests(unittest.TestCase):
             "SELECT id FROM accounts WHERE username='owner'"
         ).fetchone()[0]
         self.db.execute(
-            "INSERT INTO account_permissions(account_id,section,level) VALUES(?, 'Devices', 'edit')",
+            "INSERT INTO account_permission_overrides(account_id,section,level) VALUES(?, 'Devices', 'edit')",
             (account_id,),
         )
         self.db.execute(
@@ -160,6 +160,10 @@ class StagingTests(unittest.TestCase):
             return (
                 self.db.execute("SELECT * FROM accounts").fetchall(),
                 self.db.execute("SELECT * FROM account_permissions").fetchall(),
+                self.db.execute("SELECT * FROM account_permission_overrides").fetchall(),
+                self.db.execute("SELECT * FROM roles").fetchall(),
+                self.db.execute("SELECT * FROM role_grants").fetchall(),
+                self.db.execute("SELECT * FROM account_roles").fetchall(),
                 self.db.execute("SELECT * FROM account_sessions").fetchall(),
             )
         before = snapshot()

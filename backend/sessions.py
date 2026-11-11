@@ -8,6 +8,7 @@ import secrets
 import time
 
 from backend.authentication import authenticate
+from backend.role_policy import evaluate_role_policy
 
 SESSION_SECONDS = 12 * 60 * 60
 
@@ -60,11 +61,8 @@ def session_account(connection, token, *, now=None):
     ).fetchone()
     if not row or not row[1] or row[4] <= now:
         return None
-    editing = connection.execute(
-        "SELECT 1 FROM account_permissions WHERE account_id=? AND level='edit' LIMIT 1",
-        (row[0],),
-    ).fetchone() is not None
-    if (row[2] or editing) and not row[3]:
+    policy = evaluate_role_policy(connection, row[0])
+    if not policy.active or (policy.requires_mfa and not policy.mfa_enrolled):
         return None
     return row[0]
 

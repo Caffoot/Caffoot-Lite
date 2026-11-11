@@ -2,6 +2,8 @@
 
 These controls are included in the published v2.1 application. The implementation and acceptance history is recorded in [issue #282](https://github.com/Caffoot/Caffoot-Lite/issues/282); they were not part of v2.0.3.
 
+On `milestone-1`, recovery uses the same [shared role policy](Role-Permissions.md) as sign-in and live sessions. Wider Read or Edit access, any enabled additional role, Administrator status or retained voluntary enrolment requires authenticator proof. Recovery cannot bypass pending MFA enrolment. Schema 11 preserves email data and challenges but revokes every old application session. This intermediate development branch is not ready to deploy; the later restricted enrolment flow is outside Batch 01.
+
 ## Normal Recovery
 
 Email remains optional. In **My Account → Personal Details**, save an email address and check the **Verified / Not Verified** status beside it. An edited address must be saved before verification. Choose **Verify Email**, confirm your current password and request a confirmation code. The code field appears after the request response. Enter the eight-digit emailed code, including any leading zeroes, to verify ownership; a new request replaces the previous code. Codes expire after fifteen minutes and work once. Changing the saved address removes verification. Cancel clears the password and code fields.

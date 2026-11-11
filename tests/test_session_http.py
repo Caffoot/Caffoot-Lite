@@ -68,7 +68,10 @@ class SessionHttpTests(unittest.TestCase):
             set_permission(db,admin,editor,"IPAM","edit")
             editor_token=login_session(db,"subnet-editor","initial",mfa_code=code_at(secret,time.time()))
             reader=create_user(db,admin,"subnet-reader","initial");set_permission(db,admin,reader,"IPAM","read")
-            reader_token=login_session(db,"subnet-reader","initial")
+            reader_secret = new_secret()
+            db.execute("UPDATE accounts SET mfa_secret=?,mfa_confirmed=1 WHERE id=?", (reader_secret, reader))
+            db.commit()
+            reader_token=login_session(db,"subnet-reader","initial",mfa_code=code_at(reader_secret,time.time()))
             create_user(db,admin,"subnet-no-access","initial")
             none_token=login_session(db,"subnet-no-access","initial")
         parent={"id":"http-office","kind":"container","name":"Fictional office","cidr":"10.85.0.0/16"}
@@ -333,7 +336,10 @@ class SessionHttpTests(unittest.TestCase):
                                   self.token, csrf)
             self.assertEqual(status, 200)
         with sqlite3.connect(self.path) as db:
-            reader_token = login_session(db, "reader", "initial")
+            reader_secret = new_secret()
+            db.execute("UPDATE accounts SET mfa_secret=?,mfa_confirmed=1 WHERE id=?", (reader_secret, user_id))
+            db.commit()
+            reader_token = login_session(db, "reader", "initial", mfa_code=code_at(reader_secret, time.time()))
         status, raw, _ = self.request("/api/inventory/state", COOKIE_NAME + "=" + reader_token)
         self.assertEqual(status, 200)
         snapshot = json.loads(raw)
