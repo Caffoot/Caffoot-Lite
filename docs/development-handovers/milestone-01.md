@@ -26,7 +26,7 @@ No real installation database, private export, production email delivery or depl
 
 ## Review Boundary
 
-Batches 01 and 02 are accepted. [Batch 03 is authorised](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6792588383), starting at `ac2f2c473e9dc054dd06e7ab508e1dac5d40b992`. Stop after Batch 03 for review. This remains an intermediate build; Batch 04, merge, protected `main` changes and publication are not authorised.
+Batches 01–03 are accepted at `632fb5aebc7feb1415d0cfb6eb1c8e40258806b1`. Only the [corrected Batch 04](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6790324888) is [authorised](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6793430504). Preserve the actual approved v2.1 interface and stop for explicit owner approval if implementation requires existing layout changes beyond the agreed additions. Stop after Batch 04 for owner review. This remains an intermediate build; Batch 05, merge, protected `main` changes and publication are not authorised.
 
 ## Batch 02
 
@@ -75,3 +75,11 @@ Final pushed SHA and final-commit Actions results are recorded in [issue #351](h
 Two tests need a private genuine v1.3.3 export; the third local skip is the opt-in Docker test, covered separately by Actions. No real installation data, complete private backup/restore rehearsal or production SMTP delivery was used. The existing TOTP verifier's adjacent-step allowance and lack of a replay cache are unchanged. Pending previews require renewal after restart. The approved sign-in/My Account/Users integration remains Batch 04 and is required before deployment. No Batch 03 implementation blocker is known.
 
 **Stopped after Batch 03 for review. No Batch 04, merge, tag, deployment or publication.**
+
+## Batch 04 — Before Implementation
+
+Starting application SHA: `632fb5aebc7feb1415d0cfb6eb1c8e40258806b1`. The initial missing-reference blocker is resolved: both owner-supplied standalone HTML attachments match the approved sizes and SHA-256 hashes. The [comparison report and desktop/mobile evidence](evidence/milestone-01-batch-04-comparison/Report.md) compare both demonstrations with the current HTTPS/SQLite Users screen and exact pinned source.
+
+The comparison identifies an additive route within the existing layout: retain the original Overview, list, form and full account-management dialog, add Manage Roles fourth, and extend the existing section-permission cards with inheritance/override/effective information. Do not copy the prototypes' shell, reordered tabs, replacement KPI categories, modal panels/footer, table-based permission layout, fictional data or local mutation handlers. No required alteration to an existing approved layout has been identified; the explicit owner-approval gate still applies if implementation reveals one.
+
+Chromium captured the existing four Users views against the pinned source at desktop/mobile widths, plus editable non-owner account forms and lifecycle controls. Both prototypes rendered six views at each width: 24 captures, no JavaScript page errors or document overflow in the checked views. The report distinguishes different demonstration data from layout evidence. Integration, full keyboard/accessibility and regression tests remain outstanding. No runtime functions changed at this comparison-only checkpoint, so the Function Index remains unchanged.
