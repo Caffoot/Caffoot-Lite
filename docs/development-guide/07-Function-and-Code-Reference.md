@@ -101,6 +101,13 @@ The [planning/capacity follow-up](Issue-329-Planning-and-Capacity.md) adds `calc
 
 ## Role And MFA Interface Integration
 
+`nextRenderAccount` renders the session's own `assigned_roles` names/enabled
+flags, including disabled assignments, separately from `is_admin`.
+`isBlockedAction` checks rack actions directly against Racks Edit, including
+unassignment and suggested mounting. `applyAllowedControls` preserves vertical
+accessory and empty-U representations as non-interactive content for readers
+and removes drag affordances without changing stored records or data visibility.
+
 For independent schema-upgrade and complete-directory restoration checks, see
 [`test_upgrade_restore.py`](../../tests/test_upgrade_restore.py) and its
 [fictional fixture](../../tests/fixtures/upgrade_restore.py). These test helpers

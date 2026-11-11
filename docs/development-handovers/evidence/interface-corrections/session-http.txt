@@ -1,0 +1,160 @@
+test_account_management_and_password_change_http (test_session_http.SessionHttpTests.test_account_management_and_password_change_http) ... 127.0.0.1 - - [11/Nov/2026 19:43:17] "POST /api/users/create HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:17] "POST /api/users/roles/preview HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:17] "POST /api/users/roles/confirm HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:17] "POST /api/users/roles/preview HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:17] "POST /api/users/roles/confirm HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:17] "POST /api/users/delete HTTP/1.1" 403 -
+127.0.0.1 - - [11/Nov/2026 19:43:17] "POST /api/users/delete HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:17] "POST /api/account/password HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:17] "GET /api/session HTTP/1.1" 401 -
+ok
+test_admin_inventory_page_contains_users_and_migration_navigation (test_session_http.SessionHttpTests.test_admin_inventory_page_contains_users_and_migration_navigation) ... 127.0.0.1 - - [11/Nov/2026 19:43:18] "GET /inventory HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:18] "GET /interface/screens/navigation.html HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:18] "GET /interface/screens/navigation.html HTTP/1.1" 401 -
+127.0.0.1 - - [11/Nov/2026 19:43:18] "GET /interface/screens/settings.html HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:18] "GET /interface/screens/settings.html HTTP/1.1" 401 -
+127.0.0.1 - - [11/Nov/2026 19:43:18] "GET /interface/screens/migration.html HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:18] "GET /interface/screens/migration.html HTTP/1.1" 401 -
+ok
+test_anonymous_request_is_rejected (test_session_http.SessionHttpTests.test_anonymous_request_is_rejected) ... 127.0.0.1 - - [11/Nov/2026 19:43:19] "GET /api/session HTTP/1.1" 401 -
+ok
+test_device_create_edit_delete_through_authenticated_http (test_session_http.SessionHttpTests.test_device_create_edit_delete_through_authenticated_http) ... 127.0.0.1 - - [11/Nov/2026 19:43:20] "POST /api/devices/create HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:20] "POST /api/devices/edit/start HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:20] "POST /api/devices/edit/save HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:20] "POST /api/devices/edit/start HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:20] "POST /api/devices/delete HTTP/1.1" 200 -
+ok
+test_device_edit_reservation_conflict_cancel_and_expiry (test_session_http.SessionHttpTests.test_device_edit_reservation_conflict_cancel_and_expiry) ... 127.0.0.1 - - [11/Nov/2026 19:43:21] "POST /api/users/create HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:21] "POST /api/users/roles/preview HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:21] "POST /api/users/roles/confirm HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:21] "POST /api/devices/edit/start HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:21] "POST /api/devices/edit/start HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:21] "POST /api/devices/edit/start HTTP/1.1" 400 -
+127.0.0.1 - - [11/Nov/2026 19:43:21] "POST /api/devices/edit/start HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:21] "POST /api/devices/edit/cancel HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:21] "POST /api/devices/edit/start HTTP/1.1" 400 -
+127.0.0.1 - - [11/Nov/2026 19:43:21] "POST /api/devices/edit/cancel HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:21] "POST /api/devices/edit/start HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:21] "POST /api/devices/edit/start HTTP/1.1" 200 -
+ok
+test_device_editor_name_visible_and_competing_edit_still_refused (test_session_http.SessionHttpTests.test_device_editor_name_visible_and_competing_edit_still_refused) ... 127.0.0.1 - - [11/Nov/2026 19:43:22] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:22] "POST /api/devices/edit/start HTTP/1.1" 400 -
+127.0.0.1 - - [11/Nov/2026 19:43:22] "GET /api/inventory/state HTTP/1.1" 200 -
+ok
+test_inventory_assets_are_served_from_existing_published_files (test_session_http.SessionHttpTests.test_inventory_assets_are_served_from_existing_published_files) ... 127.0.0.1 - - [11/Nov/2026 19:43:23] "GET /assets/favicon.ico HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:23] "GET /assets/apple-touch-icon.png HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:23] "GET /assets/caffoot-icon-1024.png HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:23] "GET /assets/caffoot-logo-256.png HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:23] "GET /assets/qrcode.min.js HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:23] "GET /assets/tailwind.css HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:23] "GET /assets/not-in-application.png HTTP/1.1" 404 -
+ok
+test_inventory_requires_authenticated_inventory_access (test_session_http.SessionHttpTests.test_inventory_requires_authenticated_inventory_access) ... 127.0.0.1 - - [11/Nov/2026 19:43:23] "GET /inventory HTTP/1.1" 401 -
+ok
+test_inventory_snapshot_is_sqlite_owned_and_permission_filtered (test_session_http.SessionHttpTests.test_inventory_snapshot_is_sqlite_owned_and_permission_filtered) ... 127.0.0.1 - - [11/Nov/2026 19:43:24] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:24] "POST /api/users/create HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:24] "POST /api/users/roles/preview HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:24] "POST /api/users/roles/confirm HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:24] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:24] "GET /api/inventory/state HTTP/1.1" 401 -
+ok
+test_ipam_editor_does_not_receive_hidden_device_revisions (test_session_http.SessionHttpTests.test_ipam_editor_does_not_receive_hidden_device_revisions) ... 127.0.0.1 - - [11/Nov/2026 19:43:25] "POST /api/users/create HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:25] "POST /api/users/roles/preview HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:25] "POST /api/users/roles/confirm HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:25] "GET /api/inventory/state HTTP/1.1" 200 -
+ok
+test_ipam_notes_on_device_primary_ip_http (test_session_http.SessionHttpTests.test_ipam_notes_on_device_primary_ip_http) ... 127.0.0.1 - - [11/Nov/2026 19:43:25] "POST /api/ipam/allocation/save HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:25] "POST /api/ipam/allocation/save HTTP/1.1" 400 -
+ok
+test_legacy_device_vlan_metadata_survives_reserved_save_http (test_session_http.SessionHttpTests.test_legacy_device_vlan_metadata_survives_reserved_save_http) ... 127.0.0.1 - - [11/Nov/2026 19:43:26] "POST /api/devices/create HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:26] "POST /api/devices/edit/start HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:26] "POST /api/devices/edit/save HTTP/1.1" 200 -
+ok
+test_linked_shelf_removal_http_auth_permissions_and_atomic_result (test_session_http.SessionHttpTests.test_linked_shelf_removal_http_auth_permissions_and_atomic_result) ... 127.0.0.1 - - [11/Nov/2026 19:43:27] "POST /api/inventory/rack-shelves/remove HTTP/1.1" 403 -
+127.0.0.1 - - [11/Nov/2026 19:43:27] "POST /api/inventory/rack-shelves/remove HTTP/1.1" 403 -
+127.0.0.1 - - [11/Nov/2026 19:43:27] "POST /api/inventory/rack-shelves/remove HTTP/1.1" 403 -
+127.0.0.1 - - [11/Nov/2026 19:43:27] "POST /api/inventory/rack-shelves/remove HTTP/1.1" 400 -
+127.0.0.1 - - [11/Nov/2026 19:43:27] "POST /api/inventory/rack-shelves/remove HTTP/1.1" 400 -
+127.0.0.1 - - [11/Nov/2026 19:43:27] "POST /api/inventory/rack-shelves/remove HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:27] "POST /api/inventory/rack-shelves/remove HTTP/1.1" 403 -
+ok
+test_packaged_account_resources_require_authentication_without_inventory_data (test_session_http.SessionHttpTests.test_packaged_account_resources_require_authentication_without_inventory_data) ... 127.0.0.1 - - [11/Nov/2026 19:43:28] "GET /interface/application.js HTTP/1.1" 401 -
+127.0.0.1 - - [11/Nov/2026 19:43:28] "GET /interface/application.js HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:28] "GET /interface/application.js HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:28] "GET /interface/screens/dashboard.html HTTP/1.1" 401 -
+127.0.0.1 - - [11/Nov/2026 19:43:28] "GET /interface/screens/dashboard.html HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:28] "GET /interface/screens/dashboard.html HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:28] "GET /interface/styles/device-details.css HTTP/1.1" 401 -
+127.0.0.1 - - [11/Nov/2026 19:43:28] "GET /interface/styles/device-details.css HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:28] "GET /interface/styles/device-details.css HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:28] "GET /interface/../backend/server.py HTTP/1.1" 404 -
+127.0.0.1 - - [11/Nov/2026 19:43:28] "GET /interface/design-sources.json HTTP/1.1" 404 -
+127.0.0.1 - - [11/Nov/2026 19:43:28] "GET /interface/screens/not-packaged.html HTTP/1.1" 404 -
+127.0.0.1 - - [11/Nov/2026 19:43:28] "GET /interface/sign-in.js HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:28] "GET /interface/styles/sign-in.css HTTP/1.1" 200 -
+ok
+test_published_device_notes_exceed_login_request_limit (test_session_http.SessionHttpTests.test_published_device_notes_exceed_login_request_limit) ... 127.0.0.1 - - [11/Nov/2026 19:43:28] "POST /api/devices/create HTTP/1.1" 200 -
+ok
+test_same_tab_print_direct_entry_and_reload_keep_inventory_security (test_session_http.SessionHttpTests.test_same_tab_print_direct_entry_and_reload_keep_inventory_security) ... 127.0.0.1 - - [11/Nov/2026 19:43:29] "GET /inventory HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:29] "GET /inventory?rack-print=same-tab HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:29] "GET /inventory?rack-print=same-tab HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:29] "GET /inventory?rack-print=same-tab HTTP/1.1" 401 -
+127.0.0.1 - - [11/Nov/2026 19:43:29] "GET /inventory?rack-print=same-tab HTTP/1.1" 403 -
+127.0.0.1 - - [11/Nov/2026 19:43:29] "GET /inventory/ HTTP/1.1" 404 -
+127.0.0.1 - - [11/Nov/2026 19:43:29] "GET /inventory?rack-print=other HTTP/1.1" 404 -
+127.0.0.1 - - [11/Nov/2026 19:43:29] "GET /inventory?other=same-tab HTTP/1.1" 404 -
+127.0.0.1 - - [11/Nov/2026 19:43:29] "GET /inventory?rack-print=same-tab&extra=1 HTTP/1.1" 404 -
+127.0.0.1 - - [11/Nov/2026 19:43:29] "GET /interface/application.js?rack-print=same-tab HTTP/1.1" 404 -
+127.0.0.1 - - [11/Nov/2026 19:43:29] "GET /inventory HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:29] "GET /inventory?rack-print=same-tab HTTP/1.1" 200 -
+ok
+test_session_describes_only_own_assigned_roles_separately_from_administrator (test_session_http.SessionHttpTests.test_session_describes_only_own_assigned_roles_separately_from_administrator) ... 127.0.0.1 - - [11/Nov/2026 19:43:30] "GET /api/session HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:30] "GET /api/session HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:30] "GET /api/session HTTP/1.1" 401 -
+ok
+test_software_service_name_boundary_through_settings_api (test_session_http.SessionHttpTests.test_software_service_name_boundary_through_settings_api) ... 127.0.0.1 - - [11/Nov/2026 19:43:31] "POST /api/inventory/settings/save HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:31] "POST /api/inventory/settings/save HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:31] "POST /api/inventory/settings/save HTTP/1.1" 400 -
+127.0.0.1 - - [11/Nov/2026 19:43:31] "POST /api/inventory/settings/save HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:31] "POST /api/inventory/settings/save HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:31] "POST /api/inventory/settings/save HTTP/1.1" 400 -
+ok
+test_staff_account_route_and_mfa_eligibility_preserve_data_boundaries (test_session_http.SessionHttpTests.test_staff_account_route_and_mfa_eligibility_preserve_data_boundaries) ... 127.0.0.1 - - [11/Nov/2026 19:43:32] "GET /account HTTP/1.1" 401 -
+127.0.0.1 - - [11/Nov/2026 19:43:32] "GET /account HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:32] "GET /api/session HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:32] "GET /api/session HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:32] "GET /inventory HTTP/1.1" 403 -
+127.0.0.1 - - [11/Nov/2026 19:43:32] "GET /inventory?rack-print=same-tab HTTP/1.1" 403 -
+127.0.0.1 - - [11/Nov/2026 19:43:32] "GET /api/inventory/state HTTP/1.1" 403 -
+127.0.0.1 - - [11/Nov/2026 19:43:32] "GET /api/users HTTP/1.1" 403 -
+127.0.0.1 - - [11/Nov/2026 19:43:32] "GET /api/settings/email HTTP/1.1" 403 -
+127.0.0.1 - - [11/Nov/2026 19:43:32] "GET /api/inventory/devices HTTP/1.1" 403 -
+127.0.0.1 - - [11/Nov/2026 19:43:32] "GET /api/inventory/ipam HTTP/1.1" 403 -
+127.0.0.1 - - [11/Nov/2026 19:43:32] "GET /api/inventory/racks HTTP/1.1" 403 -
+127.0.0.1 - - [11/Nov/2026 19:43:32] "GET /api/inventory/sections HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:32] "GET /api/account/profile HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:32] "GET /api/session HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:32] "GET /account HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:32] "GET /inventory HTTP/1.1" 403 -
+ok
+test_subnet_first_batch_permissions_atomicity_and_visible_count_http (test_session_http.SessionHttpTests.test_subnet_first_batch_permissions_atomicity_and_visible_count_http) ... 127.0.0.1 - - [11/Nov/2026 19:43:33] "POST /api/ipam/subnets/save HTTP/1.1" 403 -
+127.0.0.1 - - [11/Nov/2026 19:43:33] "POST /api/ipam/subnets/save HTTP/1.1" 403 -
+127.0.0.1 - - [11/Nov/2026 19:43:33] "POST /api/ipam/subnets/save HTTP/1.1" 403 -
+127.0.0.1 - - [11/Nov/2026 19:43:33] "POST /api/ipam/subnets/save HTTP/1.1" 403 -
+127.0.0.1 - - [11/Nov/2026 19:43:33] "POST /api/ipam/subnets/save HTTP/1.1" 400 -
+127.0.0.1 - - [11/Nov/2026 19:43:33] "POST /api/ipam/subnets/save HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:33] "GET /api/inventory/state HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:33] "GET /api/inventory/state HTTP/1.1" 200 -
+ok
+test_user_mfa_start_supplies_authenticator_qr_uri (test_session_http.SessionHttpTests.test_user_mfa_start_supplies_authenticator_qr_uri) ... 127.0.0.1 - - [11/Nov/2026 19:43:34] "POST /api/users/create HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:34] "POST /api/account/mfa/start HTTP/1.1" 200 -
+ok
+test_valid_session_and_no_inventory_exposure (test_session_http.SessionHttpTests.test_valid_session_and_no_inventory_exposure) ... 127.0.0.1 - - [11/Nov/2026 19:43:35] "GET /api/session HTTP/1.1" 200 -
+127.0.0.1 - - [11/Nov/2026 19:43:35] "GET /api/inventory HTTP/1.1" 404 -
+127.0.0.1 - - [11/Nov/2026 19:43:35] "GET /health HTTP/1.1" 200 -
+ok
+
+----------------------------------------------------------------------
+Ran 22 tests in 18.835s
+
+OK

@@ -568,6 +568,31 @@ class SessionHttpTests(unittest.TestCase):
         self.assertEqual(self.request("/api/inventory")[0], 404)
         self.assertEqual(self.request("/health")[0], 200)
 
+    def test_session_describes_only_own_assigned_roles_separately_from_administrator(self):
+        with sqlite3.connect(self.path) as db:
+            staff = create_user(db, 1, "role-display-staff", "password")
+            for name, enabled in (("Support <Team>", 1), ("Retired Support", 0)):
+                role = db.execute("INSERT INTO roles(role_key,name,enabled) VALUES(?,?,?)",
+                                  ("display_" + str(enabled), name, enabled)).lastrowid
+                db.execute("INSERT INTO account_roles VALUES(1,?)", (role,))
+                if not enabled:
+                    db.execute("INSERT INTO account_roles VALUES(?,?)", (staff, role))
+            db.commit()
+            token = login_session(db, "role-display-staff", "password")
+        for bearer, administrator, expected in (
+            (self.token, True, [{"name": "Staff Member", "enabled": True},
+                                {"name": "Support <Team>", "enabled": True},
+                                {"name": "Retired Support", "enabled": False}]),
+            (token, False, [{"name": "Staff Member", "enabled": True},
+                            {"name": "Retired Support", "enabled": False}]),
+        ):
+            status, body, _ = self.request("/api/session", COOKIE_NAME + "=" + bearer)
+            self.assertEqual(status, 200)
+            session = json.loads(body)
+            self.assertEqual(session["assigned_roles"], expected)
+            self.assertEqual(session["is_admin"], administrator)
+        self.assertEqual(self.request("/api/session")[0], 401)
+
 
     def test_same_tab_print_direct_entry_and_reload_keep_inventory_security(self):
         cookie = COOKIE_NAME + "=" + self.token

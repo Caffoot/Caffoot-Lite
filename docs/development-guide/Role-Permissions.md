@@ -77,6 +77,17 @@ After commit, `notifications` reports SMTP configuration, active verified-accoun
 
 ## Users And My Account Interface
 
+My Account shows all of the signed-in account's assigned roles, including Staff
+Member and disabled assignments labelled **Disabled**. Administrator status is
+shown separately. The session response supplies only the account's own role
+names and enabled flags for this display; existing access and MFA rules apply.
+
+Rack editing, placement, movement and removal controls require Racks Edit.
+Readers retain the existing rack/accessory presentation without those controls;
+vertical accessories and empty U positions remain visible as read-only content.
+Devices permissions still determine which mounted device records are supplied.
+No rack-display projection or change to inventory API permissions is introduced.
+
 The existing Overview retains its four account totals, two charts and access guide. User List retains five columns, search/status/MFA filters and its mobile Manage controls. The Add User form adds Confirm Initial Password alongside the existing optional personal details. The backend assigns Staff Member without inventory grants.
 
 Manage Roles is the fourth tab, after Overview, User List and Add User. Create and Manage forms use the real catalogue, stable generated custom keys and current grants. Staff Member is protected. Role rename, grants, enable/disable and delete all require preview and explicit confirmation. New roles start enabled and unassigned; the status control is available after creation.

@@ -8,6 +8,11 @@
 
 ## On The Milestone Development Branch
 
+**My Account** displays all your assigned roles, including **Staff Member**.
+Disabled assigned roles are labelled **Disabled** and do not grant access.
+Administrator status appears separately from role memberships. This display
+does not change your permissions or MFA requirements.
+
 These additions are for review, not a published release. Existing Overview, User List and Add User tabs remain, with Manage Roles fourth. Administrators can create/manage custom roles, then assign multiple roles in Manage User. Staff Member is automatic and protected; Administrator remains a separate account control.
 
 Each section card shows inherited and effective access. Choose **Inherit** to use role grants, **No Access** to block them deliberately, or **Read/Edit** for an individual override. Each membership or permission change opens **Review Access Change**. Read the before/after access, MFA and session effects, then choose **Confirm Change**. Cancel saves nothing. If the preview becomes outdated, review the refreshed consequences and confirm again. Role creation, edits, disabling and deletion follow the same review process. Personal details, account activation, Administrator controls and deletion remain in Manage User.

@@ -431,6 +431,8 @@ class Handler(BaseHTTPRequestHandler):
                 self.respond(200, {
                     "username": account[0],
                     "is_admin": bool(account[1]),
+                    "assigned_roles": [{"name": role["name"], "enabled": role["enabled"]}
+                                       for role in account_access_details(connection, account_id)["roles"]],
                     "mfa_enrolled": bool(account[2]),
                     "mfa_removal_eligible": bool(account[2]) and not evaluate_role_policy(
                         connection, account_id).mfa_mandatory,

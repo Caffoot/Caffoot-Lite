@@ -8959,6 +8959,7 @@ void (async () => {
     if (['open-device-modal','duplicate-device','duplicate-device-from-details'].includes(action))
       return !(editPermissions.Devices && editPermissions.IPAM);
     if (action === 'open-subnet-modal'||action==='open-multiple-subnets') return !editPermissions.IPAM;
+    if (actionCanEditRack.has(action)) return !editPermissions.Racks;
     if (action === 'check-inventory-safety')
       return !['Devices','IPAM','Racks'].every(section => permissions[section]);
     if (action === 'apply-inventory-integrity-repairs')
@@ -8981,6 +8982,27 @@ void (async () => {
   function applyAllowedControls() {
     for(const root of [document.getElementById('sidebar'), document.getElementById('main-content'), document.getElementById('modal-content')]){
       if(!root) continue;
+      if(!editPermissions.Racks){
+        // Keep equipment and empty U positions visible without editing affordances.
+        root.querySelectorAll('button[data-vertical-accessory],button[data-action="place-rack-item"]').forEach(button=>{
+          const display=document.createElement('span');
+          for(const attribute of button.attributes){
+            if(!['type','data-action','draggable','aria-label'].includes(attribute.name))
+              display.setAttribute(attribute.name,attribute.value);
+          }
+          display.innerHTML=button.innerHTML;
+          display.style.cursor='default';
+          if(button.dataset.action==='place-rack-item'){
+            display.setAttribute('aria-label','Empty U'+button.dataset.u);
+            display.lastElementChild.textContent='Empty';
+          }else display.setAttribute('aria-label',button.getAttribute('aria-label').replace(/^Edit /,''));
+          button.replaceWith(display);
+        });
+        root.querySelectorAll('[data-rack-device],[data-rack-accessory]').forEach(item=>{
+          item.draggable=false;
+          item.style.cursor='default';
+        });
+      }
       root.querySelectorAll('button').forEach(button=>{
         const blocked=isBlockedAction(button.dataset.action || '',button);
         const unsupportedSubmit=button.type==='submit' && button.form && !(
@@ -9736,6 +9758,7 @@ void (async () => {
 
   // Self-service account controls follow the established Users card styling.
   let sessionMfaEnrolled=false;
+  let sessionAssignedRoles=[];
   let sessionMfaRemovalEligible=false;
   function renderAccountSections(){
     const card='rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 p-5 space-y-3';
@@ -9780,7 +9803,9 @@ void (async () => {
     const username=escapeHtml(signedInUsername||'');
     return accountMarkup
       .replaceAll('{{C_USERNAME}}',username)
-      .replaceAll('{{C_ROLE}}',sessionIsAdmin?'Administrator':'User')
+      .replaceAll('{{C_ROLE}}','<span aria-label="Assigned Roles">'+sessionAssignedRoles.map(role=>
+        escapeHtml(role.name)+(role.enabled?'':' (Disabled)')).join(', ')+'</span>'+
+        (sessionIsAdmin?'<br><span aria-label="Administrator Status">Administrator</span>':''))
       .replaceAll('{{C_MFA}}',sessionMfaEnrolled?'Enabled':'Not enrolled')
       .replace('<!--CAFFOOT_MFA_PANEL-->',renderAccountMfaPanel());
   };
@@ -10626,6 +10651,7 @@ void (async () => {
     const session=await sessionResponse.json();
     csrfToken=session.csrf_token;
     sessionIsAdmin=!!session.is_admin;
+    sessionAssignedRoles=session.assigned_roles||[];
     window.nextSessionIsAdmin=sessionIsAdmin;
     signedInUsername=session.username;
     sessionMfaEnrolled=!!session.mfa_enrolled;

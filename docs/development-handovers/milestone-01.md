@@ -1,6 +1,28 @@
 # Milestone 01 Development Handover
 
-## Current Checkpoint — Batch 05 Verification
+## Final Interface Corrections
+
+Continued from the existing uncommitted corrections on
+`7daa3555fe5d7c6ea90a4a79cde541ce487abbe9`, under
+[owner checkpoint 6805479377](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6805479377)
+and the owner's subsequent clarification: preserve existing Devices visibility;
+do not add a rack-display projection or change rack API permissions.
+
+My Account now displays Staff Member, additional and disabled assigned roles,
+with Administrator status separate. The rack action filter hides unavailable
+editing/removal actions, including unassignment and suggested mounting; readers
+retain vertical accessories and empty-U geometry as non-interactive content.
+Racks Edit controls, backend safeguards and all pinned HTML/CSS remain intact.
+
+See the [focused correction evidence](evidence/interface-corrections/Report.md)
+for actual results, failures, screenshots and the changed-file inventory. The
+Function Index retains 733 definitions with updated declaration locations.
+PR #358 remains draft. The earlier successful PR-merge browser checks at
+[run 43066565241](https://github.com/Caffoot/Caffoot-Lite/actions/runs/43066565241)
+remain earlier-source evidence; final-head reconciliation and verification of
+this new source are still required. No Stage 1 acceptance, merge or publication.
+
+## Batch 05 Verification Checkpoint
 
 The owner's 11 November 2026 resumption instruction authorises only the existing
 [Batch 05 specification](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6790171609),

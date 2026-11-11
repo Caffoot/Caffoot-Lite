@@ -1,0 +1,4 @@
+PASS: My Account shows Staff Member, additional/disabled roles and separate Administrator status; Staff security unchanged
+PASS: rack-reader existing inventory visibility, controls and actual save/delete/placement permission boundaries
+PASS: mixed-reader existing inventory visibility, controls and actual save/delete/placement permission boundaries
+PASS: rack-editor existing inventory visibility, controls and actual save/delete/placement permission boundaries
