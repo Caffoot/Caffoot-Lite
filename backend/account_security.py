@@ -1,7 +1,7 @@
-"""Password changes and authenticator enrolment for existing accounts.
+"""Password changes and MFA enrolment/removal for existing accounts.
 
-The HTTP server checks authentication, request origin and session-bound
-request proof before calling these operations."""
+The HTTP server checks origin and request limits. Signed-in operations use
+session-bound request proof; pre-login enrolment rechecks the password."""
 from backend.accounts import hash_password, verify_password
 from backend.authentication import verify_active_password
 from backend.audit_events import record_actor_event
