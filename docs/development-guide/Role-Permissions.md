@@ -1,6 +1,6 @@
 # Shared Roles And Account Permissions
 
-This is work on `milestone-1` under [Batch 01](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6790154284) and [Batch 02 in issue #351](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6790154888). The published release remains v2.1. This development branch is **not ready to deploy**: the approved sign-in, My Account and Users interface integration remains later work. Batch 02 adds backend operations only.
+This is work on `milestone-1` under [Batch 01](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6790154284) and [Batch 02 in issue #351](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6790154888). The published release remains v2.1. This development branch is **not ready to deploy**: the approved sign-in, My Account and Users interface integration remains later work. Batches 02 and 03 add backend operations only.
 
 ## Database Upgrade
 
@@ -20,9 +20,7 @@ Protected Administrator remains a separate account flag. It retains its existing
 
 MFA is required by any enabled additional role (even one with no grants), any effective wider Read **or** Edit grant, or independent Administrator status. Once enrolled voluntarily, an account must continue supplying authenticator codes even if its permissions are removed. Configured permissions are available to administrator account inspection while access remains blocked pending enrolment. Sign-in, live sessions, recovery and section access all use the same policy.
 
-The existing Users interface and request shape are preserved. Its No Access control still sends `null`; the server adapter stores that deliberate choice as `deny`. The internal `set_permission(..., None)` restores Inherit by deleting the override. The existing Users response keeps its positive `permissions` map, now resolved from roles and overrides; the later approved role-management interface will distinguish inherited, configured and exercisable access explicitly. No role-management API is introduced here.
-
-Existing Edit grants still require completed MFA before they can be assigned through the current account controls. A Read grant may be configured while enrolment is pending, but it cannot give an unenrolled account an application session or inventory access. Previously unenrolled legacy readers receive an enrolment-required response after a valid password, without any application session. The password-verified pre-login routes described below complete the backend transition. Their interface integration remains later work; do not deploy this intermediate build.
+The existing interface files remain unchanged. The former direct `POST /api/users/permission` is retired with HTTP 410: permission changes now require the preview and confirmation protocol below. The intermediate branch must not be deployed before Batch 04 connects the approved controls. Independent administrator promotion still requires confirmed MFA; role grants and individual Read/Edit may be configured before enrolment, with access blocked by the shared policy until enrolment completes.
 
 ## Existing-Account MFA Operations
 
@@ -47,3 +45,27 @@ First-administrator setup, existing voluntary enrolment and promotion's already-
 Use only disposable, fictional databases for development checks. Before a future authorised deployment, take a consistent private backup of the **entire `/data` directory**, including SQLite, SMTP configuration, the email-proof secret and TLS/private files, and retain the matching v2.1 application image. Rehearse restoration on an isolated copy. A v1.3.3 JSON inventory export cannot restore accounts or these private files.
 
 Rolling back requires restoring that entire matching v2.1 directory and application image together. Never run the v2.1 application against a schema-11 database. See [Database](02-Database.md) and [Account Recovery](Account-Recovery.md).
+
+## Administrator Role Operations
+
+[Batch 03](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6790155451) adds administrator-only `POST /api/users/roles/preview` and `POST /api/users/roles/confirm`. Both require the configured Origin, JSON (at most 4 KiB), a live MFA-confirmed administrator session and its CSRF header. `GET /api/users` retains existing fields and adds the role catalogue and per-account `accessDetails` for the later approved interface integration.
+
+Preview accepts exactly `{"action": action}`. Confirmation accepts exactly `{"action": action, "proof": proof}`. The action fields are:
+
+| Type | Additional required fields |
+| --- | --- |
+| `role.create` | `roleKey`, `name`, `grants` |
+| `role.update` | `roleId`, `name`, `enabled`, `grants` |
+| `role.delete` | `roleId` |
+| `membership.assign`, `membership.remove` | `roleId`, `userId` |
+| `override.set` | `userId`, `section`, `level` |
+
+`grants` maps registered sections to `read` or `edit`; omitted sections have no grant. `role.update` supplies the complete proposed definition, allowing rename, grant editing and enable/disable together. Keys remain stable through rename. Custom keys use 1–80 lowercase letters, digits or underscores, starting with a letter. Names use 1–80 printable characters with no surrounding spaces. New roles are unassigned. Overrides use `null` for Inherit, `deny` for No Access, `read` or `edit`. Unknown fields, sections, identifiers, baseline changes and unchanged proposals are rejected. Administrator status remains an independent operation with its existing safeguards.
+
+Preview returns the exact action, affected account list/count, each account's before/after enabled roles and grants, highest inheritance, explicit choice, effective rights, retained permissions, MFA requirement/pending status, live session count and revocation consequences. It contains no passwords, authenticator secrets, email addresses or session identifiers. A five-minute signed proof binds the session, actor, exact action and current dependencies. Temporary preview writes are rolled back.
+
+Confirmation repeats authorisation under `BEGIN IMMEDIATE`, recomputes consequences and verifies the proof. Stale, forged, expired, replayed or mismatched confirmation returns HTTP 409 with a new `preview`, without saving anything. If the target/action is no longer valid, the refreshed preview has `available: false` and `proof: null`; refresh the account/role list. History retains a non-secret confirmation reference to prevent reuse, including after a change is reversed.
+
+Successful confirmation atomically saves the change, attributable history and affected session/email-proof revocation. Membership assignment/removal always revokes the target's sessions. Other role/override changes revoke sessions only where effective rights or MFA requirements change. A rename or a grant hidden by an override does not force a sign-out. Unrelated accounts retain sessions. Existing enrolled MFA is never erased by role changes. Role deletion preserves its definition in history.
+
+After commit, `notifications` reports SMTP configuration, active verified-account eligibility, distinct recipient count, queue admissions, coalesced notices and unsuccessful queue admissions. It includes existing Settings → Email/SMTP/address-verification guidance for Batch 04. Eligible administrator recipients share the existing generic notice. Missing SMTP, ineligible recipients, queue failure and mail exceptions cannot undo access changes. Queue admission never establishes delivery; no delivery log or retry service is added.

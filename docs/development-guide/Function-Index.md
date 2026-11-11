@@ -6,7 +6,7 @@ Scope: named JavaScript declarations/assignments in the three application script
 
 The account hydration/photo functions now have purpose-based callable bindings matching their function names: `hydrateAccount` and `removeAccountPhoto`. The immutable design manifest retains its historical integration-entry names; those metadata names are not the runtime's current function map. Pinned source paths, revisions and hashes are unchanged.
 
-**Recorded definitions: 704.** Regenerate after changing declarations or their lines. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
+**Recorded definitions: 720.** Regenerate after changing declarations or their lines. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
 
 ## interface/loader.js
 
@@ -551,7 +551,8 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | [`confirm_email_proof`](../../backend/account_email.py#L141) | 141 |
 | [`security_recipients`](../../backend/account_email.py#L200) | 200 |
 | [`notify_security_change`](../../backend/account_email.py#L215) | 215 |
-| [`record_blocked_sign_in`](../../backend/account_email.py#L236) | 236 |
+| [`role_change_notifications`](../../backend/account_email.py#L241) | 241 |
+| [`record_blocked_sign_in`](../../backend/account_email.py#L270) | 270 |
 
 ## backend/account_security.py
 
@@ -866,6 +867,25 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | [`evaluate_role_policy`](../../backend/role_policy.py#L32) | 32 |
 | [`assign_staff_member`](../../backend/role_policy.py#L74) | 74 |
 
+## backend/roles.py
+
+| Function | Line |
+| --- | ---: |
+| [`_json`](../../backend/roles.py#L22) | 22 |
+| [`_validate_action`](../../backend/roles.py#L26) | 26 |
+| [`_require_actor`](../../backend/roles.py#L66) | 66 |
+| [`role_catalogue`](../../backend/roles.py#L72) | 72 |
+| [`account_access_details`](../../backend/roles.py#L83) | 83 |
+| [`_action_targets`](../../backend/roles.py#L112) | 112 |
+| [`_apply_values`](../../backend/roles.py#L131) | 131 |
+| [`_security_snapshot`](../../backend/roles.py#L163) | 163 |
+| [`_preview_impact`](../../backend/roles.py#L192) | 192 |
+| [`_confirmation_signature`](../../backend/roles.py#L226) | 226 |
+| [`_issue_preview`](../../backend/roles.py#L230) | 230 |
+| [`preview_role_change`](../../backend/roles.py#L238) | 238 |
+| [`confirm_role_change`](../../backend/roles.py#L250) | 250 |
+| [`_audit_role_value`](../../backend/roles.py#L300) | 300 |
+
 ## backend/schema.py
 
 | Function | Line |
@@ -878,18 +898,19 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 | Function | Line |
 | --- | ---: |
-| [`validate_public_origin`](../../backend/server.py#L77) | 77 |
-| [`connect`](../../backend/server.py#L95) | 95 |
-| [`initialise_database`](../../backend/server.py#L103) | 103 |
-| [`Handler.end_headers`](../../backend/server.py#L109) | 109 |
-| [`Handler.do_GET`](../../backend/server.py#L116) | 116 |
-| [`Handler.do_POST`](../../backend/server.py#L441) | 441 |
-| [`Handler.handle_user_mutation`](../../backend/server.py#L608) | 608 |
-| [`Handler.handle_account_email`](../../backend/server.py#L991) | 991 |
-| [`Handler.handle_profile_photo`](../../backend/server.py#L1071) | 1071 |
-| [`Handler.handle_import`](../../backend/server.py#L1102) | 1102 |
-| [`Handler.respond`](../../backend/server.py#L1178) | 1178 |
-| [`main`](../../backend/server.py#L1191) | 1191 |
+| [`validate_public_origin`](../../backend/server.py#L80) | 80 |
+| [`connect`](../../backend/server.py#L98) | 98 |
+| [`initialise_database`](../../backend/server.py#L106) | 106 |
+| [`Handler.end_headers`](../../backend/server.py#L112) | 112 |
+| [`Handler.do_GET`](../../backend/server.py#L119) | 119 |
+| [`Handler.do_POST`](../../backend/server.py#L445) | 445 |
+| [`Handler.handle_role_change`](../../backend/server.py#L616) | 616 |
+| [`Handler.handle_user_mutation`](../../backend/server.py#L658) | 658 |
+| [`Handler.handle_account_email`](../../backend/server.py#L1034) | 1034 |
+| [`Handler.handle_profile_photo`](../../backend/server.py#L1114) | 1114 |
+| [`Handler.handle_import`](../../backend/server.py#L1145) | 1145 |
+| [`Handler.respond`](../../backend/server.py#L1221) | 1221 |
+| [`main`](../../backend/server.py#L1234) | 1234 |
 
 ## backend/sessions.py
 

@@ -112,7 +112,7 @@ def attribute_event(connection, account_id, event):
 
 
 def record_actor_event(connection, actor_id, *, kind, action, label,
-                       reason, fields=(), before=None, after=None):
+                       reason, fields=(), before=None, after=None, confirmation_id=None):
     """Append one sanitised, attributable security/account event.
 
     Call only inside an already-authorised mutation transaction. Passing
@@ -131,6 +131,10 @@ def record_actor_event(connection, actor_id, *, kind, action, label,
         "at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "reason": str(reason), "changes": [change], "omitted": 0,
     }
+    if confirmation_id is not None:
+        # This public reference prevents a confirmed action being used twice.
+        # It contains no session or confirmation secret.
+        event["confirmationId"] = confirmation_id
     connection.execute(
         "INSERT INTO inventory_change_history(record_json) VALUES(?)",
         (json.dumps(attribute_event(connection, actor_id, event), ensure_ascii=False),),

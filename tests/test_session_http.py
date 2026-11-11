@@ -210,6 +210,13 @@ class SessionHttpTests(unittest.TestCase):
         conn.close()
         return status, body
 
+    def change_permission(self, data, token=None, csrf=None):
+        action = {"type": "override.set", **data}
+        status, preview = self.post("/api/users/roles/preview", {"action": action}, token, csrf)
+        if status != 200:
+            return status, preview
+        return self.post("/api/users/roles/confirm", {"action": action, "proof": preview["proof"]}, token, csrf)
+
     def test_linked_shelf_removal_http_auth_permissions_and_atomic_result(self):
         from backend.inventory import stage_inventory, reconstruct_inventory
         shelf = {"id":"shelf", "type":"shelf", "rackId":"rack", "face":"front", "startU":10, "heightU":1}
@@ -265,14 +272,14 @@ class SessionHttpTests(unittest.TestCase):
                                         self.token, csrf)
             self.assertEqual(status, 200)
             user_id = created["id"]
-            status, _ = self.post("/api/users/permission",
+            status, _ = self.change_permission(
                                   {"userId": user_id, "section": "Devices", "level": "read"},
                                   self.token, csrf)
             self.assertEqual(status, 200)
-            status, _ = self.post("/api/users/permission",
+            status, _ = self.change_permission(
                                   {"userId": user_id, "section": "Devices", "level": "edit"},
                                   self.token, csrf)
-            self.assertEqual(status, 400)  # Editing requires MFA enrolment.
+            self.assertEqual(status, 200)  # Configured Edit stays blocked until enrolment.
             status, _ = self.post("/api/users/delete", {"userId": user_id}, self.token)
             self.assertEqual(status, 403)  # CSRF required.
             status, _ = self.post("/api/users/delete", {"userId": user_id}, self.token, csrf)
@@ -331,7 +338,7 @@ class SessionHttpTests(unittest.TestCase):
                                        self.token, csrf)
             self.assertEqual(status, 200)
             user_id = result["id"]
-            status, _ = self.post("/api/users/permission",
+            status, _ = self.change_permission(
                                   {"userId": user_id, "section": "Devices", "level": "read"},
                                   self.token, csrf)
             self.assertEqual(status, 200)
@@ -375,8 +382,7 @@ class SessionHttpTests(unittest.TestCase):
                     (secret, editor_id),
                 )
                 db.commit()
-            status, _ = self.post(
-                "/api/users/permission",
+            status, _ = self.change_permission(
                 {"userId": editor_id, "section": "IPAM", "level": "edit"},
                 self.token, csrf,
             )
@@ -464,7 +470,7 @@ class SessionHttpTests(unittest.TestCase):
                 db.execute("UPDATE accounts SET mfa_secret=?,mfa_confirmed=1 WHERE id=?",
                            (second_secret, second_id))
                 db.commit()
-            status, _ = self.post("/api/users/permission",
+            status, _ = self.change_permission(
                                   {"userId": second_id, "section": "IPAM", "level": "edit"},
                                   self.token, csrf)
             self.assertEqual(status, 200)

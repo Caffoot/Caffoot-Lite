@@ -26,7 +26,7 @@ No real installation database, private export, production email delivery or depl
 
 ## Review Boundary
 
-Batch 01 was accepted and Batch 02 authorised in [issue #351](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6791990063). Stop after Batch 02 for review. This remains an intermediate development state and must not be deployed. The approved role-management API and sign-in/My Account/Users interface integration belong to later batches. No Batch 03 work, merge, main-branch change or publication is authorised.
+Batches 01 and 02 are accepted. [Batch 03 is authorised](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6792588383), starting at `ac2f2c473e9dc054dd06e7ab508e1dac5d40b992`. Stop after Batch 03 for review. This remains an intermediate build; Batch 04, merge, protected `main` changes and publication are not authorised.
 
 ## Batch 02
 
@@ -48,3 +48,9 @@ Starting SHA: `0131801e4886eb4ac9c5a5af50bdce768d11b3eb`. Scope: [existing-accou
 - GitHub Actions supplies browser and Docker coverage; no duplicate local browser suite was run. The implementation checkpoint's Docker, Firefox and WebKit jobs passed; Chromium was still running when this evidence entry was written. Final-commit Actions results and review SHA are recorded in issue #351, without assuming their outcome here.
 
 The three local skips are the opt-in real Docker test (covered by branch Actions) and two private genuine-export tests. No private installation data, production mail delivery or complete backup/restore rehearsal was used. No Batch 02 implementation blocker is known. Later UI integration remains required before deployment; it has not been started. Stop for Batch 02 owner review.
+
+## Batch 03
+
+Administrator role lifecycle, multiple assignments and individual overrides now use server-computed preview and session/action-bound confirmation. The shared policy supplies exact inheritance, overriding choices, effective/retained access, MFA and session consequences. Confirmation rechecks dependencies while holding SQLite's write lock. Values, history and precisely affected revocation commit together. The old direct permission endpoint is retired; presentation files remain unchanged. Existing best-effort verified-email security notices run after commit and expose queue admission only.
+
+The [role guide](../development-guide/Role-Permissions.md) documents the endpoint contract for Batch 04. Initial focused checks cover lifecycle, precedence, retained rights, stale/forged/expired/wrong-session proofs, safeguards and atomic rollback. Further HTTP, notification and concurrency checks and final Actions evidence are pending at this implementation checkpoint. No review or deployment readiness is claimed.

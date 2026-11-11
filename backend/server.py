@@ -24,7 +24,8 @@ from .ipam_repair import apply_ipam_repairs
 from .audit_events import record_actor_event
 from .account_email import (MAIL_REQUESTS, REQUEST_MESSAGE, issue_email_proof,
                             confirm_email_proof, queue_email, security_recipients,
-                            notify_security_change, record_blocked_sign_in)
+                            notify_security_change, record_blocked_sign_in,
+                            role_change_notifications)
 from .profiles import (read_profile, save_profile, read_profile_photo,
                        save_profile_photo, remove_profile_photo, MAX_PHOTO_BYTES)
 from .schema import initialise_database as migrate_database
@@ -37,9 +38,11 @@ from .import_drafts import ImportDrafts
 from .request_auth import authenticated_account, csrf_for_session
 from .http_security import read_session_cookie, session_cookie, clear_session_cookie
 from .request_auth import login, logout, THROTTLE
-from .permissions import (can_access, create_user, set_permission,
+from .permissions import (can_access, create_user,
                           set_account_active, set_administrator, delete_user)
 from .role_policy import evaluate_role_policy
+from .roles import (preview_role_change, confirm_role_change, role_catalogue,
+                    account_access_details)
 from .history_permissions import visible_change_history
 from .request_auth import authorised_mutation
 from .http_security import require_same_origin
@@ -269,9 +272,10 @@ class Handler(BaseHTTPRequestHandler):
                         "isAdmin": bool(is_admin), "active": bool(active),
                         "mfaEnrolled": bool(mfa_confirmed),
                         "permissions": permissions,
+                        "accessDetails": account_access_details(connection, user_id),
                         "profile": read_profile(connection, account_id, user_id),
                     })
-                self.respond(200, {"users": users})
+                self.respond(200, {"users": users, "roles": role_catalogue(connection)})
         elif self.path == "/api/inventory/sections":
             with connect() as connection:
                 account_id = authenticated_account(connection, self.headers.get("Cookie"))
@@ -439,6 +443,10 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(404, {"error": "not found"})
 
     def do_POST(self):
+        if self.path in ("/api/users/roles/preview", "/api/users/roles/confirm",
+                         "/api/users/permission"):
+            self.handle_role_change()
+            return
         if self.path in ("/api/account/email/request", "/api/account/email/confirm",
                          "/api/recovery/request", "/api/recovery/confirm"):
             self.handle_account_email()
@@ -447,7 +455,7 @@ class Handler(BaseHTTPRequestHandler):
             self.handle_profile_photo()
             return
         if self.path in ("/api/account/profile", "/api/account/photo/remove",
-                         "/api/users/create", "/api/users/profile", "/api/users/permission", "/api/users/active",
+                         "/api/users/create", "/api/users/profile", "/api/users/active",
                          "/api/users/admin", "/api/users/delete", "/api/settings/email",
                          "/api/settings/email/test", "/api/account/password",
                          "/api/account/mfa/start", "/api/account/mfa/confirm", "/api/account/mfa/remove",
@@ -605,6 +613,48 @@ class Handler(BaseHTTPRequestHandler):
             return
         self.respond(200, {"status": "signed in"}, cookie=session_cookie(token))
 
+    def handle_role_change(self):
+        """Require the existing request safeguards before preview or confirmation."""
+        if not PUBLIC_ORIGIN or not require_same_origin(self.headers.get("Origin"), PUBLIC_ORIGIN):
+            self.respond(403, {"error": "forbidden"})
+            return
+        length = self.headers.get("Content-Length", "")
+        if not length.isdecimal() or not 0 < int(length) <= MAX_LOGIN_BYTES:
+            self.respond(400, {"error": "invalid request size"})
+            return
+        if self.headers.get("Content-Type", "").split(";")[0].strip().lower() != "application/json":
+            self.respond(415, {"error": "JSON required"})
+            return
+        try:
+            payload = json.loads(self.rfile.read(int(length)))
+            expected = {"action", "proof"} if self.path.endswith("/confirm") else {"action"}
+            with connect() as connection:
+                actor = authorised_mutation(connection, self.headers.get("Cookie"),
+                    self.headers.get("Origin"), PUBLIC_ORIGIN, self.headers.get("X-CSRF-Token"))
+                if actor is None or connection.execute(
+                        "SELECT is_admin,active,mfa_confirmed FROM accounts WHERE id=?", (actor,)).fetchone() != (1, 1, 1):
+                    raise PermissionError("Verified active administrator required")
+                if self.path == "/api/users/permission":
+                    self.respond(410, {"error": "Permission changes require a role preview and confirmation.",
+                                       "previewEndpoint": "/api/users/roles/preview"})
+                    return
+                if not isinstance(payload, dict) or set(payload) != expected:
+                    raise ValueError("Invalid role request fields")
+                token = read_session_cookie(self.headers.get("Cookie"))
+                if self.path.endswith("/preview"):
+                    result = preview_role_change(connection, actor, token, payload["action"])
+                else:
+                    result = confirm_role_change(connection, actor, token, payload["action"], payload["proof"])
+                    if result["status"] == "updated":
+                        account_ids = result.pop("notificationAccountIds")
+                        result["notifications"] = role_change_notifications(
+                            connection, smtp_config_path(DB_PATH), account_ids)
+                self.respond(409 if result.get("status") == "confirmation required" else 200, result)
+        except PermissionError:
+            self.respond(403, {"error": "forbidden"})
+        except (ValueError, TypeError, sqlite3.IntegrityError) as exc:
+            self.respond(400, {"error": str(exc)})
+
     def handle_user_mutation(self):
         """Administrator-only account creation and section permission changes."""
         origin = self.headers.get("Origin")
@@ -623,7 +673,7 @@ class Handler(BaseHTTPRequestHandler):
         notice_recipients = set()
         security_change = self.path in (
             "/api/account/profile", "/api/account/password", "/api/account/mfa/confirm", "/api/account/mfa/remove",
-            "/api/users/profile", "/api/users/permission", "/api/users/active",
+            "/api/users/profile", "/api/users/active",
             "/api/users/admin", "/api/users/create", "/api/users/delete")
         try:
             payload = json.loads(self.rfile.read(int(length)))
@@ -943,13 +993,6 @@ class Handler(BaseHTTPRequestHandler):
                         raise PermissionError("Verified administrator required")
                     result = save_profile(connection, actor, payload["profile"],
                                           target_id=payload["userId"])
-                elif self.path == "/api/users/permission":
-                    if set(payload) != {"userId", "section", "level"} or type(payload["userId"]) is not int:
-                        raise ValueError("Invalid permission request")
-                    # The existing No Access control must block inherited grants too.
-                    level = "deny" if payload["level"] is None else payload["level"]
-                    set_permission(connection, actor, payload["userId"], payload["section"], level)
-                    result = {"status": "updated"}
                 else:
                     if type(payload.get("userId")) is not int:
                         raise ValueError("Invalid user identifier")

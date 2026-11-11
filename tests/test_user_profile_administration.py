@@ -129,11 +129,13 @@ class UserProfileAdministrationTests(unittest.TestCase):
             self.assertEqual(status, 200)
             viewer = next(user for user in result["users"] if user["id"] == self.viewer)
             self.assertEqual(viewer["permissions"], {"Devices": "read"})
-            status, result = self.request(
-                "POST", "/api/users/permission", self.admin_token,
-                {"userId": self.viewer, "section": "Devices", "level": None},
-                csrf_for_session(self.admin_token),
-            )
+            action = {"type": "override.set", "userId": self.viewer, "section": "Devices", "level": "deny"}
+            status, preview = self.request("POST", "/api/users/roles/preview", self.admin_token,
+                                           {"action": action}, csrf_for_session(self.admin_token))
+            self.assertEqual(status, 200, preview)
+            status, result = self.request("POST", "/api/users/roles/confirm", self.admin_token,
+                                          {"action": action, "proof": preview["proof"]},
+                                          csrf_for_session(self.admin_token))
             self.assertEqual(status, 200, result)
             status, result = self.request("GET", "/api/users", self.admin_token)
             self.assertEqual(status, 200)
