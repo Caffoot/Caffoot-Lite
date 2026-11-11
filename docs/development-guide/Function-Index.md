@@ -885,11 +885,11 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | [`Handler.do_GET`](../../backend/server.py#L116) | 116 |
 | [`Handler.do_POST`](../../backend/server.py#L441) | 441 |
 | [`Handler.handle_user_mutation`](../../backend/server.py#L608) | 608 |
-| [`Handler.handle_account_email`](../../backend/server.py#L988) | 988 |
-| [`Handler.handle_profile_photo`](../../backend/server.py#L1068) | 1068 |
-| [`Handler.handle_import`](../../backend/server.py#L1099) | 1099 |
-| [`Handler.respond`](../../backend/server.py#L1175) | 1175 |
-| [`main`](../../backend/server.py#L1188) | 1188 |
+| [`Handler.handle_account_email`](../../backend/server.py#L991) | 991 |
+| [`Handler.handle_profile_photo`](../../backend/server.py#L1071) | 1071 |
+| [`Handler.handle_import`](../../backend/server.py#L1102) | 1102 |
+| [`Handler.respond`](../../backend/server.py#L1178) | 1178 |
+| [`main`](../../backend/server.py#L1191) | 1191 |
 
 ## backend/sessions.py
 

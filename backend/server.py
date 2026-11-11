@@ -803,9 +803,12 @@ class Handler(BaseHTTPRequestHandler):
                 elif self.path == "/api/account/mfa/remove":
                     if set(payload) != {"password", "code"}:
                         raise ValueError("Current password and authenticator code required")
-                    username = connection.execute(
+                    account = connection.execute(
                         "SELECT username FROM accounts WHERE id=?", (actor,),
-                    ).fetchone()[0]
+                    ).fetchone()
+                    if account is None:
+                        raise PermissionError("Invalid credentials or MFA request")
+                    username = account[0]
                     peer = self.client_address[0]
                     if not THROTTLE.allowed(peer, username):
                         raise PermissionError("Invalid credentials or MFA request")

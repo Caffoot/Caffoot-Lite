@@ -10,11 +10,11 @@ from http.server import ThreadingHTTPServer
 from pathlib import Path
 from unittest.mock import patch
 
-from backend.accounts import bootstrap_first_admin, confirm_admin_mfa
+from backend.accounts import bootstrap_first_admin, confirm_admin_mfa, hash_password
 from backend.login_throttle import LoginThrottle
 from backend.mfa import code_at, new_secret, provisioning_uri
-from backend.permissions import create_user, set_permission
-from backend.request_auth import csrf_for_session
+from backend.permissions import create_user, set_permission, delete_user
+from backend.request_auth import csrf_for_session, authorised_mutation
 from backend.schema import initialise_database
 from backend.server import Handler
 from backend.sessions import login_session
@@ -105,6 +105,25 @@ class RequiredMfaHttpTests(unittest.TestCase):
         self.assertEqual(self.request("/api/login/mfa/confirm", self.credentials(mfa_code=code_at(secret, time.time())))[0], 401)
         self.notice.assert_called_once()
 
+    def test_upgraded_legacy_reader_enrols_without_losing_existing_access(self):
+        with sqlite3.connect(":memory:") as legacy, sqlite3.connect(self.path) as destination:
+            legacy.executescript((Path(__file__).parent / "fixtures/schema-v10.sql").read_text())
+            legacy.execute("INSERT INTO accounts(id,username,password_hash) VALUES(?, 'worker', ?)",
+                           (self.user, hash_password("password")))
+            legacy.execute("INSERT INTO account_permissions VALUES(?, 'Devices', 'read')", (self.user,))
+            legacy.commit()
+            initialise_database(legacy)
+            legacy.backup(destination)
+        self.assertEqual(self.request("/api/login", self.credentials()), (200, {"status": "mfa enrolment required"}, None))
+        secret = self.enrol()
+        status, _, cookie = self.request("/api/login", self.credentials(mfa_code=code_at(secret, time.time())))
+        self.assertEqual(status, 200)
+        status, result, _ = self.request("/api/inventory/sections", method="GET", headers={"Cookie": cookie.split(";", 1)[0]})
+        self.assertEqual(status, 200)
+        self.assertEqual(result["sections"]["Devices"], {"read": True, "edit": False})
+        with sqlite3.connect(self.path) as db:
+            self.assertEqual(db.execute("SELECT section,level FROM account_permission_overrides WHERE account_id=?", (self.user,)).fetchall(), [("Devices", "read")])
+
     def test_bad_password_unknown_and_inactive_are_generic_and_do_not_leak_secret(self):
         cases = (self.credentials(password="wrong"), self.credentials(username="unknown"))
         for path in ("/api/login", "/api/login/mfa/start", "/api/login/mfa/confirm"):
@@ -182,6 +201,23 @@ class RequiredMfaHttpTests(unittest.TestCase):
         self.assertEqual(self.request("/api/account/mfa/remove", {"password": "password", "code": code_at(secret, time.time())}, headers=headers)[0], 403)
         self.assertEqual(self.request("/api/session", method="GET", headers=headers)[0], 200)
         self.notice.assert_not_called()
+
+    def test_account_deleted_after_request_authentication_has_generic_removal_error(self):
+        secret, _, headers = self.voluntary_account()
+
+        def authenticate_then_delete(*args, **kwargs):
+            actor = authorised_mutation(*args, **kwargs)
+            with sqlite3.connect(self.path) as db:
+                db.execute("PRAGMA foreign_keys=ON")
+                delete_user(db, self.admin, self.user)
+            return actor
+
+        with patch("backend.server.authorised_mutation", side_effect=authenticate_then_delete):
+            status, result, cookie = self.request(
+                "/api/account/mfa/remove", {"password": "password", "code": code_at(secret, time.time())},
+                headers=headers,
+            )
+        self.assertEqual((status, result, cookie), (403, {"error": "forbidden"}, None))
 
     def test_role_assignment_after_login_refuses_removal_without_altering_grants(self):
         secret, token, headers = self.voluntary_account()

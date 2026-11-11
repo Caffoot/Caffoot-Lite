@@ -90,6 +90,21 @@ class RequiredMfaTests(unittest.TestCase):
         with self.assertRaises(PermissionError):
             start_required_mfa_enrolment(self.db, "worker", "password")
 
+    def test_inherited_read_and_individual_edit_both_allow_only_required_enrolment(self):
+        role = self.add_role((("Devices", "read"),))
+        for inherited in (True, False):
+            with self.subTest(inherited=inherited):
+                if not inherited:
+                    self.db.execute("UPDATE roles SET enabled=0 WHERE id=?", (role,))
+                    self.db.execute("INSERT INTO account_permission_overrides VALUES(?, 'Devices', 'edit')", (self.user,))
+                    self.db.execute("UPDATE accounts SET mfa_confirmed=0,mfa_secret=NULL WHERE id=?", (self.user,))
+                    self.db.commit()
+                with self.assertRaises(MFAEnrolmentRequired):
+                    login(self.db, "peer", "worker", "password", now=59)
+                _, secret = start_required_mfa_enrolment(self.db, "worker", "password")
+                confirm_required_mfa_enrolment(self.db, "worker", "password", code_at(secret, 59), timestamp=59)
+                self.assertIsNotNone(login(self.db, "peer", "worker", "password", mfa_code=code_at(secret, 59), now=59))
+
     def test_confirmation_rechecks_role_and_account_changes(self):
         role = self.add_role()
         _, secret = start_required_mfa_enrolment(self.db, "worker", "password")

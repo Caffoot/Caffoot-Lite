@@ -1,6 +1,6 @@
 # Milestone 01 Development Handover
 
-The published baseline remains v2.1. Work is on `milestone-1` in [draft PR #358](https://github.com/Caffoot/Caffoot-Lite/pull/358), starting at `b13e5ce919d825280a6fa5450f04ff26c356eb11`. [Issue #351, Batch 01](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6790154284) is the scope and checkpoint record. No merge, deployment or publication is authorised.
+The published baseline remains v2.1. Work is on `milestone-1` in [draft PR #358](https://github.com/Caffoot/Caffoot-Lite/pull/358), starting at `b13e5ce919d825280a6fa5450f04ff26c356eb11`. [Issue #351](https://github.com/Caffoot/Caffoot-Lite/issues/351) holds the Batch 01/02 scopes, approvals and checkpoint evidence. No merge, deployment or publication is authorised.
 
 ## Batch 01
 
@@ -37,3 +37,14 @@ Starting SHA: `0131801e4886eb4ac9c5a5af50bdce768d11b3eb`. Scope: [existing-accou
 - Session creation now holds the write transaction throughout credential/policy verification and insertion. Existing live-session, section and recovery checks retain the shared policy.
 - Optional removal verifies session, password, code and current access under one transaction, then clears MFA, audits and revokes sessions/email proofs. Roles/grants are unchanged. First-admin setup and confirmed-MFA promotion remain protected.
 - Focused checks and final automatic evidence are recorded in issue #351. A first HTTP test run exposed an overly strict assertion about cookie attribute ordering; it is corrected without changing cookie behaviour. The corrected focused run passed all 18 new tests (`python -m unittest discover -s tests -p 'test_required_mfa*.py' -v`), as did Python compilation, release-document consistency and whitespace checks. Full backend checks and final CI are pending at this checkpoint.
+
+### Batch 02 Checks And Remaining Work
+
+- Implementation checkpoint: `776a6e19cb675110da821090c2d41b24c078f394`. The first full local backend run passed 531 tests with three skips.
+- The expanded focused command, `python -m unittest discover -s tests -p 'test_*mfa*.py' -v`, passed 29 tests. Together with the final deleted-account HTTP regression, coverage includes 25 added checks across service, HTTP and real SQLite concurrency tests. The legacy-reader HTTP check upgrades the published schema-v10 fixture and confirms that Read access is preserved after enrolment.
+- Concurrency checks hold a real SQLite write lock while account/role/session changes occur, then verify the waiting operation uses the newly committed state. They cover role disable/removal, new role/Read/Edit assignment, account disable, pending/confirmed MFA changes, session revocation and new-session creation.
+- A second full backend run passed 537 tests with three skips. The final small request-guard amendment handles an account deleted immediately after request authentication; its HTTP regression and the complete 11-test MFA HTTP file are checked separately after that amendment. Final-commit Actions runs the whole resulting 538-test backend suite.
+- Python compilation, release consistency, changed local documentation links, all compatibility guide copies, all 704 Function Index declaration locations and `git diff --check` passed. Approved presentation, pinned sources, inventory contracts, migration schema, deployment configuration and protected `main` are untouched by Batch 02.
+- GitHub Actions supplies browser and Docker coverage; no duplicate local browser suite was run. The implementation checkpoint's Docker, Firefox and WebKit jobs passed; Chromium was still running when this evidence entry was written. Final-commit Actions results and review SHA are recorded in issue #351, without assuming their outcome here.
+
+The three local skips are the opt-in real Docker test (covered by branch Actions) and two private genuine-export tests. No private installation data, production mail delivery or complete backup/restore rehearsal was used. No Batch 02 implementation blocker is known. Later UI integration remains required before deployment; it has not been started. Stop for Batch 02 owner review.
