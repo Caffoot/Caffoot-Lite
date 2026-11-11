@@ -1,0 +1,20 @@
+{
+  "application_source_sha": "689afd827ef3192379b6baf7ef6d289d8f73da04",
+  "test_checkpoint_sha": "27672054fc4af430e443157733029bb4e3b677d1",
+  "prior_evidence_hash_matches": {
+    ".github/workflows/browser-compat.yml": true,
+    "backend/server.py": true,
+    "interface/application.js": true,
+    "interface/screens/my-account.html": true,
+    "interface/screens/shared.html": true,
+    "interface/screens/users.html": true,
+    "interface/sign-in.js": true,
+    "interface/styles/components.css": false,
+    "interface/styles/sign-in-controls.css": true,
+    "tests/browser-compat.cjs": true,
+    "tests/test_session_http.py": true,
+    "tests/users-roles-interface.cjs": true
+  },
+  "index_scope": "733 runtime declaration links; added test helpers are excluded",
+  "batch05_runtime_workflow_design_delta": []
+}

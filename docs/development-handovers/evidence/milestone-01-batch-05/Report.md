@@ -13,6 +13,8 @@ including rack-spacing PR #359. Batch 04 implementation checkpoint remains
 `c3237114108cad9f7d4e57657b6aed5e0091a5ef`.
 
 Only tests, the fictional fixture, this evidence and affected guides change.
+[The Batch 05 file inventory](changed-files.json) identifies every changed path;
+[source audit](source-audit.json) records the application/evidence comparison.
 Application code, approved designs, database/API contracts, workflows, root
 README version and publication strategy are unchanged. No real `/data`, Pi,
 Portainer stack or production service is used. Local private images:
@@ -36,7 +38,7 @@ source builds, not published registry digests or a new ARM64 acceptance claim.
 | Pinned stylesheet/template provenance | [2 passed](source-fidelity.txt): all twelve manifest source HTML/CSS hashes, exact stylesheets and template dependencies |
 | Extra legacy HTML contract script | [Failed](approved-html.txt), exit 1: `.ipam-modal-body` selector comparison; see limitation below |
 | Python compilation | `python -m compileall -q backend tests`, exit 0 |
-| Full backend acceptance suite | Running at the first checkpoint; final result recorded in the completion update |
+| Full backend acceptance suite | [563 run, 559 passed, four skips](backend.txt), exit 0 in 91.096 seconds; final test source matches checkpoint `27672054fc4af430e443157733029bb4e3b677d1` |
 | Release/document consistency | `python scripts/verify_release.py` and the unchanged `release-documentation.yml` embedded check, exit 0; v2.1 remains current, all eight compatibility guide copies agree |
 | Whitespace | `git diff --check`, exit 0 |
 
@@ -53,6 +55,42 @@ upgrade. The snapshot helper also explicitly closes its SQLite connection before
 enumerating files. The corrected run passed. These are test-helper corrections,
 not application changes or unexplained retries. No private snapshot/secret
 material is committed; the raw failed-run logs stay outside the repository.
+
+The four backend skips are two private genuine-v1.3.3-export checks (no private
+fixture supplied), the opt-in Compose lifecycle check (existing successful
+Actions evidence reused) and the new opt-in upgrade/restore check (run separately
+and passed above). Skips are not counted as passes. Python compilation was also
+checked after the test source was committed. No further broad suite was repeated.
+
+## Saved Checkpoint And Contributor Review
+
+Implementation and focused evidence were committed and pushed as
+`27672054fc4af430e443157733029bb4e3b677d1`; GitHub confirmed that exact SHA as
+open draft PR #358's head. The final evidence-only commit and final remote head
+are recorded in the completion comment on #351, avoiding a self-referential
+commit identifier in this file. The final application is still exactly the
+starting checkpoint; no runtime source was modified by Batch 05.
+
+- [x] Scope, descriptive names and clear British English reviewed.
+- [x] No UI labels/selectors/layouts changed; approved visual sources preserved.
+- [x] Relevant installation, developer guides and active handover updated.
+- [x] Function Index reviewed: its 733 runtime links remain in scope and no
+  indexed declaration changed. Test helpers are explicitly excluded, so no
+  regeneration or artificial source-revision change is needed.
+- [x] Compatibility guide copies agree; changed local Markdown targets resolve;
+  release consistency and whitespace checks pass.
+- [x] Exact checks, development failures, skips and reused evidence disclosed.
+- [ ] Owner review and the outstanding Batch 04 browser acceptance gate.
+
+Existing push/PR workflows run automatically and are neither cancelled nor
+modified. Their new results must be distinguished from the reused starting-head
+results below; final observed URLs/outcomes are recorded in the #351 checkpoint.
+At `27672054fc4af430e443157733029bb4e3b677d1`, the new
+[history secret scan](https://github.com/Caffoot/Caffoot-Lite/actions/runs/43066290603),
+[required documentation check](https://github.com/Caffoot/Caffoot-Lite/actions/runs/43066290667)
+and [release safety workflow](https://github.com/Caffoot/Caffoot-Lite/actions/runs/43066290784)
+completed successfully. Backend, Compose and browser workflows were still
+running at this observation; no result is inferred for them.
 
 ## Reused Evidence And Coverage
 
