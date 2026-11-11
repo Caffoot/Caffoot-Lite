@@ -44,6 +44,23 @@ The **active main repository ruleset** `Protect main and require validation` (ID
 | Docker/storage change | Backend plus Docker lifecycle on push/PR | Same persistence/security/compatibility checks, scheduled once per relevant checkpoint | PR-less pushes and explicit final-commit Docker evidence |
 | Stage/release checkpoint | Existing manual/reusable full checks | **Unchanged** required tests and release protections | Manual invocation reaches all child workflows and publication remains blocked on failure |
 
+## Important verification distinction — push versus pull request
+
+GitHub normally uses the **head commit** for a `push` event, but the **synthetic merge commit** for a mergeable `pull_request` event (the default `actions/checkout` behaviour). These are **not necessarily equivalent test inputs**, especially when the target branch moves. Therefore counting push + PR workflow runs as automatically redundant was too broad.
+
+**Revised recommendation:** retain both event types for existing required checks until a proposed replacement independently proves it covers (a) the pushed head commit before a PR exists, (b) the actual merged result during PR review, (c) protected-main behaviour, (d) existing manual/reusable release execution, and (e) every approved final-head acceptance gate. No such replacement has yet been established.
+
+GitHub also documents that path-filtered workflows can leave required checks pending. Skipping a conditional job may produce a successful status **without executing its tests**; do not use that as evidence of equivalent verification.
+
+Official references:
+- [GitHub Actions: Events that trigger workflows](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows)
+- [GitHub Actions: Triggering workflows and filters](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow)
+- [GitHub: Troubleshooting required status checks](https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/troubleshooting-required-status-checks)
+
+### Safe immediate improvement without changing workflow coverage
+
+Keep GitHub's current automatic checks, but change the **development operating procedure**: focused local tests during implementation, early clean commit checkpoints, no repeated screenshots without changed affected UI, no manual rerun of a confirmed passing unmodified check, and stop Codex investigation at independent runner dependency failures. Record exact final-source and blocked checks honestly. This does not solve the external Ubuntu DNS problem or claim a reduced GitHub Actions bill.
+
 ## Open implementation decisions / safety blockers
 
 1. **Push-versus-PR duplication:** Removing development-branch push triggers would leave **PR-less branch commits** without automatic coverage. Replacing both triggers with concurrency cancellation can cancel a required PR run or its exact-SHA evidence. Neither shortcut meets the owner's 'no weakening' rule as currently demonstrated.
