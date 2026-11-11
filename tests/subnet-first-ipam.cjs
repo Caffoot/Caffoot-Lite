@@ -78,10 +78,9 @@ with sqlite3.connect(folder/'inventory.sqlite3') as db:
  duplicate=dict(legacy,id='historical-duplicate',cidr='10.99.0.0/24',gateway='10.99.0.1');duplicate.pop('vlan',None);duplicate.pop('parentId',None);state['subnets'].append(duplicate);stage_inventory(db,state)
  for name,level in [('subnet-editor','edit'),('subnet-reader','read')]:
   user=create_user(db,owner,name,'Fictional-Role-Password');secret=new_secret()
-  if level=='edit':
-   db.execute('UPDATE accounts SET mfa_secret=?,mfa_confirmed=1 WHERE id=?',(secret,user));db.commit()
+  db.execute('UPDATE accounts SET mfa_secret=?,mfa_confirmed=1 WHERE id=?',(secret,user));db.commit()
   set_permission(db,owner,user,'IPAM',level)
-  sessions[name]=login_session(db,name,'Fictional-Role-Password',mfa_code=code_at(secret,time.time()) if level=='edit' else None)
+  sessions[name]=login_session(db,name,'Fictional-Role-Password',mfa_code=code_at(secret,time.time()))
   assert sessions[name]
 with os.fdopen(os.open(folder/'subnet-role-sessions.json',os.O_WRONLY|os.O_CREAT|os.O_EXCL,0o600),'w') as output:json.dump(sessions,output)
 `;
