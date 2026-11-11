@@ -8,6 +8,8 @@ The code keeps Devices, IPAM and Racks records in separate tables, along with ac
 
 ## Source and schema version
 
+The `milestone-1` development branch introduces schema 11 and the four-table role migration described in [Shared Roles And Account Permissions](Role-Permissions.md). This is an intermediate development state, not a deployable release. The published v2.1 schema and release remain unchanged.
+
 The exact definitions are in [`backend/schema.py`](../../backend/schema.py). The 30 October 2026 checkpoint had schema 7. The later modular v2.1 baseline used schema 9: migration 8 added profiles/photos and migration 9 added email proofs. The published v2.1 database uses schema 10, adding challenge identifiers, attempt counters and durable failed-attempt timestamps; it explicitly invalidates outstanding old-format email proofs at upgrade. The function `initialise_database(connection)` applies missing numbered migrations in a transaction and rejects databases marked newer than this application.
 
 | Table | Primary key and relevant columns | What it contains |

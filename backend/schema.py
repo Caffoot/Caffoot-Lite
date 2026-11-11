@@ -5,7 +5,7 @@ email-challenge tables support the authenticated server without changing
 the published inventory import format."""
 import sqlite3
 
-SCHEMA_VERSION = 10
+SCHEMA_VERSION = 11
 
 DDL = """
 CREATE TABLE IF NOT EXISTS inventory_devices (
@@ -183,7 +183,115 @@ def initialise_database(connection: sqlite3.Connection) -> None:
             """)
             connection.execute("CREATE INDEX account_email_attempt_window ON account_email_attempts(account_id,purpose,attempted_at)")
             connection.execute("INSERT INTO schema_migrations(version) VALUES(10)")
+        if 11 not in versions:
+            migrate_role_permissions(connection)
+            connection.execute("INSERT INTO schema_migrations(version) VALUES(11)")
         connection.commit()
     except BaseException:
         connection.rollback()
         raise
+
+
+def migrate_role_permissions(connection):
+    """Keep existing access and account details while introducing shared roles.
+
+    The caller owns the upgrade transaction. A failed check therefore restores
+    the old tables and sessions as well as removing the incomplete upgrade.
+    """
+    accounts_before = connection.execute("SELECT * FROM accounts ORDER BY id").fetchall()
+    grants_before = connection.execute(
+        "SELECT account_id,section,level FROM account_permissions ORDER BY account_id,section"
+    ).fetchall()
+    connection.execute("""
+        CREATE TABLE roles (
+            id INTEGER PRIMARY KEY,
+            role_key TEXT NOT NULL UNIQUE
+                CHECK(length(role_key)>0 AND role_key GLOB '[a-z]*'
+                      AND role_key NOT GLOB '*[^a-z0-9_]*'),
+            name TEXT NOT NULL COLLATE NOCASE UNIQUE CHECK(length(trim(name))>0),
+            enabled INTEGER NOT NULL DEFAULT 1 CHECK(enabled IN (0,1)),
+            is_builtin INTEGER NOT NULL DEFAULT 0 CHECK(is_builtin IN (0,1)),
+            CHECK((role_key='staff_member' AND name='Staff Member' COLLATE BINARY
+                   AND enabled=1 AND is_builtin=1)
+                  OR (role_key!='staff_member' AND is_builtin=0))
+        )
+    """)
+    connection.execute("""
+        CREATE TRIGGER immutable_role_key BEFORE UPDATE OF role_key ON roles
+        WHEN NEW.role_key != OLD.role_key
+        BEGIN SELECT RAISE(ABORT, 'Role keys cannot change'); END
+    """)
+    connection.execute("""
+        CREATE TRIGGER protect_staff_member_update BEFORE UPDATE ON roles
+        WHEN OLD.role_key='staff_member'
+        BEGIN SELECT RAISE(ABORT, 'Staff Member cannot change'); END
+    """)
+    connection.execute("""
+        CREATE TRIGGER protect_staff_member_delete BEFORE DELETE ON roles
+        WHEN OLD.role_key='staff_member'
+        BEGIN SELECT RAISE(ABORT, 'Staff Member cannot be deleted'); END
+    """)
+    connection.execute("""
+        CREATE TABLE role_grants (
+            role_id INTEGER NOT NULL REFERENCES roles(id) ON DELETE CASCADE,
+            section TEXT NOT NULL CHECK(length(trim(section))>0),
+            level TEXT NOT NULL CHECK(level IN ('read','edit')),
+            PRIMARY KEY(role_id,section)
+        )
+    """)
+    for operation in ("INSERT", "UPDATE"):
+        connection.execute(f"""
+            CREATE TRIGGER protect_staff_grants_{operation.lower()}
+            BEFORE {operation} ON role_grants
+            WHEN NEW.role_id=(SELECT id FROM roles WHERE role_key='staff_member')
+            BEGIN SELECT RAISE(ABORT, 'Staff Member has no inventory grants'); END
+        """)
+    connection.execute("""
+        CREATE TABLE account_roles (
+            account_id INTEGER NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
+            role_id INTEGER NOT NULL REFERENCES roles(id) ON DELETE CASCADE,
+            PRIMARY KEY(account_id,role_id)
+        )
+    """)
+    connection.execute("CREATE INDEX account_roles_role_id ON account_roles(role_id)")
+    connection.execute("""
+        CREATE TABLE account_permission_overrides (
+            account_id INTEGER NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
+            section TEXT NOT NULL CHECK(length(trim(section))>0),
+            level TEXT NOT NULL CHECK(level IN ('deny','read','edit')),
+            PRIMARY KEY(account_id,section)
+        )
+    """)
+    connection.execute(
+        "INSERT INTO roles(role_key,name,enabled,is_builtin) VALUES('staff_member','Staff Member',1,1)"
+    )
+    connection.execute(
+        "INSERT INTO account_roles(account_id,role_id) "
+        "SELECT a.id,r.id FROM accounts a CROSS JOIN roles r WHERE r.role_key='staff_member'"
+    )
+    connection.execute(
+        "INSERT INTO account_permission_overrides(account_id,section,level) "
+        "SELECT account_id,section,level FROM account_permissions"
+    )
+    connection.execute("DELETE FROM account_sessions")
+    verify_role_migration(connection, accounts_before, grants_before)
+
+
+def verify_role_migration(connection, accounts_before, grants_before):
+    """Refuse an upgrade that loses identities, grants or the safe baseline."""
+    accounts_after = connection.execute("SELECT * FROM accounts ORDER BY id").fetchall()
+    grants_after = connection.execute(
+        "SELECT account_id,section,level FROM account_permission_overrides ORDER BY account_id,section"
+    ).fetchall()
+    memberships = connection.execute(
+        "SELECT a.account_id FROM account_roles a JOIN roles r ON r.id=a.role_id "
+        "WHERE r.role_key='staff_member' ORDER BY a.account_id"
+    ).fetchall()
+    if (accounts_before != accounts_after or grants_before != grants_after
+            or memberships != [(row[0],) for row in accounts_before]
+            or connection.execute("SELECT count(*) FROM account_roles").fetchone()[0] != len(accounts_before)
+            or connection.execute("SELECT count(*) FROM roles").fetchone()[0] != 1
+            or connection.execute("SELECT 1 FROM role_grants").fetchone()
+            or connection.execute("SELECT 1 FROM account_sessions").fetchone()
+            or connection.execute("PRAGMA foreign_key_check").fetchone()):
+        raise RuntimeError("Role migration did not preserve accounts and permissions")

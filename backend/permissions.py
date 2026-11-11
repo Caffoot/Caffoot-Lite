@@ -5,6 +5,7 @@ protection before passing the actor identity to administrative operations."""
 from backend.accounts import hash_password
 from backend.audit_events import record_actor_event
 from backend.profiles import validate_profile_details
+from backend.role_policy import assign_staff_member
 
 SECTIONS = ("Devices", "IPAM", "Racks")
 LEVELS = ("read", "edit")
@@ -41,6 +42,7 @@ def create_user(connection, actor_id, username, password, profile=None):
             "INSERT INTO accounts(username,password_hash) VALUES(?,?)",
             (username.strip(), hash_password(password)),
         )
+        assign_staff_member(connection, cursor.lastrowid)
         if details is not None:
             connection.execute(
                 "INSERT INTO account_profiles(account_id,first_name,last_name,"

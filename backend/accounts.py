@@ -7,6 +7,7 @@ import hmac
 import secrets
 
 from backend.mfa import new_secret, verify_code
+from backend.role_policy import assign_staff_member
 
 ITERATIONS = 600_000
 
@@ -54,6 +55,7 @@ def bootstrap_first_admin(connection, username, password):
             "VALUES(?,?,1,?)",
             (username.strip(), hash_password(password), secret),
         )
+        assign_staff_member(connection, cursor.lastrowid)
         connection.commit()
         return cursor.lastrowid, secret
     except BaseException:

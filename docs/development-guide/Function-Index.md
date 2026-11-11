@@ -6,7 +6,7 @@ Scope: named JavaScript declarations/assignments in the three application script
 
 The account hydration/photo functions now have purpose-based callable bindings matching their function names: `hydrateAccount` and `removeAccountPhoto`. The immutable design manifest retains its historical integration-entry names; those metadata names are not the runtime's current function map. Pinned source paths, revisions and hashes are unchanged.
 
-**Recorded definitions: 693.** Regenerate after changing declarations or their lines. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
+**Recorded definitions: 696.** Regenerate after changing declarations or their lines. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
 
 ## interface/loader.js
 
@@ -565,10 +565,10 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 | Function | Line |
 | --- | ---: |
-| [`hash_password`](../../backend/accounts.py#L14) | 14 |
-| [`verify_password`](../../backend/accounts.py#L22) | 22 |
-| [`bootstrap_first_admin`](../../backend/accounts.py#L41) | 41 |
-| [`confirm_admin_mfa`](../../backend/accounts.py#L64) | 64 |
+| [`hash_password`](../../backend/accounts.py#L15) | 15 |
+| [`verify_password`](../../backend/accounts.py#L23) | 23 |
+| [`bootstrap_first_admin`](../../backend/accounts.py#L42) | 42 |
+| [`confirm_admin_mfa`](../../backend/accounts.py#L66) | 66 |
 
 ## backend/application_integrity.py
 
@@ -793,15 +793,15 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 | Function | Line |
 | --- | ---: |
-| [`_admin`](../../backend/permissions.py#L13) | 13 |
-| [`_target`](../../backend/permissions.py#L22) | 22 |
-| [`create_user`](../../backend/permissions.py#L31) | 31 |
-| [`set_permission`](../../backend/permissions.py#L63) | 63 |
-| [`can_access`](../../backend/permissions.py#L113) | 113 |
-| [`set_account_active`](../../backend/permissions.py#L135) | 135 |
-| [`delete_user`](../../backend/permissions.py#L174) | 174 |
-| [`set_administrator`](../../backend/permissions.py#L201) | 201 |
-| [`can_replace_inventory`](../../backend/permissions.py#L242) | 242 |
+| [`_admin`](../../backend/permissions.py#L14) | 14 |
+| [`_target`](../../backend/permissions.py#L23) | 23 |
+| [`create_user`](../../backend/permissions.py#L32) | 32 |
+| [`set_permission`](../../backend/permissions.py#L65) | 65 |
+| [`can_access`](../../backend/permissions.py#L115) | 115 |
+| [`set_account_active`](../../backend/permissions.py#L137) | 137 |
+| [`delete_user`](../../backend/permissions.py#L176) | 176 |
+| [`set_administrator`](../../backend/permissions.py#L203) | 203 |
+| [`can_replace_inventory`](../../backend/permissions.py#L244) | 244 |
 
 ## backend/profiles.py
 
@@ -852,11 +852,19 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | --- | ---: |
 | [`reset_inventory`](../../backend/reset_inventory.py#L13) | 13 |
 
+## backend/role_policy.py
+
+| Function | Line |
+| --- | ---: |
+| [`assign_staff_member`](../../backend/role_policy.py#L8) | 8 |
+
 ## backend/schema.py
 
 | Function | Line |
 | --- | ---: |
 | [`initialise_database`](../../backend/schema.py#L55) | 55 |
+| [`migrate_role_permissions`](../../backend/schema.py#L195) | 195 |
+| [`verify_role_migration`](../../backend/schema.py#L280) | 280 |
 
 ## backend/server.py
 
