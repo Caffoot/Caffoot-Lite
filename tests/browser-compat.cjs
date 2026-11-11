@@ -28,6 +28,23 @@ async function state(page){
     return r.json();
   });
 }
+async function confirmPermission(page,userId,section,level){
+  // Prepare test accounts through the confirmed API while the approved Users
+  // interface waits for its separately authorised integration.
+  await page.evaluate(async action=>{
+    const session=await (await fetch('/api/session')).json();
+    const headers={'Content-Type':'application/json','X-CSRF-Token':session.csrf_token};
+    const preview=await fetch('/api/users/roles/preview',{
+      method:'POST',headers,body:JSON.stringify({action})
+    });
+    if(!preview.ok)throw Error('Permission preview failed: '+preview.status);
+    const {proof}=await preview.json();
+    const confirmation=await fetch('/api/users/roles/confirm',{
+      method:'POST',headers,body:JSON.stringify({action,proof})
+    });
+    if(!confirmation.ok)throw Error('Permission confirmation failed: '+confirmation.status);
+  },{type:'override.set',userId,section,level});
+}
 async function persisted(page,test,label){
   for(let i=0;i<45;i++){
     const value=await state(page);
@@ -2016,9 +2033,9 @@ async function run(){
     const r=await fetch('/api/users',{cache:'no-store'});
     return r.ok && (await r.json()).users.find(u=>u.id===id)?.profile.displayName==='Taylor Updated';
   },editorId);
-  await page.locator('[data-next-user-permission][data-user-id="'+editorId+'"][data-section="Devices"]').selectOption('edit');
-  await page.locator('[data-next-user-permission][data-user-id="'+editorId+'"][data-section="IPAM"]').selectOption('read');
-  await page.locator('[data-next-user-permission][data-user-id="'+editorId+'"][data-section="Racks"]').selectOption('read');
+  await confirmPermission(page,editorId,'Devices','edit');
+  await confirmPermission(page,editorId,'IPAM','read');
+  await confirmPermission(page,editorId,'Racks','read');
   await page.waitForFunction(async id=>{
     const r=await fetch('/api/users',{cache:'no-store'});
     return r.ok && (await r.json()).users.find(user=>user.id===id)?.permissions.Devices==='edit';
@@ -2128,12 +2145,12 @@ async function run(){
   await page.locator('#main-content .users-management-modal').waitFor();
   const blockedEdit=page.locator('[data-next-user-permission][data-user-id="'+viewerId+'"][data-section="Devices"]');
   await blockedEdit.selectOption('edit');
-  await page.waitForFunction(()=>document.querySelector('#toast-message')?.textContent.includes('must set up MFA in My account'));
+  await page.waitForFunction(()=>document.querySelector('#toast-message')?.textContent.includes('Permission changes require a role preview and confirmation'));
   await page.waitForFunction(id=>document.querySelector('[data-next-user-permission][data-user-id="'+id+'"][data-section="Devices"]')?.value==='',viewerId);
   assert.equal(await page.evaluate(async id=>{
     const user=(await (await fetch('/api/users')).json()).users.find(u=>u.id===id);
     return user?.permissions?.Devices||null;
-  },viewerId),null,'Unenrolled users must not receive Edit permissions');
+  },viewerId),null,'The retired direct control must not change permissions');
   const readContext=await browser.newContext({ignoreHTTPSErrors:true});
   const viewer=await readContext.newPage();
   await viewer.goto(address+'/setup');
@@ -2154,7 +2171,7 @@ async function run(){
   await viewer.waitForFunction(()=>document.querySelector('#signed-in')?.hidden===true);
 
   for(const section of ['Devices','IPAM','Racks'])
-    await page.locator('[data-next-user-permission][data-user-id="'+viewerId+'"][data-section="'+section+'"]').selectOption('read');
+    await confirmPermission(page,viewerId,section,'read');
   await page.waitForFunction(async id=>{
     const user=(await (await fetch('/api/users')).json()).users.find(u=>u.id===id);
     return ['Devices','IPAM','Racks'].every(key=>user?.permissions[key]==='read');

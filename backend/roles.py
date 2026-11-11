@@ -17,6 +17,7 @@ from backend import role_policy
 from backend.sessions import session_account
 
 CONFIRMATION_SECONDS = 5 * 60
+_CONFIRMATION_SECRET = secrets.token_bytes(32)
 
 
 def _json(value):
@@ -191,12 +192,14 @@ def _security_snapshot(connection, account_ids, action):
 
 def _preview_impact(connection, actor_id, action, now):
     targets = _action_targets(connection, action)
+    role_before = _audit_role_value(connection, action) if action["type"].startswith("role.") else None
     before = {user: account_access_details(connection, user) for user in targets}
     snapshot = _security_snapshot(connection, [actor_id, *targets], action)
     connection.execute("SAVEPOINT role_preview")
     try:
         _apply_values(connection, action)
         after = {user: account_access_details(connection, user) for user in targets}
+        role_after = _audit_role_value(connection, action) if action["type"].startswith("role.") else None
         unchanged = snapshot == _security_snapshot(connection, [actor_id, *targets], action)
     finally:
         connection.execute("ROLLBACK TO role_preview")
@@ -220,11 +223,16 @@ def _preview_impact(connection, actor_id, action, now):
                       "revokedSessionCount": sessions if revoke else 0})
     preview = {"action": action, "available": True, "users": users, "accountCount": len(users),
                "revokedSessionCount": sum(user["revokedSessionCount"] for user in users)}
+    if action["type"].startswith("role."):
+        preview.update({"roleBefore": role_before, "roleAfter": role_after})
     return preview, hashlib.sha256(_json({"snapshot": snapshot, "preview": preview}).encode()).hexdigest()
 
 
 def _confirmation_signature(session_token, contents):
-    return hmac.new(bytes.fromhex(session_token), b"caffoot-role-confirmation-v1:" + _json(contents).encode(), hashlib.sha256).hexdigest()
+    # Keep the signing key on the server. A cookie holder must not be able to
+    # manufacture a confirmation by calculating a signature themselves.
+    key = hmac.new(_CONFIRMATION_SECRET, bytes.fromhex(session_token), hashlib.sha256).digest()
+    return hmac.new(key, b"caffoot-role-confirmation-v1:" + _json(contents).encode(), hashlib.sha256).hexdigest()
 
 
 def _issue_preview(connection, actor_id, session_token, action, now):
@@ -237,10 +245,10 @@ def _issue_preview(connection, actor_id, session_token, action, now):
 
 def preview_role_change(connection, actor_id, session_token, action, *, now=None):
     """Return an authoritative preview without saving any proposed change."""
-    now = time.time() if now is None else now
     action = _validate_action(action)
     connection.execute("BEGIN IMMEDIATE")
     try:
+        now = time.time() if now is None else now
         _require_actor(connection, actor_id, session_token, now)
         return _issue_preview(connection, actor_id, session_token, action, now)
     finally:
@@ -249,10 +257,11 @@ def preview_role_change(connection, actor_id, session_token, action, *, now=None
 
 def confirm_role_change(connection, actor_id, session_token, action, proof, *, now=None):
     """Recheck the displayed consequences, then save values, history and revocation together."""
-    now = time.time() if now is None else now
     action = _validate_action(action)
     connection.execute("BEGIN IMMEDIATE")
     try:
+        # Waiting for another writer must not extend a proof or session's life.
+        now = time.time() if now is None else now
         _require_actor(connection, actor_id, session_token, now)
         try:
             fresh = _issue_preview(connection, actor_id, session_token, action, now)
@@ -265,10 +274,11 @@ def confirm_role_change(connection, actor_id, session_token, action, proof, *, n
             contents = {key: value for key, value in proof.items() if key != "signature"}
             identifier = proof["confirmationId"]
             valid = (type(proof["expiresAt"]) is int and now < proof["expiresAt"] <= now + CONFIRMATION_SECONDS
-                     and proof["actorId"] == actor_id and proof["action"] == action
+                     and type(proof["actorId"]) is int and proof["actorId"] == actor_id and proof["action"] == action
                      and proof["state"] == fresh["proof"]["state"]
                      and isinstance(identifier, str) and re.fullmatch(r"[a-f0-9]{32}", identifier)
                      and isinstance(proof["signature"], str)
+                     and re.fullmatch(r"[a-f0-9]{64}", proof["signature"])
                      and hmac.compare_digest(proof["signature"], _confirmation_signature(session_token, contents))
                      and not connection.execute("SELECT 1 FROM inventory_change_history WHERE json_extract(record_json,'$.confirmationId')=? LIMIT 1", (identifier,)).fetchone())
         if not valid:
@@ -278,10 +288,10 @@ def confirm_role_change(connection, actor_id, session_token, action, proof, *, n
         _apply_values(connection, action)
         # Only explicit account/role data enters history; passwords, session tokens,
         # authenticator secrets and the confirmation proof are never recorded.
-        label = action.get("roleKey") or (str(action["roleId"]) if "roleId" in action else fresh["users"][0]["username"])
+        label = (action.get("roleKey") or previous["roleKey"]) if action["type"].startswith("role.") else fresh["users"][0]["username"]
         after = _audit_role_value(connection, action) if action["type"].startswith("role.") else fresh["users"][0]["after"]
         record_actor_event(connection, actor_id, kind="Role" if action["type"].startswith("role.") else "Account",
-                           action="Deleted" if action["type"] == "role.delete" else "Updated",
+                           action={"role.create": "Created", "role.delete": "Deleted"}.get(action["type"], "Updated"),
                            label=label, reason="Roles or individual permissions changed", fields=["Roles and permissions"],
                            before={"Roles and permissions": previous}, after={"Roles and permissions": after},
                            confirmation_id=proof["confirmationId"])

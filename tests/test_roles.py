@@ -1,5 +1,7 @@
 """Role administration uses the displayed consequences and a current session."""
 import json
+import hashlib
+import hmac
 import sqlite3
 import unittest
 from unittest.mock import patch
@@ -163,6 +165,39 @@ class RoleAdministrationTests(unittest.TestCase):
         self.db.execute("DELETE FROM roles WHERE id=?", (role,))
         self.db.commit()
         self.assertFalse(self.confirm(action, preview)["preview"]["available"])
+
+    def test_cookie_holder_cannot_sign_a_proof_and_restart_requires_new_preview(self):
+        action = {"type": "override.set", "userId": self.user, "section": "Devices", "level": "read"}
+        preview = self.preview(action)
+        contents = {key: value for key, value in preview["proof"].items() if key != "signature"}
+        encoded = json.dumps(contents, sort_keys=True, separators=(",", ":"), ensure_ascii=True).encode()
+        forged = {**contents, "signature": hmac.new(bytes.fromhex(self.token), b"caffoot-role-confirmation-v1:" + encoded, hashlib.sha256).hexdigest()}
+        self.assertEqual(confirm_role_change(self.db, self.admin, self.token, action, forged, now=61)["status"], "confirmation required")
+        with patch("backend.roles._CONFIRMATION_SECRET", b"a different server process key"):
+            self.assertEqual(self.confirm(action, preview)["status"], "confirmation required")
+        self.assertFalse(self.db.execute("SELECT 1 FROM account_permission_overrides").fetchone())
+
+    def test_reversing_an_intervening_change_does_not_renew_old_preview(self):
+        role = self.create_role()
+        action = {"type": "override.set", "userId": self.user, "section": "Devices", "level": "read"}
+        preview = self.preview(action)
+        self.assign(role)
+        self.confirm({"type": "membership.remove", "roleId": role, "userId": self.user})
+        self.assertEqual(self.confirm(action, preview)["status"], "confirmation required")
+
+    def test_new_session_invalidates_displayed_session_count_and_rename_keeps_sessions(self):
+        role = self.create_role()
+        self.assign(role)
+        self.db.execute("UPDATE accounts SET mfa_secret=?,mfa_confirmed=1 WHERE id=?", (self.secret, self.user))
+        self.db.commit()
+        action = self.update(role, name="Renamed")
+        preview = self.preview(action)
+        token = login_session(self.db, "staff", "password", mfa_code=code_at(self.secret, 59), now=59)
+        stale = self.confirm(action, preview)
+        self.assertEqual(stale["status"], "confirmation required")
+        self.assertEqual(stale["preview"]["users"][0]["sessionCount"], 1)
+        self.assertEqual(self.confirm(action, stale["preview"])["status"], "updated")
+        self.assertEqual(session_account(self.db, token, now=61), self.user)
 
     def test_atomic_rollback_on_audit_or_revocation_failure(self):
         role = self.create_role()

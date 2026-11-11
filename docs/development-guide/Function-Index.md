@@ -871,20 +871,20 @@ The account hydration/photo functions now have purpose-based callable bindings m
 
 | Function | Line |
 | --- | ---: |
-| [`_json`](../../backend/roles.py#L22) | 22 |
-| [`_validate_action`](../../backend/roles.py#L26) | 26 |
-| [`_require_actor`](../../backend/roles.py#L66) | 66 |
-| [`role_catalogue`](../../backend/roles.py#L72) | 72 |
-| [`account_access_details`](../../backend/roles.py#L83) | 83 |
-| [`_action_targets`](../../backend/roles.py#L112) | 112 |
-| [`_apply_values`](../../backend/roles.py#L131) | 131 |
-| [`_security_snapshot`](../../backend/roles.py#L163) | 163 |
-| [`_preview_impact`](../../backend/roles.py#L192) | 192 |
-| [`_confirmation_signature`](../../backend/roles.py#L226) | 226 |
-| [`_issue_preview`](../../backend/roles.py#L230) | 230 |
-| [`preview_role_change`](../../backend/roles.py#L238) | 238 |
-| [`confirm_role_change`](../../backend/roles.py#L250) | 250 |
-| [`_audit_role_value`](../../backend/roles.py#L300) | 300 |
+| [`_json`](../../backend/roles.py#L23) | 23 |
+| [`_validate_action`](../../backend/roles.py#L27) | 27 |
+| [`_require_actor`](../../backend/roles.py#L67) | 67 |
+| [`role_catalogue`](../../backend/roles.py#L73) | 73 |
+| [`account_access_details`](../../backend/roles.py#L84) | 84 |
+| [`_action_targets`](../../backend/roles.py#L113) | 113 |
+| [`_apply_values`](../../backend/roles.py#L132) | 132 |
+| [`_security_snapshot`](../../backend/roles.py#L164) | 164 |
+| [`_preview_impact`](../../backend/roles.py#L193) | 193 |
+| [`_confirmation_signature`](../../backend/roles.py#L231) | 231 |
+| [`_issue_preview`](../../backend/roles.py#L238) | 238 |
+| [`preview_role_change`](../../backend/roles.py#L246) | 246 |
+| [`confirm_role_change`](../../backend/roles.py#L258) | 258 |
+| [`_audit_role_value`](../../backend/roles.py#L310) | 310 |
 
 ## backend/schema.py
 
