@@ -265,6 +265,9 @@ html{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sa
  #rack-overview-stats {gap:10px;}
 }
 
+/* Separate the rack search from its results only when a matching rack card is visible. */
+.racks-panel[data-panel="inventory"] .rack-directory:has(> .rack-directory-item:not(.hidden)){margin-top:15px}
+
 /* One outer content area supplies the gap below main tabs. Inner screens do not add it again. */
 #main-content {--section-content-gap:16px;}
 #main-content :is(.dashboard-tab-panel,.section-page-body),
