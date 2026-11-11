@@ -12,8 +12,11 @@ import tempfile
 def build_private_acceptance(root, *, save=None, build_ca=None):
     def git(*args):
         return subprocess.check_output(["git", *args], cwd=root, text=True).strip()
-    if git("branch", "--show-current") != "feat/approved-modular-html-282":
-        raise RuntimeError("Use the isolated Issue #282 implementation branch")
+    if git("branch", "--show-current") not in (
+        "feat/approved-modular-html-282",
+        "fix/341-rack-inventory-search-spacing",
+    ):
+        raise RuntimeError("Use an approved private acceptance branch for Issue #282 or #341")
     if git("status", "--porcelain"):
         raise RuntimeError("Commit the complete integration before building acceptance")
     revision = git("rev-parse", "HEAD")
