@@ -1,4 +1,23 @@
-# Milestone 01 Development Handover
+# Milestone 01 Development Handover — v2.2 Target
+
+> **Current status, 12 November 2026:** v2.2 is the agreed **future** release designation for Milestone 01, not a public release or Docker image. The latest published version remains **v2.1**. Stage 1 RBAC, individual overrides, IT Staff and schema 12 were formally accepted, with the isolated fictional-data full-volume restore rehearsal reported passed, and [PR #358](https://github.com/Caffoot/Caffoot-Lite/pull/358) merged into `main` at `6008fedfc2c25fc40b49c9e9e21f3a93d61a9f4a`. **Stages 2–6 are still open.** Development and private acceptance continue on `milestone-1`; do not merge to `main`, publish v2.2 or deploy to a real installation without separate owner approval. Track remaining stages in [#351](https://github.com/Caffoot/Caffoot-Lite/issues/351) and release-preparation documentation in [#366](https://github.com/Caffoot/Caffoot-Lite/issues/366).
+
+## Ongoing v2.2 checklist
+
+- [x] Agree target version v2.2; distinguish from published v2.1
+- [x] Stage 1 — accepted and merged (PR #358); documented real Pi and isolated restore evidence
+- [ ] Stage 2 — optional-feature foundation (issue #238)
+- [ ] Stage 3 — People, Assets and equipment handovers (#232, #352, #292)
+- [ ] Stage 4 — Suppliers and lifecycle (#349, #286)
+- [ ] Stage 5 — Service Desk and notifications (#233, #355)
+- [ ] Stage 6 — fixes, integrated verification and milestone-wide acceptance (#347, plus cross-feature checks)
+- [ ] Draft and verify v2.2 release notes, installation/upgrade/rollback guidance, source-compatible examples and screenshots based on delivered work
+- [ ] Obtain separate final milestone merge approval; verify the resulting `main` build
+- [ ] Obtain separate v2.2 publication approval and verify published image/platforms, release notes and installation links before changing current-release instructions
+
+## Historical Stage 1 implementation record
+
+**The notes below were written during Stage 1 and may describe then-pending checks or a then-draft PR. They are historical checkpoints, superseded by the current status above.**
 
 ## IT Staff — Issue #365
 
