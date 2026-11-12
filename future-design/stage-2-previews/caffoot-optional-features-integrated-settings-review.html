@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Caffoot Lite — Settings & Data · Optional Features Integrated Design Review</title>
+  <style>
+    :root {--navy:#142b43;--navy2:#203b55;--ink:#223b53;--muted:#637c92;--line:#e1e8ee;--canvas:#f5f7fa;--white:#fff;--orange:#ed8532;--orange2:#d87327;--shadow:0 7px 26px rgba(31,51,73,.04);--radius:15px}
+    *{box-sizing:border-box}
+    html{scroll-behaviour:smooth}
+    body{margin:0;background:var(--canvas);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:var(--ink);font-size:14px}
+    button,input{font:inherit}button{cursor:pointer}
+    button:focus-visible,input:focus-visible{outline:3px solid rgba(238,135,55,.38);outline-offset:3px}
+    .shell{min-height:100vh;display:grid;grid-template-columns:215px minmax(0,1fr)}
+    .sidebar{background:var(--navy);color:#d2dce5;padding:21px 13px 18px;display:flex;flex-direction:column;gap:12px;position:sticky;top:0;height:100vh}
+    .brand{display:flex;gap:10px;align-items:center;margin:3px 7px 25px}
+    .brand-symbol{width:40px;height:40px;display:grid;place-items:center;border-radius:11px;color:#fff;background:linear-gradient(130deg,#f19a4d,#d16e23);font-size:19px;font-weight:850;box-shadow:0 3px 15px #07162733}
+    .brand-name{font-size:16px;font-weight:800;letter-spacing:-.45px;color:#fff}.brand-name span{color:#ffac6c}
+    .brand-sub{font-size:9px;color:#94abc1;letter-spacing:.045em;margin-top:3px}
+    .nav-label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#829ab2;padding:0 11px;margin:4px 0 0}
+    .nav-item{display:flex;align-items:center;gap:12px;padding:12px 13px;color:#d2dfeb;text-decoration:none;border-radius:10px;font-size:13px;font-weight:550}
+    .nav-item .glyph{width:19px;text-align:center;opacity:.9;font-size:17px}
+    .nav-item.current{background:#2e465e;color:white;font-weight:700}.nav-item.current .glyph{color:#ffa164}
+    .nav-item:not(.current):hover{background:#253c54}
+    .sidebar-bottom{margin-top:auto;border-top:1px solid #365069;padding-top:12px}
+    .sidebar-bottom .nav-item{padding:10px 13px}
+    .sidebar-note{font-size:10px;color:#94abc1;line-height:1.5;margin:9px 12px 0}
+    .main{min-width:0;width:100%;padding:30px clamp(22px,3vw,46px) 48px}
+    .eyebrow{font-size:11px;font-weight:800;letter-spacing:.12em;color:#ec8536;text-transform:uppercase;margin:3px 0 8px}
+    .header h1{font-size:31px;line-height:1.2;letter-spacing:-.8px;color:#1c3850;margin:0 0 9px}
+    .header p{color:#748a9f;font-size:14px;margin:0;line-height:1.6}
+    .subnav{margin-top:26px;display:flex;gap:24px;border-bottom:1px solid var(--line);overflow-x:auto}
+    .subnav button{color:#7189a0;background:transparent;border:0;border-bottom:3px solid transparent;font-size:12px;font-weight:700;padding:0 4px 14px;display:inline-flex;gap:8px;align-items:center;white-space:nowrap}
+    .subnav button svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .subnav button.active{color:#27435a;border-bottom-color:var(--orange)}
+    .panel{padding-top:23px}
+    .panel-heading{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:18px}
+    .panel-heading h2{font-size:17px;letter-spacing:-.4px;color:#273f59;margin:0 0 5px}.panel-heading p{font-size:12px;color:#788da1;margin:0;line-height:1.6;max-width:700px}
+    .preview-pill{font-size:10px;background:#fff2e5;color:#a86120;border:1px solid #f4d9bb;padding:8px 11px;border-radius:99px;font-weight:800;white-space:nowrap}
+    .note{border:1px solid #dce6ee;background:#eef3f7;color:#4e6c83;border-radius:12px;padding:14px 16px;font-size:12px;line-height:1.7;margin-bottom:23px;display:flex;gap:12px;align-items:flex-start}
+    .note svg{width:17px;flex:none;margin-top:2px}
+    .section-title{margin:24px 0 12px;font-weight:800;font-size:13px;color:#344e66;letter-spacing:.01em}
+    .feature-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px}
+    .card{background:white;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);min-width:0;overflow:hidden}
+    .card-padded{padding:20px 21px}
+    .card-head{display:flex;align-items:flex-start;gap:12px}
+    .iconwrap{width:42px;height:42px;display:grid;place-items:center;flex:none;border-radius:11px;background:#eaf0f7;color:#6685a1}
+    .iconwrap.orange{background:#fff2e5;color:#cc7d30}.iconwrap.green{background:#e8f6f0;color:#3c917b}
+    .iconwrap svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .feature-title{font-size:15px;font-weight:800;margin:0 0 6px;color:#28435b;letter-spacing:-.2px}
+    .description{font-size:11.5px;color:#70859a;line-height:1.65;margin:0;min-height:57px}
+    .separator{height:1px;background:#e9eef2;margin:18px 0 15px}
+    .feature-bottom{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .status{font-size:10px;font-weight:800;padding:7px 10px;border-radius:99px;color:#788ca1;background:#f0f3f6}
+    .status.enabled{color:#27735f;background:#e8f6f0}
+    .status.planned{color:#8b6c38;background:#fff4dd;border:1px solid #f5dfb5}
+    .toggle-label{display:inline-flex;align-items:center;gap:9px;font-weight:750;font-size:11px;color:#405b72;cursor:pointer}
+    .switch{appearance:none;position:relative;width:40px;height:23px;background:#cbd6e0;border:0;border-radius:40px;transition:background .15s;margin:0;cursor:pointer;flex:none}
+    .switch:after{content:"";position:absolute;width:17px;height:17px;background:#fff;left:3px;top:3px;border-radius:50%;box-shadow:0 1px 3px #0e274a29;transition:transform .15s}
+    .switch:checked{background:var(--orange)}.switch:checked:after{transform:translateX(17px)}
+    .switch:disabled{opacity:.45;cursor:not-allowed}.toggle-label.unavailable{color:#8b9bad;cursor:default}
+    .detail{font-size:10.5px;color:#8a9aaa;line-height:1.6;margin-top:12px}
+    .footer{border-top:1px solid #e0e8ef;margin-top:27px;padding-top:17px;color:#98a8b8;font-size:10px;display:flex;justify-content:space-between;gap:10px}
+    .placeholder{background:#fff;border:1px dashed #d7e3ec;border-radius:13px;padding:25px;color:#637d95;line-height:1.7;font-size:13px}
+    .modal-back{position:fixed;inset:0;z-index:20;background:#10253dbb;display:grid;place-items:center;padding:20px}
+    .modal-back[hidden]{display:none}
+    .modal{background:#fff;border-radius:15px;padding:25px;width:min(100%,460px);box-shadow:0 30px 80px #0003}
+    .modal h3{margin:0 0 10px;font-size:18px;letter-spacing:-.25px;color:#263e55}
+    .modal p{font-size:12px;color:#6d8497;line-height:1.7;margin:0 0 18px}
+    .actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+    .btn{border:1px solid #e0e8ee;background:#fff;color:#425e78;padding:10px 15px;border-radius:9px;font-weight:750;font-size:11px}
+    .btn.primary{background:var(--orange);color:white;border-color:var(--orange)}.btn.primary:hover{background:var(--orange2)}
+    .btn:hover:not(.primary){background:#f5f8fb}
+    @media(max-width:1050px){.feature-grid{grid-template-columns:1fr}.description{min-height:0}}
+    @media(max-width:720px){.shell{grid-template-columns:62px minmax(0,1fr)}.sidebar{padding:16px 7px}.brand{margin:0 auto 17px}.brand-symbol{width:36px;height:36px}.brand-text,.nav-label,.nav-item .item-text,.sidebar-note{display:none}.nav-item{justify-content:center;padding:12px 0}.main{padding:24px 14px 30px}.header h1{font-size:25px}.header p{font-size:12px}.subnav{gap:15px}.panel-heading{flex-direction:column}.card-padded{padding:17px}.footer{flex-wrap:wrap}}
+    @media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important}}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar" aria-label="Illustrative Application Navigation">
+      <div class="brand"><div class="brand-symbol" aria-hidden="true">C</div><div class="brand-text"><div class="brand-name">Caffoot <span>Lite</span></div><div class="brand-sub">INFRASTRUCTURE, SIMPLIFIED.</div></div></div>
+      <div class="nav-label">Administration</div>
+      <a href="#" class="nav-item current" onclick="return false"><span class="glyph" aria-hidden="true">⚙</span><span class="item-text">Settings &amp; Data</span></a>
+      <a href="#" class="nav-item" onclick="return false"><span class="glyph" aria-hidden="true">♙</span><span class="item-text">Users &amp; Permissions</span></a>
+      <div class="sidebar-bottom"><a href="#" class="nav-item" onclick="return false"><span class="glyph" aria-hidden="true">◉</span><span class="item-text">My Account</span></a><div class="sidebar-note">Illustrative sidebar only. Unrelated navigation remains subject to the approved application design.</div></div>
+    </aside>
+    <main class="main">
+      <div class="eyebrow">System Administration</div>
+      <header class="header"><h1>Settings &amp; Data</h1><p>Manage your installation, protect your data and configure optional email.</p></header>
+      <nav class="subnav" role="tablist" aria-label="Settings and Data Sections">
+        <button role="tab" aria-selected="false" data-tab="data" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v7c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12v7c0 1.7 3.6 3 8 3s8-1.3 8-3v-7"/></svg>Data &amp; Backups</button>
+        <button role="tab" aria-selected="false" data-tab="email" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>Email Settings</button>
+        <button role="tab" aria-selected="false" data-tab="maintenance" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 6a5 5 0 0 0-6 6L3 17l4 4 5-5a5 5 0 0 0 6-6l-4 2-3-3z"/></svg>System Maintenance</button>
+        <button class="active" role="tab" aria-selected="true" data-tab="features" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M8 9h8M8 15h8"/><circle cx="12" cy="9" r="2" fill="currentColor" stroke="none"/><circle cx="12" cy="15" r="2" fill="currentColor" stroke="none"/></svg>Optional Features</button>
+      </nav>
+      <section id="features-panel" class="panel" role="tabpanel">
+        <div class="panel-heading"><div><h2>Optional Features</h2><p>Choose which sections your organisation uses. Features can be enabled independently, with permissions retained.</p></div><span class="preview-pill">Design Review · No Settings Saved</span></div>
+        <div class="note"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v1"/></svg><span><strong>Your Information Stays Safe.</strong> Disabling a feature hides its functionality but retains existing records, relationships and permissions. Only administrators can change these settings. Turning a feature on does not grant users permission to access it.</span></div>
+        <h3 class="section-title">Infrastructure</h3>
+        <div id="infrastructure" class="feature-grid"></div>
+        <h3 class="section-title">Additional Features</h3>
+        <div id="additional" class="feature-grid"></div>
+        <footer class="footer"><span>Caffoot Lite · Infrastructure, Simplified.</span><span>Optional Features · Stage 2 Integrated-Style Review (Not Live)</span></footer>
+      </section>
+      <section id="existing-panel" class="panel" role="tabpanel" hidden><div class="placeholder"><strong>Existing Settings Screen</strong><p>The existing tab is deliberately not duplicated in this design review. The approved Data &amp; Backups, Email Settings and System Maintenance screens remain unchanged in the application.</p></div></section>
+    </main>
+  </div>
+  <div id="confirmation" class="modal-back" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-description">
+      <h3 id="modal-title">Disable Feature?</h3>
+      <p id="modal-description"></p>
+      <div class="actions"><button id="cancel" class="btn" type="button">Cancel</button><button id="confirm" class="btn primary" type="button">Disable Feature</button></div>
+    </div>
+  </div>
+  <script>
+    'use strict';
+    // Design preview only: all state is local to this page and is never saved.
+    const features = [
+      {id:'devices',title:'Devices',desc:'Record and manage equipment, including its location and basic IP address details.',kind:'infrastructure',icon:'devices'},
+      {id:'ipam',title:'IP Address Management',desc:'Manage subnets, IP address allocations and VLANs. Without IPAM, Devices still offers basic IP entry.',kind:'infrastructure',icon:'network'},
+      {id:'racks',title:'Network Racks',desc:'Document racks, rack accessories and equipment placement within racks.',kind:'infrastructure',icon:'racks'},
+      {id:'suppliers',title:'Suppliers',desc:'Manage supplier records, contacts and related notes and issues.',kind:'additional',icon:'people',planned:true},
+      {id:'lifecycle',title:'Equipment Lifecycle',desc:'Track equipment lifecycle information, warranty dates and related warnings.',kind:'additional',icon:'clock',planned:true}
+    ];
+    const icons={
+      devices:'<rect x="4" y="4" width="16" height="12" rx="2"/><path d="M9 20h6m-3-4v4"/>',
+      network:'<rect x="9" y="3" width="6" height="6" rx="1"/><rect x="2" y="16" width="7" height="5" rx="1"/><rect x="15" y="16" width="7" height="5" rx="1"/><path d="M12 9v4M5.5 16v-3h13v3"/>',
+      racks:'<rect x="6" y="2" width="12" height="20" rx="1"/><path d="M9 6h6M9 10h6M9 14h6M9 18h6"/>',
+      people:'<circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 6a3 3 0 0 1 0 6m1 4a5 5 0 0 1 3 4"/>',
+      clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/>'
+    };
+    const state=Object.fromEntries(features.map(feature=>[feature.id,false]));
+    let pending=null;
+    let priorFocus=null;
+    const modal=document.querySelector('#confirmation');
+    const modalTitle=document.querySelector('#modal-title');
+    const modalDescription=document.querySelector('#modal-description');
+    function render(){
+      for(const kind of ['infrastructure','additional']){
+        document.querySelector('#'+kind).innerHTML=features.filter(feature=>feature.kind===kind).map(feature=>{
+          const active=state[feature.id];
+          return `<article class="card card-padded"><div class="card-head"><span class="iconwrap ${feature.id==='devices'||feature.id==='suppliers'?'orange':feature.id==='racks'?'green':''}"><svg viewBox="0 0 24 24" aria-hidden="true">${icons[feature.icon]}</svg></span><div><h4 class="feature-title">${feature.title}</h4><p class="description">${feature.desc}</p></div></div><div class="separator"></div><div class="feature-bottom"><span class="status ${feature.planned?'planned':active?'enabled':''}">${feature.planned?'Coming in Stage 4':active?'Enabled':'Disabled'}</span><label class="toggle-label ${feature.planned?'unavailable':''}" for="switch-${feature.id}"><span>${feature.planned?'Not Available Yet':active?'Enabled':'Enable Feature'}</span><input id="switch-${feature.id}" class="switch" type="checkbox" ${active?'checked':''} ${feature.planned?'disabled':''} aria-label="${feature.planned?feature.title+' — Coming in Stage 4':active?'Disable '+feature.title:'Enable '+feature.title}" data-feature="${feature.id}"></label></div>${feature.planned?'<div class="detail">This feature cannot be enabled until Stage 4 functionality is developed and approved.</div>':''}</article>`;
+        }).join('');
+      }
+      document.querySelectorAll('input[data-feature]:not(:disabled)').forEach(input=>input.addEventListener('change',event=>{
+        const id=event.target.dataset.feature;
+        if(!event.target.checked){
+          event.target.checked=true;
+          priorFocus=event.target;
+          pending=id;
+          const label=features.find(f=>f.id===id).title;
+          modalTitle.textContent=`Disable ${label}?`;
+          modalDescription.textContent=`${label} will no longer be available in menus, forms or feature operations. Existing data, relationships and saved permissions will be retained. Re-enabling it will restore permitted access.`;
+          modal.hidden=false;
+          document.querySelector('#cancel').focus();
+          return;
+        }
+        state[id]=true;render();document.querySelector('#switch-'+id)?.focus();
+      }));
+    }
+    function closeDialog(){modal.hidden=true;pending=null;priorFocus?.focus();priorFocus=null}
+    document.querySelector('#cancel').addEventListener('click',closeDialog);
+    document.querySelector('#confirm').addEventListener('click',()=>{
+      if(pending!==null){const id=pending;state[id]=false;modal.hidden=true;pending=null;render();document.querySelector('#switch-'+id)?.focus();priorFocus=null;}
+    });
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!modal.hidden){e.preventDefault();closeDialog()}});
+    modal.addEventListener('click',e=>{if(e.target===modal)closeDialog()});
+    document.querySelectorAll('[data-tab]').forEach(tab=>tab.addEventListener('click',()=>{
+      document.querySelectorAll('[data-tab]').forEach(t=>{const on=t===tab;t.classList.toggle('active',on);t.setAttribute('aria-selected',String(on))});
+      const featuresOn=tab.dataset.tab==='features';
+      document.querySelector('#features-panel').hidden=!featuresOn;
+      document.querySelector('#existing-panel').hidden=featuresOn;
+    }));
+    render();
+  </script>
+</body>
+</html>

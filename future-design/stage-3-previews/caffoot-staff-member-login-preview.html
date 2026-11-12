@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+
+<html lang="en-GB">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Caffoot Lite — Staff Members &amp; Optional Login — Interactive Preview</title>
+<style>
+/* Standalone planning preview. Visual tokens and shell are taken from the pinned v2.1 Dashboard Draft 02.
+   Additional Assets-specific layouts are proposals only, not approved application styling. */
+:root{--navy:#142b43;--navy2:#203b55;--ink:#223b53;--muted:#637c92;--line:#e1e8ee;--canvas:#f5f7fa;--white:#fff;--orange:#ed8532;--orange2:#d87327;--shadow:0 7px 26px rgba(31,51,73,.04);--radius:15px;--soft:#f2f6fa;--green:#51a287;--blue:#7197b9;--grey:#aabaca;--red:#cf746c;--heading:#1f3850}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--canvas);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:var(--ink);font-size:13px}button,input,select{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid rgba(238,135,55,.5);outline-offset:2px}.shell{min-height:100vh;display:grid;grid-template-columns:215px minmax(0,1fr)}.sidebar{background:var(--navy);color:#d2dce5;display:flex;flex-direction:column;min-height:100vh;padding:20px 13px 15px;gap:12px;position:sticky;top:0;height:100vh}.brand{display:flex;align-items:center;gap:10px;margin:1px 7px 21px}.brand img{width:42px;height:42px;border-radius:10px;object-fit:contain}.brand-fallback{width:42px;height:42px;border-radius:10px;background:#ef8a39;display:none;place-items:center;color:#fff;font-size:22px;font-weight:800}.brand-name{font-size:16px;font-weight:750;letter-spacing:-.55px;color:white}.brand-name span{color:#ffac6c}.brand-sub{font-size:9px;letter-spacing:.045em;color:#94abc1;margin-top:3px}.nav-label{font-weight:700;letter-spacing:.13em;font-size:10px;color:#829ab2;margin:10px 11px 4px}.nav-item{display:flex;align-items:center;gap:12px;width:100%;padding:11px 13px;border:0;text-align:left;border-radius:10px;color:#d2dfeb;background:none;font-weight:550}.nav-item svg{width:17px;height:17px;stroke-width:1.8;flex-shrink:0}.nav-item.current{background:#2e465e;color:#fff}.nav-item.current svg{color:#ffa164}.nav-item.subtle:hover,.sidebar-button:hover{background:#253c54}.nav-bottom{margin-top:auto;border-top:1px solid #365069;padding-top:11px;display:grid;gap:5px}.identity{display:flex;align-items:center;gap:10px;margin:8px 7px 9px}.avatar{width:32px;height:32px;background:#3c5872;color:#ffba83;border-radius:50%;display:grid;place-items:center;font-weight:800}.identity .who{color:white;font-size:11px;font-weight:700}.identity .meta{font-size:10px;color:#a9bfd1;margin-top:3px}.sidebar-button{border:0;background:#243d56;color:#c7d7e6;border-radius:9px;padding:9px;display:flex;align-items:center;justify-content:center;gap:9px;font-size:11px;margin-top:9px}.sidebar-button svg{width:15px;height:15px;color:#f5a66a}.shell.collapsed{grid-template-columns:65px minmax(0,1fr)}.shell.collapsed .sidebar{width:65px;padding-left:8px;padding-right:8px}.collapsed .nav-item{justify-content:center;padding:12px}.collapsed .brand{justify-content:center;margin:0 0 22px}.collapsed .brand img,.collapsed .brand-fallback{width:37px;height:37px}.collapsed .brand-text,.collapsed .nav-label,.collapsed .nav-text,.collapsed .identity-text,.collapsed .collapse-text{display:none}.collapsed .identity{justify-content:center;margin:5px 0}.workspace{min-width:0}.topbar{height:64px;border-bottom:1px solid var(--line);background:var(--white);display:flex;align-items:center;justify-content:space-between;padding:0 clamp(20px,3vw,44px)}.crumb{display:flex;align-items:center;gap:10px;font-size:12px;color:#75899a}.crumb b{color:#34526b;font-weight:650}.top-right{display:flex;align-items:center;gap:11px}.top-right .role{font-size:11px;color:#8597a7}.top-right .topavatar{display:grid;place-items:center;border-radius:50%;height:31px;width:31px;background:#edf2f6;color:#5e7892;font-weight:800}.main{max-width:1350px;margin:auto;padding:32px clamp(20px,3vw,44px) 50px}.eyebrow{font-size:10px;letter-spacing:.15em;color:#d27931;font-weight:850;margin-bottom:7px}.header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}.header h1{font-size:30px;line-height:1.15;color:var(--heading);margin:0 0 8px;letter-spacing:-1.1px;font-weight:790}.header p{margin:0;color:var(--muted);font-size:13px;line-height:1.6}.version{color:#5e7891;background:var(--white);border:1px solid var(--line);padding:9px 13px;border-radius:9px;font-size:11px;white-space:nowrap;font-weight:600}.context{margin-top:20px;background:#eaf1f7;border:1px solid #dae6ef;border-radius:12px;padding:13px 17px;display:flex;align-items:flex-start;gap:12px;color:#4b6a85;font-size:12px;line-height:1.5}.context svg{flex-shrink:0;width:17px;height:17px;color:#6386a3}.subnav{margin-top:24px;display:flex;gap:22px;border-bottom:1px solid var(--line);overflow-x:auto}.subnav button{color:#7189a0;background:transparent;border:0;border-bottom:3px solid transparent;font-size:12px;font-weight:700;padding:0 4px 14px;display:inline-flex;gap:8px;align-items:center;white-space:nowrap}.subnav button svg{width:16px;height:16px}.subnav button.active{color:var(--heading);border-bottom-color:#ed8532}.account-panel{display:none;padding-top:23px}.account-panel.active{display:block}.section-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:15px;gap:12px}.section-heading h2{font-size:17px;margin:0;color:var(--heading);letter-spacing:-.35px}.section-heading p{font-size:11px;color:var(--muted);margin:5px 0 0}.card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);min-width:0;overflow:hidden}.card-padded{padding:22px}.card-head{display:flex;align-items:flex-start;gap:12px}.iconwrap{width:40px;height:40px;flex:none;display:grid;place-items:center;border-radius:11px;background:#eaf0f7;color:#6685a1}.iconwrap svg{width:20px;height:20px}.iconwrap.orange{background:#fff2e5;color:#cc7d30}.iconwrap.green{background:#e8f6f0;color:#3c917b}.iconwrap.red{background:#fff0ed;color:#cb665f}.card h3{font-size:15px;margin:0 0 4px;letter-spacing:-.2px}.sub{font-size:11.5px;color:var(--muted);line-height:1.6;margin:0}.divider{border-top:1px solid var(--line);margin:18px 0}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid #e0e8ee;padding:10px 15px;border-radius:9px;background:var(--white);color:#425e78;font-size:11px;font-weight:750;white-space:nowrap}.btn svg{width:15px;height:15px}.btn-primary{background:var(--orange);color:white;border-color:var(--orange)}.btn-primary:hover{background:var(--orange2)}.btn-outline:hover{background:var(--soft)}.footer{margin-top:24px;border-top:1px solid var(--line);padding:15px 0;color:#98a8b7;font-size:10px;display:flex;justify-content:space-between}
+/* New proposed Assets-only arrangements; no existing v2.1 screen is altered. */
+.filters{display:flex;gap:11px;align-items:end;flex-wrap:wrap;margin-bottom:19px}.filter{display:grid;gap:6px;min-width:165px}.filter label{font-size:10.5px;font-weight:750;color:var(--muted)}.filter select,.filter input{min-height:39px;padding:9px 11px;background:var(--white);color:var(--ink);border:1px solid #dce5ed;border-radius:9px;min-width:0;width:100%;font-size:11.5px}.filters .filter-note{margin-left:auto;max-width:310px;font-size:10px;line-height:1.5;color:var(--muted)}.metrics{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:13px;margin-bottom:18px}.metric{display:flex;flex-direction:column;align-items:stretch;text-align:left;padding:17px 17px 14px;min-height:141px;border:1px solid var(--line);background:var(--white);color:var(--ink);border-radius:var(--radius);box-shadow:var(--shadow);transition:border-color .12s,transform .12s}.metric:hover{border-color:#c3d4e1;transform:translateY(-1px)}.metric-top{display:flex;align-items:center;justify-content:space-between;gap:5px;font-size:11px;color:var(--muted);font-weight:700}.miniicon{display:grid;place-items:center;width:29px;height:29px;border-radius:8px;background:#ebf2f8;color:#6283a1;flex:none}.miniicon.good{background:#e8f6f0;color:#398c78}.miniicon.warn{background:#fff3e7;color:#be7c3a}.miniicon.bad{background:#fff0ed;color:#c16c61}.miniicon svg{width:16px;height:16px}.metric strong{font-size:29px;line-height:1.25;letter-spacing:-1px;margin-top:11px;color:var(--heading)}.metric small{font-size:10px;color:var(--muted);line-height:1.5;margin-top:3px}.card-grid{display:grid;grid-template-columns:minmax(0,1.14fr) minmax(0,.86fr);gap:17px;margin-bottom:17px}.card-grid.equal{grid-template-columns:repeat(2,minmax(0,1fr))}.card-inner{padding:21px}.split-title{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}.tiny-legend{display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:10.5px;color:var(--muted)}.legend-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:middle}.legend-dot.green{background:var(--green)}.legend-dot.orange{background:var(--orange)}.legend-dot.grey{background:var(--grey)}.legend-dot.blue{background:var(--blue)}.legend-dot.red{background:var(--red)}.legend-dot.navy{background:#4c6a86}.category-row{display:grid;grid-template-columns:94px minmax(80px,1fr) 66px;gap:10px;align-items:center;margin:13px 0}.category-row .name{font-size:11px;color:var(--ink);font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.category-row .counts{font-size:10.5px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}.stackbar{height:12px;border-radius:6px;overflow:hidden;display:flex;background:var(--soft)}.stackbar span{height:100%}.bar-ready{background:var(--green)}.bar-awaiting{background:var(--orange)}.bar-issued{background:var(--blue)}.bar-unregistered{background:#6e93b1}.bar-registered{background:#e9a066}.bar-subtitle{font-size:10px;color:var(--muted);margin:12px 0 0;line-height:1.5}.status-block{display:flex;align-items:center;gap:20px}.donut{width:150px;height:150px;flex:none;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--green) 0 84.21%,var(--orange) 84.21% 100%)}.donut-center{background:var(--white);border-radius:50%;width:103px;height:103px;display:flex;flex-direction:column;justify-content:center;align-items:center}.donut-center strong{font-size:28px;color:var(--heading);line-height:1.1}.donut-center small{color:var(--muted);font-size:10px;margin-top:6px}.stat-lines{flex:1;min-width:0}.stat-line{display:flex;align-items:center;gap:8px;padding:11px 0;border-bottom:1px solid var(--line);font-size:11px}.stat-line:last-child{border-bottom:0}.stat-line strong{margin-left:auto;font-variant-numeric:tabular-nums;font-size:12px}.notice{padding:12px 14px;border-radius:10px;background:var(--soft);color:#56758f;line-height:1.5;font-size:11px;margin-top:16px}.notice strong{color:inherit}.attention-list{display:grid;gap:0}.attention{display:flex;align-items:center;gap:11px;padding:12px 0;border-bottom:1px solid var(--line)}.attention:last-child{border-bottom:0}.attention-dot{width:10px;height:10px;border-radius:50%;background:var(--orange);flex:none}.attention strong{font-size:11px;display:block;margin-bottom:4px}.attention p{color:var(--muted);font-size:10px;line-height:1.45;margin:0}.attention button{margin-left:auto;color:#b8763c;background:transparent;border:0;font-weight:750;font-size:10.5px;padding:9px;white-space:nowrap}.attention button:hover{text-decoration:underline}.identity-blocks{display:grid;grid-template-columns:1fr 1fr;gap:12px}.identity-block{background:var(--soft);border-radius:11px;padding:16px}.identity-block strong{display:block;font-size:26px;color:var(--heading);line-height:1.2}.identity-block small{font-size:10px;color:var(--muted);display:block;margin-top:7px}.identity-strip{height:12px;display:flex;border-radius:10px;overflow:hidden;margin-top:17px}.identity-strip span{display:block}.identity-help{margin-top:12px;font-size:10px;color:var(--muted);line-height:1.5}.chartbox{height:220px;display:flex;align-items:end;justify-content:space-around;gap:9px;position:relative;border-bottom:1px solid var(--line);padding:16px 3px 0}.chartbox::before{content:'';position:absolute;left:0;right:0;top:25%;border-top:1px dashed var(--line);box-shadow:0 51px 0 var(--line),0 101px 0 var(--line);pointer-events:none;opacity:.8}.chartcol{position:relative;z-index:1;min-width:0;flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:end}.chartbars{width:100%;height:174px;display:flex;align-items:end;justify-content:center;gap:3px}.chartbars span{width:min(16%,25px);max-width:25px;min-width:5px;border-radius:4px 4px 0 0;min-height:2px;transition:height .2s}.chartlbl{position:absolute;bottom:-23px;left:0;right:0;text-align:center;font-size:10px;color:var(--muted);white-space:nowrap}.chart-legend{margin-top:39px}.small-table{width:100%;border-collapse:collapse;font-size:11px}.small-table th{text-align:left;font-size:10px;letter-spacing:.01em;color:var(--muted);font-weight:750;background:var(--soft);padding:12px}.small-table td{padding:12px;border-bottom:1px solid var(--line);color:var(--ink)}.small-table tr:last-child td{border:0}.small-table .right{text-align:right;font-variant-numeric:tabular-nums}.status-pill{display:inline-flex;align-items:center;border-radius:30px;padding:5px 8px;font-size:10px;font-weight:750;background:#f1f4f7;color:#6b8096;white-space:nowrap}.status-pill.received{background:#e8f6f0;color:#34816d}.status-pill.issued{background:#eaf1f8;color:#567b9d}.status-pill.returned{background:#fff2e5;color:#ab722e}.status-pill.written-off{background:#fff0ed;color:#b8615c}.status-pill.registered-device{background:#f1f4f7;color:#6b8096}.table-scroll{overflow:auto}.table-footer{display:flex;justify-content:space-between;align-items:center;gap:12px;border-top:1px solid var(--line);padding:11px 17px;color:var(--muted);font-size:10.5px}.empty{padding:24px;text-align:center;color:var(--muted);font-size:12px}.actionline{display:flex;gap:9px;flex-wrap:wrap;justify-content:flex-end}.warning-note{font-size:10px;color:var(--muted);margin:0 0 15px;line-height:1.6}.visually-hidden{position:absolute;clip:rect(0 0 0 0);height:1px;width:1px;overflow:hidden;white-space:nowrap}.toast{position:fixed;right:22px;bottom:22px;padding:12px 17px;background:#172e45;color:#fff;border-radius:11px;box-shadow:0 16px 45px #10243c44;z-index:50;font-size:12px;max-width:370px;display:none}.toast.show{display:block}
+html.dark{color-scheme:dark;--canvas:#0f172a;--white:#1e293b;--ink:#f1f5f9;--muted:#cbd5e1;--line:#475569;--soft:#0f172a;--heading:#f1f5f9;--shadow:0 7px 26px rgba(0,0,0,.08)}html.dark .topbar,html.dark .card,html.dark .metric{background:var(--white);border-color:var(--line)}html.dark .version,html.dark .filter select,html.dark .filter input,html.dark .btn:not(.btn-primary){background:#0f172a;color:var(--ink);border-color:#64748b}html.dark .crumb b{color:var(--ink)}html.dark .context{background:#0f172a;border-color:#475569;color:var(--muted)}html.dark .metric:hover{background:#334155}html.dark .miniicon,html.dark .iconwrap{background:#334155;color:#bdd1e1}html.dark .iconwrap.orange,html.dark .miniicon.warn{background:#451a03;color:#fde68a}html.dark .miniicon.good,html.dark .iconwrap.green{background:#022c22;color:#a7f3d0}html.dark .miniicon.bad,html.dark .iconwrap.red{background:#4c0519;color:#fecdd3}html.dark .notice{color:#cbd5e1}html.dark .identity-block{background:#0f172a}html.dark .small-table th{background:#0f172a}html.dark .status-pill.received{background:#022c22;color:#a7f3d0}html.dark .status-pill.issued{background:#172e48;color:#bfdbfe}html.dark .status-pill.returned{background:#451a03;color:#fde68a}html.dark .status-pill.written-off{background:#4c0519;color:#fecdd3}html.dark .status-pill.registered-device{background:#334155;color:#cbd5e1}html.dark .attention button{color:#fdba74}html.dark .top-right .topavatar{background:#334155;color:#d4e4ef}
+@media(max-width:1250px){.metrics{grid-template-columns:repeat(3,minmax(0,1fr))}.card-grid{grid-template-columns:1fr}}
+@media(max-width:1080px){.main{padding:25px 24px}.topbar{padding:0 24px}}
+@media(max-width:720px){.shell{grid-template-columns:65px minmax(0,1fr)}.sidebar{width:65px;padding:16px 8px}.brand{justify-content:center;margin:0 0 16px}.brand img,.brand-fallback{width:36px;height:36px}.brand-text,.nav-label,.nav-text,.identity-text,.collapse-text{display:none}.nav-item{justify-content:center;padding:11px}.identity{justify-content:center}.main{padding:24px 13px}.topbar{height:54px;padding:0 14px}.top-right .role{display:none}.version{display:none}.header h1{font-size:25px}.card-padded,.card-inner{padding:16px}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.metric{min-height:126px;padding:13px}.metric strong{font-size:25px}.card-grid.equal{grid-template-columns:1fr}.filters .filter-note{margin-left:0;max-width:none}.status-block{flex-wrap:wrap}.footer{gap:10px}.category-row{grid-template-columns:83px minmax(80px,1fr) 65px}}
+@media(max-width:435px){.metrics{grid-template-columns:1fr 1fr;gap:8px}.metric{padding:12px}.metric-top{font-size:10px}.miniicon{width:23px;height:23px}.metric strong{font-size:23px}.header{flex-wrap:wrap}.stat-line{font-size:10px}.donut{width:125px;height:125px}.donut-center{width:86px;height:86px}.identity-blocks{gap:8px}.identity-block{padding:11px}.identity-block strong{font-size:21px}.subnav{gap:16px}.card h3{font-size:13px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;scroll-behavior:auto!important}}
+
+
+/* Standalone navigation preview only. New sidebar grouping keeps the v2.1 palette, dimensions and typography. */
+.content-view{display:none}.content-view.active{display:block}
+.nav-stack{display:flex;flex-direction:column;gap:4px;overflow-y:auto;min-height:0;flex:1;padding:0 0 6px;scrollbar-color:#536e85 transparent;scrollbar-width:thin}
+.nav-group{margin:1px 0}.nav-group-toggle{font-weight:700}.nav-group-toggle .nav-caret{margin-left:auto;font-size:19px;line-height:.7;color:#92a9bf;transform:rotate(0);transition:transform .15s}.nav-group[data-open=false] .nav-caret{transform:rotate(-90deg)}
+.nav-group.active-group .nav-group-toggle{background:#253d55;color:#fff}.nav-group.active-group .nav-group-toggle>svg{color:#ffac6c}
+.group-children{display:grid;gap:2px;padding:5px 0 5px 18px;margin-left:8px;border-left:1px solid #365069}.nav-group[data-open=false] .group-children{display:none}
+.nav-child{display:flex;align-items:center;gap:11px;text-align:left;border:0;border-radius:9px;background:transparent;color:#c9d8e6;width:100%;min-height:37px;padding:8px 9px 8px 11px;font-weight:550;font-size:11px}
+.nav-child svg{width:14px;height:14px;flex:none;stroke-width:1.8}.nav-child:hover{background:#253c54}.nav-child.current{background:#365169;color:#fff}.nav-child.current svg{color:#ffac6c}
+.nav-item[hidden],.nav-child[hidden],.nav-group[hidden]{display:none!important}.nav-group-toggle:focus-visible,.nav-child:focus-visible{outline:2px solid #ffb77f;outline-offset:2px}
+.nav-group .nav-item{padding:11px 13px}.nav-bottom{flex:none}.nav-primary.current{background:#2e465e;color:#fff}.nav-primary.current svg{color:#ffa164}
+.shell.collapsed .group-children,.shell.collapsed .nav-caret{display:none}.shell.collapsed .nav-group-toggle{justify-content:center;padding:12px}.shell.collapsed .nav-stack{overflow-x:hidden}.shell.collapsed .nav-child{display:none}.shell.collapsed .nav-group{margin:0}
+.demo-select-label{font-size:10px;color:#778ca0;font-weight:700;white-space:nowrap}#demo-access{background:var(--white);border:1px solid var(--line);color:var(--ink);border-radius:9px;height:35px;padding:0 8px;max-width:155px;font-size:11px;font-weight:700}
+.crumb{white-space:nowrap}.top-right{flex-wrap:nowrap}.topbar .mobile-menu{display:none}
+.demo-screen{margin-top:24px;min-height:245px}.demo-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.demo-tile{border:1px solid var(--line);border-radius:11px;background:var(--soft);padding:18px;display:flex;flex-direction:column;min-height:132px}.demo-tile span{color:var(--muted);font-weight:750;font-size:11px}.demo-tile strong{font-size:29px;color:var(--heading);margin-top:14px}.demo-tile small{font-size:10px;color:var(--muted);margin-top:3px}.screen-note{font-size:11px;color:var(--muted);margin:17px 0 0;line-height:1.7}.screen-sample{padding:30px;background:var(--soft);border-radius:10px;color:var(--muted);font-size:12px;line-height:1.7}.screen-sample strong{color:var(--heading);font-size:16px}.demo-subnav{margin-top:22px}.nav-child.current .nav-text{font-weight:750}
+html.dark #demo-access{background:#0f172a;color:#f1f5f9;border-color:#64748b}html.dark .demo-tile{background:#0f172a}html.dark .nav-group.active-group .nav-group-toggle{background:#2e465e}
+@media(max-height:760px){.sidebar{gap:5px}.brand{margin-bottom:10px}.nav-group .nav-item{padding:9px 12px}.nav-child{min-height:32px;padding:6px 9px}.identity{margin:5px 7px}.sidebar-button{margin-top:2px}}
+@media(max-width:1100px){.top-right .role,.demo-select-label{display:none}.topbar{gap:12px}}
+@media(max-width:820px){.topbar .topavatar{display:none}.top-right{gap:6px}}
+@media(max-width:720px){.topbar .mobile-menu{display:inline-flex;font-size:11px;padding:7px}.crumb{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}.sidebar{gap:7px}.nav-group-toggle{justify-content:center}.sidebar .nav-stack{overflow-x:hidden}.sidebar .group-children,.sidebar .nav-caret{display:none}.sidebar .nav-group-toggle .nav-text{display:none}.demo-grid{grid-template-columns:1fr 1fr}.shell.mobile-expanded{grid-template-columns:215px minmax(0,1fr)}.shell.mobile-expanded .sidebar{width:215px;padding:16px 13px}.shell.mobile-expanded .sidebar .brand-text,.shell.mobile-expanded .sidebar .nav-label,.shell.mobile-expanded .sidebar .nav-text,.shell.mobile-expanded .sidebar .identity-text,.shell.mobile-expanded .sidebar .collapse-text{display:block}.shell.mobile-expanded .sidebar .brand{justify-content:flex-start}.shell.mobile-expanded .sidebar .nav-item{justify-content:flex-start}.shell.mobile-expanded .sidebar .nav-group-toggle{justify-content:flex-start}.shell.mobile-expanded .sidebar .nav-caret{display:block}.shell.mobile-expanded .sidebar .nav-group[data-open=true] .group-children{display:grid}.shell.mobile-expanded .sidebar .nav-group[data-open=false] .group-children{display:none}.shell.mobile-expanded .sidebar .identity{justify-content:flex-start}.shell.mobile-expanded .sidebar .nav-group-toggle .nav-text{display:block}.shell.mobile-expanded .sidebar .nav-child{display:flex}}
+@media(max-width:720px){.shell.mobile-expanded{grid-template-columns:65px minmax(0,1fr)}.shell.mobile-expanded .sidebar{position:fixed;inset:0 auto 0 0;height:100vh;z-index:40;box-shadow:12px 0 30px rgba(0,0,0,.25)}.shell.mobile-expanded .workspace{min-width:0}}
+@media(max-width:520px){.topbar{gap:5px;padding:0 7px}.top-right{gap:4px}.topbar .btn{padding:7px;font-size:10px}#demo-access{max-width:105px;font-size:10px;padding:0 3px}.crumb #breadcrumb-group,.crumb>span:nth-child(2){display:none}.demo-grid{grid-template-columns:1fr}.shell.mobile-expanded{grid-template-columns:215px minmax(0,1fr)}.shell.mobile-expanded .workspace{min-width:0}.shell.mobile-expanded .main{padding:20px 10px}.shell.mobile-expanded .header h1{font-size:21px}.shell.mobile-expanded .topbar{overflow:hidden}.shell.mobile-expanded .demo-select-label{display:none}}
+
+/* Planning preview additions only: same approved v2.1 card, button and field treatment. */
+.staff-mode-view{margin-top:25px}
+.staff-mode-view[hidden],#staff-login-fields[hidden],#staff-login-linked[hidden],#staff-login-create[hidden],#staff-login-restricted[hidden]{display:none!important}
+.staff-toolbar{align-items:center;flex-wrap:wrap}
+.staff-toolbar .btn{min-height:38px}
+.staff-list-card{margin-top:14px}
+.staff-table-top{display:flex;align-items:end;justify-content:space-between;gap:16px;padding:19px 22px}
+.staff-table-top .field{width:min(370px,100%);margin:0}
+.staff-table-top .field>span{font-size:11px;color:var(--muted);font-weight:750;display:block;margin-bottom:7px}
+.staff-counter,.staff-table-foot{color:var(--muted);font-size:10.5px}
+.staff-table-foot{padding:13px 22px;border-top:1px solid var(--line)}
+.cell-sub{display:block;margin-top:5px;font-size:10px;color:var(--muted)}
+.staff-main-grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(315px,.8fr);gap:17px;align-items:start}
+.staff-side-stack{display:grid;gap:17px}
+.staff-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px 16px}
+.staff-span-two{grid-column:1/-1}
+.staff-mode-view .field{display:flex;flex-direction:column;gap:7px;min-width:0;font-weight:700;color:var(--muted);font-size:11px}
+.staff-mode-view .field em{font-style:normal;color:#bd653c}
+.staff-mode-view .field small:not(.field-help){font-weight:500;font-size:10px}
+.staff-mode-view .input{width:100%;min-width:0;min-height:39px;border:1px solid #dce5ed;background:var(--white);color:var(--ink);border-radius:9px;padding:9px 11px;font-size:12px;font-weight:500;line-height:1.35}
+.staff-mode-view .input::placeholder{color:#92a5b4;opacity:1}
+.staff-mode-view .input:focus{outline:3px solid #ed853233;outline-offset:0;border-color:#ed8532}
+.staff-mode-view .field-help{display:block;color:var(--muted);font-size:10px;font-weight:450;line-height:1.6}
+.staff-side-stack .card{padding:21px}
+.switch-row-staff{display:flex;align-items:center;gap:13px;justify-content:space-between;cursor:pointer}
+.switch-row-staff strong{font-size:12px;color:var(--heading)}
+.switch-row-staff small{display:block;margin-top:6px;font-size:10.5px;color:var(--muted);line-height:1.55;max-width:290px}
+.switch-control{width:40px;height:23px;flex:0 0 40px;position:relative;display:block}
+.switch-control input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;z-index:1;margin:0}
+.switch-slider{position:absolute;inset:0;border-radius:30px;background:#c8d4df;transition:background .15s}
+.switch-slider:before{content:'';position:absolute;left:3px;top:3px;width:17px;height:17px;border-radius:50%;background:white;transition:transform .15s;box-shadow:0 1px 3px #0002}
+.switch-control input:checked+.switch-slider{background:var(--orange)}
+.switch-control input:checked+.switch-slider:before{transform:translateX(17px)}
+.switch-control input:focus-visible+.switch-slider{outline:3px solid #ed853277;outline-offset:3px}
+.staff-account-fields{display:grid;gap:15px;padding-top:2px}
+.staff-account-fields .divider{margin:8px 0 0}
+.staff-role-note{border:1px solid var(--line);background:var(--soft);border-radius:10px;padding:13px 14px;line-height:1.6}
+.staff-role-note strong{color:var(--heading);font-size:11px}
+.staff-role-note p{font-size:10.5px;color:var(--muted);margin:7px 0 0}
+.role-name{display:inline-block;float:right;border-radius:7px;background:#e8f6f0;color:#287860;padding:4px 8px;font-weight:750;font-size:10px}
+.staff-mfa-hint{background:#f1f5f9;border-radius:9px;padding:13px 14px;color:#4c6780}
+.staff-mfa-hint strong{font-size:11px}.staff-mfa-hint p{font-size:10.5px;line-height:1.6;margin:6px 0 0}
+.linked-account{padding:3px 0 17px;display:grid;gap:9px}
+.linked-account strong{font-size:13px;color:var(--heading)}
+.linked-account p,.staff-restricted p{font-size:11px;line-height:1.65;color:var(--muted);margin:0}
+.staff-restricted{display:grid;gap:10px}
+.staff-restricted .status-pill{justify-self:start}
+.staff-quickpoints{display:grid;gap:11px;margin-top:1px}.staff-quickpoints>div{display:flex;gap:9px;color:var(--muted);font-size:10.5px;line-height:1.55}
+.point-dot{width:7px;height:7px;flex:none;background:#ed8532;border-radius:50%;margin-top:5px}
+.staff-actions{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);margin-top:17px;padding:16px 21px;display:flex;align-items:center;justify-content:space-between;gap:17px;flex-wrap:wrap}
+.staff-actions p{font-size:10.5px;color:var(--muted);margin:0;line-height:1.6;max-width:440px}
+.staff-action-buttons{display:flex;gap:10px;flex-wrap:wrap}
+.staff-mode-view .btn:disabled{opacity:.6;cursor:not-allowed}
+html.dark .staff-mode-view .input{background:#0f172a;border-color:#64748b;color:#f1f5f9}
+html.dark .staff-role-note,html.dark .staff-mfa-hint{background:#0f172a;border-color:#475569;color:#cbd5e1}
+html.dark .staff-role-note strong,html.dark .switch-row-staff strong,html.dark .linked-account strong{color:#f1f5f9}
+html.dark .staff-actions{background:var(--white)}
+html.dark .role-name{background:#022c22;color:#a7f3d0}
+@media(max-width:1110px){.staff-main-grid{grid-template-columns:1fr}.staff-side-stack{grid-template-columns:1fr 1fr}}
+@media(max-width:850px){.staff-side-stack{grid-template-columns:1fr}}
+@media(max-width:590px){.staff-fields{grid-template-columns:1fr}.staff-span-two{grid-column:auto}.staff-table-top{flex-wrap:wrap}.staff-mode-view .small-table th:last-child,.staff-mode-view .small-table td:last-child{padding-right:10px}.staff-actions{align-items:stretch}.staff-action-buttons{justify-content:flex-end}}
+</style>
+</head>
+<body>
+<div class="shell" id="app">
+<svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden" xmlns="http://www.w3.org/2000/svg"><symbol id="i-grid" viewbox="0 0 24 24"><rect height="7" rx="1" width="7" x="3" y="3"></rect><rect height="7" rx="1" width="7" x="14" y="3"></rect><rect height="7" rx="1" width="7" x="3" y="14"></rect><rect height="7" rx="1" width="7" x="14" y="14"></rect></symbol><symbol id="i-box" viewbox="0 0 24 24"><rect height="18" rx="2" width="16" x="4" y="3"></rect><path d="M4 9h16M8 6h1M8 13h8M8 17h8"></path></symbol><symbol id="i-users" viewbox="0 0 24 24"><circle cx="9" cy="8" r="3"></circle><path d="M3 20v-2a6 6 0 0 1 12 0v2M16 5a3 3 0 0 1 0 6M18 14a5 5 0 0 1 3 5v1"></path></symbol><symbol id="i-network" viewbox="0 0 24 24"><rect height="6" rx="1" width="6" x="9" y="2"></rect><rect height="6" rx="1" width="6" x="2" y="16"></rect><rect height="6" rx="1" width="6" x="16" y="16"></rect><path d="M12 8v4M5 16v-4h14v4"></path></symbol><symbol id="i-rack" viewbox="0 0 24 24"><rect height="20" rx="2" width="14" x="5" y="2"></rect><path d="M8 6h8M8 11h8M8 16h8M8 20h8"></path></symbol><symbol id="i-history" viewbox="0 0 24 24"><path d="M3 11a9 9 0 1 1 2.5 6.5M3 4v7h7M12 7v5l3 2"></path></symbol><symbol id="i-settings" viewbox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M10 2h4l.8 2.6 2 1.1 2.6-.7 2.8 2.8-.7 2.6 1.1 2L22 14v4l-2.6.8-1.1 2 .7 2.6-2.8 2.8-2.6-.7-2 1.1-2.6-.8h-4l-.8-2.6-2-1.1-2.6.7-2.8-2.8.7-2.6-1.1-2L2 14v-4l2.6-.8 1.1-2-.7-2.6L7.8 2l2.6.7z" transform="translate(2 0) scale(.82)"></path></symbol><symbol id="i-check" viewbox="0 0 24 24"><path d="m5 12 4 4L19 6"></path></symbol><symbol id="i-alert" viewbox="0 0 24 24"><path d="m12 3 10 18H2L12 3Zm0 7v4m0 3v1"></path></symbol><symbol id="i-archive" viewbox="0 0 24 24"><rect height="5" rx="1" width="18" x="3" y="4"></rect><path d="M5 9v11h14V9M10 13h4"></path></symbol><symbol id="i-chart" viewbox="0 0 24 24"><path d="M3 20h18M6 17V9m6 8V4m6 13v-6"></path></symbol><symbol id="i-arrow" viewbox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"></path></symbol><symbol id="i-shield" viewbox="0 0 24 24"><path d="M12 2 21 6v6c0 5-4 8.5-9 10-5-1.5-9-5-9-10V6l9-4z"></path><path d="m8.5 12 2.5 2.5 4.5-5"></path></symbol></svg>
+<aside aria-label="Application Navigation" class="sidebar" id="sidebar">
+<div class="brand"><img alt="Caffoot Hedgehog Logo" id="logo" onerror="this.style.display='none';document.getElementById('logo-fallback').style.display='grid'" src="https://raw.githubusercontent.com/Caffoot/Caffoot-Lite/main/assets/caffoot-logo-256.png"/><span aria-hidden="true" class="brand-fallback" id="logo-fallback">C</span><div class="brand-text"><div class="brand-name">Caffoot <span>Lite</span></div><div class="brand-sub">INFRASTRUCTURE, SIMPLIFIED.</div></div></div>
+<div class="nav-label">WORKSPACE</div>
+<div class="nav-stack">
+<button class="nav-item subtle nav-primary" data-page="dashboard" title="Dashboard" type="button"><svg fill="none" stroke="currentColor"><use href="#i-grid"></use></svg><span class="nav-text">Dashboard</span></button>
+<div class="nav-group active-group" data-group="it" data-open="true">
+<button aria-controls="group-it" aria-expanded="true" class="nav-item nav-group-toggle" data-toggle-group="it" title="Expand Or Collapse IT" type="button">
+<svg fill="none" stroke="currentColor"><use href="#i-box"></use></svg><span class="nav-text">IT</span><span aria-hidden="true" class="nav-caret">⌄</span>
+</button>
+<div class="group-children" id="group-it">
+<button class="nav-child" data-page="devices" title="Devices" type="button"><svg fill="none" stroke="currentColor"><use href="#i-box"></use></svg><span class="nav-text">Devices</span></button>
+<button aria-current="page" class="nav-child current" data-page="assets" title="IT Assets" type="button"><svg fill="none" stroke="currentColor"><use href="#i-archive"></use></svg><span class="nav-text">IT Assets</span></button>
+<button class="nav-child" data-page="ipam" title="IPAM" type="button"><svg fill="none" stroke="currentColor"><use href="#i-network"></use></svg><span class="nav-text">IPAM</span></button>
+<button class="nav-child" data-page="racks" title="Network Racks" type="button"><svg fill="none" stroke="currentColor"><use href="#i-rack"></use></svg><span class="nav-text">Network Racks</span></button>
+</div>
+</div>
+<div class="nav-group" data-group="staff" data-open="true">
+<button aria-controls="group-staff" aria-expanded="true" class="nav-item nav-group-toggle" data-toggle-group="staff" title="Expand Or Collapse Staff" type="button">
+<svg fill="none" stroke="currentColor"><use href="#i-users"></use></svg><span class="nav-text">Staff</span><span aria-hidden="true" class="nav-caret">⌄</span>
+</button>
+<div class="group-children" id="group-staff">
+<button class="nav-child" data-page="staff" title="Staff Members" type="button"><svg fill="none" stroke="currentColor"><use href="#i-users"></use></svg><span class="nav-text">Staff Members</span></button>
+<button class="nav-child" data-page="departments" title="Departments" type="button"><svg fill="none" stroke="currentColor"><use href="#i-grid"></use></svg><span class="nav-text">Departments</span></button>
+<button class="nav-child admin-only" data-page="users" title="Permissions (Administrators Only)" type="button"><svg fill="none" stroke="currentColor"><use href="#i-shield"></use></svg><span class="nav-text">Permissions</span></button></div>
+</div>
+<button class="nav-item subtle nav-primary" data-page="audit" title="Audit Trail" type="button"><svg fill="none" stroke="currentColor"><use href="#i-history"></use></svg><span class="nav-text">Audit Trail</span></button>
+
+</div>
+<div class="nav-bottom">
+<button class="nav-item subtle nav-primary" data-page="settings" title="Settings &amp; Data" type="button"><svg fill="none" stroke="currentColor"><use href="#i-settings"></use></svg><span class="nav-text">Settings &amp; Data</span></button>
+<div class="identity"><span class="avatar">IT</span><div class="identity-text"><div class="who">Example IT User</div><div class="meta">Design Preview</div></div></div>
+<button class="sidebar-button" id="collapse" title="Collapse Or Expand Menu" type="button"><svg fill="none" stroke="currentColor"><use href="#i-box"></use></svg><span class="collapse-text">Collapse Menu</span></button>
+</div>
+</aside>
+<div class="workspace"><div class="topbar">
+<button aria-label="Open Navigation" class="btn btn-outline mobile-menu" id="mobile-menu" type="button">☰ Menu</button>
+<div class="crumb"><span>Workspace</span><span>›</span><span id="breadcrumb-group">IT</span><span>›</span><b id="breadcrumb-page">IT Assets</b></div>
+<div class="top-right">
+<label class="demo-select-label" for="demo-access">Preview Access</label>
+<select aria-label="Preview Different Section Permissions" id="demo-access" title="Illustrative Visibility Only — Not An Application Control">
+<option value="all">Administrator</option>
+<option value="assets">IT Assets Access</option>
+<option value="devices">Devices Access</option>
+<option value="staff">Staff Editor (No Admin)</option>
+<option value="none">No Staff Access</option>
+</select>
+<button class="btn btn-outline" id="theme" type="button">Dark Mode</button>
+<span class="role">Staff Form Preview</span><span class="topavatar">IT</span>
+</div>
+</div>
+<main class="main"><div class="content-view active" id="view-assets">
+<div class="header"><div><div class="eyebrow">IT STOCK &amp; ASSIGNMENTS</div><h1>IT Assets</h1><p>Keep track of equipment in stock, issued equipment and items awaiting checks.</p></div><div class="version">DESIGN PREVIEW · SAMPLE DATA</div></div>
+<div class="context"><svg fill="none" stroke="currentColor" stroke-width="1.8"><use href="#i-alert"></use></svg><div><strong>Planning Preview — Not Connected to Caffoot</strong><div>All quantities, dates and people are fictional. The controls demonstrate a possible layout; no records can be created or changed. Existing v2.1 screens are not modified.</div></div></div>
+<div aria-label="Assets Screens" class="subnav" role="tablist"><button aria-controls="panel-overview" aria-selected="true" class="active" data-tab="overview" id="tab-overview" role="tab"><svg fill="none" stroke="currentColor"><use href="#i-grid"></use></svg>Overview</button><button aria-controls="panel-inventory" aria-selected="false" data-tab="inventory" id="tab-inventory" role="tab"><svg fill="none" stroke="currentColor"><use href="#i-box"></use></svg>Stock Inventory</button><button aria-controls="panel-movements" aria-selected="false" data-tab="movements" id="tab-movements" role="tab"><svg fill="none" stroke="currentColor"><use href="#i-history"></use></svg>Stock Movements</button></div>
+<section aria-labelledby="tab-overview" class="account-panel active" id="panel-overview" role="tabpanel">
+<div class="filters"><div class="filter"><label for="category">Equipment Category</label><select id="category"><option value="all">All Categories</option></select></div><div class="filter"><label for="period">Movement Period</label><select id="period"><option value="30">Last 30 Days</option><option value="90">Last 90 Days</option></select></div><p class="filter-note">Stock cards show the current example snapshot. The movement period only changes the movements chart, activity history and write-off total.</p></div>
+<div class="metrics">
+<button class="metric" data-drill="all" title="View physically held equipment"><span class="metric-top">Physically In Stock <span class="miniicon"><svg fill="none" stroke="currentColor"><use href="#i-archive"></use></svg></span></span><strong id="kpi-held">76</strong><small>Registered and unregistered units held</small></button>
+<button class="metric" data-drill="ready" title="View ready equipment"><span class="metric-top">Ready To Issue <span class="miniicon good"><svg fill="none" stroke="currentColor"><use href="#i-check"></use></svg></span></span><strong id="kpi-ready">64</strong><small>Within physically held stock</small></button>
+<button class="metric" data-drill="awaiting" title="View equipment awaiting checks"><span class="metric-top">Awaiting Checks <span class="miniicon warn"><svg fill="none" stroke="currentColor"><use href="#i-alert"></use></svg></span></span><strong id="kpi-awaiting">12</strong><small>Held but unavailable to issue</small></button>
+<button class="metric" data-drill="issued" title="View equipment currently issued"><span class="metric-top">Currently Issued <span class="miniicon"><svg fill="none" stroke="currentColor"><use href="#i-users"></use></svg></span></span><strong id="kpi-issued">51</strong><small>With Staff Members or Departments</small></button>
+<button class="metric" data-drill="movements" title="View stock movements"><span class="metric-top">Written Off <span class="miniicon bad"><svg fill="none" stroke="currentColor"><use href="#i-history"></use></svg></span></span><strong id="kpi-written">3</strong><small id="kpi-written-period">During the last 30 days, not held</small></button>
+</div>
+<div class="card-grid"><article class="card"><div class="card-inner"><div class="card-head"><span class="iconwrap"><svg fill="none" stroke="currentColor"><use href="#i-chart"></use></svg></span><div><h3>Equipment Distribution</h3><p class="sub">Physical stock and equipment issued, by category.</p></div></div><div class="divider"></div><div class="tiny-legend"><span><i class="legend-dot green"></i>Physically Held</span><span><i class="legend-dot blue"></i>Currently Issued</span></div><div id="distribution"></div><p class="bar-subtitle">Counts refer to individual physical units, not stock catalogue entries.</p></div></article>
+<article class="card"><div class="card-inner"><div class="card-head"><span class="iconwrap green"><svg fill="none" stroke="currentColor"><use href="#i-check"></use></svg></span><div><h3>Stock Readiness</h3><p class="sub">What is available to issue right now?</p></div></div><div class="divider"></div><div class="status-block"><div class="donut" id="readiness-donut"><div class="donut-center"><strong id="donut-total">76</strong><small>Physically Held</small></div></div><div class="stat-lines"><div class="stat-line"><i class="legend-dot green"></i>Ready <strong id="readiness-ready">64</strong></div><div class="stat-line"><i class="legend-dot orange"></i>Awaiting Checks <strong id="readiness-awaiting">12</strong></div></div></div><p class="bar-subtitle">Returned Devices and new deliveries are included immediately in held stock, but cannot be issued before their checks are completed.</p></div></article>
+</div>
+<div class="card-grid equal"><article class="card"><div class="card-inner"><div class="card-head"><span class="iconwrap orange"><svg fill="none" stroke="currentColor"><use href="#i-archive"></use></svg></span><div><h3>Registered &amp; Unregistered Stock</h3><p class="sub">Two ways of classifying equipment physically held.</p></div></div><div class="divider"></div><div class="identity-blocks"><div class="identity-block"><strong id="unregistered">64</strong><small>Unregistered Stock Units</small></div><div class="identity-block"><strong id="registered">12</strong><small>Registered Devices In Stock</small></div></div><div class="identity-strip"><span class="bar-unregistered" id="identity-unregistered" style="width:84.2%"></span><span class="bar-registered" id="identity-registered" style="width:15.8%"></span></div><p class="identity-help"><strong>Example:</strong> registering a new PC moves one held unit from unregistered stock to registered stock. Total physical stock stays the same until the PC is issued.</p></div></article>
+<article class="card"><div class="card-inner"><div class="card-head"><span class="iconwrap orange"><svg fill="none" stroke="currentColor"><use href="#i-alert"></use></svg></span><div><h3>Attention Required</h3><p class="sub">Equipment to check and stock to replenish.</p></div></div><div class="divider"></div><div class="attention-list" id="attention-list"></div></div></article>
+</div>
+<div class="card-grid equal"><article class="card"><div class="card-inner"><div class="split-title"><div class="card-head"><span class="iconwrap"><svg fill="none" stroke="currentColor"><use href="#i-chart"></use></svg></span><div><h3>Stock Movements</h3><p class="sub">Received, issued, returned and written off during the selected period.</p></div></div></div><div class="divider"></div><div aria-label="Stock movement chart" class="chartbox" id="movement-chart" role="img"></div><div class="tiny-legend chart-legend"><span><i class="legend-dot green"></i>Received</span><span><i class="legend-dot blue"></i>Issued</span><span><i class="legend-dot orange"></i>Returned</span><span><i class="legend-dot red"></i>Written Off</span></div><p class="bar-subtitle">Registering a Device is not a physical receipt or issue, so it does not inflate this chart.</p></div></article>
+<article class="card"><div class="card-inner"><div class="card-head"><span class="iconwrap"><svg fill="none" stroke="currentColor"><use href="#i-history"></use></svg></span><div><h3>Recent Activity</h3><p class="sub">A few of the latest example movements.</p></div></div><div class="divider"></div><div class="table-scroll"><table class="small-table"><thead><tr><th scope="col">Date</th><th scope="col">Equipment</th><th scope="col">Movement</th><th class="right" scope="col">Qty</th></tr></thead><tbody id="recent-rows"></tbody></table></div><div style="margin-top:13px"><button class="btn btn-outline" id="show-all-movements" type="button">View All Movements</button></div></div></article>
+</div>
+</section>
+<section aria-labelledby="tab-inventory" class="account-panel" id="panel-inventory" role="tabpanel"><div class="section-heading"><div><h2>Stock Inventory</h2><p>An illustrative category summary, not a replacement for the full Stock Inventory design.</p></div><button class="btn btn-outline" id="clear-inventory">Clear Filters</button></div><div class="filters"><div class="filter"><label for="inventory-search">Search Equipment</label><input id="inventory-search" placeholder="Search category..."/></div><div class="filter"><label for="inventory-status">Stock Status</label><select id="inventory-status"><option value="all">All Statuses</option><option value="ready">Ready To Issue</option><option value="awaiting">Awaiting Checks</option><option value="issued">Currently Issued</option><option value="low">Low Stock</option></select></div></div><article class="card"><div class="table-scroll"><table class="small-table"><thead><tr><th>Equipment Category</th><th class="right">Held</th><th class="right">Ready</th><th class="right">Awaiting</th><th class="right">Unregistered</th><th class="right">Registered</th><th class="right">Issued</th></tr></thead><tbody id="inventory-rows"></tbody></table></div><div class="table-footer"><span id="inventory-count"></span><span>Ready + Awaiting = Held · Registered + Unregistered = Held</span></div></article><div class="notice"><strong>Design Boundary:</strong> The eventual Stock Inventory page will list distinct stock items and their different hardware configurations. This preview shows category totals solely to demonstrate dashboard drill-downs.</div></section>
+<section aria-labelledby="tab-movements" class="account-panel" id="panel-movements" role="tabpanel"><div class="section-heading"><div><h2>Stock Movements</h2><p>Every physical movement retains its date, quantity and audit trail.</p></div></div><article class="card"><div class="table-scroll"><table class="small-table"><thead><tr><th>Date</th><th>Equipment</th><th>Movement</th><th class="right">Quantity</th></tr></thead><tbody id="movement-rows"></tbody></table></div><div class="table-footer"><span id="movement-count"></span><span>Registration events are recorded without increasing physical stock.</span></div></article></section>
+<footer class="footer"><span>Caffoot Lite · Infrastructure, Simplified.</span><span>IT Assets · Navigation Preview · 12 November 2026</span></footer>
+</div><div class="content-view" id="view-devices"><div class="header"><div><div class="eyebrow">DEVICE INTELLIGENCE</div><h1>Devices</h1><p>Explore inventory insights, recorded equipment and data completeness.</p></div><div class="version">NAVIGATION PREVIEW</div></div>
+<div class="context"><span aria-hidden="true">ⓘ</span><div><strong>Existing Screens Stay Unchanged</strong><br/>This content is illustrative navigation context only. The approved v2.1 screen remains authoritative; no features or records are being changed.</div></div>
+<nav aria-label="Device Intelligence Views" class="subnav demo-subnav">
+<button class="active" data-demo-tab="Overview" type="button">Overview</button><button data-demo-tab="Hardware" type="button">Hardware</button><button data-demo-tab="Operating Systems" type="button">Operating Systems</button><button data-demo-tab="Software &amp; Services" type="button">Software &amp; Services</button><button data-demo-tab="Data Quality" type="button">Data Quality</button></nav>
+<div class="card card-padded demo-screen"><div class="card-head"><span class="iconwrap"><svg fill="none" stroke="currentColor"><use href="#i-box"></use></svg></span><div><h3>Device Intelligence Overview</h3><p class="sub">The approved existing Devices area remains separate from IT Assets.</p></div></div><div class="divider"></div><div class="screen-body" id="device-demo-panel"><div class="demo-grid"><div class="demo-tile"><span>Device Inventory</span><strong>42</strong><small>Example data</small></div><div class="demo-tile"><span>Hardware Categories</span><strong>6</strong><small>Example data</small></div><div class="demo-tile"><span>Needs Attention</span><strong>3</strong><small>Example data</small></div></div><p class="screen-note">The current v2.1 Devices interface would appear here unchanged. These example figures are included only to demonstrate navigation.</p></div></div><footer class="footer"><span>Caffoot Lite · Infrastructure, Simplified.</span><span>Devices · Standalone Preview</span></footer></div><div class="content-view" id="view-ipam"><div class="header"><div><div class="eyebrow">NETWORK MANAGEMENT</div><h1>IPAM</h1><p>View IP address allocations and managed subnets.</p></div><div class="version">NAVIGATION PREVIEW</div></div>
+<div class="context"><span aria-hidden="true">ⓘ</span><div><strong>Existing Screens Stay Unchanged</strong><br/>This content is illustrative navigation context only. The approved v2.1 screen remains authoritative; no features or records are being changed.</div></div>
+<div class="card card-padded demo-screen"><div class="card-head"><span class="iconwrap"><svg fill="none" stroke="currentColor"><use href="#i-network"></use></svg></span><div><h3>IP Address Management</h3><p class="sub">Existing IPAM screen, unchanged and independently permissioned.</p></div></div><div class="divider"></div><div class="demo-grid"><div class="demo-tile"><span>Subnets</span><strong>—</strong><small>Current screen retained</small></div><div class="demo-tile"><span>IP Allocations</span><strong>—</strong><small>Current screen retained</small></div></div><p class="screen-note">The approved IPAM workspace would appear here. No data or feature integration is implied by its placement under IT.</p></div><footer class="footer"><span>Caffoot Lite · Infrastructure, Simplified.</span><span>IPAM · Standalone Preview</span></footer></div><div class="content-view" id="view-racks"><div class="header"><div><div class="eyebrow">INFRASTRUCTURE</div><h1>Network Racks</h1><p>View rack equipment, placement and capacity.</p></div><div class="version">NAVIGATION PREVIEW</div></div>
+<div class="context"><span aria-hidden="true">ⓘ</span><div><strong>Existing Screens Stay Unchanged</strong><br/>This content is illustrative navigation context only. The approved v2.1 screen remains authoritative; no features or records are being changed.</div></div>
+<div class="card card-padded demo-screen"><div class="card-head"><span class="iconwrap"><svg fill="none" stroke="currentColor"><use href="#i-rack"></use></svg></span><div><h3>Rack Inventory</h3><p class="sub">Existing Network Racks screen, unchanged and independently permissioned.</p></div></div><div class="divider"></div><div class="demo-grid"><div class="demo-tile"><span>Network Racks</span><strong>—</strong><small>Current screen retained</small></div><div class="demo-tile"><span>Rack Capacity</span><strong>—</strong><small>Current screen retained</small></div></div><p class="screen-note">The approved rack management interface would remain in place.</p></div><footer class="footer"><span>Caffoot Lite · Infrastructure, Simplified.</span><span>Network Racks · Standalone Preview</span></footer></div><div class="content-view" id="view-staff">
+<div class="header"><div><div class="eyebrow">STAFF DIRECTORY</div><h1>Staff Members</h1><p>Maintain your staff records and optionally create a Caffoot login in the same form.</p></div><span class="version">DESIGN PREVIEW · SAMPLE DATA</span></div>
+<div class="context"><span aria-hidden="true">ⓘ</span><div><strong>Planning Preview — Nothing Is Saved</strong><br/>This is a standalone demonstration of the proposed Stage 3 Staff form, using the approved v2.1 look and feel. No Caffoot accounts, staff records or permissions can be created or changed here.</div></div>
+<div class="staff-mode-view" id="staff-directory">
+<div class="section-heading staff-toolbar"><div><h2>Staff Directory</h2><p>Staff Members can be listed without giving them a Caffoot login.</p></div><button class="btn btn-primary" id="staff-add" type="button"><svg fill="none" stroke="currentColor"><use href="#i-users"></use></svg>Add Staff Member</button></div>
+<div class="card staff-list-card"><div class="staff-table-top"><label class="field"><span>Find A Staff Member</span><input autocomplete="off" class="input" id="staff-find" placeholder="Search by name or department…" type="search"/></label><span class="staff-counter" id="staff-count">3 Staff Members · Example Data</span></div>
+<div class="table-scroll"><table class="small-table"><thead><tr><th>Staff Member</th><th>Department</th><th>Status</th><th>Caffoot Login</th><th></th></tr></thead><tbody>
+<tr data-search="alex morgan it" data-staff-row=""><td><strong>Alex Morgan</strong><span class="cell-sub">IT Support Technician</span></td><td>IT</td><td><span class="status-pill received">Active</span></td><td><span class="status-pill received">Linked</span></td><td class="right"><button class="btn btn-outline staff-edit" data-record="alex" type="button">View / Edit</button></td></tr>
+<tr data-search="jamie taylor operations" data-staff-row=""><td><strong>Jamie Taylor</strong><span class="cell-sub">Production Operative</span></td><td>Operations</td><td><span class="status-pill received">Active</span></td><td><span class="status-pill returned">No Login</span></td><td class="right"><button class="btn btn-outline staff-edit" data-record="jamie" type="button">View / Edit</button></td></tr>
+<tr data-search="charlie reed finance" data-staff-row=""><td><strong>Charlie Reed</strong><span class="cell-sub">Accounts Assistant</span></td><td>Finance</td><td><span class="status-pill returned">Inactive</span></td><td><span class="status-pill returned">No Login</span></td><td class="right"><button class="btn btn-outline staff-edit" data-record="charlie" type="button">View / Edit</button></td></tr>
+</tbody></table></div>
+<div class="staff-table-foot">Sample records only. Select a row to see the same form used for editing.</div>
+</div>
+</div>
+<div class="staff-mode-view" hidden="" id="staff-editor">
+<div class="section-heading staff-toolbar"><div><h2 id="staff-editor-title">Add Staff Member</h2><p id="staff-editor-subtitle">A Staff Member does not need a Caffoot login.</p></div><button class="btn btn-outline" id="staff-back" type="button">← Back To Staff Members</button></div>
+<form autocomplete="off" id="staff-form">
+<div class="staff-main-grid">
+<div class="card card-padded staff-details-card">
+<div class="card-head"><span class="iconwrap"><svg fill="none" stroke="currentColor"><use href="#i-users"></use></svg></span><div><h3>Personal Details</h3><p class="sub">Basic information about the person, whether or not they sign in.</p></div></div><div class="divider"></div>
+<div class="staff-fields">
+<label class="field"><span>First Name <em>*</em></span><input autocomplete="given-name" class="input" id="staff-first" maxlength="100" name="firstName" placeholder="e.g. Alex" required=""/></label>
+<label class="field"><span>Surname <em>*</em></span><input autocomplete="family-name" class="input" id="staff-last" maxlength="100" name="lastName" placeholder="e.g. Morgan" required=""/></label>
+<label class="field staff-span-two"><span>Email Address</span><input autocomplete="email" class="input" id="staff-email" maxlength="254" name="email" placeholder="alex.morgan@example.co.uk" type="email"/></label>
+<label class="field"><span>Department <small>Optional</small></span><select class="input" id="staff-department" name="department"><option value="">No Department</option><option>IT</option><option>Operations</option><option>Finance</option><option>Sales</option></select></label>
+<label class="field"><span>Job Title</span><input class="input" id="staff-job" maxlength="120" name="jobTitle" placeholder="e.g. IT Support Technician"/></label>
+<label class="field"><span>Telephone Number</span><input class="input" id="staff-phone" name="phone" placeholder="Optional" type="tel"/></label>
+<label class="field"><span>Location</span><input class="input" id="staff-location" name="location" placeholder="Optional"/></label>
+<label class="field staff-span-two"><span>Staff Status</span><select class="input" id="staff-status" name="status"><option>Active</option><option>Inactive</option></select><small class="field-help">Changing Staff status does not automatically enable or disable a Caffoot login.</small></label>
+</div>
+</div>
+<div class="staff-side-stack">
+<div class="card card-padded staff-login-card">
+<div class="card-head"><span class="iconwrap orange"><svg fill="none" stroke="currentColor"><use href="#i-shield"></use></svg></span><div><h3>Caffoot Login</h3><p class="sub">Optional account access, managed using the existing permissions system.</p></div></div><div class="divider"></div>
+<div id="staff-login-create">
+<label class="switch-row-staff" for="staff-create-login"><span><strong>Create Caffoot Login</strong><small>Enable this if the person needs to sign in to Caffoot Lite.</small></span><span class="switch-control"><input aria-controls="staff-login-fields" id="staff-create-login" type="checkbox"/><span aria-hidden="true" class="switch-slider"></span></span></label>
+<div class="staff-account-fields" hidden="" id="staff-login-fields">
+<div class="divider"></div>
+<label class="field"><span>Username <em>*</em></span><input autocomplete="off" class="input" id="staff-username" maxlength="256" name="username" placeholder="e.g. alex.morgan"/><small class="field-help">A unique username used to sign in.</small></label>
+<label class="field"><span>Initial Password <em>*</em></span><input autocomplete="new-password" class="input" id="staff-password" name="password" placeholder="Create an initial password" type="password"/><small class="field-help">Share the password using a secure channel.</small></label>
+<label class="field"><span>Confirm Initial Password <em>*</em></span><input autocomplete="new-password" class="input" id="staff-confirm-password" name="confirmPassword" placeholder="Confirm the initial password" type="password"/></label>
+<div class="staff-role-note"><span class="role-name">Staff Member</span><strong>Default Role</strong><p>The baseline role is assigned to every new ordinary login. It does not grant general Devices, IT Assets, IPAM or Network Racks access.</p><p>Additional roles and individual permissions remain managed through the existing Permissions controls.</p></div>
+<div class="staff-mfa-hint"><strong>MFA And Security</strong><p>Existing password, MFA and account safeguards still apply. Any enabled additional role requires MFA.</p></div>
+</div>
+</div>
+<div hidden="" id="staff-login-linked">
+<div class="linked-account"><span class="status-pill received">Linked Account</span><strong id="staff-linked-username">alex.morgan</strong><p>Staff and login records remain separate. Manage account access through Permissions.</p></div>
+<button class="btn btn-outline" id="staff-manage-login" type="button">Manage Login In Permissions</button>
+</div>
+<div class="staff-restricted" hidden="" id="staff-login-restricted"><span class="status-pill returned">Staff Directory Access Only</span><p>Creating or managing Caffoot logins is restricted to authorised administrators. You can still maintain permitted Staff details.</p></div>
+</div>
+<div class="card card-padded staff-security-summary"><h3>Equipment And Ticket Access</h3><p class="sub">A Staff record can hold equipment assignments without a login. A linked login later provides only the personal access allowed by the baseline Staff Member role.</p><div class="divider"></div><div class="staff-quickpoints"><div><span class="point-dot"></span><span>Assigned equipment stays linked to this Staff Member.</span></div><div><span class="point-dot"></span><span>Service Desk self-service arrives in the planned future stage.</span></div><div><span class="point-dot"></span><span>No automatic IT inventory permission or department-based grant.</span></div></div></div>
+</div>
+</div>
+<div class="staff-actions"><p><strong>Planning preview only.</strong> Saving here shows validation but never writes records or creates a login.</p><div class="staff-action-buttons"><button class="btn btn-outline" id="staff-clear" type="button">Clear Form</button><button class="btn btn-primary" id="staff-submit" type="submit">Save Staff Member</button></div></div>
+</form>
+</div>
+<footer class="footer"><span>Caffoot Lite · Infrastructure, Simplified.</span><span>Staff Members · Form Preview · 12 November 2026</span></footer>
+</div><div class="content-view" id="view-departments"><div class="header"><div><div class="eyebrow">STAFF DIRECTORY</div><h1>Departments</h1><p>Organise Staff Members and approved department assignments.</p></div><div class="version">NAVIGATION PREVIEW</div></div>
+<div class="context"><span aria-hidden="true">ⓘ</span><div><strong>Existing Screens Stay Unchanged</strong><br/>This content is illustrative navigation context only. The approved v2.1 screen remains authoritative; no features or records are being changed.</div></div>
+<div class="card card-padded demo-screen"><div class="card-head"><span class="iconwrap"><svg fill="none" stroke="currentColor"><use href="#i-grid"></use></svg></span><div><h3>Departments</h3><p class="sub">Core Staff functionality planned for Stage 3.</p></div></div><div class="divider"></div><div class="table-scroll"><table class="small-table"><thead><tr><th>Department</th><th>Status</th></tr></thead><tbody><tr><td>IT</td><td><span class="status-pill received">Active</span></td></tr><tr><td>Operations</td><td><span class="status-pill received">Active</span></td></tr><tr><td>Finance</td><td><span class="status-pill received">Active</span></td></tr></tbody></table></div><p class="screen-note">Example department names; no department permissions or additional departmental features are being introduced.</p></div><footer class="footer"><span>Caffoot Lite · Infrastructure, Simplified.</span><span>Departments · Standalone Preview</span></footer></div><div class="content-view" id="view-dashboard"><div class="header"><div><div class="eyebrow">YOUR WORKSPACE</div><h1>Dashboard</h1><p>This existing application destination remains separate from the new IT and Staff groups.</p></div><div class="version">NAVIGATION PREVIEW</div></div>
+<div class="context"><span aria-hidden="true">ⓘ</span><div><strong>Existing Screens Stay Unchanged</strong><br/>This content is illustrative navigation context only. The approved v2.1 screen remains authoritative; no features or records are being changed.</div></div>
+<div class="card card-padded demo-screen"><div class="card-head"><span class="iconwrap"><svg fill="none" stroke="currentColor"><use href="#i-grid"></use></svg></span><div><h3>Dashboard</h3><p class="sub">Approved existing v2.1 destination, unchanged.</p></div></div><div class="divider"></div><p class="screen-note">This standalone preview is focused on the new navigation structure. The existing Dashboard screen and its permissions are not being redesigned here.</p></div><footer class="footer"><span>Caffoot Lite · Infrastructure, Simplified.</span><span>Dashboard · Standalone Preview</span></footer></div><div class="content-view" id="view-audit"><div class="header"><div><div class="eyebrow">ACTIVITY &amp; HISTORY</div><h1>Audit Trail</h1><p>This existing application destination remains separate from the new IT and Staff groups.</p></div><div class="version">NAVIGATION PREVIEW</div></div>
+<div class="context"><span aria-hidden="true">ⓘ</span><div><strong>Existing Screens Stay Unchanged</strong><br/>This content is illustrative navigation context only. The approved v2.1 screen remains authoritative; no features or records are being changed.</div></div>
+<div class="card card-padded demo-screen"><div class="card-head"><span class="iconwrap"><svg fill="none" stroke="currentColor"><use href="#i-grid"></use></svg></span><div><h3>Audit Trail</h3><p class="sub">Approved existing v2.1 destination, unchanged.</p></div></div><div class="divider"></div><p class="screen-note">This standalone preview is focused on the new navigation structure. The existing Audit Trail screen and its permissions are not being redesigned here.</p></div><footer class="footer"><span>Caffoot Lite · Infrastructure, Simplified.</span><span>Audit Trail · Standalone Preview</span></footer></div><div class="content-view" id="view-users">
+<div class="header"><div><div class="eyebrow">ACCOUNT ADMINISTRATION</div><h1>Permissions</h1><p>Manage Caffoot logins, roles, MFA and individual permission overrides.</p></div><span class="version">ADMINISTRATOR-ONLY PREVIEW</span></div>
+<div class="context"><span aria-hidden="true">ⓘ</span><div><strong>Existing v2.1 Administration Remains Intact</strong><br/>Only the navigation label and location are proposed to change. The approved Users &amp; Permissions account-management screens, security controls and behaviour are retained.</div></div>
+<div class="card card-padded demo-screen"><div class="card-head"><span class="iconwrap orange"><svg fill="none" stroke="currentColor"><use href="#i-users"></use></svg></span><div><h3>Account And Role Management</h3><p class="sub">The current v2.1 Users &amp; Permissions interface appears here during application integration.</p></div></div><div class="divider"></div><div class="demo-grid"><div class="demo-tile"><span>Account Management</span><strong>Existing</strong><small>Users, account states and MFA</small></div><div class="demo-tile"><span>Role Management</span><strong>Existing</strong><small>Built-in and custom roles</small></div><div class="demo-tile"><span>Individual Access</span><strong>Existing</strong><small>Overrides and effective grants</small></div></div><p class="screen-note">This preview deliberately does not redraw or replace the approved Users &amp; Permissions controls. The linked login remains separate from the Staff Member record.</p></div>
+<footer class="footer"><span>Caffoot Lite · Infrastructure, Simplified.</span><span>Permissions · Standalone Planning Preview</span></footer>
+</div><div class="content-view" id="view-settings"><div class="header"><div><div class="eyebrow">APPLICATION SETTINGS</div><h1>Settings &amp; Data</h1><p>This existing application destination remains separate from the new IT and Staff groups.</p></div><div class="version">NAVIGATION PREVIEW</div></div>
+<div class="context"><span aria-hidden="true">ⓘ</span><div><strong>Existing Screens Stay Unchanged</strong><br/>This content is illustrative navigation context only. The approved v2.1 screen remains authoritative; no features or records are being changed.</div></div>
+<div class="card card-padded demo-screen"><div class="card-head"><span class="iconwrap"><svg fill="none" stroke="currentColor"><use href="#i-grid"></use></svg></span><div><h3>Settings &amp; Data</h3><p class="sub">Approved existing v2.1 destination, unchanged.</p></div></div><div class="divider"></div><p class="screen-note">This standalone preview is focused on the new navigation structure. The existing Settings &amp; Data screen and its permissions are not being redesigned here.</p></div><footer class="footer"><span>Caffoot Lite · Infrastructure, Simplified.</span><span>Settings &amp; Data · Standalone Preview</span></footer></div></main></div>
+</div><div aria-live="polite" class="toast" id="toast" role="status"></div>
+<script>
+'use strict';
+// Fictional preview records. Each category separately satisfies both approved physical stock partitions.
+const stock=[
+ {key:'Laptop',held:18,ready:14,awaiting:4,unregistered:13,registered:5,issued:16,minReady:5},
+ {key:'Desktop',held:14,ready:12,awaiting:2,unregistered:11,registered:3,issued:12,minReady:4},
+ {key:'Monitor',held:16,ready:14,awaiting:2,unregistered:13,registered:3,issued:8,minReady:15},
+ {key:'Keyboard',held:14,ready:12,awaiting:2,unregistered:14,registered:0,issued:7,minReady:5},
+ {key:'Mouse',held:10,ready:9,awaiting:1,unregistered:10,registered:0,issued:5,minReady:12},
+ {key:'Dock',held:4,ready:3,awaiting:1,unregistered:3,registered:1,issued:3,minReady:4}
+];
+const logs=[
+ ['2026-11-11','Mouse','Written Off',2],['2026-11-10','Mouse','Returned',5],['2026-11-10','Desktop','Registered Device',1],
+ ['2026-11-09','Laptop','Received',6],['2026-11-08','Laptop','Issued',3],['2026-11-05','Dock','Returned',2],
+ ['2026-11-03','Desktop','Received',4],['2026-11-02','Mouse','Written Off',1],['2026-10-29','Keyboard','Issued',5],
+ ['2026-10-28','Keyboard','Received',5],['2026-10-27','Monitor','Returned',3],['2026-10-25','Laptop','Issued',1],
+ ['2026-10-23','Mouse','Received',5],['2026-10-22','Desktop','Returned',2],['2026-10-20','Monitor','Issued',2],
+ ['2026-10-19','Dock','Received',2],['2026-10-15','Laptop','Received',3],['2026-10-14','Mouse','Issued',2],
+ ['2026-09-20','Desktop','Issued',4],['2026-09-16','Laptop','Written Off',1],['2026-09-13','Monitor','Received',2],
+ ['2026-08-25','Dock','Returned',2],['2026-08-17','Keyboard','Written Off',3]
+].map(([date,category,type,quantity])=>({date,category,type,quantity}));
+const el=id=>document.getElementById(id); const sum=(rows,key)=>rows.reduce((n,r)=>n+r[key],0);const names=stock.map(s=>s.key);
+let category='all',days=30,invStatus='all';
+const fmt=d=>new Date(d+'T12:00:00Z').toLocaleDateString('en-GB',{day:'numeric',month:'short',timeZone:'UTC'});
+function relevantStock(){return stock.filter(s=>category==='all'||s.key===category)}
+function filteredLog(){const start=days===30?'2026-10-13':'2026-08-14';return logs.filter(e=>e.date>=start&&(category==='all'||category===e.category))}
+function rowType(t){return t.toLowerCase().replaceAll(' ','-')}
+function render(){const arr=relevantStock();const held=sum(arr,'held'),ready=sum(arr,'ready'),awaiting=sum(arr,'awaiting'),issued=sum(arr,'issued'),registered=sum(arr,'registered'),unregistered=sum(arr,'unregistered'); const active=filteredLog();const written=active.filter(x=>x.type==='Written Off').reduce((n,x)=>n+x.quantity,0);
+  for(const [id,n] of [['kpi-held',held],['kpi-ready',ready],['kpi-awaiting',awaiting],['kpi-issued',issued],['kpi-written',written],['donut-total',held],['readiness-ready',ready],['readiness-awaiting',awaiting],['registered',registered],['unregistered',unregistered]]) el(id).textContent=n;
+  el('kpi-written-period').textContent=`During the last ${days} days, not held`;
+  const pp=held?ready/held*100:0;el('readiness-donut').style.background=`conic-gradient(var(--green) 0 ${pp}%,var(--orange) ${pp}% 100%)`;
+  el('identity-unregistered').style.width=`${held?100*unregistered/held:0}%`; el('identity-registered').style.width=`${held?100*registered/held:0}%`;
+  const max=Math.max(1,...arr.map(s=>s.held+s.issued)); el('distribution').innerHTML=arr.map(s=>`<div class="category-row"><span class="name">${s.key}</span><div class="stackbar" role="img" aria-label="${s.key}: ${s.held} held, ${s.issued} issued"><span class="bar-ready" style="width:${100*s.held/max}%" title="${s.held} Held"></span><span class="bar-issued" style="width:${100*s.issued/max}%" title="${s.issued} Issued"></span></div><span class="counts">${s.held} / ${s.issued}</span></div>`).join('');
+  const alerts=arr.filter(s=>s.ready<=s.minReady).map(s=>({cat:s.key,text:`${s.ready} ready · warning level ${s.minReady}`,status:'low'}));if(awaiting)alerts.unshift({cat:'Awaiting Checks',text:`${awaiting} units physically held but not ready`,status:'awaiting'});
+  el('attention-list').innerHTML=alerts.length?alerts.map(a=>`<div class="attention"><span class="attention-dot"></span><div><strong>${a.cat}</strong><p>${a.text}</p></div><button data-alert="${a.status}" data-category="${a.cat==='Awaiting Checks'?'all':a.cat}">View Stock →</button></div>`).join(''):'<div class="empty">No current warnings in this example selection.</div>';
+  const rows=active.slice(0,5);el('recent-rows').innerHTML=rows.length?rows.map(e=>`<tr><td>${fmt(e.date)}</td><td>${e.category}</td><td><span class="status-pill ${rowType(e.type)}">${e.type}</span></td><td class="right">${e.quantity}</td></tr>`).join(''):'<tr><td colspan="4" class="empty">No movements in the selected period.</td></tr>';
+  renderMovementChart(active);renderInventory();renderMovements(active);
+}
+function renderMovementChart(entries){const periods=days===30?[['13 Oct','2026-10-13','2026-10-20'],['20 Oct','2026-10-20','2026-10-27'],['27 Oct','2026-10-27','2026-11-03'],['3 Nov','2026-11-03','2026-11-10'],['10 Nov','2026-11-10','2026-11-17']]:[['Aug','2026-08-14','2026-09-01'],['Sep','2026-09-01','2026-10-01'],['Oct','2026-10-01','2026-11-01'],['Nov','2026-11-01','2026-12-01']];const kinds=[['Received','var(--green)'],['Issued','var(--blue)'],['Returned','var(--orange)'],['Written Off','var(--red)']];const cells=periods.map(([label,start,end])=>({label,counts:kinds.map(([name])=>entries.filter(x=>x.type===name&&x.date>=start&&x.date<end).reduce((n,x)=>n+x.quantity,0))}));const top=Math.max(1,...cells.flatMap(c=>c.counts));el('movement-chart').innerHTML=cells.map(c=>`<div class="chartcol"><div class="chartbars">${c.counts.map((n,i)=>`<span title="${c.label}: ${kinds[i][0]} ${n}" aria-label="${c.label} ${kinds[i][0]} ${n}" style="height:${Math.max(2,Math.round(n/top*155))}px;background:${kinds[i][1]}"></span>`).join('')}</div><span class="chartlbl">${c.label}</span></div>`).join('');el('movement-chart').setAttribute('aria-label',`Stock movement chart for last ${days} days: ${kinds.map(([type])=>type+' '+entries.filter(e=>e.type===type).reduce((n,e)=>n+e.quantity,0)).join(', ')}`)}
+function renderInventory(){const search=el('inventory-search').value.trim().toLowerCase();const visible=relevantStock().filter(s=>s.key.toLowerCase().includes(search)).filter(s=>invStatus==='all'||(invStatus==='low'?s.ready<=s.minReady:s[invStatus]>0));el('inventory-rows').innerHTML=visible.length?visible.map(s=>`<tr><td><strong>${s.key}</strong></td><td class="right">${s.held}</td><td class="right">${s.ready}</td><td class="right">${s.awaiting}</td><td class="right">${s.unregistered}</td><td class="right">${s.registered}</td><td class="right">${s.issued}</td></tr>`).join(''):'<tr><td colspan="7" class="empty">No equipment matches these filters.</td></tr>';el('inventory-count').textContent=`${visible.length} categor${visible.length===1?'y':'ies'} shown`}
+function renderMovements(rows){el('movement-rows').innerHTML=rows.length?rows.map(e=>`<tr><td>${fmt(e.date)}</td><td>${e.category}</td><td><span class="status-pill ${rowType(e.type)}">${e.type}</span></td><td class="right">${e.quantity}</td></tr>`).join(''):'<tr><td colspan="4" class="empty">No movements match this selection.</td></tr>';el('movement-count').textContent=`${rows.length} example movement records · Last ${days} days`}
+function tab(name){document.querySelectorAll('[data-tab]').forEach(b=>{const yes=b.dataset.tab===name;b.classList.toggle('active',yes);b.setAttribute('aria-selected',String(yes));b.tabIndex=yes?0:-1});document.querySelectorAll('.account-panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+name));if(window.scrollY>220)document.querySelector('.subnav').scrollIntoView({behavior:'smooth',block:'start'})}
+function toast(message){el('toast').textContent=message;el('toast').classList.add('show');if(window._toastTimer)clearTimeout(window._toastTimer);window._toastTimer=setTimeout(()=>el('toast').classList.remove('show'),3800)}
+function drill(status){if(status==='movements'){tab('movements');return}invStatus=status;el('inventory-status').value=status;el('inventory-search').value='';tab('inventory');renderInventory()}
+for(const key of names){const option=document.createElement('option');option.value=key;option.textContent=key;el('category').append(option)}
+el('category').addEventListener('change',e=>{category=e.target.value;render()});el('period').addEventListener('change',e=>{days=Number(e.target.value);render()});el('inventory-search').addEventListener('input',renderInventory);el('inventory-status').addEventListener('change',e=>{invStatus=e.target.value;renderInventory()});el('clear-inventory').addEventListener('click',()=>{category='all';el('category').value='all';invStatus='all';el('inventory-status').value='all';el('inventory-search').value='';render()});el('show-all-movements').addEventListener('click',()=>tab('movements'));
+document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>tab(b.dataset.tab)));document.querySelectorAll('[data-drill]').forEach(b=>b.addEventListener('click',()=>drill(b.dataset.drill)));
+el('attention-list').addEventListener('click',e=>{const b=e.target.closest('[data-alert]');if(!b)return;if(b.dataset.category!=='all'){category=b.dataset.category;el('category').value=category}drill(b.dataset.alert==='low'?'low':'awaiting');render()});
+
+el('collapse').addEventListener('click',()=>{const collapsed=el('app').classList.toggle('collapsed');el('collapse').setAttribute('aria-label',collapsed?'Expand Menu':'Collapse Menu')});el('theme').addEventListener('click',()=>{const dark=document.documentElement.classList.toggle('dark');el('theme').textContent=dark?'Light Mode':'Dark Mode'});
+// Internal demo integrity check — not an application test.
+if(stock.some(s=>s.ready+s.awaiting!==s.held||s.unregistered+s.registered!==s.held)){console.error('Preview stock counts are inconsistent')}
+render();
+</script>
+<script>
+(function(){
+'use strict';
+const container=document.getElementById('app');
+const pages=['dashboard','devices','assets','ipam','racks','staff','departments','audit','users','settings'];
+const groupFor=p=>['devices','assets','ipam','racks'].includes(p)?'IT':['staff','departments','users'].includes(p)?'Staff':null;
+const titles={dashboard:'Dashboard',devices:'Devices',assets:'IT Assets',ipam:'IPAM',racks:'Network Racks',staff:'Staff Members',departments:'Departments',audit:'Audit Trail',users:'Permissions',settings:'Settings & Data'};
+const permissions={
+ all:['dashboard','devices','assets','ipam','racks','staff','departments','audit','users','settings'],
+ assets:['dashboard','assets','staff','departments','audit','settings'],
+ devices:['dashboard','devices','staff','departments','audit','settings'],
+ staff:['dashboard','staff','departments','audit','settings'],
+ none:['dashboard','audit','settings']
+};
+let current='staff';
+let activeAccess='all';
+function navigate(page){
+ if(!permissions[activeAccess].includes(page))return;
+ current=page;
+ for(const node of document.querySelectorAll('.content-view')) node.classList.toggle('active',node.id==='view-'+page);
+ for(const btn of document.querySelectorAll('[data-page]')){
+   const active=btn.dataset.page===page;
+   btn.classList.toggle('current',active);
+   btn.classList.toggle('subtle',!active&&btn.classList.contains('nav-primary'));
+   if(active)btn.setAttribute('aria-current','page');else btn.removeAttribute('aria-current');
+ }
+ for(const node of document.querySelectorAll('[data-group]')) node.classList.toggle('active-group',node.dataset.group.toLowerCase() === String(groupFor(page)).toLowerCase());
+ const group=groupFor(page);
+ const crumbGroup=document.getElementById('breadcrumb-group');
+ crumbGroup.textContent=group||'';
+ crumbGroup.hidden=!group;
+ crumbGroup.previousElementSibling.hidden=!group;
+ document.getElementById('breadcrumb-page').textContent=titles[page];
+ // Reopen only the parent group for the selected destination.
+ if(group){const element=document.querySelector('[data-group="'+group.toLowerCase()+'"]');
+  if(element) setGroup(element,true);
+ }
+ document.title='Caffoot Lite — '+titles[page]+' — Navigation Preview';
+ if(matchMedia('(max-width:720px)').matches)container.classList.remove('mobile-expanded');
+ window.scrollTo({top:0,behavior:'instant'});
+}
+function setGroup(element,open){
+ element.dataset.open=String(open);
+ element.querySelector('[data-toggle-group]').setAttribute('aria-expanded',String(open));
+}
+function updateAccess(choice){
+ activeAccess=choice;
+ const allowed=permissions[choice];
+ for(const btn of document.querySelectorAll('[data-page]')) btn.hidden=!allowed.includes(btn.dataset.page);
+ for(const element of document.querySelectorAll('[data-group]')){
+  const childButtons=Array.from(element.querySelectorAll('[data-page]'));
+  element.hidden=!childButtons.some(button=>!button.hidden);
+ }
+ if(!allowed.includes(current)){
+  const first=['staff','departments','assets','devices','ipam','racks','dashboard'].find(p=>allowed.includes(p));
+  navigate(first||'dashboard');
+ }else navigate(current);
+}
+for(const button of document.querySelectorAll('[data-page]'))button.addEventListener('click',()=>navigate(button.dataset.page));
+for(const button of document.querySelectorAll('[data-toggle-group]'))button.addEventListener('click',()=>{
+ const group=button.closest('[data-group]');
+ if(container.classList.contains('collapsed'))container.classList.remove('collapsed');
+ if(matchMedia('(max-width:720px)').matches)container.classList.add('mobile-expanded');
+ setGroup(group,group.dataset.open!=='true');
+});
+document.getElementById('demo-access').addEventListener('change',e=>updateAccess(e.target.value));
+document.getElementById('mobile-menu').addEventListener('click',()=>container.classList.toggle('mobile-expanded'));
+const collapse=document.getElementById('collapse');
+collapse.addEventListener('click',()=>{collapse.querySelector('.collapse-text').textContent=container.classList.contains('collapsed')?'Expand Menu':'Collapse Menu';});
+for(const btn of document.querySelectorAll('[data-demo-tab]'))btn.addEventListener('click',()=>{
+ for(const b of document.querySelectorAll('[data-demo-tab]'))b.classList.toggle('active',b===btn);
+ const tab=btn.dataset.demoTab;
+ document.getElementById('device-demo-panel').innerHTML=tab==='Overview'?`<div class="demo-grid"><div class="demo-tile"><span>Device Inventory</span><strong>42</strong><small>Example data</small></div><div class="demo-tile"><span>Hardware Categories</span><strong>6</strong><small>Example data</small></div><div class="demo-tile"><span>Needs Attention</span><strong>3</strong><small>Example data</small></div></div><p class="screen-note">The current v2.1 Devices interface would appear here unchanged. These example figures are included only to demonstrate navigation.</p>`:`<div class="screen-sample"><strong>${tab}</strong><p>The existing ${tab} view remains unchanged. This preview demonstrates navigation placement, not a redesign.</p></div>`;
+});
+updateAccess('all');
+})();
+</script><script>
+(function(){
+ 'use strict';
+ const $=id=>document.getElementById(id);
+ const examples={
+   alex:{first:'Alex',last:'Morgan',email:'alex.morgan@example.co.uk',department:'IT',job:'IT Support Technician',phone:'',location:'Main Office',status:'Active',username:'alex.morgan'},
+   jamie:{first:'Jamie',last:'Taylor',email:'jamie.taylor@example.co.uk',department:'Operations',job:'Production Operative',phone:'',location:'Production Floor',status:'Active',username:null},
+   charlie:{first:'Charlie',last:'Reed',email:'charlie.reed@example.co.uk',department:'Finance',job:'Accounts Assistant',phone:'',location:'Main Office',status:'Inactive',username:null}
+ };
+ let record='new';
+ function isAdministrator(){return $('demo-access').value==='all'}
+ function previewNotice(text){$('toast').textContent=text; $('toast').classList.add('show');clearTimeout(window.__staffToast);window.__staffToast=setTimeout(()=>$('toast').classList.remove('show'),4700)}
+ function updateLoginVisibility(){
+   const isLinked=record!=='new' && !!examples[record].username;
+   const admin=isAdministrator();
+   $('staff-login-create').hidden=isLinked||!admin;
+   $('staff-login-linked').hidden=!isLinked||!admin;
+   $('staff-login-restricted').hidden=admin;
+   if(isLinked)$('staff-linked-username').textContent=examples[record].username;
+   const showFields=admin&&!isLinked&&$('staff-create-login').checked;
+   $('staff-login-fields').hidden=!showFields;
+   ['staff-username','staff-password','staff-confirm-password'].forEach(id=>$(id).required=showFields);
+   $('staff-submit').textContent=(showFields?'Save Staff & Create Login':'Save Staff Member');
+ }
+ function openEditor(key){
+   record=key;const data=examples[key];
+   $('staff-form').reset();
+   $('staff-create-login').checked=false;
+   const ids=['first','last','email','department','job','phone','location','status'];
+   for(const part of ids){let field=$('staff-'+part);field.value=data?data[part]:part==='status'?'Active':''}
+   $('staff-username').value=''; $('staff-password').value='';$('staff-confirm-password').value='';
+   $('staff-editor-title').textContent=key==='new'?'Add Staff Member':'Edit Staff Member';
+   $('staff-editor-subtitle').textContent=key==='new'?'Create a Staff Member, with an optional Caffoot login.':'Keep the Staff record separate from its optional Caffoot login.';
+   $('staff-directory').hidden=true;$('staff-editor').hidden=false;
+   $('staff-clear').textContent=key==='new'?'Clear Form':'Reset Changes';
+   updateLoginVisibility();
+   $('staff-editor-title').scrollIntoView({block:'nearest'});
+ }
+ function showDirectory(){$('staff-editor').hidden=true;$('staff-directory').hidden=false;}
+ $('staff-add').addEventListener('click',()=>openEditor('new'));
+ $('staff-back').addEventListener('click',showDirectory);
+ for(const btn of document.querySelectorAll('.staff-edit'))btn.addEventListener('click',()=>openEditor(btn.dataset.record));
+ $('staff-clear').addEventListener('click',()=>openEditor(record));
+ $('staff-create-login').addEventListener('change',updateLoginVisibility);
+ $('staff-manage-login').addEventListener('click',()=>{
+    if(!isAdministrator())return;
+    const permissions=document.querySelector('[data-page="users"]');
+    permissions.click();previewNotice('Navigation only — the existing account management screen is unchanged.');
+ });
+ $('staff-find').addEventListener('input',e=>{
+    const q=e.target.value.trim().toLowerCase();let n=0;
+    for(const row of document.querySelectorAll('[data-staff-row]')){row.hidden=!row.dataset.search.includes(q);if(!row.hidden)n++}
+    $('staff-count').textContent=n+' Sample Staff Member'+(n===1?'':'s');
+ });
+ $('staff-form').addEventListener('submit',e=>{
+    e.preventDefault();
+    if(!$('staff-form').reportValidity())return;
+    if(isAdministrator()&&$('staff-create-login').checked&&!(record!=='new'&&examples[record].username)){
+      if($('staff-password').value!==$('staff-confirm-password').value){
+        $('staff-confirm-password').setCustomValidity('The passwords do not match.');
+        $('staff-confirm-password').reportValidity();return;
+      }
+    }
+    previewNotice('Preview validated — no Staff Member or Caffoot login was actually saved.');
+ });
+ $('staff-confirm-password').addEventListener('input',()=> $('staff-confirm-password').setCustomValidity(''));
+ $('demo-access').addEventListener('change',()=>{
+    updateLoginVisibility();
+    if(record!=='new' && !isAdministrator()){
+     // We retain the form, but account controls are no longer exposed.
+    }
+ });
+ // Open Add Staff Member on first display for design review.
+ document.querySelector('[data-page="staff"]').click();
+ openEditor('new');
+})();
+</script></body>
+</html>
