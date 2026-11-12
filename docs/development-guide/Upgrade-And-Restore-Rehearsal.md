@@ -1,7 +1,7 @@
 # Isolated Upgrade And Restore Rehearsal
 
 This development check starts published v2.1 (schema 10), creates a fictional
-installation, upgrades it to schema 11, then restores the whole saved directory
+installation, upgrades it to the current schema 12, then restores the whole saved directory
 before starting the matching v2.1 image. It does not use an owner's installation
 or establish that a production backup exists. Stage 1 remains under review.
 
@@ -20,15 +20,17 @@ Set the following values to those local images and verified revisions:
 ```sh
 CAFFOOT_UPGRADE_RESTORE=1 \
 CAFFOOT_V21_TEST_IMAGE=caffoot-batch05:v21 \
-CAFFOOT_UPGRADE_TEST_IMAGE=caffoot-batch05:v11 \
+CAFFOOT_UPGRADE_TEST_IMAGE=caffoot-it-staff:private \
 CAFFOOT_V21_TEST_REVISION=c3237114108cad9f7d4e57657b6aed5e0091a5ef \
-CAFFOOT_UPGRADE_TEST_REVISION=689afd827ef3192379b6baf7ef6d289d8f73da04 \
+CAFFOOT_UPGRADE_TEST_REVISION="$(git rev-parse HEAD)" \
 python -m unittest discover -s tests -p 'test_upgrade_restore.py' -v
 ```
 
-These revisions identify this rehearsal's original application inputs, not a
-future release. Use the actual revisions if reviewing different application
-source. The test verifies image labels before creating data. Images are built
+The current test expects schema 12, including IT Staff assignment and preserved
+overrides. Build the second image from the current committed source with that
+exact revision label. The original Batch 05 schema-11 result remains historical
+evidence, not proof of a new two-image run for schema 12. The test verifies image
+labels before creating data. Images are built
 locally from those sources; it does not certify a registry image digest or ARM64.
 
 The test selects a free loopback port and a unique `caffoot-restore-…` Compose
@@ -53,11 +55,13 @@ deployment method. No Raspberry Pi or Portainer configuration is changed.
   backup volume. It includes SQLite, SMTP credentials, the email-proof key and
   actual generated TLS certificate/private key, with original ownership/modes.
 - After upgrade, all old table rows are identical except the expected migration
-  record and removal of all sessions. Exactly four role tables are added;
-  grants become exact overrides and all eight accounts receive Staff Member.
+  record, removal of all sessions and revocation of affected email proofs.
+  Exactly four role tables are added; legacy grants remain exact overrides,
+  necessary No Access overrides prevent widening, all eight accounts receive
+  Staff Member and seven active accounts also receive IT Staff.
   Private files remain identical. Unenrolled/pending Read cannot sign in before
-  enrolment; no-grant Staff is denied inventory, and missing grants can later
-  inherit from an explicitly assigned role. A second startup is unchanged.
+  enrolment; preserved No Access is denied inventory, and deliberately choosing
+  Inherit allows the assigned role to supply access. A second startup is unchanged.
 - With the application stopped, only the newly generated test data volume is
   cleared and restored. Every row, file hash, mode and owner must match the
   original snapshot, both before and after starting the matching v2.1 image.

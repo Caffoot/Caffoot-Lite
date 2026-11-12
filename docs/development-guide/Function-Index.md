@@ -6,7 +6,7 @@ Scope: named JavaScript declarations/assignments in the three application script
 
 The account hydration/photo functions now have purpose-based callable bindings matching their function names: `hydrateAccount` and `removeAccountPhoto`. The immutable design manifest retains its historical integration-entry names; those metadata names are not the runtime's current function map. Pinned source paths, revisions and hashes are unchanged.
 
-**Recorded definitions: 733.** Regenerate after changing declarations or their lines. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
+**Recorded definitions: 734.** Regenerate after changing declarations or their lines. See [coding conventions](06-Coding-and-Naming-Conventions.md) and the [code reference](07-Function-and-Code-Reference.md).
 
 ## interface/loader.js
 
@@ -890,22 +890,24 @@ The account hydration/photo functions now have purpose-based callable bindings m
 | [`role_catalogue`](../../backend/roles.py#L73) | 73 |
 | [`account_access_details`](../../backend/roles.py#L84) | 84 |
 | [`_action_targets`](../../backend/roles.py#L113) | 113 |
-| [`_apply_values`](../../backend/roles.py#L132) | 132 |
-| [`_security_snapshot`](../../backend/roles.py#L164) | 164 |
-| [`_preview_impact`](../../backend/roles.py#L195) | 195 |
-| [`_confirmation_signature`](../../backend/roles.py#L233) | 233 |
-| [`_issue_preview`](../../backend/roles.py#L240) | 240 |
-| [`preview_role_change`](../../backend/roles.py#L248) | 248 |
-| [`confirm_role_change`](../../backend/roles.py#L260) | 260 |
-| [`_audit_role_value`](../../backend/roles.py#L312) | 312 |
+| [`_apply_values`](../../backend/roles.py#L135) | 135 |
+| [`_security_snapshot`](../../backend/roles.py#L167) | 167 |
+| [`_preview_impact`](../../backend/roles.py#L198) | 198 |
+| [`_confirmation_signature`](../../backend/roles.py#L236) | 236 |
+| [`_issue_preview`](../../backend/roles.py#L243) | 243 |
+| [`preview_role_change`](../../backend/roles.py#L251) | 251 |
+| [`confirm_role_change`](../../backend/roles.py#L263) | 263 |
+| [`_audit_role_value`](../../backend/roles.py#L315) | 315 |
 
 ## backend/schema.py
 
 | Function | Line |
 | --- | ---: |
 | [`initialise_database`](../../backend/schema.py#L56) | 56 |
-| [`migrate_role_permissions`](../../backend/schema.py#L196) | 196 |
-| [`verify_role_migration`](../../backend/schema.py#L281) | 281 |
+| [`migrate_role_permissions`](../../backend/schema.py#L199) | 199 |
+| [`verify_role_migration`](../../backend/schema.py#L284) | 284 |
+| [`migrate_configurable_builtin_roles`](../../backend/schema.py#L310) | 310 |
+
 
 ## backend/server.py
 

@@ -115,12 +115,15 @@ def _action_targets(connection, action):
     if "userId" in action:
         _target(connection, action["userId"])
     if "roleId" in action:
-        role = connection.execute("SELECT role_key,is_builtin FROM roles WHERE id=?",
+        role = connection.execute("SELECT role_key,is_builtin,name FROM roles WHERE id=?",
                                   (action["roleId"],)).fetchone()
         if role is None:
             raise ValueError("Role not found")
-        if role[1] or role[0] == role_policy.STAFF_ROLE_KEY:
+        if role[0] == role_policy.STAFF_ROLE_KEY:
             raise ValueError("Staff Member cannot be changed or unassigned")
+        if role[1] and (action["type"] == "role.delete"
+                        or (action["type"] == "role.update" and action["name"] != role[2])):
+            raise ValueError("Built-in role identity cannot be renamed or deleted")
     if "userId" in action:
         return [action["userId"]]
     if "roleId" in action:

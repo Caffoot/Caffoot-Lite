@@ -64,6 +64,10 @@ async function confirm(page){
   const login=await context.request.post(address+'/api/login',{headers:{Origin:address},data:{username:creds.username,password:creds.password,mfa_code:code(creds.secret)}});assert.equal(login.status(),200);
   const page=await context.newPage();page.on('pageerror',error=>errors.push(error.message));
   await page.goto(address+'/inventory#users');await page.locator('#app[aria-busy="false"]').waitFor();
+  if(process.env.CAFFOOT_BUILTIN_ROLES_ONLY==='1'){
+   await require('./builtin-roles-interface.cjs')({page,context,catalogue,confirmedAction,confirm,screenshot,checked});
+   assert.deepEqual(errors,[]);fs.writeFileSync(path.join(out,'results.json'),JSON.stringify({checks,errors},null,2));return;
+  }
   assert.deepEqual(await page.locator('.section-page-header .tabs button').allTextContents(),['Overview','User List','Add User','Manage Roles']);
   assert.equal(await page.locator('.users-live .cards4 .stat').count(),4);
   assert.equal(await page.locator('.users-live .two-col>.card').count(),2);
@@ -86,7 +90,7 @@ async function confirm(page){
   await page.locator('#role-name').fill('Inventory Readers');await page.locator('#role-grant-Devices').selectOption('read');
   await page.locator('[form="role-definition-form"]').click();
   await page.locator('[data-role-command="confirm"]').waitFor();
-  assert.equal((await catalogue(context)).roles.length,1);
+  assert.equal((await catalogue(context)).roles.length,2);
   await screenshot(page,'create-preview-1440');await audit(page,'role-preview','[data-role-layer]');await confirm(page);
   data=await catalogue(context);let role=data.roles.find(role=>role.name==='Inventory Readers');assert.ok(role);assert.equal(role.accountCount,0);
   await checked(page,'Role create uses preview then confirmation and leaves the new role unassigned');
@@ -234,6 +238,7 @@ async function confirm(page){
   await staff.locator('.account-screen .subnav [data-section="security"]').click();assert.ok(await staff.locator('#next-account-mfa-start').isVisible());
   await screenshot(staff,'staff-my-account-390');await staffContext.close();
   await checked(page,'Approved /account shell permits only own-account functionality; unauthenticated access and Staff inventory/admin/other-user access are denied; optional removal verifies proofs and ends all sessions');
+  await require('./builtin-roles-interface.cjs')({page,context,catalogue,confirmedAction,confirm,screenshot,checked});
   if(process.env.CAFFOOT_AXE_SOURCE){
    await page.locator('[data-role-command="create"]').click();
    await audit(page,'role-editor','[data-role-layer]');

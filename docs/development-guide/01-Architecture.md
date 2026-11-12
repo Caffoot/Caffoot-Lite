@@ -2,6 +2,12 @@
 
 ## In simple terms
 
+The current `milestone-1` addition is schema 12 and IT Staff. It reuses the same
+role tables, permission policy, MFA flow and administrator preview/confirmation
+service. Only built-in identity constraints and the approved access-preserving
+upgrade change; no parallel permissions system, new framework or future
+departmental roles are introduced. See [IT Staff](Role-Permissions.md#configurable-built-in-roles--schema-12).
+
 The Docker version of Caffoot Lite is a small web application, not a collection of separate services. A browser opens the application's HTTPS page; the Python server serves that page and processes its requests; SQLite stores the shared inventory and account details. A Portainer stack or Docker Compose configuration starts the same application.
 
 ## The implemented pieces

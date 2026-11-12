@@ -95,11 +95,18 @@ class UpgradeRestoreTests(unittest.TestCase):
                 added = set(upgraded["tables"]) - set(before["tables"])
                 self.assertEqual(added, {"roles", "role_grants", "account_roles", "account_permission_overrides"})
                 for table, rows in before["tables"].items():
-                    if table not in ("schema_migrations", "account_sessions"):
+                    if table not in ("schema_migrations", "account_sessions", "account_email_proofs"):
                         self.assertTrue(upgraded["tables"][table] == rows, f"Preserved rows: {table}")
                 self.assertEqual(upgraded["tables"]["account_sessions"], [])
-                self.assertTrue(upgraded["tables"]["account_permission_overrides"] == before["tables"]["account_permissions"])
-                self.assertEqual(len(upgraded["tables"]["account_roles"]), 8)
+                self.assertEqual(upgraded["tables"]["account_email_proofs"], [])
+                expected = {(account, section): level for account, section, level in before["tables"]["account_permissions"]}
+                for row in before["tables"]["accounts"]:
+                    if row[6] and not row[3]:
+                        for section in ("Devices", "IPAM", "Racks"):
+                            expected.setdefault((row[0], section), "deny")
+                actual = {(account, section): level for account, section, level in upgraded["tables"]["account_permission_overrides"]}
+                self.assertEqual(actual, expected)
+                self.assertEqual(len(upgraded["tables"]["account_roles"]), 15)
                 for name, metadata in before["files"].items():
                     if not name.startswith("caffoot.sqlite3"):
                         self.assertEqual(upgraded["files"][name], metadata, name)
@@ -122,7 +129,7 @@ class UpgradeRestoreTests(unittest.TestCase):
                        "db=sqlite3.connect('/data/caffoot.sqlite3'); "
                        "token=login_session(db,'reader-unenrolled','Fictional-Restore-Password-2026!'); "
                        "assert token and session_account(db,token)")
-                print(f"Isolated restore passed: {project}; v2.1={old_revision}; v11={new_revision}; "
+                print(f"Isolated restore passed: {project}; v2.1={old_revision}; current={new_revision}; "
                       "8 accounts, 5 invalidated sessions, 4 new tables, exact restored rows/files/modes/owners")
             finally:
                 run([*command, "down", "-v", "--remove-orphans"])

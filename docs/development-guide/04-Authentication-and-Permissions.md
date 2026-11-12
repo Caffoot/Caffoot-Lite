@@ -19,6 +19,14 @@ The configured `CAFFOOT_WEB_ADDRESS` defines the permitted HTTPS origin; alterin
 
 ## Roles and permissions
 
+Schema 12 adds the protected, configurable IT Staff role. Existing active
+accounts receive it with exact section-access preservation through ordinary
+overrides; disabled accounts do not. Sessions and email proofs of newly assigned
+accounts are revoked. Enabled IT Staff requires MFA even with three No Access
+overrides. The existing mandatory-enrolment flow handles unenrolled users without
+granting a session beforehand. New ordinary users remain Staff-only. See the
+[migration and built-in safeguards](Role-Permissions.md#configurable-built-in-roles--schema-12).
+
 The shared source of truth for role decisions is [`role_policy.py`](../../backend/role_policy.py), called by [`permissions.py`](../../backend/permissions.py), authentication, sessions, recovery and the Users response.
 
 | Account state | Effective inventory access |

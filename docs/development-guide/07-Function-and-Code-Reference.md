@@ -101,6 +101,15 @@ The [planning/capacity follow-up](Issue-329-Planning-and-Capacity.md) adds `calc
 
 ## Role And MFA Interface Integration
 
+`schema.py:migrate_configurable_builtin_roles` applies schema 12 after the
+unchanged schema-11 migration, preserves existing role IDs and section levels,
+and invalidates sessions/proofs for active accounts newly assigned IT Staff.
+`roles.py:_action_targets` distinguishes the immutable Staff Member baseline
+from configurable built-ins with protected names/keys and allowed membership,
+grant and enabled-state changes. Existing preview/confirmation remains authoritative.
+The existing catalogue/editor/membership renderers expose those distinctions;
+Manage User explains overrides in a paragraph outside its three-card access grid.
+
 `nextRenderAccount` renders the session's own `assigned_roles` names/enabled
 flags, including disabled assignments, separately from `is_admin`.
 `isBlockedAction` checks rack actions directly against Racks Edit, including

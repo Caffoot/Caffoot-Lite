@@ -117,7 +117,7 @@ class RolePolicyTests(unittest.TestCase):
 
     def test_inactive_unknown_and_new_sections_fail_closed(self):
         self.enrol()
-        self.role("editors", [("Devices", "edit"), ("Unknown", "edit")])
+        role = self.role("editors", [("Devices", "edit"), ("Unknown", "edit")])
         self.db.execute("INSERT INTO account_permission_overrides VALUES(?, 'Unknown', 'edit')", (self.user,))
         self.db.commit()
         self.assertNotIn("Unknown", evaluate_role_policy(self.db, self.user).permissions)
@@ -125,7 +125,7 @@ class RolePolicyTests(unittest.TestCase):
         self.assertFalse(can_access(self.db, self.owner, "Unknown"))
         with patch("backend.role_policy.SECTIONS", ("Devices", "IPAM", "Racks", "People")):
             self.assertFalse(can_access(self.db, self.user, "People"))
-            self.db.execute("INSERT INTO role_grants VALUES(2,'People','read')")
+            self.db.execute("INSERT INTO role_grants VALUES(?,'People','read')", (role,))
             self.assertTrue(can_access(self.db, self.user, "People"))
         self.db.execute("UPDATE accounts SET active=0 WHERE id=?", (self.user,))
         self.db.commit()

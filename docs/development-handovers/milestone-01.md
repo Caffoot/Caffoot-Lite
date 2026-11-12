@@ -1,5 +1,30 @@
 # Milestone 01 Development Handover
 
+## IT Staff — Issue #365
+
+Original Stage 1 was [accepted by the owner](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6816955325)
+at `53252613cf5302d8e526324c0982b8807472e251`. The separately authorised
+[IT Staff feature](https://github.com/Caffoot/Caffoot-Lite/issues/365) follows
+the issue's final active-account migration and schema-12 technical review;
+the earlier exact-match and unassigned-upgrade proposals are superseded.
+
+Schema 12 adds configurable protected built-in identities without weakening
+Staff Member. IT Staff starts with Edit/Edit/Edit; active existing accounts
+receive it while necessary ordinary overrides preserve exact prior section
+access. Disabled users are not assigned; new ordinary users remain Staff-only.
+Assigned active accounts are signed out and retain the existing mandatory-MFA
+enrolment flow, including where preserved access is No Access throughout.
+The existing role editor/membership controls expose permitted configuration,
+protect name/deletion, and explain individual overrides without changing the
+three-card permission layout. User instructions include Dave and Tim.
+
+See [implementation and test evidence](evidence/it-staff/Report.md),
+[role/security details](../development-guide/Role-Permissions.md#configurable-built-in-roles--schema-12)
+and the updated Function Index. PR #358 must stay draft and unmerged. Stop for
+private Raspberry Pi acceptance of this additional feature; no deployment,
+release or Docker publication is authorised. Existing Stage 1 acceptance is
+not claimed as acceptance of schema 12.
+
 ## Final Interface Corrections
 
 Continued from the existing uncommitted corrections on

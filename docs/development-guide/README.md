@@ -6,7 +6,7 @@ Welcome. This guide explains **how Caffoot Lite actually works**, from the every
 
 ## In simple terms
 
-Current development on `milestone-1` includes [Batches 01–04: Shared Roles And Account Permissions](Role-Permissions.md). These introduce schema 11, the Staff Member baseline, a shared access/MFA policy, secure enrolment/removal, confirmed administrator role management and additive integration into the existing approved interface. Batch 05 verification is authorised by the owner's 11 November 2026 resumption instruction; see the [isolated upgrade and restore rehearsal](Upgrade-And-Restore-Rehearsal.md). Batch 04's final Chromium, Firefox and WebKit acceptance requirement remains outstanding. This is not a deployable release; the published baseline remains v2.1. See the [active milestone handover](../development-handovers/milestone-01.md).
+Original Stage 1 was accepted at `53252613cf5302d8e526324c0982b8807472e251`. Current work adds [IT Staff and schema 12](Role-Permissions.md#configurable-built-in-roles--schema-12) under [issue #365](https://github.com/Caffoot/Caffoot-Lite/issues/365), preserving existing access and mandatory MFA. This additional feature requires private Raspberry Pi acceptance before any new merge decision; PR #358 remains draft. The published baseline remains v2.1. See the [active handover](../development-handovers/milestone-01.md).
 
 Caffoot Lite helps small IT teams document their devices, IP addresses, network racks and changes. The earlier HTML release saves its inventory in one browser. The Docker application keeps a **shared inventory** in a central SQLite database so authorised users see the same information.
 

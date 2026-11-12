@@ -110,11 +110,12 @@ def file_manifest():
 def verify_upgraded_policy():
     """Check migrated sign-in and later inheritance using the real new policy."""
     from backend.authentication import MFAEnrolmentRequired
+    from backend.schema import SCHEMA_VERSION
     from backend.permissions import can_access
     from backend.role_policy import evaluate_role_policy
     from backend.sessions import login_session
     with connect() as db:
-        assert db.execute("SELECT max(version) FROM schema_migrations").fetchone() == (11,)
+        assert db.execute("SELECT max(version) FROM schema_migrations").fetchone() == (SCHEMA_VERSION,)
         for name in ("reader-unenrolled", "reader-pending"):
             try:
                 login_session(db, name, PASSWORD, report_enrolment=True)
@@ -130,7 +131,10 @@ def verify_upgraded_policy():
         role = db.execute("INSERT INTO roles(role_key,name) VALUES('restore_readers','Restore Readers')").lastrowid
         db.execute("INSERT INTO role_grants VALUES(?,'Devices','read')", (role,))
         db.execute("INSERT INTO account_roles VALUES(?,?)", (account, role))
-        assert evaluate_role_policy(db, account).permissions == {"Devices": "read"}
+        # Schema 12 deliberately preserves old No Access with an override.
+        # Choosing Inherit is required before a later role can supply access.
+        db.execute("DELETE FROM account_permission_overrides WHERE account_id=? AND section='Devices'", (account,))
+        assert evaluate_role_policy(db, account).permissions == {"Devices": "edit" if SCHEMA_VERSION >= 12 else "read"}
         assert evaluate_role_policy(db, account).mfa_mandatory
         assert not can_access(db, account, "Devices")
         db.rollback()

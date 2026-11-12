@@ -123,7 +123,7 @@ class RequiredMfaHttpTests(unittest.TestCase):
         self.assertEqual(status, 200)
         self.assertEqual(result["sections"]["Devices"], {"read": True, "edit": False})
         with sqlite3.connect(self.path) as db:
-            self.assertEqual(db.execute("SELECT section,level FROM account_permission_overrides WHERE account_id=?", (self.user,)).fetchall(), [("Devices", "read")])
+            self.assertEqual(db.execute("SELECT section,level FROM account_permission_overrides WHERE account_id=?", (self.user,)).fetchall(), [("Devices", "read"), ("IPAM", "deny"), ("Racks", "deny")])
 
     def test_bad_password_unknown_and_inactive_are_generic_and_do_not_leak_secret(self):
         cases = (self.credentials(password="wrong"), self.credentials(username="unknown"))

@@ -15,6 +15,10 @@ from backend.role_policy import evaluate_role_policy
 
 class RoleMigrationTests(unittest.TestCase):
     def setUp(self):
+        # Keep the accepted v10-to-v11 contract independently covered.
+        version = patch.object(schema, "SCHEMA_VERSION", 11)
+        version.start()
+        self.addCleanup(version.stop)
         self.db = sqlite3.connect(":memory:")
         self.db.execute("PRAGMA foreign_keys=ON")
         self.db.executescript((Path(__file__).parent / "fixtures/schema-v10.sql").read_text())

@@ -6,7 +6,7 @@ the published inventory import format."""
 import sqlite3
 from backend.role_policy import evaluate_role_policy
 
-SCHEMA_VERSION = 11
+SCHEMA_VERSION = 12
 
 DDL = """
 CREATE TABLE IF NOT EXISTS inventory_devices (
@@ -187,6 +187,9 @@ def initialise_database(connection: sqlite3.Connection) -> None:
         if 11 not in versions:
             migrate_role_permissions(connection)
             connection.execute("INSERT INTO schema_migrations(version) VALUES(11)")
+        if SCHEMA_VERSION >= 12 and 12 not in versions:
+            migrate_configurable_builtin_roles(connection)
+            connection.execute("INSERT INTO schema_migrations(version) VALUES(12)")
         connection.commit()
     except BaseException:
         connection.rollback()
@@ -302,3 +305,97 @@ def verify_role_migration(connection, accounts_before, grants_before):
     for account in accounts_before:
         if evaluate_role_policy(connection, account[0]).permissions != expected_permissions.get(account[0], {}):
             raise RuntimeError("Role migration changed configured section access")
+
+
+def migrate_configurable_builtin_roles(connection):
+    """Add configurable built-ins without widening existing section access.
+
+    The caller's transaction also covers rebuilding the role constraint and
+    restoring its dependent rows. Active accounts gain IT Staff, but retain
+    earlier section levels through the existing individual override choices.
+    """
+    accounts = connection.execute("SELECT * FROM accounts ORDER BY id").fetchall()
+    previous = {row[0]: evaluate_role_policy(connection, row[0]) for row in accounts}
+    roles = connection.execute("SELECT * FROM roles ORDER BY id").fetchall()
+    grants = connection.execute("SELECT * FROM role_grants ORDER BY role_id,section").fetchall()
+    memberships = connection.execute("SELECT * FROM account_roles ORDER BY account_id,role_id").fetchall()
+    overrides = connection.execute("SELECT * FROM account_permission_overrides ORDER BY account_id,section").fetchall()
+    triggers = connection.execute(
+        "SELECT sql FROM sqlite_master WHERE type='trigger' AND tbl_name='roles' ORDER BY name"
+    ).fetchall()
+    # Clear saved dependent rows explicitly before rebuilding their parent.
+    # This also works for isolated callers that have not enabled foreign keys.
+    # Normal application connections keep foreign keys enabled throughout.
+    connection.execute("DELETE FROM role_grants")
+    connection.execute("DELETE FROM account_roles")
+    connection.execute("DROP TABLE roles")
+    connection.execute("""
+        CREATE TABLE roles (
+            id INTEGER PRIMARY KEY,
+            role_key TEXT NOT NULL UNIQUE
+                CHECK(length(role_key)>0 AND role_key GLOB '[a-z]*'
+                      AND role_key NOT GLOB '*[^a-z0-9_]*'),
+            name TEXT NOT NULL COLLATE NOCASE UNIQUE CHECK(length(trim(name))>0),
+            enabled INTEGER NOT NULL DEFAULT 1 CHECK(enabled IN (0,1)),
+            is_builtin INTEGER NOT NULL DEFAULT 0 CHECK(is_builtin IN (0,1)),
+            CHECK(role_key!='staff_member' OR
+                  (name='Staff Member' COLLATE BINARY AND enabled=1 AND is_builtin=1))
+        )
+    """)
+    connection.executemany("INSERT INTO roles VALUES(?,?,?,?,?)", roles)
+    for (statement,) in triggers:
+        connection.execute(statement)
+    connection.executemany("INSERT INTO role_grants VALUES(?,?,?)", grants)
+    connection.executemany("INSERT INTO account_roles VALUES(?,?)", memberships)
+    connection.execute("""
+        CREATE TRIGGER protect_builtin_identity BEFORE UPDATE ON roles
+        WHEN NEW.is_builtin!=OLD.is_builtin
+             OR (OLD.is_builtin=1 AND NEW.name!=OLD.name COLLATE BINARY)
+        BEGIN SELECT RAISE(ABORT, 'Built-in role identity cannot change'); END
+    """)
+    connection.execute("""
+        CREATE TRIGGER protect_builtin_delete BEFORE DELETE ON roles
+        WHEN OLD.is_builtin=1
+        BEGIN SELECT RAISE(ABORT, 'Built-in roles cannot be deleted'); END
+    """)
+    role_id = connection.execute(
+        "INSERT INTO roles(role_key,name,is_builtin) VALUES('it_staff','IT Staff',1)"
+    ).lastrowid
+    sections = ("Devices", "IPAM", "Racks")
+    connection.executemany("INSERT INTO role_grants VALUES(?,?,'edit')",
+                           [(role_id, section) for section in sections])
+    expected_overrides = {(account, section): level for account, section, level in overrides}
+    active = [account for account, policy in previous.items() if policy.active]
+    for account in active:
+        policy = previous[account]
+        connection.execute("INSERT INTO account_roles VALUES(?,?)", (account, role_id))
+        for section in sections:
+            level = "edit" if policy.is_admin else policy.permissions.get(section)
+            if level != "edit" and (account, section) not in expected_overrides:
+                connection.execute("INSERT INTO account_permission_overrides VALUES(?,?,?)",
+                                   (account, section, level or "deny"))
+                expected_overrides[account, section] = level or "deny"
+        # Membership changes follow the established sign-out/proof-revocation rule.
+        connection.execute("DELETE FROM account_sessions WHERE account_id=?", (account,))
+        connection.execute("DELETE FROM account_email_proofs WHERE account_id=?", (account,))
+    if (connection.execute("SELECT * FROM accounts ORDER BY id").fetchall() != accounts
+            or connection.execute("SELECT * FROM roles WHERE id!=? ORDER BY id", (role_id,)).fetchall() != roles
+            or connection.execute("SELECT * FROM role_grants WHERE role_id!=? ORDER BY role_id,section", (role_id,)).fetchall() != grants
+            or connection.execute("SELECT * FROM account_roles WHERE role_id!=? ORDER BY account_id,role_id", (role_id,)).fetchall() != memberships
+            or dict(((account, section), level) for account, section, level in connection.execute(
+                "SELECT * FROM account_permission_overrides")) != expected_overrides
+            or connection.execute("SELECT account_id FROM account_roles WHERE role_id=? ORDER BY account_id", (role_id,)).fetchall() != [(account,) for account in active]
+            or dict(connection.execute("SELECT section,level FROM role_grants WHERE role_id=?", (role_id,))) != dict.fromkeys(sections, "edit")
+            or connection.execute("PRAGMA foreign_key_check").fetchone()):
+        raise RuntimeError("Built-in role upgrade did not preserve existing data")
+    for account, policy in previous.items():
+        after = evaluate_role_policy(connection, account)
+        if policy.active and (not after.mfa_mandatory
+                or connection.execute("SELECT 1 FROM account_sessions WHERE account_id=?", (account,)).fetchone()
+                or connection.execute("SELECT 1 FROM account_email_proofs WHERE account_id=?", (account,)).fetchone()):
+            raise RuntimeError("Built-in role upgrade did not invalidate account sessions and proofs")
+        for section in sections:
+            before_level = "edit" if policy.is_admin else policy.permissions.get(section)
+            after_level = "edit" if after.is_admin else after.permissions.get(section)
+            if before_level != after_level:
+                raise RuntimeError("Built-in role upgrade changed section access")

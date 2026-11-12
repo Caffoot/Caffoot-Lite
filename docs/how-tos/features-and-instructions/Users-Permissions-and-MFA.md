@@ -8,6 +8,43 @@
 
 ## On The Milestone Development Branch
 
+### IT Staff And Individual Permissions
+
+**Staff Member** is the protected baseline for everyone and grants no inventory
+access. **IT Staff** is a separate built-in role, initially enabled with **Edit**
+for Devices, IPAM and Network Racks. **Administrator** is a separate account
+status with its own safeguards; IT Staff does not make someone an administrator.
+
+In **Manage Roles**, administrators can edit IT Staff's grants and disable or
+re-enable it after reviewing the change. Disabling stops its grants contributing
+but keeps its settings and memberships. Its name and identity cannot be changed
+or deleted. Assign or remove it deliberately in **Manage User**. Newly created
+ordinary accounts still receive Staff Member only; a fresh installation creates
+IT Staff without assigning it to anyone.
+
+When upgrading existing data to schema 12, every active account receives IT Staff,
+including existing administrators and Staff-only users. Disabled accounts are not
+assigned. Previous Devices/IPAM/Racks levels stay exactly as they were. Existing
+individual choices remain, and Read or No Access overrides are added only where
+needed to prevent IT Staff's initial grants widening access. Other memberships
+and role definitions stay intact. Users are signed out after this membership
+change. **MFA becomes mandatory for active IT Staff members even when their
+effective inventory access remains No Access.** Users without an authenticator
+complete the existing enrolment process, then sign in again with their code.
+
+The section cards distinguish **Inherited** access from roles, the user's
+individual choice, and **Effective** access after that choice. **Inherit** uses
+assigned enabled roles. **No Access**, **Read** and **Edit** are individual
+overrides and take precedence even when a role's configured grants change.
+
+For example, **Tim** and **Dave** are both IT Staff. Tim has no overrides and
+inherits **Edit / Edit / Edit**. Dave has Devices **Read** and Racks **Read**
+overrides, while IPAM inherits **Edit**, giving **Read / Edit / Read**. Later
+role edits do not replace Dave's explicit Read choices. Choosing **Inherit** for
+a section is the deliberate way to resume following its role grants. Upgraded
+accounts may retain earlier choices in the same way; review the preview before
+changing them. Disabling a role does not erase existing individual overrides.
+
 **My Account** displays all your assigned roles, including **Staff Member**.
 Disabled assigned roles are labelled **Disabled** and do not grant access.
 Administrator status appears separately from role memberships. This display

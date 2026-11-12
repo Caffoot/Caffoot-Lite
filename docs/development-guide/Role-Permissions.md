@@ -1,8 +1,55 @@
 # Shared Roles And Account Permissions
 
-This is work on `milestone-1` under [Batch 01](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6790154284), [Batch 02](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6790154888) and [Batch 03](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6790155451). The published release remains v2.1. [Corrected Batch 04](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6790324888) integrates these operations into the existing approved Users, sign-in and My Account interfaces. This development branch is **not ready to deploy**: Batch 04 owner review and separately authorised later verification remain required.
+This is development on `milestone-1`; the published release remains v2.1.
+Original Stage 1 was [accepted](https://github.com/Caffoot/Caffoot-Lite/issues/351#issuecomment-6816955325)
+at `53252613cf5302d8e526324c0982b8807472e251`. The additional
+[IT Staff feature](https://github.com/Caffoot/Caffoot-Lite/issues/365) introduces
+schema 12 and requires separate private Raspberry Pi acceptance before any new
+merge decision. PR #358 remains draft and unmerged.
+
+## Configurable Built-In Roles — Schema 12
+
+IT Staff is a protected built-in identity, initially enabled with Devices,
+IPAM and Network Racks **Edit**. Administrators can review/confirm grant changes,
+disable/re-enable it and assign/remove memberships through the existing controls.
+Its key and name cannot change and it cannot be deleted. Administrator remains
+an independent account flag. Staff Member retains all of its stricter protections.
+
+Schema 12 permits multiple configurable built-in identities using the existing
+role columns and services. Only IT Staff is introduced; no future departmental
+roles or permissions are created. Both database triggers and role administration
+protect built-in identity. Custom roles retain their existing rename/delete rules.
+
+The accepted schema-10→11 migration below remains unchanged. A subsequent
+schema-11→12 migration rebuilds the roles CHECK constraint while preserving IDs,
+grants and memberships, with foreign keys enabled throughout the same transaction.
+All existing active accounts, including administrators and Staff-only accounts,
+receive IT Staff. Disabled accounts receive no new membership. Existing section
+levels remain exact: existing individual choices stay intact, and only missing
+overrides needed to preserve an earlier Read or No Access result are added.
+Earlier Edit outcomes and independent Administrator access need no extra choices.
+Existing custom roles, disabled roles, account security fields, inventory and
+history are preserved. Repeated startup does not repeat assignment or revoke
+new sessions. A failed migration rolls everything back. A pre-existing custom
+role using the IT Staff key/name causes a safe failure rather than conversion,
+renaming or deletion of that role; resolve such a collision before upgrading.
+
+Every newly assigned active account's sessions and email proofs are invalidated,
+following the existing membership-change rule. IT Staff imposes mandatory MFA
+even when all three effective section levels remain No Access. Unenrolled users
+must use the existing password-verified enrolment and then sign in afresh; no
+session, automatic enrolment or MFA exception is introduced. Disabled accounts'
+security state is unchanged. Fresh installations create IT Staff unassigned;
+first-admin and new ordinary-account creation continue to assign Staff Member only.
+
+Preserved overrides remain authoritative after future role edits. Selecting
+**Inherit** intentionally removes an override and resumes role-derived access.
+See the [Dave and Tim example](../how-tos/features-and-instructions/Users-Permissions-and-MFA.md#it-staff-and-individual-permissions).
 
 ## Database Upgrade
+
+This section records the retained schema-10→11 stage. Schema 12 then applies
+the additional migration above before the application starts.
 
 Schema 11 adds `roles`, `role_grants`, `account_roles` and `account_permission_overrides`. Every existing account, including disabled accounts and independent administrators, receives the protected, enabled **Staff Member** role. First-administrator setup and ordinary account creation assign it within the account transaction. This role grants no Devices, IPAM or Racks access and does not create or infer a People link.
 
