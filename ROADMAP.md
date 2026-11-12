@@ -16,9 +16,11 @@ Caffoot Lite v2.1 was published on **8 November 2026**. The current release incl
 
 **[Install Caffoot Lite](INSTALLATION.md)** · **[See the latest release](https://github.com/Caffoot/Caffoot-Lite/releases/latest)** · **[Explore the features](docs/how-tos/features-and-instructions/README.md)**
 
-## Next development work — planning
+## In development — v2.2 (Milestone 01)
 
-The [six long-term planning milestones](docs/product-direction/PROPOSED-MILESTONES.md) organise future proposals. **Milestone 01 — Everyday IT Management** is the next planning priority. Its connected foundations cover Suppliers, a core Assets and stock section, People and Departments, equipment assignments and handovers, permissions, and the full Service Desk. **Milestone 02 — Connected Infrastructure** remains focused on network relationships. **Milestone 03 — Inventory Tools, Reporting & Verification** groups later inventory improvements such as CSV/JSON, saved views, QR labels, stocktakes, reporting and IT documentation. See the [live GitHub milestones](https://github.com/Caffoot/Caffoot-Lite/milestones). These are planning groupings: detailed feature scope and implementation still require separate approval; no release date is set. The completed v2.1 integration and its historical decisions are recorded in [issue #282](https://github.com/Caffoot/Caffoot-Lite/issues/282).
+**v2.2 is the agreed target version, not a published release and not a release-date commitment.** Stage 1 (role-based access, per-user overrides, MFA safeguards and IT Staff) is accepted and merged; Stages 2–6 are not yet complete. Development continues on `milestone-1`, with scope, reviews and acceptance recorded in the [Milestone 01 tracker #351](https://github.com/Caffoot/Caffoot-Lite/issues/351). Only v2.1 installation instructions and published images are presently available. Documentation preparation is tracked in [#366](https://github.com/Caffoot/Caffoot-Lite/issues/366).
+
+The [six long-term planning milestones](docs/product-direction/PROPOSED-MILESTONES.md) organise future proposals. **Milestone 01 — Everyday IT Management** includes upcoming Suppliers, a core Assets and stock section, People and Departments, equipment assignments and handovers, optional modules and the full Service Desk. **Milestone 02 — Connected Infrastructure** remains focused on network relationships. **Milestone 03 — Inventory Tools, Reporting & Verification** groups later inventory improvements such as CSV/JSON, saved views, QR labels, stocktakes, reporting and IT documentation. See the [live GitHub milestones](https://github.com/Caffoot/Caffoot-Lite/milestones). These are planning groupings: detailed feature scope and implementation still require separate approval; no release date is set. The completed v2.1 integration and its historical decisions are recorded in [issue #282](https://github.com/Caffoot/Caffoot-Lite/issues/282).
 
 ## Ideas under consideration — not yet scheduled
 
@@ -53,4 +55,4 @@ Please [report security vulnerabilities privately](SECURITY.md), not in public i
 
 ---
 
-*Updated: 10 November 2026. This page reflects the published release and proposed future work, not a guaranteed delivery schedule.*
+*Updated: 12 November 2026. This page distinguishes the published v2.1 release from the agreed v2.2 development target; no release date is promised.*
