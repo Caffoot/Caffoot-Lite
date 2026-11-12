@@ -1,5 +1,7 @@
 # Milestone 01 — Interactive Planning Previews
 
+> **Permanent reference archive — outside `main`.** This branch is intentionally retained to store reviewed Milestone 01 prototype files. **Do not merge it into `main`, publish it with a release, copy its styling into v2.1 screens, or delete it during ordinary branch clean-up.** At the start of Stage 2 and Stage 3 work, review the relevant archived HTML alongside the latest owner-approved issue requirements. Each new mock-up should be archived here only after the owner reviews it; the feature issues remain the source of truth for approved behaviour.
+
 These are the **five original standalone HTML files supplied by the product owner on 12 November 2026**, kept as review evidence and practical **functional interaction references only**.
 
 **These are not application files, implementation authorisation, or additional/replacement pinned design sources.** The current v2.1 interface, the twelve pinned approved v2.1 HTML designs, and existing `interface/` styling and behaviour remain authoritative. Follow `CONTRIBUTING.md`. Add only independently approved new functionality **inside the existing v2.1 design**; never replace established screens with whole preview mock-ups or restyle unrelated controls. Preview data and access simulations are fictional and are not proof of backend security or persistence.
@@ -39,4 +41,4 @@ These SHA-256 values refer to the **unaltered uploaded source files**:
 
 Open the HTML files locally to review their interactive behaviour. A few Stage 3 files request the public Caffoot logo from GitHub; none connect to live Caffoot Lite data. No screenshots were uploaded with these five files.
 
-**PR intent:** archive reviewed sources only. Do not modify, import or pin these under `interface/`, and do not infer development permission from this PR.
+**Archive intent:** retain the reviewed sources on this dedicated reference branch. Do not modify, import or pin these under `interface/`, and do not infer development permission from archived prototypes or the closed documentation PR.
